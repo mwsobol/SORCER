@@ -15,5 +15,5 @@ classes
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 atlassian-ide-plugin.xml
-iGrid-dist**
-iGrid/repo-builder/toPush*.txt
+iGrid-dist-*
+toPush*.txt
