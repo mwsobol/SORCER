@@ -3,6 +3,10 @@
 ### Java template
 *.class
 classes
+logs/
+databases/
+reports/
+build/
 
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
@@ -15,5 +19,6 @@ classes
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 atlassian-ide-plugin.xml
-iGrid-dist-*
+iGrid-dist*
 toPush*.txt
+junit*.properties
