@@ -22,3 +22,4 @@ atlassian-ide-plugin.xml
 iGrid-dist*
 toPush*.txt
 junit*.properties
+.metadata/
