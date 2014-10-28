@@ -58,39 +58,3 @@ allprojects {
     version = '5.0.0-SNAPSHOT'
 }
 
-
-task libDist(dependsOn: assemble) {
-	description 'Distributes all SORCER libraries to libs/socer/lib, libs/socer/lib-dl and libs/socer/lib-ext'
-
-	File libRoot = mkdir("${project.rootProject.projectDir.path}/lib")
-	File sorcerLibDir = mkdir("${project.rootProject.projectDir.path}/lib/sorcer/lib")
-	File sorcerDlDir = mkdir("${project.rootProject.projectDir.path}/lib/sorcer/lib-dl")
-	File sorcerExtDir = mkdir("${project.rootProject.projectDir.path}/lib/sorcer/lib-ext")
-
-	doLast {
-		allprojects.each { project ->
-			project.tasks.withType(Jar).each { jar ->
-				File target
-				if (jar.archiveName.indexOf('dl') > 0 ||
-					jar.archiveName.indexOf('ui') > 0) {
-					target = sorcerDlDir
-				} else if (jar.path.indexOf('boot') > 0) {
-					target = libRoot
-				} else if (jar.archiveName.startsWith('ssb-') || jar.archiveName.startsWith('webster-')) {
-					target = sorcerExtDir
-				} else {
-					target = sorcerLibDir
-				}
-				if (file(jar.archivePath).exists()) {
-					copy {
-						from jar.archivePath
-						into target
-					}
-				} else {
-					println "Archive does not exist ${jar.archivePath}"
-				}
-			}
-		}
-
-	}
-}

@@ -20,16 +20,6 @@ task arithmeticPrvDlJar(type: Jar) {
 	dependsOn classes
 	from sourceSets.main.output
 	include('sorcer/arithmetic/provider/*')
-	
-	doLast {
-        if (file("build/libs/arithmetic-${version}-${classifier}.jar").exists()) {
-			File dlLib = file("${rootDir}/lib/sorcer/lib-dl")
-			if(!dlLib.exists())
-				dlLib.mkdirs()
-		    file("${rootDir}/lib/sorcer/lib-dl/arithmetic-${version}-${classifier}.jar").bytes = 
-			file("build/libs/arithmetic-${version}-${classifier}.jar").bytes
-		}
-    }
 }
 
 task arithmeticReqJar(type: Jar) {
@@ -50,16 +40,6 @@ task arithmeticPrvUiJar(type: Jar) {
 	dependsOn classes
 	from sourceSets.main.output
 	include('sorcer/arithmetic/provider/ui/**')
-	
-	doLast {
-        if (file("build/libs/arithmetic-${version}-${classifier}.jar").exists()) {
-			File dlLib = file("${rootDir}/lib/sorcer/lib-dl")
-			if(!dlLib.exists())
-				dlLib.mkdirs()
-		    file("${rootDir}/lib/sorcer/lib-dl/arithmetic-${version}-${classifier}.jar").bytes = 
-			file("build/libs/arithmetic-${version}-${classifier}.jar").bytes
-		}
-    }
 }
 
 artifacts {
