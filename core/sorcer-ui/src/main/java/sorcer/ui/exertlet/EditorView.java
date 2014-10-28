@@ -62,7 +62,7 @@ public class EditorView extends JPanel implements HyperlinkListener {
 			.getName());
 	private static boolean debug = false;
 	private final JFileChooser fileChooser = new JFileChooser(System
-			.getProperty("iGrid.home"));
+			.getProperty("sorcer.home"));
 	private JIconButton homeButton;
 	private JButton editButton, saveButton, openButton,
 			saveAsButton, exertButton;

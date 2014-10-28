@@ -78,7 +78,7 @@ public class ServiceLogger extends ServiceProvider implements RemoteLogger,
 	public void init(String[] args) {
 		knownLoggers = new Vector<LoggingConfig>();
 		final String[] argv = args;
-		final String defautDir = System.getProperty("iGrid.home")
+		final String defautDir = System.getProperty("sorcer.home")
 				+ File.separator + "logs" + File.separator + "remote";
 		new Thread() {
 			public void run() {
@@ -137,7 +137,7 @@ public class ServiceLogger extends ServiceProvider implements RemoteLogger,
 			FileHandler h;
 			try {
 				String fs = File.separator;
-				h = new FileHandler(System.getProperty(IGRID_HOME) + fs
+				h = new FileHandler(System.getProperty(SORCER_HOME) + fs
 						+ "logs" + fs + "remote" + fs + "remote-logger-" + log.getName()
 						+ "%g.log", 20000, 8, true);
 

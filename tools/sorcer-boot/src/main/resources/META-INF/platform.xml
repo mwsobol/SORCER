@@ -6,8 +6,8 @@
 		<version>5.0</version>
 		<manufacturer>SORCERsoft.org</manufacturer>
 		<classpath>
-			${iGrid.home}/lib/sorcer/lib/sorcer-platform-5.0.0-SNAPSHOT.jar
-			${iGrid.home}/lib/sorcer/lib/sorcer-lib-5.0.0-SNAPSHOT.jar
+			${sorcer.home}/lib/sorcer/lib/sorcer-platform-5.0.0-SNAPSHOT.jar
+			${sorcer.home}/lib/sorcer/lib/sorcer-lib-5.0.0-SNAPSHOT.jar
 		</classpath>
 	</capability>
 
@@ -16,8 +16,8 @@
 		<version>2.2.1</version>
 		<manufacturer>Apache Software Foundation</manufacturer>
 		<classpath>
-			${iGrid.home}/lib/river/lib/jsk-lib-2.2.2.jar
-			${iGrid.home}/lib/river/lib/serviceui-2.2.2.jar
+			${sorcer.home}/lib/river/lib/jsk-lib-2.2.2.jar
+			${sorcer.home}/lib/river/lib/serviceui-2.2.2.jar
 		</classpath>
 	</capability>
 

@@ -58,7 +58,7 @@ import sorcer.util.Table;
  *         output) vars 3. Setting parametric (a collection of selected model
  *         input) vars (vm -s {var names}) 4. Calculating response tables (vm
  *         -rt <parametric table URL>), for example using
- *         geometry/parametric_datafile_long.txt in ${IGRID_HOME}/data
+ *         geometry/parametric_datafile_long.txt in ${SORCER_HOME}/data
  */
 public class VarModelCmd extends ShellCmd {
 

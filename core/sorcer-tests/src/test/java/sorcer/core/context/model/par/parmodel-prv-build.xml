@@ -4,7 +4,7 @@
  * Service-Oriented Computing Environmet: SORCER Arithetic service provider 
  * build configuration.
  * Make sure the following variables are changed to reflect your environment:
- *    IGRID_HOME        	iGrid location
+ *    SORCER_HOME        	iGrid location
  *    JAVA_HOME         	JDK Location
  *	  IGRID_WEBSTER_PORT 	The class server (webster) port
  *    ANT_HOME          	Jakarta Ant location
@@ -16,9 +16,9 @@
 
 	<!-- set global properties -->
 	<import file="../../../../../../../../common-build.xml" />
-	<property name="src" value="${iGrid.home}/modules/sorcer/src" />
+	<property name="src" value="${sorcer.home}/modules/sorcer/src" />
 
-	<property name="resources" value="${iGrid.home}/modules/sorcer/resources" />
+	<property name="resources" value="${sorcer.home}/modules/sorcer/resources" />
 
 	<!-- The sources to compile -->
 	<patternset id="ant.java">

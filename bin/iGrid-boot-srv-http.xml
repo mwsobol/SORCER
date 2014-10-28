@@ -3,7 +3,7 @@
 
 	<import file="common-run.xml" />
 
-	<property name="iGrid.data" value="${iGrid.home}/data" />
+	<property name="iGrid.data" value="${sorcer.home}/data" />
 
 	<target name="run" depends="clean">
 		<antcall target="kernel">
@@ -31,12 +31,12 @@
                 <pathelement location="${rio.home}/lib/logging/slf4j-jdk14-${slf4j.version}.jar" />
             </classpath>
 			<arg value="../configs/boot-iGrid-srv-http.config" />
-			<sysproperty key="iGrid.home" value="${iGrid.home}" />
+			<sysproperty key="sorcer.home" value="${sorcer.home}" />
 			<sysproperty key="rio.home" value="${env.RIO_HOME}" />
-			<sysproperty key="sorcer.env.file" value="${iGrid.home}/configs/sorcer.env" />
+			<sysproperty key="sorcer.env.file" value="${sorcer.home}/configs/sorcer.env" />
 			<sysproperty key="java.rmi.server.useCodebaseOnly" value="false" />
-			<sysproperty key="java.security.policy" value="${iGrid.home}/policy/iGrid.policy" />
-			<sysproperty key="java.util.logging.config.file" value="${iGrid.home}/configs/sorcer.logging" />
+			<sysproperty key="java.security.policy" value="${sorcer.home}/policy/iGrid.policy" />
+			<sysproperty key="java.util.logging.config.file" value="${sorcer.home}/configs/sorcer.logging" />
 			<sysproperty key="webster.tmp.dir" value="${iGrid.data}" />
 			<jvmarg value="-Xms1g"/>
 			<jvmarg value="-Xmx8g"/>			
@@ -50,12 +50,12 @@
 	</target>
 
 	<target name="clean" description="Deletes Blitz DB files">
-		<delete dir="${iGrid.home}/logs/dbfiles_blitz" failonerror="false" />
-		<delete dir="${iGrid.home}/logs/dbfiles_monitor" failonerror="false" />
-		<delete dir="${iGrid.home}/logs/slamonitor.sla_db" failonerror="false" />
-		<delete file="${iGrid.home}/bin/monitoredjobs_index.obf" failonerror="false" />
-		<delete file="${iGrid.home}/bin/monitoredjobs_temp.obf" failonerror="false" />
-		<delete file="${iGrid.home}/bin/monitoredjobs.obf" failonerror="false" />
+		<delete dir="${sorcer.home}/logs/dbfiles_blitz" failonerror="false" />
+		<delete dir="${sorcer.home}/logs/dbfiles_monitor" failonerror="false" />
+		<delete dir="${sorcer.home}/logs/slamonitor.sla_db" failonerror="false" />
+		<delete file="${sorcer.home}/bin/monitoredjobs_index.obf" failonerror="false" />
+		<delete file="${sorcer.home}/bin/monitoredjobs_temp.obf" failonerror="false" />
+		<delete file="${sorcer.home}/bin/monitoredjobs.obf" failonerror="false" />
 	</target>
 
 </project>

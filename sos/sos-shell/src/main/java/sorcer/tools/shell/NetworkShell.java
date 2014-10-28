@@ -470,7 +470,7 @@ public class NetworkShell implements DiscoveryListener {
 		Properties props = new Properties();
 		String iGridHome = Sorcer.getHome();
 		if (iGridHome == null)
-			throw new RuntimeException("IGRID_HOME must be set");
+			throw new RuntimeException("SORCER_HOME must be set");
 		props.put("java.protocol.handler.pkgs", "net.jini.url|sorcer.util.bdb.sos");
 		Properties addedProps = getConfiguredSystemProperties();
 		props.putAll(addedProps);
@@ -1484,7 +1484,7 @@ public class NetworkShell implements DiscoveryListener {
 	static private Map<String, String> nishAppMap = new TreeMap<String, String>();
 
 	static { 
-		String iGridHome = System.getenv("IGRID_HOME");
+		String iGridHome = System.getenv("SORCER_HOME");
 		String[] apps = new String[] { 
 				"browser", 
 				iGridHome + "/bin/browser/bin/sorcer-browser-spawn.xml",

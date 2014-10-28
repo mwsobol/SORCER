@@ -2,16 +2,16 @@
 <project name="Arithmetic all bean services" default="all-arithmetic" basedir="">
 
 	<property environment="env" />
-	<import file="${env.IGRID_HOME}/bin/common-run.xml" />
+	<import file="${env.SORCER_HOME}/bin/common-run.xml" />
 
 	<target name="all-arithmetic">
 		<java jar="${lib}/sorcer-boot.jar" fork="yes">
 			<arg value="../configs/start-all-arithmetic-http.config" />
-			<sysproperty key="iGrid.home" value="${iGrid.home}" />
-			<sysproperty key="sorcer.env.file" value="${iGrid.home}/configs/sorcer.env" />
+			<sysproperty key="sorcer.home" value="${sorcer.home}" />
+			<sysproperty key="sorcer.env.file" value="${sorcer.home}/configs/sorcer.env" />
             <sysproperty key="java.rmi.server.useCodebaseOnly" value="false" />
 			<sysproperty key="java.security.policy" value="../policy/arithmetic-beans-prv.policy" />
-			<sysproperty key="java.util.logging.config.file" value="${iGrid.home}/configs/sorcer.logging" />
+			<sysproperty key="java.util.logging.config.file" value="${sorcer.home}/configs/sorcer.logging" />
 			<sysproperty key="webster.port" value="60009" />
 		</java>
 	</target>

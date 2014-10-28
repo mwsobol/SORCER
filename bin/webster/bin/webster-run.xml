@@ -2,14 +2,14 @@
 
 <project name="Run webster" default="webster" basedir="">
 	<!-- load system environment variables -->
-    <dirname file="${basedir}/../../" property="iGrid.basedir"/>
-    <import file="${iGrid.basedir}/bin/common-run.xml" />
+    <dirname file="${basedir}/../../" property="sorcer.basedir"/>
+    <import file="${sorcer.basedir}/bin/common-run.xml" />
 	<property name="provider.webster" value="${provider.webster.interface.TMP}" />
 	<echo message="provider.webster = ${provider.webster}" />
 	<echo message="provider.webster.port ${provider.webster.port}" />
 
 	<!-- IGRID Data Directory -->
-    <property name="iGrid.data" value="${iGrid.home}/data" />
+    <property name="iGrid.data" value="${sorcer.home}/data" />
 
 	<!-- SORCER code server: Webster -->
 	<!-- webster root directories -->
@@ -34,7 +34,7 @@
 	<!-- start webster -->
 	<target name="webster" depends="logDir">
 		<java jar="${sorcer-ext.lib}/webster-${sorcer.version}.jar" maxmemory="450M" fork="yes">
-			<sysproperty key="java.util.logging.config.file" value="${iGrid.home}/configs/sorcer.logging" />
+			<sysproperty key="java.util.logging.config.file" value="${sorcer.home}/configs/sorcer.logging" />
 			<sysproperty key="java.protocol.handler.pkgs" value="net.jini.url" />
 			<sysproperty key="java.rmi.server.useCodebaseOnly" value="false" />
 			<sysproperty key="java.security.policy" value="${iGrid.policy}/policy.all" />
@@ -49,7 +49,7 @@
     <!-- start webster -->
     <target name="webster-spawn" depends="logDir">
         <java jar="${sorcer-ext.lib}/webster-${sorcer.version}.jar" maxmemory="450M" fork="yes" spawn="yes">
-            <sysproperty key="java.util.logging.config.file" value="${iGrid.home}/configs/sorcer.logging" />
+            <sysproperty key="java.util.logging.config.file" value="${sorcer.home}/configs/sorcer.logging" />
             <sysproperty key="java.protocol.handler.pkgs" value="net.jini.url" />
             <sysproperty key="java.rmi.server.useCodebaseOnly" value="false" />
             <sysproperty key="java.security.policy" value="${iGrid.policy}/policy.all" />

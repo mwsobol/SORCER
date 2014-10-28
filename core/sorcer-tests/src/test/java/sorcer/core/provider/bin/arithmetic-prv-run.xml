@@ -8,9 +8,9 @@ Also you might need to adjust the classpath (provider.classpath) for your provid
 
 	<!-- system environment variables -->
 	<property environment="env" />
-	<import file="${env.IGRID_HOME}/bin/common-run.xml" />
+	<import file="${env.SORCER_HOME}/bin/common-run.xml" />
 
-	<echo message="IGRID_HOME: ${iGrid.home}" />
+	<echo message="SORCER_HOME: ${sorcer.home}" />
 	<echo message="WEBSTER: ${provider.webster.url}" />
 
 	<target name="run">
@@ -53,11 +53,11 @@ Also you might need to adjust the classpath (provider.classpath) for your provid
 			<sysproperty key="sorcer.provider.classpath" value="${toString:project.classpath}" />
 			<sysproperty key="sorcer.provider.impl" value="${provider.class}" />
 			<sysproperty key="sorcer.provider.config" value="../configs/${provider.bean}-prv.config" />
-			<sysproperty key="sorcer.env.file" value="${iGrid.home}/configs/sorcer.env" />
+			<sysproperty key="sorcer.env.file" value="${sorcer.home}/configs/sorcer.env" />
 			<sysproperty key="java.security.policy" value="../policy/arithmetic-beans-prv.policy" />
-			<sysproperty key="java.util.logging.config.file" value="${iGrid.home}/configs/sorcer.logging" />
+			<sysproperty key="java.util.logging.config.file" value="${sorcer.home}/configs/sorcer.logging" />
 			<sysproperty key="java.rmi.server.useCodebaseOnly" value="false" />
-			<arg value="${iGrid.home}/configs/startup-prv.config" />
+			<arg value="${sorcer.home}/configs/startup-prv.config" />
 			
 			<!--<sysproperty key="java.rmi.server.RMIClassLoaderSpi" value="org.rioproject.rmi.ResolvingLoader" />
 			<sysproperty key="java.protocol.handler.pkgs" value="net.jini.url|sorcer.util.url|org.rioproject.url" />

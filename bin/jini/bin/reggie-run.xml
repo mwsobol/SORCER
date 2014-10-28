@@ -8,9 +8,9 @@
 		<java jar="${jini.lib}/start.jar" fork="yes">
 			<arg value="../configs/start-generic.config" />
 			<sysproperty key="java.security.policy" value="../policy/jini.policy" />
-			<sysproperty key="iGrid.home" value="${iGrid.home}" />
+			<sysproperty key="sorcer.home" value="${sorcer.home}" />
 			<sysproperty key="provider.webster.url" value="${provider.webster.url}/" />
-			<sysproperty key="java.util.logging.config.file" value="${iGrid.home}/configs/sorcer.logging" />
+			<sysproperty key="java.util.logging.config.file" value="${sorcer.home}/configs/sorcer.logging" />
 			<sysproperty key="impl.class" value="com.sun.jini.reggie.TransientRegistrarImpl" />
 			<sysproperty key="impl.jar" value="reggie.jar" />
 			<sysproperty key="dl.jar" value="reggie-dl.jar" />

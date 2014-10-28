@@ -263,7 +263,7 @@ public interface SorcerConstants {
 
 	public static final String S_SERVICE_ACCESSOR_PROVIDER_NAME = "provider.lookup.accessor";
 
-	public static final String IGRID_HOME = "iGrid.home";
+	public static final String SORCER_HOME = "sorcer.home";
 
 	// discovery and lookup
 

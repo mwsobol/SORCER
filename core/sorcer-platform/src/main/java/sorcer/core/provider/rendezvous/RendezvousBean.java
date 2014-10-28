@@ -105,7 +105,7 @@ abstract public class RendezvousBean implements Service, Executor {
 		try {
 			logger = Logger.getLogger("local." + provider.getClass().getName() + "."
 					+ provider.getProviderName());
-			h = new FileHandler(System.getProperty(SorcerConstants.IGRID_HOME)
+			h = new FileHandler(System.getProperty(SorcerConstants.SORCER_HOME)
 					+ "/logs/remote/local-Jobber-" + provider.getDelegate().getHostName() + "-" + provider.getProviderName()
 					+ "%g.log", 20000, 8, true);
 			if (h != null) {

@@ -1,12 +1,12 @@
 <?xml version='1.0' encoding='ISO-8859-1' standalone='yes'?>
 <project name="sorcer" default="sorcer-rio-destroy" basedir="">
 
-    <dirname file="${basedir}/.." property="iGrid.basedir"/>
-    <import file="${iGrid.basedir}/bin/common-run.xml" />
+    <dirname file="${basedir}/.." property="sorcer.basedir"/>
+    <import file="${sorcer.basedir}/bin/common-run.xml" />
 
     <target name="sorcer-rio-destroy">
         <java classname="sorcer.util.ServiceDestroyer" fork="yes">
-            <env key="IGRID_HOME" value="${iGrid.home}"/>
+            <env key="SORCER_HOME" value="${sorcer.home}"/>
             <classpath>
                 <pathelement location="${jini.lib}/jsk-platform.jar" />
                 <pathelement location="${jini.lib}/jsk-lib.jar" />
@@ -18,7 +18,7 @@
                 <pathelement location="${rio.home}/lib-dl/monitor-api-${rio.version}.jar" />
                 <pathelement location="${java.home}/../lib/tools.jar" />
             </classpath>
-            <sysproperty key="java.security.policy" value="${iGrid.home}/policy/iGrid.policy" />
+            <sysproperty key="java.security.policy" value="${sorcer.home}/policy/iGrid.policy" />
             <sysproperty key="java.protocol.handler.pkgs" value="net.jini.url|sorcer.util.bdb.sos|org.rioproject.url" />
             <sysproperty key="java.rmi.server.RMIClassLoaderSpi" value="org.rioproject.rmi.ResolvingLoader" />
             <sysproperty key="RIO_HOME" value="${rio.home}" />

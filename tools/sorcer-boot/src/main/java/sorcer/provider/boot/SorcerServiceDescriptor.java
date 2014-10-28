@@ -85,7 +85,7 @@ import com.sun.jini.start.ServiceProxyAccessor;
  * @author Dennis Reedy, updated for SORCER by M. Sobolewski
  */
 public class SorcerServiceDescriptor implements ServiceDescriptor {
-	static { 	System.setProperty("iGrid.home", System.getenv("IGRID_HOME")); }
+	static { 	System.setProperty("sorcer.home", System.getenv("SORCER_HOME")); }
 	static String COMPONENT = "sorcer.provider.boot";
 	static Logger logger = Logger.getLogger(COMPONENT);
 	
@@ -295,9 +295,9 @@ public class SorcerServiceDescriptor implements ServiceDescriptor {
 		/* Set common JARs to the CommonClassLoader */
 		String defaultDir = null;
 		String fs = File.separator;
-		String iGridHome = System.getProperty("iGrid.home");
+		String iGridHome = System.getProperty("sorcer.home");
 		if (iGridHome == null) {
-			logger.info("'iGrid.home' not defined, no default platformDir");
+			logger.info("'sorcer.home' not defined, no default platformDir");
 		} else {
 			defaultDir = iGridHome+fs+"configs"+fs+"platform"+fs+ "sorcer";
 		}

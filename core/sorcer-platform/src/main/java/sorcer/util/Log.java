@@ -30,7 +30,7 @@ import java.util.logging.SimpleFormatter;
  * <p>
  * The loggers can be configured via the standard java logger configuration
  * interface, if the system property <code>java.util.logging.config.file</code>
- * is set. It should be set to <code>${IGRID_HOME}/configs/sorcer.logging</code>
+ * is set. It should be set to <code>${SORCER_HOME}/configs/sorcer.logging</code>
  * . This already has a good example configuration.
  * <p>
  * You should generally consider using a logger for each of your packages or

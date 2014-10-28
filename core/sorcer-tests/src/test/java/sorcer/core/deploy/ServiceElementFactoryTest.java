@@ -60,7 +60,7 @@ public class ServiceElementFactoryTest {
     @Test
     public void setDeploymentWebsterUrl() throws IOException, ConfigurationException, URISyntaxException, ResolverException {
         ServiceDeployment deployment = new ServiceDeployment();
-        String iGridHome = System.getProperty("IGRID_HOME", System.getenv("IGRID_HOME"));
+        String iGridHome = System.getProperty("SORCER_HOME", System.getenv("SORCER_HOME"));
         Assert.assertNotNull(iGridHome);
         deployment.setConfig(iGridHome + "/bin/sorcer/test/deploy/configs/TestIP.groovy");
         deployment.setWebsterUrl("http://spongebob:8080");
@@ -72,7 +72,7 @@ public class ServiceElementFactoryTest {
 
     @Test
     public void setDeploymentWebsterOperator() throws IOException, ConfigurationException, URISyntaxException, ResolverException {
-        String iGridHome = System.getProperty("IGRID_HOME", System.getenv("IGRID_HOME"));
+        String iGridHome = System.getProperty("SORCER_HOME", System.getenv("SORCER_HOME"));
         Assert.assertNotNull(iGridHome);
         NetSignature methodEN = new NetSignature("executeFoo",
                                                  ServiceProvider.class,
@@ -89,7 +89,7 @@ public class ServiceElementFactoryTest {
     @Test
     public void setDeploymentWebsterFromConfig() throws IOException, ConfigurationException, URISyntaxException, ResolverException {
         ServiceDeployment deployment = new ServiceDeployment();
-        String iGridHome = System.getProperty("IGRID_HOME", System.getenv("IGRID_HOME"));
+        String iGridHome = System.getProperty("SORCER_HOME", System.getenv("SORCER_HOME"));
         Assert.assertNotNull(iGridHome);
         deployment.setConfig(iGridHome + "/bin/sorcer/test/deploy/configs/testWebster.config");
         ServiceElement serviceElement = ServiceElementFactory.create(deployment);
@@ -109,7 +109,7 @@ public class ServiceElementFactoryTest {
 
     @Test
     public void testConfigurationAsHTTP() throws IOException, ConfigurationException {
-        String configDirToServe = String.format("%s/bin", System.getProperty("IGRID_HOME"));
+        String configDirToServe = String.format("%s/bin", System.getProperty("SORCER_HOME"));
         Webster webster = new Webster(configDirToServe, true);
         try {
             ServiceDeployment deployment = new ServiceDeployment();
@@ -142,7 +142,7 @@ public class ServiceElementFactoryTest {
     @Test
     public void testIPAddressesUsingConfiguration() throws IOException, ConfigurationException, URISyntaxException, ResolverException {
         ServiceDeployment deployment = new ServiceDeployment();
-        String iGridHome = System.getProperty("IGRID_HOME", System.getenv("IGRID_HOME"));
+        String iGridHome = System.getProperty("SORCER_HOME", System.getenv("SORCER_HOME"));
         Assert.assertNotNull(iGridHome);
         deployment.setConfig(iGridHome + "/bin/sorcer/test/deploy/configs/testIP.config");
         verifyServiceElement(ServiceElementFactory.create(deployment));
@@ -151,7 +151,7 @@ public class ServiceElementFactoryTest {
     @Test
     public void testIPAddressesUsingGroovyConfiguration() throws IOException, ConfigurationException, URISyntaxException, ResolverException {
         ServiceDeployment deployment = new ServiceDeployment();
-        String iGridHome = System.getProperty("IGRID_HOME", System.getenv("IGRID_HOME"));
+        String iGridHome = System.getProperty("SORCER_HOME", System.getenv("SORCER_HOME"));
         Assert.assertNotNull(iGridHome);
         deployment.setConfig(iGridHome + "/bin/sorcer/test/deploy/configs/TestIP.groovy");
         verifyServiceElement(ServiceElementFactory.create(deployment));

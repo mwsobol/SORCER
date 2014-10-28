@@ -26,26 +26,26 @@ To include this file in your custom *-run-buld.xml have the import line:
 	<property name="dospawn" value="false" />
 
 	<property environment="env" />
-	<condition property="iGrid.home" value="${iGrid.basedir}">
+	<condition property="sorcer.home" value="${sorcer.basedir}">
 		<not>
-			<isset property="env.IGRID_HOME" />
+			<isset property="env.SORCER_HOME" />
 		</not>
 	</condition>
-	<condition property="iGrid.home" value="${env.IGRID_HOME}">
+	<condition property="sorcer.home" value="${env.SORCER_HOME}">
 		<not>
-			<isset property="iGrid.home" />
+			<isset property="sorcer.home" />
 		</not>
 	</condition>
 	<exec executable="hostname" outputproperty="hostname" />
 
     <property name="java.home" value="${env.JAVA_HOME}" />
-    <loadproperties srcfile="${iGrid.home}/configs/versions.properties" />
-	<loadproperties srcfile="${iGrid.home}/configs/sorcer.env" />
+    <loadproperties srcfile="${sorcer.home}/configs/versions.properties" />
+	<loadproperties srcfile="${sorcer.home}/configs/sorcer.env" />
 
-	<property name="lib" value="${iGrid.home}/lib" />
+	<property name="lib" value="${sorcer.home}/lib" />
 	<property name="jini.lib" value="${lib}/river" />
 	<property name="jini-dl.lib" value="${lib}/river" />
-    <property name="rio.home" value="${iGrid.home}/rio" />
+    <property name="rio.home" value="${sorcer.home}/rio" />
 	<property name="rio.lib" value="${rio.home}/lib" />
 	<property name="rio-dl.lib" value="${rio.home}/lib-dl" />
 
@@ -56,8 +56,8 @@ To include this file in your custom *-run-buld.xml have the import line:
 	<property name="sorcer-ext.lib" value="${lib}/sorcer/lib-ext" />
 	<property name="support.lib" value="${common.lib}/buildsupport" />
 
-	<property name="iGrid.policy" value="${iGrid.home}/policy" />
-	<property name="iGrid.config" value="${iGrid.home}/configs" />
+	<property name="iGrid.policy" value="${sorcer.home}/policy" />
+	<property name="iGrid.config" value="${sorcer.home}/configs" />
 
 	<!-- Declare versions as properties -->
 	<property name="modeling.version" value="1.1.9" />
@@ -74,7 +74,7 @@ To include this file in your custom *-run-buld.xml have the import line:
     <echo message="SORCER version: ${sorcer.version}"/>
 
 	<property name="java.protocol.handler.pkgs" value="net.jini.url|sorcer.util.url|org.rioproject.url" />
-	<property name="java.util.logging.config.file" value="${iGrid.home}/configs/sorcer.logging" />
+	<property name="java.util.logging.config.file" value="${sorcer.home}/configs/sorcer.logging" />
 	<property name="java.rmi.server.useCodebaseOnly" value="false" />
 	<property name="org.rioproject.resolver.jar" value="${rio.lib}/resolver/resolver-aether-${rio.version}.jar" />
 
@@ -94,7 +94,7 @@ To include this file in your custom *-run-buld.xml have the import line:
 		<propertyref prefix="java.protocol.handler.pkgs" />
 		<propertyref prefix="java.util.logging.config.file" />
 		<propertyref prefix="java.rmi.server.useCodebaseOnly" />
-		<propertyref name="iGrid.home" />
+		<propertyref name="sorcer.home" />
 		<propertyref name="sorcer.version" />
 		<propertyref name="modeling.version" />
 		<propertyref name="rio.version" />
@@ -104,7 +104,7 @@ To include this file in your custom *-run-buld.xml have the import line:
 
 	<!-- define boot classpath -->
 	<path id="boot.classpath">
-		<pathelement location="${iGrid.home}/lib/sorcer-boot-${sorcer.version}.jar" />
+		<pathelement location="${sorcer.home}/lib/sorcer-boot-${sorcer.version}.jar" />
 		<pathelement location="${jini.lib}/start-${river.version}.jar" />
 		<pathelement location="${common.lib}/groovy/groovy-all-${groovy.version}.jar" />
 		<pathelement location="${rio.lib}/rio-platform-${rio.version}.jar" />

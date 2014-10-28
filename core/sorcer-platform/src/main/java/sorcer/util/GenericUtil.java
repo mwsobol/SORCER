@@ -2011,7 +2011,7 @@ public class GenericUtil {
 			scriptCommand[0] = "cmd";
 			scriptCommand[1] = "/C";
 
-			String iGridHome = GenericUtil.getEnvVar("IGRID_HOME").trim().replace("\\", "/");
+			String iGridHome = GenericUtil.getEnvVar("SORCER_HOME").trim().replace("\\", "/");
 			
 			String shExec = null;
 			String cygwinHome = null;

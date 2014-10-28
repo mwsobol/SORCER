@@ -31,9 +31,9 @@ class iGrid {
     static String blitzVersion = versionProps.getProperty("blitz.version")
 
     static getIGridHome() {
-        String iGridHome = System.getProperty("IGRID_HOME", System.getenv("IGRID_HOME"))
+        String iGridHome = System.getProperty("SORCER_HOME", System.getenv("SORCER_HOME"))
         if(iGridHome==null) {
-            throw new RuntimeException("IGRID_HOME must be set")
+            throw new RuntimeException("SORCER_HOME must be set")
         }
         iGridHome
     }
@@ -80,7 +80,7 @@ deployment(name: "Sorcer OS") {
         maintain 1
     }
 
-    service(name: SorcerEnv.getActualSpaceName(), fork:getForkMode(), jvmArgs:"-DiGrid.home=${iGrid.iGridHome}") {
+    service(name: SorcerEnv.getActualSpaceName(), fork:getForkMode(), jvmArgs:"-Dsorcer.home=${iGrid.iGridHome}") {
         interfaces {
             classes 'net.jini.space.JavaSpace05'
             resources "blitz-dl-${iGrid.blitzVersion}.jar", "blitzui-${iGrid.blitzVersion}.jar"
@@ -92,7 +92,7 @@ deployment(name: "Sorcer OS") {
         maintain 1
     }
 
-    service(name: SorcerEnv.getActualName("Rendezvous"), fork:getForkMode(), jvmArgs:"-DiGrid.home=${iGrid.iGridHome}") {
+    service(name: SorcerEnv.getActualName("Rendezvous"), fork:getForkMode(), jvmArgs:"-Dsorcer.home=${iGrid.iGridHome}") {
         interfaces {
             classes "sorcer.core.provider.Rendezvous",
                     "sorcer.core.provider.Jobber",
@@ -130,7 +130,7 @@ deployment(name: "Sorcer OS") {
         maintain 1
     }
 
-    service(name: SorcerEnv.getActualName("Exert Monitor"), fork:getForkMode(), jvmArgs:"-DiGrid.home=${iGrid.iGridHome}") {
+    service(name: SorcerEnv.getActualName("Exert Monitor"), fork:getForkMode(), jvmArgs:"-Dsorcer.home=${iGrid.iGridHome}") {
         interfaces {
             classes 'sorcer.core.provider.MonitoringManagement'
             resources appendJars(["sorcer-ui-${iGrid.sorcerVersion}.jar"])
@@ -154,7 +154,7 @@ deployment(name: "Sorcer OS") {
         maintain 1
     }
     
-    service(name: SorcerEnv.getActualName("Database Storage"), fork:getForkMode(), jvmArgs:"-DiGrid.home=${iGrid.iGridHome}") {
+    service(name: SorcerEnv.getActualName("Database Storage"), fork:getForkMode(), jvmArgs:"-Dsorcer.home=${iGrid.iGridHome}") {
         interfaces {
             classes 'sorcer.core.provider.DatabaseStorer'
             resources appendJars(["sorcer-ui-${iGrid.sorcerVersion}.jar"])

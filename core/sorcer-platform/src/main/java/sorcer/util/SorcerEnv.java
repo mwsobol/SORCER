@@ -109,7 +109,7 @@ public class SorcerEnv extends SOS {
 		try {
 			String home = getHome();
 			if (home != null) {
-				System.setProperty("iGrid.home", getHome());
+				System.setProperty("sorcer.home", getHome());
 				loadEnvironment();
 			}
 		} catch (ConfigurationException e) {
@@ -130,21 +130,21 @@ public class SorcerEnv extends SOS {
 	 * @return a path of the home directory
 	 */
 	public static File getHomeDir() {
-		String hd = System.getenv("IGRID_HOME");
+		String hd = System.getenv("SORCER_HOME");
 		if (hd != null)	hd = hd.trim();
 
 		if (hd != null && hd.length() > 0) {
-			System.setProperty(IGRID_HOME, hd);
+			System.setProperty(SORCER_HOME, hd);
 			return new File(hd);
 		}
 
-		hd = System.getProperty(IGRID_HOME);
+		hd = System.getProperty(SORCER_HOME);
 		if (hd != null && hd.length() > 0) {
 			return new File(hd);
 		}
 
 		if (props != null) {
-			hd = props.getProperty(IGRID_HOME);
+			hd = props.getProperty(SORCER_HOME);
 			if (hd != null && hd.length() > 0) {
 				return new File(hd);
 			}
@@ -336,7 +336,7 @@ public class SorcerEnv extends SOS {
 				cftFile = CONTEXT_DATA_FORMATS;
 				loadDataFormatTypes(cftFile);
 			} catch (Exception e) {
-				cftFile = System.getenv("IGRID_HOME") + "/configs/"
+				cftFile = System.getenv("SORCER_HOME") + "/configs/"
 						+ CONTEXT_DATA_FORMATS;
 				System.setProperty("sorcer.formats.file", cftFile);
 				loadDataFormatTypes(cftFile);
@@ -353,7 +353,7 @@ public class SorcerEnv extends SOS {
 
 	/**
 	 * Loads properties from a <code>filename</code>, and overwrites them with
-	 * ${IGRID_HOME}/configs/sorcer.env and then with given properties.
+	 * ${SORCER_HOME}/configs/sorcer.env and then with given properties.
 	 * 
 	 * @param filenames properties
 	 * @return expended given Properties instance
@@ -590,7 +590,7 @@ public class SorcerEnv extends SOS {
 	}
 
 	/**
-	 * Overwrites defined properties in sorcer.env (iGrid.home,
+	 * Overwrites defined properties in sorcer.env (sorcer.home,
 	 * provider.webster.interface, provider.webster.port) with those defined as
 	 * JVM system properties.
 	 * 
@@ -1186,9 +1186,9 @@ public class SorcerEnv extends SOS {
 			if (val != null && val.length() != 0)
 				props.put(S_COMMANDER_NAME, val);
 
-			val = properties.getProperty(IGRID_HOME);
+			val = properties.getProperty(SORCER_HOME);
 			if (val != null && val.length() != 0)
-				props.put(IGRID_HOME, val);
+				props.put(SORCER_HOME, val);
 
 			val = properties.getProperty(S_RMI_HOST);
 			if (val != null && val.length() != 0)
@@ -1299,7 +1299,7 @@ public class SorcerEnv extends SOS {
 	 * @return a scratch directory
 	 */
 	static public File getSorcerHomeDir() {
-		return new File(System.getProperty(IGRID_HOME));
+		return new File(System.getProperty(SORCER_HOME));
 	}
 
 	/**

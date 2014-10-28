@@ -4,7 +4,7 @@
 
 	<!-- loads system environment variables -->
 	<property environment="env" />
-	<import file="${env.IGRID_HOME}/bin/common-run.xml" />
+	<import file="${env.SORCER_HOME}/bin/common-run.xml" />
 	<echo message="webster: ${provider.webster.url}" />
 	<property name="webster" value="${provider.webster.url}" />
 
@@ -30,10 +30,10 @@
 	<target name="run.requestor">
 		<java classname="${requestor.class}" fork="yes">
 			<classpath refid="project.classpath" />
-			<sysproperty key="java.util.logging.config.file" value="${iGrid.home}/configs/sorcer.logging" />
+			<sysproperty key="java.util.logging.config.file" value="${sorcer.home}/configs/sorcer.logging" />
 			<sysproperty key="java.security.policy" value="../policy/${requestor.name}-req.policy" />
 			<sysproperty key="java.rmi.server.codebase" value="${j1} ${j2} ${j3}" />
-			<sysproperty key="sorcer.env.file" value="${iGrid.home}/configs/sorcer.env" />
+			<sysproperty key="sorcer.env.file" value="${sorcer.home}/configs/sorcer.env" />
 			<arg value="f5xP" />
 			<arg value="30" />
 			<arg value="300" />

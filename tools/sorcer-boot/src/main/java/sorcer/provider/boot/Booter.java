@@ -458,7 +458,7 @@ public class Booter implements SorcerConstants {
 	private static void loadEnvironment() throws IOException {
 		String envFile = System.getProperty("sorcer.env.file");
 		if (envFile == null) {
-			envFile = System.getenv("IGRID_HOME") + File.separatorChar
+			envFile = System.getenv("SORCER_HOME") + File.separatorChar
 					+ "configs" + File.separatorChar + "sorcer.env";
 		}
 		logger.info("using env file: " + envFile);

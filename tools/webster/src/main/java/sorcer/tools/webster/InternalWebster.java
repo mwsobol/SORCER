@@ -77,7 +77,7 @@ public class InternalWebster {
 		String roots;
 		InetAddress ip = InetAddress.getLocalHost();
 		String localIPAddress = ip.getHostAddress();
-		String iGridHome = System.getProperty("iGrid.home");
+		String iGridHome = System.getProperty("sorcer.home");
         StringBuilder sb = new StringBuilder();
 		if (websterRoots == null) {
 			// defaults Sorcer roots

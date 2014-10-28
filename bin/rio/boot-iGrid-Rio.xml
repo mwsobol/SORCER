@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <project name="SOS kernel" default="iGrid.boot" basedir="">
-    <dirname file="${basedir}/.." property="iGrid.basedir"/>
-    <import file="${iGrid.basedir}/bin/common-run.xml" />
+    <dirname file="${basedir}/.." property="sorcer.basedir"/>
+    <import file="${sorcer.basedir}/bin/common-run.xml" />
 	<target name="iGrid.boot" depends="clean-files, set.fork.iGrid, rio"/>
     <target name="iGrid.boot.nofork" depends="clean-files, set.donot.fork.iGrid, rio"/>
 
@@ -16,8 +16,8 @@
     </target>
 
     <target name="webster" description="Starts a Webster">
-        <ant antfile="${iGrid.home}/bin/webster/bin/webster-run.xml" target="webster-spawn">
-            <property name="iGrid.home" value="${iGrid.home}"/>
+        <ant antfile="${sorcer.home}/bin/webster/bin/webster-run.xml" target="webster-spawn">
+            <property name="sorcer.home" value="${sorcer.home}"/>
         </ant>
     </target>
 
@@ -44,7 +44,7 @@
 
     <target name="start-rio-service" description="Declaration to start a Rio service">
         <java classname="org.rioproject.start.ServiceStarter" fork="yes" spawn="yes">
-            <env key="IGRID_HOME" value="${iGrid.home}"/>
+            <env key="SORCER_HOME" value="${sorcer.home}"/>
             <classpath>
                 <pathelement location="${lib}/common/groovy/groovy-all-${groovy.version}.jar"/>
                 <pathelement location="${rio.home}/lib/rio-platform-${rio.version}.jar" />
@@ -70,19 +70,19 @@
             <sysproperty key="org.rioproject.service" value="${service}"/>
             <sysproperty key="rio.script.mainClass" value="org.rioproject.start.ServiceStarter"/>
             <sysproperty key="java.rmi.server.useCodebaseOnly" value="false" />
-            <sysproperty key="IGRID_HOME" value="${iGrid.home}"/>
-            <sysproperty key="iGrid.home" value="${iGrid.home}"/>
+            <sysproperty key="SORCER_HOME" value="${sorcer.home}"/>
+            <sysproperty key="sorcer.home" value="${sorcer.home}"/>
             <sysproperty key="org.rioproject.exec.monitor.reap.interval" value="1"/>
             <arg value="${rio.home}/config/start-${service}.groovy"/>
         </java>
     </target>
 
 	<target name="clean-files" description="Deletes Blitz DB files">
-		<delete dir="${iGrid.home}/logs/dbfiles_blitz" failonerror="false" />
-		<delete dir="${iGrid.home}/logs/slamonitor.sla_db" failonerror="false" />
-		<delete file="${iGrid.home}/bin/monitoredjobs_index.obf" failonerror="false" />
-		<delete file="${iGrid.home}/bin/monitoredjobs_temp.obf" failonerror="false" />
-		<delete file="${iGrid.home}/bin/monitoredjobs.obf" failonerror="false" />
+		<delete dir="${sorcer.home}/logs/dbfiles_blitz" failonerror="false" />
+		<delete dir="${sorcer.home}/logs/slamonitor.sla_db" failonerror="false" />
+		<delete file="${sorcer.home}/bin/monitoredjobs_index.obf" failonerror="false" />
+		<delete file="${sorcer.home}/bin/monitoredjobs_temp.obf" failonerror="false" />
+		<delete file="${sorcer.home}/bin/monitoredjobs.obf" failonerror="false" />
         <delete dir="${rio.home}/logs" failonerror="false"/>
         <delete file="pids" failonerror="false"/>
 	</target>

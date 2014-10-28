@@ -17,9 +17,9 @@
 		<java classname="${invoked.class}" fork="yes">
 			<classpath refid="project.classpath" />
 			<arg value="../configs/start-blitz-all.config" />
-			<sysproperty key="iGrid.home" value="${iGrid.home}" />
+			<sysproperty key="sorcer.home" value="${sorcer.home}" />
 			<sysproperty key="java.security.policy" value="../policy/blitz.policy" />
-			<sysproperty key="sorcer.env.file" value="${iGrid.home}/configs/sorcer.env" />
+			<sysproperty key="sorcer.env.file" value="${sorcer.home}/configs/sorcer.env" />
 		</java>
 	</target>
 

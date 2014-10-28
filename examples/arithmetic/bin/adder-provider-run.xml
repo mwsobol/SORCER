@@ -8,8 +8,8 @@ Also you might need to adjust the classpath (provider.classpath) for your provid
 
 	<!-- system environment variables -->
 	<property environment="env" />
-	<import file="${env.IGRID_HOME}/bin/common-run.xml" />
-	<echo message="IGRID_HOME: ${iGrid.home}" />
+	<import file="${env.SORCER_HOME}/bin/common-run.xml" />
+	<echo message="SORCER_HOME: ${sorcer.home}" />
 
 	<!-- property values -->
 	<property name="provider.name" value="adder" />
@@ -18,14 +18,14 @@ Also you might need to adjust the classpath (provider.classpath) for your provid
 	<!-- start provider -->
 	<target name="run.provider">
 		<java jar="${lib}/sorcer-boot.jar" fork="yes">
-			<arg value="${iGrid.home}/configs/boot-prv.config" />
+			<arg value="${sorcer.home}/configs/boot-prv.config" />
 			<sysproperty key="sorcer.provider.impl" value="${provider.class}" />
 			<sysproperty key="sorcer.provider.config" value="../configs/${provider.name}-provider.config" />
 			<sysproperty key="sorcer.provider.codebase" value="sorcer-dl.jar jsk-dl.jar ex6-arithmetic-dl.jar" />
 			<sysproperty key="sorcer.provider.classpath" value="${sorcer.lib}/ex6-arithmetic-providers.jar" />
-			<sysproperty key="sorcer.env.file" value="${iGrid.home}/configs/sorcer.env" />
+			<sysproperty key="sorcer.env.file" value="${sorcer.home}/configs/sorcer.env" />
 			<sysproperty key="java.security.policy" value="../policy/arithmetic-provider.policy" />
-			<sysproperty key="java.util.logging.config.file" value="${iGrid.home}/configs/sorcer.logging" />
+			<sysproperty key="java.util.logging.config.file" value="${sorcer.home}/configs/sorcer.logging" />
 		</java>
 	</target>
 

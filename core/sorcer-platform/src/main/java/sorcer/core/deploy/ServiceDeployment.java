@@ -87,7 +87,7 @@ public class ServiceDeployment implements Arg, Serializable, Deployment {
         } else if(Artifact.isArtifact(config)) {
             this.config = config;
         } else if(!config.startsWith("/")) {
-            this.config = System.getenv("IGRID_HOME") + File.separatorChar + config;
+            this.config = System.getenv("SORCER_HOME") + File.separatorChar + config;
         } else {
             this.config = config;
         }
