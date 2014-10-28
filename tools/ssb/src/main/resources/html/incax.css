@@ -1,0 +1,26 @@
+.b_menu {  font-family: Verdana, Arial, Helvetica, sans-serif; font-weight: normal; color: #FFFFFF; font-size: 10pt}
+.b_menu A {  font-size: 9pt; color: #FFFFFF; text-decoration: none; font-weight: normal}
+.news_title {  font-family: Arial, Helvetica, sans-serif; font-size: 10pt; color: #996699; font-weight: bold}
+.news_date {  font-family: Arial, Helvetica, sans-serif; font-size: 8pt; color: #999999; font-weight: normal}
+.news_text { font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 10pt; color: #999999; font-weight: normal}
+.news_text A { font-size: 9pt; color: #333333; text-decoration: none; font-weight: normal}
+.main_title {  font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 10pt; color: #000000; font-weight: bold}
+p {  font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 10px; color: #000000}
+li {  font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 10px; color: #003366}
+.intropara {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 18px;
+	color: #000000;
+}
+.tableText { font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 11px; color: #000000 } 
+
+.pressTitle { font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 10pt; color: #000000 } 
+.submenutitle { font-family: Verdana, Arial, Helvetica, sans-serif; font-weight: normal; color: #FFFFFF; font-size: 10pt ; background-color: #417DB4}
+.submenu { font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 10pt; color: #999999; font-weight: bold; background-color: #e5e5e5}
+.submenu A { font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 9px; font-weight: bold; background-color: #e5e5e5 ; text-decoration: none; color: #333333}
+.simpletable { font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 9px; color: #999999; font-weight: normal ; background-color: #e5e5e5 }
+a:hover {
+	color: #000066;
+	text-decoration: underline;
+}
+li { font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 10px; color: #003366}.submenuLarger { font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 10pt; color: #999999; font-weight: bold; background-color: #e5e5e5 }

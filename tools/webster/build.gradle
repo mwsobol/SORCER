@@ -1,0 +1,11 @@
+jar {
+	manifest {
+		attributes("Implementation-Title": "SORCER Class Server (Webster)",
+                   "Implementation-Version": version,
+                   "Main-Class" : "sorcer.tools.webster.Webster")
+	   }
+}
+
+dependencies {
+    compile project(':sorcer-platform')
+}

@@ -1,0 +1,26 @@
+jar {
+    manifest {
+        attributes("Implementation-Title": "SORCER Network Logger Service",
+                   "Implementation-Version": version)
+    }
+    include 'sorcer/core/provider/logger/**'
+}
+
+dependencies {
+    compile project(':sorcer-platform')
+}
+
+task uiJar(type: Jar) {
+    manifest {
+        attributes("Implementation-Title": "SORCER Network Logger Service UI",
+                   "Implementation-Version": version)
+    }
+    from(sourceSets.main.output) {
+        include 'sorcer/core/provider/logger/ui/**'
+        classifier = "ui"
+    }
+}
+
+artifacts {
+    archives uiJar
+}

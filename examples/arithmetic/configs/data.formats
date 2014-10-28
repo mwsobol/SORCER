@@ -1,0 +1,371 @@
+# Context Type Attributes
+#
+# Used by engineering tools, applications and utilities
+# Note: All Modifies must be in alphabetical order
+# Example: dnt|application|format|a.b.c.e.f.g
+#
+sorcer.unknown=dnt|*|unknown|*
+engineering.responsevariable=dnt|engineering|object|ResponseVariable
+engineering.design.responsevariable=dnt|engineering|object|ResponseVariable
+engineering.responsevariableTxt=dnt|engineering|text|ResponseVariable
+sorcer.job=dnt|sorcer|object|ServiceJob
+sorcer.variables=dnt|sorcer|object|Variable.Array
+sorcer.variable=dnt|sorcer|object|Variable
+sorcer.variableTxt=dnt|sorcer|text|Variable
+sorcer.contextvariable=dnt|sorcer|object|ContextVariable
+engineering.response.job=dnt|engineering|object|ServiceJob.Response
+engineering.gradient.job=dnt|engineering|object|ServiceJob.Gradient
+
+# MeshProvider
+engineering.text.mesh=dnt|engineering|text|mesh
+engineering.ansys.mesh=dnt|ansys|text|mesh.prep7
+engineering.ansys.translation=dnt|ansys|text|translation
+
+# Optimization
+engineering.design.realdesignvariables=dnt|engineering|object|RealDesignVariable.Array
+engineering.design.responsevariables=dnt|engineering|object|ResponseVariable.Array
+engineering.design.linkedvariables=dnt|engineering|object|LinkedVariables
+engineering.design.objs=dnt|design|object|Objective.Array
+engineering.design.objsTxt=dnt|design|text|Objective.Array
+engineering.design.obj=dnt|design|object|Objective
+engineering.design.objTxt=dnt|design|text|Objective
+engineering.design.strategyTxt=dnt|design|text|Strategy
+engineering.design.dotstrategy=dnt|design|object|DotStrategy
+engineering.design.configuration=dnt|design|object|Configuration
+
+engineering.design.constrs=dnt|design|object|Constraint.Array
+engineering.design.constrsTxt=dnt|design|text|Constraint.Array
+engineering.design.constr=dnt|design|object|Constraint
+engineering.design.constrTxt=dnt|design|text|Constraint
+
+# Process information
+engineering.process.runparallel=dnt|process|boolean|runParallel
+
+# Gradient information   
+engineering.gradient.strategyTxt=dnt|design|text|gradientStrategy
+engineering.gradient.strategy=dnt|design|object|gradientStrategy
+engineering.gradient.gradient=dnt|design|object|gradient
+engineering.optim.designvariableTxt=dnt|optim|text|designvariable
+
+# Response Provider
+engineering.resp.input=dnt|resp|text|input
+engineering.resp.output=dnt|resp|text|output
+engineering.resp.vect1=dnt|resp|text|input1
+engineering.resp.vect2=dnt|resp|text|input2
+engineering.resp.vect3=dnt|resp|test|input3
+engineering.resp.ppout=dnt|resp|test|ppout
+engineering.resp.trefftzcdi=dnt|resp|object|trefftzPlane
+
+# provider
+engineering.provider.scratchdir=dnt|provider|object|scratchDir
+engineering.provider.scratchurl=dnt|provider|object|scratchUrl
+
+
+#excel
+engineering.excel.xls=dnt|excel|bin|xls 
+engineering.excel.xlsx=dnt|excel|bin|xlsx
+engineering.excel.strategy=dnt|excel|text|strategy
+
+# BCProvider
+engineering.text.boundarycondition=dnt|engineering|text|boundaryCondition
+engineering.object.boundarycondition=dnt|engineering|object|boundaryCondition
+engineering.text.discretedomain = dnt|engineering|text|discretedomain
+
+#PatranProvider
+engineering.patran.neutral.geometry=dnt|patran|text|discretized.geometry.neutral
+
+# numericalanalysis
+engineering.numericalanalysis.doeMatrix=dnt|numericalanalysis|text|doeTable
+engineering.numericalanalysis.paramMatrix=dnt|numericalanalysis|text|paramTable
+
+# avusProvider
+engineering.avus.bcTxt   = dnt|avus|text|boundaryCondition
+engineering.avus.jobTxt  = dnt|avus|text|jobFile
+engineering.avus.gridTxt = dnt|avus|text|grid
+engineering.avus.oldrestart = dnt|avus|binary|oldrestart
+engineering.avus.tapTxt     = dnt|avus|text|tap
+engineering.avus.tripTxt    = dnt|avus|text|trip
+engineering.avus.output     = dnt|avus|object|output
+engineering.avus.lpuspp     = dnt|avus|text|postProcessing
+engineering.avus.archieveRestartReplace = dnt|avus|boolean|archieveRestartReplace
+engineering.avus.nodeDisplacements = dnt|avus|text|nodeDisplacements
+
+# flops
+engineering.flops.mainInputTxt    = dnt|flops|text|input.main
+engineering.flops.engineDeckInputTxt = dnt|flops|text|input.engineDeck
+engineering.flops.engineComponentMapTxt = dnt|flops|text|input.engineComponentMap
+engineering.flops.engineAnalysisDebugTxt = dnt|flops|text|input.engineDebug
+engineering.flops.mainOutputTxt   = dnt|flops|text|output.main
+engineering.flops.weightSummaryOutputTxt = dnt|flops|text|output.weightSummary
+engineering.flops.weightSummaryOutputObj = dnt|flops|object|output.weightSummar
+engineering.flops.engineCycleOutTxt = dnt|flops|text|output.engineCycleAnalysis
+engineering.flops.contourPlotOutput = dnt|flops|plt|output.contourPlot
+engineering.flops.aeroDragPolarOutput = dnt|flops|plt|output.aeroDragPolar
+engineering.flops.takeoffClimbOutput = dnt|flops|text|output.takeoffClimb
+engineering.flops.noiseOutput = dnt|flops|text|output.noise
+engineering.flops.nacelleOutput = dnt|flops|plt|output.nacelle
+engineering.flops.excessPower   = dnt|flops|plt|output.excessPower
+engineering.flops.engineDeckOutput = dnt|flops|plt|output.engineDeck
+engineering.flops.optimizationOutput = dnt|flops|plt|output.optimization
+engineering.flops.missionSummaryOutput = dnt|flops|output.missionSummary
+engineering.flops.cruiseScheduleOutput = dnt|flops|output.cruiseSchedule
+engineering.flops.fuselageDesignOutput = dnt|flops|output.fuselageDesign
+engineering.flops.takeoffLandingOutput = dnt|flops|output.takeoffLanding
+engineering.flops.takeoffLandingOutput = dnt|flops|output.takeoffLanding
+engineering.flops.Output.flopsCdiformat = dnt|friction|text|output.flopscdi
+engineering.flops.Output.flopsCd0format = dnt|friction|text|output.flopscd0
+
+# friction
+engineering.friction.mainInputTxt = dnt|friction|text|input.main
+engineering.friction.machCasesInputTxt = dnt|friction|text|inputcases
+engineering.friction.mainOutputTxt = dnt|friction|text|output.main
+engineering.friction.OutputTable = dnt|friction|object|output.table
+engineering.friction.Output.flopsformat = dnt|friction|text|output.flops
+engineering.friction.OutputLog = dnt|friction|text|output.log
+engineering.friction.OutputRunScript = dnt|friction|text|output.runscript
+# ldslib
+engineering.ldslib.mainInputTxt = dnt|ldslib|text|input
+engineering.ldslib.outputTxt = dnt|ldslib|text|output
+
+# turnip
+engineering.turnip.dataObj        = dnt|turnip|object|turnipData
+
+# maelstrom
+engineering.maelstrom.inputTxt    = dnt|maelstrom|text|input
+engineering.maelstrom.dataObj    = dnt|maelstrom|object|maelstromData
+
+# maelstrom-ae
+engineering.maelstrom_ae.inputTxt    = dnt|maelstrom_ae|text|input
+engineering.maelstrom_ae.dataObj    = dnt|maelstrom_ae|object|maelstromAEData
+
+# casp
+engineering.casp.input.text           = dnt|casp|text|input
+
+# astros
+engineering.astros.version      = dnt|astros|text|version
+engineering.astros.inputTxt       = dnt|astros|text|input
+engineering.astros.outputTxt      = dnt|astros|text|output
+engineering.astros.mainInputTxt   = dnt|astros|text|input.main
+engineering.astros.bdfInputTxt   = dnt|astros|text|input.bdf
+engineering.astros.solInputTxt   = dnt|astros|text|input.sol
+engineering.astros.mapolInputTxt = dnt|astros|text|input.mapol
+engineering.astros.assignDBInputTxt = dnt|astros|text|input.assignDB
+engineering.astros.debugInputTxt = dnt|astros|text|input.debug
+engineering.astros.funcpakInputTxt=dnt|astros|text|input.functpak
+engineering.astros.outputTxt      =dnt|astros|text|output
+engineering.astros.lpus			  =dnt|astros|object|AstrosLpus
+engineering.astros.flutdamping	  =dnt|astros|object|AstrosFlutterOutput
+engineering.astros.gpwg			  =dnt|astros|object|AstrosGPWGOutput
+
+engineering.astros.freq			  =dnt|astros|text|freq
+engineering.astros.flutter		  =dnt|astros|text|flutter
+engineering.astros.trim		      =dnt|astros|text|trim
+engineering.astros.design		  =dnt|astros|text|design
+engineering.astros.trimdes		  =dnt|astros|text|trimdes
+engineering.astros.inducedDrag	  =dnt|astros|object|AstrosIDragTable
+
+
+# caddb
+engineering.caddb.idx             = dnt|caddb|binary|idx
+engineering.caddb.d01             = dnt|caddb|binary|d01
+engineering.caddb.password		  = dnt|caddb|String|password
+engineering.caddb.query			  = dnt|caddb|object|CADDBQuery
+
+# ansys
+engineering.ansys.db              = dnt|ansys|binary|database
+engineering.ansys.prep7           = dnt|ansys|text|prep7
+engineering.mesh                  = dnt|*|text|mesh
+engineering.ansys.mesh            = dnt|ansys|text|mesh
+engineering.ansys.mac             = dnt|ansys|text|macro
+engineering.service.properties    = dnt|ansys|text|service properties
+engineering.ansys.rst             = dnt|ansys|binary|rst
+engineering.ansys.rth             = dnt|ansys|binary|rth
+engineering.ansys.mode            = dnt|ansys|binary|mode
+engineering.ansys.apdl            = dnt|ansys|text|apdl
+engineering.ansys.output          = dnt|ansys|*|out
+engineering.ansys.text.batch      = dnt|ansys|text|batch
+
+engineering.ansys.text.output.stress	= dnt|ansys|text|output.stress
+engineering.ansys.text.output.volume  = dnt|ansys|text|output.volume
+engineering.ansys.text.load	        = dnt|ansys|text|natural.prep7.solu
+engineering.ansys.text.bc.nat	        = dnt|ansys|text|natural.prep7.solu
+engineering.ansys.text.mat  	        = dnt|ansys|text|materials.prep7
+engineering.ansys.text.bc.all         = dnt|ansys|text|bc.prep7.solu
+engineering.ansys.text.bc.dof         = dnt|ansys|text|bc.essential.prep7.solu
+engineering.ansys.text.bc.ce	        = dnt|ansys|text|bc.essential.prep7
+engineering.ansys.text.solu           = dnt|ansys|text|solu
+engineering.ansys.text.post1.stress 	= dnt|ansys|text|post1.stress
+engineering.ansys.text.post1.volume 	= dnt|ansys|text|post1.volume
+
+# MDICE MIME types
+engineering.mdice.inp = dnt|mdice|binary|input
+enginerring.mdice.out = dnt|mdice|binary|output
+
+# NASTRAN MIME types
+engineering.nastran.text.input = dnt|nastran|text|input.bdf
+engineering.nastran.text.maininput = dnt|nastran|text|input.bdf.main
+engineering.nastran.directory.input = dnt|nastran|directory|input.dir
+engineering.nastran.directory.output = dnt|nastran|directory|output.dir
+engineering.nastran.inp = dnt|nastran|binary|input
+engineering.nastran.out = dnt|nastran|binary|output
+engineering.nastran.text.outputdball = dnt|nastran|binary|output.DBALL
+engineering.nastran.text.outputf04 = dnt|nastran|text|output.f04
+engineering.nastran.text.outputf06 = dnt|nastran|text|output.f06
+engineering.nastran.object.outputf06 = dnt|nastran|obj|output.f06
+engineering.nastran.object.outputpch = dnt|nastran|obj|output.pch
+engineering.nastran.text.outputlog = dnt|nastran|text|output.log
+engineering.nastran.binary.outputmaster = dnt|nastran|binary|output.MASTER
+engineering.nastran.binary.outputop2 = dnt|nastran|binary|output.op2
+engineering.nastran.text.outputpch = dnt|nastran|text|output.pch
+engineering.nastran.binary.outputxdb = dnt|nastran|binary|output.xdb
+engineering.nastran.binary.output4 = dnt|nastran|binary|output4
+engineering.nastran.text.output4 = dnt|nastran|text|output4
+
+engineering.nastran.png.outputvg   = dnt|nastran|png|vg
+engineering.nastran.png.outputvomega   = dnt|nastran|png|vomega
+engineering.nastran.png.outputrootlocus   = dnt|nastran|png|rootlocus
+engineering.nastran.object.trimresults = dnt|nastran|obj|trimresultsmap
+
+engineering.nastran.text.freq   = dnt|nastran|text|freq
+engineering.nastran.text.flutter   = dnt|nastran|text|flutter
+engineering.nastran.text.flutdes   = dnt|nastran|text|flutdes
+engineering.nastran.text.trimdes   = dnt|nastran|text|trimdes
+engineering.nastran.text.trimstressdes   = dnt|nastran|text|trimstressdes
+engineering.nastran.text.fluttrimstressdes   = dnt|nastran|text|fluttrimstressdes
+engineering.nastran.text.noproptrim   = dnt|nastran|text|noproptrim
+engineering.nastran.text.design   = dnt|nastran|text|design
+engineering.nastran.text.fluttrimdes   = dnt|nastran|text|fluttrimdes
+engineering.nastran.text.trim   = dnt|nastran|text|trim
+
+# script
+engineering.script.text.strat		= dnt|script|text|strategy
+engineering.script.text.script	= dnt|script|text|script
+
+engineering.ansys.mesh.prep7=dnt|ansys|text|mesh.prep7
+
+# Combustor MDO
+engineering.MDO.SQL.input            	= dnt|MDO|SQL|input
+
+
+# Scott Provider
+engineering.scott.f1.input.text = dnt|scottprovider|text|f1.input
+engineering.scott.f1.output.text = dnt|scottprovider|text|f1.output
+engineering.scott.f2.output.text = dnt|scottprovider|text|f2.output
+
+# File-Based Provider
+engineering.fileBasedProvider.strategyTxt=dnt|matlab|text|Strategy
+
+# MSTCGEOM Provider
+engineering.mstcgeom.input = dnt|mstcgeom|text|input
+engineering.mstcgeom.log = dnt|mstcgeom|text|log
+engineering.mstcgeom.input.obj = dnt|mstcgeom|obj|input
+engineering.mstcgeom.output.figurl = dnt|mstcgeom|url|fig
+engineering.mstcgeom.outputmachalt = dnt|mstcgeom|text|outputmachalt
+engineering.mstcgeom.objects = dnt|mstcgeom|mat|objects
+engineering.mstcgeom.runLogTxt = dnt|mstcgeom|text|log.run
+
+# MstcPerf Provider
+engineering.mstcperf.input.rangeobj = dnt|mstcgeom|obj|input.range.alt
+
+
+# Mobius
+engineering.mobius.input.config = dnt|mobius|text|inputConfig
+engineering.mobius.input.controls = dnt|mobius|text|inputControls
+engineering.mobius.input.parameter = dnt|mobius|text|inputParam
+engineering.mobius.output.responsemap = dnt|mobius|text|outputRespMap
+engineering.mobius.output.sensitivitymap = dnt|mobius|text|outputSensMap
+engineering.mobius.output.message = dnt|mobius|text|outputMsg
+engineering.mobius.id = dnt|mobius|text|id
+
+#serviceTemplate
+engineering.servicetemplate.input = dnt|servicetemplate|Object|input
+engineering.servicetemplate.output = dnt|servicetemplate|Object|output
+
+# Rosen-Suzuki Provider
+engineering.rosensuzuki.file1Txt = dnt|rosensuzuki|text|input1
+engineering.rosensuzuki.file2Txt= dnt|rosensuzuki|text|input2 
+engineering.rosensuzuki.outputXi= dnt|rosensuzuki|Object|outputXi 
+engineering.rosensuzuki.outputXLi= dnt|rosensuzuki|Object|outputXLi 
+engineering.rosensuzuki.outputFile= dnt|rosensuzuki|url|output 
+
+# Self Provider
+engineering.self.input.file=dnt|self|text|input
+engineering.self.input.obj=dnt|self|obj|input
+engineering.self.input.obj.execmode=dnt|self|obj|execmode
+engineering.self.input.obj.condition=dnt|self|obj|condition
+engineering.self.output.file=dnt|self|text|output
+engineering.self.output.table=dnt|self|tableobj|output
+engineering.self.outputlog.file=dnt|self|text|outputlog
+engineernig.self.output.file.matlab=dnt|self|text|matlaboutfiles
+engineering.self.outputmulti.table=dnt|self|tableobj|outputmulti
+engineering.self.outputvol.table=dnt|self|tableobj|outputvolume
+
+# Tornado Provider
+engineering.tornado.input.file=dnt|tornado|text|input
+engineering.tornado.output.file=dnt|tornado|text|output
+engineering.tornado.outputlog.file=dnt|tornado|text|outputlog
+engineering.tornado.output.table.cdi=dnt|tornado|tableobj|outputcdi
+engineering.tornado.output.table.cd0=dnt|tornado|tableobj|outputcd0
+
+# AeroPost Provider
+engineering.aeropost.input.file=dnt|aeropost|text|input
+engineering.aeropost.output.plot.tornadodragpolar = dnt|aeropost|plotpng|tornadodragpolar
+engineering.aeropost.output.plot.fricastrosdragpolar = dnt|aeropost|plotpng|fricastrosdragpolar
+engineering.aeropost.output.plot.frictornadodragpolar = dnt|aeropost|plotpng|frictornadodragpolar
+
+#Aero2s Provider
+engineering.aero2s.mainInputTxt = dnt|aero2s|text|input
+engineering.aero2s.mainOutputTxt = dnt|aero2s|text|output
+engineering.aero2s.OutputTable = dnt|aero2s|tableobj|output
+engineering.aero2s.OutputDragPolarTable =dnt|aero2s|tableobj|outputdragpolar
+engineering.aero2s.OutputDragPolarFile =dnt|aero2s|text|outputdragpolar
+engineering.aero2s.OutputDragPolarPlot =dnt|aero2s|png|outputdragpolar
+engineering.aero2s.OutputLog = dnt|aero2s|text|outputlog
+engineering.aero2s.OutputRunScript = dnt|aero2s|text|outputrunscript
+
+# awave Provider
+engineering.awave.mainInputTxt = dnt|awave|text|input
+engineering.awave.CDWaveOutputTxt = dnt|awave|text|outputcdwave
+engineering.awave.WaveDragOutputTxt = dnt|awave|text|outputwavedrag
+engineering.awave.OptDistOutputTxt = dnt|awave|text|outputoptdist
+engineering.awave.OutputTable = dnt|awave|tableobj|output
+engineering.awave.OutputLog = dnt|awave|text|outputlog
+engineering.awave.OutputRunScript = dnt|awave|text|outputrunscript
+
+#WingDes Provider
+engineering.wingdes.mainInputTxt = dnt|wingdes|text|input
+engineering.wingdes.OutputTxt = dnt|wingdes|text|output
+engineering.wingdes.OutputTable = dnt|wingdes|tableobj|output
+engineering.wingdes.OutputDragPolarTable =dnt|wingdes|tableobj|outputdragpolar
+engineering.wingdes.OutputDragPolarFile =dnt|wingdes|text|outputdragpolar
+engineering.wingdes.OutputDragPolarPlot =dnt|wingdes|png|outputdragpolar
+
+engineering.wingdes.OutputLog = dnt|wingdes|text|outputlog
+engineering.wingdes.OutputRunScript = dnt|wingdes|text|outputrunscript
+
+
+#Zaero Provider
+engineering.zaero.mainInputTxt = dnt|zaero|text|input
+
+engineering.zaero.OutputTxt = dnt|zaero|text|output
+engineering.zaero.OutputTable = dnt|zaero|tableobj|output
+engineering.zaero.OutputDragPolarTable =dnt|zaero|tableobj|outputdragpolar
+engineering.zaero.OutputDragPolarFile =dnt|zaero|text|outputdragpolar
+engineering.zaero.OutputDragPolarPlot =dnt|zaero|png|outputdragpolar
+
+engineering.zaero.OutputLog = dnt|zaero|text|outputlog
+engineering.zaero.OutputRunScript = dnt|zaero|text|outputrunscript
+
+#ParaView Provider
+engineering.paraview.txt.inputVTK = dnt|paraview|txt|inputVTK
+engineering.paraview.txt.stateFile = dnt|paraview|txt|stateFile
+engineering.paraview.plottype = dnt|paraview|enum|plottype
+engineering.paraview.png.output = dnt|paraview|png|output
+engineering.paraview.OutputLog  = dnt|paraview|text|outputlog
+engineering.paraview.OutputRunScript = dnt|paraview|text|outputrunscript
+engineering.paraview.string.attributeToPlot = dnt|paraview|string|inputAttributeToPlot
+
+engineering.ensight6.txt.case = dnt|ensight6|txt|case
+engineering.ensight6.txt.geom = dnt|ensight6|txt|geom
+
+

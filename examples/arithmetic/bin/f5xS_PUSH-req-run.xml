@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+
+<project name="arithmetic tester" default="run.requestor" basedir="">
+
+	<!-- loads system environment variables -->
+	<property environment="env" />
+	<import file="${env.IGRID_HOME}/bin/common-run.xml" />
+	<echo message="webster: ${provider.webster.url}" />
+	<property name="webster" value="${provider.webster.url}" />
+
+	<!-- set property values here -->
+	<property name="requestor.name" value="arithmetic-tester" />
+	<property name="requestor.class" value="sorcer.arithmetic.requestor.ArithmeticTester" />
+
+	<path id="project.classpath">
+		<pathelement location="${sorcer.lib}/${requestor.name}.jar" />
+		<pathelement location="${sorcer.lib}/sorcer-platform.jar" />
+		<pathelement location="${sorcer.lib}/sorcer-lib.jar" />
+		<pathelement location="${jini.lib}/jsk-lib.jar" />
+		<pathelement location="${jini.lib}/jsk-platform.jar" />
+		<pathelement location="${rio.lib}/rio.jar" />
+	</path>
+
+	<!-- provider codeabse jars -->
+	<property name="j1" value="${webster}/ex6-arithmetic-dl.jar" />
+	<property name="j2" value="${webster}/sorcer-dl.jar" />
+	<property name="j3" value="${webster}/sorcer-lib.jar" />
+
+
+	<target name="run.requestor">
+		<java classname="${requestor.class}" fork="yes">
+			<classpath refid="project.classpath" />
+			<sysproperty key="java.util.logging.config.file" value="${iGrid.home}/configs/sorcer.logging" />
+			<sysproperty key="java.security.policy" value="../policy/${requestor.name}-req.policy" />
+			<sysproperty key="java.rmi.server.codebase" value="${j1} ${j2} ${j3}" />
+			<sysproperty key="sorcer.env.file" value="${iGrid.home}/configs/sorcer.env" />
+			<arg value="f5xS_PUSH" />
+			<arg value="3" />
+		</java>
+	</target>
+
+</project>
+
+
+

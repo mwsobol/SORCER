@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<project name="Start Rio UI" default="rio-ui" basedir="">
+    <dirname file="${basedir}/.." property="iGrid.basedir"/>
+    <import file="${iGrid.basedir}/bin/common-run.xml" />
+
+    <target name="rio-ui" description="Starts the Rio UI">
+        <java classname="org.rioproject.tools.ui.Main" fork="yes">
+        	<classpath>
+        	    <pathelement location="${rio.home}/lib/rio-ui-${rio.version}.jar" />
+                <pathelement location="${sorcer.lib}/sorcer-platform-${sorcer.version}.jar" />
+        	</classpath>
+            <env key="IGRID_HOME" value="${iGrid.home}"/>
+            <sysproperty key="java.rmi.server.useCodebaseOnly" value="false" />
+            <sysproperty key="java.security.policy" value="${rio.home}/policy/policy.all" />
+            <sysproperty key="java.util.logging.config.file" value="${rio.home}/config/logging/rio-logging.properties" />
+            <sysproperty key="java.protocol.handler.pkgs" value="net.jini.url|sorcer.util.url|org.rioproject.url" />
+            <sysproperty key="RIO_HOME" value="${rio.home}"/>
+            <sysproperty key="java.rmi.server.useCodebaseOnly" value="false" />
+        </java>
+    </target>
+
+    <target name="spawn" description="Starts the Rio UI">
+        <java classname="org.rioproject.tools.ui.Main" fork="yes" spawn="yes">
+        	<classpath>
+        	    <pathelement location="${rio.home}/lib/rio-ui-${rio.version}.jar" />
+                <pathelement location="${sorcer.lib}/sorcer-platform-${sorcer.version}.jar" />
+        	</classpath>
+            <env key="IGRID_HOME" value="${iGrid.home}"/>
+            <sysproperty key="java.rmi.server.useCodebaseOnly" value="false" />
+            <sysproperty key="java.security.policy" value="${rio.home}/policy/policy.all" />
+            <sysproperty key="java.protocol.handler.pkgs" value="net.jini.url|sorcer.util.url|org.rioproject.url" />
+            <sysproperty key="RIO_HOME" value="${rio.home}"/>
+            <sysproperty key="java.rmi.server.useCodebaseOnly" value="false" />
+        </java>
+    </target>
+
+</project>

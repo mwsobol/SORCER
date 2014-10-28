@@ -1,0 +1,79 @@
+//project.jar.enabled = false
+
+jar {
+	manifest {
+		attributes("Implementation-Title": "SORCER Arithmetic Providers", "Implementation-Version": version)
+	}
+	//baseName = "arithmetic-impl"
+	classifier = "prv"
+	dependsOn classes
+	from sourceSets.main.output
+	exclude('sorcer/arithmetic/provider/ui/**')
+}
+
+task arithmeticPrvDlJar(type: Jar) {
+	manifest {
+		attributes("Implementation-Title": "SORCER Arithmetic Exported Classes", "Implementation-Version": version)
+	}
+	//baseName = "arithmetic-dl"
+    classifier = "dl"
+	dependsOn classes
+	from sourceSets.main.output
+	include('sorcer/arithmetic/provider/*')
+	
+	doLast {
+        if (file("build/libs/arithmetic-${version}-${classifier}.jar").exists()) {
+			File dlLib = file("${rootDir}/lib/sorcer/lib-dl")
+			if(!dlLib.exists())
+				dlLib.mkdirs()
+		    file("${rootDir}/lib/sorcer/lib-dl/arithmetic-${version}-${classifier}.jar").bytes = 
+			file("build/libs/arithmetic-${version}-${classifier}.jar").bytes
+		}
+    }
+}
+
+task arithmeticReqJar(type: Jar) {
+	manifest {
+		attributes("Implementation-Title": "SORCER Arithmetic Requestor", "Implementation-Version": version)
+	}
+	classifier = "req"
+	dependsOn classes
+	from sourceSets.main.output
+	include('sorcer/arithmetic/requestor/**')
+}
+
+task arithmeticPrvUiJar(type: Jar) {
+	manifest {
+		attributes("Implementation-Title": "SORCER Arithmetic Service UI", "Implementation-Version": version)
+	}
+    classifier = "ui"
+	dependsOn classes
+	from sourceSets.main.output
+	include('sorcer/arithmetic/provider/ui/**')
+	
+	doLast {
+        if (file("build/libs/arithmetic-${version}-${classifier}.jar").exists()) {
+			File dlLib = file("${rootDir}/lib/sorcer/lib-dl")
+			if(!dlLib.exists())
+				dlLib.mkdirs()
+		    file("${rootDir}/lib/sorcer/lib-dl/arithmetic-${version}-${classifier}.jar").bytes = 
+			file("build/libs/arithmetic-${version}-${classifier}.jar").bytes
+		}
+    }
+}
+
+artifacts {
+    archives arithmeticPrvDlJar
+    archives arithmeticPrvUiJar
+	archives arithmeticReqJar
+}
+
+install.dependsOn(['arithmeticPrvDlJar', 'arithmeticPrvUiJar', 'arithmeticReqJar'])
+publish.dependsOn(install)
+build.dependsOn(install)
+
+dependencies { 
+	compile project(':sorcer-platform')
+    compile project(':sorcer-lib')
+    compile project(':sos-db-prv')
+}

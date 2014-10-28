@@ -1,0 +1,11 @@
+jar {
+	manifest {
+		attributes("Implementation-Title": "SORCER Network Shell (nsh)", "Implementation-Version": version)
+	   }
+}
+
+dependencies {
+	compile "org.sorcer:sorcer-modeling-lib:${sorcerModelingVersion}",
+			project(':webster'),
+			project(':sorcer-platform')
+}

@@ -1,0 +1,74 @@
+<?xml version="1.0"?>
+
+<project name="Run webster" default="webster" basedir="">
+	<!-- load system environment variables -->
+	<property environment="env" />
+	<import file="${env.IGRID_HOME}/bin/common-run.xml" />
+	<property name="data.server" value="${data.server.interface.TMP}" />
+	<echo message="data.server = ${data.server}" />
+	<echo message="data.server.port = ${data.server.port}" />
+	
+	<!-- Jini distribution code server -->
+	<target name="httpd">
+		<java jar="${jini.lib}/tools.jar" fork="yes">
+			<arg line="-verbose -port ${data.server.port} -dir ${lib}" />
+		</java>
+	</target>
+	<!-- IGRID Data Directory -->
+	<property name="iGrid.data" value="${iGrid.home}/data" />
+	<!-- SORCER code server: Webster -->
+	<!-- webster root directories -->
+	<property name="d1" value="${sorcer-dl.lib}" />
+	<property name="d2" value="${sorcer.lib}" />
+	<property name="dJ" value="${jini.lib}" />
+	<property name="d3" value="${jini-dl.lib}" />
+	<property name="d4" value="${rio-dl.lib}" />
+	<property name="d5" value="${common.lib}" />
+	<property name="d6" value="${common.lib}/blitz" />
+	<!-- Required when eng-eval.jar needs to be in the codebase -->
+	<property name="d7" value="${eng-dl.lib}" />
+	<property name="d8" value="${eng.lib}" />
+	<property name="d9" value="${lib}" />
+	<property name="d10" value="${eng.data}" />
+	<property name="d11" value="${iGrid.data}" />
+	<property name="d12" value="${env.IGRID_HOME}/../Products/lib/products/lib" />
+	<property name="d13" value="${env.IGRID_HOME}/../Products/lib/products/lib-dl" />
+	<property name="d14" value="${common.lib}/jfreechart" />
+	<property name="d15" value="${rio.lib}" />
+	<property name="d16" value="${rio.home}" />
+	<property name="rootdirs" value="${d1};${d2};${dJ};${d3};${d4};${d5};${d6};${d7};${d8};${d9};${d10};${d11};${d12};${d13};${d14};${d15};${d16}" />
+	<!--property name="rd" value="${requestor.data}" /-->
+	<!--property name="pd" value="${provider.data}" /-->
+	<!--property name="sd" value="${ishared.data}" /-->
+	<property name="webster.tmp.dir" value="${iGrid.data}" />
+
+	<!-- start webster -->
+	<target name="webster">
+		<java jar="${sorcer-ext.lib}/webster.jar" maxmemory="450M" fork="yes">
+			<sysproperty key="java.util.logging.config.file" value="${iGrid.home}/configs/sorcer.logging" />
+			<sysproperty key="java.protocol.handler.pkgs" value="net.jini.url" />
+			<sysproperty key="java.rmi.server.useCodebaseOnly" value="false" />
+			<sysproperty key="java.security.policy" value="${iGrid.policy}/policy.all" />
+			<sysproperty key="webster.root" value="${rootdirs}" />
+			<sysproperty key="webster.port" value="${data.server.port}" />
+			<sysproperty key="webster.tmp.dir" value="${webster.tmp.dir}" />
+			<sysproperty key="webster.interface" value="${data.server}" />
+			<sysproperty key="webster.debug" value="true" />
+		</java>
+	</target>
+
+	<!-- start webster -->
+	<target name="webster-spawn">
+		<java jar="${sorcer-ext.lib}/webster.jar" maxmemory="450M" fork="yes" spawn="yes">
+			<sysproperty key="java.util.logging.config.file" value="${iGrid.home}/configs/sorcer.logging" />
+			<sysproperty key="java.protocol.handler.pkgs" value="net.jini.url" />
+			<sysproperty key="java.rmi.server.useCodebaseOnly" value="false" />
+			<sysproperty key="java.security.policy" value="${iGrid.policy}/policy.all" />
+			<sysproperty key="webster.root" value="${rootdirs}" />
+			<sysproperty key="webster.port" value="${data.server.port}" />
+			<sysproperty key="webster.tmp.dir" value="${webster.tmp.dir}" />
+			<sysproperty key="webster.interface" value="${data.server}" />
+			<sysproperty key="webster.debug" value="true" />
+		</java>
+	</target>
+</project>

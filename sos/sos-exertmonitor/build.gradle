@@ -1,0 +1,7 @@
+jar {
+	manifest {
+		attributes("Implementation-Title": "SORCER Exertion Execution Monitoring Service", "Implementation-Version": version)
+	   }
+}
+
+dependencies { compile project(':sorcer-platform') }

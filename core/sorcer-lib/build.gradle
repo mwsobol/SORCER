@@ -1,0 +1,20 @@
+jar {  
+	manifest {
+		attributes("Implementation-Title": "SORCER Requestor Support", "Implementation-Version": version)
+       }
+}
+
+dependencies {
+	compile project(":webster")
+    compile	 project(':sorcer-platform')
+	testCompile	"junit:junit:${junitVersion}"
+	compile	"junit-addons:junit-addons:${junitAddonsVersion}"
+}
+
+test {
+	systemProperty "java.security.policy", "${project.projectDir.path}/src/test/resources/policy/policy.all"
+	if(System.getenv("IGRID_HOME")==null)
+		println "You may have problems running tests since IGRID_HOME is not set!"
+	else
+		systemProperty "iGrid.home", System.getenv("IGRID_HOME")
+}

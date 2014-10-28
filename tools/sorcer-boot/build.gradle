@@ -1,0 +1,36 @@
+jar {
+	manifest {
+		attributes("Implementation-Title": "SORCER Service Booter", "Implementation-Version": version,
+		"Class-Path": "river/lib/start-${riverVersion}.jar river/lib/jsk-lib-${riverVersion}.jar river/lib/serviceui-${riverVersion}.jar",
+		"Main-Class": "com.sun.jini.start.ServiceStarter",
+		"Premain-Class": "sorcer.provider.boot.InstrumentationHook",
+		"SORCER-Version": "${sorcerVersion}")
+	}
+	from sourceSets.main.output.classesDir include "**"
+	from sourceSets.main.resources 
+	include "META-INF/platform.xml", "META-INF/services/net.jini.config.Configuration"
+	
+}
+
+sourceSets {
+	main {
+		java {
+			srcDir "${project.projectDir}/src/main/java" include "**"
+			srcDir rootProject.project(':sorcer-dl').sourceSets.main.java.srcDirs[0] 
+			include "sorcer/core/SorcerConstants.java"
+			srcDir rootProject.project(':sorcer-platform').sourceSets.main.java.srcDirs[0]
+			include "sorcer/core/SorcerConstants.java"
+		}
+	}
+}
+	
+//sourceSets.main.java.each { println it }
+	
+dependencies {
+	compile "org.apache.river:start:${riverVersion}",
+			"org.rioproject:rio-platform:${rioVersion}",
+			"org.rioproject:rio-lib:${rioVersion}",
+    		"org.rioproject:rio-api:${rioVersion}"
+}
+
+dependencies { compile project(':sorcer-platform') }

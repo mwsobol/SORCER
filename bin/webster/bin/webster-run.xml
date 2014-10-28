@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+
+<project name="Run webster" default="webster" basedir="">
+	<!-- load system environment variables -->
+    <dirname file="${basedir}/../../" property="iGrid.basedir"/>
+    <import file="${iGrid.basedir}/bin/common-run.xml" />
+	<property name="provider.webster" value="${provider.webster.interface.TMP}" />
+	<echo message="provider.webster = ${provider.webster}" />
+	<echo message="provider.webster.port ${provider.webster.port}" />
+
+	<!-- IGRID Data Directory -->
+    <property name="iGrid.data" value="${iGrid.home}/data" />
+
+	<!-- SORCER code server: Webster -->
+	<!-- webster root directories -->
+	<property name="d1" value="${sorcer-dl.lib}" />
+	<property name="d2" value="${sorcer.lib}" />
+    <property name="d3" value="${lib}/river" />
+	<property name="d4" value="${rio.lib}" />
+    <property name="d5" value="${rio-dl.lib}" />
+    <property name="d6" value="${rio.home}" />
+	<property name="d7" value="${common.lib}" />
+	<property name="d8" value="${lib}/blitz" />
+	<property name="d9" value="${lib}" />
+	<property name="d10" value="${iGrid.data}" />
+	<property name="rootdirs" value="${d1};${d2};${d3};${d4};${d5};${d6};${d7};${d8};${d9};${d10}" />
+
+	<property name="webster.tmp.dir" value="${iGrid.data}" />
+
+    <target name="logDir">
+        <mkdir dir="${basedir}/../logs" />
+    </target>
+
+	<!-- start webster -->
+	<target name="webster" depends="logDir">
+		<java jar="${sorcer-ext.lib}/webster-${sorcer.version}.jar" maxmemory="450M" fork="yes">
+			<sysproperty key="java.util.logging.config.file" value="${iGrid.home}/configs/sorcer.logging" />
+			<sysproperty key="java.protocol.handler.pkgs" value="net.jini.url" />
+			<sysproperty key="java.rmi.server.useCodebaseOnly" value="false" />
+			<sysproperty key="java.security.policy" value="${iGrid.policy}/policy.all" />
+			<sysproperty key="webster.root" value="${rootdirs}" />
+			<sysproperty key="webster.port" value="${provider.webster.port}" />
+			<sysproperty key="webster.tmp.dir" value="${webster.tmp.dir}" />
+			<sysproperty key="webster.interface" value="${provider.webster}" /> 
+			<sysproperty key="webster.debug" value="true" />
+		</java>
+	</target>
+
+    <!-- start webster -->
+    <target name="webster-spawn" depends="logDir">
+        <java jar="${sorcer-ext.lib}/webster-${sorcer.version}.jar" maxmemory="450M" fork="yes" spawn="yes">
+            <sysproperty key="java.util.logging.config.file" value="${iGrid.home}/configs/sorcer.logging" />
+            <sysproperty key="java.protocol.handler.pkgs" value="net.jini.url" />
+            <sysproperty key="java.rmi.server.useCodebaseOnly" value="false" />
+            <sysproperty key="java.security.policy" value="${iGrid.policy}/policy.all" />
+            <sysproperty key="webster.root" value="${rootdirs}" />
+            <sysproperty key="webster.port" value="${provider.webster.port}" />
+            <sysproperty key="webster.tmp.dir" value="${webster.tmp.dir}" />
+            <sysproperty key="webster.interface" value="${provider.webster}" />
+            <sysproperty key="webster.debug" value="true" />
+        </java>
+    </target>
+</project>

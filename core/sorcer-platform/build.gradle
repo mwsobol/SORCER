@@ -1,0 +1,46 @@
+jar {  
+	manifest {
+		attributes("Implementation-Title": "SORCER Platform",
+                   "Implementation-Version": version)
+       }
+}
+
+sourceSets {
+	def dirSet = project.sourceSets.main.java.srcDirs
+	dirSet.addAll(rootProject.project(':sorcer-dl').sourceSets.main.java.srcDirs)
+//	dirSet.addAll(rootProject.project(':sos-rendezvous').sourceSets.main.java.srcDirs)
+//	from <zipfileset src="${rio-dl.lib}/rio-api-${rio.version}.jar" includes="org/rioproject/admin/ServiceActivityProvider.class" />
+	main {
+		java {
+			srcDirs = dirSet
+		}
+	}
+}
+
+//sourceSets.main.java.each { println it }
+
+dependencies {
+    compile "net.jini:jsk-platform:${riverVersion}",
+			"net.jini:jsk-lib:${riverVersion}",
+			"org.apache.river:start:${riverVersion}",
+    		"org.rioproject:rio-platform:${rioVersion}",
+			"org.rioproject:rio-lib:${rioVersion}",
+    		"org.rioproject:rio-api:${rioVersion}",
+			"org.rioproject.monitor:monitor-api:${rioVersion}",
+			"org.rioproject.cybernode:cybernode-api:${rioVersion}",
+            "org.apache.ant:ant:${antVersion}",
+            "com.sleepycat:je:${jeVersion}",
+            "org.dancres:lockmgr:${lockmgrVersion}",
+			"junit:junit:${junitVersion}",
+			project(':sorcer-dl')
+	compile files("${System.properties['java.home']}/../lib/tools.jar")
+}
+
+test {
+	systemProperty "java.security.policy", "${project.projectDir.path}/src/test/resources/policy/policy.all"
+	if(System.getenv("IGRID_HOME")==null)
+		println "You may have problems running tests since IGRID_HOME is not set!"
+	else
+		systemProperty "iGrid.home", System.getenv("IGRID_HOME")
+}
+

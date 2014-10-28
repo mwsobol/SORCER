@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<project name="SOS kernel" default="kernel" basedir="">
+
+	<import file="common-run.xml" />
+
+	<target name="kernel" depends="clean, services" />
+
+	<target name="services">
+		<java classname="com.sun.jini.start.ServiceStarter" fork="yes">
+            <classpath>
+                <pathelement location="${lib}/sorcer-boot-${sorcer.version}.jar"/>
+                <pathelement location="${lib}/sorcer/lib/sorcer-env-${sorcer.version}.jar"/>
+                <pathelement location="${lib}/common/groovy/groovy-all-${groovy.version}.jar"/>
+                <pathelement location="${rio.home}/lib/rio-platform-${rio.version}.jar" />
+                <pathelement location="${rio.home}/lib/rio-start-${rio.version}.jar" />
+                <pathelement location="${rio.home}/lib/logging/slf4j-jdk14-${slf4j.version}.jar" />
+            </classpath>
+			<arg value="../configs/boot-iGrid.config" />
+			<sysproperty key="iGrid.home" value="${iGrid.home}" />
+			<sysproperty key="sorcer.env.file" value="${iGrid.home}/configs/sorcer.env" />
+			<sysproperty key="java.rmi.server.useCodebaseOnly" value="false" />
+			<sysproperty key="java.security.policy" value="../policy/iGrid.policy" />
+			<sysproperty key="java.util.logging.config.file" value="${iGrid.home}/configs/sorcer.logging" />
+			<sysproperty key="webster.tmp.dir" value="${iGrid.data}" />
+			<sysproperty key="java.protocol.handler.pkgs" value="net.jini.url|sorcer.util.url|org.rioproject.url" />
+			<sysproperty key="java.rmi.server.RMIClassLoaderSpi" value="org.rioproject.rmi.ResolvingLoader" />
+			<!--sysproperty key="webster.port" value="60009" /-->
+			<!--<jvmarg value="-Xdebug"/>
+			<jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,address=8000"/>-->
+
+		</java>
+	</target>
+
+	<target name="clean" description="Deletes Blitz DB files">
+		<delete dir="${iGrid.home}/logs/dbfiles_blitz" failonerror="false" />
+		<delete dir="${iGrid.home}/logs/slamonitor.sla_db" failonerror="false" />
+		<delete file="${iGrid.home}/bin/monitoredjobs_index.obf" failonerror="false" />
+		<delete file="${iGrid.home}/bin/monitoredjobs_temp.obf" failonerror="false" />
+		<delete file="${iGrid.home}/bin/monitoredjobs.obf" failonerror="false" />
+	</target>
+
+</project>

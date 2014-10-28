@@ -1,0 +1,9 @@
+The Exertion-Oriented Languages (EOL) Tutorial
+
+1. main/java/sorcer/arithmetic
+	contains arithmetic providers and requestors
+	
+2. test/java/sorcer/arithmetic
+
+	service
+		introduction to service signatures, providers, services and data used with them

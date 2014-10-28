@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<project name="Start Rio Provision Monitor" default="boot" basedir="">
+    <dirname file="${basedir}/../" property="iGrid.basedir"/>
+    <import file="${iGrid.basedir}/bin/common-run.xml" />
+    <target name="boot" depends="clean, webster, monitor" />
+
+    <target name="webster" description="Starts a Webster">
+        <ant antfile="${basedir}/../webster/bin/webster-run.xml" target="webster-spawn">
+            <property name="iGrid.home" value="${iGrid.home}"/>
+        </ant>
+    </target>
+
+    <target name="verify" description="Checks the local repository for artifacts. If not present will install them.">
+        <ant antfile="${iGrid.home}/bin/rio/boot-iGrid-Rio.xml" dir="${iGrid.home}/bin" target="verify">
+            <property name="iGrid.home" value="${iGrid.home}"/>
+            <property name="fork.mode" value="yes"/>
+        </ant>
+    </target>
+
+    <target name="monitor" depends="verify" description="Starts a Monitor">
+        <ant antfile="${iGrid.home}/bin/rio/boot-iGrid-Rio.xml" dir="${iGrid.home}/bin" target="monitor">
+		    <property name="iGrid.home" value="${iGrid.home}"/>
+	    </ant>	
+    </target>
+
+    <target name="clean" description="Deletes Monitor log files">
+        <delete includeemptydirs="true" >
+            <fileset dir="${rio.home}/logs" includes="**/monitor*" />
+        </delete>
+    </target>
+
+    <target name="destroy" description="Destroys Monitors on the local machine">
+        <java classname="sorcer.util.ServiceDestroyer" fork="yes">
+            <env key="IGRID_HOME" value="${iGrid.home}"/>
+            <classpath>
+                <pathelement location="${lib}/river/jsk-platform-${river.version}.jar" />
+                <pathelement location="${lib}/river/jsk-lib-${river.version}.jar" />
+                <pathelement location="${sorcer.lib}/sorcer-platform-${sorcer.version}.jar" />
+                <path refid="rio.path" />
+                <pathelement location="${rio.home}/lib-dl/cybernode-api-${rio.version}.jar" />
+                <pathelement location="${rio.home}/lib-dl/monitor-api-${rio.version}.jar" />
+                <pathelement location="${rio.home}/lib/logging/jul/slf4j-jdk14-${slf4j.version}.jar" />
+                <pathelement location="${java.home}/../lib/tools.jar" />
+            </classpath>
+            <sysproperty key="java.security.policy" value="${iGrid.home}/policy/iGrid.policy" />
+            <sysproperty key="java.protocol.handler.pkgs" value="net.jini.url|sorcer.util.bdb.sos|org.rioproject.url" />
+            <sysproperty key="java.rmi.server.RMIClassLoaderSpi" value="org.rioproject.rmi.ResolvingLoader" />
+            <sysproperty key="RIO_HOME" value="${rio.home}" />
+            <arg value="jvm:monitor" />
+        </java>
+    </target>
+
+
+</project>

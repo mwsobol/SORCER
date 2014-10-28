@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+
+<project name="bliz service" default="blitz" basedir="">
+
+	<import file="../../common-run.xml" />
+
+	<target name="blitz">
+		<java jar="${jini.lib}/start.jar" fork="yes">
+			<arg value="../configs/start-lockmgr.config" />
+			<sysproperty key="iGrid.home" value="${iGrid.home}" />
+			<sysproperty key="provider.webster.url" value="${provider.webster.url}/" />
+			<sysproperty key="java.security.policy" value="../policy/locker.policy" />
+			<sysproperty key="java.util.logging.config.file" value="${iGrid.home}/configs/sorcer.logging" />
+			<sysproperty key="sorcer.env.file" value="${iGrid.home}/configs/sorcer.env" />
+		</java>
+	</target>
+
+</project>

@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+<project name="SOS kernel" default="run" basedir="">
+
+	<import file="common-run.xml" />
+
+	<property name="iGrid.data" value="${iGrid.home}/data" />
+
+	<target name="run" depends="clean">
+		<antcall target="kernel">
+			<param name="spawn" value="no" />
+		</antcall>
+	</target>
+
+	<target name="spawn" depends="clean">
+		<antcall target="kernel" >
+			<param name="spawn" value="yes" />
+		</antcall>
+	</target>
+				
+	<target name="kernel">
+		<!--java jar="${lib}/sorcer-boot.jar" fork="yes"-->
+		<java classname="com.sun.jini.start.ServiceStarter" fork="yes">
+            <classpath>
+                <pathelement location="${lib}/sorcer-boot-${sorcer.version}.jar"/>
+            	<pathelement location="${jini.lib}/serviceui-${river.version}.jar"/>
+            	<pathelement location="${jini.lib}/jsk-lib-${river.version}.jar"/>
+            	<pathelement location="${common.lib}/je-5.0.104.jar"/>
+                <pathelement location="${rio.home}/lib/rio-platform-${rio.version}.jar" />
+                <pathelement location="${rio.home}/lib/rio-start-${rio.version}.jar" />
+            	<pathelement location="${rio.home}/lib-dl/rio-api-${rio.version}.jar" />
+                <pathelement location="${rio.home}/lib/logging/slf4j-jdk14-${slf4j.version}.jar" />
+            </classpath>
+			<arg value="../configs/boot-iGrid-srv-http.config" />
+			<sysproperty key="iGrid.home" value="${iGrid.home}" />
+			<sysproperty key="rio.home" value="${env.RIO_HOME}" />
+			<sysproperty key="sorcer.env.file" value="${iGrid.home}/configs/sorcer.env" />
+			<sysproperty key="java.rmi.server.useCodebaseOnly" value="false" />
+			<sysproperty key="java.security.policy" value="${iGrid.home}/policy/iGrid.policy" />
+			<sysproperty key="java.util.logging.config.file" value="${iGrid.home}/configs/sorcer.logging" />
+			<sysproperty key="webster.tmp.dir" value="${iGrid.data}" />
+			<jvmarg value="-Xms1g"/>
+			<jvmarg value="-Xmx8g"/>			
+			<sysproperty key="java.protocol.handler.pkgs" value="net.jini.url|sorcer.util.url|org.rioproject.url" />
+			<sysproperty key="java.rmi.server.RMIClassLoaderSpi" value="org.rioproject.rmi.ResolvingLoader"/>
+			<!--sysproperty key=""webster.debug"" value="true" /-->
+			<!--sysproperty key="webster.port" value="60009" /-->
+			<!--jvmarg value="-Xdebug"/>
+			<jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,address=8000"/-->
+		</java>
+	</target>
+
+	<target name="clean" description="Deletes Blitz DB files">
+		<delete dir="${iGrid.home}/logs/dbfiles_blitz" failonerror="false" />
+		<delete dir="${iGrid.home}/logs/dbfiles_monitor" failonerror="false" />
+		<delete dir="${iGrid.home}/logs/slamonitor.sla_db" failonerror="false" />
+		<delete file="${iGrid.home}/bin/monitoredjobs_index.obf" failonerror="false" />
+		<delete file="${iGrid.home}/bin/monitoredjobs_temp.obf" failonerror="false" />
+		<delete file="${iGrid.home}/bin/monitoredjobs.obf" failonerror="false" />
+	</target>
+
+</project>
+

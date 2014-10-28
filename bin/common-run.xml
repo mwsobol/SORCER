@@ -1,0 +1,223 @@
+<?xml version="1.0"?>
+<!-- 
+ * Copyright 2010 the original author or authors.
+ * Copyright 2010 SorcerSoft.org.
+ *  
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+
+How to use the common-run.xml file in your project. 
+To include this file in your custom *-run-buld.xml have the import line:
+
+  <import file="../../common-run.xml" />
+-->
+
+<project name="" default="" basedir="">
+	<tstamp />
+	<property name="dospawn" value="false" />
+
+	<property environment="env" />
+	<condition property="iGrid.home" value="${iGrid.basedir}">
+		<not>
+			<isset property="env.IGRID_HOME" />
+		</not>
+	</condition>
+	<condition property="iGrid.home" value="${env.IGRID_HOME}">
+		<not>
+			<isset property="iGrid.home" />
+		</not>
+	</condition>
+	<exec executable="hostname" outputproperty="hostname" />
+
+    <property name="java.home" value="${env.JAVA_HOME}" />
+    <loadproperties srcfile="${iGrid.home}/configs/versions.properties" />
+	<loadproperties srcfile="${iGrid.home}/configs/sorcer.env" />
+
+	<property name="lib" value="${iGrid.home}/lib" />
+	<property name="jini.lib" value="${lib}/river" />
+	<property name="jini-dl.lib" value="${lib}/river" />
+    <property name="rio.home" value="${iGrid.home}/rio" />
+	<property name="rio.lib" value="${rio.home}/lib" />
+	<property name="rio-dl.lib" value="${rio.home}/lib-dl" />
+
+	<property name="blitz.lib" value="${lib}/blitz" />
+	<property name="common.lib" value="${lib}/common" />
+	<property name="sorcer.lib" value="${lib}/sorcer/lib" />
+	<property name="sorcer-dl.lib" value="${lib}/sorcer/lib-dl" />
+	<property name="sorcer-ext.lib" value="${lib}/sorcer/lib-ext" />
+	<property name="support.lib" value="${common.lib}/buildsupport" />
+
+	<property name="iGrid.policy" value="${iGrid.home}/policy" />
+	<property name="iGrid.config" value="${iGrid.home}/configs" />
+
+	<!-- Declare versions as properties -->
+	<property name="modeling.version" value="1.1.9" />
+	<property name="rio.version" value="5.0-M4" />
+	<property name="groovy.version" value="2.2.1" />
+	<property name="river.version" value="2.2.2" />
+	<property name="river.version" value="2.2.2" />
+	<property name="je.version" value="5.0.104" />
+	<property name="slf4j.version" value="1.7.5" />
+
+    <taskdef name="groovy" classname="org.codehaus.groovy.ant.Groovy"
+             classpath="${common.lib}/groovy/groovy-all-${groovy.version}.jar" onerror="ignore"/>
+
+    <echo message="SORCER version: ${sorcer.version}"/>
+
+	<property name="java.protocol.handler.pkgs" value="net.jini.url|sorcer.util.url|org.rioproject.url" />
+	<property name="java.util.logging.config.file" value="${iGrid.home}/configs/sorcer.logging" />
+	<property name="java.rmi.server.useCodebaseOnly" value="false" />
+	<property name="org.rioproject.resolver.jar" value="${rio.lib}/resolver/resolver-aether-${rio.version}.jar" />
+
+	<path id="provider.starter.path">
+		<pathelement location="${rio.lib}/groovy-all-${groovy.version}.jar" />
+		<pathelement location="${rio.lib}/logging/slf4j-api-${slf4j.version}.jar" />
+		<pathelement location="${rio.lib}/logging/slf4j-jdk14-${slf4j.version}.jar" />
+		<pathelement location="${rio.lib}/rio-platform-${rio.version}.jar" />
+		<pathelement location="${rio-dl.lib}/rio-api-${rio.version}.jar" />
+		<pathelement location="${jini.lib}/start-${river.version}.jar" />
+		<pathelement location="${jini.lib}/serviceui-${river.version}.jar" />
+		<pathelement location="${jini.lib}/jsk-platform-${river.version}.jar" />
+		<pathelement location="${jini.lib}/jsk-lib-${river.version}.jar" />
+	</path>
+
+	<propertyset id="provider.system.properties">
+		<propertyref prefix="java.protocol.handler.pkgs" />
+		<propertyref prefix="java.util.logging.config.file" />
+		<propertyref prefix="java.rmi.server.useCodebaseOnly" />
+		<propertyref name="iGrid.home" />
+		<propertyref name="sorcer.version" />
+		<propertyref name="modeling.version" />
+		<propertyref name="rio.version" />
+		<propertyref name="river.version" />
+		<propertyref name="org.rioproject.resolver.jar" />
+	</propertyset>
+
+	<!-- define boot classpath -->
+	<path id="boot.classpath">
+		<pathelement location="${iGrid.home}/lib/sorcer-boot-${sorcer.version}.jar" />
+		<pathelement location="${jini.lib}/start-${river.version}.jar" />
+		<pathelement location="${common.lib}/groovy/groovy-all-${groovy.version}.jar" />
+		<pathelement location="${rio.lib}/rio-platform-${rio.version}.jar" />
+	</path>
+
+	<path id="sorcer.path">
+		<pathelement location="${sorcer.lib}/sorcer-platform-${sorcer.version}.jar" />
+		<pathelement location="${sorcer.lib}/sorcer-lib-${sorcer.version}.jar" />
+		<pathelement location="${sorcer.lib}/sorcer-modeling-lib-${modeling.version}.jar" />
+		<pathelement location="${common.lib}/groovy/groovy-all-${groovy.version}.jar" />
+	</path>
+
+	<path id="jini.path">
+		<pathelement location="${jini.lib}/jsk-platform-${river.version}.jar" />
+		<pathelement location="${jini.lib}/jsk-lib-${river.version}.jar" />
+		<pathelement location="${jini.lib}/serviceui-${river.version}.jar" />
+	</path>
+
+	<path id="rio.path">
+		<pathelement location="${common.lib}/groovy/groovy-all-${groovy.version}.jar" />
+		<pathelement location="${rio.home}/lib/logging/slf4j-jdk14-${slf4j.version}.jar" />
+		<pathelement location="${rio.home}/lib/rio-platform-${rio.version}.jar" />
+		<pathelement location="${rio.home}/lib-dl/rio-api-${rio.version}.jar" />
+	</path>
+
+	<path id="jep.path">
+		<pathelement location="${common.lib}/jep-2.4.1a.jar" />
+		<pathelement location="${common.lib}/ext-1.1.1a.jar" />
+	</path>
+
+	<path id="junit.path">
+		<pathelement location="${support.lib}/junit.jar" />
+		<pathelement location="${support.lib}/junit-addons-1.4.jar" />
+	</path>
+
+    <!-- Properties are IMMUTABLE. Once set it cannot be changed. Here we specify that environment variables take precedence. -->
+
+	<condition property="localhost" value="${hostname}">
+		<equals arg1="${provider.webster.interface}" arg2="$${localhost}" />
+	</condition>
+
+	<condition property="local.interface" value="${hostname}">
+		<equals arg1="${provider.webster.interface}" arg2="$${localhost}" />
+	</condition>
+
+	<!--SAB -->
+	<condition property="provider.webster.interface.TMP" value="${provider.webster.interface}">
+		<not>
+			<equals arg1="${provider.webster.interface}" arg2="$${localhost}" />
+		</not>
+	</condition>
+	<condition property="provider.webster.interface.TMP" value="${hostname}">
+		<equals arg1="${provider.webster.interface}" arg2="$${localhost}" />
+	</condition>
+
+	<condition property="data.server.interface.TMP" value="${data.server.interface}">
+		<not>
+			<equals arg1="${data.server.interface}" arg2="$${localhost}" />
+		</not>
+	</condition>
+	<condition property="data.server.interface.TMP" value="${hostname}">
+		<equals arg1="${provider.webster.interface}" arg2="$${localhost}" />
+	</condition>
+
+	<!--<echo message="provider.webster.interface.TMP = ${provider.webster.interface.TMP}" />-->
+
+	<condition property="provider.webster.url" value="http://${env.IGRID_WEBSTER_INTERFACE}:${env.IGRID_WEBSTER_PORT}">
+		<and>
+			<isset property="env.IGRID_WEBSTER_INTERFACE" />
+			<isset property="env.IGRID_WEBSTER_PORT" />
+		</and>
+	</condition>
+
+	<condition property="provider.webster.url" value="http://${local.interface}:${provider.webster.port}" else="http://${provider.webster.interface}:${provider.webster.port}">
+		<isset property="local.interface" />
+	</condition>
+
+	<!--<echo message="provider.webster.url = ${provider.webster.url}" />-->
+
+	<condition property="data.server.url" value="http://${env.DATA_SERVER_INTERFACE}:${env.DATA_SERVER_PORT}" else="http://${data.server.interface}:${data.server.port}">
+		<and>
+			<isset property="env.DATA_SERVER_INTERFACE" />
+			<isset property="env.DATA_SERVER_PORT" />
+		</and>
+	</condition>
+
+	<!-- define provider codebase -->
+	<url id="sorcer-dl" url="${provider.webster.url}/sorcer-dl-${sorcer.version}.jar" />
+	<url id="jini-dl" url="${provider.webster.url}/jsk-dl-${river.version}.jar" />
+	<url id="sui-dl" url="${provider.webster.url}/serviceui-${river.version}.jar" />
+	<url id="prv-dl" url="${provider.webster.url}/provider-ui-${sorcer.version}.jar" />
+	<url id="xui-dl" url="${provider.webster.url}/exertlet-ui-${sorcer.version}.jar" />
+	<url id="rio-dl" url="${provider.webster.url}/rio-api-${rio.version}.jar" />
+	<property name="sos-codebase" value="${ant.refid:sorcer-dl} ${ant.refid:jini-dl} ${ant.refid:rio-dl}" />
+	<property name="starter-codebase" value="${ant.refid:sorcer-dl} ${ant.refid:jini-dl} ${ant.refid:sorcer-dl}" />
+	<property name="sos-ui" value="${ant.refid:sui-dl} ${ant.refid:prv-dl} ${ant.refid:xui-dl}" />
+
+	<target name="groovyRun">
+		<groovy src="${groovySrc}">
+			<classpath>
+				<pathelement location="${groovyDir}" />
+			</classpath>
+		</groovy>
+	</target>
+
+	<target name="set-hostname">
+		<condition property="hostname" value="${env.HOST}">
+			<os family="unix" />
+		</condition>
+		<condition property="hostname" value="${env.COMPUTERNAME}">
+			<os family="windows" />
+		</condition>
+		<!--<echo message="host = ${hostname}" />-->
+	</target>
+
+</project>

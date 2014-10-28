@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<!-- 
+Replace "provider.name" with your provider name and specify property value for "provider.class."
+Also you might need to adjust the classpath (provider.classpath) for your provider 
+-->
+
+<project name="Running Arithmeric" default="run.provider" basedir="">
+
+	<!-- system environment variables -->
+	<property environment="env" />
+	<import file="${env.IGRID_HOME}/bin/common-run.xml" />
+
+	<echo message="IGRID_HOME: ${iGrid.home}" />
+	<echo message="WEBSTER: ${provider.webster.url}" />
+
+	<!-- set property values here -->
+	<property name="provider.bean" value="arithmetic" />
+	<property name="provider.class" value="sorcer.core.provider.ServiceTasker" />
+	<property name="webster" value="${provider.webster.url}" />
+
+	<!-- provider classpath -->
+	<path id="project.classpath">
+		<pathelement location="${sorcer.lib}/ex6-arithmetic-beans.jar" />
+		<pathelement location="${sorcer.lib}/sorcer-platform.jar" />
+		<pathelement location="${sorcer-ext.lib}/webster.jar" />
+		<pathelement location="${sorcer.lib}/sorcer-modeling-lib.jar" />
+		<pathelement location="${jini.lib}/jsk-lib.jar" />
+		<pathelement location="${jini.lib}/jsk-platform.jar" />
+		<pathelement location="${jini.lib}/serviceui.jar" />
+		<pathelement location="${rio.lib}/rio.jar" />
+	</path>
+
+	<!-- provider codeabse jars -->
+	<property name="j1" value="${webster}/ex6-arithmetic-dl.jar" />
+	<property name="j2" value="${webster}/sorcer-dl.jar" />
+	<property name="j3" value="${webster}/jsk-dl.jar" />
+	<property name="j4" value="${webster}/provider-ui.jar" />
+	<property name="j5" value="${webster}/exertlet-ui.jar" />
+
+	<!-- start provider -->
+	<target name="run.provider">
+		<java jar="${jini.lib}/start.jar" fork="yes">
+			<sysproperty key="java.security.manager" value="" />
+			<sysproperty key="java.util.logging.config.file" value="${iGrid.home}/configs/sorcer.logging" />
+			<sysproperty key="java.security.policy" value="../policy/arithmetic-beans-prv.policy" />
+			<sysproperty key="sorcer.provider.codebase" value="${j1} ${j2} ${j3} ${j4} ${j5}" />
+			<sysproperty key="sorcer.provider.classpath" value="${toString:project.classpath}" />
+			<sysproperty key="sorcer.provider.impl" value="${provider.class}" />
+			<sysproperty key="sorcer.provider.config" value="../configs/${provider.bean}-prv.config" />
+			<sysproperty key="sorcer.env.file" value="${iGrid.home}/configs/sorcer.env" />
+			<arg value="${iGrid.home}/configs/startup-prv.config" />
+		</java>
+	</target>
+
+</project>
+

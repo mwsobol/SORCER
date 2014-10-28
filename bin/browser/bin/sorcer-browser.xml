@@ -1,0 +1,100 @@
+<?xml version="1.0"?>
+
+<project name="SSB" default="ssb" basedir="">
+
+	<!-- load system environment variables -->
+	<property environment="env" />
+	<dirname file="${basedir}/../../" property="iGrid.basedir" />
+	<import file="${iGrid.basedir}/bin/common-run.xml" />
+
+	<target name="browser.run">
+		<antcall target="runBrowser">
+			<param name="spawn" value="no" />
+		</antcall>
+	</target>
+
+	<target name="browser.spawn">
+		<antcall target="runBrowser">
+			<param name="spawn" value="yes" />
+		</antcall>
+	</target>
+
+	<condition property="isMac" value="true">
+		<os family="mac" />
+	</condition>
+
+	<target name="log-dir">
+		<mkdir dir="${basedir}/../logs" />
+	</target>
+
+	<target name="runBrowser" depends="log-dir, SORCER Service Browser Mac, SORCER Service Browser" />
+
+	<path id="run.classpath">
+		<!--pathelement location="${sorcer-ext.lib}/sb.jar" /-->
+		<pathelement location="${sorcer-ext.lib}/ssb-${sorcer.version}.jar" />
+		<pathelement location="${sorcer.lib}/sorcer-platform-${sorcer.version}.jar" />
+		<pathelement location="${lib}/common/groovy/groovy-all-${groovy.version}.jar" />
+		<pathelement location="${lib}/river/jsk-lib-${river.version}.jar" />
+		<pathelement location="${lib}/river/jsk-platform-${river.version}.jar" />
+		<pathelement location="${lib}/river/outrigger-dl-${river.version}.jar" />
+		<pathelement location="${lib}/river/serviceui-${river.version}.jar" />
+        <pathelement location="${rio.lib}/rio-platform-${rio.version}.jar" />
+        <pathelement location="${rio.lib}/logging/slf4j-api-${slf4j.version}.jar" />
+		<pathelement location="${rio.lib}/logging/slf4j-jdk14-${slf4j.version}.jar" />
+		<!--<pathelement location="${env.IGRID_HOME}/classes" />-->
+	</path>
+
+	<target name="SORCER Service Browser Mac" if="isMac">
+		<java classname="sorcer.ssb.ServiceBrowser" fork="yes" maxmemory="1g" spawn="${spawn}">
+			<arg value="../configs/ssb.config" />
+			<jvmarg value="-Xdock:name=Service Browser" />
+			<jvmarg value="-Xdock:icon=../../images/sorcer-dock.png" />
+			<classpath>
+				<path refid="run.classpath" />
+			</classpath>
+			<sysproperty key="iGrid.home" value="${iGrid.home}" />
+			<sysproperty key="RIO_HOME" value="${rio.home}" />
+			<sysproperty key="java.protocol.handler.pkgs" value="net.jini.url|sorcer.util.url|org.rioproject.url" />
+			<sysproperty key="java.rmi.server.RMIClassLoaderSpi" value="org.rioproject.rmi.ResolvingLoader" />
+			<sysproperty key="java.security.policy" value="../policy/ssb.policy" />
+			<sysproperty key="java.rmi.server.useCodebaseOnly" value="false" />
+			<sysproperty key="ssb.logFile" value="${iGrid.home}/bin/browser/logs/browser.log" />
+			<sysproperty key="java.util.logging.config.file" value="../configs/browser-logging.properties" />
+			<sysproperty key="ssb.logLen" value="300" />
+		</java>
+	</target>
+
+	<target name="SORCER Service Browser" unless="isMac">
+		<java classname="sorcer.ssb.ServiceBrowser" fork="yes" maxmemory="1g" spawn="${spawn}">
+			<arg value="../configs/ssb.config" />
+			<classpath>
+				<path refid="run.classpath" />
+			</classpath>
+			<sysproperty key="iGrid.home" value="${iGrid.home}" />
+			<sysproperty key="java.protocol.handler.pkgs" value="net.jini.url|sorcer.util.bdb.sos|org.rioproject.url" />
+			<sysproperty key="java.rmi.server.RMIClassLoaderSpi" value="org.rioproject.rmi.ResolvingLoader" />
+			<sysproperty key="java.security.policy" value="../policy/ssb.policy" />
+			<sysproperty key="java.rmi.server.useCodebaseOnly" value="false" />
+			<sysproperty key="ssb.logFile" value="${iGrid.home}/bin/browser/logs/browser.log" />
+			<sysproperty key="java.util.logging.config.file" value="../configs/browser-logging.properties" />
+			<sysproperty key="ssb.logLen" value="300" />
+		</java>
+	</target>
+
+	<target name="ssb" depends="log-dir">
+		<java classname="sorcer.ssb.ServiceBrowser" fork="yes" maxmemory="1g" spawn="${spawn}">
+			<arg value="../configs/ssb.config" />
+			<classpath>
+				<path refid="run.classpath" />
+			</classpath>
+			<sysproperty key="iGrid.home" value="${iGrid.home}" />
+			<sysproperty key="java.protocol.handler.pkgs" value="net.jini.url|sorcer.util.bdb.sos|org.rioproject.url" />
+			<sysproperty key="java.rmi.server.RMIClassLoaderSpi" value="org.rioproject.rmi.ResolvingLoader" />
+			<sysproperty key="java.security.policy" value="../policy/ssb.policy" />
+			<sysproperty key="java.rmi.server.useCodebaseOnly" value="false" />
+			<sysproperty key="ssb.logFile" value="${iGrid.home}/bin/browser/logs/browser.log" />
+			<sysproperty key="java.util.logging.config.file" value="../configs/browser-logging.properties" />
+			<sysproperty key="ssb.logLen" value="300" />
+		</java>
+	</target>
+</project>

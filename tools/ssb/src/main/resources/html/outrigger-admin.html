@@ -1,0 +1,55 @@
+<!-- saved from url=(0022)http://internet.e-mail -->
+<html>
+<head>
+<title>Outrigger: space browser</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" href="incax.css" type="text/css">
+</head>
+
+<body bgcolor="#FFFFFF" text="#000000" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0">
+<table>
+  <tr valign="top"> 
+    <td height="58"> 
+      <p class="intropara"><b>Space browser</b></p>
+      <p>
+      The Space browser allows you to 
+      	<ol>
+      	<li>View a table of entry types and the number of instances per type</li>
+      	<li>Iterate, view and delete Entry objects</li>
+      	
+      	</ol>
+      </p>
+      <p>
+      Use the buttons below to query the JavaSpace.
+      <ul>
+      	<li>Get entries/Refresh<br>
+      		Queries the JavaSpace for a list of entries
+      	</li>
+      	<li>Auto refresh<br>
+      		Queries the JavaSpace every 5 seconds and updates the view
+      	</li>
+      	
+      </ul>
+      
+      </p>
+      <p><b>Viewing and deleting entries</b></p>
+      <p>Double click on a row to activate the Entry viewer, which allows you to step the through 
+      	Entry objects for the selected type, see the field values and optionally delete the current Entry 
+      <i>This option is NOT available when the auto refresh in running</i></p>
+      <p><b>Unusable entry count</b></p>
+      <p>If any entries returned by the JavaSpace throw an UnusableEntryException then 
+      they are added to a row called "unusable entry"</p>
+      <p>
+      An UnusableEntryException occurs when the JavaSpace proxy cannot deserialize an Entry.
+      Frequently the cause of this exception is due to an invalid codebase
+      </p>
+      
+      <p>
+      <b>WARNING:</b> If the selected JavaSpace contains millions of entries, this is likely to cause an OutOfMemoryException in the browser
+      </p>
+    </td>
+  </tr>
+  
+</table>
+</body>
+</html>
