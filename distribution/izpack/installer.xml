@@ -79,7 +79,7 @@ SORCER installation file.
 	<packs>
 		<pack name="SORCER Core" installGroups="All,SORCER Core" required="yes">
 			<description>SORCER core distribution</description>
-			<fileset dir="../iGrid-dist-5.0.0-SNAPSHOT" targetdir="$INSTALL_PATH" defaultexcludes="yes"/>
+			<fileset dir="../sorcer-5.0.0-SNAPSHOT" targetdir="$INSTALL_PATH" defaultexcludes="yes"/>
 		</pack>
 
 <!--
