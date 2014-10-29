@@ -1,0 +1,36 @@
+/*
+ * Build a map of the dependency artifacts to use.  Allows centralized definition of the version of artifacts to
+ * use.  In that respect it serves a role similar to <dependencyManagement> in Maven
+ */
+ext {
+	sorcerVersion = "5.0.0-SNAPSHOT"
+	sorcerModelingVersion = "1.1.9"
+	sosVersion = "1.0-SNAPSHOT"
+	// other artifact versions
+	classdepandjarVersion = "2.0"
+	configbuilderVersion = "1.6"
+	extVersion = "1.1.1a"
+	groovyVersion = "2.2.1"
+	rioVersion = "5.0-M4"
+	riverVersion = "2.2.2"
+	slf4jVersion = "1.7.5"
+	blitzVersion = "2.1.7"
+	lockmgrVersion = "2.1.7"
+	jamaVersion = "1.0.3"
+	jeVersion = "5.0.104"
+	jepVersion = "2.4.1a"
+	jfreechartVersion = "1.0.14"
+	jnaVersion = "4.1.0"
+	junitVersion = "4.8.2"
+	junitAddonsVersion = "1.4"
+	poiVersion = "3.7"
+	jffpVersion = "1.2"
+	antVersion = "1.8.2"
+	websterVersion = "4.2.8"
+	websterUrl = "http://" + InetAddress.getLocalHost().getHostName() + ":9001"
+	slf4jVersion = "1.7.5"
+
+	sorcer_deps = []
+	sorcer_test_deps = []
+
+}

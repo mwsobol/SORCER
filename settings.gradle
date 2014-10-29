@@ -1,0 +1,26 @@
+include 'sorcer-dl'
+project(":sorcer-dl").projectDir = file("core/sorcer-dl")
+include 'sorcer-platform'
+project(":sorcer-platform").projectDir = file("core/sorcer-platform")
+include 'sorcer-lib'
+project(":sorcer-lib").projectDir = file("core/sorcer-lib")
+include 'sorcer-ui'
+project(":sorcer-ui").projectDir = file("core/sorcer-ui")
+include 'sos-shell'
+project(":sos-shell").projectDir = file("sos/sos-shell")
+include 'sos-cataloger'
+project(":sos-cataloger").projectDir = file("sos/sos-cataloger")
+include 'sos-db-prv'
+project(":sos-db-prv").projectDir = file("sos/sos-db-prv")
+include 'sos-exertmonitor'
+project(":sos-exertmonitor").projectDir = file("sos/sos-exertmonitor")
+include 'sos-logger'
+project(":sos-logger").projectDir = file("sos/sos-logger")
+include 'webster'
+project(":webster").projectDir = file("tools/webster")
+include 'sorcer-boot'
+project(":sorcer-boot").projectDir = file("tools/sorcer-boot")
+include 'ssb'
+project(":ssb").projectDir = file("tools/ssb")
+include 'examples:arithmetic'
+//include 'sorcer-tests'

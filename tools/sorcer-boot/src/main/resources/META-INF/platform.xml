@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Default platform configuration -->
+<platform>
+	<!-- SORCER jars to load into the common classloader. -->
+	<capability name="SORCER" common="yes">
+		<version>5.0</version>
+		<manufacturer>SORCERsoft.org</manufacturer>
+		<classpath>
+			${sorcer.home}/lib/sorcer/lib/sorcer-platform-5.0.0-SNAPSHOT.jar
+			${sorcer.home}/lib/sorcer/lib/sorcer-lib-5.0.0-SNAPSHOT.jar
+		</classpath>
+	</capability>
+
+	<!-- River (Jini) jars to load into the common classloader. -->
+	<capability name="River" common="yes">
+		<version>2.2.1</version>
+		<manufacturer>Apache Software Foundation</manufacturer>
+		<classpath>
+			${sorcer.home}/lib/river/lib/jsk-lib-2.2.2.jar
+			${sorcer.home}/lib/river/lib/serviceui-2.2.2.jar
+		</classpath>
+	</capability>
+
+</platform>
+

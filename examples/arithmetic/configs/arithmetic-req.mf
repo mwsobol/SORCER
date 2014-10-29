@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+Main-Class: sorcer.arithmetic.requestor.ArithmeticTester
+Class-path: jsk-platform.jar jsk-policy.jar jsk-resources.jar
+Sorcer-Version: @SORCER_VERSION@
+Sorcer-Build: @SORCER_BUILD@

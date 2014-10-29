@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<project name="Arithmetic all bean services" default="run" basedir="">
+
+	<property environment="env" />
+	<import file="${env.SORCER_HOME}/bin/common-run.xml" />
+
+	<target name="run">
+		<antcall target="all-arithmetic">
+			<param name="spawn" value="no" />
+		</antcall>
+	</target>
+
+	<target name="spawn">
+		<antcall target="all-arithmetic">
+			<param name="spawn" value="yes" />
+		</antcall>
+	</target>
+		
+	<target name="all-arithmetic">
+		<java classname="com.sun.jini.start.ServiceStarter" classpathref="boot.classpath" fork="yes" spawn="${spawn}">
+			<classpath refid="provider.starter.path" />
+			<arg value="../configs/start-all-arithmetic.config" />
+			<sysproperty key="sorcer.home" value="${sorcer.home}" />
+			<sysproperty key="sorcer.env.file" value="${sorcer.home}/configs/sorcer.env" />
+			<sysproperty key="java.rmi.server.useCodebaseOnly" value="false" />
+			<sysproperty key="java.security.policy" value="../policy/arithmetic-beans-prv.policy" />
+			<sysproperty key="java.util.logging.config.file" value="${sorcer.home}/configs/sorcer.logging" />
+			<sysproperty key="java.protocol.handler.pkgs" value="net.jini.url|sorcer.util.bdb.sos|org.rioproject.url" />
+			<sysproperty key="java.rmi.server.RMIClassLoaderSpi" value="org.rioproject.rmi.ResolvingLoader" />
+		</java>
+	</target>
+
+</project>

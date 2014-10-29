@@ -1,0 +1,67 @@
+<!-- saved from url=(0022)http://internet.e-mail -->
+<html>
+<head>
+<title>Outrigger: space browser</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" href="incax.css" type="text/css">
+</head>
+
+<body bgcolor="#FFFFFF" text="#000000" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0">
+<table>
+  <tr valign="top"> 
+    <td height="58"> 
+      <p class="intropara"><b>Plugin &amp; Filter Development</b></p>
+      <p>SORCER Service Browser  allows you to add functionality 
+        to the browser in the form of plugins and filters. You can download the 
+        API and examples from the SORCERsoft.org (http://SORCERsoft,org) website's service browser downloads page.</p>
+      <p><b>Filters</b></p>
+      <p>Filters are interceptors, which allow you to programatically filter out 
+        services that you don't want the browser to display. To create a filter 
+        plugin, simply write a class that implements the interface sorcer.ssb.browser.api.SSBrowserFilter 
+        as shown below, package the class into a JAR file and then place it in 
+        the browser's plugins directory.</p><br>
+      <pre>
+import sorcer.ssb.browser.api.SSBrowserFilter;
+import net.jini.core.lookup.ServiceItem;
+
+
+public class MyFilter implements SSBrowserFilter{
+	
+
+	public boolean accept(ServiceItem  aServiceItem){
+		//return true if you want to browser to display
+		//this service
+		return true;
+	}
+
+	public String getDisplayName(){
+		return "My Filter name";
+	}
+
+}
+</pre>
+      <p>Having written and deployed your filter object it will appears as an item under the tab 
+        called plugins on the filters dialog box - a restart of the browser 
+        is required to allow the browser to load any new filters or plugins</p>
+      <p><b>Plugins</b></p>
+      <p>The SORCER browser API allows you to write plugins that hook directly 
+        into the browser's Graphical User Interface and receive notifications 
+        when service's are discovered or discarded.</p>
+      <p>Plugin hooks</p>
+      <ul>
+        <li>Add a menu to the browser</li>
+        <li>Add a service's tab to the browser</li>
+        <li>Set the content of the right-hand pane</li>
+        <li>Set the displayable attributes</li>
+      </ul>
+      <p>For example, you may want to have a service's tab which displays services 
+        grouped by a lookup attributes as opposed to the browser's default of 
+        grouping by lookup service.</p>
+      <p>There is an example browser plugin available with the API download from 
+        the SORCERsoft.org website browser page.</p>
+    </td>
+  </tr>
+  
+</table>
+</body>
+</html>

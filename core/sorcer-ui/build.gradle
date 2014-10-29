@@ -1,0 +1,12 @@
+jar {  
+	manifest {
+		attributes("Implementation-Title": "SORCER UI Support",
+                   "Implementation-Version": version)
+       }
+}
+
+dependencies {
+    compile project(':sorcer-platform')
+    compile project(':sorcer-dl')
+}
+

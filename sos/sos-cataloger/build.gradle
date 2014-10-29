@@ -1,0 +1,7 @@
+jar {
+	manifest {
+		attributes("Implementation-Title": "SORCER Cataloger Service", "Implementation-Version": version)
+	   }
+}
+
+dependencies { compile project(':sorcer-platform') }

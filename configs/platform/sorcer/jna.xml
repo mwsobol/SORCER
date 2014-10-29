@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<platform>
+
+	<!-- Engineering jars to load into the common classloader -->
+	<capability name="JNA" common="yes">
+		<version>X.x</version>
+		<manufacturer>JNA Project</manufacturer>
+		<classpath>
+			${iGrid.home}/lib/common/jna.jar
+		</classpath>
+	</capability>
+
+</platform>
+

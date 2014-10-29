@@ -1,0 +1,15 @@
+import static sorcer.eo.operator.*;
+import static sorcer.co.operator.*;
+import static sorcer.vo.operator.*;
+import static sorcer.po.operator.*;
+
+//common SORCER classes
+import sorcer.vfe.*;
+import sorcer.vfe.util.*;
+import sorcer.service.*;
+import sorcer.service.Signature.*;
+import sorcer.service.Strategy.*;
+import sorcer.core.deploy.Deployment.*;
+import sorcer.core.provider.*;
+import sorcer.core.context.model.*;
+

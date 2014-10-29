@@ -1,0 +1,75 @@
+<?xml version='1.0' encoding='ISO-8859-1' standalone='yes'?>
+<!-- 
+ * Copyight (C) 2004 SORCER Lab, Texas Tech University. All rights reserved.
+ * Service-Oriented Computing Environmet: SORCER Arithetic service provider 
+ * build configuration.
+ * Make sure the following variables are changed to reflect your environment:
+ *    SORCER_HOME        	iGrid location
+ *    JAVA_HOME         	JDK Location
+ *	  IGRID_WEBSTER_PORT 	The class server (webster) port
+ *    ANT_HOME          	Jakarta Ant location
+ Please see also the ../common-build.xml for classpaths, definitions and targets
+-->
+<project name="Arithmetic Beans" default="all" basedir="">
+	<property name="module.name" value="beans" />
+	<property name="module.run.dir" value="ju-arithmetic" />
+
+	<!-- set global properties -->
+	<import file="../../../../../../../../common-build.xml" />
+	<property name="src" value="${sorcer.home}/modules/sorcer/src" />
+
+	<property name="resources" value="${sorcer.home}/modules/sorcer/resources" />
+
+	<!-- The sources to compile -->
+	<patternset id="ant.java">
+		<include name="junit/sorcer/core/invoker/**/*.java" />
+		<exclude name="**/SAVE/*.java" />
+		<exclude name="**/BAK/*.java" />
+	</patternset>
+
+	<patternset id="ant.classes">
+		<include name="junit/sorcer/core/provider/**/*.class" />
+	</patternset>
+
+	<fileset dir="${resources}" id="icons">
+		<include name="sorcer.jpg" />
+	</fileset>
+
+	<path id="project.classpath">
+		<pathelement location="${classes}" />
+		<pathelement location="${sorcer.lib}/sorcer-platform.jar" />
+		<pathelement location="${support.lib}/junit.jar" />
+		<pathelement location="${common.lib}/je-5.0.104.jar" />
+		<path refid="jaxp.path" />
+		<path refid="jini.path" />
+		<path refid="rio.path" />
+	</path>
+
+	<path id="javadocs.classpath">
+		<path refid="jini.path" />
+		<pathelement location="${common.lib}/buildsupport/ant-ext.jar" />
+		<pathelement location="${common.lib}/buildsupport/ant.jar" />
+	</path>
+
+	<!-- No RMI stubs are required for JERI type of providers -->
+	<target name="compile" depends="compileSources" />
+	<target name="jars" depends="invoker" />
+	<target name="invoker" depends="ju-invoker-beans.jar" />
+	<target name="all" depends="prepare, compile, jars" />
+
+	<!-- No RMI stubs are required for JERI type of providers -->
+	<target name="ju-invoker-beans.jar" depends="compile">
+		<classdepandjar jarfile="${sorcer.lib}/ju-invoker-beans.jar" files="true" debug="false">
+			<classpath refid="project.classpath" />
+			<in name="junit.sorcer.core.context.model.par" />
+			<in name="sorcer.service" />
+			<in name="junit.sorcer.vfe" />
+			<topclass name="sorcer.service.Evaluation" />
+			<topclass name="sorcer.service.Invocation" />
+			<topclass name="junit.sorcer.core.context.model.par.ParModeler" />
+			<!--topclass name="sorcer.core.context.model.ResponseMode" /-->
+			<fileset refid="icons" />
+		</classdepandjar>
+	</target>
+
+</project>

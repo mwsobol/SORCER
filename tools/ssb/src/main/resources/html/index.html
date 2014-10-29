@@ -1,0 +1,141 @@
+<!-- saved from url=(0022)http://internet.e-mail -->
+<html>
+<head>
+<title>inca X</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" href="incax.css" type="text/css">
+</head>
+
+<body bgcolor="#FFFFFF" text="#000000" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0">
+<table>
+  <tr valign="top"> 
+    <td height="58"> 
+      <p class="intropara"><b>SORCER  Service Browser (SSB)</b></p>
+      <p>The SORCER service browser comes with support for the following features</p>
+      <ul>
+      <li>Service Admin</li>
+        <li>ServiceUI support</li>
+        <li>Service icon support</li>
+        <li>Unicast & Multicast discovery</li>
+        <li>Filters for interfaces, groups, Name attributes &amp; lookup locators</li>
+        <li>Hierarchical &amp; graphical views</li>
+        <li>Displays Lookup service events</li>
+        <li>Create multiple windows with different filters</li>
+        <li>Displays service codebase URLs</li>
+        <li>Displays service codebase JAR contents</li>
+        <li>Multicast request & multicast announcement monitor</li>
+      </ul>
+      <p><b>Tree views</b></p>
+      	<ul>
+      		<li>Lookup services<br>
+      		Provides information on all the services that are 
+        	registered with each Lookup Service.      		</li>
+      		<li>Services<br>
+      		Shows a list of unique services.      		</li>
+      	</ul>	
+      <p>By expanding each service node you< 
+        can see the following information</p>
+      <ul>
+        <li>ServiceID</li>
+        <li>Codebase URLs</li>
+        <li>Interfaces &amp; methods</li>
+        <li>Lookup attributes</li>
+        <li>Service methods</li>
+      </ul>
+      <p><b>Graphical view</b></p>
+      <p>By selecting a Lookup Service node in the tree this view will change 
+        to a graphical representation of the Lookup Service and the services registered 
+        with it. By moving the cursor over each service icon a popup window will 
+        display that service's full name and the lookup attributes in the properties window.</p>
+        <p>To see all a service's attributes in the popup layer, use the View menu to enable this feature</p>
+        <p>Double click on a service glyph to take you to the service admin view</p>
+      <p><b>Service UIs</b></p>
+      <p>If you select a service in the tree view that supports a JComponent service 
+        UI then the service UI will be displayed in this window.</p>
+      <p>If your service supports other JFC factories then you can use the "Windows" 
+        menu to launch JFrame, JDialog & JWindow serviceUIs</P>
+      <p>By default the browser will display the ServiceUI's role name e.g MainUI as the
+      title. If you set the AccessibleContext name on your JComponent the browser will use 
+      this name instead of the role name e.g. MyName</p> 
+      
+      <p><b>Service icons</b></p>
+      <p>If your service has a ServiceType attribute that return an Image from ServiceType.getIcon()
+      then the browser will attempt to display this icon in the service's tree      </p>
+      <p><b>Multiple windows</b></p>
+      <p>To open a new browser window use the File->New Window... menu option</p>
+       <P>The Window menu has options for cascade/tile plus a list of open windows to select from</p>
+      
+      <p><b>Using filters</b></p>
+      <p>There are four types of filters you can apply to the lookup disovery 
+        process. </p>
+      <p>These can be set via the Filters menu. <br>
+        You can use C++ style comments in each of the filter views to comment 
+        out values</p>
+      <ol>
+        <li>Interfaces<br>
+          Type in the full name of the service's interface classes that you want 
+          to filter on.<br>
+          For example net.jini.event.EventMailbox<br>
+          <br>
+        </li>
+        <li>Groups<br>
+          These filters apply the &quot;initialMemberGroups&quot; set by a Lookup 
+          Service.<br>
+          There are two special cases to keep in mind. <br>
+          For the public group, enter &quot;PUBLIC&quot;, for all groups enter 
+          &quot;ALL_GROUPS&quot; <br>
+          <br>
+        </li>
+        <li>LookupLocators<br>
+          If you specify any LookupLocators then the brower will only perform 
+          Unicast Discovery<br>
+          Lookup locators are specified as Jini URLs in the format<br>
+          jini://&lt;host&gt;:&lt;port&gt;<br>
+          You can leave off the port value to specify the default Lookup Service 
+          port. <br>
+          </li>
+          <li>Names<br>
+          This filter allows you to filter on a service's Name attribute<br>
+          Please note that this filter overrides the interfaces filter<br>
+          </li>
+          <li><a href="plugin-dev.html">Plugin filters</a><br>
+          This filter allow you to programatically filter out 
+        services that you don't want the browser to display          </li>
+      </ol>
+      <p>To reset the filters, use the Filters->Reset filters menu</p>
+      <p><b>Unicast Discovery</b></p>
+      <p>You can add additional Lookup Services that are running outside of the default
+      multicast range by using the "Options->Unicast discovery" menu option.</p>
+      <p>Enter the jini URL of the Lookup Service in the format jini://&lt;host&gt;:&lt;port&gt;  
+      If the LUS is using the default port then you do not have to specify the port</p>
+      
+      <p><b>Log file settings</b></p>
+      <p>The browser creates a log file called browserLog.txt in the working directory</p>
+      <p>To monitor the log file use the "View->Log file" menu option</p>
+      
+      <p>You can change the name and location of the log file by specify the full path in the
+      system property -Dssb.logFile=</p>
+      <p>The maximum size (in KB) of the log file can be set via the system property -Dssb.logLen= 
+      the default size before the log file is overwritten is 500KB      </p>
+      
+      <p><b>Exported host name or IP Address</b></p>
+      <p>You can override the default host name exported by the browser's LUS listener by adding the following
+      	JVM command to the browser's start script</p>
+      <pre>-Dssb.browser.exportHost</pre>
+                  
+      <hr>
+      <p>SORCERsoft.org makes this software freely available with no express or implied warrantees. <br>
+        SORCERsoft.org will not be held accountable for any loss of income or other 
+    damages due to the use of this software.</p>
+    </td>
+  </tr>
+  <tr> 
+    <td height="27"> 
+    
+      <p class="news_date" align="left">Java and all Java-based marks are trademarks 
+        or registered trademarks of Sun Microsystems, Inc. in the U. S. and other 
+        countries. </p>    </td>
+  </tr>
+</table>
+</body>
+</html>

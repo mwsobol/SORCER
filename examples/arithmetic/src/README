@@ -1,0 +1,22 @@
+The Exertion-Oriented Languages (EOL) Tutorial
+
+1. Collections used in EOL
+	test/java/sorcer/arithmetic/collections
+	
+2. Service signatures, providers. services, and their service data in  EOL
+	test/java/sorcer/arithmetic/services
+		
+3. Arithmetic providers and requestors
+	main/java/sorcer/arithmetic
+	
+4. Service contexts
+	test/java/sorcer/arithmetic/contexts
+
+5. Exertions: tasks, jobs, and blocks
+	test/java/sorcer/arithmetic/tasks	
+	test/java/sorcer/arithmetic/jobs	
+	test/java/sorcer/arithmetic/blocks	
+	
+6. Models: context and par models
+	test/java/sorcer/arithmetic/contextModels
+	test/java/sorcer/arithmetic/parModels

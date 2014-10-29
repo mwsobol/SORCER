@@ -1,0 +1,17 @@
+jar {
+	manifest {
+		attributes("Implementation-Title": "SORCER Service Browser (SSB)", "Implementation-Version": version)
+	}
+	from sourceSets.main.output.classesDir include "**"
+	from sourceSets.main.resources 
+	include "html/**"
+	from sourceSets.main.resources 
+	include "rt-images/**"
+}
+
+dependencies {
+	compile project(':webster')
+	compile "org.apache.river:outrigger-dl:${riverVersion}"
+}
+
+

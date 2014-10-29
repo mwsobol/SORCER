@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<platform>
+
+    <!--
+    Berkeley database jars to load into the common classloader.
+    -->
+    <capability name="Groovy" common="yes">
+        <version>groovy-all-2.2.1</version>
+        <manufacturer>Groovy</manufacturer>
+        <classpath>${iGrid.home}/lib/common/groovy/groovy-all-2.2.1.jar</classpath>
+    </capability>  
+       
+</platform>

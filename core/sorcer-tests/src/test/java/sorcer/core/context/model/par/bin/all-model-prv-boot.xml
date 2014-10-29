@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<project name="Invoke bean services" default="all-models" basedir="">
+
+	<property environment="env" />
+	<import file="${env.SORCER_HOME}/bin/common-run.xml" />
+
+	<target name="all-models">
+		<java jar="${lib}/sorcer-boot.jar" fork="yes">
+			<arg value="../configs/boot-all-models.config" />
+			<sysproperty key="sorcer.home" value="${sorcer.home}" />
+			<sysproperty key="sorcer.env.file" value="${sorcer.home}/configs/sorcer.env" />
+			<sysproperty key="java.rmi.server.useCodebaseOnly" value="false" />
+			<sysproperty key="java.security.policy" value="../policy/parmodel-prv.policy" />
+			<sysproperty key="java.util.logging.config.file" value="${sorcer.home}/configs/sorcer.logging" />
+		</java>
+	</target>
+
+</project>

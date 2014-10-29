@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+
+<!-- 
+SORCER installation file.
+-->
+<installation version="1.0">
+
+	<!-- 
+	The info section.
+	The meaning of the tags should be natural ...
+	-->
+	<info>
+		<appname>SORCER</appname>
+		<appversion>5.0.0-SNAPSHOT</appversion>
+		<authors>
+			<author name="Mike Sobolewski" email="sobol@sorcersoft.com"/>
+		</authors>
+		<javaversion>1.7</javaversion>
+	</info>
+
+	<variables>
+		<variable name="DesktopShortcutCheckboxEnabled" value="true"/>
+	</variables>
+
+	<!-- 
+	The gui preferences indication.
+	Sets the installer window to 640x480. It will not be able to change the size.
+	-->
+    <guiprefs height="480" resizable="no" width="680">
+        <modifier key="labelYGap" value="12"/>
+        <modifier key="layoutAnchor" value="CENTER"/>
+        <modifier key="useHeadingPanel" value="yes"/>
+        <modifier key="useHeadingForSummary" value="yes"/>
+        <modifier key="headingLineCount" value="2"/>
+        <modifier key="headingFontSize" value="1.5"/>
+        <modifier key="headingPanelCounter" value="text"/>
+        <modifier key="headingPanelCounterPos" value="inHeading"/>
+    </guiprefs>
+
+	<!-- 
+	The locale section.
+	-->
+	<locale>
+		<langpack iso3="eng"/>
+		<langpack iso3="fra"/>
+	</locale>
+
+	<native type="izpack" name="ShellLink.dll"/>
+
+	<!-- 
+	The resources section.
+	The ids must be these ones if you want to use the LicencePanel and/or the InfoPanel.
+	-->
+	<resources>
+		<res id="LicencePanel.licence" src="LICENSE.txt"/>
+		<res id="installer.langsel.img" src="sorcer-logo.png"/>
+		<res id="shortcutSpec.xml" src="shortcutSpec.xml"/>
+	</resources>
+
+	<!-- 
+	The panels section.
+	We indicate here which panels we want to use. The order will be respected.
+	-->
+	<panels>
+		<panel classname="HelloPanel"/>
+		<panel classname="LicencePanel"/>
+		<panel classname="TargetPanel"/>
+		<panel classname="PacksPanel"/>
+		<panel classname="SummaryPanel"/>
+		<panel classname="InstallPanel"/>
+		<panel classname="ShortcutPanel"/>
+		<panel classname="SimpleFinishPanel"/>
+	</panels>
+
+	<!-- 
+	The packs section.
+	We specify our packs here.
+	-->
+	<packs>
+		<pack name="SORCER Core" installGroups="All,SORCER Core" required="yes">
+			<description>SORCER core distribution</description>
+			<fileset dir="../sorcer-5.0.0-SNAPSHOT" targetdir="$INSTALL_PATH" defaultexcludes="yes"/>
+		</pack>
+
+<!--
+		<pack name="SORCER Examples" installGroups="All,SORCER Examples" required="no">
+			<description>SORCER Examples</description>
+			<fileset dir="../examples" targetdir="$INSTALL_PATH" defaultexcludes="yes">
+                <include name="examples.zip"/>
+            </fileset>
+		</pack>-->
+	</packs>
+
+</installation>
