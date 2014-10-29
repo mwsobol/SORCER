@@ -1,4 +1,4 @@
-package sorcer.arithmetic.service;
+package sorcer.arithmetic.services;
 
 import static org.junit.Assert.assertEquals;
 import static sorcer.co.operator.from;
@@ -29,7 +29,6 @@ import sorcer.arithmetic.provider.impl.SubtractorImpl;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.service.Context;
 import sorcer.service.ContextException;
-import sorcer.service.Exertion;
 import sorcer.service.ExertionException;
 import sorcer.service.Job;
 import sorcer.service.Service;

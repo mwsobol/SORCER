@@ -1,4 +1,4 @@
-package sorcer.arithmetic.job;
+package sorcer.arithmetic.jobs;
 
 import static org.junit.Assert.assertEquals;
 import static sorcer.co.operator.entry;

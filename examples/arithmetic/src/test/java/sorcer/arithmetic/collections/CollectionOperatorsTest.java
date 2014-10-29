@@ -1,4 +1,4 @@
-package sorcer.arithmetic.data;
+package sorcer.arithmetic.collections;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
@@ -10,15 +10,12 @@ import static sorcer.co.operator.columnNames;
 import static sorcer.co.operator.columnSize;
 import static sorcer.co.operator.dbEntry;
 import static sorcer.co.operator.dictionary;
+import static sorcer.co.operator.entries;
 import static sorcer.co.operator.entry;
-import static sorcer.co.operator.inEntry;
-import static sorcer.co.operator.inoutEntry;
 import static sorcer.co.operator.isPersistent;
 import static sorcer.co.operator.key;
 import static sorcer.co.operator.list;
-import static sorcer.co.operator.listContext;
 import static sorcer.co.operator.map;
-import static sorcer.co.operator.outEntry;
 import static sorcer.co.operator.path;
 import static sorcer.co.operator.persistent;
 import static sorcer.co.operator.put;
@@ -37,6 +34,7 @@ import static sorcer.eo.operator.access;
 import static sorcer.eo.operator.add;
 import static sorcer.eo.operator.asis;
 import static sorcer.eo.operator.context;
+import static sorcer.eo.operator.contextModel;
 import static sorcer.eo.operator.flow;
 import static sorcer.eo.operator.get;
 import static sorcer.eo.operator.put;
@@ -52,10 +50,8 @@ import static sorcer.po.operator.pars;
 import static sorcer.po.operator.set;
 import static sorcer.po.operator.value;
 
-import java.io.IOException;
 import java.io.Serializable;
 import java.net.URL;
-import java.rmi.RemoteException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -65,14 +61,11 @@ import java.util.logging.Logger;
 import org.junit.Test;
 
 import sorcer.co.tuple.Entry;
-import sorcer.core.context.ListContext;
 import sorcer.core.context.model.par.Par;
 import sorcer.core.context.model.par.ParModel;
+import sorcer.core.invoker.GroovyInvoker;
+import sorcer.core.invoker.ServiceInvoker;
 import sorcer.service.Context;
-import sorcer.service.ContextException;
-import sorcer.service.EvaluationException;
-import sorcer.service.ExertionException;
-import sorcer.service.SignatureException;
 import sorcer.service.Strategy.Access;
 import sorcer.service.Strategy.Flow;
 import sorcer.util.Sorcer;
@@ -301,7 +294,7 @@ public class CollectionOperatorsTest {
 		
 	}
 	
-
+	
 	@Test
 	public void contextOperator() throws Exception {
 		
@@ -309,14 +302,18 @@ public class CollectionOperatorsTest {
 				 entry("arg/x3", 1.3), entry("arg/x4", 1.4), entry("arg/x5", 1.5));
 		
 		add(cxt, entry("arg/x6", 1.6));
+		add(cxt, entry("arg/x7", invoker("x1 + x3", entries("x1", "x3"))));
 		
 		assertTrue(value(cxt, "arg/x1").equals(1.1));
 		assertEquals(get(cxt, "arg/x1"), 1.1);
 		assertEquals(asis(cxt, "arg/x1"), 1.1);
 		
-		put(cxt, entry("arg/x1", 5.0));
-		assertEquals(get(cxt, "arg/x1"), 5.0);
+		add(cxt, entry("arg/x1", 1.0));
+		assertEquals(get(cxt, "arg/x1"), 1.0);
 
+		add(cxt, entry("arg/x3", 3.0));
+		assertEquals(get(cxt, "arg/x3"), 3.0);
+		
 		Context<Double> subcxt = context(cxt, list("arg/x4", "arg/x5"));
 		logger.info("subcontext: " + subcxt);
 		assertNull(get(subcxt, "arg/x1"));
@@ -325,11 +322,45 @@ public class CollectionOperatorsTest {
 		assertEquals(get(cxt, "arg/x4"), 1.4);
 		assertEquals(get(cxt, "arg/x5"), 1.5);
 		assertEquals(get(cxt, "arg/x6"), 1.6);
+		assertTrue(get(cxt, "arg/x7") instanceof ServiceInvoker);
+		
+		// aliasing entries
+		put(cxt, entry("arg/x6", entry("overwrite", 20.0)));
+		assertTrue(value(cxt, "arg/x6").equals(20.0));
+		
+		// aliasing pars
+		put(cxt, entry("arg/x6", par("overwrite", 40.0)));
+		assertTrue(value(cxt, "arg/x6").equals(40.0));
+
+		// but no direct evaluations
+		Object obj = value(cxt, "arg/x7");
+		logger.info("obj: " + obj);
+		assertTrue(obj.getClass() == GroovyInvoker.class);
+
+	}
+	
+
+	@Test
+	public void contextModeling() throws Exception {
+		
+		Context<Double> cxt = contextModel(entry("arg/x1", 1.0), entry("arg/x2", 2.0), 
+				 entry("arg/x3", 3.0), entry("arg/x4", 4.0), entry("arg/x5", 5.0));
+		
+		add(cxt, entry("arg/x6", 6.0));
+		assertTrue(value(cxt, "arg/x6").equals(6.0));
+
+		put(cxt, entry("arg/x6", entry("overwrite", 20.0)));
+		assertTrue(value(cxt, "arg/x6").equals(20.0));
+		
+		add(cxt, entry("arg/x7", invoker("x1 + x3", entries("x1", "x3"))));	
+		
+		assertTrue(value(cxt, "arg/x7").equals(4.0));
 		
 	}
 	
+	
 	@Test
-	public void parModelOperator() throws Exception {
+	public void parModeling() throws Exception {
 		
 		ParModel pm = parModel("par-model", entry("John/weight", 180.0));
 		add(pm, par("x", 10.0), entry("y", 20.0));

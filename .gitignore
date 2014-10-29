@@ -23,3 +23,5 @@ iGrid-dist*
 toPush*.txt
 junit*.properties
 .metadata/
+/.gradle/
+/.git/

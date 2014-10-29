@@ -1,4 +1,4 @@
-package sorcer.arithmetic.context;
+package sorcer.arithmetic.contexts;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -13,11 +13,12 @@ import static sorcer.co.operator.outEntry;
 import static sorcer.co.operator.path;
 import static sorcer.eo.operator.add;
 import static sorcer.eo.operator.asis;
-import static sorcer.eo.operator.context;
+import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.get;
 import static sorcer.eo.operator.getAt;
 import static sorcer.eo.operator.inPaths;
 import static sorcer.eo.operator.inValues;
+import static sorcer.eo.operator.link;
 import static sorcer.eo.operator.mark;
 import static sorcer.eo.operator.marker;
 import static sorcer.eo.operator.outPaths;
@@ -27,7 +28,6 @@ import static sorcer.eo.operator.select;
 import static sorcer.eo.operator.value;
 import static sorcer.eo.operator.valuesAt;
 
-import java.rmi.RemoteException;
 import java.util.logging.Logger;
 
 import org.junit.Test;
@@ -38,8 +38,6 @@ import sorcer.core.context.ListContext;
 import sorcer.core.context.PositionalContext;
 import sorcer.core.context.ServiceContext;
 import sorcer.service.Context;
-import sorcer.service.ContextException;
-import sorcer.service.ExertionException;
 import sorcer.util.Sorcer;
 
 /**
@@ -89,15 +87,15 @@ public class ContextTest {
 
 	
 	@Test
-	public void weakValues() throws Exception {
+	public void softValues() throws Exception {
 		Context cxt = context("add", inEntry("arg/x1", 20.0), inEntry("arg/x2", 80.0));
 		
 //		logger.info("arg/x1 = " + cxt.getValue("arg/x1"));
 		assertEquals(cxt.getValue("arg/x1"), 20.0);
 //		logger.info("val x1 = " + cxt.getValue("x1"));
 		assertEquals(cxt.getValue("x1"), null);
-//		logger.info("weak x1 = " + cxt.getWeakValue("arg/var/x1"));
-		assertEquals(cxt.getWeakValue("arg/var/x1"), 20.0);
+//		logger.info("soft x1 = " + cxt.getSoftValue("arg/var/x1"));
+		assertEquals(cxt.getSoftValue("arg/var/x1"), 20.0);
 	}
 	
 	
@@ -236,35 +234,28 @@ public class ContextTest {
 	
 	@Test
 	public void linkedContext() throws Exception {
-		Context addContext = new PositionalContext("add");
-		addContext.putInValue("arg1/value", 90.0);
-		addContext.putInValue("arg2/value", 110.0);
 		
-		Context multiplyContext = new PositionalContext("multiply");
-		multiplyContext.putInValue("arg1/value", 10.0);
-		multiplyContext.putInValue("arg2/value", 70.0);
+		Context ac = context("add", 
+				inEntry("arg1/value", 90.0),
+				inEntry("arg2/value", 110.0));
 		
-		ServiceContext invokeContext = new ServiceContext("invoke");
-//		add additional tests with offset
-//		invokeContext.putLink("add", addContext, "offset");
-//		invokeContext.putLink("multiply", multiplyContext, "offset");
+		Context mc = context("multiply", 
+				inEntry("arg1/value", 10.0),
+				inEntry("arg2/value", 70.0));
 		
-		invokeContext.putLink("add", addContext);
-		invokeContext.putLink("multiply", multiplyContext);
-		
-		ContextLink addLink = (ContextLink)invokeContext.getLink("add");
-		ContextLink multiplyLink = (ContextLink)invokeContext.getLink("multiply");
-		
-//		logger.info("invoke context: " + invokeContext);
+		Context lc = context("invoke");
 
-//		logger.info("path arg1/value: " + addLink.getContext().getValue("arg1/value"));
-		assertEquals(addLink.getContext().getValue("arg1/value"), 90.0);
-//		logger.info("path arg2/value: " + multiplyLink.getContext().getValue("arg2/value"));
-		assertEquals(multiplyLink.getContext().getValue("arg2/value"), 70.0);
-//		logger.info("path add/arg1/value: " + invokeContext.getValue("add/arg1/value"));		
-		assertEquals(invokeContext.getValue("add/arg1/value"), 90.0);
-//		logger.info("path multiply/arg2/value: " + invokeContext.getValue("multiply/arg2/value"));		
-		assertEquals(invokeContext.getValue("multiply/arg2/value"), 70.0);
+		link(lc, "add", ac);
+		link(lc, "multiply", mc);
+		
+		ac = context(getLink(lc, "add"));
+		mc = context(getLink(lc, "multiply"));
+	
+		assertEquals(value(ac, "arg1/value"), 90.0);
+		assertEquals(value(mc,"arg2/value"), 70.0);
+		
+		assertEquals(value(lc, "add/arg1/value"), 90.0);
+		assertEquals(value(lc, "multiply/arg2/value"), 70.0);
 
 	}
 	

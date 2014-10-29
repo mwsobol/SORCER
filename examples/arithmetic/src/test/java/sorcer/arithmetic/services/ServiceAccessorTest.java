@@ -1,4 +1,4 @@
-package sorcer.arithmetic.service;
+package sorcer.arithmetic.services;
 
 import static org.junit.Assert.assertNotNull;
 import static sorcer.eo.operator.sig;

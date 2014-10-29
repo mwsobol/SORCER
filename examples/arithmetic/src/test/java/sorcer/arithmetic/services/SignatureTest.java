@@ -1,4 +1,4 @@
-package sorcer.arithmetic.service;
+package sorcer.arithmetic.services;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -60,7 +60,8 @@ public class SignatureTest {
 	public void referencingObjectsAsProviders() throws SignatureException,
 			EvaluationException, ExertionException, ContextException {
 		
-		Signature s = sig("getTime", new Date());
+		Object obj = new Date();
+		Signature s = sig("getTime", obj);
 		
 		// get service provider for signature
 		Object prv = provider(s);
@@ -82,9 +83,7 @@ public class SignatureTest {
 		logger.info("selector of s: " + selector(s));
 		logger.info("service type of s: " + type(s));
 		assertTrue(prv instanceof Date);
-		
-		logger.info("ZZZZZZ task: " + service("time", s));
-		
+				
 		value(service("time", s));
 		// request the service
 		logger.info("time: " + value(service("time", s)));

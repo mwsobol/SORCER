@@ -1,4 +1,4 @@
-package sorcer.arithmetic.parModel;
+package sorcer.arithmetic.parModels;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -42,8 +42,6 @@ import static sorcer.po.operator.set;
 import static sorcer.po.operator.value;
 import groovy.lang.Closure;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.logging.Logger;
@@ -63,10 +61,7 @@ import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.service.Condition;
 import sorcer.service.Context;
 import sorcer.service.ContextException;
-import sorcer.service.EvaluationException;
-import sorcer.service.ExertionException;
 import sorcer.service.Job;
-import sorcer.service.SignatureException;
 import sorcer.service.Task;
 import sorcer.util.Sorcer;
 
