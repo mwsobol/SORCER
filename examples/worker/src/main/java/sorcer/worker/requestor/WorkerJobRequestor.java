@@ -14,6 +14,7 @@ import sorcer.service.Job;
 import sorcer.service.Task;
 import sorcer.util.Log;
 import sorcer.util.Sorcer;
+import sorcer.worker.provider.Worker;
 
 @SuppressWarnings("rawtypes")
 public class WorkerJobRequestor {
@@ -70,12 +71,9 @@ public class WorkerJobRequestor {
         context3.putValue("to/provider/name", pn3);
         context3.putValue("requestor/work", Works.work3);
 
-		NetSignature signature1 = new NetSignature("doWork",
-				sorcer.ex2.provider.Worker.class, pn1);
-		NetSignature signature2 = new NetSignature("doWork",
-				sorcer.ex2.provider.Worker.class, pn2);
-		NetSignature signature3 = new NetSignature("doWork",
-				sorcer.ex2.provider.Worker.class, pn3);
+		NetSignature signature1 = new NetSignature("doWork", Worker.class, pn1);
+		NetSignature signature2 = new NetSignature("doWork", Worker.class, pn2);
+		NetSignature signature3 = new NetSignature("doWork", Worker.class, pn3);
 		
 		Task task1 = new NetTask("work1", signature1, context1);
 		Task task2 = new NetTask("work2", signature2, context2);

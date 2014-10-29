@@ -11,11 +11,12 @@ import static sorcer.eo.operator.put;
 import static sorcer.eo.operator.revalue;
 
 import java.io.Serializable;
+import java.rmi.RemoteException;
 import java.util.Scanner;
 import java.util.logging.Logger;
 
-import sorcer.pml.invoker.service.Cylinder;
-import sorcer.pml.invoker.service.Sphere;
+import sorcer.pml.provider.Cylinder;
+import sorcer.pml.provider.Sphere;
 import sorcer.service.Context;
 import sorcer.service.ContextException;
 
@@ -29,21 +30,21 @@ public class Volume implements Sphere, Cylinder, Serializable {
 	
 	public Volume(Context context) {}
 	
-	public Context getSphereSurface(Context context) throws ContextException {
+	public Context getSphereSurface(Context context) throws RemoteException, ContextException {
 		double radius = (Double) revalue(context, "sphere/radius");
 		put(context,
 			entry("sphere/surface", 4.0 * Math.PI * Math.pow(radius, 3)));
 		return context;
 	}
 
-	public Context getSphereVolume(Context context) throws ContextException {
+	public Context getSphereVolume(Context context) throws ContextException, RemoteException {
 		double radius = (Double) revalue(context, "sphere/radius");
 		put(context, entry("sphere/volume",
 			(4.0 / 3.0) * Math.PI * Math.pow(radius, 3)));
 		return context;
 	}
 
-	public Context getCylinderSurface(Context context) throws ContextException {
+	public Context getCylinderSurface(Context context) throws ContextException, RemoteException {
 		double radius = (Double) revalue(context, "cylinder/radius");
 		double height = (Double) revalue(context, "cylinder/height");
 		put(context, entry("cylinder/surface", 
@@ -52,7 +53,7 @@ public class Volume implements Sphere, Cylinder, Serializable {
 		return context;
 	}
 
-	public Context getCylinderVolume(Context context) throws ContextException {
+	public Context getCylinderVolume(Context context) throws ContextException, RemoteException {
 		double radius = (Double) revalue(context, "cylinder/radius");
 		double height = (Double) revalue(context, "cylinder/height");
 		put(context, entry("cylinder/volume", 
@@ -61,7 +62,7 @@ public class Volume implements Sphere, Cylinder, Serializable {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static void main(String... args) throws ContextException {
+	public static void main(String... args) throws ContextException, RemoteException {
 		Volume v = new Volume();
 		if (args.length == 2 && args[0].equals("cylinder")
 				&& args[1].equals("input")) {

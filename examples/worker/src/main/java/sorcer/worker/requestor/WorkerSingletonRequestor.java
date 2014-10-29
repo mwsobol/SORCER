@@ -14,6 +14,7 @@ import sorcer.service.Job;
 import sorcer.service.Task;
 import sorcer.util.Log;
 import sorcer.util.Sorcer;
+import sorcer.worker.provider.Worker;
 
 public class WorkerSingletonRequestor {
 
@@ -51,8 +52,7 @@ public class WorkerSingletonRequestor {
         context.putValue("to/provider/name", pn);
         context.putValue("requestor/work", Works.work2);
 
-        NetSignature signature = new NetSignature("doWork",
-				sorcer.ex2.provider.Worker.class, pn);
+        NetSignature signature = new NetSignature("doWork", Worker.class, pn);
 
 		Task task = new NetTask("work", signature, context);
 

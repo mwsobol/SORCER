@@ -11,5 +11,9 @@
 	<classpathentry kind="con" path="org.springsource.ide.eclipse.gradle.dsld.classpathcontainer"/>
 	<classpathentry kind="con" path="GROOVY_DSL_SUPPORT"/>
 	<classpathentry kind="con" path="GROOVY_SUPPORT"/>
+	<classpathentry kind="lib" path="core/sorcer-platform/build/libs/sorcer-platform-5.0.0-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="core/sorcer-lib/build/libs/sorcer-lib-5.0.0-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="rio/lib/jsk-platform-2.2.2.jar"/>
+	<classpathentry kind="lib" path="rio/lib/start-2.2.2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -1,5 +1,7 @@
 package sorcer.pml.provider;
 
+import java.rmi.RemoteException;
+
 import sorcer.service.Context;
 import sorcer.service.ContextException;
 
@@ -10,7 +12,7 @@ import sorcer.service.ContextException;
 @SuppressWarnings("rawtypes")
 public interface Sphere {
 
-	public Context getSphereSurface(Context context) throws ContextException;
+	public Context getSphereSurface(Context context) throws ContextException, RemoteException;
 
-	public Context getSphereVolume(Context context) throws ContextException;
+	public Context getSphereVolume(Context context) throws ContextException, RemoteException;
 }

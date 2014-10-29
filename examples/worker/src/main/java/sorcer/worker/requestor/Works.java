@@ -5,10 +5,9 @@ import java.util.List;
 
 import sorcer.core.context.Contexts;
 import sorcer.core.context.ServiceContext;
-import sorcer.ex2.provider.InvalidWork;
-import sorcer.ex2.provider.Work;
 import sorcer.service.Context;
 import sorcer.service.ContextException;
+import sorcer.worker.provider.Work;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class Works implements Serializable {
@@ -19,7 +18,7 @@ public class Works implements Serializable {
 
 	static {
 		work1 = new Work() {
-			public Context exec(Context cxt) throws InvalidWork, ContextException {
+			public Context exec(Context cxt) throws ContextException {
 				String sigPrefix = ((ServiceContext)cxt).getCurrentPrefix();
 				String operand1Path = "requestor/operand/1";
 				String operand2Path = "requestor/operand/2";
@@ -56,7 +55,7 @@ public class Works implements Serializable {
 		};
 
 		work2 = new Work() {
-			public Context exec(Context cxt) throws InvalidWork, ContextException {
+			public Context exec(Context cxt) throws ContextException {
 				String sigPrefix = ((ServiceContext)cxt).getCurrentPrefix();
 				String operand1Path = "requestor/operand/1";
 				String operand2Path = "requestor/operand/2";
@@ -93,7 +92,7 @@ public class Works implements Serializable {
 		};
 
 		work3 = new Work() {
-			public Context exec(Context cxt) throws InvalidWork, ContextException {
+			public Context exec(Context cxt) throws ContextException {
 				String sigPrefix = ((ServiceContext)cxt).getCurrentPrefix();
 				String operand1Path = "requestor/operand/1";
 				String operand2Path = "requestor/operand/2";
@@ -131,7 +130,7 @@ public class Works implements Serializable {
 		};
 		
 		work4 = new Work() {
-			public Context exec(Context cxt) throws InvalidWork, ContextException {
+			public Context exec(Context cxt) throws ContextException {
 				String sigPrefix = ((ServiceContext)cxt).getCurrentPrefix();
 				String operand1Path = "requestor/operand/1";
 				String operand2Path = "requestor/operand/2";

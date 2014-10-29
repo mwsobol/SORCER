@@ -1,9 +1,10 @@
 package sorcer.worker.provider;
 
+import java.io.Serializable;
+
 import sorcer.service.Context;
 import sorcer.service.ContextException;
-
-import java.io.Serializable;
+import sorcer.worker.provider.impl.InvalidWork;
 
 public interface Work extends Serializable {
 

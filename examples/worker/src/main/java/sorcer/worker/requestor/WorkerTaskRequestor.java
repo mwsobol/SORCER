@@ -11,6 +11,7 @@ import sorcer.service.Task;
 import sorcer.util.Log;
 import sorcer.util.Sorcer;
 import sorcer.util.SorcerEnv;
+import sorcer.worker.provider.Worker;
 
 @SuppressWarnings("rawtypes")
 public class WorkerTaskRequestor {
@@ -48,8 +49,7 @@ public class WorkerTaskRequestor {
         context.putValue("requestor/work", Works.work2);
 
 
-        NetSignature signature = new NetSignature("doWork",
-				sorcer.ex2.provider.Worker.class, pn);
+        NetSignature signature = new NetSignature("doWork", Worker.class, pn);
 
 		Task task = new NetTask("work", signature, context);
 
