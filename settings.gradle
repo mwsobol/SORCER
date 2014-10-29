@@ -23,4 +23,5 @@ project(":sorcer-boot").projectDir = file("tools/sorcer-boot")
 include 'ssb'
 project(":ssb").projectDir = file("tools/ssb")
 include 'examples:arithmetic'
+include 'examples:worker'
 //include 'sorcer-tests'

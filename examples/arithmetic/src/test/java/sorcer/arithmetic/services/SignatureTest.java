@@ -56,6 +56,7 @@ public class SignatureTest {
 		System.setProperty("java.rmi.server.RMIClassLoaderSpi","org.rioproject.rmi.ResolvingLoader");
 	}
 	
+	
 	@Test
 	public void referencingObjectsAsProviders() throws SignatureException,
 			EvaluationException, ExertionException, ContextException {
@@ -67,6 +68,27 @@ public class SignatureTest {
 		Object prv = provider(s);
 		logger.info("provider of s: " + prv);
 		assertTrue(prv instanceof Date);
+		
+	}
+	
+	
+	@Test
+	public void referencingUtilityClassProviders() throws Exception {
+		
+		Signature ms = sig("random", Math.class, "random");
+		Object prv = provider(ms);
+		logger.info("provider of s: " + prv);
+		assertTrue(prv instanceof Math);
+		
+		ms = sig("max", Math.class, "max");
+		Context cxt = context(
+				parameterTypes(new Class[] { double.class, double.class }), 
+				args(new Object[] { 200.11, 3000.0 }));
+		
+		// request the service
+		logger.info("time: " + value(service("max", ms, cxt)));
+		assertTrue(value(service("max", ms, cxt)) instanceof Double);
+		assertTrue(value(service("max", ms, cxt)).equals(3000.0));
 		
 	}
 	
@@ -91,6 +113,7 @@ public class SignatureTest {
 		
 	}
 	
+	
 	@Test
 	public void classWithFactoryAsService() throws SignatureException,
 			EvaluationException, ExertionException, ContextException, IOException {
@@ -111,6 +134,7 @@ public class SignatureTest {
 		assertTrue(value(service("month", ps, cxt)).equals(((Calendar)prv).get(Calendar.MONTH)));
 		
 	}
+	
 	
 	@Test
 	public void localSignature() throws SignatureException  {
@@ -157,6 +181,7 @@ public class SignatureTest {
 		assertTrue(prv instanceof Proxy);
 		
 	}
+	
 	
 	@Test
 	public void remoteService() throws SignatureException, 
