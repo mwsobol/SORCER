@@ -1,0 +1,43 @@
+jar {
+	manifest {
+		attributes("Implementation-Title": "SORCER Volume service bean", "Implementation-Version": version)
+	}
+	classifier = "bean"
+	dependsOn classes
+	from sourceSets.main.output
+	exclude('sorcer/pml/model/**')
+}
+
+task beanDlJar(type: Jar) {
+	manifest {
+		attributes("Implementation-Title": "SORCER Volume bean Exported Classes", "Implementation-Version": version)
+	}
+	classifier = "dl"
+	dependsOn classes
+	from sourceSets.main.output
+	include('sorcer/pml/provider/*')
+}
+
+task modelJar(type: Jar) {
+	manifest {
+		attributes("Implementation-Title": "SORCER Par-model", "Implementation-Version": version)
+	}
+    classifier = "model"
+	dependsOn classes
+	from sourceSets.main.output
+	include('sorcer/pml/model/*')
+}
+
+artifacts {
+    archives modelJar
+}
+
+install.dependsOn(['modelJar', 'beanDlJar'])
+publish.dependsOn(install)
+build.dependsOn(install)
+
+dependencies { 
+	compile project(':sorcer-platform')
+    compile project(':sorcer-lib')
+    compile project(':sos-db-prv')
+}

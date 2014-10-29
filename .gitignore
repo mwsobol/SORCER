@@ -25,3 +25,5 @@ junit*.properties
 .metadata/
 /.gradle/
 /.git/
+/.settings/
+/settings.gradle

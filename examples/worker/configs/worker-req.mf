@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+Main-Class: sorcer.ex2.requestor.WorkerJobRequestor
+Class-path: common/jsk-platform.jar common/jsk-lib.jar common/jsk-policy.jar common/jsk-resources.jar
+Sorcer-Version: @SORCER_VERSION@
+Sorcer-Build: @SORCER_BUILD@

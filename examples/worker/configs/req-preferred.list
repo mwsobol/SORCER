@@ -1,0 +1,11 @@
+PreferredResources-Version: 1.0
+Preferred: true
+
+Name: sorcer/core/exertion/-
+Preferred: false
+Name: sorcer/core/context/-
+Preferred: false
+Name: sorcer/core/signature/-
+Preferred: false
+Name: sorcer/ex2/requestor/WorkerJobRequestor
+Preferred: false
