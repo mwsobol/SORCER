@@ -25,3 +25,4 @@ project(":ssb").projectDir = file("tools/ssb")
 include 'examples:arithmetic'
 include 'examples:worker'
 //include 'sorcer-tests'
+

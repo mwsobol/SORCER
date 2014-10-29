@@ -25,7 +25,7 @@ ext {
     distDir = "${project.rootProject.projectDir.path}/distribution/sorcer"
 }
 
-task izpack(/*dependsOn: [prepareIzpack]*/) {
+task installer(dependsOn: ["distribution"]) {
     description = "Creates an IzPack based installer."
     inputs.dir("distribution/sorcer-${version}" as File)
     outputs.files "distribution/sorcer-${version}-installer.jar"
@@ -145,17 +145,6 @@ task distribution(dependsOn: [gatherDeps]) {
             }
         }
 
-        /* Create a versions.properties file based on the versions in this build */
-        Properties versionProps = new Properties()
-        File versionPropsFile = new File("configs/versions.properties")
-        versionProps.setProperty("river.version", riverVersion)
-        versionProps.setProperty("rio.version", rioVersion)
-        versionProps.setProperty("sorcer.version", version)
-        versionProps.setProperty("blitz.version", blitzVersion)
-        versionProps.setProperty("sorcer.modeling.version", sorcerModelingVersion)
-        versionProps.setProperty("groovy.version", groovyVersion)
-        versionProps.store(versionPropsFile.newWriter(), null)
-
         copy {
             from("${project.rootProject.projectDir}") {
                 include "LICENSE.txt"
@@ -188,12 +177,25 @@ task distribution(dependsOn: [gatherDeps]) {
                 include "bin/images/**"
 
                 include "rio/**"
+                exclude "rio/deploy/**"
                 exclude "rio/docs/**"
+                exclude "rio/docs.zip"
                 exclude "rio/logs/**"
             }
             into "${distDir}-${version}"
             rename "standalone.sorcer.env", "sorcer.env"
         }
+
+        /* Create a versions.properties file based on the versions in this build */
+        Properties versionProps = new Properties()
+        File versionPropsFile = file("${distDir}-${version}/configs/versions.properties")
+        versionProps.setProperty("river.version", riverVersion)
+        versionProps.setProperty("rio.version", rioVersion)
+        versionProps.setProperty("sorcer.version", version)
+        versionProps.setProperty("blitz.version", blitzVersion)
+        versionProps.setProperty("sorcer.modeling.version", sorcerModelingVersion)
+        versionProps.setProperty("groovy.version", groovyVersion)
+        versionProps.store(versionPropsFile.newWriter(), null)
 
         println "Zipping distribution sorcer-${version} -> sorcer-${version}.zip"
         ant.zip(destfile:"distribution/sorcer-${version}.zip",
