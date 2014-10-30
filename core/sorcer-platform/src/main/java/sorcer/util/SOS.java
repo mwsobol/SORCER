@@ -41,6 +41,12 @@ public class SOS implements SorcerConstants {
 	 */
 	public static String SORCER_ENV_FILENAME = "sorcer.env";
 
+    /**
+     * Default name 'data.formats' for a file defining service context node
+     * types.
+     */
+    protected static String CONTEXT_DATA_FORMATS = "data.formats";
+
 	/**
 	 * Default name 'provider.properties' for a file defining provider
 	 * properties.
