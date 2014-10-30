@@ -21,7 +21,6 @@ import java.rmi.RemoteException;
 import java.util.concurrent.Callable;
 import java.util.logging.Logger;
 
-import sorcer.co.tuple.Entry;
 import sorcer.co.tuple.ExecPath;
 import sorcer.co.tuple.InputEntry;
 import sorcer.co.tuple.Tuple2;
@@ -126,17 +125,17 @@ public class operator {
 		return pm;
 	}
 	
-	public static Object value(Par par) throws EvaluationException,
+	public static <T> T value(Par<T> par) throws EvaluationException,
 			RemoteException {
 		return par.getValue();
 	}
 	
-	public static Object get(ParModel pm, String parname, Arg... parametrs)
+	public static <T> T get(ParModel<T> pm, String parname, Arg... parametrs)
 			throws ContextException, RemoteException {
 		Object obj = pm.asis(parname);
 		if (obj instanceof Par)
 			obj = ((Par)obj).getValue(parametrs);
-		return obj;
+		return (T)obj;
 	}
 	
 	public static Object asis(ParModel pm, String parname)
