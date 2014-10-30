@@ -2,8 +2,8 @@ jar {
 	manifest {
 		attributes("Implementation-Title": "SORCER Exported Classes", "Implementation-Version": version)
 	}
-	from sourceSets.main.output.classesDir include "**"
-	from sourceSets.main.resources include "sorcer-ico.png"
+	//from sourceSets.main.output.classesDir include "**"
+	//from sourceSets.main.resources include "sorcer-ico.png"
 }
 	
 dependencies {

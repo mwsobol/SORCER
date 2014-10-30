@@ -1,36 +1,60 @@
-jar {
-	manifest {
-		attributes("Implementation-Title": "SORCER Service Booter", "Implementation-Version": version,
-		"Class-Path": "river/start-${riverVersion}.jar river/jsk-lib-${riverVersion}.jar river/serviceui-${riverVersion}.jar",
-		"Main-Class": "com.sun.jini.start.ServiceStarter",
-		"Premain-Class": "sorcer.provider.boot.InstrumentationHook",
-		"SORCER-Version": "${sorcerVersion}")
-	}
-	from sourceSets.main.output.classesDir include "**"
-	from sourceSets.main.resources 
-	include "META-INF/platform.xml", "META-INF/services/net.jini.config.Configuration"
-	
-}
+/*
+ * Copyright to the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
-sourceSets {
-	main {
-		java {
-			srcDir "${project.projectDir}/src/main/java" include "**"
-			srcDir rootProject.project(':sorcer-dl').sourceSets.main.java.srcDirs[0] 
-			include "sorcer/core/SorcerConstants.java"
-			srcDir rootProject.project(':sorcer-platform').sourceSets.main.java.srcDirs[0]
-			include "sorcer/core/SorcerConstants.java"
-		}
-	}
-}
-	
-//sourceSets.main.java.each { println it }
-	
 dependencies {
+    compile project(':sorcer-platform')
 	compile "org.apache.river:start:${riverVersion}",
 			"org.rioproject:rio-platform:${rioVersion}",
 			"org.rioproject:rio-lib:${rioVersion}",
     		"org.rioproject:rio-api:${rioVersion}"
 }
 
-dependencies { compile project(':sorcer-platform') }
+jar {
+    from(configurations.compile.collect { it.isDirectory() ? it : zipTree(it)}) {
+        include "sorcer/core/SorcerConstants.class"
+        include "sorcer/util/SOS.class"
+        include "sorcer/core/provider/util/PropertyHelper.class"
+        /*
+        include "sorcer/core/provider/AdministratableProvider.class"
+        include "sorcer/core/provider/RemoteContextManagement.class"
+        include "sorcer/core/provider/Provider.class"
+        include "sorcer/service/ConfigurationException.class"
+        include "sorcer/service/Context.class"
+        include "sorcer/service/ContextException.class"
+        include "sorcer/service/Evaluation.class"
+        include "sorcer/service/ExertionException.class"
+        include "sorcer/service/Identifiable.class"
+        include "sorcer/service/Invocation.class"
+        include "sorcer/service/Mappable.class"
+        include "sorcer/service/Monitorable.class"
+        include "sorcer/service/Service.class"
+
+        include "sorcer/core/ContextManagement.class"
+
+        include "net/jini/admin/Administrable.class"
+        include "net/jini/admin/JoinAdmin.class"
+        include "com/sun/jini/admin/DestroyAdmin.class"*/
+    }
+    manifest {
+        attributes("Implementation-Title": "SORCER Service Booter",
+                   "Implementation-Version": version,
+                   "Class-Path": "river/lib/start-${riverVersion}.jar river/lib/jsk-lib-${riverVersion}.jar river/lib/serviceui-${riverVersion}.jar",
+                   "Main-Class": "com.sun.jini.start.ServiceStarter",
+                   "Premain-Class": "sorcer.provider.boot.InstrumentationHook",
+                   "SORCER-Version": "${version}")
+    }
+}
+
