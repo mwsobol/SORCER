@@ -44,8 +44,8 @@ To include this file in your custom *-run-buld.xml have the import line:
 	<loadproperties srcfile="${sorcer.home}/configs/sorcer.env" />
 
 	<property name="lib" value="${sorcer.home}/lib" />
-	<property name="jini.lib" value="${rio.home}/lib" />
-	<property name="jini-dl.lib" value="${rio.home}/lib-dl" />
+	<property name="jini.lib" value="${lib}/river" />
+	<property name="jini-dl.lib" value="${lib}/river" />
     <property name="rio.home" value="${sorcer.home}/rio" />
 	<property name="rio.lib" value="${rio.home}/lib" />
 	<property name="rio-dl.lib" value="${rio.home}/lib-dl" />
