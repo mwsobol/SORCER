@@ -36,7 +36,7 @@
 		<pathelement location="${rio.lib}/groovy-all-${groovy.version}.jar" />
 		<pathelement location="${rio.lib}/jsk-lib-${river.version}.jar" />
 		<pathelement location="${rio.lib}/jsk-platform-${river.version}.jar" />
-		<pathelement location="${rio.lib}/outrigger-dl-${river.version}.jar" />
+		<pathelement location="${lib}/river/outrigger-dl-${river.version}.jar" />
 		<pathelement location="${rio.lib}/serviceui-${river.version}.jar" />
         <pathelement location="${rio.lib}/rio-platform-${rio.version}.jar" />
         <pathelement location="${rio-dl.lib}/rio-api-${rio.version}.jar" />
