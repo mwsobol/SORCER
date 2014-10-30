@@ -7,6 +7,7 @@ import static sorcer.eo.operator.condition;
 import static sorcer.eo.operator.context;
 import static sorcer.eo.operator.in;
 import static sorcer.eo.operator.job;
+import static sorcer.eo.operator.model;
 import static sorcer.eo.operator.out;
 import static sorcer.eo.operator.pipe;
 import static sorcer.eo.operator.result;
@@ -24,7 +25,6 @@ import static sorcer.po.operator.invoke;
 import static sorcer.po.operator.invoker;
 import static sorcer.po.operator.loop;
 import static sorcer.po.operator.methodInvoker;
-import static sorcer.po.operator.model;
 import static sorcer.po.operator.next;
 import static sorcer.po.operator.opt;
 import static sorcer.po.operator.par;
@@ -32,24 +32,24 @@ import static sorcer.po.operator.pars;
 import static sorcer.po.operator.put;
 import static sorcer.po.operator.runnableInvoker;
 import static sorcer.po.operator.set;
+import static sorcer.po.operator.value;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.URL;
-import java.rmi.RMISecurityManager;
 import java.rmi.RemoteException;
 import java.util.Properties;
 import java.util.logging.Logger;
 
 import junit.framework.Assert;
-import junit.sorcer.core.provider.AdderImpl;
-import junit.sorcer.core.provider.MultiplierImpl;
-import junit.sorcer.core.provider.SubtractorImpl;
 import net.jini.core.transaction.TransactionException;
 
 import org.junit.Test;
 
+import sorcer.arithmetic.provider.impl.AdderImpl;
+import sorcer.arithmetic.provider.impl.MultiplierImpl;
+import sorcer.arithmetic.provider.impl.SubtractorImpl;
 import sorcer.core.context.model.par.Par;
 import sorcer.core.context.model.par.ParModel;
 import sorcer.core.invoker.AltInvoker;
@@ -57,7 +57,7 @@ import sorcer.core.invoker.Invocable;
 import sorcer.core.invoker.OptInvoker;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.core.provider.rendezvous.ServiceJobber;
-import sorcer.pml.invoker.service.Volume;
+import sorcer.pml.provider.impl.Volume;
 import sorcer.service.Condition;
 import sorcer.service.Context;
 import sorcer.service.ContextException;
@@ -85,7 +85,7 @@ public class InvokerTest {
 				+ "/configs/sorcer.logging");
 		System.setProperty("java.security.policy", Sorcer.getHome()
 				+ "/configs/policy.all");
-		System.setSecurityManager(new RMISecurityManager());
+		System.setSecurityManager(new SecurityManager());
 		Sorcer.setCodeBase(new String[] { "ju-invoker-beans.jar" });
 	}
 

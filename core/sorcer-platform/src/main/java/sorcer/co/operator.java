@@ -225,11 +225,7 @@ public class operator {
 		return new OutputEntry(path, value, index);
 	}
 
-	public static <T> OutputEntry<T> dbOutput(String path, T value) {
-		return new OutputEntry(path, value, true, 0);
-	}
-
-	public static <T> OutputEntry<T> dbOut(String path, T value) {
+	public static <T> OutputEntry<T> dbOutEntry(String path, T value) {
 		return new OutputEntry(path, value, true, 0);
 	}
 
@@ -257,11 +253,13 @@ public class operator {
 		return new InputEntry(path, value, 0);
 	}
 
-	public static <T> InputEntry<T> dbInput(String path, T value) {
-		return new InputEntry(path, value, true, 0);
+	public static <T> InputEntry<T> dbInEntry(String path, T value, String annotation) {
+		InputEntry<T> ie = new InputEntry(path, value, true, 0);
+		ie.annotation(annotation);
+		return ie;
 	}
-
-	public static <T> InputEntry<T> dbIn(String path, T value) {
+	
+	public static <T> InputEntry<T> dbInEntry(String path, T value) {
 		return new InputEntry(path, value, true, 0);
 	}
 
