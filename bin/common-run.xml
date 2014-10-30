@@ -50,14 +50,14 @@ To include this file in your custom *-run-buld.xml have the import line:
 	<property name="rio-dl.lib" value="${rio.home}/lib-dl" />
 
 	<property name="sorcer.lib" value="${lib}/sorcer/lib" />
-	<property name="common.lib" value="${sorcer.lib}/common" />
+	<property name="common.lib" value="${lib}/common" />
 	<property name="sorcer-dl.lib" value="${lib}/sorcer/lib-dl" />
 	<property name="sorcer-ext.lib" value="${lib}/sorcer/lib-ext" />
 	<property name="support.lib" value="${common.lib}/buildsupport" />
-	<property name="blitz.lib" value="${sorcer.lib}/blitz" />
+	<property name="blitz.lib" value="${lib}/blitz" />
 
-	<property name="iGrid.policy" value="${sorcer.home}/policy" />
-	<property name="iGrid.config" value="${sorcer.home}/configs" />
+	<property name="sorcer.policy" value="${sorcer.home}/policy" />
+	<property name="sorcer.config" value="${sorcer.home}/configs" />
 
 	<!-- Declare versions as properties -->
 	<property name="modeling.version" value="1.1.9" />
@@ -171,10 +171,10 @@ To include this file in your custom *-run-buld.xml have the import line:
 
 	<!--<echo message="provider.webster.interface.TMP = ${provider.webster.interface.TMP}" />-->
 
-	<condition property="provider.webster.url" value="http://${env.IGRID_WEBSTER_INTERFACE}:${env.IGRID_WEBSTER_PORT}">
+	<condition property="provider.webster.url" value="http://${env.SORCER_WEBSTER_INTERFACE}:${env.SORCER_WEBSTER_PORT}">
 		<and>
-			<isset property="env.IGRID_WEBSTER_INTERFACE" />
-			<isset property="env.IGRID_WEBSTER_PORT" />
+			<isset property="env.SORCER_WEBSTER_INTERFACE" />
+			<isset property="env.SORCER_WEBSTER_PORT" />
 		</and>
 	</condition>
 

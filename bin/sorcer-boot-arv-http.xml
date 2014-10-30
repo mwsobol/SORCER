@@ -28,11 +28,13 @@
                 <pathelement location="${rio.lib}/rio-start-${rio.version}.jar" />
             	<pathelement location="${rio-dl.lib}/rio-api-${rio.version}.jar" />
                 <pathelement location="${rio.lib}/logging/slf4j-jdk14-${slf4j.version}.jar" />
+            	<pathelement location="${lib}/common/je-${je.version}.jar"/>
             </classpath>
 			<arg value="../configs/boot-sorcer-arv-http.config" />
 			<sysproperty key="sorcer.home" value="${sorcer.home}" />
 			<sysproperty key="sorcer.version" value="${sorcer.version}" />
 			<sysproperty key="river.version" value="${river.version}" />
+			<sysproperty key="blitz.version" value="${blitz.version}" />
 			<sysproperty key="je.version" value="${je.version}" />
 			<sysproperty key="rio.home" value="${env.RIO_HOME}" />
 			<sysproperty key="sorcer.env.file" value="${sorcer.home}/configs/sorcer.env" />

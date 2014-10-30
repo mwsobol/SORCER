@@ -35,7 +35,13 @@ public class SorcerDescriptorUtil {
 	private static String sorcerVersion = System.getProperty("sorcer.version");
 	private static String riverVersion = System.getProperty("river.version");
 	private static String jeVersion = System.getProperty("je.version");
-
+	
+	private static String fs = File.separator;
+	private static String ps = File.pathSeparator;
+	private static String sorcerHome = getHomeDir();
+	private static String sorcerLib = sorcerHome +fs +"distribution" + fs + 
+			"sorcer-"+System.getProperty("sorcer.version") +fs +"lib";
+	private static String  jiniLib = sorcerHome+fs +"rio"+fs +"lib";
 	
 	/**
 	 * Get the {@link com.sun.jini.start.ServiceDescriptor} instance for
@@ -138,10 +144,8 @@ public class SorcerDescriptorUtil {
 				+ startPort + ", endPort:" + endPort 
 				+ ", debug: " + debug + ", isDaemon: " + isDaemon);
 		int websterPort = 0;
-		String iGridHome = getHomeDir();
-		if (iGridHome == null)
+		if (sorcerLib == null)
 			throw new RuntimeException("'sorcer.home' property not declared");
-		String fs = File.separator;
 		// anonymous case
 		if (port == 0) {
 			websterPort = Booter.getAnonymousPort(); 
@@ -154,7 +158,7 @@ public class SorcerDescriptorUtil {
 			websterPort = Booter.getPort();
 		}
 		
-		String webster = iGridHome + fs + "lib" + fs + "sorcer" + fs
+		String webster = sorcerLib + fs + "sorcer" + fs
 				+ "lib-ext" + fs + "webster-" + sorcerVersion + ".jar";
 		String websterRoots = concat(roots, ';');
 		String websterClass = "sorcer.tools.webster.Webster";
@@ -248,14 +252,12 @@ public class SorcerDescriptorUtil {
 	public static ServiceDescriptor getProvider(String policy,
 			String hostAddress, int port, String... jobberConfig)
 			throws IOException {
-		String fs = File.separator;
-		String iGridHome = System.getProperty("sorcer.home");
-		if (iGridHome == null)
+		if (sorcerHome == null)
 			throw new RuntimeException("'sorcer.home' property not declared");
 		
 		// service provider classpath
 		String jobberClasspath = ConfigUtil.concat(new Object[] {
-				iGridHome,fs,"lib",fs, "sorcer",fs,"lib",fs,"sorcer-platform-" + sorcerVersion + ".jar"
+				sorcerLib,fs,"sorcer",fs,"lib",fs,"sorcer-platform-" + sorcerVersion + ".jar"
 		});
 		
 		// service provider codebase
@@ -342,14 +344,12 @@ public class SorcerDescriptorUtil {
 	public static ServiceDescriptor getSpacer(String policy,
 			String hostAddress, int port, String... spacerConfig)
 			throws IOException {
-		String fs = File.separator;
-		String iGridHome = System.getProperty("sorcer.home");
-		if (iGridHome == null)
+		if (sorcerHome == null)
 			throw new RuntimeException("'sorcer.home' property not declared");
 		
 		// service provider classpath
 		String spacerClasspath = ConfigUtil.concat(new Object[] {
-				iGridHome,fs,"lib",fs, "sorcer",fs,"lib",fs,"sos-rendezvous-" + sorcerVersion + ".jar"});
+				sorcerLib,fs,"sorcer",fs,"lib",fs,"sos-rendezvous-" + sorcerVersion + ".jar"});
 		
 		// service provider codebase
 		String spacerCodebase = Booter.getCodebase(new String[] {
@@ -434,14 +434,12 @@ public class SorcerDescriptorUtil {
 	public static ServiceDescriptor getConcatenator(String policy,
 			String hostAddress, int port, String... spacerConfig)
 			throws IOException {
-		String fs = File.separator;
-		String iGridHome = System.getProperty("sorcer.home");
-		if (iGridHome == null)
+		if (sorcerHome == null)
 			throw new RuntimeException("'sorcer.home' property not declared");
 		
 		// service provider classpath
 		String concatenatorClasspath = ConfigUtil.concat(new Object[] {
-				iGridHome,fs,"lib",fs, "sorcer",fs,"lib",fs,"sos-rendezvous-" + sorcerVersion + ".jar"});
+				sorcerLib,fs,"sorcer",fs,"lib",fs,"sos-rendezvous-" + sorcerVersion + ".jar"});
 		
 		// service provider codebase
 		String spacerCodebase = Booter.getCodebase(new String[] {
@@ -526,14 +524,12 @@ public class SorcerDescriptorUtil {
 	public static ServiceDescriptor getJobber(String policy,
 			String hostAddress, int port, String... jobberConfig)
 			throws IOException {
-		String fs = File.separator;
-		String iGridHome = System.getProperty("sorcer.home");
-		if (iGridHome == null)
+		if (sorcerHome == null)
 			throw new RuntimeException("'sorcer.home' property not declared");
 		
 		// service provider classpath
 		String jobberClasspath = ConfigUtil.concat(new Object[] {
-				iGridHome,fs,"lib",fs, "sorcer",fs,"lib",fs,"sos-rendezvous-" + sorcerVersion + ".jar"
+				sorcerLib,fs,"sorcer",fs,"lib",fs,"sos-rendezvous-" + sorcerVersion + ".jar"
 		});
 		
 		// service provider codebase
@@ -621,14 +617,12 @@ public class SorcerDescriptorUtil {
 	public static ServiceDescriptor getExerter(String policy,
 			String hostAddress, int port, String... exerterConfig)
 			throws IOException {
-		String fs = File.separator;
-		String iGridHome = System.getProperty("sorcer.home");
-		if (iGridHome == null)
+		if (sorcerHome == null)
 			throw new RuntimeException("'sorcer.home' property not declared");
 		
 		// service provider classpath
 		String exerterClasspath = ConfigUtil.concat(new Object[] {
-				iGridHome,fs,"lib",fs, "sorcer",fs,"lib",fs,"sorcer-platform-" + sorcerVersion + ".jar"
+				sorcerLib,fs,"sorcer",fs,"lib",fs,"sorcer-platform-" + sorcerVersion + ".jar"
 		});
 		
 		// service provider codebase
@@ -714,16 +708,13 @@ public class SorcerDescriptorUtil {
 	public static ServiceDescriptor getExertMonitor(String policy,
 			String hostAddress, int port, String... exertmonitorConfig)
 			throws IOException {
-		String fs = File.separator;
-		String ps = File.pathSeparator;
-		String iGridHome = System.getProperty("sorcer.home");
-		if (iGridHome == null)
+		if (sorcerHome == null)
 			throw new RuntimeException("'sorcer.home' property not declared");
 		
 		// service provider classpath
 		String exertmonitor = ConfigUtil.concat(new Object[] {
-				iGridHome,fs,"lib",fs, "sorcer",fs,"lib",fs,"sos-exertmonitor-" + sorcerVersion + ".jar",
-				ps,iGridHome,fs,"lib",fs,"common",fs,"je-5.0.104.jar"
+				sorcerLib,fs,"sorcer",fs,"lib",fs,"sos-exertmonitor-" + sorcerVersion + ".jar",
+				ps,sorcerLib,fs,"common",fs,"je-5.0.104.jar"
 		});
 		
 		// service provider codebase
@@ -810,16 +801,13 @@ public class SorcerDescriptorUtil {
 	public static ServiceDescriptor getDatabaseStorer(String policy,
 			String hostAddress, int port, String... sdbConfig)
 			throws IOException {
-		String fs = File.separator;
-		String ps = File.pathSeparator;
-		String iGridHome = System.getProperty("sorcer.home");
-		if (iGridHome == null)
+		if (sorcerHome == null)
 			throw new RuntimeException("'sorcer.home' property not declared");
 		
 		// service provider classpath
 		String dbpc = ConfigUtil.concat(new Object[] {
-				iGridHome,fs,"lib",fs, "sorcer",fs,"lib",fs,"sos-db-prv-" + sorcerVersion + ".jar",
-				ps,iGridHome,fs,"lib",fs,"common",fs,"je-" + jeVersion  + ".jar"
+				sorcerLib,fs,"sorcer",fs,"lib",fs,"sos-db-prv-" + sorcerVersion + ".jar",
+				ps,sorcerLib,fs,"common",fs,"je-" + jeVersion  + ".jar"
 		});
 		
 		// service provider codebase
@@ -905,16 +893,13 @@ public class SorcerDescriptorUtil {
 	public static ServiceDescriptor getDataspaceStorer(String policy,
 			String hostAddress, int port, String... sdbConfig)
 			throws IOException {
-		String fs = File.separator;
-		String ps = File.pathSeparator;
-		String iGridHome = System.getProperty("sorcer.home");
-		if (iGridHome == null)
+		if (sorcerHome == null)
 			throw new RuntimeException("'sorcer.home' property not declared");
 		
 		// service provider classpath
 		String dbpc = ConfigUtil.concat(new Object[] {
-				iGridHome,fs,"lib",fs, "sorcer",fs,"lib",fs,"sos-ds-prv-" + sorcerVersion + ".jar",
-				ps,iGridHome,fs,"lib",fs,"common",fs,"je-" + jeVersion  + ".jar"
+				sorcerLib,fs,"sorcer",fs,"lib",fs,"sos-ds-prv-" + sorcerVersion + ".jar",
+				ps,sorcerLib,fs,"common",fs,"je-" + jeVersion  + ".jar"
 		});
 		
 		// service provider codebase
@@ -1000,20 +985,18 @@ public class SorcerDescriptorUtil {
 	public static ServiceDescriptor getCataloger(String policy,
 			String hostAddress, int port, String... catalogerConfig)
 			throws IOException {
-		String fs = File.separator;
-		String iGridHome = System.getProperty("sorcer.home");
-		if (iGridHome == null)
+		if (sorcerHome == null)
 			throw new RuntimeException("'sorcer.home' property not declared");
 		
 		// service provider classpath
 		String catalogClasspath = ConfigUtil.concat(new Object[] {
-				iGridHome,fs,"lib",fs, "sorcer",fs,"lib",fs,"sos-cataloger-" + sorcerVersion + ".jar"
+				sorcerLib,fs,"sorcer",fs,"lib",fs,"sos-cataloger-"+sorcerVersion + ".jar"
 		});
 		
 		// service provider codebase
 		String catalogCodebase = Booter.getCodebase(new String[] {
-				"sorcer-dl-" + sorcerVersion + ".jar", "jsk-dl-" + riverVersion + ".jar", 
-				"serviceui-" + riverVersion + ".jar", "sorcer-ui-" + sorcerVersion + ".jar", 
+				"sorcer-dl-" + sorcerVersion + ".jar", "jsk-dl-"+riverVersion + ".jar", 
+				"serviceui-" + riverVersion + ".jar", "sorcer-ui-"+sorcerVersion + ".jar", 
 				"sos-cataloger-ui-" + sorcerVersion + ".jar", 
 				getRioDlJar() },
 				hostAddress, Integer.toString(port));
@@ -1095,15 +1078,13 @@ public class SorcerDescriptorUtil {
 	public static ServiceDescriptor getLogger(String policy,
 			String hostAddress, int port, String... loggerConfig)
 			throws IOException {
-		String fs = File.separator;
-		String iGridHome = System.getProperty("sorcer.home");
-		if (iGridHome == null)
+		if (sorcerHome == null)
 			throw new RuntimeException("'sorcer.home' property not declared");
 		
 		// service provider classpath
 		String loggerClasspath = ConfigUtil.concat(new Object[] {
-				iGridHome,fs,"lib",fs, "sorcer",fs,"lib",fs,"sos-logger-" + sorcerVersion + ".jar"
-				//,ps,iGridHome,fs,"lib",fs,"sorcer",fs,"lib-dl",fs,"logger-ui.jar"
+				sorcerLib,fs,"sorcer",fs,"lib",fs,"sos-logger-" + sorcerVersion + ".jar"
+				//,ps,sorcerLib,fs,"sorcer",fs,"lib-dl",fs,"logger-ui.jar"
 		});
 		// service provider codebase
 		String loggerCodebase = Booter.getCodebase(new String[] {
@@ -1189,12 +1170,9 @@ public class SorcerDescriptorUtil {
 	public static ServiceDescriptor getLookup(String policy,
 			String hostAddress, int port, String... lookupConfig)
 			throws IOException {
-		String fs = File.separator;
-		String iGridHome = System.getProperty("sorcer.home");
-		if (iGridHome == null)
+		if (sorcerHome == null)
 			throw new RuntimeException("'sorcer.home' system property not declared");
-		String jiniHome = iGridHome+fs+"lib"+fs+"river";
-		String reggieClasspath = jiniHome+fs+"lib"+fs+"reggie-" + riverVersion + ".jar";
+		String reggieClasspath = jiniLib+fs+"reggie-" + riverVersion + ".jar";
 		String reggieCodebase = Booter.getCodebase(new String[] {
 				"reggie-dl-" + riverVersion + ".jar", "jsk-dl-" + riverVersion + ".jar" }, 
 				hostAddress, Integer.toString(port));
@@ -1262,12 +1240,11 @@ public class SorcerDescriptorUtil {
 			}
 		}
 		throw new IllegalArgumentException(hd
-				+ " is not a vald iGrid home directory");
+				+ " is not a vald SORCER home directory");
 	}
 
     static String getRioDlJar() {
-        File iGridHome = new File(System.getProperty("SORCER_HOME"), System.getenv("SORCER_HOME"));
-        File rioLibDl = new File(iGridHome, "rio" + File.separator + "lib-dl");
+        File rioLibDl = new File(sorcerHome+fs+"rio"+fs+"lib-dl");
         return find(rioLibDl, "rio-api").getName();
     }
 
