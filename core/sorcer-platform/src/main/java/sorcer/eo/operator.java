@@ -2263,7 +2263,7 @@ public class operator {
 		}
 		
 		Idle(final String idle) {
-			this.idle = new ServiceDeployment().setIdle(idle).getIdle();
+			this.idle = ServiceDeployment.parseInt(idle);
 		}
 	}
 

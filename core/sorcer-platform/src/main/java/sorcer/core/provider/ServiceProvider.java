@@ -16,37 +16,9 @@ s * Copyright 2009 the original author or authors.
  */
 package sorcer.core.provider;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.rmi.Remote;
-import java.rmi.RemoteException;
-import java.security.Permission;
-import java.security.Policy;
-import java.security.Principal;
-import java.security.PrivilegedActionException;
-import java.security.PrivilegedExceptionAction;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.LogRecord;
-import java.util.logging.Logger;
-
-import javax.security.auth.Subject;
-import javax.security.auth.login.LoginContext;
-
+import com.sun.jini.config.Config;
+import com.sun.jini.start.LifeCycle;
+import com.sun.jini.thread.TaskManager;
 import net.jini.config.Configuration;
 import net.jini.config.ConfigurationException;
 import net.jini.config.ConfigurationProvider;
@@ -78,25 +50,9 @@ import sorcer.core.dispatch.MonitoredTaskDispatcher;
 import sorcer.core.proxy.Outer;
 import sorcer.core.proxy.Partner;
 import sorcer.core.proxy.Partnership;
-import sorcer.service.AccessDeniedException;
-import sorcer.service.Arg;
-import sorcer.service.Context;
-import sorcer.service.ContextException;
-import sorcer.service.Evaluation;
-import sorcer.service.EvaluationException;
-import sorcer.service.Exec;
-import sorcer.service.Exertion;
-import sorcer.service.ExertionException;
-import sorcer.service.Identifiable;
-import sorcer.service.Job;
-import sorcer.service.MonitorException;
-import sorcer.service.Service;
-import sorcer.service.ServiceExertion;
-import sorcer.service.SetterException;
+import sorcer.service.*;
 import sorcer.service.Signature;
 import sorcer.service.SignatureException;
-import sorcer.service.Task;
-import sorcer.service.UnknownExertionException;
 import sorcer.serviceui.UIComponentFactory;
 import sorcer.serviceui.UIDescriptorFactory;
 import sorcer.serviceui.UIFrameFactory;
@@ -106,9 +62,18 @@ import sorcer.util.Sorcer;
 import sorcer.util.SorcerUtil;
 import sorcer.util.url.sos.SdbURLStreamHandlerFactory;
 
-import com.sun.jini.config.Config;
-import com.sun.jini.start.LifeCycle;
-import com.sun.jini.thread.TaskManager;
+import javax.security.auth.Subject;
+import javax.security.auth.login.LoginContext;
+import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.rmi.Remote;
+import java.rmi.RemoteException;
+import java.security.*;
+import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.LogRecord;
+import java.util.logging.Logger;
 
 /**
  * The ServiceProvider class is a type of {@link Provider} with dependency
@@ -264,8 +229,9 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		final Configuration config = ConfigurationProvider.getInstance(args, serviceClassLoader);
 		delegate.setJiniConfig(config);
 		// inspect class loader tree
-		 com.sun.jini.start.ClassLoaderUtil.displayContextClassLoaderTree();
-		// System.out.println("service provider class loader: " +
+        if(logger.isLoggable(Level.FINEST))
+            com.sun.jini.start.ClassLoaderUtil.displayContextClassLoaderTree();
+        // System.out.println("service provider class loader: " +
 		// serviceClassLoader);
 		String providerProperties = null;
 		try {

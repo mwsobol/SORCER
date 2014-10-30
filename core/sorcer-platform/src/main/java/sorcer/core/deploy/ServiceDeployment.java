@@ -30,6 +30,9 @@ import java.io.Serializable;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Attributes related to signature based deployment.
@@ -37,17 +40,17 @@ import java.util.Arrays;
  * @author Mike Sobolewski
  * @author Dennis Reedy
  */
-public class ServiceDeployment  extends org.rioproject.opstring.ServiceDeployment implements Arg, Serializable, Deployment {
+public class ServiceDeployment implements Arg, Serializable, Deployment {
     private static final long serialVersionUID = 1L;
 
     private boolean isProvisionable = true;
 	private Type type = Type.FED;
     private Unique unique = Unique.NO;
-    //private int maxPerCybernode;
+    private int maxPerCybernode;
 
-    //private String name;
+    private String name;
     private Uuid providerUuid;
-    //private int multiplicity = 1;
+    private int multiplicity = 1;
     private String[] codebaseJars;
     private String[] classpathJars;
 
@@ -59,17 +62,17 @@ public class ServiceDeployment  extends org.rioproject.opstring.ServiceDeploymen
     private String impl = ServiceTasker.class.getName();
     private String websterUrl = Sorcer.getWebsterUrl();
     private String config;
-    //private String architecture;
-    //private final Set<String> operatingSystems = new HashSet<String>();
-    //private final Set<String> ips = new HashSet<String>();
-    //private final Set<String> excludeIps = new HashSet<String>();
+    private String architecture;
+    private final Set<String> operatingSystems = new HashSet<String>();
+    private final Set<String> ips = new HashSet<String>();
+    private final Set<String> excludeIps = new HashSet<String>();
 
     // an idle time for un-provisioning
-    //private int idle = 0; /* Value is in minutes */
-    //public static final int DEFAULT_IDLE_TIME = 5;
+    private int idle = 0; /* Value is in minutes */
+    public static final int DEFAULT_IDLE_TIME = 5;
 
-    //private Boolean fork;
-    //private String jvmArgs;
+    private Boolean fork;
+    private String jvmArgs;
 
     public ServiceDeployment() {
     }
@@ -78,33 +81,26 @@ public class ServiceDeployment  extends org.rioproject.opstring.ServiceDeploymen
         setConfig(config);
     }
 
-    @Override
-    public ServiceDeployment setConfig(final String config) {
+    public void setConfig(final String config) {
         if(config.startsWith("http")) {
             this.config = config;
         } else if(Artifact.isArtifact(config)) {
             this.config = config;
         } else if(!config.startsWith("/")) {
-            this.config = System.getenv("SORCER_HOME") + File.separatorChar + config;
+            this.config = System.getenv("IGRID_HOME") + File.separatorChar + config;
         } else {
             this.config = config;
         }
-        return this;
     }
 
-    /*
     public String getConfig() {
         if(config==null) {
             return "-";
         }
         return config;
     }
-    */
 
-    public String[] getGroups() {
-        return Sorcer.getLookupGroups();
-    }
-    /*public ServiceDeployment setName(final String name) {
+    public void setName(final String name) {
         this.name = name;
     }
 
@@ -115,36 +111,35 @@ public class ServiceDeployment  extends org.rioproject.opstring.ServiceDeploymen
     public String[] getIps() {
         return ips.toArray(new String[ips.size()]);
     }
-    */
-    /*public void setExcludeIps(final String... ips) {
+
+    public void setExcludeIps(final String... ips) {
         Collections.addAll(this.excludeIps, ips);
     }
 
     public String[] getExcludeIps() {
         return excludeIps.toArray(new String[excludeIps.size()]);
     }
-    */
-    /*public void setArchitecture(final String architecture) {
+
+    public void setArchitecture(final String architecture) {
         this.architecture = architecture;
     }
 
     public String getArchitecture() {
         return architecture;
     }
-    */
-    /*public void setOperatingSystems(final String... operatingSystems) {
+
+    public void setOperatingSystems(final String... operatingSystems) {
         Collections.addAll(this.operatingSystems, operatingSystems);
     }
 
     public String[] getOperatingSystems() {
         return operatingSystems.toArray(new String[operatingSystems.size()]);
     }
-    */
-    /*
+
     public String getName() {
         return name;
     }
-    */
+
     public Uuid getProviderUuid() {
         return providerUuid;
     }
@@ -154,21 +149,21 @@ public class ServiceDeployment  extends org.rioproject.opstring.ServiceDeploymen
     }
 
     public int getMultiplicity() {
-        return getPlanned();
+        return multiplicity;
     }
 
     public void setMultiplicity(final int multiplicity) {
-        setPlanned(multiplicity);
+        this.multiplicity = multiplicity;
     }
 
-    /*public Integer getMaxPerCybernode() {
+    public Integer getMaxPerCybernode() {
         return maxPerCybernode;
-    }*/
+    }
 
-    /*public void setMaxPerCybernode(int maxPerCybernode) {
+    public void setMaxPerCybernode(int maxPerCybernode) {
         this.maxPerCybernode = maxPerCybernode;
     }
-*/
+
     public String[] getCodebaseJars() {
         return codebaseJars;
     }
@@ -196,13 +191,13 @@ public class ServiceDeployment  extends org.rioproject.opstring.ServiceDeploymen
         this.impl = impl;
     }
 
-    /*public String getServiceType() {
+    public String getServiceType() {
         return serviceType;
     }
 
     public void setServiceType(final String serviceType) {
         this.serviceType = serviceType;
-    }*/
+    }
 
     public String getProviderName() {
         return providerName;
@@ -220,7 +215,7 @@ public class ServiceDeployment  extends org.rioproject.opstring.ServiceDeploymen
         this.websterUrl = websterUrl;
     }
 
-    /*public int getIdle() {
+    public int getIdle() {
         return idle;
     }
 
@@ -244,23 +239,23 @@ public class ServiceDeployment  extends org.rioproject.opstring.ServiceDeploymen
 			delay = Integer.parseInt(timeout);
 		}
 		return delay;
-	}*/
+	}
 
-    /*public Boolean getFork() {
+    public Boolean getFork() {
         return fork;
     }
 
     public void setFork(final boolean fork) {
         this.fork = fork;
     }
-*/
-    /*public String getJvmArgs() {
+
+    public String getJvmArgs() {
         return jvmArgs;
     }
 
     public void setJvmArgs(final String jvmArgs) {
         this.jvmArgs = jvmArgs;
-    }*/
+    }
 
     public Type getType() {
         return type;
@@ -277,7 +272,7 @@ public class ServiceDeployment  extends org.rioproject.opstring.ServiceDeploymen
     public Unique getUnique() {
         return unique;
     }
-    
+
     public static String createDeploymentID(final String ssb) throws NoSuchAlgorithmException {
     	MessageDigest md = MessageDigest.getInstance("MD5");
 		md.update(ssb.getBytes());
@@ -300,7 +295,7 @@ public class ServiceDeployment  extends org.rioproject.opstring.ServiceDeploymen
 	public void setProvisionable(boolean isProvisionable) {
 		this.isProvisionable = isProvisionable;
 	}
-	
+
 	public void setProvisionable(Provision isProvisionable) {
 		if (isProvisionable == Provision.YES
 				|| isProvisionable == Provision.TRUE) {
@@ -309,16 +304,16 @@ public class ServiceDeployment  extends org.rioproject.opstring.ServiceDeploymen
 			this.isProvisionable = true;
 		}
 	}
-	
+
     @Override
     public String toString() {
         return "Deployment {" +
                "type=" + type +
                ", unique=" + unique +
-               ", maxPerCybernode=" + getMaxPerCybernode() +
-               ", name='" + getName() + '\'' +
+               ", maxPerCybernode=" + maxPerCybernode +
+               ", name='" + name + '\'' +
                ", providerUuid=" + providerUuid +
-               ", multiplicity=" + getMultiplicity() +
+               ", multiplicity=" + multiplicity +
                ", codebaseJars=" + Arrays.toString(codebaseJars) +
                ", classpathJars=" + Arrays.toString(classpathJars) +
                ", serviceType='" + serviceType + '\'' +
@@ -326,13 +321,13 @@ public class ServiceDeployment  extends org.rioproject.opstring.ServiceDeploymen
                ", impl='" + impl + '\'' +
                ", websterUrl='" + websterUrl + '\'' +
                ", config='" + config + '\'' +
-               ", architecture='" + getArchitecture() + '\'' +
-               ", operatingSystems=" + getOperatingSystems() +
-               ", ips=" + getIps() +
-               ", excludeIps=" + getExcludeIps() +
-               ", idle=" + getIdle() +
-               ", fork=" + getFork() +
-               ", jvmArgs='" + getJvmArgs() + '\'' +
+               ", architecture='" + architecture + '\'' +
+               ", operatingSystems=" + operatingSystems +
+               ", ips=" + ips +
+               ", excludeIps=" + excludeIps +
+               ", idle=" + idle +
+               ", fork=" + fork +
+               ", jvmArgs='" + jvmArgs + '\'' +
                '}';
     }
 }
