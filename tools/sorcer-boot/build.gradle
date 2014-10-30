@@ -26,6 +26,7 @@ jar {
     from(configurations.compile.collect { it.isDirectory() ? it : zipTree(it)}) {
         include "sorcer/core/SorcerConstants**"
         include "sorcer/core/provider/util/PropertyHelper**"
+        include "sorcer/service/ConfigurationException**"
         include "sorcer/util/SOS**"
     }
     manifest {
