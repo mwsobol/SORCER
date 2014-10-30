@@ -19,6 +19,7 @@ package sorcer.util;
 
 import sorcer.core.SorcerConstants;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.jar.Attributes;
@@ -91,5 +92,28 @@ public class SOS implements SorcerConstants {
          }
         return sorcerVersion==null?"unknown":sorcerVersion;
 	}
+	
+    public static String deriveSorcerHome() {
+        String sorcerHome = null;
+		getSorcerVersion();
+		if(sorcerVersion!=null) {
+            Class clazz = SOS.class;
+            String className = clazz.getSimpleName() + ".class";
+            String classPath = clazz.getResource(className).toString();
+            /* Make sure we are loaded from a JAR */
+            if (classPath.startsWith("jar")) {
+                String path = classPath.substring("jar:".length(), classPath.lastIndexOf("!"));
+                logger.info("Loading " + path);
+                File sorcerPlatformJar = new File(path);
+    	        File directory = sorcerPlatformJar.getParentFile();
+		        while(directory.getName()!=null && !directory.getName().endsWith(sorcerVersion)) {
+		        	directory = directory.getParentFile();
+		        }
+				sorcerHome = directory.getPath();
+		        logger.info("SORCER_HOME: "+sorcerHome);
+            }
+	    }
+        return sorcerHome;
+    }
 
 }

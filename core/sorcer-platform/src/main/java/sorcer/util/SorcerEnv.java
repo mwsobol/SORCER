@@ -135,14 +135,15 @@ public class SorcerEnv extends SOS {
 	 */
 	public static File getHomeDir() {
 		String hd = System.getenv("SORCER_HOME");
-		if (hd != null)	hd = hd.trim();
+		if (hd != null)	
+			hd = hd.trim();
 
 		if (hd != null && hd.length() > 0) {
 			System.setProperty(SORCER_HOME, hd);
 			return new File(hd);
 		}
 
-		hd = System.getProperty(SORCER_HOME);
+		hd = System.getProperty(SORCER_HOME, SOS.deriveSorcerHome());
 		if (hd != null && hd.length() > 0) {
 			return new File(hd);
 		}
@@ -152,8 +153,7 @@ public class SorcerEnv extends SOS {
 			if (hd != null && hd.length() > 0) {
 				return new File(hd);
 			}
-		}
-		
+		}		
 		return null;
 	}
 
