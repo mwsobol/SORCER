@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<platform>
+
+    <!--
+    Berkeley database jars to load into the common classloader.
+    -->
+    <capability name="Berkeley DB JE" common="yes">
+        <version>je-5.0.104</version>
+        <manufacturer>Oracle</manufacturer>
+        <classpath>${sorcer.home}/distribution/sorcer-${sorcer.version}/lib/common/je-5.0.104.jar</classpath>
+    </capability>  
+       
+</platform>

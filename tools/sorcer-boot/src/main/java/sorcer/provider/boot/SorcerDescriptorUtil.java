@@ -39,9 +39,9 @@ public class SorcerDescriptorUtil {
 	private static String fs = File.separator;
 	private static String ps = File.pathSeparator;
 	private static String sorcerHome = getHomeDir();
-	private static String sorcerLib = sorcerHome +fs +"distribution" + fs + 
-			"sorcer-"+System.getProperty("sorcer.version") +fs +"lib";
-	private static String  jiniLib = sorcerHome+fs +"rio"+fs +"lib";
+	private static String sorcerLib = sorcerHome+fs +"distribution"+fs+ 
+			"sorcer-"+System.getProperty("sorcer.version")+fs+"lib";
+	private static String  jiniLib = sorcerHome+fs+"rio"+fs +"lib";
 	
 	/**
 	 * Get the {@link com.sun.jini.start.ServiceDescriptor} instance for
@@ -262,8 +262,8 @@ public class SorcerDescriptorUtil {
 		
 		// service provider codebase
 		String jobberCodebase = Booter.getCodebase(new String[] {
-				"sorcer-dl-" + sorcerVersion + ".jar", "jsk-dl-" + riverVersion + ".jar", 
-				"serviceui-" + riverVersion + ".jar", "sorcer-ui-" + sorcerVersion + ".jar", 
+				"sorcer-dl-",sorcerVersion,".jar","jsk-dl-",riverVersion,".jar", 
+				"serviceui-", riverVersion,".jar","sorcer-ui-",sorcerVersion,".jar", 
 				getRioDlJar() },
 				hostAddress, Integer.toString(port));
 		String implClass = "sorcer.core.provider.ServiceProvider";
@@ -443,7 +443,7 @@ public class SorcerDescriptorUtil {
 		
 		// service provider codebase
 		String spacerCodebase = Booter.getCodebase(new String[] {
-				"sorcer-dl-" + sorcerVersion + ".jar", "jsk-dl-" + riverVersion + ".jar", "serviceui-" + riverVersion + ".jar", 
+				"sorcer-dl-" + sorcerVersion + ".jar", "jsk-dl-",riverVersion,".jar","serviceui-",riverVersion,".jar", 
 				"sorcer-ui-" + sorcerVersion + ".jar", getRioDlJar() },
 				hostAddress, Integer.toString(port));
 		String implClass = "sorcer.core.provider.rendezvous.ServiceConcatenator";
@@ -529,12 +529,12 @@ public class SorcerDescriptorUtil {
 		
 		// service provider classpath
 		String jobberClasspath = ConfigUtil.concat(new Object[] {
-				sorcerLib,fs,"sorcer",fs,"lib",fs,"sos-rendezvous-" + sorcerVersion + ".jar"
+				sorcerLib,fs,"sorcer",fs,"lib",fs,"sos-rendezvous-",sorcerVersion,".jar"
 		});
 		
 		// service provider codebase
 		String jobberCodebase = Booter.getCodebase(new String[] {
-				"sorcer-dl-" + sorcerVersion + ".jar", "jsk-dl-" + riverVersion + ".jar", "serviceui-" + riverVersion + ".jar", 
+				"sorcer-dl-" + sorcerVersion + ".jar", "jsk-dl-",riverVersion,".jar","serviceui-",riverVersion,".jar", 
 				"sorcer-ui-" + sorcerVersion + ".jar", getRioDlJar() },
 				hostAddress, Integer.toString(port));
 		String implClass = "sorcer.core.provider.rendezvous.ServiceJobber";
@@ -627,7 +627,7 @@ public class SorcerDescriptorUtil {
 		
 		// service provider codebase
 		String exerterCodebase = Booter.getCodebase(new String[] {
-				"sorcer-dl-" + sorcerVersion + ".jar", "jsk-dl-" + riverVersion + ".jar", "serviceui-" + riverVersion + ".jar", 
+				"sorcer-dl-" + sorcerVersion + ".jar", "jsk-dl-",riverVersion,".jar","serviceui-",riverVersion,".jar", 
 				"sorcer-ui-" + sorcerVersion + ".jar", getRioDlJar() },
 				hostAddress, Integer.toString(port));
 		String implClass = "sorcer.core.provider.ServiceTasker";
@@ -713,14 +713,14 @@ public class SorcerDescriptorUtil {
 		
 		// service provider classpath
 		String exertmonitor = ConfigUtil.concat(new Object[] {
-				sorcerLib,fs,"sorcer",fs,"lib",fs,"sos-exertmonitor-" + sorcerVersion + ".jar",
+				sorcerLib,fs,"sorcer",fs,"lib",fs,"sos-exertmonitor-",sorcerVersion,".jar",
 				ps,sorcerLib,fs,"common",fs,"je-5.0.104.jar"
 		});
 		
 		// service provider codebase
 		String jobberCodebase = Booter.getCodebase(new String[] {
 				"sorcer-dl-" + sorcerVersion + ".jar", "jsk-dl-" + riverVersion + ".jar", 
-				"outrigger-dl-" + riverVersion + ".jar", "serviceui-" + riverVersion + ".jar", 
+				"outrigger-dl-" + riverVersion + ".jar", "serviceui-",riverVersion,".jar", 
 				"sorcer-ui-" + sorcerVersion + ".jar", getRioDlJar() },
 				hostAddress, Integer.toString(port));
 		String implClass = "sorcer.core.provider.exertmonitor.ExertMonitor";
@@ -806,8 +806,8 @@ public class SorcerDescriptorUtil {
 		
 		// service provider classpath
 		String dbpc = ConfigUtil.concat(new Object[] {
-				sorcerLib,fs,"sorcer",fs,"lib",fs,"sos-db-prv-" + sorcerVersion + ".jar",
-				ps,sorcerLib,fs,"common",fs,"je-" + jeVersion  + ".jar"
+				sorcerLib,fs,"sorcer",fs,"lib",fs,"sos-db-prv-",sorcerVersion,".jar",
+				ps,sorcerLib,fs,"common",fs,"je-",jeVersion,".jar"
 		});
 		
 		// service provider codebase

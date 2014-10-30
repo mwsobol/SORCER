@@ -28,7 +28,6 @@
                 <pathelement location="${rio.lib}/rio-start-${rio.version}.jar" />
             	<pathelement location="${rio-dl.lib}/rio-api-${rio.version}.jar" />
                 <pathelement location="${rio.lib}/logging/slf4j-jdk14-${slf4j.version}.jar" />
-            	<pathelement location="${lib}/common/je-${je.version}.jar"/>
             </classpath>
 			<arg value="../configs/boot-sorcer-arv-http.config" />
 			<sysproperty key="sorcer.home" value="${sorcer.home}" />
