@@ -269,7 +269,7 @@ public class Webster implements Runnable {
         } else {
             options = args;
         }
-        //logger.info("roots concat: " + roots + "\noptions: " + Arrays.toString(options));
+//        logger.info("roots concat: " + roots + "\noptions: " + Arrays.toString(options));
         for (int i = 0; i < options.length; i++) {
             String option = options[i];
             if (option.equals("-port")) {
