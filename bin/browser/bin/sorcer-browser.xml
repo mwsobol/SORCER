@@ -24,7 +24,8 @@
 	</condition>
 
 	<target name="log-dir">
-		<mkdir dir="${basedir}/../logs" />
+		<echo message="===> CREATE ${sorcer.home}/bin/browser/logs"/>
+		<mkdir dir="${sorcer.home}/bin/browser/logs" />
 	</target>
 
 	<target name="runBrowser" depends="log-dir, SORCER Service Browser Mac, SORCER Service Browser" />

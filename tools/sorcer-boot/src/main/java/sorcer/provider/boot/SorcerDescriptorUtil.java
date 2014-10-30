@@ -15,14 +15,17 @@
  */
 package sorcer.provider.boot;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.logging.Logger;
-
 import com.sun.jini.config.ConfigUtil;
 import com.sun.jini.start.NonActivatableServiceDescriptor;
 import com.sun.jini.start.ServiceDescriptor;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * Holds static attributes used during the startup of services and provides
@@ -260,16 +263,20 @@ public class SorcerDescriptorUtil {
 		});
 		
 		// service provider codebase
-		String jobberCodebase = Booter.getCodebase(new String[] {
-				"sorcer-dl-",sorcerVersion,".jar","jsk-dl-",riverVersion,".jar", 
-				"serviceui-", riverVersion,".jar","sorcer-ui-",sorcerVersion,".jar", 
-				getRioDlJar() },
-				hostAddress, Integer.toString(port));
-		String implClass = "sorcer.core.provider.ServiceProvider";
-		return (new SorcerServiceDescriptor(jobberCodebase, policy,
-				jobberClasspath, implClass, jobberConfig));
-
+        String jobberCodebase = Booter.getCodebase(getDefaultSorcerExports(),
+                                                   hostAddress, Integer.toString(port));
+        String implClass = "sorcer.core.provider.ServiceProvider";
+        return (new SorcerServiceDescriptor(jobberCodebase, policy,
+                                            jobberClasspath, implClass, jobberConfig));
 	}
+
+    private static String[] getDefaultSorcerExports() {
+        return new String[] {"sorcer-dl-"+sorcerVersion+".jar",
+                             "jsk-dl-"+riverVersion+".jar",
+                             "serviceui-"+riverVersion+".jar",
+                             "sorcer-ui-"+sorcerVersion+".jar",
+                             getRioDlJar()};
+    }
 	
 	/**
 	 * Get the {@link com.sun.jini.start.ServiceDescriptor} instance for
@@ -351,12 +358,11 @@ public class SorcerDescriptorUtil {
 				sorcerLib,fs,"sorcer",fs,"lib",fs,"sos-rendezvous-" + sorcerVersion + ".jar"});
 		
 		// service provider codebase
-		String spacerCodebase = Booter.getCodebase(new String[] {
-				"sorcer-dl-" + sorcerVersion + ".jar", "jsk-dl-" + riverVersion + ".jar", "serviceui-" + riverVersion + ".jar", 
-				"sorcer-ui-" + sorcerVersion + ".jar", getRioDlJar() },
-				hostAddress, Integer.toString(port));
-		String implClass = "sorcer.core.provider.rendezvous.ServiceSpacer";
-		return (new SorcerServiceDescriptor(spacerCodebase, policy,
+        String spacerCodebase = Booter.getCodebase(getDefaultSorcerExports(),
+                                                   hostAddress,
+                                                   Integer.toString(port));
+        String implClass = "sorcer.core.provider.rendezvous.ServiceSpacer";
+        return (new SorcerServiceDescriptor(spacerCodebase, policy,
 				spacerClasspath, implClass, spacerConfig));
 
 	}
@@ -379,8 +385,7 @@ public class SorcerDescriptorUtil {
 	 * @throws RuntimeException
 	 *             If the <tt>sorcer.home</tt> system property is not set
 	 */
-	public static ServiceDescriptor getConcatenator(String policy,
-			String... concatenatorConfig) throws IOException {
+	public static ServiceDescriptor getConcatenator(String policy, String... concatenatorConfig) throws IOException {
 		return (getConcatenator(policy, Booter.getPort(), concatenatorConfig));
 	}
 
@@ -441,11 +446,10 @@ public class SorcerDescriptorUtil {
 				sorcerLib,fs,"sorcer",fs,"lib",fs,"sos-rendezvous-" + sorcerVersion + ".jar"});
 		
 		// service provider codebase
-		String spacerCodebase = Booter.getCodebase(new String[] {
-				"sorcer-dl-" + sorcerVersion + ".jar", "jsk-dl-",riverVersion,".jar","serviceui-",riverVersion,".jar", 
-				"sorcer-ui-" + sorcerVersion + ".jar", getRioDlJar() },
-				hostAddress, Integer.toString(port));
-		String implClass = "sorcer.core.provider.rendezvous.ServiceConcatenator";
+        String spacerCodebase = Booter.getCodebase(getDefaultSorcerExports(),
+                                                   hostAddress,
+                                                   Integer.toString(port));
+        String implClass = "sorcer.core.provider.rendezvous.ServiceConcatenator";
 		return (new SorcerServiceDescriptor(spacerCodebase, policy,
 				concatenatorClasspath, implClass, spacerConfig));
 
@@ -532,11 +536,10 @@ public class SorcerDescriptorUtil {
 		});
 		
 		// service provider codebase
-		String jobberCodebase = Booter.getCodebase(new String[] {
-				"sorcer-dl-" + sorcerVersion + ".jar", "jsk-dl-",riverVersion,".jar","serviceui-",riverVersion,".jar", 
-				"sorcer-ui-" + sorcerVersion + ".jar", getRioDlJar() },
-				hostAddress, Integer.toString(port));
-		String implClass = "sorcer.core.provider.rendezvous.ServiceJobber";
+        String jobberCodebase = Booter.getCodebase(getDefaultSorcerExports(),
+                                                   hostAddress,
+                                                   Integer.toString(port));
+        String implClass = "sorcer.core.provider.rendezvous.ServiceJobber";
 		return (new SorcerServiceDescriptor(jobberCodebase, policy,
 				jobberClasspath, implClass, jobberConfig));
 
@@ -625,10 +628,9 @@ public class SorcerDescriptorUtil {
 		});
 		
 		// service provider codebase
-		String exerterCodebase = Booter.getCodebase(new String[] {
-				"sorcer-dl-" + sorcerVersion + ".jar", "jsk-dl-",riverVersion,".jar","serviceui-",riverVersion,".jar", 
-				"sorcer-ui-" + sorcerVersion + ".jar", getRioDlJar() },
-				hostAddress, Integer.toString(port));
+        String exerterCodebase = Booter.getCodebase(getDefaultSorcerExports(),
+                                                    hostAddress,
+                                                    Integer.toString(port));
 		String implClass = "sorcer.core.provider.ServiceTasker";
 		return (new SorcerServiceDescriptor(exerterCodebase, policy,
 				exerterClasspath, implClass, exerterConfig));
@@ -717,13 +719,15 @@ public class SorcerDescriptorUtil {
 		});
 		
 		// service provider codebase
-		String jobberCodebase = Booter.getCodebase(new String[] {
-				"sorcer-dl-" + sorcerVersion + ".jar", "jsk-dl-" + riverVersion + ".jar", 
-				"outrigger-dl-" + riverVersion + ".jar", "serviceui-",riverVersion,".jar", 
-				"sorcer-ui-" + sorcerVersion + ".jar", getRioDlJar() },
-				hostAddress, Integer.toString(port));
-		String implClass = "sorcer.core.provider.exertmonitor.ExertMonitor";
-		return (new SorcerServiceDescriptor(jobberCodebase, policy,
+
+        List<String> codebase = new ArrayList<String>();
+        Collections.addAll(codebase, getDefaultSorcerExports());
+        codebase.add("outrigger-dl-" + riverVersion + ".jar");
+        String jobberCodebase = Booter.getCodebase(codebase.toArray(new String[codebase.size()]),
+                                                   hostAddress,
+                                                   Integer.toString(port));
+        String implClass = "sorcer.core.provider.exertmonitor.ExertMonitor";
+        return (new SorcerServiceDescriptor(jobberCodebase, policy,
 				exertmonitor, implClass, exertmonitorConfig));
 
 	}
@@ -810,10 +814,9 @@ public class SorcerDescriptorUtil {
 		});
 		
 		// service provider codebase
-		String dbpCodebase = Booter.getCodebase(new String[] {
-				"sorcer-dl-" + sorcerVersion + ".jar", "jsk-dl-" + riverVersion + ".jar", "serviceui-" + riverVersion + ".jar", 
-				"sorcer-ui-" + sorcerVersion + ".jar", getRioDlJar() },
-				hostAddress, Integer.toString(port));
+        String dbpCodebase = Booter.getCodebase(getDefaultSorcerExports(),
+                                                hostAddress,
+                                                Integer.toString(port));
 		String implClass = "sorcer.core.provider.dbp.DatabaseProvider";
 		return (new SorcerServiceDescriptor(dbpCodebase, policy,
 				dbpc, implClass, sdbConfig));
@@ -902,11 +905,10 @@ public class SorcerDescriptorUtil {
 		});
 		
 		// service provider codebase
-		String dbpCodebase = Booter.getCodebase(new String[] {
-				"sorcer-dl-" + sorcerVersion + ".jar", "jsk-dl-" + riverVersion + ".jar", "serviceui-" + riverVersion + ".jar", 
-				"sorcer-ui-" + sorcerVersion + ".jar", getRioDlJar() },
-				hostAddress, Integer.toString(port));
-		String implClass = "sorcer.core.provider.dbp.DataspaceProvider";
+        String dbpCodebase = Booter.getCodebase(getDefaultSorcerExports(),
+                                                hostAddress,
+                                                Integer.toString(port));
+        String implClass = "sorcer.core.provider.dbp.DataspaceProvider";
 		return (new SorcerServiceDescriptor(dbpCodebase, policy,
 				dbpc, implClass, sdbConfig));
 
@@ -992,13 +994,10 @@ public class SorcerDescriptorUtil {
 				sorcerLib,fs,"sorcer",fs,"lib",fs,"sos-cataloger-"+sorcerVersion + ".jar"
 		});
 		
-		// service provider codebase
-		String catalogCodebase = Booter.getCodebase(new String[] {
-				"sorcer-dl-" + sorcerVersion + ".jar", "jsk-dl-"+riverVersion + ".jar", 
-				"serviceui-" + riverVersion + ".jar", "sorcer-ui-"+sorcerVersion + ".jar", 
-				"sos-cataloger-ui-" + sorcerVersion + ".jar", 
-				getRioDlJar() },
-				hostAddress, Integer.toString(port));
+        // service provider codebase
+        String catalogCodebase = Booter.getCodebase(getDefaultSorcerExports(),
+                                                    hostAddress,
+                                                    Integer.toString(port));
 		String implClass = "sorcer.core.provider.cataloger.ServiceCataloger";
 		return (new SorcerServiceDescriptor(catalogCodebase, policy,
 				catalogClasspath, implClass, catalogerConfig));
@@ -1086,10 +1085,9 @@ public class SorcerDescriptorUtil {
 				//,ps,sorcerLib,fs,"sorcer",fs,"lib-dl",fs,"logger-ui.jar"
 		});
 		// service provider codebase
-		String loggerCodebase = Booter.getCodebase(new String[] {
-				"sorcer-dl-" + sorcerVersion + ".jar", "jsk-dl-" + riverVersion + ".jar", "serviceui-" + riverVersion + ".jar", 
-				"sorcer-ui-" + sorcerVersion + ".jar", getRioDlJar() },
-				hostAddress, Integer.toString(port));
+        String loggerCodebase = Booter.getCodebase(getDefaultSorcerExports(),
+                                                   hostAddress,
+                                                   Integer.toString(port));
 		// Logger is a partner to ServiceTasker
 		String implClass = "sorcer.core.provider.logger.ServiceLogger";
 		return (new SorcerServiceDescriptor(loggerCodebase, policy,
@@ -1172,13 +1170,14 @@ public class SorcerDescriptorUtil {
 		if (sorcerHome == null)
 			throw new RuntimeException("'sorcer.home' system property not declared");
 		String reggieClasspath = jiniLib+fs+"reggie-" + riverVersion + ".jar";
-		String reggieCodebase = Booter.getCodebase(new String[] {
-				"reggie-dl-" + riverVersion + ".jar", "jsk-dl-" + riverVersion + ".jar" }, 
-				hostAddress, Integer.toString(port));
-		String implClass = "com.sun.jini.reggie.TransientRegistrarImpl";
-		return (new SorcerServiceDescriptor(reggieCodebase, policy,
-				reggieClasspath, implClass, lookupConfig));
-	}
+        String reggieCodebase = Booter.getCodebase(new String[] {"reggie-dl-" + riverVersion + ".jar",
+                                                                 "jsk-dl-" + riverVersion + ".jar" },
+                                                   hostAddress,
+                                                   Integer.toString(port));
+        String implClass = "com.sun.jini.reggie.TransientRegistrarImpl";
+        return (new SorcerServiceDescriptor(reggieCodebase, policy,
+                                            reggieClasspath, implClass, lookupConfig));
+    }
 	
 	protected static String[] getArray(String s, String[] array) {
 		String[] sArray;
