@@ -17,14 +17,46 @@
 
 package sorcer.util;
 
+import sorcer.core.provider.Provider;
+import sorcer.core.provider.ServiceProvider;
+
+import java.io.File;
+
 /**
  * For compatibility with the version of sorcersoft.com Not needed class as the
  * methods of ProviderUtil that are in SORCEREnv/Sorcer define the system
  * functionality not a provider!
  */
-public class ProviderUtil extends Sorcer {
+public class ProviderUtil extends GenericUtil {
 	private ProviderUtil() {
 		super();
 	}
 
+    public static void destroy(String providerName, Class serviceType) {
+        Provider prv = (Provider) ProviderLookup.getService(providerName,
+                serviceType);
+        if (prv != null)
+            try {
+                prv.destroy();
+            } catch (Throwable t) {
+                // a dead provider will be not responding anymore
+                // t.printStackTrace();
+            }
+    }
+
+    public static void destroyNode(String providerName, Class serviceType) {
+        Provider prv = (Provider) ProviderLookup.getService(providerName,
+                serviceType);
+        if (prv != null)
+            try {
+                prv.destroyNode();
+            } catch (Throwable t) {
+                // a dead provider will be not responding anymore
+                // t.printStackTrace();
+            }
+    }
+
+    public static void checkFileExistsAndIsReadable(File file, ServiceProvider sp) {
+        GenericUtil.checkFileExistsAndIsReadable(file, sp);
+    }
 }
