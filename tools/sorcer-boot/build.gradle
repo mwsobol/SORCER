@@ -12,6 +12,7 @@ jar {
 	
 }
 
+/*
 sourceSets {
 	main {
 		java {
@@ -23,9 +24,9 @@ sourceSets {
 		}
 	}
 }
-	
+*/
 //sourceSets.main.java.each { println it }
-	
+
 dependencies {
 	compile "org.apache.river:start:${riverVersion}",
 			"org.rioproject:rio-platform:${rioVersion}",

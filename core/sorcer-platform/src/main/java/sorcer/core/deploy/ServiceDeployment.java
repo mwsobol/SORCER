@@ -30,9 +30,6 @@ import java.io.Serializable;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Attributes related to signature based deployment.
@@ -40,17 +37,17 @@ import java.util.Set;
  * @author Mike Sobolewski
  * @author Dennis Reedy
  */
-public class ServiceDeployment implements Arg, Serializable, Deployment {
+public class ServiceDeployment  extends org.rioproject.opstring.ServiceDeployment implements Arg, Serializable, Deployment {
     private static final long serialVersionUID = 1L;
 
     private boolean isProvisionable = true;
 	private Type type = Type.FED;
     private Unique unique = Unique.NO;
-    private int maxPerCybernode;
+    //private int maxPerCybernode;
 
-    private String name;
+    //private String name;
     private Uuid providerUuid;
-    private int multiplicity = 1;
+    //private int multiplicity = 1;
     private String[] codebaseJars;
     private String[] classpathJars;
 
@@ -62,17 +59,17 @@ public class ServiceDeployment implements Arg, Serializable, Deployment {
     private String impl = ServiceTasker.class.getName();
     private String websterUrl = Sorcer.getWebsterUrl();
     private String config;
-    private String architecture;
-    private final Set<String> operatingSystems = new HashSet<String>();
-    private final Set<String> ips = new HashSet<String>();
-    private final Set<String> excludeIps = new HashSet<String>();
+    //private String architecture;
+    //private final Set<String> operatingSystems = new HashSet<String>();
+    //private final Set<String> ips = new HashSet<String>();
+    //private final Set<String> excludeIps = new HashSet<String>();
 
     // an idle time for un-provisioning
-    private int idle = 0; /* Value is in minutes */
-    public static final int DEFAULT_IDLE_TIME = 5;
+    //private int idle = 0; /* Value is in minutes */
+    //public static final int DEFAULT_IDLE_TIME = 5;
 
-    private Boolean fork;
-    private String jvmArgs;
+    //private Boolean fork;
+    //private String jvmArgs;
 
     public ServiceDeployment() {
     }
@@ -81,7 +78,8 @@ public class ServiceDeployment implements Arg, Serializable, Deployment {
         setConfig(config);
     }
 
-    public void setConfig(final String config) {
+    @Override
+    public ServiceDeployment setConfig(final String config) {
         if(config.startsWith("http")) {
             this.config = config;
         } else if(Artifact.isArtifact(config)) {
@@ -91,16 +89,22 @@ public class ServiceDeployment implements Arg, Serializable, Deployment {
         } else {
             this.config = config;
         }
+        return this;
     }
 
+    /*
     public String getConfig() {
         if(config==null) {
             return "-";
         }
         return config;
     }
+    */
 
-    public void setName(final String name) {
+    public String[] getGroups() {
+        return Sorcer.getLookupGroups();
+    }
+    /*public ServiceDeployment setName(final String name) {
         this.name = name;
     }
 
@@ -111,35 +115,36 @@ public class ServiceDeployment implements Arg, Serializable, Deployment {
     public String[] getIps() {
         return ips.toArray(new String[ips.size()]);
     }
-
-    public void setExcludeIps(final String... ips) {
+    */
+    /*public void setExcludeIps(final String... ips) {
         Collections.addAll(this.excludeIps, ips);
     }
 
     public String[] getExcludeIps() {
         return excludeIps.toArray(new String[excludeIps.size()]);
     }
-
-    public void setArchitecture(final String architecture) {
+    */
+    /*public void setArchitecture(final String architecture) {
         this.architecture = architecture;
     }
 
     public String getArchitecture() {
         return architecture;
     }
-
-    public void setOperatingSystems(final String... operatingSystems) {
+    */
+    /*public void setOperatingSystems(final String... operatingSystems) {
         Collections.addAll(this.operatingSystems, operatingSystems);
     }
 
     public String[] getOperatingSystems() {
         return operatingSystems.toArray(new String[operatingSystems.size()]);
     }
-
+    */
+    /*
     public String getName() {
         return name;
     }
-
+    */
     public Uuid getProviderUuid() {
         return providerUuid;
     }
@@ -149,21 +154,21 @@ public class ServiceDeployment implements Arg, Serializable, Deployment {
     }
 
     public int getMultiplicity() {
-        return multiplicity;
+        return getPlanned();
     }
 
     public void setMultiplicity(final int multiplicity) {
-        this.multiplicity = multiplicity;
+        setPlanned(multiplicity);
     }
 
-    public Integer getMaxPerCybernode() {
+    /*public Integer getMaxPerCybernode() {
         return maxPerCybernode;
-    }
+    }*/
 
-    public void setMaxPerCybernode(int maxPerCybernode) {
+    /*public void setMaxPerCybernode(int maxPerCybernode) {
         this.maxPerCybernode = maxPerCybernode;
     }
-
+*/
     public String[] getCodebaseJars() {
         return codebaseJars;
     }
@@ -191,13 +196,13 @@ public class ServiceDeployment implements Arg, Serializable, Deployment {
         this.impl = impl;
     }
 
-    public String getServiceType() {
+    /*public String getServiceType() {
         return serviceType;
     }
 
     public void setServiceType(final String serviceType) {
         this.serviceType = serviceType;
-    }
+    }*/
 
     public String getProviderName() {
         return providerName;
@@ -215,7 +220,7 @@ public class ServiceDeployment implements Arg, Serializable, Deployment {
         this.websterUrl = websterUrl;
     }
 
-    public int getIdle() {
+    /*public int getIdle() {
         return idle;
     }
 
@@ -239,23 +244,23 @@ public class ServiceDeployment implements Arg, Serializable, Deployment {
 			delay = Integer.parseInt(timeout);
 		}
 		return delay;
-	}
+	}*/
 
-    public Boolean getFork() {
+    /*public Boolean getFork() {
         return fork;
     }
 
     public void setFork(final boolean fork) {
         this.fork = fork;
     }
-
-    public String getJvmArgs() {
+*/
+    /*public String getJvmArgs() {
         return jvmArgs;
     }
 
     public void setJvmArgs(final String jvmArgs) {
         this.jvmArgs = jvmArgs;
-    }
+    }*/
 
     public Type getType() {
         return type;
@@ -310,10 +315,10 @@ public class ServiceDeployment implements Arg, Serializable, Deployment {
         return "Deployment {" +
                "type=" + type +
                ", unique=" + unique +
-               ", maxPerCybernode=" + maxPerCybernode +
-               ", name='" + name + '\'' +
+               ", maxPerCybernode=" + getMaxPerCybernode() +
+               ", name='" + getName() + '\'' +
                ", providerUuid=" + providerUuid +
-               ", multiplicity=" + multiplicity +
+               ", multiplicity=" + getMultiplicity() +
                ", codebaseJars=" + Arrays.toString(codebaseJars) +
                ", classpathJars=" + Arrays.toString(classpathJars) +
                ", serviceType='" + serviceType + '\'' +
@@ -321,13 +326,13 @@ public class ServiceDeployment implements Arg, Serializable, Deployment {
                ", impl='" + impl + '\'' +
                ", websterUrl='" + websterUrl + '\'' +
                ", config='" + config + '\'' +
-               ", architecture='" + architecture + '\'' +
-               ", operatingSystems=" + operatingSystems +
-               ", ips=" + ips +
-               ", excludeIps=" + excludeIps +
-               ", idle=" + idle +
-               ", fork=" + fork +
-               ", jvmArgs='" + jvmArgs + '\'' +
+               ", architecture='" + getArchitecture() + '\'' +
+               ", operatingSystems=" + getOperatingSystems() +
+               ", ips=" + getIps() +
+               ", excludeIps=" + getExcludeIps() +
+               ", idle=" + getIdle() +
+               ", fork=" + getFork() +
+               ", jvmArgs='" + getJvmArgs() + '\'' +
                '}';
     }
 }

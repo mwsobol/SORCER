@@ -48,7 +48,7 @@ import java.util.logging.Logger;
  *
  * @author Dennis Reedy
  */
-public final class ServiceElementFactory {
+public final class ServiceElementFactory  {
     static final Logger logger = Logger.getLogger(ServiceElementFactory.class.getName());
     /* The default provider codebase jars */
     static final List<String> commonDLJars = Arrays.asList("rio-api-"+ RioVersion.VERSION+".jar");
@@ -312,8 +312,8 @@ public final class ServiceElementFactory {
         ServiceBeanConfig sbc = new ServiceBeanConfig(configMap, new String[]{deployment.getConfig()});
         sbc.addAdditionalEntries(new DeployInfo(deployment.getType().name(), deployment.getUnique().name(), deployment.getIdle()));
         service.setServiceBeanConfig(sbc);
-        service.setPlanned(deployment.getMultiplicity());                
-        
+        service.setPlanned(deployment.getMultiplicity());
+
         /* If the service is to be forked, create an ExecDescriptor */
         if(serviceDetails.fork) {
             service.setFork(true);
