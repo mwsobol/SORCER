@@ -24,7 +24,6 @@
 	</condition>
 
 	<target name="log-dir">
-		<echo message="===> CREATE ${sorcer.home}/bin/browser/logs"/>
 		<mkdir dir="${sorcer.home}/bin/browser/logs" />
 	</target>
 
