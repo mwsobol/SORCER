@@ -37,12 +37,13 @@ To include this file in your custom *-run-buld.xml have the import line:
 		</not>
 	</condition>
 	<exec executable="hostname" outputproperty="hostname" />
-
+	
+    <echo message="SORCER home: ${sorcer.home}"/>
     <property name="java.home" value="${env.JAVA_HOME}" />
     <loadproperties srcfile="${sorcer.home}/configs/versions.properties" />
 	<loadproperties srcfile="${sorcer.home}/configs/sorcer.env" />
 
-	<property name="lib" value="${sorcer.home}/distribution/sorcer-${sorcer.version}/lib" />
+	<property name="lib" value="${sorcer.home}/lib" />
 	<property name="jini.lib" value="${rio.home}/lib" />
 	<property name="jini-dl.lib" value="${rio.home}/lib-dl" />
     <property name="rio.home" value="${sorcer.home}/rio" />
