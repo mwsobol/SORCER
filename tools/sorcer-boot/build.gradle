@@ -1,37 +1,40 @@
-jar {
-	manifest {
-		attributes("Implementation-Title": "SORCER Service Booter", "Implementation-Version": version,
-		"Class-Path": "river/start-${riverVersion}.jar river/jsk-lib-${riverVersion}.jar river/serviceui-${riverVersion}.jar",
-		"Main-Class": "com.sun.jini.start.ServiceStarter",
-		"Premain-Class": "sorcer.provider.boot.InstrumentationHook",
-		"SORCER-Version": "${sorcerVersion}")
-	}
-	from sourceSets.main.output.classesDir include "**"
-	from sourceSets.main.resources 
-	include "META-INF/platform.xml", "META-INF/services/net.jini.config.Configuration"
-	
-}
-
 /*
-sourceSets {
-	main {
-		java {
-			srcDir "${project.projectDir}/src/main/java" include "**"
-			srcDir rootProject.project(':sorcer-dl').sourceSets.main.java.srcDirs[0] 
-			include "sorcer/core/SorcerConstants.java"
-			srcDir rootProject.project(':sorcer-platform').sourceSets.main.java.srcDirs[0]
-			include "sorcer/core/SorcerConstants.java"
-		}
-	}
-}
-*/
-//sourceSets.main.java.each { println it }
+ * Copyright to the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 dependencies {
+    compile project(':sorcer-platform')
 	compile "org.apache.river:start:${riverVersion}",
 			"org.rioproject:rio-platform:${rioVersion}",
 			"org.rioproject:rio-lib:${rioVersion}",
     		"org.rioproject:rio-api:${rioVersion}"
 }
 
-dependencies { compile project(':sorcer-platform') }
+jar {
+    from(configurations.compile.collect { it.isDirectory() ? it : zipTree(it)}) {
+        include "sorcer/core/SorcerConstants**"
+        include "sorcer/core/provider/util/PropertyHelper**"
+        include "sorcer/util/SOS**"
+    }
+    manifest {
+        attributes("Implementation-Title": "SORCER Service Booter",
+                   "Implementation-Version": version,
+                   "Class-Path": "river/lib/start-${riverVersion}.jar river/lib/jsk-lib-${riverVersion}.jar river/lib/serviceui-${riverVersion}.jar",
+                   "Main-Class": "com.sun.jini.start.ServiceStarter",
+                   "Premain-Class": "sorcer.provider.boot.InstrumentationHook",
+                   "SORCER-Version": "${version}")
+    }
+}
+

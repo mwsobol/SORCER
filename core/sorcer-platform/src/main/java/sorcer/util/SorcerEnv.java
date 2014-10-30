@@ -17,6 +17,7 @@ package sorcer.util;
 
 import sorcer.core.SorcerConstants;
 import sorcer.service.ConfigurationException;
+import sorcer.service.Context;
 
 import java.io.*;
 import java.net.MalformedURLException;
@@ -27,17 +28,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.Hashtable;
 
-<<<<<<< HEAD
-=======
-import sorcer.core.SorcerConstants;
-import sorcer.core.provider.DatabaseStorer;
-import sorcer.core.provider.DataspaceStorer;
-import sorcer.service.ConfigurationException;
-import sorcer.service.Context;
-
->>>>>>> 75dbca447873484dd643d0ceb3dca45441b50255
 /**
  * The Sorcer utility class provides the global environment configuration for
  * the SORCER environment. The class is initialized only once by a static
@@ -122,8 +113,7 @@ public class SorcerEnv extends SOS {
 	}
 
 	public static String getHome() {
-        File homeDir = getHomeDir();
-		return getHomeDir()==null?"":homeDir.toString();
+		return getHomeDir().toString();
 	}
 
 	/**
@@ -133,14 +123,15 @@ public class SorcerEnv extends SOS {
 	 */
 	public static File getHomeDir() {
 		String hd = System.getenv("SORCER_HOME");
-		if (hd != null)	hd = hd.trim();
+		if (hd != null)	
+			hd = hd.trim();
 
 		if (hd != null && hd.length() > 0) {
 			System.setProperty(SORCER_HOME, hd);
 			return new File(hd);
 		}
 
-		hd = System.getProperty(SORCER_HOME);
+		hd = System.getProperty(SORCER_HOME, SOS.deriveSorcerHome());
 		if (hd != null && hd.length() > 0) {
 			return new File(hd);
 		}
@@ -150,8 +141,7 @@ public class SorcerEnv extends SOS {
 			if (hd != null && hd.length() > 0) {
 				return new File(hd);
 			}
-		}
-		
+		}		
 		return null;
 	}
 
