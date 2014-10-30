@@ -28,7 +28,7 @@
 	<property name="webster.tmp.dir" value="${sorcer.data}" />
 
     <target name="logDir">
-        <mkdir dir="${basedir}/../logs" />
+        <mkdir dir="${sorcer.home}/bin/webster/logs" />
     </target>
 
 	<!-- start webster -->
