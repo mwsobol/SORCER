@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!-- 
+Replace "provider.name" with your provider name and specify property value for "provider.class."
+Also you might need to adjust the classpath (provider.classpath) for your provider 
+-->
+
+<project name="Invoking exertion service" default="run.provider" basedir=".">
+
+	<!-- system environment variables -->
+	<property environment="env" />
+	<import file="${env.IGRID_HOME}/bin/common-run.xml" />
+	<echo message="IGRID_HOME: ${sorcer.home}" />
+
+	<!-- property values -->
+	<property name="provider.name" value="parmodel" />
+	<property name="provider.class" value="sorcer.core.provider.ServiceTasker" />
+
+	<!-- start provider -->
+	<target name="run.provider">
+		<java jar="${lib}/sorcer-boot.jar" fork="yes">
+			<arg value="${sorcer.home}/configs/boot-prv.config" />
+			<sysproperty key="sorcer.provider.impl" value="${provider.class}" />
+			<sysproperty key="sorcer.provider.config" value="../configs/${provider.name}-prv.config" />
+			<sysproperty key="sorcer.provider.codebase" value="sorcer-dl.jar" />
+			<sysproperty key="sorcer.provider.classpath" value="${sorcer.lib}/invoker-beans.jar" />
+			<sysproperty key="sorcer.env.file" value="${sorcer.home}/configs/sorcer.env" />
+			<sysproperty key="java.security.policy" value="../policy/${provider.name}-prv.policy" />
+			<sysproperty key="java.util.logging.config.file" value="${sorcer.home}/configs/sorcer.logging" />
+		</java>
+	</target>
+
+</project>
+

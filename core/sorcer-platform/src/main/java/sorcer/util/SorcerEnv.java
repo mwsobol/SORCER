@@ -27,7 +27,17 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.Hashtable;
 
+<<<<<<< HEAD
+=======
+import sorcer.core.SorcerConstants;
+import sorcer.core.provider.DatabaseStorer;
+import sorcer.core.provider.DataspaceStorer;
+import sorcer.service.ConfigurationException;
+import sorcer.service.Context;
+
+>>>>>>> 75dbca447873484dd643d0ceb3dca45441b50255
 /**
  * The Sorcer utility class provides the global environment configuration for
  * the SORCER environment. The class is initialized only once by a static
@@ -319,22 +329,23 @@ public class SorcerEnv extends SOS {
 		reconcileProperties(props, false);
 		logger.info("*** loaded env properties:" + envFile + "\n"+ GenericUtil.getPropertiesString(props));
 
-		/*
-		String cftFile = System.getProperty("sorcer.formats.file");
-		if (cftFile != null) {
-			loadDataFormatTypes(cftFile);
-		} else {
-			try {
-				cftFile = CONTEXT_DATA_FORMATS;
-				loadDataFormatTypes(cftFile);
-			} catch (Exception e) {
-				cftFile = System.getenv("SORCER_HOME") + "/configs/"
-						+ CONTEXT_DATA_FORMATS;
-				System.setProperty("sorcer.formats.file", cftFile);
-				loadDataFormatTypes(cftFile);
-			}
-		}*/
-
+		// Set Engineering formats only when eng.home is set
+        if (System.getProperty("eng.home")!=null) {
+            String cftFile = System.getProperty("sorcer.formats.file");
+            if (cftFile != null) {
+                loadDataFormatTypes(cftFile);
+            } else {
+                try {
+                    cftFile = CONTEXT_DATA_FORMATS;
+                    loadDataFormatTypes(cftFile);
+                } catch (Exception e) {
+                    cftFile = System.getenv("IGRID_HOME") + "/configs/"
+                            + CONTEXT_DATA_FORMATS;
+                    System.setProperty("sorcer.formats.file", cftFile);
+                    loadDataFormatTypes(cftFile);
+                }
+            }
+        }
 		logger.finer("* Sorcer provider accessor:"
 				+ getProperty(SorcerConstants.S_SERVICE_ACCESSOR_PROVIDER_NAME));
 
@@ -1696,4 +1707,61 @@ public class SorcerEnv extends SOS {
         return true;
     }
 
+
+
+    /**
+     * Loads data node (value) types from the SORCER data store or file. Data
+     *
+     * node types specify application types of data nodes in service contexts.
+     * It is analogous to MIME types in SORCER. Each type has a format
+     * 'cnt/application/format/modifiers' or in the association format
+     * 'cnt|application|format|modifiers' when used with
+     * {@code Context.getMarkedPaths}.
+     *
+     * @param filename
+     *            name of file containing service context node type definitions.
+     */
+    private static void loadDataNodeTypes(String filename) {
+        try {
+            // Try in local directory first
+            props.load((new FileInputStream(new File(filename))));
+        } catch (Throwable t1) {
+            try {
+                // Can not access "filename" give try as resource
+                // sorcer/util/data.formats
+                InputStream stream = Sorcer.class.getResourceAsStream(filename);
+                if (stream != null)
+                    props.load(stream);
+                else
+                    logger.severe("could not load data node types from: "
+                            + filename);
+            } catch (Throwable t2) {
+                logger.severe("could not load data node types: \n"
+                        + t2.getMessage());
+                logger.throwing(Sorcer.class.getName(), "loadDataNodeTypes", t2);
+            }
+
+        }
+    }
+
+
+    /**
+     * Load context node (value) types from default 'node.types'. SORCER node
+     * types specify application types of data nodes in SORCER service contexts.
+     * It is an analog of MIME types in SORCER. Each type has a format
+     * 'cnt/application/format/modifiers'.
+     */
+    public static void loadContextNodeTypes(Hashtable<?, ?> map) {
+        if (map != null && !map.isEmpty()) {
+            String idName = null, cntName = null;
+            String[] tokens;
+            for (Enumeration<?> e = map.keys(); e.hasMoreElements();) {
+                idName = (String) e.nextElement();
+                tokens = toArray(idName);
+                cntName = ("".equals(tokens[1])) ? tokens[0] : tokens[1];
+                props.put(cntName,
+                        Context.DATA_NODE_TYPE + APS + map.get(idName));
+            }
+        }
+    }
 }

@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<project name="Boot" default="sdb-prv" basedir=".">
+	<!-- load system environment variables -->
+	<property environment="env" />
+	<import file="${env.SORCER_HOME}/bin/common-run.xml" />
+	<echo message="SORCER_HOME: ${sorcer.home}" />
+
+	<!-- set property values -->
+	<property name="provider.name" value="dbp" />
+
+	<!-- start service provider -->
+	<target name="sdb-prv">
+		<java jar="${lib}/sorcer-boot.jar" fork="yes">
+			<arg value="../configs/start-dbp.config" />
+			<sysproperty key="java.util.logging.config.file" value="${sorcer.home}/configs/sorcer.logging" />
+			<sysproperty key="java.security.policy" value="../policy/${provider.name}-prv.policy" />
+			<sysproperty key="iGrid.home" value="${iGrid.home}" />
+			<sysproperty key="sorcer.env.file" value="${iGrid.home}/configs/sorcer.env" />
+			<sysproperty key="java.protocol.handler.pkgs" value="net.jini.url|sorcer.util.url|org.rioproject.url" />
+			<sysproperty key="java.rmi.server.RMIClassLoaderSpi" value="org.rioproject.rmi.ResolvingLoader" />
+		</java>
+	</target>
+
+</project>

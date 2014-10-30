@@ -1,0 +1,48 @@
+//project.jar.enabled = false
+
+jar {
+	manifest {
+		attributes("Implementation-Title": "SORCER Worker Provider", "Implementation-Version": version)
+	}
+	//baseName = "worker-impl"
+	classifier = "prv"
+	dependsOn classes
+	from sourceSets.main.output
+	exclude('sorcer/worker/requestor/**')
+}
+
+task workerPrvDlJar(type: Jar) {
+	manifest {
+		attributes("Implementation-Title": "SORCER Worker Exported Classes", "Implementation-Version": version)
+	}
+	//baseName = "worker-dl"
+    classifier = "dl"
+	dependsOn classes
+	from sourceSets.main.output
+	include('sorcer/worker/provider/*')
+}
+
+task workerReqJar(type: Jar) {
+	manifest {
+		attributes("Implementation-Title": "SORCER Worker Requestor", "Implementation-Version": version)
+	}
+	classifier = "req"
+	dependsOn classes
+	from sourceSets.main.output
+	include('sorcer/worker/requestor/**')
+}
+
+artifacts {
+    archives workerPrvDlJar
+	archives workerReqJar
+}
+
+install.dependsOn(['workerPrvDlJar', 'workerReqJar'])
+publish.dependsOn(install)
+build.dependsOn(install)
+
+dependencies { 
+	compile project(':sorcer-platform')
+    compile project(':sorcer-lib')
+    compile project(':sos-db-prv')
+}

@@ -57,4 +57,3 @@ allprojects {
     group = 'org.sorcer'
     version = '5.0.0-SNAPSHOT'
 }
-

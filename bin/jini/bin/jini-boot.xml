@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<project name="Jini basic services" default="jini all" basedir=".">
+
+	<import file="../../../bin/common-run.xml" />
+
+	<target name="jini all">
+		<java jar="${lib}/sorcer-boot.jar" fork="yes">
+			<arg value="../configs/boot-jini.config" />
+			<sysproperty key="iGrid.home" value="${iGrid.home}" />
+			<sysproperty key="sorcer.env.file" value="${iGrid.home}/configs/sorcer.env" />
+			<sysproperty key="java.rmi.server.useCodebaseOnly" value="false" />
+			<sysproperty key="java.security.policy" value="../policy/jini.policy" />
+			<sysproperty key="java.util.logging.config.file" value="${iGrid.home}/configs/sorcer.logging" />
+		</java>
+	</target>
+
+</project>

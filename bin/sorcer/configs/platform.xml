@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ Default platform configuration
+-->
+<platform>
+     <!--
+    SORCER jars to load into the common classloader.
+    -->
+    <capability name="SORCER" common="yes">
+        <version>5.0</version>
+        <manufacturer>SORCERsoft.org</manufacturer>
+        <classpath>${iGrid.home}/lib/sorcer/lib/sorcer-platform.jar</classpath>
+    </capability>
+    
+       <!--
+    River (Jini) jars to load into the common classloader.
+    -->
+    <capability name="River" common="yes">
+        <version>2.1.1</version>
+        <manufacturer>Apache Software Foundation</manufacturer>
+        <classpath>${iGrid.home}/lib/river/lib/jsk-lib.jar</classpath>
+    </capability>
+    
+    <!--
+    Rio jars to load into the common classloader.
+    -->
+    <capability name="Rio"
+                class="org.rioproject.system.capability.software.RioSupport"
+                common="yes">
+        <version>4.0 M3</version>
+        <classpath>${iGrid.home}/lib/rio/rio.jar</classpath>
+    </capability>
+    
+</platform>
+

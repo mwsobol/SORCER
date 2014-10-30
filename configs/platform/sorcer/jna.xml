@@ -6,7 +6,7 @@
 		<version>X.x</version>
 		<manufacturer>JNA Project</manufacturer>
 		<classpath>
-			${iGrid.home}/lib/common/jna.jar
+			${sorcer.home}/lib/common/jna.jar
 		</classpath>
 	</capability>
 

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="examples/eol/src/main/java"/>
+	<classpathentry kind="src" path="examples/eol/src/test/java"/>
+	<classpathentry kind="src" path="examples/pml/src/main/java"/>
+	<classpathentry kind="src" path="examples/pml/src/test/java"/>
+	<classpathentry kind="src" path="examples/worker/src/main/java"/>
+	<classpathentry kind="src" path="examples/worker/src/test/java"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry exported="true" kind="con" path="org.springsource.ide.eclipse.gradle.classpathcontainer"/>
+	<classpathentry kind="con" path="org.springsource.ide.eclipse.gradle.dsld.classpathcontainer"/>
+	<classpathentry kind="con" path="GROOVY_DSL_SUPPORT"/>
+	<classpathentry kind="con" path="GROOVY_SUPPORT"/>
+	<classpathentry kind="lib" path="core/sorcer-platform/build/libs/sorcer-platform-5.0.0-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="core/sorcer-lib/build/libs/sorcer-lib-5.0.0-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="rio/lib/jsk-platform-2.2.2.jar"/>
+	<classpathentry kind="lib" path="rio/lib/start-2.2.2.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

@@ -1,7 +1,7 @@
 jar {
 	manifest {
 		attributes("Implementation-Title": "SORCER Service Booter", "Implementation-Version": version,
-		"Class-Path": "river/lib/start-${riverVersion}.jar river/lib/jsk-lib-${riverVersion}.jar river/lib/serviceui-${riverVersion}.jar",
+		"Class-Path": "river/start-${riverVersion}.jar river/jsk-lib-${riverVersion}.jar river/serviceui-${riverVersion}.jar",
 		"Main-Class": "com.sun.jini.start.ServiceStarter",
 		"Premain-Class": "sorcer.provider.boot.InstrumentationHook",
 		"SORCER-Version": "${sorcerVersion}")

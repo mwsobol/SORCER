@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+
+<project name="Worker Requestor" default="run.requestor" basedir=".">
+
+	<!-- loads system environment variables -->
+	<property environment="env" />
+	<import file="${env.IGRID_HOME}/bin/common-run.xml" />
+	<echo message="webster: ${provider.webster.url}" />
+
+	<!-- set property values here -->
+	<property name="requestor.name" value="worker-req" />
+	<property name="requestor.class" value="sorcer.ex2.requestor.WorkerJobRequestor" />
+
+	<path id="project.classpath">
+		<pathelement location="${sorcer.lib}/${requestor.name}.jar" />
+		<pathelement location="${sorcer.lib}/sorcer-platform.jar" />
+		<pathelement location="${jini.lib}/jsk-lib.jar" />
+		<pathelement location="${jini.lib}/jsk-platform.jar" />
+	</path>
+
+	<target name="run.requestor">
+		<java classname="${requestor.class}" fork="yes">
+			<arg value="Worker1" />
+			<arg value="Worker2" />
+			<arg value="Worker3" />
+			<classpath refid="project.classpath" />
+			<sysproperty key="java.util.logging.config.file" value="${sorcer.home}/configs/sorcer.logging" />
+			<sysproperty key="java.security.policy" value="../policy/${requestor.name}.policy" />
+			<sysproperty key="java.rmi.server.codebase" value="${provider.webster.url}/${requestor.name}-dl.jar" />
+		</java>
+	</target>
+
+</project>
+
+
+
