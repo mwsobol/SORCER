@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+
+<project name="lookup service" default="reggie" basedir=".">
+
+	<import file="../../../bin/common-run.xml" />
+
+	<target name="reggie">
+		<java jar="${jini.lib}/start.jar" fork="yes">
+			<arg value="../configs/start-generic.config" />
+			<sysproperty key="java.security.policy" value="../policy/jini.policy" />
+			<sysproperty key="iGrid.home" value="${iGrid.home}" />
+			<sysproperty key="provider.webster.url" value="${provider.webster.url}/" />
+			<sysproperty key="java.util.logging.config.file" value="${iGrid.home}/configs/sorcer.logging" />
+			<sysproperty key="impl.class" value="com.sun.jini.reggie.TransientRegistrarImpl" />
+			<sysproperty key="impl.jar" value="reggie.jar" />
+			<sysproperty key="dl.jar" value="reggie-dl.jar" />
+            <sysproperty key="java.rmi.server.useCodebaseOnly"  value="false" />
+		</java>
+	</target>
+
+
+</project>

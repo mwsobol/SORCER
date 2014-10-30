@@ -1,0 +1,134 @@
+#!/bin/bash
+
+JAVA=${JAVA_HOME:=/usr/local/java}
+JINI=${JINI_HOME:=/usr/local/jini}
+HOST=${CLASS_FILE_SERVER_HOST:=`hostname`}
+PORT=${CLASS_FILE_SERVER_PORT:=9000}
+INITIAL_LOOKUP_GROUP=${INITIAL_LOOKUP_GROUP:=com.sun.bar}
+OUTRIGGER=${IGRID_HOME}/bin/jini/services/outrigger
+IGRID=${IGRID_HOME:=/usr/local/iGrid}
+DEBUG_CONFIG_FILE=${DEBUG_CONFIG_FILE:=${OUTRIGGER}/logging.properties}
+LOG_DIR=${LOG_DIR:=${HOME}/jiniLogs}
+
+
+start_transient() {
+  if [ "$1" = "jeri" ]; then
+    START_CONFIG=${OUTRIGGER}/start-transient-outrigger.config
+  else
+    START_CONFIG=${OUTRIGGER}/start-transient-jrmp-outrigger.config
+  fi
+
+  echo "Starting Transient Outrigger using $1..."
+  ${JAVA}/bin/java -Djava.security.policy=${START_POLICY} \
+	-Djava.util.logging.config.file=${DEBUG_CONFIG_FILE} \
+	-Djava.protocol.handler.pkgs=net.jini.url \
+	-DSERVER_NAME=${HOST} \
+	-DJINI=${JINI} \
+	-DPORT=${PORT} \
+	-DINITIAL_LOOKUP_GROUP=${INITIAL_LOOKUP_GROUP} \
+	-DLOG_DIR=${LOG_DIR} \
+        -DIGRID=${IGRID} \
+	-jar ${JINI}/lib/start.jar \
+	${START_CONFIG} &
+}
+
+start_persistent() {
+  START_CONFIG=${OUTRIGGER}/start-persistent-outrigger.config
+  if [ "$1" = "jrmp" ]; then
+    echo ""
+    echo "Sorry, using Persistent, Non-activatable Outriggers over jrmp"
+    echo "is not recommended.   I will use jeri instead..."
+    echo "For further information, see the Outrigger documentation."
+    echo ""
+  fi
+
+  echo "Starting Persistent Outrigger using jeri..."
+  ${JAVA}/bin/java -Djava.security.policy=${START_POLICY} \
+	-Djava.util.logging.config.file=${DEBUG_CONFIG_FILE} \
+	-DSERVER_NAME=${HOST} \
+	-DJINI=${JINI} \
+	-DPORT=${PORT} \
+	-DINITIAL_LOOKUP_GROUP=${INITIAL_LOOKUP_GROUP} \
+	-DLOG_DIR=${LOG_DIR} \
+	-jar ${JINI}/lib/start.jar \
+	${START_CONFIG} &
+}
+
+start_activatable() {
+  echo "Starting an Activatable Outrigger using $1"
+  if [ "$1" = "jeri" ]; then
+    START_CONFIG=${OUTRIGGER}/start-activatable-outrigger.config
+  else
+    START_CONFIG=${OUTRIGGER}/start-activatable-jrmp-outrigger.config
+  fi
+
+  ${JAVA}/bin/java -Djava.security.policy=${START_POLICY} \
+	-Djava.util.logging.config.file=${DEBUG_CONFIG_FILE} \
+	-DSERVER_NAME=${HOST} \
+	-DJINI=${JINI} \
+	-DPORT=${PORT} \
+	-DINITIAL_LOOKUP_GROUP=${INITIAL_LOOKUP_GROUP} \
+	-DLOG_DIR=${LOG_DIR} \
+	-jar ${JINI}/lib/start.jar \
+	${START_CONFIG} &
+  echo "Activatable Outrigger starting"
+}
+
+
+##
+##  The Entry Point of this script can start outrigger in transient,
+##  persistent or activatable mode.
+##
+
+
+START_POLICY=${OUTRIGGER}/start.policy
+case "$1" in
+  --transient)  
+	mode=transient
+	;;
+
+  --persistent) 
+	mode=persistent
+	;;
+  
+  --activatable)
+	mode=activatable
+	;;
+
+  *) echo $"Usage: $0 {--transient|--persistent|--activatable} [--jeri|--jrmp]"
+	exit 1
+	;;
+esac
+
+if [ "$#" -ne  2 ]; then
+  protocol=jeri
+else
+  case "$2" in
+    --jeri)
+  	protocol=jeri
+	;;
+    --jrmp)
+	protocol=jrmp
+	;;
+    *) echo $"Usage: $0 {--transient|--persistent|--activatable} [--jeri|--jrmp]"
+	exit 1
+	;;
+  esac
+fi
+
+
+case "$mode" in
+  transient)
+    start_transient $protocol
+    ;;
+
+  persistent)
+    start_persistent $protocol
+    ;;
+
+  activatable)
+    start_activatable $protocol
+    ;; 
+esac
+  
+exit 0

@@ -1,0 +1,148 @@
+#!/bin/bash
+
+# startFiddler version 1.0: Starts the Fiddler Service
+# Copyright (C) 2003  Frank Gauthier
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+JAVA=${JAVA_HOME:=/usr/local/java}
+JINI=${JINI_HOME:=/usr/local/jini}
+HOST=${CLASS_FILE_SERVER_HOST:=`hostname`}
+PORT=${CLASS_FILE_SERVER_PORT:=8080}
+INITIAL_LOOKUP_GROUP=${INITIAL_LOOKUP_GROUP:=com.sun.bar}
+FIDDLER=${JINI}/services/fiddler
+DEBUG_CONFIG_FILE=${DEBUG_CONFIG_FILE:=${FIDDLER}/logging.properties}
+LOG_DIR=${LOG_DIR:=${HOME}/jiniLogs}
+
+start_transient() {
+  echo "Starting Transient Fiddler using $1"
+  if [ "$1" = "jeri" ]; then
+    START_CONFIG=${FIDDLER}/start-transient-fiddler.config
+  else
+    START_CONFIG=${FIDDLER}/start-transient-jrmp-fiddler.config
+  fi
+
+  ${JAVA}/bin/java -Djava.security.policy=${START_POLICY} \
+	-Djava.protocol.handler.pkgs=net.jini.url \
+	-Djava.util.logging.config.file=${DEBUG_CONFIG_FILE} \
+	-DSERVER_NAME=${HOST} \
+	-DJINI=${JINI} \
+	-DPORT=${PORT} \
+	-DINITIAL_LOOKUP_GROUP=${INITIAL_LOOKUP_GROUP} \
+	-DLOG_DIR=${LOG_DIR} \
+	-jar ${JINI}/lib/start.jar \
+	${START_CONFIG} &
+  echo "Transient Fiddler starting"
+}
+
+start_persistent() {
+  START_CONFIG=${FIDDLER}/start-persistent-fiddler.config
+  if [ "$1" = "jrmp" ]; then
+    echo ""
+    echo "Sorry, using Persistent, Non-activatable Fiddlers over jrmp"
+    echo "is not recommended.  I will use jeri instead..."
+    echo "For further information, see the Fiddler documentation."
+    echo ""
+  fi
+
+  echo "Starting a Persistent, Non-activatable Fiddler using jeri"
+  ${JAVA}/bin/java -Djava.security.policy=${START_POLICY} \
+	-Djava.util.logging.config.file=${DEBUG_CONFIG_FILE} \
+	-DSERVER_NAME=${HOST} \
+	-DJINI=${JINI} \
+	-DPORT=${PORT} \
+	-DINITIAL_LOOKUP_GROUP=${INITIAL_LOOKUP_GROUP} \
+	-DLOG_DIR=${LOG_DIR} \
+	-jar ${JINI}/lib/start.jar \
+	${START_CONFIG} &
+}
+
+start_activatable() {
+  if [ "$1" = "jeri" ]; then
+    START_CONFIG=${FIDDLER}/start-activatable-fiddler.config
+  else
+    START_CONFIG=${FIDDLER}/start-activatable-jrmp-fiddler.config
+  fi
+
+  echo "Starting an Activatable Fiddler using $1"
+  ${JAVA}/bin/java -Djava.security.policy=${START_POLICY} \
+	-Djava.util.logging.config.file=${DEBUG_CONFIG_FILE} \
+	-DSERVER_NAME=${HOST} \
+	-DJINI=${JINI} \
+	-DPORT=${PORT} \
+	-DINITIAL_LOOKUP_GROUP=${INITIAL_LOOKUP_GROUP} \
+	-DLOG_DIR=${LOG_DIR} \
+	-jar ${JINI}/lib/start.jar \
+	${START_CONFIG} &
+}
+
+
+##
+##  The Entry Point of this script can start fiddler in transient,
+##  persistent, or activatable mode.
+##
+
+
+START_POLICY=${FIDDLER}/start.policy
+case "$1" in
+  --transient)  
+	mode=transient
+	;;
+
+  --persistent) 
+	mode=persistent
+	;;
+  
+  --activatable)
+	mode=activatable
+	;;
+
+  *) echo $"Usage1: $0 {--transient|--persistent|--activatable} [--jeri|--jrmp]"
+	exit 1
+	;;
+esac
+
+if [ "$#" -ne  2 ]; then
+  protocol=jeri
+else
+  case "$2" in
+    --jeri)
+  	protocol=jeri
+	;;
+    --jrmp)
+	protocol=jrmp
+	;;
+    *) echo $"Usage2: $0 {--transient|--persistent|--activatable} [--jeri|--jrmp]"
+	exit 1
+	;;
+  esac
+fi
+
+
+case "$mode" in
+  transient)
+    start_transient $protocol
+    ;;
+
+  persistent)
+    start_persistent $protocol
+    ;;
+
+  activatable)
+    start_activatable $protocol
+    ;; 
+esac
+  
+exit 0

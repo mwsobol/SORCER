@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<project name="SOS basic services" default="sorcer-services" basedir=".">
+
+	<import file="../../../bin/common-run.xml" />
+
+	<target name="sorcer-services">
+		<java jar="${lib}/sorcer-boot.jar" fork="yes">
+			<arg value="../configs/boot-sorcer.config" />
+			<sysproperty key="iGrid.home" value="${iGrid.home}" />
+			<sysproperty key="sorcer.env.file" value="${iGrid.home}/configs/sorcer.env" />
+			<sysproperty key="java.rmi.server.useCodebaseOnly" value="false" />
+			<sysproperty key="java.security.policy" value="${iGrid.home}/policy/sorcer.policy" />
+			<sysproperty key="java.util.logging.config.file" value="${iGrid.home}/configs/sorcer.logging" />
+		</java>
+	</target>
+
+</project>

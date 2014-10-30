@@ -33,11 +33,11 @@
 		<!--pathelement location="${sorcer-ext.lib}/sb.jar" /-->
 		<pathelement location="${sorcer-ext.lib}/ssb-${sorcer.version}.jar" />
 		<pathelement location="${sorcer.lib}/sorcer-platform-${sorcer.version}.jar" />
-		<pathelement location="${lib}/common/groovy/groovy-all-${groovy.version}.jar" />
-		<pathelement location="${lib}/river/lib/jsk-lib-${river.version}.jar" />
-		<pathelement location="${lib}/river/lib/jsk-platform-${river.version}.jar" />
-		<pathelement location="${lib}/river/lib-dl/outrigger-dl-${river.version}.jar" />
-		<pathelement location="${lib}/river/lib/serviceui-${river.version}.jar" />
+		<pathelement location="${rio.lib}/groovy-all-${groovy.version}.jar" />
+		<pathelement location="${rio.lib}/jsk-lib-${river.version}.jar" />
+		<pathelement location="${rio.lib}/jsk-platform-${river.version}.jar" />
+		<pathelement location="${rio.lib}/outrigger-dl-${river.version}.jar" />
+		<pathelement location="${rio.lib}/serviceui-${river.version}.jar" />
         <pathelement location="${rio.lib}/rio-platform-${rio.version}.jar" />
         <pathelement location="${rio-dl.lib}/rio-api-${rio.version}.jar" />
         <pathelement location="${rio.lib}/logging/slf4j-api-${slf4j.version}.jar" />

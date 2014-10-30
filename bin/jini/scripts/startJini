@@ -1,0 +1,130 @@
+#!/bin/bash
+
+# startJini version 1.0: Starts the major components of the Jini system.
+# Copyright (C) 2003  Frank Gauthier
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place - Suite 35, Boston, MA  02111-157, USA.
+
+JINI=${JINI_HOME:=/usr/local/jini}
+LOG_DIR=${LOG_DIR:=${HOME}/jiniLogs}
+
+
+deleteLogs() {
+  echo "Deleting log directory: ${LOG_DIR}" 
+  rm -ir ${LOG_DIR}/*
+}
+
+checkForLogDirectory() {
+  if [ ! -d ${LOG_DIR} ]; then
+    mkdir -pv ${LOG_DIR} 
+    RETVAL=$?
+    if [ "${RETVAL}" != 0 ]; then
+      echo "Oops, I can't use '${LOG_DIR}' for my Jini Logs."
+      echo "Bye for now..."
+      exit $?
+    fi
+  fi
+}
+
+case "$1" in
+  --transient)
+        mode=--transient
+        ;;
+
+  --persistent)
+        mode=--persistent
+        ;;
+
+  --activatable)
+        mode=--activatable
+        ;;
+
+  *) echo $"Usage: $0 {--transient|--persistent|--activatable} [--jeri|--jrmp] [--delete-logs]"
+        exit 1
+        ;;
+esac
+
+##  Jeri is the default.
+protocol=--jeri
+if [ "$#" -gt 1 ]; then
+  case "$2" in
+    --jeri)
+        protocol=--jeri
+        ;;
+    --jrmp)
+        protocol=--jrmp
+        ;;
+    --delete-logs)
+	deleteLogs
+	;;
+
+    *) echo $"Usage: $0 {--transient|--persistent|--activatable} [--jeri|--jrmp] [--delete-logs]"
+        exit 1
+        ;;
+  esac
+fi
+
+if [ "$#" -eq  3 ]; then
+  case "$3" in
+    --delete-logs)
+	deleteLogs
+	;;
+
+    
+    *) echo $"Usage: $0 {--transient|--persistent|--activatable} [--jeri|--jrmp] [--delete-logs]"
+        exit 1
+        ;;
+
+  esac
+fi
+
+
+## Make sure we've got a useable Jini Log directory.
+checkForLogDirectory
+
+## Start the class file server
+${JINI}/bin/startTools ${JINI}/lib
+
+sleep 5
+
+## Start the new Activation service
+${JINI}/bin/startPhoenix
+sleep 5 
+
+## Start the Service Registrar
+${JINI}/bin/startReggie $mode $protocol
+sleep 5 
+
+## Start the Transaction Manager
+${JINI}/bin/startMahalo $mode $protocol
+sleep 5 
+
+## Start a JavaSpace
+${JINI}/bin/startOutrigger $mode $protocol
+sleep 5 
+
+## Start the Lookup Discovery service
+${JINI}/bin/startFiddler $mode $protocol
+sleep 5 
+
+## Start the Lease Renewal service
+${JINI}/bin/startNorm $mode $protocol
+sleep 5 
+
+## Start the Event Mailbox service
+${JINI}/bin/startMercury $mode $protocol
+sleep 5 
+
+echo "The Jini System is ready..."

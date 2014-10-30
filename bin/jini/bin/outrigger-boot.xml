@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<project name="Jini transaction manager" default="mahalo" basedir=".">
+
+	<import file="../../../bin/common-run.xml" />
+
+	<target name="mahalo">
+		<java jar="${lib}/sorcer-boot.jar" fork="yes">
+			<arg value="../configs/boot-outrigger.config" />
+			<sysproperty key="iGrid.home" value="${iGrid.home}" />
+			<sysproperty key="sorcer.env.file" value="${iGrid.home}/configs/sorcer.env" />
+			<sysproperty key="java.security.policy" value="../policy/jini.policy" />
+			<sysproperty key="java.util.logging.config.file" value="${iGrid.home}/configs/sorcer.logging" />
+            <sysproperty key="java.rmi.server.useCodebaseOnly"  value="false" />
+			<sysproperty key="webster.port" value="8003" />
+		</java>
+	</target>
+
+</project>

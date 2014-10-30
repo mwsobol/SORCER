@@ -359,7 +359,7 @@ abstract public class SorcerRequestor implements SorcerConstants {
 		File iGridHome = Sorcer.getHomeDir();
 		logger.info("iGrid Home = " + iGridHome);
 
-		// junitDataDirName must be relative to iGrid.Home
+		// junitDataDirName must be relative to sorcer.home
 		
 		logger.info("junitDataDirName " + junitDataDirName);
 		return new File(iGridHome + junitDataDirName);

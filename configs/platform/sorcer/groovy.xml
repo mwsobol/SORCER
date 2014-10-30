@@ -7,7 +7,7 @@
     <capability name="Groovy" common="yes">
         <version>groovy-all-2.2.1</version>
         <manufacturer>Groovy</manufacturer>
-        <classpath>${iGrid.home}/lib/common/groovy/groovy-all-2.2.1.jar</classpath>
+        <classpath>${sorcer.home}/lib/common/groovy/groovy-all-2.2.1.jar</classpath>
     </capability>  
        
 </platform>

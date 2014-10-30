@@ -1,0 +1,31 @@
+#!/bin/bash
+
+# startBrowser version 1.0: Starts the Jini Service browser
+# Copyright (C) 2003  Frank Gauthier
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+JAVA=${JAVA_HOME:=/usr/local/java}
+JINI=${JINI_HOME:=/usr/local/jini}
+HOST=${CLASS_FILE_SERVER_HOST:=`hostname`}
+PORT=${CLASS_FILE_SERVER_PORT:=8080}
+BROWSER=${IGRID_HOME}/bin/jini/services/browser
+DEBUG_CONFIG_FILE=${DEBUG_CONFIG_FILE:=${IGRID_HOME}/bin/jini/services/logging.properties}
+
+${JAVA}/bin/java \
+	-Djava.security.policy=${BROWSER}/policy.all \
+	-Djava.rmi.server.codebase=http://${HOST}:${PORT}/browser-dl.jar \
+	-Djava.protocol.handler.pkgs=net.jini.url \
+	-jar ${JINI}/lib/browser.jar $1 &

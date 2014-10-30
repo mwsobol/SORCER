@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<!-- 
+Replace MYPROVIDER with your provider name and specify property value for "provider.class."
+Also you might need to adjust the classpath (provider.classpath) for your provider 
+-->
+<project name="Run Exert Monitor" default="run.provider.class" basedir=".">
+
+	<!-- load system environment variables -->
+	<property environment="env" />
+	<import file="${env.IGRID_HOME}/bin/common-run.xml" />
+
+	<echo message="IGRID_HOME: ${iGrid.home}" />
+	<echo message="Webster: ${provider.webster.url}" />
+
+	<!-- set property values -->
+	<property name="provider.name" value="exertmonitor" />
+	<property name="provider.class" value="sorcer.core.provider.exertmonitor.ExertMonitor" />
+
+	<!-- define provider classpath -->
+	<path id="project.classpath">
+		<pathelement location="${sorcer.lib}/sos-${provider.name}.jar" />
+		<pathelement location="${common.lib}/je-5.0.104.jar" />
+		<path refid="sorcer.path" />
+		<path refid="rio.path" />
+		<path refid="jini.path" />
+	</path>
+
+	<!-- start service provider -->
+	<target name="run.provider.class">
+		<java classname="com.sun.jini.start.ServiceStarter" fork="yes">
+			<classpath>
+				<path refid="provider.starter.path" />
+			</classpath>
+			<sysproperty key="java.rmi.server.codebase" value="${starter-codebase}" />
+			<sysproperty key="java.util.logging.config.file" value="${iGrid.home}/configs/sorcer.logging" />
+			<sysproperty key="java.security.policy" value="../policy/${provider.name}-prv.policy" />
+			<sysproperty key="sorcer.env.file" value="${iGrid.home}/configs/sorcer.env" />
+			<sysproperty key="sorcer.provider.codebase" value="${sos-codebase}" />
+			<sysproperty key="sorcer.provider.classpath" value="${toString:project.classpath}" />
+			<sysproperty key="sorcer.provider.config" value="../configs/${provider.name}-prv.config" />
+			<sysproperty key="sorcer.provider.impl" value="${provider.class}" />
+			<arg value="${iGrid.home}/configs/startup-prv.config" />
+		</java>
+	</target>
+
+</project>

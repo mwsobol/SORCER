@@ -3,7 +3,7 @@
 
 	<import file="common-run.xml" />
 
-	<property name="iGrid.data" value="${sorcer.home}/data" />
+	<property name="sorcer.data" value="${sorcer.home}/data" />
 	
 	<target name="run" depends="clean">
 		<antcall target="kernel">
@@ -23,13 +23,13 @@
             <classpath>
                 <pathelement location="${lib}/sorcer-boot-${sorcer.version}.jar"/>
             	<pathelement location="${jini.lib}/serviceui-${river.version}.jar"/>
-            	<pathelement location="${common.lib}/je-${je.version}.jar"/>
-                <pathelement location="${rio.home}/lib/rio-platform-${rio.version}.jar" />
-                <pathelement location="${rio.home}/lib/rio-start-${rio.version}.jar" />
-            	<pathelement location="${rio.home}/lib-dl/rio-api-${rio.version}.jar" />
-                <pathelement location="${rio.home}/lib/logging/slf4j-jdk14-${slf4j.version}.jar" />
+            	<pathelement location="${sorcer.lib}/common/je-${je.version}.jar"/>
+                <pathelement location="${rio.lib}/rio-platform-${rio.version}.jar" />
+                <pathelement location="${rio.lib}/rio-start-${rio.version}.jar" />
+            	<pathelement location="${rio-dl.lib}/rio-api-${rio.version}.jar" />
+                <pathelement location="${rio.lib}/logging/slf4j-jdk14-${slf4j.version}.jar" />
             </classpath>
-			<arg value="../configs/boot-iGrid-arv-http.config" />
+			<arg value="../configs/boot-sorcer-arv-http.config" />
 			<sysproperty key="sorcer.home" value="${sorcer.home}" />
 			<sysproperty key="sorcer.version" value="${sorcer.version}" />
 			<sysproperty key="river.version" value="${river.version}" />
@@ -37,9 +37,9 @@
 			<sysproperty key="rio.home" value="${env.RIO_HOME}" />
 			<sysproperty key="sorcer.env.file" value="${sorcer.home}/configs/sorcer.env" />
 			<sysproperty key="java.rmi.server.useCodebaseOnly" value="false" />
-			<sysproperty key="java.security.policy" value="${sorcer.home}/policy/iGrid.policy" />
+			<sysproperty key="java.security.policy" value="${sorcer.home}/policy/sorcer.policy" />
 			<sysproperty key="java.util.logging.config.file" value="${sorcer.home}/configs/sorcer.logging" />
-			<sysproperty key="webster.tmp.dir" value="${iGrid.data}" />
+			<sysproperty key="webster.tmp.dir" value="${sorcer.data}" />
 			<jvmarg value="-Xms1g"/>
 			<jvmarg value="-Xmx8g"/>			
 			<sysproperty key="java.protocol.handler.pkgs" value="net.jini.url|sorcer.util.url|org.rioproject.url" />

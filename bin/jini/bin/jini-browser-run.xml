@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+
+<project name="Service Browser" default="jini-browser" basedir=".">
+	<!-- system environment variables -->
+	<property environment="env" />
+	<import file="${env.IGRID_HOME}/bin/common-run.xml" />
+
+	<target name="jini-browser">
+		<java classname="com.sun.jini.example.browser.Browser" fork="yes">
+			<arg value="${iGrid.home}/bin/jini/configs/jini-browser.config" />
+			<!--jvmarg value="-Xdock:name=Jini Service Browser"/-->
+			<classpath>
+				<pathelement location="${jini.lib}/browser.jar" />
+				<!--<pathelement location="${jini.lib}/serviceui-1.1.jar" />-->
+				<!--<pathelement location="${jini.lib}/jsk-lib.jar" />-->
+				<pathelement location="${jini.lib}/jsk-platform.jar" />
+				<!--<pathelement location="${sorcer.lib}/sorcer-platform.jar" />-->
+			</classpath>
+			<sysproperty key="java.protocol.handler.pkgs" value="net.jini.url|org.rioproject.url" />
+			<sysproperty key="java.security.policy" value="${iGrid.policy}/policy.all" />
+            <sysproperty key="java.rmi.server.useCodebaseOnly" value="false" />
+		</java>
+	</target>
+
+</project>

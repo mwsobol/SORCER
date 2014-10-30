@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<project name="Run Jobber" default="jobber" basedir=".">
+	<!-- load system environment variables -->
+	<property environment="env" />
+	<import file="${env.IGRID_HOME}/bin/common-run.xml" />
+	<echo message="IGRID_HOME: ${iGrid.home}" />
+
+	<!-- set property values -->
+	<property name="provider.name" value="jobber" />
+
+	<!-- start service provider -->
+	<target name="jobber">
+		<java jar="${lib}/sorcer-boot.jar" fork="yes">
+			<arg value="../configs/start-jobber.config" />
+			<sysproperty key="java.util.logging.config.file" value="${iGrid.home}/configs/sorcer.logging" />
+			<sysproperty key="java.security.policy" value="../policy/${provider.name}-prv.policy" />
+			<sysproperty key="iGrid.home" value="${iGrid.home}" />
+			<sysproperty key="sorcer.env.file" value="${iGrid.home}/configs/sorcer.env" />
+			<!--sysproperty key="webster.port" value="8101" /-->
+
+		</java>
+	</target>
+
+</project>

@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+
+<project name="JavaSpace service" default="outrigger" basedir=".">
+
+	<import file="../../../bin/common-run.xml" />
+
+	<target name="outrigger">
+		<java jar="${common.lib}/start.jar" fork="yes" spawn="yes">
+			<arg value="../configs/start-generic.config" />
+			<sysproperty key="java.security.policy" value="../policy/jini.policy" />
+			<sysproperty key="iGrid.home" value="${iGrid.home}" />
+			<sysproperty key="provider.webster.url" value="${provider.webster.url}/" />
+			<sysproperty key="java.util.logging.config.file" value="${iGrid.home}/configs/sorcer.logging" />
+			<sysproperty key="impl.class" value="com.sun.jini.outrigger.TransientOutriggerImpl" />
+			<sysproperty key="impl.jar" value="outrigger.jar" />
+			<sysproperty key="dl.jar" value="outrigger-dl.jar" />
+            <sysproperty key="java.rmi.server.useCodebaseOnly"  value="false" />
+		</java>
+	</target>
+
+
+</project>

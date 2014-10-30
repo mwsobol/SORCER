@@ -22,7 +22,7 @@
 		<java classname="${requestor.class}" fork="yes">
 			<arg value="Worker1" />
 			<classpath refid="project.classpath" />
-			<sysproperty key="java.util.logging.config.file" value="${iGrid.home}/configs/sorcer.logging" />
+			<sysproperty key="java.util.logging.config.file" value="${sorcer.home}/configs/sorcer.logging" />
 			<sysproperty key="java.security.policy" value="../policy/${requestor.name}.policy" />
 			<sysproperty key="java.rmi.server.codebase" value="${provider.webster.url}/${requestor.name}-dl.jar" />
 		</java>

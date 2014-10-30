@@ -1,0 +1,62 @@
+The scripts in this directory can be used to start up the entire 
+Jini system, or used individually, they can start up a single service.
+
+The script 'startJini' will start the entire Jini system for you.
+The script 'startBrowser' will start the Jini Service browser.
+The remaining scripts start up a single service.
+
+Enviroment Variables
+--------------------
+
+These scripts depend upon five enviroment variables.  All five variables
+have moderately reasonable default values for standalone systems.  If you 
+like the default value, then you do not need to set the corresponding 
+enviroment variable.  Listed below are the enviroment variables and their 
+default values:
+
+    Enviroment Variable	    Default Value	Usage
+    -------------------	    -------------	---------------
+    JAVA_HOME		    /usr/local/java	Points to the top of the
+						Java directory.
+    JINI_HOME		    /usr/local/jini	Points to the top of the
+						Jini directory.
+    CLASS_FILE_SERVER_HOST  `hostname`		The name of the machine
+						which is running the 
+						class file server.
+    CLASS_FILE_SERVER_PORT  8080		The port number which the
+						class file server is 
+						listening to.
+    INITIAL_LOOKUP_GROUP    com.sun.bar		The name of the initial
+						lookup group.
+    LOG_DIR                 ${HOME}/jiniLogs    The directory where the
+                                                Jini logs are stored
+
+    DEBUG_CONFIG_FILE       ${JINI_HOME}/services/*/logging.properties
+						The name of the property
+						file which controls the
+						java.util.logging facility
+		
+						Note: there is a logging
+						properties file for each
+						service to make customized
+						logging easier to do.
+
+	
+
+Command Line Parameters
+-----------------------
+	'startTools', 'startPhoenix' : take no command line parameters
+
+	'startJini' : accepts the following command line parameters:
+	  startScript {--transient|--persistent|--activatable} \
+		[--jeri|--jrmp] [--delete-logs]
+
+	all other scripts accept the following command line parameters:
+	  startScript {--transient|--persistent|--activatable} [--jeri|--jrmp]
+
+	The first argument must be given.  The second one is optional.
+	If you do not select an RMI protocol, jeri will be used...
+
+        The startJini 'delete-logs' argument will remove the Jini log
+        directory.  This will cause Jini to start "fresh".  
+       

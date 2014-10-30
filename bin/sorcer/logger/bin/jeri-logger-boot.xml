@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<project name="Run Logger" default="logger" basedir=".">
+	<!-- load system environment variables -->
+	<property environment="env" />
+	<import file="${env.IGRID_HOME}/bin/common-run.xml" />
+	<echo message="IGRID_HOME: ${iGrid.home}" />
+
+	<!-- set property values -->
+	<property name="provider.name" value="logger" />
+
+	<!-- start service provider -->
+	<target name="logger">
+		<java jar="${lib}/sorcer-boot.jar" fork="yes">
+			<arg value="../configs/start-logger.config" />
+			<sysproperty key="java.util.logging.config.file" value="${iGrid.home}/configs/sorcer.logging" />
+			<sysproperty key="java.security.policy" value="../policy/${provider.name}-prv.policy" />
+			<sysproperty key="iGrid.home" value="${iGrid.home}" />
+			<sysproperty key="sorcer.provider.config" value="${iGrid.home}/bin/sorcer/logger/configs/${provider.name}-prv.config" />
+			<sysproperty key="sorcer.env.file" value="${iGrid.home}/configs/sorcer.env" />
+		</java>
+	</target>
+
+</project>
