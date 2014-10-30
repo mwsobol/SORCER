@@ -24,10 +24,29 @@ dependencies {
 
 jar {
     from(configurations.compile.collect { it.isDirectory() ? it : zipTree(it)}) {
-        include "sorcer/core/SorcerConstants**"
-        include "sorcer/core/provider/util/PropertyHelper**"
-        include "sorcer/service/ConfigurationException**"
-        include "sorcer/util/SOS**"
+        include "sorcer/core/SorcerConstants.class"
+        include "sorcer/util/SOS.class"
+        include "sorcer/core/provider/util/PropertyHelper.class"
+        /*
+        include "sorcer/core/provider/AdministratableProvider.class"
+        include "sorcer/core/provider/RemoteContextManagement.class"
+        include "sorcer/core/provider/Provider.class"
+        include "sorcer/service/ConfigurationException.class"
+        include "sorcer/service/Context.class"
+        include "sorcer/service/ContextException.class"
+        include "sorcer/service/Evaluation.class"
+        include "sorcer/service/ExertionException.class"
+        include "sorcer/service/Identifiable.class"
+        include "sorcer/service/Invocation.class"
+        include "sorcer/service/Mappable.class"
+        include "sorcer/service/Monitorable.class"
+        include "sorcer/service/Service.class"
+
+        include "sorcer/core/ContextManagement.class"
+
+        include "net/jini/admin/Administrable.class"
+        include "net/jini/admin/JoinAdmin.class"
+        include "com/sun/jini/admin/DestroyAdmin.class"*/
     }
     manifest {
         attributes("Implementation-Title": "SORCER Service Booter",
