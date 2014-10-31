@@ -41,7 +41,6 @@ import org.rioproject.admin.ServiceActivityProvider;
 
 import sorcer.core.provider.AdministratableProvider;
 import sorcer.core.provider.Provider;
-import sorcer.core.provider.RemoteContextManagement;
 
 import com.sun.jini.admin.DestroyAdmin;
 
@@ -136,7 +135,6 @@ public class ProviderProxy implements Serializable {
 				list.add(DestroyAdmin.class);
 				list.add(JoinAdmin.class);
 				list.add(RemoteMethodControl.class);
-				list.add(RemoteContextManagement.class);
 			} else {
 				// provider interfaces
 				Class[] interfaces = proxy.getClass().getInterfaces();
@@ -152,7 +150,6 @@ public class ProviderProxy implements Serializable {
 
 				if (list.contains(Provider.class)) {
 					list.remove(AdministratableProvider.class);
-					list.remove(RemoteContextManagement.class);
 				}
 			}
 			for (Class c : additionalInterfaces) {

@@ -1,6 +1,6 @@
 /*
- * Copyright 2010 the original author or authors.
- * Copyright 2010 SorcerSoft.org.
+ * Copyright 2014 the original author or authors.
+ * Copyright 2014 SorcerSoft.org.
  *  
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,13 +15,12 @@
  * limitations under the License.
  */
 
-package sorcer.core.provider;
+package sorcer.ui.exertlet;
 
-import java.rmi.Remote;
+public interface EditorViewSignature {
 
-import sorcer.core.ContextManagement;
+	public String getServiceType();
 
-
-public interface RemoteContextManagement extends ContextManagement, Remote{
+	public String getSelector();
 
 }

@@ -7,7 +7,7 @@ jar {
 }
 
 dependencies {
-    compile project(':sorcer-platform')
+    compile project(':sorcer-platform'), project(':sorcer-ui')
 }
 
 task uiJar(type: Jar) {

@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="examples/eol/src/main/java"/>
+	<classpathentry kind="src" path="core/sorcer-dl/src/main/java"/>
+	<classpathentry kind="src" path="core/sorcer-ui/src/main/java"/>
+	<classpathentry kind="src" path="sos/sos-cataloger/src/main/java"/>
 	<classpathentry kind="src" path="core/sorcer-platform/src/main/java"/>
 	<classpathentry kind="src" path="examples/eol/src/test/java"/>
 	<classpathentry kind="src" path="examples/pml/src/main/java"/>

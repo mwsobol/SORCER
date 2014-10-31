@@ -19,6 +19,7 @@ package sorcer.core.provider;
 import com.sun.jini.config.Config;
 import com.sun.jini.start.LifeCycle;
 import com.sun.jini.thread.TaskManager;
+
 import net.jini.config.Configuration;
 import net.jini.config.ConfigurationException;
 import net.jini.config.ConfigurationProvider;
@@ -41,7 +42,7 @@ import net.jini.lookup.ui.factory.JFrameFactory;
 import net.jini.security.TrustVerifier;
 import net.jini.security.proxytrust.ServerProxyTrust;
 import net.jini.security.proxytrust.TrustEquivalence;
-import sorcer.core.ContextManagement;
+import sorcer.service.ContextManagement;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.ControlContext;
 import sorcer.core.context.ServiceContext;
@@ -64,6 +65,7 @@ import sorcer.util.url.sos.SdbURLStreamHandlerFactory;
 
 import javax.security.auth.Subject;
 import javax.security.auth.login.LoginContext;
+
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -147,8 +149,7 @@ import java.util.logging.Logger;
  */
 public class ServiceProvider implements Identifiable, Provider, ServiceIDListener,
 		ReferentUuid, ProxyAccessor, ServerProxyTrust,
-		RemoteMethodControl, LifeCycle, Partner, Partnership,
-		RemoteContextManagement, SorcerConstants, AdministratableProvider {
+		RemoteMethodControl, LifeCycle, Partner, Partnership, SorcerConstants, AdministratableProvider {
 	// RemoteMethodControl is needed to enable Proxy Constraints
 
 	/** Logger and configuration component name for service provider. */
@@ -1019,19 +1020,6 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		return delegate.isMonitorable();
 	}
 
-	public Context<?> getContext(Context<?> context) throws RemoteException {
-		// TODO can be extended for finding service type and its selector in the
-		// context parameter
-		try {
-			context.putValue(ContextManagement.CONTEXT_REQUEST_PATH,
-					getContext());
-		} catch (ContextException e) {
-			e.printStackTrace();
-		}
-
-		return context;
-	}
-
 	public Logger getContextLogger() {
 		return delegate.getContextLogger();
 	}
@@ -1052,72 +1040,6 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	 */
 	public boolean isReady(Exertion exertion) {
 		return true;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see sorcer.core.context.ContextManagement#getContextScript()
-	 */
-	@Override
-	public String getContextScript() throws RemoteException {
-		// implement context management in subcllases
-		ContextManagement contextManager = delegate.getContextManager();
-		if (contextManager != null)
-			return contextManager.getContextScript();
-		else
-			return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see sorcer.core.context.ContextManagement#getContext()
-	 */
-	@Override
-	public Context<?> getContext() throws RemoteException {
-		// implement context management in subcllases
-		ContextManagement contextManager = delegate.getContextManager();
-		if (contextManager != null)
-			return contextManager.getContext();
-		else
-			return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * sorcer.core.context.ContextManagement#getMethodContextScript(java.lang
-	 * .String, java.lang.String)
-	 */
-	@Override
-	public String getMethodContextScript(String interfaceName, String methodName)
-			throws RemoteException {
-		ContextManagement contextManager = delegate.getContextManager();
-		if (contextManager != null)
-			return contextManager.getMethodContextScript(interfaceName,
-					methodName);
-		else
-			return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * sorcer.core.context.ContextManagement#currentContextList(java.lang.String
-	 * )
-	 */
-	@Override
-	public String[] currentContextList(String interfaceName)
-			throws RemoteException {
-		ContextManagement contextManager = delegate.getContextManager();
-		if (contextManager != null)
-			return contextManager.currentContextList(interfaceName);
-		else {
-			return providerCurrentContextList(interfaceName);
-		}
 	}
 
 	private String[] providerCurrentContextList(String interfaceName)
@@ -1167,24 +1089,6 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		return toReturn;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * sorcer.core.context.ContextManagement#deleteContext(java.lang.String,
-	 * java.lang.String)
-	 */
-	@Override
-	public boolean deleteContext(String interfaceName, String methodName)
-			throws RemoteException {
-		ContextManagement contextManager = delegate.getContextManager();
-		if (contextManager != null)
-			return contextManager.deleteContext(interfaceName, methodName);
-		else {
-			return providerDeleteContext(interfaceName, methodName);
-		}
-	}
-
 	private boolean providerDeleteContext(String interfaceName,
 			String methodName) throws RemoteException {
 		boolean contextLoaded = false;
@@ -1222,24 +1126,6 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * sorcer.core.context.ContextManagement#getMethodContext(java.lang.String,
-	 * java.lang.String)
-	 */
-	@Override
-	public Context<?> getMethodContext(String interfaceName, String methodName)
-			throws RemoteException {
-		ContextManagement contextManager = delegate.getContextManager();
-		if (contextManager != null)
-			return contextManager.getMethodContext(interfaceName, methodName);
-		else {
-			return providerGetMethodContext(interfaceName, methodName);
-		}
-	}
-
 	private Context<?> providerGetMethodContext(String interfaceName,
 			String methodName) throws RemoteException {
 		logger.info("user directory is " + System.getProperty("user.dir"));
@@ -1270,26 +1156,6 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 			context = theContextMap.get(interfaceName + "core/sorcer-ui/src/main" + methodName);
 		}
 		return context;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * sorcer.core.context.ContextManagement#saveMethodContext(java.lang.String,
-	 * java.lang.String, sorcer.service.Context)
-	 */
-	@Override
-	public boolean saveMethodContext(String interfaceName, String methodName,
-			Context theContext) throws RemoteException {
-		ContextManagement contextManager = delegate.getContextManager();
-		if (contextManager != null)
-			return contextManager.saveMethodContext(interfaceName, methodName,
-					theContext);
-		else {
-			return providerSaveMethodContext(interfaceName, methodName,
-					theContext);
-		}
 	}
 
 	private boolean providerSaveMethodContext(String interfaceName,

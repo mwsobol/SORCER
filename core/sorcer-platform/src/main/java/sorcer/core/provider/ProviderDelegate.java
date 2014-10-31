@@ -40,7 +40,7 @@ import net.jini.lookup.entry.Name;
 import net.jini.security.AccessPermission;
 import net.jini.security.TrustVerifier;
 import net.jini.space.JavaSpace05;
-import sorcer.core.ContextManagement;
+import sorcer.service.ContextManagement;
 import sorcer.core.SorcerConstants;
 import sorcer.core.SorcerNotifierProtocol;
 import sorcer.core.context.Contexts;

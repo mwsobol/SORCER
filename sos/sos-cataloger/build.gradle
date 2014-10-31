@@ -4,4 +4,20 @@ jar {
 	   }
 }
 
-dependencies { compile project(':sorcer-platform') }
+task catalogerJar(type: Jar) {
+	manifest {
+		attributes("Implementation-Title": "SORCER Cataloger Service UI",
+				   "Implementation-Version": version)
+	}
+	from(sourceSets.main.output) {
+		include 'sorcer/core/provider/cataloger/ui/**'
+		classifier = "ui"
+	}
+}
+
+artifacts {
+	archives catalogerJar
+}
+
+
+dependencies { compile 	project(':sorcer-ui') }

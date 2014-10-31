@@ -1,3 +1,19 @@
+/*
+ * Copyright 2014 the original author or authors.
+ * Copyright 2014 SorcerSoft.org.
+ *  
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package sorcer.ui.exertlet;
 
 import groovy.lang.GroovyShell;
@@ -18,7 +34,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.rmi.RemoteException;
-import java.util.Arrays;
 import java.util.logging.Logger;
 
 import javax.swing.BoxLayout;
@@ -42,11 +57,11 @@ import javax.swing.text.html.HTMLFrameHyperlinkEvent;
 
 import net.jini.core.transaction.TransactionException;
 import sorcer.core.provider.Provider;
-import sorcer.core.provider.RemoteContextManagement;
 import sorcer.service.ContextException;
+import sorcer.service.ContextManagement;
+import sorcer.service.Exec;
 import sorcer.service.Exertion;
 import sorcer.service.ExertionException;
-import sorcer.service.Exec;
 import sorcer.service.ServiceExertion;
 import sorcer.ui.util.JIconButton;
 import sorcer.ui.util.WindowUtilities;
@@ -62,7 +77,7 @@ public class EditorView extends JPanel implements HyperlinkListener {
 			.getName());
 	private static boolean debug = false;
 	private final JFileChooser fileChooser = new JFileChooser(System
-			.getProperty("sorcer.home"));
+			.getProperty("iGrid.home"));
 	private JIconButton homeButton;
 	private JButton editButton, saveButton, openButton,
 			saveAsButton, exertButton;
@@ -83,6 +98,7 @@ public class EditorView extends JPanel implements HyperlinkListener {
 	private JMenuItem openMenuItem, editMenuItem, saveMenuItem, saveAsMenuItem, getContextMenuItem, exertMenuItem, closeMenuItem;
 	private Provider provider;
 	private GroovyShell shell;
+	private EditorViewSignature model;
 	private static StringBuilder staticImports;
 	
 	public EditorView(String url, boolean withLocator) {
@@ -91,13 +107,20 @@ public class EditorView extends JPanel implements HyperlinkListener {
 	}
 
 	public EditorView(String url, boolean withLocator, boolean editable) {
-		this(url, withLocator, editable, false, false, false);
+		this(url, withLocator, editable, false, false, false, null);
 		setDebug();
 	}
 
 	public EditorView(String input, boolean withLocator, boolean editable,
 			boolean withEditing, boolean isEditor, boolean isDisposable) {
+		this(input, withLocator, editable, withEditing, isEditor, isDisposable, null);
+	}
+	
+	/** Creates new editor JPanel */
+	public EditorView(String input, boolean withLocator, boolean editable,
+			boolean withEditing, boolean isEditor, boolean isDisposable, EditorViewSignature model) {
 		setDebug();
+		this.model = model;
 		WindowUtilities.setNativeLookAndFeel();
 		setLayout(new BorderLayout());
 		this.source = input;
@@ -325,14 +348,19 @@ public class EditorView extends JPanel implements HyperlinkListener {
 				openEditor(urlField.getText());
 				return;
 			} else if (EXERT_LABEL.equals(command)) {
-                String script = editPane.getText();
-                StringBuilder sb = new StringBuilder(staticImports.toString());
-                sb.append(script);
-                logger.finer(">>> executing script: " + sb.toString());
-                runExertionScript(sb.toString());
-                return;
-            } else if (SAVE_LABEL.equals(command)) {
-                saveFile();
+				String script = editPane.getText();
+				if (model != null) {
+					runTaskScript(script);
+				} else {
+					StringBuilder sb = new StringBuilder(staticImports
+							.toString());
+					sb.append(script);
+					 logger.finer(">>> executing script: " + sb.toString());				
+					runExertionScript(sb.toString());
+				}
+				return;
+			} else if (SAVE_LABEL.equals(command)) {
+				saveFile();
 				return;
 			} else if (SAVE_AS_LABEL.equals(command)) {
 				saveAsFile();
@@ -405,7 +433,24 @@ public class EditorView extends JPanel implements HyperlinkListener {
 		eThread.start();
 		return eThread;
 	}
+	
+	private ExertionThread runTaskScript(String script) {
+		String serviceType = model.getServiceType();
+		String selector = model.getSelector();
+		StringBuilder sb = new StringBuilder();
+		sb.append(staticImports.toString()).append("\nimport ").append(
+				serviceType).append(";\n").append("task(sig(\"")
+				.append(selector).append("\",").append(serviceType).append(
+						".class),\n").append(script).append(");");
 
+		// logger.info(">>> executing task script: " + sb.toString());
+		ExertionThread eThread = new ExertionThread(sb.toString());
+		eThread.start();
+		return eThread;
+	}
+	
+	
+	
 	private class ExertionThread extends Thread {
 		String script;
 		Object result;
@@ -433,13 +478,13 @@ public class EditorView extends JPanel implements HyperlinkListener {
 		}
 	}
 
-	private void processExerion(Exertion exertion) throws ContextException {
+	private void processExerion(Exertion exertion) {
 		String codebase = System.getProperty("java.rmi.server.codebase");
 		logger.finer("Using exertlet codebase: " + codebase);
 		
 		if (((ServiceExertion) exertion).getStatus() == Exec.DONE) {
 		//logger.finer(">>> done by Groovy Shell");
-		showResulst(exertion);
+		showResults(exertion);
 		return;
 		}
 		Exertion out = null;
@@ -464,7 +509,7 @@ public class EditorView extends JPanel implements HyperlinkListener {
 //				com.sun.jini.start.ClassLoaderUtil.displayClassLoaderTree(exertion
 //						 .getClass().getClassLoader());
 
-				out = exertion.exert(null);
+				out = exertion.exert();
 				//logger.finer(">>> done by SSB");
 			}
 		} catch (RemoteException e) {
@@ -480,24 +525,29 @@ public class EditorView extends JPanel implements HyperlinkListener {
 			e.printStackTrace();
 			return;
 		}
-		showResulst(out);
+		showResults(out);
 	}
 
-	private void showResulst(Exertion exertion) throws ContextException {
-		if (exertion == null) {
-			openOutPanel("Failed to process the exertlet!");
-			return;
-		}
-		if (exertion.getExceptions().size() > 0) {
-			openOutPanel(exertion.getExceptions().toString());
-		}
-		else {
-			StringBuilder sb = new StringBuilder(exertion.getContext().toString());
-			if (debug) {
-				sb.append("\n");
-				sb.append(((ServiceExertion)exertion).getControlInfo().toString());
+	private void showResults(Exertion exertion) {
+		try {
+			if (exertion == null) {
+				openOutPanel("Failed to process the exertlet!");
+				return;
 			}
-			openOutPanel(sb.toString());
+			if (exertion.getExceptions().size() > 0) {
+				openOutPanel(exertion.getExceptions().toString());
+			}
+			else {
+				StringBuilder sb = new StringBuilder(exertion.getContext().toString());
+				if (debug) {
+					sb.append("\n");
+					sb.append(((ServiceExertion)exertion).getControlInfo().toString());
+				}
+				openOutPanel(sb.toString());
+			}
+		}
+		catch(ContextException e) {
+			e.printStackTrace();
 		}
 	}
 	
@@ -541,7 +591,10 @@ public class EditorView extends JPanel implements HyperlinkListener {
 	}
 
 	private void openEditor(String url) {
-        editor = new EditorView(url, false, true, true, true, false);
+		if (model != null)
+			editor = new EditorView(url, false, true, true, true, false, model);
+		else
+			editor = new EditorView(url, false, true, true, true, false);
 		editor.provider = provider;
 		editor.setTabbedPane(tabbedPane);
 		tabbedPane.addTab("Editor", null, editor, "Editor");
@@ -549,12 +602,15 @@ public class EditorView extends JPanel implements HyperlinkListener {
 	}
 
 	private void getContextFromProvider() throws RemoteException {
-		String script = ((RemoteContextManagement)provider).getContextScript();
+		String script = ((ContextManagement)provider).getContextScript();
 
 		if (script == null || script.length() == 0) {
 			script = "No context script availble from the provider: \n" + provider;
 		}
-		editor = new EditorView(script, false, true, true, true, false);
+		if (model != null)
+			editor = new EditorView(script, false, true, true, true, false, model);
+		else
+			editor = new EditorView(script, false, true, true, true, false);
 		editor.provider = provider;
 		editor.setTabbedPane(tabbedPane);
 		tabbedPane.addTab("Editor", null, editor, "Editor");
@@ -562,7 +618,10 @@ public class EditorView extends JPanel implements HyperlinkListener {
 	}
 	
 	private void openOutPanel(String text) {
-		editor = new EditorView(text, false, false, false, false, true);
+		if (model != null)
+			editor = new EditorView(text, false, false, false, false, true, model);
+		else
+			editor = new EditorView(text, false, false, false, false, true);
 		editor.provider = provider;
 		editor.setTabbedPane(tabbedPane);
 		tabbedPane.addTab("Output", null, editor, "Exertion");

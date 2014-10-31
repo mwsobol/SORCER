@@ -15,18 +15,18 @@
  * limitations under the License.
  */
 
-package sorcer.core;
+package sorcer.service;
 
+import java.rmi.Remote;
 import java.rmi.RemoteException;
-
-import sorcer.service.Context;
 
 /**
  * Context Management provides methods for managing contexts over the network.
  * The ContextManagement interface is implemented by providers to allow for
  * remote calls to obtain, update and delete contexts.
  */
-public interface ContextManagement {
+@SuppressWarnings("rawtypes")
+public interface ContextManagement extends Remote {
 	// used in sorcer.core.exertion.ContextTask
 	public final static String CONTEXT_REQUEST_PATH = "request/context";
 	public final static String CONTEXT_FILENAME = "context.cxt";
@@ -112,6 +112,66 @@ public interface ContextManagement {
 	public boolean deleteContext(String interfaceName, String methodName)
 			throws RemoteException;
 
-	// public boolean loadContextDatabase() throws RemoteException;
+	/**
+	 * Get the context from the provider specified for the interface and method
+	 * requested
+	 * 
+	 * @param providerName
+	 *            String of the currently selected provider
+	 * @param interfaceName
+	 *            the currently selected interface
+	 * @param methodName
+	 *            String of the currently selected method name
+	 * @return Context defined for the specified method
+	 * @throws RemoteException
+	 */
+	public Context getContext(String providerName, String serviceType,
+			String methodName) throws RemoteException;
+
+	/**
+	 * Saves the context to the provider specified for the interface and method
+	 * 
+	 * @param providerName
+	 *            String of the currently selected provider
+	 * @param serviceType
+	 *            the currently selected interface
+	 * @param methodName
+	 *            String of the currently selected method name
+	 * @param theContext
+	 *            Context to be stored
+	 * @return Boolean indicating if the operation was successful
+	 * @throws RemoteException
+	 */
+	public Boolean saveContext(String providerName, String serviceType,
+			String methodName, Context theContext) throws RemoteException;
+
+	/**
+	 * Delete the context from the provider specified for the interface and
+	 * method
+	 * 
+	 * @param providerName
+	 *            String of the currently selected provider
+	 * @param serviceType
+	 *            the currently selected interface
+	 * @param methodName
+	 *            String of the currently selected method name
+	 * @return Boolean indicating if the operation was successful
+	 * @throws RemoteException
+	 */
+	public Boolean deleteContext(String providerName, String serviceType,
+			String methodName) throws RemoteException;
+
+	/**
+	 * Get a list of the contexts currently stored on the provider.
+	 * 
+	 * @param providerName
+	 *            String of the currently selected provider
+	 * @param serviceType
+	 *            the currently selected interface
+	 * @return a String array of the available contexts stored on the provider
+	 * @throws RemoteException
+	 */
+	public String[] getSavedContextList(String providerName,
+			String serviceType) throws RemoteException;
 
 }
