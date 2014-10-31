@@ -249,7 +249,7 @@ public class CollectionOperatorsTest {
 		assertFalse(asis(dbp1) instanceof URL);
 		assertFalse(asis(dbp2) instanceof URL);
 		
-		assertEquals(value(dbp1), 25.0);
+		assertTrue(value(dbp1).equals(25.0));
 		assertEquals(value(dbp2), "http://sorcersoft.org/sobol");
 		
 		assertTrue(asis(dbp1) instanceof URL);
