@@ -626,7 +626,7 @@ public class SorcerDescriptorUtil {
 		String exerterClasspath = ConfigUtil.concat(new Object[] {
 				sorcerLib,fs,"sorcer",fs,"lib",fs,"sorcer-platform-" + sorcerVersion + ".jar"
 		});
-		
+
 		// service provider codebase
         String exerterCodebase = Booter.getCodebase(getDefaultSorcerExports(),
                                                     hostAddress,
@@ -995,7 +995,10 @@ public class SorcerDescriptorUtil {
 		});
 		
         // service provider codebase
-        String catalogCodebase = Booter.getCodebase(getDefaultSorcerExports(),
+        List<String> codebase = new ArrayList<String>();
+        Collections.addAll(codebase, getDefaultSorcerExports());
+        codebase.add("sos-cataloger-" + sorcerVersion + "-ui.jar");
+        String catalogCodebase = Booter.getCodebase(codebase.toArray(new String[codebase.size()]),
                                                     hostAddress,
                                                     Integer.toString(port));
 		String implClass = "sorcer.core.provider.cataloger.ServiceCataloger";

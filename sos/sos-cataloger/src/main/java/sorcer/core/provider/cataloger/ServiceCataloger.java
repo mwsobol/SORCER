@@ -16,31 +16,7 @@
  */
 package sorcer.core.provider.cataloger;
 
-import java.io.IOException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
-import java.lang.reflect.Type;
-import java.net.MalformedURLException;
-import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Observable;
-import java.util.Observer;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-import java.util.logging.FileHandler;
-import java.util.logging.Handler;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
-
+import com.sun.jini.start.LifeCycle;
 import net.jini.core.discovery.LookupLocator;
 import net.jini.core.entry.Entry;
 import net.jini.core.lookup.ServiceID;
@@ -54,21 +30,37 @@ import net.jini.lookup.ServiceDiscoveryEvent;
 import net.jini.lookup.ServiceDiscoveryListener;
 import net.jini.lookup.ServiceDiscoveryManager;
 import net.jini.lookup.entry.Name;
+import net.jini.lookup.entry.UIDescriptor;
+import net.jini.lookup.ui.MainUI;
 import sorcer.core.exertion.NetTask;
 import sorcer.core.provider.Cataloger;
 import sorcer.core.provider.Provider;
 import sorcer.core.provider.ServiceProvider;
 import sorcer.core.provider.cataloger.ServiceCataloger.CatalogerInfo.InterfaceList;
+import sorcer.core.provider.cataloger.ui.CatalogerUI;
 import sorcer.core.signature.NetSignature;
 import sorcer.jini.lookup.entry.SorcerServiceInfo;
 import sorcer.service.Context;
 import sorcer.service.Service;
 import sorcer.service.Task;
+import sorcer.serviceui.UIDescriptorFactory;
+import sorcer.serviceui.UIFrameFactory;
 import sorcer.util.GenericUtil;
+import sorcer.util.SOS;
 import sorcer.util.Sorcer;
 import sorcer.util.SorcerUtil;
 
-import com.sun.jini.start.LifeCycle;
+import java.io.IOException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+import java.lang.reflect.Type;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.rmi.RemoteException;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.logging.*;
 
 /**
  * The facility for maintaining a cache of all SORCER providers {@link Service}s
@@ -150,6 +142,21 @@ public class ServiceCataloger extends ServiceProvider implements Cataloger {
 		return null;
 
 	}
+
+    public UIDescriptor getMainUIDescriptor() {
+        UIDescriptor uiDesc = null;
+        try {
+            URL uiUrl = new URL(Sorcer.getWebsterUrl() + "/sos-cataloger-"+ SOS.getSorcerVersion()+"-ui.jar");
+            uiDesc = UIDescriptorFactory.getUIDescriptor(MainUI.ROLE,
+                                                         new UIFrameFactory(new URL[]{uiUrl},
+                                                                            CatalogerUI.class.getName(),
+                                                                            "Cataloger UI",
+                                                                            null));
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return uiDesc;
+    }
 
 	public String[] getGroups() throws RemoteException {
 		String gs = getProperty(P_GROUPS);
@@ -265,8 +272,7 @@ public class ServiceCataloger extends ServiceProvider implements Cataloger {
 	/**
 	 * Returns a SORCER service provider identified by its primary service type.
 	 * 
-	 * @param primaryInterface
-	 *            - interface of a SORCER provider
+	 * @param serviceTypes interface of a SORCER provider
 	 * @return a SORCER service provider
 	 * @throws RemoteException
 	 */
@@ -275,17 +281,16 @@ public class ServiceCataloger extends ServiceProvider implements Cataloger {
 
 	}
 
-	/**
-	 * * Returns a SORCER service provider identified by its primary service
-	 * type and the provider's name/
-	 * 
-	 * @param providerName
-	 *            - a provider name, a friendly provider's ID.
-	 * @param primaryInterface
-	 *            - interface of a SORCER provider
-	 * @return a SORCER service provider
-	 * @throws RemoteException
-	 */
+    /**
+     * Returns a SORCER service provider identified by its primary service
+     * type and the provider's name/
+     *
+     * @param providerName
+     *            - a provider name, a friendly provider's ID.
+     * @param serviceTypes
+     * @return
+     * @throws RemoteException
+     */
 	public Provider lookup(String providerName, Class... serviceTypes)
 			throws RemoteException {
 		logger.info("lookup: providerName = " + providerName);
@@ -527,7 +532,7 @@ public class ServiceCataloger extends ServiceProvider implements Cataloger {
 		}
 
 		public String toString() {
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 			List<ServiceItem> sItems;
 			for(Map.Entry<InterfaceList, List<ServiceItem>> entry : interfaceListMap.entrySet()){			
 				sItems = entry.getValue();
@@ -541,11 +546,9 @@ public class ServiceCataloger extends ServiceProvider implements Cataloger {
 
 					for (int i = 1; i < sItems.size(); i++) {
 						if (sItems.get(i).attributeSets[0] instanceof Name)
-							sb.append(",")
-									.append(((Name) (sItems.get(i).attributeSets[0])).name);
+							sb.append(",").append(((Name) (sItems.get(i).attributeSets[0])).name);
 						else
-							sb.append(",")
-									.append(((ServiceItem) sItems.get(i)).attributeSets[0]);
+							sb.append(",").append(sItems.get(i).attributeSets[0]);
 					}
 					sb.append("==>\n");
 					sb.append(entry.getKey());
@@ -702,7 +705,7 @@ public class ServiceCataloger extends ServiceProvider implements Cataloger {
 		/**
 		 * Tests if provider is still alive.
 		 * 
-		 * @param provider
+		 * @param si
 		 * @return true if a provider is alive, otherwise false
 		 * @throws RemoteException
 		 */
