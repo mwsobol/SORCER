@@ -21,5 +21,6 @@
 	<classpathentry kind="lib" path="rio/lib/start-2.2.2.jar"/>
 	<classpathentry kind="lib" path="distribution/sorcer-5.0.0-SNAPSHOT/lib/common/buildsupport/junit-4.8.2.jar"/>
 	<classpathentry kind="lib" path="examples/eol/build/libs/eol-5.0.0-SNAPSHOT-prv.jar"/>
+	<classpathentry kind="lib" path="examples/worker/build/classes/main/sorcer"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

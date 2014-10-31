@@ -1,4 +1,4 @@
-package sorcer.pml.test;
+package sorcer.pml.modeling;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;

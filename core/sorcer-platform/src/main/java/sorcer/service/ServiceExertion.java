@@ -63,6 +63,9 @@ import sorcer.service.Signature.Type;
 import sorcer.service.Strategy.Access;
 import sorcer.service.Strategy.Flow;
 
+/**
+ * @author Mike Sobolewski
+ */
 @SuppressWarnings("rawtypes")
 public abstract class ServiceExertion implements Exertion, SorcerConstants, Exec, Serializable {
 
@@ -124,6 +127,9 @@ public abstract class ServiceExertion implements Exertion, SorcerConstants, Exec
 
 	protected ServiceFidelity fidelity = new ServiceFidelity();
 
+	// the current fidelity alias, as it is named in 'fidelities'
+	// its original name is different if aliasing is used for already
+	// existing names 
 	protected String selectedFidelitySelector;
 
 	// fidelity Contexts for this exertions
@@ -433,8 +439,7 @@ public abstract class ServiceExertion implements Exertion, SorcerConstants, Exec
 	
 	public void setFidelity(String name, ServiceFidelity fidelity) {
 		this.fidelity = new ServiceFidelity(name, fidelity);
-
-		ServiceFidelity nf = new ServiceFidelity(name, fidelity);
+		putFidelity(name, fidelity);
 		selectedFidelitySelector = name;
 	}
 	

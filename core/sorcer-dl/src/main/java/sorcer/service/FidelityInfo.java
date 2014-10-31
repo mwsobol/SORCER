@@ -29,7 +29,7 @@ public class FidelityInfo implements Serializable, Arg {
 
 	protected String name;
 
-	// signature names
+	// fidelity selectors: names of signatures, entries, etc.
 	protected String[] selectors;
 
 	public FidelityInfo() {

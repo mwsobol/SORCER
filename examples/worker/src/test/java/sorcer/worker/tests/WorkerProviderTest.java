@@ -1,10 +1,9 @@
-package sorcer.worker.test;
+package sorcer.worker.tests;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.net.InetAddress;
 import java.rmi.RemoteException;
 import java.util.logging.Logger;
@@ -13,14 +12,12 @@ import org.junit.Before;
 import org.junit.Test;
 
 import sorcer.core.context.ServiceContext;
-import sorcer.ex2.provider.InvalidWork;
-import sorcer.ex2.provider.Work;
-import sorcer.ex2.provider.WorkerProvider;
 import sorcer.service.Context;
 import sorcer.service.ContextException;
 import sorcer.util.Log;
-
-import com.gargoylesoftware.base.testing.TestUtil;
+import sorcer.worker.provider.Work;
+import sorcer.worker.provider.impl.InvalidWork;
+import sorcer.worker.provider.impl.WorkerProvider;
 
 /**
  * @author Mike Sobolewski

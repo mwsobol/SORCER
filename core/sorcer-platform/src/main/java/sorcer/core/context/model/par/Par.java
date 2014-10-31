@@ -21,11 +21,13 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.security.Principal;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import sorcer.co.tuple.FidelityEntry;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.ApplicationDescription;
 import sorcer.core.context.ServiceContext;
@@ -39,6 +41,7 @@ import sorcer.service.ContextException;
 import sorcer.service.Evaluation;
 import sorcer.service.EvaluationException;
 import sorcer.service.Exertion;
+import sorcer.service.FidelityInfo;
 import sorcer.service.Identifiable;
 import sorcer.service.Identity;
 import sorcer.service.Invocation;
@@ -84,6 +87,11 @@ public class Par<T> extends Identity implements Variability<T>, Arg, Mappable<T>
 	// Sorcer Mappable: Context, Exertion, or Var args
 	protected Mappable mappable;
 
+	protected FidelityEntry fidelity;
+
+	// par fidelities for this par
+	protected Map<String, FidelityEntry> fidelities;
+		
 	public Par(String parname) {
 		name = parname;
 		value = null;
@@ -180,6 +188,9 @@ public class Par<T> extends Identity implements Variability<T>, Arg, Mappable<T>
 	@Override
 	public T getValue(Arg... entries) throws EvaluationException,
 	RemoteException {
+		if (fidelity != null) {
+			value = (T) fidelity.asis();
+		}
 		T val = null;
 		try {
 			substitute(entries);
@@ -203,7 +214,7 @@ public class Par<T> extends Identity implements Variability<T>, Arg, Mappable<T>
 				if (val instanceof Exertion) {
 					// TODO context binding for all exertions, works for tasks only
 					Context cxt = ((Exertion)val).getDataContext();
-					List<String> paths =((ServiceContext)cxt).getPaths();
+					List<String> paths = ((ServiceContext)cxt).getPaths();
 					for (String an : ((Map<String, Object>)scope).keySet()) {
 						for (String p : paths) {
 							if (p.endsWith(an)) {
@@ -305,7 +316,6 @@ public class Par<T> extends Identity implements Variability<T>, Arg, Mappable<T>
 	@Override
 	public T getPerturbedValue(String varName) throws EvaluationException,
 			RemoteException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -314,7 +324,6 @@ public class Par<T> extends Identity implements Variability<T>, Arg, Mappable<T>
 	 */
 	@Override
 	public double getPerturbation() {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
@@ -331,7 +340,6 @@ public class Par<T> extends Identity implements Variability<T>, Arg, Mappable<T>
 	 */
 	@Override
 	public ApplicationDescription getDescription() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -340,7 +348,6 @@ public class Par<T> extends Identity implements Variability<T>, Arg, Mappable<T>
 	 */
 	@Override
 	public Class getValueType() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -390,18 +397,14 @@ public class Par<T> extends Identity implements Variability<T>, Arg, Mappable<T>
 	 */
 	@Override
 	public void valueChanged(Object obj) throws EvaluationException,
-			RemoteException {
-		// TODO Auto-generated method stub
-		
+			RemoteException {		
 	}
 
 	/* (non-Javadoc)
 	 * @see sorcer.vfe.Variability#valueChanged()
 	 */
 	@Override
-	public void valueChanged() throws EvaluationException {
-		// TODO Auto-generated method stub
-		
+	public void valueChanged() throws EvaluationException {		
 	}
 
 	public Principal getPrincipal() {
@@ -455,30 +458,6 @@ public class Par<T> extends Identity implements Variability<T>, Arg, Mappable<T>
 	public boolean isMappable() {
 		return (mappable != null);
 	}
-
-//	/* (non-Javadoc)
-//	 * @see sorcer.service.Invocation#invoke()
-//	 */
-//	@Override
-//	public T invoke() throws RemoteException, InvocationException {
-//		return invoke(new Arg[] {});
-//	}
-//
-//	
-//	/* (non-Javadoc)
-//	 * @see sorcer.service.Invocation#invoke(sorcer.service.Arg[])
-//	 */
-//	@Override
-//	public T invoke(Arg[] entries) throws RemoteException, InvocationException {
-//		try {
-//			if (value instanceof Invocation)
-//				return ((Invocation<T>) value).invoke(entries);
-//			else
-//				return getValue(entries);
-//		} catch (EvaluationException e) {
-//			throw new InvocationException(e);
-//		}
-//	}
 
 	/* (non-Javadoc)
 	 * @see sorcer.service.Invocation#invoke(sorcer.service.Context, sorcer.service.Arg[])
@@ -582,5 +561,44 @@ public class Par<T> extends Identity implements Variability<T>, Arg, Mappable<T>
 	public void setScope(Object scope) throws RemoteException {
 		this.scope = (Context)scope;
 		
+	}
+	
+	public void setFidelity(FidelityEntry fidelity) {
+		this.fidelity = fidelity;
+	}
+
+	public void putFidelity(FidelityEntry fidelity) {
+		if (fidelities == null)
+			fidelities = new HashMap<String, FidelityEntry>();
+		fidelities.put(fidelity.getName(), fidelity);
+	}
+
+	public void addFidelity(FidelityEntry fidelity) {
+		putFidelity(fidelity);
+		this.fidelity = fidelity;
+	}
+
+	public void selectFidelity(Arg... entries) throws ParException {
+		if (entries != null && entries.length > 0) {
+			for (Arg a : entries)
+				if (a instanceof FidelityInfo) {
+					selectFidelity(((FidelityInfo) a).getName());
+				} 
+		}
+	}
+
+	public void selectFidelity(String selector) throws ParException {
+		if (selector != null && fidelities != null
+				&& fidelities.containsKey(selector)) {
+			FidelityEntry pf = fidelities.get(selector);
+
+			if (pf == null)
+				throw new ParException("no such service fidelity: " + selector + " at: " + this);
+			fidelity = pf;
+		}
+	}
+
+	public void setFidelities(Map<String, FidelityEntry> fidelities) {
+		this.fidelities = fidelities;
 	}
 }

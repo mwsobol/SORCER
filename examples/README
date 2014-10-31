@@ -1,0 +1,49 @@
+A service is the work performed 
+in which a service provider (one that serves) 
+exerts acquired abilities to execute a computation. 
+
+No explicit provider references!
+A reference for work  and activity is called 
+a service signature.
+
+A specification of provider's exerted 
+acquired abilities is called an exertion.
+An exertion is a service request or simply a service 
+in the Exertion-Oriented Language (EOL).
+
+
+The Exertion-Oriented Languages (EOL) Tutorial
+
+1. Collections used in EOL
+	eol/src/test/java/sorcer/arithmetic/collections
+	
+2. Service signatures, providers, services (exertions), 
+and service data (contexts) in  EOL
+	eol/test/java/sorcer/eol/services
+		
+3. Intro to service provider/requestor development
+	worker/src/main/java/sorcer/worker/provider
+	worker/src/main/java/sorcer/worker/requestor
+	worker/test/java/sorcer/worker/tests
+	
+4. Arithmetic providers and requestors, 
+contexts and exertions as providers
+	eol/main/java/sorcer/arithmetic/provider
+	eol/main/java/sorcer/arithmetic/requestor
+	
+5. Service contexts
+	eol/test/java/sorcer/eol/contexts
+
+6. Exertions: tasks, jobs, and blocks
+	eol/test/java/sorcer/eol/tasks	
+	eol/test/java/sorcer/eol/jobs	
+	eol/test/java/sorcer/eol/blocks	
+	
+7. Contexts and context models
+	eol/test/java/sorcer/eol/contexts
+	test/java/sorcer/arithmetic/parModels
+	
+8. Modeling and Par-model providers and agents
+	pml/main/java/sorcer/pml/model
+	pml/main/java/sorcer/pml/provider
+	pml/test/java/sorcer/pml/modeling

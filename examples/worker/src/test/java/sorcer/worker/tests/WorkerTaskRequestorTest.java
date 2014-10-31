@@ -1,4 +1,4 @@
-package sorcer.worker.test;
+package sorcer.worker.tests;
 
 import static org.junit.Assert.assertEquals;
 
@@ -15,15 +15,15 @@ import org.junit.Test;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.exertion.ObjectTask;
 import sorcer.core.signature.ObjectSignature;
-import sorcer.ex2.provider.InvalidWork;
-import sorcer.ex2.provider.Work;
-import sorcer.ex2.provider.WorkerProvider;
 import sorcer.service.Context;
 import sorcer.service.ContextException;
 import sorcer.service.Exertion;
 import sorcer.service.ExertionException;
 import sorcer.service.SignatureException;
 import sorcer.util.Log;
+import sorcer.worker.provider.Work;
+import sorcer.worker.provider.impl.InvalidWork;
+import sorcer.worker.provider.impl.WorkerProvider;
 
 /**
  * @author Mike Sobolewski
