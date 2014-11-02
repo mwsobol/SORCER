@@ -31,21 +31,23 @@ import sorcer.util.Sorcer;
  * @author Mike Sobolewski
  */
 @SuppressWarnings("unchecked")
-public class ArithmeticSpaceBlockTest implements SorcerConstants {
+public class ArithmeticSpaceBlock implements SorcerConstants {
 
 	private final static Logger logger = Logger
-			.getLogger(ArithmeticSpaceBlockTest.class.getName());
+			.getLogger(ArithmeticSpaceBlock.class.getName());
 
 	static {
-		ServiceExertion.debug = true;
-		String version = "5.0.0-SNAPSHOT";
+		String sorcerVersion = "5.0.0-SNAPSHOT";
+		String riverVersion = "2.2.2";
 		System.setProperty("java.security.policy", Sorcer.getHome()
-				+ "/configs/policy.all");
+				+ "/policy/policy.all");
 		System.setSecurityManager(new SecurityManager());
-		Sorcer.setCodeBase(new String[] { "arithmetic-" + version + "-dl.jar",  "sorcer-dl-"+version +".jar" });
+		Sorcer.setCodeBase(new String[] { "arithmetic-" + sorcerVersion + "-dl.jar",  
+				"sorcer-dl-"+sorcerVersion +".jar", "jsk-dl-"+riverVersion+".jar" });
+		
 		System.out.println("CLASSPATH :" + System.getProperty("java.class.path"));
 		System.setProperty("java.protocol.handler.pkgs", "sorcer.util.url|org.rioproject.url");
-		System.setProperty("java.rmi.server.RMIClassLoaderSpi","org.rioproject.rmi.ResolvingLoader");
+//		System.setProperty("java.rmi.server.RMIClassLoaderSpi","org.rioproject.rmi.ResolvingLoader");
 	}
 
 	@Test

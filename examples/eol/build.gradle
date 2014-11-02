@@ -4,7 +4,7 @@ jar {
 	manifest {
 		attributes("Implementation-Title": "SORCER Exertion-Oriented Languagr (EOL)", "Implementation-Version": version)
 	}
-	//baseName = "arithmetic-impl"
+	baseName = "arithmetic"
 	classifier = "prv"
 	dependsOn classes
 	from sourceSets.main.output
@@ -16,7 +16,7 @@ task arithmeticPrvDlJar(type: Jar) {
 	manifest {
 		attributes("Implementation-Title": "SORCER Arithmetic Exported Classes", "Implementation-Version": version)
 	}
-	//baseName = "arithmetic-dl"
+	baseName = "arithmetic"
     classifier = "dl"
 	dependsOn classes
 	from sourceSets.main.output
@@ -27,6 +27,7 @@ task arithmeticReqJar(type: Jar) {
 	manifest {
 		attributes("Implementation-Title": "SORCER Arithmetic Requestor", "Implementation-Version": version)
 	}
+	baseName = "arithmetic"
 	classifier = "req"
 	dependsOn classes
 	from sourceSets.main.output
@@ -37,6 +38,7 @@ task arithmeticPrvUiJar(type: Jar) {
 	manifest {
 		attributes("Implementation-Title": "SORCER Arithmetic Service UI", "Implementation-Version": version)
 	}
+	baseName = "arithmetic"
     classifier = "ui"
 	dependsOn classes
 	from sourceSets.main.output

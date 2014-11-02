@@ -39,7 +39,6 @@ import sorcer.co.tuple.Tuple4;
 import sorcer.co.tuple.Tuple5;
 import sorcer.co.tuple.Tuple6;
 import sorcer.core.context.ListContext;
-import sorcer.core.context.model.par.Par;
 import sorcer.service.Arg;
 import sorcer.service.ArgSet;
 import sorcer.service.Context;
@@ -180,15 +179,15 @@ public class operator {
 		return new Tuple3<T1, T2, T3>(x1, x2, x3);
 	}
 
-	public static <T2> Entry<T2> entry(String x1, T2 x2) {
-		return new Entry<T2>(x1, x2);
+	public static <T> Entry<T> entry(String path, T value) {
+		return new Entry<T>(path, value);
 	}
 	
-	public static <T2> Entry<T2> entry(String x1) {
-		return new Entry<T2>(x1, null);
+	public static Entry<Object>  entry(String path) {
+		return new Entry<Object>(path, null);
 	}
 	
-	public static <T2> Entry<T2> put(Entry<T2> entry, T2 value)
+	public static <T> Entry<T> put(Entry<T> entry, T value)
 			throws SetterException, RemoteException {
 		entry.setValue(value);
 		return entry;
@@ -295,11 +294,6 @@ public class operator {
 		return new Entry<T>(path, value, association);
 	}
 	
-	public static Par persistent(Par par) {
-		par.setPersistent(true);
-		return par;
-	}
-	
 	public static <S extends Setter> boolean isPersistent(S setter) {
 			return setter.isPersistent();
 	}
@@ -313,19 +307,23 @@ public class operator {
 		return setter;
 	}
 	
-	public static <T2> Entry<T2> persistent(Entry<T2> entry) {
+	public static <T> Entry<T> db(Entry<T> entry) {
+		return persistent(entry);
+	}
+	
+	public static <T extends Entry> T persistent(T entry) {
 		entry.setPersistent(true);
 		return entry;
 	}
 	
-	public static <T2> Entry<T2> dbEntry(String path) {
-		Entry<T2> e = new Entry<T2>(path);
+	public static <T> Entry<T> dbEntry(String path) {
+		Entry<T> e = new Entry<T>(path);
 		e.setPersistent(true);
 		return e;
 	}
 	
-	public static <T2> Entry<T2> dbEntry(String path, T2 value) {
-		Entry<T2> e = new Entry<T2>(path, value);
+	public static <T> Entry<T> dbEntry(String path, T value) {
+		Entry<T> e = new Entry<T>(path, value);
 		e.setPersistent(true);
 		return e;
 	}
@@ -348,17 +346,54 @@ public class operator {
 		return as.toArray();
 	}
 
-	public static URL url(Evaluation entry) throws EvaluationException {
+	public static URL db(Context context, String path) throws EvaluationException {
+		return  url(context, path);
+	}
+	
+	public static URL url(Context context, String path) throws EvaluationException {
 		URL dburl = null;
 		try {
-			Object obj = entry.asis();
-			if (obj instanceof URL)
-				dburl = (URL) obj;
-			else {
-				if (entry instanceof Setter) {
-					((Setter) entry).setPersistent(true);
-					entry.getValue();
-					dburl = (URL) entry.asis();
+			Object v = context.asis(path);
+			if (v instanceof URL)
+				return (URL) v;
+			else if (v instanceof Setter && v instanceof Evaluation) {
+				Object nv = ((Evaluation)v).getValue();
+				if (nv instanceof URL)
+					return (URL) nv;					
+				((Setter) v).setPersistent(true);
+				((Evaluation)v).getValue();
+				dburl = (URL) ((Evaluation)v).asis();
+			} else {
+				Entry dbe = new Entry(path, context.asis(path));
+				((Setter)dbe).setPersistent(true);
+				dbe.getValue();
+				context.putValue(path, dbe);
+				dburl = (URL) dbe.asis();
+			}
+		} catch (Exception e) {
+			throw new EvaluationException(e);
+		}
+		return dburl;		
+	}
+
+	public static URL db(Object object) throws EvaluationException {
+		return  url(object);
+	}
+	
+	public static URL url(Object object) throws EvaluationException {
+		URL dburl = null;
+		try {
+			if (object instanceof Evaluation) {
+				Evaluation entry = (Evaluation)	object;
+				Object obj = entry.asis();
+				if (obj instanceof URL)
+					dburl = (URL) obj;
+				else {
+					if (entry instanceof Setter) {
+						((Setter) entry).setPersistent(true);
+						entry.getValue();
+						dburl = (URL) entry.asis();
+					}
 				}
 			}
 		} catch (Exception e) {
@@ -381,14 +416,6 @@ public class operator {
 	
 	public static <T2> String path(Tuple2<String, T2> entry) {
 		return entry._1;
-	}
-	
-	public static <T1, T2> T2 value(Tuple2<T1, T2> entry) throws EvaluationException {
-		try {
-			return entry.getValue();
-		} catch (RemoteException e) {
-			throw new EvaluationException(e);
-		}
 	}
 		
 	public static <T extends List<?>> Table table(T... elems) {

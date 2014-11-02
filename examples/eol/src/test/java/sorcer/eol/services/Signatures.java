@@ -39,21 +39,23 @@ import sorcer.util.Sorcer;
  * @author Mike Sobolewski
  */
 @SuppressWarnings({ "rawtypes", "unchecked" } )
-public class SignatureTest {
+public class Signatures {
 	private final static Logger logger = Logger
-			.getLogger(SignatureTest.class.getName());
+			.getLogger(Signatures.class.getName());
 
 	static {
-		String version = "5.0.0-SNAPSHOT";
+		String sorcerVersion = "5.0.0-SNAPSHOT";
+		String riverVersion = "2.2.2";
 		System.setProperty("java.util.logging.config.file",
 				Sorcer.getHome() + "/configs/sorcer.logging");
 		System.setProperty("java.security.policy", Sorcer.getHome()
-				+ "/configs/policy.all");
+				+ "/policy/policy.all");
 		System.setSecurityManager(new SecurityManager());
-		Sorcer.setCodeBase(new String[] { "arithmetic-" + version + "-dl.jar",  "sorcer-dl-"+version +".jar" });
+		Sorcer.setCodeBase(new String[] { "arithmetic-" + sorcerVersion + "-dl.jar",  
+				"sorcer-dl-"+sorcerVersion +".jar", "jsk-dl-"+riverVersion+".jar" });
 		
 		System.setProperty("java.protocol.handler.pkgs", "sorcer.util.url|org.rioproject.url");
-		System.setProperty("java.rmi.server.RMIClassLoaderSpi","org.rioproject.rmi.ResolvingLoader");
+//		System.setProperty("java.rmi.server.RMIClassLoaderSpi","org.rioproject.rmi.ResolvingLoader");
 	}
 	
 	
@@ -78,7 +80,9 @@ public class SignatureTest {
 		Signature ms = sig("random", Math.class, "random");
 		Object prv = provider(ms);
 		logger.info("provider of s: " + prv);
-		assertTrue(prv instanceof Math);
+		assertTrue(prv == Math.class);
+		assertTrue(value(service("random", ms)) instanceof Double);
+		logger.info("random: " + value(service("random", ms)));
 		
 		ms = sig("max", Math.class, "max");
 		Context cxt = context(
@@ -86,7 +90,7 @@ public class SignatureTest {
 				args(new Object[] { 200.11, 3000.0 }));
 		
 		// request the service
-		logger.info("time: " + value(service("max", ms, cxt)));
+		logger.info("max: " + value(service("max", ms, cxt)));
 		assertTrue(value(service("max", ms, cxt)) instanceof Double);
 		assertTrue(value(service("max", ms, cxt)).equals(3000.0));
 		
@@ -105,9 +109,6 @@ public class SignatureTest {
 		logger.info("selector of s: " + selector(s));
 		logger.info("service type of s: " + type(s));
 		assertTrue(prv instanceof Date);
-				
-		value(service("time", s));
-		// request the service
 		logger.info("time: " + value(service("time", s)));
 		assertTrue(value(service("time", s)) instanceof Long);
 		

@@ -74,7 +74,7 @@ public class ParSet extends TreeSet<Par> {
 			throws EvaluationException {
 		Par par = null;
 		for (Par<?> p : this) {
-			if (((Identity) p).getName().equals(parName)) {
+			if (p.getName().equals(parName)) {
 				par = p;
 				try {
 					par.setValue(value);

@@ -82,7 +82,7 @@ import sorcer.core.provider.Provider;
  */
 @SuppressWarnings("rawtypes")
 public interface Context<T> extends Mappable<T>, Serializable, Evaluation<T>,
-		Invocation<T>, Contexter<T>, Paradigm, Arg, Service<T> {
+		Invocation<T>, Contexter<T>, Paradigmatic, Arg, Service<T> {
 
 	/** parameter (par) */
 	final static String PATH_PAR = "par";

@@ -1,6 +1,6 @@
 /*
- * Copyright 2013 the original author or authors.
- * Copyright 2013 SorcerSoft.org.
+ * Copyright 2012 the original author or authors.
+ * Copyright 2012 SorcerSoft.org.
  *  
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,21 +17,28 @@
 
 package sorcer.service;
 
-import java.rmi.RemoteException;
 
 /**
- * @author Mike Sobolewski
+ * A Paradigm instance can return exact data or evaluated (reevaluated -
+ * of Evaluation type). If isModeling is true that returned values of the
+ * Evaluation type are evaluated, otherwise returned as is.
  */
-public interface Active<T> {
+public interface Paradigmatic {
 
 	/**
-	 * Returns the current value of this evaluation. The current value can be
-	 * exiting value with no need to evaluate it if it's still valid.
+	 * Returns true if this instance is a model, otherwise false
 	 * 
-	 * @return the current value of this evaluation
-	 * @throws EvaluationException
-	 * @throws RemoteException
+	 * @return true if this instance is a model
 	 */
-	public T getValue(Arg... entries) throws EvaluationException, RemoteException;
+	public boolean isModeling();
+
+	/**
+	 * <p>
+	 * Assign the modeling mode of instance of this type.
+	 * </p>
+	 * 
+	 * @param isEvaluable
+	 */
+	public void setModeling(boolean modeling);
 
 }

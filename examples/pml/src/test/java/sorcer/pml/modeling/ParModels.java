@@ -3,8 +3,29 @@ package sorcer.pml.modeling;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static sorcer.co.operator.*;
-import static sorcer.eo.operator.*;
+import static sorcer.co.operator.dbEntry;
+import static sorcer.co.operator.dbInEntry;
+import static sorcer.co.operator.dbOutEntry;
+import static sorcer.co.operator.entry;
+import static sorcer.co.operator.inEntry;
+import static sorcer.co.operator.outEntry;
+import static sorcer.co.operator.persistent;
+import static sorcer.eo.operator.asis;
+import static sorcer.eo.operator.condition;
+import static sorcer.eo.operator.context;
+import static sorcer.eo.operator.exert;
+import static sorcer.eo.operator.get;
+import static sorcer.eo.operator.in;
+import static sorcer.eo.operator.job;
+import static sorcer.eo.operator.serviceContext;
+import static sorcer.eo.operator.out;
+import static sorcer.eo.operator.pipe;
+import static sorcer.eo.operator.sig;
+import static sorcer.eo.operator.store;
+import static sorcer.eo.operator.task;
+import static sorcer.eo.operator.taskContext;
+import static sorcer.eo.operator.url;
+import static sorcer.eo.operator.value;
 import static sorcer.po.operator.add;
 import static sorcer.po.operator.agent;
 import static sorcer.po.operator.callableInvoker;
@@ -21,11 +42,9 @@ import static sorcer.po.operator.put;
 import static sorcer.po.operator.result;
 import static sorcer.po.operator.runnableInvoker;
 import static sorcer.po.operator.set;
-import static sorcer.po.operator.value;
 import groovy.lang.Closure;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.concurrent.Callable;
@@ -61,8 +80,8 @@ import sorcer.util.url.sos.SdbURLStreamHandlerFactory;
  * @author Mike Sobolewski
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })
-public class ParModelTest {
-	private final static Logger logger = Logger.getLogger(ParModelTest.class
+public class ParModels {
+	private final static Logger logger = Logger.getLogger(ParModels.class
 			.getName());
 
 	static {
@@ -99,7 +118,7 @@ public class ParModelTest {
 		assertFalse(asis(dbp1) instanceof URL);
 		assertFalse(asis(dbp2) instanceof URL);
 		
-		assertEquals(value(dbp1), 25.0);
+		assertTrue(value(dbp1).equals(25.0));
 		assertEquals(value(dbp2), "http://sorcersoft.org/sobol");
 		
 		assertTrue(asis(dbp1) instanceof URL);
@@ -236,7 +255,7 @@ public class ParModelTest {
 		assertEquals(value(pm), 30.0);
 		
 		// with new arguments, closure
-		assertEquals(value(pm, par("x", 10.0), par("y", 20.0)), 30.0);
+		assertTrue(value(pm, par("x", 10.0), par("y", 20.0)).equals(30.0));
 		
 		add(pm, par("z", invoker("(x * y) + add", pars("x", "y", "add"))));
 		logger.info("z value: " + value(pm, "z"));
@@ -505,7 +524,7 @@ public class ParModelTest {
 		// get job parameter value
 		assertEquals(value(j1p), 400.0);
 		
-		logger.info("j1 job context: " + jobContext(j1));
+		logger.info("j1 job context: " + serviceContext(j1));
 		
 		
 		Task t6 = task("t6", sig("add", AdderImpl.class),

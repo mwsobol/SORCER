@@ -5,18 +5,16 @@ import static sorcer.co.operator.inEntry;
 import static sorcer.eo.operator.context;
 import static sorcer.eo.operator.cxt;
 import static sorcer.eo.operator.exert;
-import static sorcer.eo.operator.get;
 import static sorcer.eo.operator.result;
 import static sorcer.eo.operator.sig;
 import static sorcer.eo.operator.srv;
-import static sorcer.eo.operator.task;
 import static sorcer.eo.operator.value;
 
 import java.util.logging.Logger;
 
 import org.junit.Test;
 
-import sorcer.arithmetic.provider.impl.AdderImpl;
+import sorcer.arithmetic.provider.Adder;
 import sorcer.service.Context;
 import sorcer.service.ContextException;
 import sorcer.service.Exertion;
@@ -29,17 +27,20 @@ import sorcer.util.Sorcer;
  * @author Mike Sobolewski
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
-public class ArithmeticLocalTaskTest {
+public class ArithmeticNetTasks {
 	private final static Logger logger = Logger
-			.getLogger(ArithmeticLocalTaskTest.class.getName());
+			.getLogger(ArithmeticNetTasks.class.getName());
 
 	static {
+		String sorcerVersion = "5.0.0-SNAPSHOT";
+		String riverVersion = "2.2.2";
 		System.setProperty("java.util.logging.config.file",
 				Sorcer.getHome() + "/configs/sorcer.logging");
 		System.setProperty("java.security.policy", Sorcer.getHome()
-				+ "/configs/policy.all");
+				+ "/policy/policy.all");
 		System.setSecurityManager(new SecurityManager());
-		Sorcer.setCodeBase(new String[] { "arithmetic-dl.jar" });
+		Sorcer.setCodeBase(new String[] { "arithmetic-" + sorcerVersion + "-dl.jar",  
+				"sorcer-dl-"+sorcerVersion +".jar", "jsk-dl-"+riverVersion+".jar" });
 		
 		System.setProperty("java.protocol.handler.pkgs", "sorcer.util.url|org.rioproject.url");
 		System.setProperty("java.rmi.server.RMIClassLoaderSpi","org.rioproject.rmi.ResolvingLoader");
@@ -49,24 +50,23 @@ public class ArithmeticLocalTaskTest {
 	@Test
 	public void exertTask() throws Exception  {
 
-		Task t5 = srv("t5", sig("add", AdderImpl.class),
+		Task t5 = srv("t5", sig("add", Adder.class),
 				cxt("add", inEntry("arg/x1", 20.0), inEntry("arg/x2", 80.0), result("result/y")));
 
 		Exertion out = exert(t5);
 		Context cxt = context(out);
 		logger.info("out context: " + cxt);
-		logger.info("context @ arg/x1: " + get(cxt, "arg/x1"));
+		logger.info("context @ arg/x1: " + value(cxt, "arg/x1"));
 		logger.info("context @ arg/x2: " + value(cxt, "arg/x2"));
 		logger.info("context @ result/y: " + value(cxt, "result/y"));
 
 		assertEquals(100.0, value(cxt, "result/y"));
-
 	}
 	
 	@Test
 	public void valueTask() throws SignatureException, ExertionException, ContextException  {
 
-		Task t5 = task("t5", sig("add", AdderImpl.class),
+		Task t5 = srv("t5", sig("add", Adder.class),
 				cxt("add", inEntry("arg/x1", 20.0), inEntry("arg/x2", 80.0), result("result/y")));
 
 		Object out = value(t5);

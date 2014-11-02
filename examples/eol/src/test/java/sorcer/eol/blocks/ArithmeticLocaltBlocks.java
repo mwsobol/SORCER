@@ -38,17 +38,20 @@ import sorcer.util.Sorcer;
  * @author Mike Sobolewski
  */
 @SuppressWarnings("unchecked")
-public class ArithmeticNoNetBlockTest implements SorcerConstants {
+public class ArithmeticLocaltBlocks implements SorcerConstants {
 
 	private final static Logger logger = Logger
-			.getLogger(ArithmeticNoNetBlockTest.class.getName());
+			.getLogger(ArithmeticLocaltBlocks.class.getName());
 
 	static {
+		String sorcerVersion = "5.0.0-SNAPSHOT";
+		String riverVersion = "2.2.2";
 		System.setProperty("java.security.policy", Sorcer.getHome()
-				+ "/configs/policy.all");
+				+ "/policy/policy.all");
 		System.setSecurityManager(new SecurityManager());
-		Sorcer.setCodeBase(new String[] { "arithmetic-dl.jar",
-				"sorcer-dl.jar" });
+		Sorcer.setCodeBase(new String[] { "arithmetic-" + sorcerVersion + "-dl.jar",  
+				"sorcer-dl-"+sorcerVersion +".jar", "jsk-dl-"+riverVersion+".jar" });
+		
 		System.out.println("CLASSPATH :"
 				+ System.getProperty("java.class.path"));
 	}

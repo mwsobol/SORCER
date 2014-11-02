@@ -41,7 +41,6 @@ jar {
     }
 }
 
-
 test {
     systemProperty "java.security.policy", "${project.projectDir.path}/src/test/resources/policy/policy.all"
     systemProperty "sorcer.home", "${project.rootProject.path}/distribution/sorcer-${version}"

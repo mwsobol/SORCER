@@ -14,7 +14,7 @@ import static sorcer.eo.operator.get;
 import static sorcer.eo.operator.in;
 import static sorcer.eo.operator.input;
 import static sorcer.eo.operator.job;
-import static sorcer.eo.operator.jobContext;
+import static sorcer.eo.operator.serviceContext;
 import static sorcer.eo.operator.name;
 import static sorcer.eo.operator.out;
 import static sorcer.eo.operator.path;
@@ -136,7 +136,7 @@ public class ArithmeticTester implements SorcerConstants {
 
 		Job out = exert(f1);
 		if (out != null) {
-			logger.info("job f1 context: " + jobContext(out));
+			logger.info("job f1 context: " + serviceContext(out));
 			logger.info("job f1/f5/result/y: " + get(out, "f1/f5/result/y"));
 		} else {
 			logger.info("job execution failed");
@@ -168,7 +168,7 @@ public class ArithmeticTester implements SorcerConstants {
 
 		Exertion out = exert(f1);
 		if (out != null) {
-			logger.info("job f1 context: " + jobContext(out));
+			logger.info("job f1 context: " + serviceContext(out));
 			logger.info("job f1/f3/result/y3: " + get(out, "f1/f3/result/y3"));
 		} else {
 			logger.info("job execution failed");
@@ -213,7 +213,7 @@ public class ArithmeticTester implements SorcerConstants {
 		
 		Exertion out = exert(f1);
 		if (out != null) {
-			logger.info("job f1 context: " + jobContext(out));
+			logger.info("job f1 context: " + serviceContext(out));
 			logger.info("job f1/f3/result/y3: " + get(out, "f1/f3/result/y3"));
 		} else {
 			logger.info("job execution failed");
@@ -245,7 +245,7 @@ public class ArithmeticTester implements SorcerConstants {
 		   pipe(out(f5, path(result, y)), in(f3, path(arg, x2))));
 
 		Exertion out = exert(f1);
-		logger.info("job f1 context: " + jobContext(out));
+		logger.info("job f1 context: " + serviceContext(out));
 		logger.info("job f1 f1/f3/result/y: " + get(out, path("f1", "f3", result, y)));
 		
 		return out;
@@ -275,7 +275,7 @@ public class ArithmeticTester implements SorcerConstants {
 
 		Exertion out = exert(f1);
 
-		logger.info("job f1 context: " + jobContext(out));
+		logger.info("job f1 context: " + serviceContext(out));
 		logger.info("job f1 f3/result/y3: " + get(out, path("f1/f3/result/y3")));
 
 		return out;
@@ -310,7 +310,7 @@ public class ArithmeticTester implements SorcerConstants {
 		
 		logger.info("out name: " + name(out));
 		logger.info("job f1 context: " + context(out));
-		logger.info("job f1 job context: " + jobContext(out));
+		logger.info("job f1 job context: " + serviceContext(out));
 		logger.info("job f1 f3/result/y3: " + get(out, path("f1/f3/result/y3")));
 		logger.info("task f4 trace: " + trace(exertion(out, "f1/f2/f4")));
 		logger.info("task f5 trace: " + trace(exertion(out, "f1/f2/f5")));
@@ -348,7 +348,7 @@ private Exertion f1SEQpull() throws Exception {
 		
 		logger.info("out name: " + name(out));
 		logger.info("job f1 context: " + context(out));
-		logger.info("job f1 job context: " + jobContext(out));
+		logger.info("job f1 job context: " + serviceContext(out));
 		logger.info("job f1 f3/result/y3: " + get(out, path("f1/f3/result/y3")));
 		logger.info("task f4 trace: " + trace(exertion(out, "f1/f2/f4")));
 		logger.info("task f5 trace: " + trace(exertion(out, "f1/f2/f5")));

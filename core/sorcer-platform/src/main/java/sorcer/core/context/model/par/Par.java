@@ -27,11 +27,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import sorcer.co.tuple.Entry;
 import sorcer.co.tuple.FidelityEntry;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.ApplicationDescription;
 import sorcer.core.context.ServiceContext;
-import sorcer.service.Active;
+import sorcer.service.Reactive;
 import sorcer.service.Arg;
 import sorcer.service.ArgException;
 import sorcer.service.ArgSet;
@@ -43,7 +44,6 @@ import sorcer.service.EvaluationException;
 import sorcer.service.Exertion;
 import sorcer.service.FidelityInfo;
 import sorcer.service.Identifiable;
-import sorcer.service.Identity;
 import sorcer.service.Invocation;
 import sorcer.service.InvocationException;
 import sorcer.service.Mappable;
@@ -62,8 +62,8 @@ import sorcer.util.url.sos.SdbUtil;
  * @author Mike Sobolewski
  */
 @SuppressWarnings({"unchecked", "rawtypes" })
-public class Par<T> extends Identity implements Variability<T>, Arg, Mappable<T>, Evaluation<T>, 
-	Invocation<T>, Setter, Scopable, Comparable<T>, Active, Serializable {
+public class Par<T> extends Entry<T> implements Variability<T>, Arg, Mappable<T>, Evaluation<T>, 
+	Invocation<T>, Setter, Scopable, Comparable<T>, Reactive<T>, Serializable {
 
 	private static final long serialVersionUID = 7495489980319169695L;
 	 
@@ -134,17 +134,15 @@ public class Par<T> extends Identity implements Variability<T>, Arg, Mappable<T>
 	public void setValue(Object value) throws SetterException, RemoteException {		
 		if (persistent) {
 			try {
-				if (SdbUtil.isSosURL(value)) {
-					if (((URL)value).getRef() == null) {
-						value = SdbUtil.store(value);
-					} else if (persistent){
-						SdbUtil.update((URL)value, value);
-					}
-					return;
-				}	
+				if (SdbUtil.isSosURL(this.value)) {
+					SdbUtil.update((URL)this.value, value);
+				} else {
+					this.value = (T)SdbUtil.store(value);
+				}
 			} catch (Exception e) {
 				throw new SetterException(e);
 			} 
+			return;
 		}
 		if (mappable != null) {
 			try {
@@ -600,5 +598,11 @@ public class Par<T> extends Identity implements Variability<T>, Arg, Mappable<T>
 
 	public void setFidelities(Map<String, FidelityEntry> fidelities) {
 		this.fidelities = fidelities;
+	}
+	
+
+	@Override
+	public boolean isReactive() {
+		return true;
 	}
 }

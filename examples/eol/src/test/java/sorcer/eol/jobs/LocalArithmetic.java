@@ -50,17 +50,20 @@ import sorcer.util.Sorcer;
  * @author Mike Sobolewski
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })
-public class ArithmeticNoNetTest implements SorcerConstants {
+public class LocalArithmetic implements SorcerConstants {
 
 	private final static Logger logger = Logger
-			.getLogger(ArithmeticNoNetTest.class.getName());
+			.getLogger(LocalArithmetic.class.getName());
 
 	static {
+		String sorcerVersion = "5.0.0-SNAPSHOT";
+		String riverVersion = "2.2.2";
 		System.setProperty("java.security.policy", Sorcer.getHome()
-				+ "/configs/policy.all");
+				+ "/policy/policy.all");
 		System.setSecurityManager(new SecurityManager());
-		Sorcer.setCodeBase(new String[] { "arithmetic-dl.jar",
-				"sorcer-dl.jar" });
+		Sorcer.setCodeBase(new String[] { "arithmetic-" + sorcerVersion + "-dl.jar",  
+				"sorcer-dl-"+sorcerVersion +".jar", "jsk-dl-"+riverVersion+".jar" });
+		
 		System.out.println("CLASSPATH :"
 				+ System.getProperty("java.class.path"));
 	}
@@ -230,7 +233,7 @@ public class ArithmeticNoNetTest implements SorcerConstants {
 	@Test
 	public void contexterTest() throws Exception {
 		// get a context for the template context in the task
-		Task cxtt = task("addContext", sig("getContext", ArithmeticNetTest.createContext()),
+		Task cxtt = task("addContext", sig("getContext", NetArithmetic.createContext()),
 				context("add", input("arg/x1"), input("arg/x2")));
 
 		Context result = context(exert(cxtt));
@@ -242,7 +245,7 @@ public class ArithmeticNoNetTest implements SorcerConstants {
 	@Test
 	public void objectContexterTaskTest() throws Exception {
 		Task t5 = task("t5", sig("add", AdderImpl.class), 
-					type(sig("getContext", ArithmeticNetTest.createContext()), Signature.APD),
+					type(sig("getContext", NetArithmetic.createContext()), Signature.APD),
 					context("add", inEntry("arg/x1"), inEntry("arg/x2"),
 						result("result/y")));
 		

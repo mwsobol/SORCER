@@ -38,7 +38,7 @@ public class ObjectSignature extends ServiceSignature {
 
 	// list of initialization arguments for the constructor
 	private Object[] args;	
-
+	
 	private String initSelector;
 	
 	private Class<?>[] argTypes;
@@ -157,11 +157,19 @@ public class ObjectSignature extends ServiceSignature {
 		return evaluator;
 	}
 
-	public Class<?>[] getTypes() throws ContextException {
+	public Object[] getArgs() {
+		return args;
+	}
+
+	public void setArgs(Object[] args) {
+		this.args = args;
+	}
+
+	public Class<?>[] getParameterTypes() throws ContextException {
 		return argTypes;
 	}
 
-	public void setTypes(Class<?>... types) throws ContextException {
+	public void setParameterTypes(Class<?>... types) throws ContextException {
 		argTypes = types;
 	}
 
@@ -234,7 +242,11 @@ public class ObjectSignature extends ServiceSignature {
 				else
 					m = providerType.getMethod(selector);
 			}
-
+			// Utility class, target is a static method to be invoked
+			if (selector.equals(initSelector)) {
+				target = m;
+				return m;
+			}
 			if (args != null) {
 				obj = m.invoke(obj, args);
 			}
@@ -259,6 +271,7 @@ public class ObjectSignature extends ServiceSignature {
 		}
 		// logger.fine(">>>>>>>>>>> instantiated: \n" + obj +
 		// "\n by signature: " + this);
+		target = obj;
 		return obj;
 	}
 

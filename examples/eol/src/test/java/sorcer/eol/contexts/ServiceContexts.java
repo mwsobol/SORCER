@@ -3,6 +3,10 @@ package sorcer.eol.contexts;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static sorcer.co.operator.db;
+import static sorcer.co.operator.dbEntry;
+import static sorcer.co.operator.dbInEntry;
+import static sorcer.co.operator.entries;
 import static sorcer.co.operator.entry;
 import static sorcer.co.operator.inEntry;
 import static sorcer.co.operator.inoutEntry;
@@ -11,11 +15,14 @@ import static sorcer.co.operator.list;
 import static sorcer.co.operator.listContext;
 import static sorcer.co.operator.outEntry;
 import static sorcer.co.operator.path;
+import static sorcer.co.operator.url;
 import static sorcer.eo.operator.add;
 import static sorcer.eo.operator.asis;
-import static sorcer.eo.operator.*;
+import static sorcer.eo.operator.context;
+import static sorcer.eo.operator.contextModel;
 import static sorcer.eo.operator.get;
 import static sorcer.eo.operator.getAt;
+import static sorcer.eo.operator.getLink;
 import static sorcer.eo.operator.inPaths;
 import static sorcer.eo.operator.inValues;
 import static sorcer.eo.operator.link;
@@ -25,18 +32,18 @@ import static sorcer.eo.operator.outPaths;
 import static sorcer.eo.operator.outValues;
 import static sorcer.eo.operator.put;
 import static sorcer.eo.operator.select;
+import static sorcer.eo.operator.softValue;
 import static sorcer.eo.operator.value;
 import static sorcer.eo.operator.valuesAt;
+import static sorcer.po.operator.invoker;
 
+import java.net.URL;
 import java.util.logging.Logger;
 
 import org.junit.Test;
 
 import sorcer.co.tuple.Entry;
-import sorcer.core.context.ContextLink;
 import sorcer.core.context.ListContext;
-import sorcer.core.context.PositionalContext;
-import sorcer.core.context.ServiceContext;
 import sorcer.service.Context;
 import sorcer.util.Sorcer;
 
@@ -44,15 +51,19 @@ import sorcer.util.Sorcer;
  * @author Mike Sobolewski
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
-public class ContextTest {
+public class ServiceContexts {
 	
-	private final static Logger logger = Logger.getLogger(ContextTest.class.getName());
+	private final static Logger logger = Logger.getLogger(ServiceContexts.class.getName());
 	
 	static {
+		String sorcerVersion = "5.0.0-SNAPSHOT";
+		String riverVersion = "2.2.2";
 		System.setProperty("java.security.policy", Sorcer.getHome()
-				+ "/configs/policy.all");
+				+ "/policy/policy.all");
 		System.setSecurityManager(new SecurityManager());
-		Sorcer.setCodeBase(new String[] { "arithmetic-dl.jar",  "sorcer-dl.jar" });
+		Sorcer.setCodeBase(new String[] { "arithmetic-" + sorcerVersion + "-dl.jar",  
+				"sorcer-dl-"+sorcerVersion +".jar", "jsk-dl-"+riverVersion+".jar" });
+		
 		System.out.println("CLASSPATH :" + System.getProperty("java.class.path"));
 		System.setProperty("java.protocol.handler.pkgs", "sorcer.util.url|org.rioproject.url");
 //		System.setProperty("java.rmi.server.RMIClassLoaderSpi","org.rioproject.rmi.ResolvingLoader");	
@@ -68,20 +79,20 @@ public class ContextTest {
 		add(cxt, entry("arg/x6", 1.6));
 		
 		assertTrue(value(cxt, "arg/x1").equals(1.1));
-		assertEquals(get(cxt, "arg/x1"), 1.1);
-		assertEquals(asis(cxt, "arg/x1"), 1.1);
+		assertTrue(get(cxt, "arg/x1").equals(1.1));
+		assertTrue(asis(cxt, "arg/x1").equals(1.1));
 		
 		put(cxt, entry("arg/x1", 5.0));
-		assertEquals(get(cxt, "arg/x1"), 5.0);
+		assertTrue(get(cxt, "arg/x1").equals(5.0));
 
 		Context<Double> subcxt = context(cxt, list("arg/x4", "arg/x5"));
 		logger.info("subcontext: " + subcxt);
 		assertNull(get(subcxt, "arg/x1"));
 		assertNull(get(subcxt, "arg/x2"));
 		assertNull(get(subcxt, "arg/x3"));
-		assertEquals(get(cxt, "arg/x4"), 1.4);
-		assertEquals(get(cxt, "arg/x5"), 1.5);
-		assertEquals(get(cxt, "arg/x6"), 1.6);
+		assertTrue(get(cxt, "arg/x4").equals(1.4));
+		assertTrue(get(cxt, "arg/x5").equals(1.5));
+		assertTrue(get(cxt, "arg/x6").equals(1.6));
 		
 	}
 
@@ -90,12 +101,11 @@ public class ContextTest {
 	public void softValues() throws Exception {
 		Context cxt = context("add", inEntry("arg/x1", 20.0), inEntry("arg/x2", 80.0));
 		
-//		logger.info("arg/x1 = " + cxt.getValue("arg/x1"));
-		assertEquals(cxt.getValue("arg/x1"), 20.0);
-//		logger.info("val x1 = " + cxt.getValue("x1"));
-		assertEquals(cxt.getValue("x1"), null);
-//		logger.info("soft x1 = " + cxt.getSoftValue("arg/var/x1"));
-		assertEquals(cxt.getSoftValue("arg/var/x1"), 20.0);
+		// context soft values correspond to a subpath, e.g. "x1" 
+		// if no match for the exact path. e.g."arg1/x1"
+		assertEquals(value(cxt, "arg/x1"), 20.0);
+		assertEquals(value(cxt,"x1"), null);
+		assertEquals(softValue(cxt, "arg/var/x1"), 20.0);
 	}
 	
 	
@@ -163,9 +173,9 @@ public class ContextTest {
 	
 	
 	@Test
-	public void listContextOperator() throws Exception {
+	public void indexedContextOperator() throws Exception {
 		
-		// ListContext has Java List API
+		// ListContext complies with Java List API
 		ListContext<Double> cxt = listContext(1.1, 1.2, 1.3, 1.4, 1.5);
 
 		assertTrue(cxt instanceof Context);
@@ -263,11 +273,55 @@ public class ContextTest {
 	@Test
 	public void sharedContext() throws Exception {
 		
+		// two contexts ac and mc sharing arg1/value 
+		// and arg3/value values over the network
+		Context ac = context("add", 
+				inEntry("arg1/value", 90.0),
+				inEntry("arg2/value", 110.0),
+				inEntry("arg3/value", 100.0));
+		
+		// make arg1/value persistent
+		URL a1vURL = url(ac, "arg1/value");
+			
+		// make arg1/value in mc the same as in ac
+		Context mc = context("multiply", 
+				dbInEntry("arg1/value", a1vURL),
+				inEntry("arg2/value", 70.0),
+				inEntry("arg3/value", 200.0));
+		
+		// sharing arg1/value from mc in ac
+		assertTrue(value(mc, "arg1/value").equals(90.0));
+		put(mc, "arg1/value", 200.0);
+		assertTrue(value(ac, "arg1/value").equals(200.0));
+		
+		// sharing arg3/value from ac in mc
+		assertTrue(value(ac, "arg3/value").equals(100.0));
+		assertTrue(value(mc, "arg3/value").equals(200.0));
+		URL a3vURL = db(mc, "arg3/value");
+		add(ac, dbEntry("arg3/value", a3vURL));
+		put(ac, "arg1/value", 300.0);
+		assertTrue(value(mc, "arg1/value").equals(300.0));
+		
 	}
 	
 	
 	@Test
-	public void contextModel() throws Exception {
+	public void contextModeling() throws Exception {
+		
+		Context<Double> cxt = contextModel(entry("arg/x1", 1.0), entry("arg/x2", 2.0), 
+				 entry("arg/x3", 3.0), entry("arg/x4", 4.0), entry("arg/x5", 5.0));
+		
+		add(cxt, entry("arg/x6", 6.0));
+		assertTrue(value(cxt, "arg/x6").equals(6.0));
+
+		put(cxt, entry("arg/x6", entry("overwrite", 20.0)));
+		assertTrue(value(cxt, "arg/x6").equals(20.0));
+		
+		add(cxt, entry("arg/x7", invoker("x1 + x3", entries("x1", "x3"))));	
+		
+		value(cxt, "arg/x7");
+		
+		assertTrue(value(cxt, "arg/x7").equals(4.0));
 		
 	}
 	

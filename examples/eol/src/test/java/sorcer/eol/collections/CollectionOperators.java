@@ -48,7 +48,6 @@ import static sorcer.po.operator.par;
 import static sorcer.po.operator.parModel;
 import static sorcer.po.operator.pars;
 import static sorcer.po.operator.set;
-import static sorcer.po.operator.value;
 
 import java.io.Serializable;
 import java.net.URL;
@@ -75,15 +74,19 @@ import sorcer.util.Table;
  * @author Mike Sobolewski
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
-public class CollectionOperatorsTest {
+public class CollectionOperators {
 	
-	private final static Logger logger = Logger.getLogger(CollectionOperatorsTest.class.getName());
+	private final static Logger logger = Logger.getLogger(CollectionOperators.class.getName());
 	
 	static {
+		String sorcerVersion = "5.0.0-SNAPSHOT";
+		String riverVersion = "2.2.2";
 		System.setProperty("java.security.policy", Sorcer.getHome()
-				+ "/configs/policy.all");
+				+ "/policy/policy.all");
 		System.setSecurityManager(new SecurityManager());
-		Sorcer.setCodeBase(new String[] { "arithmetic-dl.jar",  "sorcer-dl.jar" });
+		Sorcer.setCodeBase(new String[] { "arithmetic-" + sorcerVersion + "-dl.jar",  
+				"sorcer-dl-"+sorcerVersion +".jar", "jsk-dl-"+riverVersion+".jar" });
+		
 		System.out.println("CLASSPATH :" + System.getProperty("java.class.path"));
 		System.setProperty("java.protocol.handler.pkgs", "sorcer.util.url|org.rioproject.url");
 //		System.setProperty("java.rmi.server.RMIClassLoaderSpi","org.rioproject.rmi.ResolvingLoader");	
@@ -229,7 +232,7 @@ public class CollectionOperatorsTest {
 	@Test
 	public void parOperator() throws Exception {
 		
-		Par<?> add = par("add", invoker("x + y", pars("x", "y")));
+		Par add = par("add", invoker("x + y", pars("x", "y")));
 		Context<Double> cxt = context(entry("x", 10.0), entry("y", 20.0));
 		logger.info("par value: " + value(add, cxt));
 		assertTrue(value(add, cxt).equals(30.0));
@@ -272,7 +275,11 @@ public class CollectionOperatorsTest {
 		
 		// keys and values of entries
 		String k = key(entry("name", "Mike"));
-		Double v = value(entry("height", 174.0));
+		
+		Entry<Double> de = entry("height", 174.0);
+		Double v = value(de);
+
+//		Double v = value(entry("height", 174.0));
 		assertEquals(k, "name");
 		assertTrue(v.equals(174.0));
 		
@@ -305,24 +312,24 @@ public class CollectionOperatorsTest {
 		add(cxt, entry("arg/x7", invoker("x1 + x3", entries("x1", "x3"))));
 		
 		assertTrue(value(cxt, "arg/x1").equals(1.1));
-		assertEquals(get(cxt, "arg/x1"), 1.1);
-		assertEquals(asis(cxt, "arg/x1"), 1.1);
+		assertTrue(get(cxt, "arg/x1").equals(1.1));
+		assertTrue(asis(cxt, "arg/x1").equals(1.1));
 		
 		add(cxt, entry("arg/x1", 1.0));
-		assertEquals(get(cxt, "arg/x1"), 1.0);
+		assertTrue(get(cxt, "arg/x1").equals(1.0));
 
 		add(cxt, entry("arg/x3", 3.0));
-		assertEquals(get(cxt, "arg/x3"), 3.0);
+		assertTrue(get(cxt, "arg/x3").equals(3.0));
 		
 		Context<Double> subcxt = context(cxt, list("arg/x4", "arg/x5"));
 		logger.info("subcontext: " + subcxt);
 		assertNull(get(subcxt, "arg/x1"));
 		assertNull(get(subcxt, "arg/x2"));
 		assertNull(get(subcxt, "arg/x3"));
-		assertEquals(get(cxt, "arg/x4"), 1.4);
-		assertEquals(get(cxt, "arg/x5"), 1.5);
-		assertEquals(get(cxt, "arg/x6"), 1.6);
-		assertTrue(get(cxt, "arg/x7") instanceof ServiceInvoker);
+		assertTrue(get(cxt, "arg/x4").equals(1.4));
+		assertTrue(get(cxt, "arg/x5").equals(1.5));
+		assertTrue(get(cxt, "arg/x6").equals(1.6));
+		assertTrue(((Object)get(cxt, "arg/x7")) instanceof ServiceInvoker);
 		
 		// aliasing entries
 		put(cxt, entry("arg/x6", entry("overwrite", 20.0)));

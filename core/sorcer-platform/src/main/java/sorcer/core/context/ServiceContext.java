@@ -53,7 +53,6 @@ import sorcer.core.provider.Provider;
 import sorcer.core.provider.ServiceProvider;
 import sorcer.core.signature.NetSignature;
 import sorcer.security.util.SorcerPrincipal;
-import sorcer.service.Active;
 import sorcer.service.Arg;
 import sorcer.service.AssociativeContext;
 import sorcer.service.Condition;
@@ -70,7 +69,8 @@ import sorcer.service.Invocation;
 import sorcer.service.InvocationException;
 import sorcer.service.Link;
 import sorcer.service.MonitorException;
-import sorcer.service.Paradigm;
+import sorcer.service.Paradigmatic;
+import sorcer.service.Reactive;
 import sorcer.service.Scopable;
 import sorcer.service.ServiceExertion;
 import sorcer.service.Setter;
@@ -542,8 +542,8 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 		}
 		if (val instanceof Evaluation && isModeling) {
 			val = ((Evaluation<T>) val).getValue(entries);
-		} else if ((val instanceof Paradigm)
-				&& ((Paradigm) val).isModeling()) {
+		} else if ((val instanceof Paradigmatic)
+				&& ((Paradigmatic) val).isModeling()) {
 			val = ((Evaluation<T>) val).getValue(entries);
 		}
 		return val;
@@ -760,9 +760,9 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 			obj = put(path, (T)none);
 		else {
 			obj = get(path);
-			if (obj instanceof Par) {
+			if (obj instanceof Reactive && obj instanceof Setter) {
 				try {
-					((Par)obj).setValue(value);
+					((Setter)obj).setValue(value);
 				} catch (RemoteException ex) {
 					throw new ContextException(ex);
 				}
@@ -2162,11 +2162,11 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
         return value;
     }
 
-	public Object getArgs() throws ContextException {
+	public Object[] getArgs() throws ContextException {
 		if (argsPath == null)
 			return null;
 		else
-			return get(argsPath);
+			return (Object[])get(argsPath);
 	}
 
 	public ServiceContext setArgs(Object... args) throws ContextException {
@@ -2902,13 +2902,13 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 						}
 					}
 					obj = ((Evaluation<T>)obj).getValue(entries);
-				} else if ((obj instanceof Paradigm)
-						&& ((Paradigm) obj).isModeling()) {
+				} else if ((obj instanceof Paradigmatic)
+						&& ((Paradigmatic) obj).isModeling()) {
 					obj = ((Evaluation<T>)obj).getValue(entries);
 				}
 			}
-			if (obj instanceof Active)
-				return (T) ((Active)obj).getValue(entries);
+			if (obj instanceof Reactive)
+				return (T) ((Evaluation)obj).getValue(entries);
 			else
 				return (T) obj;
 		} catch (Throwable e) {

@@ -20,7 +20,7 @@ import static sorcer.eo.operator.implementation;
 import static sorcer.eo.operator.in;
 import static sorcer.eo.operator.input;
 import static sorcer.eo.operator.job;
-import static sorcer.eo.operator.jobContext;
+import static sorcer.eo.operator.serviceContext;
 import static sorcer.eo.operator.link;
 import static sorcer.eo.operator.maintain;
 import static sorcer.eo.operator.out;
@@ -74,17 +74,20 @@ import sorcer.util.Sorcer;
  * @author Mike Sobolewski
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })
-public class ArithmeticNetTest implements SorcerConstants {
+public class NetArithmetic implements SorcerConstants {
 
 	private final static Logger logger = Logger
-			.getLogger(ArithmeticNetTest.class.getName());
+			.getLogger(NetArithmetic.class.getName());
 
 	static {
-		String version = "5.0.0-SNAPSHOT";
+		String sorcerVersion = "5.0.0-SNAPSHOT";
+		String riverVersion = "2.2.2";
 		System.setProperty("java.security.policy", Sorcer.getHome()
-				+ "/configs/policy.all");
+				+ "/policy/policy.all");
 		System.setSecurityManager(new SecurityManager());
-		Sorcer.setCodeBase(new String[] { "arithmetic-" + version + "-dl.jar",  "sorcer-dl-"+version +".jar" });
+		Sorcer.setCodeBase(new String[] { "arithmetic-" + sorcerVersion + "-dl.jar",  
+				"sorcer-dl-"+sorcerVersion +".jar", "jsk-dl-"+riverVersion+".jar" });
+		
 		System.out.println("CLASSPATH :" + System.getProperty("java.class.path"));
 		System.setProperty("java.protocol.handler.pkgs", "sorcer.util.url|org.rioproject.url");
 //		System.setProperty("java.rmi.server.RMIClassLoaderSpi","org.rioproject.rmi.ResolvingLoader");	
@@ -173,7 +176,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 		job = exert(job);
 		//logger.info("job j1: " + job);
 		//logger.info("job j1 job context: " + context(job));
-		logger.info("job j1 job context: " + jobContext(job));
+		logger.info("job j1 job context: " + serviceContext(job));
 		//logger.info("job j1 value @ j1/t3/result/y = " + get(job, "j1/t3/result/y"));
 		assertEquals(get(job, "j1/t3/result/y"), 400.00);
 	}
@@ -185,7 +188,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 		job = exert(job);
 		logger.info("job j1: " + job);
 		//logger.info("job j1 job context: " + context(job));
-		logger.info("job j1 job context: " + jobContext(job));
+		logger.info("job j1 job context: " + serviceContext(job));
 		//logger.info("job j1 value @ j1/t3/result/y = " + get(job, "j1/t3/result/y"));
 		assertEquals(get(job, "j1/t3/result/y"), 400.00);
 	}
@@ -196,7 +199,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 		job = exert(job);
 		//logger.info("job j1: " + job);
 		//logger.info("job j1 job context: " + context(job));
-		logger.info("job j1 job context: " + jobContext(job));
+		logger.info("job j1 job context: " + serviceContext(job));
 		//logger.info("job j1 value @ j1/t3/result/y = " + get(job, "j1/t3/result/y"));
 		assertEquals(get(job, "j1/t3/result/y"), 400.00);
 	}
@@ -207,7 +210,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 		job = exert(job);
 		//logger.info("job j1: " + job);
 		//logger.info("job j1 job context: " + context(job));
-		logger.info("job j1 job context: " + jobContext(job));
+		logger.info("job j1 job context: " + serviceContext(job));
 		//logger.info("job j1 value @ j1/t3/result/y = " + get(job, "j1/t3/result/y"));
 		assertEquals(get(job, "j1/t3/result/y"), 400.00);
 	}
@@ -419,54 +422,4 @@ public class ArithmeticNetTest implements SorcerConstants {
 		assertEquals(value(par(vm, "j1")), 400.0);
 	}
 
-	@Test
-	public void testProvisionedJob() throws Exception {
-		Job f1 = createProvisionedJob();
-		List<Signature> allSigs = f1.getAllSignatures();
-//		logger.info("all sigs size: " + allSigs.size());
-		assertEquals(allSigs.size(), 5);
-		allSigs = f1.getAllTaskSignatures();
-//		logger.info("all net sigs size: " + allSigs.size());
-		assertEquals(allSigs.size(), 3);
-		List<Signature> netSigs = f1.getAllTaskSignatures();
-//		logger.info("all net sigs size: " + allSigs.size());
-		assertEquals(netSigs.size(), 3);
-
-		List<ServiceDeployment> allDeployments = f1.getAllDeployments();
-//		logger.info("allDeployments: " + allDeployments);
-//		logger.info("allDeployments size: " + allDeployments.size());
-		assertEquals(allDeployments.size(), 3);
-
-		int f4Idle = ((ServiceSignature) ((Task) exertion(f1, "f1/f2/f4"))
-				.getProcessSignature()).getDeployment().getIdle();
-		int f5Idle = ((ServiceSignature) ((Task) exertion(f1, "f1/f2/f5"))
-				.getProcessSignature()).getDeployment().getIdle();
-//		logger.info("f4 idle: " + f4Idle);
-//		logger.info("f5 idle: " + f5Idle);
-		assertEquals(f4Idle, f5Idle);
-	}
-	
-	@Test
-	public void exertionDeploymentIdTest() throws Exception {
-		Job job = createProvisionedJob();
-		String did =  job.getDeploymentId();
-		logger.info("job deploy id: " + did);
-		assertEquals(did, "80f64d24d61547437dfdfec697546191");
-	}
-		
-	@Ignore
-	@Test
-	public void deployTest() throws Exception {
-		// works only with Rio support
-		Task t5 = task("f5",
-			sig("add", Adder.class,
-					deploy(configuration("bin/sorcer/test/arithmetic/configs/AdderProviderConfig.groovy"))),
-				context("add", inEntry("arg/x3", 20.0d), inEntry("arg/x4", 80.0d),
-							result("result/y")),
-				strategy(Provision.YES));
-//		logger.info("t5 is provisionable: " + t5.isProvisionable());
-		assertTrue(t5.isProvisionable());
-//		logger.info("t5 value: " + value(t5));
-		assertEquals(value(t5), 100.0);
-	}
 }
