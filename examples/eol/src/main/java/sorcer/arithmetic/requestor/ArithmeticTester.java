@@ -1,7 +1,7 @@
 package sorcer.arithmetic.requestor;
 
-import static sorcer.co.operator.inEntry;
-import static sorcer.co.operator.outEntry;
+import static sorcer.co.operator.inEnt;
+import static sorcer.co.operator.outEnt;
 import static sorcer.eo.operator.classpath;
 import static sorcer.eo.operator.codebase;
 import static sorcer.eo.operator.configuration;
@@ -14,11 +14,11 @@ import static sorcer.eo.operator.get;
 import static sorcer.eo.operator.in;
 import static sorcer.eo.operator.input;
 import static sorcer.eo.operator.job;
-import static sorcer.eo.operator.serviceContext;
 import static sorcer.eo.operator.name;
 import static sorcer.eo.operator.out;
 import static sorcer.eo.operator.path;
 import static sorcer.eo.operator.pipe;
+import static sorcer.eo.operator.serviceContext;
 import static sorcer.eo.operator.sig;
 import static sorcer.eo.operator.strategy;
 import static sorcer.eo.operator.task;
@@ -42,7 +42,6 @@ import sorcer.service.Exertion;
 import sorcer.service.ExertionCallable;
 import sorcer.service.ExertionException;
 import sorcer.service.Job;
-import sorcer.service.Service;
 import sorcer.service.SignatureException;
 import sorcer.service.Strategy.Access;
 import sorcer.service.Strategy.Flow;
@@ -64,7 +63,7 @@ import sorcer.util.ProviderAccessor;
  * @see ArithmeticTester
  * @author Mike Sobolewski
  */
-
+@SuppressWarnings("unchecked")
 public class ArithmeticTester implements SorcerConstants {
 
 	private static Logger logger = Log.getTestLog();
@@ -117,16 +116,16 @@ public class ArithmeticTester implements SorcerConstants {
 		String x1 = "x1", x2 = "x2", y = "y";
 
 		Task f3 = task("f3", sig("multiply", Multiplier.class), 
-				   context("multiply", inEntry(path(arg, x1), 10.0), inEntry(path(arg, x2), 50.0),
-				      outEntry(path(result, y), null)));
+				   context("multiply", inEnt(path(arg, x1), 10.0), inEnt(path(arg, x2), 50.0),
+				      outEnt(path(result, y), null)));
 		
 		Task f4 = task("f4", sig("add", Adder.class), 
-		   context("add", inEntry(path(arg, x1), 20.0), inEntry(path(arg, x2), 80.0),
-		      outEntry(path(result, y), null)));
+		   context("add", inEnt(path(arg, x1), 20.0), inEnt(path(arg, x2), 80.0),
+		      outEnt(path(result, y), null)));
 		
 		Task f5 = task("f5", sig("subtract", Subtractor.class), 
-				   context("subtract", inEntry(path(arg, x1), null), inEntry(path(arg, x2), null),
-				      outEntry(path(result, y), null)));
+				   context("subtract", inEnt(path(arg, x1), null), inEnt(path(arg, x2), null),
+				      outEnt(path(result, y), null)));
 
 		// Service Composition f1(f2(f3((x1, x2), f4(x1, x2)), f5(x1, x2))
 		//Job f1= job("f1", job("f2", f4, f5, strategy(Flow.PARALLEL, Access.PULL)), f3,
@@ -149,16 +148,16 @@ public class ArithmeticTester implements SorcerConstants {
 	private Exertion f1() throws Exception {
 		
 		Task f4 = task("f4", sig("multiply", Multiplier.class),
-				context("multiply", inEntry("arg/x1", 10.0d), inEntry("arg/x2", 50.0d),
-						outEntry("result/y1", null)));
+				context("multiply", inEnt("arg/x1", 10.0d), inEnt("arg/x2", 50.0d),
+						outEnt("result/y1", null)));
 
 		Task f5 = task("f5", sig("add", Adder.class),
-				context("add", inEntry("arg/x3", 20.0d), inEntry("arg/x4", 80.0d),
-						inEntry("result/y2", null)));
+				context("add", inEnt("arg/x3", 20.0d), inEnt("arg/x4", 80.0d),
+						inEnt("result/y2", null)));
 
 		Task f3 = task("f3", sig("subtract", Subtractor.class),
-				context("subtract", inEntry("arg/x5", null), inEntry("arg/x6", null),
-						outEntry("result/y3", null)));
+				context("subtract", inEnt("arg/x5", null), inEnt("arg/x6", null),
+						outEnt("result/y3", null)));
 
 		//job("f1", job("f2", f4, f5), f3,		
 		//job("f1", job("f2", f4, f5, strategy(Flow.PAR, Access.PULL)), f3,
@@ -184,8 +183,8 @@ public class ArithmeticTester implements SorcerConstants {
 					deploy(classpath("arithmetic-beans.jar"),
 						codebase("arithmetic-dl.jar"),
 						configuration("bin/examples/ex6/configs/multiplier-prv.config"))),
-				context("multiply", inEntry("arg/x1", 10.0d),
-						inEntry("arg/x2", 50.0d), outEntry("result/y1", null)));
+				context("multiply", inEnt("arg/x1", 10.0d),
+						inEnt("arg/x2", 50.0d), outEnt("result/y1", null)));
 
 		Task f5 = task(
 				"f5",
@@ -193,8 +192,8 @@ public class ArithmeticTester implements SorcerConstants {
 					deploy(classpath("arithmetic-beans.jar"),
 						codebase("arithmetic-dl.jar"),
 						configuration("bin/examples/ex6/configs/adder-prv.config"))),
-				context("add", inEntry("arg/x3", 20.0d), inEntry("arg/x4", 80.0d),
-						outEntry("result/y2", null)));
+				context("add", inEnt("arg/x3", 20.0d), inEnt("arg/x4", 80.0d),
+						outEnt("result/y2", null)));
 
 		Task f3 = task(
 				"f3",
@@ -202,8 +201,8 @@ public class ArithmeticTester implements SorcerConstants {
 					deploy(classpath("arithmetic-beans.jar"),
 						codebase("arithmetic-dl.jar"),
 						configuration("bin/examples/ex6/configs/subtractor-prv.config"))),
-				context("subtract", inEntry("arg/x5", null),
-						inEntry("arg/x6", null), outEntry("result/y3", null)));
+				context("subtract", inEnt("arg/x5", null),
+						inEnt("arg/x6", null), outEnt("result/y3", null)));
 
 		// job("f1", job("f2", f4, f5), f3,
 		// job("f1", job("f2", f4, f5, strategy(Flow.PAR, Access.PULL)), f3,
@@ -228,16 +227,16 @@ public class ArithmeticTester implements SorcerConstants {
 		String x1 = "x1", x2 = "x2", y = "y";
 
 		Task f3 = task("f3", sig("subtract", Subtractor.class), 
-		   context("subtract", inEntry(path(arg, x1), null), inEntry(path(arg, x2), null),
-		      outEntry(path(result, y), null)));
+		   context("subtract", inEnt(path(arg, x1), null), inEnt(path(arg, x2), null),
+		      outEnt(path(result, y), null)));
 		
 		Task f4 = task("f4", sig("multiply", Multiplier.class), 
-				   context("multiply", inEntry(path(arg, x1), 10.0), inEntry(path(arg, x2), 50.0),
-				      outEntry(path(result, y), null)));
+				   context("multiply", inEnt(path(arg, x1), 10.0), inEnt(path(arg, x2), 50.0),
+				      outEnt(path(result, y), null)));
 		
 		Task f5 = task("f5", sig("add", Adder.class), 
-		   context("add", inEntry(path(arg, x1), 20.0), inEntry(path(arg, x2), 80.0),
-		      outEntry(path(result, y), null)));
+		   context("add", inEnt(path(arg, x1), 20.0), inEnt(path(arg, x2), 80.0),
+		      outEnt(path(result, y), null)));
 
 		// Service Composition f1(f4(x1, x2), f5(x1, x2), f3(x1, x2))
 		Job f1= job("f1", f4, f5, f3,
@@ -255,16 +254,16 @@ public class ArithmeticTester implements SorcerConstants {
 	private Exertion f1c() throws Exception {
 		
 		Task f4 = task("f4", sig("multiply", Multiplier.class), 
-				context("multiply", inEntry(path("arg/x1"), 10.0), inEntry(path("arg/x2"), 50.0),
-						outEntry(path("result/y1"), null)));
+				context("multiply", inEnt(path("arg/x1"), 10.0), inEnt(path("arg/x2"), 50.0),
+						outEnt(path("result/y1"), null)));
 
 		Task f5 = task("f5", sig("add", Adder.class), 
-				context("add", inEntry(path("arg/x3"), 20.0), inEntry(path("arg/x4"), 80.0),
-						outEntry(path("result/y2"), null)));
+				context("add", inEnt(path("arg/x3"), 20.0), inEnt(path("arg/x4"), 80.0),
+						outEnt(path("result/y2"), null)));
 
 		Task f3 = task("f3", sig("subtract", Subtractor.class), 
-				context("subtract", inEntry(path("arg/x5"), null), inEntry(path("arg/x6"), null),
-						outEntry(path("result/y3"), null)));
+				context("subtract", inEnt(path("arg/x5"), null), inEnt(path("arg/x6"), null),
+						outEnt(path("result/y3"), null)));
 
 		// Service Composition f1(f2(x1, x2), f3(x1, x2))
 		// Service Composition f2(f4(x1, x2), f5(x1, x2))
@@ -285,16 +284,16 @@ public class ArithmeticTester implements SorcerConstants {
 	private Exertion f1PARpull() throws Exception {
 		
 		Task f4 = task("f4", sig("multiply", Multiplier.class), 
-				context("multiply", inEntry(path("arg/x1"), 10.0), inEntry(path("arg/x2"), 50.0),
-						outEntry(path("result/y1"), null)), Access.PULL);
+				context("multiply", inEnt(path("arg/x1"), 10.0), inEnt(path("arg/x2"), 50.0),
+						outEnt(path("result/y1"), null)), Access.PULL);
 
 		Task f5 = task("f5", sig("add", Adder.class), 
-				context("add", inEntry(path("arg/x3"), 20.0), inEntry(path("arg/x4"), 80.0),
-						outEntry(path("result/y2"), null)), Access.PULL);
+				context("add", inEnt(path("arg/x3"), 20.0), inEnt(path("arg/x4"), 80.0),
+						outEnt(path("result/y2"), null)), Access.PULL);
 
 		Task f3 = task("f3", sig("subtract", Subtractor.class), 
-				context("subtract", inEntry(path("arg/x5"), null), inEntry(path("arg/x6"), null),
-						outEntry(path("result/y3"), null)));
+				context("subtract", inEnt(path("arg/x5"), null), inEnt(path("arg/x6"), null),
+						outEnt(path("result/y3"), null)));
 
 		// Service Composition f1(f2(x1, x2), f3(x1, x2))
 		// Service Composition f2(f4(x1, x2), f5(x1, x2))
@@ -323,16 +322,16 @@ public class ArithmeticTester implements SorcerConstants {
 private Exertion f1SEQpull() throws Exception {
 		
 		Task f4 = task("f4", sig("multiply", Multiplier.class), 
-				context("multiply", inEntry(path("arg/x1"), 10.0), inEntry(path("arg/x2"), 50.0),
-						outEntry(path("result/y1"), null)), Access.PULL);
+				context("multiply", inEnt(path("arg/x1"), 10.0), inEnt(path("arg/x2"), 50.0),
+						outEnt(path("result/y1"), null)), Access.PULL);
 
 		Task f5 = task("f5", sig("add", Adder.class), 
-				context("add", inEntry(path("arg/x3"), 20.0), inEntry(path("arg/x4"), 80.0),
-						outEntry(path("result/y2"), null)), Access.PULL);
+				context("add", inEnt(path("arg/x3"), 20.0), inEnt(path("arg/x4"), 80.0),
+						outEnt(path("result/y2"), null)), Access.PULL);
 
 		Task f3 = task("f3", sig("subtract", Subtractor.class), 
-				context("subtract", inEntry(path("arg/x5"), null), inEntry(path("arg/x6"), null),
-						outEntry(path("result/y3"), null)));
+				context("subtract", inEnt(path("arg/x5"), null), inEnt(path("arg/x6"), null),
+						outEnt(path("result/y3"), null)));
 
 		// Service Composition f1(f2(x1, x2), f3(x1, x2))
 		// Service Composition f2(f4(x1, x2), f5(x1, x2))
@@ -362,8 +361,8 @@ private Exertion f1SEQpull() throws Exception {
 		Task f5 = task(
 				"f5",
 				sig("add", Adder.class),
-				context("add", inEntry("arg/x1", 20.0),
-						inEntry("arg/x2", 80.0), outEntry("result/y", null)),
+				context("add", inEnt("arg/x1", 20.0),
+						inEnt("arg/x2", 80.0), outEnt("result/y", null)),
 				strategy(Monitor.NO, Wait.YES, Provision.YES));
 		
 		Exertion out = null;
@@ -381,8 +380,8 @@ private Exertion f1SEQpull() throws Exception {
 		Task f5 = task(
 				"f5",
 				sig("add", Adder.class),
-				context("add", inEntry("arg/x1", 20.0),
-						inEntry("arg/x2", 80.0), outEntry("result/y", null)),
+				context("add", inEnt("arg/x1", 20.0),
+						inEnt("arg/x2", 80.0), outEnt("result/y", null)),
 				strategy(Monitor.NO, Wait.YES));
 		
 		Exertion out = null;
@@ -409,8 +408,8 @@ private Exertion f1SEQpull() throws Exception {
 		Task f5 = task(
 				"f5",
 				sig("add", Adder.class),
-				context("add", inEntry("arg/x1", 20.0),
-						inEntry("arg/x2", 80.0), outEntry("result/y", null)),
+				context("add", inEnt("arg/x1", 20.0),
+						inEnt("arg/x2", 80.0), outEnt("result/y", null)),
 				strategy(Monitor.YES, Wait.YES));
 		
 		Exertion out = null;
@@ -430,8 +429,8 @@ private Exertion f1SEQpull() throws Exception {
 		Task f5 = task(
 				"f5",
 				sig("add", RemoteAdder.class),
-				context("add", inEntry("arg/x1", 20.0),
-						inEntry("arg/x2", 80.0), outEntry("result/y", null)),
+				context("add", inEnt("arg/x1", 20.0),
+						inEnt("arg/x2", 80.0), outEnt("result/y", null)),
 				strategy(Monitor.YES, Wait.YES));
 		
 		Exertion out = null;
@@ -450,8 +449,8 @@ private Exertion f1SEQpull() throws Exception {
 		Task f5 = task(
 				"f5",
 				sig("add", Adder.class),
-				context("add", inEntry("arg/x1", 20.0),
-						inEntry("arg/x2", 80.0), outEntry("result/y", null)),
+				context("add", inEnt("arg/x1", 20.0),
+						inEnt("arg/x2", 80.0), outEnt("result/y", null)),
 				strategy(Access.PULL, Wait.YES));
 		
 		Exertion out = null;
@@ -471,8 +470,8 @@ private Exertion f1SEQpull() throws Exception {
 		Task f5 = task(
 				"f5",
 				sig("add", Adder.class),
-				context("add", inEntry("arg/x1", 20.0),
-						inEntry("arg/x2", 80.0), outEntry("result/y", null)),
+				context("add", inEnt("arg/x1", 20.0),
+						inEnt("arg/x2", 80.0), outEnt("result/y", null)),
 				strategy(Monitor.YES, Wait.NO));
 		
 		logger.info("task f5 control context: " + control(f5));
@@ -492,8 +491,8 @@ private Exertion f1SEQpull() throws Exception {
 		int to = new Integer(repeat);
 		
 		Task f5 = task("f5", sig("add", Adder.class), 
-		   context("add", inEntry("arg/x1", 20.0), inEntry("arg/x2", 80.0),
-		      outEntry("result/y", null),
+		   context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
+		      outEnt("result/y", null),
 		      strategy(Access.PULL, Wait.YES)));
 		
 		f5.setAccess(Access.PULL);
@@ -515,8 +514,8 @@ private Exertion f1SEQpull() throws Exception {
 		int to = new Integer(repeat);
 		
 		Task f5 = task("f5", sig("add", Adder.class), 
-		   context("add", inEntry("arg/x1", 20.0), inEntry("arg/x2", 80.0),
-		      outEntry("result/y", null),
+		   context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
+		      outEnt("result/y", null),
 		      strategy(Access.PUSH, Wait.YES)));
 		
 		f5.setAccess(Access.PUSH);
@@ -540,8 +539,8 @@ private Exertion f1SEQpull() throws Exception {
 		Task f5 = task(
 				"f5",
 				sig("add", Adder.class),
-				context("add", inEntry("arg/x1", 20.0),
-					inEntry("arg/x2", 80.0), outEntry("result/y", null)));
+				context("add", inEnt("arg/x1", 20.0),
+					inEnt("arg/x2", 80.0), outEnt("result/y", null)));
 		return f5;
 	}
 	

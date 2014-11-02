@@ -3,12 +3,12 @@ package sorcer.pml.modeling;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static sorcer.co.operator.dbEntry;
-import static sorcer.co.operator.dbInEntry;
-import static sorcer.co.operator.dbOutEntry;
-import static sorcer.co.operator.entry;
-import static sorcer.co.operator.inEntry;
-import static sorcer.co.operator.outEntry;
+import static sorcer.co.operator.dbEnt;
+import static sorcer.co.operator.dbInEnt;
+import static sorcer.co.operator.dbOutEnt;
+import static sorcer.co.operator.ent;
+import static sorcer.co.operator.inEnt;
+import static sorcer.co.operator.outEnt;
 import static sorcer.co.operator.persistent;
 import static sorcer.eo.operator.asis;
 import static sorcer.eo.operator.condition;
@@ -99,11 +99,11 @@ public class ParModels {
 	public void parOperator() throws Exception {
 		
 		Par<?> add = par("add", invoker("x + y", pars("x", "y")));
-		Context<Double> cxt = context(entry("x", 10.0), entry("y", 20.0));
+		Context<Double> cxt = context(ent("x", 10.0), ent("y", 20.0));
 		logger.info("par value: " + value(add, cxt));
 		assertTrue(value(add, cxt).equals(30.0));
 
-		cxt = context(entry("x", 20.0), entry("y", 30.0));
+		cxt = context(ent("x", 20.0), ent("y", 30.0));
 		add = par(cxt, "add", invoker("x + y", pars("x", "y")));
 		logger.info("par value: " + value(add));
 		assertTrue(value(add).equals(50.0));
@@ -135,7 +135,7 @@ public class ParModels {
 	@Test
 	public void parModelOperator() throws Exception {
 		ParModel pm = parModel("par-model");
-		add(pm, par("x", 10.0), entry("y", 20.0));
+		add(pm, par("x", 10.0), ent("y", 20.0));
 		add(pm, invoker("add", "x + y", pars("x", "y")));
 
 //		logger.info("adder value: " + value(pm, "add"));
@@ -171,7 +171,7 @@ public class ParModels {
 		logger.info("add value: " + pm.getValue("add"));
 		assertEquals(pm.getValue("add"), 300.0);		
 
-		assertEquals(pm.invoke(context(inEntry("x", 200.0), inEntry("y", 300.0))), 500.0);
+		assertEquals(pm.invoke(context(inEnt("x", 200.0), inEnt("y", 300.0))), 500.0);
 	}
 	
 
@@ -283,7 +283,7 @@ public class ParModels {
 	@Test
 	public void contextParsTest() throws RemoteException,
 			ContextException {
-		Context cxt = context(entry("url", "myUrl"), entry("design/in", 25.0));
+		Context cxt = context(ent("url", "myUrl"), ent("design/in", 25.0));
 
 		// mapping parameters to cxt, m1 and m2 are par aliases 
 		Par p1 = par("p1", "design/in", cxt);
@@ -326,8 +326,8 @@ public class ParModels {
 	
 	@Test
 	public void persistableEolContext() throws ContextException, RemoteException {
-		Context c4 = context("multiply", dbEntry("arg/x0", 1.0), dbInEntry("arg/x1", 10.0), 
-				dbOutEntry("arg/x2", 50.0), outEntry("result/y"));
+		Context c4 = context("multiply", dbEnt("arg/x0", 1.0), dbInEnt("arg/x1", 10.0), 
+				dbOutEnt("arg/x2", 50.0), outEnt("result/y"));
 		
 		assertEquals(value(c4, "arg/x0"), 1.0);
 		assertEquals(value(c4, "arg/x1"), 10.0);
@@ -383,7 +383,7 @@ public class ParModels {
 	
 	@Test
 	public void persistableMappableParsTest() throws SignatureException, ExertionException, ContextException, IOException {
-		Context cxt = context(entry("url", "myUrl"), entry("design/in", 25.0));
+		Context cxt = context(ent("url", "myUrl"), ent("design/in", 25.0));
 
 		// persistent par
 		Par dbIn = persistent(par("dbIn", "design/in", cxt));
@@ -412,7 +412,7 @@ public class ParModels {
 	
 	@Test
 	public void aliasedParsTest() throws ContextException, RemoteException {
-		Context cxt = context(entry("design/in1", 25.0), entry("design/in2", 35.0));
+		Context cxt = context(ent("design/in1", 25.0), ent("design/in2", 35.0));
 		
 		Par x1 = par("x1", "design/in1", cxt);
 		Par x2 = par("x2", "design/in2", cxt);
@@ -434,15 +434,15 @@ public class ParModels {
 	public void exertionParsTest() throws RemoteException,
 			ContextException, ExertionException, SignatureException {
 		
-		Context c4 = context("multiply", inEntry("arg/x1"), inEntry("arg/x2"),
-				outEntry("result/y"));
+		Context c4 = context("multiply", inEnt("arg/x1"), inEnt("arg/x2"),
+				outEnt("result/y"));
 				
-		Context c5 = context("add", inEntry("arg/x1", 20.0), inEntry("arg/x2", 80.0),
-				outEntry("result/y", null));
+		Context c5 = context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
+				outEnt("result/y", null));
 		
 		Task t3 = task("t3", sig("subtract", SubtractorImpl.class),
-				context("subtract", inEntry("arg/x1", null), inEntry("arg/x2", null),
-						outEntry("result/y")));
+				context("subtract", inEnt("arg/x1", null), inEnt("arg/x2", null),
+						outEnt("result/y")));
 
 		Task t4 = task("t4", sig("multiply", MultiplierImpl.class), c4);
 
@@ -486,15 +486,15 @@ public class ParModels {
 	public void associatingContextsTest() throws RemoteException,
 			ContextException, ExertionException, SignatureException {
 		
-		Context c4 = context("multiply", inEntry("arg/x1"), inEntry("arg/x2"),
-				outEntry("result/y"));
+		Context c4 = context("multiply", inEnt("arg/x1"), inEnt("arg/x2"),
+				outEnt("result/y"));
 				
-		Context c5 = context("add", inEntry("arg/x1", 20.0), inEntry("arg/x2", 80.0),
-				outEntry("result/y"));
+		Context c5 = context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
+				outEnt("result/y"));
 		
 		Task t3 = task("t3", sig("subtract", SubtractorImpl.class),
-				context("subtract", inEntry("arg/x1"), inEntry("arg/x2"),
-						outEntry("result/y", null)));
+				context("subtract", inEnt("arg/x1"), inEnt("arg/x2"),
+						outEnt("result/y", null)));
 
 		Task t4 = task("t4", sig("multiply", MultiplierImpl.class), c4);
 
@@ -528,8 +528,8 @@ public class ParModels {
 		
 		
 		Task t6 = task("t6", sig("add", AdderImpl.class),
-				context("add", inEntry("arg/x1", t4x1p), inEntry("arg/x2", j1p),
-						outEntry("result/y")));
+				context("add", inEnt("arg/x1", t4x1p), inEnt("arg/x2", j1p),
+						outEnt("result/y")));
 
 		Task task = exert(t6);
 //		logger.info("t6 context: " + context(task));
@@ -695,7 +695,7 @@ public class ParModels {
 		};
 		
 		add(pm, callableInvoker("call", update));	
-		assertEquals(invoke(pm, "call", context(entry("limit", 100.0))), 420.0);
+		assertEquals(invoke(pm, "call", context(ent("limit", 100.0))), 420.0);
 	}
 	
 	ParModel pm = new ParModel();
@@ -721,7 +721,7 @@ public class ParModels {
 		
 		add(pm, methodInvoker("call", new Config()));	
 		logger.info("call value:" + invoke(pm, "call"));
-		assertEquals(invoke(pm, "call", context(entry("limit", 100.0))), 420.0);
+		assertEquals(invoke(pm, "call", context(ent("limit", 100.0))), 420.0);
 	}
 	
 	@Test

@@ -1,7 +1,7 @@
 package sorcer.eol.blocks;
 
 import static org.junit.Assert.assertEquals;
-import static sorcer.co.operator.inEntry;
+import static sorcer.co.operator.inEnt;
 import static sorcer.co.operator.loop;
 import static sorcer.eo.operator.add;
 import static sorcer.eo.operator.block;
@@ -21,7 +21,6 @@ import sorcer.arithmetic.provider.Adder;
 import sorcer.arithmetic.provider.Averager;
 import sorcer.core.SorcerConstants;
 import sorcer.service.Block;
-import sorcer.service.ServiceExertion;
 import sorcer.service.Strategy.Access;
 import sorcer.service.Strategy.Wait;
 import sorcer.service.Task;
@@ -55,8 +54,8 @@ public class ArithmeticSpaceBlock implements SorcerConstants {
 		Task spaceTask = task(
 				"space task",
 				sig("add", Adder.class),
-				context("add", inEntry("arg/x1", 20.0),
-						inEntry("arg/x2", 80.0), result("result/${name}")),
+				context("add", inEnt("arg/x1", 20.0),
+						inEnt("arg/x2", 80.0), result("result/${name}")),
 				strategy(Access.PULL, Wait.YES));
 		
 		Block spaceBlock = block(loop(10), spaceTask);

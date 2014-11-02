@@ -2,9 +2,9 @@ package sorcer.pml.modeling;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static sorcer.co.operator.entry;
-import static sorcer.co.operator.inEntry;
-import static sorcer.co.operator.outEntry;
+import static sorcer.co.operator.ent;
+import static sorcer.co.operator.inEnt;
+import static sorcer.co.operator.outEnt;
 import static sorcer.eo.operator.condition;
 import static sorcer.eo.operator.context;
 import static sorcer.eo.operator.in;
@@ -125,8 +125,8 @@ public class Invokers {
 //		logger.info("y:" + value(pm, "y"));
 //		logger.info("y:" + value(pm, "z"));
 
-		Context in = context(entry("x", 20.0), entry("y", 30.0));
-		Context arg = context(entry("x", 200.0), entry("y", 300.0));
+		Context in = context(ent("x", 20.0), ent("y", 30.0));
+		Context arg = context(ent("x", 200.0), ent("y", 300.0));
 		add(pm, methodInvoker("invoke", new Update(in), arg));
 		logger.info("call value:" + invoke(pm, "invoke"));
 		assertEquals(invoke(pm, "invoke"), 400.0);
@@ -151,7 +151,7 @@ public class Invokers {
 		Task t4 = task(
 				"t4",
 				sig("multiply", MultiplierImpl.class),
-				context("multiply", inEntry("arg/x1", 50.0), inEntry("arg/x2", 10.0),
+				context("multiply", inEnt("arg/x1", 50.0), inEnt("arg/x2", 10.0),
 						result("result/y")));
 
 		// logger.info("invoke value:" + invoke(t4));
@@ -161,16 +161,16 @@ public class Invokers {
 	@Test
 	public void invokeJobTest() throws RemoteException, ContextException,
 			SignatureException, ExertionException, TransactionException {
-		Context c4 = context("multiply", inEntry("arg/x1", 50.0),
-				inEntry("arg/x2", 10.0), result("result/y"));
-		Context c5 = context("add", inEntry("arg/x1", 20.0), inEntry("arg/x2", 80.0),
+		Context c4 = context("multiply", inEnt("arg/x1", 50.0),
+				inEnt("arg/x2", 10.0), result("result/y"));
+		Context c5 = context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
 				result("result/y"));
 
 		// exertions
 		Task t3 = task(
 				"t3",
 				sig("subtract", SubtractorImpl.class),
-				context("subtract", inEntry("arg/x1"), inEntry("arg/x2"), outEntry("result/y")));
+				context("subtract", inEnt("arg/x1"), inEnt("arg/x2"), outEnt("result/y")));
 		Task t4 = task("t4", sig("multiply", MultiplierImpl.class), c4);
 		Task t5 = task("t5", sig("add", AdderImpl.class), c5);
 
@@ -187,16 +187,16 @@ public class Invokers {
 	@Test
 	public void invokeParJobTest() throws RemoteException, ContextException,
 			SignatureException, ExertionException {
-		Context c4 = context("multiply", inEntry("arg/x1"), inEntry("arg/x2"),
+		Context c4 = context("multiply", inEnt("arg/x1"), inEnt("arg/x2"),
 				result("result/y"));
-		Context c5 = context("add", inEntry("arg/x1", 20.0), inEntry("arg/x2", 80.0),
+		Context c5 = context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
 				result("result/y"));
 
 		// exertions
 		Task t3 = task(
 				"t3",
 				sig("subtract", SubtractorImpl.class),
-				context("subtract", inEntry("arg/x1"), inEntry("arg/x2"), outEntry("result/y")));
+				context("subtract", inEnt("arg/x1"), inEnt("arg/x2"), outEnt("result/y")));
 		Task t4 = task("t4", sig("multiply", MultiplierImpl.class), c4);
 		Task t5 = task("t5", sig("add", AdderImpl.class), c5);
 
@@ -242,7 +242,7 @@ public class Invokers {
 		logger.info("y: " + value(y));
 		assertEquals(value(y), 3.0);
 
-		Object val = invoke(y, entry("x1", 10.0), entry ("x2", 20.0));
+		Object val = invoke(y, ent("x1", 10.0), ent ("x2", 20.0));
 		logger.info("y: " + val);
 
 		logger.info("y: " + value(y));
@@ -252,16 +252,16 @@ public class Invokers {
 	@Test
 	public void exertionInvokerTest() throws RemoteException, ContextException,
 			SignatureException, ExertionException {
-		Context c4 = context("multiply", inEntry("arg/x1"), inEntry("arg/x2"),
+		Context c4 = context("multiply", inEnt("arg/x1"), inEnt("arg/x2"),
 				result("result/y"));
-		Context c5 = context("add", inEntry("arg/x1", 20.0), inEntry("arg/x2", 80.0),
+		Context c5 = context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
 				result("result/y"));
 
 		// exertions
 		Task t3 = task(
 				"t3",
 				sig("subtract", SubtractorImpl.class),
-				context("subtract", inEntry("arg/x1"), inEntry("arg/x2"), outEntry("result/y")));
+				context("subtract", inEnt("arg/x1"), inEnt("arg/x2"), outEnt("result/y")));
 		Task t4 = task("t4", sig("multiply", MultiplierImpl.class), c4);
 		Task t5 = task("t5", sig("add", AdderImpl.class), c5);
 
@@ -479,12 +479,12 @@ public class Invokers {
 		logger.info("alt value: " + value(alt));
 		assertEquals(value(alt), 50.0);
 
-		put(pm, entry("x", 300.0), entry("y", 200.0));
+		put(pm, ent("x", 300.0), ent("y", 200.0));
 		logger.info("alt value: " + value(alt));
 		assertEquals(value(alt), 510.0);
 
-		put(pm, entry("x", 10.0), entry("y", 20.0), entry("x2", 40.0),
-				entry("y2", 50.0), entry("x3", 50.0), entry("y3", 60.0));
+		put(pm, ent("x", 10.0), ent("y", 20.0), ent("x2", 40.0),
+				ent("y2", 50.0), ent("x3", 50.0), ent("y3", 60.0));
 		logger.info("alt value: " + value(alt));
 		assertEquals(value(alt), 70.0);
 	}
@@ -492,7 +492,7 @@ public class Invokers {
 	@Test
 	public void loopInvokerTest() throws RemoteException, ContextException {
 		final ParModel pm = parModel("par-model");
-		add(pm, entry("x", 1));
+		add(pm, ent("x", 1));
 		add(pm, par("y", invoker("x + 1", pars("x"))));
 
 		// update x and y for the loop condition (z) depends on
@@ -524,7 +524,7 @@ public class Invokers {
 	@Test
 	public void incrementorBy1Test() throws RemoteException, ContextException {
 		ParModel pm = parModel("par-model");
-		add(pm, entry("x", 1));
+		add(pm, ent("x", 1));
 		add(pm, par("y", invoker("x + 1", pars("x"))));
 		add(pm, inc("y++", invoker(pm, "y")));
 
@@ -537,7 +537,7 @@ public class Invokers {
 	@Test
 	public void incrementorBy2Test() throws RemoteException, ContextException {
 		ParModel pm = parModel("par-model");
-		add(pm, entry("x", 1));
+		add(pm, ent("x", 1));
 		add(pm, par("y", invoker("x + 1", pars("x"))));
 		add(pm, inc("y++2", invoker(pm, "y"), 2));
 
@@ -551,7 +551,7 @@ public class Invokers {
 	public void incrementorDoubleTest() throws RemoteException,
 			ContextException {
 		ParModel pm = parModel("par-model");
-		add(pm, entry("x", 1.0));
+		add(pm, ent("x", 1.0));
 		add(pm, par("y", invoker("x + 1.2", pars("x"))));
 		add(pm, inc("y++2.1", invoker(pm, "y"), 2.1));
 

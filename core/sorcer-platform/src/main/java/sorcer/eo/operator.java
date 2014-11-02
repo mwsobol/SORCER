@@ -300,7 +300,7 @@ public class operator {
 		return fiCxt;
 	}
 	
-	public static <T extends Object> Context contextModel(T... entries) 
+	public static <T extends Object> Context entModel(T... entries) 
 			throws ContextException {
 		Context cxt = context(entries);
 		cxt.setModeling(true);

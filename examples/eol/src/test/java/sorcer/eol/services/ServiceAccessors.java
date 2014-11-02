@@ -55,7 +55,7 @@ public class ServiceAccessors implements SorcerConstants {
 	}
 	
 	@Test
-	public void providerAccessor() throws Exception {
+	public void providerAccessorSig() throws Exception {
 		long startTime = System.currentTimeMillis();
 		Provider provider = ProviderAccessor.getProvider(sig(Jobber.class));
 //		logger.info("Accessor provider: " + provider);
@@ -64,7 +64,7 @@ public class ServiceAccessors implements SorcerConstants {
 	}
 	
 	@Test
-	public void providerLocator() throws Exception {
+	public void providerLocatorSig() throws Exception {
 		long startTime = System.currentTimeMillis();
 		Provider provider = ProviderLocator.getProvider(sig(Spacer.class));
 		//logger.info("ProviderLocator provider: " + provider);
@@ -73,7 +73,7 @@ public class ServiceAccessors implements SorcerConstants {
 	}
 	
 	@Test
-	public void providerLookup() throws Exception {
+	public void providerLookupSig() throws Exception {
 		long startTime = System.currentTimeMillis();
 		Provider provider = ProviderLookup.getProvider(sig(Concatenator.class));
 //		logger.info("ProviderAccessor provider: " + provider);
@@ -82,7 +82,7 @@ public class ServiceAccessors implements SorcerConstants {
 	}
 
 	@Test
-	public void providerAccessorSt() throws Exception {
+	public void providerAccessorType() throws Exception {
 		long startTime = System.currentTimeMillis();
 		Provider provider = ProviderAccessor.getProvider(Jobber.class);
 //		logger.info("Accessor provider: " + provider);
@@ -91,7 +91,7 @@ public class ServiceAccessors implements SorcerConstants {
 	}
 	
 	@Test
-	public void providerLocatorSt() throws Exception {
+	public void providerLocatorType() throws Exception {
 		long startTime = System.currentTimeMillis();
 		Provider provider = ProviderLocator.getProvider(Spacer.class);
 		//logger.info("ProviderLocator provider: " + provider);
@@ -100,7 +100,7 @@ public class ServiceAccessors implements SorcerConstants {
 	}
 	
 	@Test
-	public void providerLookupSt() throws Exception {
+	public void providerLookupType() throws Exception {
 		long startTime = System.currentTimeMillis();
 		Provider provider = ProviderLookup.getProvider(Concatenator.class);
 //		logger.info("ProviderAccessor provider: " + provider);

@@ -1,7 +1,7 @@
 package sorcer.eol.tasks;
 
 import static org.junit.Assert.assertEquals;
-import static sorcer.co.operator.inEntry;
+import static sorcer.co.operator.inEnt;
 import static sorcer.eo.operator.context;
 import static sorcer.eo.operator.cxt;
 import static sorcer.eo.operator.exert;
@@ -45,7 +45,7 @@ public class ArithmeticLocalTasks {
 				"sorcer-dl-"+sorcerVersion +".jar", "jsk-dl-"+riverVersion+".jar" });
 		
 		System.setProperty("java.protocol.handler.pkgs", "sorcer.util.url|org.rioproject.url");
-		System.setProperty("java.rmi.server.RMIClassLoaderSpi","org.rioproject.rmi.ResolvingLoader");
+//		System.setProperty("java.rmi.server.RMIClassLoaderSpi","org.rioproject.rmi.ResolvingLoader");
 	}
 	
 	
@@ -53,7 +53,7 @@ public class ArithmeticLocalTasks {
 	public void exertTask() throws Exception  {
 
 		Task t5 = srv("t5", sig("add", AdderImpl.class),
-				cxt("add", inEntry("arg/x1", 20.0), inEntry("arg/x2", 80.0), result("result/y")));
+				cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0), result("result/y")));
 
 		Exertion out = exert(t5);
 		Context cxt = context(out);
@@ -70,7 +70,7 @@ public class ArithmeticLocalTasks {
 	public void valueTask() throws SignatureException, ExertionException, ContextException  {
 
 		Task t5 = task("t5", sig("add", AdderImpl.class),
-				cxt("add", inEntry("arg/x1", 20.0), inEntry("arg/x2", 80.0), result("result/y")));
+				cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0), result("result/y")));
 
 		Object out = value(t5);
 		logger.info("out value: " + out);

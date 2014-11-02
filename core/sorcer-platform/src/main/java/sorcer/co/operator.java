@@ -16,6 +16,7 @@
  */
 package sorcer.co;
 
+import java.lang.reflect.Array;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -115,6 +116,12 @@ public class operator {
 		return elems;
 	}
 	
+	public static <T> T[] array(List<T> list) {
+		T[] na = (T[]) Array.newInstance(list.get(0).getClass(), list.size());
+		return list.toArray(na);
+
+	}
+	
 	public static Arg[] args(Arg... elems) {
 		return elems;
 	}
@@ -179,11 +186,11 @@ public class operator {
 		return new Tuple3<T1, T2, T3>(x1, x2, x3);
 	}
 
-	public static <T> Entry<T> entry(String path, T value) {
+	public static <T> Entry<T> ent(String path, T value) {
 		return new Entry<T>(path, value);
 	}
 	
-	public static Entry<Object>  entry(String path) {
+	public static Entry<Object>  ent(String path) {
 		return new Entry<Object>(path, null);
 	}
 	
@@ -193,12 +200,12 @@ public class operator {
 		return entry;
 	}
 
-	public static <T> OutputEntry<T> outEntry(String path, T value) {
+	public static <T> OutputEntry<T> outEnt(String path, T value) {
 		return new OutputEntry(path, value, 0);
 	}
 
-	public static <T> OutputEntry<T> outEntry(String path, T value, String annotation) {
-		OutputEntry oe =  outEntry(path, value);
+	public static <T> OutputEntry<T> outEnt(String path, T value, String annotation) {
+		OutputEntry oe =  outEnt(path, value);
 		oe.annotation(annotation);
 		return oe;
 	}
@@ -220,11 +227,11 @@ public class operator {
 		return new DataEntry(Context.DSD_PATH, data);
 	}
 	
-	public static <T> OutputEntry<T> outEntry(String path, T value, int index) {
+	public static <T> OutputEntry<T> outEnt(String path, T value, int index) {
 		return new OutputEntry(path, value, index);
 	}
 
-	public static <T> OutputEntry<T> dbOutEntry(String path, T value) {
+	public static <T> OutputEntry<T> dbOutEnt(String path, T value) {
 		return new OutputEntry(path, value, true, 0);
 	}
 
@@ -232,11 +239,11 @@ public class operator {
 		return new InputEntry(path, null, 0);
 	}
 
-	public static OutputEntry outEntry(String path) {
+	public static OutputEntry outEnt(String path) {
 		return new OutputEntry(path, null, 0);
 	}
 
-	public static InputEntry inEntry(String path) {
+	public static InputEntry inEnt(String path) {
 		return new InputEntry(path, null, 0);
 	}
 
@@ -248,50 +255,58 @@ public class operator {
 		return new Entry(path, value, index);
 	}
 
-	public static <T> InputEntry<T> inEntry(String path, T value) {
+	public static <T> InputEntry<T> inEnt(String path, T value) {
 		return new InputEntry(path, value, 0);
 	}
 
-	public static <T> InputEntry<T> dbInEntry(String path, T value, String annotation) {
+	public static <T> InputEntry<T> dbInEnt(String path, T value, String annotation) {
 		InputEntry<T> ie = new InputEntry(path, value, true, 0);
 		ie.annotation(annotation);
 		return ie;
 	}
 	
-	public static <T> InputEntry<T> dbInEntry(String path, T value) {
+	public static <T> InputEntry<T> dbInEnt(String path, T value) {
 		return new InputEntry(path, value, true, 0);
 	}
 
-	public static <T> InputEntry<T> inEntry(String path, T value, int index) {
+	public static <T> InputEntry<T> inEnt(String path, T value, int index) {
 		return new InputEntry(path, value, index);
 	}
 
-	public static <T> InputEntry<T> inEntry(String path, T value, String annotation) {
-		InputEntry<T> ie = inEntry(path, value);
+	public static <T> InputEntry<T> inEnt(String path, T value, String annotation) {
+		InputEntry<T> ie = inEnt(path, value);
 		ie.annotation(annotation);
 		return ie;
 	}
 	
-	public static InputEntry inoutEntry(String path) {
+	public static InputEntry inoutEnt(String path) {
 		return new InputEntry(path, null, 0);
 	}
 
-	public static <T> InoutEntry<T> inoutEntry(String path, T value) {
+	public static <T> InoutEntry<T> inoutEnt(String path, T value) {
 		return new InoutEntry(path, value, 0);
 	}
 
-	public static <T> InoutEntry<T> inoutEntry(String path, T value, int index) {
+	public static <T> InoutEntry<T> inoutEnt(String path, T value, int index) {
 		return new InoutEntry(path, value, index);
 	}
 	
-	public static <T> InoutEntry<T> inoutEntry(String path, T value, String annotation) {
-		InoutEntry<T> ie = inoutEntry(path, value);
+	public static <T> InoutEntry<T> inoutEnt(String path, T value, String annotation) {
+		InoutEntry<T> ie = inoutEnt(path, value);
 		ie.annotation(annotation);
 		return ie;
 	}
 	
-	public static <T> Entry<T> entry(String path, T value, String association) {
+	public static <T> Entry<T> ent(String path, T value, String association) {
 		return new Entry<T>(path, value, association);
+	}
+	
+	public static <S extends Setter> boolean isDB(S setter) {
+		return isPersistent(setter);
+	}
+	
+	public static <S extends Setter> boolean isDb(S setter) {
+		return isPersistent(setter);
 	}
 	
 	public static <S extends Setter> boolean isPersistent(S setter) {
@@ -316,19 +331,19 @@ public class operator {
 		return entry;
 	}
 	
-	public static <T> Entry<T> dbEntry(String path) {
+	public static <T> Entry<T> dbEnt(String path) {
 		Entry<T> e = new Entry<T>(path);
 		e.setPersistent(true);
 		return e;
 	}
 	
-	public static <T> Entry<T> dbEntry(String path, T value) {
+	public static <T> Entry<T> dbEnt(String path, T value) {
 		Entry<T> e = new Entry<T>(path, value);
 		e.setPersistent(true);
 		return e;
 	}
 	
-	public static Arg[] entries(String... entries)
+	public static Arg[] ents(String... entries)
 			throws ContextException {
 		ArgSet as = new ArgSet();
 		for (String name : entries) {
@@ -337,7 +352,7 @@ public class operator {
 		return as.toArray();
 	}
 	
-	public static Arg[] entries(Entry... entries)
+	public static Arg[] ents(Entry... entries)
 			throws ContextException {
 		ArgSet as = new ArgSet();
 		for (Entry e : entries) {
@@ -402,11 +417,11 @@ public class operator {
 		return dburl;
 	}
 	
-	public static FidelityEntry entry(String x1, FidelityInfo x3) {
+	public static FidelityEntry ent(String x1, FidelityInfo x3) {
 		return new FidelityEntry(x1, x3);
 	}
 	
-	public static StrategyEntry strategyEntry(String x1, Strategy strategy) {
+	public static StrategyEntry strategyEnt(String x1, Strategy strategy) {
 		return new StrategyEntry(x1, strategy);
 	}
 	

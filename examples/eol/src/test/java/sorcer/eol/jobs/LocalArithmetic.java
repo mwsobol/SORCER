@@ -1,11 +1,11 @@
 package sorcer.eol.jobs;
 
 import static org.junit.Assert.assertEquals;
-import static sorcer.co.operator.entry;
+import static sorcer.co.operator.ent;
 import static sorcer.co.operator.from;
-import static sorcer.co.operator.inEntry;
+import static sorcer.co.operator.inEnt;
 import static sorcer.co.operator.input;
-import static sorcer.co.operator.outEntry;
+import static sorcer.co.operator.outEnt;
 import static sorcer.eo.operator.context;
 import static sorcer.eo.operator.cxt;
 import static sorcer.eo.operator.exert;
@@ -72,8 +72,8 @@ public class LocalArithmetic implements SorcerConstants {
 	public void exertAdderProviderTest() throws Exception {
 		Task t5 = task("t5",
 				sig("add", AdderImpl.class),
-				context("add", inEntry("arg, x1", 20.0),
-						inEntry("arg, x2", 80.0), result("result/y")));
+				context("add", inEnt("arg, x1", 20.0),
+						inEnt("arg, x2", 80.0), result("result/y")));
 		
 		t5 = exert(t5);
 		logger.info("t5 context: " + context(t5));
@@ -84,8 +84,8 @@ public class LocalArithmetic implements SorcerConstants {
 	public void execAdderProviderTest() throws Exception {
 		Task t5 = task("t5",
 				sig("add", AdderImpl.class),
-				context("add", inEntry("arg, x1", 20.0),
-						inEntry("arg, x2", 80.0), result("result/y")));
+				context("add", inEnt("arg, x1", 20.0),
+						inEnt("arg, x2", 80.0), result("result/y")));
 		
 		assertEquals(value(t5), 100.0);
 	}
@@ -95,8 +95,8 @@ public class LocalArithmetic implements SorcerConstants {
 		Task t5 = task(
 				"t5",
 				sig("average", AveragerImpl.class),
-				context("average", inEntry("arg, x1", 20.0),
-						inEntry("arg, x2", 80.0), result("result/y")));
+				context("average", inEnt("arg, x1", 20.0),
+						inEnt("arg, x2", 80.0), result("result/y")));
 		t5 = exert(t5);
 		logger.info("t5 context: " + context(t5));
 		assertEquals(value(context(t5), "result/y"), 50.0);
@@ -107,20 +107,20 @@ public class LocalArithmetic implements SorcerConstants {
 		Task t3 = task(
 				"t3",
 				sig("subtract", SubtractorImpl.class),
-				context("subtract", inEntry("arg/x1"), inEntry("arg/x2"),
-						outEntry("result/y")));
+				context("subtract", inEnt("arg/x1"), inEnt("arg/x2"),
+						outEnt("result/y")));
 
 		Task t4 = task(
 				"t4",
 				sig("multiply", MultiplierImpl.class),
-				context("multiply", inEntry("arg/x1", 10.0), inEntry("arg/x2", 50.0),
-						outEntry("result/y")));
+				context("multiply", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
+						outEnt("result/y")));
 
 		Task t5 = task(
 				"t5",
 				sig("add", AdderImpl.class),
-				context("add", inEntry("arg/x1", 20.0), inEntry("arg/x2", 80.0),
-						outEntry("result/y")));
+				context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
+						outEnt("result/y")));
 
 		Job job = job(sig("service", ServiceJobber.class),
 				"j1", t4, t5, t3,
@@ -137,20 +137,20 @@ public class LocalArithmetic implements SorcerConstants {
 		Task t3 = task(
 				"t3",
 				sig("subtract", SubtractorImpl.class),
-				context("subtract", inEntry("arg/x1", null), inEntry("arg/x2", null),
-						outEntry("result/y", null)));
+				context("subtract", inEnt("arg/x1", null), inEnt("arg/x2", null),
+						outEnt("result/y", null)));
 
 		Task t4 = task(
 				"t4",
 				sig("multiply", MultiplierImpl.class),
-				context("multiply", inEntry("arg/x1", 10.0), inEntry("arg/x2", 50.0),
-						outEntry("result/y", null)));
+				context("multiply", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
+						outEnt("result/y", null)));
 
 		Task t5 = task(
 				"t5",
 				sig("add", AdderImpl.class),
-				context("add", inEntry("arg/x1", 20.0), inEntry("arg/x2", 80.0),
-						outEntry("result/y", null)));
+				context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
+						outEnt("result/y", null)));
 
 		// Service Composition j1(j2(t4(x1, x2), t5(x1, x2)), t3(x1, x2))
 		Job job = job(
@@ -168,8 +168,8 @@ public class LocalArithmetic implements SorcerConstants {
 	public void arithmeticPars() throws Exception {
 		Par y = par("y",
 				invoker("(x1 * x2) - (x3 + x4)", pars("x1", "x2", "x3", "x4")));
-		Object val = value(y, entry("x1", 10.0), entry("x2", 50.0),
-				entry("x3", 20.0), entry("x4", 80.0));
+		Object val = value(y, ent("x1", 10.0), ent("x2", 50.0),
+				ent("x3", 20.0), ent("x4", 80.0));
 		// logger.info("y value: " + val);
 		assertEquals(val, 400.0);
 
@@ -200,7 +200,7 @@ public class LocalArithmetic implements SorcerConstants {
 		// logger.info("j1 value: " + value(var(put(vm, entry("x1", 10.0),
 		// entry("x2", 50.0)), "j1")));
 		assertEquals(
-				value(par(put(vm, entry("x1", 10.0), entry("x2", 50.0)), "j1")),
+				value(par(put(vm, ent("x1", 10.0), ent("x2", 50.0)), "j1")),
 				400.0);
 		// logger.info("j1 value: " + value(par(vm, "j1")));
 		assertEquals(value(par(vm, "j1")), 400.0);
@@ -219,13 +219,13 @@ public class LocalArithmetic implements SorcerConstants {
 				par("t5",
 					task("t5",
 						sig("add", AdderImpl.class),
-						cxt("add", inEntry("arg/x3"),
-								inEntry("arg/x4"),
+						cxt("add", inEnt("arg/x3"),
+								inEnt("arg/x4"),
 						result("result/y")))),
 				par("j1", invoker("t4 - t5", pars("t4", "t5"))));
 
-		vm = put(vm, entry("x1", 10.0), entry("x2", 50.0),
-				entry("x4", 80.0));
+		vm = put(vm, ent("x1", 10.0), ent("x2", 50.0),
+				ent("x4", 80.0));
 				 
 		assertEquals(value(par(vm, "j1")), 400.0);
 	}
@@ -246,7 +246,7 @@ public class LocalArithmetic implements SorcerConstants {
 	public void objectContexterTaskTest() throws Exception {
 		Task t5 = task("t5", sig("add", AdderImpl.class), 
 					type(sig("getContext", NetArithmetic.createContext()), Signature.APD),
-					context("add", inEntry("arg/x1"), inEntry("arg/x2"),
+					context("add", inEnt("arg/x1"), inEnt("arg/x2"),
 						result("result/y")));
 		
 		Context result = context(exert(t5));
@@ -257,25 +257,25 @@ public class LocalArithmetic implements SorcerConstants {
 	@Test
 	public void serviceJob() throws Exception {
 		Task t3 = srv("t3", sig("subtract", SubtractorImpl.class),
-				cxt("subtract", inEntry("arg/x1"), inEntry("arg/x2"), outEntry("result/y")));
+				cxt("subtract", inEnt("arg/x1"), inEnt("arg/x2"), outEnt("result/y")));
 
 		Task t4 = srv("t4",
 				sig("multiply", MultiplierImpl.class),
 				// cxt("multiply", in("super/arg/x1"), in("arg/x2", 50.0),
-				cxt("multiply", inEntry("arg/x1", 10.0), inEntry("arg/x2", 50.0),
-						outEntry("result/y")));
+				cxt("multiply", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
+						outEnt("result/y")));
 
 		Task t5 = srv(
 				"t5",
 				sig("add", AdderImpl.class),
-				cxt("add", inEntry("arg/x1", 20.0), inEntry("arg/x2", 80.0),
-						outEntry("result/y")));
+				cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
+						outEnt("result/y")));
 
 		// Service Composition j1(j2(t4(x1, x2), t5(x1, x2)), t3(x1, x2))
 		Job job = srv(
 				"j1",
 				sig("execute", ServiceJobber.class),
-				cxt(inEntry("arg/x1", 10.0),
+				cxt(inEnt("arg/x1", 10.0),
 						result("job/result", from("j1/t3/result/y"))),
 				srv("j2", sig("execute", ServiceJobber.class), t4, t5), t3,
 				pipe(out(t4, "result/y"), in(t3, "arg/x1")),

@@ -3,7 +3,7 @@ package sorcer.eol.services;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static sorcer.co.operator.inEntry;
+import static sorcer.co.operator.inEnt;
 import static sorcer.eo.operator.args;
 import static sorcer.eo.operator.context;
 import static sorcer.eo.operator.parameterTypes;
@@ -60,7 +60,7 @@ public class Signatures {
 	
 	
 	@Test
-	public void referencingObjectsAsProviders() throws SignatureException,
+	public void referencingInstances() throws SignatureException,
 			EvaluationException, ExertionException, ContextException {
 		
 		Object obj = new Date();
@@ -75,7 +75,7 @@ public class Signatures {
 	
 	
 	@Test
-	public void referencingUtilityClassProviders() throws Exception {
+	public void referencingUtilityClass() throws Exception {
 		
 		Signature ms = sig("random", Math.class, "random");
 		Object prv = provider(ms);
@@ -98,7 +98,7 @@ public class Signatures {
 	
 	
 	@Test
-	public void classWithConstructorAsService() throws SignatureException,
+	public void referencingClassWithConstructor() throws SignatureException,
 			EvaluationException, ExertionException, ContextException, IOException {
 		
 		Signature s = sig("getTime", Date.class);
@@ -116,7 +116,7 @@ public class Signatures {
 	
 	
 	@Test
-	public void classWithFactoryAsService() throws SignatureException,
+	public void referencingFactoryClass() throws SignatureException,
 			EvaluationException, ExertionException, ContextException, IOException {
 		
 		Signature ps = sig("get", Calendar.class, "getInstance");
@@ -163,8 +163,8 @@ public class Signatures {
 		Service as = service("as", 
 				ps,
 				context("add", 
-						inEntry("arg/x1", 20.0), 
-						inEntry("arg/x2", 80.0), 
+						inEnt("arg/x1", 20.0), 
+						inEnt("arg/x2", 80.0), 
 						result("result/y")));
 
 		assertEquals(100.0, value(as));		
@@ -198,8 +198,8 @@ public class Signatures {
 		Service as = service("as", 
 				ps,
 				context("add", 
-						inEntry("arg/x1", 20.0), 
-						inEntry("arg/x2", 80.0), 
+						inEnt("arg/x1", 20.0), 
+						inEnt("arg/x2", 80.0), 
 						result("result/y")));
 
 		assertEquals(100.0, value(as));	

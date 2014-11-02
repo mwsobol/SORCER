@@ -17,7 +17,7 @@
 
 package sorcer.util.url.sos;
 
-import static sorcer.co.operator.inEntry;
+import static sorcer.co.operator.inEnt;
 import static sorcer.eo.operator.context;
 import static sorcer.eo.operator.exert;
 import static sorcer.eo.operator.get;
@@ -202,7 +202,7 @@ public class SdbUtil {
 		Task objectStoreTask = task(
 				"clear",
 				sig("contextClear", DatabaseStorer.class, storageName),
-				context("clear", inEntry(StorageManagement.store_type, type),
+				context("clear", inEnt(StorageManagement.store_type, type),
 						result(StorageManagement.store_size)));
 		return (Integer) value(objectStoreTask);
 	}
@@ -214,7 +214,7 @@ public class SdbUtil {
 		Task objectStoreTask = task(
 				"size",
 				sig("contextSize", DatabaseStorer.class, storageName, new Arg[] {}),
-				context("size", inEntry(StorageManagement.store_type, type),
+				context("size", inEnt(StorageManagement.store_type, type),
 						result(StorageManagement.store_size)));
 		return (Integer) value(objectStoreTask);
 	}
@@ -235,7 +235,7 @@ public class SdbUtil {
 		Task objectStoreTask = task(
 				"delete",
 				sig("contextDelete", DatabaseStorer.class, storageName),
-				context("delete", inEntry(StorageManagement.object_deleted, object),
+				context("delete", inEnt(StorageManagement.object_deleted, object),
 						result(StorageManagement.object_url)));
 		return (URL) value(objectStoreTask);
 	}
@@ -251,7 +251,7 @@ public class SdbUtil {
 					sig("contextDelete", Class.forName(serviceTypeName),
 							storageName),
 					context("delete",
-							inEntry(StorageManagement.object_deleted, url),
+							inEnt(StorageManagement.object_deleted, url),
 							result(StorageManagement.object_url)));
 		} catch (ClassNotFoundException e) {
 			throw new SignatureException("No such service type: "
@@ -267,7 +267,7 @@ public class SdbUtil {
 		Task objectStoreTask = task(
 				"store",
 				sig("contextStore", DatabaseStorer.class, storageName),
-				context("store", inEntry(StorageManagement.object_stored, object),
+				context("store", inEnt(StorageManagement.object_stored, object),
 						result("result, stored/object/url")));
 		return (URL) value(objectStoreTask);
 	}
@@ -278,7 +278,7 @@ public class SdbUtil {
 		Task objectStoreTask = task(
 				"write",
 				sig("contextWrite", DataspaceStorer.class, storageName),
-				context("stored", inEntry(StorageManagement.object_stored, object),
+				context("stored", inEnt(StorageManagement.object_stored, object),
 						result("result, stored/object/url")));
 		return (URL) value(objectStoreTask);
 	}

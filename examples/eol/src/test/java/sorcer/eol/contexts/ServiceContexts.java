@@ -4,22 +4,22 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.db;
-import static sorcer.co.operator.dbEntry;
-import static sorcer.co.operator.dbInEntry;
-import static sorcer.co.operator.entries;
-import static sorcer.co.operator.entry;
-import static sorcer.co.operator.inEntry;
-import static sorcer.co.operator.inoutEntry;
+import static sorcer.co.operator.dbEnt;
+import static sorcer.co.operator.dbInEnt;
+import static sorcer.co.operator.ent;
+import static sorcer.co.operator.ents;
+import static sorcer.co.operator.inEnt;
+import static sorcer.co.operator.inoutEnt;
 import static sorcer.co.operator.key;
 import static sorcer.co.operator.list;
 import static sorcer.co.operator.listContext;
-import static sorcer.co.operator.outEntry;
+import static sorcer.co.operator.outEnt;
 import static sorcer.co.operator.path;
 import static sorcer.co.operator.url;
 import static sorcer.eo.operator.add;
 import static sorcer.eo.operator.asis;
 import static sorcer.eo.operator.context;
-import static sorcer.eo.operator.contextModel;
+import static sorcer.eo.operator.entModel;
 import static sorcer.eo.operator.get;
 import static sorcer.eo.operator.getAt;
 import static sorcer.eo.operator.getLink;
@@ -73,16 +73,16 @@ public class ServiceContexts {
 	@Test
 	public void contextOperator() throws Exception {
 		
-		Context<Double> cxt = context(entry("arg/x1", 1.1), entry("arg/x2", 1.2), 
-				 entry("arg/x3", 1.3), entry("arg/x4", 1.4), entry("arg/x5", 1.5));
+		Context<Double> cxt = context(ent("arg/x1", 1.1), ent("arg/x2", 1.2), 
+				 ent("arg/x3", 1.3), ent("arg/x4", 1.4), ent("arg/x5", 1.5));
 		
-		add(cxt, entry("arg/x6", 1.6));
+		add(cxt, ent("arg/x6", 1.6));
 		
 		assertTrue(value(cxt, "arg/x1").equals(1.1));
 		assertTrue(get(cxt, "arg/x1").equals(1.1));
 		assertTrue(asis(cxt, "arg/x1").equals(1.1));
 		
-		put(cxt, entry("arg/x1", 5.0));
+		put(cxt, ent("arg/x1", 5.0));
 		assertTrue(get(cxt, "arg/x1").equals(5.0));
 
 		Context<Double> subcxt = context(cxt, list("arg/x4", "arg/x5"));
@@ -99,7 +99,7 @@ public class ServiceContexts {
 	
 	@Test
 	public void softValues() throws Exception {
-		Context cxt = context("add", inEntry("arg/x1", 20.0), inEntry("arg/x2", 80.0));
+		Context cxt = context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0));
 		
 		// context soft values correspond to a subpath, e.g. "x1" 
 		// if no match for the exact path. e.g."arg1/x1"
@@ -112,20 +112,20 @@ public class ServiceContexts {
 	@Test
 	public void directionalEntries() throws Exception {
 		
-		Entry<Double> e = entry("arg/x1", 10.0);
+		Entry<Double> e = ent("arg/x1", 10.0);
 		assertEquals("arg/x1", key(e));
 		// a path is a String - usually a sequence of attributes
 		assertEquals(path(e), "arg/x1");
 
-		Entry<Double> in = inEntry("arg/x2", 10.0);
+		Entry<Double> in = inEnt("arg/x2", 10.0);
 		assertTrue(path(in).equals("arg/x2"));
 		assertTrue(value(in).equals(10.0));
 		
-		Entry<Double> out = outEntry("arg/y", 20.0);
+		Entry<Double> out = outEnt("arg/y", 20.0);
 		assertTrue(path(out).equals("arg/y"));
 		assertTrue(value(out).equals(20.0));
 		
-		Entry<Double> inout = inoutEntry("arg/z", 30.0);
+		Entry<Double> inout = inoutEnt("arg/z", 30.0);
 		assertTrue(path(inout).equals("arg/z"));
 		assertTrue(value(inout).equals(30.0));
 		
@@ -136,13 +136,13 @@ public class ServiceContexts {
 	public void inputOutputEntriesinContexts() throws Exception {
 		
 		// PositionaContext has paths and indexes
-		Context<Double> cxt = context(entry("arg/x1", 1.1), inEntry("arg/x2", 1.2), 
-				inEntry("arg/x3", 1.3), inEntry("arg/x4", 1.4), inEntry("arg/x5", 1.5));
+		Context<Double> cxt = context(ent("arg/x1", 1.1), inEnt("arg/x2", 1.2), 
+				inEnt("arg/x3", 1.3), inEnt("arg/x4", 1.4), inEnt("arg/x5", 1.5));
 		
-		add(cxt, entry("arg/x6", 1.6));
-		add(cxt, outEntry("out/y1", 1.7));
-		add(cxt, outEntry("out/y2", 1.8));
-		add(cxt, inoutEntry("par/z", 1.9));
+		add(cxt, ent("arg/x6", 1.6));
+		add(cxt, outEnt("out/y1", 1.7));
+		add(cxt, outEnt("out/y2", 1.8));
+		add(cxt, inoutEnt("par/z", 1.9));
 		
 		assertTrue(cxt instanceof Context);
 
@@ -198,12 +198,12 @@ public class ServiceContexts {
 	@Test
 	public void markingContextPaths() throws Exception {
 
-		Context<Double> cxt = context(entry("arg/x1", 1.1), entry("arg/x2", 1.2), 
-				 entry("arg/x3", 1.3), entry("arg/x4", 1.4), entry("arg/x5", 1.5));
+		Context<Double> cxt = context(ent("arg/x1", 1.1), ent("arg/x2", 1.2), 
+				 ent("arg/x3", 1.3), ent("arg/x4", 1.4), ent("arg/x5", 1.5));
 		
-		add(cxt, entry("arg/x6", 1.6));
-		add(cxt, inEntry("arg/x7", 1.7));
-		add(cxt, outEntry("arg/y", 1.8));
+		add(cxt, ent("arg/x6", 1.6));
+		add(cxt, inEnt("arg/x7", 1.7));
+		add(cxt, outEnt("arg/y", 1.8));
 		
 		// the default marker (attribute) 'tag'
 		mark(cxt, "arg/x1", "tag|set1");
@@ -234,8 +234,8 @@ public class ServiceContexts {
 		
 		// custom annotation with the association: "person|first|last"
 		marker(cxt, "person|first|last");
-		add(cxt, entry("arg/Mike/height", 174.0, "person|Mike|Sobolewski"));
-		add(cxt, inEntry("arg/John/height", 178.0, "person|John|Doe"));
+		add(cxt, ent("arg/Mike/height", 174.0, "person|Mike|Sobolewski"));
+		add(cxt, inEnt("arg/John/height", 178.0, "person|John|Doe"));
 		assertTrue(getAt(cxt, "person|Mike|Sobolewski").equals(174.0));
 		assertTrue(getAt(cxt, "person|John|Doe").equals(178.0));
 
@@ -246,12 +246,12 @@ public class ServiceContexts {
 	public void linkedContext() throws Exception {
 		
 		Context ac = context("add", 
-				inEntry("arg1/value", 90.0),
-				inEntry("arg2/value", 110.0));
+				inEnt("arg1/value", 90.0),
+				inEnt("arg2/value", 110.0));
 		
 		Context mc = context("multiply", 
-				inEntry("arg1/value", 10.0),
-				inEntry("arg2/value", 70.0));
+				inEnt("arg1/value", 10.0),
+				inEnt("arg2/value", 70.0));
 		
 		Context lc = context("invoke");
 
@@ -276,18 +276,18 @@ public class ServiceContexts {
 		// two contexts ac and mc sharing arg1/value 
 		// and arg3/value values over the network
 		Context ac = context("add", 
-				inEntry("arg1/value", 90.0),
-				inEntry("arg2/value", 110.0),
-				inEntry("arg3/value", 100.0));
+				inEnt("arg1/value", 90.0),
+				inEnt("arg2/value", 110.0),
+				inEnt("arg3/value", 100.0));
 		
 		// make arg1/value persistent
 		URL a1vURL = url(ac, "arg1/value");
 			
 		// make arg1/value in mc the same as in ac
 		Context mc = context("multiply", 
-				dbInEntry("arg1/value", a1vURL),
-				inEntry("arg2/value", 70.0),
-				inEntry("arg3/value", 200.0));
+				dbInEnt("arg1/value", a1vURL),
+				inEnt("arg2/value", 70.0),
+				inEnt("arg3/value", 200.0));
 		
 		// sharing arg1/value from mc in ac
 		assertTrue(value(mc, "arg1/value").equals(90.0));
@@ -298,7 +298,7 @@ public class ServiceContexts {
 		assertTrue(value(ac, "arg3/value").equals(100.0));
 		assertTrue(value(mc, "arg3/value").equals(200.0));
 		URL a3vURL = db(mc, "arg3/value");
-		add(ac, dbEntry("arg3/value", a3vURL));
+		add(ac, dbEnt("arg3/value", a3vURL));
 		put(ac, "arg1/value", 300.0);
 		assertTrue(value(mc, "arg1/value").equals(300.0));
 		
@@ -306,21 +306,18 @@ public class ServiceContexts {
 	
 	
 	@Test
-	public void contextModeling() throws Exception {
+	public void entModeling() throws Exception {
 		
-		Context<Double> cxt = contextModel(entry("arg/x1", 1.0), entry("arg/x2", 2.0), 
-				 entry("arg/x3", 3.0), entry("arg/x4", 4.0), entry("arg/x5", 5.0));
+		Context<Double> cxt = entModel(ent("arg/x1", 1.0), ent("arg/x2", 2.0), 
+				 ent("arg/x3", 3.0), ent("arg/x4", 4.0), ent("arg/x5", 5.0));
 		
-		add(cxt, entry("arg/x6", 6.0));
+		add(cxt, ent("arg/x6", 6.0));
 		assertTrue(value(cxt, "arg/x6").equals(6.0));
 
-		put(cxt, entry("arg/x6", entry("overwrite", 20.0)));
+		put(cxt, ent("arg/x6", ent("overwrite", 20.0)));
 		assertTrue(value(cxt, "arg/x6").equals(20.0));
 		
-		add(cxt, entry("arg/x7", invoker("x1 + x3", entries("x1", "x3"))));	
-		
-		value(cxt, "arg/x7");
-		
+		add(cxt, ent("arg/x7", invoker("x1 + x3", ents("x1", "x3"))));			
 		assertTrue(value(cxt, "arg/x7").equals(4.0));
 		
 	}

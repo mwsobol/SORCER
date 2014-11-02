@@ -1,7 +1,7 @@
 package sorcer.pml.modeling;
 
 import static org.junit.Assert.assertEquals;
-import static sorcer.co.operator.entry;
+import static sorcer.co.operator.ent;
 import static sorcer.eo.operator.context;
 import static sorcer.eo.operator.exert;
 import static sorcer.eo.operator.get;
@@ -57,7 +57,7 @@ public class ParModelServices {
 	public void parObjectModelServiceTest() throws RemoteException, ContextException, ExertionException, SignatureException {
 		ParModel pm = ParModeler.getParModel();
 		Task pmt = task(sig("invoke", pm), 
-				context(entry("par", "expr"), result("invoke/result")));
+				context(ent("par", "expr"), result("invoke/result")));
 		
 		logger.info("result: " + value(pmt));
 		assertEquals(value(pmt), 60.0);
@@ -71,7 +71,7 @@ public class ParModelServices {
 			ExertionException, SignatureException {
 		// the provider in ex6/bin parmodel-prv-run.xml
 		Task pmt = task(sig("invoke", Invocation.class, "ParModel Service"), 
-				context(entry("par", "expr"), result("invoke/result")));
+				context(ent("par", "expr"), result("invoke/result")));
 		
 //		logger.info("result: " + value(pmt));
 		assertEquals(value(pmt), 60.0);

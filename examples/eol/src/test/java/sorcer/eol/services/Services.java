@@ -2,8 +2,8 @@ package sorcer.eol.services;
 
 import static org.junit.Assert.assertEquals;
 import static sorcer.co.operator.from;
-import static sorcer.co.operator.inEntry;
-import static sorcer.co.operator.outEntry;
+import static sorcer.co.operator.inEnt;
+import static sorcer.co.operator.outEnt;
 import static sorcer.eo.operator.context;
 import static sorcer.eo.operator.cxt;
 import static sorcer.eo.operator.exert;
@@ -66,8 +66,8 @@ public class Services {
 	public void exertTask() throws Exception  {
 
 		Service t5 = service("t5", sig("add", AdderImpl.class),
-				cxt("add", inEntry("arg/x1", 20.0), inEntry("arg/x2", 80.0),
-						outEntry("result/y")));
+				cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
+						outEnt("result/y")));
 
 		Service out = exert(t5);
 		Context cxt = context(out);
@@ -81,11 +81,11 @@ public class Services {
 	}
 	
 	
-	public void taskValue() throws SignatureException, ExertionException, ContextException  {
+	public void evaluateTask() throws SignatureException, ExertionException, ContextException  {
 
 		Service t5 = service("t5", sig("add", AdderImpl.class),
-				cxt("add", inEntry("arg/x1", 20.0), inEntry("arg/x2", 80.0),
-						outEntry("result/y")));
+				cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
+						outEnt("result/y")));
 
 		Object out = value(t5);
 		logger.info("out value: " + out);
@@ -98,20 +98,20 @@ public class Services {
 	public void exertJob() throws Exception {
 
 		Task t3 = srv("t3", sig("subtract", SubtractorImpl.class),
-				cxt("subtract", inEntry("arg/x1"), inEntry("arg/x2"), outEntry("result/y")));
+				cxt("subtract", inEnt("arg/x1"), inEnt("arg/x2"), outEnt("result/y")));
 
 		Task t4 = srv("t4", sig("multiply", MultiplierImpl.class),
 				// cxt("multiply", in("super/arg/x1"), in("arg/x2", 50.0),
-				cxt("multiply", inEntry("arg/x1", 10.0), inEntry("arg/x2", 50.0),
-						outEntry("result/y")));
+				cxt("multiply", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
+						outEnt("result/y")));
 
 		Task t5 = srv("t5", sig("add", AdderImpl.class),
-				cxt("add", inEntry("arg/x1", 20.0), inEntry("arg/x2", 80.0),
-						outEntry("result/y")));
+				cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
+						outEnt("result/y")));
 
 		Service job = //j1(j2(t4(x1, x2), t5(x1, x2)), t3(x1, x2))
 				srv("j1", sig(ServiceJobber.class),
-					cxt(inEntry("arg/x1", 10.0),
+					cxt(inEnt("arg/x1", 10.0),
 					result("job/result", from("j1/t3/result/y"))),
 				srv("j2", sig(ServiceJobber.class), t4, t5), 
 				t3,
@@ -132,16 +132,16 @@ public class Services {
 	
 	
 	@Test
-	public void jobValue() throws Exception {
+	public void evaluateJob() throws Exception {
 
 		Task t3 = srv("t3", sig("subtract", SubtractorImpl.class),
-				cxt("subtract", inEntry("arg/x1"), inEntry("arg/x2"), result("result/y")));
+				cxt("subtract", inEnt("arg/x1"), inEnt("arg/x2"), result("result/y")));
 
 		Task t4 = srv("t4", sig("multiply", MultiplierImpl.class),
-				cxt("multiply", inEntry("arg/x1", 10.0), inEntry("arg/x2", 50.0), result("result/y")));
+				cxt("multiply", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0), result("result/y")));
 
 		Task t5 = srv("t5", sig("add", AdderImpl.class),
-				cxt("add", inEntry("arg/x1", 20.0), inEntry("arg/x2", 80.0), result("result/y")));
+				cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0), result("result/y")));
 
 		Job job = //j1(j2(t4(x1, x2), t5(x1, x2)), t3(x1, x2))
 				srv("j1", sig(ServiceJobber.class), result("job/result", from("j1/t3/result/y")),

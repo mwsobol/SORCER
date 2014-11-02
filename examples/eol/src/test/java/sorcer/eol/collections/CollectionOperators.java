@@ -8,10 +8,10 @@ import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.array;
 import static sorcer.co.operator.columnNames;
 import static sorcer.co.operator.columnSize;
-import static sorcer.co.operator.dbEntry;
+import static sorcer.co.operator.dbEnt;
 import static sorcer.co.operator.dictionary;
-import static sorcer.co.operator.entries;
-import static sorcer.co.operator.entry;
+import static sorcer.co.operator.ent;
+import static sorcer.co.operator.ents;
 import static sorcer.co.operator.isPersistent;
 import static sorcer.co.operator.key;
 import static sorcer.co.operator.list;
@@ -25,7 +25,7 @@ import static sorcer.co.operator.rowNames;
 import static sorcer.co.operator.rowSize;
 import static sorcer.co.operator.set;
 import static sorcer.co.operator.store;
-import static sorcer.co.operator.strategyEntry;
+import static sorcer.co.operator.strategyEnt;
 import static sorcer.co.operator.table;
 import static sorcer.co.operator.tuple;
 import static sorcer.co.operator.url;
@@ -34,7 +34,7 @@ import static sorcer.eo.operator.access;
 import static sorcer.eo.operator.add;
 import static sorcer.eo.operator.asis;
 import static sorcer.eo.operator.context;
-import static sorcer.eo.operator.contextModel;
+import static sorcer.eo.operator.entModel;
 import static sorcer.eo.operator.flow;
 import static sorcer.eo.operator.get;
 import static sorcer.eo.operator.put;
@@ -94,17 +94,33 @@ public class CollectionOperators {
 	
 	
 	@Test
+	public void arrayOperator() throws Exception {
+		
+		Double[] da = array(1.1, 2.1, 3.1);
+		assertArrayEquals(da, new Double[] { 1.1, 2.1, 3.1 } );
+		
+		Object oa = array(array(1.1, 2.1, 3.1),  4.1,  array(11.1, 12.1, 13.1));		
+		assertArrayEquals((Double[])((Object[])oa)[0], array(1.1, 2.1, 3.1));
+		assertEquals(((Object[])oa)[1], 4.1);
+		assertArrayEquals((Double[])((Object[])oa)[2], array(11.1, 12.1, 13.1));
+		
+	}
+
+	
+	@Test
 	public void listOperator() throws Exception {
 		
 		// the list operator creates an instance of ArrayList
 		List<Object> l = list(list(1.1, 2.1, 3.1),  4.1,  list(11.1, 12.1, 13.1));
 		
-		List<Double> al = (List<Double>)l.get(0);
-		assertEquals(al, Arrays.asList(array(1.1, 2.1, 3.1)));
-		
+		List<Double> l0 = (List<Double>)l.get(0);
+		assertEquals(l0, list(array(1.1, 2.1, 3.1)));
+			
 		assertEquals(l.get(0), list(1.1, 2.1, 3.1));
 		assertEquals(l.get(1), 4.1);
 		assertEquals(l.get(2), list(11.1, 12.1, 13.1));
+		
+		assertTrue(Arrays.equals(array(list(1.1, 2.1, 3.1)), array(1.1, 2.1, 3.1)));
 		
 	}
 	
@@ -124,20 +140,6 @@ public class CollectionOperators {
 	
 	
 	@Test
-	public void arrayOperator() throws Exception {
-		
-		Double[] da = array(1.1, 2.1, 3.1);
-		assertArrayEquals(da, new Double[] { 1.1, 2.1, 3.1 } );
-		
-		Object oa = array(array(1.1, 2.1, 3.1),  4.1,  array(11.1, 12.1, 13.1));		
-		assertArrayEquals((Double[])((Object[])oa)[0], array(1.1, 2.1, 3.1));
-		assertEquals(((Object[])oa)[1], 4.1);
-		assertArrayEquals((Double[])((Object[])oa)[2], array(11.1, 12.1, 13.1));
-		
-	}
-
-	
-	@Test
 	public void tableOperator() throws Exception {
 		
 		Table t = table(
@@ -153,8 +155,8 @@ public class CollectionOperators {
 		
 		assertEquals(rowNames(t), list("f1", "f2", "f3"));
 		assertEquals(columnNames(t), list("x1", "x2", "x3", "x4", "x5"));
-		assertEquals(rowMap(t, "f2"), map(entry("x1", 2.1), entry("x2", 2.2), 
-				entry("x3", 2.3), entry("x4", 2.4), entry("x5",2.5)));
+		assertEquals(rowMap(t, "f2"), map(ent("x1", 2.1), ent("x2", 2.2), 
+				ent("x3", 2.3), ent("x4", 2.4), ent("x5",2.5)));
 		assertEquals(value(t, "f2", "x2"), 2.2);
 		assertEquals(value(t, 1, 1), 2.2);
 		
@@ -164,7 +166,7 @@ public class CollectionOperators {
 	@Test
 	public void entryOperator() throws Exception {
 		
-		Entry<Double> e = entry("arg/x1", 10.0);
+		Entry<Double> e = ent("arg/x1", 10.0);
 		assertEquals("arg/x1", key(e));
 		// a path is a String - usually a sequence of attributes
 		assertEquals("arg/x1", path(e));
@@ -187,12 +189,12 @@ public class CollectionOperators {
 		assertTrue(value(e).equals(50.0));
 		assertTrue(asis(e) instanceof URL);
 		
-		Entry se = strategyEntry("j1/j2", strategy(Access.PULL, Flow.PAR));
+		Entry se = strategyEnt("j1/j2", strategy(Access.PULL, Flow.PAR));
 		assertEquals(flow(se), Flow.PAR);
 		assertEquals(access(se), Access.PULL);
 		
 		// store value of the entry
-		e = entry("arg/x1", 100.0);
+		e = ent("arg/x1", 100.0);
 		store(e);
 		assertEquals(isPersistent(e), true);
 		assertTrue(asis(e) instanceof URL);
@@ -205,7 +207,7 @@ public class CollectionOperators {
 	public void dbEntryOperator() throws Exception {
 		
 		// create an entry
-		Entry<Double> e = entry("x1", 10.0);
+		Entry<Double> e = ent("x1", 10.0);
 		assertTrue(value(e).equals(10.0));
 		assertTrue(asis(e).equals(10.0));
 		
@@ -216,12 +218,12 @@ public class CollectionOperators {
 		assertTrue(asis(e) instanceof URL);
 		
 		// create a persistent entry
-		Entry<?> urle = dbEntry("x2", valUrl);
+		Entry<?> urle = dbEnt("x2", valUrl);
 		assertTrue(value(urle).equals(10.0));
 		assertTrue(asis(urle) instanceof URL);
 		
 		// assign a given URL
-		Entry<Object> dbe = dbEntry("y1");
+		Entry<Object> dbe = dbEnt("y1");
 		put(dbe, valUrl);
 		assertTrue(value(dbe).equals(10.0));
 		assertTrue(asis(dbe) instanceof URL);
@@ -233,11 +235,11 @@ public class CollectionOperators {
 	public void parOperator() throws Exception {
 		
 		Par add = par("add", invoker("x + y", pars("x", "y")));
-		Context<Double> cxt = context(entry("x", 10.0), entry("y", 20.0));
+		Context<Double> cxt = context(ent("x", 10.0), ent("y", 20.0));
 		logger.info("par value: " + value(add, cxt));
 		assertTrue(value(add, cxt).equals(30.0));
 
-		cxt = context(entry("x", 20.0), entry("y", 30.0));
+		cxt = context(ent("x", 20.0), ent("y", 30.0));
 		add = par(cxt, "add", invoker("x + y", pars("x", "y")));
 		logger.info("par value: " + value(add));
 		assertTrue(value(add).equals(50.0));
@@ -269,14 +271,14 @@ public class CollectionOperators {
 	@Test
 	public void mapOperator() throws Exception {
 		
-		Map<Object, Object> map1 = dictionary(entry("name", "Mike"), entry("height", 174.0));
+		Map<Object, Object> map1 = dictionary(ent("name", "Mike"), ent("height", 174.0));
 				
-		Map<String, Double> map2 = map(entry("length", 248.0), entry("width", 2.0), entry("height", 17.0));
+		Map<String, Double> map2 = map(ent("length", 248.0), ent("width", 2.0), ent("height", 17.0));
 		
 		// keys and values of entries
-		String k = key(entry("name", "Mike"));
+		String k = key(ent("name", "Mike"));
 		
-		Entry<Double> de = entry("height", 174.0);
+		Entry<Double> de = ent("height", 174.0);
 		Double v = value(de);
 
 //		Double v = value(entry("height", 174.0));
@@ -305,20 +307,20 @@ public class CollectionOperators {
 	@Test
 	public void contextOperator() throws Exception {
 		
-		Context<Double> cxt = context(entry("arg/x1", 1.1), entry("arg/x2", 1.2), 
-				 entry("arg/x3", 1.3), entry("arg/x4", 1.4), entry("arg/x5", 1.5));
+		Context<Double> cxt = context(ent("arg/x1", 1.1), ent("arg/x2", 1.2), 
+				 ent("arg/x3", 1.3), ent("arg/x4", 1.4), ent("arg/x5", 1.5));
 		
-		add(cxt, entry("arg/x6", 1.6));
-		add(cxt, entry("arg/x7", invoker("x1 + x3", entries("x1", "x3"))));
+		add(cxt, ent("arg/x6", 1.6));
+		add(cxt, ent("arg/x7", invoker("x1 + x3", ents("x1", "x3"))));
 		
 		assertTrue(value(cxt, "arg/x1").equals(1.1));
 		assertTrue(get(cxt, "arg/x1").equals(1.1));
 		assertTrue(asis(cxt, "arg/x1").equals(1.1));
 		
-		add(cxt, entry("arg/x1", 1.0));
+		add(cxt, ent("arg/x1", 1.0));
 		assertTrue(get(cxt, "arg/x1").equals(1.0));
 
-		add(cxt, entry("arg/x3", 3.0));
+		add(cxt, ent("arg/x3", 3.0));
 		assertTrue(get(cxt, "arg/x3").equals(3.0));
 		
 		Context<Double> subcxt = context(cxt, list("arg/x4", "arg/x5"));
@@ -332,11 +334,11 @@ public class CollectionOperators {
 		assertTrue(((Object)get(cxt, "arg/x7")) instanceof ServiceInvoker);
 		
 		// aliasing entries
-		put(cxt, entry("arg/x6", entry("overwrite", 20.0)));
+		put(cxt, ent("arg/x6", ent("overwrite", 20.0)));
 		assertTrue(value(cxt, "arg/x6").equals(20.0));
 		
 		// aliasing pars
-		put(cxt, entry("arg/x6", par("overwrite", 40.0)));
+		put(cxt, ent("arg/x6", par("overwrite", 40.0)));
 		assertTrue(value(cxt, "arg/x6").equals(40.0));
 
 		// but no direct evaluations
@@ -350,16 +352,16 @@ public class CollectionOperators {
 	@Test
 	public void contextModeling() throws Exception {
 		
-		Context<Double> cxt = contextModel(entry("arg/x1", 1.0), entry("arg/x2", 2.0), 
-				 entry("arg/x3", 3.0), entry("arg/x4", 4.0), entry("arg/x5", 5.0));
+		Context<Double> cxt = entModel(ent("arg/x1", 1.0), ent("arg/x2", 2.0), 
+				 ent("arg/x3", 3.0), ent("arg/x4", 4.0), ent("arg/x5", 5.0));
 		
-		add(cxt, entry("arg/x6", 6.0));
+		add(cxt, ent("arg/x6", 6.0));
 		assertTrue(value(cxt, "arg/x6").equals(6.0));
 
-		put(cxt, entry("arg/x6", entry("overwrite", 20.0)));
+		put(cxt, ent("arg/x6", ent("overwrite", 20.0)));
 		assertTrue(value(cxt, "arg/x6").equals(20.0));
 		
-		add(cxt, entry("arg/x7", invoker("x1 + x3", entries("x1", "x3"))));	
+		add(cxt, ent("arg/x7", invoker("x1 + x3", ents("x1", "x3"))));	
 		
 		assertTrue(value(cxt, "arg/x7").equals(4.0));
 		
@@ -369,8 +371,8 @@ public class CollectionOperators {
 	@Test
 	public void parModeling() throws Exception {
 		
-		ParModel pm = parModel("par-model", entry("John/weight", 180.0));
-		add(pm, par("x", 10.0), entry("y", 20.0));
+		ParModel pm = parModel("par-model", ent("John/weight", 180.0));
+		add(pm, par("x", 10.0), ent("y", 20.0));
 		add(pm, invoker("add", "x + y", pars("x", "y")));
 
 //		logger.info("adder value: " + value(pm, "add"));
