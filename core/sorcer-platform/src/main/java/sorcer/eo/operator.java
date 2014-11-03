@@ -267,11 +267,15 @@ public class operator {
 	
 	public static Exertion dependsOn(Exertion dependee, Invocation depender,
 			ParModel scope) throws ContextException {
-		ParModel context = ((ServiceExertion) dependee).getScope();
-		if (context == null)
-			((ServiceExertion) dependee).setScope(scope);
-		else
-			context.append(scope);
+		try {
+			Context context = (Context) ((ServiceExertion) dependee).getScope();
+			if (context == null)
+				((ServiceExertion) dependee).setScope(scope);
+			else
+				context.append(scope);
+		} catch (RemoteException e) {
+			throw new ContextException(e);
+		}
 		return dependsOn(dependee, depender);
 	}
 
@@ -279,11 +283,13 @@ public class operator {
 		return job.getComponentContext(path);
 	}
 
-	public static FidelityContext fiContext(FidelityInfo... fidelityInfos) throws ContextException {
+	public static FidelityContext fiContext(FidelityInfo... fidelityInfos) 
+			throws ContextException {
 		return fiContext(null, fidelityInfos);
 	}
 	
-	public static FidelityContext fiContext(String name, FidelityInfo... fidelityInfos) throws ContextException {
+	public static FidelityContext fiContext(String name, FidelityInfo... fidelityInfos) 
+			throws ContextException {
 		FidelityContext fiCxt = new FidelityContext(name);
 		for (FidelityInfo e : fidelityInfos) {
 			if (e instanceof FidelityInfo) {
@@ -1120,6 +1126,11 @@ public class operator {
 		return (E) exertion(name, elems);
 	}
 	
+	public static <T extends Object, E extends Exertion> E service(T... elems)
+			throws ExertionException, ContextException, SignatureException {
+		return (E) exertion(null, elems);
+	}
+	
 	public static <T extends Object, E extends Exertion> E service(String name,
 			T... elems) throws ExertionException, ContextException,
 			SignatureException {
@@ -1503,33 +1514,33 @@ public class operator {
 		System.out.println(obj.toString());
 	}
 
-	public static Object exec(Context context, Arg... entries)
+	public static Object exec(Context context, Arg... args)
 			throws ExertionException, ContextException {
 		try {
-			context.substitute(entries);
+			context.substitute(args);
 		} catch (RemoteException e) {
 			throw new ContextException(e);
 		}
 		ReturnPath returnPath = ((ServiceContext)context).getReturnPath();
 		if (returnPath != null) {
-			return context.getValue(returnPath.path, entries);
+			return context.getValue(returnPath.path, args);
 		} else
 			throw new ExertionException("No return path in the context: "
 					+ context.getName());
 	}
 
 	public static Object execExertion(Exertion exertion, ReturnPath rPath,
-			Arg... entries) throws ExertionException, ContextException,
+			Arg... args) throws ExertionException, ContextException,
 			RemoteException {
 		Exertion xrt;
 		try {
 			if (exertion.getClass() == Task.class) {
 				if (((Task) exertion).getDelegate() != null)
-					xrt = exert(((Task) exertion).getDelegate(), null, entries);
+					xrt = exert(((Task) exertion).getDelegate(), null, args);
 				else
-					xrt = exertOpenTask(exertion, entries);
+					xrt = exertOpenTask(exertion, args);
 			} else {
-				xrt = exert(exertion, null, entries);
+				xrt = exert(exertion, null, args);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -1557,11 +1568,11 @@ public class operator {
 				}
 			}
 		}
-		Object obj = ((ServiceExertion) xrt).getReturnValue(entries);
+		Object obj = ((ServiceExertion) xrt).getReturnValue(args);
 		if (obj == null) {
 			ReturnPath returnPath = ((ServiceContext)xrt.getDataContext()).getReturnPath();
 			if (returnPath != null) {
-				return ((ServiceExertion) xrt).getReturnValue(entries);
+				return ((ServiceExertion) xrt).getReturnValue(args);
 			} else {
 				return xrt.getContext();
 			}
@@ -1570,10 +1581,10 @@ public class operator {
 		}
 	}
 
-	public static Exertion exertOpenTask(Exertion exertion, Arg... entries)
+	public static Exertion exertOpenTask(Exertion exertion, Arg... args)
 			throws ExertionException {
 		Exertion closedTask = null;
-		List<Arg> params = Arrays.asList(entries);
+		List<Arg> params = Arrays.asList(args);
 		List<Object> items = new ArrayList<Object>();
 		for (Arg param : params) {
 			if (param instanceof ControlContext
@@ -1594,7 +1605,7 @@ public class operator {
 			}
 		}
 		try {
-			closedTask = closedTask.exert(entries);
+			closedTask = closedTask.exert(args);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new ExertionException(e);
@@ -1615,10 +1626,10 @@ public class operator {
 		return exertion.getExceptions();
 	}
 
-	public static <T extends Service> T exert(T input, Entry... entries)
+	public static <T extends Service> T exert(T input, Arg... args)
 			throws ExertionException {
 		try {
-			return  (T)((Exertion)input).exert(null, entries);
+			return  (T)((Exertion)input).exert(null, args);
 		} catch (Exception e) {
 			throw new ExertionException(e);
 		}
@@ -2014,20 +2025,20 @@ public class operator {
 		}
 	}
 
-	public static OutEndPoint output(Exertion outExertion, String outPath) {
-		return new OutEndPoint(outExertion, outPath);
+	public static OutEndPoint output(Service outExertion, String outPath) {
+		return new OutEndPoint((Exertion)outExertion, outPath);
 	}
 
-	public static OutEndPoint out(Mappable outExertion, String outPath) {
-		return new OutEndPoint(outExertion, outPath);
+	public static OutEndPoint out(Service outExertion, String outPath) {
+		return new OutEndPoint((Exertion)outExertion, outPath);
 	}
 
-	public static InEndPoint input(Mappable inExertion, String inPath) {
-		return new InEndPoint(inExertion, inPath);
+	public static InEndPoint input(Service inExertion, String inPath) {
+		return new InEndPoint((Exertion)inExertion, inPath);
 	}
 
-	public static InEndPoint in(Exertion inExertion, String inPath) {
-		return new InEndPoint(inExertion, inPath);
+	public static InEndPoint in(Service inExertion, String inPath) {
+		return new InEndPoint((Exertion)inExertion, inPath);
 	}
 
 	public static Pipe pipe(OutEndPoint outEndPoint, InEndPoint inEndPoint) {

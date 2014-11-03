@@ -28,11 +28,9 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import sorcer.co.tuple.Entry;
-import sorcer.co.tuple.FidelityEntry;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.ApplicationDescription;
 import sorcer.core.context.ServiceContext;
-import sorcer.service.Reactive;
 import sorcer.service.Arg;
 import sorcer.service.ArgException;
 import sorcer.service.ArgSet;
@@ -42,11 +40,11 @@ import sorcer.service.ContextException;
 import sorcer.service.Evaluation;
 import sorcer.service.EvaluationException;
 import sorcer.service.Exertion;
-import sorcer.service.FidelityInfo;
 import sorcer.service.Identifiable;
 import sorcer.service.Invocation;
 import sorcer.service.InvocationException;
 import sorcer.service.Mappable;
+import sorcer.service.Reactive;
 import sorcer.service.Scopable;
 import sorcer.service.Setter;
 import sorcer.service.SetterException;
@@ -87,10 +85,10 @@ public class Par<T> extends Entry<T> implements Variability<T>, Arg, Mappable<T>
 	// Sorcer Mappable: Context, Exertion, or Var args
 	protected Mappable mappable;
 
-	protected FidelityEntry fidelity;
+	protected String selectedFidelity;
 
 	// par fidelities for this par
-	protected Map<String, FidelityEntry> fidelities;
+	protected Map<String, Object> fidelities;
 		
 	public Par(String parname) {
 		name = parname;
@@ -186,8 +184,8 @@ public class Par<T> extends Entry<T> implements Variability<T>, Arg, Mappable<T>
 	@Override
 	public T getValue(Arg... entries) throws EvaluationException,
 	RemoteException {
-		if (fidelity != null) {
-			value = (T) fidelity.asis();
+		if (selectedFidelity != null) {
+			value = (T) fidelities.get(selectedFidelity);;
 		}
 		T val = null;
 		try {
@@ -457,6 +455,18 @@ public class Par<T> extends Entry<T> implements Variability<T>, Arg, Mappable<T>
 		return (mappable != null);
 	}
 
+	public Map<String, Object> getFidelities() {
+		return fidelities;
+	}
+
+	public String getSelectedFidelity() {
+		return selectedFidelity;
+	}
+
+	public void setSelectedFidelity(String selectedFidelity) {
+		this.selectedFidelity = selectedFidelity;
+	}
+	
 	/* (non-Javadoc)
 	 * @see sorcer.service.Invocation#invoke(sorcer.service.Context, sorcer.service.Arg[])
 	 */
@@ -560,43 +570,28 @@ public class Par<T> extends Entry<T> implements Variability<T>, Arg, Mappable<T>
 		this.scope = (Context)scope;
 		
 	}
-	
-	public void setFidelity(FidelityEntry fidelity) {
-		this.fidelity = fidelity;
-	}
 
-	public void putFidelity(FidelityEntry fidelity) {
+	public void putFidelity(ParFidelity fidelity) throws EvaluationException,
+			RemoteException {
 		if (fidelities == null)
-			fidelities = new HashMap<String, FidelityEntry>();
-		fidelities.put(fidelity.getName(), fidelity);
+			fidelities = new HashMap<String, Object>();
+		for (Entry e : fidelity)
+			fidelities.put(e.getName(), e.asis());
 	}
 
-	public void addFidelity(FidelityEntry fidelity) {
+	public void addFidelity(ParFidelity fidelity) throws EvaluationException,
+			RemoteException {
 		putFidelity(fidelity);
-		this.fidelity = fidelity;
 	}
 
-	public void selectFidelity(Arg... entries) throws ParException {
-		if (entries != null && entries.length > 0) {
-			for (Arg a : entries)
-				if (a instanceof FidelityInfo) {
-					selectFidelity(((FidelityInfo) a).getName());
-				} 
-		}
+	public void selectFidelity(String name) throws ParException {
+		if (fidelities.containsKey(name))
+			value = (T) fidelities.get(name);
+		else
+			throw new ParException("no such service fidelity: " + name + " at: " + this);
 	}
 
-	public void selectFidelity(String selector) throws ParException {
-		if (selector != null && fidelities != null
-				&& fidelities.containsKey(selector)) {
-			FidelityEntry pf = fidelities.get(selector);
-
-			if (pf == null)
-				throw new ParException("no such service fidelity: " + selector + " at: " + this);
-			fidelity = pf;
-		}
-	}
-
-	public void setFidelities(Map<String, FidelityEntry> fidelities) {
+	public void setFidelities(Map<String, Object> fidelities) {
 		this.fidelities = fidelities;
 	}
 	

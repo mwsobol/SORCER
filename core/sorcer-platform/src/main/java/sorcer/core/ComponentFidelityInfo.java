@@ -26,7 +26,8 @@ import sorcer.service.FidelityInfo;
  */
 public class ComponentFidelityInfo extends FidelityInfo {
 
-
+	private static final long serialVersionUID = 1L;
+	
 	// component exertion path
 	protected String path;
 

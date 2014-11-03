@@ -12,6 +12,7 @@ import static sorcer.co.operator.dbEnt;
 import static sorcer.co.operator.dictionary;
 import static sorcer.co.operator.ent;
 import static sorcer.co.operator.ents;
+import static sorcer.co.operator.inEnt;
 import static sorcer.co.operator.isPersistent;
 import static sorcer.co.operator.key;
 import static sorcer.co.operator.list;
@@ -34,17 +35,21 @@ import static sorcer.eo.operator.access;
 import static sorcer.eo.operator.add;
 import static sorcer.eo.operator.asis;
 import static sorcer.eo.operator.context;
+import static sorcer.eo.operator.cxt;
 import static sorcer.eo.operator.entModel;
 import static sorcer.eo.operator.flow;
 import static sorcer.eo.operator.get;
 import static sorcer.eo.operator.put;
+import static sorcer.eo.operator.result;
+import static sorcer.eo.operator.service;
+import static sorcer.eo.operator.sig;
 import static sorcer.eo.operator.strategy;
 import static sorcer.eo.operator.value;
 import static sorcer.po.operator.add;
-import static sorcer.po.operator.asis;
 import static sorcer.po.operator.dbPar;
 import static sorcer.po.operator.invoker;
 import static sorcer.po.operator.par;
+import static sorcer.po.operator.parFi;
 import static sorcer.po.operator.parModel;
 import static sorcer.po.operator.pars;
 import static sorcer.po.operator.set;
@@ -59,6 +64,8 @@ import java.util.logging.Logger;
 
 import org.junit.Test;
 
+import sorcer.arithmetic.provider.impl.AdderImpl;
+import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.co.tuple.Entry;
 import sorcer.core.context.model.par.Par;
 import sorcer.core.context.model.par.ParModel;
@@ -99,10 +106,10 @@ public class CollectionOperators {
 		Double[] da = array(1.1, 2.1, 3.1);
 		assertArrayEquals(da, new Double[] { 1.1, 2.1, 3.1 } );
 		
-		Object oa = array(array(1.1, 2.1, 3.1),  4.1,  array(11.1, 12.1, 13.1));		
-		assertArrayEquals((Double[])((Object[])oa)[0], array(1.1, 2.1, 3.1));
-		assertEquals(((Object[])oa)[1], 4.1);
-		assertArrayEquals((Double[])((Object[])oa)[2], array(11.1, 12.1, 13.1));
+		Object[] oa = array(array(1.1, 2.1, 3.1),  4.1,  array(11.1, 12.1, 13.1));		
+		assertArrayEquals((Double[])oa[0], array(1.1, 2.1, 3.1));
+		assertEquals(oa[1], 4.1);
+		assertArrayEquals((Double[])oa[2], array(11.1, 12.1, 13.1));
 		
 	}
 
@@ -246,6 +253,29 @@ public class CollectionOperators {
 
 	}
 		
+	
+	@Test
+	public void parFidelities() throws Exception {
+		
+		Par add = par("add", parFi(ent("init/value"),
+				ent("invoke", invoker("x + y", pars("x", "y")))));
+		
+		Context<Double> cxt = context(ent("x", 10.0), 
+				ent("y", 20.0), ent("init/value", 49.0));
+		
+		logger.info("par value: " + value(add, cxt, parFi("init/value")));
+//		assertTrue(value(add, cxt).equals(30.0));
+		logger.info("par value: " + value(add, cxt, parFi("add")));
+//		assertTrue(value(add, cxt).equals(30.0));
+
+//		cxt = context(ent("x", 20.0), ent("y", 30.0));
+//		add = par(cxt, "add", invoker("x + y", pars("x", "y")));
+//		logger.info("par value: " + value(add));
+//		assertTrue(value(add).equals(50.0));
+
+	}
+	
+	
 	@Test
 	public void dbParOperator() throws Exception {	
 		Par<Double> dbp1 = persistent(par("design/in", 25.0));
@@ -357,14 +387,24 @@ public class CollectionOperators {
 		
 		add(cxt, ent("arg/x6", 6.0));
 		assertTrue(value(cxt, "arg/x6").equals(6.0));
-
+			
 		put(cxt, ent("arg/x6", ent("overwrite", 20.0)));
 		assertTrue(value(cxt, "arg/x6").equals(20.0));
 		
+		// model with invoker
 		add(cxt, ent("arg/x7", invoker("x1 + x3", ents("x1", "x3"))));	
-		
 		assertTrue(value(cxt, "arg/x7").equals(4.0));
 		
+		// model with local service entry, own arguments
+		add(cxt, ent("arg/x8", service(sig("add", AdderImpl.class),
+				cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
+						result("result/y")))));
+		assertTrue(value(cxt, "arg/x8").equals(100.0));
+		
+		// model with local service entry, no arguments
+		add(cxt, ent("arg/x9", service(sig("multiply", MultiplierImpl.class),
+			cxt("add", inEnt("arg/x1"), inEnt("arg/x2"), result("result/y")))));
+		assertTrue(value(cxt, "arg/x9").equals(2.0));
 	}
 	
 	

@@ -184,7 +184,7 @@ public class ExertionDispatcher implements Exerter, Callable {
 		if (dependers != null && dependers.size() > 0) {
 			for (Invocation<Object> depender : dependers) {
 				try {
-					depender.invoke(exertion.getScope(), entries);
+					depender.invoke((Context)exertion.getScope(), entries);
 				} catch (InvocationException e) {
 					throw new ExertionException(e);
 				}

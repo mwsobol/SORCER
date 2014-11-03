@@ -67,7 +67,7 @@ import sorcer.service.Strategy.Flow;
  * @author Mike Sobolewski
  */
 @SuppressWarnings("rawtypes")
-public abstract class ServiceExertion implements Exertion, SorcerConstants, Exec, Serializable {
+public abstract class ServiceExertion implements Exertion, Scopable, SorcerConstants, Exec, Serializable {
 
 	static final long serialVersionUID = -3907402419486719293L;
 
@@ -161,7 +161,7 @@ public abstract class ServiceExertion implements Exertion, SorcerConstants, Exec
 	protected boolean isProxy = false;
 	
 	// the exertions's dependency scope
-	protected ParModel scope;
+	protected Context scope;
 
 	// dependency management for this evaluator 
 	protected List<Invocation> dependers = new ArrayList<Invocation>();
@@ -1240,7 +1240,7 @@ public abstract class ServiceExertion implements Exertion, SorcerConstants, Exec
 	public String state() {
 		return controlContext.getRendezvousName();
 	}
-
+	
 	// Check if this is a Job that will be performed by Spacer
 	public boolean isSpacable() {
 		return  (controlContext.getAccessType().equals(Access.PULL));
@@ -1335,34 +1335,22 @@ public abstract class ServiceExertion implements Exertion, SorcerConstants, Exec
 		return cxt;
 	}
 
-	/**
-	 * <p>
-	 *  Returns the dependency scope for this exertion.
-	 * </p>
-	 * 
-	 * @return the scope
-	 */
-	public ParModel getScope() {
+	public Object getScope() throws RemoteException {
 		return scope;
 	}
-
+	
 	/**
-	 * <p>
-	 * 
 	 * Assigns the dependency scope for this exertion.
-	 * </p>
 	 * 
 	 * @param scope
 	 *            the scope to set
-	 */
-	public void setScope(ParModel scope) {
-		this.scope = scope;
+	 */	
+	public void setScope(Object scope) throws RemoteException, ContextException {
+		this.scope = (Context)scope;
 	}
 
 	/**
-	 * <p>
 	 * Return a list of dependent agents.
-	 * </p>
 	 * 
 	 * @return the dependers
 	 */

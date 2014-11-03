@@ -417,9 +417,9 @@ public class operator {
 		return dburl;
 	}
 	
-	public static FidelityEntry ent(String x1, FidelityInfo x3) {
-		return new FidelityEntry(x1, x3);
-	}
+//	public static FidelityEntry ent(String x1, FidelityInfo x3) {
+//		return new FidelityEntry(x1, x3);
+//	}
 	
 	public static StrategyEntry strategyEnt(String x1, Strategy strategy) {
 		return new StrategyEntry(x1, strategy);

@@ -18,10 +18,13 @@
 package sorcer.core.exertion;
 
 
+import static sorcer.eo.operator.provider;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
-import static sorcer.eo.operator.provider;
+import java.util.List;
+
 import net.jini.core.transaction.Transaction;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.invoker.MethodInvoker;
@@ -124,6 +127,9 @@ public class ObjectTask extends Task {
 					// assume this task context is used by the signature's
 					// provider
 					if (dataContext != null && dataContext.size() > 0) {
+						if (scope != null && scope.size() > 0) {
+							appendScope();
+						}
 						evaluator
 						.setParameterTypes(new Class[] { Context.class });
 						evaluator.setContext(dataContext);
@@ -176,6 +182,17 @@ public class ObjectTask extends Task {
 			result = method.invoke(null, (Object[])null);
 		}
 		return result;
+	}
+	
+	private void appendScope() throws ContextException {
+		if (scope != null) {
+			List<String> paths = dataContext.getPaths();
+			for (String path : paths) {
+				if (dataContext.getValue(path) == Context.none) {
+					dataContext.putValue(path, scope.getValue(path));
+				}
+			}
+		}
 	}
 	
 	public Object getArgs() throws ContextException {
