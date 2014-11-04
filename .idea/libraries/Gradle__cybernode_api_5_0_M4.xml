@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="Gradle: cybernode-api-5.0-M4">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/rioproject/cybernode/cybernode-api/5.0-M4/cybernode-api-5.0-M4.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

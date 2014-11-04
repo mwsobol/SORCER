@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="Gradle: serviceui-2.2.2">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/net/jini/lookup/serviceui/2.2.2/serviceui-2.2.2.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

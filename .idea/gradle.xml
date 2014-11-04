@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="GradleSettings">
+    <option name="linkedExternalProjectsSettings">
+      <GradleProjectSettings>
+        <option name="distributionType" value="LOCAL" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="gradleHome" value="$PROJECT_DIR$/../../opt/gradle-2.1" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/core/sorcer-dl" />
+            <option value="$PROJECT_DIR$/core/sorcer-lib" />
+            <option value="$PROJECT_DIR$/core/sorcer-platform" />
+            <option value="$PROJECT_DIR$/core/sorcer-ui" />
+            <option value="$PROJECT_DIR$/examples" />
+            <option value="$PROJECT_DIR$/examples/eol" />
+            <option value="$PROJECT_DIR$/examples/pml" />
+            <option value="$PROJECT_DIR$/examples/worker" />
+            <option value="$PROJECT_DIR$/sos/sos-cataloger" />
+            <option value="$PROJECT_DIR$/sos/sos-db-prv" />
+            <option value="$PROJECT_DIR$/sos/sos-exertmonitor" />
+            <option value="$PROJECT_DIR$/sos/sos-logger" />
+            <option value="$PROJECT_DIR$/sos/sos-shell" />
+            <option value="$PROJECT_DIR$/tools/sorcer-boot" />
+            <option value="$PROJECT_DIR$/tools/ssb" />
+            <option value="$PROJECT_DIR$/tools/webster" />
+          </set>
+        </option>
+      </GradleProjectSettings>
+    </option>
+  </component>
+</project>
+

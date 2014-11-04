@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="Gradle: resolver-api-5.0-M4">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/rioproject/resolver/resolver-api/5.0-M4/resolver-api-5.0-M4.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

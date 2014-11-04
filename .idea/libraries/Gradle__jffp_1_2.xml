@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="Gradle: jffp-1.2">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/sadun/jffp/1.2/jffp-1.2.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
