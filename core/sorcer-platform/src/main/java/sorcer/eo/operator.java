@@ -16,62 +16,19 @@
  */
 package sorcer.eo;
 
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.Method;
-import java.net.InetAddress;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.logging.Logger;
-
 import net.jini.core.lookup.ServiceItem;
 import net.jini.core.lookup.ServiceTemplate;
 import net.jini.core.transaction.Transaction;
 import sorcer.co.operator.DataEntry;
-import sorcer.co.tuple.Entry;
-import sorcer.co.tuple.EntryList;
-import sorcer.co.tuple.ExecPath;
-import sorcer.co.tuple.InoutEntry;
-import sorcer.co.tuple.InputEntry;
-import sorcer.co.tuple.OutputEntry;
-import sorcer.co.tuple.Path;
-import sorcer.co.tuple.Tuple2;
+import sorcer.co.tuple.*;
 import sorcer.core.ComponentFidelityInfo;
 import sorcer.core.SorcerConstants;
-import sorcer.core.context.ArrayContext;
-import sorcer.core.context.ContextLink;
-import sorcer.core.context.ControlContext;
-import sorcer.core.context.FidelityContext;
-import sorcer.core.context.ListContext;
-import sorcer.core.context.PositionalContext;
-import sorcer.core.context.ServiceContext;
-import sorcer.core.context.SharedAssociativeContext;
-import sorcer.core.context.SharedIndexedContext;
-import sorcer.core.context.ThrowableTrace;
+import sorcer.core.context.*;
 import sorcer.core.context.model.PoolStrategy;
 import sorcer.core.context.model.par.Par;
 import sorcer.core.context.model.par.ParModel;
 import sorcer.core.deploy.ServiceDeployment;
-import sorcer.core.exertion.AltExertion;
-import sorcer.core.exertion.AntTask;
-import sorcer.core.exertion.EvaluationTask;
-import sorcer.core.exertion.LoopExertion;
-import sorcer.core.exertion.NetBlock;
-import sorcer.core.exertion.NetJob;
-import sorcer.core.exertion.NetTask;
-import sorcer.core.exertion.ObjectBlock;
-import sorcer.core.exertion.ObjectJob;
-import sorcer.core.exertion.ObjectTask;
-import sorcer.core.exertion.OptExertion;
+import sorcer.core.exertion.*;
 import sorcer.core.provider.DatabaseStorer.Store;
 import sorcer.core.provider.Exerter;
 import sorcer.core.provider.Jobber;
@@ -82,59 +39,26 @@ import sorcer.core.provider.rendezvous.ServiceConcatenator;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.core.provider.rendezvous.ServiceRendezvous;
 import sorcer.core.provider.rendezvous.ServiceSpacer;
-import sorcer.core.signature.AntSignature;
-import sorcer.core.signature.EvaluationSignature;
-import sorcer.core.signature.NetSignature;
-import sorcer.core.signature.ObjectSignature;
-import sorcer.core.signature.ServiceSignature;
-import sorcer.service.Accessor;
-import sorcer.service.Arg;
-import sorcer.service.Block;
-import sorcer.service.Condition;
-import sorcer.service.Context;
-import sorcer.service.ContextException;
-import sorcer.service.Evaluation;
-import sorcer.service.EvaluationException;
-import sorcer.service.Evaluator;
-import sorcer.service.Exec;
-import sorcer.service.Executor;
-import sorcer.service.Exertion;
-import sorcer.service.ExertionException;
-import sorcer.service.FidelityInfo;
-import sorcer.service.Identifiable;
-import sorcer.service.Invocation;
-import sorcer.service.Job;
-import sorcer.service.Link;
-import sorcer.service.Mappable;
-import sorcer.service.NoneException;
-import sorcer.service.Paradigmatic;
-import sorcer.service.Positioning;
-import sorcer.service.Reactive;
-import sorcer.service.Scopable;
-import sorcer.service.Service;
-import sorcer.service.ServiceExertion;
-import sorcer.service.ServiceFidelity;
-import sorcer.service.SetterException;
-import sorcer.service.Signature;
-import sorcer.service.Signature.Direction;
-import sorcer.service.Signature.Kind;
-import sorcer.service.Signature.Operating;
-import sorcer.service.Signature.ReturnPath;
-import sorcer.service.Signature.Type;
-import sorcer.service.SignatureException;
-import sorcer.service.Strategy.Access;
-import sorcer.service.Strategy.Flow;
-import sorcer.service.Strategy.Monitor;
-import sorcer.service.Strategy.Opti;
-import sorcer.service.Strategy.Provision;
-import sorcer.service.Strategy.Wait;
-import sorcer.service.Task;
+import sorcer.core.signature.*;
+import sorcer.service.*;
+import sorcer.service.Signature.*;
+import sorcer.service.Strategy.*;
 import sorcer.service.modeling.Variability;
 import sorcer.util.Loop;
 import sorcer.util.ObjectCloner;
 import sorcer.util.ServiceAccessor;
 import sorcer.util.Sorcer;
 import sorcer.util.url.sos.SdbUtil;
+
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Method;
+import java.net.InetAddress;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.rmi.RemoteException;
+import java.util.*;
+import java.util.logging.Logger;
 
 
 /**
@@ -727,6 +651,11 @@ public class operator {
 		}
 		return null;
 	}
+
+    public static Paradigmatic model(Paradigmatic paradigm) {
+        paradigm.setModeling(true);
+        return paradigm;
+    }
 
 	public static Paradigmatic modeling(Paradigmatic paradigm, boolean modeling) {
 		paradigm.setModeling(modeling);
