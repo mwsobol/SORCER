@@ -112,6 +112,14 @@ public class operator {
 		return elems;
 	}
 	
+	public static Class[] types(Class... classes) {
+		return classes;
+	}
+	
+	public static Object[] typeArgs(Object... args) {
+		return args;
+	}
+	
 	public static <T> T[] array(T... elems) {
 		return elems;
 	}

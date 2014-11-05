@@ -16,40 +16,6 @@
  */
 package sorcer.eo;
 
-import net.jini.core.lookup.ServiceItem;
-import net.jini.core.lookup.ServiceTemplate;
-import net.jini.core.transaction.Transaction;
-import sorcer.co.operator.DataEntry;
-import sorcer.co.tuple.*;
-import sorcer.core.ComponentFidelityInfo;
-import sorcer.core.SorcerConstants;
-import sorcer.core.context.*;
-import sorcer.core.context.model.PoolStrategy;
-import sorcer.core.context.model.par.Par;
-import sorcer.core.context.model.par.ParModel;
-import sorcer.core.deploy.ServiceDeployment;
-import sorcer.core.exertion.*;
-import sorcer.core.provider.DatabaseStorer.Store;
-import sorcer.core.provider.Exerter;
-import sorcer.core.provider.Jobber;
-import sorcer.core.provider.Provider;
-import sorcer.core.provider.Spacer;
-import sorcer.core.provider.exerter.ExertionDispatcher;
-import sorcer.core.provider.rendezvous.ServiceConcatenator;
-import sorcer.core.provider.rendezvous.ServiceJobber;
-import sorcer.core.provider.rendezvous.ServiceRendezvous;
-import sorcer.core.provider.rendezvous.ServiceSpacer;
-import sorcer.core.signature.*;
-import sorcer.service.*;
-import sorcer.service.Signature.*;
-import sorcer.service.Strategy.*;
-import sorcer.service.modeling.Variability;
-import sorcer.util.Loop;
-import sorcer.util.ObjectCloner;
-import sorcer.util.ServiceAccessor;
-import sorcer.util.Sorcer;
-import sorcer.util.url.sos.SdbUtil;
-
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
@@ -57,8 +23,119 @@ import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.rmi.RemoteException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.logging.Logger;
+
+import net.jini.core.lookup.ServiceItem;
+import net.jini.core.lookup.ServiceTemplate;
+import net.jini.core.transaction.Transaction;
+import sorcer.co.operator.DataEntry;
+import sorcer.co.tuple.Entry;
+import sorcer.co.tuple.EntryList;
+import sorcer.co.tuple.ExecPath;
+import sorcer.co.tuple.InoutEntry;
+import sorcer.co.tuple.InputEntry;
+import sorcer.co.tuple.OutputEntry;
+import sorcer.co.tuple.Path;
+import sorcer.co.tuple.Tuple2;
+import sorcer.core.ComponentFidelityInfo;
+import sorcer.core.SorcerConstants;
+import sorcer.core.context.ArrayContext;
+import sorcer.core.context.ContextLink;
+import sorcer.core.context.ControlContext;
+import sorcer.core.context.FidelityContext;
+import sorcer.core.context.ListContext;
+import sorcer.core.context.PositionalContext;
+import sorcer.core.context.ServiceContext;
+import sorcer.core.context.SharedAssociativeContext;
+import sorcer.core.context.SharedIndexedContext;
+import sorcer.core.context.ThrowableTrace;
+import sorcer.core.context.model.PoolStrategy;
+import sorcer.core.context.model.par.Par;
+import sorcer.core.context.model.par.ParModel;
+import sorcer.core.deploy.ServiceDeployment;
+import sorcer.core.exertion.AltExertion;
+import sorcer.core.exertion.AntTask;
+import sorcer.core.exertion.EvaluationTask;
+import sorcer.core.exertion.LoopExertion;
+import sorcer.core.exertion.NetBlock;
+import sorcer.core.exertion.NetJob;
+import sorcer.core.exertion.NetTask;
+import sorcer.core.exertion.ObjectBlock;
+import sorcer.core.exertion.ObjectJob;
+import sorcer.core.exertion.ObjectTask;
+import sorcer.core.exertion.OptExertion;
+import sorcer.core.provider.DatabaseStorer.Store;
+import sorcer.core.provider.Exerter;
+import sorcer.core.provider.Jobber;
+import sorcer.core.provider.Provider;
+import sorcer.core.provider.ProviderName;
+import sorcer.core.provider.Spacer;
+import sorcer.core.provider.exerter.ExertionDispatcher;
+import sorcer.core.provider.rendezvous.ServiceConcatenator;
+import sorcer.core.provider.rendezvous.ServiceJobber;
+import sorcer.core.provider.rendezvous.ServiceRendezvous;
+import sorcer.core.provider.rendezvous.ServiceSpacer;
+import sorcer.core.signature.AntSignature;
+import sorcer.core.signature.EvaluationSignature;
+import sorcer.core.signature.NetSignature;
+import sorcer.core.signature.ObjectSignature;
+import sorcer.core.signature.ServiceSignature;
+import sorcer.service.Accessor;
+import sorcer.service.Arg;
+import sorcer.service.Block;
+import sorcer.service.Condition;
+import sorcer.service.Context;
+import sorcer.service.ContextException;
+import sorcer.service.Evaluation;
+import sorcer.service.EvaluationException;
+import sorcer.service.Evaluator;
+import sorcer.service.Exec;
+import sorcer.service.Executor;
+import sorcer.service.Exertion;
+import sorcer.service.ExertionException;
+import sorcer.service.FidelityInfo;
+import sorcer.service.Identifiable;
+import sorcer.service.Invocation;
+import sorcer.service.Job;
+import sorcer.service.Link;
+import sorcer.service.Mappable;
+import sorcer.service.NoneException;
+import sorcer.service.Paradigmatic;
+import sorcer.service.Positioning;
+import sorcer.service.Reactive;
+import sorcer.service.Scopable;
+import sorcer.service.Service;
+import sorcer.service.ServiceExertion;
+import sorcer.service.ServiceFidelity;
+import sorcer.service.SetterException;
+import sorcer.service.Signature;
+import sorcer.service.Signature.Direction;
+import sorcer.service.Signature.Kind;
+import sorcer.service.Signature.Operating;
+import sorcer.service.Signature.ReturnPath;
+import sorcer.service.Signature.Type;
+import sorcer.service.SignatureException;
+import sorcer.service.Strategy.Access;
+import sorcer.service.Strategy.Flow;
+import sorcer.service.Strategy.Monitor;
+import sorcer.service.Strategy.Opti;
+import sorcer.service.Strategy.Provision;
+import sorcer.service.Strategy.Wait;
+import sorcer.service.Task;
+import sorcer.service.modeling.Variability;
+import sorcer.util.Loop;
+import sorcer.util.ObjectCloner;
+import sorcer.util.ServiceAccessor;
+import sorcer.util.Sorcer;
+import sorcer.util.url.sos.SdbUtil;
 
 
 /**
@@ -684,29 +761,51 @@ public class operator {
 		return signature.getSelector();
 	}
 	
-	public static Signature sig(Class<?> serviceType, String providerName,
-			Arg... parameters) throws SignatureException {
-		return sig(null, serviceType, Sorcer.getActualName(providerName),
-				parameters);
+//	public static Signature sig(Class<?> serviceType, String providerName,
+//			Arg... parameters) throws SignatureException {
+//		return sig(null, serviceType, new Sorcer.getActualName(providerName),
+//				parameters);
+//	}
+	
+//	public static Signature sig(String operation, Class serviceType,
+//			String providerName) throws SignatureException {
+//		return sig(operation, serviceType, providerName, (Arg[])null);
+//	}
+			
+//	public static Signature sig(String operation, Class serviceType, 
+//			String providerName, Arg... args)
+//			throws SignatureException {
+	
+	public static Signature sig(String operation, Class serviceType)
+			throws SignatureException {
+		return sig(operation, serviceType, new Arg[] {});
 	}
 	
 	public static Signature sig(String operation, Class serviceType,
-			String providerName) throws SignatureException {
-		return sig(operation, serviceType, providerName, (Arg[])null);
+			String initSetector) throws SignatureException {
+		try {
+			return new ObjectSignature(operation, serviceType, initSetector, 
+					(Class<?>[])null, (Object[])null);
+		} catch (Exception e) {
+			throw new SignatureException(e);
+		} 
 	}
-			
-	public static Signature sig(String operation, Class serviceType, 
-			String providerName, Arg... args)
+
+	public static Signature sig(String operation, Class serviceType,  Arg... args)
 			throws SignatureException {
-		if (args == null) {
-			return sig(operation, serviceType, providerName, (Class[])null);
+		String providerName = null;
+		if (args != null) {
+			for (Object o : args) {
+				if (o instanceof ProviderName)
+					providerName = Sorcer.getActualName(((ProviderName)o).getName());
+			}
 		}
 		Signature sig = null;
 		if (serviceType.isInterface()) {
-			sig = new NetSignature(operation, serviceType,
-					Sorcer.getActualName(providerName));
+			sig = new NetSignature(operation, serviceType, providerName);
 		} else {
 			sig = new ObjectSignature(operation, serviceType);
+			sig.setProviderName(providerName);
 		}
 		
 		if (args.length > 0) {
@@ -731,6 +830,10 @@ public class operator {
 		return sig;
 	}
 
+	public static ProviderName prvName(String name) {
+		return new ProviderName(name);
+	}
+	
 	public static Signature sig(String selector) throws SignatureException {
 		return new ServiceSignature(selector);
 	}
@@ -747,15 +850,15 @@ public class operator {
 		return signture;
 	}
 	
-	public static Signature sig(String operation, Class serviceType,
-			List<net.jini.core.entry.Entry> attributes)
-			throws SignatureException {
-		NetSignature op = new NetSignature();
-		op.setAttributes(attributes);
-		op.setServiceType(serviceType);
-		op.setSelector(operation);
-		return op;
-	}
+//	public static Signature sig(String operation, Class serviceType,
+//			List<net.jini.core.entry.Entry> attributes)
+//			throws SignatureException {
+//		NetSignature op = new NetSignature();
+//		op.setAttributes(attributes);
+//		op.setServiceType(serviceType);
+//		op.setSelector(operation);
+//		return op;
+//	}
 
 	public static Signature sig(Class<?> serviceType) throws SignatureException {
 		if (serviceType == ServiceJobber.class ||
@@ -830,12 +933,12 @@ public class operator {
 		return new EvaluationTask(signature, context);
 	}
 
-	public static ObjectSignature sig(String operation, Object object, ServiceDeployment deployment,
-			Class... types) throws SignatureException {
-		ObjectSignature signature = sig(operation, object, types);
-		signature.setDeployment(deployment);
-		return signature;
-	}
+//	public static ObjectSignature sig(String operation, Object serviceType, ServiceDeployment deployment,
+//			Class... types) throws SignatureException {
+//		ObjectSignature signature = sig(operation, serviceType, types);
+//		signature.setDeployment(deployment);
+//		return signature;
+//	}
 	
 	public static FidelityInfo sFi(String name) {
 		return new FidelityInfo(name);
@@ -871,13 +974,21 @@ public class operator {
 		return new ServiceFidelity(name, signatures);		
 	}
 				
+	public static ObjectSignature sig(String operation, Object object)
+			throws SignatureException {
+		return sig(operation, object, (String) null, null, null);
+	}
+			
 	public static ObjectSignature sig(String operation, Object object, 
-			Class... types) throws SignatureException {
-		return sig(operation, object, (String)null, types);
+			Class[] types, Object... args) throws SignatureException {
+		if (args == null || args.length == 0)
+			return sig(operation, object, (String)null, types);
+		else
+			return sig(operation, object, (String)null, types, args);
 	}
 	
 	public static ObjectSignature sig(String operation, Object object, String initOperation,
-			Class... types) throws SignatureException {
+			Class[] types) throws SignatureException {
 		try {
 			if (object instanceof Class && ((Class) object).isInterface()) {
 				if (initOperation != null)
@@ -898,7 +1009,7 @@ public class operator {
 	}
 
 	public static ObjectSignature sig(String selector, Object object, String initSelector,
-			Class<?>[] types, Object[] args) throws SignatureException {
+			Class[] types, Object[] args) throws SignatureException {
 		try {
 			return new ObjectSignature(selector, object, initSelector, types, args);
 		} catch (Exception e) {
@@ -1055,16 +1166,22 @@ public class operator {
 		return (E) exertion(name, elems);
 	}
 	
-	public static <T extends Object, E extends Exertion> E service(T... elems)
+	public static <T extends Object, E extends Exertion> E service(T... items)
 			throws ExertionException, ContextException, SignatureException {
-		return (E) exertion(null, elems);
+		String name = "unknown" + count++;
+		for (T i : items) {
+			if (i instanceof String) {
+				name = (String)i;
+			}
+		}
+		return (E) exertion(name, items);
 	}
 	
-	public static <T extends Object, E extends Exertion> E service(String name,
-			T... elems) throws ExertionException, ContextException,
-			SignatureException {
-		return (E) exertion(name, elems);
-	}
+//	public static <T extends Object, E extends Exertion> E service(String name,
+//			T... elems) throws ExertionException, ContextException,
+//			SignatureException {
+//		return (E) exertion(name, elems);
+//	}
 
 	public static <T extends Object, E extends Exertion> E xrt(String name,
 			T... elems) throws ExertionException, ContextException,
@@ -2279,7 +2396,7 @@ public class operator {
 		}
 	}
 	
-	public static class CodebaseJars {
+	public static class CodebaseJars  {
 		public String[] jars;
 		
 		CodebaseJars(String... jarNames) {

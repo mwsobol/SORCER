@@ -26,6 +26,7 @@ import static sorcer.eo.operator.maintain;
 import static sorcer.eo.operator.out;
 import static sorcer.eo.operator.pipe;
 import static sorcer.eo.operator.provider;
+import static sorcer.eo.operator.prvName;
 import static sorcer.eo.operator.result;
 import static sorcer.eo.operator.sFi;
 import static sorcer.eo.operator.sFis;
@@ -406,7 +407,7 @@ public class NetArithmetic implements SorcerConstants {
 	
 	@Test
 	public void contexterTest() throws Exception {
-		Task cxtt = task("getAddContext", sig("getContext", Contexter.class, "Add Contexter"),
+		Task cxtt = task("getAddContext", sig("getContext", Contexter.class, prvName("Add Contexter")),
 				context("add", input("arg/x1"), input("arg/x2")));
 		 
 		Context result = context(exert(cxtt));
@@ -415,13 +416,13 @@ public class NetArithmetic implements SorcerConstants {
 		assertEquals(get(result, "arg/x1"), 20.0);
 		assertEquals(get(result, "arg/x2"), 80.0);
 	
-		cxtt = task("appendContext", sig("appendContext", Contexter.class, "Add Contexter"),
+		cxtt = task("appendContext", sig("appendContext", Contexter.class, prvName("Add Contexter")),
 				context("add", inEnt("arg/x1", 200.0), inEnt("arg/x2", 800.0)));
 
 		result = context(exert(cxtt));
 //		logger.info("contexter context 2: " + result);
 
-		cxtt = task("getAddContext", sig("getContext", Contexter.class, "Add Contexter"),
+		cxtt = task("getAddContext", sig("getContext", Contexter.class, prvName("Add Contexter")),
 				context("add", input("arg/x1"), input("arg/x2")));
 
 		result = context(exert(cxtt));
@@ -431,7 +432,7 @@ public class NetArithmetic implements SorcerConstants {
 		assertEquals(get(result, "arg/x2"), 800.0);
 		
 		// reset the contexter
-		cxtt = task("appendContext", sig("appendContext", Contexter.class, "Add Contexter"),
+		cxtt = task("appendContext", sig("appendContext", Contexter.class, prvName("Add Contexter")),
 				context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0)));
 
 		result = context(exert(cxtt));
@@ -443,7 +444,7 @@ public class NetArithmetic implements SorcerConstants {
 	@Test
 	public void netContexterTaskTest() throws Exception {
 		Task t5 = task("t5", sig("add", Adder.class), 
-					sig("getContext", Contexter.class, "Add Contexter", Signature.APD),
+					sig("getContext", Contexter.class, prvName("Add Contexter"), Signature.APD),
 					context("add", inEnt("arg/x1"), inEnt("arg/x2"),
 						result("result/y")));
 
@@ -498,7 +499,7 @@ public class NetArithmetic implements SorcerConstants {
 	@Test
 	public void arithmeticJobExertleter() throws Exception {
 		// get the current value of the exertlet
-		Task task = task("eval", sig("getValue", Evaluation.class, "Arithmetic Exertleter"));
+		Task task = task("eval", sig("getValue", Evaluation.class, prvName("Arithmetic Exertleter")));
 		logger.info("j1/t3/result/y: " + value(task, "j1/t3/result/y"));
 		assertEquals(value(task, "j1/t3/result/y"), 400.0);
 	
@@ -508,7 +509,7 @@ public class NetArithmetic implements SorcerConstants {
 		Context invokeContext = context("invoke");
 		link(invokeContext, "t4", multiplyContext);
 		link(invokeContext, "t5", addContext);
-		task = task("invoke", sig("invoke", Invocation.class, "Arithmetic Exertleter"), invokeContext);
+		task = task("invoke", sig("invoke", Invocation.class, prvName("Arithmetic Exertleter")), invokeContext);
 		logger.info("j1/t3/result/y: " + value(task, "j1/t3/result/y"));
 		assertEquals(value(task, "j1/t3/result/y"), 500.0);
 	
@@ -518,7 +519,7 @@ public class NetArithmetic implements SorcerConstants {
 		invokeContext = context("invoke");
 		link(invokeContext, "t4", multiplyContext);
 		link(invokeContext, "t5", addContext);
-		task = task("invoke", sig("invoke", Invocation.class, "Arithmetic Exertleter"), invokeContext);
+		task = task("invoke", sig("invoke", Invocation.class, prvName("Arithmetic Exertleter")), invokeContext);
 //		logger.info("j1/t3/result/y: " + value(task, "j1/t3/result/y"));
 		assertEquals(value(task, "j1/t3/result/y"), 1210.0);		
 				
@@ -528,7 +529,7 @@ public class NetArithmetic implements SorcerConstants {
 		invokeContext = context("invoke");
 		link(invokeContext, "t4", multiplyContext);
 		link(invokeContext, "t5", addContext);
-		task = task("invoke", sig("invoke", Invocation.class, "Arithmetic Exertleter"), invokeContext);
+		task = task("invoke", sig("invoke", Invocation.class, prvName("Arithmetic Exertleter")), invokeContext);
 //		logger.info("j1/t3/result/y: " + value(task, "j1/t3/result/y"));
 		assertEquals(value(task, "j1/t3/result/y"), 400.0);
 	}

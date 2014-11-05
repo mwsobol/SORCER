@@ -60,7 +60,6 @@ import sorcer.util.ProviderAccessor;
  * task one. The {@link sorcer.core.context.PositionalContext} is used for requestor's
  * data in this test.
  * 
- * @see ArithmeticTester
  * @author Mike Sobolewski
  */
 @SuppressWarnings("unchecked")
