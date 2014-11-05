@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+version = sorcerVersion
+
 dependencies {
     compile project(':sorcer-platform')
 	compile "org.apache.river:start:${riverVersion}",

@@ -1,8 +1,11 @@
 //project.jar.enabled = false
 
+version = sorcerVersion
+
 jar {
 	manifest {
-		attributes("Implementation-Title": "SORCER Exertion-Oriented Languagr (EOL)", "Implementation-Version": version)
+		attributes("Implementation-Title": "SORCER Exertion-Oriented Language (EOL)",
+                   "Implementation-Version": version)
 	}
 	//baseName = "arithmetic-impl"
 	classifier = "prv"
@@ -14,7 +17,8 @@ jar {
 
 task arithmeticPrvDlJar(type: Jar) {
 	manifest {
-		attributes("Implementation-Title": "SORCER Arithmetic Exported Classes", "Implementation-Version": version)
+		attributes("Implementation-Title": "SORCER Arithmetic Exported Classes",
+                   "Implementation-Version": version)
 	}
 	//baseName = "arithmetic-dl"
     classifier = "dl"
@@ -25,7 +29,8 @@ task arithmeticPrvDlJar(type: Jar) {
 
 task arithmeticReqJar(type: Jar) {
 	manifest {
-		attributes("Implementation-Title": "SORCER Arithmetic Requestor", "Implementation-Version": version)
+		attributes("Implementation-Title": "SORCER Arithmetic Requestor",
+                   "Implementation-Version": version)
 	}
 	classifier = "req"
 	dependsOn classes
@@ -35,7 +40,8 @@ task arithmeticReqJar(type: Jar) {
 
 task arithmeticPrvUiJar(type: Jar) {
 	manifest {
-		attributes("Implementation-Title": "SORCER Arithmetic Service UI", "Implementation-Version": version)
+		attributes("Implementation-Title": "SORCER Arithmetic Service UI",
+                   "Implementation-Version": version)
 	}
     classifier = "ui"
 	dependsOn classes
@@ -57,4 +63,20 @@ dependencies {
 	compile project(':sorcer-platform')
     compile project(':sorcer-lib')
     compile project(':sos-db-prv')
+    testCompile project(':sorcer-test')
+    testRuntime libs.slf4j
+}
+
+bootme {
+    starterConfig = file("${projectDir.path}/configs/start-all.config")
+}
+
+test {
+    systemProperty "java.rmi.server.codebase",
+                   "${websterUrl}/eol-${version}-dl.jar ${websterUrl}/sorcer-dl-${version}.jar ${websterUrl}/jsk-dl-${riverVersion}.jar"
+    testLogging {
+        events "passed", "skipped", "failed", "standardOut", "standardError"
+    }
+    //dependsOn([install, bootme])
+    finalizedBy(stopme)
 }

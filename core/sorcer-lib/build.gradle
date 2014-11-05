@@ -1,4 +1,7 @@
-jar {  
+
+version = sorcerVersion
+
+jar {
 	manifest {
 		attributes("Implementation-Title": "SORCER Requestor Support", "Implementation-Version": version)
        }
@@ -13,8 +16,4 @@ dependencies {
 
 test {
 	systemProperty "java.security.policy", "${project.projectDir.path}/src/test/resources/policy/policy.all"
-	if(System.getenv("IGRID_HOME")==null)
-		println "You may have problems running tests since IGRID_HOME is not set!"
-	else
-		systemProperty "iGrid.home", System.getenv("IGRID_HOME")
 }

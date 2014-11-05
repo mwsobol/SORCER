@@ -1,63 +1,29 @@
 package sorcer.eol.contexts;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static sorcer.co.operator.entry;
-import static sorcer.co.operator.inEntry;
-import static sorcer.co.operator.inoutEntry;
-import static sorcer.co.operator.key;
-import static sorcer.co.operator.list;
-import static sorcer.co.operator.listContext;
-import static sorcer.co.operator.outEntry;
-import static sorcer.co.operator.path;
-import static sorcer.eo.operator.add;
-import static sorcer.eo.operator.asis;
-import static sorcer.eo.operator.*;
-import static sorcer.eo.operator.get;
-import static sorcer.eo.operator.getAt;
-import static sorcer.eo.operator.inPaths;
-import static sorcer.eo.operator.inValues;
-import static sorcer.eo.operator.link;
-import static sorcer.eo.operator.mark;
-import static sorcer.eo.operator.marker;
-import static sorcer.eo.operator.outPaths;
-import static sorcer.eo.operator.outValues;
-import static sorcer.eo.operator.put;
-import static sorcer.eo.operator.select;
-import static sorcer.eo.operator.value;
-import static sorcer.eo.operator.valuesAt;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.sorcer.test.SorcerTestRunner;
+import sorcer.co.tuple.Entry;
+import sorcer.core.context.ListContext;
+import sorcer.service.Context;
 
 import java.util.logging.Logger;
 
-import org.junit.Test;
-
-import sorcer.co.tuple.Entry;
-import sorcer.core.context.ContextLink;
-import sorcer.core.context.ListContext;
-import sorcer.core.context.PositionalContext;
-import sorcer.core.context.ServiceContext;
-import sorcer.service.Context;
-import sorcer.util.Sorcer;
+import static org.junit.Assert.*;
+import static sorcer.co.operator.*;
+import static sorcer.co.operator.list;
+import static sorcer.co.operator.path;
+import static sorcer.eo.operator.*;
+import static sorcer.eo.operator.put;
+import static sorcer.eo.operator.value;
 
 /**
  * @author Mike Sobolewski
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
+@RunWith(SorcerTestRunner.class)
 public class ContextTest {
-	
 	private final static Logger logger = Logger.getLogger(ContextTest.class.getName());
-	
-	static {
-		System.setProperty("java.security.policy", Sorcer.getHome()
-				+ "/configs/policy.all");
-		System.setSecurityManager(new SecurityManager());
-		Sorcer.setCodeBase(new String[] { "arithmetic-dl.jar",  "sorcer-dl.jar" });
-		System.out.println("CLASSPATH :" + System.getProperty("java.class.path"));
-		System.setProperty("java.protocol.handler.pkgs", "sorcer.util.url|org.rioproject.url");
-//		System.setProperty("java.rmi.server.RMIClassLoaderSpi","org.rioproject.rmi.ResolvingLoader");	
-	}
-
 	
 	@Test
 	public void contextOperator() throws Exception {

@@ -4,10 +4,14 @@ include 'sorcer-platform'
 project(":sorcer-platform").projectDir = file("core/sorcer-platform")
 include 'sorcer-lib'
 project(":sorcer-lib").projectDir = file("core/sorcer-lib")
+
+include 'sorcer-test'
+project(":sorcer-test").projectDir = file("tools/sorcer-test")
+
 include 'sorcer-ui'
 project(":sorcer-ui").projectDir = file("core/sorcer-ui")
-include 'sos-shell'
-project(":sos-shell").projectDir = file("sos/sos-shell")
+//include 'sos-shell'
+//project(":sos-shell").projectDir = file("sos/sos-shell")
 include 'sos-cataloger'
 project(":sos-cataloger").projectDir = file("sos/sos-cataloger")
 include 'sos-db-prv'

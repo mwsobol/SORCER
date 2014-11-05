@@ -94,6 +94,7 @@ public class SOS implements SorcerConstants {
 	}
 	
     public static String deriveSorcerHome() {
+        new Throwable().printStackTrace();
         String sorcerHome = null;
 		getSorcerVersion();
 		if(sorcerVersion!=null) {
@@ -106,10 +107,10 @@ public class SOS implements SorcerConstants {
                 logger.info("Loading " + path);
                 File sorcerPlatformJar = new File(path);
     	        File directory = sorcerPlatformJar.getParentFile();
-		        while(directory.getName()!=null && !directory.getName().endsWith(sorcerVersion)) {
+		        while(directory!=null && !directory.getName().endsWith(sorcerVersion)) {
 		        	directory = directory.getParentFile();
 		        }
-				sorcerHome = directory.getPath();
+				sorcerHome = directory!=null?directory.getPath():null;
 		        logger.info("SORCER_HOME: "+sorcerHome);
             }
 	    }

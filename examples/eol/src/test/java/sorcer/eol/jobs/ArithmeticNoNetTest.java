@@ -1,35 +1,7 @@
 package sorcer.eol.jobs;
 
-import static org.junit.Assert.assertEquals;
-import static sorcer.co.operator.entry;
-import static sorcer.co.operator.from;
-import static sorcer.co.operator.inEntry;
-import static sorcer.co.operator.input;
-import static sorcer.co.operator.outEntry;
-import static sorcer.eo.operator.context;
-import static sorcer.eo.operator.cxt;
-import static sorcer.eo.operator.exert;
-import static sorcer.eo.operator.get;
-import static sorcer.eo.operator.in;
-import static sorcer.eo.operator.job;
-import static sorcer.eo.operator.out;
-import static sorcer.eo.operator.pipe;
-import static sorcer.eo.operator.result;
-import static sorcer.eo.operator.sig;
-import static sorcer.eo.operator.srv;
-import static sorcer.eo.operator.task;
-import static sorcer.eo.operator.type;
-import static sorcer.eo.operator.value;
-import static sorcer.po.operator.invoker;
-import static sorcer.po.operator.par;
-import static sorcer.po.operator.parModel;
-import static sorcer.po.operator.pars;
-import static sorcer.po.operator.put;
-
-import java.util.logging.Logger;
-
+import org.junit.BeforeClass;
 import org.junit.Test;
-
 import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.arithmetic.provider.impl.AveragerImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
@@ -42,7 +14,20 @@ import sorcer.service.Context;
 import sorcer.service.Job;
 import sorcer.service.Signature;
 import sorcer.service.Task;
-import sorcer.util.Sorcer;
+
+import java.util.logging.Logger;
+
+import static org.junit.Assert.assertEquals;
+import static sorcer.co.operator.*;
+import static sorcer.co.operator.input;
+import static sorcer.eo.operator.*;
+import static sorcer.eo.operator.get;
+import static sorcer.eo.operator.in;
+import static sorcer.eo.operator.pipe;
+import static sorcer.eo.operator.result;
+import static sorcer.eo.operator.value;
+import static sorcer.po.operator.*;
+import static sorcer.po.operator.put;
 
 
 
@@ -52,18 +37,12 @@ import sorcer.util.Sorcer;
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class ArithmeticNoNetTest implements SorcerConstants {
 
-	private final static Logger logger = Logger
-			.getLogger(ArithmeticNoNetTest.class.getName());
+	private final static Logger logger = Logger.getLogger(ArithmeticNoNetTest.class.getName());
 
-	static {
-		System.setProperty("java.security.policy", Sorcer.getHome()
-				+ "/configs/policy.all");
-		System.setSecurityManager(new SecurityManager());
-		Sorcer.setCodeBase(new String[] { "arithmetic-dl.jar",
-				"sorcer-dl.jar" });
-		System.out.println("CLASSPATH :"
-				+ System.getProperty("java.class.path"));
-	}
+    @BeforeClass
+    public static void setup() {
+        System.setSecurityManager(new SecurityManager());
+    }
 	
 	@Test
 	public void exertAdderProviderTest() throws Exception {

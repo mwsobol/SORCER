@@ -1,19 +1,10 @@
 package sorcer.eol.services;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static sorcer.co.operator.inEntry;
-import static sorcer.eo.operator.args;
-import static sorcer.eo.operator.context;
-import static sorcer.eo.operator.parameterTypes;
-import static sorcer.eo.operator.provider;
-import static sorcer.eo.operator.result;
-import static sorcer.eo.operator.selector;
-import static sorcer.eo.operator.service;
-import static sorcer.eo.operator.sig;
-import static sorcer.eo.operator.type;
-import static sorcer.eo.operator.value;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import sorcer.arithmetic.provider.Adder;
+import sorcer.arithmetic.provider.impl.AdderImpl;
+import sorcer.service.*;
 
 import java.io.IOException;
 import java.lang.reflect.Proxy;
@@ -21,18 +12,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.logging.Logger;
 
-import org.junit.Test;
-
-import sorcer.arithmetic.provider.Adder;
-import sorcer.arithmetic.provider.impl.AdderImpl;
-import sorcer.service.Context;
-import sorcer.service.ContextException;
-import sorcer.service.EvaluationException;
-import sorcer.service.ExertionException;
-import sorcer.service.Service;
-import sorcer.service.Signature;
-import sorcer.service.SignatureException;
-import sorcer.util.Sorcer;
+import static org.junit.Assert.*;
+import static sorcer.co.operator.inEntry;
+import static sorcer.eo.operator.*;
 
 
 /**
@@ -40,22 +22,12 @@ import sorcer.util.Sorcer;
  */
 @SuppressWarnings({ "rawtypes", "unchecked" } )
 public class SignatureTest {
-	private final static Logger logger = Logger
-			.getLogger(SignatureTest.class.getName());
+	private final static Logger logger = Logger.getLogger(SignatureTest.class.getName());
 
-	static {
-		String version = "5.0.0-SNAPSHOT";
-		System.setProperty("java.util.logging.config.file",
-				Sorcer.getHome() + "/configs/sorcer.logging");
-		System.setProperty("java.security.policy", Sorcer.getHome()
-				+ "/configs/policy.all");
-		System.setSecurityManager(new SecurityManager());
-		Sorcer.setCodeBase(new String[] { "arithmetic-" + version + "-dl.jar",  "sorcer-dl-"+version +".jar" });
-		
-		System.setProperty("java.protocol.handler.pkgs", "sorcer.util.url|org.rioproject.url");
-		System.setProperty("java.rmi.server.RMIClassLoaderSpi","org.rioproject.rmi.ResolvingLoader");
-	}
-	
+    @BeforeClass
+    public static void setup() {
+        System.setSecurityManager(new SecurityManager());
+    }
 	
 	@Test
 	public void referencingObjectsAsProviders() throws SignatureException,

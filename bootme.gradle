@@ -1,0 +1,84 @@
+apply plugin: BootMePlugin
+apply plugin: StopMePlugin
+
+
+class BootMePlugin implements Plugin<Project> {
+
+    void apply(Project project) {
+        project.extensions.create("bootme", BootMePluginExtension)
+        // Add a task that uses the configuration
+        project.task('bootme') << {
+            println project.name
+            StringBuilder java = new StringBuilder()
+            java.append(System.getProperty('java.home')).append("/bin/java")
+
+            def args = []
+            if (System.getProperty("os.name").startsWith("Windows")) {
+                args << "cmd.exe"
+                args << "/C"
+            }
+            args << java.toString()
+            args << "-cp"
+            args << project.bootClassPath.getAsPath()
+            args << "-Dproject.id=${project.name}"
+            args << "-Djava.protocol.handler.pkgs=net.jini.url|sorcer.util.url|org.rioproject.url"
+            args << "-Djava.util.logging.config.file=${project.sorcerDistHome}/configs/sorcer.logging"
+            args << "-Djava.security.policy=${project.sorcerDistHome}/policy/policy.all"
+            args << "-Djava.rmi.server.useCodebaseOnly=false"
+            args << "-Driver.version=${project.riverVersion}"
+            args << "-Dsorcer.version=${project.sorcerVersion}"
+            args << "-Dsorcer.home=${project.sorcerDistHome}"
+            args << "-Dsorcer.env.file=${project.sorcerDistHome}/configs/sorcer.env"
+            args << "-Dproject.build.dir=${project.buildDir.path}"
+            args << "com.sun.jini.start.ServiceStarter"
+            //args << "${projectDir.path}/configs/start-all.config"
+            args << "${project.bootme.starterConfig}"
+            println args
+
+            ProcessBuilder pb = new ProcessBuilder(args as String[])
+            Map<String, String> env = pb.environment()
+            env.put("SORCER_HOME", "${project.sorcerDistHome}")
+            env.put("RIO_HOME", "${project.rioHome}")
+
+            Process process = pb.start()
+            process.consumeProcessOutput(System.out, System.err)
+            if (!project.bootme.spawn) {
+                process.waitFor()
+            } else {
+                process.in.close()
+                process.out.close()
+                process.err.close()
+            }
+        }
+    }
+}
+
+class BootMePluginExtension {
+    File starterConfig
+    boolean spawn = true
+}
+
+class StopMePlugin implements Plugin<Project> {
+
+    void apply(Project project) {
+        project.task('stopme') << {
+            def pids = []
+            "jps -v".execute().text.eachLine { line ->
+                if (line.contains("${project.name}")) {
+                    pids << line.split()[0]
+                }
+            }
+            String command
+            if (System.getProperty("os.name").startsWith("Windows")) {
+                command = "taskkill /f /pid "
+            } else {
+                command = "kill "
+            }
+            pids.each { pid ->
+                "$command $pid".execute().waitFor()
+            }
+        }
+    }
+
+}
+

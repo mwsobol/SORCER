@@ -1,50 +1,27 @@
 package sorcer.eol.tasks;
 
-import static org.junit.Assert.assertEquals;
-import static sorcer.co.operator.inEntry;
-import static sorcer.eo.operator.context;
-import static sorcer.eo.operator.cxt;
-import static sorcer.eo.operator.exert;
-import static sorcer.eo.operator.get;
-import static sorcer.eo.operator.result;
-import static sorcer.eo.operator.sig;
-import static sorcer.eo.operator.srv;
-import static sorcer.eo.operator.task;
-import static sorcer.eo.operator.value;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import sorcer.arithmetic.provider.impl.AdderImpl;
+import sorcer.service.*;
 
 import java.util.logging.Logger;
 
-import org.junit.Test;
-
-import sorcer.arithmetic.provider.impl.AdderImpl;
-import sorcer.service.Context;
-import sorcer.service.ContextException;
-import sorcer.service.Exertion;
-import sorcer.service.ExertionException;
-import sorcer.service.SignatureException;
-import sorcer.service.Task;
-import sorcer.util.Sorcer;
+import static org.junit.Assert.assertEquals;
+import static sorcer.co.operator.inEntry;
+import static sorcer.eo.operator.*;
 
 /**
  * @author Mike Sobolewski
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class ArithmeticLocalTaskTest {
-	private final static Logger logger = Logger
-			.getLogger(ArithmeticLocalTaskTest.class.getName());
+	private final static Logger logger = Logger.getLogger(ArithmeticLocalTaskTest.class.getName());
 
-	static {
-		System.setProperty("java.util.logging.config.file",
-				Sorcer.getHome() + "/configs/sorcer.logging");
-		System.setProperty("java.security.policy", Sorcer.getHome()
-				+ "/configs/policy.all");
-		System.setSecurityManager(new SecurityManager());
-		Sorcer.setCodeBase(new String[] { "arithmetic-dl.jar" });
-		
-		System.setProperty("java.protocol.handler.pkgs", "sorcer.util.url|org.rioproject.url");
-		System.setProperty("java.rmi.server.RMIClassLoaderSpi","org.rioproject.rmi.ResolvingLoader");
-	}
-	
+    @BeforeClass
+    public static void setup() {
+        System.setSecurityManager(new SecurityManager());
+    }
 	
 	@Test
 	public void exertTask() throws Exception  {

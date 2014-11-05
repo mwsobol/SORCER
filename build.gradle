@@ -18,16 +18,19 @@ ext {
     enclaveRepo = "10.131.7.138:7001"
     enclave = InetAddress.getLocalHost().getHostAddress().startsWith("10.131")
     noVersion = System.getProperty("nv") != null
+    version = "5.0.0-SNAPSHOT"
 }
 
 apply from: file('libraries.gradle')
 apply from: file("distribution/dist.gradle")
+apply from: file("testProperties.gradle")
 
 allprojects {
     if (project.name != "examples") {
         apply plugin: "maven"
         apply plugin: "maven-publish"
         apply plugin: "java"
+        apply from: file("${rootProject.projectDir.path}/bootme.gradle")
 
         repositories {
             mavenLocal()
@@ -55,5 +58,5 @@ allprojects {
     }
 
     group = 'org.sorcer'
-    version = '5.0.0-SNAPSHOT'
+    version = "$version"
 }

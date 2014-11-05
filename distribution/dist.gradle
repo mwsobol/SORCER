@@ -1,7 +1,8 @@
 /* Build a distribution  */
 
-
 apply plugin: 'java'
+
+version = sorcerVersion
 
 /* Declare a custom configuration for distribution only dependencies */
 configurations {
@@ -57,15 +58,13 @@ task installer(dependsOn: ["distribution"]) {
 task gatherDeps() {
     description = "Gather up and organize subproject dependencies, and resolve distribution dependencies"
     def exclusions = ["sos-shell", "iGrid", "examples", "arithmetic"]
-    doFirst {
+
+    doLast {
         File dir = file("${distDir}-${version}")
         if (dir.exists()) {
             delete dir
-            println "Removed  distribution $dir"
+            println "Removed distribution $dir"
         }
-    }
-    doLast {
-        File dir = file("${distDir}-${version}")
         println "Creating distribution $dir"
         subprojects.each { project ->
             if (!exclusions.contains(project.name)) {

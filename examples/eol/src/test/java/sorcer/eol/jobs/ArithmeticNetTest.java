@@ -1,48 +1,9 @@
 package sorcer.eol.jobs;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static sorcer.co.operator.entry;
-import static sorcer.co.operator.inEntry;
-import static sorcer.co.operator.input;
-import static sorcer.co.operator.outEntry;
-import static sorcer.eo.operator.classpath;
-import static sorcer.eo.operator.codebase;
-import static sorcer.eo.operator.configuration;
-import static sorcer.eo.operator.context;
-import static sorcer.eo.operator.cxt;
-import static sorcer.eo.operator.deploy;
-import static sorcer.eo.operator.exert;
-import static sorcer.eo.operator.exertion;
-import static sorcer.eo.operator.get;
-import static sorcer.eo.operator.idle;
-import static sorcer.eo.operator.implementation;
-import static sorcer.eo.operator.in;
-import static sorcer.eo.operator.input;
-import static sorcer.eo.operator.job;
-import static sorcer.eo.operator.jobContext;
-import static sorcer.eo.operator.link;
-import static sorcer.eo.operator.maintain;
-import static sorcer.eo.operator.out;
-import static sorcer.eo.operator.pipe;
-import static sorcer.eo.operator.provider;
-import static sorcer.eo.operator.result;
-import static sorcer.eo.operator.sig;
-import static sorcer.eo.operator.strategy;
-import static sorcer.eo.operator.task;
-import static sorcer.eo.operator.value;
-import static sorcer.po.operator.invoker;
-import static sorcer.po.operator.par;
-import static sorcer.po.operator.parModel;
-import static sorcer.po.operator.pars;
-import static sorcer.po.operator.put;
-
-import java.util.List;
-import java.util.logging.Logger;
-
 import org.junit.Ignore;
 import org.junit.Test;
-
+import org.junit.runner.RunWith;
+import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.Adder;
 import sorcer.arithmetic.provider.Averager;
 import sorcer.arithmetic.provider.Multiplier;
@@ -55,40 +16,33 @@ import sorcer.core.provider.Exerter;
 import sorcer.core.provider.ServiceTasker;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.core.signature.ServiceSignature;
-import sorcer.service.Context;
-import sorcer.service.Contexter;
-import sorcer.service.Evaluation;
-import sorcer.service.Exertion;
-import sorcer.service.Invocation;
-import sorcer.service.Job;
-import sorcer.service.Signature;
-import sorcer.service.Strategy.Access;
-import sorcer.service.Strategy.Flow;
-import sorcer.service.Strategy.Monitor;
-import sorcer.service.Strategy.Provision;
-import sorcer.service.Strategy.Wait;
-import sorcer.service.Task;
-import sorcer.util.Sorcer;
+import sorcer.service.*;
+import sorcer.service.Strategy.*;
+
+import java.util.List;
+import java.util.logging.Logger;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static sorcer.co.operator.*;
+import static sorcer.co.operator.input;
+import static sorcer.eo.operator.*;
+import static sorcer.eo.operator.get;
+import static sorcer.eo.operator.in;
+import static sorcer.eo.operator.input;
+import static sorcer.eo.operator.pipe;
+import static sorcer.eo.operator.result;
+import static sorcer.eo.operator.value;
+import static sorcer.po.operator.*;
+import static sorcer.po.operator.put;
 
 /**
  * @author Mike Sobolewski
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })
+@RunWith(SorcerTestRunner.class)
 public class ArithmeticNetTest implements SorcerConstants {
-
-	private final static Logger logger = Logger
-			.getLogger(ArithmeticNetTest.class.getName());
-
-	static {
-		String version = "5.0.0-SNAPSHOT";
-		System.setProperty("java.security.policy", Sorcer.getHome()
-				+ "/configs/policy.all");
-		System.setSecurityManager(new SecurityManager());
-		Sorcer.setCodeBase(new String[] { "arithmetic-" + version + "-dl.jar",  "sorcer-dl-"+version +".jar" });
-		System.out.println("CLASSPATH :" + System.getProperty("java.class.path"));
-		System.setProperty("java.protocol.handler.pkgs", "sorcer.util.url|org.rioproject.url");
-//		System.setProperty("java.rmi.server.RMIClassLoaderSpi","org.rioproject.rmi.ResolvingLoader");	
-		}
+	private final static Logger logger = Logger.getLogger(ArithmeticNetTest.class.getName());
 	
 	@Test
 	public void exertAdderProviderTest() throws Exception {

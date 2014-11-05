@@ -3,11 +3,10 @@
  * use.  In that respect it serves a role similar to <dependencyManagement> in Maven
  */
 ext {
-	sorcerVersion = "5.0.0-SNAPSHOT"
+	sorcerVersion = version
 	sorcerModelingVersion = "1.1.9"
 	sosVersion = "1.0-SNAPSHOT"
 	// other artifact versions
-	classdepandjarVersion = "2.0"
 	configbuilderVersion = "1.6"
 	extVersion = "1.1.1a"
 	groovyVersion = "2.2.1"
@@ -23,14 +22,31 @@ ext {
 	jnaVersion = "4.1.0"
 	junitVersion = "4.8.2"
 	junitAddonsVersion = "1.4"
-	poiVersion = "3.7"
 	jffpVersion = "1.2"
 	antVersion = "1.8.2"
 	websterVersion = "4.2.8"
-	websterUrl = "http://" + InetAddress.getLocalHost().getHostName() + ":9001"
+    websterPort = "9001"
+    websterAddress = InetAddress.getLocalHost().getHostName()
+	websterUrl = "http://${websterAddress}:${websterPort}"
 	slf4jVersion = "1.7.5"
 
 	sorcer_deps = []
 	sorcer_test_deps = []
 
+    sorcerDistHome = "${rootProject.projectDir.path}/distribution/sorcer-$version"
+    rioHome = "$sorcerDistHome/rio"
+
+    startClassPath = files("${rioHome}/lib/groovy-all-${groovyVersion}.jar",
+                             "${rioHome}/lib/logging/slf4j-api-${slf4jVersion}.jar",
+                             "${rioHome}/lib/logging/slf4j-jdk14-${slf4jVersion}.jar",
+                             "${rioHome}/lib/logging/rio-logging-support-${rioVersion}.jar",
+                             "${rioHome}/lib/rio-platform-${rioVersion}.jar",
+                             "${rioHome}/lib/start-${riverVersion}.jar",
+                             "${rioHome}/lib/jsk-platform-${riverVersion}.jar")
+    bootClassPath = files(startClassPath, "${sorcerDistHome}/lib/sorcer-boot-${version}.jar")
+
+    libs = [
+            junit : ["junit:junit:${junitVersion}", "junit-addons:junit-addons:${junitAddonsVersion}"],
+            slf4j : ["org.slf4j:slf4j-api:${slf4jVersion}", "org.slf4j:slf4j-jdk14:${slf4jVersion}"]
+    ]
 }

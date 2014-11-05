@@ -1,3 +1,6 @@
+
+version = sorcerVersion
+
 jar {
 	manifest {
 		attributes("Implementation-Title": "SORCER Service Browser (SSB)", "Implementation-Version": version)

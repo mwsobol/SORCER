@@ -122,26 +122,33 @@ public class SorcerEnv extends SOS {
 	 * @return a path of the home directory
 	 */
 	public static File getHomeDir() {
-		String hd = System.getenv("SORCER_HOME");
-		if (hd != null)	
-			hd = hd.trim();
+        try {
+            String hd = System.getenv("SORCER_HOME");
+            if (hd != null)
+                hd = hd.trim();
 
-		if (hd != null && hd.length() > 0) {
-			System.setProperty(SORCER_HOME, hd);
-			return new File(hd);
-		}
+            if (hd != null && hd.length() > 0) {
+                System.setProperty(SORCER_HOME, hd);
+                return new File(hd);
+            }
 
-		hd = System.getProperty(SORCER_HOME, SOS.deriveSorcerHome());
-		if (hd != null && hd.length() > 0) {
-			return new File(hd);
-		}
+            hd = System.getProperty(SORCER_HOME);
+            System.out.println("===> SORCER_HOME: " + hd);
+            if (hd == null)
+                hd = SOS.deriveSorcerHome();
+            if (hd != null && hd.length() > 0) {
+                return new File(hd);
+            }
 
-		if (props != null) {
-			hd = props.getProperty(SORCER_HOME);
-			if (hd != null && hd.length() > 0) {
-				return new File(hd);
-			}
-		}		
+            if (props != null) {
+                hd = props.getProperty(SORCER_HOME);
+                if (hd != null && hd.length() > 0) {
+                    return new File(hd);
+                }
+            }
+        } catch(Throwable t) {
+            t.printStackTrace();
+        }
 		return null;
 	}
 

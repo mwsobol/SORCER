@@ -30,11 +30,8 @@
             <classpath>
                 <pathelement location="${lib}/river/start-${river.version}.jar"/>
                 <pathelement location="${lib}/sorcer-boot-${sorcer.version}.jar"/>
-            	<!--<pathelement location="${jini.lib}/serviceui-${river.version}.jar"/>
-            	<pathelement location="${sorcer.lib}/common/je-${je.version}.jar"/>-->
                 <pathelement location="${rio.lib}/rio-platform-${rio.version}.jar" />
                 <pathelement location="${rio.lib}/rio-start-${rio.version}.jar" />
-            	<!--<pathelement location="${rio-dl.lib}/rio-api-${rio.version}.jar" />-->
                 <pathelement location="${rio.lib}/logging/slf4j-jdk14-${slf4j.version}.jar" />
             </classpath>
             <env key="SORCER_HOME" value="${sorcer.home}"/>
