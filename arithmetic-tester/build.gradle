@@ -1,0 +1,46 @@
+//project.jar.enabled = false
+
+jar {
+	manifest {
+		attributes("Implementation-Title": "SORCER Arithmetic Tester", "Implementation-Version": version)
+	}
+	classifier = "prv"
+	dependsOn classes
+	from sourceSets.main.output
+	exclude('sorcer/arithmetic/tester/requestor/**')
+}
+
+task arithmeticPrvDlJar(type: Jar) {
+	manifest {
+		attributes("Implementation-Title": "SORCER Arithmetic Tester Exported Classes", "Implementation-Version": version)
+	}
+    classifier = "dl"
+	dependsOn classes
+	from sourceSets.main.output
+	include('sorcer/arithmetic/tester/provider/*')
+}
+
+task arithmeticReqJar(type: Jar) {
+	manifest {
+		attributes("Implementation-Title": "SORCER Arithmetic Tester Requestor", "Implementation-Version": version)
+	}
+	classifier = "req"
+	dependsOn classes
+	from sourceSets.main.output
+	include('sorcer/arithmetic/tester/requestor/**')
+}
+
+artifacts {
+    archives arithmeticPrvDlJar
+	archives arithmeticReqJar
+}
+
+install.dependsOn(['arithmeticPrvDlJar', 'arithmeticReqJar'])
+publish.dependsOn(install)
+build.dependsOn(install)
+
+dependencies { 
+	compile project(':sorcer-platform')
+    compile project(':sorcer-lib')
+    compile project(':sos-db-prv')
+}

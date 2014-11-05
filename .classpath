@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="core/sorcer-dl/src/main/java"/>
+	<classpathentry kind="src" path="arithmetic-tester/src/main/java"/>
 	<classpathentry kind="src" path="core/sorcer-lib/src/main/java"/>
 	<classpathentry kind="src" path="core/sorcer-platform/src/main/java"/>
 	<classpathentry kind="src" path="examples/eol/src/main/java"/>
