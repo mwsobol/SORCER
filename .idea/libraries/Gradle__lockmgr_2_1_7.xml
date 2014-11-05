@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="Gradle: lockmgr-2.1.7">
-    <CLASSES>
-      <root url="jar://$MAVEN_REPOSITORY$/org/dancres/lockmgr/2.1.7/lockmgr-2.1.7.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>

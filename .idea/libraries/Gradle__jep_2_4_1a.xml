@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="Gradle: jep-2.4.1a">
-    <CLASSES>
-      <root url="jar://$MAVEN_REPOSITORY$/org/nfunk/jep/jep/2.4.1a/jep-2.4.1a.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>

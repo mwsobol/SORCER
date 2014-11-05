@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="Gradle: je-5.0.104">
-    <CLASSES>
-      <root url="jar://$MAVEN_REPOSITORY$/com/sleepycat/je/5.0.104/je-5.0.104.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>
