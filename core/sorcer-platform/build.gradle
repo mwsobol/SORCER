@@ -21,10 +21,10 @@ dependencies {
     compile "org.rioproject:rio-lib:${rioVersion}"
     compile "org.rioproject.monitor:monitor-api:${rioVersion}"
     compile "org.rioproject.cybernode:cybernode-api:${rioVersion}"
-    compile "org.apache.ant:ant:${antVersion}"
+    //compile "org.apache.ant:ant:${antVersion}"
     compile "com.sleepycat:je:${jeVersion}"
     compile "org.dancres:lockmgr:${lockmgrVersion}"
-    compile "junit:junit:${junitVersion}"
+    //compile "junit:junit:${junitVersion}"
     compile project(':sorcer-dl')
     compile files("${System.properties['java.home']}/../lib/tools.jar")
     testCompile project(":webster")
