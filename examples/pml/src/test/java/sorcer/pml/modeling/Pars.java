@@ -132,10 +132,10 @@ public class Pars {
 		Context<Double> cxt = context(ent("x", 10.0), 
 				ent("y", 20.0), ent("init/value", 49.0));
 		
-//		set(dbp, 50.0);
-//		
-//		assertTrue(value(multi, cxt, parFi("shared/value")).equals(50.0));
-//		logger.info("shared/value: " + value(multi, cxt, parFi("shared/value")));
+		set(dbp, 50.0);
+		
+		assertTrue(value(multi, cxt, parFi("shared/value")).equals(50.0));
+		logger.info("shared/value: " + value(multi, cxt, parFi("shared/value")));
 		
 		assertTrue(value(multi, cxt, parFi("init/value")).equals(49.0));
 		logger.info("init/value: " + value(multi, cxt, parFi("init/value")));

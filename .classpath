@@ -18,12 +18,13 @@
 	<classpathentry kind="lib" path="distribution/sorcer-5.0.0-SNAPSHOT/lib/sorcer/lib/arithmetic-5.0.0-SNAPSHOT-req.jar"/>
 	<classpathentry kind="lib" path="distribution/sorcer-5.0.0-SNAPSHOT/lib/sorcer/lib/sorcer-platform-5.0.0-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="examples/eol/build/classes/test"/>
-	<classpathentry kind="lib" path="examples/pml/build/classes/test"/>
 	<classpathentry kind="lib" path="examples/worker/src/test/java/sorcer"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry exported="true" kind="con" path="org.springsource.ide.eclipse.gradle.classpathcontainer"/>
 	<classpathentry kind="con" path="GROOVY_DSL_SUPPORT"/>
 	<classpathentry kind="con" path="GROOVY_SUPPORT"/>
 	<classpathentry kind="lib" path="distribution/sorcer-5.0.0-SNAPSHOT/lib/sorcer/lib/sorcer-test-5.0.0-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="examples/pml/build/classes/main/sorcer"/>
+	<classpathentry kind="lib" path="examples/pml/build/classes/test"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
