@@ -4,7 +4,7 @@ Replace "provider.name" with your provider name and specify property value for "
 Also you might need to adjust the classpath (provider.classpath) for your provider 
 -->
 
-<project name="Invoking exertion service" default="run.provider" basedir=".">
+<project name="Invoking exertion service" default="run.provider" basedir="">
 
 	<!-- system environment variables -->
 	<property environment="env" />
@@ -14,7 +14,7 @@ Also you might need to adjust the classpath (provider.classpath) for your provid
 	<echo message="WEBSTER: ${provider.webster.url}" />
 
 	<!-- set property values here -->
-	<property name="provider.bean" value="contexter" />
+	<property name="provider.bean" value="exertleter" />
 	<property name="provider.class" value="sorcer.core.provider.ServiceTasker" />
 	<property name="webster" value="${provider.webster.url}" />
 
@@ -27,12 +27,11 @@ Also you might need to adjust the classpath (provider.classpath) for your provid
 		<pathelement location="${jini.lib}/jsk-lib.jar" />
 		<pathelement location="${jini.lib}/jsk-platform.jar" />
 		<pathelement location="${jini.lib}/serviceui.jar" />
-		<pathelement location="${rio.lib}/rio.jar" />
 	</path>
 
 	<!-- provider codeabse jars -->
-	<property name="j1" value="${webster}/sorcer-dl.jar" />
-	<property name="j2" value="${webster}/ju-arithmetic-dl.jar" />
+	<property name="j1" value="${webster}/ju-arithmetic-dl.jar" />
+	<property name="j2" value="${webster}/sorcer-dl.jar" />
 	<property name="j3" value="${webster}/jsk-dl.jar" />
 	<property name="j4" value="${webster}/provider-ui.jar" />
 	<property name="j5" value="${webster}/exertlet-ui.jar" />
