@@ -69,7 +69,7 @@ public class LocalArithmetic implements SorcerConstants {
 	}
 	
 	@Test
-	public void exertAdderProviderTest() throws Exception {
+	public void exertAdderProvider() throws Exception {
 		Task t5 = task("t5",
 				sig("add", AdderImpl.class),
 				context("add", inEnt("arg, x1", 20.0),
@@ -81,7 +81,7 @@ public class LocalArithmetic implements SorcerConstants {
 	}
 	
 	@Test
-	public void execAdderProviderTest() throws Exception {
+	public void evaluateAdderProvider() throws Exception {
 		Task t5 = task("t5",
 				sig("add", AdderImpl.class),
 				context("add", inEnt("arg, x1", 20.0),
@@ -91,7 +91,7 @@ public class LocalArithmetic implements SorcerConstants {
 	}
 	
 	@Test
-	public void averagerProviderTest() throws Exception {
+	public void exertAveragerProvider() throws Exception {
 		Task t5 = task(
 				"t5",
 				sig("average", AveragerImpl.class),
@@ -103,7 +103,7 @@ public class LocalArithmetic implements SorcerConstants {
 	}
 	
 	@Test
-	public void testTaskConcatenation() throws Exception {
+	public void taskConcatenation() throws Exception {
 		Task t3 = task(
 				"t3",
 				sig("subtract", SubtractorImpl.class),
@@ -133,7 +133,7 @@ public class LocalArithmetic implements SorcerConstants {
 	}
 
 	@Test
-	public void testJobHierachicalComposition() throws Exception {
+	public void nestingJobComposition() throws Exception {
 		Task t3 = task(
 				"t3",
 				sig("subtract", SubtractorImpl.class),
@@ -162,72 +162,6 @@ public class LocalArithmetic implements SorcerConstants {
 		Context context = context(exert(job));
 		logger.info("job context: " + context);
 		assertEquals(get(context, "j1/t3/result/y"), 400.0);
-	}
-	
-	@Test
-	public void arithmeticPars() throws Exception {
-		Par y = par("y",
-				invoker("(x1 * x2) - (x3 + x4)", pars("x1", "x2", "x3", "x4")));
-		Object val = value(y, ent("x1", 10.0), ent("x2", 50.0),
-				ent("x3", 20.0), ent("x4", 80.0));
-		// logger.info("y value: " + val);
-		assertEquals(val, 400.0);
-
-	}
-
-	@Test
-	public void createParModel() throws Exception {
-
-		ParModel vm = parModel(
-				"Hello Arithmetic Model #1",
-				// inputs
-				par("x1"), par("x2"), par("x3", 20.0),
-				par("x4", 80.0),
-				// outputs
-				par("t4", invoker("x1 * x2", pars("x1", "x2"))),
-				par("t5", invoker("x3 + x4", pars("x3", "x4"))),
-				par("j1", invoker("t4 - t5", pars("t4", "t5"))));
-
-//		logger.info("t4 value: " + value(par(vm, "t4")));
-		assertEquals(value(par(vm, "t4")), null);
-
-		logger.info("t5 value: " + value(par(vm, "t5")));
-		assertEquals(value(par(vm, "t5")), 100.0);
-
-		// logger.info("j1 value: " + value(par(vm, "j1")));
-		assertEquals(value(par(vm, "j1")), null);
-
-		// logger.info("j1 value: " + value(var(put(vm, entry("x1", 10.0),
-		// entry("x2", 50.0)), "j1")));
-		assertEquals(
-				value(par(put(vm, ent("x1", 10.0), ent("x2", 50.0)), "j1")),
-				400.0);
-		// logger.info("j1 value: " + value(par(vm, "j1")));
-		assertEquals(value(par(vm, "j1")), 400.0);
-
-	}
-
-	@Test
-	public void createMogram() throws Exception {
-
-		ParModel vm = parModel(
-				"Hello Arithmetic #2",
-				// inputs
-				par("x1"), par("x2"), par("x3", 20.0), par("x4"),
-				// outputs
-				par("t4", invoker("x1 * x2", pars("x1", "x2"))),
-				par("t5",
-					task("t5",
-						sig("add", AdderImpl.class),
-						cxt("add", inEnt("arg/x3"),
-								inEnt("arg/x4"),
-						result("result/y")))),
-				par("j1", invoker("t4 - t5", pars("t4", "t5"))));
-
-		vm = put(vm, ent("x1", 10.0), ent("x2", 50.0),
-				ent("x4", 80.0));
-				 
-		assertEquals(value(par(vm, "j1")), 400.0);
 	}
 
 	@Test

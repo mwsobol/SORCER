@@ -54,6 +54,7 @@ import sorcer.util.Loop;
 //import sorcer.vfe.filter.TableReader;
 //import sorcer.vfe.util.Response;
 import sorcer.util.Table;
+import sorcer.util.url.sos.SdbUtil;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class operator {
@@ -409,7 +410,7 @@ public class operator {
 			if (object instanceof Evaluation) {
 				Evaluation entry = (Evaluation)	object;
 				Object obj = entry.asis();
-				if (obj instanceof URL)
+				if (SdbUtil.isSosURL(obj))
 					dburl = (URL) obj;
 				else {
 					if (entry instanceof Setter) {
@@ -424,10 +425,6 @@ public class operator {
 		}
 		return dburl;
 	}
-	
-//	public static FidelityEntry ent(String x1, FidelityInfo x3) {
-//		return new FidelityEntry(x1, x3);
-//	}
 	
 	public static StrategyEntry strategyEnt(String x1, Strategy strategy) {
 		return new StrategyEntry(x1, strategy);

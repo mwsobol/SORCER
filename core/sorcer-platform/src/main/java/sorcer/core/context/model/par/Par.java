@@ -40,6 +40,7 @@ import sorcer.service.ContextException;
 import sorcer.service.Evaluation;
 import sorcer.service.EvaluationException;
 import sorcer.service.Exertion;
+import sorcer.service.FidelityInfo;
 import sorcer.service.Identifiable;
 import sorcer.service.Invocation;
 import sorcer.service.InvocationException;
@@ -90,6 +91,9 @@ public class Par<T> extends Entry<T> implements Variability<T>, Arg, Mappable<T>
 	// par fidelities for this par
 	protected Map<String, Object> fidelities;
 		
+	public Par() {
+	}
+	
 	public Par(String parname) {
 		name = parname;
 		value = null;
@@ -100,9 +104,22 @@ public class Par<T> extends Entry<T> implements Variability<T>, Arg, Mappable<T>
 		value = (T)identifiable;
 	}
 	
-	public Par(String parname, T argument) {
+	public Par(String parname, T argument) throws EvaluationException, RemoteException {
 		name = parname;
-		value = argument;
+		
+		if (argument instanceof ParFidelity) {
+			if (fidelities == null)
+				fidelities = new HashMap<String, Object>();
+			for (Entry e : (ParFidelity)argument) {
+				fidelities.put(e.getName(), e.asis());
+			}
+			
+			Entry first = ((ParFidelity)argument).get(0);
+			selectedFidelity = first.getName();
+			value = (T)first.getValue();
+		} else {
+			value = argument;
+		}
 	}
 	
 	public Par(String parname, Object argument, Context scope) 
@@ -184,12 +201,15 @@ public class Par<T> extends Entry<T> implements Variability<T>, Arg, Mappable<T>
 	@Override
 	public T getValue(Arg... entries) throws EvaluationException,
 	RemoteException {
-		if (selectedFidelity != null) {
-			value = (T) fidelities.get(selectedFidelity);;
-		}
 		T val = null;
 		try {
 			substitute(entries);
+			if (selectedFidelity != null) {
+				value = (T) fidelities.get(selectedFidelity);
+				if (value == null || value == Context.none) {
+					value = scope.asis(selectedFidelity);
+				}
+			} 
 			if (mappable != null) {
 				val = (T) mappable.getValue((String) value);
 			} else if (value == null && scope != null) {
@@ -264,6 +284,12 @@ public class Par<T> extends Entry<T> implements Variability<T>, Arg, Mappable<T>
 						if (((Par<T>) p).getScope() != null)
 							scope.append(((Par<T>) p).getScope());
 
+					}
+				} else if (p instanceof FidelityInfo) {
+						selectedFidelity = ((FidelityInfo) p).getName();
+						value = (T) fidelities.get(selectedFidelity);
+						if (value == null || value == Context.none) {
+							value = (T)scope.asis(selectedFidelity);
 					}
 				} else if (p instanceof Context) {
 					if (scope == null)

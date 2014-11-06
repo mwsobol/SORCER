@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.Iterator;
 
+import sorcer.co.tuple.Entry;
 import sorcer.core.context.model.par.Par;
 import sorcer.service.Arg;
 import sorcer.service.ArgSet;
@@ -105,7 +106,9 @@ public class GroovyInvoker<T> extends ServiceInvoker<T> {
 		if (entries != null) {
 			for (Arg a : entries)
 				try {
-					invokeContext.putValue(a.getName(), ((Evaluation)a).getValue());
+					if (a instanceof Evaluation) {
+						invokeContext.putValue(a.getName(), ((Evaluation)a).getValue());
+					}
 				} catch (Exception e) {
 					throw new InvocationException(e);
 				} 

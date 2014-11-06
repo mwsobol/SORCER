@@ -38,10 +38,10 @@ import sorcer.util.Sorcer;
  * @author Mike Sobolewski
  */
 @SuppressWarnings("unchecked")
-public class ArithmeticLocaltBlocks implements SorcerConstants {
+public class ArithmeticLocalBlocks implements SorcerConstants {
 
 	private final static Logger logger = Logger
-			.getLogger(ArithmeticLocaltBlocks.class.getName());
+			.getLogger(ArithmeticLocalBlocks.class.getName());
 
 	static {
 		String sorcerVersion = "5.0.0-SNAPSHOT";

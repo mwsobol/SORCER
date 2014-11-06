@@ -973,7 +973,7 @@ public abstract class ServiceExertion implements Exertion, Scopable, SorcerConst
 		return controlContext.isExecTimeRequested();
 	}
 
-	public Par getPar(String path) {
+	public Par getPar(String path) throws EvaluationException, RemoteException {
 		return new Par(path, this);
 	}
 

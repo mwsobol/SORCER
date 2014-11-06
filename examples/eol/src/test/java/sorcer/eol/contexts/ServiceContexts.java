@@ -308,6 +308,8 @@ public class ServiceContexts {
 	@Test
 	public void entModeling() throws Exception {
 		
+		// create a new entModel as a regular context 
+		// or convert any context to entModel(<context>)
 		Context<Double> cxt = entModel(ent("arg/x1", 1.0), ent("arg/x2", 2.0), 
 				 ent("arg/x3", 3.0), ent("arg/x4", 4.0), ent("arg/x5", 5.0));
 		

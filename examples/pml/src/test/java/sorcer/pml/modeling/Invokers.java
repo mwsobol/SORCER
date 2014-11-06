@@ -46,6 +46,7 @@ import java.util.logging.Logger;
 import junit.framework.Assert;
 import net.jini.core.transaction.TransactionException;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import sorcer.arithmetic.provider.impl.AdderImpl;
@@ -62,6 +63,7 @@ import sorcer.pml.provider.impl.Volume;
 import sorcer.service.Condition;
 import sorcer.service.Context;
 import sorcer.service.ContextException;
+import sorcer.service.EvaluationException;
 import sorcer.service.ExertionException;
 import sorcer.service.Job;
 import sorcer.service.ServiceExertion;
@@ -79,6 +81,11 @@ public class Invokers {
 	private final static Logger logger = Logger.getLogger(Invokers.class
 			.getName());
 
+	private ParModel pm; 
+	private Par<Double> x;
+	private Par<Double> y;
+	private Par z;
+	
 	static {
 		ServiceExertion.debug = true;
 		URL.setURLStreamHandlerFactory(new SdbURLStreamHandlerFactory());
@@ -93,16 +100,19 @@ public class Invokers {
 	// member subclass of Invocable with Context parameter used below with
 	// contextMethodAttachmentWithArgs()
 	// there are constructor's context and invoke metod's context as parameters
-	ParModel pm = new ParModel();
-	Par<Double> x = par("x", 10.0);
-	Par<Double> y = par("y", 20.0);
-	Par z = par("z", invoker("x - y", x, y));
+	
+	@BeforeClass
+	public void initParModel() throws EvaluationException, RemoteException {
+		pm = new ParModel();
+		x = par("x", 10.0);
+		y = par("y", 20.0);
+		par("z", invoker("x - y", x, y));
+	}
 
 	public class Update extends Invocable {
 		public Update(Context context) {
 			super(context);
 		}
-
 		public Double invoke(Context arg) throws Exception {
 			set(x, value(arg, "x"));
 			set(y, value(context, "y"));

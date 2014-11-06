@@ -252,28 +252,6 @@ public class CollectionOperators {
 		assertTrue(value(add).equals(50.0));
 
 	}
-		
-	
-	@Test
-	public void parFidelities() throws Exception {
-		
-		Par add = par("add", parFi(ent("init/value"),
-				ent("invoke", invoker("x + y", pars("x", "y")))));
-		
-		Context<Double> cxt = context(ent("x", 10.0), 
-				ent("y", 20.0), ent("init/value", 49.0));
-		
-		logger.info("par value: " + value(add, cxt, parFi("init/value")));
-//		assertTrue(value(add, cxt).equals(30.0));
-		logger.info("par value: " + value(add, cxt, parFi("add")));
-//		assertTrue(value(add, cxt).equals(30.0));
-
-//		cxt = context(ent("x", 20.0), ent("y", 30.0));
-//		add = par(cxt, "add", invoker("x + y", pars("x", "y")));
-//		logger.info("par value: " + value(add));
-//		assertTrue(value(add).equals(50.0));
-
-	}
 	
 	
 	@Test
@@ -297,6 +275,7 @@ public class CollectionOperators {
 		assertEquals(value(url(p1)), 30.0);
 		assertEquals(value(url(p2)), "http://sorcersoft.org");
 	}
+	
 	
 	@Test
 	public void mapOperator() throws Exception {

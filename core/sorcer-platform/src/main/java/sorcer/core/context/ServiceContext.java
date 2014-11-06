@@ -2861,10 +2861,10 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 		return this;
 	}
 
-	public Par getPar(String path) throws ContextException  {
+	public Par getPar(String path) throws ContextException, RemoteException {
 		return new Par(path, this);
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -2996,7 +2996,7 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 	 * @see sorcer.service.Context#putDbValue(java.lang.String, java.lang.Object)
 	 */
 	@Override
-	public Object putDbValue(String path, Object value) throws ContextException {
+	public Object putDbValue(String path, Object value) throws ContextException, RemoteException {
 		Par par = new Par(path, value);
 		par.setPersistent(true);
 		return putValue(path, par);
@@ -3007,7 +3007,7 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 	 */
 	@Override
 	public Object putDbValue(String path, Object value, URL datastoreUrl)
-			throws ContextException {
+			throws ContextException, RemoteException {
 		Par par = new Par(path, value);
 		par.setPersistent(true);
 		par.setDbURL(datastoreUrl);
