@@ -1,69 +1,9 @@
 package sorcer.eol.collections;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static sorcer.co.operator.array;
-import static sorcer.co.operator.columnNames;
-import static sorcer.co.operator.columnSize;
-import static sorcer.co.operator.dbEnt;
-import static sorcer.co.operator.dictionary;
-import static sorcer.co.operator.ent;
-import static sorcer.co.operator.ents;
-import static sorcer.co.operator.inEnt;
-import static sorcer.co.operator.isPersistent;
-import static sorcer.co.operator.key;
-import static sorcer.co.operator.list;
-import static sorcer.co.operator.map;
-import static sorcer.co.operator.path;
-import static sorcer.co.operator.persistent;
-import static sorcer.co.operator.put;
-import static sorcer.co.operator.row;
-import static sorcer.co.operator.rowMap;
-import static sorcer.co.operator.rowNames;
-import static sorcer.co.operator.rowSize;
-import static sorcer.co.operator.set;
-import static sorcer.co.operator.store;
-import static sorcer.co.operator.strategyEnt;
-import static sorcer.co.operator.table;
-import static sorcer.co.operator.tuple;
-import static sorcer.co.operator.url;
-import static sorcer.co.operator.value;
-import static sorcer.eo.operator.access;
-import static sorcer.eo.operator.add;
-import static sorcer.eo.operator.asis;
-import static sorcer.eo.operator.context;
-import static sorcer.eo.operator.cxt;
-import static sorcer.eo.operator.entModel;
-import static sorcer.eo.operator.flow;
-import static sorcer.eo.operator.get;
-import static sorcer.eo.operator.put;
-import static sorcer.eo.operator.result;
-import static sorcer.eo.operator.service;
-import static sorcer.eo.operator.sig;
-import static sorcer.eo.operator.strategy;
-import static sorcer.eo.operator.value;
-import static sorcer.po.operator.add;
-import static sorcer.po.operator.dbPar;
-import static sorcer.po.operator.invoker;
-import static sorcer.po.operator.par;
-import static sorcer.po.operator.parFi;
-import static sorcer.po.operator.parModel;
-import static sorcer.po.operator.pars;
-import static sorcer.po.operator.set;
-
-import java.io.Serializable;
-import java.net.URL;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.logging.Logger;
-
 import org.junit.Test;
-
+import org.junit.runner.RunWith;
+import org.sorcer.test.ProjectContext;
+import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.co.tuple.Entry;
@@ -74,18 +14,48 @@ import sorcer.core.invoker.ServiceInvoker;
 import sorcer.service.Context;
 import sorcer.service.Strategy.Access;
 import sorcer.service.Strategy.Flow;
-import sorcer.util.Sorcer;
 import sorcer.util.Table;
+
+import java.io.Serializable;
+import java.net.URL;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.logging.Logger;
+
+import static org.junit.Assert.*;
+import static sorcer.co.operator.*;
+import static sorcer.co.operator.list;
+import static sorcer.co.operator.path;
+import static sorcer.co.operator.persistent;
+import static sorcer.co.operator.put;
+import static sorcer.co.operator.set;
+import static sorcer.co.operator.store;
+import static sorcer.co.operator.url;
+import static sorcer.co.operator.value;
+import static sorcer.eo.operator.*;
+import static sorcer.eo.operator.add;
+import static sorcer.eo.operator.asis;
+import static sorcer.eo.operator.get;
+import static sorcer.eo.operator.put;
+import static sorcer.eo.operator.result;
+import static sorcer.eo.operator.value;
+import static sorcer.po.operator.add;
+import static sorcer.po.operator.*;
+import static sorcer.po.operator.set;
 
 /**
  * @author Mike Sobolewski
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
+@RunWith(SorcerTestRunner.class)
+@ProjectContext("examples/eol")
 public class CollectionOperators {
 	
 	private final static Logger logger = Logger.getLogger(CollectionOperators.class.getName());
 	
-	static {
+/*	static {
 		String sorcerVersion = "5.0.0-SNAPSHOT";
 		String riverVersion = "2.2.2";
 		System.setProperty("java.security.policy", Sorcer.getHome()
@@ -97,7 +67,7 @@ public class CollectionOperators {
 		System.out.println("CLASSPATH :" + System.getProperty("java.class.path"));
 		System.setProperty("java.protocol.handler.pkgs", "sorcer.util.url|org.rioproject.url");
 //		System.setProperty("java.rmi.server.RMIClassLoaderSpi","org.rioproject.rmi.ResolvingLoader");	
-	}
+	}*/
 	
 	
 	@Test

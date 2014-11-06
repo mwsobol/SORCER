@@ -16,6 +16,9 @@ import java.util.logging.Logger;
 
 import org.junit.Test;
 
+import org.junit.runner.RunWith;
+import org.sorcer.test.ProjectContext;
+import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.service.Context;
 import sorcer.service.ContextException;
@@ -29,11 +32,12 @@ import sorcer.util.Sorcer;
  * @author Mike Sobolewski
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
+@RunWith(SorcerTestRunner.class)
+@ProjectContext("examples/eol")
 public class ArithmeticLocalTasks {
-	private final static Logger logger = Logger
-			.getLogger(ArithmeticLocalTasks.class.getName());
+	private final static Logger logger = Logger.getLogger(ArithmeticLocalTasks.class.getName());
 
-	static {
+/*	static {
 		String sorcerVersion = "5.0.0-SNAPSHOT";
 		String riverVersion = "2.2.2";
 		System.setProperty("java.util.logging.config.file",
@@ -46,7 +50,7 @@ public class ArithmeticLocalTasks {
 		
 		System.setProperty("java.protocol.handler.pkgs", "sorcer.util.url|org.rioproject.url");
 //		System.setProperty("java.rmi.server.RMIClassLoaderSpi","org.rioproject.rmi.ResolvingLoader");
-	}
+	}*/
 	
 	
 	@Test

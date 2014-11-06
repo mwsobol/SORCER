@@ -1,19 +1,13 @@
 package sorcer.eol.services;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static sorcer.co.operator.inEntry;
-import static sorcer.eo.operator.args;
-import static sorcer.eo.operator.context;
-import static sorcer.eo.operator.parameterTypes;
-import static sorcer.eo.operator.provider;
-import static sorcer.eo.operator.result;
-import static sorcer.eo.operator.selector;
-import static sorcer.eo.operator.service;
-import static sorcer.eo.operator.sig;
-import static sorcer.eo.operator.type;
-import static sorcer.eo.operator.value;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.sorcer.test.ProjectContext;
+import org.sorcer.test.SorcerTestRunner;
+import sorcer.arithmetic.provider.Adder;
+import sorcer.arithmetic.provider.impl.AdderImpl;
+import sorcer.service.*;
+import sorcer.util.Sorcer;
 
 import java.io.IOException;
 import java.lang.reflect.Proxy;
@@ -21,28 +15,20 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.logging.Logger;
 
-import org.junit.Test;
-
-import sorcer.arithmetic.provider.Adder;
-import sorcer.arithmetic.provider.impl.AdderImpl;
-import sorcer.service.Context;
-import sorcer.service.ContextException;
-import sorcer.service.EvaluationException;
-import sorcer.service.ExertionException;
-import sorcer.service.Service;
-import sorcer.service.Signature;
-import sorcer.service.SignatureException;
-import sorcer.util.Sorcer;
+import static org.junit.Assert.*;
+import static sorcer.co.operator.inEnt;
+import static sorcer.eo.operator.*;
 
 
 /**
  * @author Mike Sobolewski
  */
 @SuppressWarnings({ "rawtypes", "unchecked" } )
+@RunWith(SorcerTestRunner.class)
+@ProjectContext("examples/eol")
 public class Signatures {
-	private final static Logger logger = Logger
-			.getLogger(Signatures.class.getName());
-
+	private final static Logger logger = Logger.getLogger(Signatures.class.getName());
+/*
 	static {
 		String version = "5.0.0-SNAPSHOT";
 		System.setProperty("java.util.logging.config.file",
@@ -54,7 +40,7 @@ public class Signatures {
 		
 		System.setProperty("java.protocol.handler.pkgs", "sorcer.util.url|org.rioproject.url");
 		System.setProperty("java.rmi.server.RMIClassLoaderSpi","org.rioproject.rmi.ResolvingLoader");
-	}
+	}*/
 	
 	
 	@Test

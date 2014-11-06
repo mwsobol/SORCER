@@ -1,5 +1,7 @@
 //project.jar.enabled = false
 
+version = sorcerVersion
+
 jar {
 	manifest {
 		attributes("Implementation-Title": "SORCER Arithmetic Tester", "Implementation-Version": version)

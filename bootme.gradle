@@ -1,12 +1,64 @@
-apply plugin: BootMePlugin
+//apply plugin: BootMePlugin
 apply plugin: StopMePlugin
 
+task bootme(type: BootMe)
+
+class BootMe extends DefaultTask {
+    @InputFile
+    File starterConfig
+    @Input @org.gradle.api.tasks.Optional
+    boolean spawn = true
+
+    @TaskAction
+    def bootMe() {
+        StringBuilder java = new StringBuilder()
+        java.append(System.getProperty('java.home')).append("/bin/java")
+
+        def args = []
+        if (System.getProperty("os.name").startsWith("Windows")) {
+            args << "cmd.exe"
+            args << "/C"
+        }
+        args << java.toString()
+        args << "-cp"
+        args << project.bootClassPath.getAsPath()
+        args << "-Dproject.id=${project.name}"
+        args << "-Djava.protocol.handler.pkgs=net.jini.url|sorcer.util.url|org.rioproject.url"
+        args << "-Djava.util.logging.config.file=${project.sorcerDistHome}/configs/sorcer.logging"
+        args << "-Djava.security.policy=${project.sorcerDistHome}/policy/policy.all"
+        args << "-Djava.rmi.server.useCodebaseOnly=false"
+        args << "-Driver.version=${project.riverVersion}"
+        args << "-Dsorcer.version=${project.sorcerVersion}"
+        args << "-Dsorcer.home=${project.sorcerDistHome}"
+        args << "-Dsorcer.env.file=${project.sorcerDistHome}/configs/sorcer.env"
+        args << "-Dproject.build.dir=${project.buildDir.path}"
+        args << "com.sun.jini.start.ServiceStarter"
+        //args << "${projectDir.path}/configs/start-all.config"
+        args << "${starterConfig.path}"
+        println args
+
+        ProcessBuilder pb = new ProcessBuilder(args as String[])
+        Map<String, String> env = pb.environment()
+        env.put("SORCER_HOME", "${project.sorcerDistHome}")
+        env.put("RIO_HOME", "${project.rioHome}")
+
+        Process process = pb.start()
+        process.consumeProcessOutput(System.out, System.err)
+        if (!spawn) {
+            process.waitFor()
+        } else {
+            process.in.close()
+            process.out.close()
+            process.err.close()
+        }
+    }
+}
 
 class BootMePlugin implements Plugin<Project> {
 
     void apply(Project project) {
-        project.extensions.create("bootme", BootMePluginExtension)
-        // Add a task that uses the configuration
+        project.extensions.create("bootme", BootMe)
+        /*
         project.task('bootme') << {
             println project.name
             StringBuilder java = new StringBuilder()
@@ -50,13 +102,11 @@ class BootMePlugin implements Plugin<Project> {
                 process.err.close()
             }
         }
+        */
     }
+
 }
 
-class BootMePluginExtension {
-    File starterConfig
-    boolean spawn = true
-}
 
 class StopMePlugin implements Plugin<Project> {
 

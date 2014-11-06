@@ -47,6 +47,9 @@ import java.util.logging.Logger;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import org.junit.runner.RunWith;
+import org.sorcer.test.ProjectContext;
+import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.Adder;
 import sorcer.arithmetic.provider.Averager;
 import sorcer.arithmetic.provider.Multiplier;
@@ -83,12 +86,13 @@ import sorcer.util.Sorcer;
  * @author Mike Sobolewski
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })
+@RunWith(SorcerTestRunner.class)
+@ProjectContext("examples/eol")
 public class NetArithmetic implements SorcerConstants {
 
-	private final static Logger logger = Logger
-			.getLogger(NetArithmetic.class.getName());
+	private final static Logger logger = Logger.getLogger(NetArithmetic.class.getName());
 
-	static {
+	/*static {
 		String sorcerVersion = "5.0.0-SNAPSHOT";
 		String riverVersion = "2.2.2";
 		System.setProperty("java.security.policy", Sorcer.getHome()
@@ -100,7 +104,7 @@ public class NetArithmetic implements SorcerConstants {
 		System.out.println("CLASSPATH :" + System.getProperty("java.class.path"));
 		System.setProperty("java.protocol.handler.pkgs", "sorcer.util.url|org.rioproject.url");
 //		System.setProperty("java.rmi.server.RMIClassLoaderSpi","org.rioproject.rmi.ResolvingLoader");	
-		}
+		}*/
 	
 	@Test
 	public void exertAdderProviderTest() throws Exception {
