@@ -83,6 +83,12 @@ dependencies {
     testRuntime libs.slf4j
 }
 
+task testCP() {
+    configurations.testRuntime.each {
+        println "--> $it"
+    }
+}
+
 bootme {
     starterConfig = file("${projectDir.path}/configs/start-all.config")
     //spawn = false
