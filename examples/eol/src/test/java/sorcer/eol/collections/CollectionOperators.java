@@ -215,7 +215,7 @@ public class CollectionOperators {
 		Par<String> dbp2 = dbPar("url/sobol", "http://sorcersoft.org/sobol");
 
 		assertFalse(asis(dbp1) instanceof URL);
-		assertFalse(asis(dbp2) instanceof URL);
+		assertTrue(asis(dbp2) instanceof URL);
 		
 		assertTrue(value(dbp1).equals(25.0));
 		assertEquals(value(dbp2), "http://sorcersoft.org/sobol");

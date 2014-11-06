@@ -18,14 +18,6 @@
 package sorcer.service;
 
 import groovy.lang.Closure;
-
-import java.io.Serializable;
-import java.rmi.RemoteException;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Logger;
-
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.par.Par;
 import sorcer.core.exertion.AltExertion;
@@ -33,6 +25,13 @@ import sorcer.core.exertion.LoopExertion;
 import sorcer.core.exertion.OptExertion;
 import sorcer.core.invoker.GroovyInvoker;
 import sorcer.core.invoker.ServiceInvoker;
+
+import java.io.Serializable;
+import java.rmi.RemoteException;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Logger;
 
 
 /**
@@ -259,9 +258,10 @@ import sorcer.core.invoker.ServiceInvoker;
 			}
 			List<Exertion> tl = ((ConditionalExertion) exertion).getTargets();
 			for (Exertion vt : tl) {
-				clenupContextScripts(vt.getContext());
-			}
-		}
+                if(vt!=null)
+                    clenupContextScripts(vt.getContext());
+            }
+        }
 	}
 
 }
