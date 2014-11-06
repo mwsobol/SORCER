@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-//apply plugin: BootMePlugin
 apply plugin: StopMePlugin
 
 task bootme(type: BootMe)
@@ -22,6 +21,8 @@ task bootme(type: BootMe)
 class BootMe extends DefaultTask {
     @InputFile
     File starterConfig
+    @Input @org.gradle.api.tasks.Optional
+    def systemProperties = [:]
     @Input @org.gradle.api.tasks.Optional
     boolean spawn = true
 
@@ -48,10 +49,13 @@ class BootMe extends DefaultTask {
         args << "-Dsorcer.home=${project.sorcerDistHome}"
         args << "-Dsorcer.env.file=${project.sorcerDistHome}/configs/sorcer.env"
         args << "-Dproject.build.dir=${project.buildDir.path}"
+        systemProperties.each { k, v ->
+            args << "-D$k=$v"
+        }
         args << "com.sun.jini.start.ServiceStarter"
-        //args << "${projectDir.path}/configs/start-all.config"
         args << "${starterConfig.path}"
-        println args
+
+        project.logger.info "Args: ${args.toString()}"
 
         ProcessBuilder pb = new ProcessBuilder(args as String[])
         Map<String, String> env = pb.environment()
@@ -69,14 +73,6 @@ class BootMe extends DefaultTask {
         }
     }
 }
-
-class BootMePlugin implements Plugin<Project> {
-    void apply(Project project) {
-        project.extensions.create("bootme", BootMe)
-    }
-
-}
-
 
 class StopMePlugin implements Plugin<Project> {
 

@@ -17,13 +17,32 @@ ext {
 	junitAddonsVersion = "1.4"
 	antVersion = "1.8.2"
 
-    websterPort = "9001"
-    websterAddress = InetAddress.getLocalHost().getHostName()
-	websterUrl = "http://${websterAddress}:${websterPort}"
-
-
-	sorcerDistHome = "${rootProject.projectDir.path}/distribution/sorcer-$version"
+    sorcerDistHome = "${rootProject.projectDir.path}/distribution/sorcer-$version"
     rioHome = "$sorcerDistHome/rio"
+
+    /* ========================================================
+     * Load configs/sorcer.env to get webster port and address.
+     * First check if we have a distribution, if we do, load the
+     * sorcer.env from the distribution
+     * ======================================================== */
+    def sorcerEnvProps = new Properties()
+    File sorcerEnvFile = file("${sorcerDistHome}/configs/sorcer.env")
+    if(!sorcerEnvFile.exists())
+        sorcerEnvFile = file("configs/sorcer.env")
+    sorcerEnvFile.withReader { reader ->
+        sorcerEnvProps.load(reader)
+    }
+    def sorcerEnvParsed = new ConfigSlurper().parse(sorcerEnvProps)
+    sorcerEnv = sorcerEnvParsed
+
+    websterPort = sorcerEnv.provider.webster.port
+    if(sorcerEnv.provider.webster.interface.contains("localhost") ||
+       sorcerEnv.provider.webster.interface.contains("127.0.0.1")) {
+        websterAddress = InetAddress.getLocalHost().getHostName()
+    } else {
+        websterAddress = sorcerEnv.provider.webster.interface
+    }
+    websterUrl = "http://${websterAddress}:${websterPort}"
 
     startClassPath = files("${rioHome}/lib/groovy-all-${groovyVersion}.jar",
                              "${rioHome}/lib/logging/slf4j-api-${slf4jVersion}.jar",
@@ -33,7 +52,7 @@ ext {
                              "${rioHome}/lib/start-${riverVersion}.jar",
                              "${rioHome}/lib/jsk-platform-${riverVersion}.jar")
 
-    bootClassPath = files(startClassPath, "${sorcerDistHome}/lib/sorcer-boot-${version}.jar")
+    bootClassPath = files(startClassPath, "${sorcerDistHome}/lib/sorcer/lib/sorcer-boot-${version}.jar")
 
     libs = [
             junit : ["junit:junit:${junitVersion}", "junit-addons:junit-addons:${junitAddonsVersion}"],

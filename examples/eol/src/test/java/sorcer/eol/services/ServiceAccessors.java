@@ -32,22 +32,7 @@ import sorcer.util.Stopwatch;
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/eol")
 public class ServiceAccessors implements SorcerConstants {
-
-	private final static Logger logger = Logger
-			.getLogger(ServiceAccessors.class.getName());
-
-/*	static {
-		String sorcerVersion = "5.0.0-SNAPSHOT";
-		String riverVersion = "2.2.2";
-		System.setProperty("java.security.policy", Sorcer.getHome()
-				+ "/policy/policy.all");
-		System.setSecurityManager(new SecurityManager());
-		Sorcer.setCodeBase(new String[] { "arithmetic-" + sorcerVersion + "-dl.jar",  
-				"sorcer-dl-"+sorcerVersion +".jar", "jsk-dl-"+riverVersion+".jar" });
-		
-		System.setProperty("java.protocol.handler.pkgs", "sorcer.util.url|org.rioproject.url");
-//		System.setProperty("java.rmi.server.RMIClassLoaderSpi","org.rioproject.rmi.ResolvingLoader");
-	}*/
+	private final static Logger logger = Logger.getLogger(ServiceAccessors.class.getName());
 	
 	@Ignore
 	@Test

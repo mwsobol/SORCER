@@ -1,52 +1,7 @@
 package sorcer.eol.jobs;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static sorcer.co.operator.ent;
-import static sorcer.co.operator.inEnt;
-import static sorcer.co.operator.input;
-import static sorcer.co.operator.outEnt;
-import static sorcer.eo.operator.classpath;
-import static sorcer.eo.operator.codebase;
-import static sorcer.eo.operator.configuration;
-import static sorcer.eo.operator.context;
-import static sorcer.eo.operator.csFi;
-import static sorcer.eo.operator.cxt;
-import static sorcer.eo.operator.deploy;
-import static sorcer.eo.operator.exert;
-import static sorcer.eo.operator.fiContext;
-import static sorcer.eo.operator.get;
-import static sorcer.eo.operator.idle;
-import static sorcer.eo.operator.implementation;
-import static sorcer.eo.operator.in;
-import static sorcer.eo.operator.input;
-import static sorcer.eo.operator.job;
-import static sorcer.eo.operator.link;
-import static sorcer.eo.operator.maintain;
-import static sorcer.eo.operator.out;
-import static sorcer.eo.operator.pipe;
-import static sorcer.eo.operator.provider;
-import static sorcer.eo.operator.prvName;
-import static sorcer.eo.operator.result;
-import static sorcer.eo.operator.sFi;
-import static sorcer.eo.operator.sFis;
-import static sorcer.eo.operator.serviceContext;
-import static sorcer.eo.operator.sig;
-import static sorcer.eo.operator.strategy;
-import static sorcer.eo.operator.task;
-import static sorcer.eo.operator.value;
-import static sorcer.po.operator.invoker;
-import static sorcer.po.operator.par;
-import static sorcer.po.operator.parModel;
-import static sorcer.po.operator.pars;
-import static sorcer.po.operator.put;
-
-import java.rmi.RemoteException;
-import java.util.logging.Logger;
-
 import org.junit.Ignore;
 import org.junit.Test;
-
 import org.junit.runner.RunWith;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
@@ -64,23 +19,24 @@ import sorcer.core.provider.Exerter;
 import sorcer.core.provider.Jobber;
 import sorcer.core.provider.ServiceTasker;
 import sorcer.core.provider.rendezvous.ServiceJobber;
-import sorcer.service.Context;
-import sorcer.service.ContextException;
-import sorcer.service.Contexter;
-import sorcer.service.Evaluation;
-import sorcer.service.Exertion;
-import sorcer.service.ExertionException;
-import sorcer.service.Invocation;
-import sorcer.service.Job;
-import sorcer.service.Signature;
-import sorcer.service.SignatureException;
-import sorcer.service.Strategy.Access;
-import sorcer.service.Strategy.Flow;
-import sorcer.service.Strategy.Monitor;
-import sorcer.service.Strategy.Provision;
-import sorcer.service.Strategy.Wait;
-import sorcer.service.Task;
-import sorcer.util.Sorcer;
+import sorcer.service.*;
+import sorcer.service.Strategy.*;
+
+import java.rmi.RemoteException;
+import java.util.logging.Logger;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static sorcer.co.operator.*;
+import static sorcer.co.operator.input;
+import static sorcer.eo.operator.*;
+import static sorcer.eo.operator.get;
+import static sorcer.eo.operator.in;
+import static sorcer.eo.operator.input;
+import static sorcer.eo.operator.pipe;
+import static sorcer.eo.operator.value;
+import static sorcer.po.operator.*;
+import static sorcer.po.operator.put;
 
 /**
  * @author Mike Sobolewski
@@ -89,22 +45,7 @@ import sorcer.util.Sorcer;
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/eol")
 public class NetArithmetic implements SorcerConstants {
-
 	private final static Logger logger = Logger.getLogger(NetArithmetic.class.getName());
-
-	/*static {
-		String sorcerVersion = "5.0.0-SNAPSHOT";
-		String riverVersion = "2.2.2";
-		System.setProperty("java.security.policy", Sorcer.getHome()
-				+ "/policy/policy.all");
-		System.setSecurityManager(new SecurityManager());
-		Sorcer.setCodeBase(new String[] { "arithmetic-" + sorcerVersion + "-dl.jar",  
-				"sorcer-dl-"+sorcerVersion +".jar", "jsk-dl-"+riverVersion+".jar" });
-		
-		System.out.println("CLASSPATH :" + System.getProperty("java.class.path"));
-		System.setProperty("java.protocol.handler.pkgs", "sorcer.util.url|org.rioproject.url");
-//		System.setProperty("java.rmi.server.RMIClassLoaderSpi","org.rioproject.rmi.ResolvingLoader");	
-		}*/
 	
 	@Test
 	public void exertAdderProviderTest() throws Exception {

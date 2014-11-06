@@ -1,30 +1,9 @@
 package sorcer.eol.blocks;
 
-import static org.junit.Assert.assertEquals;
-import static sorcer.co.operator.ent;
-import static sorcer.co.operator.inEnt;
-import static sorcer.eo.operator.alt;
-import static sorcer.eo.operator.block;
-import static sorcer.eo.operator.condition;
-import static sorcer.eo.operator.context;
-import static sorcer.eo.operator.exert;
-import static sorcer.eo.operator.loop;
-import static sorcer.eo.operator.opt;
-import static sorcer.eo.operator.result;
-import static sorcer.eo.operator.sig;
-import static sorcer.eo.operator.task;
-import static sorcer.eo.operator.value;
-import static sorcer.po.operator.invoker;
-import static sorcer.po.operator.par;
-import static sorcer.po.operator.pars;
-
-import java.util.logging.Logger;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
-
 import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.arithmetic.provider.impl.AveragerImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
@@ -34,6 +13,17 @@ import sorcer.core.provider.rendezvous.ServiceConcatenator;
 import sorcer.service.Block;
 import sorcer.service.Task;
 
+import java.util.logging.Logger;
+
+import static org.junit.Assert.assertEquals;
+import static sorcer.co.operator.ent;
+import static sorcer.co.operator.inEnt;
+import static sorcer.eo.operator.alt;
+import static sorcer.eo.operator.*;
+import static sorcer.eo.operator.loop;
+import static sorcer.eo.operator.opt;
+import static sorcer.po.operator.*;
+
 
 /**
  * @author Mike Sobolewski
@@ -42,23 +32,8 @@ import sorcer.service.Task;
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/eol")
 public class ArithmeticLocalBlocks implements SorcerConstants {
-
 	private final static Logger logger = Logger.getLogger(ArithmeticLocalBlocks.class.getName());
-	/*
->>>>>>> f48b5e6aea49c2d64fb703a63e5be33c6f19951b:examples/eol/src/test/java/sorcer/eol/blocks/ArithmeticLocaltBlocks.java
-	static {
-		String sorcerVersion = "5.0.0-SNAPSHOT";
-		String riverVersion = "2.2.2";
-		System.setProperty("java.security.policy", Sorcer.getHome()
-				+ "/policy/policy.all");
-		System.setSecurityManager(new SecurityManager());
-		Sorcer.setCodeBase(new String[] { "arithmetic-" + sorcerVersion + "-dl.jar",  
-				"sorcer-dl-"+sorcerVersion +".jar", "jsk-dl-"+riverVersion+".jar" });
-		
-		System.out.println("CLASSPATH :"
-				+ System.getProperty("java.class.path"));
-	}
-	*/
+
 	@Test
 	public void contextAltTest() throws Exception {
 		Task t4 = task("t4", sig("multiply", MultiplierImpl.class), 

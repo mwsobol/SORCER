@@ -1,54 +1,25 @@
 package sorcer.eol.contexts;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static sorcer.co.operator.db;
-import static sorcer.co.operator.dbEnt;
-import static sorcer.co.operator.dbInEnt;
-import static sorcer.co.operator.ent;
-import static sorcer.co.operator.ents;
-import static sorcer.co.operator.inEnt;
-import static sorcer.co.operator.inoutEnt;
-import static sorcer.co.operator.key;
-import static sorcer.co.operator.list;
-import static sorcer.co.operator.listContext;
-import static sorcer.co.operator.outEnt;
-import static sorcer.co.operator.path;
-import static sorcer.co.operator.url;
-import static sorcer.eo.operator.add;
-import static sorcer.eo.operator.asis;
-import static sorcer.eo.operator.context;
-import static sorcer.eo.operator.entModel;
-import static sorcer.eo.operator.get;
-import static sorcer.eo.operator.getAt;
-import static sorcer.eo.operator.getLink;
-import static sorcer.eo.operator.inPaths;
-import static sorcer.eo.operator.inValues;
-import static sorcer.eo.operator.link;
-import static sorcer.eo.operator.mark;
-import static sorcer.eo.operator.marker;
-import static sorcer.eo.operator.outPaths;
-import static sorcer.eo.operator.outValues;
-import static sorcer.eo.operator.put;
-import static sorcer.eo.operator.select;
-import static sorcer.eo.operator.softValue;
-import static sorcer.eo.operator.value;
-import static sorcer.eo.operator.valuesAt;
-import static sorcer.po.operator.invoker;
-
-import java.net.URL;
-import java.util.logging.Logger;
-
 import org.junit.Test;
-
 import org.junit.runner.RunWith;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.co.tuple.Entry;
 import sorcer.core.context.ListContext;
 import sorcer.service.Context;
-import sorcer.util.Sorcer;
+
+import java.net.URL;
+import java.util.logging.Logger;
+
+import static org.junit.Assert.*;
+import static sorcer.co.operator.*;
+import static sorcer.co.operator.list;
+import static sorcer.co.operator.path;
+import static sorcer.co.operator.url;
+import static sorcer.eo.operator.*;
+import static sorcer.eo.operator.put;
+import static sorcer.eo.operator.value;
+import static sorcer.po.operator.invoker;
 
 /**
  * @author Mike Sobolewski
@@ -57,24 +28,8 @@ import sorcer.util.Sorcer;
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/eol")
 public class ServiceContexts {
-	
 	private final static Logger logger = Logger.getLogger(ServiceContexts.class.getName());
-	
-	/*static {
-		String sorcerVersion = "5.0.0-SNAPSHOT";
-		String riverVersion = "2.2.2";
-		System.setProperty("java.security.policy", Sorcer.getHome()
-				+ "/policy/policy.all");
-		System.setSecurityManager(new SecurityManager());
-		Sorcer.setCodeBase(new String[] { "arithmetic-" + sorcerVersion + "-dl.jar",  
-				"sorcer-dl-"+sorcerVersion +".jar", "jsk-dl-"+riverVersion+".jar" });
-		
-		System.out.println("CLASSPATH :" + System.getProperty("java.class.path"));
-		System.setProperty("java.protocol.handler.pkgs", "sorcer.util.url|org.rioproject.url");
-//		System.setProperty("java.rmi.server.RMIClassLoaderSpi","org.rioproject.rmi.ResolvingLoader");	
-	}*/
 
-	
 	@Test
 	public void contextOperator() throws Exception {
 		

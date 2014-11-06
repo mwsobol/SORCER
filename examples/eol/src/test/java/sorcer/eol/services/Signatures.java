@@ -28,21 +28,7 @@ import static sorcer.eo.operator.*;
 @ProjectContext("examples/eol")
 public class Signatures {
 	private final static Logger logger = Logger.getLogger(Signatures.class.getName());
-/*
-	static {
-		String version = "5.0.0-SNAPSHOT";
-		System.setProperty("java.util.logging.config.file",
-				Sorcer.getHome() + "/configs/sorcer.logging");
-		System.setProperty("java.security.policy", Sorcer.getHome()
-				+ "/configs/policy.all");
-		System.setSecurityManager(new SecurityManager());
-		Sorcer.setCodeBase(new String[] { "arithmetic-" + version + "-dl.jar",  "sorcer-dl-"+version +".jar" });
-		
-		System.setProperty("java.protocol.handler.pkgs", "sorcer.util.url|org.rioproject.url");
-		System.setProperty("java.rmi.server.RMIClassLoaderSpi","org.rioproject.rmi.ResolvingLoader");
-	}*/
-	
-	
+
 	@Test
 	public void referencingInstances() throws SignatureException,
 			EvaluationException, ExertionException, ContextException {

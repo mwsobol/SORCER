@@ -22,8 +22,9 @@
 	<property name="d7" value="${common.lib}" />
 	<property name="d8" value="${lib}/blitz" />
 	<property name="d9" value="${lib}" />
-	<property name="d10" value="${sorcer.data}" />
-	<property name="rootdirs" value="${d1};${d2};${d3};${d4};${d5};${d6};${d7};${d8};${d9};${d10}" />
+    <property name="d10" value="${user.home}/.m2/repository" />
+	<property name="d11" value="${sorcer.data}" />
+	<property name="rootdirs" value="${d1};${d2};${d3};${d4};${d5};${d6};${d7};${d8};${d9};${d10};${d11}" />
 
 	<property name="webster.tmp.dir" value="${sorcer.data}" />
 

@@ -51,6 +51,17 @@ task installer(dependsOn: ["distribution"]) {
     }
 }
 
+def filter(project) {
+    def exclusions = ["sos-shell", "iGrid", "examples", "arithmetic"]
+    boolean include = true
+    for(String exclude : exclusions) {
+        if(project.contains(exclude))  {
+            include = false
+            break
+        }
+    }
+    include
+}
 
 /*
  * This will gather up and organize subproject dependencies, and resolve distribution dependencies
@@ -67,10 +78,11 @@ task gatherDeps() {
         }
         println "Creating distribution $dir"
         subprojects.each { project ->
-            if (!exclusions.contains(project.name)) {
-                //println "Processing ${project.name}"
+            boolean include = filter(project.path)
+            if(include) {
+                println "Processing ${project.path}"
                 ["jsk, start, service-ui"                             : "lib/river",
-                 "blitz, lockmgr"                                     : "lib/common/blitz",
+                 "blitz, lockmgr"                                     : "lib/blitz",
                  "je, bcmail, bcprov, itext, jffp, jfree, xerces, xml": "lib/common",
                  "groovy"                                             : "lib/common/groovy",
                  "junit"                                              : "lib/common/buildsupport"].each {
@@ -90,7 +102,6 @@ task gatherDeps() {
                 dest = "lib/river"
             else
                 dest = "lib/blitz"
-            //println "===> $dest ${file.name}"
             copy {
                 from file
                 into "$distDir-${version}/$dest"
@@ -118,28 +129,29 @@ task distribution(dependsOn: [gatherDeps]) {
         File sorcerLibDir = file("$distDir-${version}/lib/sorcer/lib")
         File sorcerDlDir = file("$distDir-${version}/lib/sorcer/lib-dl")
         File sorcerExtDir = file("$distDir-${version}/lib/sorcer/lib-ext")
-        File libRoot = file("$distDir-${version}/lib")
 
         subprojects.each { project ->
-            project.tasks.withType(Jar).each { jar ->
-                File target
-                if (jar.archiveName.indexOf('dl') > 0 ||
-                    jar.archiveName.indexOf('ui') > 0) {
-                    target = sorcerDlDir
-                } else if (jar.path.indexOf('boot') > 0) {
-                    target = libRoot
-                } else if (jar.archiveName.startsWith('ssb-') || jar.archiveName.startsWith('webster-')) {
-                    target = sorcerExtDir
-                } else {
-                    target = sorcerLibDir
-                }
-                if (file(jar.archivePath).exists()) {
-                    copy {
-                        from jar.archivePath
-                        into target
+            boolean include = filter(project.path)
+            if(include) {
+                println "Processing ${project.path}"
+                project.tasks.withType(Jar).each { jar ->
+                    File target
+                    if (jar.archiveName.indexOf('dl') > 0 ||
+                        jar.archiveName.indexOf('ui') > 0) {
+                        target = sorcerDlDir
+                    } else if (jar.archiveName.startsWith('ssb-') || jar.archiveName.startsWith('webster-')) {
+                        target = sorcerExtDir
+                    } else {
+                        target = sorcerLibDir
                     }
-                } else {
-                    println "Archive does not exist ${jar.archivePath}"
+                    if (file(jar.archivePath).exists()) {
+                        copy {
+                            from jar.archivePath
+                            into target
+                        }
+                    } else {
+                        println "Archive does not exist ${jar.archivePath}"
+                    }
                 }
             }
         }

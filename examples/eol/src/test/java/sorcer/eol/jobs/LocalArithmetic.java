@@ -56,21 +56,7 @@ import sorcer.util.Sorcer;
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/eol")
 public class LocalArithmetic implements SorcerConstants {
-
 	private final static Logger logger = Logger.getLogger(LocalArithmetic.class.getName());
-
-	/*static {
-		String sorcerVersion = "5.0.0-SNAPSHOT";
-		String riverVersion = "2.2.2";
-		System.setProperty("java.security.policy", Sorcer.getHome()
-				+ "/policy/policy.all");
-		System.setSecurityManager(new SecurityManager());
-		Sorcer.setCodeBase(new String[] { "arithmetic-" + sorcerVersion + "-dl.jar",  
-				"sorcer-dl-"+sorcerVersion +".jar", "jsk-dl-"+riverVersion+".jar" });
-		
-		System.out.println("CLASSPATH :"
-				+ System.getProperty("java.class.path"));
-	}*/
 	
 	@Test
 	public void exertAdderProvider() throws Exception {

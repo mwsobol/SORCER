@@ -1,30 +1,10 @@
 package sorcer.eol.blocks;
 
-import static org.junit.Assert.assertEquals;
-import static sorcer.co.operator.ent;
-import static sorcer.co.operator.inEnt;
-import static sorcer.eo.operator.alt;
-import static sorcer.eo.operator.block;
-import static sorcer.eo.operator.condition;
-import static sorcer.eo.operator.context;
-import static sorcer.eo.operator.exert;
-import static sorcer.eo.operator.loop;
-import static sorcer.eo.operator.opt;
-import static sorcer.eo.operator.result;
-import static sorcer.eo.operator.sig;
-import static sorcer.eo.operator.task;
-import static sorcer.eo.operator.value;
-import static sorcer.po.operator.invoker;
-import static sorcer.po.operator.par;
-import static sorcer.po.operator.pars;
-
-import java.util.logging.Logger;
-
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
-
 import sorcer.arithmetic.provider.Adder;
 import sorcer.arithmetic.provider.Averager;
 import sorcer.arithmetic.provider.Multiplier;
@@ -32,6 +12,17 @@ import sorcer.arithmetic.provider.Subtractor;
 import sorcer.core.SorcerConstants;
 import sorcer.service.Block;
 import sorcer.service.Task;
+
+import java.util.logging.Logger;
+
+import static org.junit.Assert.assertEquals;
+import static sorcer.co.operator.ent;
+import static sorcer.co.operator.inEnt;
+import static sorcer.eo.operator.alt;
+import static sorcer.eo.operator.*;
+import static sorcer.eo.operator.loop;
+import static sorcer.eo.operator.opt;
+import static sorcer.po.operator.*;
 
 /**
  * @author Mike Sobolewski
@@ -41,6 +32,13 @@ import sorcer.service.Task;
 @ProjectContext("examples/eol")
 public class ArithmeticNetBlocks implements SorcerConstants {
 	private final static Logger logger = Logger.getLogger(ArithmeticNetBlocks.class.getName());
+
+    @BeforeClass
+    public static void setup() {
+        System.out.println("=====================================================================================");
+        System.out.println( "java.rmi.server.codebase: "+System.getProperty("java.rmi.server.codebase"));
+        System.out.println( "=====================================================================================");
+    }
 
 	@Test
 	public void contextAltTest() throws Exception {
@@ -93,7 +91,6 @@ public class ArithmeticNetBlocks implements SorcerConstants {
 		Block block = block("block", t4, t5, alt(
 			opt(condition("{ t4, t5 -> t4 > t5 }", "t4", "t5"), t3), 
 			opt(condition("{ t4, t5 -> t4 <= t5 }", "t4", "t5"), t6)));
-
 		block = exert(block);
 		logger.info("block context 1: " + context(block));
 //		logger.info("result: " + value(context(block), "block/result"));

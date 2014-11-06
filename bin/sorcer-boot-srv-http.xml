@@ -21,7 +21,7 @@
 		<!--java jar="${lib}/sorcer-boot.jar" fork="yes"-->
 		<java classname="com.sun.jini.start.ServiceStarter" fork="yes">
             <classpath>
-                <pathelement location="${lib}/sorcer-boot-${sorcer.version}.jar"/>
+                <pathelement location="${lib}/sorcer/lib/sorcer-boot-${sorcer.version}.jar"/>
             	<pathelement location="${jini.lib}/serviceui-${river.version}.jar"/>
             	<pathelement location="${jini.lib}/jsk-lib-${river.version}.jar"/>
             	<pathelement location="${common.lib}/je-5.0.104.jar"/>

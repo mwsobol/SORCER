@@ -489,12 +489,11 @@ public class ServiceCataloger extends ServiceProvider implements Cataloger {
 
 		public List<ServiceItem> getAll(InterfaceList interfaceList) {
 			List<ServiceItem> sItems = new ArrayList<ServiceItem>();
-			for (Map.Entry<InterfaceList, List<ServiceItem>> entry : interfaceListMap
-					.entrySet()) {
-				logger.info("list = " + entry.getValue());
+			for (Map.Entry<InterfaceList, List<ServiceItem>> entry : interfaceListMap.entrySet()) {
+                if(logger.isLoggable(Level.FINE))
+				logger.fine("list = " + entry.getValue());
 				if (entry.getKey().containsAllInterfaces(interfaceList)) {
-					logger.info("Cataloger found matching interface list: "
-							+ entry.getValue());
+					logger.info("Cataloger found matching interface list: "+ entry.getValue());
 					sItems.addAll(interfaceListMap.get(entry.getKey()));
 				}
 			}

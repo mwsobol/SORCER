@@ -69,11 +69,11 @@ public class SorcerTestRunner extends BlockJUnit4ClassRunner {
      */
     @Override
     public void run(RunNotifier notifier) {
-        System.out.println("===> "+getTestClass().getJavaClass().getName());
-        for(Annotation a : getTestClass().getJavaClass().getAnnotations()) {
-            System.out.println("\t"+a.toString());
-        }
         if (System.getProperty("sorcer.home") == null) {
+            System.out.println("===> "+getTestClass().getJavaClass().getName());
+            for(Annotation a : getTestClass().getJavaClass().getAnnotations()) {
+                System.out.println("\t"+a.toString());
+            }
             ProjectContext projectContext = getTestClass().getJavaClass().getAnnotation(ProjectContext.class);
             if (projectContext != null) {
                 String rootDir = System.getProperty("user.dir");

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package sorcer.core.requestor;
+package org.sorcer.core.requestor;
 
 import junitx.framework.FileAssert;
 import sorcer.core.SorcerConstants;
@@ -93,7 +93,7 @@ import static org.junit.Assert.assertTrue;
 		}
 		// Determine if an internal web server is running if so obtain the root paths
 		boolean isWebsterInt = false;
-		String val = System.getProperty(SORCER_WEBSTER_INTERNAL);
+		String val = System.getProperty(SorcerConstants.SORCER_WEBSTER_INTERNAL);
 		if (val != null && val.length() != 0) {
 			isWebsterInt = val.equals("true");
 		}
@@ -131,7 +131,7 @@ import static org.junit.Assert.assertTrue;
 	 * @return the current URL for the requestor's data server.
 	 */
 	public String getDataServerUrl() {
-		return "http://" + getProperty(DATA_SERVER_INTERFACE) + ':' + getProperty(DATA_SERVER_PORT);
+		return "http://" + getProperty(SorcerConstants.DATA_SERVER_INTERFACE) + ':' + getProperty(SorcerConstants.DATA_SERVER_PORT);
 	}
 
 	/**
@@ -140,7 +140,7 @@ import static org.junit.Assert.assertTrue;
 	 * @return a data server name.
 	 */
 	public String getDataServerInterface() {
-		return  System.getProperty(DATA_SERVER_INTERFACE);
+		return  System.getProperty(SorcerConstants.DATA_SERVER_INTERFACE);
 		}
 	
 
@@ -150,7 +150,7 @@ import static org.junit.Assert.assertTrue;
 	 * @return a data server port.
 	 */
 	public String getDataServerPort() {
-		return  System.getProperty(DATA_SERVER_PORT);
+		return  System.getProperty(SorcerConstants.DATA_SERVER_PORT);
 		}
 	
 	/**
@@ -176,18 +176,16 @@ import static org.junit.Assert.assertTrue;
 			return hn;
 		}
 
-		hn = System.getProperty(R_WEBSTER_INTERFACE);
+		hn = System.getProperty(SorcerConstants.R_WEBSTER_INTERFACE);
 		if (hn != null && hn.length() > 0) {
-			logger
-					.finer("webster hostname as '" + R_WEBSTER_INTERFACE + "' system property value: "
+			logger.finer("webster hostname as '" + SorcerConstants.R_WEBSTER_INTERFACE + "' system property value: "
 							+ hn);
 			return hn;
 		}
 
-		hn = tester.getProps().getProperty(R_WEBSTER_INTERFACE);
+		hn = tester.getProps().getProperty(SorcerConstants.R_WEBSTER_INTERFACE);
 		if (hn != null && hn.length() > 0) {
-			logger
-					.finer("webster hostname as '" + R_WEBSTER_INTERFACE + "' provider property value: "
+			logger.finer("webster hostname as '" + SorcerConstants.R_WEBSTER_INTERFACE + "' provider property value: "
 							+ hn);
 			return hn;
 		}
@@ -217,16 +215,16 @@ import static org.junit.Assert.assertTrue;
 			return new Integer(wp);
 		}
 
-		wp = System.getProperty(R_WEBSTER_PORT);
+		wp = System.getProperty(SorcerConstants.R_WEBSTER_PORT);
 		if (wp != null && wp.length() > 0) {
-			logger.finer("requestor webster port as System '" + R_WEBSTER_PORT + "': "
+			logger.finer("requestor webster port as System '" + SorcerConstants.R_WEBSTER_PORT + "': "
 					+ wp);
 			return new Integer(wp);
 		}
 
-		wp = tester.getProps().getProperty(R_WEBSTER_PORT);
+		wp = tester.getProps().getProperty(SorcerConstants.R_WEBSTER_PORT);
 		if (wp != null && wp.length() > 0) {
-			logger.finer("requestor webster port as Sorcer '" + R_WEBSTER_PORT + "': "
+			logger.finer("requestor webster port as Sorcer '" + SorcerConstants.R_WEBSTER_PORT + "': "
 					+ wp);
 			return new Integer(wp);
 		}
@@ -248,7 +246,7 @@ import static org.junit.Assert.assertTrue;
 	 */
 	public URL getRequestorDataFileURL(String filename) throws MalformedURLException {
 		return new URL("http://" + getDataServerUrl() + '/'
-				+ getProperty(R_DATA_DIR) + '/' + filename);
+				+ getProperty(SorcerConstants.R_DATA_DIR) + '/' + filename);
 	}
 
 	public File getScrachFile(String filename) {
@@ -295,7 +293,7 @@ import static org.junit.Assert.assertTrue;
 	 * @return a tester data root directory
 	 */
 	public File getDataRootDir() {
-		return new File(getProperty(R_DATA_ROOT_DIR));
+		return new File(getProperty(SorcerConstants.R_DATA_ROOT_DIR));
 	}
 	
 	/**
@@ -305,7 +303,7 @@ import static org.junit.Assert.assertTrue;
 	 */
 	public File getDataDir() {
 		//return new File(getProperty(R_DATA_ROOT_DIR) + File.separator + getProperty(R_DATA_DIR));
-		return new File(System.getProperty(DOC_ROOT_DIR));
+		return new File(System.getProperty(SorcerConstants.DOC_ROOT_DIR));
 	}
 
 	/**
@@ -319,7 +317,7 @@ import static org.junit.Assert.assertTrue;
 	public String getDataFileUrl(File dataFile) throws MalformedURLException {
 		String dataURL = getDataServerUrl();
 		String path = dataFile.getAbsolutePath();
-		int index = path.indexOf(Sorcer.getProperty(R_DATA_DIR));
+		int index = path.indexOf(Sorcer.getProperty(SorcerConstants.R_DATA_DIR));
 		return dataURL + File.separator + path.substring(index);
 	}
 

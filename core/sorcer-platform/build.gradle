@@ -26,6 +26,7 @@ dependencies {
     compile project(':sorcer-dl')
     compile files("${System.properties['java.home']}/../lib/tools.jar")
     testCompile project(":webster")
+    testCompile libs.junit
 }
 
 jar {

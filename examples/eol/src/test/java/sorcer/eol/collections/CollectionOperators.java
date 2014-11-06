@@ -52,23 +52,8 @@ import static sorcer.po.operator.set;
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/eol")
 public class CollectionOperators {
-	
 	private final static Logger logger = Logger.getLogger(CollectionOperators.class.getName());
-	
-/*	static {
-		String sorcerVersion = "5.0.0-SNAPSHOT";
-		String riverVersion = "2.2.2";
-		System.setProperty("java.security.policy", Sorcer.getHome()
-				+ "/policy/policy.all");
-		System.setSecurityManager(new SecurityManager());
-		Sorcer.setCodeBase(new String[] { "arithmetic-" + sorcerVersion + "-dl.jar",  
-				"sorcer-dl-"+sorcerVersion +".jar", "jsk-dl-"+riverVersion+".jar" });
-		
-		System.out.println("CLASSPATH :" + System.getProperty("java.class.path"));
-		System.setProperty("java.protocol.handler.pkgs", "sorcer.util.url|org.rioproject.url");
-//		System.setProperty("java.rmi.server.RMIClassLoaderSpi","org.rioproject.rmi.ResolvingLoader");	
-	}*/
-	
+
 	
 	@Test
 	public void arrayOperator() throws Exception {

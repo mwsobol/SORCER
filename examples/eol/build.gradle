@@ -84,19 +84,28 @@ dependencies {
 }
 
 task testCP() {
-    configurations.testRuntime.each {
-        println "--> $it"
+    doLast {
+        println "${project.name}"
+        configurations.testRuntime.each {
+            println "--> $it"
+        }
     }
+}
+
+def repoPath() {
+    return "${project.group.replaceAll("\\.", "/")}/arithmetic/${version}"
 }
 
 bootme {
     starterConfig = file("${projectDir.path}/configs/start-all.config")
+    systemProperties = ["local.repo.path" : repoPath()]
     //spawn = false
 }
 
 test {
     systemProperty "java.rmi.server.codebase",
-                   "${websterUrl}/arithmetic-${version}-dl.jar ${websterUrl}/sorcer-dl-${version}.jar ${websterUrl}/jsk-dl-${riverVersion}.jar"
+                   "${websterUrl}/${repoPath()}/arithmetic-${version}-dl.jar ${websterUrl}/sorcer-dl-${version}.jar ${websterUrl}/jsk-dl-${riverVersion}.jar"
+
     testLogging {
         events "passed", "skipped", "failed"/*, "standardOut", "standardError"*/
     }
