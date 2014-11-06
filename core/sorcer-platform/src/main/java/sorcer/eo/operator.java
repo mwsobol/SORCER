@@ -309,6 +309,10 @@ public class operator {
 	
 	public static <T extends Object> Context entModel(T... entries) 
 			throws ContextException {
+		if (entries != null && entries.length == 1 && entries[0] instanceof Context) {
+			((Context)entries[0]).setModeling(true);
+			return (Context)entries[0];
+		}
 		Context cxt = context(entries);
 		cxt.setModeling(true);
 		return cxt;
@@ -654,7 +658,12 @@ public class operator {
 	
 	protected static void setPar(PositionalContext pcxt, Tuple2 entry, int i)
 			throws ContextException {
-		Par p = new Par(entry.path(), entry.value());
+		Par p;
+		try {
+			p = new Par(entry.path(), entry.value());
+		} catch (RemoteException e) {
+			throw new ContextException(e);
+		}
 		p.setPersistent(true);
 		if (entry instanceof InputEntry)
 			pcxt.putInValueAt(entry.path(), p, i + 1);
@@ -668,7 +677,12 @@ public class operator {
 
 	protected static void setPar(Context cxt, Tuple2 entry)
 			throws ContextException {
-		Par p = new Par(entry.path(), entry.value());
+		Par p;
+		try {
+			p = new Par(entry.path(), entry.value());
+		} catch (RemoteException e) {
+			throw new ContextException(e);
+		}
 		p.setPersistent(true);
 		if (entry instanceof InputEntry)
 			cxt.putInValue(entry.path(), p);
@@ -1407,6 +1421,8 @@ public class operator {
 					ReturnPath rp = ((ServiceContext)((Exertion)evaluation).getDataContext()).getReturnPath();
 					return (T) execExertion((Exertion) evaluation, rp,
 							entries);
+				} else if (evaluation instanceof Par){ 
+					return ((Par<T>)evaluation).getValue(entries);
 				} else if (evaluation instanceof Entry){ 
 					return ((Entry<T>)evaluation).getValue(entries);
 				} else {

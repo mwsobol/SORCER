@@ -515,10 +515,10 @@ public interface Context<T> extends Mappable<T>, Serializable, Evaluation<T>,
 
 	public void setReturnValue(Object value) throws ContextException;
 
-	public Object putDbValue(String path, Object value) throws ContextException;
+	public Object putDbValue(String path, Object value) throws ContextException, RemoteException;
 
 	public Object putDbValue(String path, Object value, URL datastoreUrl)
-			throws ContextException;
+			throws ContextException, RemoteException;
 
 	public URL getURL(String path) throws ContextException;
 
@@ -528,7 +528,7 @@ public interface Context<T> extends Mappable<T>, Serializable, Evaluation<T>,
 	
 	public Arg addPar(String path, Object value) throws ContextException;
 
-	public Arg getPar(String path) throws ContextException;
+	public Arg getPar(String path) throws ContextException, RemoteException;
 
 	public Object putValue(String path, Object value, String association)
 			throws ContextException;

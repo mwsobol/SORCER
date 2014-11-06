@@ -16,8 +16,6 @@
  */
 package sorcer.po;
 
-import static sorcer.eo.operator.sFi;
-
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.concurrent.Callable;
@@ -61,7 +59,8 @@ import sorcer.service.InvocationException;
 import sorcer.service.Mappable;
 import sorcer.service.NoneException;
 import sorcer.service.ServiceExertion;
-import sorcer.service.ServiceFidelity;
+import sorcer.service.Setter;
+import sorcer.util.url.sos.SdbUtil;
 
 /**
  * @author Mike Sobolewski
@@ -72,23 +71,37 @@ public class operator {
 	private static final Logger logger = Logger.getLogger(operator.class.getName());
 
 
-	public static <T> Par<T> par(String path, T argument) {
+	public static <T> Par<T> par(String path, T argument) throws EvaluationException, RemoteException {
 		return new Par(path, argument);
 	}
 	
-	public static Par dbPar(String path, Object argument) {
+	public static Par dbPar(String path, Object argument) throws EvaluationException, RemoteException {
 		Par p = new Par(path, argument);
 		p.setPersistent(true);
+		p.getValue();
 		return p;
 	}
 	
-	public static Par par(Context context, String path, Object argument) {
+	public static Par par(Context context, Identifiable identifiable) throws EvaluationException, RemoteException {
+		Par p = new Par(identifiable.getName(), identifiable);
+		p.setScope(context);
+		return p;
+	}
+	
+	public static Par par(Context context, String path, Object argument) throws EvaluationException, RemoteException {
 		Par p = new Par(path, argument);
 		p.setScope(context);
 		return p;
 	}
 	
-	public static Par dbPar(Context context, String path, Object argument) {
+	public static Par dBar(Context context, Identifiable identifiable) throws EvaluationException, RemoteException {
+		Par p = new Par(identifiable.getName(), identifiable);
+		p.setPersistent(true);
+		p.setScope(context);
+		return p;
+	}
+	
+	public static Par dbPar(Context context, String path, Object argument) throws EvaluationException, RemoteException {
 		Par p = new Par(path, argument);
 		p.setPersistent(true);
 		p.setScope(context);
@@ -106,12 +119,12 @@ public class operator {
 		return p;
 	}
 	
-	public static Par url(Par par, URL url) {
+	public static Par storeUrl(Par par, URL url) {
 		par.setDbURL(url);
 		return par;
 	}
 	
-	public static Par par(ParModel pm, String name) throws ContextException {
+	public static Par par(ParModel pm, String name) throws ContextException, RemoteException {
 		Par parameter = new Par(name, pm.asis(name));
 		parameter.setScope(pm);
 		return parameter;
@@ -138,13 +151,6 @@ public class operator {
 	public static ParModel parModel(String name, Identifiable... Objects)
 			throws EvaluationException, RemoteException, ContextException {
 		ParModel pm = new ParModel(name);
-		pm.add(Objects);
-		return pm;
-	}
-	
-	public static ParModel parModel(Identifiable... Objects)
-			throws EvaluationException, RemoteException, ContextException {
-		ParModel pm = new ParModel();
 		pm.add(Objects);
 		return pm;
 	}
@@ -188,12 +194,12 @@ public class operator {
 			((ServiceInvoker)invoker).clearPars();
 	}
 	
-	public static ParModel parContext(Identifiable... objects)
+	public static ParModel parModel(Identifiable... objects)
 			throws ContextException, RemoteException {
 		return new ParModel(objects);
 	}
 	
-	public static Context result(Context model, String parname)
+	public static Context target(Context model, String parname)
 			throws ContextException, RemoteException {
 		((ServiceContext)model).setReturnPath(parname);
 		return model;
@@ -211,7 +217,7 @@ public class operator {
 		return parContext;
 	}
 	
-	public static Par put(ParModel parModel, String name, Object value) throws ContextException {
+	public static Par put(ParModel parModel, String name, Object value) throws ContextException, RemoteException {
 		parModel.putValue(name, value);
 		parModel.setContextChanged(true);
 		return par(parModel, name);
@@ -269,7 +275,7 @@ public class operator {
 		return add(par, to);
 	}
 	
-	public static Par par(Object object) {
+	public static Par par(Object object) throws EvaluationException, RemoteException {
 		if (object instanceof String)
 			return new Par((String)object);
 		else if (object instanceof Identifiable)

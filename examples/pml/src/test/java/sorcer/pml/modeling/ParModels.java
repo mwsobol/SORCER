@@ -13,10 +13,12 @@ import static sorcer.co.operator.persistent;
 import static sorcer.eo.operator.asis;
 import static sorcer.eo.operator.condition;
 import static sorcer.eo.operator.context;
+import static sorcer.eo.operator.cxt;
 import static sorcer.eo.operator.exert;
 import static sorcer.eo.operator.get;
 import static sorcer.eo.operator.in;
 import static sorcer.eo.operator.job;
+import static sorcer.eo.operator.result;
 import static sorcer.eo.operator.serviceContext;
 import static sorcer.eo.operator.out;
 import static sorcer.eo.operator.pipe;
@@ -35,11 +37,11 @@ import static sorcer.po.operator.invoker;
 import static sorcer.po.operator.loop;
 import static sorcer.po.operator.methodInvoker;
 import static sorcer.po.operator.par;
-import static sorcer.po.operator.parContext;
+import static sorcer.po.operator.parModel;
 import static sorcer.po.operator.parModel;
 import static sorcer.po.operator.pars;
 import static sorcer.po.operator.put;
-import static sorcer.po.operator.result;
+import static sorcer.po.operator.target;
 import static sorcer.po.operator.runnableInvoker;
 import static sorcer.po.operator.set;
 import groovy.lang.Closure;
@@ -95,54 +97,79 @@ public class ParModels {
 		Sorcer.setCodeBase(new String[] { "aritmeticInvokeModel-bean.jar" });
 	}
 
-	@Test
-	public void parOperator() throws Exception {
+	private ParModel pm; 
+	private Par<Double> x;
+	private Par<Double> y;
+	private Par z;
 		
-		Par<?> add = par("add", invoker("x + y", pars("x", "y")));
-		Context<Double> cxt = context(ent("x", 10.0), ent("y", 20.0));
-		logger.info("par value: " + value(add, cxt));
-		assertTrue(value(add, cxt).equals(30.0));
-
-		cxt = context(ent("x", 20.0), ent("y", 30.0));
-		add = par(cxt, "add", invoker("x + y", pars("x", "y")));
-		logger.info("par value: " + value(add));
-		assertTrue(value(add).equals(50.0));
+	@Test
+	public void runtimeScope() throws Exception {
+		
+		// a par is a variable (entry) evaluated in its own scope (context)
+		Par y = par("y",
+				invoker("(x1 * x2) - (x3 + x4)", pars("x1", "x2", "x3", "x4")));
+		Object val = value(y, ent("x1", 10.0), ent("x2", 50.0),
+				ent("x3", 20.0), ent("x4", 80.0));
+		// logger.info("y value: " + val);
+		assertEquals(val, 400.0);
 
 	}
 	
 	@Test
-	public void dbParOperator() throws Exception {	
-		Par<Double> dbp1 = persistent(par("design/in", 25.0));
-		Par<String> dbp2 = dbPar("url/sobol", "http://sorcersoft.org/sobol");
+	public void createParModel() throws Exception {
 
-		assertFalse(asis(dbp1) instanceof URL);
-		assertFalse(asis(dbp2) instanceof URL);
-		
-		assertTrue(value(dbp1).equals(25.0));
-		assertEquals(value(dbp2), "http://sorcersoft.org/sobol");
-		
-		assertTrue(asis(dbp1) instanceof URL);
-		assertTrue(asis(dbp2) instanceof URL);
+		ParModel vm = parModel(
+				"Hello Arithmetic Model #1",
+				// inputs
+				par("x1"), par("x2"), par("x3", 20.0),
+				par("x4", 80.0),
+				// outputs
+				par("t4", invoker("x1 * x2", pars("x1", "x2"))),
+				par("t5", invoker("x3 + x4", pars("x3", "x4"))),
+				par("j1", invoker("t4 - t5", pars("t4", "t5"))));
 
-		// store par args in the data store
-		URL url1 = store(par("design/in", 30.0));
-		URL url2 = store(par("url/sorcer", "http://sorcersoft.org"));
-		
-		assertEquals(value(url1), 30.0);
-		assertEquals(value(url2), "http://sorcersoft.org");
+//		logger.info("t4 value: " + value(par(vm, "t4")));
+		assertEquals(value(par(vm, "t4")), null);
+
+		logger.info("t5 value: " + value(par(vm, "t5")));
+		assertEquals(value(par(vm, "t5")), 100.0);
+
+		// logger.info("j1 value: " + value(par(vm, "j1")));
+		assertEquals(value(par(vm, "j1")), null);
+
+		// logger.info("j1 value: " + value(var(put(vm, entry("x1", 10.0),
+		// entry("x2", 50.0)), "j1")));
+		assertEquals(
+				value(par(put(vm, ent("x1", 10.0), ent("x2", 50.0)), "j1")),
+				400.0);
+		// logger.info("j1 value: " + value(par(vm, "j1")));
+		assertEquals(value(par(vm, "j1")), 400.0);
+
 	}
-	
+
 	@Test
-	public void parModelOperator() throws Exception {
-		ParModel pm = parModel("par-model");
-		add(pm, par("x", 10.0), ent("y", 20.0));
-		add(pm, invoker("add", "x + y", pars("x", "y")));
+	public void createMogram() throws Exception {
 
-//		logger.info("adder value: " + value(pm, "add"));
-		assertEquals(value(pm, "add"), 30.0);
-		set(pm, "x", 20.0);
-		assertEquals(value(pm, "add"), 40.0);
+		ParModel vm = parModel(
+				"Hello Arithmetic #2",
+				// inputs
+				par("x1"), par("x2"), par("x3", 20.0), par("x4"),
+				// outputs
+				par("t4", invoker("x1 * x2", pars("x1", "x2"))),
+				par("t5",
+					task(sig("add", AdderImpl.class),
+						cxt("add", inEnt("arg/x3"),
+								inEnt("arg/x4"),
+						result("result/y")))),
+				par("j1", invoker("t4 - t5", pars("t4", "t5"))));
+
+		vm = put(vm, ent("x1", 10.0), ent("x2", 50.0),
+				ent("x4", 80.0));
+				 
+		assertEquals(value(par(vm, "j1")), 400.0);
+		
 	}
+
 	
 	@Test
 	public void contextInvoker() throws RemoteException, ContextException {
@@ -216,8 +243,9 @@ public class ParModels {
 		assertEquals(value(pm, "x"), 10.0);
 		assertEquals(value(pm, "y"), 20.0);
 		assertEquals(value(pm, "add"), 30.0);
-
-		result(pm, "add");
+		
+		// now evaluate model for its target       
+		target(pm, "add");
 		assertEquals(value(pm), 30.0);
 	}
 	
@@ -241,7 +269,7 @@ public class ParModels {
 		assertEquals(value(pm, "y"), 40.0);
 		assertEquals(value(pm, "add"), 60.0);
 		
-		result(pm, "add");
+		target(pm, "add");
 		assertEquals(value(pm), 60.0);
 		
 		add(pm, par("x", 10.0), par("y", 20.0));
@@ -251,7 +279,7 @@ public class ParModels {
 		logger.info("par model2:" + pm);
 		assertEquals(value(pm, "add"), 30.0);
 		
-		result(pm, "add");
+		target(pm, "add");
 		assertEquals(value(pm), 30.0);
 		
 		// with new arguments, closure
@@ -270,7 +298,7 @@ public class ParModels {
 		Par y2 = par("y2", invoker("x * y1", pars("x", "y1")));
 		Par y1 = par("y1", invoker("x1 * 5", par("x1")));
 		
-		ParModel pc = parContext(y1, y2, y3);		
+		ParModel pc = parModel(y1, y2, y3);		
 		// any dependent values or pars can be updated or added any time
 		put(pc, "x", 10.0);
 		put(pc, "x1", 20.0);
@@ -425,7 +453,7 @@ public class ParModels {
 		set(x2, 55.0);
 		assertEquals(value(x2), 55.0);
 		
-		ParModel pc = parContext(x1, x2);
+		ParModel pc = parModel(x1, x2);
 		assertEquals(value(pc, "x1"), 45.0);
 		assertEquals(value(pc, "x2"), 55.0);
 	}
@@ -478,7 +506,7 @@ public class ParModels {
 		assertEquals(value(j1p), 1000.0);
 		
 		// map pars are aliased pars
-		ParModel pc = parContext(x1p, x2p, j1p);
+		ParModel pc = parModel(x1p, x2p, j1p);
 		logger.info("y value: " + value(pc, "y"));
 	}
 	
@@ -698,11 +726,6 @@ public class ParModels {
 		assertEquals(invoke(pm, "call", context(ent("limit", 100.0))), 420.0);
 	}
 	
-	ParModel pm = new ParModel();
-	Par<Double> x = par("x", 10.0);
-	Par<Double> y = par("y", 20.0);
-	Par z = par("z", invoker("x - y", x, y));
-
 	// member class implementing Callable interface used below with methodAttachmentWithArgs()
 	public class Config implements Callable {
 		public Double call() throws Exception {
