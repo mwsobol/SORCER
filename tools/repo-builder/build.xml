@@ -1,0 +1,88 @@
+<project name="Repository builder" default="all" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
+	<property environment="env"/>
+    <loadproperties srcfile="${basedir}/versions.properties"/>
+
+	<target name="all" description="Builds the entire Repository">
+		<antcall target="run.install">
+			<param name="module" value="all"/>
+		</antcall>
+	</target>
+
+	<target name="sorcer" depends="sorcer.install, sorcer.auto.push"/>
+
+    <target name="sorcer.install" description="Builds the Sorcer artifacts for the Repository">
+        <antcall target="run.install">
+            <param name="module" value="sorcer"/>
+        </antcall>
+        <dirname file="${basedir}/../distribution/dist.xml" property="dist.home"/>
+        <ant antfile="${basedir}/../distribution/dist.xml">
+            <property name="dist.home" value="${dist.home}"/>
+        </ant>
+        <echo file="toPush.txt"
+              message="../distribution/iGrid-dist-${sorcer.version}.zip${line.separator}"
+              append="true"/>
+    </target>
+
+    <target name="sorcer.auto.push" description="Pushes the Sorcer artifacts to the Repository" if="deploy">
+        <antcall target="run.install">
+            <param name="module" value="push"/>
+        </antcall>
+    </target>
+
+	<target name="common" description="Builds the Common artifacts for the Repository">
+		<antcall target="run.install">
+			<param name="module" value="common"/>
+		</antcall>
+	</target>
+
+	<target name="buildtools" description="Builds the build tools artifacts for the Repository">
+		<antcall target="run.install">
+			<param name="module" value="buildtools"/>
+		</antcall>
+	</target>
+
+	<target name="javatools" description="Builds the java tools artifacts for the Repository">
+		<antcall target="run.install">
+			<param name="module" value="javatools"/>
+		</antcall>
+	</target>
+		
+	<target name="river" description="Builds the river/jini artifacts for the Repository">
+		<antcall target="run.install">
+			<param name="module" value="river"/>
+		</antcall>
+	</target>
+			
+	<target name="blitz" description="Blitz JavaSpace artifacts for the Repository">
+		<antcall target="run.install">
+			<param name="module" value="blitz" />
+		</antcall>
+	</target>
+
+    <target name="run.install">
+        <condition property="run.deploy" value="true" else="false">
+            <isset property="deploy"/>
+        </condition>
+
+        <exec executable="./buildrepo.groovy">
+            <arg value="${module}" />
+            <arg value="${run.deploy}" />
+        </exec>
+    </target>
+
+	<target name="push" description="Pushes modified repository files to a web server serving the shared repository">
+		<exec executable="./buildrepo.groovy">
+			<arg value="push"/>
+		</exec>
+	</target>
+
+	<target name="clean">
+		<delete verbose="true" failonerror="false">
+			<fileset dir="repository"/>
+		</delete>
+		<delete verbose="true" failonerror="false">
+			<fileset dir=".ivy2/cache"/>
+		</delete>
+	</target>
+
+</project>

@@ -1,0 +1,40 @@
+<ivysettings>
+    <properties environment="env" />
+    <properties file="versions.properties" />
+    <caches defaultCacheDir="${user.dir}/.ivy2/cache"/>
+
+    <settings defaultResolver="resolver-chain"/>
+    <property name="ivy.checksums" value="" override="true"/>
+    <!--<property name="m2.repo" value="${user.home}/.m2/repository"/>-->
+    <property name="m2.repo" value="/Volumes/SSD/.m2/repository"/>
+
+    <resolvers>
+
+        <filesystem name="local-maven-2" m2compatible="true">
+            <artifact pattern="${m2.repo}/[organisation]/[module]/[revision]/[module]-[revision](-[classifier]).[ext]"/>
+            <ivy pattern="${m2.repo}/[organisation]/[module]/[revision]/[module]-[revision](-[classifier]).pom"/>
+        </filesystem>
+
+        <ibiblio name="sharedm2" m2compatible="true" root="http://10.131.7.138:7001/repository"/>
+
+        <ibiblio name="central" m2compatible="true"/>
+        <ibiblio name="oracle" m2compatible="true" root="http://download.oracle.com/maven"/>
+        <ibiblio name="mvnrepository" m2compatible="true" root="http://mvnrepository.com/artifact"/>
+        <ibiblio name="rio" m2compatible="true" root="http://www.rio-project.org/maven2"/>
+
+        <chain name="resolver-chain" returnFirst="true">
+            <resolver ref="local-maven-2" />
+            <resolver ref="central"/>
+            <resolver ref="oracle"/>
+            <resolver ref="mvnrepository"/>
+            <resolver ref="rio"/>
+        </chain>
+
+        <filesystem name="my-repository">
+            <ivy pattern="${dest.repo.dir}/[organisation]/[module]/ivy/ivy-[revision].xml"/>
+            <artifact pattern="${dest.repo.dir}/[organisation]/[module]/[artifact]-[revision].[ext]"/>
+        </filesystem>
+    </resolvers>
+
+
+</ivysettings>
