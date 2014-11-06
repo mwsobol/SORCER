@@ -30,6 +30,9 @@ import java.util.logging.Logger;
 
 import org.junit.Test;
 
+import org.junit.runner.RunWith;
+import org.sorcer.test.ProjectContext;
+import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.arithmetic.provider.impl.AveragerImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
@@ -50,12 +53,13 @@ import sorcer.util.Sorcer;
  * @author Mike Sobolewski
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })
+@RunWith(SorcerTestRunner.class)
+@ProjectContext("examples/eol")
 public class LocalArithmetic implements SorcerConstants {
 
-	private final static Logger logger = Logger
-			.getLogger(LocalArithmetic.class.getName());
+	private final static Logger logger = Logger.getLogger(LocalArithmetic.class.getName());
 
-	static {
+	/*static {
 		String sorcerVersion = "5.0.0-SNAPSHOT";
 		String riverVersion = "2.2.2";
 		System.setProperty("java.security.policy", Sorcer.getHome()
@@ -66,7 +70,7 @@ public class LocalArithmetic implements SorcerConstants {
 		
 		System.out.println("CLASSPATH :"
 				+ System.getProperty("java.class.path"));
-	}
+	}*/
 	
 	@Test
 	public void exertAdderProvider() throws Exception {

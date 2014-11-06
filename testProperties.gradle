@@ -1,0 +1,70 @@
+/*
+ * Copyright to the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+subprojects {
+    if (project.name != "examples") {
+        /*
+         * Inject common test system properties for all 'test' tasks
+         */
+        afterEvaluate { project ->
+            [Test, JavaExec].each { task ->
+                if (task.name == Test.class.name && project.tasks["test"].systemProperties.size() > 0) {
+                    project.tasks['processResources'].dependsOn { "genTestProps" }
+                }
+                tasks.withType(task) {
+                    systemProperty "java.security.policy", "${sorcerDistHome}/policy/policy.all"
+                    systemProperty "java.protocol.handler.pkgs", "net.jini.url|sorcer.util.url|org.rioproject.url"
+                    systemProperty "java.rmi.server.useCodebaseOnly", "false"
+                    systemProperty "java.rmi.server.RMIClassLoaderSpi","org.rioproject.rmi.ResolvingLoader"
+                    systemProperty "sorcer.home", "${sorcerDistHome}"
+                    systemProperty "java.util.logging.config.file", "${sorcerDistHome}/configs/sorcer.logging"
+                    environment("SORCER_HOME":"${sorcerDistHome}", "RIO_HOME": "${rioHome}")
+
+                }
+            }
+        }
+
+        task genTestProps() {
+            doLast {
+                File configDir = new File(project.buildDir, 'configs')
+                if (!configDir.exists())
+                    configDir.mkdirs()
+                Properties testProps = new Properties()
+                Test test = project.tasks["test"]
+                test.systemProperties.each { key, value ->
+                    testProps.put(key, value.toString())
+                }
+                File propsFile = new File(configDir, 'test.properties')
+                testProps.store(propsFile.newWriter(), null)
+                println "Wrote ${propsFile.path}"
+            }
+        }
+        genTestProps.onlyIf {
+            File propsFile = new File(project.buildDir, 'configs/test.properties')
+            if (!propsFile.exists())
+                return true
+            def props = new Properties()
+            propsFile.withInputStream {
+                stream -> props.load(stream)
+            }
+            Properties testProps = new Properties()
+            project.tasks["test"].systemProperties.each { key, value ->
+                testProps.put(key, value.toString())
+            }
+            !testProps.equals(props)
+        }
+    }
+}

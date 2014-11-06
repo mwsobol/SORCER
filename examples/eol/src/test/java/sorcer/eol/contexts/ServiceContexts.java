@@ -42,6 +42,9 @@ import java.util.logging.Logger;
 
 import org.junit.Test;
 
+import org.junit.runner.RunWith;
+import org.sorcer.test.ProjectContext;
+import org.sorcer.test.SorcerTestRunner;
 import sorcer.co.tuple.Entry;
 import sorcer.core.context.ListContext;
 import sorcer.service.Context;
@@ -51,11 +54,13 @@ import sorcer.util.Sorcer;
  * @author Mike Sobolewski
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
+@RunWith(SorcerTestRunner.class)
+@ProjectContext("examples/eol")
 public class ServiceContexts {
 	
 	private final static Logger logger = Logger.getLogger(ServiceContexts.class.getName());
 	
-	static {
+	/*static {
 		String sorcerVersion = "5.0.0-SNAPSHOT";
 		String riverVersion = "2.2.2";
 		System.setProperty("java.security.policy", Sorcer.getHome()
@@ -67,7 +72,7 @@ public class ServiceContexts {
 		System.out.println("CLASSPATH :" + System.getProperty("java.class.path"));
 		System.setProperty("java.protocol.handler.pkgs", "sorcer.util.url|org.rioproject.url");
 //		System.setProperty("java.rmi.server.RMIClassLoaderSpi","org.rioproject.rmi.ResolvingLoader");	
-	}
+	}*/
 
 	
 	@Test

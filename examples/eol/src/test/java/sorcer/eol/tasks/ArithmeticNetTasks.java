@@ -1,53 +1,39 @@
 package sorcer.eol.tasks;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static sorcer.co.operator.inEnt;
-import static sorcer.co.operator.outEnt;
-import static sorcer.eo.operator.context;
-import static sorcer.eo.operator.cxt;
-import static sorcer.eo.operator.exert;
-import static sorcer.eo.operator.get;
-import static sorcer.eo.operator.result;
-import static sorcer.eo.operator.sFi;
-import static sorcer.eo.operator.sFis;
-import static sorcer.eo.operator.sig;
-import static sorcer.eo.operator.srv;
-import static sorcer.eo.operator.strategy;
-import static sorcer.eo.operator.task;
-import static sorcer.eo.operator.value;
-
-import java.rmi.RemoteException;
-import java.util.logging.Logger;
-
 import org.junit.Test;
-
+import org.junit.runner.RunWith;
+import org.sorcer.test.ProjectContext;
+import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.Adder;
 import sorcer.arithmetic.provider.Multiplier;
 import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.core.provider.Exerter;
-import sorcer.service.Context;
-import sorcer.service.ContextException;
-import sorcer.service.Exertion;
-import sorcer.service.ExertionException;
-import sorcer.service.SignatureException;
+import sorcer.service.*;
 import sorcer.service.Strategy.Access;
 import sorcer.service.Strategy.Monitor;
 import sorcer.service.Strategy.Wait;
-import sorcer.service.Task;
 import sorcer.util.ProviderAccessor;
-import sorcer.util.Sorcer;
+
+import java.rmi.RemoteException;
+import java.util.logging.Logger;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static sorcer.co.operator.inEnt;
+import static sorcer.co.operator.outEnt;
+import static sorcer.eo.operator.*;
 
 /**
  * @author Mike Sobolewski
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
+@RunWith(SorcerTestRunner.class)
+@ProjectContext("examples/eol")
 public class ArithmeticNetTasks {
-	private final static Logger logger = Logger
-			.getLogger(ArithmeticNetTasks.class.getName());
+	private final static Logger logger = Logger.getLogger(ArithmeticNetTasks.class.getName());
 
-	static {
+/*	static {
 		String sorcerVersion = "5.0.0-SNAPSHOT";
 		String riverVersion = "2.2.2";
 		System.setProperty("java.util.logging.config.file",
@@ -60,7 +46,7 @@ public class ArithmeticNetTasks {
 		
 		System.setProperty("java.protocol.handler.pkgs", "sorcer.util.url|org.rioproject.url");
 //		System.setProperty("java.rmi.server.RMIClassLoaderSpi","org.rioproject.rmi.ResolvingLoader");
-	}
+	}*/
 	
 	
 	@Test

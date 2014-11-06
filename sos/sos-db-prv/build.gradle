@@ -1,3 +1,5 @@
+version = sorcerVersion
+
 jar {
 	manifest {
 		attributes("Implementation-Title": "SORCER Berkeley Database Service", "Implementation-Version": version)

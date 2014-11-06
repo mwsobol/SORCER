@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,17 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.sorcer.test;
 
-version = sorcerVersion
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-jar {
-	manifest {
-		attributes("Implementation-Title": "SORCER Network Shell (nsh)", "Implementation-Version": version)
-	   }
-}
-
-dependencies {
-    //compile "org.sorcer:sorcer-modeling-lib:${sorcerModelingVersion}"
-    compile	project(':webster')
-    compile project(':sorcer-platform')
+/**
+ * Provides context where a test class is in a project
+ *
+ * @author Dennis Reedy
+ */
+@Retention(RetentionPolicy.RUNTIME)
+@Target(value= ElementType.TYPE)
+public @interface ProjectContext {
+    String value();
 }

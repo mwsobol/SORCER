@@ -1,65 +1,47 @@
 package sorcer.eol.services;
 
-import static org.junit.Assert.assertEquals;
-import static sorcer.co.operator.from;
-import static sorcer.co.operator.inEnt;
-import static sorcer.co.operator.outEnt;
-import static sorcer.eo.operator.context;
-import static sorcer.eo.operator.cxt;
-import static sorcer.eo.operator.exert;
-import static sorcer.eo.operator.get;
-import static sorcer.eo.operator.in;
-import static sorcer.eo.operator.input;
-import static sorcer.eo.operator.out;
-import static sorcer.eo.operator.output;
-import static sorcer.eo.operator.pipe;
-import static sorcer.eo.operator.result;
-import static sorcer.eo.operator.service;
-import static sorcer.eo.operator.serviceContext;
-import static sorcer.eo.operator.sig;
-import static sorcer.eo.operator.srv;
-import static sorcer.eo.operator.strategy;
-import static sorcer.eo.operator.value;
-
-import java.util.logging.Logger;
-
 import org.junit.Test;
-
+import org.junit.runner.RunWith;
+import org.sorcer.test.ProjectContext;
+import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.provider.impl.SubtractorImpl;
 import sorcer.core.provider.rendezvous.ServiceJobber;
-import sorcer.service.Context;
-import sorcer.service.ContextException;
-import sorcer.service.ExertionException;
-import sorcer.service.Service;
-import sorcer.service.SignatureException;
+import sorcer.service.*;
 import sorcer.service.Strategy.Access;
 import sorcer.service.Strategy.Flow;
 import sorcer.util.Sorcer;
+
+import java.util.logging.Logger;
+
+import static org.junit.Assert.assertEquals;
+import static sorcer.co.operator.*;
+import static sorcer.eo.operator.*;
+import static sorcer.eo.operator.input;
+import static sorcer.eo.operator.value;
 
 /**
  * @author Mike Sobolewski
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
+@RunWith(SorcerTestRunner.class)
+@ProjectContext("examples/eol")
 public class Services {
-	private final static Logger logger = Logger
-			.getLogger(Services.class.getName());
+	private final static Logger logger = Logger.getLogger(Services.class.getName());
 
-	static {
-		String sorcerVersion = "5.0.0-SNAPSHOT";
-		String riverVersion = "2.2.2";
+/*	static {
+		String version = "5.0.0-SNAPSHOT";
 		System.setProperty("java.util.logging.config.file",
 				Sorcer.getHome() + "/configs/sorcer.logging");
 		System.setProperty("java.security.policy", Sorcer.getHome()
-				+ "/policy/policy.all");
+				+ "/configs/policy.all");
 		System.setSecurityManager(new SecurityManager());
-		Sorcer.setCodeBase(new String[] { "arithmetic-" + sorcerVersion + "-dl.jar",  
-				"sorcer-dl-"+sorcerVersion +".jar", "jsk-dl-"+riverVersion+".jar" });
+		Sorcer.setCodeBase(new String[] { "arithmetic-" + version + "-dl.jar",  "sorcer-dl-"+version +".jar" });
 		
 		System.setProperty("java.protocol.handler.pkgs", "sorcer.util.url|org.rioproject.url");
-//		System.setProperty("java.rmi.server.RMIClassLoaderSpi","org.rioproject.rmi.ResolvingLoader");
-	}
+		System.setProperty("java.rmi.server.RMIClassLoaderSpi","org.rioproject.rmi.ResolvingLoader");
+	}*/
 	
 	
 	@Test

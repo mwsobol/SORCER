@@ -1,22 +1,9 @@
 package sorcer.eol.blocks;
 
-import static org.junit.Assert.assertEquals;
-import static sorcer.co.operator.inEnt;
-import static sorcer.co.operator.loop;
-import static sorcer.eo.operator.add;
-import static sorcer.eo.operator.block;
-import static sorcer.eo.operator.context;
-import static sorcer.eo.operator.exert;
-import static sorcer.eo.operator.get;
-import static sorcer.eo.operator.result;
-import static sorcer.eo.operator.sig;
-import static sorcer.eo.operator.strategy;
-import static sorcer.eo.operator.task;
-
-import java.util.logging.Logger;
-
 import org.junit.Test;
-
+import org.junit.runner.RunWith;
+import org.sorcer.test.ProjectContext;
+import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.Adder;
 import sorcer.arithmetic.provider.Averager;
 import sorcer.core.SorcerConstants;
@@ -24,18 +11,25 @@ import sorcer.service.Block;
 import sorcer.service.Strategy.Access;
 import sorcer.service.Strategy.Wait;
 import sorcer.service.Task;
-import sorcer.util.Sorcer;
+
+import java.util.logging.Logger;
+
+import static org.junit.Assert.assertEquals;
+import static sorcer.co.operator.inEnt;
+import static sorcer.co.operator.loop;
+import static sorcer.eo.operator.*;
 
 /**
  * @author Mike Sobolewski
  */
 @SuppressWarnings("unchecked")
+@RunWith(SorcerTestRunner.class)
+@ProjectContext("examples/eol")
 public class ArithmeticSpaceBlock implements SorcerConstants {
 
-	private final static Logger logger = Logger
-			.getLogger(ArithmeticSpaceBlock.class.getName());
+	private final static Logger logger = Logger.getLogger(ArithmeticSpaceBlock.class.getName());
 
-	static {
+	/*static {
 		String sorcerVersion = "5.0.0-SNAPSHOT";
 		String riverVersion = "2.2.2";
 		System.setProperty("java.security.policy", Sorcer.getHome()
@@ -47,7 +41,7 @@ public class ArithmeticSpaceBlock implements SorcerConstants {
 		System.out.println("CLASSPATH :" + System.getProperty("java.class.path"));
 		System.setProperty("java.protocol.handler.pkgs", "sorcer.util.url|org.rioproject.url");
 //		System.setProperty("java.rmi.server.RMIClassLoaderSpi","org.rioproject.rmi.ResolvingLoader");
-	}
+	}*/
 
 	@Test
 	public void arithmeticSpaceTaskTest() throws Exception {

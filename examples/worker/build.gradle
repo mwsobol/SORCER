@@ -1,5 +1,7 @@
 //project.jar.enabled = false
 
+version = sorcerVersion
+
 jar {
 	manifest {
 		attributes("Implementation-Title": "SORCER Worker Provider", "Implementation-Version": version)

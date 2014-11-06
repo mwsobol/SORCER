@@ -1,0 +1,104 @@
+/*
+ * Copyright to the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+//apply plugin: BootMePlugin
+apply plugin: StopMePlugin
+
+task bootme(type: BootMe)
+
+class BootMe extends DefaultTask {
+    @InputFile
+    File starterConfig
+    @Input @org.gradle.api.tasks.Optional
+    boolean spawn = true
+
+    @TaskAction
+    def bootMe() {
+        StringBuilder java = new StringBuilder()
+        java.append(System.getProperty('java.home')).append("/bin/java")
+
+        def args = []
+        if (System.getProperty("os.name").startsWith("Windows")) {
+            args << "cmd.exe"
+            args << "/C"
+        }
+        args << java.toString()
+        args << "-cp"
+        args << project.bootClassPath.getAsPath()
+        args << "-Dproject.id=${project.name}"
+        args << "-Djava.protocol.handler.pkgs=net.jini.url|sorcer.util.url|org.rioproject.url"
+        args << "-Djava.util.logging.config.file=${project.sorcerDistHome}/configs/sorcer.logging"
+        args << "-Djava.security.policy=${project.sorcerDistHome}/policy/policy.all"
+        args << "-Djava.rmi.server.useCodebaseOnly=false"
+        args << "-Driver.version=${project.riverVersion}"
+        args << "-Dsorcer.version=${project.sorcerVersion}"
+        args << "-Dsorcer.home=${project.sorcerDistHome}"
+        args << "-Dsorcer.env.file=${project.sorcerDistHome}/configs/sorcer.env"
+        args << "-Dproject.build.dir=${project.buildDir.path}"
+        args << "com.sun.jini.start.ServiceStarter"
+        //args << "${projectDir.path}/configs/start-all.config"
+        args << "${starterConfig.path}"
+        println args
+
+        ProcessBuilder pb = new ProcessBuilder(args as String[])
+        Map<String, String> env = pb.environment()
+        env.put("SORCER_HOME", "${project.sorcerDistHome}")
+        env.put("RIO_HOME", "${project.rioHome}")
+
+        Process process = pb.start()
+        process.consumeProcessOutput(System.out, System.err)
+        if (!spawn) {
+            process.waitFor()
+        } else {
+            process.in.close()
+            process.out.close()
+            process.err.close()
+        }
+    }
+}
+
+class BootMePlugin implements Plugin<Project> {
+    void apply(Project project) {
+        project.extensions.create("bootme", BootMe)
+    }
+
+}
+
+
+class StopMePlugin implements Plugin<Project> {
+
+    void apply(Project project) {
+        project.task('stopme') << {
+            def pids = []
+            "jps -v".execute().text.eachLine { line ->
+                if (line.contains("${project.name}")) {
+                    pids << line.split()[0]
+                }
+            }
+            String command
+            if (System.getProperty("os.name").startsWith("Windows")) {
+                command = "taskkill /f /pid "
+            } else {
+                command = "kill "
+            }
+            pids.each { pid ->
+                "$command $pid".execute().waitFor()
+            }
+        }
+    }
+
+}
+

@@ -1,8 +1,25 @@
-//project.jar.enabled = false
+/*
+ * Copyright to the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+version = sorcerVersion
 
 jar {
 	manifest {
-		attributes("Implementation-Title": "SORCER Exertion-Oriented Languagr (EOL)", "Implementation-Version": version)
+		attributes("Implementation-Title": "SORCER Exertion-Oriented Language (EOL)",
+                   "Implementation-Version": version)
 	}
 	baseName = "arithmetic"
 	classifier = "prv"
@@ -14,7 +31,8 @@ jar {
 
 task arithmeticPrvDlJar(type: Jar) {
 	manifest {
-		attributes("Implementation-Title": "SORCER Arithmetic Exported Classes", "Implementation-Version": version)
+		attributes("Implementation-Title": "SORCER Arithmetic Exported Classes",
+                   "Implementation-Version": version)
 	}
 	baseName = "arithmetic"
     classifier = "dl"
@@ -25,7 +43,8 @@ task arithmeticPrvDlJar(type: Jar) {
 
 task arithmeticReqJar(type: Jar) {
 	manifest {
-		attributes("Implementation-Title": "SORCER Arithmetic Requestor", "Implementation-Version": version)
+		attributes("Implementation-Title": "SORCER Arithmetic Requestor",
+                   "Implementation-Version": version)
 	}
 	baseName = "arithmetic"
 	classifier = "req"
@@ -36,7 +55,8 @@ task arithmeticReqJar(type: Jar) {
 
 task arithmeticPrvUiJar(type: Jar) {
 	manifest {
-		attributes("Implementation-Title": "SORCER Arithmetic Service UI", "Implementation-Version": version)
+		attributes("Implementation-Title": "SORCER Arithmetic Service UI",
+                   "Implementation-Version": version)
 	}
 	baseName = "arithmetic"
     classifier = "ui"
@@ -59,4 +79,21 @@ dependencies {
 	compile project(':sorcer-platform')
     compile project(':sorcer-lib')
     compile project(':sos-db-prv')
+    testCompile project(':sorcer-test')
+    testRuntime libs.slf4j
+}
+
+bootme {
+    starterConfig = file("${projectDir.path}/configs/start-all.config")
+    //spawn = false
+}
+
+test {
+    systemProperty "java.rmi.server.codebase",
+                   "${websterUrl}/arithmetic-${version}-dl.jar ${websterUrl}/sorcer-dl-${version}.jar ${websterUrl}/jsk-dl-${riverVersion}.jar"
+    testLogging {
+        events "passed", "skipped", "failed"/*, "standardOut", "standardError"*/
+    }
+    dependsOn([install, bootme])
+    finalizedBy(stopme)
 }

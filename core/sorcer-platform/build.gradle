@@ -37,12 +37,14 @@ jar {
     }
     manifest {
         attributes("Implementation-Title": "SORCER Platform",
-                   "Implementation-Version": version)
+                   "Implementation-Version": sorcerVersion)
     }
+    version = sorcerVersion
 }
 
 test {
-    systemProperty "java.security.policy", "${project.projectDir.path}/src/test/resources/policy/policy.all"
-    systemProperty "sorcer.home", "${project.rootProject.path}/distribution/sorcer-${version}"
+    testLogging {
+        events "passed", "skipped", "failed"/*, "standardOut", "standardError"*/
+    }
 }
 

@@ -8,6 +8,9 @@ import java.util.logging.Logger;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import org.junit.runner.RunWith;
+import org.sorcer.test.ProjectContext;
+import org.sorcer.test.SorcerTestRunner;
 import sorcer.core.SorcerConstants;
 import sorcer.core.provider.Concatenator;
 import sorcer.core.provider.Jobber;
@@ -26,12 +29,14 @@ import sorcer.util.Stopwatch;
  * @author Mike Sobolewski
  */
 @SuppressWarnings("rawtypes")
+@RunWith(SorcerTestRunner.class)
+@ProjectContext("examples/eol")
 public class ServiceAccessors implements SorcerConstants {
 
 	private final static Logger logger = Logger
 			.getLogger(ServiceAccessors.class.getName());
 
-	static {
+/*	static {
 		String sorcerVersion = "5.0.0-SNAPSHOT";
 		String riverVersion = "2.2.2";
 		System.setProperty("java.security.policy", Sorcer.getHome()
@@ -42,7 +47,7 @@ public class ServiceAccessors implements SorcerConstants {
 		
 		System.setProperty("java.protocol.handler.pkgs", "sorcer.util.url|org.rioproject.url");
 //		System.setProperty("java.rmi.server.RMIClassLoaderSpi","org.rioproject.rmi.ResolvingLoader");
-	}
+	}*/
 	
 	@Ignore
 	@Test

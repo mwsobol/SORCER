@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="Gradle: jsk-dl-2.2.2">
-    <CLASSES>
-      <root url="jar://$MAVEN_REPOSITORY$/net/jini/jsk-dl/2.2.2/jsk-dl-2.2.2.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>
