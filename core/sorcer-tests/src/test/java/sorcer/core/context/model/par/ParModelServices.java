@@ -16,7 +16,7 @@ import static sorcer.po.operator.invoker;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.rmi.RMISecurityManager;
+import java.rmi.SecurityManager;
 import java.rmi.RemoteException;
 import java.util.logging.Logger;
 
@@ -54,7 +54,7 @@ public class ParModelServices {
 				Sorcer.getHome() + "/configs/sorcer.logging");
 		System.setProperty("java.security.policy", Sorcer.getHome()
 				+ "/configs/policy.all");
-		System.setSecurityManager(new RMISecurityManager());
+		System.setSecurityManager(new SecurityManager());
 		Sorcer.setCodeBase(new String[] { "ju-invoker-beans.jar" });
 	}
 	

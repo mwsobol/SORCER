@@ -39,11 +39,14 @@ contexts and exertions as providers
 	eol/test/java/sorcer/eol/jobs	
 	eol/test/java/sorcer/eol/blocks	
 	
-7. Contexts and context models
+7. Contexts and  ent-models
 	eol/test/java/sorcer/eol/contexts
 	test/java/sorcer/arithmetic/parModels
 	
-8. Modeling and Par-model providers and agents
+8. Modeling and par-model providers and agents
 	pml/main/java/sorcer/pml/model
 	pml/main/java/sorcer/pml/provider
 	pml/test/java/sorcer/pml/modeling
+	
+9. TD-modeling - Federations of exertions and models
+Proxying ents and pars in exertions

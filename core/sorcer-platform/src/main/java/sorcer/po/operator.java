@@ -16,17 +16,21 @@
  */
 package sorcer.po;
 
+import static sorcer.eo.operator.sFi;
+
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.concurrent.Callable;
 import java.util.logging.Logger;
 
+import sorcer.co.tuple.Entry;
 import sorcer.co.tuple.ExecPath;
 import sorcer.co.tuple.InputEntry;
 import sorcer.co.tuple.Tuple2;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.par.Agent;
 import sorcer.core.context.model.par.Par;
+import sorcer.core.context.model.par.ParFidelity;
 import sorcer.core.context.model.par.ParModel;
 import sorcer.core.invoker.AltInvoker;
 import sorcer.core.invoker.CallableInvoker;
@@ -49,6 +53,7 @@ import sorcer.service.Evaluation;
 import sorcer.service.EvaluationException;
 import sorcer.service.Evaluator;
 import sorcer.service.Exertion;
+import sorcer.service.FidelityInfo;
 import sorcer.service.Identifiable;
 import sorcer.service.Incrementor;
 import sorcer.service.Invocation;
@@ -56,6 +61,7 @@ import sorcer.service.InvocationException;
 import sorcer.service.Mappable;
 import sorcer.service.NoneException;
 import sorcer.service.ServiceExertion;
+import sorcer.service.ServiceFidelity;
 
 /**
  * @author Mike Sobolewski
@@ -67,34 +73,34 @@ public class operator {
 
 
 	public static <T> Par<T> par(String path, T argument) {
-		return new Par<T>(path, argument);
+		return new Par(path, argument);
 	}
 	
-	public static <T> Par<T> dbPar(String path, T argument) {
+	public static Par dbPar(String path, Object argument) {
 		Par p = new Par(path, argument);
 		p.setPersistent(true);
 		return p;
 	}
 	
-	public static <T> Par<T> par(Context context, String path, T argument) {
+	public static Par par(Context context, String path, Object argument) {
 		Par p = new Par(path, argument);
 		p.setScope(context);
 		return p;
 	}
 	
-	public static <T> Par<T> dbPar(Context context, String path, T argument) {
+	public static Par dbPar(Context context, String path, Object argument) {
 		Par p = new Par(path, argument);
 		p.setPersistent(true);
 		p.setScope(context);
 		return p;
 	}
 	
-	public static <T> Par<T> par(String name, String path, Mappable argument) {
+	public static Par par(String name, String path, Mappable argument) {
 		Par p = new Par(name, path, argument);
 		return p;
 	}
 	
-	public static <T> Par<T> pipe(Mappable in, String name, String path, Mappable out) throws ContextException {
+	public static Par pipe(Mappable in, String name, String path, Mappable out) throws ContextException {
 		Par p = new Par(name, path, out);
 		add(p, in);
 		return p;
@@ -111,6 +117,24 @@ public class operator {
 		return parameter;
 	}
 	
+	public static ParFidelity parFi(String name, Entry... entries) {
+		return new ParFidelity(name, entries);
+	}
+	
+	public static ParFidelity parFi(Entry... entries) {
+		return new ParFidelity(entries);
+	}
+	
+	public static FidelityInfo parFi(String name) {
+		return new FidelityInfo(name);
+	}
+	
+	public static Entry parFi(Par par) {
+		Entry fi = new Entry(par.getSelectedFidelity(), par.getFidelities()
+				.get(par.getSelectedFidelity()));
+		return fi;
+	}
+	
 	public static ParModel parModel(String name, Identifiable... Objects)
 			throws EvaluationException, RemoteException, ContextException {
 		ParModel pm = new ParModel(name);
@@ -123,11 +147,6 @@ public class operator {
 		ParModel pm = new ParModel();
 		pm.add(Objects);
 		return pm;
-	}
-	
-	public static <T> T value(Par<T> par) throws EvaluationException,
-			RemoteException {
-		return par.getValue();
 	}
 	
 	public static <T> T get(ParModel<T> pm, String parname, Arg... parametrs)

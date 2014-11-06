@@ -5,7 +5,7 @@ package sorcer.pml.provider.impl;
  */
 
 import static java.lang.System.out;
-import static sorcer.co.operator.entry;
+import static sorcer.co.operator.ent;
 import static sorcer.eo.operator.context;
 import static sorcer.eo.operator.put;
 import static sorcer.eo.operator.revalue;
@@ -33,13 +33,13 @@ public class Volume implements Sphere, Cylinder, Serializable {
 	public Context getSphereSurface(Context context) throws RemoteException, ContextException {
 		double radius = (Double) revalue(context, "sphere/radius");
 		put(context,
-			entry("sphere/surface", 4.0 * Math.PI * Math.pow(radius, 3)));
+			ent("sphere/surface", 4.0 * Math.PI * Math.pow(radius, 3)));
 		return context;
 	}
 
 	public Context getSphereVolume(Context context) throws ContextException, RemoteException {
 		double radius = (Double) revalue(context, "sphere/radius");
-		put(context, entry("sphere/volume",
+		put(context, ent("sphere/volume",
 			(4.0 / 3.0) * Math.PI * Math.pow(radius, 3)));
 		return context;
 	}
@@ -47,7 +47,7 @@ public class Volume implements Sphere, Cylinder, Serializable {
 	public Context getCylinderSurface(Context context) throws ContextException, RemoteException {
 		double radius = (Double) revalue(context, "cylinder/radius");
 		double height = (Double) revalue(context, "cylinder/height");
-		put(context, entry("cylinder/surface", 
+		put(context, ent("cylinder/surface", 
 				(2 * Math.PI * Math.pow(radius, 2))
 						+ (2 * Math.PI * radius * height)));
 		return context;
@@ -56,7 +56,7 @@ public class Volume implements Sphere, Cylinder, Serializable {
 	public Context getCylinderVolume(Context context) throws ContextException, RemoteException {
 		double radius = (Double) revalue(context, "cylinder/radius");
 		double height = (Double) revalue(context, "cylinder/height");
-		put(context, entry("cylinder/volume", 
+		put(context, ent("cylinder/volume", 
 				Math.PI * Math.pow(radius, 2) * height));
 		return context;
 	}
@@ -75,16 +75,16 @@ public class Volume implements Sphere, Cylinder, Serializable {
 			} finally {
 				scanner.close();
 			}
-			Context context = context(entry("cylinder/radius", radius),
-					entry("cylinder/height", height));
+			Context context = context(ent("cylinder/radius", radius),
+					ent("cylinder/height", height));
 			out.println("cylinder volume: " + v.getCylinderVolume(context));
 		} else {
 			if (args[0].equals("cylinder")) {
-				Context context = context(entry("cylinder/radius", 2.0),
-						entry("cylinder/height", 3.0));
+				Context context = context(ent("cylinder/radius", 2.0),
+						ent("cylinder/height", 3.0));
 				out.println("cylinder volume: " + v.getCylinderVolume(context));
 			} else if (args[0].equals("sphere")) {
-				Context context = context(entry("sphere/radius", 2.0));
+				Context context = context(ent("sphere/radius", 2.0));
 				out.println("sphere volume: " + v.getSphereVolume(context));
 			}
 		}

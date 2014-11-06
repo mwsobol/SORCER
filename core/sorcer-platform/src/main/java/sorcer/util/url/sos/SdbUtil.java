@@ -17,10 +17,11 @@
 
 package sorcer.util.url.sos;
 
-import static sorcer.co.operator.inEntry;
+import static sorcer.co.operator.inEnt;
 import static sorcer.eo.operator.context;
 import static sorcer.eo.operator.exert;
 import static sorcer.eo.operator.get;
+import static sorcer.eo.operator.prvName;
 import static sorcer.eo.operator.result;
 import static sorcer.eo.operator.sig;
 import static sorcer.eo.operator.task;
@@ -36,8 +37,8 @@ import sorcer.core.context.ServiceContext;
 import sorcer.core.provider.DatabaseStorer;
 import sorcer.core.provider.DatabaseStorer.Store;
 import sorcer.core.provider.DataspaceStorer;
+import sorcer.core.provider.ProviderName;
 import sorcer.core.provider.StorageManagement;
-import sorcer.service.Arg;
 import sorcer.service.Context;
 import sorcer.service.ContextException;
 import sorcer.service.ExertionException;
@@ -187,7 +188,7 @@ public class SdbUtil {
 		Service objectUpdateTask = task(
 				"update",
 				sig("contextUpdate", DatabaseStorer.class,
-						Sorcer.getActualDatabaseStorerName()),
+						prvName(Sorcer.getActualDatabaseStorerName())),
 				SdbUtil.getUpdateContext(value, storeUuid));
 
 		objectUpdateTask = exert(objectUpdateTask);
@@ -201,8 +202,8 @@ public class SdbUtil {
 				.getDatabaseStorerName());
 		Task objectStoreTask = task(
 				"clear",
-				sig("contextClear", DatabaseStorer.class, storageName),
-				context("clear", inEntry(StorageManagement.store_type, type),
+				sig("contextClear", DatabaseStorer.class, prvName(storageName)),
+				context("clear", inEnt(StorageManagement.store_type, type),
 						result(StorageManagement.store_size)));
 		return (Integer) value(objectStoreTask);
 	}
@@ -213,8 +214,8 @@ public class SdbUtil {
 				.getDatabaseStorerName());
 		Task objectStoreTask = task(
 				"size",
-				sig("contextSize", DatabaseStorer.class, storageName, new Arg[] {}),
-				context("size", inEntry(StorageManagement.store_type, type),
+				sig("contextSize", DatabaseStorer.class, new ProviderName(storageName)),
+				context("size", inEnt(StorageManagement.store_type, type),
 						result(StorageManagement.store_size)));
 		return (Integer) value(objectStoreTask);
 	}
@@ -234,8 +235,8 @@ public class SdbUtil {
 				.getDatabaseStorerName());
 		Task objectStoreTask = task(
 				"delete",
-				sig("contextDelete", DatabaseStorer.class, storageName),
-				context("delete", inEntry(StorageManagement.object_deleted, object),
+				sig("contextDelete", DatabaseStorer.class, prvName(storageName)),
+				context("delete", inEnt(StorageManagement.object_deleted, object),
 						result(StorageManagement.object_url)));
 		return (URL) value(objectStoreTask);
 	}
@@ -249,9 +250,9 @@ public class SdbUtil {
 			objectStoreTask = task(
 					"delete",
 					sig("contextDelete", Class.forName(serviceTypeName),
-							storageName),
+							prvName(storageName)),
 					context("delete",
-							inEntry(StorageManagement.object_deleted, url),
+							inEnt(StorageManagement.object_deleted, url),
 							result(StorageManagement.object_url)));
 		} catch (ClassNotFoundException e) {
 			throw new SignatureException("No such service type: "
@@ -266,8 +267,8 @@ public class SdbUtil {
 				.getDatabaseStorerName());
 		Task objectStoreTask = task(
 				"store",
-				sig("contextStore", DatabaseStorer.class, storageName),
-				context("store", inEntry(StorageManagement.object_stored, object),
+				sig("contextStore", DatabaseStorer.class, prvName(storageName)),
+				context("store", inEnt(StorageManagement.object_stored, object),
 						result("result, stored/object/url")));
 		return (URL) value(objectStoreTask);
 	}
@@ -277,8 +278,8 @@ public class SdbUtil {
 		String storageName = Sorcer.getActualName(Sorcer.getSpacerName());
 		Task objectStoreTask = task(
 				"write",
-				sig("contextWrite", DataspaceStorer.class, storageName),
-				context("stored", inEntry(StorageManagement.object_stored, object),
+				sig("contextWrite", DataspaceStorer.class, prvName(storageName)),
+				context("stored", inEnt(StorageManagement.object_stored, object),
 						result("result, stored/object/url")));
 		return (URL) value(objectStoreTask);
 	}
@@ -293,7 +294,7 @@ public class SdbUtil {
 		Task objectRetrieveTask = task(
 				"retrieve",
 				sig("contextRetrieve", DatabaseStorer.class,
-						Sorcer.getActualDatabaseStorerName()),
+						prvName(Sorcer.getActualDatabaseStorerName())),
 				SdbUtil.getRetrieveContext(storeUuid, storeType));
 
 		try {
@@ -309,7 +310,6 @@ public class SdbUtil {
 
 	}
 
-	@SuppressWarnings("unchecked")
 	static public List<String> list(URL url, Store storeType)
 			throws ExertionException, SignatureException, ContextException {
 		Store type = storeType;
@@ -324,20 +324,19 @@ public class SdbUtil {
 			}
 		}
 		Task listTask = task("list",
-				sig("contextList", DatabaseStorer.class, providerName),
+				sig("contextList", DatabaseStorer.class, prvName(providerName)),
 				SdbUtil.getListContext(type));
 
 		return (List<String>) value(listTask);
 	}
 
-	@SuppressWarnings("unchecked")
 	static public List<String> list(Store storeType) throws ExertionException,
 			SignatureException, ContextException {
 		String storageName = Sorcer.getActualName(Sorcer
 				.getDatabaseStorerName());
 	
 		Task listTask = task("contextList",
-				sig("contextList", DatabaseStorer.class, storageName),
+				sig("contextList", DatabaseStorer.class, prvName(storageName)),
 				SdbUtil.getListContext(storeType));
 
 		return (List<String>) value(listTask);

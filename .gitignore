@@ -27,3 +27,5 @@ junit*.properties
 /.git/
 /.settings/
 /settings.gradle
+/.idea/
+/SORCER.iml

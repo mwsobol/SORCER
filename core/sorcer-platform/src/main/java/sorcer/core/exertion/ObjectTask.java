@@ -17,7 +17,13 @@
 
 package sorcer.core.exertion;
 
+
+import static sorcer.eo.operator.provider;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.rmi.RemoteException;
+import java.util.List;
 
 import net.jini.core.transaction.Transaction;
 import sorcer.core.context.ServiceContext;
@@ -84,37 +90,62 @@ public class ObjectTask extends Task {
 		this.dataContext = (ServiceContext) context;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public Task doTask(Transaction txn) throws ExertionException, SignatureException, RemoteException {
+		MethodInvoker evaluator = null;
 		ObjectSignature os = (ObjectSignature) getProcessSignature();
 		dataContext.setCurrentSelector(os.getSelector());
 		dataContext.setCurrentPrefix(os.getPrefix());
-		MethodInvoker evaluator = ((ObjectSignature) getProcessSignature())
-				.getEvaluator();
 		try {
+			if (dataContext.getArgs() != null)
+				os.setArgs(dataContext.getArgs());
+			if (dataContext.getParameterTypes() != null)
+				os.setParameterTypes(dataContext.getParameterTypes());
+			evaluator = ((ObjectSignature) getProcessSignature())
+					.getEvaluator();
+			Object result = null;
 			if (evaluator == null) {
-				if (os.getTarget() != null)
-					evaluator = new MethodInvoker(os.getTarget(), os.getSelector());
-				else
+				// create a provider of this object signature
+				provider(os);
+				Object target = os.getTarget();
+				if (target != null) {
+					if (target instanceof Method) {
+						result = invokeMethod((Method)target, os);
+					} else {
+						evaluator = new MethodInvoker(os.getTarget(), os.getSelector());
+					}
+				}
+				else {
 					evaluator = new MethodInvoker(os.newInstance(), os.getSelector());
+				}
 			}
 			if (os.getReturnPath() != null)
 				dataContext.setReturnPath(os.getReturnPath());
-			if (getArgs() == null  && os.getTypes() == null) {
-				// assume this task context is used by the signature's provider
-				if (dataContext != null && dataContext.size() > 0) {
-					evaluator.setParameterTypes(new Class[] { Context.class });
-					evaluator.setContext(dataContext);
+
+			if (result == null) {
+				if (getArgs() == null && os.getParameterTypes() == null) {
+					// assume this task context is used by the signature's
+					// provider
+					if (dataContext != null && dataContext.size() > 0) {
+						if (scope != null && scope.size() > 0) {
+							appendScope();
+						}
+						evaluator
+						.setParameterTypes(new Class[] { Context.class });
+						evaluator.setContext(dataContext);
+					}
+				} else if (dataContext.getArgsPath() != null) {
+					evaluator
+					.setArgs(getParameterTypes(), (Object[]) getArgs());
 				}
-			} 
-			else if (dataContext.getArgsPath() != null) {
-				evaluator.setArgs(getParameterTypes(), (Object[]) getArgs());
+				// evaluator.setParameters(context);
+				result = evaluator.evaluate();
 			}
-			//evaluator.setParameters(context);
-			Object result = evaluator.evaluate();
+
 			if (result instanceof Context) {
 				if (dataContext.getReturnPath() != null) {
 					dataContext.setReturnValue(((Context) result).getValue(dataContext
-						.getReturnPath().path));
+							.getReturnPath().path));
 				} else {
 					dataContext.append((Context)result);
 				}
@@ -130,8 +161,38 @@ public class ObjectTask extends Task {
 				setStatus(ERROR);
 		}
 		setStatus(DONE);
-		dataContext.appendTrace(evaluator.toString());
+		if (evaluator != null)
+			dataContext.appendTrace(evaluator.toString());
+		else
+			dataContext.appendTrace(os.toString());
 		return this;
+	}
+
+	private Object invokeMethod(Method method, ObjectSignature os)
+			throws IllegalAccessException, IllegalArgumentException,
+			InvocationTargetException, ContextException {
+		Object[] args = os.getArgs();
+		Class<?>[] argTypes = os.getParameterTypes();
+		Object result = null;
+		if (args != null) {
+			result = method.invoke(null, args);
+		} else if (argTypes != null && argTypes.length == 1 && args == null) {
+			result = method.invoke(null, new Object[] { null });
+		} else {
+			result = method.invoke(null, (Object[])null);
+		}
+		return result;
+	}
+	
+	private void appendScope() throws ContextException {
+		if (scope != null) {
+			List<String> paths = dataContext.getPaths();
+			for (String path : paths) {
+				if (dataContext.getValue(path) == Context.none) {
+					dataContext.putValue(path, scope.getValue(path));
+				}
+			}
+		}
 	}
 	
 	public Object getArgs() throws ContextException {

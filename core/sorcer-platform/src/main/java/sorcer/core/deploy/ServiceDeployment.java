@@ -40,7 +40,7 @@ import java.util.Set;
  * @author Mike Sobolewski
  * @author Dennis Reedy
  */
-public class ServiceDeployment implements Arg, Serializable, Deployment {
+public class ServiceDeployment implements Serializable, Deployment {
     private static final long serialVersionUID = 1L;
 
     private boolean isProvisionable = true;

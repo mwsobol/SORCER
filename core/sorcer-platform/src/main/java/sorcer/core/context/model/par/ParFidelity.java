@@ -19,14 +19,14 @@ package sorcer.core.context.model.par;
 
 import java.util.ArrayList;
 
-import sorcer.co.tuple.FidelityEntry;
+import sorcer.co.tuple.Entry;
 
 /**
  * @author Mike Sobolewski
  *
  */
 @SuppressWarnings("rawtypes")
-public class ParFidelity extends ArrayList<FidelityEntry> {
+public class ParFidelity extends ArrayList<Entry> {
 	
 	private static final long serialVersionUID = -1L;
 	
@@ -53,15 +53,15 @@ public class ParFidelity extends ArrayList<FidelityEntry> {
 		name = "unknown" + count++;
 	}
 	
-	public ParFidelity(FidelityEntry... entries) {
+	public ParFidelity(Entry... entries) {
 		name = "unknown" + count++;
-		for (FidelityEntry e : entries)
+		for (Entry e : entries)
 			add(e);
 	}
 	
-	public ParFidelity(String name, FidelityEntry... entries) {
+	public ParFidelity(String name, Entry... entries) {
 		this.name = name;
-		for (FidelityEntry e : entries)
+		for (Entry e : entries)
 			add(e);
 	}
 	
