@@ -26,6 +26,8 @@ import static sorcer.eo.operator.opt;
 import static sorcer.eo.operator.result;
 import static sorcer.po.operator.*;
 
+
+
 /**
  * @author Mike Sobolewski
  */
@@ -34,7 +36,7 @@ import static sorcer.po.operator.*;
 @ProjectContext("examples/eol")
 public class ArithmeticLocalBlocks implements SorcerConstants {
 
-	private final static Logger logger = Logger.getLogger(ArithmeticLocalBlocks.class.getName());
+	private final static Logger logger = Logger.getLogger(ArithmeticLocaltBlocks.class.getName());
 	/*
 >>>>>>> f48b5e6aea49c2d64fb703a63e5be33c6f19951b:examples/eol/src/test/java/sorcer/eol/blocks/ArithmeticLocaltBlocks.java
 	static {
