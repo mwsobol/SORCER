@@ -1,9 +1,30 @@
 package sorcer.eol.blocks;
 
+import static org.junit.Assert.assertEquals;
+import static sorcer.co.operator.ent;
+import static sorcer.co.operator.inEnt;
+import static sorcer.eo.operator.alt;
+import static sorcer.eo.operator.block;
+import static sorcer.eo.operator.condition;
+import static sorcer.eo.operator.context;
+import static sorcer.eo.operator.exert;
+import static sorcer.eo.operator.loop;
+import static sorcer.eo.operator.opt;
+import static sorcer.eo.operator.result;
+import static sorcer.eo.operator.sig;
+import static sorcer.eo.operator.task;
+import static sorcer.eo.operator.value;
+import static sorcer.po.operator.invoker;
+import static sorcer.po.operator.par;
+import static sorcer.po.operator.pars;
+
+import java.util.logging.Logger;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
+
 import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.arithmetic.provider.impl.AveragerImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
@@ -12,17 +33,6 @@ import sorcer.core.SorcerConstants;
 import sorcer.core.provider.rendezvous.ServiceConcatenator;
 import sorcer.service.Block;
 import sorcer.service.Task;
-
-import java.util.logging.Logger;
-
-import static org.junit.Assert.assertEquals;
-import static sorcer.co.operator.ent;
-import static sorcer.co.operator.inEnt;
-import static sorcer.eo.operator.alt;
-import static sorcer.eo.operator.*;
-import static sorcer.eo.operator.loop;
-import static sorcer.eo.operator.opt;
-import static sorcer.po.operator.*;
 
 
 /**

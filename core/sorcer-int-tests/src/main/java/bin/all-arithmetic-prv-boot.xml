@@ -21,6 +21,8 @@
 			<classpath refid="provider.starter.path" />
 			<arg value="../configs/boot-all-arithmetic.config" />
 			<sysproperty key="sorcer.home" value="${sorcer.home}" />
+			<sysproperty key="local.repo.path" value="org.sorcer" />
+			<sysproperty key="project.build.dir" value="${sorcer.home}/core/sorcer-int-tests" />
 			<sysproperty key="sorcer.env.file" value="${sorcer.home}/configs/sorcer.env" />
 			<sysproperty key="java.rmi.server.useCodebaseOnly" value="false" />
 			<sysproperty key="java.security.policy" value="../policy/arithmetic-beans-prv.policy" />
