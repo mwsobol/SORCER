@@ -28,7 +28,6 @@ import java.util.Map;
 import java.util.Set;
 
 import sorcer.co.tuple.Entry;
-import sorcer.co.tuple.FidelityEntry;
 import sorcer.co.tuple.InoutEntry;
 import sorcer.co.tuple.InputEntry;
 import sorcer.co.tuple.OutputEntry;
@@ -46,7 +45,6 @@ import sorcer.service.Context;
 import sorcer.service.ContextException;
 import sorcer.service.Evaluation;
 import sorcer.service.EvaluationException;
-import sorcer.service.FidelityInfo;
 import sorcer.service.Setter;
 import sorcer.service.SetterException;
 import sorcer.service.Strategy;
@@ -346,9 +344,16 @@ public class operator {
 		return e;
 	}
 	
-	public static <T> Entry<T> dbEnt(String path, T value) {
+	public static <T> Entry<T> dbEnt(String path, T value) throws EvaluationException {
 		Entry<T> e = new Entry<T>(path, value);
 		e.setPersistent(true);
+		if (SdbUtil.isSosURL(value)) {
+			try {
+				e.getValue();
+			} catch (RemoteException ex) {
+				throw new EvaluationException(ex);
+			}
+		}
 		return e;
 	}
 	

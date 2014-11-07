@@ -47,4 +47,6 @@ dependencies {
 	compile project(':sorcer-platform')
     compile project(':sorcer-lib')
     compile project(':sos-db-prv')
+	testCompile project(':sorcer-test')
+	testRuntime libs.slf4j
 }

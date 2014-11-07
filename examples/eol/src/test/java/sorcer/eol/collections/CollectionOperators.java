@@ -168,18 +168,24 @@ public class CollectionOperators {
 	@Test
 	public void dbEntryOperator() throws Exception {
 		
+		// create a persistent entry
+		Entry<Double> de = dbEnt("x3", 110.0);
+		assertFalse(asis(de) instanceof URL);
+		assertTrue(value(de).equals(110.0));
+		
 		// create an entry
 		Entry<Double> e = ent("x1", 10.0);
 		assertTrue(value(e).equals(10.0));
 		assertTrue(asis(e).equals(10.0));
-		
+		assertFalse(asis(e) instanceof URL);
+				
 		// make it a persistent entry
-		// 'url' operator makes the entry persistent		
+		// 'url' operator makes the entry value persited		
 		URL valUrl = url(e);
 		assertTrue(value(e).equals(10.0));
 		assertTrue(asis(e) instanceof URL);
 		
-		// create a persistent entry
+		// create a persistent entry with URL
 		Entry<?> urle = dbEnt("x2", valUrl);
 		assertTrue(value(urle).equals(10.0));
 		assertTrue(asis(urle) instanceof URL);
@@ -189,7 +195,7 @@ public class CollectionOperators {
 		put(dbe, valUrl);
 		assertTrue(value(dbe).equals(10.0));
 		assertTrue(asis(dbe) instanceof URL);
-
+		
 	}
 	
 	
