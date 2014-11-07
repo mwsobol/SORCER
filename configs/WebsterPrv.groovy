@@ -14,24 +14,27 @@
  * limitations under the License.
  */
 import org.rioproject.config.Component
+import org.rioproject.resolver.maven2.Repository
 import sorcer.provider.boot.Booter
 
 @Component("sorcer.tools.codeserver")
 class WebsterProv {
 
     String[] getRoots() {
-        String home = "${sorcer.home}"
-        String libPath = home + "/lib"
+        def roots = []
+        String sorcerHome = System.getProperty("sorcer.home")
+        String libPath = "${sorcerHome}/lib"
 
         // webster root directories
-        String sorcerLibPath = libPath + "/sorcer/lib"
-        String sorcerLibDlPath = libPath + "/sorcer/lib-dl"
-        String jiniLibPath = libPath + "/river"
-        String rioLibDlPath = home + "/rio/lib-dl"
-        String blitzLib = libPath + "/blitz"
-        String httpData = home + "/data"
-        String m2Repo = "${user.home}/.m2/repository"
+        roots << "${libPath}/sorcer/lib"
+        roots <<  "${libPath}/sorcer/lib-dl"
+        roots <<  "${libPath}/river"
+        roots <<  "${sorcerHome}/rio/lib-dl"
+        roots <<  "${libPath}/blitz"
+        roots <<  Repository.getLocalRepository().absolutePath
+        roots <<  "${sorcerHome}/data"
 
+        return roots as String[]
     }
 
     String[] getOptions() {
