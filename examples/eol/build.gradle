@@ -93,11 +93,11 @@ task testCP() {
 }
 
 def repoPath() {
-    return "${project.group.replaceAll("\\.", "/")}/arithmetic/${version}"
+    return "org/sorcer/arithmetic/${version}"
 }
 
 bootme {
-    starterConfig = file("${projectDir.path}/configs/start-all.config")
+    starterConfig = file("${projectDir.path}/configs/StartAll.groovy")
     systemProperties = ["local.repo.path" : repoPath()]
     //spawn = false
 }
