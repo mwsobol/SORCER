@@ -33,13 +33,6 @@ import static sorcer.po.operator.*;
 public class ArithmeticNetBlocks implements SorcerConstants {
 	private final static Logger logger = Logger.getLogger(ArithmeticNetBlocks.class.getName());
 
-    @BeforeClass
-    public static void setup() {
-        System.out.println("=====================================================================================");
-        System.out.println( "java.rmi.server.codebase: "+System.getProperty("java.rmi.server.codebase"));
-        System.out.println( "=====================================================================================");
-    }
-
 	@Test
 	public void contextAltTest() throws Exception {
 		Task t4 = task("t4", sig("multiply", Multiplier.class), 
