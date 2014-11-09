@@ -94,7 +94,6 @@ public class SOS implements SorcerConstants {
 	}
 	
     public static String deriveSorcerHome() {
-        new Throwable().printStackTrace();
         String sorcerHome = null;
 		getSorcerVersion();
 		if(sorcerVersion!=null) {

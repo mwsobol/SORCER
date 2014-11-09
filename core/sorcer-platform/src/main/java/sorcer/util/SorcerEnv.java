@@ -113,7 +113,8 @@ public class SorcerEnv extends SOS {
 	}
 
 	public static String getHome() {
-		return getHomeDir().toString();
+        File homeDir = getHomeDir();
+		return homeDir==null?null:homeDir.toString();
 	}
 
 	/**
@@ -133,7 +134,6 @@ public class SorcerEnv extends SOS {
             }
 
             hd = System.getProperty(SORCER_HOME);
-            System.out.println("===> SORCER_HOME: " + hd);
             if (hd == null)
                 hd = SOS.deriveSorcerHome();
             if (hd != null && hd.length() > 0) {
@@ -182,7 +182,8 @@ public class SorcerEnv extends SOS {
 			return hn;
 		}
 
-		hn = props.getProperty(P_WEBSTER_INTERFACE);
+        if(props!=null)
+            hn = props.getProperty(P_WEBSTER_INTERFACE);
 		if (hn != null && hn.length() > 0) {
 			return hn;
 		}
@@ -215,7 +216,8 @@ public class SorcerEnv extends SOS {
 			return new Integer(wp);
 		}
 
-		wp = props.getProperty(P_WEBSTER_PORT);
+        if(props!=null)
+            wp = props.getProperty(P_WEBSTER_PORT);
 		if (wp != null && wp.length() > 0) {
 			return new Integer(wp);
 		}
