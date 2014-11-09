@@ -15,12 +15,35 @@
  */
 package sorcer.core.deploy;
 
-import sorcer.core.provider.Jobber;
-import sorcer.service.*;
-import sorcer.service.Strategy.Provision;
-
 import static sorcer.co.operator.inEnt;
-import static sorcer.eo.operator.*;
+import static sorcer.eo.operator.arch;
+import static sorcer.eo.operator.configuration;
+import static sorcer.eo.operator.context;
+import static sorcer.eo.operator.deploy;
+import static sorcer.eo.operator.idle;
+import static sorcer.eo.operator.input;
+import static sorcer.eo.operator.ips;
+import static sorcer.eo.operator.ips_exclude;
+import static sorcer.eo.operator.job;
+import static sorcer.eo.operator.maintain;
+import static sorcer.eo.operator.opsys;
+import static sorcer.eo.operator.out;
+import static sorcer.eo.operator.perNode;
+import static sorcer.eo.operator.pipe;
+import static sorcer.eo.operator.result;
+import static sorcer.eo.operator.sig;
+import static sorcer.eo.operator.strategy;
+import static sorcer.eo.operator.task;
+import sorcer.arithmetic.tester.provider.Adder;
+import sorcer.arithmetic.tester.provider.Multiply;
+import sorcer.arithmetic.tester.provider.Subtractor;
+import sorcer.core.provider.Jobber;
+import sorcer.service.ContextException;
+import sorcer.service.ExertionException;
+import sorcer.service.Job;
+import sorcer.service.SignatureException;
+import sorcer.service.Strategy.Provision;
+import sorcer.service.Task;
 
 /**
  * Utilities for creating jobs
@@ -36,7 +59,7 @@ public class Util {
     static Job createJob(boolean fork) throws ContextException, SignatureException, ExertionException {
         Task f4 = task("f4",
                        sig("multiply",
-                           Object.class,
+                           Multiply.class,
                            deploy(configuration(fork?"bin/sorcer/test/arithmetic/configs/multiplier-prv-fork.config":
                                                      "bin/sorcer/test/arithmetic/configs/multiplier-prv.config"),
                                   idle(1),
@@ -46,13 +69,13 @@ public class Util {
 
         Task f5 = task("f5",
                        sig("add",
-                           Object.class,
+                           Adder.class,
                            deploy(configuration("bin/sorcer/test/arithmetic/configs/AdderProviderConfig.groovy"))),
                        context("add", inEnt("arg/x3", 20.0d), inEnt("arg/x4", 80.0d),
                                result("result/y2")));
 
         Task f3 = task("f3",
-                       sig("subtract", Object.class,
+                       sig("subtract", Subtractor.class,
                            deploy(maintain(2, perNode(2)),
                                   idle(1),
                                   configuration("bin/sorcer/test/arithmetic/configs/subtractor-prv.config"))),

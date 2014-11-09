@@ -1,8 +1,9 @@
-package junit.sorcer.core.context;
+package sorcer.core.context;
+ 
 
 import static org.junit.Assert.assertEquals;
+import static sorcer.co.operator.inEnt;
 import static sorcer.eo.operator.context;
-import static sorcer.eo.operator.in;
 
 import java.util.logging.Logger;
 
@@ -57,13 +58,13 @@ public class ContextTest {
 	
 	@Test
 	public void weakValueTest() throws Exception {
-		Context cxt = context("add", in("arg/x1", 20.0), in("arg/x2", 80.0));
+		Context cxt = context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0));
 		
 //		logger.info("arg/x1 = " + cxt.getValue("arg/x1"));
 		assertEquals(cxt.getValue("arg/x1"), 20.0);
 //		logger.info("val x1 = " + cxt.getValue("x1"));
 		assertEquals(cxt.getValue("x1"), null);
 //		logger.info("weak x1 = " + cxt.getWeakValue("arg/var/x1"));
-		assertEquals(cxt.getWeakValue("arg/var/x1"), 20.0);
+		assertEquals(cxt.getSoftValue("arg/var/x1"), 20.0);
 	}
 }

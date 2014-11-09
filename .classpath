@@ -1,26 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="arithmetic-tester/src/main/java"/>
 	<classpathentry kind="src" path="core/sorcer-dl/src/main/java"/>
+	<classpathentry kind="src" path="core/sorcer-int-tests/src/main/java"/>
+	<classpathentry kind="src" path="core/sorcer-int-tests/src/test/java"/>
 	<classpathentry kind="src" path="core/sorcer-lib/src/main/java"/>
 	<classpathentry kind="src" path="core/sorcer-platform/src/main/java"/>
+	<classpathentry kind="src" path="core/sorcer-platform/src/test/java"/>
 	<classpathentry kind="src" path="examples/eol/src/main/java"/>
 	<classpathentry kind="src" path="examples/eol/src/test/java"/>
 	<classpathentry kind="src" path="examples/pml/src/main/java"/>
 	<classpathentry kind="src" path="examples/pml/src/test/java"/>
 	<classpathentry kind="src" path="examples/worker/src/main/java"/>
+	<classpathentry kind="lib" path="distribution/sorcer-5.0.0-SNAPSHOT/lib/common/buildsupport/junit-4.8.2.jar"/>
+	<classpathentry kind="lib" path="distribution/sorcer-5.0.0-SNAPSHOT/lib/common/buildsupport/junit-addons-1.4.jar"/>
+	<classpathentry kind="lib" path="distribution/sorcer-5.0.0-SNAPSHOT/lib/river/jsk-lib-2.2.2.jar"/>
+	<classpathentry kind="lib" path="distribution/sorcer-5.0.0-SNAPSHOT/lib/river/jsk-platform-2.2.2.jar" sourcepath="/Volumes/SSSD/opt/River-2.2.0/apache-river-src-2.2.0/src"/>
+	<classpathentry kind="lib" path="distribution/sorcer-5.0.0-SNAPSHOT/lib/sorcer/lib/sorcer-lib-5.0.0-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="distribution/sorcer-5.0.0-SNAPSHOT/lib/sorcer/lib/sorcer-platform-5.0.0-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="examples/eol/build/classes/main"/>
+	<classpathentry kind="lib" path="examples/eol/build/classes/test"/>
+	<classpathentry kind="lib" path="tools/sorcer-test/build/libs/sorcer-test-5.0.0-SNAPSHOT.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry exported="true" kind="con" path="org.springsource.ide.eclipse.gradle.classpathcontainer"/>
 	<classpathentry kind="con" path="GROOVY_DSL_SUPPORT"/>
 	<classpathentry kind="con" path="GROOVY_SUPPORT"/>
-	<classpathentry kind="lib" path="distribution/sorcer-5.0.0-SNAPSHOT/lib/common/buildsupport/junit-4.8.2.jar"/>
-	<classpathentry kind="lib" path="distribution/sorcer-5.0.0-SNAPSHOT/lib/common/buildsupport/junit-addons-1.4.jar"/>
-	<classpathentry kind="lib" path="tools/sorcer-test/build/libs/sorcer-test-5.0.0-SNAPSHOT.jar"/>
-	<classpathentry kind="lib" path="examples/eol/build/classes/main"/>
-	<classpathentry kind="lib" path="examples/eol/build/classes/test"/>
-	<classpathentry kind="lib" path="distribution/sorcer-5.0.0-SNAPSHOT/lib/sorcer/lib/sorcer-lib-5.0.0-SNAPSHOT.jar"/>
-	<classpathentry kind="lib" path="distribution/sorcer-5.0.0-SNAPSHOT/lib/sorcer/lib/sorcer-platform-5.0.0-SNAPSHOT.jar"/>
-	<classpathentry kind="lib" path="distribution/sorcer-5.0.0-SNAPSHOT/lib/river/jsk-platform-2.2.2.jar" sourcepath="/Volumes/SSSD/opt/River-2.2.0/apache-river-src-2.2.0/src"/>
-	<classpathentry kind="lib" path="distribution/sorcer-5.0.0-SNAPSHOT/lib/river/jsk-lib-2.2.2.jar"/>
+	<classpathentry kind="lib" path="distribution/sorcer-5.0.0-SNAPSHOT/rio/lib/rio-lib-5.0-M4.jar"/>
+	<classpathentry kind="lib" path="distribution/sorcer-5.0.0-SNAPSHOT/rio/lib/rio-platform-5.0-M4.jar"/>
+	<classpathentry kind="lib" path="distribution/sorcer-5.0.0-SNAPSHOT/rio/lib-dl/rio-api-5.0-M4.jar"/>
+	<classpathentry kind="lib" path="core/sorcer-platform/build/classes/test"/>
+	<classpathentry kind="lib" path="core/sorcer-int-tests/build/libs/arithmetic-tester-5.0.0-SNAPSHOT-prv.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

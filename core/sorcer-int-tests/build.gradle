@@ -6,6 +6,7 @@ jar {
 	manifest {
 		attributes("Implementation-Title": "SORCER Arithmetic Tester", "Implementation-Version": version)
 	}
+	baseName = "arithmetic-tester"
 	classifier = "prv"
 	dependsOn classes
 	from sourceSets.main.output
@@ -16,6 +17,7 @@ task arithmeticPrvDlJar(type: Jar) {
 	manifest {
 		attributes("Implementation-Title": "SORCER Arithmetic Tester Exported Classes", "Implementation-Version": version)
 	}
+	baseName = "arithmetic-tester"
     classifier = "dl"
 	dependsOn classes
 	from sourceSets.main.output
@@ -26,6 +28,7 @@ task arithmeticReqJar(type: Jar) {
 	manifest {
 		attributes("Implementation-Title": "SORCER Arithmetic Tester Requestor", "Implementation-Version": version)
 	}
+	baseName = "arithmetic-tester"
 	classifier = "req"
 	dependsOn classes
 	from sourceSets.main.output
@@ -45,4 +48,6 @@ dependencies {
 	compile project(':sorcer-platform')
     compile project(':sorcer-lib')
     compile project(':sos-db-prv')
+	testCompile project(':sorcer-test')
+	testRuntime libs.slf4j
 }

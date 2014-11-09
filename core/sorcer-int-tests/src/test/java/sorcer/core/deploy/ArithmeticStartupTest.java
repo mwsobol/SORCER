@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package junit.sorcer.core.deploy;
+package sorcer.core.deploy;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -22,13 +22,12 @@ import static sorcer.eo.operator.get;
 
 import java.io.IOException;
 import java.net.URL;
-import java.rmi.RMISecurityManager;
 import java.rmi.RemoteException;
 import java.util.logging.Logger;
 
 import junit.framework.Assert;
-import junit.sorcer.core.provider.Adder;
-import junit.sorcer.core.provider.Subtractor;
+import sorcer.arithmetic.tester.provider.Adder;
+import sorcer.arithmetic.tester.provider.Subtractor;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -53,12 +52,12 @@ import sorcer.util.url.sos.SdbURLStreamHandlerFactory;
  */
 @Ignore
 public class ArithmeticStartupTest implements SorcerConstants {
-    private final static Logger logger = Logger.getLogger(iGridStartupTest.class.getName());
+    private final static Logger logger = Logger.getLogger(ArithmeticStartupTest.class.getName());
     static long t0;
     static {
 		ServiceExertion.debug = true;
 		System.setProperty("java.security.policy", Sorcer.getHome()+ "/configs/policy.all");
-		System.setSecurityManager(new RMISecurityManager());
+		System.setSecurityManager(new SecurityManager());
 		Sorcer.setCodeBase(new String[] { "ju-arithmetic-beans.jar",  "sorcer-dl.jar" });
 		try {
 			URL.setURLStreamHandlerFactory(new SdbURLStreamHandlerFactory());

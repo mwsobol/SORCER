@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
+
 import sorcer.arithmetic.provider.Adder;
 import sorcer.arithmetic.provider.Averager;
 import sorcer.arithmetic.provider.Multiplier;
@@ -23,20 +24,14 @@ import sorcer.service.*;
 import sorcer.service.Strategy.*;
 
 import java.rmi.RemoteException;
+import java.util.List;
 import java.util.logging.Logger;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
-import static sorcer.co.operator.input;
 import static sorcer.eo.operator.*;
-import static sorcer.eo.operator.get;
-import static sorcer.eo.operator.in;
-import static sorcer.eo.operator.input;
-import static sorcer.eo.operator.pipe;
-import static sorcer.eo.operator.value;
 import static sorcer.po.operator.*;
-import static sorcer.po.operator.put;
 
 /**
  * @author Mike Sobolewski
@@ -310,7 +305,7 @@ public class NetArithmetic implements SorcerConstants {
 
 		Task t5 = task(
 				"t5",
-				sig("add", AdderImpl.class),
+				sig("add", Adder.class),
 				context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
 						outEnt("result/y", null)));
 
