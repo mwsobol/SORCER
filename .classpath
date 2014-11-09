@@ -29,5 +29,6 @@
 	<classpathentry kind="lib" path="distribution/sorcer-5.0.0-SNAPSHOT/rio/lib-dl/rio-api-5.0-M4.jar"/>
 	<classpathentry kind="lib" path="core/sorcer-platform/build/classes/test"/>
 	<classpathentry kind="lib" path="core/sorcer-int-tests/build/libs/arithmetic-tester-5.0.0-SNAPSHOT-prv.jar"/>
+	<classpathentry kind="lib" path="examples/pml/build/classes/test"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

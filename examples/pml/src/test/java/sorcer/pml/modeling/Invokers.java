@@ -46,7 +46,7 @@ import java.util.logging.Logger;
 import junit.framework.Assert;
 import net.jini.core.transaction.TransactionException;
 
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
 
 import sorcer.arithmetic.provider.impl.AdderImpl;
@@ -92,7 +92,7 @@ public class Invokers {
 		System.setProperty("java.util.logging.config.file", Sorcer.getHome()
 				+ "/configs/sorcer.logging");
 		System.setProperty("java.security.policy", Sorcer.getHome()
-				+ "/configs/policy.all");
+				+ "/policy/policy.all");
 		System.setSecurityManager(new SecurityManager());
 		Sorcer.setCodeBase(new String[] { "ju-invoker-beans.jar" });
 	}
@@ -100,15 +100,6 @@ public class Invokers {
 	// member subclass of Invocable with Context parameter used below with
 	// contextMethodAttachmentWithArgs()
 	// there are constructor's context and invoke metod's context as parameters
-	
-	@BeforeClass
-	public void initParModel() throws EvaluationException, RemoteException {
-		pm = new ParModel();
-		x = par("x", 10.0);
-		y = par("y", 20.0);
-		par("z", invoker("x - y", x, y));
-	}
-
 	public class Update extends Invocable {
 		public Update(Context context) {
 			super(context);
@@ -124,6 +115,14 @@ public class Invokers {
 			return (Double)value(x) + (Double)value(y) + (Double)value(pm, "z");
 		}
 	};
+
+	@Before
+	public void initParModel() throws EvaluationException, RemoteException {
+		pm = new ParModel();
+		x = par("x", 10.0);
+		y = par("y", 20.0);
+		z = par("z", invoker("x - y", x, y));
+	}
 
 	@Test
 	public void methodInvokerTest() throws RemoteException, ContextException {

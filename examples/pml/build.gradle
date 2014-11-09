@@ -47,3 +47,24 @@ dependencies {
 	testCompile project(':sorcer-test')
 	testRuntime libs.slf4j
 }
+
+def repoPath() {
+	return "org/sorcer/arithmetic/${version}"
+}
+
+bootme {
+	starterConfig = file("${projectDir.path}/configs/StartAll.groovy")
+	systemProperties = ["local.repo.path" : repoPath()]
+	//spawn = false
+}
+
+test {
+	systemProperty "java.rmi.server.codebase",
+				   "${websterUrl}/${repoPath()}/arithmetic-${version}-dl.jar ${websterUrl}/sorcer-dl-${version}.jar ${websterUrl}/jsk-dl-${riverVersion}.jar"
+
+	testLogging {
+		events "passed", "skipped", "failed"/*, "standardOut", "standardError"*/
+	}
+	dependsOn([install, bootme])
+	finalizedBy(stopme)
+}
