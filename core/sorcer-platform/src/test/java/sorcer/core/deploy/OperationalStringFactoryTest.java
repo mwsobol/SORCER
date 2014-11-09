@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package junit.sorcer.core.deploy;
+package sorcer.core.deploy;
 
 import junit.framework.Assert;
 import org.junit.Test;
@@ -23,8 +23,6 @@ import org.rioproject.opstring.OperationalString;
 import org.rioproject.opstring.ServiceElement;
 import org.rioproject.opstring.UndeployOption;
 import org.rioproject.system.capability.connectivity.TCPConnectivity;
-import sorcer.core.deploy.ServiceDeployment;
-import sorcer.core.deploy.OperationalStringFactory;
 import sorcer.service.Job;
 import sorcer.service.Service;
 import sorcer.service.Strategy;
@@ -37,6 +35,7 @@ import java.util.Map;
 import static junit.framework.Assert.assertNotNull;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static sorcer.co.operator.inEnt;
 import static sorcer.eo.operator.*;
 
 /**
@@ -139,14 +138,18 @@ public class OperationalStringFactoryTest {
         return sysComponents.toArray(new SystemComponent[sysComponents.size()]);
     }
 
+    private String getConfigDir() {
+        return String.format("%s/src/test/resources/deploy/configs/", System.getProperty("user.dir"));
+    }
+
     @Test
     public void testServiceProperties() throws Exception {
         Task task = task("f5",
                 sig("Foo",
                         Service.class,
-                        deploy(configuration("bin/sorcer/test/deploy/configs/TestConfig.groovy"))),
-                context("foo", input("arg/x3", 20.0d), input("arg/x4", 80.0d),
-                        output("result/y2", null)));
+                        deploy(configuration(getConfigDir() + "/TestConfig.groovy"))),
+                context("foo", inEnt("arg/x3", 20.0d), inEnt("arg/x4", 80.0d),
+                        result("result/y2", null)));
 
         /* totally bogus job definition */
         Job job = job("Some Job", job("f2", task), task, strategy(Strategy.Provision.YES),
