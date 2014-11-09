@@ -163,6 +163,8 @@ task distribution(dependsOn: [gatherDeps]) {
                 include "configs/opstrings/**"
                 include "configs/sorcer.logging"
                 include "configs/standalone.sorcer.env"
+				include "configs/startup-prv.config"
+				include "configs/boot-prv.config"
                 include "configs/boot-sorcer-arv-http.config"
                 include "configs/WebsterPrv.groovy"
                 include "configs/platform/**"

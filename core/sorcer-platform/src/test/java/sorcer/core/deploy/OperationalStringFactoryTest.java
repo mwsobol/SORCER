@@ -15,7 +15,29 @@
  */
 package sorcer.core.deploy;
 
+import static junit.framework.Assert.assertNotNull;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static sorcer.co.operator.inEnt;
+import static sorcer.eo.operator.configuration;
+import static sorcer.eo.operator.context;
+import static sorcer.eo.operator.deploy;
+import static sorcer.eo.operator.input;
+import static sorcer.eo.operator.job;
+import static sorcer.eo.operator.out;
+import static sorcer.eo.operator.pipe;
+import static sorcer.eo.operator.result;
+import static sorcer.eo.operator.sig;
+import static sorcer.eo.operator.strategy;
+import static sorcer.eo.operator.task;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Logger;
+
 import junit.framework.Assert;
+
 import org.junit.Test;
 import org.rioproject.config.Configuration;
 import org.rioproject.deploy.SystemComponent;
@@ -23,28 +45,27 @@ import org.rioproject.opstring.OperationalString;
 import org.rioproject.opstring.ServiceElement;
 import org.rioproject.opstring.UndeployOption;
 import org.rioproject.system.capability.connectivity.TCPConnectivity;
+
 import sorcer.service.Job;
 import sorcer.service.Service;
+import sorcer.service.Signature;
 import sorcer.service.Strategy;
 import sorcer.service.Task;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import static junit.framework.Assert.assertNotNull;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static sorcer.co.operator.inEnt;
-import static sorcer.eo.operator.*;
 
 /**
  * @author Dennis Reedy
  */
 public class OperationalStringFactoryTest {
+	private final static Logger logger = Logger.getLogger(OperationalStringFactoryTest.class.getName());
+
     @Test
     public void testOperationalStringCreation() throws Exception {
         Job job = Util.createJob();
+        
+    	List<Signature> sigs = job.getAllNetTaskSignatures();
+		logger.info("job signatures: " + sigs.size());
+
+		
         Map<ServiceDeployment.Unique, List<OperationalString>> deployments = OperationalStringFactory.create(job);
         List<OperationalString> allOperationalStrings = new ArrayList<OperationalString>();
         allOperationalStrings.addAll(deployments.get(ServiceDeployment.Unique.YES));
@@ -145,7 +166,7 @@ public class OperationalStringFactoryTest {
                         Service.class,
                         deploy(configuration(Util.getConfigDir() + "/TestConfig.groovy"))),
                 context("foo", inEnt("arg/x3", 20.0d), inEnt("arg/x4", 80.0d),
-                        result("result/y2", null)));
+                        result("result/y2")));
 
         /* totally bogus job definition */
         Job job = job("Some Job", job("f2", task), task, strategy(Strategy.Provision.YES),

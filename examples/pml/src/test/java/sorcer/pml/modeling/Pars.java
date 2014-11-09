@@ -47,14 +47,14 @@ public class Pars {
 			.getName());
 
 	static {
-		ServiceExertion.debug = true;
+		String sorcerVersion = "5.0.0";
 		URL.setURLStreamHandlerFactory(new SdbURLStreamHandlerFactory());
 		System.setProperty("java.util.logging.config.file",
 				Sorcer.getHome() + "/configs/sorcer.logging");
 		System.setProperty("java.security.policy", Sorcer.getHome()
 				+ "/policy/policy.all");
 		System.setSecurityManager(new SecurityManager());
-		Sorcer.setCodeBase(new String[] { "aritmeticInvokeModel-bean.jar" });
+		Sorcer.setCodeBase(new String[] { "pml-sorcer-" + sorcerVersion + "-prv.jar" });
 	}
 
 	@Test
@@ -96,7 +96,7 @@ public class Pars {
 		Par<String> dbp2 = dbPar("url/sobol", "http://sorcersoft.org/sobol");
 
 		assertFalse(asis(dbp1) instanceof URL);
-		assertFalse(asis(dbp2) instanceof URL);
+		assertTrue(asis(dbp2) instanceof URL);
 			
 		URL dbp1Url = url(dbp1);
 		URL dbp2Url = url(dbp2);
