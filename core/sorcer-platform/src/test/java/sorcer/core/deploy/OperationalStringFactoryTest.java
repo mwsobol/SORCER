@@ -138,16 +138,12 @@ public class OperationalStringFactoryTest {
         return sysComponents.toArray(new SystemComponent[sysComponents.size()]);
     }
 
-    private String getConfigDir() {
-        return String.format("%s/src/test/resources/deploy/configs/", System.getProperty("user.dir"));
-    }
-
     @Test
     public void testServiceProperties() throws Exception {
         Task task = task("f5",
                 sig("Foo",
                         Service.class,
-                        deploy(configuration(getConfigDir() + "/TestConfig.groovy"))),
+                        deploy(configuration(Util.getConfigDir() + "/TestConfig.groovy"))),
                 context("foo", inEnt("arg/x3", 20.0d), inEnt("arg/x4", 80.0d),
                         result("result/y2", null)));
 

@@ -36,9 +36,10 @@ public class Util {
     static Job createJob(boolean fork) throws ContextException, SignatureException, ExertionException {
         Task f4 = task("f4",
                        sig("multiply",
-                           Object.class,
-                           deploy(configuration(fork?"bin/sorcer/test/arithmetic/configs/multiplier-prv-fork.config":
-                                                     "bin/sorcer/test/arithmetic/configs/multiplier-prv.config"),
+                           FakeProvider.class,
+                           deploy(configuration(fork?
+                                                getConfigDir()+"/multiplier-prv-fork.config":
+                                                getConfigDir()+"/multiplier-prv.config"),
                                   idle(1),
                                   ServiceDeployment.Type.SELF)),
                        context("multiply", inEnt("arg/x1", 10.0d),
@@ -46,16 +47,16 @@ public class Util {
 
         Task f5 = task("f5",
                        sig("add",
-                           Object.class,
-                           deploy(configuration("bin/sorcer/test/arithmetic/configs/AdderProviderConfig.groovy"))),
+                           FakeProvider.class,
+                           deploy(configuration(getConfigDir()+"/AdderProviderConfig.groovy"))),
                        context("add", inEnt("arg/x3", 20.0d), inEnt("arg/x4", 80.0d),
                                result("result/y2")));
 
         Task f3 = task("f3",
-                       sig("subtract", Object.class,
+                       sig("subtract", FakeProvider.class,
                            deploy(maintain(2, perNode(2)),
                                   idle(1),
-                                  configuration("bin/sorcer/test/arithmetic/configs/subtractor-prv.config"))),
+                                  configuration(getConfigDir()+"/subtractor-prv.config"))),
                        context("subtract", inEnt("arg/x5"),
                                inEnt("arg/x6"), result("result/y3")));
 
@@ -80,8 +81,8 @@ public class Util {
         if(excludeIPs) {
             f4 = task("f4",
                       sig("multiply",
-                          Object.class,
-                          deploy(configuration("bin/sorcer/test/arithmetic/configs/multiplier-prv.config"),
+                          FakeProvider.class,
+                          deploy(configuration(getConfigDir()+"/multiplier-prv.config"),
                                  idle(1),
                                  opsys(opSys),
                                  arch(arch),
@@ -92,8 +93,8 @@ public class Util {
         } else {
             f4 = task("f4",
                       sig("multiply",
-                          Object.class,
-                          deploy(configuration("bin/sorcer/test/arithmetic/configs/multiplier-prv.config"),
+                          FakeProvider.class,
+                          deploy(configuration(getConfigDir()+"/multiplier-prv.config"),
                                  idle(1),
                                  opsys(opSys),
                                  arch(arch),
@@ -105,16 +106,16 @@ public class Util {
 
         Task f5 = task("f5",
                        sig("add",
-                           Object.class,
-                           deploy(configuration("bin/sorcer/test/arithmetic/configs/AdderProviderConfig.groovy"))),
+                           FakeProvider.class,
+                           deploy(configuration(getConfigDir()+"/AdderProviderConfig.groovy"))),
                        context("add", inEnt("arg/x3", 20.0d), inEnt("arg/x4", 80.0d),
                                result("result/y2")));
 
         Task f3 = task("f3",
-                       sig("subtract", Object.class,
+                       sig("subtract", FakeProvider.class,
                            deploy(maintain(2, perNode(2)),
                                   idle(1),
-                                  configuration("bin/sorcer/test/arithmetic/configs/subtractor-prv.config"))),
+                                  configuration(getConfigDir()+"/subtractor-prv.config"))),
                        context("subtract", inEnt("arg/x5"),
                                inEnt("arg/x6"), result("result/y3")));
 
@@ -123,5 +124,9 @@ public class Util {
                    strategy(Provision.YES),
                    pipe(out(f4, "result/y1"), input(f3, "arg/x5")),
                    pipe(out(f5, "result/y2"), input(f3, "arg/x6")));
+    }
+
+    static  String getConfigDir() {
+        return String.format("%s/src/test/resources/deploy/configs/", System.getProperty("user.dir"));
     }
 }

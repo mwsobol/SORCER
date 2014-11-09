@@ -23,9 +23,9 @@ import org.rioproject.deploy.SystemRequirements;
 import org.rioproject.opstring.ServiceElement;
 import org.rioproject.resolver.ResolverException;
 import org.rioproject.system.capability.connectivity.TCPConnectivity;
+import org.rioproject.tools.webster.Webster;
 import sorcer.core.provider.ServiceProvider;
 import sorcer.core.signature.NetSignature;
-import sorcer.tools.webster.Webster;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -100,7 +100,7 @@ public class ServiceElementFactoryTest {
     @Test
     public void testConfigurationAsHTTP() throws IOException, ConfigurationException {
         String configDirToServe = getConfigDir();
-        Webster webster = new Webster(configDirToServe, true);
+        Webster webster = new Webster(0, configDirToServe, null);
         try {
             ServiceDeployment deployment = new ServiceDeployment();
             String hostName = InetAddress.getLocalHost().getHostName();
