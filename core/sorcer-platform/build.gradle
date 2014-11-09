@@ -33,6 +33,7 @@ jar {
     from(configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }) {
         include "sorcer/**"
         include "org/rioproject/admin/ServiceActivityProvider.class"
+		include "org/rioproject/entry/ComputeResourceInfo.class"
     }
     manifest {
         attributes("Implementation-Title": "SORCER Platform",
