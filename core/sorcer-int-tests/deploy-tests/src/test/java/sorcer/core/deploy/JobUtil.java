@@ -15,6 +15,9 @@
  */
 package sorcer.core.deploy;
 
+import sorcer.arithmetic.tester.provider.Adder;
+import sorcer.arithmetic.tester.provider.Multiplier;
+import sorcer.arithmetic.tester.provider.Subtractor;
 import sorcer.core.provider.Jobber;
 import sorcer.service.*;
 import sorcer.service.Strategy.Provision;
@@ -27,7 +30,7 @@ import static sorcer.eo.operator.*;
  *
  * @author Dennis Reedy
  */
-public class Util {
+public class JobUtil {
 
     static Job createJob() throws ContextException, SignatureException, ExertionException {
         return createJob(false);
@@ -36,7 +39,7 @@ public class Util {
     static Job createJob(boolean fork) throws ContextException, SignatureException, ExertionException {
         Task f4 = task("f4",
                        sig("multiply",
-                           FakeProvider.class,
+                           Multiplier.class,
                            deploy(configuration(fork?
                                                 getConfigDir()+"/multiplier-prv-fork.config":
                                                 getConfigDir()+"/multiplier-prv.config"),
@@ -47,13 +50,13 @@ public class Util {
 
         Task f5 = task("f5",
                        sig("add",
-                           FakeProvider.class,
+                           Adder.class,
                            deploy(configuration(getConfigDir()+"/AdderProviderConfig.groovy"))),
                        context("add", inEnt("arg/x3", 20.0d), inEnt("arg/x4", 80.0d),
                                result("result/y2")));
 
         Task f3 = task("f3",
-                       sig("subtract", FakeProvider.class,
+                       sig("subtract", Subtractor.class,
                            deploy(maintain(2, perNode(2)),
                                   idle(1),
                                   configuration(getConfigDir()+"/subtractor-prv.config"))),
@@ -81,7 +84,7 @@ public class Util {
         if(excludeIPs) {
             f4 = task("f4",
                       sig("multiply",
-                          FakeProvider.class,
+                          Multiplier.class,
                           deploy(configuration(getConfigDir()+"/multiplier-prv.config"),
                                  idle(1),
                                  opsys(opSys),
@@ -93,7 +96,7 @@ public class Util {
         } else {
             f4 = task("f4",
                       sig("multiply",
-                          FakeProvider.class,
+                          Multiplier.class,
                           deploy(configuration(getConfigDir()+"/multiplier-prv.config"),
                                  idle(1),
                                  opsys(opSys),
@@ -106,13 +109,13 @@ public class Util {
 
         Task f5 = task("f5",
                        sig("add",
-                           FakeProvider.class,
+                           Adder.class,
                            deploy(configuration(getConfigDir()+"/AdderProviderConfig.groovy"))),
                        context("add", inEnt("arg/x3", 20.0d), inEnt("arg/x4", 80.0d),
                                result("result/y2")));
 
         Task f3 = task("f3",
-                       sig("subtract", FakeProvider.class,
+                       sig("subtract", Subtractor.class,
                            deploy(maintain(2, perNode(2)),
                                   idle(1),
                                   configuration(getConfigDir()+"/subtractor-prv.config"))),

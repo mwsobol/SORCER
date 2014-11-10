@@ -25,6 +25,7 @@ dependencies {
     compile "org.dancres:lockmgr:${lockmgrVersion}"
     compile project(':sorcer-dl')
     compile files("${System.properties['java.home']}/../lib/tools.jar")
+    /* Depend on Rio webster for running a test so we do not create a circular dependency on Sorcer Webster */
     testCompile "org.rioproject:webster:${rioVersion}"
     testCompile libs.junit
 }

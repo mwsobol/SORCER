@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package junit.sorcer.core.provider.configs
+package deploy.configs
 
 import org.rioproject.config.Component
 import java.util.logging.Level
@@ -34,7 +34,7 @@ class AdderProviderConfig {
     boolean remoteLogging=true
     String remoteLoggerManagerName="Logger"
     Level remoteLoggerLevel=Level.FINE;
-    String remoteLoggerName="remote.junit.sorcer.core.provider.ArithmeticBeans"
+    String remoteLoggerName="remote.sorcer.core.provider.ArithmeticBeans"
     // local private logging available via by RemoteLogger
     boolean remoteContextLogging = true
     boolean remoteProviderLogging = true
@@ -52,7 +52,7 @@ class AdderProviderConfig {
      * @return An array of service implementation classes required to load the service
      */
     Class[] getBeanClasses() {
-        return [junit.sorcer.core.provider.AdderImpl.class]
+        return [sorcer.arithmetic.provider.impl.AdderImpl.class]
     }
 
 
@@ -62,7 +62,7 @@ class AdderProviderConfig {
 
     /* This is declared as a static property so the class below can reference it, and used by the published interfaces
      * method above. Removes duplication. */
-    static String interfaceClass = "junit.sorcer.core.provider.Adder"
+    static String interfaceClass = "sorcer.arithmetic.provider.Adder"
 
 }
 
@@ -71,7 +71,7 @@ class AdderProviderConfig {
  */
 @Component('sorcer.core.exertion.deployment')
 class AdderDeploymentConfig {
-    String[] interfaces = [AdderProviderConfig.interfaceClass]
-    String[] codebaseJars = ["ju-arithmetic-dl.jar"]
-    String[] implJars = ["ju-arithmetic-beans.jar"]
+    String[] interfaces = ["sorcer.arithmetic.provider.Adder"]
+    String[] codebaseJars = ["arithmetic-tester-${System.getProperty("sorcer.version")}-dl.jar"]
+    String[] implJars = ["arithmetic-tester-${System.getProperty("sorcer.version")}.jar"]
 }
