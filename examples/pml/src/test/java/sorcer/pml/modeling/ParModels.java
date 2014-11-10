@@ -52,6 +52,7 @@ import java.rmi.RemoteException;
 import java.util.concurrent.Callable;
 import java.util.logging.Logger;
 
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -100,8 +101,15 @@ public class ParModels {
 	private ParModel pm; 
 	private Par<Double> x;
 	private Par<Double> y;
-	private Par z;
 		
+	
+	@Before
+	public void initParModel() throws EvaluationException, RemoteException {
+		pm = new ParModel();
+		x = par("x", 10.0);
+		y = par("y", 20.0);
+	}
+	
 	@Test
 	public void runtimeScope() throws Exception {
 		

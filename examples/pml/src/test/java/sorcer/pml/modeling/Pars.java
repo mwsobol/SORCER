@@ -4,16 +4,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.ent;
-import static sorcer.co.operator.inEnt;
 import static sorcer.co.operator.persistent;
 import static sorcer.co.operator.url;
 import static sorcer.eo.operator.asis;
 import static sorcer.eo.operator.context;
-import static sorcer.eo.operator.cxt;
-import static sorcer.eo.operator.result;
-import static sorcer.eo.operator.sig;
-import static sorcer.eo.operator.store;
-import static sorcer.eo.operator.task;
 import static sorcer.eo.operator.value;
 import static sorcer.po.operator.add;
 import static sorcer.po.operator.dbPar;
@@ -22,7 +16,6 @@ import static sorcer.po.operator.par;
 import static sorcer.po.operator.parFi;
 import static sorcer.po.operator.parModel;
 import static sorcer.po.operator.pars;
-import static sorcer.po.operator.put;
 import static sorcer.po.operator.set;
 
 import java.net.URL;
@@ -30,11 +23,9 @@ import java.util.logging.Logger;
 
 import org.junit.Test;
 
-import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.core.context.model.par.Par;
 import sorcer.core.context.model.par.ParModel;
 import sorcer.service.Context;
-import sorcer.service.ServiceExertion;
 import sorcer.util.Sorcer;
 import sorcer.util.url.sos.SdbURLStreamHandlerFactory;
 
