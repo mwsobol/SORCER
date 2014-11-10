@@ -72,6 +72,6 @@ class AdderProviderConfig {
 @Component('sorcer.core.exertion.deployment')
 class AdderDeploymentConfig {
     String[] interfaces = ["sorcer.arithmetic.provider.Adder"]
-    String[] codebaseJars = ["arithmetic-tester-${System.getProperty("sorcer.version")}-dl.jar"]
-    String[] implJars = ["arithmetic-tester-${System.getProperty("sorcer.version")}.jar"]
+    String[] codebaseJars = ["${System.getProperty("relative.repo.path")}/arithmetic-tester-${System.getProperty("sorcer.version")}-dl.jar"]
+    String[] implJars = ["${System.getProperty("relative.repo.path")}/arithmetic-tester-${System.getProperty("sorcer.version")}.jar"]
 }
