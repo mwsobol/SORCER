@@ -17,12 +17,15 @@ package sorcer.core.deploy;
 
 import junit.framework.Assert;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.rioproject.config.Configuration;
 import org.rioproject.deploy.SystemComponent;
 import org.rioproject.opstring.OperationalString;
 import org.rioproject.opstring.ServiceElement;
 import org.rioproject.opstring.UndeployOption;
 import org.rioproject.system.capability.connectivity.TCPConnectivity;
+import org.sorcer.test.ProjectContext;
+import org.sorcer.test.SorcerTestRunner;
 import sorcer.service.*;
 
 import java.util.ArrayList;
@@ -39,6 +42,8 @@ import static sorcer.eo.operator.*;
 /**
  * @author Dennis Reedy
  */
+@RunWith(SorcerTestRunner.class)
+@ProjectContext("core/sorcer-int-tests/deploy-tests")
 public class OperationalStringFactoryTest {
 	private final static Logger logger = Logger.getLogger(OperationalStringFactoryTest.class.getName());
 
@@ -170,7 +175,7 @@ public class OperationalStringFactoryTest {
                                                        "codebaseJars",
                                                        String[].class);
         assertTrue(codebaseJars.length == 1);
-        assertTrue(codebaseJars[0].equals("ju-arithmetic-dl.jar"));
+        assertTrue(codebaseJars[0].equals("arithmetic-tester-"+System.getProperty("sorcer.version")+"-dl.jar"));
     }
 
 }

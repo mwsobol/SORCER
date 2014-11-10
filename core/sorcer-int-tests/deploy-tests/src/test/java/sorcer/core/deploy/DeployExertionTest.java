@@ -16,6 +16,9 @@
 package sorcer.core.deploy;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.sorcer.test.ProjectContext;
+import org.sorcer.test.SorcerTestRunner;
 import sorcer.core.SorcerConstants;
 import sorcer.service.ContextException;
 import sorcer.service.Exertion;
@@ -31,6 +34,8 @@ import static sorcer.eo.operator.get;
 /**
  * @author Dennis Reedy
  */
+@RunWith(SorcerTestRunner.class)
+@ProjectContext("core/sorcer-int-tests/deploy-tests")
 public class DeployExertionTest extends DeploySetup implements SorcerConstants {
     private final static Logger logger = Logger.getLogger(DeployExertionTest.class.getName());
 

@@ -14,6 +14,27 @@
  * limitations under the License.
  */
 
+version = sorcerVersion
+
 dependencies {
     compile project(":sorcer-lib")
 }
+
+task arithmeticPrvDlJar(type: Jar) {
+    manifest {
+        attributes("Implementation-Title": "SORCER Arithmetic tester Exported Classes",
+                   "Implementation-Version": version)
+    }
+    classifier = "dl"
+    dependsOn classes
+    from sourceSets.main.output
+    include('sorcer/arithmetic/tester/provider/*')
+}
+
+artifacts {
+    archives arithmeticPrvDlJar
+}
+
+install.dependsOn(['arithmeticPrvDlJar'])
+publish.dependsOn(install)
+build.dependsOn(install)

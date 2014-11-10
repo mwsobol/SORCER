@@ -13,8 +13,6 @@ import org.sorcer.test.SorcerTestRunner;
 /**
  * Class
  */
-@RunWith(SorcerTestRunner.class)
-@ProjectContext("core/sorcer-int-tests/deploy-tests")
 public class DeploySetup {
     static ProvisionMonitor monitor;
 

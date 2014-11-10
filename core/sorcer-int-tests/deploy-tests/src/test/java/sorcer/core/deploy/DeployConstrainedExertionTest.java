@@ -6,12 +6,15 @@ import net.jini.jeri.BasicJeriExporter;
 import net.jini.jeri.tcp.TcpServerEndpoint;
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.rioproject.deploy.DeployAdmin;
 import org.rioproject.deploy.ServiceBeanInstance;
 import org.rioproject.deploy.ServiceProvisionListener;
 import org.rioproject.deploy.SystemRequirements;
 import org.rioproject.opstring.OperationalString;
 import org.rioproject.opstring.ServiceElement;
+import org.sorcer.test.ProjectContext;
+import org.sorcer.test.SorcerTestRunner;
 import sorcer.core.SorcerConstants;
 import sorcer.service.Job;
 
@@ -44,6 +47,8 @@ import static org.junit.Assert.assertTrue;
  * If providing machine architecture, the provided value must be the same as what
  * System.getProperty("os.arch") returns for the required machine architecture
  */
+@RunWith(SorcerTestRunner.class)
+@ProjectContext("core/sorcer-int-tests/deploy-tests")
 public class DeployConstrainedExertionTest  extends DeploySetup implements SorcerConstants {
     private final static Logger logger = Logger.getLogger(DeployConstrainedExertionTest.class.getName());
 

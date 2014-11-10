@@ -16,6 +16,9 @@
 package sorcer.core.deploy;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.sorcer.test.ProjectContext;
+import org.sorcer.test.SorcerTestRunner;
 import sorcer.core.dispatch.ProvisionManager;
 import sorcer.service.Job;
 
@@ -33,6 +36,8 @@ import static org.junit.Assert.assertTrue;
  *
  * @author Dennis Reedy
  */
+@RunWith(SorcerTestRunner.class)
+@ProjectContext("core/sorcer-int-tests/deploy-tests")
 public class ProvisionManagerTest extends DeploySetup {
 
     //@Test

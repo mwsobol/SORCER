@@ -29,7 +29,7 @@ def repoPath() {
 }
 
 test {
-    dependsOn("bootSorcerRio")
+    dependsOn([":sorcer-int-tests:arithmetic-tester:install", "bootSorcerRio"])
     systemProperty "sorcer.version", version
     systemProperty "relative.repo.path", repoPath()
     systemProperty "java.rmi.server.codebase",
@@ -40,4 +40,4 @@ test {
     }
     finalizedBy("terminateSorcerRio")
 }
-test.onlyIf{file("${sorcerDistHome}").exists()}
+test.onlyIf{ file("${sorcerDistHome}").exists() }
