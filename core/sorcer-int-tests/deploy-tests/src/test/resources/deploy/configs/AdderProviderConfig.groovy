@@ -62,7 +62,7 @@ class AdderProviderConfig {
 
     /* This is declared as a static property so the class below can reference it, and used by the published interfaces
      * method above. Removes duplication. */
-    static String interfaceClass = "Adder"
+    static String interfaceClass = "sorcer.arithmetic.tester.provider.Adder"
 
 }
 
@@ -71,7 +71,8 @@ class AdderProviderConfig {
  */
 @Component('sorcer.core.exertion.deployment')
 class AdderDeploymentConfig {
-    String[] interfaces = ["Adder"]
-    String[] codebaseJars = ["${System.getProperty("relative.repo.path")}/arithmetic-tester-${System.getProperty("sorcer.version")}-dl.jar"]
-    String[] implJars = ["${System.getProperty("relative.repo.path")}/arithmetic-tester-${System.getProperty("sorcer.version")}.jar"]
+    String sorcerVersion = System.getProperty("sorcer.version")
+    String[] interfaces = ["sorcer.arithmetic.tester.provider.Adder"]
+    String[] codebaseJars = ["org/sorcer/arithmetic-tester/${sorcerVersion}/arithmetic-tester-${System.getProperty("sorcer.version")}-dl.jar"]
+    String[] implJars = ["org/sorcer/arithmetic-tester/${sorcerVersion}/arithmetic-tester-${System.getProperty("sorcer.version")}.jar"]
 }

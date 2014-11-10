@@ -54,6 +54,7 @@ public class DeployExertionTest extends DeploySetup implements SorcerConstants {
         Exertion out = exert(job);
         System.out.println("Waited "+(System.currentTimeMillis()-t0)+" millis for exerting: " + out.getName());
         assertNotNull(out);
+        System.out.println("===> out: "+out);
         assertEquals(get(out, "f1/f3/result/y3"), 400.0);
     }
 

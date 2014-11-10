@@ -66,12 +66,13 @@
             <sysproperty key="java.util.logging.config.file" value="${rio.home}/config/logging/rio-logging.properties" />
             <sysproperty key="java.protocol.handler.pkgs" value="net.jini.url|sorcer.util.url|org.rioproject.url" />
             <sysproperty key="RIO_HOME" value="${rio.home}"/>
-            <sysproperty key="RIO_LOG_DIR" value="${rio.home}/logs"/>
+            <sysproperty key="RIO_LOG_DIR" value="${sorcer.home}/logs"/>
             <sysproperty key="org.rioproject.service" value="${service}"/>
             <sysproperty key="rio.script.mainClass" value="org.rioproject.start.ServiceStarter"/>
             <sysproperty key="java.rmi.server.useCodebaseOnly" value="false" />
             <sysproperty key="SORCER_HOME" value="${sorcer.home}"/>
             <sysproperty key="sorcer.home" value="${sorcer.home}"/>
+            <sysproperty key="sorcer.version" value="${sorcer.version}"/>
             <sysproperty key="org.rioproject.exec.monitor.reap.interval" value="1"/>
             <arg value="${rio.home}/config/start-${service}.groovy"/>
         </java>
