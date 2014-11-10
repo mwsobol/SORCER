@@ -1,4 +1,4 @@
-package junit.sorcer.core.provider;
+package sorcer.core.provider;
 
 import static org.junit.Assert.assertNotNull;
 
@@ -7,8 +7,6 @@ import java.util.logging.Logger;
 import org.junit.Test;
 
 import sorcer.core.SorcerConstants;
-import sorcer.core.provider.Concatenator;
-import sorcer.core.provider.Jobber;
 import sorcer.core.signature.NetSignature;
 import sorcer.service.Accessor;
 import sorcer.service.Service;

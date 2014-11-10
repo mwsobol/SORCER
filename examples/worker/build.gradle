@@ -22,6 +22,8 @@ task workerPrvDlJar(type: Jar) {
 	dependsOn classes
 	from sourceSets.main.output
 	include('sorcer/worker/provider/*')
+	from sourceSets.main.resources
+	include('sorcer.jpg')
 }
 
 task workerReqJar(type: Jar) {

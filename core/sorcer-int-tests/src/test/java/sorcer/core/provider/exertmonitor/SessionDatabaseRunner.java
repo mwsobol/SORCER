@@ -1,4 +1,4 @@
-package junit.sorcer.core.provider.exertmonitor;
+package sorcer.core.provider.exertmonitor;
 
 import java.io.IOException;
 import java.rmi.RMISecurityManager;

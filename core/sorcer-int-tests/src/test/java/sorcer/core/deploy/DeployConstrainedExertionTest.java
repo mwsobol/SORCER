@@ -1,4 +1,4 @@
-package junit.sorcer.core.deploy;
+package sorcer.core.deploy;
 
 import net.jini.export.Exporter;
 import net.jini.jeri.BasicILFactory;

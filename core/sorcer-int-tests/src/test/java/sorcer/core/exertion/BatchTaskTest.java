@@ -1,19 +1,24 @@
-package junit.sorcer.core.exertion;
+package sorcer.core.exertion;
 
 //import com.gargoylesoftware,base,testing,TestUtil;
 import static org.junit.Assert.assertEquals;
 import static sorcer.co.operator.from;
-import static sorcer.eo.operator.*;
+import static sorcer.co.operator.inEnt;
+import static sorcer.eo.operator.context;
+import static sorcer.eo.operator.exert;
+import static sorcer.eo.operator.get;
+import static sorcer.eo.operator.result;
+import static sorcer.eo.operator.sig;
+import static sorcer.eo.operator.task;
+import static sorcer.eo.operator.type;
 
-import java.rmi.RMISecurityManager;
 import java.util.logging.Logger;
-
-import junit.sorcer.core.provider.AdderImpl;
-import junit.sorcer.core.provider.MultiplierImpl;
-import junit.sorcer.core.provider.SubtractorImpl;
 
 import org.junit.Test;
 
+import sorcer.arithmetic.tester.provider.impl.AdderImpl;
+import sorcer.arithmetic.tester.provider.impl.MultiplierImpl;
+import sorcer.arithmetic.tester.provider.impl.SubtractorImpl;
 import sorcer.service.Signature;
 import sorcer.service.Signature.Direction;
 import sorcer.service.Task;
@@ -22,7 +27,7 @@ import sorcer.util.Sorcer;
 /**
  * @author Mike Sobolewski
  */
-
+@SuppressWarnings("unchecked")
 public class BatchTaskTest {
 	private final static Logger logger = Logger.getLogger(TaskTest.class
 			.getName());
@@ -32,7 +37,7 @@ public class BatchTaskTest {
 				Sorcer.getHome() + "/configs/sorcer.logging");
 		System.setProperty("java.security.policy", Sorcer.getHome()
 				+ "/configs/policy.all");
-		System.setSecurityManager(new RMISecurityManager());
+		System.setSecurityManager(new SecurityManager());
 		Sorcer.setCodeBase(new String[] { "arithmetic-beans.jar" });
 	}
 	
@@ -44,8 +49,8 @@ public class BatchTaskTest {
 				type(sig("multiply", MultiplierImpl.class, result("subtract/x1", Direction.IN)), Signature.PRE),
 				type(sig("add", AdderImpl.class, result("subtract/x2", Direction.IN)), Signature.PRE),
 				sig("subtract", SubtractorImpl.class, result("result/y", from("subtract/x1", "subtract/x2"))),
-				context(in("multiply/x1", 10.0), in("multiply/x2", 50.0), 
-						in("add/x1", 20.0), in("add/x2", 80.0)));
+				context(inEnt("multiply/x1", 10.0), inEnt("multiply/x2", 50.0), 
+						inEnt("add/x1", 20.0), inEnt("add/x2", 80.0)));
 		
 		logger.info("task getSignatures:" + batch3.getFidelity());
 				
@@ -63,8 +68,8 @@ public class BatchTaskTest {
 				type(sig("multiply#op1", MultiplierImpl.class, result("op3/x1", Direction.IN)), Signature.PRE),
 				type(sig("add#op2", AdderImpl.class, result("op3/x2", Direction.IN)), Signature.PRE),
 				sig("subtract", SubtractorImpl.class, result("result/y", from("op3/x1", "op3/x2"))),
-				context(in("op1/x1", 10.0), in("op1/x2", 50.0), 
-						in("op2/x1", 20.0), in("op2/x2", 80.0)));
+				context(inEnt("op1/x1", 10.0), inEnt("op1/x2", 50.0), 
+						inEnt("op2/x1", 20.0), inEnt("op2/x2", 80.0)));
 		
 		batch3 = exert(batch3);
 		//logger.info("task result/y: " + get(batch3, "result/y"));

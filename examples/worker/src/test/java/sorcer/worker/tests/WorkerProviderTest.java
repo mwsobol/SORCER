@@ -15,8 +15,8 @@ import sorcer.core.context.ServiceContext;
 import sorcer.service.Context;
 import sorcer.service.ContextException;
 import sorcer.util.Log;
+import sorcer.worker.provider.InvalidWork;
 import sorcer.worker.provider.Work;
-import sorcer.worker.provider.impl.InvalidWork;
 import sorcer.worker.provider.impl.WorkerProvider;
 
 /**

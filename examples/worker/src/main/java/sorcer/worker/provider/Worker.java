@@ -5,7 +5,6 @@ import java.rmi.RemoteException;
 
 import sorcer.service.Context;
 import sorcer.service.ContextException;
-import sorcer.worker.provider.impl.InvalidWork;
 
 @SuppressWarnings("rawtypes")
 public interface Worker extends Remote {

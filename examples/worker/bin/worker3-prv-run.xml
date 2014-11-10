@@ -4,27 +4,51 @@ Replace "provider.name" with your provider name and specify property value for "
 Also you might need to adjust the classpath (provider.classpath) for your provider 
 -->
 
-<project name="Run Worker Provider" default="run.provider" basedir=".">
+<project name="Run Worker Provider" default="run" basedir=".">
 
-	<!-- system environment variables -->
 	<property environment="env" />
-	<import file="${env.IGRID_HOME}/bin/common-run.xml" />
-	<echo message="IGRID_HOME: ${sorcer.home}" />
+	<import file="${env.SORCER_HOME}/bin/common-run.xml" />
+	<echo message="SORCER_HOME: ${sorcer.home}" />
+
+	<target name="run">
+		<antcall target="run.provider">
+			<param name="spawn" value="no" />
+		</antcall>
+	</target>
+
+	<target name="spawn">
+		<antcall target="run.provider">
+			<param name="spawn" value="yes" />
+		</antcall>
+	</target>
 
 	<!-- property values -->
 	<property name="provider.name" value="worker" />
-	<property name="provider.class" value="sorcer.ex2.provider.WorkerProvider" />
+	<property name="provider.class" value="sorcer.worker.provider.impl.WorkerProvider" />
+	<property name="webster" value="${provider.webster.url}" />
+
+	<!-- provider codeabse jars -->
+	<property name="j1" value="${webster}/org/sorcer/worker/${sorcer.version}/worker-${sorcer.version}-dl.jar" />	
+	<property name="j2" value="${webster}/sorcer-dl-${sorcer.version}.jar" />
+	<property name="j3" value="${webster}/jsk-dl-${river.version}.jar" />
+	<property name="j4" value="${webster}/sorcer-ui-${sorcer.version}.jar" />
 
 	<target name="run.provider">
-		<java jar="${lib}/sorcer-boot.jar" fork="yes">
-			<arg value="${sorcer.home}/configs/boot-prv.config" />
+		<java classname="com.sun.jini.start.ServiceStarter" classpathref="provider.starter.path" fork="yes" spawn="${spawn}">
+			<arg value="${sorcer.home}/configs/startup-prv.config" />
 			<sysproperty key="sorcer.provider.impl" value="${provider.class}" />
+			<sysproperty key="sorcer.provider.codebase" value="${j1} ${j2} ${j3} ${j4}" />
+			<sysproperty key="sorcer.provider.classpath" value="../build/libs/worker-${sorcer.version}-prv.jar" />
 			<sysproperty key="sorcer.provider.config" value="../configs/${provider.name}3-prv.config" />
-			<sysproperty key="sorcer.provider.codebase" value="sorcer-dl.jar ${provider.name}-dl.jar rio-api${rio.version}.jar" />
-			<sysproperty key="sorcer.provider.classpath" value="${sorcer.lib}/${provider.name}.jar" />
+			<sysproperty key="sorcer.home" value="${sorcer.home}" />
+			<sysproperty key="sorcer.version" value="${sorcer.version}" />
+			<sysproperty key="rio.version" value="${rio.version}" />
+			<sysproperty key="river.version" value="${river.version}" />
 			<sysproperty key="sorcer.env.file" value="${sorcer.home}/configs/sorcer.env" />
+			<sysproperty key="java.rmi.server.useCodebaseOnly" value="false" />
 			<sysproperty key="java.security.policy" value="../policy/${provider.name}-prv.policy" />
 			<sysproperty key="java.util.logging.config.file" value="${sorcer.home}/configs/sorcer.logging" />
+			<sysproperty key="java.protocol.handler.pkgs" value="net.jini.url|sorcer.util.bdb.sos|org.rioproject.url" />
 		</java>
 	</target>
 

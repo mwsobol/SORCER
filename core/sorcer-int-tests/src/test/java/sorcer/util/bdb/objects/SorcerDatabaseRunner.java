@@ -1,5 +1,7 @@
-package junit.sorcer.util.bdb.objects;
+package sorcer.util.bdb.objects;
 
+import static sorcer.co.operator.inEnt;
+import static sorcer.co.operator.outEnt;
 import static sorcer.eo.operator.context;
 import static sorcer.eo.operator.in;
 import static sorcer.eo.operator.job;
@@ -10,17 +12,16 @@ import static sorcer.eo.operator.sig;
 import static sorcer.eo.operator.task;
 
 import java.io.IOException;
-import java.rmi.RMISecurityManager;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import junit.sorcer.core.provider.Adder;
-import junit.sorcer.core.provider.Multiplier;
-import junit.sorcer.core.provider.Subtractor;
-import junit.sorcer.core.provider.exertmonitor.SessionDatabaseRunner;
+import sorcer.arithmetic.tester.provider.Adder;
+import sorcer.arithmetic.tester.provider.Multiplier;
+import sorcer.arithmetic.tester.provider.Subtractor;
 import sorcer.core.context.ServiceContext;
+import sorcer.core.provider.exertmonitor.SessionDatabaseRunner;
 import sorcer.service.Context;
 import sorcer.service.ContextException;
 import sorcer.service.EvaluationException;
@@ -31,9 +32,6 @@ import sorcer.service.SignatureException;
 import sorcer.service.Task;
 import sorcer.util.ModelTable;
 import sorcer.util.Table;
-import sorcer.util.bdb.objects.SorcerDatabase;
-import sorcer.util.bdb.objects.SorcerDatabaseViews;
-import sorcer.util.bdb.objects.UuidObject;
 
 import com.sleepycat.collections.StoredValueSet;
 import com.sleepycat.collections.TransactionRunner;
@@ -59,6 +57,7 @@ import com.sleepycat.je.DatabaseException;
  * 
  * @author Mike Sobolewski
  */
+@SuppressWarnings("unchecked")
 public class SorcerDatabaseRunner {
 
     protected final SorcerDatabase sdb;
@@ -70,7 +69,7 @@ public class SorcerDatabaseRunner {
      */
     public static void main(String... args) {
     	if (System.getSecurityManager() == null)
-			System.setSecurityManager(new RMISecurityManager());
+			System.setSecurityManager(new SecurityManager());
         System.out.println("\nRunning sample: " + SessionDatabaseRunner.class);
 
         // Parse the command line arguments.
@@ -302,24 +301,23 @@ public class SorcerDatabaseRunner {
 	
 	private Task getTask() throws ExertionException, SignatureException, ContextException {
 		Task f4 = task("f4", sig("multiply", Multiplier.class), 
-				context("multiply", in(path("arg/x1"), 10.0), in(path("arg/x2"), 50.0),
-						out(path("result/y1"), null)));
-		
+				context("multiply", inEnt(path("arg/x1"), 10.0), inEnt(path("arg/x2"), 50.0),
+						outEnt(path("result/y1"), null)));
 		return f4;
 	}
 		
 	private Job getJob() throws ExertionException, SignatureException, ContextException {
 		Task f4 = task("f4", sig("multiply", Multiplier.class), 
-				context("multiply", in(path("arg/x1"), 10.0), in(path("arg/x2"), 50.0),
-						out(path("result/y1"), null)));
+				context("multiply", inEnt(path("arg/x1"), 10.0), inEnt(path("arg/x2"), 50.0),
+						outEnt(path("result/y1"), null)));
 
 		Task f5 = task("f5", sig("add", Adder.class), 
-				context("add", in(path("arg/x3"), 20.0), in(path("arg/x4"), 80.0),
-						out(path("result/y2"), null)));
+				context("add", inEnt(path("arg/x3"), 20.0), inEnt(path("arg/x4"), 80.0),
+						outEnt(path("result/y2"), null)));
 
 		Task f3 = task("f3", sig("subtract", Subtractor.class), 
-				context("subtract", in(path("arg/x5"), null), in(path("arg/x6"), null),
-						out(path("result/y3"), null)));
+				context("subtract", inEnt(path("arg/x5"), null), inEnt(path("arg/x6"), null),
+						outEnt(path("result/y3"), null)));
 
 		// Service Composition f1(f2(x1, x2), f3(x1, x2))
 		// Service Composition f2(f4(x1, x2), f5(x1, x2))

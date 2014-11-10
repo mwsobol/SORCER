@@ -1,4 +1,4 @@
-package junit.sorcer.util;
+package sorcer.util;
 
 import static org.junit.Assert.assertEquals;
 

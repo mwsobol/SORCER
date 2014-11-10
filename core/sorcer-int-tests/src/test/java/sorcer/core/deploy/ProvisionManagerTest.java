@@ -13,12 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package junit.sorcer.core.deploy;
+package sorcer.core.deploy;
 
-import org.junit.Test;
-import sorcer.core.dispatch.ProvisionManager;
-import sorcer.service.Job;
-import sorcer.util.Sorcer;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,8 +24,11 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import org.junit.Test;
+
+import sorcer.core.dispatch.ProvisionManager;
+import sorcer.service.Job;
+import sorcer.util.Sorcer;
 
 /**
  * Test {@code ProvisionManager} interactions

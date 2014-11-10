@@ -1,24 +1,32 @@
-package junit.sorcer.core.exertion;
+package sorcer.core.exertion;
 
 import static org.junit.Assert.assertEquals;
+import static sorcer.co.operator.inEnt;
+import static sorcer.eo.operator.alt;
+import static sorcer.eo.operator.condition;
+import static sorcer.eo.operator.context;
+import static sorcer.eo.operator.cxt;
+import static sorcer.eo.operator.exert;
+import static sorcer.eo.operator.get;
+import static sorcer.eo.operator.opt;
+import static sorcer.eo.operator.result;
+import static sorcer.eo.operator.sig;
+import static sorcer.eo.operator.task;
+import static sorcer.eo.operator.value;
+import static sorcer.eo.operator.xrt;
 import static sorcer.po.operator.add;
-import static sorcer.po.operator.model;
+import static sorcer.po.operator.parModel;
 import static sorcer.po.operator.put;
-import static sorcer.eo.operator.*;
 
-import java.rmi.RMISecurityManager;
 import java.rmi.RemoteException;
 import java.util.logging.Logger;
 
-import junit.sorcer.core.provider.AdderImpl;
-import junit.sorcer.core.provider.MultiplierImpl;
-import junit.sorcer.core.provider.SubtractorImpl;
-
 import org.junit.Test;
 
+import sorcer.arithmetic.tester.provider.impl.AdderImpl;
+import sorcer.arithmetic.tester.provider.impl.MultiplierImpl;
+import sorcer.arithmetic.tester.provider.impl.SubtractorImpl;
 import sorcer.core.context.model.par.ParModel;
-import sorcer.core.exertion.AltExertion;
-import sorcer.core.exertion.OptExertion;
 import sorcer.service.Condition;
 import sorcer.service.ContextException;
 import sorcer.service.ExertionException;
@@ -41,7 +49,7 @@ public class ConditionalTaskTest {
 				+ "/configs/sorcer.logging");
 		System.setProperty("java.security.policy", Sorcer.getHome()
 				+ "/configs/policy.all");
-		System.setSecurityManager(new RMISecurityManager());
+		System.setSecurityManager(new SecurityManager());
 		Sorcer.setCodeBase(new String[] { "arithmetic-beans.jar" });
 	}
 
@@ -54,7 +62,7 @@ public class ConditionalTaskTest {
 		Task task = task(
 				"add",
 				sig("add", AdderImpl.class),
-				context(in("arg/x1", 20.0), in("arg/x2", 80.0),
+				context(inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
 						result("result/y")));
 
 		OptExertion ift = opt("ift", condition(pm,
@@ -80,7 +88,7 @@ public class ConditionalTaskTest {
 
 	@Test
 	public void altExertionTest() throws RemoteException, ContextException, SignatureException, ExertionException {
-		ParModel pm = model("par-model");
+		ParModel pm = parModel("par-model");
 		pm.putValue("x1", 30.0);
 		pm.putValue("y1", 20.0);
 		pm.putValue("x2", 50.0);
@@ -88,15 +96,15 @@ public class ConditionalTaskTest {
 
 
 		Task t3 = xrt("t3", sig("subtract", SubtractorImpl.class), 
-				cxt("subtract", in("arg/x1", 200.0), in("arg/x2", 50.0),
+				cxt("subtract", inEnt("arg/x1", 200.0), inEnt("arg/x2", 50.0),
 						result("result/y")));
 
 		Task t4 = xrt("t4", sig("multiply", MultiplierImpl.class), 
-				cxt("multiply", in("arg/x1", 10.0), in("arg/x2", 50.0),
+				cxt("multiply", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
 						result("result/y")));
 
 		Task t5 = xrt("t5", sig("add", AdderImpl.class), 
-				cxt("add", in("arg/x1", 20.0), in("arg/x2", 80.0),
+				cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
 						result("result/y")));
 		
 		OptExertion opt1 = opt("opt1", condition(pm,

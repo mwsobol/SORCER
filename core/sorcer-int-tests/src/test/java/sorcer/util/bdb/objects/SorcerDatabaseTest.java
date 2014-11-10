@@ -1,4 +1,4 @@
-package junit.sorcer.util.bdb.objects;
+package sorcer.util.bdb.objects;
 
 import static org.junit.Assert.assertEquals;
 import static sorcer.co.operator.list;
@@ -22,8 +22,6 @@ import sorcer.service.Exertion;
 import sorcer.util.ModelTable;
 import sorcer.util.Sorcer;
 import sorcer.util.SorcerUtil;
-import sorcer.util.bdb.objects.UuidKey;
-import sorcer.util.bdb.objects.UuidObject;
 
 import com.sleepycat.collections.StoredMap;
 

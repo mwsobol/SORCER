@@ -7,6 +7,7 @@ import sorcer.core.context.ServiceContext;
 import sorcer.core.provider.ServiceTasker;
 import sorcer.service.Context;
 import sorcer.service.ContextException;
+import sorcer.worker.provider.InvalidWork;
 import sorcer.worker.provider.Work;
 import sorcer.worker.provider.Worker;
 

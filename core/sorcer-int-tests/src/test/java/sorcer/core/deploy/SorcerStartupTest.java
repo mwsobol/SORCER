@@ -13,21 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package junit.sorcer.core.deploy;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static sorcer.eo.operator.exert;
-import static sorcer.eo.operator.get;
-import static sorcer.eo.operator.jobContext;
+package sorcer.core.deploy;
 
 import java.io.IOException;
 import java.net.URL;
-import java.rmi.RMISecurityManager;
 import java.util.logging.Logger;
 
 import junit.framework.Assert;
-import junit.sorcer.core.provider.Adder;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -36,10 +28,6 @@ import org.junit.Test;
 
 import sorcer.core.provider.Exerter;
 import sorcer.core.provider.Provider;
-import sorcer.service.ContextException;
-import sorcer.service.Exertion;
-import sorcer.service.ExertionException;
-import sorcer.service.Job;
 import sorcer.service.ServiceExertion;
 import sorcer.util.ProviderLookup;
 import sorcer.util.Sorcer;
@@ -53,9 +41,9 @@ import sorcer.util.url.sos.SdbURLStreamHandlerFactory;
  * @author Mike Sobolewski
  */
 @Ignore
-public class iGridStartupTest {
+public class SorcerStartupTest {
 	 
-	private final static Logger logger = Logger.getLogger(iGridStartupTest.class.getName());
+	private final static Logger logger = Logger.getLogger(SorcerStartupTest.class.getName());
 	
 	static long t0;
 	 
@@ -63,7 +51,7 @@ public class iGridStartupTest {
 		ServiceExertion.debug = true;
 		System.setProperty("java.security.policy", Sorcer.getHome()
 				+ "/configs/policy.all");
-		System.setSecurityManager(new RMISecurityManager());
+		System.setSecurityManager(new SecurityManager());
 		Sorcer.setCodeBase(new String[] { "ju-arithmetic-beans.jar",  "sorcer-dl.jar" });
 		System.out.println("CLASSPATH :" + System.getProperty("java.class.path"));
 		

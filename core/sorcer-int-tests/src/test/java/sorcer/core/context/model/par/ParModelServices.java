@@ -1,7 +1,7 @@
-package junit.sorcer.core.context.model.par;
+package sorcer.core.context.model.par;
 
 import static org.junit.Assert.assertEquals;
-import static sorcer.co.operator.entry;
+import static sorcer.co.operator.ent;
 import static sorcer.eo.operator.context;
 import static sorcer.eo.operator.exert;
 import static sorcer.eo.operator.get;
@@ -16,7 +16,6 @@ import static sorcer.po.operator.invoker;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.rmi.SecurityManager;
 import java.rmi.RemoteException;
 import java.util.logging.Logger;
 
@@ -26,7 +25,6 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import sorcer.core.context.model.par.ParModel;
 import sorcer.service.Context;
 import sorcer.service.ContextException;
 import sorcer.service.ExertionException;
@@ -137,7 +135,7 @@ public class ParModelServices {
 		Task pmt = task(sig("invoke", pm), context(
 				invoker("getSphereVolume"),
 				result("sphere/volume"),
-				entry("sphere/radius", 20.0),
+				ent("sphere/radius", 20.0),
 				agent("getSphereVolume",
 					"junit.sorcer.vfe.evaluator.service.Volume",
 					new URL(Sorcer.getWebsterUrl()
@@ -158,7 +156,7 @@ public class ParModelServices {
 		Task pmt = task(sig("invoke", pm), context(
 				invoker("getSphereVolume"),
 				result("sphere/volume"),
-				entry("sphere/radius", 20.0),
+				ent("sphere/radius", 20.0),
 				agent("getSphereVolume",
 					"junit.sorcer.vfe.evaluator.service.Volume",
 					new URL(Sorcer.getWebsterUrl()
@@ -175,16 +173,16 @@ public class ParModelServices {
 		pmt = task(sig("invoke", pm), context(
 				invoker("getCylinderSurface"),
 				result("cylinder/surface"),
-				entry("cylinder/radius", 1.0), 
-				entry("cylinder/height", 2.0)));
+				ent("cylinder/radius", 1.0), 
+				ent("cylinder/height", 2.0)));
 		
 		assertEquals(value(pmt), 18.84955592153876);
 
 		// the existing agent and no return value specified
 		pmt = task(sig("invoke", pm), context(
 				invoker("getCylinderSurface"),
-				entry("cylinder/radius", 1.0), 
-				entry("cylinder/height", 2.0)));
+				ent("cylinder/radius", 1.0), 
+				ent("cylinder/height", 2.0)));
 
 		assertEquals(get((Context)value(pmt), "cylinder/surface"), 18.84955592153876);
 	}
@@ -196,7 +194,7 @@ public class ParModelServices {
 		Task pmt = task(sig("invoke", Invocation.class, "ParModel Service"), 
 				context(invoker("getSphereVolume"),
 //						result("sphere/volume"),
-						entry("sphere/radius", 20.0),
+						ent("sphere/radius", 20.0),
 						agent("getSphereVolume",
 							"junit.sorcer.vfe.evaluator.service.Volume",
 							new URL(Sorcer.getWebsterUrl()
@@ -213,7 +211,7 @@ public class ParModelServices {
 		pmt = task(sig("invoke", Invocation.class, "ParModel Service"), 
 				context(invoker("getSphereVolume"),
 						result("sphere/volume"),
-						entry("sphere/radius", 20.0),
+						ent("sphere/radius", 20.0),
 						agent("getSphereVolume",
 							"junit.sorcer.vfe.evaluator.service.Volume",
 							new URL(Sorcer.getWebsterUrl()
@@ -230,7 +228,7 @@ public class ParModelServices {
 		Task pmt = task(sig("invoke", Invocation.class, "ParModel Service"), 
 				context(invoker("getSphereVolume"),
 						result("sphere/volume"),
-						entry("sphere/radius", 20.0),
+						ent("sphere/radius", 20.0),
 						agent("getSphereVolume",
 							"junit.sorcer.vfe.evaluator.service.Volume",
 							new URL(Sorcer.getWebsterUrl()
@@ -247,8 +245,8 @@ public class ParModelServices {
 						result("cylinder/surface"),
 						invoker("getCylinderSurface"),
 						result("cylinder/surface"),
-						entry("cylinder/radius", 1.0), 
-						entry("cylinder/height", 2.0)));
+						ent("cylinder/radius", 1.0), 
+						ent("cylinder/height", 2.0)));
 		
 		assertEquals(value(pmt), 18.84955592153876);
 	}

@@ -13,29 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package junit.sorcer.core.deploy;
+package sorcer.core.deploy;
+
+import static sorcer.eo.operator.configuration;
+import static sorcer.eo.operator.deploy;
+import static sorcer.eo.operator.webster;
+
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.URISyntaxException;
 
 import junit.framework.Assert;
 import net.jini.config.ConfigurationException;
+
 import org.junit.Test;
 import org.rioproject.deploy.SystemComponent;
 import org.rioproject.deploy.SystemRequirements;
 import org.rioproject.opstring.ServiceElement;
 import org.rioproject.resolver.ResolverException;
 import org.rioproject.system.capability.connectivity.TCPConnectivity;
-import sorcer.core.deploy.ServiceDeployment;
-import sorcer.core.deploy.ServiceElementFactory;
+
 import sorcer.core.provider.ServiceProvider;
 import sorcer.core.signature.NetSignature;
 import sorcer.tools.webster.Webster;
-
-import java.io.IOException;
-import java.net.InetAddress;
-import java.net.URISyntaxException;
-
-import static sorcer.eo.operator.configuration;
-import static sorcer.eo.operator.deploy;
-import static sorcer.eo.operator.webster;
 
 /**
  * @author Dennis Reedy

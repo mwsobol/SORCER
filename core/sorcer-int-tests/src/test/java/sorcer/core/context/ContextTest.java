@@ -17,14 +17,14 @@ import sorcer.service.Context;
 /**
  * @author Mike Sobolewski
  */
-@SuppressWarnings("rawtypes")
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class ContextTest {
 	private final static Logger logger = Logger
 			.getLogger(ContextTest.class.getName());
 	
 	@Test
 	public void linkedContext() throws Exception {
-		Context addContext = new PositionalContext("add");
+		Context<Double> addContext = new PositionalContext("add");
 		addContext.putInValue("arg1/value", 90.0);
 		addContext.putInValue("arg2/value", 110.0);
 		

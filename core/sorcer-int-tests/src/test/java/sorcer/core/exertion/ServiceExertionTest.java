@@ -1,22 +1,38 @@
-package junit.sorcer.core.exertion;
+package sorcer.core.exertion;
 
 //import com.gargoylesoftware,base,testing,TestUtil;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static sorcer.co.operator.inEnt;
 import static sorcer.co.operator.list;
-import static sorcer.eo.operator.*;
+import static sorcer.co.operator.outEnt;
+import static sorcer.eo.operator.context;
+import static sorcer.eo.operator.cxt;
+import static sorcer.eo.operator.exert;
+import static sorcer.eo.operator.exertion;
+import static sorcer.eo.operator.exertions;
+import static sorcer.eo.operator.get;
+import static sorcer.eo.operator.in;
+import static sorcer.eo.operator.job;
+import static sorcer.eo.operator.name;
+import static sorcer.eo.operator.names;
+import static sorcer.eo.operator.out;
+import static sorcer.eo.operator.path;
+import static sorcer.eo.operator.pipe;
+import static sorcer.eo.operator.serviceContext;
+import static sorcer.eo.operator.sig;
+import static sorcer.eo.operator.task;
+import static sorcer.eo.operator.xrt;
 
-import java.rmi.RMISecurityManager;
 import java.rmi.RemoteException;
 import java.util.logging.Logger;
-
-import junit.sorcer.core.provider.AdderImpl;
-import junit.sorcer.core.provider.MultiplierImpl;
-import junit.sorcer.core.provider.SubtractorImpl;
 
 import org.junit.Before;
 import org.junit.Test;
 
+import sorcer.arithmetic.tester.provider.impl.AdderImpl;
+import sorcer.arithmetic.tester.provider.impl.MultiplierImpl;
+import sorcer.arithmetic.tester.provider.impl.SubtractorImpl;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.service.Context;
 import sorcer.service.ContextException;
@@ -44,7 +60,7 @@ public class ServiceExertionTest {
 	static {
 		ServiceExertion.debug = true;
 		System.setProperty("java.security.policy", Sorcer.getHome() + "/configs/policy.all");
-		System.setSecurityManager(new RMISecurityManager());
+		System.setSecurityManager(new SecurityManager());
 	}
 	
 	@Before
@@ -79,7 +95,7 @@ public class ServiceExertionTest {
 		// exert and then get the value from job's context
 		eJob = exert(eJob);
 		
-		logger.info("eJob jobContext: " + jobContext(eJob));
+		logger.info("eJob jobContext: " + serviceContext(eJob));
 		//logger.info("eJob value @  j2/t5/arg/x1 = " + get(eJob, "j2/t5/arg/x1"));
 		assertTrue("Wrong eJob value for 20.0", get(eJob, "/j1/j2/t5/arg/x1").equals(20.0));
 			
@@ -95,7 +111,7 @@ public class ServiceExertionTest {
 		//logger.info("eJob value @  j2/t4/arg/x2 = " + exert(eJob, "j2/t4/arg/x2"));
 		assertTrue("Wrong eJob value for 50.0", get(eJob, "/j1/j2/t4/arg/x2").equals(50.0));
 			
-		logger.info("job context: " + jobContext(eJob));
+		logger.info("job context: " + serviceContext(eJob));
 		logger.info("value at j1/t3/result/y: " + get(eJob, "j1/t3/result/y"));
 		logger.info("value at t3, result/y: " + get(eJob, "t3", "result/y"));
 
@@ -129,8 +145,8 @@ public class ServiceExertionTest {
 //		      out(path(result, y), null)));
 
 		Task task = task("t1", sig("add", AdderImpl.class), 
-				   context("add", in(path(arg, x1), 20.0), in(path(arg, x2), 80.0),
-				      out(path(result, y), null)));
+				   context("add", inEnt(path(arg, x1), 20.0), inEnt(path(arg, x2), 80.0),
+				      outEnt(path(result, y), null)));
 		
 		return task;
 	}
@@ -157,16 +173,16 @@ public class ServiceExertionTest {
 //		   pipe(out(t5, path(result, y)), in(t3, path(arg, x2))));
 		
 		Task t3 = task("t3", sig("subtract", SubtractorImpl.class), 
-				context("subtract", in(path(arg, x1), null), in(path(arg, x2), null),
-						out(path(result, y), null)));
+				context("subtract", inEnt(path(arg, x1), null), inEnt(path(arg, x2), null),
+						outEnt(path(result, y))));
 
 		Task t4 = task("t4", sig("multiply", MultiplierImpl.class), 
-				context("multiply", in(path(arg, x1), 10.0), in(path(arg, x2), 50.0),
-						out(path(result, y), null)));
+				context("multiply", inEnt(path(arg, x1), 10.0), inEnt(path(arg, x2), 50.0),
+						outEnt(path(result, y))));
 
 		Task t5 = task("t5", sig("add", AdderImpl.class), 
-				context("add", in(path(arg, x1), 20.0), in(path(arg, x2), 80.0),
-						out(path(result, y), null)));
+				context("add", inEnt(path(arg, x1), 20.0), inEnt(path(arg, x2), 80.0),
+						outEnt(path(result, y))));
 
 		// Service Composition j1(j2(t4(x1, x2), t5(x1, x2)), t3(x1, x2))
 		//Job j1= job("j1", job("j2", t4, t5, strategy(Flow.PARALLEL, Access.PULL)), t3,
@@ -196,21 +212,21 @@ public class ServiceExertionTest {
 	private Exertion createXrt() throws Exception {
 		// using the data context in jobs
 		Task t3 = xrt("t3", sig("subtract", SubtractorImpl.class), 
-				cxt("subtract", in("arg/x1", null), in("arg/x2", null),
-						out("result/y", null)));
+				cxt("subtract", inEnt("arg/x1"), inEnt("arg/x2"),
+						outEnt("result/y")));
 
 		Task t4 = xrt("t4", sig("multiply", MultiplierImpl.class), 
-				cxt("multiply", in("super/arg/x1"), in("arg/x2", 50.0),
-						out("result/y", null)));
+				cxt("multiply", inEnt("super/arg/x1"), inEnt("arg/x2", 50.0),
+						outEnt("result/y")));
 
 		Task t5 = xrt("t5", sig("add", AdderImpl.class), 
-				cxt("add", in("arg/x1", 20.0), in("arg/x2", 80.0),
-						out("result/y", null)));
+				cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
+						outEnt("result/y")));
 
 		// Service Composition j1(j2(t4(x1, x2), t5(x1, x2)), t3(x1, x2))
 		//Job j1= job("j1", job("j2", t4, t5, strategy(Flow.PARALLEL, Access.PULL)), t3,
 		Job job = xrt("j1", sig("execute", ServiceJobber.class), 
-					cxt(in("arg/x1", 10.0), out("job/result")), 
+					cxt(inEnt("arg/x1", 10.0), outEnt("job/result")), 
 				xrt("j2", sig("execute", ServiceJobber.class), t4, t5), 
 				t3,
 				pipe(out(t4, "result/y"), in(t3, "arg/x1")),

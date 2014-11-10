@@ -1,4 +1,4 @@
-package junit.sorcer.core.provider.exertmonitor;
+package sorcer.core.provider.exertmonitor;
 
 import static org.junit.Assert.assertEquals;
 import static sorcer.co.operator.list;

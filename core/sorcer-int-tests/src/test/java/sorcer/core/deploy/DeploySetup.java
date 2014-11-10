@@ -1,4 +1,4 @@
-package junit.sorcer.core.deploy;
+package sorcer.core.deploy;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -11,7 +11,6 @@ import sorcer.util.exec.ExecUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.rmi.RMISecurityManager;
 
 /**
  * Class
@@ -19,7 +18,7 @@ import java.rmi.RMISecurityManager;
 public class DeploySetup {
     static {
         System.setProperty("java.security.policy", Sorcer.getHome() + "/configs/policy.all");
-        System.setSecurityManager(new RMISecurityManager());
+        System.setSecurityManager(new SecurityManager());
     }
     static ProvisionMonitor monitor;
 

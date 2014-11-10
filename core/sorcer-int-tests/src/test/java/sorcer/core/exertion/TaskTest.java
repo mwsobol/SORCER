@@ -1,18 +1,17 @@
-package junit.sorcer.core.exertion;
+package sorcer.core.exertion;
 
 //import com.gargoylesoftware,base,testing,TestUtil;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static sorcer.co.operator.entry;
+import static sorcer.co.operator.ent;
+import static sorcer.co.operator.inEnt;
+import static sorcer.co.operator.outEnt;
 import static sorcer.eo.operator.configuration;
 import static sorcer.eo.operator.context;
 import static sorcer.eo.operator.deploy;
 import static sorcer.eo.operator.exceptions;
 import static sorcer.eo.operator.exert;
 import static sorcer.eo.operator.get;
-import static sorcer.eo.operator.in;
-import static sorcer.eo.operator.input;
-import static sorcer.eo.operator.output;
 import static sorcer.eo.operator.print;
 import static sorcer.eo.operator.put;
 import static sorcer.eo.operator.result;
@@ -23,15 +22,13 @@ import static sorcer.eo.operator.task;
 import static sorcer.eo.operator.trace;
 import static sorcer.eo.operator.value;
 
-import java.rmi.RMISecurityManager;
 import java.rmi.RemoteException;
 import java.util.logging.Logger;
 
-import junit.sorcer.core.provider.Adder;
-import junit.sorcer.core.provider.AdderImpl;
-
 import org.junit.Test;
 
+import sorcer.arithmetic.tester.provider.Adder;
+import sorcer.arithmetic.tester.provider.impl.AdderImpl;
 import sorcer.service.Context;
 import sorcer.service.ContextException;
 import sorcer.service.Exertion;
@@ -58,7 +55,7 @@ public class TaskTest {
 				Sorcer.getHome() + "/configs/sorcer.logging");
 		System.setProperty("java.security.policy", Sorcer.getHome()
 				+ "/configs/policy.all");
-		System.setSecurityManager(new RMISecurityManager());
+		System.setSecurityManager(new SecurityManager());
 		Sorcer.setCodeBase(new String[] { "arithmetic-beans.jar" });
 	}
 
@@ -67,13 +64,13 @@ public class TaskTest {
 		//to test tracing of execution enable ServiceExertion.debug 		
 		Exertion task = task("add",
 				sig("add"),
-				context(in("arg/x1"), in("arg/x2"),
+				context(inEnt("arg/x1"), inEnt("arg/x2"),
 						result("result/y")));
 		
 		logger.info("get task: " + task);
 		logger.info("get context: " + context(task));
 		
-		Object val = value(task, in("arg/x1", 20.0), in("arg/x2", 80.0),
+		Object val = value(task, inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
 				strategy(sig("add", AdderImpl.class), Access.PUSH, Wait.YES));
 		
 		logger.info("get value: " + val);
@@ -87,7 +84,7 @@ public class TaskTest {
 		
 		Task task = task("add",
 				sig("add", AdderImpl.class),
-				context(in("arg/x1", 20.0), in("arg/x2", 80.0),
+				context(inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
 						result("result/y")));
 		
 		// EXERTING
@@ -99,7 +96,7 @@ public class TaskTest {
 		print(trace(task));
 		
 		// EVALUATING
-		put(task, entry("result/y", Context.none));
+		put(task, ent("result/y", Context.none));
 		print(task);
 		
 		double val = (Double)value(task);
@@ -144,7 +141,7 @@ public class TaskTest {
 		Task task = task("add",
 				sFi("net", sig("add", Adder.class)),
 				sFi("object", sig("add", AdderImpl.class)),
-				context(in("arg/x1", 20.0), in("arg/x2", 80.0),
+				context(inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
 						result("result/y")));
 		
 //		logger.info("sFi: " + sFi(task));
@@ -194,8 +191,8 @@ public class TaskTest {
 		Task t5 = task("f5",
 			sig("add", Adder.class,
 					deploy(configuration("bin/sorcer/test/arithmetic/configs/AdderProviderConfig.groovy"))),
-				context("add", input("arg/x3", 20.0d), input("arg/x4", 80.0d),
-							output("result/y")),
+				context("add", inEnt("arg/x3", 20.0d), inEnt("arg/x4", 80.0d),
+							outEnt("result/y")),
 				strategy(Provision.YES));
 		logger.info("t5 is provisionable: " + t5.isProvisionable());
 		assertTrue(t5.isProvisionable());

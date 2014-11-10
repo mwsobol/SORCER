@@ -1,4 +1,4 @@
-package sorcer.worker.provider.impl;
+package sorcer.worker.provider;
 
 public class InvalidWork extends Exception {
 	
@@ -6,7 +6,7 @@ public class InvalidWork extends Exception {
 	
 	private String message;
 
-	InvalidWork(String s) {
+	public InvalidWork(String s) {
 		message = s;
 	}
 

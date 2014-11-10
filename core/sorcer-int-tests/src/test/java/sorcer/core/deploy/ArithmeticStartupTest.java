@@ -26,14 +26,11 @@ import java.rmi.RemoteException;
 import java.util.logging.Logger;
 
 import junit.framework.Assert;
+
+import org.junit.Ignore;
+
 import sorcer.arithmetic.tester.provider.Adder;
 import sorcer.arithmetic.tester.provider.Subtractor;
-
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
-
 import sorcer.core.SorcerConstants;
 import sorcer.core.provider.Provider;
 import sorcer.service.ContextException;

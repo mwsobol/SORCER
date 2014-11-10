@@ -21,8 +21,8 @@ import sorcer.service.Exertion;
 import sorcer.service.ExertionException;
 import sorcer.service.SignatureException;
 import sorcer.util.Log;
+import sorcer.worker.provider.InvalidWork;
 import sorcer.worker.provider.Work;
-import sorcer.worker.provider.impl.InvalidWork;
 import sorcer.worker.provider.impl.WorkerProvider;
 
 /**

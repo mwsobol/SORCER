@@ -13,22 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package junit.sorcer.core.deploy;
-
-import junit.framework.Assert;
-import org.junit.Ignore;
-import org.junit.Test;
-import sorcer.core.SorcerConstants;
-import sorcer.core.provider.Provider;
-import sorcer.service.*;
-import sorcer.util.ProviderLookup;
-import sorcer.util.Sorcer;
-
-import java.util.logging.Logger;
+package sorcer.core.deploy;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static sorcer.eo.operator.*;
+import static sorcer.eo.operator.exert;
+import static sorcer.eo.operator.get;
+import static sorcer.eo.operator.serviceContext;
+
+import java.util.logging.Logger;
+
+import junit.framework.Assert;
+
+import org.junit.Test;
+
+import sorcer.core.SorcerConstants;
+import sorcer.core.provider.Provider;
+import sorcer.service.ContextException;
+import sorcer.service.Exertion;
+import sorcer.service.ExertionException;
+import sorcer.service.Job;
+import sorcer.service.ServiceExertion;
+import sorcer.util.ProviderLookup;
+import sorcer.util.Sorcer;
 
 /**
  * @author Dennis Reedy
@@ -62,7 +69,7 @@ public class DeployExertionTest2 extends DeploySetup implements SorcerConstants 
         Exertion out = exert(job);
         System.out.println("Waited "+(System.currentTimeMillis()-t0)+" millis for exerting: " + out.getName());
         assertNotNull(out);
-        logger.info("job f1 context: " + jobContext(out));
+        logger.info("job f1 context: " + serviceContext(out));
         logger.info("job f1/f3/result/y3: " + get(out, "f1/f3/result/y3"));
         assertEquals(get(out, "f1/f3/result/y3"), 400.0);
     }
