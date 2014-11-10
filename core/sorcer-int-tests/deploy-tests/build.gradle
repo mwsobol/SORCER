@@ -31,7 +31,6 @@ def repoPath() {
 test {
     dependsOn([":sorcer-int-tests:arithmetic-tester:install", "bootSorcerRio"])
     systemProperty "sorcer.version", version
-    systemProperty "relative.repo.path", repoPath()
     systemProperty "java.rmi.server.codebase",
                    "${websterUrl}/${repoPath()}/arithmetic-tester-${version}-dl.jar ${websterUrl}/sorcer-dl-${version}.jar ${websterUrl}/jsk-dl-${riverVersion}.jar"
 
