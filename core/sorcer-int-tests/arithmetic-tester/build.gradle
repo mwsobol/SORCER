@@ -18,6 +18,9 @@ version = sorcerVersion
 
 dependencies {
     compile project(":sorcer-lib")
+    testCompile project(':sos-exertmonitor')
+    testCompile project(':sorcer-test')
+    testRuntime libs.slf4j
 }
 
 task arithmeticPrvDlJar(type: Jar) {
@@ -31,10 +34,20 @@ task arithmeticPrvDlJar(type: Jar) {
     include('sorcer/arithmetic/tester/provider/*')
 }
 
-artifacts {
-    archives arithmeticPrvDlJar
+task arithmeticReqJar(type: Jar) {
+    manifest {
+        attributes("Implementation-Title": "SORCER Arithmetic Tester Requestor", "Implementation-Version": version)
+    }
+    classifier = "req"
+    dependsOn classes
+    from sourceSets.main.output
+    include('sorcer/arithmetic/tester/requestor/**')
 }
 
-install.dependsOn(['arithmeticPrvDlJar'])
-publish.dependsOn(install)
+artifacts {
+    archives arithmeticPrvDlJar
+    archives arithmeticReqJar
+}
+
+install.dependsOn(['arithmeticPrvDlJar', 'arithmeticReqJar'])
 build.dependsOn(install)
