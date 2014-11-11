@@ -14,11 +14,7 @@ import java.util.logging.Logger;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.sorcer.test.ProjectContext;
-import org.sorcer.test.SorcerTestRunner;
 
-import sorcer.core.context.ServiceContext;
 import sorcer.service.Context;
 import sorcer.service.ContextException;
 import sorcer.util.Log;

@@ -1,11 +1,15 @@
 package sorcer.worker.requestor;
 
+import static sorcer.eo.operator.put;
+import static sorcer.eo.operator.value;
+
 import java.io.Serializable;
 import java.util.List;
 
 import sorcer.core.context.ServiceContext;
 import sorcer.service.Context;
 import sorcer.service.ContextException;
+import sorcer.worker.provider.InvalidWork;
 import sorcer.worker.provider.Work;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -13,9 +17,23 @@ public class Works implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	
-	public static Work work1, work2, work3, work4;
+	public static Work work0, work1, work2, work3, work4;
 
 	static {
+		
+		 work0 = new Work() {
+			private static final long serialVersionUID = 1L;
+
+			public Context<Integer> exec(Context cxt) throws InvalidWork, ContextException {
+				int arg1 = (int)value(cxt, "req/arg/1");
+				int arg2 = (int)value(cxt, "req/arg/2");
+				int result =  arg1 * arg2;
+				put(cxt, "prv/result", result);
+				cxt.setReturnValue(result);
+				return cxt;
+			}
+		};
+		
 		work1 = new Work() {
 			private static final long serialVersionUID = 1L;
 

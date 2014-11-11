@@ -321,32 +321,25 @@ public class operator {
 	
 	public static <T extends Object> Context context(T... entries)
 			throws ContextException {
-		if (SdbUtil.isSosURL(entries[0]) || (entries.length == 2 &&
-				entries[0] instanceof String && SdbUtil.isSosURL(entries[1]))) {
-			try {
-				Context cxt = (Context)((URL)entries[1]).getContent();
-				if (entries[0] instanceof String)
-					cxt.setName((String)entries[0]);
-				return cxt;
-			} catch (IOException e) {
-				throw new ContextException(e);
-			}
-		} else if (entries[0] instanceof Exertion) {
+		Context cxt = null;
+		if (entries[0] instanceof Exertion) {
 			Exertion xrt = (Exertion) entries[0];
 			if (entries.length >= 2 && entries[1] instanceof String)
 				xrt = ((Job) xrt).getComponentExertion((String) entries[1]);
 			return xrt.getContext();
 		} else if (entries[0] instanceof Link) {
 			return ((Link)entries[0] ).getContext();
-		} else if (entries[0] instanceof String) {
-			if (entries.length == 1)
-				return new PositionalContext((String) entries[0]);
-			else if (entries[1] instanceof Exertion) {
-				return ((Job) entries[1]).getComponentExertion(
+		} else if (entries.length == 1 && entries[0] instanceof String) {
+			return new PositionalContext((String) entries[0]);
+		} else if (entries.length == 2 && entries[0] instanceof String 
+				&& entries[1] instanceof Exertion) {
+			return ((Job) entries[1]).getComponentExertion(
 						(String) entries[0]).getContext();
-			}
 		} else if (entries[0] instanceof Context && entries[1] instanceof List) {
 			return ((ServiceContext)entries[0]).getSubcontext((List)entries[1]);
+		} else {
+			cxt = getPersistedContext(entries);
+			if (cxt != null) return cxt;
 		}
 		String name = getUnknown();
 		List<Tuple2<String, ?>> entryList = new ArrayList<Tuple2<String, ?>>();
@@ -389,7 +382,7 @@ public class operator {
 				entryLists.add((EntryList) o);
 			}
 		}
-		Context cxt = null;
+	
 		if (types.contains(Context.Type.ARRAY)) {
 			if (subject != null)
 				cxt = new ArrayContext(name, subject.path(), subject.value());
@@ -464,6 +457,21 @@ public class operator {
 		return cxt;
 	}
 
+	private static Context getPersistedContext(Object... entries) throws ContextException {
+		Context cxt = null;
+		try {
+			if (entries.length == 1 && SdbUtil.isSosURL(entries[0])) 
+				cxt = (Context)((URL)entries[0]).getContent();
+			else if (entries.length == 2 && entries[0] instanceof String && SdbUtil.isSosURL(entries[1])) {
+				cxt = (Context)((URL)entries[1]).getContent();
+				cxt.setName((String)entries[0]);
+			}
+		} catch (IOException e) {
+			throw new ContextException(e);
+		}
+		return cxt;
+	}
+	
 	protected static void popultePositionalContext(PositionalContext pcxt,
 			List<Tuple2<String, ?>> entryList) throws ContextException {
 		for (int i = 0; i < entryList.size(); i++) {
@@ -859,6 +867,10 @@ public class operator {
 		return new ProviderName(name);
 	}
 	
+	public static String actualName(String name) {
+		return 	Sorcer.getActualName(name);
+	}
+			
 	public static Signature sig(String selector) throws SignatureException {
 		return new ServiceSignature(selector);
 	}
@@ -1323,12 +1335,17 @@ public class operator {
 				job.addExertion(ex);
 			}
 			for (Pipe p : pipes) {
-				logger.finer("from context: "
-						+ ((Exertion) p.in).getDataContext().getName()
-						+ " path: " + p.inPath);
-				logger.finer("to context: "
-						+ ((Exertion) p.out).getDataContext().getName()
-						+ " path: " + p.outPath);
+//				logger.finer("from context: "
+//						+ ((Exertion) p.in).getDataContext().getName()
+//						+ " path: " + p.inPath);
+//				logger.finer("to context: "
+//						+ ((Exertion) p.out).getDataContext().getName()
+//						+ " path: " + p.outPath);
+				// find component exertions for thir paths
+				if (!p.isExertional()) {
+					p.out = job.getComponentExertion(p.outComponentPath);
+					p.in = job.getComponentExertion(p.inComponentPath);
+				}
 				((Exertion) p.out).getDataContext().connect(p.outPath,
 						p.inPath, ((Exertion) p.in).getContext());
 			}
@@ -2042,6 +2059,9 @@ public class operator {
 		String outPath;
 		Mappable in;
 		Mappable out;
+		String outComponentPath;
+		String inComponentPath;
+
 		Par par;
 
 		Pipe(Exertion out, String outPath, Mappable in, String inPath) {
@@ -2058,12 +2078,19 @@ public class operator {
 		Pipe(OutEndPoint outEndPoint, InEndPoint inEndPoint) {
 			this.out = outEndPoint.out;
 			this.outPath = outEndPoint.outPath;
+			this.outComponentPath = outEndPoint.outComponentPath;
 			this.in = inEndPoint.in;
 			this.inPath = inEndPoint.inPath;
+			this.inComponentPath = inEndPoint.inComponentPath;
+
 			if ((in instanceof Exertion) && (out instanceof Exertion)) {
 				par = new Par(outPath, inPath, in);
 				((ServiceExertion) out).addPersister(par);
 			}
+		}
+		
+		public boolean isExertional() {
+			return in != null && out != null;
 		}
 	}
 	
