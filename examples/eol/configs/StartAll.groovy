@@ -32,7 +32,7 @@ class StartAll {
         String sorcerVersion = System.getProperty("sorcer.version")
         String policy = System.getProperty("java.security.policy")
 
-        String relativeRepoPath = System.getProperty("local.repo.path")
+        String relativeRepoPath = System.getProperty("relative.repo.path")
         String projectBuildDir = System.getProperty("project.build.dir")
         String buildLibPath = "${projectBuildDir}/libs";
         String configPath = "${projectBuildDir}/../configs"
