@@ -1019,12 +1019,30 @@ public abstract class ServiceExertion implements Exertion, Scopable, SorcerConst
 						ex.printStackTrace();
 						throw new SetterException(ex);
 					}
+					// check for control strategy
+				} else if (e instanceof ControlContext) {
+					updateControlContect((ControlContext)e);
 				}
 			}
 		}
 		return this;
 	}
 
+	protected void updateControlContect(ControlContext startegy) {
+		Access at = startegy.getAccessType();
+		if (at != null)
+			controlContext.setAccessType(at);
+		Flow ft = startegy.getFlowType();
+		if (ft != null)
+			controlContext.setFlowType(ft);
+		if (controlContext.isProvisionable() != startegy.isProvisionable())
+			controlContext.setProvisionable(startegy.isProvisionable());
+		if (controlContext.isWaitable() != (startegy.isWaitable()))
+			controlContext.setWaitable(startegy.isWaitable());
+		if (controlContext.isMonitorable() != startegy.isMonitorable())
+			controlContext.setMonitorable(startegy.isMonitorable());
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 

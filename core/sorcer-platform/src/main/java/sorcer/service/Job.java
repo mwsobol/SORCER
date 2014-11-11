@@ -695,6 +695,11 @@ public class Job extends ServiceExertion implements CompoundExertion {
 						else
 							super.putValue(((Entry) e).path(),
 									((Entry) e).value());
+
+					// check for control strategy
+					else if (e instanceof ControlContext) {
+						updateControlContect((ControlContext)e);
+					}
 				}
 			}
 		} catch (ContextException ex) {

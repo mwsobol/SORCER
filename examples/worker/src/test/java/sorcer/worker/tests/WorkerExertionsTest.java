@@ -6,7 +6,7 @@ import static sorcer.co.operator.inEnt;
 import static sorcer.co.operator.outEnt;
 import static sorcer.eo.operator.actualName;
 import static sorcer.eo.operator.context;
-import static sorcer.eo.operator.exert;
+import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.get;
 import static sorcer.eo.operator.in;
 import static sorcer.eo.operator.job;
@@ -208,24 +208,28 @@ public class WorkerExertionsTest {
 
 		Job out = exert(job, control1);
 		logger.info("job context: " + serviceContext(out));
+		logger.info("control context: " + control(job));
 		assertEquals(get(out, "strategy/work1/prv/result"), 100);
 		assertEquals(get(out, "strategy/work2/prv/result"), 500);
 		assertEquals(get(out, "strategy/work3/prv/result"), 0);
 		
 		out = exert(job, control2);
 		logger.info("job context: " + serviceContext(out));
+		logger.info("control context: " + control(job));
 		assertEquals(get(out, "strategy/work1/prv/result"), 100);
 		assertEquals(get(out, "strategy/work2/prv/result"), 500);
 		assertEquals(get(out, "strategy/work3/prv/result"), 0);
 		
 		out = exert(job, control3);
 		logger.info("job context: " + serviceContext(out));
+		logger.info("control context: " + control(job));
 		assertEquals(get(out, "strategy/work1/prv/result"), 100);
 		assertEquals(get(out, "strategy/work2/prv/result"), 500);
 		assertEquals(get(out, "strategy/work3/prv/result"), 0);
 		
 		out = exert(job, control4);
 		logger.info("job context: " + serviceContext(out));
+		logger.info("control context: " + control(job));
 		assertEquals(get(out, "strategy/work1/prv/result"), 100);
 		assertEquals(get(out, "strategy/work2/prv/result"), 500);
 		assertEquals(get(out, "strategy/work3/prv/result"), 0);
