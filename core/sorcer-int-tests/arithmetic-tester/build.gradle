@@ -52,6 +52,9 @@ artifacts {
 install.dependsOn(['arithmeticPrvDlJar', 'arithmeticReqJar'])
 build.dependsOn(install)
 
+def repoPath() {
+    return "org/sorcer/arithmetic-tester/${version}"
+}
 test {
     systemProperty "java.rmi.server.codebase",
                    "${websterUrl}/${repoPath()}/arithmetic-tester-${version}-dl.jar ${websterUrl}/sorcer-dl-${version}.jar ${websterUrl}/jsk-dl-${riverVersion}.jar"
