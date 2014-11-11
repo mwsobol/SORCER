@@ -15,7 +15,7 @@ import static sorcer.eo.operator.get;
 import static sorcer.eo.operator.print;
 import static sorcer.eo.operator.put;
 import static sorcer.eo.operator.result;
-import static sorcer.eo.operator.sFi;
+import static sorcer.eo.operator.srvFi;
 import static sorcer.eo.operator.sig;
 import static sorcer.eo.operator.strategy;
 import static sorcer.eo.operator.task;
@@ -139,15 +139,15 @@ public class TaskTest {
 		ServiceExertion.debug = true;
 		
 		Task task = task("add",
-				sFi("net", sig("add", Adder.class)),
-				sFi("object", sig("add", AdderImpl.class)),
+				srvFi("net", sig("add", Adder.class)),
+				srvFi("object", sig("add", AdderImpl.class)),
 				context(inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
 						result("result/y")));
 		
 //		logger.info("sFi: " + sFi(task));
 //		logger.info("sFis: " + sFis(task));
 
-		task = exert(task, sFi("object"));
+		task = exert(task, srvFi("object"));
 		logger.info("exerted: " + task);
 		assertTrue("Wrong value for 100.0", (Double)get(task) == 100.0);
 		

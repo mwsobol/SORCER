@@ -34,8 +34,8 @@ import sorcer.util.Sorcer;
 @SuppressWarnings({ "unchecked", "rawtypes" })
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/eol")
-public class ArithmeticLocalTasks {
-	private final static Logger logger = Logger.getLogger(ArithmeticLocalTasks.class.getName());
+public class LocalExertionTasks {
+	private final static Logger logger = Logger.getLogger(LocalExertionTasks.class.getName());
 	
 	@Test
 	public void exertTask() throws Exception  {

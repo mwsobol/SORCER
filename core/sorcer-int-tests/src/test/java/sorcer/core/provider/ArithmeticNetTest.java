@@ -174,19 +174,19 @@ public class ArithmeticNetTest implements SorcerConstants {
 	@Test
 	public void arithmeticNetFiTaskTest() throws ExertionException, SignatureException, ContextException, RemoteException {
 		Task task = task("add",
-				sFi("net", sig("add", Adder.class)),
-				sFi("object", sig("add", AdderImpl.class)),
+				srvFi("net", sig("add", Adder.class)),
+				srvFi("object", sig("add", AdderImpl.class)),
 				context(inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
 						result("result/y")));
 		
-		logger.info("sFi: " + sFi(task));
-		logger.info("sFis: " + sFis(task));
+		logger.info("sFi: " + srvFi(task));
+		logger.info("sFis: " + srvFis(task));
 
 //		task = exert(task, sFi("object"));
 //		logger.info("exerted: " + task);
 //		assertTrue("Wrong value for 100.0", (Double)get(task) == 100.0);
 		
-		task = exert(task, sFi("net"));
+		task = exert(task, srvFi("net"));
 		logger.info("exerted: " + task);
 		assertTrue("Wrong value for 100.0", (Double)get(task) == 100.0);
 	}
@@ -194,29 +194,29 @@ public class ArithmeticNetTest implements SorcerConstants {
 	@Ignore
 	@Test
 	public void arithmeticFiJobTest() throws ExertionException, SignatureException, ContextException, RemoteException {
-		Task t3 = task("t3", sFi("object", sig("subtract", SubtractorImpl.class)),
-				sFi("net", sig("subtract", Subtractor.class)),
+		Task t3 = task("t3", srvFi("object", sig("subtract", SubtractorImpl.class)),
+				srvFi("net", sig("subtract", Subtractor.class)),
 				context("subtract", inEnt("arg/x1", null), inEnt("arg/x2", null),
 						outEnt("result/y", null)));
 
-		Task t4 = task("t4", sFi("object", sig("multiply", MultiplierImpl.class)),
-				sFi("net", sig("multiply", Multiplier.class)),
+		Task t4 = task("t4", srvFi("object", sig("multiply", MultiplierImpl.class)),
+				srvFi("net", sig("multiply", Multiplier.class)),
 				context("multiply", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
 						outEnt("result/y", null)));
 
-		Task t5 = task("t5", sFi("object", sig("add", AdderImpl.class)),
-				sFi("net", sig("add", Adder.class)),
+		Task t5 = task("t5", srvFi("object", sig("add", AdderImpl.class)),
+				srvFi("net", sig("add", Adder.class)),
 				context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
 						outEnt("result/y", null)));
 
-		Job job = job("j1", sFi("object", sig("service", ServiceJobber.class)),
-				sFi("net", sig("service", Jobber.class)),
+		Job job = job("j1", srvFi("object", sig("service", ServiceJobber.class)),
+				srvFi("net", sig("service", Jobber.class)),
 				job("j2", sig("service", ServiceJobber.class), t4, t5), 
 				t3,
 				pipe(out(t4, "result/y"), in(t3, "arg/x1")),
 				pipe(out(t5, "result/y"), in(t3, "arg/x2")),
-				fiContext("mix1", sFi("j1", "net"), csFi("j1/j2/t4", "net")),
-				fiContext("mix2", sFi("j1", "net"), csFi("j1/j2/t4", "net"), csFi("j1/j2/t5", "net")));
+				fiContext("mix1", srvFi("j1", "net"), csFi("j1/j2/t4", "net")),
+				fiContext("mix2", srvFi("j1", "net"), csFi("j1/j2/t4", "net"), csFi("j1/j2/t5", "net")));
 		
 //		logger.info("sFi j1: " + sFi(job));
 //		logger.info("sFis j1: " + sFis(job));
@@ -233,7 +233,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 		assertTrue((Double)get(job, "j1/t3/result/y") == 400.0);
 		
 		// The remote Jobber with the all local task
-		job = exert(job, sFi("net"));
+		job = exert(job, srvFi("net"));
 		logger.info("job context: " + serviceContext(job));
 		assertTrue((Double)get(job, "j1/t3/result/y") == 400.0);
 
@@ -244,11 +244,11 @@ public class ArithmeticNetTest implements SorcerConstants {
 		
 		// The remote Jobber with the remote Adder
 //		job = exert(job, cFi("j1/j2/t5", "net"));
-		job = exert(job, sFi("object"), csFi("j1/j2/t4", "net"), csFi("j1/j2/t5", "net"));
+		job = exert(job, srvFi("object"), csFi("j1/j2/t4", "net"), csFi("j1/j2/t5", "net"));
 		logger.info("job context: " + serviceContext(job));
 		assertTrue((Double) get(job, "j1/t3/result/y") == 400.0);
 				
-		job = exert(job, fiContext(sFi("j1", "net"), csFi("j1/j2/t4", "net")));
+		job = exert(job, fiContext(srvFi("j1", "net"), csFi("j1/j2/t4", "net")));
 		logger.info("job context: " + serviceContext(job));
 		assertTrue((Double)get(job, "j1/t3/result/y") == 400.0);
 		
@@ -260,46 +260,46 @@ public class ArithmeticNetTest implements SorcerConstants {
 	@Test
 	public void arithmeticFiBatchTaskTest() throws ExertionException, SignatureException, ContextException, RemoteException {
 		
-		Task t4 = task("t4", sFi("object", sig("multiply", MultiplierImpl.class), sig("add", AdderImpl.class)),
-				sFi("net", sig("multiply", Multiplier.class), sig("add", Adder.class)),
+		Task t4 = task("t4", srvFi("object", sig("multiply", MultiplierImpl.class), sig("add", AdderImpl.class)),
+				srvFi("net", sig("multiply", Multiplier.class), sig("add", Adder.class)),
 				context("shared", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
 						outEnt("result/y", null)));
 
 		t4 = exert(t4);
 		logger.info("task cont4text: " + context(t4));
 		
-		t4 = exert(t4, sFi("net"));
+		t4 = exert(t4, srvFi("net"));
 		logger.info("task cont4text: " + context(t4));
 	}
 	
 	@Test
 	public void arithmeticFiBatchJobTest() throws ExertionException, SignatureException, ContextException, RemoteException {
-		Task t3 = task("t3", sFi("object", sig("subtract", SubtractorImpl.class), sig("average", AveragerImpl.class)),
-				sFi("net", sig("subtract", Subtractor.class), sig("average", Averager.class)),
+		Task t3 = task("t3", srvFi("object", sig("subtract", SubtractorImpl.class), sig("average", AveragerImpl.class)),
+				srvFi("net", sig("subtract", Subtractor.class), sig("average", Averager.class)),
 				context("t3-cxt", inEnt("arg/x1", null), inEnt("arg/x2", null),
 						outEnt("result/y", null)));
 				
-		Task t4 = task("t4", sFi("object", sig("multiply", MultiplierImpl.class)),
-				sFi("net", sig("multiply", Multiplier.class)),
+		Task t4 = task("t4", srvFi("object", sig("multiply", MultiplierImpl.class)),
+				srvFi("net", sig("multiply", Multiplier.class)),
 				context("multiply", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
 						outEnt("result/y", null)));
 
-		Task t5 = task("t5", sFi("object", sig("add", AdderImpl.class)),
-				sFi("net", sig("add", Adder.class)),
+		Task t5 = task("t5", srvFi("object", sig("add", AdderImpl.class)),
+				srvFi("net", sig("add", Adder.class)),
 				context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
 						outEnt("result/y", null)));
 
-		Job job = job("j1", sFi("object", sig("service", ServiceJobber.class)),
-				sFi("net", sig("service", Jobber.class)),
+		Job job = job("j1", srvFi("object", sig("service", ServiceJobber.class)),
+				srvFi("net", sig("service", Jobber.class)),
 				job("j2", sig("service", ServiceJobber.class), t4, t5), 
 				t3,
 				pipe(out(t4, "result/y"), in(t3, "arg/x1")),
 				pipe(out(t5, "result/y"), in(t3, "arg/x2")),
-				fiContext("mix1", sFi("j1", "net"), csFi("j1/j2/t4", "net")),
-				fiContext("mix2", sFi("j1", "net"), csFi("j1/j2/t4", "net"), csFi("j1/j2/t5", "net")));
+				fiContext("mix1", srvFi("j1", "net"), csFi("j1/j2/t4", "net")),
+				fiContext("mix2", srvFi("j1", "net"), csFi("j1/j2/t4", "net"), csFi("j1/j2/t5", "net")));
 
 		//The Jobber and  all tasks are local with 'subtract' signature
-		Job result = exert(job, sFi("object"), csFi("j1/t3", "object", "subtract"));
+		Job result = exert(job, srvFi("object"), csFi("j1/t3", "object", "subtract"));
 		logger.info("result context: " + serviceContext(result));
 		assertTrue((Double)get(result, "j1/t3/result/y") == 400.0);		
 

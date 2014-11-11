@@ -17,7 +17,8 @@
 	</target>
 
 	<target name="all-models">
-		<java classname="com.sun.jini.start.ServiceStarter" classpathref="provider.starter.path" fork="yes" spawn="${spawn}">
+		<java classname="com.sun.jini.start.ServiceStarter" classpathref="boot.classpath" fork="yes" spawn="${spawn}">
+			<classpath refid="provider.starter.path" />
 			<arg value="../configs/boot-all-models.config" />
 			<sysproperty key="sorcer.home" value="${sorcer.home}" />
 			<sysproperty key="local.repo.path" value="org/sorcer/arithmetic/${sorcer.version}" />

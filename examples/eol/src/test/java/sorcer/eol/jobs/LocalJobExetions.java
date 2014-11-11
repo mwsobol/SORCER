@@ -55,8 +55,8 @@ import sorcer.util.Sorcer;
 @SuppressWarnings({ "rawtypes", "unchecked" })
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/eol")
-public class LocalArithmetic implements SorcerConstants {
-	private final static Logger logger = Logger.getLogger(LocalArithmetic.class.getName());
+public class LocalJobExetions implements SorcerConstants {
+	private final static Logger logger = Logger.getLogger(LocalJobExetions.class.getName());
 	
 	@Test
 	public void exertAdderProvider() throws Exception {
@@ -157,7 +157,7 @@ public class LocalArithmetic implements SorcerConstants {
 	@Test
 	public void contexterTest() throws Exception {
 		// get a context for the template context in the task
-		Task cxtt = task("addContext", sig("getContext", NetArithmetic.createContext()),
+		Task cxtt = task("addContext", sig("getContext", NetJobExertions.createContext()),
 				context("add", input("arg/x1"), input("arg/x2")));
 
 		Context result = context(exert(cxtt));
@@ -169,7 +169,7 @@ public class LocalArithmetic implements SorcerConstants {
 	@Test
 	public void objectContexterTaskTest() throws Exception {
 		Task t5 = task("t5", sig("add", AdderImpl.class), 
-					type(sig("getContext", NetArithmetic.createContext()), Signature.APD),
+					type(sig("getContext", NetJobExertions.createContext()), Signature.APD),
 					context("add", inEnt("arg/x1"), inEnt("arg/x2"),
 						result("result/y")));
 		

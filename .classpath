@@ -28,10 +28,12 @@
 	<classpathentry kind="lib" path="distribution/sorcer-5.0.0-SNAPSHOT/rio/lib/rio-lib-5.0-M4.jar"/>
 	<classpathentry kind="lib" path="distribution/sorcer-5.0.0-SNAPSHOT/rio/lib/rio-platform-5.0-M4.jar"/>
 	<classpathentry kind="lib" path="distribution/sorcer-5.0.0-SNAPSHOT/rio/lib-dl/rio-api-5.0-M4.jar"/>
-	<classpathentry kind="lib" path="core/sorcer-platform/build/classes/test"/>
 	<classpathentry kind="lib" path="core/sorcer-int-tests/build/libs/arithmetic-tester-5.0.0-SNAPSHOT-prv.jar"/>
 	<classpathentry kind="lib" path="examples/pml/build/classes/test"/>
 	<classpathentry kind="lib" path="distribution/sorcer-5.0.0-SNAPSHOT/lib/common/je-5.0.104.jar"/>
 	<classpathentry kind="lib" path="distribution/sorcer-5.0.0-SNAPSHOT/lib/sorcer/lib-ext/webster-5.0.0-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="examples/pml/build/classes/main"/>
+	<classpathentry kind="lib" path="examples/worker/build/classes/main"/>
+	<classpathentry kind="lib" path="examples/worker/build/classes/test"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

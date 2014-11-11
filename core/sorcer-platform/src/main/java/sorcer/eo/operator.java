@@ -72,6 +72,10 @@ public class operator {
 
 	protected static final Logger logger = Logger.getLogger(operator.class.getName());
 
+	public static void requestTime(Exertion exertion) {
+		((ServiceExertion)exertion).setExecTimeRequested(true);
+	}
+	
 	public static String path(List<String> attributes) {
 		if (attributes.size() == 0)
 			return null;
@@ -876,11 +880,11 @@ public class operator {
 //		return signature;
 //	}
 	
-	public static FidelityInfo sFi(String name) {
+	public static FidelityInfo srvFi(String name) {
 		return new FidelityInfo(name);
 	}
 
-	public static FidelityInfo sFi(String name, String... selectors) {
+	public static FidelityInfo srvFi(String name, String... selectors) {
 		return new FidelityInfo(name, selectors);
 	}
 	
@@ -894,19 +898,19 @@ public class operator {
 	}
 	
 	
-	public static ServiceFidelity sFi(Exertion exertion) {
+	public static ServiceFidelity srvFi(Exertion exertion) {
 		return exertion.getFidelity();		
 	}
 	
-	public static Map<String, ServiceFidelity> sFis(Exertion exertion) {
+	public static Map<String, ServiceFidelity> srvFis(Exertion exertion) {
 		return exertion.getFidelities();		
 	}
 	
-	public static ServiceFidelity sFi(Signature... signatures) {
+	public static ServiceFidelity srvFi(Signature... signatures) {
 		return new ServiceFidelity(signatures);		
 	}
 	
-	public static ServiceFidelity sFi(String name, Signature... signatures) {
+	public static ServiceFidelity srvFi(String name, Signature... signatures) {
 		return new ServiceFidelity(name, signatures);		
 	}
 				
@@ -1986,29 +1990,57 @@ public class operator {
 	private static class InEndPoint {
 		String inPath;
 		Mappable in;
+		String inComponentPath;
 
-		InEndPoint(Mappable in, String inPath) {
-			this.inPath = inPath;
+		InEndPoint(Mappable in, String inDataPath) {
+			this.inPath = inDataPath;
 			this.in = in;
+		}
+		
+		InEndPoint(String inComponentPath, String inDataPath) {
+			this.inPath = inDataPath;
+			this.inComponentPath = inComponentPath;
 		}
 	}
 
 	private static class OutEndPoint {
 		public String outPath;
 		public Mappable out;
-
-		OutEndPoint(Mappable out, String outPath) {
-			this.outPath = outPath;
+		public String outComponentPath;
+		
+		OutEndPoint(Mappable out, String outDataPath) {
+			this.outPath = outDataPath;
 			this.out = out;
+		}
+		
+		OutEndPoint(String outComponentPath, String outDataPath) {
+			this.outPath = outDataPath;
+			this.outComponentPath = outComponentPath;
 		}
 	}
 
+	public static OutEndPoint output(String outComponent, String outPath) {
+		return new OutEndPoint(outComponent, outPath);
+	}
+
+	public static OutEndPoint out(String outComponent, String outPath) {
+		return new OutEndPoint(outComponent, outPath);
+	}
+	
 	public static OutEndPoint output(Service outExertion, String outPath) {
 		return new OutEndPoint((Exertion)outExertion, outPath);
 	}
 
 	public static OutEndPoint out(Service outExertion, String outPath) {
 		return new OutEndPoint((Exertion)outExertion, outPath);
+	}
+
+	public static InEndPoint input(String inComponent, String inPath) {
+		return new InEndPoint(inComponent, inPath);
+	}
+
+	public static InEndPoint in(String inComponent, String inPath) {
+		return new InEndPoint(inComponent, inPath);
 	}
 
 	public static InEndPoint input(Service inExertion, String inPath) {
@@ -2018,7 +2050,7 @@ public class operator {
 	public static InEndPoint in(Service inExertion, String inPath) {
 		return new InEndPoint((Exertion)inExertion, inPath);
 	}
-
+	
 	public static Pipe pipe(OutEndPoint outEndPoint, InEndPoint inEndPoint) {
 		Pipe p = new Pipe(outEndPoint, inEndPoint);
 		return p;
