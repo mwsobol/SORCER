@@ -54,7 +54,7 @@ import sorcer.worker.requestor.Works;
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })
 @RunWith(SorcerTestRunner.class)
-@ProjectContext("examples/pml")
+@ProjectContext("examples/worker")
 public class WorkerExertionsTest {
 	private static Logger logger = Log.getTestLog();
 

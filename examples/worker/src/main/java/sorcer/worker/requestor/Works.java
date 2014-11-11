@@ -17,6 +17,8 @@ public class Works implements Serializable {
 
 	static {
 		work1 = new Work() {
+			private static final long serialVersionUID = 1L;
+
 			public Context exec(Context cxt) throws ContextException {
 				String sigPrefix = ((ServiceContext)cxt).getCurrentPrefix();
 				String operand1Path = "req/arg/1";
@@ -38,13 +40,10 @@ public class Works implements Serializable {
 						cxt.putValue(outPaths.get(0), result);
 				}
 				else if (outPaths.size() > 1) {
-					for (String path : outPaths) {
-						String[] mpaths = cxt.getMarkedPaths("tag|"+sigPrefix);
-				        if (mpaths.length == 1) {
-				        	cxt.putOutValue(mpaths[0], result);
-				        	break;
-				        }
-					}
+					String[] mpaths = cxt.getMarkedPaths("tag|"+sigPrefix);
+				    if (mpaths.length == 1) {
+				        cxt.putOutValue(mpaths[0], result);
+				    }
 				} else
 					cxt.putOutValue("prv/result", result);
 				
@@ -54,6 +53,8 @@ public class Works implements Serializable {
 		};
 
 		work2 = new Work() {
+			private static final long serialVersionUID = 1L;
+
 			public Context exec(Context cxt) throws ContextException {
 				String sigPrefix = ((ServiceContext)cxt).getCurrentPrefix();
 				String operand1Path = "req/arg/1";
@@ -88,6 +89,8 @@ public class Works implements Serializable {
 		};
 
 		work3 = new Work() {
+			private static final long serialVersionUID = 1L;
+
 			public Context exec(Context cxt) throws ContextException {
 				String sigPrefix = ((ServiceContext)cxt).getCurrentPrefix();
 				String operand1Path = "req/arg/1";
@@ -123,6 +126,8 @@ public class Works implements Serializable {
 		};
 		
 		work4 = new Work() {
+			private static final long serialVersionUID = 1L;
+
 			public Context exec(Context cxt) throws ContextException {
 				String sigPrefix = ((ServiceContext)cxt).getCurrentPrefix();
 				String operand1Path = "req/arg/1";

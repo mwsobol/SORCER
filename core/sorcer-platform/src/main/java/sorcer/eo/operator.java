@@ -321,8 +321,8 @@ public class operator {
 	
 	public static <T extends Object> Context context(T... entries)
 			throws ContextException {
-		if (SdbUtil.isSosURL(entries[0]) || 
-				(entries[0] instanceof String && SdbUtil.isSosURL(entries[1]))) {
+		if (SdbUtil.isSosURL(entries[0]) || (entries.length == 2 &&
+				entries[0] instanceof String && SdbUtil.isSosURL(entries[1]))) {
 			try {
 				Context cxt = (Context)((URL)entries[1]).getContent();
 				if (entries[0] instanceof String)
