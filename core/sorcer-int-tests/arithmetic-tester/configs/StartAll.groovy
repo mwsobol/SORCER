@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package examples.eol
+package sorcer.arithmetic.tester
 
 import com.sun.jini.start.ServiceDescriptor
 import org.rioproject.config.Component
 import sorcer.provider.boot.SorcerServiceDescriptor
 
 /**
- * Configuration to start all EOL example providers
+ * Configuration to start all arithmetic tester providers
  *
  * @author Dennis Reedy
  */
@@ -38,16 +38,16 @@ class StartAll {
         String configPath = "${projectBuildDir}/../configs"
 
         def descriptors = []
-        ["adder", "multiplier", "divider", "subtractor", "averager", "exertleter", "contexter"].each { provider ->
+        ["adder", "multiplier", "divider", "subtractor", "averager"].each { provider ->
             def configArg = ["${configPath}/${provider}-prv.config"]
-            def codebase = "${relativeRepoPath}/arithmetic-${sorcerVersion}-dl.jar sorcer-dl-${sorcerVersion}.jar jsk-dl-${riverVersion}.jar"
+            def codebase = "${relativeRepoPath}/arithmetic-tester-${sorcerVersion}-dl.jar sorcer-dl-${sorcerVersion}.jar jsk-dl-${riverVersion}.jar"
 
             descriptors << new SorcerServiceDescriptor(codebase,
                                                        policy,
-                                                       "${buildLibPath}/arithmetic-${sorcerVersion}-prv.jar",
+                                                       "${buildLibPath}/arithmetic-tester-${sorcerVersion}.jar",
                                                        "sorcer.core.provider.ServiceTasker",
                                                        configArg as String[])
         }
         return descriptors as ServiceDescriptor[]
     }
-}	
+}

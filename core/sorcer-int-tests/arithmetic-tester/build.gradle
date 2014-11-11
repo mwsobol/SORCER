@@ -56,6 +56,12 @@ def repoPath() {
 	return "org/sorcer/arithmetic-tester/${version}"
 }
 
+bootme {
+    starterConfig = file("${projectDir.path}/configs/StartAll.groovy")
+    systemProperties = ["relative.repo.path" : repoPath()]
+    spawn = false
+}
+
 test {
     systemProperty "java.rmi.server.codebase",
                    "${websterUrl}/${repoPath()}/arithmetic-tester-${version}-dl.jar ${websterUrl}/sorcer-dl-${version}.jar ${websterUrl}/jsk-dl-${riverVersion}.jar"
