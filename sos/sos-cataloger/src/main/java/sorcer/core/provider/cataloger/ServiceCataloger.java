@@ -110,10 +110,10 @@ import java.util.logging.*;
 public class ServiceCataloger extends ServiceProvider implements Cataloger {
 
 	/** Logger for logging information about this instance */
-	// private static Logger logger =
-	// Logger.getLogger(ServiceCataloger.class.getName());
 	private static Logger logger;
 
+	public boolean debug = false;
+	
 	public ServiceDiscoveryManager lookupMgr;
 
 	public LookupCache cache;
@@ -232,29 +232,34 @@ public class ServiceCataloger extends ServiceProvider implements Cataloger {
 	}
 
 	private void initLogger() {
-		Handler h = null;
-		try {
-			logger = Logger.getLogger("local."
-					+ ServiceCataloger.class.getName() + "."
-					+ getProviderName());
-			h = new FileHandler(System.getProperty(SORCER_HOME)
-					+ "/logs/remote/local-Cataloger-" + delegate.getHostName()
-					+ "-" + getProviderName() + "%g.log", 2000000, 8, true);
-			if (h != null) {
-				h.setFormatter(new SimpleFormatter());
-				logger.addHandler(h);
+		if (debug) {
+			Handler h = null;
+			try {
+				logger = Logger.getLogger("local."
+						+ ServiceCataloger.class.getName() + "."
+						+ getProviderName());
+				h = new FileHandler(System.getProperty(SORCER_HOME)
+						+ "/logs/remote/local-Cataloger-" + delegate.getHostName()
+						+ "-" + getProviderName() + "%g.log", 2000000, 8, true);
+				if (h != null) {
+					h.setFormatter(new SimpleFormatter());
+					logger.addHandler(h);
+				}
+				logger.setUseParentHandlers(false);
+			} catch (SecurityException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
-			logger.setUseParentHandlers(false);
-		} catch (SecurityException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
+		} else {
+			logger = Logger.getLogger(ServiceCataloger.class.getName());
+
 		}
 	}
 
-	public void setLogger(Logger logger) {
-		ServiceCataloger.logger = logger;
-	}
+//	public void setLogger(Logger logger) {
+//		ServiceCataloger.logger = logger;
+//	}
 
 	/**
 	 * Returns a Jini ServiceItem containing SORCER service provider based on
