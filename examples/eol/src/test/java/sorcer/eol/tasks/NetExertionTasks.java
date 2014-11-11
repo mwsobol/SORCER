@@ -146,7 +146,7 @@ public class NetExertionTasks {
 	
 	
 	@Test
-	public void suffixedBatchTask() throws Exception {
+	public void prefixedBatchTask() throws Exception {
 		// batch for the composition f1(f2(f3((x1, x2), f4(x1, x2)), f5(x1, x2))
 		// shared context with prefixed paths
 		Task batch3 = task("batch3",

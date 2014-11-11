@@ -661,6 +661,16 @@ public interface Context<T> extends Mappable<T>, Serializable, Evaluation<T>,
 	public List<T> getMarkedValues(String association) throws ContextException;
 
 	/**
+	 * Returns the List of tagged path with the given association.
+	 * 
+	 * @param association
+	 *            the association of this context to be matched
+	 * @return the List of paths for the given association
+	 * @throws ContextException
+	 */
+	public String[] getMarkedPaths(String association) throws ContextException;
+	
+	/**
 	 * Register an attribute with a ServiceContext's metacontext
 	 * 
 	 * @param attribute

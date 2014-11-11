@@ -208,6 +208,11 @@ public class operator {
 	}
 
 	public static <T> OutputEntry<T> outEnt(String path, T value) {
+		if (value instanceof String && ((String)value).indexOf('|') > 0) {
+			OutputEntry oe =  outEnt(path, null);
+			oe.annotation((String)value);
+			return oe;
+		}
 		return new OutputEntry(path, value, 0);
 	}
 

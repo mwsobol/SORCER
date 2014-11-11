@@ -3191,5 +3191,11 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 			ExertionException, RemoteException {
 		return service(exertion, null);
 	}
+
+	@Override
+	public String[] getMarkedPaths(String association)
+			throws ContextException {
+		return Contexts.getMarkedPaths(this, association);
+	}
 	
 }
