@@ -22,7 +22,6 @@ import org.junit.runners.model.InitializationError;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -70,10 +69,6 @@ public class SorcerTestRunner extends BlockJUnit4ClassRunner {
     @Override
     public void run(RunNotifier notifier) {
         if (System.getProperty("sorcer.home") == null) {
-            System.out.println("===> "+getTestClass().getJavaClass().getName());
-            for(Annotation a : getTestClass().getJavaClass().getAnnotations()) {
-                System.out.println("\t"+a.toString());
-            }
             ProjectContext projectContext = getTestClass().getJavaClass().getAnnotation(ProjectContext.class);
             if (projectContext != null) {
                 String rootDir = System.getProperty("user.dir");
