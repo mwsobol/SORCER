@@ -25,8 +25,8 @@ import static sorcer.eo.operator.*;
 @SuppressWarnings("unchecked")
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/eol")
-public class ArithmeticSpaceBlock implements SorcerConstants {
-	private final static Logger logger = Logger.getLogger(ArithmeticSpaceBlock.class.getName());
+public class SpaceBlockExertions implements SorcerConstants {
+	private final static Logger logger = Logger.getLogger(SpaceBlockExertions.class.getName());
 
 	@Test
 	public void arithmeticSpaceTaskTest() throws Exception {

@@ -41,8 +41,8 @@ import sorcer.service.Task;
 @SuppressWarnings("unchecked")
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/eol")
-public class ArithmeticLocalBlocks implements SorcerConstants {
-	private final static Logger logger = Logger.getLogger(ArithmeticLocalBlocks.class.getName());
+public class LocalBlockExertions implements SorcerConstants {
+	private final static Logger logger = Logger.getLogger(LocalBlockExertions.class.getName());
 
 	@Test
 	public void contextAltTest() throws Exception {
