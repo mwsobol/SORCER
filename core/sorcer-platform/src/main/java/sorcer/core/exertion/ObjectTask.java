@@ -106,7 +106,7 @@ public class ObjectTask extends Task {
 			Object result = null;
 			if (evaluator == null) {
 				// create a provider of this object signature
-				provider(os);
+				Object prv = provider(os);
 				Object target = os.getTarget();
 				if (target != null) {
 					if (target instanceof Method) {
@@ -116,7 +116,7 @@ public class ObjectTask extends Task {
 					}
 				}
 				else {
-					evaluator = new MethodInvoker(os.newInstance(), os.getSelector());
+					evaluator = new MethodInvoker(prv, os.getSelector());
 				}
 			}
 			if (os.getReturnPath() != null)

@@ -59,6 +59,12 @@ def repoPath() {
 	return "org/sorcer/worker/${version}"
 }
 
+bootme {
+	starterConfig = file("${projectDir.path}/configs/StartAll.groovy")
+	systemProperties = ["local.repo.path" : repoPath()]
+	//spawn = false
+}
+
 test {
 	systemProperty "java.rmi.server.codebase",
 				   "${websterUrl}/${repoPath()}/worker-${version}-dl.jar ${websterUrl}/sorcer-dl-${version}.jar ${websterUrl}/jsk-dl-${riverVersion}.jar"
@@ -66,6 +72,8 @@ test {
 	testLogging {
 		events "passed", "skipped", "failed"/*, "standardOut", "standardError"*/
 	}
+	dependsOn([install, bootme])
+	finalizedBy(stopme)
 }
 test.onlyIf{ file("${sorcerDistHome}").exists() }
 
