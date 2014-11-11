@@ -130,7 +130,7 @@ public class ServiceElementFactoryTest {
     }
 
     @Test
-    public void testIPAddressesUsingConfiguration() throws IOException, ConfigurationException, URISyntaxException, ResolverException {
+    public void testIPAddressestisingConfiguration() throws IOException, ConfigurationException, URISyntaxException, ResolverException {
         ServiceDeployment deployment = new ServiceDeployment();
         deployment.setConfig(getConfigDir()+"/testIP.config");
         verifyServiceElement(ServiceElementFactory.create(deployment));

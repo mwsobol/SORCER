@@ -1,0 +1,61 @@
+/*
+ * Copyright to the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/*
+ * Declares utilities for starting Sorcer using sorcer boot, as we as starting Sorcer with Rio
+ */
+
+/*
+ * Start Sorcer using Rio
+ */
+task bootSorcerRio(type: Exec) {
+    commandLine "ant", "-f", "${file("${sorcerDistHome}").path}/bin/rio/boot-sorcer-rio.xml"
+}
+bootSorcerRio.onlyIf {
+    if(file("${sorcerDistHome}").exists()) {
+        def jps = "jps -lm".execute()
+        !jps.text.contains("start-monitor")
+    } else {
+        false
+    }
+}
+
+/*
+ * Destroy Sorcer
+ */
+task terminateSorcerRio(type: Exec) {
+    commandLine "ant", "-f", "${file("${sorcerDistHome}").path}/bin/rio/destroy-sorcer-rio.xml"
+}
+bootSorcerRio.onlyIf {
+    file("${sorcerDistHome}").exists()
+}
+
+/*
+ * * Start a browser
+ */
+task browser(type: Exec) {
+    commandLine "ant", "-f",
+                "${file("${sorcerDistHome}").path}/bin/browser/bin/sorcer-browser.xml",
+                "browser.spawn"
+}
+browser.onlyIf {
+    if(file("${sorcerDistHome}").exists()) {
+        def jps = "jps -lm".execute()
+        !jps.text.contains("sorcer-browser")
+    } else {
+        false
+    }
+}

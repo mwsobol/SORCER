@@ -31,7 +31,6 @@ import org.rioproject.monitor.ProvisionMonitor;
 import org.rioproject.opstring.OperationalStringManager;
 import sorcer.util.exec.ExecUtils;
 
-import java.rmi.RMISecurityManager;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +43,7 @@ import java.util.List;
 public class ServiceDestroyer {
 
     public static void main(String[] args) throws Exception {
-        System.setSecurityManager(new RMISecurityManager());
+        System.setSecurityManager(new SecurityManager());
         boolean killCybernode = false;
         boolean killMonitor = false;
         List<String> killJVMs = new ArrayList<String>();
@@ -124,9 +123,11 @@ public class ServiceDestroyer {
         boolean killed = false;
         List<VirtualMachineDescriptor> vms = VirtualMachine.list();
         for (VirtualMachineDescriptor vm : vms) {
-        	System.out.println("vm = " + vm);
-        	System.out.println("id = " + id);
-        	System.out.println("vm.displayName() = " + vm.displayName());
+            if(System.getProperty("debug")!=null) {
+                System.out.println("vm = " + vm);
+                System.out.println("id = " + id);
+                System.out.println("vm.displayName() = " + vm.displayName());
+            }
             if (vm.displayName().contains(id) && !vm.displayName().contains(ServiceDestroyer.class.getName())) {
                 try {
                     String command;

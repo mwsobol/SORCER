@@ -1,0 +1,63 @@
+/*
+ * Copyright to the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+version = sorcerVersion
+
+dependencies {
+    compile project(":sorcer-lib")
+    testCompile project(':sos-exertmonitor')
+    testCompile project(':sorcer-test')
+    testRuntime libs.slf4j
+}
+
+task arithmeticPrvDlJar(type: Jar) {
+    manifest {
+        attributes("Implementation-Title": "SORCER Arithmetic tester Exported Classes",
+                   "Implementation-Version": version)
+    }
+    classifier = "dl"
+    dependsOn classes
+    from sourceSets.main.output
+    include('sorcer/arithmetic/tester/provider/*')
+}
+
+task arithmeticReqJar(type: Jar) {
+    manifest {
+        attributes("Implementation-Title": "SORCER Arithmetic Tester Requestor", "Implementation-Version": version)
+    }
+    classifier = "req"
+    dependsOn classes
+    from sourceSets.main.output
+    include('sorcer/arithmetic/tester/requestor/**')
+}
+
+artifacts {
+    archives arithmeticPrvDlJar
+    archives arithmeticReqJar
+}
+
+install.dependsOn(['arithmeticPrvDlJar', 'arithmeticReqJar'])
+build.dependsOn(install)
+
+test {
+    systemProperty "java.rmi.server.codebase",
+                   "${websterUrl}/${repoPath()}/arithmetic-tester-${version}-dl.jar ${websterUrl}/sorcer-dl-${version}.jar ${websterUrl}/jsk-dl-${riverVersion}.jar"
+
+    testLogging {
+        events "passed", "skipped", "failed"/*, "standardOut"*, "standardError"*/
+    }
+}
+test.onlyIf{ file("${sorcerDistHome}").exists() }
