@@ -1,74 +1,44 @@
 package sorcer.core.context.model.par;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static sorcer.co.operator.dbEnt;
-import static sorcer.co.operator.dbInEnt;
-import static sorcer.co.operator.dbOutEnt;
-import static sorcer.co.operator.ent;
-import static sorcer.co.operator.inEnt;
-import static sorcer.co.operator.outEnt;
-import static sorcer.co.operator.persistent;
-import static sorcer.co.operator.url;
-import static sorcer.eo.operator.asis;
-import static sorcer.eo.operator.context;
-import static sorcer.eo.operator.exert;
-import static sorcer.eo.operator.get;
-import static sorcer.eo.operator.in;
-import static sorcer.eo.operator.job;
-import static sorcer.eo.operator.out;
-import static sorcer.eo.operator.pipe;
-import static sorcer.eo.operator.serviceContext;
-import static sorcer.eo.operator.sig;
-import static sorcer.eo.operator.task;
-import static sorcer.eo.operator.taskContext;
-import static sorcer.eo.operator.value;
-import static sorcer.po.operator.add;
-import static sorcer.po.operator.agent;
-import static sorcer.po.operator.asis;
-import static sorcer.po.operator.dbPar;
-import static sorcer.po.operator.invoke;
-import static sorcer.po.operator.invoker;
-import static sorcer.po.operator.par;
-import static sorcer.po.operator.parModel;
-import static sorcer.po.operator.pars;
-import static sorcer.po.operator.put;
-import static sorcer.po.operator.set;
 import groovy.lang.Closure;
-
-import java.io.IOException;
-import java.net.URL;
-import java.rmi.RemoteException;
-import java.util.logging.Logger;
-
 import org.junit.Test;
-
 import sorcer.arithmetic.tester.provider.impl.AdderImpl;
 import sorcer.arithmetic.tester.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.tester.provider.impl.SubtractorImpl;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.core.provider.rendezvous.ServiceJobber;
-import sorcer.service.Condition;
-import sorcer.service.Context;
-import sorcer.service.ContextException;
-import sorcer.service.EvaluationException;
-import sorcer.service.ExertionException;
-import sorcer.service.Job;
-import sorcer.service.ServiceExertion;
-import sorcer.service.SignatureException;
-import sorcer.service.Task;
+import sorcer.service.*;
 import sorcer.util.Sorcer;
 import sorcer.util.url.sos.SdbURLStreamHandlerFactory;
+
+import java.io.IOException;
+import java.net.URL;
+import java.rmi.RemoteException;
+import java.util.logging.Logger;
+
+import static org.junit.Assert.*;
+import static sorcer.co.operator.*;
+import static sorcer.co.operator.persistent;
+import static sorcer.co.operator.url;
+import static sorcer.eo.operator.asis;
+import static sorcer.eo.operator.*;
+import static sorcer.eo.operator.get;
+import static sorcer.eo.operator.in;
+import static sorcer.eo.operator.pipe;
+import static sorcer.eo.operator.value;
+import static sorcer.po.operator.add;
+import static sorcer.po.operator.*;
+import static sorcer.po.operator.asis;
+import static sorcer.po.operator.put;
+import static sorcer.po.operator.set;
 
 /**
  * @author Mike Sobolewski
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class ParModelTest {
-	private final static Logger logger = Logger.getLogger(ParModelTest.class
-			.getName());
+	private final static Logger logger = Logger.getLogger(ParModelTest.class.getName());
 
 	static {
 		ServiceExertion.debug = true;
