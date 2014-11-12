@@ -518,15 +518,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 				
 		return job;
 	}
-		
-	public static Context createContext() throws Exception {
-		return context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0));
-	}
-	
-	public static Exertion createJob() throws Exception {
-		return createJob(Flow.SEQ, Access.PUSH);
-	}
-	
+			
 	@Test
 	public void contexterTest() throws Exception {
         System.out.println("========== contexterTest ==========");
@@ -681,4 +673,13 @@ public class ArithmeticNetTest implements SorcerConstants {
 //		logger.info("t5 value: " + value(t5));
 		assertEquals(value(t5), 100.0);
 	}
+	
+	public static Context createContext() throws Exception {
+		return context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0));
+	}
+	
+	public static Exertion createJob() throws Exception {
+		return createJob(Flow.SEQ, Access.PUSH);
+	}
+
 }
