@@ -16,7 +16,9 @@
 
 /* Build a distribution  */
 
-apply plugin: 'java'
+apply plugin: 'base'
+apply plugin: 'maven'
+apply plugin: 'maven-publish'
 
 version = sorcerVersion
 
@@ -36,7 +38,6 @@ dependencies {
     ["blitz", "blitz-dl", "blitzui"].each { blitz ->
         distribution "org.dancres:${blitz}:$blitzVersion"
     }
-    distribution "org.codehaus.groovy:groovy-all:${groovyVersion}"
 }
 
 ext {
@@ -84,8 +85,7 @@ def filter(project) {
  * This will gather up and organize subproject dependencies, and resolve distribution dependencies
  */
 task gatherDeps() {
-    description = "Gather up and organize subproject dependencies, and resolve distribution dependencies"
-    def exclusions = ["sos-shell", "iGrid", "examples", "arithmetic"]
+    description = "Gather up and organize distribution dependencies"
 
     doLast {
         File dir = file("${distDir}-${version}")
@@ -94,7 +94,7 @@ task gatherDeps() {
             println "Removed distribution $dir"
         }
         println "Creating distribution $dir"
-        subprojects.each { project ->
+        rootProject.subprojects.each { project ->
             boolean include = filter(project.path)
             if(include) {
                 println "Processing ${project.path}"
@@ -141,13 +141,12 @@ def filterDeps(project, prefix) {
 
 task distribution(dependsOn: [gatherDeps]) {
     description 'Creates a Sorcer distribution'
-
     doLast {
         File sorcerLibDir = file("$distDir-${version}/lib/sorcer/lib")
         File sorcerDlDir = file("$distDir-${version}/lib/sorcer/lib-dl")
         File sorcerExtDir = file("$distDir-${version}/lib/sorcer/lib-ext")
 
-        subprojects.each { project ->
+        rootProject.subprojects.each { project ->
             boolean include = filter(project.path)
             if(include) {
                 println "Processing ${project.path}"
@@ -236,9 +235,22 @@ task distribution(dependsOn: [gatherDeps]) {
         versionProps.store(versionPropsFile.newWriter(), null)
 
         println "Zipping distribution sorcer-${version} -> sorcer-${version}.zip"
-        ant.zip(destfile:"distribution/sorcer-${version}.zip",
-                basedir: "distribution",
+        ant.zip(destfile:"sorcer-${version}.zip",
+                basedir: ".",
                 includes:"sorcer-${version}/**")
         println "Complete"
+    }
+}
+
+def sorcerDistribution = file("sorcer-${version}.zip")
+artifacts {
+    archives file: sorcerDistribution, name: 'sorcer-distribution', type: 'zip', builtBy: distribution
+}
+
+publishing {
+    publications {
+        distribution(MavenPublication) {
+            artifact sorcerDistribution
+        }
     }
 }

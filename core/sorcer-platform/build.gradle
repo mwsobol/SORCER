@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+version = sorcerVersion
+
 dependencies {
     compile "net.jini:jsk-platform:${riverVersion}"
     compile "net.jini:jsk-lib:${riverVersion}"
@@ -40,7 +42,6 @@ jar {
         attributes("Implementation-Title": "SORCER Platform",
                    "Implementation-Version": sorcerVersion)
     }
-    version = sorcerVersion
 }
 
 test {

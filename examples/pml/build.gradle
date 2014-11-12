@@ -36,7 +36,6 @@ artifacts {
 }
 
 install.dependsOn(['modelJar', 'beanDlJar'])
-publish.dependsOn(install)
 build.dependsOn(install)
 
 dependencies { 
