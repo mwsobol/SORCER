@@ -69,7 +69,7 @@ task browser(type: Exec) {
 browser.onlyIf {
     if(file("${sorcerDistHome}").exists()) {
         def jps = "jps -lm".execute()
-        !jps.text.contains("sorcer-browser")
+        !jps.text.contains("sorcer.ssb.ServiceBrowser")
     } else {
         false
     }

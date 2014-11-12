@@ -58,5 +58,5 @@
 			<sysproperty key="ssb.logLen" value="300" />
 		</java>
 	</target>
-	
+
 </project>
