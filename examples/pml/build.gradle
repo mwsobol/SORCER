@@ -49,18 +49,18 @@ dependencies {
 }
 
 def repoPath() {
-	return "org/sorcer/arithmetic/${version}"
+	return "org/sorcer/pml/${version}"
 }
 
 bootme {
-	starterConfig = file("${projectDir.path}/configs/boot-all-models.config")
+	starterConfig = file("${projectDir.path}/configs/StartAll.groovy")
 	systemProperties = ["local.repo.path" : repoPath()]
 	//spawn = false
 }
 
 test {
 	systemProperty "java.rmi.server.codebase",
-				   "${websterUrl}/${repoPath()}/arithmetic-${version}-dl.jar ${websterUrl}/sorcer-dl-${version}.jar ${websterUrl}/jsk-dl-${riverVersion}.jar"
+				   "${websterUrl}/${repoPath()}/pml-${version}-dl.jar ${websterUrl}/sorcer-dl-${version}.jar ${websterUrl}/jsk-dl-${riverVersion}.jar"
 
 	testLogging {
 		events "passed", "skipped", "failed"/*, "standardOut", "standardError"*/

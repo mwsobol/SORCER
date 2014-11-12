@@ -25,6 +25,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import sorcer.arithmetic.tester.provider.impl.ParModelImpl;
 import sorcer.service.Context;
 import sorcer.service.ContextException;
 import sorcer.service.ExertionException;
@@ -81,14 +82,14 @@ public class ParModelServices {
 	@Test
 	public void parModelerTest() throws RemoteException, ContextException,
 			ExertionException, SignatureException {
-		ParModel pm = ParModeler.getParModel();
+		ParModel pm = ParModelImpl.getParModel();
 		logger.info("result: " + invoke(pm, "expr"));
 		assertEquals(invoke(pm, "expr"), 60.0);
 	}
 	
 	@Test
 	public void parObjectModelServiceTest() throws RemoteException, ContextException, ExertionException, SignatureException {
-		ParModel pm = ParModeler.getParModel();
+		ParModel pm = ParModelImpl.getParModel();
 		Task pmt = task(sig("invoke", pm), 
 				context(invoker("expr"), result("invoke/result")));
 		
@@ -131,7 +132,7 @@ public class ParModelServices {
 	public void parObjectModelAgentTest() throws RemoteException, ContextException, ExertionException, 
 			SignatureException, MalformedURLException {
 		
-		ParModel pm = ParModeler.getParModel();
+		ParModel pm = ParModelImpl.getParModel();
 		Task pmt = task(sig("invoke", pm), context(
 				invoker("getSphereVolume"),
 				result("sphere/volume"),
@@ -150,7 +151,7 @@ public class ParModelServices {
 	public void parObjectModelMultiAgentTest() throws RemoteException, ContextException, ExertionException, 
 			SignatureException, MalformedURLException {
 		
-		ParModel pm = ParModeler.getParModel();
+		ParModel pm = ParModelImpl.getParModel();
 		
 		// invoking non existing agent and the return value specified
 		Task pmt = task(sig("invoke", pm), context(
