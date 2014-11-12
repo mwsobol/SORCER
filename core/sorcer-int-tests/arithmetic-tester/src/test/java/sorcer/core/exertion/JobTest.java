@@ -20,6 +20,9 @@ import static sorcer.eo.operator.task;
 import java.util.logging.Logger;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.sorcer.test.ProjectContext;
+import org.sorcer.test.SorcerTestRunner;
 
 import sorcer.arithmetic.tester.provider.Adder;
 import sorcer.arithmetic.tester.provider.Multiplier;
@@ -35,6 +38,8 @@ import sorcer.util.Sorcer;
  * @author Mike Sobolewski
  */
 @SuppressWarnings("unchecked")
+@RunWith(SorcerTestRunner.class)
+@ProjectContext("sorcer-int-tests/arithmetic-tester")
 public class JobTest {
 	private final static Logger logger = Logger.getLogger(TaskTest.class
 			.getName());

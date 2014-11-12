@@ -13,8 +13,8 @@ import static sorcer.eo.operator.result;
 import static sorcer.eo.operator.sig;
 import static sorcer.eo.operator.task;
 import static sorcer.eo.operator.value;
-import static sorcer.eo.operator.xrt;
-import static sorcer.po.operator.add;
+import static sorcer.eo.operator.*;
+import static sorcer.po.operator.*;
 import static sorcer.po.operator.parModel;
 import static sorcer.po.operator.put;
 
@@ -22,6 +22,9 @@ import java.rmi.RemoteException;
 import java.util.logging.Logger;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.sorcer.test.ProjectContext;
+import org.sorcer.test.SorcerTestRunner;
 
 import sorcer.arithmetic.tester.provider.impl.AdderImpl;
 import sorcer.arithmetic.tester.provider.impl.MultiplierImpl;
@@ -39,19 +42,11 @@ import sorcer.util.Sorcer;
  * @author Mike Sobolewski
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
+@RunWith(SorcerTestRunner.class)
+@ProjectContext("sorcer-int-tests/arithmetic-tester")
 public class ConditionalTaskTest {
 	private final static Logger logger = Logger
 			.getLogger(ConditionalTaskTest.class.getName());
-
-	static {
-		ServiceExertion.debug = true;
-		System.setProperty("java.util.logging.config.file", Sorcer.getHome()
-				+ "/configs/sorcer.logging");
-		System.setProperty("java.security.policy", Sorcer.getHome()
-				+ "/configs/policy.all");
-		System.setSecurityManager(new SecurityManager());
-		Sorcer.setCodeBase(new String[] { "arithmetic-beans.jar" });
-	}
 
 	@Test
 	public void arithmeticTaskTest() throws ExertionException,

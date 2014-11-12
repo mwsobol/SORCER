@@ -3,9 +3,9 @@ package sorcer.core.exertion;
 //import com.gargoylesoftware,base,testing,TestUtil;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static sorcer.co.operator.ent;
 import static sorcer.co.operator.inEnt;
 import static sorcer.co.operator.outEnt;
+import static sorcer.co.operator.set;
 import static sorcer.eo.operator.configuration;
 import static sorcer.eo.operator.context;
 import static sorcer.eo.operator.deploy;
@@ -13,10 +13,9 @@ import static sorcer.eo.operator.exceptions;
 import static sorcer.eo.operator.exert;
 import static sorcer.eo.operator.get;
 import static sorcer.eo.operator.print;
-import static sorcer.eo.operator.put;
 import static sorcer.eo.operator.result;
-import static sorcer.eo.operator.srvFi;
 import static sorcer.eo.operator.sig;
+import static sorcer.eo.operator.srvFi;
 import static sorcer.eo.operator.strategy;
 import static sorcer.eo.operator.task;
 import static sorcer.eo.operator.trace;
@@ -26,6 +25,9 @@ import java.rmi.RemoteException;
 import java.util.logging.Logger;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.sorcer.test.ProjectContext;
+import org.sorcer.test.SorcerTestRunner;
 
 import sorcer.arithmetic.tester.provider.Adder;
 import sorcer.arithmetic.tester.provider.impl.AdderImpl;
@@ -45,6 +47,8 @@ import sorcer.util.Sorcer;
  * @author Mike Sobolewski
  */
 @SuppressWarnings("unchecked")
+@RunWith(SorcerTestRunner.class)
+@ProjectContext("sorcer-int-tests/arithmetic-tester")
 public class TaskTest {
 	private final static Logger logger = Logger.getLogger(TaskTest.class
 			.getName());
@@ -96,7 +100,7 @@ public class TaskTest {
 		print(trace(task));
 		
 		// EVALUATING
-		put(task, ent("result/y", Context.none));
+		set(task, "result/y", Context.none);
 		print(task);
 		
 		double val = (Double)value(task);

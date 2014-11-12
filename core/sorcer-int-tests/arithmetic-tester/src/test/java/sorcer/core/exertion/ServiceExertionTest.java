@@ -29,6 +29,9 @@ import java.util.logging.Logger;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.sorcer.test.ProjectContext;
+import org.sorcer.test.SorcerTestRunner;
 
 import sorcer.arithmetic.tester.provider.impl.AdderImpl;
 import sorcer.arithmetic.tester.provider.impl.MultiplierImpl;
@@ -48,6 +51,8 @@ import sorcer.util.Sorcer;
  * @author Mike Sobolewski
  */
 @SuppressWarnings("unchecked")
+@RunWith(SorcerTestRunner.class)
+@ProjectContext("sorcer-int-tests/arithmetic-tester")
 public class ServiceExertionTest {
 	private final static Logger logger = Logger
 			.getLogger(ServiceExertionTest.class.getName());

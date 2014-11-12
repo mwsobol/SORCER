@@ -15,6 +15,9 @@ import static sorcer.eo.operator.type;
 import java.util.logging.Logger;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.sorcer.test.ProjectContext;
+import org.sorcer.test.SorcerTestRunner;
 
 import sorcer.arithmetic.tester.provider.impl.AdderImpl;
 import sorcer.arithmetic.tester.provider.impl.MultiplierImpl;
@@ -28,8 +31,10 @@ import sorcer.util.Sorcer;
  * @author Mike Sobolewski
  */
 @SuppressWarnings("unchecked")
+@RunWith(SorcerTestRunner.class)
+@ProjectContext("sorcer-int-tests/arithmetic-tester")
 public class BatchTaskTest {
-	private final static Logger logger = Logger.getLogger(TaskTest.class
+	private final static Logger logger = Logger.getLogger(BatchTaskTest.class
 			.getName());
 
 	static {
