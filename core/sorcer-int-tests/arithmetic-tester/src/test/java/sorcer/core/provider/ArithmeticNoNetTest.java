@@ -1,32 +1,10 @@
 package sorcer.core.provider;
 
-import static org.junit.Assert.assertEquals;
-import static sorcer.co.operator.from;
-import static sorcer.co.operator.inEnt;
-import static sorcer.co.operator.input;
-import static sorcer.co.operator.outEnt;
-import static sorcer.eo.operator.context;
-import static sorcer.eo.operator.cxt;
-import static sorcer.eo.operator.exert;
-import static sorcer.eo.operator.get;
-import static sorcer.eo.operator.in;
-import static sorcer.eo.operator.job;
-import static sorcer.eo.operator.out;
-import static sorcer.eo.operator.pipe;
-import static sorcer.eo.operator.result;
-import static sorcer.eo.operator.serviceContext;
-import static sorcer.eo.operator.sig;
-import static sorcer.eo.operator.srv;
-import static sorcer.eo.operator.strategy;
-import static sorcer.eo.operator.task;
-import static sorcer.eo.operator.type;
-import static sorcer.eo.operator.value;
-
-import java.util.logging.Logger;
-
 import org.junit.Ignore;
 import org.junit.Test;
-
+import org.junit.runner.RunWith;
+import org.sorcer.test.ProjectContext;
+import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.tester.provider.Adder;
 import sorcer.arithmetic.tester.provider.Arithmetic;
 import sorcer.arithmetic.tester.provider.Multiplier;
@@ -40,36 +18,31 @@ import sorcer.core.exertion.ObjectJob;
 import sorcer.core.exertion.ObjectTask;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.core.signature.ObjectSignature;
-import sorcer.service.Context;
-import sorcer.service.Exertion;
-import sorcer.service.Job;
-import sorcer.service.Signature;
+import sorcer.service.*;
 import sorcer.service.Strategy.Access;
 import sorcer.service.Strategy.Flow;
 import sorcer.service.Strategy.Wait;
-import sorcer.service.Task;
 import sorcer.util.ProviderAccessor;
 import sorcer.util.ProviderLookup;
-import sorcer.util.Sorcer;
+
+import java.util.logging.Logger;
+
+import static org.junit.Assert.assertEquals;
+import static sorcer.co.operator.*;
+import static sorcer.co.operator.input;
+import static sorcer.eo.operator.*;
+import static sorcer.eo.operator.value;
 
 /**
  * @author Mike Sobolewski
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })
+@RunWith(SorcerTestRunner.class)
+@ProjectContext("core/sorcer-int-tests/arithmetic-tester")
 public class ArithmeticNoNetTest implements SorcerConstants {
 
 	private final static Logger logger = Logger
 			.getLogger(ArithmeticNoNetTest.class.getName());
-
-	static {
-		System.setProperty("java.security.policy", Sorcer.getHome()
-				+ "/configs/policy.all");
-		System.setSecurityManager(new SecurityManager());
-		Sorcer.setCodeBase(new String[] { "ju-arithmetic-beans.jar",
-				"sorcer-dl.jar" });
-		System.out.println("CLASSPATH :"
-				+ System.getProperty("java.class.path"));
-	}
 	
 	@Test
 	public void testTaskConcatenation() throws Exception {

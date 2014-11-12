@@ -1,56 +1,12 @@
 package sorcer.core.invoker;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static sorcer.co.operator.args;
-import static sorcer.co.operator.ent;
-import static sorcer.co.operator.inEnt;
-import static sorcer.co.operator.outEnt;
-import static sorcer.eo.operator.condition;
-import static sorcer.eo.operator.context;
-import static sorcer.eo.operator.in;
-import static sorcer.eo.operator.job;
-import static sorcer.eo.operator.out;
-import static sorcer.eo.operator.pipe;
-import static sorcer.eo.operator.result;
-import static sorcer.eo.operator.sig;
-import static sorcer.eo.operator.task;
-import static sorcer.eo.operator.value;
-import static sorcer.po.operator.add;
-import static sorcer.po.operator.alt;
-import static sorcer.po.operator.asis;
-import static sorcer.po.operator.cmdInvoker;
-import static sorcer.po.operator.exertInvoker;
-import static sorcer.po.operator.get;
-import static sorcer.po.operator.inc;
-import static sorcer.po.operator.invoke;
-import static sorcer.po.operator.invoker;
-import static sorcer.po.operator.loop;
-import static sorcer.po.operator.methodInvoker;
-import static sorcer.po.operator.next;
-import static sorcer.po.operator.opt;
-import static sorcer.po.operator.par;
-import static sorcer.po.operator.parModel;
-import static sorcer.po.operator.pars;
-import static sorcer.po.operator.put;
-import static sorcer.po.operator.runnableInvoker;
-import static sorcer.po.operator.scope;
-import static sorcer.po.operator.set;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.StringReader;
-import java.net.URL;
-import java.rmi.RemoteException;
-import java.util.Properties;
-import java.util.logging.Logger;
-
 import junit.framework.Assert;
 import net.jini.core.transaction.TransactionException;
-
 import org.junit.Before;
 import org.junit.Test;
-
+import org.junit.runner.RunWith;
+import org.sorcer.test.ProjectContext;
+import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.tester.provider.impl.AdderImpl;
 import sorcer.arithmetic.tester.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.tester.provider.impl.SubtractorImpl;
@@ -58,37 +14,44 @@ import sorcer.core.context.model.par.Par;
 import sorcer.core.context.model.par.ParModel;
 import sorcer.core.invoker.service.Volume;
 import sorcer.core.provider.rendezvous.ServiceJobber;
-import sorcer.service.Condition;
-import sorcer.service.Context;
-import sorcer.service.ContextException;
-import sorcer.service.EvaluationException;
-import sorcer.service.ExertionException;
-import sorcer.service.Job;
-import sorcer.service.ServiceExertion;
-import sorcer.service.SignatureException;
-import sorcer.service.Task;
+import sorcer.service.*;
 import sorcer.util.Sorcer;
 import sorcer.util.exec.ExecUtils.CmdResult;
-import sorcer.util.url.sos.SdbURLStreamHandlerFactory;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.StringReader;
+import java.rmi.RemoteException;
+import java.util.Properties;
+import java.util.logging.Logger;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static sorcer.co.operator.args;
+import static sorcer.co.operator.*;
+import static sorcer.eo.operator.*;
+import static sorcer.eo.operator.in;
+import static sorcer.eo.operator.pipe;
+import static sorcer.eo.operator.value;
+import static sorcer.po.operator.add;
+import static sorcer.po.operator.alt;
+import static sorcer.po.operator.asis;
+import static sorcer.po.operator.*;
+import static sorcer.po.operator.get;
+import static sorcer.po.operator.loop;
+import static sorcer.po.operator.opt;
+import static sorcer.po.operator.put;
+import static sorcer.po.operator.set;
 
 /**
  * @author Mike Sobolewski
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })
+@RunWith(SorcerTestRunner.class)
+@ProjectContext("sorcer-int-tests/arithmetic-tester")
 public class InvokerTest {
 	private final static Logger logger = Logger.getLogger(InvokerTest.class
 			.getName());
-
-	static {
-		ServiceExertion.debug = true;
-		URL.setURLStreamHandlerFactory(new SdbURLStreamHandlerFactory());
-		System.setProperty("java.util.logging.config.file", Sorcer.getHome()
-				+ "/configs/sorcer.logging");
-		System.setProperty("java.security.policy", Sorcer.getHome()
-				+ "/configs/policy.all");
-		System.setSecurityManager(new SecurityManager());
-		Sorcer.setCodeBase(new String[] { "ju-invoker-beans.jar" });
-	}
 
 	private ParModel pm; 
 	private Par<Double> x;

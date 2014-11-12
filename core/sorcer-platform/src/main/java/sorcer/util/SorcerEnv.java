@@ -171,7 +171,7 @@ public class SorcerEnv extends SOS {
 	 * @return a webster host name.
 	 */
 	public static String getWebsterInterface() {
-		String hn = System.getenv("IGRID_WEBSTER_INTERFACE");
+		String hn = System.getenv("SORCER_WEBSTER_INTERFACE");
 
 		if (hn != null && hn.length() > 0) {
 			return hn;

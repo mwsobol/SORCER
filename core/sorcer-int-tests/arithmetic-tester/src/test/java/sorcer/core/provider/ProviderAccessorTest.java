@@ -1,39 +1,30 @@
 package sorcer.core.provider;
 
-import static org.junit.Assert.assertNotNull;
-
-import java.util.logging.Logger;
-
 import org.junit.Test;
-
+import org.junit.runner.RunWith;
+import org.sorcer.test.ProjectContext;
+import org.sorcer.test.SorcerTestRunner;
 import sorcer.core.SorcerConstants;
 import sorcer.core.signature.NetSignature;
 import sorcer.service.Accessor;
 import sorcer.service.Service;
-import sorcer.util.ProviderAccessor;
-import sorcer.util.ProviderLocator;
-import sorcer.util.ProviderLookup;
-import sorcer.util.Sorcer;
-import sorcer.util.Stopwatch;
+import sorcer.util.*;
+
+import java.util.logging.Logger;
+
+import static org.junit.Assert.assertNotNull;
 
 /**
  * @author Mike Sobolewski
  */
 
+@RunWith(SorcerTestRunner.class)
+@ProjectContext("core/sorcer-int-tests/arithmetic-tester")
 public class ProviderAccessorTest implements SorcerConstants {
 
 	private final static Logger logger = Logger
 			.getLogger(ProviderAccessorTest.class.getName());
 
-	static {
-		System.setProperty("java.security.policy", Sorcer.getHome()
-				+ "/configs/policy.all");
-		System.setSecurityManager(new SecurityManager());
-		Sorcer.setCodeBase(new String[] { "arithmetic-beans.jar" });
-		System.setProperty("java.protocol.handler.pkgs", "sorcer.util.url|org.rioproject.url");
-		//System.setProperty("java.rmi.server.RMIClassLoaderSpi","org.rioproject.rmi.ResolvingLoader");
-	}
-	
 	@Test
 	public void providerAcessorTest() throws Exception {
 		long startTime = System.currentTimeMillis();

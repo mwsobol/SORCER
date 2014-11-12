@@ -1,23 +1,9 @@
 package sorcer.core.provider;
 
-import static org.junit.Assert.assertEquals;
-import static sorcer.co.operator.ent;
-import static sorcer.co.operator.inEnt;
-import static sorcer.eo.operator.alt;
-import static sorcer.eo.operator.block;
-import static sorcer.eo.operator.condition;
-import static sorcer.eo.operator.context;
-import static sorcer.eo.operator.exert;
-import static sorcer.eo.operator.opt;
-import static sorcer.eo.operator.result;
-import static sorcer.eo.operator.sig;
-import static sorcer.eo.operator.task;
-import static sorcer.eo.operator.value;
-
-import java.util.logging.Logger;
-
 import org.junit.Test;
-
+import org.junit.runner.RunWith;
+import org.sorcer.test.ProjectContext;
+import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.tester.provider.impl.AdderImpl;
 import sorcer.arithmetic.tester.provider.impl.AveragerImpl;
 import sorcer.arithmetic.tester.provider.impl.MultiplierImpl;
@@ -28,10 +14,19 @@ import sorcer.service.Block;
 import sorcer.service.Task;
 import sorcer.util.Sorcer;
 
+import java.util.logging.Logger;
+
+import static org.junit.Assert.assertEquals;
+import static sorcer.co.operator.ent;
+import static sorcer.co.operator.inEnt;
+import static sorcer.eo.operator.*;
+
 /**
  * @author Mike Sobolewski
  */
 @SuppressWarnings("unchecked")
+@RunWith(SorcerTestRunner.class)
+@ProjectContext("core/sorcer-int-tests/arithmetic-tester")
 public class ArithmeticNoNetBlockTest implements SorcerConstants {
 
 	private final static Logger logger = Logger

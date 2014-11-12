@@ -19,6 +19,21 @@
  */
 
 /*
+ * Start Sorcer only
+ */
+task bootSorcer(type: Exec) {
+    commandLine "ant", "-f", "${file("${sorcerDistHome}").path}/bin/sorcer-boot-arv-http.xml"
+}
+bootSorcer.onlyIf {
+    if(file("${sorcerDistHome}").exists()) {
+        def jps = "jps -lm".execute()
+        !jps.text.contains("sorcer-boot")
+    } else {
+        false
+    }
+}
+
+/*
  * Start Sorcer using Rio
  */
 task bootSorcerRio(type: Exec) {

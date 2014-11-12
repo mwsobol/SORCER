@@ -1,21 +1,10 @@
 package sorcer.core.provider;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static sorcer.co.operator.inEnt;
-import static sorcer.co.operator.input;
-import static sorcer.co.operator.outEnt;
-import static sorcer.eo.operator.*;
-
-import java.rmi.RemoteException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.logging.Logger;
-
 import org.junit.Ignore;
 import org.junit.Test;
-
+import org.junit.runner.RunWith;
+import org.sorcer.test.ProjectContext;
+import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.tester.provider.Adder;
 import sorcer.arithmetic.tester.provider.Averager;
 import sorcer.arithmetic.tester.provider.Multiplier;
@@ -32,64 +21,33 @@ import sorcer.core.exertion.NetTask;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.core.signature.NetSignature;
 import sorcer.core.signature.ServiceSignature;
-import sorcer.service.Accessor;
-import sorcer.service.Context;
-import sorcer.service.ContextException;
-import sorcer.service.Contexter;
-import sorcer.service.Evaluation;
-import sorcer.service.Exertion;
-import sorcer.service.ExertionException;
-import sorcer.service.Invocation;
-import sorcer.service.Job;
-import sorcer.service.Service;
-import sorcer.service.ServiceExertion;
-import sorcer.service.Signature;
-import sorcer.service.SignatureException;
-import sorcer.service.Strategy.Access;
-import sorcer.service.Strategy.Flow;
-import sorcer.service.Strategy.Monitor;
-import sorcer.service.Strategy.Provision;
-import sorcer.service.Strategy.Wait;
-import sorcer.service.Task;
+import sorcer.service.*;
+import sorcer.service.Strategy.*;
 import sorcer.util.ProviderAccessor;
 import sorcer.util.Sorcer;
 import sorcer.util.Stopwatch;
+
+import java.rmi.RemoteException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.logging.Logger;
+
+import static org.junit.Assert.*;
+import static sorcer.co.operator.*;
+import static sorcer.co.operator.input;
+import static sorcer.eo.operator.*;
+import static sorcer.eo.operator.value;
 
 /**
  * @author Mike Sobolewski
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })
+@RunWith(SorcerTestRunner.class)
+@ProjectContext("core/sorcer-int-tests/arithmetic-tester")
 public class ArithmeticNetTest implements SorcerConstants {
 
 	private final static Logger logger = Logger
 			.getLogger(ArithmeticNetTest.class.getName());
-
-	static {
-		ServiceExertion.debug = true;
-		System.setProperty("java.security.policy", Sorcer.getHome()
-				+ "/configs/policy.all");
-		System.setSecurityManager(new SecurityManager());
-		Sorcer.setCodeBase(new String[] { "ju-arithmetic-beans.jar",  "sorcer-dl.jar" });
-		System.out.println("CLASSPATH :" + System.getProperty("java.class.path"));
-		System.setProperty("java.protocol.handler.pkgs", "sorcer.util.url|org.rioproject.url");
-	}
-
-//	@BeforeClass
-//	public static void setUpOnce() throws IOException, InterruptedException {
-//		String antBuild = Sorcer.getHome()
-//				+ "/modules/sorcer/src/junit/sorcer/core/provider/bin/build.xml";
-//		File antFile = new File(antBuild);
-//		Project project = new Project();
-//		project.init();
-//		ProjectHelper.configureProject(project, antFile);
-//		project.executeTarget("spawn");
-//		Thread.sleep(2000);
-//	}
-	
-//	@AfterClass
-//	public static void cleanup() throws RemoteException, InterruptedException {
-//		Sorcer.destroyNode(null, Adder.class);
-//	}
 	
 	@Test
 	public void getPoviderTest() throws Exception {

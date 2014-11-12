@@ -1,99 +1,37 @@
 package sorcer.core.provider;
 
-import static org.junit.Assert.assertEquals;
-import static sorcer.co.operator.ent;
-import static sorcer.co.operator.inEnt;
-import static sorcer.eo.operator.alt;
-import static sorcer.eo.operator.block;
-import static sorcer.eo.operator.condition;
-import static sorcer.eo.operator.context;
-import static sorcer.eo.operator.exert;
-import static sorcer.eo.operator.in;
-import static sorcer.eo.operator.opt;
-import static sorcer.eo.operator.result;
-import static sorcer.eo.operator.sig;
-import static sorcer.eo.operator.task;
-import static sorcer.eo.operator.value;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.logging.Logger;
-
-import org.junit.BeforeClass;
 import org.junit.Test;
-
+import org.junit.runner.RunWith;
+import org.sorcer.test.ProjectContext;
+import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.tester.provider.Adder;
 import sorcer.arithmetic.tester.provider.Averager;
 import sorcer.arithmetic.tester.provider.Multiplier;
 import sorcer.arithmetic.tester.provider.Subtractor;
 import sorcer.core.SorcerConstants;
 import sorcer.service.Block;
-import sorcer.service.ContextException;
-import sorcer.service.ExertionException;
-import sorcer.service.ServiceExertion;
-import sorcer.service.SignatureException;
 import sorcer.service.Task;
 import sorcer.util.ProviderAccessor;
 import sorcer.util.ProviderLocator;
 import sorcer.util.ProviderLookup;
-import sorcer.util.Sorcer;
+
+import java.util.logging.Logger;
+
+import static org.junit.Assert.assertEquals;
+import static sorcer.co.operator.ent;
+import static sorcer.co.operator.inEnt;
+import static sorcer.eo.operator.*;
 
 /**
  * @author Mike Sobolewski
  */
 @SuppressWarnings("unchecked")
+@RunWith(SorcerTestRunner.class)
+@ProjectContext("core/sorcer-int-tests/arithmetic-tester")
 public class ArithmeticNetBlockTest implements SorcerConstants {
 
 	private final static Logger logger = Logger
-			.getLogger(ArithmeticNoNetTest.class.getName());
-	
-	static {
-		ServiceExertion.debug = true;
-		System.setProperty("java.security.policy", Sorcer.getHome()
-				+ "/configs/policy.all");
-		System.setSecurityManager(new SecurityManager());
-		Sorcer.setCodeBase(new String[] { "ju-arithmetic-beans.jar",  "sorcer-dl.jar" });
-		System.out.println("CLASSPATH :" + System.getProperty("java.class.path"));
-		System.setProperty("java.protocol.handler.pkgs", "sorcer.util.url|org.rioproject.url");
-	}
-			
-	@BeforeClass
-	public static void setUpOnce() throws IOException, InterruptedException,
-			ExertionException, ContextException, SignatureException {
-		
-		//Version with AntTask
-		String antBuild = Sorcer.getHome()
-				+ "/modules/sorcer/src/junit/sorcer/core/provider/bin/build.xml";
-		File antFile = new File(antBuild);
-		exert(task("spawn", antFile));
-		
-//		// SORCER ExecUtils
-//		Service service = Accessor.getService(sig(Multiplier.class));
-//		if (service == null) {
-//			CmdResult result = ExecUtils.execCommand("ant -f "
-//					+ Sorcer.getHome()
-//					+ "/modules/sorcer/src/junit/sorcer/core/provider/bin/boot-all.xml spawn");
-//			logger.info("out: " + result.getOut());
-//			logger.info("err: " + result.getErr());
-//			logger.info("status: " + result.getExitValue());
-//		}
-//
-//		// Version with Ant Project
-//		String antBuild = Sorcer.getHome()
-//				+ "/modules/sorcer/src/junit/sorcer/core/provider/bin/boot-all.xml";
-//		File antFile = new File(antBuild);
-//		Project project = new Project();
-//		project.init();
-//		ProjectHelper.configureProject(project, antFile);
-//		project.executeTarget("spawn");
-//		Thread.sleep(2000);
-	}
-
-//	@AfterClass
-//	public static void cleanup() throws RemoteException, InterruptedException,
-//			SignatureException {
-//		Sorcer.destroyNode(null, Adder.class);
-//	}
+			.getLogger(ArithmeticNetBlockTest.class.getName());
 	
 	@Test
 	public void getProxy() throws Exception {
