@@ -30,24 +30,21 @@ import sorcer.util.Table;
 /**
  * @author Mike Sobolewski
  */
+@SuppressWarnings({ "unchecked" })
 public class CollectionOperatorsTest {
 	private final static Logger logger = Logger.getLogger(CollectionOperatorsTest.class.getName());
 	
 	@Test
 	public void arrayOperatorTest() throws EvaluationException {
-		Double[] doubles = array(1.1, 2.1, 3.1);
-		//logger.info("length " + ((Double[])doubles).length);
-		assertArrayEquals(doubles, new Double[] { 1.1, 2.1, 3.1 }   );
-		
-		Object array = array(array(1.1, 2.1, 3.1),  4.1,  array(11.1, 12.1, 13.1));
-//		logger.info("array " + SorcerUtil.arrayToString(array));
-		
-		assertArrayEquals((Double[])((Object[])array)[0], array(1.1, 2.1, 3.1));
-		assertEquals(((Object[])array)[1], 4.1);
-		assertArrayEquals((Double[])((Object[])array)[2], array(11.1, 12.1, 13.1));
+        Double[] da = array(1.1, 2.1, 3.1);
+        assertArrayEquals(da, new Double[] { 1.1, 2.1, 3.1 } );
+
+        Object[] oa = array(array(1.1, 2.1, 3.1),  4.1,  array(11.1, 12.1, 13.1));
+        assertArrayEquals((Double[])oa[0], array(1.1, 2.1, 3.1));
+        assertEquals(oa[1], 4.1);
+        assertArrayEquals((Double[])oa[2], array(11.1, 12.1, 13.1));
 	}
-	
-	@SuppressWarnings({ "unchecked" })
+
 	@Test
 	public void listOperatorTest() throws EvaluationException {
 		List<Object> o_list = list(list(1.1, 2.1, 3.1),  4.1,  list(11.1, 12.1, 13.1));
@@ -59,8 +56,7 @@ public class CollectionOperatorsTest {
 		assertEquals(o_list.get(1), 4.1);
 		assertEquals(o_list.get(2), list(11.1, 12.1, 13.1));
 	}
-	
-	@SuppressWarnings("unchecked")
+
 	@Test
 	public void mapOperatorTest() throws EvaluationException {
 		Map<Object, Object> map1 = dictionary(ent("name", "Mike"), ent("height", 174.0));
@@ -98,8 +94,7 @@ public class CollectionOperatorsTest {
 		assertEquals(ent("height", 174), ent("height", 174));
 		assertTrue(set.contains(ent("height", 174)));
 	}
-	
-	@SuppressWarnings({ "unchecked" })
+
 	@Test
 	public void tableOperatorTest() throws EvaluationException {
 		Table table = table(
