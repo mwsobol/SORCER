@@ -69,7 +69,7 @@ task installer(dependsOn: ["distribution"]) {
 }
 
 def filter(project) {
-    def exclusions = ["sos-shell", "iGrid", "examples", "sorcer-int-tests"]
+    def exclusions = ["sos-shell", "examples", "sorcer-int-tests"]
     boolean include = true
     for(String exclude : exclusions) {
         if(project.contains(exclude))  {
