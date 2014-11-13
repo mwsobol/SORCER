@@ -26,7 +26,7 @@
 				
 	<target name="kernel" depends="log-dir">
 		<!--java jar="${lib}/sorcer-boot.jar" fork="yes"-->
-		<java classname="com.sun.jini.start.ServiceStarter" fork="yes">
+		<java classname="com.sun.jini.start.ServiceStarter" fork="yes" spawn="${spawn}">
             <classpath>
                 <pathelement location="${lib}/river/start-${river.version}.jar"/>
                 <pathelement location="${sorcer.lib}/sorcer-boot-${sorcer.version}.jar"/>
