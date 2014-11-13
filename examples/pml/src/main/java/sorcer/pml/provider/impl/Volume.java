@@ -22,6 +22,7 @@ import sorcer.service.ContextException;
 
 @SuppressWarnings("rawtypes")
 public class Volume implements Sphere, Cylinder, Serializable {
+	private static final long serialVersionUID = 1L;
 	private final static Logger logger = Logger.getLogger(Volume.class
 			.getName());
 	private static double radius = 0.0, height = 0.0;

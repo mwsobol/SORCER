@@ -268,8 +268,7 @@ public class InvokerTest {
 
 		CmdResult result = (CmdResult) invoke(pm, "volume");
 		// get from the result the volume of cylinder and assign to y parameter
-		if (result.getExitValue() != 0)
-			throw new RuntimeException();
+		assertTrue("EXPECTED '0' return value, GOT: "+result.getExitValue(), result.getExitValue() == 0);
 		Properties props = new Properties();
 		props.load(new StringReader(result.getOut()));
 		set(pm, "y", new Double(props.getProperty("cylinder/volume")));
