@@ -23,6 +23,7 @@ import org.rioproject.deploy.SystemRequirements;
 import org.rioproject.opstring.ServiceElement;
 import org.rioproject.resolver.ResolverException;
 import org.rioproject.system.capability.connectivity.TCPConnectivity;
+import org.rioproject.tools.webster.Webster;
 import sorcer.core.provider.ServiceProvider;
 import sorcer.core.signature.NetSignature;
 
