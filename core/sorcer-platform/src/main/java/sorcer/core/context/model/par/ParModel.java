@@ -59,7 +59,7 @@ import sorcer.service.modeling.Variability;
  */
 
 /**
- * The ParModel is a shared service context as a map of parameters (Pars),
+ * The ParModel is an active shared service context as a map of parameters (Pars),
  * parameter name and its argument <name, argument> is the definition of a
  * independent and dependent arguments. Arguments that dependent on other
  * arguments are subroutines (invokers), so that, each time the subroutine is

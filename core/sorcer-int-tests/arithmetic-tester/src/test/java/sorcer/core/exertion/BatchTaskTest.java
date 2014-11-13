@@ -32,7 +32,7 @@ import sorcer.util.Sorcer;
  */
 @SuppressWarnings("unchecked")
 @RunWith(SorcerTestRunner.class)
-@ProjectContext("sorcer-int-tests/arithmetic-tester")
+@ProjectContext("core/sorcer-int-tests/arithmetic-tester")
 public class BatchTaskTest {
 	private final static Logger logger = Logger.getLogger(BatchTaskTest.class
 			.getName());

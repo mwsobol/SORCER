@@ -43,7 +43,7 @@ import sorcer.util.Sorcer;
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
 @RunWith(SorcerTestRunner.class)
-@ProjectContext("sorcer-int-tests/arithmetic-tester")
+@ProjectContext("core/sorcer-int-tests/arithmetic-tester")
 public class ConditionalTaskTest {
 	private final static Logger logger = Logger
 			.getLogger(ConditionalTaskTest.class.getName());

@@ -533,7 +533,7 @@ public class ParModelTest {
 		put(pm, "sphere/radius", 20.0);
 		// attach the agent to the par-model and invoke
 		pm.add(new Agent("getSphereVolume",
-				"junit.sorcer.core.invoker.service.Volume", new URL(Sorcer
+				"junit.sorcer.arithmetic.tester.volume.Volume", new URL(Sorcer
 						.getWebsterUrl() + "/ju-volume-bean.jar")));
 
 		Object val =  get((Context)value(pm,"getSphereVolume"), "sphere/volume");

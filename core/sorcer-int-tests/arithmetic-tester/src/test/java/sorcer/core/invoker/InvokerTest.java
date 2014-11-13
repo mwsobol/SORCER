@@ -12,7 +12,7 @@ import sorcer.arithmetic.tester.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.tester.provider.impl.SubtractorImpl;
 import sorcer.core.context.model.par.Par;
 import sorcer.core.context.model.par.ParModel;
-import sorcer.core.invoker.service.Volume;
+import sorcer.arithmetic.tester.volume.Volume;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.service.*;
 import sorcer.util.Sorcer;
@@ -48,7 +48,7 @@ import static sorcer.po.operator.set;
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })
 @RunWith(SorcerTestRunner.class)
-@ProjectContext("sorcer-int-tests/arithmetic-tester")
+@ProjectContext("core/sorcer-int-tests/arithmetic-tester")
 public class InvokerTest {
 	private final static Logger logger = Logger.getLogger(InvokerTest.class
 			.getName());
@@ -252,9 +252,13 @@ public class InvokerTest {
 	public void cmdInvokerTest() throws SignatureException, ExertionException,
 			ContextException, IOException {
 		String riverVersion = System.getProperty("river.version");
-		String cp = Sorcer.getHome() + "/classes" + File.pathSeparator
-				+ Sorcer.getHome() + "/lib/river/lib/jsk-platform-" + riverVersion + ".jar"
-				+ File.pathSeparator + Sorcer.getHome() + "/lib/river/lib/jsk-lib-" + riverVersion + ".jar ";
+        String sorcerVersion = System.getProperty("sorcer.version");
+        String buildDir = System.getProperty("project.build.dir");
+
+        String cp = buildDir + "/libs/arithmetic-tester-" + sorcerVersion + ".jar" + File.pathSeparator
+        		+ Sorcer.getHome() + "/lib/sorcer/lib/sorcer-platform-" + sorcerVersion + ".jar"  + File.pathSeparator
+				+ Sorcer.getHome() + "/lib/river/jsk-platform-" + riverVersion + ".jar"  + File.pathSeparator
+				+ Sorcer.getHome() + "/lib/river/jsk-lib-" + riverVersion + ".jar ";
 		ServiceInvoker cmd = cmdInvoker("volume",
 				"java -cp  " + cp + Volume.class.getName() + " cylinder");
 
