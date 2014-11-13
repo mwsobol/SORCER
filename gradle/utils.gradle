@@ -27,7 +27,7 @@ task bootSorcer(type: Exec) {
 bootSorcer.onlyIf {
     if(file("${sorcerDistHome}").exists()) {
         def jps = "jps -lm".execute()
-        !jps.text.contains("sorcer-boot")
+        !jps.text.contains("boot-sorcer")
     } else {
         false
     }

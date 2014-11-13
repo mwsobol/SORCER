@@ -26,7 +26,7 @@ ext {
 }
 
 apply from: file('gradle/libraries.gradle')
-//apply from: file("gradle/dist.gradle")
+apply from: file("gradle/utils.gradle")
 apply from: file("gradle/testProperties.gradle")
 
 subprojects {
@@ -38,7 +38,7 @@ subprojects {
         if(project.name!="distribution") {
             apply plugin: "java"
             apply from: file("${rootProject.projectDir.path}/gradle/bootme.gradle")
-            apply from: file("${rootProject.projectDir.path}/gradle/utils.gradle")
+
 
             publishing {
                 publications {
