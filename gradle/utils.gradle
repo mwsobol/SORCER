@@ -22,7 +22,7 @@
  * Start Sorcer only
  */
 task bootSorcer(type: Exec) {
-    commandLine "ant", "-f", "${file("${sorcerDistHome}").path}/bin/sorcer-boot-arv-http.xml"
+    commandLine "ant", "-f", "${file("${sorcerDistHome}").path}/bin/sorcer-boot-arv-http.xml", "spawn"
 }
 bootSorcer.onlyIf {
     if(file("${sorcerDistHome}").exists()) {
