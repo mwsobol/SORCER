@@ -144,7 +144,11 @@ public class ServiceElementFactoryTest {
     }
 
     private String getConfigDir() {
-        return String.format("%s/src/test/resources/deploy/configs/", System.getProperty("user.dir"));
+        String baseDir = "";
+        if(System.getProperty("sorcer.home")==null) {
+            baseDir = "core/sorcer-platform/";
+        }
+        return String.format("%s%s/src/test/resources/deploy/configs/", baseDir, System.getProperty("user.dir"));
     }
 
     private void verifyServiceElement(ServiceElement serviceElement) {

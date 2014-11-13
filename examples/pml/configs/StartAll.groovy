@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package sorcer.arithmetic.tester
+package examples.pml
 
 import com.sun.jini.start.ServiceDescriptor
 import org.rioproject.config.Component
@@ -38,16 +38,14 @@ class StartAll {
         String configPath = "${projectBuildDir}/../configs"
 
         def descriptors = []
-        ["parmodel"].each { provider ->
-            def configArg = ["${configPath}/${provider}-prv.config"]
-            def codebase = "sorcer-dl-${sorcerVersion}.jar jsk-dl-${riverVersion}.jar"
+        def configArg = ["${configPath}/parmodel-prv.config"]
+        def codebase = "sorcer-dl-${sorcerVersion}.jar jsk-dl-${riverVersion}.jar"
 
-            descriptors << new SorcerServiceDescriptor(codebase,
-                                                       policy,
-                                                       "${buildLibPath}/pml-${sorcerVersion}-model.jar",
-                                                       "sorcer.core.provider.ServiceTasker",
-                                                       configArg as String[])
-        }
+        descriptors << new SorcerServiceDescriptor(codebase,
+                                                   policy,
+                                                   "${buildLibPath}/pml-${sorcerVersion}-model.jar",
+                                                   "sorcer.core.provider.ServiceTasker",
+                                                   configArg as String[])
         return descriptors as ServiceDescriptor[]
     }
 }

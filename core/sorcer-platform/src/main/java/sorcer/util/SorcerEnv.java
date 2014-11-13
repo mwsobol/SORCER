@@ -828,11 +828,13 @@ public class SorcerEnv extends SOS {
 	 */
 	public static String[] getLookupGroups() {
 		String[] ALL_GROUPS = null; // Jini ALL_GROUPS
-		String groups = props.getProperty(P_GROUPS);
-		if (groups == null || groups.length() == 0)
-			return ALL_GROUPS;
-		String[] providerGroups = toArray(groups);
-		return providerGroups;
+        String groups = null;
+        if(props!=null)
+            groups = props.getProperty(P_GROUPS);
+        if (groups == null || groups.length() == 0)
+            return ALL_GROUPS;
+        String[] providerGroups = toArray(groups);
+        return providerGroups;
 	}
 
 	public static String getLookupGroupsAsString() {

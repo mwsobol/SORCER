@@ -20,7 +20,6 @@ package sorcer.core.deploy;
 import net.jini.id.Uuid;
 import org.rioproject.resolver.Artifact;
 import sorcer.core.provider.ServiceTasker;
-import sorcer.service.Arg;
 import sorcer.service.Deployment;
 import sorcer.service.Strategy.Provision;
 import sorcer.util.Sorcer;
@@ -87,7 +86,7 @@ public class ServiceDeployment implements Serializable, Deployment {
         } else if(Artifact.isArtifact(config)) {
             this.config = config;
         } else if(!config.startsWith("/")) {
-            this.config = System.getenv("IGRID_HOME") + File.separatorChar + config;
+            this.config = System.getenv("SORCER_HOME") + File.separatorChar + config;
         } else {
             this.config = config;
         }
