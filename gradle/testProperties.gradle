@@ -15,7 +15,7 @@
  */
 
 subprojects {
-    if (project.name != "examples") {
+    if (project.name != "examples" && project.name != "distribution" && project.name != "sorcer-int-tests") {
         /*
          * Inject common test system properties for all 'test' tasks
          */
@@ -36,7 +36,6 @@ subprojects {
 					systemProperty "project.build.dir", project.buildDir
 					systemProperty "java.util.logging.config.file", "${sorcerDistHome}/configs/sorcer.logging"
                     environment("SORCER_HOME":"${sorcerDistHome}", "RIO_HOME": "${rioHome}")
-
                 }
             }
         }

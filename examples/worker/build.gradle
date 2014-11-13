@@ -44,7 +44,6 @@ artifacts {
 }
 
 install.dependsOn(['workerPrvDlJar', 'workerReqJar'])
-publish.dependsOn(install)
 build.dependsOn(install)
 
 dependencies { 

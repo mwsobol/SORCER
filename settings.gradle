@@ -52,4 +52,6 @@ include 'examples:eol'
 include 'examples:pml'
 include 'examples:worker'
 
+include 'distribution'
+
 
