@@ -1,4 +1,4 @@
-package sorcer.core.invoker.service;
+package sorcer.arithmetic.tester.volume;
 
 import java.rmi.RemoteException;
 

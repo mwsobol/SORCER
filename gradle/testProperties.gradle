@@ -31,6 +31,10 @@ subprojects {
                     systemProperty "java.rmi.server.RMIClassLoaderSpi","org.rioproject.rmi.ResolvingLoader"
                     systemProperty "sorcer.home", "${sorcerDistHome}"
                     systemProperty "java.util.logging.config.file", "${sorcerDistHome}/configs/sorcer.logging"
+					systemProperty "sorcer.version", "${sorcerVersion}"
+					systemProperty "river.version", "${riverVersion}"
+					systemProperty "project.build.dir", project.buildDir
+					systemProperty "java.util.logging.config.file", "${sorcerDistHome}/configs/sorcer.logging"
                     environment("SORCER_HOME":"${sorcerDistHome}", "RIO_HOME": "${rioHome}")
                 }
             }
