@@ -2,8 +2,10 @@ package sorcer.pml.modeling;
 
 import junit.framework.Assert;
 import net.jini.core.transaction.TransactionException;
+
 import org.junit.Before;
 import org.junit.Test;
+
 import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.provider.impl.SubtractorImpl;
@@ -32,18 +34,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
-import static sorcer.eo.operator.in;
-import static sorcer.eo.operator.pipe;
-import static sorcer.eo.operator.value;
-import static sorcer.po.operator.add;
-import static sorcer.po.operator.alt;
-import static sorcer.po.operator.asis;
 import static sorcer.po.operator.*;
-import static sorcer.po.operator.get;
-import static sorcer.po.operator.loop;
-import static sorcer.po.operator.opt;
-import static sorcer.po.operator.put;
-import static sorcer.po.operator.set;
 
 /**
  * @author Mike Sobolewski
@@ -265,9 +256,15 @@ public class Invokers {
 	@Test
 	public void cmdInvokerTest() throws SignatureException, ExertionException,
 			ContextException, IOException {
-		String cp = Sorcer.getHome() + "/classes" + File.pathSeparator
-				+ Sorcer.getHome() + "/lib/river/lib/jsk-platform.jar"
-				+ File.pathSeparator + Sorcer.getHome() + "/lib/river/lib/jsk-lib.jar ";
+		String riverVersion = System.getProperty("river.version");
+        String sorcerVersion = System.getProperty("sorcer.version");
+        String buildDir = System.getProperty("project.build.dir");
+
+        String cp = buildDir + "/libs/pml-" + sorcerVersion + "-bean.jar" + File.pathSeparator
+        		+ Sorcer.getHome() + "/lib/sorcer/lib/sorcer-platform-" + sorcerVersion + ".jar"  + File.pathSeparator
+				+ Sorcer.getHome() + "/lib/river/jsk-platform-" + riverVersion + ".jar"  + File.pathSeparator
+				+ Sorcer.getHome() + "/lib/river/jsk-lib-" + riverVersion + ".jar ";
+        
 		ServiceInvoker cmd = cmdInvoker("volume",
 				"java -cp  " + cp + Volume.class.getName() + " cylinder");
 

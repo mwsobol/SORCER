@@ -15,11 +15,14 @@ import java.rmi.RemoteException;
 import java.util.Scanner;
 import java.util.logging.Logger;
 
+import sorcer.arithmetic.tester.volume.impl.Cylinder;
+import sorcer.arithmetic.tester.volume.impl.Sphere;
 import sorcer.service.Context;
 import sorcer.service.ContextException;
 
 @SuppressWarnings("rawtypes")
 public class Volume implements Sphere, Cylinder, Serializable {
+	private static final long serialVersionUID = 1L;
 	private final static Logger logger = Logger.getLogger(Volume.class
 			.getName());
 	private static double radius = 0.0, height = 0.0;
