@@ -1,37 +1,35 @@
 package sorcer.core.provider.exertmonitor;
 
-import static org.junit.Assert.assertEquals;
-import static sorcer.co.operator.list;
-
-import java.io.File;
-import java.io.IOException;
-import java.rmi.RMISecurityManager;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Logger;
-
+import com.sleepycat.collections.StoredMap;
+import com.sleepycat.je.DatabaseException;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
+import org.junit.runner.RunWith;
+import org.sorcer.test.ProjectContext;
+import org.sorcer.test.SorcerTestRunner;
 import sorcer.core.SorcerConstants;
 import sorcer.core.provider.MonitorManagementSession;
-import sorcer.core.provider.exertmonitor.MonitorSession;
 import sorcer.util.GenericUtil;
 import sorcer.util.Sorcer;
 import sorcer.util.SorcerUtil;
 import sorcer.util.bdb.objects.UuidKey;
 
-import com.sleepycat.collections.StoredMap;
-import com.sleepycat.je.DatabaseException;
+import java.io.File;
+import java.io.IOException;
+import java.rmi.RMISecurityManager;
+import java.util.*;
+import java.util.logging.Logger;
+
+import static org.junit.Assert.assertEquals;
+import static sorcer.co.operator.list;
 
 /**
  * @author Mike Sobolewski
  */
 
+@RunWith(SorcerTestRunner.class)
+@ProjectContext("core/sorcer-int-tests/arithmetic-tester")
 public class SessionDatabaseTest implements SorcerConstants {
 
 	private final static Logger logger = Logger

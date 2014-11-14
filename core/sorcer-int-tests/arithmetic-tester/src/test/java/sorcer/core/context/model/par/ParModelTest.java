@@ -2,6 +2,9 @@ package sorcer.core.context.model.par;
 
 import groovy.lang.Closure;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.sorcer.test.ProjectContext;
+import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.tester.provider.impl.AdderImpl;
 import sorcer.arithmetic.tester.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.tester.provider.impl.SubtractorImpl;
@@ -10,7 +13,6 @@ import sorcer.core.invoker.ServiceInvoker;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.service.*;
 import sorcer.util.Sorcer;
-import sorcer.util.url.sos.SdbURLStreamHandlerFactory;
 
 import java.io.IOException;
 import java.net.URL;
@@ -37,21 +39,10 @@ import static sorcer.po.operator.set;
  * @author Mike Sobolewski
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })
+@RunWith(SorcerTestRunner.class)
+@ProjectContext("core/sorcer-int-tests/arithmetic-tester")
 public class ParModelTest {
 	private final static Logger logger = Logger.getLogger(ParModelTest.class.getName());
-
-	static {
-		ServiceExertion.debug = true;
-		URL.setURLStreamHandlerFactory(new SdbURLStreamHandlerFactory());
-		System.setProperty("java.util.logging.config.file",
-				Sorcer.getHome() + "/configs/sorcer.logging");
-		System.setProperty("java.security.policy", Sorcer.getHome()
-				+ "/configs/policy.all");
-		System.setSecurityManager(new SecurityManager());
-		Sorcer.setCodeBase(new String[] { "aritmeticInvokeModel-bean.jar" });
-		System.setProperty("java.protocol.handler.pkgs", "sorcer.util.url|org.rioproject.url");
-		//System.setProperty("java.rmi.server.RMIClassLoaderSpi","org.rioproject.rmi.ResolvingLoader");
-	}
 
 	@Test
 	public void adderParTest() throws EvaluationException, RemoteException,

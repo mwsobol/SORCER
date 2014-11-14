@@ -55,6 +55,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 		Object proxy = catalog.lookup(Adder.class);
 		if (proxy != null)
 			System.out.println("Averager: " + Arrays.toString(proxy.getClass().getInterfaces()));
+		assertNotNull(proxy);
 //		String[] pnames = catalog.getProviderList();
 //		logger.info("cataloger pnames: " + Arrays.toString(pnames));
 	}
@@ -269,7 +270,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 	
 	
 	@Test
-	public void averagerProviderTest() throws Exception {
+	public void averagerproxyProviderTest() throws Exception {
         System.out.println("========== averagerProviderTest ==========");
 		Task t5 = task(
 				"t5",
@@ -374,7 +375,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 	public void arithmeticEolExertleter() throws Exception {
         System.out.println("========== arithmeticEolExertleter ==========");
 		// get the current value of the exertlet
-		Task task = task("eval", sig("getValue", Evaluation.class, "Arithmetic Exertleter"));
+		Task task = task("eval", sig("getValue", Evaluation.class, prvName("Arithmetic Exertleter")));
 		logger.info("j1/t3/result/y: " + value(task, "j1/t3/result/y"));
 		assertEquals(value(task, "j1/t3/result/y"), 400.0);
 	
@@ -384,7 +385,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 		Context invokeContext = context("invoke");
 		link(invokeContext, "t4", multiplyContext);
 		link(invokeContext, "t5", addContext);
-		task = task("invoke", sig("invoke", Invocation.class, "Arithmetic Exertleter"), invokeContext);
+		task = task("invoke", sig("invoke", Invocation.class, prvName("Arithmetic Exertleter")), invokeContext);
 		logger.info("j1/t3/result/y: " + value(task, "j1/t3/result/y"));
 		assertEquals(value(task, "j1/t3/result/y"), 500.0);
 	
@@ -394,7 +395,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 		invokeContext = context("invoke");
 		link(invokeContext, "t4", multiplyContext);
 		link(invokeContext, "t5", addContext);
-		task = task("invoke", sig("invoke", Invocation.class, "Arithmetic Exertleter"), invokeContext);
+		task = task("invoke", sig("invoke", Invocation.class, prvName("Arithmetic Exertleter")), invokeContext);
 //		logger.info("j1/t3/result/y: " + value(task, "j1/t3/result/y"));
 		assertEquals(value(task, "j1/t3/result/y"), 1210.0);		
 				
@@ -404,7 +405,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 		invokeContext = context("invoke");
 		link(invokeContext, "t4", multiplyContext);
 		link(invokeContext, "t5", addContext);
-		task = task("invoke", sig("invoke", Invocation.class, "Arithmetic Exertleter"), invokeContext);
+		task = task("invoke", sig("invoke", Invocation.class, prvName("Arithmetic Exertleter")), invokeContext);
 //		logger.info("j1/t3/result/y: " + value(task, "j1/t3/result/y"));
 		assertEquals(value(task, "j1/t3/result/y"), 400.0);
 	}
@@ -522,7 +523,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 	@Test
 	public void contexterTest() throws Exception {
         System.out.println("========== contexterTest ==========");
-		Task cxtt = task("addContext", sig("getContext", Contexter.class, "Add Contexter"),
+		Task cxtt = task("addContext", sig("getContext", Contexter.class, prvName("Add Contexter")),
 				context("add", input("arg/x1"), input("arg/x2")));
 		 
 		Context result = context(exert(cxtt));
@@ -531,13 +532,13 @@ public class ArithmeticNetTest implements SorcerConstants {
 		assertEquals(get(result, "arg/x1"), 20.0);
 		assertEquals(get(result, "arg/x2"), 80.0);
 	
-		cxtt = task("appendContext", sig("appendContext", Contexter.class, "Add Contexter"),
+		cxtt = task("appendContext", sig("appendContext", Contexter.class, prvName("Add Contexter")),
 				context("add", inEnt("arg/x1", 200.0), inEnt("arg/x2", 800.0)));
 
 		result = context(exert(cxtt));
 //		logger.info("contexter context 2: " + result);
 
-		cxtt = task("addContext", sig("getContext", Contexter.class, "Add Contexter"),
+		cxtt = task("addContext", sig("getContext", Contexter.class, prvName("Add Contexter")),
 				context("add", input("arg/x1"), input("arg/x2")));
 
 		result = context(exert(cxtt));
@@ -547,7 +548,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 		assertEquals(get(result, "arg/x2"), 800.0);
 		
 		// reset the contexter
-		cxtt = task("appendContext", sig("appendContext", Contexter.class, "Add Contexter"),
+		cxtt = task("appendContext", sig("appendContext", Contexter.class, prvName("Add Contexter")),
 				context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0)));
 
 		result = context(exert(cxtt));
@@ -645,7 +646,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 		Job job = createProvisionedJob();
 		String did =  job.getDeploymentId();
 		logger.info("job deploy id: " + did);
-		assertEquals(did, "a65d7a4ccafe6c2cf7ff20e207ba7e8a");
+		assertEquals(did, "8ec89094533e199116f7d3a53b49ea7f");
 	}
 	
 	@Ignore
