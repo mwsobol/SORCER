@@ -1,35 +1,28 @@
 package sorcer.pml.modeling;
 
-import static org.junit.Assert.assertEquals;
-import static sorcer.co.operator.ent;
-import static sorcer.eo.operator.context;
-import static sorcer.eo.operator.exert;
-import static sorcer.eo.operator.get;
-import static sorcer.eo.operator.result;
-import static sorcer.eo.operator.sig;
-import static sorcer.eo.operator.task;
-import static sorcer.eo.operator.value;
-import static sorcer.po.operator.invoke;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.sorcer.test.ProjectContext;
+import org.sorcer.test.SorcerTestRunner;
+import sorcer.core.context.model.par.ParModel;
+import sorcer.pml.model.ParModeler;
+import sorcer.service.*;
+import sorcer.util.Sorcer;
 
 import java.rmi.RemoteException;
 import java.util.logging.Logger;
 
-import org.junit.Test;
-
-import sorcer.core.context.model.par.ParModel;
-import sorcer.pml.model.ParModeler;
-import sorcer.service.ContextException;
-import sorcer.service.ExertionException;
-import sorcer.service.Invocation;
-import sorcer.service.ServiceExertion;
-import sorcer.service.SignatureException;
-import sorcer.service.Task;
-import sorcer.util.Sorcer;
+import static org.junit.Assert.assertEquals;
+import static sorcer.co.operator.ent;
+import static sorcer.eo.operator.*;
+import static sorcer.po.operator.invoke;
 
 /**
  * @author Mike Sobolewski
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })
+@RunWith(SorcerTestRunner.class)
+@ProjectContext("examples/eol")
 public class ParModelServices {
 	private final static Logger logger = Logger.getLogger(ParModelServices.class
 			.getName());
@@ -70,7 +63,7 @@ public class ParModelServices {
 	public void parNetModelServiceTest() throws RemoteException, ContextException, 
 			ExertionException, SignatureException {
 		// the provider in ex6/bin parmodel-prv-run.xml
-		Task pmt = task(sig("invoke", Invocation.class, "ParModel Service"), 
+		Task pmt = task(sig("invoke", Invocation.class, prvName("ParModel Service")),
 				context(ent("par", "expr"), result("invoke/result")));
 		
 //		logger.info("result: " + value(pmt));
