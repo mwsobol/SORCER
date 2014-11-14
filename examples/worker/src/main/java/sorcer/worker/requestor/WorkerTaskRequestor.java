@@ -13,6 +13,10 @@ import sorcer.util.Sorcer;
 import sorcer.util.SorcerEnv;
 import sorcer.worker.provider.Worker;
 
+/**
+ * @author Mike Sobolewski
+ *
+ */
 @SuppressWarnings("rawtypes")
 public class WorkerTaskRequestor {
 

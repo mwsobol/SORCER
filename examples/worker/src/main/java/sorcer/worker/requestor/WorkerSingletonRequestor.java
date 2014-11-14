@@ -16,6 +16,10 @@ import sorcer.util.Log;
 import sorcer.util.Sorcer;
 import sorcer.worker.provider.Worker;
 
+/**
+ * @author Mike Sobolewski
+ *
+ */
 public class WorkerSingletonRequestor {
 
 	private static Logger logger = Log.getTestLog();

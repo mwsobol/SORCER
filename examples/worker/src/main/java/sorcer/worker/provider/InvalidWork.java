@@ -1,5 +1,9 @@
 package sorcer.worker.provider;
 
+/**
+ * @author Mike Sobolewski
+ *
+ */
 public class InvalidWork extends Exception {
 	
 	private static final long serialVersionUID = 1L;
