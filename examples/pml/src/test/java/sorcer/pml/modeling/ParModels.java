@@ -16,9 +16,7 @@ import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.pml.provider.impl.Volume;
 import sorcer.service.*;
 import sorcer.util.Sorcer;
-import sorcer.util.url.sos.SdbURLStreamHandlerFactory;
 
-import java.io.IOException;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.concurrent.Callable;
@@ -47,19 +45,7 @@ import static sorcer.po.operator.target;
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class ParModels {
-	private final static Logger logger = Logger.getLogger(ParModels.class
-			.getName());
-
-	static {
-		ServiceExertion.debug = true;
-		URL.setURLStreamHandlerFactory(new SdbURLStreamHandlerFactory());
-		System.setProperty("java.util.logging.config.file",
-				Sorcer.getHome() + "/configs/sorcer.logging");
-		System.setProperty("java.security.policy", Sorcer.getHome()
-				+ "/configs/policy.all");
-		System.setSecurityManager(new SecurityManager());
-		Sorcer.setCodeBase(new String[] { "aritmeticInvokeModel-bean.jar" });
-	}
+	private final static Logger logger = Logger.getLogger(ParModels.class.getName());
 
 	private ParModel pm; 
 	private Par<Double> x;

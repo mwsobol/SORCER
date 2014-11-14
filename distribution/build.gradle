@@ -38,6 +38,7 @@ dependencies {
     ["blitz", "blitz-dl", "blitzui"].each { blitz ->
         distribution "org.dancres:${blitz}:$blitzVersion"
     }
+    distribution "org.rioproject:distribution:${rioVersion}"
 }
 
 ext {
@@ -139,7 +140,17 @@ def filterDeps(project, prefix) {
     }
 }
 
-task distribution(dependsOn: [gatherDeps]) {
+task distribution(dependsOn: [":sorcer-boot:install",
+                              ":sorcer-lib:install",
+                              ":sorcer-ui:install",
+                              ":sorcer-test:install",
+                              ":sos-cataloger:install",
+                              ":sos-db-prv:install",
+                              ":sos-exertmonitor:install",
+                              ":sos-logger:install",
+                              ":ssb:install",
+                              ":webster:install",
+                              gatherDeps]) {
     description 'Creates a Sorcer distribution'
     doLast {
         File sorcerLibDir = file("$distDir-${version}/lib/sorcer/lib")

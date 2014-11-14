@@ -114,7 +114,7 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
 	public Object getObject(Uuid uuid) {
 		StoredMap<UuidKey, UuidObject> uuidObjectMap = views.getUuidObjectMap();
 		UuidObject uuidObj = uuidObjectMap.get(new UuidKey(uuid));
-		return uuidObj.getObject();
+		return uuidObj==null?null:uuidObj.getObject();
 	}
 	
 	public Context getContext(Uuid uuid) {

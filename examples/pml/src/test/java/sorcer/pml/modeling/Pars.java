@@ -4,8 +4,6 @@ import org.junit.Test;
 import sorcer.core.context.model.par.Par;
 import sorcer.core.context.model.par.ParModel;
 import sorcer.service.Context;
-import sorcer.util.Sorcer;
-import sorcer.util.url.sos.SdbURLStreamHandlerFactory;
 
 import java.net.URL;
 import java.util.logging.Logger;
@@ -27,23 +25,10 @@ import static sorcer.po.operator.set;
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class Pars {
-	private final static Logger logger = Logger.getLogger(Pars.class
-			.getName());
-
-	static {
-		String sorcerVersion = "5.0.0";
-		URL.setURLStreamHandlerFactory(new SdbURLStreamHandlerFactory());
-		System.setProperty("java.util.logging.config.file",
-				Sorcer.getHome() + "/configs/sorcer.logging");
-		System.setProperty("java.security.policy", Sorcer.getHome()
-				+ "/policy/policy.all");
-		System.setSecurityManager(new SecurityManager());
-		Sorcer.setCodeBase(new String[] { "pml-sorcer-" + sorcerVersion + "-prv.jar" });
-	}
+	private final static Logger logger = Logger.getLogger(Pars.class.getName());
 
 	@Test
 	public void runtimeScope() throws Exception {
-		
 		// a par is a variable (entry) evaluated in its own scope (context)
 		Par y = par("y",
 				invoker("(x1 * x2) - (x3 + x4)", pars("x1", "x2", "x3", "x4")));
@@ -51,7 +36,6 @@ public class Pars {
 				ent("x3", 20.0), ent("x4", 80.0));
 		// logger.info("y value: " + val);
 		assertEquals(val, 400.0);
-
 	}
 	
 	
