@@ -1,33 +1,26 @@
 package sorcer.pml.modeling;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static sorcer.co.operator.ent;
-import static sorcer.co.operator.persistent;
-import static sorcer.co.operator.url;
-import static sorcer.eo.operator.asis;
-import static sorcer.eo.operator.context;
-import static sorcer.eo.operator.value;
-import static sorcer.po.operator.add;
-import static sorcer.po.operator.dbPar;
-import static sorcer.po.operator.invoker;
-import static sorcer.po.operator.par;
-import static sorcer.po.operator.parFi;
-import static sorcer.po.operator.parModel;
-import static sorcer.po.operator.pars;
-import static sorcer.po.operator.set;
-
-import java.net.URL;
-import java.util.logging.Logger;
-
 import org.junit.Test;
-
 import sorcer.core.context.model.par.Par;
 import sorcer.core.context.model.par.ParModel;
 import sorcer.service.Context;
 import sorcer.util.Sorcer;
 import sorcer.util.url.sos.SdbURLStreamHandlerFactory;
+
+import java.net.URL;
+import java.util.logging.Logger;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static sorcer.co.operator.*;
+import static sorcer.co.operator.persistent;
+import static sorcer.co.operator.url;
+import static sorcer.eo.operator.asis;
+import static sorcer.eo.operator.*;
+import static sorcer.eo.operator.value;
+import static sorcer.po.operator.add;
+import static sorcer.po.operator.*;
+import static sorcer.po.operator.set;
 
 /**
  * @author Mike Sobolewski
@@ -86,7 +79,7 @@ public class Pars {
 		Par<Double> dbp1 = persistent(par("design/in", 25.0));
 		Par<String> dbp2 = dbPar("url/sobol", "http://sorcersoft.org/sobol");
 
-		assertFalse(asis(dbp1) instanceof URL);
+		assertEquals(asis(dbp1), 25.0);
 		assertTrue(asis(dbp2) instanceof URL);
 			
 		URL dbp1Url = url(dbp1);
@@ -107,6 +100,7 @@ public class Pars {
 		
 		assertTrue(asis(dbp1) instanceof URL);
 		assertTrue(asis(dbp2) instanceof URL);
+
 	}
 
 	
@@ -124,16 +118,13 @@ public class Pars {
 				ent("y", 20.0), ent("init/value", 49.0));
 		
 		set(dbp, 50.0);
-		
+
 		assertTrue(value(multi, cxt, parFi("shared/value")).equals(50.0));
-		logger.info("shared/value: " + value(multi, cxt, parFi("shared/value")));
-		
+
 		assertTrue(value(multi, cxt, parFi("init/value")).equals(49.0));
-		logger.info("init/value: " + value(multi, cxt, parFi("init/value")));
-			
+
 		assertTrue(value(multi, cxt, parFi("invoke")).equals(30.0));
-		logger.info("invoke: " + value(multi, cxt, parFi("invoke")));
-		
+
 	}
 	
 	@Test

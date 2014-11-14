@@ -2997,7 +2997,7 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 	 */
 	@Override
 	public Object putDbValue(String path, Object value) throws ContextException, RemoteException {
-		Par par = new Par(path, value);
+		Par par = new Par(path, value == null ? Context.none : value);
 		par.setPersistent(true);
 		return putValue(path, par);
 	}
@@ -3008,7 +3008,7 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 	@Override
 	public Object putDbValue(String path, Object value, URL datastoreUrl)
 			throws ContextException, RemoteException {
-		Par par = new Par(path, value);
+		Par par = new Par(path, value == null ? Context.none : value);
 		par.setPersistent(true);
 		par.setDbURL(datastoreUrl);
 		return putValue(path, par);
@@ -3021,13 +3021,7 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 	public URL getURL(String path) throws ContextException {
 		Object obj = asis(path);
 		if (obj instanceof Par) {
-			try {
-				obj = ((Par)obj).asis();
-			} catch (RemoteException e) {
-				throw new ContextException(e);
-			}
-			if (obj instanceof URL)
-				return (URL)obj;
+			return ((Par)obj).getURL();
 		}
 		return null;
 	}

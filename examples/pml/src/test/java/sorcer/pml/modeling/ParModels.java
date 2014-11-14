@@ -1,61 +1,9 @@
 package sorcer.pml.modeling;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static sorcer.co.operator.dbEnt;
-import static sorcer.co.operator.dbInEnt;
-import static sorcer.co.operator.dbOutEnt;
-import static sorcer.co.operator.ent;
-import static sorcer.co.operator.inEnt;
-import static sorcer.co.operator.outEnt;
-import static sorcer.co.operator.persistent;
-import static sorcer.eo.operator.asis;
-import static sorcer.eo.operator.condition;
-import static sorcer.eo.operator.context;
-import static sorcer.eo.operator.cxt;
-import static sorcer.eo.operator.exert;
-import static sorcer.eo.operator.get;
-import static sorcer.eo.operator.in;
-import static sorcer.eo.operator.job;
-import static sorcer.eo.operator.result;
-import static sorcer.eo.operator.serviceContext;
-import static sorcer.eo.operator.out;
-import static sorcer.eo.operator.pipe;
-import static sorcer.eo.operator.sig;
-import static sorcer.eo.operator.store;
-import static sorcer.eo.operator.task;
-import static sorcer.eo.operator.taskContext;
-import static sorcer.eo.operator.url;
-import static sorcer.eo.operator.value;
-import static sorcer.po.operator.add;
-import static sorcer.po.operator.agent;
-import static sorcer.po.operator.callableInvoker;
-import static sorcer.po.operator.dbPar;
-import static sorcer.po.operator.invoke;
-import static sorcer.po.operator.invoker;
-import static sorcer.po.operator.loop;
-import static sorcer.po.operator.methodInvoker;
-import static sorcer.po.operator.par;
-import static sorcer.po.operator.parModel;
-import static sorcer.po.operator.parModel;
-import static sorcer.po.operator.pars;
-import static sorcer.po.operator.put;
-import static sorcer.po.operator.target;
-import static sorcer.po.operator.runnableInvoker;
-import static sorcer.po.operator.set;
 import groovy.lang.Closure;
-
-import java.io.IOException;
-import java.net.URL;
-import java.rmi.RemoteException;
-import java.util.concurrent.Callable;
-import java.util.logging.Logger;
-
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-
 import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.provider.impl.SubtractorImpl;
@@ -66,18 +14,33 @@ import sorcer.core.context.model.par.ParModel;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.pml.provider.impl.Volume;
-import sorcer.service.Condition;
-import sorcer.service.Context;
-import sorcer.service.ContextException;
-import sorcer.service.EvaluationException;
-import sorcer.service.ExertionException;
-import sorcer.service.Job;
-import sorcer.service.ServiceExertion;
-import sorcer.service.SetterException;
-import sorcer.service.SignatureException;
-import sorcer.service.Task;
+import sorcer.service.*;
 import sorcer.util.Sorcer;
 import sorcer.util.url.sos.SdbURLStreamHandlerFactory;
+
+import java.io.IOException;
+import java.net.URL;
+import java.rmi.RemoteException;
+import java.util.concurrent.Callable;
+import java.util.logging.Logger;
+
+import static org.junit.Assert.*;
+import static sorcer.co.operator.*;
+import static sorcer.co.operator.persistent;
+import static sorcer.eo.operator.asis;
+import static sorcer.eo.operator.*;
+import static sorcer.eo.operator.get;
+import static sorcer.eo.operator.in;
+import static sorcer.eo.operator.pipe;
+import static sorcer.eo.operator.store;
+import static sorcer.eo.operator.url;
+import static sorcer.eo.operator.value;
+import static sorcer.po.operator.add;
+import static sorcer.po.operator.*;
+import static sorcer.po.operator.loop;
+import static sorcer.po.operator.put;
+import static sorcer.po.operator.set;
+import static sorcer.po.operator.target;
 
 /**
  * @author Mike Sobolewski
@@ -338,14 +301,15 @@ public class ParModels {
 		Context c4 = new ServiceContext("multiply");
 		c4.putDbValue("arg/x1", 10.0);
 		c4.putValue("arg/x2", 50.0);
-		c4.putDbValue("result/y", Context.none);
-		
+		c4.putDbValue("result/y", null);
+
+		value(c4, "arg/x1");
 		assertEquals(value(c4, "arg/x1"), 10.0);
 		assertEquals(value(c4, "arg/x2"), 50.0);
 		
 		assertTrue(asis(c4, "arg/x1") instanceof Par);
 		assertFalse(asis(c4, "arg/x2") instanceof Par);
-		
+
 		logger.info("arg/x1 URL: " + url(c4, "arg/x1"));
 		assertTrue(url(c4, "arg/x1") instanceof URL);
 		assertFalse(url(c4, "arg/x2") instanceof URL);
@@ -394,14 +358,14 @@ public class ParModels {
 	}
 	
 	@Test
-	public void persistableParsTest() throws SignatureException, ExertionException, ContextException, IOException {	
+	public void persistableParsTest() throws Exception {
 		// persistable just indicates that parameter is set given value that can be persist,
 		// for example when value(par) is invoked
 		Par dbp1 = persistent(par("design/in", 25.0));
 		Par dbp2 = dbPar("url", "myUrl1");
 
 		assertFalse(asis(dbp1) instanceof URL);
-		assertFalse(asis(dbp2) instanceof URL);
+		assertTrue(asis(dbp2) instanceof URL);
 		
 		assertEquals(value(dbp1), 25.0);
 		assertEquals(value(dbp2), "myUrl1");
@@ -418,30 +382,29 @@ public class ParModels {
 	}
 	
 	@Test
-	public void persistableMappableParsTest() throws SignatureException, ExertionException, ContextException, IOException {
+	public void persistableMappableParsTest() throws Exception {
+
 		Context cxt = context(ent("url", "myUrl"), ent("design/in", 25.0));
 
 		// persistent par
 		Par dbIn = persistent(par("dbIn", "design/in", cxt));
 		assertEquals(value(dbIn), 25.0);  	// is persisted
-		logger.info("value dbIn asis design/in 1: " + dbIn.getMappable().asis("design/in"));
-
-		assertTrue(asis(cxt,"design/in") instanceof Par);
-		assertEquals(value((Par)asis(cxt, "design/in")), 25.0);
+		assertEquals(dbIn.asis(), "design/in");
+		assertEquals(value(asis(cxt, "design/in")), 25.0);
 		assertEquals(value(cxt, "design/in"), 25.0);
 
 		set(dbIn, 30.0); 	// is persisted
-		
-//		logger.info("value dbIn asis: " + dbIn.asis());
-//		logger.info("value dbIn asis design/in 2: " + dbIn.getMappable().asis("design/in"));
-
-		logger.info("value dbIn: " + value(dbIn));
 		assertEquals(value(dbIn), 30.0);
-		
+
+		// associated context is updated accordingly
+		assertEquals(value(cxt, "design/in"), 30.0);
+		assertTrue(asis(cxt, "design/in") instanceof Par);
+		assertTrue(asis((Par)asis(cxt, "design/in")) instanceof URL);
+
 		// not persistent par
 		Par up = par("up", "url", cxt);
 		assertEquals(value(up), "myUrl");
-		
+
 		set(up, "newUrl");
 		assertEquals(value(up), "newUrl");
 	}

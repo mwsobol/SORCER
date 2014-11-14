@@ -16,6 +16,14 @@
  */
 package sorcer.core.context.model.par;
 
+import sorcer.co.tuple.Entry;
+import sorcer.core.SorcerConstants;
+import sorcer.core.context.ApplicationDescription;
+import sorcer.core.context.ServiceContext;
+import sorcer.service.*;
+import sorcer.service.modeling.Variability;
+import sorcer.util.url.sos.SdbUtil;
+
 import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -26,31 +34,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
-
-import sorcer.co.tuple.Entry;
-import sorcer.core.SorcerConstants;
-import sorcer.core.context.ApplicationDescription;
-import sorcer.core.context.ServiceContext;
-import sorcer.service.Arg;
-import sorcer.service.ArgException;
-import sorcer.service.ArgSet;
-import sorcer.service.Condition;
-import sorcer.service.Context;
-import sorcer.service.ContextException;
-import sorcer.service.Evaluation;
-import sorcer.service.EvaluationException;
-import sorcer.service.Exertion;
-import sorcer.service.FidelityInfo;
-import sorcer.service.Identifiable;
-import sorcer.service.Invocation;
-import sorcer.service.InvocationException;
-import sorcer.service.Mappable;
-import sorcer.service.Reactive;
-import sorcer.service.Scopable;
-import sorcer.service.Setter;
-import sorcer.service.SetterException;
-import sorcer.service.modeling.Variability;
-import sorcer.util.url.sos.SdbUtil;
 
 /**
  * In service-based modeling, a parameter (for short a par) is a special kind of
@@ -75,9 +58,7 @@ public class Par<T> extends Entry<T> implements Variability<T>, Arg, Mappable<T>
 	protected T value;
 
 	protected Context<T> scope;
-	
-	boolean persistent = false;
-				
+
 	// data store URL for this par
 	private URL dbURL;
 
@@ -111,12 +92,12 @@ public class Par<T> extends Entry<T> implements Variability<T>, Arg, Mappable<T>
 			if (fidelities == null)
 				fidelities = new HashMap<String, Object>();
 			for (Entry e : (ParFidelity)argument) {
-				fidelities.put(e.getName(), e.asis());
+				fidelities.put(e.getName(), e);
 			}
 			
 			Entry first = ((ParFidelity)argument).get(0);
 			selectedFidelity = first.getName();
-			value = (T)first.getValue();
+			value = (T)first;
 		} else {
 			value = argument;
 		}
@@ -145,26 +126,26 @@ public class Par<T> extends Entry<T> implements Variability<T>, Arg, Mappable<T>
 	public String getName() {
 		return name;
 	}
-	
-	public void setValue(Object value) throws SetterException, RemoteException {		
-		if (persistent) {
+
+	public void setValue(Object value) throws SetterException, RemoteException {
+		if (isPersistent && mappable == null) {
 			try {
 				if (SdbUtil.isSosURL(this.value)) {
 					SdbUtil.update((URL)this.value, value);
-				} else {
+				} else  {
 					this.value = (T)SdbUtil.store(value);
 				}
 			} catch (Exception e) {
 				throw new SetterException(e);
-			} 
+			}
 			return;
 		}
-		if (mappable != null) {
+		if (mappable != null && this.value instanceof String ) {
 			try {
 				Object val = mappable.asis((String)this.value);
 				if (val instanceof Par) {
 					((Par)val).setValue(value);
-				} else if (persistent) {
+				} else if (isPersistent) {
 					if (SdbUtil.isSosURL(val)) {
 						SdbUtil.update((URL)val, value);
 					} else {
@@ -175,14 +156,14 @@ public class Par<T> extends Entry<T> implements Variability<T>, Arg, Mappable<T>
 							((ServiceContext)mappable).put((String)this.value, p);
 						else
 							mappable.putValue((String)this.value, p);
-					} 
+					}
 				} else {
 					mappable.putValue((String)this.value, value);
 				}
 			} catch (Exception e) {
 				throw new SetterException(e);
 			}
-		} 
+		}
 		else
 			this.value = (T)value;
 	}
@@ -205,13 +186,18 @@ public class Par<T> extends Entry<T> implements Variability<T>, Arg, Mappable<T>
 		try {
 			substitute(entries);
 			if (selectedFidelity != null) {
-				value = (T) fidelities.get(selectedFidelity);
-				if (value == null || value == Context.none) {
-					value = scope.asis(selectedFidelity);
+				Object obj = fidelities.get(selectedFidelity);
+				if (!isFidelityValid(obj)) {
+					obj = scope.asis(selectedFidelity);
 				}
-			} 
-			if (mappable != null) {
-				val = (T) mappable.getValue((String) value);
+				value = (T)obj;
+			}
+			if (mappable != null && value instanceof String) {
+				Object obj = mappable.asis((String) value);
+				if (obj instanceof Par && ((Par)obj).isPersistent())
+					return (T)((Par)obj).getValue();
+				else
+					val = (T) mappable.getValue((String) value);
 			} else if (value == null && scope != null) {
 				val = (T) ((ServiceContext<T>) scope).get(name);
 			} else {
@@ -222,9 +208,17 @@ public class Par<T> extends Entry<T> implements Variability<T>, Arg, Mappable<T>
 					logger.warning("undefined par: " + val);
 					return null;
 				}
-
+				// direct scope
 				if (val instanceof Scopable && ((Scopable)val).getScope() != null) {
 					((Context)((Scopable)val).getScope()).append(scope);
+				}
+
+				// indirect scope for enty values
+				if (val instanceof Entry) {
+					Object ev = ((Entry)val).asis();
+					if (ev instanceof Scopable && ((Scopable)ev).getScope() != null) {
+						((Context)((Scopable)ev).getScope()).append(scope);
+					}
 				}
 
 				if (val instanceof Exertion) {
@@ -243,21 +237,22 @@ public class Par<T> extends Entry<T> implements Variability<T>, Arg, Mappable<T>
 				val = ((Evaluation<T>) val).getValue(entries);
 			}
 
-			if (persistent) {
-				if (SdbUtil.isSosURL(val))
+			if (isPersistent) {
+				if (SdbUtil.isSosURL(val)) {
 					val = (T) ((URL) val).getContent();
-				else {
-					if (mappable != null) {
-						URL url = SdbUtil.store(val);
-						Par p = new Par((String)this.value, url);
+				} else {
+					URL url = SdbUtil.store(val);
+					Par p = null;
+					if (mappable != null && this.value instanceof String
+							&& mappable.asis((String) this.value) != null) {
+						p = new Par((String) this.value, url);
 						p.setPersistent(true);
-						if (mappable instanceof ServiceContext)
-							((ServiceContext)mappable).put((String)this.value, p);
-						else
-							mappable.putValue((String)this.value, p);
-					}
-					else {
-						value = (T) SdbUtil.store(val);
+						mappable.putValue((String) this.value, p);
+					} else if (this.value instanceof Identifiable) {
+						p = new Par((String) ((Identifiable) this.value).getName(), url);
+						p.setPersistent(true);
+					} else {
+						this.value = (T)url;
 					}
 				}
 			}
@@ -285,12 +280,8 @@ public class Par<T> extends Entry<T> implements Variability<T>, Arg, Mappable<T>
 							scope.append(((Par<T>) p).getScope());
 
 					}
-				} else if (p instanceof FidelityInfo) {
-						selectedFidelity = ((FidelityInfo) p).getName();
-						value = (T) fidelities.get(selectedFidelity);
-						if (value == null || value == Context.none) {
-							value = (T)scope.asis(selectedFidelity);
-					}
+				} else if (p instanceof FidelityInfo && fidelities != null) {
+					selectedFidelity = p.getName();
 				} else if (p instanceof Context) {
 					if (scope == null)
 						scope = (Context) p;
@@ -298,12 +289,28 @@ public class Par<T> extends Entry<T> implements Variability<T>, Arg, Mappable<T>
 						scope.append((Context) p);
 				}
 			} catch (ContextException e) {
+				e.printStackTrace();
 				throw new SetterException(e);
 			}
 		}
 		return this;
 	}
-	
+
+	private boolean isFidelityValid(Object fidelity) throws EvaluationException {
+		if (fidelity == null || fidelity == Context.none)
+			return false;
+		if (fidelity instanceof Entry) {
+			Object obj = null;
+			try {
+				obj = ((Entry)fidelity).asis();
+			} catch (RemoteException e) {
+				throw new EvaluationException(e);
+			}
+			if (obj == null || obj == Context.none) return false;
+		}
+		 return true;
+	}
+
 	public Context getScope() {
 		return scope;
 	}
@@ -444,7 +451,7 @@ public class Par<T> extends Entry<T> implements Variability<T>, Arg, Mappable<T>
 	}
 
 	public URL getURL() throws ContextException {
-		if (persistent) {
+		if (isPersistent) {
 			if (mappable != null)
 				return (URL)mappable.asis((String)value);
 			else
@@ -462,11 +469,11 @@ public class Par<T> extends Entry<T> implements Variability<T>, Arg, Mappable<T>
 	 */
 	@Override
 	public boolean isPersistent() {
-		return persistent;
+		return isPersistent;
 	}
 
 	public void setPersistent(boolean state) {
-		persistent = state;
+		isPersistent = state;
 	}
 	
 	public Mappable getMappable() {
