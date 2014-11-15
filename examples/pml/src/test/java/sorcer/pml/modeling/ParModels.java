@@ -24,21 +24,8 @@ import java.util.logging.Logger;
 
 import static org.junit.Assert.*;
 import static sorcer.co.operator.*;
-import static sorcer.co.operator.persistent;
-import static sorcer.eo.operator.asis;
 import static sorcer.eo.operator.*;
-import static sorcer.eo.operator.get;
-import static sorcer.eo.operator.in;
-import static sorcer.eo.operator.pipe;
-import static sorcer.eo.operator.store;
-import static sorcer.eo.operator.url;
-import static sorcer.eo.operator.value;
-import static sorcer.po.operator.add;
 import static sorcer.po.operator.*;
-import static sorcer.po.operator.loop;
-import static sorcer.po.operator.put;
-import static sorcer.po.operator.set;
-import static sorcer.po.operator.target;
 
 /**
  * @author Mike Sobolewski
@@ -360,8 +347,8 @@ public class ParModels {
 		assertTrue(asis(dbp2) instanceof URL);
 
 		// store par args in the data store
-		URL url1 = store(par("design/in", 30.0));
-		URL url2 = store(par("url", "myUrl2"));
+		URL url1 = url(par("design/in", 30.0));
+		URL url2 = url(par("url", "myUrl2"));
 		
 		assertEquals(value(url1), 30.0);
 		assertEquals(value(url2), "myUrl2");

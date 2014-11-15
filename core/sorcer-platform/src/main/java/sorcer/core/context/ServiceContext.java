@@ -157,6 +157,9 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 
 	protected String currentPrefix;
 
+	// dependency management for this Context
+	protected List<Evaluation> dependers = new ArrayList<Evaluation>();
+
 	/**
 	 * For persistence layers to differentiate with saved context already
 	 * associated to task or not.
@@ -2850,17 +2853,31 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 
 	public T getValue(String path, Arg... entries)
 			throws ContextException {
+		// first managed dependencies
+		String currentPath = path;
+		if (dependers != null) {
+			for (Evaluation eval : dependers)  {
+				try {
+					eval.getValue(entries);
+				} catch (RemoteException e) {
+					throw new ContextException(e);
+				}
+			}
+		}
 		T obj = null;
 		try {
 			substitute(entries);
-			if (path == null) {
-				if (returnPath != null) {
-					obj = getReturnValue(entries);
-				}
-			} else if (path.startsWith("super")) {
-				obj = (T) exertion.getContext().getValue(path.substring(6));
+			if (currentPath == null) {
+				if (targetPath != null)
+					currentPath = targetPath;
+			}
+
+			if (returnPath != null) {
+				obj = getReturnValue(entries);
+			} else if (currentPath.startsWith("super")) {
+				obj = (T) exertion.getContext().getValue(currentPath.substring(6));
 			} else {
-				obj = (T) getValue0(path);
+				obj = (T) getValue0(currentPath);
 				if (obj instanceof Evaluation && isModeling) {
 					if (obj instanceof Scopable) {
 						Object scope = ((Scopable)obj).getScope();
@@ -2981,18 +2998,6 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 		par.setPersistent(true);
 		par.setDbURL(datastoreUrl);
 		return putValue(path, par);
-	}
-
-	/* (non-Javadoc)
-	 * @see sorcer.service.Context#getURL(java.lang.String)
-	 */
-	@Override
-	public URL getURL(String path) throws ContextException {
-		Object obj = asis(path);
-		if (obj instanceof Par) {
-			return ((Par)obj).getURL();
-		}
-		return null;
 	}
 	
 	public String getDbUrl() {
@@ -3160,5 +3165,25 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 			throws ContextException {
 		return Contexts.getMarkedPaths(this, association);
 	}
-	
+
+	@Override
+	public Evaluation addDepender(Evaluation depender) {
+		if (this.dependers == null)
+			this.dependers = new ArrayList<Evaluation>();
+		dependers.add(depender);
+		return this;
+	}
+
+	public Evaluation addDependers(Evaluation... dependers) {
+		if (this.dependers == null)
+			this.dependers = new ArrayList<Evaluation>();
+		for (Evaluation depender : dependers)
+			this.dependers.add(depender);
+		return this;
+	}
+
+	@Override
+	public List<Evaluation> getDependers() {
+		return dependers;
+	}
 }

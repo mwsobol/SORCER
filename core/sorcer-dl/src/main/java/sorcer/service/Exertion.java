@@ -26,6 +26,7 @@ import java.util.Map;
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
 import net.jini.id.Uuid;
+import sorcer.service.*;
 import sorcer.core.context.ThrowableTrace;
 import sorcer.core.provider.Jobber;
 import sorcer.service.Strategy.Access;
@@ -69,11 +70,10 @@ import sorcer.service.Strategy.Flow;
  * service providers bound dynamically in runtime as determined by
  * {@link Signature}s of job component exertions.
  * 
- * @see sorcer.service.AsyncExertion
  * @author Mike Sobolewski
  */
 @SuppressWarnings("rawtypes")
-public interface Exertion extends Service<Object>, Invocation<Object>, Paradigmatic, Mappable, Serializable, Identifiable {
+public interface Exertion extends Service<Object>, Dependency, Invocation<Object>, Paradigmatic, Mappable, Serializable, Identifiable {
 
 	/**
 	 * Returns a name of this exertion.
@@ -231,7 +231,6 @@ public interface Exertion extends Service<Object>, Invocation<Object>, Paradigma
 	 *             if a transaction error occurs
 	 * @throws ExertionException
 	 *             if processing this exertion causes an error
-	 * @see #setService
 	 */
 	public <T extends Exertion> T exert(Transaction txn, Arg... entries) throws TransactionException,
 			ExertionException, RemoteException;

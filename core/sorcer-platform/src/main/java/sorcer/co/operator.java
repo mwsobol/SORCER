@@ -16,43 +16,21 @@
  */
 package sorcer.co;
 
+import sorcer.co.tuple.*;
+import sorcer.core.context.Copier;
+import sorcer.core.context.ListContext;
+import sorcer.service.*;
+import sorcer.util.Loop;
+import sorcer.util.Table;
+import sorcer.util.url.sos.SdbUtil;
+
 import java.lang.reflect.Array;
 import java.net.URL;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
-import sorcer.co.tuple.Entry;
-import sorcer.co.tuple.InoutEntry;
-import sorcer.co.tuple.InputEntry;
-import sorcer.co.tuple.OutputEntry;
-import sorcer.co.tuple.StrategyEntry;
-import sorcer.co.tuple.Tuple1;
-import sorcer.co.tuple.Tuple2;
-import sorcer.co.tuple.Tuple3;
-import sorcer.co.tuple.Tuple4;
-import sorcer.co.tuple.Tuple5;
-import sorcer.co.tuple.Tuple6;
-import sorcer.core.context.ListContext;
-import sorcer.service.Arg;
-import sorcer.service.ArgSet;
-import sorcer.service.Context;
-import sorcer.service.ContextException;
-import sorcer.service.Evaluation;
-import sorcer.service.EvaluationException;
-import sorcer.service.Setter;
-import sorcer.service.SetterException;
-import sorcer.service.Strategy;
-import sorcer.util.Loop;
 //import sorcer.vfe.filter.TableReader;
 //import sorcer.vfe.util.Response;
-import sorcer.util.Table;
-import sorcer.util.url.sos.SdbUtil;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class operator {
@@ -522,6 +500,34 @@ public class operator {
 			map.put(entry._1, entry._2);
 		}
 		return map;
+	}
+
+	public static Evaluation  dependsOn(Evaluation dependee,  Evaluation depender) {
+		if (dependee instanceof Dependency)
+			((Dependency)dependee).getDependers().add(depender);
+
+		return dependee;
+	}
+
+	public static Copier copier(Context fromContext, Arg[] fromEntries,
+								 Context toContext, Arg[] toEntries) throws EvaluationException {
+		return new Copier(fromContext, fromEntries, toContext, toEntries);
+	}
+
+	public static Evaluation dependsOn(Evaluation dependee, Evaluation depender,
+									   Context scope) throws ContextException {
+		try {
+			if (dependee instanceof Scopable) {
+				Context context = (Context) ((Scopable) dependee).getScope();
+				if (context == null)
+					((Scopable) dependee).setScope(scope);
+				else
+					context.append(scope);
+			}
+		} catch (RemoteException e) {
+			throw new ContextException(e);
+		}
+		return dependsOn(dependee, depender);
 	}
 
 	public static Loop loop(int to) {

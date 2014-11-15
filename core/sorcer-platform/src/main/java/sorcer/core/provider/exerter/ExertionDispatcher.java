@@ -17,19 +17,12 @@
 
 package sorcer.core.provider.exerter;
 
-import java.rmi.RemoteException;
-import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.logging.Logger;
-
 import net.jini.core.lookup.ServiceID;
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
 import net.jini.core.transaction.server.TransactionManager;
-
 import org.dancres.blitz.jini.lockmgr.LockResult;
 import org.dancres.blitz.jini.lockmgr.MutualExclusion;
-
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.ControlContext;
 import sorcer.core.context.ThrowableTrace;
@@ -37,39 +30,21 @@ import sorcer.core.context.model.par.Par;
 import sorcer.core.deploy.ServiceDeployment;
 import sorcer.core.dispatch.DispatcherException;
 import sorcer.core.dispatch.ProvisionManager;
-import sorcer.core.provider.ControlFlowManager;
-import sorcer.core.provider.Exerter;
-import sorcer.core.provider.Jobber;
-import sorcer.core.provider.Provider;
-import sorcer.core.provider.Spacer;
+import sorcer.core.provider.*;
 import sorcer.core.signature.NetSignature;
 import sorcer.core.signature.ServiceSignature;
 import sorcer.jini.lookup.ProviderID;
-import sorcer.service.Accessor;
-import sorcer.service.Arg;
-import sorcer.service.Block;
-import sorcer.service.CompoundExertion;
-import sorcer.service.Context;
-import sorcer.service.ContextException;
-import sorcer.service.EvaluationException;
-import sorcer.service.Exec;
-import sorcer.service.Invocation;
-import sorcer.service.InvocationException;
+import sorcer.service.*;
 import sorcer.service.Exec.State;
-import sorcer.service.Exertion;
-import sorcer.service.ExertionException;
-import sorcer.service.Job;
-import sorcer.service.Service;
-import sorcer.service.ServiceExertion;
-import sorcer.service.Setter;
-import sorcer.service.Signature;
-import sorcer.service.SignatureException;
 import sorcer.service.Strategy.Access;
-import sorcer.service.Task;
 import sorcer.service.modeling.ModelingTask;
 import sorcer.util.ProviderAccessor;
 import sorcer.util.ProviderLookup;
-import sorcer.util.Sorcer;
+
+import java.rmi.RemoteException;
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.logging.Logger;
 
 /**
  * @author Mike Sobolewski
@@ -180,11 +155,11 @@ public class ExertionDispatcher implements Exerter, Callable {
 	
 	private void realizeDependencies(Arg... entries) throws RemoteException,
 			ExertionException {
-		List<Invocation> dependers = exertion.getDependers();
+		List<Evaluation> dependers = exertion.getDependers();
 		if (dependers != null && dependers.size() > 0) {
-			for (Invocation<Object> depender : dependers) {
+			for (Evaluation<Object> depender : dependers) {
 				try {
-					depender.invoke((Context)exertion.getScope(), entries);
+					((Invocation)depender).invoke((Context)exertion.getScope(), entries);
 				} catch (InvocationException e) {
 					throw new ExertionException(e);
 				}

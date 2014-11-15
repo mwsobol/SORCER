@@ -187,25 +187,6 @@ public class operator {
 		return ((Job) job).getJobContext();
 	}
 
-	public static Exertion  dependsOn(Exertion dependee,  Invocation depender) {
-		((ServiceExertion)dependee).getDependers().add(depender);
-		return dependee;
-	}
-	
-	public static Exertion dependsOn(Exertion dependee, Invocation depender,
-			ParModel scope) throws ContextException {
-		try {
-			Context context = (Context) ((ServiceExertion) dependee).getScope();
-			if (context == null)
-				((ServiceExertion) dependee).setScope(scope);
-			else
-				context.append(scope);
-		} catch (RemoteException e) {
-			throw new ContextException(e);
-		}
-		return dependsOn(dependee, depender);
-	}
-
 	public static Context taskContext(String path, Job job) throws ContextException {
 		return job.getComponentContext(path);
 	}
@@ -1487,11 +1468,6 @@ public class operator {
 			values.add(getAt(context, i));
 		}
 		return values;
-	}
-	
-	public static URL url(Context model, String name)
-			throws ContextException, RemoteException {
-		return model.getURL(name);
 	}
 
 	public static Object asis(Mappable mappable, String path)
