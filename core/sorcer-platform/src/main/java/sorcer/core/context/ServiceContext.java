@@ -17,23 +17,6 @@
 
 package sorcer.core.context;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.rmi.RemoteException;
-import java.security.Principal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.StringTokenizer;
-import java.util.Vector;
-import java.util.logging.Logger;
-import java.util.regex.Pattern;
-
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
 import net.jini.id.Uuid;
@@ -53,32 +36,19 @@ import sorcer.core.provider.Provider;
 import sorcer.core.provider.ServiceProvider;
 import sorcer.core.signature.NetSignature;
 import sorcer.security.util.SorcerPrincipal;
-import sorcer.service.Arg;
-import sorcer.service.AssociativeContext;
-import sorcer.service.Condition;
-import sorcer.service.Context;
-import sorcer.service.ContextException;
-import sorcer.service.Contexter;
-import sorcer.service.Evaluation;
-import sorcer.service.EvaluationException;
+import sorcer.service.*;
 import sorcer.service.Exec.State;
-import sorcer.service.Exertion;
-import sorcer.service.ExertionException;
-import sorcer.service.Identifiable;
-import sorcer.service.Invocation;
-import sorcer.service.InvocationException;
-import sorcer.service.Link;
-import sorcer.service.MonitorException;
-import sorcer.service.Paradigmatic;
-import sorcer.service.Reactive;
-import sorcer.service.Scopable;
-import sorcer.service.ServiceExertion;
-import sorcer.service.Setter;
-import sorcer.service.SetterException;
-import sorcer.service.Signature;
 import sorcer.service.Signature.Direction;
 import sorcer.service.Signature.ReturnPath;
 import sorcer.util.SorcerUtil;
+
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.rmi.RemoteException;
+import java.security.Principal;
+import java.util.*;
+import java.util.logging.Logger;
+import java.util.regex.Pattern;
 
 /**
  * Implements the base-level service context interface {@link Context}.
@@ -116,7 +86,7 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 	
 	protected String parameterTypesPath;
 
-	protected String targetPath = Context.TARGET;
+	protected String targetPath;
 
 	protected Uuid contextId;
 
@@ -2227,8 +2197,7 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 		return targetPath;
 	}
 
-	public ServiceContext setTargetPath(String targetPath)
-			throws ContextException {
+	public ServiceContext setTargetPath(String targetPath) {
 		this.targetPath = targetPath;
 		return this;
 	}

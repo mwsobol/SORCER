@@ -243,7 +243,16 @@ public class operator {
 		cxt.setModeling(true);
 		return cxt;
 	}
-	
+
+	public static Context target(Context context, String targetPath) {
+		((ServiceContext)context).setTargetPath(targetPath);
+		return context;
+	}
+
+	public static Object target(Context context) throws ContextException {
+		return ((ServiceContext)context).getTarget();
+	}
+
 	public static <T extends Object> Context context(T... entries)
 			throws ContextException {
 		Context cxt = null;

@@ -64,7 +64,7 @@ public class ParModelServices {
 	public void parNetModelServiceTest() throws RemoteException, ContextException, 
 			ExertionException, SignatureException {
 		// the provider in ex6/bin parmodel-prv-run.xml
-		Task pmt = task(sig("invoke", Invocation.class, prvName("ParModel Service")),
+		Task pmt = task(sig("invoke", Invocation.class, prvName("Arithmetic ParModel")),
 				context(invoker("expr"), result("invoke/result")));
 		
 //		logger.info("result: " + value(pmt));
@@ -78,7 +78,7 @@ public class ParModelServices {
 	public void parNetVarModelServiceTest() throws RemoteException, ContextException, 
 			ExertionException, SignatureException {
 		// the provider in ex6/bin varparmodel-prv-run.xml
-		Task pmt = task(sig("invoke", Invocation.class, prvName("VarParModel Service")),
+		Task pmt = task(sig("invoke", Invocation.class, prvName("Arithmetic ParModel")),
 				context(invoker("expr"), result("invoke/result")));
 
 //		logger.info("result: " + value(pmt));
@@ -152,7 +152,7 @@ public class ParModelServices {
 	public void parNetModelAgentTest() throws RemoteException, ContextException, ExertionException, 
 			SignatureException, MalformedURLException, TransactionException {
 		// the provider in ex6/bin parmodel-prv-run.xml
-		Task pmt = task(sig("invoke", Invocation.class, prvName("ParModel Service")),
+		Task pmt = task(sig("invoke", Invocation.class, prvName("Arithmetic ParModel")),
 				context(invoker("getSphereVolume"),
 //						result("sphere/volume"),
 						ent("sphere/radius", 20.0),
@@ -169,7 +169,7 @@ public class ParModelServices {
 		assertEquals(get(cxt, "sphere/radius"), 20.0);
 		assertEquals(get(cxt, "sphere/volume"), 33510.32163829113);
 		
-		pmt = task(sig("invoke", Invocation.class, prvName("ParModel Service")),
+		pmt = task(sig("invoke", Invocation.class, prvName("Arithmetic ParModel")),
 				context(invoker("getSphereVolume"),
 						result("sphere/volume"),
 						ent("sphere/radius", 20.0),
@@ -186,22 +186,22 @@ public class ParModelServices {
 	public void parNetModelMultiAgentTest() throws RemoteException, ContextException, ExertionException, 
 			SignatureException, MalformedURLException, TransactionException {
 		// the provider in ex6/bin parmodel-prv-run.xml
-		Task pmt = task(sig("invoke", Invocation.class, prvName("ParModel Service")),
+		Task pmt = task(sig("invoke", Invocation.class, prvName("Arithmetic ParModel")),
 				context(invoker("getSphereVolume"),
 						result("sphere/volume"),
 						ent("sphere/radius", 20.0),
 						agent("getSphereVolume",
-							"junit.sorcer.vfe.evaluator.service.Volume",
-							new URL(Sorcer.getWebsterUrl()
-									+ "/ju-volume-bean.jar")),
+								"sorcer.arithmetic.tester.volume.Volume",
+								new URL(Sorcer.getWebsterUrl()
+										+ "/arithmetic-tester-" + sorcerVersion + ".jar")),
 						agent("getCylinderSurface",
 								"sorcer.arithmetic.tester.volume.Volume",
 								new URL(Sorcer.getWebsterUrl()
-										+ "/arithmetic-tester-"+sorcerVersion+".jar"))));
+										+ "/arithmetic-tester-" + sorcerVersion + ".jar"))));
 	
 		assertEquals(value(pmt), 33510.32163829113);
 		
-		pmt = task(sig("invoke", Invocation.class, prvName("ParModel Service")),
+		pmt = task(sig("invoke", Invocation.class, prvName("Arithmetic ParModel")),
 				context(invoker("getCylinderSurface"),
 						result("cylinder/surface"),
 						invoker("getCylinderSurface"),
