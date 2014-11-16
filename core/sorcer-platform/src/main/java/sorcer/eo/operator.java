@@ -29,7 +29,6 @@ import sorcer.core.context.model.par.Par;
 import sorcer.core.context.model.par.ParModel;
 import sorcer.core.deploy.ServiceDeployment;
 import sorcer.core.exertion.*;
-import sorcer.core.provider.DatabaseStorer.Store;
 import sorcer.core.provider.*;
 import sorcer.core.provider.exerter.ExertionDispatcher;
 import sorcer.core.provider.rendezvous.ServiceConcatenator;
@@ -53,7 +52,6 @@ import sorcer.util.url.sos.SdbUtil;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.InetAddress;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.*;
@@ -1797,72 +1795,7 @@ public class operator {
 		el.setType(EntryList.Type.INITIAL_DESIGN);
 		return el;
 	}
-	
-	public static URL dbURL() throws MalformedURLException {
-		return new URL(Sorcer.getDatabaseStorerUrl());
-	}
 
-	public static URL dsURL() throws MalformedURLException {
-		return new URL(Sorcer.getDataspaceStorerUrl());
-	}
-
-	public static void dbURL(Object object, URL dbUrl)
-			throws MalformedURLException {
-		if (object instanceof Par)
-			((Par) object).setDbURL(dbUrl);
-		else if (object instanceof ServiceContext)
-			((ServiceContext) object).setDbUrl("" + dbUrl);
-		else
-			throw new MalformedURLException("Can not set URL to: " + object);
-	}
-
-	public static URL dbURL(Object object) throws MalformedURLException {
-		if (object instanceof Par)
-			return ((Par) object).getDbURL();
-		else if (object instanceof ServiceContext)
-			return new URL(((ServiceContext) object).getDbUrl());
-		return null;
-	}
-
-	public static URL store(Object object) throws ExertionException,
-			SignatureException, ContextException {
-		return SdbUtil.store(object);
-	}
-
-	public static Object retrieve(URL url) throws IOException {
-		return url.getContent();
-	}
-
-	public static URL update(Object object) throws ExertionException,
-			SignatureException, ContextException {
-		return SdbUtil.update(object);
-	}
-
-	public static List<String> list(URL url) throws ExertionException,
-			SignatureException, ContextException {
-		return SdbUtil.list(url);
-	}
-
-	public static List<String> list(Store store) throws ExertionException,
-			SignatureException, ContextException {
-		return SdbUtil.list(store);
-	}
-
-	public static URL delete(Object object) throws ExertionException,
-			SignatureException, ContextException {
-		return SdbUtil.delete(object);
-	}
-
-	public static int clear(Store type) throws ExertionException,
-			SignatureException, ContextException {
-		return SdbUtil.clear(type);
-	}
-
-	public static int size(Store type) throws ExertionException,
-			SignatureException, ContextException {
-		return SdbUtil.size(type);
-	}
-	
 	public static Object target(Object object) {
 		return new target(object);
 	}

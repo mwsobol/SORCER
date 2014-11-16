@@ -1,55 +1,46 @@
 package sorcer.util.bdb.objects;
 
-import static org.junit.Assert.assertEquals;
-import static sorcer.co.operator.list;
-
-import java.io.File;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Logger;
-
+import com.sleepycat.collections.StoredMap;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
+import org.junit.runner.RunWith;
+import org.sorcer.test.ProjectContext;
+import org.sorcer.test.SorcerTestRunner;
 import sorcer.core.SorcerConstants;
 import sorcer.service.Context;
 import sorcer.service.Exertion;
 import sorcer.util.ModelTable;
-import sorcer.util.Sorcer;
 import sorcer.util.SorcerUtil;
 
-import com.sleepycat.collections.StoredMap;
+import java.io.File;
+import java.net.URL;
+import java.util.*;
+import java.util.logging.Logger;
+
+import static org.junit.Assert.assertEquals;
+import static sorcer.co.operator.list;
 
 /**
  * @author Mike Sobolewski
  */
-
+@RunWith(SorcerTestRunner.class)
+@ProjectContext("core/sorcer-int-tests/arithmetic-tester")
 public class SorcerDatabaseTest implements SorcerConstants {
 
 	private final static Logger logger = Logger
 			.getLogger(SorcerDatabaseTest.class.getName());
-	
-	static {
-		System.setProperty("java.security.policy", Sorcer.getHome()
-				+ "/configs/policy.all");
-		System.setSecurityManager(new SecurityManager());
-	}
-	
+
 	private static SorcerDatabaseRunner runner;
 	private static File dbDir;
 	
 	@BeforeClass 
 	public static void setUpOnce() throws Exception {
-		dbDir = new File("./tmp/ju-sorcer-db");
+		dbDir = new File("./tmp/test-sorcer-db");
 		SorcerUtil.deleteDir(dbDir);
 		System.out.println("Sorcer DB dir: " + dbDir.getCanonicalPath());
 		dbDir.mkdirs();
-		String homeDir = "./tmp/ju-sorcer-db";
+		String homeDir = "./tmp/test-sorcer-db";
 		runner = new SorcerDatabaseRunner(homeDir);
         runner.run();
 	}

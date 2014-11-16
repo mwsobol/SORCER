@@ -99,7 +99,7 @@ public class Arithmometer implements SorcerConstants {
 	 *            input context for this operation
 	 * @return an output service context
 	 * @throws ContextException 
-	 * @throws RemoteExceptionO
+	 * @throws RemoteException
 	 */
 	public Context divide(Context context) throws RemoteException, ContextException {
 		if (context instanceof ArrayContext) {
@@ -202,8 +202,7 @@ public class Arithmometer implements SorcerConstants {
 	 * Calculates the result of arithmetic operation specified by a selector
 	 * (add, subtract, multiply, or divide) from the instance of ServiceContext.
 	 * 
-	 * @param input
-	 *            service context
+	 * @param context
 	 * @param selector
 	 *            a name of arithmetic operation
 	 * @return
@@ -312,7 +311,6 @@ public class Arithmometer implements SorcerConstants {
 		List<String> outpaths = ((ServiceContext) context).getOutPaths();
 		GroovyShell gsh = new GroovyShell();
 		Object result = gsh.evaluate(expr);
-		logger.info("ZZZZZZZZZZZZZZZZZZZZZZZZZ gsh: " + result);
 		String outputMessage;
 		try {
 			outputMessage = "calculated by " + getHostname();
@@ -349,7 +347,6 @@ public class Arithmometer implements SorcerConstants {
 		}
 		return context;
 	}
-	
 	
 	/**
 	 * Returns name of the local host.

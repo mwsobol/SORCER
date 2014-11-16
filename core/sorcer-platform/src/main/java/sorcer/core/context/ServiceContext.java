@@ -2855,7 +2855,7 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 			throws ContextException {
 		// first managed dependencies
 		String currentPath = path;
-		if (dependers != null) {
+		if (dependers != null && dependers.size() > 0) {
 			for (Evaluation eval : dependers)  {
 				try {
 					eval.getValue(entries);
@@ -2870,11 +2870,10 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 			if (currentPath == null) {
 				if (targetPath != null)
 					currentPath = targetPath;
+				else if (returnPath != null)
+					obj = getReturnValue(entries);
 			}
-
-			if (returnPath != null) {
-				obj = getReturnValue(entries);
-			} else if (currentPath.startsWith("super")) {
+			if (currentPath.startsWith("super")) {
 				obj = (T) exertion.getContext().getValue(currentPath.substring(6));
 			} else {
 				obj = (T) getValue0(currentPath);

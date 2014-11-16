@@ -332,7 +332,7 @@ public class ParModels {
 	
 	@Test
 	public void persistableParsTest() throws Exception {
-		// persistable just indicates that parameter is set given value that can be persist,
+		// persistable just indicates that argument is persistent,
 		// for example when value(par) is invoked
 		Par dbp1 = persistent(par("design/in", 25.0));
 		Par dbp2 = dbPar("url", "myUrl1");
@@ -347,11 +347,19 @@ public class ParModels {
 		assertTrue(asis(dbp2) instanceof URL);
 
 		// store par args in the data store
-		URL url1 = url(par("design/in", 30.0));
-		URL url2 = url(par("url", "myUrl2"));
+		URL url1 = storeArg(par("design/in", 30.0));
+		URL url2 = storeArg(par("url", "myUrl2"));
 		
 		assertEquals(value(url1), 30.0);
 		assertEquals(value(url2), "myUrl2");
+
+		// store par args in the data store
+		URL url3 = store(par("design/in", 30.0));
+		URL url4 = store(par("url", "myUrl2"));
+
+		assertTrue(value(url3).equals(par("design/in", 30.0)));
+		assertTrue(value(url4).equals(par("url", "myUrl2")));
+
 	}
 	
 	@Test

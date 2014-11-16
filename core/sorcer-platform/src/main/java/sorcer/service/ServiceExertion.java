@@ -1312,7 +1312,7 @@ public abstract class ServiceExertion implements Exertion, Scopable, SorcerConst
 		Context cxt = null;
 		try {
 			substitute(entries);
-			Exertion evaluatedExertion = exert();
+			Exertion evaluatedExertion = exert(entries);
 			ReturnPath returnPath = ((ServiceContext)evaluatedExertion.getDataContext())
 					.getReturnPath();
 			if (evaluatedExertion instanceof Job) {

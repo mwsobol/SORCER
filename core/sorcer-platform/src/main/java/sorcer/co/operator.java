@@ -19,12 +19,18 @@ package sorcer.co;
 import sorcer.co.tuple.*;
 import sorcer.core.context.Copier;
 import sorcer.core.context.ListContext;
+import sorcer.core.context.ServiceContext;
+import sorcer.core.context.model.par.Par;
+import sorcer.core.provider.DatabaseStorer;
 import sorcer.service.*;
 import sorcer.util.Loop;
+import sorcer.util.Sorcer;
 import sorcer.util.Table;
 import sorcer.util.url.sos.SdbUtil;
 
+import java.io.IOException;
 import java.lang.reflect.Array;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.*;
@@ -302,16 +308,83 @@ public class operator {
 	public static <S extends Setter> boolean isPersistent(S setter) {
 			return setter.isPersistent();
 	}
-	
-	public static <S extends Setter> S store(S setter)
-			throws EvaluationException, RemoteException {
-		if (!setter.isPersistent()) {
-			setter.setPersistent(true);
-			((Evaluation) setter).getValue();
+
+	public static URL store(Object object) throws EvaluationException {
+		try {
+			return SdbUtil.store(object);
+		} catch (Exception e) {
+			throw new EvaluationException(e);
 		}
-		return setter;
 	}
-	
+
+	public static URL storeArg(Entry entry)
+			throws EvaluationException, RemoteException {
+		entry.setPersistent(true);
+		entry.setPersistent(true);
+		entry.getValue();
+		return (URL) entry.asis();
+	}
+
+	public static URL dbURL() throws MalformedURLException {
+		return new URL(Sorcer.getDatabaseStorerUrl());
+	}
+
+	public static URL dsURL() throws MalformedURLException {
+		return new URL(Sorcer.getDataspaceStorerUrl());
+	}
+
+	public static void dbURL(Object object, URL dbUrl)
+			throws MalformedURLException {
+		if (object instanceof Par)
+			((Par) object).setDbURL(dbUrl);
+		else if (object instanceof ServiceContext)
+			((ServiceContext) object).setDbUrl("" + dbUrl);
+		else
+			throw new MalformedURLException("Can not set URL to: " + object);
+	}
+
+	public static URL dbURL(Object object) throws MalformedURLException {
+		if (object instanceof Par)
+			return ((Par) object).getDbURL();
+		else if (object instanceof ServiceContext)
+			return new URL(((ServiceContext) object).getDbUrl());
+		return null;
+	}
+
+	public static Object retrieve(URL url) throws IOException {
+		return url.getContent();
+	}
+
+	public static URL update(Object object) throws ExertionException,
+			SignatureException, ContextException {
+		return SdbUtil.update(object);
+	}
+
+	public static List<String> list(URL url) throws ExertionException,
+			SignatureException, ContextException {
+		return SdbUtil.list(url);
+	}
+
+	public static List<String> list(DatabaseStorer.Store store) throws ExertionException,
+			SignatureException, ContextException {
+		return SdbUtil.list(store);
+	}
+
+	public static URL delete(Object object) throws ExertionException,
+			SignatureException, ContextException {
+		return SdbUtil.delete(object);
+	}
+
+	public static int clear(DatabaseStorer.Store type) throws ExertionException,
+			SignatureException, ContextException {
+		return SdbUtil.clear(type);
+	}
+
+	public static int size(DatabaseStorer.Store type) throws ExertionException,
+			SignatureException, ContextException {
+		return SdbUtil.size(type);
+	}
+
 	public static <T> Entry<T> db(Entry<T> entry) {
 		return persistent(entry);
 	}
