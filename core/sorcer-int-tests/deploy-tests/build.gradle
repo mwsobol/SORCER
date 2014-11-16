@@ -19,20 +19,20 @@ version = sorcerVersion
 dependencies {
     testCompile project(":sorcer-platform")
     testCompile project(":sorcer-test")
-    testCompile project(":sorcer-int-tests:arithmetic-tester")
+    testCompile project(":sorcer-int-tests:sorcer-tester")
     testCompile libs.junit
     testRuntime libs.slf4j
 }
 
 def repoPath() {
-    return "org/sorcer/arithmetic-tester/${version}"
+    return "org/sorcer/sorcer-tester/${version}"
 }
 
 test {
-    dependsOn([":sorcer-int-tests:arithmetic-tester:install", "bootSorcerRio"])
+    dependsOn([":sorcer-int-tests:sorcer-tester:install"/*, "bootSorcerRio"*/])
     systemProperty "sorcer.version", version
     systemProperty "java.rmi.server.codebase",
-                   "${websterUrl}/${repoPath()}/arithmetic-tester-${version}-dl.jar ${websterUrl}/sorcer-dl-${version}.jar ${websterUrl}/jsk-dl-${riverVersion}.jar"
+                   "${websterUrl}/${repoPath()}/sorcer-tester-${version}-dl.jar ${websterUrl}/sorcer-dl-${version}.jar ${websterUrl}/jsk-dl-${riverVersion}.jar"
 
     testLogging {
         events "passed", "skipped", "failed"/*, "standardOut"*/, "standardError"
