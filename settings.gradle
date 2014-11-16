@@ -43,8 +43,8 @@ project(":sorcer-boot").projectDir = file("tools/sorcer-boot")
 include 'ssb'
 project(":ssb").projectDir = file("tools/ssb")
 
-include 'sorcer-int-tests:arithmetic-tester'
-project(":sorcer-int-tests:arithmetic-tester").projectDir = file("core/sorcer-int-tests/arithmetic-tester")
+include 'sorcer-int-tests:sorcer-tester'
+project(":sorcer-int-tests:sorcer-tester").projectDir = file("core/sorcer-int-tests/sorcer-tester")
 include 'sorcer-int-tests:deploy-tests'
 project(":sorcer-int-tests:deploy-tests").projectDir = file("core/sorcer-int-tests/deploy-tests")
 

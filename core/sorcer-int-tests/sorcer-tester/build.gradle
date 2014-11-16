@@ -53,7 +53,7 @@ install.dependsOn(['arithmeticPrvDlJar', 'arithmeticReqJar'])
 build.dependsOn(install)
 
 def repoPath() {
-	return "org/sorcer/arithmetic-tester/${version}"
+	return "org/sorcer/sorcer-tester/${version}"
 }
 
 bootme {
