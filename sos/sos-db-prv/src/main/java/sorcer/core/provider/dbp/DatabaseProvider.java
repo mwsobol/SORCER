@@ -17,15 +17,10 @@
 
 package sorcer.core.provider.dbp;
 
-import java.io.File;
-import java.io.InvalidObjectException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
+import com.sleepycat.collections.StoredMap;
+import com.sleepycat.collections.StoredValueSet;
+import com.sleepycat.je.DatabaseException;
+import com.sun.jini.start.LifeCycle;
 import net.jini.config.Configuration;
 import net.jini.id.Uuid;
 import net.jini.id.UuidFactory;
@@ -47,10 +42,14 @@ import sorcer.util.bdb.objects.UuidObject;
 import sorcer.util.url.sos.Handler;
 import sorcer.util.url.sos.SdbUtil;
 
-import com.sleepycat.collections.StoredMap;
-import com.sleepycat.collections.StoredValueSet;
-import com.sleepycat.je.DatabaseException;
-import com.sun.jini.start.LifeCycle;
+import java.io.File;
+import java.io.InvalidObjectException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class DatabaseProvider extends ServiceProvider implements DatabaseStorer {
@@ -62,7 +61,7 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
 	private SorcerDatabase db;
 
 	private SorcerDatabaseViews views;
-	
+
 	public DatabaseProvider() throws RemoteException {
 		// do nothing
 	}
@@ -71,7 +70,7 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
 	 * Constructs an instance of the SORCER Object Store implementing
 	 * EvaluationRemote. This constructor is required by Jini 2 life cycle
 	 * management.
-	 * 
+	 *
 	 * @param args
 	 * @param lifeCycle
 	 * @throws Exception
@@ -80,27 +79,29 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
 		super(args, lifeCycle);
 		setupDatabase();
 	}
-	
+
 	public Uuid store(Object object) {
-		Object obj = object;
-		if (!(object instanceof Identifiable)) {
+		Object obj = null;
+		if (object instanceof Identifiable && ((Identifiable)object).getId() instanceof Uuid) {
+			obj = new UuidObject((Uuid)((Identifiable)object).getId(), object);
+		} else {
 			obj = new UuidObject(object);
 		}
 		PersistThread pt = new PersistThread(obj);
 		pt.start();
-		return pt.getUuid();	
+		return pt.getUuid();
 	}
-	
+
 	public Uuid update(Uuid uuid, Object object) throws InvalidObjectException {
 		Object uuidObject = object;
 		if (!(object instanceof Identifiable)) {
 			uuidObject = new UuidObject(uuid, object);
 		}
-			UpdateThread ut = new UpdateThread(uuid, uuidObject);
-			ut.start();
-			return ut.getUuid();
+		UpdateThread ut = new UpdateThread(uuid, uuidObject);
+		ut.start();
+		return ut.getUuid();
 	}
-	
+
 	public Uuid update(URL url, Object object) throws InvalidObjectException {
 		Object uuidObject = object;
 		if (!(object instanceof Identifiable)) {
@@ -110,28 +111,28 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
 		ut.start();
 		return ut.getUuid();
 	}
-	
+
 	public Object getObject(Uuid uuid) {
 		StoredMap<UuidKey, UuidObject> uuidObjectMap = views.getUuidObjectMap();
 		UuidObject uuidObj = uuidObjectMap.get(new UuidKey(uuid));
-		return uuidObj==null?null:uuidObj.getObject();
+		return uuidObj == null ? null : uuidObj.getObject();
 	}
-	
+
 	public Context getContext(Uuid uuid) {
 		StoredMap<UuidKey, Context> cxtMap = views.getContextMap();
 		return cxtMap.get(new UuidKey(uuid));
 	}
-	
+
 	public ModelTable getTable(Uuid uuid) {
 		StoredMap<UuidKey, ModelTable> tableMap = views.getTableMap();
 		return tableMap.get(new UuidKey(uuid));
 	}
-	
+
 	public Exertion getExertion(Uuid uuid) {
 		StoredMap<UuidKey, Exertion> xrtMap = views.getExertionMap();
 		return xrtMap.get(new UuidKey(uuid));
 	}
-	
+
 	protected class PersistThread extends Thread {
 
 		Object object;
@@ -158,7 +159,7 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
 				storedSet.add(object);
 			}
 		}
-		
+
 		public Uuid getUuid() {
 			return uuid;
 		}
@@ -168,7 +169,7 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
 
 		Object object;
 		Uuid uuid;
-		
+
 		public UpdateThread(Uuid uuid, Object object) throws InvalidObjectException {
 			this.uuid = uuid;
 			this.object = object;
@@ -178,7 +179,7 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
 			this.object = object;
 			this.uuid = SdbUtil.getUuid(url);
 		}
-		
+
 		public void run() {
 			StoredMap storedMap = null;
 			if (object instanceof Context) {
@@ -195,17 +196,17 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
 				storedMap.replace(new UuidKey(uuid), object);
 			}
 		}
-		
+
 		public Uuid getUuid() {
 			return uuid;
 		}
 	}
-	
+
 	protected class DeleteThread extends Thread {
 
 		Uuid uuid;
 		Store storeType;
-		
+
 		public DeleteThread(Uuid uuid, Store storeType) {
 			this.uuid = uuid;
 			this.storeType = storeType;
@@ -215,15 +216,15 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
 			StoredMap storedMap = getStoredMap(storeType);
 			storedMap.remove(new UuidKey(uuid));
 		}
-		
+
 		public Uuid getUuid() {
 			return uuid;
 		}
 	}
-	
+
 	public Context contextStore(Context context) throws RemoteException,
 			ContextException, MalformedURLException {
-		Object object = context.getValue(object_stored);		
+		Object object = context.getValue(object_stored);
 		Uuid uuid = store(object);
 		Store type = getStoreType(object);
 		URL sdbUrl = getDatabaseURL(type, uuid);
@@ -232,7 +233,7 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
 
 		context.putOutValue(object_url, sdbUrl);
 		context.putOutValue(store_size, getStoreSize(type));
-		
+
 		return context;
 	}
 
@@ -250,7 +251,7 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
 		return new URL("sos://" + delegate.getPublishedServiceTypes()[0].getName() + pn + "#"
 				+ storeType + "=" + uuid);
 	}
-	
+
 	public URL getSdbUrl() throws MalformedURLException, RemoteException {
 		String pn = getProviderName();
 		if (pn == null || pn.length() == 0 || pn.equals("*"))
@@ -259,12 +260,12 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
 			pn = "/" + pn;
 		return new URL("sos://" + delegate.getPublishedServiceTypes()[0].getName() + pn);
 	}
-	
+
 	public int size(Store storeType) {
 		StoredValueSet storedSet = getStoredSet(storeType);
 		return storedSet.size();
 	}
-	
+
 	public Uuid deleteURL(URL url) {
 		Store storeType = SdbUtil.getStoreType(url);
 		Uuid id = SdbUtil.getUuid(url);
@@ -279,7 +280,7 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
 		Uuid uuid = SdbUtil.getUuid(url);
 		return retrieve(uuid, storeType);
 	}
-	
+
 	public Object retrieve(Uuid uuid, Store storeType) {
 		Object obj = null;
 		if (storeType == Store.context)
@@ -290,10 +291,10 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
 			obj = getTable(uuid);
 		else if (storeType == Store.object)
 			obj = getObject(uuid);
-		
+
 		return obj;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -305,18 +306,18 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
 		Store storeType = (Store) context.getValue(object_type);
 		Uuid uuid = null;
 		Object id = context.getValue(object_uuid);
-			if (id instanceof String) {
-				uuid = UuidFactory.create((String)id);
-			} else if (id instanceof Uuid) {
-				uuid = (Uuid)id;
-			} else {
-				throw new ContextException("No valid stored object Uuid: " + id);
-			}
-				
+		if (id instanceof String) {
+			uuid = UuidFactory.create((String)id);
+		} else if (id instanceof Uuid) {
+			uuid = (Uuid)id;
+		} else {
+			throw new ContextException("No valid stored object Uuid: " + id);
+		}
+
 		Object obj = retrieve(uuid, storeType);
 		if (((ServiceContext)context).getReturnPath() != null)
 			context.putOutValue(((ServiceContext)context).getReturnPath().path, obj);
-		
+
 		// default returned path
 		context.putOutValue(object_retrieved, obj);
 		return context;
@@ -349,7 +350,7 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
 		context.putOutValue(store_size, getStoreSize(type));
 		return context;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see sorcer.core.StorageManagement#contextList(sorcer.service.Context)
 	 */
@@ -360,7 +361,7 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
 		context.putValue(StorageManagement.store_content_list, content);
 		return context;
 	}
-	
+
 	public List<String> list(Store storeType) {
 		StoredValueSet storedSet = getStoredSet(storeType);
 		List<String> contents = new ArrayList<String>(storedSet.size());
@@ -370,7 +371,7 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
 		}
 		return contents;
 	}
-	
+
 	public List<String> list(URL url) {
 		return list(SdbUtil.getStoreType(url));
 	}
@@ -385,7 +386,7 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
 		context.putValue(store_size, clear(type));
 		return context;
 	}
-	
+
 	public int clear(Store type) throws RemoteException,
 			ContextException, MalformedURLException {
 		StoredValueSet storedSet = getStoredSet(type);
@@ -393,7 +394,7 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
 		storedSet.clear();
 		return size;
 	}
-	
+
 	protected void setupDatabase() throws DatabaseException, RemoteException {
 		Configuration config = delegate.getDeploymentConfig();
 		String dbHome = null;
@@ -426,10 +427,10 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
 		db = new SorcerDatabase(dbHome);
 		views = new SorcerDatabaseViews(db);
 	}
-	
+
 	/**
 	 * Destroy the service, if possible, including its persistent storage.
-	 * 
+	 *
 	 * @see sorcer.core.provider.base.Provider#destroy()
 	 */
 	@Override
@@ -463,7 +464,7 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
 		delete(deletedObject);
 		return context;
 	}
-	
+
 	public StoredMap getStoredMap(Store storeType) {
 		StoredMap storedMap = null;
 		if (storeType == Store.context) {
@@ -477,7 +478,7 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
 		}
 		return storedMap;
 	}
-	
+
 	public StoredValueSet getStoredSet(Store storeType) {
 		StoredValueSet storedSet = null;
 		if (storeType == Store.context) {
@@ -491,15 +492,15 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
 		}
 		return storedSet;
 	}
-	
+
 	public Uuid delete(Object object) {
 		if (object instanceof URL) {
 			return deleteURL((URL)object);
-		} else if (object instanceof Identifiable) 
+		} else if (object instanceof Identifiable)
 			return deleteIdentifiable(object);
 		return null;
 	}
-	
+
 	public Uuid deleteIdentifiable(Object object) {
 		Uuid id = (Uuid) ((Identifiable) object).getId();
 		DeleteThread dt = null;
@@ -514,13 +515,13 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
 		} else if (object instanceof ModelTable) {
 			dt = new DeleteThread(id, Store.table);
 		} else {
-			dt = new DeleteThread(id, Store.object);			
+			dt = new DeleteThread(id, Store.object);
 		}
 		dt.start();
 		id = dt.getUuid();
 		return id;
 	}
-	
+
 	private int getStoreSize(Store type) {
 		if (type == Store.context) {
 			return views.getContextSet().size();
@@ -532,7 +533,7 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
 			return views.getUuidObjectSet().size();
 		}
 	}
-	
+
 	private Store getStoreType(Object object) {
 		Store type = Store.object;
 		if (object instanceof Context) {

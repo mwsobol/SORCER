@@ -17,17 +17,6 @@
 
 package sorcer.util.bdb.objects;
 
-import java.io.IOException;
-
-import net.jini.id.Uuid;
-import sorcer.core.provider.DatabaseStorer.Store;
-import sorcer.core.provider.ProviderRuntime;
-import sorcer.service.Context;
-import sorcer.service.Exertion;
-import sorcer.service.ServiceExertion;
-import sorcer.util.ModelTable;
-import sorcer.util.Table;
-
 import com.sleepycat.bind.EntityBinding;
 import com.sleepycat.bind.EntryBinding;
 import com.sleepycat.bind.serial.ClassCatalog;
@@ -37,6 +26,17 @@ import com.sleepycat.bind.tuple.TupleBinding;
 import com.sleepycat.collections.StoredMap;
 import com.sleepycat.collections.StoredSortedMap;
 import com.sleepycat.collections.StoredValueSet;
+import net.jini.id.Uuid;
+import sorcer.core.context.ServiceContext;
+import sorcer.core.provider.DatabaseStorer.Store;
+import sorcer.core.provider.ProviderRuntime;
+import sorcer.service.Context;
+import sorcer.service.Exertion;
+import sorcer.service.ServiceExertion;
+import sorcer.util.ModelTable;
+import sorcer.util.Table;
+
+import java.io.IOException;
 
 /**
  * ExertionDatabaseViews defines the data bindings and collection views for the
@@ -311,7 +311,7 @@ public class SorcerDatabaseViews {
 			MarshalledData md = (MarshalledData)object;
 			try {
 				context = (Context)md.get();
-				context.setId(((UuidKey)keyInput).getId());
+				((ServiceContext)context).setId(((UuidKey)keyInput).getId());
 			} catch (IOException e) {
 				e.printStackTrace();
 			} catch (ClassNotFoundException e) {

@@ -30,6 +30,7 @@ import static sorcer.eo.operator.value;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.List;
+import java.util.logging.Logger;
 
 import net.jini.id.Uuid;
 import net.jini.id.UuidFactory;
@@ -54,6 +55,7 @@ import sorcer.util.bdb.objects.SorcerDatabaseViews;
  */
 @SuppressWarnings({ "rawtypes", "unchecked" } )
 public class SdbUtil {
+	private static final Logger logger = Logger.getLogger(SdbUtil.class.getName());
 
 	public static boolean isSosURL(Object url) {
 		if (url instanceof URL && ((URL)url).getProtocol().equals("sos"))
@@ -268,6 +270,7 @@ public class SdbUtil {
 				sig("contextStore", DatabaseStorer.class, prvName(storageName)),
 				context("store", inEnt(StorageManagement.object_stored, object),
 						result("result, stored/object/url")));
+
 		return (URL) value(objectStoreTask);
 	}
 

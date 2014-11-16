@@ -26,6 +26,7 @@ import sorcer.service.*;
 import sorcer.util.Loop;
 import sorcer.util.Sorcer;
 import sorcer.util.Table;
+import sorcer.util.bdb.objects.UuidObject;
 import sorcer.util.url.sos.SdbUtil;
 
 import java.io.IOException;
@@ -112,7 +113,6 @@ public class operator {
 		return list.toArray(na);
 
 	}
-	
 	public static Arg[] args(Arg... elems) {
 		return elems;
 	}
@@ -309,20 +309,24 @@ public class operator {
 			return setter.isPersistent();
 	}
 
-	public static URL store(Object object) throws EvaluationException {
-		try {
-			return SdbUtil.store(object);
-		} catch (Exception e) {
-			throw new EvaluationException(e);
-		}
-	}
-
 	public static URL storeArg(Entry entry)
 			throws EvaluationException, RemoteException {
 		entry.setPersistent(true);
 		entry.setPersistent(true);
 		entry.getValue();
 		return (URL) entry.asis();
+	}
+
+	public static URL store(Object object) throws EvaluationException {
+		try {
+			if (object instanceof Identifiable)
+				return SdbUtil.store(object);
+			else  {
+				return SdbUtil.store(new UuidObject(object));
+			}
+		} catch (Exception e) {
+			throw new EvaluationException(e);
+		}
 	}
 
 	public static URL dbURL() throws MalformedURLException {

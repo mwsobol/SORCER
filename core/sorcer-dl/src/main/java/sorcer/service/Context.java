@@ -82,7 +82,7 @@ import sorcer.core.provider.Provider;
  */
 @SuppressWarnings("rawtypes")
 public interface Context<T> extends Mappable<T>, Serializable, Evaluation<T>,
-		Invocation<T>, Dependency, Contexter<T>, Paradigmatic, Arg, Service<T> {
+		Invocation<T>, Dependency, Contexter<T>, Identifiable, Paradigmatic, Arg, Service<T> {
 
 	/** parameter (par) */
 	final static String PATH_PAR = "par";
@@ -226,12 +226,6 @@ public interface Context<T> extends Mappable<T>, Serializable, Evaluation<T>,
 	/**
      */
 	public Uuid getId();
-
-	/**
-	 * @param contextId
-	 *            The identifier to set.
-	 */
-	public void setId(Uuid contextId);
 
 	/**
 	 * Returns a value at the path if exists, otherwise a value of the path that

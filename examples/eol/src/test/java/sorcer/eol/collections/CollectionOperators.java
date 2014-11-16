@@ -12,8 +12,7 @@ import sorcer.core.context.model.par.ParModel;
 import sorcer.core.invoker.GroovyInvoker;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.service.Context;
-import sorcer.service.Strategy.Access;
-import sorcer.service.Strategy.Flow;
+import sorcer.service.Strategy;
 import sorcer.util.Table;
 
 import java.io.Serializable;
@@ -26,7 +25,6 @@ import java.util.logging.Logger;
 
 import static org.junit.Assert.*;
 import static sorcer.co.operator.*;
-import static sorcer.co.operator.path;
 import static sorcer.co.operator.persistent;
 import static sorcer.co.operator.put;
 import static sorcer.co.operator.set;
@@ -121,6 +119,7 @@ public class CollectionOperators {
 		
 	}
 
+
 	@Test
 	public void entryOperator() throws Exception {
 		
@@ -129,16 +128,16 @@ public class CollectionOperators {
 		// a path is a String - usually a sequence of attributes
 		assertEquals("arg/x1", path(e));
 
-		assertEquals(isPersistent(e), false);
+		assertFalse(isPersistent(e));
 		assertTrue(asis(e) instanceof Double);
 		assertTrue(value(e).equals(10.0));
 		assertTrue(asis(e).equals(10.0));
-		
+
 		// make the entry persistent
 		// value is not yet persisted
 		persistent(e);
-		
-		assertEquals(isPersistent(e), true);
+
+		assertTrue(isPersistent(e));
 		assertFalse(asis(e) instanceof URL);
 		assertTrue(value(e).equals(10.0));
 		assertTrue(asis(e) instanceof URL);
@@ -148,17 +147,18 @@ public class CollectionOperators {
 		assertTrue(value(e).equals(50.0));
 		assertTrue(asis(e) instanceof URL);
 		
-		Entry se1 = strategyEnt("j1/j2", strategy(Access.PULL, Flow.PAR));
-		assertEquals(flow(se1), Flow.PAR);
-		assertEquals(access(se1), Access.PULL);
-		
-		// store the entry
-		URL seUrl = store(se1);
+		Entry se1 = strategyEnt("j1/j2", strategy(Strategy.Access.PULL, Strategy.Flow.PAR));
+		assertEquals(flow(se1), Strategy.Flow.PAR);
+		assertEquals(access(se1), Strategy.Access.PULL);
 
-		logger.info("ZZZZZZZ url: " + seUrl)  ;
-//		Entry se2 = (Entry)value(seUrl);
-		logger.info("ZZZZZZZ se2: " + value(seUrl))  ;
+		URL se1Url = store(se1);
+		Entry se2 = (Entry)value(se1Url);
+		assertFalse(isPersistent(se1));
+		assertFalse(asis(se1) instanceof URL);
+		assertTrue(flow(se1).equals(flow(se1)));
+		assertTrue(access(se1).equals(access(se1)));
 
+//		URL seUrl = url(se1);
 //		assertEquals(isPersistent(se2), false);
 //		assertFalse(asis(se2) instanceof URL);
 //		assertTrue(flow(se1).equals(flow(se2)));

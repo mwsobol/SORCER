@@ -17,27 +17,29 @@
 
 package sorcer.co.tuple;
 
+import net.jini.id.Uuid;
+import net.jini.id.UuidFactory;
+import sorcer.service.*;
+import sorcer.util.url.sos.SdbUtil;
+
 import java.io.Serializable;
 import java.net.URL;
 import java.rmi.RemoteException;
-
-import sorcer.service.Arg;
-import sorcer.service.Evaluation;
-import sorcer.service.EvaluationException;
-import sorcer.service.Identifiable;
-import sorcer.service.Setter;
-import sorcer.service.SetterException;
-import sorcer.service.Strategy;
-import sorcer.util.url.sos.SdbUtil;
 
 @SuppressWarnings("unchecked")
 public class Tuple2<T1, T2> implements Arg, Serializable, Identifiable, Evaluation<T2>, Setter {
 	private  static final long serialVersionUID = -6519678282532888568L;
 	public T1 _1 = null;
 	public T2 _2 = null;
+	// its arguments is persisted
 	protected boolean isPersistent = false;
+	// its arguments are always evaluated if active (either Evaluataion or Invocation type)
+	protected boolean isReactive = false;
+	private Uuid entryUuid;
 
-	public Tuple2() {};
+	public Tuple2() {
+		entryUuid = UuidFactory.generate();
+	}
 	
 	public Tuple2(T1 x1, T2 x2) {
 		_1 = x1;
@@ -93,7 +95,11 @@ public class Tuple2<T1, T2> implements Arg, Serializable, Identifiable, Evaluati
 	 */
 	@Override
 	public Object getId() {
-		return ""+_1;
+		return entryUuid;
+	}
+
+	public void setId(Uuid id) {
+		entryUuid = id;
 	}
 
 	/* (non-Javadoc)

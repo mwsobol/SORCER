@@ -17,14 +17,14 @@
 
 package sorcer.util.bdb.objects;
 
-import java.io.Serializable;
-import java.security.Principal;
-import java.util.Date;
-
 import net.jini.id.Uuid;
 import net.jini.id.UuidFactory;
 import sorcer.security.util.SorcerPrincipal;
 import sorcer.service.SecureIdentifiable;
+
+import java.io.Serializable;
+import java.security.Principal;
+import java.util.Date;
 
 /**
  * A UuidObject serves as the Uuid/Object pair for persisted entities.
@@ -48,23 +48,24 @@ public class UuidObject implements SecureIdentifiable, Serializable {
 	private Date dateCreated;
 
 	public UuidObject(Object object) {
-		this(object, "");
+		this(object, object.getClass().getName());
 	}
 	  
 	public UuidObject(Uuid uuid, Object object) {
-		this(object, "");
+		this(object, object.getClass().getName());
 		id = uuid;
 	}
 	
-    public UuidObject(Object object, String descrition) {
-    	id = UuidFactory.generate();
-    	name = ""+object;
+    public UuidObject(Object object, String description) {
+		name = ""+object;
         this.object = object;
         principal = new SorcerPrincipal(System.getProperty("user.name"));
 		principal.setId(principal.getName());
-		this.description = descrition;
+		this.description = description;
 		dateCreated = new Date();
-    }
+		if (id == null)
+			id = UuidFactory.generate();
+	}
     
     public final Uuid getId() {
         return id;

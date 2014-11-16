@@ -21,10 +21,7 @@ import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
 import net.jini.id.Uuid;
 import net.jini.id.UuidFactory;
-import sorcer.co.tuple.Entry;
-import sorcer.co.tuple.EntryList;
-import sorcer.co.tuple.ExecPath;
-import sorcer.co.tuple.Tuple2;
+import sorcer.co.tuple.*;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.model.par.Par;
 import sorcer.core.context.model.par.ParList;
@@ -60,6 +57,8 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 
 	private static final long serialVersionUID = 3311956866023311727L;
 
+	protected Uuid contextId;
+
 	private static String defaultName = "cxt-";
 
 	private static int count = 0;
@@ -87,8 +86,6 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 	protected String parameterTypesPath;
 
 	protected String targetPath;
-
-	protected Uuid contextId;
 
 	protected String parentPath = "";
 
@@ -336,8 +333,8 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 		return contextId;
 	}
 
-	public void setId(Uuid contextID) {
-		this.contextId = contextID;
+	public void setId(Uuid id) {
+		contextId = id;
 	}
 
 	public String getParentPath() {
@@ -2872,6 +2869,8 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 					currentPath = targetPath;
 				else if (returnPath != null)
 					obj = getReturnValue(entries);
+				else
+					return null;
 			}
 			if (currentPath.startsWith("super")) {
 				obj = (T) exertion.getContext().getValue(currentPath.substring(6));
@@ -2892,7 +2891,7 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 					obj = ((Evaluation<T>)obj).getValue(entries);
 				}
 			}
-			if (obj instanceof Reactive)
+			if (obj instanceof Reactive && ((Reactive)obj).isReactive())
 				return (T) ((Evaluation)obj).getValue(entries);
 			else
 				return (T) obj;

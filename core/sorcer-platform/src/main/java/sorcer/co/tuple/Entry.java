@@ -17,24 +17,18 @@
 
 package sorcer.co.tuple;
 
+import sorcer.core.invoker.ServiceInvoker;
+import sorcer.service.*;
+
 import java.net.URL;
 import java.rmi.RemoteException;
-
-import sorcer.core.invoker.ServiceInvoker;
-import sorcer.service.Reactive;
-import sorcer.service.Arg;
-import sorcer.service.Context;
-import sorcer.service.Evaluation;
-import sorcer.service.EvaluationException;
-import sorcer.service.Identifiable;
-import sorcer.service.Setter;
 
 
 /**
  * @author Mike Sobolewski
  */
 @SuppressWarnings("unchecked")
-public class Entry<T> extends Tuple2<String, T> implements Arg, Comparable<T>, Identifiable, Setter, Evaluation<T>, Reactive<T> {
+public class Entry<T> extends Tuple2<String, T> implements Arg, Comparable<T>, Setter, Evaluation<T>, Reactive<T> {
 	private static final long serialVersionUID = 5168783170981015779L;
 	
 	public int index;
@@ -143,7 +137,7 @@ public class Entry<T> extends Tuple2<String, T> implements Arg, Comparable<T>, I
 
 	@Override
 	public boolean isReactive() {
-		return isPersistent;
+		return isReactive;
 	}
 
 }
