@@ -17,29 +17,14 @@
 package sorcer.core.context.model.par;
 
 
-import java.rmi.RemoteException;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Vector;
-
 import sorcer.core.context.Contexts;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.invoker.ServiceInvoker;
-import sorcer.service.Arg;
-import sorcer.service.ArgSet;
-import sorcer.service.Context;
-import sorcer.service.ContextException;
-import sorcer.service.Evaluation;
-import sorcer.service.EvaluationException;
-import sorcer.service.Identifiable;
-import sorcer.service.Invocation;
-import sorcer.service.InvocationException;
-import sorcer.service.Scopable;
+import sorcer.service.*;
 import sorcer.service.modeling.Variability;
+
+import java.rmi.RemoteException;
+import java.util.*;
 
 /*
  * Copyright 2013 the original author or authors.
@@ -99,17 +84,20 @@ public class ParModel<T> extends ServiceContext<T> implements Evaluation<T>, Inv
 	public T getValue(String path, Arg... entries) throws ContextException {
 		try {
 			T val = null;
-			if (path != null)
+			if (path != null) {
 				val = (T) get(path);
-			else
+			} else
 				val = (T) super.getValue(path, entries);
 			if ((val instanceof Par) && (((Par) val).asis() instanceof Variability)) {
 				bindVar((Variability) ((Par) val).asis());
 			}
 			if (val != null && val instanceof Evaluation) {
 				return (T) ((Evaluation) val).getValue(entries);
-			} else
+			} else if (val == null && targetPath != null) {
+				return(T) getValue(targetPath, entries);
+			}  else {
 				return (T) val;
+			}
 		} catch (Exception e) {
 			throw new EvaluationException(e);
 		}
@@ -139,7 +127,6 @@ public class ParModel<T> extends ServiceContext<T> implements Evaluation<T>, Inv
 				return (T) value;
 			} else {
 				if (value instanceof Scopable) {
-
 					Object scope = ((Scopable) value).getScope();
 					if (scope != null && ((Context) scope).size() > 0) {
 						((Context) scope).append(this);

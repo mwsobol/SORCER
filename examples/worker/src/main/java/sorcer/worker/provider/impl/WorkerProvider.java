@@ -1,8 +1,6 @@
 package sorcer.worker.provider.impl;
 
-import java.net.InetAddress;
-import java.rmi.RemoteException;
-
+import com.sun.jini.start.LifeCycle;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.provider.ServiceTasker;
 import sorcer.service.Context;
@@ -11,8 +9,13 @@ import sorcer.worker.provider.InvalidWork;
 import sorcer.worker.provider.Work;
 import sorcer.worker.provider.Worker;
 
-import com.sun.jini.start.LifeCycle;
+import java.net.InetAddress;
+import java.rmi.RemoteException;
 
+/**
+ * @author Mike Sobolewski
+ *
+ */
 @SuppressWarnings("rawtypes")
 public class WorkerProvider extends ServiceTasker implements Worker {
 	
@@ -59,7 +62,7 @@ public class WorkerProvider extends ServiceTasker implements Worker {
             throw new InvalidWork("No Work found to do at path requestor/work'!");
         }
 		String reply = "Done work by: "
-                + (getProviderName() == null ? getClass() : getProviderName());
+                + (getProviderName() == null ? getClass().getName() : getProviderName());
 		setMessage(context, reply);
 
 		// simulate longer execution time based on the value in

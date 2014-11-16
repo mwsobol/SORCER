@@ -16,43 +16,27 @@
  */
 package sorcer.co;
 
-import java.lang.reflect.Array;
-import java.net.URL;
-import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import sorcer.co.tuple.Entry;
-import sorcer.co.tuple.InoutEntry;
-import sorcer.co.tuple.InputEntry;
-import sorcer.co.tuple.OutputEntry;
-import sorcer.co.tuple.StrategyEntry;
-import sorcer.co.tuple.Tuple1;
-import sorcer.co.tuple.Tuple2;
-import sorcer.co.tuple.Tuple3;
-import sorcer.co.tuple.Tuple4;
-import sorcer.co.tuple.Tuple5;
-import sorcer.co.tuple.Tuple6;
+import sorcer.co.tuple.*;
+import sorcer.core.context.Copier;
 import sorcer.core.context.ListContext;
-import sorcer.service.Arg;
-import sorcer.service.ArgSet;
-import sorcer.service.Context;
-import sorcer.service.ContextException;
-import sorcer.service.Evaluation;
-import sorcer.service.EvaluationException;
-import sorcer.service.Setter;
-import sorcer.service.SetterException;
-import sorcer.service.Strategy;
+import sorcer.core.context.ServiceContext;
+import sorcer.core.context.model.par.Par;
+import sorcer.core.provider.DatabaseStorer;
+import sorcer.service.*;
 import sorcer.util.Loop;
-//import sorcer.vfe.filter.TableReader;
-//import sorcer.vfe.util.Response;
+import sorcer.util.Sorcer;
 import sorcer.util.Table;
 import sorcer.util.url.sos.SdbUtil;
+
+import java.io.IOException;
+import java.lang.reflect.Array;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.rmi.RemoteException;
+import java.util.*;
+
+//import sorcer.vfe.filter.TableReader;
+//import sorcer.vfe.util.Response;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class operator {
@@ -324,16 +308,83 @@ public class operator {
 	public static <S extends Setter> boolean isPersistent(S setter) {
 			return setter.isPersistent();
 	}
-	
-	public static <S extends Setter> S store(S setter)
-			throws EvaluationException, RemoteException {
-		if (!setter.isPersistent()) {
-			setter.setPersistent(true);
-			((Evaluation) setter).getValue();
+
+	public static URL store(Object object) throws EvaluationException {
+		try {
+			return SdbUtil.store(object);
+		} catch (Exception e) {
+			throw new EvaluationException(e);
 		}
-		return setter;
 	}
-	
+
+	public static URL storeArg(Entry entry)
+			throws EvaluationException, RemoteException {
+		entry.setPersistent(true);
+		entry.setPersistent(true);
+		entry.getValue();
+		return (URL) entry.asis();
+	}
+
+	public static URL dbURL() throws MalformedURLException {
+		return new URL(Sorcer.getDatabaseStorerUrl());
+	}
+
+	public static URL dsURL() throws MalformedURLException {
+		return new URL(Sorcer.getDataspaceStorerUrl());
+	}
+
+	public static void dbURL(Object object, URL dbUrl)
+			throws MalformedURLException {
+		if (object instanceof Par)
+			((Par) object).setDbURL(dbUrl);
+		else if (object instanceof ServiceContext)
+			((ServiceContext) object).setDbUrl("" + dbUrl);
+		else
+			throw new MalformedURLException("Can not set URL to: " + object);
+	}
+
+	public static URL dbURL(Object object) throws MalformedURLException {
+		if (object instanceof Par)
+			return ((Par) object).getDbURL();
+		else if (object instanceof ServiceContext)
+			return new URL(((ServiceContext) object).getDbUrl());
+		return null;
+	}
+
+	public static Object retrieve(URL url) throws IOException {
+		return url.getContent();
+	}
+
+	public static URL update(Object object) throws ExertionException,
+			SignatureException, ContextException {
+		return SdbUtil.update(object);
+	}
+
+	public static List<String> list(URL url) throws ExertionException,
+			SignatureException, ContextException {
+		return SdbUtil.list(url);
+	}
+
+	public static List<String> list(DatabaseStorer.Store store) throws ExertionException,
+			SignatureException, ContextException {
+		return SdbUtil.list(store);
+	}
+
+	public static URL delete(Object object) throws ExertionException,
+			SignatureException, ContextException {
+		return SdbUtil.delete(object);
+	}
+
+	public static int clear(DatabaseStorer.Store type) throws ExertionException,
+			SignatureException, ContextException {
+		return SdbUtil.clear(type);
+	}
+
+	public static int size(DatabaseStorer.Store type) throws ExertionException,
+			SignatureException, ContextException {
+		return SdbUtil.size(type);
+	}
+
 	public static <T> Entry<T> db(Entry<T> entry) {
 		return persistent(entry);
 	}
@@ -522,6 +573,34 @@ public class operator {
 			map.put(entry._1, entry._2);
 		}
 		return map;
+	}
+
+	public static Evaluation  dependsOn(Evaluation dependee,  Evaluation depender) {
+		if (dependee instanceof Dependency)
+			((Dependency)dependee).getDependers().add(depender);
+
+		return dependee;
+	}
+
+	public static Copier copier(Context fromContext, Arg[] fromEntries,
+								 Context toContext, Arg[] toEntries) throws EvaluationException {
+		return new Copier(fromContext, fromEntries, toContext, toEntries);
+	}
+
+	public static Evaluation dependsOn(Evaluation dependee, Evaluation depender,
+									   Context scope) throws ContextException {
+		try {
+			if (dependee instanceof Scopable) {
+				Context context = (Context) ((Scopable) dependee).getScope();
+				if (context == null)
+					((Scopable) dependee).setScope(scope);
+				else
+					context.append(scope);
+			}
+		} catch (RemoteException e) {
+			throw new ContextException(e);
+		}
+		return dependsOn(dependee, depender);
 	}
 
 	public static Loop loop(int to) {

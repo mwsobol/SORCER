@@ -26,22 +26,19 @@ import java.util.logging.Logger;
 
 import static org.junit.Assert.*;
 import static sorcer.co.operator.*;
-import static sorcer.co.operator.list;
 import static sorcer.co.operator.path;
 import static sorcer.co.operator.persistent;
 import static sorcer.co.operator.put;
 import static sorcer.co.operator.set;
-import static sorcer.co.operator.store;
-import static sorcer.co.operator.url;
 import static sorcer.co.operator.value;
 import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.add;
 import static sorcer.eo.operator.asis;
 import static sorcer.eo.operator.get;
 import static sorcer.eo.operator.put;
-import static sorcer.eo.operator.result;
 import static sorcer.eo.operator.value;
 import static sorcer.po.operator.add;
+import static sorcer.po.operator.asis;
 import static sorcer.po.operator.*;
 import static sorcer.po.operator.set;
 
@@ -123,8 +120,7 @@ public class CollectionOperators {
 		assertEquals(value(t, 1, 1), 2.2);
 		
 	}
-	
-	
+
 	@Test
 	public void entryOperator() throws Exception {
 		
@@ -146,21 +142,30 @@ public class CollectionOperators {
 		assertFalse(asis(e) instanceof URL);
 		assertTrue(value(e).equals(10.0));
 		assertTrue(asis(e) instanceof URL);
-		
+
 		put(e, 50.0);
+
 		assertTrue(value(e).equals(50.0));
 		assertTrue(asis(e) instanceof URL);
 		
-		Entry se = strategyEnt("j1/j2", strategy(Access.PULL, Flow.PAR));
-		assertEquals(flow(se), Flow.PAR);
-		assertEquals(access(se), Access.PULL);
+		Entry se1 = strategyEnt("j1/j2", strategy(Access.PULL, Flow.PAR));
+		assertEquals(flow(se1), Flow.PAR);
+		assertEquals(access(se1), Access.PULL);
 		
-		// store value of the entry
-		e = ent("arg/x1", 100.0);
-		store(e);
-		assertEquals(isPersistent(e), true);
-		assertTrue(asis(e) instanceof URL);
-		assertTrue(value(e).equals(100.0));
+		// store the entry
+		URL seUrl = store(se1);
+
+		logger.info("ZZZZZZZ url: " + seUrl)  ;
+//		Entry se2 = (Entry)value(seUrl);
+		logger.info("ZZZZZZZ se2: " + value(seUrl))  ;
+
+//		assertEquals(isPersistent(se2), false);
+//		assertFalse(asis(se2) instanceof URL);
+//		assertTrue(flow(se1).equals(flow(se2)));
+//		assertTrue(access(se1).equals(access(se2)));
+//
+//		// store the entry
+//		URL argURL = storeArg(ent("arg/x1", "Hello SORCER!"));
 		
 	}
 	
@@ -216,7 +221,9 @@ public class CollectionOperators {
 	
 	
 	@Test
-	public void dbParOperator() throws Exception {	
+	public void dbParOperator() throws Exception {
+
+		// persist values (arguments) of pars
 		Par<Double> dbp1 = persistent(par("design/in", 25.0));
 		Par<String> dbp2 = dbPar("url/sobol", "http://sorcersoft.org/sobol");
 
@@ -229,12 +236,13 @@ public class CollectionOperators {
 		assertTrue(asis(dbp1) instanceof URL);
 		assertTrue(asis(dbp2) instanceof URL);
 
-		// store par args in the data store
-		Par p1 = store(par("design/in", 30.0));
-		Par p2 = store(par("url/sorcer", "http://sorcersoft.org"));
+		// store pars, not their arguments) in the data store
+		URL p1Url = store(par("design/in", 30.0));
+		URL p2Url = store(par("url/sorcer", "http://sorcersoft.org"));
 		
-		assertEquals(value(url(p1)), 30.0);
-		assertEquals(value(url(p2)), "http://sorcersoft.org");
+		assertEquals(value(p1Url), 30.0);
+		assertEquals(value(p2Url), "http://sorcersoft.org");
+
 	}
 	
 	

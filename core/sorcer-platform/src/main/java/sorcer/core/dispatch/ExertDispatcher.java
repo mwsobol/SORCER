@@ -17,20 +17,6 @@
 
 package sorcer.core.dispatch;
 
-import java.io.File;
-import java.lang.reflect.Array;
-import java.rmi.RemoteException;
-import java.rmi.server.UID;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-import java.util.Vector;
-import java.util.logging.Logger;
-
-import javax.security.auth.Subject;
-
 import net.jini.core.event.RemoteEvent;
 import net.jini.id.Uuid;
 import net.jini.id.UuidFactory;
@@ -46,21 +32,19 @@ import sorcer.core.exertion.NetJob;
 import sorcer.core.misc.MsgRef;
 import sorcer.core.provider.Cataloger;
 import sorcer.core.provider.Provider;
-import sorcer.service.CompoundExertion;
-import sorcer.service.Conditional;
-import sorcer.service.Context;
-import sorcer.service.ContextException;
-import sorcer.service.Exec;
-import sorcer.service.Exertion;
-import sorcer.service.ExertionException;
-import sorcer.service.Job;
-import sorcer.service.ServiceExertion;
-import sorcer.service.SignatureException;
-import sorcer.util.EmailCmd;
+import sorcer.service.*;
 import sorcer.util.Log;
 import sorcer.util.ProviderAccessor;
 import sorcer.util.Sorcer;
 import sorcer.util.SorcerUtil;
+
+import javax.security.auth.Subject;
+import java.io.File;
+import java.lang.reflect.Array;
+import java.rmi.RemoteException;
+import java.rmi.server.UID;
+import java.util.*;
+import java.util.logging.Logger;
 
 @SuppressWarnings("rawtypes")
 abstract public class ExertDispatcher implements Dispatcher,
@@ -372,37 +356,6 @@ abstract public class ExertDispatcher implements Dispatcher,
 			}
 		}
 		return null;
-	}
-
-	public void sendMail(String message, String to) {
-		String[] msg = new String[MSIZE];
-		msg[MTO] = to;
-		String admin = Sorcer.getProperty("sorcer.admin");
-		if (admin == null)
-			admin = "nobody@sorcer.cs.ttu.edu";
-		msg[MFROM] = admin;
-		msg[MSUBJECT] = "SORCER notification";
-		msg[MTEXT] = message;
-		EmailCmd mail = new EmailCmd(String.valueOf(SEND_MAIL), Sorcer
-				.getProperty("smtp.host"));
-		mail.setArgs(null, msg);
-		mail.doIt();
-	}
-
-	public static void sendMailWithSubject(String message, String subject,
-			String to) {
-		String[] msg = new String[MSIZE];
-		msg[MTO] = to;
-		String admin = Sorcer.getProperty("sorcer.admin");
-		if (admin == null)
-			admin = "nobody@sorcer.cs.ttu.edu";
-		msg[MFROM] = admin;
-		msg[MSUBJECT] = "SORCER notification: " + subject;
-		msg[MTEXT] = message;
-		EmailCmd mail = new EmailCmd(String.valueOf(SEND_MAIL), Sorcer
-				.getProperty("smtp.host"));
-		mail.setArgs(null, msg);
-		mail.doIt();
 	}
 
 	public void notifyExertionExecution(Exertion inex, Exertion outex) throws ContextException {

@@ -2,6 +2,9 @@ package sorcer.core.context.model.par;
 
 import groovy.lang.Closure;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.sorcer.test.ProjectContext;
+import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.tester.provider.impl.AdderImpl;
 import sorcer.arithmetic.tester.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.tester.provider.impl.SubtractorImpl;
@@ -10,7 +13,6 @@ import sorcer.core.invoker.ServiceInvoker;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.service.*;
 import sorcer.util.Sorcer;
-import sorcer.util.url.sos.SdbURLStreamHandlerFactory;
 
 import java.io.IOException;
 import java.net.URL;
@@ -37,21 +39,11 @@ import static sorcer.po.operator.set;
  * @author Mike Sobolewski
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })
+@RunWith(SorcerTestRunner.class)
+@ProjectContext("core/sorcer-int-tests/arithmetic-tester")
 public class ParModelTest {
 	private final static Logger logger = Logger.getLogger(ParModelTest.class.getName());
-
-	static {
-		ServiceExertion.debug = true;
-		URL.setURLStreamHandlerFactory(new SdbURLStreamHandlerFactory());
-		System.setProperty("java.util.logging.config.file",
-				Sorcer.getHome() + "/configs/sorcer.logging");
-		System.setProperty("java.security.policy", Sorcer.getHome()
-				+ "/configs/policy.all");
-		System.setSecurityManager(new SecurityManager());
-		Sorcer.setCodeBase(new String[] { "aritmeticInvokeModel-bean.jar" });
-		System.setProperty("java.protocol.handler.pkgs", "sorcer.util.url|org.rioproject.url");
-		//System.setProperty("java.rmi.server.RMIClassLoaderSpi","org.rioproject.rmi.ResolvingLoader");
-	}
+	public static String sorcerVersion = System.getProperty("sorcer.version");
 
 	@Test
 	public void adderParTest() throws EvaluationException, RemoteException,
@@ -135,11 +127,12 @@ public class ParModelTest {
 		ParModel pm = parModel(par("x", 10.0), par("y", 20.0),
 				par("add", invoker("x + y", pars("x", "y"))));
 
+		target(pm, "add");
+
 		assertEquals(value(pm, "x"), 10.0);
 		assertEquals(value(pm, "y"), 20.0);
 		assertEquals(value(pm, "add"), 30.0);
 
-		value(pm, "add");
 		assertEquals(value(pm), 30.0);
 	}
 	
@@ -148,7 +141,9 @@ public class ParModelTest {
 			ContextException { 
 		ParModel pm = parModel(par("x", 10.0), par("y", 20.0),
 				par("add", invoker("x + y", pars("x", "y"))));
-		
+
+		target(pm, "add");
+
 		Par x = par(pm, "x");
 		logger.info("par x: " + x);
 		set(x, 20.0);
@@ -156,29 +151,27 @@ public class ParModelTest {
 		logger.info("val x: " + value(pm, "x"));
 
 		put(pm, "y", 40.0);
-		
-		logger.info("par model1:" + pm);
-		
+
 		assertEquals(value(pm, "x"), 20.0);
 		assertEquals(value(pm, "y"), 40.0);
 		assertEquals(value(pm, "add"), 60.0);
-		
-		value(pm, "add");
+
+		// get modeling taget
 		assertEquals(value(pm), 60.0);
-		
+
 		add(pm, par("x", 10.0), par("y", 20.0));
 		assertEquals(value(pm, "x"), 10.0);
 		assertEquals(value(pm, "y"), 20.0);
-		
+
 		logger.info("par model2:" + pm);
 		assertEquals(value(pm, "add"), 30.0);
-		
+
 		value(pm, "add");
 		assertEquals(value(pm), 30.0);
-		
+
 		// with new arguments, closure
 		assertEquals(Double.valueOf(30.0d), (Double)value(pm, par("x", 10.0), par("y", 20.0)));
-		
+
 		add(pm, par("z", invoker("(x * y) + add", pars("x", "y", "add"))));
 		logger.info("z value: " + value(pm, "z"));
 		assertEquals(value(pm, "z"), 230.0);
@@ -206,31 +199,32 @@ public class ParModelTest {
 		Context c4 = new ServiceContext("multiply");
 		c4.putDbValue("arg/x1", 10.0);
 		c4.putValue("arg/x2", 50.0);
-		c4.putDbValue("result/y", Context.none);
+		c4.putDbValue("result/y", null);
 		
 		assertEquals(value(c4, "arg/x1"), 10.0);
 		assertEquals(value(c4, "arg/x2"), 50.0);
-		
+
 		assertTrue(asis(c4, "arg/x1") instanceof Par);
-		assertFalse(asis(c4, "arg/x2") instanceof Par);
-		
-		logger.info("arg/x1 URL: " + url(c4, "arg/x1"));
+		assertEquals(asis(c4, "arg/x2"), 50.0);
+
 		assertTrue(url(c4, "arg/x1") instanceof URL);
-		assertFalse(url(c4, "arg/x2") instanceof URL);
-		
+		assertTrue(url(c4, "arg/x2") instanceof URL);
+
 		c4.putValue("arg/x1", 110.0);
 		c4.putValue("arg/x2", 150.0);
-		
+
 		assertEquals(value(c4, "arg/x1"), 110.0);
 		assertEquals(value(c4, "arg/x2"), 150.0);
-		
+
 		assertTrue(asis(c4, "arg/x1") instanceof Par);
 		assertFalse(asis(c4, "arg/x2") instanceof Par);
 	}
 	
 	@Test
 	public void persistableEolContext() throws ContextException, RemoteException {
-		Context c4 = context("multiply", dbEnt("arg/x0", 1.0), dbInEnt("arg/x1", 10.0), dbOutEnt("arg/x2", 50.0), outEnt("result/y"));
+		Context c4 = context("multiply",
+				dbEnt("arg/x0", 1.0), dbInEnt("arg/x1", 10.0),
+				dbOutEnt("arg/x2", 50.0), outEnt("result/y"));
 		
 		assertEquals(value(c4, "arg/x0"), 1.0);
 		assertEquals(value(c4, "arg/x1"), 10.0);
@@ -268,7 +262,7 @@ public class ParModelTest {
 		Par dbp2 = dbPar("url", "myUrl1");
 
 		assertFalse(asis(dbp1) instanceof URL);
-		assertFalse(asis(dbp2) instanceof URL);
+		assertTrue(asis(dbp2) instanceof URL);
 		
 		assertEquals(value(dbp1), 25.0);
 		assertEquals(value(dbp2), "myUrl1");
@@ -336,15 +330,15 @@ public class ParModelTest {
 	@Test
 	public void exertionParsTest() throws RemoteException,
 			ContextException, ExertionException, SignatureException {
-		
+
 		Context c4 = context("multiply", inEnt("arg/x1"), inEnt("arg/x2"),
 				outEnt("result/y"));
 				
 		Context c5 = context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
-				outEnt("result/y", null));
+				outEnt("result/y"));
 		
 		Task t3 = task("t3", sig("subtract", SubtractorImpl.class),
-				context("subtract", inEnt("arg/x1", null), inEnt("arg/x2", null),
+				context("subtract", inEnt("arg/x1", null), inEnt("arg/x2"),
 						outEnt("result/y")));
 
 		Task t4 = task("t4", sig("multiply", MultiplierImpl.class), c4);
@@ -370,8 +364,8 @@ public class ParModelTest {
 		// update par references
 		j1 = exert(j1);
 		c4 = taskContext("j1/t4", j1);
-//		logger.info("j1 value: " + jobContext(job));
-//		logger.info("j1p value: " + value(j1p));
+		logger.info("j1 value: " + serviceContext(j1));
+		logger.info("j1p value: " + value(j1p));
 		
 		// get job parameter value
 		assertEquals(value(j1p), 400.0);
@@ -379,10 +373,12 @@ public class ParModelTest {
 		// set job parameter value
 		set(j1p, 1000.0);
 		assertEquals(value(j1p), 1000.0);
-		
-		// map pars are aliased pars
+
+		// par model with exertions
 		ParModel pc = parModel(x1p, x2p, j1p);
-		logger.info("y value: " + value(pc, "y"));
+		exert(j1);
+		// j1p is the alias to context value of j1 at j1/t3/result/y
+		assertEquals(value(pc, "j1p"), 400.0);
 	}
 	
 	@Test
@@ -533,8 +529,9 @@ public class ParModelTest {
 		put(pm, "sphere/radius", 20.0);
 		// attach the agent to the par-model and invoke
 		pm.add(new Agent("getSphereVolume",
-				"junit.sorcer.arithmetic.tester.volume.Volume", new URL(Sorcer
-						.getWebsterUrl() + "/ju-volume-bean.jar")));
+				"sorcer.arithmetic.tester.volume.Volume",
+		new URL(Sorcer.getWebsterUrl()
+				+ "/arithmetic-tester-"+sorcerVersion+".jar")));
 
 		Object val =  get((Context)value(pm,"getSphereVolume"), "sphere/volume");
 				 
@@ -551,8 +548,9 @@ public class ParModelTest {
 		invoke(pm,
 				"getSphereVolume",
 				new Agent("getSphereVolume",
-						"junit.sorcer.vfe.evaluator.service.Volume", new URL(
-								Sorcer.getWebsterUrl() + "/ju-volume-bean.jar")));
+						"sorcer.arithmetic.tester.volume.Volume",
+						new URL(Sorcer.getWebsterUrl()
+								+ "/arithmetic-tester-"+sorcerVersion+".jar")));
 
 //		logger.info("call getSphereVolume:"
 //				+ invoke(pm, "getSphereVolume",
@@ -564,9 +562,9 @@ public class ParModelTest {
 		assertEquals(
 				get((Context) invoke(pm, "getSphereVolume",
 						agent("getSphereVolume",
-								"junit.sorcer.vfe.evaluator.service.Volume",
+								"sorcer.arithmetic.tester.volume.Volume",
 								new URL(Sorcer.getWebsterUrl()
-										+ "/ju-volume-bean.jar"))),
+										+ "/arithmetic-tester-"+sorcerVersion+".jar"))),
 						"sphere/volume"), 33510.32163829113);
 	}
 }

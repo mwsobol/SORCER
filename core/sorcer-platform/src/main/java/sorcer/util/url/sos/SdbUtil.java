@@ -97,9 +97,7 @@ public class SdbUtil {
 	/**
 	 * Returns a context to be used with
 	 * {@link StorageManagement#contextStore(Context)}
-	 * 
-	 * @param uuid
-	 *            {@link Uuid}
+	 *
 	 * @param object
 	 *            to be stored
 	 * @return storage {@link Context}
@@ -296,7 +294,6 @@ public class SdbUtil {
 				sig("contextRetrieve", DatabaseStorer.class,
 						prvName(Sorcer.getActualDatabaseStorerName())),
 				SdbUtil.getRetrieveContext(storeUuid, storeType));
-
 		try {
 			return get((Context) value(objectRetrieveTask));
 		} catch (RemoteException e) {

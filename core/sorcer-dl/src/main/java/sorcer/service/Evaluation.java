@@ -49,6 +49,7 @@ public interface  Evaluation <T> {
 	
 	/**
 	 * Realizes the substitution for this evaluation with respect to the provided parameters.
+	 *
 	 * @param entries substitution parameters
 	 * @throws EvaluationException
 	 * @throws RemoteException

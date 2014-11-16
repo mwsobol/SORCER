@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 
-<project name="SSB" default="browser.run" basedir="">
+<project name="SORCER Service Browser" default="browser.run" basedir="">
 
 	<!-- load system environment variables -->
 	<property environment="env" />

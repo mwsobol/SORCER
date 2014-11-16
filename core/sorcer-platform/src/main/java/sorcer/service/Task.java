@@ -17,12 +17,6 @@
 
 package sorcer.service;
 
-import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.logging.Logger;
-
 import net.jini.core.transaction.Transaction;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.exertion.NetTask;
@@ -30,6 +24,12 @@ import sorcer.core.exertion.ObjectTask;
 import sorcer.core.provider.ControlFlowManager;
 import sorcer.core.signature.NetSignature;
 import sorcer.core.signature.ObjectSignature;
+
+import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.logging.Logger;
 
 /**
  * A <code>Task</code> is an elementary service-oriented message
@@ -385,11 +385,6 @@ public class Task extends ServiceExertion {
 		} else {
 			return dataContext.getValue(path, args);
 		}
-	}
-	
-	@Override
-	public void reset(int state) {
-		status = state;
 	}
 
 }

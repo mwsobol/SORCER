@@ -1,77 +1,37 @@
 package sorcer.core.context.model.par;
 
-import static org.junit.Assert.assertEquals;
-import static sorcer.co.operator.ent;
-import static sorcer.eo.operator.context;
-import static sorcer.eo.operator.exert;
-import static sorcer.eo.operator.get;
-import static sorcer.eo.operator.result;
-import static sorcer.eo.operator.sig;
-import static sorcer.eo.operator.task;
-import static sorcer.eo.operator.value;
-import static sorcer.po.operator.agent;
-import static sorcer.po.operator.invoke;
-import static sorcer.po.operator.invoker;
+import net.jini.core.transaction.TransactionException;
+import org.junit.AfterClass;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.sorcer.test.ProjectContext;
+import org.sorcer.test.SorcerTestRunner;
+import sorcer.arithmetic.tester.provider.impl.ParModelImpl;
+import sorcer.service.*;
+import sorcer.util.Sorcer;
 
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.logging.Logger;
 
-import net.jini.core.transaction.TransactionException;
-
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
-import sorcer.arithmetic.tester.provider.impl.ParModelImpl;
-import sorcer.service.Context;
-import sorcer.service.ContextException;
-import sorcer.service.ExertionException;
-import sorcer.service.Invocation;
-import sorcer.service.ServiceExertion;
-import sorcer.service.SignatureException;
-import sorcer.service.Task;
-import sorcer.util.Sorcer;
-import sorcer.util.exec.ExecUtils;
-import sorcer.util.exec.ExecUtils.CmdResult;
-import sorcer.util.url.sos.SdbURLStreamHandlerFactory;
+import static org.junit.Assert.assertEquals;
+import static sorcer.co.operator.ent;
+import static sorcer.eo.operator.*;
+import static sorcer.eo.operator.get;
+import static sorcer.po.operator.*;
 
 /**
  * @author Mike Sobolewski
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })
+@RunWith(SorcerTestRunner.class)
+@ProjectContext("core/sorcer-int-tests/arithmetic-tester")
 public class ParModelServices {
 	private final static Logger logger = Logger.getLogger(ParModelServices.class
 			.getName());
 
-	static {
-		ServiceExertion.debug = true;
-		URL.setURLStreamHandlerFactory(new SdbURLStreamHandlerFactory());
-		System.setProperty("java.util.logging.config.file",
-				Sorcer.getHome() + "/configs/sorcer.logging");
-		System.setProperty("java.security.policy", Sorcer.getHome()
-				+ "/configs/policy.all");
-		System.setSecurityManager(new SecurityManager());
-		Sorcer.setCodeBase(new String[] { "ju-invoker-beans.jar" });
-	}
-	
-	@BeforeClass 
-	public static void setUpOnce() throws IOException, InterruptedException {
-		CmdResult result = ExecUtils.execCommand("ant -f " + Sorcer.getHome() 
-				+ "/modules/sorcer/src/junit/sorcer/core/invoker/bin/all-model-prv-boot-spawn.xml");
-		System.out.println("out: " + result.getOut());
-		System.out.println("err: " + result.getErr());
-		System.out.println("status: " + result.getExitValue());
-				
-//		result = ExecUtils.execCommand("ant -f " + Sorcer.getHome() 
-//				+ "/modules/sorcer/src/junit/sorcer/core/invoker/bin/all-model-prv-boot-spawn.xml");
-		System.out.println("out: " + result.getOut());
-		System.out.println("err: " + result.getErr());
-		System.out.println("status: " + result.getExitValue());
-		Thread.sleep(2000);
-	}
+	public static String sorcerVersion = System.getProperty("sorcer.version");
 	
 	@AfterClass 
 	public static void cleanup() throws RemoteException, InterruptedException {
@@ -104,7 +64,7 @@ public class ParModelServices {
 	public void parNetModelServiceTest() throws RemoteException, ContextException, 
 			ExertionException, SignatureException {
 		// the provider in ex6/bin parmodel-prv-run.xml
-		Task pmt = task(sig("invoke", Invocation.class, "ParModel Service"), 
+		Task pmt = task(sig("invoke", Invocation.class, prvName("Arithmetic ParModel")),
 				context(invoker("expr"), result("invoke/result")));
 		
 //		logger.info("result: " + value(pmt));
@@ -118,7 +78,7 @@ public class ParModelServices {
 	public void parNetVarModelServiceTest() throws RemoteException, ContextException, 
 			ExertionException, SignatureException {
 		// the provider in ex6/bin varparmodel-prv-run.xml
-		Task pmt = task(sig("invoke", Invocation.class, "VarParModel Service"), 
+		Task pmt = task(sig("invoke", Invocation.class, prvName("Arithmetic ParModel")),
 				context(invoker("expr"), result("invoke/result")));
 
 //		logger.info("result: " + value(pmt));
@@ -138,9 +98,9 @@ public class ParModelServices {
 				result("sphere/volume"),
 				ent("sphere/radius", 20.0),
 				agent("getSphereVolume",
-					"junit.sorcer.vfe.evaluator.service.Volume",
-					new URL(Sorcer.getWebsterUrl()
-							+ "/ju-volume-bean.jar"))));
+						"sorcer.arithmetic.tester.volume.Volume",
+						new URL(Sorcer.getWebsterUrl()
+								+ "/arithmetic-tester-"+sorcerVersion+".jar"))));
 		
 		logger.info("result: " + value(pmt));
 		assertEquals(value(pmt), 33510.32163829113);
@@ -159,13 +119,13 @@ public class ParModelServices {
 				result("sphere/volume"),
 				ent("sphere/radius", 20.0),
 				agent("getSphereVolume",
-					"junit.sorcer.vfe.evaluator.service.Volume",
-					new URL(Sorcer.getWebsterUrl()
-							+ "/ju-volume-bean.jar")),
+						"sorcer.arithmetic.tester.volume.Volume",
+						new URL(Sorcer.getWebsterUrl()
+								+ "/arithmetic-tester-"+sorcerVersion+".jar")),
 				agent("getCylinderSurface",
-					"junit.sorcer.vfe.evaluator.service.Volume",
-					new URL(Sorcer.getWebsterUrl()
-								+ "/ju-volume-bean.jar"))));
+						"sorcer.arithmetic.tester.volume.Volume",
+						new URL(Sorcer.getWebsterUrl()
+								+ "/arithmetic-tester-"+sorcerVersion+".jar"))));
 		
 		logger.info("result: " + value(pmt));
 		assertEquals(value(pmt), 33510.32163829113);
@@ -192,14 +152,14 @@ public class ParModelServices {
 	public void parNetModelAgentTest() throws RemoteException, ContextException, ExertionException, 
 			SignatureException, MalformedURLException, TransactionException {
 		// the provider in ex6/bin parmodel-prv-run.xml
-		Task pmt = task(sig("invoke", Invocation.class, "ParModel Service"), 
+		Task pmt = task(sig("invoke", Invocation.class, prvName("Arithmetic ParModel")),
 				context(invoker("getSphereVolume"),
 //						result("sphere/volume"),
 						ent("sphere/radius", 20.0),
 						agent("getSphereVolume",
-							"junit.sorcer.vfe.evaluator.service.Volume",
-							new URL(Sorcer.getWebsterUrl()
-									+ "/ju-volume-bean.jar"))));
+								"sorcer.arithmetic.tester.volume.Volume",
+								new URL(Sorcer.getWebsterUrl()
+										+ "/arithmetic-tester-"+sorcerVersion+".jar"))));
 	
 		
 
@@ -209,14 +169,14 @@ public class ParModelServices {
 		assertEquals(get(cxt, "sphere/radius"), 20.0);
 		assertEquals(get(cxt, "sphere/volume"), 33510.32163829113);
 		
-		pmt = task(sig("invoke", Invocation.class, "ParModel Service"), 
+		pmt = task(sig("invoke", Invocation.class, prvName("Arithmetic ParModel")),
 				context(invoker("getSphereVolume"),
 						result("sphere/volume"),
 						ent("sphere/radius", 20.0),
 						agent("getSphereVolume",
-							"junit.sorcer.vfe.evaluator.service.Volume",
+							"sorcer.arithmetic.tester.volume.Volume",
 							new URL(Sorcer.getWebsterUrl()
-									+ "/ju-volume-bean.jar"))));
+									+ "/arithmetic-tester-"+sorcerVersion+".jar"))));
 		
 //		logger.info("result: " + value(pmt));
 		assertEquals(value(pmt), 33510.32163829113);
@@ -226,22 +186,22 @@ public class ParModelServices {
 	public void parNetModelMultiAgentTest() throws RemoteException, ContextException, ExertionException, 
 			SignatureException, MalformedURLException, TransactionException {
 		// the provider in ex6/bin parmodel-prv-run.xml
-		Task pmt = task(sig("invoke", Invocation.class, "ParModel Service"), 
+		Task pmt = task(sig("invoke", Invocation.class, prvName("Arithmetic ParModel")),
 				context(invoker("getSphereVolume"),
 						result("sphere/volume"),
 						ent("sphere/radius", 20.0),
 						agent("getSphereVolume",
-							"junit.sorcer.vfe.evaluator.service.Volume",
-							new URL(Sorcer.getWebsterUrl()
-									+ "/ju-volume-bean.jar")),
+								"sorcer.arithmetic.tester.volume.Volume",
+								new URL(Sorcer.getWebsterUrl()
+										+ "/arithmetic-tester-" + sorcerVersion + ".jar")),
 						agent("getCylinderSurface",
-							"junit.sorcer.vfe.evaluator.service.Volume",
-							new URL(Sorcer.getWebsterUrl()
-										+ "/ju-volume-bean.jar"))));
+								"sorcer.arithmetic.tester.volume.Volume",
+								new URL(Sorcer.getWebsterUrl()
+										+ "/arithmetic-tester-" + sorcerVersion + ".jar"))));
 	
 		assertEquals(value(pmt), 33510.32163829113);
 		
-		pmt = task(sig("invoke", Invocation.class, "ParModel Service"), 
+		pmt = task(sig("invoke", Invocation.class, prvName("Arithmetic ParModel")),
 				context(invoker("getCylinderSurface"),
 						result("cylinder/surface"),
 						invoker("getCylinderSurface"),

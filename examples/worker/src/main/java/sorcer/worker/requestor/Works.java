@@ -1,17 +1,21 @@
 package sorcer.worker.requestor;
 
-import static sorcer.eo.operator.put;
-import static sorcer.eo.operator.value;
-
-import java.io.Serializable;
-import java.util.List;
-
 import sorcer.core.context.ServiceContext;
 import sorcer.service.Context;
 import sorcer.service.ContextException;
 import sorcer.worker.provider.InvalidWork;
 import sorcer.worker.provider.Work;
 
+import java.io.Serializable;
+import java.util.List;
+
+import static sorcer.eo.operator.put;
+import static sorcer.eo.operator.value;
+
+/**
+ * @author Mike Sobolewski
+ *
+ */
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class Works implements Serializable {
 	
@@ -119,7 +123,6 @@ public class Works implements Serializable {
 			     } else {
 			    	 sigPrefix = ""; 
 			     }
-			        
 				int arg1 = (Integer) cxt.getValue(operand1Path);
 				int arg2 = (Integer) cxt.getValue(operand2Path);
 				int result = arg2 - arg1;

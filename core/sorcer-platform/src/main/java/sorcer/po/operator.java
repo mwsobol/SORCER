@@ -16,11 +16,6 @@
  */
 package sorcer.po;
 
-import java.net.URL;
-import java.rmi.RemoteException;
-import java.util.concurrent.Callable;
-import java.util.logging.Logger;
-
 import sorcer.co.tuple.Entry;
 import sorcer.co.tuple.ExecPath;
 import sorcer.co.tuple.InputEntry;
@@ -30,37 +25,13 @@ import sorcer.core.context.model.par.Agent;
 import sorcer.core.context.model.par.Par;
 import sorcer.core.context.model.par.ParFidelity;
 import sorcer.core.context.model.par.ParModel;
-import sorcer.core.invoker.AltInvoker;
-import sorcer.core.invoker.CallableInvoker;
-import sorcer.core.invoker.CmdInvoker;
-import sorcer.core.invoker.ExertInvoker;
-import sorcer.core.invoker.GroovyInvoker;
-import sorcer.core.invoker.InvokeDoubleIncrementor;
-import sorcer.core.invoker.InvokeIncrementor;
-import sorcer.core.invoker.LoopInvoker;
-import sorcer.core.invoker.MethodInvoker;
-import sorcer.core.invoker.OptInvoker;
-import sorcer.core.invoker.RunnableInvoker;
-import sorcer.core.invoker.ServiceInvoker;
-import sorcer.service.Arg;
-import sorcer.service.ArgSet;
-import sorcer.service.Condition;
-import sorcer.service.Context;
-import sorcer.service.ContextException;
-import sorcer.service.Evaluation;
-import sorcer.service.EvaluationException;
-import sorcer.service.Evaluator;
-import sorcer.service.Exertion;
-import sorcer.service.FidelityInfo;
-import sorcer.service.Identifiable;
-import sorcer.service.Incrementor;
-import sorcer.service.Invocation;
-import sorcer.service.InvocationException;
-import sorcer.service.Mappable;
-import sorcer.service.NoneException;
-import sorcer.service.ServiceExertion;
-import sorcer.service.Setter;
-import sorcer.util.url.sos.SdbUtil;
+import sorcer.core.invoker.*;
+import sorcer.service.*;
+
+import java.net.URL;
+import java.rmi.RemoteException;
+import java.util.concurrent.Callable;
+import java.util.logging.Logger;
 
 /**
  * @author Mike Sobolewski
@@ -197,12 +168,6 @@ public class operator {
 	public static ParModel parModel(Identifiable... objects)
 			throws ContextException, RemoteException {
 		return new ParModel(objects);
-	}
-	
-	public static Context target(Context model, String parname)
-			throws ContextException, RemoteException {
-		((ServiceContext)model).setReturnPath(parname);
-		return model;
 	}
 
 	public static ParModel add(ParModel parContext, Identifiable... objects)

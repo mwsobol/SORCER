@@ -17,24 +17,6 @@
 
 package sorcer.service;
 
-import java.io.Serializable;
-import java.rmi.RemoteException;
-import java.security.NoSuchAlgorithmException;
-import java.security.Principal;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.logging.Logger;
-
-import javax.security.auth.Subject;
-
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
 import net.jini.id.Uuid;
@@ -42,13 +24,8 @@ import net.jini.id.UuidFactory;
 import sorcer.co.tuple.Entry;
 import sorcer.core.ComponentFidelityInfo;
 import sorcer.core.SorcerConstants;
-import sorcer.core.context.ContextLink;
-import sorcer.core.context.ControlContext;
-import sorcer.core.context.FidelityContext;
-import sorcer.core.context.ServiceContext;
-import sorcer.core.context.ThrowableTrace;
+import sorcer.core.context.*;
 import sorcer.core.context.model.par.Par;
-import sorcer.core.context.model.par.ParModel;
 import sorcer.core.deploy.ServiceDeployment;
 import sorcer.core.invoker.ExertInvoker;
 import sorcer.core.provider.Jobber;
@@ -62,6 +39,14 @@ import sorcer.service.Signature.ReturnPath;
 import sorcer.service.Signature.Type;
 import sorcer.service.Strategy.Access;
 import sorcer.service.Strategy.Flow;
+
+import javax.security.auth.Subject;
+import java.io.Serializable;
+import java.rmi.RemoteException;
+import java.security.NoSuchAlgorithmException;
+import java.security.Principal;
+import java.util.*;
+import java.util.logging.Logger;
 
 /**
  * @author Mike Sobolewski
@@ -163,8 +148,8 @@ public abstract class ServiceExertion implements Exertion, Scopable, SorcerConst
 	// the exertions's dependency scope
 	protected Context scope;
 
-	// dependency management for this evaluator 
-	protected List<Invocation> dependers = new ArrayList<Invocation>();
+	// dependency management for this exertion
+	protected List<Evaluation> dependers = new ArrayList<Evaluation>();
 
 	public ServiceExertion() {
 		this(defaultName + count++);
@@ -839,9 +824,7 @@ public abstract class ServiceExertion implements Exertion, Scopable, SorcerConst
 
 	/**
 	 * Appends a signature <code>signature</code> for this exertion.
-	 * 
-	 * @see #getSignatures
-	 */
+	 **/
 	public void addSignature(Signature signature) {
 		if (signature == null)
 			return;
@@ -1329,7 +1312,7 @@ public abstract class ServiceExertion implements Exertion, Scopable, SorcerConst
 		Context cxt = null;
 		try {
 			substitute(entries);
-			Exertion evaluatedExertion = exert();
+			Exertion evaluatedExertion = exert(entries);
 			ReturnPath returnPath = ((ServiceContext)evaluatedExertion.getDataContext())
 					.getReturnPath();
 			if (evaluatedExertion instanceof Job) {
@@ -1372,7 +1355,7 @@ public abstract class ServiceExertion implements Exertion, Scopable, SorcerConst
 	 * 
 	 * @return the dependers
 	 */
-	public List<Invocation> getDependers() {
+	public List<Evaluation> getDependers() {
 		return dependers;
 	}
 
@@ -1384,23 +1367,8 @@ public abstract class ServiceExertion implements Exertion, Scopable, SorcerConst
 	 * @param dependers
 	 *            the dependers to set
 	 */
-	public void setDependers(List<Invocation> dependers) {
+	public void setDependers(List<Evaluation> dependers) {
 		this.dependers = dependers;
-	}
-	
-	public Exertion addDepender(Invocation depender) {
-		if (this.dependers == null) 
-			this.dependers = new ArrayList<Invocation>();
-		dependers.add(depender);
-		return this;
-	}
-	
-	public Exertion addDependers(Invocation... dependers) {
-		if (this.dependers == null) 
-			this.dependers = new ArrayList<Invocation>();
-		for (Invocation depender : dependers)
-			this.dependers.add(depender);
-		return this;
 	}
 
 	/*
@@ -1507,7 +1475,23 @@ public abstract class ServiceExertion implements Exertion, Scopable, SorcerConst
 	public void setProxy(boolean isProxy) {
 		this.isProxy = isProxy;
 	}
-	
+
+
+	public Exertion addDepender(Evaluation depender) {
+		if (this.dependers == null)
+			this.dependers = new ArrayList<Evaluation>();
+		dependers.add(depender);
+		return this;
+	}
+
+	public Evaluation addDependers(Evaluation... dependers) {
+		if (this.dependers == null)
+			this.dependers = new ArrayList<Evaluation>();
+		for (Evaluation depender : dependers)
+			this.dependers.add(depender);
+		return this;
+	}
+
 	/* (non-Javadoc)
 	 * @see sorcer.service.Exertion#getComponentExertion(java.lang.String)
 	 */

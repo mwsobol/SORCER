@@ -41,11 +41,18 @@ class StartAll {
             def configArg = ["${configPath}/${provider}-prv.config"]
             def codebase = "${relativeRepoPath}/worker-${sorcerVersion}-dl.jar sorcer-dl-${sorcerVersion}.jar jsk-dl-${riverVersion}.jar"
 
-            descriptors << new SorcerServiceDescriptor(codebase,
-                                                       policy,
-                                                       "${buildLibPath}/worker-${sorcerVersion}-prv.jar",
-                                                       "sorcer.worker.provider.impl.WorkerProvider",
-                                                       configArg as String[])
+            if (provider.indexOf("bean") > 0)
+                descriptors << new SorcerServiceDescriptor(codebase,
+                        policy,
+                        "${buildLibPath}/worker-${sorcerVersion}-prv.jar",
+                        "sorcer.core.provider.ServiceTasker",
+                        configArg as String[])
+            else
+                descriptors << new SorcerServiceDescriptor(codebase,
+                        policy,
+                        "${buildLibPath}/worker-${sorcerVersion}-prv.jar",
+                        "sorcer.worker.provider.impl.WorkerProvider",
+                        configArg as String[])
         }
         return descriptors as ServiceDescriptor[]
     }

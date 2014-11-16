@@ -82,7 +82,7 @@ import sorcer.core.provider.Provider;
  */
 @SuppressWarnings("rawtypes")
 public interface Context<T> extends Mappable<T>, Serializable, Evaluation<T>,
-		Invocation<T>, Contexter<T>, Paradigmatic, Arg, Service<T> {
+		Invocation<T>, Dependency, Contexter<T>, Paradigmatic, Arg, Service<T> {
 
 	/** parameter (par) */
 	final static String PATH_PAR = "par";
@@ -519,8 +519,6 @@ public interface Context<T> extends Mappable<T>, Serializable, Evaluation<T>,
 
 	public Object putDbValue(String path, Object value, URL datastoreUrl)
 			throws ContextException, RemoteException;
-
-	public URL getURL(String path) throws ContextException;
 
 	public Object addValue(Identifiable value) throws ContextException;
 

@@ -1,48 +1,26 @@
 package sorcer.worker.tests;
 
-import static org.junit.Assert.assertEquals;
-import static sorcer.co.operator.ent;
-import static sorcer.co.operator.inEnt;
-import static sorcer.co.operator.outEnt;
-import static sorcer.eo.operator.actualName;
-import static sorcer.eo.operator.context;
-import static sorcer.eo.operator.*;
-import static sorcer.eo.operator.get;
-import static sorcer.eo.operator.in;
-import static sorcer.eo.operator.job;
-import static sorcer.eo.operator.out;
-import static sorcer.eo.operator.pipe;
-import static sorcer.eo.operator.prvName;
-import static sorcer.eo.operator.requestTime;
-import static sorcer.eo.operator.result;
-import static sorcer.eo.operator.serviceContext;
-import static sorcer.eo.operator.sig;
-import static sorcer.eo.operator.store;
-import static sorcer.eo.operator.strategy;
-import static sorcer.eo.operator.task;
-import static sorcer.eo.operator.type;
-
-import java.net.InetAddress;
-import java.net.URL;
-import java.util.logging.Logger;
-
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
-
-import sorcer.service.Context;
-import sorcer.service.Job;
-import sorcer.service.Signature;
-import sorcer.service.Strategy;
+import sorcer.service.*;
 import sorcer.service.Strategy.Access;
 import sorcer.service.Strategy.Flow;
-import sorcer.service.Task;
 import sorcer.util.Log;
 import sorcer.worker.provider.Worker;
+import sorcer.worker.provider.impl.WorkerBean;
 import sorcer.worker.provider.impl.WorkerProvider;
 import sorcer.worker.requestor.Works;
+
+import java.net.InetAddress;
+import java.net.URL;
+import java.util.logging.Logger;
+
+import static org.junit.Assert.assertEquals;
+import static sorcer.co.operator.*;
+import static sorcer.eo.operator.*;
 
 /**
  * @author Mike Sobolewski
@@ -85,10 +63,21 @@ public class WorkerExertionsTest {
 	
 		logger.info("context: " + context(et));
 		assertEquals(get(et, "prv/result"), 1111);
-		assertEquals(get(et, "prv/message"), 
-				"Done work by: class sorcer.worker.provider.impl.WorkerProvider");
 		assertEquals(get(et, "prv/host/name"), hostname);
 		
+	}
+
+	@Test
+	public void beanTest() throws Exception {
+
+		Task pt = task("work", sig("doWork", WorkerBean.class),
+				context);
+		Task et = exert(pt);
+
+		logger.info("context: " + context(et));
+		assertEquals(get(et, "prv/result"), 1111);
+		assertEquals(get(et, "prv/host/name"), Context.none);
+
 	}
 
 	@Test
@@ -100,8 +89,6 @@ public class WorkerExertionsTest {
 	
 		logger.info("context: " + context(et));
 		assertEquals(get(et, "prv/result"), 1111);
-		assertEquals(get(et, "prv/message"), 
-				"Done work by: class sorcer.worker.provider.impl.WorkerProvider");
 		assertEquals(get(et, "prv/host/name"), hostname);
 		
 	}
@@ -165,7 +152,8 @@ public class WorkerExertionsTest {
 
 		Context cxt3 = context(ent("req/name", "workaholic"), 
 				inEnt("req/arg/1"),  inEnt("req/arg/2"),
-				ent("req/work", Works.work3),  ent("tp/prv/name", "Worker3"));
+				ent("req/work", Works.work3),  ent("tp/prv/name", "Worker3"),
+				outEnt("prv/result"));
 
 		Job job = job("strategy", 
 				task("work1", sig("doWork", Worker.class), cxt1),

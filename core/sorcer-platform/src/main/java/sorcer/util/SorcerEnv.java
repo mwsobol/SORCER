@@ -1280,7 +1280,7 @@ public class SorcerEnv extends SOS {
 	 */
 	public static File getDocRootDir() {
 		String drd = System
-				.getProperty(DOC_ROOT_DIR, getProperty(DOC_ROOT_DIR));
+				.getProperty(DOC_ROOT_DIR, Sorcer.getHome() + File.separator + "data");
 		return new File(drd);
 	}
 
