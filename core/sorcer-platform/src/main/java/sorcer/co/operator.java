@@ -180,7 +180,35 @@ public class operator {
 	public static <T> Entry<T> ent(String path, T value) {
 		return new Entry<T>(path, value);
 	}
-	
+
+	public static <T> Entry<T> rrvEnt(String path, T value) {
+		Entry<T> e = new Entry<T>(path, value);
+		return e.setReactive(true);
+	}
+
+	public static <T> Entry<T> urvEnt(String path, T value) {
+		Entry<T> e = new Entry<T>(path, value);
+		return e.setReactive(false);
+	}
+
+
+	public static <T> Reactive<T> rrvEnt(Context<T> cxt, String path) throws ContextException {
+		T obj = cxt.asis(path);
+		if (obj instanceof Reactive)
+			return ((Reactive<T>) obj).setReactive(true);
+		else
+			throw new ContextException("No Entry at path: " + path);
+	}
+
+	public static <T> Reactive<T> urvEnt(Context<T> cxt, String path) throws ContextException {
+		T obj = cxt.asis(path);
+		if (obj instanceof Reactive)
+			return ((Reactive<T>) obj).setReactive(false);
+		else
+			throw new ContextException("No Entry at path: " + path);
+	}
+
+
 	public static Entry<Object>  ent(String path) {
 		return new Entry<Object>(path, null);
 	}
@@ -309,17 +337,31 @@ public class operator {
 			return setter.isPersistent();
 	}
 
-	public static URL storeArg(Entry entry)
-			throws EvaluationException, RemoteException {
-		entry.setPersistent(true);
-		entry.setPersistent(true);
-		entry.getValue();
-		return (URL) entry.asis();
+	public static URL storeArg(Object object) throws EvaluationException {
+		URL dburl = null;
+		try {
+			if (object instanceof Evaluation) {
+				Evaluation entry = (Evaluation)	object;
+				Object obj = entry.asis();
+				if (SdbUtil.isSosURL(obj))
+					dburl = (URL) obj;
+				else {
+					if (entry instanceof Setter) {
+						((Setter) entry).setPersistent(true);
+						entry.getValue();
+						dburl = (URL) entry.asis();
+					}
+				}
+			}
+		} catch (Exception e) {
+			throw new EvaluationException(e);
+		}	return dburl;
 	}
+
 
 	public static URL store(Object object) throws EvaluationException {
 		try {
-			if (object instanceof Identifiable)
+			if (object instanceof UuidObject)
 				return SdbUtil.store(object);
 			else  {
 				return SdbUtil.store(new UuidObject(object));
@@ -389,10 +431,6 @@ public class operator {
 		return SdbUtil.size(type);
 	}
 
-	public static <T> Entry<T> db(Entry<T> entry) {
-		return persistent(entry);
-	}
-	
 	public static <T extends Entry> T persistent(T entry) {
 		entry.setPersistent(true);
 		return entry;
@@ -446,18 +484,22 @@ public class operator {
 			if (v instanceof URL)
 				return (URL) v;
 			else if (v instanceof Setter && v instanceof Evaluation) {
-				Object nv = ((Evaluation)v).getValue();
+				Object nv = ((Evaluation)v).asis();
 				if (nv instanceof URL)
 					return (URL) nv;					
 				((Setter) v).setPersistent(true);
 				((Evaluation)v).getValue();
 				dburl = (URL) ((Evaluation)v).asis();
+//			}
+//			else {
+//				Entry dbe = new Entry(path, context.asis(path));
+//				((Setter)dbe).setPersistent(true);
+//				dbe.getValue();
+//				context.putValue(path, dbe);
+//				dburl = (URL) dbe.asis();
 			} else {
-				Entry dbe = new Entry(path, context.asis(path));
-				((Setter)dbe).setPersistent(true);
-				dbe.getValue();
-				context.putValue(path, dbe);
-				dburl = (URL) dbe.asis();
+				dburl = store(v);
+				context.putValue(path, dburl);
 			}
 		} catch (Exception e) {
 			throw new EvaluationException(e);
@@ -465,32 +507,6 @@ public class operator {
 		return dburl;		
 	}
 
-	public static URL db(Object object) throws EvaluationException {
-		return  url(object);
-	}
-	
-	public static URL url(Object object) throws EvaluationException {
-		URL dburl = null;
-		try {
-			if (object instanceof Evaluation) {
-				Evaluation entry = (Evaluation)	object;
-				Object obj = entry.asis();
-				if (SdbUtil.isSosURL(obj))
-					dburl = (URL) obj;
-				else {
-					if (entry instanceof Setter) {
-						((Setter) entry).setPersistent(true);
-						entry.getValue();
-						dburl = (URL) entry.asis();
-					}
-				}
-			}
-		} catch (Exception e) {
-			throw new EvaluationException(e);
-		}
-		return dburl;
-	}
-	
 	public static StrategyEntry strategyEnt(String x1, Strategy strategy) {
 		return new StrategyEntry(x1, strategy);
 	}

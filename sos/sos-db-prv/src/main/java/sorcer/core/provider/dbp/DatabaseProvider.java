@@ -81,9 +81,9 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
 	}
 
 	public Uuid store(Object object) {
-		Object obj = null;
-		if (object instanceof Identifiable && ((Identifiable)object).getId() instanceof Uuid) {
-			obj = new UuidObject((Uuid)((Identifiable)object).getId(), object);
+		UuidObject obj = null;
+		if (object instanceof UuidObject) {
+			obj = (UuidObject)object;
 		} else {
 			obj = new UuidObject(object);
 		}
@@ -140,24 +140,28 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
 
 		public PersistThread(Object object) {
 			this.object = object;
-			this.uuid = (Uuid)((Identifiable)object).getId();
+			this.uuid = ((UuidObject)object).getId();
 		}
 
 		public void run() {
-			StoredValueSet storedSet = null;
-			if (object instanceof Context) {
-				storedSet = views.getContextSet();
-				storedSet.add(object);
-			} else if (object instanceof Exertion) {
-				storedSet = views.getExertionSet();
-				storedSet.add(object);
-			} else if (object instanceof ModelTable) {
-				storedSet = views.getTableSet();
-				storedSet.add(object);
-			} else if (object instanceof UuidObject) {
-				storedSet = views.getUuidObjectSet();
-				storedSet.add(object);
-			}
+//			StoredValueSet storedSet = null;
+			StoredValueSet storedSet = views.getUuidObjectSet();
+			storedSet.add(object);
+
+//			Object inner = ((UuidObject)object).getObject();
+//			if (inner instanceof Context) {
+//				storedSet = views.getContextSet();
+//				storedSet.add(object);
+//			} else if (inner instanceof Exertion) {
+//				storedSet = views.getExertionSet();
+//				storedSet.add(object);
+//			} else if (inner instanceof ModelTable) {
+//				storedSet = views.getTableSet();
+//				storedSet.add(object);
+//			} else if (inner instanceof UuidObject) {
+//				storedSet = views.getUuidObjectSet();
+//				storedSet.add(object);
+//			}
 		}
 
 		public Uuid getUuid() {
@@ -233,7 +237,6 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
 
 		context.putOutValue(object_url, sdbUrl);
 		context.putOutValue(store_size, getStoreSize(type));
-
 		return context;
 	}
 
@@ -283,15 +286,15 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
 
 	public Object retrieve(Uuid uuid, Store storeType) {
 		Object obj = null;
-		if (storeType == Store.context)
-			obj = getContext(uuid);
-		else if (storeType == Store.exertion)
-			obj = getExertion(uuid);
-		else if (storeType == Store.table)
-			obj = getTable(uuid);
-		else if (storeType == Store.object)
+//
+		if (storeType == Store.object)
+//			obj = getContext(uuid);
+//		else if (storeType == Store.exertion)
+//			obj = getExertion(uuid);
+//		else if (storeType == Store.table)
+//			obj = getTable(uuid);
+//		else if (storeType == Store.object)
 			obj = getObject(uuid);
-
 		return obj;
 	}
 
@@ -303,7 +306,8 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
 	@Override
 	public Context contextRetrieve(Context context) throws RemoteException,
 			ContextException {
-		Store storeType = (Store) context.getValue(object_type);
+//		Store storeType = (Store) context.getValue(object_type);
+		Store storeType =  Store.object;
 		Uuid uuid = null;
 		Object id = context.getValue(object_uuid);
 		if (id instanceof String) {
@@ -320,6 +324,9 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
 
 		// default returned path
 		context.putOutValue(object_retrieved, obj);
+		logger.info("ZZZZZZZZZZZZZ object_retrieved: " + obj);
+		logger.info("ZZZZZZZZZZZZZ context retuned: " + context);
+
 		return context;
 	}
 

@@ -113,10 +113,10 @@ public class Par<T> extends Entry<T> implements Variability<T>, Arg, Mappable<T>
 			((Scopable)argument).setScope(this.scope);
 	}
 	
-	public Par(String name, String path, Mappable map) {
+	public Par(String name, String path, Service map) {
 		this(name);
 		value =  (T)path;
-		mappable = map;
+		mappable = (Mappable)map;
 	}
 	
 	/* (non-Javadoc)

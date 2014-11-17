@@ -58,10 +58,6 @@ public class Tuple2<T1, T2> implements Arg, Serializable, Identifiable, Evaluati
 		return _2;
 	}
 	
-	public Strategy strategy() {
-		return (Strategy)_2;
-	}
-	
 	/* (non-Javadoc)
 	 * @see sorcer.service.Arg#getName()
 	 */
@@ -118,18 +114,10 @@ public class Tuple2<T1, T2> implements Arg, Serializable, Identifiable, Evaluati
 			RemoteException {
 		try {
 			substitute(entries);
-			T2 val = this._2;
-			if (isPersistent) {
-				if (SdbUtil.isSosURL(val))
-					val = (T2) ((URL) val).getContent();
-				else {
-					this._2 = (T2) SdbUtil.store(val);
-				}
-			}
-			return val;
-		} catch (Exception e) {
+		} catch (SetterException e) {
 			throw new EvaluationException(e);
 		}
+		return this._2;
 	}
 
 	/* (non-Javadoc)

@@ -6,17 +6,18 @@ import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
+import sorcer.arithmetic.provider.impl.SubtractorImpl;
 import sorcer.co.tuple.Entry;
 import sorcer.core.context.model.par.Par;
 import sorcer.core.context.model.par.ParModel;
-import sorcer.core.invoker.GroovyInvoker;
 import sorcer.core.invoker.ServiceInvoker;
-import sorcer.service.Context;
-import sorcer.service.Strategy;
+import sorcer.core.provider.rendezvous.ServiceJobber;
+import sorcer.service.*;
 import sorcer.util.Table;
 
 import java.io.Serializable;
 import java.net.URL;
+import java.rmi.RemoteException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -25,20 +26,8 @@ import java.util.logging.Logger;
 
 import static org.junit.Assert.*;
 import static sorcer.co.operator.*;
-import static sorcer.co.operator.persistent;
-import static sorcer.co.operator.put;
-import static sorcer.co.operator.set;
-import static sorcer.co.operator.value;
 import static sorcer.eo.operator.*;
-import static sorcer.eo.operator.add;
-import static sorcer.eo.operator.asis;
-import static sorcer.eo.operator.get;
-import static sorcer.eo.operator.put;
-import static sorcer.eo.operator.value;
-import static sorcer.po.operator.add;
-import static sorcer.po.operator.asis;
 import static sorcer.po.operator.*;
-import static sorcer.po.operator.set;
 
 /**
  * @author Mike Sobolewski
@@ -136,36 +125,32 @@ public class CollectionOperators {
 		// make the entry persistent
 		// value is not yet persisted
 		persistent(e);
-
 		assertTrue(isPersistent(e));
 		assertFalse(asis(e) instanceof URL);
 		assertTrue(value(e).equals(10.0));
 		assertTrue(asis(e) instanceof URL);
-
 		put(e, 50.0);
-
 		assertTrue(value(e).equals(50.0));
 		assertTrue(asis(e) instanceof URL);
-		
+
+		// create service strategy entry
 		Entry se1 = strategyEnt("j1/j2", strategy(Strategy.Access.PULL, Strategy.Flow.PAR));
 		assertEquals(flow(se1), Strategy.Flow.PAR);
 		assertEquals(access(se1), Strategy.Access.PULL);
 
-		URL se1Url = store(se1);
-		Entry se2 = (Entry)value(se1Url);
-		assertFalse(isPersistent(se1));
-		assertFalse(asis(se1) instanceof URL);
-		assertTrue(flow(se1).equals(flow(se1)));
-		assertTrue(access(se1).equals(access(se1)));
+		// store the argument of entry (parameter)
+		URL se1Url = storeArg(se1);
+		Strategy st1 = (Strategy)value(se1Url);
+		assertTrue(isPersistent(se1));
+		assertTrue(asis(se1) instanceof URL);
+		assertTrue(flow(se1).equals(flow(st1)));
+		assertTrue(access(se1).equals(access(st1)));
 
-//		URL seUrl = url(se1);
-//		assertEquals(isPersistent(se2), false);
-//		assertFalse(asis(se2) instanceof URL);
-//		assertTrue(flow(se1).equals(flow(se2)));
-//		assertTrue(access(se1).equals(access(se2)));
-//
-//		// store the entry
-//		URL argURL = storeArg(ent("arg/x1", "Hello SORCER!"));
+		// store an object
+		URL se2Url = store(value(se1));
+		Strategy st2 = (Strategy)value(se1Url);
+		assertTrue(flow(se1).equals(flow(st2)));
+		assertTrue(access(se1).equals(access(st2)));
 		
 	}
 	
@@ -184,9 +169,9 @@ public class CollectionOperators {
 		assertTrue(asis(e).equals(10.0));
 		assertFalse(asis(e) instanceof URL);
 				
-		// make it a persistent entry
-		// 'url' operator makes the entry value persited		
-		URL valUrl = url(e);
+		// make a persistent entry
+		// 'storeArg' operator makes the entry value persisted
+		URL valUrl = storeArg(e);
 		assertTrue(value(e).equals(10.0));
 		assertTrue(asis(e) instanceof URL);
 		
@@ -285,22 +270,22 @@ public class CollectionOperators {
 	@Test
 	public void contextOperator() throws Exception {
 		
-		Context<Double> cxt = context(ent("arg/x1", 1.1), ent("arg/x2", 1.2), 
-				 ent("arg/x3", 1.3), ent("arg/x4", 1.4), ent("arg/x5", 1.5));
-		
+		Context<Double> cxt = context(ent("arg/x1", 1.1), ent("arg/x2", 1.2),
+				ent("arg/x3", 1.3), ent("arg/x4", 1.4), ent("arg/x5", 1.5));
+
 		add(cxt, ent("arg/x6", 1.6));
 		add(cxt, ent("arg/x7", invoker("x1 + x3", ents("x1", "x3"))));
-		
+
 		assertTrue(value(cxt, "arg/x1").equals(1.1));
 		assertTrue(get(cxt, "arg/x1").equals(1.1));
 		assertTrue(asis(cxt, "arg/x1").equals(1.1));
-		
+
 		add(cxt, ent("arg/x1", 1.0));
 		assertTrue(get(cxt, "arg/x1").equals(1.0));
 
 		add(cxt, ent("arg/x3", 3.0));
 		assertTrue(get(cxt, "arg/x3").equals(3.0));
-		
+
 		Context<Double> subcxt = context(cxt, list("arg/x4", "arg/x5"));
 		logger.info("subcontext: " + subcxt);
 		assertNull(get(subcxt, "arg/x1"));
@@ -309,20 +294,24 @@ public class CollectionOperators {
 		assertTrue(get(cxt, "arg/x4").equals(1.4));
 		assertTrue(get(cxt, "arg/x5").equals(1.5));
 		assertTrue(get(cxt, "arg/x6").equals(1.6));
-		assertTrue(((Object)get(cxt, "arg/x7")) instanceof ServiceInvoker);
-		
-		// aliasing entries
-		put(cxt, ent("arg/x6", ent("overwrite", 20.0)));
+		assertTrue((Object) get(cxt, "arg/x7") instanceof ServiceInvoker);
+
+		// aliasing entries and repeatedly reactive entries
+		put(cxt, rrvEnt("arg/x6", ent("overwrite", 20.0)));
 		assertTrue(value(cxt, "arg/x6").equals(20.0));
-		
-		// aliasing pars
+		urvEnt(cxt, "arg/x6");
+		assertTrue(value(value(cxt, "arg/x6")).equals(20.0));
+		rrvEnt(cxt, "arg/x6");
+		assertTrue(value(cxt, "arg/x6").equals(20.0));
+
+		// aliasing pars, pars are always reactive
 		put(cxt, ent("arg/x6", par("overwrite", 40.0)));
 		assertTrue(value(cxt, "arg/x6").equals(40.0));
 
-		// but no direct evaluations
-		Object obj = value(cxt, "arg/x7");
-		logger.info("obj: " + obj);
-		assertTrue(obj.getClass() == GroovyInvoker.class);
+		// repeatedly reactive evaluations
+		assertTrue((Object) get(cxt, "arg/x7") instanceof ServiceInvoker);
+		rrvEnt(cxt, "arg/x7");
+		assertEquals(2.4, (Double)value(value(cxt, "arg/x7")), 0.0000001);
 
 	}
 	
@@ -370,5 +359,60 @@ public class CollectionOperators {
 		assertEquals(value(pm, "add"), 40.0);
 		
 	}
-	
+
+	@Test
+	public void serviceMogramming() throws RemoteException,
+			ContextException, ExertionException, SignatureException {
+
+		Service c4 = context("multiply", inEnt("arg/x1"), inEnt("arg/x2"),
+				outEnt("result/y"));
+
+		Service c5 = context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
+				outEnt("result/y"));
+
+		Service t3 = srv("t3", sig("subtract", SubtractorImpl.class),
+				context("subtract", inEnt("arg/x1", null), inEnt("arg/x2"),
+						outEnt("result/y")));
+
+		Service t4 = srv("t4", sig("multiply", MultiplierImpl.class), c4);
+
+		Service t5 = srv("t5", sig("add", AdderImpl.class), c5);
+
+		Service j1 = srv("j1", sig("service", ServiceJobber.class),
+				srv("j2", t4, t5, sig("service", ServiceJobber.class)),
+				t3,
+				pipe(out(t4, "result/y"), in(t3, "arg/x1")),
+				pipe(out(t5, "result/y"), in(t3, "arg/x2")));
+
+
+		// context and exertion parameters
+		Par x1p = par("x1p", "arg/x1", c4);
+		Par x2p = par("x2p", "arg/x2", c4);
+		Par j1p = par("j1p", "j1/t3/result/y", j1);
+		// par model with contexts and exertion
+		ParModel pc = parModel(x1p, x2p, j1p);
+
+		// setting context arguments
+		set(x1p, 10.0);
+		set(x2p, 50.0);
+
+		// update par references
+		Service j2 = exert(j1);
+		Service c4s = taskContext("j1/t4", j2);
+
+		// get service j2 direct result value
+		assertEquals(get(j2, "j1/t3/result/y"), 400.0);
+		// get service par j1p value
+		assertEquals(value(j1p), 400.0);
+
+		// set job parameter value
+		set(j1p, 1000.0);
+		assertEquals(value(j1p), 1000.0);
+
+		// execute original service and get its par value
+		exert(j1);
+		// j1p is the alias to context value of j1 at j1/t3/result/y
+		assertEquals(value(pc, "j1p"), 400.0);
+	}
+
 }

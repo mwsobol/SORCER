@@ -26,7 +26,7 @@ import static sorcer.eo.operator.*;
  */
 @SuppressWarnings("unchecked")
 @RunWith(SorcerTestRunner.class)
-@ProjectContext("core/sorcer-int-tests/arithmetic-tester")
+@ProjectContext("core/sorcer-int-tests/sorcer-tester")
 public class ArithmeticNoNetBlockTest implements SorcerConstants {
 
 	private final static Logger logger = Logger

@@ -25,7 +25,7 @@ import static sorcer.co.operator.list;
  * @author Mike Sobolewski
  */
 @RunWith(SorcerTestRunner.class)
-@ProjectContext("core/sorcer-int-tests/arithmetic-tester")
+@ProjectContext("core/sorcer-int-tests/sorcer-tester")
 public class SorcerDatabaseTest implements SorcerConstants {
 
 	private final static Logger logger = Logger

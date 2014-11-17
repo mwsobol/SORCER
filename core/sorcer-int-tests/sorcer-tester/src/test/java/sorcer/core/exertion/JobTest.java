@@ -39,7 +39,7 @@ import sorcer.util.Sorcer;
  */
 @SuppressWarnings("unchecked")
 @RunWith(SorcerTestRunner.class)
-@ProjectContext("core/sorcer-int-tests/arithmetic-tester")
+@ProjectContext("core/sorcer-int-tests/sorcer-tester")
 public class JobTest {
 	private final static Logger logger = Logger.getLogger(TaskTest.class
 			.getName());

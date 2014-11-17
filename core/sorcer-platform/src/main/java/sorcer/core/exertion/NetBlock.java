@@ -17,8 +17,6 @@
 
 package sorcer.core.exertion;
 
-import java.rmi.RemoteException;
-
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
 import sorcer.core.context.ServiceContext;
@@ -27,14 +25,10 @@ import sorcer.core.provider.exerter.ExertionDispatcher;
 import sorcer.core.signature.NetSignature;
 import sorcer.security.util.Auth;
 import sorcer.security.util.SorcerPrincipal;
-import sorcer.service.Block;
-import sorcer.service.Context;
-import sorcer.service.Evaluation;
-import sorcer.service.ExertionException;
-import sorcer.service.Invocation;
-import sorcer.service.ServiceExertion;
+import sorcer.service.*;
 import sorcer.service.Signature.Type;
-import sorcer.service.SignatureException;
+
+import java.rmi.RemoteException;
 
 public class NetBlock extends Block implements Evaluation<Object>, Invocation<Object> {
 
@@ -82,5 +76,5 @@ public class NetBlock extends Block implements Evaluation<Object>, Invocation<Ob
 		ExertionDispatcher se = new ExertionDispatcher(this);
 		return (Block)se.exert(txn, null);
 	}
-	
+
 }

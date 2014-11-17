@@ -48,11 +48,11 @@ public class UuidObject implements SecureIdentifiable, Serializable {
 	private Date dateCreated;
 
 	public UuidObject(Object object) {
-		this(object, object.getClass().getName());
+		this(object, "");
 	}
 	  
 	public UuidObject(Uuid uuid, Object object) {
-		this(object, object.getClass().getName());
+		this(object, "");
 		id = uuid;
 	}
 	

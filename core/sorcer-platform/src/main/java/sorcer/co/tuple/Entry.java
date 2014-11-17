@@ -19,6 +19,8 @@ package sorcer.co.tuple;
 
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.service.*;
+import sorcer.util.bdb.objects.UuidObject;
+import sorcer.util.url.sos.SdbUtil;
 
 import java.net.URL;
 import java.rmi.RemoteException;
@@ -77,13 +79,35 @@ public class Entry<T> extends Tuple2<String, T> implements Arg, Comparable<T>, S
 	@Override
 	public T getValue(Arg... entries) throws EvaluationException,
 			RemoteException {
-		Object obj = super.getValue(entries);
-		if (obj instanceof ServiceInvoker) {
-			return ((ServiceInvoker<T>) obj).invoke(entries);
-		} else if (obj instanceof Evaluation) {
-			return ((Evaluation<T>) obj).getValue(entries);
+		T val = this._2;
+		try {
+			substitute(entries);
+			if (isPersistent) {
+				if (SdbUtil.isSosURL(val)) {
+					val = (T) ((URL) val).getContent();
+					if (val instanceof UuidObject)
+						val = (T) ((UuidObject) val).getObject();
+				} else {
+					setReactive(true);
+					if (val instanceof UuidObject) {
+						this._2 =  (T) SdbUtil.store(val);
+					} else {
+						UuidObject uo = new UuidObject(val);
+						uo.setName(_1);
+						this._2 = (T) SdbUtil.store(uo);
+					}
+				}
+				return val;
+			}
+			if (val instanceof ServiceInvoker) {
+				return ((ServiceInvoker<T>) val).invoke(entries);
+			} else if (val instanceof Evaluation) {
+				return ((Evaluation<T>) val).getValue(entries);
+			}
+		} catch (Exception e) {
+			throw new EvaluationException(e);
 		}
-		return (T) obj;
+		return (T) val;
 	}
 	
 	public int index() {
@@ -124,12 +148,14 @@ public class Entry<T> extends Tuple2<String, T> implements Arg, Comparable<T>, S
 	
 	@Override
 	public boolean equals(Object object) {
-		if ((object instanceof Entry<?>)
-				&& ((Entry<T>) object)._1.equals(_1))
+		if ((object instanceof Entry<?>
+				&& ((Entry<?>) object)._1.equals(_1)
+				&&   ((Entry<?>) object)._2.equals(_2)))
 			return true;
 		else
 			return false;
 	}
+
 	@Override
 	public String toString() {
 		return "[" + _1 + ":" + _2 + ":" + index + "]";
@@ -138,6 +164,11 @@ public class Entry<T> extends Tuple2<String, T> implements Arg, Comparable<T>, S
 	@Override
 	public boolean isReactive() {
 		return isReactive;
+	}
+
+	public Entry<T> setReactive(boolean isReactive) {
+		this.isReactive = isReactive;
+		return this;
 	}
 
 }

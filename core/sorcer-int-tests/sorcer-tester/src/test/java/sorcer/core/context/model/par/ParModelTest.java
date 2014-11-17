@@ -40,7 +40,7 @@ import static sorcer.po.operator.set;
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })
 @RunWith(SorcerTestRunner.class)
-@ProjectContext("core/sorcer-int-tests/arithmetic-tester")
+@ProjectContext("core/sorcer-int-tests/sorcer-tester")
 public class ParModelTest {
 	private final static Logger logger = Logger.getLogger(ParModelTest.class.getName());
 	public static String sorcerVersion = System.getProperty("sorcer.version");
@@ -271,8 +271,8 @@ public class ParModelTest {
 		assertTrue(asis(dbp2) instanceof URL);
 
 		// store par args in the data store
-		URL url1 = url(par("design/in", 30.0));
-		URL url2 = url(par("url", "myUrl2"));
+		URL url1 = storeArg(par("design/in", 30.0));
+		URL url2 = storeArg(par("url", "myUrl2"));
 		
 		assertEquals(value(url1), 30.0);
 		assertEquals(value(url2), "myUrl2");
@@ -531,7 +531,7 @@ public class ParModelTest {
 		pm.add(new Agent("getSphereVolume",
 				"sorcer.arithmetic.tester.volume.Volume",
 		new URL(Sorcer.getWebsterUrl()
-				+ "/arithmetic-tester-"+sorcerVersion+".jar")));
+				+ "/sorcer-tester-"+sorcerVersion+".jar")));
 
 		Object val =  get((Context)value(pm,"getSphereVolume"), "sphere/volume");
 				 
@@ -550,7 +550,7 @@ public class ParModelTest {
 				new Agent("getSphereVolume",
 						"sorcer.arithmetic.tester.volume.Volume",
 						new URL(Sorcer.getWebsterUrl()
-								+ "/arithmetic-tester-"+sorcerVersion+".jar")));
+								+ "/sorcer-tester-"+sorcerVersion+".jar")));
 
 //		logger.info("call getSphereVolume:"
 //				+ invoke(pm, "getSphereVolume",
@@ -564,7 +564,7 @@ public class ParModelTest {
 						agent("getSphereVolume",
 								"sorcer.arithmetic.tester.volume.Volume",
 								new URL(Sorcer.getWebsterUrl()
-										+ "/arithmetic-tester-"+sorcerVersion+".jar"))),
+										+ "/sorcer-tester-"+sorcerVersion+".jar"))),
 						"sphere/volume"), 33510.32163829113);
 	}
 }

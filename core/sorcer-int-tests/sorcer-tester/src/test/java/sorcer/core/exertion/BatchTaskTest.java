@@ -1,24 +1,10 @@
 package sorcer.core.exertion;
 
 //import com.gargoylesoftware,base,testing,TestUtil;
-import static org.junit.Assert.assertEquals;
-import static sorcer.co.operator.from;
-import static sorcer.co.operator.inEnt;
-import static sorcer.eo.operator.context;
-import static sorcer.eo.operator.exert;
-import static sorcer.eo.operator.get;
-import static sorcer.eo.operator.result;
-import static sorcer.eo.operator.sig;
-import static sorcer.eo.operator.task;
-import static sorcer.eo.operator.type;
-
-import java.util.logging.Logger;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
-
 import sorcer.arithmetic.tester.provider.impl.AdderImpl;
 import sorcer.arithmetic.tester.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.tester.provider.impl.SubtractorImpl;
@@ -27,12 +13,19 @@ import sorcer.service.Signature.Direction;
 import sorcer.service.Task;
 import sorcer.util.Sorcer;
 
+import java.util.logging.Logger;
+
+import static org.junit.Assert.assertEquals;
+import static sorcer.co.operator.from;
+import static sorcer.co.operator.inEnt;
+import static sorcer.eo.operator.*;
+
 /**
  * @author Mike Sobolewski
  */
 @SuppressWarnings("unchecked")
 @RunWith(SorcerTestRunner.class)
-@ProjectContext("core/sorcer-int-tests/arithmetic-tester")
+@ProjectContext("core/sorcer-int-tests/sorcer-tester")
 public class BatchTaskTest {
 	private final static Logger logger = Logger.getLogger(BatchTaskTest.class
 			.getName());

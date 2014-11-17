@@ -64,7 +64,7 @@ bootme {
 
 test {
     systemProperty "java.rmi.server.codebase",
-                   "${websterUrl}/${repoPath()}/arithmetic-tester-${version}-dl.jar ${websterUrl}/sorcer-dl-${version}.jar ${websterUrl}/jsk-dl-${riverVersion}.jar"
+                   "${websterUrl}/${repoPath()}/sorcer-tester-${version}-dl.jar ${websterUrl}/sorcer-dl-${version}.jar ${websterUrl}/jsk-dl-${riverVersion}.jar"
 
     testLogging {
         events "passed", "skipped", "failed"/*, "standardOut"*, "standardError"*/

@@ -42,7 +42,7 @@ public class ServiceContexts {
 		assertTrue(get(cxt, "arg/x1").equals(1.1));
 		assertTrue(asis(cxt, "arg/x1").equals(1.1));
 
-		put(cxt, ent("arg/x1", 5.0));
+		put(cxt, rrvEnt("arg/x1", 5.0));
 		assertTrue(get(cxt, "arg/x1").equals(5.0));
 
 		Context<Double> subcxt = context(cxt, list("arg/x4", "arg/x5"));
@@ -250,8 +250,11 @@ public class ServiceContexts {
 				inEnt("arg3/value", 200.0));
 
 		// sharing arg1/value from mc in ac
+		logger.info("ZZZZZZZZZZ1: " + value(ac, "arg1/value"));
 		assertTrue(value(mc, "arg1/value").equals(90.0));
 		put(mc, "arg1/value", 200.0);
+
+		logger.info("ZZZZZZZZZZ2: " + value(ac, "arg1/value"));
 		assertTrue(value(ac, "arg1/value").equals(200.0));
 
 		// sharing arg3/value from ac in mc

@@ -175,7 +175,7 @@ public class OperationalStringFactoryTest {
                                                        "codebaseJars",
                                                        String[].class);
         assertTrue(codebaseJars.length == 1);
-        assertTrue(codebaseJars[0].equals("arithmetic-tester-"+System.getProperty("sorcer.version")+"-dl.jar"));
+        assertTrue(codebaseJars[0].equals("sorcer-tester-"+System.getProperty("sorcer.version")+"-dl.jar"));
     }
 
 }

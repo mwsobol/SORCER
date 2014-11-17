@@ -20,15 +20,37 @@ package sorcer.co.tuple;
 import sorcer.service.Arg;
 import sorcer.service.Strategy;
 
+import java.io.IOException;
+import java.net.URL;
+
 public class StrategyEntry extends Entry<Strategy> implements Arg {
 	private static final long serialVersionUID = -5033590792138379782L;
+
+	private URL url;
+
 	public StrategyEntry(String path, Strategy strategy) {
 		_1 = path;
 		_2 = strategy;
 	};
-	
+
+	public StrategyEntry(String path, URL strategy) {
+		_1 = path;
+		url = strategy;
+	};
+
+	public void setStrategy(URL strategy) {
+		url = strategy;
+	}
+
 	public Strategy strategy() {
-		return (Strategy)_2;
+		if (url != null) {
+			try {
+				return (Strategy) url.getContent();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return (Strategy) _2;
 	}
 	
 	/* (non-Javadoc)

@@ -25,7 +25,7 @@
 	</path>
 
 	<!-- provider codeabse jars -->
-		<property name="j1" value="${webster}/arithmetic-tester-dl.jar" />
+		<property name="j1" value="${webster}/sorcer-tester-dl.jar" />
 		<property name="j2" value="${webster}/sorcer-dl.jar" />
 		<property name="j3" value="${webster}/sorcer-lib.jar" />
 

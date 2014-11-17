@@ -17,14 +17,6 @@
 
 package sorcer.service;
 
-import java.io.IOException;
-import java.net.URL;
-import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
 import sorcer.co.tuple.Entry;
@@ -35,6 +27,14 @@ import sorcer.core.exertion.LoopExertion;
 import sorcer.core.exertion.OptExertion;
 import sorcer.util.SorcerUtil;
 import sorcer.util.url.sos.SdbUtil;
+
+import java.io.IOException;
+import java.net.URL;
+import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 
 /**
@@ -287,7 +287,18 @@ public abstract class Block extends ServiceExertion implements CompoundExertion 
 		
 		this.setStatus(state);
 	}
-	
+
+	/**
+	 *  TODO
+	 * @param path
+	 * @return
+	 * @throws ContextException
+	 */
+	@Override
+	public Context getComponentContext(String path) throws ContextException {
+		return null;
+	}
+
 	@Override
 	public ServiceExertion substitute(Arg... entries)
 			throws SetterException {

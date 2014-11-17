@@ -11,14 +11,8 @@ import java.util.logging.Logger;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
-import static sorcer.co.operator.persistent;
-import static sorcer.co.operator.url;
-import static sorcer.eo.operator.asis;
 import static sorcer.eo.operator.*;
-import static sorcer.eo.operator.value;
-import static sorcer.po.operator.add;
 import static sorcer.po.operator.*;
-import static sorcer.po.operator.set;
 
 /**
  * @author Mike Sobolewski
@@ -66,8 +60,8 @@ public class Pars {
 		assertEquals(asis(dbp1), 25.0);
 		assertTrue(asis(dbp2) instanceof URL);
 			
-		URL dbp1Url = url(dbp1);
-		URL dbp2Url = url(dbp2);
+		URL dbp1Url = storeArg(dbp1);
+		URL dbp2Url = storeArg(dbp2);
 		
 		assertTrue(value(dbp1Url).equals(25.0));
 		assertEquals(value(dbp2Url), "http://sorcersoft.org/sobol");
@@ -79,8 +73,8 @@ public class Pars {
 		set(dbp1, 30.0);
 		set(dbp2, "http://sorcersoft.org");
 	
-		assertTrue(value(url(dbp1)).equals(30.0));
-		assertEquals(value(url(dbp2)), "http://sorcersoft.org");
+		assertTrue(value(storeArg(dbp1)).equals(30.0));
+		assertEquals(value(storeArg(dbp2)), "http://sorcersoft.org");
 		
 		assertTrue(asis(dbp1) instanceof URL);
 		assertTrue(asis(dbp2) instanceof URL);

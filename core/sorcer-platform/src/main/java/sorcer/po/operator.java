@@ -65,7 +65,7 @@ public class operator {
 		return p;
 	}
 	
-	public static Par dBar(Context context, Identifiable identifiable) throws EvaluationException, RemoteException {
+	public static Par dPar(Context context, Identifiable identifiable) throws EvaluationException, RemoteException {
 		Par p = new Par(identifiable.getName(), identifiable);
 		p.setPersistent(true);
 		p.setScope(context);
@@ -79,12 +79,12 @@ public class operator {
 		return p;
 	}
 	
-	public static Par par(String name, String path, Mappable argument) {
+	public static Par par(String name, String path, Service argument) {
 		Par p = new Par(name, path, argument);
 		return p;
 	}
 	
-	public static Par pipe(Mappable in, String name, String path, Mappable out) throws ContextException {
+	public static Par pipe(Mappable in, String name, String path, Service out) throws ContextException {
 		Par p = new Par(name, path, out);
 		add(p, in);
 		return p;

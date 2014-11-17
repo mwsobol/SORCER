@@ -26,7 +26,7 @@ import static sorcer.po.operator.*;
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })
 @RunWith(SorcerTestRunner.class)
-@ProjectContext("core/sorcer-int-tests/arithmetic-tester")
+@ProjectContext("core/sorcer-int-tests/sorcer-tester")
 public class ParModelServices {
 	private final static Logger logger = Logger.getLogger(ParModelServices.class
 			.getName());
@@ -100,7 +100,7 @@ public class ParModelServices {
 				agent("getSphereVolume",
 						"sorcer.arithmetic.tester.volume.Volume",
 						new URL(Sorcer.getWebsterUrl()
-								+ "/arithmetic-tester-"+sorcerVersion+".jar"))));
+								+ "/sorcer-tester-"+sorcerVersion+".jar"))));
 		
 		logger.info("result: " + value(pmt));
 		assertEquals(value(pmt), 33510.32163829113);
@@ -121,11 +121,11 @@ public class ParModelServices {
 				agent("getSphereVolume",
 						"sorcer.arithmetic.tester.volume.Volume",
 						new URL(Sorcer.getWebsterUrl()
-								+ "/arithmetic-tester-"+sorcerVersion+".jar")),
+								+ "/sorcer-tester-"+sorcerVersion+".jar")),
 				agent("getCylinderSurface",
 						"sorcer.arithmetic.tester.volume.Volume",
 						new URL(Sorcer.getWebsterUrl()
-								+ "/arithmetic-tester-"+sorcerVersion+".jar"))));
+								+ "/sorcer-tester-"+sorcerVersion+".jar"))));
 		
 		logger.info("result: " + value(pmt));
 		assertEquals(value(pmt), 33510.32163829113);
@@ -159,7 +159,7 @@ public class ParModelServices {
 						agent("getSphereVolume",
 								"sorcer.arithmetic.tester.volume.Volume",
 								new URL(Sorcer.getWebsterUrl()
-										+ "/arithmetic-tester-"+sorcerVersion+".jar"))));
+										+ "/sorcer-tester-"+sorcerVersion+".jar"))));
 	
 		
 
@@ -176,7 +176,7 @@ public class ParModelServices {
 						agent("getSphereVolume",
 							"sorcer.arithmetic.tester.volume.Volume",
 							new URL(Sorcer.getWebsterUrl()
-									+ "/arithmetic-tester-"+sorcerVersion+".jar"))));
+									+ "/sorcer-tester-"+sorcerVersion+".jar"))));
 		
 //		logger.info("result: " + value(pmt));
 		assertEquals(value(pmt), 33510.32163829113);
@@ -193,11 +193,11 @@ public class ParModelServices {
 						agent("getSphereVolume",
 								"sorcer.arithmetic.tester.volume.Volume",
 								new URL(Sorcer.getWebsterUrl()
-										+ "/arithmetic-tester-" + sorcerVersion + ".jar")),
+										+ "/sorcer-tester-" + sorcerVersion + ".jar")),
 						agent("getCylinderSurface",
 								"sorcer.arithmetic.tester.volume.Volume",
 								new URL(Sorcer.getWebsterUrl()
-										+ "/arithmetic-tester-" + sorcerVersion + ".jar"))));
+										+ "/sorcer-tester-" + sorcerVersion + ".jar"))));
 	
 		assertEquals(value(pmt), 33510.32163829113);
 		

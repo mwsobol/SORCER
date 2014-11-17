@@ -34,4 +34,13 @@ public interface Reactive<T> {
 	 */
 	public boolean isReactive();
 
+	/**
+	 * Assigns repeatedly reactive feature, that can be reversed any time.
+	 *
+	 * @param isReactive
+	 * @return
+	 */
+	public Reactive<T> setReactive(boolean isReactive);
+
+
 }

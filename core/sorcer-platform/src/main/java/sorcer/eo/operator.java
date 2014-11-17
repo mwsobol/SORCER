@@ -185,8 +185,11 @@ public class operator {
 		return ((Job) job).getJobContext();
 	}
 
-	public static Context taskContext(String path, Job job) throws ContextException {
-		return job.getComponentContext(path);
+	public static Context taskContext(String path, Service service) throws ContextException {
+		if (service instanceof ServiceExertion) {
+			return ((CompoundExertion) service).getComponentContext(path);
+		} else
+			throw new ContextException("Service not a compunt exetion: " + service);
 	}
 
 	public static FidelityContext fiContext(FidelityInfo... fidelityInfos) 
@@ -1479,7 +1482,8 @@ public class operator {
 			return (T) get((Exertion) service, path);
 		Object obj = ((ServiceContext) service).asis(path);
 		if (obj != null) {
-			while (obj instanceof Mappable || obj instanceof Reactive) {
+			while (obj instanceof Mappable ||
+					(obj instanceof Reactive && ((Reactive)obj).isReactive())) {
 				try {
 					obj = ((Evaluation) obj).asis();
 				} catch (RemoteException e) {
@@ -1770,19 +1774,19 @@ public class operator {
 		return cc;
 	}
 
-	public static Flow flow(Entry entry) {
-		return entry.strategy().getFlowType();
+	public static Flow flow(Entry entry) throws EvaluationException {
+		return ((Strategy)value(entry)).getFlowType();
 	}
-	
-	public static Access access(Entry entry) {
-		return entry.strategy().getAccessType();
+
+	public static Access access(Entry entry) throws EvaluationException {
+		return ((Strategy)value(entry)).getAccessType();
 	}
-	
-	public static Flow flow(ControlContext strategy) {
+
+	public static Flow flow(Strategy strategy) {
 		return strategy.getFlowType();
 	}
 	
-	public static Access access(ControlContext strategy) {
+	public static Access access(Strategy strategy) {
 		return strategy.getAccessType();
 	}
 	
@@ -1915,7 +1919,7 @@ public class operator {
 			this.in = in;
 			this.inPath = inPath;
 			if ((in instanceof Exertion) && (out instanceof Exertion)) {
-				par = new Par(outPath, inPath, in);
+				par = new Par(outPath, inPath, (Exertion)in);
 				((ServiceExertion) out).addPersister(par);
 			}
 		}
@@ -1929,7 +1933,7 @@ public class operator {
 			this.inComponentPath = inEndPoint.inComponentPath;
 
 			if ((in instanceof Exertion) && (out instanceof Exertion)) {
-				par = new Par(outPath, inPath, in);
+				par = new Par(outPath, inPath, (Exertion)in);
 				((ServiceExertion) out).addPersister(par);
 			}
 		}

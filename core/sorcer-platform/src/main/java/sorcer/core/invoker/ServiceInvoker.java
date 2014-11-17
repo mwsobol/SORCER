@@ -27,19 +27,7 @@ import net.jini.id.UuidFactory;
 import sorcer.co.tuple.Entry;
 import sorcer.core.context.model.par.Par;
 import sorcer.core.context.model.par.ParModel;
-import sorcer.service.Arg;
-import sorcer.service.ArgList;
-import sorcer.service.ArgSet;
-import sorcer.service.Context;
-import sorcer.service.ContextException;
-import sorcer.service.Evaluation;
-import sorcer.service.EvaluationException;
-import sorcer.service.Evaluator;
-import sorcer.service.Identifiable;
-import sorcer.service.Invocation;
-import sorcer.service.InvocationException;
-import sorcer.service.Scopable;
-import sorcer.service.SetterException;
+import sorcer.service.*;
 
 /**
  * @author Mike Sobolewski
@@ -75,7 +63,7 @@ import sorcer.service.SetterException;
  * of the context.
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })
-public class ServiceInvoker<T> extends Observable implements Identifiable, Scopable, Evaluator<T>, Invocation<T>, Observer, Serializable {
+public class ServiceInvoker<T> extends Observable implements Identifiable, Scopable, Evaluator<T>, Invocation<T>, Reactive<T>, Observer, Serializable {
 
 	private static final long serialVersionUID = -2007501128660915681L;
 	
@@ -93,6 +81,8 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 		
 	// invocation delegate to
 	Evaluator evaluator;
+
+	private boolean isReactive = false;
 
 	// indication that value has been calculated with recent arguments
 	protected boolean valueIsValid = false;
@@ -514,6 +504,17 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 	@Override
 	public void setParameters(Object... args) {
 		// implemented by subclasses
+	}
+
+	@Override
+	 public boolean isReactive() {
+		return isReactive;
+	}
+
+	@Override
+	public Reactive<T> setReactive(boolean isReactive) {
+		this.isReactive = isReactive;
+		return this;
 	}
 
 }

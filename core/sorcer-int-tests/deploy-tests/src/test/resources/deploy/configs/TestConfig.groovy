@@ -23,8 +23,8 @@ import org.rioproject.config.Component
 @Component('sorcer.core.exertion.deployment')
 class TestConfig {
     String[] interfaces = ["some.example.interface.Test"]
-    String[] codebaseJars = ["arithmetic-tester-${System.getProperty("sorcer.version")}-dl.jar"]
-    String[] implJars = ["arithmetic-tester-${System.getProperty("sorcer.version")}.jar"]
+    String[] codebaseJars = ["sorcer-tester-${System.getProperty("sorcer.version")}-dl.jar"]
+    String[] implJars = ["sorcer-tester-${System.getProperty("sorcer.version")}.jar"]
     String jvmArgs = "-Xmx4G"
     boolean fork = true
 

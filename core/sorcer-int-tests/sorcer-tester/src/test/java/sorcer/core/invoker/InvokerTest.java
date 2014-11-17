@@ -48,7 +48,7 @@ import static sorcer.po.operator.set;
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })
 @RunWith(SorcerTestRunner.class)
-@ProjectContext("core/sorcer-int-tests/arithmetic-tester")
+@ProjectContext("core/sorcer-int-tests/sorcer-tester")
 public class InvokerTest {
 	private final static Logger logger = Logger.getLogger(InvokerTest.class
 			.getName());
@@ -255,7 +255,7 @@ public class InvokerTest {
         String sorcerVersion = System.getProperty("sorcer.version");
         String buildDir = System.getProperty("project.build.dir");
 
-        String cp = buildDir + "/libs/arithmetic-tester-" + sorcerVersion + ".jar" + File.pathSeparator
+        String cp = buildDir + "/libs/sorcer-tester-" + sorcerVersion + ".jar" + File.pathSeparator
         		+ Sorcer.getHome() + "/lib/sorcer/lib/sorcer-platform-" + sorcerVersion + ".jar"  + File.pathSeparator
 				+ Sorcer.getHome() + "/lib/river/jsk-platform-" + riverVersion + ".jar"  + File.pathSeparator
 				+ Sorcer.getHome() + "/lib/river/jsk-lib-" + riverVersion + ".jar ";

@@ -43,7 +43,7 @@ import static sorcer.eo.operator.value;
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })
 @RunWith(SorcerTestRunner.class)
-@ProjectContext("core/sorcer-int-tests/arithmetic-tester")
+@ProjectContext("core/sorcer-int-tests/sorcer-tester")
 public class ArithmeticNetTest implements SorcerConstants {
 
 	private final static Logger logger = Logger

@@ -9,7 +9,7 @@
 	<property name="webster" value="${provider.webster.url}" />
 	
 	<!-- set property values here -->
-	<property name="requestor.name" value="arithmetic-tester" />
+	<property name="requestor.name" value="sorcer-tester" />
 	<property name="requestor.class" value="sorcer.arithmetic.requestor.ArithmeticTester" />
 
 	<path id="project.classpath">

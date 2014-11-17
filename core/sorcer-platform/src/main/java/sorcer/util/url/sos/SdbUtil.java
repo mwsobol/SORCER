@@ -32,6 +32,7 @@ import java.rmi.RemoteException;
 import java.util.List;
 import java.util.logging.Logger;
 
+import net.jini.core.transaction.TransactionException;
 import net.jini.id.Uuid;
 import net.jini.id.UuidFactory;
 import sorcer.core.context.ServiceContext;
@@ -263,13 +264,12 @@ public class SdbUtil {
 
 	public static URL store(Object object) throws ExertionException,
 			SignatureException, ContextException {
-		String storageName = Sorcer.getActualName(Sorcer
-				.getDatabaseStorerName());
+		String storageName = Sorcer.getDatabaseStorerName();
 		Task objectStoreTask = task(
 				"store",
 				sig("contextStore", DatabaseStorer.class, prvName(storageName)),
 				context("store", inEnt(StorageManagement.object_stored, object),
-						result("result, stored/object/url")));
+						result(StorageManagement.object_url)));
 
 		return (URL) value(objectStoreTask);
 	}
@@ -281,7 +281,7 @@ public class SdbUtil {
 				"write",
 				sig("contextWrite", DataspaceStorer.class, prvName(storageName)),
 				context("stored", inEnt(StorageManagement.object_stored, object),
-						result("result, stored/object/url")));
+						result("stored/object/url")));
 		return (URL) value(objectStoreTask);
 	}
 

@@ -40,11 +40,11 @@ class StartAll {
         def descriptors = []
         ["adder", "multiplier", "divider", "subtractor", "averager", "exertleter", "contexter", "parmodel"].each { provider ->
             def configArg = ["${configPath}/${provider}-prv.config"]
-            def codebase = "${relativeRepoPath}/arithmetic-tester-${sorcerVersion}-dl.jar sorcer-dl-${sorcerVersion}.jar jsk-dl-${riverVersion}.jar"
+            def codebase = "${relativeRepoPath}/sorcer-tester-${sorcerVersion}-dl.jar sorcer-dl-${sorcerVersion}.jar jsk-dl-${riverVersion}.jar"
 
             descriptors << new SorcerServiceDescriptor(codebase,
                                                        policy,
-                                                       "${buildLibPath}/arithmetic-tester-${sorcerVersion}.jar",
+                                                       "${buildLibPath}/sorcer-tester-${sorcerVersion}.jar",
                                                        "sorcer.core.provider.ServiceTasker",
                                                        configArg as String[])
         }
