@@ -282,6 +282,7 @@ public class SdbUtil {
 				sig("contextWrite", DataspaceStorer.class, prvName(storageName)),
 				context("stored", inEnt(StorageManagement.object_stored, object),
 						result("stored/object/url")));
+
 		return (URL) value(objectStoreTask);
 	}
 

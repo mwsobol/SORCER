@@ -14,12 +14,8 @@ import java.util.logging.Logger;
 
 import static org.junit.Assert.*;
 import static sorcer.co.operator.*;
-import static sorcer.co.operator.list;
-import static sorcer.co.operator.path;
 import static sorcer.eo.operator.*;
-import static sorcer.eo.operator.put;
-import static sorcer.eo.operator.value;
-import static sorcer.po.operator.invoker;
+import static sorcer.po.operator.*;
 
 /**
  * @author Mike Sobolewski
@@ -241,7 +237,7 @@ public class ServiceContexts {
 				inEnt("arg3/value", 100.0));
 
 		// make arg1/value persistent
-		URL a1vURL = url(ac, "arg1/value");
+		URL a1vURL = storeArg(ac, "arg1/value");
 
 		// make arg1/value in mc the same as in ac
 		Context mc = context("multiply",
@@ -250,19 +246,21 @@ public class ServiceContexts {
 				inEnt("arg3/value", 200.0));
 
 		// sharing arg1/value from mc in ac
-		logger.info("ZZZZZZZZZZ1: " + value(ac, "arg1/value"));
+		assertTrue(value(ac, "arg1/value").equals(90.0));
 		assertTrue(value(mc, "arg1/value").equals(90.0));
-		put(mc, "arg1/value", 200.0);
 
-		logger.info("ZZZZZZZZZZ2: " + value(ac, "arg1/value"));
+		put(mc, "arg1/value", 200.0);
 		assertTrue(value(ac, "arg1/value").equals(200.0));
+		assertTrue(value(mc, "arg1/value").equals(200.0));
 
 		// sharing arg3/value from ac in mc
 		assertTrue(value(ac, "arg3/value").equals(100.0));
 		assertTrue(value(mc, "arg3/value").equals(200.0));
-		URL a3vURL = db(mc, "arg3/value");
-		add(ac, dbEnt("arg3/value", a3vURL));
+		URL a3vURL = storeArg(mc, "arg3/value");
+		add(ac, ent("arg3/value", a3vURL));
+
 		put(ac, "arg1/value", 300.0);
+		assertTrue(value(ac, "arg1/value").equals(300.0));
 		assertTrue(value(mc, "arg1/value").equals(300.0));
 
 	}

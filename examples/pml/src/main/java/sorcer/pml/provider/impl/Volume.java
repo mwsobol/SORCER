@@ -5,10 +5,8 @@ package sorcer.pml.provider.impl;
  */
 
 import static java.lang.System.out;
-import static sorcer.co.operator.ent;
-import static sorcer.eo.operator.context;
-import static sorcer.eo.operator.put;
-import static sorcer.eo.operator.revalue;
+import static sorcer.co.operator.*;
+import static sorcer.eo.operator.*;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
@@ -32,32 +30,32 @@ public class Volume implements Sphere, Cylinder, Serializable {
 	public Volume(Context context) {}
 	
 	public Context getSphereSurface(Context context) throws RemoteException, ContextException {
-		double radius = (Double) revalue(context, "sphere/radius");
-		put(context,
+		double radius = (Double) value(context, "sphere/radius");
+		add(context,
 			ent("sphere/surface", 4.0 * Math.PI * Math.pow(radius, 3)));
 		return context;
 	}
 
 	public Context getSphereVolume(Context context) throws ContextException, RemoteException {
-		double radius = (Double) revalue(context, "sphere/radius");
-		put(context, ent("sphere/volume",
+		double radius = (Double) value(context, "sphere/radius");
+		add(context, ent("sphere/volume",
 			(4.0 / 3.0) * Math.PI * Math.pow(radius, 3)));
 		return context;
 	}
 
 	public Context getCylinderSurface(Context context) throws ContextException, RemoteException {
-		double radius = (Double) revalue(context, "cylinder/radius");
-		double height = (Double) revalue(context, "cylinder/height");
-		put(context, ent("cylinder/surface", 
+		double radius = (Double) value(context, "cylinder/radius");
+		double height = (Double) value(context, "cylinder/height");
+		add(context, ent("cylinder/surface",
 				(2 * Math.PI * Math.pow(radius, 2))
 						+ (2 * Math.PI * radius * height)));
 		return context;
 	}
 
 	public Context getCylinderVolume(Context context) throws ContextException, RemoteException {
-		double radius = (Double) revalue(context, "cylinder/radius");
-		double height = (Double) revalue(context, "cylinder/height");
-		put(context, ent("cylinder/volume", 
+		double radius = (Double) value(context, "cylinder/radius");
+		double height = (Double) value(context, "cylinder/height");
+		add(context, ent("cylinder/volume",
 				Math.PI * Math.pow(radius, 2) * height));
 		return context;
 	}

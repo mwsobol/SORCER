@@ -21,19 +21,9 @@ import java.util.logging.Logger;
 
 import static org.junit.Assert.*;
 import static sorcer.co.operator.*;
-import static sorcer.co.operator.persistent;
-import static sorcer.co.operator.url;
-import static sorcer.eo.operator.asis;
 import static sorcer.eo.operator.*;
-import static sorcer.eo.operator.get;
-import static sorcer.eo.operator.in;
-import static sorcer.eo.operator.pipe;
-import static sorcer.eo.operator.value;
-import static sorcer.po.operator.add;
 import static sorcer.po.operator.*;
-import static sorcer.po.operator.asis;
-import static sorcer.po.operator.put;
-import static sorcer.po.operator.set;
+
 
 /**
  * @author Mike Sobolewski
@@ -207,8 +197,8 @@ public class ParModelTest {
 		assertTrue(asis(c4, "arg/x1") instanceof Par);
 		assertEquals(asis(c4, "arg/x2"), 50.0);
 
-		assertTrue(url(c4, "arg/x1") instanceof URL);
-		assertTrue(url(c4, "arg/x2") instanceof URL);
+		assertTrue(storeArg(c4, "arg/x1") instanceof URL);
+		assertTrue(storeArg(c4, "arg/x2") instanceof URL);
 
 		c4.putValue("arg/x1", 110.0);
 		c4.putValue("arg/x2", 150.0);
@@ -234,12 +224,12 @@ public class ParModelTest {
 		assertTrue(asis(c4, "arg/x1") instanceof Par);
 		assertTrue(asis(c4, "arg/x2") instanceof Par);
 		
-		logger.info("arg/x0 URL: " + url(c4, "arg/x0"));
-		logger.info("arg/x1 URL: " + url(c4, "arg/x1"));
-		logger.info("arg/x2 URL: " + url(c4, "arg/x2"));
-		assertTrue(url(c4, "arg/x0") instanceof URL);
-		assertTrue(url(c4, "arg/x1") instanceof URL);
-		assertTrue(url(c4, "arg/x2") instanceof URL);
+		logger.info("arg/x0 URL: " + storeArg(c4, "arg/x0"));
+		logger.info("arg/x1 URL: " + storeArg(c4, "arg/x1"));
+		logger.info("arg/x2 URL: " + storeArg(c4, "arg/x2"));
+		assertTrue(storeArg(c4, "arg/x0") instanceof URL);
+		assertTrue(storeArg(c4, "arg/x1") instanceof URL);
+		assertTrue(storeArg(c4, "arg/x2") instanceof URL);
 		
 		c4.putValue("arg/x0", 11.0);
 		c4.putValue("arg/x1", 110.0);

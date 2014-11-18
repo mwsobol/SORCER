@@ -37,6 +37,9 @@ public class Entry<T> extends Tuple2<String, T> implements Arg, Comparable<T>, S
 	
 	protected String annotation;
 
+	// its arguments are always evaluated if active (either Evaluataion or Invocation type)
+	protected boolean isReactive = false;
+
 	public Entry() {
 	}
 
@@ -75,11 +78,26 @@ public class Entry<T> extends Tuple2<String, T> implements Arg, Comparable<T>, S
 		this._2 = v;
 		this.annotation = association;
 	}
-	
+
+//	@Override
+//	public T getValue(Arg... entries) throws EvaluationException,
+//			RemoteException {
+//
+//
+//		Object obj = super.getValue(entries);
+//		if (obj instanceof ServiceInvoker) {
+//			return ((ServiceInvoker<T>) obj).invoke(entries);
+//		} else if (obj instanceof Evaluation) {
+//			return ((Evaluation<T>) obj).getValue(entries);
+//		}
+//		return (T) obj;
+//	}
+
 	@Override
 	public T getValue(Arg... entries) throws EvaluationException,
 			RemoteException {
 		T val = this._2;
+		URL url = null;
 		try {
 			substitute(entries);
 			if (isPersistent) {
@@ -88,18 +106,16 @@ public class Entry<T> extends Tuple2<String, T> implements Arg, Comparable<T>, S
 					if (val instanceof UuidObject)
 						val = (T) ((UuidObject) val).getObject();
 				} else {
-					setReactive(true);
 					if (val instanceof UuidObject) {
-						this._2 =  (T) SdbUtil.store(val);
+						url =  (URL) SdbUtil.store(val);
 					} else {
 						UuidObject uo = new UuidObject(val);
 						uo.setName(_1);
-						this._2 = (T) SdbUtil.store(uo);
+						url =  (URL)  SdbUtil.store(uo);
 					}
+					this._2 = (T)url;
 				}
-				return val;
-			}
-			if (val instanceof ServiceInvoker) {
+			} else if (val instanceof ServiceInvoker) {
 				return ((ServiceInvoker<T>) val).invoke(entries);
 			} else if (val instanceof Evaluation) {
 				return ((Evaluation<T>) val).getValue(entries);
@@ -107,9 +123,30 @@ public class Entry<T> extends Tuple2<String, T> implements Arg, Comparable<T>, S
 		} catch (Exception e) {
 			throw new EvaluationException(e);
 		}
-		return (T) val;
+		return val;
 	}
-	
+
+	@Override
+	public void setValue(Object value) throws SetterException, RemoteException {
+		if (isPersistent) {
+			try {
+				if (SdbUtil.isSosURL(value)) {
+					this._2 = (T) value;
+				} else if (SdbUtil.isSosURL(this._2)) {
+					if (((URL) this._2).getRef() == null) {
+						this._2 = (T) SdbUtil.store(value);
+					} else {
+						SdbUtil.update((URL) this._2, value);
+					}
+				}
+			} catch (Exception e) {
+				throw new SetterException(e);
+			}
+		} else {
+			this._2 = (T) value;
+		}
+	}
+
 	public int index() {
 		return index;
 	}

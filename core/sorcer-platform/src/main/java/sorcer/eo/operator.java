@@ -549,6 +549,14 @@ public class operator {
 	
 	public static Context put(Context context, String path, Object value)
 			throws ContextException {
+		Object val = context.asis(path);
+		if (SdbUtil.isSosURL(val)) {
+			try {
+				SdbUtil.update((URL)val, value);
+			} catch (Exception e) {
+				throw new ContextException(e);
+			}
+		}
 		context.putValue(path, value);
 		return context;
 	}
@@ -1328,7 +1336,32 @@ public class operator {
 	public static <T> T softValue(Context<T> context, String path) throws ContextException {
 		return context.getSoftValue(path);
 	}
-	
+
+	public static <K, V> V keyValue(Map<K, V> map, K path) throws ContextException {
+		return map.get(path);
+	}
+
+	public static <K, V> V pathValue(Map<K, V> map, K path) throws ContextException {
+		return map.get(path);
+	}
+
+	public static <V> V pathValue(Mappable<V> map, String path, Arg... args) throws ContextException {
+		return map.getValue(path, args);
+	}
+
+	public static <T> T value(Evaluation<T> evaluation)
+			throws EvaluationException {
+		try {
+			return evaluation.getValue();
+		} catch (RemoteException e) {
+			throw new EvaluationException(e);
+		}
+	}
+
+//	public static <T> T value(Mappable<T> map, String path) throws ContextException {
+//		return map.getValue(path);
+//	}
+
 	public static Object value(Object obj) throws EvaluationException {
 		try {
 			if (obj instanceof URL)
@@ -1341,16 +1374,7 @@ public class operator {
 			throw new EvaluationException(e);
 		}
 	}
-	
-	public static <T> T value(Evaluation<T> evaluation)
-			throws EvaluationException {
-		try {
-			return evaluation.getValue();
-		} catch (RemoteException e) {
-			throw new EvaluationException(e);
-		}
-	}
-	
+
 	public static <T> T value(Evaluation<T> evaluation, Arg... entries)
 			throws EvaluationException {
 		try {
@@ -1393,8 +1417,13 @@ public class operator {
 			}
 		} else if (evaluation instanceof Context) {
 			try {
-				return (T) ((Context) evaluation).getValue(evalSelector,
+				Object val = ((Context) evaluation).getValue(evalSelector,
 						entries);
+				if (SdbUtil.isSosURL(val)) {
+					return (T) ((URL) val).getContent();
+				} else {
+					return (T)val;
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
 				throw new EvaluationException(e);
