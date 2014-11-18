@@ -733,6 +733,13 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 			obj = put(path, (T)none);
 		else {
 			obj = get(path);
+//			if (SdbUtil.isSosURL(obj)) {
+//				try {
+//				SdbUtil.update((URL)obj, value);
+//			} catch (Exception ex) {
+//				throw new ContextException(ex);
+//			}
+//		} else
 			if (obj instanceof Reactive && obj instanceof Setter) {
 				try {
 					((Setter)obj).setValue(value);
@@ -2873,7 +2880,7 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 				else if (returnPath != null)
 					obj = getReturnValue(entries);
 				else
-					return null;
+					return (T)this;
 			}
 			if (currentPath.startsWith("super")) {
 				obj = (T) exertion.getContext().getValue(currentPath.substring(6));

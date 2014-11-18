@@ -38,7 +38,7 @@ dependencies {
     ["blitz", "blitz-dl", "blitzui"].each { blitz ->
         distribution "org.dancres:${blitz}:$blitzVersion"
     }
-    distribution "org.rioproject:distribution:${rioVersion}"
+//    distribution "org.rioproject:distribution:${rioVersion}"
 }
 
 ext {

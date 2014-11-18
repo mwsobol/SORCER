@@ -473,11 +473,7 @@ public class operator {
 		return as.toArray();
 	}
 
-	public static URL db(Context context, String path) throws EvaluationException {
-		return  url(context, path);
-	}
-	
-	public static URL url(Context context, String path) throws EvaluationException {
+	public static URL storeArg(Context context, String path) throws EvaluationException {
 		URL dburl = null;
 		try {
 			Object v = context.asis(path);

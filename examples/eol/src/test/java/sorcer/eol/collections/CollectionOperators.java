@@ -26,8 +26,23 @@ import java.util.logging.Logger;
 
 import static org.junit.Assert.*;
 import static sorcer.co.operator.*;
+import static sorcer.co.operator.path;
+import static sorcer.co.operator.persistent;
+import static sorcer.co.operator.put;
+import static sorcer.co.operator.set;
+import static sorcer.co.operator.value;
 import static sorcer.eo.operator.*;
+import static sorcer.eo.operator.add;
+import static sorcer.eo.operator.asis;
+import static sorcer.eo.operator.get;
+import static sorcer.eo.operator.in;
+import static sorcer.eo.operator.pipe;
+import static sorcer.eo.operator.put;
+import static sorcer.eo.operator.value;
+import static sorcer.po.operator.add;
+import static sorcer.po.operator.asis;
 import static sorcer.po.operator.*;
+import static sorcer.po.operator.set;
 
 /**
  * @author Mike Sobolewski
@@ -236,29 +251,27 @@ public class CollectionOperators {
 		
 		Map<Object, Object> map1 = dictionary(ent("name", "Mike"), ent("height", 174.0));
 				
-		Map<String, Double> map2 = map(ent("length", 248.0), ent("width", 2.0), ent("height", 17.0));
+		Map<String, Double> map2 = map(ent("length", 248.0), ent("screen/width", 27.0), ent("screen/height", 12.0));
 		
 		// keys and values of entries
-		String k = key(ent("name", "Mike"));
-		
-		Entry<Double> de = ent("height", 174.0);
-		Double v = value(de);
+		assertEquals(key(ent("name", "Mike")), "name");
+		assertEquals(value(ent("name", "Mike")), "Mike");
+		// when using namespaces use path for the name of context (map) variables
+		assertEquals(path(ent("screen/height", 12.0)), "screen/height");
 
-//		Double v = value(entry("height", 174.0));
-		assertEquals(k, "name");
-		assertTrue(v.equals(174.0));
-		
-		// casts are needed for dictionary: Map<Object, Object>
-		k = (String)map1.get("name");
-		v = (Double)map1.get("height");
-		assertEquals(k, "Mike");
-		assertTrue(v.equals(174.0));
-		
-		// casts are NOT needed for map: Map<K, V>
-		v = map2.get("length");
-		assertTrue(v.equals(248.0));
-		
-		// check map keys
+		assertEquals(keyValue(map1, "name"), "Mike");
+		assertEquals(keyValue(map1, "height"), 174.0);
+
+		assertTrue(key(ent("width", 2.0)).equals("width"));
+		assertTrue(value(ent("width", 2.0)).equals(2.0));
+
+		assertEquals(keyValue(map1, "name"), "Mike");
+		assertEquals(keyValue(map1, "height"), 174.0);
+
+		assertTrue(pathValue(map2, "screen/width").equals(27.0));
+		assertTrue(pathValue(map2, "screen/height").equals(12.0));
+
+		// Java API
 		assertEquals(map1.keySet(), set("name", "height"));
 		// check map values
 		assertTrue(map1.values().contains("Mike"));
@@ -311,7 +324,7 @@ public class CollectionOperators {
 		// repeatedly reactive evaluations
 		assertTrue((Object) get(cxt, "arg/x7") instanceof ServiceInvoker);
 		rrvEnt(cxt, "arg/x7");
-		assertEquals(2.4, (Double)value(value(cxt, "arg/x7")), 0.0000001);
+		assertEquals(2.4, (Double) value(value(cxt, "arg/x7")), 0.0000001);
 
 	}
 	

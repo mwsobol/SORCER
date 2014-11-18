@@ -31,11 +31,9 @@ public class Tuple2<T1, T2> implements Arg, Serializable, Identifiable, Evaluati
 	private  static final long serialVersionUID = -6519678282532888568L;
 	public T1 _1 = null;
 	public T2 _2 = null;
+	private Uuid entryUuid;
 	// its arguments is persisted
 	protected boolean isPersistent = false;
-	// its arguments are always evaluated if active (either Evaluataion or Invocation type)
-	protected boolean isReactive = false;
-	private Uuid entryUuid;
 
 	public Tuple2() {
 		entryUuid = UuidFactory.generate();
@@ -125,23 +123,7 @@ public class Tuple2<T1, T2> implements Arg, Serializable, Identifiable, Evaluati
 	 */
 	@Override
 	public void setValue(Object value) throws SetterException, RemoteException {
-		if (isPersistent) {
-			try {
-				if (SdbUtil.isSosURL(value))
-					this._2 = (T2) value;
-				else if (SdbUtil.isSosURL(_2)) {
-					if (((URL) _2).getRef() == null) {
-						this._2 = (T2) SdbUtil.store(value);
-					} else
-						SdbUtil.update((URL) _2, value);
-				}
-				return;
-			} catch (Exception e) {
-				throw new SetterException(e);
-			}
-		} else {
-			this._2 = (T2) value;
-		}
+		this._2 = (T2) value;
 	}
 
 	/* (non-Javadoc)
@@ -167,7 +149,7 @@ public class Tuple2<T1, T2> implements Arg, Serializable, Identifiable, Evaluati
 	public boolean isPersistent() {
 		return isPersistent;
 	}
-	
+
 	/**
 	 * <p>
 	 * Assigns the flag for persistent storage of values of this entry

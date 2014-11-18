@@ -23,7 +23,7 @@ import org.rioproject.deploy.SystemRequirements;
 import org.rioproject.opstring.ServiceElement;
 import org.rioproject.resolver.ResolverException;
 import org.rioproject.system.capability.connectivity.TCPConnectivity;
-import org.rioproject.tools.webster.Webster;
+//import org.rioproject.tools.webster.Webster;
 import sorcer.core.provider.ServiceProvider;
 import sorcer.core.signature.NetSignature;
 
@@ -97,22 +97,22 @@ public class ServiceElementFactoryTest {
                             deployment.getConfig());
     }
 
-    @Test
-    public void testConfigurationAsHTTP() throws IOException, ConfigurationException {
-        String configDirToServe = getConfigDir();
-        Webster webster = new Webster(0, configDirToServe, null);
-        try {
-            ServiceDeployment deployment = new ServiceDeployment();
-            String hostName = InetAddress.getLocalHost().getHostName();
-            int port = webster.getPort();
-            deployment.setConfig("http://"+hostName+":"+port+"/testIP.config");
-            Assert.assertNotNull(deployment.getConfig());
-            Assert.assertEquals("http://"+hostName+":"+port+"/testIP.config",
-                                deployment.getConfig());
-        } finally {
-            webster.terminate();
-        }
-    }
+//    @Test
+//    public void testConfigurationAsHTTP() throws IOException, ConfigurationException {
+//        String configDirToServe = getConfigDir();
+//        Webster webster = new Webster(0, configDirToServe, null);
+//        try {
+//            ServiceDeployment deployment = new ServiceDeployment();
+//            String hostName = InetAddress.getLocalHost().getHostName();
+//            int port = webster.getPort();
+//            deployment.setConfig("http://"+hostName+":"+port+"/testIP.config");
+//            Assert.assertNotNull(deployment.getConfig());
+//            Assert.assertEquals("http://"+hostName+":"+port+"/testIP.config",
+//                                deployment.getConfig());
+//        } finally {
+//            webster.terminate();
+//        }
+//    }
 
     @Test
     public void testIPAddresses() throws Exception {

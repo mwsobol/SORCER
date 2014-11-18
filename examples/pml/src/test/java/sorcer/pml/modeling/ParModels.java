@@ -7,7 +7,6 @@ import org.junit.Test;
 import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.provider.impl.SubtractorImpl;
-import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.par.Agent;
 import sorcer.core.context.model.par.Par;
 import sorcer.core.context.model.par.ParModel;
@@ -118,31 +117,26 @@ public class ParModels {
 	@Test
 	public void contextInvoker() throws RemoteException, ContextException {
 		ParModel pm = new ParModel("par-model");
-		pm.putValue("x", 10.0);
-		pm.putValue("y", 20.0);
-		pm.putValue("add", new ServiceInvoker(pm));
-		((ServiceInvoker)pm.get("add"))
-			.setPars(pars("x", "y"))
-			.setEvaluator(invoker("x + y", pars("x", "y")));
+		add(pm, ent("x", 10.0));
+		add(pm, ent("y", 20.0));
+		add(pm, ent("add", invoker("x + y", pars("x", "y"))));
 		
-		assertEquals(pm.getValue("x"), 10.0);
-		assertEquals(pm.getValue("y"), 20.0);
-		logger.info("add value: " + pm.getValue("add"));
-		assertEquals(pm.getValue("add"), 30.0);
+		assertEquals(value(pm, "x"), 10.0);
+		assertEquals(value(pm, "y"), 20.0);
+		logger.info("add value: " + value(pm, "add"));
+		assertEquals(value(pm, "add"), 30.0);
 
-		logger.info("invoker value: " 
-				+ ((ServiceInvoker) pm.get("add")).invoke());
-
-		pm.setReturnPath("add");
-		logger.info("pm context value: " + pm.getValue());
-		assertEquals(pm.getValue(), 30.0);
+		target(pm, "add");
+		logger.info("pm context value: " + value(pm));
+		assertEquals(value(pm), 30.0);
 		
-		pm.putValue("x", 100.0);
-		pm.putValue("y", 200.0);
-		logger.info("add value: " + pm.getValue("add"));
-		assertEquals(pm.getValue("add"), 300.0);		
+		set(pm, "x", 100.0);
+		set(pm, "y", 200.0);
+		logger.info("add value: " + value(pm, "add"));
+		assertEquals(value(pm, "add"), 300.0);
 
-		assertEquals(pm.invoke(context(inEnt("x", 200.0), inEnt("y", 300.0))), 500.0);
+		assertTrue(value(pm, ent("x", 200.0), ent("y", 300.0)).equals(500.0));
+
 	}
 	
 
@@ -270,64 +264,29 @@ public class ParModels {
 	}
 	
 	@Test
-	public void persistableContext() throws ContextException, RemoteException {
-		Context c4 = new ServiceContext("multiply");
-		c4.putDbValue("arg/x1", 10.0);
-		c4.putValue("arg/x2", 50.0);
-		c4.putDbValue("result/y", null);
-
-		value(c4, "arg/x1");
-		assertEquals(value(c4, "arg/x1"), 10.0);
-		assertEquals(value(c4, "arg/x2"), 50.0);
-		
-		assertTrue(asis(c4, "arg/x1") instanceof Par);
-		assertFalse(asis(c4, "arg/x2") instanceof Par);
-
-		logger.info("arg/x1 URL: " + url(c4, "arg/x1"));
-		assertTrue(url(c4, "arg/x1") instanceof URL);
-		assertFalse(url(c4, "arg/x2") instanceof URL);
-		
-		c4.putValue("arg/x1", 110.0);
-		c4.putValue("arg/x2", 150.0);
-		
-		assertEquals(value(c4, "arg/x1"), 110.0);
-		assertEquals(value(c4, "arg/x2"), 150.0);
-		
-		assertTrue(asis(c4, "arg/x1") instanceof Par);
-		assertFalse(asis(c4, "arg/x2") instanceof Par);
-	}
-	
-	@Test
-	public void persistableEolContext() throws ContextException, RemoteException {
-		Context c4 = context("multiply", dbEnt("arg/x0", 1.0), dbInEnt("arg/x1", 10.0), 
+	public void contextArgsPersistence() throws ContextException, RemoteException {
+		Context cxt = context("multiply", dbEnt("arg/x0", 1.0), dbInEnt("arg/x1", 10.0),
 				dbOutEnt("arg/x2", 50.0), outEnt("result/y"));
 		
-		assertEquals(value(c4, "arg/x0"), 1.0);
-		assertEquals(value(c4, "arg/x1"), 10.0);
-		assertEquals(value(c4, "arg/x2"), 50.0);
+		assertEquals(value(cxt, "arg/x0"), 1.0);
+		assertEquals(value(cxt, "arg/x1"), 10.0);
+		assertEquals(value(cxt, "arg/x2"), 50.0);
 		
-		assertTrue(asis(c4, "arg/x0") instanceof Par);
-		assertTrue(asis(c4, "arg/x1") instanceof Par);
-		assertTrue(asis(c4, "arg/x2") instanceof Par);
+		assertTrue(asis(cxt, "arg/x0") instanceof Par);
+		assertTrue(asis(cxt, "arg/x1") instanceof Par);
+		assertTrue(asis(cxt, "arg/x2") instanceof Par);
 		
-		logger.info("arg/x0 URL: " + url(c4, "arg/x0"));
-		logger.info("arg/x1 URL: " + url(c4, "arg/x1"));
-		logger.info("arg/x2 URL: " + url(c4, "arg/x2"));
-		assertTrue(url(c4, "arg/x0") instanceof URL);
-		assertTrue(url(c4, "arg/x1") instanceof URL);
-		assertTrue(url(c4, "arg/x2") instanceof URL);
+		set(cxt, ent("arg/x0", 11.0));
+		set(cxt, ent("arg/x1", 110.0));
+		set(cxt, ent("arg/x2", 150.0));
 		
-		c4.putValue("arg/x0", 11.0);
-		c4.putValue("arg/x1", 110.0);
-		c4.putValue("arg/x2", 150.0);
-		
-		assertEquals(value(c4, "arg/x0"), 11.0);
-		assertEquals(value(c4, "arg/x1"), 110.0);
-		assertEquals(value(c4, "arg/x2"), 150.0);
+		assertEquals(value(cxt, "arg/x0"), 11.0);
+		assertEquals(value(cxt, "arg/x1"), 110.0);
+		assertEquals(value(cxt, "arg/x2"), 150.0);
 
-		assertTrue(asis(c4, "arg/x0") instanceof Par);
-		assertTrue(asis(c4, "arg/x1") instanceof Par);
-		assertTrue(asis(c4, "arg/x2") instanceof Par);
+		assertTrue(asis(cxt, "arg/x0") instanceof Par);
+		assertTrue(asis(cxt, "arg/x1") instanceof Par);
+		assertTrue(asis(cxt, "arg/x2") instanceof Par);
 	}
 	
 	@Test
@@ -641,8 +600,8 @@ public class ParModels {
 		
 		// update vars x and y that loop condition (var z) depends on
 		Callable update = new Callable() {
-			public Double call() throws EvaluationException,
-					InterruptedException, RemoteException, SetterException {
+			public Double call() throws ContextException,
+					InterruptedException, RemoteException {
 				while ((Double) x.getValue() < 60.0) {
 					x.setValue((Double) x.getValue() + 1.0);
 					y.setValue((Double) y.getValue() + 1.0);

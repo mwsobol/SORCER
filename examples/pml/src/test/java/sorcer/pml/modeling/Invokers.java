@@ -2,10 +2,11 @@ package sorcer.pml.modeling;
 
 import junit.framework.Assert;
 import net.jini.core.transaction.TransactionException;
-
 import org.junit.Before;
 import org.junit.Test;
-
+import org.junit.runner.RunWith;
+import org.sorcer.test.ProjectContext;
+import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.provider.impl.SubtractorImpl;
@@ -20,12 +21,10 @@ import sorcer.pml.provider.impl.Volume;
 import sorcer.service.*;
 import sorcer.util.Sorcer;
 import sorcer.util.exec.ExecUtils.CmdResult;
-import sorcer.util.url.sos.SdbURLStreamHandlerFactory;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
-import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.Properties;
 import java.util.logging.Logger;
@@ -34,12 +33,25 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
+import static sorcer.eo.operator.in;
+import static sorcer.eo.operator.pipe;
+import static sorcer.eo.operator.value;
+import static sorcer.po.operator.add;
+import static sorcer.po.operator.alt;
+import static sorcer.po.operator.asis;
 import static sorcer.po.operator.*;
+import static sorcer.po.operator.get;
+import static sorcer.po.operator.loop;
+import static sorcer.po.operator.opt;
+import static sorcer.po.operator.put;
+import static sorcer.po.operator.set;
 
 /**
  * @author Mike Sobolewski
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })
+@RunWith(SorcerTestRunner.class)
+@ProjectContext("examples/pml")
 public class Invokers {
 	private final static Logger logger = Logger.getLogger(Invokers.class
 			.getName());
@@ -48,17 +60,6 @@ public class Invokers {
 	private Par<Double> x;
 	private Par<Double> y;
 	private Par z;
-	
-	static {
-		ServiceExertion.debug = true;
-		URL.setURLStreamHandlerFactory(new SdbURLStreamHandlerFactory());
-		System.setProperty("java.util.logging.config.file", Sorcer.getHome()
-				+ "/configs/sorcer.logging");
-		System.setProperty("java.security.policy", Sorcer.getHome()
-				+ "/policy/policy.all");
-		System.setSecurityManager(new SecurityManager());
-		Sorcer.setCodeBase(new String[] { "ju-invoker-beans.jar" });
-	}
 
 	// member subclass of Invocable with Context parameter used below with
 	// contextMethodAttachmentWithArgs()
@@ -255,7 +256,7 @@ public class Invokers {
 
 	@Test
 	public void cmdInvokerTest() throws SignatureException, ExertionException,
-			ContextException, IOException {
+	ContextException, IOException {
 		String riverVersion = System.getProperty("river.version");
         String sorcerVersion = System.getProperty("sorcer.version");
         String buildDir = System.getProperty("project.build.dir");
@@ -264,12 +265,14 @@ public class Invokers {
         		+ Sorcer.getHome() + "/lib/sorcer/lib/sorcer-platform-" + sorcerVersion + ".jar"  + File.pathSeparator
 				+ Sorcer.getHome() + "/lib/river/jsk-platform-" + riverVersion + ".jar"  + File.pathSeparator
 				+ Sorcer.getHome() + "/lib/river/jsk-lib-" + riverVersion + ".jar ";
-        
+
+
 		ServiceInvoker cmd = cmdInvoker("volume",
 				"java -cp  " + cp + Volume.class.getName() + " cylinder");
 
-		par("multiply", invoker("x * y", pars("x", "y")));
-		ParModel pm = add(parModel(), par("x", 10.0), par("y"), par(cmd),
+		ParModel pm = parModel(par(cmd),
+				par("x", 10.0), par("y"),
+				par("multiply", invoker("x * y", pars("x", "y"))),
 				par("add", invoker("x + y", pars("x", "y"))));
 
 		CmdResult result = (CmdResult) invoke(pm, "volume");
@@ -277,6 +280,7 @@ public class Invokers {
 		assertTrue("EXPECTED '0' return value, GOT: "+result.getExitValue(), result.getExitValue() == 0);
 		Properties props = new Properties();
 		props.load(new StringReader(result.getOut()));
+
 		set(pm, "y", new Double(props.getProperty("cylinder/volume")));
 
 		logger.info("x value:" + value(pm, "x"));
