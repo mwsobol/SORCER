@@ -7,7 +7,7 @@ import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.provider.impl.SubtractorImpl;
-import sorcer.co.tuple.Entry;
+import sorcer.co.tuple.*;
 import sorcer.core.context.model.par.Par;
 import sorcer.core.context.model.par.ParModel;
 import sorcer.core.invoker.ServiceInvoker;
@@ -53,9 +53,53 @@ import static sorcer.po.operator.set;
 public class CollectionOperators {
 	private final static Logger logger = Logger.getLogger(CollectionOperators.class.getName());
 
-	
+
 	@Test
-	public void arrayOperator() throws Exception {
+		public void tuplesOfTypedObjects() throws Exception {
+
+
+		Tuple1 t1 = tuple("Mike");
+
+		Entry ent = ent("Mike", "Sobolewski");
+
+		Tuple2<String, String> t2 = tuple("Mike", "Sobolewski");
+
+		Tuple3 t3 = tuple("Mike", "Sobolewski", "SORCER");
+
+		Tuple4<String, String, String, Integer> t4 = tuple("Mike", "Sobolewski", "SORCER", 2014);
+
+		Tuple5 t5 = tuple("Mike", "Sobolewski", "SORCER", 2014, "AFRL/WPAFB");
+
+		Tuple6 t6 = tuple("Mike", "Sobolewski", "SORCER", 2010, "TTU", "AFRL/WPAFB");
+
+
+		assertTrue(ent instanceof Tuple2);
+
+		// no casting required
+		String last = t4._2;
+		int year = t4._4;
+
+		// casting required
+		String first = (String)t5._1;
+
+		assertEquals(t1._1, t2._1);
+		assertEquals(t2._2, t3._2);
+		assertEquals(t3._3, t4._3);
+		assertEquals(t4._4, t5._4);
+		assertEquals(t5._5, t6._6);
+
+		// for shot you can use the x operator for tupele
+
+		Tuple2<Integer, Double> z = x(12, 12.0);
+		int z1 = z._1;
+		double z2 = z._2;
+		assertTrue((z1 * z2) == 144.0);
+
+	}
+
+
+	@Test
+	public void genericArrayOperator() throws Exception {
 		
 		Double[] da = array(1.1, 2.1, 3.1);
 		assertArrayEquals(da, new Double[] { 1.1, 2.1, 3.1 } );
@@ -69,7 +113,7 @@ public class CollectionOperators {
 
 	
 	@Test
-	public void listOperator() throws Exception {
+	public void genericListOperator() throws Exception {
 		
 		// the list operator creates an instance of ArrayList
 		List<Object> l = list(list(1.1, 2.1, 3.1),  4.1,  list(11.1, 12.1, 13.1));
@@ -87,7 +131,7 @@ public class CollectionOperators {
 	
 	
 	@Test
-	public void setOperator() throws Exception {
+	public void genericSetOperator() throws Exception {
 		
 		// the set operator creates instances of java.util.Set
 		Set<Serializable> s = set("name", "Mike", "name", "Ray", tuple("height", 174));
@@ -402,6 +446,7 @@ public class CollectionOperators {
 		Par x1p = par("x1p", "arg/x1", c4);
 		Par x2p = par("x2p", "arg/x2", c4);
 		Par j1p = par("j1p", "j1/t3/result/y", j1);
+
 		// par model with contexts and exertion
 		ParModel pc = parModel(x1p, x2p, j1p);
 
@@ -426,6 +471,7 @@ public class CollectionOperators {
 		exert(j1);
 		// j1p is the alias to context value of j1 at j1/t3/result/y
 		assertEquals(value(pc, "j1p"), 400.0);
+
 	}
 
 }

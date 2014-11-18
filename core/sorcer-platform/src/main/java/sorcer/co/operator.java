@@ -36,9 +36,6 @@ import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.*;
 
-//import sorcer.vfe.filter.TableReader;
-//import sorcer.vfe.util.Response;
-
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class operator {
 
