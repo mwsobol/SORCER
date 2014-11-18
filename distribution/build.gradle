@@ -38,7 +38,7 @@ dependencies {
     ["blitz", "blitz-dl", "blitzui"].each { blitz ->
         distribution "org.dancres:${blitz}:$blitzVersion"
     }
-    distribution "org.rioproject:distribution:${rioVersion}"
+    distribution "org.rioproject:distribution:${rioVersion}@zip"
 }
 
 ext {
@@ -99,11 +99,11 @@ task gatherDeps() {
             boolean include = filter(project.path)
             if(include) {
                 println "Processing ${project.path}"
-                ["jsk, start, service-ui"                             : "lib/river",
-                 "blitz, lockmgr"                                     : "lib/blitz",
-                 "je, bcmail, bcprov, itext, jffp, jfree, xerces, xml": "lib/common",
-                 "groovy"                                             : "lib/common/groovy",
-                 "junit"                                              : "lib/common/buildsupport"].each {
+                ["jsk, start, service-ui"  : "lib/river",
+                 "blitz, lockmgr"          : "lib/blitz",
+                 "je, xerces, xml"         : "lib/common",
+                 "groovy"                  : "lib/common/groovy",
+                 "junit"                   : "lib/common/buildsupport"].each {
                     prefix, dest ->
                     copy {
                         from filterDeps(project, prefix)
@@ -116,13 +116,20 @@ task gatherDeps() {
         /* Copy over distribution dependencies */
         project.configurations['distribution'].files.each { file ->
             String dest
-            if(file.path.contains("jini") || file.path.contains("river"))
-                dest = "lib/river"
-            else
-                dest = "lib/blitz"
-            copy {
-                from file
-                into "$distDir-${version}/$dest"
+            if(file.path.endsWith("distribution-5.0-M4.zip")) {
+                copy {
+                    from zipTree(file)
+                    into "$distDir-${version}"
+                }
+            } else {
+                if (file.path.contains("jini") || file.path.contains("river"))
+                    dest = "lib/river"
+                else
+                    dest = "lib/blitz"
+                copy {
+                    from file
+                    into "$distDir-${version}/$dest"
+                }
             }
         }
     }
@@ -223,7 +230,7 @@ task distribution(dependsOn: [":sorcer-boot:install",
                 include "bin/webster/bin/webster-run.xml"
                 include "bin/images/**"
 
-                include "rio/**"
+                exclude "rio/**"
                 exclude "rio/deploy/**"
                 exclude "rio/docs/**"
                 exclude "rio/docs.zip"
