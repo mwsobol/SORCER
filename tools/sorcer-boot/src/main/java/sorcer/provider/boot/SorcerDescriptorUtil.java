@@ -38,7 +38,8 @@ public class SorcerDescriptorUtil {
 	private static String sorcerVersion = System.getProperty("sorcer.version");
 	private static String riverVersion = System.getProperty("river.version");
 	private static String jeVersion = System.getProperty("je.version");
-	
+	private static String rioVersion = System.getProperty("rio.version");
+
 	private static String fs = File.separator;
 	private static String ps = File.pathSeparator;
 	private static String sorcerHome = getHomeDir();
@@ -1245,7 +1246,7 @@ public class SorcerDescriptorUtil {
 	}
 
     static String getRioDlJar() {
-        File rioLibDl = new File(sorcerHome+fs+"rio"+fs+"lib-dl");
+        File rioLibDl = new File(sorcerHome+fs+"rio-"+rioVersion+fs+"lib-dl");
         return find(rioLibDl, "rio-api").getName();
     }
 
