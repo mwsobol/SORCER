@@ -44,7 +44,7 @@ public class SorcerDescriptorUtil {
 	private static String ps = File.pathSeparator;
 	private static String sorcerHome = getHomeDir();
 	private static String sorcerLib = sorcerHome+fs+"lib";
-	private static String jiniLib = sorcerHome+fs+"rio"+fs +"lib";
+	private static String jiniLib = sorcerHome+fs+"rio-"+rioVersion+fs +"lib";
 	
 	/**
 	 * Get the {@link com.sun.jini.start.ServiceDescriptor} instance for
