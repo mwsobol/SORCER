@@ -118,7 +118,10 @@ task gatherDeps() {
             String dest
             if(file.path.endsWith("distribution-5.0-M4.zip")) {
                 copy {
-                    from zipTree(file)
+                    from(zipTree(file)) {
+                        exclude "**/examples.zip"
+                        exclude "**/docs/*"
+                    }
                     into "$distDir-${version}"
                 }
             } else {
@@ -240,6 +243,24 @@ task distribution(dependsOn: [":sorcer-boot:install",
             rename "standalone.sorcer.env", "sorcer.env"
         }
 
+        /* Overlay Rio customizations onto Rio distribution */
+        copy {
+            from("${projectDir.path}/resources/rio")
+            into "${distDir}-${version}/rio-${rioVersion}"
+        }
+
+        /* Move the SLF4J logback jars out of the way and slide SLF4J JUL logging support in */
+        File rioLoggingLib = file("${distDir}-${version}/rio-${rioVersion}/lib/logging")
+        for(File jar : rioLoggingLib.listFiles()) {
+            if(jar.name.startsWith("logback") && !jar.isDirectory())
+                jar.delete()
+        }
+        copy {
+            from(file("${rioLoggingLib.path}/jul")) {
+                include "**/slf4j-jdk14*.jar"
+            }
+            into rioLoggingLib
+        }
         /* Create a versions.properties file based on the versions in this build */
         Properties versionProps = new Properties()
         File versionPropsFile = file("${distDir}-${version}/configs/versions.properties")

@@ -46,7 +46,7 @@ To include this file in your custom *-run-buld.xml have the import line:
 	<property name="lib" value="${sorcer.home}/lib" />
 	<property name="jini.lib" value="${lib}/river" />
 	<property name="jini-dl.lib" value="${lib}/river" />
-    <property name="rio.home" value="${sorcer.home}/rio" />
+    <property name="rio.home" value="${sorcer.home}/rio-${rio.version}" />
 	<property name="rio.lib" value="${rio.home}/lib" />
 	<property name="rio-dl.lib" value="${rio.home}/lib-dl" />
 
@@ -59,15 +59,6 @@ To include this file in your custom *-run-buld.xml have the import line:
 
 	<property name="sorcer.policy" value="${sorcer.home}/policy" />
 	<property name="sorcer.config" value="${sorcer.home}/configs" />
-
-	<!-- Declare versions as properties -->
-	<property name="modeling.version" value="1.1.9" />
-	<property name="rio.version" value="5.0-M4" />
-	<property name="groovy.version" value="2.2.1" />
-	<property name="river.version" value="2.2.2" />
-	<property name="river.version" value="2.2.2" />
-	<property name="je.version" value="5.0.104" />
-	<property name="slf4j.version" value="1.7.5" />
 
     <taskdef name="groovy" classname="org.codehaus.groovy.ant.Groovy"
              classpath="${common.lib}/groovy/groovy-all-${groovy.version}.jar" onerror="ignore"/>
@@ -97,7 +88,6 @@ To include this file in your custom *-run-buld.xml have the import line:
 		<propertyref prefix="java.rmi.server.useCodebaseOnly" />
 		<propertyref name="sorcer.home" />
 		<propertyref name="sorcer.version" />
-		<propertyref name="modeling.version" />
 		<propertyref name="rio.version" />
 		<propertyref name="river.version" />
 		<propertyref name="org.rioproject.resolver.jar" />
