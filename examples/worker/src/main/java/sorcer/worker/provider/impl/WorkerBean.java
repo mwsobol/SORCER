@@ -59,7 +59,6 @@ public class WorkerBean implements Worker {
 		if (sigPrefix != null && sigPrefix.length() > 0)
 			path = sigPrefix + "/" + path;
 		Object workToDo = context.getValue(path);
-		logger.info("ZZZZZZZZZZZ in: " + context);
 		if (workToDo != null && (workToDo instanceof Work)) {
 			// requestor's work to be done
 			Context out = ((Work) workToDo).exec(context);
@@ -67,7 +66,6 @@ public class WorkerBean implements Worker {
 		} else {
 			throw new InvalidWork("No Work found to do at path requestor/work'!");
 		}
-		logger.info("ZZZZZZZZZZZ in: " + context);
 
 		String reply = "Done work by: "
 				+ (provider == null ? getClass().getName() : provider.getProviderName());

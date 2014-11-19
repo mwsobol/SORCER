@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<project name="Arithmetic all bean services" default="run" basedir="">
+<project name="Arithmetic all services" default="run" basedir="">
 
 	<property environment="env" />
 	<import file="${env.SORCER_HOME}/bin/common-run.xml" />
