@@ -7,7 +7,6 @@ import org.sorcer.test.SorcerTestRunner;
 import sorcer.core.context.model.par.ParModel;
 import sorcer.pml.model.ParModeler;
 import sorcer.service.*;
-import sorcer.util.Sorcer;
 
 import java.rmi.RemoteException;
 import java.util.logging.Logger;
@@ -22,21 +21,10 @@ import static sorcer.po.operator.invoke;
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })
 @RunWith(SorcerTestRunner.class)
-@ProjectContext("examples/eol")
+@ProjectContext("examples/pml")
 public class ParModelServices {
 	private final static Logger logger = Logger.getLogger(ParModelServices.class
 			.getName());
-
-	static {
-		ServiceExertion.debug = true;
-//		URL.setURLStreamHandlerFactory(new SdbURLStreamHandlerFactory());
-		System.setProperty("java.util.logging.config.file",
-				Sorcer.getHome() + "/configs/sorcer.logging");
-		System.setProperty("java.security.policy", Sorcer.getHome()
-				+ "/configs/policy.all");
-		System.setSecurityManager(new SecurityManager());
-		Sorcer.setCodeBase(new String[] { "ju-invoker-beans.jar" });
-	}
 	
 	@Test
 	public void parModelerTest() throws RemoteException, ContextException,
@@ -47,7 +35,7 @@ public class ParModelServices {
 	}
 	
 	@Test
-	public void parObjectModelServiceTest() throws RemoteException, ContextException, ExertionException, SignatureException {
+	public void parObjectModelServiceTest() throws Exception {
 		ParModel pm = ParModeler.getParModel();
 		Task pmt = task(sig("invoke", pm), 
 				context(ent("par", "expr"), result("invoke/result")));
@@ -60,7 +48,7 @@ public class ParModelServices {
 	}
 
 	@Test
-	public void parNetModelServiceTest() throws RemoteException, ContextException, 
+	public void parNetModelServiceTest() throws Exception,
 			ExertionException, SignatureException {
 		// the provider in ex6/bin parmodel-prv-run.xml
 		Task pmt = task(sig("invoke", Invocation.class, prvName("ParModel Service")),

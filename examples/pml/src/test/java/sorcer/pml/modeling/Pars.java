@@ -1,6 +1,9 @@
 package sorcer.pml.modeling;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.sorcer.test.ProjectContext;
+import org.sorcer.test.SorcerTestRunner;
 import sorcer.core.context.model.par.Par;
 import sorcer.core.context.model.par.ParModel;
 import sorcer.service.Context;
@@ -18,6 +21,8 @@ import static sorcer.po.operator.*;
  * @author Mike Sobolewski
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })
+@RunWith(SorcerTestRunner.class)
+@ProjectContext("examples/pml")
 public class Pars {
 	private final static Logger logger = Logger.getLogger(Pars.class.getName());
 

@@ -4,7 +4,7 @@ Replace "provider.name" with your provider name and specify property value for "
 Also you might need to adjust the classpath (provider.classpath) for your provider 
 -->
 
-<project name="Invoking exertion service" default="run" basedir=".">
+<project name="Par-Model service" default="run" basedir=".">
 
 	<property environment="env" />
 	<import file="${env.SORCER_HOME}/bin/common-run.xml" />
