@@ -44,67 +44,67 @@ public class operator {
 	public static <T1> Tuple1<T1> x(T1 x1 ){
 		return new Tuple1<T1>( x1 );
 	}
-	
+
 	public static <T1> Tuple1<T1> tuple(T1 x1 ){
 		return new Tuple1<T1>( x1 );
 	}
-	
+
 	public static <T1,T2> Tuple2<T1,T2> x(T1 x1, T2 x2 ){
 		return new Tuple2<T1,T2>( x1, x2 );
 	}
-	
+
 	public static <T1,T2> Tuple2<T1,T2> tuple(T1 x1, T2 x2 ){
 		return new Tuple2<T1,T2>( x1, x2 );
 	}
-	
+
 	public static <T1,T2,T3> Tuple3<T1,T2,T3> x(T1 x1, T2 x2, T3 x3 ){
 		return new Tuple3<T1,T2,T3>( x1, x2, x3 );
 	}
-	
+
 	public static <T1,T2,T3> Tuple3<T1,T2,T3> tuple(T1 x1, T2 x2, T3 x3 ){
 		return new Tuple3<T1,T2,T3>( x1, x2, x3 );
 	}
-	
+
 	public static <T1,T2,T3,T4> Tuple4<T1,T2,T3,T4> x(T1 x1, T2 x2, T3 x3, T4 x4 ){
 		return new Tuple4<T1,T2,T3,T4>( x1, x2, x3, x4 );
 	}
-	
+
 	public static <T1,T2,T3,T4> Tuple4<T1,T2,T3,T4> tuple(T1 x1, T2 x2, T3 x3, T4 x4 ){
 		return new Tuple4<T1,T2,T3,T4>( x1, x2, x3, x4 );
 	}
-	
+
 	public static <T1,T2,T3,T4,T5> Tuple5<T1,T2,T3,T4,T5> x(T1 x1, T2 x2, T3 x3, T4 x4, T5 x5 ){
 		return new Tuple5<T1,T2,T3,T4,T5>( x1, x2, x3, x4, x5 );
 	}
-	
+
 	public static <T1,T2,T3,T4,T5> Tuple5<T1,T2,T3,T4,T5> tuple(T1 x1, T2 x2, T3 x3, T4 x4, T5 x5 ){
 		return new Tuple5<T1,T2,T3,T4,T5>( x1, x2, x3, x4, x5 );
 	}
-	
+
 	public static <T1,T2,T3,T4,T5,T6> Tuple6<T1,T2,T3,T4,T5,T6> x(T1 x1, T2 x2, T3 x3, T4 x4, T5 x5, T6 x6 ){
 		return new Tuple6<T1,T2,T3,T4,T5,T6>( x1, x2, x3, x4, x5, x6 );
 	}
-	
+
 	public static <T1,T2,T3,T4,T5,T6> Tuple6<T1,T2,T3,T4,T5,T6> tuple(T1 x1, T2 x2, T3 x3, T4 x4, T5 x5, T6 x6 ){
 		return new Tuple6<T1,T2,T3,T4,T5,T6>( x1, x2, x3, x4, x5, x6 );
 	}
-	
+
 	public static String[] from(String... elems) {
 		return elems;
 	}
-	
+
 	public static Class[] types(Class... classes) {
 		return classes;
 	}
-	
+
 	public static Object[] typeArgs(Object... args) {
 		return args;
 	}
-	
+
 	public static <T> T[] array(T... elems) {
 		return elems;
 	}
-	
+
 	public static <T> T[] array(List<T> list) {
 		T[] na = (T[]) Array.newInstance(list.get(0).getClass(), list.size());
 		return list.toArray(na);
@@ -113,7 +113,7 @@ public class operator {
 	public static Arg[] args(Arg... elems) {
 		return elems;
 	}
-	
+
 	public static Set<Object> bag(Object... elems) {
 		return new HashSet<Object>(list(elems));
 	}
@@ -121,7 +121,7 @@ public class operator {
 	public static <T> Set<T> set(T... elems) {
 		return new HashSet<T>(list(elems));
 	}
-	
+
 	public static <T> List<T> list(T... elems) {
 		List<T> out = new ArrayList<T>(elems.length);
 		for (T each : elems) {
@@ -133,7 +133,7 @@ public class operator {
 	public static List<Object> row(Object... elems) {
 		return Arrays.asList(elems);
 	}
-	
+
 	public static List<Object> values(Object... elems) {
 		List<Object> list = new ArrayList<Object>();
 		for(Object o: elems) {
@@ -165,7 +165,7 @@ public class operator {
 		}
 		return out;
 	}
-	
+
 	public static <T1, T2> Tuple2<T1, T2> duo(T1 x1, T2 x2) {
 		return new Tuple2<T1, T2>(x1, x2);
 	}
@@ -209,7 +209,7 @@ public class operator {
 	public static Entry<Object>  ent(String path) {
 		return new Entry<Object>(path, null);
 	}
-	
+
 	public static <T> Entry<T> put(Entry<T> entry, T value)
 			throws SetterException, RemoteException {
 		entry.setValue(value);
@@ -247,7 +247,7 @@ public class operator {
 	public static DataEntry data(Object data) {
 		return new DataEntry(Context.DSD_PATH, data);
 	}
-	
+
 	public static <T> OutputEntry<T> outEnt(String path, T value, int index) {
 		return new OutputEntry(path, value, index);
 	}
@@ -285,7 +285,7 @@ public class operator {
 		ie.annotation(annotation);
 		return ie;
 	}
-	
+
 	public static <T> InputEntry<T> dbInEnt(String path, T value) {
 		return new InputEntry(path, value, true, 0);
 	}
@@ -299,7 +299,7 @@ public class operator {
 		ie.annotation(annotation);
 		return ie;
 	}
-	
+
 	public static InputEntry inoutEnt(String path) {
 		return new InputEntry(path, null, 0);
 	}
@@ -311,27 +311,27 @@ public class operator {
 	public static <T> InoutEntry<T> inoutEnt(String path, T value, int index) {
 		return new InoutEntry(path, value, index);
 	}
-	
+
 	public static <T> InoutEntry<T> inoutEnt(String path, T value, String annotation) {
 		InoutEntry<T> ie = inoutEnt(path, value);
 		ie.annotation(annotation);
 		return ie;
 	}
-	
+
 	public static <T> Entry<T> ent(String path, T value, String association) {
 		return new Entry<T>(path, value, association);
 	}
-	
+
 	public static <S extends Setter> boolean isDB(S setter) {
 		return isPersistent(setter);
 	}
-	
+
 	public static <S extends Setter> boolean isDb(S setter) {
 		return isPersistent(setter);
 	}
-	
+
 	public static <S extends Setter> boolean isPersistent(S setter) {
-			return setter.isPersistent();
+		return setter.isPersistent();
 	}
 
 	public static URL storeArg(Object object) throws EvaluationException {
@@ -432,13 +432,13 @@ public class operator {
 		entry.setPersistent(true);
 		return entry;
 	}
-	
+
 	public static <T> Entry<T> dbEnt(String path) {
 		Entry<T> e = new Entry<T>(path);
 		e.setPersistent(true);
 		return e;
 	}
-	
+
 	public static <T> Entry<T> dbEnt(String path, T value) throws EvaluationException {
 		Entry<T> e = new Entry<T>(path, value);
 		e.setPersistent(true);
@@ -451,7 +451,7 @@ public class operator {
 		}
 		return e;
 	}
-	
+
 	public static Arg[] ents(String... entries)
 			throws ContextException {
 		ArgSet as = new ArgSet();
@@ -460,7 +460,7 @@ public class operator {
 		}
 		return as.toArray();
 	}
-	
+
 	public static Arg[] ents(Entry... entries)
 			throws ContextException {
 		ArgSet as = new ArgSet();
@@ -479,7 +479,7 @@ public class operator {
 			else if (v instanceof Setter && v instanceof Evaluation) {
 				Object nv = ((Evaluation)v).asis();
 				if (nv instanceof URL)
-					return (URL) nv;					
+					return (URL) nv;
 				((Setter) v).setPersistent(true);
 				((Evaluation)v).getValue();
 				dburl = (URL) ((Evaluation)v).asis();
@@ -497,21 +497,21 @@ public class operator {
 		} catch (Exception e) {
 			throw new EvaluationException(e);
 		}
-		return dburl;		
+		return dburl;
 	}
 
 	public static StrategyEntry strategyEnt(String x1, Strategy strategy) {
 		return new StrategyEntry(x1, strategy);
 	}
-	
+
 	public static <T1, T2> T1 key(Tuple2<T1, T2> entry) {
 		return entry._1;
 	}
-	
+
 	public static <T2> String path(Tuple2<String, T2> entry) {
 		return entry._1;
 	}
-		
+
 	public static <T extends List<?>> Table table(T... elems) {
 		int rowCount = elems.length;
 		int columnCount = ((List<?>) elems[0]).size();
@@ -529,40 +529,40 @@ public class operator {
 	public static void rowNames(Table table, List rowIdentifiers) {
 		table.setRowIdentifiers(rowIdentifiers);
 	}
-	
+
 	public static List<String> rowNames(Table table) {
 		return table.getRowNames();
 	}
-	
-	
+
+
 	public static void columnNames(Table table, List columnIdentifiers) {
 		table.setColumnIdentifiers(columnIdentifiers);
 	}
-	
+
 	public static List<String> columnNames(Table table) {
 		return table.getColumnNames();
 	}
-	
+
 	public static int rowSize(Table table) {
 		return table.getRowCount();
 	}
-			
+
 	public static int columnSize(Table table) {
 		return table.getColumnCount();
 	}
-	
+
 	public static Map<String, Object> rowMap(Table table, String rowName) {
 		return table.getRowMap(rowName);
 	}
-	
+
 	public static Object value(Table table, String rowName, String columnName) {
 		return table.getValue(rowName, columnName);
 	}
-	
+
 	public static Object value(Table table, int row, int column) {
 		return table.getValueAt(row, column);
 	}
-	
+
 	public static <T extends Object> ListContext<T> listContext(T... elems)
 			throws ContextException {
 		ListContext<T> lc = new ListContext<T>();
@@ -579,7 +579,7 @@ public class operator {
 		}
 		return map;
 	}
-	
+
 	public static <K, V> Map<K, V> map(Tuple2<K, V>... entries) {
 		Map<K, V> map = new HashMap<K, V>();
 		for (Tuple2<K, V> entry : entries) {
@@ -596,7 +596,7 @@ public class operator {
 	}
 
 	public static Copier copier(Context fromContext, Arg[] fromEntries,
-								 Context toContext, Arg[] toEntries) throws EvaluationException {
+								Context toContext, Arg[] toEntries) throws EvaluationException {
 		return new Copier(fromContext, fromEntries, toContext, toEntries);
 	}
 
@@ -625,26 +625,26 @@ public class operator {
 		Loop loop = new Loop(from, to);
 		return loop;
 	}
-	
+
 	public static Loop loop(String template, int to) {
 		Loop loop = new Loop(template, 1, to);
 		return loop;
 	}
-	
+
 	public static Loop loop(List<String> templates, int to) {
 		Loop loop = new Loop(templates, to);
 		return loop;
 	}
-	
+
 	public static Loop loop(String template, int from, int to) {
 		Loop loop = new Loop(template, from, to);
 		return loop;
 	}
-	
+
 	public static List<String> names(Loop loop, String prefix) {
 		return loop.getNames(prefix);
 	}
-		
+
 	public static String[] names(String name, int size, int from) {
 		List<String> out = new ArrayList<String>();
 		for (int i = from - 1; i < from + size - 1; i++) {
@@ -654,22 +654,22 @@ public class operator {
 		out.toArray(names);
 		return names;
 	}
-	
+
 	private static String getUnknown() {
 		return "unknown" + count++;
 	}
-	
+
 	private static String getUnknown(String name) {
 		return name + count++;
 	}
-	
+
 	public static class Header<T> extends ArrayList<T> {
 		private static final long serialVersionUID = 1L;
 
 		public Header() {
 			super();
 		}
-		
+
 		public Header(int initialCapacity) {
 			super(initialCapacity);
 		}
