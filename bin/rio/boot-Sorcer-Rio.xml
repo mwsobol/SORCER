@@ -1,17 +1,17 @@
 <?xml version="1.0"?>
-<project name="SOS kernel" default="iGrid.boot" basedir="">
+<project name="SOS kernel" default="sorcer.boot" basedir="">
     <dirname file="${basedir}/.." property="sorcer.basedir"/>
     <import file="${sorcer.basedir}/bin/common-run.xml" />
-	<target name="iGrid.boot" depends="clean-files, set.fork.iGrid, rio"/>
-    <target name="iGrid.boot.nofork" depends="clean-files, set.donot.fork.iGrid, rio"/>
+	<target name="sorcer.boot" depends="clean-files, set.fork.sorcer, rio"/>
+    <target name="sorcer.boot.nofork" depends="clean-files, set.donot.fork.sorcer, rio"/>
 
     <target name="rio" depends="webster, cybernode, monitor"/>
 
-    <target name="set.fork.iGrid">
+    <target name="set.fork.sorcer">
         <property name="fork.mode" value="yes"/>
     </target>
 
-    <target name="set.donot.fork.iGrid">
+    <target name="set.donot.fork.sorcer">
         <property name="fork.mode" value="no"/>
     </target>
 
