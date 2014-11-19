@@ -1,26 +1,23 @@
 package sorcer.worker.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static sorcer.co.operator.ent;
-import static sorcer.eo.operator.context;
-import static sorcer.eo.operator.put;
-import static sorcer.eo.operator.value;
-
-import java.io.IOException;
-import java.net.InetAddress;
-import java.rmi.RemoteException;
-import java.util.logging.Logger;
-
 import org.junit.Before;
 import org.junit.Test;
-
 import sorcer.service.Context;
 import sorcer.service.ContextException;
 import sorcer.util.Log;
 import sorcer.worker.provider.InvalidWork;
 import sorcer.worker.provider.Work;
 import sorcer.worker.provider.impl.WorkerProvider;
+
+import java.io.IOException;
+import java.net.InetAddress;
+import java.rmi.RemoteException;
+import java.util.logging.Logger;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static sorcer.co.operator.ent;
+import static sorcer.eo.operator.*;
 
 /**
  * @author Mike Sobolewski
@@ -46,8 +43,8 @@ public class WorkerProviderImplTest {
 			private static final long serialVersionUID = 1L;
 
 			public Context<Integer> exec(Context cxt) throws InvalidWork, ContextException {
-				int arg1 = (int)value(cxt, "req/arg/1");
-				int arg2 = (int)value(cxt, "req/arg/2");
+				int arg1 = (Integer)value(cxt, "req/arg/1");
+				int arg2 = (Integer)value(cxt, "req/arg/2");
 				int result =  arg1 * arg2;
 				put(cxt, "prv/result", result);
 				cxt.setReturnValue(result);

@@ -29,8 +29,8 @@ public class Works implements Serializable {
 			private static final long serialVersionUID = 1L;
 
 			public Context<Integer> exec(Context cxt) throws InvalidWork, ContextException {
-				int arg1 = (int)value(cxt, "req/arg/1");
-				int arg2 = (int)value(cxt, "req/arg/2");
+				int arg1 = (Integer)value(cxt, "req/arg/1");
+				int arg2 = (Integer)value(cxt, "req/arg/2");
 				int result =  arg1 * arg2;
 				put(cxt, "prv/result", result);
 				cxt.setReturnValue(result);

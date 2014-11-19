@@ -4,7 +4,7 @@ Replace "provider.name" with your provider name and specify property value for "
 Also you might need to adjust the classpath (provider.classpath) for your provider 
 -->
 
-<project name="Run Worker Bean 4" default="run" basedir=".">
+<project name="Run Worker Provider 3" default="run" basedir=".">
 
 	<property environment="env" />
 	<import file="${env.SORCER_HOME}/bin/common-run.xml" />
@@ -24,11 +24,11 @@ Also you might need to adjust the classpath (provider.classpath) for your provid
 
 	<!-- property values -->
 	<property name="provider.name" value="worker" />
-	<property name="provider.class" value="sorcer.core.provider.ServiceTasker" />
+	<property name="provider.class" value="sorcer.worker.provider.impl.WorkerProvider" />
 	<property name="webster" value="${provider.webster.url}" />
 
 	<!-- provider codeabse jars -->
-	<property name="j1" value="${webster}/org/sorcer/worker/${sorcer.version}/worker-${sorcer.version}-dl.jar" />	
+	<property name="j1" value="${webster}/org/sorcer/worker/${sorcer.version}/worker-${sorcer.version}-dl.jar" />
 	<property name="j2" value="${webster}/sorcer-dl-${sorcer.version}.jar" />
 	<property name="j3" value="${webster}/jsk-dl-${river.version}.jar" />
 	<property name="j4" value="${webster}/sorcer-ui-${sorcer.version}.jar" />
@@ -40,7 +40,7 @@ Also you might need to adjust the classpath (provider.classpath) for your provid
 			<sysproperty key="sorcer.provider.impl" value="${provider.class}" />
 			<sysproperty key="sorcer.provider.codebase" value="${j1} ${j2} ${j3} ${j4}" />
 			<sysproperty key="sorcer.provider.classpath" value="../build/libs/worker-${sorcer.version}-prv.jar" />
-			<sysproperty key="sorcer.provider.config" value="../configs/worker4-bean-prv.config" />
+			<sysproperty key="sorcer.provider.config" value="../configs/${provider.name}3-prv.config" />
 			<sysproperty key="sorcer.home" value="${sorcer.home}" />
 			<sysproperty key="sorcer.version" value="${sorcer.version}" />
 			<sysproperty key="rio.version" value="${rio.version}" />
