@@ -34,7 +34,7 @@ ext {
 	antVersion = "1.8.2"
 
     sorcerDistHome = "${rootProject.projectDir.path}/distribution/sorcer-$version"
-    rioHome = "$sorcerDistHome/rio"
+    rioHome = "$sorcerDistHome/rio-${rioVersion}"
 
     /* ========================================================
      * Load configs/sorcer.env to get webster port and address.
