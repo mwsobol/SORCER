@@ -232,12 +232,6 @@ task distribution(dependsOn: [":sorcer-boot:install",
                 include "bin/browser/policy/ssb.policy"
                 include "bin/webster/bin/webster-run.xml"
                 include "bin/images/**"
-
-                exclude "rio/**"
-                exclude "rio/deploy/**"
-                exclude "rio/docs/**"
-                exclude "rio/docs.zip"
-                exclude "rio/logs/**"
             }
             into "${distDir}-${version}"
             rename "standalone.sorcer.env", "sorcer.env"
