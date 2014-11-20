@@ -152,7 +152,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 	
 	@Ignore
 	@Test
-	public void arithmeticFiJobTest() throws ExertionException, SignatureException, ContextException, RemoteException {
+	public void arithmeticFiJobTest() throws Exception {
 		Task t3 = task("t3", srvFi("object", sig("subtract", SubtractorImpl.class)),
 				srvFi("net", sig("subtract", Subtractor.class)),
 				context("subtract", inEnt("arg/x1", null), inEnt("arg/x2", null),
@@ -217,9 +217,10 @@ public class ArithmeticNetTest implements SorcerConstants {
 	}
 	
 	@Test
-	public void arithmeticFiBatchTaskTest() throws ExertionException, SignatureException, ContextException, RemoteException {
+	public void arithmeticFiBatchTaskTest() throws Exception {
 		
-		Task t4 = task("t4", srvFi("object", sig("multiply", MultiplierImpl.class), sig("add", AdderImpl.class)),
+		Task t4 = task("t4",
+				srvFi("object", sig("multiply", MultiplierImpl.class), sig("add", AdderImpl.class)),
 				srvFi("net", sig("multiply", Multiplier.class), sig("add", Adder.class)),
 				context("shared", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
 						outEnt("result/y", null)));
@@ -232,7 +233,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 	}
 	
 	@Test
-	public void arithmeticFiBatchJobTest() throws ExertionException, SignatureException, ContextException, RemoteException {
+	public void arithmeticFiBatchJobTest() throws Exception {
 		Task t3 = task("t3", srvFi("object", sig("subtract", SubtractorImpl.class), sig("average", AveragerImpl.class)),
 				srvFi("net", sig("subtract", Subtractor.class), sig("average", Averager.class)),
 				context("t3-cxt", inEnt("arg/x1", null), inEnt("arg/x2", null),
@@ -497,16 +498,16 @@ public class ArithmeticNetTest implements SorcerConstants {
 	// two level job composition with PULL and PAR execution
 	private static Job createJob(Flow flow, Access access) throws Exception {
 		Task t3 = task("t3", sig("subtract", Subtractor.class), 
-				context("subtract", inEnt("arg/x1", null), inEnt("arg/x2", null),
-						outEnt("result/y", null)));
+				context("subtract", inEnt("arg/x1"), inEnt("arg/x2"),
+						outEnt("result/y")));
 
 		Task t4 = task("t4", sig("multiply", Multiplier.class), 
 				context("multiply", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
-						outEnt("result/y", null)));
+						outEnt("result/y")));
 
 		Task t5 = task("t5", sig("add", Adder.class), 
 				context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
-						outEnt("result/y", null)));
+						outEnt("result/y")));
 
 		// Service Composition j1(j2(t4(x1, x2), t5(x1, x2)), t3(x1, x2))
 		//Job job = job("j1",
@@ -582,7 +583,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 						maintain(1),
 						idle("3h"))),
 				context("multiply", inEnt("arg/x1", 10.0d),
-						inEnt("arg/x2", 50.0d), outEnt("result/y1", null)));
+						inEnt("arg/x2", 50.0d), outEnt("result/y1")));
 
 		Task f5 = task(
 				"f5",
@@ -592,7 +593,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 						configuration("bin/examples/ex6/configs/adder-prv.config"),
 						idle(60*3))),
 				context("add", inEnt("arg/x3", 20.0d), inEnt("arg/x4", 80.0d),
-						outEnt("result/y2", null)));
+						outEnt("result/y2")));
 
 		Task f3 = task(
 				"f3",
@@ -600,8 +601,8 @@ public class ArithmeticNetTest implements SorcerConstants {
 					deploy(classpath("arithmetic-beans.jar"),
 						codebase("arithmetic-dl.jar"),
 						configuration("bin/examples/ex6/configs/subtractor-prv.config"))),
-				context("subtract", inEnt("arg/x5", null),
-						inEnt("arg/x6", null), outEnt("result/y3", null)));
+				context("subtract", inEnt("arg/x5"),
+						inEnt("arg/x6"), outEnt("result/y3")));
 
 		// job("f1", job("f2", f4, f5), f3,
 		// job("f1", job("f2", f4, f5, strategy(Flow.PAR, Access.PULL)), f3,

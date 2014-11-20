@@ -12,7 +12,6 @@ import sorcer.core.SorcerConstants;
 import sorcer.core.provider.rendezvous.ServiceConcatenator;
 import sorcer.service.Block;
 import sorcer.service.Task;
-import sorcer.util.Sorcer;
 
 import java.util.logging.Logger;
 
@@ -32,16 +31,6 @@ public class ArithmeticNoNetBlockTest implements SorcerConstants {
 	private final static Logger logger = Logger
 			.getLogger(ArithmeticNoNetTest.class.getName());
 
-	static {
-		System.setProperty("java.security.policy", Sorcer.getHome()
-				+ "/configs/policy.all");
-		System.setSecurityManager(new SecurityManager());
-		Sorcer.setCodeBase(new String[] { "ju-arithmetic-beans.jar",
-				"sorcer-dl.jar" });
-		System.out.println("CLASSPATH :"
-				+ System.getProperty("java.class.path"));
-	}
-	
 	@Test
 	public void contextAltTest() throws Exception {
 		Task t4 = task("t4", sig("multiply", MultiplierImpl.class), 

@@ -21,8 +21,18 @@ import java.util.logging.Logger;
 
 import static org.junit.Assert.*;
 import static sorcer.co.operator.*;
+import static sorcer.co.operator.persistent;
+import static sorcer.eo.operator.asis;
 import static sorcer.eo.operator.*;
+import static sorcer.eo.operator.get;
+import static sorcer.eo.operator.in;
+import static sorcer.eo.operator.pipe;
+import static sorcer.eo.operator.value;
+import static sorcer.po.operator.add;
 import static sorcer.po.operator.*;
+import static sorcer.po.operator.asis;
+import static sorcer.po.operator.put;
+import static sorcer.po.operator.set;
 
 
 /**
@@ -66,7 +76,7 @@ public class ParModelTest {
 		logger.info("invoker value: " 
 				+ ((ServiceInvoker) pm.get("add")).invoke());
 
-		pm.setReturnPath("add");
+		pm.setTargetPath("add");
 		logger.info("pm context value: " + pm.getValue());
 		assertEquals(pm.getValue(), 30.0);
 		
@@ -80,7 +90,7 @@ public class ParModelTest {
 	
 
 	@Test
-	public void parContextTest() throws RemoteException, ContextException {
+	public void parModelTest() throws RemoteException, ContextException {
 		Par x = new Par("x", 10.0);
 		Par y = new Par("y", 20.0);
 		Par add = new Par("add", invoker("x + y", pars("x", "y")));
@@ -99,7 +109,7 @@ public class ParModelTest {
 		assertEquals(add.getValue(), 30.0);
 		assertEquals(pm.getValue("add"), 30.0);
 
-		pm.setReturnPath("add");
+		pm.setTargetPath("add");
 		logger.info("pm context value: " + pm.invoke(null));
 		assertEquals(pm.invoke(null), 30.0);
 
@@ -127,7 +137,7 @@ public class ParModelTest {
 	}
 	
 	@Test
-	public void mutateParContextTest() throws RemoteException,
+	public void mutateParModeltTest() throws RemoteException,
 			ContextException { 
 		ParModel pm = parModel(par("x", 10.0), par("y", 20.0),
 				par("add", invoker("x + y", pars("x", "y"))));
@@ -211,7 +221,7 @@ public class ParModelTest {
 	}
 	
 	@Test
-	public void persistableEolContext() throws ContextException, RemoteException {
+	public void persistableEolParModel() throws ContextException, RemoteException {
 		Context c4 = context("multiply",
 				dbEnt("arg/x0", 1.0), dbInEnt("arg/x1", 10.0),
 				dbOutEnt("arg/x2", 50.0), outEnt("result/y"));
@@ -424,9 +434,48 @@ public class ParModelTest {
 //		logger.info("t6 context: " + context(task));
 		assertEquals(get(task, "result/y"), 410.0);
 	}
-	
+
 	@Test
-	public void conditionalContext() throws RemoteException, ContextException {
+	public void conditionalClosures() throws RemoteException, ContextException {
+		ParModel pm = new ParModel("par-model");
+		pm.putValue(Condition._closure_, new ServiceInvoker(pm));
+		// free variables, no pars for the invoker
+		((ServiceInvoker) pm.get(Condition._closure_))
+				.setEvaluator(invoker("{ double x, double y -> x > y }"));
+
+		Closure c = (Closure)pm.getValue(Condition._closure_);
+		logger.info("closure condition: " + c);
+		Object[] args = new Object[] { 10.0, 20.0 };
+		logger.info("closure condition 1: " + c.call(args));
+		assertEquals(c.call(args), false);
+
+		//reuse the closure again
+		args = new Object[] { 20.0, 10.0 };
+		logger.info("closure condition 2: " + c.call(args));
+		assertEquals(c.call(args), true);
+
+		// provided conditional context to get the closure only
+		Condition eval = new Condition(pm) {
+			@Override
+			public boolean isTrue() throws ContextException {
+				Closure c = (Closure)conditionalContext.getValue(Condition._closure_);
+				Object[] args = new Object[] { conditionalContext.getValue("x"),
+						conditionalContext.getValue("y") };
+				return (Boolean) c.call(args);
+			}
+		};
+
+		pm.putValue("x", 10.0);
+		pm.putValue("y", 20.0);
+		assertEquals(eval.getValue(), false);
+
+		pm.putValue("x", 20.0);
+		pm.putValue("y", 10.0);
+		assertEquals(eval.getValue(), true);
+	}
+
+	@Test
+	public void conditionalParModel() throws RemoteException, ContextException {
 		final ParModel pm = new ParModel("par-model");
 		pm.putValue("x", 10.0);
 		pm.putValue("y", 20.0);
@@ -447,48 +496,9 @@ public class ParModelTest {
 		logger.info("condition value: " + flag.isTrue());
 		assertEquals(flag.isTrue(), true);
 	}
-	
-	@Test
-	public void conditionClosureContext() throws RemoteException, ContextException {
-		ParModel pm = new ParModel("par-model");
-		pm.putValue(Condition._closure_, new ServiceInvoker(pm));
-		// free variables, no pars for the invoker
-		((ServiceInvoker) pm.get(Condition._closure_))
-				.setEvaluator(invoker("{ double x, double y -> x > y }"));
 
-		Closure c = (Closure)pm.getValue(Condition._closure_);
-		logger.info("closure condition: " + c);
-		Object[] args = new Object[] { 10.0, 20.0 };
-		logger.info("closure condition 1: " + c.call(args));
-		assertEquals(c.call(args), false);
-		
-		//reuse the closure again
-		args = new Object[] { 20.0, 10.0 };
-		logger.info("closure condition 2: " + c.call(args));
-		assertEquals(c.call(args), true);
-		
-		// provided conditional context to get the closure only
-		Condition eval = new Condition(pm) {
-			@Override
-			public boolean isTrue() throws ContextException {
-				Closure c = (Closure)conditionalContext.getValue(Condition._closure_);
-				Object[] args = new Object[] { conditionalContext.getValue("x"),
-						conditionalContext.getValue("y") };
-				return (Boolean) c.call(args);
-			}
-		};
-		
-		pm.putValue("x", 10.0);
-		pm.putValue("y", 20.0);
-		assertEquals(eval.getValue(), false);
-		
-		pm.putValue("x", 20.0);
-		pm.putValue("y", 10.0);
-		assertEquals(eval.getValue(), true);
-	}
-	
 	@Test
-	public void conditionalFreeContext() throws RemoteException, ContextException {
+	public void closingParModelConditions() throws RemoteException, ContextException {
 		final ParModel pm = new ParModel("par-model");
 		pm.putValue("x", 10.0);
 		pm.putValue("y", 20.0);
@@ -509,7 +519,10 @@ public class ParModelTest {
 
 	
 	@Test
-	public void attachAgent() throws Exception {
+		public void attachAgent() throws Exception {
+
+		String sorcerVersion = System.getProperty("sorcer.version");
+
 		ParModel pm = new ParModel();
 		Par<Double> x = par("x", 10.0);
 		Par<Double> y = par("y", 20.0);
@@ -526,7 +539,7 @@ public class ParModelTest {
 		Object val =  get((Context)value(pm,"getSphereVolume"), "sphere/volume");
 				 
 //		 logger.info("call getSphereVolume:" + get((Context)value(pm,
-//				 "getSphereVolume"), "sphere/volume"));
+//				"getSphereVolume"), "sphere/volume"));
 		assertEquals(
 				get((Context) value(pm, "getSphereVolume"), "sphere/volume"),
 				33510.32163829113);

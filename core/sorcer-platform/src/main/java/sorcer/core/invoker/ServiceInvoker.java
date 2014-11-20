@@ -17,17 +17,17 @@
 
 package sorcer.core.invoker;
 
-import java.io.Serializable;
-import java.rmi.RemoteException;
-import java.util.List;
-import java.util.logging.Logger;
-
 import net.jini.id.Uuid;
 import net.jini.id.UuidFactory;
 import sorcer.co.tuple.Entry;
 import sorcer.core.context.model.par.Par;
 import sorcer.core.context.model.par.ParModel;
 import sorcer.service.*;
+
+import java.io.Serializable;
+import java.rmi.RemoteException;
+import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * @author Mike Sobolewski
@@ -221,16 +221,14 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 	 * {@link #invoke} so the invoker is aware that the new par may be added to
 	 * the model.
 	 * 
-	 * @param name
-	 *            Name of the variable to be added
-	 * @param value
-	 *            Initial value or new value for the variable
+	 * @param par
+	 *            the variable to be added
+	 *
 	 * @throws RemoteException
 	 * @throws EvaluationException
-	 * @throws VarException
+	 * @throws RemoteException
 	 */
-	public ServiceInvoker addPar(Object par) throws EvaluationException,
-	RemoteException {
+	public ServiceInvoker addPar(Object par) throws EvaluationException, RemoteException {
 		if (par instanceof Par) {
 			invokeContext.put(((Par) par).getName(), par);
 			if (((Par) par).asis() instanceof ServiceInvoker) {
@@ -305,8 +303,7 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 			return invoke(entries);
 	}
 	
-	public T invoke(Arg... entries) throws RemoteException,
-			InvocationException {
+	public T invoke(Arg... entries) throws RemoteException, InvocationException {
 		try {
 			if (entries != null && entries.length > 0) {
 				valueIsValid = false;

@@ -252,18 +252,21 @@ public class InvokerTest {
 	public void cmdInvokerTest() throws SignatureException, ExertionException,
 			ContextException, IOException {
 		String riverVersion = System.getProperty("river.version");
-        String sorcerVersion = System.getProperty("sorcer.version");
-        String buildDir = System.getProperty("project.build.dir");
+		String sorcerVersion = System.getProperty("sorcer.version");
+		String buildDir = System.getProperty("project.build.dir");
 
-        String cp = buildDir + "/libs/sorcer-tester-" + sorcerVersion + ".jar" + File.pathSeparator
-        		+ Sorcer.getHome() + "/lib/sorcer/lib/sorcer-platform-" + sorcerVersion + ".jar"  + File.pathSeparator
+		String cp = buildDir + "/libs/sorcer-tester-" + sorcerVersion + ".jar" + File.pathSeparator
+				+ Sorcer.getHome() + "/lib/sorcer/lib/sorcer-platform-" + sorcerVersion + ".jar"  + File.pathSeparator
 				+ Sorcer.getHome() + "/lib/river/jsk-platform-" + riverVersion + ".jar"  + File.pathSeparator
 				+ Sorcer.getHome() + "/lib/river/jsk-lib-" + riverVersion + ".jar ";
+
+
 		ServiceInvoker cmd = cmdInvoker("volume",
 				"java -cp  " + cp + Volume.class.getName() + " cylinder");
 
-		par("multiply", invoker("x * y", pars("x", "y")));
-		ParModel pm = add(parModel(), par("x", 10.0), par("y"), par(cmd),
+		ParModel pm = parModel(par(cmd),
+				par("x", 10.0), par("y"),
+				par("multiply", invoker("x * y", pars("x", "y"))),
 				par("add", invoker("x + y", pars("x", "y"))));
 
 		CmdResult result = (CmdResult) invoke(pm, "volume");
@@ -271,6 +274,7 @@ public class InvokerTest {
 		assertTrue("EXPECTED '0' return value, GOT: "+result.getExitValue(), result.getExitValue() == 0);
 		Properties props = new Properties();
 		props.load(new StringReader(result.getOut()));
+
 		set(pm, "y", new Double(props.getProperty("cylinder/volume")));
 
 		logger.info("x value:" + value(pm, "x"));

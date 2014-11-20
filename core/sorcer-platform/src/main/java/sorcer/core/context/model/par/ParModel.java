@@ -22,6 +22,7 @@ import sorcer.core.context.ServiceContext;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.service.*;
 import sorcer.service.modeling.Variability;
+import sorcer.util.Response;
 
 import java.rmi.RemoteException;
 import java.util.*;
@@ -250,16 +251,22 @@ public class ParModel<T> extends ServiceContext<T> implements Evaluation<T>, Inv
 	public T invoke(Context context, Arg... entries) throws RemoteException,
 			InvocationException {
 		Object result = null;
+		Signature.ReturnPath rp = ((ServiceContext)context).getReturnPath();
 		try {
 			if (context != null) {
 				this.append(context);
-				if (context.getValue("par") != null
-						&& context.getValue("par") != Context.none) {
-					// logger.info("ZZZZZZZZZZZZZZZZZZZZ value key: " +
-					// getValue("par"));
-					// logger.info("ZZZZZZZZZZZZZZZZZZZZ value at: " +
-					// getValue((String)context.getValue("par"), entries));
-					return (T) getValue((String) context.getValue("par"));
+				// check for multiple responses of this model
+				if (rp != null && rp.argPaths.length > 0) {
+						if (rp.argPaths.length == 1)
+							return (T) getValue(rp.argPaths[0]);
+					      else {
+							 List vals = new ArrayList(rp.argPaths.length);
+							for (int j = 0; j < rp.argPaths.length; j++)   {
+								vals.add(getValue(rp.argPaths[j]));
+							}
+							Response r = new Response(Arrays.asList(rp.argPaths), vals);
+							return (T) r;
+						}
 				}
 				if (((ServiceContext) context).getExecPath() != null) {
 					Object o = get(((ServiceContext) context).getExecPath()
