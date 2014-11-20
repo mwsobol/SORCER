@@ -4,21 +4,19 @@ package sorcer.arithmetic.tester.volume;
  * @author Mike Sobolewski
  */
 
-import static java.lang.System.out;
-import static sorcer.co.operator.ent;
-import static sorcer.eo.operator.context;
-import static sorcer.eo.operator.put;
-import static sorcer.eo.operator.revalue;
+import sorcer.arithmetic.tester.volume.impl.Cylinder;
+import sorcer.arithmetic.tester.volume.impl.Sphere;
+import sorcer.service.Context;
+import sorcer.service.ContextException;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.Scanner;
 import java.util.logging.Logger;
 
-import sorcer.arithmetic.tester.volume.impl.Cylinder;
-import sorcer.arithmetic.tester.volume.impl.Sphere;
-import sorcer.service.Context;
-import sorcer.service.ContextException;
+import static java.lang.System.out;
+import static sorcer.co.operator.ent;
+import static sorcer.eo.operator.*;
 
 @SuppressWarnings("rawtypes")
 public class Volume implements Sphere, Cylinder, Serializable {
@@ -26,38 +24,38 @@ public class Volume implements Sphere, Cylinder, Serializable {
 	private final static Logger logger = Logger.getLogger(Volume.class
 			.getName());
 	private static double radius = 0.0, height = 0.0;
-	 
+
 	public Volume() {}
-	
+
 	public Volume(Context context) {}
-	
-	public Context getSphereSurface(Context context) throws ContextException, RemoteException {
-		double radius = (Double) revalue(context, "sphere/radius");
-		put(context,
-			ent("sphere/surface", 4.0 * Math.PI * Math.pow(radius, 3)));
+
+	public Context getSphereSurface(Context context) throws RemoteException, ContextException {
+		double radius = (Double) value(context, "sphere/radius");
+		add(context,
+				ent("sphere/surface", 4.0 * Math.PI * Math.pow(radius, 3)));
 		return context;
 	}
 
 	public Context getSphereVolume(Context context) throws ContextException, RemoteException {
-		double radius = (Double) revalue(context, "sphere/radius");
-		put(context, ent("sphere/volume",
-			(4.0 / 3.0) * Math.PI * Math.pow(radius, 3)));
+		double radius = (Double) value(context, "sphere/radius");
+		add(context, ent("sphere/volume",
+				(4.0 / 3.0) * Math.PI * Math.pow(radius, 3)));
 		return context;
 	}
 
 	public Context getCylinderSurface(Context context) throws ContextException, RemoteException {
-		double radius = (Double) revalue(context, "cylinder/radius");
-		double height = (Double) revalue(context, "cylinder/height");
-		put(context, ent("cylinder/surface", 
+		double radius = (Double) value(context, "cylinder/radius");
+		double height = (Double) value(context, "cylinder/height");
+		add(context, ent("cylinder/surface",
 				(2 * Math.PI * Math.pow(radius, 2))
 						+ (2 * Math.PI * radius * height)));
 		return context;
 	}
 
 	public Context getCylinderVolume(Context context) throws ContextException, RemoteException {
-		double radius = (Double) revalue(context, "cylinder/radius");
-		double height = (Double) revalue(context, "cylinder/height");
-		put(context, ent("cylinder/volume", 
+		double radius = (Double) value(context, "cylinder/radius");
+		double height = (Double) value(context, "cylinder/height");
+		add(context, ent("cylinder/volume",
 				Math.PI * Math.pow(radius, 2) * height));
 		return context;
 	}
@@ -90,7 +88,7 @@ public class Volume implements Sphere, Cylinder, Serializable {
 			}
 		}
 	}
-	
+
 	private static void processLine(String line) {
 		// use a second Scanner to parse the content of each line
 		Scanner scanner = new Scanner(line);
@@ -106,9 +104,7 @@ public class Volume implements Sphere, Cylinder, Serializable {
 		} else {
 			logger.info("Empty or invalid line. Unable to process.");
 		}
-		scanner.close();
 		// no need to call scanner.close(), since the source is a String
 	}
 
 }
-	

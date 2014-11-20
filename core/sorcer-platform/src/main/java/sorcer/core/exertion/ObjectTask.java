@@ -18,27 +18,22 @@
 package sorcer.core.exertion;
 
 
-import static sorcer.eo.operator.provider;
+import net.jini.core.transaction.Transaction;
+import sorcer.core.context.ServiceContext;
+import sorcer.core.invoker.MethodInvoker;
+import sorcer.core.signature.ObjectSignature;
+import sorcer.service.*;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
 import java.util.List;
 
-import net.jini.core.transaction.Transaction;
-import sorcer.core.context.ServiceContext;
-import sorcer.core.invoker.MethodInvoker;
-import sorcer.core.signature.ObjectSignature;
-import sorcer.service.Context;
-import sorcer.service.ContextException;
-import sorcer.service.ExertionException;
-import sorcer.service.Signature;
-import sorcer.service.SignatureException;
-import sorcer.service.Task;
+import static sorcer.eo.operator.provider;
 
 /**
  * The SORCER object task extending the basic task implementation {@link Task}.
- * 
+ *
  * @author Mike Sobolewski
  */
 @SuppressWarnings("rawtypes")
@@ -47,11 +42,11 @@ public class ObjectTask extends Task {
 	static final long serialVersionUID = 1793342047789581449L;
 
 	public ObjectTask() { }
-	
+
 	public ObjectTask(String name) {
 		super(name);
 	}
-	
+
 	public ObjectTask(String name, Signature... signatures) {
 		super(name);
 		for (Signature s : signatures) {
@@ -65,7 +60,7 @@ public class ObjectTask extends Task {
 		super(name);
 		if (signature instanceof ObjectSignature)
 			addSignature(signature);
-		else 
+		else
 			throw new SignatureException("Object task requires ObjectSignature: "
 					+ signature);
 		if (((ObjectSignature)signature).getEvaluator() == null)
@@ -77,19 +72,19 @@ public class ObjectTask extends Task {
 			}
 		this.description = description;
 	}
-	
+
 	public ObjectTask(String name, Signature signature, Context context)
 			throws SignatureException {
 		this(name, signature);
 		this.dataContext = (ServiceContext) context;
 	}
-	
+
 	public ObjectTask(Signature signature, Context context)
 			throws SignatureException {
 		addSignature(signature);
 		this.dataContext = (ServiceContext) context;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public Task doTask(Transaction txn) throws ExertionException, SignatureException, RemoteException {
 		MethodInvoker evaluator = null;
@@ -126,17 +121,17 @@ public class ObjectTask extends Task {
 				if (getArgs() == null && os.getParameterTypes() == null) {
 					// assume this task context is used by the signature's
 					// provider
-					if (dataContext != null && dataContext.size() > 0) {
+					if (dataContext != null && os.getTarget() != null) {
 						if (scope != null && scope.size() > 0) {
 							appendScope();
 						}
 						evaluator
-						.setParameterTypes(new Class[] { Context.class });
+								.setParameterTypes(new Class[] { Context.class });
 						evaluator.setContext(dataContext);
 					}
 				} else if (dataContext.getArgsPath() != null) {
 					evaluator
-					.setArgs(getParameterTypes(), (Object[]) getArgs());
+							.setArgs(getParameterTypes(), (Object[]) getArgs());
 				}
 				// evaluator.setParameters(context);
 				result = evaluator.evaluate();
@@ -183,7 +178,7 @@ public class ObjectTask extends Task {
 		}
 		return result;
 	}
-	
+
 	private void appendScope() throws ContextException {
 		if (scope != null) {
 			List<String> paths = dataContext.getPaths();
@@ -194,7 +189,7 @@ public class ObjectTask extends Task {
 			}
 		}
 	}
-	
+
 	public Object getArgs() throws ContextException {
 		return dataContext.getArgs();
 	}

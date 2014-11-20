@@ -2095,6 +2095,11 @@ public class operator {
 	public static Object provider(Signature signature)
 			throws SignatureException {
 		Object target = null;
+		if (signature instanceof ObjectSignature) {
+			target = ((ObjectSignature) signature).getTarget();
+			if (target != null && signature.getServiceType() == null)
+				return target;
+		}
 		Service provider = null;
 		Class<?> providerType = null;
 		if (signature.getClass() == NetSignature.class) {

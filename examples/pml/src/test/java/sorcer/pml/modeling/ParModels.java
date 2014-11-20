@@ -638,12 +638,14 @@ public class ParModels {
 	@Test
 	public void attachAgent() throws Exception {
 
+		String sorcerVersion = System.getProperty("sorcer.version");
+
 		// set the sphere/radius in the model
 		put(pm, "sphere/radius", 20.0);
 		// attach the agent to the par-model and invoke
 		pm.add(new Agent("getSphereVolume",
 				Volume.class.getName(), new URL(Sorcer
-				.getWebsterUrl() + "/ju-volume-bean.jar")));
+				.getWebsterUrl() + "/pml-"+sorcerVersion+".jar")));
 
 		Object val =  get((Context)value(pm,"getSphereVolume"), "sphere/volume");
 
@@ -660,8 +662,8 @@ public class ParModels {
 		invoke(pm,
 				"getSphereVolume",
 				new Agent("getSphereVolume",
-						"junit.sorcer.vfe.evaluator.service.Volume", new URL(
-						Sorcer.getWebsterUrl() + "/ju-volume-bean.jar")));
+						Volume.class.getName(), new URL(
+						Sorcer.getWebsterUrl() + "/pml-"+sorcerVersion+".jar")));
 
 //		logger.info("call getSphereVolume:"
 //				+ invoke(pm, "getSphereVolume",
@@ -673,9 +675,9 @@ public class ParModels {
 		assertEquals(
 				get((Context) invoke(pm, "getSphereVolume",
 								agent("getSphereVolume",
-										"junit.sorcer.vfe.evaluator.service.Volume",
+										Volume.class.getName(),
 										new URL(Sorcer.getWebsterUrl()
-												+ "/ju-volume-bean.jar"))),
+												+ "/pml-"+sorcerVersion+".jar"))),
 						"sphere/volume"), 33510.32163829113);
 
 	}

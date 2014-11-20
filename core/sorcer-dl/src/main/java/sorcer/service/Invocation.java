@@ -51,6 +51,5 @@ import java.rmi.RemoteException;
  */
 public interface Invocation<T> {
 
-	public T invoke(Context<T> context, Arg... entries) throws RemoteException,
-			InvocationException;
+	public T invoke(Context<T> context, Arg... entries) throws InvocationException, RemoteException;
 }
