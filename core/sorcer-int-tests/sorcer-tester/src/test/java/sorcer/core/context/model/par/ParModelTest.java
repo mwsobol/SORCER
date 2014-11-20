@@ -274,8 +274,8 @@ public class ParModelTest {
 		URL url1 = storeArg(par("design/in", 30.0));
 		URL url2 = storeArg(par("url", "myUrl2"));
 		
-		assertEquals(value(url1), 30.0);
-		assertEquals(value(url2), "myUrl2");
+		assertEquals(content(url1), 30.0);
+		assertEquals(content(url2), "myUrl2");
 	}
 	
 	@Test

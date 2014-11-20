@@ -1374,20 +1374,18 @@ public class operator {
 		}
 	}
 
-
-
-	public static Object value(Object obj) throws EvaluationException {
-		try {
-			if (obj instanceof URL)
-				return ((URL)obj).getContent();
-			else  if(obj instanceof Evaluation)
-				return ((Evaluation)obj).getValue();
-			else
-				return obj;
-		} catch (IOException e) {
-			throw new EvaluationException(e);
-		}
-	}
+//	public static Object value(Object obj) throws EvaluationException {
+//		try {
+//			if (obj instanceof URL)
+//				return ((URL)obj).getContent();
+//			else  if(obj instanceof Evaluation)
+//				return ((Evaluation)obj).getValue();
+//			else
+//				return obj;
+//		} catch (IOException e) {
+//			throw new EvaluationException(e);
+//		}
+//	}
 
 	public static <T> T value(Evaluation<T> evaluation, Arg... entries)
 			throws EvaluationException {

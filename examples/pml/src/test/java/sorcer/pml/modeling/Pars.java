@@ -68,8 +68,8 @@ public class Pars {
 		URL dbp1Url = storeArg(dbp1);
 		URL dbp2Url = storeArg(dbp2);
 		
-		assertTrue(value(dbp1Url).equals(25.0));
-		assertEquals(value(dbp2Url), "http://sorcersoft.org/sobol");
+		assertTrue(content(dbp1Url).equals(25.0));
+		assertEquals(content(dbp2Url), "http://sorcersoft.org/sobol");
 		
 		assertTrue(value(dbp1).equals(25.0));
 		assertEquals(value(dbp2), "http://sorcersoft.org/sobol");
@@ -78,8 +78,8 @@ public class Pars {
 		set(dbp1, 30.0);
 		set(dbp2, "http://sorcersoft.org");
 	
-		assertTrue(value(storeArg(dbp1)).equals(30.0));
-		assertEquals(value(storeArg(dbp2)), "http://sorcersoft.org");
+		assertTrue(content(storeArg(dbp1)).equals(30.0));
+		assertEquals(content(storeArg(dbp2)), "http://sorcersoft.org");
 		
 		assertTrue(asis(dbp1) instanceof URL);
 		assertTrue(asis(dbp2) instanceof URL);

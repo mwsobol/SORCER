@@ -199,7 +199,7 @@ public class CollectionOperators {
 
 		// store the argument of entry (parameter)
 		URL se1Url = storeArg(se1);
-		Strategy st1 = (Strategy)value(se1Url);
+		Strategy st1 = (Strategy)content(se1Url);
 		assertTrue(isPersistent(se1));
 		assertTrue(asis(se1) instanceof URL);
 		assertTrue(flow(se1).equals(flow(st1)));
@@ -207,7 +207,7 @@ public class CollectionOperators {
 
 		// store an object
 		URL se2Url = store(value(se1));
-		Strategy st2 = (Strategy)value(se1Url);
+		Strategy st2 = (Strategy)content(se1Url);
 		assertTrue(flow(se1).equals(flow(st2)));
 		assertTrue(access(se1).equals(access(st2)));
 		
@@ -284,8 +284,8 @@ public class CollectionOperators {
 		URL p1Url = store(par("design/in", 30.0));
 		URL p2Url = store(par("url/sorcer", "http://sorcersoft.org"));
 		
-		assertEquals(value(p1Url), 30.0);
-		assertEquals(value(p2Url), "http://sorcersoft.org");
+		assertEquals(content(p1Url), 30.0);
+		assertEquals(content(p2Url), "http://sorcersoft.org");
 
 	}
 	
@@ -327,7 +327,7 @@ public class CollectionOperators {
 	@Test
 	public void contextOperator() throws Exception {
 		
-		Context<Double> cxt = context(ent("arg/x1", 1.1), ent("arg/x2", 1.2),
+		Context cxt = context(ent("arg/x1", 1.1), ent("arg/x2", 1.2),
 				ent("arg/x3", 1.3), ent("arg/x4", 1.4), ent("arg/x5", 1.5));
 
 		add(cxt, ent("arg/x6", 1.6));
@@ -357,7 +357,7 @@ public class CollectionOperators {
 		put(cxt, rrvEnt("arg/x6", ent("overwrite", 20.0)));
 		assertTrue(value(cxt, "arg/x6").equals(20.0));
 		urvEnt(cxt, "arg/x6");
-		assertTrue(value(value(cxt, "arg/x6")).equals(20.0));
+		assertTrue(value((Evaluation)value(cxt, "arg/x6")).equals(20.0));
 		rrvEnt(cxt, "arg/x6");
 		assertTrue(value(cxt, "arg/x6").equals(20.0));
 
@@ -368,7 +368,7 @@ public class CollectionOperators {
 		// repeatedly reactive evaluations
 		assertTrue((Object) get(cxt, "arg/x7") instanceof ServiceInvoker);
 		rrvEnt(cxt, "arg/x7");
-		assertEquals(2.4, (Double) value(value(cxt, "arg/x7")), 0.0000001);
+		assertEquals(2.4, (Double) value((Evaluation)value(cxt, "arg/x7")), 0.0000001);
 
 	}
 	
