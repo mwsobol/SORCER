@@ -17,17 +17,14 @@
 
 package sorcer.ssb.tools.plugin.browser;
 
-import java.awt.Component;
-import java.util.HashMap;
-
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JTree;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeCellRenderer;
-
 import net.jini.core.lookup.ServiceRegistrar;
 import sorcer.jini.lookup.entry.SorcerServiceInfo;
+
+import javax.swing.*;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeCellRenderer;
+import java.awt.*;
+import java.util.HashMap;
 
 public class TreeRenderer extends DefaultTreeCellRenderer {
 
@@ -206,7 +203,8 @@ public class TreeRenderer extends DefaultTreeCellRenderer {
 		if (ii == null) {
             for(net.jini.core.entry.Entry entry : node.getServiceItem().attributeSets) {
                 if(entry instanceof SorcerServiceInfo) {
-                    if(((SorcerServiceInfo)entry).iconName.contains("sorcer")) {
+                    SorcerServiceInfo ssi = (SorcerServiceInfo)entry;
+                    if(ssi.iconName!=null && ssi.iconName.contains("sorcer")) {
                         return _sorcerServiceIcon;
                     }
                 }
