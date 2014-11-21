@@ -738,6 +738,11 @@ public class operator {
 		return sig(operation, serviceType, new Arg[] {});
 	}
 
+	public static Signature sig(Class serviceType,
+								String initSetector) throws SignatureException {
+		return sig(initSetector, serviceType, initSetector);
+	}
+
 	public static Signature sig(String operation, Class serviceType,
 								String initSetector) throws SignatureException {
 		try {

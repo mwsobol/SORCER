@@ -48,14 +48,14 @@ public class Signatures {
 	@Test
 	public void referencingUtilityClass() throws Exception {
 		
-		Signature ms = sig("random", Math.class, "random");
+		Signature ms = sig(Math.class, "random");
 		Object prv = provider(ms);
 		logger.info("provider of s: " + prv);
 		assertTrue(prv == Math.class);
 		assertTrue(value(service("random", ms)) instanceof Double);
 		logger.info("random: " + value(service("random", ms)));
 		
-		ms = sig("max", Math.class, "max");
+		ms = sig(Math.class, "max");
 		Context cxt = context(
 				parameterTypes(new Class[] { double.class, double.class }), 
 				args(new Object[] { 200.11, 3000.0 }));
@@ -68,7 +68,7 @@ public class Signatures {
 	}
 	
 
-	@Ignore
+//	@Ignore
 	@Test
 	//TODO
 	public void referencingClassWithConstructor() throws SignatureException,

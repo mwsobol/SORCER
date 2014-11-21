@@ -215,16 +215,21 @@ public class MethodInvoker<T> extends ServiceInvoker<T> implements MethodInvokin
 						m = mts[0];
 				} else {
 					// exception when Arg... is not specified for the invoke
-					if (target instanceof Invocation && paramTypes.length == 1 
-								&&  paramTypes[0] == Context.class
-									&& selector.equals("invoke"))	{
+					if (target instanceof Invocation && paramTypes.length == 1
+							&&  paramTypes[0] == Context.class
+							&& selector.equals("invoke"))	{
 						paramTypes = new Class[2];
 						paramTypes[0] = Context.class;
-						paramTypes[1] = Arg[].class;		
+						paramTypes[1] = Arg[].class;
 						Object[] parameters2 = new Object[2];
 						parameters2[0] = parameters[0];
 						parameters2[1] = new Arg[0];
 						parameters = parameters2;
+					// ignore default setup for exertion tasks the call the object provider
+					} else if (paramTypes.length == 1 && (paramTypes[0] == Context.class)
+							&& ((Context)parameters[0]).size() == 0 && !(target instanceof Evaluation)) {
+						paramTypes = null;
+						parameters = null;
 					}
 					m = evalClass.getMethod(selector, paramTypes);
 					if (m == null) {
@@ -239,22 +244,22 @@ public class MethodInvoker<T> extends ServiceInvoker<T> implements MethodInvokin
 						}
 					}
 				}
-			}		
+			}
 			if (context != null)
 				((ServiceContext)context).setCurrentSelector(selector);
 			val = m.invoke(target, parameters);
 		} catch (Exception e) {
-            StringBuilder message = new StringBuilder();
-            message.append("** Error in object invoker").append("\n");
-            message.append("target = ").append(target).append("\n");
-            message.append("class: ").append(evalClass).append("\n");
-            message.append("method: ").append(m).append("\n");
-            message.append("selector: ").append(selector).append("\n");
-            message.append("paramTypes: ")
-                .append((paramTypes == null ? "null" : SorcerUtil.arrayToString(paramTypes))).append("\n");
-            message.append("parameters: ")
-                .append((parameters == null ? "null" : SorcerUtil.arrayToString(parameters)));
-            logger.log(Level.SEVERE, message.toString(), e);
+			StringBuilder message = new StringBuilder();
+			message.append("** Error in object invoker").append("\n");
+			message.append("target = ").append(target).append("\n");
+			message.append("class: ").append(evalClass).append("\n");
+			message.append("method: ").append(m).append("\n");
+			message.append("selector: ").append(selector).append("\n");
+			message.append("paramTypes: ")
+					.append((paramTypes == null ? "null" : SorcerUtil.arrayToString(paramTypes))).append("\n");
+			message.append("parameters: ")
+					.append((parameters == null ? "null" : SorcerUtil.arrayToString(parameters)));
+			logger.log(Level.SEVERE, message.toString(), e);
 			throw new EvaluationException(message.toString(), e);
 		}
 		return (T) val;

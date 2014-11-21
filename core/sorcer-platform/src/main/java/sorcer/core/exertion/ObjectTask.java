@@ -107,7 +107,7 @@ public class ObjectTask extends Task {
 					if (target instanceof Method) {
 						result = invokeMethod((Method)target, os);
 					} else {
-						evaluator = new MethodInvoker(os.getTarget(), os.getSelector());
+						evaluator = new MethodInvoker(target, os.getSelector());
 					}
 				}
 				else {
