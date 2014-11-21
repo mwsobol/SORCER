@@ -328,29 +328,10 @@ public class SorcerEnv extends SOS {
 		reconcileProperties(props, false);
 		logger.info("*** loaded env properties:" + envFile + "\n"+ GenericUtil.getPropertiesString(props));
 
-		// Set Engineering formats only when eng.home is set
-        if (System.getProperty("eng.home")!=null) {
-            String cftFile = System.getProperty("sorcer.formats.file");
-            if (cftFile != null) {
-                loadDataFormatTypes(cftFile);
-            } else {
-                try {
-                    cftFile = CONTEXT_DATA_FORMATS;
-                    loadDataFormatTypes(cftFile);
-                } catch (Exception e) {
-                    cftFile = System.getenv("IGRID_HOME") + "/configs/"
-                            + CONTEXT_DATA_FORMATS;
-                    System.setProperty("sorcer.formats.file", cftFile);
-                    loadDataFormatTypes(cftFile);
-                }
-            }
-        }
-		logger.finer("* Sorcer provider accessor:"
-				+ getProperty(SorcerConstants.S_SERVICE_ACCESSOR_PROVIDER_NAME));
+		logger.finer("* Sorcer provider accessor:"+ getProperty(SorcerConstants.S_SERVICE_ACCESSOR_PROVIDER_NAME));
 
 		updateCodebase();
-		logger.finer("java.rmi.server.codebase: "
-				+ System.getProperty("java.rmi.server.codebase"));
+		logger.finer("java.rmi.server.codebase: "+ System.getProperty("java.rmi.server.codebase"));
 	}
 
 	/**

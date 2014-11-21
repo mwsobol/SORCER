@@ -26,9 +26,9 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.rmi.RemoteException;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -176,10 +176,9 @@ public class MethodInvoker<T> extends ServiceInvoker<T> implements MethodInvokin
 	}
 
 	@Override
-	public T getValue(Arg... entries) throws EvaluationException,
-			RemoteException {
+	public T getValue(Arg... entries) throws EvaluationException {
 		Object[] parameters = getParameters();
-		Object val = null;
+		Object val;
 		Class<?> evalClass = null;
 
 		try {
@@ -191,10 +190,8 @@ public class MethodInvoker<T> extends ServiceInvoker<T> implements MethodInvokin
 
 					Constructor<?> constructor;
 					if (initObject != null) {
-						constructor = evalClass
-								.getConstructor(new Class[] { Object.class });
-						target = constructor
-								.newInstance(new Object[] { initObject });
+						constructor = evalClass.getConstructor(new Class[]{Object.class});
+						target = constructor.newInstance(new Object[]{initObject});
 					} else
 						target = evalClass.newInstance();
 				}
@@ -217,7 +214,7 @@ public class MethodInvoker<T> extends ServiceInvoker<T> implements MethodInvokin
 					if (mts.length == 1)
 						m = mts[0];
 				} else {
-//					// exception when Arg... is not specified for the invoke
+					// exception when Arg... is not specified for the invoke
 					if (target instanceof Invocation && paramTypes.length == 1 
 								&&  paramTypes[0] == Context.class
 									&& selector.equals("invoke"))	{
@@ -234,7 +231,7 @@ public class MethodInvoker<T> extends ServiceInvoker<T> implements MethodInvokin
 						Method[] mts = evalClass.getMethods();
 						if (Context.class.isAssignableFrom(paramTypes[0])) {
 							for (Method mt : mts) {
-								if (mt.getName().equals(selector)) {
+								if (mt.getName()!=null && mt.getName().equals(selector)) {
 									m = mt;
 									break;
 								}
@@ -247,18 +244,18 @@ public class MethodInvoker<T> extends ServiceInvoker<T> implements MethodInvokin
 				((ServiceContext)context).setCurrentSelector(selector);
 			val = m.invoke(target, parameters);
 		} catch (Exception e) {
-			logger.severe("**error in object invoker; target = " + target);
-			System.out.println("class: " + evalClass);
-			System.out.println("method: " + m);
-			System.out.println("selector: " + selector);
-			System.out.println("paramTypes: "
-					+ (paramTypes == null ? "null" : SorcerUtil
-							.arrayToString(paramTypes)));
-			System.out.println("parameters: "
-					+ (parameters == null ? "null" : SorcerUtil
-							.arrayToString(parameters)));
-			e.printStackTrace();
-			throw new EvaluationException(e);
+            StringBuilder message = new StringBuilder();
+            message.append("** Error in object invoker").append("\n");
+            message.append("target = ").append(target).append("\n");
+            message.append("class: ").append(evalClass).append("\n");
+            message.append("method: ").append(m).append("\n");
+            message.append("selector: ").append(selector).append("\n");
+            message.append("paramTypes: ")
+                .append((paramTypes == null ? "null" : SorcerUtil.arrayToString(paramTypes))).append("\n");
+            message.append("parameters: ")
+                .append((parameters == null ? "null" : SorcerUtil.arrayToString(parameters)));
+            logger.log(Level.SEVERE, message.toString(), e);
+			throw new EvaluationException(message.toString(), e);
 		}
 		return (T) val;
 	}
