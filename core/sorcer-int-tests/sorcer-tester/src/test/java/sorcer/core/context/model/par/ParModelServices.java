@@ -53,7 +53,7 @@ public class ParModelServices {
 	public void parNetModelServiceTest() throws Exception,
 			ExertionException, SignatureException {
 		// the provider in ex6/bin parmodel-prv-run.xml
-		Task pmt = task(sig("invoke", Invocation.class, prvName("ParModel Service")),
+		Task pmt = task(sig("invoke", Invocation.class, prvName("Arithmetic ParModel")),
 				context(result("invoke/result", from("expr"))));
 
 		logger.info("result: " + value(pmt));

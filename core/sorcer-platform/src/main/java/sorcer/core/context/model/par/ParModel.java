@@ -251,9 +251,9 @@ public class ParModel<T> extends ServiceContext<T> implements Evaluation<T>, Inv
 	public T invoke(Context context, Arg... entries) throws RemoteException,
 			InvocationException {
 		Object result = null;
-		Signature.ReturnPath rp = ((ServiceContext)context).getReturnPath();
 		try {
 			if (context != null) {
+				Signature.ReturnPath rp = ((ServiceContext)context).getReturnPath();
 				this.append(context);
 				// check for multiple responses of this model
 				if (rp != null && rp.argPaths.length > 0) {
