@@ -42,7 +42,7 @@ public class ObjectJob extends Job {
 
 	static final long serialVersionUID = 1793342047789581449L;
 	
-	public ObjectJob(String name) {
+	public ObjectJob(String name) throws SignatureException {
 		super(name);
 		addSignature(new ObjectSignature("execute", ServiceJobber.class));
 	}

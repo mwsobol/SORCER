@@ -55,7 +55,7 @@ public class MethodInvoker<T> extends ServiceInvoker<T> implements MethodInvokin
 
 	transient private Method m;
 
-	transient private URLClassLoader meLoader;
+	transient private URLClassLoader miLoader;
 
 	private URL[] exportURL;
 
@@ -271,7 +271,7 @@ public class MethodInvoker<T> extends ServiceInvoker<T> implements MethodInvokin
 		Object instanceObj = null;
 		ClassLoader cl = this.getClass().getClassLoader();
 		try {
-			meLoader = URLClassLoader.newInstance(exportURL, cl);
+			miLoader = URLClassLoader.newInstance(exportURL, cl);
 			final Thread currentThread = Thread.currentThread();
 			final ClassLoader parentLoader = (ClassLoader) AccessController
 					.doPrivileged(new PrivilegedAction() {
@@ -283,13 +283,13 @@ public class MethodInvoker<T> extends ServiceInvoker<T> implements MethodInvokin
 			try {
 				AccessController.doPrivileged(new PrivilegedAction() {
 					public Object run() {
-						currentThread.setContextClassLoader(meLoader);
+						currentThread.setContextClassLoader(miLoader);
 						return (null);
 					}
 				});
 				Class<?> clazz = null;
 				try {
-					clazz = meLoader.loadClass(className);
+					clazz = miLoader.loadClass(className);
 				} catch (ClassNotFoundException ex) {
 					ex.printStackTrace();
 					throw ex;

@@ -1,5 +1,6 @@
 package sorcer.eol.services;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.sorcer.test.ProjectContext;
@@ -66,8 +67,10 @@ public class Signatures {
 		
 	}
 	
-	
+
+	@Ignore
 	@Test
+	//TODO
 	public void referencingClassWithConstructor() throws SignatureException,
 			EvaluationException, ExertionException, ContextException, IOException {
 		
@@ -79,6 +82,8 @@ public class Signatures {
 		logger.info("selector of s: " + selector(s));
 		logger.info("service type of s: " + type(s));
 		assertTrue(prv instanceof Date);
+		service("time", s);
+
 		logger.info("time: " + value(service("time", s)));
 		assertTrue(value(service("time", s)) instanceof Long);
 		
@@ -108,7 +113,7 @@ public class Signatures {
 	
 	
 	@Test
-	public void localSignature() throws SignatureException  {
+	public void referencingProviderImpl() throws SignatureException  {
 		
 		// the AdderImpl class (service bean) implements the Adder interface 
 		Signature ps = sig(AdderImpl.class);
@@ -124,14 +129,14 @@ public class Signatures {
 	public void localService() throws SignatureException, 
 		ExertionException, ContextException  {
 		
-		Signature ps = sig("add", AdderImpl.class);
-		Object prv = provider(ps);
+		Signature lps = sig("add", AdderImpl.class);
+		Object prv = provider(lps);
 		assertTrue(prv instanceof AdderImpl);
 		assertFalse(prv instanceof Proxy);
 		
 		// request the local service
 		Service as = service("as", 
-				ps,
+				lps,
 				context("add", 
 						inEnt("arg/x1", 20.0), 
 						inEnt("arg/x2", 80.0), 
@@ -143,30 +148,42 @@ public class Signatures {
 	
 	
 	@Test
-	public void remoteSignature() throws SignatureException  {
+	public void referencingRemoteProvider() throws SignatureException  {
 		
-		Signature ps = sig("add", Adder.class);
-		Object prv = provider(ps);
-		logger.info("provider of ps: " + prv);
+		Signature rps = sig("add", Adder.class);
+		Object prv = provider(rps);
+		logger.info("provider of rps: " + prv);
 		assertTrue(prv instanceof Adder);
 		assertTrue(prv instanceof Proxy);
 		
 	}
-	
-	
+
+
+	@Test
+	public void referencingNamedRemoteProvider() throws SignatureException  {
+
+		Signature ps = sig("add", Adder.class, prvName("Adder"));
+		Object prv = provider(ps);
+		logger.info("provider of ps: " + prv);
+		assertTrue(prv instanceof Adder);
+		assertTrue(prv instanceof Proxy);
+
+	}
+
+
 	@Test
 	public void remoteService() throws SignatureException, 
 	ExertionException, ContextException  {
 
-		Signature ps = sig("add", Adder.class);
-		Object prv = provider(ps);
+		Signature rps = sig("add", Adder.class);
+		Object prv = provider(rps);
 		logger.info("provider of ps: " + prv);
 		assertTrue(prv instanceof Adder);
 		assertTrue(prv instanceof Proxy);
 
 		// request the remote (net) service
 		Service as = service("as", 
-				ps,
+				rps,
 				context("add", 
 						inEnt("arg/x1", 20.0), 
 						inEnt("arg/x2", 80.0), 

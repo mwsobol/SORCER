@@ -195,8 +195,8 @@ public class ExertionDispatcher implements Exerter, Callable {
 			}
 			transaction = txn;
 			Context<?> cxt = exertion.getDataContext();
-
-			cxt.setExertion(exertion);
+			if (cxt != null)
+				cxt.setExertion(exertion);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			throw new ExertionException(ex);

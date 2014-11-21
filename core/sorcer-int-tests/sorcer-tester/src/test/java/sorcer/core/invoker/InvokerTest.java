@@ -467,37 +467,38 @@ public class InvokerTest {
 		assertEquals(value(alt), 70.0);
 	}
 
-	@Test
-	public void loopInvokerTest() throws RemoteException, ContextException {
-		final ParModel pm = parModel("par-model");
-		add(pm, ent("x", 1));
-		add(pm, par("y", invoker("x + 1", pars("x"))));
-
-		// update x and y for the loop condition (z) depends on
-		Runnable update = new Runnable() {
-			public void run() {
-				try {
-					while ((Integer) value(pm, "x") < 25) {
-						set(pm, "x", (Integer) value(pm, "x") + 1);
-						// System.out.println("running ... " + value(pm, "x"));
-						Thread.sleep(100);
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		};
-
-		add(pm, runnableInvoker("update", update));
-		invoke(pm, "update");
-
-		add(pm,
-				loop("loop", condition(pm, "{ x -> x < 20 }", "x"),
-						(ServiceInvoker) asis((Par) asis(pm, "y"))));
-
-		// logger.info("loop value: " + value(pm, "loop"));
-		assertTrue((Integer) value(pm, "loop") == 20);
-	}
+	// TODO design a better test to avoid race conditions
+//	@Test
+//	public void loopInvokerTest() throws RemoteException, ContextException {
+//		final ParModel pm = parModel("par-model");
+//		add(pm, ent("x", 1));
+//		add(pm, par("y", invoker("x + 1", pars("x"))));
+//
+//		// update x and y for the loop condition (z) depends on
+//		Runnable update = new Runnable() {
+//			public void run() {
+//				try {
+//					while ((Integer) value(pm, "x") < 25) {
+//						set(pm, "x", (Integer) value(pm, "x") + 1);
+//						// System.out.println("running ... " + value(pm, "x"));
+//						Thread.sleep(100);
+//					}
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//				}
+//			}
+//		};
+//
+//		add(pm, runnableInvoker("update", update));
+//		invoke(pm, "update");
+//
+//		add(pm,
+//				loop("loop", condition(pm, "{ x -> x < 20 }", "x"),
+//						(ServiceInvoker) asis((Par) asis(pm, "y"))));
+//
+//		// logger.info("loop value: " + value(pm, "loop"));
+//		assertTrue((Integer) value(pm, "loop") == 20);
+//	}
 
 	@Test
 	public void incrementorBy1Test() throws RemoteException, ContextException {

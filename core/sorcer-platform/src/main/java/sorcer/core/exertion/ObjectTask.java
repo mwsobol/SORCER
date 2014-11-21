@@ -121,7 +121,7 @@ public class ObjectTask extends Task {
 				if (getArgs() == null && os.getParameterTypes() == null) {
 					// assume this task context is used by the signature's
 					// provider
-					if (dataContext != null && os.getTarget() != null) {
+					if (dataContext != null) {
 						if (scope != null && scope.size() > 0) {
 							appendScope();
 						}
@@ -165,14 +165,17 @@ public class ObjectTask extends Task {
 
 	private Object invokeMethod(Method method, ObjectSignature os)
 			throws IllegalAccessException, IllegalArgumentException,
-			InvocationTargetException, ContextException {
+			InvocationTargetException, ContextException, SignatureException {
 		Object[] args = os.getArgs();
 		Class<?>[] argTypes = os.getParameterTypes();
+//		Object prv = provider(os);
 		Object result = null;
 		if (args != null) {
 			result = method.invoke(null, args);
 		} else if (argTypes != null && argTypes.length == 1 && args == null) {
 			result = method.invoke(null, new Object[] { null });
+//		} else if (prv != null) {
+//			result = method.invoke(prv, (Object[])null);
 		} else {
 			result = method.invoke(null, (Object[])null);
 		}
