@@ -138,9 +138,14 @@ public class ObjectTask extends Task {
 			}
 
 			if (result instanceof Context) {
-				if (dataContext.getReturnPath() != null) {
-					dataContext.setReturnValue(((Context) result).getValue(dataContext
-							.getReturnPath().path));
+				Signature.ReturnPath rp = dataContext.getReturnPath();
+				if (rp != null) {
+					dataContext.setReturnValue(((Context) result).getValue(rp.path));
+					Context out = null;
+					if (rp.argPaths != null && rp.argPaths.length > 0) {
+						out = dataContext.getSubcontext(rp.argPaths);
+						dataContext.setReturnValue(out);
+					}
 				} else {
 					dataContext.append((Context)result);
 				}

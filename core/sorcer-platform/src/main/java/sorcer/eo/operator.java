@@ -1399,9 +1399,7 @@ public class operator {
 				if (evaluation instanceof ParModel) {
 					return ((ParModel<T>) evaluation).getValue(entries);
 				} else if (evaluation instanceof Exertion) {
-					ReturnPath rp = ((ServiceContext)((Exertion)evaluation).getDataContext()).getReturnPath();
-					return (T) execExertion((Exertion) evaluation, rp,
-							entries);
+					return (T) execExertion((Exertion) evaluation, entries);
 				} else if (evaluation instanceof Par){
 					return ((Par<T>)evaluation).getValue(entries);
 				} else if (evaluation instanceof Entry){
@@ -1426,8 +1424,9 @@ public class operator {
 			}
 		} else if (evaluation instanceof Exertion) {
 			try {
-				return (T) execExertion((Exertion) evaluation, new ReturnPath(evalSelector),
-						entries);
+				((ServiceContext)((Exertion) evaluation).getContext())
+						.setReturnPath(new ReturnPath(evalSelector));
+				return (T) execExertion((Exertion) evaluation, entries);
 			} catch (Exception e) {
 				e.printStackTrace();
 				throw new EvaluationException(e);
@@ -1573,10 +1572,16 @@ public class operator {
 					+ context.getName());
 	}
 
-	public static Object execExertion(Exertion exertion, ReturnPath rPath,
-									  Arg... args) throws ExertionException, ContextException,
-			RemoteException {
+	public static Object execExertion(Exertion exertion, Arg... args)
+			throws ExertionException, ContextException, RemoteException {
 		Exertion xrt;
+		ReturnPath rPath = null;
+		for (Arg a : args) {
+			if (a instanceof ReturnPath) {
+				rPath = (ReturnPath)a;
+				break;
+			}
+		}
 		try {
 			if (exertion.getClass() == Task.class) {
 				if (((Task) exertion).getDelegate() != null)
@@ -1719,20 +1724,32 @@ public class operator {
 		return new OutputEntry(null, value, 0);
 	}
 
+	public static ReturnPath result(String path) {
+		return new ReturnPath(path);
+	}
+
+	public static ReturnPath result(String[] paths) {
+		return new ReturnPath(null, paths);
+	}
+
 	public static ReturnPath self() {
 		return new ReturnPath();
 	}
 
-	public static ReturnPath result(String path, String... paths) {
+	public static ReturnPath result(String path, String[] paths) {
 		return new ReturnPath(path, paths);
 	}
 
+	public static ReturnPath result(String path, Direction direction) {
+		return new ReturnPath(path, direction);
+	}
+
 	public static ReturnPath result(String path, Direction direction,
-									String... paths) {
+									String[] paths) {
 		return new ReturnPath(path, direction, paths);
 	}
 
-	public static ReturnPath result(String path, Class type, String... paths) {
+	public static ReturnPath result(String path, Class type, String[] paths) {
 		return new ReturnPath(path, Direction.OUT, type, paths);
 	}
 

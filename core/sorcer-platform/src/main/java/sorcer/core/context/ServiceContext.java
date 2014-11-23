@@ -500,14 +500,22 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 	public T getReturnValue(Arg... entries) throws RemoteException,
 			ContextException {
 		T val = null;
-		if (returnPath != null) {
+		ReturnPath rp = returnPath;
+		for (Arg a : entries) {
+			if (a instanceof ReturnPath)
+				rp = (ReturnPath)a;
+		}
+		if (rp != null) {
 			try {
-				if (returnPath.path == null || returnPath.path.equals("self")) {
+				if (rp.path == null || rp.path.equals("self")) {
 					return (T) this;
-				} else if (returnPath.type != null) {
-					val = returnPath.type.cast(getValue(returnPath.path));
+				} else if (rp.argPaths != null) {
+					 val = (T)getSubcontext(rp.argPaths);
 				} else {
-					val = (T) getValue0(returnPath.path);
+					if (rp.type != null) {
+						val = (T) rp.type.cast(getValue(rp.path));
+					}  else
+						val= (T) getValue0(rp.path);
 				}
 			} catch (Exception e) {
 				throw new ContextException(e);
@@ -1633,6 +1641,14 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 		subcntxt.setName(getName() + " subcontext");
 		subcntxt.setDomainID(getDomainID());
 		subcntxt.setSubdomainID(getSubdomainID());
+		return subcntxt;
+	}
+
+	public Context getSubcontext(String[] paths) {
+		ServiceContext subcntxt = (ServiceContext)getSubcontext();
+		for (String path : paths) {
+			subcntxt.put(path, get(path));
+		}
 		return subcntxt;
 	}
 
@@ -2878,7 +2894,7 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 				if (targetPath != null)
 					currentPath = targetPath;
 				else if (returnPath != null)
-					obj = getReturnValue(entries);
+					return getReturnValue(entries);
 				else
 					return (T)this;
 			}
@@ -3193,5 +3209,24 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 	@Override
 	public List<Evaluation> getDependers() {
 		return dependers;
+	}
+
+	@Override
+	public boolean equals(Object object) {
+		if (!(object instanceof Context))
+			return false;
+
+		if (keySet().size() != ((ServiceContext)object).keySet().size())
+			return false;
+
+		for (String  path : keySet()) {
+			try {
+				if (!asis(path).equals(((ServiceContext) object).asis(path)))
+                    return false;
+			} catch (ContextException e) {
+				e.printStackTrace();
+			}
+		}
+		return true;
 	}
 }

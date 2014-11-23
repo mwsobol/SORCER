@@ -292,8 +292,7 @@ public class GenericUtil {
 	 * 
 	 * @param command
 	 * @param scratchDir
-	 * @param iGridHome
-	 * @param mcrEnvVarReference
+	 * @param scratchDir
 	 * @param mcrHome
 	 * @return
 	 */
@@ -2556,7 +2555,7 @@ public class GenericUtil {
 	}
 
 	public static void upload(File fromFile, URL toUrl) throws IOException {
-		logger.warn("********** WARNING: using GenericUtil.upload() "
+		logger.log(Level.WARNING, "********** WARNING: using GenericUtil.upload() "
 				+ "will corrupt binary files! Use at your own risk.");
 		upload(vect2String(getFileContents(fromFile)), toUrl);
 	}
@@ -2872,7 +2871,7 @@ public class GenericUtil {
 				throw new RuntimeException(errorMessage);
 			} catch (InterruptedException ex) {
 				GenericUtil.appendFileContents("executeCommandWithWorker(): ***exception in executeCommandWithWorker: " + ex, dir);
-				logger.log(Level.WARNING, "***exception in executeCommandWithWorker", ex)
+				logger.log(Level.WARNING, "***exception in executeCommandWithWorker", ex);
 				throw ex;
 			}
 		} catch (InterruptedException ex) {

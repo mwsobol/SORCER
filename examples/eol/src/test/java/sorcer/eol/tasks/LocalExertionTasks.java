@@ -9,9 +9,11 @@ import sorcer.service.*;
 
 import java.util.logging.Logger;
 
-import static org.junit.Assert.assertEquals;
-import static sorcer.co.operator.inEnt;
+import static org.junit.Assert.*;
+import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
+import static sorcer.eo.operator.value;
+import static sorcer.po.operator.*;
 
 /**
  * @author Mike Sobolewski
@@ -35,19 +37,28 @@ public class LocalExertionTasks {
 		logger.info("context @ arg/x2: " + value(cxt, "arg/x2"));
 		logger.info("context @ result/y: " + value(cxt, "result/y"));
 
+		// get a single context argument
 		assertEquals(100.0, value(cxt, "result/y"));
 
+		// get subcontext output
+		assertTrue(context(ent("arg/x1", 20.0), ent("result/y", 100.0)).equals(
+				value(cxt, result("result/context", from("arg/x1", "result/y")))));
+
 	}
-	
+
+
 	@Test
-	public void valgetInPathsueTask() throws SignatureException, ExertionException, ContextException  {
+	public void evaluateTask() throws SignatureException, ExertionException, ContextException  {
 
 		Task t5 = task("t5", sig("add", AdderImpl.class),
 				cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0), result("result/y")));
 
-		Object out = value(t5);
-		logger.info("out value: " + out);
-		assertEquals(100.0, out);
+//		logger.info("ZZZZZZZZZZ 1: " +   value(t5));
+//		Object out = value(t5);
+//		logger.info("out value: " + out);
+//		assertEquals(100.0, out);
+
+		logger.info("ZZZZZZZZZZ 2: " + value(t5, result("result/context", from("arg/x1", "result/y"))));
 	}
 
 }

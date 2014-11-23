@@ -247,8 +247,11 @@ public abstract class ServiceExertion implements Exertion, Scopable, SorcerConst
 					obj = cxt;
 				else if (rp.path.equals("self"))
 					obj = xrt;
-				else
-					obj = xrt.getContext().getValue(rp.path);
+				else  if (rp.argPaths != null) {
+					obj = ((ServiceContext)cxt).getSubcontext(rp.argPaths);
+				} else {
+					obj = cxt.getValue(rp.path);
+				}
 			}
 			return obj;
 		} catch (Exception e) {
@@ -1314,7 +1317,7 @@ public abstract class ServiceExertion implements Exertion, Scopable, SorcerConst
 		try {
 			substitute(entries);
 			Exertion evaluatedExertion = exert(entries);
-			ReturnPath returnPath = ((ServiceContext)evaluatedExertion.getDataContext())
+			ReturnPath rp = ((ServiceContext)evaluatedExertion.getDataContext())
 					.getReturnPath();
 			if (evaluatedExertion instanceof Job) {
 				cxt = ((Job) evaluatedExertion).getJobContext();
@@ -1322,14 +1325,23 @@ public abstract class ServiceExertion implements Exertion, Scopable, SorcerConst
 				cxt = evaluatedExertion.getContext();
 			}
 
-			if (returnPath != null) {
-				if (returnPath.path == null)
+			if (rp != null) {
+				if (rp.path == null)
 					return cxt;
-				else if (returnPath.path.equals("self"))
+				else if (rp.path.equals("self"))
 					return this;
-				else
+				else if (rp.path != null) {
+					cxt.setReturnValue(cxt.getValue(rp.path));
+					Context out = null;
+					if (rp.argPaths != null && rp.argPaths.length > 0) {
+						out = ((ServiceContext)cxt).getSubcontext(rp.argPaths);
+						cxt.setReturnValue(out);
+						return out;
+					}
 					return cxt.getReturnValue();
-
+				} else {
+					return cxt.getReturnValue();
+				}
 			}
 		} catch (Exception e) {
 			throw new InvocationException(e);
