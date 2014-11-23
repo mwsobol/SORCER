@@ -1897,27 +1897,21 @@ public class GenericUtil {
 		try {
 			
 			if(!file.exists()) {
-				System.out.println("***error: file does not exist or is not readable = " 
-						+ file.getAbsolutePath());			
+                logger.warning("***error: file does not exist or is not readable = "+ file.getAbsolutePath());
 				if (sp != null) sp.destroy();
 				throw new IOException("***error: file does not exist or is not readable = " 
 						+ file.getAbsolutePath());
 				
 			}
 					
-			if (!file.canRead()){ 
-				System.out.println("***error: file does not have read permission = " 
-						+ file.getAbsolutePath());			
+			if (!file.canRead()){
+                logger.warning("***error: file does not have read permission = "+ file.getAbsolutePath());
 				if (sp != null) sp.destroy();				
-				throw new IOException("***error: file does not have read permission = " 
-						+ file.getAbsolutePath());
+				throw new IOException("***error: file does not have read permission = "+ file.getAbsolutePath());
 			}
 					
 		} catch (IOException e) {
-			System.out.println("***error: " + e.toString() 
-					+ "; problem with file = " + file.getAbsolutePath());
-			e.printStackTrace();
-			System.exit(1);
+            logger.log(Level.WARNING, "***error:  problem with file = " + file.getAbsolutePath(), e);
 			throw new RuntimeException(e);
 		}
 	}
@@ -2038,7 +2032,6 @@ public class GenericUtil {
 					String msg = "***error: the environment variable CYGWIN_HOME is not set correctly." 
 							+ "(Check env and make sure to use DOS file path format.)";
 					logger.severe(msg);
-					System.out.println(msg);
 					throw new Exception(msg);
 				}
 			}
@@ -2049,9 +2042,7 @@ public class GenericUtil {
 				GenericUtil.checkFileExistsAndIsReadable(new File(shExec), null);
 			} catch (Exception e) {
 				String msg = "***error: the cygwin \"sh.exe\" must be installed in: " + shExec;
-				logger.severe(msg);
-				System.out.println(msg + "\n" + e);
-				e.printStackTrace();
+				logger.log(Level.SEVERE, msg, e);
 				throw e;
 			}
 			
@@ -2565,7 +2556,7 @@ public class GenericUtil {
 	}
 
 	public static void upload(File fromFile, URL toUrl) throws IOException {
-		System.out.println("********** WARNING: using GenericUtil.upload() "
+		logger.warn("********** WARNING: using GenericUtil.upload() "
 				+ "will corrupt binary files! Use at your own risk.");
 		upload(vect2String(getFileContents(fromFile)), toUrl);
 	}
@@ -2707,11 +2698,7 @@ public class GenericUtil {
 		
 		if (!destDir.exists())	throw new IOException(destDir + " does not exist.");
 		if (!destDir.isDirectory())	throw new IOException(destDir + " is not a directory.");
-		
-		//System.out.println("\n====================");
-		//System.out.println("dirUrl = " + dirUrl);
-		//System.out.println("destDir = " + destDir);
-		
+
 		Vector<String> dirListing = getFileContents(dirUrl);
 		//printVect(dirListing);
 		
@@ -2885,23 +2872,23 @@ public class GenericUtil {
 				throw new RuntimeException(errorMessage);
 			} catch (InterruptedException ex) {
 				GenericUtil.appendFileContents("executeCommandWithWorker(): ***exception in executeCommandWithWorker: " + ex, dir);
-				System.out.println("***exception in executeCommandWithWorker: " + ex);
+				logger.log(Level.WARNING, "***exception in executeCommandWithWorker", ex)
 				throw ex;
 			}
 		} catch (InterruptedException ex) {
 			String errorMessage = "the command: " + arrayToOneLineSpaceDelimitedString(command)
 					+ ", did not complete due to an "
 					+ "unexpected interruption.";
-			ex.printStackTrace();
+            logger.log(Level.WARNING, errorMessage, ex);
 			throw new RuntimeException(errorMessage, ex);
 		} catch (FileNotFoundException ex) {
 			String errorMessage = "the log file was not found.";
-			ex.printStackTrace();
+            logger.log(Level.WARNING, errorMessage, ex);
 			throw new RuntimeException(errorMessage, ex);
 		} catch (IOException ex) {
 			String errorMessage = "the command: " + arrayToOneLineSpaceDelimitedString(command)
 					+ ", did not complete due to an " + "io error.";
-			ex.printStackTrace();
+            logger.log(Level.WARNING, errorMessage, ex);
 			throw new RuntimeException(errorMessage, ex);
 		}
 	}
@@ -2922,9 +2909,6 @@ public class GenericUtil {
 			final ClassLoader loader) throws Exception {
 		Map<String, String> jarMap = new HashMap<String, String>();
 		List<ClassLoader> loaderList = new ArrayList<ClassLoader>();
-		System.out.println("========================================");
-		System.out.println(loader.getClass().getName());
-		System.out.println("========================================");
 		ClassLoader currentLoader = loader == null ? Thread.currentThread()
 				.getContextClassLoader() : loader;
 		StringBuilder fileUrlBuilder = new StringBuilder();
