@@ -324,9 +324,6 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
 
 		// default returned path
 		context.putOutValue(object_retrieved, obj);
-		logger.info("ZZZZZZZZZZZZZ object_retrieved: " + obj);
-		logger.info("ZZZZZZZZZZZZZ context retuned: " + context);
-
 		return context;
 	}
 

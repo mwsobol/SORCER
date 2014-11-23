@@ -368,7 +368,7 @@ public class CollectionOperators {
 		// repeatedly reactive evaluations
 		assertTrue((Object) get(cxt, "arg/x7") instanceof ServiceInvoker);
 		rrvEnt(cxt, "arg/x7");
-		assertEquals(2.4, (Double) value((Evaluation)value(cxt, "arg/x7")), 0.0000001);
+		assertEquals(2.4, (Double) value(cxt, "arg/x7"), 0.0000001);
 
 	}
 	

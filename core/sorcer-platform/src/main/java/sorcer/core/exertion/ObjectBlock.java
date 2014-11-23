@@ -45,10 +45,10 @@ public class ObjectBlock extends Block {
 		super(null, new ObjectSignature("execute", ServiceConcatenator.class));
 	}
 	
-	public ObjectBlock(String name) {
+	public ObjectBlock(String name) throws SignatureException {
 		super(name, new ObjectSignature("execute", ServiceConcatenator.class));
 	}
-	
+
 	public ObjectBlock(String name, Context context)
 			throws SignatureException {
 		this(name);

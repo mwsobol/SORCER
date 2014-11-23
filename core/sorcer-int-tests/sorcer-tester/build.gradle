@@ -69,7 +69,7 @@ test {
     testLogging {
         events "passed", "skipped", "failed"/*, "standardOut"*, "standardError"*/
     }
-    dependsOn([install]) //, bootme])
-//    finalizedBy(stopme)
+    dependsOn([install, bootme])
+    finalizedBy(stopme)
 }
 test.onlyIf{ file("${sorcerDistHome}").exists() }

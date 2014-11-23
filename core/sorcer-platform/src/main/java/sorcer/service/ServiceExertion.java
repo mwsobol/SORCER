@@ -760,7 +760,8 @@ public abstract class ServiceExertion implements Exertion, Scopable, SorcerConst
 
 	public ServiceExertion setContext(Context context) {
 		this.dataContext = (ServiceContext) context;
-		((ServiceContext) context).setExertion(this);
+		if (context != null)
+			((ServiceContext) context).setExertion(this);
 		return this;
 	}
 

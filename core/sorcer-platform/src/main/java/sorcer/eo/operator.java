@@ -738,6 +738,11 @@ public class operator {
 		return sig(operation, serviceType, new Arg[] {});
 	}
 
+	public static Signature sig(Class serviceType,
+								String initSetector) throws SignatureException {
+		return sig(initSetector, serviceType, initSetector);
+	}
+
 	public static Signature sig(String operation, Class serviceType,
 								String initSetector) throws SignatureException {
 		try {
@@ -2093,12 +2098,7 @@ public class operator {
 	public static Object provider(Signature signature)
 			throws SignatureException {
 		Object target = null;
-		if (signature instanceof ObjectSignature) {
-			target = ((ObjectSignature) signature).getTarget();
-			if (target != null && signature.getServiceType() == null)
-				return target;
-		}
-		Service provider = null;
+		Object provider = null;
 		Class<?> providerType = null;
 		if (signature.getClass() == NetSignature.class) {
 			providerType = ((NetSignature) signature).getServiceType();
@@ -2111,24 +2111,25 @@ public class operator {
 				provider = ((NetSignature) signature).getService();
 				if (provider == null) {
 					provider = Accessor.getService(signature);
-					((NetSignature) signature).setProvider(provider);
+					((NetSignature) signature).setProvider((Service)provider);
 				}
 			} else if (signature.getClass() == ObjectSignature.class) {
 				if (target != null) {
-					return target;
+					provider = target;
 				} else if (Provider.class.isAssignableFrom(providerType)) {
-					target = providerType.newInstance();
-					return target;
+					provider = providerType.newInstance();
 				} else {
 					target = instance((ObjectSignature) signature);
 					// utility class returns a utility (class) method
 					if (target instanceof Method)
-						return ((ObjectSignature)signature).getProviderType();
-					else
-						return target;
+						provider = ((ObjectSignature)signature).getProviderType();
+					else {
+						provider = target;
+						((ObjectSignature)signature).setTarget(provider);
+					}
 				}
 			} else if (signature instanceof EvaluationSignature) {
-				return ((EvaluationSignature) signature).getEvaluator();
+				provider = ((EvaluationSignature) signature).getEvaluator();
 			}
 		} catch (Exception e) {
 			throw new SignatureException("No signature provider avaialable", e);
