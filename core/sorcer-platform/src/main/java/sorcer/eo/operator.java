@@ -1572,32 +1572,78 @@ public class operator {
 					+ context.getName());
 	}
 
-	public static Object execExertion(Exertion exertion, Arg... args)
-			throws ExertionException, ContextException, RemoteException {
-		Exertion xrt;
+	private static Exertion initialize(Exertion xrt, Arg... args) throws ContextException {
 		ReturnPath rPath = null;
 		for (Arg a : args) {
 			if (a instanceof ReturnPath) {
-				rPath = (ReturnPath)a;
+				rPath = (ReturnPath) a;
 				break;
 			}
 		}
+		((ServiceContext)xrt.getContext()).setReturnPath(rPath);
+		return xrt;
+	}
+
+	public static Object execExertion(Exertion exertion, Arg... args)
+			throws ExertionException, ContextException, RemoteException {
+		Exertion out;
+		initialize(exertion, args);
 		try {
 			if (exertion.getClass() == Task.class) {
 				if (((Task) exertion).getDelegate() != null)
-					xrt = exert(((Task) exertion).getDelegate(), null, args);
+					out = exert(((Task) exertion).getDelegate(), null, args);
 				else
-					xrt = exertOpenTask(exertion, args);
+					out = exertOpenTask(exertion, args);
 			} else {
-				xrt = exert(exertion, null, args);
+				out = exert(exertion, null, args);
 			}
+			return finalize(out, args);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new ExertionException(e);
 		}
+
+//		Context cxt = out.getContext();
+//		Context dcxt = out.getDataContext();
+//		if (rPath != null) {
+//			// if Path.argPaths.length > 1 return subcontext
+//			if (rPath.argPaths != null && rPath.argPaths.length == 1) {
+//				Object val = cxt.getValue(rPath.argPaths[0]);
+//				dcxt.putValue(rPath.path, val);
+//				return val;
+//			} else {
+//				ReturnPath rp = ((ServiceContext) dcxt).getReturnPath();
+//				if (rp != null && rPath.path != null) {
+//					Object result = cxt.getValue(rp.path);
+//					if (result instanceof Context)
+//						return ((Context) cxt.getValue(rp.path))
+//								.getValue(rPath.path);
+//					else
+//						return result;
+//				} else {
+//					return out.getContext().getValue(rPath.path);
+//				}
+//			}
+//		}
+//		Object obj = ((ServiceExertion) out).getReturnValue(args);
+//		if (obj == null) {
+//			ReturnPath returnPath = ((ServiceContext)out.getDataContext()).getReturnPath();
+//			if (returnPath != null) {
+//				return ((ServiceExertion) out).getReturnValue(args);
+//			} else {
+//				return out.getContext();
+//			}
+//		} else {
+//			return obj;
+//		}
+	}
+
+	private static Object finalize(Exertion xrt, Arg... args) throws ContextException, RemoteException {
 		Context cxt = xrt.getContext();
 		Context dcxt = xrt.getDataContext();
-		if (rPath != null) {
+		ReturnPath rPath =	((ServiceContext)xrt.getContext()).getReturnPath();
+
+		if (rPath != null && xrt.isCompound()) {
 			// if Path.argPaths.length > 1 return subcontext
 			if (rPath.argPaths != null && rPath.argPaths.length == 1) {
 				Object val = cxt.getValue(rPath.argPaths[0]);
@@ -1614,6 +1660,23 @@ public class operator {
 						return result;
 				} else {
 					return xrt.getContext().getValue(rPath.path);
+				}
+			}
+		} else if (rPath != null) {
+			if (rPath.argPaths != null && rPath.argPaths.length == 1) {
+				Object val = cxt.getValue(rPath.argPaths[0]);
+				cxt.putValue(rPath.path, val);
+				return val;
+			} else {
+				if (rPath.path != null && rPath.argPaths.length > 1) {
+					Object result = cxt.getValue(rPath.path);
+					if (result instanceof Context)
+						return result;
+					else {
+						Context cxtOut = ((ServiceContext)cxt).getSubcontext(rPath.argPaths);
+						cxtOut.putValue(rPath.path, result);
+						return cxtOut;
+					}
 				}
 			}
 		}

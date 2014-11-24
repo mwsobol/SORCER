@@ -40,7 +40,7 @@ public class LocalExertionTasks {
 		// get a single context argument
 		assertEquals(100.0, value(cxt, "result/y"));
 
-		// get subcontext output
+		// get the subcontext output from the context
 		assertTrue(context(ent("arg/x1", 20.0), ent("result/y", 100.0)).equals(
 				value(cxt, result("result/context", from("arg/x1", "result/y")))));
 
@@ -53,12 +53,10 @@ public class LocalExertionTasks {
 		Task t5 = task("t5", sig("add", AdderImpl.class),
 				cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0), result("result/y")));
 
-//		logger.info("ZZZZZZZZZZ 1: " +   value(t5));
-//		Object out = value(t5);
-//		logger.info("out value: " + out);
-//		assertEquals(100.0, out);
+		// get the subcontext output from the exertion
+		assertTrue(context(ent("arg/x1", 20.0), ent("result/z", 100.0)).equals(
+				value(t5, result("result/z", from("arg/x1", "result/z")))));
 
-		logger.info("ZZZZZZZZZZ 2: " + value(t5, result("result/context", from("arg/x1", "result/y"))));
 	}
 
 }
