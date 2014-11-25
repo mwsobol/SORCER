@@ -242,7 +242,7 @@ public class operator {
 			Exertion xrt = (Exertion) entries[0];
 			if (entries.length >= 2 && entries[1] instanceof String)
 				xrt = ((Job) xrt).getComponentExertion((String) entries[1]);
-			return xrt.getContext();
+			return xrt.getDataContext();
 		} else if (entries[0] instanceof Link) {
 			return ((Link)entries[0] ).getContext();
 		} else if (entries.length == 1 && entries[0] instanceof String) {
@@ -1237,6 +1237,7 @@ public class operator {
 
 		if (rp != null) {
 			((ServiceContext) job.getDataContext()).setReturnPath(rp);
+			logger.info("ZZZZZZZZZZZZZZ setting rp: " + rp);
 		}
 
 		if (job instanceof NetJob && control != null) {
@@ -1246,10 +1247,7 @@ public class operator {
 				procSig.setServiceType(Spacer.class);
 				job.getFidelity().clear();
 				job.addSignature(procSig);
-				if (data != null)
-					job.setContext(data);
-				else
-					job.getDataContext().setExertion(job);
+				job.getDataContext().setExertion(job);
 			}
 		}
 		if (fiContexts != null) {
@@ -1354,17 +1352,13 @@ public class operator {
 		return map.getValue(path, args);
 	}
 
-	public static <T> T value(Evaluation<T> evaluation)
-			throws EvaluationException {
-		try {
-			return evaluation.getValue();
-		} catch (RemoteException e) {
-			throw new EvaluationException(e);
-		}
-	}
-
-//	public static <T> T value(Mappable<T> map, String path) throws ContextException {
-//		return map.getValue(path);
+//	public static <T> T value(Evaluation<T> evaluation)
+//			throws EvaluationException {
+//		try {
+//			return evaluation.getValue();
+//		} catch (RemoteException e) {
+//			throw new EvaluationException(e);
+//		}
 //	}
 
 	public static Object content(URL url) throws EvaluationException {
@@ -1378,19 +1372,6 @@ public class operator {
 			throw new EvaluationException("Expected URL for its content");
 		}
 	}
-
-//	public static Object value(Object obj) throws EvaluationException {
-//		try {
-//			if (obj instanceof URL)
-//				return ((URL)obj).getContent();
-//			else  if(obj instanceof Evaluation)
-//				return ((Evaluation)obj).getValue();
-//			else
-//				return obj;
-//		} catch (IOException e) {
-//			throw new EvaluationException(e);
-//		}
-//	}
 
 	public static <T> T value(Evaluation<T> evaluation, Arg... entries)
 			throws EvaluationException {
@@ -1580,7 +1561,8 @@ public class operator {
 				break;
 			}
 		}
-		((ServiceContext)xrt.getContext()).setReturnPath(rPath);
+		if (rPath != null)
+			((ServiceContext)xrt.getDataContext()).setReturnPath(rPath);
 		return xrt;
 	}
 
@@ -1602,88 +1584,63 @@ public class operator {
 			e.printStackTrace();
 			throw new ExertionException(e);
 		}
-
-//		Context cxt = out.getContext();
-//		Context dcxt = out.getDataContext();
-//		if (rPath != null) {
-//			// if Path.argPaths.length > 1 return subcontext
-//			if (rPath.argPaths != null && rPath.argPaths.length == 1) {
-//				Object val = cxt.getValue(rPath.argPaths[0]);
-//				dcxt.putValue(rPath.path, val);
-//				return val;
-//			} else {
-//				ReturnPath rp = ((ServiceContext) dcxt).getReturnPath();
-//				if (rp != null && rPath.path != null) {
-//					Object result = cxt.getValue(rp.path);
-//					if (result instanceof Context)
-//						return ((Context) cxt.getValue(rp.path))
-//								.getValue(rPath.path);
-//					else
-//						return result;
-//				} else {
-//					return out.getContext().getValue(rPath.path);
-//				}
-//			}
-//		}
-//		Object obj = ((ServiceExertion) out).getReturnValue(args);
-//		if (obj == null) {
-//			ReturnPath returnPath = ((ServiceContext)out.getDataContext()).getReturnPath();
-//			if (returnPath != null) {
-//				return ((ServiceExertion) out).getReturnValue(args);
-//			} else {
-//				return out.getContext();
-//			}
-//		} else {
-//			return obj;
-//		}
 	}
 
 	private static Object finalize(Exertion xrt, Arg... args) throws ContextException, RemoteException {
-		Context cxt = xrt.getContext();
+		Context acxt = xrt.getContext();
 		Context dcxt = xrt.getDataContext();
-		ReturnPath rPath =	((ServiceContext)xrt.getContext()).getReturnPath();
+		ReturnPath rPath =	((ServiceContext)dcxt).getReturnPath();
 
 		if (rPath != null && xrt.isCompound()) {
 			// if Path.argPaths.length > 1 return subcontext
 			if (rPath.argPaths != null && rPath.argPaths.length == 1) {
-				Object val = cxt.getValue(rPath.argPaths[0]);
+				Object val = acxt.getValue(rPath.argPaths[0]);
 				dcxt.putValue(rPath.path, val);
 				return val;
 			} else {
 				ReturnPath rp = ((ServiceContext) dcxt).getReturnPath();
 				if (rp != null && rPath.path != null) {
-					Object result = cxt.getValue(rp.path);
+					Object result = acxt.getValue(rp.path);
 					if (result instanceof Context)
-						return ((Context) cxt.getValue(rp.path))
+						return ((Context) acxt.getValue(rp.path))
 								.getValue(rPath.path);
-					else
+					else if (result == null) {
+						Context out = new ServiceContext();
+						logger.fine("\nselected paths: " + Arrays.toString(rPath.argPaths)
+								+ "\nfrom context: " + acxt);
+						for (String p : rPath.argPaths) {
+							out.putValue(p, acxt.getValue(p));
+						}
+						dcxt.setReturnValue(out);
+						result = out;
+					}
 						return result;
 				} else {
 					return xrt.getContext().getValue(rPath.path);
 				}
 			}
 		} else if (rPath != null) {
-			if (rPath.argPaths != null && rPath.argPaths.length == 1) {
-				Object val = cxt.getValue(rPath.argPaths[0]);
-				cxt.putValue(rPath.path, val);
-				return val;
-			} else {
-				if (rPath.path != null && rPath.argPaths.length > 1) {
-					Object result = cxt.getValue(rPath.path);
+			if (rPath.argPaths != null) {
+				if (rPath.argPaths.length == 1) {
+					Object val = acxt.getValue(rPath.argPaths[0]);
+					acxt.putValue(rPath.path, val);
+					return val;
+				} else if (rPath.argPaths.length > 1) {
+					Object result = acxt.getValue(rPath.path);
 					if (result instanceof Context)
 						return result;
 					else {
-						Context cxtOut = ((ServiceContext)cxt).getSubcontext(rPath.argPaths);
+						Context cxtOut = ((ServiceContext) acxt).getSubcontext(rPath.argPaths);
 						cxtOut.putValue(rPath.path, result);
 						return cxtOut;
 					}
 				}
 			}
 		}
+
 		Object obj = ((ServiceExertion) xrt).getReturnValue(args);
 		if (obj == null) {
-			ReturnPath returnPath = ((ServiceContext)xrt.getDataContext()).getReturnPath();
-			if (returnPath != null) {
+			if (rPath != null) {
 				return ((ServiceExertion) xrt).getReturnValue(args);
 			} else {
 				return xrt.getContext();
@@ -1756,17 +1713,9 @@ public class operator {
 		}
 	}
 
-//	public static <T extends Exertion> T exert(Exertion input, Arg... entries)
-//			throws ExertionException {
-//		try {
-//			return (T) exert(input, null, entries);
-//		} catch (Exception e) {
-//			throw new ExertionException(e);
-//		}
-//	}
-
 	public static <T extends Exertion> T exert(T input,
-											   Transaction transaction, Arg... entries) throws ExertionException {
+											   Transaction transaction,
+											   Arg... entries) throws ExertionException {
 		try {
 			ExertionDispatcher se = new ExertionDispatcher(input);
 			Exertion result = null;

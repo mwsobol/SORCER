@@ -2726,6 +2726,15 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 	public ServiceContext substitute(Arg... entries) throws SetterException, RemoteException {
 		if (entries == null)
 			return this;
+		ReturnPath rPath = null;
+		for (Arg a : entries) {
+			if (a instanceof ReturnPath) {
+				rPath = (ReturnPath) a;
+				break;
+			}
+		}
+		if (rPath != null) setReturnPath(rPath);
+
 		try {
 			for (Arg e : entries) {
 				if (e instanceof Tuple2) {

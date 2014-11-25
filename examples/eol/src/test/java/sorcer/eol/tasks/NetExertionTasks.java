@@ -2,22 +2,8 @@ package sorcer.eol.tasks;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static sorcer.co.operator.from;
-import static sorcer.co.operator.inEnt;
-import static sorcer.co.operator.outEnt;
-import static sorcer.eo.operator.context;
-import static sorcer.eo.operator.cxt;
-import static sorcer.eo.operator.exert;
-import static sorcer.eo.operator.get;
-import static sorcer.eo.operator.result;
-import static sorcer.eo.operator.sig;
-import static sorcer.eo.operator.srv;
-import static sorcer.eo.operator.srvFi;
-import static sorcer.eo.operator.srvFis;
-import static sorcer.eo.operator.strategy;
-import static sorcer.eo.operator.task;
-import static sorcer.eo.operator.type;
-import static sorcer.eo.operator.value;
+import static sorcer.co.operator.*;
+import static sorcer.eo.operator.*;
 
 import java.util.logging.Logger;
 
@@ -67,7 +53,12 @@ public class NetExertionTasks {
 		logger.info("context @ arg/x2: " + value(cxt, "arg/x2"));
 		logger.info("context @ result/y: " + value(cxt, "result/y"));
 
+		// get a single context argument
 		assertEquals(100.0, value(cxt, "result/y"));
+
+		// get the subcontext output from the context
+		assertTrue(context(ent("arg/x1", 20.0), ent("result/y", 100.0)).equals(
+				value(cxt, result("result/context", from("arg/x1", "result/y")))));
 	}
 	
 	
@@ -77,10 +68,13 @@ public class NetExertionTasks {
 		Task t5 = srv("t5", sig("add", Adder.class),
 				cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0), result("result/y")));
 
-		Object out = value(t5);
-		logger.info("out value: " + out);
-		assertEquals(100.0, out);
-		
+		// get the result value
+		assertEquals(100.0, value(t5));
+
+		// get the subcontext output from the exertion
+		assertTrue(context(ent("arg/x1", 20.0), ent("result/z", 100.0)).equals(
+				value(t5, result("result/z", from("arg/x1", "result/z")))));
+
 	}
 
 	

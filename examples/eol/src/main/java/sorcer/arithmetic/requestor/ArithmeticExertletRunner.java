@@ -2,6 +2,7 @@ package sorcer.arithmetic.requestor;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.logging.Logger;
 
 import org.codehaus.groovy.control.CompilationFailedException;
 
@@ -13,6 +14,8 @@ import sorcer.service.Job;
 import sorcer.service.SignatureException;
 
 public class ArithmeticExertletRunner extends ExertletRunner {
+
+	private final static Logger logger = Logger.getLogger(ArithmeticExertletRunner.class.getName());
 
 	/* (non-Javadoc)
 	 * @see sorcer.core.requestor.ExertionRunner#getExertion(java.lang.String[])
