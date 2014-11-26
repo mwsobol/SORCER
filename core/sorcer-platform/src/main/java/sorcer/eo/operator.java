@@ -1587,9 +1587,15 @@ public class operator {
 	}
 
 	private static Object finalize(Exertion xrt, Arg... args) throws ContextException, RemoteException {
-		Context acxt = xrt.getContext();
 		Context dcxt = xrt.getDataContext();
 		ReturnPath rPath =	((ServiceContext)dcxt).getReturnPath();
+		// check if it was already finalized
+//		if (dcxt.getValue(rPath.path) != null
+//				&& !(dcxt.getValue(rPath.path) instanceof Context)) {
+//			return dcxt.getValue(rPath.path);
+//		}
+		// get the compound service context
+		Context acxt = xrt.getContext();
 
 		if (rPath != null && xrt.isCompound()) {
 			// if Path.argPaths.length > 1 return subcontext
@@ -1645,9 +1651,10 @@ public class operator {
 			} else {
 				return xrt.getContext();
 			}
-		} else {
-			return obj;
+		} else if (obj instanceof Context && rPath.path != null) {
+			return (((Context)obj).getValue(rPath.path));
 		}
+		return obj;
 	}
 
 	public static Exertion exertOpenTask(Exertion exertion, Arg... args)

@@ -316,7 +316,7 @@ public class NetJobExertions implements SorcerConstants {
 				pipe(out(t4, "result/y"), in(t3, "arg/x1")),
 				pipe(out(t5, "result/y"), in(t3, "arg/x2")));
 
-		Context context = context(exert(job));
+		Context context = serviceContext(exert(job));
 		logger.info("job context: " + context);
 		assertEquals(get(context, "j1/t3/result/y"), 400.0);
 	}
@@ -441,8 +441,9 @@ public class NetJobExertions implements SorcerConstants {
 		// get the current value of the exertlet
 		Task task = task("eval", sig("getValue", Evaluation.class, prvName("Arithmetic Exertleter")));
 		logger.info("j1/t3/result/y: " + value(task, "j1/t3/result/y"));
+
 		assertEquals(value(task, "j1/t3/result/y"), 400.0);
-	
+
 		// update inputs contexts
 		Context multiplyContext = context("multiply", inEnt("arg/x1", 10.0), inEnt("arg/x2", 70.0));
 		Context addContext = context("add", inEnt("arg/x1", 90.0), inEnt("arg/x2", 110.0));
@@ -452,7 +453,7 @@ public class NetJobExertions implements SorcerConstants {
 		task = task("invoke", sig("invoke", Invocation.class, prvName("Arithmetic Exertleter")), invokeContext);
 		logger.info("j1/t3/result/y: " + value(task, "j1/t3/result/y"));
 		assertEquals(value(task, "j1/t3/result/y"), 500.0);
-	
+
 		// update contexts partially
 		multiplyContext = context("multiply", inEnt("arg/x1", 20.0));
 		addContext = context("add", inEnt("arg/x1", 80.0));
@@ -461,8 +462,8 @@ public class NetJobExertions implements SorcerConstants {
 		link(invokeContext, "t5", addContext);
 		task = task("invoke", sig("invoke", Invocation.class, prvName("Arithmetic Exertleter")), invokeContext);
 //		logger.info("j1/t3/result/y: " + value(task, "j1/t3/result/y"));
-		assertEquals(value(task, "j1/t3/result/y"), 1210.0);		
-				
+		assertEquals(value(task, "j1/t3/result/y"), 1210.0);
+
 		// reverse the state to the initial one
 		multiplyContext = context("multiply", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0));
 		addContext = context("add", inEnt("arg/x1", 80.0), inEnt("arg/x2", 20.0));

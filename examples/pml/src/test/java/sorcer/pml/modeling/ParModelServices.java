@@ -1,14 +1,15 @@
 package sorcer.pml.modeling;
 
+import jdk.nashorn.internal.ir.annotations.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.core.context.model.par.ParModel;
 import sorcer.pml.model.ParModeler;
-import sorcer.service.*;
+import sorcer.service.Invocation;
+import sorcer.service.Task;
 
-import java.rmi.RemoteException;
 import java.util.logging.Logger;
 
 import static org.junit.Assert.assertEquals;
@@ -27,39 +28,40 @@ public class ParModelServices {
 			.getName());
 	
 	@Test
-	public void parModelerTest() throws RemoteException, ContextException,
-			ExertionException, SignatureException {
+	public void parModelerTest() throws Exception {
+
 		ParModel pm = ParModeler.getParModel();
 		logger.info("result: " + invoke(pm, "expr"));
 		assertEquals(invoke(pm, "expr"), 60.0);
+
 	}
 
+	@Ignore
 	@Test
 	public void parObjectModelServiceTest() throws Exception {
+
 		ParModel pm = ParModeler.getParModel();
 		Task pmt = task(sig("invoke", pm),
 				context(result("invoke/result", from("expr"))));
 
-		value(pmt);
-		logger.info("result: " + value(pmt));
 		assertEquals(value(pmt), 60.0);
 
-		logger.info("result: " + exert(pmt));
 		assertEquals(get(exert(pmt), "invoke/result"), 60.0);
+
 	}
 
+	@Ignore
 	@Test
-	public void parNetModelServiceTest() throws Exception,
-			ExertionException, SignatureException {
+	public void parNetModelServiceTest() throws Exception {
+
 		// the provider in ex6/bin parmodel-prv-run.xml
 		Task pmt = task(sig("invoke", Invocation.class, prvName("ParModel Service")),
 				context(result("invoke/result", from("expr"))));
 
-		logger.info("result: " + value(pmt));
 		assertEquals(value(pmt), 60.0);
 		
-		logger.info("result: " + exert(pmt));
 		assertEquals(get(exert(pmt), "invoke/result"), 60.0);
+
 	}
 	
 }

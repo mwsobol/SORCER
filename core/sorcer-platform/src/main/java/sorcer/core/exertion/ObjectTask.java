@@ -140,10 +140,10 @@ public class ObjectTask extends Task {
 			if (result instanceof Context) {
 				Signature.ReturnPath rp = dataContext.getReturnPath();
 				if (rp != null) {
-					dataContext.setReturnValue(((Context) result).getValue(rp.path));
-					Context out = null;
-					if (rp.argPaths != null && rp.argPaths.length > 0) {
-						out = dataContext.getSubcontext(rp.argPaths);
+					if (((Context) result).getValue(rp.path) != null) {
+						dataContext.setReturnValue(((Context) result).getValue(rp.path));
+					} else if (rp.argPaths != null && rp.argPaths.length > 0) {
+						Context out = dataContext.getSubcontext(rp.argPaths);
 						dataContext.setReturnValue(out);
 					}
 				} else {
@@ -165,6 +165,7 @@ public class ObjectTask extends Task {
 			dataContext.appendTrace(evaluator.toString());
 		else
 			dataContext.appendTrace(os.toString());
+
 		return this;
 	}
 

@@ -193,7 +193,8 @@ public class CollectionOperators {
 		assertTrue(asis(e) instanceof URL);
 
 		// create service strategy entry
-		Entry se1 = strategyEnt("j1/j2", strategy(Strategy.Access.PULL, Strategy.Flow.PAR));
+		Entry se1 = strategyEnt("j1/j2",
+				strategy(Strategy.Access.PULL, Strategy.Flow.PAR));
 		assertEquals(flow(se1), Strategy.Flow.PAR);
 		assertEquals(access(se1), Strategy.Access.PULL);
 
