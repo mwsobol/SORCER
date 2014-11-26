@@ -23,7 +23,6 @@ jar {
 }
 
 dependencies {
-    //compile "org.sorcer:sorcer-modeling-lib:${sorcerModelingVersion}"
     compile	project(':webster')
     compile project(':sorcer-platform')
 }

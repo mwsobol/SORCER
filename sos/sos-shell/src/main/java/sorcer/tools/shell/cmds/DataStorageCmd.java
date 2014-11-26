@@ -16,38 +16,27 @@
  */
 
 package sorcer.tools.shell.cmds;
-import static sorcer.eo.operator.list;
-import static sorcer.eo.operator.store;
-
-import java.io.PrintStream;
-import java.net.MalformedURLException;
-import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.StringTokenizer;
-
 import net.jini.core.lookup.ServiceItem;
 import net.jini.id.Uuid;
 import sorcer.core.provider.DatabaseStorer;
+import sorcer.core.provider.DatabaseStorer.Store;
 import sorcer.core.provider.MonitorUIManagement;
 import sorcer.core.provider.Provider;
 import sorcer.core.provider.StorageManagement;
 import sorcer.jini.lookup.AttributesUtil;
-import sorcer.service.Context;
-import sorcer.service.ContextException;
-import sorcer.service.Exertion;
-import sorcer.service.ExertionException;
-import sorcer.service.MonitorException;
-import sorcer.service.ServiceExertion;
-import sorcer.service.SignatureException;
+import sorcer.service.*;
 import sorcer.tools.shell.NetworkShell;
 import sorcer.tools.shell.ShellCmd;
 import sorcer.util.bdb.objects.ObjectInfo;
-import sorcer.core.provider.DatabaseStorer.Store;
 import sorcer.util.url.sos.SdbUtil;
+
+import java.io.PrintStream;
+import java.net.MalformedURLException;
+import java.rmi.RemoteException;
+import java.util.*;
+
+import static sorcer.co.operator.list;
+import static sorcer.co.operator.store;
 
 public class DataStorageCmd extends ShellCmd {
 
@@ -201,13 +190,7 @@ public class DataStorageCmd extends ShellCmd {
 			
 			Context cxt = null;
 			 try {
-				 try {
-					store("dupa");
-				} catch (ExertionException e1) {
-					e1.printStackTrace();
-				} catch (SignatureException e1) {
-					e1.printStackTrace();
-				}
+				 store("test-only");
 				 out.println("XXXXXXXXXXXXX service item: " + dataStorers[selectedDataStorer]);
 				 out.println("XXXXXXXXXXXXX service: " + (DatabaseStorer) dataStorers[selectedDataStorer].service);
 				 out.println("XXXXXXXXXXXXX interfaces: " + Arrays.toString(dataStorers[selectedDataStorer].service.getClass().getInterfaces()));
@@ -219,7 +202,7 @@ public class DataStorageCmd extends ShellCmd {
 				}
 				out.println("XXXXXXXXXXXXX context: " + cxt);
 				try {
-					store("dupa");
+					store("test-only");
 					List<String>  records = list(Store.object);
 					out.println("XXXXXXXXXXXXX records; " + records);
 				} catch (ExertionException e) {
