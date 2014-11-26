@@ -141,8 +141,6 @@ public abstract class ServiceExertion implements Exertion, Scopable, SorcerConst
 
 	protected boolean isRevaluable = false;
 
-	protected boolean isFinalized = false;
-
 	// if isProxy is true then the identity of returned exertion 
 	// after exerting it is preserved
 	protected boolean isProxy = false;
@@ -1489,14 +1487,6 @@ public abstract class ServiceExertion implements Exertion, Scopable, SorcerConst
 	
 	public void setProxy(boolean isProxy) {
 		this.isProxy = isProxy;
-	}
-
-	public boolean isFinalized() {
-		return isFinalized;
-	}
-
-	public void setFinalized(boolean isFinalized) {
-		this.isFinalized = isFinalized;
 	}
 
 	public Exertion addDepender(Evaluation depender) {

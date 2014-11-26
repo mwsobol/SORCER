@@ -1590,10 +1590,9 @@ public class operator {
 		Context dcxt = xrt.getDataContext();
 		ReturnPath rPath =	((ServiceContext)dcxt).getReturnPath();
 		// check if it was already finalized
-//		if (dcxt.getValue(rPath.path) != null
-//				&& !(dcxt.getValue(rPath.path) instanceof Context)) {
-//			return dcxt.getValue(rPath.path);
-//		}
+		if (((ServiceContext) dcxt).isFinalized()) {
+			return dcxt.getValue(rPath.path);
+		}
 		// get the compound service context
 		Context acxt = xrt.getContext();
 

@@ -1,6 +1,5 @@
 package sorcer.pml.modeling;
 
-import jdk.nashorn.internal.ir.annotations.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.sorcer.test.ProjectContext;
@@ -36,7 +35,6 @@ public class ParModelServices {
 
 	}
 
-	@Ignore
 	@Test
 	public void parObjectModelServiceTest() throws Exception {
 
@@ -50,7 +48,6 @@ public class ParModelServices {
 
 	}
 
-	@Ignore
 	@Test
 	public void parNetModelServiceTest() throws Exception {
 

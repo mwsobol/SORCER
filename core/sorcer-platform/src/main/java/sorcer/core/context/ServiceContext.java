@@ -157,6 +157,8 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 
 	protected String currentPrefix;
 
+	protected boolean isFinalized = false;
+
 	// dependency management for this Context
 	protected List<Evaluation> dependers = new ArrayList<Evaluation>();
 
@@ -3218,6 +3220,14 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 	@Override
 	public List<Evaluation> getDependers() {
 		return dependers;
+	}
+
+	public boolean isFinalized() {
+		return isFinalized;
+	}
+
+	public void setFinalized(boolean isFinalized) {
+		this.isFinalized = isFinalized;
 	}
 
 	@Override
