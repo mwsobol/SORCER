@@ -17,6 +17,7 @@ import sorcer.core.invoker.ServiceInvoker;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.pml.provider.impl.Volume;
 import sorcer.service.*;
+import sorcer.util.Response;
 import sorcer.util.Sorcer;
 
 import java.net.URL;
@@ -26,8 +27,20 @@ import java.util.logging.Logger;
 
 import static org.junit.Assert.*;
 import static sorcer.co.operator.*;
+import static sorcer.co.operator.persistent;
+import static sorcer.eo.operator.asis;
 import static sorcer.eo.operator.*;
+import static sorcer.eo.operator.get;
+import static sorcer.eo.operator.in;
+import static sorcer.eo.operator.pipe;
+import static sorcer.eo.operator.put;
+import static sorcer.eo.operator.value;
+import static sorcer.po.operator.add;
 import static sorcer.po.operator.*;
+import static sorcer.po.operator.asis;
+import static sorcer.po.operator.loop;
+import static sorcer.po.operator.put;
+import static sorcer.po.operator.set;
 
 /**
  * @author Mike Sobolewski
@@ -81,22 +94,26 @@ public class ParModels {
 				par("t5", invoker("x3 + x4", pars("x3", "x4"))),
 				par("j1", invoker("t4 - t5", pars("t4", "t5"))));
 
-//		logger.info("t4 value: " + value(par(vm, "t4")));
 		assertEquals(value(par(vm, "t4")), null);
 
-		logger.info("t5 value: " + value(par(vm, "t5")));
 		assertEquals(value(par(vm, "t5")), 100.0);
 
-		// logger.info("j1 value: " + value(par(vm, "j1")));
 		assertEquals(value(par(vm, "j1")), null);
 
-		// logger.info("j1 value: " + value(var(put(vm, entry("x1", 10.0),
-		// entry("x2", 50.0)), "j1")));
-		assertEquals(
-				value(par(put(vm, ent("x1", 10.0), ent("x2", 50.0)), "j1")),
-				400.0);
-		// logger.info("j1 value: " + value(par(vm, "j1")));
+		assertEquals(value(vm, "j1", ent("x1", 10.0), ent("x2", 50.0)), 400.0);
+
+		// equivalent to the above line
+//		assertEquals(
+//				value(par(put(vm, ent("x1", 10.0), ent("x2", 50.0)), "j1")),
+//				400.0);
+
 		assertEquals(value(par(vm, "j1")), 400.0);
+
+		// get model response
+		Response mr = (Response) value(vm, //ent("x1", 10.0), ent("x2", 50.0),
+				result("y", from("t4", "t5", "j1")));
+		assertTrue(names(mr).equals(list("t4", "t5", "j1")));
+		assertTrue(values(mr).equals(list(500.0, 100.0, 400.0)));
 
 	}
 

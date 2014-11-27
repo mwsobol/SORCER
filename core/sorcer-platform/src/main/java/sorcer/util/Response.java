@@ -59,7 +59,7 @@ public class Response extends Table implements ModelResponse {
 		return null;
 	}
 	
-	public Object getValues() {
+	public List getValues() {
 		return getRow(0);
 	}
 

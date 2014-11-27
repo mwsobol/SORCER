@@ -24,6 +24,7 @@ import sorcer.core.context.model.par.Par;
 import sorcer.core.provider.DatabaseStorer;
 import sorcer.service.*;
 import sorcer.util.Loop;
+import sorcer.util.Response;
 import sorcer.util.Sorcer;
 import sorcer.util.Table;
 import sorcer.util.bdb.objects.UuidObject;
@@ -132,6 +133,14 @@ public class operator {
 
 	public static List<Object> row(Object... elems) {
 		return Arrays.asList(elems);
+	}
+
+	public static List<Object> values(Response response) {
+		return response.getValues();
+	}
+
+	public static List<String> names(Response response) {
+		return response.getNames();
 	}
 
 	public static List<Object> values(Object... elems) {

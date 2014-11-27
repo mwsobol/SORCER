@@ -176,7 +176,7 @@ public class operator {
 		return parContext;
 	}
 
-	public static ParModel append(ParModel parContext, Identifiable... objects)
+	public static ParModel append(ParModel parContext, Arg... objects)
 			throws RemoteException, ContextException {
 		parContext.append(objects);
 		return parContext;

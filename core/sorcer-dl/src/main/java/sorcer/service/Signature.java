@@ -241,7 +241,7 @@ public interface Signature extends Serializable, Comparable, Arg {
 			return toString();
 		}
 	}
-	
+
 	public enum Kind implements Arg {
 		TASKER, JOBBER, SPACER, DISPATCHER, OPTIMIZER, EXPLORER, MODEL, MODEL_MANAGER;
 

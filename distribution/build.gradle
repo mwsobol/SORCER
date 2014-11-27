@@ -262,7 +262,7 @@ task distribution(dependsOn: [":sorcer-boot:install",
         versionProps.setProperty("rio.version", rioVersion)
         versionProps.setProperty("sorcer.version", version)
         versionProps.setProperty("blitz.version", blitzVersion)
-        versionProps.setProperty("sorcer.modeling.version", sorcerModelingVersion)
+        versionProps.setProperty("je.version", jeVersion)
         versionProps.setProperty("groovy.version", groovyVersion)
         versionProps.setProperty("slf4j.version", slf4jVersion)
         versionProps.store(versionPropsFile.newWriter(), null)

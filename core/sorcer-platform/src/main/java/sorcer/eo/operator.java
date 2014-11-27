@@ -738,6 +738,14 @@ public class operator {
 		return sig(operation, serviceType, new Arg[] {});
 	}
 
+	public static ReturnPath returnPath(Arg... args) {
+		for (Arg a : args) {
+			if (a instanceof ReturnPath)
+				return (ReturnPath) a;
+		}
+		return null;
+	}
+
 	public static Signature sig(Class serviceType,
 								String initSetector) throws SignatureException {
 		return sig(initSetector, serviceType, initSetector);
