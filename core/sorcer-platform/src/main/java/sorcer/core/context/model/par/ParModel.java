@@ -95,7 +95,7 @@ public class ParModel<T> extends ServiceContext<T> implements Evaluation<T>, Inv
 					val = (T) getReturnValue(rp);
 				else
 					val = (T) super.getValue(path, entries);
-				return val;
+//				return val;
 			}
 			if ((val instanceof Par) && (((Par) val).asis() instanceof Variability)) {
 				bindVar((Variability) ((Par) val).asis());

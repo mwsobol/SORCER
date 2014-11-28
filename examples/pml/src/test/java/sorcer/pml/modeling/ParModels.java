@@ -100,7 +100,7 @@ public class ParModels {
 
 		assertEquals(value(par(vm, "j1")), null);
 
-		assertEquals(value(vm, "j1", ent("x1", 10.0), ent("x2", 50.0)), 400.0);
+		assertTrue(value(vm, "j1", ent("x1", 10.0), ent("x2", 50.0)).equals(400.0));
 
 		// equivalent to the above line
 //		assertEquals(

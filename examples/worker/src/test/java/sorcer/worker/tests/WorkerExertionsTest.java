@@ -1,6 +1,6 @@
 package sorcer.worker.tests;
 
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.sorcer.test.ProjectContext;
@@ -39,8 +39,8 @@ public class WorkerExertionsTest {
 	/**
 	 * @throws java.lang.Exception
 	 */
-	@BeforeClass
-	static public void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		
 		hostname = InetAddress.getLocalHost().getHostName();
 		
