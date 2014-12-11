@@ -174,14 +174,11 @@ public class ObjectTask extends Task {
 			InvocationTargetException, ContextException, SignatureException {
 		Object[] args = os.getArgs();
 		Class<?>[] argTypes = os.getParameterTypes();
-//		Object prv = provider(os);
 		Object result = null;
 		if (args != null) {
 			result = method.invoke(null, args);
 		} else if (argTypes != null && argTypes.length == 1 && args == null) {
 			result = method.invoke(null, new Object[] { null });
-//		} else if (prv != null) {
-//			result = method.invoke(prv, (Object[])null);
 		} else {
 			result = method.invoke(null, (Object[])null);
 		}

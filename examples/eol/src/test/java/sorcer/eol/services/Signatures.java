@@ -1,6 +1,5 @@
 package sorcer.eol.services;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.sorcer.test.ProjectContext;
@@ -8,9 +7,7 @@ import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.Adder;
 import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.service.*;
-import sorcer.util.Sorcer;
 
-import java.io.IOException;
 import java.lang.reflect.Proxy;
 import java.util.Calendar;
 import java.util.Date;
@@ -31,8 +28,19 @@ public class Signatures {
 	private final static Logger logger = Logger.getLogger(Signatures.class.getName());
 
 	@Test
-	public void referencingInstances() throws SignatureException,
-			EvaluationException, ExertionException, ContextException {
+	public void newInstance() throws Exception {
+
+		Signature s = sig("new", Date.class);
+		// get service provider for signature
+		Object obj = instance(s);
+		logger.info("provider of s: " + obj);
+		assertTrue(obj instanceof Date);
+
+	}
+
+
+	@Test
+	public void referencingInstances() throws Exception {
 		
 		Object obj = new Date();
 		Signature s = sig("getTime", obj);
@@ -43,8 +51,19 @@ public class Signatures {
 		assertTrue(prv instanceof Date);
 		
 	}
-	
-	
+
+	@Test
+	public void referencingClass() throws Exception {
+
+		Signature s = sig("getTime", Date.class);
+
+		// get service provider for signature
+		Object prv = provider(s);
+		logger.info("provider of s: " + prv);
+		assertTrue(prv instanceof Date);
+
+	}
+
 	@Test
 	public void referencingUtilityClass() throws Exception {
 		
@@ -57,9 +76,9 @@ public class Signatures {
 		
 		ms = sig(Math.class, "max");
 		Context cxt = context(
-				parameterTypes(new Class[] { double.class, double.class }), 
+				parameterTypes(new Class[] { double.class, double.class }),
 				args(new Object[] { 200.11, 3000.0 }));
-		
+
 		// request the service
 		logger.info("max: " + value(service("max", ms, cxt)));
 		assertTrue(value(service("max", ms, cxt)) instanceof Double);
@@ -68,11 +87,8 @@ public class Signatures {
 	}
 	
 
-//	@Ignore
 	@Test
-	//TODO
-	public void referencingClassWithConstructor() throws SignatureException,
-			EvaluationException, ExertionException, ContextException, IOException {
+	public void referencingClassWithConstructor() throws Exception {
 		
 		Signature s = sig("getTime", Date.class);
 		
@@ -91,8 +107,7 @@ public class Signatures {
 	
 	
 	@Test
-	public void referencingFactoryClass() throws SignatureException,
-			EvaluationException, ExertionException, ContextException, IOException {
+	public void referencingFactoryClass() throws Exception {
 		
 		Signature ps = sig("get", Calendar.class, "getInstance");
 		
@@ -102,6 +117,8 @@ public class Signatures {
 		
 		// get service provider for signature
 		Object prv = provider(ps);
+		logger.info("prv: " + prv);
+
 		assertTrue(prv instanceof Calendar);
 		
 		// request the service
@@ -113,7 +130,7 @@ public class Signatures {
 	
 	
 	@Test
-	public void referencingProviderImpl() throws SignatureException  {
+	public void referencingProviderImpl() throws Exception  {
 		
 		// the AdderImpl class (service bean) implements the Adder interface 
 		Signature ps = sig(AdderImpl.class);
@@ -126,8 +143,7 @@ public class Signatures {
 	
 	
 	@Test
-	public void localService() throws SignatureException, 
-		ExertionException, ContextException  {
+	public void localService() throws Exception  {
 		
 		Signature lps = sig("add", AdderImpl.class);
 		Object prv = provider(lps);

@@ -17,16 +17,16 @@
 
 package sorcer.core.signature;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-
 import sorcer.core.invoker.MethodInvoker;
 import sorcer.service.Context;
 import sorcer.service.ContextException;
 import sorcer.service.SignatureException;
 import sorcer.service.modeling.Modeling;
 import sorcer.util.ObjectCloner;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 
 public class ObjectSignature extends ServiceSignature {
 
@@ -229,7 +229,7 @@ public class ObjectSignature extends ServiceSignature {
 		Object obj = null;
 		Method m = null;
 		try {
-			if (initSelector == null) {
+			if (initSelector == null || initSelector.equals("new")) {
 				obj = providerType.newInstance();
 				return obj;
 			}
@@ -241,11 +241,6 @@ public class ObjectSignature extends ServiceSignature {
 					m = providerType.getMethod(initSelector);
 				else
 					m = providerType.getMethod(selector);
-			}
-			// Utility class, target is a static method to be invoked
-			if (selector.equals(initSelector)) {
-				target = m;
-				return m;
 			}
 			if (args != null) {
 				obj = m.invoke(obj, args);

@@ -50,7 +50,6 @@ import sorcer.util.Sorcer;
 import sorcer.util.url.sos.SdbUtil;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.net.InetAddress;
 import java.net.URL;
 import java.rmi.RemoteException;
@@ -747,14 +746,14 @@ public class operator {
 	}
 
 	public static Signature sig(Class serviceType,
-								String initSetector) throws SignatureException {
-		return sig(initSetector, serviceType, initSetector);
+								String initSelector) throws SignatureException {
+		return sig(initSelector, serviceType, initSelector);
 	}
 
 	public static Signature sig(String operation, Class serviceType,
-								String initSetector) throws SignatureException {
+								String initSelector) throws SignatureException {
 		try {
-			return new ObjectSignature(operation, serviceType, initSetector,
+			return new ObjectSignature(operation, serviceType, initSelector,
 					(Class<?>[])null, (Object[])null);
 		} catch (Exception e) {
 			throw new SignatureException(e);
@@ -1658,7 +1657,7 @@ public class operator {
 			} else {
 				return xrt.getContext();
 			}
-		} else if (obj instanceof Context && rPath.path != null) {
+		} else if (obj instanceof Context && rPath != null && rPath.path != null) {
 			return (((Context)obj).getValue(rPath.path));
 		}
 		return obj;
@@ -2140,6 +2139,8 @@ public class operator {
 
 	public static Object provider(Signature signature)
 			throws SignatureException {
+		if (signature instanceof ObjectSignature && ((ObjectSignature)signature).getTarget() != null)
+			return  ((ObjectSignature)signature).getTarget();
 		Object target = null;
 		Object provider = null;
 		Class<?> providerType = null;
@@ -2162,12 +2163,14 @@ public class operator {
 				} else if (Provider.class.isAssignableFrom(providerType)) {
 					provider = providerType.newInstance();
 				} else {
-					target = instance((ObjectSignature) signature);
-					// utility class returns a utility (class) method
-					if (target instanceof Method)
-						provider = ((ObjectSignature)signature).getProviderType();
-					else {
-						provider = target;
+					if (signature.getSelector() == null &&
+								(((ObjectSignature)signature).getInitSelector())== null) {
+						provider = ((ObjectSignature) signature).getProviderType().newInstance();
+					} else if (signature.getSelector().equals(((ObjectSignature)signature).getInitSelector())) {
+						// utility class returns a utility (class) method
+						provider = ((ObjectSignature) signature).getProviderType();
+					} else {
+						provider = instance(signature);
 						((ObjectSignature)signature).setTarget(provider);
 					}
 				}
@@ -2175,7 +2178,7 @@ public class operator {
 				provider = ((EvaluationSignature) signature).getEvaluator();
 			}
 		} catch (Exception e) {
-			throw new SignatureException("No signature provider avaialable", e);
+			throw new SignatureException("No provider available", e);
 		}
 		return provider;
 	}
@@ -2191,7 +2194,9 @@ public class operator {
 	public static Object instance(Signature signature)
 			throws SignatureException {
 		if (signature.getSelector() == null
-				|| signature.getSelector().equals("new"))
+				|| signature.getSelector().equals("new")
+				|| (((ObjectSignature) signature).getInitSelector() != null
+					&& ((ObjectSignature) signature).getInitSelector().equals("new")))
 			return ((ObjectSignature) signature).newInstance();
 		else
 			return ((ObjectSignature) signature).initInstance();

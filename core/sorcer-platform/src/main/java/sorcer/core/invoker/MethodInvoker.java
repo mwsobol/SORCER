@@ -196,7 +196,10 @@ public class MethodInvoker<T> extends ServiceInvoker<T> implements MethodInvokin
 						target = evalClass.newInstance();
 				}
 			} else {
-				evalClass = target.getClass();
+				if (target instanceof Class)
+					evalClass = (Class<?>) target;
+				else
+					evalClass = target.getClass();
 			}
 			// if no paramTypes defined assume that the method name 'selector'
 			// is unique
