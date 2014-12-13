@@ -3,6 +3,7 @@ package sorcer.pml.modeling;
 import junit.framework.Assert;
 import net.jini.core.transaction.TransactionException;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.sorcer.test.ProjectContext;
@@ -468,6 +469,7 @@ public class Invokers {
 		assertEquals(value(alt), 70.0);
 	}
 
+	@Ignore
 	@Test
 	public void loopInvokerTest() throws RemoteException, ContextException {
 		final ParModel pm = parModel("par-model");

@@ -14,10 +14,14 @@
  * limitations under the License.
  */
 
-ext.versionFile = file('version.properties')
+/*
+ * Declares utilities for starting Sorcer using sorcer boot, as we as starting Sorcer with Rio
+ */
+
+ext.versionFile = file('../version.properties')
 
 task loadVersion {
-    project.version = readVersion() as String
+    project.version = readVersion()
     group = 'org.sorcer'
 }
 
@@ -63,56 +67,61 @@ class ProjectVersion {
     }
 }
 
-task wrapper(type: Wrapper) {
-	gradleVersion = '2.1'
+ext.sorcerDistHome = "../distribution/sorcer-${version}"
+
+/*
+ * Start Sorcer only
+ */
+task bootSorcer(type: Exec) {
+    commandLine "ant", "-f", "${file("${sorcerDistHome}").path}/bin/sorcer-boot-arv-http.xml", "run"
 }
+//bootSorcer.onlyIf {
+//    if(file("${sorcerDistHome}").exists()) {
+//        def jps = "jps -lm".execute()
+//        !jps.text.contains("boot-sorcer")
+//    } else {
+//        false
+//    }
+//}
 
-ext {
-    enclaveRepo = "10.131.7.138:7001"
-    //enclaveRepo = "10.0.1.9:50001"
-    enclave = InetAddress.getLocalHost().getHostAddress().startsWith("10.131")
+/*
+ * Start Sorcer using Rio
+ */
+task bootSorcerRio(type: Exec) {
+    commandLine "ant", "-f", "${file("${sorcerDistHome}").path}/bin/rio/boot-sorcer-rio.xml"
 }
+//bootSorcerRio.onlyIf {
+//    if(file("${sorcerDistHome}").exists()) {
+//        def jps = "jps -lm".execute()
+//        !jps.text.contains("start-monitor")
+//    } else {
+//        false
+//    }
+//}
 
-apply from: file('gradle/libraries.gradle')
-apply from: file("gradle/testProperties.gradle")
-
-subprojects {
-    apply from: file("${rootProject.projectDir.path}/gradle/utils.gradle")
-    if (project.name != "examples" && project.name != "sorcer-int-tests") {
-        apply plugin: "maven"
-        apply plugin: "maven-publish"
-
-        if(project.name!="distribution") {
-            apply plugin: "java"
-            apply from: file("${rootProject.projectDir.path}/gradle/bootme.gradle")
-
-
-            publishing {
-                publications {
-                    mavenJava(MavenPublication) {
-                        from components.java
-                    }
-                }
-            }
-        }
-        publishing {
-            repositories {
-                maven {
-                    url "http://$enclaveRepo"
-                    //			url "http://repo1.maven.org/maven2"
-                }
-            }
-        }
-        repositories {
-            mavenLocal()
-            if (!enclave) {
-                mavenCentral()
-                maven { url "http://www.rio-project.org/maven2" }
-                maven { url "http://mvn.sorcersoft.com/content/groups/public" }
-            } else {
-                maven { url "http://$enclaveRepo" }
-            }
-        }
-    }
-
+/*
+ * Destroy Sorcer
+ */
+task terminateSorcerRio(type: Exec) {
+    commandLine "ant", "-f", "${file("${sorcerDistHome}").path}/bin/rio/destroy-sorcer-rio.xml"
 }
+//bootSorcerRio.onlyIf {
+//    file("${sorcerDistHome}").exists()
+//}
+
+/*
+ * * Start a browser
+ */
+task browser(type: Exec) {
+    commandLine "ant", "-f",
+                "${file("${sorcerDistHome}").path}/bin/browser/bin/sorcer-browser.xml",
+                "browser.spawn"
+}
+//browser.onlyIf {
+//    if(file("${ext.sorcerDistHome}").exists()) {
+//        def jps = "jps -lm".execute()
+//        !jps.text.contains("sorcer.ssb.ServiceBrowser")
+//    } else {
+//        false
+//    }
+//}

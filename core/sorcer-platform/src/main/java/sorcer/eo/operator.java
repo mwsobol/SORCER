@@ -563,10 +563,16 @@ public class operator {
 	public static Context put(Context context, Identifiable... objects)
 			throws RemoteException, ContextException {
 		for (Identifiable i : objects) {
+			// just replace the value
+			if (((Map)context).containsKey(i.getName())) {
+				context.putValue(i.getName(), i);
+				continue;
+			}
+
 			if (context instanceof PositionalContext) {
 				PositionalContext pc = (PositionalContext)context;
 				if (i instanceof InputEntry) {
-					pc.putInValueAt(i.getName(), i, pc.getTally()+1);
+					pc.putInValueAt(i.getName(), i, pc.getTally() + 1);
 				} else if (i instanceof OutputEntry) {
 					pc.putOutValueAt(i.getName(), i, pc.getTally()+1);
 				} else if (i instanceof InoutEntry) {
@@ -906,13 +912,6 @@ public class operator {
 		return new EvaluationTask(signature, context);
 	}
 
-//	public static ObjectSignature sig(String operation, Object serviceType, ServiceDeployment deployment,
-//			Class... types) throws SignatureException {
-//		ObjectSignature signature = sig(operation, serviceType, types);
-//		signature.setDeployment(deployment);
-//		return signature;
-//	}
-
 	public static FidelityInfo srvFi(String name) {
 		return new FidelityInfo(name);
 	}
@@ -949,7 +948,7 @@ public class operator {
 
 	public static ObjectSignature sig(String operation, Object object)
 			throws SignatureException {
-		return sig(operation, object, (String) null, null, null);
+		return sig(operation, object, null, null, null);
 	}
 
 	public static ObjectSignature sig(String operation, Object object,
@@ -957,7 +956,7 @@ public class operator {
 		if (args == null || args.length == 0)
 			return sig(operation, object, (String)null, types);
 		else
-			return sig(operation, object, (String)null, types, args);
+			return sig(operation, object, null, types, args);
 	}
 
 	public static ObjectSignature sig(String operation, Object object, String initOperation,
@@ -975,6 +974,16 @@ public class operator {
 				return new ObjectSignature(operation, object,
 						types == null || types.length == 0 ? null : types);
 			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new SignatureException(e);
+		}
+	}
+
+	public static ObjectSignature sig(Object object, String initSelector,
+									  Class[] types, Object[] args) throws SignatureException {
+		try {
+			return new ObjectSignature(object, initSelector, types, args);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new SignatureException(e);
@@ -2193,8 +2202,9 @@ public class operator {
 	 */
 	public static Object instance(Signature signature)
 			throws SignatureException {
-		if (signature.getSelector() == null
-				|| signature.getSelector().equals("new")
+		if ((signature.getSelector() == null
+					&& ((ObjectSignature) signature).getInitSelector() == null)
+				|| signature.getSelector() != null && signature.getSelector().equals("new")
 				|| (((ObjectSignature) signature).getInitSelector() != null
 					&& ((ObjectSignature) signature).getInitSelector().equals("new")))
 			return ((ObjectSignature) signature).newInstance();

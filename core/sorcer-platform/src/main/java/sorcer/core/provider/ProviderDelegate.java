@@ -2199,7 +2199,7 @@ public class ProviderDelegate implements SorcerConstants {
 				// check the class resource
                 ClassLoader resourceLoader = Thread.currentThread().getContextClassLoader();
                 String name = "configs/"+ filename;
-                logger.info("Try to load: "+name);
+                logger.info("Try to load configuration: " + filename);
                 URL resourceURL = resourceLoader.getResource(name);
                 InputStream is = null;
                 if(resourceURL!=null) {
@@ -2231,8 +2231,8 @@ public class ProviderDelegate implements SorcerConstants {
 						// properties
 						Sorcer.updateFromProperties(props);
 					}
-					logger.fine("*** loaded provider properties: /configs/" + filename + ":\n"
-							+ GenericUtil.getPropertiesString(props));
+//					logger.fine("*** loaded provider properties: /configs/" + filename + ":\n"
+//							+ GenericUtil.getPropertiesString(props));
 				}
 			} catch (Exception ex) {
 				logger.log(Level.WARNING, "Not able to load provider's properties: " + filename, ex);
