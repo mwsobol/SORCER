@@ -11,7 +11,7 @@ SORCER installation file.
 	-->
 	<info>
 		<appname>SORCER</appname>
-		<appversion>5.0.0-SNAPSHOT</appversion>
+		<appversion>5.0-SNAPSHOT</appversion>
 		<authors>
 			<author name="Mike Sobolewski" email="sobol@sorcersoft.com"/>
 		</authors>
@@ -79,7 +79,7 @@ SORCER installation file.
 	<packs>
 		<pack name="SORCER Core" installGroups="All,SORCER Core" required="yes">
 			<description>SORCER core distribution</description>
-			<fileset dir="../sorcer-5.0.0-SNAPSHOT" targetdir="$INSTALL_PATH" defaultexcludes="yes"/>
+			<fileset dir="../sorcer-5.0-SNAPSHOT" targetdir="$INSTALL_PATH" defaultexcludes="yes"/>
 		</pack>
 
 <!--
