@@ -76,6 +76,7 @@ ext {
 
 apply from: file('gradle/libraries.gradle')
 apply from: file("gradle/testProperties.gradle")
+apply from: file("gradle/utils.gradle")
 
 allprojects {
     group = 'org.sorcer'
