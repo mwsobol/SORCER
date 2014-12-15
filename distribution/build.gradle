@@ -287,4 +287,7 @@ publishing {
             artifact sorcerDistribution
         }
     }
+    repositories {
+        maven { url "http://$enclaveRepo" }
+    }
 }
