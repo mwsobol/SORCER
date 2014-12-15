@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-ext.versionFile = file('version.properties')
+ext{
+    versionFile = file('version.properties')
+}
 
 task loadVersion {
     project.version = readVersion() as String
-    group = 'org.sorcer'
 }
 
 ProjectVersion readVersion() {
@@ -76,6 +77,10 @@ ext {
 apply from: file('gradle/libraries.gradle')
 apply from: file("gradle/testProperties.gradle")
 
+allprojects {
+    group = 'org.sorcer'
+}
+
 subprojects {
     apply from: file("${rootProject.projectDir.path}/gradle/utils.gradle")
     if (project.name != "examples" && project.name != "sorcer-int-tests") {
@@ -85,7 +90,6 @@ subprojects {
         if(project.name!="distribution") {
             apply plugin: "java"
             apply from: file("${rootProject.projectDir.path}/gradle/bootme.gradle")
-
 
             publishing {
                 publications {
@@ -106,9 +110,9 @@ subprojects {
         repositories {
             mavenLocal()
             if (!enclave) {
-                mavenCentral()
                 maven { url "http://www.rio-project.org/maven2" }
                 maven { url "http://mvn.sorcersoft.com/content/groups/public" }
+                mavenCentral()
             } else {
                 maven { url "http://$enclaveRepo" }
             }

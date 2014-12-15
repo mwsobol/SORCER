@@ -6,21 +6,21 @@
  */
 
 class BuildRepo {
-    static String iGridHome = System.getenv("SORCER_HOME")
-    static String repoAddress = "10.131.7.138:7001"
-	//static String repoAddress = "10.0.1.9:9002"
+    String repoBuilderDir
+    //static String repoAddress = "10.131.7.138:7001"
+	String repoAddress = "rio-project.org/maven2"
 	
-    static void build(artifacts, runDeploy) {
-        if (iGridHome == null)
-            iGridHome = new File("../").path
-        String rootDir = iGridHome
+    void build(artifacts, runDeploy) {
+        if (repoBuilderDir == null)
+            repoBuilderDir = new File(".").path
+        String rootDir = repoBuilderDir
         def cacheDir = new File(".ivy2/cache")
         def localRepository = getLocalRepository()
         if (cacheDir.exists()) {
             cacheDir.deleteDir()
             println "Deleted Ivy cache directory"
         }
-        def File pomDir = new File("${iGridHome}/repo-builder/poms")
+        def File pomDir = new File("${repoBuilderDir}/poms")
 
         artifacts.each { artifact ->
 			String[] parts = artifact.split(":")
@@ -62,7 +62,7 @@ class BuildRepo {
         }
     }
 
-    def static mvnInstall(String artifact, String dir, File localRepository, boolean runDeploy) {
+    def mvnInstall(String artifact, String dir, File localRepository, boolean runDeploy) {
         println "Processing ${artifact}, dir: ${dir} ..."
         String[] parts = artifact.split(":")
         String gId = parts[0]
@@ -97,7 +97,7 @@ class BuildRepo {
                 install = true
         }
         if (install) {
-            getAndMaybeFixPomVersion("${iGridHome}/repo-builder/poms/${aId}.pom", version)
+            getAndMaybeFixPomVersion("${repoBuilderDir}/poms/${aId}.pom", version)
             File toPublish = new File("toPublish.txt")
             if (toPublish.exists())
                 toPublish.delete()
@@ -107,7 +107,7 @@ class BuildRepo {
                     "-Dpackaging=jar " +
                     "-DgroupId=${gId} " +
                     "-DartifactId=${aId} " +
-                    "-DpomFile=${iGridHome}/repo-builder/poms/${aId}.pom"
+                    "-DpomFile=${repoBuilderDir}/poms/${aId}.pom"
             exec(installCommand)
             String findCommand = "find ${localRepository.path} -type f -cmin 1"
             StringBuffer out = new StringBuffer()
@@ -125,7 +125,7 @@ class BuildRepo {
                         "-DgroupId=${gId} " +
                         "-DartifactId=${aId} " +
                         "-Dfile=${dir}/${aId}.jar " +
-                        "-DpomFile=${iGridHome}/repo-builder/poms/${aId}.pom " +
+                        "-DpomFile=${repoBuilderDir}/poms/${aId}.pom " +
                         "-Durl=http://${repoAddress}"
                 exec(deployCommand)
             }
@@ -135,14 +135,14 @@ class BuildRepo {
         }
     }
 
-    static exec(String cmd) {
+    def exec(String cmd) {
         Process process = cmd.execute()
         process.consumeProcessOutputStream(System.out)
         process.consumeProcessErrorStream(System.err)
         process.waitFor()
     }
 
-    def static copy(File source, File target) {
+    def copy(File source, File target) {
         def input = source.newDataInputStream()
         def output = target.newDataOutputStream()
         output << input
@@ -150,14 +150,14 @@ class BuildRepo {
         output.close()
     }
 
-    def static getTempDir() {
+    def getTempDir() {
         File tmpDir = new File(System.getProperty("user.dir") + "/tmp")
         if (!tmpDir.exists())
             tmpDir.mkdirs()
         tmpDir
     }
 
-    def static getJar(File dir, String name) {
+    def getJar(File dir, String name) {
         File jar = null		
         for (File file : dir.listFiles()) {
             if (file.name.startsWith(name)) {
@@ -168,7 +168,7 @@ class BuildRepo {
         return jar
     }
 
-    def static getAndMaybeFixPomVersion(String pom, String version) {
+    def getAndMaybeFixPomVersion(String pom, String version) {
         boolean changed = false
         File pomFile = new File(pom)
         def parsedPom = new XmlSlurper().parse(pomFile)
@@ -188,8 +188,7 @@ class BuildRepo {
      *
      * @return The File for the local maven repository, taking into account settings.xml
      */
-    def static File getLocalRepository() {
-        File repoDir
+    def File getLocalRepository() {
         String localRepository = null
         File defaultM2Home =
             new File(System.getProperty("user.home") + File.separator + ".m2")
@@ -205,6 +204,7 @@ class BuildRepo {
             def settings = new XmlSlurper().parse(settingsFile)
             localRepository = settings.localRepository
         }
+        File repoDir
         if (localRepository == null) {
             repoDir = new File(defaultM2Home, "repository")
         } else if (localRepository != null && localRepository.length() == 0) {
@@ -215,7 +215,7 @@ class BuildRepo {
         return repoDir
     }
 
-    def static void publish() {
+    def void publish() {
         File localRepository = getLocalRepository()
         File toPublish = new File("toPublish.txt")
         if (!toPublish.exists()) {
@@ -264,9 +264,9 @@ class BuildRepo {
     }
 }
 
-def getArtifacts(String[] options) {
+def getArtifacts(String[] options, String scriptDir) {
     def props = new Properties()
-    new File("${System.getenv('SORCER_HOME')}/repo-builder/versions.properties").withInputStream {
+    new File("${scriptDir}/versions.properties").withInputStream {
         stream -> props.load(stream)
     }
     for (prop in props) {
@@ -325,24 +325,26 @@ def getArtifacts(String[] options) {
     }
     artifacts
 }
-
+def options = []
 if (args[0].equals("all")) {
-    def options = []
+
     options << "sorcer"
     options << "buildtools"
     options << "common"
     options << "river"
     options << "blitz"
-    args = options as String[]
 } else {
     if (args[0].equals("push")) {
-        BuildRepo.push()
+        new BuildRepo().push()
         System.exit(0)
+    } else {
+        options << args[0]
     }
 }
 
-def artifacts = getArtifacts(args[0])
+String scriptDir = new File(getClass().protectionDomain.codeSource.location.path).parent
+def artifacts = getArtifacts(options as String[], scriptDir)
 if (artifacts) {
     boolean doDeploy = Boolean.valueOf(args[1])
-    BuildRepo.build(artifacts, doDeploy)
+    new BuildRepo().build(artifacts, doDeploy)
 }

@@ -21,6 +21,7 @@ apply plugin: 'maven'
 apply plugin: 'maven-publish'
 
 version = sorcerVersion
+group = "org.sorcer"
 
 /* Declare a custom configuration for distribution only dependencies */
 configurations {
@@ -116,7 +117,7 @@ task gatherDeps() {
         /* Copy over distribution dependencies */
         project.configurations['distribution'].files.each { file ->
             String dest
-            if(file.path.endsWith("distribution-5.0-M4.zip")) {
+            if(file.path.endsWith("distribution-${rioVersion}.zip")) {
                 copy {
                     from(zipTree(file)) {
                         exclude "**/examples.zip"

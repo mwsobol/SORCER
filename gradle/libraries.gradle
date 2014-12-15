@@ -22,10 +22,10 @@ ext {
 	sorcerVersion = version
 	sorcerModelingVersion = "1.1.9"
 
-	groovyVersion = "2.2.1"
-	rioVersion = "5.0-M4"
+	groovyVersion = "2.3.8"
+	rioVersion = "5.0-M5"
 	riverVersion = "2.2.2"
-	slf4jVersion = "1.7.5"
+	slf4jVersion = "1.7.7"
 	blitzVersion = "2.1.7"
 	lockmgrVersion = "2.1.7"
 	jeVersion = "5.0.104"
