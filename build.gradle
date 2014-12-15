@@ -19,7 +19,7 @@ ext{
 }
 
 task loadVersion {
-    project.version = readVersion() as String
+    project.version = readVersion()
 }
 
 ProjectVersion readVersion() {
