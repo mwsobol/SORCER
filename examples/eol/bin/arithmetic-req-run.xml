@@ -10,7 +10,7 @@
 	
 	<!-- set property values here -->
 	<property name="requestor.name" value="ex6-exertlet" />
-	<property name="requestor.class" value="sorcer.core.requestor.ExertletRunner" />
+	<property name="requestor.class" value="sorcer.core.requestor.ServiceRunner" />
 
 	<path id="project.classpath">
 		<pathelement location="${sorcer.lib}/${requestor.name}.jar" />
@@ -31,7 +31,7 @@
 
 	<target name="run.requestor">
 		<java classname="${requestor.class}" fork="yes">
-			<arg value="sorcer.arithmetic.requestor.ArithmeticExertletRequestor" />
+			<arg value="sorcer.arithmetic.requestor.ArithmeticServiceRequestor" />
 			<classpath refid="project.classpath" />
 			<sysproperty key="java.util.logging.config.file" value="${sorcer.home}/configs/sorcer.logging" />
 			<sysproperty key="java.security.policy" value="../policy/${requestor.name}.policy" />

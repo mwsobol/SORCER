@@ -37,6 +37,7 @@ import sorcer.arithmetic.provider.RemoteAdder;
 import sorcer.arithmetic.provider.Subtractor;
 import sorcer.core.SorcerConstants;
 import sorcer.core.provider.Exerter;
+import sorcer.core.requestor.SorcerRequestor;
 import sorcer.service.ContextException;
 import sorcer.service.Exertion;
 import sorcer.service.ExertionCallable;
@@ -64,11 +65,12 @@ import sorcer.util.ProviderAccessor;
  * @author Mike Sobolewski
  */
 @SuppressWarnings("unchecked")
-public class ArithmeticTester implements SorcerConstants {
+public class ArithmeticTester extends SorcerRequestor {
 
 	private static Logger logger = Log.getTestLog();
-	
-	public static void main(String[] args) throws Exception {
+
+	@Override
+	public void run(String... args) throws Exception {
 		System.setSecurityManager(new SecurityManager());
 		logger.info("running: " + args[0]);
 		Exertion result = null;
@@ -109,7 +111,7 @@ public class ArithmeticTester implements SorcerConstants {
 //		logger.info(">>>>>>>>>>>>> exceptions: " + exceptions(result));
 //		logger.info(">>>>>>>>>>>>> result context: " + context(result));
 	}
-	
+
 	// two level composition
 	private Exertion f1a() throws Exception {
 		String arg = "arg", result = "result";

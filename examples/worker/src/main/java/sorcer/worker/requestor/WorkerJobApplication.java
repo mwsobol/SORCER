@@ -21,7 +21,7 @@ import sorcer.worker.provider.Worker;
  *
  */
 @SuppressWarnings("rawtypes")
-public class WorkerJobRequestor {
+public class WorkerJobApplication {
 
 	private static Logger logger = Log.getTestLog();
 
@@ -39,7 +39,7 @@ public class WorkerJobRequestor {
 		logger.info("Provider name2: " + pn2);
 		logger.info("Provider name3: " + pn3);
 
-		Exertion result = new WorkerJobRequestor()
+		Exertion result = new WorkerJobApplication()
 			.getExertion(pn1, pn2, pn3).exert();
 		// get contexts of component exertions - in this case tasks
 		logger.info("Output context1: \n" + result.getContext("work1"));

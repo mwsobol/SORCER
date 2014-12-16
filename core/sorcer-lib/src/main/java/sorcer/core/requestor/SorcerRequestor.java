@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.UnknownHostException;
-import java.rmi.RMISecurityManager;
 import java.util.Arrays;
 import java.util.Properties;
 import java.util.StringTokenizer;
@@ -66,7 +65,7 @@ abstract public class SorcerRequestor implements SorcerConstants {
 	 */
 	public static void main(String... args) throws Exception {
 		// Setup the security manager
-		System.setSecurityManager(new RMISecurityManager());
+		System.setSecurityManager(new SecurityManager());
 
 		// Initialize system properties: configs/sorcer.env
 		Sorcer.getEnvProperties();
@@ -133,7 +132,7 @@ abstract public class SorcerRequestor implements SorcerConstants {
 	/**
 	 * Loads service requestor properties from a <code>filename</code> file. 
 	 * 
-	 * @param filename
+	 * @param filenames
 	 *            the properties file name see #getProperty
 	 * @throws ConfigurationException 
 	 */

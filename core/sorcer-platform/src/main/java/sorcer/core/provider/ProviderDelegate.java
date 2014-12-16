@@ -40,6 +40,7 @@ import net.jini.lookup.entry.Name;
 import net.jini.security.AccessPermission;
 import net.jini.security.TrustVerifier;
 import net.jini.space.JavaSpace05;
+import sorcer.jini.jeri.BeanILFactory;
 import sorcer.service.ContextManagement;
 import sorcer.core.SorcerConstants;
 import sorcer.core.SorcerNotifierProtocol;
@@ -2744,7 +2745,8 @@ public class ProviderDelegate implements SorcerConstants {
 						Exporter.class,
 						new BasicJeriExporter(TcpServerEndpoint.getInstance(
 								exporterInterface, exporterPort),
-								new BasicILFactory()));
+								new BeanILFactory()));
+//								new BasicILFactory()));
 				if (outerExporter == null) {
 					logger.warning("*** NO provider exporter defined!!!");
 				} else {

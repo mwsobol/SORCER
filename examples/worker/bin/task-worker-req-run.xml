@@ -4,12 +4,12 @@
 
 	<!-- loads system environment variables -->
 	<property environment="env" />
-	<import file="${env.IGRID_HOME}/bin/common-run.xml" />
+	<import file="${env.SORCER_HOME}/bin/common-run.xml" />
 	<echo message="webster: ${provider.webster.url}" />
 
 	<!-- set property values here -->
 	<property name="requestor.name" value="worker-req" />
-	<property name="requestor.class" value="sorcer.ex2.requestor.WorkerTaskRequestor" />
+	<property name="requestor.class" value="sorcer.worker.requestor.WorkerTaskApplication" />
 	<property name="webster" value="${provider.webster.url}" />
 	<echo message="webster: ${webster}" />
 
