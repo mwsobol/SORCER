@@ -261,7 +261,7 @@ task distribution(dependsOn: [":sorcer-boot:install",
         File versionPropsFile = file("${distDir}-${version}/configs/versions.properties")
         versionProps.setProperty("river.version", riverVersion)
         versionProps.setProperty("rio.version", rioVersion)
-        versionProps.setProperty("sorcer.version", version.toString())
+        versionProps.setProperty("sorcer.version", version)
         versionProps.setProperty("blitz.version", blitzVersion)
         versionProps.setProperty("je.version", jeVersion)
         versionProps.setProperty("groovy.version", groovyVersion)
