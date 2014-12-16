@@ -76,13 +76,14 @@ ext {
 
 apply from: file('gradle/libraries.gradle')
 apply from: file("gradle/testProperties.gradle")
-
+apply from: file("gradle/utils.gradle")
+		
 allprojects {
     group = 'org.sorcer'
 }
 
 subprojects {
-    apply from: file("${rootProject.projectDir.path}/gradle/utils.gradle")
+
     if (project.name != "examples" && project.name != "sorcer-int-tests") {
         apply plugin: "maven"
         apply plugin: "maven-publish"
