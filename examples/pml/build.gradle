@@ -1,7 +1,6 @@
 
-version = sorcerVersion as String
+version = sorcerVersion
 
-println "ZZZZZZZZZZZZZ version" + version.getClass()
 jar {
 	manifest {
 		attributes("Implementation-Title": "SORCER Volume service bean", "Implementation-Version": version)

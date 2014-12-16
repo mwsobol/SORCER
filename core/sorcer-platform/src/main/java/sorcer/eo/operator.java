@@ -1253,7 +1253,6 @@ public class operator {
 
 		if (rp != null) {
 			((ServiceContext) job.getDataContext()).setReturnPath(rp);
-			logger.info("ZZZZZZZZZZZZZZ setting rp: " + rp);
 		}
 
 		if (job instanceof NetJob && control != null) {
