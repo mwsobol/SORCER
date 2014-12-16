@@ -45,7 +45,7 @@ task printVersion << {
     logger.quiet "Version: $version"
 }
 
-class ProjectVersion {
+class ProjectVersion implements Serializable {
     Integer major
     Integer minor
     Boolean release
