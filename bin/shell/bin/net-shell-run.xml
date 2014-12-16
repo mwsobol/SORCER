@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+
+<project name="ssh" default="SORCER Shell" basedir=".">
+	<!-- load system environment variables -->
+	<property environment="env" />
+	<import file="${env.IGRID_HOME}/bin/common-run.xml" />
+
+	<target name="SORCER Shell">
+		<java classname="sorcer.tools.shell.ExertionShell" fork="no">
+			<!--jvmarg value="-Xdock:name=SORCER Service Browser" /-->
+			<classpath>
+				<pathelement location="${sorcer-ext.lib}/shell.jar" />
+				<pathelement location="${jini.lib}/jsk-lib.jar" />
+				<pathelement location="${jini.lib}/jsk-platform.jar" />
+				<pathelement location="${jini-dl.lib}/outrigger-dl.jar" />
+				<pathelement location="${jini.lib}/serviceui.jar" />
+			</classpath>
+			<sysproperty key="java.util.logging.config.file" value="${iGrid.home}/configs/sorcer.logging" />
+			<sysproperty key="iGrid.home" value="${iGrid.home}" />
+			<sysproperty key="java.protocol.handler.pkgs" value="net.jini.url" />
+			<sysproperty key="java.security.policy" value="../policy/shell.policy" />
+			<sysproperty key="ssb.logFile" value="../logs/browser.log" />
+		</java>
+	</target>
+
+</project>
