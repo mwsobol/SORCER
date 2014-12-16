@@ -75,14 +75,14 @@ ext.sorcerDistHome = "../distribution/sorcer-${version}"
 task bootSorcer(type: Exec) {
     commandLine "ant", "-f", "${file("${sorcerDistHome}").path}/bin/sorcer-boot-arv-http.xml", "run"
 }
-//bootSorcer.onlyIf {
-//    if(file("${sorcerDistHome}").exists()) {
-//        def jps = "jps -lm".execute()
-//        !jps.text.contains("boot-sorcer")
-//    } else {
-//        false
-//    }
-//}
+bootSorcer.onlyIf {
+    if(file("${sorcerDistHome}").exists()) {
+        def jps = "jps -lm".execute()
+        !jps.text.contains("boot-sorcer")
+    } else {
+        false
+    }
+}
 
 /*
  * Start Sorcer using Rio
@@ -90,14 +90,14 @@ task bootSorcer(type: Exec) {
 task bootSorcerRio(type: Exec) {
     commandLine "ant", "-f", "${file("${sorcerDistHome}").path}/bin/rio/boot-sorcer-rio.xml"
 }
-//bootSorcerRio.onlyIf {
-//    if(file("${sorcerDistHome}").exists()) {
-//        def jps = "jps -lm".execute()
-//        !jps.text.contains("start-monitor")
-//    } else {
-//        false
-//    }
-//}
+bootSorcerRio.onlyIf {
+    if(file("${sorcerDistHome}").exists()) {
+        def jps = "jps -lm".execute()
+        !jps.text.contains("start-monitor")
+    } else {
+        false
+    }
+}
 
 /*
  * Destroy Sorcer
@@ -105,9 +105,9 @@ task bootSorcerRio(type: Exec) {
 task terminateSorcerRio(type: Exec) {
     commandLine "ant", "-f", "${file("${sorcerDistHome}").path}/bin/rio/destroy-sorcer-rio.xml"
 }
-//bootSorcerRio.onlyIf {
-//    file("${sorcerDistHome}").exists()
-//}
+bootSorcerRio.onlyIf {
+    file("${sorcerDistHome}").exists()
+}
 
 /*
  * * Start a browser
@@ -117,11 +117,11 @@ task browser(type: Exec) {
                 "${file("${sorcerDistHome}").path}/bin/browser/bin/sorcer-browser.xml",
                 "browser.spawn"
 }
-//browser.onlyIf {
-//    if(file("${ext.sorcerDistHome}").exists()) {
-//        def jps = "jps -lm".execute()
-//        !jps.text.contains("sorcer.ssb.ServiceBrowser")
-//    } else {
-//        false
-//    }
-//}
+browser.onlyIf {
+    if(file("${ext.sorcerDistHome}").exists()) {
+        def jps = "jps -lm".execute()
+        !jps.text.contains("sorcer.ssb.ServiceBrowser")
+    } else {
+        false
+    }
+}

@@ -1,0 +1,281 @@
+# -*- mode:sh -*-
+
+##############################################################################
+##                                                                          ##
+##  The SORCER Network Shell (nsh) JVM Bootstrap for UN*X                   ##
+##                                                                          ##
+##############################################################################
+
+PROGNAME=`basename "$0"`
+
+#DIRNAME=`dirname "$0"`
+
+SCRIPT_PATH="$0"
+
+# Use the maximum available, or set MAX_FD != -1 to use that value.
+MAX_FD="maximum"
+
+warn ( ) {
+    echo "${PROGNAME}: $*"
+}
+
+die ( ) {
+    warn "$*"
+    exit 1
+}
+
+earlyInit ( ) {
+    return
+}
+
+lateInit ( ) {
+    return
+}
+
+NSH_STARTUP="$HOME/.nsh/startup"
+if [ -r "$NSH_STARTUP" ] ; then
+    . "$NSH_STARTUP"
+fi
+
+earlyInit
+
+# OS specific support (must be 'true' or 'false').
+cygwin=false
+msys=false
+darwin=false
+case "`uname`" in
+  CYGWIN* )
+    cygwin=true
+    ;; 
+  Darwin* )
+    darwin=true
+    ;;
+  MINGW* )
+    msys=true
+    ;;
+esac
+
+if [ "$1" = "-cp" -o "$1" = "-classpath" -o "$1" = "--classpath" ] ; then
+    CP=$2
+    shift 2
+fi
+
+# Attempt to set JAVA_HOME if it's not already set.
+if [ -z "$JAVA_HOME" ] ; then
+    if $darwin ; then 
+        [ -z "$JAVA_HOME" -a -d "/Library/Java/Home" ] && export JAVA_HOME="/Library/Java/Home"
+        [ -z "$JAVA_HOME" -a -d "/System/Library/Frameworks/JavaVM.framework/Home" ] && export JAVA_HOME="/System/Library/Frameworks/JavaVM.framework/Home"
+    else
+        javaExecutable="`which javac`"
+        [ -z "$javaExecutable" -o "`expr \"$javaExecutable\" : '\([^ ]*\)'`" = "no" ] && die "JAVA_HOME not set and cannot find javac to deduce location, please set JAVA_HOME."
+        # readlink(1) is not available as standard on Solaris 10.
+        readLink=`which readlink`
+        [ `expr "$readLink" : '\([^ ]*\)'` = "no" ] && die "JAVA_HOME not set and readlink not available, please set JAVA_HOME."
+        javaExecutable="`readlink -f \"$javaExecutable\"`"
+        javaHome="`dirname \"$javaExecutable\"`"
+        javaHome=`expr "$javaHome" : '\(.*\)/bin'`
+        JAVA_HOME="$javaHome"
+        export JAVA_HOME
+
+    fi
+fi
+
+# For Cygwin, ensure paths are in UNIX format before anything is touched.
+if $cygwin ; then
+    [ -n "$SORCER_HOME" ] && SORCER_HOME=`cygpath --unix "$SORCER_HOME"`
+    [ -n "$JAVACMD" ] && JAVACMD=`cygpath --unix "$JAVACMD"`
+    [ -n "$JAVA_HOME" ] && JAVA_HOME=`cygpath --unix "$JAVA_HOME"`
+    [ -n "$CP" ] && CP=`cygpath --path --unix "$CP"`
+else
+    if [ -n "SORCER_HOME" -a `expr "$SORCER_HOME":'\/$'` ] ; then
+        SORCER_HOME=`echo $SORCER_HOME | sed -e 's/\/$//'`
+    fi
+fi
+
+#  For MSYS, ensure paths are in appropriate format.
+if $msys
+then
+    [ -n "$JAVA_HOME" ] && JAVA_HOME=`( cd "$JAVA_HOME" ; pwd )`
+fi
+
+# Attempt to set SORCER_HOME if it is not already set.
+if [ -z "$SORCER_HOME" -o ! -d "$SORCER_HOME" ] ; then
+    # Resolve links: $0 may be a link to iGrid's home.
+    PRG="$0"
+    # Need this for relative symlinks.
+    while [ -h "$PRG" ] ; do
+        ls=`ls -ld "$PRG"`
+        link=`expr "$ls" : '.*-> \(.*\)$'`
+        if expr "$link" : '/.*' > /dev/null; then
+            PRG="$link"
+        else
+            PRG=`dirname "$PRG"`"/$link"
+        fi
+    done
+    SAVED="`pwd`"
+    cd "`dirname \"$PRG\"`/.."
+    SORCER_HOME="`pwd -P`"
+    cd "$SAVED"
+fi
+
+# Use SORCER default if still not found
+if [ -z "$NSH_CONF" ] ; then
+    NSH_CONF="$SORCER_HOME/bin/shell/configs/nsh-start.config"
+fi
+
+# Use the user nsh start-config file if exists.
+startConfigFile="$HOME/.nsh/configs/nsh-start.config"
+if [ -e $startConfigFile ] ; then
+    NSH_CONF="$HOME/.nsh/configs/nsh-start.config"
+fi
+
+RIO_CLASSPATH="$RIO_HOME/lib/rio-platform-5.0-M4.jar:$RIO_HOME/lib/rio-lib-5.0-M4.jar:$RIO_HOME/lib/rio-start-5.0-M4.jar:$RIO_HOME/lib-dl/monitor-api-5.0-M4.jar:$RIO_HOME/lib/logging/slf4j-jdk14-1.7.5.jar"
+# the classpath to start nsh then application specific classpath is defined in nsh-start.config
+STARTER_CLASSPATH="$SORCER_HOME/lib/common/groovy/groovy-all-2.2.1.jar:$SORCER_HOME/lib/river/lib/jsk-platform.jar:$SORCER_HOME/lib/river/lib/jsk-lib.jar:$RIO_CLASSPATH:$SORCER_HOME/lib/sorcer/lib-ext/shell.jar:$SORCER_HOME/lib/sorcer/lib-ext/webster.jar:$SORCER_HOME/lib/sorcer/lib/sorcer-prv.jar"
+
+# Create the final classpath. Setting a classpath using the -cp or -classpath option means not to use the
+# global classpath. Network shell behaves then the same as the java interpreter
+if [ -n "$CP" ] ; then
+    CP="$CP":.
+elif [ -n "$CLASSPATH" ] ; then
+    CP="$CLASSPATH":.
+else
+    CP=.
+    
+fi
+
+# Determine the Java command to use to start the JVM.
+if [ -z "$JAVACMD" ] ; then
+    if [ -n "$JAVA_HOME" ] ; then
+        if [ -x "$JAVA_HOME/jre/sh/java" ] ; then
+            # IBM's JDK on AIX uses strange locations for the executables
+            JAVACMD="$JAVA_HOME/jre/sh/java"
+        else
+            JAVACMD="$JAVA_HOME/bin/java"
+        fi
+    else
+        JAVACMD="java"
+    fi
+fi
+if [ ! -x "$JAVACMD" ] ; then
+    die "JAVA_HOME is not defined correctly, can not execute: $JAVACMD"
+fi
+if [ -z "$JAVA_HOME" ] ; then
+    warn "JAVA_HOME environment variable is not set"
+fi
+
+# Increase the maximum file descriptors if we can.
+if [ "$cygwin" = "false" -a "$darwin" = "false" ] ; then
+    MAX_FD_LIMIT=`ulimit -H -n`
+    if [ $? -eq 0 ] ; then
+        if [ "$MAX_FD" = "maximum" -o "$MAX_FD" = "max" ] ; then
+            MAX_FD="$MAX_FD_LIMIT"
+        fi
+        ulimit -n $MAX_FD
+        if [ $? -ne 0 ] ; then
+            warn "Could not set maximum file descriptor limit: $MAX_FD"
+        fi
+    else
+        warn "Could not query businessSystem maximum file descriptor limit: $MAX_FD_LIMIT"
+    fi
+fi
+
+# Setup Profiler
+useprofiler=false
+if [ "$PROFILER" != "" ] ; then
+    if [ -r "$PROFILER" ] ; then
+        . $PROFILER
+        useprofiler=true
+    else
+        die "Profiler file not found: $PROFILER"
+    fi
+fi
+
+# For Darwin, use classes.jar for TOOLS_JAR
+TOOLS_JAR="$JAVA_HOME/lib/tools.jar"
+#if $darwin; then
+#    TOOLS_JAR="/System/Library/Frameworks/JavaVM.framework/Versions/CurrentJDK/Classes/classes.jar"
+#fi
+
+# For Darwin, add NSH_APP_NAME to the JAVA_OPTS as -Xdock:name
+if $darwin; then
+    JAVA_OPTS="$JAVA_OPTS -Xdock:name=NSH_APP_NAME -Xdock:icon=$SORCER_HOME/bin/shell/configs/sorcer-dock-rgb.png"
+fi
+
+# For Cygwin, switch paths to Windows format before running java
+if $cygwin ; then
+  	SORCER_HOME=`cygpath --mixed "$SORCER_HOME"`
+    JAVA_HOME=`cygpath --mixed "$JAVA_HOME"`
+    NSH_CONF=`cygpath --mixed "$NSH_CONF"`
+    CP=`cygpath --path --mixed "$CP"`    
+    TOOLS_JAR=`cygpath --mixed "$TOOLS_JAR"`
+    STARTER_CLASSPATH=`cygpath --path --mixed "$STARTER_CLASSPATH"`
+
+    # We build the pattern for arguments to be converted via cygpath
+    ROOTDIRSRAW=`find -L / -maxdepth 1 -mindepth 1 -type d 2>/dev/null`
+    SEP=""
+    for dir in $ROOTDIRSRAW ; do
+        ROOTDIRS="$ROOTDIRS$SEP$dir"
+        SEP="|"
+    done
+    OURCYGPATTERN="(^($ROOTDIRS))"
+    # Add a user-defined pattern to the cygpath arguments
+    if [ "$SORCER_CYGPATTERN" != "" ] ; then
+        OURCYGPATTERN="$OURCYGPATTERN|($NSH_CYGPATTERN)"
+    fi
+    # Now convert the arguments - kludge to limit ourselves to /bin/sh
+    i=0
+    for arg in "$@" ; do
+        CHECK=`echo "$arg"|egrep -c "$OURCYGPATTERN" -`
+        if [ $CHECK -ne 0 ] ; then
+            eval `echo args$i`=`cygpath --path --ignore --mixed "$arg"`
+        else
+            eval `echo args$i`="\"$arg\""
+        fi
+        i=`expr $i + 1`
+    done
+    case $i in
+        0) set -- ;;
+        1) set -- "$args0" ;;
+        2) set -- "$args0" "$args1" ;;
+        3) set -- "$args0" "$args1" "$args2" ;;
+        4) set -- "$args0" "$args1" "$args2" "$args3" ;;
+        5) set -- "$args0" "$args1" "$args2" "$args3" "$args4" ;;
+        6) set -- "$args0" "$args1" "$args2" "$args3" "$args4" "$args5" ;;
+        7) set -- "$args0" "$args1" "$args2" "$args3" "$args4" "$args5" "$args6" ;;
+        8) set -- "$args0" "$args1" "$args2" "$args3" "$args4" "$args5" "$args6" "$args7" ;;
+        9) set -- "$args0" "$args1" "$args2" "$args3" "$args4" "$args5" "$args6" "$args7" "$args8" ;;
+    esac
+
+fi
+
+startShell ( ) {	
+    CLASS=$1
+    shift
+    # Start the Profiler or the JVM
+    if $useprofiler ; then
+        runProfiler
+    else
+#       echo "==> STARTER_CLASSPATH: $STARTER_CLASSPATH"
+        exec "$JAVACMD" $JAVA_OPTS \
+            -classpath "$STARTER_CLASSPATH" \
+            -Djava.security.policy="$SORCER_HOME"/bin/shell/policy/shell.policy \
+            -Dscript.name="$SCRIPT_PATH" \
+            -Dprogram.name="$PROGNAME" \
+            -Desh.starter.conf="$NSH_CONF" \
+            -DiGrid.home="$SORCER_HOME" \
+            -Djava.protocol.handler.pkgs="net.jini.url|sorcer.util.bdb.sos|org.rioproject.url" \
+            -Djava.rmi.server.RMIClassLoaderSpi=org.rioproject.rmi.ResolvingLoader \
+            -Dtools.jar="$TOOLS_JAR" \
+            -Djava.util.logging.config.file="$SORCER_HOME"/bin/shell/configs/sorcer.logging \
+            $STARTER_MAIN_CLASS \
+            --main $CLASS \
+            --config "$NSH_CONF" \
+            --classpath "$CP" \
+            "$@"
+    fi
+}
+
+STARTER_MAIN_CLASS=sorcer.tools.shell.ShellStarter
+
+lateInit
