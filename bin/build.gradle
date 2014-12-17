@@ -76,12 +76,8 @@ task bootSorcer(type: Exec) {
     commandLine "ant", "-f", "${file("${sorcerDistHome}").path}/bin/sorcer-boot-arv-http.xml", "run"
 }
 bootSorcer.onlyIf {
-    if(file("${sorcerDistHome}").exists()) {
-        def jps = "jps -lm".execute()
-        !jps.text.contains("boot-sorcer")
-    } else {
-        false
-    }
+    def jps = "jps -lm".execute()
+    !jps.text.contains("boot-sorcer")
 }
 
 /*
@@ -91,12 +87,8 @@ task bootSorcerRio(type: Exec) {
     commandLine "ant", "-f", "${file("${sorcerDistHome}").path}/bin/rio/boot-sorcer-rio.xml"
 }
 bootSorcerRio.onlyIf {
-    if(file("${sorcerDistHome}").exists()) {
-        def jps = "jps -lm".execute()
-        !jps.text.contains("start-monitor")
-    } else {
-        false
-    }
+    def jps = "jps -lm".execute()
+    !jps.text.contains("start-monitor")
 }
 
 /*
@@ -105,23 +97,16 @@ bootSorcerRio.onlyIf {
 task terminateSorcerRio(type: Exec) {
     commandLine "ant", "-f", "${file("${sorcerDistHome}").path}/bin/rio/destroy-sorcer-rio.xml"
 }
-bootSorcerRio.onlyIf {
-    file("${sorcerDistHome}").exists()
-}
 
 /*
  * * Start a browser
  */
 task browser(type: Exec) {
     commandLine "ant", "-f",
-                "${file("${sorcerDistHome}").path}/bin/browser/bin/sorcer-browser.xml",
-                "browser.spawn"
+            "${file("${sorcerDistHome}").path}/bin/browser/bin/sorcer-browser.xml",
+            "browser.spawn"
 }
 browser.onlyIf {
-    if(file("${ext.sorcerDistHome}").exists()) {
-        def jps = "jps -lm".execute()
-        !jps.text.contains("sorcer.ssb.ServiceBrowser")
-    } else {
-        false
-    }
+    def jps = "jps -lm".execute()
+    !jps.text.contains("sorcer-browser")
 }

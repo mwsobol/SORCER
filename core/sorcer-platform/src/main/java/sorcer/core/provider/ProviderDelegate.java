@@ -2745,8 +2745,8 @@ public class ProviderDelegate implements SorcerConstants {
 						Exporter.class,
 						new BasicJeriExporter(TcpServerEndpoint.getInstance(
 								exporterInterface, exporterPort),
-								new BeanILFactory()));
-//								new BasicILFactory()));
+//								new BeanILFactory()));
+								new BasicILFactory()));
 				if (outerExporter == null) {
 					logger.warning("*** NO provider exporter defined!!!");
 				} else {

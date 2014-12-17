@@ -53,7 +53,7 @@ task installer(dependsOn: ["distribution"]) {
 
     doLast {
         ant.taskdef(name: 'izpack',
-                    classpath: fileTree(dir: file('distribution/izpack/lib'), includes: ['*.jar']).asPath,
+                    classpath: fileTree(dir: file("${rootProject.projectDir.path}/distribution/izpack/lib"), includes: ['*.jar']).asPath,
                     classname: 'com.izforge.izpack.ant.IzPackTask')
 
         ant.property(name: 'app.group',   value: 'SORCER')
@@ -62,14 +62,15 @@ task installer(dependsOn: ["distribution"]) {
         ant.property(name: 'app.version', value: version)
         ant.property(name: 'app.subpath', value: "SORCER-$version")
 
-        ant.izpack(basedir: "distribution/izpack",
-                   output: "distribution/sorcer-${version}-installer.jar",
+        ant.izpack(basedir: "${rootProject.projectDir.path}/distribution/izpack",
+                   output: "${rootProject.projectDir.path}/distribution/sorcer-${version}-installer.jar",
                    compression: 'deflate',
                    compressionlevel: '9') {
-            config(file('distribution/izpack/installer.xml').text)
+            config(file("${rootProject.projectDir.path}/distribution/izpack/installer.xml").text)
         }
     }
 }
+installer.outputs.upToDateWhen { false }
 
 def filter(project) {
     def exclusions = ["sos-shell", "examples", "sorcer-int-tests"]

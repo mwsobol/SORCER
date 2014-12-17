@@ -111,3 +111,14 @@ test {
     dependsOn([install, bootme])
     finalizedBy(stopme)
 }
+
+//task runTester(type:JavaExec, dependsOn:[jar, "bootme"]) {
+task runTester(type:JavaExec, dependsOn:[jar]) {
+	main = "sorcer.core.requestor.SorcerRequestor"
+	classpath = sourceSets.main.runtimeClasspath
+	systemProperty "requestor.properties", "configs/arithmetic-req.properties"
+	systemProperty "java.rmi.server.codebase",
+			"${websterUrl}/${repoPath()}/arithmetic-${version}-dl.jar ${websterUrl}/sorcer-dl-${version}.jar ${websterUrl}/jsk-dl-${riverVersion}.jar"
+	args = ["sorcer.arithmetic.requestor.ArithmeticTester", "f1"]
+//	finalizedBy (":stopme")
+}

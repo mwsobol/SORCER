@@ -13,7 +13,10 @@ SORCER installation file.
 		<appname>SORCER</appname>
 		<appversion>5.0-SNAPSHOT</appversion>
 		<authors>
-			<author name="Mike Sobolewski" email="sobol@sorcersoft.com"/>
+			<author name="Mike Sobolewski" email="sobol@sorcersoft.org"/>
+			<author name="Ray Kolonay" email="raymond.kolonay@us.af.mil"/>
+			<author name="Scott A. Burton" email="scottaburton@amopti.com"/>
+			<author name="Dennis Reedy" email="dennis.reedy@gmail.com"/>
 		</authors>
 		<javaversion>1.7</javaversion>
 	</info>

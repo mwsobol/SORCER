@@ -36,3 +36,6 @@ junit*.properties
 /settings.gradle
 /.idea/
 /SORCER.iml
+
+### Generated config files
+bin/webster/websterConfig.groovy
