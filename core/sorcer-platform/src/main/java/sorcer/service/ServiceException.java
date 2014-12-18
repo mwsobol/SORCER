@@ -13,62 +13,58 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * @author Mike Sobolewski
  */
 
 package sorcer.service;
 
+import sorcer.util.ProviderInfo;
+
 public class ServiceException extends Exception {
 
 	private static final long serialVersionUID = 1L;
-	/**  Embedded exception for this ServiceException */
-	
-	private String providerName = null;
-	private String serviceName = null;
-	private Exception embedded;
-	private String msg = null;
-	
+
+	private ProviderInfo providerInfo;
+
 	public ServiceException() {
+		super();
 	}
 
 	public ServiceException(String msg) {
 		super(msg);
 	}
-	
+
 	/**
 	 * Constructs a new ServiceException with an embedded exception.
-	 * 
-	 * @param exception
+	 *
+	 * @param cause
 	 *            embedded exception
 	 */
-	public ServiceException(Exception exception) {
-		this();
-		embedded = exception;
+	public ServiceException(Throwable cause) {
+		super(cause);
 	}
 
-	public ServiceException(String msg, Exception e) {
-		super(msg);
-		this.msg = msg;
-		//e.printStackTrace();
+	/**
+	 * Constructs a new exception with the specified detail message and
+	 * cause.  <p>Note that the detail message associated with
+	 * {@code cause} is <i>not</i> automatically incorporated in
+	 * this exception's detail message.
+	 */
+	public ServiceException(String message, Throwable cause) {
+		super(message, cause);
 	}
-	
-	public ServiceException(String msg, Exception e, String providerName, String serviceName) {
-		super(msg);
-		this.msg = msg;
-		embedded = e;
-		this.providerName = providerName;
-		this.serviceName = serviceName;
+
+	public ServiceException(String message, Throwable cause, ProviderInfo providerInfo) {
+		super(message, cause);
+		this.providerInfo = providerInfo;
 	}
-	
+
 	public String toString() {
-		String s = null;
-		if (embedded != null) {
-			s = "ServiceException: " + msg + "; providerName = " + providerName
-					+ "; serviceName = " + serviceName
-					+ "; embedded exception = " + embedded.toString();
-		} else {
-			s = "ServiceException: " + msg + "; providerName = " + providerName
-					+ "; serviceName = " + serviceName;
-		}
-		return s;
+		StringBuilder sb = new StringBuilder(getClass().getName()).append("\n");
+		sb.append(getLocalizedMessage()).append("\n");
+		sb.append(providerInfo);
+
+		return sb.toString();
 	}
 }

@@ -40,6 +40,7 @@ import sorcer.service.*;
 import sorcer.service.Exec.State;
 import sorcer.service.Signature.Direction;
 import sorcer.service.Signature.ReturnPath;
+import sorcer.util.ProviderInfo;
 import sorcer.util.SorcerUtil;
 
 import java.net.MalformedURLException;
@@ -2701,6 +2702,20 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 
 	public void reportException(String message, Throwable t) {
 		exertion.getControlContext().addException(message, t);
+	}
+
+	public void reportException(String message, Throwable t, ProviderInfo info) {
+		exertion.getControlContext().addException(new ServiceException(message, t, info));
+	}
+
+	public void reportException(String message, Throwable t, ServiceProvider provider) {
+		exertion.getControlContext().addException(new ServiceException(message, t,
+				new ProviderInfo(provider.getDelegate().getServiceInfo())));
+	}
+
+	public void reportException(String message, Throwable t, ServiceProvider provider,  ProviderInfo info) {
+		exertion.getControlContext().addException(new ServiceException(message, t,
+				new ProviderInfo(provider.getDelegate().getServiceInfo()).append(info)));
 	}
 
 	/*

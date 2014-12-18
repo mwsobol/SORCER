@@ -40,7 +40,6 @@ import net.jini.lookup.entry.Name;
 import net.jini.security.AccessPermission;
 import net.jini.security.TrustVerifier;
 import net.jini.space.JavaSpace05;
-import sorcer.jini.jeri.BeanILFactory;
 import sorcer.service.ContextManagement;
 import sorcer.core.SorcerConstants;
 import sorcer.core.SorcerNotifierProtocol;
@@ -154,7 +153,7 @@ public class ProviderDelegate implements SorcerConstants {
 	protected Class[] publishedServiceTypes;
 
 	/** provider service type entry used to be included in the provider's proxy. */
-	protected SorcerServiceInfo serviceType;
+	protected SorcerServiceInfo serviceInfo;
 
 	protected boolean idPersistent = false;
 
@@ -239,7 +238,7 @@ public class ProviderDelegate implements SorcerConstants {
 	 * redirected calls using its inner proxy (redirected remote invocations).
 	 * Any method of not Remote interface implemented by a SORCER service
 	 * provider can be invoked via the Service remote interface,
-	 * {@link #Service#service(Exertion)} - recommended approach. That
+	 * {@link Service#service(Exertion)} - recommended approach. That
 	 * provider's direct invocation method is embedded into a service method of
 	 * the provided exertion.
 	 */
@@ -1443,8 +1442,8 @@ public class ProviderDelegate implements SorcerConstants {
 	 * 
 	 * @return a SorcerServiceType
 	 */
-	public SorcerServiceInfo getServiceType() {
-		return serviceType;
+	public SorcerServiceInfo getServiceInfo() {
+		return serviceInfo;
 	}
 
 	public Properties getProviderProperties() {
@@ -1462,8 +1461,6 @@ public class ProviderDelegate implements SorcerConstants {
 	/**
 	 * Set a name of the provider. The name may be defined in this provider's
 	 * properties file.
-	 * 
-	 * @see #load(String)
 	 */
 	public void setProviderName(String name) {
 		config.setProviderName(name);
@@ -2569,12 +2566,12 @@ public class ProviderDelegate implements SorcerConstants {
 	/**
 	 * Returns a proxy object for this provider. If the smart proxy is alocated
 	 * then returns a non exported object to be registerd with loookup services.
-	 * However, if a smart proxy implements {@link OuteProxy} then the
-	 * provider's proxy is set as its inner proxy. Otherwise the {@link Remote}
-	 * outer proxy of this provider is returned.
+	 * However, if a smart proxy is defined then the provider's proxy is set as
+	 * its inner proxy. Otherwise the {@link Remote} outer proxy of this provider
+	 * is returned.
 	 * 
 	 * @return a proxy, or null
-	 * @see sorcer.core.provider.Provider#getProxy()
+	 * @see sorcer.core.provider.ServiceProvider#getProxy()
 	 */
 	public Object getProxy() {
 		if (providerProxy != null)

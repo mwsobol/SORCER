@@ -28,7 +28,7 @@ public class ProviderDestroyer {
 		// initialize system properties
 		Sorcer.getEnvProperties();
 
-		// args: providerName, serviceType
+		// args: providerName, serviceInfo
 		if (args.length == 3) {
 			Class serviceType = Class.forName(args[1]);
 			Provider prv = (Provider) ProviderLookup.getProvider(

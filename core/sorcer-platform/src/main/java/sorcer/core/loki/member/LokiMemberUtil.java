@@ -124,8 +124,8 @@ public class LokiMemberUtil
 			ExertionEnvelop cckeeTemp = ExertionEnvelop.getTemplate();
 	        cckeeTemp.isEncrypted = false;
 	        cckeeTemp.serviceType = serviceType;
-//	        cckeeTemp.serviceType = "ComplimentaryCompoundKeys:"+serviceType.getName();
-//	        cckeeTemp.exertionID = "ComplimentaryCompoundKeys:"+serviceType.getName();
+//	        cckeeTemp.serviceInfo = "ComplimentaryCompoundKeys:"+serviceInfo.getName();
+//	        cckeeTemp.exertionID = "ComplimentaryCompoundKeys:"+serviceInfo.getName();
 	        
 	        if(debug)
 	        { logger.info(printEE("LOOKING FOR CCK EXERTION",cckeeTemp)); }
@@ -164,7 +164,7 @@ public class LokiMemberUtil
 			
 			ExertionEnvelop kpeeTemp = ExertionEnvelop.getTemplate();
 		    kpeeTemp.isEncrypted = false;
-		    //kpeeTemp.serviceType = "MemberKeyPairKeyAgreement:"+serviceType;
+		    //kpeeTemp.serviceInfo = "MemberKeyPairKeyAgreement:"+serviceInfo;
 		    kpeeTemp.serviceType = serviceType;
 	
 		    if(debug)
@@ -210,8 +210,8 @@ public class LokiMemberUtil
 			ExertionEnvelop cckeeTemp = ExertionEnvelop.getTemplate();
 	        cckeeTemp.isEncrypted = false;
 	        cckeeTemp.serviceType = serviceType;
-//	        cckeeTemp.serviceType = "ComplimentaryCompoundKeys:"+serviceType;
-//	        cckeeTemp.exertionID = "ComplimentaryCompoundKeys:"+serviceType;
+//	        cckeeTemp.serviceInfo = "ComplimentaryCompoundKeys:"+serviceInfo;
+//	        cckeeTemp.exertionID = "ComplimentaryCompoundKeys:"+serviceInfo;
 	        
 	        if(debug)
 	        { logger.info(printEE("LOOKING FOR CCK EXERTION",cckeeTemp)); }
@@ -250,7 +250,7 @@ public class LokiMemberUtil
 			
 			ExertionEnvelop kpeeTemp = ExertionEnvelop.getTemplate();
 		    kpeeTemp.isEncrypted = false;
-		    //kpeeTemp.serviceType = "MemberKeyPairKeyAgreement:"+serviceType;
+		    //kpeeTemp.serviceInfo = "MemberKeyPairKeyAgreement:"+serviceInfo;
 		    kpeeTemp.serviceType = serviceType;
 	
 		    if(debug)
@@ -305,8 +305,8 @@ public class LokiMemberUtil
 	        
 	        ExertionEnvelop cckEE = ExertionEnvelop.getTemplate();
 	    	cckEE.isEncrypted = false;
-//	    	cckEE.serviceType = "ComplimentaryCompoundKeys:"+serviceType;
-//	    	cckEE.exertionID = "ComplimentaryCompoundKeys:"+serviceType;
+//	    	cckEE.serviceInfo = "ComplimentaryCompoundKeys:"+serviceInfo;
+//	    	cckEE.exertionID = "ComplimentaryCompoundKeys:"+serviceInfo;
 	    	cckEE.serviceType = serviceType;
 	    	space.takeIfExists(cckEE,null,Lease.FOREVER);
 	        
@@ -472,7 +472,7 @@ public class LokiMemberUtil
 			
 			ExertionEnvelop kpEE = ExertionEnvelop.getTemplate();
 			kpEE.isEncrypted = false;
-			//kpEE.serviceType = "MemberKeyPairKeyAgreement:"+serviceType;
+			//kpEE.serviceInfo = "MemberKeyPairKeyAgreement:"+serviceInfo;
 			kpEE.serviceType = serviceType;
 	        kpEE.exertionID = myUID;
 	    	space.takeIfExists(kpEE,null,Lease.FOREVER);

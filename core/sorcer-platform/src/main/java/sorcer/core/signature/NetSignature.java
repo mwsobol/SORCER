@@ -208,7 +208,7 @@ public class NetSignature extends ObjectSignature {
 //		ServiceSignature method = (ServiceSignature) m;
 //		selector = method.selector;
 //		providerName = method.providerName;
-//		serviceType = method.serviceType;
+//		serviceInfo = method.serviceInfo;
 //		methodID = method.methodID;
 //		portalURL = method.portalURL;
 //		codebase = method.codebase;
@@ -234,23 +234,23 @@ public class NetSignature extends ObjectSignature {
 //	}
 //
 //	public boolean isSelectable() throws SignatureException {
-//		if (selector == null && serviceType == null) {
+//		if (selector == null && serviceInfo == null) {
 //			return false;
 //		}
-//		Method[] methods = serviceType.getMethods();
+//		Method[] methods = serviceInfo.getMethods();
 //		for (Method m : methods) {
 //			if (m.getName().equals(selector)) {
 //				return true;
 //			}
 //		}
 //		throw new SignatureException("No selector:" + selector
-//				+ " in service type: " + serviceType.getName());
+//				+ " in service type: " + serviceInfo.getName());
 //	}
 
 
 //	public String toString() {
 //		return providerName + ":" + execType + ":" + isActive + ":"
-//				+ serviceType + ":" + selector;
+//				+ serviceInfo + ":" + selector;
 //	}
 
 	public boolean equals(ServiceSignature method) {

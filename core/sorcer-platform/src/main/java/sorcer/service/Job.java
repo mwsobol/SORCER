@@ -124,7 +124,7 @@ public class Job extends ServiceExertion implements CompoundExertion {
 
 	/**
 	 * Initialize it with assigning it a new ControlContext and a defaultMethod
-	 * with serviceType as "sorcer.core.provider.jobber.ServiceJobber" name as
+	 * with serviceInfo as "sorcer.core.provider.jobber.ServiceJobber" name as
 	 * "service" and providerName "*"
 	 * @throws sorcer.service.SignatureException
 	 */

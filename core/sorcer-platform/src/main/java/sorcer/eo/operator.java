@@ -815,12 +815,12 @@ public class operator {
 		return signture;
 	}
 
-//	public static Signature sig(String operation, Class serviceType,
+//	public static Signature sig(String operation, Class serviceInfo,
 //			List<net.jini.core.entry.Entry> attributes)
 //			throws SignatureException {
 //		NetSignature op = new NetSignature();
 //		op.setAttributes(attributes);
-//		op.setServiceType(serviceType);
+//		op.setServiceType(serviceInfo);
 //		op.setSelector(operation);
 //		return op;
 //	}

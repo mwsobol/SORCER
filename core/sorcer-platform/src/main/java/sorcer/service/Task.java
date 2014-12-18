@@ -229,7 +229,7 @@ public class Task extends ServiceExertion {
 		if (getProcessSignature() != null)
 			sb.append(getProcessSignature().getProviderName());
 		sb.append(", principal: ").append(getPrincipal());
-		sb.append(", serviceType: ").append(getServiceType());
+		sb.append(", serviceInfo: ").append(getServiceType());
 		sb.append(", selector: ").append(getSelector());
 		sb.append(", parent ID: ").append(parentId);
 

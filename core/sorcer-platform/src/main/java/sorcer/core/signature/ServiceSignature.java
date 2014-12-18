@@ -62,11 +62,11 @@ public class ServiceSignature implements Signature, SorcerConstants {
 
 
 	// Must initialize to ANY to have correct JavaSpace workers behavior
-	// to have exertions with providerName/serviceType specified going to
+	// to have exertions with providerName/serviceInfo specified going to
 	// providers
-	// named "providerName". Otherwise, exertions with providerName/serviceType
+	// named "providerName". Otherwise, exertions with providerName/serviceInfo
 	// can
-	// be picked up by workers with template null/serviceType that are not named
+	// be picked up by workers with template null/serviceInfo that are not named
 	// "providerName"
 	protected String providerName = ANY;
 
@@ -74,7 +74,7 @@ public class ServiceSignature implements Signature, SorcerConstants {
 
 	protected Class<?> serviceType;
 
-	// implementation of the serviceType
+	// implementation of the serviceInfo
 	protected Class<?> providerType;
 
 	protected String group = "";
