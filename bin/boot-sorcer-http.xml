@@ -35,6 +35,7 @@
                 <pathelement location="${rio.lib}/logging/slf4j-jdk14-${slf4j.version}.jar" />
             </classpath>
             <env key="SORCER_HOME" value="${sorcer.home}"/>
+			<env key="RIO_HOME" value="${sorcer.home}/rio-${rio.version}"/>
 			<arg value="${sorcer.home}/configs/boot-sorcer-arv-http.config" />
 			<sysproperty key="sorcer.home" value="${sorcer.home}" />
 			<sysproperty key="sorcer.version" value="${sorcer.version}" />
