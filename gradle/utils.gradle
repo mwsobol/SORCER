@@ -84,7 +84,7 @@ rioUI.onlyIf {
  * Start Sorcer Webster
  */
 task webster(type: Exec, dependsOn: 'genWebsterConfig') {
-    commandLine "${sorcerDistHome}/bin/webster/webster.groovy"
+    commandLine "${sorcerDistHome}/bin/webster/bin/webster.groovy"
 }
 webster.onlyIf {
     File sorcerDist = file(sorcerDistHome)
@@ -147,6 +147,6 @@ task genWebsterConfig {
                 .append("    sorcerHome = \"").append(sorcerDistHome).append("\"\n")
                 .append("}\n\n")
 
-        file("${sorcerDistHome}/bin/webster/websterConfig.groovy").write(configBuilder.toString())
+        file("${sorcerDistHome}/bin/webster/configs/websterConfig.groovy").write(configBuilder.toString())
     }
 }

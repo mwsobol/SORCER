@@ -15,13 +15,12 @@
  * owned rights.
  */
 
-applyt plugin
 /*
  * Starts a Webster serving up Sorcer distribution content
  */
 
 String scriptDir = new File(getClass().protectionDomain.codeSource.location.path).parent
-def config = new ConfigSlurper().parse(new File(scriptDir, "websterConfig.groovy").toURI().toURL())
+def config = new ConfigSlurper().parse(new File(scriptDir, "../configs/websterConfig.groovy").toURI().toURL())
 boolean spawn = config.webster.spawn
 StringBuilder java = new StringBuilder()
 java.append(System.getProperty('java.home')).append("/bin/java")
