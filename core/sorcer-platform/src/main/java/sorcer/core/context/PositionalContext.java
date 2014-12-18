@@ -138,8 +138,7 @@ public class PositionalContext<T> extends ServiceContext<T> implements
 	 * java.lang.String, java.lang.Object, int)
 	 */
 	@Override
-	public Object putValueAt(String path, Object value, int index)
-			throws ContextException {
+	public Object putValueAt(final String path, Object value, int index) throws ContextException {
 		super.putValue(path, value);
 		if (index >= tally) tally++;
 		mark(path, Context.INDEX + APS + index);

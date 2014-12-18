@@ -1,7 +1,7 @@
 package sorcer.eol.services;
 
 import static org.junit.Assert.assertNotNull;
-import static sorcer.eo.operator.sig;
+import static sorcer.eo.operator.*;
 
 import java.util.logging.Logger;
 

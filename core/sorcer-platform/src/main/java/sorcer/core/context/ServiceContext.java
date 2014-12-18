@@ -695,7 +695,9 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 	 * @see sorcer.service.AssociativeContext#putValue(java.lang.String, java.lang.Object)
 	 */
 	@Override
-	public T putValue(String path, Object value) throws ContextException {
+	public T putValue(final String path, Object value) throws ContextException {
+		if(path==null)
+			throw new IllegalArgumentException("path must not be null");
 		// first test if path is in a linked context
 		Enumeration e = null;
 		e = localLinkPaths();

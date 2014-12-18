@@ -33,7 +33,7 @@
 		<property name="requestor.class" value="sorcer.core.requestor.SorcerRequestor" />
 		<java classname="${requestor.class}" fork="yes">
 			<arg value="${requestor.impl}" />
-			<arg value="f5" />
+			<arg value="f1" />
 			<classpath refid="project.classpath" />
 			<sysproperty key="requestor.properties" value="../configs/arithmetic-req.properties" />
 			<sysproperty key="local.repo.path" value="org/sorcer/arithmetic/${sorcer.version}" />

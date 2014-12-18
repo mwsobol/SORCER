@@ -217,11 +217,11 @@ public class ParModels {
 		assertEquals(value(pm), 30.0);
 
 		// with new arguments, closure
-		assertTrue(value(pm, par("x", 10.0), par("y", 20.0)).equals(30.0));
+//		assertTrue(value(pm, par("x", 10.0), par("y", 20.0)).equals(30.0));
 
-		add(pm, par("z", invoker("(x * y) + add", pars("x", "y", "add"))));
-		logger.info("z value: " + value(pm, "z"));
-		assertEquals(value(pm, "z"), 230.0);
+//		add(pm, par("z", invoker("(x * y) + add", pars("x", "y", "add"))));
+//		logger.info("z value: " + value(pm, "z"));
+//		assertEquals(value(pm, "z"), 230.0);
 
 	}
 

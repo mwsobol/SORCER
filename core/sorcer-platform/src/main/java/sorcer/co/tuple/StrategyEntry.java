@@ -29,12 +29,12 @@ public class StrategyEntry extends Entry<Strategy> implements Arg {
 	private URL url;
 
 	public StrategyEntry(String path, Strategy strategy) {
-		_1 = path;
+		super(path);
 		_2 = strategy;
 	};
 
 	public StrategyEntry(String path, URL strategy) {
-		_1 = path;
+		super(path);
 		url = strategy;
 	};
 
