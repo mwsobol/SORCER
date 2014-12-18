@@ -1,0 +1,91 @@
+<?xml version="1.0"?>
+<project name="SOS kernel" default="sorcer.boot" basedir="">
+    <dirname file="${basedir}/.." property="sorcer.basedir"/>
+    <import file="${sorcer.basedir}/bin/common-run.xml" />
+	<target name="sorcer.boot" depends="clean-files, set.fork.sorcer, rio"/>
+    <target name="sorcer.boot.nofork" depends="clean-files, set.donot.fork.sorcer, rio"/>
+
+    <target name="rio" depends="webster, cybernode, monitor"/>
+
+    <target name="set.fork.sorcer">
+        <property name="fork.mode" value="yes"/>
+    </target>
+
+    <target name="set.donot.fork.sorcer">
+        <property name="fork.mode" value="no"/>
+    </target>
+
+    <target name="webster" description="Starts a Webster">
+        <ant antfile="${sorcer.home}/bin/webster/bin/webster-run.xml" target="webster-spawn">
+            <property name="sorcer.home" value="${sorcer.home}"/>
+        </ant>
+    </target>
+
+    <target name="verify" description="Checks the local repository for artifacts. If not present will install them.">
+        <groovy src="${rio.home}/bin/install.groovy">
+            <classpath>
+                <pathelement location="${rio.home}/bin"/>
+            </classpath>
+            <arg line="${java.home} ${rio.home}"/>
+        </groovy>
+    </target>
+
+    <target name="monitor" description="Starts a Provision Monitor">
+        <antcall target="start-rio-service">
+            <param name="service" value="monitor"/>
+        </antcall>
+    </target>
+
+    <target name="cybernode" depends="verify" description="Starts a Cybernode">
+        <antcall target="start-rio-service">
+            <param name="service" value="cybernode"/>
+        </antcall>
+    </target>
+
+    <target name="start-rio-service" description="Declaration to start a Rio service">
+        <java classname="org.rioproject.start.ServiceStarter" fork="yes" spawn="yes">
+            <env key="SORCER_HOME" value="${sorcer.home}"/>
+            <classpath>
+                <pathelement location="${lib}/common/groovy/groovy-all-${groovy.version}.jar"/>
+                <pathelement location="${rio.home}/lib/rio-platform-${rio.version}.jar" />
+                <pathelement location="${rio.home}/lib/rio-start-${rio.version}.jar" />
+                <pathelement location="${rio.home}/lib/logging/rio-logging-support-${rio.version}.jar" />
+                <pathelement location="${rio.home}/lib/logging/slf4j-jdk14-${slf4j.version}.jar" />
+                <pathelement location="${java.home}/../lib/tools.jar" />
+            </classpath>
+            <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError"/>
+            <jvmarg value="-XX:+UseConcMarkSweepGC"/>
+            <jvmarg value="-XX:+AggressiveOpts"/>
+            <jvmarg value="-XX:+CMSClassUnloadingEnabled"/>
+            <jvmarg value="-XX:MaxPermSize=256m"/>
+        	<jvmarg value="-Xms512m"/>
+        	<jvmarg value="-Xmx1024m"/>
+            <sysproperty key="fork.mode" value="${fork.mode}" />
+            <sysproperty key="java.rmi.server.useCodebaseOnly" value="false" />
+            <sysproperty key="java.security.policy" value="${rio.home}/policy/policy.all" />
+            <sysproperty key="java.util.logging.config.file" value="${rio.home}/config/logging/rio-logging.properties" />
+            <sysproperty key="java.protocol.handler.pkgs" value="net.jini.url|sorcer.util.url|org.rioproject.url" />
+            <sysproperty key="RIO_HOME" value="${rio.home}"/>
+            <sysproperty key="RIO_LOG_DIR" value="${sorcer.home}/logs"/>
+            <sysproperty key="org.rioproject.service" value="${service}"/>
+            <sysproperty key="rio.script.mainClass" value="org.rioproject.start.ServiceStarter"/>
+            <sysproperty key="java.rmi.server.useCodebaseOnly" value="false" />
+            <sysproperty key="SORCER_HOME" value="${sorcer.home}"/>
+            <sysproperty key="sorcer.home" value="${sorcer.home}"/>
+            <sysproperty key="sorcer.version" value="${sorcer.version}"/>
+            <sysproperty key="org.rioproject.exec.monitor.reap.interval" value="1"/>
+            <arg value="${rio.home}/config/start-${service}.groovy"/>
+        </java>
+    </target>
+
+	<target name="clean-files" description="Deletes Blitz DB files">
+		<delete dir="${sorcer.home}/logs/dbfiles_blitz" failonerror="false" />
+		<delete dir="${sorcer.home}/logs/slamonitor.sla_db" failonerror="false" />
+		<delete file="${sorcer.home}/bin/monitoredjobs_index.obf" failonerror="false" />
+		<delete file="${sorcer.home}/bin/monitoredjobs_temp.obf" failonerror="false" />
+		<delete file="${sorcer.home}/bin/monitoredjobs.obf" failonerror="false" />
+        <delete dir="${rio.home}/logs" failonerror="false"/>
+        <delete file="pids" failonerror="false"/>
+	</target>
+
+</project>
