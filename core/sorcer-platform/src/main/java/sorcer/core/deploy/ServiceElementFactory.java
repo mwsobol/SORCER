@@ -88,12 +88,24 @@ public final class ServiceElementFactory  {
         if(Artifact.isArtifact(deployment.getConfig())) {
             logger.info("Resolve "+deployment.getConfig());
             Resolver resolver = ResolverHelper.getResolver();
-            Artifact artifact = new Artifact(deployment.getConfig());
+            Artifact temp = new Artifact(deployment.getConfig());
+            String classifier = temp.getClassifier();
+            if(classifier==null) {
+                logger.info("Setting classifier to \"deploy\" for "+temp.getGAV());
+                classifier = "deploy";
+            }
+            String type = temp.getType();
+            if(type==null) {
+                logger.info("Setting type to \"config\" for "+temp.getGAV());
+                type = "config";
+            }
+            Artifact artifact = new Artifact(temp.getGroupId(), temp.getArtifactId(), temp.getVersion(), type, classifier);
             URL configLocation = resolver.getLocation(artifact.getGAV(), artifact.getType());
             configurationFilePath = new File(configLocation.toURI()).getPath();
         } else {
             configurationFilePath = deployment.getConfig();
         }
+        logger.info("Loading "+configurationFilePath);
         Configuration configuration = Configuration.getInstance(configurationFilePath);
         String component = "sorcer.core.provider.ServiceProvider";
 

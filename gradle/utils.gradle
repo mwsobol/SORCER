@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+apply plugin: "maven"
+
 /*
  * Declares utilities for starting Sorcer using sorcer boot, as we as starting Sorcer with Rio
  */
@@ -32,10 +34,15 @@ bootSorcer.onlyIf {
 /*
  * Start Sorcer using Rio
  */
-task bootSorcerRio(type: Exec) {
+task bootSorcerRio(type: Exec, dependsOn: "webster") {
     commandLine "ant", "-f", "${file("${sorcerDistHome}").path}/bin/rio/boot-sorcer-rio.xml"
 }
 bootSorcerRio.onlyIf {
+    File sorcerDist = file(sorcerDistHome)
+    if(!sorcerDist.exists()) {
+        println "Sorcer distribution not found, cannot start Sorcer"
+        return false
+    }
     def jps = "jps -lm".execute()
     !jps.text.contains("start-monitor")
 }
@@ -48,14 +55,98 @@ task terminateSorcerRio(type: Exec) {
 }
 
 /*
- * * Start a browser
+ * Start a browser
  */
 task browser(type: Exec) {
     commandLine "ant", "-f",
-                "${file("${sorcerDistHome}").path}/bin/browser/bin/sorcer-browser.xml",
-                "browser.spawn"
+            "${file("${sorcerDistHome}").path}/bin/browser/bin/sorcer-browser.xml",
+            "browser.spawn"
 }
 browser.onlyIf {
     def jps = "jps -lm".execute()
     !jps.text.contains("sorcer-browser")
+}
+
+/*
+ * Start the Rio UI
+ */
+task rioUI(type: Exec) {
+    commandLine "ant", "-f",
+                "${file("${sorcerDistHome}").path}/bin/rio/rio-ui.xml",
+                "spawn"
+}
+rioUI.onlyIf {
+    def jps = "jps -lm".execute()
+    !jps.text.contains("rio-ui")
+}
+
+/*
+ * Start Sorcer Webster
+ */
+task webster(type: Exec, dependsOn: 'genWebsterConfig') {
+    commandLine "${sorcerDistHome}/bin/webster/webster.groovy"
+}
+webster.onlyIf {
+    File sorcerDist = file(sorcerDistHome)
+    if(!sorcerDist.exists()) {
+        println "Sorcer distribution not found cannot start Webster"
+        return false
+    }
+    boolean running
+    try {
+        def connection = new URL(websterUrl).openConnection()
+        connection.responseCode
+        running = true
+        println "Webster already serving up ${websterAddress}:${websterPort}"
+    } catch(Exception e) {
+        running = false
+    }
+    !running
+}
+
+task genWebsterConfig {
+    doLast {
+        String localMaven
+        repositories {
+            localMaven = mavenLocal().url.path
+        }
+        def roots = ["${sorcerDistHome}/lib/sorcer/lib-dl",
+                     "${sorcerDistHome}/lib/sorcer/lib",
+                     "${sorcerDistHome}/lib/river",
+                     "${sorcerDistHome}/rio-${rioVersion}/lib",
+                     "${sorcerDistHome}/rio-${rioVersion}/lib-dl",
+                     "${sorcerDistHome}/lib/common",
+                     "${sorcerDistHome}/lib/blitz",
+                     "${sorcerDistHome}/lib",
+                     "${localMaven}",
+                     "${sorcerDistHome}/data"]
+        StringBuilder rootsBuilder = new StringBuilder()
+        String indent  = "             "
+        roots.each { root ->
+            if(rootsBuilder.length()>0)
+                rootsBuilder.append(",\n").append(indent)
+            rootsBuilder.append("\"${root}\"")
+        }
+        String spawn = System.getProperty("spawn")==null?true:System.getProperty("spawn")
+        StringBuilder configBuilder = new StringBuilder()
+        configBuilder.append("/*\n")
+                .append(" * This file is generated. If you modify the contents,\n")
+                .append(" * chances are good you will lose your modifications.\n")
+                .append(" */\n\n")
+                .append("webster {\n")
+                .append("    address = \"").append(websterAddress).append("\"\n")
+                .append("    port = \"").append(websterPort).append("\"\n")
+                .append("    roots = [").append(rootsBuilder.toString()).append("]\n")
+                .append("    spawn = ").append(spawn).append("\n")
+                .append("}\n\n")
+                .append("versions {\n")
+                .append("    rio = \"").append(rioVersion).append("\"\n")
+                .append("    sorcer = \"").append(sorcerVersion).append("\"\n")
+                .append("}\n\n")
+                .append("paths {\n")
+                .append("    sorcerHome = \"").append(sorcerDistHome).append("\"\n")
+                .append("}\n\n")
+
+        file("${sorcerDistHome}/bin/webster/websterConfig.groovy").write(configBuilder.toString())
+    }
 }

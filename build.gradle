@@ -120,3 +120,24 @@ subprojects {
     }
 
 }
+
+task allTests(type: TestReport, dependsOn: "bootSorcerRio") {
+    destinationDir = file("$buildDir/reports/allTests")
+    project.subprojects { project ->
+        /* Disable the test report for the individual test task */
+        /* test {
+             reports.html.enabled = false
+         }*/
+        tasks.withType(Test) {
+            reports.html.enabled = false
+            ignoreFailures true
+            reportOn it
+        }
+    }
+    doLast {
+        println "\nThe allTests task is complete. See the results at: file://${destinationDir.path}/index.html"
+    }
+
+    finalizedBy("terminateSorcerRio")
+}
+

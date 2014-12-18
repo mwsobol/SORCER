@@ -18,7 +18,7 @@ SORCER installation file.
 			<author name="Scott A. Burton" email="scottaburton@amopti.com"/>
 			<author name="Dennis Reedy" email="dennis.reedy@gmail.com"/>
 		</authors>
-		<javaversion>1.7</javaversion>
+		<javaversion>1.8</javaversion>
 	</info>
 
 	<variables>
@@ -80,9 +80,9 @@ SORCER installation file.
 	We specify our packs here.
 	-->
 	<packs>
-		<pack name="SORCER Core" installGroups="All,SORCER Core" required="yes">
-			<description>SORCER core distribution</description>
-			<fileset dir="../sorcer-5.0-SNAPSHOT" targetdir="$INSTALL_PATH" defaultexcludes="yes"/>
+		<pack name="SORCER Platform" installGroups="All, SORCER Platform" required="yes">
+			<description>SORCER Platform Distribution</description>
+			<fileset dir="../build/sorcer-5.0-SNAPSHOT" targetdir="$INSTALL_PATH" defaultexcludes="yes"/>
 		</pack>
 
 <!--

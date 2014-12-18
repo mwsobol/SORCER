@@ -43,13 +43,14 @@ dependencies {
 }
 
 ext {
-    distDir = "${project.rootProject.projectDir.path}/distribution/sorcer"
+    //distDir = "${project.rootProject.projectDir.path}/distribution/build/sorcer"
+    distDir = "${project.buildDir.path}/sorcer"
 }
 
 task installer(dependsOn: ["distribution"]) {
     description = "Creates an IzPack based installer."
-    inputs.dir("distribution/sorcer-${version}" as File)
-    outputs.files "distribution/sorcer-${version}-installer.jar"
+    inputs.dir("${project.buildDir.path}/sorcer-${version}" as File)
+    outputs.files "${project.buildDir.path}/sorcer-${version}-installer.jar"
 
     doLast {
         ant.taskdef(name: 'izpack',
@@ -63,7 +64,7 @@ task installer(dependsOn: ["distribution"]) {
         ant.property(name: 'app.subpath', value: "SORCER-$version")
 
         ant.izpack(basedir: "${rootProject.projectDir.path}/distribution/izpack",
-                   output: "${rootProject.projectDir.path}/distribution/sorcer-${version}-installer.jar",
+                   output: "${project.buildDir.path}/sorcer-${version}-installer.jar",
                    compression: 'deflate',
                    compressionlevel: '9') {
             config(file("${rootProject.projectDir.path}/distribution/izpack/installer.xml").text)
@@ -233,6 +234,7 @@ task distribution(dependsOn: [":sorcer-boot:install",
                 include "bin/browser/configs/ssb.config"
                 include "bin/browser/policy/ssb.policy"
                 include "bin/webster/bin/webster-run.xml"
+                include "bin/webster/webster.groovy"
                 include "bin/images/**"
             }
             into "${distDir}-${version}"
@@ -270,8 +272,8 @@ task distribution(dependsOn: [":sorcer-boot:install",
         versionProps.store(versionPropsFile.newWriter(), null)
 
         println "Zipping distribution sorcer-${version} -> sorcer-${version}.zip"
-        ant.zip(destfile:"sorcer-${version}.zip",
-                basedir: ".",
+        ant.zip(destfile:"${project.buildDir.path}/sorcer-${version}.zip",
+                basedir: "${project.buildDir.path}",
                 includes:"sorcer-${version}/**")
         println "Complete"
     }
