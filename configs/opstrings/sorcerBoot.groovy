@@ -154,7 +154,9 @@ deployment(name: "Sorcer OS") {
         maintain 1
     }
     
-    service(name: SorcerEnv.getActualName("Database Storage"), fork:getForkMode(), jvmArgs:"-Dsorcer.home=${Sorcer.sorcerHome}") {
+    service(name: SorcerEnv.getActualName("Database Storage"),
+            fork:getForkMode(),
+            jvmArgs:"-Dsorcer.home=${Sorcer.sorcerHome} -Xmx1G") {
         interfaces {
             classes 'sorcer.core.provider.DatabaseStorer'
             resources appendJars(["sorcer-ui-${Sorcer.sorcerVersion}.jar"])

@@ -29,14 +29,13 @@ def repoPath() {
 }
 
 test {
-    dependsOn([":sorcer-int-tests:sorcer-tester:install"/*, "bootSorcerRio"*/])
+    dependsOn([":sorcer-int-tests:sorcer-tester:install"])
     systemProperty "sorcer.version", version
     systemProperty "java.rmi.server.codebase",
                    "${websterUrl}/${repoPath()}/sorcer-tester-${version}-dl.jar ${websterUrl}/sorcer-dl-${version}.jar ${websterUrl}/jsk-dl-${riverVersion}.jar"
 
     testLogging {
-        events "passed", "skipped", "failed"/*, "standardOut"*/, "standardError"
+        events "passed", "skipped", "failed", "standardOut"/*, "standardError"*/
     }
-    finalizedBy("terminateSorcerRio")
 }
 test.onlyIf{ file("${sorcerDistHome}").exists() }

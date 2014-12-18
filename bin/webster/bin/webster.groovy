@@ -16,11 +16,11 @@
  */
 
 /*
- * Starts a Webster serving up Sorcer and MSTC Engineering project content
+ * Starts a Webster serving up Sorcer distribution content
  */
 
 String scriptDir = new File(getClass().protectionDomain.codeSource.location.path).parent
-def config = new ConfigSlurper().parse(new File(scriptDir, "websterConfig.groovy").toURI().toURL())
+def config = new ConfigSlurper().parse(new File(scriptDir, "../configs/websterConfig.groovy").toURI().toURL())
 boolean spawn = config.webster.spawn
 StringBuilder java = new StringBuilder()
 java.append(System.getProperty('java.home')).append("/bin/java")
@@ -45,7 +45,7 @@ args << java.toString()
  "webster.debug" : "true",
  "webster.port" : "${config.webster.port}",
  "webster.interface" : "${config.webster.address}",
- "webster.tmp.dir" : "${config.paths.engHome}/data",
+ "webster.tmp.dir" : "${config.paths.sorcerHome}/data",
  "webster.root" : "${websterRoots.toString()}"
 ].each { key, value ->
     args << "-D${key}=${value}"
@@ -64,7 +64,7 @@ if (!spawn) {
     process.consumeProcessOutput(System.out, System.err)
     process.waitFor()
 } else {
-    println "tempDir: ${config.paths.engHome}/data"
+    println "tempDir: ${config.paths.sorcerHome}/data"
     int rootNum = 0
     config.webster.roots.each { root ->
         println "Root ${rootNum++} = $root"
