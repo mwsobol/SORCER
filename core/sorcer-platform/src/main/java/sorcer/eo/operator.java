@@ -723,20 +723,6 @@ public class operator {
 		return signature.getSelector();
 	}
 
-//	public static Signature sig(Class<?> serviceType, String providerName,
-//			Arg... parameters) throws SignatureException {
-//		return sig(null, serviceType, new Sorcer.getActualName(providerName),
-//				parameters);
-//	}
-
-//	public static Signature sig(String operation, Class serviceType,
-//			String providerName) throws SignatureException {
-//		return sig(operation, serviceType, providerName, (Arg[])null);
-//	}
-
-//	public static Signature sig(String operation, Class serviceType, 
-//			String providerName, Arg... args)
-//			throws SignatureException {
 
 	public static Signature sig(String operation, Class serviceType)
 			throws SignatureException {
@@ -1366,15 +1352,6 @@ public class operator {
 	public static <V> V pathValue(Mappable<V> map, String path, Arg... args) throws ContextException {
 		return map.getValue(path, args);
 	}
-
-//	public static <T> T value(Evaluation<T> evaluation)
-//			throws EvaluationException {
-//		try {
-//			return evaluation.getValue();
-//		} catch (RemoteException e) {
-//			throw new EvaluationException(e);
-//		}
-//	}
 
 	public static Object content(URL url) throws EvaluationException {
 		if (url instanceof URL) {
@@ -2118,7 +2095,7 @@ public class operator {
 		private static final long serialVersionUID = 1L;
 
 		Complement(String path, T2 value) {
-			this._1 = path;
+			super(path);
 			this._2 = value;
 		}
 	}

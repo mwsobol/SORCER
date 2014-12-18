@@ -20,7 +20,6 @@
  */
 ext {
 	sorcerVersion = version
-	sorcerModelingVersion = "1.1.9"
 
 	groovyVersion = "2.3.8"
 	rioVersion = "5.0-M5"

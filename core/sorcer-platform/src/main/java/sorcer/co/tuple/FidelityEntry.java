@@ -22,20 +22,16 @@ package sorcer.co.tuple;
 import sorcer.service.FidelityInfo;
 
 public class FidelityEntry<T> extends Entry<T> {
-	
 	private static final long serialVersionUID = -508307270964254478L;
 	
 	protected FidelityInfo fidelity;
 	
-	public FidelityEntry() {}
-	
 	public FidelityEntry(String x1, T value) {
-		_1 = x1;
-		_2 = value;
+		super(x1, value);
 	}
 
 	public FidelityEntry(String x1, FidelityInfo fidelity) {
-		_1 = x1;
+		super(x1);
 		this.fidelity = fidelity;
 	}
 	

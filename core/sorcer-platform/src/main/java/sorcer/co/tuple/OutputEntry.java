@@ -24,12 +24,7 @@ public class OutputEntry<T> extends FidelityEntry<T> {
 	private static final long serialVersionUID = 1L;
 
 	public OutputEntry(String path, T value, int index) {
-		T v = value;
-		if (v == null)
-			v = (T) Context.none;
-
-		this._1 = path;
-		this._2 = v;
+		super(path, value==null?(T) Context.none: value);
 		this.index = index;
 	}
 
@@ -39,7 +34,6 @@ public class OutputEntry<T> extends FidelityEntry<T> {
 	}
 
 	public OutputEntry(String path, FidelityInfo fidelity) {
-		this._1 = path;
-		this.fidelity = fidelity;
+		super(path, fidelity);
 	}
 }

@@ -8,8 +8,13 @@ import sorcer.co.tuple.Entry;
 import sorcer.core.context.Copier;
 import sorcer.core.context.ListContext;
 import sorcer.service.Context;
+import sorcer.service.ContextException;
+import sorcer.service.Strategy;
+import sorcer.service.Task;
 
+import java.io.File;
 import java.net.URL;
+import java.util.List;
 import java.util.logging.Logger;
 
 import static org.junit.Assert.*;
@@ -331,4 +336,5 @@ public class ServiceContexts {
 		assertTrue( value(cxt2).equals(22.0));
 
 	}
+
 }

@@ -51,7 +51,7 @@ public class Par<T> extends Entry<T> implements Variability<T>, Arg, Mappable<T>
 	 
 	private static Logger logger = Logger.getLogger(Par.class.getName());
 
-	protected String name;
+	protected final String name;
 	
 	private Principal principal;
 
@@ -71,22 +71,22 @@ public class Par<T> extends Entry<T> implements Variability<T>, Arg, Mappable<T>
 
 	// par fidelities for this par
 	protected Map<String, Object> fidelities;
-		
-	public Par() {
-	}
-	
+
 	public Par(String parname) {
+		super(parname);
 		name = parname;
 		value = null;
 	}
 	
 	public Par(Identifiable identifiable) {
+		super(identifiable.getName());
 		name = identifiable.getName();
 		value = (T)identifiable;
 	}
 	
-	public Par(String parname, T argument) throws EvaluationException, RemoteException {
-		name = parname;
+	public Par(String path, T argument) throws EvaluationException, RemoteException {
+		super(path);
+		name = path;
 		
 		if (argument instanceof ParFidelity) {
 			if (fidelities == null)
@@ -103,9 +103,9 @@ public class Par<T> extends Entry<T> implements Variability<T>, Arg, Mappable<T>
 		}
 	}
 	
-	public Par(String parname, Object argument, Context scope) 
+	public Par(String path, Object argument, Context scope)
 			throws RemoteException, ContextException {
-		this(parname, (T)argument);
+		this(path, (T)argument);
 		if (((ServiceContext)scope).containsKey(Condition._closure_))
 			((ServiceContext) scope).remove(Condition._closure_);
 		this.scope = scope;
@@ -336,7 +336,7 @@ public class Par<T> extends Entry<T> implements Variability<T>, Arg, Mappable<T>
 	
 	@Override
 	public String toString() {
-		return "par [" + name + ":" + value + "]";
+		return "par [name: " + name + ", value: " + value + ", path: "+_1+"]";
 	}
 
 	/* (non-Javadoc)
@@ -435,6 +435,7 @@ public class Par<T> extends Entry<T> implements Variability<T>, Arg, Mappable<T>
 	@Override
 	public void valueChanged() throws EvaluationException {		
 	}
+
 
 	public Principal getPrincipal() {
 		return principal;

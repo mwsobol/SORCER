@@ -1,28 +1,15 @@
 package sorcer.arithmetic.requestor;
 
-import static sorcer.co.operator.inEnt;
-import static sorcer.co.operator.outEnt;
-import static sorcer.eo.operator.classpath;
-import static sorcer.eo.operator.codebase;
-import static sorcer.eo.operator.configuration;
-import static sorcer.eo.operator.context;
-import static sorcer.eo.operator.control;
-import static sorcer.eo.operator.deploy;
-import static sorcer.eo.operator.exert;
-import static sorcer.eo.operator.exertion;
-import static sorcer.eo.operator.get;
-import static sorcer.eo.operator.in;
-import static sorcer.eo.operator.input;
-import static sorcer.eo.operator.job;
-import static sorcer.eo.operator.name;
-import static sorcer.eo.operator.out;
-import static sorcer.eo.operator.path;
-import static sorcer.eo.operator.pipe;
-import static sorcer.eo.operator.serviceContext;
-import static sorcer.eo.operator.sig;
-import static sorcer.eo.operator.strategy;
-import static sorcer.eo.operator.task;
-import static sorcer.eo.operator.trace;
+import sorcer.arithmetic.provider.Adder;
+import sorcer.arithmetic.provider.Multiplier;
+import sorcer.arithmetic.provider.RemoteAdder;
+import sorcer.arithmetic.provider.Subtractor;
+import sorcer.core.provider.Exerter;
+import sorcer.core.requestor.SorcerRequestor;
+import sorcer.service.*;
+import sorcer.service.Strategy.*;
+import sorcer.util.Log;
+import sorcer.util.ProviderAccessor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,27 +18,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.logging.Logger;
 
-import sorcer.arithmetic.provider.Adder;
-import sorcer.arithmetic.provider.Multiplier;
-import sorcer.arithmetic.provider.RemoteAdder;
-import sorcer.arithmetic.provider.Subtractor;
-import sorcer.core.SorcerConstants;
-import sorcer.core.provider.Exerter;
-import sorcer.core.requestor.SorcerRequestor;
-import sorcer.service.ContextException;
-import sorcer.service.Exertion;
-import sorcer.service.ExertionCallable;
-import sorcer.service.ExertionException;
-import sorcer.service.Job;
-import sorcer.service.SignatureException;
-import sorcer.service.Strategy.Access;
-import sorcer.service.Strategy.Flow;
-import sorcer.service.Strategy.Monitor;
-import sorcer.service.Strategy.Provision;
-import sorcer.service.Strategy.Wait;
-import sorcer.service.Task;
-import sorcer.util.Log;
-import sorcer.util.ProviderAccessor;
+import static sorcer.co.operator.inEnt;
+import static sorcer.co.operator.outEnt;
+import static sorcer.eo.operator.*;
 
 /**
  * Testing parameter passing between tasks within the same service job. Two
@@ -75,37 +44,37 @@ public class ArithmeticTester extends SorcerRequestor {
 		logger.info("running: " + args[0]);
 		Exertion result = null;
 		ArithmeticTester tester = new ArithmeticTester();
-		if (args[0].equals("f5"))
+		if (args[1].equals("f5"))
 			result = tester.f5();
-		if (args[0].equals("f5m"))
+		if (args[1].equals("f5m"))
 			result = tester.f5m();
-		else if (args[0].equals("f5inh"))
+		else if (args[1].equals("f5inh"))
 			result = tester.f5inh();
-		else if (args[0].equals("f5a"))
+		else if (args[1].equals("f5a"))
 			result = tester.f5a();
-		else if (args[0].equals("f5pull"))
+		else if (args[1].equals("f5pull"))
 			result = tester.f5pull();
-		else if (args[0].equals("f1provisioned"))
+		else if (args[1].equals("f1provisioned"))
 			result = tester.f1provisioned();
-		else if (args[0].equals("f1"))
+		else if (args[1].equals("f1"))
 			result = tester.f1();
-		else if (args[0].equals("f1a"))
+		else if (args[1].equals("f1a"))
 			result = tester.f1a();
-		else if (args[0].equals("f1b"))
+		else if (args[1].equals("f1b"))
 			result = tester.f1b();
-		else if (args[0].equals("f1c"))
+		else if (args[1].equals("f1c"))
 			result = tester.f1c();
-		else if (args[0].equals("f1PARpull"))
+		else if (args[1].equals("f1PARpull"))
 			result = tester.f1PARpull();
-		else if (args[0].equals("f1SEQpull"))
+		else if (args[1].equals("f1SEQpull"))
 			result = tester.f1SEQpull();
-		else if (args[0].equals("f5xS_PULL"))
+		else if (args[1].equals("f5xS_PULL"))
 			result = tester.f5xS_PULL(args[1]);
-		else if (args[0].equals("f5xS_PUSH"))
+		else if (args[1].equals("f5xS_PUSH"))
 			result = tester.f5xS_PUSH(args[1]);
-		else if (args[0].equals("f5xP"))
+		else if (args[1].equals("f5xP"))
 			result = tester.f5xP(args[1], args[2]);
-		else if (args[0].equals("f5exerter"))
+		else if (args[1].equals("f5exerter"))
 			result = tester.f5exerter();
 		
 //		logger.info(">>>>>>>>>>>>> exceptions: " + exceptions(result));

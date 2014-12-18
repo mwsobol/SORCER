@@ -40,14 +40,18 @@ public class Entry<T> extends Tuple2<String, T> implements Arg, Comparable<T>, S
 	// its arguments are always evaluated if active (either Evaluataion or Invocation type)
 	protected boolean isReactive = false;
 
-	public Entry() {
+	/*public Entry() {
 	}
-
-	public Entry(String path) {
+*/
+	public Entry(final String path) {
+		if(path==null)
+			throw new IllegalArgumentException("path must not be null");
 		_1 = path;
 	}
 	
-	public Entry(String path, T value) {
+	public Entry(final String path, final T value) {
+		if(path==null)
+			throw new IllegalArgumentException("path must not be null");
 		T v = value;
 		if (v == null)
 			v = (T)Context.none;
@@ -59,7 +63,9 @@ public class Entry<T> extends Tuple2<String, T> implements Arg, Comparable<T>, S
 		this._2 = v;
 	}
 	
-	public Entry(String path, T value, int index) {
+	public Entry(final String path, final T value, final int index) {
+		if(path==null)
+			throw new IllegalArgumentException("path must not be null");
 		T v = value;
 		if (v == null)
 			v = (T)Context.none;
@@ -69,7 +75,9 @@ public class Entry<T> extends Tuple2<String, T> implements Arg, Comparable<T>, S
 		this.index = index;
 	}
 
-	public Entry(String path, T value, String association) {
+	public Entry(final String path, final T value, final String association) {
+		if(path==null)
+			throw new IllegalArgumentException("path must not be null");
 		T v = value;
 		if (v == null)
 			v = (T)Context.none;
@@ -78,20 +86,6 @@ public class Entry<T> extends Tuple2<String, T> implements Arg, Comparable<T>, S
 		this._2 = v;
 		this.annotation = association;
 	}
-
-//	@Override
-//	public T getValue(Arg... entries) throws EvaluationException,
-//			RemoteException {
-//
-//
-//		Object obj = super.getValue(entries);
-//		if (obj instanceof ServiceInvoker) {
-//			return ((ServiceInvoker<T>) obj).invoke(entries);
-//		} else if (obj instanceof Evaluation) {
-//			return ((Evaluation<T>) obj).getValue(entries);
-//		}
-//		return (T) obj;
-//	}
 
 	@Override
 	public T getValue(Arg... entries) throws EvaluationException,
