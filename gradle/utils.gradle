@@ -22,7 +22,7 @@
  * Start Sorcer only
  */
 task bootSorcer(type: Exec) {
-    commandLine "ant", "-f", "${file("${sorcerDistHome}").path}/bin/sorcer-boot-arv-http.xml", "run"
+    commandLine "ant", "-f", "${file("${sorcerDistHome}").path}/bin/boot-sorcer-http.xml", "run"
 }
 bootSorcer.onlyIf {
     def jps = "jps -lm".execute()
