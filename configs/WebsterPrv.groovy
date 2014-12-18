@@ -29,7 +29,7 @@ class WebsterProv {
         roots << "${libPath}/sorcer/lib"
         roots <<  "${libPath}/sorcer/lib-dl"
         roots <<  "${libPath}/river"
-        roots <<  "${sorcerHome}/rio/lib-dl"
+        roots <<  "${sorcerHome}/rio-${System.properties['rio.version']}/lib-dl"
         roots <<  "${libPath}/blitz"
         roots <<  Repository.getLocalRepository().absolutePath
         roots <<  "${sorcerHome}/data"
