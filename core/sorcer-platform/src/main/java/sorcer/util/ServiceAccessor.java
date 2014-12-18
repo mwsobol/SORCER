@@ -111,7 +111,7 @@ public class ServiceAccessor implements SorcerConstants {
 
 	/**
 	 * Returns a service item containing a service matching providerName and
-	 * serviceType using Jini lookup service.
+	 * serviceInfo using Jini lookup service.
 	 * 
 	 * @param providerName
 	 * @param serviceType
@@ -138,7 +138,7 @@ public class ServiceAccessor implements SorcerConstants {
 	
 	/**
 	 * Returns a service item containing a service matching only the
-	 * serviceType. It uses Jini lookup service.
+	 * serviceInfo. It uses Jini lookup service.
 	 * 
 	 * @param serviceType
 	 * @return a SORCER provider
@@ -374,7 +374,7 @@ public class ServiceAccessor implements SorcerConstants {
 	}
 
 	/**
-	 * Returns a service matching serviceType, service attributes (entries), and
+	 * Returns a service matching serviceInfo, service attributes (entries), and
 	 * passes a provided filter.
 	 * 
 	 * @param providerName
@@ -387,7 +387,7 @@ public class ServiceAccessor implements SorcerConstants {
 	}
 
 	/**
-	 * Returns a service matching serviceType, service attributes (entries),
+	 * Returns a service matching serviceInfo, service attributes (entries),
 	 * passes a provided filter, and uses a given codebase for downloadable
 	 * classes.
 	 * 
@@ -400,7 +400,7 @@ public class ServiceAccessor implements SorcerConstants {
 		if (serviceType == null) {
 			throw new RuntimeException("Missing service type for a ServiceTemplate");
 		}
-//		logger.info("serviceType: " + serviceType + "\nattributes: "
+//		logger.info("serviceInfo: " + serviceInfo + "\nattributes: "
 //				+ SorcerUtil.arrayToString(atributes) + "\nfilter: " + filter
 //				+ "\ncodebase: " + codebase);
 
@@ -416,7 +416,7 @@ public class ServiceAccessor implements SorcerConstants {
 	}
 
 	/**
-	 * Returns a service matching serviceName and serviceType using Jini lookup
+	 * Returns a service matching serviceName and serviceInfo using Jini lookup
 	 * service.
 	 * 
 	 * @param serviceName
@@ -449,7 +449,7 @@ public class ServiceAccessor implements SorcerConstants {
 	}
 
 	/**
-	 * Returns a service matching the given serviceType, provider Name, and
+	 * Returns a service matching the given serviceInfo, provider Name, and
 	 * codebase where to get the interface class from.
 	 * 
 	 * @param providerName

@@ -186,19 +186,19 @@ public class ProviderAccessor extends ServiceAccessor implements
 	 */
 	public final static Provider getProvider(String providerName, Class serviceType) {
 //		logger.info("providerName = " + providerName
-//				+ "\nserviceType = " + serviceType);
+//				+ "\nserviceInfo = " + serviceInfo);
 		Provider servicer = null;
 		if (providerName != null && providerName.equals(ANY))
 			providerName = null;
 		try {
-			//servicer = (Service)ProviderLookup.getService(providerName, serviceType);
+			//servicer = (Service)ProviderLookup.getService(providerName, serviceInfo);
 			cataloger = getCataloger();
 			if (cataloger != null) {
 				int tryNo = 0;
 //				logger.info("Total timeout for service discovery is: " + LUS_REAPEAT);
 				while (tryNo < LUS_REAPEAT) {
 					servicer = cataloger.lookup(providerName, serviceType);
-					//servicer = (Service)cataloger.lookupItem(providerName, serviceType).service;
+					//servicer = (Service)cataloger.lookupItem(providerName, serviceInfo).service;
 					if (servicer != null)
 						break;
 						
@@ -307,11 +307,11 @@ public class ProviderAccessor extends ServiceAccessor implements
 
 	/**
 	 * Returns a JINI ServiceItem containing the SORCER service provider with
-	 * the specified providerName and serviceType using Cataloger if available,
+	 * the specified providerName and serviceInfo using Cataloger if available,
 	 * otherwise using Jini lookup services.
 	 * 
 	 * @param providerName
-	 *            , serviceType serviceID of the desired service
+	 *            , serviceInfo serviceID of the desired service
 	 * @return JINI ServiceItem
 	 */
 

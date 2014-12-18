@@ -274,7 +274,7 @@ public class ExertionDispatcher implements Exerter, Callable {
 		}
 		// Provider tasker = ProviderLookup.getProvider(exertion.getProcessSignature());		 
 		// provider = ProviderAccessor.getProvider(null, signature
-		// .getServiceType());
+		// .getServiceInfo());
 		if (provider == null) {
 			logger.warning("* Provider not available for: " + signature);
 			exertion.setStatus(Exec.FAILED);

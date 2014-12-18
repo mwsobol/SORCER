@@ -32,7 +32,7 @@ import sorcer.util.bdb.objects.SorcerDatabaseViews;
 /**
  * @author Mike Sobolewski
  *
- * sdb URL = sos://serviceType/providerName#objectType=Uuid
+ * sdb URL = sos://serviceInfo/providerName#objectType=Uuid
  * 
  * objectType = context, exertion, table, var, varModel, object
  */
@@ -64,7 +64,7 @@ public class SdbConnection extends URLConnection {
 	 */
 	@Override
 	public void connect() throws IOException {
-		//Provider provider = (Provider)ProviderLookup.getProvider(providerName, serviceType);
+		//Provider provider = (Provider)ProviderLookup.getProvider(providerName, serviceInfo);
         try {
             Provider provider = (Provider) ProviderAccessor.getProvider(providerName, Class.forName(serviceType));
             store = (StorageManagement)provider;

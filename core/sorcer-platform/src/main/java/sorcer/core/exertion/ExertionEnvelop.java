@@ -144,7 +144,7 @@ public class ExertionEnvelop implements Entry {
 		return Long.MAX_VALUE;
 	}
 	
-//	public Class serviceType;
+//	public Class serviceInfo;
 //	public String providerName;
 //	public Uuid exertionID;
 //	public Uuid parentID;
@@ -160,7 +160,7 @@ public class ExertionEnvelop implements Entry {
 		StringBuffer sb = new StringBuffer("\nExertionEnvelop: ");
 		sb.append("id=").append(exertionID)
 		.append(", state=").append(state)
-		.append(", serviceType=").append(serviceType)
+		.append(", serviceInfo=").append(serviceType)
 		.append(", providerName=").append(providerName)
 		.append(", exertion=").append(exertion == null ? "null" : exertion);
 		return sb.toString();
@@ -173,7 +173,7 @@ public class ExertionEnvelop implements Entry {
 		.append(", state=").append(state)
 		.append(", providerName=").append(providerName)
 		.append(", parentID=").append(parentID)
-		.append(", serviceType=").append(serviceType)
+		.append(", serviceInfo=").append(serviceType)
 		.append(", isEncrypted=").append(isEncrypted)
 		.append(", encryptedExertion=").append(encryptedExertion)
 		.append(", providerSubject=").append(providerSubject)

@@ -53,7 +53,7 @@ public class ServiceDeployment implements Serializable, Deployment {
     private String[] codebaseJars;
     private String[] classpathJars;
 
-    // serviceType and providerName are given in Signatures,
+    // serviceInfo and providerName are given in Signatures,
     // can be used for querying relevant Deployments
     // to be associated with signatures
     private String serviceType;
@@ -315,7 +315,7 @@ public class ServiceDeployment implements Serializable, Deployment {
                ", multiplicity=" + multiplicity +
                ", codebaseJars=" + Arrays.toString(codebaseJars) +
                ", classpathJars=" + Arrays.toString(classpathJars) +
-               ", serviceType='" + serviceType + '\'' +
+               ", serviceInfo='" + serviceType + '\'' +
                ", providerName='" + providerName + '\'' +
                ", impl='" + impl + '\'' +
                ", websterUrl='" + websterUrl + '\'' +
