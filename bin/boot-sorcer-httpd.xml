@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<project name="SORCER OS" default="run" basedir="">
+<project name="SORCER OS httpd" default="run" basedir="">
 
     <!-- load system environment variables -->
     <property environment="env" />
