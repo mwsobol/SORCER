@@ -11,16 +11,16 @@ A specification of provider's exerted acquired abilities is called an exertion.
 An exertion is expressed in the Exertion-Oriented Language (EOL).
 
 Service Provider (service actualization) is an instruction of service processor
-	- defines a service type
-	- implements a service type
-	- satisfy three neutralities
+	- defines its service types
+	- implements and and owns its service types
+	- satisfy three neutralities (location, protocol, implementation)
 
 Service Exertion specifies runtime collaboration of providers (federation)
 	- specifies federation's members (composition with dependencies)
 	- specifies federation's context and data flow
 	- specifies federation's control strategy
 
-A service in SORCER: implements the Service interface: Service#service(Exertion)
+Services in SORCER: implement the Service interface: Service#service(Exertion)
 	- service provider
 	- exertion
 	- service context (model)
