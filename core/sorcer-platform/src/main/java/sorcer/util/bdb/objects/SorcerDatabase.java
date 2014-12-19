@@ -78,6 +78,7 @@ public class SorcerDatabase {
         EnvironmentConfig envConfig = new EnvironmentConfig();
         envConfig.setTransactional(true);
         envConfig.setAllowCreate(true);
+        envConfig.setSharedCache(true);
         env = new Environment(new File(homeDirectory), envConfig);
 
         // Set the Berkeley DB config for opening all stores.
@@ -91,19 +92,19 @@ public class SorcerDatabase {
         Database catalogDb = env.openDatabase(null, CLASS_CATALOG, dbConfig);
         javaCatalog = new StoredClassCatalog(catalogDb);
 
-        // Open the Berkeley DB database for the part, supplier and shipment
-        // stores.  The stores are opened with no duplicate keys allowed.
-        //
+        // Open the Berkeley DB database, the stores are opened
+        // with no duplicate keys allowed.
+
         runtimeDb = env.openDatabase(null, RUNTIME_STORE, dbConfig);
 
         exertionDb = env.openDatabase(null, EXERTION_STORE, dbConfig);
 
         contextDb = env.openDatabase(null, CONTEXT_STORE, dbConfig);
-                
+
         tableDb = env.openDatabase(null, TABLE_STORE, dbConfig);
-        
+
         varDb = env.openDatabase(null, VAR_STORE, dbConfig);
-        
+
         varModelDb = env.openDatabase(null, VAR_MODEL_STORE, dbConfig);
         
         uuidObjectDb = env.openDatabase(null, OBJECT_STORE, dbConfig);

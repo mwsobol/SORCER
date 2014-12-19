@@ -205,6 +205,7 @@ task distribution(dependsOn: [":sorcer-boot:install",
                 include "configs/standalone.sorcer.env"
 				include "configs/startup-prv.config"
 				include "configs/boot-prv.config"
+                include "configs/boot-sorcer-arv.config"
                 include "configs/boot-sorcer-arv-http.config"
                 include "configs/WebsterPrv.groovy"
                 include "configs/platform/**"

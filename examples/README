@@ -1,15 +1,34 @@
-A service is the work performed 
-in which a service provider (one that serves) 
+A service is the work performed in which a service provider (one that serves)
 exerts acquired abilities to execute a computation. 
 
 No explicit provider references!
-A reference for work  and activity is called 
-a service signature.
+A reference to a provider and/or its activity is called a signature.
+A signature specifies at least a service type and an operation (name of activity).
+Service data is context-oriented - context aware exertions and operating system
+An expression of collaborating abilities to be exerted by a federation of providers is called an exertion
 
-A specification of provider's exerted 
-acquired abilities is called an exertion.
-An exertion is a service request or simply a service 
-in the Exertion-Oriented Language (EOL).
+A specification of provider's exerted acquired abilities is called an exertion.
+An exertion is expressed in the Exertion-Oriented Language (EOL).
+
+Service Provider (service actualization) is an instruction of service processor
+	- defines a service type
+	- implements a service type
+	- satisfy three neutralities
+
+Service Exertion specifies runtime collaboration of providers (federation)
+	- specifies federation's members (composition with dependencies)
+	- specifies federation's context and data flow
+	- specifies federation's control strategy
+
+A service in SORCER: implements the Service interface: Service#service(Exertion)
+	- service provider
+	- exertion
+	- service context (model)
+
+SORCER Operating System (SOS)
+	- executes exertions expressed in EOL
+	- manages runtime service federations for exertions
+	- provides a service-oriented shell (sosh) for the SOS
 
 
 The Exertion-Oriented Languages (EOL) Tutorial
@@ -18,7 +37,7 @@ The Exertion-Oriented Languages (EOL) Tutorial
 	eol/src/test/java/sorcer/arithmetic/collections
 	
 2. Service signatures, providers, services (exertions), 
-and service data (contexts) in  EOL
+   and service data (contexts) in  EOL
 	eol/test/java/sorcer/eol/services
 		
 3. Intro to service provider/requestor development
@@ -27,7 +46,7 @@ and service data (contexts) in  EOL
 	worker/test/java/sorcer/worker/tests
 	
 4. Arithmetic providers and requestors, 
-contexts and exertions as providers
+   contexts and exertions as providers
 	eol/main/java/sorcer/arithmetic/provider
 	eol/main/java/sorcer/arithmetic/requestor
 	
@@ -43,10 +62,10 @@ contexts and exertions as providers
 	eol/test/java/sorcer/eol/contexts
 	test/java/sorcer/arithmetic/parModels
 	
-8. Modeling and par-model providers and agents
+8. Par-models, providers and agents
 	pml/main/java/sorcer/pml/model
 	pml/main/java/sorcer/pml/provider
 	pml/test/java/sorcer/pml/modeling
 	
-9. TD-modeling - Federations of exertions and models
-Proxying ents and pars in exertions and models
+9. Transdisciplinary computing - collaborative agregation of exertions and models
+   Proxying ents and pars in exertions and models

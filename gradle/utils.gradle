@@ -24,7 +24,7 @@ apply plugin: "maven"
  * Start Sorcer only with hhtp
  */
 task bootSorcer(type: Exec) {
-    commandLine "ant", "-f", "${file("${sorcerDistHome}").path}/bin/boot-sorcer-http.xml", "run"
+    commandLine "ant", "-f", "${file("${sorcerDistHome}").path}/bin/boot-sorcer.xml", "run"
 }
 bootSorcer.onlyIf {
     def jps = "jps -lm".execute()
@@ -34,10 +34,10 @@ bootSorcer.onlyIf {
 /*
  * Start Sorcer only
  */
-task bootSOS(type: Exec) {
-    commandLine "ant", "-f", "${file("${sorcerDistHome}").path}/bin/boot-sorcer.xml", "run"
+task bootSorcerNoHttpd(type: Exec) {
+    commandLine "ant", "-f", "${file("${sorcerDistHome}").path}/bin/boot-sorcer-noHttpd.xml", "run"
 }
-bootSOS.onlyIf {
+bootSorcerNoHttpd.onlyIf {
     def jps = "jps -lm".execute()
     !jps.text.contains("boot-sorcer")
 }
