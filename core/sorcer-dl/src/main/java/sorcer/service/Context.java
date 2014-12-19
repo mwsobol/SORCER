@@ -491,6 +491,12 @@ public interface Context<T> extends Mappable<T>, Serializable, Evaluation<T>,
 
 	public void reportException(String message, Throwable t);
 
+	public void reportException(String message, Throwable t, ProviderInfo info);
+
+	public void reportException(String message, Throwable t, Provider provider);
+
+	public void reportException(String message, Throwable t, Provider provider,  ProviderInfo info);
+
 	public void appendTrace(String footprint);
 
 	public Context<T> append(Context<T> context) throws ContextException;

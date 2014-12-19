@@ -159,11 +159,11 @@ public class ParModelTest {
 		assertEquals(value(pm), 30.0);
 
 		// with new arguments, closure
-		assertEquals(Double.valueOf(30.0), (Double)value(pm, par("x", 10.0), par("y", 20.0)));
+		assertTrue(value(pm, par("x", 20.0), par("y", 30.0)).equals(50.0));
 
 		add(pm, par("z", invoker("(x * y) + add", pars("x", "y", "add"))));
 		logger.info("z value: " + value(pm, "z"));
-		assertEquals(value(pm, "z"), 230.0);
+		assertEquals(value(pm, "z"), 650.0);
 	}
 		
 	@Test

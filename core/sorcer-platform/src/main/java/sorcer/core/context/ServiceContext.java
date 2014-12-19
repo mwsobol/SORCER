@@ -40,7 +40,7 @@ import sorcer.service.*;
 import sorcer.service.Exec.State;
 import sorcer.service.Signature.Direction;
 import sorcer.service.Signature.ReturnPath;
-import sorcer.util.ProviderInfo;
+import sorcer.service.ProviderInfo;
 import sorcer.util.SorcerUtil;
 
 import java.net.MalformedURLException;
@@ -2708,14 +2708,14 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 		exertion.getControlContext().addException(new ServiceException(message, t, info));
 	}
 
-	public void reportException(String message, Throwable t, ServiceProvider provider) {
+	public void reportException(String message, Throwable t, Provider provider) {
 		exertion.getControlContext().addException(new ServiceException(message, t,
-				new ProviderInfo(provider.getDelegate().getServiceInfo())));
+				new ProviderInfo(((ServiceProvider)provider).getDelegate().getServiceInfo())));
 	}
 
-	public void reportException(String message, Throwable t, ServiceProvider provider,  ProviderInfo info) {
+	public void reportException(String message, Throwable t, Provider provider,  ProviderInfo info) {
 		exertion.getControlContext().addException(new ServiceException(message, t,
-				new ProviderInfo(provider.getDelegate().getServiceInfo()).append(info)));
+				new ProviderInfo(((ServiceProvider)provider).getDelegate().getServiceInfo()).append(info)));
 	}
 
 	/*
@@ -2760,9 +2760,9 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 					T val = null;
 					
 					if (((Tuple2) e)._2 instanceof Evaluation)
-						val = (T)((Evaluation) ((Tuple2) e)._2).getValue();
+						val = (T)((Evaluation) ((Tuple2) e).value()).getValue();
 					else
-						val = (T)((Tuple2) e)._2;
+						val = (T)((Tuple2) e).value();
 			
 					if (((Tuple2) e)._1 instanceof String) {
 						if (asis((String) ((Tuple2) e)._1) instanceof Setter) {

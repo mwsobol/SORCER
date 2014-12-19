@@ -222,7 +222,8 @@ public class CollectionOperators {
 		Entry<Double> de = dbEnt("x3", 110.0);
 		assertFalse(asis(de) instanceof URL);
 		assertTrue(value(de).equals(110.0));
-		
+		assertTrue(asis(de) instanceof URL);
+
 		// create an entry
 		Entry<Double> e = ent("x1", 10.0);
 		assertTrue(value(e).equals(10.0));
@@ -328,8 +329,12 @@ public class CollectionOperators {
 	@Test
 	public void contextOperator() throws Exception {
 		
-		Context cxt = context(ent("arg/x1", 1.1), ent("arg/x2", 1.2),
-				ent("arg/x3", 1.3), ent("arg/x4", 1.4), ent("arg/x5", 1.5));
+		Context cxt = context(
+				ent("arg/x1", 1.1),
+				ent("arg/x2", 1.2),
+				ent("arg/x3", 1.3),
+				ent("arg/x4", 1.4),
+				ent("arg/x5", 1.5));
 
 		add(cxt, ent("arg/x6", 1.6));
 		add(cxt, ent("arg/x7", invoker("x1 + x3", ents("x1", "x3"))));

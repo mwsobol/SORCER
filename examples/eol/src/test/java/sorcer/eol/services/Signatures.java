@@ -30,8 +30,9 @@ public class Signatures {
 	@Test
 	public void newInstance() throws Exception {
 
+		// Object orientation
 		Signature s = sig("new", Date.class);
-		// get service provider for signature
+		// create a new instance
 		Object obj = instance(s);
 		logger.info("provider of s: " + obj);
 		assertTrue(obj instanceof Date);
@@ -45,53 +46,22 @@ public class Signatures {
 		Object obj = new Date();
 		Signature s = sig("getTime", obj);
 		
-		// get service provider for signature
-		Object prv = provider(s);
-		logger.info("provider of s: " + prv);
-		assertTrue(prv instanceof Date);
-		
-	}
-
-	@Test
-	public void referencingClass() throws Exception {
-
-		Signature s = sig("getTime", Date.class);
-
-		// get service provider for signature
+		// get service provider - a given object
 		Object prv = provider(s);
 		logger.info("provider of s: " + prv);
 		assertTrue(prv instanceof Date);
 
+		logger.info("getTime: " + value(service("gt", s)));
+		assertTrue(value(service("gt", s)) instanceof Long);
+
 	}
 
-	@Test
-	public void referencingUtilityClass() throws Exception {
-		
-		Signature ms = sig(Math.class, "random");
-		Object prv = provider(ms);
-		logger.info("provider of s: " + prv);
-		assertTrue(prv == Math.class);
-		assertTrue(value(service("random", ms)) instanceof Double);
-		logger.info("random: " + value(service("random", ms)));
-		
-		ms = sig(Math.class, "max");
-		Context cxt = context(
-				parameterTypes(new Class[] { double.class, double.class }),
-				args(new Object[] { 200.11, 3000.0 }));
-
-		// request the service
-		logger.info("max: " + value(service("max", ms, cxt)));
-		assertTrue(value(service("max", ms, cxt)) instanceof Double);
-		assertTrue(value(service("max", ms, cxt)).equals(3000.0));
-		
-	}
-	
 
 	@Test
 	public void referencingClassWithConstructor() throws Exception {
-		
+
 		Signature s = sig("getTime", Date.class);
-		
+
 		// get service provider for signature
 		Object prv = provider(s);
 		logger.info("provider of s: " + prv);
@@ -102,6 +72,30 @@ public class Signatures {
 
 		logger.info("time: " + value(service("time", s)));
 		assertTrue(value(service("time", s)) instanceof Long);
+
+	}
+
+
+	@Test
+	public void referencingUtilityClass() throws Exception {
+		
+		Signature ms = sig(Math.class, "random");
+		Object prv = provider(ms);
+		logger.info("provider of s: " + prv);
+		assertTrue(prv == Math.class);
+
+		logger.info("random: " + value(service("random", ms)));
+		assertTrue(value(service("random", ms)) instanceof Double);
+		
+		ms = sig(Math.class, "max");
+		Context cxt = context(
+				parameterTypes(new Class[] { double.class, double.class }),
+				args(new Object[] { 200.11, 3000.0 }));
+
+		// request the service
+		logger.info("max: " + value(service("max", ms, cxt)));
+		assertTrue(value(service("max", ms, cxt)) instanceof Double);
+		assertTrue(value(service("max", ms, cxt)).equals(3000.0));
 		
 	}
 	
@@ -118,7 +112,6 @@ public class Signatures {
 		// get service provider for signature
 		Object prv = provider(ps);
 		logger.info("prv: " + prv);
-
 		assertTrue(prv instanceof Calendar);
 		
 		// request the service
@@ -127,20 +120,7 @@ public class Signatures {
 		assertTrue(value(service("month", ps, cxt)).equals(((Calendar)prv).get(Calendar.MONTH)));
 		
 	}
-	
-	
-	@Test
-	public void referencingProviderImpl() throws Exception  {
-		
-		// the AdderImpl class (service bean) implements the Adder interface 
-		Signature ps = sig(AdderImpl.class);
-		Object prv = provider(ps);
-		logger.info("provider of ps: " + prv);
-		assertTrue(prv instanceof AdderImpl);
-		assertFalse(prv instanceof Proxy);
-		
-	}
-	
+
 	
 	@Test
 	public void localService() throws Exception  {
@@ -151,8 +131,7 @@ public class Signatures {
 		assertFalse(prv instanceof Proxy);
 		
 		// request the local service
-		Service as = service("as", 
-				lps,
+		Service as = service("as", lps,
 				context("add", 
 						inEnt("arg/x1", 20.0), 
 						inEnt("arg/x2", 80.0), 
@@ -164,19 +143,28 @@ public class Signatures {
 	
 	
 	@Test
-	public void referencingRemoteProvider() throws SignatureException  {
+	public void referencingRemoteProvider() throws Exception  {
 		
 		Signature rps = sig("add", Adder.class);
 		Object prv = provider(rps);
 		logger.info("provider of rps: " + prv);
 		assertTrue(prv instanceof Adder);
 		assertTrue(prv instanceof Proxy);
-		
+
+		// request the local service
+		Service as = service("as", rps,
+				context("add",
+						inEnt("arg/x1", 20.0),
+						inEnt("arg/x2", 80.0),
+						result("result/y")));
+
+		assertEquals(100.0, value(as));
+
 	}
 
 
 	@Test
-	public void referencingNamedRemoteProvider() throws SignatureException  {
+	public void referencingNamedRemoteProvider() throws Exception  {
 
 		Signature ps = sig("add", Adder.class, prvName("Adder"));
 		Object prv = provider(ps);
@@ -184,29 +172,14 @@ public class Signatures {
 		assertTrue(prv instanceof Adder);
 		assertTrue(prv instanceof Proxy);
 
-	}
-
-
-	@Test
-	public void remoteService() throws SignatureException, 
-	ExertionException, ContextException  {
-
-		Signature rps = sig("add", Adder.class);
-		Object prv = provider(rps);
-		logger.info("provider of ps: " + prv);
-		assertTrue(prv instanceof Adder);
-		assertTrue(prv instanceof Proxy);
-
-		// request the remote (net) service
-		Service as = service("as", 
-				rps,
-				context("add", 
-						inEnt("arg/x1", 20.0), 
-						inEnt("arg/x2", 80.0), 
+		// request the local service
+		Service as = service("as", ps,
+				context("add",
+						inEnt("arg/x1", 20.0),
+						inEnt("arg/x2", 80.0),
 						result("result/y")));
 
-		assertEquals(100.0, value(as));	
-
+		assertEquals(100.0, value(as));
 	}
-	
+
 }

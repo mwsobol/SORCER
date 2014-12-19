@@ -195,7 +195,7 @@ public class Invokers {
 	}
 
 	@Test
-	public void invokeVarTest() throws RemoteException, ContextException,
+	public void invokerParTest() throws RemoteException, ContextException,
 			SignatureException, ExertionException {
 
 		Par<Double> x1 = par("x1", 1.0);

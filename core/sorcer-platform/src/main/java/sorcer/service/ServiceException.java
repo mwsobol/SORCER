@@ -19,8 +19,6 @@
 
 package sorcer.service;
 
-import sorcer.util.ProviderInfo;
-
 public class ServiceException extends Exception {
 
 	private static final long serialVersionUID = 1L;

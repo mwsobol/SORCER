@@ -1,4 +1,4 @@
-package sorcer.util;
+package sorcer.service;
 
 import sorcer.jini.lookup.entry.SorcerServiceInfo;
 

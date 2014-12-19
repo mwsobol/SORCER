@@ -168,9 +168,14 @@ public class Par<T> extends Entry<T> implements Variability<T>, Arg, Mappable<T>
 			this.value = (T)value;
 	}
 
+	@Override
+	public T value() {
+		return value;
+	}
+
 	/* (non-Javadoc)
-	 * @see sorcer.service.Evaluation#getAsis()
-	 */
+         * @see sorcer.service.Evaluation#getAsis()
+         */
 	@Override
 	public T asis() throws EvaluationException, RemoteException {
 		return value;
