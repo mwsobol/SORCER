@@ -27,20 +27,9 @@ import java.util.logging.Logger;
 
 import static org.junit.Assert.*;
 import static sorcer.co.operator.*;
-import static sorcer.co.operator.persistent;
-import static sorcer.eo.operator.asis;
 import static sorcer.eo.operator.*;
-import static sorcer.eo.operator.get;
-import static sorcer.eo.operator.in;
-import static sorcer.eo.operator.pipe;
-import static sorcer.eo.operator.put;
-import static sorcer.eo.operator.value;
-import static sorcer.po.operator.add;
 import static sorcer.po.operator.*;
-import static sorcer.po.operator.asis;
-import static sorcer.po.operator.loop;
-import static sorcer.po.operator.put;
-import static sorcer.po.operator.set;
+
 
 /**
  * @author Mike Sobolewski
@@ -242,31 +231,39 @@ public class ParModels {
 		assertEquals(value(pc, "y3"), 1010.0);
 	}
 
-
 	@Test
 	public void entryPersistence() throws Exception {
-		Context cxt = context("multiply", dbEnt("arg/x0", 1.0), dbInEnt("arg/x1", 10.0),
-				dbOutEnt("arg/x2", 50.0), outEnt("result/y"));
 
-		assertEquals(value(cxt, "arg/x0"), 1.0);
-		assertEquals(value(cxt, "arg/x1"), 10.0);
-		assertEquals(value(cxt, "arg/x2"), 50.0);
+		Context cxt = context("multiply", dbOutEnt("arg/x1", 10));
+		logger.info("ZZZZZZZZZ " + value(cxt, "arg/x1"));
+		for (int i=0; i< 100; i++) {
+			put(cxt, "arg/x1", i);
+			logger.info("ZZZZZZZZZ " + value(cxt, "arg/x1"));
+			assertEquals(value(cxt, "arg/x1"), i);
+		}
 
-		assertTrue(asis(cxt, "arg/x0") instanceof Par);
-		assertTrue(asis(cxt, "arg/x1") instanceof Par);
-		assertTrue(asis(cxt, "arg/x2") instanceof Par);
-
-		put(cxt, "arg/x0", 11.0);
-		put(cxt, "arg/x1", 110.0);
-		put(cxt, "arg/x2", 150.0);
-
-		assertEquals(value(cxt, "arg/x0"), 11.0);
-		assertEquals(value(cxt, "arg/x1"), 110.0);
-		assertEquals(value(cxt, "arg/x2"), 150.0);
-
-		assertTrue(asis(cxt, "arg/x0") instanceof Par);
-		assertTrue(asis(cxt, "arg/x1") instanceof Par);
-		assertTrue(asis(cxt, "arg/x2") instanceof Par);
+//		Context cxt = context("multiply", dbEnt("arg/x0", 1.0), dbInEnt("arg/x1", 10.0),
+//				dbOutEnt("arg/x2", 50.0), outEnt("result/y"));
+//
+//		assertEquals(value(cxt, "arg/x0"), 1.0);
+//		assertEquals(value(cxt, "arg/x1"), 10.0);
+//		assertEquals(value(cxt, "arg/x2"), 50.0);
+//
+//		assertTrue(asis(cxt, "arg/x0") instanceof Par);
+//		assertTrue(asis(cxt, "arg/x1") instanceof Par);
+//		assertTrue(asis(cxt, "arg/x2") instanceof Par);
+//
+//		put(cxt, "arg/x0", 11.0);
+//		put(cxt, "arg/x1", 110.0);
+//		put(cxt, "arg/x2", 150.0);
+//
+//		assertEquals(value(cxt, "arg/x0"), 11.0);
+//		assertEquals(value(cxt, "arg/x1"), 110.0);
+//		assertEquals(value(cxt, "arg/x2"), 150.0);
+//
+//		assertTrue(asis(cxt, "arg/x0") instanceof Par);
+//		assertTrue(asis(cxt, "arg/x1") instanceof Par);
+//		assertTrue(asis(cxt, "arg/x2") instanceof Par);
 	}
 
 	@Test

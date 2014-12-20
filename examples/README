@@ -30,6 +30,9 @@ SORCER Operating System (SOS)
 	- manages runtime service federations for exertions
 	- provides a service-oriented shell (sosh) for the SOS
 
+Service-orientation = everything is a service => EaaS
+S2S => service requestor, provider, request, result, and invocation are services
+
 
 The Exertion-Oriented Languages (EOL) Tutorial
 

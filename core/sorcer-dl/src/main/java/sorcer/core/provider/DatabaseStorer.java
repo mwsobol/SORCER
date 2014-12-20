@@ -17,6 +17,7 @@
 
 package sorcer.core.provider;
 
+import java.io.InvalidObjectException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.rmi.Remote;
@@ -31,7 +32,11 @@ public interface DatabaseStorer extends StorageManagement, Remote {
 	
 	public enum Store { context, exertion, var, varmodel, table, object, all }
 	
-	public Uuid store(Object object) throws RemoteException;
+	public URL storeObject(Object object) throws RemoteException;
+	
+	void updateObject(URL url, Object object) throws RemoteException, InvalidObjectException;
+
+	void deleteObject(URL url) throws RemoteException;
 	
 	public URL getDatabaseURL(Store storeType, Uuid uuid) throws MalformedURLException, RemoteException;
 }

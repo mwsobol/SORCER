@@ -1065,13 +1065,7 @@ public class Table implements ModelTable {
 					outputTableURL = (URL)objectStore.contextStore(cxt).getValue("object/url");;
 				}
 			} else if (url.getHost().equals("self")) {
-				Uuid uuid = ((DatabaseStorer) provider).store(this);
-				try {
-					outputTableURL = ((DatabaseStorer) provider).getDatabaseURL(
-							Store.table, uuid);
-				} catch (Exception e) {
-					throw new EvaluationException(e);
-				}
+				outputTableURL = ((DatabaseStorer) provider).storeObject(this);				
 			} else {
 				String serviceType = url.getHost();
 				String providerName = url.getPath();
