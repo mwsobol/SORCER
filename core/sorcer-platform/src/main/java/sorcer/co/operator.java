@@ -354,8 +354,9 @@ public class operator {
 				else {
 					if (entry instanceof Setter) {
 						((Setter) entry).setPersistent(true);
-						entry.getValue();
-						dburl = (URL) entry.asis();
+						dburl = (URL) SdbUtil.store(obj);
+						((Setter)entry).setValue(dburl);
+						return dburl;
 					}
 				}
 			}
@@ -443,7 +444,7 @@ public class operator {
 	}
 
 	public static <T> Entry<T> dbEnt(String path) {
-		Entry<T> e = new Entry<T>(path);
+		Entry<T> e = new Par<T>(path);
 		e.setPersistent(true);
 		return e;
 	}
@@ -611,16 +612,17 @@ public class operator {
 
 	public static Evaluation dependsOn(Evaluation dependee, Evaluation depender,
 									   Context scope) throws ContextException {
-		try {
-			if (dependee instanceof Scopable) {
-				Context context = (Context) ((Scopable) dependee).getScope();
+		if (dependee instanceof Scopable) {
+			Context context = null;
+			try {
+				context = (Context) ((Scopable) dependee).getScope();
 				if (context == null)
 					((Scopable) dependee).setScope(scope);
 				else
 					context.append(scope);
+			} catch (RemoteException e) {
+				e.printStackTrace();
 			}
-		} catch (RemoteException e) {
-			throw new ContextException(e);
 		}
 		return dependsOn(dependee, depender);
 	}

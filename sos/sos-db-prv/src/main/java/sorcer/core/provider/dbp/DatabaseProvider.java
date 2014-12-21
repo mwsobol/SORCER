@@ -49,6 +49,9 @@ import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.*;
 
+/**
+ * @author Mike Sobolewski
+ */
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class DatabaseProvider extends ServiceProvider implements DatabaseStorer {
 
@@ -63,7 +66,7 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
 	public DatabaseProvider() throws RemoteException {
 		// do nothing
 	}
-    
+
 	/**
 	 * Constructs an instance of the SORCER Object Store implementing
 	 * EvaluationRemote. This constructor is required by Jini 2 life cycle
@@ -78,19 +81,19 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
 		setupDatabase();
 	}
 
-    private Set<Uuid> objectsBeingUsed = Collections.synchronizedSet(new HashSet<Uuid>());
+    private Set<Uuid> objectsQueue = Collections.synchronizedSet(new HashSet<Uuid>());
 
 	public Uuid store(Object object) {
 		Object obj = object;
-		if (!(object instanceof Identifiable)) {
+//		if (!(object instanceof Identifiable)) {
 			obj = new UuidObject(object);
-		}
+//		}
         PersistThread pt = new PersistThread(obj);
 		Uuid id = pt.getUuid();
         pt.start();
         return id;
 	}
-	 
+
 	public Uuid update(Uuid uuid, Object object) throws InvalidObjectException {
 		Object uuidObject = object;
 		if (!(object instanceof Identifiable)) {
@@ -101,8 +104,8 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
         ut.start();
         return id;
 	}
-	
-	public Uuid update(URL url, Object object) throws InvalidObjectException {
+
+	public Uuid updateObject(URL url, Object object) throws InvalidObjectException {
 		Object uuidObject = object;
 		if (!(object instanceof Identifiable)) {
 			uuidObject = new UuidObject(SdbUtil.getUuid(url), object);
@@ -113,51 +116,49 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
 		return id;
 	}
 
-    private void addToWaitingList(Uuid id, Object object) {
-        waitWhileObjectIsModified(id);
-        objectsBeingUsed.add(id);
-		logger.info("ZZZZZZZZZZZZ new waiting: " + object + " id: " + id);
+    private void append(Uuid id, Object object) {
+        waitIfBusy(id);
+        objectsQueue.add(id);
+//		logger.info("new waiting: " + object + " id: " + id + " size: " + objectsQueue.size());
 	}
 
-    private void waitWhileObjectIsModified(Uuid uuid) {
-        while (objectsBeingUsed.contains(uuid)) {
+    private void waitIfBusy(Uuid uuid) {
+        while (objectsQueue.contains(uuid)) {
             try {
-                logger.info("waiting for uuid: " + uuid);
-                Thread.sleep(25);
+                Thread.sleep(50);
             } catch (InterruptedException ie) {
-                logger.warning("Interrupted in getObject while waiting for object to be used: " + uuid);
+                logger.warning("Interrupted while waiting for retrieved object: " + uuid);
             }
         }
     }
 
-    private synchronized Set<Uuid> getAllObjectsBeingUsed(){
-        return new HashSet<Uuid>(objectsBeingUsed);
+    private synchronized Set<Uuid> getCurrentBusy(){
+        return new HashSet<Uuid>(objectsQueue);
     }
 
-    public void waitWhileObjectsAreUsed() {
-        Set<Uuid> tmpObjectList = getAllObjectsBeingUsed();
-        logger.info("Init tmpObjList size: " + tmpObjectList.size());
-        while (!tmpObjectList.isEmpty()) {
+    public void waitIfBusy() {
+        Set<Uuid> currentlyBusy = getCurrentBusy();
+        while (!currentlyBusy.isEmpty()) {
             try {
-                tmpObjectList.retainAll(objectsBeingUsed);
-                logger.info("tmpObjList size: " + tmpObjectList.size());
+                currentlyBusy.retainAll(objectsQueue);
+//                logger.info("currentlyBusy size: " + currentlyBusy.size());
                 Thread.sleep(50);
             } catch (InterruptedException ie) {
-                logger.warning("Interrupted in getObject while waiting for objects to be used");
+                logger.warning("Interrupted while busy :" + currentlyBusy.size());
             }
         }
     }
 
 	public Object getObject(Uuid uuid) {
 		logger.info("Getting object: " + uuid);
-		waitWhileObjectIsModified(uuid);
+		waitIfBusy(uuid);
 		StoredMap<UuidKey, UuidObject> uuidObjectMap = views.getUuidObjectMap();
 
 		int tries = 0;
-		while (uuidObjectMap==null && tries<20) {
+		while (uuidObjectMap == null && tries < 100) {
 			logger.info("Didn't get UuidObjectMap, trying: " + tries);
 			try {
-				Thread.sleep(25);
+				Thread.sleep(50);
 			} catch (InterruptedException ie) {
 			}
 			views.getUuidObjectMap();
@@ -167,34 +168,34 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
 		UuidObject uuidObj = uuidObjectMap.get(new UuidKey(uuid));
 		return uuidObj != null ? uuidObj.getObject() : null;
 	}
-	
+
 	public Context getContext(Uuid uuid) {
         try {
-            addToWaitingList(uuid, "context");
+            append(uuid, "context");
             StoredMap<UuidKey, Context> cxtMap = views.getContextMap();
             return cxtMap.get(new UuidKey(uuid));
         } finally {
-            objectsBeingUsed.remove(uuid);
+            objectsQueue.remove(uuid);
         }
 	}
-	
+
 	public Exertion getExertion(Uuid uuid) {
         try {
-            addToWaitingList(uuid, "exertion");
+            append(uuid, "exertion");
             StoredMap<UuidKey, Exertion> xrtMap = views.getExertionMap();
 		    return xrtMap.get(new UuidKey(uuid));
         } finally {
-            objectsBeingUsed.remove(uuid);
+            objectsQueue.remove(uuid);
         }
 	}
 
     public ModelTable getTable(Uuid uuid) {
         try {
-            addToWaitingList(uuid, "table");
+            append(uuid, "table");
             StoredMap<UuidKey, ModelTable> xrtMap = views.getTableMap();
             return xrtMap.get(new UuidKey(uuid));
         } finally {
-            objectsBeingUsed.remove(uuid);
+            objectsQueue.remove(uuid);
         }
     }
 
@@ -207,15 +208,16 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
             super("PersistThread-" + ((Identifiable)object).getId());
 			this.object = object;
 			this.uuid = ((UuidObject)object).getId();
-			addToWaitingList(uuid, object);
+			append(uuid, object);
 		}
 
 		@SuppressWarnings("unchecked")
 		public void run() {
 			try {
+//				logger.info("persisting: " + object);
 				StoredValueSet storedSet = views.getUuidObjectSet();
 				storedSet.add(object);
-
+//				TODO
 //				Object inner = ((UuidObject)object).getObject();
 //				if (inner instanceof Context) {
 //					storedSet = views.getContextSet();
@@ -231,10 +233,10 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
 //					storedSet.add(object);
 //				}
 			} finally {
-				objectsBeingUsed.remove(this.uuid);
+				objectsQueue.remove(this.uuid);
 			}
 		}
-		
+
 		public Uuid getUuid() {
 			return uuid;
 		}
@@ -254,9 +256,9 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
             super("UpdateThread-" + url);
 			this.object = object;
 			this.uuid = SdbUtil.getUuid(url);
-            addToWaitingList(uuid, object);
+            append(uuid, object);
 		}
-		
+
 		public void run() {
             StoredMap storedMap = null;
             UuidKey key = null;
@@ -278,18 +280,18 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
             } catch (IllegalArgumentException ie) {
                 logger.warning("Problem updating object with key: " + key.toString()
 						+ "\n" + storedMap.get(key).toString());
-                objectsBeingUsed.remove(this.uuid);
+                objectsQueue.remove(this.uuid);
                 throw (ie);
             } finally {
-                objectsBeingUsed.remove(this.uuid);
+                objectsQueue.remove(this.uuid);
             }
 		}
-		
+
 		public Uuid getUuid() {
 			return uuid;
 		}
 	}
-	
+
 	protected class DeleteThread extends Thread {
 
 		Uuid uuid;
@@ -301,25 +303,25 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
             this.uuid = uuid;
 			this.storeType = storeType;
             storedMap = getStoredMap(storeType);
-            addToWaitingList(uuid, "delete");
+            append(uuid, "deleteThread");
 		}
 
 		public void run() {
             try {
                 storedMap.remove(new UuidKey(uuid));
             } finally {
-                objectsBeingUsed.remove(this.uuid);
+                objectsQueue.remove(this.uuid);
             }
 		}
-		
+
 		public Uuid getUuid() {
 			return uuid;
 		}
 	}
-	
+
 	public Context contextStore(Context context) throws RemoteException,
 			ContextException, MalformedURLException {
-		Object object = context.getValue(object_stored);		
+		Object object = context.asis(object_stored);
 		Uuid uuid = store(object);
 		Store type = getStoreType(object);
 		URL sdbUrl = getDatabaseURL(type, uuid);
@@ -328,7 +330,7 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
 
 		context.putOutValue(object_url, sdbUrl);
 		context.putOutValue(store_size, getStoreSize(type));
-		
+
 		return context;
 	}
 
@@ -341,7 +343,7 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
 		return new URL("sos://" + DatabaseStorer.class.getName() + pn + "#"
 				+ storeType + "=" + uuid);
 	}
-	
+
 	public URL getSdbUrl() throws MalformedURLException, RemoteException {
 		String pn = getProviderName();
 		if (pn == null || pn.length() == 0 || pn.equals("*"))
@@ -350,13 +352,13 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
 			pn = "/" + pn;
 		return new URL("sos://" + delegate.getPublishedServiceTypes()[0].getName() + pn);
 	}
-	
+
 	public int size(Store storeType) {
 		StoredValueSet storedSet = getStoredSet(storeType);
 		return storedSet.size();
 	}
-	
-	public Uuid deleteURL(URL url) {
+
+	public Uuid deleteObject(URL url) {
 		Store storeType = SdbUtil.getStoreType(url);
 		Uuid id = SdbUtil.getUuid(url);
 		DeleteThread dt = new DeleteThread(id, storeType);
@@ -368,20 +370,23 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
 	public Object retrieve(URL url) {
 		Store storeType = SdbUtil.getStoreType(url);
 		Uuid uuid = SdbUtil.getUuid(url);
-		return retrieve(uuid, storeType);
+//		return retrieve(uuid, storeType);
+		//TODO
+		return retrieve(uuid, Store.object);
+
 	}
 	
 	public Object retrieve(Uuid uuid, Store storeType) {
 		Object obj = null;
-		if (storeType == Store.context)
-			obj = getContext(uuid);
-		else if (storeType == Store.exertion)
-			obj = getExertion(uuid);
-        else if (storeType == Store.table)
-            obj = getTable(uuid);
-        else if (storeType == Store.object)
+//		TODO
+//		if (storeType == Store.context)
+//			obj = getContext(uuid);
+//		else if (storeType == Store.exertion)
+//			obj = getExertion(uuid);
+//        else if (storeType == Store.table)
+//            obj = getTable(uuid);
+//        else if (storeType == Store.object)
 			obj = getObject(uuid);
-		
 		return obj;
 	}
 	
@@ -403,8 +408,9 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
 			} else {
 				throw new ContextException("No valid stored object Uuid: " + id);
 			}
-
-		Object obj = retrieve(uuid, storeType);
+//		TODO
+//		Object obj = retrieve(uuid, storeType);
+		Object obj = retrieve(uuid, Store.object);
 		if (((ServiceContext)context).getReturnPath() != null)
 			context.putOutValue(((ServiceContext)context).getReturnPath().path, obj);
 		
@@ -418,7 +424,7 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
 	 */
 	@Override
 	public Context contextUpdate(Context context) throws RemoteException,
-			ContextException, MalformedURLException, InvalidObjectException {
+			ContextException {
 		Object object = context.getValue(object_updated);
 		Object id = context.getValue(object_uuid);
 		Uuid uuid = null;
@@ -427,16 +433,16 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
 		} else if (id instanceof Uuid) {
 			uuid = (Uuid)id;
 		} else {
-			throw new ContextException("Wrong update object Uuid: " + id);
+			throw new ContextException("Wrong object Uuid: " + id);
 		}
-        try {
-            uuid = update(uuid, object);
-        } catch (IllegalArgumentException e) {
-            logger.warning("GOT EXCEPTION in contextUpdate for:" + id + "\nObject to be updated: " + object.toString() +"CTX:\n" + context);
-            throw e;
-        }
+		URL sdbUrl = null;
 		Store type = getStoreType(object);
-		URL sdbUrl = getDatabaseURL(type, uuid);
+		try {
+            uuid = update(uuid, object);
+		 	sdbUrl = getDatabaseURL(type, uuid);
+		} catch (Exception e) {
+			throw new ContextException(e);
+		}
 		if (((ServiceContext)context).getReturnPath() != null)
 			context.putOutValue(((ServiceContext)context).getReturnPath().path, sdbUrl);
 
@@ -491,7 +497,6 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
 		return size;
 	}
 
-
 	protected void setupDatabase() throws DatabaseException, RemoteException {
 		Configuration config = delegate.getDeploymentConfig();
 		String dbHome = null;
@@ -533,12 +538,12 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
 		try {
             int tries=0;
             try {
-                while (objectsBeingUsed.size()>0 && tries<80) {
+                while (objectsQueue.size()>0 && tries<80) {
                     Thread.sleep(50);
                     tries++;
                 }
                 if (tries==80) logger.warning("Interrupted while objects where still being used; size: "
-                + objectsBeingUsed.size());
+                + objectsQueue.size());
             } catch (InterruptedException ie) {}
 			if (db != null) {
 				db.close();
@@ -551,7 +556,7 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
 	}
 
 	/* (non-Javadoc)
-	 * @see sorcer.core.provider.StorageManagement#delete(sorcer.service.Context)
+	 * @see sorcer.core.provider.StorageManagement#deleteObject(sorcer.service.Context)
 	 */
 	@Override
 	public Context contextDelete(Context context) throws RemoteException,
@@ -565,12 +570,12 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
 			context.putValue(StorageManagement.object_url,
 					getDatabaseURL(getStoreType(deletedObject), id));
 		}
-		delete(deletedObject);
+		deleteObject(deletedObject);
 		return context;
 	}
 	
 	public StoredMap getStoredMap(Store storeType) {
-        waitWhileObjectsAreUsed();
+        waitIfBusy();
 		StoredMap storedMap = null;
 		if (storeType == Store.context) {
 			storedMap = views.getContextMap();
@@ -585,7 +590,7 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
 	}
 	
 	public StoredValueSet getStoredSet(Store storeType) {
-        waitWhileObjectsAreUsed();
+        waitIfBusy();
 		StoredValueSet storedSet = null;
 		if (storeType == Store.context) {
 			storedSet = views.getContextSet();
@@ -599,9 +604,9 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
 		return storedSet;
 	}
 	
-	public Uuid delete(Object object) {
+	public Uuid deleteObject(Object object) {
 		if (object instanceof URL) {
-			return deleteURL((URL)object);
+			return deleteObject((URL)object);
 		} else if (object instanceof Identifiable) 
 			return deleteIdentifiable(object);
 		return null;
@@ -629,7 +634,7 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
 	}
 	
 	private int getStoreSize(Store type) {
-        waitWhileObjectsAreUsed();
+        waitIfBusy();
 		if (type == Store.context) {
 			return views.getContextSet().size();
 		} else if (type == Store.exertion) {
@@ -686,21 +691,9 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
         try {
             return getDatabaseURL(type, uuid);
         } catch (MalformedURLException e) {
-            throw new IllegalStateException("Couldn't parse my own URL", e);
+            throw new IllegalStateException("Couldn't parse object URL", e);
         }
     }
 
-    /**
-     * the same as #update() but hide requirement on Uuid class
-     */
-    @Override
-    public void updateObject(URL url, Object object) throws InvalidObjectException {
-        update(url, object);
-    }
-
-    @Override
-    public void deleteObject(URL url) {
-        deleteURL(url);
-    }
 }
 

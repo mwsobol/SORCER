@@ -23,6 +23,7 @@ import sorcer.core.provider.StorageManagement;
 import sorcer.service.Context;
 import sorcer.util.ProviderAccessor;
 import sorcer.util.bdb.objects.SorcerDatabaseViews;
+import sorcer.util.bdb.objects.UuidObject;
 
 import java.io.IOException;
 import java.net.URL;
@@ -84,11 +85,17 @@ public class SdbConnection extends URLConnection {
 			outContext = null;
 			if (store != null) {
 				Context cxt = new ServiceContext();
-				cxt.putInValue(StorageManagement.object_type, storeType);
+//				TODO
+				cxt.putInValue(StorageManagement.object_type, Store.object);
+//				cxt.putInValue(StorageManagement.object_type, storeType);
 				cxt.putInValue(StorageManagement.object_uuid, uuid);
 				outContext = store.contextRetrieve(cxt);
 			}
-			return outContext.getValue(StorageManagement.object_retrieved);
+			Object obj =  outContext.getValue(StorageManagement.object_retrieved);
+			if (obj instanceof UuidObject)
+				return ((UuidObject)obj).getObject();
+			else
+				return obj;
 		} catch (Exception e) {
 			throw new IOException(e);
 		}

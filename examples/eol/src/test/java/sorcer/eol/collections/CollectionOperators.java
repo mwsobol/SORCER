@@ -286,8 +286,8 @@ public class CollectionOperators {
 		URL p1Url = store(par("design/in", 30.0));
 		URL p2Url = store(par("url/sorcer", "http://sorcersoft.org"));
 		
-		assertEquals(content(p1Url), 30.0);
-		assertEquals(content(p2Url), "http://sorcersoft.org");
+		assertEquals(value((Par)content(p1Url)), 30.0);
+		assertEquals(value((Par)content(p2Url)), "http://sorcersoft.org");
 
 	}
 	

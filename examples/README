@@ -1,3 +1,5 @@
+Basic Definitions
+
 A service is the work performed in which a service provider (one that serves)
 exerts acquired abilities to execute a computation. 
 
@@ -30,11 +32,12 @@ SORCER Operating System (SOS)
 	- manages runtime service federations for exertions
 	- provides a service-oriented shell (sosh) for the SOS
 
-Service-orientation = everything is a service => EaaS
-S2S => service requestor, provider, request, result, and invocation are services
-
+###############################################################################
 
 The Exertion-Oriented Languages (EOL) Tutorial
+Object-orientation = everything is an object => EaaO => Java
+Service-orientation = everything is a service => EaaS => EOL
+S2S => service requestor, provider, request, result, and invocation are services
 
 1. Collections used in EOL
 	eol/src/test/java/sorcer/arithmetic/collections

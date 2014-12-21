@@ -606,12 +606,7 @@ public class operator {
 
 	protected static void setPar(PositionalContext pcxt, Tuple2 entry, int i)
 			throws ContextException {
-		Par p;
-		try {
-			p = new Par(entry.path(), entry.value());
-		} catch (RemoteException e) {
-			throw new ContextException(e);
-		}
+		Par p = new Par(entry.path(), entry.value());
 		p.setPersistent(true);
 		if (entry instanceof InputEntry)
 			pcxt.putInValueAt(entry.path(), p, i + 1);
@@ -625,12 +620,7 @@ public class operator {
 
 	protected static void setPar(Context cxt, Tuple2 entry)
 			throws ContextException {
-		Par p;
-		try {
-			p = new Par(entry.path(), entry.value());
-		} catch (RemoteException e) {
-			throw new ContextException(e);
-		}
+		Par p = new Par(entry.path(), entry.value());
 		p.setPersistent(true);
 		if (entry instanceof InputEntry)
 			cxt.putInValue(entry.path(), p);

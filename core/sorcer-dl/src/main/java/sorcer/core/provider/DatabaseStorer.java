@@ -17,26 +17,27 @@
 
 package sorcer.core.provider;
 
+import net.jini.id.Uuid;
+
 import java.io.InvalidObjectException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
-import sorcer.core.provider.StorageManagement;
-import sorcer.core.provider.DatabaseStorer.Store;
-import net.jini.id.Uuid;
 
-
-public interface DatabaseStorer extends StorageManagement, Remote { 
+/**
+ * @author Mike Sobolewski
+ */
+public interface DatabaseStorer extends StorageManagement, Remote {
 	
 	public enum Store { context, exertion, var, varmodel, table, object, all }
 	
 	public URL storeObject(Object object) throws RemoteException;
-	
-	void updateObject(URL url, Object object) throws RemoteException, InvalidObjectException;
 
-	void deleteObject(URL url) throws RemoteException;
+	public Uuid updateObject(URL url, Object object) throws RemoteException, InvalidObjectException;
+
+	public Uuid deleteObject(URL url) throws RemoteException;
 	
 	public URL getDatabaseURL(Store storeType, Uuid uuid) throws MalformedURLException, RemoteException;
 }

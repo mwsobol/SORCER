@@ -57,33 +57,19 @@ public class Entry<T> extends Tuple2<String, T> implements Arg, Comparable<T>, S
 			v = (T)Context.none;
 
 		_1 = path;
-		if (v instanceof URL) {
+		if (SdbUtil.isSosURL(v)) {
 			isPersistent = true;
 		}
 		this._2 = v;
 	}
 	
 	public Entry(final String path, final T value, final int index) {
-		if(path==null)
-			throw new IllegalArgumentException("path must not be null");
-		T v = value;
-		if (v == null)
-			v = (T)Context.none;
-
-		_1 = path;
-		this._2 = v;
+		this(path, value);
 		this.index = index;
 	}
 
 	public Entry(final String path, final T value, final String association) {
-		if(path==null)
-			throw new IllegalArgumentException("path must not be null");
-		T v = value;
-		if (v == null)
-			v = (T)Context.none;
-
-		_1 = path;
-		this._2 = v;
+		this(path, value);
 		this.annotation = association;
 	}
 

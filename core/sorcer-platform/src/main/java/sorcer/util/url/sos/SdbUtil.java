@@ -271,7 +271,8 @@ public class SdbUtil {
 				context("store", inEnt(StorageManagement.object_stored, object),
 						result(StorageManagement.object_url)));
 
-		return (URL) value(objectStoreTask);
+		Task out = exert(objectStoreTask);
+		return (URL) out.getDataContext().getValue(StorageManagement.object_url);
 	}
 
 	public static URL write(Object object) throws ExertionException,
