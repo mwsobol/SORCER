@@ -5,7 +5,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
-
 import sorcer.arithmetic.provider.Adder;
 import sorcer.arithmetic.provider.Averager;
 import sorcer.arithmetic.provider.Multiplier;
@@ -16,22 +15,28 @@ import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.provider.impl.SubtractorImpl;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.model.par.ParModel;
-import sorcer.core.provider.Exerter;
 import sorcer.core.provider.Jobber;
 import sorcer.core.provider.ServiceTasker;
+import sorcer.core.provider.Shell;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.service.*;
 import sorcer.service.Strategy.*;
 
 import java.rmi.RemoteException;
-import java.util.List;
 import java.util.logging.Logger;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
+import static sorcer.co.operator.input;
 import static sorcer.eo.operator.*;
+import static sorcer.eo.operator.get;
+import static sorcer.eo.operator.in;
+import static sorcer.eo.operator.input;
+import static sorcer.eo.operator.pipe;
+import static sorcer.eo.operator.value;
 import static sorcer.po.operator.*;
+import static sorcer.po.operator.put;
 
 /**
  * @author Mike Sobolewski
@@ -320,25 +325,38 @@ public class NetJobExertions implements SorcerConstants {
 		logger.info("job context: " + context);
 		assertEquals(get(context, "j1/t3/result/y"), 400.0);
 	}
-	
+
 	@Test
-	public void exerterTest() throws Exception {
-	Task f5 = task(
-			"f5",
-			sig("add", Adder.class),
-			context("add", inEnt("arg/x1", 20.0),
-					inEnt("arg/x2", 80.0), outEnt("result/y", null)),
-			strategy(Monitor.NO, Wait.YES));
-	
-//	long start = System.currentTimeMillis();
-	Exerter exerter = (Exerter)provider(sig( Exerter.class));
-	Exertion out = exert(exerter, f5);
-	 
-//	long end = System.currentTimeMillis();
-	
-//	logger.info("task f5 context: " + context(out));
-//	logger.info("task f5 result/y: " + get(context(out), "result/y"));
-	assertEquals(get(out, "result/y"), 100.00);
+	public void serviceShellTest() throws Exception {
+		Task t3 = task(
+				"t3",
+				sig("subtract", Subtractor.class),
+				context("subtract", inEnt("arg/x1", null), inEnt("arg/x2", null),
+						outEnt("result/y", null)));
+
+		Task t4 = task(
+				"t4",
+				sig("multiply", Multiplier.class),
+				context("multiply", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
+						outEnt("result/y", null)));
+
+		Task t5 = task(
+				"t5",
+				sig("add", Adder.class),
+				context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
+						outEnt("result/y", null)));
+
+		// Service Composition j1(j2(t4(x1, x2), t5(x1, x2)), t3(x1, x2))
+		Job job = job(
+				"j1", sig("service", ServiceJobber.class),
+				job("j2", t4, t5), t3,
+				pipe(out(t4, "result/y"), in(t3, "arg/x1")),
+				pipe(out(t5, "result/y"), in(t3, "arg/x2")));
+
+		Context context = serviceContext(exert(sig(Shell.class), job));
+		logger.info("job context: " + context);
+		assertEquals(get(context, "j1/t3/result/y"), 400.0);
+
 	}
 		
 	public static Context createContext() throws Exception {

@@ -43,10 +43,7 @@ import sorcer.service.*;
 import sorcer.service.Signature.*;
 import sorcer.service.Strategy.*;
 import sorcer.service.modeling.Variability;
-import sorcer.util.Loop;
-import sorcer.util.ObjectCloner;
-import sorcer.util.ServiceAccessor;
-import sorcer.util.Sorcer;
+import sorcer.util.*;
 import sorcer.util.url.sos.SdbUtil;
 
 import java.io.IOException;
@@ -1690,6 +1687,21 @@ public class operator {
 		} catch (Exception e) {
 			throw new ExertionException(e);
 		}
+	}
+
+	public static <T extends Exertion> T exert(Signature signature, Exertion input)
+			throws ExertionException {
+		try {
+			Provider prv = ProviderLookup.getProvider(signature);
+			return (T) prv.service(input, null);
+		} catch (Exception e) {
+			throw new ExertionException(e);
+		}
+	}
+
+	public static <T extends Exertion> T service(Exerter exerter, Exertion input,
+											   Arg... entries) throws ExertionException {
+		  return(exert(exerter, input, entries));
 	}
 
 	public static <T extends Exertion> T exert(Exerter exerter, Exertion input,

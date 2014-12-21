@@ -1,35 +1,28 @@
 package sorcer.eol.tasks;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static sorcer.co.operator.*;
-import static sorcer.eo.operator.*;
-
-import java.util.logging.Logger;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
-
 import sorcer.arithmetic.provider.Adder;
 import sorcer.arithmetic.provider.Multiplier;
 import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.provider.impl.SubtractorImpl;
-import sorcer.core.provider.Exerter;
-import sorcer.service.Context;
-import sorcer.service.ContextException;
-import sorcer.service.Exertion;
-import sorcer.service.ExertionException;
-import sorcer.service.Signature;
+import sorcer.core.provider.Shell;
+import sorcer.service.*;
 import sorcer.service.Signature.Direction;
-import sorcer.service.SignatureException;
 import sorcer.service.Strategy.Access;
 import sorcer.service.Strategy.Monitor;
 import sorcer.service.Strategy.Wait;
-import sorcer.service.Task;
-import sorcer.util.ProviderAccessor;
+
+import java.util.logging.Logger;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static sorcer.co.operator.*;
+import static sorcer.eo.operator.*;
+import static sorcer.eo.operator.value;
 
 /**
  * @author Mike Sobolewski
@@ -96,27 +89,19 @@ public class NetExertionTasks {
 
 	
 	@Test
-	public void exerterTest() throws Exception {
+	public void serviceShellTest() throws Exception {
 
+		// The SORCER Service Shell as a service provider
 		Task f5 = task(
-			"f5",
-			sig("add", Adder.class),
-			context("add", inEnt("arg/x1", 20.0),
-					inEnt("arg/x2", 80.0), outEnt("result/y", null)),
-			strategy(Monitor.NO, Wait.YES));
-	
-	Exertion out = null;
-//	long start = System.currentTimeMillis();
-	Exerter exerter = ProviderAccessor.getExerter();
-//	logger.info("got exerter: " + exerter);
+				"f5",
+				sig("add", Adder.class),
+				context("add", inEnt("arg/x1", 20.0),
+						inEnt("arg/x2", 80.0), result("result/y")),
+				strategy(Monitor.NO, Wait.YES));
 
-	out = exerter.exert(f5);
-//	long end = System.currentTimeMillis();
-	
-//	logger.info("task f5 context: " + context(out));
-//	logger.info("task f5 result/y: " + get(context(out), "result/y"));
-	assertEquals(get(out, "result/y"), 100.00);
-	
+		Exertion out = exert(sig(Shell.class), f5);
+		assertEquals(get(out, "result/y"), 100.00);
+
 	}
 	
 	

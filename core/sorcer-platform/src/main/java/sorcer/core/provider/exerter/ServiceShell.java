@@ -52,7 +52,7 @@ import static sorcer.eo.operator.value;
  * @author Mike Sobolewski
  */
 @SuppressWarnings("rawtypes")
-public class ServiceShell implements Service, Exerter, Callable {
+public class ServiceShell implements Shell, Service, Exerter, Callable {
 	protected final static Logger logger = Logger.getLogger(ServiceShell.class
 			.getName());
 
