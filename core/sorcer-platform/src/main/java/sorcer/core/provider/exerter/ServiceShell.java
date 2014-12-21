@@ -46,26 +46,28 @@ import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.logging.Logger;
 
+import static sorcer.eo.operator.value;
+
 /**
  * @author Mike Sobolewski
  */
 @SuppressWarnings("rawtypes")
-public class ExertionDispatcher implements Exerter, Callable {
-	protected final static Logger logger = Logger.getLogger(ExertionDispatcher.class
+public class ServiceShell implements Service, Exerter, Callable {
+	protected final static Logger logger = Logger.getLogger(ServiceShell.class
 			.getName());
 
 	private ServiceExertion exertion;
 	private Transaction transaction;
 	private static MutualExclusion locker;
 
-	public ExertionDispatcher() {
+	public ServiceShell() {
 	}
 	
-	public ExertionDispatcher(Exertion xrt) {
+	public ServiceShell(Exertion xrt) {
 		exertion = (ServiceExertion) xrt;
 	}
 
-	public ExertionDispatcher(Exertion xrt, Transaction txn) {
+	public ServiceShell(Exertion xrt, Transaction txn) {
 		exertion = (ServiceExertion) xrt;
 		transaction = txn;
 
@@ -108,6 +110,31 @@ public class ExertionDispatcher implements Exerter, Callable {
 	public Exertion exert(String providerName) throws TransactionException,
 			ExertionException, RemoteException {
 		return exert(null, providerName);
+	}
+
+	@Override
+	public Exertion service(Exertion exertion, Transaction txn) throws TransactionException, ExertionException, RemoteException {
+		return exert(exertion, txn);
+	}
+
+	@Override
+	public Exertion service(Exertion exertion) throws TransactionException, ExertionException, RemoteException {
+		return exert(exertion);
+	}
+
+	@Override
+	public Object asis() throws EvaluationException, RemoteException {
+		return exertion;
+	}
+
+	@Override
+	public Object getValue(Arg... entries) throws EvaluationException, RemoteException {
+		return value(exertion, entries);
+	}
+
+	@Override
+	public Evaluation substitute(Arg... entries) throws SetterException, RemoteException {
+		return exertion.substitute(entries);
 	}
 
 	public Exertion exert(Exertion xrt, Transaction txn, String providerName)

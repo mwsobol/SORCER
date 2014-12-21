@@ -31,7 +31,7 @@ import sorcer.core.invoker.ExertInvoker;
 import sorcer.core.provider.Jobber;
 import sorcer.core.provider.MonitoringSession;
 import sorcer.core.provider.Spacer;
-import sorcer.core.provider.exerter.ExertionDispatcher;
+import sorcer.core.provider.exerter.ServiceShell;
 import sorcer.core.signature.NetSignature;
 import sorcer.core.signature.ServiceSignature;
 import sorcer.security.util.SorcerPrincipal;
@@ -299,7 +299,7 @@ public abstract class ServiceExertion implements Exertion, Scopable, SorcerConst
 	 */
 	public <T extends Exertion> T exert(Transaction txn, Arg... entries)
 			throws TransactionException, ExertionException, RemoteException {
-		ExertionDispatcher se = new ExertionDispatcher(this);
+		ServiceShell se = new ServiceShell(this);
 		Exertion result = null;
 		try {
 			result = se.exert(txn, null, entries);
@@ -325,7 +325,7 @@ public abstract class ServiceExertion implements Exertion, Scopable, SorcerConst
 			throw new ExertionException(e);
 		}
 		
-		ExertionDispatcher se = new ExertionDispatcher(this);
+		ServiceShell se = new ServiceShell(this);
 		return se.exert(entries);
 	}
 
@@ -337,7 +337,7 @@ public abstract class ServiceExertion implements Exertion, Scopable, SorcerConst
 			e.printStackTrace();
 			throw new ExertionException(e);
 		}
-		ExertionDispatcher se = new ExertionDispatcher(this);
+		ServiceShell se = new ServiceShell(this);
 		return se.exert(txn, providerName);
 	}
 

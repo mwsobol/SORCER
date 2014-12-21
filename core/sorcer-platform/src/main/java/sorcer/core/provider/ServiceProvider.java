@@ -961,7 +961,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 			// URL exportUrl, String className, String name, String helpFilename
 			uiDesc2 = UIDescriptorFactory.getUIDescriptor(MainUI.ROLE,
 					(JFrameFactory) new UIFrameFactory(new URL[] { uiUrl },
-							"sorcer.ui.exertlet.NetletUI", "Exertlet Editor",
+							"sorcer.ui.exertlet.NetletUI", "Netlet Editor",
 							helpUrl));
 		} catch (Exception ex) {
 			ex.printStackTrace();

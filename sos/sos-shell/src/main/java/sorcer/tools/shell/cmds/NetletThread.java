@@ -10,7 +10,7 @@ import net.jini.core.transaction.TransactionException;
 
 import org.codehaus.groovy.control.CompilationFailedException;
 
-import sorcer.core.provider.exerter.ExertionDispatcher;
+import sorcer.core.provider.exerter.ServiceShell;
 import sorcer.service.Exertion;
 import sorcer.service.ExertionException;
 import sorcer.service.ServiceExertion;
@@ -48,7 +48,7 @@ public class NetletThread extends Thread {
 		}
 		if (target instanceof Exertion) {
 			Signature sig = ((ServiceExertion)target).getProcessSignature();			
-			ExertionDispatcher se = new ExertionDispatcher((Exertion) target);
+			ServiceShell se = new ServiceShell((Exertion) target);
 			try {
 				result = se.exert();
 			} catch (RemoteException e) {

@@ -52,7 +52,7 @@ import sorcer.core.exertion.NetTask;
 import sorcer.core.loki.member.LokiMemberUtil;
 import sorcer.core.misc.MsgRef;
 import sorcer.core.provider.ServiceProvider.ProxyVerifier;
-import sorcer.core.provider.exerter.ExertionDispatcher;
+import sorcer.core.provider.exerter.ServiceShell;
 import sorcer.core.provider.logger.RemoteHandler;
 import sorcer.core.proxy.Partnership;
 import sorcer.core.proxy.ProviderProxy;
@@ -1020,7 +1020,7 @@ public class ProviderDelegate implements SorcerConstants {
 					m = impl.getClass().getMethod(selector,
 							new Class[] { Context.class, Arg[].class });
 					isContextual = true;
-				} else if (selector.equals("exert") && impl instanceof ExertionDispatcher) {
+				} else if (selector.equals("exert") && impl instanceof ServiceShell) {
 					m = impl.getClass().getMethod(selector,
 							new Class[] { Exertion.class, Arg[].class });
 					isContextual = false;
@@ -1101,7 +1101,7 @@ public class ProviderDelegate implements SorcerConstants {
 		String selector = task.getProcessSignature().getSelector();
 		Class[] argTypes = ((ServiceContext)result).getParameterTypes();
 		Object[] args = (Object[]) ((ServiceContext)result).getArgs();
-		if (selector.equals("exert") && impl instanceof ExertionDispatcher) {
+		if (selector.equals("exert") && impl instanceof ServiceShell) {
 			Exertion xrt = null;
 			if (args.length == 1) {
 				xrt = (Exertion) m.invoke(impl, new Object[] { args[0],

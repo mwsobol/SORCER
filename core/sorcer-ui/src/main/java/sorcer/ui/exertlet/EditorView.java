@@ -17,55 +17,27 @@
 package sorcer.ui.exertlet;
 
 import groovy.lang.GroovyShell;
+import net.jini.core.transaction.TransactionException;
+import sorcer.core.provider.Provider;
+import sorcer.service.*;
+import sorcer.ui.util.JIconButton;
+import sorcer.ui.util.WindowUtilities;
+import sorcer.util.SorcerUtil;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.rmi.RemoteException;
-import java.util.logging.Logger;
-
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JEditorPane;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
-import javax.swing.JTextField;
-import javax.swing.UIManager;
+import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLFrameHyperlinkEvent;
-
-import net.jini.core.transaction.TransactionException;
-import sorcer.core.provider.Provider;
-import sorcer.service.ContextException;
-import sorcer.service.ContextManagement;
-import sorcer.service.Exec;
-import sorcer.service.Exertion;
-import sorcer.service.ExertionException;
-import sorcer.service.ServiceExertion;
-import sorcer.ui.util.JIconButton;
-import sorcer.ui.util.WindowUtilities;
-import sorcer.util.SorcerUtil;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.*;
+import java.net.URL;
+import java.rmi.RemoteException;
+import java.util.logging.Logger;
 
 /**
  * HTML file browser and file editor
@@ -213,7 +185,7 @@ public class EditorView extends JPanel implements HyperlinkListener {
 			add(bpanel, BorderLayout.SOUTH);
 		}
 
-		JPopupMenu popup = new JPopupMenu("Exertlet Editor");
+		JPopupMenu popup = new JPopupMenu("Netlet Editor");
 	
 		if (isEditor || !isDisposable || withLocator) {
 			openMenuItem = new JMenuItem(OPEN_LABEL);

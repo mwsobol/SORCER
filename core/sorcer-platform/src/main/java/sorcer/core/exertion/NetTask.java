@@ -23,9 +23,8 @@ import java.util.Arrays;
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
 import net.jini.id.Uuid;
-import sorcer.core.provider.exerter.ExertionDispatcher;
+import sorcer.core.provider.exerter.ServiceShell;
 import sorcer.core.signature.NetSignature;
-import sorcer.core.signature.ObjectSignature;
 import sorcer.service.Context;
 import sorcer.service.Evaluation;
 import sorcer.service.ExertionException;
@@ -122,7 +121,7 @@ public class NetTask extends ObjectTask implements Evaluation<Object>, Invocatio
 
 	public Task doTask(Transaction txn) throws ExertionException,
 			SignatureException, RemoteException {
-		ExertionDispatcher se = new ExertionDispatcher(this);
+		ServiceShell se = new ServiceShell(this);
 		try {
 			return (Task) se.exert();
 		} catch (TransactionException e) {

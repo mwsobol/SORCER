@@ -19,7 +19,6 @@ package sorcer.core.provider;
 import static sorcer.eo.operator.task;
 
 import java.rmi.RemoteException;
-import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
@@ -35,7 +34,6 @@ import sorcer.core.exertion.LoopExertion;
 import sorcer.core.exertion.NetJob;
 import sorcer.core.exertion.NetTask;
 import sorcer.core.exertion.OptExertion;
-import sorcer.core.provider.exerter.ExertionDispatcher;
 import sorcer.core.provider.rendezvous.RendezvousBean;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.core.provider.rendezvous.ServiceSpacer;
@@ -65,7 +63,7 @@ import com.sun.jini.thread.TaskManager;
  * The ControlFlowManager class is responsible for handling control flow
  * exertions ({@link Conditional}, {@link NetJob}, {@link NetTask}).
  * 
- * This class is used by the {@link ExertionDispatcher} class for executing
+ * This class is used by the {@link sorcer.core.provider.exerter.ServiceShell} class for executing
  * {@link Exertions}.
  * 
  * @author Mike Sobolewski

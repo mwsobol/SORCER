@@ -549,7 +549,7 @@ public class SorcerDescriptorUtil {
 	/**
 	 * Get the {@link com.sun.jini.start.ServiceDescriptor} instance for
 	 * {@link sorcer.core.provider.ServiceTasker} with beaned
-	 * {@link sorcer.core.provider.exerter.ExertionDispatcher}, called Exerter.
+	 * {@link sorcer.core.provider.exerter.ServiceShell}, called Exerter.
 	 * 
 	 * @param policy
 	 *            The security policy file to use
@@ -572,7 +572,7 @@ public class SorcerDescriptorUtil {
 	/**
 	 * Get the {@link com.sun.jini.start.ServiceDescriptor} instance for
 	 * {@link sorcer.core.provider.ServiceTasker} with beaned
-	 * {@link sorcer.core.provider.exerter.ExertionDispatcher}, called Exerter.
+	 * {@link sorcer.core.provider.exerter.ServiceShell}, called Exerter.
 	 * 
 	 * @param policy
 	 *            The security policy file to use
@@ -598,7 +598,7 @@ public class SorcerDescriptorUtil {
 	/**
 	 * Get the {@link com.sun.jini.start.ServiceDescriptor} instance for
 	 * {@link sorcer.core.provider.ServiceTasker} with beaned
-	 * {@link sorcer.core.provider.exerter.ExertionDispatcher}, called Exerter.
+	 * {@link sorcer.core.provider.exerter.ServiceShell}, called Exerter.
 	 * 
 	 * @param policy
 	 *            The security policy file to use

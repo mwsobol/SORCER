@@ -30,7 +30,7 @@ import sorcer.core.context.model.par.ParModel;
 import sorcer.core.deploy.ServiceDeployment;
 import sorcer.core.exertion.*;
 import sorcer.core.provider.*;
-import sorcer.core.provider.exerter.ExertionDispatcher;
+import sorcer.core.provider.exerter.ServiceShell;
 import sorcer.core.provider.rendezvous.ServiceConcatenator;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.core.provider.rendezvous.ServiceRendezvous;
@@ -1705,7 +1705,7 @@ public class operator {
 											   Transaction transaction,
 											   Arg... entries) throws ExertionException {
 		try {
-			ExertionDispatcher se = new ExertionDispatcher(input);
+			ServiceShell se = new ServiceShell(input);
 			Exertion result = null;
 			try {
 				result = se.exert(transaction, null, entries);

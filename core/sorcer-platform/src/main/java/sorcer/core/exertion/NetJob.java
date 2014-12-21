@@ -22,7 +22,7 @@ import java.rmi.RemoteException;
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
 import sorcer.core.provider.Jobber;
-import sorcer.core.provider.exerter.ExertionDispatcher;
+import sorcer.core.provider.exerter.ServiceShell;
 import sorcer.core.signature.NetSignature;
 import sorcer.security.util.Auth;
 import sorcer.security.util.SorcerPrincipal;
@@ -79,7 +79,7 @@ public class NetJob extends Job implements Evaluation<Object>, Invocation<Object
 	@Override
 	public Job doJob(Transaction txn) throws ExertionException,
 			SignatureException, RemoteException, TransactionException {
-		ExertionDispatcher se = new ExertionDispatcher(this);
+		ServiceShell se = new ServiceShell(this);
 		return (Job)se.exert(txn, null);
 	}
 	
