@@ -86,8 +86,8 @@ def repoPath() {
 
 bootme {
     starterConfig = file("${projectDir.path}/configs/StartAdderConfig.groovy")
-    systemProperties = ["local.repo.path" : repoPath()]
-    //spawn = false
+    systemProperties = ["relative.repo.path" : repoPath(), "java.util.logging.config.file" : "${projectDir.path}/configs/sorcer.logging"]
+    spawn = false
 }
 
 //task runRequestor(type:JavaExec, dependsOn:[jar, "bootme"]) {
