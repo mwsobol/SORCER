@@ -1,7 +1,5 @@
 package sorcer.worker.requestor;
 
-import java.util.logging.Logger;
-
 import sorcer.core.context.ServiceContext;
 import sorcer.core.exertion.NetTask;
 import sorcer.core.signature.NetSignature;
@@ -12,6 +10,8 @@ import sorcer.util.Log;
 import sorcer.util.Sorcer;
 import sorcer.util.SorcerEnv;
 import sorcer.worker.provider.Worker;
+
+import java.util.logging.Logger;
 
 /**
  * @author Mike Sobolewski

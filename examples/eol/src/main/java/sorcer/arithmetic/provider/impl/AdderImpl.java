@@ -1,9 +1,5 @@
 package sorcer.arithmetic.provider.impl;
 
-import java.net.URL;
-import java.rmi.RemoteException;
-import java.util.logging.Logger;
-
 import net.jini.lookup.entry.UIDescriptor;
 import net.jini.lookup.ui.MainUI;
 import sorcer.arithmetic.provider.Adder;
@@ -15,6 +11,10 @@ import sorcer.service.MonitorException;
 import sorcer.serviceui.UIComponentFactory;
 import sorcer.serviceui.UIDescriptorFactory;
 import sorcer.util.Sorcer;
+
+import java.net.URL;
+import java.rmi.RemoteException;
+import java.util.logging.Logger;
 
 @SuppressWarnings("rawtypes")
 public class AdderImpl implements Adder {

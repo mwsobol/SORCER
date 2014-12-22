@@ -1,10 +1,10 @@
 package sorcer.arithmetic.provider;
 
-import java.rmi.RemoteException;
-
 import sorcer.service.Context;
 import sorcer.service.ContextException;
 import sorcer.service.MonitorException;
+
+import java.rmi.RemoteException;
 
 public interface Arithmetic extends Adder, Subtractor, Multiplier, Divider {
 

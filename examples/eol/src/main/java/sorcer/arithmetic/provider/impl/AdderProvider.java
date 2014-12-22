@@ -1,8 +1,6 @@
 package sorcer.arithmetic.provider.impl;
 
-import java.net.URL;
-import java.rmi.RemoteException;
-
+import com.sun.jini.start.LifeCycle;
 import net.jini.lookup.entry.UIDescriptor;
 import net.jini.lookup.ui.MainUI;
 import sorcer.arithmetic.provider.RemoteAdder;
@@ -15,7 +13,8 @@ import sorcer.serviceui.UIComponentFactory;
 import sorcer.serviceui.UIDescriptorFactory;
 import sorcer.util.Sorcer;
 
-import com.sun.jini.start.LifeCycle;
+import java.net.URL;
+import java.rmi.RemoteException;
 
 public class AdderProvider extends ServiceTasker implements RemoteAdder {
 	private Arithmometer arithmometer = new Arithmometer();

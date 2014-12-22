@@ -1,9 +1,9 @@
 package sorcer.worker.provider;
 
-import java.io.Serializable;
-
 import sorcer.service.Context;
 import sorcer.service.ContextException;
+
+import java.io.Serializable;
 
 /**
  * @author Mike Sobolewski

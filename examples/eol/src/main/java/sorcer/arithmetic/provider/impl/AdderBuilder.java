@@ -1,16 +1,12 @@
 package sorcer.arithmetic.provider.impl;
 
-import static sorcer.po.operator.add;
-import static sorcer.po.operator.invoker;
-import static sorcer.po.operator.parModel;
-import static sorcer.po.operator.par;
-import static sorcer.po.operator.pars;
-
-import java.rmi.RemoteException;
-
 import sorcer.core.context.model.par.ParModel;
 import sorcer.service.ContextException;
 import sorcer.service.EvaluationException;
+
+import java.rmi.RemoteException;
+
+import static sorcer.po.operator.*;
 
 /**
  * @author Mike Sobolewski

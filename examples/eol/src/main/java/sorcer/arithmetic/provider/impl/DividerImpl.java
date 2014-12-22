@@ -1,10 +1,10 @@
 package sorcer.arithmetic.provider.impl;
 
-import java.rmi.RemoteException;
-
 import sorcer.arithmetic.provider.Divider;
 import sorcer.service.Context;
 import sorcer.service.ContextException;
+
+import java.rmi.RemoteException;
 
 public class DividerImpl implements Divider {
 	Arithmometer arithmometer = new Arithmometer();

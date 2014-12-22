@@ -1,29 +1,23 @@
 package sorcer.eol.services;
 
-import static org.junit.Assert.assertNotNull;
-import static sorcer.eo.operator.*;
-
-import java.util.logging.Logger;
-
 import org.junit.Ignore;
 import org.junit.Test;
-
 import org.junit.runner.RunWith;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.core.SorcerConstants;
-import sorcer.core.provider.Concatenator;
-import sorcer.core.provider.Jobber;
-import sorcer.core.provider.Provider;
-import sorcer.core.provider.Rendezvous;
-import sorcer.core.provider.Spacer;
+import sorcer.core.provider.*;
 import sorcer.service.Accessor;
 import sorcer.service.Service;
 import sorcer.util.ProviderAccessor;
 import sorcer.util.ProviderLocator;
 import sorcer.util.ProviderLookup;
-import sorcer.util.Sorcer;
 import sorcer.util.Stopwatch;
+
+import java.util.logging.Logger;
+
+import static org.junit.Assert.assertNotNull;
+import static sorcer.eo.operator.sig;
 
 /**
  * @author Mike Sobolewski

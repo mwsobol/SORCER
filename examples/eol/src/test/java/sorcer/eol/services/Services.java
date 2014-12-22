@@ -7,9 +7,9 @@ import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.provider.impl.SubtractorImpl;
-import sorcer.core.context.ServiceContext;
 import sorcer.core.provider.rendezvous.ServiceJobber;
-import sorcer.service.*;
+import sorcer.service.Context;
+import sorcer.service.Service;
 import sorcer.service.Strategy.Access;
 import sorcer.service.Strategy.Flow;
 

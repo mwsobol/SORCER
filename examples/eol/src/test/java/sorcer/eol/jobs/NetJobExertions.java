@@ -20,7 +20,10 @@ import sorcer.core.provider.ServiceTasker;
 import sorcer.core.provider.Shell;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.service.*;
-import sorcer.service.Strategy.*;
+import sorcer.service.Strategy.Access;
+import sorcer.service.Strategy.Flow;
+import sorcer.service.Strategy.Provision;
+import sorcer.service.Strategy.Wait;
 
 import java.rmi.RemoteException;
 import java.util.logging.Logger;

@@ -1,9 +1,5 @@
 package sorcer.worker.requestor;
 
-import java.net.InetAddress;
-import java.rmi.RMISecurityManager;
-import java.util.logging.Logger;
-
 import sorcer.core.context.ServiceContext;
 import sorcer.core.exertion.NetJob;
 import sorcer.core.exertion.NetTask;
@@ -15,6 +11,10 @@ import sorcer.service.Task;
 import sorcer.util.Log;
 import sorcer.util.Sorcer;
 import sorcer.worker.provider.Worker;
+
+import java.net.InetAddress;
+import java.rmi.RMISecurityManager;
+import java.util.logging.Logger;
 
 /**
  * @author Mike Sobolewski

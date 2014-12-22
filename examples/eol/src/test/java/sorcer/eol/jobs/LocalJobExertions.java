@@ -1,14 +1,6 @@
 package sorcer.eol.jobs;
 
-import static org.junit.Assert.assertEquals;
-import static sorcer.co.operator.*;
-import static sorcer.eo.operator.*;
-import static sorcer.po.operator.*;
-
-import java.util.logging.Logger;
-
 import org.junit.Test;
-
 import org.junit.runner.RunWith;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
@@ -22,6 +14,14 @@ import sorcer.service.Context;
 import sorcer.service.Job;
 import sorcer.service.Signature;
 import sorcer.service.Task;
+
+import java.util.logging.Logger;
+
+import static org.junit.Assert.assertEquals;
+import static sorcer.co.operator.*;
+import static sorcer.co.operator.input;
+import static sorcer.eo.operator.*;
+import static sorcer.eo.operator.value;
 
 
 /**

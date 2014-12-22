@@ -8,19 +8,17 @@ import sorcer.co.tuple.Entry;
 import sorcer.core.context.Copier;
 import sorcer.core.context.ListContext;
 import sorcer.service.Context;
-import sorcer.service.ContextException;
-import sorcer.service.Strategy;
-import sorcer.service.Task;
 
-import java.io.File;
 import java.net.URL;
-import java.util.List;
 import java.util.logging.Logger;
 
 import static org.junit.Assert.*;
 import static sorcer.co.operator.*;
+import static sorcer.co.operator.path;
 import static sorcer.eo.operator.*;
-import static sorcer.po.operator.*;
+import static sorcer.eo.operator.put;
+import static sorcer.eo.operator.value;
+import static sorcer.po.operator.invoker;
 
 /**
  * @author Mike Sobolewski

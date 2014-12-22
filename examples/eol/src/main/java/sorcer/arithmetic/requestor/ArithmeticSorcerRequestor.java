@@ -13,7 +13,8 @@ import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.core.requestor.SorcerRequestor;
 import sorcer.service.*;
 
-import static sorcer.co.operator.*;
+import static sorcer.co.operator.inEnt;
+import static sorcer.co.operator.outEnt;
 import static sorcer.eo.operator.*;
 
 public class ArithmeticSorcerRequestor extends SorcerRequestor {

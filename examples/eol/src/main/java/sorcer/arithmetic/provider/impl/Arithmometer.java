@@ -1,15 +1,6 @@
 package sorcer.arithmetic.provider.impl;
 
-import static sorcer.eo.operator.path;
-import static sorcer.eo.operator.revalue;
 import groovy.lang.GroovyShell;
-
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.rmi.RemoteException;
-import java.util.List;
-import java.util.logging.Logger;
-
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.ArrayContext;
 import sorcer.core.context.Contexts;
@@ -18,6 +9,15 @@ import sorcer.core.context.ServiceContext;
 import sorcer.service.Context;
 import sorcer.service.ContextException;
 import sorcer.service.Signature.ReturnPath;
+
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.rmi.RemoteException;
+import java.util.List;
+import java.util.logging.Logger;
+
+import static sorcer.eo.operator.path;
+import static sorcer.eo.operator.revalue;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class Arithmometer implements SorcerConstants {

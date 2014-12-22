@@ -101,17 +101,6 @@ bootme {
     //spawn = false
 }
 
-test {
-    systemProperty "java.rmi.server.codebase",
-                   "${websterUrl}/${repoPath()}/arithmetic-${version}-dl.jar ${websterUrl}/sorcer-dl-${version}.jar ${websterUrl}/jsk-dl-${riverVersion}.jar"
-
-    testLogging {
-        events "passed", "skipped", "failed"/*, "standardOut", "standardError"*/
-    }
-    dependsOn([install, bootme])
-    finalizedBy(stopme)
-}
-
 //task runTester(type:JavaExec, dependsOn:[jar, "bootme"]) {
 task runTester(type:JavaExec, dependsOn:[jar]) {
 	main = "sorcer.core.requestor.SorcerRequestor"
@@ -121,4 +110,15 @@ task runTester(type:JavaExec, dependsOn:[jar]) {
 			"${websterUrl}/${repoPath()}/arithmetic-${version}-dl.jar ${websterUrl}/sorcer-dl-${version}.jar ${websterUrl}/jsk-dl-${riverVersion}.jar"
 	args = ["sorcer.arithmetic.requestor.ArithmeticTester", "f1"]
 //	finalizedBy (":stopme")
+}
+
+test {
+	systemProperty "java.rmi.server.codebase",
+			"${websterUrl}/${repoPath()}/arithmetic-${version}-dl.jar ${websterUrl}/sorcer-dl-${version}.jar ${websterUrl}/jsk-dl-${riverVersion}.jar"
+
+	testLogging {
+		events "passed", "skipped", "failed"/*, "standardOut", "standardError"*/
+	}
+	dependsOn([install, bootme])
+	finalizedBy(stopme)
 }

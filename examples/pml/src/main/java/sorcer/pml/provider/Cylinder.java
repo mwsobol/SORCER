@@ -1,9 +1,9 @@
 package sorcer.pml.provider;
 
-import java.rmi.RemoteException;
-
 import sorcer.service.Context;
 import sorcer.service.ContextException;
+
+import java.rmi.RemoteException;
 
 /**
  * @author Mike Sobolewski
