@@ -1,0 +1,121 @@
+/*
+ * Copyright to the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+version = sorcerVersion
+
+jar {
+    manifest {
+        attributes("Implementation-Title": "Service Provider", "Implementation-Version": version)
+    }
+    baseName = "adder"
+    classifier = "prv"
+    dependsOn classes
+    from sourceSets.main.output
+    exclude('sorcer/requestor/**')
+}
+
+task servicePrvDlJar(type: Jar) {
+    manifest {
+        attributes("Implementation-Title": "Service Provider Exported Classes", "Implementation-Version": version)
+    }
+    baseName = "adder"
+    classifier = "dl"
+    dependsOn classes
+    from sourceSets.main.output
+    include('sorcer/provider/adder/*')
+    from sourceSets.main.resources
+    include('sorcer.jpg')
+}
+
+task serviceReqJar(type: Jar) {
+    manifest {
+        attributes("Implementation-Title": "Service Requestor", "Implementation-Version": version)
+    }
+    baseName = "adder"
+    classifier = "req"
+    dependsOn classes
+    from sourceSets.main.output
+    include('sorcer/requestor/**')
+}
+
+task servicePrvUiJar(type: Jar) {
+    manifest {
+        attributes("Implementation-Title": "Adder Service UI",
+                "Implementation-Version": version)
+    }
+    baseName = "adder"
+    classifier = "ui"
+    dependsOn classes
+    from sourceSets.main.output
+    include('sorcer/provider/adder/ui/**')
+}
+
+artifacts {
+    archives servicePrvDlJar
+    archives servicePrvUiJar
+    archives serviceReqJar
+}
+
+install.dependsOn(['servicePrvDlJar', 'serviceReqJar', 'servicePrvUiJar'])
+build.dependsOn(install)
+
+dependencies {
+    compile project(':sorcer-platform')
+    compile project(':sorcer-lib')
+    compile project(':sos-db-prv')
+    testCompile project(':sorcer-test')
+    testRuntime libs.slf4j
+}
+
+def repoPath() {
+    return "org/sorcer/adder/${version}"
+}
+
+bootme {
+    starterConfig = file("${projectDir.path}/configs/StartAdderConfig.groovy")
+    systemProperties = ["local.repo.path" : repoPath()]
+    //spawn = false
+}
+
+//task runRequestor(type:JavaExec, dependsOn:[jar, "bootme"]) {
+task runRequestor(type:JavaExec, dependsOn:[jar]) {
+    main = "sorcer.core.requestor.SorcerRequestor"
+    classpath = sourceSets.main.runtimeClasspath
+    systemProperty "requestor.properties", "configs/adder-req.properties"
+    systemProperty "java.rmi.server.codebase",
+            "${websterUrl}/${repoPath()}/adder-${version}-dl.jar ${websterUrl}/sorcer-dl-${version}.jar ${websterUrl}/jsk-dl-${riverVersion}.jar"
+    args = ["sorcer.arithmetic.requestor.ArithmeticTester", "f1"]
+//	finalizedBy (":stopme")
+}
+
+test {
+    systemProperty "java.rmi.server.codebase",
+            "${websterUrl}/${repoPath()}/adder-${version}-dl.jar ${websterUrl}/sorcer-dl-${version}.jar ${websterUrl}/jsk-dl-${riverVersion}.jar"
+
+    testLogging {
+        events "passed", "skipped", "failed"/*, "standardOut", "standardError"*/
+    }
+    dependsOn([install, bootme])
+    finalizedBy(stopme)
+}
+
+
+
+
+
+
+
+
