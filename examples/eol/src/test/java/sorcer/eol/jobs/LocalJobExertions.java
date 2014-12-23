@@ -17,11 +17,9 @@ import sorcer.service.Task;
 
 import java.util.logging.Logger;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 import static sorcer.co.operator.*;
-import static sorcer.co.operator.input;
 import static sorcer.eo.operator.*;
-import static sorcer.eo.operator.value;
 
 
 /**

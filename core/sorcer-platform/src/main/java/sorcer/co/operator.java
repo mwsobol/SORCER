@@ -187,7 +187,7 @@ public class operator {
 		return new Entry<T>(path, value);
 	}
 
-	public static <T> Entry<T> rrvEnt(String path, T value) {
+	public static <T> Entry<T> rvEnt(String path, T value) {
 		Entry<T> e = new Entry<T>(path, value);
 		return e.setReactive(true);
 	}
