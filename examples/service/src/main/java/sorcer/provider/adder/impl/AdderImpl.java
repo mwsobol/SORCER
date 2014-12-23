@@ -2,6 +2,9 @@ package sorcer.provider.adder.impl;
 
 import net.jini.lookup.entry.UIDescriptor;
 import net.jini.lookup.ui.MainUI;
+import sorcer.core.context.ArrayContext;
+import sorcer.core.context.PositionalContext;
+import sorcer.core.context.ServiceContext;
 import sorcer.core.provider.Provider;
 import sorcer.provider.adder.Adder;
 import sorcer.provider.adder.ui.AdderUI;
@@ -13,13 +16,17 @@ import sorcer.util.Sorcer;
 
 import java.net.URL;
 import java.rmi.RemoteException;
+import java.util.List;
 import java.util.logging.Logger;
+
+import static sorcer.eo.operator.path;
+import static sorcer.eo.operator.revalue;
 
 @SuppressWarnings("rawtypes")
 public class AdderImpl implements Adder {
-	private Arithmometer arithmometer = new Arithmometer();
+	public static final String RESULT_PATH = "result/value";
 	private Provider provider;
-	private Logger logger = Logger.getLogger(Arithmometer.class.getName());
+	private Logger logger = Logger.getLogger(AdderImpl.class.getName());
 	
 	public void init(Provider provider) {
 		this.provider = provider;
@@ -31,25 +38,34 @@ public class AdderImpl implements Adder {
 	}
 	
 	public Context add(Context context) throws RemoteException, ContextException {
-		Context out = arithmometer.add(context);
-		logger.info("add result: " + out);
-		
-//		Logger contextLogger = provider.getContextLogger();
-//		contextLogger.info("context logging; add result: " + out);
-//		
-//		Logger providerLogger =  provider.getProviderLogger();
-//		providerLogger.info("provider logging; add result: " + out);
-//		try {
-//			Thread.sleep(1000 * 5);
-//			System.out.println("slept: " + 1000 * 5);
-//		} catch (InterruptedException e) {
-//			e.printStackTrace();
-//		}
-//		out.checkpoint();
-//		Logger remoteLogger =  provider.getRemoteLogger();
-//		remoteLogger.info("remote logging; add result: " + out);
-		
-		return out;
+
+		// get inputs and outputs from the service context
+		PositionalContext cxt = (PositionalContext) context;
+		List<Double> inputs = cxt.getInValues();
+		logger.info("inputs: \n" + inputs);
+		List<String> outpaths = cxt.getOutPaths();
+		logger.info("outpaths: \n" + outpaths);
+
+		// calculate the result
+		Double result = 0.0;
+		for (Double value : inputs)
+			result += value;
+
+		// update the service context
+		if (provider != null)
+			cxt.putValue("calculated/provider", provider.getProviderName());
+		else
+			cxt.putValue("calculated/provider", getClass().getName());
+		if (((ServiceContext)context).getReturnPath() != null) {
+			((ServiceContext)context).setReturnValue(result);
+		} else if (outpaths.size() == 1) {
+			// put the result in the existing output path
+			cxt.putValue(outpaths.get(0), result);
+		} else {
+			cxt.putValue(RESULT_PATH, result);
+		}
+
+		return cxt;
 	}
 	
 	public static UIDescriptor getCalculatorDescriptor() {

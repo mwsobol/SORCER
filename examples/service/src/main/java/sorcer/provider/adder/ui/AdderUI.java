@@ -69,7 +69,7 @@ public class AdderUI extends JPanel implements ActionListener {
 
 			// Schedule a job for the event-dispatching thread:
 			// creating this application's service UI.
-			javax.swing.SwingUtilities.invokeLater(new Runnable() {
+			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
 					createUI();
 				}
