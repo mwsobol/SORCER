@@ -23,7 +23,7 @@ java.util.logging.ConsoleHandler.formatter=java.util.logging.SimpleFormatter
 #handlers=java.util.logging.FileHandler
 java.util.logging.FileHandler.level=ALL
 java.util.logging.FileHandler.formatter=java.util.logging.SimpleFormatter
-java.util.logging.FileHandler.pattern=./logs/sorcer%g.log
+java.util.logging.FileHandler.pattern=./logs/sorcer-prv%g.log
 java.util.logging.FileHandler.limit=10000000
 java.util.logging.FileHandler.count=3
 
@@ -32,7 +32,7 @@ java.util.logging.FileHandler.count=3
 #java.util.logging.FileHandler.level = ALL
 #java.util.logging.FileHandler.encoding = UTF-8
 # replace in the following line the text after the equal sign with your log file destination
-#java.util.logging.FileHandler.pattern = ../logs/sorcer%g.log
+#java.util.logging.FileHandler.pattern = ./logs/sorcer-prv%g.log
 #java.util.logging.FileHandler.limit = 0
 #java.util.logging.FileHandler.count = 0
 #java.util.logging.FileHandler.formatter = java.util.logging.XMLFormatter
