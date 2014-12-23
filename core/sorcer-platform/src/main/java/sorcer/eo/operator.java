@@ -177,8 +177,11 @@ public class operator {
 		return context(entries);
 	}
 
-	public static Context serviceContext(Service job) throws ContextException {
-		return ((Job) job).getJobContext();
+	public static Context serviceContext(Service exertion) throws ContextException {
+		if (exertion instanceof CompoundExertion)
+			return ((ServiceExertion) exertion).getContext();
+		else
+			return ((ServiceExertion)exertion).getDataContext();
 	}
 
 	public static Context taskContext(String path, Service service) throws ContextException {
