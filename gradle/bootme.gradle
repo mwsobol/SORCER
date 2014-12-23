@@ -81,22 +81,25 @@ class BootMe extends DefaultTask {
 class StopMePlugin implements Plugin<Project> {
 
     void apply(Project project) {
-        project.task('stopme') << {
-            def pids = []
-            "jps -v".execute().text.eachLine { line ->
-                if (line.contains("${project.name}")) {
-                    pids << line.split()[0]
-                }
-            }
-            String command
-            if (System.getProperty("os.name").startsWith("Windows")) {
-                command = "taskkill /f /pid "
-            } else {
-                command = "kill "
-            }
-            pids.each { pid ->
-                "$command $pid".execute().waitFor()
-            }
+        project.task('stopme') {
+            description = "Shuts down a service provider started with 'bootme'"
+             doLast {
+                 def pids = []
+                 "jps -v".execute().text.eachLine { line ->
+                     if (line.contains("${project.name}")) {
+                         pids << line.split()[0]
+                     }
+                 }
+                 String command
+                 if (System.getProperty("os.name").startsWith("Windows")) {
+                     command = "taskkill /f /pid "
+                 } else {
+                     command = "kill "
+                 }
+                 pids.each { pid ->
+                     "$command $pid".execute().waitFor()
+                 }
+             }
         }
     }
 
