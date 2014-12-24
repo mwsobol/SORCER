@@ -23,16 +23,21 @@ class SorcerPlatformConfig {
 
     def getPlatformCapabilityConfigs() {
         def configs = []
-
-        File sorcerHome = new File(System.getProperty("SORCER_HOME", System.getenv("SORCER_HOME")))
-        if(sorcerHome.exists()) {
+        String sorcerHome = System.getProperty("sorcer.home", System.getenv("SORCER_HOME"))
+        if(sorcerHome==null) {
+            String scriptDir = new File(getClass().protectionDomain.codeSource.location.path).parent
+            sorcerHome =  new File(scriptDir, "../../..").absolutePath
+            System.setProperty("sorcer.home", sorcerHome)
+        }
+        File sorcerHomeDir = new File(sorcerHome)
+        if(sorcerHomeDir.exists()) {
             def jars = ["JE"              : "lib/common | Sleepy Cat",
                         "Sorcer-Platform" : "lib/sorcer/lib | Sorcer Platform"]
             jars.each { jar, data ->
                 String[] parts = data.split("\\|")
                 String dir = parts[0].trim()
                 String name = parts[1].trim()
-                File jarFile = getJar(new File(sorcerHome, dir), jar.toLowerCase())
+                File jarFile = getJar(new File(sorcerHomeDir, dir), jar.toLowerCase())
                 if(jarFile.exists()) {
                     configs << new PlatformCapabilityConfig(jar,
                                                             getVersion(jar, jarFile.name),
@@ -45,7 +50,7 @@ class SorcerPlatformConfig {
             }
 
         } else {
-            System.err.println("The ${sorcerHome.path} does not exist, cannot add sSorcer Modeling jars to platform")
+            System.err.println("The ${sorcerHomeDir.path} does not exist, cannot add Sorcer jars to platform")
         }
         return configs
     }
