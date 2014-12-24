@@ -55,8 +55,15 @@ class BootMe extends DefaultTask {
         args << "com.sun.jini.start.ServiceStarter"
         args << "${starterConfig.path}"
 
-        project.logger.info "Args: ${args.toString()}"
-
+        if(project.logger.isInfoEnabled()) {
+            StringBuilder sb = new StringBuilder()
+            for(String arg : args) {
+                if(sb.length()>0)
+                    sb.append(" ")
+                sb.append(arg)
+            }
+            project.logger.info "\nCommand line\n=================\n${sb.toString()}\n"
+        }
         ProcessBuilder pb = new ProcessBuilder(args as String[])
         Map<String, String> env = pb.environment()
         env.put("SORCER_HOME", "${project.sorcerDistHome}")
