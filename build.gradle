@@ -19,6 +19,7 @@ ext{
 }
 
 task loadVersion {
+    description = 'Reads the SORCER version fom the version.properties file.'
     project.version = readVersion()
 }
 
@@ -38,8 +39,22 @@ ProjectVersion readVersion() {
     new ProjectVersion(versionProps.major.toInteger(), versionProps.minor.toInteger(), versionProps.release.toBoolean())
 }
 
-task printVersion << {
-    logger.quiet "Version: $version"
+task printVersion {
+    description = 'Prints the current SORCER version.'
+    doLast {
+        logger.quiet "Version: $version"
+    }
+}
+
+
+task printClasspath() {
+    description = 'Prints the current Java classpath.'
+    doLast {
+        println "${project.name}"
+        configurations.testRuntime.each {
+            println "--> $it"
+        }
+    }
 }
 
 class ProjectVersion implements Serializable {
@@ -65,7 +80,8 @@ class ProjectVersion implements Serializable {
 }
 
 task wrapper(type: Wrapper) {
-	gradleVersion = '2.1'
+    description = 'Prints the Gradle wrapper version.'
+    gradleVersion = '2.1'
 }
 
 ext {
@@ -122,6 +138,7 @@ subprojects {
 }
 
 task allTests(type: TestReport, dependsOn: "bootSorcerRio") {
+    description = 'Aggregates all tests, view them in build/reports/tests/index.html.'
     destinationDir = file("$buildDir/reports/allTests")
     project.subprojects { project ->
         /* Disable the test report for the individual test task */

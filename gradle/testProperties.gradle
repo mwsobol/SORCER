@@ -40,6 +40,7 @@ subprojects {
         }
 
         task genTestProps() {
+            description = 'Generates system properties for JUnit tests with SorcerTestRunner.'
             doLast {
                 File configDir = new File(project.buildDir, 'configs')
                 if (!configDir.exists())

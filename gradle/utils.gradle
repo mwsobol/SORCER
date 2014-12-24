@@ -24,6 +24,7 @@ apply plugin: "maven"
  * Start Sorcer only with hhtp
  */
 task bootSorcer(type: Exec) {
+    description = 'Starts SORCER Operating System Services.'
     commandLine "ant", "-f", "${file("${sorcerDistHome}").path}/bin/boot-sorcer.xml", "spawn"
 }
 bootSorcer.onlyIf {
@@ -35,6 +36,7 @@ bootSorcer.onlyIf {
  * Start Sorcer only
  */
 task bootSorcerNoHttpd(type: Exec) {
+    description = 'Starts SORCER OS Services without a class servcer (webster).'
     commandLine "ant", "-f", "${file("${sorcerDistHome}").path}/bin/boot-sorcer-noHttpd.xml", "run"
 }
 bootSorcerNoHttpd.onlyIf {
@@ -46,6 +48,7 @@ bootSorcerNoHttpd.onlyIf {
  * Start Sorcer using Rio
  */
 task bootSorcerRio(type: Exec, dependsOn: "webster") {
+    description = 'Starts SORCER OS Services with Rio services for service provisioning.'
     commandLine "ant", "-f", "${file("${sorcerDistHome}").path}/bin/rio/boot-sorcer-rio.xml"
 }
 bootSorcerRio.onlyIf {
@@ -62,6 +65,7 @@ bootSorcerRio.onlyIf {
  * Destroy Sorcer
  */
 task terminateSorcerRio(type: Exec) {
+    description = 'Halts SORCER OS Services and Rio services.'
     commandLine "ant", "-f", "${file("${sorcerDistHome}").path}/bin/rio/destroy-sorcer-rio.xml"
 }
 
@@ -69,6 +73,7 @@ task terminateSorcerRio(type: Exec) {
  * Start a browser
  */
 task browser(type: Exec) {
+    description = 'Starts the SORCER service browser.'
     commandLine "ant", "-f",
             "${file("${sorcerDistHome}").path}/bin/browser/bin/sorcer-browser.xml",
             "browser.spawn"
@@ -82,6 +87,7 @@ browser.onlyIf {
  * Start the Rio UI
  */
 task rioUI(type: Exec) {
+    description = 'Starts a user agent (GUI) for Rio service provisioning.'
     commandLine "ant", "-f",
                 "${file("${sorcerDistHome}").path}/bin/rio/rio-ui.xml",
                 "spawn"
@@ -95,12 +101,13 @@ rioUI.onlyIf {
  * Start Sorcer Webster
  */
 task webster(type: Exec, dependsOn: 'genWebsterConfig') {
+    description = 'Starts a class server (webster).'
     commandLine "${sorcerDistHome}/bin/webster/bin/webster.groovy"
 }
 webster.onlyIf {
     File sorcerDist = file(sorcerDistHome)
     if(!sorcerDist.exists()) {
-        println "Sorcer distribution not found cannot start Webster"
+        println "Sorcer distribution not found cannot start Webster."
         return false
     }
     boolean running
@@ -116,6 +123,7 @@ webster.onlyIf {
 }
 
 task genWebsterConfig {
+    description = 'Generates a configuration for class server (webster).'
     doLast {
         String localMaven
         repositories {

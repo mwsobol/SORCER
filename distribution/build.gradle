@@ -48,7 +48,7 @@ ext {
 }
 
 task installer(dependsOn: ["distribution"]) {
-    description = "Creates an IzPack based installer."
+    description = "Creates a distribution and an IzPack based installer."
     inputs.dir("${project.buildDir.path}/sorcer-${version}" as File)
     outputs.files "${project.buildDir.path}/sorcer-${version}-installer.jar"
 

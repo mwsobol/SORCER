@@ -82,15 +82,6 @@ dependencies {
     testRuntime libs.slf4j
 }
 
-task testCP() {
-    doLast {
-        println "${project.name}"
-        configurations.testRuntime.each {
-            println "--> $it"
-        }
-    }
-}
-
 def repoPath() {
     return "org/sorcer/arithmetic/${version}"
 }
@@ -101,8 +92,9 @@ bootme {
     //spawn = false
 }
 
-//task runTester(type:JavaExec, dependsOn:[jar, "bootme"]) {
-task runTester(type:JavaExec, dependsOn:[jar]) {
+//task runRequestor(type:JavaExec, dependsOn:[jar, "bootme"]) {
+task runRequestor(type:JavaExec, dependsOn:[jar]) {
+	description = 'Runs a service requestor executing a local or remote service.'
 	main = "sorcer.core.requestor.SorcerRequestor"
 	classpath = sourceSets.main.runtimeClasspath
 	systemProperty "requestor.properties", "configs/arithmetic-req.properties"

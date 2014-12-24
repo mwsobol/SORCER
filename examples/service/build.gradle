@@ -93,7 +93,7 @@ bootme {
 
 //task runRequestor(type:JavaExec, dependsOn:[jar, "bootme"]) {
 task runRequestor(type:JavaExec, dependsOn:[jar]) {
-    description = 'Runs a requestor executing a local or remote service'
+    description = 'Runs a service requestor executing a local or remote service.'
     main = "sorcer.core.requestor.ServiceRequestor"
     classpath = sourceSets.main.runtimeClasspath
     systemProperty "java.util.logging.config.file", "${projectDir.path}/configs/sorcer-req.logging"
@@ -105,7 +105,7 @@ task runRequestor(type:JavaExec, dependsOn:[jar]) {
 }
 
 test {
-    description = 'Tests local and remote services with JUnit test case'
+    description = 'Tests local and remote services with JUnit test case.'
     systemProperty "java.rmi.server.codebase",
             "${websterUrl}/${repoPath()}/adder-${version}-dl.jar ${websterUrl}/sorcer-dl-${version}.jar ${websterUrl}/jsk-dl-${riverVersion}.jar"
 
