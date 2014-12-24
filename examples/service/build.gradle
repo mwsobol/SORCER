@@ -88,7 +88,7 @@ bootme {
     description = 'Starts up a service provider'
     starterConfig = file("${projectDir.path}/configs/StartAdderConfig.groovy")
     systemProperties = ["relative.repo.path" : repoPath(), "java.util.logging.config.file" : "${projectDir.path}/configs/sorcer-prv.logging"]
-    spawn = false
+    spawn = true
 }
 
 //task runRequestor(type:JavaExec, dependsOn:[jar, "bootme"]) {
