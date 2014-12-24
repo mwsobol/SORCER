@@ -41,7 +41,11 @@ class BootMe extends DefaultTask {
         args << project.bootClassPath.getAsPath()
         args << "-Dproject.id=${project.name}"
         args << "-Djava.protocol.handler.pkgs=net.jini.url|sorcer.util.url|org.rioproject.url"
-        args << "-Djava.util.logging.config.file=${project.sorcerDistHome}/configs/sorcer.logging"
+        // use distribution or project specific java.util.logging.config.file
+        if (System.getProperty("java.util.logging.config.file") != null)
+            args << "-Djava.util.logging.config.file=${System.getProperty("java.util.logging.config.file")}"
+        else
+            args << "-Djava.util.logging.config.file=${project.sorcerDistHome}/configs/sorcer.logging"
         args << "-Djava.security.policy=${project.sorcerDistHome}/policy/policy.all"
         args << "-Djava.rmi.server.useCodebaseOnly=false"
         args << "-Driver.version=${project.riverVersion}"

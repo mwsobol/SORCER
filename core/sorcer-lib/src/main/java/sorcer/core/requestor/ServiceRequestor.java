@@ -18,31 +18,23 @@
 package sorcer.core.requestor;
 
 import groovy.lang.GroovyShell;
+import net.jini.core.transaction.Transaction;
+import org.codehaus.groovy.control.CompilationFailedException;
+import sorcer.core.SorcerConstants;
+import sorcer.core.context.ControlContext;
+import sorcer.service.*;
+import sorcer.tools.webster.InternalWebster;
+import sorcer.tools.webster.Webster;
+import sorcer.util.Sorcer;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.rmi.RMISecurityManager;
 import java.util.Properties;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import net.jini.core.transaction.Transaction;
-
-import org.codehaus.groovy.control.CompilationFailedException;
-
-import sorcer.core.SorcerConstants;
-import sorcer.core.context.ControlContext;
-import sorcer.service.ContextException;
-import sorcer.service.Exertion;
-import sorcer.service.ExertionException;
-import sorcer.service.ServiceExertion;
-import sorcer.service.SignatureException;
-import sorcer.tools.webster.InternalWebster;
-import sorcer.tools.webster.Webster;
-import sorcer.util.Sorcer;
 
 abstract public class ServiceRequestor implements Requestor, SorcerConstants {
 	/** Logger for logging information about this instance */
@@ -64,7 +56,7 @@ abstract public class ServiceRequestor implements Requestor, SorcerConstants {
 	}
 
 	public static void prepareToRun(String... args) {
-		System.setSecurityManager(new RMISecurityManager());
+		System.setSecurityManager(new SecurityManager());
 
 		// Initialize system properties: configs/sorcer.env
 		Sorcer.getEnvProperties();
@@ -261,7 +253,7 @@ abstract public class ServiceRequestor implements Requestor, SorcerConstants {
         System.setProperty("java.protocol.handler.pkgs", "net.jini.url|sorcer.util.url|org.rioproject.url");
         System.setProperty("java.security.policy", Sorcer.getHome() + "/configs/policy.all");
         System.setProperty("java.util.logging.config.file", Sorcer.getHome() + "/configs/sorcer.logging");
-        System.setSecurityManager(new RMISecurityManager());
+        System.setSecurityManager(new SecurityManager());
     }
 
 }

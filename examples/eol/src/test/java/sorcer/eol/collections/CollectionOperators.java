@@ -359,8 +359,8 @@ public class CollectionOperators {
 		assertTrue(get(cxt, "arg/x6").equals(1.6));
 		assertTrue((Object) get(cxt, "arg/x7") instanceof ServiceInvoker);
 
-		// aliasing entries and repeatedly reactive entries
-		put(cxt, rrvEnt("arg/x6", ent("overwrite", 20.0)));
+		// aliasing entries with reactive value entries - rvEnt
+		put(cxt, rvEnt("arg/x6", ent("overwrite", 20.0)));
 		assertTrue(value(cxt, "arg/x6").equals(20.0));
 		urvEnt(cxt, "arg/x6");
 		assertTrue(value((Evaluation)value(cxt, "arg/x6")).equals(20.0));

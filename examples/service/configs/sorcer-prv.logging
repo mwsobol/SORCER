@@ -1,0 +1,146 @@
+# SORCER Logging Configuration File
+# Default configuration for handlers associated with the root logger.
+# To use this configuration file, specify the parameter
+# java.util.logging.config.file on the command line, e.g.,
+# java -Djava.util.logging.config.file=sorcer.logging
+
+# Handlers installed for the root logger
+handlers=java.util.logging.ConsoleHandler, java.util.logging.FileHandler
+    
+# Level for the root logger - is used by any logger
+# that does not have its level set
+.level=INFO
+
+# Initialization class - the public default constructor 
+# of this class is called by the Logging framework
+#config=sorcer.core.util.Log
+
+# Configure ConsoleHandler
+java.util.logging.ConsoleHandler.level=ALL
+java.util.logging.ConsoleHandler.formatter=java.util.logging.SimpleFormatter
+
+# Configure Plain Text FileHandler
+#handlers=java.util.logging.FileHandler
+java.util.logging.FileHandler.level=ALL
+java.util.logging.FileHandler.formatter=java.util.logging.SimpleFormatter
+java.util.logging.FileHandler.pattern=./logs/sorcer-prv%g.log
+java.util.logging.FileHandler.limit=10000000
+java.util.logging.FileHandler.count=3
+
+# Configure XML FileHandler (use it with Log Viewer)
+#handlers=java.util.logging.FileHandler
+#java.util.logging.FileHandler.level = ALL
+#java.util.logging.FileHandler.encoding = UTF-8
+# replace in the following line the text after the equal sign with your log file destination
+#java.util.logging.FileHandler.pattern = ./logs/sorcer-prv%g.log
+#java.util.logging.FileHandler.limit = 0
+#java.util.logging.FileHandler.count = 0
+#java.util.logging.FileHandler.formatter = java.util.logging.XMLFormatter
+
+# For receiving on a socket
+#handlers=java.util.logging.SocketHandler
+#java.util.logging.SocketHandler.level=ALL
+#java.util.logging.SocketHandler.host=localhost
+#the port number 8888 is default for LogViewer
+#java.util.logging.SocketHandler.port=8888
+#java.util.logging.SocketHandler.formatter = java.util.logging.XMLFormatter
+
+# For all sorcer.* packages except core packages
+sorcer.level=INFO
+# For all sorcer.core.* core packages except core providers
+sorcer.core.level=INFO
+# SORCER booter
+sorcer.provider.boot.level=FINE
+#sorcer.tools.webster.level=INFO
+#org.rioproject.boot.level=FINE
+# For all dispatch classes
+sorcer.core.dispatch.level=FINE
+# SORCER security logging
+sorcer.core.security.level=OFF
+# Used by service providers except core providers
+sorcer.core.provider.level=FINE
+#sorcer.core.provider.jobber.ServiceJobberlevel=FINER
+# Used by SORCER core service providers
+sorcer.core.provider.ServiceProvider.level=INFO
+# Logger to facilitate testing
+#sorcer.test.level=ALL
+# All other logging purposes
+#sorcer.random.level=FINER
+
+# remote logger
+# domain specific provider and context loggers
+private.level=INFO
+# local loggers exposed by the remote logger
+local.level=ALL
+#Variable oriented loggers
+#sorcer.modeling.level=OFF
+#sorcer.modeling.vfe.Var.level=OFF
+#sorcer.modeling.vfe.filter.Filter.level=OFF
+#sorcer.modeling.vfe.filter.BasicFileFilter.level=OFF
+#sorcer.modeling.vfe.evaluator.level=OFF
+#sorcer.modeling.vfe.ServiceEvaluator.level=INFO
+#sorcer.core.context.model.level=ALL
+#sorcer.core.context.model.var.level=ALL
+#sorcer.core.context.model.explore.level=ALL
+#sorcer.core.context.model.opti.level=ALL
+#sorcer.core.context.model.explore.Explorer.level=ALL
+#sorcer.core.context.model.explore.ExploreDispatcher.level=ALL
+#sorcer.core.context.model.explore.ModelManager.level=ALL
+#sorcer.core.context.model.opti.level=ALL
+
+# Other specialized loggers
+#sorcer.core.context.eval.level=OFF
+#sorcer.core.context.level=ALL
+#sorcer.jini.jeri.SorcerILFactory.level=ALL
+#org.sadun.text.ffp.level=OFF
+#sorcer.ui.tools.level=FINER
+#sorcer.util.level=ALL
+
+#com.sun.jini.start.level=FINEST
+
+# JavaSpace logging
+#com.sun.jini.outrigger.level=FINER
+#com.sun.jini.outrigger.proxy.level=FINER
+
+# Reggie logging
+#com.sun.jini.reggie.level=FINER
+
+# Additional loggers
+#net.jini.loader.pref.PreferredClassProvider.level=ALL
+#net.jini.jeri.tcp.client.level=FINEST
+#net.jini.jeri.BasicInvocationHandler.level=FINEST
+#net.jini.jeri.connection.ConnectionManager.level=FINEST
+#net.jini.lookup.ServiceDiscoveryManager.level=FINEST
+#net.jini.lookup.JoinManager=FINEST
+#net.jini.jrmp.JrmpExporter.level=FINER
+#net.jini.discovery.LookupDiscovery.level=FINER
+#com.sun.jini.start.service.starter.level=ALL
+
+# testing Space Dispatcher/Worker wit transactions
+#com.sun.jini.thread.TaskManager.level=ALL
+#net.jini.lease.LeaseRenewalManager.level=ALL
+#com.sun.jini.mahalo.init.level=ALL
+#com.sun.jini.mahalo.operations.level=ALL
+#com.sun.jini.mahalo.transactions.level=ALL
+#com.sun.jini.mahalo.participant.level=ALL
+
+# Jini security loggers
+#net.jini.security.integrity.level=FINER
+#net.jini.security.trust.level=FINER
+#net.jini.security.policy.level=FINER
+#net.jini.jeri.level=FINER
+
+#sorcer.core.dispatch.ProvisionManager.level=ALL
+#sorcer.core.provider.exerter.ServiceShell.level=ALL
+#sorcer.core.provider.jobber.ServiceSpacer.level=ALL
+#sorcer.core.dispatch.ExertDispatcherFactory.level=ALL
+sorcer.util.ProviderAccessor.level=OFF
+sorcer.core.provider.cataloger.ServiceCataloger.level=OFF
+#sorcer.modeling.vfe.persist.TaskContextSetter.level=OFF
+#sorcer.core.context.model.var.ResponseModel.level=ALL
+
+#sorcer.provider.boot.level=ALL
+sorcer.core.provider.SpaceTaker.level=OFF
+
+#org.rioproject.level=FINEST
+

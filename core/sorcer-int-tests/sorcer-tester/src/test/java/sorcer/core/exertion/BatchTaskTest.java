@@ -11,7 +11,6 @@ import sorcer.arithmetic.tester.provider.impl.SubtractorImpl;
 import sorcer.service.Signature;
 import sorcer.service.Signature.Direction;
 import sorcer.service.Task;
-import sorcer.util.Sorcer;
 
 import java.util.logging.Logger;
 
@@ -29,15 +28,6 @@ import static sorcer.eo.operator.*;
 public class BatchTaskTest {
 	private final static Logger logger = Logger.getLogger(BatchTaskTest.class
 			.getName());
-
-	static {
-		System.setProperty("java.util.logging.config.file",
-				Sorcer.getHome() + "/configs/sorcer.logging");
-		System.setProperty("java.security.policy", Sorcer.getHome()
-				+ "/configs/policy.all");
-		System.setSecurityManager(new SecurityManager());
-		Sorcer.setCodeBase(new String[] { "arithmetic-beans.jar" });
-	}
 	
 	@Test
 	public void batchTask3Test() throws Exception {

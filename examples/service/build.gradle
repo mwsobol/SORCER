@@ -85,23 +85,27 @@ def repoPath() {
 }
 
 bootme {
+    description = 'Starts up a service provider'
     starterConfig = file("${projectDir.path}/configs/StartAdderConfig.groovy")
-    systemProperties = ["local.repo.path" : repoPath()]
-    //spawn = false
+    systemProperties = ["relative.repo.path" : repoPath(), "java.util.logging.config.file" : "${projectDir.path}/configs/sorcer-prv.logging"]
+    spawn = true
 }
 
 //task runRequestor(type:JavaExec, dependsOn:[jar, "bootme"]) {
 task runRequestor(type:JavaExec, dependsOn:[jar]) {
-    main = "sorcer.core.requestor.SorcerRequestor"
+    description = 'Runs a requestor executing a local or remote service'
+    main = "sorcer.core.requestor.ServiceRequestor"
     classpath = sourceSets.main.runtimeClasspath
+    systemProperty "java.util.logging.config.file", "${projectDir.path}/configs/sorcer-req.logging"
     systemProperty "requestor.properties", "configs/adder-req.properties"
     systemProperty "java.rmi.server.codebase",
             "${websterUrl}/${repoPath()}/adder-${version}-dl.jar ${websterUrl}/sorcer-dl-${version}.jar ${websterUrl}/jsk-dl-${riverVersion}.jar"
-    args = ["sorcer.arithmetic.requestor.ArithmeticTester", "f1"]
+    args = ["sorcer.requestor.adder.AdderRequestor", "local"]
 //	finalizedBy (":stopme")
 }
 
 test {
+    description = 'Tests local and remote services with JUnit test case'
     systemProperty "java.rmi.server.codebase",
             "${websterUrl}/${repoPath()}/adder-${version}-dl.jar ${websterUrl}/sorcer-dl-${version}.jar ${websterUrl}/jsk-dl-${riverVersion}.jar"
 

@@ -31,15 +31,8 @@ import java.util.logging.Logger;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
-import static sorcer.co.operator.input;
 import static sorcer.eo.operator.*;
-import static sorcer.eo.operator.get;
-import static sorcer.eo.operator.in;
-import static sorcer.eo.operator.input;
-import static sorcer.eo.operator.pipe;
-import static sorcer.eo.operator.value;
 import static sorcer.po.operator.*;
-import static sorcer.po.operator.put;
 
 /**
  * @author Mike Sobolewski

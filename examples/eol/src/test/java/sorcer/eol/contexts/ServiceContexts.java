@@ -14,11 +14,8 @@ import java.util.logging.Logger;
 
 import static org.junit.Assert.*;
 import static sorcer.co.operator.*;
-import static sorcer.co.operator.path;
 import static sorcer.eo.operator.*;
-import static sorcer.eo.operator.put;
-import static sorcer.eo.operator.value;
-import static sorcer.po.operator.invoker;
+import static sorcer.po.operator.*;
 
 /**
  * @author Mike Sobolewski
@@ -41,8 +38,9 @@ public class ServiceContexts {
 		assertTrue(get(cxt, "arg/x1").equals(1.1));
 		assertTrue(asis(cxt, "arg/x1").equals(1.1));
 
-		put(cxt, rrvEnt("arg/x1", 5.0));
-		assertTrue(get(cxt, "arg/x1").equals(5.0));
+		// aliasing with reactive value entries - rvEnt
+		put(cxt, rvEnt("arg/x1", value(cxt, "arg/x5")));
+		assertTrue(get(cxt, "arg/x1").equals(1.5));
 
 		Context<Double> subcxt = context(cxt, list("arg/x4", "arg/x5"));
 		logger.info("subcontext: " + subcxt);
@@ -92,7 +90,7 @@ public class ServiceContexts {
 
 
 	@Test
-	public void inputOutputEntriesinContexts() throws Exception {
+	public void inputsOutputsOfContexts() throws Exception {
 
 		// PositionaContext has paths and indexes
 		Context<Double> cxt = context(ent("arg/x1", 1.1), inEnt("arg/x2", 1.2),
@@ -280,9 +278,11 @@ public class ServiceContexts {
 		add(cxt, ent("arg/x6", 6.0));
 		assertTrue(value(cxt, "arg/x6").equals(6.0));
 
+		// ent is of the Evaluation tpe
 		put(cxt, ent("arg/x6", ent("overwrite", 20.0)));
 		assertTrue(value(cxt, "arg/x6").equals(20.0));
 
+		// invoker is of the Invocation type
 		add(cxt, ent("arg/x7", invoker("x1 + x3", ents("x1", "x3"))));
 		assertTrue(value(cxt, "arg/x7").equals(4.0));
 

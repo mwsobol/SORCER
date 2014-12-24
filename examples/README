@@ -14,7 +14,7 @@ An exertion is expressed in the Exertion-Oriented Language (EOL).
 
 Service Provider (service actualization) is an instruction of service processor
 	- defines its service types
-	- implements and and owns its service types
+	- implements and owns its service types
 	- satisfy three neutralities (location, protocol, implementation)
 
 Service Exertion specifies runtime collaboration of providers (federation)

@@ -1,29 +1,10 @@
 package sorcer.core.exertion;
 
 //import com.gargoylesoftware,base,testing,TestUtil;
-import static sorcer.co.operator.inEnt;
-import static sorcer.co.operator.outEnt;
-import static sorcer.eo.operator.configuration;
-import static sorcer.eo.operator.context;
-import static sorcer.eo.operator.deploy;
-import static sorcer.eo.operator.idle;
-import static sorcer.eo.operator.input;
-import static sorcer.eo.operator.job;
-import static sorcer.eo.operator.maintain;
-import static sorcer.eo.operator.out;
-import static sorcer.eo.operator.perNode;
-import static sorcer.eo.operator.pipe;
-import static sorcer.eo.operator.sig;
-import static sorcer.eo.operator.strategy;
-import static sorcer.eo.operator.task;
-
-import java.util.logging.Logger;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
-
 import sorcer.arithmetic.tester.provider.Adder;
 import sorcer.arithmetic.tester.provider.Multiplier;
 import sorcer.arithmetic.tester.provider.Subtractor;
@@ -32,7 +13,12 @@ import sorcer.core.provider.Jobber;
 import sorcer.service.Job;
 import sorcer.service.Strategy;
 import sorcer.service.Task;
-import sorcer.util.Sorcer;
+
+import java.util.logging.Logger;
+
+import static sorcer.co.operator.inEnt;
+import static sorcer.co.operator.outEnt;
+import static sorcer.eo.operator.*;
 
 /**
  * @author Mike Sobolewski
@@ -43,15 +29,6 @@ import sorcer.util.Sorcer;
 public class JobTest {
 	private final static Logger logger = Logger.getLogger(TaskTest.class
 			.getName());
-
-	static {
-		System.setProperty("java.util.logging.config.file", Sorcer.getHome()
-				+ "/configs/sorcer.logging");
-		System.setProperty("java.security.policy", Sorcer.getHome()
-				+ "/configs/policy.all");
-		System.setSecurityManager(new SecurityManager());
-		Sorcer.setCodeBase(new String[] { "arithmetic-beans.jar" });
-	}
 
 	@Test
 	public void batchTask1aTest() throws Exception {
