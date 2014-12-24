@@ -17,7 +17,7 @@
 apply plugin: StopMePlugin
 
 task bootme(type: BootMe) {
-    description = "Starts a provider from this project)"
+    description = "Starts a provider from this project."
 }
 
 class BootMe extends DefaultTask {
@@ -91,7 +91,7 @@ class StopMePlugin implements Plugin<Project> {
 
     void apply(Project project) {
         project.task('stopme') {
-            description = 'Stops a provider booted from this project)'
+            description = 'Stops a provider booted from this project.)'
             doLast {
                 def pids = []
                 "jps -v".execute().text.eachLine { line ->
