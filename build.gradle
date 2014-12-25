@@ -14,30 +14,7 @@
  * limitations under the License.
  */
 
-ext{
-    versionFile = file('version.properties')
-}
-
-task loadVersion {
-    description = 'Reads the SORCER version fom the version.properties file.'
-    project.version = readVersion()
-}
-
-ProjectVersion readVersion() {
-    logger.quiet 'Reading the version file.'
-
-    if (!versionFile.exists()) {
-        throw new GradleException("Required version file does not exist: $versionFile.canonicalPath")
-    }
-
-    Properties versionProps = new Properties()
-
-    versionFile.withInputStream { stream ->
-        versionProps.load(stream)
-    }
-
-    new ProjectVersion(versionProps.major.toInteger(), versionProps.minor.toInteger(), versionProps.release.toBoolean())
-}
+project.version = '5.0-SNAPSHOT'
 
 task printVersion {
     description = 'Prints the current SORCER version.'
@@ -54,28 +31,6 @@ task printClasspath() {
         configurations.testRuntime.each {
             println "--> $it"
         }
-    }
-}
-
-class ProjectVersion implements Serializable {
-    Integer major
-    Integer minor
-    Boolean release
-
-    ProjectVersion(Integer major, Integer minor) {
-        this.major = major
-        this.minor = minor
-        this.release = Boolean.FALSE
-    }
-
-    ProjectVersion(Integer major, Integer minor, Boolean release) {
-        this(major, minor)
-        this.release = release
-    }
-
-    @Override
-    String toString() {
-        "$major.$minor${release ? '' : '-SNAPSHOT'}"
     }
 }
 
