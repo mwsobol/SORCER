@@ -23,10 +23,12 @@ import sorcer.service.Exertion;
 import sorcer.service.ExertionException;
 import sorcer.service.SignatureException;
 
+import java.io.IOException;
+
 public interface Requestor {
 
 	public Exertion getExertion(String... args) throws ExertionException,
-			ContextException, SignatureException;
+			ContextException, SignatureException, IOException;
 
 	public Transaction getTransaction();
 

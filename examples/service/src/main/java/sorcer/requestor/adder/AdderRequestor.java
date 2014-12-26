@@ -8,19 +8,23 @@ import sorcer.service.Exertion;
 import sorcer.service.ExertionException;
 import sorcer.service.SignatureException;
 
-import static sorcer.co.operator.inEnt;
+import java.io.File;
+import java.io.IOException;
+
+import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
 
 public class AdderRequestor extends ServiceRequestor {
 
-    public Exertion getExertion(String... args) throws ExertionException, ContextException, SignatureException {
+    public Exertion getExertion(String... args)
+            throws ExertionException, ContextException, SignatureException, IOException {
 
-        Class serviceType;
+        Class serviceType = Adder.class;
         
         if (args[1].equals("local")) {
             serviceType =  AdderImpl.class;
-        } else {
-            serviceType =  Adder.class; 
+        } else if (args[1].equals("netlet")) {
+            return (Exertion) evaluate(new File("netlets/adder-netlet.groovy"));
         }
 
         Double v1 = new Double(getProperty("arg/x1"));

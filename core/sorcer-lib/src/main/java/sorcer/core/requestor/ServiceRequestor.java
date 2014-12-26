@@ -107,7 +107,7 @@ abstract public class ServiceRequestor implements Requestor, SorcerConstants {
 	}
 
 	abstract public Exertion getExertion(String... args)
-			throws ExertionException, ContextException, SignatureException;
+			throws ExertionException, ContextException, SignatureException, IOException;
 
 	public String getJobberName() {
 		return jobberName;

@@ -86,6 +86,7 @@ def repoPath() {
 
 bootme {
     description = 'Starts up a service provider'
+    if (!file("logs").exists()) file("logs").mkdir()
     starterConfig = file("${projectDir.path}/configs/StartAdderConfig.groovy")
     systemProperties = ["relative.repo.path" : repoPath(), "java.util.logging.config.file" : "${projectDir.path}/configs/sorcer-prv.logging"]
     spawn = true
@@ -100,7 +101,7 @@ task runRequestor(type:JavaExec, dependsOn:[jar]) {
     systemProperty "requestor.properties", "configs/adder-req.properties"
     systemProperty "java.rmi.server.codebase",
             "${websterUrl}/${repoPath()}/adder-${version}-dl.jar ${websterUrl}/sorcer-dl-${version}.jar ${websterUrl}/jsk-dl-${riverVersion}.jar"
-    args = ["sorcer.requestor.adder.AdderRequestor", "local"]
+    args = ["sorcer.requestor.adder.AdderRequestor", "netlet"]
 //	finalizedBy (":stopme")
 }
 
