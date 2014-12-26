@@ -153,7 +153,7 @@ public class Signatures {
 		assertTrue(prv instanceof Adder);
 		assertTrue(prv instanceof Proxy);
 
-		// request the local service
+		// request the remote service
 		Service as = service("as", rps,
 				context("add",
 						inEnt("arg/x1", 20.0),
@@ -174,7 +174,7 @@ public class Signatures {
 		assertTrue(prv instanceof Adder);
 		assertTrue(prv instanceof Proxy);
 
-		// request the local service
+		// request the remote service
 		Service as = service("as", ps,
 				context("add",
 						inEnt("arg/x1", 20.0),
