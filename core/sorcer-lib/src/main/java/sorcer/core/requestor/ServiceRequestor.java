@@ -61,20 +61,20 @@ abstract public class ServiceRequestor implements Requestor, SorcerConstants {
 		// Initialize system properties: configs/sorcer.env
 		Sorcer.getEnvProperties();
 
-		String runnerType = null;
+		String requestorType = null;
 		if (args.length == 0) {
 			System.err
-					.println("Usage: Java sorcer.core.requestor.ExertionRunner  <runnerType>");
+					.println("Usage: java sorcer.core.requestor.ServiceRequestor  <requestorType>");
 			System.exit(1);
 		} else {
-			runnerType = args[0];
+			requestorType = args[0];
 		}
 		try {
-			requestor = (ServiceRequestor) Class.forName(runnerType)
+			requestor = (ServiceRequestor) Class.forName(requestorType)
 					.newInstance();
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.info("Not able to create service runner: " + runnerType);
+			logger.info("Not able to create service requestor: " + requestorType);
 			System.exit(1);
 		}
 		String str = System.getProperty(REQUESTOR_PROPERTIES_FILENAME);
@@ -118,7 +118,7 @@ abstract public class ServiceRequestor implements Requestor, SorcerConstants {
 		try {
 			in = requestor.getExertion(args);
 			if (logger.isLoggable(Level.FINE))
-				logger.fine("Runner java.rmi.server.codebase: "
+				logger.fine("ServiceRequestor java.rmi.server.codebase: "
 						+ System.getProperty("java.rmi.server.codebase"));
 
 			if (in != null)
@@ -126,7 +126,7 @@ abstract public class ServiceRequestor implements Requestor, SorcerConstants {
 			if (exertion != null)
 				logger.info(">>>>>>>>>> Input context: \n" + exertion.getContext());
 		} catch (Exception e) {
-			logger.throwing("ExertionRunner", "main", e);
+			logger.throwing(ServiceRequestor.class.getName(), "main", e);
 			System.exit(1);
 		}
 	}
@@ -152,10 +152,15 @@ abstract public class ServiceRequestor implements Requestor, SorcerConstants {
 		}
 	}
 
-	public Object evaluate(File scriptFile) throws CompilationFailedException,
-			IOException {
+	public Object evaluate(File scriptFile) throws IOException {
 		shell = new GroovyShell();
-		return shell.evaluate(scriptFile);
+		Object obj = null;
+		try {
+			obj = shell.evaluate(scriptFile);
+		} catch (CompilationFailedException e) {
+			logger.throwing(ServiceRequestor.class.getName(), "evaluate", e);
+		}
+		return obj;
 	}
 	
 	public Transaction getTransaction() {
@@ -196,7 +201,7 @@ abstract public class ServiceRequestor implements Requestor, SorcerConstants {
 					System.err
 							.println("Not able to open stream on properties: "
 									+ filename);
-					System.err.println("Service runner class: "
+					System.err.println("Service requestor class: "
 							+ this.getClass());
 					return;
 				}

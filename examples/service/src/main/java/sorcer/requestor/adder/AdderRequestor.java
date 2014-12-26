@@ -1,5 +1,6 @@
 package sorcer.requestor.adder;
 
+import org.codehaus.groovy.control.CompilationFailedException;
 import sorcer.core.requestor.ServiceRequestor;
 import sorcer.provider.adder.Adder;
 import sorcer.provider.adder.impl.AdderImpl;

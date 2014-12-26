@@ -1,4 +1,4 @@
-// Adder netlet
+// Adder netlet for testing the requestor of the examples/server project
 
 import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
