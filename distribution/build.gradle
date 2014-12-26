@@ -43,7 +43,6 @@ dependencies {
 }
 
 ext {
-    //distDir = "${project.rootProject.projectDir.path}/distribution/build/sorcer"
     distDir = "${project.buildDir.path}/sorcer"
 }
 
@@ -280,7 +279,7 @@ task distribution(dependsOn: [":sorcer-boot:install",
     }
 }
 
-def sorcerDistribution = file("sorcer-${version}.zip")
+def sorcerDistribution = file("build/sorcer-${version}.zip")
 artifacts {
     archives file: sorcerDistribution, name: 'distribution', type: 'zip', builtBy: distribution
 }
