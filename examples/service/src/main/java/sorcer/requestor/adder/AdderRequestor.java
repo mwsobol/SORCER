@@ -19,12 +19,13 @@ public class AdderRequestor extends ServiceRequestor {
     public Exertion getExertion(String... args)
             throws ExertionException, ContextException, SignatureException, IOException {
 
-        Class serviceType = Adder.class;
-        
-        if (args[1].equals("local")) {
-            serviceType =  AdderImpl.class;
-        } else if (args[1].equals("netlet")) {
+        // by default request a local service
+        Class serviceType = AdderImpl.class;
+
+        if (args[1].equals("netlet")) {
             return (Exertion) evaluate(new File("netlets/adder-netlet.groovy"));
+        } else if (args[1].equals("remote")) {
+            serviceType =  Adder.class;
         }
 
         Double v1 = new Double(getProperty("arg/x1"));
