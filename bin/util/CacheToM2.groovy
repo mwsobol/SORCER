@@ -73,11 +73,10 @@ if(args.length>0) {
 }
 
 getVersion = { String name ->
-    int startIndex = name.lastIndexOf("-")
     int lastIndex = name.lastIndexOf(".")
-    if(startIndex==-1 || lastIndex==-1)
+    if(lastIndex==-1)
         return null;
-    return name.substring(startIndex+1, lastIndex);
+    return name.substring(0, lastIndex);
 }
 
 copy = { File src, File dest ->
@@ -101,7 +100,7 @@ for(File first : gradleCacheDir.listFiles()) {
             continue
         second.traverse(type: groovy.io.FileType.FILES) { file ->
             String groupId = first.name.replaceAll("\\.", "/")
-            String version = getVersion(file.name)
+            String version = getVersion(file.name.substring(second.name.length()+1))
             File target = new File(m2Repo, "${groupId}/${second.name}/$version/${file.name}")
             if(!target.exists()) {
                 File targetDir = new File(m2Repo, "${groupId}/${second.name}/$version")
