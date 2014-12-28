@@ -1140,7 +1140,7 @@ public interface Context<T> extends Mappable<T>, Serializable, Evaluation<T>,
 	String getUserName();
 	 
 	public enum Type {
-		ASSOCIATIVE, SHARED, POSITIONAL, LIST, INDEXED, ARRAY
+		ASSOCIATIVE, SHARED, POSITIONAL, LIST, SCOPE, INDEXED, ARRAY
 	}
 
 	final static String PARAMETER_TYPES = "context/parameter/types";

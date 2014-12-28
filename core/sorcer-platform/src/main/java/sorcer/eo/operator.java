@@ -233,7 +233,14 @@ public class operator {
 	public static Object target(Context context) throws ContextException {
 		return ((ServiceContext)context).getTarget();
 	}
-
+	
+	public static <T extends Object> Context scope(T... entries) throws ContextException {
+		Object[] args = new Object[entries.length + 1];
+		System.arraycopy(entries, 0, args, 1, entries.length);
+		args[0] = Context.Type.SCOPE;
+		return  context(args);
+	}
+	
 	public static <T extends Object> Context context(T... entries)
 			throws ContextException {
 		Context cxt = null;
@@ -308,6 +315,8 @@ public class operator {
 				cxt = new ListContext(name, subject.path(), subject.value());
 			else
 				cxt = new ListContext(name);
+		} else if (types.contains(Context.Type.SCOPE)) {
+			cxt = new ScopeContext(name);
 		} else if (types.contains(Context.Type.SHARED)
 				&& types.contains(Context.Type.INDEXED)) {
 			cxt = new SharedIndexedContext(name);

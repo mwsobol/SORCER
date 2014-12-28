@@ -17,6 +17,12 @@
 
 package sorcer.core.context;
 
+import sorcer.core.provider.MonitoringManagement;
+import sorcer.core.signature.ServiceSignature;
+import sorcer.service.*;
+import sorcer.service.Signature.Kind;
+import sorcer.util.Stopwatch;
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -24,20 +30,6 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.logging.Logger;
-
-import sorcer.core.provider.MonitoringManagement;
-import sorcer.core.signature.ServiceSignature;
-import sorcer.service.Context;
-import sorcer.service.ContextException;
-import sorcer.service.Exec;
-import sorcer.service.Exertion;
-import sorcer.service.Job;
-import sorcer.service.ServiceExertion;
-import sorcer.service.Signature;
-import sorcer.service.Signature.Kind;
-import sorcer.service.Strategy;
-import sorcer.util.Log;
-import sorcer.util.Stopwatch;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class ControlContext extends ServiceContext implements Strategy {
@@ -166,7 +158,7 @@ public class ControlContext extends ServiceContext implements Strategy {
 	private Stopwatch stopwatch;
 
 	// this class logger
-	private static Logger logger = Log.getSorcerCoreLog();
+	private static Logger logger = Logger.getLogger(ControlContext.class.getName());
 
 	public ControlContext() {
 		super(CONTROL_CONTEXT, CONTROL_CONTEXT);
