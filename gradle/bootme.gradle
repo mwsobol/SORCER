@@ -76,8 +76,8 @@ class BootMe extends DefaultTask {
         env.put("RIO_HOME", "${project.rioHome}")
 
         Process process = pb.start()
-        process.consumeProcessOutput(System.out, System.err)
         if (!spawn) {
+            process.consumeProcessOutput(System.out, System.err)
             process.waitFor()
         } else {
             process.in.close()
@@ -95,7 +95,7 @@ class StopMePlugin implements Plugin<Project> {
             doLast {
                 def pids = []
                 "jps -v".execute().text.eachLine { line ->
-                    if (line.contains("${project.name}")) {
+                    if (line.contains("project.id=${project.name}")) {
                         pids << line.split()[0]
                     }
                 }

@@ -35,7 +35,7 @@ test {
                    "${websterUrl}/${repoPath()}/sorcer-tester-${version}-dl.jar ${websterUrl}/sorcer-dl-${version}.jar ${websterUrl}/jsk-dl-${riverVersion}.jar"
 
     testLogging {
-        events "passed", "skipped", "failed", "standardOut"/*, "standardError"*/
+        events "passed", "skipped", "failed"/*, "standardOut", "standardError"*/
     }
 }
 test.onlyIf{ file("${sorcerDistHome}").exists() }
