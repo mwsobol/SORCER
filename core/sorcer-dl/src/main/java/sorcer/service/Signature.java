@@ -17,10 +17,10 @@
 
 package sorcer.service;
 
+import sorcer.service.modeling.Variability;
+
 import java.io.Serializable;
 import java.util.Arrays;
-
-import sorcer.service.modeling.Variability;
 
 /**
  * A service <code>Signature</code> is an indirect behavioral feature of
@@ -65,6 +65,13 @@ public interface Signature extends Serializable, Comparable, Arg {
 	 * @return name of service provider
 	 */
 	public String getProviderName();
+
+	/**
+	 * Returns a service provider.
+	 *
+	 * @return name of service provider
+	 */
+	public Object getProvider() throws SignatureException;
 
 	/**
 	 * Returns a provider of <code>Variability</code> type.
@@ -212,7 +219,7 @@ public interface Signature extends Serializable, Comparable, Arg {
 	 * with any exertion. The <code>SRV</code> signature defines an executing
 	 * provider dynamically bounded at runtime. The <code>APD_DATA</code>
 	 * signatures are invoked invoked first to get specified contexts from
-	 * {@link sorcer.servoce.Contexter}s that are appended to the task's current
+	 * {@link sorcer.service.Contexter}s that are appended to the task's current
 	 * context.
 	 */
 	public enum Type implements Arg {

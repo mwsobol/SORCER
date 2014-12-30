@@ -18,20 +18,27 @@
 package sorcer.core.signature;
 
 import net.jini.core.lookup.ServiceID;
+import net.jini.core.transaction.Transaction;
+import net.jini.core.transaction.TransactionException;
 import sorcer.core.SorcerConstants;
 import sorcer.core.deploy.ServiceDeployment;
+import sorcer.core.provider.Provider;
 import sorcer.service.*;
 import sorcer.service.Strategy.Provision;
 import sorcer.service.modeling.Variability;
 import sorcer.util.Log;
+import sorcer.util.ProviderLookup;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.rmi.RemoteException;
 import java.util.*;
 import java.util.logging.Logger;
 
-public class ServiceSignature implements Signature, SorcerConstants {
+import static sorcer.eo.operator.provider;
+
+public class ServiceSignature implements Signature, Service, SorcerConstants {
 
 	static final long serialVersionUID = -8527094638557595398L;
 
@@ -178,6 +185,11 @@ public class ServiceSignature implements Signature, SorcerConstants {
 
 	public String getProviderName() {
 		return providerName;
+	}
+
+	@Override
+	public Object getProvider() throws SignatureException {
+		return provider(this);
 	}
 
 	public void setProviderName(String name) {
@@ -556,4 +568,34 @@ public class ServiceSignature implements Signature, SorcerConstants {
 				.compareTo(""+((ServiceSignature) signature).providerName));
 	}
 
+	@Override
+	public Exertion service(Exertion exertion, Transaction txn) 
+			throws TransactionException, ExertionException, RemoteException {
+		Provider prv = (Provider) ProviderLookup.getProvider(this);
+		return prv.service(exertion, txn);
+	}
+
+	@Override
+	public Exertion service(Exertion exertion) throws TransactionException, ExertionException, RemoteException {
+		return service(exertion,null);
+	}
+
+	@Override
+	public Object asis() throws EvaluationException, RemoteException {
+		return this;
+	}
+
+	@Override
+	public Object getValue(Arg... entries) throws EvaluationException, RemoteException {
+		try {
+			return getProvider();
+		} catch (SignatureException e) {
+			throw new EvaluationException(e);
+		}
+	}
+
+	@Override
+	public Evaluation substitute(Arg... entries) throws SetterException, RemoteException {
+		return this;
+	}
 }
