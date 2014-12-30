@@ -17,27 +17,19 @@
 
 package sorcer.core.signature;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.StringTokenizer;
-import java.util.logging.Logger;
-
 import net.jini.core.lookup.ServiceID;
 import sorcer.core.SorcerConstants;
 import sorcer.core.deploy.ServiceDeployment;
-import sorcer.service.Exertion;
-import sorcer.service.ExertionException;
-import sorcer.service.ServiceExertion;
-import sorcer.service.Signature;
+import sorcer.service.*;
 import sorcer.service.Strategy.Provision;
 import sorcer.service.modeling.Variability;
 import sorcer.util.Log;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.*;
+import java.util.logging.Logger;
 
 public class ServiceSignature implements Signature, SorcerConstants {
 
@@ -88,6 +80,9 @@ public class ServiceSignature implements Signature, SorcerConstants {
 	protected boolean isActive = true;
 
 	protected boolean isProvisionable = false;
+	
+	// shell can be used to execute exertions locally or remotely (as ServiceProvider)
+	protected boolean isShellRemote = false;
 
 	/**
 	 * a context template to define the context appended from a provider
@@ -503,6 +498,23 @@ public class ServiceSignature implements Signature, SorcerConstants {
 			this.isProvisionable = true;
 		} else {
 			this.isProvisionable = true;
+		}
+	}
+
+	public boolean isShellRemote() {
+		return isShellRemote;
+	}
+
+	public void setShellRemote(boolean isShellRemote) {
+		this.isShellRemote = isShellRemote;
+	}
+
+	
+	public void setShellRemote(Strategy.ServiceShell shellExec) {
+		if (shellExec == Strategy.ServiceShell.REMOTE) {
+			this.isShellRemote = true;
+		} else {
+			this.isShellRemote = false;
 		}
 	}
 	

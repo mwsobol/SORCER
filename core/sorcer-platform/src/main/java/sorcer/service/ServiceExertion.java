@@ -777,6 +777,7 @@ public abstract class ServiceExertion implements Exertion, Scopable, SorcerConst
 		controlContext.setAccessType(context.getAccessType());
 		controlContext.setFlowType(context.getFlowType());
 		controlContext.setProvisionable(context.isProvisionable());
+		controlContext.setShellRemote(context.isShellRemote());
 		controlContext.setMonitorable(context.isMonitorable());
 		controlContext.setWaitable(context.isWaitable());
 		controlContext.setSignatures(context.getSignatures());
@@ -1024,6 +1025,8 @@ public abstract class ServiceExertion implements Exertion, Scopable, SorcerConst
 			controlContext.setFlowType(ft);
 		if (controlContext.isProvisionable() != startegy.isProvisionable())
 			controlContext.setProvisionable(startegy.isProvisionable());
+		if (controlContext.isShellRemote() != startegy.isShellRemote())
+			controlContext.setShellRemote(startegy.isShellRemote());
 		if (controlContext.isWaitable() != (startegy.isWaitable()))
 			controlContext.setWaitable(startegy.isWaitable());
 		if (controlContext.isMonitorable() != startegy.isMonitorable())
@@ -1481,6 +1484,10 @@ public abstract class ServiceExertion implements Exertion, Scopable, SorcerConst
 		controlContext.setProvisionable(state);
 	}
 
+	public void setShellRemote(boolean state) {
+		controlContext.setShellRemote(state);
+	}
+	
 	public boolean isProxy() {
 		return isProxy;
 	}

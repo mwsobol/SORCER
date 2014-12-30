@@ -96,6 +96,21 @@ public interface Strategy extends Arg {
 			return toString();
 		}
 	}
+
+	/**
+	 * Indicates whether to use ServiceShell locally or remotely (as ServiceProvider).
+	 */
+	public enum ServiceShell implements Arg {
+		REMOTE, LOCAL;
+
+		/* (non-Javadoc)
+		 * @see sorcer.service.Arg#getName()
+		 */
+		@Override
+		public String getName() {
+			return toString();
+		}
+	}
 	
 	/**
 	 * Indicates whether the service requestor waits for results or not.

@@ -53,6 +53,9 @@ public class ControlContext extends ServiceContext implements Strategy {
 	public final static String EXERTION_PROVISIONABLE = "exertion" + CPS
 			+ "provisionable";
 
+	public final static String SHELL_REMOTE = "shell" + CPS
+			+ "remote";
+
 	public final static String EXERTION_OPTI = "exertion" + CPS + "opti";
 
 	public final static String EXEC_STATE = "exertion" + CPS + "exec" + CPS
@@ -175,6 +178,7 @@ public class ControlContext extends ServiceContext implements Strategy {
 		setComponentAttribute(NOTIFY_EXEC);
 		setMonitorable(false);
 		setProvisionable(false);
+		setShellRemote(false);
 		setNotifierEnabled(false);
 		setExecTimeRequested(true);
 		setWaitable(true);
@@ -300,6 +304,14 @@ public class ControlContext extends ServiceContext implements Strategy {
 
 	public void setProvisionable(boolean state) {
 		put(EXERTION_PROVISIONABLE, new Boolean(state));
+	}
+
+	public boolean isShellRemote() {
+		return Boolean.TRUE.equals(get(SHELL_REMOTE));
+	}
+
+	public void setShellRemote(boolean state) {
+		put(SHELL_REMOTE, new Boolean(state));
 	}
 
 	public void setOpti(Opti optiType) {

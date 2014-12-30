@@ -62,7 +62,7 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 
 	public ServiceShell() {
 	}
-	
+
 	public ServiceShell(Exertion xrt) {
 		exertion = (ServiceExertion) xrt;
 	}
@@ -71,6 +71,13 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 		exertion = (ServiceExertion) xrt;
 		transaction = txn;
 
+	}
+
+	// a refrence to a provider running this service bean
+	private Provider provider;
+
+	public void init(Provider provider) {
+		this.provider = provider;
 	}
 	
 	public Exertion exert(Arg... entries) throws TransactionException,
@@ -446,6 +453,10 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 		return exertion;
 	}
 
+	private boolean isShellRemote() {
+		return provider != null;
+	}
+	
 	public Transaction getTransaction() {
 		return transaction;
 	}

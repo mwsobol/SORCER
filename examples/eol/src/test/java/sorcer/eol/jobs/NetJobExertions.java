@@ -23,6 +23,7 @@ import sorcer.service.*;
 import sorcer.service.Strategy.Access;
 import sorcer.service.Strategy.Flow;
 import sorcer.service.Strategy.Provision;
+import sorcer.service.Strategy.ServiceShell;
 import sorcer.service.Strategy.Wait;
 
 import java.rmi.RemoteException;
@@ -31,8 +32,15 @@ import java.util.logging.Logger;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
+import static sorcer.co.operator.input;
 import static sorcer.eo.operator.*;
+import static sorcer.eo.operator.get;
+import static sorcer.eo.operator.in;
+import static sorcer.eo.operator.input;
+import static sorcer.eo.operator.pipe;
+import static sorcer.eo.operator.value;
 import static sorcer.po.operator.*;
+import static sorcer.po.operator.put;
 
 /**
  * @author Mike Sobolewski
@@ -323,7 +331,7 @@ public class NetJobExertions implements SorcerConstants {
 	}
 
 	@Test
-	public void serviceShellTest() throws Exception {
+	public void shellRedirectTest() throws Exception {
 		Task t3 = task(
 				"t3",
 				sig("subtract", Subtractor.class),
@@ -354,7 +362,40 @@ public class NetJobExertions implements SorcerConstants {
 		assertEquals(get(context, "j1/t3/result/y"), 400.0);
 
 	}
-		
+
+	@Test
+	public void serviceRemoteShellTest() throws Exception {
+		Task t3 = task(
+				"t3",
+				sig("subtract", Subtractor.class),
+				context("subtract", inEnt("arg/x1", null), inEnt("arg/x2", null),
+						outEnt("result/y", null)));
+
+		Task t4 = task(
+				"t4",
+				sig("multiply", Multiplier.class),
+				context("multiply", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
+						outEnt("result/y", null)));
+
+		Task t5 = task(
+				"t5",
+				sig("add", Adder.class),
+				context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
+						outEnt("result/y", null)));
+
+		// Service Composition j1(j2(t4(x1, x2), t5(x1, x2)), t3(x1, x2))
+		Job job = job(
+				"j1", sig("service", ServiceJobber.class, ServiceShell.REMOTE),
+				job("j2", t4, t5), t3,
+				pipe(out(t4, "result/y"), in(t3, "arg/x1")),
+				pipe(out(t5, "result/y"), in(t3, "arg/x2")));
+
+		Context context = serviceContext(exert(job));
+		logger.info("job context: " + context);
+		assertEquals(get(context, "j1/t3/result/y"), 400.0);
+
+	}
+	
 	public static Context createContext() throws Exception {
 		return context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0));
 	}

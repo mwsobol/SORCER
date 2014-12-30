@@ -30,7 +30,7 @@ import sorcer.core.context.model.par.ParModel;
 import sorcer.core.deploy.ServiceDeployment;
 import sorcer.core.exertion.*;
 import sorcer.core.provider.*;
-import sorcer.core.provider.exerter.ServiceShell;
+import sorcer.core.provider.Shell;
 import sorcer.core.provider.rendezvous.ServiceConcatenator;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.core.provider.rendezvous.ServiceRendezvous;
@@ -778,6 +778,8 @@ public class operator {
 				} else if (o instanceof Provision) {
 					p = (Provision)o;
 					((ServiceSignature)sig).setProvisionable((Provision) o);
+				} else if (o instanceof ServiceShell) {
+					((ServiceSignature)sig).setShellRemote((ServiceShell) o);
 				} else if (o instanceof ReturnPath) {
 					sig.setReturnPath((ReturnPath) o);
 				} else if (o instanceof ServiceDeployment) {
@@ -1729,10 +1731,16 @@ public class operator {
 											   Transaction transaction,
 											   Arg... entries) throws ExertionException {
 		try {
-			ServiceShell se = new ServiceShell(input);
 			Exertion result = null;
 			try {
-				result = se.exert(transaction, null, entries);
+				if (((ServiceSignature)input.getProcessSignature()).isShellRemote()
+						|| ((ServiceSignature)input.getControlContext()).isShellRemote()) {
+					Exerter prv = (Exerter)ProviderLookup.getProvider(sig(Shell.class));
+					result = prv.exert(input, transaction, entries);
+				} else {
+					sorcer.core.provider.exerter.ServiceShell se = new sorcer.core.provider.exerter.ServiceShell(input);
+					result = se.exert(transaction, null, entries);
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
 				if (result != null)
@@ -1847,6 +1855,11 @@ public class operator {
 					cc.setProvisionable(true);
 				else
 					cc.setProvisionable(false);
+			} else if (o instanceof ServiceShell) {
+				if (o.equals(ServiceShell.REMOTE))
+					cc.setShellRemote(true);
+				else
+					cc.setShellRemote(false);
 			} else if (o instanceof Wait) {
 				cc.isWait((Wait) o);
 			} else if (o instanceof Signature) {
