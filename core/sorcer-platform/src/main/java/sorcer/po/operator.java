@@ -16,10 +16,7 @@
  */
 package sorcer.po;
 
-import sorcer.co.tuple.Entry;
-import sorcer.co.tuple.ExecPath;
-import sorcer.co.tuple.InputEntry;
-import sorcer.co.tuple.Tuple2;
+import sorcer.co.tuple.*;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.par.Agent;
 import sorcer.core.context.model.par.Par;
@@ -98,6 +95,18 @@ public class operator {
 		Par parameter = new Par(name, pm.asis(name));
 		parameter.setScope(pm);
 		return parameter;
+	}
+
+	public static EntryList parFi(String name, Entry... entries) {
+		return new EntryList(name, entries);
+	}
+
+	public static EntryList parFi(Entry... entries) {
+		return new EntryList(entries);
+	}
+
+	public static SelectionFidelity parFi(String name) {
+		return new SelectionFidelity(name);
 	}
 	
 	public static Entry parFi(Par par) {

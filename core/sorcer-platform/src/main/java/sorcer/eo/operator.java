@@ -1733,8 +1733,10 @@ public class operator {
 		try {
 			Exertion result = null;
 			try {
-				if (((ServiceSignature)input.getProcessSignature()).isShellRemote()
-						|| ((ServiceSignature)input.getControlContext()).isShellRemote()) {
+				if ((input.getProcessSignature() != null
+						&& ((ServiceSignature)input.getProcessSignature()).isShellRemote())
+						|| (input.getControlContext() != null 
+							&& ((ControlContext)input.getControlContext()).isShellRemote())) {
 					Exerter prv = (Exerter)ProviderLookup.getProvider(sig(Shell.class));
 					result = prv.exert(input, transaction, entries);
 				} else {
