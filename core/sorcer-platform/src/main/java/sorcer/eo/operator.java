@@ -21,7 +21,7 @@ import net.jini.core.lookup.ServiceTemplate;
 import net.jini.core.transaction.Transaction;
 import sorcer.co.operator.DataEntry;
 import sorcer.co.tuple.*;
-import sorcer.core.ComponentFidelityInfo;
+import sorcer.core.ComponentSelectionFidelity;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.*;
 import sorcer.core.context.model.PoolStrategy;
@@ -191,16 +191,16 @@ public class operator {
 			throw new ContextException("Service not a compunt exetion: " + service);
 	}
 
-	public static FidelityContext fiContext(FidelityInfo... fidelityInfos)
+	public static FidelityContext fiContext(SelectionFidelity... fidelityInfos)
 			throws ContextException {
 		return fiContext(null, fidelityInfos);
 	}
 
-	public static FidelityContext fiContext(String name, FidelityInfo... fidelityInfos)
+	public static FidelityContext fiContext(String name, SelectionFidelity... fidelityInfos)
 			throws ContextException {
 		FidelityContext fiCxt = new FidelityContext(name);
-		for (FidelityInfo e : fidelityInfos) {
-			if (e instanceof FidelityInfo) {
+		for (SelectionFidelity e : fidelityInfos) {
+			if (e instanceof SelectionFidelity) {
 				try {
 					fiCxt.put(e.getName(), e);
 				} catch (Exception ex) {
@@ -897,21 +897,21 @@ public class operator {
 		return new EvaluationTask(signature, context);
 	}
 
-	public static FidelityInfo srvFi(String name) {
-		return new FidelityInfo(name);
+	public static SelectionFidelity srvFi(String name) {
+		return new SelectionFidelity(name);
 	}
 
-	public static FidelityInfo srvFi(String name, String... selectors) {
-		return new FidelityInfo(name, selectors);
+	public static SelectionFidelity srvFi(String name, String... selectors) {
+		return new SelectionFidelity(name, selectors);
 	}
 
-	public static ComponentFidelityInfo csFi(String path, String name) {
-		return new ComponentFidelityInfo(name, path);
+	public static ComponentSelectionFidelity csFi(String path, String name) {
+		return new ComponentSelectionFidelity(name, path);
 	}
 
 
-	public static ComponentFidelityInfo csFi(String path, String name, String... selectors) {
-		return new ComponentFidelityInfo(name, path, selectors);
+	public static ComponentSelectionFidelity csFi(String path, String name, String... selectors) {
+		return new ComponentSelectionFidelity(name, path, selectors);
 	}
 
 

@@ -33,7 +33,7 @@ import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
 import net.jini.id.Uuid;
 import sorcer.co.tuple.Entry;
-import sorcer.core.ComponentFidelityInfo;
+import sorcer.core.ComponentSelectionFidelity;
 import sorcer.core.context.ControlContext;
 import sorcer.core.context.FidelityContext;
 import sorcer.core.context.ServiceContext;
@@ -665,11 +665,11 @@ public class Job extends ServiceExertion implements CompoundExertion {
 	}
 	
 	public void applyFidelityContext(FidelityContext fiContext) throws ExertionException {
-		Collection<FidelityInfo> fidelities = fiContext.values();
+		Collection<SelectionFidelity> fidelities = fiContext.values();
 		ServiceExertion se = null;
-		for (FidelityInfo fi : fidelities) {
-			if (fi instanceof ComponentFidelityInfo) {
-				se = (ServiceExertion) getComponentExertion(((ComponentFidelityInfo)fi).getPath());				
+		for (SelectionFidelity fi : fidelities) {
+			if (fi instanceof ComponentSelectionFidelity) {
+				se = (ServiceExertion) getComponentExertion(((ComponentSelectionFidelity)fi).getPath());
 				se.selectFidelity(fi.getName());
 			}
 		}

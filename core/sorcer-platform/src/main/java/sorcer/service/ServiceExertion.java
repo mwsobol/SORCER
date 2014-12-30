@@ -22,7 +22,7 @@ import net.jini.core.transaction.TransactionException;
 import net.jini.id.Uuid;
 import net.jini.id.UuidFactory;
 import sorcer.co.tuple.Entry;
-import sorcer.core.ComponentFidelityInfo;
+import sorcer.core.ComponentSelectionFidelity;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.*;
 import sorcer.core.context.model.par.Par;
@@ -117,7 +117,7 @@ public abstract class ServiceExertion implements Exertion, Scopable, SorcerConst
 	// existing names 
 	protected String selectedFidelitySelector;
 
-	// fidelity Contexts for this exertions
+	// fidelity Contexts for its component exertions
 	protected Map<String, FidelityContext> fidelityContexts;
 
 	protected ServiceContext dataContext;
@@ -447,10 +447,10 @@ public abstract class ServiceExertion implements Exertion, Scopable, SorcerConst
 	public void selectFidelity(Arg... entries) throws ExertionException {
 		if (entries != null && entries.length > 0) {
 			for (Arg a : entries)
-				if (a instanceof ComponentFidelityInfo) {
-					selectComponentFidelity((ComponentFidelityInfo) a);
-				} else if (a instanceof FidelityInfo) {
-					selectFidelity(((FidelityInfo) a).getName());
+				if (a instanceof ComponentSelectionFidelity) {
+					selectComponentFidelity((ComponentSelectionFidelity) a);
+				} else if (a instanceof SelectionFidelity) {
+					selectFidelity(((SelectionFidelity) a).getName());
 				} else if (a instanceof FidelityContext) {
 					if (((FidelityContext) a).size() == 0
 							&& ((FidelityContext) a).getName() != null)
@@ -474,7 +474,7 @@ public abstract class ServiceExertion implements Exertion, Scopable, SorcerConst
 		}
 	}
 	
-	public void selectComponentFidelity(ComponentFidelityInfo componetFiInfo) throws ExertionException {
+	public void selectComponentFidelity(ComponentSelectionFidelity componetFiInfo) throws ExertionException {
 		Exertion ext = getComponentExertion(componetFiInfo.getPath());
 		String fn = componetFiInfo.getName();
 		if (ext != null && ext.getFidelity() != null

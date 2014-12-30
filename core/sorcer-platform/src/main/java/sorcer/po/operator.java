@@ -23,7 +23,6 @@ import sorcer.co.tuple.Tuple2;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.par.Agent;
 import sorcer.core.context.model.par.Par;
-import sorcer.core.context.model.par.ParFidelity;
 import sorcer.core.context.model.par.ParModel;
 import sorcer.core.invoker.*;
 import sorcer.service.*;
@@ -99,18 +98,6 @@ public class operator {
 		Par parameter = new Par(name, pm.asis(name));
 		parameter.setScope(pm);
 		return parameter;
-	}
-	
-	public static ParFidelity parFi(String name, Entry... entries) {
-		return new ParFidelity(name, entries);
-	}
-	
-	public static ParFidelity parFi(Entry... entries) {
-		return new ParFidelity(entries);
-	}
-	
-	public static FidelityInfo parFi(String name) {
-		return new FidelityInfo(name);
 	}
 	
 	public static Entry parFi(Par par) {

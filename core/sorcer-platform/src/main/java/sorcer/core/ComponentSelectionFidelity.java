@@ -17,30 +17,30 @@
 
 package sorcer.core;
 
-import java.util.Arrays;
+import sorcer.service.SelectionFidelity;
 
-import sorcer.service.FidelityInfo;
+import java.util.Arrays;
 
 /**
  * @author Mike Sobolewski
  */
-public class ComponentFidelityInfo extends FidelityInfo {
+public class ComponentSelectionFidelity extends SelectionFidelity {
 
 	private static final long serialVersionUID = 1L;
 	
 	// component exertion path
 	protected String path;
 
-	public ComponentFidelityInfo() {
+	public ComponentSelectionFidelity() {
 		// fidelityName undefined
 	}
 
-	public ComponentFidelityInfo(String fidelityName, String path) {
+	public ComponentSelectionFidelity(String fidelityName, String path) {
 		this.name = fidelityName;
 		this.path = path;
 	}
 
-	public ComponentFidelityInfo(String fidelityName, String path, String... selectors) {
+	public ComponentSelectionFidelity(String fidelityName, String path, String... selectors) {
 		this(fidelityName, path);
 		this.selectors = selectors;
 	}

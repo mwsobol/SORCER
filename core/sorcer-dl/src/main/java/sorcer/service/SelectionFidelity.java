@@ -21,9 +21,11 @@ import java.io.Serializable;
 import java.util.Arrays;
 
 /**
+ * The SelectionFidelity is a subset of selectors applied to its larger superset. 
+ *
  * @author Mike Sobolewski
  */
-public class FidelityInfo implements Serializable, Arg {
+public class SelectionFidelity implements Serializable, Arg {
 
 	static final long serialVersionUID = -5142124650278074464L;
 
@@ -32,15 +34,15 @@ public class FidelityInfo implements Serializable, Arg {
 	// fidelity selectors: names of signatures, entries, etc.
 	protected String[] selectors;
 
-	public FidelityInfo() {
+	public SelectionFidelity() {
 		// fidelityName undefined
 	}
 
-	public FidelityInfo(String fidelityName) {
+	public SelectionFidelity(String fidelityName) {
 		this.name = fidelityName;
 	}
 
-	public FidelityInfo(String fidelityName, String... selectors) {
+	public SelectionFidelity(String fidelityName, String... selectors) {
 		this.name = fidelityName;
 		this.selectors = selectors;
 	}
@@ -63,7 +65,7 @@ public class FidelityInfo implements Serializable, Arg {
 
 	@Override
 	public String toString() {
-		return "Fidelity: " + name
+		return "SelectionFidelity: " + name
 				+ (selectors == null ? "" : ":" + Arrays.toString(selectors));
 	}
 
