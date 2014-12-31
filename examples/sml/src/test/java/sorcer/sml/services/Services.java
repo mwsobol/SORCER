@@ -1,4 +1,4 @@
-package sorcer.eol.services;
+package sorcer.sml.services;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,7 +27,7 @@ import static sorcer.eo.operator.value;
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
 @RunWith(SorcerTestRunner.class)
-@ProjectContext("examples/eol")
+@ProjectContext("examples/sml")
 public class Services {
 	private final static Logger logger = Logger.getLogger(Services.class.getName());
 	

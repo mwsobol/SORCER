@@ -18,7 +18,7 @@ version = sorcerVersion
 
 jar {
 	manifest {
-		attributes("Implementation-Title": "SORCER Exertion-Oriented Language (EOL)",
+		attributes("Implementation-Title": "SORCER Service Modeling Language (SML)",
                    "Implementation-Version": version)
 	}
 	baseName = "arithmetic"

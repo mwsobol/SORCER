@@ -1,4 +1,4 @@
-package sorcer.eol.contexts;
+package sorcer.sml.contexts;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,7 +22,7 @@ import static sorcer.po.operator.*;
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
 @RunWith(SorcerTestRunner.class)
-@ProjectContext("examples/eol")
+@ProjectContext("examples/sml")
 public class ServiceContexts {
 	private final static Logger logger = Logger.getLogger(ServiceContexts.class.getName());
 

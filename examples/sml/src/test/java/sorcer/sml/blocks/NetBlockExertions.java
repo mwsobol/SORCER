@@ -1,4 +1,4 @@
-package sorcer.eol.blocks;
+package sorcer.sml.blocks;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,7 +28,7 @@ import static sorcer.po.operator.*;
  */
 @SuppressWarnings("unchecked")
 @RunWith(SorcerTestRunner.class)
-@ProjectContext("examples/eol")
+@ProjectContext("examples/sml")
 public class NetBlockExertions implements SorcerConstants {
 	private final static Logger logger = Logger.getLogger(NetBlockExertions.class.getName());
 

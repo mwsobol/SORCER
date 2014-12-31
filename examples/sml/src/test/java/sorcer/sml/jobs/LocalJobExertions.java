@@ -1,4 +1,4 @@
-package sorcer.eol.jobs;
+package sorcer.sml.jobs;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,7 +27,7 @@ import static sorcer.eo.operator.*;
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })
 @RunWith(SorcerTestRunner.class)
-@ProjectContext("examples/eol")
+@ProjectContext("examples/sml")
 public class LocalJobExertions implements SorcerConstants {
 
 	private final static Logger logger = Logger.getLogger(LocalJobExertions.class.getName());

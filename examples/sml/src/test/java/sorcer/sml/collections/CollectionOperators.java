@@ -1,4 +1,4 @@
-package sorcer.eol.collections;
+package sorcer.sml.collections;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -49,7 +49,7 @@ import static sorcer.po.operator.set;
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
 @RunWith(SorcerTestRunner.class)
-@ProjectContext("examples/eol")
+@ProjectContext("examples/sml")
 public class CollectionOperators {
 	private final static Logger logger = Logger.getLogger(CollectionOperators.class.getName());
 

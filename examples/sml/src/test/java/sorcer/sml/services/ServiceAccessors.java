@@ -1,4 +1,4 @@
-package sorcer.eol.services;
+package sorcer.sml.services;
 
 import org.junit.Ignore;
 import org.junit.Test;
@@ -26,7 +26,7 @@ import static sorcer.eo.operator.sig;
  */
 @SuppressWarnings("rawtypes")
 @RunWith(SorcerTestRunner.class)
-@ProjectContext("examples/eol")
+@ProjectContext("examples/sml")
 public class ServiceAccessors implements SorcerConstants {
 	private final static Logger logger = Logger.getLogger(ServiceAccessors.class.getName());
 

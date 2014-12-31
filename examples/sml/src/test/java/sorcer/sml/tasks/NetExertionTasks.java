@@ -1,4 +1,4 @@
-package sorcer.eol.tasks;
+package sorcer.sml.tasks;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,7 +29,7 @@ import static sorcer.eo.operator.value;
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
 @RunWith(SorcerTestRunner.class)
-@ProjectContext("examples/eol")
+@ProjectContext("examples/sml")
 public class NetExertionTasks {
 	private final static Logger logger = Logger.getLogger(NetExertionTasks.class.getName());
 	

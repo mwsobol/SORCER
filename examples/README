@@ -5,7 +5,7 @@ exerts acquired abilities to execute a computation.
 
 Explicit references to providers are not required!
 
-A reference to a provider and/or its activity is called a signature.
+A reference to a provider and/or its action is called a signature.
 
 A signature specifies an activity by an operation and its service type 
 (context-oriented Java class or interface).
@@ -17,7 +17,7 @@ A task is an elementary service defined by a signature with its data and control
 An exertion is a compound service defining collaborating providers-federation-to be exerted 
 by the SORCER Operating System (SOS). It is a structured composition of tasks and exertions.
 	
-An exertion expressed in the Exertion-Oriented Language (EOL) is called a service script or netlet.
+An exertion expressed in the Service Modeling Language (SML) is called a service script or netlet.
 
 
 Service Provider exerts acquired abilities to execute a task
@@ -36,19 +36,19 @@ The Service interface (Service#service(Exertion)) is implemented by:
 	- service context (model)
 
 SORCER Operating System (SOS)
-	- executes exertions expressed in EOL
+	- executes exertions expressed in SML
 	- manages runtime service federations for exertions
 	- provides a service-oriented shell (sosh) for the SOS
 
 ###############################################################################
 
-EOL examples in the SORCER Project
+SML examples in the SORCER Project
 
-1. Collections used in EOL
+1. Collections used in SML
 	eol/src/test/java/sorcer/arithmetic/collections
 	
 2. Service signatures, providers, services (exertions), 
-   and service data (contexts) in  EOL
+   and service data (contexts) in  SML
 	eol/test/java/sorcer/eol/services
 		
 3. Intro to service provider/requestor development
