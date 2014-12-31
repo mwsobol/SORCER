@@ -128,7 +128,7 @@ if (JavaVersion.current().isJava8Compatible()) {
  * Generate all javadocs
  */
 task allJavadoc(type: Javadoc) {
-    description = 'Creates SORCER API Specification'
+    description = 'Creates SORCER API Specification, view them in build/javadoc/index.html'
     destinationDir = new File(project.projectDir, 'build/javadoc')
     title = "SORCER ${version}"
 }
