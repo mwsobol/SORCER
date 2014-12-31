@@ -55,7 +55,7 @@ import java.util.logging.Logger;
 
 
 /**
- * Operators used for the Exertion-Oriented Language (EOL).
+ * Operators defined for the Service Modeling Language (SML).
  *
  * @author Mike Sobolewski
  */
@@ -172,8 +172,7 @@ public class operator {
 		return (ControlContext)exertion.getExertion(childName).getControlContext();
 	}
 
-	public static <T extends Object> Context cxt(T... entries)
-			throws ContextException {
+	public static Context cxt(Object... entries) throws ContextException {
 		return context(entries);
 	}
 
@@ -188,7 +187,7 @@ public class operator {
 		if (service instanceof ServiceExertion) {
 			return ((CompoundExertion) service).getComponentContext(path);
 		} else
-			throw new ContextException("Service not a compunt exetion: " + service);
+			throw new ContextException("Service not an exertion: " + service);
 	}
 
 	public static FidelityContext fiContext(SelectionFidelity... fidelityInfos)
@@ -214,7 +213,7 @@ public class operator {
 		return fiCxt;
 	}
 
-	public static <T extends Object> Context entModel(T... entries)
+	public static Context entModel(Object... entries)
 			throws ContextException {
 		if (entries != null && entries.length == 1 && entries[0] instanceof Context) {
 			((Context)entries[0]).setModeling(true);
@@ -234,14 +233,14 @@ public class operator {
 		return ((ServiceContext)context).getTarget();
 	}
 	
-	public static <T extends Object> Context scope(T... entries) throws ContextException {
+	public static Context scope(Object... entries) throws ContextException {
 		Object[] args = new Object[entries.length + 1];
 		System.arraycopy(entries, 0, args, 1, entries.length);
 		args[0] = Context.Type.SCOPE;
 		return  context(args);
 	}
 	
-	public static <T extends Object> Context context(T... entries)
+	public static Context context(Object... entries)
 			throws ContextException {
 		Context cxt = null;
 		if (entries[0] instanceof Exertion) {
@@ -275,7 +274,7 @@ public class operator {
 		ParameterTypes parameterTypes = null;
 		target target = null;
 		PoolStrategy modelStrategy = null;
-		for (T o : entries) {
+		for (Object o : entries) {
 			if (o instanceof Complement) {
 				subject = (Complement) o;
 			} else if (o instanceof Args
@@ -816,16 +815,6 @@ public class operator {
 		return signture;
 	}
 
-//	public static Signature sig(String operation, Class serviceInfo,
-//			List<net.jini.core.entry.Entry> attributes)
-//			throws SignatureException {
-//		NetSignature op = new NetSignature();
-//		op.setAttributes(attributes);
-//		op.setServiceType(serviceInfo);
-//		op.setSelector(operation);
-//		return op;
-//	}
-
 	public static Signature sig(Class<?> serviceType) throws SignatureException {
 		if (serviceType == ServiceJobber.class ||
 				serviceType == ServiceSpacer.class ||
@@ -995,8 +984,7 @@ public class operator {
 
 	public static ObjectTask task(ObjectSignature signature, Context context)
 			throws SignatureException {
-		return new ObjectTask(signature.getSelector(),
-				(ObjectSignature) signature, context);
+		return new ObjectTask(signature.getSelector(), signature, context);
 	}
 
 	public static Task task(String name, Signature signature, Context context)
@@ -1008,11 +996,11 @@ public class operator {
 
 	public static Task task(Signature signature, Context context)
 			throws SignatureException {
-		Task task = null;
+		Task task;
 		if (signature instanceof NetSignature) {
-			task = new NetTask((NetSignature) signature, context);
+			task = new NetTask(signature, context);
 		} else if (signature instanceof ObjectSignature) {
-			task = new ObjectTask((ObjectSignature) signature, context);
+			task = new ObjectTask(signature, context);
 		} else if (signature instanceof EvaluationSignature) {
 			task = new EvaluationTask((EvaluationSignature) signature,
 					context);
@@ -1022,7 +1010,7 @@ public class operator {
 		return task;
 	}
 
-	public static <T> Task batch(String name, T... elems)
+	public static Task batch(String name, Object... elems)
 			throws ExertionException {
 		Task batch = task(name, elems);
 		if (batch.getFidelity().size() > 1)
@@ -1032,7 +1020,7 @@ public class operator {
 					"A batch should comprise of more than one signature.");
 	}
 
-	public static <T> Task task(String name, T... elems)
+	public static Task task(String name, Object... elems)
 			throws ExertionException {
 		Context context = null;
 		List<Signature> ops = new ArrayList<Signature>();
@@ -1123,16 +1111,15 @@ public class operator {
 		return task;
 	}
 
-	public static <T extends Object, E extends Exertion> E srv(String name,
-															   T... elems) throws ExertionException, ContextException,
-			SignatureException {
+	public static <E extends Exertion> E srv(String name, Object... elems) 
+			throws ExertionException, ContextException, SignatureException {
 		return (E) exertion(name, elems);
 	}
 
-	public static <T extends Object, E extends Exertion> E service(T... items)
+	public static <E extends Exertion> E service(Object... items) 
 			throws ExertionException, ContextException, SignatureException {
 		String name = "unknown" + count++;
-		for (T i : items) {
+		for (Object i : items) {
 			if (i instanceof String) {
 				name = (String)i;
 			}
@@ -1140,20 +1127,13 @@ public class operator {
 		return (E) exertion(name, items);
 	}
 
-//	public static <T extends Object, E extends Exertion> E service(String name,
-//			T... elems) throws ExertionException, ContextException,
-//			SignatureException {
-//		return (E) exertion(name, elems);
-//	}
-
-	public static <T extends Object, E extends Exertion> E xrt(String name,
-															   T... elems) throws ExertionException, ContextException,
-			SignatureException {
+	public static <E extends Exertion> E xrt(String name, Object... elems) 
+			throws ExertionException, ContextException, SignatureException {
 		return (E) exertion(name, elems);
 	}
 
-	public static <T extends Object, E extends Exertion> E exertion(
-			String name, T... elems) throws ExertionException,
+	public static <E extends Exertion> E exertion(
+			String name, Object... elems) throws ExertionException,
 			ContextException, SignatureException {
 		List<Exertion> exertions = new ArrayList<Exertion>();
 		for (int i = 0; i < elems.length; i++) {
@@ -1170,7 +1150,7 @@ public class operator {
 		}
 	}
 
-	public static <T> Job job(T... elems) throws ExertionException,
+	public static Job job(Object... elems) throws ExertionException,
 			ContextException, SignatureException {
 		String name = getUnknown();
 		Signature signature = null;
