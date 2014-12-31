@@ -58,7 +58,7 @@ subprojects {
         apply plugin: "maven"
         apply plugin: "maven-publish"
 
-        if(project.name!="distribution") {
+        if (project.name != "distribution") {
             apply plugin: "java"
             apply from: file("${rootProject.projectDir.path}/gradle/bootme.gradle")
 
@@ -112,4 +112,38 @@ task allTests(type: TestReport, dependsOn: "bootSorcerRio") {
 
     finalizedBy("terminateSorcerRio")
 }
+
+if (JavaVersion.current().isJava8Compatible()) {
+    allprojects {
+        //noinspection SpellCheckingInspection
+        tasks.withType(Javadoc) {
+            // disable the crazy super-strict doclint tool in Java 8
+            //noinspection SpellCheckingInspection
+            options.addStringOption('Xdoclint:none', '-quiet')
+        }
+    }
+}
+
+/*
+ * Generate all javadocs
+ */
+task allJavadoc(type: Javadoc) {
+    destinationDir = new File(project.projectDir, 'build/javadoc')
+    title = "SORCER ${version}"
+}
+
+subprojects {
+    afterEvaluate {
+        def skip = ["deploy-tests", "sorcer-tester", "eol", "worker", "pml", "service", "ssb"]
+        if (plugins.hasPlugin(JavaPlugin) && !skip.contains(project.name)) {
+            // configuration here
+            rootProject.tasks.allJavadoc {
+                source += files(sourceSets.collect { srcSet -> srcSet.allJava })
+                classpath += files(sourceSets*.compileClasspath)
+            }
+
+        }
+    }
+}
+
 
