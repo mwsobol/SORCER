@@ -101,7 +101,7 @@ task allTests(type: TestReport, dependsOn: "bootSorcerRio") {
              reports.html.enabled = false
          }*/
         tasks.withType(Test) {
-            //reports.html.enabled = false
+            reports.html.enabled = false
             ignoreFailures true
             reportOn it
         }
