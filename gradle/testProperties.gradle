@@ -32,6 +32,7 @@ subprojects {
                     systemProperty "sorcer.home", "${sorcerDistHome}"
 					systemProperty "sorcer.version", "${sorcerVersion}"
 					systemProperty "river.version", "${riverVersion}"
+                    systemProperty "rio.home", "${rioHome}"
 					systemProperty "project.build.dir", project.buildDir
                     environment("SORCER_HOME":"${sorcerDistHome}", "RIO_HOME": "${rioHome}")
 //                  systemProperty "java.util.logging.config.file", "${sorcerDistHome}/configs/sorcer.logging"

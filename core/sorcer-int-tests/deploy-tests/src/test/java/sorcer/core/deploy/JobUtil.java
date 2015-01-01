@@ -42,7 +42,7 @@ public class JobUtil {
                            Multiplier.class,
                            deploy(configuration(fork?
                                                 getConfigDir()+"/multiplier-prv-fork.config":
-                                                getConfigDir()+"/multiplier-prv.config"),
+                                                "org.sorcer:deploy-tests:config:5.0"),
                                   idle(1),
                                   ServiceDeployment.Type.SELF)),
                        context("multiply", inEnt("arg/x1", 10.0d),
@@ -85,7 +85,7 @@ public class JobUtil {
             f4 = task("f4",
                       sig("multiply",
                           Multiplier.class,
-                          deploy(configuration(getConfigDir()+"/multiplier-prv.config"),
+                          deploy(configuration("org.sorcer:deploy-tests:config:5.0"),
                                  idle(1),
                                  opsys(opSys),
                                  arch(arch),
@@ -97,7 +97,7 @@ public class JobUtil {
             f4 = task("f4",
                       sig("multiply",
                           Multiplier.class,
-                          deploy(configuration(getConfigDir()+"/multiplier-prv.config"),
+                          deploy(configuration("org.sorcer:deploy-tests:config:5.0"),
                                  idle(1),
                                  opsys(opSys),
                                  arch(arch),
@@ -130,6 +130,6 @@ public class JobUtil {
     }
 
     static  String getConfigDir() {
-        return String.format("%s/src/test/resources/deploy/configs/", System.getProperty("user.dir"));
+        return String.format("%s/src/test/resources/deploy/configs", System.getProperty("user.dir"));
     }
 }

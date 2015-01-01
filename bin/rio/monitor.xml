@@ -11,14 +11,14 @@
     </target>
 
     <target name="verify" description="Checks the local repository for artifacts. If not present will install them.">
-        <ant antfile="${sorcer.home}/bin/rio/boot-iGrid-Rio.xml" dir="${sorcer.home}/bin" target="verify">
+        <ant antfile="${sorcer.home}/bin/rio/boot-sorcer-rio.xml" dir="${sorcer.home}/bin" target="verify">
             <property name="sorcer.home" value="${sorcer.home}"/>
             <property name="fork.mode" value="yes"/>
         </ant>
     </target>
 
     <target name="monitor" depends="verify" description="Starts a Monitor">
-        <ant antfile="${sorcer.home}/bin/rio/boot-iGrid-Rio.xml" dir="${sorcer.home}/bin" target="monitor">
+        <ant antfile="${sorcer.home}/bin/rio/boot-sorcer-rio.xml" dir="${sorcer.home}/bin" target="monitor">
 		    <property name="sorcer.home" value="${sorcer.home}"/>
 	    </ant>	
     </target>
@@ -45,7 +45,7 @@
             <sysproperty key="java.security.policy" value="${sorcer.home}/policy/sorcer.policy" />
             <sysproperty key="java.protocol.handler.pkgs" value="net.jini.url|sorcer.util.bdb.sos|org.rioproject.url" />
             <sysproperty key="java.rmi.server.RMIClassLoaderSpi" value="org.rioproject.rmi.ResolvingLoader" />
-            <sysproperty key="RIO_HOME" value="${rio.home}" />
+            <sysproperty key="rio.home" value="${rio.home}" />
             <arg value="jvm:monitor" />
         </java>
     </target>

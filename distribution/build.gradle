@@ -121,11 +121,15 @@ task gatherDeps() {
             if(file.path.endsWith("distribution-${rioVersion}.zip")) {
                 copy {
                     from(zipTree(file)) {
-                        exclude "**/examples.zip"
-                        exclude "**/docs/*"
+                        exclude '**/examples.zip'
+                        exclude '**/docs/*'
+                        exclude '**/index.html'
                     }
                     into "$distDir-${version}"
                 }
+                File docs = new File("$distDir-${version}/rio-${rioVersion}/docs")
+                if(docs.exists())
+                    docs.deleteDir()
             } else {
                 if (file.path.contains("jini") || file.path.contains("river"))
                     dest = "lib/river"

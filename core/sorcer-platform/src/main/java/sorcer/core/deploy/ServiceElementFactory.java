@@ -90,7 +90,7 @@ public final class ServiceElementFactory  {
             Resolver resolver = ResolverHelper.getResolver();
             Artifact temp = new Artifact(deployment.getConfig());
             String classifier = temp.getClassifier();
-            if(classifier==null) {
+            if(classifier==null || classifier.length()==0) {
                 logger.info("Setting classifier to \"deploy\" for "+temp.getGAV());
                 classifier = "deploy";
             }
