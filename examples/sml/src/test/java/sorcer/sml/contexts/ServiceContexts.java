@@ -38,7 +38,7 @@ public class ServiceContexts {
 		assertTrue(get(cxt, "arg/x1").equals(1.1));
 		assertTrue(asis(cxt, "arg/x1").equals(1.1));
 
-		// aliasing with reactive value entries - rvEnt
+		// aliasing with an reactive value entry - rvEnt
 		put(cxt, rvEnt("arg/x1", value(cxt, "arg/x5")));
 		assertTrue(get(cxt, "arg/x1").equals(1.5));
 
