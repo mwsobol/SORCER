@@ -34,7 +34,6 @@ public class AdderImpl implements Adder {
 	}
 	
 	public Context add(Context context) throws RemoteException, ContextException {
-
 		// get inputs and outputs from the service context
 		PositionalContext cxt = (PositionalContext) context;
 		List<Double> inputs = cxt.getInValues();
@@ -62,16 +61,23 @@ public class AdderImpl implements Adder {
 			cxt.putValue(RESULT_PATH, result);
 		}
 
+		// get a custom provider property
+		if (provider != null) {
+			try {
+				int st = new Integer(provider.getProperty("provider.sleep.time"));
+				Thread.sleep(st);
+				logger.info("slept for: " + st);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		
 		return cxt;
 	}
 	
 	public static UIDescriptor getCalculatorDescriptor() {
 		String sorcerVersion = System.getProperty("sorcer.version");
 		String relativeRepoPath = System.getProperty("relative.repo.path");
-
-		logger.info("ZZZZZZZZZZZ " + sorcerVersion);
-		logger.info("ZZZZZZZZZZZ " + relativeRepoPath);
-
 		UIDescriptor uiDesc = null;
 		try {
 			uiDesc = UIDescriptorFactory.getUIDescriptor(MainUI.ROLE,

@@ -182,14 +182,10 @@ public class AdderUI extends JPanel implements SorcerConstants {
 		try {
 			String serverVersion = System.getProperty("sorcer.version");
 			uiDesc = UIDescriptorFactory.getUIDescriptor(MainUI.ROLE,
-					new UIComponentFactory(new URL[] { new URL(Sorcer
-							.getWebsterUrl()
-							+ "/adder-" + serverVersion + "-ui.jar") }, AdderUI.class
-							.getName()));
+					new UIComponentFactory(new URL[] { new URL(Sorcer.getWebsterUrl() + "/adder-" + serverVersion + "-ui.jar") },
+							AdderUI.class.getName()));
 		} catch (Exception ex) {
-			logger
-					.throwing(AdderUI.class.getName(), "getCalculatorDescriptor",
-							ex);
+			logger.throwing(AdderUI.class.getName(), "getCalculatorDescriptor", ex);
 		}
 		return uiDesc;
 	}
