@@ -80,6 +80,11 @@ dependencies {
     testRuntime libs.slf4j
 }
 
+def deployConfig = file("configs/adder-prv.config")
+artifacts {
+    archives deployConfig
+}
+
 def repoPath() {
     return "org/sorcer/adder/${version}"
 }
@@ -93,7 +98,7 @@ bootme {
 }
 
 //task runRequestor(type:JavaExec, dependsOn:[jar, "bootme"]) {
-task runRequestor(type:JavaExec, dependsOn:[jar]) {
+task runRequestor(type:JavaExec, dependsOn:[install]) {
     description = 'Runs a service requestor executing a local or remote service.'
     main = "sorcer.core.requestor.ServiceRequestor"
     classpath = sourceSets.main.runtimeClasspath
@@ -101,7 +106,7 @@ task runRequestor(type:JavaExec, dependsOn:[jar]) {
     systemProperty "requestor.properties", "configs/adder-req.properties"
     systemProperty "java.rmi.server.codebase",
             "${websterUrl}/${repoPath()}/adder-${version}-dl.jar ${websterUrl}/sorcer-dl-${version}.jar ${websterUrl}/jsk-dl-${riverVersion}.jar"
-    args = ["sorcer.requestor.adder.AdderRequestor", "netlet"]
+    args = ["sorcer.requestor.adder.AdderRequestor", "dynamic"]
 //	finalizedBy (":stopme")
 }
 
