@@ -21,11 +21,11 @@ apply plugin: "maven"
  */
 
 /*
- * Start Sorcer only with hhtp
+ * Start Sorcer only with http
  */
 task bootSorcer(type: Exec) {
     description = 'Starts SORCER Operating System Services.'
-    commandLine "ant", "-f", "${file("${sorcerDistHome}").path}/bin/boot-sorcer.xml", "spawn"
+    commandLine "ant", "-f", "${file("${sorcerDistHome}").path}/bin/sorcer/bin/boot-sorcer.xml", "spawn"
 }
 bootSorcer.onlyIf {
     def jps = "jps -lm".execute()
@@ -37,7 +37,7 @@ bootSorcer.onlyIf {
  */
 task bootSorcerNoHttpd(type: Exec) {
     description = 'Starts SORCER OS Services without a class servcer (webster).'
-    commandLine "ant", "-f", "${file("${sorcerDistHome}").path}/bin/boot-sorcer-noHttpd.xml", "run"
+    commandLine "ant", "-f", "${file("${sorcerDistHome}").path}/bin/sorcer/bin/boot-sorcer-noHttpd.xml", "run"
 }
 bootSorcerNoHttpd.onlyIf {
     def jps = "jps -lm".execute()
@@ -62,11 +62,19 @@ bootSorcerRio.onlyIf {
 }
 
 /*
- * Destroy Sorcer
+ * Destroy Sorcer and Rio
  */
 task terminateSorcerRio(type: Exec) {
     description = 'Halts SORCER OS Services and Rio services.'
     commandLine "ant", "-f", "${file("${sorcerDistHome}").path}/bin/rio/destroy-sorcer-rio.xml"
+}
+
+/*
+ * Destroy Sorcer and Rio
+ */
+task terminateSorcer(type: Exec) {
+    description = 'Halts SORCER OS Services.'
+    commandLine "ant", "-f", "${file("${sorcerDistHome}").path}/bin/sorcer/bin/destroy-sorcer.xml"
 }
 
 /*
@@ -100,9 +108,14 @@ rioUI.onlyIf {
 /*
  * Start Sorcer Webster
  */
-task webster(type: Exec, dependsOn: 'genWebsterConfig') {
+task webster(type: Exec) {
     description = 'Starts a class server (webster).'
-    commandLine "${sorcerDistHome}/bin/webster/bin/webster.groovy"
+    StringBuilder command = new StringBuilder()
+    if(System.properties['os.name'].contains("Windows")) {
+        commandLine "cmd.exe", "/C", "groovy", "${sorcerDistHome}/bin/webster/bin/webster.groovy"
+    } else {
+        commandLine "${sorcerDistHome}/bin/webster/bin/webster.groovy"
+    }
 }
 webster.onlyIf {
     File sorcerDist = file(sorcerDistHome)
@@ -122,50 +135,3 @@ webster.onlyIf {
     !running
 }
 
-task genWebsterConfig {
-    description = 'Generates a configuration for class server (webster).'
-    doLast {
-        String localMaven
-        repositories {
-            localMaven = mavenLocal().url.path
-        }
-        def roots = ["${sorcerDistHome}/lib/sorcer/lib-dl",
-                     "${sorcerDistHome}/lib/sorcer/lib",
-                     "${sorcerDistHome}/lib/river",
-                     "${sorcerDistHome}/rio-${rioVersion}/lib",
-                     "${sorcerDistHome}/rio-${rioVersion}/lib-dl",
-                     "${sorcerDistHome}/lib/common",
-                     "${sorcerDistHome}/lib/blitz",
-                     "${sorcerDistHome}/lib",
-                     "${localMaven}",
-                     "${sorcerDistHome}/data"]
-        StringBuilder rootsBuilder = new StringBuilder()
-        String indent  = "             "
-        roots.each { root ->
-            if(rootsBuilder.length()>0)
-                rootsBuilder.append(",\n").append(indent)
-            rootsBuilder.append("\"${root}\"")
-        }
-        String spawn = System.getProperty("spawn")==null?true:System.getProperty("spawn")
-        StringBuilder configBuilder = new StringBuilder()
-        configBuilder.append("/*\n")
-                .append(" * This file is generated. If you modify the contents,\n")
-                .append(" * chances are good you will lose your modifications.\n")
-                .append(" */\n\n")
-                .append("webster {\n")
-                .append("    address = \"").append(websterAddress).append("\"\n")
-                .append("    port = \"").append(websterPort).append("\"\n")
-                .append("    roots = [").append(rootsBuilder.toString()).append("]\n")
-                .append("    spawn = ").append(spawn).append("\n")
-                .append("}\n\n")
-                .append("versions {\n")
-                .append("    rio = \"").append(rioVersion).append("\"\n")
-                .append("    sorcer = \"").append(sorcerVersion).append("\"\n")
-                .append("}\n\n")
-                .append("paths {\n")
-                .append("    sorcerHome = \"").append(sorcerDistHome).append("\"\n")
-                .append("}\n\n")
-
-        file("${sorcerDistHome}/bin/webster/configs/websterConfig.groovy").write(configBuilder.toString())
-    }
-}
