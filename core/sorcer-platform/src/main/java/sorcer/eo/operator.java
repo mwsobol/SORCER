@@ -753,10 +753,14 @@ public class operator {
 	public static Signature sig(String operation, Class serviceType,  Arg... args)
 			throws SignatureException {
 		String providerName = null;
+		Provision p = null;
 		if (args != null) {
 			for (Object o : args) {
-				if (o instanceof ProviderName)
-					providerName = Sorcer.getActualName(((ProviderName)o).getName());
+				if (o instanceof ProviderName) {
+					providerName = Sorcer.getActualName(((ProviderName) o).getName());
+				} else if (o instanceof Provision) {
+					  p = (Provision) o;
+				}
 			}
 		}
 		Signature sig = null;
@@ -766,9 +770,11 @@ public class operator {
 			sig = new ObjectSignature(operation, serviceType);
 			sig.setProviderName(providerName);
 		}
-
+		
+		if (p != null)
+			((ServiceSignature)sig).setProvisionable(p);
+		
 		if (args.length > 0) {
-			Provision p = null;
 			for (Object o : args) {
 				if (o instanceof Type) {
 					sig.setType((Type) o);
@@ -782,12 +788,12 @@ public class operator {
 				} else if (o instanceof ReturnPath) {
 					sig.setReturnPath((ReturnPath) o);
 				} else if (o instanceof ServiceDeployment) {
-					if (p != null)
-						((ServiceDeployment)o).setProvisionable(p);
+					((ServiceSignature)sig).setProvisionable(true);
 					((ServiceSignature)sig).setDeployment((ServiceDeployment)o);
-				}
+				}  
 			}
 		}
+		
 		return sig;
 	}
 
@@ -812,6 +818,7 @@ public class operator {
 			throws SignatureException {
 		ServiceSignature signture = new ServiceSignature(name, selector);
 		signture.setDeployment(deployment);
+		signture.setProvisionable(true);
 		return signture;
 	}
 
@@ -829,6 +836,7 @@ public class operator {
 			throws SignatureException {
 		Signature signature = sig(serviceType, returnPath);
 		((ServiceSignature)signature).setDeployment(deployment);
+		((ServiceSignature)signature).setProvisionable(true);
 		return signature;
 	}
 
@@ -1007,6 +1015,8 @@ public class operator {
 		} else {
 			task = new Task(signature, context);
 		}
+		if (((ServiceSignature)signature).isProvisionable())
+			task.setProvisionable(true);
 		return task;
 	}
 
@@ -1107,6 +1117,9 @@ public class operator {
 		}
 		if (cc != null) {
 			task.updateStrategy(cc);
+		}
+		if (((ServiceSignature)ss).isProvisionable()) {
+			task.setProvisionable(true);
 		}
 		return task;
 	}
