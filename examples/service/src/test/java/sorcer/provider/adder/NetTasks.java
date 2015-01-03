@@ -76,6 +76,15 @@ public class NetTasks {
 		assertEquals(get(t5, "result/y"), 100.0);
 	}
 
+
+	@Test
+	public void spaceTask2() throws Exception {
+		task("hello adder", sig("add",
+						Adder.class,
+						deploy(configuration("org.sorcer:adder:config:5.0"))),
+//				strategy(Strategy.Provision.YES),
+				context("adder", inEnt("arg/x1", 10.0), inEnt("arg/x2", 100.0), result("out/y")));
+	}
 }
 	
 	
