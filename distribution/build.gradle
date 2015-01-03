@@ -202,6 +202,8 @@ task distribution(dependsOn: [":sorcer-boot:install",
         copy {
             from("${project.rootProject.projectDir}") {
                 include "LICENSE.txt"
+                include "configs/all-prv.config"
+                include "configs/all-sorcer.env"
                 include "configs/versions.properties"
                 include "configs/opstrings/**"
                 include "configs/sorcer.logging"
