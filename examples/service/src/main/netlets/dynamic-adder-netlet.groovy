@@ -27,7 +27,10 @@ Double v2 = 200.0;
 
 task("hello adder", sig("add",
                         Adder.class,
-                        deploy(configuration("org.sorcer:adder:config:5.0"))),
+                        /* Dynamic deployment configuration is an artifact, and we declare that the provider
+                         * will be undeployed if idle for 1 minute */
+                        deploy(configuration("org.sorcer:adder:config:5.0"),
+                               idle(1))),
      strategy(Strategy.Provision.YES),
      context("adder", inEnt("arg/x1", v1), inEnt("arg/x2", v2), result("out/y")));
 
