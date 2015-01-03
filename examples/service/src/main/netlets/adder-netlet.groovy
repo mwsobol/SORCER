@@ -16,9 +16,10 @@
 
 // Adder netlet for testing the requestor of the examples/server project
 
-import static sorcer.co.operator.*;
-import static sorcer.eo.operator.*;
-import sorcer.provider.adder.*;
+import sorcer.provider.adder.Adder
+
+import static sorcer.co.operator.inEnt
+import static sorcer.eo.operator.*
 
 Double v1 = 100.0;
 Double v2 = 200.0;
