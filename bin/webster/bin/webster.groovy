@@ -109,7 +109,7 @@ if (!spawn) {
     config.webster.roots.each { root ->
         println "Root ${rootNum++} = $root"
     }
-    println "Webster serving on : ${config.webster.address}:${config.webster.port}"
+    println "Webster serving on : ${config.webster.address}:${sorcerEnv['provider.webster.port']}"
     process.in.close()
     process.out.close()
     process.err.close()

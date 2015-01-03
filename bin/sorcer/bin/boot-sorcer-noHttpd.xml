@@ -3,7 +3,7 @@
 
 	<!-- load system environment variables -->
 	<property environment="env" />
-	<dirname file="${basedir}" property="sorcer.basedir" />
+	<dirname file="${basedir}/../.." property="sorcer.basedir" />
 	<import file="${sorcer.basedir}/bin/common-run.xml" />
 
 	<property name="sorcer.data" value="${sorcer.home}/data" />

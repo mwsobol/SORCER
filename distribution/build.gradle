@@ -156,7 +156,7 @@ def filterDeps(project, prefix) {
     }
 }
 
-task distribution(dependsOn: [":sorcer-boot:install",
+task createDistribution(dependsOn: [":sorcer-boot:install",
                               ":sorcer-lib:install",
                               ":sorcer-ui:install",
                               ":sorcer-test:install",
@@ -240,19 +240,14 @@ task distribution(dependsOn: [":sorcer-boot:install",
                 include "bin/browser/bin/sorcer-browser.xml"
                 include "bin/browser/configs/ssb.config"
                 include "bin/browser/policy/ssb.policy"
+
                 include "bin/webster/bin/webster**"
                 include "bin/webster/configs/websterConfig.groovy"
+
                 include "bin/images/**"
             }
             into "${distDir}-${version}"
             rename "standalone.sorcer.env", "sorcer.env"
-        }
-
-        if(!System.properties['os.name'].contains("Windows")) {
-            String webster = "${distDir}-${version}/bin/webster/bin/webster.groovy"
-            println "Running chmod ug+x ${webster} ... "
-            Process chmod = "chmod ug+x ${webster}".execute()
-            chmod.waitFor()
         }
 
         /* Overlay Rio customizations onto Rio distribution */
@@ -284,11 +279,26 @@ task distribution(dependsOn: [":sorcer-boot:install",
         versionProps.setProperty("groovy.version", groovyVersion)
         versionProps.setProperty("slf4j.version", slf4jVersion)
         versionProps.store(versionPropsFile.newWriter(), null)
+    }
+}
 
+task distribution(type: Zip, dependsOn: [createDistribution]) {
+    description 'Creates a Sorcer distribution archive'
+    doFirst {
         println "Zipping distribution sorcer-${version} -> sorcer-${version}.zip"
-        ant.zip(destfile:"${project.buildDir.path}/sorcer-${version}.zip",
-                basedir: "${project.buildDir.path}",
-                includes:"sorcer-${version}/**")
+    }
+    //compression = Compression.GZIP // for Tar type
+    baseName = "sorcer"
+    destinationDir = project.buildDir
+    from("${project.buildDir.path}/sorcer-${version}") {
+        exclude("**/bin/webster/bin/*")
+    }
+    from("${project.buildDir.path}/sorcer-${version}") {
+        include("**/bin/webster/bin/*")
+        fileMode = 0755
+    }
+    into "sorcer-${version}"
+    doLast {
         println "Complete"
     }
 }
