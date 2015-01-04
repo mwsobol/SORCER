@@ -1451,7 +1451,7 @@ public class ProviderDelegate implements SorcerConstants {
 	}
 
 	public Configuration getProviderConfiguration() {
-		return config.getProviderConfiguraion();
+		return config.getProviderConfiguration();
 	}
 
 	public String getDescription() throws RemoteException {
@@ -2029,7 +2029,7 @@ public class ProviderDelegate implements SorcerConstants {
 					+ GenericUtil.getPropertiesString(props));
 		}
 
-		public Configuration getProviderConfiguraion() {
+		public Configuration getProviderConfiguration() {
 			return jiniConfig;
 		}
 
@@ -2267,7 +2267,7 @@ public class ProviderDelegate implements SorcerConstants {
 		}
 
 		/**
-		 * Load the provider deployment configuration. The properties can be
+		 * Loads the provider deployment configuration. The properties can be
 		 * accessed calling getProperty() methods to obtain properties of this
 		 * service provider. Also, the SORCER environment properties are updated
 		 * by corresponding properties found in the provider's configuration and

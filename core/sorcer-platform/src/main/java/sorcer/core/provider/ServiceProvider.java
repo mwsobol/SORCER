@@ -142,7 +142,6 @@ import java.util.logging.Logger;
  * @see com.sun.jini.start.LifeCycle
  * @see Partner
  * @see sorcer.core.proxy.Partnership
- * @see sorcer.core.provider.RemoteContextManagement
  * @see sorcer.core.SorcerConstants
  * 
  * @author Mike Sobolewski
@@ -1472,10 +1471,6 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		return delegate.getProperties();
 	}
 
-	public Properties getProviderProperties() throws RemoteException {
-		return delegate.getProviderProperties();
-	}
-
 	public Configuration getProviderConfiguration() {
 		return delegate.getProviderConfiguration();
 	}
@@ -1581,6 +1576,17 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		return delegate.getProviderConfig().getProperty(key, defaultValue);
 	}
 
+	/**
+	 * @return Returns the provider Jini configuration instance.
+	 */
+	public Configuration getDeploymentConfig() {
+		return delegate.getDeploymentConfig();
+	}
+
+	public Properties getProviderProperties() {
+		return delegate.getProviderProperties();
+	}
+	
 	public void notifyInformation(Exertion task, String message)
 			throws RemoteException {
 		delegate.notifyInformation(task, message);

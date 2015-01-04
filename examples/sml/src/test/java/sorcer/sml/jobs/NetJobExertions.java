@@ -86,7 +86,7 @@ public class NetJobExertions implements SorcerConstants {
 	}
 	
 	@Test
-	public void arithmeticNetFiTaskT() throws Exception {
+	public void arithmeticNetFiTask() throws Exception {
 		Task task = task("add",
 				srvFi("net", sig("add", Adder.class)),
 				srvFi("object", sig("add", AdderImpl.class)),
