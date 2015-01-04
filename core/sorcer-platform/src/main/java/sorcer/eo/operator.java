@@ -1118,7 +1118,7 @@ public class operator {
 		if (cc != null) {
 			task.updateStrategy(cc);
 		}
-		if (((ServiceSignature)ss).isProvisionable()) {
+		if (ss != null && ((ServiceSignature)ss).isProvisionable()) {
 			task.setProvisionable(true);
 		}
 		return task;
