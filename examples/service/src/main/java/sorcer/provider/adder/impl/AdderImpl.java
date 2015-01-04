@@ -65,8 +65,11 @@ public class AdderImpl implements Adder {
 		if (provider != null) {
 			try {
 				int st = new Integer(provider.getProperty("provider.sleep.time"));
-				Thread.sleep(st);
-				logger.info("slept for: " + st);
+				if (st > 0) {
+					Thread.sleep(st);
+					logger.info("slept for: " + st);
+					cxt.putValue("provider/slept/ms", st);
+				}
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
