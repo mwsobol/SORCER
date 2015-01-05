@@ -248,6 +248,11 @@ public abstract class Block extends ServiceExertion implements CompoundExertion 
 		return null;
 	}
 
+	public Exertion getComponentExertion(String path) {
+		// TODO
+		return getChild(path);
+	}
+	
 	public Object putBlockValue(String path, Object value) throws ContextException {
 		String[] attributes = SorcerUtil.pathToArray(path);
 		// remove the leading attribute of the current exertion

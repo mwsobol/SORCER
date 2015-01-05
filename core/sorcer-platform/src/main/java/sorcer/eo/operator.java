@@ -246,7 +246,7 @@ public class operator {
 		if (entries[0] instanceof Exertion) {
 			Exertion xrt = (Exertion) entries[0];
 			if (entries.length >= 2 && entries[1] instanceof String)
-				xrt = ((Job) xrt).getComponentExertion((String) entries[1]);
+				xrt = ((CompoundExertion) xrt).getComponentExertion((String) entries[1]);
 			return xrt.getDataContext();
 		} else if (entries[0] instanceof Link) {
 			return ((Link)entries[0] ).getContext();
@@ -254,7 +254,7 @@ public class operator {
 			return new PositionalContext((String) entries[0]);
 		} else if (entries.length == 2 && entries[0] instanceof String
 				&& entries[1] instanceof Exertion) {
-			return ((Job) entries[1]).getComponentExertion(
+			return ((CompoundExertion) entries[1]).getComponentExertion(
 					(String) entries[0]).getContext();
 		} else if (entries[0] instanceof Context && entries[1] instanceof List) {
 			return ((ServiceContext)entries[0]).getSubcontext((List)entries[1]);
@@ -828,6 +828,11 @@ public class operator {
 				serviceType == ServiceConcatenator.class ||
 				serviceType == ServiceRendezvous.class) {
 			return sig("execute", serviceType);
+		} else if (serviceType == Jobber.class ||
+				serviceType == Spacer.class ||
+				serviceType == Concatenator.class ||
+				serviceType == Rendezvous.class) {
+			return sig("service", serviceType);
 		} else
 			return sig(serviceType, (ReturnPath) null);
 	}
@@ -1145,21 +1150,30 @@ public class operator {
 		return (E) exertion(name, elems);
 	}
 
-	public static <E extends Exertion> E exertion(
-			String name, Object... elems) throws ExertionException,
+	public static <E extends Exertion> E exertion(String name, Object... items) throws ExertionException,
 			ContextException, SignatureException {
 		List<Exertion> exertions = new ArrayList<Exertion>();
-		for (int i = 0; i < elems.length; i++) {
-			if (elems[i] instanceof Exertion) {
-				exertions.add((Exertion) elems[i]);
+		Signature sig = null;
+		Context cxt = null;
+		for (int i = 0; i < items.length; i++) {
+			if (items[i] instanceof Exertion) {
+				exertions.add((Exertion) items[i]);
+			} else if (items[i] instanceof Signature) {
+				sig = (Signature) items[i];
+			} else if (items[i] instanceof String) {
+				name = (String) items[i];
 			}
 		}
-		if (exertions.size() > 0) {
-			Job j = job(elems);
+		if (exertions.size() > 0 && sig != null
+				&& (sig.getServiceType() == Concatenator.class
+				|| sig.getServiceType() == ServiceConcatenator.class)) {
+			return (E) block(items);
+		} else if (exertions.size() > 0) {
+			Job j = job(items);
 			j.setName(name);
 			return (E) j;
 		} else {
-			return (E)task(name, elems);
+			return (E)task(name, items);
 		}
 	}
 
@@ -2313,46 +2327,27 @@ public class operator {
 		return signature;
 	}
 
-	public static Block block(Exertion... exertions) throws ExertionException {
-		return block(null, null, null, exertions);
-	}
-
-	public static Block block(Signature signature,
-							  Exertion... exertions) throws ExertionException {
-		return block(signature,  null, exertions);
-	}
-
-	public static Block block(String name,
-							  Exertion... exertions) throws ExertionException {
-		return block(name, null,  null, exertions);
-	}
-
-	public static Block block(String name, Signature signature,
-							  Exertion... exertions) throws ExertionException {
-		return block(name, signature,  null, exertions);
-	}
-
-	public static Block block(String name, Context context,
-							  Exertion... exertions) throws ExertionException {
-		return block(name, null, context, exertions);
-	}
-
-	public static Block block(Context context,
-							  Exertion... exertions) throws ExertionException {
-		return block(null, null, context, exertions);
-	}
-
-	public static Block block(Signature signature, Context context,
-							  Exertion... exertions) throws ExertionException {
-		return block(null, signature, context, exertions);
-	}
-
-	public static Block block(String name, Signature signature, Context context,
-							  Exertion... exertions) throws ExertionException {
+	public static Block block(Object...  items) throws ExertionException {
+		List<Exertion> exertions = new ArrayList<Exertion>();
+		String name = null;
+		Signature sig = null;
+		Context context = null;
+		for (int i = 0; i < items.length; i++) {
+			if (items[i] instanceof Exertion) {
+				exertions.add((Exertion) items[i]);
+			} else if (items[i] instanceof Context) {
+				context = (Context)items[i];
+			} else if (items[i] instanceof Signature) {
+				sig = (Signature)items[i];
+			} else if (items[i] instanceof String) {
+				name = (String)items[i];
+			}
+		}
+			
 		Block block;
 		try {
-			if (signature != null) {
-				if (signature instanceof ObjectSignature)
+			if (sig != null) {
+				if (sig instanceof ObjectSignature)
 					block = new ObjectBlock(name);
 				else
 					block = new NetBlock(name);
@@ -2363,13 +2358,14 @@ public class operator {
 
 			if (context != null)
 				block.setContext(context);
-			block.setExertions(exertions);
+			for (Exertion e :exertions)
+				block.addExertion(e);
 		} catch (Exception se) {
 			throw new ExertionException(se);
 		}
 		//make sure it has ParModel as the data context
 		ParModel pm = null;
-		Context cxt;
+		Context cxt = null;
 		try {
 			cxt = block.getDataContext();
 			if (cxt == null) {

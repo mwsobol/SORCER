@@ -44,7 +44,7 @@ public class ObjectSignature extends ServiceSignature {
 	private Class<?>[] argTypes;
 
 	public ObjectSignature() {
-		serviceType = Object.class;
+		this.providerType = Object.class;
 	}
 
 	public ObjectSignature(String selector, Object object, Class<?>[] argTypes,
@@ -64,6 +64,7 @@ public class ObjectSignature extends ServiceSignature {
 			IllegalAccessException {
 		this();
 		if (object instanceof Class) {
+			this.serviceType = (Class<?>)object;
 			this.providerType = (Class<?>)object;
 		} else {
 			target = object;
@@ -80,7 +81,7 @@ public class ObjectSignature extends ServiceSignature {
 
 	public ObjectSignature(String selector, Class<?> providerClass,
 			Class<?>... argClasses) {
-		this();
+		this.serviceType = providerClass;
 		this.providerType = providerClass;
 		if (argClasses != null && argClasses.length > 0)
 			this.argTypes = argClasses;
@@ -154,8 +155,8 @@ public class ObjectSignature extends ServiceSignature {
 
 	public MethodInvoker<?> createEvaluator() throws InstantiationException,
 	IllegalAccessException {
-		if (target == null && providerType != null) {
-			evaluator = new MethodInvoker(providerType.newInstance(),
+		if (target == null && serviceType != null) {
+			evaluator = new MethodInvoker(serviceType.newInstance(),
 					selector);
 		} else
 			evaluator = new MethodInvoker(target, selector);
@@ -191,16 +192,16 @@ public class ObjectSignature extends ServiceSignature {
 		Object obj = null;
 		try {
 			if (args == null) {
-				if (Modifier.isAbstract(providerType.getModifiers()) ||
-						providerType.getConstructors().length == 0) {
-					Method sm = providerType.getMethod(initSelector, (Class[])null);
-					obj = sm.invoke(providerType, (Object[])null);
+				if (Modifier.isAbstract(serviceType.getModifiers()) ||
+						serviceType.getConstructors().length == 0) {
+					Method sm = serviceType.getMethod(initSelector, (Class[])null);
+					obj = sm.invoke(serviceType, (Object[])null);
 				} else {
-					constructor = providerType.getConstructor();
+					constructor = serviceType.getConstructor();
 					obj = constructor.newInstance();
 				}
 			} else {
-				constructor = providerType.getConstructor(argTypes);
+				constructor = serviceType.getConstructor(argTypes);
 				obj = constructor.newInstance(args);
 			}
 		} catch (Exception e) {

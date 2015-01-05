@@ -20,13 +20,8 @@ import sorcer.core.provider.ServiceTasker;
 import sorcer.core.provider.Shell;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.service.*;
-import sorcer.service.Strategy.Access;
-import sorcer.service.Strategy.Flow;
-import sorcer.service.Strategy.Provision;
-import sorcer.service.Strategy.ServiceShell;
-import sorcer.service.Strategy.Wait;
+import sorcer.service.Strategy.*;
 
-import java.rmi.RemoteException;
 import java.util.logging.Logger;
 
 import static org.junit.Assert.assertEquals;
@@ -53,6 +48,7 @@ public class NetJobExertions implements SorcerConstants {
 	
 	@Test
 	public void exertAdderProviderTest() throws Exception {
+		
 		Task t5 = task("t5",
 				sig("add", Adder.class),
 				context("add", inEnt("arg, x1", 20.0),
@@ -61,20 +57,24 @@ public class NetJobExertions implements SorcerConstants {
 		t5 = exert(t5);
 		logger.info("t5 context: " + context(t5));
 		assertEquals(value(context(t5), "result/y"), 100.0);
+		
 	}
 	
 	@Test
 	public void evaluateAdder() throws Exception {
+		
 		Task t5 = task("t5",
 				sig("add", Adder.class),
 				context("add", inEnt("arg, x1", 20.0),
 						inEnt("arg, x2", 80.0), result("result/y")));
 		
 		assertEquals(value(t5), 100.0);
+		
 	}
 	
 	@Test
 	public void evaluateAverager() throws Exception {
+		
 		Task t5 = task(
 				"t5",
 				sig("average", Averager.class),
@@ -83,10 +83,12 @@ public class NetJobExertions implements SorcerConstants {
 		t5 = exert(t5);
 		logger.info("t5 context: " + context(t5));
 		assertEquals(value(context(t5), "result/y"), 50.0);
+		
 	}
 	
 	@Test
 	public void arithmeticNetFiTask() throws Exception {
+		
 		Task task = task("add",
 				srvFi("net", sig("add", Adder.class)),
 				srvFi("object", sig("add", AdderImpl.class)),
@@ -107,6 +109,7 @@ public class NetJobExertions implements SorcerConstants {
 	
 	@Test
 	public void arithmeticSpaceTaskTest() throws Exception {
+		
 		Task t5 = task(
 				"t5",
 				sig("add", Adder.class),
@@ -118,10 +121,12 @@ public class NetJobExertions implements SorcerConstants {
 		logger.info("t5 context: " + context(t5));
 		logger.info("t5 value: " + get(t5, "result/y"));
 		assertEquals("Wrong value for 100.0", get(t5, "result/y"), 100.0);
+		
 	}
 	
 	@Test
 	public void arithmeticFiBatchJob() throws Exception {
+		
 		Task t3 = task("t3", 
 				srvFi("object", sig("subtract", SubtractorImpl.class), sig("average", AveragerImpl.class)),
 				srvFi("net", sig("subtract", Subtractor.class), sig("average", Averager.class)),
@@ -160,7 +165,8 @@ public class NetJobExertions implements SorcerConstants {
 	
 	@Ignore
 	@Test
-	public void arithmeticFiJobTest() throws ExertionException, SignatureException, ContextException, RemoteException {
+	public void arithmeticFiJobTest() throws Exception {
+		
 		Task t3 = task("t3", srvFi("object", sig("subtract", SubtractorImpl.class)),
 				srvFi("net", sig("subtract", Subtractor.class)),
 				context("subtract", inEnt("arg/x1", null), inEnt("arg/x2", null),
@@ -227,6 +233,7 @@ public class NetJobExertions implements SorcerConstants {
 	
 	// two level job composition with PULL and PAR execution
 	private static Job createJob(Flow flow, Access access) throws Exception {
+		
 		Task t3 = task("t3", sig("subtract", Subtractor.class), 
 				context("subtract", inEnt("arg/x1"), inEnt("arg/x2"),
 						outEnt("result/y")));
@@ -255,6 +262,7 @@ public class NetJobExertions implements SorcerConstants {
 
 	@Test
 	public void exertJobPushParTest() throws Exception {
+		
 		Job job = createJob(Flow.PAR, Access.PUSH);
 		job = exert(job);
 		//logger.info("job j1: " + job);
@@ -262,10 +270,12 @@ public class NetJobExertions implements SorcerConstants {
 		logger.info("job j1 job context: " + serviceContext(job));
 		//logger.info("job j1 value @ j1/t3/result/y = " + get(job, "j1/t3/result/y"));
 		assertEquals(get(job, "j1/t3/result/y"), 400.00);
+		
 	}
 	
 	@Test
 	public void exertJobPushSeqTest() throws Exception {
+		
 		Job job = createJob(Flow.SEQ, Access.PUSH);
 		logger.info("job j1: " + job);
 		job = exert(job);
@@ -274,6 +284,7 @@ public class NetJobExertions implements SorcerConstants {
 		logger.info("job j1 job context: " + serviceContext(job));
 		//logger.info("job j1 value @ j1/t3/result/y = " + get(job, "j1/t3/result/y"));
 		assertEquals(get(job, "j1/t3/result/y"), 400.00);
+		
 	}
 	
 	@Test
@@ -289,6 +300,7 @@ public class NetJobExertions implements SorcerConstants {
 	
 	@Test
 	public void exertJobPullSeqTest() throws Exception {
+		
 		Job job = createJob(Flow.SEQ, Access.PULL);
 		job = exert(job);
 		//logger.info("job j1: " + job);
@@ -296,10 +308,12 @@ public class NetJobExertions implements SorcerConstants {
 		logger.info("job j1 job context: " + serviceContext(job));
 		//logger.info("job j1 value @ j1/t3/result/y = " + get(job, "j1/t3/result/y"));
 		assertEquals(get(job, "j1/t3/result/y"), 400.00);
+		
 	}
 	
 	@Test
 	public void testLocalNetJobComposition() throws Exception {
+		
 		Task t3 = task(
 				"t3",
 				sig("subtract", Subtractor.class),
@@ -332,6 +346,7 @@ public class NetJobExertions implements SorcerConstants {
 
 	@Test
 	public void shellRedirectTest() throws Exception {
+		
 		Task t3 = task(
 				"t3",
 				sig("subtract", Subtractor.class),
@@ -365,6 +380,7 @@ public class NetJobExertions implements SorcerConstants {
 
 	@Test
 	public void serviceRemoteShellTest() throws Exception {
+		
 		Task t3 = task(
 				"t3",
 				sig("subtract", Subtractor.class),
@@ -402,6 +418,7 @@ public class NetJobExertions implements SorcerConstants {
 	
 	@Test
 	public void contexterTest() throws Exception {
+		
 		Task cxtt = task("getAddContext", sig("getContext", Contexter.class, prvName("Add Contexter")),
 				context("add", input("arg/x1"), input("arg/x2")));
 		 
@@ -434,10 +451,12 @@ public class NetJobExertions implements SorcerConstants {
 //		logger.info("contexter context 4: " + result);
 		assertEquals(get(result, "arg/x1"), 20.0);
 		assertEquals(get(result, "arg/x2"), 80.0);
+		
 	}
 	
 	@Test
 	public void netContexterTaskTest() throws Exception {
+		
 		Task t5 = task("t5", sig("add", Adder.class), 
 					sig("getContext", Contexter.class, prvName("Add Contexter"), Signature.APD),
 					context("add", inEnt("arg/x1"), inEnt("arg/x2"),
@@ -448,9 +467,11 @@ public class NetJobExertions implements SorcerConstants {
 		assertEquals(get(result, "arg/x1"), 20.0);
 		assertEquals(get(result, "arg/x2"), 80.0);
 		assertEquals(get(result, "result/y"), 100.0);
+		
 	}
 	
 	public Job createProvisionedJob() throws Exception {
+		
 		Task f4 = task(
 				"f4",
 				sig("multiply", Multiplier.class,
@@ -493,10 +514,10 @@ public class NetJobExertions implements SorcerConstants {
 
 	@Test
 	public void arithmeticJobExertleter() throws Exception {
+		
 		// get the current value of the exertlet
 		Task task = task("eval", sig("getValue", Evaluation.class, prvName("Arithmetic Exertleter")));
 		logger.info("j1/t3/result/y: " + value(task, "j1/t3/result/y"));
-
 		assertEquals(value(task, "j1/t3/result/y"), 400.0);
 
 		// update inputs contexts
@@ -528,6 +549,7 @@ public class NetJobExertions implements SorcerConstants {
 		task = task("invoke", sig("invoke", Invocation.class, prvName("Arithmetic Exertleter")), invokeContext);
 //		logger.info("j1/t3/result/y: " + value(task, "j1/t3/result/y"));
 		assertEquals(value(task, "j1/t3/result/y"), 400.0);
+		
 	}
 
 	@Test

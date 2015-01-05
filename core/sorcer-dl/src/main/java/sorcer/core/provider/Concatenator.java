@@ -17,12 +17,12 @@
 
 package sorcer.core.provider;
 
-import java.rmi.Remote;
-
 import sorcer.service.Service;
 
+import java.rmi.Remote;
+
 /**
- * A service coordinating a {@link sorcer.service.Job} execution by creating a
+ * A service coordinating a {@link sorcer.service.Block} execution by creating a
  * runtime federation of all needed service providers to execute all component
  * exertions of the received job.
  * 

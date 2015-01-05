@@ -98,7 +98,7 @@ task allTests(type: TestReport, dependsOn: "bootSorcerRio") {
     project.subprojects { project ->
         /* Disable the test report for the individual test task */
         /* test {
-             reports.html.enabled = false
+             reports.html.enabled = true
          }*/
         tasks.withType(Test) {
             reports.html.enabled = false

@@ -89,7 +89,7 @@ public class Services {
 					t3,
 					pipe(output(t4, "result/y"), input(t3, "arg/x1")),
 					pipe(output(t5, "result/y"), input(t3, "arg/x2")));
-
+		
 		logger.info("srv job context: " + serviceContext(job));
 		logger.info("srv j1/t3 context: " + context(job, "j1/t3"));
 		logger.info("srv j1/j2/t4 context: " + context(job, "j1/j2/t4"));
