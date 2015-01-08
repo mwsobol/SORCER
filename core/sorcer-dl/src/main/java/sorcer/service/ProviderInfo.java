@@ -2,6 +2,8 @@ package sorcer.service;
 
 import sorcer.jini.lookup.entry.SorcerServiceInfo;
 
+import java.io.Serializable;
+
 /**
  * The ProviderInfo class defines human-oriented information about a SORCER provider.
  * This is not related to its data or class types, and is more oriented towards allowing
@@ -9,23 +11,21 @@ import sorcer.jini.lookup.entry.SorcerServiceInfo;
  *
  * @author Mike Sobolewski
  */
-public class ProviderInfo  {
-
-    private static final long serialVersionUID = 1L;
+public class ProviderInfo implements Serializable {
+    static final long serialVersionUID = 1L;
 
     public ProviderInfo() {
-
     }
 
     /**
      * Instantiate this class with the provider name, address, and its exectuting operation.
      */
-    public ProviderInfo(String providerName, String hostAddress,
-                             String operation) {
+    public ProviderInfo(final String providerName,
+                        final String hostAddress,
+                        final String operation) {
         this.providerName = providerName;
         this.hostAddress = hostAddress;
         this.operation = operation;
-        userName = userName;
     }
 
     public ProviderInfo(SorcerServiceInfo info) {
@@ -37,7 +37,7 @@ public class ProviderInfo  {
         serviceHome = info. serviceHome;
     }
 
-    public ProviderInfo  append(ProviderInfo info) {
+    public ProviderInfo append(final ProviderInfo info) {
         if (info.providerName != null)
             providerName = info.providerName;
         if (info.operation != null)
