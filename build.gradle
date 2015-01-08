@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-project.version = '5.0'
+project.version = '5.1-SNAPSHOT'
 
 task printVersion {
     description = 'Prints the current SORCER version.'
