@@ -598,9 +598,11 @@ public class operator {
 		return map;
 	}
 
-	public static Evaluation  dependsOn(Evaluation dependee,  Evaluation depender) {
-		if (dependee instanceof Dependency)
-			((Dependency)dependee).getDependers().add(depender);
+	public static Evaluation  dependsOn(Evaluation dependee,  Evaluation... dependers) {
+		if (dependee instanceof Dependency) {
+			for (Evaluation depender : dependers)
+				((Dependency) dependee).getDependers().add(depender);
+		}
 
 		return dependee;
 	}
