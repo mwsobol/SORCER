@@ -1,18 +1,14 @@
 package sorcer.core.context;
  
 
-import static org.junit.Assert.assertEquals;
-import static sorcer.co.operator.inEnt;
-import static sorcer.eo.operator.context;
+import org.junit.Test;
+import sorcer.service.Context;
 
 import java.util.logging.Logger;
 
-import org.junit.Test;
-
-import sorcer.core.context.ContextLink;
-import sorcer.core.context.PositionalContext;
-import sorcer.core.context.ServiceContext;
-import sorcer.service.Context;
+import static org.junit.Assert.assertEquals;
+import static sorcer.co.operator.inEnt;
+import static sorcer.eo.operator.context;
 
 /**
  * @author Mike Sobolewski
@@ -57,7 +53,7 @@ public class ContextTest {
 	}
 	
 	@Test
-	public void weakValueTest() throws Exception {
+	public void softValueTest() throws Exception {
 		Context cxt = context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0));
 		
 //		logger.info("arg/x1 = " + cxt.getValue("arg/x1"));
