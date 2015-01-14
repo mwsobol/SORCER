@@ -78,10 +78,6 @@ import java.util.logging.Logger;
  * @author Dennis Reedy, updated for SORCER by M. Sobolewski
  */
 public class SorcerServiceDescriptor implements ServiceDescriptor {
-    static {
-        System.setProperty("sorcer.home", System.getenv("SORCER_HOME"));
-    }
-
     static String COMPONENT = "sorcer.provider.boot";
     static Logger logger = Logger.getLogger(COMPONENT);
 
@@ -280,11 +276,11 @@ public class SorcerServiceDescriptor implements ServiceDescriptor {
 		/* Set common JARs to the CommonClassLoader */
         String defaultDir = null;
         String fs = File.separator;
-        String iGridHome = System.getProperty("sorcer.home");
-        if (iGridHome == null) {
+        String sorcerHome = System.getProperty("sorcer.home");
+        if (sorcerHome == null) {
             logger.info("'sorcer.home' not defined, no default platformDir");
         } else {
-            defaultDir = iGridHome + fs + "configs" + fs + "platform" + fs + "sorcer";
+            defaultDir = sorcerHome + fs + "configs" + fs + "platform" + fs + "sorcer";
         }
 
         PlatformLoader platformLoader = new PlatformLoader();
