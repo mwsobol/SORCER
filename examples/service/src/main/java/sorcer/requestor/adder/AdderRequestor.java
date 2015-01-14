@@ -25,10 +25,10 @@ public class AdderRequestor extends ServiceRequestor {
 
         Double v1 = new Double(getProperty("arg/x1"));
         Double v2 = new Double(getProperty("arg/x2"));
-        
+
         return task("hello adder", sig("add", serviceType),
-                    context("adder", inEnt("arg/x1", v1), inEnt("arg/x2", v2),
-                            result("out/y")));
+                context("adder", inEnt("arg/x1", v1), inEnt("arg/x2", v2),
+                        result("out/y")));
     }
 
     @Override
