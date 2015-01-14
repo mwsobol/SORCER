@@ -112,5 +112,5 @@ test {
 		events "passed", "skipped", "failed"/*, "standardOut", "standardError"*/
 	}
 	dependsOn([install, bootme])
-	finalizedBy(stopme)
+//	finalizedBy(stopme)
 }
