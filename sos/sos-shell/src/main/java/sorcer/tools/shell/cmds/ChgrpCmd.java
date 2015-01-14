@@ -19,7 +19,6 @@ package sorcer.tools.shell.cmds;
 
 import java.io.PrintStream;
 import java.util.ArrayList;
-import java.util.StringTokenizer;
 
 import net.jini.admin.Administrable;
 import net.jini.admin.JoinAdmin;
@@ -99,7 +98,7 @@ public class ChgrpCmd extends ShellCmd {
 		}
 	}
 
-	private String[] getGroupArray(StringTokenizer tokenizer, int size) {
+	private String[] getGroupArray(WhitespaceTokenizer tokenizer, int size) {
 		String[] groups = new String[size];
 		String group;
 		for (int i = 0; i < size; i++) {

@@ -1,6 +1,7 @@
 /*
  * Copyright 2011 the original author or authors.
  * Copyright 2011 SorcerSoft.org.
+ * Copyright 2015 SorcerSoft.con.
  *  
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,17 +27,7 @@ import java.net.URL;
 import java.rmi.RMISecurityManager;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.StringTokenizer;
-import java.util.TreeMap;
+import java.util.*;
 
 import org.rioproject.impl.config.DynamicConfiguration;
 import org.slf4j.Logger;
@@ -228,6 +219,8 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 			if ((argv.length == 1 && argv[0].startsWith("--"))
 					|| (argv.length == 2 && (argv[0].equals("-e"))
 							|| argv[0].equals("-f")
+                            || argv[0].equals("-c")
+                            || argv[0].equals("-b")
 							|| argv[0].equals("-n")
 							|| argv[0].equals("-version") || argv[0]
 							.equals("-help"))) {
@@ -248,6 +241,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 			}
 			
 			argv = buildInstance(true, argv);
+			instance.loadExternalCommands();
 			if (!instance.interactive) {
 				// System.out.println("main appMap: " + appMap);
 				execNoninteractiveCommand(argv);
@@ -285,7 +279,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 			}
 			try {
 				if (commandTable.containsKey(curToken)) {
-					cmd = (ShellCmd) commandTable.get(curToken);
+					cmd = commandTable.get(curToken);
 					cmd.execute();
 				}
 				// admissible shortcuts in the 'synonyms' map
@@ -301,7 +295,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 						cmdName = new StringTokenizer(cmdName).nextToken();
 						shellTokenizer = new WhitespaceTokenizer(request);
 					}
-					cmd = (ShellCmd) commandTable.get(cmdName);
+					cmd = commandTable.get(cmdName);
 					cmd.execute();
 				} else if (request.length() > 0) {
 					if (request.equals("?")) {
@@ -397,13 +391,13 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 			if (args[0].equals("-f") || args[0].equals("-n")) {
 				// evaluate file
                     ShellCmd cmd = commandTable.get("exert");
-                    cmd.execute(NetworkShell.getInstance());
+                    cmd.execute();
 			} else if (args[0].equals("-e")) {
 				// evaluate command line expression
 				ExertCmd cmd = (ExertCmd) commandTable.get("exert");
 				// cmd.setScript(instance.getText(args[1]));
 				cmd.setScript(ExertCmd.readFile(huntForTheScriptFile(args[1])));
-                    cmd.execute(NetworkShell.getInstance());
+                    cmd.execute();
                 } else if (args[0].equals("-c")) {
                     ShellCmd cmd = commandTable.get(args[1]);
                     if (args.length > 2)
@@ -411,7 +405,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
                     else
                         shellTokenizer = new WhitespaceTokenizer(request.substring(3 + args[1].length()));
                     if (cmd!=null)
-                        cmd.execute(NetworkShell.getInstance());
+                        cmd.execute();
                     else
                         shellOutput.println("Command: " + args[1] + " not found. " +
                                 "Please run 'nsh -help' to see the list of available commands");
@@ -435,7 +429,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
                         request = batchCmd;
                         System.err.println("Starting command: '" + batchCmd + "'");
                         if (cmd!=null)
-                            cmd.execute(NetworkShell.getInstance());
+                            cmd.execute();
                         else
                             shellOutput.println("Command: " + args[1] + " not found. " +
                                     "Please run 'nsh -help' to see the list of available commands");
@@ -451,6 +445,27 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
         }
         System.err.println("----------------------------------------------------");
     }
+
+	protected void loadExternalCommands(){
+		            // Process config files to load extensions - i.e. external commands and activate them
+/*
+            try {
+
+
+
+				LoaderConfiguration lc = new LoaderConfiguration();
+                final ClassLoader cl = new URLClassLoader(lc.getClassPathUrls(), NetworkShell.class.getClassLoader());
+                Thread.currentThread().setContextClassLoader(cl);
+				ServiceLoader<IShellCmdFactory> loader = ServiceLoader.load(IShellCmdFactory.class, cl);
+				for (IShellCmdFactory factory: loader) {
+					factory.instantiateCommands(this);
+				}
+            } catch (Exception e) {
+                e.printStackTrace(shellOutput);
+                System.exit(-1);
+            }
+*/
+	}
 
 	static public void setLookupDiscovery(String... ingroups) {
 		disco = null;
@@ -518,7 +533,6 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 		for (int i = 0; i < shellCommands.length; i++) {
 			addToCommandTable(shellCommands[i], shellCmdClasses[i]);
 			ShellCmd cmdInstance = commandTable.get(shellCommands[i]);
-            cmdInstance.setConfig(getConfiguration());
 			String[] subCmds = toArray(cmdInstance.getCommandWord(), ", ");
 			if (subCmds.length > 1) {
 				for (String subCmd : subCmds) {
@@ -539,14 +553,20 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 	}
 
 	@Override
+	public void addToCommandTable(String cmd, ShellCmd cmdInstance) {
+		cmdInstance.setNetworkShell(this);
+		cmdInstance.setConfiguration(getConfiguration());
+		commandTable.put(cmd, cmdInstance);
+	}
+
 	public void addToCommandTable(String cmd, Class<? extends ShellCmd> inCls) {
 		try {
 			// System.out.println("creating command's instance - "
 			// + inCls.getName() + " for " + cmd);
-			ShellCmd cmdInstance = (ShellCmd) inCls.newInstance();
-			commandTable.put(cmd, cmdInstance);
+			ShellCmd cmdInstance = inCls.newInstance();
+			addToCommandTable(cmd, cmdInstance);
 		} catch (Exception e) {
-			System.out.println(e);
+			e.printStackTrace();
 		}
 	}
 
