@@ -18,6 +18,10 @@
 
 package sorcer.service;
 
+import net.jini.id.Uuid;
+import sorcer.core.SorcerConstants;
+import sorcer.core.provider.Provider;
+
 import java.io.Serializable;
 import java.net.URL;
 import java.rmi.RemoteException;
@@ -27,11 +31,8 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
-import net.jini.id.Uuid;
 //import sorcer.co.tuple.ExecPath;
-import sorcer.core.SorcerConstants;
 //import sorcer.core.context.model.par.Par;
-import sorcer.core.provider.Provider;
 //import sorcer.service.Signature.ReturnPath;
 
 /**
@@ -1138,7 +1139,11 @@ public interface Context<T> extends Mappable<T>, Serializable, Evaluation<T>,
 	public int size();
 
 	String getUserName();
-	 
+
+	Signature.ReturnPath getReturnPath();
+
+	Context setReturnPath(Signature.ReturnPath returnPath);
+
 	public enum Type {
 		ASSOCIATIVE, SHARED, POSITIONAL, LIST, SCOPE, INDEXED, ARRAY
 	}
