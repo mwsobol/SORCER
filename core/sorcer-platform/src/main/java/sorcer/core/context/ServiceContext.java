@@ -35,6 +35,7 @@ import sorcer.core.invoker.ServiceInvoker;
 import sorcer.core.provider.Provider;
 import sorcer.core.provider.ServiceProvider;
 import sorcer.core.signature.NetSignature;
+import sorcer.eo.operator;
 import sorcer.security.util.SorcerPrincipal;
 import sorcer.service.*;
 import sorcer.service.Exec.State;
@@ -50,6 +51,8 @@ import java.security.Principal;
 import java.util.*;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
+
+import static sorcer.eo.operator.sig;
 
 /**
  * Implements the base-level service context interface {@link Context}.
@@ -3189,6 +3192,31 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 		this.blockScope = blockScope;
 	}
 
+
+	@Override
+	public <T extends Mogram> T exert(Transaction txn, Arg... entries) throws TransactionException,
+			ExertionException, RemoteException {
+		Signature signature = null;
+		try {
+			if (subjectValue instanceof Class) {
+				signature = sig(subjectPath, subjectValue);
+				return operator.exertion(name, signature, this).exert(txn, entries);
+			} else {
+				// evaluates model targets - responses
+				getValue(entries);
+				return (T) this;
+			}
+		} catch (Exception e) {
+			throw new ExertionException(e);
+		}
+	}
+
+	@Override
+	public <T1 extends Mogram> T1 exert(Arg... entries) throws TransactionException, 
+			ExertionException, RemoteException {
+		return exert(null, entries);
+	}
+	
 	/* (non-Javadoc)
 	 * @see sorcer.service.Service#service(sorcer.service.Exertion, net.jini.core.transaction.Transaction)
 	 */
@@ -3265,4 +3293,5 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 		}
 		return true;
 	}
+	
 }

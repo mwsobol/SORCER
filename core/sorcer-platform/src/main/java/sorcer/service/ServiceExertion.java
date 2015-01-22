@@ -297,7 +297,7 @@ public abstract class ServiceExertion implements Exertion, Scopable, SorcerConst
 	 * @see sorcer.service.Exertion#exert(net.jini.core.transaction.Transaction,
 	 * sorcer.servie.Arg[])
 	 */
-	public <T extends Exertion> T exert(Transaction txn, Arg... entries)
+	public <T extends Mogram> T exert(Transaction txn, Arg... entries)
 			throws TransactionException, ExertionException, RemoteException {
 		ServiceShell se = new ServiceShell(this);
 		Exertion result = null;
@@ -316,7 +316,7 @@ public abstract class ServiceExertion implements Exertion, Scopable, SorcerConst
 	 * 
 	 * @see sorcer.service.Exertion#exert(sorcer.core.context.Path.Entry[])
 	 */
-	public Exertion exert(Arg... entries) throws TransactionException,
+	public <T extends Mogram> T  exert(Arg... entries) throws TransactionException,
 			ExertionException, RemoteException {
 		try {
 			substitute(entries);

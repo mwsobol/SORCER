@@ -80,7 +80,7 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 		this.provider = provider;
 	}
 	
-	public Exertion exert(Arg... entries) throws TransactionException,
+	public <T extends Mogram> T  exert(Arg... entries) throws TransactionException,
 			ExertionException, RemoteException {
 		return exert((Transaction) null, (String) null, entries);
 	}
@@ -152,7 +152,7 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 	}
 	
 	
-	public Exertion exert(Transaction txn, String providerName, Arg... entries)
+	public <T extends Mogram> T  exert(Transaction txn, String providerName, Arg... entries)
 			throws TransactionException, ExertionException, RemoteException {
 		try {
 			exertion.selectFidelity(entries); 
@@ -167,9 +167,9 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 									.getExertions());
 				}
 
-				return exertion;
+				return (T) exertion;
 			} else {
-				return xrt;
+				return (T) xrt;
 			}
 		} catch (ContextException e) {
 			throw new ExertionException(e);
