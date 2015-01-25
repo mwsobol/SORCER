@@ -157,15 +157,18 @@ public class AdderUI extends JPanel implements SorcerConstants {
 				context = createServiceContext(inField.getText());
 				outText.append(context.toString());
 				return;
-			}
-			try {
-				outText.setText("Input Data Context\n");
-				outText.append(context.toString());
-				outText.append("\n\nOutput Data Context\n");
-				outText.append(((Adder)provider).add(context).toString());
-			} catch (Exception ex) {
-				logger.throwing(AdderUI.class.getName(),
-						"actionPerformed", ex);
+			} else if (selector.equals("add")) {
+				try {
+					context = createServiceContext(inField.getText());
+					outText.append(context.toString());
+					outText.setText("Input Data Context\n");
+					outText.append(context.toString());
+					outText.append("\n\nOutput Data Context\n");
+					outText.append(((Adder) provider).add(context).toString());
+				} catch (Exception ex) {
+					logger.throwing(AdderUI.class.getName(),
+							"actionPerformed", ex);
+				}
 			}
 		}
 	}
