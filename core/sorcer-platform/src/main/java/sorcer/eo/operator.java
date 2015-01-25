@@ -1373,6 +1373,11 @@ public class operator {
 		}
 	}
 
+	public static <T extends Service> Object exec(T service, Arg... entries)
+			throws EvaluationException {
+		return value((Evaluation)service, entries);
+	}
+
 	public static <T> T value(Evaluation<T> evaluation, Arg... entries)
 			throws EvaluationException {
 		try {
@@ -1380,13 +1385,13 @@ public class operator {
 				if (evaluation instanceof ParModel) {
 					return ((ParModel<T>) evaluation).getValue(entries);
 				} else if (evaluation instanceof Exertion) {
-					return (T) execExertion((Exertion) evaluation, entries);
+					return (T) getValue((Exertion) evaluation, entries);
 				} else if (evaluation instanceof Par){
 					return ((Par<T>)evaluation).getValue(entries);
 				} else if (evaluation instanceof Entry){
 					return ((Entry<T>)evaluation).getValue(entries);
 				} else {
-					return evaluation.getValue(entries);
+					return (T) ((Evaluation)evaluation).getValue(entries);
 				}
 			}
 		} catch (Exception e) {
@@ -1407,7 +1412,7 @@ public class operator {
 			try {
 				((ServiceContext)((Exertion) evaluation).getContext())
 						.setReturnPath(new ReturnPath(evalSelector));
-				return (T) execExertion((Exertion) evaluation, entries);
+				return (T) getValue((Exertion) evaluation, entries);
 			} catch (Exception e) {
 				e.printStackTrace();
 				throw new EvaluationException(e);
@@ -1502,10 +1507,10 @@ public class operator {
 		return  mappable.asis(path);
 	}
 
-	public static <T> T get(Service<T> service, String path)
+	public static Object get(Service service, String path)
 			throws ContextException, ExertionException {
 		if (service instanceof Exertion)
-			return (T) get((Exertion) service, path);
+			return get((Exertion) service, path);
 		Object obj = ((ServiceContext) service).asis(path);
 		if (obj != null) {
 			while (obj instanceof Mappable ||
@@ -1519,7 +1524,7 @@ public class operator {
 		} else {
 			obj = ((ServiceContext) service).getValue(path);
 		}
-		return (T)obj;
+		return obj;
 	}
 
 	public static List<Exertion> exertions(Exertion xrt) {
@@ -1566,7 +1571,7 @@ public class operator {
 		return xrt;
 	}
 
-	public static Object execExertion(Exertion exertion, Arg... args)
+	public static Object getValue(Exertion exertion, Arg... args)
 			throws ExertionException, ContextException, RemoteException {
 		Exertion out;
 		initialize(exertion, args);

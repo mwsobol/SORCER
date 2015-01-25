@@ -1022,7 +1022,7 @@ public class ProviderDelegate implements SorcerConstants {
 					isContextual = true;
 				} else if (selector.equals("exert") && impl instanceof ServiceShell) {
 					m = impl.getClass().getMethod(selector,
-							new Class[] { Exertion.class, Arg[].class });
+							new Class[] { Mogram.class, Arg[].class });
 					isContextual = false;
 				} else if (selector.equals("getValue") && impl instanceof Evaluation) {
 					m = impl.getClass().getMethod(selector,
@@ -1300,7 +1300,7 @@ public class ProviderDelegate implements SorcerConstants {
 
 	public Exertion invokeMethod(String selector, Exertion ex)
 			throws ExertionException {
-		Class[] argTypes = new Class[] { Exertion.class };
+		Class[] argTypes = new Class[] { Mogram.class };
 		try {
 			Method m = provider.getClass().getMethod(selector, argTypes);
 			logger.info("Executing method: " + m + " by: "

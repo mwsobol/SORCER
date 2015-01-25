@@ -190,12 +190,12 @@ public abstract class ServiceExertion implements Exertion, Scopable, SorcerConst
 	 * 
 	 * @see sorcer.service.Service#service(sorcer.service.Exertion)
 	 */
-	public Exertion service(Exertion exertion) throws TransactionException,
+	public <T extends Mogram> T  service(T exertion) throws TransactionException,
 			ExertionException, RemoteException {
 		if (exertion == null)
 			return exert();
 		else
-			return exertion.exert();
+			return (T) exertion.exert();
 	}
 
 	/*
@@ -204,12 +204,12 @@ public abstract class ServiceExertion implements Exertion, Scopable, SorcerConst
 	 * @see sorcer.service.Service#service(sorcer.service.Exertion,
 	 * net.jini.core.transaction.Transaction)
 	 */
-	public Exertion service(Exertion exertion, Transaction txn)
+	public <T extends Mogram> T service(T exertion, Transaction txn)
 			throws TransactionException, ExertionException, RemoteException {
 		if (exertion == null)
 			return exert();
 		else
-			return exertion.exert(txn);
+			return (T) exertion.exert(txn);
 	}
 
 	/*

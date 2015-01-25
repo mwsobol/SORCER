@@ -59,7 +59,7 @@ import static sorcer.eo.operator.sig;
  */
 @SuppressWarnings({ "unchecked", "rawtypes"})
 public class ServiceContext<T> extends Hashtable<String, T> implements
-		Context<T>, AssociativeContext<T>, Evaluation<T>, Invocation<T>,
+		Context<T>, AssociativeContext<T>, Invocation<T>,
 		Contexter<T>, SorcerConstants {
 
 	private static final long serialVersionUID = 3311956866023311727L;
@@ -3212,7 +3212,7 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 	}
 
 	@Override
-	public <T1 extends Mogram> T1 exert(Arg... entries) throws TransactionException, 
+	public <T extends Mogram> T exert(Arg... entries) throws TransactionException,
 			ExertionException, RemoteException {
 		return exert(null, entries);
 	}
@@ -3221,23 +3221,23 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 	 * @see sorcer.service.Service#service(sorcer.service.Exertion, net.jini.core.transaction.Transaction)
 	 */
 	@Override
-	public Exertion service(Exertion exertion, Transaction txn)
-			throws TransactionException, ExertionException, RemoteException {
+	public <T extends Mogram> T service(T mogram, Transaction txn) throws TransactionException, 
+			ExertionException, RemoteException {
 		try {
 			((ServiceExertion)exertion).getContext().appendContext(this);
 		} catch (Exception e) {
 			throw new ExertionException(e);
 		}
-		return exertion.exert(txn);
+		return (T) exertion.exert(txn);
 	}
 
 	/* (non-Javadoc)
 	 * @see sorcer.service.Service#service(sorcer.service.Exertion)
 	 */
 	@Override
-	public Exertion service(Exertion exertion) throws TransactionException,
+	public <T extends Mogram> T service(T mogram) throws TransactionException, 
 			ExertionException, RemoteException {
-		return service(exertion, null);
+		return (T) service(exertion, null);
 	}
 
 	@Override
@@ -3293,5 +3293,6 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 		}
 		return true;
 	}
-	
+
+
 }

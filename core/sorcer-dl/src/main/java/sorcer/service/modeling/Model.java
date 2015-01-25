@@ -21,9 +21,9 @@ import sorcer.service.Mogram;
 
 /**
  * An top-level common interface for all service Models in SORCER.
- * 
+ *
  * @author Mike Sobolewski
  */
-public interface Model<T> extends Mogram<T> {
+public interface Model extends Mogram {
 
 }

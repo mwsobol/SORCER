@@ -16,16 +16,7 @@
  */
 package sorcer.core.provider.rendezvous;
 
-import java.io.IOException;
-import java.rmi.RemoteException;
-import java.util.Vector;
-import java.util.logging.FileHandler;
-import java.util.logging.Handler;
-import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
-
-import javax.security.auth.Subject;
-
+import com.sun.jini.thread.TaskManager;
 import net.jini.core.lookup.ServiceID;
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
@@ -40,23 +31,18 @@ import sorcer.core.provider.ControlFlowManager;
 import sorcer.core.provider.Provider;
 import sorcer.core.provider.ProviderDelegate;
 import sorcer.core.provider.ServiceProvider;
-import sorcer.service.Arg;
-import sorcer.service.Context;
-import sorcer.service.ContextException;
-import sorcer.service.Evaluation;
-import sorcer.service.EvaluationException;
-import sorcer.service.Executor;
-import sorcer.service.Exertion;
-import sorcer.service.ExertionException;
-import sorcer.service.Job;
-import sorcer.service.Service;
-import sorcer.service.ServiceExertion;
-import sorcer.service.SetterException;
-import sorcer.service.Signature;
+import sorcer.service.*;
 import sorcer.util.Sorcer;
 import sorcer.util.SorcerUtil;
 
-import com.sun.jini.thread.TaskManager;
+import javax.security.auth.Subject;
+import java.io.IOException;
+import java.rmi.RemoteException;
+import java.util.Vector;
+import java.util.logging.FileHandler;
+import java.util.logging.Handler;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 /**
  * ServiceBean - The SORCER superclass of service components of ServiceProvider.
@@ -216,13 +202,14 @@ abstract public class RendezvousBean implements Service, Executor {
 	 * @see sorcer.core.provider.ServiceBean#service(sorcer.service.Exertion, net.jini.core.transaction.Transaction)
 	 */
 	@Override
-	public Exertion service(Exertion exertion, Transaction transaction) throws RemoteException, ExertionException {
+	public Mogram service(Mogram mogram, Transaction transaction) throws RemoteException, ExertionException {
 		try {
-			setServiceID(exertion);
+			Exertion exertion = (Exertion) mogram;
+			setServiceID((Exertion)exertion);
 			if (exertion instanceof ObjectJob || exertion instanceof ObjectBlock)
-                return execute(exertion, transaction);
+                return execute((Exertion)exertion, transaction);
             else {
-            	ControlFlowManager cm = new ControlFlowManager(exertion, delegate);
+            	ControlFlowManager cm = new ControlFlowManager((Exertion)exertion, delegate);
             	return cm.process(threadManager); 
             }
 		} 
@@ -232,42 +219,16 @@ abstract public class RendezvousBean implements Service, Executor {
 		}
 	}
 
-	public Exertion service(Exertion exertion) throws RemoteException, ExertionException, TransactionException {
-		return service(exertion, null);
+	public Mogram service(Mogram mogram) throws RemoteException, ExertionException, TransactionException {
+		return service(mogram, null);
 	}
 		
-	abstract public Exertion execute(Exertion exertion, Transaction txn)
+	abstract public Mogram execute(Mogram mogram, Transaction txn)
 			throws TransactionException, ExertionException, RemoteException;
 	
-	public Exertion execute(Exertion exertion)
+	public Mogram execute(Mogram mogram)
 			throws TransactionException, ExertionException, RemoteException {
-		return execute(exertion, null);
+		return execute(mogram, null);
 	}
 
-	/* (non-Javadoc)
-	 * @see sorcer.service.Evaluation#asis()
-	 */
-	@Override
-	public Object asis() throws EvaluationException, RemoteException {
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see sorcer.service.Evaluation#getValue(sorcer.service.Arg[])
-	 */
-	@Override
-	public Object getValue(Arg... entries) throws EvaluationException,
-			RemoteException {
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see sorcer.service.Evaluation#substitute(sorcer.service.Arg[])
-	 */
-	@Override
-	public Evaluation substitute(Arg... entries) throws SetterException,
-			RemoteException {
-		return null;
-	}
-	
 }

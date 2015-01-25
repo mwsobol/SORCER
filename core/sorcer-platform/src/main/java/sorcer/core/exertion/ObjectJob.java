@@ -17,20 +17,14 @@
 
 package sorcer.core.exertion;
 
-import java.rmi.RemoteException;
-
 import net.jini.core.transaction.Transaction;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.invoker.MethodInvoker;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.core.signature.ObjectSignature;
-import sorcer.service.Context;
-import sorcer.service.Evaluator;
-import sorcer.service.Exertion;
-import sorcer.service.ExertionException;
-import sorcer.service.Job;
-import sorcer.service.Signature;
-import sorcer.service.SignatureException;
+import sorcer.service.*;
+
+import java.rmi.RemoteException;
 
 /**
  * The SORCER object job extending the basic job implementation {@link Job}.
@@ -76,7 +70,7 @@ public class ObjectJob extends Job {
 				evaluator = new MethodInvoker(os.newInstance(),
 						os.getSelector());
 			}
-			evaluator.setParameterTypes(new Class[] { Exertion.class });
+			evaluator.setParameterTypes(new Class[] { Mogram.class });
 			evaluator.setParameters(new Object[] { this });
 			result = (Job)evaluator.evaluate();
 			getControlContext().appendTrace("" + evaluator);

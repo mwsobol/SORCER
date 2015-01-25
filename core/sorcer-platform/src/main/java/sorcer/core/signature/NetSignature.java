@@ -17,22 +17,16 @@
 
 package sorcer.core.signature;
 
-import java.lang.reflect.Method;
-import java.rmi.RemoteException;
-import java.util.Arrays;
-import java.util.List;
-
 import net.jini.core.entry.Entry;
 import net.jini.lookup.entry.Name;
 import sorcer.core.provider.Provider;
 import sorcer.core.provider.ServiceProvider;
-import sorcer.service.Accessor;
-import sorcer.service.Context;
-import sorcer.service.Exertion;
-import sorcer.service.ExertionException;
-import sorcer.service.Service;
-import sorcer.service.ServiceExertion;
-import sorcer.service.SignatureException;
+import sorcer.service.*;
+
+import java.lang.reflect.Method;
+import java.rmi.RemoteException;
+import java.util.Arrays;
+import java.util.List;
 
 public class NetSignature extends ObjectSignature {
 
@@ -294,7 +288,7 @@ public class NetSignature extends ObjectSignature {
 	public Exertion invokeMethod(Exertion ex) throws RemoteException,
 			ExertionException {
 		// If customized method provided by Mobile Agent
-		Method m = getSubstituteMethod(new Class[] { Exertion.class });
+		Method m = getSubstituteMethod(new Class[] { Mogram.class });
 		try {
 			if (m != null)
 				return (Exertion) m.invoke(this, new Object[] { ex });

@@ -139,7 +139,7 @@ public class SignatureTest {
 						inEnt("arg/x2", 80.0),
 						result("result/y")));
 
-		assertEquals(100.0, value(as));
+		assertEquals(100.0, exec(as));
 
 	}
 
@@ -160,7 +160,7 @@ public class SignatureTest {
 						inEnt("arg/x2", 80.0),
 						result("result/y")));
 
-		assertEquals(100.0, value(as));
+		assertEquals(100.0, exec(as));
 
 	}
 
@@ -181,7 +181,7 @@ public class SignatureTest {
 						inEnt("arg/x2", 80.0),
 						result("result/y")));
 
-		assertEquals(100.0, value(as));
+		assertEquals(100.0, exec(as));
 	}
 
 }

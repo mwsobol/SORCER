@@ -46,8 +46,6 @@ import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.logging.Logger;
 
-import static sorcer.eo.operator.value;
-
 /**
  * @author Mike Sobolewski
  */
@@ -114,37 +112,22 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 		return exert(xrt, txn, (String) null);
 	}
 
-	public Exertion exert(String providerName) throws TransactionException,
+	public  <T extends Mogram> T exert(String providerName) throws TransactionException,
 			ExertionException, RemoteException {
 		return exert(null, providerName);
 	}
 
 	@Override
-	public Exertion service(Exertion exertion, Transaction txn) throws TransactionException, ExertionException, RemoteException {
-		return exert(exertion, txn);
+	public Exertion service(Mogram exertion, Transaction txn) throws TransactionException, ExertionException, RemoteException {
+		return exert((Exertion)exertion, txn);
 	}
 
 	@Override
-	public Exertion service(Exertion exertion) throws TransactionException, ExertionException, RemoteException {
-		return exert(exertion);
+	public Exertion service(Mogram exertion) throws TransactionException, ExertionException, RemoteException {
+		return exert((Exertion)exertion);
 	}
 
-	@Override
-	public Object asis() throws EvaluationException, RemoteException {
-		return exertion;
-	}
-
-	@Override
-	public Object getValue(Arg... entries) throws EvaluationException, RemoteException {
-		return value(exertion, entries);
-	}
-
-	@Override
-	public Evaluation substitute(Arg... entries) throws SetterException, RemoteException {
-		return exertion.substitute(entries);
-	}
-
-	public Exertion exert(Exertion xrt, Transaction txn, String providerName)
+	public  <T extends Mogram> T exert(T xrt, Transaction txn, String providerName)
 			throws TransactionException, ExertionException, RemoteException {
 		this.exertion = (ServiceExertion) xrt;
 		transaction = txn;

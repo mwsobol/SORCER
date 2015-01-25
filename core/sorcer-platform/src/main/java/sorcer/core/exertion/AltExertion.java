@@ -17,22 +17,15 @@
  */
 package sorcer.core.exertion;
 
+import net.jini.core.transaction.Transaction;
+import sorcer.core.context.ServiceContext;
+import sorcer.core.context.ThrowableTrace;
+import sorcer.service.*;
+
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import net.jini.core.transaction.Transaction;
-import sorcer.core.context.ServiceContext;
-import sorcer.core.context.ThrowableTrace;
-import sorcer.service.Condition;
-import sorcer.service.Conditional;
-import sorcer.service.ConditionalExertion;
-import sorcer.service.Exertion;
-import sorcer.service.ExertionException;
-import sorcer.service.ServiceExertion;
-import sorcer.service.SignatureException;
-import sorcer.service.Task;
 
 /**
  * The alternative Exertion that executes sequentially a collection of optional
@@ -73,7 +66,7 @@ public class AltExertion extends Task implements ConditionalExertion {
 				if (opt.condition.isTrue()) {
 					opt.isActive = true;
 					opt.getTarget().getDataContext().append(opt.condition.getConditionalContext());					
-					opt.setTarget(opt.getTarget().exert(txn));
+					opt.setTarget((Exertion)opt.getTarget().exert(txn));
 					dataContext = (ServiceContext)opt.getTarget().getContext();
 					controlContext.append(opt.getTarget().getControlContext());
 					dataContext.putValue(Condition.CONDITION_VALUE, true);
