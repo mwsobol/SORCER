@@ -224,13 +224,18 @@ public class operator {
 		return cxt;
 	}
 
-	public static Context response(Context context, String responsePath) throws ContextException {
-		 ((ServiceContext)context).addResponsePath(responsePath);
+	public static Context response(Context context, String... responsePaths) throws ContextException {
+		for (String path : responsePaths)
+		 	((ServiceContext)context).addResponsePath(path);
 		return context;
 	}
 
 	public static <T> T response(Context<T> context) throws ContextException {
 		return ((ServiceContext<T>)context).getResponse();
+	}
+
+	public static Context responses(Context context) throws ContextException {
+		return ((ServiceContext)context).getResponses();
 	}
 	
 	public static Context scope(Object... entries) throws ContextException {

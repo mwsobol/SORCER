@@ -233,7 +233,7 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 		Enumeration e = ((ServiceContext) cntxt).keys();
 		while (e.hasMoreElements()) {
 			path = (String) e.nextElement();
-			obj = cntxt.getValue(path);
+			obj = cntxt.get(path);
 			if (obj instanceof ContextLink
 					&& ((ContextLink) obj).isFetched())
 				updateLinkedContext((ContextLink) obj);
@@ -1663,7 +1663,19 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 	public Context getSubcontext(List<String> paths) {
 		ServiceContext subcntxt = (ServiceContext)getSubcontext();
 		for (String path : paths) {
-			subcntxt.put(path, get(path));
+			try {
+				subcntxt.put(path, get(path));
+			} catch(Exception e) {
+
+			}
+		}
+		return subcntxt;
+	}
+	
+	public Context getEvaluatedSubcontext(List<String> paths) throws ContextException {
+		ServiceContext subcntxt = (ServiceContext)getSubcontext();
+		for (String path : paths) {
+			subcntxt.put(path, getValue(path));
 		}
 		return subcntxt;
 	}
@@ -2981,8 +2993,8 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 		}
 	}
 	
-	public Context getResponses() {
-		return null;
+	public Context getResponses() throws ContextException {
+		return getEvaluatedSubcontext(responsePaths);
 	}
 	
 	public String getCurrentSelector() {

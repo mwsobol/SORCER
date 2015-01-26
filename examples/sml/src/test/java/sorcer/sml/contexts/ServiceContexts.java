@@ -340,16 +340,22 @@ public class ServiceContexts {
 	}
 
 	@Test
-	public void contextMogram() throws Exception {
-		Context<Double> cxt = entModel(sig("add", Adder.class), ent("arg/x1", 1.0), ent("arg/x2", 2.0),
+	public void multiResponseModel() throws Exception {
+		Context cxt = entModel(sig("add", Adder.class), ent("arg/x1", 1.0), ent("arg/x2", 2.0),
 				ent("arg/x3", 3.0), ent("arg/x4", 4.0), ent("arg/x5", 5.0));
 
-		add(cxt, ent("invoke", invoker("x1 + x3", ents("x1", "x3"))));
+		add(cxt, ent("add", invoker("x1 + x3", ents("x1", "x3"))));
+
+		add(cxt, ent("multiply", invoker("x4 * x5", ents("x4", "x5"))));
+
+		// two responses declared
+		response(cxt, "add", "multiply");
 
 		// evaluate the model
-		response(cxt, "invoke");
-		value(cxt);
-		assertTrue(value(cxt).equals(4.0));
+		Context result = (Context) value(cxt);
+
+		logger.info("result: " + result);
+		assertTrue(result.equals(context(ent("add", 4.0), ent("multiply", 20.0))));
 	}
 
 }
