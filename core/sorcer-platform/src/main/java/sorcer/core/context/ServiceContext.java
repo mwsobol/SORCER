@@ -92,7 +92,7 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 	
 	protected String parameterTypesPath;
 
-	protected String targetPath;
+	protected List<String> responsePaths;
 
 	protected String parentPath = "";
 
@@ -2213,26 +2213,43 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 		parameterTypesPath = targetPath;
 		return this;
 	}
+
+	public Context addResponsePath(String path) {
+		if (responsePaths == null)
+			responsePaths = new ArrayList<String>();
+		if (!responsePaths.contains(path))
+			responsePaths.add(path);
+		return this;
+	}
 	
-	public Object getTarget() throws ContextException {
+	
+	public T getResponse() throws ContextException {
 		try {
-			return getValue(targetPath);
+			return getValue(responsePaths.get(0));
 		} catch (Exception e) {
 			throw new ContextException(e);
 		}
 	}
 
-	public ServiceContext setTarget(Object target) throws ContextException {
-		putValue(targetPath, (T)target);
+	public T getResponse(String path) throws ContextException {
+		if (!responsePaths.contains(path))
+			throw new ContextException("no such response: " + path);
+		return getValue(path);
+	}
+	
+	public ServiceContext setResponse(String path, Object target) throws ContextException {
+		if (!responsePaths.contains(path))
+			throw new ContextException("no such response: " + path);
+		putValue(path, (T) target);
 		return this;
 	}
 
-	public String getTargetPath() {
-		return targetPath;
+	public List<String> getResponsePaths() {
+		return responsePaths;
 	}
 
-	public ServiceContext setTargetPath(String targetPath) {
-		this.targetPath = targetPath;
+	public ServiceContext setResponsePaths(List<String> responsePaths) {
+		this.responsePaths = responsePaths;
 		return this;
 	}
 
@@ -2922,8 +2939,12 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 		try {
 			substitute(entries);
 			if (currentPath == null) {
-				if (targetPath != null)
-					currentPath = targetPath;
+				if (responsePaths != null) { 
+					if (responsePaths.size() == 1)
+						currentPath = responsePaths.get(0);
+					else 
+						return (T) getResponses();
+				}
 				else if (returnPath != null)
 					return getReturnValue(entries);
 				else
@@ -2958,6 +2979,10 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 			return (T) Context.none;
 //			throw new EvaluationException(e);
 		}
+	}
+	
+	public Context getResponses() {
+		return null;
 	}
 	
 	public String getCurrentSelector() {

@@ -101,8 +101,11 @@ public class ParModel<T> extends ServiceContext<T> implements Evaluation<T>, Inv
 			}
 			if (val != null && val instanceof Evaluation) {
 				return (T) ((Evaluation) val).getValue(entries);
-			} else if (val == null && targetPath != null) {
-				return(T) getValue(targetPath, entries);
+			} else if (val == null && responsePaths != null) {
+				if (responsePaths.size() == 1)
+					return (T) getValue(responsePaths.get(0), entries);
+				else 
+					return  (T) getResponses();
 			}  else {
 				return (T) val;
 			}

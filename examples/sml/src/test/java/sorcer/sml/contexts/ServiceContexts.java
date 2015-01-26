@@ -4,6 +4,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
+import sorcer.arithmetic.provider.Adder;
 import sorcer.co.tuple.Entry;
 import sorcer.core.context.Copier;
 import sorcer.core.context.ListContext;
@@ -14,8 +15,11 @@ import java.util.logging.Logger;
 
 import static org.junit.Assert.*;
 import static sorcer.co.operator.*;
+import static sorcer.co.operator.path;
 import static sorcer.eo.operator.*;
-import static sorcer.po.operator.*;
+import static sorcer.eo.operator.put;
+import static sorcer.eo.operator.value;
+import static sorcer.po.operator.invoker;
 
 /**
  * @author Mike Sobolewski
@@ -297,7 +301,7 @@ public class ServiceContexts {
 		add(cxt, ent("invoke", invoker("x1 + x3", ents("x1", "x3"))));
 
 		// evaluate the model
-		target(cxt, "invoke");
+		response(cxt, "invoke");
 		value(cxt);
 		assertTrue(value(cxt).equals(4.0));
 
@@ -324,7 +328,7 @@ public class ServiceContexts {
 		// cxt2 depends on values y1 and y2 calculated in cxt1
 		Context<Double> cxt2 = entModel(ent("arg/y3", 8.0), ent("arg/y4", 9.0), ent("arg/y5", 10.0));
 		add(cxt2, ent("invoke", invoker("y1 + y2 + y4 + y5", ents("y1", "y2", "y4", "y5"))));
-		target(cxt2, "invoke");
+		response(cxt2, "invoke");
 
 		// created dependency on cxt1 via a context copier
 		Copier cp = copier(cxt1, ents("arg/x1", "arg/x2"), cxt2, ents("y1", "y2"));
@@ -333,6 +337,19 @@ public class ServiceContexts {
 		Double result = value(cxt2);
 		assertTrue( value(cxt2).equals(22.0));
 
+	}
+
+	@Test
+	public void contextMogram() throws Exception {
+		Context<Double> cxt = entModel(sig("add", Adder.class), ent("arg/x1", 1.0), ent("arg/x2", 2.0),
+				ent("arg/x3", 3.0), ent("arg/x4", 4.0), ent("arg/x5", 5.0));
+
+		add(cxt, ent("invoke", invoker("x1 + x3", ents("x1", "x3"))));
+
+		// evaluate the model
+		response(cxt, "invoke");
+		value(cxt);
+		assertTrue(value(cxt).equals(4.0));
 	}
 
 }

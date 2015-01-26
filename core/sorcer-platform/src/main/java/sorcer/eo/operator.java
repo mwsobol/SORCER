@@ -224,13 +224,13 @@ public class operator {
 		return cxt;
 	}
 
-	public static Context target(Context context, String targetPath) {
-		((ServiceContext)context).setTargetPath(targetPath);
+	public static Context response(Context context, String responsePath) throws ContextException {
+		 ((ServiceContext)context).addResponsePath(responsePath);
 		return context;
 	}
 
-	public static Object target(Context context) throws ContextException {
-		return ((ServiceContext)context).getTarget();
+	public static <T> T response(Context<T> context) throws ContextException {
+		return ((ServiceContext<T>)context).getResponse();
 	}
 	
 	public static Context scope(Object... entries) throws ContextException {
@@ -272,7 +272,7 @@ public class operator {
 		ExecPath execPath = null;
 		Args cxtArgs = null;
 		ParameterTypes parameterTypes = null;
-		target target = null;
+		Response response = null;
 		PoolStrategy modelStrategy = null;
 		for (Object o : entries) {
 			if (o instanceof Complement) {
@@ -283,8 +283,8 @@ public class operator {
 			} else if (o instanceof ParameterTypes
 					&& ((ParameterTypes) o).parameterTypes.getClass().isArray()) {
 				parameterTypes = (ParameterTypes) o;
-			} else if (o instanceof target) {
-				target = (target) o;
+			} else if (o instanceof Response) {
+				response = (Response) o;
 			} else if (o instanceof ReturnPath) {
 				returnPath = (ReturnPath) o;
 			} else if (o instanceof ExecPath) {
@@ -369,11 +369,11 @@ public class operator {
 			((ServiceContext) cxt)
 					.setParameterTypes(parameterTypes.parameterTypes);
 		}
-		if (target != null) {
-			if (target.path() != null) {
-				((ServiceContext) cxt).setTargetPath(target.path());
+		if (response != null) {
+			if (response.path() != null) {
+				((ServiceContext) cxt).addResponsePath(response.path());
 			}
-			((ServiceContext) cxt).setTarget(target.target);
+			((ServiceContext) cxt).setResponse(response.path(), response.target);
 		}
 		if (entryLists.size() > 0)
 			((ServiceContext)cxt).setEntryLists(entryLists);
@@ -1915,18 +1915,18 @@ public class operator {
 	}
 
 	public static Object target(Object object) {
-		return new target(object);
+		return new Response(object);
 	}
 
-	public static class target extends Path {
+	public static class Response extends Path {
 		private static final long serialVersionUID = 1L;
 		public Object target;
 
-		target(Object target) {
+		Response(Object target) {
 			this.target = target;
 		}
 
-		target(String path, Object target) {
+		Response(String path, Object target) {
 			this.target = target;
 			this._1 = path;
 		}
