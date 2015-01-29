@@ -165,7 +165,7 @@ abstract public class RendezvousBean implements Service, Executor {
 		}
 	}
 	
-	public void setServiceID(Exertion ex) {
+	public void setServiceID(Mogram ex) {
 		if (provider == null) {
 			try {
 				provider = new ServiceProvider();

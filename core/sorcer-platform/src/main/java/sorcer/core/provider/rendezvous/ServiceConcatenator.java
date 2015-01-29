@@ -27,8 +27,9 @@ import java.rmi.RemoteException;
 import java.util.logging.Logger;
 
 /**
- * ServiceJobber - The SORCER rendezvous service provider that provides
- * coordination for executing exertions using directly (PUSH) service providers.
+ * ServiceJobber - The SORCER rendezvous service provider that manages
+ * coordination for executing exertions using service providers that 
+ * form a dynamic service federation as specified signatures of component mograms.
  * 
  * @author Mike Sobolewski
  */
@@ -41,7 +42,7 @@ public class ServiceConcatenator extends RendezvousBean implements Concatenator 
 
 	public Mogram execute(Mogram mogram, Transaction txn)
 			throws TransactionException, ExertionException, RemoteException {
-		//logger.info("*********************************************ServiceConcatenator.execute, block = " + exertion);
+		//logger.info("*********************************************ServiceConcatenator.execute, block = " + mogram);
 		Exertion exertion = (Exertion) mogram;
 		setServiceID(exertion);
 		Block result = null;

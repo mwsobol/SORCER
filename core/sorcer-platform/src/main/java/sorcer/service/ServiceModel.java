@@ -1,6 +1,6 @@
 /*
- * Copyright 2009 the original author or authors.
- * Copyright 2009 SorcerSoft.org.
+ * Copyright 2015 the original author or authors.
+ * Copyright 2015 SorcerSoft.org.
  *  
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,7 +37,7 @@ import java.util.Map;
  */
 public class ServiceModel extends ServiceContext implements Model {
 
-    // service fidelities for this exertions
+    // service fidelities for this model
     protected Map<String, ServiceFidelity> fidelities;
 
     protected ServiceFidelity fidelity = new ServiceFidelity();
@@ -132,6 +132,14 @@ public class ServiceModel extends ServiceContext implements Model {
         fidelity = nf;
     }
 
+    public Signature getProcessSignature() {
+        for (Signature s : fidelity) {
+            if (s.getType() == Signature.Type.SRV)
+                return s;
+        }
+        return null;
+    }
+    
     public void selectFidelity(String selector) throws ExertionException {
         if (selector != null && fidelities != null
                 && fidelities.containsKey(selector)) {

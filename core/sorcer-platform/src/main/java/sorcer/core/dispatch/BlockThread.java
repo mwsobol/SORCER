@@ -1,8 +1,21 @@
-package sorcer.core.dispatch;
+/*
+ * Copyright 2013 the original author or authors.
+ * Copyright 2013 SorcerSoft.org.
+ *  
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
-import java.rmi.RemoteException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+package sorcer.core.dispatch;
 
 import net.jini.config.ConfigurationException;
 import sorcer.core.Dispatcher;
@@ -11,6 +24,10 @@ import sorcer.core.provider.ServiceProvider;
 import sorcer.service.Block;
 import sorcer.service.ContextException;
 import sorcer.service.Exec;
+
+import java.rmi.RemoteException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class BlockThread extends Thread {
 	private final static Logger logger = Logger.getLogger(BlockThread.class
@@ -37,10 +54,10 @@ public class BlockThread extends Thread {
 			String exertionDeploymentConfig = null;
 			if (block.isProvisionable()) {
 				try {
-					exertionDeploymentConfig = 
-							(String)((ServiceProvider)provider).getProviderConfiguration().getEntry("sorcer.core.provider.ServiceProvider", 
-									"exertionDeploymentConfig", 
-									String.class, 
+					exertionDeploymentConfig =
+							(String)((ServiceProvider)provider).getProviderConfiguration().getEntry("sorcer.core.provider.ServiceProvider",
+									"exertionDeploymentConfig",
+									String.class,
 									null);
 				} catch (ConfigurationException e1) {
 					logger.log(Level.WARNING, "Unable to read property from configuration", e1);
@@ -50,24 +67,24 @@ public class BlockThread extends Thread {
 				dispatcher = ExertDispatcherFactory.getFactory().createDispatcher(block, provider, exertionDeploymentConfig);
 			else
 				dispatcher = ExertDispatcherFactory.getFactory().createDispatcher(block, provider);
-							
+
 			try {
 				block.getControlContext().appendTrace(provider.getProviderName() +
 						" dispatcher: " + dispatcher.getClass().getName());
 			} catch (RemoteException e) {
 				// ignore it, locall call
 			}
-			 int COUNT = 1000;
-			 int count = COUNT;
+			int COUNT = 1000;
+			int count = COUNT;
 			while (dispatcher.getState() != Exec.DONE
 					&& dispatcher.getState() != Exec.FAILED
 					&& dispatcher.getState() != Exec.SUSPENDED) {
-				 count--;
-				 if (count < 0) {
-				 logger.finer("*** Concatenator's Exertion Dispatcher waiting in state: "
-				 + dispatcher.getState());
-				 count = COUNT;
-				 }
+				count--;
+				if (count < 0) {
+					logger.finer("*** Concatenator's Exertion Dispatcher waiting in state: "
+							+ dispatcher.getState());
+					count = COUNT;
+				}
 				Thread.sleep(SLEEP_TIME);
 			}
 			logger.finer("*** Dispatcher exit state = " + dispatcher.getClass().getName()  + " state: " + dispatcher.getState()
