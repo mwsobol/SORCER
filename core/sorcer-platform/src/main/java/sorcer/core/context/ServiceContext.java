@@ -3218,6 +3218,10 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 		}
 	}
 
+	public String getOwnerId() {
+		return ownerId;
+	}
+	
 	public Context getBlockScope() {
 		return blockScope;
 	}
