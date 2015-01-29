@@ -4,7 +4,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
-import sorcer.arithmetic.provider.Adder;
+import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.co.tuple.Entry;
 import sorcer.core.context.Copier;
 import sorcer.core.context.ListContext;
@@ -340,8 +340,8 @@ public class ServiceContexts {
 	}
 
 	@Test
-	public void multiResponseModel() throws Exception {
-		Context cxt = entModel(sig("add", Adder.class), ent("arg/x1", 1.0), ent("arg/x2", 2.0),
+	public void evaluateMultiResponseModel() throws Exception {
+		Context cxt = entModel(ent("arg/x1", 1.0), ent("arg/x2", 2.0),
 				ent("arg/x3", 3.0), ent("arg/x4", 4.0), ent("arg/x5", 5.0));
 
 		add(cxt, ent("add", invoker("x1 + x3", ents("x1", "x3"))));
@@ -358,4 +358,22 @@ public class ServiceContexts {
 		assertTrue(result.equals(context(ent("add", 4.0), ent("multiply", 20.0))));
 	}
 
+
+	public void exertModel() throws Exception {
+		Context cxt = entModel(sig("add", AdderImpl.class), ent("arg/x1", 1.0), ent("arg/x2", 2.0),
+				ent("arg/x3", 3.0), ent("arg/x4", 4.0), ent("arg/x5", 5.0));
+
+		add(cxt, ent("add", invoker("x1 + x3", ents("x1", "x3"))));
+
+		add(cxt, ent("multiply", invoker("x4 * x5", ents("x4", "x5"))));
+
+		// two responses declared
+		response(cxt, "add", "multiply");
+
+		// exert the model
+		Context result = exert(cxt);
+
+		logger.info("result: " + responses(result));
+//		assertTrue(result.equals(context(ent("add", 4.0), ent("multiply", 20.0))));
+	}
 }

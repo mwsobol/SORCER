@@ -102,7 +102,7 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 	// for data piping see: map. connect, pipe
 	protected boolean isShared = false;
 
-	protected String creationDate;
+	protected long creationTime;
 
 	protected String lastUpdateDate;
 
@@ -196,6 +196,7 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 		name = defaultName + count++;
 		delPathIds = new Hashtable();
 		contextId = UuidFactory.generate();
+		creationTime = System.currentTimeMillis();
 	}
 
 	/**
@@ -247,7 +248,7 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 		contextId = cntxt.getId();
 		parentPath = cntxt.getParentPath();
 		parentId = cntxt.getParentID();
-		creationDate = cntxt.getCreationDate();
+		creationTime = ((ServiceContext) cntxt).getCreationTime();
 		lastUpdateDate = cntxt.getLastUpdateDate();
 		description = cntxt.getDescription();
 		scopeCode = cntxt.getScope();
@@ -362,12 +363,8 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 		parentId = id;
 	}
 
-	public String getCreationDate() {
-		return creationDate;
-	}
-
-	public void setCreationDate(String date) {
-		creationDate = date;
+	public long getCreationTime() {
+		return creationTime;
 	}
 
 	public String getLastUpdateDate() {

@@ -17,18 +17,6 @@
 
 package sorcer.jini.jeri;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.rmi.Remote;
-import java.rmi.server.ExportException;
-import java.security.Permission;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Logger;
-
 import net.jini.core.constraint.MethodConstraints;
 import net.jini.core.constraint.RemoteMethodControl;
 import net.jini.jeri.BasicILFactory;
@@ -38,25 +26,28 @@ import net.jini.jeri.ServerCapabilities;
 import net.jini.security.proxytrust.ProxyTrust;
 import net.jini.security.proxytrust.ServerProxyTrust;
 import net.jini.security.proxytrust.TrustEquivalence;
-import sorcer.service.ContextManagement;
-import sorcer.service.Exec;
-import sorcer.service.ExertionException;
-import sorcer.service.Service;
-import sorcer.service.Task;
+import sorcer.service.*;
+
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.rmi.Remote;
+import java.rmi.server.ExportException;
+import java.security.Permission;
+import java.util.*;
+import java.util.logging.Logger;
 
 /**
  * A SorcerILFactory can be used with object interfaces as its services. Those
  * services exposed as interfaces do need implement Remote. A
  * {@link sorcer.core.provider.ServiceProvider} or
- * {@link sorcer.core.provider.bean.ProviderBean} using this factory should tell
+ * service beans using this factory should tell
  * the factory what objects should be exposed as services and the invocation
  * dispatcher created by this factory will manage the delegation of the method
  * calls to the right exposed object. SORCER service beans (objects with methods
  * taking a parameter {@link sorcer.service.Context} and returning
  * {@link sorcer.service.Context} can be used transparently as
  * {@link sorcer.service.Service}s with either
- * {@link sorcer.core.provider.ServiceProvider} or
- * {@link sorcer.core.provider.bean.ProviderBean}.
+ * {@link sorcer.core.provider.ServiceProvider}
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class SorcerILFactory extends BasicILFactory {
@@ -81,8 +72,8 @@ public class SorcerILFactory extends BasicILFactory {
 	 * Creates a <code>SorcerILFactory</code> instance with no server
 	 * constraints, no permission class, and a <code>null</code> class loader.
 	 * 
-	 * @param services
-	 *            the object to be exposed as a service by the dispatcher of
+	 * @param serviceBeans
+	 *            the objects to be exposed as services by the dispatcher of
 	 *            this ILFactory
 	 * 
 	 */
@@ -99,8 +90,8 @@ public class SorcerILFactory extends BasicILFactory {
 	 *            the server constraints, or <code>null</code>
 	 * @param permissionClass
 	 *            the permission class, or <code>null</code>
-	 * @param services
-	 *            the object to be exposed as a service by the dispatcher of
+	 * @param serviceBeans
+	 *            the objects to be exposed as services by the dispatcher of
 	 *            this ILFactory
 	 * @throws IllegalArgumentException
 	 *             if the permission class is abstract, is not a subclass of
@@ -131,8 +122,8 @@ public class SorcerILFactory extends BasicILFactory {
 	 *            the permission class, or <code>null</code>
 	 * @param loader
 	 *            the class loader, or <code>null</code>
-	 * @param services
-	 *            the object to be exposed as a service by the dispatcher of
+	 * @param serviceBeans
+	 *            the objects to be exposed as services by the dispatcher of
 	 *            this ILFactory
 	 * 
 	 * @throws IllegalArgumentException

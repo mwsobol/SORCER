@@ -256,13 +256,7 @@ public interface Context<T> extends Model, Mappable<T>, Serializable, Evaluation
 
 	/**
      */
-	public String getCreationDate();
-
-	/**
-	 * @param date
-	 *            The creationDate to set.
-	 */
-	public void setCreationDate(String date);
+	public long getCreationTime();
 
 	/**
      */

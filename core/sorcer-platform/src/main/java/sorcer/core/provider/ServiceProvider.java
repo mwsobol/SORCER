@@ -19,7 +19,6 @@ package sorcer.core.provider;
 import com.sun.jini.config.Config;
 import com.sun.jini.start.LifeCycle;
 import com.sun.jini.thread.TaskManager;
-
 import net.jini.config.Configuration;
 import net.jini.config.ConfigurationException;
 import net.jini.config.ConfigurationProvider;
@@ -43,7 +42,6 @@ import net.jini.lookup.ui.factory.JFrameFactory;
 import net.jini.security.TrustVerifier;
 import net.jini.security.proxytrust.ServerProxyTrust;
 import net.jini.security.proxytrust.TrustEquivalence;
-import sorcer.service.ContextManagement;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.ControlContext;
 import sorcer.core.context.ServiceContext;
@@ -66,7 +64,6 @@ import sorcer.util.url.sos.SdbURLStreamHandlerFactory;
 
 import javax.security.auth.Subject;
 import javax.security.auth.login.LoginContext;
-
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -74,6 +71,7 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.security.*;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
@@ -200,10 +198,13 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 
 	private volatile boolean running = true;
 
+	private Map<Uuid, ProviderSession> sessions;
+	
 	public ServiceProvider() throws RemoteException {
 		providers.add(this);
 		delegate = new ProviderDelegate();
 		delegate.provider = this;
+		sessions = new ConcurrentHashMap<Uuid, ProviderSession>();
 		logger.info("\n\t<init> providers.size() = " + providers.size()
 				+ "\n\t<init> providers = " + providers
 				+ "\n\t<init> this.getName = " + this.getName());
@@ -1468,7 +1469,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	public Entry[] getAttributes() throws RemoteException {
 		return delegate.getAttributes();
 	}
-
+	
 	public List<Object> getProperties() throws RemoteException {
 		return delegate.getProperties();
 	}
