@@ -33,6 +33,7 @@ import java.util.logging.Logger;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
+import static sorcer.co.operator.asis;
 import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.in;
 import static sorcer.eo.operator.pipe;

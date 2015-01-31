@@ -166,6 +166,8 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 	// dependency management for this Context
 	protected List<Evaluation> dependers = new ArrayList<Evaluation>();
 
+    protected Map<String, List<String>> dependentPaths;
+    
 	/**
 	 * For persistence layers to differentiate with saved context already
 	 * associated to task or not.
@@ -3332,5 +3334,10 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 		return true;
 	}
 
-
+    public Map<String, List<String>> getDependentPaths() {
+        if (dependentPaths == null) {
+            dependentPaths = new HashMap<String, List<String>>();
+        }
+        return dependentPaths;
+    }
 }

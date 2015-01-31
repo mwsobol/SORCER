@@ -17,10 +17,7 @@
 
 package sorcer.service.modeling;
 
-import sorcer.service.Arg;
-import sorcer.service.Context;
-import sorcer.service.ContextException;
-import sorcer.service.Mogram;
+import sorcer.service.*;
 
 import java.rmi.RemoteException;
 
@@ -29,16 +26,40 @@ import java.rmi.RemoteException;
  *
  * @author Mike Sobolewski
  */
-public interface Model extends Mogram {
+public interface Model extends Mogram, Dependency {
     
     public Context getInputs()  throws ContextException, RemoteException;
     
     public Context getOutputs()  throws ContextException, RemoteException;
-    
+
+    /**
+     *  Returns a context od all specified responses of this model. 
+     *
+     * @param entries  optional configuration arguments
+     * @return
+     * @throws ContextException
+     * @throws RemoteException
+     */
     public Context getResponses(Arg... entries)  throws ContextException, RemoteException;
 
+    /**
+     * Returns a response for a given <code>path</code>
+     *  
+     * @param path a path of the response in the model
+     * @param entries  optional configuration arguments
+     * @return
+     * @throws ContextException
+     * @throws RemoteException
+     */
     public Object getResponse(String path, Arg... entries)  throws ContextException, RemoteException;
 
+    /**
+     * Returns a default response of this model
+     *
+     * @return  a default response
+     * @throws ContextException
+     * @throws RemoteException
+     */
     public Object getResponse() throws ContextException, RemoteException;
 
 }

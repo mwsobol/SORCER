@@ -37,8 +37,8 @@ public interface Paradigmatic {
 	 * Assign the modeling mode of instance of this type.
 	 * </p>
 	 * 
-	 * @param isEvaluable
+	 * @param isModeling
 	 */
-	public void setModeling(boolean modeling);
+	public void setModeling(boolean isModeling);
 
 }

@@ -59,6 +59,8 @@ public class ServiceSignature implements Signature, Service, Evaluation<Object>,
 	// the indicated usage of this signature
 	protected Set<Kind> rank = new HashSet<Kind>();
 
+    // dependency management for this Signature
+    protected List<Evaluation> dependers = new ArrayList<Evaluation>();
 
 	// Must initialize to ANY to have correct JavaSpace workers behavior
 	// to have exertions with providerName/serviceInfo specified going to
@@ -454,7 +456,12 @@ public class ServiceSignature implements Signature, Service, Evaluation<Object>,
 		return null;
 	}
 
-	public String getName() {
+    @Override
+    public Object getId() {
+        return selector;
+    }
+
+    public String getName() {
 		return name;
 	}
 
@@ -589,4 +596,18 @@ public class ServiceSignature implements Signature, Service, Evaluation<Object>,
 	public Evaluation substitute(Arg... entries) throws SetterException, RemoteException {
 		return this;
 	}
+
+    @Override
+    public void addDependers(Evaluation... dependers) {
+        if (this.dependers == null)
+            this.dependers = new ArrayList<Evaluation>();
+        for (Evaluation depender : dependers)
+            this.dependers.add(depender);
+    }
+
+    @Override
+    public List<Evaluation> getDependers() {
+        return dependers;
+    }
+
 }

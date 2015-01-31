@@ -30,10 +30,7 @@ import sorcer.core.context.model.par.ParModel;
 import sorcer.core.deploy.ServiceDeployment;
 import sorcer.core.exertion.*;
 import sorcer.core.provider.*;
-import sorcer.core.provider.rendezvous.ServiceConcatenator;
-import sorcer.core.provider.rendezvous.ServiceJobber;
-import sorcer.core.provider.rendezvous.ServiceRendezvous;
-import sorcer.core.provider.rendezvous.ServiceSpacer;
+import sorcer.core.provider.rendezvous.*;
 import sorcer.core.signature.EvaluationSignature;
 import sorcer.core.signature.NetSignature;
 import sorcer.core.signature.ObjectSignature;
@@ -224,24 +221,43 @@ public class operator {
 		return cxt;
 	}
 
-	public static <T extends Model> T response(T model, String... responsePaths) throws ContextException {
-		for (String path : responsePaths)
-		 	((ServiceContext)model).addResponsePath(path);
-		return model;
-	}
+    public static Model addResponse(Model model, String... responsePaths) throws ContextException {
+        for (String path : responsePaths)
+            ((ServiceContext)model).addResponsePath(path);
+        return model;
+    }
+    
+//	public static <T extends Model> T response(T model, String... responsePaths) throws ContextException {
+//		for (String path : responsePaths)
+//		 	((ServiceContext)model).addResponsePath(path);
+//		return model;
+//	}
 
-	public static <T> T response(Context<T> context) throws ContextException, RemoteException {
+	public static <T> T response(Context<T> context, String add, String multiply) throws ContextException, RemoteException {
 		return ((ServiceContext<T>)context).getResponse();
 	}
 
-	public static Model responses(Model model) throws ContextException {
+	public static Context responses(Model model) throws ContextException {
         try {
             return ((ServiceContext)model).getResponses();
         } catch (RemoteException e) {
             throw new ContextException(e);
         }
     }
-	
+
+    public static Object response(Model model, String path) throws ContextException {
+        try {
+            return ((ServiceContext)model).getResponse(path);
+        } catch (RemoteException e) {
+            throw new ContextException(e);
+        }
+    }
+
+
+    public static Entry Entry(Model model, String path) throws ContextException {
+        return new Entry(path, ((Context)model).asis(path));
+    }
+    
 	public static Context scope(Object... entries) throws ContextException {
 		Object[] args = new Object[entries.length + 1];
 		System.arraycopy(entries, 0, args, 1, entries.length);
@@ -786,7 +802,8 @@ public class operator {
 			sig = new ObjectSignature(operation, serviceType);
 			sig.setProviderName(providerName);
 		}
-		
+        ((ServiceSignature)sig).setName(operation);
+        
 		if (p != null)
 			((ServiceSignature)sig).setProvisionable(p);
 		
@@ -1543,11 +1560,6 @@ public class operator {
 			values.add(getAt(context, i));
 		}
 		return values;
-	}
-
-	public static Object asis(Mappable mappable, String path)
-			throws ContextException {
-		return  mappable.asis(path);
 	}
 
 	public static Object get(Service service, String path)
@@ -2361,16 +2373,24 @@ public class operator {
 
     public static Model model(Object... items) throws ContextException {
         ServiceFidelity fidelity = null;
+        Complement complement = null;
         for (Object item : items) {
            if (item instanceof Signature) {
                if (fidelity == null)
                    fidelity = new ServiceFidelity();
                fidelity.add((Signature) item);
-            }
+            } else if (item instanceof Complement) {
+               complement = (Complement)item;
+           }
         }
         ServiceModel model = new  ServiceModel();
-        if (fidelity != null)
+        if (fidelity != null) {
             model.setFidelity(fidelity);
+        } else if (complement != null) {
+            model.setSubject(complement.path(), complement.value());
+        } else {
+            model.setSubject("execute", ServiceModeler.class);
+        }
         Object[] dest = new Object[items.length+1];
         System.arraycopy(items,  0, dest,  1, items.length);
         dest[0] = model;

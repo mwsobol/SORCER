@@ -84,7 +84,7 @@ import java.util.Map;
  */
 @SuppressWarnings("rawtypes")
 public interface Context<T> extends Model, Mappable<T>, Serializable, 
-        Dependency, Contexter<T>, Identifiable, Paradigmatic, Arg, Service {
+        Dependency, Contexter<T>, Identifiable, Paradigmatic, Arg {
 
 	/** parameter (par) */
 	final static String PATH_PAR = "par";

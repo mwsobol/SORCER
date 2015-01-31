@@ -145,7 +145,7 @@ public class ParModels {
 		logger.info("add value: " + value(pm, "add"));
 		assertEquals(value(pm, "add"), 30.0);
 
-		response(pm, "add");
+        addResponse(pm, "add");
 		logger.info("pm context value: " + value(pm));
 		assertEquals(value(pm), 30.0);
 
@@ -169,7 +169,7 @@ public class ParModels {
 		assertEquals(value(pm, "add"), 30.0);
 
 		// now evaluate model for its target       
-		response(pm, "add");
+        addResponse(pm, "add");
 		assertEquals(value(pm), 30.0);
 	}
 
@@ -191,7 +191,7 @@ public class ParModels {
 		assertEquals(value(pm, "y"), 40.0);
 		assertEquals(value(pm, "add"), 60.0);
 
-		response(pm, "add");
+        addResponse(pm, "add");
 		assertEquals(value(pm), 60.0);
 
 		add(pm, par("x", 10.0), par("y", 20.0));

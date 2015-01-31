@@ -24,13 +24,15 @@ import sorcer.util.url.sos.SdbUtil;
 
 import java.net.URL;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
  * @author Mike Sobolewski
  */
 @SuppressWarnings("unchecked")
-public class Entry<T> extends Tuple2<String, T> implements Arg, Comparable<T>, Setter, Evaluation<T>, Reactive<T> {
+public class Entry<T> extends Tuple2<String, T> implements Dependency, Comparable<T>, Setter, Evaluation<T>, Reactive<T>, Arg {
 	private static final long serialVersionUID = 5168783170981015779L;
 	
 	public int index;
@@ -40,9 +42,9 @@ public class Entry<T> extends Tuple2<String, T> implements Arg, Comparable<T>, S
 	// its arguments are always evaluated if active (either Evaluataion or Invocation type)
 	protected boolean isReactive = false;
 
-	/*public Entry() {
-	}
-*/
+    // dependency management for this Entry
+    protected List<Evaluation> dependers = new ArrayList<Evaluation>();
+    
 	public Entry(final String path) {
 		if(path==null)
 			throw new IllegalArgumentException("path must not be null");
@@ -173,6 +175,19 @@ public class Entry<T> extends Tuple2<String, T> implements Arg, Comparable<T>, S
 			return false;
 	}
 
+    @Override
+    public void addDependers(Evaluation... dependers) {
+        if (this.dependers == null)
+            this.dependers = new ArrayList<Evaluation>();
+        for (Evaluation depender : dependers)
+            this.dependers.add(depender);
+    }
+
+    @Override
+    public List<Evaluation> getDependers() {
+        return dependers;
+    }
+    
 	@Override
 	public String toString() {
 		return "[" + _1 + ":" + _2 + ":" + index + "]";
