@@ -17,10 +17,14 @@
 
 package sorcer.service;
 
-import sorcer.core.context.ServiceContext;
+import net.jini.core.transaction.Transaction;
+import net.jini.core.transaction.TransactionException;
+import sorcer.core.context.PositionalContext;
 import sorcer.core.signature.ServiceSignature;
+import sorcer.eo.operator;
 import sorcer.service.modeling.Model;
 
+import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,7 +39,7 @@ import java.util.Map;
  *   
  * Created by Mike Sobolewski on 1/29/15.
  */
-public class ServiceModel extends ServiceContext implements Model {
+public class ServiceModel<T> extends PositionalContext<T> implements Model {
 
     // service fidelities for this model
     protected Map<String, ServiceFidelity> fidelities;
@@ -152,4 +156,22 @@ public class ServiceModel extends ServiceContext implements Model {
         }
     }
 
+    @Override
+    public Model exert(Transaction txn, Arg... entries) throws TransactionException,
+            ExertionException, RemoteException {
+        Signature signature = null;
+        try {
+            if (fidelity != null) {
+                signature = getProcessSignature();
+                Exertion out = operator.exertion(name, signature, this).exert(txn, entries);
+                return out.getDataContext();
+            } else {
+                // evaluate model responses
+                getValue(entries);
+                return this;
+            }
+        } catch (Exception e) {
+            throw new ExertionException(e);
+        }
+    }
 }

@@ -2230,21 +2230,7 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 			responsePaths.add(path);
 		return this;
 	}
-	
-	
-	public T getResponse() throws ContextException {
-		try {
-			return getValue(responsePaths.get(0));
-		} catch (Exception e) {
-			throw new ContextException(e);
-		}
-	}
-
-	public T getResponse(String path) throws ContextException {
-		if (!responsePaths.contains(path))
-			throw new ContextException("no such response: " + path);
-		return getValue(path);
-	}
+    
 	
 	public ServiceContext setResponse(String path, Object target) throws ContextException {
 		if (!responsePaths.contains(path))
@@ -2917,12 +2903,6 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 		return new Par(path, this);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see sorcer.service.Evaluation#getValue(sorcer.core.context.Path.Entry[])
-	 */
-	@Override
 	public T getValue(Arg... entries) throws EvaluationException, RemoteException {
 		try {
 			return getValue(null, entries);
@@ -2989,8 +2969,45 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 //			throw new EvaluationException(e);
 		}
 	}
-	
-	public Context getResponses() throws ContextException {
+
+    @Override
+    public Context getInputs() throws ContextException, RemoteException {
+        List<String> paths = Contexts.getInPaths(this);
+        Context<T> inputs = new ServiceContext();
+        for (String path : paths)
+            inputs.putValue(path, getValue(path));
+
+        return inputs;
+    }
+
+    @Override
+    public Context getOutputs() throws ContextException, RemoteException {
+        List<String> paths = Contexts.getOutPaths(this);
+        Context<T> inputs = new ServiceContext();
+        for (String path : paths)
+            inputs.putValue(path, getValue(path));
+
+        return inputs;
+    }
+
+    @Override
+    public Object getResponse(String path, Arg... entries) throws ContextException, RemoteException {
+        return getValue(path, entries);
+    }
+
+    public T getResponse() throws ContextException, RemoteException {
+        try {
+            if (responsePaths != null && responsePaths.size() == 1)
+                return getValue(responsePaths.get(0));
+            else 
+                throw new ContextException("No valid unique response available");
+        } catch (Exception e) {
+            throw new ContextException(e);
+        }
+    }
+
+    @Override
+    public Context getResponses(Arg... entries) throws ContextException, RemoteException {
 		return getEvaluatedSubcontext(responsePaths);
 	}
 	
@@ -3010,16 +3027,6 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 		this.currentPrefix = currentPrefix;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see sorcer.service.Evaluation#getAsIs()
-	 */
-	@Override
-	public T asis() throws EvaluationException, RemoteException {
-		return getValue();
-	}
-
 	/* (non-Javadoc)
 	 * @see sorcer.service.Context#getData()
 	 */
@@ -3028,7 +3035,8 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 		// to reimplemented in subclasses
 		return null;
 	}
-  public String getPrefix() {
+    
+    public String getPrefix() {
         if (prefix != null && prefix.length() > 0)
             return prefix + CPS;
         else
@@ -3284,20 +3292,12 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 		return Contexts.getMarkedPaths(this, association);
 	}
 
-	@Override
-	public Evaluation addDepender(Evaluation depender) {
-		if (this.dependers == null)
-			this.dependers = new ArrayList<Evaluation>();
-		dependers.add(depender);
-		return this;
-	}
-
-	public Evaluation addDependers(Evaluation... dependers) {
+    @Override
+    public void addDependers(Evaluation... dependers) {
 		if (this.dependers == null)
 			this.dependers = new ArrayList<Evaluation>();
 		for (Evaluation depender : dependers)
 			this.dependers.add(depender);
-		return this;
 	}
 
 	@Override

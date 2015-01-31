@@ -53,8 +53,8 @@ public class SignatureTest {
 		logger.info("provider of s: " + prv);
 		assertTrue(prv instanceof Date);
 
-		logger.info("getTime: " + value(service("gt", s)));
-		assertTrue(value(service("gt", s)) instanceof Long);
+		logger.info("getTime: " + reply(service("gt", s)));
+		assertTrue(reply(service("gt", s)) instanceof Long);
 
 	}
 
@@ -72,8 +72,8 @@ public class SignatureTest {
 		assertTrue(prv instanceof Date);
 		service("time", s);
 
-		logger.info("time: " + value(service("time", s)));
-		assertTrue(value(service("time", s)) instanceof Long);
+		logger.info("time: " + reply(service("time", s)));
+		assertTrue(reply(service("time", s)) instanceof Long);
 
 	}
 
@@ -86,8 +86,8 @@ public class SignatureTest {
 		logger.info("provider of s: " + prv);
 		assertTrue(prv == Math.class);
 
-		logger.info("random: " + value(service("random", ms)));
-		assertTrue(value(service("random", ms)) instanceof Double);
+		logger.info("random: " + reply(service("random", ms)));
+		assertTrue(reply(service("random", ms)) instanceof Double);
 
 		ms = sig(Math.class, "max");
 		Context cxt = context(
@@ -95,9 +95,9 @@ public class SignatureTest {
 				args(new Object[] { 200.11, 3000.0 }));
 
 		// request the service
-		logger.info("max: " + value(service("max", ms, cxt)));
-		assertTrue(value(service("max", ms, cxt)) instanceof Double);
-		assertTrue(value(service("max", ms, cxt)).equals(3000.0));
+		logger.info("max: " + reply(service("max", ms, cxt)));
+		assertTrue(reply(service("max", ms, cxt)) instanceof Double);
+		assertTrue(reply(service("max", ms, cxt)).equals(3000.0));
 
 	}
 
@@ -117,9 +117,9 @@ public class SignatureTest {
 		assertTrue(prv instanceof Calendar);
 
 		// request the service
-		logger.info("time: " + value(service("month", ps, cxt)));
-		assertTrue(value(service("month", ps, cxt)) instanceof Integer);
-		assertTrue(value(service("month", ps, cxt)).equals(((Calendar)prv).get(Calendar.MONTH)));
+		logger.info("time: " + reply(service("month", ps, cxt)));
+		assertTrue(reply(service("month", ps, cxt)) instanceof Integer);
+		assertTrue(reply(service("month", ps, cxt)).equals(((Calendar)prv).get(Calendar.MONTH)));
 
 	}
 

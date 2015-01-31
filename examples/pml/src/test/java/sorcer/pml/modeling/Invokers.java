@@ -115,7 +115,7 @@ public class Invokers {
 		logger.info("invoke value: " + invoke(pm, "expr"));
 		assertEquals(invoke(pm, "expr"), 60.0);
 		logger.info("get value: " + value(pm, "expr"));
-		assertEquals(value(pm, "expr"), 60.0);
+		assertTrue(value(pm, "expr").equals(60.0));
 	}
 
 	@Test
@@ -287,7 +287,7 @@ public class Invokers {
 		logger.info("x value:" + value(pm, "x"));
 		logger.info("y value:" + value(pm, "y"));
 		logger.info("multiply value:" + value(pm, "add"));
-		assertEquals(value(pm, "add"), 47.69911184307752);
+		assertTrue(value(pm, "add").equals(47.69911184307752));
 	}
 
 	@Test
@@ -365,7 +365,7 @@ public class Invokers {
 		put(pm, "x", 300.0);
 		put(pm, "y", 200.0);
 		logger.info("opt value: " + value(pm, "opt"));
-		assertEquals(value(pm, "opt"), 500.0);
+        assertTrue(value(pm, "opt").equals(500.0));
 	}
 
 	@Test
@@ -451,11 +451,11 @@ public class Invokers {
 		logger.info("opt1 value : " + value(pm, "opt1"));
 		assertEquals(value(pm, "opt1"), null);
 		logger.info("opt2 value: " + value(pm, "opt2"));
-		assertEquals(value(pm, "opt2"), 50.0);
+        assertTrue(value(pm, "opt2").equals(50.0));
 		logger.info("opt3 value: " + value(pm, "opt3"));
 		assertEquals(value(pm, "opt3"), null);
 		logger.info("opt4 value: " + value(pm, "opt4"));
-		assertEquals(value(pm, "opt4"), 70.0);
+        assertTrue(value(pm, "opt4").equals(70.0));
 		logger.info("alt value: " + value(alt));
 		assertEquals(value(alt), 50.0);
 
@@ -512,7 +512,7 @@ public class Invokers {
 		for (int i = 0; i < 10; i++) {
 			logger.info("" + value(pm, "y++"));
 		}
-		assertEquals(value(pm, "y++"), 13);
+        assertTrue(value(pm, "y++").equals(13));
 	}
 
 	@Test

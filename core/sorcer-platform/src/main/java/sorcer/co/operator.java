@@ -23,6 +23,7 @@ import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.par.Par;
 import sorcer.core.provider.DatabaseStorer;
 import sorcer.service.*;
+import sorcer.service.modeling.Model;
 import sorcer.util.Loop;
 import sorcer.util.Response;
 import sorcer.util.Sorcer;
@@ -598,6 +599,13 @@ public class operator {
 		return map;
 	}
 
+    public static Model dependsOn(Model dependee,  Evaluation depender) {
+        if (dependee instanceof Dependency)
+            ((Dependency)dependee).getDependers().add(depender);
+
+        return dependee;
+    }
+    
 	public static Evaluation  dependsOn(Evaluation dependee,  Evaluation depender) {
 		if (dependee instanceof Dependency)
 			((Dependency)dependee).getDependers().add(depender);

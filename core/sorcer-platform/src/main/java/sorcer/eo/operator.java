@@ -30,7 +30,6 @@ import sorcer.core.context.model.par.ParModel;
 import sorcer.core.deploy.ServiceDeployment;
 import sorcer.core.exertion.*;
 import sorcer.core.provider.*;
-import sorcer.core.provider.Shell;
 import sorcer.core.provider.rendezvous.ServiceConcatenator;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.core.provider.rendezvous.ServiceRendezvous;
@@ -42,6 +41,7 @@ import sorcer.core.signature.ServiceSignature;
 import sorcer.service.*;
 import sorcer.service.Signature.*;
 import sorcer.service.Strategy.*;
+import sorcer.service.modeling.Model;
 import sorcer.service.modeling.Variability;
 import sorcer.util.*;
 import sorcer.util.url.sos.SdbUtil;
@@ -224,19 +224,23 @@ public class operator {
 		return cxt;
 	}
 
-	public static Context response(Context context, String... responsePaths) throws ContextException {
+	public static <T extends Model> T response(T model, String... responsePaths) throws ContextException {
 		for (String path : responsePaths)
-		 	((ServiceContext)context).addResponsePath(path);
-		return context;
+		 	((ServiceContext)model).addResponsePath(path);
+		return model;
 	}
 
-	public static <T> T response(Context<T> context) throws ContextException {
+	public static <T> T response(Context<T> context) throws ContextException, RemoteException {
 		return ((ServiceContext<T>)context).getResponse();
 	}
 
-	public static Context responses(Context context) throws ContextException {
-		return ((ServiceContext)context).getResponses();
-	}
+	public static Model responses(Model model) throws ContextException {
+        try {
+            return ((ServiceContext)model).getResponses();
+        } catch (RemoteException e) {
+            throw new ContextException(e);
+        }
+    }
 	
 	public static Context scope(Object... entries) throws ContextException {
 		Object[] args = new Object[entries.length + 1];
@@ -263,7 +267,9 @@ public class operator {
 					(String) entries[0]).getContext();
 		} else if (entries[0] instanceof Context && entries[1] instanceof List) {
 			return ((ServiceContext)entries[0]).getSubcontext((List)entries[1]);
-		} else {
+		} else if (entries[0] instanceof ServiceModel) {
+            cxt = (ServiceModel)entries[0];
+        } else {
 			cxt = getPersistedContext(entries);
 			if (cxt != null) return cxt;
 		}
@@ -309,36 +315,40 @@ public class operator {
 			}
 		}
 
-		if (types.contains(Context.Type.ARRAY)) {
-			if (subject != null)
-				cxt = new ArrayContext(name, subject.path(), subject.value());
-			else
-				cxt = new ArrayContext(name);
-		} else if (types.contains(Context.Type.LIST)) {
-			if (subject != null)
-				cxt = new ListContext(name, subject.path(), subject.value());
-			else
-				cxt = new ListContext(name);
-		} else if (types.contains(Context.Type.SCOPE)) {
-			cxt = new ScopeContext(name);
-		} else if (types.contains(Context.Type.SHARED)
-				&& types.contains(Context.Type.INDEXED)) {
-			cxt = new SharedIndexedContext(name);
-		} else if (types.contains(Context.Type.SHARED)) {
-			cxt = new SharedAssociativeContext(name);
-		} else if (types.contains(Context.Type.ASSOCIATIVE)) {
-			if (subject != null)
-				cxt = new ServiceContext(name, subject.path(), subject.value());
-			else
-				cxt = new ServiceContext(name);
-		} else {
-			if (subject != null) {
-				cxt = new PositionalContext(name, subject.path(),
-						subject.value());
-			} else {
-				cxt = new PositionalContext(name);
-			}
-		}
+        if (cxt == null) {
+            if (types.contains(Context.Type.ARRAY)) {
+                if (subject != null)
+                    cxt = new ArrayContext(name, subject.path(), subject.value());
+                else
+                    cxt = new ArrayContext(name);
+            } else if (types.contains(Context.Type.LIST)) {
+                if (subject != null)
+                    cxt = new ListContext(name, subject.path(), subject.value());
+                else
+                    cxt = new ListContext(name);
+            } else if (types.contains(Context.Type.SCOPE)) {
+                cxt = new ScopeContext(name);
+            } else if (types.contains(Context.Type.SHARED)
+                    && types.contains(Context.Type.INDEXED)) {
+                cxt = new SharedIndexedContext(name);
+            } else if (types.contains(Context.Type.SHARED)) {
+                cxt = new SharedAssociativeContext(name);
+            } else if (types.contains(Context.Type.ASSOCIATIVE)) {
+                if (subject != null)
+                    cxt = new ServiceContext(name, subject.path(), subject.value());
+                else
+                    cxt = new ServiceContext(name);
+            } else {
+                if (subject != null) {
+                    cxt = new PositionalContext(name, subject.path(),
+                            subject.value());
+                } else {
+                    cxt = new PositionalContext(name);
+                }
+            }
+        }
+            
+        
 		if (cxt instanceof PositionalContext) {
 			PositionalContext pcxt = (PositionalContext) cxt;
 			if (entryList.size() > 0)
@@ -485,9 +495,10 @@ public class operator {
 		}
 	}
 
-	public static Context add(Context context, Identifiable... objects)
+	public static Context add(Model model, Identifiable... objects)
 			throws RemoteException, ContextException {
 		boolean isReactive = false;
+        Context context = (Context) model;
 		for (Identifiable i : objects) {
 			if (i instanceof Reactive && ((Reactive)i).isReactive()) {
 				isReactive = true;
@@ -694,7 +705,7 @@ public class operator {
 		return null;
 	}
 
-	public static Paradigmatic model(Paradigmatic paradigm) {
+	public static Paradigmatic modeling(Paradigmatic paradigm) {
 		paradigm.setModeling(true);
 		return paradigm;
 	}
@@ -1383,13 +1394,38 @@ public class operator {
 		return value((Evaluation)service, entries);
 	}
 
+    public static Object reply(Service service, Arg... entries) throws ServiceException {
+        try {
+            if (service instanceof Model) {
+                return value((Context) service, entries);
+            } else {
+                return value((Evaluation) service, entries);
+            }
+        } catch (Exception e) {
+            throw new ServiceException(e);
+        }
+    }
+    
+    public static <T> T value(Context<T> model, Arg... entries)
+            throws ContextException {
+        try {
+            synchronized (model) {
+                if (model instanceof ParModel) {
+                    return ((ParModel<T>) model).getValue(entries);
+                } else {
+                    return (T) ((ServiceContext)model).getValue(entries);
+                }
+            }
+        } catch (Exception e) {
+            throw new ContextException(e);
+        }
+    }
+    
 	public static <T> T value(Evaluation<T> evaluation, Arg... entries)
 			throws EvaluationException {
 		try {
 			synchronized (evaluation) {
-				if (evaluation instanceof ParModel) {
-					return ((ParModel<T>) evaluation).getValue(entries);
-				} else if (evaluation instanceof Exertion) {
+				if (evaluation instanceof Exertion) {
 					return (T) getValue((Exertion) evaluation, entries);
 				} else if (evaluation instanceof Par){
 					return ((Par<T>)evaluation).getValue(entries);
@@ -1404,33 +1440,35 @@ public class operator {
 		}
 	}
 
+    public static <T> T value(Context<T> model, String evalSelector,
+                              Arg... entries) throws ContextException {
+        if (model instanceof ParModel) {
+                return (T) ((ParModel) model).getValue(evalSelector,
+                        entries);
+        }  else if (model instanceof Context) {
+            try {
+                Object val = ((Context) model).getValue(evalSelector,
+                        entries);
+                if (SdbUtil.isSosURL(val)) {
+                    return (T) ((URL) val).getContent();
+                } else {
+                    return (T)val;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw new ContextException(e);
+            }
+        }
+        return null;
+    }
+    
 	public static <T> T value(Evaluation<T> evaluation, String evalSelector,
 							  Arg... entries) throws EvaluationException {
-		if (evaluation instanceof ParModel) {
-			try {
-				return (T) ((ParModel) evaluation).getValue(evalSelector,
-						entries);
-			} catch (ContextException e) {
-				throw new EvaluationException(e);
-			}
-		} else if (evaluation instanceof Exertion) {
+		if (evaluation instanceof Exertion) {
 			try {
 				((ServiceContext)((Exertion) evaluation).getContext())
 						.setReturnPath(new ReturnPath(evalSelector));
 				return (T) getValue((Exertion) evaluation, entries);
-			} catch (Exception e) {
-				e.printStackTrace();
-				throw new EvaluationException(e);
-			}
-		} else if (evaluation instanceof Context) {
-			try {
-				Object val = ((Context) evaluation).getValue(evalSelector,
-						entries);
-				if (SdbUtil.isSosURL(val)) {
-					return (T) ((URL) val).getContent();
-				} else {
-					return (T)val;
-				}
 			} catch (Exception e) {
 				e.printStackTrace();
 				throw new EvaluationException(e);
@@ -1551,7 +1589,7 @@ public class operator {
 	public static Object exec(Context context, Arg... args)
 			throws ExertionException, ContextException {
 		try {
-			context.substitute(args);
+            ((ServiceContext)context).substitute(args);
 		} catch (RemoteException e) {
 			throw new ContextException(e);
 		}
@@ -1714,10 +1752,14 @@ public class operator {
 	public static <T extends Service> T exert(T input, Arg... args)
 			throws ExertionException {
 		try {
-			return  (T)((Exertion)input).exert(null, args);
+            if (input instanceof Exertion)
+			    return  (T)((Exertion)input).exert(null, args);
+            else if (input instanceof Model)
+                return  (T)((Model)input).exert(null, args);
 		} catch (Exception e) {
 			throw new ExertionException(e);
 		}
+        return null;
 	}
 
 	public static <T extends Exertion> T exert(Signature signature, Exertion input)
@@ -2317,10 +2359,23 @@ public class operator {
 		return signature;
 	}
 
-	public static Signature model(Signature signature) {
-		((ServiceSignature)signature).addRank(Kind.MODEL, Kind.TASKER);
-		return signature;
-	}
+    public static Model model(Object... items) throws ContextException {
+        ServiceFidelity fidelity = null;
+        for (Object item : items) {
+           if (item instanceof Signature) {
+               if (fidelity == null)
+                   fidelity = new ServiceFidelity();
+               fidelity.add((Signature) item);
+            }
+        }
+        ServiceModel model = new  ServiceModel();
+        if (fidelity != null)
+            model.setFidelity(fidelity);
+        Object[] dest = new Object[items.length+1];
+        System.arraycopy(items,  0, dest,  1, items.length);
+        dest[0] = model;
+        return context(dest);
+    }
 
 	public static Signature modelManager(Signature signature) {
 		((ServiceSignature)signature).addRank(Kind.MODEL, Kind.MODEL_MANAGER);

@@ -39,7 +39,11 @@ public class PositionalContext<T> extends ServiceContext<T> implements
 	public PositionalContext(String name) {
 		super(name);
 	}
-	
+
+    public PositionalContext(Context context) throws ContextException {
+        super(context);
+    }
+    
 	public PositionalContext(String name, String subjectPath, Object subjectValue) {
 		super(name, subjectPath, subjectValue);
 	}

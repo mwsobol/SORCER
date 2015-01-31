@@ -29,10 +29,9 @@ public interface Dependency {
     /**
      * Creates a dependenvy bewteen two eavaluation in a given Context.
      *
-     * @param depender
-     * @return dependee
+     * @param dependers
      */
-    public Evaluation addDepender(Evaluation depender);
+    public void addDependers(Evaluation... dependers);
 
 
     /**

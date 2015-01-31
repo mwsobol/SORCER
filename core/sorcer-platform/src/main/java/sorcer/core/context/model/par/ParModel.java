@@ -56,7 +56,7 @@ import static sorcer.eo.operator.returnPath;
  * @author Mike Sobolewski
  */
 @SuppressWarnings({"unchecked", "rawtypes"  })
-public class ParModel<T> extends ServiceContext<T> implements Evaluation<T>, Invocation<T>, ParModeling {
+public class ParModel<T> extends ServiceContext<T> implements Invocation<T>, ParModeling {
 	
 	private static final long serialVersionUID = -6932730998474298653L;
 	
@@ -391,7 +391,7 @@ public class ParModel<T> extends ServiceContext<T> implements Evaluation<T>, Inv
 		while (i.hasNext()) {
 			Map.Entry<String, Object> e = i.next();
 			if (!contains(e.getKey()) && e.getKey().equals("script")) {
-				put(e.getKey(), context.asis());
+				put(e.getKey(), context.asis(e.getKey()));
 			}
 		}
 		return this;

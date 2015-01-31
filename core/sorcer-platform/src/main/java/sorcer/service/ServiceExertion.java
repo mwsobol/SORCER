@@ -1496,19 +1496,11 @@ public abstract class ServiceExertion implements Exertion, Scopable, SorcerConst
 		this.isProxy = isProxy;
 	}
 
-	public Exertion addDepender(Evaluation depender) {
-		if (this.dependers == null)
-			this.dependers = new ArrayList<Evaluation>();
-		dependers.add(depender);
-		return this;
-	}
-
-	public Evaluation addDependers(Evaluation... dependers) {
+	public void addDependers(Evaluation... dependers) {
 		if (this.dependers == null)
 			this.dependers = new ArrayList<Evaluation>();
 		for (Evaluation depender : dependers)
 			this.dependers.add(depender);
-		return this;
 	}
 
 	/* (non-Javadoc)

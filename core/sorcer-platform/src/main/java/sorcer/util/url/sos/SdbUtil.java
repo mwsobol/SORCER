@@ -172,7 +172,7 @@ public class SdbUtil {
 
 	static public URL update(Uuid storeUuid, Object value)
 			throws ExertionException, SignatureException, ContextException {
-		Service objectUpdateTask = task(
+		Task objectUpdateTask = task(
 				"update",
 				sig("contextUpdate", DatabaseStorer.class,
 						prvName(Sorcer.getActualDatabaseStorerName())),

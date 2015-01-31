@@ -17,7 +17,12 @@
 
 package sorcer.service.modeling;
 
+import sorcer.service.Arg;
+import sorcer.service.Context;
+import sorcer.service.ContextException;
 import sorcer.service.Mogram;
+
+import java.rmi.RemoteException;
 
 /**
  * An top-level common interface for all service Models in SORCER.
@@ -25,5 +30,15 @@ import sorcer.service.Mogram;
  * @author Mike Sobolewski
  */
 public interface Model extends Mogram {
+    
+    public Context getInputs()  throws ContextException, RemoteException;
+    
+    public Context getOutputs()  throws ContextException, RemoteException;
+    
+    public Context getResponses(Arg... entries)  throws ContextException, RemoteException;
+
+    public Object getResponse(String path, Arg... entries)  throws ContextException, RemoteException;
+
+    public Object getResponse() throws ContextException, RemoteException;
 
 }

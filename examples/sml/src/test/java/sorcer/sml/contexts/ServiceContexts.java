@@ -9,6 +9,7 @@ import sorcer.co.tuple.Entry;
 import sorcer.core.context.Copier;
 import sorcer.core.context.ListContext;
 import sorcer.service.Context;
+import sorcer.service.modeling.Model;
 
 import java.net.URL;
 import java.util.logging.Logger;
@@ -358,22 +359,41 @@ public class ServiceContexts {
 		assertTrue(result.equals(context(ent("add", 4.0), ent("multiply", 20.0))));
 	}
 
+    @Test
+         public void exertEntModel() throws Exception {
+        Context cxt = entModel(ent("arg/x1", 1.0), ent("arg/x2", 2.0),
+                ent("arg/x3", 3.0), ent("arg/x4", 4.0), ent("arg/x5", 5.0));
 
-	public void exertModel() throws Exception {
-		Context cxt = entModel(sig("add", AdderImpl.class), ent("arg/x1", 1.0), ent("arg/x2", 2.0),
-				ent("arg/x3", 3.0), ent("arg/x4", 4.0), ent("arg/x5", 5.0));
+        add(cxt, ent("add", invoker("x1 + x3", ents("x1", "x3"))));
 
-		add(cxt, ent("add", invoker("x1 + x3", ents("x1", "x3"))));
+        add(cxt, ent("multiply", invoker("x4 * x5", ents("x4", "x5"))));
 
-		add(cxt, ent("multiply", invoker("x4 * x5", ents("x4", "x5"))));
+        // two responses declared
+        response(cxt, "add", "multiply");
 
-		// two responses declared
-		response(cxt, "add", "multiply");
+        // exert the model
+        Context result = exert(cxt);
 
-		// exert the model
-		Context result = exert(cxt);
-
-		logger.info("result: " + responses(result));
+        logger.info("result: " + responses(result));
 //		assertTrue(result.equals(context(ent("add", 4.0), ent("multiply", 20.0))));
-	}
+    }
+
+    @Test
+    public void exertModel() throws Exception {
+        Model m = model(sig("add", AdderImpl.class),
+                inEnt("arg/x1", 1.0), inEnt("arg/x2", 2.0),
+                ent("arg/x3", 3.0), ent("arg/x4", 4.0), ent("arg/x5", 5.0));
+
+        add(m, ent("add", invoker("x1 + x3", ents("x1", "x3"))));
+
+        add(m, ent("multiply", invoker("x4 * x5", ents("x4", "x5"))));
+
+        // two responses declared
+        response(m, "add", "multiply", "result/value");
+        // exert the model
+        Model model = exert(m);
+        // logger.info("model: " + model);
+        logger.info("result: " + responses(model));
+		assertTrue(responses(model).equals(context(ent("add", 4.0), ent("multiply", 20.0), ent("result/value", 3.0))));
+    }
 }
