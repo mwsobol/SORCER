@@ -2997,6 +2997,13 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
         return getValue(path, entries);
     }
 
+    public String getResponsePath() throws ContextException {
+        if (responsePaths != null && responsePaths.size() == 1)
+            return responsePaths.get(0);
+        else
+            throw new ContextException("No valid unique response available");
+    }
+    
     public T getResponse() throws ContextException, RemoteException {
         try {
             if (responsePaths != null && responsePaths.size() == 1)

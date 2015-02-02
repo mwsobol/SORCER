@@ -81,12 +81,27 @@ public class operator {
 		return attributes.get(0);
 	}
 
-	public static Object revalue(Evaluation evaluation, String path,
+    public static Object revalue(Context evaluation, String path,
+                                 Arg... entries) throws ContextException {
+        Object obj = value(evaluation, path, entries);
+        if (obj instanceof Evaluation) {
+            obj = value((Evaluation) obj, entries);
+        }
+        return obj;
+    }
+    
+	public static Object revalue(Object object, String path,
 								 Arg... entries) throws ContextException {
-		Object obj = value(evaluation, path, entries);
-		if (obj instanceof Evaluation) {
-			obj = value((Evaluation) obj, entries);
-		}
+        Object obj = null;
+        if (object instanceof Evaluation || object instanceof Context) {
+            obj = value((Evaluation) object, path, entries);
+            obj = value((Evaluation) obj, entries);
+        } else if  (object instanceof Context) {
+            obj = value((Context) object, path, entries);
+            obj = value((Context) obj, entries);
+        }  else {
+            obj = object;
+        }
 		return obj;
 	}
 
@@ -95,7 +110,13 @@ public class operator {
 		Object obj = null;
 		if (object instanceof Evaluation) {
 			obj = value((Evaluation) object, entries);
-		}
+		} else if (object instanceof Context) {
+            try {
+                obj = value((Context) object, entries);
+            } catch (ContextException e) {
+                throw new EvaluationException(e);
+            }
+        }
 		if (obj == null) {
 			obj = object;
 		}
@@ -1339,8 +1360,8 @@ public class operator {
 
 	public static Object get(Exertion exertion) throws ContextException,
 			RemoteException {
-		return ((ServiceContext) exertion.getContext()).getReturnValue();
-	}
+        return ((ServiceContext) exertion.getContext()).getReturnValue();
+    }
 
 	public static <T extends Evaluation> Object asis(T evaluation) throws EvaluationException {
 		if (evaluation instanceof Evaluation) {
@@ -1981,11 +2002,11 @@ public class operator {
 		private static final long serialVersionUID = 1L;
 		public Object target;
 
-		Response(Object target) {
+		public Response(Object target) {
 			this.target = target;
 		}
 
-		Response(String path, Object target) {
+		public Response(String path, Object target) {
 			this.target = target;
 			this._1 = path;
 		}
