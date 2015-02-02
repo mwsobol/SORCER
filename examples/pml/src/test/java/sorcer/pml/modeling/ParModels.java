@@ -27,21 +27,9 @@ import java.util.logging.Logger;
 
 import static org.junit.Assert.*;
 import static sorcer.co.operator.*;
-import static sorcer.co.operator.names;
-import static sorcer.co.operator.persistent;
-import static sorcer.eo.operator.asis;
 import static sorcer.eo.operator.*;
-import static sorcer.eo.operator.get;
-import static sorcer.eo.operator.in;
-import static sorcer.eo.operator.pipe;
-import static sorcer.eo.operator.put;
-import static sorcer.eo.operator.value;
-import static sorcer.po.operator.add;
 import static sorcer.po.operator.*;
-import static sorcer.po.operator.asis;
-import static sorcer.po.operator.loop;
-import static sorcer.po.operator.put;
-import static sorcer.po.operator.set;
+
 
 
 /**
@@ -157,7 +145,7 @@ public class ParModels {
 		logger.info("add value: " + value(pm, "add"));
 		assertEquals(value(pm, "add"), 30.0);
 
-		target(pm, "add");
+        addResponse(pm, "add");
 		logger.info("pm context value: " + value(pm));
 		assertEquals(value(pm), 30.0);
 
@@ -181,7 +169,7 @@ public class ParModels {
 		assertEquals(value(pm, "add"), 30.0);
 
 		// now evaluate model for its target       
-		target(pm, "add");
+        addResponse(pm, "add");
 		assertEquals(value(pm), 30.0);
 	}
 
@@ -199,23 +187,20 @@ public class ParModels {
 
 		put(pm, "y", 40.0);
 
-		logger.info("par model1:" + pm);
-
 		assertEquals(value(pm, "x"), 20.0);
 		assertEquals(value(pm, "y"), 40.0);
 		assertEquals(value(pm, "add"), 60.0);
 
-		target(pm, "add");
+        addResponse(pm, "add");
 		assertEquals(value(pm), 60.0);
 
 		add(pm, par("x", 10.0), par("y", 20.0));
 		assertEquals(value(pm, "x"), 10.0);
 		assertEquals(value(pm, "y"), 20.0);
 
-		logger.info("par model2:" + pm);
 		assertEquals(value(pm, "add"), 30.0);
 
-		target(pm, "add");
+		response(pm, "add");
 		assertEquals(value(pm), 30.0);
 
 		// with new arguments, closure

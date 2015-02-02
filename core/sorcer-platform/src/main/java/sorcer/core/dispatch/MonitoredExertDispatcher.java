@@ -179,7 +179,7 @@ public abstract class MonitoredExertDispatcher extends ExertDispatcher
 
 	}
 
-	// Made private so that other classes just calls execExertion and not
+	// Made private so that other classes just calls getValue and not
 	// execTask
 	private void execTask(NetTask task) throws ExertionException,
 			SignatureException {

@@ -38,7 +38,7 @@ import java.util.logging.Logger;
 
 import static sorcer.eo.operator.provider;
 
-public class ServiceSignature implements Signature, Service, SorcerConstants {
+public class ServiceSignature implements Signature, Service, Evaluation<Object>, SorcerConstants {
 
 	static final long serialVersionUID = -8527094638557595398L;
 
@@ -59,6 +59,8 @@ public class ServiceSignature implements Signature, Service, SorcerConstants {
 	// the indicated usage of this signature
 	protected Set<Kind> rank = new HashSet<Kind>();
 
+    // dependency management for this Signature
+    protected List<Evaluation> dependers = new ArrayList<Evaluation>();
 
 	// Must initialize to ANY to have correct JavaSpace workers behavior
 	// to have exertions with providerName/serviceInfo specified going to
@@ -453,18 +455,13 @@ public class ServiceSignature implements Signature, Service, SorcerConstants {
 		// should be implemented by subclasses
 		return null;
 	}
-	
-	public static Class<?> getClass(String serviceName) {
-		Class<?> serviceType = null;
-		try {
-			serviceType = Class.forName(serviceName);
-		} catch (ClassNotFoundException e) {
-			System.err.println("Can not load type: " + serviceName);
-		}
-		return serviceType;
-	}
 
-	public String getName() {
+    @Override
+    public Object getId() {
+        return selector;
+    }
+
+    public String getName() {
 		return name;
 	}
 
@@ -569,15 +566,16 @@ public class ServiceSignature implements Signature, Service, SorcerConstants {
 	}
 
 	@Override
-	public Exertion service(Exertion exertion, Transaction txn) 
-			throws TransactionException, ExertionException, RemoteException {
-		Provider prv = (Provider) ProviderLookup.getProvider(this);
+	public Mogram service(Mogram exertion, Transaction txn) throws TransactionException,
+		ExertionException, RemoteException {
+		Provider prv = ProviderLookup.getProvider(this);
 		return prv.service(exertion, txn);
 	}
 
 	@Override
-	public Exertion service(Exertion exertion) throws TransactionException, ExertionException, RemoteException {
-		return service(exertion,null);
+	public Mogram service(Mogram exertion) throws TransactionException,
+			ExertionException, RemoteException {
+		return service(exertion, null);
 	}
 
 	@Override
@@ -598,4 +596,18 @@ public class ServiceSignature implements Signature, Service, SorcerConstants {
 	public Evaluation substitute(Arg... entries) throws SetterException, RemoteException {
 		return this;
 	}
+
+    @Override
+    public void addDependers(Evaluation... dependers) {
+        if (this.dependers == null)
+            this.dependers = new ArrayList<Evaluation>();
+        for (Evaluation depender : dependers)
+            this.dependers.add(depender);
+    }
+
+    @Override
+    public List<Evaluation> getDependers() {
+        return dependers;
+    }
+
 }

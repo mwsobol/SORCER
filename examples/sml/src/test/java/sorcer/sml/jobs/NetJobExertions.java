@@ -391,7 +391,7 @@ public class NetJobExertions implements SorcerConstants {
 				"t4",
 				sig("multiply", Multiplier.class),
 				context("multiply", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
-						outEnt("result/y", null)));
+						outEnt("result/y")));
 
 		Task t5 = task(
 				"t5",
@@ -482,7 +482,7 @@ public class NetJobExertions implements SorcerConstants {
 						maintain(1),
 						idle("3h"))),
 				context("multiply", inEnt("arg/x1", 10.0d),
-						inEnt("arg/x2", 50.0d), outEnt("result/y1", null)));
+						inEnt("arg/x2", 50.0d), outEnt("result/y1")));
 
 		Task f5 = task(
 				"f5",
@@ -492,7 +492,7 @@ public class NetJobExertions implements SorcerConstants {
 						configuration("bin/examples/ex6/configs/adder-prv.config"),
 						idle(60*3))),
 				context("add", inEnt("arg/x3", 20.0d), inEnt("arg/x4", 80.0d),
-						outEnt("result/y2", null)));
+						outEnt("result/y2")));
 
 		Task f3 = task(
 				"f3",
@@ -501,7 +501,7 @@ public class NetJobExertions implements SorcerConstants {
 						codebase("arithmetic-dl.jar"),
 						configuration("bin/examples/ex6/configs/subtractor-prv.config"))),
 				context("subtract", inEnt("arg/x5", null),
-						inEnt("arg/x6", null), outEnt("result/y3", null)));
+						inEnt("arg/x6"), outEnt("result/y3")));
 
 		// job("f1", job("f2", f4, f5), f3,
 		// job("f1", job("f2", f4, f5, strategy(Flow.PAR, Access.PULL)), f3,

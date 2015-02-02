@@ -1,6 +1,6 @@
 /*
- * Copyright 2014 the original author or authors.
- * Copyright 2014 SorcerSoft.org.
+ * Copyright 2015 the original author or authors.
+ * Copyright 2015 SorcerSoft.org.
  *  
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,32 +15,18 @@
  * limitations under the License.
  */
 
-package sorcer.service;
+package sorcer.core.provider;
 
-import java.util.List;
+import sorcer.service.Service;
+
+import java.rmi.Remote;
 
 /**
- * A functionality required by major evaluations in SORCER.
+ * A service coordinating a {@link sorcer.service.modeling.Model} execution by creating a
+ * runtime federation of all needed service providers to execute all requested
+ * entries (variables) of the received model.
  *
  * @author Mike Sobolewski
  */
-public interface Dependency {
-
-    /**
-     * Creates a dependenvy bewteen two eavaluation in a given Context.
-     *
-     * @param dependers
-     */
-    public void addDependers(Evaluation... dependers);
-
-
-    /**
-     * Return a list of all depndent Evaluations
-     * @return
-     */
-    public List<Evaluation> getDependers();
-
+public interface Modeler extends Service, Remote {
 }
-
-
-

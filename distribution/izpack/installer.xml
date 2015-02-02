@@ -82,7 +82,7 @@ SORCER installation file.
 	<packs>
 		<pack name="SORCER Platform" installGroups="All, SORCER Platform" required="yes">
 			<description>SORCER Platform Distribution</description>
-			<fileset dir="../build/sorcer-5.0.1" targetdir="$INSTALL_PATH" defaultexcludes="yes"/>
+			<fileset dir="../build/sorcer-5.0.2" targetdir="$INSTALL_PATH" defaultexcludes="yes"/>
 		</pack>
 
 <!--

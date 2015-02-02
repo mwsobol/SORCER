@@ -129,11 +129,6 @@ public class operator {
 			obj = ((Par)obj).getValue(parametrs);
 		return (T)obj;
 	}
-	
-	public static Object asis(ParModel pm, String parname)
-			throws ContextException {
-		return pm.asis(parname);
-	}
 		
 	public static Invocation invoker(Mappable mappable, String path)
 			throws ContextException {

@@ -26,23 +26,8 @@ import java.util.logging.Logger;
 
 import static org.junit.Assert.*;
 import static sorcer.co.operator.*;
-import static sorcer.co.operator.path;
-import static sorcer.co.operator.persistent;
-import static sorcer.co.operator.put;
-import static sorcer.co.operator.set;
-import static sorcer.co.operator.value;
 import static sorcer.eo.operator.*;
-import static sorcer.eo.operator.add;
-import static sorcer.eo.operator.asis;
-import static sorcer.eo.operator.get;
-import static sorcer.eo.operator.in;
-import static sorcer.eo.operator.pipe;
-import static sorcer.eo.operator.put;
-import static sorcer.eo.operator.value;
-import static sorcer.po.operator.add;
-import static sorcer.po.operator.asis;
 import static sorcer.po.operator.*;
-import static sorcer.po.operator.set;
 
 /**
  * @author Mike Sobolewski

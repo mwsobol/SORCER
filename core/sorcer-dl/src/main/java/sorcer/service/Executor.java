@@ -18,19 +18,18 @@
 
 package sorcer.service;
 
-import java.rmi.RemoteException;
-
-import javax.security.auth.Subject;
-
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
 
+import javax.security.auth.Subject;
+import java.rmi.RemoteException;
+
 /**
  * An top-level common local interface for all service-to-service (S2S)
- * providers in SORCER. Each service accepts a service-oriented message
- * {@link Exertion} to be processed locally as the result
- * {@link Service#service(Exertion, Transaction)} of and returns it after
- * exerting it.
+ * providers in SORCER. Each service accepts a service-oriented mogram
+ * {@link sorcer.service.Mogram} to be processed locally as the follow up of
+ * {@link Service#service(Mogram, Transaction)} and returns the mogram after
+ * executing it locally.
  * 
  * @author Mike Sobolewski
  */
@@ -42,8 +41,8 @@ public interface Executor {
 	 * <code>Service</code> peer and directly by a <code>Service</code>
 	 * matching the exertion's method {@link Signature}.
 	 * 
-	 * @param exertion
-	 *            an input exertion
+	 * @param mogram
+	 *            an input mogram
 	 * @param txn
 	 *            The transaction (if any) under which to provide service.
 	 * @return a resulting exertion
@@ -53,7 +52,7 @@ public interface Executor {
 	 *             if an exertion invocation failed for any reason
 	 */
 	
-	public Exertion execute(Exertion exertion, Transaction txn)
+	public Mogram execute(Mogram mogram, Transaction txn)
 			throws TransactionException, ExertionException, RemoteException;
 	
 	/**
@@ -62,8 +61,8 @@ public interface Executor {
 	 * 
 	 * @param subject
 	 *            <code>subject</code> invoking the <code>exertion</code>
-	 * @param task
-	 *            an input task
+	 * @param signature
+	 *            a signature
 	 * @return true if authorized, otherwise false
 	 * @throws RemoteException
 	 */

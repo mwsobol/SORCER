@@ -17,22 +17,17 @@
 
 package sorcer.core.context;
 
+import sorcer.service.*;
+
 import java.util.Arrays;
 import java.util.List;
-
-import sorcer.service.Context;
-import sorcer.service.ContextException;
-import sorcer.service.Contexter;
-import sorcer.service.Evaluation;
-import sorcer.service.Invocation;
-import sorcer.service.Positioning;
 
 /**
  * @author Mike Sobolewski
  */
 @SuppressWarnings("unchecked")
 public class PositionalContext<T> extends ServiceContext<T> implements
-		Positioning, Evaluation<T>, Invocation<T>, Contexter<T> {
+		Positioning, Invocation<T>, Contexter<T> {
 
 	private static final long serialVersionUID = -8607789835474515562L;
 	private int tally = 0;
@@ -44,7 +39,11 @@ public class PositionalContext<T> extends ServiceContext<T> implements
 	public PositionalContext(String name) {
 		super(name);
 	}
-	
+
+    public PositionalContext(Context context) throws ContextException {
+        super(context);
+    }
+    
 	public PositionalContext(String name, String subjectPath, Object subjectValue) {
 		super(name, subjectPath, subjectValue);
 	}
