@@ -92,16 +92,22 @@ subprojects {
 
 }
 
+gradle.taskGraph.whenReady { graph ->
+    if (graph.hasTask(":allTests")) {
+        project.subprojects { project ->
+            tasks.withType(Test) {
+                /* Disable the test report for the individual test task */
+                reports.html.enabled = false
+            }
+        }
+    }
+}
+
 task allTests(type: TestReport, dependsOn: "bootSorcerRio") {
     description = 'Aggregates all tests, view them in build/reports/tests/index.html.'
     destinationDir = file("$buildDir/reports/allTests")
     project.subprojects { project ->
-        /* Disable the test report for the individual test task */
-        /* test {
-             reports.html.enabled = true
-         }*/
         tasks.withType(Test) {
-            reports.html.enabled = false
             ignoreFailures true
             reportOn it
         }
