@@ -30,11 +30,11 @@ def repoPath() {
 
 def deployConfig = file("src/test/resources/deploy/configs/multiplier-prv.config")
 artifacts {
-    archives deployConfig
+    archives file: deployConfig, classifier: "deploy"
 }
 
 test {
-    dependsOn([":sorcer-int-tests:sorcer-tester:install"])
+    dependsOn([":sorcer-int-tests:sorcer-tester:install", install])
     systemProperty "sorcer.version", version
     systemProperty "java.rmi.server.codebase",
                    "${websterUrl}/${repoPath()}/sorcer-tester-${version}-dl.jar ${websterUrl}/sorcer-dl-${version}.jar ${websterUrl}/jsk-dl-${riverVersion}.jar"
