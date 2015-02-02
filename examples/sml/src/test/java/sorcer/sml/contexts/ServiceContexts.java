@@ -335,7 +335,7 @@ public class ServiceContexts {
 		add(cxt2, ent("invoke", invoker("y1 + y2 + y4 + y5", ents("y1", "y2", "y4", "y5"))));
         addResponse(cxt2, "invoke");
 
-		// created dependency on cxt1 via a context copier
+		// created dependency of cxt2 on cxt1 via a context copier
 		Copier cp = copier(cxt1, ents("arg/x1", "arg/x2"), cxt2, ents("y1", "y2"));
 		dependsOn(cxt2, cp);
 

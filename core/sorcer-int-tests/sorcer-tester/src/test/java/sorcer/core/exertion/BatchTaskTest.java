@@ -30,10 +30,10 @@ public class BatchTaskTest {
 			.getName());
 	
 	@Test
-	public void batchTask3Test() throws Exception {
+	public void batchTaskTest() throws Exception {
 		// batch for the composition f1(f2(f3((x1, x2), f4(x1, x2)), f5(x1, x2))
 		// shared context with named paths
-		Task batch3 = task("batch3",
+		Task batch3 = task("batch",
 				type(sig("multiply", MultiplierImpl.class, result("subtract/x1", Direction.IN)), Signature.PRE),
 				type(sig("add", AdderImpl.class, result("subtract/x2", Direction.IN)), Signature.PRE),
 				sig("subtract", SubtractorImpl.class, result("result/y", from("subtract/x1", "subtract/x2"))),
@@ -49,10 +49,10 @@ public class BatchTaskTest {
 	
 	
 	@Test
-	public void batchTask4Test() throws Exception {
+	public void prefixedBatchTaskTest() throws Exception {
 		// batch for the composition f1(f2(f3((x1, x2), f4(x1, x2)), f5(x1, x2))
 		// shared context with prefixed paths
-		Task batch3 = task("batch3",
+		Task batch3 = task("batch",
 				type(sig("multiply#op1", MultiplierImpl.class, result("op3/x1", Direction.IN)), Signature.PRE),
 				type(sig("add#op2", AdderImpl.class, result("op3/x2", Direction.IN)), Signature.PRE),
 				sig("subtract", SubtractorImpl.class, result("result/y", from("op3/x1", "op3/x2"))),
