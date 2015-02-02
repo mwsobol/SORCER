@@ -73,7 +73,8 @@ import sorcer.service.Strategy.Flow;
  * @author Mike Sobolewski
  */
 @SuppressWarnings("rawtypes")
-public interface Exertion extends Service<Object>, Dependency, Invocation<Object>, Paradigmatic, Mappable, Serializable, Identifiable {
+public interface Exertion extends Mogram, Dependency, Invocation<Object>, Evaluation<Object>,
+		Paradigmatic, Mappable, Serializable, Identifiable {
 
 	/**
 	 * Returns a name of this exertion.
@@ -218,26 +219,7 @@ public interface Exertion extends Service<Object>, Dependency, Invocation<Object
 	 * @see {@link Access}.
 	 */
 	public Access getAccessType();
-	
-	/**
-	 * Sends this exertion to the assigned service provider if set. If a service
-	 * provider is not set then in runtime it bounds to any available provider
-	 * that matches this exersion's signature of the <code>PROCESS</code> type.
-	 * 
-	 * @param txn
-	 *            The transaction (if any) under which to exert.
-	 * @return a resulting exertion
-	 * @throws TransactionException
-	 *             if a transaction error occurs
-	 * @throws ExertionException
-	 *             if processing this exertion causes an error
-	 */
-	public <T extends Exertion> T exert(Transaction txn, Arg... entries) throws TransactionException,
-			ExertionException, RemoteException;
 
-	public Exertion exert(Arg... entries) throws TransactionException, ExertionException,
-			RemoteException;
-	
 	/**
 	 * Returns the list of traces of thrown exceptions.
 	 * @return ThrowableTrace list

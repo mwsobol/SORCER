@@ -109,7 +109,7 @@ task runRequestor(type:JavaExec, dependsOn:[install]) {
 //    args = ["sorcer.requestor.adder.AdderRequestor", "netlet"]
 //  Requires service provisioning support - bootSorcerRio
     args = ["sorcer.requestor.adder.AdderRequestor", "dynamic"]
-//	finalizedBy (":stopme")
+	finalizedBy (":stopme")
 }
 
 test {

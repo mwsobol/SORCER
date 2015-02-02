@@ -17,19 +17,14 @@
 
 package sorcer.core.exertion;
 
-import java.rmi.RemoteException;
-
 import net.jini.core.transaction.Transaction;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.invoker.MethodInvoker;
 import sorcer.core.provider.rendezvous.ServiceConcatenator;
 import sorcer.core.signature.ObjectSignature;
-import sorcer.service.Block;
-import sorcer.service.Context;
-import sorcer.service.Evaluator;
-import sorcer.service.Exertion;
-import sorcer.service.ExertionException;
-import sorcer.service.SignatureException;
+import sorcer.service.*;
+
+import java.rmi.RemoteException;
 
 /**
  * The SORCER object block extending the basic block implementation {@link Block}.
@@ -68,7 +63,7 @@ public class ObjectBlock extends Block {
 				evaluator = new MethodInvoker(os.newInstance(),
 						os.getSelector());
 			}
-			evaluator.setParameterTypes(new Class[] { Exertion.class });
+			evaluator.setParameterTypes(new Class[] { Mogram.class });
 			evaluator.setParameters(new Object[] { this });
 			result = (Block)evaluator.evaluate();
 			getControlContext().appendTrace("" + evaluator);

@@ -17,6 +17,7 @@
 package sorcer.core.context.model.par;
 
 import sorcer.core.context.Contexts;
+import sorcer.core.context.PositionalContext;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.service.*;
@@ -56,7 +57,7 @@ import static sorcer.eo.operator.returnPath;
  * @author Mike Sobolewski
  */
 @SuppressWarnings({"unchecked", "rawtypes"  })
-public class ParModel<T> extends ServiceContext<T> implements Evaluation<T>, Invocation<T>, ParModeling {
+public class ParModel<T> extends PositionalContext<T> implements Invocation<T>, Mappable<T>, ParModeling {
 	
 	private static final long serialVersionUID = -6932730998474298653L;
 	
@@ -101,8 +102,11 @@ public class ParModel<T> extends ServiceContext<T> implements Evaluation<T>, Inv
 			}
 			if (val != null && val instanceof Evaluation) {
 				return (T) ((Evaluation) val).getValue(entries);
-			} else if (val == null && targetPath != null) {
-				return(T) getValue(targetPath, entries);
+			} else if (path == null && val == null && responsePaths != null) {
+				if (responsePaths.size() == 1)
+					return (T) getValue(responsePaths.get(0), entries);
+				else 
+					return  (T) getResponses();
 			}  else {
 				return (T) val;
 			}
@@ -388,12 +392,12 @@ public class ParModel<T> extends ServiceContext<T> implements Evaluation<T>, Inv
 		while (i.hasNext()) {
 			Map.Entry<String, Object> e = i.next();
 			if (!contains(e.getKey()) && e.getKey().equals("script")) {
-				put(e.getKey(), context.asis());
+				put(e.getKey(), context.asis(e.getKey()));
 			}
 		}
 		return this;
 	}
-	
+    
 	@Override
 	public String toString() {
 		return this.getClass().getName() + ":" + getName() + "\nkeys: " + keySet() 

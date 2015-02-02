@@ -58,11 +58,11 @@ public class Services {
 						result("result/y")));
 
 		// get a single context argument
-		assertEquals(100.0, value(t5));
+		assertEquals(100.0, exec(t5));
 
 		// get the subcontext output from the exertion
 		assertTrue(context(ent("arg/x1", 20.0), ent("result/z", 100.0)).equals(
-				value(t5, result("result/z", from("arg/x1", "result/z")))));
+				exec(t5, result("result/z", from("arg/x1", "result/z")))));
 	}
 
 	
@@ -123,13 +123,13 @@ public class Services {
 					pipe(out(t5, "result/y"), in(t3, "arg/x2")));
 
 		// get the result value
-		assertEquals(400.0, value(job));
+		assertEquals(400.0, exec(job));
 
 		// get the subcontext output from the exertion
 		assertTrue(context(ent("j1/j2/t4/result/y", 500.0),
 				ent("j1/j2/t5/result/y", 100.0),
 				ent("j1/t3/result/y", 400.0)).equals(
-					value(job, result("result/z",
+					exec(job, result("result/z",
 						from("j1/j2/t4/result/y", "j1/j2/t5/result/y", "j1/t3/result/y")))));
 
 		

@@ -16,14 +16,9 @@
  */
 package sorcer.core.provider.rendezvous;
 
-import java.rmi.RemoteException;
-import java.util.HashSet;
-import java.util.logging.Logger;
-
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
 import sorcer.core.Dispatcher;
-import sorcer.core.SorcerConstants;
 import sorcer.core.context.ControlContext;
 import sorcer.core.dispatch.DispatcherException;
 import sorcer.core.dispatch.ExertDispatcherFactory;
@@ -33,13 +28,11 @@ import sorcer.core.exertion.NetTask;
 import sorcer.core.loki.member.LokiMemberUtil;
 import sorcer.core.provider.Provider;
 import sorcer.core.provider.Spacer;
-import sorcer.service.Context;
-import sorcer.service.ContextException;
-import sorcer.service.Exec;
-import sorcer.service.Executor;
-import sorcer.service.Exertion;
-import sorcer.service.Job;
-import sorcer.service.Task;
+import sorcer.service.*;
+
+import java.rmi.RemoteException;
+import java.util.HashSet;
+import java.util.logging.Logger;
 
 /**
  * ServiceSpacer - The SORCER rendezvous service provider that provides
@@ -61,8 +54,9 @@ public class ServiceSpacer extends RendezvousBean implements Spacer {
 		myMemberUtil = new LokiMemberUtil(ServiceSpacer.class.getName());
 	}
 
-	public Exertion execute(Exertion exertion, Transaction txn)
+	public Mogram execute(Mogram mogram, Transaction txn)
 			throws TransactionException, RemoteException {
+		Exertion exertion = (Exertion) mogram;
 		if (exertion.isJob())
 			return doJob(exertion);
 		else

@@ -17,38 +17,37 @@
 
 package sorcer.service;
 
-import java.rmi.RemoteException;
-
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
 
+import java.rmi.RemoteException;
+
 /**
  * An top-level common interface for all service peers in SORCER.
- * Each service accepts a request for {@link Exertion} to exert
- * the federation of collaborating services as specified by the exertion.
+ * Each service accepts a request for {@link Mogram} to exert
+ * the federation of collaborating services as specified by the mogram.
  *
  * @author Mike Sobolewski
  */
-public interface Service<T> extends Evaluation<T> {
+public interface Service  {
 
 	/**
-	 * A generic service request as specified by an exertion - a generic service
-	 * message. It can be carried out dynamically and indirectly by any
-	 * <code>Service</code> peer and directly by a <code>Service</code>
-	 * matching the exertion's method {@link Signature}.
+	 * A generic service request as specified by a mogram - a generic service
+	 * mogram. It can be carried out dynamically by any
+	 * <code>Service</code> peer matching the exertion's {@link Signature}.
 	 *
-	 * @param exertion an input exertion
+	 * @param mogram an input mogram
 	 * @param txn      The transaction (if any) under which to provide service.
-	 * @return a resulting exertion
+	 * @return a resulting mogram
 	 * @throws TransactionException if a transaction error occurs
 	 * @throws ExertionException    if an exertion invocation failed for any reason
 	 * @throws RemoteException
 	 */
-	public Exertion service(Exertion exertion, Transaction txn)
+	public <T extends Mogram> T service(T mogram, Transaction txn)
 			throws TransactionException, ExertionException, RemoteException;
 
 
-	public Exertion service(Exertion exertion)
+	public <T extends Mogram> T service(T mogram)
 			throws TransactionException, ExertionException, RemoteException;
 
 }

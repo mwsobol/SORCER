@@ -67,7 +67,7 @@ import java.util.logging.Logger;
 	private Closure closure;
 	
 	protected String[] pars;
-	
+
 	private Boolean status = null;
 	
 	public Condition() {
@@ -182,13 +182,10 @@ import java.util.logging.Logger;
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see sorcer.service.Evaluation#substitute(sorcer.service.Parameter[])
-	 */
-	@Override
-	public Evaluation<Object> substitute(Arg... entries)
+    @Override
+    public Evaluation<Object> substitute(Arg... entries)
 			throws SetterException, RemoteException {
-		conditionalContext.substitute(entries);
+        ((ServiceContext)conditionalContext).substitute(entries);
 		return this;
 	}
 	

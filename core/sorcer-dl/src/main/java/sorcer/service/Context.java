@@ -22,6 +22,11 @@ import net.jini.id.Uuid;
 import sorcer.core.SorcerConstants;
 import sorcer.core.provider.Provider;
 
+import net.jini.id.Uuid;
+import sorcer.core.SorcerConstants;
+import sorcer.core.provider.Provider;
+import sorcer.service.modeling.Model;
+
 import java.io.Serializable;
 import java.net.URL;
 import java.rmi.RemoteException;
@@ -82,8 +87,8 @@ import java.util.Map;
  * @author Mike Sobolewski
  */
 @SuppressWarnings("rawtypes")
-public interface Context<T> extends Mappable<T>, Serializable, Evaluation<T>,
-		Invocation<T>, Dependency, Contexter<T>, Identifiable, Paradigmatic, Arg, Service<T> {
+public interface Context<T> extends Model, Mappable<T>, Serializable, 
+        Dependency, Contexter<T>, Identifiable, Paradigmatic, Arg {
 
 	/** parameter (par) */
 	final static String PATH_PAR = "par";
@@ -255,13 +260,7 @@ public interface Context<T> extends Mappable<T>, Serializable, Evaluation<T>,
 
 	/**
      */
-	public String getCreationDate();
-
-	/**
-	 * @param date
-	 *            The creationDate to set.
-	 */
-	public void setCreationDate(String date);
+	public long getCreationTime();
 
 	/**
      */

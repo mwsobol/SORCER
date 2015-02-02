@@ -58,7 +58,7 @@ public class ArithmeticNoNetBlockTest implements SorcerConstants {
 	}
 	
 	@Test
-	public void taskAltBlocTest() throws Exception {
+	public void taskAltBlockTest() throws Exception {
 		Task t3 = task("t3", sig("subtract", SubtractorImpl.class), 
 				context("subtract", inEnt("arg/t4"), inEnt("arg/t5"),
 						result("block/result")));

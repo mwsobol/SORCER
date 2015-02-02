@@ -42,7 +42,7 @@ import java.util.Arrays;
  * @author Mike Sobolewski
  */
 @SuppressWarnings("rawtypes")
-public interface Signature extends Serializable, Comparable, Arg {
+public interface Signature extends Serializable, Comparable, Dependency, Identifiable, Arg {
 
 	/**
 	 * Returns an operation name of this signature.

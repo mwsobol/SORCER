@@ -24,11 +24,7 @@ import net.jini.core.transaction.TransactionException;
 import sorcer.core.dispatch.JobThread;
 import sorcer.core.exertion.NetJob;
 import sorcer.core.provider.Jobber;
-import sorcer.service.Executor;
-import sorcer.service.Exertion;
-import sorcer.service.ExertionException;
-import sorcer.service.Job;
-import sorcer.service.ServiceExertion;
+import sorcer.service.*;
 
 /**
  * ServiceJobber - The SORCER rendezvous service provider that provides
@@ -42,30 +38,31 @@ public class ServiceJobber extends RendezvousBean implements Jobber {
 	public ServiceJobber() throws RemoteException {
 		// do nothing
 	}
-			
-	public Exertion execute(Exertion exertion, Transaction txn)
+
+	public Mogram execute(Mogram mogram, Transaction txn)
 			throws TransactionException, ExertionException, RemoteException {
 		//logger.info("*********************************************ServiceJobber.exert(), exertion = " + exertion);
-				setServiceID(exertion);
-				Exertion result = null;
-				try {
-					if (((ServiceExertion)exertion).getControlContext().isMonitorable()
-							&& !(((NetJob)exertion).getControlContext()).isWaitable()) {
-						replaceNullExertionIDs(exertion);
-						notifyViaEmail(exertion);
-						new JobThread((Job) exertion, provider).start();
-						return exertion;
-					} else {
-						JobThread jobThread = new JobThread((Job) exertion, provider);
-						jobThread.start();
-						jobThread.join();
-						result = jobThread.getResult();
-						logger.finest("<==== Result: " + result);
-					}
-				} catch (Throwable e) {
-					throw new ExertionException(e);
-				}
-				//logger.info("*********************************************ServiceJobber.exert(), ex = " + ex);
+		Exertion exertion =  (Exertion)mogram;
+		setServiceID(exertion);
+		Exertion result = null;
+		try {
+			if (((ServiceExertion)exertion).getControlContext().isMonitorable()
+					&& !(((NetJob)exertion).getControlContext()).isWaitable()) {
+				replaceNullExertionIDs(exertion);
+				notifyViaEmail((Exertion)exertion);
+				new JobThread((Job) exertion, provider).start();
+				return exertion;
+			} else {
+				JobThread jobThread = new JobThread((Job) exertion, provider);
+				jobThread.start();
+				jobThread.join();
+				result = jobThread.getResult();
+				logger.finest("<==== Result: " + result);
+			}
+		} catch (Throwable e) {
+			throw new ExertionException(e);
+		}
+		//logger.info("*********************************************ServiceJobber.exert(), ex = " + ex);
 
 		return result;
 	}

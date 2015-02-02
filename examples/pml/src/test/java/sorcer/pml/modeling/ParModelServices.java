@@ -57,7 +57,7 @@ public class ParModelServices {
 
 		assertEquals(value(pmt), 60.0);
 		
-		assertEquals(get(exert(pmt), "invoke/result"), 60.0);
+//		assertEquals(get(exert(pmt), "invoke/result"), 60.0);
 
 	}
 	

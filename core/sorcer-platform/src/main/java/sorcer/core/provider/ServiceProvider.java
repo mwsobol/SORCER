@@ -19,7 +19,6 @@ package sorcer.core.provider;
 import com.sun.jini.config.Config;
 import com.sun.jini.start.LifeCycle;
 import com.sun.jini.thread.TaskManager;
-
 import net.jini.config.Configuration;
 import net.jini.config.ConfigurationException;
 import net.jini.config.ConfigurationProvider;
@@ -29,6 +28,7 @@ import net.jini.core.discovery.LookupLocator;
 import net.jini.core.entry.Entry;
 import net.jini.core.lookup.ServiceID;
 import net.jini.core.transaction.Transaction;
+import net.jini.core.transaction.TransactionException;
 import net.jini.discovery.DiscoveryGroupManagement;
 import net.jini.discovery.LookupDiscoveryManager;
 import net.jini.export.ProxyAccessor;
@@ -42,7 +42,6 @@ import net.jini.lookup.ui.factory.JFrameFactory;
 import net.jini.security.TrustVerifier;
 import net.jini.security.proxytrust.ServerProxyTrust;
 import net.jini.security.proxytrust.TrustEquivalence;
-import sorcer.service.ContextManagement;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.ControlContext;
 import sorcer.core.context.ServiceContext;
@@ -65,7 +64,6 @@ import sorcer.util.url.sos.SdbURLStreamHandlerFactory;
 
 import javax.security.auth.Subject;
 import javax.security.auth.login.LoginContext;
-
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -73,6 +71,7 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.security.*;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
@@ -131,7 +130,7 @@ import java.util.logging.Logger;
  * implemented by service beans are dynamically created and registered with
  * lookup services. Multiple SORECER servers can be deployed within a single
  * {@link sorcer.core.provider.ServiceProvider} as its own service beans.
- * 
+ *
  * @see sorcer.core.provider.Provider
  * @see net.jini.lookup.ServiceIDListener
  * @see ReferentUuid
@@ -143,7 +142,7 @@ import java.util.logging.Logger;
  * @see Partner
  * @see sorcer.core.proxy.Partnership
  * @see sorcer.core.SorcerConstants
- * 
+ *
  * @author Mike Sobolewski
  */
 public class ServiceProvider implements Identifiable, Provider, ServiceIDListener,
@@ -153,7 +152,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 
 	/** Logger and configuration component name for service provider. */
 	public static final String COMPONENT = ServiceProvider.class.getName();
-	
+
 	/** Logger for logging information about this instance */
 	protected static final Logger logger = Logger.getLogger(COMPONENT);
 
@@ -164,7 +163,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 			logger.info(e.getMessage());
 		}
 	}
-	
+
 
 	protected ProviderDelegate delegate;
 
@@ -186,34 +185,37 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	protected static int tally = 0;
 	// the size of this service node
 	protected static int size = 0;
-	
+
 	/** Object to notify when this service is destroyed, or null. */
 	private LifeCycle lifeCycle;
-	
+
 	// all providers in the same shared JVM
 	private static List<ServiceProvider> providers = new ArrayList<ServiceProvider>();
 
 	private ClassLoader serviceClassLoader;
 
 	private String[] accessorGroups = DiscoveryGroupManagement.ALL_GROUPS;
-	
+
 	private volatile boolean running = true;
 
+	private Map<Uuid, ProviderSession> sessions;
+	
 	public ServiceProvider() throws RemoteException {
 		providers.add(this);
 		delegate = new ProviderDelegate();
 		delegate.provider = this;
+		sessions = new ConcurrentHashMap<Uuid, ProviderSession>();
 		logger.info("\n\t<init> providers.size() = " + providers.size()
 				+ "\n\t<init> providers = " + providers
 				+ "\n\t<init> this.getName = " + this.getName());
-        ShutdownHook shutdownHook =  new ShutdownHook(this);
-        shutdownHook.setDaemon(true);
-        Runtime.getRuntime().addShutdownHook(shutdownHook);
+		ShutdownHook shutdownHook =  new ShutdownHook(this);
+		shutdownHook.setDaemon(true);
+		Runtime.getRuntime().addShutdownHook(shutdownHook);
 	}
 
 	/**
 	 * Required constructor for Jini 2 NonActivatableServiceDescriptors
-	 * 
+	 *
 	 * @param args
 	 * @param lifeCycle
 	 * @throws Exception
@@ -229,9 +231,9 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		final Configuration config = ConfigurationProvider.getInstance(args, serviceClassLoader);
 		delegate.setJiniConfig(config);
 		// inspect class loader tree
-        if(logger.isLoggable(Level.FINEST))
-            com.sun.jini.start.ClassLoaderUtil.displayContextClassLoaderTree();
-        // System.out.println("service provider class loader: " +
+		if(logger.isLoggable(Level.FINEST))
+			com.sun.jini.start.ClassLoaderUtil.displayContextClassLoaderTree();
+		// System.out.println("service provider class loader: " +
 		// serviceClassLoader);
 		String providerProperties = null;
 		try {
@@ -247,7 +249,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		// decide if thread management is needed for ExertionDispatcher
 		setupThreadManager();
 		init(args, lifeCycle);
-		
+
 		logger.info("<init> (String[], LifeCycle); name = " + this.getName());
 	}
 
@@ -257,8 +259,8 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		this();
 		delegate.getProviderConfig().loadConfiguration(providerPropertiesFile);
 	}
-	
-	
+
+
 	// Implement ServerProxyTrust
 	/**
 	 * @throws UnsupportedOperationException
@@ -287,9 +289,9 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		return null;
 	}
 
-	 
+
 	@Override
-    public RemoteMethodControl setConstraints(MethodConstraints constraints) {
+	public RemoteMethodControl setConstraints(MethodConstraints constraints) {
 		//return (RemoteMethodControl)delegate.getProxy();
 		return (RemoteMethodControl) delegate.getProxy();
 	}
@@ -297,7 +299,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	/**
 	 * Returns an object that implements whatever administration interfaces are
 	 * appropriate for the particular service.
-	 * 
+	 *
 	 * @return an object that implements whatever administration interfaces are
 	 *         appropriate for the particular service.
 	 */
@@ -317,7 +319,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 
 	/**
 	 * Get the current attribute sets for the service.
-	 * 
+	 *
 	 * @return the current attribute sets for the service
 	 */
 	public Entry[] getLookupAttributes() {
@@ -328,7 +330,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	 * Add attribute sets for the service. The resulting set will be used for
 	 * all future joins. The attribute sets are also added to all
 	 * currently-joined lookup services.
-	 * 
+	 *
 	 * @param: attrSets the attribute sets to add
 	 * @see net.jini.admin.JoinAdmin#addLookupAttributes(net.jini.core.entry.Entry[])
 	 */
@@ -342,7 +344,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	 * ServiceRegistration.modifyAttributes. The resulting set will be used for
 	 * all future joins. The same modifications are also made to all
 	 * currently-joined lookup services.
-	 * 
+	 *
 	 * @param attrSetTemplates
 	 *            - the templates for matching attribute sets
 	 * @param attrSets
@@ -352,7 +354,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	 *      net.jini.core.entry.Entry[])
 	 */
 	public void modifyLookupAttributes(Entry[] attrSetTemplates,
-			Entry[] attrSets) {
+									   Entry[] attrSets) {
 		joinManager.modifyAttributes(attrSetTemplates, attrSets, true);
 		logger.log(Level.CONFIG, "Modified attributes");
 	}
@@ -360,10 +362,10 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	/**
 	 * Get the list of groups to join. An empty array means the service joins no
 	 * groups (as opposed to "all" groups).
-	 * 
+	 *
 	 * @return an array of groups to join. An empty array means the service
 	 *         joins no groups (as opposed to "all" groups).
-	 * 
+	 *
 	 * @exception java.rmi.RemoteException
 	 * @see net.jini.admin.JoinAdmin#getLookupGroups()
 	 */
@@ -374,7 +376,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	/**
 	 * Add new groups to the set to join. Lookup services in the new groups will
 	 * be discovered and joined.
-	 * 
+	 *
 	 * @param groups
 	 *            groups to join
 	 * @exception java.rmi.RemoteException
@@ -396,19 +398,19 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 
 	protected static void checkFileExists(File file) throws IOException {
 		if (!file.exists()) {
-			throw new IOException("***error: the file does not exist: " 
+			throw new IOException("***error: the file does not exist: "
 					+ file.getAbsolutePath());
 		}
 		if (!file.canRead()) {
-			throw new IOException("***error: the file is not readable: " 
+			throw new IOException("***error: the file is not readable: "
 					+ file.getAbsolutePath());
-		} 
+		}
 	}
-	
+
 	/**
 	 * Remove groups from the set to join. Leases are cancelled at lookup
 	 * services that are not members of any of the remaining groups.
-	 * 
+	 *
 	 * @param groups
 	 *            groups to leave
 	 * @exception java.rmi.RemoteException
@@ -433,7 +435,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	 * Replace the list of groups to join with a new list. Leases are cancelled
 	 * at lookup services that are not members of any of the new groups. Lookup
 	 * services in the new groups will be discovered and joined.
-	 * 
+	 *
 	 * @param groups
 	 *            groups to join
 	 * @exception java.rmi.RemoteException
@@ -456,7 +458,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 
 	/**
 	 * Get the list of locators of specific lookup services to join.
-	 * 
+	 *
 	 * @return the list of locators of specific lookup services to join
 	 * @exception java.rmi.RemoteException
 	 * @see net.jini.admin.JoinAdmin#getLookupLocators()
@@ -468,7 +470,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	/**
 	 * Add locators for specific new lookup services to join. The new lookup
 	 * services will be discovered and joined.
-	 * 
+	 *
 	 * @param locators
 	 *            locators of specific lookup services to join
 	 * @exception java.rmi.RemoteException
@@ -490,7 +492,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	/**
 	 * Remove locators for specific lookup services from the set to join. Any
 	 * leases held at the lookup services are cancelled.
-	 * 
+	 *
 	 * @param locators
 	 *            locators of specific lookup services to leave
 	 * @exception java.rmi.RemoteException
@@ -526,7 +528,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	/**
 	 * Method invoked by a server to inform the LifeCycle object that it can
 	 * release any resources associated with the server.
-	 * 
+	 *
 	 * @param impl
 	 *            Object reference to the implementation object created by the
 	 *            NonActivatableServiceDescriptor. This reference must be equal,
@@ -560,18 +562,18 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 			} catch (InterruptedException e) {
 			} finally {
 				logger.info("going to call System.exit() NOW...");
-			    System.exit(0);
+				System.exit(0);
 			}
 		}
 	}
 
 	/**
 	 * Unexport the service provider appropriately.
-	 * 
+	 *
 	 * @param force
 	 *            terminate in progress calls if necessary
 	 * @return true if unexport succeeds
-	 * @throws RemoteException 
+	 * @throws RemoteException
 	 */
 	boolean unexport(boolean force) throws RemoteException {
 		return delegate.unexport(force);
@@ -580,7 +582,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	/**
 	 * Returns a proxy object for this object. This value should not be null.
 	 * Implements the <code>ServiceProxyAccessor</code> interface.
-	 * 
+	 *
 	 * @return a proxy object reference
 	 * @exception java.rmi.RemoteException
 	 */
@@ -594,7 +596,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	 * However, if a smart proxy implements {@link Outer} then the
 	 * provider's proxy is set as its inner proxy. Otherwise the {@link java.rmi.Remote}
 	 * outer proxy of this provider is returned.
-	 * 
+	 *
 	 * @return a proxy, or null
 	 * @see Provider#getProxy()
 	 */
@@ -622,7 +624,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 
 	/**
 	 * Returns a string representation of this service provider.
-	 * 
+	 *
 	 * @see Object#toString()
 	 */
 	public String toString() {
@@ -690,7 +692,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 			}
 			logger.log(Level.INFO, "Provider service started: "
 					+ getProviderName(), this);
-			
+
 			// allow for enough time to export the provider's proxy and stay alive
 			new Thread(ProviderDelegate.threadGroup, new KeepAwake()).start();
 		} catch (Throwable e) {
@@ -701,7 +703,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	/**
 	 * Log information about failing to initialize the service and rethrow the
 	 * appropriate exception.
-	 * 
+	 *
 	 * @param throwable
 	 *            exception produced by the failure
 	 */
@@ -709,7 +711,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		String message = null;
 		if (throwable instanceof InitException) {
 			message = throwable.getMessage();
-            throwable = throwable.getCause();
+			throwable = throwable.getCause();
 		}
 		if (logger.isLoggable(Level.SEVERE)) {
 			if (message != null) {
@@ -726,7 +728,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 			throw (Error) throwable;
 		} else {
 			IllegalStateException ise = new IllegalStateException(
-                    throwable.getMessage());
+					throwable.getMessage());
 			ise.initCause(throwable);
 			throw ise;
 		}
@@ -734,7 +736,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 
 	/** Logs a throw */
 	private static void logThrow(Level level, String method, String msg,
-			Object[] msgParams, Throwable t) {
+								 Object[] msgParams, Throwable t) {
 		LogRecord r = new LogRecord(level, msg);
 		r.setLoggerName(logger.getName());
 		r.setSourceClassName(Provider.class.getName());
@@ -752,7 +754,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	 * configuration file - the latter recommended.
 	 */
 	/**
-	 * 
+	 *
 	 */
 	private void initAsSubject() {
 		boolean done = false;
@@ -760,7 +762,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		// file and from provider's Jini configuration file
 		try {
 			delegate.init(this);
-		
+
 			// Use locators specified in the Jini configuration file, otherwise
 			// from the environment configuration
 			// String[] lookupLocators = (String[]) Config.getNonNullEntry(
@@ -773,7 +775,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 			}
 			logger.finer("provider lookup locators: "
 					+ (lookupLocators.length == 0 ? "no locators" : Arrays
-							.toString(lookupLocators)));
+					.toString(lookupLocators)));
 
 			String[] lookupGroups = (String[]) Config.getNonNullEntry(
 					delegate.getDeploymentConfig(), COMPONENT, "lookupGroups",
@@ -782,7 +784,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 				lookupGroups = DiscoveryGroupManagement.ALL_GROUPS;
 			logger.finer("provider lookup groups: "
 					+ (lookupGroups != null ? "all groups" : Arrays
-							.toString(lookupGroups)));
+					.toString(lookupGroups)));
 
 			String[] accessorGroups = (String[]) Config.getNonNullEntry(
 					delegate.getDeploymentConfig(), COMPONENT, "accessorGroups",
@@ -791,7 +793,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 				accessorGroups = lookupGroups;
 			logger.finer("service accessor groups: "
 					+ (accessorGroups != null ? "all groups" : Arrays
-							.toString(accessorGroups)));
+					.toString(accessorGroups)));
 
 			Entry[] serviceAttributes = getAttributes();
 			serviceAttributes = addServiceUIDesciptors(serviceAttributes);
@@ -829,7 +831,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 			/* registers provider's proxy so this provider is discoverable or not*/
 			boolean discoveryEnabled = (Boolean) Config.getNonNullEntry(
 					delegate.getDeploymentConfig(), COMPONENT, ProviderDelegate.DISCOVERY_ENABLED,
-					boolean.class, true);	
+					boolean.class, true);
 			logger.info(ProviderDelegate.DISCOVERY_ENABLED + ": " + discoveryEnabled);
 			Object proxy = null;
 			if (discoveryEnabled) {
@@ -905,7 +907,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	 * Returns a UI descriptor for this provider to be included in a UI
 	 * descriptor for your provider. This method should be implemented in
 	 * sublcasses inmplementing the Jini ServiceUI framwork.
-	 * 
+	 *
 	 * @return an UI descriptor for your provider. <code>null</code> if not
 	 *         overwritten in subclasses.
 	 */
@@ -919,9 +921,9 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 			descriptor = UIDescriptorFactory.getUIDescriptor(
 					MainUI.ROLE,
 					new UIComponentFactory(new URL[] { new URL(String.format("%s/sorcer-ui-%s.jar",
-                                                                             Sorcer.getWebsterUrl(),
-                                                                             SOS.getSorcerVersion()))
-                                                     },
+							Sorcer.getWebsterUrl(),
+							SOS.getSorcerVersion()))
+					},
 							"sorcer.ui.provider.ProviderUI"));
 		} catch (Exception ex) {
 			logger.throwing(ServiceProvider.class.getName(), "getServiceUI", ex);
@@ -934,7 +936,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	 * Jini service item that is registerd with lookup services. By default a
 	 * generic ServiceProvider service UI is provided with: attribute viewer,
 	 * context and task editor for this service provider.
-	 * 
+	 *
 	 * @return an array of service UI descriptors
 	 */
 	public UIDescriptor[] getServiceUIEntries() {
@@ -942,11 +944,11 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		try {
 			uiDesc1 = UIDescriptorFactory.getUIDescriptor(
 					MainUI.ROLE,
-                    new UIComponentFactory(new URL[] {new URL(String.format("%s/sorcer-ui-%s.jar",
-                                                                            Sorcer.getWebsterUrl(),
-                                                                            SOS.getSorcerVersion()))
-                                                     },
-                                           "sorcer.ui.exertlet.NetletEditor"));
+					new UIComponentFactory(new URL[] {new URL(String.format("%s/sorcer-ui-%s.jar",
+							Sorcer.getWebsterUrl(),
+							SOS.getSorcerVersion()))
+					},
+							"sorcer.ui.exertlet.NetletEditor"));
 		} catch (Exception ex) {
 			logger.throwing(ServiceProvider.class.getName(), "getServiceUI", ex);
 		}
@@ -972,7 +974,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	/**
 	 * Returnes an appended list of enrties that includes UI descriptors of this
 	 * provider.
-	 * 
+	 *
 	 * @param serviceAttributes
 	 * @return an array of UI descriptors
 	 */
@@ -1034,7 +1036,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	/**
 	 * Defines rediness of the provider: true if this provider is ready to
 	 * process the incoming exertion, otherwise false.
-	 * 
+	 *
 	 * @return true if the provider is redy to execute the exertion
 	 */
 	public boolean isReady(Exertion exertion) {
@@ -1089,7 +1091,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	}
 
 	private boolean providerDeleteContext(String interfaceName,
-			String methodName) throws RemoteException {
+										  String methodName) throws RemoteException {
 		boolean contextLoaded = false;
 		try {
 			FileInputStream fis = new FileInputStream("../configs/"
@@ -1126,7 +1128,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	}
 
 	private Context<?> providerGetMethodContext(String interfaceName,
-			String methodName) throws RemoteException {
+												String methodName) throws RemoteException {
 		logger.info("user directory is " + System.getProperty("user.dir"));
 		boolean contextLoaded = false;
 		try {
@@ -1158,7 +1160,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	}
 
 	private boolean providerSaveMethodContext(String interfaceName,
-			String methodName, Context<?> theContext) throws RemoteException {
+											  String methodName, Context<?> theContext) throws RemoteException {
 		boolean contextLoaded = false;
 		try {
 			FileInputStream fis = new FileInputStream("../configs/"
@@ -1199,7 +1201,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	public void setAccessorGroups(String[] accessorGroups) {
 		this.accessorGroups = accessorGroups;
 	}
-		
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -1271,10 +1273,10 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	 * <p>
 	 * TODO: This functionality is similar / identical / linked to
 	 * {@link sorcer.core.provider.ProviderDelegate#restore()}. Investigate.
-	 * 
+	 *
 	 * @param sid
 	 *            The assigned ServiceID
-	 * 
+	 *
 	 * @see net.jini.lookup.ServiceIDListener#serviceIDNotify(net.jini.core.lookup.ServiceID)
 	 */
 	public void serviceIDNotify(ServiceID sid) {
@@ -1302,7 +1304,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 
 	/**
 	 * Returns a server delegate for this server.
-	 * 
+	 *
 	 * @return this server delegate
 	 */
 	public ProviderDelegate getDelegate() {
@@ -1363,7 +1365,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	/**
 	 * This method calls on an ExertionProcessor which executes the exertion
 	 * accordingly to its compositional type.
-	 * 
+	 *
 	 * @param exertion
 	 *            Exertion
 	 * @return Exertion
@@ -1407,21 +1409,22 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 			throw new ExertionException(e);
 		}
 	}
-
-	public Exertion service(Exertion exertion) throws RemoteException,
-			ExertionException {
-		return doExertion(exertion, null);
+	
+	@Override
+	public Exertion service(Mogram mogram) throws ExertionException, RemoteException {
+		return doExertion((Exertion)mogram, null);
 	}
 
-	public Exertion service(Exertion exertion, Transaction txn)
-			throws RemoteException {
+	@Override
+	public Exertion service(Mogram mogram, Transaction txn) throws TransactionException,
+			ExertionException, RemoteException {
 		// TODO transaction handling to be implemented when needed
 		// TO DO HANDLING SUSSPENDED exertions
 		// if (((ServiceExertion) exertion).monitorSession != null) {
 		// new Thread(new ServiceThread(exertion, this)).start();
 		// return exertion;
 		// }
-
+	   	Exertion exertion = (Exertion)mogram;
 		// when service Locker is used
 		if (delegate.mutualExlusion()) {
 			Object mutexId = ((ControlContext)exertion.getControlContext()).getMutexId();
@@ -1466,7 +1469,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	public Entry[] getAttributes() throws RemoteException {
 		return delegate.getAttributes();
 	}
-
+	
 	public List<Object> getProperties() throws RemoteException {
 		return delegate.getProperties();
 	}
@@ -1492,7 +1495,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		if (delegate != null) name = delegate.getProviderName();
 		return name;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see sorcer.service.Identifiable#getId()
 	 */
@@ -1500,7 +1503,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	public Object getId() {
 		return delegate.getServiceID();
 	}
-	
+
 	public String getProviderName() throws RemoteException {
 		return delegate.getProviderName();
 	}
@@ -1529,7 +1532,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	public File getScratchDir(String scratchDirNamePrefix) {
 		return delegate.getScratchDir(scratchDirNamePrefix);
 	}
-	
+
 	// this methods generates a scratch directory with a prefix on the unique
 	// directory name
 	// and puts the directory into the context under a fixed path (path is in
@@ -1540,7 +1543,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		try {
 			scratchDir = delegate.getScratchDir(context, scratchDirNamePrefix);
 		} catch (Exception e) {
-            logger.log(Level.WARNING, "Getting scratch directory failed", e);
+			logger.log(Level.WARNING, "Getting scratch directory failed", e);
 			throw new RemoteException("***error: problem getting scratch "
 					+ "directory and adding path/url to context"
 					+ "\ncontext name = " + context.getName() + "\ncontext = "
@@ -1586,7 +1589,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	public Properties getProviderProperties() {
 		return delegate.getProviderProperties();
 	}
-	
+
 	public void notifyInformation(Exertion task, String message)
 			throws RemoteException {
 		delegate.notifyInformation(task, message);
@@ -1632,13 +1635,13 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	 * MonitorManagers call suspend a MonitorableService. Once suspend is
 	 * called, the monitorables must suspend immediatly and return the suspended
 	 * state of the context.
-	 * 
+	 *
 	 * @throws sorcer.service.UnknownExertionException
 	 *             if the exertion is not executed by this provider.
-	 * 
+	 *
 	 * @throws java.rmi.RemoteException
 	 *             if there is a communication error
-	 * 
+	 *
 	 */
 
 	public void suspend(Uuid ref, Subject subject) throws RemoteException,
@@ -1649,28 +1652,28 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	/**
 	 * Resume if the resume functionality is supported by the provider Else
 	 * start from the begining.
-	 * 
+	 *
 	 * @throws sorcer.service.UnknownExertionException
 	 *             if the exertion is not executed by this provider.
-	 * 
+	 *
 	 * @throws java.rmi.RemoteException
 	 *             if there is a communication error
-	 * 
+	 *
 	 */
 	public void resume(Exertion ex) throws RemoteException, ExertionException {
-		service(ex);
+		service((Mogram)ex);
 	}
 
 	/**
 	 * Step if the step functionality is supported by the provider Else start
 	 * from the begining.
-	 * 
+	 *
 	 * @throws sorcer.service.UnknownExertionException
 	 *             if the exertion is not executed by this provider.
-	 * 
+	 *
 	 * @throws java.rmi.RemoteException
 	 *             if there is a communication error
-	 * 
+	 *
 	 */
 	public void step(Exertion ex) throws RemoteException, ExertionException {
 		service(ex);
@@ -1678,7 +1681,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 
 	/**
 	 * Calls the delegate to update the monitor with the current context.
-	 * 
+	 *
 	 * @param context
 	 * @throws sorcer.service.MonitorException
 	 * @throws java.rmi.RemoteException
@@ -1690,7 +1693,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 
 	/**
 	 * Destroy the service, if possible, including its persistent storage.
-	 * 
+	 *
 	 * @see Provider#destroy()
 	 */
 	public void destroy() throws RemoteException {
@@ -1701,7 +1704,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 			if (joinManager != null)
 				joinManager.terminate();
 			tally = tally - 1;
-			
+
 			logger.info("destroyed provider: " + getProviderName() + ", providers left: " + tally);
 			if (threadManager != null)
 				threadManager.terminate();
@@ -1721,9 +1724,9 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 			running = false;
 		}
 	}
-	
+
 	private void checkAndMaybeKillJVM() {
-		if (tally <= 0) {		
+		if (tally <= 0) {
 			new Thread(new Destroyer()).start();
 		}
 	}
@@ -1736,29 +1739,29 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		return isBusy;
 	}
 
-    /**
-     * ShutdownHook for the ServiceProvider
-     */
-    static class ShutdownHook extends Thread {
-        final ServiceProvider provider;
-        ShutdownHook(ServiceProvider provider) {
-            super("ShutdownHook");
-            this.provider = provider;
-        }
+	/**
+	 * ShutdownHook for the ServiceProvider
+	 */
+	static class ShutdownHook extends Thread {
+		final ServiceProvider provider;
+		ShutdownHook(ServiceProvider provider) {
+			super("ShutdownHook");
+			this.provider = provider;
+		}
 
-        public void run() {
-            try {
-                provider.destroyNode();
-            } catch(Throwable t) {
-                logger.log(Level.SEVERE, "Terminating ServiceProvider", t);
-            }
-        }
-    }
-	
+		public void run() {
+			try {
+				provider.destroyNode();
+			} catch(Throwable t) {
+				logger.log(Level.SEVERE, "Terminating ServiceProvider", t);
+			}
+		}
+	}
+
 	/**
 	 * Destroy all services in this node (virtual machine) by calling each
 	 * destroy().
-	 * 
+	 *
 	 * @see Provider#destroy()
 	 */
 	public void destroyNode() throws RemoteException {
@@ -1767,7 +1770,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 			logger.info("calling destroy on provider name = " + provider.getName());
 			provider.destroy();
 		}
-        logger.info("Returning from destroyNode()");
+		logger.info("Returning from destroyNode()");
 		checkAndMaybeKillJVM();
 	}
 
@@ -1775,7 +1778,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	public Uuid getReferentUuid() {
 		return delegate.getProviderUuid();
 	}
-	
+
 	public void updatePolicy(Policy policy) throws RemoteException {
 		if (Sorcer.getProperty("sorcer.policer.mandatory").equals("true")) {
 			Policy.setPolicy(policy);
@@ -1860,16 +1863,16 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 
 		ControlFlowManager.WAIT_INCREMENT = waitIncrement;
 
-		 /**
-	     * Create a task manager.
-	     *
-	     * @param maxThreads maximum number of threads to use on tasks
-	     * @param timeout idle time before a thread exits 
-	     * @param loadFactor threshold for creating new threads.  A new
-	     * thread is created if the total number of runnable tasks (both active
-	     * and pending) exceeds the number of threads times the loadFactor,
-	     * and the maximum number of threads has not been reached.
-	     */
+		/**
+		 * Create a task manager.
+		 *
+		 * @param maxThreads maximum number of threads to use on tasks
+		 * @param timeout idle time before a thread exits
+		 * @param loadFactor threshold for creating new threads.  A new
+		 * thread is created if the total number of runnable tasks (both active
+		 * and pending) exceeds the number of threads times the loadFactor,
+		 * and the maximum number of threads has not been reached.
+		 */
 		threadManager = new TaskManager(maxThreads, timeout, loadFactor);
 	}
 
@@ -1877,8 +1880,8 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	 * <p>
 	 * Returns a threda manger of this provider.
 	 * </p>
-	 * 
-	 * @param 
+	 *
+	 * @param
 	 * @return the thread manager
 	 */
 	public TaskManager getThreadManager() {
@@ -1915,13 +1918,13 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 			}
 		}
 	}
-	
+
 	public void initSpaceSupport() throws RemoteException,
 			ConfigurationException {
 		delegate.spaceEnabled(true);
 		delegate.initSpaceSupport();
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -1970,30 +1973,4 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		return dispatcher.getExertion();
 	}
 
-	/* (non-Javadoc)
-	 * @see sorcer.service.Evaluation#asis()
-	 */
-	@Override
-	public Object asis() throws EvaluationException, RemoteException {
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see sorcer.service.Evaluation#getValue(sorcer.service.Arg[])
-	 */
-	@Override
-	public Object getValue(Arg... entries) throws EvaluationException,
-			RemoteException {
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see sorcer.service.Evaluation#substitute(sorcer.service.Arg[])
-	 */
-	@Override
-	public Evaluation substitute(Arg... entries) throws SetterException,
-			RemoteException {
-		return null;
-	}
-	
 }

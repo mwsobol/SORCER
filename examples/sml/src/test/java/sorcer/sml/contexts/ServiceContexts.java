@@ -4,19 +4,28 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
+import sorcer.arithmetic.provider.impl.AdderImpl;
+import sorcer.arithmetic.provider.impl.MultiplierImpl;
+import sorcer.arithmetic.provider.impl.SubtractorImpl;
 import sorcer.co.tuple.Entry;
 import sorcer.core.context.Copier;
 import sorcer.core.context.ListContext;
+import sorcer.core.provider.rendezvous.ServiceModeler;
 import sorcer.service.Context;
+import sorcer.service.Signature;
+import sorcer.service.modeling.Model;
 
 import java.net.URL;
 import java.util.logging.Logger;
 
 import static org.junit.Assert.*;
+import static sorcer.co.operator.asis;
 import static sorcer.co.operator.*;
+import static sorcer.co.operator.path;
 import static sorcer.eo.operator.*;
-import static sorcer.po.operator.*;
-
+import static sorcer.eo.operator.put;
+import static sorcer.eo.operator.value;
+import static sorcer.po.operator.invoker;
 /**
  * @author Mike Sobolewski
  */
@@ -297,7 +306,7 @@ public class ServiceContexts {
 		add(cxt, ent("invoke", invoker("x1 + x3", ents("x1", "x3"))));
 
 		// evaluate the model
-		target(cxt, "invoke");
+        addResponse(cxt, "invoke");
 		value(cxt);
 		assertTrue(value(cxt).equals(4.0));
 
@@ -324,7 +333,7 @@ public class ServiceContexts {
 		// cxt2 depends on values y1 and y2 calculated in cxt1
 		Context<Double> cxt2 = entModel(ent("arg/y3", 8.0), ent("arg/y4", 9.0), ent("arg/y5", 10.0));
 		add(cxt2, ent("invoke", invoker("y1 + y2 + y4 + y5", ents("y1", "y2", "y4", "y5"))));
-		target(cxt2, "invoke");
+        addResponse(cxt2, "invoke");
 
 		// created dependency on cxt1 via a context copier
 		Copier cp = copier(cxt1, ents("arg/x1", "arg/x2"), cxt2, ents("y1", "y2"));
@@ -335,4 +344,82 @@ public class ServiceContexts {
 
 	}
 
+	@Test
+	public void evaluateMultiResponseModel() throws Exception {
+		Context cxt = entModel(ent("arg/x1", 1.0), ent("arg/x2", 2.0),
+				ent("arg/x3", 3.0), ent("arg/x4", 4.0), ent("arg/x5", 5.0));
+
+		add(cxt, ent("add", invoker("x1 + x3", ents("x1", "x3"))));
+
+		add(cxt, ent("multiply", invoker("x4 * x5", ents("x4", "x5"))));
+
+		// two responses declared
+        addResponse(cxt, "add", "multiply");
+
+		// evaluate the model
+		Context result = (Context) value(cxt);
+
+		logger.info("result: " + result);
+		assertTrue(result.equals(context(ent("add", 4.0), ent("multiply", 20.0))));
+	}
+
+    @Test
+    public void exertEntModel() throws Exception {
+
+        Context cxt = entModel(ent("arg/x1", 1.0), ent("arg/x2", 2.0),
+                ent("arg/x3", 3.0), ent("arg/x4", 4.0), ent("arg/x5", 5.0));
+
+        add(cxt, ent("add", invoker("x1 + x3", ents("x1", "x3"))));
+
+        add(cxt, ent("multiply", invoker("x4 * x5", ents("x4", "x5"))));
+
+        // two responses declared
+        addResponse(cxt, "add", "multiply");
+
+        // exert the model
+        Context result = exert(cxt);
+
+        logger.info("result: " + responses(result));
+//		assertTrue(result.equals(context(ent("add", 4.0), ent("multiply", 20.0))));
+    }
+
+    @Test
+    public void exertModelAsContext() throws Exception {
+        
+        Model m = model(sig("add", AdderImpl.class),
+                inEnt("arg/x1", 1.0), inEnt("arg/x2", 2.0),
+                ent("arg/x3", 3.0), ent("arg/x4", 4.0), ent("arg/x5", 5.0));
+
+        add(m, ent("add", invoker("x1 + x3", ents("x1", "x3"))));
+
+        add(m, ent("multiply", invoker("x4 * x5", ents("x4", "x5"))));
+
+        // two responses declared
+        addResponse(m, "add", "multiply", "result/value");
+        // exert the model
+        Model model = exert(m);
+        // logger.info("model: " + model);
+        logger.info("result: " + responses(model));
+        
+        assertTrue(response(model, "add").equals(4.0));
+                
+		assertTrue(responses(model).equals(
+                context(ent("add", 4.0), ent("multiply", 20.0), ent("result/value", 3.0))));
+        
+    }
+
+    @Test
+    public void exertServiceModel() throws Exception {
+
+        Model m = model(sig("execute", ServiceModeler.class),
+                inEnt("multiply/x1", 10.0), inEnt("multiply/x2", 50.0),
+                inEnt("add/x1", 20.0), inEnt("add/x2", 80.0),
+                ent(sig("multiply", MultiplierImpl.class, result("subtract/x1", Signature.Direction.IN))),
+                ent(sig("add", AdderImpl.class, result("subtract/x2", Signature.Direction.IN))),
+                ent(sig("subtract", SubtractorImpl.class, result("model/response", from("subtract/x1", "subtract/x2")))));
+
+        dependsOn(m, "subtract", paths("multiply", "add"));
+        logger.info("dependentPaths: " + dependentPaths(m));
+        
+    }
 }
