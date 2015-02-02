@@ -123,7 +123,6 @@ if [ -z "$SORCER_HOME" -o ! -d "$SORCER_HOME" ] ; then
     cd "$SAVED"
 fi
 
-echo "SORCER_HOME=$SORCER_HOME"
 setVersionVar "rio.version"
 rio_version=$VERSION
 RIO_HOME=$SORCER_HOME/rio-$rio_version
@@ -154,7 +153,7 @@ fi
 RIO_CLASSPATH="$RIO_HOME/lib/rio-platform-$rio_version.jar:$RIO_HOME/lib/rio-lib-$rio_version.jar:$RIO_HOME/lib/rio-start-$rio_version.jar:$RIO_HOME/lib-dl/monitor-api-$rio_version.jar:$RIO_HOME/lib/logging/slf4j-jdk14-$slf4j_version.jar"
 # the classpath to start nsh then application specific classpath is defined in nsh-start.config
 STARTER_CLASSPATH="$SORCER_HOME/lib/common/groovy/groovy-all-$groovy_version.jar:$SORCER_HOME/lib/river/jsk-platform-$river_version.jar:$SORCER_HOME/lib/river/jsk-lib-$river_version.jar:$RIO_CLASSPATH:$SORCER_HOME/lib/sorcer/lib/sos-shell-$sorcer_version.jar:$SORCER_HOME/lib/sorcer/lib-ext/webster-$sorcer_version.jar:$SORCER_HOME/lib/sorcer/lib/sorcer-platform-$sorcer_version.jar"
-echo "STARTER_CLASSPATH = $STARTER_CLASSPATH"
+
 # Create the final classpath. Setting a classpath using the -cp or -classpath option means not to use the
 # global classpath. Network shell behaves then the same as the java interpreter
 if [ -n "$CP" ] ; then
@@ -285,7 +284,7 @@ startShell ( ) {
             -Dscript.name="$SCRIPT_PATH" \
             -Dprogram.name="$PROGNAME" \
             -Desh.starter.conf="$NSH_CONF" \
-            -DiGrid.home="$SORCER_HOME" \
+            -Dsorcer.home="$SORCER_HOME" \
             -Djava.protocol.handler.pkgs="net.jini.url|sorcer.util.bdb.sos|org.rioproject.url" \
             -Djava.rmi.server.RMIClassLoaderSpi=org.rioproject.rmi.ResolvingLoader \
             -Dtools.jar="$TOOLS_JAR" \
