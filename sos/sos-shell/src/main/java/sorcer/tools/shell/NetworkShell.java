@@ -23,7 +23,9 @@ import groovy.lang.GroovyRuntimeException;
 import java.io.*;
 import java.lang.reflect.Array;
 import java.net.InetAddress;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.rmi.RMISecurityManager;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
@@ -446,25 +448,38 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
         System.err.println("----------------------------------------------------");
     }
 
-	protected void loadExternalCommands(){
-		            // Process config files to load extensions - i.e. external commands and activate them
-/*
-            try {
+	protected ClassLoader getExtClassLoader() {
+		String sorcerExtPath = Sorcer.getHome() + File.separator
+				+ "lib" + File.separator + "sorcer" + File.separator
+				+ "lib-ext";
+		File extDir = new File(sorcerExtPath);
+		File[] files = extDir.listFiles(new FilenameFilter() {
+			@Override
+			public boolean accept(File dir, String name) {
+				return name.endsWith("-shell.jar");
+			}
+		});
 
-
-
-				LoaderConfiguration lc = new LoaderConfiguration();
-                final ClassLoader cl = new URLClassLoader(lc.getClassPathUrls(), NetworkShell.class.getClassLoader());
-                Thread.currentThread().setContextClassLoader(cl);
-				ServiceLoader<IShellCmdFactory> loader = ServiceLoader.load(IShellCmdFactory.class, cl);
-				for (IShellCmdFactory factory: loader) {
-					factory.instantiateCommands(this);
+		ClassLoader cl = Thread.currentThread().getContextClassLoader();
+		if (files.length > 0) {
+			URL[] urls = new URL[files.length];
+			for (int i = 0; i < files.length; i++) {
+				try {
+					urls[i] = files[i].toURI().toURL();
+				} catch (MalformedURLException e) {
+					throw new RuntimeException("Error parsing path " + files[i], e);
 				}
-            } catch (Exception e) {
-                e.printStackTrace(shellOutput);
-                System.exit(-1);
-            }
-*/
+			}
+			cl = new URLClassLoader(urls, cl);
+		}
+		return cl;
+	}
+
+	protected void loadExternalCommands() {
+		ServiceLoader<IShellCmdFactory> loader = ServiceLoader.load(IShellCmdFactory.class, getExtClassLoader());
+		for (IShellCmdFactory factory : loader) {
+			factory.instantiateCommands(this);
+		}
 	}
 
 	static public void setLookupDiscovery(String... ingroups) {
