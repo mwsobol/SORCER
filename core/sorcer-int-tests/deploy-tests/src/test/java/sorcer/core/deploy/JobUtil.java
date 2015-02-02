@@ -42,7 +42,7 @@ public class JobUtil {
                            Multiplier.class,
                            deploy(configuration(fork?
                                                 getConfigDir()+"/multiplier-prv-fork.config":
-                                                "org.sorcer:deploy-tests:config:5.0"),
+                                                "org.sorcer:deploy-tests:config:"+System.getProperty("sorcer.version")),
                                   idle(1),
                                   ServiceDeployment.Type.SELF)),
                        context("multiply", inEnt("arg/x1", 10.0d),
@@ -85,7 +85,7 @@ public class JobUtil {
             f4 = task("f4",
                       sig("multiply",
                           Multiplier.class,
-                          deploy(configuration("org.sorcer:deploy-tests:config:5.0"),
+                          deploy(configuration("org.sorcer:deploy-tests:config:"+System.getProperty("sorcer.version")),
                                  idle(1),
                                  opsys(opSys),
                                  arch(arch),
@@ -97,7 +97,7 @@ public class JobUtil {
             f4 = task("f4",
                       sig("multiply",
                           Multiplier.class,
-                          deploy(configuration("org.sorcer:deploy-tests:config:5.0"),
+                          deploy(configuration("org.sorcer:deploy-tests:config:"+System.getProperty("sorcer.version")),
                                  idle(1),
                                  opsys(opSys),
                                  arch(arch),
