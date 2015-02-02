@@ -3,7 +3,8 @@
 <project name="ssh" default="SORCER Shell" basedir=".">
 	<!-- load system environment variables -->
 	<property environment="env" />
-	<import file="${env.IGRID_HOME}/bin/common-run.xml" />
+	<dirname file="${basedir}/../.." property="sorcer.basedir" />
+	<import file="${sorcer.basedir}/bin/common-run.xml" />
 
 	<target name="SORCER Shell">
 		<java classname="sorcer.tools.shell.ExertionShell" fork="no">
@@ -15,8 +16,8 @@
 				<pathelement location="${jini-dl.lib}/outrigger-dl.jar" />
 				<pathelement location="${jini.lib}/serviceui.jar" />
 			</classpath>
-			<sysproperty key="java.util.logging.config.file" value="${iGrid.home}/configs/sorcer.logging" />
-			<sysproperty key="iGrid.home" value="${iGrid.home}" />
+			<sysproperty key="java.util.logging.config.file" value="${sorcer.home}/configs/sorcer.logging" />
+			<sysproperty key="sorcer.home" value="${sorcer.home}" />
 			<sysproperty key="java.protocol.handler.pkgs" value="net.jini.url" />
 			<sysproperty key="java.security.policy" value="../policy/shell.policy" />
 			<sysproperty key="ssb.logFile" value="../logs/browser.log" />

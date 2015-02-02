@@ -32,6 +32,11 @@ lateInit ( ) {
     return
 }
 
+function setVersionVar() {
+	PROP=$1
+	export VERSION=`awk -v prop=$PROP 'BEGIN{FS="="} {gsub(" ","",$0);if ($1 == prop) {print $2; exit}}' $SORCER_HOME/configs/versions.properties`
+}
+
 NSH_STARTUP="$HOME/.nsh/startup"
 if [ -r "$NSH_STARTUP" ] ; then
     . "$NSH_STARTUP"
@@ -113,10 +118,27 @@ if [ -z "$SORCER_HOME" -o ! -d "$SORCER_HOME" ] ; then
         fi
     done
     SAVED="`pwd`"
-    cd "`dirname \"$PRG\"`/.."
+    cd "`dirname \"$PRG\"`/../../.."
     SORCER_HOME="`pwd -P`"
     cd "$SAVED"
 fi
+
+echo "SORCER_HOME=$SORCER_HOME"
+setVersionVar "rio.version"
+rio_version=$VERSION
+RIO_HOME=$SORCER_HOME/rio-$rio_version
+
+setVersionVar "slf4j.version"
+slf4j_version=$VERSION
+
+setVersionVar "groovy.version"
+groovy_version=$VERSION
+
+setVersionVar "river.version"
+river_version=$VERSION
+
+setVersionVar "sorcer.version"
+sorcer_version=$VERSION
 
 # Use SORCER default if still not found
 if [ -z "$NSH_CONF" ] ; then
@@ -129,10 +151,10 @@ if [ -e $startConfigFile ] ; then
     NSH_CONF="$HOME/.nsh/configs/nsh-start.config"
 fi
 
-RIO_CLASSPATH="$RIO_HOME/lib/rio-platform-5.0-M4.jar:$RIO_HOME/lib/rio-lib-5.0-M4.jar:$RIO_HOME/lib/rio-start-5.0-M4.jar:$RIO_HOME/lib-dl/monitor-api-5.0-M4.jar:$RIO_HOME/lib/logging/slf4j-jdk14-1.7.5.jar"
+RIO_CLASSPATH="$RIO_HOME/lib/rio-platform-$rio_version.jar:$RIO_HOME/lib/rio-lib-$rio_version.jar:$RIO_HOME/lib/rio-start-$rio_version.jar:$RIO_HOME/lib-dl/monitor-api-$rio_version.jar:$RIO_HOME/lib/logging/slf4j-jdk14-$slf4j_version.jar"
 # the classpath to start nsh then application specific classpath is defined in nsh-start.config
-STARTER_CLASSPATH="$SORCER_HOME/lib/common/groovy/groovy-all-2.2.1.jar:$SORCER_HOME/lib/river/lib/jsk-platform.jar:$SORCER_HOME/lib/river/lib/jsk-lib.jar:$RIO_CLASSPATH:$SORCER_HOME/lib/sorcer/lib-ext/shell.jar:$SORCER_HOME/lib/sorcer/lib-ext/webster.jar:$SORCER_HOME/lib/sorcer/lib/sorcer-prv.jar"
-
+STARTER_CLASSPATH="$SORCER_HOME/lib/common/groovy/groovy-all-$groovy_version.jar:$SORCER_HOME/lib/river/jsk-platform-$river_version.jar:$SORCER_HOME/lib/river/jsk-lib-$river_version.jar:$RIO_CLASSPATH:$SORCER_HOME/lib/sorcer/lib/sos-shell-$sorcer_version.jar:$SORCER_HOME/lib/sorcer/lib-ext/webster-$sorcer_version.jar:$SORCER_HOME/lib/sorcer/lib/sorcer-platform-$sorcer_version.jar"
+echo "STARTER_CLASSPATH = $STARTER_CLASSPATH"
 # Create the final classpath. Setting a classpath using the -cp or -classpath option means not to use the
 # global classpath. Network shell behaves then the same as the java interpreter
 if [ -n "$CP" ] ; then
