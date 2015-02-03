@@ -32,7 +32,7 @@ lateInit ( ) {
     return
 }
 
-function setVersionVar() {
+setVersionVar ( ) {
 	PROP=$1
 	export VERSION=`awk -v prop=$PROP 'BEGIN{FS="="} {gsub(" ","",$0);if ($1 == prop) {print $2; exit}}' $SORCER_HOME/configs/versions.properties`
 }
