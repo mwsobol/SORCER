@@ -39,6 +39,7 @@ import sorcer.tools.shell.NetworkShell;
 import sorcer.tools.shell.ShellCmd;
 
 import com.sun.jini.admin.DestroyAdmin;
+import sorcer.util.WhitespaceTokenizer;
 
 public class LookupCmd extends ShellCmd {
 
@@ -75,7 +76,7 @@ public class LookupCmd extends ShellCmd {
 
 	public void execute() throws IOException, ClassNotFoundException {
 		out = NetworkShell.getShellOutputStream();
-		StringTokenizer myTk = NetworkShell.getShellTokenizer();
+		WhitespaceTokenizer myTk = NetworkShell.getShellTokenizer();
 		int numTokens = myTk.countTokens();
 		int index = DiscoCmd.selectedRegistrar;
 		String next = null;
@@ -187,7 +188,7 @@ public class LookupCmd extends ShellCmd {
 	@SuppressWarnings("unchecked")
 	private void lookup(int index, String option, String attributeValue, String serviceType) {
 		// pass in a clone of list - command may modify it
-		ArrayList<ServiceRegistrar> registrars = (ArrayList<ServiceRegistrar>) NetworkShell.getRegistrars().clone();
+		ArrayList<ServiceRegistrar> registrars = new ArrayList<ServiceRegistrar>(NetworkShell.getRegistrars());
 		if (index < registrars.size()) {
 			ServiceRegistrar myReg = (ServiceRegistrar) registrars.get(index);
 			if (myReg != null) {

@@ -22,7 +22,6 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.StringTokenizer;
 
 import net.jini.core.lookup.ServiceItem;
 import net.jini.id.Uuid;
@@ -37,6 +36,7 @@ import sorcer.service.MonitorException;
 import sorcer.service.ServiceExertion;
 import sorcer.tools.shell.NetworkShell;
 import sorcer.tools.shell.ShellCmd;
+import sorcer.util.WhitespaceTokenizer;
 
 public class EmxCmd extends ShellCmd {
 
@@ -81,7 +81,7 @@ public class EmxCmd extends ShellCmd {
 
 	public void execute() throws RemoteException, MonitorException, ContextException {
 		out = NetworkShell.getShellOutputStream();
-		StringTokenizer myTk = NetworkShell.getShellTokenizer();
+		WhitespaceTokenizer myTk = NetworkShell.getShellTokenizer();
 		int numTokens = myTk.countTokens();
 		int myIdx = 0;
 		String next = null;

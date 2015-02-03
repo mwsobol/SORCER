@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.StringTokenizer;
 
 import net.jini.core.entry.Entry;
 import net.jini.core.entry.UnusableEntryException;
@@ -44,6 +43,7 @@ import sorcer.service.MonitorException;
 import sorcer.service.ServiceExertion;
 import sorcer.tools.shell.NetworkShell;
 import sorcer.tools.shell.ShellCmd;
+import sorcer.util.WhitespaceTokenizer;
 
 /**
  * @author Mike Sobolewski
@@ -96,7 +96,7 @@ public class SpaceCmd extends ShellCmd {
 
 	public void execute() throws RemoteException, MonitorException, ContextException {
 		out = NetworkShell.getShellOutputStream();
-		StringTokenizer myTk = NetworkShell.getShellTokenizer();
+		WhitespaceTokenizer myTk = NetworkShell.getShellTokenizer();
 		int numTokens = myTk.countTokens();
 //		out.println("numTokens: " + numTokens);
 		int myIdx = 0;
