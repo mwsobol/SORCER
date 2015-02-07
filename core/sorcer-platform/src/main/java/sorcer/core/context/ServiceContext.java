@@ -514,8 +514,8 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 			try {
 				if (rp.path == null || rp.path.equals("self")) {
 					return (T) this;
-				} else if (rp.argPaths != null) {
-					 val = (T)getSubcontext(rp.argPaths);
+				} else if (rp.outPaths != null) {
+					 val = (T)getSubcontext(rp.outPaths);
 				} else {
 					if (rp.type != null) {
 						val = (T) rp.type.cast(getValue(rp.path));
@@ -1641,9 +1641,9 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 		return links.elements();
 	}
 
-	public Context getSubcontext() {
+	public ServiceContext getSubcontext() {
 		// bare-bones subcontext
-		Context subcntxt = new ServiceContext();
+        ServiceContext subcntxt = new ServiceContext();
 		subcntxt.setSubject(subjectPath, subjectValue);
 		subcntxt.setName(getName() + " subcontext");
 		subcntxt.setDomainID(getDomainID());
@@ -1659,7 +1659,7 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 		return subcntxt;
 	}
 
-	public Context getSubcontext(List<String> paths) {
+	public ServiceContext getSubcontext(List<String> paths) {
 		ServiceContext subcntxt = (ServiceContext)getSubcontext();
 		for (String path : paths) {
 			try {
@@ -1670,9 +1670,17 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 		}
 		return subcntxt;
 	}
-	
+    
+    public Context getEvaluatedSubcontext(String... paths) throws ContextException {
+        ServiceContext subcntxt = getSubcontext();
+        for (String path : paths) {
+            subcntxt.put(path, getValue(path));
+        }
+        return subcntxt;
+    }
+    
 	public Context getEvaluatedSubcontext(List<String> paths) throws ContextException {
-		ServiceContext subcntxt = (ServiceContext)getSubcontext();
+		ServiceContext subcntxt = getSubcontext();
 		for (String path : paths) {
 			subcntxt.put(path, getValue(path));
 		}

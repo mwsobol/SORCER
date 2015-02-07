@@ -20,7 +20,9 @@ package sorcer.core.context;
 import sorcer.service.*;
 
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Mike Sobolewski
@@ -47,7 +49,41 @@ public class PositionalContext<T> extends ServiceContext<T> implements
 	public PositionalContext(String name, String subjectPath, Object subjectValue) {
 		super(name, subjectPath, subjectValue);
 	}
-	
+
+    public PositionalContext getSubcontext() {
+        // bare-bones subcontext
+        PositionalContext subcntxt = new PositionalContext();
+        subcntxt.setSubject(subjectPath, subjectValue);
+        subcntxt.setName(getName() + " subcontext");
+        subcntxt.setDomainID(getDomainID());
+        subcntxt.setSubdomainID(getSubdomainID());
+        return subcntxt;
+    }
+
+    public Context appendInOut(Context context) throws ContextException {
+        Iterator it = ((Map)context).entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry<String, Object> pairs = (Map.Entry) it.next();
+            putInoutValueAt(pairs.getKey(), pairs.getValue(), tally + 1);
+            System.out.println(pairs.getKey() + " = " + pairs.getValue());
+        }
+        return this;
+    }
+    
+    public PositionalContext getEvaluatedSubcontext(String... paths) throws ContextException {
+        PositionalContext subcntxt = getSubcontext();
+        List<String>  ips = getInPaths();
+        for (String p : paths) {
+            for (int i = 1; i <= tally; i++) {
+                if (ips.contains(p)) {
+                    subcntxt.putInValueAt(p, getValue(p), i);
+                    break;
+                }
+            }
+        }
+        return subcntxt;
+    }
+    
 	/* (non-Javadoc)
 	 * @see sorcer.core.context.Positioning#getInValueAt(sorcer.service.Context, int)
 	 */

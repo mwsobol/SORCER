@@ -12,7 +12,6 @@ import sorcer.core.context.Copier;
 import sorcer.core.context.ListContext;
 import sorcer.core.provider.rendezvous.ServiceModeler;
 import sorcer.service.Context;
-import sorcer.service.Signature;
 import sorcer.service.modeling.Model;
 
 import java.net.URL;
@@ -414,12 +413,12 @@ public class ServiceContexts {
         Model m = model(sig("execute", ServiceModeler.class),
                 inEnt("multiply/x1", 10.0), inEnt("multiply/x2", 50.0),
                 inEnt("add/x1", 20.0), inEnt("add/x2", 80.0),
-                ent(sig("multiply", MultiplierImpl.class, result("subtract/x1", Signature.Direction.IN))),
-                ent(sig("add", AdderImpl.class, result("subtract/x2", Signature.Direction.IN))),
-                ent(sig("subtract", SubtractorImpl.class, result("model/response", from("subtract/x1", "subtract/x2")))));
+                ent(sig("multiply", MultiplierImpl.class, result("subtract/x1", forPaths("multiply/x1", "multiply/x2")))),
+                ent(sig("add", AdderImpl.class, result("subtract/x2", forPaths("add/x1", "add/x2")))),
+                ent(sig("subtract", SubtractorImpl.class, result("model/response", forPaths("subtract/x1", "subtract/x2")))));
 
+        addResponse(m, "subtract");
         dependsOn(m, "subtract", paths("multiply", "add"));
-        logger.info("dependentPaths: " + dependentPaths(m));
-        
-    }
+        logger.info("result: " + responses(m));
+        assertTrue(response(m, "model/response").equals(400.0));    }
 }

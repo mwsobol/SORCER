@@ -893,6 +893,7 @@ public class Contexts implements SorcerConstants {
 					list.add(inoutPaths[i]);
 		return list;
 	}
+    
 	/**
 	 * Returns a map of all paths marked as data input.
 	 * 
@@ -950,6 +951,28 @@ public class Contexts implements SorcerConstants {
 		return inpaths;
 	}
 
+    /**
+     * Returns a map of all paths marked as data input.
+     *
+     * @param cntxt
+     *            a service context
+     * @return map of all paths marked as data input
+     * @throws ContextException
+     */
+    public static Hashtable getInoutPathsMap(Context cntxt)
+            throws ContextException {
+        // get all the inout paths
+        String inoutAssoc = Context.DIRECTION + APS + Context.DA_INOUT;
+        String[] inoutPaths = Contexts.getMarkedPaths(cntxt, inoutAssoc);
+        Hashtable inpaths = new Hashtable();
+
+        if (inoutPaths != null)
+            for (int i = 0; i < inoutPaths.length; i++)
+                inpaths.put(inoutPaths[i], cntxt.getMetaattributeValue(inoutPaths[i],
+                        Context.CONTEXT_PARAMETER));
+        return inpaths;
+    }
+    
 	public static void copyContextNodesFrom(Context toContext,
 			Context fromContext) throws ContextException {
 		// copy all sorcerNodes from fromContext to this context.

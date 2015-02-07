@@ -159,8 +159,8 @@ public class WorkerExertionsTest {
 				task("work1", sig("doWork", Worker.class), cxt1),
 				task("work2", sig("doWork", Worker.class), cxt2),
 				task("work3", sig("doWork", Worker.class), cxt3),
-				pipe(out("strategy/work1", "prv/result"), in("strategy/work3", "req/arg/1")),
-				pipe(out("strategy/work2", "prv/result"), in("strategy/work3", "req/arg/2")));
+				pipe(outPoint("strategy/work1", "prv/result"), inPoint("strategy/work3", "req/arg/1")),
+				pipe(outPoint("strategy/work2", "prv/result"), inPoint("strategy/work3", "req/arg/2")));
 
 		requestTime(job);
 		Job out = exert(job);

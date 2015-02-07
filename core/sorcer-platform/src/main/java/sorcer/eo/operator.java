@@ -1678,9 +1678,9 @@ public class operator {
 		Context acxt = xrt.getContext();
 
 		if (rPath != null && xrt.isCompound()) {
-			// if Path.argPaths.length > 1 return subcontext
-			if (rPath.argPaths != null && rPath.argPaths.length == 1) {
-				Object val = acxt.getValue(rPath.argPaths[0]);
+			// if Path.outPaths.length > 1 return subcontext
+			if (rPath.outPaths != null && rPath.outPaths.length == 1) {
+				Object val = acxt.getValue(rPath.outPaths[0]);
 				dcxt.putValue(rPath.path, val);
 				return val;
 			} else {
@@ -1692,9 +1692,9 @@ public class operator {
 								.getValue(rPath.path);
 					else if (result == null) {
 						Context out = new ServiceContext();
-						logger.fine("\nselected paths: " + Arrays.toString(rPath.argPaths)
+						logger.fine("\nselected paths: " + Arrays.toString(rPath.outPaths)
 								+ "\nfrom context: " + acxt);
-						for (String p : rPath.argPaths) {
+						for (String p : rPath.outPaths) {
 							out.putValue(p, acxt.getValue(p));
 						}
 						dcxt.setReturnValue(out);
@@ -1706,17 +1706,17 @@ public class operator {
 				}
 			}
 		} else if (rPath != null) {
-			if (rPath.argPaths != null) {
-				if (rPath.argPaths.length == 1) {
-					Object val = acxt.getValue(rPath.argPaths[0]);
+			if (rPath.outPaths != null) {
+				if (rPath.outPaths.length == 1) {
+					Object val = acxt.getValue(rPath.outPaths[0]);
 					acxt.putValue(rPath.path, val);
 					return val;
-				} else if (rPath.argPaths.length > 1) {
+				} else if (rPath.outPaths.length > 1) {
 					Object result = acxt.getValue(rPath.path);
 					if (result instanceof Context)
 						return result;
 					else {
-						Context cxtOut = ((ServiceContext) acxt).getSubcontext(rPath.argPaths);
+						Context cxtOut = ((ServiceContext) acxt).getSubcontext(rPath.outPaths);
 						cxtOut.putValue(rPath.path, result);
 						return cxtOut;
 					}
@@ -1854,7 +1854,7 @@ public class operator {
 		return new ReturnPath(path);
 	}
 
-	public static ReturnPath result(String[] paths) {
+	public static ReturnPath result(From paths) {
 		return new ReturnPath(null, paths);
 	}
 
@@ -1862,10 +1862,18 @@ public class operator {
 		return new ReturnPath();
 	}
 
-	public static ReturnPath result(String path, String[] paths) {
-		return new ReturnPath(path, paths);
+	public static ReturnPath result(String path, From outPaths) {
+		return new ReturnPath(path, outPaths);
 	}
 
+    public static ReturnPath result(String path, In inPaths) {
+        return new ReturnPath(path, inPaths);
+    }
+
+    public static ReturnPath result(String path, From outPaths, In inPaths) {
+        return new ReturnPath(path, outPaths, inPaths);
+    }
+    
 	public static ReturnPath result(String path, Direction direction) {
 		return new ReturnPath(path, direction);
 	}
@@ -2174,35 +2182,19 @@ public class operator {
 		}
 	}
 
-	public static OutEndPoint output(String outComponent, String outPath) {
+	public static OutEndPoint outPoint(String outComponent, String outPath) {
 		return new OutEndPoint(outComponent, outPath);
 	}
 
-	public static OutEndPoint out(String outComponent, String outPath) {
-		return new OutEndPoint(outComponent, outPath);
-	}
-
-	public static OutEndPoint output(Service outExertion, String outPath) {
+	public static OutEndPoint outPoint(Service outExertion, String outPath) {
 		return new OutEndPoint((Exertion)outExertion, outPath);
 	}
 
-	public static OutEndPoint out(Service outExertion, String outPath) {
-		return new OutEndPoint((Exertion)outExertion, outPath);
-	}
-
-	public static InEndPoint input(String inComponent, String inPath) {
+	public static InEndPoint inPoint(String inComponent, String inPath) {
 		return new InEndPoint(inComponent, inPath);
 	}
 
-	public static InEndPoint in(String inComponent, String inPath) {
-		return new InEndPoint(inComponent, inPath);
-	}
-
-	public static InEndPoint input(Service inExertion, String inPath) {
-		return new InEndPoint((Exertion)inExertion, inPath);
-	}
-
-	public static InEndPoint in(Service inExertion, String inPath) {
+	public static InEndPoint inPoint(Service inExertion, String inPath) {
 		return new InEndPoint((Exertion)inExertion, inPath);
 	}
 

@@ -101,8 +101,8 @@ public class ArithmeticTester extends SorcerRequestor {
 		// Service Composition f1(f2(f3((x1, x2), f4(x1, x2)), f5(x1, x2))
 		//Job f1= job("f1", job("f2", f4, f5, strategy(Flow.PARALLEL, Access.PULL)), f3,
 		Job f1 = job("f1", job("f2", f3, f4), f5, strategy(Provision.NO),
-		   pipe(out(f3, path(result, y)), in(f5, path(arg, x1))),
-		   pipe(out(f4, path(result, y)), in(f5, path(arg, x2))));
+		   pipe(outPoint(f3, path(result, y)), inPoint(f5, path(arg, x1))),
+        pipe(outPoint(f4, path(result, y)), inPoint(f5, path(arg, x2))));
 
 		Job out = exert(f1);
 		if (out != null) {
@@ -133,8 +133,8 @@ public class ArithmeticTester extends SorcerRequestor {
 		//job("f1", job("f2", f4, f5), f3,		
 		//job("f1", job("f2", f4, f5, strategy(Flow.PAR, Access.PULL)), f3,
 		Job f1 = job("f1", job("f2", f4, f5), f3, strategy(Provision.NO),
-				pipe(out(f4, "result/y1"), in(f3, "arg/x5")),
-				pipe(out(f5, "result/y2"), in(f3, "arg/x6")));
+				pipe(outPoint(f4, "result/y1"), inPoint(f3, "arg/x5")),
+				pipe(outPoint(f5, "result/y2"), inPoint(f3, "arg/x6")));
 
 		Exertion out = exert(f1);
 		if (out != null) {
@@ -178,8 +178,8 @@ public class ArithmeticTester extends SorcerRequestor {
 		// job("f1", job("f2", f4, f5), f3,
 		// job("f1", job("f2", f4, f5, strategy(Flow.PAR, Access.PULL)), f3,
 		Job f1 = job("f1", job("f2", f4, f5), f3, strategy(Provision.NO),
-				pipe(out(f4, "result/y1"), input(f3, "arg/x5")),
-				pipe(out(f5, "result/y2"), input(f3, "arg/x6")));
+				pipe(outPoint(f4, "result/y1"), inPoint(f3, "arg/x5")),
+				pipe(outPoint(f5, "result/y2"), inPoint(f3, "arg/x6")));
 		
 		Exertion out = exert(f1);
 		if (out != null) {
@@ -211,8 +211,8 @@ public class ArithmeticTester extends SorcerRequestor {
 
 		// Service Composition f1(f4(x1, x2), f5(x1, x2), f3(x1, x2))
 		Job f1= job("f1", f4, f5, f3,
-		   pipe(out(f4, path(result, y)), in(f3, path(arg, x1))),
-		   pipe(out(f5, path(result, y)), in(f3, path(arg, x2))));
+		   pipe(outPoint(f4, path(result, y)), inPoint(f3, path(arg, x1))),
+		   pipe(outPoint(f5, path(result, y)), inPoint(f3, path(arg, x2))));
 
 		Exertion out = exert(f1);
 		logger.info("job f1 context: " + serviceContext(out));
@@ -240,8 +240,8 @@ public class ArithmeticTester extends SorcerRequestor {
 		// Service Composition f2(f4(x1, x2), f5(x1, x2))
 		//Job f1= job("f1", job("f2", f4, f5, strategy(Flow.PAR, Access.PULL)), f3,
 		Job f1= job("f1", job("f2", f4, f5), f3,
-				pipe(out(f4, path("result/y1")), in(f3, path("arg/x5"))),
-				pipe(out(f5, path("result/y2")), in(f3, path("arg/x6"))));
+				pipe(outPoint(f4, path("result/y1")), inPoint(f3, path("arg/x5"))),
+				pipe(outPoint(f5, path("result/y2")), inPoint(f3, path("arg/x6"))));
 
 		Exertion out = exert(f1);
 
@@ -270,8 +270,8 @@ public class ArithmeticTester extends SorcerRequestor {
 		// Service Composition f2(f4(x1, x2), f5(x1, x2))
 		//Job f1= job("f1", job("f2", f4, f5, strategy(Flow.PAR, Access.PULL)), f3,
 		Job f1= job("f1", job("f2", f4, f5, strategy(Access.PULL, Flow.PAR)), f3,
-				pipe(out(f4, path("result/y1")), in(f3, path("arg/x5"))),
-				pipe(out(f5, path("result/y2")), in(f3, path("arg/x6"))));
+				pipe(outPoint(f4, path("result/y1")), inPoint(f3, path("arg/x5"))),
+				pipe(outPoint(f5, path("result/y2")), inPoint(f3, path("arg/x6"))));
 
 		long start = System.currentTimeMillis();
 		Exertion out = exert(f1);
@@ -308,8 +308,8 @@ private Exertion f1SEQpull() throws Exception {
 		// Service Composition f2(f4(x1, x2), f5(x1, x2))
 		//Job f1= job("f1", job("f2", f4, f5, strategy(Flow.PAR, Access.PULL)), f3,
 		Job f1= job("f1", job("f2", f4, f5, strategy(Access.PULL, Flow.SEQ)), f3,
-				pipe(out(f4, path("result/y1")), in(f3, path("arg/x5"))),
-				pipe(out(f5, path("result/y2")), in(f3, path("arg/x6"))));
+				pipe(outPoint(f4, path("result/y1")), inPoint(f3, path("arg/x5"))),
+				pipe(outPoint(f5, path("result/y2")), inPoint(f3, path("arg/x6"))));
 		
 		long start = System.currentTimeMillis();
 		Exertion out = exert(f1);

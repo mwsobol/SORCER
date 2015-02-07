@@ -66,8 +66,8 @@ public class JobUtil {
         return job("f1", sig("service", Jobber.class, deploy(idle(1))),
                    job("f2", f4, f5), f3,
                    strategy(Provision.YES),
-                   pipe(out(f4, "result/y1"), input(f3, "arg/x5")),
-                   pipe(out(f5, "result/y2"), input(f3, "arg/x6")));
+                   pipe(outPoint(f4, "result/y1"), inPoint(f3, "arg/x5")),
+                   pipe(outPoint(f5, "result/y2"), inPoint(f3, "arg/x6")));
     }
 
     static Job createJobWithIPAndOpSys() throws SignatureException, ContextException, ExertionException {
@@ -125,8 +125,8 @@ public class JobUtil {
         return job("f1", sig("service", Jobber.class, deploy(idle(1))),
                    job("f2", f4, f5), f3,
                    strategy(Provision.YES),
-                   pipe(out(f4, "result/y1"), input(f3, "arg/x5")),
-                   pipe(out(f5, "result/y2"), input(f3, "arg/x6")));
+                   pipe(outPoint(f4, "result/y1"), inPoint(f3, "arg/x5")),
+                   pipe(outPoint(f5, "result/y2"), inPoint(f3, "arg/x6")));
     }
 
     static  String getConfigDir() {

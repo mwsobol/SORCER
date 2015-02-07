@@ -91,10 +91,14 @@ public class operator {
 		return new Tuple6<T1,T2,T3,T4,T5,T6>( x1, x2, x3, x4, x5, x6 );
 	}
 
-	public static String[] from(String... elems) {
-		return elems;
+	public static Signature.From fromPaths(String... elems) {
+		return new Signature.From(elems);
 	}
 
+    public static Signature.In forPaths (String... elems) {
+        return new Signature.In(elems);
+    }
+    
 	public static Class[] types(Class... classes) {
 		return classes;
 	}
@@ -189,7 +193,11 @@ public class operator {
     }
 
     public static Entry<Identifiable> ent(Identifiable item) {
-        return new Entry<Identifiable>(item.getName(), item);
+        if (item instanceof Signature)
+            return new Entry<Identifiable>(item.getName(), 
+                    new SignatureEntry(item.getName(), (Signature) item));
+        else
+            return new Entry<Identifiable>(item.getName(), item);
     }
     
 	public static <T> Entry<T> ent(String path, T value) {
@@ -712,4 +720,5 @@ public class operator {
 			super(initialCapacity);
 		}
 	}
+
 }

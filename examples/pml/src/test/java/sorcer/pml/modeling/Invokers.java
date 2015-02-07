@@ -32,10 +32,9 @@ import java.util.logging.Logger;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static sorcer.co.operator.*;
 import static sorcer.co.operator.asis;
+import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
-import static sorcer.eo.operator.in;
 import static sorcer.eo.operator.pipe;
 import static sorcer.eo.operator.value;
 import static sorcer.po.operator.add;
@@ -151,8 +150,8 @@ public class Invokers {
 
 		Job j1 = job("j1", sig("service", ServiceJobber.class),
 					job("j2", t4, t5, sig("service", ServiceJobber.class)), t3,
-					pipe(out(t4, "result/y"), in(t3, "arg/x1")),
-					pipe(out(t5, "result/y"), in(t3, "arg/x2")),
+					pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
+					pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")),
 					result("j1/t3/result/y"));
 
 		// logger.info("invoke value:" + invoke(j1));
@@ -177,8 +176,8 @@ public class Invokers {
 
 		Job j1 = job("j1", sig("service", ServiceJobber.class),
 					job("j2", t4, t5, sig("service", ServiceJobber.class)), t3,
-					pipe(out(t4, "result/y"), in(t3, "arg/x1")),
-					pipe(out(t5, "result/y"), in(t3, "arg/x2")),
+					pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
+					pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")),
 					result("j1/t3/result/y"));
 
 		// logger.info("return path:" + j1.getReturnJobPath());
@@ -242,8 +241,8 @@ public class Invokers {
 
 		Job j1 = job("j1", sig("service", ServiceJobber.class),
 				job("j2", t4, t5, sig("service", ServiceJobber.class)), t3,
-				pipe(out(t4, "result/y"), in(t3, "arg/x1")),
-				pipe(out(t5, "result/y"), in(t3, "arg/x2")));
+				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
+				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
 
 		ParModel pm = parModel("par-model");
 		add(pm, par("x1p", "arg/x1", c4), par("x2p", "arg/x2", c4), j1);

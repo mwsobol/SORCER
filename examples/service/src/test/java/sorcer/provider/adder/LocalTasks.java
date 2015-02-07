@@ -42,7 +42,7 @@ public class LocalTasks {
 
 		// get the subcontext output from the context
 		assertTrue(context(ent("arg/x1", 20.0), ent("result/value", 100.0)).equals(
-				value(cxt, result("result/value", from("arg/x1", "result/value")))));
+				value(cxt, result("result/value", fromPaths("arg/x1", "result/value")))));
 
 	}
 
@@ -58,7 +58,7 @@ public class LocalTasks {
 
 		// get the subcontext output from the exertion
 		assertTrue(context(ent("arg/x1", 20.0), ent("result/z", 100.0)).equals(
-				value(t5, result("result/z", from("arg/x1", "result/z")))));
+				value(t5, result("result/z", fromPaths("arg/x1", "result/z")))));
 
 	}
 

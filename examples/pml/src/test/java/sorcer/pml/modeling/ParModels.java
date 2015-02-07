@@ -101,7 +101,7 @@ public class ParModels {
 
 		// get model response
 		Response mr = (Response) value(vm, //ent("x1", 10.0), ent("x2", 50.0),
-				result("y", from("t4", "t5", "j1")));
+				result("y", fromPaths("t4", "t5", "j1")));
 		assertTrue(names(mr).equals(list("t4", "t5", "j1")));
 		assertTrue(values(mr).equals(list(500.0, 100.0, 400.0)));
 
@@ -377,8 +377,8 @@ public class ParModels {
 		Job j1 = job("j1", sig("service", ServiceJobber.class),
 				job("j2", t4, t5, sig("service", ServiceJobber.class)),
 				t3,
-				pipe(out(t4, "result/y"), in(t3, "arg/x1")),
-				pipe(out(t5, "result/y"), in(t3, "arg/x2")));
+				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
+				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
 
 
 		// context and job parameters
@@ -430,8 +430,8 @@ public class ParModels {
 		Job j1 = job("j1", sig("service", ServiceJobber.class),
 				job("j2", t4, t5, sig("service", ServiceJobber.class)),
 				t3,
-				pipe(out(t4, "result/y"), in(t3, "arg/x1")),
-				pipe(out(t5, "result/y"), in(t3, "arg/x2")));
+				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
+				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
 
 
 		Par c4x1p = par("c4x1p", "arg/x1", c4);

@@ -30,8 +30,6 @@ import static sorcer.co.operator.*;
 import static sorcer.co.operator.input;
 import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.get;
-import static sorcer.eo.operator.in;
-import static sorcer.eo.operator.input;
 import static sorcer.eo.operator.pipe;
 import static sorcer.eo.operator.value;
 import static sorcer.po.operator.*;
@@ -147,8 +145,8 @@ public class NetJobExertions implements SorcerConstants {
 				srvFi("net", sig("service", Jobber.class)),
 				job("j2", sig("service", ServiceJobber.class), t4, t5), 
 				t3,
-				pipe(out(t4, "result/y"), in(t3, "arg/x1")),
-				pipe(out(t5, "result/y"), in(t3, "arg/x2")),
+				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
+				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")),
 				fiContext("mix1", srvFi("j1", "net"), csFi("j1/j2/t4", "net")),
 				fiContext("mix2", srvFi("j1", "net"), csFi("j1/j2/t4", "net"), csFi("j1/j2/t5", "net")));
 
@@ -186,8 +184,8 @@ public class NetJobExertions implements SorcerConstants {
 				srvFi("net", sig("service", Jobber.class)),
 				job("j2", sig("service", ServiceJobber.class), t4, t5), 
 				t3,
-				pipe(out(t4, "result/y"), in(t3, "arg/x1")),
-				pipe(out(t5, "result/y"), in(t3, "arg/x2")),
+				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
+				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")),
 				fiContext("mix1", srvFi("j1", "net"), csFi("j1/j2/t4", "net")),
 				fiContext("mix2", srvFi("j1", "net"), csFi("j1/j2/t4", "net"), csFi("j1/j2/t5", "net")));
 		
@@ -250,8 +248,8 @@ public class NetJobExertions implements SorcerConstants {
 		Job job = job("j1", 
 				job("j2", t4, t5, strategy(flow, access)), 
 				t3,
-				pipe(out(t4, "result/y"), in(t3, "arg/x1")),
-				pipe(out(t5, "result/y"), in(t3, "arg/x2")));
+				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
+				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
 				
 		return job;
 	}
@@ -336,8 +334,8 @@ public class NetJobExertions implements SorcerConstants {
 		Job job = job(
 				"j1", sig("service", ServiceJobber.class),
 				job("j2", t4, t5), t3,
-				pipe(out(t4, "result/y"), in(t3, "arg/x1")),
-				pipe(out(t5, "result/y"), in(t3, "arg/x2")));
+				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
+				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
 
 		Context context = serviceContext(exert(job));
 		logger.info("job context: " + context);
@@ -369,8 +367,8 @@ public class NetJobExertions implements SorcerConstants {
 		Job job = job(
 				"j1", sig("service", ServiceJobber.class),
 				job("j2", t4, t5), t3,
-				pipe(out(t4, "result/y"), in(t3, "arg/x1")),
-				pipe(out(t5, "result/y"), in(t3, "arg/x2")));
+				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
+				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
 
 		Context context = serviceContext(exert(sig(Shell.class), job));
 		logger.info("job context: " + context);
@@ -403,8 +401,8 @@ public class NetJobExertions implements SorcerConstants {
 		Job job = job(
 				"j1", sig("service", ServiceJobber.class, ServiceShell.REMOTE),
 				job("j2", t4, t5), t3,
-				pipe(out(t4, "result/y"), in(t3, "arg/x1")),
-				pipe(out(t5, "result/y"), in(t3, "arg/x2")));
+				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
+				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
 
 		Context context = serviceContext(exert(job));
 		logger.info("job context: " + context);
@@ -506,8 +504,8 @@ public class NetJobExertions implements SorcerConstants {
 		// job("f1", job("f2", f4, f5), f3,
 		// job("f1", job("f2", f4, f5, strategy(Flow.PAR, Access.PULL)), f3,
 		Job f1 = job("f1", job("f2", f4, f5), f3, strategy(Provision.NO),
-				pipe(out(f4, "result/y1"), input(f3, "arg/x5")),
-				pipe(out(f5, "result/y2"), input(f3, "arg/x6")));
+				pipe(outPoint(f4, "result/y1"), inPoint(f3, "arg/x5")),
+				pipe(outPoint(f5, "result/y2"), inPoint(f3, "arg/x6")));
 		
 		return f1;
 	}

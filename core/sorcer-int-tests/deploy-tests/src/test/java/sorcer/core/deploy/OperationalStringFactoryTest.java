@@ -158,8 +158,8 @@ public class OperationalStringFactoryTest {
 
         /* totally bogus job definition */
         Job job = job("Some Job", job("f2", task), task, strategy(Strategy.Provision.YES),
-                pipe(out(task, "result/y1"), input(task, "arg/x5")),
-                pipe(out(task, "result/y2"), input(task, "arg/x6")));
+                pipe(outPoint(task, "result/y1"), inPoint(task, "arg/x5")),
+                pipe(outPoint(task, "result/y2"), inPoint(task, "arg/x6")));
         Map<ServiceDeployment.Unique, List<OperationalString>> deployments = OperationalStringFactory.create(job);
         OperationalString operationalString = deployments.get(ServiceDeployment.Unique.NO).get(0);
         assertEquals(1, operationalString.getServices().length);
