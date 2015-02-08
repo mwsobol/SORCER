@@ -274,7 +274,14 @@ public class operator {
         }
     }
 
-
+    public static Object response(Model model) throws ContextException {
+        try {
+            return ((ServiceContext)model).getResponse();
+        } catch (RemoteException e) {
+            throw new ContextException(e);
+        }
+    }
+    
     public static Entry Entry(Model model, String path) throws ContextException {
         return new Entry(path, ((Context)model).asis(path));
     }
@@ -1870,8 +1877,8 @@ public class operator {
         return new ReturnPath(path, inPaths);
     }
 
-    public static ReturnPath result(String path, From outPaths, In inPaths) {
-        return new ReturnPath(path, outPaths, inPaths);
+    public static ReturnPath result(String path, In inPaths, From outPaths) {
+        return new ReturnPath(path, inPaths, outPaths);
     }
     
 	public static ReturnPath result(String path, Direction direction) {

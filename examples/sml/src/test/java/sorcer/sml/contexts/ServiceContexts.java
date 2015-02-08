@@ -413,12 +413,27 @@ public class ServiceContexts {
         Model m = model(sig("execute", ServiceModeler.class),
                 inEnt("multiply/x1", 10.0), inEnt("multiply/x2", 50.0),
                 inEnt("add/x1", 20.0), inEnt("add/x2", 80.0),
-                ent(sig("multiply", MultiplierImpl.class, result("subtract/x1", forPaths("multiply/x1", "multiply/x2")))),
-                ent(sig("add", AdderImpl.class, result("subtract/x2", forPaths("add/x1", "add/x2")))),
-                ent(sig("subtract", SubtractorImpl.class, result("model/response", forPaths("subtract/x1", "subtract/x2")))));
+                ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
+                        inPaths("multiply/x1", "multiply/x2")))),
+                ent(sig("add", AdderImpl.class, result("add/out", 
+                        inPaths("add/x1", "add/x2")))),
+                ent(sig("subtract", SubtractorImpl.class, result("model/response", 
+                        inPaths("multiply/out", "add/out")))));
 
+        // get a scalar response
         addResponse(m, "subtract");
         dependsOn(m, "subtract", paths("multiply", "add"));
-        logger.info("result: " + responses(m));
-        assertTrue(response(m, "model/response").equals(400.0));    }
+        assertTrue(response(m).equals(400.0));
+
+        // ger a response context
+        addResponse(m, "add", "multiply");
+        Context out = responses(m);
+        logger.info("out: " + out);
+        assertTrue(response(out, "add").equals(100.0));
+        assertTrue(response(out, "multiply").equals(500.0));
+        assertTrue(response(out, "subtract").equals(400.0));
+
+        logger.info("model: " + m);
+
+    }
 }

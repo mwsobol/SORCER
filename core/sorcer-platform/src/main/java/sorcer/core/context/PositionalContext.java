@@ -50,13 +50,17 @@ public class PositionalContext<T> extends ServiceContext<T> implements
 		super(name, subjectPath, subjectValue);
 	}
 
-    public PositionalContext getSubcontext() {
+    public PositionalContext getSubcontext(String... paths) throws ContextException {
         // bare-bones subcontext
         PositionalContext subcntxt = new PositionalContext();
         subcntxt.setSubject(subjectPath, subjectValue);
-        subcntxt.setName(getName() + " subcontext");
+        subcntxt.setName(getName() + "-subcontext");
         subcntxt.setDomainID(getDomainID());
         subcntxt.setSubdomainID(getSubdomainID());
+        if  (paths != null && paths.length > 0) {
+            for (int i = 0; i < paths.length; i++)
+                subcntxt.putInoutValueAt(paths[i], getValue(paths[i]), tally + 1);
+        }
         return subcntxt;
     }
 
@@ -65,7 +69,6 @@ public class PositionalContext<T> extends ServiceContext<T> implements
         while (it.hasNext()) {
             Map.Entry<String, Object> pairs = (Map.Entry) it.next();
             putInoutValueAt(pairs.getKey(), pairs.getValue(), tally + 1);
-            System.out.println(pairs.getKey() + " = " + pairs.getValue());
         }
         return this;
     }

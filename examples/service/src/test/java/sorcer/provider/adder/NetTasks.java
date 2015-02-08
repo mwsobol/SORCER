@@ -42,7 +42,7 @@ public class NetTasks {
 
 		// get the subcontext output from the context
 		assertTrue(context(ent("arg/x1", 20.0), ent("result/y", 100.0)).equals(
-				value(cxt, result("result/context", fromPaths("arg/x1", "result/y")))));
+				value(cxt, result("result/context", outPaths("arg/x1", "result/y")))));
 	}
 
 	@Test
@@ -56,7 +56,7 @@ public class NetTasks {
 
 		// get the subcontext output from the exertion
 		assertTrue(context(ent("arg/x1", 20.0), ent("result/z", 100.0)).equals(
-				value(t5, result("result/z", fromPaths("arg/x1", "result/z")))));
+				value(t5, result("result/z", outPaths("arg/x1", "result/z")))));
 
 	}
 

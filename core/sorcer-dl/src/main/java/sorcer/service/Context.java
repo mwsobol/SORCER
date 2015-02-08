@@ -828,6 +828,8 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 	public String getLocalMetapath(String metaattributeName)
 			throws ContextException;
 
+    public Context getSubcontext(String... paths) throws ContextException;
+
 	public boolean isValid(Signature method) throws ContextException;
 
 	/**

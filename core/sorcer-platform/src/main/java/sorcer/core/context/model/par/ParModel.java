@@ -102,8 +102,16 @@ public class ParModel<T> extends PositionalContext<T> implements Invocation<T>, 
             }
             if ((val instanceof Par) && (((Par) val).asis() instanceof Variability)) {
                 bindVar((Variability) ((Par) val).asis());
-            } else if (val instanceof SignatureEntry) {
-                return (T) execSignature((SignatureEntry)val);
+            } else {
+                if (val instanceof SignatureEntry) {
+                    ServiceSignature sig = (ServiceSignature) ((SignatureEntry) val).value();
+                    Context out = execSignature(sig);
+                    if (sig.getReturnPath() != null && sig.getReturnPath().path != null) {
+                        return (T) getValue(sig.getReturnPath().path);
+                    } else {
+                        return (T) out;
+                    }
+                }
             }
             if (val != null && val instanceof Evaluation) {
                 return (T) ((Evaluation) val).getValue(entries);
@@ -120,8 +128,7 @@ public class ParModel<T> extends PositionalContext<T> implements Invocation<T>, 
         }
     }
 
-    private Context execSignature(SignatureEntry entry) throws Exception {
-        ServiceSignature sig = (ServiceSignature) entry.value();
+    private Context execSignature(Signature sig) throws Exception {
         String[] ips = sig.getReturnPath().inPaths;
         String[] ops = sig.getReturnPath().outPaths;
         execDependencies(sig);
@@ -134,7 +141,7 @@ public class ParModel<T> extends PositionalContext<T> implements Invocation<T>, 
         }
         Context outcxt = ((Task) task(sig, incxt).exert()).getContext();
         if (ops != null && ops.length > 0) {
-            outcxt = this.getEvaluatedSubcontext(ops);
+            outcxt = outcxt.getSubcontext(ops);
         }
         this.appendInOut(outcxt);
         return outcxt;

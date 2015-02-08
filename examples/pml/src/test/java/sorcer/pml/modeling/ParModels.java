@@ -101,7 +101,7 @@ public class ParModels {
 
 		// get model response
 		Response mr = (Response) value(vm, //ent("x1", 10.0), ent("x2", 50.0),
-				result("y", fromPaths("t4", "t5", "j1")));
+				result("y", outPaths("t4", "t5", "j1")));
 		assertTrue(names(mr).equals(list("t4", "t5", "j1")));
 		assertTrue(values(mr).equals(list(500.0, 100.0, 400.0)));
 

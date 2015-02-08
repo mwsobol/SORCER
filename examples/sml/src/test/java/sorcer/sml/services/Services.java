@@ -61,7 +61,7 @@ public class Services {
 
 		// get the subcontext output from the exertion
 		assertTrue(context(ent("arg/x1", 20.0), ent("result/z", 100.0)).equals(
-				exec(t5, result("result/z", fromPaths("arg/x1", "result/z")))));
+				exec(t5, result("result/z", outPaths("arg/x1", "result/z")))));
 	}
 
 	
@@ -83,7 +83,7 @@ public class Services {
 		Service job = //j1(j2(t4(x1, x2), t5(x1, x2)), t3(x1, x2))
 				srv("j1", sig(ServiceJobber.class),
 					cxt(inEnt("arg/x1", 10.0),
-					result("job/result", fromPaths("j1/t3/result/y"))),
+					result("job/result", outPaths("j1/t3/result/y"))),
 					srv("j2", sig(ServiceJobber.class), t4, t5),
 					t3,
 					pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
@@ -115,7 +115,7 @@ public class Services {
 				cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0), result("result/y")));
 
 		Service job = //j1(j2(t4(x1, x2), t5(x1, x2)), t3(x1, x2))
-				srv("j1", sig(ServiceJobber.class), result("job/result", fromPaths("j1/t3/result/y")),
+				srv("j1", sig(ServiceJobber.class), result("job/result", outPaths("j1/t3/result/y")),
 					srv("j2", sig(ServiceJobber.class), t4, t5, strategy(Flow.PAR, Access.PULL)),
 					t3,
 					pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
@@ -129,7 +129,7 @@ public class Services {
 				ent("j1/j2/t5/result/y", 100.0),
 				ent("j1/t3/result/y", 400.0)).equals(
 					exec(job, result("result/z",
-						fromPaths("j1/j2/t4/result/y", "j1/j2/t5/result/y", "j1/t3/result/y")))));
+						outPaths("j1/j2/t4/result/y", "j1/j2/t5/result/y", "j1/t3/result/y")))));
 
 		
 	}

@@ -195,7 +195,7 @@ public interface Signature extends Serializable, Comparable, Dependency, Identif
             }
         }
 
-        public ReturnPath(String path, From outPaths, In inPaths) {
+        public ReturnPath(String path, In inPaths, From outPaths) {
             this.path = path;
             if (outPaths != null && outPaths.size() > 0) {
                 String[] ps = new String[outPaths.size()];

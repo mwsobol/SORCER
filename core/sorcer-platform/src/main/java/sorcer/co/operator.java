@@ -91,14 +91,14 @@ public class operator {
 		return new Tuple6<T1,T2,T3,T4,T5,T6>( x1, x2, x3, x4, x5, x6 );
 	}
 
-	public static Signature.From fromPaths(String... elems) {
+	public static Signature.From outPaths(String... elems) {
 		return new Signature.From(elems);
 	}
 
-    public static Signature.In forPaths (String... elems) {
+    public static Signature.In inPaths(String... elems) {
         return new Signature.In(elems);
     }
-    
+
 	public static Class[] types(Class... classes) {
 		return classes;
 	}
@@ -192,7 +192,7 @@ public class operator {
         return new Entry(path, ((Context)model).asis(path));
     }
 
-    public static Entry<Identifiable> ent(Identifiable item) {
+    public static Entry ent(Identifiable item) {
         if (item instanceof Signature)
             return new Entry<Identifiable>(item.getName(), 
                     new SignatureEntry(item.getName(), (Signature) item));
