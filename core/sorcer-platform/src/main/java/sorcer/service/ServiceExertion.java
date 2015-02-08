@@ -746,14 +746,10 @@ public abstract class ServiceExertion implements Exertion, Scopable, SorcerConst
     public void setSessionId(Uuid id) {
         sessionId = id;
         if (this instanceof Job) {
-            System.out.println("sorcer.core.ExertionImpl::setSessionID this instanceof ServiceJob");
             List<Exertion> v = ((Job) this).getExertions();
-            System.out.println("sorcer.core.ExertionImpl::setSessionID this instanceof ServiceJob2");
             for (int i = 0; i < v.size(); i++) {
-                System.out.println("sorcer.core.ExertionImpl::setSessionID this instanceof ServiceJob3");
                 ((ServiceExertion) v.get(i)).setSessionId(id);
             }
-
         }
     }
 

@@ -17,34 +17,17 @@
 
 package sorcer.util;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
-import java.io.PrintWriter;
+import sorcer.core.SorcerConstants;
+import sorcer.service.Identifiable;
+
+import java.io.*;
 import java.lang.reflect.Array;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Properties;
-import java.util.StringTokenizer;
-import java.util.Vector;
+import java.util.*;
 import java.util.logging.Logger;
-
-import sorcer.core.SorcerConstants;
-import sorcer.service.Identifiable;
 
 public class SorcerUtil implements SorcerConstants {
 	final static Logger logger = Logger.getLogger("sorcer");
@@ -530,7 +513,6 @@ public class SorcerUtil implements SorcerConstants {
 
 	public static Properties loadConfiguration(Properties props, String filename)
 			throws IOException {
-		System.out.println("load:filename=" + filename);
 		InputStream is = SorcerUtil.class.getResourceAsStream(filename);
 		if (is == null)
 			is = (InputStream) (new FileInputStream(new File(filename)));

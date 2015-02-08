@@ -17,11 +17,10 @@
 
 package sorcer.jini.lookup.entry;
 
-import java.awt.Image;
-import java.awt.Toolkit;
-
 import net.jini.core.lookup.ServiceID;
 import net.jini.lookup.entry.ServiceType;
+
+import java.awt.*;
 
 /**
  * Human-oriented information about the "type" of a SORCER service. This is not
@@ -230,7 +229,6 @@ public class SorcerServiceInfo extends ServiceType {
 			else
 				return image.getScaledInstance(32, 32, 0);
 		} catch (Exception ex) {
-			System.out.println("## " + getClass() + " " + ex);
 			ex.printStackTrace();
 			return null;
 		}

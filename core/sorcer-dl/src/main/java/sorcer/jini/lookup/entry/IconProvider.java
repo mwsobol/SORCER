@@ -17,10 +17,9 @@
 
 package sorcer.jini.lookup.entry;
 
-import java.awt.Image;
-import java.awt.Toolkit;
-
 import net.jini.lookup.entry.ServiceType;
+
+import java.awt.*;
 
 /**
  * Provides an icon for the service associated with tis entry. The valid
@@ -48,7 +47,6 @@ public class IconProvider extends ServiceType {
 			else
 				return image.getScaledInstance(32, 32, 0);
 		} catch (Exception ex) {
-			System.out.println("## " + getClass() + " " + ex);
 			ex.printStackTrace();
 			return null;
 		}

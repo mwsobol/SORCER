@@ -152,7 +152,6 @@ public class Log {
 			integrityLogger = Logger.getLogger(INTEGRITY_LOG);
 			policyLogger = Logger.getLogger(POLICY_LOG);
 
-			System.out.println(System.getProperty("user.dir"));
 			// this handler will save ALL log messages in the file
 			trustFh = new FileHandler("../logs/trust.log");
 			integrityFh = new FileHandler("../logs/integrity.log");

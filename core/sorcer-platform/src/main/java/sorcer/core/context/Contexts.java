@@ -1478,11 +1478,11 @@ public class Contexts implements SorcerConstants {
 		Hashtable values;
 		attr = metaAssoc.substring(0, metaAssoc.indexOf(APS));
 		value = metaAssoc.substring(metaAssoc.indexOf(APS) + 1);
-		System.out.println("attr, value" + attr + "," + value);
+//		System.out.println("attr, value" + attr + "," + value);
 		if (!context.isMetaattribute(attr))
 			return false;
 		values = (Hashtable) context.getMetacontext().get(attr);
-		System.out.println("values" + values);
+//		System.out.println("values" + values);
 		Enumeration e = values.keys();
 		while (e.hasMoreElements()) {
 			key = (String) e.nextElement();
