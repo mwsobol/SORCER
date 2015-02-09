@@ -1135,6 +1135,8 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 	 */
 	public Enumeration<?> getAttributes(String path) throws ContextException;
 
+    public ServiceSession getSession() throws ContextException;
+        
 	public Object getData();
 
 	public int size();

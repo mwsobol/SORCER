@@ -67,7 +67,7 @@ public class NetTasks {
 				"t5",
 				sig("add", Adder.class),
 				context("add", inEnt("arg/x1", 20.0),
-						inEnt("arg/x2", 80.0), outEnt("result/y")),
+						inEnt("arg/x2", 80.0), result("result/y")),
 				strategy(Access.PULL, Wait.YES));
 
 		t5 = exert(t5);

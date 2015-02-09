@@ -140,6 +140,7 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 
 	protected float version;
 
+    protected ServiceSession serviceSession;
 	/**
 	 * An additional hashtable to handle the ids
 	 * (context_data_id,data_version_id)
@@ -180,7 +181,7 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 
 	public static ContextAccessor cntxtAccessor;
 
-	/** EMPTY LEAF NODE ie. node with no data and not empty string */
+    /** EMPTY LEAF NODE ie. node with no data and not empty string */
 	public final static String EMPTY_LEAF = ":Empty";
 
 	// this class logger
@@ -2604,7 +2605,16 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 		return values.elements();
 	}
 
-	public String getNodeType(Object obj) throws ContextException {
+    @Override
+    public ServiceSession getSession() throws ContextException {
+        return serviceSession;
+    }
+    
+    public void setSession(ServiceSession session) {
+        serviceSession = session;
+    }
+    
+    public String getNodeType(Object obj) throws ContextException {
 		// deprecated. If this object appears in the context more
 		// than once, there is no guarantee that the correct context
 		// type will be returned. Best not to have an orphaned
