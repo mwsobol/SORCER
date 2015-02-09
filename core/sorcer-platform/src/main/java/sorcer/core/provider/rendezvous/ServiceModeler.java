@@ -56,7 +56,11 @@ public class ServiceModeler extends RendezvousBean implements Modeler {
                 logger.finest("<==== Result: " + out);
                 result = out.getDataContext();
             } else {
-                logger.finest("<==== Result: " + "TODO ZZZZZZZZZZ");
+                Task task = task(model.getName(), model);
+                task.setFidelity(model.getFidelity());
+                Task out = task.exert();                
+                logger.finest("<==== Result: " + out);
+                result = out.getDataContext();
             }
         } catch (Throwable e) {
             throw new ExertionException(e);

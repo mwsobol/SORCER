@@ -408,8 +408,10 @@ public class ServiceContexts {
     }
 
     @Test
-    public void exertServiceModel() throws Exception {
+    public void evaluateServiceModel() throws Exception {
 
+        // get responses of a service model
+        
         Model m = model(sig("execute", ServiceModeler.class),
                 inEnt("multiply/x1", 10.0), inEnt("multiply/x2", 50.0),
                 inEnt("add/x1", 20.0), inEnt("add/x2", 80.0),
