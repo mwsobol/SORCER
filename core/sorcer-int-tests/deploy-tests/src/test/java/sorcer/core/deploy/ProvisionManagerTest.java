@@ -40,7 +40,7 @@ import static org.junit.Assert.assertTrue;
 @ProjectContext("core/sorcer-int-tests/deploy-tests")
 public class ProvisionManagerTest extends DeploySetup {
 
-    //@Test
+    @Test
     public void testDeploy() throws Exception {
         banner("testDeploy");
         Job f1 = JobUtil.createJob();

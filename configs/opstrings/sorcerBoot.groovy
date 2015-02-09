@@ -31,9 +31,9 @@ class Sorcer {
     static String blitzVersion = versionProps.getProperty("blitz.version")
 
     static getSorcerHome() {
-        String sorcerHome = System.getProperty("SORCER_HOME", System.getenv("SORCER_HOME"))
+        String sorcerHome = System.getProperty("sorcer.home", System.getenv("SORCER_HOME"))
         if(sorcerHome==null) {
-            throw new RuntimeException("SORCER_HOME must be set")
+            throw new RuntimeException("The system property sorcer.home must be set, or the environment SORCER_HOME set")
         }
         sorcerHome
     }
@@ -60,6 +60,13 @@ def getCommonDLs() {
 
 def getForkMode() {
     return System.getProperty("fork.mode", "yes")
+}
+
+def getDbStorageMaxMem() {
+    String maxMem = System.getenv("MAX_MEM")
+    if(maxMem == null)
+        maxMem = "1G"
+    return maxMem
 }
 
 deployment(name: "Sorcer OS") {
@@ -156,7 +163,7 @@ deployment(name: "Sorcer OS") {
     
     service(name: SorcerEnv.getActualName("Database Storage"),
             fork:getForkMode(),
-            jvmArgs:"-Dsorcer.home=${Sorcer.sorcerHome} -Xmx1G") {
+            jvmArgs:"-Dsorcer.home=${Sorcer.sorcerHome} -Xmx${getDbStorageMaxMem()}") {
         interfaces {
             classes 'sorcer.core.provider.DatabaseStorer'
             resources appendJars(["sorcer-ui-${Sorcer.sorcerVersion}.jar"])
