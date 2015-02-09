@@ -1427,10 +1427,8 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
                 ProviderSession ps = sessions.get(id);
                 if (ps == null) {
                     ps = new ProviderSession(id);
-                    ps.setMaxInactiveInterval(30*60);
                     sessions.put(id, ps);
                 }
-                cxt.setSession(ps);
             } catch (ContextException e) {
                 e.printStackTrace();
             }
@@ -1467,8 +1465,6 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
         Exertion out = exertion;
         try {
             out = doExertion(exertion, txn);
-            // clear provider session;
-            ((ServiceContext)out.getContext()).setSession(null);
         } catch (Exception e) {
             e.printStackTrace();
             ((ServiceExertion) out).reportException(new ExertionException(
@@ -1477,7 +1473,16 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
         return out;
     }
 
-	public ServiceExertion dropTask(ServiceExertion task)
+
+    public ServiceSession getSession(Context context) throws ContextException {
+        return sessions.get(context.getId());
+    }
+
+    public void deletedSession(Context context) {
+        sessions.remove(context.getId());
+    }
+
+    public ServiceExertion dropTask(ServiceExertion task)
 			throws RemoteException, ExertionException, SignatureException {
 		return delegate.dropTask(task);
 	}
@@ -1933,7 +1938,18 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 				delegate.initSpaceSupport();
 				while (running) {
 					Thread.sleep(ProviderDelegate.KEEP_ALIVE_TIME);
-				}
+                    
+                    // remove inactive sessions
+                    Iterator<Map.Entry<Uuid, ProviderSession>> si = sessions.entrySet().iterator();
+                    while (si.hasNext())  {
+                        Map.Entry<Uuid, ProviderSession> se = si.next();
+                        ProviderSession ss = se.getValue();
+                        long now = System.currentTimeMillis();
+                        if (now - ss.getLastAccessedTime() > ss.getMaxInactiveInterval() * 1000) {
+                            si.remove();
+                        }
+                    }
+                }
 			} catch (Exception doNothing) {
 			}
 		}

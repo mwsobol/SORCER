@@ -24,6 +24,9 @@ public class ProviderSession extends ServiceContext implements ServiceSession {
     public ProviderSession(Uuid id) {
         super();
         this.id = id;
+        lastAccessedTime = System.currentTimeMillis();
+        // in seconds
+        maxInactiveInterval = 30 * 60;
     }
 
     /**
@@ -88,7 +91,7 @@ public class ProviderSession extends ServiceContext implements ServiceSession {
     public Object getAttribute(String name) throws ContextException {
         if (isInvalid)
             throw new  ContextException("Invalid session: " + getId());
-        
+        lastAccessedTime  = System.currentTimeMillis();
         return getValue(name);
     }
 
@@ -136,7 +139,8 @@ public class ProviderSession extends ServiceContext implements ServiceSession {
         if (isInvalid)
             throw new  ContextException("Invalid session: " + getId());
         
-            putValue(name, value);
+        putValue(name, value);
+        lastAccessedTime  = System.currentTimeMillis();
     }
 
 

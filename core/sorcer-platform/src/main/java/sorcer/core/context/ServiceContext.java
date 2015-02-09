@@ -140,7 +140,6 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 
 	protected float version;
 
-    protected ServiceSession serviceSession;
 	/**
 	 * An additional hashtable to handle the ids
 	 * (context_data_id,data_version_id)
@@ -2605,15 +2604,6 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 		return values.elements();
 	}
 
-    @Override
-    public ServiceSession getSession() throws ContextException {
-        return serviceSession;
-    }
-    
-    public void setSession(ServiceSession session) {
-        serviceSession = session;
-    }
-    
     public String getNodeType(Object obj) throws ContextException {
 		// deprecated. If this object appears in the context more
 		// than once, there is no guarantee that the correct context

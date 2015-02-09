@@ -9,4 +9,6 @@ import java.rmi.RemoteException;
 public interface Adder {
 
 	public Context add(Context context) throws RemoteException, ContextException;
+
+    public Context sum(Context context) throws RemoteException, ContextException;
 }
