@@ -194,7 +194,7 @@ public class operator {
 
     public static Entry ent(Identifiable item) {
         if (item instanceof Signature)
-            return new Entry<Identifiable>(item.getName(), 
+            return new Entry<Identifiable>(item.getName(),
                     new SignatureEntry(item.getName(), (Signature) item));
         else
             return new Entry<Identifiable>(item.getName(), item);
