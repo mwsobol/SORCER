@@ -15,7 +15,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
-import static sorcer.eo.operator.value;
 
 /**
  * @author Mike Sobolewski
@@ -44,7 +43,7 @@ public class LocalExertionTasks {
 
 		// get the subcontext output from the context
 		assertTrue(context(ent("arg/x1", 20.0), ent("result/value", 100.0)).equals(
-				value(cxt, result("result/value", from("arg/x1", "result/value")))));
+				value(cxt, result("result/value", outPaths("arg/x1", "result/value")))));
 
 	}
 
@@ -60,7 +59,7 @@ public class LocalExertionTasks {
 
 		// get the subcontext output from the exertion
 		assertTrue(context(ent("arg/x1", 20.0), ent("result/z", 100.0)).equals(
-				value(t5, result("result/z", from("arg/x1", "result/z")))));
+				value(t5, result("result/z", outPaths("arg/x1", "result/z")))));
 
 	}
 
@@ -71,7 +70,7 @@ public class LocalExertionTasks {
         Task batch3 = task("batch3",
                 type(sig("multiply", MultiplierImpl.class, result("subtract/x1", Signature.Direction.IN)), Signature.PRE),
                 type(sig("add", AdderImpl.class, result("subtract/x2", Signature.Direction.IN)), Signature.PRE),
-                sig("subtract", SubtractorImpl.class, result("result/y", from("subtract/x1", "subtract/x2"))),
+                sig("subtract", SubtractorImpl.class, result("result/y", inPaths("subtract/x1", "subtract/x2"))),
                 context(inEnt("multiply/x1", 10.0), inEnt("multiply/x2", 50.0),
                         inEnt("add/x1", 20.0), inEnt("add/x2", 80.0)));
 
@@ -91,7 +90,7 @@ public class LocalExertionTasks {
         Task batch3 = task("batch3",
                 type(sig("multiply#op1", MultiplierImpl.class, result("op3/x1", Signature.Direction.IN)), Signature.PRE),
                 type(sig("add#op2", AdderImpl.class, result("op3/x2", Signature.Direction.IN)), Signature.PRE),
-                sig("subtract", SubtractorImpl.class, result("result/y", from("op3/x1", "op3/x2"))),
+                sig("subtract", SubtractorImpl.class, result("result/y", inPaths("op3/x1", "op3/x2"))),
                 context(inEnt("op1/x1", 10.0), inEnt("op1/x2", 50.0),
                         inEnt("op2/x1", 20.0), inEnt("op2/x2", 80.0)));
 

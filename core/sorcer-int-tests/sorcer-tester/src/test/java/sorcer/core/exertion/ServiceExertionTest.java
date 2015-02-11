@@ -1,51 +1,27 @@
 package sorcer.core.exertion;
 
 //import com.gargoylesoftware,base,testing,TestUtil;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static sorcer.co.operator.inEnt;
-import static sorcer.co.operator.list;
-import static sorcer.co.operator.outEnt;
-import static sorcer.eo.operator.context;
-import static sorcer.eo.operator.cxt;
-import static sorcer.eo.operator.exert;
-import static sorcer.eo.operator.exertion;
-import static sorcer.eo.operator.exertions;
-import static sorcer.eo.operator.get;
-import static sorcer.eo.operator.in;
-import static sorcer.eo.operator.job;
-import static sorcer.eo.operator.name;
-import static sorcer.eo.operator.names;
-import static sorcer.eo.operator.out;
-import static sorcer.eo.operator.path;
-import static sorcer.eo.operator.pipe;
-import static sorcer.eo.operator.serviceContext;
-import static sorcer.eo.operator.sig;
-import static sorcer.eo.operator.task;
-import static sorcer.eo.operator.xrt;
-
-import java.rmi.RemoteException;
-import java.util.logging.Logger;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
-
 import sorcer.arithmetic.tester.provider.impl.AdderImpl;
 import sorcer.arithmetic.tester.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.tester.provider.impl.SubtractorImpl;
 import sorcer.core.provider.rendezvous.ServiceJobber;
-import sorcer.service.Context;
-import sorcer.service.ContextException;
-import sorcer.service.EvaluationException;
-import sorcer.service.Exertion;
-import sorcer.service.ExertionException;
-import sorcer.service.Job;
-import sorcer.service.ServiceExertion;
-import sorcer.service.Task;
+import sorcer.service.*;
 import sorcer.util.Sorcer;
+
+import java.rmi.RemoteException;
+import java.util.logging.Logger;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static sorcer.co.operator.*;
+import static sorcer.eo.operator.*;
+import static sorcer.eo.operator.names;
+import static sorcer.eo.operator.path;
 
 /**
  * @author Mike Sobolewski
@@ -194,8 +170,8 @@ public class ServiceExertionTest {
 		Job job = job("j1", sig("execute", ServiceJobber.class), 
 					job("j2", sig("execute", ServiceJobber.class), t4, t5), 
 					t3,
-					pipe(out(t4, path(result, y)), in(t3, path(arg, x1))),
-					pipe(out(t5, path(result, y)), in(t3, path(arg, x2))));
+					pipe(outPoint(t4, path(result, y)), inPoint(t3, path(arg, x1))),
+					pipe(outPoint(t5, path(result, y)), inPoint(t3, path(arg, x2))));
 				
 		return job;
 	}
@@ -234,8 +210,8 @@ public class ServiceExertionTest {
 					cxt(inEnt("arg/x1", 10.0), outEnt("job/result")), 
 				xrt("j2", sig("execute", ServiceJobber.class), t4, t5), 
 				t3,
-				pipe(out(t4, "result/y"), in(t3, "arg/x1")),
-				pipe(out(t5, "result/y"), in(t3, "arg/x2")));
+				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
+				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
 				
 		return job;
 	}

@@ -21,6 +21,10 @@ package sorcer.service;
 import net.jini.id.Uuid;
 import sorcer.core.SorcerConstants;
 import sorcer.core.provider.Provider;
+
+import net.jini.id.Uuid;
+import sorcer.core.SorcerConstants;
+import sorcer.core.provider.Provider;
 import sorcer.service.modeling.Model;
 
 import java.io.Serializable;
@@ -824,6 +828,8 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 	public String getLocalMetapath(String metaattributeName)
 			throws ContextException;
 
+    public Context getSubcontext(String... paths) throws ContextException;
+
 	public boolean isValid(Signature method) throws ContextException;
 
 	/**
@@ -1134,7 +1140,11 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 	public int size();
 
 	String getUserName();
-	 
+
+	Signature.ReturnPath getReturnPath();
+
+	Context setReturnPath(Signature.ReturnPath returnPath);
+
 	public enum Type {
 		ASSOCIATIVE, SHARED, POSITIONAL, LIST, SCOPE, INDEXED, ARRAY
 	}

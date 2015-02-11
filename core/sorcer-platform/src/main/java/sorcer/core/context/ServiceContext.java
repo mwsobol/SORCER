@@ -180,7 +180,7 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 
 	public static ContextAccessor cntxtAccessor;
 
-	/** EMPTY LEAF NODE ie. node with no data and not empty string */
+    /** EMPTY LEAF NODE ie. node with no data and not empty string */
 	public final static String EMPTY_LEAF = ":Empty";
 
 	// this class logger
@@ -514,8 +514,8 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 			try {
 				if (rp.path == null || rp.path.equals("self")) {
 					return (T) this;
-				} else if (rp.argPaths != null) {
-					 val = (T)getSubcontext(rp.argPaths);
+				} else if (rp.outPaths != null) {
+					 val = (T)getSubcontext(rp.outPaths);
 				} else {
 					if (rp.type != null) {
 						val = (T) rp.type.cast(getValue(rp.path));
@@ -1641,40 +1641,50 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 		return links.elements();
 	}
 
-	public Context getSubcontext() {
+    public ServiceContext getSubcontext(List<String> paths) throws ContextException {
+        ServiceContext subcntxt = (ServiceContext)getSubcontext();
+        for (String path : paths) {
+            try {
+                subcntxt.put(path, get(path));
+            } catch(Exception e) {
+
+            }
+        }
+        return subcntxt;
+    }
+    
+	public ServiceContext getSubcontext(String... paths) throws ContextException {
 		// bare-bones subcontext
-		Context subcntxt = new ServiceContext();
+        ServiceContext subcntxt = new ServiceContext();
 		subcntxt.setSubject(subjectPath, subjectValue);
 		subcntxt.setName(getName() + " subcontext");
 		subcntxt.setDomainID(getDomainID());
 		subcntxt.setSubdomainID(getSubdomainID());
+        if  (paths != null && paths.length > 0) {
+            for (String path : paths) {
+                subcntxt.put(path, get(path));
+            }
+        }
 		return subcntxt;
 	}
-
-	public Context getSubcontext(String[] paths) {
-		ServiceContext subcntxt = (ServiceContext)getSubcontext();
+    
+    public Context getEvaluatedSubcontext(String... paths) throws ContextException {
+        ServiceContext subcntxt = getSubcontext();
+        for (String path : paths) {
+            subcntxt.put(path, getValue(path));
+        }
+        return subcntxt;
+    }
+    
+	public Context getMergedSubcontext(List<String> paths, Arg... args) throws ContextException {
+		ServiceContext subcntxt = getSubcontext();
+        Object val = null;
 		for (String path : paths) {
-			subcntxt.put(path, get(path));
-		}
-		return subcntxt;
-	}
-
-	public Context getSubcontext(List<String> paths) {
-		ServiceContext subcntxt = (ServiceContext)getSubcontext();
-		for (String path : paths) {
-			try {
-				subcntxt.put(path, get(path));
-			} catch(Exception e) {
-
-			}
-		}
-		return subcntxt;
-	}
-	
-	public Context getEvaluatedSubcontext(List<String> paths) throws ContextException {
-		ServiceContext subcntxt = (ServiceContext)getSubcontext();
-		for (String path : paths) {
-			subcntxt.put(path, getValue(path));
+            val = getValue(path, args);
+            if (getValue(path) instanceof Context)
+                subcntxt.append((Context) val);
+            else
+			    subcntxt.put(path, getValue(path, args));
 		}
 		return subcntxt;
 	}
@@ -2594,7 +2604,7 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 		return values.elements();
 	}
 
-	public String getNodeType(Object obj) throws ContextException {
+    public String getNodeType(Object obj) throws ContextException {
 		// deprecated. If this object appears in the context more
 		// than once, there is no guarantee that the correct context
 		// type will be returned. Best not to have an orphaned
@@ -3004,22 +3014,26 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
             throw new ContextException("No valid unique response available");
     }
     
-    public T getResponse() throws ContextException, RemoteException {
+    public T getResponse(Arg... entries) throws ContextException, RemoteException {
         try {
             if (responsePaths != null && responsePaths.size() == 1)
-                return getValue(responsePaths.get(0));
+                return getValue(responsePaths.get(0), entries);
             else 
                 throw new ContextException("No valid unique response available");
         } catch (Exception e) {
             throw new ContextException(e);
         }
     }
-
+    
     @Override
-    public Context getResponses(Arg... entries) throws ContextException, RemoteException {
-		return getEvaluatedSubcontext(responsePaths);
-	}
-	
+    public Context getResponses(Arg... args) throws ContextException, RemoteException {
+        return getMergedSubcontext(responsePaths, args);
+    } 
+    
+    public Context getResponses(String path, String... paths) throws ContextException, RemoteException {
+        return getMergedSubcontext(Arrays.asList(paths));
+    }
+    
 	public String getCurrentSelector() {
 		return currentSelector;
 	}

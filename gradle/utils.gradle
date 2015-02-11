@@ -75,6 +75,10 @@ task bootSorcerRio(type: Exec, dependsOn: "webster") {
     args << "ant"
     args << "-f"
     args << "${file("${sorcerDistHome}").path}/bin/rio/boot-sorcer-rio.xml"
+    def env = []
+    if(System.getProperty("maxMem")!=null) {
+        environment "MAX_MEM": System.getProperty("maxMem")
+    }
     commandLine args
 }
 bootSorcerRio.onlyIf {

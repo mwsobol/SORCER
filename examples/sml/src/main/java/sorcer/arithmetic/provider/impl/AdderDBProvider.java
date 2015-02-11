@@ -38,7 +38,7 @@ public class AdderDBProvider extends DatabaseProvider implements RemoteAdder {
 		
 		Uuid id =  store(context);
 		Context scxt = getContext(id);
-		System.out.println("stored context: " + context);
+//		System.out.println("stored context: " + context);
 		
 		return out;
 	}

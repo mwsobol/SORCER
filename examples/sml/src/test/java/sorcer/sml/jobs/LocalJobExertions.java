@@ -95,8 +95,8 @@ public class LocalJobExertions implements SorcerConstants {
 
 		Job job = job(sig("service", ServiceJobber.class),
 				"j1", t4, t5, t3,
-				pipe(out(t4, "result/y"), in(t3, "arg/x1")),
-				pipe(out(t5, "result/y"), in(t3, "arg/x2")));
+				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
+				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
 		
 		Context context = serviceContext(exert(job));
 		logger.info("job context: " + context);
@@ -129,8 +129,8 @@ public class LocalJobExertions implements SorcerConstants {
 		Job job = job(
 				"j1", sig("service", ServiceJobber.class),
 				job("j2", t4, t5), t3,
-				pipe(out(t4, "result/y"), in(t3, "arg/x1")),
-				pipe(out(t5, "result/y"), in(t3, "arg/x2")));
+				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
+				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
 
 		Context context = serviceContext(exert(job));
 		logger.info("job context: " + context);
@@ -189,10 +189,10 @@ public class LocalJobExertions implements SorcerConstants {
 				"j1",
 				sig("execute", ServiceJobber.class),
 				cxt(inEnt("arg/x1", 10.0),
-						result("job/result", from("j1/t3/result/y"))),
+						result("job/result", outPaths("j1/t3/result/y"))),
 				srv("j2", sig("execute", ServiceJobber.class), t4, t5), t3,
-				pipe(out(t4, "result/y"), in(t3, "arg/x1")),
-				pipe(out(t5, "result/y"), in(t3, "arg/x2")));
+				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
+				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
 
 		Context context = serviceContext(exert(job));
 		logger.info("job context: " + context);

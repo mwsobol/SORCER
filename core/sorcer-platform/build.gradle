@@ -45,6 +45,15 @@ jar {
     }
 }
 
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+artifacts {
+    archives sourcesJar
+}
+
 test {
     testLogging {
         events "passed", "skipped", "failed"/*, "standardOut", "standardError"*/

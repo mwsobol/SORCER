@@ -1402,7 +1402,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 			} else {
 				logger.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> processing by: "
 						+ getProviderName());
-				cfm = new ControlFlowManager(exertion, delegate);
+                cfm = new ControlFlowManager(exertion, delegate);
 				return cfm.process(threadManager);
 			}
 		} catch (Exception e) {
@@ -1412,52 +1412,77 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	
 	@Override
 	public Exertion service(Mogram mogram) throws ExertionException, RemoteException {
+        // session management
 		return doExertion((Exertion)mogram, null);
 	}
 
 	@Override
-	public Exertion service(Mogram mogram, Transaction txn) throws TransactionException,
-			ExertionException, RemoteException {
-		// TODO transaction handling to be implemented when needed
-		// TO DO HANDLING SUSSPENDED exertions
-		// if (((ServiceExertion) exertion).monitorSession != null) {
-		// new Thread(new ServiceThread(exertion, this)).start();
-		// return exertion;
-		// }
-	   	Exertion exertion = (Exertion)mogram;
-		// when service Locker is used
-		if (delegate.mutualExlusion()) {
-			Object mutexId = ((ControlContext)exertion.getControlContext()).getMutexId();
-			if (mutexId == null) {
-				exertion.getControlContext().appendTrace(
-						"mutex required by: " + getProviderName() + ":"
-								+ getProviderID());
-				return exertion;
-			} else if (!(mutexId.equals(delegate.getServiceID()))) {
-				exertion.getControlContext().appendTrace(
-						"invalid mutex for: " + getProviderName() + ":"
-								+ getProviderID());
-				return exertion;
-			}
-		}
-		// allow provider to leave a trace
-		// exertion.getControlContext().appendTrace(
-		// delegate.mutualExlusion() ? "mutex in: "
-		// + getProviderName() + ":" + getProviderID()
-		// : "in: " + getProviderName() + ":"
-		// + getProviderID());
-		Exertion out = exertion;
-		try {
-			out = doExertion(exertion, txn);
-		} catch (ExertionException e) {
-			e.printStackTrace();
-			((ServiceExertion) out).reportException(new ExertionException(
-					getProviderName() + " failed", e));
-		}
-		return out;
-	}
+    public Exertion service(Mogram mogram, Transaction txn) throws TransactionException,
+            ExertionException, RemoteException {
+        if (mogram instanceof Task) {
+            ServiceContext cxt;
+            try {
+                cxt = (ServiceContext) ((Task)mogram).getDataContext();
+                Uuid id = cxt.getId();
+                ProviderSession ps = sessions.get(id);
+                if (ps == null) {
+                    ps = new ProviderSession(id);
+                    sessions.put(id, ps);
+                }
+            } catch (ContextException e) {
+                e.printStackTrace();
+            }
+        }
 
-	public ServiceExertion dropTask(ServiceExertion task)
+        // TODO transaction handling to be implemented when needed
+        // TO DO HANDLING SUSSPENDED exertions
+        // if (((ServiceExertion) exertion).monitorSession != null) {
+        // new Thread(new ServiceThread(exertion, this)).start();
+        // return exertion;
+        // }
+        Exertion exertion = (Exertion)mogram;
+        // when service Locker is used
+        if (delegate.mutualExlusion()) {
+            Object mutexId = ((ControlContext)exertion.getControlContext()).getMutexId();
+            if (mutexId == null) {
+                exertion.getControlContext().appendTrace(
+                        "mutex required by: " + getProviderName() + ":"
+                                + getProviderID());
+                return exertion;
+            } else if (!(mutexId.equals(delegate.getServiceID()))) {
+                exertion.getControlContext().appendTrace(
+                        "invalid mutex for: " + getProviderName() + ":"
+                                + getProviderID());
+                return exertion;
+            }
+        }
+        // allow provider to leave a trace
+        // exertion.getControlContext().appendTrace(
+        // delegate.mutualExlusion() ? "mutex in: "
+        // + getProviderName() + ":" + getProviderID()
+        // : "in: " + getProviderName() + ":"
+        // + getProviderID());
+        Exertion out = exertion;
+        try {
+            out = doExertion(exertion, txn);
+        } catch (Exception e) {
+            e.printStackTrace();
+            ((ServiceExertion) out).reportException(new ExertionException(
+                    getProviderName() + " failed", e));
+        }
+        return out;
+    }
+
+
+    public ServiceSession getSession(Context context) throws ContextException {
+        return sessions.get(context.getId());
+    }
+
+    public void deletedSession(Context context) {
+        sessions.remove(context.getId());
+    }
+
+    public ServiceExertion dropTask(ServiceExertion task)
 			throws RemoteException, ExertionException, SignatureException {
 		return delegate.dropTask(task);
 	}
@@ -1913,7 +1938,18 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 				delegate.initSpaceSupport();
 				while (running) {
 					Thread.sleep(ProviderDelegate.KEEP_ALIVE_TIME);
-				}
+                    
+                    // remove inactive sessions
+                    Iterator<Map.Entry<Uuid, ProviderSession>> si = sessions.entrySet().iterator();
+                    while (si.hasNext())  {
+                        Map.Entry<Uuid, ProviderSession> se = si.next();
+                        ProviderSession ss = se.getValue();
+                        long now = System.currentTimeMillis();
+                        if (now - ss.getLastAccessedTime() > ss.getMaxInactiveInterval() * 1000) {
+                            si.remove();
+                        }
+                    }
+                }
 			} catch (Exception doNothing) {
 			}
 		}

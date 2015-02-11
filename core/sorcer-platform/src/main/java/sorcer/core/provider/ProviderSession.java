@@ -1,13 +1,15 @@
 
 package sorcer.core.provider;
 
+import net.jini.id.Uuid;
 import sorcer.core.context.ServiceContext;
 import sorcer.service.ContextException;
+import sorcer.service.ServiceSession;
 
 import java.util.Enumeration;
 
 
-public class ProviderSession extends ServiceContext {
+public class ProviderSession extends ServiceContext implements ServiceSession {
 
     private long lastAccessedTime;
     
@@ -17,10 +19,15 @@ public class ProviderSession extends ServiceContext {
 
     boolean isInvalid = false;
     
-    public ProviderSession() {
-       super();
-    }
+    Uuid id;
 
+    public ProviderSession(Uuid id) {
+        super();
+        this.id = id;
+        lastAccessedTime = System.currentTimeMillis();
+        // in seconds
+        maxInactiveInterval = 30 * 60;
+    }
 
     /**
      * Returns the last time the requestor sent a request associated with this
@@ -84,7 +91,7 @@ public class ProviderSession extends ServiceContext {
     public Object getAttribute(String name) throws ContextException {
         if (isInvalid)
             throw new  ContextException("Invalid session: " + getId());
-        
+        lastAccessedTime  = System.currentTimeMillis();
         return getValue(name);
     }
 
@@ -132,7 +139,8 @@ public class ProviderSession extends ServiceContext {
         if (isInvalid)
             throw new  ContextException("Invalid session: " + getId());
         
-            putValue(name, value);
+        putValue(name, value);
+        lastAccessedTime  = System.currentTimeMillis();
     }
 
 
@@ -159,6 +167,10 @@ public class ProviderSession extends ServiceContext {
         removePath(name);
     }
 
+    @Override
+    public Uuid getId() {
+        return id;
+    }
 
     /**
      * Invalidates this session then unbinds any objects bound to it.

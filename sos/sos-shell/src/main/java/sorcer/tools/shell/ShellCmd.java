@@ -20,6 +20,7 @@ package sorcer.tools.shell;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 
+import net.jini.config.Configuration;
 import net.jini.core.entry.Entry;
 import net.jini.core.lookup.ServiceItem;
 import net.jini.core.lookup.ServiceMatches;
@@ -39,6 +40,10 @@ abstract public class ShellCmd {
 	protected String COMMAND_USAGE;
 
 	protected String COMMAND_HELP;
+
+	protected INetworkShell shell;
+
+	protected Configuration config;
 
 	protected static final int MAX_MATCHES = 64;
 
@@ -68,6 +73,14 @@ abstract public class ShellCmd {
 	}
 
 	public void endSubsystem() {
+	}
+
+	public void setNetworkShell(INetworkShell shell){
+		this.shell = shell;
+	}
+
+	public void setConfiguration(Configuration config){
+		this.config = config;
 	}
 
 	public String toString() {

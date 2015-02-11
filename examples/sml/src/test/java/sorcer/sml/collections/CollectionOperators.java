@@ -429,8 +429,8 @@ public class CollectionOperators {
 		Service j1 = srv("j1", sig("service", ServiceJobber.class),
 				srv("j2", t4, t5, sig("service", ServiceJobber.class)),
 				t3,
-				pipe(out(t4, "result/y"), in(t3, "arg/x1")),
-				pipe(out(t5, "result/y"), in(t3, "arg/x2")));
+				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
+				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
 
 
 		// context and exertion parameters

@@ -19,7 +19,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
-import static sorcer.eo.operator.input;
 import static sorcer.eo.operator.value;
 
 /**
@@ -62,7 +61,7 @@ public class Services {
 
 		// get the subcontext output from the exertion
 		assertTrue(context(ent("arg/x1", 20.0), ent("result/z", 100.0)).equals(
-				exec(t5, result("result/z", from("arg/x1", "result/z")))));
+				exec(t5, result("result/z", outPaths("arg/x1", "result/z")))));
 	}
 
 	
@@ -84,11 +83,11 @@ public class Services {
 		Service job = //j1(j2(t4(x1, x2), t5(x1, x2)), t3(x1, x2))
 				srv("j1", sig(ServiceJobber.class),
 					cxt(inEnt("arg/x1", 10.0),
-					result("job/result", from("j1/t3/result/y"))),
+					result("job/result", outPaths("j1/t3/result/y"))),
 					srv("j2", sig(ServiceJobber.class), t4, t5),
 					t3,
-					pipe(output(t4, "result/y"), input(t3, "arg/x1")),
-					pipe(output(t5, "result/y"), input(t3, "arg/x2")));
+					pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
+					pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
 		
 		logger.info("srv job context: " + serviceContext(job));
 		logger.info("srv j1/t3 context: " + context(job, "j1/t3"));
@@ -116,11 +115,11 @@ public class Services {
 				cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0), result("result/y")));
 
 		Service job = //j1(j2(t4(x1, x2), t5(x1, x2)), t3(x1, x2))
-				srv("j1", sig(ServiceJobber.class), result("job/result", from("j1/t3/result/y")),
+				srv("j1", sig(ServiceJobber.class), result("job/result", outPaths("j1/t3/result/y")),
 					srv("j2", sig(ServiceJobber.class), t4, t5, strategy(Flow.PAR, Access.PULL)),
 					t3,
-					pipe(out(t4, "result/y"), in(t3, "arg/x1")),
-					pipe(out(t5, "result/y"), in(t3, "arg/x2")));
+					pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
+					pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
 
 		// get the result value
 		assertEquals(400.0, exec(job));
@@ -130,7 +129,7 @@ public class Services {
 				ent("j1/j2/t5/result/y", 100.0),
 				ent("j1/t3/result/y", 400.0)).equals(
 					exec(job, result("result/z",
-						from("j1/j2/t4/result/y", "j1/j2/t5/result/y", "j1/t3/result/y")))));
+						outPaths("j1/j2/t4/result/y", "j1/j2/t5/result/y", "j1/t3/result/y")))));
 
 		
 	}

@@ -247,8 +247,8 @@ public abstract class ServiceExertion implements Exertion, Scopable, SorcerConst
                     obj = cxt;
                 else if (rp.path.equals("self"))
                     obj = xrt;
-                else  if (rp.argPaths != null) {
-                    obj = ((ServiceContext)cxt).getSubcontext(rp.argPaths);
+                else  if (rp.outPaths != null) {
+                    obj = ((ServiceContext)cxt).getSubcontext(rp.outPaths);
                 } else {
                     obj = cxt.getValue(rp.path);
                 }
@@ -746,14 +746,10 @@ public abstract class ServiceExertion implements Exertion, Scopable, SorcerConst
     public void setSessionId(Uuid id) {
         sessionId = id;
         if (this instanceof Job) {
-            System.out.println("sorcer.core.ExertionImpl::setSessionID this instanceof ServiceJob");
             List<Exertion> v = ((Job) this).getExertions();
-            System.out.println("sorcer.core.ExertionImpl::setSessionID this instanceof ServiceJob2");
             for (int i = 0; i < v.size(); i++) {
-                System.out.println("sorcer.core.ExertionImpl::setSessionID this instanceof ServiceJob3");
                 ((ServiceExertion) v.get(i)).setSessionId(id);
             }
-
         }
     }
 
@@ -1336,8 +1332,8 @@ public abstract class ServiceExertion implements Exertion, Scopable, SorcerConst
                 else if (rp.path != null) {
                     cxt.setReturnValue(cxt.getValue(rp.path));
                     Context out = null;
-                    if (rp.argPaths != null && rp.argPaths.length > 0) {
-                        out = ((ServiceContext)cxt).getSubcontext(rp.argPaths);
+                    if (rp.outPaths != null && rp.outPaths.length > 0) {
+                        out = ((ServiceContext)cxt).getSubcontext(rp.outPaths);
                         cxt.setReturnValue(out);
                         return out;
                     }

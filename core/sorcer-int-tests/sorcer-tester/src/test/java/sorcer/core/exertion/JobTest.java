@@ -62,8 +62,8 @@ public class JobTest {
 		Job f1 = job("f1", sig("service", Jobber.class, "Jobber"),
 				job(sig("service", Jobber.class, "Jobber"), "f2", f4, f5), f3,
 				strategy(Strategy.Provision.YES),
-				pipe(out(f4, "result/y1"), input(f3, "arg/x5")),
-				pipe(out(f5, "result/y2"), input(f3, "arg/x6")));
+				pipe(outPoint(f4, "result/y1"), inPoint(f3, "arg/x5")),
+				pipe(outPoint(f5, "result/y2"), inPoint(f3, "arg/x6")));
 
 		logger.info("f1 signature : " + f1.getProcessSignature());
 	}

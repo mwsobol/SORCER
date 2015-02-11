@@ -65,7 +65,6 @@ public class GroovyCmd extends ShellCmd {
 	}
 
 	public void execute() throws Throwable {
-		NetworkShell shell = NetworkShell.getInstance();
 		BufferedReader br = NetworkShell.getShellInputStream();
 		out = NetworkShell.getShellOutputStream();
 		input = shell.getCmd();

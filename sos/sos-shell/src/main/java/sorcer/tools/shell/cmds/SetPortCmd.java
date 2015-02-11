@@ -26,6 +26,7 @@ import net.jini.core.lookup.ServiceRegistrar;
 import net.jini.lookup.DiscoveryAdmin;
 import sorcer.tools.shell.NetworkShell;
 import sorcer.tools.shell.ShellCmd;
+import sorcer.util.WhitespaceTokenizer;
 
 public class SetPortCmd extends ShellCmd {
 	{
@@ -45,9 +46,9 @@ public class SetPortCmd extends ShellCmd {
 
 	public void execute() {
 		out = NetworkShell.getShellOutputStream();
-		StringTokenizer myTk = NetworkShell.getShellTokenizer();
+		WhitespaceTokenizer myTk = NetworkShell.getShellTokenizer();
 		// pass in a clone of list - command may modify it
-		ArrayList registrars = (ArrayList) NetworkShell.getRegistrars().clone();
+		ArrayList<ServiceRegistrar> registrars = new ArrayList<ServiceRegistrar>(NetworkShell.getRegistrars());
 		int numTokens = myTk.countTokens();
 		if (numTokens < 2) {
 			out.println(COMMAND_USAGE);

@@ -249,7 +249,7 @@ public class SorcerILFactory extends BasicILFactory {
 						((Task)obj).setStatus(Exec.DONE);
 					}
 				} else {
-					obj = method.invoke(impl, args);
+                    obj = method.invoke(impl, args);
 				}
 			} catch (Throwable t) {
 				throw new ExertionException(t);
