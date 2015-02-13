@@ -20,6 +20,7 @@ package sorcer.service;
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
 import sorcer.core.context.model.par.ParModel;
+import sorcer.core.provider.rendezvous.ServiceModeler;
 import sorcer.core.signature.ServiceSignature;
 import sorcer.eo.operator;
 import sorcer.service.modeling.Model;
@@ -27,6 +28,8 @@ import sorcer.service.modeling.Model;
 import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.Map;
+
+import static sorcer.eo.operator.sig;
 
 /**
  * A ServiceModel is a schematic description or representation of something, especially a system, 
@@ -51,22 +54,27 @@ public class ServiceModel<T> extends ParModel<T> implements Model {
     // existing names 
     protected String selectedFidelitySelector;
     
-    public ServiceModel() {
+    public ServiceModel() throws SignatureException {
         super();
         isModeling = true;
+        addSignature(sig("service", ServiceModeler.class));
     }
 
-    public ServiceModel(String name) {
+    public ServiceModel(String name) throws SignatureException {
         super(name);
         isModeling = true;
+        addSignature(sig("service", ServiceModeler.class));
     }
 
     public ServiceModel(Signature signature) {
+        super();
+        getFidelity().clear();
         addSignature(signature);
     }
 
-    public ServiceModel(String name, Signature signature) {
+    public ServiceModel(String name, Signature signature) throws SignatureException {
         this(name);
+        getFidelity().clear();
         addSignature(signature);
     }
 
