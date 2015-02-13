@@ -2391,6 +2391,11 @@ public class operator {
 		return signature;
 	}
 
+    public static Signature model(Signature signature) {
+        ((ServiceSignature)signature).addRank(new Kind[]{Kind.MODEL, Kind.TASKER});
+        return signature;
+    }
+    
     public static Model srvModel(Object... items) throws ContextException {
         ServiceFidelity fidelity = null;
         Complement complement = null;
