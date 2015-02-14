@@ -385,7 +385,7 @@ public class ServiceContexts {
     }
 
     @Test
-    public void exertContextualServiceModel() throws Exception {
+    public void exertContextServiceModel() throws Exception {
 
         // get a context from a subject provider
         
