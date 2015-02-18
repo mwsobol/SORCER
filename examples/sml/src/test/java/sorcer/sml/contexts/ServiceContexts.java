@@ -10,7 +10,6 @@ import sorcer.arithmetic.provider.impl.SubtractorImpl;
 import sorcer.co.tuple.Entry;
 import sorcer.core.context.Copier;
 import sorcer.core.context.ListContext;
-import sorcer.core.provider.rendezvous.ServiceModeler;
 import sorcer.service.Context;
 import sorcer.service.modeling.Model;
 
@@ -20,8 +19,11 @@ import java.util.logging.Logger;
 import static org.junit.Assert.*;
 import static sorcer.co.operator.asis;
 import static sorcer.co.operator.*;
+import static sorcer.co.operator.inPaths;
 import static sorcer.co.operator.path;
 import static sorcer.eo.operator.*;
+import static sorcer.eo.operator.inPaths;
+import static sorcer.eo.operator.outPaths;
 import static sorcer.eo.operator.put;
 import static sorcer.eo.operator.value;
 import static sorcer.po.operator.invoker;
@@ -383,9 +385,9 @@ public class ServiceContexts {
     }
 
     @Test
-    public void exertModelAsContext() throws Exception {
+    public void exertServiceModel() throws Exception {
         
-        Model m = model(sig("add", AdderImpl.class),
+        Model m = srvModel(sig("add", AdderImpl.class),
                 inEnt("arg/x1", 1.0), inEnt("arg/x2", 2.0),
                 ent("arg/x3", 3.0), ent("arg/x4", 4.0), ent("arg/x5", 5.0));
 
@@ -408,11 +410,11 @@ public class ServiceContexts {
     }
 
     @Test
-    public void evaluateServiceModel() throws Exception {
+        public void queryServiceModel() throws Exception {
 
         // get responses of a service model
-        
-        Model m = model(sig("execute", ServiceModeler.class),
+
+        Model m = srvModel(
                 inEnt("multiply/x1", 10.0), inEnt("multiply/x2", 50.0),
                 inEnt("add/x1", 20.0), inEnt("add/x2", 80.0),
                 ent(sig("multiply", MultiplierImpl.class, result("multiply/out",

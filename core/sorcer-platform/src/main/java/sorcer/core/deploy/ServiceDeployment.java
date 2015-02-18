@@ -32,6 +32,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.logging.Logger;
 
 /**
  * Attributes related to signature based deployment.
@@ -72,6 +73,7 @@ public class ServiceDeployment implements Serializable, Deployment {
 
     private Boolean fork;
     private String jvmArgs;
+    private static final Logger logger = Logger.getLogger(ServiceDeployment.class.getName());
 
     public ServiceDeployment() {
     }
@@ -84,7 +86,22 @@ public class ServiceDeployment implements Serializable, Deployment {
         if(config.startsWith("http")) {
             this.config = config;
         } else if(Artifact.isArtifact(config)) {
-            this.config = config;
+            Artifact temp = new Artifact(config);
+            String classifier = temp.getClassifier();
+            if(classifier==null || !classifier.equals("deploy")) {
+                logger.info("Setting classifier to \"deploy\" for "+temp.getGAV());
+                classifier = "deploy";
+            }
+            String type = temp.getType();
+            if(type==null || !type.equals("config")) {
+                logger.info("Setting type to \"config\" for "+temp.getGAV());
+                type = "config";
+            }
+            this.config = new Artifact(temp.getGroupId(),
+                                       temp.getArtifactId(),
+                                       temp.getVersion(),
+                                       type,
+                                       classifier).getGAV();
         } else if(!config.startsWith("/")) {
             this.config = System.getenv("SORCER_HOME") + File.separatorChar + config;
         } else {

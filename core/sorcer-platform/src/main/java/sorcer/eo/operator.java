@@ -2391,7 +2391,12 @@ public class operator {
 		return signature;
 	}
 
-    public static Model model(Object... items) throws ContextException {
+    public static Signature model(Signature signature) {
+        ((ServiceSignature)signature).addRank(new Kind[]{Kind.MODEL, Kind.TASKER});
+        return signature;
+    }
+    
+    public static Model srvModel(Object... items) throws ContextException {
         ServiceFidelity fidelity = null;
         Complement complement = null;
         for (Object item : items) {
@@ -2403,7 +2408,12 @@ public class operator {
                complement = (Complement)item;
            }
         }
-        ServiceModel model = new  ServiceModel();
+        ServiceModel model = null;
+        try {
+            model = new ServiceModel();
+        } catch (SignatureException e) {
+            throw new ContextException(e);
+        }
         if (fidelity != null) {
             model.setFidelity(fidelity);
         } else if (complement != null) {
