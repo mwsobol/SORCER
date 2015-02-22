@@ -224,7 +224,7 @@ public class ProviderDelegate implements SorcerConstants {
 	 * A remote inner proxy implements Remote interface. Usually outer proxy
 	 * complements its functionality by invoking remote calls on the inner proxy
 	 * server. Thus, inner proxy can make remote calls on another service
-	 * provider, for example {@link Provider#service(Exertion)), while the
+	 * provider, for example {@code Provider.service(Exertion)), while the
 	 * outer proxy still can call directly on the originating service provider.
 	 */
 	private Remote innerProxy = null;
@@ -238,7 +238,7 @@ public class ProviderDelegate implements SorcerConstants {
 	 * redirected calls using its inner proxy (redirected remote invocations).
 	 * Any method of not Remote interface implemented by a SORCER service
 	 * provider can be invoked via the Service remote interface,
-	 * {@link Service#service(Exertion)} - recommended approach. That
+	 * {@code Service.service(Exertion)} - recommended approach. That
 	 * provider's direct invocation method is embedded into a service method of
 	 * the provided exertion.
 	 */
@@ -338,13 +338,12 @@ public class ProviderDelegate implements SorcerConstants {
 	public ProviderDelegate() {
 	}
 
-	public void init(sorcer.core.provider.Provider provider) throws RemoteException,
-	ConfigurationException {
+	public void init(sorcer.core.provider.Provider provider) throws ConfigurationException {
 		init(provider, null);
 	}
 
 	public void init(sorcer.core.provider.Provider provider, String configFilename)
-			throws RemoteException, ConfigurationException {
+			throws ConfigurationException {
 		this.provider = provider;
 		String providerProperties = configFilename;
 		// This allows us to specify different properties for different hosts
@@ -417,7 +416,7 @@ public class ProviderDelegate implements SorcerConstants {
 		}
 	}
 
-	void initSpaceSupport() throws ConfigurationException, RemoteException {
+	void initSpaceSupport() throws ConfigurationException {
 		if (!spaceEnabled)
 			return;
 
@@ -452,10 +451,13 @@ public class ProviderDelegate implements SorcerConstants {
 		try {
 			startSpaceTakers();
 		} catch (Exception e) {
-			e.printStackTrace();
-			logger.severe("Provider HALTED: Couldn't start Workers");
-			provider.destroy();
-		}
+			logger.log(Level.SEVERE, "Provider HALTED: Couldn't start Workers", e);
+            try {
+                provider.destroy();
+            } catch (RemoteException e1) {
+                logger.log(Level.SEVERE, "Could not desrtroy provider", e1);
+            }
+        }
 	}
 
 	protected void configure(Configuration jconfig) throws ExportException {
@@ -943,7 +945,7 @@ public class ProviderDelegate implements SorcerConstants {
 		}
 	}
 
-	private void confirmExec(Task task) throws RemoteException {
+	private void confirmExec(Task task)  {
 		String pn;
 		try {
 			pn = getProviderName();
@@ -1205,7 +1207,7 @@ public class ProviderDelegate implements SorcerConstants {
 	}
 
 	public ServiceExertion dropTask(Exertion entryTask)
-			throws ExertionException, SignatureException, RemoteException {
+			throws ExertionException, SignatureException {
 		return null;
 	}
 
@@ -1233,11 +1235,11 @@ public class ProviderDelegate implements SorcerConstants {
 		return outJob;
 	}
 
-	public Job dropJob(Job job) throws RemoteException, ExertionException {
+	public Job dropJob(Job job) throws ExertionException {
 		return null;
 	}
 
-	public void hangup() throws RemoteException {
+	public void hangup() {
 		String str = config.getProperty(P_DELAY_TIME);
 		if (str != null) {
 			try {
@@ -1250,7 +1252,7 @@ public class ProviderDelegate implements SorcerConstants {
 		}
 	}
 
-	public boolean isValidMethod(String name) throws RemoteException {
+	public boolean isValidMethod(String name) {
 		// modify name for SORCER providers
 		Method[] methods = provider.getClass().getMethods();
 		for (int i = 0; i < methods.length; i++) {
@@ -1454,7 +1456,7 @@ public class ProviderDelegate implements SorcerConstants {
 		return config.getProviderConfiguration();
 	}
 
-	public String getDescription() throws RemoteException {
+	public String getDescription() {
 		return config.getProperty(P_DESCRIPTION);
 	}
 
@@ -1466,7 +1468,7 @@ public class ProviderDelegate implements SorcerConstants {
 		config.setProviderName(name);
 	}
 
-	public String[] getGroups() throws RemoteException {
+	public String[] getGroups() {
 		return groupsToDiscover;
 	}
 
@@ -1748,7 +1750,7 @@ public class ProviderDelegate implements SorcerConstants {
 		return leaseManager;
 	}
 
-	public void destroy() throws RemoteException {
+	public void destroy() {
 		if (spaceEnabled && spaceHandlingPools != null) {
 			for (ExecutorService es : spaceHandlingPools)
 				shutdownAndAwaitTermination(es);
@@ -1771,8 +1773,7 @@ public class ProviderDelegate implements SorcerConstants {
 		provider.fireEvent();
 	}
 
-	public boolean isValidTask(Exertion servicetask) throws RemoteException,
-	ExertionException, ContextException {
+	public boolean isValidTask(Exertion servicetask) throws ExertionException, ContextException {
 
 		if (servicetask.getContext() == null) {
 			servicetask.getContext().reportException(
@@ -1838,8 +1839,7 @@ public class ProviderDelegate implements SorcerConstants {
 		return false;
 	}
 
-	protected void notify(Exertion task, int notificationType, String message)
-			throws RemoteException {
+	protected void notify(Exertion task, int notificationType, String message) {
 		if (!notifying)
 			return;
 		logger.info(getClass().getName() + "::notify() START message:"
@@ -1859,16 +1859,18 @@ public class ProviderDelegate implements SorcerConstants {
 			logger.info(getClass().getName() + "::notify() END.");
 			notifier.notify(re);
 		} catch (ClassNotFoundException cnfe) {
-			cnfe.printStackTrace();
-		}
-	}
+			logger.log(Level.WARNING, "Could not get SorcerNotifierProtocol", cnfe);
+		} catch (RemoteException e) {
+            logger.log(Level.WARNING, "Problem notifying", e);
+        }
+    }
 
 	public void notifyException(Exertion task, String message, Exception e,
-			boolean fullStackTrace) throws RemoteException {
+			boolean fullStackTrace) {
 
 		if (message == null && e == null)
 			message = "NO MESSAGE OR EXCEPTION PASSED";
-		else if (message == null && e != null) {
+		else if (message == null) {
 			if (fullStackTrace)
 				message = SorcerUtil.stackTraceToString(e);
 			else
@@ -1883,23 +1885,19 @@ public class ProviderDelegate implements SorcerConstants {
 		notify(task, NOTIFY_EXCEPTION, message);
 	}
 
-	public void notifyException(Exertion task, String message, Exception e)
-			throws RemoteException {
+	public void notifyException(Exertion task, String message, Exception e) {
 		notifyException(task, message, e, false);
 	}
 
-	public void notifyExceptionWithStackTrace(Exertion task, Exception e)
-			throws RemoteException {
+	public void notifyExceptionWithStackTrace(Exertion task, Exception e) {
 		notifyException(task, null, e, true);
 	}
 
-	public void notifyException(Exertion task, Exception e)
-			throws RemoteException {
+	public void notifyException(Exertion task, Exception e) {
 		notifyException(task, null, e, false);
 	}
 
-	public void notifyInformation(Exertion task, String message)
-			throws RemoteException {
+	public void notifyInformation(Exertion task, String message) {
 		notify(task, NOTIFY_INFORMATION, message);
 	}
 
@@ -1912,18 +1910,15 @@ public class ProviderDelegate implements SorcerConstants {
 	 * notify(task, NOTIFY_WARNING, message); }
 	 */
 
-	public void notifyFailure(Exertion task, Exception e)
-			throws RemoteException {
+	public void notifyFailure(Exertion task, Exception e) {
 		notifyFailure(task, e.getMessage());
 	}
 
-	public void notifyFailure(Exertion task, String message)
-			throws RemoteException {
+	public void notifyFailure(Exertion task, String message) {
 		notify(task, NOTIFY_FAILURE, message);
 	}
 
-	public void notifyWarning(Exertion task, String message)
-			throws RemoteException {
+	public void notifyWarning(Exertion task, String message) {
 		notify(task, NOTIFY_WARNING, message);
 	}
 
@@ -1956,16 +1951,14 @@ public class ProviderDelegate implements SorcerConstants {
 		}
 	}
 
-	public boolean suspend(Uuid uuid, Subject subject) throws RemoteException,
-	UnknownExertionException {
+	public boolean suspend(Uuid uuid, Subject subject) throws UnknownExertionException {
 		synchronized (exertionStateTable) {
 			if (exertionStateTable.get(uuid) == null)
 				throw new UnknownExertionException(
 						" No exertion exists corresponding to "
 								+ uuid);
 
-			exertionStateTable.put(getServiceID(uuid), new Integer(
-					Exec.SUSPENDED));
+			exertionStateTable.put(getServiceID(uuid), Exec.SUSPENDED);
 		}
 
 		return true;

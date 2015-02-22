@@ -67,6 +67,7 @@ import javax.security.auth.login.LoginContext;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.rmi.NoSuchObjectException;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.security.*;
@@ -81,7 +82,7 @@ import java.util.logging.Logger;
  * injection defined by a Jini 2 configuration, proxy management, and own
  * service discovery management for registering its proxies. In the simplest
  * case, the provider exports and registers its own (outer) proxy with the
- * primary method {@link Service#service(Exertion, Transaction)}. The functionality of an
+ * primary method {@code Service.service(Exertion, Transaction)}. The functionality of an
  * outer proxy can be extended by its inner server functionality with its Remote
  * inner proxy. In this case, the outer proxies have to implement {@link sorcer.core.proxy.Outer}
  * interface and each outer proxy is registered with the inner proxy allocated
@@ -200,7 +201,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 
 	private Map<Uuid, ProviderSession> sessions;
 	
-	public ServiceProvider() throws RemoteException {
+	public ServiceProvider() {
 		providers.add(this);
 		delegate = new ProviderDelegate();
 		delegate.provider = this;
@@ -255,7 +256,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 
 	// this is only used to instantiate provider impl objects and use their
 	// methods
-	public ServiceProvider(String providerPropertiesFile) throws RemoteException {
+	public ServiceProvider(String providerPropertiesFile) {
 		this();
 		delegate.getProviderConfig().loadConfiguration(providerPropertiesFile);
 	}
@@ -471,13 +472,11 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	 * Add locators for specific new lookup services to join. The new lookup
 	 * services will be discovered and joined.
 	 *
-	 * @param locators
-	 *            locators of specific lookup services to join
-	 * @exception java.rmi.RemoteException
+	 * @param locators locators of specific lookup services to join
+
 	 * @see net.jini.admin.JoinAdmin#addLookupLocators(net.jini.core.discovery.LookupLocator[])
 	 */
-	public void addLookupLocators(LookupLocator[] locators)
-			throws RemoteException {
+	public void addLookupLocators(LookupLocator[] locators) {
 		// for (int i = locators.length; --i >= 0; ) {
 		// locators[i] = (LookupLocator)
 		// locatorPreparer.prepareProxy(locators[i]);
@@ -498,8 +497,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	 * @exception java.rmi.RemoteException
 	 * @see net.jini.admin.JoinAdmin#removeLookupLocators(net.jini.core.discovery.LookupLocator[])
 	 */
-	public void removeLookupLocators(LookupLocator[] locators)
-			throws RemoteException {
+	public void removeLookupLocators(LookupLocator[] locators) {
 		// for (int i = locators.length; --i >= 0; ) {
 		// locators[i] = (LookupLocator) locatorPreparer.prepareProxy(
 		// locators[i]);
@@ -512,8 +510,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	}
 
 	// Inherit java doc from super type
-	public void setLookupLocators(LookupLocator[] locators)
-			throws RemoteException {
+	public void setLookupLocators(LookupLocator[] locators) {
 		// for (int i = locators.length; --i >= 0; ) {
 		// locators[i] = (LookupLocator)
 		// locatorPreparer.prepareProxy(locators[i]);
@@ -539,12 +536,8 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	 */
 	public boolean unregister(Object impl) {
 		logger.log(Level.INFO, "Unregistering service");
-		if (this == impl)
-			try {
-				this.destroy();
-			} catch (RemoteException re) {
-				re.printStackTrace();
-			}
+        if (this == impl)
+            this.destroy();
 		return true;
 	}
 
@@ -573,11 +566,17 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	 * @param force
 	 *            terminate in progress calls if necessary
 	 * @return true if unexport succeeds
-	 * @throws RemoteException
 	 */
-	boolean unexport(boolean force) throws RemoteException {
-		return delegate.unexport(force);
-	}
+	boolean unexport(boolean force)  {
+        boolean unexported;
+        try {
+            unexported = delegate.unexport(force);
+        } catch (NoSuchObjectException e) {
+            unexported= false;
+            logger.log(Level.WARNING, "Could not unexport", e);
+        }
+        return unexported;
+    }
 
 	/**
 	 * Returns a proxy object for this object. This value should not be null.
@@ -586,7 +585,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	 * @return a proxy object reference
 	 * @exception java.rmi.RemoteException
 	 */
-	public Object getServiceProxy() throws RemoteException {
+	public Object getServiceProxy() {
 		return getProxy();
 	}
 
@@ -598,7 +597,6 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	 * outer proxy of this provider is returned.
 	 *
 	 * @return a proxy, or null
-	 * @see Provider#getProxy()
 	 */
 	public Object getProxy() {
 		return delegate.getProxy();
@@ -882,8 +880,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		}
 
 		/** Implement TrustVerifier */
-		public boolean isTrustedObject(Object obj, Context ctx)
-				throws RemoteException {
+		public boolean isTrustedObject(Object obj, Context ctx) {
 			if (obj == null || ctx == null) {
 				throw new NullPointerException();
 			} else if (!(obj instanceof ProxyAccessor)) {
@@ -1043,8 +1040,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		return true;
 	}
 
-	private String[] providerCurrentContextList(String interfaceName)
-			throws RemoteException {
+	private String[] providerCurrentContextList(String interfaceName) {
 		boolean contextLoaded = false;
 		try {
 			FileInputStream fis = new FileInputStream("../configs/"
@@ -1091,7 +1087,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	}
 
 	private boolean providerDeleteContext(String interfaceName,
-										  String methodName) throws RemoteException {
+										  String methodName) {
 		boolean contextLoaded = false;
 		try {
 			FileInputStream fis = new FileInputStream("../configs/"
@@ -1128,7 +1124,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	}
 
 	private Context<?> providerGetMethodContext(String interfaceName,
-												String methodName) throws RemoteException {
+												String methodName) {
 		logger.info("user directory is " + System.getProperty("user.dir"));
 		boolean contextLoaded = false;
 		try {
@@ -1160,7 +1156,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	}
 
 	private boolean providerSaveMethodContext(String interfaceName,
-											  String methodName, Context<?> theContext) throws RemoteException {
+											  String methodName, Context<?> theContext) {
 		boolean contextLoaded = false;
 		try {
 			FileInputStream fis = new FileInputStream("../configs/"
@@ -1208,7 +1204,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	 * @see sorcer.core.Provider#mutualExclusion()
 	 */
 	@Override
-	public boolean mutualExclusion() throws RemoteException {
+	public boolean mutualExclusion() {
 		return delegate.mutualExclusion;
 	}
 
@@ -1249,11 +1245,11 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		return serviceIdString;
 	}
 
-	public void init() throws RemoteException, ConfigurationException {
+	public void init() throws ConfigurationException {
 		delegate.init(this);
 	}
 
-	public void init(String propFile) throws RemoteException, ConfigurationException {
+	public void init(String propFile) throws ConfigurationException {
 		delegate.init(this, propFile);
 	}
 
@@ -1261,7 +1257,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		this.delegate = delegate;
 	}
 
-	public ServiceID getProviderID() throws RemoteException {
+	public ServiceID getProviderID() {
 		return delegate.getServiceID();
 	}
 
@@ -1324,12 +1320,12 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		return sidFile;
 	}
 
-	public long getLeastSignificantBits() throws RemoteException {
+	public long getLeastSignificantBits() {
 		return (delegate.getServiceID() == null) ? -1 : delegate.getServiceID()
 				.getLeastSignificantBits();
 	}
 
-	public long getMostSignificantBits() throws RemoteException {
+	public long getMostSignificantBits() {
 		return (delegate.getServiceID() == null) ? -1 : delegate.getServiceID()
 				.getMostSignificantBits();
 	}
@@ -1338,17 +1334,15 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	 * A provider responsibility is to check a task completeness in paricular
 	 * the relevance of the task's context.
 	 */
-	public boolean isValidTask(Exertion task) throws RemoteException,
-			ExertionException {
+	public boolean isValidTask(Exertion task) throws ExertionException {
 		return true;
 	}
 
-	public String getInfo() throws RemoteException {
+	public String getInfo() {
 		return SorcerUtil.arrayToString(getAttributes());
 	}
 
-	public boolean isValidMethod(String name) throws RemoteException,
-			SignatureException {
+	public boolean isValidMethod(String name) throws SignatureException {
 		return delegate.isValidMethod(name);
 	}
 
@@ -1411,7 +1405,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	}
 	
 	@Override
-	public Exertion service(Mogram mogram) throws ExertionException, RemoteException {
+	public Exertion service(Mogram mogram) throws ExertionException {
         // session management
 		return doExertion((Exertion)mogram, null);
 	}
@@ -1483,19 +1477,19 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
     }
 
     public ServiceExertion dropTask(ServiceExertion task)
-			throws RemoteException, ExertionException, SignatureException {
+			throws ExertionException, SignatureException {
 		return delegate.dropTask(task);
 	}
 
-	public Job dropJob(Job job) throws RemoteException, ExertionException {
+	public Job dropJob(Job job) throws ExertionException {
 		return delegate.dropJob(job);
 	}
 
-	public Entry[] getAttributes() throws RemoteException {
+	public Entry[] getAttributes() {
 		return delegate.getAttributes();
 	}
 	
-	public List<Object> getProperties() throws RemoteException {
+	public List<Object> getProperties() {
 		return delegate.getProperties();
 	}
 
@@ -1503,11 +1497,11 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		return delegate.getProviderConfiguration();
 	}
 
-	public String getDescription() throws RemoteException {
+	public String getDescription() {
 		return delegate.getDescription();
 	}
 
-	public String[] getGroups() throws RemoteException {
+	public String[] getGroups() {
 		return delegate.getGroups();
 	}
 
@@ -1529,24 +1523,24 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		return delegate.getServiceID();
 	}
 
-	public String getProviderName() throws RemoteException {
+	public String getProviderName() {
 		return delegate.getProviderName();
 	}
 
-	public void restore() throws RemoteException {
+	public void restore() {
 		delegate.restore();
 	}
 
-	public void fireEvent() throws RemoteException {
+	public void fireEvent() {
 		// do noting
 	}
 
-	public void loadConfiguration(String filename) throws RemoteException {
+	public void loadConfiguration(String filename) {
 		delegate.getProviderConfig().loadConfiguration(filename);
 	}
 
 	/** for a testing purpose only. */
-	public void hangup() throws RemoteException {
+	public void hangup() {
 		delegate.hangup();
 	}
 
@@ -1562,14 +1556,13 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	// directory name
 	// and puts the directory into the context under a fixed path (path is in
 	// SorcerConstants)
-	public File getScratchDir(Context context, String scratchDirNamePrefix)
-			throws RemoteException {
+	public File getScratchDir(Context context, String scratchDirNamePrefix) throws ContextException {
 		File scratchDir;
 		try {
 			scratchDir = delegate.getScratchDir(context, scratchDirNamePrefix);
 		} catch (Exception e) {
 			logger.log(Level.WARNING, "Getting scratch directory failed", e);
-			throw new RemoteException("***error: problem getting scratch "
+			throw new ContextException("***error: problem getting scratch "
 					+ "directory and adding path/url to context"
 					+ "\ncontext name = " + context.getName() + "\ncontext = "
 					+ context + "\nscratchDirNamePrefix = "
@@ -1579,7 +1572,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	}
 
 	// method adds scratch dir to context
-	public File getScratchDir(Context context) throws RemoteException {
+	public File getScratchDir(Context context) throws ContextException {
 		return getScratchDir(context, "");
 		// File scratchDir;
 		// try {
@@ -1615,44 +1608,36 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		return delegate.getProviderProperties();
 	}
 
-	public void notifyInformation(Exertion task, String message)
-			throws RemoteException {
+	public void notifyInformation(Exertion task, String message) {
 		delegate.notifyInformation(task, message);
 	}
 
-	public void notifyException(Exertion task, String message, Exception e)
-			throws RemoteException {
+	public void notifyException(Exertion task, String message, Exception e) {
 		delegate.notifyException(task, message, e);
 	}
 
-	public void notifyExceptionWithStackTrace(Exertion task, Exception e)
-			throws RemoteException {
+	public void notifyExceptionWithStackTrace(Exertion task, Exception e){
 		delegate.notifyExceptionWithStackTrace(task, e);
 	}
 
-	public void notifyException(Exertion task, Exception e)
-			throws RemoteException {
+	public void notifyException(Exertion task, Exception e) {
 		delegate.notifyException(task, e);
 	}
 
-	public void notifyWarning(Exertion task, String message)
-			throws RemoteException {
+	public void notifyWarning(Exertion task, String message) {
 		delegate.notifyWarning(task, message);
 	}
 
-	public void notifyFailure(Exertion task, Exception e)
-			throws RemoteException {
+	public void notifyFailure(Exertion task, Exception e) {
 		delegate.notifyFailure(task, e);
 	}
 
-	public void notifyFailure(Exertion task, String message)
-			throws RemoteException {
+	public void notifyFailure(Exertion task, String message) {
 		delegate.notifyFailure(task, message);
 	}
 
 	// task/job monitoring API
-	public void stop(Uuid uuid, Subject subject) throws RemoteException,
-			UnknownExertionException, AccessDeniedException {
+	public void stop(Uuid uuid, Subject subject) throws UnknownExertionException, AccessDeniedException {
 		delegate.stop(uuid, subject);
 	}
 
@@ -1669,8 +1654,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	 *
 	 */
 
-	public void suspend(Uuid ref, Subject subject) throws RemoteException,
-			UnknownExertionException, AccessDeniedException {
+	public void suspend(Uuid ref, Subject subject) throws UnknownExertionException, AccessDeniedException {
 		delegate.suspend(ref, subject);
 	}
 
@@ -1685,7 +1669,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	 *             if there is a communication error
 	 *
 	 */
-	public void resume(Exertion ex) throws RemoteException, ExertionException {
+	public void resume(Exertion ex) throws ExertionException {
 		service((Mogram)ex);
 	}
 
@@ -1700,7 +1684,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	 *             if there is a communication error
 	 *
 	 */
-	public void step(Exertion ex) throws RemoteException, ExertionException {
+	public void step(Exertion ex) throws ExertionException {
 		service(ex);
 	}
 
@@ -1721,7 +1705,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	 *
 	 * @see Provider#destroy()
 	 */
-	public void destroy() throws RemoteException {
+	public void destroy() {
 		try {
 			logger.log(Level.INFO, "Destroying service " + getProviderName());
 			if (ldmgr != null)
@@ -1789,7 +1773,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	 *
 	 * @see Provider#destroy()
 	 */
-	public void destroyNode() throws RemoteException {
+	public void destroyNode() {
 		logger.info("providers.size() = " + providers.size());
 		for (ServiceProvider provider : providers) {
 			logger.info("calling destroy on provider name = " + provider.getName());
@@ -1804,7 +1788,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		return delegate.getProviderUuid();
 	}
 
-	public void updatePolicy(Policy policy) throws RemoteException {
+	public void updatePolicy(Policy policy) {
 		if (Sorcer.getProperty("sorcer.policer.mandatory").equals("true")) {
 			Policy.setPolicy(policy);
 		} else {
@@ -1814,7 +1798,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 
 	public HashMap<String, Context> theContextMap = new HashMap<String, Context>();
 
-	public boolean loadContextDatabase() throws RemoteException {
+	public boolean loadContextDatabase() {
 		try {
 			FileInputStream fis = new FileInputStream("context.cxnt");
 			ObjectInputStream in = new ObjectInputStream(fis);
@@ -1927,7 +1911,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	 * @see sorcer.core.Provider#getJavaSystemProperties()
 	 */
 	@Override
-	public Properties getJavaSystemProperties() throws RemoteException {
+	public Properties getJavaSystemProperties() {
 		return System.getProperties();
 	}
 
@@ -1955,8 +1939,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		}
 	}
 
-	public void initSpaceSupport() throws RemoteException,
-			ConfigurationException {
+	public void initSpaceSupport() throws ConfigurationException {
 		delegate.spaceEnabled(true);
 		delegate.initSpaceSupport();
 	}

@@ -180,21 +180,23 @@ task createDistribution(dependsOn: [":sorcer-boot:install",
                 println "Processing ${project.path}"
                 project.tasks.withType(Jar).each { jar ->
                     File target
-                    if (jar.archiveName.indexOf('dl') > 0 ||
-                        jar.archiveName.indexOf('ui') > 0) {
-                        target = sorcerDlDir
-                    } else if (jar.archiveName.startsWith('ssb-') || jar.archiveName.startsWith('webster-')) {
-                        target = sorcerExtDir
-                    } else {
-                        target = sorcerLibDir
-                    }
-                    if (file(jar.archivePath).exists()) {
-                        copy {
-                            from jar.archivePath
-                            into target
+                    if(!jar.archiveName.contains("sources")) {
+                        if (jar.archiveName.indexOf('dl') > 0 ||
+                            jar.archiveName.indexOf('ui') > 0) {
+                            target = sorcerDlDir
+                        } else if (jar.archiveName.startsWith('ssb-') || jar.archiveName.startsWith('webster-')) {
+                            target = sorcerExtDir
+                        } else {
+                            target = sorcerLibDir
                         }
-                    } else {
-                        println "Archive does not exist ${jar.archivePath}"
+                        if (file(jar.archivePath).exists()) {
+                            copy {
+                                from jar.archivePath
+                                into target
+                            }
+                        } else {
+                            println "Archive does not exist ${jar.archivePath}"
+                        }
                     }
                 }
             }

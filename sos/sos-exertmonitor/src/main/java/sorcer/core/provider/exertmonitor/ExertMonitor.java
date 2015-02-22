@@ -17,17 +17,9 @@
 
 package sorcer.core.provider.exertmonitor;
 
-import java.io.File;
-import java.io.IOException;
-import java.rmi.RemoteException;
-import java.security.Principal;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.logging.Logger;
-
+import com.sleepycat.collections.StoredMap;
+import com.sleepycat.je.DatabaseException;
+import com.sun.jini.start.LifeCycle;
 import net.jini.core.event.RemoteEventListener;
 import net.jini.core.lease.Lease;
 import net.jini.id.Uuid;
@@ -38,21 +30,16 @@ import sorcer.core.provider.ServiceProvider;
 import sorcer.core.provider.exertmonitor.db.SessionDatabase;
 import sorcer.core.provider.exertmonitor.db.SessionDatabaseViews;
 import sorcer.security.util.SorcerPrincipal;
-import sorcer.service.AccessDeniedException;
-import sorcer.service.Context;
+import sorcer.service.*;
 import sorcer.service.Exec.State;
-import sorcer.service.Exertion;
-import sorcer.service.ExertionException;
-import sorcer.service.ExertionInfo;
-import sorcer.service.MonitorException;
-import sorcer.service.Monitorable;
-import sorcer.service.ServiceExertion;
-import sorcer.service.UnknownExertionException;
 import sorcer.util.bdb.objects.UuidKey;
 
-import com.sleepycat.collections.StoredMap;
-import com.sleepycat.je.DatabaseException;
-import com.sun.jini.start.LifeCycle;
+import java.io.File;
+import java.io.IOException;
+import java.rmi.RemoteException;
+import java.security.Principal;
+import java.util.*;
+import java.util.logging.Logger;
 
 public class ExertMonitor extends ServiceProvider implements MonitoringManagement {
 
@@ -295,9 +282,9 @@ public class ExertMonitor extends ServiceProvider implements MonitoringManagemen
 	/**
 	 * Providers use this method to update their current status of the executed
 	 * tasks
-	 * 
-	 * @param Context
-	 *            The current state of data of this task.
+	 *
+     * @param cookie A Uuid
+	 * @param ctx The current state of data of this task.
 	 * 
 	 * @throws MonitorException
 	 *             1) If there is no such session 2) The session is not valid
@@ -320,7 +307,7 @@ public class ExertMonitor extends ServiceProvider implements MonitoringManagemen
 	/**
 	 * Providers use this method to notify that the exertion has been executed.
 	 * 
-	 * @param exertion
+	 * @param ctx
 	 *            The monitorable who picked this up.
 	 * 
 	 * @throws MonitorException
@@ -345,7 +332,7 @@ public class ExertMonitor extends ServiceProvider implements MonitoringManagemen
 	/**
 	 * Providers use this method to notify that the exertion was failed
 	 * 
-	 * @param exertion
+	 * @param ctx
 	 *            The monitorable who picked this up.
 	 * 
 	 * @throws MonitorException
@@ -479,7 +466,7 @@ public class ExertMonitor extends ServiceProvider implements MonitoringManagemen
 
 	}
 
-	public void destroy() throws RemoteException {
+	public void destroy() {
 		try {
 			db.close();
 		} catch (DatabaseException e) {
