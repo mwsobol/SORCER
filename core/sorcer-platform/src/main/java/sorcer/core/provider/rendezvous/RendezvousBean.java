@@ -73,13 +73,8 @@ abstract public class RendezvousBean implements Service, Executor {
 		}
 	}
 
-	public String getProviderName()  {
-		try {
-			return provider.getProviderName();
-		} catch (RemoteException e) {
-			// ignore local call
-			return null;
-		}
+    public String getProviderName()  {
+        return provider.getProviderName();
 	}
 	
 	public TaskManager getThreadManager() {
@@ -165,30 +160,22 @@ abstract public class RendezvousBean implements Service, Executor {
 		}
 	}
 	
-	public void setServiceID(Mogram ex) {
-		if (provider == null) {
-			try {
-				provider = new ServiceProvider();
-				init (provider);
-			} catch (RemoteException e) {
-				e.printStackTrace();
-			}
-		}
-		try {
-			ServiceID id = provider.getProviderID();
-			if (id != null) {
-				logger.finest(id.getLeastSignificantBits() + ":"
-						+ id.getMostSignificantBits());
-				((ServiceExertion) ex).setLsbId(id.getLeastSignificantBits());
-				((ServiceExertion) ex).setMsbId(id.getMostSignificantBits());
-			}
-		} catch (RemoteException e) {
-			e.printStackTrace();
-		}
-	}
+    public void setServiceID(Mogram ex) {
+        if (provider == null) {
+            provider = new ServiceProvider();
+            init (provider);
+        }
+        ServiceID id = provider.getProviderID();
+        if (id != null) {
+            logger.finest(id.getLeastSignificantBits() + ":"
+                          + id.getMostSignificantBits());
+            ((ServiceExertion) ex).setLsbId(id.getLeastSignificantBits());
+            ((ServiceExertion) ex).setMsbId(id.getMostSignificantBits());
+        }
+    }
 
-	private String getDataURL(String filename) {
-		return delegate.getProviderConfig().getProperty(
+    private String getDataURL(String filename) {
+        return delegate.getProviderConfig().getProperty(
 				"provider.dataURL")
 				+ filename;
 	}

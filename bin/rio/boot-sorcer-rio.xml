@@ -70,7 +70,6 @@
             <sysproperty key="org.rioproject.service" value="${service}"/>
             <sysproperty key="rio.script.mainClass" value="org.rioproject.start.ServiceStarter"/>
             <sysproperty key="java.rmi.server.useCodebaseOnly" value="false" />
-            <sysproperty key="SORCER_HOME" value="${sorcer.home}"/>
             <sysproperty key="sorcer.home" value="${sorcer.home}"/>
             <sysproperty key="sorcer.version" value="${sorcer.version}"/>
             <sysproperty key="org.rioproject.exec.monitor.reap.interval" value="1"/>

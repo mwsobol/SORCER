@@ -534,7 +534,7 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
 	 * 
 	 * @see sorcer.core.provider.Provider#destroy()
 	 */
-	public void destroy() throws RemoteException {
+	public void destroy() {
 		try {
             int tries=0;
             try {

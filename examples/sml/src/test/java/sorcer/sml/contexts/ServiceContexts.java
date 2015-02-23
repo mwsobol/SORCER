@@ -385,7 +385,9 @@ public class ServiceContexts {
     }
 
     @Test
-    public void exertServiceModel() throws Exception {
+    public void exertContextServiceModel() throws Exception {
+
+        // get a context from a subject provider
         
         Model m = srvModel(sig("add", AdderImpl.class),
                 inEnt("arg/x1", 1.0), inEnt("arg/x2", 2.0),
@@ -410,9 +412,9 @@ public class ServiceContexts {
     }
 
     @Test
-        public void queryServiceModel() throws Exception {
+        public void queryResponseServiceModel() throws Exception {
 
-        // get responses of a service model
+        // get responses from a service model
 
         Model m = srvModel(
                 inEnt("multiply/x1", 10.0), inEnt("multiply/x2", 50.0),
