@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-project.version = '5.1.2'
+project.version = '5.1.3'
 
 task printVersion {
     description = 'Prints the current SORCER version.'
@@ -136,7 +136,14 @@ if (JavaVersion.current().isJava8Compatible()) {
 task allJavadoc(type: Javadoc) {
     options.links = ['http://docs.oracle.com/javase/8/docs/api/',
                      'https://river.apache.org/doc/api/',
-                     'http://www.rioproject.org/apidocs']
+                     'http://www.rio-project.org/apidocs']
+    /*
+    options.linksOffline 'http://docs.oracle.com/javase/8/docs/api/', 'docs/java'
+    options.linksOffline 'https://river.apache.org/doc/api/', 'docs/river'
+    options.linksOffline 'http://www.rioproject.org/apidocs','docs/rio'
+     */
+    exclude '**/*Test.java'
+    exclude '**/edu/*'
     description = 'Creates SORCER API Specification, view them in build/javadoc/index.html'
     destinationDir = new File(project.projectDir, 'build/javadoc')
     title = "SORCER ${version}"
