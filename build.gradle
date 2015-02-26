@@ -137,11 +137,6 @@ task allJavadoc(type: Javadoc) {
     options.links = ['http://docs.oracle.com/javase/8/docs/api/',
                      'https://river.apache.org/doc/api/',
                      'http://www.rio-project.org/apidocs']
-    /*
-    options.linksOffline 'http://docs.oracle.com/javase/8/docs/api/', 'docs/java'
-    options.linksOffline 'https://river.apache.org/doc/api/', 'docs/river'
-    options.linksOffline 'http://www.rioproject.org/apidocs','docs/rio'
-     */
     exclude '**/*Test.java'
     exclude '**/edu/*'
     description = 'Creates SORCER API Specification, view them in build/javadoc/index.html'
@@ -162,5 +157,11 @@ subprojects {
         }
     }
 }
+
+task javaDocZip(type: Zip, dependsOn: allJavadoc) {
+    classifier = 'javadoc'
+    from allJavadoc.destinationDir
+}
+
 
 
