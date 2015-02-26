@@ -70,6 +70,8 @@ public class ProvisionManager {
 
     private synchronized void doGetDeployAdmin() throws RemoteException {
         if(deployAdmin==null) {
+            logger.info(String.format("Discover a DeployAdmin reference using %s ...",
+                                      getDiscoveryInfo()));
             deployAdmin = provisionMonitorCache.getDeployAdmin();
         }
     }
@@ -151,9 +153,16 @@ public class ProvisionManager {
                     }
                 }
             } else {
-                logger.warning(String.format("Unable to obtain a ProvisionMonitor for %s", exertion.getName()));
+                String message = String.format("Unable to obtain a ProvisionMonitor for %s using %s",
+                                               exertion.getName(),
+                                               getDiscoveryInfo());
+                logger.warning(message);
+                throw new DispatcherException(message);
             }
         } catch (Exception e) {
+            if(e instanceof DispatcherException)
+                throw (DispatcherException)e;
+
             logger.log(Level.WARNING,
                        String.format("Unable to process deployment for %s", exertion.getName()),
                        e);
@@ -192,6 +201,21 @@ public class ProvisionManager {
             }
         }
         return String.format("%s-(%s)", baseName, known);
+    }
+
+    private String getDiscoveryInfo() {
+        StringBuilder discoveryInfo = new StringBuilder();
+        String groups = provisionMonitorCache.getGroups();
+        String locators = provisionMonitorCache.getLocators();
+        if(groups!=null) {
+            discoveryInfo.append("groups: ").append(groups);
+        }
+        if(locators!=null) {
+            if(discoveryInfo.length()>0)
+                discoveryInfo.append(",");
+            discoveryInfo.append("locators: ").append(locators);
+        }
+        return discoveryInfo.toString();
     }
 
     class DeploymentFutureTask implements Callable<Boolean> {
