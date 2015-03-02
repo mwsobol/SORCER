@@ -28,7 +28,7 @@ import net.jini.admin.JoinAdmin;
 import net.jini.core.lookup.ServiceRegistrar;
 import sorcer.tools.shell.NetworkShell;
 import sorcer.tools.shell.ShellCmd;
-import sorcer.util.WhitespaceTokenizer;
+import sorcer.tools.shell.WhitespaceTokenizer;
 
 import static org.fusesource.jansi.Ansi.ansi;
 

@@ -23,7 +23,7 @@ import java.util.Arrays;
 import net.jini.discovery.LookupDiscovery;
 import sorcer.tools.shell.NetworkShell;
 import sorcer.tools.shell.ShellCmd;
-import sorcer.util.WhitespaceTokenizer;
+import sorcer.tools.shell.WhitespaceTokenizer;
 
 public class GroupsCmd extends ShellCmd {
 
@@ -48,9 +48,7 @@ public class GroupsCmd extends ShellCmd {
 		int numTokens = myTk.countTokens();
 		if (numTokens == 0) {
 			printShellGroups();
-			return;
-		}
-		else if (numTokens == 1) {
+		} else if (numTokens == 1) {
 			String next = myTk.nextToken();
 			if (next.equals("-d")) {
 				printLookupDiscoveryGroups();

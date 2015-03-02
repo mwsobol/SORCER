@@ -1,0 +1,31 @@
+#!/usr/bin/env nsh
+
+//codebase mvn://org.sorcersoft.sorcer:ex6-api
+load mvn://org.sorcersoft.sorcer:ex6-api:1.1-SNAPSHOT
+load mvn://org.sorcersoft.sorcer:sorcer-api:1.1-SNAPSHOT
+
+import sorcer.arithmetic.provider.Adder;
+import sorcer.arithmetic.provider.Multiplier;
+import sorcer.arithmetic.provider.Subtractor;
+import sorcer.service.Task
+
+//println "Codebase: " + System.getProperty("java.rmi.server.codebase");
+
+// Service Composition f1(f2(f4, f5), f3)
+
+Task f4 = task("f4", sig("multiply", Multiplier.class),
+	context("multiply", inEnt(path("arg/x1"), 10.0d), inEnt(path("arg/x2"), 50.0d),
+		outEnt(path("result/y1"), null)));
+		
+Task f5 = task("f5", sig("add", Adder.class),
+	context("add", inEnt(path("arg/x3"), 20.0d), inEnt(path("arg/x4"), 80.0d),
+		outEnt(path("result/y2"), null)));
+
+Task f3 = task("f3", sig("subtract", Subtractor.class),
+	context("subtract", inEnt(path("arg/x5"), null), inEnt(path("arg/x6"), null),
+		outEnt(path("result/y3"), null)));
+
+job("f1", job("f2", f4, f5, strategy(Flow.PAR, Access.PULL)), f3,
+	pipe(out(f4, path("result/y1")), input(f3, path("arg/x5"))),
+	pipe(out(f5, path("result/y2")), input(f3, path("arg/x6"))));
+	

@@ -15,6 +15,8 @@
  */
 package sorcer.tools.shell;
 
+import sorcer.netlet.util.LoaderConfiguration;
+
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Map;
@@ -99,7 +101,7 @@ public class RootLoader extends URLClassLoader {
     }
 
     /**
-     * constructs a new RootLoader with a {@link LoaderConfiguration}
+     * constructs a new RootLoader with a {@link sorcer.netlet.util.LoaderConfiguration}
      * object which holds the classpath
      */
     public RootLoader(LoaderConfiguration lc) {

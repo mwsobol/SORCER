@@ -1,7 +1,7 @@
 /*
  * Copyright 2011 the original author or authors.
  * Copyright 2011 SorcerSoft.org.
- * Copyright 2015 SorcerSoft.con.
+ * Copyright 2015 SorcerSoft.com.
  *  
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -56,6 +56,7 @@ import net.jini.lookup.entry.UIDescriptor;
 import org.codehaus.groovy.runtime.DefaultGroovyMethods;
 
 import sorcer.jini.lookup.entry.SorcerServiceInfo;
+import sorcer.netlet.util.ScriptExertException;
 import sorcer.security.util.SorcerPrincipal;
 import sorcer.service.EvaluationException;
 import sorcer.service.ExertionInfo;
@@ -264,8 +265,19 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 				System.exit(1);
 			}
 
-			principal = new SorcerPrincipal(NetworkShell.getUserName());
-			principal.setId(NetworkShell.getUserName());
+            argv = buildInstance(true, argv);
+            instance.loadExternalCommands();
+            if (!instance.interactive) {
+                // System.out.println("main appMap: " + appMap);
+                execNoninteractiveCommand(argv);
+                shellOutput.println();
+                System.exit(0);
+            }
+            if (argv.length == 1 && argv[0].indexOf("-") == 0) {
+                shellOutput.println(UNKNOWN_COMMAND_MSG);
+                shellOutput.flush();
+                System.exit(1);
+            }
 
             shellOutput.print(ansi().render("@|bold " +SYSTEM_PROMPT + "|@"));
 			shellOutput.flush();
@@ -279,18 +291,29 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 		nshUrl = getWebsterUrl();
 		//System.out.println("main request: " + request);
 		//ClassLoaderUtil.displayContextClassLoaderTree();    	
-		
-		while ((request.length() > 0 && BUILTIN_QUIT_COMMAND.indexOf(request) < 0)
-				|| request.length() == 0) {
+
+		if (request==null || request.equals("q")) {
+			// Exit when CTRL+D is pressed
+			System.exit(0);
+		}
+		while (request != null && ((request.length() > 0 && BUILTIN_QUIT_COMMAND.indexOf(request) < 0)
+				|| request.length() == 0)) {
+            processRequest(false);
+		}
+		// shellOutput.println("Thanks for using the SORCER Network Shell!");
+	}
+
+    public static void processRequest(boolean outsideCall) {
+        ShellCmd cmd;
 			shellTokenizer = new WhitespaceTokenizer(request);
-			curToken = "";
+        String curToken = "";
 			if (shellTokenizer.hasMoreTokens()) {
 				curToken = shellTokenizer.nextToken();
 			}
 			try {
 				if (commandTable.containsKey(curToken)) {
 					cmd = commandTable.get(curToken);
-					cmd.execute();
+                cmd.execute();
 				}
 				// admissible shortcuts in the 'synonyms' map
 				else if (aliases.containsKey(curToken)) {
@@ -306,7 +329,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 						shellTokenizer = new WhitespaceTokenizer(request);
 					}
 					cmd = commandTable.get(cmdName);
-					cmd.execute();
+                	cmd.execute();
 				} else if (request.length() > 0) {
 					if (request.equals("?")) {
 						instance.listCommands();
@@ -316,18 +339,38 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 					}
 				}
                 shellOutput.print(ansi().render("@|bold " +SYSTEM_PROMPT + "|@"));
+            if(outsideCall) {
+                return;
+            }
+				shellOutput.print(SYSTEM_PROMPT);
 				shellOutput.flush();
 				String in = shellInput.readLine();
+            // Exit if CTRL+D pressed
+            if (in==null || in.equals("q")) System.exit(0);
+            for (String q : BUILTIN_QUIT_COMMAND.split(",")) {
+                if (in != null && in.equals(q)) System.exit(0);
+            }
+
 				// fore !! run the previous command
 				if (in!=null && !in.equals("!!")) {
 					instance.request = in;
 				}
-				if (request==null || request.equals("q")) {
-					// Exit when CTRL+D is pressed
-					System.exit(0);
-				}
+        } catch (IOException io) {
+            shellOutput.println(io.getMessage());
+            try {
+                request = shellInput.readLine();
+            } catch (IOException e) {
+                e.printStackTrace();
+                System.exit(1);
+            }
 			} catch (Throwable ex) {
-				ex.printStackTrace();
+            if (ex instanceof ScriptExertException) {
+                String msg = "Problem parsing script @ line: " +
+                        ((ScriptExertException)ex).getLineNum() + ":\n" + ex.getLocalizedMessage();
+                logger.error(msg);
+                shellOutput.println(msg);
+            } else
+                ex.printStackTrace(shellOutput);
 				try {
 					request = shellInput.readLine();
 				} catch (IOException e) {
@@ -337,7 +380,6 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 			}
 		}
 		// shellOutput.println("Thanks for using the SORCER Network Shell!");
-	}
 
 	public static String getUserName() {
 		return userName;
@@ -381,7 +423,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 		}
         PropertyEvaluator propsEval = new PropertyEvaluator();
         propsEval.addDefaultSources();
-        for (int i=0; i<args.length ;i++) {
+        for (int i = 0; i < args.length; i++) {
             args[i] = propsEval.eval(args[i]);
         }
 		request = arrayToRequest(args);
@@ -627,7 +669,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 			ShellCmd cmdInstance = inCls.newInstance();
 			addToCommandTable(cmd, cmdInstance);
 		} catch (Exception e) {
-			e.printStackTrace();
+			shellOutput.println(e);
 		}
 	}
 
@@ -768,7 +810,6 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
                 try {
                     sr.getGroups();
                 } catch (Exception e) {
-					logger.info("Problem running getGroups: " + e.getMessage());
                     regsToRemove.add(sr);
                 }
             }
@@ -1319,7 +1360,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 					+ " in: " + new File(".").getCanonicalPath());
 		} else {
 			sysConfig = ConfigurationProvider
-					.getInstance(new String[] { configFilename });
+					.getInstance(new String[] { configFilename }, Thread.currentThread().getContextClassLoader().getParent());
 		}
 
 		if (sysConfig == null)
@@ -1600,7 +1641,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
         String lineSep = "\n";
         BufferedReader br = new BufferedReader(new FileReader(file));
         String nextLine = br.readLine();
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         while ((nextLine = br.readLine()) != null) {
             if (!nextLine.startsWith("#")) {
                 nextLine = propsEval.eval(nextLine);

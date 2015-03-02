@@ -1,0 +1,8 @@
+dependencies {
+    compile project(':sorcer-platform'),
+            "org.rioproject:rio-platform:${rioVersion}",
+            "org.codehaus.groovy:groovy-all:${groovyVersion}",
+            "org.slf4j:slf4j-api:${slf4jVersion}",
+            "net.jini:jsk-platform:${riverVersion}"
+    testCompile "junit:junit:${junitVersion}"
+}

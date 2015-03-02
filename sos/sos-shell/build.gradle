@@ -23,6 +23,7 @@ jar {
 }
 
 dependencies {
+    compile project(':sos-netlet')
     compile 'org.fusesource.jansi:jansi:' + jansiVersion
     compile 'jline:jline:' + jlineVersion
     compile	project(':webster')

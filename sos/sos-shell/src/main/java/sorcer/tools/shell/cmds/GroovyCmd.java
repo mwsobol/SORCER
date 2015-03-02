@@ -71,7 +71,7 @@ public class GroovyCmd extends ShellCmd {
 		if (out == null)
 			throw new NullPointerException("Must have an output PrintStream");
 
-		File d = NetworkShell.getInstance().getCurrentDir();
+		File d = shell.getCurrentDir();
 		String nextToken = null;
 		String scriptFilename = null;
 		boolean outPersisted = false;

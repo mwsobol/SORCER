@@ -26,7 +26,7 @@ import sorcer.jini.lookup.AttributesUtil;
 import sorcer.service.*;
 import sorcer.tools.shell.NetworkShell;
 import sorcer.tools.shell.ShellCmd;
-import sorcer.util.WhitespaceTokenizer;
+import sorcer.tools.shell.WhitespaceTokenizer;
 import sorcer.util.bdb.objects.ObjectInfo;
 import sorcer.util.url.sos.SdbUtil;
 

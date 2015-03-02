@@ -35,7 +35,7 @@ import sorcer.service.*;
 import sorcer.service.Exec.State;
 import sorcer.tools.shell.NetworkShell;
 import sorcer.tools.shell.ShellCmd;
-import sorcer.util.WhitespaceTokenizer;
+import sorcer.tools.shell.WhitespaceTokenizer;
 
 import static org.fusesource.jansi.Ansi.ansi;
 
