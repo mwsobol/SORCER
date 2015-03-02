@@ -1,4 +1,4 @@
-package sorcer.util;
+package sorcer.tools.shell;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
 
 /**
  * @author Paweł Rubach
- * Created on 5/27/2014.
+ *         Created on 5/27/2014.
  */
 public class WhitespaceTokenizer {
 
@@ -39,19 +39,18 @@ public class WhitespaceTokenizer {
     }
 
     public boolean hasMoreTokens() {
-        return (countTokens()>0);
+        return (countTokens() > 0);
     }
 
     public int countTokens() {
-        return tokens.size()-pos;
+        return tokens.size() - pos;
     }
 
     public String nextToken() {
-        if (pos<tokens.size()) {
-            pos+=1;
+        if (pos < tokens.size()) {
+            pos += 1;
             return tokens.get(pos - 1);
-        }
-        else
+        } else
             return "";
     }
 

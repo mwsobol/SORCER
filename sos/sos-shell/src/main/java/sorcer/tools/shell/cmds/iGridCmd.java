@@ -23,7 +23,7 @@ import java.io.PrintStream;
 import sorcer.tools.shell.NetworkShell;
 import sorcer.tools.shell.ShellCmd;
 import sorcer.util.Sorcer;
-import sorcer.util.WhitespaceTokenizer;
+import sorcer.tools.shell.WhitespaceTokenizer;
 
 public class iGridCmd extends ShellCmd {
 	{

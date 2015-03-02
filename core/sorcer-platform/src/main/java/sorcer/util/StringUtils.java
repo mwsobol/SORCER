@@ -297,6 +297,21 @@ public class StringUtils {
 		return sdf.format(time);
 	}
 
+    public static int firstInteger(int defVal, String... strings) {
+        for (String string : strings) {
+            try {
+                return Integer.parseInt(string);
+            } catch (NumberFormatException ignored) {
+                //deliberately ignored, return the first string that parses cleanly
+            }
+        }
+        return defVal;
+    }
+
+    public static String tName(String newThreadName) {
+        return "[" + Thread.currentThread().getName() + "] " + newThreadName;
+    }
+
     /* Copied from commons-lang3 */
 
     /**
@@ -597,20 +612,5 @@ public class StringUtils {
 
     public static String toString(Object obj) {
         return obj == null ? "" : obj.toString();
-    }
-
-    public static int firstInteger(int defVal, String... strings) {
-        for (String string : strings) {
-            try {
-                return Integer.parseInt(string);
-            } catch (NumberFormatException ignored) {
-                //deliberately ignored, return the first string that parses cleanly
-            }
-        }
-        return defVal;
-    }
-
-    public static String tName(String newThreadName) {
-        return "[" + Thread.currentThread().getName() + "] " + newThreadName;
     }
 }

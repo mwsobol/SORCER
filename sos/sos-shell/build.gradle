@@ -23,6 +23,7 @@ jar {
 }
 
 dependencies {
+    compile project(':sos-netlet')
     compile	project(':webster')
     compile project(':sorcer-platform')
 }

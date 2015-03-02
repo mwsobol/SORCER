@@ -15,6 +15,8 @@
  */
 package sorcer.tools.shell;
 
+import sorcer.netlet.util.LoaderConfiguration;
+
 import java.io.FileInputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

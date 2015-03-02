@@ -24,7 +24,6 @@ import java.net.URLClassLoader;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.StringTokenizer;
 
 import net.jini.admin.Administrable;
 import net.jini.core.entry.Entry;
@@ -39,7 +38,7 @@ import sorcer.tools.shell.NetworkShell;
 import sorcer.tools.shell.ShellCmd;
 
 import com.sun.jini.admin.DestroyAdmin;
-import sorcer.util.WhitespaceTokenizer;
+import sorcer.tools.shell.WhitespaceTokenizer;
 
 public class LookupCmd extends ShellCmd {
 

@@ -19,7 +19,6 @@ package sorcer.tools.shell;
 
 
 import net.jini.core.lookup.ServiceRegistrar;
-import sorcer.util.WhitespaceTokenizer;
 
 import java.io.File;
 import java.io.PrintStream;

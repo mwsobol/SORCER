@@ -43,6 +43,9 @@ project(":sorcer-boot").projectDir = file("tools/sorcer-boot")
 include 'ssb'
 project(":ssb").projectDir = file("tools/ssb")
 
+include 'sos-netlet'
+project(':sos-netlet').projectDir = file('tools/sos-netlet')
+
 include 'sorcer-int-tests:sorcer-tester'
 project(":sorcer-int-tests:sorcer-tester").projectDir = file("core/sorcer-int-tests/sorcer-tester")
 include 'sorcer-int-tests:deploy-tests'

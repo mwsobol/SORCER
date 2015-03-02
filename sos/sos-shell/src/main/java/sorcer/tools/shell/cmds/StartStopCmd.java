@@ -28,7 +28,7 @@ import sorcer.tools.shell.NetworkShell;
 import sorcer.tools.shell.ShellCmd;
 
 import com.sun.jini.admin.DestroyAdmin;
-import sorcer.util.WhitespaceTokenizer;
+import sorcer.tools.shell.WhitespaceTokenizer;
 
 public class StartStopCmd extends ShellCmd {
 	{
