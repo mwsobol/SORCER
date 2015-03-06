@@ -17,8 +17,10 @@
 
 package sorcer.tools.shell;
 
+import java.io.PrintWriter;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 import net.jini.config.Configuration;
 import net.jini.core.entry.Entry;
@@ -27,13 +29,15 @@ import net.jini.core.lookup.ServiceMatches;
 import net.jini.core.lookup.ServiceRegistrar;
 import net.jini.core.lookup.ServiceTemplate;
 import net.jini.lookup.entry.Name;
+import org.apache.commons.cli.*;
 import sorcer.tools.shell.cmds.DiscoCmd;
 import sorcer.util.ServiceAccessor;
 
 @SuppressWarnings("rawtypes")
 abstract public class ShellCmd {
 
-	protected String COMMAND_NAME;
+    private final HelpFormatter helpFormatter = new HelpFormatter();
+    protected String COMMAND_NAME;
 
 	protected String NOT_LOADED_MSG;
 
@@ -41,15 +45,41 @@ abstract public class ShellCmd {
 
 	protected String COMMAND_HELP;
 
-	protected INetworkShell shell;
+	protected NetworkShell shell;
 
 	protected Configuration config;
 
-	protected static final int MAX_MATCHES = 64;
+    protected Parser parser = new BasicParser();
 
-	abstract public void execute() throws Throwable;
+    protected Options options;
 
-	public String getCommandWord() {
+    protected PrintWriter out;
+
+    public ShellCmd() {
+        options = getOptions();
+    }
+
+    public void execute(String command, String[] argv) throws ExecutionException, ParseException {
+        try {
+            execute(command, parser.parse(getOptions(), argv));
+        } catch (RuntimeException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new ExecutionException(e);
+        }
+    }
+
+    public void execute(String command, CommandLine cmd) throws Exception{}
+
+    public Options getOptions() {
+        return new Options();
+    }
+
+    public void printUsage() {
+        helpFormatter.printUsage(new PrintWriter(out), 120, COMMAND_NAME, options);
+    }
+
+    public String getCommandWord() {
 		return COMMAND_NAME;
 	}
 
@@ -75,9 +105,10 @@ abstract public class ShellCmd {
 	public void endSubsystem() {
 	}
 
-	public void setNetworkShell(INetworkShell shell){
+	public void setNetworkShell(NetworkShell shell){
 		this.shell = shell;
-	}
+        out = shell.getOutputStream();
+    }
 
 	public void setConfiguration(Configuration config){
 		this.config = config;
@@ -87,46 +118,7 @@ abstract public class ShellCmd {
 		return getClass().getName() + ": " + COMMAND_NAME;
 	}
 
-	public static ServiceItem[] lookup(
-			Class[] serviceTypes) throws RemoteException {
-		return lookup(serviceTypes, (String)null);
-	}
-	
-	public static ServiceItem[] lookup(
-			Class[] serviceTypes, String serviceName) throws RemoteException {
-		return lookup(null, serviceTypes, serviceName);
-	}
-
-	public static ServiceItem[] lookup(ServiceRegistrar registrar,
-			Class[] serviceTypes, String serviceName) throws RemoteException {
-		ServiceRegistrar regie = null;
-		if (registrar == null) {
-			regie = DiscoCmd.getSelectedRegistrar();
-			if (regie == null)
-				return null;
-		} else {
-			regie = registrar;
-		}
-
-		ArrayList<ServiceItem> serviceItems = new ArrayList<ServiceItem>();
-		ServiceMatches matches = null;
-		Entry myAttrib[] = null;
-		if (serviceName != null) {
-			myAttrib = new Entry[1];
-			myAttrib[0] = new Name(serviceName);
-		}
-		ServiceTemplate myTmpl = new ServiceTemplate(null, serviceTypes,
-				myAttrib);
-
-		matches = regie.lookup(myTmpl, MAX_MATCHES);
-		for (int j = 0; j < Math.min(MAX_MATCHES, matches.totalMatches); j++) {
-			serviceItems.add(matches.items[j]);
-		}
-		ServiceItem[] sItems = new ServiceItem[serviceItems.size()];
-		return serviceItems.toArray(sItems);
-	}
-
-	public static ServiceItem[] serviceLookup(
+    public static ServiceItem[] serviceLookup(
 			Class[] serviceTypes) throws RemoteException {
 		ServiceTemplate st = new ServiceTemplate(null, serviceTypes, null);
 		ServiceItem[] serviceItems = ServiceAccessor.getServiceItems(st, null,

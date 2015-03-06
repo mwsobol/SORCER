@@ -43,8 +43,7 @@ public class SetPortCmd extends ShellCmd {
 	public SetPortCmd() {
 	}
 
-	public void execute() {
-		out = NetworkShell.getShellOutputStream();
+	public void execute(String command, String[] cmd) {
 		WhitespaceTokenizer myTk = NetworkShell.getShellTokenizer();
 		// pass in a clone of list - command may modify it
 		ArrayList<ServiceRegistrar> registrars = new ArrayList<ServiceRegistrar>(NetworkShell.getRegistrars());

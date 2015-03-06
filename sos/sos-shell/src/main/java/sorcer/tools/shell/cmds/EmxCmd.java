@@ -1,7 +1,8 @@
 /*
  * Copyright 2011 the original author or authors.
  * Copyright 2011 SorcerSoft.org.
- *  
+ * Copyright 2015 SorcerSoft.com
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -17,14 +18,16 @@
 
 package sorcer.tools.shell.cmds;
 
-import java.io.PrintStream;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import net.jini.core.lookup.ServiceItem;
 import net.jini.id.Uuid;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
 import sorcer.core.provider.MonitorUIManagement;
 import sorcer.core.provider.MonitoringManagement;
 import sorcer.jini.lookup.AttributesUtil;
@@ -36,7 +39,6 @@ import sorcer.service.MonitorException;
 import sorcer.service.ServiceExertion;
 import sorcer.tools.shell.NetworkShell;
 import sorcer.tools.shell.ShellCmd;
-import sorcer.tools.shell.WhitespaceTokenizer;
 
 public class EmxCmd extends ShellCmd {
 
@@ -68,149 +70,145 @@ public class EmxCmd extends ShellCmd {
 
 	}
 
-	static private PrintStream out;
-	private boolean isEmxMode = true;
-	static private ServiceItem[] emxMonitors;
-	static private int selectedMonitor = -1;
-	static private ExertionInfo[] exertionInfos = new ExertionInfo[0];
-	private int selectedExertion = -1;
-	static private Map<Uuid, ServiceItem> monitorMap = new HashMap<Uuid, ServiceItem>();
+	boolean isEmxMode = true;
+	private ServiceItem[] emxMonitors;
+	private int selectedMonitor = -1;
+	private ExertionInfo[] exertionInfos = new ExertionInfo[0];
+	int selectedExertion = -1;
+	private Map<Uuid, ServiceItem> monitorMap = new HashMap<Uuid, ServiceItem>();
 
 	public EmxCmd() {
 	}
 
-	public void execute() throws RemoteException, MonitorException, ContextException {
-		out = NetworkShell.getShellOutputStream();
-		WhitespaceTokenizer myTk = NetworkShell.getShellTokenizer();
-		int numTokens = myTk.countTokens();
-		int myIdx = 0;
-		String next = null;
-		State xrtType = null;
+    @Override
+    public Options getOptions() {
+        Option e = new Option("e", false, "print selected exertion");
+        e.setOptionalArg(true);
+        Option c = new Option("c", false, "print the data context of selected exertion");
+        c.setOptionalArg(true);
+        Option cc = new Option(null, "cc", false, "print the control context of selected exertion");
+        cc.setOptionalArg(true);
+        Option ccc = new Option(null, "ccc", false, "print both data and control contexts of selected exertion");
+        ccc.setOptionalArg(true);
 
-		if (numTokens == 0) {
-			showEmxServices();
-			selectedMonitor = -1;
-			isEmxMode = true;
-		} else if (numTokens == 1) {
-			next = myTk.nextToken();
-			if (next.equals("-xrt")) {
-				isEmxMode = false;
-				out.println("you are in 'xrt' mode");
-			} if (next.equals("-emx")) {
-				isEmxMode = true;
-				out.println("you are in 'emx' mode");
-			} if (next.equals("-mode")) {
-				if (isEmxMode)
-					out.println("you are in 'emx' mode");
-				else
-					out.println("you are in 'xrt' mode");
-			} else if (next.equals("-v")) {
-				if (selectedMonitor >= 0) {
-					describeMonitor(selectedMonitor);
-				} else
-					out.println("No selected EMX");
-			} else if (next.equals("-d") || next.equals("-r")
-					|| next.equals("-f") || next.equals("-f")
-					|| next.equals("-a") || next.equals("-y")) {
-				xrtType = getStatus(next);
-				printMonitoredExertions(xrtType);
-			} else if (next.equals("-x")) {
-				// clear monitor selection
-				selectedMonitor = -1;
-			} else if (next.equals("-e")) {
-				isEmxMode = false;
-				if (selectedExertion >= 0) {
-					ExertionInfo xrtInfo = exertionInfos[selectedExertion];
-					printExertion(xrtInfo.getStoreId(), false, false);
-				}
-			} else if (next.equals("-c")) {
-				isEmxMode = false;
-				if (selectedExertion >= 0) {
-					ExertionInfo xrtInfo = exertionInfos[selectedExertion];
-					printExertion(xrtInfo.getStoreId(), true, false);
-				}
-			} else if (next.equals("-cc")) {
-				isEmxMode = false;
-				if (selectedExertion >= 0) {
-					ExertionInfo xrtInfo = exertionInfos[selectedExertion];
-					printExertion(xrtInfo.getStoreId(), false, true);
-				}
-			} else if (next.equals("-ccc")) {
-				isEmxMode = false;
-				if (selectedExertion >= 0) {
-					ExertionInfo xrtInfo = exertionInfos[selectedExertion];
-					printExertion(xrtInfo.getStoreId(), true, true);
-				}
-			} else {
-				if (isEmxMode) {
-					try {
-						next = myTk.nextToken();
-						myIdx = Integer.parseInt(next);
-						selectedMonitor = myIdx;
-					} catch (NumberFormatException e) {
-						selectedMonitor = selectMonitorByName(next);
-						if (selectedMonitor < 0)
-							out.println("No such EMX for: " + next);
-					}
-					if (selectedMonitor >= 0) {
-						describeMonitor(selectedMonitor, "SELECTED");
-					} else {
-						out.println("No such EMX for: " + selectedMonitor);
-					}
-				} else {
-					try {
-						myIdx = Integer.parseInt(next);
-						selectedExertion = myIdx;
-					} catch (NumberFormatException e) {
-						selectedExertion = selectExertionByName(next);
-					}
-					if (selectedExertion < 0
-							|| selectedExertion >= exertionInfos.length)
-						out.println("No such Exertion for: " + next);
-					else
-						out.println(exertionInfos[selectedExertion]);
-				}
-			}
-		} else if (numTokens == 2) {
-			next = myTk.nextToken();
-			if (next.equals("-e") || next.equals("-c")
-					|| next.equals("-cc") || next.equals("-ccc")) {
-				isEmxMode = false;
-				boolean isContext = false;
-				boolean isControlContext = false;
-				if (next.equals("-c"))
-					isContext = true;
-				if (next.equals("-cc"))
-					isControlContext = true;
-				if (next.equals("-ccc")) {
-					isContext = true;
-					isControlContext = true;
-				}
-				try {
-					next = myTk.nextToken();
-					myIdx = Integer.parseInt(next);
-					selectedExertion = myIdx;
-				} catch (NumberFormatException e) {
-					selectedExertion = selectExertionByName(next);
-					if (selectedExertion < 0)
-						out.println("No such Exertion for: " + next);
-				}
-				if (selectedExertion >= 0
-						&& selectedExertion < exertionInfos.length) {
-					ExertionInfo xrtInfo = exertionInfos[selectedExertion];
-					printExertion(xrtInfo.getStoreId(), isContext,
-							isControlContext);
-				} else
-					out.println("No such Exertion for: " + selectedExertion);
-			}
-		} else {
-			out.println(COMMAND_USAGE);
-		}
-	}
+        return super.getOptions()
+                .addOption(null, "xrt", false, "set xrt mode")
+                .addOption(null, "emx", false, "set emx mode")
+                .addOption(null, "mode", false, "show mode")
+                .addOption("v", false, "print exertions")
+                .addOption("d", false, "show done monitored exertions")
+                .addOption("r", false, "show running monitored exertions")
+                .addOption("f", false, "show failed monitored exertions")
+                .addOption("a", false, "show all monitored exertions")
+                .addOption("y", false, "show asynchronous monitored exertions")
+                .addOption("x", false, "clear selection")
+                .addOption(e)
+                .addOption(c)
+                .addOption(cc)
+                .addOption(ccc)
+                ;
+    }
 
-	private void printExertion(Uuid id, boolean isContext,
+    public void execute(String command, CommandLine cmd) throws RemoteException, MonitorException, ContextException, ExecutionException {
+        if (cmd.hasOption("xrt")) {
+            isEmxMode = false;
+            out.println("you are in 'xrt' mode");
+        } else if (cmd.hasOption("emx")) {
+            isEmxMode = true;
+            out.println("you are in 'emx' mode");
+        } else if (cmd.hasOption("mode")) {
+            if (isEmxMode)
+                out.println("you are in 'emx' mode");
+            else
+                out.println("you are in 'xrt' mode");
+        } else if (cmd.hasOption('v')) {
+            if (selectedMonitor >= 0) {
+                describeMonitor(selectedMonitor);
+            } else
+                out.println("No selected EMX");
+        } else if (cmd.hasOption('d'))
+            printMonitoredExertions(State.DONE);
+        else if (cmd.hasOption('r'))
+            printMonitoredExertions(State.RUNNING);
+        else if (cmd.hasOption('f'))
+            printMonitoredExertions(State.FAILED);
+        else if (cmd.hasOption('a'))
+            printMonitoredExertions(State.NULL);
+        else if (cmd.hasOption('y'))
+            printMonitoredExertions(State.ASYNC);
+        else if (cmd.hasOption('x'))
+            selectedMonitor = -1;
+        else if (cmd.hasOption('e')) {
+            isEmxMode = false;
+            String selectionStr = cmd.getOptionValue('e');
+            ExertionInfo xrtInfo = getSelectedExertion(selectionStr);
+            printExertionInfo(xrtInfo, false, false, selectionStr);
+        } else if (cmd.hasOption('c')) {
+            isEmxMode = false;
+            String selectionStr = cmd.getOptionValue('c');
+            ExertionInfo xrtInfo = getSelectedExertion(selectionStr);
+            printExertionInfo(xrtInfo, true, false, selectionStr);
+        } else if (cmd.hasOption("cc")) {
+            isEmxMode = false;
+            String selectionStr = cmd.getOptionValue("cc");
+            ExertionInfo xrtInfo = getSelectedExertion(selectionStr);
+            printExertionInfo(xrtInfo, false, true, selectionStr);
+        } else if (cmd.hasOption("ccc")) {
+            isEmxMode = false;
+            String selectionStr = cmd.getOptionValue('e');
+            ExertionInfo xrtInfo = getSelectedExertion(selectionStr);
+            printExertionInfo(xrtInfo, true, true, selectionStr);
+        } else {
+            String[] args = cmd.getArgs();
+            if (args.length > 0)
+                try {
+                    selectedMonitor = Integer.parseInt(args[0]);
+                } catch (NumberFormatException e) {
+                    selectedMonitor = selectMonitorByName(args[0]);
+                }
+
+            if (isEmxMode) {
+                if (selectedMonitor >= 0 && selectedMonitor < emxMonitors.length) {
+                    describeMonitor(selectedMonitor, args[0]);
+                } else {
+                    out.println("No such EMX for: " + args[0]);
+                }
+            } else {
+                if (selectedExertion < 0 || selectedExertion >= exertionInfos.length)
+                    out.println("No such Exertion for: " + args[0]);
+                else
+                    out.println(exertionInfos[selectedExertion]);
+            }
+        }
+    }
+
+    private void printExertionInfo(ExertionInfo xrtInfo, boolean isContext, boolean isControlContext, String arg) throws ExecutionException {
+        if (xrtInfo != null)
+            try {
+                printExertion(xrtInfo.getStoreId(), isContext, isControlContext);
+            } catch (RuntimeException e) {
+                throw e;
+            } catch (Exception e) {
+                throw new ExecutionException(e);
+            }
+        else
+            out.println("No such Exertion for: " + arg);
+    }
+
+    private ExertionInfo getSelectedExertion(String selectionStr) {
+        if (selectionStr != null) {
+            try{
+                selectedExertion = Integer.parseInt(selectionStr);
+            }catch (NumberFormatException e){
+                selectedExertion = selectExertionByName(selectionStr);
+            }
+        }
+        return selectedExertion >= 0 && selectedExertion < exertionInfos.length ? exertionInfos[selectedExertion] : null;
+    }
+
+    private void printExertion(Uuid id, boolean isContext,
 			boolean isControlContext) throws RemoteException, MonitorException, ContextException {
-		Exertion xrt = null;
+		Exertion xrt;
 		if (selectedMonitor >= 0) {
 			xrt = ((MonitorUIManagement) emxMonitors[selectedMonitor].service)
 					.getMonitorableExertion(id, NetworkShell.getPrincipal());
@@ -287,35 +285,21 @@ public class EmxCmd extends ShellCmd {
 		}
 	}
 
-	private void showEmxServices() throws RemoteException {
-		findMonitors();
-		printEmxServices();
-	}
-
-	private void printEmxServices() {
-		if ((emxMonitors != null) && (emxMonitors.length > 0)) {
-			for (int i = 0; i < emxMonitors.length; i++) {
-				describeMonitor(i);
-			}
-		} else
-			System.out.println("Sorry, no fetched EMX services.");
-	}
-
-	static private void describeMonitor(int index) {
+    private void describeMonitor(int index) {
 		describeMonitor(index, null);
 	}
 	
-	public static void printCurrentMonitor() {
+	public void printCurrentMonitor() {
 		if (selectedMonitor >= 0) {
-			NetworkShell.shellOutput.println("Current exertion monitoring service: ");
+            shell.getOutputStream().println("Current exertion monitoring service: ");
 			describeMonitor(selectedMonitor);
 		}
 		else {
-			NetworkShell.shellOutput.println("No selected EMX, use 'mxe' command");
+            shell.getOutputStream().println("No selected EMX, use 'mxe' command");
 		}
 	}
 
-	static private void describeMonitor(int index, String msg) {
+	private void describeMonitor(int index, String msg) {
 		out.println("---------" + (msg != null ? " " + msg : "")
 				+ " EMX SERVICE # " + index + " ---------");
 		out.println("EMX: " + emxMonitors[index].serviceID + " at: "
@@ -348,59 +332,20 @@ public class EmxCmd extends ShellCmd {
 		return -1;
 	}
 
-	public static ServiceItem[] getEmxMonitors() {
-		return emxMonitors;
+	public void setExertionInfos(ExertionInfo[] exertionInfos) {
+		this.exertionInfos = exertionInfos;
 	}
 
-	public static ExertionInfo[] getExertionInfos() {
-		return exertionInfos;
-	}
-
-	public static void setExertionInfos(ExertionInfo[] exertionInfos) {
-		EmxCmd.exertionInfos = exertionInfos;
-	}
-
-	public static void setEmxMonitors(ServiceItem[] monitors) {
+	public void setEmxMonitors(ServiceItem[] monitors) {
 		emxMonitors = monitors;
 	}
 
-	public static Map<Uuid, ServiceItem> getMonitorMap() {
+	public Map<Uuid, ServiceItem> getMonitorMap() {
 		return monitorMap;
 	}
 
-	static ServiceItem[] findMonitors() throws RemoteException {
-		emxMonitors = ShellCmd.lookup(new Class[] { MonitoringManagement.class });
+	ServiceItem[] findMonitors() throws RemoteException {
+		emxMonitors = shell.lookup(new Class[]{MonitoringManagement.class});
 		return emxMonitors;
-	}
-
-	public static ArrayList<MonitoringManagement> getMonitors() {
-		ArrayList<MonitoringManagement> emxList = new ArrayList<MonitoringManagement>();
-		for (int i = 0; i < emxMonitors.length; i++) {
-			emxList.add((MonitoringManagement) emxMonitors[i].service);
-		}
-		return emxList;
-	}
-
-	private State getStatus(String option) {
-		if (option.equals("-r"))
-			return State.RUNNING;
-		else if (option.equals("-a"))
-			return State.NULL;
-		else if (option.equals("-f"))
-			return State.FAILED;
-		else if (option.equals("-d"))
-			return State.DONE;
-		else if (option.equals("-i"))
-			return State.INITIAL;
-		else if (option.equals("-u"))
-			return State.SUSPENDED;
-		else if (option.equals("-p"))
-			return State.STOPPED;
-		else if (option.equals("-s"))
-			return State.INSPACE;
-		else if (option.equals("-y"))
-			return State.ASYNC;
-
-		return State.NULL;
 	}
 }

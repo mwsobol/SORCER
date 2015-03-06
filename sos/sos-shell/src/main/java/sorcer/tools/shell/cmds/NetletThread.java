@@ -47,7 +47,7 @@ public class NetletThread extends Thread {
 			}
 		}
 		if (target instanceof Exertion) {
-			Signature sig = ((ServiceExertion)target).getProcessSignature();			
+			Signature sig = ((ServiceExertion)target).getProcessSignature();
 			ServiceShell se = new ServiceShell((Exertion) target);
 			try {
 				result = se.exert();

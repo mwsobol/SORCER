@@ -147,6 +147,20 @@ public class StringUtils {
         return (array);
     }
 
+    public static String[] toArray(String s, String delim) {
+        StringTokenizer tok;
+        if (delim == null)
+            tok = new StringTokenizer(s);
+        else
+            tok = new StringTokenizer(s, delim);
+        String[] array = new String[tok.countTokens()];
+        int i = 0;
+        while (tok.hasMoreTokens()) {
+            array[i++] = tok.nextToken();
+        }
+        return array;
+    }
+
     public static String firstToken(String str, String delim) {
 		String out = "";
 

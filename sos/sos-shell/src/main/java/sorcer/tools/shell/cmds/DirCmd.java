@@ -1,7 +1,8 @@
 /*
  * Copyright 2011 the original author or authors.
  * Copyright 2011 SorcerSoft.org.
- *  
+ * Copyright 2015 SorcerSoft.com
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -17,14 +18,13 @@
 
 package sorcer.tools.shell.cmds;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintStream;
+import java.io.*;
 import java.rmi.RemoteException;
 import java.util.Date;
-import java.util.StringTokenizer;
 
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 import sorcer.core.provider.Cataloger;
 import sorcer.core.provider.Provider;
 import sorcer.tools.shell.NetworkShell;
@@ -46,47 +46,64 @@ public class DirCmd extends ShellCmd {
 		COMMAND_HELP = "Handles directory commands: ls, pwd, cd; Cataloger contents or providers: ls --c | --p.";
 	}
 
-	private String input;
+    private Options lsOpts = new Options();
 
-	private PrintStream out;
+    {
+        lsOpts.addOption("l", false, "long format");
+        lsOpts.addOption("c", "c", false, "Contents of catalog");
+        lsOpts.addOption("p", "p", false, "long format");
+    }
 
-	public void execute() throws Throwable {
-		BufferedReader br = NetworkShell.getShellInputStream();
-		out = NetworkShell.getShellOutputStream();
-		input = shell.getCmd();
-		if (out == null)
-			throw new NullPointerException("Must have an output PrintStream");
-		if (input.startsWith("ls") || input.startsWith("dir")) {
-			File d = NetworkShell.getInstance().getCurrentDir();
-			boolean details = false;
-			StringTokenizer tok = new StringTokenizer(input);
-			if (tok.countTokens() > 1) {
-				/* First token is "ls" */
-				tok.nextToken();
-				String option = tok.nextToken();
-				
-				//list the content of the CatalogercatalogInfo
-				if (option.equals("--c")) {
-					catalogInfo();
-					return;
-				}
-				else if (option.equals("--p")) {
-					listCatalog();
-					return;
-				}
-				
-				if (option.equals("-l"))
-					details = true;
-				else {
-					File temp = new File(d + File.separator + option);
-					if (temp.isDirectory()) {
-						d = temp;
-					} else {
-						out.println("Bad option " + option);
-						return;
-					}
-				}
-			}
+    public void execute(String command, String[] cmd) throws ParseException {
+        if ("ls".equals(command) || "dir".equals(command))
+            list(cmd);
+        else if ("pwd".equals(command))
+            printUserDir();
+        else if ("cd".equals(command))
+            changeDir(cmd);
+        else
+            printUsage();
+    }
+
+    private void printUserDir() {
+        try {
+            out.println("\""
+                    + shell.getCurrentDir().getCanonicalPath()
+                    + "\" is the current working directory");
+        } catch (IOException e) {
+            out.println("\""
+                    + shell.getCurrentDir().getPath()
+                    + "\" is the current working directory");
+        }
+    }
+
+    private void list(String[] input) throws ParseException {
+        CommandLine cmd = parser.parse(lsOpts, input);
+
+        if(cmd.hasOption('c'))
+            catalogInfo();
+        else if(cmd.hasOption('p'))
+            listCatalog();
+        else
+            listDir(cmd);
+    }
+
+    private void listDir(CommandLine cmd){
+        String[] args = cmd.getArgs();
+        File d;
+        if (args.length == 0)
+            d = shell.getCurrentDir();
+        else if (args.length == 1)
+            d = new File(args[0]);
+        else
+            throw new IllegalArgumentException("Expecting exactly one argument to ls");
+
+        boolean details = cmd.hasOption('l');
+
+        listDir(d, details);
+    }
+
+    private void listDir(File d, boolean details) {
 			File[] files = d.listFiles();
 			if (files == null) {
 				String path = NetworkShell.getInstance().getCurrentDir()
@@ -126,57 +143,30 @@ public class DirCmd extends ShellCmd {
 					out.println(file.getName());
 				}
 			}
-		} else if (input.equals("pwd")) {
-			try {
-				out.println("\""
-						+ NetworkShell.getInstance().getCurrentDir()
-								.getCanonicalPath() + "\" "
-						+ "is the current working directory");
-			} catch (IOException e) {
-				out.println("\""
-						+ NetworkShell.getInstance().getCurrentDir()
-								.getAbsolutePath() + "\" "
-						+ "is the current working directory");
-			}
-		} else {
-			StringTokenizer tok = new StringTokenizer(input);
-			if (tok.countTokens() > 1) {
-				/* First token is "cd" */
-				tok.nextToken();
-				String value = tok.nextToken();
-				if (!value.endsWith("*"))
-					changeDir(value, out);
-			} else {
-				out.print("(enter a directory to change to) ");
-				try {
-					String response = br.readLine();
-					if (response.length() == 0) {
-						out.println("usage: cd directory");
-					} else {
-						changeDir(response, out);
-					}
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-		return;
-	}
+    }
 
-	boolean changeDir(String dirName, PrintStream out) throws Throwable {
+    private void changeDir(String[] argv) throws ParseException {
+        CommandLine cmd = parser.parse(lsOpts, argv);
+        String[] args = cmd.getArgs();
+        if (args.length != 1) {
+            throw new IllegalArgumentException("cd is expecting exactly one argument");
+        }
+        changeDir(args[0], out);
+    }
+
+    boolean changeDir(String dirName, PrintWriter out)  {
 		return (changeDir(dirName, false, out));
 	}
 
 	private void listCatalog() {
 		Cataloger cataloger = (Cataloger)ProviderLookup.getService(Cataloger.class);
 		if (cataloger != null) {
-			String[] providers = new String[0];
 			try {
-				providers = cataloger.getProviderList();
-			out.println("Providers in the " + ((Provider)cataloger).getProviderName() + ": ");
-			for (String provider : providers) {
-				out.println("  " + provider);
-			}
+                String[] providers = cataloger.getProviderList();
+                out.println("Providers in the " + ((Provider)cataloger).getProviderName() + ": ");
+                for (String provider : providers) {
+                    out.println("  " + provider);
+                }
 			} catch (RemoteException e) {
 				e.printStackTrace();
 			}
@@ -196,7 +186,7 @@ public class DirCmd extends ShellCmd {
 	}
 	
 	public static boolean changeDir(String dirName, boolean echoSuccess,
-			PrintStream out) throws Throwable {
+			PrintWriter out) {
 		boolean changed = false;
 		if (dirName.startsWith("core/sorcer-ui/src/main")) {
 			dirName = NetworkShell.getInstance().getCurrentDir()

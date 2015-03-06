@@ -17,18 +17,14 @@
 
 package sorcer.tools.shell.cmds;
 
-import java.io.PrintStream;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import net.jini.core.entry.Entry;
 import net.jini.core.entry.UnusableEntryException;
 import net.jini.core.lease.Lease;
 import net.jini.core.lookup.ServiceItem;
-import net.jini.id.Uuid;
 import net.jini.lookup.entry.Name;
 import net.jini.space.JavaSpace;
 import net.jini.space.JavaSpace05;
@@ -81,12 +77,10 @@ public class SpaceCmd extends ShellCmd {
 				+ "\n  -s   save the selected exertion in a given file ";
 	}
 
-	static private PrintStream out;
 	private boolean isSpaceMode = true;
 	static private ServiceItem[] spaces;
 	static private int selectedSpace = -1;
 	private int selectedExertion = -1;
-	static private Map<Uuid, ServiceItem> monitorMap = new HashMap<Uuid, ServiceItem>();
 
 	static private List<Entry> instanceList = new ArrayList<Entry>();
 	static private JavaSpace05 javaSpace;
@@ -94,8 +88,7 @@ public class SpaceCmd extends ShellCmd {
 	public SpaceCmd() {
 	}
 
-	public void execute() throws RemoteException, MonitorException, ContextException {
-		out = NetworkShell.getShellOutputStream();
+	public void execute(String command, String[] cmd) throws RemoteException, MonitorException, ContextException {
 		WhitespaceTokenizer myTk = NetworkShell.getShellTokenizer();
 		int numTokens = myTk.countTokens();
 //		out.println("numTokens: " + numTokens);
@@ -375,8 +368,8 @@ public class SpaceCmd extends ShellCmd {
 			System.out.println("Sorry, no fetched JavaSpace services.");
 	}
 	
-	static ServiceItem[] findSpaces() throws RemoteException {
-		spaces = ShellCmd.lookup(new Class[] { JavaSpace05.class });
+	 ServiceItem[] findSpaces() throws RemoteException {
+		spaces = shell.lookup(new Class[]{JavaSpace05.class});
 		return spaces;
 	}
 	

@@ -17,23 +17,26 @@
 
 package sorcer.tools.shell.cmds;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.PrintStream;
+import java.io.*;
+import java.rmi.RemoteException;
 import java.util.List;
 import java.util.StringTokenizer;
+import java.util.concurrent.ExecutionException;
 import java.util.logging.Logger;
 
+import groovy.lang.GroovyShell;
+import groovy.lang.Script;
+import net.jini.core.transaction.TransactionException;
+import org.codehaus.groovy.control.CompilationFailedException;
 import sorcer.core.context.ThrowableTrace;
+import sorcer.core.provider.exerter.ServiceShell;
 import sorcer.service.Exertion;
+import sorcer.service.ExertionException;
 import sorcer.service.Job;
 import sorcer.service.ServiceExertion;
 import sorcer.tools.shell.NetworkShell;
 import sorcer.tools.shell.ShellCmd;
+import sorcer.tools.shell.ShellStarter;
 
 public class ExertCmd extends ShellCmd {
 
@@ -44,7 +47,7 @@ public class ExertCmd extends ShellCmd {
 
 		COMMAND_USAGE = "exert [-cc] [[-s | --s | --m] <output filename>] <input filename>";
 
-		COMMAND_HELP = "Manage and execute the federation of services specified by the <input filename>;" 
+		COMMAND_HELP = "Manage and execute the federation of services specified by the <input filename>;"
 				+ "\n  -cc   print the executed exertion with control context"
 				+ "\n  -s   save the command output in a file"
 				+ "\n  --s   serialize the command output in a file"
@@ -56,8 +59,6 @@ public class ExertCmd extends ShellCmd {
 
 	private String input;
 
-	private PrintStream out;
-
 	private File outputFile;
 
 	private File scriptFile;
@@ -65,6 +66,8 @@ public class ExertCmd extends ShellCmd {
 	private String script;
 
 	private static StringBuilder staticImports;
+
+    private GroovyShell gShell = new GroovyShell(ShellStarter.getLoader());
 
 	public ExertCmd() {
 		if (staticImports == null) {
@@ -79,9 +82,7 @@ public class ExertCmd extends ShellCmd {
 		}
 	}
 
-	public void execute() throws Throwable {
-		BufferedReader br = NetworkShell.getShellInputStream();
-		out = NetworkShell.getShellOutputStream();
+	public void execute(String command, String[] cmd) {
 		input = shell.getCmd();
 		if (out == null)
 			throw new NullPointerException("Must have an output PrintStream");
@@ -125,6 +126,7 @@ public class ExertCmd extends ShellCmd {
 			sb = new StringBuilder(staticImports.toString());
 			sb.append(script);
 		} else if (scriptFilename != null) {
+            try {
 			if ((new File(scriptFilename)).isAbsolute()) {
 				scriptFile = NetworkShell.huntForTheScriptFile(scriptFilename);
 			} else {
@@ -132,7 +134,6 @@ public class ExertCmd extends ShellCmd {
 						+ File.separator + scriptFilename);
 			}
 			sb = new StringBuilder(staticImports.toString());
-			try {
 				sb.append(readFile(scriptFile));
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -171,7 +172,7 @@ public class ExertCmd extends ShellCmd {
 					}
 				}
 			}
-			
+
 			out.println("\n---> OUTPUT EXERTION --->");
 			out.println(((ServiceExertion) xrt).describe());
 			out.println("\n---> OUTPUT DATA CONTEXT --->");
@@ -254,5 +255,35 @@ public class ExertCmd extends ShellCmd {
 		}
 		return sb;
 	}
+
+    public Object run() throws IOException, ExecutionException {
+        Object target;
+
+        Script parse = gShell.parse(script);
+        if (script != null) {
+            target = parse.run();
+        } else {
+            target = gShell.parse(scriptFile);
+        }
+        try {
+            parse.run();
+        } catch (CompilationFailedException e) {
+            throw new ExecutionException(e);
+        }
+
+        if (target instanceof Exertion) {
+            ServiceShell se = new ServiceShell((Exertion) target);
+            try {
+                return se.exert();
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            } catch (TransactionException e) {
+                e.printStackTrace();
+            } catch (ExertionException e) {
+                e.printStackTrace();
+            }
+        }
+        return target;
+    }
 
 }

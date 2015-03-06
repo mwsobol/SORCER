@@ -1,5 +1,6 @@
 /*
  * Copyright to the original author or authors.
+ * Copyright 2015 SorcerSoft.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,13 +18,52 @@
 version = sorcerVersion
 
 jar {
-	manifest {
-		attributes("Implementation-Title": "SORCER Network Shell (nsh)", "Implementation-Version": version)
-	   }
+    manifest {
+        attributes("Implementation-Title": "SORCER Network Shell (nsh)", "Implementation-Version": version)
+    }
 }
 
 dependencies {
-    compile project(':sos-netlet')
-    compile	project(':webster')
-    compile project(':sorcer-platform')
+    compile project(':sos-netlet'),
+            project(':webster'),
+            project(':sorcer-platform'),
+            'commons-cli:commons-cli:1.2'
+    runtime 'ch.qos.logback:logback-classic:1.0.13'
+}
+
+task(run, dependsOn: 'classes') << {
+    def command = [
+            'java',
+            '-cp', sourceSets.main.runtimeClasspath.collect().join(System.getProperty('path.separator')),
+            '-Djava.protocol.handler.pkgs="net.jini.url|sorcer.util.url|org.rioproject.url"',
+            "-Djava.security.policy=${rootDir}/policy/policy.all",
+            "-Djava.rmi.server.useCodebaseOnly=false",
+            "-Driver.version=${project.riverVersion}",
+            "-Dsorcer.version=${project.sorcerVersion}",
+            "-Dsorcer.home=${project.sorcerDistHome}",
+            "-Dsorcer.env.file=${rootDir}/configs/sorcer.env",
+            "-Dproject.build.dir=${project.buildDir.path}"
+    ]
+
+    if (System.getProperty("java.util.logging.config.file") != null)
+        command << "-Djava.util.logging.config.file=${System.getProperty("java.util.logging.config.file")}"
+    else
+        command  << "-Djava.util.logging.config.file=${rootDir}/configs/sorcer.logging"
+
+    command << 'sorcer.tools.shell.NetworkShell'
+
+/*
+    def proc = new ProcessBuilder(command as String[])
+            .redirectOutput(ProcessBuilder.Redirect.INHERIT)
+            .redirectInput(ProcessBuilder.Redirect.INHERIT)
+            .redirectError(ProcessBuilder.Redirect.INHERIT)
+            .start()
+
+    proc.waitFor()
+
+    if (0 != proc.exitValue()) {
+        throw new RuntimeException("console exited with status: ${proc.exitValue()}")
+    }
+*/
+    println command.join(' ')
 }

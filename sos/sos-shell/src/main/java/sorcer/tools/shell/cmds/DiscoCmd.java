@@ -18,7 +18,7 @@
 package sorcer.tools.shell.cmds;
 
 import java.io.IOException;
-import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.*;
@@ -26,9 +26,10 @@ import java.util.*;
 import net.jini.admin.Administrable;
 import net.jini.admin.JoinAdmin;
 import net.jini.core.lookup.ServiceRegistrar;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.Options;
 import sorcer.tools.shell.NetworkShell;
 import sorcer.tools.shell.ShellCmd;
-import sorcer.tools.shell.WhitespaceTokenizer;
 
 public class DiscoCmd extends ShellCmd {
 
@@ -45,70 +46,79 @@ public class DiscoCmd extends ShellCmd {
 			+ "\n\t-x   clear the selected registrar and start discovery";
 	}
 
-	static private List<ServiceRegistrar> registrars;
-	static int selectedRegistrar = 0;
-	static private PrintStream out;
+	private List<ServiceRegistrar> registrars;
+	int selectedRegistrar = 0;
 
 	public DiscoCmd() {
 	}
 
-	public void execute() throws IOException, ClassNotFoundException {
-		// create a clone of list - command may modify it
-		registrars = new ArrayList<ServiceRegistrar>(NetworkShell.getRegistrars());
-		// out.println("registrars: " + registrars);
-		out = NetworkShell.getShellOutputStream();
-		WhitespaceTokenizer myTk = NetworkShell.getShellTokenizer();
-		int numTokens = myTk.countTokens();
-		int index = 0;
-		String next = null;
-		if (numTokens == 1) {
-			next = myTk.nextToken();
-			if (next.equals("-x")) {
-				NetworkShell.getRegistrars().clear();
-				registrars.clear();
-				// default index
-				selectedRegistrar = 0;
-				NetworkShell.getDisco().terminate();
-				// start new lookup discovery
-				NetworkShell.setLookupDiscovery(NetworkShell.getGroups());
-			}
-			else if (next.equals("-v")) {
-				if (selectedRegistrar >= 0
-						&& selectedRegistrar < registrars.size()) {
-					describeServiceRegistrar(registrars.get(selectedRegistrar),
-							true);
-				}
-				else {
-					out.println("No selected registrar!");
-				}
-			} else if (next != null) {
-				index = Integer.parseInt(next);
-				if (index >= 0 && index < registrars.size())
-					selectedRegistrar = index;
-				describeServiceRegistrar(registrars.get(selectedRegistrar),
-						true);
-			} else {
-				out.println("Wrong argument for selected registrar!");
-			}
-			return;
-		}
-		if ((registrars != null) && (registrars.size() > 0)) {
-			Iterator it = registrars.iterator();
-			while (it.hasNext()) {
-				ServiceRegistrar myReg = (ServiceRegistrar) it.next();
-				describeServiceRegistrar(myReg, false);
-			}
-		} else
-			System.out.println("Sorry, no lookup services located");
-	}
+    @Override
+    public Options getOptions() {
+        return super.getOptions()
+                .addOption("x", false, "clear the selected registrar and start discovery")
+                .addOption("v", false, "print the default registrar info");
 
-	static public void describeServiceRegistrar(ServiceRegistrar myReg,
-			boolean withDetails) throws IOException, ClassNotFoundException {
+    }
+
+    @Override
+    public void execute(String command, CommandLine cmd) throws Exception {
+        String[] args = cmd.getArgs();
+        if (args.length == 1)
+            try {
+                selectedRegistrar = Integer.parseInt(args[0]);
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException("Expected an index of the registrar", e);
+            }
+
+
+        if (cmd.hasOption('x')) {
+            clearSelection();
+        }else if(cmd.hasOption('v'))
+            describeSelectedRegistrar();
+        else
+            describeRegistrars();
+
+    }
+
+    private void clearSelection() {
+        NetworkShell.getRegistrars().clear();
+        registrars.clear();
+        // default index
+        selectedRegistrar = 0;
+        NetworkShell.getDisco().terminate();
+        // start new lookup discovery
+        NetworkShell.setLookupDiscovery(NetworkShell.getGroups());
+    }
+
+    private void describeRegistrars() throws IOException, ClassNotFoundException {
+        if ((registrars != null) && (registrars.size() > 0)) {
+            Iterator it = registrars.iterator();
+            while (it.hasNext()) {
+                ServiceRegistrar myReg = (ServiceRegistrar) it.next();
+                describeServiceRegistrar(myReg, false, shell);
+            }
+        } else
+            System.out.println("Sorry, no lookup services located");
+    }
+
+    private void describeSelectedRegistrar() throws IOException, ClassNotFoundException {
+        if (selectedRegistrar >= 0
+                && selectedRegistrar < registrars.size()) {
+            describeServiceRegistrar(registrars.get(selectedRegistrar),
+                    true, shell);
+        }
+        else {
+            out.println("No selected registrar!");
+        }
+    }
+
+    public void describeServiceRegistrar(ServiceRegistrar myReg,
+			boolean withDetails, NetworkShell shell) throws IOException, ClassNotFoundException {
 		String[] groups;
 		String msg = "";
-		if (out == null) {
-			out = NetworkShell.getShellOutputStream();
-		}
+
+        PrintWriter out = shell.getOutputStream();
+
 		out.println("--------- LOOKUP SERVICE # " + registrars.indexOf(myReg)
 				+ " ---------");
 		out.println("ID: " + myReg.getServiceID());
@@ -121,26 +131,27 @@ public class DiscoCmd extends ShellCmd {
 		out.println("Lookup locator: " + myReg.getLocator().getHost() + ":"
 				+ myReg.getLocator().getPort());
 		if (withDetails)
-			printDetails(myReg);
+			printDetails(myReg, shell);
 	}
 
-	static public void printCurrentLus() throws IOException,
+	public void printCurrentLus(NetworkShell shell) throws IOException,
 			ClassNotFoundException {
 		if (registrars == null)
 			registrars = NetworkShell.getRegistrars();
 		if (selectedRegistrar >= 0) {
-			NetworkShell.shellOutput.println("Current lookup service: ");
+			shell.getOutputStream().println("Current lookup service: ");
 			if (registrars.size() > 0)
-				describeServiceRegistrar(registrars.get(selectedRegistrar), false);
+				describeServiceRegistrar(registrars.get(selectedRegistrar), false, shell);
 		} else {
-			NetworkShell.shellOutput
+            shell.getOutputStream()
 					.println("No selected LUS; use 'disco' cmd");
 		}
 	}
 	
-	static private void printDetails(ServiceRegistrar myReg) throws IOException,
+	static private void printDetails(ServiceRegistrar myReg, NetworkShell shell1) throws IOException,
 			ClassNotFoundException {
 		Class myCls = myReg.getClass();
+        PrintWriter out = shell1.getOutputStream();
 		out.println("Proxy class: " + myCls);
 		Class[] allIntf = myCls.getInterfaces();
 		out.println("Interfaces: ");
@@ -168,7 +179,7 @@ public class DiscoCmd extends ShellCmd {
 		}
 	}
 
-	public static ServiceRegistrar getSelectedRegistrar() {
+	public ServiceRegistrar getSelectedRegistrar() {
 		if (registrars != null && registrars.size() > 0
 				&& selectedRegistrar >= 0)
 			return registrars.get(selectedRegistrar);

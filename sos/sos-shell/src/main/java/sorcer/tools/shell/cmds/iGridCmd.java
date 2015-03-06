@@ -18,7 +18,6 @@
 package sorcer.tools.shell.cmds;
 
 import java.io.File;
-import java.io.PrintStream;
 
 import sorcer.tools.shell.NetworkShell;
 import sorcer.tools.shell.ShellCmd;
@@ -37,13 +36,10 @@ public class iGridCmd extends ShellCmd {
 				+"-n  cd to the netlets directory\n  -d  cd to http data root directory.";
 	}
 
-	private PrintStream out;
-
 	public iGridCmd() {
 	}
 
-	public void execute() throws Throwable {
-		out = NetworkShell.getShellOutputStream();
+	public void execute(String command, String[] request) throws Throwable {
 		WhitespaceTokenizer myTk = NetworkShell.getShellTokenizer();
 		int numTokens = myTk.countTokens();
 		if (numTokens == 0) {
@@ -58,21 +54,21 @@ public class iGridCmd extends ShellCmd {
 		if (option.equals("-h")) {
 			NetworkShell.setRequest("cd " + Sorcer.getHome());
 			ShellCmd cmd = (ShellCmd) NetworkShell.getCommandTable().get("ls");
-			cmd.execute();
+			cmd.execute(command, request);
 		} else if (option.equals("-n")) {
 			NetworkShell.setRequest("cd " + Sorcer.getHome()
 					+ File.separator + "netlets");
 			ShellCmd cmd = (ShellCmd) NetworkShell.getCommandTable().get("ls");
-			cmd.execute();
+			cmd.execute(command, request);
 		} else if (option.equals("-d")) {
 			NetworkShell.setRequest("cd " + Sorcer.getHome()
 					+ File.separator + "data");
 			ShellCmd cmd = (ShellCmd) NetworkShell.getCommandTable().get("ls");
-			cmd.execute();
+			cmd.execute(command, request);
 		} else if (option.equals("~")) {
 			NetworkShell.setRequest("cd " + System.getProperty("user.home"));
 			ShellCmd cmd = (ShellCmd) NetworkShell.getCommandTable().get("ls");
-			cmd.execute();
+			cmd.execute(command, request);
 		}
 	}
 

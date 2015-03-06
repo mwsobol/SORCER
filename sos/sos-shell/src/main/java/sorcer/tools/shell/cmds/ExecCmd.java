@@ -19,11 +19,11 @@ package sorcer.tools.shell.cmds;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintStream;
-import java.util.StringTokenizer;
+import java.util.Arrays;
+import java.util.concurrent.ExecutionException;
 
-import sorcer.tools.shell.NetworkShell;
 import sorcer.tools.shell.ShellCmd;
+import sorcer.util.StringUtils;
 import sorcer.util.exec.ExecUtils;
 import sorcer.util.exec.ExecUtils.CmdResult;
 
@@ -39,77 +39,41 @@ public class ExecCmd extends ShellCmd {
 
 		COMMAND_USAGE = "exec <cmd>";
 
-		COMMAND_HELP = "Handles the uderlying OS shell commands";
+		COMMAND_HELP = "Handles the underlying OS shell commands";
 	}
 
-	private String input;
+    final static String[] viewers = {"cat", "less", "more"};
 
-	private PrintStream out;
+    public void execute(String command, String[] argv) throws ExecutionException{
 
-	private Thread execThread;
-	
-	public void execute() throws Throwable {
-		out = NetworkShell.getShellOutputStream();
-		String cmd = "";
-		input = shell.getCmd();
-		if (out == null)
-			throw new NullPointerException("Must have an output PrintStream");
-		StringTokenizer tok = new StringTokenizer(input);
-		String token = tok.nextToken();
-		String arg = "";
-		if (token.equals("exec")) {
-			//CmdResult result = null;
-			token = tok.nextToken();
-			if (token.equals("more") || token.equals("less")
-					|| token.equals("cat")) {
-				arg = tok.nextToken();
-				if (!(new File(arg).isAbsolute())) {
-					arg = arg.replace("." + File.separator,
-							shell.getCurrentDir() + File.separator);
-					if (!(new File(arg).isAbsolute())) {
-						arg = shell.getCurrentDir() + File.separator + arg;
-					}
-				}
-				cmd = token + " " + arg;
-			} else {
-				cmd = cmd.replace("." + File.separator,
-						shell.getCurrentDir() + File.separator);
-				cmd = input.substring(5);
-			}
-			
-//			run(cmd);
-//			t.join();
-			
-			CmdResult result = ExecUtils.execCommand(cmd);
-			Thread.sleep(400);
-			out.println(result.getOut());   	
-			out.flush();
-			
-//			out.println(result.getExitValue());
-//			out.flush();
-//			out.println(result.getErr());
-//			out.flush();
-		} else {
-			out.println(COMMAND_USAGE);
-		}
-	}
-	
-	
-	private void run(final String cmd) {
-		 execThread = new Thread(new Runnable() {
-			public void run() {
-				CmdResult result = null;
+        if (Arrays.binarySearch(viewers, argv[0]) > -1) {
+            adjustPath(argv);
+        }
+
+        String cmd = StringUtils.join(argv,' ');
+
+        CmdResult result;
 				try {
 					result = ExecUtils.execCommand(cmd);
 					Thread.sleep(400);
 				} catch (IOException e) {
-					e.printStackTrace();
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-				out.println(result.getOut());
-			}
-		});
-		execThread.start();
-	}
+            throw new ExecutionException(e);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        out.println(result.getOut());
+        out.flush();
+    }
+
+    private void adjustPath(String[] argv) {
+        String arg = argv[1];
+        if (!(new File(arg).isAbsolute())) {
+            arg = arg.replace("." + File.separator,
+                    shell.getCurrentDir() + File.separator);
+            if (!(new File(arg).isAbsolute())) {
+                arg = shell.getCurrentDir() + File.separator + arg;
+            }
+        }
+        argv[1] = arg;
+    }
 }

@@ -73,8 +73,7 @@ public class LookupCmd extends ShellCmd {
 	public LookupCmd() {
 	}
 
-	public void execute() throws IOException, ClassNotFoundException {
-		out = NetworkShell.getShellOutputStream();
+	public void execute(String command, String[] cmd) throws IOException, ClassNotFoundException {
 		WhitespaceTokenizer myTk = NetworkShell.getShellTokenizer();
 		int numTokens = myTk.countTokens();
 		int index = DiscoCmd.selectedRegistrar;
@@ -232,11 +231,11 @@ public class LookupCmd extends ShellCmd {
 				myTmpl = new ServiceTemplate(null, serviceTypes, myAttrib);
 			}
 
-			matches = registrar.lookup(myTmpl, MAX_MATCHES);
+			matches = registrar.lookup(myTmpl, NetworkShell.MAX_MATCHES);
 			out.println("\t.... found " + matches.totalMatches + " services...");
 			// for (int j=0; j < matches.totalMatches; j++) {
 			serviceItems.clear();
-			for (int j = 0; j < Math.min(MAX_MATCHES, matches.totalMatches); j++) {
+			for (int j = 0; j < Math.min(NetworkShell.MAX_MATCHES, matches.totalMatches); j++) {
 				serviceItems.add(matches.items[j]);
 			}
 			printServices();
@@ -335,13 +334,13 @@ public class LookupCmd extends ShellCmd {
 						.getPublishedServices(serviceItems.get(index).attributeSets)));
 	}
 
-	public static void printCurrentService() throws IOException,
+	public static void printCurrentService(NetworkShell shell) throws IOException,
 			ClassNotFoundException {
 		if (selectedServiceItem >= 0) {
-			NetworkShell.shellOutput.println("Selected service provider: ");
+            shell.getOutputStream().println("Selected service provider: ");
 			printService(selectedServiceItem, "");
 		} else {
-			NetworkShell.shellOutput.println("No selected service provider, use 'lup' command");
+            shell.getOutputStream().println("No selected service provider, use 'lup' command");
 		}
 	}
 	
