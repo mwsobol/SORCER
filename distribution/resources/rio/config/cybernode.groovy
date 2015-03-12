@@ -17,14 +17,10 @@
 /*
  * Configuration for a Cybernode
  */
-import org.rioproject.config.Component
-
-import org.rioproject.impl.client.JiniClient
-import org.rioproject.util.RioHome
-
 import net.jini.core.discovery.LookupLocator
+import org.rioproject.config.Component
 import org.rioproject.config.Constants
-
+import org.rioproject.impl.client.JiniClient
 /*
  * Declare Cybernode properties
  */
@@ -67,19 +63,5 @@ class CybernodeConfig {
 
     String getNativeLibDirectory() {
         return System.getProperty("rio.native.dir")
-    }
-}
-
-@Component('org.rioproject.exec')
-class ExecConfig {
-
-    String getServiceBeanExecShellTemplate() {
-        String template
-        if(System.getProperty("os.name").startsWith("Windows")) {
-            template = "${RioHome.get()}/config/templates/start-template.cmd"
-        } else {
-            template = "classpath:exec-template.sh"
-        }
-        return template
     }
 }
