@@ -26,6 +26,7 @@ import net.jini.lookup.ServiceItemFilter;
 import sorcer.core.provider.Cataloger;
 import sorcer.core.provider.Provider;
 import sorcer.core.SorcerConstants;
+import sorcer.core.signature.NetSignature;
 import sorcer.river.Filters;
 import sorcer.service.Accessor;
 import sorcer.service.DynamicAccessor;
@@ -84,6 +85,17 @@ public class ProviderAccessor extends ServiceAccessor implements
     }
 
 
+    /**
+     * Returns a SORCER service provider with the specified service type, using
+     * a Cataloger if available, otherwise using Jini lookup services.
+     *
+     * @param serviceType
+     *            a provider service type (interface)
+     * @return a SORCER provider service
+     */
+    public final static Provider getProvider(Class serviceType) {
+        return getProvider(new NetSignature(serviceType));
+    }
 
 
     /**
@@ -170,7 +182,7 @@ public class ProviderAccessor extends ServiceAccessor implements
 		}
 	}
 
-	/**
+    /**
 	 * Returns a SORCER service provider matching a given attributes.
 	 *
 	 * @param attributes

@@ -38,6 +38,7 @@ import net.jini.lookup.ServiceItemFilter;
 import net.jini.lookup.entry.Name;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sorcer.core.provider.Provider;
 import sorcer.core.signature.NetSignature;
 import sorcer.service.DynamicAccessor;
 import sorcer.service.Service;
@@ -130,6 +131,22 @@ public class ProviderLocator implements DynamicAccessor {
 		return getService(serviceClass, null, Long.MAX_VALUE);
 	}
 
+    /**
+     * Locates the first matching service via multicast discovery;
+     * for compatibility with other provider accessors.
+     *
+     * @param serviceClass
+     *            The class object representing the interface of the service
+     * @throws IOException
+     * @throws InterruptedException
+     * @return
+     */
+    public static Provider getProvider(Class serviceClass)
+            throws java.io.IOException, InterruptedException {
+
+        return (Provider)getService(serviceClass, null, Long.MAX_VALUE);
+    }
+
 	/**
 	 * Locates the first matching service via multicast discovery
 	 * 
@@ -149,7 +166,7 @@ public class ProviderLocator implements DynamicAccessor {
 
 	/**
 	 * Locates the first matching service via multicast discovery
-	 * 
+	 *
 	 * @param serviceClass
 	 *            The class object representing the interface of the service
 	 * @param serviceName
@@ -315,6 +332,10 @@ public class ProviderLocator implements DynamicAccessor {
 		} else
 			return (Service) proxy;
 	}
+
+    public static Provider getProvider(Signature signature) throws SignatureException {
+        return (Provider)getService(signature);
+    }
 
 
     /*

@@ -38,6 +38,7 @@ import net.jini.discovery.DiscoveryListener;
 import net.jini.discovery.LookupDiscovery;
 import net.jini.lookup.ServiceItemFilter;
 import net.jini.lookup.entry.Name;
+import sorcer.core.provider.Provider;
 import sorcer.service.DynamicAccessor;
 import sorcer.service.Service;
 import sorcer.service.Signature;
@@ -85,6 +86,18 @@ public class ProviderLookup implements DiscoveryListener, DynamicAccessor {
 				signature.getServiceType());
 		return (Service) lookup.getService();
 	}
+
+
+    /**
+     * Returns a SORCER service provider with the specified signature, using
+     * a Cataloger if available, otherwise using Jini lookup services.
+     *
+     * @param signature a provider signature
+     * @return a SORCER service provider
+     */
+    public static Provider getProvider(Signature signature) {
+        return (Provider) getService(signature);
+    }
 
 	/**
 	 * Returns a service provider with the specified service type.

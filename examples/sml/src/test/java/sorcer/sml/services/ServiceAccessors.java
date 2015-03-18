@@ -87,17 +87,16 @@ public class ServiceAccessors implements SorcerConstants {
 	@Test
 	public void providerLookupType() throws Exception {
 		long startTime = System.currentTimeMillis();
-		Provider provider = ProviderLookup.getProvider(Concatenator.class);
+        Object  provider = ProviderLookup.getService(Concatenator.class);
 //		logger.info("ProviderAccessor provider: " + provider);
 		logger.info(Stopwatch.getTimeString(System.currentTimeMillis() - startTime));
 		assertNotNull(provider);
 	}
 
-	@Ignore
 	@Test
 	public void acessor() throws Exception {
 		long startTime = System.currentTimeMillis();
-		Service provider = Accessor.getService(sig(Rendezvous.class));
+		Object provider = Accessor.getService(sig(Rendezvous.class));
 //		logger.info("Accessor provider: " + provider);
 		logger.info(Stopwatch.getTimeString(System.currentTimeMillis() - startTime));
 		assertNotNull(provider);
