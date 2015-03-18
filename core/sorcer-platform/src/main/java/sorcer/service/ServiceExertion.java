@@ -28,8 +28,8 @@ import sorcer.core.context.*;
 import sorcer.core.context.model.par.Par;
 import sorcer.core.deploy.ServiceDeployment;
 import sorcer.core.invoker.ExertInvoker;
+import sorcer.core.monitor.MonitoringSession;
 import sorcer.core.provider.Jobber;
-import sorcer.core.provider.MonitoringSession;
 import sorcer.core.provider.Spacer;
 import sorcer.core.provider.exerter.ServiceShell;
 import sorcer.core.signature.NetSignature;
@@ -45,6 +45,7 @@ import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.security.NoSuchAlgorithmException;
 import java.security.Principal;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -101,6 +102,9 @@ public abstract class ServiceExertion implements Exertion, Scopable, SorcerConst
     protected Boolean isExportControlled;
 
     protected Integer scopeCode;
+
+    // Date of creation of this Exertion
+    protected Date creationDate = new Date();
 
     /** execution status: INITIAL|DONE|RUNNING|SUSPENDED|HALTED */
     protected Integer status = Exec.INITIAL;
@@ -1514,10 +1518,15 @@ public abstract class ServiceExertion implements Exertion, Scopable, SorcerConst
         return this;
     }
 
+    public Date getCreationDate() {
+        return creationDate;
+    }
+
     public String describe() {
         if (!debug)
             return info();
 
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm");
         String stdoutSep = "================================================================================\n";
         StringBuffer info = new StringBuffer();
         info.append("\n" + stdoutSep)
@@ -1527,6 +1536,7 @@ public abstract class ServiceExertion implements Exertion, Scopable, SorcerConst
                 .append("\tExertion Name:        " + name + "\n")
                 .append("\tExertion Status:      " + status + "\n")
                 .append("\tExertion ID:          " + exertionId + "\n")
+             	.append("\tCreation Date:        " + sdf.format(creationDate) + "\n")
                 .append("\tRuntime ID:           " + runtimeId + "\n")
                 .append("\tParent ID:            " + parentId + "\n")
                 .append("\tOwner ID:             " + ownerId + "\n")

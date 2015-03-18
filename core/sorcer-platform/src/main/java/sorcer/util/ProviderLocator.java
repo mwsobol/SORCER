@@ -1,7 +1,8 @@
 /*
  * Copyright 2010 the original author or authors.
  * Copyright 2010 SorcerSoft.org.
- *  
+ * Copyright 2013 Sorcersoft.com S.A.
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -17,27 +18,31 @@
 
 package sorcer.util;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import net.jini.core.discovery.LookupLocator;
 import net.jini.core.entry.Entry;
 import net.jini.core.lookup.ServiceItem;
+import net.jini.core.lookup.ServiceMatches;
 import net.jini.core.lookup.ServiceRegistrar;
 import net.jini.core.lookup.ServiceTemplate;
 import net.jini.discovery.DiscoveryEvent;
 import net.jini.discovery.DiscoveryListener;
 import net.jini.discovery.LookupDiscovery;
+import net.jini.lookup.ServiceItemFilter;
 import net.jini.lookup.entry.Name;
-import sorcer.core.SorcerConstants;
-import sorcer.core.provider.Provider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sorcer.core.signature.NetSignature;
-import sorcer.service.Accessor;
 import sorcer.service.DynamicAccessor;
 import sorcer.service.Service;
 import sorcer.service.Signature;
-
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.rmi.RemoteException;
-import java.util.logging.Logger;
+import sorcer.service.SignatureException;
 
 /**
  * ProviderLoactor is a simple wrapper class over Jini's LookupDiscover. It
@@ -45,29 +50,17 @@ import java.util.logging.Logger;
  * multicast discovery
  */
 
-public class ProviderLocator implements DynamicAccessor, SorcerConstants {
+public class ProviderLocator implements DynamicAccessor {
 
-	static final long WAIT_FOR = Sorcer.getLookupWaitTime();
+	static final long WAIT_FOR = SorcerEnv.getLookupWaitTime();
 
-	static final int MAX_TRIES = 5;
+	static final int MAX_TRIES = 20;
 
-	static final private Logger logger = Log.getTestLog();
-
-	private int tries = 0;
-
-	static {
-		if (System.getSecurityManager() == null) {
-			System.setSecurityManager(new SecurityManager());
-		}
-	}
+    final private static Logger log = LoggerFactory.getLogger(ProviderLocator.class);
 
 	private Object _proxy;
-	private Object _lock = new Object();
+	private final Object _lock = new Object();
 	private ServiceTemplate _template;
-
-	public static void init() {
-		Accessor.setAccessor(new ProviderLocator());
-	}
 
 	/**
 	 * Locates a service via Unicast discovery
@@ -82,7 +75,7 @@ public class ProviderLocator implements DynamicAccessor, SorcerConstants {
 	 * @return The proxy to the discovered service
 	 */
 	public static Object getService(String lusHost, Class serviceClass)
-			throws java.net.MalformedURLException, java.io.IOException,
+			throws java.io.IOException,
 			ClassNotFoundException {
 
 		LookupLocator loc = new LookupLocator("jini://" + lusHost);
@@ -105,7 +98,7 @@ public class ProviderLocator implements DynamicAccessor, SorcerConstants {
 	 * @throws ClassNotFoundException
 	 */
 	public static Object getService(String lusHost, Class serviceClass,
-			String serviceName) throws java.net.MalformedURLException,
+			String serviceName) throws
 			java.io.IOException, ClassNotFoundException {
 
 		Class[] types = new Class[] { serviceClass };
@@ -135,22 +128,6 @@ public class ProviderLocator implements DynamicAccessor, SorcerConstants {
 			throws java.io.IOException, InterruptedException {
 
 		return getService(serviceClass, null, Long.MAX_VALUE);
-	}
-
-	/**
-	 * Locates the first matching service via multicast discovery;
-	 * for compatibility with other provider accessors.
-	 * 
-	 * @param serviceClass
-	 *            The class object representing the interface of the service
-	 * @throws IOException
-	 * @throws InterruptedException
-	 * @return
-	 */
-	public static Provider getProvider(Class serviceClass)
-			throws java.io.IOException, InterruptedException {
-
-		return (Provider)getService(serviceClass, null, Long.MAX_VALUE);
 	}
 
 	/**
@@ -216,7 +193,54 @@ public class ProviderLocator implements DynamicAccessor, SorcerConstants {
 
 	}
 
-	class Listener implements DiscoveryListener {
+    @Override
+    public ServiceItem[] getServiceItems(ServiceTemplate template, int minMatches, int maxMatches, ServiceItemFilter filter, String[] groups) {
+        String[] locators = SorcerEnv.getLookupLocators();
+        List<ServiceItem> result = new ArrayList<ServiceItem>();
+        for (String locator : locators) {
+            try {
+                LookupLocator loc = new LookupLocator("jini://" + locator);
+                ServiceRegistrar reggie = loc.getRegistrar();
+                ServiceMatches matches = reggie.lookup(template, maxMatches);
+                result.addAll(Arrays.asList(matches.items));
+                if (result.size() >= maxMatches) break;
+            } catch (MalformedURLException e) {
+                log.warn("Malformed URL", e);
+            } catch (ClassNotFoundException e) {
+                log.warn("Malformed URL", e);
+            } catch (RemoteException e) {
+                log.debug("Remote exception", e);
+            } catch (IOException e) {
+                log.debug("Communication error", e);
+            }
+        }
+        if (result.size() < minMatches) {
+            //TODO this is exactly the same as ProviderLookup. Consider extending that class
+            LookupDiscovery disco = null;
+            try {
+                disco = new LookupDiscovery(groups);
+                //SorcerDiscoveryListener listener = new SorcerDiscoveryListener(template, minMatches, maxMatches, filter);
+                //disco.addDiscoveryListener(listener);
+                //result.addAll(listener.get(WAIT_FOR, TimeUnit.MILLISECONDS));
+                Thread.sleep(WAIT_FOR*MAX_TRIES);
+                for (ServiceRegistrar registrar : disco.getRegistrars()) {
+                    ServiceMatches matches = registrar.lookup(template, maxMatches);
+                    result.addAll(Arrays.asList(matches.items));
+                    if (result.size() >= maxMatches) break;
+                }
+            } catch (IOException e) {
+                log.debug("Communication error", e);
+            } catch (InterruptedException ignored) {
+                //ignored
+            } finally {
+                disco.terminate();
+            }
+        }
+
+        return result.toArray(new ServiceItem[result.size()]);
+    }
+
+    class Listener implements DiscoveryListener {
 		// invoked when a LUS is discovered
 		public void discovered(DiscoveryEvent ev) {
 			ServiceRegistrar[] reg = ev.getRegistrars();
@@ -251,7 +275,7 @@ public class ProviderLocator implements DynamicAccessor, SorcerConstants {
 	 * @see Sorcer
 	 */
 	protected static String[] getGroups() {
-		return Sorcer.getLookupGroups();
+		return SorcerEnv.getLookupGroups();
 	}
 
 	/*
@@ -260,51 +284,49 @@ public class ProviderLocator implements DynamicAccessor, SorcerConstants {
 	 * @see
 	 * sorcer.service.DynamicAccessor#getServiceItem(sorcer.service.Signature)
 	 */
-	@Override
-	public ServiceItem getServiceItem(Signature signature) {
-			//throws SignatureException {
-		return null;
-		//throw new SignatureException("Not implemented by this service accessor");
+	public ServiceItem getServiceItem(Signature signature)
+			throws SignatureException {
+		throw new SignatureException("Not implemented by this service accessor");
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see sorcer.service.DynamicAccessor#getService(sorcer.service.Signature)
-	 */
-	@Override
-	public Service getService(Signature signature) {
-		return getProvider(signature);
-	}
 	
-	public static Provider getProvider(Signature signature) {
+	public static Service getService(Signature signature) throws SignatureException {
 		Object proxy = null;
 		try {
 			if (((NetSignature)signature).isUnicast()) {
-				String[] locators = Sorcer.getLookupLocators();
+				String[] locators = SorcerEnv.getLookupLocators();
 				for (String locator : locators) {
-					proxy = (Service) ProviderLocator.getService(locator,
-							signature.getServiceType(), signature
-									.getProviderName());
+					proxy = getService(locator,
+                            signature.getServiceType(), signature
+                            .getProviderName());
 					if (proxy != null && proxy instanceof Service)
 						break;
-					else
-						continue;
-				}
+                }
 			} else {
-				proxy = ProviderLocator.getService(signature.getServiceType(),
-						signature.getProviderName().equals(ANY) 
-						? null : signature.getProviderName(), WAIT_FOR);
+				proxy = getService(signature.getServiceType(),
+                        signature.getProviderName(), WAIT_FOR);
 			}
 		} catch (Exception ioe) {
-			//throw new SignatureException(ioe);
-			return null;
+			throw new SignatureException(ioe);
 		} 
 		if (proxy == null || !(proxy instanceof Service)) {
-			return null;
-			//throw new SignatureException("Cannot find service for: "
-			//		+ signature);
+			throw new SignatureException("Cannot find service for: "
+					+ signature);
 		} else
-			return (Provider) proxy;
+			return (Service) proxy;
 	}
+
+
+    /*
+ * (non-Javadoc)
+ *
+ * @see sorcer.service.DynamicAccessor#getService(sorcer.service.Signature)
+ */
+    public <T> T getProvider(String serviceName, Class<T> serviceType) {
+        try {
+            return (T)getServiceImpl(serviceType, serviceName, WAIT_FOR);
+        } catch (Exception e) {
+            return null;
+        }
+    }
 }

@@ -26,6 +26,7 @@ import net.jini.jeri.ServerCapabilities;
 import net.jini.security.proxytrust.ProxyTrust;
 import net.jini.security.proxytrust.ServerProxyTrust;
 import net.jini.security.proxytrust.TrustEquivalence;
+import org.slf4j.MDC;
 import sorcer.service.*;
 
 import java.lang.reflect.Method;
@@ -35,6 +36,8 @@ import java.rmi.server.ExportException;
 import java.security.Permission;
 import java.util.*;
 import java.util.logging.Logger;
+
+import static sorcer.core.SorcerConstants.*;
 
 /**
  * A SorcerILFactory can be used with object interfaces as its services. Those
@@ -214,6 +217,38 @@ public class SorcerILFactory extends BasicILFactory {
 
 		protected Object invoke(Remote impl, Method method, Object[] args,
 				Collection context) throws Throwable {
+            try {
+                setupLogging(impl, args);
+                return doInvoke(impl, method, args, context);
+            } finally {
+                cleanLogging();
+            }
+        }
+
+        private void setupLogging(Remote impl, Object[] args) {
+            if(remoteLogging)
+                MDC.put(MDC_SORCER_REMOTE_CALL, MDC_SORCER_REMOTE_CALL);
+            if (impl instanceof Identifiable) {
+				Identifiable identifiable = (Identifiable) impl;
+				MDC.put(MDC_PROVIDER_ID, identifiable.getId().toString());
+				MDC.put(MDC_PROVIDER_NAME, identifiable.getName());
+			}
+            if (args.length > 0 && args[0] instanceof Exertion) {
+                Exertion xrt = ((Exertion) args[0]);
+                if (xrt != null && xrt.getId() != null)
+                    MDC.put(MDC_EXERTION_ID, xrt.getId().toString());
+            }
+        }
+
+        private void cleanLogging() {
+			MDC.remove(MDC_PROVIDER_NAME);
+            MDC.remove(MDC_SORCER_REMOTE_CALL);
+            MDC.remove(MDC_EXERTION_ID);
+            MDC.remove(MDC_PROVIDER_ID);
+        }
+
+		protected Object doInvoke(Remote impl, Method method, Object[] args,
+				Collection context) throws Throwable {
 			if (impl == null || args == null || context == null)
 				throw new NullPointerException();
 
@@ -245,9 +280,9 @@ public class SorcerILFactory extends BasicILFactory {
 				Object service = serviceBeanMap.get(method.getDeclaringClass());
 				if (service != null) {
 					obj = method.invoke(service, args);
-					if (obj instanceof Task) {
+				/*	if (obj instanceof Task) {
 						((Task)obj).setStatus(Exec.DONE);
-					}
+					}*/
 				} else {
                     obj = method.invoke(impl, args);
 				}
@@ -256,5 +291,11 @@ public class SorcerILFactory extends BasicILFactory {
 			}
 			return obj;
 		}
+	}
+
+    private boolean remoteLogging = false;
+
+    public void setRemoteLogging(boolean remoteLogging){
+        this.remoteLogging = remoteLogging;
 	}
 }

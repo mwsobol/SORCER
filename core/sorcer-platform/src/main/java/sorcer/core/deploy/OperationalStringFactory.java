@@ -21,7 +21,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.rioproject.impl.opstring.OpString;
 import org.rioproject.opstring.ClassBundle;
@@ -40,8 +41,8 @@ import sorcer.service.Signature;
  * @author Dennis Reedy
  */
 public final class OperationalStringFactory {
-    static final Logger logger = Logger.getLogger(OperationalStringFactory.class.getName());
-    private OperationalStringFactory() throws Exception {
+    static final Logger logger = LoggerFactory.getLogger(OperationalStringFactory.class.getName());
+    private OperationalStringFactory() {
     }
 
     /**
@@ -99,7 +100,7 @@ public final class OperationalStringFactory {
             }
         }
         if(services.isEmpty()) {
-            logger.warning(String.format("No services configured for exertion %s", exertion.getName()));
+            logger.warn(String.format("No services configured for exertion %s", exertion.getName()));
             return null;
         }
         OpString opString = new OpString(exertion.getDeploymentId(),

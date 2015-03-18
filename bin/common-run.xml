@@ -90,6 +90,8 @@ To include this file in your custom *-run-buld.xml have the import line:
 		<propertyref name="sorcer.version" />
 		<propertyref name="rio.version" />
 		<propertyref name="river.version" />
+        <propertyref name="plexus.version" />
+        <propertyref name="slf4j.version" />
 		<propertyref name="org.rioproject.resolver.jar" />
 	</propertyset>
 

@@ -100,6 +100,8 @@ public interface Provider extends Service, Monitorable, Administrable, Remote {
 //	public void notifyFailure(Exertion task, String message)
 //			throws RemoteException;
 
+	public Object getProxy() throws RemoteException;
+
 	public void updatePolicy(Policy policy) throws RemoteException;
 
 	public Logger getLogger() throws RemoteException;

@@ -5,7 +5,20 @@ import sorcer.jini.lookup.entry.SorcerServiceInfo;
 
 public class AttributesUtil {
 
-	static public String getGroups(Entry[] attributeSets) {
+    public static <T extends Entry> T getFirstByType(Entry[] attributeSets, Class<T> type) {
+        if (attributeSets != null) {
+            for (Entry attributeSet : attributeSets) {
+                if (type.isInstance(attributeSet)) return (T) attributeSet;
+            }
+        }
+        return null;
+    }
+
+    static public SorcerServiceInfo getSorcerServiceInfo(Entry[] attributeSets) {
+        return getFirstByType(attributeSets, SorcerServiceInfo.class);
+    }
+
+    static public String getGroups(Entry[] attributeSets) {
 		if (attributeSets != null) {
 			if (attributeSets.length > 0) {
 				for (int i = 0; i < attributeSets.length - 1; i++) {

@@ -1,7 +1,8 @@
-/*
- * Copyright 2010 the original author or authors.
- * Copyright 2010 SorcerSoft.org.
- *  
+/**
+ *
+ * Copyright 2013 the original author or authors.
+ * Copyright 2013 Sorcersoft.com S.A.
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -14,17 +15,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package sorcer.core.provider;
-
-import java.rmi.RemoteException;
+package sorcer.core.monitor;
 
 import net.jini.core.lease.Lease;
 import net.jini.core.transaction.server.TransactionConstants;
 import net.jini.id.Uuid;
+import sorcer.core.context.IControlContext;
+import sorcer.service.Monitorable;
 import sorcer.service.Context;
 import sorcer.service.MonitorException;
-import sorcer.service.Monitorable;
+
+import java.rmi.RemoteException;
 
 
 /**
@@ -53,7 +54,7 @@ import sorcer.service.Monitorable;
 public interface MonitorSessionManagement extends MonitorManagement {
 	
 	/**
-	 * Makes this an active session. The jobber decides the lease duration and
+	 * Makes this an active session. The rendezvous decides the lease duration and
 	 * the timeout after which the monitor will call on monitorables that the
 	 * job is failed and report back to the Listener that the exertion of this
 	 * session has failed.
@@ -138,21 +139,21 @@ public interface MonitorSessionManagement extends MonitorManagement {
 	/**
 	 * Providers use this method to update the state of monitorable exertion.
 	 * 
-	 * @param context
-	 *            The service context of monitorable exertion.
+	 * @param ctx
+	 *            The service dataContext of monitorable exertion.
 	 *            
 	 * @param aspect
-	 *            The aspect of context change.
+	 *            The aspect of dataContext change.
 	 * 
 	 * @throws MonitorException
-	 *             1) If there is no such session 2) The context does not
+	 *             1) If there is no such session 2) The dataContext does not
 	 *             belong to this session
 	 * 
 	 * @throws RemoteException
 	 *             if there is a communication error
 	 **/
 	
-	public void update(Uuid cookie, Context ctx, Object aspect)
+	public void update(Uuid cookie, Context ctx, IControlContext controlContext, int aspect)
 			throws RemoteException, MonitorException;
 	
 	public int getState(Uuid cookie) throws RemoteException,

@@ -1,7 +1,8 @@
 /*
  * Copyright 2010 the original author or authors.
  * Copyright 2010 SorcerSoft.org.
- *  
+ * Copyright 2013 Sorcersoft.com S.A.
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,12 +16,14 @@
  * limitations under the License.
  */
 
-package sorcer.core.provider;
+package sorcer.core.monitor;
 
 import java.io.IOException;
 import java.rmi.RemoteException;
 
 import net.jini.core.event.RemoteEventListener;
+import sorcer.core.provider.MonitorManagementSession;
+import sorcer.core.provider.exertmonitor.IMonitorSession;
 import sorcer.service.Exertion;
 import sorcer.service.Monitorable;
 
@@ -42,6 +45,6 @@ public interface MonitorManagement extends Monitorable {
 	public Exertion register(RemoteEventListener lstnr, Exertion ex,
 			long duration) throws RemoteException;
 
-	public boolean persist(MonitorManagementSession session) throws RemoteException, IOException;
+	public boolean persist(MonitorManagementSession session) throws IOException;
 
 }

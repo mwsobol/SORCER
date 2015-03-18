@@ -202,7 +202,7 @@ public interface SorcerConstants {
 
 	public static final String J_GROUPS = "providerGroups";
 
-	public static final String P_CATALOOGER_NAME = "provider.catalog.name";
+	public static final String P_CATALOGER_NAME = "provider.catalog.name";
 	
 	public static final String J_CATALOG_NAME = "catalogName";
 	
@@ -743,4 +743,15 @@ public interface SorcerConstants {
 			INCOMPLETE = "Incomplete";
 	public static final String EXPORT_CONTROL = "Export Control",
 			ACCESS_CLASS = "Access Class";
+
+
+    String NAME_DEFAULT="___SORCER_NAME_DEFAULT___";
+    String MDC_SORCER_REMOTE_CALL = "SORCER-REMOTE-CALL";
+    String MDC_EXERTION_ID = "xrtId";
+    String MDC_PROVIDER_ID = "prvId";
+    String MDC_PROVIDER_NAME = "prvName";
+    String START_PACKAGE = "com.sun.jini.start";
+    String DEPLOYMENT_PACKAGE = "sorcer.core.exertion.deployment";
+    String REMOTE_LOGGER_INTERFACE = "RemoteLogger";
+    String S_SHARED_DIRS_FILE = "sorcer.sharedDirs.file";
 }

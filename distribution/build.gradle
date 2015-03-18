@@ -103,7 +103,7 @@ task gatherDeps() {
                 println "Processing ${project.path}"
                 ["jsk, start, service-ui"  : "lib/river",
                  "blitz, lockmgr"          : "lib/blitz",
-                 "je, xerces, xml"         : "lib/common",
+                 "je, xerces, xml, javax.inject, slf4j, plexus-utils"         : "lib/common",
                  "groovy"                  : "lib/common/groovy",
                  "junit"                   : "lib/common/buildsupport"].each {
                     prefix, dest ->
@@ -291,6 +291,7 @@ task createDistribution(dependsOn: [":sorcer-boot:install",
         versionProps.setProperty("je.version", jeVersion)
         versionProps.setProperty("groovy.version", groovyVersion)
         versionProps.setProperty("slf4j.version", slf4jVersion)
+        versionProps.setProperty("plexus.version", plexusVersion)
         versionProps.store(versionPropsFile.newWriter(), null)
     }
 }

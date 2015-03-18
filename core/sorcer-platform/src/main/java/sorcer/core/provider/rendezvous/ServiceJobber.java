@@ -16,15 +16,19 @@
  */
 package sorcer.core.provider.rendezvous;
 
-import java.rmi.RemoteException;
-import java.util.logging.Logger;
-
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
+import sorcer.core.dispatch.DispatcherFactory;
+import sorcer.core.dispatch.ExertionDispatcherFactory;
 import sorcer.core.dispatch.JobThread;
-import sorcer.core.exertion.NetJob;
 import sorcer.core.provider.Jobber;
-import sorcer.service.*;
+import sorcer.service.Exertion;
+import sorcer.service.ExertionException;
+import sorcer.service.Job;
+import sorcer.service.Mogram;
+
+import java.rmi.RemoteException;
+import java.util.logging.Logger;
 
 /**
  * ServiceJobber - The SORCER rendezvous service provider that provides
@@ -41,30 +45,31 @@ public class ServiceJobber extends RendezvousBean implements Jobber {
 
 	public Mogram execute(Mogram mogram, Transaction txn)
 			throws TransactionException, ExertionException, RemoteException {
-		//logger.info("*********************************************ServiceJobber.exert(), exertion = " + exertion);
-		Exertion exertion =  (Exertion)mogram;
-		setServiceID(exertion);
-		Exertion result = null;
-		try {
-			if (((ServiceExertion)exertion).getControlContext().isMonitorable()
-					&& !(((NetJob)exertion).getControlContext()).isWaitable()) {
-				replaceNullExertionIDs(exertion);
-				notifyViaEmail((Exertion)exertion);
-				new JobThread((Job) exertion, provider).start();
-				return exertion;
-			} else {
-				JobThread jobThread = new JobThread((Job) exertion, provider);
-				jobThread.start();
-				jobThread.join();
-				result = jobThread.getResult();
-				logger.finest("<==== Result: " + result);
-			}
-		} catch (Throwable e) {
-			throw new ExertionException(e);
-		}
-		//logger.info("*********************************************ServiceJobber.exert(), ex = " + ex);
 
-		return result;
+            setServiceID(mogram);
+            try {
+                JobThread mogramThread = new JobThread((Job)mogram, provider, getDispatcherFactory((Exertion)mogram));
+                if (((Exertion)mogram).getControlContext().isMonitorable()
+                        && !((Exertion)mogram).getControlContext().isWaitable()) {
+                    replaceNullExertionIDs((Exertion)mogram);
+                    notifyViaEmail((Exertion)mogram);
+                    new Thread(mogramThread, ((Job)mogram).getContextName()).start();
+                    return mogram;
+                } else {
+                    mogramThread.run();
+                    Job result = mogramThread.getResult();
+                    logger.fine("<== Result: " + result);
+                    return result;
+                }
+            } catch (Exception e) {
+                ((Job)mogram).reportException(e);
+                logger.warning("Error: " + e.getMessage());
+                return mogram;
+            }
 	}
+
+    protected DispatcherFactory getDispatcherFactory(Exertion exertion) {
+        return ExertionDispatcherFactory.getFactory();
+    }
 
 }

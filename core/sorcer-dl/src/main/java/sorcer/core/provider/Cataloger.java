@@ -85,20 +85,6 @@ public interface Cataloger extends Service, Remote {
 	 */
 	public Provider lookup(ServiceID sid) throws RemoteException;
 
-	/**
-	 * Returns the service Provider from an item matching the template, or null
-	 * if there is no match. If multiple items match the template, it is
-	 * arbitrary as to which service object is returned. If the returned object
-	 * cannot be deserialized, an UnmarshalException is thrown with the standard
-	 * RMI semantics.
-	 * 
-	 * @param tmpl
-	 *            - template to match
-	 * @return an object that represents a service that matches the specified
-	 *         template
-	 * @throws RemoteException
-	 */
-	public Object lookup(ServiceTemplate tmpl) throws RemoteException;
 
 	/**
 	 * Returns at most maxMatches items matching the template, plus the total

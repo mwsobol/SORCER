@@ -1805,7 +1805,7 @@ public class operator {
 	public static <T extends Exertion> T exert(Signature signature, Exertion input)
 			throws ExertionException {
 		try {
-			Provider prv = ProviderLookup.getProvider(signature);
+			Provider prv = (Provider)Accessor.getService(signature);
 			return (T) prv.service(input, null);
 		} catch (Exception e) {
 			throw new ExertionException(e);
@@ -1836,7 +1836,7 @@ public class operator {
 						&& ((ServiceSignature)input.getProcessSignature()).isShellRemote())
 						|| (input.getControlContext() != null 
 							&& ((ControlContext)input.getControlContext()).isShellRemote())) {
-					Exerter prv = (Exerter)ProviderLookup.getProvider(sig(Shell.class));
+					Exerter prv = (Exerter)Accessor.getService(sig(Shell.class));
 					result = prv.exert(input, transaction, entries);
 				} else {
 					sorcer.core.provider.exerter.ServiceShell se = new sorcer.core.provider.exerter.ServiceShell(input);
@@ -2224,7 +2224,7 @@ public class operator {
 			throws SignatureException {
 		ServiceTemplate st = new ServiceTemplate(null,
 				new Class[] { signature.getServiceType() }, null);
-		ServiceItem[] sis = ServiceAccessor.getServiceItems(st, null,
+		ServiceItem[] sis = Accessor.getServiceItems(st, null,
 				Sorcer.getLookupGroups());
 		if (sis == null)
 			throw new SignatureException("No available providers of type: "

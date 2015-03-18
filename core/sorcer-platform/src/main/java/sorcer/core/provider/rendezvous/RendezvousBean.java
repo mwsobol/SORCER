@@ -27,10 +27,7 @@ import sorcer.core.context.ControlContext;
 import sorcer.core.exertion.NetJob;
 import sorcer.core.exertion.ObjectBlock;
 import sorcer.core.exertion.ObjectJob;
-import sorcer.core.provider.ControlFlowManager;
-import sorcer.core.provider.Provider;
-import sorcer.core.provider.ProviderDelegate;
-import sorcer.core.provider.ServiceProvider;
+import sorcer.core.provider.*;
 import sorcer.service.*;
 import sorcer.util.Sorcer;
 import sorcer.util.SorcerUtil;
@@ -56,7 +53,7 @@ abstract public class RendezvousBean implements Service, Executor {
 
 	protected ProviderDelegate delegate;
 	
-	protected TaskManager threadManager;
+	//protected TaskManager threadManager;
 	
 	public RendezvousBean() throws RemoteException {
 		// do nothing
@@ -65,7 +62,7 @@ abstract public class RendezvousBean implements Service, Executor {
 	public void init(Provider provider) {
 		this.provider = (ServiceProvider)provider;
 		this.delegate = ((ServiceProvider)provider).getDelegate();
-		this.threadManager = ((ServiceProvider)provider).getThreadManager();
+		//this.threadManager = ((ServiceProvider)provider).getThreadManager();
 		try {
 			logger = provider.getLogger();
 		} catch (RemoteException e) {
@@ -75,10 +72,6 @@ abstract public class RendezvousBean implements Service, Executor {
 
     public String getProviderName()  {
         return provider.getProviderName();
-	}
-	
-	public TaskManager getThreadManager() {
-		return provider.getThreadManager();
 	}
 		
 	private void initLogger() {
@@ -191,20 +184,35 @@ abstract public class RendezvousBean implements Service, Executor {
 	@Override
 	public Mogram service(Mogram mogram, Transaction transaction) throws RemoteException, ExertionException {
 		try {
-			Exertion exertion = (Exertion) mogram;
-			setServiceID((Exertion)exertion);
-			if (exertion instanceof ObjectJob || exertion instanceof ObjectBlock)
-                return execute((Exertion)exertion, transaction);
-            else {
-            	ControlFlowManager cm = new ControlFlowManager((Exertion)exertion, delegate);
-            	return cm.process(threadManager); 
-            }
-		} 
+            logger.info("Got exertion to process: " + mogram.toString());
+			setServiceID(mogram);
+            if (mogram instanceof ObjectJob || mogram instanceof ObjectBlock)
+                return execute(mogram, transaction);
+            else
+                return getControlFlownManager((Exertion)mogram).process();
+            //exrt.getDataContext().setExertion(null); ???
+        }
 		catch (Exception e) {
 			e.printStackTrace();
 			throw new ExertionException();
 		}
 	}
+
+    protected ControlFlowManager getControlFlownManager(Mogram exertion) throws ExertionException {
+        try {
+            if (exertion instanceof Exertion) {
+                if (((Exertion)exertion).isMonitorable())
+                    return new MonitoringControlFlowManager((Exertion)exertion, delegate, this);
+                else
+                    return new ControlFlowManager((Exertion)exertion, delegate, this);
+            }
+            else
+                return null;
+        } catch (Exception e) {
+            ((Task) exertion).reportException(e);
+            throw new ExertionException(e);
+        }
+    }
 
 	public Mogram service(Mogram mogram) throws RemoteException, ExertionException, TransactionException {
 		return service(mogram, null);

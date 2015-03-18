@@ -1,7 +1,8 @@
-/*
- * Copyright 2010 the original author or authors.
- * Copyright 2010 SorcerSoft.org.
- *  
+/**
+ *
+ * Copyright 2013 the original author or authors.
+ * Copyright 2013 Sorcersoft.com S.A.
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -14,19 +15,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package sorcer.core.monitor;
 
-package sorcer.core.provider;
+import net.jini.id.Uuid;
+import sorcer.core.UEID;
+import sorcer.service.Exec;
+import sorcer.service.Exertion;
+import sorcer.service.ExertionInfo;
+import sorcer.service.MonitorException;
 
 import java.rmi.RemoteException;
 import java.security.Principal;
 import java.util.Map;
-
-import net.jini.id.Uuid;
-import sorcer.core.UEID;
-import sorcer.service.Exec.State;
-import sorcer.service.Exertion;
-import sorcer.service.ExertionInfo;
-import sorcer.service.MonitorException;
 
 /**
  * An interface for UI to interact with the monitor. Get all the refIDs and
@@ -57,7 +57,7 @@ public interface MonitorUIManagement {
 	 * 
 	 */
 	public Map<Uuid, ExertionInfo> getMonitorableExertionInfo(
-			State aspect, Principal principal)
+			Exec.State aspect, Principal principal)
 			throws RemoteException, MonitorException;
 
 	/**

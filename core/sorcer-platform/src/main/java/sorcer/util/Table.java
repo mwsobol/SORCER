@@ -41,9 +41,7 @@ import net.jini.id.UuidFactory;
 import sorcer.core.provider.DatabaseStorer;
 import sorcer.core.provider.Provider;
 import sorcer.core.provider.StorageManagement;
-import sorcer.service.Context;
-import sorcer.service.EvaluationException;
-import sorcer.service.Signature;
+import sorcer.service.*;
 import sorcer.core.provider.DatabaseStorer.Store;
 import sorcer.util.url.sos.SdbUtil;
 
@@ -1055,13 +1053,13 @@ public class Table implements ModelTable {
 			Context cxt = SdbUtil.getStoreContext(this);
 			if (outputStorageSignature != null) {
 				if (outputStorageSignature.getServiceType() == DatabaseStorer.class) {
-					DatabaseStorer objectStore = ((DatabaseStorer) ProviderLookup
-							.getProvider(outputStorageSignature));
+					DatabaseStorer objectStore = ((DatabaseStorer) Accessor
+							.getService(outputStorageSignature));
 					outputTableURL = (URL)objectStore.contextStore(cxt).getValue("object/url");
 
 				} else {
-					StorageManagement objectStore = ((StorageManagement) ProviderLookup
-							.getProvider(outputStorageSignature));
+					StorageManagement objectStore = ((StorageManagement) Accessor
+							.getService(outputStorageSignature));
 					outputTableURL = (URL)objectStore.contextStore(cxt).getValue("object/url");;
 				}
 			} else if (url.getHost().equals("self")) {

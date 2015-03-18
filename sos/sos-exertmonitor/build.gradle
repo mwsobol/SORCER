@@ -6,4 +6,4 @@ jar {
 	   }
 }
 
-dependencies { compile project(':sorcer-platform') }
+dependencies { compile project(':sorcer-dl'), project(':sorcer-platform') }

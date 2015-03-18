@@ -30,16 +30,20 @@ import sorcer.core.context.model.par.Par;
 import sorcer.core.deploy.ServiceDeployment;
 import sorcer.core.dispatch.DispatcherException;
 import sorcer.core.dispatch.ProvisionManager;
+import sorcer.core.dispatch.ServiceDirectoryProvisioner;
 import sorcer.core.provider.*;
 import sorcer.core.signature.NetSignature;
 import sorcer.core.signature.ServiceSignature;
+import sorcer.ext.ProvisioningException;
 import sorcer.jini.lookup.ProviderID;
 import sorcer.service.*;
 import sorcer.service.Exec.State;
 import sorcer.service.Strategy.Access;
 import sorcer.service.modeling.ModelingTask;
+import sorcer.service.txmgr.TransactionManagerAccessor;
 import sorcer.util.ProviderAccessor;
 import sorcer.util.ProviderLookup;
+import sorcer.util.Sorcer;
 
 import java.rmi.RemoteException;
 import java.util.List;
@@ -262,33 +266,35 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 				signature.setProviderName(providerName);
 			}
 			logger.finer("* ExertProcessor's servicer accessor: "
-					+ Accessor.getAccessor());
+					+ Accessor.getAccessorType());
 			provider = ((NetSignature) signature).getService();
 		} catch (SignatureException e) {
 			e.printStackTrace();
 			new ExertionException(e);
 		}
-		if (provider == null) {
-			// handle signatures for PULL tasks
-			if (!exertion.isJob()
-					&& exertion.getControlContext().getAccessType() == Access.PULL) {
-//				signature = new NetSignature("service", Spacer.class, Sorcer.getActualSpacerName());
-				signature = new NetSignature("service", Spacer.class);
-			}
-			
-			logger.info("Accessor.getAccessor() = " + Accessor.getAccessor());
-			provider = Accessor.getService(signature);
-			
-			if (provider==null) {
-				ExertionException e = new ExertionException("exerting failed; provider is null.");
-				exertion.getControlContext().addException(
-						"no provider avaialable for signature: " + signature, e);
-				exertion.getControlContext().appendTrace(
-						"xrt shell:" + exertion.getName());
-				exertion.setStatus(Exec.FAILED);
-				throw e;
-			}
-		}
+        if (provider == null) {
+            // handle signatures for PULL tasks
+            if (!exertion.isJob()
+                    && exertion.getControlContext().getAccessType() == Access.PULL) {
+                signature = new NetSignature("service", Spacer.class, Sorcer.getActualSpacerName());
+                provider = (Service) Accessor.getService(signature);
+            } else {
+                provider = (Service) Accessor.getService(signature);
+                if (provider == null && exertion.isProvisionable() && signature instanceof NetSignature) {
+                    try {
+                        logger.fine("Provisioning: " + signature);
+                        provider = ServiceDirectoryProvisioner.getProvisioner().provision(signature.getServiceType().getName(),
+                                signature.getName(), ((NetSignature) signature).getVersion());
+                    } catch (ProvisioningException pe) {
+                        logger.warning("Provider not available and not provisioned: " + pe.getMessage());
+                        exertion.setStatus(Exec.FAILED);
+                        exertion.reportException(new RuntimeException(
+                                "Cannot find provider and provisioning returned error: " + pe.getMessage()));
+                        return exertion;
+                    }
+                }
+            }
+        }
 		// Provider tasker = ProviderLookup.getProvider(exertion.getProcessSignature());		 
 		// provider = ProviderAccessor.getProvider(null, signature
 		// .getServiceInfo());
@@ -318,8 +324,11 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 			Exertion result = provider.service(exertion, transaction);
 			if (result != null && result.getExceptions().size() > 0) {
 				for (ThrowableTrace et : result.getExceptions()) {
-					if (et.getThrowable() instanceof Error)
-						((ServiceExertion) result).setStatus(Exec.ERROR);
+                    Throwable t = et.getThrowable();
+                    logger.severe("Got exception running: "  + exertion.getName() + " " + t.getMessage());
+                    logger.fine("Exception details: " + t.getMessage());
+                    if (t instanceof Error)
+                        ((ServiceExertion) result).setStatus(Exec.ERROR);
 				}
 				((ServiceExertion)result).setStatus(Exec.FAILED); 
 			} else if (result == null) {
@@ -349,7 +358,7 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 			locker = (MutualExclusion) ProviderLookup
 					.getService(MutualExclusion.class);
 		}
-		TransactionManager transactionManager = ProviderAccessor
+		TransactionManager transactionManager = TransactionManagerAccessor
 				.getTransactionManager();
 		Transaction txn = null;
 

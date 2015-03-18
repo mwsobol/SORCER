@@ -2724,7 +2724,10 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 	}
 
 	public void reportException(Throwable t) {
-		exertion.getControlContext().addException(t);
+        if (exertion != null)
+            exertion.getControlContext().addException(t);
+        else
+            logger.warning("Error (could not report) " + t.getMessage());
 	}
 
 	public void reportException(String message, Throwable t) {
@@ -2752,7 +2755,8 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 	 */
 	@Override
 	public void appendTrace(String footprint) {
-		exertion.getControlContext().appendTrace(footprint);
+		if (exertion!=null)
+            exertion.getControlContext().appendTrace(footprint);
 	}
 
 	/*
@@ -2851,41 +2855,6 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 	@Override
 	public T get(String path) {
 		return super.get(path);
-	}
-
-	/**
-	 * Record this context as updated if the related exertion is monitored.
-	 * 
-	 * @throws RemoteException
-	 * @throws MonitorException
-	 */
-	public void checkpoint() throws ContextException {
-		ServiceExertion mxrt = (ServiceExertion) getExertion();
-		if (mxrt != null && mxrt.isMonitorable()
-				&& mxrt.getMonitorSession() != null) {
-			try {
-				putValue("context/checkpoint/time", SorcerUtil.getDateTime());
-				mxrt.getMonitorSession().changed(this, State.UPDATED);
-			} catch (Exception e) {
-				throw new ContextException(e);
-			}
-		}
-	}
-
-	/**
-	 * Record this context acording to the corresponding aspect if the related
-	 * exertion is monitored.
-	 * 
-	 * @throws RemoteException
-	 * @throws MonitorException
-	 */
-	public void changed(State aspect) throws RemoteException,
-			MonitorException {
-		ServiceExertion mxrt = (ServiceExertion) getExertion();
-		if (mxrt != null && mxrt.isMonitorable()
-				&& mxrt.getMonitorSession() != null) {
-			mxrt.getMonitorSession().changed(this, aspect);
-		}
 	}
 
 	public T asis(String path) throws ContextException {

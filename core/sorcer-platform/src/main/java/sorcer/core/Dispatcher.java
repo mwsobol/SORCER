@@ -1,7 +1,7 @@
-/*
- * Copyright 2010 the original author or authors.
- * Copyright 2010 SorcerSoft.org.
- *  
+ /*
+ * Copyright 2013 the original author or authors.
+ * Copyright 2013, 2014 Sorcersoft.com S.A.
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -17,23 +17,12 @@
 
 package sorcer.core;
 
-import sorcer.core.provider.Provider;
-import sorcer.service.Exertion;
-import sorcer.service.ExertionException;
-import sorcer.service.SignatureException;
+import net.jini.lease.LeaseRenewalManager;
 
 public interface Dispatcher {
+    void exec();
+    DispatchResult getResult();
 
-	public void dispatchExertions() throws ExertionException,
-			SignatureException;
-
-	public void collectResults() throws ExertionException, SignatureException;
-
-	public int getState();
-
-	public Exertion getExertion();
-	
-	public void setProvider(Provider provider);
-
-
+    LeaseRenewalManager getLrm();
+    void setLrm(LeaseRenewalManager lrm);
 }

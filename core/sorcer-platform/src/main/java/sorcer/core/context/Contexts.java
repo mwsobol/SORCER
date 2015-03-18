@@ -19,14 +19,7 @@ package sorcer.core.context;
 
 import java.net.MalformedURLException;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Vector;
+import java.util.*;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
@@ -172,21 +165,21 @@ public class Contexts implements SorcerConstants {
 		return list;
 	}
 
-	public static List<?> getNamedOutValues(Context context) throws ContextException {
-		List inpaths = Contexts.getNamedOutPaths(context);
-		if (inpaths == null) 
-			return null;
-		List list = new ArrayList(inpaths.size());
-		for (Object path : inpaths)
-			try {
-				list.add(context.getValue((String) path));
-			} catch (ContextException e) {
-				throw new ContextException(e);
-			}
+    public static List<?> getNamedOutValues(Context context) throws ContextException {
+        List outpaths = Contexts.getNamedOutPaths(context);
+        if (outpaths == null)
+            return null;
+        List list = new ArrayList(outpaths.size());
+        for (Object path : outpaths)
+            try {
+                list.add(context.getValue((String) path));
+            } catch (ContextException e) {
+                throw new ContextException(e);
+            }
 
-		return list;
-	}
-	
+        return list;
+    }
+
 	public static List<?> getPrefixedInValues(Context context) throws ContextException {
 		List inpaths = Contexts.getPrefixedInPaths(context);
 		if (inpaths == null) 
@@ -239,7 +232,7 @@ public class Contexts implements SorcerConstants {
 		ArrayList result = new ArrayList();
 		while (e.hasMoreElements()) {
 			candidate = "" + e.nextElement();
-			if (candidate.indexOf(subpath) >= 0)
+			if (candidate.contains(subpath))
 				result.add(candidate);
 		}
 		return result;
@@ -449,7 +442,7 @@ public class Contexts implements SorcerConstants {
 			cr = "<br>";
 		else
 			cr = "\n";
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		if (outPaths != null)
 			for (int i = 0; i < outPaths.length; i++) {
 				sb.append(outPaths[i]).append(" = ");
@@ -602,6 +595,21 @@ public class Contexts implements SorcerConstants {
 			obj = e.nextElement();
 			if (obj != null && obj instanceof ContextNode)
 				nodes.add(obj);
+            // Look for ContextNodes also in values and set the ContextNode's direction
+            else {
+                Object val = context.get((String)obj);
+                if (val!= null && val instanceof ContextNode) {
+                    String dire = Contexts.getDirection(context, (String)obj);
+
+                    ((ContextNode)val).setDA(dire);
+                    nodes.add(val);
+                } else if (val!=null && val instanceof ContextLink) {
+                    ContextLink cl = (ContextLink)val;
+                    ContextNode[] cns = getContextNodes(cl.getContext());
+                    for (ContextNode cn : cns)
+                        nodes.add(cn);
+                }
+            }
 		}
 		ContextNode[] nodeArray = new ContextNode[nodes.size()];
 		nodes.toArray(nodeArray);
@@ -732,10 +740,8 @@ public class Contexts implements SorcerConstants {
 	public static boolean hasMarkedValue(Context sc, String association)
 			throws ContextException {
 		String[] paths = getMarkedPaths(sc, association);
-		if (paths == null) return false;
-		if (paths.length == 0)
-			return false;
-		return true;
+        if (paths == null) return false;
+        return paths.length > 0;
 	}
 
 	public static Object getMarkedValue(Context sc, String association)
@@ -783,20 +789,19 @@ public class Contexts implements SorcerConstants {
 	 * @return list of all paths marked as input
 	 * @throws ContextException
 	 */
-	public static List getInPaths(Context cntxt) throws ContextException {
+	public static List<String> getInPaths(Context cntxt) throws ContextException {
 		// get all the in and inout paths
 		String inAssoc = Context.DIRECTION + APS + Context.DA_IN;
 		String inoutAssoc = Context.DIRECTION + APS + Context.DA_INOUT;
-		String[] inPaths = Contexts.getMarkedPaths(cntxt, inAssoc);
-		String[] inoutPaths = Contexts.getMarkedPaths(cntxt, inoutAssoc);
-		List list = new ArrayList();
+		String[] inPaths = getMarkedPaths(cntxt, inAssoc);
+		String[] inoutPaths = getMarkedPaths(cntxt, inoutAssoc);
+        int cap = (inPaths == null ? 0 : inPaths.length) + (inoutPaths == null ? 0 : inoutPaths.length);
+        List<String> list = new ArrayList<String>(cap);
 
 		if (inPaths != null)
-			for (int i = 0; i < inPaths.length; i++)
-				list.add(inPaths[i]);
+            Collections.addAll(list, inPaths);
 		if (inoutPaths != null)
-			for (int i = 0; i < inoutPaths.length; i++)
-				list.add(inoutPaths[i]);
+            Collections.addAll(list, inoutPaths);
 		return list;
 	}
 
@@ -847,20 +852,19 @@ public class Contexts implements SorcerConstants {
 	 * @return list of all paths marked as data output
 	 * @throws ContextException
 	 */
-	public static List getOutPaths(Context cntxt) throws ContextException {
+	public static List<String> getOutPaths(Context cntxt) throws ContextException {
 		// get all the in and inout paths
 		String outAssoc = Context.DIRECTION + APS + Context.DA_OUT;
 		String inoutAssoc = Context.DIRECTION + APS + Context.DA_INOUT;
-		String[] outPaths = Contexts.getMarkedPaths(cntxt, outAssoc);
-		String[] inoutPaths = Contexts.getMarkedPaths(cntxt, inoutAssoc);
-		List list = new ArrayList();
+		String[] outPaths = getMarkedPaths(cntxt, outAssoc);
+		String[] inoutPaths = getMarkedPaths(cntxt, inoutAssoc);
+        int cap = (outPaths == null ? 0 : outPaths.length) + (inoutPaths == null ? 0 : inoutPaths.length);
+		List<String> list = new ArrayList<String>(cap);
 
 		if (outPaths != null)
-			for (int i = 0; i < outPaths.length; i++)
-				list.add(outPaths[i]);
+            Collections.addAll(list, outPaths);
 		if (inoutPaths != null)
-			for (int i = 0; i < inoutPaths.length; i++)
-				list.add(inoutPaths[i]);
+            Collections.addAll(list, inoutPaths);
 		return list;
 	}
 
@@ -902,14 +906,14 @@ public class Contexts implements SorcerConstants {
 	 * @return map of all paths marked as data input
 	 * @throws ContextException
 	 */
-	public static Hashtable getInPathsMap(Context cntxt)
+	public static Map<String, String> getInPathsMap(Context cntxt)
 			throws ContextException {
 		// get all the in and inout paths
 		String inAssoc = Context.DIRECTION + APS + Context.DA_IN;
 		String inoutAssoc = Context.DIRECTION + APS + Context.DA_INOUT;
 		String[] inPaths = Contexts.getMarkedPaths(cntxt, inAssoc);
 		String[] inoutPaths = Contexts.getMarkedPaths(cntxt, inoutAssoc);
-		Hashtable inpaths = new Hashtable();
+		Map<String,String> inpaths = new HashMap<String, String>();
 
 		if (inPaths != null)
 			for (int i = 0; i < inPaths.length; i++)
@@ -1539,4 +1543,15 @@ public class Contexts implements SorcerConstants {
 //		return outpaths.elements();
 //
 //	}
+
+    public static String getDirection(Context context, String path) throws ContextException {
+        Enumeration ens = Contexts.getSimpleAssociations(context, path);
+        while (ens.hasMoreElements()) {
+            String assoc = (String)ens.nextElement();
+            if ((assoc).startsWith(Context.DIRECTION)) {
+                return assoc.substring(assoc.indexOf(SEP)+1, assoc.length());
+            }
+        }
+        return null;
+    }
 }

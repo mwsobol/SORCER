@@ -15,11 +15,13 @@
  */
 package sorcer.util;
 
+import org.rioproject.net.HostUtil;
 import sorcer.core.SorcerConstants;
 import sorcer.service.ConfigurationException;
 import sorcer.service.Context;
 
 import java.io.*;
+import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.UnknownHostException;
@@ -835,7 +837,7 @@ public class SorcerEnv extends SOS {
 	 * @return a name of the system Cataloger
 	 */
 	public static String getCatalogerName() {
-		return props.getProperty(P_CATALOOGER_NAME, "Cataloger");
+		return props.getProperty(P_CATALOGER_NAME, "Cataloger");
 	}
 
 	/**
@@ -1528,6 +1530,14 @@ public class SorcerEnv extends SOS {
 	public static String getHostName() throws java.net.UnknownHostException {
 		return java.net.InetAddress.getLocalHost().getCanonicalHostName();
 	}
+
+    public static InetAddress getLocalHost() throws UnknownHostException {
+        String hostnameProp = getProperty(JavaSystemProperties.RMI_SERVER_HOSTNAME);
+        if (hostnameProp != null && !hostnameProp.isEmpty())
+            return InetAddress.getByName(hostnameProp);
+        else
+            return HostUtil.getInetAddress();
+    }
 
 	/**
 	 * Return the SORCER environment properties loaded by default from the

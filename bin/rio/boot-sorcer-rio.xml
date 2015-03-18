@@ -72,6 +72,7 @@
             <sysproperty key="java.rmi.server.useCodebaseOnly" value="false" />
             <sysproperty key="sorcer.home" value="${sorcer.home}"/>
             <sysproperty key="sorcer.version" value="${sorcer.version}"/>
+            <sysproperty key="plexus.version" value="${plexus.version}"/>
             <sysproperty key="org.rioproject.exec.monitor.reap.interval" value="1"/>
             <arg value="${rio.home}/config/start-${service}.groovy"/>
         </java>
@@ -79,7 +80,6 @@
 
 	<target name="clean-files" description="Deletes Blitz DB files">
 		<delete dir="${sorcer.home}/logs/dbfiles_blitz" failonerror="false" />
-		<delete dir="${sorcer.home}/logs/slamonitor.sla_db" failonerror="false" />
 		<delete file="${sorcer.home}/bin/monitoredjobs_index.obf" failonerror="false" />
 		<delete file="${sorcer.home}/bin/monitoredjobs_temp.obf" failonerror="false" />
 		<delete file="${sorcer.home}/bin/monitoredjobs.obf" failonerror="false" />

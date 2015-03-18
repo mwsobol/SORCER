@@ -1,7 +1,9 @@
-/*
- * Copyright 2012 the original author or authors.
- * Copyright 2012 SorcerSoft.org.
- *  
+package sorcer.ext;
+/**
+ *
+ * Copyright 2013 Rafał Krupiński.
+ * Copyright 2013 Sorcersoft.com S.A.
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,14 +17,17 @@
  * limitations under the License.
  */
 
-package sorcer.core.provider;
 
-import java.rmi.Remote;
+import net.jini.core.lookup.ServiceID;
 
-import sorcer.service.Monitorable;
+import java.rmi.RemoteException;
 
+/**
+ * @author Rafał Krupiński
+ */
+public interface Provisioner {
+    <T> T provision(String type, String name, String version) throws ProvisioningException;
 
-public interface MonitoringManagement extends Monitorable, MonitorManagement,
-		MonitorSessionManagement, MonitorUIManagement, Remote {
+    void unProvision(ServiceID service) throws ProvisioningException;
 
 }

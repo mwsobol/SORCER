@@ -50,7 +50,7 @@ public class LoopExertion extends Task implements ConditionalExertion {
 
 	private int max = 0;
 
-	protected Conditional condition;
+	protected Condition condition;
 
 	protected Exertion target;
 
@@ -156,7 +156,7 @@ public class LoopExertion extends Task implements ConditionalExertion {
 		return target;
 	}
 	
-	public Conditional getCondition() {
+	public Condition getCondition() {
 		return condition;
 	}
 	

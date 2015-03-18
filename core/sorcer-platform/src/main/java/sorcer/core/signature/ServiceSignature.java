@@ -80,7 +80,7 @@ public class ServiceSignature implements Signature, Service, Evaluation<Object>,
 
 	protected String group = "";
 
-	protected ServiceExertion exertion;
+	protected Exertion exertion;
 
 	/** preprocess, process, postprocess, append context */
 	protected Type execType = Type.SRV;
@@ -135,7 +135,7 @@ public class ServiceSignature implements Signature, Service, Evaluation<Object>,
 	}
 
 	public void setExertion(Exertion exertion) throws ExertionException {
-		this.exertion = (ServiceExertion) exertion;
+		this.exertion = exertion;
 	}
 
 	public Exertion getExertion() {
@@ -385,9 +385,9 @@ public class ServiceSignature implements Signature, Service, Evaluation<Object>,
 		return execType == Type.POST;
 	}
 
-	public boolean isAppendType() {
-		return execType == Type.APD_DATA;
-	}
+    public boolean isAppendType() {
+        return execType == Type.APD_DATA;
+    }
 
 	public String toString() {
 		return this.getClass() + ":" + providerName + ";" + execType + ";"
@@ -568,7 +568,7 @@ public class ServiceSignature implements Signature, Service, Evaluation<Object>,
 	@Override
 	public Mogram service(Mogram exertion, Transaction txn) throws TransactionException,
 		ExertionException, RemoteException {
-		Provider prv = ProviderLookup.getProvider(this);
+		Provider prv = (Provider)Accessor.getService(this);
 		return prv.service(exertion, txn);
 	}
 

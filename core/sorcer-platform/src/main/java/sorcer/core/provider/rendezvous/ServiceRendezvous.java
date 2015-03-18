@@ -83,8 +83,8 @@ public class ServiceRendezvous extends RendezvousBean implements Rendezvous, Spa
 		delegate.getServiceComponents().put(Jobber.class, new ServiceJobber());
 		delegate.getServiceComponents().put(Concatenator.class, new ServiceConcatenator());
 		delegate.getServiceComponents().put(Spacer.class, new ServiceSpacer());
-		if (!delegate.spaceEnabled())
-				provider.initSpaceSupport();
+		//if (!delegate.spaceEnabled())
+				//provider.initSpaceSupport();
 		isConfigured = true;
 	}
 }

@@ -25,8 +25,8 @@ import java.util.Map;
 
 import net.jini.core.lookup.ServiceItem;
 import net.jini.id.Uuid;
-import sorcer.core.provider.MonitorUIManagement;
-import sorcer.core.provider.MonitoringManagement;
+import sorcer.core.monitor.MonitorUIManagement;
+import sorcer.core.monitor.MonitoringManagement;
 import sorcer.jini.lookup.AttributesUtil;
 import sorcer.service.ContextException;
 import sorcer.service.Exec.State;

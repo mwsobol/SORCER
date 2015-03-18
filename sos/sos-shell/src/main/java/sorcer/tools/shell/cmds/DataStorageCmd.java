@@ -18,9 +18,9 @@
 package sorcer.tools.shell.cmds;
 import net.jini.core.lookup.ServiceItem;
 import net.jini.id.Uuid;
+import sorcer.core.monitor.MonitorUIManagement;
 import sorcer.core.provider.DatabaseStorer;
 import sorcer.core.provider.DatabaseStorer.Store;
-import sorcer.core.provider.MonitorUIManagement;
 import sorcer.core.provider.Provider;
 import sorcer.core.provider.StorageManagement;
 import sorcer.jini.lookup.AttributesUtil;

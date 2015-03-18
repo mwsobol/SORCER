@@ -355,7 +355,7 @@ private Exertion f1SEQpull() throws Exception {
 		
 		Exertion out = null;
 		long start = System.currentTimeMillis();
-		Exerter exerter = ProviderAccessor.getExerter();
+		Exerter exerter = Accessor.getService(Exerter.class);
 		logger.info("got exerter: " + exerter);
 
 		out = exerter.exert(f5);

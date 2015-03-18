@@ -45,8 +45,6 @@ import net.jini.security.proxytrust.TrustEquivalence;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.ControlContext;
 import sorcer.core.context.ServiceContext;
-import sorcer.core.dispatch.DispatcherException;
-import sorcer.core.dispatch.MonitoredTaskDispatcher;
 import sorcer.core.proxy.Outer;
 import sorcer.core.proxy.Partner;
 import sorcer.core.proxy.Partnership;
@@ -56,10 +54,7 @@ import sorcer.service.SignatureException;
 import sorcer.serviceui.UIComponentFactory;
 import sorcer.serviceui.UIDescriptorFactory;
 import sorcer.serviceui.UIFrameFactory;
-import sorcer.util.ObjectLogger;
-import sorcer.util.SOS;
-import sorcer.util.Sorcer;
-import sorcer.util.SorcerUtil;
+import sorcer.util.*;
 import sorcer.util.url.sos.SdbURLStreamHandlerFactory;
 
 import javax.security.auth.Subject;
@@ -72,10 +67,12 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.security.*;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.*;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
+
+import static sorcer.util.StringUtils.tName;
 
 /**
  * The ServiceProvider class is a type of {@link Provider} with dependency
@@ -170,8 +167,6 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 
 	static final String DEFAULT_PROVIDER_PROPERTY = "provider.properties";
 
-	protected TaskManager threadManager;
-
 	int loopCount = 0;
 
 	/** The login context, for logging out */
@@ -200,7 +195,9 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	private volatile boolean running = true;
 
 	private Map<Uuid, ProviderSession> sessions;
-	
+
+	protected ScheduledExecutorService scheduler;
+
 	public ServiceProvider() {
 		providers.add(this);
 		delegate = new ProviderDelegate();
@@ -541,7 +538,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		return true;
 	}
 
-	/**
+    /**
 	 * This method spawns a separate thread to destroy this provider after 2
 	 * sec, should make a reasonable attempt to let this remote call return
 	 * successfully.
@@ -692,7 +689,13 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 					+ getProviderName(), this);
 
 			// allow for enough time to export the provider's proxy and stay alive
-			new Thread(ProviderDelegate.threadGroup, new KeepAwake()).start();
+            scheduler.schedule(new Callable<Void>() {
+                @Override
+                public Void call() throws RemoteException, ConfigurationException {
+                    delegate.initSpaceSupport();
+                    return null;
+                }
+            }, 0, TimeUnit.MILLISECONDS);
 		} catch (Throwable e) {
 			initFailed(e);
 		}
@@ -1342,7 +1345,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		return SorcerUtil.arrayToString(getAttributes());
 	}
 
-	public boolean isValidMethod(String name) throws SignatureException {
+	public boolean isValidMethod(String name) throws RemoteException, SignatureException {
 		return delegate.isValidMethod(name);
 	}
 
@@ -1372,45 +1375,35 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	 */
 	public Exertion doExertion(final Exertion exertion, Transaction txn)
 			throws ExertionException {
-		ControlFlowManager cfm = null;
-		try {
-			if (exertion instanceof Task && exertion.isMonitorable()) {
-				if (exertion.isWaitable())
-					return doMonitoredTask(exertion, null);
-				else {
-					// asynchronous execution
-					// TODO for all exertions
-					Thread dt = new Thread(new Runnable() {
-						public void run() {
-							doMonitoredTask(exertion, null);
-						}
-					});
-					exertion.getContext().putValue(
-							ControlContext.EXERTION_WAITED_FROM,
-							SorcerUtil.getDateTime());
-
-					dt.setDaemon(true);
-					dt.start();
-					return exertion;
-				}
-			} else {
-				logger.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> processing by: "
-						+ getProviderName());
-                cfm = new ControlFlowManager(exertion, delegate);
-				return cfm.process(threadManager);
-			}
-		} catch (Exception e) {
-			throw new ExertionException(e);
-		}
-	}
-	
-	@Override
-	public Exertion service(Mogram mogram) throws ExertionException {
-        // session management
-		return doExertion((Exertion)mogram, null);
+        logger.fine("service: " + exertion.getName());
+		// create an instance of the ControlFlowManager and call on the
+		// process method, returns an Exertion
+        return (Exertion)getControlFlownManager(exertion).process();
 	}
 
-	@Override
+    protected ControlFlowManager getControlFlownManager(Exertion exertion) throws ExertionException {
+        List<Class> publishedIfaces = Arrays.asList(this.delegate.getPublishedServiceTypes());
+        if (!(exertion instanceof Task) && (!publishedIfaces.contains(Spacer.class))
+                && (!publishedIfaces.contains(Jobber.class)) && (!publishedIfaces.contains(Concatenator.class)))
+            throw new ExertionException(new IllegalArgumentException("Unknown exertion type " + exertion));
+        try {
+            if (exertion.isMonitorable())
+                return new MonitoringControlFlowManager(exertion, delegate);
+            else
+                return new ControlFlowManager(exertion, delegate);
+        } catch (Exception e) {
+            ((Task) exertion).reportException(e);
+            throw new ExertionException(e);
+        }
+	}
+
+    @Override
+	public Exertion service(Mogram exertion) throws RemoteException,
+			ExertionException {
+		return doExertion((Exertion)exertion, null);
+	}
+
+    @Override
     public Exertion service(Mogram mogram, Transaction txn) throws TransactionException,
             ExertionException, RemoteException {
         if (mogram instanceof Task) {
@@ -1476,15 +1469,6 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
         sessions.remove(context.getId());
     }
 
-    public ServiceExertion dropTask(ServiceExertion task)
-			throws ExertionException, SignatureException {
-		return delegate.dropTask(task);
-	}
-
-	public Job dropJob(Job job) throws ExertionException {
-		return delegate.dropJob(job);
-	}
-
 	public Entry[] getAttributes() {
 		return delegate.getAttributes();
 	}
@@ -1537,11 +1521,6 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 
 	public void loadConfiguration(String filename) {
 		delegate.getProviderConfig().loadConfiguration(filename);
-	}
-
-	/** for a testing purpose only. */
-	public void hangup() {
-		delegate.hangup();
 	}
 
 	public File getScratchDir() {
@@ -1669,8 +1648,8 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	 *             if there is a communication error
 	 *
 	 */
-	public void resume(Exertion ex) throws ExertionException {
-		service((Mogram)ex);
+	public void resume(Exertion ex) throws RemoteException, ExertionException {
+		service((Mogram) ex);
 	}
 
 	/**
@@ -1684,21 +1663,21 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	 *             if there is a communication error
 	 *
 	 */
-	public void step(Exertion ex) throws ExertionException {
+	public void step(Exertion ex) throws RemoteException, ExertionException {
 		service(ex);
 	}
-
-	/**
+/*
+	*//**
 	 * Calls the delegate to update the monitor with the current context.
 	 *
 	 * @param context
 	 * @throws sorcer.service.MonitorException
 	 * @throws java.rmi.RemoteException
-	 */
+	 *//*
 	public void changed(Context<?> context, Object aspect) throws RemoteException,
 			MonitorException {
 		delegate.changed(context, aspect);
-	}
+	}*/
 
 	/**
 	 * Destroy the service, if possible, including its persistent storage.
@@ -1715,8 +1694,8 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 			tally = tally - 1;
 
 			logger.info("destroyed provider: " + getProviderName() + ", providers left: " + tally);
-			if (threadManager != null)
-				threadManager.terminate();
+			//if (threadManager != null)
+			//	threadManager.terminate();
 
 			unexport(true);
 			logger.info("calling destroy on the delegate...");
@@ -1742,8 +1721,8 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 
 	public boolean isBusy() {
 		boolean isBusy = false;
-		if (threadManager != null)
-			isBusy = isBusy || threadManager.getPending().size() > 0;
+		//if (threadManager != null)
+		//	isBusy = isBusy || threadManager.getPending().size() > 0;
 		isBusy = isBusy || delegate.exertionStateTable.size() > 0;
 		return isBusy;
 	}
@@ -1778,9 +1757,14 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		for (ServiceProvider provider : providers) {
 			logger.info("calling destroy on provider name = " + provider.getName());
 			provider.destroy();
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
 		logger.info("Returning from destroyNode()");
-		checkAndMaybeKillJVM();
+		//checkAndMaybeKillJVM();
 	}
 
 	/** {@inheritDoc} */
@@ -1831,11 +1815,16 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 			// do nothing, default value is used
 			// e.printStackTrace();
 		}
+        ConfigurableThreadFactory tf = new ConfigurableThreadFactory();
+        tf.setDaemon(true);
+        tf.setNameFormat(tName(getName()) + "-init-%2$s");
+        tf.setThreadGroup(ProviderDelegate.threadGroup);
+        scheduler = Executors.newScheduledThreadPool(1, tf);
 		logger.info("threadManagement: " + threadManagement);
 		if (!threadManagement) {
 			return;
 		}
-
+        logger.fine("Initialized scheduler: " + scheduler.toString());
 		try {
 			maxThreads = (Integer) config.getEntry(ServiceProvider.COMPONENT,
 					MAX_THREADS, int.class);
@@ -1870,7 +1859,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		}
 		logger.info("waitIncrement: " + waitIncrement);
 
-		ControlFlowManager.WAIT_INCREMENT = waitIncrement;
+		//ControlFlowManager.WAIT_INCREMENT = waitIncrement;
 
 		/**
 		 * Create a task manager.
@@ -1882,7 +1871,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		 * and pending) exceeds the number of threads times the loadFactor,
 		 * and the maximum number of threads has not been reached.
 		 */
-		threadManager = new TaskManager(maxThreads, timeout, loadFactor);
+		//threadManager = new TaskManager(maxThreads, timeout, loadFactor);
 	}
 
 	/**
@@ -1893,9 +1882,9 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	 * @param
 	 * @return the thread manager
 	 */
-	public TaskManager getThreadManager() {
+	/*public TaskManager getThreadManager() {
 		return threadManager;
-	}
+	} */
 
 	public final static String DB_HOME = "dbHome";
 	public final static String THREAD_MANAGEMNT = "threadManagement";
@@ -1939,10 +1928,10 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		}
 	}
 
-	public void initSpaceSupport() throws ConfigurationException {
-		delegate.spaceEnabled(true);
-		delegate.initSpaceSupport();
-	}
+	//public void initSpaceSupport() throws ConfigurationException {
+	//	delegate.spaceEnabled(true);
+	//	delegate.initSpaceSupport();
+	//}
 
 	/*
 	 * (non-Javadoc)
@@ -1959,37 +1948,5 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	}
 
 	private final int SLEEP_TIME = 250;
-
-	public Exertion doMonitoredTask(Exertion task, Transaction txn) {
-		MonitoredTaskDispatcher dispatcher = null;
-		try {
-			dispatcher = new MonitoredTaskDispatcher(task, null, false, this);
-			// logger.finer("*** MonitoredTaskDispatcher started with control context ***\n"
-			// + task.getControlContext());
-			// int COUNT = 1000;
-			// int count = COUNT;
-			while (dispatcher.getState() != Exec.DONE
-					&& dispatcher.getState() != Exec.FAILED
-					&& dispatcher.getState() != Exec.SUSPENDED) {
-				// count--;
-				// if (count < 0) {
-				// logger.finer("*** MonitoredTaskDispatcher waiting in state: "
-				// + dispatcher.getState());
-				// count = COUNT;
-				// }
-				Thread.sleep(SLEEP_TIME);
-			}
-			// logger.finer("*** MonitoredTaskDispatcher exit state = "
-			// + dispatcher.getState() + " for ***\n"
-			// + task.getControlContext());
-		} catch (DispatcherException de) {
-			de.printStackTrace();
-		} catch (InterruptedException ie) {
-			ie.printStackTrace();
-		} catch (Throwable e) {
-			e.printStackTrace();
-		}
-		return dispatcher.getExertion();
-	}
 
 }

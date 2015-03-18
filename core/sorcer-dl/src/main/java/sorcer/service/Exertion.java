@@ -20,12 +20,14 @@ package sorcer.service;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.security.NoSuchAlgorithmException;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
 import net.jini.id.Uuid;
+import sorcer.core.context.IControlContext;
 import sorcer.service.*;
 import sorcer.core.context.ThrowableTrace;
 import sorcer.core.provider.Jobber;
@@ -164,12 +166,12 @@ public interface Exertion extends Mogram, Dependency, Invocation<Object>, Evalua
 	
 	/**
 	 * Returns a control context (service control strategy) of this exertion to be 
-	 * realized by a tasker, jobber or spacer.
+	 * realized by a tasker, rendezvous or spacer.
 	 * 
 	 * @return a control context
 	 * @see #getSignatures
 	 */
-	public Context getControlContext();
+	public IControlContext getControlContext();
 	
 	public String getExecTime();
 	
@@ -220,7 +222,10 @@ public interface Exertion extends Mogram, Dependency, Invocation<Object>, Evalua
 	 */
 	public Access getAccessType();
 
-	/**
+    // Check if this is a Job that will be performed by Spacer
+    boolean isSpacable();
+
+    /**
 	 * Returns the list of traces of thrown exceptions.
 	 * @return ThrowableTrace list
 	 */ 
@@ -349,5 +354,16 @@ public interface Exertion extends Mogram, Dependency, Invocation<Object>, Evalua
 	 * The exertion format for thick exertions (with RMI and Jini classes)
 	 */
 	public static final int STANDARD = 1;
-	
+
+    int getIndex();
+
+    void setIndex(int i);
+
+    Uuid getParentId();
+
+    /**
+     * Return date when exertion was created
+     * @return
+     */
+    Date getCreationDate();
 }

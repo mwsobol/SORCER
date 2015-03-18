@@ -17,7 +17,9 @@
 
 package sorcer.core.context;
 
-import sorcer.core.provider.MonitoringManagement;
+import sorcer.core.exertion.NetJob;
+import sorcer.core.exertion.NetTask;
+import sorcer.core.monitor.MonitoringManagement;
 import sorcer.core.signature.ServiceSignature;
 import sorcer.service.*;
 import sorcer.service.Signature.Kind;
@@ -31,8 +33,16 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.logging.Logger;
 
-@SuppressWarnings({ "rawtypes", "unchecked" })
-public class ControlContext extends ServiceContext implements Strategy {
+import sorcer.core.exertion.NetJob;
+import sorcer.core.exertion.NetTask;
+import sorcer.core.signature.ServiceSignature;
+import sorcer.service.*;
+import sorcer.util.Stopwatch;
+
+import static sorcer.core.SorcerConstants.*;
+
+@SuppressWarnings({"rawtypes", "unchecked"})
+public class ControlContext extends ServiceContext<Object> implements Strategy, IControlContext {
 
 	private static final long serialVersionUID = 7280700425027799253L;
 
@@ -123,6 +133,8 @@ public class ControlContext extends ServiceContext implements Strategy {
 
 	public final static String DIRECT = "direct";
 
+    public final static String AUTO = "auto";
+
 	public final static String PARALLEL = "parallel";
 
 	public final static String SEQUENTIAL = "sequential";
@@ -168,7 +180,10 @@ public class ControlContext extends ServiceContext implements Strategy {
 		setDomainID("0");
 		setSubdomainID("0");
 		setExecTimeRequested(true);
-		setFlowType(Flow.SEQ);
+        // Changed for Sorter
+		setFlowType(Flow.AUTO);
+        //setFlowType(Flow.SEQ);
+
 		setAccessType(Access.PUSH);
 		setExecState(Exec.State.INITIAL);
 		setComponentAttribute(GET_EXEC_TIME);
@@ -194,6 +209,10 @@ public class ControlContext extends ServiceContext implements Strategy {
 			Exertion erxt = (Exertion) getValue(EXERTION);
 			if (exertion != null) {
 				putValue(EXERTION, exertion);
+                //
+                if (exertion instanceof NetTask || exertion instanceof NetJob)
+                    setProvisionable(true);
+
 			}
 		} catch (ContextException e) {
 			e.printStackTrace();
@@ -360,7 +379,7 @@ public class ControlContext extends ServiceContext implements Strategy {
 	}
 
 	public void setExecTimeRequested(boolean state) {
-		if (state == false)
+		if (!state)
 			remove(GET_EXEC_TIME);
 		else
 			put(GET_EXEC_TIME, new Boolean(state));
@@ -464,10 +483,7 @@ public class ControlContext extends ServiceContext implements Strategy {
 	}
 
 	public void setReview(Exertion ex, boolean b) {
-		if (b)
-			addAttributeValue(ex, EXERTION_REVIEW, TRUE);
-		else
-			addAttributeValue(ex, EXERTION_REVIEW, FALSE);
+        addAttributeValue(ex, EXERTION_REVIEW, Boolean.toString(b));
 	}
 
 	public boolean isReview(Exertion exertion) {
@@ -661,7 +677,7 @@ public class ControlContext extends ServiceContext implements Strategy {
 		if (exceptions.size() == 0)
 			return "no exceptions thrown\n";
 
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		for (ThrowableTrace exceptionTrace : exceptions) {
 			sb.append(exceptionTrace.stackTrace).append("\n");
 		}
@@ -706,7 +722,7 @@ public class ControlContext extends ServiceContext implements Strategy {
 	}
 
 	public String toString() {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append(super.toString());
 		if (ServiceExertion.debug) {
 			sb.append("\nControl Context Exceptions: \n");

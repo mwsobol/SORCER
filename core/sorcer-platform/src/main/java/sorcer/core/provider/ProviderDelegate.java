@@ -40,6 +40,9 @@ import net.jini.lookup.entry.Name;
 import net.jini.security.AccessPermission;
 import net.jini.security.TrustVerifier;
 import net.jini.space.JavaSpace05;
+import sorcer.container.jeri.AbstractExporterFactory;
+import sorcer.container.jeri.ExporterFactories;
+import sorcer.core.monitor.MonitoringSession;
 import sorcer.service.ContextManagement;
 import sorcer.core.SorcerConstants;
 import sorcer.core.SorcerNotifierProtocol;
@@ -66,6 +69,9 @@ import sorcer.security.sign.TaskAuditor;
 import sorcer.security.util.SorcerPrincipal;
 import sorcer.service.*;
 import sorcer.service.Exec;
+import sorcer.service.jobber.JobberAccessor;
+import sorcer.service.space.SpaceAccessor;
+import sorcer.service.txmgr.TransactionManagerAccessor;
 import sorcer.util.*;
 
 import javax.security.auth.Subject;
@@ -92,6 +98,8 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.*;
+
+import static sorcer.util.StringUtils.tName;
 
 /**
  * There are two types of SORCER service servers: generic service servers -
@@ -130,6 +138,8 @@ public class ProviderDelegate implements SorcerConstants {
 	/** Context logger used in custom provider methods */
 	private Logger contextLogger;
 
+    private boolean remoteLogging = false;
+
 	/** Provider deployment configuration. */
 	protected DeploymentConfiguration config = new DeploymentConfiguration();
 
@@ -149,6 +159,8 @@ public class ProviderDelegate implements SorcerConstants {
 	protected String spaceGroup;
 
 	protected String spaceName;
+
+    private List<SpaceTaker> spaceTakers = new ArrayList<SpaceTaker>();
 
 	protected Class[] publishedServiceTypes;
 
@@ -204,6 +216,8 @@ public class ProviderDelegate implements SorcerConstants {
 	private long eventID = 0, seqNum = 0;
 
 	private List<Entry> extraLookupAttributes = new Vector<Entry>();
+
+    public int processedExertionsCount=0;
 
 	/** Map of exertion ID's and state of execution */
 	static final Map exertionStateTable = Collections
@@ -268,7 +282,7 @@ public class ProviderDelegate implements SorcerConstants {
 	 * Exposed service type components. A key is an interface and a value its
 	 * implementing service-object.
 	 */
-	private Map serviceComponents;
+	private Map<Class, Object> serviceComponents;
 
 	/**
 	 * List of Exertions for which SLA Offer was given
@@ -285,6 +299,8 @@ public class ProviderDelegate implements SorcerConstants {
 	private String hostName, hostAddress;
 
 	private ContextManagement contextManager;
+
+    protected AbstractExporterFactory exporterFactory;
 
 	/*
 	 * A nested class to hold the state information of the executing thread for
@@ -358,7 +374,10 @@ public class ProviderDelegate implements SorcerConstants {
 			}
 		}
 		restore();
-		// set provider's ID persistence flag if defined in provider's
+        // Intialize hostName and hostAddress
+        getHostName();
+        getHostAddress();
+        // set provider's ID persistance flag if defined in provider's
 		// properties
 		idPersistent = Sorcer.getProperty(P_SERVICE_ID_PERSISTENT, "false")
 				.equals("true");
@@ -393,10 +412,10 @@ public class ProviderDelegate implements SorcerConstants {
 		} catch (ConfigurationException e) {
 			// do nothing, used the default value
 		}
-		initDynamicServiceAccessor();
+	//	initDynamicServiceAccessor();
 	}
 
-	private void initDynamicServiceAccessor() {
+	/*private void initDynamicServiceAccessor() {
 		try {
 			String val = Sorcer.getProperty(S_SERVICE_ACCESSOR_PROVIDER_NAME);
 			if (val != null && val.equals(ProviderLookup.class.getName())) {
@@ -414,19 +433,13 @@ public class ProviderDelegate implements SorcerConstants {
 		} catch (AccessorException e) {
 			e.printStackTrace();
 		}
-	}
+	}*/
 
 	void initSpaceSupport() throws ConfigurationException {
 		if (!spaceEnabled)
 			return;
 
-		try {
-			hostName = Sorcer.getHostName();
-			hostAddress = Sorcer.getHostAddress();
-		} catch (UnknownHostException e) {
-			// ignore it
-		}
-		space = ProviderAccessor.getSpace(spaceName, spaceGroup);
+		space = SpaceAccessor.getSpace(spaceName, spaceGroup);
 		if (space == null) {
 			int ctr = 0;
 			while (space == null && ctr++ < TRY_NUMBER) {
@@ -437,7 +450,7 @@ public class ProviderDelegate implements SorcerConstants {
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
-				space = ProviderAccessor.getSpace(spaceName, spaceGroup);
+				space = SpaceAccessor.getSpace(spaceName, spaceGroup);
 			}
 			if (space != null) {
 				logger.info("got space = " + space);
@@ -446,7 +459,7 @@ public class ProviderDelegate implements SorcerConstants {
 			}
 		}
 		if (workerTransactional)
-			tManager = ProviderAccessor.getTransactionManager();
+			tManager = TransactionManagerAccessor.getTransactionManager();
 
 		try {
 			startSpaceTakers();
@@ -734,13 +747,22 @@ public class ProviderDelegate implements SorcerConstants {
 			if (maximumPoolSize > workerCount)
 				workerCount = maximumPoolSize;
 		}
+
+        ConfigurableThreadFactory factory = new ConfigurableThreadFactory();
+        factory.setNameFormat(tName("SpcTkr-" + getProviderName()+ "-%2$d"));
+
+        ConfigurableThreadFactory namedWorkerFactory = new ConfigurableThreadFactory();
+        namedWorkerFactory.setThreadGroup(namedGroup);
+        namedWorkerFactory.setNameFormat(tName("SpcTkr-" + getProviderName() + "-%2$d"));
+        namedWorkerFactory.setDaemon(true);
+
 		for (int i = 0; i < publishedServiceTypes.length; i++) {
 			// spaceWorkerPool = Executors.newFixedThreadPool(workerCount);
-			spaceWorkerPool = new ThreadPoolExecutor(workerCount,
+            spaceWorkerPool = new ThreadPoolExecutor(workerCount,
 					maximumPoolSize > workerCount ? maximumPoolSize
 							: workerCount, 0L, TimeUnit.MILLISECONDS,
-							new LinkedBlockingQueue<Runnable>(
-									(queueSize == 0 ? workerCount : queueSize)));
+					new LinkedBlockingQueue<Runnable>(
+							(queueSize == 0 ? workerCount : queueSize)), factory);
 			spaceHandlingPools.add(spaceWorkerPool);
 			// SORCER.ANY is required for a ProviderWorker
 			// to avoid matching to any provider name
@@ -751,15 +773,20 @@ public class ProviderDelegate implements SorcerConstants {
 				worker = new SpaceIsReadyTaker(new SpaceTaker.SpaceTakerData(
 						envelop, memberInfo, provider, spaceName, spaceGroup,
 						workerTransactional, queueSize == 0), spaceWorkerPool);
+                spaceTakers.add(worker);
 			} else {
 				worker = new SpaceTaker(new SpaceTaker.SpaceTakerData(envelop,
 						memberInfo, provider, spaceName, spaceGroup,
-						workerTransactional, queueSize == 0), spaceWorkerPool);
+						workerTransactional, queueSize == 0), spaceWorkerPool, remoteLogging);
+                spaceTakers.add(worker);
 			}
-			Thread sith = new Thread(interfaceGroup, worker);
-			sith.setDaemon(true);
-			sith.start();
-			spaceTakerThreads.add(worker);
+            ConfigurableThreadFactory ifaceWorkerFactory = new ConfigurableThreadFactory();
+            ifaceWorkerFactory.setThreadGroup(interfaceGroup);
+            ifaceWorkerFactory.setDaemon(true);
+            ifaceWorkerFactory.setNameFormat(tName("SpcTkr-" + publishedServiceTypes[i].getSimpleName()));
+
+            Thread sith = ifaceWorkerFactory.newThread(worker);
+			sith.start();			
 			logger.info("*** space worker-" + i + " started for: "
 					+ publishedServiceTypes[i]);
 			// System.out.println("space template: " +
@@ -770,8 +797,8 @@ public class ProviderDelegate implements SorcerConstants {
 				spaceWorkerPool = new ThreadPoolExecutor(workerCount,
 						maximumPoolSize > workerCount ? maximumPoolSize
 								: workerCount, 0L, TimeUnit.MILLISECONDS,
-								new LinkedBlockingQueue<Runnable>(
-										(queueSize == 0 ? workerCount : queueSize)));
+						new LinkedBlockingQueue<Runnable>(
+								(queueSize == 0 ? workerCount : queueSize)), factory);
 				spaceHandlingPools.add(spaceWorkerPool);
 				envelop = ExertionEnvelop.getTemplate(publishedServiceTypes[i],
 						getProviderName());
@@ -780,17 +807,17 @@ public class ProviderDelegate implements SorcerConstants {
 							new SpaceTaker.SpaceTakerData(envelop, memberInfo,
 									provider, spaceName, spaceGroup,
 									workerTransactional, queueSize == 0),
-									spaceWorkerPool);
+							spaceWorkerPool);
+                    spaceTakers.add(worker);
 				} else {
 					worker = new SpaceTaker(new SpaceTaker.SpaceTakerData(
 							envelop, memberInfo, provider, spaceName,
 							spaceGroup, workerTransactional, queueSize == 0),
-							spaceWorkerPool);
+							spaceWorkerPool, remoteLogging);
+                    spaceTakers.add(worker);
 				}
-				Thread snth = new Thread(namedGroup, worker);
-				snth.setDaemon(true);
+				Thread snth = namedWorkerFactory.newThread(worker);
 				snth.start();
-				spaceTakerThreads.add(worker);
 				logger.info("*** named space worker-" + i + " started for: "
 						+ publishedServiceTypes[i] + ":" + getProviderName());
 				// System.out.println("space template: " +
@@ -814,11 +841,10 @@ public class ProviderDelegate implements SorcerConstants {
 				alls.get(i).setType(Signature.PRE);
 			}
 		}
-
 		task.getControlContext().appendTrace(
 				provider.getProviderName() + " execute: "
-						+ task.getProcessSignature().getSelector() + ":"
-						+ task.getProcessSignature().getServiceType() + ":"
+						+ (task.getProcessSignature()!=null ? task.getProcessSignature().getSelector() : "null") + ":"
+						+ (task.getProcessSignature()!=null ? task.getProcessSignature().getServiceType() : "null") + ":"
 						+ getHostName());
 
 		if (task instanceof SignedTaskInterface) {
@@ -842,6 +868,7 @@ public class ProviderDelegate implements SorcerConstants {
 		 * actions); }
 		 */
 		if (isValidTask(task)) {
+            logger.info("Task " + task.getName() + " is valid");
 			try {
 				task.startExecTime();
 				exertionStateTable.put(task.getId(), new Integer(
@@ -867,11 +894,11 @@ public class ProviderDelegate implements SorcerConstants {
 
 					tsig.setProvider(provider);
 					// reset path prefix and return path
-					if (tsig.getPrefix() != null)
-						((ServiceContext)task.getContext()).setPrefix(tsig.getPrefix());
+                    if (tsig.getPrefix() != null)
+                        ((ServiceContext)task.getContext()).setPrefix(tsig.getPrefix());
 					if (tsig.getReturnPath() != null)
-						((ServiceContext) task.getContext())
-						.setReturnPath(tsig.getReturnPath());
+							((ServiceContext) task.getContext())
+									.setReturnPath(tsig.getReturnPath());
 
 					if (isBeanable(task)) {
 						task = useServiceComponents(task, transaction);
@@ -907,7 +934,9 @@ public class ProviderDelegate implements SorcerConstants {
 					return (Task) forwardTask(task, provider);
 				}
 			} finally {
-				exertionStateTable.remove(exertionStateTable.remove(task
+                processedExertionsCount++;
+                logger.warning("EXERTIONS PROCESSED: " + processedExertionsCount);
+                exertionStateTable.remove(exertionStateTable.remove(task
 						.getId()));
 			}
 		}
@@ -930,13 +959,13 @@ public class ProviderDelegate implements SorcerConstants {
 
 	private Context processContinousely(Task task, List<Signature> signatures)
 			throws ExertionException, ContextException {
-		ControlFlowManager cfm;
 		try {
-			cfm = new ControlFlowManager(task, this);
-		} catch (Exception e) {
-			throw new ExertionException(e);
-		} 
-		return cfm.processContinousely(task, signatures);
+            ControlFlowManager cfm = new ControlFlowManager(task, this);
+            return cfm.processContinousely(task, signatures);
+        }   catch (Exception e) {
+            ((Task) task).reportException(e);
+            throw new ExertionException(e);
+        }
 	}
 
 	private void resetSigantures(List<Signature> signatures, Signature.Type type) {
@@ -962,20 +991,15 @@ public class ProviderDelegate implements SorcerConstants {
 		if (serviceComponents == null || serviceComponents.size() == 0)
 			return false;
 		Class serviceType = task.getProcessSignature().getServiceType();
-		Iterator i = serviceComponents.entrySet().iterator();
-		Map.Entry next;
-		while (i.hasNext()) {
-			next = (Map.Entry) i.next();
-			// check declared interfaces
-			if (next.getKey() == serviceType)
-				return true;
+		logger.fine("match serviceType: " + serviceType);
+        // check declared interfaces
+        if(serviceComponents.containsKey(serviceType))
+            return true;
 
+        for (Class next: serviceComponents.keySet()) {
 			// check implemented interfaces
-			Class[] supertypes = ((Class)next.getKey()).getInterfaces();			
-			for (Class st : supertypes) {
-				if (st == serviceType)
-					return true;
-			}
+            if(next.isAssignableFrom(serviceType))
+                return true;
 		}
 		return false;
 	}
@@ -1051,9 +1075,13 @@ public class ProviderDelegate implements SorcerConstants {
 				task.setContext(result);
 				task.setStatus(Exec.DONE);
 				return task;
+            } catch (InvocationTargetException e){
+                Throwable t = e.getCause();
+                task.reportException(t);
+                logger.warning("Error while executing: " + m + " " + t.getMessage());
 			} catch (Exception e) {
 				task.reportException(e);
-				e.printStackTrace();
+                logger.warning("Error while executing: " + m + " " + e.getMessage());
 			}
 		}
 		task.setStatus(Exec.FAILED);
@@ -1167,11 +1195,11 @@ public class ProviderDelegate implements SorcerConstants {
 			}
 		}
 		if (serviceID != null)
-			recipient = ProviderAccessor.getProvider(serviceID);
+			recipient = (Service) Accessor.getService(serviceID);
 		else if (prvType != null && prvName != null) {
-			recipient = ProviderAccessor.getProvider(prvName, prvType);
+			recipient = (Service) Accessor.getService(prvName, prvType);
 		} else if (prvType != null) {
-			recipient = ProviderAccessor.getProvider(prvType);
+			recipient = (Service) Accessor.getService(null, prvType);
 		}
 		if (recipient == null) {
 			visited.remove(serviceID);
@@ -1207,7 +1235,7 @@ public class ProviderDelegate implements SorcerConstants {
 	}
 
 	public ServiceExertion dropTask(Exertion entryTask)
-			throws ExertionException, SignatureException {
+			throws ExertionException, SignatureException, RemoteException {
 		return null;
 	}
 
@@ -1217,29 +1245,29 @@ public class ProviderDelegate implements SorcerConstants {
 		Jobber jobber;
 		try {
 			if (jobberName != null)
-				jobber = ProviderAccessor.getJobber(jobberName);
+				jobber = JobberAccessor.getJobber(jobberName);
 			else
-				jobber = ProviderAccessor.getJobber();
+				jobber = JobberAccessor.getJobber();
 		} catch (AccessorException ae) {
 			ae.printStackTrace();
 			throw new ExertionException(
 					"Provider Delegate Could not find the Jobber");
 		}
 
-		Job outJob = null;
+		Job outJob;
 		try {
-			outJob =  (Job)jobber.service(job, null);
+			outJob = (Job) jobber.service(job, null);
 		} catch (TransactionException te) {
 			throw new ExertionException("transaction failure", te);
 		}
 		return outJob;
 	}
 
-	public Job dropJob(Job job) throws ExertionException {
+	public Job dropJob(Job job) throws RemoteException, ExertionException {
 		return null;
 	}
 
-	public void hangup() {
+	public void hangup() throws RemoteException {
 		String str = config.getProperty(P_DELAY_TIME);
 		if (str != null) {
 			try {
@@ -1252,7 +1280,7 @@ public class ProviderDelegate implements SorcerConstants {
 		}
 	}
 
-	public boolean isValidMethod(String name) {
+	public boolean isValidMethod(String name) throws RemoteException {
 		// modify name for SORCER providers
 		Method[] methods = provider.getClass().getMethods();
 		for (int i = 0; i < methods.length; i++) {
@@ -1262,8 +1290,8 @@ public class ProviderDelegate implements SorcerConstants {
 		return false;
 	}
 
-	public Task execTask(Task task) throws ExertionException,
-	SignatureException, RemoteException, ContextException {
+	public Task execTask(Task task) throws ContextException, ExertionException,
+			SignatureException, RemoteException {
 		ServiceContext cxt = (ServiceContext) task.getContext();
 		try {
 			if (cxt.isValid(task.getProcessSignature())) {
@@ -1750,23 +1778,52 @@ public class ProviderDelegate implements SorcerConstants {
 		return leaseManager;
 	}
 
-	public void destroy() {
+	public void destroy() throws RemoteException {
 		if (spaceEnabled && spaceHandlingPools != null) {
+            for (SpaceTaker st : spaceTakers) {
+                st.destroy();
+            }
 			for (ExecutorService es : spaceHandlingPools)
 				shutdownAndAwaitTermination(es);
-
-			for (SpaceTaker st : spaceTakerThreads) {
-				st.stopTakerThread();
-				try {
-					st.join();
-				} catch (InterruptedException e) {
-					st.interrupt();
-					e.printStackTrace();
-					logger.severe(e.toString());
-					logger.severe(GenericUtil.arrayToString(e.getStackTrace()));
-				}
-			}
+			if (interfaceGroup != null) {
+				Thread[] ifgThreads = new Thread[interfaceGroup.activeCount()];
+				Thread[] ngThreads = new Thread[namedGroup.activeCount()];
+				interfaceGroup.enumerate(ifgThreads);
+				namedGroup.enumerate(ngThreads);
+                // Wait until spaceTakers shutdown
+                int attempts = 0;
+                Set<Thread> spaceTakerThreads = new HashSet<Thread>();
+                while (attempts < 11) {
+                    try {
+                        Thread.sleep(SpaceTaker.SPACE_TIMEOUT/10);
+                    } catch (InterruptedException ie) {
+                    }
+                    attempts++;
+                    for (int i = 0; i < ifgThreads.length; i++) {
+                        if (ifgThreads[i].isAlive())
+                            spaceTakerThreads.add(ifgThreads[i]);
+                        else
+                            spaceTakerThreads.remove(ifgThreads[i]);
+                    }
+                    for (int i = 0; i < ngThreads.length; i++) {
+                        if (ngThreads[i].isAlive())
+                            spaceTakerThreads.add(ngThreads[i]);
+                        else
+                            spaceTakerThreads.remove(ngThreads[i]);
+                    }
+                    if (spaceTakerThreads.isEmpty())
+                        break;
+                }
+/*                for (Thread thread : spaceTakerThreads) {
+                    if (thread.isAlive())
+//                        thread.interrupt();
+                        threadLogger.warn("Thread alive {}", thread);
+                }*/
+            }
 		}
+/*        if (beanListener != null && serviceBeans != null)
+            for (Object serviceBean : serviceBeans)
+                beanListener.destroy(serviceBuilder, serviceBean);*/
 	}
 
 	public void fireEvent() throws RemoteException {
@@ -1847,8 +1904,7 @@ public class ProviderDelegate implements SorcerConstants {
 
 		try {
 			MsgRef mr;
-			SorcerNotifierProtocol notifier = (SorcerNotifierProtocol) ProviderAccessor
-					.getNotifierProvider();
+			SorcerNotifierProtocol notifier = Accessor.getService(null, SorcerNotifierProtocol.class);
 
 			mr = new MsgRef(task.getId(), notificationType,
 					config.getProviderName(), message,
@@ -1858,8 +1914,6 @@ public class ProviderDelegate implements SorcerConstants {
 			RemoteEvent re = new RemoteEvent(mr, eventID++, seqNum++, null);
 			logger.info(getClass().getName() + "::notify() END.");
 			notifier.notify(re);
-		} catch (ClassNotFoundException cnfe) {
-			logger.log(Level.WARNING, "Could not get SorcerNotifierProtocol", cnfe);
 		} catch (RemoteException e) {
             logger.log(Level.WARNING, "Problem notifying", e);
         }
@@ -1920,21 +1974,6 @@ public class ProviderDelegate implements SorcerConstants {
 
 	public void notifyWarning(Exertion task, String message) {
 		notify(task, NOTIFY_WARNING, message);
-	}
-
-	/**
-	 * Indicates the change of the monitored service context.
-	 * 
-	 * @param sc
-	 *            the service context
-	 * @throws MonitorException
-	 * @throws RemoteException
-	 */
-	public void changed(Context sc, Object aspect) throws RemoteException,
-	MonitorException {
-		MonitoringSession session = ExertionSessionInfo.getSession();
-		if (session != null)
-			session.changed(sc, aspect);
 	}
 
 	// task/job monitoring API
@@ -2050,12 +2089,12 @@ public class ProviderDelegate implements SorcerConstants {
 		private void fillInProviderHost() {
 			String hostname = null, hostaddress = null;
 			try {
-				hostname = Sorcer.getHostName();
+				hostname = SorcerEnv.getLocalHost().getHostName();
 				if (hostname == null) {
 					logger.warning("Could not aquire hostname");
 					hostname = "[unknown]";
 				} else {
-					hostaddress = Sorcer.getHostAddress();
+					hostaddress = SorcerEnv.getLocalHost().getHostAddress();
 				}
 			} catch (Throwable t) {
 				// Can be ignored.
@@ -2638,7 +2677,7 @@ public class ProviderDelegate implements SorcerConstants {
 			try {
 				exporterInterface = (String) config.getEntry(
 						ServiceProvider.COMPONENT, EXPORTER_INTERFACE,
-						String.class, Sorcer.getHostAddress());
+						String.class, SorcerEnv.getLocalHost().getHostAddress());
 			} catch (Exception e) {
 				// do nothng
 			}
@@ -2648,13 +2687,10 @@ public class ProviderDelegate implements SorcerConstants {
 			String port = Sorcer.getProperty(P_EXPORTER_PORT);
 			if (port != null)
 				exporterPort = Integer.parseInt(port);
-			try {
-				exporterPort = (Integer) config.getEntry(
-						ServiceProvider.COMPONENT, EXPORTER_PORT,
-						Integer.class, null);
-			} catch (Exception e) {
-				// do nothng
-			}
+            else
+                exporterPort = (Integer) config.getEntry(
+                    ServiceProvider.COMPONENT, EXPORTER_PORT,
+                    Integer.class, 0);
 			logger.info(">>>>> exporterPort: " + exporterPort);
 
 			try {
@@ -2716,33 +2752,30 @@ public class ProviderDelegate implements SorcerConstants {
 					allBeans.add(instantiateScriplet(scriptlets[i]));
 			}
 
+            exporterFactory = (AbstractExporterFactory) config.getEntry(ServiceProvider.COMPONENT, "exporterFactory", AbstractExporterFactory.class, null);
+            if (exporterFactory == null)
+                exporterFactory = ExporterFactories.EXPORTER;
+
 			if (allBeans.size() > 0) {
 				logger.finer("*** all beans by XXXX " + getProviderName()
 						+ " for: \n" + allBeans);
 				serviceBeans = allBeans.toArray();
 				initServiceBeans(serviceBeans);
-				ilFactory = new SorcerILFactory(serviceComponents,
-						implClassLoader);
-				outerExporter = new BasicJeriExporter(
-						TcpServerEndpoint.getInstance(exporterInterface,
-								exporterPort), ilFactory);
+                SorcerILFactory ilFactory = new SorcerILFactory(serviceComponents, implClassLoader);
+                ilFactory.setRemoteLogging(remoteLogging);
+                outerExporter = exporterFactory.get(ilFactory);
 			} else {
-				logger.finer("*** NO beans used by " + getProviderName());
-				outerExporter = (Exporter) Config.getNonNullEntry(
-						config,
+				logger.info("*** NO beans used by " + getProviderName());
+				outerExporter = (Exporter) config.getEntry(
 						ServiceProvider.COMPONENT,
 						EXPORTER,
 						Exporter.class,
-						new BasicJeriExporter(TcpServerEndpoint.getInstance(
-								exporterInterface, exporterPort),
-//								new BeanILFactory()));
-								new BasicILFactory()));
+						null);
 				if (outerExporter == null) {
-					logger.warning("*** NO provider exporter defined!!!");
-				} else {
-					logger.info("current exporter: "
-							+ outerExporter.toString());
+                    outerExporter = exporterFactory.get();
 				}
+                logger.info("current exporter: "
+                        + outerExporter.toString());
 
 				try {
 					partnerExporter = (Exporter) Config.getNonNullEntry(config,
@@ -2918,8 +2951,8 @@ public class ProviderDelegate implements SorcerConstants {
 				}
 			} else {
 				// if partner discovered use it as the inner proxy
-				innerProxy = (Remote) ProviderAccessor.getService(partnerName,
-						partnerType);
+				innerProxy = (Remote) Accessor.getService(partnerName,
+                        partnerType);
 			}
 		} else {
 			// if partner exported use it as the primary proxy
@@ -3075,7 +3108,7 @@ public class ProviderDelegate implements SorcerConstants {
 	public String getHostAddress() {
 		if (hostAddress == null)
 			try {
-				hostAddress = Sorcer.getHostAddress();
+				hostAddress = SorcerEnv.getLocalHost().getHostAddress();
 			} catch (UnknownHostException e) {
 				e.printStackTrace();
 			}
@@ -3085,7 +3118,7 @@ public class ProviderDelegate implements SorcerConstants {
 	public String getHostName() {
 		if (hostName == null) {
 			try {
-				hostName = Sorcer.getHostName();
+				hostName = SorcerEnv.getLocalHost().getHostAddress();
 			} catch (UnknownHostException e) {
 				e.printStackTrace();
 			}

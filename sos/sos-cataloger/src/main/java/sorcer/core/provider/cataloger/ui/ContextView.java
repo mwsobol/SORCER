@@ -29,11 +29,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.rmi.RMISecurityManager;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Hashtable;
-import java.util.Observable;
-import java.util.Observer;
+import java.util.*;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -363,7 +359,7 @@ public class ContextView extends JPanel implements Observer, ActionListener,
 		// Enumeration e = null;
 		// Hashtable linkPaths = new Hashtable();
 		if (theContext != null) {
-			Hashtable inputs = new Hashtable();
+			Map<String,String> inputs = new HashMap<String,String>();
 			Hashtable outputs = new Hashtable();
 			try {
 				inputs = Contexts.getInPathsMap(theContext);

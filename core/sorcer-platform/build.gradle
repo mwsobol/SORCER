@@ -25,6 +25,8 @@ dependencies {
     compile "org.rioproject.cybernode:cybernode-api:${rioVersion}"
     compile "com.sleepycat:je:${jeVersion}"
     compile "org.dancres:lockmgr:${lockmgrVersion}"
+    compile "javax.inject:javax.inject:1"
+    compile "org.codehaus.plexus:plexus-utils:${plexusVersion}"
     compile project(':sorcer-dl')
     compile files("${System.properties['java.home']}/../lib/tools.jar")
     /* Depend on Rio webster for running a test so we do not create a circular dependency on Sorcer Webster */

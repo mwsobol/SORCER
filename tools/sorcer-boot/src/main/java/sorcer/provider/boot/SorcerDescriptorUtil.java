@@ -259,16 +259,16 @@ public class SorcerDescriptorUtil {
 			throw new RuntimeException("'sorcer.home' property not declared");
 		
 		// service provider classpath
-		String jobberClasspath = ConfigUtil.concat(new Object[] {
+		String providerClasspath = ConfigUtil.concat(new Object[] {
 				sorcerLib,fs,"sorcer",fs,"lib",fs,"sorcer-platform-" + sorcerVersion + ".jar"
 		});
 		
 		// service provider codebase
-        String jobberCodebase = Booter.getCodebase(getDefaultSorcerExports(),
+        String providerCodebase = Booter.getCodebase(getDefaultSorcerExports(),
                                                    hostAddress, Integer.toString(port));
         String implClass = "sorcer.core.provider.ServiceProvider";
-        return (new SorcerServiceDescriptor(jobberCodebase, policy,
-                                            jobberClasspath, implClass, jobberConfig));
+        return (new SorcerServiceDescriptor(providerCodebase, policy,
+                                            providerClasspath, implClass, jobberConfig));
 	}
 
     private static String[] getDefaultSorcerExports() {

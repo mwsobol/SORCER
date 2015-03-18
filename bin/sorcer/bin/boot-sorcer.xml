@@ -43,6 +43,7 @@
 			<sysproperty key="blitz.version" value="${blitz.version}" />
 			<sysproperty key="je.version" value="${je.version}" />
 			<sysproperty key="rio.version" value="${rio.version}" />
+            <sysproperty key="plexus.version" value="${plexus.version}" />
 			<sysproperty key="rio.home" value="${sorcer.home}/rio-${rio.version}" />
 			<sysproperty key="sorcer.env.file" value="${sorcer.home}/configs/sorcer.env" />
 			<sysproperty key="java.rmi.server.useCodebaseOnly" value="false" />

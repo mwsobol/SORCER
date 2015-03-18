@@ -22,6 +22,7 @@ import javax.security.auth.Subject;
 import net.jini.core.entry.Entry;
 import net.jini.id.Uuid;
 import net.jini.lookup.entry.Name;
+import sorcer.core.context.ThrowableTrace;
 import sorcer.core.signature.NetSignature;
 import sorcer.service.Exec;
 import sorcer.service.Exertion;
@@ -177,7 +178,10 @@ public class ExertionEnvelop implements Entry {
 		.append(", isEncrypted=").append(isEncrypted)
 		.append(", encryptedExertion=").append(encryptedExertion)
 		.append(", providerSubject=").append(providerSubject)
-		.append(", exertion=").append(exertion == null ? "null" : exertion);
+		.append(", exertion=").append(exertion);
+        if (exertion!=null && !exertion.getAllExceptions().isEmpty())
+            for (ThrowableTrace tt : exertion.getAllExceptions())
+                sb.append(tt.message + ": " + tt.stackTrace);
 		return sb.toString();
 	}
 }

@@ -1,11 +1,29 @@
+/**
+ *
+ * Copyright 2013 the original author or authors.
+ * Copyright 2013, 2014 Sorcersoft.com S.A.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package sorcer.core.dispatch;
 
 import java.rmi.RemoteException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import net.jini.config.ConfigurationException;
-
+import sorcer.core.DispatchResult;
 import sorcer.core.Dispatcher;
 import sorcer.core.provider.Provider;
 import sorcer.core.provider.ServiceProvider;
@@ -13,8 +31,8 @@ import sorcer.service.ContextException;
 import sorcer.service.Exec;
 import sorcer.service.Job;
 
-public class JobThread extends Thread {
-	private final static Logger logger = Logger.getLogger(JobThread.class
+public class JobThread implements Runnable {
+	private final static Logger logger = LoggerFactory.getLogger(JobThread.class
 			.getName());
 
 	private static final int SLEEP_TIME = 250;
@@ -25,24 +43,27 @@ public class JobThread extends Thread {
 
 	Provider provider;
 
-	public JobThread(Job job, Provider provider) {
+    private DispatcherFactory dispatcherFactory;
+
+	public JobThread(Job job, Provider provider, DispatcherFactory dispatcherFactory) {
 		this.job = job;
 		this.provider = provider;
+        this.dispatcherFactory = dispatcherFactory;
 	}
 
 	public void run() {
-		logger.finer("*** Exertion dispatcher started with control context ***\n"
+		logger.debug("*** Exertion dispatcher started with control context ***\n"
 				+ job.getControlContext());
-		Dispatcher dispatcher = null;
 		try {
-			dispatcher = ExertDispatcherFactory.getFactory().createDispatcher(job, provider);
+            Dispatcher dispatcher = dispatcherFactory.createDispatcher(job, provider);
 			try {
 				job.getControlContext().appendTrace(provider.getProviderName() +
 						" dispatcher: " + dispatcher.getClass().getName());
 			} catch (RemoteException e) {
+                logger.error("exception in dispatcher: " + e);
 				// ignore it, locall call
 			}
-			 int COUNT = 1000;
+/*			 int COUNT = 1000;
 			 int count = COUNT;
 			while (dispatcher.getState() != Exec.DONE
 					&& dispatcher.getState() != Exec.FAILED
@@ -54,15 +75,15 @@ public class JobThread extends Thread {
 				 count = COUNT;
 				 }
 				Thread.sleep(SLEEP_TIME);
-			}
-			logger.finer("*** Dispatcher exit state = " + dispatcher.getClass().getName()  + " state: " + dispatcher.getState()
-					+ " for job***\n" + job.getControlContext());
+			}*/
+            dispatcher.exec();
+            DispatchResult dispatchResult = dispatcher.getResult();
+            logger.debug("*** Dispatcher exit state = " + dispatcher.getClass().getName()  + " state: " + dispatchResult.state
+                    + " for job***\n" + job.getControlContext());
+            result = (Job) dispatchResult.exertion;
 		} catch (DispatcherException de) {
 			de.printStackTrace();
-		} catch (InterruptedException ie) {
-			ie.printStackTrace();
 		}
-		result = (Job) dispatcher.getExertion();
 	}
 
 	public Job getJob() {

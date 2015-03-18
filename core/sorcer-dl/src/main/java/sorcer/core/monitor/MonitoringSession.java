@@ -15,11 +15,12 @@
  * limitations under the License.
  */
 
-package sorcer.core.provider;
+package sorcer.core.monitor;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
 
+import sorcer.core.context.IControlContext;
 import sorcer.service.Context;
 import sorcer.service.MonitorException;
 import sorcer.service.Monitorable;
@@ -137,7 +138,7 @@ public interface MonitoringSession extends Serializable {
 	/**
 	 * Providers use this method to update the monitoring session
 	 * 
-	 * @param xtc
+	 * @param ctx
 	 *            The service context changed.
 	 * 
 	 *  * @param aspect
@@ -151,7 +152,7 @@ public interface MonitoringSession extends Serializable {
 	 *             if there is a communication error
 	 **/
 
-	public void changed(Context ctx, Object aspect) throws RemoteException,
+	public void changed(Context ctx, IControlContext controlContext, int aspect) throws RemoteException,
 			MonitorException;
 
 	/**
