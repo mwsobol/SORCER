@@ -1,47 +1,25 @@
 package sorcer.core.exertion;
 
 //import com.gargoylesoftware,base,testing,TestUtil;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static sorcer.co.operator.inEnt;
-import static sorcer.co.operator.outEnt;
-import static sorcer.co.operator.set;
-import static sorcer.eo.operator.configuration;
-import static sorcer.eo.operator.context;
-import static sorcer.eo.operator.deploy;
-import static sorcer.eo.operator.exceptions;
-import static sorcer.eo.operator.exert;
-import static sorcer.eo.operator.get;
-import static sorcer.eo.operator.print;
-import static sorcer.eo.operator.result;
-import static sorcer.eo.operator.sig;
-import static sorcer.eo.operator.srvFi;
-import static sorcer.eo.operator.strategy;
-import static sorcer.eo.operator.task;
-import static sorcer.eo.operator.trace;
-import static sorcer.eo.operator.value;
-
-import java.rmi.RemoteException;
-import java.util.logging.Logger;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
-
 import sorcer.arithmetic.tester.provider.Adder;
 import sorcer.arithmetic.tester.provider.impl.AdderImpl;
-import sorcer.service.Context;
-import sorcer.service.ContextException;
-import sorcer.service.Exertion;
-import sorcer.service.ExertionException;
-import sorcer.service.ServiceExertion;
-import sorcer.service.SignatureException;
+import sorcer.service.*;
 import sorcer.service.Strategy.Access;
 import sorcer.service.Strategy.Provision;
 import sorcer.service.Strategy.Wait;
-import sorcer.service.Task;
-import sorcer.util.Sorcer;
+
+import java.rmi.RemoteException;
+import java.util.logging.Logger;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static sorcer.co.operator.*;
+import static sorcer.eo.operator.*;
+import static sorcer.eo.operator.value;
 
 /**
  * @author Mike Sobolewski
@@ -52,16 +30,6 @@ import sorcer.util.Sorcer;
 public class TaskTest {
 	private final static Logger logger = Logger.getLogger(TaskTest.class
 			.getName());
-
-	static {
-		ServiceExertion.debug = true;
-		System.setProperty("java.util.logging.config.file",
-				Sorcer.getHome() + "/configs/sorcer.logging");
-		System.setProperty("java.security.policy", Sorcer.getHome()
-				+ "/configs/policy.all");
-		System.setSecurityManager(new SecurityManager());
-		Sorcer.setCodeBase(new String[] { "arithmetic-beans.jar" });
-	}
 
 	@Test
 	public void freeArithmeticTaskTest() throws ExertionException, SignatureException, ContextException {

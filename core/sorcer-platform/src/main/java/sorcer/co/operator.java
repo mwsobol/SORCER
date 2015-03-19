@@ -23,6 +23,7 @@ import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.par.Par;
 import sorcer.core.provider.DatabaseStorer;
 import sorcer.service.*;
+import sorcer.service.modeling.Model;
 import sorcer.util.Loop;
 import sorcer.util.Response;
 import sorcer.util.Sorcer;
@@ -90,9 +91,13 @@ public class operator {
 		return new Tuple6<T1,T2,T3,T4,T5,T6>( x1, x2, x3, x4, x5, x6 );
 	}
 
-	public static String[] from(String... elems) {
-		return elems;
+	public static Signature.From outPaths(String... elems) {
+		return new Signature.From(elems);
 	}
+
+    public static Signature.In inPaths(String... elems) {
+        return new Signature.In(elems);
+    }
 
 	public static Class[] types(Class... classes) {
 		return classes;
@@ -183,11 +188,23 @@ public class operator {
 		return new Tuple3<T1, T2, T3>(x1, x2, x3);
 	}
 
+    public static Entry ent(Model model, String path) throws ContextException {
+        return new Entry(path, ((Context)model).asis(path));
+    }
+
+    public static Entry ent(Identifiable item) {
+        if (item instanceof Signature)
+            return new Entry<Identifiable>(item.getName(),
+                    new SignatureEntry(item.getName(), (Signature) item));
+        else
+            return new Entry<Identifiable>(item.getName(), item);
+    }
+    
 	public static <T> Entry<T> ent(String path, T value) {
 		return new Entry<T>(path, value);
 	}
 
-	public static <T> Entry<T> rrvEnt(String path, T value) {
+	public static <T> Entry<T> rvEnt(String path, T value) {
 		Entry<T> e = new Entry<T>(path, value);
 		return e.setReactive(true);
 	}
@@ -354,8 +371,9 @@ public class operator {
 				else {
 					if (entry instanceof Setter) {
 						((Setter) entry).setPersistent(true);
-						entry.getValue();
-						dburl = (URL) entry.asis();
+						dburl = (URL) SdbUtil.store(obj);
+						((Setter)entry).setValue(dburl);
+						return dburl;
 					}
 				}
 			}
@@ -443,7 +461,7 @@ public class operator {
 	}
 
 	public static <T> Entry<T> dbEnt(String path) {
-		Entry<T> e = new Entry<T>(path);
+		Entry<T> e = new Par<T>(path);
 		e.setPersistent(true);
 		return e;
 	}
@@ -597,33 +615,52 @@ public class operator {
 		return map;
 	}
 
-	public static Evaluation  dependsOn(Evaluation dependee,  Evaluation depender) {
-		if (dependee instanceof Dependency)
-			((Dependency)dependee).getDependers().add(depender);
+    public static <T> T asis(Mappable<T> mappable, String path)
+            throws ContextException {
+        return  mappable.asis(path);
+    }
 
-		return dependee;
-	}
+    public static Copier copier(Context fromContext, Arg[] fromEntries,
+                                Context toContext, Arg[] toEntries) throws EvaluationException {
+        return new Copier(fromContext, fromEntries, toContext, toEntries);
+    }
 
-	public static Copier copier(Context fromContext, Arg[] fromEntries,
-								Context toContext, Arg[] toEntries) throws EvaluationException {
-		return new Copier(fromContext, fromEntries, toContext, toEntries);
-	}
+    public static List<String> paths(String... paths) {
+       return Arrays.asList(paths);
+    }
+    
+    public static void dependsOn(Model model, String path, List<String> dependentPaths) {
+        Map<String, List<String>> dm = ((ServiceContext)model).getDependentPaths();
+        dm.put(path, dependentPaths);
+    }
 
-	public static Evaluation dependsOn(Evaluation dependee, Evaluation depender,
-									   Context scope) throws ContextException {
-		try {
-			if (dependee instanceof Scopable) {
-				Context context = (Context) ((Scopable) dependee).getScope();
-				if (context == null)
-					((Scopable) dependee).setScope(scope);
-				else
-					context.append(scope);
-			}
-		} catch (RemoteException e) {
-			throw new ContextException(e);
-		}
-		return dependsOn(dependee, depender);
-	}
+    public static Map<String, List<String>> dependentPaths(Model model) {
+         return ((ServiceContext)model).getDependentPaths();
+    }
+    
+    public static Dependency dependsOn(Dependency dependee,  Evaluation... dependers) throws ContextException {
+        for (Evaluation d : dependers)
+            ((Dependency) dependee).getDependers().add(d);
+        
+        return dependee;
+    }
+
+    public static Dependency dependsOn(Dependency dependee, Context scope, Evaluation... dependers) 
+            throws ContextException {
+        if (dependee instanceof Scopable) {
+            Context context = null;
+            try {
+                context = (Context) ((Scopable) dependee).getScope();
+                if (context == null)
+                    ((Scopable) dependee).setScope(scope);
+                else
+                    context.append(scope);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+        return dependsOn(dependee, dependers);
+    }
 
 	public static Loop loop(int to) {
 		Loop loop = new Loop(to);
@@ -683,4 +720,5 @@ public class operator {
 			super(initialCapacity);
 		}
 	}
+
 }

@@ -21,13 +21,23 @@ apply plugin: "maven"
  */
 
 /*
- * Start Sorcer only with hhtp
+ * Start Sorcer only with http
  */
 task bootSorcer(type: Exec) {
-    commandLine "ant", "-f", "${file("${sorcerDistHome}").path}/bin/boot-sorcer.xml", "run"
+    description = 'Starts SORCER Operating System Services.'
+    def args = []
+    if(System.properties['os.name'].contains("Windows")) {
+        args << "cmd.exe"
+        args << "/C"
+    }
+    args << "ant"
+    args << "-f"
+    args << "${file("${sorcerDistHome}").path}/bin/sorcer/bin/boot-sorcer.xml"
+    args << "spawn"
+    commandLine args
 }
 bootSorcer.onlyIf {
-    def jps = "jps -lm".execute()
+    def jps = jps().execute()
     !jps.text.contains("boot-sorcer")
 }
 
@@ -35,10 +45,20 @@ bootSorcer.onlyIf {
  * Start Sorcer only
  */
 task bootSorcerNoHttpd(type: Exec) {
-    commandLine "ant", "-f", "${file("${sorcerDistHome}").path}/bin/boot-sorcer-noHttpd.xml", "run"
+    description = 'Starts SORCER OS Services without a class servcer (webster).'
+    def args = []
+    if(System.properties['os.name'].contains("Windows")) {
+        args << "cmd.exe"
+        args << "/C"
+    }
+    args << "ant"
+    args << "-f"
+    args << "${file("${sorcerDistHome}").path}/bin/sorcer/bin/boot-sorcer-noHttpd.xml"
+    args << "run"
+    commandLine args
 }
 bootSorcerNoHttpd.onlyIf {
-    def jps = "jps -lm".execute()
+    def jps = jps().execute()
     !jps.text.contains("boot-sorcer")
 }
 
@@ -46,7 +66,19 @@ bootSorcerNoHttpd.onlyIf {
  * Start Sorcer using Rio
  */
 task bootSorcerRio(type: Exec, dependsOn: "webster") {
-    commandLine "ant", "-f", "${file("${sorcerDistHome}").path}/bin/rio/boot-sorcer-rio.xml"
+    description = 'Starts SORCER OS Services with Rio services for service provisioning.'
+    def args = []
+    if(System.properties['os.name'].contains("Windows")) {
+        args << "cmd.exe"
+        args << "/C"
+    }
+    args << "ant"
+    args << "-f"
+    args << "${file("${sorcerDistHome}").path}/bin/rio/boot-sorcer-rio.xml"
+    if(System.properties['sorcer.lite']==null) {
+        environment "sorcer.start.all": true
+    }
+    commandLine args
 }
 bootSorcerRio.onlyIf {
     File sorcerDist = file(sorcerDistHome)
@@ -54,27 +86,60 @@ bootSorcerRio.onlyIf {
         println "Sorcer distribution not found, cannot start Sorcer"
         return false
     }
-    def jps = "jps -lm".execute()
+    def jps = jps().execute()
     !jps.text.contains("start-monitor")
 }
 
 /*
- * Destroy Sorcer
+ * Destroy Sorcer and Rio
  */
 task terminateSorcerRio(type: Exec) {
-    commandLine "ant", "-f", "${file("${sorcerDistHome}").path}/bin/rio/destroy-sorcer-rio.xml"
+    description = 'Halts SORCER OS Services and Rio services.'
+    def args = []
+    if(System.properties['os.name'].contains("Windows")) {
+        args << "cmd.exe"
+        args << "/C"
+    }
+    args << "ant"
+    args << "-f"
+    args << "${file("${sorcerDistHome}").path}/bin/rio/destroy-sorcer-rio.xml"
+    commandLine args
+}
+
+/*
+ * Destroy Sorcer and Rio
+ */
+task terminateSorcer(type: Exec) {
+    description = 'Halts SORCER OS Services.'
+    def args = []
+    if(System.properties['os.name'].contains("Windows")) {
+        args << "cmd.exe"
+        args << "/C"
+    }
+    args << "ant"
+    args << "-f"
+    args << "${file("${sorcerDistHome}").path}/bin/sorcer/bin/destroy-sorcer.xml"
+    commandLine args
 }
 
 /*
  * Start a browser
  */
 task browser(type: Exec) {
-    commandLine "ant", "-f",
-            "${file("${sorcerDistHome}").path}/bin/browser/bin/sorcer-browser.xml",
-            "browser.spawn"
+    description = 'Starts the SORCER service browser.'
+    def args = []
+    if(System.properties['os.name'].contains("Windows")) {
+        args << "cmd.exe"
+        args << "/C"
+    }
+    args << "ant"
+    args << "-f"
+    args << "${file("${sorcerDistHome}").path}/bin/browser/bin/sorcer-browser.xml"
+    args << "browser.spawn"
+    commandLine args
 }
 browser.onlyIf {
-    def jps = "jps -lm".execute()
+    def jps = jps().execute()
     !jps.text.contains("sorcer-browser")
 }
 
@@ -82,25 +147,41 @@ browser.onlyIf {
  * Start the Rio UI
  */
 task rioUI(type: Exec) {
-    commandLine "ant", "-f",
-                "${file("${sorcerDistHome}").path}/bin/rio/rio-ui.xml",
-                "spawn"
+    description = 'Starts a user agent (GUI) for Rio service provisioning.'
+    def args = []
+    if(System.properties['os.name'].contains("Windows")) {
+        args << "cmd.exe"
+        args << "/C"
+    }
+    args << "ant"
+    args << "-f"
+    args << "${file("${sorcerDistHome}").path}/bin/rio/rio-ui.xml"
+    args << "spawn"
+    commandLine args
 }
 rioUI.onlyIf {
-    def jps = "jps -lm".execute()
+    def jps = jps().execute()
     !jps.text.contains("rio-ui")
 }
 
 /*
  * Start Sorcer Webster
  */
-task webster(type: Exec, dependsOn: 'genWebsterConfig') {
-    commandLine "${sorcerDistHome}/bin/webster/bin/webster.groovy"
+task webster(type: Exec) {
+    description = 'Starts a class server (webster).'
+    def args = []
+    if(System.properties['os.name'].contains("Windows")) {
+        args << "cmd.exe"
+        args << "/C"
+        args << "groovy"
+    }
+    args << "${sorcerDistHome}/bin/webster/bin/webster.groovy"
+    commandLine args
 }
 webster.onlyIf {
     File sorcerDist = file(sorcerDistHome)
     if(!sorcerDist.exists()) {
-        println "Sorcer distribution not found cannot start Webster"
+        println "Sorcer distribution not found cannot start Webster."
         return false
     }
     boolean running
@@ -115,49 +196,11 @@ webster.onlyIf {
     !running
 }
 
-task genWebsterConfig {
-    doLast {
-        String localMaven
-        repositories {
-            localMaven = mavenLocal().url.path
-        }
-        def roots = ["${sorcerDistHome}/lib/sorcer/lib-dl",
-                     "${sorcerDistHome}/lib/sorcer/lib",
-                     "${sorcerDistHome}/lib/river",
-                     "${sorcerDistHome}/rio-${rioVersion}/lib",
-                     "${sorcerDistHome}/rio-${rioVersion}/lib-dl",
-                     "${sorcerDistHome}/lib/common",
-                     "${sorcerDistHome}/lib/blitz",
-                     "${sorcerDistHome}/lib",
-                     "${localMaven}",
-                     "${sorcerDistHome}/data"]
-        StringBuilder rootsBuilder = new StringBuilder()
-        String indent  = "             "
-        roots.each { root ->
-            if(rootsBuilder.length()>0)
-                rootsBuilder.append(",\n").append(indent)
-            rootsBuilder.append("\"${root}\"")
-        }
-        String spawn = System.getProperty("spawn")==null?true:System.getProperty("spawn")
-        StringBuilder configBuilder = new StringBuilder()
-        configBuilder.append("/*\n")
-                .append(" * This file is generated. If you modify the contents,\n")
-                .append(" * chances are good you will lose your modifications.\n")
-                .append(" */\n\n")
-                .append("webster {\n")
-                .append("    address = \"").append(websterAddress).append("\"\n")
-                .append("    port = \"").append(websterPort).append("\"\n")
-                .append("    roots = [").append(rootsBuilder.toString()).append("]\n")
-                .append("    spawn = ").append(spawn).append("\n")
-                .append("}\n\n")
-                .append("versions {\n")
-                .append("    rio = \"").append(rioVersion).append("\"\n")
-                .append("    sorcer = \"").append(sorcerVersion).append("\"\n")
-                .append("}\n\n")
-                .append("paths {\n")
-                .append("    sorcerHome = \"").append(sorcerDistHome).append("\"\n")
-                .append("}\n\n")
-
-        file("${sorcerDistHome}/bin/webster/configs/websterConfig.groovy").write(configBuilder.toString())
+def jps() {
+    StringBuilder s = new StringBuilder()
+    if(System.properties['os.name'].contains("Windows")) {
+        s.append("cmd.exe /C ")
     }
+    s.append("jps -lm")
+    s.toString()
 }

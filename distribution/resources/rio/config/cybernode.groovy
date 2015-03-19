@@ -17,13 +17,10 @@
 /*
  * Configuration for a Cybernode
  */
-import org.rioproject.config.Component
-
-import org.rioproject.impl.client.JiniClient
-
 import net.jini.core.discovery.LookupLocator
+import org.rioproject.config.Component
 import org.rioproject.config.Constants
-
+import org.rioproject.impl.client.JiniClient
 /*
  * Declare Cybernode properties
  */
@@ -54,7 +51,7 @@ class CybernodeConfig {
 
     String getServiceLogRootDirectory() {
         String logExt = System.getProperty(Constants.GROUPS_PROPERTY_NAME, System.getProperty('user.name'))
-        String serviceLogRootDirectory = System.getProperty("RIO_LOG_DIR")
+        String serviceLogRootDirectory = System.getProperty("rio.log.dir")
         if(serviceLogRootDirectory==null) {
             String opSys = System.getProperty('os.name')
             String rootLogDir = opSys.startsWith("Windows")?System.getProperty("java.io.tmpdir"):'/tmp'
@@ -65,20 +62,6 @@ class CybernodeConfig {
     }
 
     String getNativeLibDirectory() {
-        return System.getProperty("RIO_NATIVE_DIR")
-    }
-}
-
-@Component('org.rioproject.exec')
-class ExecConfig {
-
-    String getServiceBeanExecShellTemplate() {
-        String template
-        if(System.getProperty("os.name").startsWith("Windows")) {
-            template = "${System.getProperty("RIO_HOME")}/config/templates/start-template.cmd"
-        } else {
-            template = "classpath:exec-template.sh"
-        }
-        return template
+        return System.getProperty("rio.native.dir")
     }
 }

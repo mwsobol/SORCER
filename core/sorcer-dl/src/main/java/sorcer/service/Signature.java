@@ -17,10 +17,11 @@
 
 package sorcer.service;
 
-import java.io.Serializable;
-import java.util.Arrays;
-
 import sorcer.service.modeling.Variability;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * A service <code>Signature</code> is an indirect behavioral feature of
@@ -42,7 +43,7 @@ import sorcer.service.modeling.Variability;
  * @author Mike Sobolewski
  */
 @SuppressWarnings("rawtypes")
-public interface Signature extends Serializable, Comparable, Arg {
+public interface Signature extends Serializable, Comparable, Dependency, Identifiable, Arg {
 
 	/**
 	 * Returns an operation name of this signature.
@@ -65,6 +66,13 @@ public interface Signature extends Serializable, Comparable, Arg {
 	 * @return name of service provider
 	 */
 	public String getProviderName();
+
+	/**
+	 * Returns a service provider.
+	 *
+	 * @return name of service provider
+	 */
+	public Object getProvider() throws SignatureException;
 
 	/**
 	 * Returns a provider of <code>Variability</code> type.
@@ -160,7 +168,8 @@ public interface Signature extends Serializable, Comparable, Arg {
 		static final long serialVersionUID = 6158097800741638834L;
 		public String path;
 		public Direction direction;
-		public String[] argPaths;
+		public String[] outPaths;
+        public String[] inPaths;
 		public Class<T> type;
 
 		public ReturnPath() {
@@ -168,17 +177,48 @@ public interface Signature extends Serializable, Comparable, Arg {
 			path = "self";
 		}
 
+        public ReturnPath(String path, From argPaths) {
+            this.path = path;
+            if (argPaths != null && argPaths.size() > 0) {
+                String[] ps = new String[argPaths.size()];
+                this.outPaths = argPaths.toArray(ps);
+                direction = Direction.OUT;
+            }
+        }
+
+        public ReturnPath(String path, In argPaths) {
+            this.path = path;
+            if (argPaths != null && argPaths.size() > 0) {
+                String[] ps = new String[argPaths.size()];
+                this.inPaths = argPaths.toArray(ps);
+                direction = Direction.IN;
+            }
+        }
+
+        public ReturnPath(String path, In inPaths, From outPaths) {
+            this.path = path;
+            if (outPaths != null && outPaths.size() > 0) {
+                String[] ps = new String[outPaths.size()];
+                this.outPaths = outPaths.toArray(ps);
+            }
+            if (inPaths != null && inPaths.size() > 0) {
+                String[] ps = new String[inPaths.size()];
+                this.inPaths = inPaths.toArray(ps);
+            }
+            direction = Direction.INOUT;
+        }
+        
 		public ReturnPath(String path, String... argPaths) {
 			this.path = path;
 			if (argPaths != null && argPaths.length > 0) {
-				this.argPaths = argPaths;
+				this.outPaths = argPaths;
 				direction = Direction.OUT;
 			}
 		}
 
 		public ReturnPath(String path, Direction direction, String... argPaths) {
 			this.path = path;
-			this.argPaths = argPaths;
+			this.outPaths = argPaths;
 			this.direction = direction;
 		}
 
@@ -186,7 +226,7 @@ public interface Signature extends Serializable, Comparable, Arg {
 				Class<T> returnType, String... argPaths) {
 			this.path = path;
 			this.direction = direction;
-			this.argPaths = argPaths;
+			this.outPaths = argPaths;
 			type = returnType;
 		}
 
@@ -196,10 +236,35 @@ public interface Signature extends Serializable, Comparable, Arg {
 
 		public String toString() {
 			String params = "";
-			if (argPaths != null)
-				params = " argPaths: " + Arrays.toString(argPaths);
+			if (outPaths != null)
+				params = " outPaths: " + Arrays.toString(outPaths);
 			return path + (direction != null ? " direction: " + direction : "")
 					+ params;
+		}
+
+		@Override
+		public boolean equals(Object o) {
+			if (this == o) return true;
+			if (o == null || getClass() != o.getClass()) return false;
+
+			ReturnPath that = (ReturnPath) o;
+
+			if (!Arrays.equals(outPaths, that.outPaths)) return false;
+			if (direction != that.direction) return false;
+			if (!path.equals(that.path)) return false;
+			if (type != null ? !type.equals(that.type) : that.type != null) return false;
+
+			return true;
+		}
+
+		@Override
+		public int hashCode() {
+			int result = path.hashCode();
+			result = 31 * result + (direction != null ? direction.hashCode() : 0);
+			result = 31 * result + (outPaths != null ? Arrays.hashCode(outPaths) : 0);
+            result = 31 * result + (inPaths != null ? Arrays.hashCode(outPaths) : 0);
+			result = 31 * result + (type != null ? type.hashCode() : 0);
+			return result;
 		}
 	}
 
@@ -212,7 +277,7 @@ public interface Signature extends Serializable, Comparable, Arg {
 	 * with any exertion. The <code>SRV</code> signature defines an executing
 	 * provider dynamically bounded at runtime. The <code>APD_DATA</code>
 	 * signatures are invoked invoked first to get specified contexts from
-	 * {@link sorcer.servoce.Contexter}s that are appended to the task's current
+	 * {@link sorcer.service.Contexter}s that are appended to the task's current
 	 * context.
 	 */
 	public enum Type implements Arg {
@@ -266,6 +331,42 @@ public interface Signature extends Serializable, Comparable, Arg {
 		}
 	};
 
+    public static class From extends ArrayList<String> {
+        private static final long serialVersionUID = 1L;
+
+        public From() {
+            super();
+        }
+
+        public From(String[] names) {
+            for (String name : names) {
+                add(name) ;
+            }
+        }
+
+        public From(int initialCapacity) {
+            super(initialCapacity);
+        }
+    }
+
+    public static class In extends ArrayList<String> {
+        private static final long serialVersionUID = 1L;
+
+        public In() {
+            super();
+        }
+
+        public In(String[] names) {
+            for (String name : names) {
+                add(name) ;
+            }
+        }
+
+        public In(int initialCapacity) {
+            super(initialCapacity);
+        }
+    }
+    
 	static final Type SRV = Type.SRV;
 	static final Type PRE = Type.PRE;
 	static final Type POST = Type.POST;

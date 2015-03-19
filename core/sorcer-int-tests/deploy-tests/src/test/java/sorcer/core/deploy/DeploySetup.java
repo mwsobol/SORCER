@@ -2,13 +2,10 @@ package sorcer.core.deploy;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.runner.RunWith;
 import org.rioproject.deploy.DeployAdmin;
 import org.rioproject.monitor.ProvisionMonitor;
 import org.rioproject.opstring.OperationalStringException;
 import org.rioproject.opstring.OperationalStringManager;
-import org.sorcer.test.ProjectContext;
-import org.sorcer.test.SorcerTestRunner;
 
 /**
  * Class

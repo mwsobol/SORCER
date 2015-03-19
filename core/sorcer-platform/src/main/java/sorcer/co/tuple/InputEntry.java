@@ -17,7 +17,7 @@
 package sorcer.co.tuple;
 
 import sorcer.service.Context;
-import sorcer.service.FidelityInfo;
+import sorcer.service.SelectionFidelity;
 
 public class InputEntry<T> extends FidelityEntry<T> {
 
@@ -34,7 +34,7 @@ public class InputEntry<T> extends FidelityEntry<T> {
 	}
 
 
-	public InputEntry(String path, FidelityInfo fidelity) {
+	public InputEntry(String path, SelectionFidelity fidelity) {
 		super(path, fidelity);
 	}
 }

@@ -1,0 +1,72 @@
+<?xml version="1.0"?>
+<project name="SORCER OS" default="run" basedir="">
+
+	<!-- load system environment variables -->
+	<property environment="env" />
+	<dirname file="${basedir}/../.." property="sorcer.basedir" />
+	<import file="${sorcer.basedir}/bin/common-run.xml" />
+
+	<property name="sorcer.data" value="${sorcer.home}/data" />
+
+	<target name="run" depends="clean">
+		<antcall target="kernel">
+			<param name="spawn" value="no" />
+		</antcall>
+	</target>
+
+	<target name="spawn" depends="clean">
+		<antcall target="kernel" >
+			<param name="spawn" value="yes" />
+		</antcall>
+	</target>
+
+	<target name="log-dir">
+		<mkdir dir="${basedir}/../logs" />
+	</target>
+
+	<target name="kernel" depends="log-dir">
+		<!--java jar="${lib}/sorcer-boot.jar" fork="yes"-->
+		<java classname="com.sun.jini.start.ServiceStarter" fork="yes" spawn="${spawn}">
+			<classpath>
+				<pathelement location="${lib}/river/start-${river.version}.jar"/>
+				<pathelement location="${sorcer.lib}/sorcer-boot-${sorcer.version}.jar"/>
+				<pathelement location="${rio.lib}/rio-platform-${rio.version}.jar" />
+				<pathelement location="${rio.lib}/rio-start-${rio.version}.jar" />
+				<pathelement location="${rio.lib}/logging/slf4j-jdk14-${slf4j.version}.jar" />
+			</classpath>
+			<env key="SORCER_HOME" value="${sorcer.home}"/>
+			<env key="RIO_HOME" value="${sorcer.home}/rio-${rio.version}"/>
+			<arg value="../configs/boot-sorcer-arv.config" />
+			<sysproperty key="sorcer.home" value="${sorcer.home}" />
+			<sysproperty key="sorcer.version" value="${sorcer.version}" />
+			<sysproperty key="river.version" value="${river.version}" />
+			<sysproperty key="blitz.version" value="${blitz.version}" />
+			<sysproperty key="je.version" value="${je.version}" />
+			<sysproperty key="rio.version" value="${rio.version}" />
+			<sysproperty key="rio.home" value="${sorcer.home}/rio-${rio.version}" />
+			<sysproperty key="sorcer.env.file" value="${sorcer.home}/configs/sorcer.env" />
+			<sysproperty key="java.rmi.server.useCodebaseOnly" value="false" />
+			<sysproperty key="java.security.policy" value="${sorcer.home}/policy/sorcer.policy" />
+			<sysproperty key="java.util.logging.config.file" value="${sorcer.home}/configs/sorcer.logging" />
+			<sysproperty key="webster.tmp.dir" value="${sorcer.data}" />
+			<jvmarg value="-Xms512m"/>
+			<jvmarg value="-Xmx1g"/>
+			<sysproperty key="java.protocol.handler.pkgs" value="net.jini.url|sorcer.util.url|org.rioproject.url" />
+			<sysproperty key="java.rmi.server.RMIClassLoaderSpi" value="org.rioproject.rmi.ResolvingLoader"/>
+			<!--sysproperty key=""webster.debug"" value="true" /-->
+			<!--sysproperty key="webster.port" value="60009" /-->
+			<!--jvmarg value="-Xdebug"/>
+        <jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,address=8000"/-->
+		</java>
+	</target>
+
+	<target name="clean" description="Deletes Blitz DB files">
+		<delete dir="${sorcer.home}/logs/dbfiles_blitz" failonerror="false" />
+		<delete dir="${sorcer.home}/logs/dbfiles_monitor" failonerror="false" />
+		<delete dir="${sorcer.home}/logs/slamonitor.sla_db" failonerror="false" />
+		<delete file="${sorcer.home}/bin/monitoredjobs_index.obf" failonerror="false" />
+		<delete file="${sorcer.home}/bin/monitoredjobs_temp.obf" failonerror="false" />
+		<delete file="${sorcer.home}/bin/monitoredjobs.obf" failonerror="false" />
+	</target>
+
+</project>

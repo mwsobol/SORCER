@@ -53,6 +53,8 @@ public interface CompoundExertion {
 	
 	public Exertion getChild(String childName);
 
+	public Exertion getComponentExertion(String path);
+	
 	public Context getComponentContext(String path) throws ContextException;
 
 	public void applyFidelityContext(FidelityContext fiContext) throws ExertionException;

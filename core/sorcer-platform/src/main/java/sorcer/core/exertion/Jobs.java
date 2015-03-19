@@ -127,7 +127,6 @@ public class Jobs implements SorcerConstants {
 		cc.setParentPath(sc.getParentPath());
 		cc.setParentID((sc.getParentID() == null) ? null : sc.getParentID());
 		cc.setSubject(sc.getSubjectPath(), sc.getSubjectValue());
-		cc.setCreationDate(sc.getCreationDate());
 		cc.setLastUpdateDate(sc.getLastUpdateDate());
 		cc.setDescription(sc.getDescription());
 		cc.setScopeCode(sc.getScope());

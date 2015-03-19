@@ -16,9 +16,6 @@
  */
 package sorcer.core.provider.rendezvous;
 
-import java.rmi.RemoteException;
-import java.util.logging.Logger;
-
 import net.jini.config.ConfigurationException;
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
@@ -27,12 +24,11 @@ import sorcer.core.provider.Concatenator;
 import sorcer.core.provider.Jobber;
 import sorcer.core.provider.Rendezvous;
 import sorcer.core.provider.Spacer;
-import sorcer.service.Block;
-import sorcer.service.Executor;
-import sorcer.service.Exertion;
-import sorcer.service.ExertionException;
-import sorcer.service.Job;
+import sorcer.service.*;
 import sorcer.service.Strategy.Access;
+
+import java.rmi.RemoteException;
+import java.util.logging.Logger;
 
 /**
  * ServiceJobber - The SORCER rendezvous service provider that provides
@@ -48,8 +44,9 @@ public class ServiceRendezvous extends RendezvousBean implements Rendezvous, Spa
 	public ServiceRendezvous() throws RemoteException {
 	}
 	
-	public Exertion execute(Exertion exertion, Transaction txn)
+	public Mogram execute(Mogram mogram, Transaction txn)
 			throws TransactionException, ExertionException, RemoteException {
+		Exertion exertion = (Exertion) mogram;
 		if (!isConfigured)
 			try {
 				configure();

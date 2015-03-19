@@ -11,7 +11,7 @@ import java.rmi.RemoteException;
 import java.util.logging.Logger;
 
 import static org.junit.Assert.assertEquals;
-import static sorcer.co.operator.from;
+import static sorcer.co.operator.outPaths;
 import static sorcer.eo.operator.*;
 import static sorcer.po.operator.invoke;
 
@@ -39,7 +39,7 @@ public class ParModelServices {
 	public void parObjectModelServiceTest() throws Exception {
 		ParModel pm = ParModelImpl.getParModel();
 		Task pmt = task(sig("invoke", pm),
-				context(result("invoke/result", from("expr"))));
+				context(result("invoke/result", outPaths("expr"))));
 
 		value(pmt);
 		logger.info("result: " + value(pmt));
@@ -54,7 +54,7 @@ public class ParModelServices {
 			ExertionException, SignatureException {
 		// the provider in ex6/bin parmodel-prv-run.xml
 		Task pmt = task(sig("invoke", Invocation.class, prvName("Arithmetic ParModel")),
-				context(result("invoke/result", from("expr"))));
+				context(result("invoke/result", outPaths("expr"))));
 
 		logger.info("result: " + value(pmt));
 		assertEquals(value(pmt), 60.0);

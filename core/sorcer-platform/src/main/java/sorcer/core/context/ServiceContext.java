@@ -35,6 +35,7 @@ import sorcer.core.invoker.ServiceInvoker;
 import sorcer.core.provider.Provider;
 import sorcer.core.provider.ServiceProvider;
 import sorcer.core.signature.NetSignature;
+import sorcer.eo.operator;
 import sorcer.security.util.SorcerPrincipal;
 import sorcer.service.*;
 import sorcer.service.Exec.State;
@@ -51,12 +52,14 @@ import java.util.*;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
+import static sorcer.eo.operator.sig;
+
 /**
  * Implements the base-level service context interface {@link Context}.
  */
 @SuppressWarnings({ "unchecked", "rawtypes"})
 public class ServiceContext<T> extends Hashtable<String, T> implements
-		Context<T>, AssociativeContext<T>, Evaluation<T>, Invocation<T>,
+		Context<T>, AssociativeContext<T>, Invocation<T>,
 		Contexter<T>, SorcerConstants {
 
 	private static final long serialVersionUID = 3311956866023311727L;
@@ -89,7 +92,7 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 	
 	protected String parameterTypesPath;
 
-	protected String targetPath;
+	protected List<String> responsePaths;
 
 	protected String parentPath = "";
 
@@ -99,7 +102,7 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 	// for data piping see: map. connect, pipe
 	protected boolean isShared = false;
 
-	protected String creationDate;
+	protected long creationTime;
 
 	protected String lastUpdateDate;
 
@@ -163,6 +166,8 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 	// dependency management for this Context
 	protected List<Evaluation> dependers = new ArrayList<Evaluation>();
 
+    protected Map<String, List<String>> dependentPaths;
+    
 	/**
 	 * For persistence layers to differentiate with saved context already
 	 * associated to task or not.
@@ -175,7 +180,7 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 
 	public static ContextAccessor cntxtAccessor;
 
-	/** EMPTY LEAF NODE ie. node with no data and not empty string */
+    /** EMPTY LEAF NODE ie. node with no data and not empty string */
 	public final static String EMPTY_LEAF = ":Empty";
 
 	// this class logger
@@ -193,6 +198,7 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 		name = defaultName + count++;
 		delPathIds = new Hashtable();
 		contextId = UuidFactory.generate();
+		creationTime = System.currentTimeMillis();
 	}
 
 	/**
@@ -230,7 +236,7 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 		Enumeration e = ((ServiceContext) cntxt).keys();
 		while (e.hasMoreElements()) {
 			path = (String) e.nextElement();
-			obj = cntxt.getValue(path);
+			obj = cntxt.get(path);
 			if (obj instanceof ContextLink
 					&& ((ContextLink) obj).isFetched())
 				updateLinkedContext((ContextLink) obj);
@@ -244,7 +250,7 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 		contextId = cntxt.getId();
 		parentPath = cntxt.getParentPath();
 		parentId = cntxt.getParentID();
-		creationDate = cntxt.getCreationDate();
+		creationTime = ((ServiceContext) cntxt).getCreationTime();
 		lastUpdateDate = cntxt.getLastUpdateDate();
 		description = cntxt.getDescription();
 		scopeCode = cntxt.getScope();
@@ -359,12 +365,8 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 		parentId = id;
 	}
 
-	public String getCreationDate() {
-		return creationDate;
-	}
-
-	public void setCreationDate(String date) {
-		creationDate = date;
+	public long getCreationTime() {
+		return creationTime;
 	}
 
 	public String getLastUpdateDate() {
@@ -512,8 +514,8 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 			try {
 				if (rp.path == null || rp.path.equals("self")) {
 					return (T) this;
-				} else if (rp.argPaths != null) {
-					 val = (T)getSubcontext(rp.argPaths);
+				} else if (rp.outPaths != null) {
+					 val = (T)getSubcontext(rp.outPaths);
 				} else {
 					if (rp.type != null) {
 						val = (T) rp.type.cast(getValue(rp.path));
@@ -1639,28 +1641,50 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 		return links.elements();
 	}
 
-	public Context getSubcontext() {
+    public ServiceContext getSubcontext(List<String> paths) throws ContextException {
+        ServiceContext subcntxt = (ServiceContext)getSubcontext();
+        for (String path : paths) {
+            try {
+                subcntxt.put(path, get(path));
+            } catch(Exception e) {
+
+            }
+        }
+        return subcntxt;
+    }
+    
+	public ServiceContext getSubcontext(String... paths) throws ContextException {
 		// bare-bones subcontext
-		Context subcntxt = new ServiceContext();
+        ServiceContext subcntxt = new ServiceContext();
 		subcntxt.setSubject(subjectPath, subjectValue);
 		subcntxt.setName(getName() + " subcontext");
 		subcntxt.setDomainID(getDomainID());
 		subcntxt.setSubdomainID(getSubdomainID());
+        if  (paths != null && paths.length > 0) {
+            for (String path : paths) {
+                subcntxt.put(path, get(path));
+            }
+        }
 		return subcntxt;
 	}
-
-	public Context getSubcontext(String[] paths) {
-		ServiceContext subcntxt = (ServiceContext)getSubcontext();
+    
+    public Context getEvaluatedSubcontext(String... paths) throws ContextException {
+        ServiceContext subcntxt = getSubcontext();
+        for (String path : paths) {
+            subcntxt.put(path, getValue(path));
+        }
+        return subcntxt;
+    }
+    
+	public Context getMergedSubcontext(List<String> paths, Arg... args) throws ContextException {
+		ServiceContext subcntxt = getSubcontext();
+        Object val = null;
 		for (String path : paths) {
-			subcntxt.put(path, get(path));
-		}
-		return subcntxt;
-	}
-
-	public Context getSubcontext(List<String> paths) {
-		ServiceContext subcntxt = (ServiceContext)getSubcontext();
-		for (String path : paths) {
-			subcntxt.put(path, get(path));
+            val = getValue(path, args);
+            if (getValue(path) instanceof Context)
+                subcntxt.append((Context) val);
+            else
+			    subcntxt.put(path, getValue(path, args));
 		}
 		return subcntxt;
 	}
@@ -2210,26 +2234,29 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 		parameterTypesPath = targetPath;
 		return this;
 	}
-	
-	public Object getTarget() throws ContextException {
-		try {
-			return getValue(targetPath);
-		} catch (Exception e) {
-			throw new ContextException(e);
-		}
-	}
 
-	public ServiceContext setTarget(Object target) throws ContextException {
-		putValue(targetPath, (T)target);
+	public Context addResponsePath(String path) {
+		if (responsePaths == null)
+			responsePaths = new ArrayList<String>();
+		if (!responsePaths.contains(path))
+			responsePaths.add(path);
+		return this;
+	}
+    
+	
+	public ServiceContext setResponse(String path, Object target) throws ContextException {
+		if (!responsePaths.contains(path))
+			throw new ContextException("no such response: " + path);
+		putValue(path, (T) target);
 		return this;
 	}
 
-	public String getTargetPath() {
-		return targetPath;
+	public List<String> getResponsePaths() {
+		return responsePaths;
 	}
 
-	public ServiceContext setTargetPath(String targetPath) {
-		this.targetPath = targetPath;
+	public ServiceContext setResponsePaths(List<String> responsePaths) {
+		this.responsePaths = responsePaths;
 		return this;
 	}
 
@@ -2577,7 +2604,7 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 		return values.elements();
 	}
 
-	public String getNodeType(Object obj) throws ContextException {
+    public String getNodeType(Object obj) throws ContextException {
 		// deprecated. If this object appears in the context more
 		// than once, there is no guarantee that the correct context
 		// type will be returned. Best not to have an orphaned
@@ -2888,12 +2915,6 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 		return new Par(path, this);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see sorcer.service.Evaluation#getValue(sorcer.core.context.Path.Entry[])
-	 */
-	@Override
 	public T getValue(Arg... entries) throws EvaluationException, RemoteException {
 		try {
 			return getValue(null, entries);
@@ -2919,8 +2940,12 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 		try {
 			substitute(entries);
 			if (currentPath == null) {
-				if (targetPath != null)
-					currentPath = targetPath;
+				if (responsePaths != null) { 
+					if (responsePaths.size() == 1)
+						currentPath = responsePaths.get(0);
+					else 
+						return (T) getResponses();
+				}
 				else if (returnPath != null)
 					return getReturnValue(entries);
 				else
@@ -2956,7 +2981,59 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 //			throw new EvaluationException(e);
 		}
 	}
-	
+
+    @Override
+    public Context getInputs() throws ContextException, RemoteException {
+        List<String> paths = Contexts.getInPaths(this);
+        Context<T> inputs = new ServiceContext();
+        for (String path : paths)
+            inputs.putValue(path, getValue(path));
+
+        return inputs;
+    }
+
+    @Override
+    public Context getOutputs() throws ContextException, RemoteException {
+        List<String> paths = Contexts.getOutPaths(this);
+        Context<T> inputs = new ServiceContext();
+        for (String path : paths)
+            inputs.putValue(path, getValue(path));
+
+        return inputs;
+    }
+
+    @Override
+    public Object getResponse(String path, Arg... entries) throws ContextException, RemoteException {
+        return getValue(path, entries);
+    }
+
+    public String getResponsePath() throws ContextException {
+        if (responsePaths != null && responsePaths.size() == 1)
+            return responsePaths.get(0);
+        else
+            throw new ContextException("No valid unique response available");
+    }
+    
+    public T getResponse(Arg... entries) throws ContextException, RemoteException {
+        try {
+            if (responsePaths != null && responsePaths.size() == 1)
+                return getValue(responsePaths.get(0), entries);
+            else 
+                throw new ContextException("No valid unique response available");
+        } catch (Exception e) {
+            throw new ContextException(e);
+        }
+    }
+    
+    @Override
+    public Context getResponses(Arg... args) throws ContextException, RemoteException {
+        return getMergedSubcontext(responsePaths, args);
+    } 
+    
+    public Context getResponses(String path, String... paths) throws ContextException, RemoteException {
+        return getMergedSubcontext(Arrays.asList(paths));
+    }
+    
 	public String getCurrentSelector() {
 		return currentSelector;
 	}
@@ -2973,16 +3050,6 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 		this.currentPrefix = currentPrefix;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see sorcer.service.Evaluation#getAsIs()
-	 */
-	@Override
-	public T asis() throws EvaluationException, RemoteException {
-		return getValue();
-	}
-
 	/* (non-Javadoc)
 	 * @see sorcer.service.Context#getData()
 	 */
@@ -2991,7 +3058,8 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 		// to reimplemented in subclasses
 		return null;
 	}
-  public String getPrefix() {
+    
+    public String getPrefix() {
         if (prefix != null && prefix.length() > 0)
             return prefix + CPS;
         else
@@ -3181,6 +3249,10 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 		}
 	}
 
+	public String getOwnerId() {
+		return ownerId;
+	}
+	
 	public Context getBlockScope() {
 		return blockScope;
 	}
@@ -3189,27 +3261,52 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 		this.blockScope = blockScope;
 	}
 
+
+	@Override
+	public <T extends Mogram> T exert(Transaction txn, Arg... entries) throws TransactionException,
+			ExertionException, RemoteException {
+		Signature signature = null;
+		try {
+			if (subjectValue instanceof Class) {
+				signature = sig(subjectPath, subjectValue);
+				return operator.exertion(name, signature, this).exert(txn, entries);
+			} else {
+				// evaluates model targets - responses
+				getValue(entries);
+				return (T) this;
+			}
+		} catch (Exception e) {
+			throw new ExertionException(e);
+		}
+	}
+
+	@Override
+	public <T extends Mogram> T exert(Arg... entries) throws TransactionException,
+			ExertionException, RemoteException {
+		return exert(null, entries);
+	}
+	
 	/* (non-Javadoc)
 	 * @see sorcer.service.Service#service(sorcer.service.Exertion, net.jini.core.transaction.Transaction)
 	 */
 	@Override
-	public Exertion service(Exertion exertion, Transaction txn)
-			throws TransactionException, ExertionException, RemoteException {
+	public <T extends Mogram> T service(T mogram, Transaction txn) throws TransactionException, 
+			ExertionException, RemoteException {
 		try {
 			((ServiceExertion)exertion).getContext().appendContext(this);
 		} catch (Exception e) {
 			throw new ExertionException(e);
 		}
-		return exertion.exert(txn);
+		return (T) exertion.exert(txn);
 	}
 
 	/* (non-Javadoc)
 	 * @see sorcer.service.Service#service(sorcer.service.Exertion)
 	 */
 	@Override
-	public Exertion service(Exertion exertion) throws TransactionException,
+	public <T extends Mogram> T service(T mogram) throws TransactionException, 
 			ExertionException, RemoteException {
-		return service(exertion, null);
+		return (T) service(exertion, null);
 	}
 
 	@Override
@@ -3218,20 +3315,12 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 		return Contexts.getMarkedPaths(this, association);
 	}
 
-	@Override
-	public Evaluation addDepender(Evaluation depender) {
-		if (this.dependers == null)
-			this.dependers = new ArrayList<Evaluation>();
-		dependers.add(depender);
-		return this;
-	}
-
-	public Evaluation addDependers(Evaluation... dependers) {
+    @Override
+    public void addDependers(Evaluation... dependers) {
 		if (this.dependers == null)
 			this.dependers = new ArrayList<Evaluation>();
 		for (Evaluation depender : dependers)
 			this.dependers.add(depender);
-		return this;
 	}
 
 	@Override
@@ -3265,4 +3354,11 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 		}
 		return true;
 	}
+
+    public Map<String, List<String>> getDependentPaths() {
+        if (dependentPaths == null) {
+            dependentPaths = new HashMap<String, List<String>>();
+        }
+        return dependentPaths;
+    }
 }

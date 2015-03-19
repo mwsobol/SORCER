@@ -16,7 +16,9 @@
 
 apply plugin: StopMePlugin
 
-task bootme(type: BootMe)
+task bootme(type: BootMe) {
+    description = "Starts a provider from this project."
+}
 
 class BootMe extends DefaultTask {
     @InputFile
@@ -29,7 +31,10 @@ class BootMe extends DefaultTask {
     @TaskAction
     def bootMe() {
         StringBuilder java = new StringBuilder()
-        java.append(System.getProperty('java.home')).append("/bin/java")
+        if (System.getProperty("os.name").startsWith("Windows"))
+            java.append("java")
+        else
+            java.append(System.getProperty('java.home')).append("/bin/java")
 
         def args = []
         if (System.getProperty("os.name").startsWith("Windows")) {
@@ -40,8 +45,12 @@ class BootMe extends DefaultTask {
         args << "-cp"
         args << project.bootClassPath.getAsPath()
         args << "-Dproject.id=${project.name}"
-        args << "-Djava.protocol.handler.pkgs=net.jini.url|sorcer.util.url|org.rioproject.url"
-        args << "-Djava.util.logging.config.file=${project.sorcerDistHome}/configs/sorcer.logging"
+        args << '-Djava.protocol.handler.pkgs="net.jini.url|sorcer.util.url|org.rioproject.url"'
+        // use distribution or project specific java.util.logging.config.file
+        if (System.getProperty("java.util.logging.config.file") != null)
+            args << "-Djava.util.logging.config.file=${System.getProperty("java.util.logging.config.file")}"
+        else
+            args << "-Djava.util.logging.config.file=${project.sorcerDistHome}/configs/sorcer.logging"
         args << "-Djava.security.policy=${project.sorcerDistHome}/policy/policy.all"
         args << "-Djava.rmi.server.useCodebaseOnly=false"
         args << "-Driver.version=${project.riverVersion}"
@@ -55,16 +64,23 @@ class BootMe extends DefaultTask {
         args << "com.sun.jini.start.ServiceStarter"
         args << "${starterConfig.path}"
 
-        project.logger.info "Args: ${args.toString()}"
-
+        if(project.logger.isInfoEnabled()) {
+            StringBuilder sb = new StringBuilder()
+            for(String arg : args) {
+                if(sb.length()>0)
+                    sb.append(" ")
+                sb.append(arg)
+            }
+            project.logger.info "\nCommand line\n=================\n${sb.toString()}\n"
+        }
         ProcessBuilder pb = new ProcessBuilder(args as String[])
         Map<String, String> env = pb.environment()
         env.put("SORCER_HOME", "${project.sorcerDistHome}")
         env.put("RIO_HOME", "${project.rioHome}")
 
         Process process = pb.start()
-        process.consumeProcessOutput(System.out, System.err)
         if (!spawn) {
+            process.consumeProcessOutput(System.out, System.err)
             process.waitFor()
         } else {
             process.in.close()
@@ -77,21 +93,24 @@ class BootMe extends DefaultTask {
 class StopMePlugin implements Plugin<Project> {
 
     void apply(Project project) {
-        project.task('stopme') << {
-            def pids = []
-            "jps -v".execute().text.eachLine { line ->
-                if (line.contains("${project.name}")) {
-                    pids << line.split()[0]
+        project.task('stopme') {
+            description = 'Stops a provider booted from this project.)'
+            doLast {
+                def pids = []
+                "jps -v".execute().text.eachLine { line ->
+                    if (line.contains("project.id=${project.name}")) {
+                        pids << line.split()[0]
+                    }
                 }
-            }
-            String command
-            if (System.getProperty("os.name").startsWith("Windows")) {
-                command = "taskkill /f /pid "
-            } else {
-                command = "kill "
-            }
-            pids.each { pid ->
-                "$command $pid".execute().waitFor()
+                String command
+                if (System.getProperty("os.name").startsWith("Windows")) {
+                    command = "taskkill /f /pid "
+                } else {
+                    command = "kill "
+                }
+                pids.each { pid ->
+                    "$command $pid".execute().waitFor()
+                }
             }
         }
     }

@@ -18,6 +18,7 @@
 package sorcer.service;
 
 import net.jini.core.transaction.Transaction;
+import net.jini.core.transaction.TransactionException;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.exertion.NetTask;
 import sorcer.core.exertion.ObjectTask;
@@ -212,7 +213,7 @@ public class Task extends ServiceExertion {
 			return delegate.toString();
 		}
 		StringBuilder sb = new StringBuilder(
-				"\n=== START PRINTNIG TASK ===\nExertion Description: "
+				"\n=== START PRINTING TASK ===\nExertion Description: "
 						+ getClass().getName() + ":" + name);
 		sb.append("\n\tstatus: ").append(getStatus());
 		sb.append(", task ID=");

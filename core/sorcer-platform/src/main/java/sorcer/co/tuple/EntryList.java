@@ -17,14 +17,14 @@
 
 package sorcer.co.tuple;
 
+import sorcer.core.context.model.par.Par;
+import sorcer.core.context.model.par.ParSet;
+import sorcer.service.EvaluationException;
+
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-
-import sorcer.core.context.model.par.Par;
-import sorcer.core.context.model.par.ParSet;
-import sorcer.service.EvaluationException;
 
 /**
  * @author Mike Sobolewski
@@ -40,6 +40,8 @@ public class EntryList extends ArrayList<Entry> {
 	
 	private Type type = Type.INPUT;
 	
+	private String name;
+	
 	public EntryList() {
 		super();
 	}
@@ -51,6 +53,11 @@ public class EntryList extends ArrayList<Entry> {
 	public EntryList(Set<Entry> entrySet) {
 		addAll(entrySet);
 	}
+
+	public EntryList(String name, Entry...  entryLists) {
+		this(entryLists);
+		this.name = name;
+	}
 	
 	public EntryList(EntryList...  entryLists) {
 		super();
@@ -59,7 +66,7 @@ public class EntryList extends ArrayList<Entry> {
 		}
 	}
 	
-	public EntryList(Entry[] entryArray) {
+	public EntryList(Entry... entryArray) {
 		super();
 		for (Entry e : entryArray) {
 			add(e);
@@ -161,7 +168,15 @@ public class EntryList extends ArrayList<Entry> {
 		 }
 		return sb.toString();
 	}
-	
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
 	public Type getType() {
 		return type;
 	}

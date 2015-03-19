@@ -16,14 +16,10 @@
  */
 package sorcer.po;
 
-import sorcer.co.tuple.Entry;
-import sorcer.co.tuple.ExecPath;
-import sorcer.co.tuple.InputEntry;
-import sorcer.co.tuple.Tuple2;
+import sorcer.co.tuple.*;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.par.Agent;
 import sorcer.core.context.model.par.Par;
-import sorcer.core.context.model.par.ParFidelity;
 import sorcer.core.context.model.par.ParModel;
 import sorcer.core.invoker.*;
 import sorcer.service.*;
@@ -100,17 +96,17 @@ public class operator {
 		parameter.setScope(pm);
 		return parameter;
 	}
-	
-	public static ParFidelity parFi(String name, Entry... entries) {
-		return new ParFidelity(name, entries);
+
+	public static EntryList parFi(String name, Entry... entries) {
+		return new EntryList(name, entries);
 	}
-	
-	public static ParFidelity parFi(Entry... entries) {
-		return new ParFidelity(entries);
+
+	public static EntryList parFi(Entry... entries) {
+		return new EntryList(entries);
 	}
-	
-	public static FidelityInfo parFi(String name) {
-		return new FidelityInfo(name);
+
+	public static SelectionFidelity parFi(String name) {
+		return new SelectionFidelity(name);
 	}
 	
 	public static Entry parFi(Par par) {
@@ -132,11 +128,6 @@ public class operator {
 		if (obj instanceof Par)
 			obj = ((Par)obj).getValue(parametrs);
 		return (T)obj;
-	}
-	
-	public static Object asis(ParModel pm, String parname)
-			throws ContextException {
-		return pm.asis(parname);
 	}
 		
 	public static Invocation invoker(Mappable mappable, String path)

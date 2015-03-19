@@ -21,16 +21,14 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.StringTokenizer;
+import java.util.*;
 
 import net.jini.admin.Administrable;
 import net.jini.admin.JoinAdmin;
 import net.jini.core.lookup.ServiceRegistrar;
 import sorcer.tools.shell.NetworkShell;
 import sorcer.tools.shell.ShellCmd;
+import sorcer.util.WhitespaceTokenizer;
 
 public class DiscoCmd extends ShellCmd {
 
@@ -47,7 +45,7 @@ public class DiscoCmd extends ShellCmd {
 			+ "\n\t-x   clear the selected registrar and start discovery";
 	}
 
-	static private ArrayList<ServiceRegistrar> registrars;
+	static private List<ServiceRegistrar> registrars;
 	static int selectedRegistrar = 0;
 	static private PrintStream out;
 
@@ -56,11 +54,10 @@ public class DiscoCmd extends ShellCmd {
 
 	public void execute() throws IOException, ClassNotFoundException {
 		// create a clone of list - command may modify it
-		registrars = (ArrayList<ServiceRegistrar>) NetworkShell.getRegistrars()
-				.clone();
+		registrars = new ArrayList<ServiceRegistrar>(NetworkShell.getRegistrars());
 		// out.println("registrars: " + registrars);
 		out = NetworkShell.getShellOutputStream();
-		StringTokenizer myTk = NetworkShell.getShellTokenizer();
+		WhitespaceTokenizer myTk = NetworkShell.getShellTokenizer();
 		int numTokens = myTk.countTokens();
 		int index = 0;
 		String next = null;

@@ -1,26 +1,66 @@
 #!/usr/bin/env groovy
 /*
- * Distribution Statement
+ * Copyright to the original author or authors.
  *
- * This computer software has been developed under sponsorship of the United States Air Force Research Lab. Any further
- * distribution or use by anyone or any data contained therein, unless otherwise specifically provided for,
- * is prohibited without the written approval of AFRL/RQVC-MSTC, 2210 8th Street Bldg 146, Room 218, WPAFB, OH  45433
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Disclaimer
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * This material was prepared as an account of work sponsored by an agency of the United States Government. Neither
- * the United States Government nor the United States Air Force, nor any of their employees, makes any warranty,
- * express or implied, or assumes any legal liability or responsibility for the accuracy, completeness, or usefulness
- * of any information, apparatus, product, or process disclosed, or represents that its use would not infringe privately
- * owned rights.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 /*
  * Starts a Webster serving up Sorcer distribution content
  */
 
+/*
+ * Get the local Maven repository
+ */
+def getLocalRepository() {
+    File repoDir
+    String localRepository = null
+    File defaultM2Home = new File(System.getProperty("user.home")+File.separator+".m2")
+    File settingsFile = new File(defaultM2Home, "settings.xml")
+    if(settingsFile.exists()) {
+        def settings = new XmlSlurper().parse(settingsFile)
+        localRepository = settings.localRepository
+    }
+    if(localRepository==null || localRepository.length()==0) {
+        repoDir = new File(defaultM2Home, "repository")
+    } else {
+        repoDir = new File(localRepository)
+    }
+    repoDir.path
+}
+
 String scriptDir = new File(getClass().protectionDomain.codeSource.location.path).parent
-def config = new ConfigSlurper().parse(new File(scriptDir, "../configs/websterConfig.groovy").toURI().toURL())
+String sorcerHome = new File(scriptDir).parentFile.parentFile.parentFile.path
+println "SORCER_HOME: ${sorcerHome}"
+
+/* Load versions.properties */
+def versions = new Properties()
+new File(sorcerHome, "configs/versions.properties").withReader { reader ->
+    versions.load(reader)
+}
+
+/* Load sorcer.env */
+def sorcerEnv = new Properties()
+new File(sorcerHome, "configs/sorcer.env").withReader { reader ->
+    sorcerEnv.load(reader)
+}
+
+def configSlurper = new ConfigSlurper()
+configSlurper.setBinding("sorcerHome" : sorcerHome,
+                         "rioVersion" : versions['rio.version'],
+                         "m2Repo" : getLocalRepository())
+
+def config = configSlurper.parse(new File(scriptDir, "../configs/websterConfig.groovy").toURI().toURL())
 boolean spawn = config.webster.spawn
 StringBuilder java = new StringBuilder()
 java.append(System.getProperty('java.home')).append("/bin/java")
@@ -32,7 +72,7 @@ if (System.getProperty("os.name").startsWith("Windows")) {
 }
 
 StringBuilder websterRoots = new StringBuilder()
-config.webster.roots.each { root->
+config.webster.roots.each { root ->
     if(websterRoots.length()>0)
         websterRoots.append(";")
     websterRoots.append(root)
@@ -40,36 +80,36 @@ config.webster.roots.each { root->
 args << java.toString()
 
 ["java.protocol.handler.pkgs": "net.jini.url|sorcer.util.url|org.rioproject.url",
- "java.security.policy" : "${config.paths.sorcerHome}/policy/policy.all",
+ "java.security.policy" : "${sorcerHome}/policy/policy.all",
  "java.rmi.server.useCodebaseOnly" : "false",
  "webster.debug" : "true",
- "webster.port" : "${config.webster.port}",
+ "webster.port" : "${sorcerEnv['provider.webster.port']}",
  "webster.interface" : "${config.webster.address}",
- "webster.tmp.dir" : "${config.paths.sorcerHome}/data",
+ "webster.tmp.dir" : "${sorcerHome}/data",
  "webster.root" : "${websterRoots.toString()}"
 ].each { key, value ->
     args << "-D${key}=${value}"
 }
 args << "-Xmx450M"
 args << "-jar"
-args << "${config.paths.sorcerHome}/lib/sorcer/lib-ext/webster-${config.versions.sorcer}.jar"
+args << "${sorcerHome}/lib/sorcer/lib-ext/webster-${versions['sorcer.version']}.jar"
 
 ProcessBuilder pb = new ProcessBuilder(args as String[])
 Map<String, String> env = pb.environment()
-env.put("SORCER_HOME", "${config.paths.sorcerHome}")
-env.put("RIO_HOME", "${config.paths.sorcerHome}/rio-${config.versions.rio}")
+env.put("SORCER_HOME", "${sorcerHome}")
+env.put("RIO_HOME", "${sorcerHome}/rio-${versions['rio.version']}")
 
 Process process = pb.start()
 if (!spawn) {
     process.consumeProcessOutput(System.out, System.err)
     process.waitFor()
 } else {
-    println "tempDir: ${config.paths.sorcerHome}/data"
+    println "tempDir: ${sorcerHome}/data"
     int rootNum = 0
     config.webster.roots.each { root ->
         println "Root ${rootNum++} = $root"
     }
-    println "Webster serving on : ${config.webster.address}:${config.webster.port}"
+    println "Webster serving on : ${config.webster.address}:${sorcerEnv['provider.webster.port']}"
     process.in.close()
     process.out.close()
     process.err.close()

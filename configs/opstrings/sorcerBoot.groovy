@@ -15,7 +15,7 @@
  */
 
 /**
- * Deployment configuration for iGrid
+ * Deployment configuration for Sorcer
  *
  * @author Dennis Reedy
  */
@@ -31,9 +31,9 @@ class Sorcer {
     static String blitzVersion = versionProps.getProperty("blitz.version")
 
     static getSorcerHome() {
-        String sorcerHome = System.getProperty("SORCER_HOME", System.getenv("SORCER_HOME"))
+        String sorcerHome = System.getProperty("sorcer.home", System.getenv("SORCER_HOME"))
         if(sorcerHome==null) {
-            throw new RuntimeException("SORCER_HOME must be set")
+            throw new RuntimeException("The system property sorcer.home must be set, or the environment SORCER_HOME set")
         }
         sorcerHome
     }
@@ -71,7 +71,8 @@ deployment(name: "Sorcer OS") {
     service(name: SorcerEnv.getActualName('Transaction Manager')) {
         interfaces {
             classes 'net.jini.core.transaction.server.TransactionManager'
-            resources "mahalo-dl-${Sorcer.riverVersion}.jar", "jsk-dl-${Sorcer.riverVersion}.jar"
+            resources "mahalo-dl-${Sorcer.riverVersion}.jar",
+                      "jsk-dl-${Sorcer.riverVersion}.jar"
         }
         implementation(class: 'com.sun.jini.mahalo.TransientMahaloImpl') {
             resources "mahalo-${Sorcer.riverVersion}.jar"
@@ -86,7 +87,10 @@ deployment(name: "Sorcer OS") {
             resources "blitz-dl-${Sorcer.blitzVersion}.jar", "blitzui-${Sorcer.blitzVersion}.jar"
         }
         implementation(class: 'org.dancres.blitz.remote.BlitzServiceImpl') {
-            resources "blitz-${Sorcer.blitzVersion}.jar", "blitzui-${Sorcer.blitzVersion}.jar", "serviceui-${Sorcer.riverVersion}.jar", "outrigger-dl-${Sorcer.riverVersion}.jar"
+            resources "blitz-${Sorcer.blitzVersion}.jar",
+                      "blitzui-${Sorcer.blitzVersion}.jar",
+                      "serviceui-${Sorcer.riverVersion}.jar",
+                      "outrigger-dl-${Sorcer.riverVersion}.jar"
         }
         configuration new File("${Sorcer.sorcerHome}/bin/blitz/configs/blitz.config").text
         maintain 1
@@ -100,7 +104,8 @@ deployment(name: "Sorcer OS") {
             resources appendJars(["sorcer-ui-${Sorcer.sorcerVersion}.jar"])
         }
         implementation(class: "sorcer.core.provider.ServiceProvider") {
-            resources "sorcer-lib-${Sorcer.sorcerVersion}.jar", "rio-api-${RioVersion.VERSION}.jar"
+            resources "sorcer-lib-${Sorcer.sorcerVersion}.jar",
+                      "rio-api-${RioVersion.VERSION}.jar"
         }
         configuration new File("${Sorcer.sorcerHome}/bin/sorcer/rendezvous/configs/all-rendezvous-prv.config").text
         maintain 1
@@ -112,59 +117,69 @@ deployment(name: "Sorcer OS") {
             resources appendJars(["sorcer-ui-${Sorcer.sorcerVersion}.jar"])
         }
         implementation(class: 'sorcer.core.provider.cataloger.ServiceCataloger') {
-            resources "sos-cataloger-${Sorcer.sorcerVersion}.jar", "sorcer-lib-${Sorcer.sorcerVersion}.jar"
+            resources "sos-cataloger-${Sorcer.sorcerVersion}.jar",
+                      "sorcer-lib-${Sorcer.sorcerVersion}.jar"
         }
         configuration new File("${Sorcer.sorcerHome}/bin/sorcer/cataloger/configs/cataloger-prv.config").text
         maintain 1
     }
 
-    service(name: SorcerEnv.getActualName("Logger")) {
-        interfaces {
-            classes 'sorcer.core.provider.RemoteLogger'
-            resources appendJars(["sos-logger-${Sorcer.sorcerVersion}-ui.jar", "sorcer-ui-${Sorcer.sorcerVersion}.jar"])
-        }
-        implementation(class: 'sorcer.core.provider.logger.ServiceLogger') {
-            resources "sos-logger-${Sorcer.sorcerVersion}.jar", "sorcer-lib-${Sorcer.sorcerVersion}.jar"
-        }
-        configuration new File("${Sorcer.sorcerHome}/bin/sorcer/logger/configs/logger-prv.config").text
-        maintain 1
-    }
+    if(System.getenv('sorcer.start.all')!=null) {
 
-    service(name: SorcerEnv.getActualName("Exert Monitor"), fork:getForkMode(), jvmArgs:"-Dsorcer.home=${Sorcer.sorcerHome}") {
-        interfaces {
-            classes 'sorcer.core.provider.MonitoringManagement'
-            resources appendJars(["sorcer-ui-${Sorcer.sorcerVersion}.jar"])
+        service(name: SorcerEnv.getActualName("Logger")) {
+            interfaces {
+                classes 'sorcer.core.provider.RemoteLogger'
+                resources appendJars(["sos-logger-${Sorcer.sorcerVersion}-ui.jar",
+                                      "sorcer-ui-${Sorcer.sorcerVersion}.jar"])
+            }
+            implementation(class: 'sorcer.core.provider.logger.ServiceLogger') {
+                resources "sos-logger-${Sorcer.sorcerVersion}.jar",
+                          "sorcer-lib-${Sorcer.sorcerVersion}.jar"
+            }
+            configuration new File("${Sorcer.sorcerHome}/bin/sorcer/logger/configs/logger-prv.config").text
+            maintain 1
         }
-        implementation(class: 'sorcer.core.provider.exertmonitor.ExertMonitor') {
-            resources "sos-exertmonitor-${Sorcer.sorcerVersion}.jar", "sorcer-lib-${Sorcer.sorcerVersion}.jar"
+
+        service(name: SorcerEnv.getActualName("Exert Monitor"), fork: getForkMode(), jvmArgs: "-Dsorcer.home=${Sorcer.sorcerHome}") {
+            interfaces {
+                classes 'sorcer.core.provider.MonitoringManagement'
+                resources appendJars(["sorcer-ui-${Sorcer.sorcerVersion}.jar"])
+            }
+            implementation(class: 'sorcer.core.provider.exertmonitor.ExertMonitor') {
+                resources "sos-exertmonitor-${Sorcer.sorcerVersion}.jar",
+                          "sorcer-lib-${Sorcer.sorcerVersion}.jar"
+            }
+            configuration new File("${Sorcer.sorcerHome}/bin/sorcer/exertmonitor/configs/exertmonitor-prv.config").text
+            maintain 1
         }
-        configuration new File("${Sorcer.sorcerHome}/bin/sorcer/exertmonitor/configs/exertmonitor-prv.config").text
-        maintain 1
-    }
-    
-    service(name: SorcerEnv.getActualName("Exerter")) {
-        interfaces {
-            classes 'sorcer.core.provider.Exerter'
-            resources appendJars(["sorcer-ui-${Sorcer.sorcerVersion}.jar"])
+
+        service(name: SorcerEnv.getActualName("Exerter")) {
+            interfaces {
+                classes 'sorcer.core.provider.Exerter'
+                resources appendJars(["sorcer-ui-${Sorcer.sorcerVersion}.jar"])
+            }
+            implementation(class: 'sorcer.core.provider.ServiceTasker') {
+                resources "sorcer-lib-${Sorcer.sorcerVersion}.jar",
+                          "rio-api-${RioVersion.VERSION}.jar"
+            }
+            configuration new File("${Sorcer.sorcerHome}/bin/sorcer/exerter/configs/exerter-prv.config").text
+            maintain 1
         }
-        implementation(class: 'sorcer.core.provider.ServiceTasker') {
-            resources  "sorcer-lib-${Sorcer.sorcerVersion}.jar", "rio-api-${RioVersion.VERSION}.jar"
+
+        service(name: SorcerEnv.getActualName("Database Storage"),
+                fork: getForkMode(),
+                jvmArgs: "-Dsorcer.home=${Sorcer.sorcerHome} -Xmx1G") {
+            interfaces {
+                classes 'sorcer.core.provider.DatabaseStorer'
+                resources appendJars(["sorcer-ui-${Sorcer.sorcerVersion}.jar"])
+            }
+            implementation(class: 'sorcer.core.provider.dbp.DatabaseProvider') {
+                resources "sos-db-prv-${Sorcer.sorcerVersion}.jar",
+                          "sorcer-lib-${Sorcer.sorcerVersion}.jar",
+                          "rio-api-${RioVersion.VERSION}.jar"
+            }
+            configuration new File("${Sorcer.sorcerHome}/bin/sorcer/dbp/configs/dbp-prv.config").text
+            maintain 1
         }
-        configuration new File("${Sorcer.sorcerHome}/bin/sorcer/exerter/configs/exerter-prv.config").text
-        maintain 1
-    }
-    
-    service(name: SorcerEnv.getActualName("Database Storage"),
-            fork:getForkMode(),
-            jvmArgs:"-Dsorcer.home=${Sorcer.sorcerHome} -Xmx1G") {
-        interfaces {
-            classes 'sorcer.core.provider.DatabaseStorer'
-            resources appendJars(["sorcer-ui-${Sorcer.sorcerVersion}.jar"])
-        }
-        implementation(class: 'sorcer.core.provider.dbp.DatabaseProvider') {
-            resources "sos-db-prv-${Sorcer.sorcerVersion}.jar", "sorcer-lib-${Sorcer.sorcerVersion}.jar", "rio-api-${RioVersion.VERSION}.jar"
-        }
-        configuration new File("${Sorcer.sorcerHome}/bin/sorcer/dbp/configs/dbp-prv.config").text
-        maintain 1
     }
 }

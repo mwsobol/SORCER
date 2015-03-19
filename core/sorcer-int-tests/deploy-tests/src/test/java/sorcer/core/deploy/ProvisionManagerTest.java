@@ -40,7 +40,7 @@ import static org.junit.Assert.assertTrue;
 @ProjectContext("core/sorcer-int-tests/deploy-tests")
 public class ProvisionManagerTest extends DeploySetup {
 
-    //@Test
+    @Test
     public void testDeploy() throws Exception {
         banner("testDeploy");
         Job f1 = JobUtil.createJob();
@@ -72,7 +72,14 @@ public class ProvisionManagerTest extends DeploySetup {
             assertTrue(future.get());
         }
         List<String> deployed = provisionManager.getDeploymentNames();
-        assertTrue("Deployed size: "+deployed.size()+", expected 2", deployed.size()==2);
+        StringBuilder sb = new StringBuilder();
+        int i=1;
+        for(String d : deployed) {
+            if(sb.length()>0)
+                sb.append("\n");
+            sb.append("[").append(i++).append("] ").append(d);
+        }
+        assertTrue("Deployed size: "+deployed.size()+", expected 2\n"+sb.toString(), deployed.size()==2);
         provisionManager.undeploy();
         assertFalse(provisionManager.getDeployAdmin().hasDeployed(deployed.get(0)));
         assertFalse(provisionManager.getDeployAdmin().hasDeployed(deployed.get(1)));

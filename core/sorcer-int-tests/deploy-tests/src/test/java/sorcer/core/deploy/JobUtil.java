@@ -42,7 +42,7 @@ public class JobUtil {
                            Multiplier.class,
                            deploy(configuration(fork?
                                                 getConfigDir()+"/multiplier-prv-fork.config":
-                                                getConfigDir()+"/multiplier-prv.config"),
+                                                "org.sorcer:deploy-tests:config:"+System.getProperty("sorcer.version")),
                                   idle(1),
                                   ServiceDeployment.Type.SELF)),
                        context("multiply", inEnt("arg/x1", 10.0d),
@@ -66,8 +66,8 @@ public class JobUtil {
         return job("f1", sig("service", Jobber.class, deploy(idle(1))),
                    job("f2", f4, f5), f3,
                    strategy(Provision.YES),
-                   pipe(out(f4, "result/y1"), input(f3, "arg/x5")),
-                   pipe(out(f5, "result/y2"), input(f3, "arg/x6")));
+                   pipe(outPoint(f4, "result/y1"), inPoint(f3, "arg/x5")),
+                   pipe(outPoint(f5, "result/y2"), inPoint(f3, "arg/x6")));
     }
 
     static Job createJobWithIPAndOpSys() throws SignatureException, ContextException, ExertionException {
@@ -85,7 +85,7 @@ public class JobUtil {
             f4 = task("f4",
                       sig("multiply",
                           Multiplier.class,
-                          deploy(configuration(getConfigDir()+"/multiplier-prv.config"),
+                          deploy(configuration("org.sorcer:deploy-tests:config:"+System.getProperty("sorcer.version")),
                                  idle(1),
                                  opsys(opSys),
                                  arch(arch),
@@ -97,7 +97,7 @@ public class JobUtil {
             f4 = task("f4",
                       sig("multiply",
                           Multiplier.class,
-                          deploy(configuration(getConfigDir()+"/multiplier-prv.config"),
+                          deploy(configuration("org.sorcer:deploy-tests:config:"+System.getProperty("sorcer.version")),
                                  idle(1),
                                  opsys(opSys),
                                  arch(arch),
@@ -125,11 +125,11 @@ public class JobUtil {
         return job("f1", sig("service", Jobber.class, deploy(idle(1))),
                    job("f2", f4, f5), f3,
                    strategy(Provision.YES),
-                   pipe(out(f4, "result/y1"), input(f3, "arg/x5")),
-                   pipe(out(f5, "result/y2"), input(f3, "arg/x6")));
+                   pipe(outPoint(f4, "result/y1"), inPoint(f3, "arg/x5")),
+                   pipe(outPoint(f5, "result/y2"), inPoint(f3, "arg/x6")));
     }
 
     static  String getConfigDir() {
-        return String.format("%s/src/test/resources/deploy/configs/", System.getProperty("user.dir"));
+        return String.format("%s/src/test/resources/deploy/configs", System.getProperty("user.dir"));
     }
 }

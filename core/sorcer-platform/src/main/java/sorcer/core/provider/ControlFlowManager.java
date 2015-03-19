@@ -19,7 +19,6 @@ package sorcer.core.provider;
 import static sorcer.eo.operator.task;
 
 import java.rmi.RemoteException;
-import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
@@ -35,27 +34,13 @@ import sorcer.core.exertion.LoopExertion;
 import sorcer.core.exertion.NetJob;
 import sorcer.core.exertion.NetTask;
 import sorcer.core.exertion.OptExertion;
-import sorcer.core.provider.exerter.ExertionDispatcher;
 import sorcer.core.provider.rendezvous.RendezvousBean;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.core.provider.rendezvous.ServiceSpacer;
 import sorcer.core.signature.NetSignature;
 import sorcer.core.signature.ServiceSignature;
-import sorcer.service.Block;
-import sorcer.service.Conditional;
-import sorcer.service.Context;
-import sorcer.service.ContextException;
-import sorcer.service.Exec;
-import sorcer.service.Executor;
-import sorcer.service.Exertion;
-import sorcer.service.ExertionException;
-import sorcer.service.Job;
-import sorcer.service.ServiceExertion;
-import sorcer.service.ServiceFidelity;
-import sorcer.service.Signature;
-import sorcer.service.SignatureException;
+import sorcer.service.*;
 import sorcer.service.Strategy.Access;
-import sorcer.service.Task;
 import sorcer.util.AccessorException;
 import sorcer.util.ProviderAccessor;
 
@@ -65,7 +50,7 @@ import com.sun.jini.thread.TaskManager;
  * The ControlFlowManager class is responsible for handling control flow
  * exertions ({@link Conditional}, {@link NetJob}, {@link NetTask}).
  * 
- * This class is used by the {@link ExertionDispatcher} class for executing
+ * This class is used by the {@link sorcer.core.provider.exerter.ServiceShell} class for executing
  * {@link Exertions}.
  * 
  * @author Mike Sobolewski
@@ -354,28 +339,28 @@ public class ControlFlowManager {
 	 * @throws RemoteException
 	 * @throws ExertionException
 	 */
-	public Exertion doRendezvousExertion(ServiceExertion xrt)
+	public Exertion doRendezvousExertion(Exertion xrt)
 			throws RemoteException, ExertionException {
 		try {
-			if (xrt.isSpacable()) {
+			if (((ServiceExertion)xrt).isSpacable()) {
 				logger.info("********************************************* exertion isSpacable");
 
 				if (spacer == null) {
-					String spacerName = xrt.getRendezvousName();
+					String spacerName = ((ServiceExertion)xrt).getRendezvousName();
 					Spacer spacerService = null;
 					try {
 						// spacerService =
 						// ProviderAccessor.getSpacer(spacerName);
 						spacerService = ProviderAccessor.getSpacer();
 						logger.info("Got Spacer: " + spacerService);
-						return spacerService.service(xrt, null);
+						return (Exertion) spacerService.service((Mogram)xrt, null);
 					} catch (AccessorException ae) {
 						ae.printStackTrace();
 						throw new ExertionException("Could not find Spacer: "
 								+ spacerName);
 					}
 				}
-				Exertion job = ((ServiceSpacer) spacer).execute(xrt, null);
+				Exertion job = (Exertion)((ServiceSpacer) spacer).execute(xrt, null);
 				logger.info("********************************************* spacable exerted = "
 						+ job);
 				return job;
@@ -383,14 +368,14 @@ public class ControlFlowManager {
 				logger.info("********************************************* exertion NOT Spacable");
 				if (jobber == null) {
 					// return delegate.doJob(job);
-					String jobberName = xrt.getRendezvousName();
+					String jobberName = ((ServiceExertion)xrt).getRendezvousName();
 					Jobber jobberService = null;
 					try {
 						// jobberService =
 						// ProviderAccessor.getJobber(jobberName);
 						jobberService = ProviderAccessor.getJobber();
 						logger.info("Got Jobber: " + jobber);
-						return jobberService.service(xrt, null);
+						return (Exertion) jobberService.service((Mogram)xrt, null);
 					} catch (AccessorException ae) {
 						ae.printStackTrace();
 						throw new ExertionException("Could not find Jobber: "

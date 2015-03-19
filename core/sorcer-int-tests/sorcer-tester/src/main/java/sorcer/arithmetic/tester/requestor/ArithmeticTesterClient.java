@@ -1,28 +1,15 @@
 package sorcer.arithmetic.tester.requestor;
 
-import static sorcer.co.operator.inEnt;
-import static sorcer.co.operator.outEnt;
-import static sorcer.eo.operator.classpath;
-import static sorcer.eo.operator.codebase;
-import static sorcer.eo.operator.configuration;
-import static sorcer.eo.operator.context;
-import static sorcer.eo.operator.control;
-import static sorcer.eo.operator.deploy;
-import static sorcer.eo.operator.exert;
-import static sorcer.eo.operator.exertion;
-import static sorcer.eo.operator.get;
-import static sorcer.eo.operator.in;
-import static sorcer.eo.operator.input;
-import static sorcer.eo.operator.job;
-import static sorcer.eo.operator.name;
-import static sorcer.eo.operator.out;
-import static sorcer.eo.operator.path;
-import static sorcer.eo.operator.pipe;
-import static sorcer.eo.operator.serviceContext;
-import static sorcer.eo.operator.sig;
-import static sorcer.eo.operator.strategy;
-import static sorcer.eo.operator.task;
-import static sorcer.eo.operator.trace;
+import sorcer.arithmetic.tester.provider.Adder;
+import sorcer.arithmetic.tester.provider.Multiplier;
+import sorcer.arithmetic.tester.provider.RemoteAdder;
+import sorcer.arithmetic.tester.provider.Subtractor;
+import sorcer.core.SorcerConstants;
+import sorcer.core.provider.Exerter;
+import sorcer.service.*;
+import sorcer.service.Strategy.*;
+import sorcer.util.Log;
+import sorcer.util.ProviderAccessor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,26 +18,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.logging.Logger;
 
-import sorcer.arithmetic.tester.provider.Adder;
-import sorcer.arithmetic.tester.provider.Multiplier;
-import sorcer.arithmetic.tester.provider.RemoteAdder;
-import sorcer.arithmetic.tester.provider.Subtractor;
-import sorcer.core.SorcerConstants;
-import sorcer.core.provider.Exerter;
-import sorcer.service.ContextException;
-import sorcer.service.Exertion;
-import sorcer.service.ExertionCallable;
-import sorcer.service.ExertionException;
-import sorcer.service.Job;
-import sorcer.service.SignatureException;
-import sorcer.service.Strategy.Access;
-import sorcer.service.Strategy.Flow;
-import sorcer.service.Strategy.Monitor;
-import sorcer.service.Strategy.Provision;
-import sorcer.service.Strategy.Wait;
-import sorcer.service.Task;
-import sorcer.util.Log;
-import sorcer.util.ProviderAccessor;
+import static sorcer.co.operator.inEnt;
+import static sorcer.co.operator.outEnt;
+import static sorcer.eo.operator.*;
 
 /**
  * Testing parameter passing between tasks within the same service job. Two
@@ -129,8 +99,8 @@ public class ArithmeticTesterClient implements SorcerConstants {
 		// Service Composition f1(f2(f3((x1, x2), f4(x1, x2)), f5(x1, x2))
 		//Job f1= job("f1", job("f2", f4, f5, strategy(Flow.PARALLEL, Access.PULL)), f3,
 		Job f1 = job("f1", job("f2", f3, f4), f5, strategy(Provision.NO),
-		   pipe(out(f3, path(result, y)), in(f5, path(arg, x1))),
-		   pipe(out(f4, path(result, y)), in(f5, path(arg, x2))));
+		   pipe(outPoint(f3, path(result, y)), inPoint(f5, path(arg, x1))),
+		   pipe(outPoint(f4, path(result, y)), inPoint(f5, path(arg, x2))));
 
 		Job out = exert(f1);
 		if (out != null) {
@@ -161,8 +131,8 @@ public class ArithmeticTesterClient implements SorcerConstants {
 		//job("f1", job("f2", f4, f5), f3,		
 		//job("f1", job("f2", f4, f5, strategy(Flow.PAR, Access.PULL)), f3,
 		Job f1 = job("f1", job("f2", f4, f5), f3, strategy(Provision.NO),
-				pipe(out(f4, "result/y1"), in(f3, "arg/x5")),
-				pipe(out(f5, "result/y2"), in(f3, "arg/x6")));
+				pipe(outPoint(f4, "result/y1"), inPoint(f3, "arg/x5")),
+				pipe(outPoint(f5, "result/y2"), inPoint(f3, "arg/x6")));
 
 		Exertion out = exert(f1);
 		if (out != null) {
@@ -206,8 +176,8 @@ public class ArithmeticTesterClient implements SorcerConstants {
 		// job("f1", job("f2", f4, f5), f3,
 		// job("f1", job("f2", f4, f5, strategy(Flow.PAR, Access.PULL)), f3,
 		Job f1 = job("f1", job("f2", f4, f5), f3, strategy(Provision.NO),
-				pipe(out(f4, "result/y1"), input(f3, "arg/x5")),
-				pipe(out(f5, "result/y2"), input(f3, "arg/x6")));
+				pipe(outPoint(f4, "result/y1"), inPoint(f3, "arg/x5")),
+				pipe(outPoint(f5, "result/y2"), inPoint(f3, "arg/x6")));
 		
 		Exertion out = exert(f1);
 		if (out != null) {
@@ -239,8 +209,8 @@ public class ArithmeticTesterClient implements SorcerConstants {
 
 		// Service Composition f1(f4(x1, x2), f5(x1, x2), f3(x1, x2))
 		Job f1= job("f1", f4, f5, f3,
-		   pipe(out(f4, path(result, y)), in(f3, path(arg, x1))),
-		   pipe(out(f5, path(result, y)), in(f3, path(arg, x2))));
+		   pipe(outPoint(f4, path(result, y)), inPoint(f3, path(arg, x1))),
+		   pipe(outPoint(f5, path(result, y)), inPoint(f3, path(arg, x2))));
 
 		Exertion out = exert(f1);
 		logger.info("job f1 context: " + serviceContext(out));
@@ -268,8 +238,8 @@ public class ArithmeticTesterClient implements SorcerConstants {
 		// Service Composition f2(f4(x1, x2), f5(x1, x2))
 		//Job f1= job("f1", job("f2", f4, f5, strategy(Flow.PAR, Access.PULL)), f3,
 		Job f1= job("f1", job("f2", f4, f5), f3,
-				pipe(out(f4, path("result/y1")), in(f3, path("arg/x5"))),
-				pipe(out(f5, path("result/y2")), in(f3, path("arg/x6"))));
+				pipe(outPoint(f4, path("result/y1")), inPoint(f3, path("arg/x5"))),
+				pipe(outPoint(f5, path("result/y2")), inPoint(f3, path("arg/x6"))));
 
 		Exertion out = exert(f1);
 
@@ -298,8 +268,8 @@ public class ArithmeticTesterClient implements SorcerConstants {
 		// Service Composition f2(f4(x1, x2), f5(x1, x2))
 		//Job f1= job("f1", job("f2", f4, f5, strategy(Flow.PAR, Access.PULL)), f3,
 		Job f1= job("f1", job("f2", f4, f5, strategy(Access.PULL, Flow.PAR)), f3,
-				pipe(out(f4, path("result/y1")), in(f3, path("arg/x5"))),
-				pipe(out(f5, path("result/y2")), in(f3, path("arg/x6"))));
+				pipe(outPoint(f4, path("result/y1")), inPoint(f3, path("arg/x5"))),
+				pipe(outPoint(f5, path("result/y2")), inPoint(f3, path("arg/x6"))));
 
 		long start = System.currentTimeMillis();
 		Exertion out = exert(f1);
@@ -336,8 +306,8 @@ private Exertion f1SEQpull() throws Exception {
 		// Service Composition f2(f4(x1, x2), f5(x1, x2))
 		//Job f1= job("f1", job("f2", f4, f5, strategy(Flow.PAR, Access.PULL)), f3,
 		Job f1= job("f1", job("f2", f4, f5, strategy(Access.PULL, Flow.SEQ)), f3,
-				pipe(out(f4, path("result/y1")), in(f3, path("arg/x5"))),
-				pipe(out(f5, path("result/y2")), in(f3, path("arg/x6"))));
+				pipe(outPoint(f4, path("result/y1")), inPoint(f3, path("arg/x5"))),
+				pipe(outPoint(f5, path("result/y2")), inPoint(f3, path("arg/x6"))));
 		
 		long start = System.currentTimeMillis();
 		Exertion out = exert(f1);

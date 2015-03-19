@@ -12,6 +12,15 @@ dependencies {
     compile	 project(':sorcer-platform')
 }
 
+task sourcesJar(type: Jar, dependsOn: classes) {
+	classifier = 'sources'
+	from sourceSets.main.allSource
+}
+
+artifacts {
+	archives sourcesJar
+}
+
 test {
 	systemProperty "java.security.policy", "${project.projectDir.path}/src/test/resources/policy/policy.all"
 }

@@ -30,9 +30,7 @@ import org.rioproject.impl.client.JiniClient;
 import sorcer.util.Sorcer;
 
 import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -45,13 +43,22 @@ import java.util.concurrent.atomic.AtomicReference;
 public class ProvisionMonitorCache {
     private final net.jini.lookup.LookupCache cache;
     private static final ProvisionMonitorCache instance = new ProvisionMonitorCache();
+    private final Map<String, String> discoveryInfo = new HashMap<String, String>();
 
     private ProvisionMonitorCache() {
         try {
             LookupLocator[] locators = null;
             if(System.getProperty(Constants.LOCATOR_PROPERTY_NAME)!=null) {
+                discoveryInfo.put("locators", System.getProperty(Constants.LOCATOR_PROPERTY_NAME));
                 locators = JiniClient.parseLocators(System.getProperty(Constants.LOCATOR_PROPERTY_NAME));
             }
+            StringBuilder g = new StringBuilder();
+            for(String group : Sorcer.getLookupGroups()) {
+                if(g.length()>0)
+                    g.append(", ");
+                g.append(group);
+            }
+            discoveryInfo.put("groups", g.toString());
             ServiceDiscoveryManager lookupMgr =
                     new ServiceDiscoveryManager(new LookupDiscoveryManager(Sorcer.getLookupGroups(),
                                                                            locators,
@@ -61,10 +68,6 @@ public class ProvisionMonitorCache {
             cache = lookupMgr.createLookupCache(new ServiceTemplate(null, new Class[]{cl}, null),
                                                 null,
                                                 null);
-            JiniClient client = new JiniClient();
-            client.addRegistrarGroups(Sorcer.getLookupGroups());
-            /*Listener listener = new Listener(ProvisionMonitor.class);
-            client.getDiscoveryManager().addDiscoveryListener(listener);*/
         } catch (Exception e) {
             throw new ExceptionInInitializerError(e);
         }
@@ -74,10 +77,19 @@ public class ProvisionMonitorCache {
         return instance;
     }
 
+    public String getGroups() {
+        return discoveryInfo.get("groups");
+    }
+
+    public String getLocators() {
+        return discoveryInfo.get("locators");
+    }
 
     public DeployAdmin getDeployAdmin() {
         DeployAdmin dAdmin = null;
-        while(dAdmin==null) {
+        int waited = 0;
+        int timeout = 60; /* We will timout after 30 seconds */
+        while(dAdmin==null && waited < timeout) {
             ServiceItem item = cache.lookup(null);
             if(item!=null) {
                 try {
@@ -87,7 +99,8 @@ public class ProvisionMonitorCache {
                 }
             } else {
                 try {
-                    Thread.sleep(1000);
+                    Thread.sleep(500);
+                    waited++;
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

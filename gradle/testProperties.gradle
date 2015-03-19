@@ -30,17 +30,18 @@ subprojects {
                     systemProperty "java.rmi.server.useCodebaseOnly", "false"
                     systemProperty "java.rmi.server.RMIClassLoaderSpi","org.rioproject.rmi.ResolvingLoader"
                     systemProperty "sorcer.home", "${sorcerDistHome}"
-                    systemProperty "java.util.logging.config.file", "${sorcerDistHome}/configs/sorcer.logging"
 					systemProperty "sorcer.version", "${sorcerVersion}"
 					systemProperty "river.version", "${riverVersion}"
+                    systemProperty "rio.home", "${rioHome}"
 					systemProperty "project.build.dir", project.buildDir
-					systemProperty "java.util.logging.config.file", "${sorcerDistHome}/configs/sorcer.logging"
                     environment("SORCER_HOME":"${sorcerDistHome}", "RIO_HOME": "${rioHome}")
+//                  systemProperty "java.util.logging.config.file", "${sorcerDistHome}/configs/sorcer.logging"
                 }
             }
         }
 
         task genTestProps() {
+            description = 'Generates system properties for JUnit tests with SorcerTestRunner.'
             doLast {
                 File configDir = new File(project.buildDir, 'configs')
                 if (!configDir.exists())

@@ -158,7 +158,7 @@ public class ServiceCataloger extends ServiceProvider implements Cataloger {
         return uiDesc;
     }
 
-	public String[] getGroups() throws RemoteException {
+	public String[] getGroups() {
 		String gs = getProperty(P_GROUPS);
 		String[] groups = (gs == null) ? Sorcer.getLookupGroups() : SorcerUtil
 				.tokenize(gs, ",");

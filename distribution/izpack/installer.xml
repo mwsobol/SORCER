@@ -11,7 +11,7 @@ SORCER installation file.
 	-->
 	<info>
 		<appname>SORCER</appname>
-		<appversion>5.0-SNAPSHOT</appversion>
+		<appversion>5.0</appversion>
 		<authors>
 			<author name="Mike Sobolewski" email="sobol@sorcersoft.org"/>
 			<author name="Ray Kolonay" email="raymond.kolonay@us.af.mil"/>
@@ -82,7 +82,7 @@ SORCER installation file.
 	<packs>
 		<pack name="SORCER Platform" installGroups="All, SORCER Platform" required="yes">
 			<description>SORCER Platform Distribution</description>
-			<fileset dir="../build/sorcer-5.0-SNAPSHOT" targetdir="$INSTALL_PATH" defaultexcludes="yes"/>
+			<fileset dir="../build/sorcer-5.0.2" targetdir="$INSTALL_PATH" defaultexcludes="yes"/>
 		</pack>
 
 <!--

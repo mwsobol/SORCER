@@ -27,35 +27,56 @@ public class Pars {
 	private final static Logger logger = Logger.getLogger(Pars.class.getName());
 
 	@Test
-	public void runtimeScope() throws Exception {
-		// a par is a variable (entry) evaluated in its own scope (context)
-		Par y = par("y",
-				invoker("(x1 * x2) - (x3 + x4)", pars("x1", "x2", "x3", "x4")));
-		Object val = value(y, ent("x1", 10.0), ent("x2", 50.0),
-				ent("x3", 20.0), ent("x4", 80.0));
-		// logger.info("y value: " + val);
-		assertEquals(val, 400.0);
+	public void parScope() throws Exception {
+		// a par is a variable (entry) evaluated with its own scope (context)
+		Context<Double> cxt = context(ent("x", 20.0), ent("y", 30.0));
+
+		// par with its context scope
+		Par<?>add = par(cxt, "add", invoker("x + y", pars("x", "y")));
+		logger.info("par value: " + value(add));
+		assertTrue(value(add).equals(50.0));
+
+	}
+
+
+	@Test
+	public void contextScope() throws Exception {
+
+		Context<Double> cxt = context(ent("x", 20.0), ent("y", 30.0));
+		Par<?>add = par(cxt, "add", invoker("x + y", pars("x", "y")));
+
+		// adding a par to the context updates par's scope
+		add(cxt, add);
+
+		// evaluate the entry of the context
+		logger.info("context add value: " + value(cxt, "add"));
+		assertTrue(value(cxt, "add").equals(50.0));
+
 	}
 	
 	
 	@Test
-	public void contextScope() throws Exception {
-		
+	public void closingParWihEntries() throws Exception {
+		Par y = par("y",
+				invoker("(x1 * x2) - (x3 + x4)", pars("x1", "x2", "x3", "x4")));
+		Object val = value(y, ent("x1", 10.0), ent("x2", 50.0), ent("x3", 20.0), ent("x4", 80.0));
+		// logger.info("y value: " + val);
+		assertEquals(val, 400.0);
+	}
+
+	@Test
+	public void closingParWitScope() throws Exception {
+
 		// invokers use contextual scope of pars
 		Par<?> add = par("add", invoker("x + y", pars("x", "y")));
+
 		Context<Double> cxt = context(ent("x", 10.0), ent("y", 20.0));
 		logger.info("par value: " + value(add, cxt));
 		// evaluate a par 
 		assertTrue(value(add, cxt).equals(30.0));
 
-		// invoke with another context
-		cxt = context(ent("x", 20.0), ent("y", 30.0));
-		add = par(cxt, "add", invoker("x + y", pars("x", "y")));
-		logger.info("par value: " + value(add));
-		assertTrue(value(add).equals(50.0));
-
 	}
-	
+
 	@Test
 	public void dbParOperator() throws Exception {	
 		

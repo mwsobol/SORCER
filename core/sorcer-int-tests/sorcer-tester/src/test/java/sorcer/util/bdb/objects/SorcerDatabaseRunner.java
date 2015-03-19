@@ -1,15 +1,17 @@
 package sorcer.util.bdb.objects;
 
-import static sorcer.co.operator.inEnt;
-import static sorcer.co.operator.outEnt;
-import static sorcer.eo.operator.context;
-import static sorcer.eo.operator.in;
-import static sorcer.eo.operator.job;
-import static sorcer.eo.operator.out;
-import static sorcer.eo.operator.path;
-import static sorcer.eo.operator.pipe;
-import static sorcer.eo.operator.sig;
-import static sorcer.eo.operator.task;
+import com.sleepycat.collections.StoredValueSet;
+import com.sleepycat.collections.TransactionRunner;
+import com.sleepycat.collections.TransactionWorker;
+import com.sleepycat.je.DatabaseException;
+import sorcer.arithmetic.tester.provider.Adder;
+import sorcer.arithmetic.tester.provider.Multiplier;
+import sorcer.arithmetic.tester.provider.Subtractor;
+import sorcer.core.context.ServiceContext;
+import sorcer.core.provider.exertmonitor.SessionDatabaseRunner;
+import sorcer.service.*;
+import sorcer.util.ModelTable;
+import sorcer.util.Table;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -17,26 +19,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import sorcer.arithmetic.tester.provider.Adder;
-import sorcer.arithmetic.tester.provider.Multiplier;
-import sorcer.arithmetic.tester.provider.Subtractor;
-import sorcer.core.context.ServiceContext;
-import sorcer.core.provider.exertmonitor.SessionDatabaseRunner;
-import sorcer.service.Context;
-import sorcer.service.ContextException;
-import sorcer.service.EvaluationException;
-import sorcer.service.Exertion;
-import sorcer.service.ExertionException;
-import sorcer.service.Job;
-import sorcer.service.SignatureException;
-import sorcer.service.Task;
-import sorcer.util.ModelTable;
-import sorcer.util.Table;
-
-import com.sleepycat.collections.StoredValueSet;
-import com.sleepycat.collections.TransactionRunner;
-import com.sleepycat.collections.TransactionWorker;
-import com.sleepycat.je.DatabaseException;
+import static sorcer.co.operator.inEnt;
+import static sorcer.co.operator.outEnt;
+import static sorcer.eo.operator.*;
 
 /**
  * SessionDatabaseRunner is the main entry point for the program and may be run as
@@ -323,8 +308,8 @@ public class SorcerDatabaseRunner {
 		// Service Composition f2(f4(x1, x2), f5(x1, x2))
 		//Job f1= job("f1", job("f2", f4, f5, strategy(Flow.PAR, Access.PULL)), f3,
 		Job f1= job("f1", job("f2", f4, f5), f3,
-				pipe(out(f4, path("result/y1")), in(f3, path("arg/x5"))),
-				pipe(out(f5, path("result/y2")), in(f3, path("arg/x6"))));
+				pipe(outPoint(f4, path("result/y1")), inPoint(f3, path("arg/x5"))),
+				pipe(outPoint(f5, path("result/y2")), inPoint(f3, path("arg/x6"))));
 		return f1;
 	}
 	

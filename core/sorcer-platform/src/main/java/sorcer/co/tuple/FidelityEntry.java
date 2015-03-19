@@ -19,27 +19,27 @@ package sorcer.co.tuple;
 /**
  * @author Mike Sobolewski
  */
-import sorcer.service.FidelityInfo;
+import sorcer.service.SelectionFidelity;
 
 public class FidelityEntry<T> extends Entry<T> {
 	private static final long serialVersionUID = -508307270964254478L;
 	
-	protected FidelityInfo fidelity;
+	protected SelectionFidelity fidelity;
 	
 	public FidelityEntry(String x1, T value) {
 		super(x1, value);
 	}
 
-	public FidelityEntry(String x1, FidelityInfo fidelity) {
+	public FidelityEntry(String x1, SelectionFidelity fidelity) {
 		super(x1);
 		this.fidelity = fidelity;
 	}
 	
-	public FidelityInfo fidelity() {
+	public SelectionFidelity fidelity() {
 		return fidelity;
 	}
 	
-	public void fidelity(FidelityInfo fidelity) {
+	public void fidelity(SelectionFidelity fidelity) {
 		this.fidelity = fidelity;
 	}
 	

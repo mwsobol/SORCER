@@ -16,18 +16,18 @@
  */
 package sorcer.util.url.sos;
 
-import java.io.IOException;
-import java.net.URL;
-import java.net.URLConnection;
-
 import sorcer.core.context.ServiceContext;
 import sorcer.core.provider.DatabaseStorer.Store;
 import sorcer.core.provider.Provider;
 import sorcer.core.provider.StorageManagement;
 import sorcer.service.Context;
 import sorcer.util.ProviderAccessor;
-import sorcer.util.ProviderLookup;
 import sorcer.util.bdb.objects.SorcerDatabaseViews;
+import sorcer.util.bdb.objects.UuidObject;
+
+import java.io.IOException;
+import java.net.URL;
+import java.net.URLConnection;
 
 /**
  * @author Mike Sobolewski
@@ -76,24 +76,29 @@ public class SdbConnection extends URLConnection {
 
 	@Override
 	public Object getContent() throws IOException {
-		Context outContext = null;
+		Context outContext;
 		if (!connected)
 			connect();
+		if (store == null)
+			throw new IOException("Could not access StorageManagement implementation " + serviceType);
 		try {
+			outContext = null;
 			if (store != null) {
 				Context cxt = new ServiceContext();
-				cxt.putInValue(StorageManagement.object_type, storeType);
+//				TODO
+				cxt.putInValue(StorageManagement.object_type, Store.object);
+//				cxt.putInValue(StorageManagement.object_type, storeType);
 				cxt.putInValue(StorageManagement.object_uuid, uuid);
 				outContext = store.contextRetrieve(cxt);
 			}
-
-		} catch (Exception e) {
-			throw new IOException(e);
-		}
-		try {
-			return outContext.getValue(StorageManagement.object_retrieved);
+			Object obj =  outContext.getValue(StorageManagement.object_retrieved);
+			if (obj instanceof UuidObject)
+				return ((UuidObject)obj).getObject();
+			else
+				return obj;
 		} catch (Exception e) {
 			throw new IOException(e);
 		}
 	}
+
 }

@@ -17,21 +17,17 @@
 
 package sorcer.ui.exertlet;
 
-import java.awt.BorderLayout;
-import java.net.URL;
-import java.rmi.RemoteException;
-import java.util.logging.Logger;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
-import javax.swing.UIManager;
-
 import net.jini.core.lookup.ServiceItem;
 import sorcer.core.provider.Provider;
 import sorcer.core.proxy.Outer;
 import sorcer.ui.util.WindowUtilities;
 import sorcer.util.Log;
+
+import javax.swing.*;
+import java.awt.*;
+import java.net.URL;
+import java.rmi.RemoteException;
+import java.util.logging.Logger;
 
 public class NetletEditor extends JPanel { 
 	
@@ -50,7 +46,7 @@ public class NetletEditor extends JPanel {
 	
     public NetletEditor(Object obj) {
         super();
-		getAccessibleContext().setAccessibleName("Exertlet Editor");
+		getAccessibleContext().setAccessibleName("Netlet Editor");
     	WindowUtilities.setNativeLookAndFeel();
     	setLayout(new BorderLayout());
 		try {

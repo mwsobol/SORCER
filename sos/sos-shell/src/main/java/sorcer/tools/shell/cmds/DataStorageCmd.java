@@ -27,6 +27,7 @@ import sorcer.jini.lookup.AttributesUtil;
 import sorcer.service.*;
 import sorcer.tools.shell.NetworkShell;
 import sorcer.tools.shell.ShellCmd;
+import sorcer.util.WhitespaceTokenizer;
 import sorcer.util.bdb.objects.ObjectInfo;
 import sorcer.util.url.sos.SdbUtil;
 
@@ -73,7 +74,7 @@ public class DataStorageCmd extends ShellCmd {
 
 	public void execute() throws RemoteException, MonitorException {
 		out = NetworkShell.getShellOutputStream();
-		StringTokenizer myTk = NetworkShell.getShellTokenizer();
+		WhitespaceTokenizer myTk = NetworkShell.getShellTokenizer();
 		int numTokens = myTk.countTokens();
 		int myIdx = 0;
 		String next = null;

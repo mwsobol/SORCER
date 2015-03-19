@@ -4,19 +4,19 @@ package sorcer.pml.provider.impl;
  * @author Mike Sobolewski
  */
 
-import static java.lang.System.out;
-import static sorcer.co.operator.*;
-import static sorcer.eo.operator.*;
+import sorcer.pml.provider.Cylinder;
+import sorcer.pml.provider.Sphere;
+import sorcer.service.Context;
+import sorcer.service.ContextException;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.Scanner;
 import java.util.logging.Logger;
 
-import sorcer.pml.provider.Cylinder;
-import sorcer.pml.provider.Sphere;
-import sorcer.service.Context;
-import sorcer.service.ContextException;
+import static java.lang.System.out;
+import static sorcer.co.operator.ent;
+import static sorcer.eo.operator.*;
 
 @SuppressWarnings("rawtypes")
 public class Volume implements Sphere, Cylinder, Serializable {

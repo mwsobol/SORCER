@@ -17,29 +17,28 @@
 
 package sorcer.core.signature;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.StringTokenizer;
-import java.util.logging.Logger;
-
 import net.jini.core.lookup.ServiceID;
+import net.jini.core.transaction.Transaction;
+import net.jini.core.transaction.TransactionException;
 import sorcer.core.SorcerConstants;
 import sorcer.core.deploy.ServiceDeployment;
-import sorcer.service.Exertion;
-import sorcer.service.ExertionException;
-import sorcer.service.ServiceExertion;
-import sorcer.service.Signature;
+import sorcer.core.provider.Provider;
+import sorcer.service.*;
 import sorcer.service.Strategy.Provision;
 import sorcer.service.modeling.Variability;
 import sorcer.util.Log;
+import sorcer.util.ProviderLookup;
 
-public class ServiceSignature implements Signature, SorcerConstants {
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.rmi.RemoteException;
+import java.util.*;
+import java.util.logging.Logger;
+
+import static sorcer.eo.operator.provider;
+
+public class ServiceSignature implements Signature, Service, Evaluation<Object>, SorcerConstants {
 
 	static final long serialVersionUID = -8527094638557595398L;
 
@@ -60,6 +59,8 @@ public class ServiceSignature implements Signature, SorcerConstants {
 	// the indicated usage of this signature
 	protected Set<Kind> rank = new HashSet<Kind>();
 
+    // dependency management for this Signature
+    protected List<Evaluation> dependers = new ArrayList<Evaluation>();
 
 	// Must initialize to ANY to have correct JavaSpace workers behavior
 	// to have exertions with providerName/serviceInfo specified going to
@@ -88,6 +89,9 @@ public class ServiceSignature implements Signature, SorcerConstants {
 	protected boolean isActive = true;
 
 	protected boolean isProvisionable = false;
+	
+	// shell can be used to execute exertions locally or remotely (as ServiceProvider)
+	protected boolean isShellRemote = false;
 
 	/**
 	 * a context template to define the context appended from a provider
@@ -183,6 +187,11 @@ public class ServiceSignature implements Signature, SorcerConstants {
 
 	public String getProviderName() {
 		return providerName;
+	}
+
+	@Override
+	public Object getProvider() throws SignatureException {
+		return provider(this);
 	}
 
 	public void setProviderName(String name) {
@@ -446,18 +455,13 @@ public class ServiceSignature implements Signature, SorcerConstants {
 		// should be implemented by subclasses
 		return null;
 	}
-	
-	public static Class<?> getClass(String serviceName) {
-		Class<?> serviceType = null;
-		try {
-			serviceType = Class.forName(serviceName);
-		} catch (ClassNotFoundException e) {
-			System.err.println("Can not load type: " + serviceName);
-		}
-		return serviceType;
-	}
 
-	public String getName() {
+    @Override
+    public Object getId() {
+        return selector;
+    }
+
+    public String getName() {
 		return name;
 	}
 
@@ -505,6 +509,23 @@ public class ServiceSignature implements Signature, SorcerConstants {
 			this.isProvisionable = true;
 		}
 	}
+
+	public boolean isShellRemote() {
+		return isShellRemote;
+	}
+
+	public void setShellRemote(boolean isShellRemote) {
+		this.isShellRemote = isShellRemote;
+	}
+
+	
+	public void setShellRemote(Strategy.ServiceShell shellExec) {
+		if (shellExec == Strategy.ServiceShell.REMOTE) {
+			this.isShellRemote = true;
+		} else {
+			this.isShellRemote = false;
+		}
+	}
 	
 	@Override
      public void setReturnPath(String path) {
@@ -543,5 +564,50 @@ public class ServiceSignature implements Signature, SorcerConstants {
 		return (typeComp != 0 ? typeComp : (""+providerName)
 				.compareTo(""+((ServiceSignature) signature).providerName));
 	}
+
+	@Override
+	public Mogram service(Mogram exertion, Transaction txn) throws TransactionException,
+		ExertionException, RemoteException {
+		Provider prv = ProviderLookup.getProvider(this);
+		return prv.service(exertion, txn);
+	}
+
+	@Override
+	public Mogram service(Mogram exertion) throws TransactionException,
+			ExertionException, RemoteException {
+		return service(exertion, null);
+	}
+
+	@Override
+	public Object asis() throws EvaluationException, RemoteException {
+		return this;
+	}
+
+	@Override
+	public Object getValue(Arg... entries) throws EvaluationException, RemoteException {
+		try {
+			return getProvider();
+		} catch (SignatureException e) {
+			throw new EvaluationException(e);
+		}
+	}
+
+	@Override
+	public Evaluation substitute(Arg... entries) throws SetterException, RemoteException {
+		return this;
+	}
+
+    @Override
+    public void addDependers(Evaluation... dependers) {
+        if (this.dependers == null)
+            this.dependers = new ArrayList<Evaluation>();
+        for (Evaluation depender : dependers)
+            this.dependers.add(depender);
+    }
+
+    @Override
+    public List<Evaluation> getDependers() {
+        return dependers;
+    }
 
 }

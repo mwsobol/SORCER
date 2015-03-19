@@ -51,7 +51,7 @@ public class Copier implements Evaluation<Context> {
 			for (int i = 0; i < fromEntries.length; i++) {
 				toContext.putValue(toEntries[i].getName(), fromContext.getValue(fromEntries[i].getName()));
 			}
-			toContext.substitute(entries);
+            ((ServiceContext)toContext).substitute(entries);
 		} catch (Exception e) {
 			throw new EvaluationException(e);
 		}
@@ -60,7 +60,7 @@ public class Copier implements Evaluation<Context> {
 
 	@Override
 	public Evaluation<Context> substitute(Arg... entries) throws SetterException, RemoteException {
-			toContext.substitute(entries);
+        ((ServiceContext)toContext).substitute(entries);
 			return this;
 	}
 }

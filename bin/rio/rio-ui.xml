@@ -12,9 +12,8 @@
             <env key="SORCER_HOME" value="${sorcer.home}"/>
             <sysproperty key="java.rmi.server.useCodebaseOnly" value="false" />
             <sysproperty key="java.security.policy" value="${rio.home}/policy/policy.all" />
-            <sysproperty key="java.util.logging.config.file" value="${rio.home}/config/logging/rio-logging.properties" />
             <sysproperty key="java.protocol.handler.pkgs" value="net.jini.url|sorcer.util.url|org.rioproject.url" />
-            <sysproperty key="RIO_HOME" value="${rio.home}"/>
+            <sysproperty key="rio.home" value="${rio.home}"/>
             <sysproperty key="java.rmi.server.useCodebaseOnly" value="false" />
         </java>
     </target>
@@ -29,7 +28,7 @@
             <sysproperty key="java.rmi.server.useCodebaseOnly" value="false" />
             <sysproperty key="java.security.policy" value="${rio.home}/policy/policy.all" />
             <sysproperty key="java.protocol.handler.pkgs" value="net.jini.url|sorcer.util.url|org.rioproject.url" />
-            <sysproperty key="RIO_HOME" value="${rio.home}"/>
+            <sysproperty key="rio.home" value="${rio.home}"/>
             <sysproperty key="java.rmi.server.useCodebaseOnly" value="false" />
         </java>
     </target>

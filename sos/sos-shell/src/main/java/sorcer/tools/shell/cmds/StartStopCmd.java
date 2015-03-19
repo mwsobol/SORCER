@@ -20,7 +20,6 @@ package sorcer.tools.shell.cmds;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.StringTokenizer;
 
 import net.jini.admin.Administrable;
 import net.jini.core.lookup.ServiceRegistrar;
@@ -29,6 +28,7 @@ import sorcer.tools.shell.NetworkShell;
 import sorcer.tools.shell.ShellCmd;
 
 import com.sun.jini.admin.DestroyAdmin;
+import sorcer.util.WhitespaceTokenizer;
 
 public class StartStopCmd extends ShellCmd {
 	{
@@ -51,10 +51,9 @@ public class StartStopCmd extends ShellCmd {
 	}
 
 	public void execute() throws Throwable {
-		NetworkShell shell = NetworkShell.getInstance();
 		out = NetworkShell.getShellOutputStream();
 		LookupDiscovery ld = NetworkShell.getDisco();
-		StringTokenizer myTk = NetworkShell.getShellTokenizer();
+		WhitespaceTokenizer myTk = NetworkShell.getShellTokenizer();
 		input = shell.getCmd();
 		if (out == null)
 			throw new NullPointerException("Must have an output PrintStream");
@@ -68,8 +67,7 @@ public class StartStopCmd extends ShellCmd {
 			}
 		} else {
 			// pass in a clone of list - command may modify it
-			ArrayList registrars = (ArrayList) NetworkShell.getRegistrars()
-					.clone();
+			ArrayList<ServiceRegistrar> registrars = new ArrayList<ServiceRegistrar>(NetworkShell.getRegistrars());
 			String nxtToken;
 			if (myTk.hasMoreTokens()) {
 				nxtToken = myTk.nextToken();

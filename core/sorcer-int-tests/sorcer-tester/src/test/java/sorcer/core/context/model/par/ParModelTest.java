@@ -65,7 +65,7 @@ public class ParModelTest {
 		logger.info("invoker value: " 
 				+ ((ServiceInvoker) pm.get("add")).invoke());
 
-		pm.setTargetPath("add");
+		pm.addResponsePath("add");
 		logger.info("pm context value: " + pm.getValue());
 		assertEquals(pm.getValue(), 30.0);
 		
@@ -98,7 +98,7 @@ public class ParModelTest {
 		assertEquals(add.getValue(), 30.0);
 		assertEquals(pm.getValue("add"), 30.0);
 
-		pm.setTargetPath("add");
+		pm.addResponsePath("add");
 		logger.info("pm context value: " + pm.invoke(null));
 		assertEquals(pm.invoke(null), 30.0);
 
@@ -116,7 +116,7 @@ public class ParModelTest {
 		ParModel pm = parModel(par("x", 10.0), par("y", 20.0),
 				par("add", invoker("x + y", pars("x", "y"))));
 
-		target(pm, "add");
+        addResponse(pm, "add");
 
 		assertEquals(value(pm, "x"), 10.0);
 		assertEquals(value(pm, "y"), 20.0);
@@ -131,7 +131,7 @@ public class ParModelTest {
 		ParModel pm = parModel(par("x", 10.0), par("y", 20.0),
 				par("add", invoker("x + y", pars("x", "y"))));
 
-		target(pm, "add");
+        addResponse(pm, "add");
 
 		Par x = par(pm, "x");
 		logger.info("par x: " + x);
@@ -337,8 +337,8 @@ public class ParModelTest {
 		Job j1 = job("j1", sig("service", ServiceJobber.class),
 				job("j2", t4, t5, sig("service", ServiceJobber.class)), 
 				t3,
-				pipe(out(t4, "result/y"), in(t3, "arg/x1")),
-				pipe(out(t5, "result/y"), in(t3, "arg/x2")));
+				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
+				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
 		
 		
 		// context and job parameters
@@ -391,8 +391,8 @@ public class ParModelTest {
 		Job j1 = job("j1", sig("service", ServiceJobber.class),
 				job("j2", t4, t5, sig("service", ServiceJobber.class)), 
 				t3,
-				pipe(out(t4, "result/y"), in(t3, "arg/x1")),
-				pipe(out(t5, "result/y"), in(t3, "arg/x2")));
+				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
+				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
 		
 		
 		Par c4x1p = par("c4x1p", "arg/x1", c4);

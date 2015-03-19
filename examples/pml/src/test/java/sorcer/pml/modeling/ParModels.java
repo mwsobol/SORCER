@@ -27,20 +27,10 @@ import java.util.logging.Logger;
 
 import static org.junit.Assert.*;
 import static sorcer.co.operator.*;
-import static sorcer.co.operator.persistent;
-import static sorcer.eo.operator.asis;
 import static sorcer.eo.operator.*;
-import static sorcer.eo.operator.get;
-import static sorcer.eo.operator.in;
-import static sorcer.eo.operator.pipe;
-import static sorcer.eo.operator.put;
-import static sorcer.eo.operator.value;
-import static sorcer.po.operator.add;
 import static sorcer.po.operator.*;
-import static sorcer.po.operator.asis;
-import static sorcer.po.operator.loop;
-import static sorcer.po.operator.put;
-import static sorcer.po.operator.set;
+
+
 
 /**
  * @author Mike Sobolewski
@@ -111,7 +101,7 @@ public class ParModels {
 
 		// get model response
 		Response mr = (Response) value(vm, //ent("x1", 10.0), ent("x2", 50.0),
-				result("y", from("t4", "t5", "j1")));
+				result("y", outPaths("t4", "t5", "j1")));
 		assertTrue(names(mr).equals(list("t4", "t5", "j1")));
 		assertTrue(values(mr).equals(list(500.0, 100.0, 400.0)));
 
@@ -155,7 +145,7 @@ public class ParModels {
 		logger.info("add value: " + value(pm, "add"));
 		assertEquals(value(pm, "add"), 30.0);
 
-		target(pm, "add");
+        addResponse(pm, "add");
 		logger.info("pm context value: " + value(pm));
 		assertEquals(value(pm), 30.0);
 
@@ -179,7 +169,7 @@ public class ParModels {
 		assertEquals(value(pm, "add"), 30.0);
 
 		// now evaluate model for its target       
-		target(pm, "add");
+        addResponse(pm, "add");
 		assertEquals(value(pm), 30.0);
 	}
 
@@ -197,23 +187,20 @@ public class ParModels {
 
 		put(pm, "y", 40.0);
 
-		logger.info("par model1:" + pm);
-
 		assertEquals(value(pm, "x"), 20.0);
 		assertEquals(value(pm, "y"), 40.0);
 		assertEquals(value(pm, "add"), 60.0);
 
-		target(pm, "add");
+        addResponse(pm, "add");
 		assertEquals(value(pm), 60.0);
 
 		add(pm, par("x", 10.0), par("y", 20.0));
 		assertEquals(value(pm, "x"), 10.0);
 		assertEquals(value(pm, "y"), 20.0);
 
-		logger.info("par model2:" + pm);
 		assertEquals(value(pm, "add"), 30.0);
 
-		target(pm, "add");
+		response(pm, "add");
 		assertEquals(value(pm), 30.0);
 
 		// with new arguments, closure
@@ -226,8 +213,8 @@ public class ParModels {
 	}
 
 	@Test
-	public void parInvokers() throws Exception,
-			ContextException {
+	public void parInvokers() throws Exception {
+
 		// all var parameters (x1, y1, y2) are not initialized
 		Par y3 = par("y3", invoker("x + y2", pars("x", "y2")));
 		Par y2 = par("y2", invoker("x * y1", pars("x", "y1")));
@@ -242,9 +229,9 @@ public class ParModels {
 		assertEquals(value(pc, "y3"), 1010.0);
 	}
 
-
 	@Test
 	public void entryPersistence() throws Exception {
+
 		Context cxt = context("multiply", dbEnt("arg/x0", 1.0), dbInEnt("arg/x1", 10.0),
 				dbOutEnt("arg/x2", 50.0), outEnt("result/y"));
 
@@ -271,6 +258,7 @@ public class ParModels {
 
 	@Test
 	public void argVsParPersistence() throws Exception {
+
 		// persistable just indicates that argument is persistent,
 		// for example when value(par) is invoked
 		Par dbp1 = persistent(par("design/in", 25.0));
@@ -291,28 +279,28 @@ public class ParModels {
 		Par p2 = par("url", sUrl);
 		URL url1 = storeArg(p1);
 		URL url2 = storeArg(p2);
-
-		assertTrue(asis(p1) instanceof URL);
-		assertEquals(content(url1), 30.0);
-		assertEquals(value(p1), 30.0);
-
-		assertTrue(asis(p2) instanceof URL);
-		assertEquals(content(url2), sUrl);
-		assertEquals(value(p2), sUrl);
-
-		// store pars in the data store
-		p1 = par("design/in", 30.0);
-		p2 = par("url", sUrl);
-		URL url3 = store(p1);
-		URL url4 = store(p2);
-
-		assertTrue(asis(p1) instanceof Double);
-		assertEquals(content(url1), 30.0);
-		assertEquals(value(p1), 30.0);
-
-		assertTrue(asis(p2) instanceof URL);
-		assertEquals(content(url2), sUrl);
-		assertEquals(value(p2), sUrl);
+//
+//		assertTrue(asis(p1) instanceof URL);
+//		assertEquals(content(url1), 30.0);
+//		assertEquals(value(p1), 30.0);
+//
+//		assertTrue(asis(p2) instanceof URL);
+//		assertEquals(content(url2), sUrl);
+//		assertEquals(value(p2), sUrl);
+//
+//		// store pars in the data store
+//		p1 = par("design/in", 30.0);
+//		p2 = par("url", sUrl);
+//		URL url3 = store(p1);
+//		URL url4 = store(p2);
+//
+//		assertTrue(asis(p1) instanceof Double);
+//		assertEquals(content(url1), 30.0);
+//		assertEquals(value(p1), 30.0);
+//
+//		assertTrue(asis(p2) instanceof URL);
+//		assertEquals(content(url2), sUrl);
+//		assertEquals(value(p2), sUrl);
 
 	}
 
@@ -389,8 +377,8 @@ public class ParModels {
 		Job j1 = job("j1", sig("service", ServiceJobber.class),
 				job("j2", t4, t5, sig("service", ServiceJobber.class)),
 				t3,
-				pipe(out(t4, "result/y"), in(t3, "arg/x1")),
-				pipe(out(t5, "result/y"), in(t3, "arg/x2")));
+				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
+				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
 
 
 		// context and job parameters
@@ -442,8 +430,8 @@ public class ParModels {
 		Job j1 = job("j1", sig("service", ServiceJobber.class),
 				job("j2", t4, t5, sig("service", ServiceJobber.class)),
 				t3,
-				pipe(out(t4, "result/y"), in(t3, "arg/x1")),
-				pipe(out(t5, "result/y"), in(t3, "arg/x2")));
+				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
+				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
 
 
 		Par c4x1p = par("c4x1p", "arg/x1", c4);

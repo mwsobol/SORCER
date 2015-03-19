@@ -14,58 +14,29 @@
  * limitations under the License.
  */
 
-ext{
-    versionFile = file('version.properties')
+project.version = '5.1.4'
+
+task printVersion {
+    description = 'Prints the current SORCER version.'
+    doLast {
+        logger.quiet "Version: $version"
+    }
 }
 
-task loadVersion {
-    project.version = readVersion()
-}
 
-ProjectVersion readVersion() {
-    logger.quiet 'Reading the version file.'
-
-    if (!versionFile.exists()) {
-        throw new GradleException("Required version file does not exist: $versionFile.canonicalPath")
-    }
-
-    Properties versionProps = new Properties()
-
-    versionFile.withInputStream { stream ->
-        versionProps.load(stream)
-    }
-
-    new ProjectVersion(versionProps.major.toInteger(), versionProps.minor.toInteger(), versionProps.release.toBoolean())
-}
-
-task printVersion << {
-    logger.quiet "Version: $version"
-}
-
-class ProjectVersion implements Serializable {
-    Integer major
-    Integer minor
-    Boolean release
-
-    ProjectVersion(Integer major, Integer minor) {
-        this.major = major
-        this.minor = minor
-        this.release = Boolean.FALSE
-    }
-
-    ProjectVersion(Integer major, Integer minor, Boolean release) {
-        this(major, minor)
-        this.release = release
-    }
-
-    @Override
-    String toString() {
-        "$major.$minor${release ? '' : '-SNAPSHOT'}"
+task printClasspath() {
+    description = 'Prints the current Java classpath.'
+    doLast {
+        println "${project.name}"
+        configurations.testRuntime.each {
+            println "--> $it"
+        }
     }
 }
 
 task wrapper(type: Wrapper) {
-	gradleVersion = '2.1'
+    description = 'Prints the Gradle wrapper version.'
+    gradleVersion = '2.1'
 }
 
 ext {
@@ -87,7 +58,7 @@ subprojects {
         apply plugin: "maven"
         apply plugin: "maven-publish"
 
-        if(project.name!="distribution") {
+        if (project.name != "distribution") {
             apply plugin: "java"
             apply from: file("${rootProject.projectDir.path}/gradle/bootme.gradle")
 
@@ -121,15 +92,22 @@ subprojects {
 
 }
 
+gradle.taskGraph.whenReady { graph ->
+    if (graph.hasTask(":allTests")) {
+        project.subprojects { project ->
+            tasks.withType(Test) {
+                /* Disable the test report for the individual test task */
+                reports.html.enabled = false
+            }
+        }
+    }
+}
+
 task allTests(type: TestReport, dependsOn: "bootSorcerRio") {
+    description = 'Aggregates all tests, view them in build/reports/tests/index.html.'
     destinationDir = file("$buildDir/reports/allTests")
     project.subprojects { project ->
-        /* Disable the test report for the individual test task */
-        /* test {
-             reports.html.enabled = false
-         }*/
         tasks.withType(Test) {
-            reports.html.enabled = false
             ignoreFailures true
             reportOn it
         }
@@ -140,4 +118,50 @@ task allTests(type: TestReport, dependsOn: "bootSorcerRio") {
 
     finalizedBy("terminateSorcerRio")
 }
+
+if (JavaVersion.current().isJava8Compatible()) {
+    allprojects {
+        //noinspection SpellCheckingInspection
+        tasks.withType(Javadoc) {
+            // disable the crazy super-strict doclint tool in Java 8
+            //noinspection SpellCheckingInspection
+            options.addStringOption('Xdoclint:none', '-quiet')
+        }
+    }
+}
+
+/*
+ * Generate all javadocs
+ */
+task allJavadoc(type: Javadoc) {
+    options.links = ['http://docs.oracle.com/javase/8/docs/api/',
+                     'https://river.apache.org/doc/api/',
+                     'http://www.rio-project.org/apidocs']
+    exclude '**/*Test.java'
+    exclude '**/edu/*'
+    description = 'Creates SORCER API Specification, view them in build/javadoc/index.html'
+    destinationDir = new File(project.projectDir, 'build/javadoc')
+    title = "SORCER ${version}"
+}
+
+subprojects {
+    afterEvaluate {
+        def skip = ["deploy-tests", "sorcer-tester", "eol", "worker", "pml", "service", "ssb"]
+        if (plugins.hasPlugin(JavaPlugin) && !skip.contains(project.name)) {
+            // configuration here
+            rootProject.tasks.allJavadoc {
+                source += files(sourceSets.collect { srcSet -> srcSet.allJava })
+                classpath += files(sourceSets*.compileClasspath)
+            }
+
+        }
+    }
+}
+
+task javaDocZip(type: Zip, dependsOn: allJavadoc) {
+    classifier = 'javadoc'
+    from allJavadoc.destinationDir
+}
+
+
 

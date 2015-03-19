@@ -17,13 +17,8 @@
 
 package sorcer.ui.exertlet;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JSplitPane;
+import javax.swing.*;
+import java.awt.*;
 
 /**
  * The user agent UI for the exertlet editing and execution.
@@ -33,7 +28,7 @@ public class NetletUI extends JFrame {
 	/** Creates new CatalogerUI */
 	public NetletUI(Object obj) {
 		super();
-		getAccessibleContext().setAccessibleName("Exertlet Editor");
+		getAccessibleContext().setAccessibleName("Netlet Editor");
 		createFrame(obj);
 	}
 
@@ -43,7 +38,7 @@ public class NetletUI extends JFrame {
 	 */
 	private void createFrame(Object obj) {
 		// Create and set up the window.
-		setTitle("Exertlet Editor");
+		setTitle("Netlet Editor");
 		// closing is managed by a service browser
 		setDefaultCloseOperation(HIDE_ON_CLOSE);
 

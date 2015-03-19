@@ -51,7 +51,7 @@ class MonitorConfig {
     long initialOpStringLoadDelay = TimeUnit.MILLISECONDS.toMillis(500);
 
     String[] getInitialOpStrings() {
-        def sorcer = ["${System.getProperty("SORCER_HOME")}/configs/opstrings/sorcerBoot.groovy"]
+        def sorcer = ["${System.getProperty("sorcer.home")}/configs/opstrings/sorcerBoot.groovy"]
         return sorcer as String[]
         //return [] as String[]
     }

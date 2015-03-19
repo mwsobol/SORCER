@@ -17,6 +17,7 @@
 package sorcer.core.context.model.par;
 
 import sorcer.co.tuple.Entry;
+import sorcer.co.tuple.EntryList;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.ApplicationDescription;
 import sorcer.core.context.ServiceContext;
@@ -84,18 +85,18 @@ public class Par<T> extends Entry<T> implements Variability<T>, Arg, Mappable<T>
 		value = (T)identifiable;
 	}
 	
-	public Par(String path, T argument) throws EvaluationException, RemoteException {
+	public Par(String path, T argument) throws EvaluationException {
 		super(path);
 		name = path;
 		
-		if (argument instanceof ParFidelity) {
+		if (argument instanceof EntryList) {
 			if (fidelities == null)
 				fidelities = new HashMap<String, Object>();
-			for (Entry e : (ParFidelity)argument) {
+			for (Entry e : (EntryList)argument) {
 				fidelities.put(e.getName(), e);
 			}
 			
-			Entry first = ((ParFidelity)argument).get(0);
+			Entry first = ((EntryList)argument).get(0);
 			selectedFidelity = first.getName();
 			value = (T)first;
 		} else {
@@ -285,7 +286,7 @@ public class Par<T> extends Entry<T> implements Variability<T>, Arg, Mappable<T>
 							scope.append(((Par<T>) p).getScope());
 
 					}
-				} else if (p instanceof FidelityInfo && fidelities != null) {
+				} else if (p instanceof SelectionFidelity && fidelities != null) {
 					selectedFidelity = p.getName();
 				} else if (p instanceof Context) {
 					if (scope == null)
@@ -610,7 +611,7 @@ public class Par<T> extends Entry<T> implements Variability<T>, Arg, Mappable<T>
 		
 	}
 
-	public void putFidelity(ParFidelity fidelity) throws EvaluationException,
+	public void putFidelity(EntryList fidelity) throws EvaluationException,
 			RemoteException {
 		if (fidelities == null)
 			fidelities = new HashMap<String, Object>();
@@ -618,7 +619,7 @@ public class Par<T> extends Entry<T> implements Variability<T>, Arg, Mappable<T>
 			fidelities.put(e.getName(), e.asis());
 	}
 
-	public void addFidelity(ParFidelity fidelity) throws EvaluationException,
+	public void addFidelity(EntryList fidelity) throws EvaluationException,
 			RemoteException {
 		putFidelity(fidelity);
 	}

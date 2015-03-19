@@ -18,8 +18,6 @@ package sorcer.worker.provider.configs
 import org.rioproject.config.Component
 import sorcer.worker.provider.impl.WorkerBean
 
-import java.util.logging.Level
-
 /**
  * Configuration for the Worker bean
  *

@@ -142,8 +142,8 @@ public class ObjectTask extends Task {
 				if (rp != null) {
 					if (((Context) result).getValue(rp.path) != null) {
 						dataContext.setReturnValue(((Context) result).getValue(rp.path));
-					} else if (rp.argPaths != null && rp.argPaths.length > 0) {
-						Context out = dataContext.getSubcontext(rp.argPaths);
+					} else if (rp.outPaths != null && rp.outPaths.length > 0) {
+						Context out = dataContext.getSubcontext(rp.outPaths);
 						dataContext.setReturnValue(out);
 					}
 				} else {

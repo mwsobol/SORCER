@@ -1,43 +1,54 @@
-A service is the work performed in which a service provider (one that serves)
-exerts acquired abilities to execute a computation. 
+Basic Definitions
 
-No explicit provider references!
-A reference to a provider and/or its activity is called a signature.
-A signature specifies at least a service type and an operation (name of activity).
-Service data is context-oriented - context aware exertions and operating system
-An expression of collaborating abilities to be exerted by a federation of providers is called an exertion
+A service is the work performed in which a service provider (one that serves) 
+exerts acquired abilities to execute a computation.
 
-A specification of provider's exerted acquired abilities is called an exertion.
-An exertion is expressed in the Exertion-Oriented Language (EOL).
+Explicit references to providers are not required!
 
-Service Provider (service actualization) is an instruction of service processor
+A reference to a provider and/or its action is called a signature.
+
+A signature specifies an activity by an operation and its service type 
+(context-oriented Java class or interface).
+	
+Service data and control strategy are context-based - distributed associative storage.
+
+A task is an elementary service defined by a signature with its data and control contexts.
+
+An exertion is a compound service defining collaborating providers-federation-to be exerted 
+by the SORCER Operating System (SOS). It is a structured composition of tasks and exertions.
+	
+An exertion expressed in the Service Modeling Language (SML) is called a service script or netlet.
+
+
+Service Provider exerts acquired abilities to execute a task
 	- defines its service types
-	- implements and and owns its service types
-	- satisfy three neutralities (location, protocol, implementation)
+  	- implements and owns its service types
+ 	- satisfy three neutralities (location, protocol, implementation)
 
-Service Exertion specifies runtime collaboration of providers (federation)
-	- specifies federation's members (composition with dependencies)
-	- specifies federation's context and data flow
-	- specifies federation's control strategy
+Service Exertion specifies runtime collaboration of providers - federation
+  	- specifies federation's members (composition with dependencies)
+ 	- specifies federation's data context and data flow
+  	- specifies federation's control strategy
 
-Services in SORCER: implement the Service interface: Service#service(Exertion)
+The Service interface (Service#service(Exertion)) is implemented by:
 	- service provider
 	- exertion
 	- service context (model)
 
 SORCER Operating System (SOS)
-	- executes exertions expressed in EOL
+	- executes exertions expressed in SML
 	- manages runtime service federations for exertions
 	- provides a service-oriented shell (sosh) for the SOS
 
+###############################################################################
 
-The Exertion-Oriented Languages (EOL) Tutorial
+SML examples in the SORCER Project
 
-1. Collections used in EOL
+1. Collections used in SML
 	eol/src/test/java/sorcer/arithmetic/collections
 	
 2. Service signatures, providers, services (exertions), 
-   and service data (contexts) in  EOL
+   and service data (contexts) in  SML
 	eol/test/java/sorcer/eol/services
 		
 3. Intro to service provider/requestor development
@@ -68,4 +79,4 @@ The Exertion-Oriented Languages (EOL) Tutorial
 	pml/test/java/sorcer/pml/modeling
 	
 9. Transdisciplinary computing - collaborative agregation of exertions and models
-   Proxying ents and pars in exertions and models
+   TODO: Proxying ents and pars in exertions and models

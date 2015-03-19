@@ -21,7 +21,7 @@ import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.provider.Concatenator;
-import sorcer.core.provider.exerter.ExertionDispatcher;
+import sorcer.core.provider.exerter.ServiceShell;
 import sorcer.core.signature.NetSignature;
 import sorcer.security.util.Auth;
 import sorcer.security.util.SorcerPrincipal;
@@ -73,7 +73,7 @@ public class NetBlock extends Block implements Evaluation<Object>, Invocation<Ob
 
 	public Block doBlock(Transaction txn) throws ExertionException,
 			SignatureException, RemoteException, TransactionException {
-		ExertionDispatcher se = new ExertionDispatcher(this);
+		ServiceShell se = new ServiceShell(this);
 		return (Block)se.exert(txn, null);
 	}
 

@@ -1,5 +1,3 @@
-//project.jar.enabled = false
-
 version = sorcerVersion
 
 jar {
