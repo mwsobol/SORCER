@@ -19,18 +19,12 @@ package sorcer.tools.shell;
 
 import java.io.PrintWriter;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
 import net.jini.config.Configuration;
-import net.jini.core.entry.Entry;
 import net.jini.core.lookup.ServiceItem;
-import net.jini.core.lookup.ServiceMatches;
-import net.jini.core.lookup.ServiceRegistrar;
 import net.jini.core.lookup.ServiceTemplate;
-import net.jini.lookup.entry.Name;
 import org.apache.commons.cli.*;
-import sorcer.tools.shell.cmds.DiscoCmd;
 import sorcer.util.ServiceAccessor;
 
 @SuppressWarnings("rawtypes")

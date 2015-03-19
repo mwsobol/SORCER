@@ -28,10 +28,11 @@ import net.jini.admin.JoinAdmin;
 import net.jini.core.lookup.ServiceRegistrar;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Options;
+import sorcer.tools.shell.IStatusCommand;
 import sorcer.tools.shell.NetworkShell;
 import sorcer.tools.shell.ShellCmd;
 
-public class DiscoCmd extends ShellCmd {
+public class DiscoCmd extends ShellCmd implements IStatusCommand {
 
 	{
 		COMMAND_NAME = "disco";
@@ -134,8 +135,7 @@ public class DiscoCmd extends ShellCmd {
 			printDetails(myReg, shell);
 	}
 
-	public void printCurrentLus(NetworkShell shell) throws IOException,
-			ClassNotFoundException {
+    public void printStatus() throws Exception {
 		if (registrars == null)
 			registrars = NetworkShell.getRegistrars();
 		if (selectedRegistrar >= 0) {

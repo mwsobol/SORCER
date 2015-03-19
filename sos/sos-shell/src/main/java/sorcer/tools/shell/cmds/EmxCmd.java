@@ -37,10 +37,11 @@ import sorcer.service.Exertion;
 import sorcer.service.ExertionInfo;
 import sorcer.service.MonitorException;
 import sorcer.service.ServiceExertion;
+import sorcer.tools.shell.IStatusCommand;
 import sorcer.tools.shell.NetworkShell;
 import sorcer.tools.shell.ShellCmd;
 
-public class EmxCmd extends ShellCmd {
+public class EmxCmd extends ShellCmd implements IStatusCommand {
 
 	{
 		COMMAND_NAME = "emx";
@@ -288,8 +289,8 @@ public class EmxCmd extends ShellCmd {
     private void describeMonitor(int index) {
 		describeMonitor(index, null);
 	}
-	
-	public void printCurrentMonitor() {
+
+    public void printStatus() throws Exception {
 		if (selectedMonitor >= 0) {
             shell.getOutputStream().println("Current exertion monitoring service: ");
 			describeMonitor(selectedMonitor);

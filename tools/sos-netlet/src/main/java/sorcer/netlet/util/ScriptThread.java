@@ -44,24 +44,17 @@ public class ScriptThread extends Thread {
 		private Object target = null;
 		final private GroovyShell gShell;
         private Configuration config;
-        private boolean debug = false;
 
         private final static Logger logger = LoggerFactory.getLogger(ScriptThread.class
                 .getName());
 
-        public ScriptThread(String script, ClassLoader classLoader, PrintStream out, Configuration config, boolean debug) {
+        public ScriptThread(String script, ClassLoader classLoader, PrintStream out, Configuration config) {
             super(tName("Script"));
             this.config = config;
-            this.debug = debug;
             gShell = new GroovyShell(classLoader);
 			this.script = script;
             this.parseScript();
 		}
-
-        public ScriptThread(String script, ClassLoader classLoader, PrintStream out, Configuration config) {
-            this(script, classLoader, out, config, false);
-        }
-
 
         public ScriptThread(String script, ClassLoader classLoader, PrintStream out) {
             this(script, classLoader, out, EmptyConfiguration.INSTANCE);

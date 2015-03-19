@@ -16,6 +16,7 @@
  */
 
 package sorcer.tools.shell.cmds;
+
 import net.jini.core.lookup.ServiceItem;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
@@ -26,7 +27,7 @@ import sorcer.core.provider.Provider;
 import sorcer.core.provider.StorageManagement;
 import sorcer.jini.lookup.AttributesUtil;
 import sorcer.service.*;
-import sorcer.tools.shell.NetworkShell;
+import sorcer.tools.shell.IStatusCommand;
 import sorcer.tools.shell.ShellCmd;
 import sorcer.util.url.sos.SdbUtil;
 
@@ -38,7 +39,7 @@ import java.util.*;
 import static sorcer.co.operator.list;
 import static sorcer.co.operator.store;
 
-public class DataStorageCmd extends ShellCmd {
+public class DataStorageCmd extends ShellCmd implements IStatusCommand {
 
 	{
 		COMMAND_NAME = "ds";
@@ -196,8 +197,8 @@ public class DataStorageCmd extends ShellCmd {
 	static private void describeStorer(int index, PrintWriter out) {
 		describeStorer(index, null, out);
 	}
-	
-	public static void printCurrentStorer(PrintWriter out, int selectedDataStorer) {
+
+    public void printStatus() throws Exception {
 		if (selectedDataStorer >= 0) {
             out.println("Current data storage service: ");
 			describeStorer(selectedDataStorer, out);

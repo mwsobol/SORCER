@@ -2,6 +2,7 @@ package sorcer.tools.shell.cmds;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Options;
+import sorcer.tools.shell.IStatusCommand;
 import sorcer.tools.shell.NetworkShell;
 import sorcer.tools.shell.ShellCmd;
 import sorcer.tools.webster.Webster;
@@ -37,8 +38,11 @@ public class InfoCmd extends ShellCmd {
                 .addOption("s", false, "short");
     }
 
-    public void execute(String command, CommandLine cmd) throws IOException, ClassNotFoundException {
-        PrintStream out = shell.getOutputStream();
+    public void execute(String command, CommandLine cmd) {
+        execute(cmd);
+    }
+
+    public void execute(CommandLine cmd){
         assert out != null;
 
         out.println("SORCER Network Shell (nsh " + NetworkShell.CUR_VERSION + ", JVM: " + System.getProperty("java.version"));
@@ -47,14 +51,14 @@ public class InfoCmd extends ShellCmd {
             printDetails();
 
         if (cmd.hasOption('a'))
-            printAllDetails(out);
+            printAllDetails();
 
         out.println("Type 'quit' to terminate the shell");
         out.println("Type 'help' for command help");
-
     }
 
-    private void printAllDetails(PrintStream out) {
+    private void printAllDetails() {
+/*
         out.println("Available applications: ");
         Iterator<Map.Entry<String, String>> mi = NetworkShell.appMap.entrySet()
                 .iterator();
@@ -63,10 +67,10 @@ public class InfoCmd extends ShellCmd {
             e = mi.next();
             out.println("  " + e.getKey() + "  at: " + e.getValue());
         }
+*/
     }
 
-    private void printDetails() throws IOException, ClassNotFoundException {
-        PrintStream out = shell.getOutputStream();
+    private void printDetails() {
         long currentTime = System.currentTimeMillis();
 
         out.println("  User: " + System.getProperty("user.name"));
@@ -96,10 +100,15 @@ public class InfoCmd extends ShellCmd {
                 + (NetworkShell.groups == null ? "all groups" : Arrays
                 .toString(NetworkShell.groups)));
 
-        DiscoCmd.printCurrentLus(shell);
-        EmxCmd.printCurrentMonitor(shell);
-//			VarModelCmd.printCurrentModel();
-        DataStorageCmd.printCurrentStorer(shell);
-        LookupCmd.printCurrentService(shell);
+        for (ShellCmd shellCmd : shell.getCommandTable().values()) {
+            if (shellCmd == this || !(shellCmd instanceof IStatusCommand))
+                continue;
+
+            try {
+                ((IStatusCommand) shellCmd).printStatus();
+            } catch (Exception e) {
+                e.printStackTrace(out);
+            }
+        }
     }
 }

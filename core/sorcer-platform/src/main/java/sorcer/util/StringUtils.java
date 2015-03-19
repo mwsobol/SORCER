@@ -81,6 +81,41 @@ public class StringUtils {
 
 		return buffer.toString();
 	}
+
+    public static String arrayToRequest(Object array) {
+        if (array == null)
+            return "null";
+        else if (!array.getClass().isArray()) {
+            return array.toString();
+        }
+        int length = Array.getLength(array);
+        if (length == 0)
+            return "";
+
+        StringBuffer buffer = new StringBuffer();
+        int last = length - 1;
+        Object obj;
+        for (int i = 0; i < length; i++) {
+            obj = Array.get(array, i);
+            if (obj == null)
+                buffer.append("null");
+            else if (obj.getClass().isArray())
+                buffer.append(arrayToRequest(obj));
+            else {
+                if (obj.toString().contains(" "))
+                    buffer.append("'").append(obj).append("'");
+                else
+                    buffer.append(obj);
+            }
+
+            if (i == last)
+                buffer.append("");
+            else
+                buffer.append(" ");
+        }
+        return buffer.toString();
+    }
+
     /**
      * Makes an arry from the parameter enumeration <code>e</code>.
      *

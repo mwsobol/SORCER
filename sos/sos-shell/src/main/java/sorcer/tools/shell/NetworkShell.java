@@ -18,10 +18,7 @@
 
 package sorcer.tools.shell;
 
-import groovy.lang.GroovyRuntimeException;
-
 import java.io.*;
-import java.lang.reflect.Array;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -58,8 +55,6 @@ import net.jini.discovery.LookupDiscovery;
 import net.jini.entry.AbstractEntry;
 import net.jini.lookup.entry.UIDescriptor;
 
-import org.codehaus.groovy.runtime.DefaultGroovyMethods;
-
 import sorcer.jini.lookup.entry.SorcerServiceInfo;
 import sorcer.netlet.util.ScriptExertException;
 import sorcer.security.util.SorcerPrincipal;
@@ -73,6 +68,9 @@ import sorcer.util.exec.ExecUtils.CmdResult;
 import sorcer.util.url.sos.SdbURLStreamHandlerFactory;
 
 import com.sun.jini.config.Config;
+
+import static sorcer.util.StringUtils.arrayToRequest;
+import static sorcer.util.StringUtils.toArray;
 
 /**
  * @author Mike Sobolewski
@@ -97,7 +95,7 @@ public class NetworkShell implements DiscoveryListener {
 
 //    static private boolean isRemoteLogging = true;
 
-	static private String shellName = "nsh";
+	final static private String shellName = "nsh";
 
 	private static String request;
 
@@ -108,8 +106,6 @@ public class NetworkShell implements DiscoveryListener {
 	final static String LOCATORS = "locators";
 
 	final static String SYS_PROPS = "system-props";
-
-	final static String LIST = "list-props";
 
 	public static final String COMPONENT = "sorcer.tools.shell";
 
@@ -131,9 +127,9 @@ public class NetworkShell implements DiscoveryListener {
 
 	private static LookupDiscovery disco;
 
-	private static TreeMap<String, ShellCmd> commandTable = new TreeMap<String, ShellCmd>();
+	private TreeMap<String, ShellCmd> commandTable = new TreeMap<String, ShellCmd>();
 
-	static final int MAX_MATCHES = 5;
+	public static final int MAX_MATCHES = 5;
 
 	public static final String CUR_VERSION = "1.2";
 
@@ -175,6 +171,10 @@ public class NetworkShell implements DiscoveryListener {
 	private static boolean interactive = true;
 
 	public static String nshUrl;
+
+    private DiscoCmd discoCmd;
+    private ExertCmd exertCmd;
+    private InfoCmd infoCmd;
 
     public NetworkShell(PrintWriter out, BufferedReader in) {
         _shellOutput = out;
@@ -227,7 +227,7 @@ public class NetworkShell implements DiscoveryListener {
 
     public ServiceItem[] lookup(
             Class[] serviceTypes) throws RemoteException {
-        return lookup(serviceTypes, (String)null);
+        return lookup(serviceTypes, null);
     }
 
     public ServiceItem[] lookup(
@@ -239,7 +239,7 @@ public class NetworkShell implements DiscoveryListener {
             Class[] serviceTypes, String serviceName) throws RemoteException {
         ServiceRegistrar regie = null;
         if (registrar == null) {
-            regie = DiscoCmd.getSelectedRegistrar();
+            regie = discoCmd.getSelectedRegistrar();
             if (regie == null)
                 return null;
         } else {
@@ -268,8 +268,7 @@ public class NetworkShell implements DiscoveryListener {
      * Start interactive shell
      */
     public void start() throws Throwable {
-        ShellCmd info = commandTable.get("about");
-        info.execute("about", new String[]{});
+        infoCmd.execute("about", new String[]{});
 
         String line;
         do {
@@ -299,7 +298,10 @@ public class NetworkShell implements DiscoveryListener {
                     || cmd.hasOption("help")
             ;
 
-            instance = new NetworkShell(new PrintWriter(System.out, true), new BufferedReader(new InputStreamReader(System.in)));
+            principal = new SorcerPrincipal(NetworkShell.getUserName());
+            principal.setId(NetworkShell.getUserName());
+
+            instance = buildInstance(true, argv) new NetworkShell(new PrintWriter(System.out, true), new BufferedReader(new InputStreamReader(System.in)));
 
             if(!interactive)
                 instance.execute(cmd);
@@ -323,8 +325,6 @@ public class NetworkShell implements DiscoveryListener {
             instance.loadExternalCommands();
             if (!instance.interactive) {
                 // System.out.println("main appMap: " + appMap);
-                execNoninteractiveCommand(argv);
-                shellOutput.println();
                 System.exit(0);
             }
             if (argv.length == 1 && argv[0].indexOf("-") == 0) {
@@ -332,9 +332,6 @@ public class NetworkShell implements DiscoveryListener {
                 shellOutput.flush();
                 System.exit(1);
             }
-
-            principal = new SorcerPrincipal(NetworkShell.getUserName());
-            principal.setId(NetworkShell.getUserName());
 
             shellOutput.print(SYSTEM_PROMPT);
             shellOutput.flush();
@@ -367,6 +364,8 @@ public class NetworkShell implements DiscoveryListener {
 	}
 
     private void execute(CommandLine cmd) {
+        instance.execNoninteractiveCommand(cmd);
+        shellOutput.println();
 
     }
 
@@ -417,7 +416,7 @@ public class NetworkShell implements DiscoveryListener {
 
     public static void processRequest(boolean outsideCall) {
         ShellCmd cmd;
-			shellTokenizer = new WhitespaceTokenizer(request);
+        shellTokenizer = new WhitespaceTokenizer(request);
         String curToken = "";
 			if (shellTokenizer.hasMoreTokens()) {
 				curToken = shellTokenizer.nextToken();
@@ -425,7 +424,7 @@ public class NetworkShell implements DiscoveryListener {
 			try {
 				if (commandTable.containsKey(curToken)) {
 					cmd = commandTable.get(curToken);
-                //--cmd.execute(request);
+                cmd.execute(request);
 				}
 				// admissible shortcuts in the 'synonyms' map
 				else if (aliases.containsKey(curToken)) {
@@ -441,7 +440,7 @@ public class NetworkShell implements DiscoveryListener {
 						shellTokenizer = new WhitespaceTokenizer(request);
 					}
 					cmd = commandTable.get(cmdName);
-                    //--cmd.execute(request);
+                    cmd.execute(request);
 				} else if (request.length() > 0) {
 					if (request.equals("?")) {
 						instance.listCommands();
@@ -500,7 +499,7 @@ public class NetworkShell implements DiscoveryListener {
 		return principal;
 	}
 
-	static public void startApplication(String appPath)
+	public void startApplication(String appPath)
 			throws EvaluationException, IOException, InterruptedException {
 		shellOutput.println("nsh executing: " + appPath);
 		CmdResult result = null;
@@ -519,11 +518,14 @@ public class NetworkShell implements DiscoveryListener {
 			throw new RuntimeException("Failed to start " + appPath);
 	}
 
-	static private void execNoninteractiveCommand(String args[])
+    CommandLineParser parser = new BasicParser();
+
+	private void execNoninteractiveCommand(String args[])
 			throws Throwable {
 		// check for external commands
 		//System.out.println("nonintercative nsh: " + Arrays.toString(args));
 
+/*
 		if (args[0].indexOf("--") == 0) {
 			String path = nishAppMap.get(args[0].substring(2));
             if (path!=null)
@@ -532,6 +534,7 @@ public class NetworkShell implements DiscoveryListener {
                 shellOutput.println("No such internal command available: " + args[0].substring(2));
 			System.exit(0);
 		}
+*/
         PropertyEvaluator propsEval = new PropertyEvaluator();
         propsEval.addDefaultSources();
         for (int i = 0; i < args.length; i++) {
@@ -547,29 +550,37 @@ public class NetworkShell implements DiscoveryListener {
         while (getRegistrars().isEmpty() && i<20)
             Thread.sleep(100);
         try {
+
+            CommandLine cmd = parser.parse(globalOptions, args);
+
+            if (cmd.hasOption("version")) {
+                printVersion();
+            } else if (cmd.hasOption("help")) {
+                printHelp();
+            } else if (cmd.hasOption('f')){
+                exertCmd.executeFile(cmd.getOptionValue('f'));
+            } else if(cmd.hasOption('n')){
+                exertCmd.executeFile(cmd.getOptionValue('n'));
+            }
+
             if (args.length == 1) {
                 if (args[0].equals("-version")) {
-				shellOutput.println("SORCER Network Shell (nsh " + CUR_VERSION
-                            + ", JVM: " + System.getProperty("java.version"));
                 } else if (args[0].equals("-help")) {
-                    shellOutput.println(NSH_HELP);
                 } else {
                     // Added reading the file as default first argument
                     // Check if file exists
-                    ShellCmd cmd = commandTable.get("exert");
-                    //--cmd.execute(request);
+                    exertCmd.execute(request);
 			}
             } else if (args.length > 1) {
 			if (args[0].equals("-f") || args[0].equals("-n")) {
 				// evaluate file
-                    ShellCmd cmd = commandTable.get("exert");
-                //--cmd.execute(request);
+                exertCmd.executeFile(cmd.getOptionValue());
 			} else if (args[0].equals("-e")) {
 				// evaluate command line expression
-				ExertCmd cmd = (ExertCmd) commandTable.get("exert");
+
 				// cmd.setScript(instance.getText(args[1]));
-				cmd.setScript(ExertCmd.readFile(huntForTheScriptFile(args[1])));
-                //--cmd.execute(request);
+				exertCmd.setScript(ExertCmd.readFile(huntForTheScriptFile(args[1])));
+                exertCmd.execute(request);
                 } else if (args[0].equals("-c")) {
                     ShellCmd cmd = commandTable.get(args[1]);
                     if (args.length > 2)
@@ -577,7 +588,7 @@ public class NetworkShell implements DiscoveryListener {
                     else
                         shellTokenizer = new WhitespaceTokenizer(request.substring(3 + args[1].length()));
                     if (cmd!=null) {
-                        //--cmd.execute(request);
+                        cmd.execute(request);
                     } else
                         shellOutput.println("Command: " + args[1] + " not found. " +
                                 "Please run 'nsh -help' to see the list of available commands");
@@ -601,7 +612,7 @@ public class NetworkShell implements DiscoveryListener {
                         request = batchCmd;
                         System.err.println("Starting command: '" + batchCmd + "'");
                         if (cmd!=null) {
-                            //--cmd.execute(request);
+                            cmd.execute(request);
                         }else
                             shellOutput.println("Command: " + args[1] + " not found. " +
                                     "Please run 'nsh -help' to see the list of available commands");
@@ -616,6 +627,15 @@ public class NetworkShell implements DiscoveryListener {
             // Do nothing since an error message was already printed out by th huntForTheScriptFile method
         }
         System.err.println("----------------------------------------------------");
+    }
+
+    private void printHelp() {
+        _shellOutput.println(NSH_HELP);
+    }
+
+    private void printVersion() {
+        _shellOutput.println("SORCER Network Shell (nsh " + CUR_VERSION
+                + ", JVM: " + System.getProperty("java.version"));
     }
 
     protected ClassLoader getExtClassLoader() {
@@ -719,20 +739,23 @@ public class NetworkShell implements DiscoveryListener {
 
     public void loadBuiltinCommands() {
         addCommand(new StartStopCmd(), "start", "stop");
-        addCommand(new DiscoCmd(), "disco");
+        discoCmd = new DiscoCmd();
+        addCommand(discoCmd, "disco");
         addCommand(new DirCmd(), "ls");
         addCommand(new ChgrpCmd(), "chgrp");
         addCommand(new GroupsCmd(), "groups");
         addCommand(new LookupCmd(), "lup");
         addCommand(new SetPortCmd(), "chport");
         addCommand(new HelpCmd(), "help");
-        addCommand(new ExertCmd(), "exert");
+        exertCmd = new ExertCmd();
+        addCommand(exertCmd, "exert");
         addCommand(new HttpCmd(), "http");
         addCommand(new EmxCmd(), "emx");
         addCommand(new EditCmd(), "edit");
         addCommand(new ClearCmd(), "clear");
         addCommand(new ExecCmd(), "exec");
-        addCommand(new InfoCmd(), "about");
+        infoCmd = new InfoCmd();
+        addCommand(infoCmd, "about");
         addCommand(new iGridCmd(), "ig");
         addCommand(new DataStorageCmd(), "ds");
         addCommand(new SpaceCmd(), "sp");
@@ -1067,12 +1090,14 @@ public class NetworkShell implements DiscoveryListener {
 		shellInput = new BufferedReader(new InputStreamReader(System.in));
 		groups = (String[]) sysConfig.getEntry(CONFIG_COMPONENT, "groups",
 				String[].class, DiscoveryGroupManagement.ALL_GROUPS);
+/*
 		String[] apps = (String[]) sysConfig.getEntry(
 				CONFIG_COMPONENT, "applications", String[].class,
 				new String[0]);
 		if (apps != null && apps.length >= 2) {
 			appendApps(apps);
 		}
+*/
 
 		LookupLocator[] locators = (LookupLocator[]) sysConfig.getEntry(
 				CONFIG_COMPONENT, "locators", LookupLocator[].class, null);
@@ -1190,64 +1215,6 @@ public class NetworkShell implements DiscoveryListener {
 		NetworkShell.groups = groups;
 	}
 
-    public static String[] toArray(String s, String delim) {
-        return StringUtils.toArray(s, delim);
-    }
-
-	public static String arrayToRequest(Object array) {
-		if (array == null)
-			return "null";
-		else if (!array.getClass().isArray()) {
-			return array.toString();
-		}
-		int length = Array.getLength(array);
-		if (length == 0)
-			return "";
-
-		StringBuffer buffer = new StringBuffer();
-		int last = length - 1;
-		Object obj;
-		for (int i = 0; i < length; i++) {
-			obj = Array.get(array, i);
-			if (obj == null)
-				buffer.append("null");
-			else if (obj.getClass().isArray())
-				buffer.append(arrayToRequest(obj));
-			else {
-                if (obj.toString().contains(" "))
-                    buffer.append("'").append(obj).append("'");
-                else
-                    buffer.append(obj);
-            }
-
-			if (i == last)
-				buffer.append("");
-			else
-				buffer.append(" ");
-		}
-		return buffer.toString();
-	}
-
-	public String getText(String urlOrFilename) throws IOException {
-		if (isScriptUrl(urlOrFilename)) {
-			try {
-				return DefaultGroovyMethods.getText(new URL(urlOrFilename));
-			} catch (Exception e) {
-				throw new GroovyRuntimeException(
-						"Unable to get script from URL: ", e);
-			}
-		}
-		return DefaultGroovyMethods
-				.getText(huntForTheScriptFile(urlOrFilename));
-	}
-
-	private boolean isScriptUrl(String urlOrFilename) {
-		return urlOrFilename.startsWith("http://")
-				|| urlOrFilename.startsWith("https://")
-				|| urlOrFilename.startsWith("file:");
-	}
-
-
     static public File huntForTheScriptFile(String input) throws IOException {
         String[] standardExtensions = { ".ntl", ".xrt", ".exertlet", ".netlet", ".net",
                 ".groovy", ".gvy", ".gy", ".gsh" };
@@ -1296,7 +1263,7 @@ public class NetworkShell implements DiscoveryListener {
         return sb.toString();
     }
 
-	public static TreeMap<String, ShellCmd> getCommandTable() {
+	public TreeMap<String, ShellCmd> getCommandTable() {
 		return commandTable;
 	}
 
@@ -1334,6 +1301,7 @@ public class NetworkShell implements DiscoveryListener {
 		}
 	}
 
+/*
 	public static Map<String, String> getAppMap() {
 		return appMap;
 	}
@@ -1349,7 +1317,8 @@ public class NetworkShell implements DiscoveryListener {
 			nishAppMap.put(apps[i], apps[i+1]);
 		}
 	}
-	
+*/
+
 	public Webster getWebster() {
 		return webster;
 	}
@@ -1397,6 +1366,7 @@ public class NetworkShell implements DiscoveryListener {
         aliases.put(alias, command);
     }
 
+/*
 	// a map of application name/ filename
 	public static Map<String, String> appMap = new TreeMap<String, String>();
 	// non interactive shell apps - used with nsh --<app name>
@@ -1452,6 +1422,7 @@ public class NetworkShell implements DiscoveryListener {
 
             appendNishApps(nishApps);
 	}
+*/
 
 
 }

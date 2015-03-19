@@ -34,13 +34,14 @@ import net.jini.core.lookup.ServiceTemplate;
 import net.jini.lookup.entry.Name;
 import sorcer.core.provider.Provider;
 import sorcer.jini.lookup.AttributesUtil;
+import sorcer.tools.shell.IStatusCommand;
 import sorcer.tools.shell.NetworkShell;
 import sorcer.tools.shell.ShellCmd;
 
 import com.sun.jini.admin.DestroyAdmin;
 import sorcer.tools.shell.WhitespaceTokenizer;
 
-public class LookupCmd extends ShellCmd {
+public class LookupCmd extends ShellCmd implements IStatusCommand {
 
 	{
 		COMMAND_NAME = "lup";
@@ -334,8 +335,7 @@ public class LookupCmd extends ShellCmd {
 						.getPublishedServices(serviceItems.get(index).attributeSets)));
 	}
 
-	public static void printCurrentService(NetworkShell shell) throws IOException,
-			ClassNotFoundException {
+    public void printStatus() throws Exception {
 		if (selectedServiceItem >= 0) {
             shell.getOutputStream().println("Selected service provider: ");
 			printService(selectedServiceItem, "");

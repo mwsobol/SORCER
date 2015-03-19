@@ -20,6 +20,7 @@ package sorcer.tools.shell.cmds;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.concurrent.ExecutionException;
 
 import net.jini.admin.Administrable;
 import net.jini.core.lookup.ServiceRegistrar;
@@ -50,7 +51,7 @@ public class StartStopCmd extends ShellCmd {
 	public StartStopCmd() {
 	}
 
-	public void execute(String command, String[] cmd) throws Throwable {
+	public void execute(String command, String[] cmd) throws ExecutionException {
 		LookupDiscovery ld = NetworkShell.getDisco();
 		WhitespaceTokenizer myTk = NetworkShell.getShellTokenizer();
 		input = shell.getCmd();
@@ -60,8 +61,14 @@ public class StartStopCmd extends ShellCmd {
 			String app = myTk.nextToken();
 			if (NetworkShell.getAppMap().containsKey(app)) {
 				String path = NetworkShell.getAppMap().get(app);
-				NetworkShell.startApplication(path);
-			} else {
+                try {
+                    shell.startApplication(path);
+                } catch (RuntimeException e) {
+                    throw e;
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            } else {
 				out.print("No such application " + app);
 			}
 		} else {

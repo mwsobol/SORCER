@@ -42,13 +42,7 @@ public class ScriptExerter {
 
     private boolean startsWithShellLine = false;
 
-    private String input;
-
-    private PrintStream out;
-
-    private File outputFile;
-
-    private File scriptFile;
+    private PrintWriter out;
 
     private String script;
 
@@ -66,26 +60,19 @@ public class ScriptExerter {
 
     private ScriptThread scriptThread;
 
-    private String websterStrUrl;
-
     private Configuration config;
 
     private List<URL> urlsToLoad = new ArrayList<URL>();
 
-    private boolean debug = false;
-
     public ScriptExerter() {
-        this(null, null, null, false);
+        this((ClassLoader)null);
     }
 
     public static String[] localJars = new String[] {
             "org.sorcersoft.sorcer:sos-api"
     };
 
-    public ScriptExerter(PrintStream out, ClassLoader classLoader, String websterStrUrl, boolean debug) {
-        this.out = out;
-        if (out==null) out = System.out;
-        this.debug = debug;
+    public ScriptExerter(ClassLoader classLoader) {
         this.classLoader = classLoader;
         try {
             for (String jar : localJars) {
@@ -95,7 +82,6 @@ public class ScriptExerter {
         } catch (MalformedURLException me) {
             out.println("Problem loading default classpath for scripts in ScriptExerter: " + me);
         }
-        this.websterStrUrl = websterStrUrl;
         if (staticImports == null) {
             staticImports = readTextFromJar("static-imports.txt");
         }
@@ -106,13 +92,12 @@ public class ScriptExerter {
     }
 
     public ScriptExerter(File scriptFile, PrintStream out, ClassLoader classLoader, String websterStrUrl) throws IOException {
-        this(out, classLoader, websterStrUrl, false);
-        this.scriptFile = scriptFile;
+        this(classLoader);
         readFile(scriptFile);
     }
 
     public ScriptExerter(String script, PrintStream out, ClassLoader classLoader, String websterStrUrl) throws IOException {
-        this(out, classLoader, websterStrUrl, false);
+        this(classLoader);
         readScriptWithHeaders(script);
     }
 
@@ -147,7 +132,7 @@ public class ScriptExerter {
         try {
             scriptThread = new ScriptThread(script,
                     new URLClassLoader(urlsToLoad.toArray(new URL[0]), (classLoader!=null ? classLoader : getClass().getClassLoader())),
-                    out, config, debug);
+                    out, config);
             this.target = scriptThread.getTarget();
             return target;
         }
