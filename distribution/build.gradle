@@ -108,7 +108,7 @@ task gatherDeps() {
                  "junit"                   : "lib/common/buildsupport"].each {
                     prefix, dest ->
                     copy {
-                        from filterDeps(project, prefix)
+                        from filterDeps(project, prefix, dest)
                         into "$distDir-${version}/$dest"
                     }
                 }
@@ -144,17 +144,22 @@ task gatherDeps() {
     }
 }
 
-def filterDeps(project, prefix) {
+
+def filterDeps(project, prefix, dest) {
     project.configurations.runtime.filter {
         String[] parts = prefix.split(",")
         for (String part : parts) {
             if (it.name.startsWith(part.trim())) {
-                return true
+                if (!file("$distDir-${version}/$dest/$it.name").exists())
+                    return true
+                else
+                    return false
             }
         }
         false
     }
 }
+
 
 task createDistribution(dependsOn: [":sorcer-boot:install",
                               ":sorcer-lib:install",

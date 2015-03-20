@@ -142,7 +142,7 @@ deployment(name: "Sorcer OS") {
 
         service(name: SorcerEnv.getActualName("Exert Monitor"), fork: getForkMode(), jvmArgs: "-Dsorcer.home=${Sorcer.sorcerHome}") {
             interfaces {
-                classes 'sorcer.core.provider.MonitoringManagement'
+                classes 'sorcer.core.monitor.MonitoringManagement'
                 resources appendJars(["sorcer-ui-${Sorcer.sorcerVersion}.jar"])
             }
             implementation(class: 'sorcer.core.provider.exertmonitor.ExertMonitor') {
