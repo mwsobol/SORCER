@@ -63,7 +63,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 	@Test
 	public void providerAcessorTest() throws Exception {
 		long startTime = System.currentTimeMillis();
-		Service provider = Accessor.getService(new NetSignature(Averager.class));
+		Object provider = Accessor.getService(new NetSignature(Averager.class));
 		logger.info("INTERFACES: " + Arrays.toString(provider.getClass().getInterfaces()));
 		assertTrue(Arrays.asList(provider.getClass().getInterfaces()).contains(Averager.class));
 //		logger.info("Accessor provider: " + provider);
@@ -361,7 +361,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 	
 	Exertion out = null;
 //	long start = System.currentTimeMillis();
-	Exerter exerter = ProviderAccessor.getExerter();
+	Exerter exerter = Accessor.getService(Exerter.class);
 //	logger.info("got exerter: " + exerter);
 
 	out = exerter.exert(f5);

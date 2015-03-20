@@ -28,7 +28,7 @@ public class ProviderAccessorTest implements SorcerConstants {
 	@Test
 	public void providerAcessorTest() throws Exception {
 		long startTime = System.currentTimeMillis();
-		Service provider = Accessor.getService(new NetSignature(Jobber.class));
+		Object provider = Accessor.getService(new NetSignature(Jobber.class));
 //		logger.info("Accessor provider: " + provider);
 		logger.info(Stopwatch.getTimeString(System.currentTimeMillis() - startTime));
 		assertNotNull(provider);
@@ -53,7 +53,7 @@ public class ProviderAccessorTest implements SorcerConstants {
 	@Test
 	public void accessingConcatenatorTest() throws Exception {
 		long startTime = System.currentTimeMillis();
-		Service provider = Accessor.getService(new NetSignature(Concatenator.class));
+		Object provider = Accessor.getService(new NetSignature(Concatenator.class));
 //		logger.info("Accessor provider: " + provider);
 		logger.info(Stopwatch.getTimeString(System.currentTimeMillis() - startTime));
 		assertNotNull(provider);
