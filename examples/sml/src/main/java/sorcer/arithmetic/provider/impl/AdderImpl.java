@@ -12,12 +12,13 @@ import sorcer.serviceui.UIComponentFactory;
 import sorcer.serviceui.UIDescriptorFactory;
 import sorcer.util.Sorcer;
 
+import java.io.Serializable;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.logging.Logger;
 
 @SuppressWarnings("rawtypes")
-public class AdderImpl implements Adder {
+public class AdderImpl implements Adder, Serializable {
 	private Arithmometer arithmometer = new Arithmometer();
 	private Provider provider;
 	private Logger logger = Logger.getLogger(Arithmometer.class.getName());

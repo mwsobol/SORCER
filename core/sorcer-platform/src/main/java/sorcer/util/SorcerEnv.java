@@ -924,7 +924,7 @@ public class SorcerEnv extends SOS {
 	}
 
 	public static String getSpacerName() {
-		return props.getProperty(SPACER_NAME, "Spacer");
+		return props.getProperty(SPACER_NAME, "Rendezvous");
 	}
 
 	public static String getActualSpacerName() {

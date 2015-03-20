@@ -38,6 +38,7 @@ import net.jini.lookup.ServiceItemFilter;
 import net.jini.lookup.entry.Name;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sorcer.core.SorcerConstants;
 import sorcer.core.provider.Provider;
 import sorcer.core.signature.NetSignature;
 import sorcer.service.DynamicAccessor;
@@ -321,7 +322,8 @@ public class ProviderLocator implements DynamicAccessor {
                 }
 			} else {
 				proxy = getService(signature.getServiceType(),
-                        signature.getProviderName(), WAIT_FOR);
+                        signature.getProviderName().equals(SorcerConstants.ANY)
+                                ? null : signature.getProviderName(), WAIT_FOR);
 			}
 		} catch (Exception ioe) {
 			throw new SignatureException(ioe);

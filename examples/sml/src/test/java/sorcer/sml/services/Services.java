@@ -114,9 +114,10 @@ public class Services {
 		Service t5 = srv("t5", sig("add", AdderImpl.class),
 				cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0), result("result/y")));
 
+        //TODO: CHECK Access.PULL doesn't work with ServiceJobber!!!
 		Service job = //j1(j2(t4(x1, x2), t5(x1, x2)), t3(x1, x2))
 				srv("j1", sig(ServiceJobber.class), result("job/result", outPaths("j1/t3/result/y")),
-					srv("j2", sig(ServiceJobber.class), t4, t5, strategy(Flow.PAR, Access.PULL)),
+					srv("j2", sig(ServiceJobber.class), t4, t5, strategy(Flow.PAR, Access.PUSH)),
 					t3,
 					pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
 					pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));

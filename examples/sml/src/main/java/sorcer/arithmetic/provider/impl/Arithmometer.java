@@ -10,6 +10,7 @@ import sorcer.service.Context;
 import sorcer.service.ContextException;
 import sorcer.service.Signature.ReturnPath;
 
+import java.io.Serializable;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.rmi.RemoteException;
@@ -20,7 +21,7 @@ import static sorcer.eo.operator.path;
 import static sorcer.eo.operator.revalue;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
-public class Arithmometer implements SorcerConstants {
+public class Arithmometer implements SorcerConstants, Serializable {
 	
 	public static final String ADD = "add";
 

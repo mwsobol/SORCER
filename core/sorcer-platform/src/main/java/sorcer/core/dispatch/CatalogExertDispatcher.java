@@ -82,7 +82,7 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
 			}
             afterExec(ex, result);
 		} catch (Exception e) {
-            logger.warn("Error while executing exertion");
+            logger.warn("Error while executing exertion: ", e);
 			// return original exertion with exception
 			result = (ServiceExertion) ex;
             result.reportException(e);
@@ -98,8 +98,8 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
     protected void afterExec(Exertion ex, Exertion result)
             throws SignatureException, ExertionException, ContextException {
         ServiceExertion ser = (ServiceExertion) result;
-		((CompoundExertion)xrt).setExertionAt(result, result.getIndex());
-//		((CompoundExertion)xrt).setExertionAt(result, ex.getIndex());
+//		((CompoundExertion)xrt).setExertionAt(result, result.getIndex());
+		((CompoundExertion)xrt).setExertionAt(result, ex.getIndex());
         if (ser.getStatus() > FAILED && ser.getStatus() != SUSPENDED) {
             ser.setStatus(DONE);
 /*            if (xrt.getControlContext().isNodeReferencePreserved())

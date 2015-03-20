@@ -20,12 +20,9 @@ import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
 import sorcer.core.dispatch.DispatcherFactory;
 import sorcer.core.dispatch.ExertionDispatcherFactory;
-import sorcer.core.dispatch.JobThread;
+import sorcer.core.dispatch.MogramThread;
 import sorcer.core.provider.Jobber;
-import sorcer.service.Exertion;
-import sorcer.service.ExertionException;
-import sorcer.service.Job;
-import sorcer.service.Mogram;
+import sorcer.service.*;
 
 import java.rmi.RemoteException;
 import java.util.logging.Logger;
@@ -48,7 +45,7 @@ public class ServiceJobber extends RendezvousBean implements Jobber {
 
             setServiceID(mogram);
             try {
-                JobThread mogramThread = new JobThread((Job)mogram, provider, getDispatcherFactory((Exertion)mogram));
+                MogramThread mogramThread = new MogramThread(mogram, provider, getDispatcherFactory((Exertion)mogram));
                 if (((Exertion)mogram).getControlContext().isMonitorable()
                         && !((Exertion)mogram).getControlContext().isWaitable()) {
                     replaceNullExertionIDs((Exertion)mogram);
@@ -57,12 +54,12 @@ public class ServiceJobber extends RendezvousBean implements Jobber {
                     return mogram;
                 } else {
                     mogramThread.run();
-                    Job result = mogramThread.getResult();
+                    Mogram result = mogramThread.getResult();
                     logger.fine("<== Result: " + result);
                     return result;
                 }
             } catch (Exception e) {
-                ((Job)mogram).reportException(e);
+                ((ServiceExertion)mogram).reportException(e);
                 logger.warning("Error: " + e.getMessage());
                 return mogram;
             }

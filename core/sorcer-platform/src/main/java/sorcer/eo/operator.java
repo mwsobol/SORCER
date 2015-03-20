@@ -1310,6 +1310,9 @@ public class operator {
 			((ServiceContext) job.getDataContext()).setReturnPath(rp);
 		}
 
+        if (control != null)
+            job.setControlContext(control);
+
 		if (job instanceof NetJob && control != null) {
 			job.setControlContext(control);
 			if (control.getAccessType().equals(Access.PULL)) {

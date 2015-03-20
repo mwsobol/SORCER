@@ -96,7 +96,7 @@ public class ServiceAccessors implements SorcerConstants {
 	@Test
 	public void acessor() throws Exception {
 		long startTime = System.currentTimeMillis();
-		Object provider = Accessor.getService(sig(Rendezvous.class));
+		Object provider = Accessor.getService(sig(Jobber.class));
 //		logger.info("Accessor provider: " + provider);
 		logger.info(Stopwatch.getTimeString(System.currentTimeMillis() - startTime));
 		assertNotNull(provider);

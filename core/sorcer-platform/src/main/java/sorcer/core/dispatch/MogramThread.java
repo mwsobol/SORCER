@@ -17,35 +17,30 @@
  */
 package sorcer.core.dispatch;
 
-import java.rmi.RemoteException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import sorcer.core.DispatchResult;
 import sorcer.core.Dispatcher;
 import sorcer.core.provider.Provider;
-import sorcer.core.provider.ServiceProvider;
-import sorcer.service.ContextException;
-import sorcer.service.Exec;
-import sorcer.service.Job;
+import sorcer.service.*;
 
-public class JobThread implements Runnable {
-	private final static Logger logger = LoggerFactory.getLogger(JobThread.class
+import java.rmi.RemoteException;
+
+public class MogramThread implements Runnable {
+	private final static Logger logger = LoggerFactory.getLogger(MogramThread.class
 			.getName());
 
 	private static final int SLEEP_TIME = 250;
-	// doJob method calls internally
-	private Job job;
+	// doMogram method calls internally
+	private Mogram job;
 
-	private Job result;
+	private Mogram result;
 
 	Provider provider;
 
     private DispatcherFactory dispatcherFactory;
 
-	public JobThread(Job job, Provider provider, DispatcherFactory dispatcherFactory) {
+	public MogramThread(Mogram job, Provider provider, DispatcherFactory dispatcherFactory) {
 		this.job = job;
 		this.provider = provider;
         this.dispatcherFactory = dispatcherFactory;
@@ -53,11 +48,15 @@ public class JobThread implements Runnable {
 
 	public void run() {
 		logger.debug("*** Exertion dispatcher started with control context ***\n"
-				+ job.getControlContext());
+				+ ((Exertion)job).getControlContext());
 		try {
-            Dispatcher dispatcher = dispatcherFactory.createDispatcher(job, provider);
+            Dispatcher dispatcher = null;
+            if (job instanceof Job)
+                dispatcher = dispatcherFactory.createDispatcher((Job)job, provider);
+            else
+                dispatcher = dispatcherFactory.createDispatcher((Task)job, provider);
 			try {
-				job.getControlContext().appendTrace(provider.getProviderName() +
+                ((Exertion)job).getControlContext().appendTrace(provider.getProviderName() +
 						" dispatcher: " + dispatcher.getClass().getName());
 			} catch (RemoteException e) {
                 logger.error("exception in dispatcher: " + e);
@@ -70,7 +69,7 @@ public class JobThread implements Runnable {
 					&& dispatcher.getState() != Exec.SUSPENDED) {
 				 count--;
 				 if (count < 0) {
-				 logger.finer("*** Jobber's Exertion Dispatcher waiting in state: "
+				 logger.finer("*** Mogramber's Exertion Dispatcher waiting in state: "
 				 + dispatcher.getState());
 				 count = COUNT;
 				 }
@@ -79,18 +78,18 @@ public class JobThread implements Runnable {
             dispatcher.exec();
             DispatchResult dispatchResult = dispatcher.getResult();
             logger.debug("*** Dispatcher exit state = " + dispatcher.getClass().getName()  + " state: " + dispatchResult.state
-                    + " for job***\n" + job.getControlContext());
-            result = (Job) dispatchResult.exertion;
+                    + " for job***\n" + ((Exertion)job).getControlContext());
+            result = (Mogram) dispatchResult.exertion;
 		} catch (DispatcherException de) {
 			de.printStackTrace();
 		}
 	}
 
-	public Job getJob() {
+	public Mogram getMogram() {
 		return job;
 	}
 
-	public Job getResult() throws ContextException {
+	public Mogram getResult() throws ContextException {
 		return result;
 	}
 }
