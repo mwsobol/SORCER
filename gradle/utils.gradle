@@ -67,19 +67,15 @@ bootSorcerNoHttpd.onlyIf {
  */
 task bootSorcerRio(type: Exec, dependsOn: "webster") {
     description = 'Starts SORCER OS Services with Rio services for service provisioning.'
-    def args = []
-    if(System.properties['os.name'].contains("Windows")) {
-        args << "cmd.exe"
-        args << "/C"
+
+    // import sorcer.boot as ant_sorcer.boot, the second line makes gradle call it after this task
+    ant.importBuild("${file("${sorcerDistHome}").path}/bin/rio/boot-sorcer-rio.xml"){
+        targetName -> 'ant_' + targetName
     }
-    args << "ant"
-    args << "-f"
-    args << "${file("${sorcerDistHome}").path}/bin/rio/boot-sorcer-rio.xml"
-    if(System.properties['sorcer.lite']==null) {
-        environment "sorcer.start.all": true
-    }
-    commandLine args
 }
+
+bootSorcerRio.finalizedBy 'ant_sorcer.boot'
+
 bootSorcerRio.onlyIf {
     File sorcerDist = file(sorcerDistHome)
     if(!sorcerDist.exists()) {
@@ -169,15 +165,10 @@ rioUI.onlyIf {
  */
 task webster(type: Exec) {
     description = 'Starts a class server (webster).'
-    def args = []
-    if(System.properties['os.name'].contains("Windows")) {
-        args << "cmd.exe"
-        args << "/C"
-        args << "groovy"
-    }
-    args << "${sorcerDistHome}/bin/webster/bin/webster.groovy"
-    commandLine args
+
+    new GroovyShell().run(file("${sorcerDistHome}/bin/webster/bin/webster.groovy"))
 }
+
 webster.onlyIf {
     File sorcerDist = file(sorcerDistHome)
     if(!sorcerDist.exists()) {
