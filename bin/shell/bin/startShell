@@ -150,6 +150,32 @@ if [ -e $startConfigFile ] ; then
     NSH_CONF="$HOME/.nsh/configs/nsh-start.config"
 fi
 
+
+lib/sorcer/lib/sos-shell-${sorcer.version}.jar
+lib/sorcer/lib-ext/webster-${sorcer.version}.jar
+lib/sorcer/lib/sorcer-platform-${sorcer.version}.jar
+lib/sorcer/lib/sorcer-dl-${sorer.version}.jar
+lib/common/slf4j-api-${slf4j.version}.jar
+lib/river/jsk-platform-${river.version}.jar
+lib/river/jsk-lib-${river.version}.jar
+lib/river/start-${river.version}.jar
+lib/river/jsk-resources-${river.version}.jar
+lib/river/serviceui-${river.version}.jar
+lib/river/jsk-dl-${river.version}.jar
+rio-${rio.version}/lib/rio-lib-${rio.version}.jar
+rio-${rio.version}/lib/monitor-api-${rio.version}.jar
+rio-${rio.version}/lib/cybernode-api-${rio.version}.jar
+rio-${rio.version}/lib/rio-api-${rio.version}.jar
+rio-${rio.version}/lib/rio-proxy-${rio.version}.jar
+rio-${rio.version}/lib/rio-platform-${rio.version}.jar
+rio-${rio.version}/lib/rio-logging-support-${rio.version}.jar
+lib/common/je-${je.version}.jar
+lib/blitz/lockmgr-${blitz.version}.jar
+lib/common/groovy/groovy-all-${groovy.version}.jar
+#:/home/rufio/.m2/repository/org/slf4j/slf4j-simple/1.7.7/slf4j-simple-1.7.7.jar
+
+$JAVA_HOME/lib/tools.jar
+
 RIO_CLASSPATH="$RIO_HOME/lib/rio-platform-$rio_version.jar:$RIO_HOME/lib/rio-lib-$rio_version.jar:$RIO_HOME/lib/rio-start-$rio_version.jar:$RIO_HOME/lib-dl/monitor-api-$rio_version.jar:$RIO_HOME/lib/logging/slf4j-jdk14-$slf4j_version.jar"
 # the classpath to start nsh then application specific classpath is defined in nsh-start.config
 STARTER_CLASSPATH="$SORCER_HOME/lib/common/groovy/groovy-all-$groovy_version.jar:$SORCER_HOME/lib/river/jsk-platform-$river_version.jar:$SORCER_HOME/lib/river/jsk-lib-$river_version.jar:$RIO_CLASSPATH:$SORCER_HOME/lib/sorcer/lib/sos-shell-$sorcer_version.jar:$SORCER_HOME/lib/sorcer/lib-ext/webster-$sorcer_version.jar:$SORCER_HOME/lib/sorcer/lib/sorcer-platform-$sorcer_version.jar"

@@ -301,7 +301,7 @@ public class NetworkShell implements DiscoveryListener {
             principal = new SorcerPrincipal(NetworkShell.getUserName());
             principal.setId(NetworkShell.getUserName());
 
-            instance = buildInstance(true, argv) new NetworkShell(new PrintWriter(System.out, true), new BufferedReader(new InputStreamReader(System.in)));
+            instance = buildInstance(true, argv);
 
             if(!interactive)
                 instance.execute(cmd);
@@ -1044,7 +1044,7 @@ public class NetworkShell implements DiscoveryListener {
 					+ " in: " + new File(".").getCanonicalPath());
 		} else {
 			sysConfig = ConfigurationProvider
-					.getInstance(new String[] { configFilename }, Thread.currentThread().getContextClassLoader().getParent());
+					.getInstance(new String[] { configFilename });
 		}
 
 		if (sysConfig == null)
