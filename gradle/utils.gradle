@@ -67,14 +67,19 @@ bootSorcerNoHttpd.onlyIf {
  */
 task bootSorcerRio(type: Exec, dependsOn: "webster") {
     description = 'Starts SORCER OS Services with Rio services for service provisioning.'
-
-    // import sorcer.boot as ant_sorcer.boot, the second line makes gradle call it after this task
-    ant.importBuild("${file("${sorcerDistHome}").path}/bin/rio/boot-sorcer-rio.xml"){
-        targetName -> 'ant_' + targetName
+    def args = []
+    if(System.properties['os.name'].contains("Windows")) {
+        args << "cmd.exe"
+        args << "/C"
     }
+    args << "ant"
+    args << "-f"
+    args << "${file("${sorcerDistHome}").path}/bin/rio/boot-sorcer-rio.xml"
+    //if(System.properties['sorcer.lite']==null) {
+        environment "sorcer.start.all": true
+    //}
+    commandLine args
 }
-
-bootSorcerRio.finalizedBy 'ant_sorcer.boot'
 
 bootSorcerRio.onlyIf {
     File sorcerDist = file(sorcerDistHome)
