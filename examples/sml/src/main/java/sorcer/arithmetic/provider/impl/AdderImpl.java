@@ -48,7 +48,7 @@ public class AdderImpl implements Adder, Serializable {
 //		} catch (InterruptedException e) {
 //			e.printStackTrace();
 //		}
-//		out.checkpoint();
+		out.checkpoint();
 //		Logger remoteLogger =  provider.getRemoteLogger();
 //		remoteLogger.info("remote logging; add result: " + out);
 		

@@ -32,6 +32,7 @@ import sorcer.core.context.model.par.ParModel;
 import sorcer.core.context.node.ContextNode;
 import sorcer.core.context.node.ContextNodeException;
 import sorcer.core.invoker.ServiceInvoker;
+import sorcer.core.monitor.MonitorUtil;
 import sorcer.core.provider.Provider;
 import sorcer.core.provider.ServiceProvider;
 import sorcer.core.signature.NetSignature;
@@ -2856,6 +2857,17 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 	public T get(String path) {
 		return super.get(path);
 	}
+
+	/**
+	 * Record this context as updated if the related exertion is monitored.
+	 *
+	 * @throws RemoteException
+	 * @throws MonitorException
+	 */
+	public void checkpoint() throws ContextException {
+        MonitorUtil.checkpoint(this);
+	}
+
 
 	public T asis(String path) throws ContextException {
 		T val;
