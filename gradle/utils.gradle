@@ -170,8 +170,9 @@ rioUI.onlyIf {
  */
 task webster(type: Exec) {
     description = 'Starts a class server (webster).'
-
-    new GroovyShell().run(file("${sorcerDistHome}/bin/webster/bin/webster.groovy"))
+    File sorcerDist = file(sorcerDistHome)
+    if(sorcerDist.exists())
+        new GroovyShell().run(file("${sorcerDistHome}/bin/webster/bin/webster.groovy"))
 }
 
 webster.onlyIf {
