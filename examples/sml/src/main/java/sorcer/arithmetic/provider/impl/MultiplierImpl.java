@@ -8,6 +8,7 @@ import java.io.Serializable;
 import java.rmi.RemoteException;
 
 public class MultiplierImpl implements Multiplier, Serializable {
+    private static final long serialVersionUID = -80999944915362813L;
 	Arithmometer arithmometer = new Arithmometer();
 
 	public Context multiply(Context context) throws RemoteException,

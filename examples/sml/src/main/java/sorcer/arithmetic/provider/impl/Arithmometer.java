@@ -22,6 +22,7 @@ import static sorcer.eo.operator.revalue;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class Arithmometer implements SorcerConstants, Serializable {
+    private static final long serialVersionUID = -82252627979263L;
 	
 	public static final String ADD = "add";
 

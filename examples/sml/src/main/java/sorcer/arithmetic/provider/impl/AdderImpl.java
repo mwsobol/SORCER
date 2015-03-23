@@ -19,6 +19,7 @@ import java.util.logging.Logger;
 
 @SuppressWarnings("rawtypes")
 public class AdderImpl implements Adder, Serializable {
+    private static final long serialVersionUID = -8098772962245123252L;
 	private Arithmometer arithmometer = new Arithmometer();
 	private Provider provider;
 	private Logger logger = Logger.getLogger(Arithmometer.class.getName());
