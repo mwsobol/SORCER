@@ -31,6 +31,7 @@ import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.util.*;
 
+import org.codehaus.groovy.tools.shell.AnsiDetector;
 import org.rioproject.impl.config.DynamicConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,7 +70,12 @@ import sorcer.util.url.sos.SdbURLStreamHandlerFactory;
 
 import com.sun.jini.config.Config;
 
+import static org.fusesource.jansi.Ansi.ansi;
 import static sorcer.util.StringUtils.tName;
+
+import org.fusesource.jansi.Ansi;
+import org.fusesource.jansi.AnsiConsole;
+import static org.fusesource.jansi.Ansi.Color.*;
 
 /**
  * @author Mike Sobolewski
@@ -215,6 +221,8 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 	}
 
 	static public void main(String argv[]) {
+        AnsiConsole.systemInstall();
+        //Ansi.setDetector(new AnsiDetector());
 		URL.setURLStreamHandlerFactory(new SdbURLStreamHandlerFactory());
 		String curToken = null;
 		//System.out.println("nsh main args: " + Arrays.toString(argv));	
@@ -237,10 +245,11 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 			// default shellOutput
 			shellOutput = System.out;
 			if (interactive) {
-				shellOutput.println("SORCER Network Shell (nsh " + CUR_VERSION
-						+ ", JVM: " + System.getProperty("java.version"));
-				shellOutput.println("Type 'quit' to terminate the shell");
-				shellOutput.println("Type 'help' for command help");
+				shellOutput.print(ansi().fg(GREEN).a("SORCER Network Shell ").reset());
+                shellOutput.println(ansi().render("@|bold nsh " + CUR_VERSION
+                        + ", JVM: " + System.getProperty("java.version")+ "|@"));
+				shellOutput.println(ansi().render("Type '@|bold quit|@' to terminate the shell"));
+				shellOutput.println(ansi().render("Type '@|bold help|@' for command help"));
 			}
 			
 			argv = buildInstance(true, argv);
@@ -260,7 +269,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 			principal = new SorcerPrincipal(NetworkShell.getUserName());
 			principal.setId(NetworkShell.getUserName());
 
-			shellOutput.print(SYSTEM_PROMPT);
+            shellOutput.print(ansi().render("@|bold " +SYSTEM_PROMPT + "|@"));
 			shellOutput.flush();
 			request = "";
 			request = shellInput.readLine();
@@ -308,12 +317,16 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 						shellOutput.println(UNKNOWN_COMMAND_MSG);
 					}
 				}
-				shellOutput.print(SYSTEM_PROMPT);
+                shellOutput.print(ansi().render("@|bold " +SYSTEM_PROMPT + "|@"));
 				shellOutput.flush();
 				String in = shellInput.readLine();
 				// fore !! run the previous command
-				if (!in.equals("!!")) {
+				if (in!=null && !in.equals("!!")) {
 					instance.request = in;
+				}
+				if (request==null || request.equals("q")) {
+					// Exit when CTRL+D is pressed
+					System.exit(0);
 				}
 			} catch (Throwable ex) {
 				ex.printStackTrace();
@@ -557,7 +570,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 			shellOutput.println("\tindex: " + tpInt);
 			registrars.remove(tpInt);
 		}
-		shellOutput.print(SYSTEM_PROMPT);
+		shellOutput.print(ansi().render("@|bold " +SYSTEM_PROMPT + "|@"));
 		shellOutput.flush();
 	}
 

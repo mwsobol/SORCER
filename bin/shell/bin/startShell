@@ -128,6 +128,12 @@ setVersionVar "rio.version"
 rio_version=$VERSION
 RIO_HOME=$SORCER_HOME/rio-$rio_version
 
+setVersionVar "jansi.version"
+jansi_version=$VERSION
+
+setVersionVar "jline.version"
+jline_version=$VERSION
+
 setVersionVar "slf4j.version"
 slf4j_version=$VERSION
 
@@ -164,6 +170,8 @@ $RIO_HOME/lib/logging/slf4j-jdk14-$slf4j_version.jar"
 # the classpath to start nsh then application specific classpath is defined in nsh-start.config
 STARTER_CLASSPATH="$SORCER_HOME/lib/common/groovy/groovy-all-$groovy_version.jar:\
 $SORCER_HOME/lib/common/plexus-utils-$plexus_version.jar:\
+$SORCER_HOME/lib/common/jansi-$jansi_version.jar:\
+$SORCER_HOME/lib/common/jline-$jline_version.jar:\
 $SORCER_HOME/lib/river/jsk-platform-$river_version.jar:\
 $SORCER_HOME/lib/river/jsk-lib-$river_version.jar:\
 $SORCER_HOME/lib/river/serviceui-$river_version.jar:\

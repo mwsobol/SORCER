@@ -50,7 +50,7 @@ public class NetJobExertions implements SorcerConstants {
 		Task t5 = task("t5",
 				sig("add", Adder.class),
 				context("add", inEnt("arg, x1", 20.0),
-						inEnt("arg, x2", 80.0), result("result/y")));
+						inEnt("arg, x2", 80.0), result("result/y")), strategy(Monitor.YES));
 		
 		t5 = exert(t5);
 		logger.info("t5 context: " + context(t5));
@@ -234,22 +234,23 @@ public class NetJobExertions implements SorcerConstants {
 		
 		Task t3 = task("t3", sig("subtract", Subtractor.class), 
 				context("subtract", inEnt("arg/x1"), inEnt("arg/x2"),
-						outEnt("result/y")));
+						outEnt("result/y")), strategy(Monitor.YES));
 
 		Task t4 = task("t4", sig("multiply", Multiplier.class), 
 				context("multiply", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
-						outEnt("result/y")));
+						outEnt("result/y")), strategy(Monitor.YES));
 
 		Task t5 = task("t5", sig("add", Adder.class), 
 				context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
-						outEnt("result/y")));
+						outEnt("result/y")), strategy(Monitor.YES));
 
 		// Service Composition j1(j2(t4(x1, x2), t5(x1, x2)), t3(x1, x2))
 		Job job = job("j1", 
-				job("j2", t4, t5, strategy(flow, access)), 
+				job("j2", t4, t5, strategy(flow, access, Monitor.YES)),
 				t3,
 				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
-				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
+				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")),
+                strategy(Monitor.YES));
 				
 		return job;
 	}

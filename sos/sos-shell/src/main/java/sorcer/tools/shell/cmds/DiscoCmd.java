@@ -30,6 +30,8 @@ import sorcer.tools.shell.NetworkShell;
 import sorcer.tools.shell.ShellCmd;
 import sorcer.util.WhitespaceTokenizer;
 
+import static org.fusesource.jansi.Ansi.ansi;
+
 public class DiscoCmd extends ShellCmd {
 
 	{
@@ -109,17 +111,18 @@ public class DiscoCmd extends ShellCmd {
 		if (out == null) {
 			out = NetworkShell.getShellOutputStream();
 		}
-		out.println("--------- LOOKUP SERVICE # " + registrars.indexOf(myReg)
-				+ " ---------");
-		out.println("ID: " + myReg.getServiceID());
+
+        out.println(ansi().render("@|green ---------" + (msg != null ? " " + msg : "")
+                + " LOOKUP SERVICE # |@ @|bold,green " + registrars.indexOf(myReg) + "|@ @|green ---------|@"));
+		out.println(ansi().render("ID: @|bold " + myReg.getServiceID()+"|@"));
 		groups = myReg.getGroups();
 		if (groups.length > 0)
 			for (int o = 0; o < groups.length; o++) {
 				msg += "\'" + groups[o] + "\' ";
 			}
-		out.println("Groups supported: " + msg);
-		out.println("Lookup locator: " + myReg.getLocator().getHost() + ":"
-				+ myReg.getLocator().getPort());
+		out.println(ansi().render("Groups supported: @|green " + msg +"|@"));
+		out.println(ansi().render("Lookup locator: @|bold " + myReg.getLocator().getHost() + ":"
+				+ myReg.getLocator().getPort() + "|@"));
 		if (withDetails)
 			printDetails(myReg);
 	}

@@ -32,6 +32,8 @@ ext {
 	junitAddonsVersion = "1.4"
 	antVersion = "1.8.2"
     plexusVersion = "3.0.15"
+    jansiVersion = "1.11"
+    jlineVersion = "2.12.1"
 
     sorcerDistHome = "${rootProject.projectDir.path}/distribution/build/sorcer-$version"
     rioHome = "$sorcerDistHome/rio-${rioVersion}"

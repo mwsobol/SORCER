@@ -23,6 +23,8 @@ jar {
 }
 
 dependencies {
+    compile 'org.fusesource.jansi:jansi:' + jansiVersion
+    compile 'jline:jline:' + jlineVersion
     compile	project(':webster')
     compile project(':sorcer-platform')
 }

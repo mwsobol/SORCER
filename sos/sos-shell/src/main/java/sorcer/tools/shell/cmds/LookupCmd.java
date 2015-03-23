@@ -24,7 +24,6 @@ import java.net.URLClassLoader;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.StringTokenizer;
 
 import net.jini.admin.Administrable;
 import net.jini.core.entry.Entry;
@@ -40,6 +39,8 @@ import sorcer.tools.shell.ShellCmd;
 
 import com.sun.jini.admin.DestroyAdmin;
 import sorcer.util.WhitespaceTokenizer;
+
+import static org.fusesource.jansi.Ansi.ansi;
 
 public class LookupCmd extends ShellCmd {
 
@@ -264,7 +265,7 @@ public class LookupCmd extends ShellCmd {
 		Entry[] attributeSets = item.attributeSets;
 		for (int i = 0; i < attributeSets.length; i++) {
 			if (attributeSets[i] instanceof Name) {
-				out.println("Name: " + ((Name) attributeSets[i]).name);
+				out.println(ansi().render("Name: @|green " +((Name) attributeSets[i]).name + "|@"));
 				return;
 			}
 		}
@@ -284,20 +285,20 @@ public class LookupCmd extends ShellCmd {
 			printProvider(index, msg);
 			return;
 		}
-		out.println("---------" + (msg != null ? " " + msg : "")
-				+ " SERVICE # " + index + " ---------");
-		out.println("ID: " + serviceItems.get(index).serviceID);
-		printServiceName(serviceItems.get(index));
-		out.println("Proxy class: "
-				+ serviceItems.get(index).service.getClass());
+		out.println(ansi().render("@|blue ---------" + (msg != null ? " " + msg : "")
+				+ "|@ @|bold,blue SERVICE # " +index + "|@ @|blue ---------|@"));
+		out.println(ansi().render("ID: @|bold " + serviceItems.get(index).serviceID + "|@"));
+        printServiceName(serviceItems.get(index));
+        out.println(ansi().render("Proxy class: @|bold "
+                + serviceItems.get(index).service.getClass().getName() + "|@"));
 	}           
 
 	static private void describeService(int index, String msg) throws IOException,
 			ClassNotFoundException {
-		out.println("---------" + (msg != null ? " " + msg : "")
-				+ " SERVICE # " + index + " ---------");
-		out.println("ID: " + serviceItems.get(index).serviceID);
-		printServiceName(serviceItems.get(index));
+        out.println(ansi().render("@|blue ---------" + (msg != null ? " " + msg : "")
+                + "|@ @|bold,blue SERVICE # " +index + "|@ @|blue ---------|@"));
+        out.println(ansi().render("ID: @|white " + serviceItems.get(index).serviceID + "|@"));
+        printServiceName(serviceItems.get(index));
 		Class myCls = serviceItems.get(index).service.getClass();
 		out.println("Proxy class: " + myCls);
 		Class[] allIntf = myCls.getInterfaces();
@@ -316,24 +317,25 @@ public class LookupCmd extends ShellCmd {
 	}
 
 	static private void printProvider(int index, String msg) {
-		out.println("---------" + (msg != null ? " " + msg : "")
-				+ " SERVICE PROVIDER # " + index + " ---------");
-		out.println("ID: "
-				+ serviceItems.get(index).serviceID
-				+ " at: "
-				+ AttributesUtil.getHostName(serviceItems.get(index).attributeSets));
-		out.println("Home: "
-				+ AttributesUtil.getUserDir(serviceItems.get(index).attributeSets));
+        out.println(ansi().render("@|blue ---------" + (msg != null ? " " + msg : "")
+                + "|@ @|bold,blue SERVICE PROVIDER # " +index + "|@ @|blue ---------|@"));
+        out.println(ansi().render("ID: " +
+                "@|bold " + serviceItems.get(index).serviceID + "|@"
+                + " at: "
+                + "@|bold,green " + AttributesUtil.getHostName(serviceItems.get(index).attributeSets) + "|@"
+        ));
+		out.println(ansi().render("Home: @|bold "
+				+ AttributesUtil.getUserDir(serviceItems.get(index).attributeSets) + "|@"));
 		String groups = AttributesUtil
 				.getGroups(serviceItems.get(index).attributeSets);
-		out.println("Provider name: "
-				+ AttributesUtil.getProviderName(serviceItems.get(index).attributeSets));
-		out.println("Proxy class: "
-				+ serviceItems.get(index).service.getClass().getName());
-		out.println("Groups supported: " + groups);
-		out.println("Published services: "
+		out.println(ansi().render("Provider name: "
+                + "@|bold,green " + AttributesUtil.getProviderName(serviceItems.get(index).attributeSets) + "|@"));
+		out.println(ansi().render("Proxy class: @|bold "
+				+ serviceItems.get(index).service.getClass().getName() + "|@"));
+		out.println(ansi().render("Groups supported: @|bold " + groups + "|@"));
+		out.println(ansi().render("Published services: @|bold "
 				+ Arrays.toString(AttributesUtil
-						.getPublishedServices(serviceItems.get(index).attributeSets)));
+						.getPublishedServices(serviceItems.get(index).attributeSets))+"|@"));
 	}
 
 	public static void printCurrentService() throws IOException,
