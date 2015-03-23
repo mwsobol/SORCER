@@ -44,7 +44,7 @@ ext {
     //enclaveRepo = "10.0.1.9:50001"
     enclave = InetAddress.getLocalHost().getHostAddress().startsWith("10.131")
 }
-           pa
+
 apply from: file('gradle/libraries.gradle')
 apply from: file("gradle/testProperties.gradle")
 apply from: file("gradle/utils.gradle")
