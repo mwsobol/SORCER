@@ -60,6 +60,7 @@ subprojects {
 
         if (project.name != "distribution") {
             apply plugin: "java"
+            compileJava.options.encoding = 'UTF-8'
             apply from: file("${rootProject.projectDir.path}/gradle/bootme.gradle")
 
             publishing {
