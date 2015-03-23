@@ -121,6 +121,7 @@ if [ -z "$SORCER_HOME" -o ! -d "$SORCER_HOME" ] ; then
     cd "`dirname \"$PRG\"`/../../.."
     SORCER_HOME="`pwd -P`"
     cd "$SAVED"
+    echo SORCER_HOME=$SORCER_HOME
 fi
 
 setVersionVar "rio.version"
@@ -129,6 +130,9 @@ RIO_HOME=$SORCER_HOME/rio-$rio_version
 
 setVersionVar "slf4j.version"
 slf4j_version=$VERSION
+
+setVersionVar "plexus.version"
+plexus_version=$VERSION
 
 setVersionVar "groovy.version"
 groovy_version=$VERSION
@@ -150,9 +154,23 @@ if [ -e $startConfigFile ] ; then
     NSH_CONF="$HOME/.nsh/configs/nsh-start.config"
 fi
 
-RIO_CLASSPATH="$RIO_HOME/lib/rio-platform-$rio_version.jar:$RIO_HOME/lib/rio-lib-$rio_version.jar:$RIO_HOME/lib/rio-start-$rio_version.jar:$RIO_HOME/lib-dl/monitor-api-$rio_version.jar:$RIO_HOME/lib/logging/slf4j-jdk14-$slf4j_version.jar"
+RIO_CLASSPATH="$RIO_HOME/lib/rio-platform-$rio_version.jar:\
+$RIO_HOME/lib/rio-lib-$rio_version.jar:\
+$RIO_HOME/lib/rio-start-$rio_version.jar:\
+$RIO_HOME/lib-dl/rio-api-$rio_version.jar:\
+$RIO_HOME/lib-dl/monitor-api-$rio_version.jar:\
+$RIO_HOME/lib/logging/slf4j-api-$slf4j_version.jar:\
+$RIO_HOME/lib/logging/slf4j-jdk14-$slf4j_version.jar"
 # the classpath to start nsh then application specific classpath is defined in nsh-start.config
-STARTER_CLASSPATH="$SORCER_HOME/lib/common/groovy/groovy-all-$groovy_version.jar:$SORCER_HOME/lib/river/jsk-platform-$river_version.jar:$SORCER_HOME/lib/river/jsk-lib-$river_version.jar:$RIO_CLASSPATH:$SORCER_HOME/lib/sorcer/lib/sos-shell-$sorcer_version.jar:$SORCER_HOME/lib/sorcer/lib-ext/webster-$sorcer_version.jar:$SORCER_HOME/lib/sorcer/lib/sorcer-platform-$sorcer_version.jar"
+STARTER_CLASSPATH="$SORCER_HOME/lib/common/groovy/groovy-all-$groovy_version.jar:\
+$SORCER_HOME/lib/common/plexus-utils-$plexus_version.jar:\
+$SORCER_HOME/lib/river/jsk-platform-$river_version.jar:\
+$SORCER_HOME/lib/river/jsk-lib-$river_version.jar:\
+$SORCER_HOME/lib/river/serviceui-$river_version.jar:\
+$RIO_CLASSPATH:\
+$SORCER_HOME/lib/sorcer/lib/sos-shell-$sorcer_version.jar:\
+$SORCER_HOME/lib/sorcer/lib-ext/webster-$sorcer_version.jar:\
+$SORCER_HOME/lib/sorcer/lib/sorcer-platform-$sorcer_version.jar"
 
 # Create the final classpath. Setting a classpath using the -cp or -classpath option means not to use the
 # global classpath. Network shell behaves then the same as the java interpreter
@@ -271,16 +289,23 @@ if $cygwin ; then
 fi
 
 startShell ( ) {	
-    CLASS=$1
+    STARTER_MAIN_CLASS=$1
     shift
+    # Use rlwrap if installed to enable history in nsh
+    if [ -n "$(which rlwrap 2>&1 | egrep -v 'no ')" ]; then
+        RLWRAP="rlwrap "
+    else
+        RLWRAP=""
+    fi
     # Start the Profiler or the JVM
     if $useprofiler ; then
         runProfiler
     else
-#       echo "==> STARTER_CLASSPATH: $STARTER_CLASSPATH"
-        exec "$JAVACMD" $JAVA_OPTS \
+        #echo "==> STARTER_CLASSPATH: $STARTER_CLASSPATH"
+        exec $RLWRAP"$JAVACMD" $JAVA_OPTS \
             -classpath "$STARTER_CLASSPATH" \
             -Djava.security.policy="$SORCER_HOME"/bin/shell/policy/shell.policy \
+            -Dsorcer.tools.shell.logDir="$SORCER_HOME"/logs \
             -Dscript.name="$SCRIPT_PATH" \
             -Dprogram.name="$PROGNAME" \
             -Desh.starter.conf="$NSH_CONF" \
@@ -290,13 +315,10 @@ startShell ( ) {
             -Dtools.jar="$TOOLS_JAR" \
             -Djava.util.logging.config.file="$SORCER_HOME"/bin/shell/configs/sorcer.logging \
             $STARTER_MAIN_CLASS \
-            --main $CLASS \
             --config "$NSH_CONF" \
             --classpath "$CP" \
             "$@"
     fi
 }
-
-STARTER_MAIN_CLASS=sorcer.tools.shell.ShellStarter
 
 lateInit

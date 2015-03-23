@@ -1928,10 +1928,10 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		}
 	}
 
-	//public void initSpaceSupport() throws ConfigurationException {
-	//	delegate.spaceEnabled(true);
-	//	delegate.initSpaceSupport();
-	//}
+	public void initSpaceSupport() throws ConfigurationException {
+		delegate.spaceEnabled(true);
+		delegate.initSpaceSupport();
+	}
 
 	/*
 	 * (non-Javadoc)

@@ -91,12 +91,13 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 
 
 
-/*
-    public static final String CONFIG_EXT_PATH = Sorcer.getEnvironment().getSorcerExtDir() + "/configs/shell/configs/nsh-start-ext.config";
-    public static final String CONFIG_PATH = SorcerEnv.getEnvironment().getSorcerHome() + "/configs/shell/configs/nsh-start.config";
 
-    public static final String[] CONFIG_FILES = { CONFIG_EXT_PATH, CONFIG_PATH };
-*/
+    //public static final String CONFIG_EXT_PATH = Sorcer.get + "/configs/shell/configs/nsh-start-ext.config";
+    public static final String CONFIG_PATH = SorcerEnv.getHome() + "/configs/shell/configs/nsh-start.config";
+
+    public static final String[] CONFIG_FILES = { CONFIG_PATH };
+    //CONFIG_EXT_PATH,
+
 
     public static int selectedRegistrar = 0;
 
@@ -142,7 +143,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 
 	static final int MAX_MATCHES = 5;
 
-	static final String CUR_VERSION = "1.2";
+	static final String CUR_VERSION = Sorcer.getSorcerVersion();
 
 	static final String BUILTIN_QUIT_COMMAND = "quit,exit,bye";
 	
@@ -172,7 +173,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 
 	private Webster webster;
 
-	private String[] httpJars;
+	private String[] httpJars = new String[0];
 
 	private String[] httpRoots;
 
@@ -476,7 +477,23 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 	}
 
 	protected void loadExternalCommands() {
-		ServiceLoader<IShellCmdFactory> loader = ServiceLoader.load(IShellCmdFactory.class, getExtClassLoader());
+        try {
+            LoaderConfiguration lc = new LoaderConfiguration();
+            for (String configFile : CONFIG_FILES) {
+                File cfgFile = new File(configFile);
+                if (cfgFile.exists()) {
+                    lc.configure(new FileInputStream(cfgFile));
+                }
+            }
+            final ClassLoader cl = new URLClassLoader(lc.getClassPathUrls(), NetworkShell.class.getClassLoader());
+            Thread.currentThread().setContextClassLoader(cl);
+            //new Activator().activate(((URLClassLoader) Thread.currentThread().getContextClassLoader()).getURLs());
+        } catch (Exception e) {
+            e.printStackTrace(shellOutput);
+            System.exit(-1);
+        }
+
+        ServiceLoader<IShellCmdFactory> loader = ServiceLoader.load(IShellCmdFactory.class, getExtClassLoader());
 		for (IShellCmdFactory factory : loader) {
 			factory.instantiateCommands(this);
 		}
@@ -596,7 +613,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 		String iGridHome = Sorcer.getHome();
 		if (iGridHome == null)
 			throw new RuntimeException("SORCER_HOME must be set");
-		props.put("java.protocol.handler.pkgs", "net.jini.url|sorcer.util.bdb.sos");
+		props.put("java.protocol.handler.pkgs", "net.jini.url|sorcer.util.url|org.rioproject.url");
 		Properties addedProps = getConfiguredSystemProperties();
 		props.putAll(addedProps);
 		Properties sysProps = System.getProperties();
@@ -610,13 +627,13 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 
 		if (!interactive && (args.length==0 || (!args[0].equals("-c")
                 && !args[0].equals("-help") && !args[0].equals("-version")))) {
-			String logDirPath = System.getProperty(COMPONENT + "logDir",
+			String logDirPath = System.getProperty(COMPONENT + ".logDir",
 					iGridHome + File.separator + "bin" + File.separator
 							+ "shell" + File.separator + "logs");
 		
 			File logDir = new File(logDirPath);
 			if (!logDir.exists()) {
-				if (!logDir.mkdir()) {
+				if (!logDir.mkdirs()) {
 					System.err.println("Unable to create log directory at "
 							+ logDir.getAbsolutePath());
 				}
@@ -1177,7 +1194,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 				sb.append("http://").append(localIPAddress).append(":")
 						.append(port).append("/").append(jars[i]).append(" ");
 			}
-			sb.append("http://").append(localIPAddress).append(":")
+			if (jars.length>1) sb.append("http://").append(localIPAddress).append(":")
 					.append(port).append("/").append(jars[jars.length - 1]);
 			codebase = sb.toString();
 			System.setProperty("java.rmi.server.codebase", codebase);
@@ -1262,14 +1279,14 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 		}
 		// System.out.println("initShell configFilename: " + configFilename);
 
-		File configf = new File(configFilename);
+/*		File configf = new File(configFilename);
 		if (!configf.exists()) {
 			System.err.println("No nsh configuration file: " + configf
 					+ " in: " + new File(".").getCanonicalPath());
 		} else {
 			sysConfig = ConfigurationProvider
 					.getInstance(new String[] { configFilename }, Thread.currentThread().getContextClassLoader().getParent());
-		}
+		}*/
 
 		if (sysConfig == null)
 			sysConfig = EmptyConfiguration.INSTANCE;
