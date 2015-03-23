@@ -452,8 +452,8 @@ public class ServiceCataloger extends ServiceProvider implements Cataloger {
 		public CatalogerInfo() {
 			super();
 			interfaceIgnoreList = new String[8];
-			interfaceIgnoreList[0] = "sorcer.core.Provider";
-			interfaceIgnoreList[1] = "sorcer.core.AdministratableProvider";
+			interfaceIgnoreList[0] = "sorcer.core.provider.Provider";
+			interfaceIgnoreList[1] = "sorcer.core.provider.AdministratableProvider";
 			interfaceIgnoreList[2] = "java.rmi.Remote";
 			interfaceIgnoreList[3] = "net.jini.core.constraint.RemoteMethodControl";
 			interfaceIgnoreList[4] = "net.jini.security.proxytrust.TrustEquivalence";
@@ -731,13 +731,11 @@ public class ServiceCataloger extends ServiceProvider implements Cataloger {
 			if (c == null) {
 				return map;
 			}
-			List<ServiceItem> sItems;
 			Type[] clazz;
 			Object service;
 			String serviceName = null;
 			net.jini.core.entry.Entry[] attributes;
-			for (Iterator<List<ServiceItem>> it = c.iterator(); it.hasNext();) {
-				sItems = it.next();
+			for (List<ServiceItem> sItems : c) {
 				// get the first service proxy
 				service = sItems.get(0).service;
 				// get proxy interfaces

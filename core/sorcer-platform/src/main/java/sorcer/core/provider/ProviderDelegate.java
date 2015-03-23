@@ -2960,7 +2960,7 @@ public class ProviderDelegate implements SorcerConstants {
 				if (partnerExporter == null)
 					try {
 						partnerExporter = new BasicJeriExporter(
-								TcpServerEndpoint.getInstance(Sorcer.getHostAddress(), 0),
+								TcpServerEndpoint.getInstance(Sorcer.getLocalHost().getHostAddress(), 0),
 								new BasicILFactory());
 					} catch (UnknownHostException e) {
 						throw new ExportException("Could not obtain local address", e);

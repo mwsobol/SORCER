@@ -170,9 +170,14 @@ rioUI.onlyIf {
  */
 task webster(type: Exec) {
     description = 'Starts a class server (webster).'
-    File sorcerDist = file(sorcerDistHome)
-    if(sorcerDist.exists())
-        new GroovyShell().run(file("${sorcerDistHome}/bin/webster/bin/webster.groovy"))
+    def args = []
+    if(System.properties['os.name'].contains("Windows")) {
+        args << "cmd.exe"
+        args << "/C"
+        args << "groovy"
+    }
+    args << "${sorcerDistHome}/bin/webster/bin/webster.groovy"
+    commandLine args
 }
 
 webster.onlyIf {

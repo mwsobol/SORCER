@@ -20,6 +20,7 @@ package sorcer.core.provider.dbp;
 import com.sleepycat.collections.StoredMap;
 import com.sleepycat.collections.StoredValueSet;
 import com.sleepycat.je.DatabaseException;
+import com.sleepycat.je.EnvironmentConfig;
 import com.sun.jini.start.LifeCycle;
 import net.jini.config.Configuration;
 import net.jini.id.Uuid;
