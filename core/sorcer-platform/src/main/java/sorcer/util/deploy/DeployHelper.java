@@ -13,7 +13,6 @@ import sorcer.util.Sorcer;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.rmi.RMISecurityManager;
 import java.rmi.RemoteException;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -24,7 +23,7 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 public final class DeployHelper {
 	static {
-		System.setSecurityManager(new RMISecurityManager());
+		System.setSecurityManager(new SecurityManager());
 	}
 	
     private DeployHelper() {}

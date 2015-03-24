@@ -31,7 +31,6 @@ import java.lang.reflect.Constructor;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.rmi.MarshalledObject;
-import java.rmi.RMISecurityManager;
 import java.security.AllPermission;
 import java.security.Permission;
 import java.security.Policy;
@@ -259,7 +258,7 @@ public class SorcerServiceDescriptor implements ServiceDescriptor {
 
     synchronized void ensureSecurityManager() {
         if (System.getSecurityManager() == null) {
-            System.setSecurityManager(new RMISecurityManager());
+            System.setSecurityManager(new SecurityManager());
         }
     }
 

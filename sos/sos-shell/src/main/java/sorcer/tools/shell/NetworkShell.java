@@ -26,12 +26,10 @@ import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.rmi.RMISecurityManager;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.util.*;
 
-import org.codehaus.groovy.tools.shell.AnsiDetector;
 import org.rioproject.impl.config.DynamicConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,6 +62,7 @@ import sorcer.service.ExertionInfo;
 import sorcer.tools.shell.cmds.*;
 import sorcer.tools.webster.Webster;
 import sorcer.util.*;
+import sorcer.util.eval.PropertyEvaluator;
 import sorcer.util.exec.ExecUtils;
 import sorcer.util.exec.ExecUtils.CmdResult;
 import sorcer.util.url.sos.SdbURLStreamHandlerFactory;
@@ -73,7 +72,6 @@ import com.sun.jini.config.Config;
 import static org.fusesource.jansi.Ansi.ansi;
 import static sorcer.util.StringUtils.tName;
 
-import org.fusesource.jansi.Ansi;
 import org.fusesource.jansi.AnsiConsole;
 import static org.fusesource.jansi.Ansi.Color.*;
 
@@ -216,7 +214,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 	 */
 	protected synchronized static void ensureSecurityManager() {
 		if (System.getSecurityManager() == null) {
-			System.setSecurityManager(new RMISecurityManager());
+			System.setSecurityManager(new SecurityManager());
 		}
 	}
 
@@ -381,6 +379,11 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
                 shellOutput.println("No such internal command available: " + args[0].substring(2));
 			System.exit(0);
 		}
+        PropertyEvaluator propsEval = new PropertyEvaluator();
+        propsEval.addDefaultSources();
+        for (int i=0; i<args.length ;i++) {
+            args[i] = propsEval.eval(args[i]);
+        }
 		request = arrayToRequest(args);
         shellTokenizer = new WhitespaceTokenizer(request);
         System.err.println("----------------------------------------------------");
@@ -400,9 +403,9 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
                 } else {
                     // Added reading the file as default first argument
                     // Check if file exists
-				ShellCmd cmd = (HelpCmd) commandTable.get("help");
-				cmd.execute();
-			}
+                    ShellCmd cmd = commandTable.get("exert");
+                    cmd.execute();
+                }
             } else if (args.length > 1) {
 			if (args[0].equals("-f") || args[0].equals("-n")) {
 				// evaluate file
@@ -517,7 +520,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 		try {
             DynamicConfiguration config = new DynamicConfiguration();
             config.setEntry("net.jini.discovery.LookupDiscovery", "multicastRequestHost",
-                    String.class, InetAddress.getLocalHost().getHostAddress());
+                    String.class, Sorcer.getLocalHost().getHostAddress());
 			disco = new LookupDiscovery(LookupDiscovery.NO_GROUPS, config);
 			disco.addDiscoveryListener(instance);
 			if (ingroups == null || ingroups.length == 0) {
@@ -1443,7 +1446,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 			DirCmd.changeDir(homeDir, false, shellOutput);
 		}
 
-		InetAddress inetAddress = InetAddress.getLocalHost();
+		InetAddress inetAddress = Sorcer.getLocalHost();
 		instance.hostName = inetAddress.getHostName();
 		instance.hostAddress = inetAddress.getHostAddress();
 		instance.httpJars = jars;
@@ -1574,12 +1577,15 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 	}
 
     public static String readScript(File file) throws IOException {
+        PropertyEvaluator propsEval = new PropertyEvaluator();
+        propsEval.addDefaultSources();
         String lineSep = "\n";
         BufferedReader br = new BufferedReader(new FileReader(file));
-        String nextLine;
-        StringBuilder sb = new StringBuilder();
+        String nextLine = br.readLine();
+        StringBuffer sb = new StringBuffer();
         while ((nextLine = br.readLine()) != null) {
             if (!nextLine.startsWith("#")) {
+                nextLine = propsEval.eval(nextLine);
                 sb.append(nextLine);
                 sb.append(lineSep);
             }

@@ -13,7 +13,6 @@ import sorcer.util.Sorcer;
 import sorcer.worker.provider.Worker;
 
 import java.net.InetAddress;
-import java.rmi.RMISecurityManager;
 import java.util.logging.Logger;
 
 /**
@@ -26,7 +25,7 @@ public class WorkerJobApplication {
 	private static Logger logger = Log.getTestLog();
 
 	public static void main(String[] args) throws Exception {
-		System.setSecurityManager(new RMISecurityManager());
+		System.setSecurityManager(new SecurityManager());
 		// initialize system properties
 		Sorcer.getEnvProperties();
 		
