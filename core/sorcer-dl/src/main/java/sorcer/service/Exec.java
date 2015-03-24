@@ -64,6 +64,14 @@ public interface Exec {
 			}
 			return null;
 		}
+
+        static public Exec.State val(int state) {
+            for (State s : State.values()) {
+                if (state == s.ordinal())
+                    return s;
+            }
+            return null;
+        }
 	}
 	
 }

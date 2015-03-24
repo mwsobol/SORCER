@@ -172,12 +172,14 @@ public class DiscoCmd extends ShellCmd {
 	}
 
 	public static ServiceRegistrar getSelectedRegistrar() {
+        if (registrars==null)
+            registrars = new ArrayList<ServiceRegistrar>(NetworkShell.getRegistrars());
 		if (registrars != null && registrars.size() > 0
 				&& selectedRegistrar >= 0)
 			return registrars.get(selectedRegistrar);
 		else if (selectedRegistrar < 0 && registrars.size() > 0) {
-			return registrars.get(0);
-		} else
-			return null;
-	}
-}
+                return registrars.get(0);
+            } else
+                return null;
+        }
+    }

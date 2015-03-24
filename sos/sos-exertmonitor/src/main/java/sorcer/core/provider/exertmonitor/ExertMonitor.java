@@ -360,6 +360,7 @@ public class ExertMonitor extends ServiceProvider implements MonitoringManagemen
 	public Map<Uuid, ExertionInfo> getMonitorableExertionInfo(
 			Exec.State state, Principal principal) throws RemoteException,
 			MonitorException {
+        logger.debug("Trying to get exertionInfos for: " + state.toString() + " for: "  + principal);
 		Map<Uuid, ExertionInfo> table = new HashMap<Uuid, ExertionInfo>();
 		try {
 			if (resources==null) return table;
@@ -379,6 +380,7 @@ public class ExertMonitor extends ServiceProvider implements MonitoringManagemen
 
     private Map<Uuid, ExertionInfo> getMonitorableExertionInfo(MonitorSession monitorSession, UuidKey key, Exec.State state, Principal principal) throws RemoteException,MonitorException {
         Map<Uuid, ExertionInfo> table = new HashMap<Uuid, ExertionInfo>();
+        logger.debug("Trying to get exertionInfos for: " + monitorSession + " state: " + state.toString() + " for: "  + principal);
         ServiceExertion xrt = (ServiceExertion) (monitorSession).getRuntimeExertion();
         if (xrt.getPrincipal().getId()
                 .equals(((SorcerPrincipal) principal).getId())) {

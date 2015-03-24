@@ -249,6 +249,11 @@ if $darwin; then
     JAVA_OPTS="$JAVA_OPTS -Xdock:name=NSH_APP_NAME -Xdock:icon=$SORCER_HOME/bin/shell/configs/sorcer-dock-rgb.png"
 fi
 
+# Turn on debugging if DEBUG is set in env
+if [ -n "$DEBUG" ]; then
+    JAVA_OPTS="$JAVA_OPTS -Xdebug -Xrunjdwp:transport=dt_socket,server=y,address=8000"
+fi
+
 # For Cygwin, switch paths to Windows format before running java
 if $cygwin ; then
   	SORCER_HOME=`cygpath --mixed "$SORCER_HOME"`

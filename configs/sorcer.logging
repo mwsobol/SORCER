@@ -143,4 +143,6 @@ sorcer.core.provider.cataloger.ServiceCataloger.level=OFF
 sorcer.core.provider.SpaceTaker.level=OFF
 
 #org.rioproject.level=FINEST
-
+sorcer.core.provider.exertmonitor.level=ALL
+sorcer.core.monitor.level=ALL
+sorcer.core.dispatch.level=ALL

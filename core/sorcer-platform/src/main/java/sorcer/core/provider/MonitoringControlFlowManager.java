@@ -58,18 +58,6 @@ public class MonitoringControlFlowManager extends ControlFlowManager {
         lrm = new LeaseRenewalManager();
     }
 
-    public MonitoringControlFlowManager(Exertion exertion, ProviderDelegate delegate, Jobber jobber) throws RemoteException, ConfigurationException {
-        super(exertion, delegate, jobber);
-        sessionMonitor = Accessor.getService(MonitoringManagement.class);
-        lrm = new LeaseRenewalManager();
-    }
-
-    public MonitoringControlFlowManager(Exertion exertion, ProviderDelegate delegate, Concatenator concatenator) throws RemoteException, ConfigurationException {
-        super(exertion, delegate, concatenator);
-        sessionMonitor = Accessor.getService(MonitoringManagement.class);
-        lrm = new LeaseRenewalManager();
-    }
-
     @Override
     public Exertion process() throws ExertionException {
         MonitoringSession monSession = getMonitoringSession(exertion);
@@ -86,18 +74,21 @@ public class MonitoringControlFlowManager extends ControlFlowManager {
         monSession = getMonitoringSession(exertion);
 
         try {
-            if (sessionMonitor!=null && !(exertion instanceof CompoundExertion)) {
+            if (sessionMonitor!=null && !(exertion instanceof CompoundExertion) && !exertion.isSpacable()) {
                 monSession.init((Monitorable) delegate.getProvider().getProxy(), LEASE_RENEWAL_PERIOD,
                         DEFAULT_TIMEOUT_PERIOD);
                 lrm.renewUntil(monSession.getLease(), Lease.ANY, null);
             }
+            logger.info("Lease: " + monSession.getLease());
             ServiceExertion result = (ServiceExertion) super.process();
+            logger.info("Got result: " + result);
             Exec.State resultState = result.getStatus() <= FAILED ? Exec.State.FAILED : Exec.State.DONE;
 
             try {
-                if (sessionMonitor!=null && !(result instanceof CompoundExertion))
+                if (sessionMonitor!=null && monSession.getState()!=resultState.ordinal() && !(result instanceof CompoundExertion))
                     monSession.changed(result.getContext(), result.getControlContext(), resultState.ordinal());
             } catch (RuntimeException e) {
+                log.error(e.getMessage());
                 throw e;
             } catch (Exception e) {
                 log.warn("Error while executing monitorable exertion", e);

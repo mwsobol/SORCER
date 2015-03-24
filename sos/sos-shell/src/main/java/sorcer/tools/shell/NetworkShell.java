@@ -1292,14 +1292,14 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 		}
 		// System.out.println("initShell configFilename: " + configFilename);
 
-/*		File configf = new File(configFilename);
+		File configf = new File(configFilename);
 		if (!configf.exists()) {
 			System.err.println("No nsh configuration file: " + configf
 					+ " in: " + new File(".").getCanonicalPath());
 		} else {
 			sysConfig = ConfigurationProvider
-					.getInstance(new String[] { configFilename }, Thread.currentThread().getContextClassLoader().getParent());
-		}*/
+					.getInstance(new String[] { configFilename });
+		}
 
 		if (sysConfig == null)
 			sysConfig = EmptyConfiguration.INSTANCE;

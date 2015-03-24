@@ -113,7 +113,7 @@ public class NetJobExertions implements SorcerConstants {
 				sig("add", Adder.class),
 				context("add", inEnt("arg/x1", 20.0),
 						inEnt("arg/x2", 80.0), outEnt("result/y")),
-				strategy(Access.PULL, Wait.YES));
+				strategy(Access.PULL, Wait.YES, Monitor.YES));
 
 		t5 = exert(t5);
 		logger.info("t5 context: " + context(t5));

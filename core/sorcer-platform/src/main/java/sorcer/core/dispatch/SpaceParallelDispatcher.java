@@ -90,14 +90,18 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
         new Thread(disatchGroup, new CollectResultThread(), tName("collect-" + xrt.getName())).start();
 
         for (Exertion exertion : inputXrts) {
+            logger.info("Calling monSession.init from SpaceParallelDispatcher for: " + exertion.getName());
             MonitoringSession monSession = MonitorUtil.getMonitoringSession(exertion);
             if (xrt.isMonitorable() && monSession!=null) {
                 try {
-                    monSession.init(ExertionDispatcherFactory.LEASE_RENEWAL_PERIOD, ExertionDispatcherFactory.DEFAULT_TIMEOUT_PERIOD);
+                    if (monSession.getState()==State.INITIAL.ordinal()) {
+                        logger.info("initializing monitoring from SpaceParallelDispatcher for " + exertion.getName());
+                        monSession.init(ExertionDispatcherFactory.LEASE_RENEWAL_PERIOD, ExertionDispatcherFactory.DEFAULT_TIMEOUT_PERIOD);
+                    }
                 } catch (MonitorException me) {
-                    logger.error("Problem starting monitoring for " + xrt.getName());
+                    logger.error("Problem starting monitoring for " + xrt.getName() + " " + me.getMessage());
                 } catch (RemoteException re) {
-                    logger.error("Problem starting monitoring for " + xrt.getName());
+                    logger.error("Problem starting monitoring for " + xrt.getName() + " " + re.getMessage());
                 }
             }
             dispatchExertion(exertion);
@@ -147,6 +151,11 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
                 results = space.take(templates, null, SpaceTaker.SPACE_TIMEOUT, Integer.MAX_VALUE);
                 if (results.isEmpty())
                     continue;
+                logger.debug("Got from space: " + results.size());
+                for (ExertionEnvelop eee : results) {
+                    logger.debug("Got: " + eee.toString());
+                    logger.debug("Got: " + eee.exertion);
+                }
                 count += results.size();
             } catch (UnusableEntriesException e) {
                 xrt.setStatus(FAILED);

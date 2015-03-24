@@ -204,8 +204,8 @@ public class MonitorSession extends ArrayList<MonitorSession> implements
 
 		if (isRunning() || isInSpace()) {
 			logger.error(
-					"Trying to initialize a exertion already in space or is running"
-							+ this);
+					"Trying to initialize and set running an exertion already in space or is running"
+							+ Exec.State.name(getState()) +"\n" + this);
 			throw new MonitorException(
 					"Session already active for " + runtimeExertion.getName() + " and is in state =" + getState());
 		}
@@ -223,9 +223,9 @@ public class MonitorSession extends ArrayList<MonitorSession> implements
 	public void init(long duration, long timeout) throws MonitorException {
 
 		if (isRunning() || isInSpace()) {
-			logger.error(
-					"Trying to initialize a exertion already in space or is running"
-							+ this);
+            logger.error(
+                    "Trying to initialize and set INSPACE an exertion already running"
+                            + Exec.State.name(getState()) +"\n" + this);
 			throw new MonitorException("Session already active state="
 					+ getState());
 		}
@@ -233,6 +233,7 @@ public class MonitorSession extends ArrayList<MonitorSession> implements
 		setExpiration(mLandlord.getExpiration(duration));
 		setTimeout(System.currentTimeMillis() + timeout);
 
+        logger.warn("SETTING INSPACE for: " + runtimeExertion.getName());
 		runtimeExertion.setStatus(Exec.INSPACE);
 		persist();
 		lease = mLandlord.newLease(this);
