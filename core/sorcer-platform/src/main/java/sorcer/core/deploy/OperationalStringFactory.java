@@ -15,6 +15,16 @@
  */
 package sorcer.core.deploy;
 
+import org.rioproject.impl.opstring.OpString;
+import org.rioproject.opstring.ClassBundle;
+import org.rioproject.opstring.OperationalString;
+import org.rioproject.opstring.ServiceElement;
+import org.rioproject.opstring.UndeployOption;
+import sorcer.core.signature.ServiceSignature;
+import sorcer.service.Exertion;
+import sorcer.service.ServiceExertion;
+import sorcer.service.Signature;
+
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,17 +32,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
-
-import org.rioproject.impl.opstring.OpString;
-import org.rioproject.opstring.ClassBundle;
-import org.rioproject.opstring.OperationalString;
-import org.rioproject.opstring.ServiceElement;
-import org.rioproject.opstring.UndeployOption;
-
-import sorcer.core.signature.ServiceSignature;
-import sorcer.service.Exertion;
-import sorcer.service.ServiceExertion;
-import sorcer.service.Signature;
 
 /**
  * Create an {@link OperationalString} from an {@link Exertion}.
@@ -102,8 +101,7 @@ public final class OperationalStringFactory {
             logger.warning(String.format("No services configured for exertion %s", exertion.getName()));
             return null;
         }
-        OpString opString = new OpString(exertion.getDeploymentId(),
-                                         null);
+        OpString opString = new OpString(exertion.getDeploymentId(), null);
         for(ServiceElement service : services) {
             service.setOperationalStringName(opString.getName());
             opString.addService(service);
@@ -157,12 +155,5 @@ public final class OperationalStringFactory {
         }
         return ServiceDeployment.createDeploymentID(nameBuilder.toString());
     }
-
-//    private static OperationalString getIGridDeployment() throws Exception {
-//        File iGridDeployment = new File(Sorcer.getSorcerHomeDir(), "configs/opstrings/iGridBoot.groovy");
-//        OpStringLoader opStringLoader = new OpStringLoader(OperationalStringFactory.class.getClassLoader());
-//        OperationalString[] loaded = opStringLoader.parseOperationalString(iGridDeployment);
-//        return loaded[0];
-//    }
 
 }

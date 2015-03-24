@@ -28,10 +28,7 @@ import java.io.File;
 import java.io.Serializable;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Logger;
 
 /**
@@ -73,6 +70,7 @@ public class ServiceDeployment implements Serializable, Deployment {
 
     private Boolean fork;
     private String jvmArgs;
+    private final List<String> deployedNames = new ArrayList<String>();
     private static final Logger logger = Logger.getLogger(ServiceDeployment.class.getName());
 
     public ServiceDeployment() {
@@ -320,6 +318,14 @@ public class ServiceDeployment implements Serializable, Deployment {
 			this.isProvisionable = true;
 		}
 	}
+
+    public void setDeployedNames(final Collection<String> deployedNames) {
+        this.deployedNames.addAll(deployedNames);
+    }
+
+    public Collection<String> getDeployedNames() {
+        return deployedNames;
+    }
 
     @Override
     public String toString() {

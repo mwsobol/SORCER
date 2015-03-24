@@ -25,12 +25,11 @@ import sorcer.service.Exertion;
 import sorcer.service.ExertionException;
 import sorcer.service.Job;
 
+import java.util.Collection;
 import java.util.logging.Logger;
 
 import static org.junit.Assert.*;
-import static sorcer.eo.operator.exert;
-import static sorcer.eo.operator.get;
-import static sorcer.eo.operator.serviceContext;
+import static sorcer.eo.operator.*;
 
 /**
  * @author Dennis Reedy
@@ -57,6 +56,11 @@ public class DeployExertionTest extends DeploySetup implements SorcerConstants {
         assertNotNull(out);
         System.out.println("===> out: "+serviceContext(out));
         assertEquals(get(out, "f1/f3/result/y3"), 400.0);
+
+        ServiceDeployment deployment = (ServiceDeployment)out.getProcessSignature().getDeployment();
+        assertNotNull(deployment);
+        Collection<String> deploymentNames = deployment.getDeployedNames();
+        assertTrue(deploymentNames.size()>0);
     }
 
 }

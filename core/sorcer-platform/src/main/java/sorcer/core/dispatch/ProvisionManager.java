@@ -152,6 +152,8 @@ public class ProvisionManager {
                             deploymentNames.add(deployment.getName());
                     }
                 }
+                ServiceDeployment deployment = (ServiceDeployment)exertion.getProcessSignature().getDeployment();
+                deployment.setDeployedNames(deploymentNames);
             } else {
                 String message = String.format("Unable to obtain a ProvisionMonitor for %s using %s",
                                                exertion.getName(),
