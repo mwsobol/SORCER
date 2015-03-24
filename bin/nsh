@@ -23,7 +23,7 @@ done
 
 DIRNAME=`dirname "$PRG"`
 
-. "$DIRNAME/startShell"
+. "$DIRNAME/shell/bin/startShell"
 
 startShell sorcer.tools.shell.NetworkShell "$@"
 

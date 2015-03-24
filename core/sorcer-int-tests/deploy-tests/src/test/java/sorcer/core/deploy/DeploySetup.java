@@ -16,7 +16,7 @@ public class DeploySetup {
     @BeforeClass
     public static void verifyIGridRunning() throws Exception {
         long t0 = System.currentTimeMillis();
-        monitor = ServiceUtil.waitForService(ProvisionMonitor.class, 10);
+        monitor = ServiceUtil.waitForService(ProvisionMonitor.class, 20);
         Assert.assertNotNull(monitor);
         System.out.println("Waited "+(System.currentTimeMillis()-t0)+" millis for ProvisionMonitor discovery");
         DeployAdmin deployAdmin = (DeployAdmin) monitor.getAdmin();

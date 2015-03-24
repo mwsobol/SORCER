@@ -83,6 +83,7 @@ public class NetJobExertions implements SorcerConstants {
 		assertEquals(value(context(t5), "result/y"), 50.0);
 		
 	}
+
 	
 	@Test
 	public void arithmeticNetFiTask() throws Exception {
