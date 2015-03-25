@@ -102,7 +102,7 @@ public class ServiceDeployment implements Serializable, Deployment {
                                        temp.getVersion(),
                                        type,
                                        classifier).getGAV();
-        } else if(!config.startsWith("/")) {
+        } else if(!config.startsWith("/") && !config.matches("^([A-Za-z]):.*$")) {
             this.config = System.getenv("SORCER_HOME") + File.separatorChar + config;
         } else {
             this.config = config;
