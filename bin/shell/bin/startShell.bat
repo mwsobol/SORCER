@@ -75,7 +75,7 @@ IF DEFINED %SORCER_WEBSTER_INTERFACE% IF DEFINED %SORCER_WEBSTER_PORT% (
    SET "WEBSTER_URL=http://%provider.webster.interface%:%provider.webster.port%"
 )
 
-IF NOT DEFINED RIO_HOME SET RIO_HOME=%SORCER_HOME%\lib\rio
+IF NOT DEFINED RIO_HOME SET RIO_HOME=%SORCER_HOME%\rio-%rio.version%
 set JAVA_OPTS=
 set JAVA_OPTS=-Dsun.net.maxDatagramSockets=1024
 set JAVA_OPTS=%JAVA_OPTS% -Dsorcer.env.file="%SORCER_HOME%\configs\sorcer.env"
@@ -85,8 +85,9 @@ set JAVA_OPTS=%JAVA_OPTS% -Djava.rmi.server.RMIClassLoaderSpi=org.rioproject.rmi
 set JAVA_OPTS=%JAVA_OPTS% -Djava.rmi.server.useCodebaseOnly=false
 set JAVA_OPTS=%JAVA_OPTS% -Dwebster.tmp.dir="%SORCER_HOME%\data"
 set JAVA_OPTS=%JAVA_OPTS% -Dwebster.put.dir="%SORCER_HOME%\data"
-set JAVA_OPTS=%JAVA_OPTS% -DSORCER_HOME="%SORCER_HOME%"
 set JAVA_OPTS=%JAVA_OPTS% -Dsorcer.home="%SORCER_HOME%"
+set JAVA_OPTS=%JAVA_OPTS% -DSORCER_HOME="%SORCER_HOME%"
+set JAVA_OPTS=%JAVA_OPTS% -Drio.home="%RIO_HOME%"
 set JAVA_OPTS=%JAVA_OPTS% -DRIO_HOME="%RIO_HOME%"
 
 REM Turn on debugging if DEBUG is set in env

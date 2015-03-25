@@ -29,7 +29,7 @@ public interface SorcerConstants {
 	// P_ATTRIBUTE is a provider property defined in a properties file
 	// J_ATTRIBURE is variable name in Jini configuration file
 	/* service provider genetic properties */
-    public static final String SORCER_VERSION = "4.2.8";
+    public static final String SORCER_VERSION = "5.2.0";
     
     public static final String SORCER_MODELING_VERSION = "1.1.8";
 

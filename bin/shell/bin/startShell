@@ -32,9 +32,17 @@ lateInit ( ) {
     return
 }
 
-setVersionVar ( ) {
+#getVersion ( ) {
+#  PARAM=$1
+#  RESULT=`sed '/^\#/d' $SORCER_HOME/configs/versions.properties | grep $PARAM  | tail -n 1 | cut -d "=" -f2- | sed 's/^[[:space:]]*//;s/[[:space:]]*$//'`
+#  echo $RESULT
+#}
+
+
+getVersion ( ) {
 	PROP=$1
-	export VERSION=`awk -v prop=$PROP 'BEGIN{FS="="} {gsub(" ","",$0);if ($1 == prop) {print $2; exit}}' $SORCER_HOME/configs/versions.properties`
+	VERSION=`awk -v prop=$PROP 'BEGIN{FS="="} {gsub(" ","",$0);if ($1 == prop) {print $2; exit}}' $SORCER_HOME/configs/versions.properties`
+	echo $VERSION
 }
 
 NSH_STARTUP="$HOME/.nsh/startup"
@@ -124,30 +132,16 @@ if [ -z "$SORCER_HOME" -o ! -d "$SORCER_HOME" ] ; then
     echo SORCER_HOME=$SORCER_HOME
 fi
 
-setVersionVar "rio.version"
-rio_version=$VERSION
+jansi_version=$(getVersion jansi.version)
+jline_version=$(getVersion jline.version)
+slf4j_version=$(getVersion slf4j.version)
+plexus_version=$(getVersion plexus.version)
+groovy_version=$(getVersion groovy.version)
+river_version=$(getVersion river.version)
+sorcer_version=$(getVersion sorcer.version)
+rio_version=$(getVersion rio.version)
+
 RIO_HOME=$SORCER_HOME/rio-$rio_version
-
-setVersionVar "jansi.version"
-jansi_version=$VERSION
-
-setVersionVar "jline.version"
-jline_version=$VERSION
-
-setVersionVar "slf4j.version"
-slf4j_version=$VERSION
-
-setVersionVar "plexus.version"
-plexus_version=$VERSION
-
-setVersionVar "groovy.version"
-groovy_version=$VERSION
-
-setVersionVar "river.version"
-river_version=$VERSION
-
-setVersionVar "sorcer.version"
-sorcer_version=$VERSION
 
 # Use SORCER default if still not found
 if [ -z "$NSH_CONF" ] ; then
@@ -323,13 +317,12 @@ startShell ( ) {
             -Dprogram.name="$PROGNAME" \
             -Desh.starter.conf="$NSH_CONF" \
             -Dsorcer.home="$SORCER_HOME" \
+            -Drio.home="$RIO_HOME" \
             -Djava.protocol.handler.pkgs="net.jini.url|sorcer.util.bdb.sos|org.rioproject.url" \
             -Djava.rmi.server.RMIClassLoaderSpi=org.rioproject.rmi.ResolvingLoader \
             -Dtools.jar="$TOOLS_JAR" \
             -Djava.util.logging.config.file="$SORCER_HOME"/bin/shell/configs/sorcer.logging \
             $STARTER_MAIN_CLASS \
-            --config "$NSH_CONF" \
-            --classpath "$CP" \
             "$@"
     fi
 }

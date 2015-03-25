@@ -391,8 +391,11 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 
         // Wait for DiscoveryListener to find Reggies
         int i=0;
-        while (getRegistrars().isEmpty() && i<20)
-            Thread.sleep(100);
+		long waitTimes = (Long)instance.getSettings().get(DISCOVERY_TIMEOUT)/200;
+        while (getRegistrars().isEmpty() && i<waitTimes) {
+			Thread.sleep(200);
+			i++;
+		}
         try {
             if (args.length == 1) {
                 if (args[0].equals("-version")) {
@@ -755,6 +758,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
                 try {
                     sr.getGroups();
                 } catch (Exception e) {
+					logger.info("Problem running getGroups: " + e.getMessage());
                     regsToRemove.add(sr);
                 }
             }
@@ -801,6 +805,10 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 
 	public void setShellLog(File shellLog) {
 		this.shellLog = shellLog;
+	}
+
+	public Map<String, Object> getSettings() {
+		return settings;
 	}
 
 	public static boolean isInteractive() {

@@ -282,6 +282,7 @@ public class SpaceTaker implements Runnable {
                         envelopNoCast = space.take(data.entry, tx, spaceTimeout);
                         ee = (ExertionEnvelop) envelopNoCast;
 					} else {
+						Thread.sleep(50);
 						continue;
 					}
 				} else {

@@ -133,3 +133,4 @@ net.jini.discovery.LookupDiscovery.level=OFF
 #net.jini.security.policy.level=FINER
 #net.jini.jeri.level=FINER
 
+#org.rioproject.rmi.level=ALL
