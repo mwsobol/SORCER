@@ -389,13 +389,6 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
         System.err.println("----------------------------------------------------");
         System.err.println("Starting non-interactive exec of request: " + request);
 
-        // Wait for DiscoveryListener to find Reggies
-        int i=0;
-		long waitTimes = (Long)instance.getSettings().get(DISCOVERY_TIMEOUT)/200;
-        while (getRegistrars().isEmpty() && i<waitTimes) {
-			Thread.sleep(200);
-			i++;
-		}
         try {
             if (args.length == 1) {
                 if (args[0].equals("-version")) {
@@ -407,27 +400,32 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
                     // Added reading the file as default first argument
                     // Check if file exists
                     ShellCmd cmd = commandTable.get("exert");
+					waitForReggie();
                     cmd.execute();
                 }
             } else if (args.length > 1) {
 			if (args[0].equals("-f") || args[0].equals("-n")) {
 				// evaluate file
                     ShellCmd cmd = commandTable.get("exert");
+					waitForReggie();
                     cmd.execute();
 			} else if (args[0].equals("-e")) {
 				// evaluate command line expression
 				ExertCmd cmd = (ExertCmd) commandTable.get("exert");
 				// cmd.setScript(instance.getText(args[1]));
 				cmd.setScript(ExertCmd.readFile(huntForTheScriptFile(args[1])));
-                    cmd.execute();
-                } else if (args[0].equals("-c")) {
+				waitForReggie();
+				cmd.execute();
+			} else if (args[0].equals("-c")) {
                     ShellCmd cmd = commandTable.get(args[1]);
                     if (args.length > 2)
                         shellTokenizer = new WhitespaceTokenizer(request.substring(4 + args[1].length()));
                     else
                         shellTokenizer = new WhitespaceTokenizer(request.substring(3 + args[1].length()));
-                    if (cmd!=null)
-                        cmd.execute();
+                    if (cmd!=null) {
+						waitForReggie();
+						cmd.execute();
+					}
                     else
                         shellOutput.println("Command: " + args[1] + " not found. " +
                                 "Please run 'nsh -help' to see the list of available commands");
@@ -467,6 +465,16 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
         }
         System.err.println("----------------------------------------------------");
     }
+
+	private static void waitForReggie() throws InterruptedException {
+		// Wait for DiscoveryListener to find Reggies
+		int i=0;
+		long waitTimes = (Long)instance.getSettings().get(DISCOVERY_TIMEOUT)/200;
+		while (getRegistrars().isEmpty() && i<waitTimes) {
+			Thread.sleep(200);
+			i++;
+		}
+	}
 
 	protected ClassLoader getExtClassLoader() {
 		String sorcerExtPath = Sorcer.getHome() + File.separator

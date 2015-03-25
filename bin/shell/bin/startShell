@@ -129,7 +129,7 @@ if [ -z "$SORCER_HOME" -o ! -d "$SORCER_HOME" ] ; then
     cd "`dirname \"$PRG\"`/../"
     SORCER_HOME="`pwd -P`"
     cd "$SAVED"
-    echo SORCER_HOME=$SORCER_HOME
+    #echo SORCER_HOME=$SORCER_HOME
 fi
 
 jansi_version=$(getVersion jansi.version)
