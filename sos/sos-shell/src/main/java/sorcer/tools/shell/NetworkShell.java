@@ -388,7 +388,6 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
         shellTokenizer = new WhitespaceTokenizer(request);
         System.err.println("----------------------------------------------------");
         System.err.println("Starting non-interactive exec of request: " + request);
-
         try {
             if (args.length == 1) {
                 if (args[0].equals("-version")) {
@@ -474,6 +473,9 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 			Thread.sleep(200);
 			i++;
 		}
+		// Needs 2 seconds to get the Rio resolver settled
+		//if (i<11)
+		//		Thread.sleep(3000-i*200);
 	}
 
 	protected ClassLoader getExtClassLoader() {

@@ -1,0 +1,36 @@
+#!/usr/bin/env nsh
+
+codebase artifact:org.sorcer/ex6-dl/pom/1.1-SNAPSHOT
+
+import sorcer.arithmetic.provider.Adder;
+import sorcer.arithmetic.provider.Multiplier;
+import sorcer.arithmetic.provider.Subtractor;
+import sorcer.arithmetic.provider.Divider;
+import sorcer.service.Task
+
+//println "Codebase: " + System.getProperty("java.rmi.server.codebase");
+// Service Composition f1(f2(f4, f5), f3)
+
+Task f4 = task("f4", sig("multiply", Multiplier.class),
+	context("multiply", inEnt(path("arg/x1"), 10.0d), inEnt(path("arg/x2"), 50.0d),
+		outEnt(path("result/y1"), null)), strategy(Provision.FALSE));
+		
+Task f5 = task("f5", sig("add", Adder.class),
+	context("add", inEnt(path("arg/x3"), 20.0d), inEnt(path("arg/x4"), 80.0d),
+		outEnt(path("result/y2"), null)), strategy(Provision.FALSE));
+
+Task f3 = task("f3", sig("subtract", Subtractor.class),
+	context("subtract", inEnt(path("arg/x5"), null), inEnt(path("arg/x6"), null),
+		outEnt(path("result/y3"), null)), strategy(Provision.FALSE));
+		
+Task f6 = task("f6", sig("divide", Divider.class),
+	context("divide", inEnt(path("arg/x7"), null), inEnt(path("arg/x8"), 5.0d),
+		outEnt(path("result/y4"), null)), strategy(Provision.FALSE));
+		
+
+//job("f1", job("f2", f4, f5), job("f3",f3, f6),		
+job("f1", job("f2", f4, f5, strategy(Flow.PAR, Access.PUSH)), f3, strategy(Flow.SEQ, Access.PUSH),
+	pipe(out(f4, path("result/y1")), input(f3, path("arg/x5"))),
+	pipe(out(f5, path("result/y2")), input(f3, path("arg/x6"))));
+
+	

@@ -107,10 +107,9 @@ public class NshTest {
         //assertFalse(result.getErr().contains(EXCEPTION));
     }
 
-    @Ignore
     @Test
     public void batchCmdTest() throws Exception {
-        cmds = new String[] { baseCmd, "-b", "${sys.sorcer.home}/configs/int-tests/nsh/batch.nsh"};
+        cmds = new String[] { baseCmd, "-b", getNshDir() + "/batch.nsh"};
 
         ExecUtils.CmdResult result = ExecUtils.execCommand(cmds);
         String res =  result.getOut();
@@ -128,14 +127,19 @@ public class NshTest {
     @Ignore
     @Test(timeout = 120000)
     public void batchExertCmdTest() throws Exception {
-        cmds = new String[] { baseCmd, "-b", "${sys.sorcer.home}/configs/int-tests/nsh/batchExert.nsh"};
+        cmds = new String[] { baseCmd, "-b", getNshDir() + "/batchExert.nsh"};
 
-        logger.info("Running: " + StringUtils.join(cmds, " ") +":\n");
+        logger.info("Running: " + StringUtils.join(cmds, " ") + ":\n");
         ExecUtils.CmdResult result = ExecUtils.execCommand(cmds);
         String res =  result.getOut();
-        logger.info("Result running: " + StringUtils.join(cmds, " ") +":\n" + res);
+        logger.info("Result running: " + StringUtils.join(cmds, " ") + ":\n" + res);
         assertFalse(res.contains("ExertionException:"));
         assertTrue(res.contains("f1/f3/result/y3 = 400.0"));
         assertFalse(result.getErr().contains("ExertionException:"));
     }
+
+    static  String getNshDir() {
+        return String.format("%s/nsh", System.getProperty("user.dir"));
+    }
+
 }
