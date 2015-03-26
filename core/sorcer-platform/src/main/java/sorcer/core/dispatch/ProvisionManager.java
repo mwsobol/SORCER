@@ -27,6 +27,8 @@ import sorcer.core.deploy.OperationalStringFactory;
 import sorcer.core.deploy.ProvisionMonitorCache;
 import sorcer.core.deploy.ServiceDeployment;
 import sorcer.service.Exertion;
+import sorcer.service.ServiceExertion;
+import sorcer.service.Signature;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -153,7 +155,17 @@ public class ProvisionManager {
                     }
                 }
                 ServiceDeployment deployment = (ServiceDeployment)exertion.getProcessSignature().getDeployment();
-                deployment.setDeployedNames(deploymentNames);
+                if(deployment!=null) {
+                    deployment.setDeployedNames(deploymentNames);
+                } else {
+                    logger.warning("There was no ServiceDeployment for %s, "+exertion.getName()+" "+
+                                   "try and load all NetSignatures and set deployment names");
+                    for (Signature netSignature : getNetSignatures()) {
+                        if (netSignature.getDeployment() == null)
+                            continue;
+                        ((ServiceDeployment) netSignature.getDeployment()).setDeployedNames(deploymentNames);
+                    }
+                }
             } else {
                 String message = String.format("Unable to obtain a ProvisionMonitor for %s using %s",
                                                exertion.getName(),
@@ -218,6 +230,15 @@ public class ProvisionManager {
             discoveryInfo.append("locators: ").append(locators);
         }
         return discoveryInfo.toString();
+    }
+
+    private Iterable<Signature> getNetSignatures() {
+        List<Signature> signatures = new ArrayList<Signature>();
+        if(exertion instanceof ServiceExertion) {
+            ServiceExertion serviceExertion = (ServiceExertion)exertion;
+            signatures.addAll(serviceExertion.getAllNetTaskSignatures());
+        }
+        return signatures;
     }
 
     class DeploymentFutureTask implements Callable<Boolean> {
