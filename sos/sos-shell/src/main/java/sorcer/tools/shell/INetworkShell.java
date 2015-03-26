@@ -45,5 +45,7 @@ public interface INetworkShell {
 
     PrintStream getOutputStream();
 
+    boolean isDebug();
+
 //    boolean isRemoteLogging();
 }

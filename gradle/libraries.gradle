@@ -33,7 +33,7 @@ ext {
 	antVersion = "1.8.2"
     plexusVersion = "3.0.15"
     jansiVersion = "1.11"
-    jlineVersion = "2.12.1"
+    commonsIoVersion = "2.4"
 
     sorcerDistHome = "${rootProject.projectDir.path}/distribution/build/sorcer-$version"
     rioHome = "$sorcerDistHome/rio-${rioVersion}"

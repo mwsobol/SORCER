@@ -133,13 +133,13 @@ if [ -z "$SORCER_HOME" -o ! -d "$SORCER_HOME" ] ; then
 fi
 
 jansi_version=$(getVersion jansi.version)
-jline_version=$(getVersion jline.version)
 slf4j_version=$(getVersion slf4j.version)
 plexus_version=$(getVersion plexus.version)
 groovy_version=$(getVersion groovy.version)
 river_version=$(getVersion river.version)
 sorcer_version=$(getVersion sorcer.version)
 rio_version=$(getVersion rio.version)
+commonsio_version=$(getVersion commonsio.version)
 
 RIO_HOME=$SORCER_HOME/rio-$rio_version
 
@@ -165,11 +165,12 @@ $RIO_HOME/lib/logging/slf4j-jdk14-$slf4j_version.jar"
 STARTER_CLASSPATH="$SORCER_HOME/lib/common/groovy/groovy-all-$groovy_version.jar:\
 $SORCER_HOME/lib/common/plexus-utils-$plexus_version.jar:\
 $SORCER_HOME/lib/common/jansi-$jansi_version.jar:\
-$SORCER_HOME/lib/common/jline-$jline_version.jar:\
+$SORCER_HOME/lib/common/commonsio-$commonsio_version.jar:\
 $SORCER_HOME/lib/river/jsk-platform-$river_version.jar:\
 $SORCER_HOME/lib/river/jsk-lib-$river_version.jar:\
 $SORCER_HOME/lib/river/serviceui-$river_version.jar:\
 $RIO_CLASSPATH:\
+$SORCER_HOME/lib/sorcer/lib/sos-netlet-$sorcer_version.jar:\
 $SORCER_HOME/lib/sorcer/lib/sos-shell-$sorcer_version.jar:\
 $SORCER_HOME/lib/sorcer/lib-ext/webster-$sorcer_version.jar:\
 $SORCER_HOME/lib/sorcer/lib/sorcer-platform-$sorcer_version.jar"

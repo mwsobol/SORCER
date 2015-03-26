@@ -44,7 +44,7 @@ set SORCER_COMMON=
 set SORCER_COMMON=%SORCER_COMMON%;%LIB_DIR%\common\groovy\groovy-all-%groovy.version%.jar
 set SORCER_COMMON=%SORCER_COMMON%;%LIB_DIR%\common\plexus-utils-%plexus.version%.jar
 set SORCER_COMMON=%SORCER_COMMON%;%LIB_DIR%\common\jansi-%jansi.version%.jar
-set SORCER_COMMON=%SORCER_COMMON%;%LIB_DIR%\common\jline-%$jline.version%.jar
+set SORCER_COMMON=%SORCER_COMMON%;%LIB_DIR%\common\commonsio-%commonsio.version%.jar
 
 set RIO_CLASSPATH=
 set RIO_CLASSPATH=%RIO_CLASSPATH%;%RIO_HOME%\lib\rio-platform-%rio.version%.jar
@@ -57,6 +57,7 @@ set RIO_CLASSPATH=%RIO_CLASSPATH%;%RIO_HOME%\lib\logging\slf4j-jdk14-%slf4j.vers
 
 set SORCER_PATH=
 set SORCER_PATH=%SORCER_PATH%;%LIB_DIR%\sorcer\lib\sorcer-platform-%sorcer.version%.jar
+set SORCER_PATH=%SORCER_PATH%;%LIB_DIR%\sorcer\lib\sos-netlet-%sorcer.version%.jar
 set SORCER_PATH=%SORCER_PATH%;%LIB_DIR%\sorcer\lib\sos-shell-%sorcer.version%.jar
 set SORCER_PATH=%SORCER_PATH%;%LIB_DIR%\sorcer\lib-ext\webster-%sorcer.version%.jar
 

@@ -1,7 +1,8 @@
 /*
  * Copyright 2011 the original author or authors.
  * Copyright 2011 SorcerSoft.org.
- *  
+ * Copyright 2013 Sorcersoft.com S.A.
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,16 +25,25 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.StringTokenizer;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import org.apache.commons.io.FileUtils;
+//import sorcer.core.RemoteLogger;
+import sorcer.core.context.Contexts;
 import sorcer.core.context.ThrowableTrace;
+import sorcer.core.context.node.ContextNode;
+import sorcer.netlet.ScriptExerter;
+import sorcer.service.ContextException;
 import sorcer.service.Exertion;
 import sorcer.service.Job;
 import sorcer.service.ServiceExertion;
+import sorcer.tools.shell.INetworkShell;
 import sorcer.tools.shell.NetworkShell;
 import sorcer.tools.shell.ShellCmd;
+import sorcer.tools.shell.WhitespaceTokenizer;
 
 public class ExertCmd extends ShellCmd {
 
@@ -51,8 +61,10 @@ public class ExertCmd extends ShellCmd {
 				+ "\n  --m   marshal the the command output in a file";
 	}
 
-	private final static Logger logger = Logger.getLogger(ExertCmd.class
+	private final static Logger logger = LoggerFactory.getLogger(ExertCmd.class
 			.getName());
+
+    private ScriptExerter scriptExerter;
 
 	private String input;
 
@@ -64,66 +76,67 @@ public class ExertCmd extends ShellCmd {
 
 	private String script;
 
-	private static StringBuilder staticImports;
+    private INetworkShell shell;
 
 	public ExertCmd() {
-		if (staticImports == null) {
-			staticImports = readTextFromJar("static-imports.txt");
-			// System.out.println("get staticImports: " +
-			// staticImports.toString());
-			// ClassLoader rootClassLoader = ShellStarter.getLoader();
-			// URL[] urls = ((URLClassLoader)rootClassLoader).getURLs();
-			// for(int i=0; i< urls.length; i++) {
-			// System.out.println("Root" + urls[i].getFile());
-			// }
-		}
 	}
 
 	public void execute() throws Throwable {
-		BufferedReader br = NetworkShell.getShellInputStream();
-		out = NetworkShell.getShellOutputStream();
-		input = shell.getCmd();
+        out = NetworkShell.getShellOutputStream();
+        shell = NetworkShell.getInstance();
+        scriptExerter = new ScriptExerter(out, null, NetworkShell.getWebsterUrl(), shell.isDebug());
+        scriptExerter.setConfig(config);
+        input = shell.getCmd();
 		if (out == null)
 			throw new NullPointerException("Must have an output PrintStream");
 
 		File d = NetworkShell.getInstance().getCurrentDir();
-		String nextToken = null;
 		String scriptFilename = null;
 		boolean outPersisted = false;
 		boolean outputControlContext = false;
 		boolean marshalled = false;
-		boolean commandLine = NetworkShell.isCommandLine();
-		StringTokenizer tok = new StringTokenizer(input);
-		if (tok.countTokens() >= 1) {
-			while (tok.hasMoreTokens()) {
-				nextToken = tok.nextToken();
-				if (nextToken.equals("-s")) {
-					outPersisted = true;
-					outputFile = new File("" + d + File.separator + nextToken);
-				} else if (nextToken.equals("-cc"))
-					outputControlContext = true;
-				else if (nextToken.equals("-m"))
-					marshalled = true;
-				// evaluate text
-				else if (nextToken.equals("-t")) {
-					if (script == null || script.length() == 0) {
-						throw new NullPointerException("Must have not empty sctipt");
-					}
-				}
-				// evaluate file script
-				else if (nextToken.equals("-f"))
-					scriptFilename = nextToken;
-				else
-					scriptFilename = nextToken;
-			}
-		} else {
-			out.println(COMMAND_USAGE);
-			return;
-		}
-		StringBuilder sb = null;
-		if (script != null) {
-			sb = new StringBuilder(staticImports.toString());
-			sb.append(script);
+		boolean commandLine = NetworkShell.isInteractive();
+
+        List<String> argsList = WhitespaceTokenizer.tokenize(input);
+
+//        Pattern p = Pattern.compile("(\"[^\"]*\"|[^\"^\\s]+)(\\s+|$)", Pattern.MULTILINE);
+ //       Matcher m = p.matcher(input);
+        if (argsList.isEmpty()) {
+            out.println(COMMAND_USAGE);
+            return;
+        }
+
+        try {
+            for (int i = 0; i < argsList.size(); i++) {
+                String nextToken = argsList.get(i);
+                if (nextToken.startsWith("\"") || nextToken.startsWith("'"))
+                    nextToken = nextToken.substring(1, nextToken.length() - 1);
+                if (nextToken.equals("-s")) {
+                    outPersisted = true;
+                    outputFile = new File("" + d + File.separator + argsList.get(i + 1));
+                } else if (nextToken.equals("-controlContext"))
+                    outputControlContext = true;
+                else if (nextToken.equals("-m"))
+                    marshalled = true;
+                    // evaluate text
+                else if (nextToken.equals("-t")) {
+                    if (script == null || script.length() == 0) {
+                        throw new NullPointerException("Must have not empty script");
+                    }
+                }
+                // evaluate file script
+                else if (nextToken.equals("-f"))
+                    scriptFilename = argsList.get(i + 1);
+                else
+                    scriptFilename = nextToken;
+            }
+        } catch (IndexOutOfBoundsException ie) {
+            out.println("Wrong number of arguments");
+            return;
+        }
+
+        if (script != null) {
+            scriptExerter.readScriptWithHeaders(script);
 		} else if (scriptFilename != null) {
 			if ((new File(scriptFilename)).isAbsolute()) {
 				scriptFile = NetworkShell.huntForTheScriptFile(scriptFilename);
@@ -131,22 +144,39 @@ public class ExertCmd extends ShellCmd {
 				scriptFile = NetworkShell.huntForTheScriptFile("" + d
 						+ File.separator + scriptFilename);
 			}
-			sb = new StringBuilder(staticImports.toString());
 			try {
-				sb.append(readFile(scriptFile));
+                scriptExerter.readFile(scriptFile);
 			} catch (IOException e) {
-				e.printStackTrace();
+				out.append("File: " + scriptFile.getAbsolutePath() + " could not be found or read: " + e.getMessage());
 			}
-			//System.out.println(">>> executing script: \n" + sb.toString());
 		} else {
 			out.println("Missing exertion input filename!");
 			return;
 		}
-		NetletThread et = new NetletThread(sb.toString());
-		et.start();
-		et.join();
-		Object result = et.getResult();
-		// System.out.println(">>>>>>>>>>> result: " + result);
+        Object target = scriptExerter.parse();
+/*        LoggerRemoteEventClient lrec = null;
+
+        // Starting RemoteLoggerListener
+        if (shell.isRemoteLogging() & target instanceof Exertion) {
+            List<Map<String, String>> filterMapList = new ArrayList<Map<String, String>>();
+            for (String exId : getAllExertionIdFromExertion((Exertion)target)) {
+                Map<String, String> map = new HashMap<String, String>();
+                map.put(RemoteLogger.KEY_EXERTION_ID, exId);
+                filterMapList.add(map);
+            }
+            if (!filterMapList.isEmpty()) {
+                try {
+                    lrec = new LoggerRemoteEventClient();
+                    lrec.register(filterMapList, new ConsoleLoggerListener(out));
+                } catch (LoggerRemoteException lre) {
+                    out.append("Remote logging disabled: " + lre.getMessage());
+                    lrec = null;
+                }
+            }
+        }*/
+
+        Object result = scriptExerter.execute();
+        // System.out.println(">>>>>>>>>>> result: " + result);
 		if (result != null) {
 			if (!(result instanceof Exertion)) {
 				out.println("\n---> EVALUATION RESULT --->");
@@ -154,20 +184,16 @@ public class ExertCmd extends ShellCmd {
 				return;
 			}
 			Exertion xrt = (Exertion) result;
-			List<ThrowableTrace> ets = xrt.getExceptions();
-			if (ets.size() > 0) {
+			if (!xrt.getAllExceptions().isEmpty()) {
 				if (commandLine) {
-					out.println("\n---> EXCEPTIONS --->");
-					for (ThrowableTrace t : ets) {
-						out.println(t.describe());
-					}
+					out.println("Exceptions: ");
+					out.println(xrt.getAllExceptions());
 				} else {
-					out.println("\n---> EXCEPTIONS --->");
-					out.println(xrt.getExceptions());
-					// and into the log file
-					System.err.println("\n---> EXCEPTIONS --->");
+					List<ThrowableTrace> ets = xrt.getAllExceptions();
+                    out.println("Exceptions: ");
 					for (ThrowableTrace t : ets) {
-						System.err.println(t.describe());
+                        out.println(t.message);
+						out.println(t.describe());
 					}
 				}
 			}
@@ -175,19 +201,21 @@ public class ExertCmd extends ShellCmd {
 			out.println("\n---> OUTPUT EXERTION --->");
 			out.println(((ServiceExertion) xrt).describe());
 			out.println("\n---> OUTPUT DATA CONTEXT --->");
-			if (xrt.isJob())
+			if (xrt.isJob()) {
 				out.println(((Job)xrt).getJobContext());
-			else
-				out.println(xrt.getContext());
+            } else {
+				out.println(xrt.getDataContext());
+            }
+            saveFilesFromContext(xrt, out);
 			if (outputControlContext) {
 				out.println("\n---> OUTPUT CONTROL CONTEXT --->");
 				out.println(xrt.getControlContext());
 			}
 		} else {
-			if (et.getTarget() != null) {
+			if (target != null) {
 				out.println("\n--- Failed to excute exertion ---");
-				out.println(((ServiceExertion) et.getTarget()).describe());
-				out.println(((ServiceExertion) et.getTarget()).getContext());
+				out.println(((ServiceExertion) target).describe());
+				out.println(((ServiceExertion) target).getDataContext());
 				if (!commandLine) {
 					out.println("Script failed: " + scriptFilename);
 					out.println(script);
@@ -195,6 +223,8 @@ public class ExertCmd extends ShellCmd {
 			}
 			// System.out.println(">>> executing script: \n" + sb.toString());
 		}
+
+    //    if (lrec != null) lrec.destroy();
 	}
 
 	public String getScript() {
@@ -216,7 +246,7 @@ public class ExertCmd extends ShellCmd {
 		if (nextLine.indexOf("#!") < 0) {
 			sb.append(nextLine);
 			sb.append(lineSep);
-		}
+        }
 		while ((nextLine = br.readLine()) != null) {
 			sb.append(nextLine);
 			sb.append(lineSep);
@@ -228,8 +258,7 @@ public class ExertCmd extends ShellCmd {
 		InputStream is = null;
 		BufferedReader br = null;
 		String line;
-		StringBuilder sb = new StringBuilder();
-		;
+		StringBuilder sb = new StringBuilder();		
 
 		try {
 			is = getClass().getResourceAsStream(filename);
@@ -255,4 +284,32 @@ public class ExertCmd extends ShellCmd {
 		return sb;
 	}
 
+    public static List<String> getAllExertionIdFromExertion(Exertion xrt) {
+        List<String> xrtIdsList = new ArrayList<String>();
+        for (Exertion exertion : xrt.getAllExertions()) {
+            xrtIdsList.add(exertion.getId().toString());
+        }
+        return xrtIdsList;
+    }
+
+
+
+    private void saveFilesFromContext(Exertion xrt, PrintStream out) {
+        try {
+            ContextNode[] cns = (xrt.isJob() ? Contexts.getTaskContextNodes((ServiceExertion)xrt)
+                    : Contexts.getTaskContextNodes((ServiceExertion)xrt));
+            for (ContextNode cn : cns) {
+
+                if (cn.isOut() && cn.getData()!=null && cn.getData() instanceof byte[]) {
+                    File f = new File(cn.getName());
+                    FileUtils.writeByteArrayToFile(f, (byte[])cn.getData());
+                    out.println("A file was extracted and saved from context to: " + f.getAbsolutePath());
+                }
+            }
+        } catch (ContextException e) {
+            out.println(e.getMessage());
+        } catch (IOException e) {
+            out.println(e.getMessage());
+        }
+    }
 }

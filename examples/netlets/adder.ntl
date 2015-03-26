@@ -16,6 +16,8 @@
 
 // Adder netlet for testing the requestor of the examples/server project
 
+codebase artifact:org.sorcer/adder/jar/dl/5.2.0
+
 import sorcer.provider.adder.Adder
 
 import static sorcer.co.operator.inEnt

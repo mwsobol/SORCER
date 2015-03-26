@@ -30,6 +30,7 @@ import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.util.*;
 
+import org.fusesource.jansi.Ansi;
 import org.rioproject.impl.config.DynamicConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,6 +58,7 @@ import org.codehaus.groovy.runtime.DefaultGroovyMethods;
 
 import sorcer.jini.lookup.entry.SorcerServiceInfo;
 import sorcer.netlet.util.ScriptExertException;
+import sorcer.netlet.util.LoaderConfiguration;
 import sorcer.security.util.SorcerPrincipal;
 import sorcer.service.EvaluationException;
 import sorcer.service.ExertionInfo;
@@ -99,6 +101,8 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 
     //public static final String CONFIG_EXT_PATH = Sorcer.get + "/configs/shell/configs/nsh-start-ext.config";
     public static final String CONFIG_PATH = SorcerEnv.getHome() + "/configs/shell/configs/nsh-start.config";
+
+	static private boolean debug = false;
 
     public static final String[] CONFIG_FILES = { CONFIG_PATH };
     //CONFIG_EXT_PATH,
@@ -148,13 +152,20 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 
 	static final int MAX_MATCHES = 5;
 
-	static final String CUR_VERSION = Sorcer.getSorcerVersion();
+	static final String CUR_VERSION = Sorcer.getProperty("sorcer.version");
 
 	static final String BUILTIN_QUIT_COMMAND = "quit,exit,bye";
 	
-	static final String UNKNOWN_COMMAND_MSG = "Sorry, unknown command.";
+	static final Ansi UNKNOWN_COMMAND_MSG = ansi().render("@|red Sorry, unknown command.|@");
 
-	static final String SYSTEM_PROMPT = "nsh> ";
+	static final Ansi SYSTEM_PROMPT = ansi().render("@|bold nsh> |@");
+
+	static final Ansi WELCOME_HEADER_1 = ansi().render("@|green SORCER Network Shell |@ @|bold nsh "
+			+ CUR_VERSION + ", JVM: " + System.getProperty("java.version")+ "|@");
+
+	static final Ansi WELCOME_HEADER_2 = ansi().render("Type '@|bold quit|@' to terminate the shell");
+
+	static final Ansi WELCOME_HEADER_3 = ansi().render("Type '@|bold help|@' for command help");
 
 	private final Map<String, Object> settings = new HashMap<String, Object>();
 
@@ -244,11 +255,9 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 			// default shellOutput
 			shellOutput = System.out;
 			if (interactive) {
-				shellOutput.print(ansi().fg(GREEN).a("SORCER Network Shell ").reset());
-                shellOutput.println(ansi().render("@|bold nsh " + CUR_VERSION
-                        + ", JVM: " + System.getProperty("java.version")+ "|@"));
-				shellOutput.println(ansi().render("Type '@|bold quit|@' to terminate the shell"));
-				shellOutput.println(ansi().render("Type '@|bold help|@' for command help"));
+                shellOutput.println(WELCOME_HEADER_1);
+				shellOutput.println(WELCOME_HEADER_2);
+				shellOutput.println(WELCOME_HEADER_3);
 			}
 			
 			argv = buildInstance(true, argv);
@@ -279,7 +288,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
                 System.exit(1);
             }
 
-            shellOutput.print(ansi().render("@|bold " +SYSTEM_PROMPT + "|@"));
+            shellOutput.print(SYSTEM_PROMPT);
 			shellOutput.flush();
 			request = "";
 			request = shellInput.readLine();
@@ -338,11 +347,10 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 						shellOutput.println(UNKNOWN_COMMAND_MSG);
 					}
 				}
-                shellOutput.print(ansi().render("@|bold " +SYSTEM_PROMPT + "|@"));
-            if(outsideCall) {
-                return;
-            }
-				shellOutput.print(SYSTEM_PROMPT);
+				if(outsideCall) {
+					return;
+				}
+                shellOutput.print(SYSTEM_PROMPT);
 				shellOutput.flush();
 				String in = shellInput.readLine();
             // Exit if CTRL+D pressed
@@ -368,7 +376,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
                 String msg = "Problem parsing script @ line: " +
                         ((ScriptExertException)ex).getLineNum() + ":\n" + ex.getLocalizedMessage();
                 logger.error(msg);
-                shellOutput.println(msg);
+                shellOutput.println(ansi().render("@|red " + msg + "|@"));
             } else
                 ex.printStackTrace(shellOutput);
 				try {
@@ -384,6 +392,10 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 	public static String getUserName() {
 		return userName;
 	}
+
+    public boolean isDebug() {
+        return debug;
+    }
 
 	public static SorcerPrincipal getPrincipal() {
 		return principal;
@@ -418,7 +430,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
             if (path!=null)
                 startApplication(path);
             else
-                shellOutput.println("No such internal command available: " + args[0].substring(2));
+                shellOutput.println(ansi().render("@|red No such internal command available: " + args[0].substring(2) + "|@"));
 			System.exit(0);
 		}
         PropertyEvaluator propsEval = new PropertyEvaluator();
@@ -433,8 +445,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
         try {
             if (args.length == 1) {
                 if (args[0].equals("-version")) {
-				shellOutput.println("SORCER Network Shell (nsh " + CUR_VERSION
-                            + ", JVM: " + System.getProperty("java.version"));
+					shellOutput.println(WELCOME_HEADER_1);
                 } else if (args[0].equals("-help")) {
                     shellOutput.println(NSH_HELP);
                 } else {
@@ -468,8 +479,8 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 						cmd.execute();
 					}
                     else
-                        shellOutput.println("Command: " + args[1] + " not found. " +
-                                "Please run 'nsh -help' to see the list of available commands");
+                        shellOutput.println(ansi().render("@|red Command: " + args[1] + " not found. |@" +
+                                "Please run 'nsh -help' to see the list of available commands"));
                 } else if (args[0].equals("-b")) {
                     File batchFile = huntForTheScriptFile(args[1], new String[] { "nsh", "nbat" });
                     System.err.println("Processing batch request on file: " + batchFile.getAbsolutePath());
@@ -492,8 +503,8 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
                         if (cmd!=null)
                             cmd.execute();
                         else
-                            shellOutput.println("Command: " + args[1] + " not found. " +
-                                    "Please run 'nsh -help' to see the list of available commands");
+                            shellOutput.println(ansi().render("@|red Command: " + args[1] + " not found. |@" +
+									"Please run 'nsh -help' to see the list of available commands"));
                         System.err.println("Execution of command: '" + batchCmd + "' finished");
                         request = originalRequest;
                     }
@@ -628,7 +639,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 			shellOutput.println("\tindex: " + tpInt);
 			registrars.remove(tpInt);
 		}
-		shellOutput.print(ansi().render("@|bold " +SYSTEM_PROMPT + "|@"));
+		shellOutput.print(SYSTEM_PROMPT);
 		shellOutput.flush();
 	}
 
@@ -1235,6 +1246,9 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 				String[] systemRoots = { sorcerLibDir, sorcerLibDLDir, sorcerExtDir };
 				String[] realRoots = (roots == null ? systemRoots : roots);
 				
+                if (debug)
+                    System.setProperty("webster.debug", "true");
+
 				instance.webster = new Webster(port, realRoots,
 						instance.hostAddress, true);
 
@@ -1360,7 +1374,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 					+ " in: " + new File(".").getCanonicalPath());
 		} else {
 			sysConfig = ConfigurationProvider
-					.getInstance(new String[] { configFilename }, Thread.currentThread().getContextClassLoader().getParent());
+					.getInstance(new String[] { configFilename });
 		}
 
 		if (sysConfig == null)
@@ -1415,6 +1429,9 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 
 		LookupLocator[] locators = (LookupLocator[]) sysConfig.getEntry(
 				CONFIG_COMPONENT, "locators", LookupLocator[].class, null);
+
+        debug = (Boolean) sysConfig.getEntry(CONFIG_COMPONENT,
+                "debug", boolean.class, Boolean.FALSE);
 
 		long discoveryTimeout = (Long) sysConfig.getEntry(CONFIG_COMPONENT,
 				"discoveryTimeout", long.class, (long) 1000 * 5);

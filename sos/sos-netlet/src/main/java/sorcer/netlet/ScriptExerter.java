@@ -79,7 +79,7 @@ public class ScriptExerter {
     }
 
     public static String[] localJars = new String[] {
-            "org.sorcersoft.sorcer:sos-api"
+            //"org.sorcersoft.sorcer:sos-api"
     };
 
     public ScriptExerter(PrintStream out, ClassLoader classLoader, String websterStrUrl, boolean debug) {
