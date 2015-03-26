@@ -1,5 +1,5 @@
 
-       @Grab(group='org.sorcer', module='arithmetic', version='5.0-SNAPSHOT', classifier='prv')
+       @Grab(group='org.sorcer', module='arithmetic', version='5.2.0', classifier='prv')
 
       Task f4 = task("f4",
                        sig("multiply",
