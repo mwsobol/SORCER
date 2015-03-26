@@ -74,24 +74,24 @@ if [ "$1" = "-cp" -o "$1" = "-classpath" -o "$1" = "--classpath" ] ; then
 fi
 
 # Attempt to set JAVA_HOME if it's not already set.
-if [ -z "$JAVA_HOME" ] ; then
-    if $darwin ; then 
-        [ -z "$JAVA_HOME" -a -d "/Library/Java/Home" ] && export JAVA_HOME="/Library/Java/Home"
-        [ -z "$JAVA_HOME" -a -d "/System/Library/Frameworks/JavaVM.framework/Home" ] && export JAVA_HOME="/System/Library/Frameworks/JavaVM.framework/Home"
-    else
-        javaExecutable="`which javac`"
-        [ -z "$javaExecutable" -o "`expr \"$javaExecutable\" : '\([^ ]*\)'`" = "no" ] && die "JAVA_HOME not set and cannot find javac to deduce location, please set JAVA_HOME."
-        # readlink(1) is not available as standard on Solaris 10.
-        readLink=`which readlink`
-        [ `expr "$readLink" : '\([^ ]*\)'` = "no" ] && die "JAVA_HOME not set and readlink not available, please set JAVA_HOME."
-        javaExecutable="`readlink -f \"$javaExecutable\"`"
-        javaHome="`dirname \"$javaExecutable\"`"
-        javaHome=`expr "$javaHome" : '\(.*\)/bin'`
-        JAVA_HOME="$javaHome"
-        export JAVA_HOME
-
-    fi
-fi
+#if [ -z "$JAVA_HOME" ] ; then
+#    if $darwin ; then
+#        [ -z "$JAVA_HOME" -a -d "/Library/Java/Home" ] && export JAVA_HOME="/Library/Java/Home"
+#        [ -z "$JAVA_HOME" -a -d "/System/Library/Frameworks/JavaVM.framework/Home" ] && export JAVA_HOME="/System/Library/Frameworks/JavaVM.framework/Home"
+#    else
+#        javaExecutable="`which javac`"
+#        [ -z "$javaExecutable" -o "`expr \"$javaExecutable\" : '\([^ ]*\)'`" = "no" ] && die "JAVA_HOME not set and cannot find javac to deduce location, please set JAVA_HOME."
+#        # readlink(1) is not available as standard on Solaris 10.
+#        readLink=`which readlink`
+#        [ `expr "$readLink" : '\([^ ]*\)'` = "no" ] && die "JAVA_HOME not set and readlink not available, please set JAVA_HOME."
+#        javaExecutable="`readlink -f \"$javaExecutable\"`"
+#        javaHome="`dirname \"$javaExecutable\"`"
+#        javaHome=`expr "$javaHome" : '\(.*\)/bin'`
+#        JAVA_HOME="$javaHome"
+#        export JAVA_HOME
+#
+#    fi
+#fi
 
 # For Cygwin, ensure paths are in UNIX format before anything is touched.
 if $cygwin ; then
@@ -199,9 +199,9 @@ if [ -z "$JAVACMD" ] ; then
         JAVACMD="java"
     fi
 fi
-if [ ! -x "$JAVACMD" ] ; then
-    die "JAVA_HOME is not defined correctly, can not execute: $JAVACMD"
-fi
+#if [ ! -x "$JAVACMD" ] ; then
+#    die "JAVA_HOME is not defined correctly, can not execute: $JAVACMD"
+#fi
 if [ -z "$JAVA_HOME" ] ; then
     warn "JAVA_HOME environment variable is not set"
 fi
@@ -317,6 +317,7 @@ startShell ( ) {
             -Dscript.name="$SCRIPT_PATH" \
             -Dprogram.name="$PROGNAME" \
             -Desh.starter.conf="$NSH_CONF" \
+            -Dsorcer.version="$sorcer_version" \
             -Dsorcer.home="$SORCER_HOME" \
             -Drio.home="$RIO_HOME" \
             -Djava.protocol.handler.pkgs="net.jini.url|sorcer.util.bdb.sos|org.rioproject.url" \

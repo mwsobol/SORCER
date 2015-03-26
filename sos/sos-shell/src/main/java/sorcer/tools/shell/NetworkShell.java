@@ -152,7 +152,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 
 	static final int MAX_MATCHES = 5;
 
-	static final String CUR_VERSION = Sorcer.getProperty("sorcer.version");
+	static final String CUR_VERSION = System.getProperty("sorcer.version");
 
 	static final String BUILTIN_QUIT_COMMAND = "quit,exit,bye";
 	
