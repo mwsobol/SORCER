@@ -33,6 +33,7 @@ import sorcer.service.Exertion;
 import sorcer.service.Job;
 import sorcer.service.ServiceExertion;
 import sorcer.util.SorcerUtil;
+import sorcer.util.StringUtils;
 //import sorcer.vfe.Var;
 
 /**
@@ -1554,4 +1555,33 @@ public class Contexts implements SorcerConstants {
         }
         return null;
     }
+
+	public static String getMarkerForDataNodeType(Context ctx, String path) {
+		return getMarkerValueByAttribute(ctx, path, Context.DATA_NODE_TYPE);
+	}
+
+	public static String getMarkerValueByAttribute(Context ctx, String path, String attr) {
+		StringBuilder markerStr = new StringBuilder();
+		try {
+			Hashtable hash = ctx.getMetacontext();
+			if (!ctx.isMetaattribute(attr))
+				return null;
+			String localMeta = ctx.getLocalMetapath(attr);
+
+			if (localMeta!=null)
+				for (String loc : StringUtils.tokenize(localMeta, SorcerConstants.APS)) {
+					if ((hash!=null && !hash.isEmpty()) &&
+							hash.get(loc) !=null &&
+							(((Hashtable)hash.get(loc)).containsKey(path))) {
+						Object val = ((Hashtable)hash.get(loc)).get(path);
+						if (val!=null) markerStr.append(SorcerConstants.APS).append(val);
+					}
+				}
+			if (markerStr.length()>0)
+				return attr + markerStr.toString();
+		} catch (ContextException ce) {
+			return null;
+		}
+		return  null;
+	}
 }

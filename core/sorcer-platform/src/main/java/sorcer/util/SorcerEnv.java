@@ -333,7 +333,7 @@ public class SorcerEnv extends SOS {
 		logger.finer("* Sorcer provider accessor:"+ getProperty(SorcerConstants.S_SERVICE_ACCESSOR_PROVIDER_NAME));
 
 		updateCodebase();
-		logger.finer("java.rmi.server.codebase: "+ System.getProperty("java.rmi.server.codebase"));
+		logger.finer("java.rmi.server.codebase: " + System.getProperty("java.rmi.server.codebase"));
 	}
 
 	/**
@@ -1296,6 +1296,36 @@ public class SorcerEnv extends SOS {
 	 */
 	static public File getScratchDir() {
 		return getNewScratchDir();
+	}
+
+
+	public static File[] getSharedDirs() {
+		String filePath = props.getProperty(S_SHARED_DIRS_FILE);
+		String[] paths;
+
+		if (filePath != null) {
+			try {
+				List<String> pathList = IOUtils.readLines(new File(filePath));
+				paths = pathList.toArray(new String[pathList.size()]);
+			} catch (IOException e) {
+				logger.warning("Error while reading " + filePath  + " " + e.getMessage());
+				paths = new String[]{};
+			}
+			props.put(S_SHARED_DIRS, StringUtils.join(paths, File.pathSeparator));
+		} else {
+			String sharedDirs = props.getProperty(S_SHARED_DIRS);
+			if (sharedDirs != null) {
+				paths = sharedDirs.split(File.pathSeparator);
+			} else {
+				paths = new String[0];
+			}
+		}
+
+		File[] result = new File[paths.length];
+		for (int i = 0; i < paths.length; i++) {
+			result[i] = new File(paths[i]);
+		}
+		return result;
 	}
 
 	/**

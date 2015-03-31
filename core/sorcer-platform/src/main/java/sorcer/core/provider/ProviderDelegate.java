@@ -43,6 +43,7 @@ import net.jini.space.JavaSpace05;
 import sorcer.container.jeri.AbstractExporterFactory;
 import sorcer.container.jeri.ExporterFactories;
 import sorcer.core.monitor.MonitoringSession;
+import sorcer.core.service.Configurer;
 import sorcer.service.ContextManagement;
 import sorcer.core.SorcerConstants;
 import sorcer.core.SorcerNotifierProtocol;
@@ -2873,6 +2874,10 @@ public class ProviderDelegate implements SorcerConstants {
 
 	private Object initBean(Object serviceBean) {
 		try {
+			// Configure the bean
+			Configurer configurer = new Configurer();
+			configurer.preProcess((ServiceProvider)this.getProvider(), serviceBean);
+			//
 			Method m = serviceBean.getClass().getMethod(
 					"init", new Class[] { Provider.class });
 			m.invoke(serviceBean, new Object[] { provider });

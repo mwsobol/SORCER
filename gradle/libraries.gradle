@@ -34,6 +34,7 @@ ext {
     plexusVersion = "3.0.15"
     jansiVersion = "1.11"
     commonsIoVersion = "2.4"
+    guavaVersion = "16.0.1"
 
     sorcerDistHome = "${rootProject.projectDir.path}/distribution/build/sorcer-$version"
     rioHome = "$sorcerDistHome/rio-${rioVersion}"

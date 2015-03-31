@@ -18,6 +18,8 @@
 
 package sorcer.core;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * SORCER interface provides predefined constants, commands and parameter names
  * for the SORCER metacomputing environment. Use them to allow for
@@ -754,4 +756,9 @@ public interface SorcerConstants {
     String DEPLOYMENT_PACKAGE = "sorcer.core.exertion.deployment";
     String REMOTE_LOGGER_INTERFACE = "RemoteLogger";
     String S_SHARED_DIRS_FILE = "sorcer.sharedDirs.file";
+	String S_SHARED_DIRS = "sorcer.sharedDirs";
+	public static final String P_SCRATCH_TTL = "scratch.ttl";
+	// 30 days as seconds
+	public static final long SCRATCH_TTL_DEFAULT = TimeUnit.DAYS.toSeconds(30);
+
 }

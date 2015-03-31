@@ -612,6 +612,21 @@ public class GenericUtil {
 		}
 	}
 
+
+	public static double[][][] dObjATodPrimA(Double[][][] aD) {
+		double[][][] ad = new double[aD.length][][];
+		for (int i = 0; i < aD.length; i++)
+			ad[i] = dObjATodPrimA(aD[i]);
+		return ad;
+	}
+
+	public static double[][] dObjATodPrimA(Double[][] aD) {
+		double[][] ad = new double[aD.length][];
+		for (int i = 0; i < aD.length; i++)
+			ad[i] = dObjATodPrimA(aD[i]);
+		return ad;
+	}
+
 	/**
 	 * DoubleToDouble is a function that converts an array of double[] to and
 	 * array of Double[]. originally written by R.M. Kolonay
@@ -623,6 +638,20 @@ public class GenericUtil {
 		for (int i = 0; i < aD.length; i++)
 			ad[i] = aD[i];
 		return ad;
+	}
+
+	public static Double[][][] dPrimATodObjA(double[][][] ad) {
+		Double[][][] aD = new Double[ad.length][][];
+		for (int i = 0; i < ad.length; i++)
+			aD[i] = dPrimATodObjA(ad[i]);
+		return aD;
+	}
+
+	public static Double[][] dPrimATodObjA(double[][] ad) {
+		Double[][] aD = new Double[ad.length][];
+		for (int i = 0; i < ad.length; i++)
+			aD[i] = dPrimATodObjA(ad[i]);
+		return aD;
 	}
 
 	/**
@@ -672,6 +701,33 @@ public class GenericUtil {
 
 		execLog.close();
 
+		return child2;
+	}
+
+	/**
+	 * Execute System Shell command with parameters - Paweł Rubach
+	 * @param scriptCommand
+	 * @param directory
+	 * @param result
+	 * @param errorString
+	 * @return
+	 * @throws IOException
+	 * @throws InterruptedException
+	 */
+	public static Process execScript(String[] scriptCommand, File directory, List<String> result, List<String> errorString) throws IOException,
+			InterruptedException {
+		Process child2 = Runtime.getRuntime().exec(scriptCommand, null, directory);
+		String line;
+		BufferedReader in = new BufferedReader(new InputStreamReader(
+				child2.getInputStream()));
+		while ((line = in.readLine()) != null) {
+			result.add(line);
+		}
+		BufferedReader errorReader = new BufferedReader(new InputStreamReader(
+				child2.getErrorStream()));
+		while ((line = errorReader.readLine()) != null) {
+			errorString.add(line);
+		}
 		return child2;
 	}
 
@@ -4227,6 +4283,24 @@ public class GenericUtil {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public static String findExistingDirectory(String[] dirs) {
+		for (String dir : dirs) {
+			File dirFile = new File(dir);
+			if (dirFile.exists() && dirFile.isDirectory())
+				return dir;
+		}
+		return null;
+	}
+
+	public static File findExistingFile(String[] fileDirs, String fileName) {
+		for (String dir : fileDirs) {
+			File file = new File(dir + File.separator + fileName);
+			if (file.exists() && file.isFile())
+				return file;
+		}
+		return null;
 	}
 }
 
