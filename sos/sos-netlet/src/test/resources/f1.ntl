@@ -1,6 +1,6 @@
 #!/usr/bin/env nsh
 
-codebase artifact:org.sorcer/adder/5.2.0
+codebase artifact:org.sorcer/arithmetic/jar/dl/5.2.0
 
 import sorcer.arithmetic.provider.Adder;
 import sorcer.arithmetic.provider.Multiplier;
@@ -24,6 +24,6 @@ Task f3 = task("f3", sig("subtract", Subtractor.class),
 		outEnt(path("result/y3"), null)));
 
 job("f1", job("f2", f4, f5, strategy(Flow.PAR, Access.PULL)), f3,
-	pipe(out(f4, path("result/y1")), input(f3, path("arg/x5"))),
-	pipe(out(f5, path("result/y2")), input(f3, path("arg/x6"))));
+	pipe(outPoint(f4, path("result/y1")), inPoint(f3, path("arg/x5"))),
+	pipe(outPoint(f5, path("result/y2")), inPoint(f3, path("arg/x6"))));
 	
