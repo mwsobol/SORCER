@@ -100,7 +100,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 
 
     //public static final String CONFIG_EXT_PATH = Sorcer.get + "/configs/shell/configs/nsh-start-ext.config";
-    public static final String CONFIG_PATH = SorcerEnv.getHome() + "/configs/shell/configs/nsh-start.config";
+    public static final String CONFIG_PATH = SorcerEnv.getHome() + "/bin/shell/configs/nsh-start.config";
 
 	static private boolean debug = false;
 
@@ -539,7 +539,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 		File[] files = extDir.listFiles(new FilenameFilter() {
 			@Override
 			public boolean accept(File dir, String name) {
-				return name.endsWith("-shell.jar");
+				return name.contains("-shell-");
 			}
 		});
 

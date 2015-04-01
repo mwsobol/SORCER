@@ -54,16 +54,13 @@ public class LoaderConfigurationHelper {
             return urlsList;
         }
         String scheme = uri.getScheme();
-        if ("file".equals(scheme)) {
-            return getFilesFromFilteredPath(str);
-        } else if ("http".equals(scheme)) {
+        if ("http".equals(scheme)) {
             try {
                 urlsList.add(new URL(str));
             } catch (MalformedURLException e) {
                 logger.error("Problem creating URL: " + str);
             }
-        } else {
-            if ("artifact".equals(scheme)) {
+        } else if ("artifact".equals(scheme)) {
                 ArtifactURLConfiguration artifactConf = new ArtifactURLConfiguration(uri.getSchemeSpecificPart());
                 try {
                     urlsList.add(uri.toURL());
@@ -76,7 +73,8 @@ public class LoaderConfigurationHelper {
                 } catch (MalformedURLException e) {
                     throw new RuntimeException(e);
                 }
-            }
+        } else if ("file".equals(scheme) || scheme==null) {
+            return getFilesFromFilteredPath(str);
         }
         return urlsList;
     }

@@ -140,6 +140,7 @@ river_version=$(getVersion river.version)
 sorcer_version=$(getVersion sorcer.version)
 rio_version=$(getVersion rio.version)
 commonsio_version=$(getVersion commonsio.version)
+modeling_version=$(getVersion modeling.version)
 
 RIO_HOME=$SORCER_HOME/rio-$rio_version
 
@@ -318,6 +319,7 @@ startShell ( ) {
             -Dprogram.name="$PROGNAME" \
             -Desh.starter.conf="$NSH_CONF" \
             -Dsorcer.version="$sorcer_version" \
+            -Dmodeling.version="$modeling_version" \
             -Dsorcer.home="$SORCER_HOME" \
             -Drio.home="$RIO_HOME" \
             -Djava.protocol.handler.pkgs="net.jini.url|sorcer.util.bdb.sos|org.rioproject.url" \

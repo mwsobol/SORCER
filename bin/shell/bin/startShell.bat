@@ -87,6 +87,7 @@ set JAVA_OPTS=%JAVA_OPTS% -Djava.rmi.server.useCodebaseOnly=false
 set JAVA_OPTS=%JAVA_OPTS% -Dwebster.tmp.dir="%SORCER_HOME%\data"
 set JAVA_OPTS=%JAVA_OPTS% -Dwebster.put.dir="%SORCER_HOME%\data"
 set JAVA_OPTS=%JAVA_OPTS% -Dsorcer.version="%sorcer.version%"
+set JAVA_OPTS=%JAVA_OPTS% -Dmodeling.version="%modeling.version%"
 set JAVA_OPTS=%JAVA_OPTS% -Dsorcer.home="%SORCER_HOME%"
 set JAVA_OPTS=%JAVA_OPTS% -DSORCER_HOME="%SORCER_HOME%"
 set JAVA_OPTS=%JAVA_OPTS% -Drio.home="%RIO_HOME%"
