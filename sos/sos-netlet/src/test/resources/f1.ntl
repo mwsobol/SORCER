@@ -1,6 +1,6 @@
 #!/usr/bin/env nsh
 
-codebase artifact:org.sorcer/arithmetic/jar/dl/5.2.0
+codebase artifact:org.sorcer/arithmetic/jar/dl/${sorcer.version}
 
 import sorcer.arithmetic.provider.Adder;
 import sorcer.arithmetic.provider.Multiplier;

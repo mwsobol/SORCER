@@ -92,11 +92,12 @@ bootme {
 //  spawn = false
 }
 
-/*def deployConfig = file("build/config/${project.name}-deploy.config")
+def deployConfig = file("configs/arithmetic-prv.config")
 artifacts {
 	archives file: deployConfig, classifier: "deploy"
 }
 
+/*
 configbuilder {
 	codebase = "${project.group}:arithmetic:dl:$version"
 	serviceConfig = file("${project.projectDir.path}/configs/arithmetic-prv.config")

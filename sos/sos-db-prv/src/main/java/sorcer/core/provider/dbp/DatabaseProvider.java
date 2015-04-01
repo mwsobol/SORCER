@@ -102,7 +102,9 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
 		}
 		UpdateThread ut = new UpdateThread(uuid, uuidObject);
         Uuid id = ut.getUuid();
-        ut.start();
+		//TODO - added by PR, this slows it down but should prevent errors in tests...
+        //ut.start();
+		ut.run();
         return id;
 	}
 

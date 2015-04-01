@@ -486,6 +486,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
                     System.err.println("Processing batch request on file: " + batchFile.getAbsolutePath());
                     String batchCmds = readScript(batchFile);
                     shellOutput.println("Executing batch file: " + batchFile.getAbsolutePath());
+					waitForReggie();
                     for (String batchCmd : batchCmds.split("\n")) {
                         WhitespaceTokenizer tok = new WhitespaceTokenizer(batchCmd);
                         List<String> argsList = new ArrayList<String>();

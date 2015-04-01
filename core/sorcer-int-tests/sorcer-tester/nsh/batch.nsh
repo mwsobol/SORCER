@@ -1,5 +1,5 @@
+help
 disco
+lup -s
 sp
 ds
-lup -s
-help

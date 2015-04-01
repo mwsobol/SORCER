@@ -21,6 +21,7 @@ import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.core.dispatch.ProvisionManager;
 import sorcer.service.Job;
+import sorcer.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,7 +55,7 @@ public class ProvisionManagerTest extends DeploySetup {
         assertTrue(provisionManager.getDeploymentNames().size()==0);
     }
 
-    @Test
+    @Test(timeout = 30000)
     public void testConcurrentDeploy() throws Exception {
         banner("testConcurrentDeploy");
         Job f1 = JobUtil.createJob();
@@ -86,7 +87,7 @@ public class ProvisionManagerTest extends DeploySetup {
         assertTrue(provisionManager.getDeploymentNames().size()==0);
     }
 
-    @Test
+    @Test(timeout = 30000)
     public void testConcurrentDeploy2() throws Exception {
         banner("testConcurrentDeploy2");
         Job f1 = JobUtil.createJob(true);
@@ -102,11 +103,14 @@ public class ProvisionManagerTest extends DeploySetup {
             futures.add(task);
             new Thread(task).start();
         }
+        System.out.println("Started provisionManager threads now getting them");
         for(Future<Boolean> future : futures) {
             assertTrue(future.get());
         }
         ProvisionManager provisionManager = provisionManagers.get(0);
+        System.out.println("Got provisionManager: " + provisionManager);
         List<String> deployed = provisionManager.getDeploymentNames();
+        System.out.println("Deployed: " + deployed);
         assertTrue(deployed.size()==2);
         provisionManager.undeploy();
         assertFalse(provisionManager.getDeployAdmin().hasDeployed(deployed.get(0)));
