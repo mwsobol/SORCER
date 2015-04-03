@@ -393,20 +393,6 @@ public class ProviderDelegate implements SorcerConstants {
 		spaceName = config.getProperty(J_SPACE_NAME,
 				Sorcer.getActualSpaceName());
 
-		Class[] serviceTypes = new Class[0];
-		try {
-			serviceTypes = (Class[]) config.jiniConfig.getEntry(
-					ServiceProvider.COMPONENT, J_INTERFACES, Class[].class);
-		} catch (ConfigurationException e) {
-			// do nothing, used the default value
-			// e.printStackTrace();
-		}
-		if ((serviceTypes != null) && (serviceTypes.length > 0)) {
-			publishedServiceTypes = serviceTypes;
-			logger.info("*** published services: "
-					+ Arrays.toString(publishedServiceTypes));
-		}
-
 		try {
 			singleThreadModel = (Boolean) config.jiniConfig.getEntry(
 					ServiceProvider.COMPONENT, J_SINGLE_TRHREADED_MODEL,
@@ -673,6 +659,19 @@ public class ProviderDelegate implements SorcerConstants {
 		if (partner != null) {
 			getPartner(partnerName, partnerType);
 			exports.put(partner, partnerExporter);
+		}
+		Class[] serviceTypes = new Class[0];
+		try {
+			serviceTypes = (Class[]) config.jiniConfig.getEntry(
+					ServiceProvider.COMPONENT, J_INTERFACES, Class[].class);
+		} catch (ConfigurationException e) {
+			// do nothing, used the default value
+			// e.printStackTrace();
+		}
+		if ((serviceTypes != null) && (serviceTypes.length > 0)) {
+			publishedServiceTypes = serviceTypes;
+			logger.info("*** published services: "
+					+ Arrays.toString(publishedServiceTypes));
 		}
 		// get exporters for outer and inner proxy
 		getExporters(jconfig);
@@ -2820,9 +2819,14 @@ public class ProviderDelegate implements SorcerConstants {
 			Class[] interfaces = ((Object) serviceBeans[i]).getClass()
 					.getInterfaces();
 			logger.info("*** service component interfaces" + Arrays.toString(interfaces));
-
 			// TODO associate exposedInterfaces with publishedServiceTypes
+			// PR - Started  working on it!!!
 			List<Class> exposedInterfaces = new ArrayList<Class>(Arrays.asList(interfaces));
+			for (Class type : publishedServiceTypes) {
+				if (type.isInstance(serviceBeans[i]))
+					exposedInterfaces.add(type);
+			}
+			//Arrays.asList(interfaces)
 			List<Class> ignoredInterfaces = new ArrayList();
 			ignoredInterfaces.add(SorcerConstants.class);
 			ignoredInterfaces.add(Executor.class);

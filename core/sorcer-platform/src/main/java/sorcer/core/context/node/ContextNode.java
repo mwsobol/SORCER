@@ -283,7 +283,6 @@ public class ContextNode implements Serializable, SorcerConstants {
 		if (!isURL())
 			throw new ContextNodeException(
 					"ContextNode does not contain a URL string or URL object.");
-		String urlStr = null;
 		String urlValue = data.toString();
 		if (urlValue.startsWith("/") || urlValue.charAt(1) == ':') {
 			String dir = ""+Sorcer.getDataDir();
@@ -297,6 +296,7 @@ public class ContextNode implements Serializable, SorcerConstants {
 	}
 
 	public boolean isHttp() {
+		if (data==null) return false;
 		String urlValue = data.toString();
 		if (urlValue.startsWith("http://"))
 			return true;
@@ -304,6 +304,7 @@ public class ContextNode implements Serializable, SorcerConstants {
 	}
 
 	public boolean isFile() {
+		if (data==null) return false;
 		String urlValue = data.toString();
 		if (urlValue.startsWith("file://"))
 			return true;
@@ -311,6 +312,7 @@ public class ContextNode implements Serializable, SorcerConstants {
 	}
 
 	public boolean isFTP() {
+		if (data==null) return false;
 		String urlValue = data.toString();
 		if (urlValue.startsWith("ftp://"))
 			return true;
