@@ -59,7 +59,7 @@ def getCommonDLs() {
 }
 
 def getForkMode() {
-    return System.getProperty("fork.mode", "yes")
+    return System.getProperty("fork.mode", "no")
 }
 
 deployment(name: "Sorcer OS") {
