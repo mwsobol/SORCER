@@ -174,7 +174,7 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
                 }
                 try {
                     logger.info("Provisioning "+sig);
-                    service = ServiceDirectoryProvisioner.getProvisioner().provision(sig.getServiceType().getName(), sig.getProviderName(), sig.getVersion());
+                    service = ServiceDirectoryProvisioner.getProvisioner().provision(sig);
                 } catch (ProvisioningException pe) {
                     Throwable rootCause = pe;
                     while (rootCause.getCause()!=null && rootCause.getCause()!=rootCause) {

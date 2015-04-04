@@ -28,9 +28,7 @@ import sorcer.core.context.ControlContext;
 import sorcer.core.context.ThrowableTrace;
 import sorcer.core.context.model.par.Par;
 import sorcer.core.deploy.ServiceDeployment;
-import sorcer.core.dispatch.DispatcherException;
-import sorcer.core.dispatch.ProvisionManager;
-import sorcer.core.dispatch.ServiceDirectoryProvisioner;
+import sorcer.core.dispatch.*;
 import sorcer.core.provider.*;
 import sorcer.core.signature.NetSignature;
 import sorcer.core.signature.ServiceSignature;
@@ -225,6 +223,12 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 		Signature signature = exertion.getProcessSignature();
 		Service provider = null;
 		try {
+			// If the exertion is a job rearrange the inner exertions to make sure the
+			// dependencies are not broken
+			if (exertion.isJob()) {
+				ExertionSorter es = new ExertionSorter(exertion);
+				exertion = (ServiceExertion)es.getSortedJob();
+			}
 //			 execute modeling tasks
 			if (exertion instanceof ModelingTask && exertion.getFidelity().size() == 1) {
 				return ((Task) exertion).doTask(txn);
@@ -271,8 +275,14 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 		} catch (SignatureException e) {
 			e.printStackTrace();
 			new ExertionException(e);
+		} catch (ContextException e) {
+			e.printStackTrace();
+			new ExertionException(e);
+		} catch (SortingException e) {
+			e.printStackTrace();
+			new ExertionException(e);
 		}
-        if (provider == null) {
+		if (provider == null) {
             // handle signatures for PULL tasks
             if (!exertion.isJob()
                     && exertion.getControlContext().getAccessType() == Access.PULL) {
@@ -283,8 +293,7 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
                 if (provider == null && exertion.isProvisionable() && signature instanceof NetSignature) {
                     try {
                         logger.fine("Provisioning: " + signature);
-                        provider = ServiceDirectoryProvisioner.getProvisioner().provision(signature.getServiceType().getName(),
-                                signature.getName(), ((NetSignature) signature).getVersion());
+                        provider = ServiceDirectoryProvisioner.getProvisioner().provision(signature);
                     } catch (ProvisioningException pe) {
                         logger.warning("Provider not available and not provisioned: " + pe.getMessage());
                         exertion.setStatus(Exec.FAILED);

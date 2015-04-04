@@ -44,7 +44,7 @@ set SORCER_COMMON=
 set SORCER_COMMON=%SORCER_COMMON%;%LIB_DIR%\common\groovy\groovy-all-%groovy.version%.jar
 set SORCER_COMMON=%SORCER_COMMON%;%LIB_DIR%\common\plexus-utils-%plexus.version%.jar
 set SORCER_COMMON=%SORCER_COMMON%;%LIB_DIR%\common\jansi-%jansi.version%.jar
-set SORCER_COMMON=%SORCER_COMMON%;%LIB_DIR%\common\commonsio-%commonsio.version%.jar
+set SORCER_COMMON=%SORCER_COMMON%;%LIB_DIR%\common\commons-io-%commonsio.version%.jar
 
 set RIO_CLASSPATH=
 set RIO_CLASSPATH=%RIO_CLASSPATH%;%RIO_HOME%\lib\rio-platform-%rio.version%.jar
@@ -56,6 +56,7 @@ set RIO_CLASSPATH=%RIO_CLASSPATH%;%RIO_HOME%\lib\logging\slf4j-api-%slf4j.versio
 set RIO_CLASSPATH=%RIO_CLASSPATH%;%RIO_HOME%\lib\logging\slf4j-jdk14-%slf4j.version%.jar
 
 set SORCER_PATH=
+set SORCER_PATH=%SORCER_PATH%;%LIB_DIR%\sorcer\lib\sorcer-resolving-loader-%sorcer.version%.jar
 set SORCER_PATH=%SORCER_PATH%;%LIB_DIR%\sorcer\lib\sorcer-platform-%sorcer.version%.jar
 set SORCER_PATH=%SORCER_PATH%;%LIB_DIR%\sorcer\lib\sos-netlet-%sorcer.version%.jar
 set SORCER_PATH=%SORCER_PATH%;%LIB_DIR%\sorcer\lib\sos-shell-%sorcer.version%.jar
@@ -82,7 +83,7 @@ set JAVA_OPTS=-Dsun.net.maxDatagramSockets=1024
 set JAVA_OPTS=%JAVA_OPTS% -Dsorcer.env.file="%SORCER_HOME%\configs\sorcer.env"
 set JAVA_OPTS=%JAVA_OPTS% -Djava.net.preferIPv4Stack=true
 set JAVA_OPTS=%JAVA_OPTS% "-Djava.protocol.handler.pkgs=net.jini.url|sorcer.util.url|org.rioproject.url"
-set JAVA_OPTS=%JAVA_OPTS% -Djava.rmi.server.RMIClassLoaderSpi=org.rioproject.rmi.ResolvingLoader
+set JAVA_OPTS=%JAVA_OPTS% -Djava.rmi.server.RMIClassLoaderSpi=sorcer.rio.rmi.SorcerResolvingLoader
 set JAVA_OPTS=%JAVA_OPTS% -Djava.rmi.server.useCodebaseOnly=false
 set JAVA_OPTS=%JAVA_OPTS% -Dwebster.tmp.dir="%SORCER_HOME%\data"
 set JAVA_OPTS=%JAVA_OPTS% -Dwebster.put.dir="%SORCER_HOME%\data"

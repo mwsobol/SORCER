@@ -18,6 +18,7 @@
 
 package sorcer.core.dispatch;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -169,7 +170,7 @@ public class ExertionDispatcherFactory implements DispatcherFactory {
      */
     @Override
     public Dispatcher createDispatcher(Exertion exertion, Provider provider, String... config) throws DispatcherException {
-        return createDispatcher(exertion, new HashSet<Context>(), false, provider);
+        return createDispatcher(exertion, Collections.synchronizedSet(new HashSet<Context>()), false, provider);
     }
 
     @Override
@@ -182,7 +183,7 @@ public class ExertionDispatcherFactory implements DispatcherFactory {
         logger.info("Running Space Task Dispatcher...");
         try {
             return new SpaceTaskDispatcher(task,
-                    new HashSet<Context>(),
+                    Collections.synchronizedSet(new HashSet<Context>()),
                     false,
                     loki,
                     provisionManager);

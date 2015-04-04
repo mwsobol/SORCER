@@ -166,7 +166,7 @@ $RIO_HOME/lib/logging/slf4j-jdk14-$slf4j_version.jar"
 STARTER_CLASSPATH="$SORCER_HOME/lib/common/groovy/groovy-all-$groovy_version.jar:\
 $SORCER_HOME/lib/common/plexus-utils-$plexus_version.jar:\
 $SORCER_HOME/lib/common/jansi-$jansi_version.jar:\
-$SORCER_HOME/lib/common/commonsio-$commonsio_version.jar:\
+$SORCER_HOME/lib/common/commons-io-$commonsio_version.jar:\
 $SORCER_HOME/lib/river/jsk-platform-$river_version.jar:\
 $SORCER_HOME/lib/river/jsk-lib-$river_version.jar:\
 $SORCER_HOME/lib/river/serviceui-$river_version.jar:\
@@ -174,7 +174,8 @@ $RIO_CLASSPATH:\
 $SORCER_HOME/lib/sorcer/lib/sos-netlet-$sorcer_version.jar:\
 $SORCER_HOME/lib/sorcer/lib/sos-shell-$sorcer_version.jar:\
 $SORCER_HOME/lib/sorcer/lib-ext/webster-$sorcer_version.jar:\
-$SORCER_HOME/lib/sorcer/lib/sorcer-platform-$sorcer_version.jar"
+$SORCER_HOME/lib/sorcer/lib/sorcer-platform-$sorcer_version.jar:\
+$SORCER_HOME/lib/sorcer/lib/sorcer-resolving-loader-$sorcer_version.jar"
 
 # Create the final classpath. Setting a classpath using the -cp or -classpath option means not to use the
 # global classpath. Network shell behaves then the same as the java interpreter
@@ -310,6 +311,7 @@ startShell ( ) {
     if $useprofiler ; then
         runProfiler
     else
+        #  -Djava.rmi.server.RMIClassLoaderSpi=org.rioproject.rmi.ResolvingLoader \
         #echo "==> STARTER_CLASSPATH: $STARTER_CLASSPATH"
         exec $RLWRAP"$JAVACMD" $JAVA_OPTS \
             -classpath "$STARTER_CLASSPATH" \
@@ -323,7 +325,7 @@ startShell ( ) {
             -Dsorcer.home="$SORCER_HOME" \
             -Drio.home="$RIO_HOME" \
             -Djava.protocol.handler.pkgs="net.jini.url|sorcer.util.bdb.sos|org.rioproject.url" \
-            -Djava.rmi.server.RMIClassLoaderSpi=org.rioproject.rmi.ResolvingLoader \
+            -Djava.rmi.server.RMIClassLoaderSpi=sorcer.rio.rmi.SorcerResolvingLoader \
             -Dtools.jar="$TOOLS_JAR" \
             -Djava.util.logging.config.file="$SORCER_HOME"/bin/shell/configs/sorcer.logging \
             $STARTER_MAIN_CLASS \

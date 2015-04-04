@@ -145,4 +145,6 @@ sorcer.core.provider.SpaceTaker.level=OFF
 #org.rioproject.level=FINEST
 sorcer.core.provider.exertmonitor.level=ALL
 sorcer.core.monitor.level=ALL
-sorcer.core.dispatch.level=ALL
+sorcer.core.dispatch.level=INFO
+sorcer.core.dispatch.ExertionSorter.level=INFO
+sorcer.rio.rmi.level=INFO

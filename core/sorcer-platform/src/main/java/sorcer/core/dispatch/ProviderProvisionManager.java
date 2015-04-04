@@ -83,8 +83,7 @@ public class ProviderProvisionManager {
                 srvToProvision.incrementProvisionAttempts();
                 try {
                     logger.info("Provisioning: " + srvToProvision.getSignature());
-                    service = ServiceDirectoryProvisioner.getProvisioner().provision(srvToProvision.getServiceType(),
-                            srvToProvision.getProviderName(), srvToProvision.getVersion());
+                    service = ServiceDirectoryProvisioner.getProvisioner().provision(srvToProvision.getSignature());
                 } catch (ProvisioningException pe) {
                     String msg = "Problem provisioning " + srvToProvision.getSignature().getServiceType()
                             + " (" + srvToProvision.getSignature().getProviderName() + ")"

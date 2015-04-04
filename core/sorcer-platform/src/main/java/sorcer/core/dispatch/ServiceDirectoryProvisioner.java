@@ -30,15 +30,19 @@ import org.rioproject.resolver.Artifact;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.co.tuple.Tuple2;
+import sorcer.co.tuple.Tuple3;
+import sorcer.core.signature.NetSignature;
 import sorcer.ext.Provisioner;
 import sorcer.ext.ProvisioningException;
 import sorcer.jini.lookup.AttributesUtil;
 import sorcer.service.Accessor;
 import sorcer.service.ServiceDirectory;
+import sorcer.service.Signature;
 import sorcer.util.SorcerEnv;
 import sorcer.util.rio.OpStringUtil;
 
 import java.rmi.RemoteException;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 public class ServiceDirectoryProvisioner implements Provisioner {
@@ -57,6 +61,8 @@ public class ServiceDirectoryProvisioner implements Provisioner {
     private int undeployIdleTime = UNDEPLOY_DEFAULT_IDLE_TIME;
 
 
+    private Set<Tuple3> provisioningQueue = Collections.synchronizedSet(new HashSet<Tuple3>());
+
     public ServiceDirectoryProvisioner() {
         String propIdleTime = SorcerEnv.getProperty("provisioning.idle.time");
         if (propIdleTime!=null) {
@@ -74,20 +80,40 @@ public class ServiceDirectoryProvisioner implements Provisioner {
         return instance;
     }
 
-    public <T> T provision(String typeName, String name, String version) throws ProvisioningException {
+    @Override
+    public <T> T provision(Signature sig) throws ProvisioningException {
+        String typeName = (sig.getServiceType()!=null ? sig.getServiceType().getName() : null);
+        String name = (sig.getProviderName()!=null ? sig.getProviderName() : "*");
+        String version = ((sig instanceof NetSignature) ? ((NetSignature)sig).getVersion() : null);
         logger.warn("called provision {} {} {}", typeName, version, name);
+        Tuple3 provT = new Tuple3(typeName, (version!=null ? version : "NULL"), (name!=null ? name : "NULL"));
+        if (!provisioningQueue.contains(provT)) {
+            provisioningQueue.add(provT);
+        } else {
+            while (provisioningQueue.contains(provT)) {
+                logger.debug("already provisioning {} {} {}, waiting!!!", typeName, version, name);
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException ie) {
+                }
+            }
+            T service = (T) Accessor.getService(sig);
+            if (service!=null) return service;
+        }
+
+
         OperationalString operationalString = null;
         if (srvDirectory == null) srvDirectory = getServiceDirectory();
-        if (srvDirectory == null) throw new ProvisioningException("ServiceDirectory (Almanac) service not found!");
+        if (srvDirectory == null) removeFromQueueAndThrowException(provT, "ServiceDirectory (Almanac) service not found!", null);
         try {
             operationalString = srvDirectory.getOpString(typeName, version, name);
         } catch (RemoteException re) {
             srvDirectory = getServiceDirectory();
-            if (srvDirectory!=null)           {
+            if (srvDirectory!=null) {
                 try {
                     operationalString = srvDirectory.getOpString(typeName, version, name);
                 } catch (RemoteException ree) {
-                    throw new ProvisioningException(ree.getMessage());
+                    removeFromQueueAndThrowException(provT, ree.getMessage(), ree);
                 }
             }
 
@@ -95,12 +121,14 @@ public class ServiceDirectoryProvisioner implements Provisioner {
         if (operationalString == null) {
             String msg = "Service " + typeName + " " + name + " " + version + " not installed in the Almanac database";
             logger.warn(msg);
-            throw new ProvisioningException(msg);
+            removeFromQueueAndThrowException(provT, msg, null);
         }
         logger.debug("Got opString to provision: {}", operationalString.getName());
         T service = null;
         logger.debug("UndeployIdleTime: {}", undeployIdleTime);
         if (undeployIdleTime>0) ((OpString)operationalString).setUndeployOption(getUndeployOption(undeployIdleTime));
+        String opStringName = operationalString.getName() + "_" + UUID.randomUUID();
+        ((OpString)operationalString).setName(opStringName);
         try {
             DeploymentResult deploymentResult = getDeployAdmin().deploy(operationalString);
             StringBuilder deployErrors = new StringBuilder();
@@ -119,7 +147,7 @@ public class ServiceDirectoryProvisioner implements Provisioner {
             int tries = 0;
             while (tries < 8 && service == null) {
                 Thread.sleep(100);
-                Entry[] entries = new Entry[]{ new OperationalStringEntry(operationalString.getName()) };
+                Entry[] entries = new Entry[]{ new OperationalStringEntry(opStringName) };
                 service = (T) Accessor.getService(null, new Class[]{type}, entries );
                 tries++;
             }
@@ -142,16 +170,25 @@ public class ServiceDirectoryProvisioner implements Provisioner {
             }
         } catch (ProvisioningException pe) {
             logger.warn(pe.getMessage());
-            throw pe;
+            removeFromQueueAndThrowException(provT, pe.getMessage(), pe);
         } catch (Exception e) {
             logger.warn("OpString Error", e);
-            throw new ProvisioningException("Could not parse operational string", e);
+            removeFromQueueAndThrowException(provT, "Could not parse operational string", e);
         }
-        if (service != null)
+        if (service != null) {
+            provisioningQueue.remove(provT);
             return service;
+        }
         else
-            throw new ProvisioningException("Timed out waiting for the provisioned service to appear: " + typeName + " " + name + " " + version);
+            removeFromQueueAndThrowException(provT, "Timed out waiting for the provisioned service to appear: " + typeName + " " + name + " " + version, null);
+        throw new ProvisioningException("This line should never be reached!");
     }
+
+    private void removeFromQueueAndThrowException(Tuple3 provTuple, String msg, Exception e) throws ProvisioningException {
+        provisioningQueue.remove(provTuple);
+        throw new ProvisioningException(msg, e);
+    }
+
 
     public void unProvision(ServiceID serviceId) throws ProvisioningException {
         ServiceItem serviceItem = Accessor.getServiceItem(new ServiceTemplate(serviceId, null, null), null);

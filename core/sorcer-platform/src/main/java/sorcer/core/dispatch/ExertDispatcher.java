@@ -17,7 +17,6 @@
 
 package sorcer.core.dispatch;
 
-import net.jini.core.event.RemoteEvent;
 import net.jini.id.Uuid;
 import net.jini.id.UuidFactory;
 import net.jini.lease.LeaseRenewalManager;
@@ -26,25 +25,17 @@ import org.slf4j.LoggerFactory;
 import sorcer.co.tuple.Tuple2;
 import sorcer.core.DispatchResult;
 import sorcer.core.Dispatcher;
-import sorcer.core.SorcerConstants;
-import sorcer.core.SorcerNotifierProtocol;
 import sorcer.core.context.Contexts;
-import sorcer.core.context.ControlContext;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.exertion.Jobs;
-import sorcer.core.exertion.NetJob;
-import sorcer.core.misc.MsgRef;
 import sorcer.core.monitor.MonitorUtil;
 import sorcer.core.monitor.MonitoringSession;
-import sorcer.core.provider.Cataloger;
 import sorcer.core.provider.Provider;
 import sorcer.service.*;
 
 import javax.security.auth.Subject;
-import java.io.File;
 import java.lang.reflect.Array;
 import java.rmi.RemoteException;
-import java.rmi.server.UID;
 import java.util.*;
 import static sorcer.service.Exec.*;
 
@@ -253,7 +244,7 @@ abstract public class ExertDispatcher implements Dispatcher {
             return;
         }
         List<Context> contexts = Jobs.getTaskContexts(ex);
-        logger.info("Contexts to check if shared: " + contexts.toString());
+        logger.debug("Contexts to check if shared: " + contexts.toString());
         for (Context ctx : contexts) {
             if (((ServiceContext)ctx).isShared()) {
                 sharedContexts.add(ctx);
@@ -331,8 +322,9 @@ abstract public class ExertDispatcher implements Dispatcher {
                 }
             }
         } catch (Exception ex) {
+            ex.printStackTrace();
 			throw new ExertionException("Failed to update data dataContext: " + toContext.getName()
-                    + " at: " + toPath + " from: " + fromPath, ex);
+                    + " at: " + toPath + " from: " + fromPath + "\n" + ex.getMessage(), ex);
         }
     }
 
@@ -353,18 +345,19 @@ abstract public class ExertDispatcher implements Dispatcher {
 		// If not found, then find a dataContext with particular path.
 		if (Context.EMPTY_LEAF.equals(path) || "".equals(path))
             return null;
-        if (id != null && id.length() > 0) {
-            for (Context hc : sharedContexts) {
-                Uuid sharedCtxId = UuidFactory.create(id);
-                logger.debug("Comparing: " + sharedCtxId + " with: " + hc.getId() + "\n" + hc);
-                if (sharedCtxId.equals(hc.getId()))
-                    return (ServiceContext) hc;
-            }
-        }
-        else {
-            for (Context hc : sharedContexts) {
-                if (hc.containsPath(path))
-                    return (ServiceContext) hc;
+        synchronized (sharedContexts) {
+            if (id != null && id.length() > 0) {
+                for (Context hc : sharedContexts) {
+                    Uuid sharedCtxId = UuidFactory.create(id);
+                    logger.debug("Comparing: " + sharedCtxId + " with: " + hc.getId() + "\n" + hc);
+                    if (sharedCtxId.equals(hc.getId()))
+                        return (ServiceContext) hc;
+                }
+            } else {
+                for (Context hc : sharedContexts) {
+                    if (hc.containsPath(path))
+                        return (ServiceContext) hc;
+                }
             }
         }
         return null;

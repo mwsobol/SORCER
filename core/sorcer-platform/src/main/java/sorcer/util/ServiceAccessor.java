@@ -543,8 +543,12 @@ public class ServiceAccessor implements DynamicAccessor {
         return getService(st, null);
     }
 
-    @Override
-    public ServiceItem[] getServiceItems(ServiceTemplate template, int minMatches, int maxMatches, ServiceItemFilter filter, String[] groups) {
+	@Override
+	public ServiceItem[] getServiceItems(ServiceTemplate template, int minMatches, int maxMatches, ServiceItemFilter filter, String[] groups) {
+		return getServiceItems(template, minMatches, maxMatches, filter, groups, LUS_REAPEAT);
+	}
+
+    public ServiceItem[] getServiceItems(ServiceTemplate template, int minMatches, int maxMatches, ServiceItemFilter filter, String[] groups, int lusRepeat) {
         if (groups != null) {
             Set<String> defaultGroups = new HashSet<String>(Arrays.asList(SorcerEnv.getLookupGroups()));
             Set<String> userGroups = new HashSet<String>(Arrays.asList(groups));
@@ -552,7 +556,7 @@ public class ServiceAccessor implements DynamicAccessor {
                 throw new IllegalArgumentException("User requested River group other than default, this is currently unsupported");
             }
         }
-        for (int tryNo = 0; tryNo < LUS_REAPEAT; tryNo++) {
+        for (int tryNo = 0; tryNo < lusRepeat; tryNo++) {
             ServiceItem[] result = doGetServiceItems(template, minMatches, maxMatches, filter);
             if (result != null && result.length > 0)
                 return result;
@@ -566,7 +570,8 @@ public class ServiceAccessor implements DynamicAccessor {
         return new ServiceItem[0];
     }
 
-    private ServiceItem[] doGetServiceItems(ServiceTemplate template, int minMatches, int maxMatches, ServiceItemFilter filter) {
+
+	private ServiceItem[] doGetServiceItems(ServiceTemplate template, int minMatches, int maxMatches, ServiceItemFilter filter) {
         try {
             return sdManager.lookup(template, minMatches, maxMatches, filter, WAIT_FOR);
         } catch (RuntimeException e) {

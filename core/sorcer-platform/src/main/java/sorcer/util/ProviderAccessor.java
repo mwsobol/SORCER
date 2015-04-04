@@ -301,6 +301,7 @@ public class ProviderAccessor extends ServiceAccessor implements
                     ServiceMatches matches = cataloger.lookup(template, maxMatches);
 			        ServiceItem[] matching = Filters.matching(matches.items, filter);
                     if (matching.length > 0) return matching;
+					else return super.getServiceItems(template, minMatches, maxMatches, filter, groups, 1);
                 } catch (RemoteException e) {
                     logger.error( "Problem with Cataloger, falling back", e);
                 }

@@ -91,6 +91,7 @@ sorcer.core.context.model.opti.level=ALL
 
 # Other specialized loggers
 sorcer.core.dispatchlevel=ALL
+sorcer.core.dispatch.ExertionSorter.level=INFO
 #sorcer.core.context.eval.level=OFF
 #sorcer.core.context.level=ALL
 #sorcer.jini.jeri.SorcerILFactory.level=ALL
@@ -134,3 +135,4 @@ net.jini.discovery.LookupDiscovery.level=OFF
 #net.jini.jeri.level=FINER
 
 #org.rioproject.rmi.level=ALL
+sorcer.rio.rmi.level=INFO

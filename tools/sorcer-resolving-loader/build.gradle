@@ -1,8 +1,5 @@
-package sorcer.ext;
-/**
- *
- * Copyright 2013 Rafał Krupiński.
- * Copyright 2013 Sorcersoft.com S.A.
+/*
+ * Copyright to the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,18 +14,9 @@ package sorcer.ext;
  * limitations under the License.
  */
 
+version = sorcerVersion
 
-import net.jini.core.lookup.ServiceID;
-import sorcer.service.Signature;
-
-import java.rmi.RemoteException;
-
-/**
- * @author Rafał Krupiński
- */
-public interface Provisioner {
-    <T> T provision(Signature sig) throws ProvisioningException;
-
-    void unProvision(ServiceID service) throws ProvisioningException;
-
+dependencies {
+    compile "org.rioproject:rio-platform:${rioVersion}",
+            "org.slf4j:slf4j-api:${slf4jVersion}"
 }
