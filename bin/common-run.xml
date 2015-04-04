@@ -98,7 +98,7 @@ To include this file in your custom *-run-buld.xml have the import line:
 	<!-- define boot classpath -->
 	<path id="boot.classpath">
 		<pathelement location="${sorcer.lib}/sorcer-boot-${sorcer.version}.jar" />
-		<pathelement location="${sorcer.lib}/sorcer-resolving-loader-${sorcer.version}.jar" />
+		<!--<pathelement location="${sorcer.lib}/sorcer-resolving-loader-${sorcer.version}.jar" />-->
 		<pathelement location="${jini.lib}/start-${river.version}.jar" />
 		<pathelement location="${common.lib}/groovy/groovy-all-${groovy.version}.jar" />
 		<pathelement location="${rio.lib}/rio-platform-${rio.version}.jar" />

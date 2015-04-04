@@ -172,7 +172,7 @@ task createDistribution(dependsOn: [":sorcer-boot:install",
                               ":ssb:install",
                               ":webster:install",
                               ":sos-shell:install",
-                              ":sorcer-resolving-loader:install",
+                              //":sorcer-resolving-loader:install",
                               gatherDeps]) {
     description 'Creates a Sorcer distribution'
     doLast {

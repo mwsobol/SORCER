@@ -44,8 +44,8 @@ include 'sorcer-boot'
 project(":sorcer-boot").projectDir = file("tools/sorcer-boot")
 include 'ssb'
 project(":ssb").projectDir = file("tools/ssb")
-include 'sorcer-resolving-loader'
-project(":sorcer-resolving-loader").projectDir = file("tools/sorcer-resolving-loader")
+//include 'sorcer-resolving-loader'
+//project(":sorcer-resolving-loader").projectDir = file("tools/sorcer-resolving-loader")
 include 'sorcer-int-tests:sorcer-tester'
 project(":sorcer-int-tests:sorcer-tester").projectDir = file("core/sorcer-int-tests/sorcer-tester")
 include 'sorcer-int-tests:deploy-tests'
