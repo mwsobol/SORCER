@@ -81,7 +81,7 @@ deployment(name: "Sorcer OS") {
         maintain 1
     }
 
-    service(name: SorcerEnv.getActualSpaceName(), fork:getForkMode(), jvmArgs:"-Dsorcer.home=${Sorcer.sorcerHome}") {
+    service(name: SorcerEnv.getActualSpaceName(), fork:getForkMode()) {
         interfaces {
             classes 'net.jini.space.JavaSpace05'
             resources "blitz-dl-${Sorcer.blitzVersion}.jar", "blitzui-${Sorcer.blitzVersion}.jar"
@@ -96,7 +96,7 @@ deployment(name: "Sorcer OS") {
         maintain 1
     }
 
-    service(name: SorcerEnv.getActualName("Rendezvous"), fork:getForkMode(), jvmArgs:"-Dsorcer.home=${Sorcer.sorcerHome}") {
+    service(name: SorcerEnv.getActualName("Rendezvous"), fork:getForkMode()) {
         interfaces {
             classes "sorcer.core.provider.Rendezvous",
                     "sorcer.core.provider.Jobber",
@@ -140,7 +140,7 @@ deployment(name: "Sorcer OS") {
             maintain 1
         }
 
-        service(name: SorcerEnv.getActualName("Exert Monitor"), fork: getForkMode(), jvmArgs: "-Dsorcer.home=${Sorcer.sorcerHome}") {
+        service(name: SorcerEnv.getActualName("Exert Monitor"), fork: getForkMode()) {
             interfaces {
                 classes 'sorcer.core.monitor.MonitoringManagement'
                 resources appendJars(["sorcer-ui-${Sorcer.sorcerVersion}.jar"])
@@ -166,9 +166,7 @@ deployment(name: "Sorcer OS") {
             maintain 1
         }
 
-        service(name: SorcerEnv.getActualName("Database Storage"),
-                fork: getForkMode(),
-                jvmArgs: "-Dsorcer.home=${Sorcer.sorcerHome} -Xmx1G") {
+        service(name: SorcerEnv.getActualName("Database Storage"), fork: getForkMode(), jvmArgs: "-Xmx1G") {
             interfaces {
                 classes 'sorcer.core.provider.DatabaseStorer'
                 resources appendJars(["sorcer-ui-${Sorcer.sorcerVersion}.jar"])

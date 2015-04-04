@@ -279,18 +279,22 @@ public class ServiceSignature implements Signature, Service, Evaluation<Object>,
 	}
 
 	public boolean isActive() {
+        logger.info("Returning "+name+".isActive()="+isActive);
 		return isActive;
 	}
 
 	public void setActive(boolean state) {
 		isActive = state;
+        logger.info("Setting "+name+" Active to: "+isActive);
 	}
 
 	public void setActive(Operating state) {
-		if (state == Operating.YES || state == Operating.TRUE)
-			isActive = true;
-		else
-			isActive = false;
+		if (state == Operating.YES || state == Operating.TRUE) {
+            isActive = true;
+        } else {
+            isActive = false;
+        }
+        logger.info("Setting "+name+" Active to: "+isActive);
 	}
 	
 	public String[] getContextTemplateIDs() {

@@ -16,6 +16,7 @@
 
 project.version = '5.2.0'
 
+
 task printVersion {
     description = 'Prints the current SORCER version.'
     doLast {

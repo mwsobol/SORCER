@@ -16,25 +16,18 @@
  */
 package sorcer.core.provider;
 
-// Imported classes
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import net.jini.config.Configuration;
 import net.jini.core.entry.Entry;
 import net.jini.core.lease.Lease;
-import net.jini.core.lease.LeaseDeniedException;
 import net.jini.core.lease.UnknownLeaseException;
-import net.jini.core.transaction.CannotAbortException;
-import net.jini.core.transaction.CannotCommitException;
-import net.jini.core.transaction.Transaction;
-import net.jini.core.transaction.TransactionFactory;
-import net.jini.core.transaction.UnknownTransactionException;
-import net.jini.core.transaction.server.TransactionManager;
+import net.jini.core.transaction.*;
 import net.jini.lease.LeaseListener;
-import net.jini.lease.LeaseRenewalEvent;
 import net.jini.lease.LeaseRenewalManager;
 import net.jini.space.JavaSpace;
 import net.jini.space.JavaSpace05;
@@ -50,8 +43,6 @@ import sorcer.core.monitor.MonitoringSession;
 import sorcer.river.TX;
 import sorcer.service.*;
 import sorcer.service.space.SpaceAccessor;
-import sorcer.util.GenericUtil;
-import sorcer.util.ProviderAccessor;
 
 /**
  * This is a class creates a JavaSpace taker that extends the {@link Thread}
@@ -67,11 +58,11 @@ public class SpaceTaker implements Runnable {
 
 	protected boolean isTransactional;
 
-	protected static long TRANSACTION_LEASE_TIME = 1000 * 60 * 1; // 1 minute
+	protected static long TRANSACTION_LEASE_TIME = TimeUnit.MINUTES.toMillis(1); // 1 minute
 
 	protected long transactionLeaseTimeout = TRANSACTION_LEASE_TIME;
 
-	public final static long SPACE_TIMEOUT = 1000 * 3; // 3 seconds
+	public final static long SPACE_TIMEOUT = TimeUnit.SECONDS.toMillis(30); // 1/2 minute
 
 	protected long spaceTimeout = SPACE_TIMEOUT;
 
@@ -258,7 +249,6 @@ public class SpaceTaker implements Runnable {
 			try {
 				space = SpaceAccessor.getSpace(data.spaceName,
                         data.spaceGroup);
-
 				if (space == null) {
 //					doLog("\t***warning: space taker did not get SPACE.",
 //							threadId, null);
@@ -282,7 +272,8 @@ public class SpaceTaker implements Runnable {
                         envelopNoCast = space.take(data.entry, tx, spaceTimeout);
                         ee = (ExertionEnvelop) envelopNoCast;
 					} else {
-						Thread.sleep(50);
+                        /* Sleep for whats basically a clock tick to avoid thrashing */
+                        Thread.sleep(50);
 						continue;
 					}
 				} else {
