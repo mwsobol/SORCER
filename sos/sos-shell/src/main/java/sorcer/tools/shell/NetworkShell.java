@@ -275,6 +275,10 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 			}
 
             argv = buildInstance(true, argv);
+
+			principal = new SorcerPrincipal(NetworkShell.getUserName());
+			principal.setId(NetworkShell.getUserName());
+
             instance.loadExternalCommands();
             if (!instance.interactive) {
                 // System.out.println("main appMap: " + appMap);
