@@ -16,11 +16,13 @@ package sorcer.netlet.util;
  */
 
 import org.rioproject.resolver.*;
+import org.rioproject.resolver.Resolver;
 import org.rioproject.url.artifact.ArtifactURLConfiguration;
-import sorcer.resolver.SorcerResolver;
+import sorcer.resolver.*;
 import sorcer.util.JavaSystemProperties;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.PrintStream;
 import java.net.*;
 import java.util.*;
@@ -121,6 +123,86 @@ public class LoaderConfigurationHelper {
         }
         System.setProperty(JavaSystemProperties.RMI_SERVER_CODEBASE, codebaseSb.toString());
         return codebaseUrls;
+    }
+
+
+    public static List<URL> setCodebase(List<String> codebaseLines, String websterStrUrl, PrintStream out) {
+        String curCodebase = System.getProperty(JavaSystemProperties.RMI_SERVER_CODEBASE);
+        StringBuilder codebaseSb = new StringBuilder();
+        if (curCodebase!=null) codebaseSb.append(curCodebase);
+        List<URL> codebaseUrls = new ArrayList<URL>();
+        URL websterUrl = null;
+        if (websterStrUrl != null)
+            try {
+                websterUrl = new URL(websterStrUrl);
+            } catch (MalformedURLException me) {
+                logger.warn("Malformed url " + websterStrUrl, me);
+            }
+        for (String codebaseStr : codebaseLines) {
+            if (codebaseStr.startsWith(LoaderConfigurationHelper.CODEBASE_PREFIX))
+                codebaseStr = codebaseStr.substring(LoaderConfigurationHelper.CODEBASE_PREFIX.length()).trim();
+            if ((!codebaseStr.startsWith("mvn://")) &&  (!codebaseStr.startsWith("http://")) && (!codebaseStr.startsWith("artifact:"))) {
+                if (out!=null) out.println("Codebase can only be specified using mvn://, http:// or artifact:");
+                else logger.error("Codebase can only be specified using mvn://, http:// or artifact:");
+                return null;
+            }
+
+            String parsedCodebase = LoaderConfigurationHelper.parseCodebase(websterUrl, codebaseStr);
+            try {
+                codebaseUrls.add(new URL(parsedCodebase));
+            } catch (MalformedURLException me) {
+                if (out!=null) out.println("Codebase url is malformed: " + me.getMessage());
+                else logger.error("Codebase url is malformed: " + me.getMessage());
+            }
+
+            if (parsedCodebase!=null)
+                codebaseSb.append(" ").append(parsedCodebase);
+        }
+        System.setProperty(JavaSystemProperties.RMI_SERVER_CODEBASE, codebaseSb.toString());
+        return codebaseUrls;
+    }
+
+    public static String parseCodebase(URL websterUrl, String str) {
+        if ((!str.startsWith("mvn://")) &&  (!str.startsWith("http://")) && (!str.startsWith("artifact:"))) {
+            logger.error("Codebase can only be specified using mvn://, http:// or artifact:");
+            return null;
+        }
+        if (str.startsWith("mvn://")) {
+            String url = str.substring(6);
+            // Check if URL specifies as artifact on a remote webster
+            String[] urlEntries = url.split("@");
+            String finalUrl = null;
+            try {
+                if (urlEntries.length > 1) {
+                    finalUrl = "http://" + urlEntries[1] + "/" +
+                            sorcer.resolver.Resolver.resolveRelative(urlEntries[0]);
+                    if (existRemoteFile(new URL(finalUrl))) {
+                        return new URL(finalUrl).toString();
+                    }
+                } else if (websterUrl!=null) {
+                    finalUrl = sorcer.resolver.Resolver.resolveAbsolute(websterUrl, urlEntries[0]);
+                    if (existRemoteFile(new URL(finalUrl)))
+                        return new URL(finalUrl).toString();
+                }
+            } catch (MalformedURLException e) {
+                logger.error("Problem creating URL: " + finalUrl);
+            }
+        }
+        return str;
+    }
+
+    public static boolean existRemoteFile(URL url) {
+        try {
+            HttpURLConnection huc =  ( HttpURLConnection ) url.openConnection();
+            huc.setRequestMethod("HEAD");
+            if (huc.getResponseCode() == HttpURLConnection.HTTP_OK)
+                return true;
+        } catch (ProtocolException e) {
+            logger.error("Problem with protocol while loading URL to classpath: " + url.toString() + "\n" + e.getMessage());
+        } catch (IOException e) {
+            logger.error("Problem adding remote file to classpath, file does not exist: " + url.toString() + "\n" + e.getMessage());
+        }
+        return false;
     }
 
     /*

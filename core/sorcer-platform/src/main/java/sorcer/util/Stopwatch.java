@@ -133,4 +133,12 @@ public final class Stopwatch implements Serializable {
 	public long getCurrentTime() {
 		return System.currentTimeMillis();
 	}
+
+	public long getStartTime() {
+		return startTime;
+	}
+
+	public long getStopTime() {
+		return stopTime;
+	}
 }

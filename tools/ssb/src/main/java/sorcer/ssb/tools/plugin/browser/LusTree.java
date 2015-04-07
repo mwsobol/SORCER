@@ -17,6 +17,7 @@
 
 package sorcer.ssb.tools.plugin.browser;
 
+import java.awt.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
@@ -36,6 +37,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 
+import sorcer.jini.lookup.entry.SorcerServiceInfo;
 import sorcer.ssb.browser.api.SSBrowserFilter;
 
 import net.jini.admin.Administrable;
@@ -397,9 +399,9 @@ public class LusTree {
             }
             addCodebase(urls, service);
         }
-        /*
+
         ClassLoader cl = si.service.getClass().getClassLoader();
-        if (cl instanceof URLClassLoader) {
+        /*if (cl instanceof URLClassLoader) {
 			addCodebase(((URLClassLoader) cl).getURLs(), service);
 		}*/
 
@@ -428,13 +430,18 @@ public class LusTree {
 				System.err.println(ex);
 			}
 		}
-		addAttributes(service, si);
+		addAttributes(service, si, cl);
 		service.add(methodsNode);
 		return true;
 	}
 
 	public static DefaultMutableTreeNode addAttributes(
 			DefaultMutableTreeNode service, ServiceItem si) {
+		return addAttributes(service, si);
+	}
+
+	public static DefaultMutableTreeNode addAttributes(
+			DefaultMutableTreeNode service, ServiceItem si, ClassLoader cl) {
 		// add attributes
 		DefaultMutableTreeNode attsNode = new DefaultMutableTreeNode(ATTS_NAME);
 		service.add(attsNode);
@@ -450,6 +457,16 @@ public class LusTree {
 
 					java.awt.Image image = st
 							.getIcon(java.beans.BeanInfo.ICON_COLOR_16x16);
+					if (image==null && cl!=null && st instanceof SorcerServiceInfo) {
+						SorcerServiceInfo ssi = (SorcerServiceInfo) atts[i];
+						String iconName = ssi.iconName;
+						if (iconName!=null) {
+							java.net.URL url = cl.getResource(iconName);
+							if (url!=null) {
+								image = Toolkit.getDefaultToolkit().getImage(url);
+							}
+						}
+					}
 					if (image != null) {
 						image = image.getScaledInstance(16, 16, 0);
 						TreeRenderer
