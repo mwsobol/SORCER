@@ -10,5 +10,6 @@ jar {
 
 dependencies {
     compile project(':sorcer-platform')
+    compile project(':sos-netlet')
 }
 

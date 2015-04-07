@@ -437,7 +437,7 @@ public class LusTree {
 
 	public static DefaultMutableTreeNode addAttributes(
 			DefaultMutableTreeNode service, ServiceItem si) {
-		return addAttributes(service, si);
+		return addAttributes(service, si, LusTree.class.getClassLoader());
 	}
 
 	public static DefaultMutableTreeNode addAttributes(

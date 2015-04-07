@@ -1,0 +1,86 @@
+<style type="text/css">
+<!--
+.basicText {
+	font-family: Verdana, Geneva, sans-serif;
+}
+.blue {
+	color: #000080;
+}
+green {
+	color: #008040;
+}
+.green {
+	color: #008040;
+}
+.red {
+	color: #F00;
+}
+.magenta {
+	color: #F0F;
+}
+.light-blue {
+	color: #66F;
+}
+.light-green {
+	color: #090;
+}
+-->
+</style>
+<h1 align="center" class="basicText">Intro to Netlet Programming</h1>
+<p class="basicText">An <strong><em>exertion</em></strong> is an <em>expression </em> of <strong><em>a service federation</em></strong>. Two types of exertions are distinguished: <em><strong>tasks</strong></em> and <em><strong>jobs</strong></em>. <em>Interpreted exertions</em> executed by the  network are called<em><strong> </strong></em><strong><em>netlets</em></strong>.</p>
+<p class="basicText">A <em>task</em> is comprised of <em>name</em>, service <em>signature</em> (<code>sig</code>), and <em>service data</em> (<code>context</code>). A context is an associative array with <em>paths</em> (like file paths, e.g., <code>"arg/x1"</code>) that create a service namespace along with their respective values.</p>
+<p class="basicText">For example the <em>network service</em> <code>f4=x1*x2;</code> is represented as the following task: </p>
+<blockquote>
+  <p class="basicText"><code>Task f4 = <span class="light-green">task</span>("f5", <span class="red">sig</span>("<span class="red">multiply</span>", <span class="red">Multiplier.class</span>), <br />
+  	    	</code><span class="light-blue"><code>context</code></span><code>("multiply", <span class="light-blue">inEnt</span>("arg/x1", 10.0),
+  	    	<span class="light-blue">inEnt</span>("arg/x2", 50.0),
+		      <br />
+		      <span class="light-blue">outEnt</span>("result/y1", null)));  </code></p>
+</blockquote>
+<p class="basicText">In the above task the operation is  specified by  <code>"multiply"</code> which is defined by the service type <code>Multiplier.class</code>. Service types are Java <em>interfaces</em> that define the functionality  of services. Three types of context entries are distinguished: <code>inEnt</code>, <code>outEnt</code>, and <code>inoutEnt</code>. Additional attributes identifying the service, for example a <em>service name</em>,  can be associated with the operation (<code>sig</code>).  </p>
+<p class="basicText">A <em>job</em> is a  composition of tasks and other jobs. For example, the service composition
+  <code>f1(f2(f4,f5),f3)</code> can be defined as follows: <br />
+  execution of <code>f2</code> (<code>f4=x1*x2 and f5=x3+x4</code> in parallel) and then <code>f3=f4-f5</code>.</p>
+<blockquote>
+  <p class="basicText"> <code>Task f4 = <span class="blue"><span class="green"><span class="light-green">task</span></span></span>("f4", <br />
+    <span class="red">sig</span>("<span class="red">multiply</span>", <span class="red">Multiplier.class</span>), <br />
+    <span class="light-blue">context</span>("multiply", <span class="blue"><span class="light-blue">inEnt</span></span>("arg/x1", 10.0), <span class="blue"><span class="light-blue">inEnt</span></span>("arg/x2", 50.0),
+    <span class="blue"><span class="light-blue">outEnt</span></span>("result/y1", null)));</code>  </p>
+  <p class="basicText"><code>Task f5 = <span class="green"><span class="light-green">task</span></span>("f5", <br />
+    <span class="red">sig</span>("<span class="red">add</span>", <span class="red">Adder.class</span>), <br />
+    <span class="light-blue">context</span>("add", <span class="blue"><span class="light-blue">inEnt</span></span>("arg/x3", 20.0), <span class="blue"><span class="light-blue">inEnt</span></span>("arg/x4", 80.0),
+    <span class="blue"><span class="light-blue">outEnt</span></span>("result/y2", null)));</code></p>
+  <p class="basicText">
+    
+    <code>Task f3 = <span class="green"><span class="light-green">task</span></span>("f3", <br />
+    <span class="red">sig</span>("<span class="red">subtract</span>", <span class="red">Subtractor.class</span>), <br />
+    <span class="light-blue">context</span>("subtract", <span class="blue"><span class="light-blue">inEnt</span></span>("arg/x5", null), <span class="blue"><span class="light-blue">inEnt</span></span>("arg/x6", null),
+      <span class="blue"><span class="light-blue">outEnt</span></span>("result/y3", null)));</code>  </p>
+  <p class="basicText"><code>Job f1= <span class="green"><span class="light-green">job</span></span>("f1", <br />
+    <span class="green"><span class="light-green">job</span></span>("f2", f4, f5, <span class="magenta">strategy</span>(Flow.PAR, Access.PULL)), f3, <br />
+    <span class="magenta">pipe</span>(<span class="blue"><span class="light-blue">outPoint</span></span>(f4, "result/y1"), <span class="blue"><span class="light-blue">inPoint</span></span>(f3, "arg/x5")),
+    <br />
+    <span class="magenta">pipe</span>(<span class="blue"><span class="light-blue">outPoint</span></span>(f5, "result/y2"), <span class="blue"><span class="light-blue">inPoint</span></span>(f3, "arg/x6")));</code>  </p>
+</blockquote>
+<p class="basicText">A job has a <em>name</em>, a <em>strategy</em> for executing its components, and <em>pipes</em> for data flow between the task service contexts.
+  
+  To execute the exertion  the <code>exert</code> operator is called: </p>
+<blockquote>
+  <p class="basicText"><code>Exertion out = exert(f1);</code>  </p>
+</blockquote>
+<p class="basicText">To get a <em>context value</em>, for example the value <code>&quot;result/y3&quot;</code> in the context of task <code>f3</code>, call the get operator: </p>
+<blockquote>
+  <p class="basicText"><code>get(<span class="blue"><span class="light-blue">outEnt</span></span>, "f1/f3/result/y3");</code></p>
+</blockquote>
+<p class="basicText">To use classes that come from external providers in your code you can add a codebase declaration to specify
+    the jar files to be loaded from external http servers (websters). You can specify the codebase as:
+</p>
+<p class="basicText">
+    <span class="green"><span class="light-green"><code>codebase http://host:port/file.jar</code></span></span>
+    - a remote jar file using a direct URL or  <br>
+    <span class="green"><span class="light-green"><code>codebase artifact:groupId/artifactId[/type][/classifier]/version</code></span></span>
+    - a jar file and its dependencies from a local or remote maven repository
+</p>
+
+
+

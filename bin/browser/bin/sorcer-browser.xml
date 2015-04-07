@@ -28,6 +28,7 @@
 	<path id="run.classpath">
 		<!--pathelement location="${sorcer-ext.lib}/sb.jar" /-->
 		<pathelement location="${sorcer-ext.lib}/ssb-${sorcer.version}.jar" />
+		<pathelement location="${sorcer.lib}/sos-netlet-${sorcer.version}.jar" />
 		<pathelement location="${sorcer.lib}/sorcer-platform-${sorcer.version}.jar" />
 		<pathelement location="${rio.lib}/groovy-all-${groovy.version}.jar" />
 		<pathelement location="${jini.lib}/jsk-lib-${river.version}.jar" />
@@ -36,6 +37,7 @@
 		<pathelement location="${jini.lib}/serviceui-${river.version}.jar" />
         <pathelement location="${rio.lib}/rio-platform-${rio.version}.jar" />
         <pathelement location="${rio-dl.lib}/rio-api-${rio.version}.jar" />
+		<pathelement location="${rio.lib}/rio-lib-${rio.version}.jar" />
         <pathelement location="${rio.lib}/logging/slf4j-api-${slf4j.version}.jar" />
 		<pathelement location="${rio.lib}/logging/slf4j-jdk14-${slf4j.version}.jar" />
 		<!--<pathelement location="${env.SORCER_HOME}/classes" />-->

@@ -19,10 +19,13 @@ package sorcer.ui.exertlet;
 import groovy.lang.GroovyShell;
 import net.jini.core.transaction.TransactionException;
 import sorcer.core.provider.Provider;
+import sorcer.netlet.ScriptExerter;
 import sorcer.service.*;
 import sorcer.ui.util.JIconButton;
 import sorcer.ui.util.WindowUtilities;
+import sorcer.util.Sorcer;
 import sorcer.util.SorcerUtil;
+import sorcer.util.StringUtils;
 
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
@@ -35,9 +38,13 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.*;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.rmi.RemoteException;
+import java.util.Scanner;
 import java.util.logging.Logger;
+
+import static sorcer.util.StringUtils.tName;
 
 /**
  * HTML file browser and file editor
@@ -48,8 +55,8 @@ public class EditorView extends JPanel implements HyperlinkListener {
 	private final static Logger logger = Logger.getLogger(EditorView.class
 			.getName());
 	private static boolean debug = false;
-	private final JFileChooser fileChooser = new JFileChooser(System
-			.getProperty("iGrid.home"));
+	private final JFileChooser fileChooser = new JFileChooser(
+			System.getProperty("sorcer.home"));
 	private JIconButton homeButton;
 	private JButton editButton, saveButton, openButton,
 			saveAsButton, exertButton;
@@ -72,7 +79,8 @@ public class EditorView extends JPanel implements HyperlinkListener {
 	private GroovyShell shell;
 	private EditorViewSignature model;
 	private static StringBuilder staticImports;
-	
+    private ScriptExerter scriptExerter;
+
 	public EditorView(String url, boolean withLocator) {
 		this(url, withLocator, false);
 		setDebug();
@@ -95,14 +103,27 @@ public class EditorView extends JPanel implements HyperlinkListener {
 		this.model = model;
 		WindowUtilities.setNativeLookAndFeel();
 		setLayout(new BorderLayout());
-		this.source = input;
 		boolean isURL = false;
+        scriptExerter = new ScriptExerter(null, this.getClass().getClassLoader(), Sorcer.getWebsterUrl().toString(), debug);
+
+		if (input!=null) {
+			File ntlFile = new File(input);
+			if (ntlFile.exists()) {
+				try {
+					input = ntlFile.toURI().toURL().toString();
+				} catch (MalformedURLException e) {
+					// ignoring - just won't open
+				}
+			}
+		}
+
 		if (input != null
 				&& input.length() > 0
 				&& (input.startsWith("http:") || input.startsWith("file:") || input
 						.startsWith("jar:"))) {
 			isURL = true;
 		}
+		this.source = input;
 		
 		EditActionListener actionListener = new EditActionListener();
 		// get static imports for exertlets
@@ -308,7 +329,11 @@ public class EditorView extends JPanel implements HyperlinkListener {
 			String url;
 			if (event.getSource() == urlField) {
 				url = urlField.getText();
-				displayUrl(url);
+                try {
+                    displayUrl(new URL(url));
+                } catch (MalformedURLException me) {
+                    warnUser("can't load: " + url);
+                }
 				return;
 			}
 
@@ -324,11 +349,33 @@ public class EditorView extends JPanel implements HyperlinkListener {
 				if (model != null) {
 					runTaskScript(script);
 				} else {
-					StringBuilder sb = new StringBuilder(staticImports
-							.toString());
-					sb.append(script);
-					 logger.finer(">>> executing script: " + sb.toString());				
-					runExertionScript(sb.toString());
+					StringBuilder sb = new StringBuilder(
+							staticImports.toString());
+					Scanner scanner = new Scanner(script);
+					while (scanner.hasNextLine()) {
+						String line = scanner.nextLine().trim();
+						if (line.length() > 0 && line.charAt(0) != '#') {
+							sb.append(line);
+						}
+						sb.append("\n");
+					}
+					logger.fine(">>> executing script: " + sb.toString());
+                    try {
+                        scriptExerter.readScriptWithHeaders(sb.toString());
+                        scriptExerter.parse();
+                        Object result = scriptExerter.execute();
+                        if (result instanceof Exertion)
+                            processExerion((Exertion) result);
+                        else if (result != null) {
+                            openOutPanel(result.toString());
+                        }
+                    } catch (IOException io) {
+                        logger.severe("Caught exception while executing script: " + io.getMessage());
+                        openOutPanel(StringUtils.stackTraceToString(io));
+                    } catch (Throwable th) {
+                        openOutPanel(StringUtils.stackTraceToString(th));
+                        logger.severe("Caught exception while executing script: " + th.getMessage());
+                    }
 				}
 				return;
 			} else if (SAVE_LABEL.equals(command)) {
@@ -353,7 +400,11 @@ public class EditorView extends JPanel implements HyperlinkListener {
 			// Clicked "home" button instead of entering URL
 			// url = initialURL;
 			url = "http://sorcersoft.org";
-			displayUrl(url);
+            try {
+			    displayUrl(new URL(url));
+            } catch (MalformedURLException me) {
+                warnUser("can't load: " + url);
+            }
 		}
 	}
 
@@ -363,11 +414,11 @@ public class EditorView extends JPanel implements HyperlinkListener {
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			File file = fileChooser.getSelectedFile();
 			if (file != null) {
-				String url = file.getAbsolutePath();
-				//logger.info("Open file: " + url);
-				if (url.startsWith("/") || url.charAt(1) == ':')
-					url = "file://" + url;
-				displayUrl(url);
+                try {
+    				displayUrl(file.toURI().toURL());
+                } catch (MalformedURLException me) {
+                    warnUser("Can't open file: " + file.getPath() + ": " + me);
+                }
 			}
 		}
 	}
@@ -398,13 +449,6 @@ public class EditorView extends JPanel implements HyperlinkListener {
 			}
 		}
 	}
-
-	private ExertionThread runExertionScript(String script) {
-		String gScript = script;
-		ExertionThread eThread = new ExertionThread(gScript);
-		eThread.start();
-		return eThread;
-	}
 	
 	private ExertionThread runTaskScript(String script) {
 		String serviceType = model.getServiceType();
@@ -428,6 +472,7 @@ public class EditorView extends JPanel implements HyperlinkListener {
 		Object result;
 
 		public ExertionThread(String script) {
+            super(tName("Exertion"));
 			this.script = script;
 		}
 
@@ -450,7 +495,7 @@ public class EditorView extends JPanel implements HyperlinkListener {
 		}
 	}
 
-	private void processExerion(Exertion exertion) {
+	private void processExerion(Exertion exertion) throws ContextException{
 		String codebase = System.getProperty("java.rmi.server.codebase");
 		logger.finer("Using exertlet codebase: " + codebase);
 		
@@ -500,26 +545,21 @@ public class EditorView extends JPanel implements HyperlinkListener {
 		showResults(out);
 	}
 
-	private void showResults(Exertion exertion) {
-		try {
-			if (exertion == null) {
-				openOutPanel("Failed to process the exertlet!");
-				return;
-			}
-			if (exertion.getExceptions().size() > 0) {
-				openOutPanel(exertion.getExceptions().toString());
-			}
-			else {
-				StringBuilder sb = new StringBuilder(exertion.getContext().toString());
-				if (debug) {
-					sb.append("\n");
-					sb.append(((ServiceExertion)exertion).getControlInfo().toString());
-				}
-				openOutPanel(sb.toString());
-			}
+	private void showResults(Exertion exertion)  throws ContextException {
+		if (exertion == null) {
+			openOutPanel("Failed to process the exertlet!");
+			return;
 		}
-		catch(ContextException e) {
-			e.printStackTrace();
+		if (exertion.getExceptions().size() > 0) {
+			openOutPanel(exertion.getExceptions().toString());
+		}
+		else {
+			StringBuilder sb = new StringBuilder(exertion.getContext().toString());
+			if (debug) {
+				sb.append("\n");
+				sb.append(((ServiceExertion)exertion).getControlInfo().toString());
+			}
+			openOutPanel(sb.toString());
 		}
 	}
 	
@@ -549,14 +589,14 @@ public class EditorView extends JPanel implements HyperlinkListener {
 		}
 	}
 
-	private void displayUrl(String url) {
-		if (url == null || url.length() == 0)
+	private void displayUrl(URL url) {
+		if (url == null)
 			return;
 
 		try {
-			editPane.setPage(new URL(url));
+			editPane.setPage(url);
 			if (urlField != null)
-				urlField.setText(url);
+				urlField.setText(url.getPath());
 		} catch (IOException ioe) {
 			warnUser("Can't follow link to " + url + ": " + ioe);
 		}
