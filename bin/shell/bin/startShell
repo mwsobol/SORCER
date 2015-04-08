@@ -326,7 +326,7 @@ startShell ( ) {
             -Dmodeling.version="$modeling_version" \
             -Dsorcer.home="$SORCER_HOME" \
             -Drio.home="$RIO_HOME" \
-            -Djava.protocol.handler.pkgs="net.jini.url|sorcer.util.bdb.sos|org.rioproject.url" \
+            -Djava.protocol.handler.pkgs="net.jini.url|sorcer.util.url|org.rioproject.url" \
             -Dtools.jar="$TOOLS_JAR" \
             -Djava.util.logging.config.file="$SORCER_HOME"/bin/shell/configs/sorcer.logging \
             $STARTER_MAIN_CLASS \
