@@ -62,7 +62,7 @@ public class SpaceTaker implements Runnable {
 
 	protected long transactionLeaseTimeout = TRANSACTION_LEASE_TIME;
 
-	public final static long SPACE_TIMEOUT = TimeUnit.SECONDS.toMillis(30); // 1/2 minute
+	public final static long SPACE_TIMEOUT = TimeUnit.SECONDS.toMillis(8); // 8 seconds
 
 	protected long spaceTimeout = SPACE_TIMEOUT;
 

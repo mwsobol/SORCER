@@ -55,7 +55,7 @@ public class ProvisionManagerTest extends DeploySetup {
         assertTrue(provisionManager.getDeploymentNames().size()==0);
     }
 
-    @Test(timeout = 120000)
+    @Test(timeout = 90000)
     public void testConcurrentDeploy2() throws Exception {
         banner("testConcurrentDeploy2");
         Job f1 = JobUtil.createJob(true);
@@ -86,7 +86,7 @@ public class ProvisionManagerTest extends DeploySetup {
         assertTrue(provisionManager.getDeploymentNames().size()==0);
     }
 
-    @Test(timeout = 120000)
+    @Test(timeout = 90000)
     public void testConcurrentDeploy() throws Exception {
         banner("testConcurrentDeploy");
         Job f1 = JobUtil.createJob();

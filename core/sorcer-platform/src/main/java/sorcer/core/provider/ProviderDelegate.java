@@ -1794,7 +1794,7 @@ public class ProviderDelegate implements SorcerConstants {
                 // Wait until spaceTakers shutdown
                 int attempts = 0;
                 Set<Thread> spaceTakerThreads = new HashSet<Thread>();
-                while (attempts < 11) {
+                while (attempts < 11 && !spaceTakerThreads.isEmpty()) {
                     try {
                         Thread.sleep(SpaceTaker.SPACE_TIMEOUT/10);
                     } catch (InterruptedException ie) {
