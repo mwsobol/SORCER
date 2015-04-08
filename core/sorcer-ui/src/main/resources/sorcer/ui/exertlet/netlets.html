@@ -43,7 +43,7 @@ green {
   <p class="basicText"> <code>Task f4 = <span class="blue"><span class="green"><span class="light-green">task</span></span></span>("f4", <br />
     <span class="red"> &nbsp; &nbsp; sig</span>("<span class="red">multiply</span>", <span class="red">Multiplier.class</span>), <br />
     <span class="light-blue"> &nbsp; &nbsp; context</span>("multiply", <span class="blue"><span class="light-blue">inEnt</span></span>("arg/x1", 10.0), <span class="blue"><span class="light-blue">inEnt</span></span>("arg/x2", 50.0),
-    <span class="blue"><span class="light-blue"> <br /> &nbsp; &nbsp; outEnt</span></span>("result/y1", null)));</code>  </p>
+    <span class="blue"><span class="light-blue"> <br /> &nbsp; &nbsp; outEnt</span></span>("result/y1")));</code>  </p>
   <p class="basicText"><code>Task f5 = <span class="green"><span class="light-green">task</span></span>("f5", <br />
     <span class="red"> &nbsp; &nbsp; sig</span>("<span class="red">add</span>", <span class="red">Adder.class</span>), <br />
     <span class="light-blue"> &nbsp; &nbsp; context</span>("add", <span class="blue"><span class="light-blue">inEnt</span></span>("arg/x3", 20.0), <span class="blue"><span class="light-blue">inEnt</span></span>("arg/x4", 80.0),
@@ -52,7 +52,7 @@ green {
     
     <code>Task f3 = <span class="green"><span class="light-green">task</span></span>("f3", <br />
     <span class="red"> &nbsp; &nbsp; sig</span>("<span class="red">subtract</span>", <span class="red">Subtractor.class</span>), <br />
-    <span class="light-blue"> &nbsp; &nbsp; context</span>("subtract", <span class="blue"><span class="light-blue">inEnt</span></span>("arg/x5", null), <span class="blue"><span class="light-blue">inEnt</span></span>("arg/x6", null),
+    <span class="light-blue"> &nbsp; &nbsp; context</span>("subtract", <span class="blue"><span class="light-blue">inEnt</span></span>("arg/x5"), <span class="blue"><span class="light-blue">inEnt</span></span>("arg/x6"),
       <span class="blue"><span class="light-blue"><br /> &nbsp; &nbsp; outEnt</span></span>("result/y3")));</code>  </p>
   <p class="basicText"><code>Job f1 = <span class="green"><span class="light-green">job</span></span>("f1", <br />
     <span class="green"><span class="light-green">  &nbsp; &nbsp; job</span></span>("f2", f4, f5, <span class="magenta">strategy</span>(Flow.PAR, Access.PULL)), <br /> &nbsp; &nbsp; f3, <br />
@@ -66,13 +66,13 @@ green {
 <blockquote>
   <p class="basicText"><code>Exertion out = exert(f1);</code>  </p>
 </blockquote>
-<p class="basicText">To get a <em>context value</em>, for example the value <code>&quot;result/y3&quot;</code> in the context of task <code>f3</code>, call the get operator: </p>
+<p class="basicText">To get a <em>context value</em>, for example the value <code>&quot;result/y3&quot;</code> in the context of task <code>f3</code>, call the <code>get</code> operator: </p>
 <blockquote>
   <p class="basicText"><code>get(<span class="blue"><span class="light-blue">outEnt</span></span>, "f1/f3/result/y3");</code></p>
 </blockquote>
 
 <p class="basicText">
-A  <em>block</em> is a concatenation of exertions with control-flow exertions used to define branching and looping for service-oriented algorithmic logic.
+A  <em>block</em> is a concatenation of exertions with control-flow exertions to define branching and looping for service-oriented algorithmic logic.
 </p>
 <p class="basicText">To use classes that come from external providers in your code you can add a codebase declaration to specify
     the jar files to be loaded from external http code servers (websters). You can specify the codebase as:
@@ -81,7 +81,7 @@ A  <em>block</em> is a concatenation of exertions with control-flow exertions us
     <span class="green"><span class="light-green"><code>codebase http://host:port/file.jar</code></span></span>
     - a remote jar file using a direct URL or  <br>
     <span class="green"><span class="light-green"><code>codebase artifact:groupId/artifactId[/type][/classifier]/version</code></span></span>
-    - a jar file and its dependencies from a local or remote maven repository
+    - a jar file and its dependencies from a local or remote maven repository.
 </p>
 
 
