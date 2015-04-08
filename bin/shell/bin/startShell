@@ -314,6 +314,8 @@ startShell ( ) {
         #-Djava.rmi.server.RMIClassLoaderSpi=sorcer.rio.rmi.SorcerResolvingLoader \
         #  -Djava.rmi.server.RMIClassLoaderSpi=org.rioproject.rmi.ResolvingLoader \
         #echo "==> STARTER_CLASSPATH: $STARTER_CLASSPATH"
+        echo "==> RIO_HOME: $RIO_HOME"
+        echo "==> SORCER_HOME: $SORCER_HOME"
         exec $RLWRAP"$JAVACMD" $JAVA_OPTS \
             -classpath "$STARTER_CLASSPATH" \
             -Djava.rmi.server.RMIClassLoaderSpi=org.rioproject.rmi.ResolvingLoader \
