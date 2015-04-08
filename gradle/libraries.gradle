@@ -69,7 +69,8 @@ ext {
                              "${rioHome}/lib/logging/rio-logging-support-${rioVersion}.jar",
                              "${rioHome}/lib/rio-platform-${rioVersion}.jar",
                              "${rioHome}/lib/start-${riverVersion}.jar",
-                             "${rioHome}/lib/jsk-platform-${riverVersion}.jar")
+                             "${rioHome}/lib/jsk-platform-${riverVersion}.jar",
+                             "${sorcerDistHome}/lib/sorcer/lib/sorcer-resolving-loader-${sorcerVersion}.jar")
 
     bootClassPath = files(startClassPath, "${sorcerDistHome}/lib/sorcer/lib/sorcer-boot-${version}.jar")
 

@@ -15,7 +15,7 @@
  */
 
 codebase artifact:org.sorcer/arithmetic/jar/dl/5.2.0
-@Grab(group='org.sorcer', module='arithmetic', version='5.2.0', classifier='prv')
+//@Grab(group='org.sorcer', module='arithmetic', version='5.2.0', classifier='prv')
 
 import sorcer.arithmetic.provider.Adder
 
@@ -29,7 +29,7 @@ task("hello adder",
         sig("add", Adder.class,
         /* Dynamic deployment configuration is an artifact, and we declare that the provider
         * will be undeployed if idle for 1 minute */
-                deploy(configuration("org.sorcer:adder:config:5.2.0"), idle(1))),
+                deploy(configuration("org.sorcer:arithmetic:config:5.2.0"), idle(1))),
         context("adder", inEnt("arg/x1", v1), inEnt("arg/x2", v2), result("out/y")));
 
 

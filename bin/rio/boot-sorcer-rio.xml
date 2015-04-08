@@ -46,7 +46,7 @@
         <java classname="org.rioproject.start.ServiceStarter" fork="yes" spawn="yes">
             <env key="SORCER_HOME" value="${sorcer.home}"/>
             <classpath>
-                <!--<pathelement location="${lib}/sorcer/lib/sorcer-resolving-loader-${sorcer.version}.jar" />-->
+                <pathelement location="${lib}/sorcer/lib/sorcer-resolving-loader-${sorcer.version}.jar" />
                 <pathelement location="${lib}/common/groovy/groovy-all-${groovy.version}.jar"/>
                 <pathelement location="${rio.home}/lib/rio-platform-${rio.version}.jar" />
                 <pathelement location="${rio.home}/lib/rio-start-${rio.version}.jar" />
@@ -75,7 +75,7 @@
             <sysproperty key="sorcer.version" value="${sorcer.version}"/>
             <sysproperty key="plexus.version" value="${plexus.version}"/>
             <sysproperty key="org.rioproject.exec.monitor.reap.interval" value="1"/>
-            <!--<sysproperty key="java.rmi.server.RMIClassLoaderSpi" value="sorcer.rio.rmi.SorcerResolvingLoader" />-->
+            <sysproperty key="java.rmi.server.RMIClassLoaderSpi" value="sorcer.rio.rmi.SorcerResolvingLoader" />
             <arg value="${rio.home}/config/start-${service}.groovy"/>
         </java>
     </target>

@@ -1,9 +1,11 @@
+
 codebase artifact:org.sorcer/arithmetic/jar/dl/5.2.0
-@Grab(group='org.sorcer', module='arithmetic', version='5.2.0', classifier='prv')
+//@Grab(group='org.sorcer', module='arithmetic', version='5.2.0', classifier='prv')
 
 import sorcer.arithmetic.provider.Adder
 import sorcer.arithmetic.provider.Multiplier
 import sorcer.arithmetic.provider.Subtractor
+import sorcer.core.provider.Jobber
 
 
 Task f4 = task("f4",
@@ -22,3 +24,4 @@ job("f1", sig("service", Jobber.class),
         job("f2", f4, f5), f3,
         strategy(Provision.YES),
         pipe(outPoint(f4, "result/y1"), inPoint(f3, "arg/x5")),
+        pipe(outPoint(f5, "result/y2"), inPoint(f3, "arg/x6")));

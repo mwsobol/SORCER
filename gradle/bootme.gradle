@@ -27,9 +27,12 @@ class BootMe extends DefaultTask {
     def systemProperties = [:]
     @Input @org.gradle.api.tasks.Optional
     boolean spawn = true
+    @Input @org.gradle.api.tasks.Optional
+    boolean debug
 
     @TaskAction
     def bootMe() {
+        println "Classpath: ${project.bootClassPath.getAsPath()}"
         StringBuilder java = new StringBuilder()
         if (System.getProperty("os.name").startsWith("Windows"))
             java.append("java")
@@ -44,8 +47,14 @@ class BootMe extends DefaultTask {
         args << java.toString()
         args << "-cp"
         args << project.bootClassPath.getAsPath()
+        if (debug) {
+            args << "-Xdebug"
+            args << "-Xrunjdwp:transport=dt_socket,server=y,address=8765"
+        }
         args << "-Dproject.id=${project.name}"
         args << '-Djava.protocol.handler.pkgs="net.jini.url|sorcer.util.url|org.rioproject.url"'
+        //args << '-Djava.rmi.server.RMIClassLoaderSpi","org.rioproject.rmi.ResolvingLoader'
+        args << '-Djava.rmi.server.RMIClassLoaderSpi=sorcer.rio.rmi.SorcerResolvingLoader'
         // use distribution or project specific java.util.logging.config.file
         if (System.getProperty("java.util.logging.config.file") != null)
             args << "-Djava.util.logging.config.file=${System.getProperty("java.util.logging.config.file")}"
