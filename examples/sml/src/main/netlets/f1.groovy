@@ -20,5 +20,4 @@ Task f3 = task("f3",
 
 job("f1", sig("service", Jobber.class),
         job("f2", f4, f5), f3,
-        strategy(Provision.YES),
         pipe(outPoint(f4, "result/y1"), inPoint(f3, "arg/x5")),
