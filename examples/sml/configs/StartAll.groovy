@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package examples.eol
+package examples.sml.configs
 
 import com.sun.jini.start.ServiceDescriptor
 import org.rioproject.config.Component

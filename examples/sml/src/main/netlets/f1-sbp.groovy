@@ -9,7 +9,7 @@ import sorcer.core.provider.Jobber
 import sorcer.util.Sorcer
 import sorcer.service.Deployment
 
-String configDir = Sorcer.getHome() + "/../../../core/sorcer-int-tests/deploy-tests/src/test/resources/deploy/configs/"
+String configDir = Sorcer.getHome() + "/../../../examples/sml/configs/"
 
 println configDir
 Task f4 = task("f4",
@@ -21,7 +21,7 @@ Task f4 = task("f4",
 
 Task f5 = task("f5",
         sig("add", Adder.class,
-                deploy(configuration(configDir +"/AdderProviderConfig.groovy"))),
+                deploy(configuration(configDir +"/adder-prv.config"))),
         context("add", inEnt("arg/x3", 20.0d), inEnt("arg/x4", 80.0d), result("result/y2")));
 
 Task f3 = task("f3",

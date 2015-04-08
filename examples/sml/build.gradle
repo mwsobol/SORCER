@@ -92,7 +92,7 @@ bootme {
 //  spawn = false
 }
 
-def deployConfig = file("configs/arithmetic-prv.config")
+def deployConfig = file("configs/adder-prv.config")
 artifacts {
 	archives file: deployConfig, classifier: "deploy"
 }
