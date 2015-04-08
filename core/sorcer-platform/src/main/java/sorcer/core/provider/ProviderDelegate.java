@@ -2811,8 +2811,17 @@ public class ProviderDelegate implements SorcerConstants {
 				throw new NullPointerException("No service beans defined by: "
 						+ provider.getProviderName());
 			} catch (RemoteException e) {
-				// ignore it
+				// should never happen as provider is a local object
+				throw new RuntimeException(e);
 			}
+
+		// Use javax.inject.Provider implementations as factory objects
+		for (int i = 0; i < serviceBeans.length; i++) {
+			Object bean = serviceBeans[i];
+			if(bean instanceof javax.inject.Provider)
+				serviceBeans[i] = ((javax.inject.Provider) bean).get();
+		}
+
 		serviceComponents = new Hashtable<Class, Object>();
 
 		for (int i = 0; i < serviceBeans.length; i++) {
