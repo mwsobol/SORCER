@@ -32,7 +32,7 @@ class BootMe extends DefaultTask {
 
     @TaskAction
     def bootMe() {
-        println "Classpath: ${project.bootClassPath.getAsPath()}"
+        //println "Classpath: ${project.bootClassPath.getAsPath()}"
         StringBuilder java = new StringBuilder()
         if (System.getProperty("os.name").startsWith("Windows"))
             java.append("java")
