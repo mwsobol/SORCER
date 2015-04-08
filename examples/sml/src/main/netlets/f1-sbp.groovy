@@ -1,27 +1,33 @@
+
 codebase artifact:org.sorcer/arithmetic/jar/dl/5.2.0
-@Grab(group='org.sorcer', module='arithmetic', version='5.2.0', classifier='prv')
+//@Grab(group='org.sorcer', module='arithmetic', version='5.2.0', classifier='prv')
 
 import sorcer.arithmetic.provider.Adder
 import sorcer.arithmetic.provider.Multiplier
 import sorcer.arithmetic.provider.Subtractor
+import sorcer.core.provider.Jobber
+import sorcer.util.Sorcer
+import sorcer.service.Deployment
 
+String configDir = Sorcer.getHome() + "/../../../core/sorcer-int-tests/deploy-tests/src/test/resources/deploy/configs/"
+
+println configDir
 Task f4 = task("f4",
         sig("multiply", Multiplier.class,
-                deploy(configuration(fork?
-                        getConfigDir()+"/multiplier-prv-fork.config": getConfigDir()+"/multiplier-prv.config"),
+                deploy(configuration(configDir + "/multiplier-prv.config"),
                         idle(1),
-                        ServiceDeployment.Type.SELF)),
+                        Deployment.Type.SELF)),
         context("multiply", inEnt("arg/x1", 10.0d), inEnt("arg/x2", 50.0d), result("result/y1")));
 
 Task f5 = task("f5",
         sig("add", Adder.class,
-                deploy(configuration(getConfigDir()+"/AdderProviderConfig.groovy"))),
+                deploy(configuration(configDir +"/AdderProviderConfig.groovy"))),
         context("add", inEnt("arg/x3", 20.0d), inEnt("arg/x4", 80.0d), result("result/y2")));
 
 Task f3 = task("f3",
         sig("subtract", Subtractor.class,
                 deploy(maintain(2, perNode(2)), idle(1),
-                        configuration(getConfigDir()+"/subtractor-prv.config"))),
+                        configuration(configDir +"/subtractor-prv.config"))),
         context("subtract", inEnt("arg/x5"), inEnt("arg/x6"), result("result/y3")));
 
 job("f1", sig("service", Jobber.class, deploy(idle(1))),

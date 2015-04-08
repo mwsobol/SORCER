@@ -18,6 +18,7 @@ version = sorcerVersion
 
 dependencies {
     compile project(":sorcer-platform")
+    compile project(":sorcer-resolving-loader")
     compile project(":webster")
     compile libs.junit
 }
