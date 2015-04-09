@@ -68,7 +68,6 @@ class BootMe extends DefaultTask {
         args << "-Dsorcer.home=${project.sorcerDistHome}"
         args << "-Dsorcer.env.file=${project.sorcerDistHome}/configs/sorcer.env"
         args << "-Dproject.build.dir=${project.buildDir.path}"
-        args << "-Djava.rmi.server.RMIClassLoaderSpi=org.rioproject.rmi.ResolvingLoader"
         systemProperties.each { k, v ->
             args << "-D$k=$v"
         }
