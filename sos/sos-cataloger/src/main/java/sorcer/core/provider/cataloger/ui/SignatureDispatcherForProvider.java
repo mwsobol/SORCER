@@ -165,10 +165,11 @@ public class SignatureDispatcherForProvider implements SignatureDispatchment {
 					if (!e.getValueIsAdjusting()) // make it only run on the
 					// final event
 					{
-						String selProv = (String) list.getSelectedValue();
-						model.setContext(selProv,
+						String selMethod = (String) list.getSelectedValue();
+						model.setContext(selMethod,
 								SignatureDispatcherForProvider.this
-										.getContext(selProv));
+										.getContext(selMethod));
+						model.setSelectedMethod(selMethod);
 					}
 				}
 			};
@@ -210,6 +211,7 @@ public class SignatureDispatcherForProvider implements SignatureDispatchment {
 	 */
 	public void actionPerformed(ActionEvent e) {
 		String comm = e.getActionCommand();
+
 		if (comm == SignatureView.PROVIDER_SEARCH) {
 			String searchedProvider = ((JTextField) (e.getSource())).getText();
 			model.setProviders(processSearch(searchedProvider, model

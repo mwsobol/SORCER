@@ -141,13 +141,14 @@ public class SignatureDispatcherForCataloger implements SignatureDispatchment {
 			methodListener = new ListSelectionListener() {
 				public void valueChanged(ListSelectionEvent e) {
 					JList list = (JList) e.getSource();
+					String selMethod = (String) list.getSelectedValue();
+					model.setSelectedMethod(selMethod);
 					if (!e.getValueIsAdjusting()) // make it only run on the
 					// final event
 					{
-						String selProv = (String) list.getSelectedValue();
-						model.setContext(selProv,
+						model.setContext(selMethod,
 								SignatureDispatcherForCataloger.this
-										.getContext(selProv));
+										.getContext(selMethod));
 					}
 				}
 			};
@@ -189,6 +190,7 @@ public class SignatureDispatcherForCataloger implements SignatureDispatchment {
 	 */
 	public void actionPerformed(ActionEvent e) {
 		String comm = e.getActionCommand();
+
 		if (comm == SignatureView.PROVIDER_SEARCH) {
 			String searchedProvider = ((JTextField) (e.getSource())).getText();
 			model.setProviders(processSearch(searchedProvider, model
@@ -366,17 +368,16 @@ public class SignatureDispatcherForCataloger implements SignatureDispatchment {
 		 * e.printStackTrace();} System.out.println("context"+cxt); return cxt;
 		 */
 		Context cxt = new ServiceContext(model.getSelectedProvider());
-		// if(theproxy!=null)
-		{
-			try {
-				cxt = ((ContextManagement)catalog).getContext(model.getSelectedProvider(), model
-						.getSelectedInterfaceName(), methodName);
-
-			} catch (RemoteException e) {
-
-				e.printStackTrace();
-			}
-		}
+//		{
+//			try {
+//				cxt = ((ContextManagement)catalog).getContext(model.getSelectedProvider(), model
+//						.getSelectedInterfaceName(), methodName);
+//
+//			} catch (RemoteException e) {
+//
+//				e.printStackTrace();
+//			}
+//		}
 		return cxt;
 	}
 

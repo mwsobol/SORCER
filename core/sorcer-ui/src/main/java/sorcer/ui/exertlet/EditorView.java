@@ -451,6 +451,8 @@ public class EditorView extends JPanel implements HyperlinkListener {
 	}
 	
 	private ExertionThread runTaskScript(String script) {
+		System.out.println("task: \n" + script);
+
 		String serviceType = model.getServiceType();
 		String selector = model.getSelector();
 		StringBuilder sb = new StringBuilder();
@@ -477,6 +479,7 @@ public class EditorView extends JPanel implements HyperlinkListener {
 		}
 
 		public void run() {
+			System.out.println("netlet: " + script);
 			try {
 				shell = new GroovyShell();
 				Object result = shell.evaluate(script);

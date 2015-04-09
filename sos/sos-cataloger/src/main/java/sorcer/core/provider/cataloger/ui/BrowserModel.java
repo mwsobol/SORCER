@@ -32,7 +32,9 @@ import sorcer.ui.exertlet.EditorViewSignature;
  */
 public class BrowserModel extends Observable implements Serializable, EditorViewSignature {
 	private static final long serialVersionUID = 5311936826023311727L;
-	String selectedProvider, selectedInterfaceName, selectedMethod;
+	String selectedProvider;
+	String selectedInterfaceName;
+	String selectedMethod;
 	Class selectedInterface;
 	String providerList[], interfaceList[], methodList[], bkproviderList[],
 			bkinterfaceList[], bkmethodList[];
@@ -365,6 +367,10 @@ public class BrowserModel extends Observable implements Serializable, EditorView
 	@Override
 	public String getServiceType() {
 		return getSelectedInterfaceName();
+	}
+
+	public void setSelectedMethod(String selectedMethod) {
+		this.selectedMethod = selectedMethod;
 	}
 
 	@Override
