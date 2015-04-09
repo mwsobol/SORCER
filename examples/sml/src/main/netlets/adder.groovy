@@ -1,3 +1,4 @@
+#!/usr/bin/env nsh
 /*
  * Copyright to the original author or authors.
  *
