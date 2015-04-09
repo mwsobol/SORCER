@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.UnknownHostException;
@@ -30,7 +31,9 @@ import java.util.Properties;
 import java.util.StringTokenizer;
 import java.util.logging.Logger;
 
+import org.rioproject.net.HostUtil;
 import sorcer.core.SorcerConstants;
+import sorcer.util.JavaSystemProperties;
 import sorcer.util.SOS;
 
 /**
@@ -148,8 +151,8 @@ public class Booter implements SorcerConstants {
 	 * @return the codebase for the JAR
 	 */
 	public static String getCodebase(String jar, String address, String port) {
-		return (com.sun.jini.config.ConfigUtil.concat(new Object[] { "http://",
-				address, ":", port, "/" + jar }));
+		return (com.sun.jini.config.ConfigUtil.concat(new Object[]{"http://",
+				address, ":", port, "/" + jar}));
 	}
 
 	/**
@@ -187,7 +190,15 @@ public class Booter implements SorcerConstants {
 	 *             if no IP address for the local host could be found.
 	 */
 	public static String getHostAddress() throws java.net.UnknownHostException {
-		return java.net.InetAddress.getLocalHost().getHostAddress();
+		return getLocalHost().getHostAddress();
+	}
+
+	public static InetAddress getLocalHost() throws UnknownHostException {
+		String hostnameProp = getProperty(JavaSystemProperties.RMI_SERVER_HOSTNAME);
+		if (hostnameProp != null && !hostnameProp.isEmpty())
+			return InetAddress.getByName(hostnameProp);
+		else
+			return HostUtil.getInetAddress();
 	}
 
 	/**
@@ -240,7 +251,7 @@ public class Booter implements SorcerConstants {
 	 *             if no hostname for the local host could be found.
 	 */
 	public static String getHostName() throws java.net.UnknownHostException {
-		return java.net.InetAddress.getLocalHost().getCanonicalHostName();
+		return getLocalHost().getCanonicalHostName();
 	}
 
 	/**
