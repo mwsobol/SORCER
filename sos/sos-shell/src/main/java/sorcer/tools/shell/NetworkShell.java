@@ -144,7 +144,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 
 	private static LoginContext loginContext;
 
-	final static long startTime = System.currentTimeMillis();
+	public final static long startTime = System.currentTimeMillis();
 
 	private static LookupDiscovery disco;
 
@@ -447,6 +447,8 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
         shellTokenizer = new WhitespaceTokenizer(request);
         System.err.println("----------------------------------------------------");
         System.err.println("Starting non-interactive exec of request: " + request);
+
+		shellOutput.println("initializing nsh: " + (System.currentTimeMillis() - startTime) + "ms");
         try {
             if (args.length == 1) {
                 if (args[0].equals("-version")) {
@@ -456,8 +458,10 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
                 } else {
                     // Added reading the file as default first argument
                     // Check if file exists
+					shellOutput.println("exerting nsh: " + (System.currentTimeMillis() - startTime) + "ms");
                     ShellCmd cmd = commandTable.get("exert");
 					waitForReggie();
+					shellOutput.println("found reggie: " + (System.currentTimeMillis() - startTime) + "ms");
                     cmd.execute();
                 }
             } else if (args.length > 1) {

@@ -174,7 +174,7 @@ public class ExertCmd extends ShellCmd {
                 }
             }
         }*/
-
+		out.println("Starting execute!");
         Object result = scriptExerter.execute();
         // System.out.println(">>>>>>>>>>> result: " + result);
 		if (result != null) {

@@ -78,6 +78,8 @@ public class ScriptExerter {
         this(null, null, null, false);
     }
 
+    public final static long startTime = System.currentTimeMillis();
+
     public static String[] localJars = new String[] {
             //"org.sorcersoft.sorcer:sos-api"
     };
@@ -128,6 +130,8 @@ public class ScriptExerter {
 
     public Object parse() throws Throwable {
         // Process "load" and generate a list of URLs for the classloader
+        out.println("parsing..." + (System.currentTimeMillis()-startTime) +"ms");
+
         if (!loadLines.isEmpty()) {
             for (String jar : loadLines) {
                 String loadPath = jar.substring(LoaderConfigurationHelper.LOAD_PREFIX.length()).trim();
@@ -135,8 +139,10 @@ public class ScriptExerter {
             }
         }
         // Process "codebase" and set codebase variable
+        out.println("setting codebase..."+ (System.currentTimeMillis()-startTime)+"ms");
         LoaderConfigurationHelper.setCodebase(codebaseLines, out);
 
+        out.println("loading codebase urls..."+ (System.currentTimeMillis()-startTime)+"ms");
         // resolve codebase and add to classpath
         for (String codebaseStr : codebaseLines) {
             if (codebaseStr.startsWith(LoaderConfigurationHelper.CODEBASE_PREFIX))
@@ -145,9 +151,11 @@ public class ScriptExerter {
         }
 
         try {
+            out.println("creating scriptThread..."+ (System.currentTimeMillis()-startTime)+"ms");
             scriptThread = new ScriptThread(script,
                     new URLClassLoader(urlsToLoad.toArray(new URL[0]), (classLoader!=null ? classLoader : getClass().getClassLoader())),
                     out, config, debug);
+            out.println("get target..." + (System.currentTimeMillis()-startTime)+"ms");
             this.target = scriptThread.getTarget();
             return target;
         }
