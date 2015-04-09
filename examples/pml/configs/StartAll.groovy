@@ -39,7 +39,7 @@ class StartAll {
 
         def descriptors = []
         def configArg = ["${configPath}/parmodel-prv.config"]
-        def codebase = "sorcer-dl-${sorcerVersion}.jar jsk-dl-${riverVersion}.jar"
+        def codebase = "sorcer-dl-${sorcerVersion}.jar sorcer-ui-${sorcerVersion}.jar jsk-dl-${riverVersion}.jar"
 
         descriptors << new SorcerServiceDescriptor(codebase,
                                                    policy,

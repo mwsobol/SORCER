@@ -39,7 +39,7 @@ class StartAll {
         def descriptors = []
         ["worker1", "worker2", "worker3"].each { provider ->
             def configArg = ["${configPath}/${provider}-prv.config"]
-            def codebase = "${relativeRepoPath}/worker-${sorcerVersion}-dl.jar sorcer-dl-${sorcerVersion}.jar jsk-dl-${riverVersion}.jar"
+            def codebase = "${relativeRepoPath}/worker-${sorcerVersion}-dl.jar sorcer-dl-${sorcerVersion}.jar sorcer-ui-${sorcerVersion}.jar jsk-dl-${riverVersion}.jar"
 
             if (provider.indexOf("bean") > 0)
                 descriptors << new SorcerServiceDescriptor(codebase,
