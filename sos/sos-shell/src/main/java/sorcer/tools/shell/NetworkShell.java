@@ -238,13 +238,14 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 		//System.out.println("nsh main args: " + Arrays.toString(argv));	
 		if (argv.length > 0) {
 			if ((argv.length == 1 && argv[0].startsWith("--"))
-					|| (argv.length == 2 && (argv[0].equals("-e"))
-							|| argv[0].equals("-f")
-                            || argv[0].equals("-c")
-                            || argv[0].equals("-b")
-							|| argv[0].equals("-n")
-							|| argv[0].equals("-version") || argv[0]
-							.equals("-help"))) {
+						|| (argv.length == 2 && (argv[0].equals("-e"))
+						|| argv[0].equals("-f")
+						|| argv[0].equals("-c")
+						|| argv[0].equals("-b")
+						|| argv[0].equals("-n")
+						|| argv[0].equals("-version") || argv[0]
+						.equals("-help")) || argv.length == 1) {
+
 				interactive = false;
 			} else {
 				interactive = true;
