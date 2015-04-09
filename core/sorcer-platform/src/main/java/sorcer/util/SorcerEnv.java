@@ -1531,7 +1531,7 @@ public class SorcerEnv extends SOS {
 	 *             if no IP address for the local host could be found.
 	 */
 	public static String getHostAddress() throws java.net.UnknownHostException {
-		return java.net.InetAddress.getLocalHost().getHostAddress();
+		return getLocalHost().getHostAddress();
 	}
 
 	/**
@@ -1558,7 +1558,7 @@ public class SorcerEnv extends SOS {
 	 *             if no hostname for the local host could be found.
 	 */
 	public static String getHostName() throws java.net.UnknownHostException {
-		return java.net.InetAddress.getLocalHost().getCanonicalHostName();
+		return getLocalHost().getCanonicalHostName();
 	}
 
     public static InetAddress getLocalHost() throws UnknownHostException {
