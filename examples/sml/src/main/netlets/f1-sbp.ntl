@@ -7,12 +7,12 @@ import sorcer.arithmetic.provider.Adder
 import sorcer.arithmetic.provider.Multiplier
 import sorcer.arithmetic.provider.Subtractor
 import sorcer.core.provider.Jobber
+import sorcer.service.Task
 import sorcer.util.Sorcer
 import sorcer.service.Deployment
 
 String configDir = Sorcer.getHome() + "/../../../examples/sml/configs/"
 
-println configDir
 Task f4 = task("f4",
         sig("multiply", Multiplier.class,
                 deploy(configuration(configDir + "/multiplier-prv.config"),
