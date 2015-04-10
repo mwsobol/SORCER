@@ -2799,13 +2799,24 @@ public class ProviderDelegate implements SorcerConstants {
 	}
 
 	/**
+	 * Use javax.inject.Provider implementations as factory objects
+	 */
+	private static void callProviders(Object[] serviceBeans) {
+		for (int i = 0; i < serviceBeans.length; i++) {
+			Object bean = serviceBeans[i];
+			if(bean instanceof javax.inject.Provider)
+				serviceBeans[i] = ((javax.inject.Provider) bean).get();
+		}
+	}
+
+	/**
 	 * Initializes the map between all the interfaces and the service object
 	 * passed via the configuration file.
 	 * 
 	 * @param serviceBeans
 	 *            service objects exposing their interface types
 	 */
-	private Map<Class, Object> initServiceBeans(Object[] serviceBeans) {
+	private void initServiceBeans(Object[] serviceBeans) {
 		if (serviceBeans == null)
 			try {
 				throw new NullPointerException("No service beans defined by: "
@@ -2815,40 +2826,25 @@ public class ProviderDelegate implements SorcerConstants {
 				throw new RuntimeException(e);
 			}
 
-		// Use javax.inject.Provider implementations as factory objects
-		for (int i = 0; i < serviceBeans.length; i++) {
-			Object bean = serviceBeans[i];
-			if(bean instanceof javax.inject.Provider)
-				serviceBeans[i] = ((javax.inject.Provider) bean).get();
-		}
+		callProviders(serviceBeans);
 
 		serviceComponents = new Hashtable<Class, Object>();
 
-		for (int i = 0; i < serviceBeans.length; i++) {
-			Class[] interfaces = ((Object) serviceBeans[i]).getClass()
-					.getInterfaces();
-			logger.info("*** service component interfaces" + Arrays.toString(interfaces));
-			// TODO associate exposedInterfaces with publishedServiceTypes
-			// PR - Started  working on it!!!
-			List<Class> exposedInterfaces = new ArrayList<Class>(Arrays.asList(interfaces));
-			for (Class type : publishedServiceTypes) {
-				if (type.isInstance(serviceBeans[i]))
-					exposedInterfaces.add(type);
-			}
-			//Arrays.asList(interfaces)
-			List<Class> ignoredInterfaces = new ArrayList();
-			ignoredInterfaces.add(SorcerConstants.class);
-			ignoredInterfaces.add(Executor.class);
-			ignoredInterfaces.add(Provider.class);
-			exposedInterfaces.removeAll(ignoredInterfaces);
+		for (Object serviceBean : serviceBeans) {
+			Class[] interfaces =  serviceBean.getClass().getInterfaces();
+			logger.fine("service component interfaces" + Arrays.toString(interfaces));
 
-			for (int j = 0; j < exposedInterfaces.size(); j++) {
-				serviceComponents.put(exposedInterfaces.get(j), serviceBeans[i]);
+			List<Class> exposedInterfaces = new LinkedList<Class>();
+			for (Class publishedType : publishedServiceTypes) {
+				if (publishedType.isInstance(serviceBean)) {
+					serviceComponents.put(publishedType, serviceBean);
+					exposedInterfaces.add(publishedType);
+				}
 			}
-			logger.info("*** service component exposed interfaces" + exposedInterfaces);
+			logger.fine("service component exposed interfaces" + exposedInterfaces);
 		}
-		logger.info("*** service components" + serviceComponents);
-		return serviceComponents;
+
+		logger.info("service components" + serviceComponents);
 	}
 
 	private Object instantiateScriplet(String scripletFilename)
