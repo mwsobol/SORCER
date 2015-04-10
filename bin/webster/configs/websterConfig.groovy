@@ -22,6 +22,7 @@
  */
 
 webster {
+//    address = org.rioproject.net.HostUtil.getInetAddress().toString()
     address = InetAddress.getLocalHost().getHostName()
 
     roots = ["${sorcerHome}/lib/sorcer/lib-dl",
