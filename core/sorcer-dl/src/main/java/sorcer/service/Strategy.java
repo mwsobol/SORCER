@@ -86,7 +86,7 @@ public interface Strategy extends Arg {
 	 * called monitor.
 	 */
 	public enum Monitor implements Arg {
-		YES, TRUE, NO, FALSE, WAIT, NOTIFY, NOTIFY_ALL;
+		YES, TRUE, NO, FALSE, ALL, WAIT, NOTIFY, NOTIFY_ALL;
 
 		/* (non-Javadoc)
 		 * @see sorcer.service.Arg#getName()

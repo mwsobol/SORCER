@@ -29,7 +29,7 @@ import org.rioproject.RioVersion
 	
 String hostName = InetAddress.getLocalHost().getHostName()
 String address = InetAddress.getLocalHost().getHostAddress()
-println "hostName: ${hostName}, address: ${address}"
+//println "hostName: ${hostName}, address: ${address}"
 boolean onEnclave = (hostName.endsWith("wpafb.af.mil") || address.startsWith("10.131"))
 	
 resolver {

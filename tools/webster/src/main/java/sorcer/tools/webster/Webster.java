@@ -437,9 +437,9 @@ public class Webster implements Runnable {
         port = ss.getLocalPort();
 
         if (debug)
-            System.out.println("Webster serving on : "
+            System.out.println("Webster serving on: "
                                        + ss.getInetAddress().getHostAddress() + ":" + port);
-        if (logger.isLoggable(Level.INFO))
+        if (logger.isLoggable(Level.FINE))
             logger.info("Webster serving on: "
                                 + ss.getInetAddress().getHostAddress() + ":" + port);
         if (debug)

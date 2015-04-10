@@ -1058,9 +1058,10 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 			
 			shellOutput.println();
 			Webster web = instance.getWebster();
+
 			if (web == null) {
 				shellOutput.println("Class server: No HTTP server started");
-			} else {
+			} else if (debug) {
 				shellOutput.println("Webster URL: \n  URL: http://"
 						+ web.getAddress() + ":" + web.getPort()
 						+ "\n  Roots: " + web.getRoots());
@@ -1110,7 +1111,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 
 			COMMAND_USAGE = "http [port=<port-num>] [roots=<roots>] [jars=<codebase jars>] | stop";
 
-			COMMAND_HELP = "Start and stop the nsf shell's code server;"
+			COMMAND_HELP = "Start and stop the nsh shell's code server;"
 					+ "  <roots> is semicolon separated list of directories.\n"
 					+ "  If not provided the root directory will be:\n"
 					+ "  [" + debugGetDefaultRoots() + "]";
@@ -1276,7 +1277,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 
 			setCodeBase(jars);
 			
-			if (!quiet) {
+			if (debug) {
 				out.println("Webster URL: http://" + instance.webster.getAddress()
 						+ ":" + instance.webster.getPort());
 				out.println("  Roots: " + instance.webster.getRoots());
