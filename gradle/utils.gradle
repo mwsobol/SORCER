@@ -191,6 +191,10 @@ task webster(type: Exec) {
         args << "/C"
         args << "groovy"
     }
+/*
+    args << "-classpath"
+    args << "${sorcerDistHome}/rio-${rioVersion}/lib/rio-platform-${rioVersion}.jar"
+*/
     args << "${sorcerDistHome}/bin/webster/bin/webster.groovy"
     commandLine args
 }
