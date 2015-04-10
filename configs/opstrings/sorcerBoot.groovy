@@ -100,7 +100,8 @@ deployment(name: "Sorcer OS") {
         interfaces {
             classes "sorcer.core.provider.Rendezvous",
                     "sorcer.core.provider.Jobber",
-                    "sorcer.core.provider.Spacer"
+                    "sorcer.core.provider.Spacer",
+                    "sorcer.core.provider.Concatenator"
             resources appendJars(["sorcer-ui-${Sorcer.sorcerVersion}.jar"])
         }
         implementation(class: "sorcer.core.provider.ServiceProvider") {

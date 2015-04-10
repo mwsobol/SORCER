@@ -531,7 +531,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 	private static void waitForReggie() throws InterruptedException {
 		// Wait for DiscoveryListener to find Reggies
 		int i=0;
-		long waitTimes = (Long)instance.getSettings().get(DISCOVERY_TIMEOUT)/200;
+		long waitTimes = (Long)instance.getSettings().get(DISCOVERY_TIMEOUT)/20;
 		while (getRegistrars().isEmpty() && i<waitTimes) {
 			Thread.sleep(200);
 			i++;

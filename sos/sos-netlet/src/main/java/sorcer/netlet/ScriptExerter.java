@@ -86,7 +86,7 @@ public class ScriptExerter {
 
     public ScriptExerter(PrintStream out, ClassLoader classLoader, String websterStrUrl, boolean debug) {
         this.out = out;
-        if (out==null) out = System.out;
+        if (out==null) this.out = System.out;
         this.debug = debug;
         this.classLoader = classLoader;
         try {
@@ -130,7 +130,7 @@ public class ScriptExerter {
 
     public Object parse() throws Throwable {
         // Process "load" and generate a list of URLs for the classloader
-        out.println("parsing..." + (System.currentTimeMillis()-startTime) +"ms");
+        if (out!=null) out.println("parsing..." + (System.currentTimeMillis()-startTime) +"ms");
 
         if (!loadLines.isEmpty()) {
             for (String jar : loadLines) {
@@ -139,10 +139,10 @@ public class ScriptExerter {
             }
         }
         // Process "codebase" and set codebase variable
-        out.println("setting codebase..."+ (System.currentTimeMillis()-startTime)+"ms");
+        if (out!=null) out.println("setting codebase..."+ (System.currentTimeMillis()-startTime)+"ms");
         LoaderConfigurationHelper.setCodebase(codebaseLines, out);
 
-        out.println("loading codebase urls..."+ (System.currentTimeMillis()-startTime)+"ms");
+        if (out!=null) out.println("loading codebase urls..."+ (System.currentTimeMillis()-startTime)+"ms");
         // resolve codebase and add to classpath
         for (String codebaseStr : codebaseLines) {
             if (codebaseStr.startsWith(LoaderConfigurationHelper.CODEBASE_PREFIX))
@@ -151,11 +151,11 @@ public class ScriptExerter {
         }
 
         try {
-            out.println("creating scriptThread..."+ (System.currentTimeMillis()-startTime)+"ms");
+            if (out!=null) out.println("creating scriptThread..."+ (System.currentTimeMillis()-startTime)+"ms");
             scriptThread = new ScriptThread(script,
                     new URLClassLoader(urlsToLoad.toArray(new URL[0]), (classLoader!=null ? classLoader : getClass().getClassLoader())),
                     out, config, debug);
-            out.println("get target..." + (System.currentTimeMillis()-startTime)+"ms");
+            if (out!=null) out.println("get target..." + (System.currentTimeMillis()-startTime)+"ms");
             this.target = scriptThread.getTarget();
             return target;
         }
