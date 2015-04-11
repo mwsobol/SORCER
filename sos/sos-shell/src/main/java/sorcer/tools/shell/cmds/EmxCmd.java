@@ -17,14 +17,6 @@
 
 package sorcer.tools.shell.cmds;
 
-import java.io.PrintStream;
-import java.rmi.RemoteException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
 import net.jini.core.lookup.ServiceItem;
 import net.jini.id.Uuid;
 import sorcer.core.monitor.MonitorUIManagement;
@@ -37,6 +29,14 @@ import sorcer.tools.shell.NetworkShell;
 import sorcer.tools.shell.ShellCmd;
 import sorcer.tools.shell.WhitespaceTokenizer;
 
+import java.io.PrintStream;
+import java.rmi.RemoteException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
 import static org.fusesource.jansi.Ansi.ansi;
 
 public class EmxCmd extends ShellCmd {
@@ -46,11 +46,12 @@ public class EmxCmd extends ShellCmd {
 
 		NOT_LOADED_MSG = "***command not loaded due to conflict";
 
-		COMMAND_USAGE = "emx [-xrt | -emx | <EMX/exertion index> | -v | -x]"
+		COMMAND_USAGE = "emx [-xrt | -emx | -mode | <EMX/exertion index> | -v | -x]"
 			+ "\n\t\t\t  | [ -a | -d | -f | -r | -y | <exertion index>] "
 			+ "\n\t\t\t  | (-e | -c | -cc | -ccc) [<exertion index>] [-s <filename>]";
 
 		COMMAND_HELP = "Support for monitoring runtime exertions;"
+				+ "\n  -mode   show current mode"
 				+ "\n  ('emx' mode) show EMX services or ('xrt' mode) print the selected exertion"
 				+ "\n  <EMX index>   select the EMX given <EMX index>"
 				+ "\n  -v   print the selected EMX service/exertion"
@@ -146,13 +147,19 @@ public class EmxCmd extends ShellCmd {
 			} else {
 				if (isEmxMode) {
 					try {
-						next = myTk.nextToken();
+//						String oldNext = next;
+//						next = myTk.nextToken();
+//						if (next.length() == 0) {
+//							out.println("Invalid command option: " + oldNext);
+//							return;
+//						}
 						myIdx = Integer.parseInt(next);
 						selectedMonitor = myIdx;
 					} catch (NumberFormatException e) {
 						selectedMonitor = selectMonitorByName(next);
 						if (selectedMonitor < 0)
 							out.println("No such EMX for: " + next);
+						return;
 					}
 					if (selectedMonitor >= 0) {
 						describeMonitor(selectedMonitor, "SELECTED");
