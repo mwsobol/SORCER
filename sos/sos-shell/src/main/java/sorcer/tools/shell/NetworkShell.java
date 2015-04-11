@@ -18,31 +18,9 @@
 
 package sorcer.tools.shell;
 
+import com.sun.jini.config.Config;
 import groovy.lang.GroovyRuntimeException;
-
-import java.io.*;
-import java.lang.reflect.Array;
-import java.net.InetAddress;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.security.PrivilegedActionException;
-import java.security.PrivilegedExceptionAction;
-import java.util.*;
-
-import org.fusesource.jansi.Ansi;
-import org.rioproject.impl.config.DynamicConfiguration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.security.auth.Subject;
-import javax.security.auth.login.LoginContext;
-
-import net.jini.config.Configuration;
-import net.jini.config.ConfigurationException;
-import net.jini.config.ConfigurationProvider;
-import net.jini.config.EmptyConfiguration;
-import net.jini.config.NoSuchEntryException;
+import net.jini.config.*;
 import net.jini.core.discovery.LookupLocator;
 import net.jini.core.entry.Entry;
 import net.jini.core.lookup.ServiceItem;
@@ -53,30 +31,42 @@ import net.jini.discovery.DiscoveryListener;
 import net.jini.discovery.LookupDiscovery;
 import net.jini.entry.AbstractEntry;
 import net.jini.lookup.entry.UIDescriptor;
-
 import org.codehaus.groovy.runtime.DefaultGroovyMethods;
-
+import org.fusesource.jansi.Ansi;
+import org.fusesource.jansi.AnsiConsole;
+import org.rioproject.impl.config.DynamicConfiguration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sorcer.jini.lookup.entry.SorcerServiceInfo;
-import sorcer.netlet.util.ScriptExertException;
 import sorcer.netlet.util.LoaderConfiguration;
+import sorcer.netlet.util.ScriptExertException;
 import sorcer.security.util.SorcerPrincipal;
 import sorcer.service.EvaluationException;
 import sorcer.service.ExertionInfo;
 import sorcer.tools.shell.cmds.*;
 import sorcer.tools.webster.Webster;
-import sorcer.util.*;
+import sorcer.util.Sorcer;
+import sorcer.util.SorcerEnv;
+import sorcer.util.TimeUtil;
 import sorcer.util.eval.PropertyEvaluator;
 import sorcer.util.exec.ExecUtils;
 import sorcer.util.exec.ExecUtils.CmdResult;
 import sorcer.util.url.sos.SdbURLStreamHandlerFactory;
 
-import com.sun.jini.config.Config;
+import javax.security.auth.Subject;
+import javax.security.auth.login.LoginContext;
+import java.io.*;
+import java.lang.reflect.Array;
+import java.net.InetAddress;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.security.PrivilegedActionException;
+import java.security.PrivilegedExceptionAction;
+import java.util.*;
 
 import static org.fusesource.jansi.Ansi.ansi;
 import static sorcer.util.StringUtils.tName;
-
-import org.fusesource.jansi.AnsiConsole;
-import static org.fusesource.jansi.Ansi.Color.*;
 
 /**
  * @author Mike Sobolewski
@@ -702,8 +692,8 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 		settings.put(GROUPS, groups);
 		settings.put(LOCATORS, locators);
 		Properties props = new Properties();
-		String iGridHome = Sorcer.getHome();
-		if (iGridHome == null)
+		String sorcerHome = Sorcer.getHome();
+		if (sorcerHome == null)
 			throw new RuntimeException("SORCER_HOME must be set");
 		props.put("java.protocol.handler.pkgs", "net.jini.url|sorcer.util.url|org.rioproject.url");
 		Properties addedProps = getConfiguredSystemProperties();
@@ -720,9 +710,9 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 		if (!interactive && (args.length==0 || (!args[0].equals("-c")
                 && !args[0].equals("-help") && !args[0].equals("-version")))) {
 			String logDirPath = System.getProperty(COMPONENT + ".logDir",
-					iGridHome + File.separator + "bin" + File.separator
+					sorcerHome + File.separator + "bin" + File.separator
 							+ "shell" + File.separator + "logs");
-		
+
 			File logDir = new File(logDirPath);
 			if (!logDir.exists()) {
 				if (!logDir.mkdirs()) {
@@ -1783,13 +1773,13 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 
     static final String[] shellCommands = { "start", "disco", "ls", "chgrp",
 			"groups", "lup", "chgrp", "chport", "help", "exert", "http", "emx",
-			"gvy", "edit", "clear", "exec", "about", "ig", "ds", "sp" };
+			"gvy", "edit", "clear", "exec", "about", "sos", "ds", "sp" };
 
 	static final Class[] shellCmdClasses = { StartStopCmd.class, DiscoCmd.class,
 			DirCmd.class, ChgrpCmd.class, GroupsCmd.class, LookupCmd.class,
 			ChgrpCmd.class, SetPortCmd.class, HelpCmd.class, ExertCmd.class,
 			HttpCmd.class, EmxCmd.class, GroovyCmd.class, EditCmd.class,
-			ClearCmd.class, ExecCmd.class, InfoCmd.class, iGridCmd.class, DataStorageCmd.class,
+			ClearCmd.class, ExecCmd.class, InfoCmd.class, SosCmd.class, DataStorageCmd.class,
 			SpaceCmd.class };
 
 	// a map of application name/ filename
@@ -1798,52 +1788,52 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 	static private Map<String, String> nishAppMap = new TreeMap<String, String>();
 
 	static { 
-		String iGridHome = System.getenv("SORCER_HOME");
+		String sorcerHome = System.getenv("SORCER_HOME");
 		String[] apps = new String[] { 
 				"browser", 
-				iGridHome + "/bin/browser/bin/sorcer-browser-spawn.xml",
+				sorcerHome + "/bin/browser/bin/sorcer-browser-spawn.xml",
 				"webster", 
-				iGridHome + "/bin/webster/bin/webster-run.xml",
+				sorcerHome + "/bin/webster/bin/webster-run.xml",
 				"iGrid", 
-				iGridHome + "/bin/iGrid-boot-http-spawn.xml",
+				sorcerHome + "/bin/iGrid-boot-http-spawn.xml",
 				"sos", 
-				iGridHome + "/bin/sorcer/bin/sorcer-boot-spawn.xml",
+				sorcerHome + "/bin/sorcer/bin/sorcer-boot-spawn.xml",
 				"jobber",
-				iGridHome + "/bin/sorcer/jobber/bin/jeri-jobber-boot-spawn.xml",
+				sorcerHome + "/bin/sorcer/jobber/bin/jeri-jobber-boot-spawn.xml",
 				"spacer",
-				iGridHome + "/bin/sorcer/jobber/bin/jeri-spacer-boot-spawn.xml",
+				sorcerHome + "/bin/sorcer/jobber/bin/jeri-spacer-boot-spawn.xml",
 				"cataloger",
-				iGridHome + "/bin/sorcer/cataloger/bin/jeri-cataloger-boot-spawn.xml",
+				sorcerHome + "/bin/sorcer/cataloger/bin/jeri-cataloger-boot-spawn.xml",
 				"logger",
-				iGridHome + "/bin/sorcer/logger/bin/jeri-logger-boot-spawn.xml",
+				sorcerHome + "/bin/sorcer/logger/bin/jeri-logger-boot-spawn.xml",
 				"locker", 
-				iGridHome + "/bin/sorcer/blitz/bin/locker-boot-spawn.xml",
+				sorcerHome + "/bin/sorcer/blitz/bin/locker-boot-spawn.xml",
 				"blitz",
-				iGridHome + "/bin/sorcer/blitz/bin/blitz-boot-spawn.xml" };
+				sorcerHome + "/bin/sorcer/blitz/bin/blitz-boot-spawn.xml" };
 		
 			appendApps(apps);
 			
 			String[] nishApps = new String[] { 
 					"browser", 
-					iGridHome + "/bin/browser/bin/sorcer-browser.xml",
+					sorcerHome + "/bin/browser/bin/sorcer-browser.xml",
 					"webster", 
-					iGridHome + "/bin/webster/bin/webster-run.xml",
+					sorcerHome + "/bin/webster/bin/webster-run.xml",
 					"iGrid", 
-					iGridHome + "/bin/iGrid-boot-http.xml",
+					sorcerHome + "/bin/iGrid-boot-http.xml",
 					"sos", 
-					iGridHome + "/bin/iGrid-boot-http.xml",
+					sorcerHome + "/bin/iGrid-boot-http.xml",
 					"jobber",
-					iGridHome + "/bin/sorcer/jobber/bin/jeri-jobber-boot.xml",
+					sorcerHome + "/bin/sorcer/jobber/bin/jeri-jobber-boot.xml",
 					"spacer",
-					iGridHome + "/bin/sorcer/jobber/bin/jeri-spacer-boot.xml",
+					sorcerHome + "/bin/sorcer/jobber/bin/jeri-spacer-boot.xml",
 					"cataloger",
-					iGridHome + "/bin/sorcer/cataloger/bin/jeri-cataloger-boot.xml",
+					sorcerHome + "/bin/sorcer/cataloger/bin/jeri-cataloger-boot.xml",
 					"logger",
-					iGridHome + "/bin/sorcer/logger/bin/jeri-logger-boot.xml",
+					sorcerHome + "/bin/sorcer/logger/bin/jeri-logger-boot.xml",
 					"locker", 
-					iGridHome + "/bin/sorcer/blitz/bin/locker-boot.xml",
+					sorcerHome + "/bin/sorcer/blitz/bin/locker-boot.xml",
 					"blitz",
-					iGridHome + "/bin/sorcer/blitz/bin/blitz-boot.xml" };
+					sorcerHome + "/bin/sorcer/blitz/bin/blitz-boot.xml" };
 			
 				appendNishApps(nishApps);
 	}
