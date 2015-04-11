@@ -148,5 +148,6 @@ sorcer.core.monitor.level=ALL
 sorcer.core.dispatch.level=INFO
 sorcer.core.dispatch.ExertionSorter.level=INFO
 sorcer.rio.rmi.level=INFO
+org.rioproject.resolver.ResolverConfiguration.level=OFF
 sorcer.service.Accessor.level=INFO
 sorcer.core.provider.exerter.level=INFO

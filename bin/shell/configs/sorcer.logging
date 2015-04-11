@@ -134,6 +134,7 @@ net.jini.discovery.LookupDiscovery.level=OFF
 #net.jini.security.policy.level=FINER
 #net.jini.jeri.level=FINER
 
+org.rioproject.resolver.ResolverConfiguration.level=OFF
 #org.rioproject.rmi.level=ALL
 sorcer.rio.rmi.level=INFO
 sorcer.service.Accessor.level=INFO
