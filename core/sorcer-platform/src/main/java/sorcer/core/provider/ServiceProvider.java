@@ -18,7 +18,6 @@ package sorcer.core.provider;
 
 import com.sun.jini.config.Config;
 import com.sun.jini.start.LifeCycle;
-import com.sun.jini.thread.TaskManager;
 import net.jini.config.Configuration;
 import net.jini.config.ConfigurationException;
 import net.jini.config.ConfigurationProvider;
@@ -48,6 +47,7 @@ import sorcer.core.context.ServiceContext;
 import sorcer.core.proxy.Outer;
 import sorcer.core.proxy.Partner;
 import sorcer.core.proxy.Partnership;
+import sorcer.core.signature.ServiceSignature;
 import sorcer.service.*;
 import sorcer.service.Signature;
 import sorcer.service.SignatureException;
@@ -1410,6 +1410,9 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
             ServiceContext cxt;
             try {
                 cxt = (ServiceContext) ((Task)mogram).getDataContext();
+				if (((ServiceSignature)((Task)mogram).getProcessSignature()).getMapContext() != null) {
+					updateContext((Task) mogram);
+				}
                 Uuid id = cxt.getId();
                 ProviderSession ps = sessions.get(id);
                 if (ps == null) {
@@ -1460,6 +1463,17 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
         return out;
     }
 
+	// TODO in/out/inout marking as defined in the mapContext
+	private void updateContext(Task task) throws ContextException {
+		Context mapContext = ((ServiceSignature)task.getProcessSignature()).getMapContext();
+		Context dataContext = task.getDataContext();
+		Iterator it = ((Map)mapContext).entrySet().iterator();
+		while (it.hasNext()) {
+			Map.Entry e = (Map.Entry) it.next();
+			dataContext.putInValue((String) e.getValue(), dataContext.asis((String) e.getKey()));
+			dataContext.remove(e.getKey());
+		}
+	}
 
     public ServiceSession getSession(Context context) throws ContextException {
         return sessions.get(context.getId());

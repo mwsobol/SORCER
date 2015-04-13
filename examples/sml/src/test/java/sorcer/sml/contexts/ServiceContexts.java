@@ -11,6 +11,7 @@ import sorcer.co.tuple.Entry;
 import sorcer.core.context.Copier;
 import sorcer.core.context.ListContext;
 import sorcer.service.Context;
+import sorcer.service.Mogram;
 import sorcer.service.modeling.Model;
 
 import java.net.URL;
@@ -431,15 +432,37 @@ public class ServiceContexts {
         dependsOn(m, "subtract", paths("multiply", "add"));
         assertTrue(response(m).equals(400.0));
 
-        // ger a response context
+        // get a response context
         addResponse(m, "add", "multiply");
         Context out = responses(m);
         logger.info("out: " + out);
         assertTrue(response(out, "add").equals(100.0));
         assertTrue(response(out, "multiply").equals(500.0));
-        assertTrue(response(out, "subtract").equals(400.0));
+        assertTrue(response(out, "multiply").equals(400.0));
 
         logger.info("model: " + m);
 
     }
+
+	@Test
+	public void mogramingBlock() throws Exception {
+
+		Context out = context(inEnt("add", "x1"), inEnt("multiply", "x3"), inEnt("multiply", "x3"));
+
+		Model m = srvModel(
+				inEnt("multiply/x1", 10.0), inEnt("multiply/x2", 50.0),
+				inEnt("add/x1", 20.0), inEnt("add/x2", 80.0),
+				ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
+						inPaths("multiply/x1", "multiply/x2")))),
+				ent(sig("add", AdderImpl.class, result("add/out",
+						inPaths("add/x1", "add/x2")))),
+				ent(sig("subtract", SubtractorImpl.class, result("model/response",
+						inPaths("multiply/out", "add/out")))));
+
+		addResponse(m, "add", "multiply", "subtract");
+		dependsOn(m, "subtract", paths("multiply", "add"));
+		mapContext(m, out);
+
+		Mogram block = block(m, task(sig("multiply", MultiplierImpl.class)));
+	}
 }

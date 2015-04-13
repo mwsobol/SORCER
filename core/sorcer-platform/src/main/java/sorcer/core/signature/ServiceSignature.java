@@ -93,6 +93,7 @@ public class ServiceSignature implements Signature, Service, Evaluation<Object>,
 	// shell can be used to execute exertions locally or remotely (as ServiceProvider)
 	protected boolean isShellRemote = false;
 
+	protected Context mapContext;
 	/**
 	 * a context template to define the context appended from a provider
 	 * identified by this method
@@ -599,6 +600,14 @@ public class ServiceSignature implements Signature, Service, Evaluation<Object>,
 	@Override
 	public Evaluation substitute(Arg... entries) throws SetterException, RemoteException {
 		return this;
+	}
+
+	public Context getMapContext() {
+		return mapContext;
+	}
+
+	public void setMapContext(Context mapContext) {
+		this.mapContext = mapContext;
 	}
 
     @Override

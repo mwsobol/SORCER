@@ -243,6 +243,11 @@ public class operator {
 		return cxt;
 	}
 
+	public static Model mapContext(Model model, Context out) throws ContextException {
+		((ServiceContext)model).setMapContext(out);
+		return model;
+	}
+
     public static Model addResponse(Model model, String... responsePaths) throws ContextException {
         for (String path : responsePaths)
             ((ServiceContext)model).addResponsePath(path);
@@ -293,7 +298,20 @@ public class operator {
 		args[0] = Context.Type.SCOPE;
 		return  context(args);
 	}
-	
+
+	public static Context mapContext(List<Tuple2<String, ?>> entries) throws ContextException {
+		Context map = new MapContext();
+		populteContext(map, entries);
+		return map;
+	}
+
+	public static Context mapContext(Tuple2<String, ?>... entries) throws ContextException {
+		Context map = new MapContext();
+		List<Tuple2<String, ?>> items = Arrays.asList(entries);
+		populteContext(map, items);
+		return map;
+	}
+
 	public static Context context(Object... entries)
 			throws ContextException {
 		Context cxt = null;
@@ -785,7 +803,7 @@ public class operator {
 
 	public static Signature sig(String operation, Class serviceType)
 			throws SignatureException {
-		return sig(operation, serviceType, new Arg[] {});
+		return sig(operation, serviceType, new Arg[]{});
 	}
 
 	public static ReturnPath returnPath(Arg... args) {
@@ -815,12 +833,15 @@ public class operator {
 			throws SignatureException {
 		String providerName = null;
 		Provision p = null;
+		MapContext mc = null;
 		if (args != null) {
 			for (Object o : args) {
 				if (o instanceof ProviderName) {
 					providerName = Sorcer.getActualName(((ProviderName) o).getName());
 				} else if (o instanceof Provision) {
 					  p = (Provision) o;
+				} else if (o instanceof MapContext) {
+					mc = ((MapContext)o);
 				}
 			}
 		}
@@ -832,7 +853,10 @@ public class operator {
 			sig.setProviderName(providerName);
 		}
         ((ServiceSignature)sig).setName(operation);
-        
+
+		if (mc != null)
+			((ServiceSignature)sig).setMapContext(mc);
+
 		if (p != null)
 			((ServiceSignature)sig).setProvisionable(p);
 		
@@ -1067,6 +1091,10 @@ public class operator {
 		Task task = task(signature, context);
 		task.setName(name);
 		return task;
+	}
+
+	public static Task task(Signature signature) throws SignatureException {
+		return task(signature, null);
 	}
 
 	public static Task task(Signature signature, Context context)

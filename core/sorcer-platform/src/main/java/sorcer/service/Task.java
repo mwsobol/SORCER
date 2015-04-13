@@ -18,7 +18,6 @@
 package sorcer.service;
 
 import net.jini.core.transaction.Transaction;
-import net.jini.core.transaction.TransactionException;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.exertion.NetTask;
 import sorcer.core.exertion.ObjectTask;
@@ -82,13 +81,15 @@ public class Task extends ServiceExertion {
 	
 	public Task(Signature signature, Context context) {
 		addSignature(signature);
-		dataContext = (ServiceContext)context;
+		if (context != null)
+			dataContext = (ServiceContext)context;
 	}
 	
 	public Task(String name, Signature signature, Context context) {
 		this(name);
 		addSignature(signature);
-		dataContext = (ServiceContext)context;
+		if (context != null)
+			dataContext = (ServiceContext)context;
 	}
 	
 	public Task(String name, String description) {

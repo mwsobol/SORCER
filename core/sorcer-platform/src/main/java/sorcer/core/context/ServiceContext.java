@@ -39,10 +39,8 @@ import sorcer.core.signature.NetSignature;
 import sorcer.eo.operator;
 import sorcer.security.util.SorcerPrincipal;
 import sorcer.service.*;
-import sorcer.service.Exec.State;
 import sorcer.service.Signature.Direction;
 import sorcer.service.Signature.ReturnPath;
-import sorcer.service.ProviderInfo;
 import sorcer.util.SorcerUtil;
 
 import java.net.MalformedURLException;
@@ -166,6 +164,9 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 
 	// dependency management for this Context
 	protected List<Evaluation> dependers = new ArrayList<Evaluation>();
+
+	// mapping from paths of this context to input paths of requestors
+	protected Context mapContext;
 
     protected Map<String, List<String>> dependentPaths;
     
@@ -2198,7 +2199,7 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 	public ServiceContext setArgs(Object... args) throws ContextException {
 		if (argsPath == null) 
 			argsPath = Context.PARAMETER_VALUES;
-		putInValue(argsPath, (T)args);
+		putInValue(argsPath, (T) args);
 		return this;
 	}
 
@@ -3009,9 +3010,9 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
     @Override
     public Context getResponses(Arg... args) throws ContextException, RemoteException {
         return getMergedSubcontext(responsePaths, args);
-    } 
-    
-    public Context getResponses(String path, String... paths) throws ContextException, RemoteException {
+    }
+
+	public Context getResponses(String path, String... paths) throws ContextException, RemoteException {
         return getMergedSubcontext(Arrays.asList(paths));
     }
     
@@ -3336,7 +3337,16 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 		return true;
 	}
 
-    public Map<String, List<String>> getDependentPaths() {
+	@Override
+	public Context getMapContext(Arg... args) throws ContextException, RemoteException {
+		return mapContext;
+	}
+
+	public void setMapContext(Context mapContext) {
+		this.mapContext = mapContext;
+	}
+
+	public Map<String, List<String>> getDependentPaths() {
         if (dependentPaths == null) {
             dependentPaths = new HashMap<String, List<String>>();
         }
