@@ -49,7 +49,6 @@ public class SorcerResolvingLoader extends RMIClassLoaderSpi {
      * has it's classpath resolved from an artifact, that the artifact URL is passed back instead of the resolved
      * (local) classpath.
      */
-    private final Map<String, String> classAnnotationMap = new ConcurrentHashMap<String, String>();
     private static final Resolver resolver;
     private static final Logger logger = LoggerFactory.getLogger(SorcerResolvingLoader.class);
     private static final Map<String, Class<?>> primitiveTypes =
@@ -85,11 +84,9 @@ public class SorcerResolvingLoader extends RMIClassLoaderSpi {
                     codebase, name, defaultLoader == null ? "NULL" : defaultLoader.getClass().getName());
         }
         String resolvedCodebase = resolveCodebase(codebase);
-        if (codebase != null && codebase.startsWith("artifact:") && classAnnotationMap.get(name) == null) {
-            classAnnotationMap.put(name, codebase);
-            logger.trace("class: {}, codebase: {}, size now {}", name, codebase, classAnnotationMap.size());
+        if (logger.isTraceEnabled()) {
+            logger.trace("Load class {} using codebase {}, resolved to {}", name, codebase, resolvedCodebase);
         }
-        logger.trace("Load class {} using codebase {}, resolved to {}", name, codebase, resolvedCodebase);
         try {
             Class primitive = primitiveTypes.get(name);
             if (primitive!=null)
@@ -106,28 +103,44 @@ public class SorcerResolvingLoader extends RMIClassLoaderSpi {
     public Class<?> loadProxyClass(final String codebase,
                                    final String[] interfaces,
                                    final ClassLoader defaultLoader) throws MalformedURLException, ClassNotFoundException {
-
-        logger.trace("codebase: {}, interfaces: {}, defaultLoader: {}", codebase, interfaces, defaultLoader);
+        if(logger.isTraceEnabled()) {
+            logger.trace("Load proxy classes {}, with codebase {}, defaultLoader {}",
+                    Arrays.toString(interfaces), codebase, defaultLoader==null?"NULL":defaultLoader.getClass().getName());
+        }
         String resolvedCodebase = resolveCodebase(codebase);
-        logger.trace("Load proxy classes {} using codebase {}, resolved to {}, defaultLoader: {}",
-                interfaces, codebase, resolvedCodebase, defaultLoader);
-        return loader.loadProxyClass(resolvedCodebase, interfaces, defaultLoader);
+        Class<?> proxyClass = loader.loadProxyClass(resolvedCodebase, interfaces, defaultLoader);
+        if(logger.isDebugEnabled()) {
+            logger.debug("Proxy classes {} loaded by {}", Arrays.toString(interfaces), proxyClass.getClassLoader());
+        }
+        return proxyClass;
     }
 
     @Override
     public ClassLoader getClassLoader(String codebase) throws MalformedURLException {
-        if (logger.isTraceEnabled()) {
-            logger.trace("codebase: {}", codebase);
-        }
         String resolvedCodebase = resolveCodebase(codebase);
-        return loader.getClassLoader(resolvedCodebase);
+        ClassLoader classLoader = loader.getClassLoader(resolvedCodebase);
+        if(logger.isTraceEnabled()) {
+            logger.trace("ClassLoader for codebase {}, resolved as {} is {}", codebase, resolvedCodebase, classLoader);
+        }
+        return classLoader;
     }
 
     @Override
     public String getClassAnnotation(final Class<?> aClass) {
-        String annotation = classAnnotationMap.get(aClass.getName());
-        if (annotation == null)
-            annotation = loader.getClassAnnotation(aClass);
+        String loaderAnnotation = loader.getClassAnnotation(aClass);
+        String artifact = null;
+        if(loaderAnnotation!=null) {
+            for(Map.Entry<String, Set<String>> entry : artifactToCodebase.entrySet()) {
+                String resolvedCodebase = join(entry.getValue(), CODEBASE_SEPARATOR);
+                if(resolvedCodebase.equals(loaderAnnotation)) {
+                    artifact = entry.getKey();
+                    break;
+                }
+            }
+        }
+        String annotation = artifact==null?loaderAnnotation:artifact;
+        if(logger.isDebugEnabled())
+            logger.debug("Annotation for {} is {}", aClass.getName(), annotation);
         return annotation;
     }
 
@@ -158,10 +171,7 @@ public class SorcerResolvingLoader extends RMIClassLoaderSpi {
                         }
                     }
                     jarsSet.addAll(adaptedCodebase);
-                } else if (artf != null && artf.startsWith("mvn")) {
-                    logger.info("This should never occur codebase should not be published as mvn:// url: " + artf);
-                    jarsSet.add(artf);
-                } else
+                } else if (artf!=null)
                     jarsSet.add(artf);
 
             }
@@ -171,10 +181,6 @@ public class SorcerResolvingLoader extends RMIClassLoaderSpi {
     private String[] doResolve(String artifact) throws ResolverException {
         String path = artifact.substring(artifact.indexOf(":") + 1);
         ArtifactURLConfiguration artifactURLConfiguration = new ArtifactURLConfiguration(path);
-        for (RemoteRepository rr : artifactURLConfiguration.getRepositories()) {
-            rr.setSnapshotChecksumPolicy(RemoteRepository.CHECKSUM_POLICY_IGNORE);
-            rr.setReleaseChecksumPolicy(RemoteRepository.CHECKSUM_POLICY_IGNORE);
-        }
         //TODO Resolver error
         String[] cp = null;
         int tries = 0;
