@@ -164,9 +164,11 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 	private void initExecState() {
 		Exec.State state = exertion.getControlContext().getExecState();
 		if (state == State.INITIAL) {
-			for (Exertion e : exertion.getAllExertions()) {
-				if (((ControlContext)e.getControlContext()).getExecState() == State.INITIAL) { ;
-					((ServiceExertion)e).setStatus(Exec.INITIAL);
+			for (Mogram e : exertion.getAllExertions()) {
+				if (e instanceof Exertion) {
+					if (((ControlContext) ((Exertion)e).getControlContext()).getExecState() == State.INITIAL) {
+						((ServiceExertion) e).setStatus(Exec.INITIAL);
+					}
 				}
 			}
 		}
@@ -431,18 +433,18 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 	
 	public static Exertion postProcessExertion(Exertion exertion)
 			throws ContextException, RemoteException {
-		List<Exertion> exertions = exertion.getAllExertions();
-		for (Exertion xrt : exertions) {
-			List<Setter> ps = ((ServiceExertion) xrt).getPersisters();
+		List<Mogram> mograms = exertion.getAllExertions();
+		for (Mogram mogram : mograms) {
+			List<Setter> ps = ((ServiceExertion) mogram).getPersisters();
 			if (ps != null) {
 				for (Setter p : ps) {
 					if (p != null && (p instanceof Par) && ((Par) p).isMappable()) {
 						String from = (String) ((Par) p).getName();
 						Object obj = null;
-						if (xrt instanceof Job)
-							obj = ((Job) xrt).getJobContext().getValue(from);
+						if (mogram instanceof Job)
+							obj = ((Job) mogram).getJobContext().getValue(from);
 						else {
-							obj = xrt.getContext().getValue(from);
+							obj = ((Exertion)mogram).getContext().getValue(from);
 						}
 						
 						if (obj != null)

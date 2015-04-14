@@ -171,7 +171,7 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
 //			cxt.putValue(cxt.getReturnPath().path, cxt.getReturnValue()); 
 	}
 
-    protected List<Exertion> getInputExertions() {
+    protected List<Mogram> getInputExertions() {
         return xrt.getExertions();
 	}
 }

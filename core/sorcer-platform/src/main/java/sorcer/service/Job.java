@@ -73,7 +73,7 @@ public class Job extends ServiceExertion implements CompoundExertion {
 	/**
 	 * Component exertions of this job (the Composite Design pattern)
 	 */
-	protected List<Exertion> exertions = new ArrayList<Exertion>();
+	protected List<Mogram> exertions = new ArrayList<Mogram>();
 
 	protected Job delegate;
 	
@@ -85,7 +85,7 @@ public class Job extends ServiceExertion implements CompoundExertion {
 	 */
 	public Job() {
 		super();
-		exertions = new ArrayList<Exertion>();
+		exertions = new ArrayList<Mogram>();
 		// exertions = Collections.synchronizedList(new ArrayList<Exertion>());
 		init();
 	}
@@ -158,15 +158,15 @@ public class Job extends ServiceExertion implements CompoundExertion {
 	}
 	
 	public boolean hasChild(String childName) {
-		for (Exertion ext : exertions) {
+		for (Mogram ext : exertions) {
 			if (ext.getName().equals(childName))
 				return true;
 		}
 		return false;
 	}
 
-	public Exertion getChild(String childName) {
-		for (Exertion ext : exertions) {
+	public Mogram getChild(String childName) {
+		for (Mogram ext : exertions) {
 			if (ext.getName().equals(childName))
 				return ext;
 		}
@@ -229,7 +229,7 @@ public class Job extends ServiceExertion implements CompoundExertion {
 	 * @see sorcer.service.Exertion#addExertion(sorcer.service.Exertion)
 	 */
 	@Override
-	public Exertion addExertion(Exertion ex) throws ExertionException {
+	public Exertion addExertion(Mogram ex) throws ExertionException {
 		exertions.add(ex);
 		((ServiceExertion) ex).setIndex(exertions.indexOf(ex));
 		try {
@@ -241,16 +241,16 @@ public class Job extends ServiceExertion implements CompoundExertion {
 		return this;
 	}
 
-	public void addExertions(List<Exertion> exertions) {
+	public void addExertions(List<Exertion> Mogram) {
 		if (this.exertions != null)
 			this.exertions.addAll(exertions);
 		else {
-			this.exertions = new ArrayList<Exertion>();
+			this.exertions = new ArrayList<Mogram>();
 			this.exertions.addAll(exertions);
 		}
 	}
 
-	public void setExertions(List<Exertion> exertions) {
+	public void setExertions(List<Mogram> exertions) {
 		this.exertions = exertions;
 
 	}
@@ -320,7 +320,7 @@ public class Job extends ServiceExertion implements CompoundExertion {
 				}
 			}
 			if (exertions.size() > 0) {
-				for (Exertion ex : exertions) {
+				for (Mogram ex : exertions) {
 					delegate.addExertion(ex);
 				}
 			}
@@ -436,12 +436,12 @@ public class Job extends ServiceExertion implements CompoundExertion {
 	 * 
 	 * @return all component exertions
 	 */
-	public List<Exertion> getExertions() {
+	public List<Mogram> getExertions() {
 		return exertions;
 	}
 
-	public List<Exertion> getExertions(List<Exertion> exs) {
-		for (Exertion e : exertions)
+	public List<Mogram> getExertions(List<Mogram> exs) {
+		for (Mogram e : exertions)
 			((ServiceExertion) e).getExertions(exs);
 		exs.add(this);
 		return exs;
@@ -450,8 +450,8 @@ public class Job extends ServiceExertion implements CompoundExertion {
 	@Override
 	public List<ThrowableTrace> getExceptions() {
 		List<ThrowableTrace> exceptions = new ArrayList<ThrowableTrace>();
-		for (Exertion ext : exertions) {
-			exceptions.addAll(ext.getExceptions());
+		for (Mogram ext : exertions) {
+			exceptions.addAll(((Exertion)ext).getExceptions());
 		}
 		return exceptions;
 	}
@@ -476,7 +476,7 @@ public class Job extends ServiceExertion implements CompoundExertion {
 		return true;
 	}
 
-	public Exertion getExertion(int index) {
+	public Mogram getExertion(int index) {
 		return exertions.get(index);
 	}
 	
@@ -500,7 +500,7 @@ public class Job extends ServiceExertion implements CompoundExertion {
 
 	@Override
 	public Context linkContext(Context context, String path) {
-		Exertion ext;
+		Mogram ext;
 		for (int i = 0; i < size(); i++) {
 			ext = exertions.get(i);
 			try {
@@ -514,7 +514,7 @@ public class Job extends ServiceExertion implements CompoundExertion {
 	
 	@Override
 	public Context linkControlContext(Context context, String path) {
-		Exertion ext;
+		Mogram ext;
 		for (int i = 0; i < size(); i++) {
 			ext = exertions.get(i);
 			try {
@@ -537,7 +537,7 @@ public class Job extends ServiceExertion implements CompoundExertion {
 			attributes = attributes1;
 		}
 		String last = attributes[0];
-		Exertion exti = this;
+		Mogram exti = this;
 		for (String attribute : attributes) {
 			if (((ServiceExertion) exti).hasChild(attribute)) {
 				exti = ((Job) exti).getChild(attribute);
@@ -552,7 +552,7 @@ public class Job extends ServiceExertion implements CompoundExertion {
 		int index = path.indexOf(last);
 		String contextPath = path.substring(index + last.length() + 1);
 
-		return exti.getContext().getValue(contextPath);
+		return ((Exertion)exti).getContext().getValue(contextPath);
 	}
 	
 	/* (non-Javadoc)
@@ -591,7 +591,7 @@ public class Job extends ServiceExertion implements CompoundExertion {
 		Exertion exti = this;
 		for (String attribute : attributes) {
 			if (((ServiceExertion) exti).hasChild(attribute)) {
-				exti = ((Job) exti).getChild(attribute);
+				exti = (Exertion)((Job) exti).getChild(attribute);
 				if (exti instanceof Task) {
 					last = attribute;
 					break;
@@ -653,7 +653,7 @@ public class Job extends ServiceExertion implements CompoundExertion {
 		Exertion exti = this;
 		for (String attribute : attributes) {
 			if (((ServiceExertion) exti).hasChild(attribute)) {
-				exti = ((CompoundExertion) exti).getChild(attribute);
+				exti = (Exertion)((CompoundExertion) exti).getChild(attribute);
 				if (exti instanceof Task) {
 					break;
 				}
@@ -676,7 +676,7 @@ public class Job extends ServiceExertion implements CompoundExertion {
 	}
 	
 	public void reset(int state) {
-		for(Exertion e : exertions)
+		for(Mogram e : exertions)
 			((ServiceExertion)e).reset(state);
 		
 		this.setStatus(state);

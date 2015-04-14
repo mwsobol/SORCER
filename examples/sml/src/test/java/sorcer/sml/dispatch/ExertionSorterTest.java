@@ -10,10 +10,7 @@ import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.provider.impl.SubtractorImpl;
 import sorcer.core.dispatch.ExertionSorter;
 import sorcer.core.provider.rendezvous.ServiceJobber;
-import sorcer.service.Exertion;
-import sorcer.service.Job;
-import sorcer.service.Strategy;
-import sorcer.service.Task;
+import sorcer.service.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,8 +40,8 @@ public class ExertionSorterTest {
             System.out.print("T " + topXrt.getName() + " ");
         else {
             System.out.println("J " + topXrt.getName() + " {");
-            for (Exertion xrt : topXrt.getExertions()) {
-                printAllExertions(xrt);
+            for (Mogram xrt : topXrt.getExertions()) {
+                printAllExertions((Exertion)xrt);
             }
             System.out.println(" }");
         }
@@ -162,7 +159,7 @@ public class ExertionSorterTest {
         System.out.println("After sorting");
         printAllExertions(es.getSortedJob());
         Assert.assertEquals(Strategy.Flow.SEQ, es.getSortedJob().getFlowType());
-        Assert.assertEquals(Strategy.Flow.PAR, es.getSortedJob().getExertion("j2").getFlowType());
+        Assert.assertEquals(Strategy.Flow.PAR, ((Exertion)es.getSortedJob().getExertion("j2")).getFlowType());
 
     }
 
@@ -174,7 +171,7 @@ public class ExertionSorterTest {
         ExertionSorter es = new ExertionSorter(job);
         System.out.println("After sorting");
         printAllExertions(es.getSortedJob());
-        Assert.assertEquals(Strategy.Flow.PAR, es.getSortedJob().getExertion("j2").getFlowType());
+        Assert.assertEquals(Strategy.Flow.PAR, ((Exertion)es.getSortedJob().getExertion("j2")).getFlowType());
     }
 
     @Test

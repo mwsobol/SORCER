@@ -195,7 +195,10 @@ public class Signatures {
 				inEnt("y2", 80.0),
 				result("result/y"));
 
-		Context out = mapContext(inEnt("y1", "arg/x1"), inEnt("y2", "arg/x2"));
+		Context out = mapContext(
+				inEnt("y1", "arg/x1"),
+				inEnt("y2", "arg/x2"));
+
 		Signature ps = sig("add", Adder.class, prvName("Adder"), out);
 
 		// request the remote service

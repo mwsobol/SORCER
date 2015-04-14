@@ -23,15 +23,9 @@ import java.util.List;
 
 import net.jini.core.transaction.Transaction;
 import sorcer.core.context.ThrowableTrace;
-import sorcer.service.Condition;
-import sorcer.service.Conditional;
+import sorcer.service.*;
 //import sorcer.service.Condition;
-import sorcer.service.ConditionalExertion;
-import sorcer.service.Exertion;
-import sorcer.service.ExertionException;
-import sorcer.service.Signature;
-import sorcer.service.SignatureException;
-import sorcer.service.Task;
+
 
 /**
  * The loop Exertion executes its target exertion while its condition is true.
@@ -40,7 +34,6 @@ import sorcer.service.Task;
  * 
  * @author Mike Sobolewski
  * 
- * @param <V>
  */
 public class LoopExertion extends Task implements ConditionalExertion {
 
@@ -58,7 +51,7 @@ public class LoopExertion extends Task implements ConditionalExertion {
 	 * Loop: while(true) { operand }
 	 * 
 	 * @param name
-	 * @param var
+	 * @param exertion
 	 */
 	public LoopExertion(String name, Exertion exertion) {
 		super(name);
@@ -72,7 +65,7 @@ public class LoopExertion extends Task implements ConditionalExertion {
 	 * @param name
 	 * @param min
 	 * @param max
-	 * @param var
+	 * @param exertion
 	 */
 	public LoopExertion(String name, int min, int max, Exertion exertion) {
 		super(name);
@@ -86,7 +79,7 @@ public class LoopExertion extends Task implements ConditionalExertion {
 	 * 
 	 * @param name
 	 * @param condition
-	 * @param var
+	 * @param exertion
 	 */
 	public LoopExertion(String name, Condition condition, Exertion exertion) {
 		super(name);
@@ -102,7 +95,7 @@ public class LoopExertion extends Task implements ConditionalExertion {
 	 * @param min
 	 * @param max
 	 * @param condition
-	 * @param var
+	 * @param invoker
 	 */
 	public LoopExertion(String name, int min, int max, Condition condition,
 			Exertion invoker) {
@@ -181,7 +174,7 @@ public class LoopExertion extends Task implements ConditionalExertion {
 		return exceptions;
 	}
 	
-	public List<Exertion> getExertions(List<Exertion> exs) {
+	public List<Mogram> getExertions(List<Mogram> exs) {
 		exs.add(target);
 		exs.add(this);
 		return exs;

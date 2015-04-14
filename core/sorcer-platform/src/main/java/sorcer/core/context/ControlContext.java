@@ -426,23 +426,6 @@ public class ControlContext extends ServiceContext<Object> implements Strategy, 
 			addAttributeValue(exertion, GET_EXEC_TIME, FALSE);
 	}
 
-	public boolean isExecTimeRequested(Exertion exertion)
-			throws ContextException {
-		boolean result;
-		try {
-			String b = getAttributeValue(exertion, GET_EXEC_TIME);
-			result = TRUE.equals(b);
-		} catch (java.lang.ClassCastException ex) {
-			// v04 control context
-			Hashtable table = (Hashtable) metacontext.get(GET_EXEC_TIME);
-			result = ((Boolean) table.get(exertion.getContext().getName()))
-					.booleanValue();
-			// upgrade to v05
-			setExecTimeRequested(exertion, result);
-		}
-		return result;
-	}
-
 	public void setSkipped(Exertion exertion, boolean b) {
 		if (b)
 			addAttributeValue(exertion, SKIPPED_, TRUE);
@@ -517,16 +500,20 @@ public class ControlContext extends ServiceContext<Object> implements Strategy, 
 		return getAttributeValue(ex, NOTIFY_EXEC);
 	}
 
-	public void registerExertion(Exertion ex) throws ContextException {
-		if (ex instanceof Job)
-			put(ex.getControlContext().getName(),
-					((ServiceExertion) ex).getId());
-		else {
-			put(ex.getContext().getName(), ((ServiceExertion) ex).getId());
+	public void registerExertion(Mogram mogram) throws ContextException {
+		if (mogram instanceof Job)
+			put(((Job)mogram).getControlContext().getName(),
+					((ServiceExertion) mogram).getId());
+		else if (mogram instanceof Exertion) {
+			put(((Exertion) mogram).getContext().getName(), mogram.getId());
+		} else {
+			// TODO explain if registration is still needed
+			put(mogram.getName(), mogram.getId());
+			return;
 		}
-		setPriority((Exertion) ex,
-				MAX_PRIORITY - ((ServiceExertion) ex).getIndex());
-		setExecTimeRequested(ex, true);
+		setPriority((Exertion) mogram,
+				MAX_PRIORITY - ((ServiceExertion) mogram).getIndex());
+		setExecTimeRequested(((Exertion)mogram), true);
 	}
 
 	public void deregisterExertion(Job job, Exertion exertion)

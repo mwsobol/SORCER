@@ -438,16 +438,16 @@ public class ServiceContexts {
         logger.info("out: " + out);
         assertTrue(response(out, "add").equals(100.0));
         assertTrue(response(out, "multiply").equals(500.0));
-        assertTrue(response(out, "multiply").equals(400.0));
+        assertTrue(response(out, "subtract").equals(400.0));
 
         logger.info("model: " + m);
 
     }
 
 	@Test
-	public void mogramingBlock() throws Exception {
+	public void modelOutMap() throws Exception {
 
-		Context out = context(inEnt("add", "x1"), inEnt("multiply", "x3"), inEnt("multiply", "x3"));
+		Context outMap = context(inEnt("add", "x1"), inEnt("multiply", "x3"), inEnt("multiply", "x3"));
 
 		Model m = srvModel(
 				inEnt("multiply/x1", 10.0), inEnt("multiply/x2", 50.0),
@@ -461,7 +461,7 @@ public class ServiceContexts {
 
 		addResponse(m, "add", "multiply", "subtract");
 		dependsOn(m, "subtract", paths("multiply", "add"));
-		mapContext(m, out);
+		mapContext(m, outMap);
 
 		Mogram block = block(m, task(sig("multiply", MultiplierImpl.class)));
 	}

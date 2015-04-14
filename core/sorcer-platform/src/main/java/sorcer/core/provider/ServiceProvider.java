@@ -1471,7 +1471,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		while (it.hasNext()) {
 			Map.Entry e = (Map.Entry) it.next();
 			dataContext.putInValue((String) e.getValue(), dataContext.asis((String) e.getKey()));
-			dataContext.remove(e.getKey());
+			dataContext.removePath((String)e.getKey());
 		}
 	}
 

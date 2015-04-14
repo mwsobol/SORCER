@@ -76,7 +76,7 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
     }
 
     @Override
-    protected List<Exertion> getInputExertions() throws ContextException {
+    protected List<Mogram> getInputExertions() throws ContextException {
         if (xrt instanceof Job)
             return Jobs.getInputExertions((Job) xrt);
         else if (xrt instanceof Block)
@@ -89,13 +89,13 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
     public void doExec() throws SignatureException, ExertionException {
         new Thread(disatchGroup, new CollectResultThread(), tName("collect-" + xrt.getName())).start();
 
-        for (Exertion exertion : inputXrts) {
-            logger.info("Calling monSession.init from SpaceParallelDispatcher for: " + exertion.getName());
-            MonitoringSession monSession = MonitorUtil.getMonitoringSession(exertion);
+        for (Mogram mogram : inputXrts) {
+            logger.info("Calling monSession.init from SpaceParallelDispatcher for: " + mogram.getName());
+            MonitoringSession monSession = MonitorUtil.getMonitoringSession((Exertion)mogram);
             if (xrt.isMonitorable() && monSession!=null) {
                 try {
                     if (monSession.getState()==State.INITIAL.ordinal()) {
-                        logger.info("initializing monitoring from SpaceParallelDispatcher for " + exertion.getName());
+                        logger.info("initializing monitoring from SpaceParallelDispatcher for " + mogram.getName());
                         monSession.init(ExertionDispatcherFactory.LEASE_RENEWAL_PERIOD, ExertionDispatcherFactory.DEFAULT_TIMEOUT_PERIOD);
                     }
                 } catch (MonitorException me) {
@@ -104,9 +104,9 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
                     logger.error("Problem starting monitoring for " + xrt.getName() + " " + re.getMessage());
                 }
             }
-            dispatchExertion(exertion);
+            dispatchExertion((Exertion)mogram);
             try {
-                afterExec(exertion);
+                afterExec((Exertion)mogram);
             } catch (ContextException ce) {
                 logger.warn("Problem sending state to monitor");
             }

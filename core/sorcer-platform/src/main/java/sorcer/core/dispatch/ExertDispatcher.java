@@ -47,7 +47,7 @@ abstract public class ExertDispatcher implements Dispatcher {
 
     protected ServiceExertion masterXrt;
 
-    protected List<Exertion> inputXrts;
+    protected List<Mogram> inputXrts;
 
 	protected volatile int state = Exec.INITIAL;
 
@@ -128,7 +128,7 @@ abstract public class ExertDispatcher implements Dispatcher {
     }
 
     abstract protected void doExec() throws SignatureException, ExertionException;
-    abstract protected List<Exertion> getInputExertions() throws ContextException;
+    abstract protected List<Mogram> getInputExertions() throws ContextException;
 
     protected void beforeParent(Exertion exertion) throws ContextException, ExertionException {
         logger.debug("before parent {}", exertion);
@@ -377,8 +377,8 @@ abstract public class ExertDispatcher implements Dispatcher {
             ext.setStatus(INITIAL);
             if (ex instanceof CompoundExertion) {
                 CompoundExertion ce = (CompoundExertion) ex;
-                for (Exertion sub : ce.getExertions())
-                    reconcileInputExertions(sub);
+                for (Mogram sub : ce.getExertions())
+                    reconcileInputExertions((Exertion)sub);
             }
         }
     }

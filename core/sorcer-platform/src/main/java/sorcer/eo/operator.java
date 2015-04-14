@@ -188,7 +188,7 @@ public class operator {
 
 	public static ControlContext control(Exertion exertion, String childName)
 			throws ContextException {
-		return (ControlContext)exertion.getExertion(childName).getControlContext();
+		return (ControlContext)((Exertion)exertion.getExertion(childName)).getControlContext();
 	}
 
 	public static Context cxt(Object... entries) throws ContextException {
@@ -318,7 +318,7 @@ public class operator {
 		if (entries[0] instanceof Exertion) {
 			Exertion xrt = (Exertion) entries[0];
 			if (entries.length >= 2 && entries[1] instanceof String)
-				xrt = ((CompoundExertion) xrt).getComponentExertion((String) entries[1]);
+				xrt = (Exertion)((CompoundExertion) xrt).getComponentExertion((String) entries[1]);
 			return xrt.getDataContext();
 		} else if (entries[0] instanceof Link) {
 			return ((Link)entries[0] ).getContext();
@@ -326,8 +326,8 @@ public class operator {
 			return new PositionalContext((String) entries[0]);
 		} else if (entries.length == 2 && entries[0] instanceof String
 				&& entries[1] instanceof Exertion) {
-			return ((CompoundExertion) entries[1]).getComponentExertion(
-					(String) entries[0]).getContext();
+			return ((Exertion)((CompoundExertion) entries[1]).getComponentExertion(
+					(String) entries[0])).getContext();
 		} else if (entries[0] instanceof Context && entries[1] instanceof List) {
 			return ((ServiceContext)entries[0]).getSubcontext((List)entries[1]);
 		} else if (entries[0] instanceof ServiceModel) {
@@ -963,7 +963,7 @@ public class operator {
 	}
 
 	public static Signature sig(Exertion exertion, String componentExertionName) {
-		Exertion component = exertion.getExertion(componentExertionName);
+		Exertion component = (Exertion)exertion.getExertion(componentExertionName);
 		return component.getProcessSignature();
 	}
 
@@ -1434,8 +1434,8 @@ public class operator {
 
 	public static Object get(Exertion exertion, String component, String path)
 			throws ExertionException {
-		Exertion c = ((Exertion) exertion).getExertion(component);
-		return get((Exertion) c, path);
+		Exertion c = (Exertion) exertion.getExertion(component);
+		return get(c, path);
 	}
 
 	public static <T> T softValue(Context<T> context, String path) throws ContextException {
@@ -1642,16 +1642,16 @@ public class operator {
 		return obj;
 	}
 
-	public static List<Exertion> exertions(Exertion xrt) {
+	public static List<Mogram> exertions(Exertion xrt) {
 		return xrt.getAllExertions();
 	}
 
-	public static Exertion exertion(Exertion xrt, String componentExertionName) {
+	public static Mogram exertion(Exertion xrt, String componentExertionName) {
 		return xrt.getComponentExertion(componentExertionName);
 	}
 
-	public static List<String> trace(Exertion xrt) {
-		return ((ControlContext) xrt.getControlContext()).getTrace();
+	public static List<String> trace(Mogram xrt) {
+		return ((ControlContext) ((Exertion)xrt).getControlContext()).getTrace();
 	}
 
 	public static void print(Object obj) {
@@ -2475,13 +2475,13 @@ public class operator {
 	}
 
 	public static Block block(Object...  items) throws ExertionException {
-		List<Exertion> exertions = new ArrayList<Exertion>();
+		List<Mogram> mograms = new ArrayList<Mogram>();
 		String name = null;
 		Signature sig = null;
 		Context context = null;
 		for (int i = 0; i < items.length; i++) {
 			if (items[i] instanceof Exertion) {
-				exertions.add((Exertion) items[i]);
+				mograms.add((Exertion) items[i]);
 			} else if (items[i] instanceof Context) {
 				context = (Context)items[i];
 			} else if (items[i] instanceof Signature) {
@@ -2505,7 +2505,7 @@ public class operator {
 
 			if (context != null)
 				block.setContext(context);
-			for (Exertion e :exertions)
+			for (Mogram e :mograms)
 				block.addExertion(e);
 		} catch (Exception se) {
 			throw new ExertionException(se);
@@ -2526,7 +2526,7 @@ public class operator {
 				pm.append(cxt);
 				block.setContext(pm);
 			}
-			for (Exertion e : exertions) {
+			for (Mogram e : mograms) {
 				if (e instanceof AltExertion) {
 					List<OptExertion> opts = ((AltExertion) e).getOptExertions();
 					for (OptExertion oe : opts) {

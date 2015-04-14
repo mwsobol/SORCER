@@ -113,7 +113,7 @@ public interface Exertion extends Mogram, Dependency, Invocation<Object>, Evalua
 	 * @return an added component exertion
 	 * @throws ContextException 
 	 */
-	public Exertion addExertion(Exertion component) throws ExertionException;
+	public Exertion addExertion(Mogram component) throws ExertionException;
 	
 	/**
 	 * Returns a data service context (service data) of this exertion to be
@@ -136,7 +136,7 @@ public interface Exertion extends Mogram, Dependency, Invocation<Object>, Evalua
 	/**
 	 * Returns a component exertion at a given path.
 	 */
-	public Exertion getComponentExertion(String path);
+	public Mogram getComponentExertion(String path);
 	
 	/**
 	 * Returns a value associated with a path (key) in this exertion's context.
@@ -264,19 +264,19 @@ public interface Exertion extends Mogram, Dependency, Invocation<Object>, Evalua
 	 * Returns a component exertion with a given name.
 	 * @return Exertion list
 	 */ 
-	public Exertion getExertion(String name);
+	public Mogram getExertion(String name);
 
 	/**
 	 * Returns the list of direct component exertions.
 	 * @return Exertion list
 	 */ 
-	public List<Exertion> getExertions();
+	public List<Mogram> getExertions();
 	
 	/**
 	 * Returns the list of all nested component exertions/
 	 * @return Exertion list
 	 */ 
-	public List<Exertion> getAllExertions();
+	public List<Mogram> getAllExertions();
 	
 	/**
 	 * Returns <code>true</code> if this exertion should be monitored for its

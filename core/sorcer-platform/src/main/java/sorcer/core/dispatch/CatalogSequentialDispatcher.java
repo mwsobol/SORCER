@@ -63,18 +63,18 @@ public class CatalogSequentialDispatcher extends CatalogExertDispatcher {
 
             xrt.startExecTime();
             Context previous = null;
-            for (Exertion exertion: inputXrts) {
+            for (Mogram mogram: inputXrts) {
 
                 // Added for Blocks
                 if (xrt.isBlock()) {
                     try {
-                        ((ServiceContext) exertion.getContext()).setBlockScope(xrt.getContext());
+                        ((ServiceContext) ((Exertion)mogram).getContext()).setBlockScope(xrt.getContext());
                     } catch (ContextException ce) {
                         throw new ExertionException(ce);
                     }
                 }
 
-                ServiceExertion se = (ServiceExertion) exertion;
+                ServiceExertion se = (ServiceExertion) mogram;
                 // support for continuous pre and post execution of task
                 // signatures
                 if (previous != null && se.isTask() && ((Task) se).isContinous())
@@ -82,7 +82,7 @@ public class CatalogSequentialDispatcher extends CatalogExertDispatcher {
 
                 dispatchExertion(se);
                 try {
-                    previous = exertion.getContext();
+                    previous = se.getContext();
                 } catch (ContextException e) {
                     throw new ExertionException(e);
                 }
@@ -132,7 +132,7 @@ public class CatalogSequentialDispatcher extends CatalogExertDispatcher {
         }
     }
 
-    protected List<Exertion> getInputExertions() throws ContextException {
+    protected List<Mogram> getInputExertions() throws ContextException {
         return Jobs.getInputExertions(((Job) xrt));
     }
 }

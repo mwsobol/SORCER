@@ -36,10 +36,7 @@ import sorcer.core.context.Contexts;
 import sorcer.core.context.ThrowableTrace;
 import sorcer.core.context.node.ContextNode;
 import sorcer.netlet.ScriptExerter;
-import sorcer.service.ContextException;
-import sorcer.service.Exertion;
-import sorcer.service.Job;
-import sorcer.service.ServiceExertion;
+import sorcer.service.*;
 import sorcer.tools.shell.INetworkShell;
 import sorcer.tools.shell.NetworkShell;
 import sorcer.tools.shell.ShellCmd;
@@ -286,7 +283,7 @@ public class ExertCmd extends ShellCmd {
 
     public static List<String> getAllExertionIdFromExertion(Exertion xrt) {
         List<String> xrtIdsList = new ArrayList<String>();
-        for (Exertion exertion : xrt.getAllExertions()) {
+        for (Mogram exertion : xrt.getAllExertions()) {
             xrtIdsList.add(exertion.getId().toString());
         }
         return xrtIdsList;

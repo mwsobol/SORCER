@@ -42,7 +42,7 @@ import java.util.Set;
  */
 public abstract class Block extends ServiceExertion implements CompoundExertion {
 
-	private List<Exertion> exertions = new ArrayList<Exertion>();
+	private List<Mogram> exertions = new ArrayList<Mogram>();
 	
 	private URL contextURL;
 	
@@ -79,7 +79,7 @@ public abstract class Block extends ServiceExertion implements CompoundExertion 
 	 * @see sorcer.service.Exertion#addExertion(sorcer.service.Exertion)
 	 */
 	@Override
-	public Exertion addExertion(Exertion ex) throws ExertionException {
+	public Exertion addExertion(Mogram ex) throws ExertionException {
 		exertions.add(ex);
 		((ServiceExertion) ex).setIndex(exertions.indexOf(ex));
 		try {
@@ -91,7 +91,7 @@ public abstract class Block extends ServiceExertion implements CompoundExertion 
 		return this;
 	}
 
-	public void setExertions(List<Exertion> exertions) {
+	public void setExertions(List<Mogram> exertions) {
 		this.exertions = exertions;
 	}
 
@@ -126,11 +126,11 @@ public abstract class Block extends ServiceExertion implements CompoundExertion 
 	 * @see sorcer.service.Exertion#getExertions()
 	 */
 	@Override
-	public List<Exertion> getExertions() {
+	public List<Mogram> getExertions() {
 		return exertions;
 	}
 
-	public List<Exertion> getAllExertions() {
+	public List<Mogram> getAllExertions() {
 		return exertions;
 	}
 	
@@ -178,8 +178,8 @@ public abstract class Block extends ServiceExertion implements CompoundExertion 
 	 * @see sorcer.service.ServiceExertion#getExertions(java.util.List)
 	 */
 	@Override
-	public List<Exertion> getExertions(List<Exertion> exs) {
-		for (Exertion e : exertions)
+	public List<Mogram> getExertions(List<Mogram> exs) {
+		for (Mogram e : exertions)
 			((ServiceExertion) e).getExertions(exs);
 		exs.add(this);
 		return exs;
@@ -233,22 +233,22 @@ public abstract class Block extends ServiceExertion implements CompoundExertion 
 	}
 	
 	public boolean hasChild(String childName) {
-		for (Exertion ext : exertions) {
+		for (Mogram ext : exertions) {
 			if (ext.getName().equals(childName))
 				return true;
 		}
 		return false;
 	}
 
-	public Exertion getChild(String childName) {
-		for (Exertion ext : exertions) {
+	public Mogram getChild(String childName) {
+		for (Mogram ext : exertions) {
 			if (ext.getName().equals(childName))
 				return ext;
 		}
 		return null;
 	}
 
-	public Exertion getComponentExertion(String path) {
+	public Mogram getComponentExertion(String path) {
 		// TODO
 		return getChild(path);
 	}
@@ -268,7 +268,7 @@ public abstract class Block extends ServiceExertion implements CompoundExertion 
 			attributes = attributes1;
 		}
 		String last = attributes[0];
-		Exertion exti = this;
+		Mogram exti = this;
 		for (String attribute : attributes) {
 			if (((ServiceExertion) exti).hasChild(attribute)) {
 				exti = ((CompoundExertion) exti).getChild(attribute);
@@ -282,12 +282,12 @@ public abstract class Block extends ServiceExertion implements CompoundExertion 
 		}
 		int index = path.indexOf(last);
 		String contextPath = path.substring(index + last.length() + 1);
-		exti.getContext().putValue(contextPath, value);
+		((Exertion)exti).getContext().putValue(contextPath, value);
 		return value;
 	}
 	
 	public void reset(int state) {
-		for(Exertion e : exertions)
+		for(Mogram e : exertions)
 			((ServiceExertion)e).reset(state);
 		
 		this.setStatus(state);
@@ -326,8 +326,8 @@ public abstract class Block extends ServiceExertion implements CompoundExertion 
 	}
 	
 	private void updateConditions() throws ContextException {
-		for (Exertion e : exertions) {
-			if (e.isConditional()) {
+		for (Mogram e : exertions) {
+			if (e instanceof Exertion && ((Exertion)e).isConditional()) {
 				if (e instanceof OptExertion) { 
 					((OptExertion)e).getCondition().getConditionalContext().append(dataContext);
 				} else if (e instanceof LoopExertion) {

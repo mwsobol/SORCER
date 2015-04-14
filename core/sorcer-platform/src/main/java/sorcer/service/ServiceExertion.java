@@ -275,11 +275,11 @@ public abstract class ServiceExertion implements Exertion, Scopable, SorcerConst
             substitute(entries);
             if (context != null) {
                 if (((ServiceContext) context).isLinked()) {
-                    List<Exertion> exts = getAllExertions();
-                    for (Exertion e : exts) {
+                    List<Mogram> exts = getAllExertions();
+                    for (Mogram e : exts) {
                         Object link = context.getLink(e.getName());
                         if (link instanceof ContextLink) {
-                            e.getContext().append(
+                            ((Exertion)e).getContext().append(
                                     ((ContextLink) link).getContext());
                         }
                     }
@@ -479,7 +479,7 @@ public abstract class ServiceExertion implements Exertion, Scopable, SorcerConst
     }
 
     public void selectComponentFidelity(ComponentSelectionFidelity componetFiInfo) throws ExertionException {
-        Exertion ext = getComponentExertion(componetFiInfo.getPath());
+        Exertion ext = (Exertion)getComponentExertion(componetFiInfo.getPath());
         String fn = componetFiInfo.getName();
         if (ext != null && ext.getFidelity() != null
                 && fidelities.containsKey(componetFiInfo.getName())) {
@@ -750,7 +750,7 @@ public abstract class ServiceExertion implements Exertion, Scopable, SorcerConst
     public void setSessionId(Uuid id) {
         sessionId = id;
         if (this instanceof Job) {
-            List<Exertion> v = ((Job) this).getExertions();
+            List<Mogram> v = ((Job) this).getExertions();
             for (int i = 0; i < v.size(); i++) {
                 ((ServiceExertion) v.get(i)).setSessionId(id);
             }
@@ -1105,8 +1105,8 @@ public abstract class ServiceExertion implements Exertion, Scopable, SorcerConst
         return info.toString();
     }
 
-    public List<Exertion> getAllExertions() {
-        List<Exertion> exs = new ArrayList<Exertion>();
+    public List<Mogram> getAllExertions() {
+        List<Mogram> exs = new ArrayList<Mogram>();
         getExertions(exs);
         return exs;
     }
@@ -1189,19 +1189,19 @@ public abstract class ServiceExertion implements Exertion, Scopable, SorcerConst
 
     public List<Signature> getAllSignatures() {
         List<Signature> allSigs = new ArrayList<Signature>();
-        List<Exertion> allExertions = getAllExertions();
-        for (Exertion e : allExertions) {
-            allSigs.add(e.getProcessSignature());
+        List<Mogram> allExertions = getAllExertions();
+        for (Mogram e : allExertions) {
+            allSigs.add(((Exertion)e).getProcessSignature());
         }
         return allSigs;
     }
 
     public List<Signature> getAllTaskSignatures() {
         List<Signature> allSigs = new ArrayList<Signature>();
-        List<Exertion> allExertions = getAllExertions();
-        for (Exertion e : allExertions) {
+        List<Mogram> allExertions = getAllExertions();
+        for (Mogram e : allExertions) {
             if (e instanceof Task)
-                allSigs.add(e.getProcessSignature());
+                allSigs.add(((Exertion)e).getProcessSignature());
         }
         return allSigs;
     }
@@ -1215,17 +1215,17 @@ public abstract class ServiceExertion implements Exertion, Scopable, SorcerConst
         return allDeployments;
     }
 
-    abstract public List<Exertion> getExertions(List<Exertion> exs);
+    abstract public List<Mogram> getExertions(List<Mogram> exs);
 
     public void updateValue(Object value) throws ContextException {
-        List<Exertion> exertions = getAllExertions();
+        List<Mogram> exertions = getAllExertions();
         // logger.info(" value = " + value);
         // logger.info(" this exertion = " + this);
         // logger.info(" exertions = " + exertions);
-        for (Exertion e : exertions) {
-            if (!e.isJob()) {
+        for (Mogram e : exertions) {
+            if (e instanceof Exertion && !((Exertion)e).isJob()) {
                 // logger.info(" exertion i = "+ e.getName());
-                Context cxt = e.getContext();
+                Context cxt = ((Exertion)e).getContext();
                 ((ServiceContext) cxt).updateValue(value);
             }
         }
@@ -1235,10 +1235,10 @@ public abstract class ServiceExertion implements Exertion, Scopable, SorcerConst
         if (name.equals(componentExertionName)) {
             return this;
         } else {
-            List<Exertion> exertions = getAllExertions();
-            for (Exertion e : exertions) {
+            List<Mogram> exertions = getAllExertions();
+            for (Mogram e : exertions) {
                 if (e.getName().equals(componentExertionName)) {
-                    return e;
+                    return (Exertion)e;
                 }
             }
             return null;
@@ -1514,7 +1514,7 @@ public abstract class ServiceExertion implements Exertion, Scopable, SorcerConst
      * @see sorcer.service.Exertion#getComponentExertion(java.lang.String)
      */
     @Override
-    public Exertion getComponentExertion(String path) {
+    public Mogram getComponentExertion(String path) {
         return this;
     }
 

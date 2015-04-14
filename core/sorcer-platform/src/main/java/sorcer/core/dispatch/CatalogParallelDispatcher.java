@@ -25,13 +25,8 @@ import java.util.concurrent.*;
 
 import sorcer.core.exertion.Jobs;
 import sorcer.core.provider.Provider;
-import sorcer.service.Context;
-import sorcer.service.ContextException;
-import sorcer.service.Exertion;
-import sorcer.service.ExertionException;
-import sorcer.service.Job;
-import sorcer.service.ServiceExertion;
-import sorcer.service.SignatureException;
+import sorcer.service.*;
+
 import static sorcer.service.Exec.*;
 
 public class CatalogParallelDispatcher extends CatalogExertDispatcher {
@@ -58,8 +53,9 @@ public class CatalogParallelDispatcher extends CatalogExertDispatcher {
     public void doExec() throws ExertionException,
 			SignatureException {
         List<Future<Exertion>> results = new ArrayList<Future<Exertion>>(inputXrts.size());
-        for (Exertion exertion : inputXrts) {
-            results.add(executor.submit(new ExecExertion(exertion)));
+        for (Mogram mogram : inputXrts) {
+            if (mogram instanceof Exertion)
+                results.add(executor.submit(new ExecExertion((Exertion)mogram)));
 		}
 
         boolean isFailed = false;
@@ -120,7 +116,7 @@ public class CatalogParallelDispatcher extends CatalogExertDispatcher {
 	}
 
     @Override
-    protected List<Exertion> getInputExertions() throws ContextException {
+    protected List<Mogram> getInputExertions() throws ContextException {
         return Jobs.getInputExertions(((Job)xrt));
     }
 

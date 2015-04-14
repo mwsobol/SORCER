@@ -104,10 +104,10 @@ public class Jobs implements SorcerConstants {
 		return cc.isMonitorable();
 	}
 
-	public static List<Exertion> getInputExertions(Job job) throws ContextException {
+	public static List<Mogram> getInputExertions(Job job) throws ContextException {
 		if (job == null || job.size() == 0)
 			return null;
-		List<Exertion> exertions = new ArrayList<Exertion>();
+		List<Mogram> exertions = new ArrayList<Mogram>();
 		Exertion master = job.getMasterExertion();
 		for (int i = 0; i < job.size(); i++)
 			if (!(job.get(i).equals(master) || job

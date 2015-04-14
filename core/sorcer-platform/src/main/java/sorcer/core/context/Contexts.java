@@ -27,11 +27,7 @@ import net.jini.id.Uuid;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.node.ContextNode;
 import sorcer.security.util.SorcerPrincipal;
-import sorcer.service.Context;
-import sorcer.service.ContextException;
-import sorcer.service.Exertion;
-import sorcer.service.Job;
-import sorcer.service.ServiceExertion;
+import sorcer.service.*;
 import sorcer.util.SorcerUtil;
 import sorcer.util.StringUtils;
 //import sorcer.vfe.Var;
@@ -674,7 +670,7 @@ public class Contexts implements SorcerConstants {
 		List allNodes = new ArrayList();
 		List additional = null;
 
-		List<Exertion> exertions = ((Job) job).getExertions();
+		List<Mogram> exertions = ((Job) job).getExertions();
 		for (Object exertion : exertions) {
 			if (exertion instanceof ServiceExertion) {
 				additional = Arrays

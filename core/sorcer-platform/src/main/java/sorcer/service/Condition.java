@@ -219,9 +219,10 @@ import java.util.logging.Logger;
 	
 	static public void cleanupScripts(Exertion exertion) throws ContextException {
 		clenupContextScripts(exertion.getContext());
-		for (Exertion e : exertion.getExertions()) {
-					clenupExertionScripts(e);
-					clenupContextScripts((ServiceContext)e.getContext());
+		for (Mogram e : exertion.getExertions()) {
+			if (e instanceof Exertion)
+					clenupExertionScripts((Exertion)e);
+					clenupContextScripts(((Exertion)e).getContext());
 		}
 	}
 	
@@ -239,7 +240,7 @@ import java.util.logging.Logger;
 			} else if (entry.getValue() instanceof Par
 					&& ((ServiceContext) ((Par) entry.getValue()).getScope())
 							.containsKey(Condition._closure_)) {
-				((ServiceContext) ((Par) entry.getValue()).getScope())
+				(((Par) entry.getValue()).getScope())
 						.remove(Condition._closure_);
 			}
 		}

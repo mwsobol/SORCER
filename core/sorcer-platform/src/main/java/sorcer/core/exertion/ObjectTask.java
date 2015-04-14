@@ -82,7 +82,8 @@ public class ObjectTask extends Task {
 	public ObjectTask(Signature signature, Context context)
 			throws SignatureException {
 		addSignature(signature);
-		this.dataContext = (ServiceContext) context;
+		if (context != null)
+			this.dataContext = (ServiceContext) context;
 	}
 
 	@SuppressWarnings("unchecked")

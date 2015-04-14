@@ -27,7 +27,7 @@ public class ExertionSorter {
     private final Map projectMap;
     private final Map<String, String> contextIdsMap;
     private final Map<String, String> revContextIdsMap;
-    private List<Exertion> sortedProjects = null;
+    private List<Mogram> sortedProjects = null;
     private Exertion topLevelJob;
 
     /**
@@ -75,12 +75,12 @@ public class ExertionSorter {
      * @param sortedSubXrt
      * @return
      */
-    private List<String> addSubExertions(List<Exertion> sortedSubXrt) {
+    private List<String> addSubExertions(List<Mogram> sortedSubXrt) {
         List<String> sortedSubsetIds = new ArrayList<String>();
-        for (Exertion xrt : sortedSubXrt) {
+        for (Mogram xrt : sortedSubXrt) {
             sortedSubsetIds.add(xrt.getId().toString());
-            if (xrt.isJob())
-                sortedSubsetIds.addAll(addSubExertions(xrt.getExertions()));
+            if (xrt instanceof Job)
+                sortedSubsetIds.addAll(addSubExertions(((Job) xrt).getExertions()));
         }
         return sortedSubsetIds;
     }
@@ -93,11 +93,11 @@ public class ExertionSorter {
      * @param sortedSubXrt
      * @return
      */
-    private Strategy.Flow setFlow(Exertion topXrt, List<Exertion> sortedSubXrt) {
+    private Strategy.Flow setFlow(Exertion topXrt, List<Mogram> sortedSubXrt) {
         List<String> sortedSubsetIds = addSubExertions(sortedSubXrt);
 
         int edges = 0;
-        for (Exertion xrt : topXrt.getExertions()) {
+        for (Mogram xrt : topXrt.getExertions()) {
             for (String depId : dag.getParentLabels(xrt.getId().toString())) {
                 if (sortedSubsetIds.contains(depId)) {
                     edges++;
@@ -125,8 +125,8 @@ public class ExertionSorter {
      * @throws CycleDetectedException
      * @throws ContextException
      */
-    private void reorderJob(Exertion topXrt, List<Exertion> sortedExertions) {
-        List<Exertion> sortedSubset = new ArrayList(sortedExertions);
+    private void reorderJob(Exertion topXrt, List<Mogram> sortedExertions) {
+        List<Mogram> sortedSubset = new ArrayList(sortedExertions);
         sortedSubset.retainAll(topXrt.getExertions());
 
         if (topXrt.getFlowType()!=null && topXrt.getFlowType().equals(Strategy.Flow.AUTO)) {
@@ -134,11 +134,11 @@ public class ExertionSorter {
             logger.info("FLOW for exertion: " + topXrt.getName() + " set to: " + topXrt.getFlowType());
         }
         List<String> exertionsBefore = new ArrayList<String>();
-        for (Exertion xrt : topXrt.getExertions())
+        for (Mogram xrt : topXrt.getExertions())
                 exertionsBefore.add(xrt.getName());
 
         List<String> exertionsAfter = new ArrayList<String>();
-        for (Exertion xrt : sortedExertions)
+        for (Mogram xrt : sortedExertions)
             exertionsAfter.add(xrt.getName());
         if (!topXrt.getExertions().equals(sortedSubset)) {
             logger.info("Order of exertions for " + topXrt.getName() + " will be changed: ");
