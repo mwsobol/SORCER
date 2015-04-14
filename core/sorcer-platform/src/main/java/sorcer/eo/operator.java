@@ -1642,8 +1642,11 @@ public class operator {
 		return obj;
 	}
 
-	public static List<Mogram> exertions(Exertion xrt) {
-		return xrt.getAllExertions();
+	public static List<Mogram> exertions(Mogram mogram) {
+		if (mogram instanceof Exertion)
+			return ((Exertion)mogram).getAllExertions();
+		else
+			return null;
 	}
 
 	public static Mogram exertion(Exertion xrt, String componentExertionName) {
