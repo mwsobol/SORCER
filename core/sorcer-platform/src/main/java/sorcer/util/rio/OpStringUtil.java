@@ -54,19 +54,16 @@ public class OpStringUtil {
     }
 
     public static ClassLoader getClassLoader(ServiceElement serviceElement, ClassBundle classBundle, ClassLoader parentCL) throws ResolverException {
-        //String[] classPath = resolver.getClassPathFor(classBundle.getArtifact(), serviceElement.getRemoteRepositories());
-        URL[] urls = ResolverHelper.resolve(classBundle.getArtifact(), ResolverHelper.getResolver(), serviceElement.getRemoteRepositories());
+        URL[] urls = null;
         try {
-            URI[] uris = new URI[urls.length];
-            int i = 0;
-            for (URL url : urls) {
-                uris[i] = new URI(url.toString());
-                i++;
+            if (classBundle.getArtifact()!=null)
+                urls = ResolverHelper.resolve(classBundle.getArtifact(), ResolverHelper.getResolver(), serviceElement.getRemoteRepositories());
+            else {
+                urls = classBundle.getJARs();
             }
-            //return new URIClassLoader(SorcerResolverHelper.toURIs(classPath), parentCL);
-            return new URIClassLoader(uris, parentCL);
-        } catch (URISyntaxException e) {
-            throw new IllegalArgumentException(Arrays.toString(urls), e);
+            return new URLClassLoader(urls, parentCL);
+        } catch (MalformedURLException e) {
+            throw new IllegalArgumentException(classBundle.toString(), e);
         }
     }
 }

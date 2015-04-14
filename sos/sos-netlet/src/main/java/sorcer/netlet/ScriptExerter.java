@@ -12,10 +12,8 @@ import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,7 +68,7 @@ public class ScriptExerter {
 
     private Configuration config;
 
-    private List<URL> urlsToLoad = new ArrayList<URL>();
+    private Set<URL> urlsToLoad = new HashSet<URL>();
 
     private boolean debug = false;
 
