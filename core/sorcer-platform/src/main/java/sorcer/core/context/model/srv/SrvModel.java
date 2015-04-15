@@ -15,21 +15,26 @@
  * limitations under the License.
  */
 
-package sorcer.service;
+package sorcer.core.context.model.srv;
 
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
+import sorcer.co.tuple.SignatureEntry;
 import sorcer.core.context.model.par.ParModel;
 import sorcer.core.provider.rendezvous.ServiceModeler;
 import sorcer.core.signature.ServiceSignature;
 import sorcer.eo.operator;
+import sorcer.service.*;
 import sorcer.service.modeling.Model;
 
 import java.rmi.RemoteException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import static sorcer.eo.operator.returnPath;
 import static sorcer.eo.operator.sig;
+import static sorcer.eo.operator.task;
 
 /**
  * A ServiceModel is a schematic description or representation of something, especially a system, 
@@ -42,7 +47,7 @@ import static sorcer.eo.operator.sig;
  *   
  * Created by Mike Sobolewski on 1/29/15.
  */
-public class ServiceModel<T> extends ParModel<T> implements Model {
+public class SrvModel extends ParModel<Object> implements Model {
 
     // service fidelities for this model
     protected Map<String, ServiceFidelity> fidelities;
@@ -53,29 +58,99 @@ public class ServiceModel<T> extends ParModel<T> implements Model {
     // its original name is different if aliasing is used for already
     // existing names 
     protected String selectedFidelitySelector;
-    
-    public ServiceModel() throws SignatureException {
+
+    private ParModel modelScope = new ParModel();
+
+    public SrvModel() throws SignatureException {
         super();
         isModeling = true;
         addSignature(sig("service", ServiceModeler.class));
     }
 
-    public ServiceModel(String name) throws SignatureException {
+    public SrvModel(String name) throws SignatureException {
         super(name);
         isModeling = true;
+        subjectPath = "service/model";
         addSignature(sig("service", ServiceModeler.class));
     }
 
-    public ServiceModel(Signature signature) {
+    public SrvModel(Signature signature) {
         super();
         getFidelity().clear();
         addSignature(signature);
     }
 
-    public ServiceModel(String name, Signature signature) throws SignatureException {
+    public SrvModel(String name, Signature signature) throws SignatureException {
         this(name);
         getFidelity().clear();
         addSignature(signature);
+    }
+
+    public Object getValue(String path, Arg... entries) throws ContextException {
+        Object val = null;
+        try {
+            append(entries);
+
+            if (path != null) {
+                val = get(path);
+            } else {
+                Signature.ReturnPath rp = returnPath(entries);
+                if (rp != null)
+                    val = getReturnValue(rp);
+                else
+                    val = super.getValue(path, entries);
+            }
+
+            if (val instanceof Srv) {
+                if (((Srv) val).asis() instanceof SignatureEntry) {
+                    ServiceSignature sig = (ServiceSignature) ((SignatureEntry) ((Srv) val).asis()).value();
+                    Context out = execSignature(sig);
+                    if (sig.getReturnPath() != null && sig.getReturnPath().path != null) {
+                        return getValue(sig.getReturnPath().path);
+                    } else {
+                        return out;
+                    }
+                } else {
+                    if (((Srv) val).getValue() == Context.none) {
+                        return getValue(((Srv) val).getName());
+                    }
+                }
+            } else {
+                return super.getValue(path, entries);
+            }
+        } catch (Exception e) {
+            throw new EvaluationException(e);
+        }
+        return val;
+    }
+
+    private Context execSignature(Signature sig) throws Exception {
+        String[] ips = sig.getReturnPath().inPaths;
+        String[] ops = sig.getReturnPath().outPaths;
+        execDependencies(sig);
+        Context incxt = this;
+        if (ips != null && ips.length > 0) {
+            incxt = this.getEvaluatedSubcontext(ips);
+        }
+        if (sig.getReturnPath() != null) {
+            incxt.setReturnPath(sig.getReturnPath());
+        }
+        Context outcxt = ((Task) task(sig, incxt).exert()).getContext();
+        if (ops != null && ops.length > 0) {
+            outcxt = outcxt.getSubcontext(ops);
+        }
+        this.appendInOut(outcxt);
+        return outcxt;
+    }
+
+    private void execDependencies(Signature sig, Arg... args) throws ContextException {
+        Map<String, List<String>> dpm = getDependentPaths();
+        List<String> dpl = dpm.get(sig.getName());
+        if (dpl != null && dpl.size() > 0) {
+            for (String p : dpl) {
+                getValue(p, args);
+            }
+        }
     }
 
     /**
@@ -182,4 +257,5 @@ public class ServiceModel<T> extends ParModel<T> implements Model {
             throw new ExertionException(e);
         }
     }
+
 }

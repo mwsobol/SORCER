@@ -19,6 +19,7 @@ package sorcer.core.provider.rendezvous;
 
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
+import sorcer.core.context.model.srv.SrvModel;
 import sorcer.core.provider.Modeler;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
@@ -47,7 +48,7 @@ public class ServiceModeler extends RendezvousBean implements Modeler {
             throws TransactionException, ExertionException, RemoteException {
         //logger.info("*********************************************ServiceModeler.execute, model = " + mogram);
         setServiceID(mogram);
-        ServiceModel model = (ServiceModel) mogram;
+        SrvModel model = (SrvModel) mogram;
         Model result = null;
         try {
             if (model.getFidelity().size() == 0 && model.getSubjectValue() instanceof Class) {

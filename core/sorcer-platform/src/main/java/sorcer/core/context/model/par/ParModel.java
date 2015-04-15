@@ -16,12 +16,10 @@
  */
 package sorcer.core.context.model.par;
 
-import sorcer.co.tuple.SignatureEntry;
 import sorcer.core.context.Contexts;
 import sorcer.core.context.PositionalContext;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.invoker.ServiceInvoker;
-import sorcer.core.signature.ServiceSignature;
 import sorcer.service.*;
 import sorcer.service.modeling.Variability;
 import sorcer.util.Response;
@@ -30,7 +28,6 @@ import java.rmi.RemoteException;
 import java.util.*;
 
 import static sorcer.eo.operator.returnPath;
-import static sorcer.eo.operator.task;
 
 /*
  * Copyright 2013 the original author or authors.
@@ -87,76 +84,39 @@ public class ParModel<T> extends PositionalContext<T> implements Invocation<T>, 
         add(objects);
     }
 
-    public T getValue(String path, Arg... entries) throws ContextException {
-        try {
-            append(entries);
-            T val = null;
-            if (path != null) {
-                val = (T) get(path);
-            } else {
-                Signature.ReturnPath rp = returnPath(entries);
-                if (rp != null)
-                    val = (T) getReturnValue(rp);
-                else
-                    val = (T) super.getValue(path, entries);
-            }
-            if ((val instanceof Par) && (((Par) val).asis() instanceof Variability)) {
-                bindVar((Variability) ((Par) val).asis());
-            } else {
-                if (val instanceof SignatureEntry) {
-                    ServiceSignature sig = (ServiceSignature) ((SignatureEntry) val).value();
-                    Context out = execSignature(sig);
-                    if (sig.getReturnPath() != null && sig.getReturnPath().path != null) {
-                        return (T) getValue(sig.getReturnPath().path);
-                    } else {
-                        return (T) out;
-                    }
-                }
-            }
-            if (val != null && val instanceof Evaluation) {
-                return (T) ((Evaluation) val).getValue(entries);
-            } else if (path == null && val == null && responsePaths != null) {
-                if (responsePaths.size() == 1)
-                    return (T) getValue(responsePaths.get(0), entries);
-                else
-                    return (T) getResponses();
-            } else {
-                return (T) val;
-            }
-        } catch (Exception e) {
-            throw new EvaluationException(e);
-        }
-    }
+	public T getValue(String path, Arg... entries) throws ContextException {
+		try {
+			append(entries);
+			T val = null;
+			if (path != null) {
+				val = (T) get(path);
+			} else {
+				Signature.ReturnPath rp = returnPath(entries);
+				if (rp != null)
+					val = (T) getReturnValue(rp);
+				else
+					val = (T) super.getValue(path, entries);
+			}
 
-    private Context execSignature(Signature sig) throws Exception {
-        String[] ips = sig.getReturnPath().inPaths;
-        String[] ops = sig.getReturnPath().outPaths;
-        execDependencies(sig);
-        Context incxt = this;
-        if (ips != null && ips.length > 0) {
-            incxt = this.getEvaluatedSubcontext(ips);
-        }
-        if (sig.getReturnPath() != null) {
-            incxt.setReturnPath(sig.getReturnPath());
-        }
-        Context outcxt = ((Task) task(sig, incxt).exert()).getContext();
-        if (ops != null && ops.length > 0) {
-            outcxt = outcxt.getSubcontext(ops);
-        }
-        this.appendInOut(outcxt);
-        return outcxt;
-    }
-    
-    private void execDependencies(Signature sig, Arg... args) throws ContextException {
-        Map<String, List<String>> dpm = getDependentPaths();
-        List<String> dpl = dpm.get(sig.getName());
-        if (dpl != null && dpl.size() > 0) {
-            for (String p : dpl) {
-               getValue(p, args);
-            }
-        }
-    }
-    
+			if ((val instanceof Par) && (((Par) val).asis() instanceof Variability)) {
+				bindVar((Variability) ((Par) val).asis());
+			}
+
+			if (val != null && val instanceof Evaluation) {
+				return (T) ((Evaluation) val).getValue(entries);
+			} else if (path == null && val == null && responsePaths != null) {
+				if (responsePaths.size() == 1)
+					return (T) getValue(responsePaths.get(0), entries);
+				else
+					return (T) getResponses();
+			} else {
+				return (T) val;
+			}
+		} catch (Exception e) {
+			throw new EvaluationException(e);
+		}
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 

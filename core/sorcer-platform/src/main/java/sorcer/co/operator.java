@@ -21,9 +21,11 @@ import sorcer.core.context.Copier;
 import sorcer.core.context.ListContext;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.par.Par;
+import sorcer.core.context.model.srv.Srv;
 import sorcer.core.provider.DatabaseStorer;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
+import sorcer.service.modeling.Variability;
 import sorcer.util.Loop;
 import sorcer.util.Response;
 import sorcer.util.Sorcer;
@@ -192,14 +194,26 @@ public class operator {
         return new Entry(path, ((Context)model).asis(path));
     }
 
-    public static Entry ent(Identifiable item) {
+    public static Srv srv(Identifiable item) {
         if (item instanceof Signature)
-            return new Entry<Identifiable>(item.getName(),
+            return new Srv(item.getName(),
                     new SignatureEntry(item.getName(), (Signature) item));
         else
-            return new Entry<Identifiable>(item.getName(), item);
+            return new Srv(item.getName(), item);
     }
-    
+
+	public static Srv srv(String name, String path, Model model) {
+		return new Srv(path, model, name);
+	}
+
+	public static Srv srv(String name, String path, Model model, Variability.Type type) {
+		return new Srv(path, model, name, type);
+	}
+
+	public static Srv srv(String name, String path) {
+		return new Srv(path, null, name);
+	}
+
 	public static <T> Entry<T> ent(String path, T value) {
 		return new Entry<T>(path, value);
 	}

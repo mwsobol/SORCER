@@ -76,8 +76,7 @@ public class Entry<T> extends Tuple2<String, T> implements Dependency, Comparabl
 	}
 
 	@Override
-	public T getValue(Arg... entries) throws EvaluationException,
-			RemoteException {
+	public T getValue(Arg... entries) throws EvaluationException, RemoteException {
 		T val = this._2;
 		URL url = null;
 		try {

@@ -22,6 +22,7 @@ import static sorcer.co.operator.asis;
 import static sorcer.co.operator.*;
 import static sorcer.co.operator.inPaths;
 import static sorcer.co.operator.path;
+import static sorcer.co.operator.srv;
 import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.inPaths;
 import static sorcer.eo.operator.outPaths;
@@ -420,25 +421,31 @@ public class ServiceContexts {
         Model m = srvModel(
                 inEnt("multiply/x1", 10.0), inEnt("multiply/x2", 50.0),
                 inEnt("add/x1", 20.0), inEnt("add/x2", 80.0),
-                ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
-                        inPaths("multiply/x1", "multiply/x2")))),
-                ent(sig("add", AdderImpl.class, result("add/out",
-                        inPaths("add/x1", "add/x2")))),
-                ent(sig("subtract", SubtractorImpl.class, result("model/response",
-                        inPaths("multiply/out", "add/out")))));
+                srv(sig("multiply", MultiplierImpl.class, result("multiply/out",
+						inPaths("multiply/x1", "multiply/x2")))),
+                srv(sig("add", AdderImpl.class, result("add/out",
+						inPaths("add/x1", "add/x2")))),
+                srv(sig("subtract", SubtractorImpl.class, result("model/response",
+						inPaths("multiply/out", "add/out")))),
+				srv("y1", "multiply/x1"));
+
 
         // get a scalar response
         addResponse(m, "subtract");
         dependsOn(m, "subtract", paths("multiply", "add"));
-        assertTrue(response(m).equals(400.0));
+//		logger.info("response: " + response(m));
+
+		assertTrue(response(m).equals(400.0));
 
         // get a response context
-        addResponse(m, "add", "multiply");
+        addResponse(m, "add", "multiply", "y1");
         Context out = responses(m);
         logger.info("out: " + out);
         assertTrue(response(out, "add").equals(100.0));
         assertTrue(response(out, "multiply").equals(500.0));
         assertTrue(response(out, "subtract").equals(400.0));
+
+		assertTrue(response(out, "y1").equals(10.0));
 
         logger.info("model: " + m);
 
@@ -452,12 +459,13 @@ public class ServiceContexts {
 		Model m = srvModel(
 				inEnt("multiply/x1", 10.0), inEnt("multiply/x2", 50.0),
 				inEnt("add/x1", 20.0), inEnt("add/x2", 80.0),
-				ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
+				srv(sig("multiply", MultiplierImpl.class, result("multiply/out",
 						inPaths("multiply/x1", "multiply/x2")))),
-				ent(sig("add", AdderImpl.class, result("add/out",
+				srv(sig("add", AdderImpl.class, result("add/out",
 						inPaths("add/x1", "add/x2")))),
-				ent(sig("subtract", SubtractorImpl.class, result("model/response",
-						inPaths("multiply/out", "add/out")))));
+				srv(sig("subtract", SubtractorImpl.class, result("model/response",
+						inPaths("multiply/out", "add/out")))),
+				srv("y1", "multiply/x1"), srv("y2", "add/x2"));
 
 		addResponse(m, "add", "multiply", "subtract");
 		dependsOn(m, "subtract", paths("multiply", "add"));

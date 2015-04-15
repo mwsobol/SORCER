@@ -27,6 +27,8 @@ import sorcer.core.context.*;
 import sorcer.core.context.model.PoolStrategy;
 import sorcer.core.context.model.par.Par;
 import sorcer.core.context.model.par.ParModel;
+import sorcer.core.context.model.srv.Srv;
+import sorcer.core.context.model.srv.SrvModel;
 import sorcer.core.deploy.ServiceDeployment;
 import sorcer.core.exertion.*;
 import sorcer.core.provider.*;
@@ -330,8 +332,8 @@ public class operator {
 					(String) entries[0])).getContext();
 		} else if (entries[0] instanceof Context && entries[1] instanceof List) {
 			return ((ServiceContext)entries[0]).getSubcontext((List)entries[1]);
-		} else if (entries[0] instanceof ServiceModel) {
-            cxt = (ServiceModel)entries[0];
+		} else if (entries[0] instanceof SrvModel) {
+            cxt = (SrvModel)entries[0];
         } else {
 			cxt = getPersistedContext(entries);
 			if (cxt != null) return cxt;
@@ -476,8 +478,17 @@ public class operator {
 	protected static void popultePositionalContext(PositionalContext pcxt,
 												   List<Tuple2<String, ?>> entryList) throws ContextException {
 		for (int i = 0; i < entryList.size(); i++) {
-			if (entryList.get(i) instanceof InputEntry) {
-				Object par = ((InputEntry)entryList.get(i)).value();
+			Tuple2 t = entryList.get(i);
+			if (t instanceof Srv) {
+//				try {
+//					if (t.getValue() == Context.none && !t.getName().equals(t.path()))
+//                        t.setValue(pcxt);
+//				} catch (RemoteException e) {
+//					throw new ContextException(e);
+//				}
+				pcxt.putInoutValueAt(t.path(), t, i + 1);
+			} else if (t instanceof InputEntry) {
+				Object par = t.value();
 				if (par instanceof Scopable) {
 					try {
 						((Scopable)par).setScope(pcxt);
@@ -485,37 +496,31 @@ public class operator {
 						throw new ContextException(e);
 					}
 				}
-				if (((InputEntry) entryList.get(i)).isPersistent()) {
-					setPar(pcxt, (InputEntry) entryList.get(i), i);
+				if (t.isPersistent()) {
+					setPar(pcxt, t, i);
 				} else {
-					pcxt.putInValueAt(((InputEntry) entryList.get(i)).path(),
-							((InputEntry) entryList.get(i)).value(), i + 1);
+					pcxt.putInValueAt(t.path(), t.value(), i + 1);
 				}
-			} else if (entryList.get(i) instanceof OutputEntry) {
-				if (((OutputEntry) entryList.get(i)).isPersistent()) {
-					setPar(pcxt, (OutputEntry) entryList.get(i), i);
+			} else if (t instanceof OutputEntry) {
+				if (t.isPersistent()) {
+					setPar(pcxt, t, i);
 				} else {
-					pcxt.putOutValueAt(((OutputEntry) entryList.get(i)).path(),
-							((OutputEntry) entryList.get(i)).value(), i + 1);
+					pcxt.putOutValueAt(t.path(), t.value(), i + 1);
 				}
-			} else if (entryList.get(i) instanceof InoutEntry) {
-				if (((InoutEntry) entryList.get(i)).isPersistent()) {
-					setPar(pcxt, (InoutEntry) entryList.get(i), i);
+			} else if (t instanceof InoutEntry) {
+				if (t.isPersistent()) {
+					setPar(pcxt, t, i);
 				} else {
-					pcxt.putInoutValueAt(
-							((InoutEntry) entryList.get(i)).path(),
-							((InoutEntry) entryList.get(i)).value(), i + 1);
+					pcxt.putInoutValueAt(t.path(), t.value(), i + 1);
 				}
-			} else if (entryList.get(i) instanceof Entry) {
-				if (((Entry) entryList.get(i)).isPersistent()) {
+			} else if (t instanceof Entry) {
+				if (t.isPersistent()) {
 					setPar(pcxt, (Entry) entryList.get(i), i);
 				} else {
-					pcxt.putValueAt(((Entry) entryList.get(i)).path(),
-							((Entry) entryList.get(i)).value(), i + 1);
+					pcxt.putValueAt(t.path(), t.value(), i + 1);
 				}
-			} else if (entryList.get(i) instanceof DataEntry) {
-				pcxt.putValueAt(Context.DSD_PATH,
-						((DataEntry) entryList.get(i)).value(), i + 1);
+			} else if (t instanceof DataEntry) {
+				pcxt.putValueAt(Context.DSD_PATH, t.value(), i + 1);
 			}
 		}
 	}
@@ -2443,9 +2448,9 @@ public class operator {
                complement = (Complement)item;
            }
         }
-        ServiceModel model = null;
+        SrvModel model = null;
         try {
-            model = new ServiceModel();
+            model = new SrvModel();
         } catch (SignatureException e) {
             throw new ContextException(e);
         }
