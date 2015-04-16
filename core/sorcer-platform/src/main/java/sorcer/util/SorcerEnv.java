@@ -1786,4 +1786,24 @@ public class SorcerEnv extends SOS {
             }
         }
     }
+
+	public static void loadVersions() {
+		// Read version.properties - sometimes used in deploy.config files
+		File versionPropsFile = new File(Sorcer.getHomeDir(), "configs/versions.properties");
+		try {
+			if (versionPropsFile.exists()) {
+				Properties props = new Properties();
+				props.load(new FileInputStream(versionPropsFile));
+				for (Enumeration e = props.propertyNames(); e.hasMoreElements();) {
+					String propName = (String) e.nextElement();
+					JavaSystemProperties.ensure(propName, props.getProperty(propName));
+				}
+			} else
+				logger.severe("Cannot read versions, file does not exist: " + versionPropsFile.getAbsolutePath());
+		} catch (IOException e) {
+			logger.severe("Cannot read versions from: " + versionPropsFile.getAbsolutePath());
+		}
+	}
+
+
 }
