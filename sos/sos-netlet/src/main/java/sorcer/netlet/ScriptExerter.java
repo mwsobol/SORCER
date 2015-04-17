@@ -5,11 +5,9 @@ import net.jini.config.Configuration;
 import org.codehaus.groovy.control.CompilationFailedException;
 import sorcer.netlet.util.LoaderConfigurationHelper;
 import sorcer.netlet.util.ScriptExertException;
-import sorcer.resolver.Resolver;
 import sorcer.netlet.util.ScriptThread;
 
 import java.io.*;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.*;
@@ -78,23 +76,11 @@ public class ScriptExerter {
 
     public final static long startTime = System.currentTimeMillis();
 
-    public static String[] localJars = new String[] {
-            //"org.sorcersoft.sorcer:sos-api"
-    };
-
     public ScriptExerter(PrintStream out, ClassLoader classLoader, String websterStrUrl, boolean debug) {
         this.out = out;
         if (out==null) this.out = System.out;
         this.debug = debug;
         this.classLoader = classLoader;
-        try {
-            for (String jar : localJars) {
-                File f = new File(Resolver.resolveAbsolute(jar));
-                urlsToLoad.add(f.toURI().toURL());
-            }
-        } catch (MalformedURLException me) {
-            out.println("Problem loading default classpath for scripts in ScriptExerter: " + me);
-        }
         this.websterStrUrl = websterStrUrl;
         if (staticImports == null) {
             staticImports = readTextFromJar("static-imports.txt");
@@ -151,7 +137,7 @@ public class ScriptExerter {
         try {
             if (out!=null) out.println("creating scriptThread..."+ (System.currentTimeMillis()-startTime)+"ms");
             scriptThread = new ScriptThread(script,
-                    new URLClassLoader(urlsToLoad.toArray(new URL[0]), (classLoader!=null ? classLoader : getClass().getClassLoader())),
+                    classLoader!=null ? classLoader : new URLClassLoader(urlsToLoad.toArray(new URL[0]), getClass().getClassLoader()),
                     out, config, debug);
             if (out!=null) out.println("get target..." + (System.currentTimeMillis()-startTime)+"ms");
             this.target = scriptThread.getTarget();

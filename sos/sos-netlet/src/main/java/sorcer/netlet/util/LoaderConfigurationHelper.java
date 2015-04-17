@@ -15,10 +15,9 @@ package sorcer.netlet.util;
  * limitations under the License.
  */
 
-import org.rioproject.resolver.*;
-import org.rioproject.resolver.Resolver;
-import org.rioproject.url.artifact.ArtifactURLConfiguration;
 import sorcer.resolver.*;
+import sorcer.resolver.SorcerResolver;
+import sorcer.resolver.SorcerResolverException;
 import sorcer.util.JavaSystemProperties;
 
 import java.io.File;
@@ -42,8 +41,7 @@ public class LoaderConfigurationHelper {
     public static final String LOAD_PREFIX = "load";
     public static final String CODEBASE_PREFIX = "codebase";
     static final Logger logger = LoggerFactory.getLogger(LoaderConfigurationHelper.class.getName());
-    private static org.rioproject.resolver.Resolver resolver;
-
+    private static SorcerResolver sorcerResolver = SorcerResolver.getInstance();
 
     public static List<URL> load(String str) {
         List<URL> urlsList = new ArrayList<URL>();
@@ -63,14 +61,11 @@ public class LoaderConfigurationHelper {
                 logger.error("Problem creating URL: " + str);
             }
         } else if ("artifact".equals(scheme)) {
-                ArtifactURLConfiguration artifactConf = new ArtifactURLConfiguration(uri.getSchemeSpecificPart());
                 try {
                     urlsList.add(uri.toURL());
-                    org.rioproject.resolver.Resolver resolver = getResolver();
-                    RemoteRepository[] repos = artifactConf.getRepositories();
-                    URL[] classpath = SorcerResolver.toURLs(resolver.getClassPathFor(artifactConf.getArtifact(), repos));
+                    URL[] classpath = SorcerRioResolver.toURLs(sorcerResolver.doResolve(uri.toString()));
                     Collections.addAll(urlsList, classpath);
-                } catch (ResolverException e) {
+                } catch (SorcerResolverException e) {
                     logger.error( "Could not resolve " + str, e);
                 } catch (MalformedURLException e) {
                     throw new RuntimeException(e);
@@ -81,20 +76,6 @@ public class LoaderConfigurationHelper {
         return urlsList;
     }
 
-    private static org.rioproject.resolver.Resolver getResolver() throws ResolverException {
-        if (resolver == null)
-            resolver = SorcerResolver.getResolver();
-        return resolver;
-    }
-
-    public static String parseCodebase(String str) {
-        if ((!str.startsWith("mvn://")) &&  (!str.startsWith("http://")) && (!str.startsWith("artifact:"))) {
-            logger.error("Codebase can only be specified using mvn://, http:// or artifact:");
-            return null;
-        }
-        return str;
-    }
-
     public static List<URL> setCodebase(List<String> codebaseLines, PrintStream out) {
         String curCodebase = System.getProperty(JavaSystemProperties.RMI_SERVER_CODEBASE);
         StringBuilder codebaseSb = new StringBuilder();
@@ -103,92 +84,23 @@ public class LoaderConfigurationHelper {
         for (String codebaseStr : codebaseLines) {
             if (codebaseStr.startsWith(LoaderConfigurationHelper.CODEBASE_PREFIX))
                 codebaseStr = codebaseStr.substring(LoaderConfigurationHelper.CODEBASE_PREFIX.length()).trim();
-            if ((!codebaseStr.startsWith("mvn://")) &&  (!codebaseStr.startsWith("http://")) && (!codebaseStr.startsWith("artifact:"))) {
-                if (out!=null) out.println("Codebase can only be specified using mvn://, http:// or artifact:");
+            if ((!codebaseStr.startsWith("http://")) && (!codebaseStr.startsWith("artifact:"))) {
+                if (out!=null) out.println("Codebase can only be specified using http:// or artifact:");
                 else logger.error("Codebase can only be specified using mvn://, http:// or artifact:");
                 return null;
             }
-
-            String parsedCodebase = LoaderConfigurationHelper.parseCodebase(codebaseStr);
-            if (parsedCodebase != null) {
+            if (codebaseStr != null) {
                 try {
-                    codebaseUrls.add(new URL(parsedCodebase));
+                    codebaseUrls.add(new URL(codebaseStr));
                 } catch (MalformedURLException me) {
                     if (out != null) out.println("Codebase url is malformed: " + me.getMessage());
                     else logger.error("Codebase url is malformed: " + me.getMessage());
                 }
-
-                codebaseSb.append(" ").append(parsedCodebase);
+                codebaseSb.append(" ").append(codebaseStr);
             }
         }
         System.setProperty(JavaSystemProperties.RMI_SERVER_CODEBASE, codebaseSb.toString());
         return codebaseUrls;
-    }
-
-
-    public static List<URL> setCodebase(List<String> codebaseLines, String websterStrUrl, PrintStream out) {
-        String curCodebase = System.getProperty(JavaSystemProperties.RMI_SERVER_CODEBASE);
-        StringBuilder codebaseSb = new StringBuilder();
-        if (curCodebase!=null) codebaseSb.append(curCodebase);
-        List<URL> codebaseUrls = new ArrayList<URL>();
-        URL websterUrl = null;
-        if (websterStrUrl != null)
-            try {
-                websterUrl = new URL(websterStrUrl);
-            } catch (MalformedURLException me) {
-                logger.warn("Malformed url " + websterStrUrl, me);
-            }
-        for (String codebaseStr : codebaseLines) {
-            if (codebaseStr.startsWith(LoaderConfigurationHelper.CODEBASE_PREFIX))
-                codebaseStr = codebaseStr.substring(LoaderConfigurationHelper.CODEBASE_PREFIX.length()).trim();
-            if ((!codebaseStr.startsWith("mvn://")) &&  (!codebaseStr.startsWith("http://")) && (!codebaseStr.startsWith("artifact:"))) {
-                if (out!=null) out.println("Codebase can only be specified using mvn://, http:// or artifact:");
-                else logger.error("Codebase can only be specified using mvn://, http:// or artifact:");
-                return null;
-            }
-
-            String parsedCodebase = LoaderConfigurationHelper.parseCodebase(websterUrl, codebaseStr);
-            try {
-                codebaseUrls.add(new URL(parsedCodebase));
-            } catch (MalformedURLException me) {
-                if (out!=null) out.println("Codebase url is malformed: " + me.getMessage());
-                else logger.error("Codebase url is malformed: " + me.getMessage());
-            }
-
-            if (parsedCodebase!=null)
-                codebaseSb.append(" ").append(parsedCodebase);
-        }
-        System.setProperty(JavaSystemProperties.RMI_SERVER_CODEBASE, codebaseSb.toString());
-        return codebaseUrls;
-    }
-
-    public static String parseCodebase(URL websterUrl, String str) {
-        if ((!str.startsWith("mvn://")) &&  (!str.startsWith("http://")) && (!str.startsWith("artifact:"))) {
-            logger.error("Codebase can only be specified using mvn://, http:// or artifact:");
-            return null;
-        }
-        if (str.startsWith("mvn://")) {
-            String url = str.substring(6);
-            // Check if URL specifies as artifact on a remote webster
-            String[] urlEntries = url.split("@");
-            String finalUrl = null;
-            try {
-                if (urlEntries.length > 1) {
-                    finalUrl = "http://" + urlEntries[1] + "/" +
-                            sorcer.resolver.Resolver.resolveRelative(urlEntries[0]);
-                    if (existRemoteFile(new URL(finalUrl))) {
-                        return new URL(finalUrl).toString();
-                    }
-                } else if (websterUrl!=null) {
-                    finalUrl = sorcer.resolver.Resolver.resolveAbsolute(websterUrl, urlEntries[0]);
-                    if (existRemoteFile(new URL(finalUrl)))
-                        return new URL(finalUrl).toString();
-                }
-            } catch (MalformedURLException e) {
-                logger.error("Problem creating URL: " + finalUrl);
-            }
-        }
-        return str;
     }
 
     public static boolean existRemoteFile(URL url) {
@@ -236,7 +148,6 @@ public class LoaderConfigurationHelper {
             String propertyValue;
 
             propertyValue = System.getProperty(propertyKey);
-
 
             // assume properties contain paths
             if (propertyValue == null) {

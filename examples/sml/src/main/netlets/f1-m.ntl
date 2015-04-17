@@ -30,11 +30,11 @@ Task t3 = task("t3", sig("subtract", Subtractor.class),
                 outEnt("result/y")), strategy(Monitor.YES));
 
 Task t4 = task("t4", sig("multiply", Multiplier.class),
-        context("multiply", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
+        context("multiply", inEnt("arg/x1", 10.0d), inEnt("arg/x2", 50.0d),
                 outEnt("result/y")), strategy(Monitor.YES));
 
 Task t5 = task("t5", sig("add", Adder.class),
-        context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
+        context("add", inEnt("arg/x1", 20.0d), inEnt("arg/x2", 80.0d),
                 outEnt("result/y")), strategy(Monitor.YES));
 
 // Service Composition j1(j2(t4(x1, x2), t5(x1, x2)), t3(x1, x2))

@@ -21,6 +21,8 @@ import net.jini.core.entry.Entry;
 import net.jini.lookup.entry.Name;
 import sorcer.core.provider.Provider;
 import sorcer.core.provider.ServiceProvider;
+import sorcer.core.provider.Version;
+import sorcer.eo.operator;
 import sorcer.service.*;
 import sorcer.util.MavenUtil;
 
@@ -76,7 +78,7 @@ public class NetSignature extends ObjectSignature {
 
 	public NetSignature(String selector, Class<?> serviceType,
 			String providerName) {
-		this(selector, serviceType, providerName, (Type)null);
+		this(selector, serviceType, providerName, (Type) null);
 	}
 
 	public NetSignature(String selector, Class<?> serviceType,
@@ -94,9 +96,16 @@ public class NetSignature extends ObjectSignature {
 	}
 
 	public NetSignature(String selector, Class<?> serviceType,
-			String providerName, Type methodType) {
+						String providerName, Type methodType) {
+
+		this(selector, serviceType, providerName, methodType, null);
+	}
+
+	public NetSignature(String selector, Class<?> serviceType,
+						String providerName, Type methodType, Version version) {
+		this.version = version!=null ? version.getName() : null;
 		this.serviceType = serviceType;
-        if (serviceType!=null)
+        if (serviceType!=null && version==null)
             this.version = MavenUtil.findVersion(serviceType);
 		if (providerName == null || providerName.length() == 0)
 			this.providerName = ANY;

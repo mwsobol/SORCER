@@ -16,13 +16,10 @@
 
 package sorcer.rio.rmi;
 
-import org.rioproject.resolver.RemoteRepository;
-import org.rioproject.resolver.Resolver;
-import org.rioproject.resolver.ResolverException;
-import org.rioproject.resolver.ResolverHelper;
-import org.rioproject.url.artifact.ArtifactURLConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sorcer.resolver.SorcerResolver;
+import sorcer.resolver.SorcerResolverException;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -49,10 +46,11 @@ public class SorcerResolvingLoader extends RMIClassLoaderSpi {
      * has it's classpath resolved from an artifact, that the artifact URL is passed back instead of the resolved
      * (local) classpath.
      */
-    private static final Resolver resolver;
     private static final Logger logger = LoggerFactory.getLogger(SorcerResolvingLoader.class);
     private static final Map<String, Class<?>> primitiveTypes =
             new HashMap<String, Class<?>>();
+
+    private static SorcerResolver sorcerResolver;
 
     static {
         primitiveTypes.put("byte", byte.class);
@@ -65,12 +63,8 @@ public class SorcerResolvingLoader extends RMIClassLoaderSpi {
         primitiveTypes.put("char", char.class);
         primitiveTypes.put("void", void.class);
 
+        sorcerResolver = SorcerResolver.getInstance();
 
-        try {
-            resolver = ResolverHelper.getResolver();
-        } catch (ResolverException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     private static final RMIClassLoaderSpi loader = RMIClassLoader.getDefaultProviderInstance();
@@ -156,7 +150,7 @@ public class SorcerResolvingLoader extends RMIClassLoaderSpi {
                         if (adaptedCodebase == null)
                             try {
                                 adaptedCodebase = new HashSet<String>();
-                                for (String path : doResolve(artf)) {
+                                for (String path : sorcerResolver.doResolve(artf)) {
                                     // ignore pom files
                                     if(path.endsWith(".pom"))
                                         continue;
@@ -164,7 +158,7 @@ public class SorcerResolvingLoader extends RMIClassLoaderSpi {
                                 }
                                 artifactToCodebase.put(artf, adaptedCodebase);
                                 logger.debug("Resolved {} to {}", artf, adaptedCodebase);
-                        } catch (ResolverException e) {
+                        } catch (SorcerResolverException e) {
                             logger.warn("Unable to resolve {}", artf, e);
                         } catch (MalformedURLException e) {
                             logger.warn("The codebase {} is malformed", artf, e);
@@ -177,28 +171,6 @@ public class SorcerResolvingLoader extends RMIClassLoaderSpi {
             }
             return join(jarsSet, CODEBASE_SEPARATOR);
     }
-
-    private String[] doResolve(String artifact) throws ResolverException {
-        String path = artifact.substring(artifact.indexOf(":") + 1);
-        ArtifactURLConfiguration artifactURLConfiguration = new ArtifactURLConfiguration(path);
-        //TODO Resolver error
-        String[] cp = null;
-        int tries = 0;
-        while (tries < 5 && (cp==null || cp.length==0)) {
-            try {
-                cp = resolver.getClassPathFor(artifactURLConfiguration.getArtifact(),
-                        artifactURLConfiguration.getRepositories());
-            } catch (Exception e) {
-                logger.warn("Failed to resolve at {} attempt: {}", tries, artifactURLConfiguration.getArtifact());
-                logger.debug("Resolver error", e);
-            }
-            tries++;
-        }
-        if (cp==null || cp.length==0)
-            throw new ResolverException("Failed to resolve: " + artifactURLConfiguration.getArtifact() + " after 5 attempts" );
-        return cp;
-    }
-
 
     /**
      * Copied from StringUtils to avoid dependency on sorcer-platform

@@ -895,7 +895,9 @@ public class operator {
 				} else if (o instanceof ServiceDeployment) {
 					((ServiceSignature)sig).setProvisionable(true);
 					((ServiceSignature)sig).setDeployment((ServiceDeployment)o);
-				}  
+				} else if (o instanceof Version && sig instanceof NetSignature) {
+					((NetSignature)sig).setVersion(((Version)o).getName());
+				}
 			}
 		}
 		
@@ -2846,6 +2848,12 @@ public class operator {
 		}
 		return block;
 	}
+
+	public static Version version(String ver) {
+		return new Version(ver);
+	}
+
+
 
 	private static String getWarningBanner(String message) {
 		StringBuilder builder = new StringBuilder();

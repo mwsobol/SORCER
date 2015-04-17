@@ -54,7 +54,8 @@ public class ScriptThread extends Thread {
             this.config = config;
             this.debug = debug;
             gShell = new GroovyShell(classLoader);
-			this.script = script;
+            Thread.currentThread().setContextClassLoader(classLoader);
+            this.script = script;
             this.parseScript();
 		}
 
