@@ -64,7 +64,7 @@ public class PositionalContext<T> extends ServiceContext<T> implements
         return subcntxt;
     }
 
-    public Context appendInOut(Context context) throws ContextException {
+    public Context appendInout(Context context) throws ContextException {
         Iterator it = ((Map)context).entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry<String, Object> pairs = (Map.Entry) it.next();
@@ -72,7 +72,7 @@ public class PositionalContext<T> extends ServiceContext<T> implements
         }
         return this;
     }
-    
+
     public PositionalContext getEvaluatedSubcontext(String... paths) throws ContextException {
         PositionalContext subcntxt = getSubcontext();
         List<String>  ips = getInPaths();

@@ -83,16 +83,16 @@ import java.util.Map;
  * provide a name space for direct access to data nodes via
  * {@link Context#getValue}, data attributes specify the data node for indirect
  * efficient retrieval (search) by service providers. 
- * 
+ *
  * @author Mike Sobolewski
  */
 @SuppressWarnings("rawtypes")
-public interface Context<T> extends Model, Mappable<T>, Serializable, 
-        Dependency, Contexter<T>, Identifiable, Paradigmatic, Arg {
+public interface Context<T> extends Model, Mappable<T>, Serializable,
+		Dependency, Contexter<T>, Identifiable, Paradigmatic, Arg {
 
 	/** parameter (par) */
 	final static String PATH_PAR = "par";
-	
+
 	/** context parameter (cp) */
 	final static String CONTEXT_PARAMETER = "cp";
 
@@ -190,9 +190,9 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 		private static final long serialVersionUID = -6152257095701812950L;
 
 		private none() {
-			
+
 		}
-		
+
 		public String toString() {
 			return "none";
 		}
@@ -201,14 +201,14 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 
 	/**
 	 * Returns a name of this service context.
-	 * 
+	 *
 	 * @return context name
 	 */
 	public String getName();
 
 	/**
 	 * Assigns a name for this service context.
-	 * 
+	 *
 	 * @param name
 	 *            a context name to set.
 	 */
@@ -230,20 +230,20 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 	// public void setRootName(String rootName);
 
 	/**
-     */
+	 */
 	public Uuid getId();
 
 	/**
 	 * Returns a value at the path if exists, otherwise a value of the path that
 	 * ends with the last attribute of the given path.
-	 * 
+	 *
 	 * @param path
 	 *            The path of a context value.
 	 */
 	public T getSoftValue(String path) throws ContextException;
 
 	/**
-     */
+	 */
 	public String getParentPath();
 
 	/**
@@ -253,17 +253,17 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 	public void setParentPath(String path);
 
 	/**
-     */
+	 */
 	public Uuid getParentID();
 
 	public void setParentID(Uuid parentId);
 
 	/**
-     */
+	 */
 	public long getCreationTime();
 
 	/**
-     */
+	 */
 	public String getLastUpdateDate();
 
 	/**
@@ -279,7 +279,7 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 	public void setDescription(String date);
 
 	/**
-     */
+	 */
 	public String getDescription();
 
 	public int getScope();
@@ -287,7 +287,7 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 	public void setScopeCode(int scope);
 
 	/**
-     */
+	 */
 	public String getOwnerID();
 
 	/**
@@ -303,7 +303,7 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 	public void setSubjectID(String id);
 
 	/**
-     */
+	 */
 	public String getSubjectID();
 
 	/**
@@ -313,7 +313,7 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 	public void setProject(String projectName);
 
 	/**
-     */
+	 */
 	public String getProject();
 
 	/**
@@ -323,7 +323,7 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 	public void setAccessClass(String accessClass);
 
 	/**
-     */
+	 */
 	public String getAccessClass();
 
 	/**
@@ -333,11 +333,11 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 	public void setExportControl(String exportControl);
 
 	/**
-     */
+	 */
 	public String getExportControl();
 
 	/**
-     */
+	 */
 	public String getGoodUntilDate();
 
 	/**
@@ -347,7 +347,7 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 	public void setGoodUntilDate(String date);
 
 	/**
-     */
+	 */
 	public String getDomainID();
 
 	/**
@@ -357,7 +357,7 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 	public void setDomainID(String id);
 
 	/**
-     */
+	 */
 	public String getSubdomainID();
 
 	/**
@@ -367,7 +367,7 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 	public void setSubdomainID(String id);
 
 	/**
-     */
+	 */
 	public String getDomainName();
 
 	/**
@@ -377,7 +377,7 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 	public void setDomainName(String name);
 
 	/**
-     */
+	 */
 	public String getSubdomainName();
 
 	/**
@@ -388,14 +388,14 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 
 	/**
 	 * Returns a principal using this service context.
-	 * 
+	 *
 	 * @return a Principal
 	 */
 	public Principal getPrincipal();
 
 	/**
 	 * Assigns a principal to this service context.
-	 * 
+	 *
 	 * @param principal
 	 *            the principal to set.
 	 */
@@ -418,14 +418,14 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 
 	/**
 	 * Returns the exertion associated with this context.
-	 * 
+	 *
 	 * @return Exertion
 	 */
 	public Exertion getExertion();
 
 	/**
 	 * Returns the service provider associated with this context
-	 * 
+	 *
 	 * @return Provider
 	 */
 	public Provider getProvider();
@@ -446,7 +446,7 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 //	 * @return The context path
 //	 */
 //	public ExecPath getExecPath();
-	
+
 	/**
 	 * @param task
 	 *            The task to set.
@@ -458,7 +458,7 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 	 * association and is interpreted as the context constituent about which
 	 * something is predicated. Other path/value associations of this context
 	 * are interpreted as complements of the context subject.
-	 * 
+	 *
 	 * @return the subject path
 	 */
 	public String getSubjectPath();
@@ -468,7 +468,7 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 	 * association and is interpreted as the context constituent about which
 	 * something is predicated. Other path/value associations of this context
 	 * are interpreted as complements of the context subject.
-	 * 
+	 *
 	 * @return the subject value
 	 */
 	public Object getSubjectValue();
@@ -479,7 +479,7 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 	 * context constituent about which something is predicated. Other path/value
 	 * associations of this context are interpreted as complements of the
 	 * context subject.
-	 * 
+	 *
 	 * @param path
 	 *            the subject path
 	 * @param value
@@ -500,10 +500,10 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 	public void appendTrace(String footprint);
 
 	public Context<T> append(Context<T> context) throws ContextException;
-	
+
 	/**
 	 * Returns a value of the key object as is.
-	 * 
+	 *
 	 * @param path
 	 *            the attribute-based key
 	 * @return this context value
@@ -523,7 +523,7 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 	public Object addValue(Identifiable value) throws ContextException;
 
 	public Arg addPar(Arg value) throws ContextException;
-	
+
 	public Arg addPar(String path, Object value) throws ContextException;
 
 	public Arg getPar(String path) throws ContextException, RemoteException;
@@ -541,7 +541,7 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 			throws ContextException;
 
 	public Object putLink(String name, String path, String lnkedCntxtID,
-			float version, String offset) throws ContextException;
+						  float version, String offset) throws ContextException;
 
 	public Object remove(Object path);
 
@@ -550,7 +550,7 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 	 * context to an input parameter at inPath in outContext. The pipe allow for
 	 * passing on parameters between different contexts within the same
 	 * exertion.
-	 * 
+	 *
 	 * @param outPath
 	 *            a location of output parameter
 	 * @param inPath
@@ -569,7 +569,7 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 	 * Marks mapping between output parameter at fromParh in this context to an
 	 * input parameter at toPath in toContext. Mappings allow for passing on
 	 * parameters between different contexts within the same exertion.
-	 * 
+	 *
 	 * @param fromPath
 	 *            a location of output parameter
 	 * @param toPath
@@ -584,7 +584,7 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 	/**
 	 * Removes the <code>ContextLink</code> object pointed to by path. If object is
 	 * not a context link, a ContextException will be thrown.
-	 * 
+	 *
 	 * @throws ContextException
 	 * @see #removePath
 	 */
@@ -593,7 +593,7 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 	/**
 	 * Returns an <code>Object</code> array containing the ServiceContext in
 	 * which path belongs and the absolute path in that context.
-	 * 
+	 *
 	 * @param path
 	 *            the location in the context
 	 * @return <code>Object</code> array of length two. The first element is the
@@ -602,7 +602,7 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 	 *         returned path in the returned context--the results merely
 	 *         indicate the mapping (getValue on the resulting context at the
 	 *         resulting path will yield the contents)
-	 * 
+	 *
 	 * @throws ContextException
 	 * @see #getValue
 	 */
@@ -622,11 +622,11 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 	 * tuples (@link #getMarkedPaths} independently of associative context paths
 	 * defined by context attributes {@link #getValue}. It is usually assumed
 	 * that search relations are more stable than user friendly context paths.
-	 * 
+	 *
 	 * Tuple attributes and relations must first be registered with the context
 	 * with (addAttribute}, addProperty, and addRelation) before they are used
 	 * in contexts.
-	 * 
+	 *
 	 * @param path
 	 *            the location in the context namespace
 	 * @param tuple
@@ -639,7 +639,7 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 	/**
 	 * Returns the enumeration of all context paths matching the given
 	 * association.
-	 * 
+	 *
 	 * @param association
 	 *            the association of this context to be matched
 	 * @return the enumeration of matches for the given association
@@ -650,7 +650,7 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 
 	/**
 	 * Returns the List of all values with paths matching the given association.
-	 * 
+	 *
 	 * @param association
 	 *            the association of this context to be matched
 	 * @return the List of matches for the given association
@@ -660,17 +660,17 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 
 	/**
 	 * Returns the List of tagged path with the given association.
-	 * 
+	 *
 	 * @param association
 	 *            the association of this context to be matched
 	 * @return the List of paths for the given association
 	 * @throws ContextException
 	 */
 	public String[] getMarkedPaths(String association) throws ContextException;
-	
+
 	/**
 	 * Register an attribute with a ServiceContext's metacontext
-	 * 
+	 *
 	 * @param attribute
 	 *            the attribute descriptor
 	 */
@@ -680,7 +680,7 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 	 * Returns boolean value designating if <code>attributeName</code> is an
 	 * attribute in the top-level context. Does not descend into linked
 	 * contexts. Is true if attribute is singleton or metaattribute type.
-	 * 
+	 *
 	 * @see #isLocalSingletonAttribute
 	 * @see #isLocalMetaattribute
 	 */
@@ -690,7 +690,7 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 	 * Returns boolean value designating if <code>attributeName</code> is a
 	 * singleton attribute in the top-level context. Does not descend into
 	 * linked contexts.
-	 * 
+	 *
 	 * @see #isLocalAttribute
 	 * @see #isLocalMetaattribute
 	 */
@@ -700,7 +700,7 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 	 * Returns boolean value designating if <code>attributeName</code> is a meta
 	 * attribute in the top-level context. Does not descend into linked
 	 * contexts.
-	 * 
+	 *
 	 * @see #isLocalAttribute
 	 * @see #isLocalSingletonAttribute
 	 */
@@ -709,7 +709,7 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 	/**
 	 * Returns a {@link boolean} value designating if <code>attributeName</code>
 	 * is an attribute in this context including any linked contexts
-	 * 
+	 *
 	 * @return <code>boolean</code>
 	 * @throws ContextException
 	 * @see #isLocalAttribute
@@ -722,7 +722,7 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 	/**
 	 * Returns a {@link boolean} value designating if <code>attributeName</code>
 	 * is a singleton attribute in this context including any linked contexts
-	 * 
+	 *
 	 * @return <code>boolean</code>
 	 * @throws ContextException
 	 * @see #isLocalAttribute
@@ -736,7 +736,7 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 	/**
 	 * Returns a {@link boolean} value designating if <code>attributeName</code>
 	 * is a meta attribute in this context including any linked contexts
-	 * 
+	 *
 	 * @return <code>boolean</code>
 	 * @throws ContextException
 	 * @see #isLocalAttribute
@@ -751,12 +751,12 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 	 * Returns the value part of the specified attribute that has been assigned
 	 * to this context node. The attribute can be either a singleton attribute
 	 * or a meta-attribute, which is itself a collection of attributes.
-	 * 
+	 *
 	 * @param path
 	 *            the location in the context
 	 * @param attributeName
 	 *            the name of the metaattribute
-	 * 
+	 *
 	 * @return <code>String</code> the attribute value
 	 * @throws ContextException
 	 * @see #getSingletonAttributeValue
@@ -770,12 +770,12 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 	 * assigned to this context node. A singleton attribute is a single
 	 * attribute with a single value as distinguished from a metaattribute which
 	 * designates multiple attribute-value pairs.
-	 * 
+	 *
 	 * @param path
 	 *            the location in the context
 	 * @param attributeName
 	 *            the name of the metaattribute
-	 * 
+	 *
 	 * @return <code>String</code> the attribute value
 	 * @throws ContextException
 	 * @see #getAttributeValue
@@ -789,12 +789,12 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 	 * assigned to this context node. The attribute value is a concatenation of
 	 * the individual attribute values, separated by the context meta-path
 	 * separator character (CMPS).
-	 * 
+	 *
 	 * @param path
 	 *            the location in the context
 	 * @param attributeName
 	 *            the name of the metaattribute
-	 * 
+	 *
 	 * @return <code>String</code> the meta-attribute value
 	 * @throws ContextException
 	 * @see #getAttributeValue
@@ -813,12 +813,12 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 	 * getLocalMetapath operating on the <code>ServiceContext</code> that is
 	 * linked (which can be obtained, for example, from the getContext method of
 	 * {@link ContextLink} objects. Returns <code>null</code> if not defined.
-	 * 
+	 *
 	 * Metapaths are set using {@link #getLocalMetapath}
-	 * 
+	 *
 	 * @param metaattributeName
 	 *            the name of the metaattribute
-	 * 
+	 *
 	 * @return the metapath or <code>null</code> if not defined
 	 * @throws ContextException
 	 * @see ContextLink
@@ -828,7 +828,7 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 	public String getLocalMetapath(String metaattributeName)
 			throws ContextException;
 
-    public Context getSubcontext(String... paths) throws ContextException;
+	public Context getSubcontext(String... paths) throws ContextException;
 
 	public boolean isValid(Signature method) throws ContextException;
 
@@ -836,7 +836,7 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 	 * Returns an {@link Enumeration} of the locations of all the objects in
 	 * this context. The enumeration includes objects that reside in linked
 	 * contexts.
-	 * 
+	 *
 	 * @return <code>Enumeration</code>
 	 * @throws ContextException
 	 * @see ContextLink
@@ -845,17 +845,17 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 
 	/**
 	 * Returns a list of all paths of this context. 
-	 * 
+	 *
 	 * @return <code>List</code>
 	 * @throws ContextException
 	 * @see ContextLink
 	 */
 	public List<String> getPaths() throws ContextException;
-	
+
 	/**
 	 * Returns the enumeration of all context paths matching the given regular
 	 * expression.
-	 * 
+	 *
 	 * @param regex
 	 *            the regular expression to which paths of this context are to
 	 *            be matched
@@ -866,7 +866,7 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 
 	/**
 	 * Returns an enumeration of all values of this service context.
-	 * 
+	 *
 	 * @return an enumeration of all context values
 	 * @throws ContextException
 	 */
@@ -876,7 +876,7 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 	 * Returns an {@link Enumeration} of the locations of the first-level
 	 * {@link ContextLink} objects in this context. The enumeration does not
 	 * include ContextLink objects that reside in linked contexts.
-	 * 
+	 *
 	 * @return <code>Enumeration</code>
 	 * @throws ContextException
 	 * @see ContextLink
@@ -887,7 +887,7 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 	 * Returns an {@link Enumeration} of the locations of the
 	 * {@link ContextLink} objects in this context. The enumeration includes
 	 * ContextLink objects that reside in linked contexts.
-	 * 
+	 *
 	 * @return <code>Enumeration</code>
 	 * @throws ContextException
 	 * @see ContextLink
@@ -897,7 +897,7 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 	/**
 	 * Returns an {@link Enumeration} of all the {@link ContextLink} objects in
 	 * this context including any ContextLinks that reside in linked contexts.
-	 * 
+	 *
 	 * @return <code>Enumeration</code>
 	 * @throws ContextException
 	 * @see ContextLink
@@ -908,7 +908,7 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 	 * Returns an {@link Enumeration} of the top-level {@link ContextLink}
 	 * objects in this context. Does not include ContextLinks that reside in
 	 * linked contexts.
-	 * 
+	 *
 	 * @return <code>Enumeration</code>
 	 * @throws ContextException
 	 * @see ContextLink
@@ -919,7 +919,7 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 	 * Links the argument <code>context</code> to this context at a given path
 	 * with its offset path. The last attribute of the path is the root of the
 	 * linked subcontext of the <code>context</code>.
-	 * 
+	 *
 	 * @param context
 	 * @param atPath
 	 * @param offset
@@ -933,7 +933,7 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 	 * context. This method is necessary since ContextLink objects are otherwise
 	 * transparent. For example, getValue(path) returns a value in the linked
 	 * context, not the LinkedContext object.
-	 * 
+	 *
 	 * @param path
 	 *            the location in the context
 	 * @return <code>ContextLink</code> if a ContextLink object resides at path;
@@ -1003,7 +1003,7 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 	 * Removes a context node from the context. If the designated path points to
 	 * a {@link ContextLink} object, a {@link ContextException} will be thrown.
 	 * Use {@link #removeLink} to remove link contexts.
-	 * 
+	 *
 	 * @see #removeLink
 	 * @throws ContextException
 	 */
@@ -1011,7 +1011,7 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 
 	/**
 	 * Returns a string representation of this context.
-	 * 
+	 *
 	 * @return a string representation
 	 */
 	public String toString();
@@ -1019,7 +1019,7 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 	/**
 	 * Returns a plain string representation of this context or in the HTML
 	 * format.
-	 * 
+	 *
 	 * @param isHTML
 	 * @return a plain string if isHTML is false, otherwise in the HTML format.
 	 */
@@ -1028,14 +1028,14 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 	/**
 	 * Check if this context is export controlled, accessible to principals from
 	 * export controlled countries.
-	 * 
+	 *
 	 * @return true if is export controlled
 	 */
 	public boolean isExportControlled();
 
 	/**
 	 * Assigns export control for this context to <code>state</code> boolean.
-	 * 
+	 *
 	 * @param state
 	 *            of export control for this context
 	 */
@@ -1055,7 +1055,7 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 	 * Returns all singleton attributes for the top-level context. Does not
 	 * descend into linked contexts to retrieve attributes (see
 	 * {@link #getAttributes} which does look in linked contexts).
-	 * 
+	 *
 	 * @return Enumeration of singleton attributes (all of type
 	 *         <code>String</code>)
 	 * @see #getAttributes
@@ -1066,7 +1066,7 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 	 * Returns all singleton attributes for the context. Descends into linked
 	 * contexts to retrieve underlying singleton attributes (see
 	 * {@link #getAttributes} which does not look in linked contexts).
-	 * 
+	 *
 	 * @return Enumeration of meta attributes (all of type <code>String</code>)
 	 * @throws ContextException
 	 * @see #getAttributes
@@ -1076,7 +1076,7 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 	/**
 	 * Get all meta associations (meta attribute-meta value pairs) at the
 	 * specified context node.
-	 * 
+	 *
 	 * @param path
 	 *            the location in the context
 	 * @return Enumeration of meta associations (of type <code>String</code>)
@@ -1086,7 +1086,7 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 
 	/**
 	 * Returns all locally defined attributes in this context (metacontext).
-	 * 
+	 *
 	 * @return Enumeration of local attributes (all of type <code>String</code>)
 	 * @see #getAttributes
 	 */
@@ -1096,7 +1096,7 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 	 * Returns all composite attributes for the top-level context. Does not
 	 * descend into linked contexts to retrieve meta attributes (see
 	 * {@link #compositeAttributes} which does look in linked contexts).
-	 * 
+	 *
 	 * @return Enumeration of meta attributes (all of type <code>String</code>)
 	 * @see #compositeAttributes
 	 */
@@ -1107,7 +1107,7 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 	 * contexts to retrieve underlying meta attributes (see
 	 * {@link #localCompositeAttributes} which does not look in linked
 	 * contexts).
-	 * 
+	 *
 	 * @return Enumeration of meta attributes (all of type <code>String</code>)
 	 * @throws ContextException
 	 * @see #getAttributes
@@ -1119,7 +1119,7 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 	 * into linked contexts to retrieve underlying attributes (see
 	 * {@link #localCompositeAttributes} or {@link #getAttributes} which do not
 	 * look in linked contexts).
-	 * 
+	 *
 	 * @return Enumeration of attributes (all of type <code>String</code>)
 	 * @throws ContextException
 	 */
@@ -1127,7 +1127,7 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 
 	/**
 	 * Returns all attributes (simple and composite) at path in the context.
-	 * 
+	 *
 	 * @param path
 	 *            the location in the context
 	 * @return Enumeration of attributes (all of type <code>String</code>)

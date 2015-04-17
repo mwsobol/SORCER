@@ -29,7 +29,7 @@ import net.jini.core.lease.Lease;
 import net.jini.entry.UnusableEntriesException;
 import net.jini.id.Uuid;
 import net.jini.space.JavaSpace05;
-import sorcer.core.exertion.Jobs;
+import sorcer.core.exertion.Mograms;
 import sorcer.core.monitor.MonitorUtil;
 import sorcer.core.monitor.MonitoringSession;
 import sorcer.core.provider.Provider;
@@ -78,7 +78,7 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
     @Override
     protected List<Mogram> getInputExertions() throws ContextException {
         if (xrt instanceof Job)
-            return Jobs.getInputExertions((Job) xrt);
+            return Mograms.getInputExertions((Job) xrt);
         else if (xrt instanceof Block)
             return xrt.getAllExertions();
         else

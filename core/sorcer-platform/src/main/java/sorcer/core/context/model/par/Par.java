@@ -16,7 +16,7 @@
  */
 package sorcer.core.context.model.par;
 
-import sorcer.co.tuple.Entry;
+import sorcer.core.context.model.ent.Entry;
 import sorcer.co.tuple.EntryList;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.ApplicationDescription;

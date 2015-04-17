@@ -21,7 +21,7 @@ import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
 import net.jini.id.Uuid;
 import net.jini.id.UuidFactory;
-import sorcer.co.tuple.Entry;
+import sorcer.core.context.model.ent.Entry;
 import sorcer.core.ComponentSelectionFidelity;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.*;
@@ -1191,7 +1191,7 @@ public abstract class ServiceExertion implements Exertion, Scopable, SorcerConst
         List<Signature> allSigs = new ArrayList<Signature>();
         List<Mogram> allExertions = getAllExertions();
         for (Mogram e : allExertions) {
-            allSigs.add(((Exertion)e).getProcessSignature());
+            allSigs.add(e.getProcessSignature());
         }
         return allSigs;
     }

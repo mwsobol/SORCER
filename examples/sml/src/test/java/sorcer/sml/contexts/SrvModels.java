@@ -2,19 +2,21 @@ package sorcer.sml.contexts;
 
 import org.junit.Test;
 import sorcer.arithmetic.provider.impl.AdderImpl;
+import sorcer.arithmetic.provider.impl.AveragerImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.provider.impl.SubtractorImpl;
+import sorcer.core.provider.rendezvous.ServiceConcatenator;
+import sorcer.service.Block;
 import sorcer.service.Context;
-import sorcer.service.Mogram;
 import sorcer.service.modeling.Model;
 
 import java.util.logging.Logger;
 
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
-import static sorcer.co.operator.paths;
+import static sorcer.co.operator.inPaths;
+import static sorcer.co.operator.srv;
 import static sorcer.eo.operator.*;
-import static sorcer.eo.operator.sig;
 import static sorcer.po.operator.invoker;
 
 /**
@@ -25,7 +27,7 @@ public class SrvModels {
     private final static Logger logger = Logger.getLogger(SrvModels.class.getName());
 
     @Test
-    public void exertContextServiceModel() throws Exception {
+    public void exertServiceModel() throws Exception {
 
         // get a context from a subject provider
 
@@ -92,26 +94,38 @@ public class SrvModels {
 
 
     @Test
-    public void modelOutMap() throws Exception {
+    public void blockMogramMap() throws Exception {
 
-        Context outMap = context(inEnt("add", "x1"), inEnt("multiply", "x3"), inEnt("multiply", "x3"));
+        Context outMap = context(inEnt("y1", "add"), inEnt("y2", "multiply"), inEnt("y3", "subtract"));
 
-        Model m = srvModel(
+        Model model = srvModel(
                 inEnt("multiply/x1", 10.0), inEnt("multiply/x2", 50.0),
                 inEnt("add/x1", 20.0), inEnt("add/x2", 80.0),
                 srv(sig("multiply", MultiplierImpl.class, result("multiply/out",
                         inPaths("multiply/x1", "multiply/x2")))),
                 srv(sig("add", AdderImpl.class, result("add/out",
                         inPaths("add/x1", "add/x2")))),
-                srv(sig("subtract", SubtractorImpl.class, result("model/response",
+                srv(sig("subtract", SubtractorImpl.class, result("subtract/response",
                         inPaths("multiply/out", "add/out")))),
-                srv("y1", "multiply/x1"), srv("y2", "add/x2"));
+                srv("y1", "multiply/x1"), srv("y2", "add/x2"), srv("y3", "subtract/response"));
 
-        addResponse(m, "add", "multiply", "subtract");
-        dependsOn(m, "subtract", paths("multiply", "add"));
-        mapContext(m, outMap);
+        addResponse(model, "add", "multiply", "subtract");
+        dependsOn(model, "subtract", paths("multiply", "add"));
+        mapContext(model, outMap);
 
-        Mogram block = block(m, task(sig("multiply", MultiplierImpl.class)));
+        Block block = block(sig(ServiceConcatenator.class),
+                model,
+                task(sig("average", AveragerImpl.class,
+                        result("average/response", inPaths("y1", "y2", "y3")))));
+
+        Context result = context(exert(block));
+
+        logger.info("result: " + result);
+
+        assertTrue(value(result, "y1").equals(100.0));
+        assertTrue(value(result, "y2").equals(500.0));
+        assertTrue(value(result, "y3").equals(400.0));
+        assertTrue(value(result, "average/response").equals(333.3333333333333));
     }
 
 }

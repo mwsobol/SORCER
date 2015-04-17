@@ -29,9 +29,9 @@ import sorcer.service.Strategy.Flow;
 
 import java.util.*;
 
-public class Jobs implements SorcerConstants {
+public class Mograms implements SorcerConstants {
 
-	private Jobs() {
+	private Mograms() {
 		// Utility class
 	}
 	
@@ -260,16 +260,14 @@ public class Jobs implements SorcerConstants {
 
 	// For Recursion
 	private static void collectTaskContexts(Exertion exertion, List<Context> contexts) throws ContextException {
-//		if (exertion.isConditional())
-//			contexts.add(exertion.getDataContext());
-//		else 
-			if (exertion instanceof Job) {
+		if (exertion.isConditional())
+			contexts.add(exertion.getDataContext());
+		else if (exertion instanceof Job) {
 			contexts.add(exertion.getDataContext());
 			for (int i = 0; i < ((Job) exertion).getExertions().size(); i++)
 				collectTaskContexts(((Job) exertion).get(i),
 						contexts);
-		}
-		else if (exertion instanceof Task) {
+		} else if (exertion instanceof Task) {
 			contexts.add(exertion.getDataContext());
 		}
 	}

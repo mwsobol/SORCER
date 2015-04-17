@@ -220,9 +220,10 @@ import java.util.logging.Logger;
 	static public void cleanupScripts(Exertion exertion) throws ContextException {
 		clenupContextScripts(exertion.getContext());
 		for (Mogram e : exertion.getExertions()) {
-			if (e instanceof Exertion)
-					clenupExertionScripts((Exertion)e);
-					clenupContextScripts(((Exertion)e).getContext());
+			if (e instanceof Exertion) {
+				clenupExertionScripts((Exertion) e);
+				clenupContextScripts(((Exertion) e).getContext());
+			}
 		}
 	}
 	

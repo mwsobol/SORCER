@@ -18,13 +18,8 @@
 
 package sorcer.core.dispatch;
 
-import java.rmi.RemoteException;
-import java.util.List;
-import java.util.Set;
-
 import net.jini.core.lease.Lease;
 import net.jini.lease.LeaseRenewalManager;
-import sorcer.core.SorcerConstants;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.par.ParModel;
 import sorcer.core.exertion.AltExertion;
@@ -34,6 +29,10 @@ import sorcer.core.monitor.MonitorUtil;
 import sorcer.core.monitor.MonitoringSession;
 import sorcer.core.provider.Provider;
 import sorcer.service.*;
+
+import java.rmi.RemoteException;
+import java.util.List;
+import java.util.Set;
 
 /**
  * A dispatching class for exertion blocks in the PUSH mode.
@@ -66,7 +65,10 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
         super.beforeExec(exertion);
         try {
             preUpdate(exertion);
-            ((ServiceContext)exertion.getContext()).setBlockScope(xrt.getContext());
+            if (exertion.getDataContext().size() == 0)
+                ((ServiceExertion)exertion).setContext(xrt.getContext());
+            else
+                ((ServiceContext)exertion.getContext()).setBlockScope(xrt.getContext());
         } catch (ContextException ex) {
             throw new ExertionException(ex);
         }
@@ -121,8 +123,8 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
 			if (pc == null) {
 				pc = new ParModel(exertion.getName());
 				((OptExertion)exertion).getCondition().setConditionalContext(pc);
-			}
-			pc.append(xrt.getContext());
+            }
+            pc.append(xrt.getContext());
 		} else if (exertion instanceof LoopExertion) {
 			((LoopExertion)exertion).getCondition().setStatus(null);
 			Context pc = ((LoopExertion)exertion).getCondition().getConditionalContext();			
@@ -153,7 +155,7 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
 		} else if (exertion instanceof OptExertion) {
 			xrt.getContext().append(exertion.getContext());
 		}
-		
+
 //		if (exertion instanceof AltExertion) {
 //			((ParModel)((Block)xrt).getContext()).appendNew(((AltExertion)exertion).getActiveOptExertion().getContext());
 //		} else if (exertion instanceof OptExertion) {
@@ -162,16 +164,18 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
 		
 		ServiceContext cxt = (ServiceContext)xrt.getContext();
 		if (exertion.getContext().getReturnPath() != null)
-			cxt.putOutValue(exertion.getContext().getReturnPath().path, exertion.getContext().getReturnValue()); 
+            cxt.putInValue(exertion.getContext().getReturnPath().path,
+                    exertion.getContext().getReturnValue());
 		else 
 			cxt.appendNewEntries(exertion.getContext());
 		
 		((ServiceContext)exertion.getContext()).setBlockScope(null);
 //		if (cxt.getReturnPath() != null)
-//			cxt.putValue(cxt.getReturnPath().path, cxt.getReturnValue()); 
+//			cxt.putValue(cxt.getReturnPath().path, cxt.getReturnValue());
 	}
 
     protected List<Mogram> getInputExertions() {
         return xrt.getExertions();
 	}
+
 }

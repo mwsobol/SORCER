@@ -19,11 +19,10 @@ package sorcer.co.tuple;
 
 import net.jini.id.Uuid;
 import net.jini.id.UuidFactory;
+import sorcer.core.context.model.ent.Entry;
 import sorcer.service.*;
-import sorcer.util.url.sos.SdbUtil;
 
 import java.io.Serializable;
-import java.net.URL;
 import java.rmi.RemoteException;
 
 @SuppressWarnings("unchecked")

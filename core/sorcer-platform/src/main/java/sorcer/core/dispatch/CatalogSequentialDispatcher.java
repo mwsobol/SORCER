@@ -17,63 +17,69 @@
 
 package sorcer.core.dispatch;
 
+import sorcer.core.context.ServiceContext;
+import sorcer.core.context.model.ent.EntModel;
+import sorcer.core.exertion.Mograms;
+import sorcer.core.provider.Provider;
+import sorcer.service.*;
+import sorcer.service.modeling.Model;
+
 import java.rmi.RemoteException;
 import java.util.List;
 import java.util.Set;
 
-import sorcer.core.SorcerConstants;
-import sorcer.core.context.ServiceContext;
-import sorcer.core.exertion.Jobs;
-import sorcer.core.provider.Provider;
-import sorcer.service.*;
 import static sorcer.service.Exec.*;
 
 public class CatalogSequentialDispatcher extends CatalogExertDispatcher {
 
 	@SuppressWarnings("rawtypes")
-	public CatalogSequentialDispatcher(Exertion job,
-            Set<Context> sharedContext,
-            boolean isSpawned, 
-            Provider provider,
-            ProvisionManager provisionManager) {
-		super(job, sharedContext, isSpawned, provider, provisionManager);
-	}
+    public CatalogSequentialDispatcher(Exertion job,
+                                       Set<Context> sharedContext,
+                                       boolean isSpawned,
+                                       Provider provider,
+                                       ProvisionManager provisionManager) {
+        super(job, sharedContext, isSpawned, provider, provisionManager);
+    }
 
     protected void doExec() throws ExertionException,
-			SignatureException {
+            SignatureException {
 
-            String pn;
-            if (inputXrts == null) {
-                xrt.setStatus(FAILED);
-                state = FAILED;
+        String pn;
+        if (inputXrts == null) {
+            xrt.setStatus(FAILED);
+            state = FAILED;
+            try {
+                pn = provider.getProviderName();
+                if (pn == null)
+                    pn = provider.getClass().getName();
+                ExertionException fe = new ExertionException(pn + " received invalid job: "
+                        + xrt.getName(), xrt);
+
+                xrt.reportException(fe);
+                dispatchers.remove(xrt.getId());
+                throw fe;
+            } catch (RemoteException e) {
+                logger.warn("Error during local call", e);
+            }
+        }
+
+        xrt.startExecTime();
+        Context previous = null;
+        for (Mogram mogram: inputXrts) {
+            if (xrt.isBlock()) {
                 try {
-                    pn = provider.getProviderName();
-                    if (pn == null)
-                        pn = provider.getClass().getName();
-                    ExertionException fe = new ExertionException(pn + " received invalid job: "
-                            + xrt.getName(), xrt);
-
-                    xrt.reportException(fe);
-                    dispatchers.remove(xrt.getId());
-                    throw fe;
-                } catch (RemoteException e) {
-                    logger.warn("Error during local call", e);
+                    if (mogram instanceof Exertion) {
+                        ((ServiceContext) ((Exertion) mogram).getContext()).setBlockScope(xrt.getContext());
+                    } else if (mogram instanceof EntModel) {
+                        ((ServiceContext)mogram).setBlockScope(xrt.getContext());
+                        xrt.getContext().append(((Model)mogram).getResponses());
+                    }
+                } catch (Exception ce) {
+                    throw new ExertionException(ce);
                 }
             }
 
-            xrt.startExecTime();
-            Context previous = null;
-            for (Mogram mogram: inputXrts) {
-
-                // Added for Blocks
-                if (xrt.isBlock()) {
-                    try {
-                        ((ServiceContext) ((Exertion)mogram).getContext()).setBlockScope(xrt.getContext());
-                    } catch (ContextException ce) {
-                        throw new ExertionException(ce);
-                    }
-                }
-
+            if (mogram instanceof Exertion) {
                 ServiceExertion se = (ServiceExertion) mogram;
                 // support for continuous pre and post execution of task
                 // signatures
@@ -87,22 +93,23 @@ public class CatalogSequentialDispatcher extends CatalogExertDispatcher {
                     throw new ExertionException(e);
                 }
             }
+        }
 
-            if (masterXrt != null) {
-				masterXrt = (ServiceExertion) execExertion(masterXrt); // executeMasterExertion();
-				if (masterXrt.getStatus() <= FAILED) {
-					state = FAILED;
-					xrt.setStatus(FAILED);
-				} else {
-					state = DONE;
-					xrt.setStatus(DONE);
-				}
-			} else
-				state = DONE;
-			dispatchers.remove(xrt.getId());
-			xrt.stopExecTime();
-			xrt.setStatus(DONE);
-	}
+        if (masterXrt != null) {
+            masterXrt = (ServiceExertion) execExertion(masterXrt); // executeMasterExertion();
+            if (masterXrt.getStatus() <= FAILED) {
+                state = FAILED;
+                xrt.setStatus(FAILED);
+            } else {
+                state = DONE;
+                xrt.setStatus(DONE);
+            }
+        } else
+            state = DONE;
+        dispatchers.remove(xrt.getId());
+        xrt.stopExecTime();
+        xrt.setStatus(DONE);
+    }
 
     protected void dispatchExertion(ServiceExertion se) throws SignatureException, ExertionException {
         se = (ServiceExertion) execExertion(se);
@@ -133,6 +140,6 @@ public class CatalogSequentialDispatcher extends CatalogExertDispatcher {
     }
 
     protected List<Mogram> getInputExertions() throws ContextException {
-        return Jobs.getInputExertions(((Job) xrt));
+        return Mograms.getInputExertions(((Job) xrt));
     }
 }

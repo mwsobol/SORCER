@@ -12,6 +12,7 @@ import sorcer.core.SorcerConstants;
 import sorcer.core.provider.rendezvous.ServiceConcatenator;
 import sorcer.service.Block;
 import sorcer.service.Service;
+import sorcer.service.Signature.Direction;
 import sorcer.service.Task;
 
 import java.util.logging.Logger;
@@ -93,24 +94,24 @@ public class LocalBlockExertions implements SorcerConstants {
 	
 	
 	@Test
-	public void altBlocTest() throws Exception {
+	public void altBlockTest() throws Exception {
 		Task t3 = task("t3", sig("subtract", SubtractorImpl.class), 
 				context("subtract", inEnt("arg/t4"), inEnt("arg/t5"),
-						result("block/result")));
+						result("block/result", Direction.OUT)));
 
 		Task t4 = task("t4", sig("multiply", MultiplierImpl.class), 
 				context("multiply", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
-						result("arg/t4")));
+						result("arg/t4", Direction.IN)));
 
 		Task t5 = task("t5", sig("add", AdderImpl.class), 
 				context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
-						result("arg/t5")));
+						result("arg/t5", Direction.IN)));
 		
 		Task t6 = task("t6", sig("average", AveragerImpl.class), 
 				context("average", inEnt("arg/t4"), inEnt("arg/t5"),
-						result("block/result")));
+						result("block/result", Direction.OUT)));
 		
-		Block block = block("block", sig("execute", ServiceConcatenator.class), 
+		Block block = block("block", sig("execute", ServiceConcatenator.class),
 				t4, t5, 
 				alt(opt(condition("{ t4, t5 -> t4 > t5 }", "t4", "t5"), t3),
 					opt(condition("{ t4, t5 -> t4 <= t5 }", "t4", "t5"), t6)));
@@ -119,14 +120,17 @@ public class LocalBlockExertions implements SorcerConstants {
 //		logger.info("exertions: " + exertions(block));
 //		logger.info("block context: " + context(block));
 
-		block = exert(block);
-//		logger.info("result: " + value(context(block), "block/result"));
-		assertEquals(value(context(block), "block/result"), 400.00);
-		
-		block = exert(block, ent("block/t5/arg/x1", 200.0), ent("block/t5/arg/x2", 800.0));
-//		logger.info("block context: " + context(block));
-		logger.info("result: " + value(context(block), "block/result"));
-		assertEquals(value(context(block), "block/result"), 750.00);
+		Block result = exert(block);
+//		logger.info("result: " + value(context(result), "block/result"));
+		assertEquals(value(context(result), "block/result"), 400.00);
+
+		clearContext(block);
+		logger.info("context: " + context(block));
+
+		result = exert(block, ent("block/t5/arg/x1", 200.0), ent("block/t5/arg/x2", 800.0));
+//		logger.info("block context: " + context(result));
+		logger.info("result: " + value(context(result), "block/result"));
+		assertEquals(value(context(result), "block/result"), 750.00);
 	}
 	
 	

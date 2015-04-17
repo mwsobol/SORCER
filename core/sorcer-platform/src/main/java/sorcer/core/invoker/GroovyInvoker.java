@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.Iterator;
 
-import sorcer.co.tuple.Entry;
 import sorcer.core.context.model.par.Par;
 import sorcer.service.Arg;
 import sorcer.service.ArgSet;

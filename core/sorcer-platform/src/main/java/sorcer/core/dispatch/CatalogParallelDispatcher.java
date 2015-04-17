@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.*;
 
-import sorcer.core.exertion.Jobs;
+import sorcer.core.exertion.Mograms;
 import sorcer.core.provider.Provider;
 import sorcer.service.*;
 
@@ -117,7 +117,7 @@ public class CatalogParallelDispatcher extends CatalogExertDispatcher {
 
     @Override
     protected List<Mogram> getInputExertions() throws ContextException {
-        return Jobs.getInputExertions(((Job)xrt));
+        return Mograms.getInputExertions(((Job) xrt));
     }
 
     protected class ExecExertion implements Callable<Exertion> {

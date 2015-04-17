@@ -32,7 +32,7 @@ import net.jini.core.lookup.ServiceID;
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
 import net.jini.id.Uuid;
-import sorcer.co.tuple.Entry;
+import sorcer.core.context.model.ent.Entry;
 import sorcer.core.ComponentSelectionFidelity;
 import sorcer.core.context.ControlContext;
 import sorcer.core.context.FidelityContext;

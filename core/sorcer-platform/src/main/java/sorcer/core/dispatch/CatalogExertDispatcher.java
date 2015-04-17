@@ -18,14 +18,10 @@
 
 package sorcer.core.dispatch;
 
-import java.rmi.RemoteException;
-import java.util.Set;
-
 import net.jini.core.lookup.ServiceItem;
 import net.jini.core.lookup.ServiceTemplate;
 import net.jini.core.transaction.TransactionException;
 import sorcer.core.Dispatcher;
-import sorcer.core.SorcerConstants;
 import sorcer.core.exertion.NetTask;
 import sorcer.core.monitor.MonitorUtil;
 import sorcer.core.monitor.MonitoringSession;
@@ -34,21 +30,11 @@ import sorcer.core.provider.Provider;
 import sorcer.core.provider.ServiceProvider;
 import sorcer.core.signature.NetSignature;
 import sorcer.ext.ProvisioningException;
-import sorcer.service.Accessor;
-import sorcer.service.Block;
-import sorcer.service.CompoundExertion;
-import sorcer.service.Context;
-import sorcer.service.ContextException;
-import sorcer.service.Exec;
-import sorcer.service.Exertion;
-import sorcer.service.ExertionException;
-import sorcer.service.Job;
-import sorcer.service.Service;
-import sorcer.service.ServiceExertion;
-import sorcer.service.Signature;
-import sorcer.service.SignatureException;
-import sorcer.service.Task;
+import sorcer.service.*;
 import sorcer.util.SorcerEnv;
+
+import java.rmi.RemoteException;
+import java.util.Set;
 
 import static sorcer.service.Exec.*;
 
@@ -102,15 +88,6 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
 		((CompoundExertion)xrt).setExertionAt(result, ex.getIndex());
         if (ser.getStatus() > FAILED && ser.getStatus() != SUSPENDED) {
             ser.setStatus(DONE);
-/*            if (xrt.getControlContext().isNodeReferencePreserved())
-                try {
-                    Jobs.preserveNodeReferences(ex, result);
-                } catch (ContextException ce) {
-                    ce.printStackTrace();
-                    throw new ExertionException("ContextException caught: "
-                            + ce.getMessage());
-                }
-*/
             // update all outputs from sharedcontext only for tasks. For jobs,
             // spawned dispatcher does it.
 			try {
@@ -124,6 +101,7 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
         }
         afterExec(result);
     }
+
     protected Task execTask(Task task) throws ExertionException,
             SignatureException, RemoteException {
         if (task instanceof NetTask) {
@@ -328,8 +306,9 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
 			// create a new instance of a dispatcher
 			dispatcher = ExertionDispatcherFactory.getFactory()
 					.createDispatcher(block, sharedContexts, true, provider);
+
             dispatcher.exec();
-			// wait until serviceJob is done by dispatcher
+			// wait until a block is done by dispatcher
 			Block out = (Block) dispatcher.getResult().exertion;
 			out.getControlContext().appendTrace(provider.getProviderName() 
 					+ " dispatcher: " + getClass().getName());

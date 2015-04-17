@@ -25,6 +25,8 @@ import sorcer.core.ComponentSelectionFidelity;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.*;
 import sorcer.core.context.model.PoolStrategy;
+import sorcer.core.context.model.ent.EntModel;
+import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.par.Par;
 import sorcer.core.context.model.par.ParModel;
 import sorcer.core.context.model.srv.Srv;
@@ -42,7 +44,9 @@ import sorcer.service.Signature.*;
 import sorcer.service.Strategy.*;
 import sorcer.service.modeling.Model;
 import sorcer.service.modeling.Variability;
-import sorcer.util.*;
+import sorcer.util.Loop;
+import sorcer.util.ObjectCloner;
+import sorcer.util.Sorcer;
 import sorcer.util.url.sos.SdbUtil;
 
 import java.io.IOException;
@@ -50,7 +54,6 @@ import java.net.InetAddress;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.*;
-import java.util.Collections;
 import java.util.logging.Logger;
 
 
@@ -238,11 +241,17 @@ public class operator {
 			throws ContextException {
 		if (entries != null && entries.length == 1 && entries[0] instanceof Context) {
 			((Context)entries[0]).setModeling(true);
-			return (Context)entries[0];
+			try {
+				return new EntModel((Context)entries[0]);
+			} catch (RemoteException e) {
+				throw new ContextException(e);
+			}
 		}
-		Context cxt = context(entries);
-		cxt.setModeling(true);
-		return cxt;
+		EntModel model = new EntModel();
+		Object[] dest = new Object[entries.length+1];
+		System.arraycopy(entries,  0, dest,  1, entries.length);
+		dest[0] = model;
+		return context(dest);
 	}
 
 	public static Model mapContext(Model model, Context out) throws ContextException {
@@ -268,7 +277,7 @@ public class operator {
 
 	public static Context responses(Model model) throws ContextException {
         try {
-            return ((ServiceContext)model).getResponses();
+            return model.getResponses();
         } catch (RemoteException e) {
             throw new ContextException(e);
         }
@@ -276,7 +285,7 @@ public class operator {
 
     public static Object response(Model model, String path) throws ContextException {
         try {
-            return ((ServiceContext)model).getResponse(path);
+            return model.getResponse(path);
         } catch (RemoteException e) {
             throw new ContextException(e);
         }
@@ -284,7 +293,7 @@ public class operator {
 
     public static Object response(Model model) throws ContextException {
         try {
-            return ((ServiceContext)model).getResponse();
+            return model.getResponse();
         } catch (RemoteException e) {
             throw new ContextException(e);
         }
@@ -332,8 +341,8 @@ public class operator {
 					(String) entries[0])).getContext();
 		} else if (entries[0] instanceof Context && entries[1] instanceof List) {
 			return ((ServiceContext)entries[0]).getSubcontext((List)entries[1]);
-		} else if (entries[0] instanceof SrvModel) {
-            cxt = (SrvModel)entries[0];
+		} else if (entries[0] instanceof Model) {
+            cxt = (PositionalContext)entries[0];
         } else {
 			cxt = getPersistedContext(entries);
 			if (cxt != null) return cxt;
@@ -650,6 +659,11 @@ public class operator {
 		}
 		context.putValue(path, value);
 		return context;
+	}
+
+	public static Context put(Model model, Identifiable... objects)
+			throws RemoteException, ContextException {
+		return put((Context) model, objects);
 	}
 
 	public static Context put(Context context, Identifiable... objects)
@@ -1520,6 +1534,11 @@ public class operator {
 		} catch (Exception e) {
 			throw new EvaluationException(e);
 		}
+	}
+
+	public static Object value(Model model, String evalSelector,
+							  Arg... entries) throws ContextException {
+		return value((Context<Object>) model, evalSelector, entries);
 	}
 
     public static <T> T value(Context<T> model, String evalSelector,
@@ -2482,14 +2501,19 @@ public class operator {
 		return signature;
 	}
 
+	public static Exertion clearContext(Exertion exertion) throws ContextException {
+		((Map)exertion.getDataContext()).clear();
+		return exertion;
+	}
+
 	public static Block block(Object...  items) throws ExertionException {
 		List<Mogram> mograms = new ArrayList<Mogram>();
 		String name = null;
 		Signature sig = null;
 		Context context = null;
 		for (int i = 0; i < items.length; i++) {
-			if (items[i] instanceof Exertion) {
-				mograms.add((Exertion) items[i]);
+			if (items[i] instanceof Exertion || items[i] instanceof EntModel) {
+				mograms.add((Mogram) items[i]);
 			} else if (items[i] instanceof Context) {
 				context = (Context)items[i];
 			} else if (items[i] instanceof Signature) {

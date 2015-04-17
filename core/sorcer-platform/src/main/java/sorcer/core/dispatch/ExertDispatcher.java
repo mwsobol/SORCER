@@ -27,11 +27,12 @@ import sorcer.core.DispatchResult;
 import sorcer.core.Dispatcher;
 import sorcer.core.context.Contexts;
 import sorcer.core.context.ServiceContext;
-import sorcer.core.exertion.Jobs;
+import sorcer.core.exertion.Mograms;
 import sorcer.core.monitor.MonitorUtil;
 import sorcer.core.monitor.MonitoringSession;
 import sorcer.core.provider.Provider;
 import sorcer.service.*;
+import sorcer.service.modeling.Model;
 
 import javax.security.auth.Subject;
 import java.lang.reflect.Array;
@@ -162,7 +163,7 @@ abstract public class ExertDispatcher implements Dispatcher {
             logger.warn("Exception on local call", e);
         }
         ((ServiceExertion) exertion).startExecTime();
-        ((ServiceExertion) exertion).setStatus(Exec.RUNNING);
+        exertion.setStatus(Exec.RUNNING);
 
     }
 
@@ -238,19 +239,29 @@ abstract public class ExertDispatcher implements Dispatcher {
     protected void collectResults() throws ExertionException, SignatureException{}
     //protected abstract void dispatchExertions() throws ExertionException, SignatureException;
 
-    protected void collectOutputs(Exertion ex) throws ContextException {
-        if (sharedContexts==null) {
-            logger.warn("Trying to update sharedContexts but it is null for exertion: " + ex);
+    protected void collectOutputs(Mogram mo) throws ContextException {
+        if (sharedContexts == null) {
+            logger.warn("Trying to update sharedContexts but it is null for exertion: " + mo);
             return;
         }
-        List<Context> contexts = Jobs.getTaskContexts(ex);
-        logger.debug("Contexts to check if shared: " + contexts.toString());
-        for (Context ctx : contexts) {
-            if (((ServiceContext)ctx).isShared()) {
-                sharedContexts.add(ctx);
-                logger.debug("Added shared context: " + ctx);
+        if (mo instanceof Exertion) {
+            List<Context> contexts = Mograms.getTaskContexts((Exertion) mo);
+            logger.debug("Contexts to check if shared: " + contexts.toString());
+            for (Context ctx : contexts) {
+                if (((ServiceContext) ctx).isShared()) {
+                    sharedContexts.add(ctx);
+                    logger.debug("Added exertion shared context: " + ctx);
+                }
+            }
+        } else if (mo instanceof Model) {
+            try {
+                sharedContexts.add(((Model)mo).getResponses());
+                logger.debug("Added model shared context: " + mo);
+            } catch (RemoteException e) {
+                throw new ContextException(e);
             }
         }
+
 //      for (int i = 0; i < contexts.size(); i++) {
 //			if (!sharedContexts.contains(contexts.get(i)))
 //				sharedContexts.add(contexts.get(i));
@@ -261,7 +272,7 @@ abstract public class ExertDispatcher implements Dispatcher {
 
     protected void updateInputs(Exertion ex) throws ExertionException, ContextException {
         logger.debug("updating inputs for {}", ex.getName());
-        List<Context> inputContexts = Jobs.getTaskContexts(ex);
+        List<Context> inputContexts = Mograms.getTaskContexts(ex);
         for (Context inputContext : inputContexts)
             updateInputs((ServiceContext) inputContext);
     }
@@ -367,18 +378,17 @@ abstract public class ExertDispatcher implements Dispatcher {
         return isMonitored;
     }
 
-    protected void reconcileInputExertions(Exertion ex) throws ContextException {
-        ServiceExertion ext = (ServiceExertion)ex;
-        if (ext.getStatus() == DONE) {
-            collectOutputs(ex);
+    protected void reconcileInputExertions(Mogram mo) throws ContextException {
+        if (mo.getStatus() == DONE) {
+            collectOutputs(mo);
             if (inputXrts != null)
-                inputXrts.remove(ex);
+                inputXrts.remove(mo);
         } else {
-            ext.setStatus(INITIAL);
-            if (ex instanceof CompoundExertion) {
-                CompoundExertion ce = (CompoundExertion) ex;
+            mo.setStatus(INITIAL);
+            if (mo instanceof CompoundExertion) {
+                CompoundExertion ce = (CompoundExertion) mo;
                 for (Mogram sub : ce.getExertions())
-                    reconcileInputExertions((Exertion)sub);
+                    reconcileInputExertions(sub);
             }
         }
     }

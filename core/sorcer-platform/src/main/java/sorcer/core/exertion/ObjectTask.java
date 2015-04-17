@@ -134,6 +134,9 @@ public class ObjectTask extends Task {
 					evaluator
 							.setArgs(getParameterTypes(), (Object[]) getArgs());
 				}
+				System.out.println("XXXXXXXXXXX dataContext: " + dataContext);
+				System.out.println("XXXXXXXXXXX evaluator inputs: " + dataContext.getInputs());
+
 				// evaluator.setParameters(context);
 				result = evaluator.evaluate();
 			}
@@ -166,7 +169,12 @@ public class ObjectTask extends Task {
 			dataContext.appendTrace(evaluator.toString());
 		else
 			dataContext.appendTrace(os.toString());
+		try {
+			System.out.println("ZZZZZZZZZZZZZ inputs: " + ((ServiceContext) dataContext).getInputs());
 
+		} catch (ContextException e) {
+			e.printStackTrace();
+		}
 		return this;
 	}
 
@@ -189,9 +197,17 @@ public class ObjectTask extends Task {
 	private void appendScope() throws ContextException {
 		if (scope != null) {
 			List<String> paths = dataContext.getPaths();
+			List<String> inpaths = ((ServiceContext)scope).getInPaths();
+			List<String> outpaths = ((ServiceContext)scope).getOutPaths();
+			// append missing values available in the scope
 			for (String path : paths) {
 				if (dataContext.getValue(path) == Context.none) {
-					dataContext.putValue(path, scope.getValue(path));
+					if (inpaths.contains(path))
+						dataContext.putInValue(path, scope.getValue(path));
+					else if (outpaths.contains(path))
+						dataContext.putOutValue(path, scope.getValue(path));
+					else
+						dataContext.putValue(path, scope.getValue(path));
 				}
 			}
 		}

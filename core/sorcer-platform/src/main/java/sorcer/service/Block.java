@@ -19,7 +19,7 @@ package sorcer.service;
 
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
-import sorcer.co.tuple.Entry;
+import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.par.ParModel;
 import sorcer.core.exertion.AltExertion;
@@ -79,15 +79,15 @@ public abstract class Block extends ServiceExertion implements CompoundExertion 
 	 * @see sorcer.service.Exertion#addExertion(sorcer.service.Exertion)
 	 */
 	@Override
-	public Exertion addExertion(Mogram ex) throws ExertionException {
-		exertions.add(ex);
-		((ServiceExertion) ex).setIndex(exertions.indexOf(ex));
+	public Exertion addExertion(Mogram mogram) throws ExertionException {
+		exertions.add(mogram);
+		mogram.setIndex(exertions.indexOf(mogram));
 		try {
-			controlContext.registerExertion(ex);
+			controlContext.registerExertion(mogram);
 		} catch (ContextException e) {
 			throw new ExertionException(e);
 		}
-		((ServiceExertion) ex).setParentId(getId());
+		mogram.setParentId(getId());
 		return this;
 	}
 

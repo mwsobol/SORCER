@@ -8,11 +8,14 @@ import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.provider.impl.SubtractorImpl;
 import sorcer.co.tuple.*;
+import sorcer.core.context.model.ent.EntModel;
+import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.par.Par;
 import sorcer.core.context.model.par.ParModel;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.service.*;
+import sorcer.service.modeling.Model;
 import sorcer.util.Table;
 
 import java.io.Serializable;
@@ -365,9 +368,9 @@ public class CollectionOperators {
 	
 
 	@Test
-	public void contextModeling() throws Exception {
+	public void entryModel() throws Exception {
 		
-		Context<Double> cxt = entModel(ent("arg/x1", 1.0), ent("arg/x2", 2.0), 
+		Context cxt = entModel(ent("arg/x1", 1.0), ent("arg/x2", 2.0),
 				 ent("arg/x3", 3.0), ent("arg/x4", 4.0), ent("arg/x5", 5.0));
 		
 		add(cxt, ent("arg/x6", 6.0));

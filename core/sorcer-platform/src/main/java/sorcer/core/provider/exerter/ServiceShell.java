@@ -140,7 +140,7 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 	public <T extends Mogram> T  exert(Transaction txn, String providerName, Arg... entries)
 			throws TransactionException, ExertionException, RemoteException {
 		try {
-			exertion.selectFidelity(entries); 
+			exertion.selectFidelity(entries);
 			Exertion xrt = postProcessExertion(exert0(txn, providerName,
 					entries));
 			if (exertion.isProxy()) {
@@ -435,20 +435,22 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 			throws ContextException, RemoteException {
 		List<Mogram> mograms = exertion.getAllExertions();
 		for (Mogram mogram : mograms) {
-			List<Setter> ps = ((ServiceExertion) mogram).getPersisters();
-			if (ps != null) {
-				for (Setter p : ps) {
-					if (p != null && (p instanceof Par) && ((Par) p).isMappable()) {
-						String from = (String) ((Par) p).getName();
-						Object obj = null;
-						if (mogram instanceof Job)
-							obj = ((Job) mogram).getJobContext().getValue(from);
-						else {
-							obj = ((Exertion)mogram).getContext().getValue(from);
+			if (mogram instanceof Exertion) {
+				List<Setter> ps = ((ServiceExertion) mogram).getPersisters();
+				if (ps != null) {
+					for (Setter p : ps) {
+						if (p != null && (p instanceof Par) && ((Par) p).isMappable()) {
+							String from = (String) ((Par) p).getName();
+							Object obj = null;
+							if (mogram instanceof Job)
+								obj = ((Job) mogram).getJobContext().getValue(from);
+							else {
+								obj = ((Exertion) mogram).getContext().getValue(from);
+							}
+
+							if (obj != null)
+								p.setValue(obj);
 						}
-						
-						if (obj != null)
-							p.setValue(obj);
 					}
 				}
 			}

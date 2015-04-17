@@ -21,11 +21,11 @@ import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
 import net.jini.id.Uuid;
 import net.jini.id.UuidFactory;
-import sorcer.co.tuple.Entry;
 import sorcer.co.tuple.EntryList;
 import sorcer.co.tuple.ExecPath;
 import sorcer.co.tuple.Tuple2;
 import sorcer.core.SorcerConstants;
+import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.par.Par;
 import sorcer.core.context.model.par.ParList;
 import sorcer.core.context.model.par.ParModel;
@@ -41,6 +41,7 @@ import sorcer.security.util.SorcerPrincipal;
 import sorcer.service.*;
 import sorcer.service.Signature.Direction;
 import sorcer.service.Signature.ReturnPath;
+import sorcer.util.ObjectCloner;
 import sorcer.util.SorcerUtil;
 
 import java.net.MalformedURLException;
@@ -70,6 +71,12 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 	private static int count = 0;
 
 	protected String name;
+
+	/** execution status: INITIAL|DONE|RUNNING|SUSPENDED|HALTED */
+	protected Integer status = Exec.INITIAL;
+
+	/** position of a Context in a mogram */
+	protected Integer index;
 
 	protected String subjectPath = "";
 
@@ -275,7 +282,7 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 	public ServiceContext(Object object) throws ContextException {
 		this((object instanceof Identifiable) ? ((Identifiable)object).getName() : null);
 		setArgsPath(Context.PARAMETER_VALUES);
-		setArgs(new Object[] { object });
+		setArgs(new Object[]{object});
 		setParameterTypesPath(Context.PARAMETER_TYPES);
 		setParameterTypes(new Class[] { object.getClass() });
 	}
@@ -516,7 +523,7 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 			try {
 				if (rp.path == null || rp.path.equals("self")) {
 					return (T) this;
-				} else if (rp.outPaths != null) {
+				} else if (rp.outPaths != null && rp.outPaths.length > 0) {
 					 val = (T)getSubcontext(rp.outPaths);
 				} else {
 					if (rp.type != null) {
@@ -1657,36 +1664,65 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
     
 	public ServiceContext getSubcontext(String... paths) throws ContextException {
 		// bare-bones subcontext
-        ServiceContext subcntxt = new ServiceContext();
+        ServiceContext subcntxt = new PositionalContext();
 		subcntxt.setSubject(subjectPath, subjectValue);
 		subcntxt.setName(getName() + " subcontext");
 		subcntxt.setDomainID(getDomainID());
 		subcntxt.setSubdomainID(getSubdomainID());
+		List<String> inpaths = getInPaths();
+		List<String> outpaths = getOutPaths();
         if  (paths != null && paths.length > 0) {
-            for (String path : paths) {
-                subcntxt.put(path, get(path));
-            }
-        }
+			for (String path : paths) {
+				if (inpaths.contains(path))
+					subcntxt.putInValue(path, get(path));
+				else if (outpaths.contains(path))
+					subcntxt.putOutValue(path, get(path));
+				else
+					subcntxt.putValue(path, get(path));
+			}
+		}
 		return subcntxt;
 	}
     
     public Context getEvaluatedSubcontext(String... paths) throws ContextException {
         ServiceContext subcntxt = getSubcontext();
+		List<String> inpaths = getInPaths();
+		List<String> outpaths = getOutPaths();
+
         for (String path : paths) {
-            subcntxt.put(path, getValue(path));
+			if (inpaths.contains(path))
+           	 	subcntxt.putInValue(path, getValue(path));
+			else if (outpaths.contains(path))
+				subcntxt.putOutValue(path, getValue(path));
+			else
+				subcntxt.putValue(path, getValue(path));
         }
         return subcntxt;
     }
-    
-	public Context getMergedSubcontext(List<String> paths, Arg... args) throws ContextException {
-		ServiceContext subcntxt = getSubcontext();
-        Object val = null;
+
+	public Context getMergedSubcontext(ServiceContext intial, List<String> paths, Arg... args)
+			throws ContextException {
+		ServiceContext subcntxt = null;
+		if (intial != null) {
+			subcntxt = intial;
+		} else {
+			subcntxt = getSubcontext();
+		}
+		Object val = null;
 		for (String path : paths) {
-            val = getValue(path, args);
-            if (getValue(path) instanceof Context)
-                subcntxt.append((Context) val);
-            else
-			    subcntxt.put(path, getValue(path, args));
+			val = getValue(path, args);
+			if (getValue(path) instanceof Context)
+				subcntxt.append((Context) val);
+			else {
+				List<String> inpaths = getInPaths();
+				List<String> outpaths = getOutPaths();
+				if (inpaths.contains(path))
+					subcntxt.putInValue(path, getValue(path, args));
+				else if (outpaths.contains(path))
+					subcntxt.putOutValue(path, getValue(path, args));
+				else
+					subcntxt.put(path, getValue(path, args));
+			}
 		}
 		return subcntxt;
 	}
@@ -1703,12 +1739,21 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 	
 	public Context appendNewEntries(Context context) throws ContextException {
 		if (context != null) {
-			Map<String, Object> contextMap = (Map) context;
-			Iterator it = contextMap.entrySet().iterator();
+			List<String> inpaths = ((ServiceContext) context).getInPaths();
+			List<String> outpaths = ((ServiceContext) context).getOutPaths();
+			Iterator it = ((Map)context).entrySet().iterator();
 			while (it.hasNext()) {
-				Map.Entry<String, Object> pairs = (Map.Entry) it.next();
-				if (!containsKey(pairs.getKey())) {
-					put(pairs.getKey(), (T)pairs.getValue());
+				Map.Entry<String, Object> entry = (Map.Entry) it.next();
+				String path = entry.getKey();
+				Object val = entry.getValue();
+				System.out.println("ZZZZZZZZZ path: " + path + "  value: " + val);
+				if (!containsKey(path)) {
+					if (inpaths.contains(path))
+						putInValue(path, (T) val);
+					else if (outpaths.contains(path))
+						putOutValue(path, (T) val);
+					else if (outpaths.contains(path))
+						putValue(path, (T) val);
 				}
 			}
 			if (containsKey(Condition._closure_))
@@ -1722,31 +1767,23 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 	public Context append(Context context) throws ContextException {
 		if (context != null) {
 			putAll((ServiceContext) context);
+			// annotate as in the argument context
+			List<String> inpaths = ((ServiceContext) context).getInPaths();
+			List<String> outpaths = ((ServiceContext) context).getOutPaths();
+			for (String p : inpaths) {
+				Contexts.markIn(this, p);
+//				mark(p, "cp|in||");
+			}
+			for (String p : outpaths) {
+				Contexts.markOut(this, p);
+//				mark(p, "cp|out||");
+			}
 			if (containsKey(Condition._closure_))
 				remove(Condition._closure_);
 		}
-
-//		Iterator<Map.Entry<String, T>> i = this.entrySet().iterator();
-//		List<String> pl = new ArrayList<String>();
-//		Object val;
-//		while (i.hasNext()) {
-//			Map.Entry<String, T> e = i.next();
-//			val = e.getValue();
-//			if (val != null && val instanceof Par) {
-//				ServiceContext cxt = (ServiceContext) ((Par) val).getScope();
-//				if (cxt != null && cxt.containsKey(Condition._closure_)) 
-//					pl.add(e.getKey());
-//			}
-//		}
-//		for (String key : pl) {
-//			((Par)get(key)).getScope().remove(Condition._closure_);
-//			// remove potential loops
-//			((Par)get(key)).getScope().remove(key);
-//			((ServiceContext)((Par)get(key)).getScope()).clear();
-//		}
 		return this;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see sorcer.service.Contexter#appendContext(sorcer.service.Context)
 	 */
@@ -2922,10 +2959,10 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 		try {
 			substitute(entries);
 			if (currentPath == null) {
-				if (responsePaths != null) { 
+				if (responsePaths != null) {
 					if (responsePaths.size() == 1)
 						currentPath = responsePaths.get(0);
-					else 
+					else
 						return (T) getResponses();
 				}
 				else if (returnPath != null)
@@ -2964,7 +3001,51 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 		}
 	}
 
-    @Override
+    public String getResponsePath() throws ContextException {
+        if (responsePaths != null && responsePaths.size() == 1)
+            return responsePaths.get(0);
+        else
+            throw new ContextException("No valid unique response available");
+    }
+
+	@Override
+    public Object getResponse(String path, Arg... entries) throws ContextException, RemoteException {
+        return getValue(path, entries);
+    }
+
+    public T getResponse(Arg... entries) throws ContextException, RemoteException {
+        try {
+            if (responsePaths != null && responsePaths.size() == 1)
+                return getValue(responsePaths.get(0), entries);
+            else 
+                throw new ContextException("No valid unique response available");
+        } catch (Exception e) {
+            throw new ContextException(e);
+        }
+    }
+
+	@Override
+    public Context getResponses(Arg... args) throws ContextException, RemoteException {
+        if (mapContext != null) {
+            ServiceContext mc = null;
+            try {
+                mc = (ServiceContext) ObjectCloner.clone(mapContext);
+            } catch (Exception e) {
+                throw new ContextException(e);
+            }
+            Iterator it = ((Map)mapContext).entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry pairs = (Map.Entry) it.next();
+                mc.putInValue((String) pairs.getKey(), getValue((String) pairs.getValue()));
+            }
+            getMergedSubcontext(mc, responsePaths, args);
+            return mc;
+        } else {
+            return getMergedSubcontext(null, responsePaths, args);
+        }
+    }
+
+	@Override
     public Context getInputs() throws ContextException, RemoteException {
         List<String> paths = Contexts.getInPaths(this);
         Context<T> inputs = new ServiceContext();
@@ -2984,37 +3065,16 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
         return inputs;
     }
 
-    @Override
-    public Object getResponse(String path, Arg... entries) throws ContextException, RemoteException {
-        return getValue(path, entries);
-    }
-
-    public String getResponsePath() throws ContextException {
-        if (responsePaths != null && responsePaths.size() == 1)
-            return responsePaths.get(0);
-        else
-            throw new ContextException("No valid unique response available");
-    }
-    
-    public T getResponse(Arg... entries) throws ContextException, RemoteException {
-        try {
-            if (responsePaths != null && responsePaths.size() == 1)
-                return getValue(responsePaths.get(0), entries);
-            else 
-                throw new ContextException("No valid unique response available");
-        } catch (Exception e) {
-            throw new ContextException(e);
-        }
-    }
-    
-    @Override
-    public Context getResponses(Arg... args) throws ContextException, RemoteException {
-        return getMergedSubcontext(responsePaths, args);
+	@Override
+    public Context getMapContext(Arg... args) throws ContextException, RemoteException {
+        return mapContext;
     }
 
 	public Context getResponses(String path, String... paths) throws ContextException, RemoteException {
-        return getMergedSubcontext(Arrays.asList(paths));
-    }
+		Context results = getMergedSubcontext(null, Arrays.asList(paths));
+				putValue(path, results);
+		return results;
+	}
     
 	public String getCurrentSelector() {
 		return currentSelector;
@@ -3243,54 +3303,6 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 		this.blockScope = blockScope;
 	}
 
-
-	@Override
-	public <T extends Mogram> T exert(Transaction txn, Arg... entries) throws TransactionException,
-			ExertionException, RemoteException {
-		Signature signature = null;
-		try {
-			if (subjectValue instanceof Class) {
-				signature = sig(subjectPath, subjectValue);
-				return operator.exertion(name, signature, this).exert(txn, entries);
-			} else {
-				// evaluates model targets - responses
-				getValue(entries);
-				return (T) this;
-			}
-		} catch (Exception e) {
-			throw new ExertionException(e);
-		}
-	}
-
-	@Override
-	public <T extends Mogram> T exert(Arg... entries) throws TransactionException,
-			ExertionException, RemoteException {
-		return exert(null, entries);
-	}
-	
-	/* (non-Javadoc)
-	 * @see sorcer.service.Service#service(sorcer.service.Exertion, net.jini.core.transaction.Transaction)
-	 */
-	@Override
-	public <T extends Mogram> T service(T mogram, Transaction txn) throws TransactionException, 
-			ExertionException, RemoteException {
-		try {
-			((ServiceExertion)exertion).getContext().appendContext(this);
-		} catch (Exception e) {
-			throw new ExertionException(e);
-		}
-		return (T) exertion.exert(txn);
-	}
-
-	/* (non-Javadoc)
-	 * @see sorcer.service.Service#service(sorcer.service.Exertion)
-	 */
-	@Override
-	public <T extends Mogram> T service(T mogram) throws TransactionException, 
-			ExertionException, RemoteException {
-		return (T) service(exertion, null);
-	}
-
 	@Override
 	public String[] getMarkedPaths(String association)
 			throws ContextException {
@@ -3337,9 +3349,19 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 		return true;
 	}
 
-	@Override
-	public Context getMapContext(Arg... args) throws ContextException, RemoteException {
-		return mapContext;
+	public void setIndex(int i) {
+		index = i;
+	}
+
+	public Signature getProcessSignature() {
+		if (subjectValue instanceof Signature)
+			return (Signature)subjectValue;
+		else
+			return null;
+	}
+
+	public void setStatus(int value) {
+		status = value;
 	}
 
 	public void setMapContext(Context mapContext) {
@@ -3351,5 +3373,62 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
             dependentPaths = new HashMap<String, List<String>>();
         }
         return dependentPaths;
+    }
+
+	@Override
+    public int getStatus() {
+        return status;
+    }
+
+    @Override
+    public void setParentId(Uuid setParentId) {
+        this.parentId = parentId;
+    }
+
+	@Override
+    public <T extends Mogram> T exert(Transaction txn, Arg... entries) throws TransactionException,
+            ExertionException, RemoteException {
+        Signature signature = null;
+        try {
+            if (subjectValue instanceof Class) {
+                signature = sig(subjectPath, subjectValue);
+                return operator.exertion(name, signature, this).exert(txn, entries);
+            } else {
+                // evaluates model targets - responses
+                getValue(entries);
+                return (T) this;
+            }
+        } catch (Exception e) {
+            throw new ExertionException(e);
+        }
+    }
+
+    @Override
+    public <T extends Mogram> T exert(Arg... entries) throws TransactionException,
+            ExertionException, RemoteException {
+        return exert(null, entries);
+    }
+
+    /* (non-Javadoc)
+     * @see sorcer.service.Service#service(sorcer.service.Exertion, net.jini.core.transaction.Transaction)
+     */
+    @Override
+    public <T extends Mogram> T service(T mogram, Transaction txn) throws TransactionException,
+            ExertionException, RemoteException {
+        try {
+            ((ServiceExertion)exertion).getContext().appendContext(this);
+        } catch (Exception e) {
+            throw new ExertionException(e);
+        }
+        return (T) exertion.exert(txn);
+    }
+
+    /* (non-Javadoc)
+     * @see sorcer.service.Service#service(sorcer.service.Exertion)
+     */
+    @Override
+    public <T extends Mogram> T service(T mogram) throws TransactionException,
+            ExertionException, RemoteException {
+        return (T) service(exertion, null);
     }
 }

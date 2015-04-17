@@ -32,9 +32,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static sorcer.eo.operator.returnPath;
-import static sorcer.eo.operator.sig;
-import static sorcer.eo.operator.task;
+import static sorcer.eo.operator.*;
 
 /**
  * A ServiceModel is a schematic description or representation of something, especially a system, 
@@ -139,7 +137,7 @@ public class SrvModel extends ParModel<Object> implements Model {
         if (ops != null && ops.length > 0) {
             outcxt = outcxt.getSubcontext(ops);
         }
-        this.appendInOut(outcxt);
+        this.appendInout(outcxt);
         return outcxt;
     }
 

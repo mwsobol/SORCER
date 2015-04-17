@@ -17,6 +17,7 @@
 
 package sorcer.co.tuple;
 
+import sorcer.core.context.model.ent.Entry;
 import sorcer.service.*;
 
 import java.net.URL;

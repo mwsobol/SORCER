@@ -15,6 +15,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.rmi.RemoteException;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -244,8 +245,8 @@ public class Arithmometer implements SorcerConstants, Serializable {
 					result = (Double) revalue(cxt.getValue(rp.inPaths[0]));
 					result -= (Double) revalue(cxt.getValue(rp.inPaths[1]));
 				} else {
-					if (inputs.size() > 2) {
-						throw new ContextException("more than two arguments for subtraction");
+					if (inputs.size() > 2 || inputs.size() < 2) {
+						throw new ContextException("two arguments needed for subtraction");
 					}
 					result = (Double) revalue(cxt.getInValueAt(1));
 					result -= (Double) revalue(cxt.getInValueAt(2));
@@ -255,8 +256,8 @@ public class Arithmometer implements SorcerConstants, Serializable {
 				for (int i = 1; i < inputs.size(); i++)
 					result *= (Double)revalue(inputs.get(i));
 			} else if (selector.equals(DIVIDE)) {
-				if (inputs.size() > 2)
-					throw new ContextException("more than two arguments for division");
+				if (inputs.size() > 2 || inputs.size() < 2)
+					throw new ContextException("two arguments needed for division");
 				result = (Double)revalue(cxt.getInValueAt(1));
 				result /= (Double)revalue(cxt.getInValueAt(2));
 			} else if (selector.equals(AVERAGE)) {
