@@ -43,17 +43,17 @@ public interface CompoundExertion {
 	 */
 	public void setExertionAt(Exertion ex, int i);
 	
-	public void setExertions(List<Mogram> exertions);
+	public void setMograms(List<Mogram> exertions);
 	
-	public List<Mogram> getExertions();
+	public List<Mogram> getMograms();
 		
 	public void remove(int index) throws ContextException;
 	
-	public List<Mogram> getAllExertions();
+	public List<Mogram> getAllMograms();
 	
 	public Mogram getChild(String childName);
 
-	public Mogram getComponentExertion(String path);
+	public Mogram getComponentMogram(String path);
 	
 	public Context getComponentContext(String path) throws ContextException;
 

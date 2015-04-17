@@ -134,9 +134,6 @@ public class ObjectTask extends Task {
 					evaluator
 							.setArgs(getParameterTypes(), (Object[]) getArgs());
 				}
-				System.out.println("XXXXXXXXXXX dataContext: " + dataContext);
-				System.out.println("XXXXXXXXXXX evaluator inputs: " + dataContext.getInputs());
-
 				// evaluator.setParameters(context);
 				result = evaluator.evaluate();
 			}
@@ -169,12 +166,7 @@ public class ObjectTask extends Task {
 			dataContext.appendTrace(evaluator.toString());
 		else
 			dataContext.appendTrace(os.toString());
-		try {
-			System.out.println("ZZZZZZZZZZZZZ inputs: " + ((ServiceContext) dataContext).getInputs());
 
-		} catch (ContextException e) {
-			e.printStackTrace();
-		}
 		return this;
 	}
 

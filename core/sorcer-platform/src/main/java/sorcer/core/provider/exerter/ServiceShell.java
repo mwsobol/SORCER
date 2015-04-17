@@ -39,7 +39,6 @@ import sorcer.service.Exec.State;
 import sorcer.service.Strategy.Access;
 import sorcer.service.modeling.ModelingTask;
 import sorcer.service.txmgr.TransactionManagerAccessor;
-import sorcer.util.ProviderAccessor;
 import sorcer.util.ProviderLookup;
 import sorcer.util.Sorcer;
 
@@ -148,8 +147,8 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 				exertion.setControlContext((ControlContext)xrt.getControlContext());
 				if (exertion.isCompound()) {
 					((CompoundExertion) exertion)
-							.setExertions(((CompoundExertion) xrt)
-									.getExertions());
+							.setMograms(((CompoundExertion) xrt)
+									.getMograms());
 				}
 
 				return (T) exertion;
@@ -164,7 +163,7 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 	private void initExecState() {
 		Exec.State state = exertion.getControlContext().getExecState();
 		if (state == State.INITIAL) {
-			for (Mogram e : exertion.getAllExertions()) {
+			for (Mogram e : exertion.getAllMograms()) {
 				if (e instanceof Exertion) {
 					if (((ControlContext) ((Exertion)e).getControlContext()).getExecState() == State.INITIAL) {
 						((ServiceExertion) e).setStatus(Exec.INITIAL);
@@ -354,9 +353,9 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 	
 	private Exertion processAsTask() throws RemoteException,
 			TransactionException, ExertionException {
-		Task task = (Task) exertion.getExertions().get(0);
+		Task task = (Task) exertion.getMograms().get(0);
 		task = (Task) task.exert();
-		exertion.getExertions().set(0, task);
+		exertion.getMograms().set(0, task);
 		exertion.setStatus(task.getStatus());
 		return exertion;
 	}
@@ -433,7 +432,7 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 	
 	public static Exertion postProcessExertion(Exertion exertion)
 			throws ContextException, RemoteException {
-		List<Mogram> mograms = exertion.getAllExertions();
+		List<Mogram> mograms = exertion.getAllMograms();
 		for (Mogram mogram : mograms) {
 			if (mogram instanceof Exertion) {
 				List<Setter> ps = ((ServiceExertion) mogram).getPersisters();

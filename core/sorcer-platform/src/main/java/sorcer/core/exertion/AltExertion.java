@@ -138,18 +138,18 @@ public class AltExertion extends Task implements ConditionalExertion {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see sorcer.service.Exertion#getExertions()
+	 * @see sorcer.service.Exertion#getMograms()
 	 */
 	@Override
-	public List<Mogram> getExertions() {
+	public List<Mogram> getMograms() {
 		ArrayList<Mogram> list = new ArrayList<Mogram>(1);
 		list.addAll(optExertions);
 		return list;
 	}
 	
-	public List<Mogram> getExertions(List<Mogram> exs) {
+	public List<Mogram> getMograms(List<Mogram> exs) {
 		for (Exertion e : optExertions)
-			((ServiceExertion) e).getExertions(exs);
+			((ServiceExertion) e).getMograms(exs);
 		exs.add(this);
 		return exs;
 	}

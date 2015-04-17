@@ -80,7 +80,7 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
         if (xrt instanceof Job)
             return Mograms.getInputExertions((Job) xrt);
         else if (xrt instanceof Block)
-            return xrt.getAllExertions();
+            return xrt.getAllMograms();
         else
             return null;
     }

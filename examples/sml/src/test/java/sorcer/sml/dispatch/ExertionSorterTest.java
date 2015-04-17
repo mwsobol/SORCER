@@ -40,7 +40,7 @@ public class ExertionSorterTest {
             System.out.print("T " + topXrt.getName() + " ");
         else {
             System.out.println("J " + topXrt.getName() + " {");
-            for (Mogram xrt : topXrt.getExertions()) {
+            for (Mogram xrt : topXrt.getMograms()) {
                 printAllExertions((Exertion)xrt);
             }
             System.out.println(" }");
@@ -191,7 +191,7 @@ public class ExertionSorterTest {
         expList.add(f3);
         expList.add(j8);
         expList.add(j20);
-        Assert.assertArrayEquals(expList.toArray(), es.getSortedJob().getExertions().toArray());
+        Assert.assertArrayEquals(expList.toArray(), es.getSortedJob().getMograms().toArray());
     }
 
 }

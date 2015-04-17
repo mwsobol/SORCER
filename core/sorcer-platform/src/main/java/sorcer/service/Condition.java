@@ -219,7 +219,7 @@ import java.util.logging.Logger;
 	
 	static public void cleanupScripts(Exertion exertion) throws ContextException {
 		clenupContextScripts(exertion.getContext());
-		for (Mogram e : exertion.getExertions()) {
+		for (Mogram e : exertion.getMograms()) {
 			if (e instanceof Exertion) {
 				clenupExertionScripts((Exertion) e);
 				clenupContextScripts(((Exertion) e).getContext());

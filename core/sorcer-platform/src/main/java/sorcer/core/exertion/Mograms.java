@@ -264,7 +264,7 @@ public class Mograms implements SorcerConstants {
 			contexts.add(exertion.getDataContext());
 		else if (exertion instanceof Job) {
 			contexts.add(exertion.getDataContext());
-			for (int i = 0; i < ((Job) exertion).getExertions().size(); i++)
+			for (int i = 0; i < ((Job) exertion).getMograms().size(); i++)
 				collectTaskContexts(((Job) exertion).get(i),
 						contexts);
 		} else if (exertion instanceof Task) {

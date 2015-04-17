@@ -329,7 +329,7 @@ public class operator {
 		if (entries[0] instanceof Exertion) {
 			Exertion xrt = (Exertion) entries[0];
 			if (entries.length >= 2 && entries[1] instanceof String)
-				xrt = (Exertion)((CompoundExertion) xrt).getComponentExertion((String) entries[1]);
+				xrt = (Exertion)((CompoundExertion) xrt).getComponentMogram((String) entries[1]);
 			return xrt.getDataContext();
 		} else if (entries[0] instanceof Link) {
 			return ((Link)entries[0] ).getContext();
@@ -337,7 +337,7 @@ public class operator {
 			return new PositionalContext((String) entries[0]);
 		} else if (entries.length == 2 && entries[0] instanceof String
 				&& entries[1] instanceof Exertion) {
-			return ((Exertion)((CompoundExertion) entries[1]).getComponentExertion(
+			return ((Exertion)((CompoundExertion) entries[1]).getComponentMogram(
 					(String) entries[0])).getContext();
 		} else if (entries[0] instanceof Context && entries[1] instanceof List) {
 			return ((ServiceContext)entries[0]).getSubcontext((List)entries[1]);
@@ -1382,7 +1382,7 @@ public class operator {
 		}
 		if (exertions.size() > 0) {
 			for (Exertion ex : exertions) {
-				job.addExertion(ex);
+				job.addMgram(ex);
 			}
 			for (Pipe p : pipes) {
 //				logger.finer("from context: "
@@ -1393,8 +1393,8 @@ public class operator {
 //						+ " path: " + p.outPath);
 				// find component exertions for thir paths
 				if (!p.isExertional()) {
-					p.out = job.getComponentExertion(p.outComponentPath);
-					p.in = job.getComponentExertion(p.inComponentPath);
+					p.out = job.getComponentMogram(p.outComponentPath);
+					p.in = job.getComponentMogram(p.inComponentPath);
 				}
 				((Exertion) p.out).getDataContext().connect(p.outPath,
 						p.inPath, ((Exertion) p.in).getContext());
@@ -1670,7 +1670,7 @@ public class operator {
 
 	public static List<Mogram> exertions(Mogram mogram) {
 		if (mogram instanceof Exertion)
-			return ((Exertion)mogram).getAllExertions();
+			return ((Exertion)mogram).getAllMograms();
 		else
 			return null;
 	}
@@ -2503,8 +2503,32 @@ public class operator {
 		return signature;
 	}
 
-	public static Exertion clearContext(Exertion exertion) throws ContextException {
-		((Map)exertion.getDataContext()).clear();
+	public static Exertion clearScope(Service service) throws ContextException {
+		return clearScope((Exertion) service);
+	}
+	public static Exertion clearScope(Exertion exertion) throws ContextException {
+		Object[] paths = ((Map)exertion.getDataContext()).keySet().toArray();
+		for (Object path : paths)
+			exertion.getDataContext().removePath((String)path);
+
+		Signature.ReturnPath rp = exertion.getDataContext().getReturnPath();
+		if (rp != null && rp.path != null)
+			exertion.getDataContext().removePath(rp.path);
+
+		List<Mogram> mograms = exertion.getAllMograms();
+		Context cxt = null;
+		for (Mogram mo : mograms) {
+			if (mo instanceof Exertion)
+				cxt = ((Exertion)mo).getContext();
+			else
+				cxt = (Context) mo;
+			((ServiceContext)cxt).setBlockScope(null);
+
+			rp = cxt.getReturnPath();
+			if (rp != null && rp.path != null)
+				cxt.removePath(rp.path);
+		}
+
 		return exertion;
 	}
 
@@ -2540,7 +2564,7 @@ public class operator {
 			if (context != null)
 				block.setContext(context);
 			for (Mogram e :mograms)
-				block.addExertion(e);
+				block.addMgram(e);
 		} catch (Exception se) {
 			throw new ExertionException(se);
 		}
@@ -2826,7 +2850,7 @@ public class operator {
 
 	public static Exertion add(Exertion compound, Exertion component)
 			throws ExertionException {
-		compound.addExertion(component);
+		compound.addMgram(component);
 		return compound;
 	}
 
@@ -2844,7 +2868,7 @@ public class operator {
 		for (String name : names) {
 			xrt = (Exertion) ObjectCloner.cloneAnnotatedWithNewIDs(exertion);
 			((ServiceExertion) xrt).setName(name);
-			block.addExertion(xrt);
+			block.addMgram(xrt);
 		}
 		return block;
 	}

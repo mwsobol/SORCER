@@ -109,7 +109,7 @@ public class Job extends ServiceExertion implements CompoundExertion {
 	 * @throws ContextException 
 	 */
 	public Job(Exertion exertion) throws ExertionException {
-		addExertion(exertion);
+		addMgram(exertion);
 	}
 
 	public Job(String name, String description) {
@@ -226,10 +226,10 @@ public class Job extends ServiceExertion implements CompoundExertion {
 	}
 
 	/* (non-Javadoc)
-	 * @see sorcer.service.Exertion#addExertion(sorcer.service.Exertion)
+	 * @see sorcer.service.Exertion#addMgram(sorcer.service.Exertion)
 	 */
 	@Override
-	public Exertion addExertion(Mogram ex) throws ExertionException {
+	public Mogram addMgram(Mogram ex) throws ExertionException {
 		exertions.add(ex);
 		((ServiceExertion) ex).setIndex(exertions.indexOf(ex));
 		try {
@@ -250,13 +250,13 @@ public class Job extends ServiceExertion implements CompoundExertion {
 		}
 	}
 
-	public void setExertions(List<Mogram> exertions) {
+	public void setMograms(List<Mogram> exertions) {
 		this.exertions = exertions;
 
 	}
 
 	public Job addExertion(Exertion exertion, int priority) throws ExertionException {
-		addExertion(exertion);
+		addMgram(exertion);
 		controlContext.setPriority(exertion, priority);
 		return this;
 	}
@@ -321,7 +321,7 @@ public class Job extends ServiceExertion implements CompoundExertion {
 			}
 			if (exertions.size() > 0) {
 				for (Mogram ex : exertions) {
-					delegate.addExertion(ex);
+					delegate.addMgram(ex);
 				}
 			}
 		}
@@ -432,17 +432,17 @@ public class Job extends ServiceExertion implements CompoundExertion {
 	}
 
 	/**
-	 * Returns all component <code>Exertion</code>s of this composite exertion.
+	 * Returns all component <code>Mograms</code>s of this composite exertion.
 	 * 
 	 * @return all component exertions
 	 */
-	public List<Mogram> getExertions() {
+	public List<Mogram> getMograms() {
 		return exertions;
 	}
 
-	public List<Mogram> getExertions(List<Mogram> exs) {
+	public List<Mogram> getMograms(List<Mogram> exs) {
 		for (Mogram e : exertions)
-			((ServiceExertion) e).getExertions(exs);
+			((ServiceExertion) e).getMograms(exs);
 		exs.add(this);
 		return exs;
 	}
@@ -632,16 +632,16 @@ public class Job extends ServiceExertion implements CompoundExertion {
 	}
 	
 	public Context getComponentContext(String path) throws ContextException {
-		Exertion xrt = getComponentExertion(path);
+		Exertion xrt = getComponentMogram(path);
 		return xrt.getContext();
 	}
 	
 	public Context getComponentControlContext(String path) {
-		Exertion xrt = getComponentExertion(path);
+		Exertion xrt = getComponentMogram(path);
 		return xrt.getControlContext();
 	}
 	
-	public Exertion getComponentExertion(String path) {
+	public Exertion getComponentMogram(String path) {
 		String[] attributes = SorcerUtil.pathToArray(path);
 		// remove the leading attribute of the current exertion
 		if (attributes[0].equals(getName())) {
@@ -669,7 +669,7 @@ public class Job extends ServiceExertion implements CompoundExertion {
 		ServiceExertion se = null;
 		for (SelectionFidelity fi : fidelities) {
 			if (fi instanceof ComponentSelectionFidelity) {
-				se = (ServiceExertion) getComponentExertion(((ComponentSelectionFidelity)fi).getPath());
+				se = (ServiceExertion) getComponentMogram(((ComponentSelectionFidelity) fi).getPath());
 				se.selectFidelity(fi.getName());
 			}
 		}

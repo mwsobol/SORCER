@@ -223,14 +223,18 @@ public class Arithmometer implements SorcerConstants, Serializable {
 			//logger.info("selector: " + ((ServiceContext)context).getCurrentSelector());
 			// get sorted list of input values
 			List<Double> inputs = (List<Double>)Contexts.getNamedInValues(context);
+			System.out.println("XXXXXXX input1: " +  inputs);
 			if (inputs == null || inputs.size() == 0) {
 				inputs = (List<Double>)Contexts.getPrefixedInValues(context);
 //				logger.info("prefixed inputs: \n" + inputs);
 			}
+			System.out.println("XXXXXXX input2: " +  inputs);
+
 			//logger.info("named inputs: \n" + inputs);
 			if (inputs == null || inputs.size() == 0)
 				inputs = (List<Double>)cxt.getInValues();
-			logger.info("inputs: \n" + inputs);
+			logger.info("inputs3: \n" + inputs);
+			logger.info("inputs3 paths: \n" + Contexts.getInPaths(context));
 			List<String> outpaths = cxt.getOutPaths();
 			//logger.info("outpaths: \n" + outpaths);
 
@@ -261,12 +265,20 @@ public class Arithmometer implements SorcerConstants, Serializable {
 				result = (Double)revalue(cxt.getInValueAt(1));
 				result /= (Double)revalue(cxt.getInValueAt(2));
 			} else if (selector.equals(AVERAGE)) {
+				System.out.println("average ZZZZZZZZ inputs0: " + inputs);
+
 				if (inputs.size() == 0) {
 					inputs = (List<Double>) Contexts.getNamedOutValues(context);
+					System.out.println("average ZZZZZZZZ inputs1: " + inputs);
+
 					if (((ServiceContext) context).getBlockScope() != null)
 						inputs.addAll(((ServiceContext) ((ServiceContext) context)
 								.getBlockScope()).getOutValues());
+					System.out.println("average ZZZZZZZZ inputs2: " + inputs);
+
 				}
+				System.out.println("average ZZZZZZZZ context: " + context);
+
 				result = (Double) revalue(inputs.get(0));
 				for (int i = 1; i < inputs.size(); i++)
 					result += (Double) revalue(inputs.get(i));

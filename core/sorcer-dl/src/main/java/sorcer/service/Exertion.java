@@ -113,7 +113,7 @@ public interface Exertion extends Mogram, Dependency, Invocation<Object>, Evalua
 	 * @return an added component exertion
 	 * @throws ContextException 
 	 */
-	public Exertion addExertion(Mogram component) throws ExertionException;
+	public Mogram addMgram(Mogram component) throws ExertionException;
 	
 	/**
 	 * Returns a data service context (service data) of this exertion to be
@@ -270,13 +270,13 @@ public interface Exertion extends Mogram, Dependency, Invocation<Object>, Evalua
 	 * Returns the list of direct component exertions.
 	 * @return Exertion list
 	 */ 
-	public List<Mogram> getExertions();
+	public List<Mogram> getMograms();
 	
 	/**
 	 * Returns the list of all nested component exertions/
 	 * @return Exertion list
 	 */ 
-	public List<Mogram> getAllExertions();
+	public List<Mogram> getAllMograms();
 	
 	/**
 	 * Returns <code>true</code> if this exertion should be monitored for its

@@ -124,7 +124,7 @@ public class OptExertion extends Task implements ConditionalExertion {
 		return cs;
 	}
 	
-	public List<Mogram> getExertions(List<Mogram> exs) {
+	public List<Mogram> getMograms(List<Mogram> exs) {
 		exs.add(target);
 		exs.add(this);
 		return exs;

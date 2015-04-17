@@ -83,7 +83,7 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
             /*MonitoringSession monSession = MonitorUtil.getMonitoringSession(result);
             if (result.isBlock() && result.isMonitorable() && monSession!=null) {
                 boolean isFailed = false;
-                for (Exertion xrt : result.getAllExertions()) {
+                for (Exertion xrt : result.getAllMograms()) {
                     if (xrt.getStatus()==Exec.FAILED || xrt.getStatus()==Exec.ERROR) {
                         isFailed = true;
                         break;
@@ -175,7 +175,7 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
 	}
 
     protected List<Mogram> getInputExertions() {
-        return xrt.getExertions();
+        return xrt.getMograms();
 	}
 
 }

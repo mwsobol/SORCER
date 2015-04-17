@@ -174,7 +174,7 @@ public class LoopExertion extends Task implements ConditionalExertion {
 		return exceptions;
 	}
 	
-	public List<Mogram> getExertions(List<Mogram> exs) {
+	public List<Mogram> getMograms(List<Mogram> exs) {
 		exs.add(target);
 		exs.add(this);
 		return exs;

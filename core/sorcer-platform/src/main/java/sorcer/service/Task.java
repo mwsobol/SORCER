@@ -314,16 +314,16 @@ public class Task extends ServiceExertion {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see sorcer.service.Exertion#getExertions()
+	 * @see sorcer.service.Exertion#getMograms()
 	 */
 	@Override
-	public List<Mogram> getExertions() {
+	public List<Mogram> getMograms() {
 		ArrayList<Mogram> list = new ArrayList<Mogram>(1);
 		list.add(this);
 		return list;
 	}
 
-	public List<Mogram> getExertions(List<Mogram> exs) {
+	public List<Mogram> getMograms(List<Mogram> exs) {
 		exs.add(this);
 		return exs;
 	}
@@ -331,10 +331,10 @@ public class Task extends ServiceExertion {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see sorcer.service.Exertion#addExertion(sorcer.service.Exertion)
+	 * @see sorcer.service.Exertion#addMgram(sorcer.service.Exertion)
 	 */
 	@Override
-	public Exertion addExertion(Mogram component) {
+	public Mogram addMgram(Mogram component) {
 		throw new RuntimeException("Tasks do not contain component exertions!");
 	}
 

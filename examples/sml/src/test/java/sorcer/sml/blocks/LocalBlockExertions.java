@@ -57,6 +57,7 @@ public class LocalBlockExertions implements SorcerConstants {
 //		logger.info("result: " + value(context(block), "block/result"));
 		assertEquals(value(context(block), "block/result"), 100.00);
 
+		clearScope(block);
 		block = exert(block, ent("y1", 200.0), ent("y2", 100.0));
 //		logger.info("block context: " + context(block));
 //		logger.info("result: " + value(context(block), "block/result"));
@@ -85,6 +86,7 @@ public class LocalBlockExertions implements SorcerConstants {
 //		logger.info("result: " + value(context(block), "block/result"));
 		assertEquals(value(context(block), "block/result"), 100.00);
 
+		clearScope(block);
 		block = exert(block, ent("y1", 200.0), ent("y2", 100.0));
 //		logger.info("block context: " + context(block));
 //		logger.info("result: " + value(context(block), "block/result"));
@@ -124,9 +126,7 @@ public class LocalBlockExertions implements SorcerConstants {
 //		logger.info("result: " + value(context(result), "block/result"));
 		assertEquals(value(context(result), "block/result"), 400.00);
 
-		clearContext(block);
-		logger.info("context: " + context(block));
-
+		clearScope(block);
 		result = exert(block, ent("block/t5/arg/x1", 200.0), ent("block/t5/arg/x2", 800.0));
 //		logger.info("block context: " + context(result));
 		logger.info("result: " + value(context(result), "block/result"));
@@ -151,7 +151,8 @@ public class LocalBlockExertions implements SorcerConstants {
 		logger.info("block context: " + context(block));
 		logger.info("result: " + value(context(block), "out"));
 		assertEquals(value(context(block), "out"), 500.0);
-		
+
+		clearScope(block);
 		block = exert(block, ent("block/t4/arg/x1", 200.0), ent("block/t4/arg/x2", 800.0));
 		logger.info("block context: " + context(block));
 		logger.info("result: " + value(context(block), "out"));
@@ -198,6 +199,7 @@ public class LocalBlockExertions implements SorcerConstants {
 		logger.info("result: " + value(context(block), "block/result"));
 		assertEquals(value(context(block), "block/result"), 100.00);
 
+		clearScope(block);
 		block = exert(block, ent("block/x1", 10.0), ent("block/x2", 6.0));
 		logger.info("block context: " + context(block));
 		logger.info("result: " + value(context(block), "block/result"));

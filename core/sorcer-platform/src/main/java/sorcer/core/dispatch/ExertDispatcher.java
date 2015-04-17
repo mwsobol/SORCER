@@ -387,7 +387,7 @@ abstract public class ExertDispatcher implements Dispatcher {
             mo.setStatus(INITIAL);
             if (mo instanceof CompoundExertion) {
                 CompoundExertion ce = (CompoundExertion) mo;
-                for (Mogram sub : ce.getExertions())
+                for (Mogram sub : ce.getMograms())
                     reconcileInputExertions(sub);
             }
         }
