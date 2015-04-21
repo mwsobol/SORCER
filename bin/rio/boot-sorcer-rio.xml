@@ -46,7 +46,7 @@
         <java classname="org.rioproject.start.ServiceStarter" fork="yes" spawn="yes">
             <env key="SORCER_HOME" value="${sorcer.home}"/>
             <classpath>
-                <pathelement location="${lib}/sorcer/lib/sorcer-resolving-loader-${sorcer.version}.jar" />
+                <pathelement location="${sorcer.lib}/sorcer-resolving-loader-${sorcer.version}.jar" />
                 <pathelement location="${lib}/common/groovy/groovy-all-${groovy.version}.jar"/>
                 <pathelement location="${rio.home}/lib/rio-platform-${rio.version}.jar" />
                 <pathelement location="${rio.home}/lib/rio-start-${rio.version}.jar" />

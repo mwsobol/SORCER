@@ -36,7 +36,7 @@
                 <pathelement location="${lib}/river/jsk-platform-${river.version}.jar" />
                 <pathelement location="${lib}/river/jsk-lib-${river.version}.jar" />
                 <pathelement location="${sorcer.lib}/sorcer-platform-${sorcer.version}.jar" />
-                <pathelement location="${lib}/sorcer/lib/sorcer-resolving-loader-${sorcer.version}.jar" />
+                <pathelement location="${sorcer.lib}/sorcer-resolving-loader-${sorcer.version}.jar" />
                 <path refid="rio.path" />
                 <pathelement location="${rio.home}/lib-dl/cybernode-api-${rio.version}.jar" />
                 <pathelement location="${rio.home}/lib-dl/monitor-api-${rio.version}.jar" />

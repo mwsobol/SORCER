@@ -146,20 +146,6 @@ browser.onlyIf {
 }
 
 /*
- * Start a shell
- */
-task shell(type: Exec) {
-    description = 'Starts the SORCER Shell.'
-    def args = []
-    if(System.properties['os.name'].contains("Windows")) {
-        args << "cmd.exe"
-        args << "/C"
-    }
-    args << "${file("${sorcerDistHome}").path}/bin/shell/bin/nsh"
-    commandLine args
-}
-
-/*
  * Start the Rio UI
  */
 task rioUI(type: Exec) {
@@ -225,3 +211,19 @@ def jps() {
     s.append("jps -lm")
     s.toString()
 }
+
+/*
+ * Start a shell
+ */
+/*
+task shell(type: Exec) {
+    description = 'Starts the SORCER Shell.'
+    def args = []
+    if(System.properties['os.name'].contains("Windows")) {
+        args << "cmd.exe"
+        args << "/C"
+    }
+    args << "${file("${sorcerDistHome}").path}/bin/shell/bin/nsh"
+    commandLine args
+}
+*/
