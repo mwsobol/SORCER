@@ -17,12 +17,9 @@
 
 package sorcer.core.dispatch;
 
-import sorcer.core.context.ServiceContext;
-import sorcer.core.context.model.ent.EntModel;
 import sorcer.core.exertion.Mograms;
 import sorcer.core.provider.Provider;
 import sorcer.service.*;
-import sorcer.service.modeling.Model;
 
 import java.rmi.RemoteException;
 import java.util.List;
@@ -68,11 +65,12 @@ public class CatalogSequentialDispatcher extends CatalogExertDispatcher {
         for (Mogram mogram: inputXrts) {
             if (xrt.isBlock()) {
                 try {
-                    if (mogram instanceof Exertion) {
-                        ((ServiceContext) ((Exertion) mogram).getContext()).setBlockScope(xrt.getContext());
-                    } else if (mogram instanceof EntModel) {
-                        ((ServiceContext)mogram).setBlockScope(xrt.getContext());
-                        xrt.getContext().append(((Model)mogram).getResponses());
+                    if (mogram.getScope() != null)
+                        ((Context)mogram.getScope()).append(xrt.getContext());
+                    else {
+                        mogram.setScope(xrt.getContext());
+//                        mogram.setScope(new ParModel());
+//                        ((Context)mogram.getScope()).append(xrt.getContext());
                     }
                 } catch (Exception ce) {
                     throw new ExertionException(ce);

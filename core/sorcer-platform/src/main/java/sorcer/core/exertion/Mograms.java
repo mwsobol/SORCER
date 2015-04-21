@@ -129,7 +129,7 @@ public class Mograms implements SorcerConstants {
 		cc.setSubject(sc.getSubjectPath(), sc.getSubjectValue());
 		cc.setLastUpdateDate(sc.getLastUpdateDate());
 		cc.setDescription(sc.getDescription());
-		cc.setScopeCode(sc.getScope());
+		cc.setScopeCode(sc.getScopeCode());
 		cc.setOwnerID(sc.getOwnerID());
 		cc.setSubjectID(sc.getSubjectID());
 		cc.setProject(sc.getProject());

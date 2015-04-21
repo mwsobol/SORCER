@@ -1,6 +1,10 @@
 package sorcer.arithmetic.provider.impl;
 
 import groovy.lang.GroovyShell;
+import sorcer.arithmetic.provider.Adder;
+import sorcer.arithmetic.provider.Divider;
+import sorcer.arithmetic.provider.Multiplier;
+import sorcer.arithmetic.provider.Subtractor;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.ArrayContext;
 import sorcer.core.context.Contexts;
@@ -14,8 +18,6 @@ import java.io.Serializable;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.rmi.RemoteException;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -129,7 +131,7 @@ public class Arithmometer implements SorcerConstants, Serializable {
 	 * Calculates the result of arithmetic operation specified by a selector
 	 * (add, subtract, multiply, or divide) from the instance of ArrayContext.
 	 * 
-	 * @param input
+	 * @param context
 	 *            service context
 	 * @param selector
 	 *            a name of arithmetic operation
@@ -206,7 +208,7 @@ public class Arithmometer implements SorcerConstants, Serializable {
 	 * Calculates the result of arithmetic operation specified by a selector
 	 * (add, subtract, multiply, or divide) from the instance of ServiceContext.
 	 * 
-	 * @param context
+	 * @param cxt
 	 * @param selector
 	 *            a name of arithmetic operation
 	 * @return
@@ -214,28 +216,24 @@ public class Arithmometer implements SorcerConstants, Serializable {
 	 * @throws ContextException
 	 * @throws UnknownHostException
 	 */
-	private Context calculateFromPositionalContext(Context context, String selector)
+	private Context calculateFromPositionalContext(Context cxt, String selector)
 			throws RemoteException, ContextException {
-		PositionalContext cxt = (PositionalContext) context;
+		PositionalContext context = (PositionalContext) cxt;
 		try {
 			logger.info("arithmometer context: " + context);
-
 			//logger.info("selector: " + ((ServiceContext)context).getCurrentSelector());
 			// get sorted list of input values
 			List<Double> inputs = (List<Double>)Contexts.getNamedInValues(context);
-			System.out.println("XXXXXXX input1: " +  inputs);
 			if (inputs == null || inputs.size() == 0) {
 				inputs = (List<Double>)Contexts.getPrefixedInValues(context);
 //				logger.info("prefixed inputs: \n" + inputs);
 			}
-			System.out.println("XXXXXXX input2: " +  inputs);
-
 			//logger.info("named inputs: \n" + inputs);
 			if (inputs == null || inputs.size() == 0)
-				inputs = (List<Double>)cxt.getInValues();
-			logger.info("inputs3: \n" + inputs);
-			logger.info("inputs3 paths: \n" + Contexts.getInPaths(context));
-			List<String> outpaths = cxt.getOutPaths();
+				inputs = (List<Double>)context.getInValues();
+			logger.info("inputs: \n" + inputs);
+			logger.info("inputs paths: \n" + Contexts.getInPaths(context));
+			List<String> outpaths = context.getOutPaths();
 			//logger.info("outpaths: \n" + outpaths);
 
 			double result = 0.0;
@@ -252,8 +250,8 @@ public class Arithmometer implements SorcerConstants, Serializable {
 					if (inputs.size() > 2 || inputs.size() < 2) {
 						throw new ContextException("two arguments needed for subtraction");
 					}
-					result = (Double) revalue(cxt.getInValueAt(1));
-					result -= (Double) revalue(cxt.getInValueAt(2));
+					result = (Double) revalue(context.getInValueAt(1));
+					result -= (Double) revalue(context.getInValueAt(2));
 				}
 			} else if (selector.equals(MULTIPLY)) {
 				result = (Double)revalue(inputs.get(0));
@@ -262,23 +260,12 @@ public class Arithmometer implements SorcerConstants, Serializable {
 			} else if (selector.equals(DIVIDE)) {
 				if (inputs.size() > 2 || inputs.size() < 2)
 					throw new ContextException("two arguments needed for division");
-				result = (Double)revalue(cxt.getInValueAt(1));
-				result /= (Double)revalue(cxt.getInValueAt(2));
+				result = (Double)revalue(context.getInValueAt(1));
+				result /= (Double)revalue(context.getInValueAt(2));
 			} else if (selector.equals(AVERAGE)) {
-				System.out.println("average ZZZZZZZZ inputs0: " + inputs);
-
 				if (inputs.size() == 0) {
 					inputs = (List<Double>) Contexts.getNamedOutValues(context);
-					System.out.println("average ZZZZZZZZ inputs1: " + inputs);
-
-					if (((ServiceContext) context).getBlockScope() != null)
-						inputs.addAll(((ServiceContext) ((ServiceContext) context)
-								.getBlockScope()).getOutValues());
-					System.out.println("average ZZZZZZZZ inputs2: " + inputs);
-
 				}
-				System.out.println("average ZZZZZZZZ context: " + context);
-
 				result = (Double) revalue(inputs.get(0));
 				for (int i = 1; i < inputs.size(); i++)
 					result += (Double) revalue(inputs.get(i));

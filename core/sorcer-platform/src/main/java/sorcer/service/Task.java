@@ -246,7 +246,10 @@ public class Task extends ServiceExertion {
 		if (time != null && time.length() > 0)
 			sb.append("\n\texec time=").append(time);
 		sb.append(controlContext).append("\n");
-		sb.append(dataContext);
+//		sb.append(dataContext);
+		sb.append(dataContext.getName() + ": ");
+		sb.append(dataContext.getSubjectPath() + " = ");
+		sb.append(dataContext.getSubjectValue());
 		sb.append("\n=== DONE PRINTING TASK ===\n");
 
 		return sb.toString();
@@ -389,4 +392,32 @@ public class Task extends ServiceExertion {
 		}
 	}
 
+	public Context updateContext() throws ContextException {
+		return ((ServiceContext)getDataContext()).updateContext();
+	}
+
+	protected Context getCurrentContext() throws ContextException {
+		return getDataContext().getCurrentContext();
+	}
+
+//	protected void appendScope() throws ContextException, RemoteException {
+//		if (getScope() != null) {
+//			List<String> paths = dataContext.getPaths();
+//			logger.info("ZZZZZZZZZZZZZZ task paths: " + dataContext);
+//			logger.info("ZZZZZZZZZZZZZZ task paths: " + paths);
+//			List<String> inpaths = ((ServiceContext)getScope()).getInPaths();
+//			List<String> outpaths = ((ServiceContext)getScope()).getOutPaths();
+//			// append missing values available in the scope
+//			for (String path : paths) {
+//				if (dataContext.getValue(path) == Context.none) {
+//					if (inpaths.contains(path))
+//						dataContext.putInValue(path, ((Context) getScope()).getValue(path));
+//					else if (outpaths.contains(path))
+//						dataContext.putOutValue(path, ((Context) getScope()).getValue(path));
+//					else
+//						dataContext.putValue(path, ((Context) getScope()).getValue(path));
+//				}
+//			}
+//		}
+//	}
 }

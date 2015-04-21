@@ -111,7 +111,8 @@ public class SrvModels {
 
         addResponse(model, "add", "multiply", "subtract");
         dependsOn(model, "subtract", paths("multiply", "add"));
-        mapContext(model, outMap);
+        // specify how model connects to exertion
+        conn(model, outMap);
 
         Block block = block(sig(ServiceConcatenator.class),
                 model,

@@ -4,11 +4,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
-import sorcer.core.context.model.ent.Entry;
-import sorcer.core.context.Copier;
 import sorcer.core.context.ListContext;
+import sorcer.core.context.model.ent.Entry;
 import sorcer.service.Context;
-import sorcer.service.modeling.Model;
 
 import java.net.URL;
 import java.util.logging.Logger;
@@ -22,14 +20,13 @@ import static sorcer.eo.operator.inPaths;
 import static sorcer.eo.operator.outPaths;
 import static sorcer.eo.operator.put;
 import static sorcer.eo.operator.value;
-import static sorcer.po.operator.invoker;
 /**
  * @author Mike Sobolewski
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/sml")
-public class DataContexts {
+public class DataModels {
     private final static Logger logger = Logger.getLogger(EntModels.class.getName());
 
     @Test
@@ -62,6 +59,7 @@ public class DataContexts {
 
     @Test
     public void softValues() throws Exception {
+
         Context cxt = context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0));
 
         // context soft values correspond to a subpath, e.g. "x1"
@@ -69,6 +67,7 @@ public class DataContexts {
         assertEquals(value(cxt, "arg/x1"), 20.0);
         assertEquals(value(cxt, "x1"), null);
         assertEquals(softValue(cxt, "arg/var/x1"), 20.0);
+
     }
 
 

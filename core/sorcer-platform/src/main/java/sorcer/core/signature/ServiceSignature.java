@@ -27,7 +27,6 @@ import sorcer.service.*;
 import sorcer.service.Strategy.Provision;
 import sorcer.service.modeling.Variability;
 import sorcer.util.Log;
-import sorcer.util.ProviderLookup;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -93,7 +92,7 @@ public class ServiceSignature implements Signature, Service, Evaluation<Object>,
 	// shell can be used to execute exertions locally or remotely (as ServiceProvider)
 	protected boolean isShellRemote = false;
 
-	protected Context mapContext;
+	protected Context connector;
 	/**
 	 * a context template to define the context appended from a provider
 	 * identified by this method
@@ -602,12 +601,12 @@ public class ServiceSignature implements Signature, Service, Evaluation<Object>,
 		return this;
 	}
 
-	public Context getMapContext() {
-		return mapContext;
+	public Context getConnector() {
+		return connector;
 	}
 
-	public void setMapContext(Context mapContext) {
-		this.mapContext = mapContext;
+	public void setConnector(Context connector) {
+		this.connector = connector;
 	}
 
     @Override

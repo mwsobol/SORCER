@@ -158,8 +158,10 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 	 */
 	protected Hashtable metacontext;
 
-	protected Context blockScope;
-	
+	protected Context scopeContext;
+
+	protected Context initContext;
+
 	/** The exertion that uses this context */
 	protected ServiceExertion exertion;
 
@@ -173,7 +175,7 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 	protected List<Evaluation> dependers = new ArrayList<Evaluation>();
 
 	// mapping from paths of this context to input paths of requestors
-	protected Context mapContext;
+	protected Context connector;
 
     protected Map<String, List<String>> dependentPaths;
     
@@ -262,7 +264,13 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 		creationTime = ((ServiceContext) cntxt).getCreationTime();
 		lastUpdateDate = cntxt.getLastUpdateDate();
 		description = cntxt.getDescription();
-		scopeCode = cntxt.getScope();
+		scopeCode = cntxt.getScopeCode();
+		try {
+			scopeContext = (Context)cntxt.getScope();
+		} catch (RemoteException e1) {
+			throw new ContextException();
+		}
+		initContext = ((ServiceContext) cntxt).getInitContext();
 		ownerId = cntxt.getOwnerID();
 		subjectId = cntxt.getSubjectID();
 		project = cntxt.getProject();
@@ -394,13 +402,32 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 		description = text;
 	}
 
-	public int getScope() {
+	public int getScopeCode() {
 		return scopeCode;
 	}
 
 	public void setScopeCode(int scope) {
 		scopeCode = scope;
 	}
+
+	@Override
+	public Context getScope() {
+		return scopeContext;
+	}
+
+	@Override
+	public void setScope(Object scope) throws RemoteException, ContextException {
+		scopeContext = (Context)scope;
+	}
+
+	public Context getInitContext() {
+		return initContext;
+	}
+
+	public void setInitContext(Context initContext) {
+		this.initContext = initContext;
+	}
+
 
 	public String getOwnerID() {
 		return ownerId;
@@ -1737,7 +1764,7 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 		return null;
 	}
 	
-	public Context appendNewEntries(Context context) throws ContextException {
+	public Context updateEntries(Context context) throws ContextException {
 		if (context != null) {
 			List<String> inpaths = ((ServiceContext) context).getInPaths();
 			List<String> outpaths = ((ServiceContext) context).getOutPaths();
@@ -1746,8 +1773,7 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 				Map.Entry<String, Object> entry = (Map.Entry) it.next();
 				String path = entry.getKey();
 				Object val = entry.getValue();
-				System.out.println("ZZZZZZZZZ path: " + path + "  value: " + val);
-				if (!containsKey(path)) {
+				if (containsKey(path)) {
 					if (inpaths.contains(path))
 						putInValue(path, (T) val);
 					else if (outpaths.contains(path))
@@ -1944,12 +1970,12 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 				continue;
 			// is this also an attribute in the current context?
 			if (isSingletonAttribute(attr)) {
-				logger.info("The attribute \""
-						+ attr
-						+ "\" has conflicting definitions; it is a metaattribute in the source context and a singleton attribute in the target context.  Please correct before performing this operation");
-				logger.info("Src metacontext="
-						+ mappedCntxt.metacontext);
-				logger.info("this metacontext=" + metacontext);
+//				logger.info("The attribute \""
+//						+ attr
+//						+ "\" has conflicting definitions; it is a metaattribute in the source context and a singleton attribute in the target context.  Please correct before performing this operation");
+//				logger.info("Src metacontext="
+//						+ mappedCntxt.metacontext);
+//				logger.info("this metacontext=" + metacontext);
 				throw new ContextException("The attribute \"" + attr
 						+ "\" has conflicting definitions;");// it
 				// is a metaattribute in the source context and a singleton
@@ -2065,8 +2091,10 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 			sb.append("\n  return/job/path = " + returnJobPath);
 		}
 		if (withMetacontext)
-			sb.append("metacontext: " + metacontext);
-		
+			sb.append("\n metacontext: " + metacontext);
+
+		if (scopeContext != null)
+			sb.append("\n scope: " + ((Map) scopeContext).keySet());
 		// sb.append(cr);
 		// sb.append(cr);
 		if (cr.equals("<br>"))
@@ -2491,7 +2519,7 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 		// necessary
 		Context sc = link.getContext(principal);
 		if (sc.getClass() != this.getClass()) {
-			// logger.fine("converting linked context to " + this.getClass());
+			 logger.warning("converting linked context to " + this.getClass());
 			sc = new ServiceContext(sc);
 			link.setContext(sc);
 		}
@@ -2749,14 +2777,14 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 								"The type of initial and new value does not mach: "
 										+ initValue.getClass() + ":"
 										+ val.getClass());
-					logger.info("init val = " + initValue + " swapping from "
-							+ val + " to " + newVal + " at key = " + key);
+//					logger.info("init val = " + initValue + " swapping from "
+//							+ val + " to " + newVal + " at key = " + key);
 					put(key, newVal);
 				}
 			} else {
 				if (val instanceof Identifiable
 						&& id.equals(((Identifiable) val).getId()))
-					logger.info("id = " + id + " value changed to " + newVal);
+//					logger.info("id = " + id + " value changed to " + newVal);
 					put(key, newVal);
 			}
 		}
@@ -2796,6 +2824,11 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 	public void appendTrace(String footprint) {
 		if (exertion!=null)
             exertion.getControlContext().appendTrace(footprint);
+	}
+
+	@Override
+	public Context getCurrentContext() throws ContextException {
+		return (Context) ObjectCloner.clone(updateContext());
 	}
 
 	/*
@@ -2990,14 +3023,15 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 				}
 			}
 			if (obj instanceof Reactive && ((Reactive)obj).isReactive())
-				return (T) ((Evaluation)obj).getValue(entries);
-			else
-				return (T) obj;
+				obj = (T) ((Evaluation)obj).getValue(entries);
+			if (obj == Context.none && scopeContext != null)
+				obj = (T ) scopeContext.getValue(path, entries);
+
+			return (T) obj;
 		} catch (Throwable e) {
 			logger.warning(e.getMessage());
-			e.printStackTrace();
+//			e.printStackTrace();
 			return (T) Context.none;
-//			throw new EvaluationException(e);
 		}
 	}
 
@@ -3026,14 +3060,14 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 
 	@Override
     public Context getResponses(Arg... args) throws ContextException, RemoteException {
-        if (mapContext != null) {
+        if (connector != null) {
             ServiceContext mc = null;
             try {
-                mc = (ServiceContext) ObjectCloner.clone(mapContext);
+                mc = (ServiceContext) ObjectCloner.clone(connector);
             } catch (Exception e) {
                 throw new ContextException(e);
             }
-            Iterator it = ((Map)mapContext).entrySet().iterator();
+            Iterator it = ((Map) connector).entrySet().iterator();
             while (it.hasNext()) {
                 Map.Entry pairs = (Map.Entry) it.next();
                 mc.putInValue((String) pairs.getKey(), getValue((String) pairs.getValue()));
@@ -3046,7 +3080,7 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
     }
 
 	@Override
-    public Context getInputs() throws ContextException, RemoteException {
+    public Context getInContext() throws ContextException, RemoteException {
         List<String> paths = Contexts.getInPaths(this);
         Context<T> inputs = new ServiceContext();
         for (String path : paths)
@@ -3056,7 +3090,7 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
     }
 
     @Override
-    public Context getOutputs() throws ContextException, RemoteException {
+    public Context getOutContext() throws ContextException, RemoteException {
         List<String> paths = Contexts.getOutPaths(this);
         Context<T> inputs = new ServiceContext();
         for (String path : paths)
@@ -3066,8 +3100,8 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
     }
 
 	@Override
-    public Context getMapContext(Arg... args) throws ContextException, RemoteException {
-        return mapContext;
+    public Context getConnector(Arg... args) throws ContextException, RemoteException {
+        return connector;
     }
 
 	public Context getResponses(String path, String... paths) throws ContextException, RemoteException {
@@ -3294,14 +3328,6 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 	public String getOwnerId() {
 		return ownerId;
 	}
-	
-	public Context getBlockScope() {
-		return blockScope;
-	}
-
-	public void setBlockScope(Context blockScope) {
-		this.blockScope = blockScope;
-	}
 
 	@Override
 	public String[] getMarkedPaths(String association)
@@ -3364,8 +3390,8 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 		status = value;
 	}
 
-	public void setMapContext(Context mapContext) {
-		this.mapContext = mapContext;
+	public void setConnector(Context connector) {
+		this.connector = connector;
 	}
 
 	public Map<String, List<String>> getDependentPaths() {
@@ -3431,4 +3457,24 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
             ExertionException, RemoteException {
         return (T) service(exertion, null);
     }
+
+	public Context updateContext() throws ContextException {
+		if (scopeContext != null && scopeContext.size() > 0) {
+			List<String> paths = getPaths();
+			List<String> inpaths = ((ServiceContext) scopeContext).getInPaths();
+			List<String> outpaths = ((ServiceContext) scopeContext).getOutPaths();
+			// append missing values available in the scope
+			for (String path : paths) {
+				if (getValue(path) == Context.none) {
+					if (inpaths.contains(path))
+						putInValue(path, (T) scopeContext.getValue(path));
+					else if (outpaths.contains(path))
+						putOutValue(path, (T) scopeContext.getValue(path));
+					else
+						putValue(path, scopeContext.getValue(path));
+				}
+			}
+		}
+		return this;
+	}
 }

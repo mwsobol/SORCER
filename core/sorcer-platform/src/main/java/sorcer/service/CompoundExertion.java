@@ -41,7 +41,7 @@ public interface CompoundExertion {
 	 * Replaces the exertion at the specified position in this list with the
      * specified element.
 	 */
-	public void setExertionAt(Exertion ex, int i);
+	public void setMogramAt(Mogram ex, int i);
 	
 	public void setMograms(List<Mogram> exertions);
 	

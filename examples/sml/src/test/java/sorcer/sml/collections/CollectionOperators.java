@@ -8,14 +8,12 @@ import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.provider.impl.SubtractorImpl;
 import sorcer.co.tuple.*;
-import sorcer.core.context.model.ent.EntModel;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.par.Par;
 import sorcer.core.context.model.par.ParModel;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.service.*;
-import sorcer.service.modeling.Model;
 import sorcer.util.Table;
 
 import java.io.Serializable;
@@ -29,8 +27,24 @@ import java.util.logging.Logger;
 
 import static org.junit.Assert.*;
 import static sorcer.co.operator.*;
+import static sorcer.co.operator.asis;
+import static sorcer.co.operator.path;
+import static sorcer.co.operator.persistent;
+import static sorcer.co.operator.put;
+import static sorcer.co.operator.set;
+import static sorcer.co.operator.value;
 import static sorcer.eo.operator.*;
+import static sorcer.eo.operator.add;
+import static sorcer.eo.operator.asis;
+import static sorcer.eo.operator.get;
+import static sorcer.eo.operator.pipe;
+import static sorcer.eo.operator.put;
+import static sorcer.eo.operator.srv;
+import static sorcer.eo.operator.value;
+import static sorcer.po.operator.add;
+import static sorcer.po.operator.asis;
 import static sorcer.po.operator.*;
+import static sorcer.po.operator.set;
 
 /**
  * @author Mike Sobolewski
@@ -375,14 +389,14 @@ public class CollectionOperators {
 		
 		add(cxt, ent("arg/x6", 6.0));
 		assertTrue(value(cxt, "arg/x6").equals(6.0));
-			
+
 		put(cxt, ent("arg/x6", ent("overwrite", 20.0)));
 		assertTrue(value(cxt, "arg/x6").equals(20.0));
-		
+
 		// model with invoker
-		add(cxt, ent("arg/x7", invoker("x1 + x3", ents("x1", "x3"))));	
+		add(cxt, ent("arg/x7", invoker("x1 + x3", ents("x1", "x3"))));
 		assertTrue(value(cxt, "arg/x7").equals(4.0));
-		
+
 		// model with local service entry, own arguments
 		add(cxt, ent("arg/x8", service(sig("add", AdderImpl.class),
 				cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),

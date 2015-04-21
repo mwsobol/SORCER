@@ -17,24 +17,15 @@
 
 package sorcer.core.exertion;
 
-import java.util.Map;
-
 import net.jini.core.transaction.Transaction;
-import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.par.Par;
+import sorcer.core.context.model.par.ParModel;
 import sorcer.core.signature.EvaluationSignature;
 import sorcer.core.signature.ServiceSignature;
-import sorcer.service.Arg;
-import sorcer.service.ArgSet;
-import sorcer.service.Context;
-import sorcer.service.Evaluation;
-import sorcer.service.Evaluator;
-import sorcer.service.ExertionException;
-import sorcer.service.Identifiable;
-import sorcer.service.Scopable;
-import sorcer.service.Setter;
-import sorcer.service.SignatureException;
-import sorcer.service.Task;
+import sorcer.service.*;
+
+import java.rmi.RemoteException;
+import java.util.Map;
 
 /**
  * The SORCER evaluation task extending the basic task implementation
@@ -51,14 +42,16 @@ public class EvaluationTask extends Task {
 		super(name);
 	}
 
-	public EvaluationTask(Evaluation evaluator) {
+	public EvaluationTask(Evaluation evaluator) throws ContextException, RemoteException {
 		super(((Identifiable) evaluator).getName());
 		EvaluationSignature es = new EvaluationSignature(evaluator);
 		addSignature(es);
 		es.setEvaluator(evaluator);
 		dataContext.setExertion(this);
 		if (es.getEvaluator() instanceof Par) {
-			((Par) es.getEvaluator()).setScope(dataContext);
+			if (dataContext.getScope() == null)
+				dataContext.setScope(new ParModel(name));
+			((Par) es.getEvaluator()).setScope(dataContext.getScope());
 		}
 	}
 
@@ -95,8 +88,8 @@ public class EvaluationTask extends Task {
 	@Override
 	public Task doTask(Transaction txn) throws ExertionException,
 			SignatureException {
-		((ServiceContext)dataContext).setCurrentSelector(getProcessSignature().getSelector());
-		((ServiceContext)dataContext).setCurrentPrefix(((ServiceSignature)getProcessSignature()).getPrefix());
+		dataContext.setCurrentSelector(getProcessSignature().getSelector());
+		dataContext.setCurrentPrefix(((ServiceSignature) getProcessSignature()).getPrefix());
 
 		if (fidelity.size() > 1) {
 			try {
@@ -117,7 +110,7 @@ public class EvaluationTask extends Task {
 					for (Arg v : vs) {
 						val = ((Map<String, Object>) args).get(v.getName());
 						if (val != null && (val instanceof Setter)) {
-							((Setter)v).setValue(val);
+							((Setter) v).setValue(val);
 						}
 					}
 				} else {
@@ -125,14 +118,14 @@ public class EvaluationTask extends Task {
 						for (Arg v : vs) {
 							val = dataContext.getValueEndsWith(v.getName());
 							if (val != null && v instanceof Setter) {
-								((Setter)v).setValue(val);
+								((Setter) v).setValue(val);
 							}
 						}
 				}
 			} else {
-            if (evaluator instanceof Par && ((Par)evaluator).getScope()==null)
-                ((Par)evaluator).setScope(dataContext);
-            }
+				if (evaluator instanceof Par && ((Par) evaluator).getScope() == null)
+					((Par) evaluator).setScope(dataContext);
+			}
 			Object result = evaluator.getValue();
 			if (getProcessSignature().getReturnPath() != null)
 				dataContext.setReturnPath(getProcessSignature().getReturnPath());

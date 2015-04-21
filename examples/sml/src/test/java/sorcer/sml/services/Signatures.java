@@ -6,9 +6,7 @@ import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.Adder;
 import sorcer.arithmetic.provider.impl.AdderImpl;
-import sorcer.core.context.MapContext;
 import sorcer.service.Context;
-import sorcer.service.Exertion;
 import sorcer.service.Service;
 import sorcer.service.Signature;
 
@@ -195,7 +193,7 @@ public class Signatures {
 				inEnt("y2", 80.0),
 				result("result/y"));
 
-		Context out = mapContext(
+		Context out = conn(
 				inEnt("y1", "arg/x1"),
 				inEnt("y2", "arg/x2"));
 

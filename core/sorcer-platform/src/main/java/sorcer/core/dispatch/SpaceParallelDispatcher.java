@@ -330,7 +330,7 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
             result.getControlContext().appendTrace(provider.getProviderName()
                     + " dispatcher: " + getClass().getName());
 
-            ((NetJob) xrt).setExertionAt(result, ex.getIndex());
+            ((NetJob) xrt).setMogramAt(result, ex.getIndex());
             ServiceExertion ser = (ServiceExertion) result;
             if (ser.getStatus() > FAILED && ser.getStatus() != SUSPENDED) {
                 ser.setStatus(DONE);
@@ -344,7 +344,7 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
 
     protected void handleError(Exertion exertion) {
         if (exertion != xrt)
-            ((NetJob) xrt).setExertionAt(exertion,
+            ((NetJob) xrt).setMogramAt(exertion,
                     exertion.getIndex());
 
         // notify monitor about failure

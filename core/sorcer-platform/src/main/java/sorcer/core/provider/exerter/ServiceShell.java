@@ -26,6 +26,7 @@ import org.dancres.blitz.jini.lockmgr.MutualExclusion;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.ControlContext;
 import sorcer.core.context.ThrowableTrace;
+import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.par.Par;
 import sorcer.core.deploy.ServiceDeployment;
 import sorcer.core.dispatch.*;
@@ -160,26 +161,56 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 		}
 	}
 	
-	private void initExecState() {
+	private void initExecState(Arg... entries) throws ContextException, RemoteException {
+		Context argCxt = null;
+		for (Arg arg : entries) {
+			if (arg instanceof Context && ((Context)arg).size() > 0) {
+				argCxt = (Context)arg;
+			}
+		}
+		if (exertion instanceof Block) {
+			resetScope(exertion, argCxt, entries);
+		}
+//		else if (exertion.getScope() != null) {
+//			exertion.getDataContext().append((Context)exertion.getScope());
+//		}
 		Exec.State state = exertion.getControlContext().getExecState();
 		if (state == State.INITIAL) {
 			for (Mogram e : exertion.getAllMograms()) {
 				if (e instanceof Exertion) {
 					if (((ControlContext) ((Exertion)e).getControlContext()).getExecState() == State.INITIAL) {
-						((ServiceExertion) e).setStatus(Exec.INITIAL);
+						e.setStatus(Exec.INITIAL);
 					}
+				}
+				if (e instanceof Block) {
+					resetScope((Exertion)e, argCxt);
 				}
 			}
 		}
 	}
-	
+
+	private void resetScope(Exertion exertion, Context context, Arg... entries) throws ContextException, RemoteException {
+		exertion.clearScope();
+		if (entries != null) {
+			for (Arg a : entries) {
+				if (a instanceof Entry) {
+					exertion.getContext().putValue(
+							((Entry) a).path(), ((Entry) a).value());
+				}
+			}
+		}
+		if (context != null) {
+			exertion.getDataContext().append(context);
+		}
+	}
+
 	private void realizeDependencies(Arg... entries) throws RemoteException,
 			ExertionException {
 		List<Evaluation> dependers = exertion.getDependers();
 		if (dependers != null && dependers.size() > 0) {
 			for (Evaluation<Object> depender : dependers) {
 				try {
-					((Invocation)depender).invoke((Context)exertion.getScope(), entries);
+					((Invocation)depender).invoke((Context)exertion.getExertionScope(), entries);
 				} catch (InvocationException e) {
 					throw new ExertionException(e);
 				}
@@ -189,13 +220,12 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 	
 	public Exertion exert0(Transaction txn, String providerName, Arg... entries)
 			throws TransactionException, ExertionException, RemoteException {
-		initExecState();
-		realizeDependencies(entries);
-		
 		try {
 			if (entries != null && entries.length > 0) {
 				exertion.substitute(entries);
 			}
+			initExecState(entries);
+			realizeDependencies(entries);
 			if (exertion.isTask() && exertion.isProvisionable()) {
 				try {
 					List<ServiceDeployment> deploymnets = ((ServiceExertion) exertion)
@@ -305,6 +335,7 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
                 }
             }
         }
+
 		// Provider tasker = ProviderLookup.getProvider(exertion.getProcessSignature());		 
 		// provider = ProviderAccessor.getProvider(null, signature
 		// .getServiceInfo());

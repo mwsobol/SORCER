@@ -18,14 +18,14 @@
 
 package sorcer.core.exertion;
 
-import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.List;
-
 import net.jini.core.transaction.Transaction;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.ThrowableTrace;
 import sorcer.service.*;
+
+import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The option Exertion. There is a single target exertion that executes if the
@@ -80,7 +80,12 @@ public class OptExertion extends Task implements ConditionalExertion {
 			if (condition.isTrue()) {
 				isActive = true;
 				target = target.exert(txn);
-				dataContext = (ServiceContext)target.getContext();
+//				if (target.getScope() != null) {
+//					((Context) target.getScope()).append(dataContext);
+//				} else {
+//					target.setScope(dataContext);
+//				}
+				dataContext = (ServiceContext) target.getDataContext();
 				controlContext.append(target.getControlContext());
 				dataContext.putValue(Condition.CONDITION_VALUE, true);
 				dataContext.putValue(Condition.CONDITION_TARGET, target.getName());

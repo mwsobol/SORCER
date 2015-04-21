@@ -21,6 +21,7 @@ import sorcer.co.tuple.EntryList;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.ApplicationDescription;
 import sorcer.core.context.ServiceContext;
+import sorcer.service.Scopable;
 import sorcer.service.*;
 import sorcer.service.modeling.Variability;
 import sorcer.util.url.sos.SdbUtil;

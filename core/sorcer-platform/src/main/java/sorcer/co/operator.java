@@ -24,6 +24,7 @@ import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.par.Par;
 import sorcer.core.context.model.srv.Srv;
 import sorcer.core.provider.DatabaseStorer;
+import sorcer.service.Scopable;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
 import sorcer.service.modeling.Variability;
@@ -665,9 +666,9 @@ public class operator {
         if (dependee instanceof Scopable) {
             Context context = null;
             try {
-                context = (Context) ((Scopable) dependee).getScope();
+                context = (Context) ((ServiceExertion) dependee).getExertionScope();
                 if (context == null)
-                    ((Scopable) dependee).setScope(scope);
+                    ((ServiceExertion) dependee).setExertionScope(scope);
                 else
                     context.append(scope);
             } catch (RemoteException e) {

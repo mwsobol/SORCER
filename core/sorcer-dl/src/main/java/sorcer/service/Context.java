@@ -22,9 +22,6 @@ import net.jini.id.Uuid;
 import sorcer.core.SorcerConstants;
 import sorcer.core.provider.Provider;
 
-import net.jini.id.Uuid;
-import sorcer.core.SorcerConstants;
-import sorcer.core.provider.Provider;
 import sorcer.service.modeling.Model;
 
 import java.io.Serializable;
@@ -35,10 +32,6 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
-
-//import sorcer.co.tuple.ExecPath;
-//import sorcer.core.context.model.par.Par;
-//import sorcer.service.Signature.ReturnPath;
 
 /**
  * Service context classes that implement this interface provide SORCER generic
@@ -88,7 +81,7 @@ import java.util.Map;
  */
 @SuppressWarnings("rawtypes")
 public interface Context<T> extends Model, Mappable<T>, Serializable,
-		Dependency, Contexter<T>, Identifiable, Paradigmatic, Arg {
+		Dependency, Contexter<T>, Paradigmatic, Arg {
 
 	/** parameter (par) */
 	final static String PATH_PAR = "par";
@@ -282,7 +275,7 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 	 */
 	public String getDescription();
 
-	public int getScope();
+	public int getScopeCode();
 
 	public void setScopeCode(int scope);
 
@@ -500,6 +493,14 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 	public void appendTrace(String footprint);
 
 	public Context<T> append(Context<T> context) throws ContextException;
+
+	/**
+	 * Returns this context within its cuureent scope.
+	 *
+	 * @return this context
+	 * @throws ContextException
+	 */
+	public Context getCurrentContext() throws ContextException;
 
 	/**
 	 * Returns a value of the key object as is.

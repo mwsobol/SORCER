@@ -28,9 +28,9 @@ import java.rmi.RemoteException;
  */
 public interface Model extends Mogram, Dependency {
     
-    public Context getInputs()  throws ContextException, RemoteException;
+    public Context getInContext()  throws ContextException, RemoteException;
     
-    public Context getOutputs()  throws ContextException, RemoteException;
+    public Context getOutContext()  throws ContextException, RemoteException;
 
     /**
      *  Returns a context of all specified responses of this model.
@@ -51,7 +51,7 @@ public interface Model extends Mogram, Dependency {
      * @throws ContextException
      * @throws RemoteException
      */
-    public Context getMapContext(Arg... args)  throws ContextException, RemoteException;
+    public Context getConnector(Arg... args)  throws ContextException, RemoteException;
 
     /**
      * Returns a response for a given <code>path</code>

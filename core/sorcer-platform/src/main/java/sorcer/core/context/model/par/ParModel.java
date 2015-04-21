@@ -21,6 +21,7 @@ import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.ent.EntModel;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.invoker.ServiceInvoker;
+import sorcer.service.Scopable;
 import sorcer.service.*;
 import sorcer.service.modeling.Variability;
 import sorcer.util.Response;

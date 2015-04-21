@@ -871,6 +871,7 @@ public class ProviderDelegate implements SorcerConstants {
 		if (isValidTask(task)) {
             logger.info("Task " + task.getName() + " is valid");
 			try {
+				task.updateContext();
 				task.startExecTime();
 				exertionStateTable.put(task.getId(), new Integer(
 						Exec.RUNNING));

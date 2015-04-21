@@ -35,6 +35,7 @@ import sorcer.core.deploy.ServiceDeployment;
 import sorcer.core.exertion.*;
 import sorcer.core.provider.*;
 import sorcer.core.provider.rendezvous.*;
+import sorcer.service.Scopable;
 import sorcer.core.signature.EvaluationSignature;
 import sorcer.core.signature.NetSignature;
 import sorcer.core.signature.ObjectSignature;
@@ -254,8 +255,8 @@ public class operator {
 		return context(dest);
 	}
 
-	public static Model mapContext(Model model, Context out) throws ContextException {
-		((ServiceContext)model).setMapContext(out);
+	public static Model conn(Model model, Context out) throws ContextException {
+		((ServiceContext)model).setConnector(out);
 		return model;
 	}
 
@@ -310,13 +311,13 @@ public class operator {
 		return  context(args);
 	}
 
-	public static Context mapContext(List<Tuple2<String, ?>> entries) throws ContextException {
+	public static Context conn(List<Tuple2<String, ?>> entries) throws ContextException {
 		Context map = new MapContext();
 		populteContext(map, entries);
 		return map;
 	}
 
-	public static Context mapContext(Tuple2<String, ?>... entries) throws ContextException {
+	public static Context conn(Tuple2<String, ?>... entries) throws ContextException {
 		Context map = new MapContext();
 		List<Tuple2<String, ?>> items = Arrays.asList(entries);
 		populteContext(map, items);
@@ -601,7 +602,7 @@ public class operator {
 						pc.putInoutValueAt(i.getName(), ((Entry) i).value(), pc.getTally()+1);
 					}
 				} else {
-					if (isReactive) {
+					if (model instanceof EntModel || isReactive) {
 						pc.putValueAt(i.getName(), i, pc.getTally()+1);
 					} else {
 						pc.putValueAt(i.getName(), ((Entry) i).value(), pc.getTally()+1);
@@ -874,7 +875,7 @@ public class operator {
         ((ServiceSignature)sig).setName(operation);
 
 		if (mc != null)
-			((ServiceSignature)sig).setMapContext(mc);
+			((ServiceSignature)sig).setConnector(mc);
 
 		if (p != null)
 			((ServiceSignature)sig).setProvisionable(p);
@@ -995,7 +996,11 @@ public class operator {
 	}
 
 	public static EvaluationTask task(Evaluation evaluator) throws ExertionException, SignatureException {
-		return new EvaluationTask(evaluator);
+		try {
+			return new EvaluationTask(evaluator);
+		} catch (Exception e) {
+			throw new ExertionException(e);
+		}
 	}
 
 	public static Signature type(Signature signature, Signature.Type type) {
@@ -1263,12 +1268,12 @@ public class operator {
 
 	public static <E extends Exertion> E exertion(String name, Object... items) throws ExertionException,
 			ContextException, SignatureException {
-		List<Exertion> exertions = new ArrayList<Exertion>();
+		List<Mogram> exertions = new ArrayList<Mogram>();
 		Signature sig = null;
 		Context cxt = null;
 		for (int i = 0; i < items.length; i++) {
-			if (items[i] instanceof Exertion) {
-				exertions.add((Exertion) items[i]);
+			if (items[i] instanceof Exertion || items[i] instanceof EntModel ) {
+				exertions.add((Mogram) items[i]);
 			} else if (items[i] instanceof Signature) {
 				sig = (Signature) items[i];
 			} else if (items[i] instanceof String) {
@@ -2503,34 +2508,39 @@ public class operator {
 		return signature;
 	}
 
-	public static Exertion clearScope(Service service) throws ContextException {
-		return clearScope((Exertion) service);
-	}
-	public static Exertion clearScope(Exertion exertion) throws ContextException {
-		Object[] paths = ((Map)exertion.getDataContext()).keySet().toArray();
-		for (Object path : paths)
-			exertion.getDataContext().removePath((String)path);
-
-		Signature.ReturnPath rp = exertion.getDataContext().getReturnPath();
-		if (rp != null && rp.path != null)
-			exertion.getDataContext().removePath(rp.path);
-
-		List<Mogram> mograms = exertion.getAllMograms();
-		Context cxt = null;
-		for (Mogram mo : mograms) {
-			if (mo instanceof Exertion)
-				cxt = ((Exertion)mo).getContext();
-			else
-				cxt = (Context) mo;
-			((ServiceContext)cxt).setBlockScope(null);
-
-			rp = cxt.getReturnPath();
-			if (rp != null && rp.path != null)
-				cxt.removePath(rp.path);
-		}
-
-		return exertion;
-	}
+//	public static Exertion clearScope(Service service) throws ContextException, RemoteException {
+//		return clearScope((Exertion) service);
+//	}
+//	public static Exertion clearScope(Exertion exertion) throws ContextException, RemoteException {
+//		if (exertion instanceof Block) {
+//			Object[] paths = ((Map) exertion.getDataContext()).keySet().toArray();
+//			for (Object path : paths)
+//				exertion.getDataContext().removePath((String) path);
+//
+//			Signature.ReturnPath rp = exertion.getDataContext().getReturnPath();
+//			if (rp != null && rp.path != null)
+//				exertion.getDataContext().removePath(rp.path);
+//		}
+//		List<Mogram> mograms = exertion.getAllMograms();
+//		Context cxt = null;
+//		for (Mogram mo : mograms) {
+//			if (mo instanceof Exertion)
+//				cxt = ((Exertion)mo).getContext();
+//			else
+//				cxt = (Context) mo;
+//
+//			if (!(exertion instanceof Block)) {
+//				cxt.setScope(null);
+//			}
+//			if (mo instanceof Exertion)
+//				clearScope((Exertion)mo);
+////			rp = cxt.getReturnPath();
+////			if (rp != null && rp.path != null)
+////				cxt.removePath(rp.path);
+//		}
+//
+//		return exertion;
+//	}
 
 	public static Block block(Object...  items) throws ExertionException {
 		List<Mogram> mograms = new ArrayList<Mogram>();
@@ -2561,8 +2571,15 @@ public class operator {
 				block = new NetBlock(name);
 			}
 
-			if (context != null)
+			if (context != null) {
 				block.setContext(context);
+				context.setScope(ObjectCloner.clone(context));
+				context.setScope(context);
+
+				// context for reseting to initial state
+				((ServiceContext)context).setInitContext((Context)ObjectCloner.clone(context));
+			}
+
 			for (Mogram e :mograms)
 				block.addMgram(e);
 		} catch (Exception se) {
@@ -2582,6 +2599,7 @@ public class operator {
 			} else {
 				pm = new ParModel("block context: " + cxt.getName());
 				pm.append(cxt);
+				pm.setScope(cxt.getScope());
 				block.setContext(pm);
 			}
 			for (Mogram e : mograms) {
@@ -2604,11 +2622,13 @@ public class operator {
 //				} else if (e instanceof VarTask) {
 //					pm.append(((VarSignature)e.getProcessSignature()).getVariability());
 				} else if (e instanceof EvaluationTask) {
-					((EvaluationTask)e).setContext(pm);
+					e.setScope(pm.getScope());
 					if (((EvaluationTask)e).getEvaluation() instanceof Par) {
 						Par p = (Par)((EvaluationTask)e).getEvaluation();
-						pm.addPar(p);
+						pm.getScope().addPar(p);
 					}
+				} else {
+					e.setScope(pm.getScope());
 				}
 			}
 		} catch (Exception ex) {

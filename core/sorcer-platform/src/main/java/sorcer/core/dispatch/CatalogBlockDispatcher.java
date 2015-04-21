@@ -45,9 +45,10 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
 
 	public CatalogBlockDispatcher(Exertion block, Set<Context> sharedContext,
 			boolean isSpawned, Provider provider,
-            ProvisionManager provisionManager) {
+            ProvisionManager provisionManager) throws ContextException, RemoteException {
 		super(block, sharedContext, isSpawned, provider, provisionManager);
-	}
+        block.getDataContext().append((Context) block.getScope());
+    }
 
 
     @Override
@@ -65,11 +66,16 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
         super.beforeExec(exertion);
         try {
             preUpdate(exertion);
-            if (exertion.getDataContext().size() == 0)
-                ((ServiceExertion)exertion).setContext(xrt.getContext());
-            else
-                ((ServiceContext)exertion.getContext()).setBlockScope(xrt.getContext());
-        } catch (ContextException ex) {
+            if (exertion.getDataContext() != null) {
+                if (exertion.getScope() != null)
+                    ((Context) exertion.getScope()).append(xrt.getContext());
+                else {
+//                    exertion.setScope(xrt.getContext());
+                    exertion.setScope(new ParModel());
+                    ((Context)exertion.getScope()).append(xrt.getContext());
+                }
+            }
+        } catch (Exception ex) {
             throw new ExertionException(ex);
         }
     }
@@ -101,7 +107,7 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
     private void preUpdate(Exertion exertion) throws ContextException {
 		if (exertion instanceof AltExertion) {
 			for (OptExertion oe : ((AltExertion)exertion).getOptExertions()) {
-				oe.getCondition().getConditionalContext().append(xrt.getContext());
+                oe.getCondition().getConditionalContext().append(xrt.getContext());
 				oe.getCondition().setStatus(null);
 			}
             MonitoringSession monSession = MonitorUtil.getMonitoringSession(exertion);
@@ -166,10 +172,10 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
 		if (exertion.getContext().getReturnPath() != null)
             cxt.putInValue(exertion.getContext().getReturnPath().path,
                     exertion.getContext().getReturnValue());
-		else 
-			cxt.appendNewEntries(exertion.getContext());
+		else
+             cxt.updateEntries(exertion.getContext());
 		
-		((ServiceContext)exertion.getContext()).setBlockScope(null);
+		((ServiceContext)exertion.getContext()).setScope(null);
 //		if (cxt.getReturnPath() != null)
 //			cxt.putValue(cxt.getReturnPath().path, cxt.getReturnValue());
 	}

@@ -22,6 +22,7 @@ import net.jini.id.UuidFactory;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.par.Par;
 import sorcer.core.context.model.par.ParModel;
+import sorcer.service.Scopable;
 import sorcer.service.*;
 
 import java.io.Serializable;

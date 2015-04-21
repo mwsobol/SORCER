@@ -17,27 +17,16 @@
 
 package sorcer.service;
 
-import java.rmi.RemoteException;
-import java.security.Principal;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-import java.util.logging.Logger;
-
-import javax.security.auth.Subject;
-
 import net.jini.core.lookup.ServiceID;
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
 import net.jini.id.Uuid;
-import sorcer.core.context.model.ent.Entry;
 import sorcer.core.ComponentSelectionFidelity;
 import sorcer.core.context.ControlContext;
 import sorcer.core.context.FidelityContext;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.ThrowableTrace;
+import sorcer.core.context.model.ent.Entry;
 import sorcer.core.exertion.NetJob;
 import sorcer.core.exertion.ObjectJob;
 import sorcer.core.provider.Jobber;
@@ -49,6 +38,12 @@ import sorcer.security.util.SorcerPrincipal;
 import sorcer.service.Signature.ReturnPath;
 import sorcer.service.Strategy.Access;
 import sorcer.util.SorcerUtil;
+
+import javax.security.auth.Subject;
+import java.rmi.RemoteException;
+import java.security.Principal;
+import java.util.*;
+import java.util.logging.Logger;
 
 /**
  * A job is a composite service-oriented message comprised of {@link sorcer.service.Exertion}
@@ -194,7 +189,7 @@ public class Job extends ServiceExertion implements CompoundExertion {
 	 * Replaces the exertion at the specified position in this list with the
      * specified element.
 	 */
-	public void setExertionAt(Exertion ex, int i) {
+	public void setMogramAt(Mogram ex, int i) {
 		exertions.set(i, ex);
 	}
 

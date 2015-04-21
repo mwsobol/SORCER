@@ -76,7 +76,7 @@ import sorcer.service.Strategy.Flow;
  */
 @SuppressWarnings("rawtypes")
 public interface Exertion extends Mogram, Dependency, Invocation<Object>, Evaluation<Object>,
-		Paradigmatic, Mappable, Serializable, Identifiable {
+		Paradigmatic, Mappable, Serializable {
 
 	/**
 	 * Returns a name of this exertion.
@@ -344,7 +344,9 @@ public interface Exertion extends Mogram, Dependency, Invocation<Object>, Evalua
 	 * Returns true if this exertion is composed of other exertions.
 	 */
 	public boolean isCompound();
-	
+
+
+	public Exertion clearScope() throws ContextException;
 	/**
 	 * The exertion format for thin exertions (no RMI and Jini classes)
 	 */

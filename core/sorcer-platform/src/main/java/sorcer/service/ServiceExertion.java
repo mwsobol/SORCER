@@ -53,7 +53,7 @@ import java.util.logging.Logger;
  * @author Mike Sobolewski
  */
 @SuppressWarnings("rawtypes")
-public abstract class ServiceExertion implements Exertion, Scopable, SorcerConstants, Exec, Serializable {
+public abstract class ServiceExertion implements Exertion, SorcerConstants, Exec, Serializable {
 
     static final long serialVersionUID = -3907402419486719293L;
 
@@ -1353,6 +1353,11 @@ public abstract class ServiceExertion implements Exertion, Scopable, SorcerConst
     }
 
     public Object getScope() throws RemoteException {
+        return dataContext.getScope();
+    }
+
+
+    public Object getExertionScope() throws RemoteException {
         return scope;
     }
 
@@ -1363,6 +1368,16 @@ public abstract class ServiceExertion implements Exertion, Scopable, SorcerConst
      *            the scope to set
      */
     public void setScope(Object scope) throws RemoteException, ContextException {
+        dataContext.setScope((Context)scope);
+    }
+
+    /**
+     * Assigns the dependency scope for this exertion.
+     *
+     * @param scope
+     *            the scope to set
+     */
+    public void setExertionScope(Object scope) throws RemoteException, ContextException {
         this.scope = (Context)scope;
     }
 
@@ -1508,6 +1523,14 @@ public abstract class ServiceExertion implements Exertion, Scopable, SorcerConst
             this.dependers = new ArrayList<Evaluation>();
         for (Evaluation depender : dependers)
             this.dependers.add(depender);
+    }
+
+    public Exertion clearScope() throws ContextException {
+        Signature.ReturnPath rp = dataContext.getReturnPath();
+        if (rp != null && rp.path != null)
+            dataContext.removePath(rp.path);
+
+        return this;
     }
 
     /* (non-Javadoc)

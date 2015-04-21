@@ -31,10 +31,7 @@ import sorcer.util.url.sos.SdbUtil;
 import java.io.IOException;
 import java.net.URL;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 
 /**
@@ -213,7 +210,7 @@ public abstract class Block extends ServiceExertion implements CompoundExertion 
 	 * Replaces the exertion at the specified position in this list with the
      * specified element.
 	 */
-	public void setExertionAt(Exertion ex, int i) {
+	public void setMogramAt(Mogram ex, int i) {
 		mograms.set(i, ex);
 	}
 	
@@ -340,4 +337,48 @@ public abstract class Block extends ServiceExertion implements CompoundExertion 
 			}
 		}
 	}
+
+	public Exertion clearScope() throws ContextException {
+		Object[] paths = ((Map)getDataContext()).keySet().toArray();
+		for (Object path : paths)
+			dataContext.removePath((String) path);
+
+		if (dataContext.getInitContext() != null) {
+			dataContext.append(dataContext.getInitContext());
+		}
+
+		Signature.ReturnPath rp = dataContext.getReturnPath();
+		if (rp != null && rp.path != null)
+			dataContext.removePath(rp.path);
+
+		List<Mogram> mograms = getAllMograms();
+		Context cxt = null;
+		for (Mogram mo : mograms) {
+			if (mo instanceof Exertion)
+				((Exertion)mo).clearScope();
+			if (mo instanceof Exertion)
+				cxt = ((Exertion)mo).getContext();
+			else
+				cxt = (Context) mo;
+
+//			if (!(mo instanceof Block)) {
+//				try {
+//					cxt.setScope(null);
+//				} catch (RemoteException e) {
+//					throw new ContextException(e);
+//				}
+//			}
+//			try {
+//				if (mo instanceof Exertion) {
+//					((Exertion) mo).clearScope();
+//					// set the initial scope from the block
+//					mo.setScope((Context) dataContext.getScope());
+//				}
+//			} catch (RemoteException e) {
+//				throw new ContextException(e);
+//			}
+		}
+		return this;
+	}
+
 }
