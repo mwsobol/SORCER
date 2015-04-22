@@ -107,7 +107,7 @@ public class ServiceExertionTest {
 			RemoteException, ExertionException {
 		//logger.info("eJob exertions: " + names(exertions(eJob)));
 		assertTrue(names(exertions(eJob)).equals(list("t4", "t5", "j2", "t3", "j1")));
-		
+
 		//logger.info("t4 exertion: " + exertion(eJob, "t4"));
 		assertTrue(name(exertion(eJob, "j1/j2/t4")).equals("t4"));
 		

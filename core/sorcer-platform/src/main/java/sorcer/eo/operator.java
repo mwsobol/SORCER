@@ -1398,8 +1398,8 @@ public class operator {
 //						+ " path: " + p.outPath);
 				// find component exertions for thir paths
 				if (!p.isExertional()) {
-					p.out = job.getComponentMogram(p.outComponentPath);
-					p.in = job.getComponentMogram(p.inComponentPath);
+					p.out = (Exertion)job.getComponentMogram(p.outComponentPath);
+					p.in = (Exertion)job.getComponentMogram(p.inComponentPath);
 				}
 				((Exertion) p.out).getDataContext().connect(p.outPath,
 						p.inPath, ((Exertion) p.in).getContext());
@@ -1681,7 +1681,7 @@ public class operator {
 	}
 
 	public static Mogram exertion(Exertion xrt, String componentExertionName) {
-		return xrt.getComponentExertion(componentExertionName);
+		return xrt.getComponentMogram(componentExertionName);
 	}
 
 	public static List<String> trace(Mogram xrt) {

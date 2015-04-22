@@ -136,7 +136,7 @@ public interface Exertion extends Mogram, Dependency, Invocation<Object>, Evalua
 	/**
 	 * Returns a component exertion at a given path.
 	 */
-	public Mogram getComponentExertion(String path);
+	public Mogram getComponentMogram(String path);
 	
 	/**
 	 * Returns a value associated with a path (key) in this exertion's context.

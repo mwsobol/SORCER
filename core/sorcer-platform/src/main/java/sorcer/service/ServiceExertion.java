@@ -479,7 +479,7 @@ public abstract class ServiceExertion implements Exertion, SorcerConstants, Exec
     }
 
     public void selectComponentFidelity(ComponentSelectionFidelity componetFiInfo) throws ExertionException {
-        Exertion ext = (Exertion)getComponentExertion(componetFiInfo.getPath());
+        Exertion ext = (Exertion) getComponentMogram(componetFiInfo.getPath());
         String fn = componetFiInfo.getName();
         if (ext != null && ext.getFidelity() != null
                 && fidelities.containsKey(componetFiInfo.getName())) {
@@ -1537,7 +1537,7 @@ public abstract class ServiceExertion implements Exertion, SorcerConstants, Exec
      * @see sorcer.service.Exertion#getComponentMogram(java.lang.String)
      */
     @Override
-    public Mogram getComponentExertion(String path) {
+    public Mogram getComponentMogram(String path) {
         return this;
     }
 

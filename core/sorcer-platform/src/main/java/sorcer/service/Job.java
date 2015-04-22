@@ -627,16 +627,16 @@ public class Job extends ServiceExertion implements CompoundExertion {
 	}
 	
 	public Context getComponentContext(String path) throws ContextException {
-		Exertion xrt = getComponentMogram(path);
+		Exertion xrt = (Exertion)getComponentMogram(path);
 		return xrt.getContext();
 	}
 	
 	public Context getComponentControlContext(String path) {
-		Exertion xrt = getComponentMogram(path);
+		Exertion xrt = (Exertion)getComponentMogram(path);
 		return xrt.getControlContext();
 	}
 	
-	public Exertion getComponentMogram(String path) {
+	public Mogram getComponentMogram(String path) {
 		String[] attributes = SorcerUtil.pathToArray(path);
 		// remove the leading attribute of the current exertion
 		if (attributes[0].equals(getName())) {
