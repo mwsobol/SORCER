@@ -716,7 +716,7 @@ public class SorcerDescriptorUtil {
 		// service provider classpath
 		String exertmonitor = ConfigUtil.concat(new Object[] {
 				sorcerLib,fs,"sorcer",fs,"lib",fs,"sos-exertmonitor-",sorcerVersion,".jar",
-				ps,sorcerLib,fs,"common",fs,"je-5.0.104.jar"
+				ps,sorcerLib,fs,"common",fs,"je-", jeVersion ,".jar"
 		});
 		
 		// service provider codebase

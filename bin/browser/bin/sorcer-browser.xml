@@ -30,6 +30,7 @@
 		<pathelement location="${sorcer-ext.lib}/ssb-${sorcer.version}.jar" />
 		<pathelement location="${sorcer.lib}/sos-netlet-${sorcer.version}.jar" />
 		<pathelement location="${sorcer.lib}/sorcer-platform-${sorcer.version}.jar" />
+		<pathelement location="${sorcer.lib}/sorcer-resolving-loader-${sorcer.version}.jar" />
 		<pathelement location="${rio.lib}/groovy-all-${groovy.version}.jar" />
 		<pathelement location="${jini.lib}/jsk-lib-${river.version}.jar" />
 		<pathelement location="${jini.lib}/jsk-platform-${river.version}.jar" />
@@ -52,7 +53,7 @@
 			</classpath>
 			<sysproperty key="sorcer.home" value="${sorcer.home}" />
 			<sysproperty key="java.protocol.handler.pkgs" value="net.jini.url|sorcer.util.bdb.sos|org.rioproject.url" />
-			<sysproperty key="java.rmi.server.RMIClassLoaderSpi" value="org.rioproject.rmi.ResolvingLoader" />
+			<sysproperty key="java.rmi.server.RMIClassLoaderSpi" value="sorcer.rio.rmi.SorcerResolvingLoader" />
 			<sysproperty key="java.security.policy" value="../policy/ssb.policy" />
             <sysproperty key="RIO_HOME" value="${rio.home}"/>
 			<sysproperty key="java.rmi.server.useCodebaseOnly" value="false" />

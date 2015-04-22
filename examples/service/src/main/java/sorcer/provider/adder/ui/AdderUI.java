@@ -26,8 +26,8 @@ import sorcer.core.provider.Provider;
 import sorcer.provider.adder.Adder;
 import sorcer.service.ContextException;
 import sorcer.service.Service;
-import sorcer.ui.serviceui.UIComponentFactory;
-import sorcer.ui.serviceui.UIDescriptorFactory;
+import sorcer.serviceui.UIComponentFactory;
+import sorcer.serviceui.UIDescriptorFactory;
 import sorcer.util.Sorcer;
 import sorcer.util.SorcerUtil;
 
