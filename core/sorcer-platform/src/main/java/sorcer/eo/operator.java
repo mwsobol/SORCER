@@ -1226,7 +1226,7 @@ public class operator {
 		}
 
 		if (context == null) {
-			context = new ServiceContext();
+			context = new PositionalContext();
 		}
 		task.setContext(context);
 
@@ -1284,7 +1284,7 @@ public class operator {
 				&& (sig.getServiceType() == Concatenator.class
 				|| sig.getServiceType() == ServiceConcatenator.class)) {
 			return (E) block(items);
-		} else if (exertions.size() > 0) {
+		} else if (exertions.size() > 1) {
 			Job j = job(items);
 			j.setName(name);
 			return (E) j;
@@ -2572,11 +2572,10 @@ public class operator {
 			}
 
 			if (context != null) {
+				// block scope is its own context
 				block.setContext(context);
-				context.setScope(ObjectCloner.clone(context));
 				context.setScope(context);
-
-				// context for reseting to initial state
+				// context for resetting to initial state after cleaning scopes
 				((ServiceContext)context).setInitContext((Context)ObjectCloner.clone(context));
 			}
 
@@ -2598,9 +2597,10 @@ public class operator {
 				pm = (ParModel)cxt;
 			} else {
 				pm = new ParModel("block context: " + cxt.getName());
-				pm.append(cxt);
-				pm.setScope(cxt.getScope());
 				block.setContext(pm);
+				pm.append(cxt);
+				pm.setScope(pm);
+				pm.setInitContext(context);
 			}
 			for (Mogram e : mograms) {
 				if (e instanceof AltExertion) {
@@ -2626,9 +2626,12 @@ public class operator {
 					if (((EvaluationTask)e).getEvaluation() instanceof Par) {
 						Par p = (Par)((EvaluationTask)e).getEvaluation();
 						pm.getScope().addPar(p);
+//						pm.addPar(p);
+
 					}
 				} else {
 					e.setScope(pm.getScope());
+
 				}
 			}
 		} catch (Exception ex) {

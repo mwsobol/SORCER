@@ -656,7 +656,7 @@ public class operator {
     
     public static Dependency dependsOn(Dependency dependee,  Evaluation... dependers) throws ContextException {
         for (Evaluation d : dependers)
-            ((Dependency) dependee).getDependers().add(d);
+            	dependee.getDependers().add(d);
         
         return dependee;
     }

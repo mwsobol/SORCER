@@ -8,6 +8,7 @@ import sorcer.arithmetic.provider.impl.SubtractorImpl;
 import sorcer.core.provider.rendezvous.ServiceConcatenator;
 import sorcer.service.Block;
 import sorcer.service.Context;
+import sorcer.service.Task;
 import sorcer.service.modeling.Model;
 
 import java.util.logging.Logger;
@@ -30,6 +31,7 @@ public class SrvModels {
     public void exertServiceModel() throws Exception {
 
         // get a context from a subject provider
+        // exerting a model with the subject provider as its service context
 
         Model m = srvModel(sig("add", AdderImpl.class),
                 inEnt("arg/x1", 1.0), inEnt("arg/x2", 2.0),
@@ -43,8 +45,7 @@ public class SrvModels {
         addResponse(m, "add", "multiply", "result/value");
         // exert the model
         Model model = exert(m);
-        // logger.info("model: " + model);
-        logger.info("result: " + responses(model));
+        logger.info("model: " + model);
 
         assertTrue(response(model, "add").equals(4.0));
 
@@ -94,9 +95,9 @@ public class SrvModels {
 
 
     @Test
-    public void blockMogramMap() throws Exception {
+    public void modelConnector() throws Exception {
 
-        Context outMap = context(inEnt("y1", "add"), inEnt("y2", "multiply"), inEnt("y3", "subtract"));
+        Context modelConnector = context(inEnt("y1", "add"), inEnt("y2", "multiply"), inEnt("y3", "subtract"));
 
         Model model = srvModel(
                 inEnt("multiply/x1", 10.0), inEnt("multiply/x2", 50.0),
@@ -112,7 +113,10 @@ public class SrvModels {
         addResponse(model, "add", "multiply", "subtract");
         dependsOn(model, "subtract", paths("multiply", "add"));
         // specify how model connects to exertion
-        conn(model, outMap);
+        conn(model, modelConnector);
+
+//        Context out = responses(model);
+//        logger.info("out: " + out);
 
         Block block = block(sig(ServiceConcatenator.class),
                 model,

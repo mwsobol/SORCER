@@ -17,9 +17,11 @@
 
 package sorcer.core.dispatch;
 
+import sorcer.core.context.model.ent.EntModel;
 import sorcer.core.exertion.Mograms;
 import sorcer.core.provider.Provider;
 import sorcer.service.*;
+import sorcer.service.modeling.Model;
 
 import java.rmi.RemoteException;
 import java.util.List;
@@ -66,7 +68,7 @@ public class CatalogSequentialDispatcher extends CatalogExertDispatcher {
             if (xrt.isBlock()) {
                 try {
                     if (mogram.getScope() != null)
-                        ((Context)mogram.getScope()).append(xrt.getContext());
+                        ((Context) mogram.getScope()).append(xrt.getContext());
                     else {
                         mogram.setScope(xrt.getContext());
 //                        mogram.setScope(new ParModel());
@@ -77,20 +79,22 @@ public class CatalogSequentialDispatcher extends CatalogExertDispatcher {
                 }
             }
 
-            if (mogram instanceof Exertion) {
-                ServiceExertion se = (ServiceExertion) mogram;
-                // support for continuous pre and post execution of task
-                // signatures
-                if (previous != null && se.isTask() && ((Task) se).isContinous())
-                    se.setContext(previous);
-
-                dispatchExertion(se);
-                try {
+            try {
+                if (mogram instanceof Exertion) {
+                    ServiceExertion se = (ServiceExertion) mogram;
+                    // support for continuous pre and post execution of task
+                    // signatures
+                    if (previous != null && se.isTask() && ((Task) se).isContinous())
+                        se.setContext(previous);
+                    dispatchExertion(se);
                     previous = se.getContext();
-                } catch (ContextException e) {
-                    throw new ExertionException(e);
+                } else if (mogram instanceof EntModel) {
+                    xrt.getContext().append(((Model) mogram).getResponses());
                 }
+            } catch (Exception e) {
+                throw new ExertionException(e);
             }
+
         }
 
         if (masterXrt != null) {

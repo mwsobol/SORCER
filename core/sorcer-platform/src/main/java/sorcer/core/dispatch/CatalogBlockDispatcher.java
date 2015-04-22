@@ -174,8 +174,9 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
                     exertion.getContext().getReturnValue());
 		else
              cxt.updateEntries(exertion.getContext());
-		
-		((ServiceContext)exertion.getContext()).setScope(null);
+
+        if (! (exertion instanceof Block))
+		    ((ServiceContext)exertion.getContext()).setScope(null);
 //		if (cxt.getReturnPath() != null)
 //			cxt.putValue(cxt.getReturnPath().path, cxt.getReturnValue());
 	}

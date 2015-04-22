@@ -22,6 +22,7 @@ import net.jini.core.transaction.Transaction;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.invoker.MethodInvoker;
 import sorcer.core.signature.ObjectSignature;
+import sorcer.core.signature.ServiceSignature;
 import sorcer.service.*;
 
 import java.lang.reflect.InvocationTargetException;
@@ -92,7 +93,11 @@ public class ObjectTask extends Task {
 		dataContext.setCurrentSelector(os.getSelector());
 		dataContext.setCurrentPrefix(os.getPrefix());
 		try {
-			dataContext.updateContext();
+			if (getProcessSignature().getReturnPath() != null && getProcessSignature().getReturnPath().inPaths != null)
+				dataContext.updateContext(getProcessSignature().getReturnPath().inPaths);
+			else
+				dataContext.updateContext();
+//			dataContext = (ServiceContext)dataContext.getCurrentContext();
 			if (dataContext.getArgs() != null)
 				os.setArgs(dataContext.getArgs());
 			if (dataContext.getParameterTypes() != null)
@@ -148,7 +153,7 @@ public class ObjectTask extends Task {
 						Context out = dataContext.getSubcontext(rp.outPaths);
 						dataContext.setReturnValue(out);
 					}
-				} else {
+				} else if (dataContext.getScope() != null) {
 					dataContext.getScope().append((Context)result);
 				}
 			} else {

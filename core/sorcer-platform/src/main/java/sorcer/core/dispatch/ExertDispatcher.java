@@ -128,7 +128,7 @@ abstract public class ExertDispatcher implements Dispatcher {
         }
     }
 
-    abstract protected void doExec() throws SignatureException, ExertionException;
+    abstract protected void doExec() throws SignatureException, ExertionException, RemoteException;
     abstract protected List<Mogram> getInputExertions() throws ContextException;
 
     protected void beforeParent(Exertion exertion) throws ContextException, ExertionException {

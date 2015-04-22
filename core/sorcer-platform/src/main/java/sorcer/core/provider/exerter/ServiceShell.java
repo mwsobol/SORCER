@@ -25,6 +25,7 @@ import org.dancres.blitz.jini.lockmgr.LockResult;
 import org.dancres.blitz.jini.lockmgr.MutualExclusion;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.ControlContext;
+import sorcer.core.context.ServiceContext;
 import sorcer.core.context.ThrowableTrace;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.par.Par;
@@ -191,6 +192,7 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 
 	private void resetScope(Exertion exertion, Context context, Arg... entries) throws ContextException, RemoteException {
 		exertion.clearScope();
+		exertion.getDataContext().append(((ServiceContext)exertion.getDataContext()).getInitContext());
 		if (entries != null) {
 			for (Arg a : entries) {
 				if (a instanceof Entry) {

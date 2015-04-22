@@ -176,7 +176,7 @@ public abstract class ServiceExertion implements Exertion, SorcerConstants, Exec
         isExportControlled = Boolean.FALSE;
         scopeCode = new Integer(PRIVATE_SCOPE);
         status = new Integer(INITIAL);
-        dataContext = new ServiceContext(name);
+        dataContext = new PositionalContext(name);
         controlContext = new ControlContext(this);
         principal = new SorcerPrincipal(System.getProperty("user.name"));
         principal.setId(principal.getName());
@@ -851,6 +851,11 @@ public abstract class ServiceExertion implements Exertion, SorcerConstants, Exec
         return (signature == null) ? null : signature.getServiceType();
     }
 
+    @Override
+    public Context getScope() {
+        return dataContext.getScope();
+    }
+
     public String getSelector() {
         Signature method = getProcessSignature();
         return (method == null) ? null : method.getSelector();
@@ -1351,11 +1356,6 @@ public abstract class ServiceExertion implements Exertion, SorcerConstants, Exec
         }
         return cxt;
     }
-
-    public Object getScope() throws RemoteException {
-        return dataContext.getScope();
-    }
-
 
     public Object getExertionScope() throws RemoteException {
         return scope;

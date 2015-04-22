@@ -9,12 +9,12 @@ import sorcer.arithmetic.provider.impl.AveragerImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.provider.impl.SubtractorImpl;
 import sorcer.core.SorcerConstants;
+import sorcer.core.exertion.Mograms;
 import sorcer.core.provider.rendezvous.ServiceConcatenator;
-import sorcer.service.Block;
-import sorcer.service.Service;
+import sorcer.service.*;
 import sorcer.service.Signature.Direction;
-import sorcer.service.Task;
 
+import java.util.List;
 import java.util.logging.Logger;
 
 import static org.junit.Assert.assertEquals;
@@ -124,6 +124,7 @@ public class LocalBlockExertions implements SorcerConstants {
 //		logger.info("block context: " + context(block));
 
 		Block result = exert(block);
+//		logger.info("block context: " + context(result));
 //		logger.info("result: " + value(context(result), "block/result"));
 		assertEquals(value(context(result), "block/result"), 400.00);
 
@@ -191,9 +192,9 @@ public class LocalBlockExertions implements SorcerConstants {
 				alt(opt(condition("{ y -> y > 50 }", "y"), t4),
 						opt(condition("{ y -> y <= 50 }", "y"), t5)));
 
-//		logger.info("block: " + block);
-//		logger.info("exertions: " + exertions(block));
-//		logger.info("block context: " + context(block));
+		logger.info("block: " + block);
+		logger.info("exertions: " + exertions(block));
+		logger.info("block context: " + context(block));
 
 		block = exert(block);
 //		logger.info("block context: " + context(block));

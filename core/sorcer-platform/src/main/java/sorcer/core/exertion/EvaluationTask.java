@@ -123,8 +123,8 @@ public class EvaluationTask extends Task {
 						}
 				}
 			} else {
-				if (evaluator instanceof Par && ((Par) evaluator).getScope() == null)
-					((Par) evaluator).setScope(dataContext);
+				if (evaluator instanceof Par && dataContext.getScope() != null)
+					((Par) evaluator).getScope().append(dataContext.getScope());
 			}
 			Object result = evaluator.getValue();
 			if (getProcessSignature().getReturnPath() != null)
@@ -133,6 +133,8 @@ public class EvaluationTask extends Task {
 			if (evaluator instanceof Scopable) {
 				((Context)((Scopable)evaluator).getScope()).putValue(dataContext.getReturnPath().path, result);
 			}
+			if (evaluator instanceof Par && dataContext.getScope() != null)
+				dataContext.getScope().putValue(((Par) evaluator).getName(), result);
 		} catch (Exception e) {
 			e.printStackTrace();
 			dataContext.reportException(e);

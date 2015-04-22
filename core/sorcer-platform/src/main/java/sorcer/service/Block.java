@@ -340,11 +340,9 @@ public abstract class Block extends ServiceExertion implements CompoundExertion 
 
 	public Exertion clearScope() throws ContextException {
 		Object[] paths = ((Map)getDataContext()).keySet().toArray();
-		for (Object path : paths)
+		for (Object path : paths) {
 			dataContext.removePath((String) path);
-
-		if (dataContext.getInitContext() != null) {
-			dataContext.append(dataContext.getInitContext());
+//			dataContext.getScope().removePath((String) path);
 		}
 
 		Signature.ReturnPath rp = dataContext.getReturnPath();
@@ -354,12 +352,13 @@ public abstract class Block extends ServiceExertion implements CompoundExertion 
 		List<Mogram> mograms = getAllMograms();
 		Context cxt = null;
 		for (Mogram mo : mograms) {
-			if (mo instanceof Exertion)
+			if (mo instanceof Exertion )
 				((Exertion)mo).clearScope();
-			if (mo instanceof Exertion)
-				cxt = ((Exertion)mo).getContext();
-			else
-				cxt = (Context) mo;
+
+//			if (mo instanceof Exertion)
+//				cxt = ((Exertion)mo).getContext();
+//			else
+//				cxt = (Context) mo;
 
 //			if (!(mo instanceof Block)) {
 //				try {
@@ -378,6 +377,12 @@ public abstract class Block extends ServiceExertion implements CompoundExertion 
 //				throw new ContextException(e);
 //			}
 		}
+
+		// restore initial context
+		if (dataContext.getInitContext() != null) {
+			dataContext.append(dataContext.getInitContext());
+		}
+
 		return this;
 	}
 

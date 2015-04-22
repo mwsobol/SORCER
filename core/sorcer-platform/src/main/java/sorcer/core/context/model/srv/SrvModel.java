@@ -245,7 +245,8 @@ public class SrvModel extends ParModel<Object> implements Model {
             if (fidelity != null) {
                 signature = getProcessSignature();
                 Exertion out = operator.exertion(name, signature, this).exert(txn, entries);
-                return out.getDataContext();
+                Exertion xrt = out.exert();
+                return xrt.getDataContext();
             } else {
                 // evaluate model responses
                 getValue(entries);

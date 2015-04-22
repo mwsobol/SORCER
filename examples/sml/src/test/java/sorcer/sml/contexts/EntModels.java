@@ -98,8 +98,9 @@ public class EntModels {
 		Copier cp = copier(cxt1, ents("arg/x1", "arg/x2"), cxt2, ents("y1", "y2"));
 		dependsOn(cxt2, cp);
 
-		Double result = value(cxt2);
-		assertTrue( value(cxt2).equals(22.0));
+//		Double result =
+				value(cxt2);
+		assertTrue(value(cxt2).equals(22.0));
 
 	}
 

@@ -60,15 +60,15 @@ public class AltExertion extends Task implements ConditionalExertion {
 	public Task doTask(Transaction txn) throws ExertionException,
 			SignatureException, RemoteException {
 		OptExertion opt = null;
-		Context currentContext = dataContext;
 		try {
 			for (int i = 0; i < optExertions.size(); i++) {
 				opt = optExertions.get(i);
 				if (opt.condition.isTrue()) {
 					opt.isActive = true;
 					opt.getTarget().getDataContext().setScope(opt.condition.getConditionalContext());
-					opt.setTarget((Exertion)opt.getTarget().exert(txn));
-					dataContext = ((ServiceContext)opt.getTarget().getContext());
+					opt.getTarget().getDataContext().append(opt.getDataContext());
+					opt.setTarget((Exertion) opt.getTarget().exert(txn));
+					dataContext = (ServiceContext)opt.getTarget().getContext();
 					controlContext.append(opt.getTarget().getControlContext());
 					dataContext.putValue(Condition.CONDITION_VALUE, true);
 					dataContext.putValue(Condition.CONDITION_TARGET, opt.getName());

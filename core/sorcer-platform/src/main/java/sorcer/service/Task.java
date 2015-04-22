@@ -400,24 +400,4 @@ public class Task extends ServiceExertion {
 		return getDataContext().getCurrentContext();
 	}
 
-//	protected void appendScope() throws ContextException, RemoteException {
-//		if (getScope() != null) {
-//			List<String> paths = dataContext.getPaths();
-//			logger.info("ZZZZZZZZZZZZZZ task paths: " + dataContext);
-//			logger.info("ZZZZZZZZZZZZZZ task paths: " + paths);
-//			List<String> inpaths = ((ServiceContext)getScope()).getInPaths();
-//			List<String> outpaths = ((ServiceContext)getScope()).getOutPaths();
-//			// append missing values available in the scope
-//			for (String path : paths) {
-//				if (dataContext.getValue(path) == Context.none) {
-//					if (inpaths.contains(path))
-//						dataContext.putInValue(path, ((Context) getScope()).getValue(path));
-//					else if (outpaths.contains(path))
-//						dataContext.putOutValue(path, ((Context) getScope()).getValue(path));
-//					else
-//						dataContext.putValue(path, ((Context) getScope()).getValue(path));
-//				}
-//			}
-//		}
-//	}
 }

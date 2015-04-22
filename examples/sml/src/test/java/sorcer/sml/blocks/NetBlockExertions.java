@@ -138,10 +138,10 @@ public class NetBlockExertions implements SorcerConstants {
 //		logger.info("result: " + value(context(block), "block/result"));
 		assertEquals(value(context(block), "block/result"), 100.00);
 
-		block = exert(block, ent("block/x1", 10.0), ent("block/x2", 6.0));
-		logger.info("block context: " + context(block));
-//		logger.info("result: " + value(context(block), "block/result"));
-		assertEquals(value(context(block), "block/result"), 500.00);
+//		block = exert(block, ent("block/x1", 10.0), ent("block/x2", 6.0));
+//		logger.info("block context: " + context(block));
+////		logger.info("result: " + value(context(block), "block/result"));
+//		assertEquals(value(context(block), "block/result"), 500.00);
 	}
 	
 	@Test

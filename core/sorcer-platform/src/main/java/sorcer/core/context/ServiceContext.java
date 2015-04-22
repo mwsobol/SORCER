@@ -1807,6 +1807,9 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 			if (containsKey(Condition._closure_))
 				remove(Condition._closure_);
 		}
+//		if (((ServiceContext)scopeContext).containsKey(Condition._closure_)) {
+//			scopeContext.remove(Condition._closure_);
+//		}
 		return this;
 	}
 
@@ -3015,6 +3018,9 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 						} else {
 							((Context)((Scopable)obj).getScope()).append(this);
 						}
+					} else if (obj instanceof Entry
+							&& ((Entry)obj).value() instanceof Scopable) {
+						((Scopable)((Entry)obj).asis()).setScope(this);
 					}
 					obj = ((Evaluation<T>)obj).getValue(entries);
 				} else if ((obj instanceof Paradigmatic)
@@ -3458,14 +3464,22 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
         return (T) service(exertion, null);
     }
 
-	public Context updateContext() throws ContextException {
+	public Context updateContext(String... paths) throws ContextException {
 		if (scopeContext != null && scopeContext.size() > 0) {
-			List<String> paths = getPaths();
+			List<String> allPaths = null;
+			List<String> cxtPaths = getPaths();
+			if (paths != null) {
+				allPaths = new ArrayList<String>();
+				allPaths.addAll(Arrays.asList(paths));
+				allPaths.addAll(cxtPaths);
+			} else {
+				allPaths = cxtPaths;
+			}
 			List<String> inpaths = ((ServiceContext) scopeContext).getInPaths();
 			List<String> outpaths = ((ServiceContext) scopeContext).getOutPaths();
 			// append missing values available in the scope
-			for (String path : paths) {
-				if (getValue(path) == Context.none) {
+			for (String path : allPaths) {
+				if (getValue(path) == null || getValue(path) == Context.none) {
 					if (inpaths.contains(path))
 						putInValue(path, (T) scopeContext.getValue(path));
 					else if (outpaths.contains(path))
