@@ -17,90 +17,55 @@
  */
 package sorcer.netlet.util;
 
+import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
-import net.jini.config.Configuration;
-import net.jini.config.ConfigurationException;
-import net.jini.config.EmptyConfiguration;
 import net.jini.core.transaction.TransactionException;
-import sorcer.core.deploy.ServiceDeployment;
+import org.codehaus.groovy.control.CompilerConfiguration;
+import org.codehaus.groovy.control.customizers.ASTTransformationCustomizer;
+import org.codehaus.groovy.control.customizers.ImportCustomizer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sorcer.core.provider.exerter.ServiceShell;
 import sorcer.service.Exertion;
 import sorcer.service.ExertionException;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.net.URL;
 import java.rmi.RemoteException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static sorcer.util.StringUtils.tName;
 
 public class ScriptThread extends Thread {
 		private String script;
-		private File scriptFile;
 		private Object result;
 		private Object target = null;
 		final private GroovyShell gShell;
-        private Configuration config;
-        private boolean debug = false;
+        private NetletClassLoader classLoader;
 
         private final static Logger logger = LoggerFactory.getLogger(ScriptThread.class
                 .getName());
 
-        public ScriptThread(String script, ClassLoader classLoader, PrintStream out, Configuration config, boolean debug) {
+        public ScriptThread(String script, NetletClassLoader classLoader) {
             super(tName("Script"));
-            this.config = config;
-            this.debug = debug;
-            gShell = new GroovyShell(classLoader);
-            Thread.currentThread().setContextClassLoader(classLoader);
-            this.script = script;
-            this.parseScript();
-		}
+            this.classLoader = classLoader;
 
-        public ScriptThread(String script, ClassLoader classLoader, PrintStream out, Configuration config) {
-            this(script, classLoader, out, config, false);
-        }
+            CompilerConfiguration compilerConfig = new CompilerConfiguration();
+            compilerConfig.setPluginFactory(new ShebangPreprocessorFactory());
+            compilerConfig.addCompilationCustomizers(getImports());
+            compilerConfig.addCompilationCustomizers(new ASTTransformationCustomizer(new GroovyCodebaseSupport(classLoader)));
 
-
-        public ScriptThread(String script, ClassLoader classLoader, PrintStream out) {
-            this(script, classLoader, out, EmptyConfiguration.INSTANCE);
-        }
-
-        public ScriptThread(String script, PrintStream out) {
-            this(script, null, out);
-        }
-
-        public ScriptThread(String script) {
-            this(script, null, null);
-        }
-
-        public ScriptThread(String script, ClassLoader classLoader) {
-            super(tName("Script"));
-            this.gShell = new GroovyShell(classLoader);
+            gShell = new GroovyShell(classLoader, new Binding(), compilerConfig);
             this.script = script;
             this.parseScript();
         }
 
-		public ScriptThread(File file, ClassLoader classLoader) {
-            super(tName("Script-" + file.getPath()));
-            this.gShell = new GroovyShell(classLoader);
-			this.scriptFile = file;
-            this.parseScript();
-		}
-
-        public void parseScript() {
-            synchronized (gShell) {
-                if (script != null) {
+    public void parseScript() {
+            ClassLoader currentCL = Thread.currentThread().getContextClassLoader();
+            try {
+                Thread.currentThread().setContextClassLoader(classLoader);
+                synchronized (gShell) {
                     target = gShell.evaluate(script);
-                }  else {
-                    try {
-                        target = gShell.evaluate(scriptFile);
-                    } catch (IOException e) {
-                        logger.error("Problem evaluating Script file: " + scriptFile + ": " + e.getMessage());
-                   }
                 }
+            } finally {
+                Thread.currentThread().setContextClassLoader(currentCL);
             }
         }
 
@@ -110,6 +75,7 @@ public class ScriptThread extends Thread {
                 ServiceShell esh = new ServiceShell((Exertion) target);
                 try {
 
+/*
                     if (((Exertion) target).isProvisionable() && config!=null) {
                         String configFile;
                         try {
@@ -125,6 +91,7 @@ public class ScriptThread extends Thread {
                             result = esh.exert();
                         }
                     } else
+*/
                         result = esh.exert();
                 } catch (RemoteException e) {
                     e.printStackTrace();
@@ -144,13 +111,27 @@ public class ScriptThread extends Thread {
 			return target;
 		}
 
-        public String printUrls(URL[] urls) {
-            StringBuilder sb = new StringBuilder("URLs: [");
-            for (URL url : urls) {
-                sb.append("\n").append(url.toString());
-            }
-            sb.append(" ]");
-            return sb.toString();
-        }
+    private static String[] imports = {
+            "sorcer.netlet.annotation",
+            "sorcer.service",
+            "sorcer.core.exertion",
+            "sorcer.service",
+            "sorcer.core.context.model",
+            "java.io"
+    };
 
-	}
+    private static String[] staticImports = {
+            "sorcer.service.Strategy",
+            "sorcer.eo.operator",
+            "sorcer.co.operator",
+            "sorcer.po.operator"
+    };
+
+    private ImportCustomizer getImports() {
+        ImportCustomizer result = new ImportCustomizer();
+        result.addStarImports(imports);
+        result.addStaticStars(staticImports);
+        return result;
+    }
+
+}
