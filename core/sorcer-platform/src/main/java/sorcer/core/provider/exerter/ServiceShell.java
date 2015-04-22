@@ -211,9 +211,11 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 									+ exertion.getName(), e);
 				}
 			}
-			if (exertion instanceof Job && ((Job) exertion).size() == 1) {
+
+			//TODO disabled due to problem with monitoring. Needs to be fixed to run with monitoring
+			/*if (exertion instanceof Job && ((Job) exertion).size() == 1) {
 				return processAsTask();
-			}
+			} */
 			transaction = txn;
 			Context<?> cxt = exertion.getDataContext();
 			if (cxt != null)
