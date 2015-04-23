@@ -6,7 +6,6 @@ import org.codehaus.groovy.control.SourceUnit;
 import org.codehaus.groovy.transform.AbstractASTTransformation;
 import org.codehaus.groovy.transform.GroovyASTTransformation;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
@@ -32,26 +31,20 @@ public class GroovyCodebaseSupport extends AbstractASTTransformation {
             visitor.visitClass(node);
         }
 
+        List<URL> codebase = expand(visitor.codebase);
+        List<URL> addCP = expand(visitor.classpath);
+        addCP.addAll(codebase);
 
-        URL[] addCP = new URL[visitor.classpath.size()];
-        List<String> classpath = visitor.classpath;
-        try {
-            for (int i = 0, classpathSize = classpath.size(); i < classpathSize; i++) {
-                String cp = classpath.get(i);
-                addCP[i] = new URL(cp);
-            }
+        classLoader.addURLs(addCP.toArray(new URL[addCP.size()]));
+        classLoader.setCodebase(codebase.toArray(new URL[codebase.size()]));
+    }
 
-            URL[] codebase = new URL[visitor.codebase.size()];
-            for (int i = 0; i < visitor.codebase.size(); i++) {
-                String cb = visitor.codebase.get(i);
-                codebase[i] = new URL(cb);
-            }
-
-            classLoader.addURLs(addCP);
-            classLoader.setCodebase(codebase);
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
+    private List<URL> expand(List<String> entries) {
+        List<URL> result = new LinkedList<>();
+        for (String entry : entries) {
+            result.addAll(LoaderConfigurationHelper.load(entry));
         }
+        return result;
     }
 
     static class CodebaseVisitor extends ClassCodeVisitorSupport {
