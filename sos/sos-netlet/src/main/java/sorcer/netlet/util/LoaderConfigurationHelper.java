@@ -15,6 +15,7 @@ package sorcer.netlet.util;
  * limitations under the License.
  */
 
+import org.rioproject.resolver.Artifact;
 import sorcer.resolver.*;
 import sorcer.resolver.SorcerResolver;
 import sorcer.resolver.SorcerResolverException;
@@ -47,6 +48,20 @@ public class LoaderConfigurationHelper {
         List<URL> urlsList = new ArrayList<URL>();
         URI uri;
         str = assignProperties(str);
+
+        //first check for simple artifact coordinates
+
+        if (Artifact.isArtifact(str))
+            try {
+                URL[] classpath = SorcerRioResolver.toURLs(sorcerResolver.doResolve(str));
+                Collections.addAll(urlsList, classpath);
+            } catch (SorcerResolverException e) {
+                logger.error("Could not resolve " + str, e);
+            } catch (MalformedURLException e) {
+                throw new RuntimeException(e);
+            }
+        else {
+
         try {
             uri = new URI(str);
         } catch (URISyntaxException e) {
@@ -72,6 +87,7 @@ public class LoaderConfigurationHelper {
                 }
         } else if ("file".equals(scheme) || scheme==null) {
             return getFilesFromFilteredPath(str);
+        }
         }
         return urlsList;
     }

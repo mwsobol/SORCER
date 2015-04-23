@@ -40,16 +40,28 @@ public class SorcerRioResolver extends SorcerResolver {
         } catch (ResolverException e) {
             throw new RuntimeException(e);
         }
-
     }
 
     @Override
     public String[] doResolve(String artifact) throws SorcerResolverException {
+        String[] cp = null;
+
+        if (artifact.startsWith("artifact:")) {
+            cp = resolveUrl(artifact);
+        } else if (artifact.indexOf(':') >= 0) {
+            cp = resolveCoords(artifact);
+        }
+        if (cp == null || cp.length == 0)
+            throw new SorcerResolverException("Failed to resolve: " + artifact + " after 5 attempts");
+        return cp;
+    }
+
+    private String[] resolveUrl(String artifact) {
+        String[] cp = null;
         String path = artifact.substring(artifact.indexOf(":") + 1);
         ArtifactURLConfiguration artifactURLConfiguration = new ArtifactURLConfiguration(path);
-        String[] cp = null;
         int tries = 0;
-        while (tries < 5 && (cp==null || cp.length==0)) {
+        while (tries < 5 && (cp == null || cp.length == 0)) {
             try {
                 cp = resolver.getClassPathFor(artifactURLConfiguration.getArtifact(),
                         artifactURLConfiguration.getRepositories());
@@ -59,11 +71,23 @@ public class SorcerRioResolver extends SorcerResolver {
             }
             tries++;
         }
-        if (cp==null || cp.length==0)
-            throw new SorcerResolverException("Failed to resolve: " + artifactURLConfiguration.getArtifact() + " after 5 attempts" );
         return cp;
     }
 
+    private String[] resolveCoords(String coords) throws SorcerResolverException {
+        String[] cp = null;
+        int tries = 0;
+        while (tries < 5 && (cp == null || cp.length == 0)) {
+            try {
+                cp = resolver.getClassPathFor(coords);
+            } catch (Exception e) {
+                logger.warn("Failed to resolve at {} attempt: {}", tries, coords);
+                logger.debug("Resolver error", e);
+            }
+            tries++;
+        }
+        return cp;
+    }
 
     @Override
     public URL getLocation(String path) throws SorcerResolverException {
