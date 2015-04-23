@@ -218,35 +218,53 @@ import java.util.logging.Logger;
 	}
 	
 	static public void cleanupScripts(Exertion exertion) throws ContextException {
+		System.out.println(("ZZZZZZZZZZZ cleanupScripts exertion context: " + exertion.getContext()));
 		clenupContextScripts(exertion.getContext());
 		for (Mogram e : exertion.getMograms()) {
 			if (e instanceof Exertion) {
-				clenupExertionScripts((Exertion) e);
 				clenupContextScripts(((Exertion) e).getContext());
+				clenupExertionScripts((Exertion) e);
 			}
 		}
 	}
-	
+
 	static public void clenupContextScripts(Context context) {
+		System.out.println(("ZZZZZZZZZZZ clenupContextScripts context: " + context));
+
+		if (((ServiceContext)context).getScope() != null) {
+			clenupContextScripts(((ServiceContext)context).getScope());
+		}
 		Iterator i = ((ServiceContext) context).entrySet().iterator();
 		while (i.hasNext()) {
 			Map.Entry entry = (Map.Entry) i.next();
 			String path = (String) entry.getKey();
 			if (path.equals(_closure_)) {
 				i.remove();
-			}
-			if (entry.getValue() instanceof ServiceInvoker) {
+			} else if (entry.getValue() instanceof ServiceInvoker) {
 				clenupContextScripts(((ServiceInvoker) entry.getValue())
 						.getScope());
-			} else if (entry.getValue() instanceof Par
-					&& ((ServiceContext) ((Par) entry.getValue()).getScope())
-							.containsKey(Condition._closure_)) {
-				(((Par) entry.getValue()).getScope())
-						.remove(Condition._closure_);
+			} else if (entry.getValue() instanceof Par) {
+				ServiceContext cxt = (ServiceContext) ((Par) entry.getValue()).getScope();
+				if (cxt.containsKey(Condition._closure_)) {
+					cxt.remove(Condition._closure_);
+				}
+				cxt = (ServiceContext) ((ServiceContext) entry.getValue()).getScope();
+				if (cxt != null && cxt.containsKey(Condition._closure_)) {
+					cxt.remove(Condition._closure_);
+				}
+			} else if (entry.getValue() instanceof ServiceContext) {
+				ServiceContext cxt = (ServiceContext)entry.getValue();
+				if (cxt.containsKey(Condition._closure_)) {
+					cxt.remove(Condition._closure_);
+				}
+				cxt = (ServiceContext) ((ServiceContext) entry.getValue()).getScope();
+				if (cxt != null && cxt.containsKey(Condition._closure_)) {
+					cxt.remove(Condition._closure_);
+				}
 			}
 		}
 	}
-	
+
 	public static void clenupExertionScripts(Exertion exertion)
 			throws ContextException {
 		if (exertion instanceof ConditionalExertion) {
@@ -258,7 +276,7 @@ import java.util.logging.Logger;
 			List<Exertion> tl = ((ConditionalExertion) exertion).getTargets();
 			for (Exertion vt : tl) {
                 if(vt!=null)
-                    clenupContextScripts(vt.getContext());
+					cleanupScripts(vt);
             }
         }
 	}

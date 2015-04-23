@@ -110,8 +110,8 @@ public class AltExertion extends Task implements ConditionalExertion {
 	}
 	
 	public void reset(int state) {
-		for(ServiceExertion e : optExertions)
-			e.reset(state);
+			for (ServiceExertion e : optExertions)
+				e.reset(state);
 		
 		this.setStatus(state);
 	}
