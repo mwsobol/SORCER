@@ -18,21 +18,13 @@
 package sorcer.core.invoker;
 
 import groovy.lang.GroovyShell;
+import sorcer.core.context.model.par.Par;
+import sorcer.service.*;
 
 import java.io.File;
 import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.Iterator;
-
-import sorcer.core.context.model.par.Par;
-import sorcer.service.Arg;
-import sorcer.service.ArgSet;
-import sorcer.service.Context;
-import sorcer.service.ContextException;
-import sorcer.service.Evaluation;
-import sorcer.service.EvaluationException;
-import sorcer.service.InvocationException;
-import sorcer.service.Setter;
 
 /**
  * @author Mike Sobolewski
@@ -140,7 +132,7 @@ public class GroovyInvoker<T> extends ServiceInvoker<T> {
 		if (invokeContext != null) {
 			if (pars != null && pars.size() > 0) {
 				for (Arg p : pars) {
-					Object obj = invokeContext.getValue(p.getName());
+					Object obj = invokeContext.asis(p.getName());
 					if (obj == null || obj == Context.none) {
 						// try extended path
 						obj = invokeContext.getValueEndsWith(p.getName());

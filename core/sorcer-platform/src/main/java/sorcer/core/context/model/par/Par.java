@@ -216,7 +216,7 @@ public class Par<T> extends Entry<T> implements Variability<T>, Arg, Mappable<T>
 				}
 				// direct scope
 				if (val instanceof Scopable && ((Scopable)val).getScope() != null) {
-					((Context)((Scopable)val).getScope()).append(scope);
+					((Scopable)val).getScope().append(scope);
 				}
 
 				// indirect scope for enty values
