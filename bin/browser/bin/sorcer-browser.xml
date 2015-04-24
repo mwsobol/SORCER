@@ -56,6 +56,7 @@
 			<sysproperty key="java.rmi.server.RMIClassLoaderSpi" value="sorcer.rio.rmi.SorcerResolvingLoader" />
 			<sysproperty key="java.security.policy" value="../policy/ssb.policy" />
             <sysproperty key="RIO_HOME" value="${rio.home}"/>
+			<sysproperty key="rio.home" value="${rio.home}"/>
 			<sysproperty key="java.rmi.server.useCodebaseOnly" value="false" />
 			<sysproperty key="ssb.logFile" value="${sorcer.home}/bin/browser/logs/browser.log" />
 			<sysproperty key="java.util.logging.config.file" value="../configs/browser-logging.properties" />

@@ -1,3 +1,3 @@
 disco
-exert "${sys.sorcer.home}/bin/shell/tests/adder.ntl"
+exert "${sys.sorcer.home}/../../../core/sorcer-int-tests/sorcer-tester/nsh/adder.ntl"
 # exert "nsh/adder.ntl"
