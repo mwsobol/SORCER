@@ -20,6 +20,7 @@ package sorcer.service;
 import groovy.lang.Closure;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.par.Par;
+import sorcer.core.context.model.par.ParModel;
 import sorcer.core.exertion.AltExertion;
 import sorcer.core.exertion.LoopExertion;
 import sorcer.core.exertion.OptExertion;
@@ -134,11 +135,7 @@ import java.util.logging.Logger;
 				ps.add(new Par(name));
 			}			
 			ServiceInvoker invoker = new GroovyInvoker(closureExpression, ps.toArray());
-			try {
-				invoker.setScope(conditionalContext);
-			} catch (RemoteException re) {
-				throw new ContextException(re);
-			}
+			invoker.setScope(conditionalContext);
 			conditionalContext.putValue(_closure_, invoker);
 			closure = (Closure)conditionalContext.getValue(_closure_);
 			args = new Object[pars.length];
@@ -221,32 +218,36 @@ import java.util.logging.Logger;
 		clenupContextScripts(exertion.getContext());
 		for (Mogram e : exertion.getMograms()) {
 			if (e instanceof Exertion) {
-				clenupExertionScripts((Exertion) e);
 				clenupContextScripts(((Exertion) e).getContext());
+				clenupExertionScripts((Exertion) e);
 			}
 		}
 	}
-	
+
 	static public void clenupContextScripts(Context context) {
-		Iterator i = ((ServiceContext) context).entrySet().iterator();
+		context.remove(Condition._closure_);
+		Iterator i = ((Map) context).entrySet().iterator();
 		while (i.hasNext()) {
 			Map.Entry entry = (Map.Entry) i.next();
-			String path = (String) entry.getKey();
-			if (path.equals(_closure_)) {
-				i.remove();
-			}
+			// now check entries
 			if (entry.getValue() instanceof ServiceInvoker) {
 				clenupContextScripts(((ServiceInvoker) entry.getValue())
 						.getScope());
-			} else if (entry.getValue() instanceof Par
-					&& ((ServiceContext) ((Par) entry.getValue()).getScope())
-							.containsKey(Condition._closure_)) {
-				(((Par) entry.getValue()).getScope())
-						.remove(Condition._closure_);
+			} else if (entry.getValue() instanceof Par) {
+				Context cxt =  ((Par) entry.getValue()).getScope();
+				if (cxt != null) cxt.remove(Condition._closure_);
+				cxt = ((Par)entry.getValue()).getScope();
+				if (cxt != null) cxt.remove(Condition._closure_);
+			} else if (entry.getValue() instanceof ServiceContext) {
+				ServiceContext cxt = (ServiceContext)entry.getValue();
+				if (cxt != null) cxt.remove(Condition._closure_);
+
+				cxt = (ServiceContext) ((ServiceContext) entry.getValue()).getScope();
+				if (cxt != null) cxt.remove(Condition._closure_);
 			}
 		}
 	}
-	
+
 	public static void clenupExertionScripts(Exertion exertion)
 			throws ContextException {
 		if (exertion instanceof ConditionalExertion) {
@@ -257,8 +258,8 @@ import java.util.logging.Logger;
 			}
 			List<Exertion> tl = ((ConditionalExertion) exertion).getTargets();
 			for (Exertion vt : tl) {
-                if(vt!=null)
-                    clenupContextScripts(vt.getContext());
+				if (vt!=null)
+					clenupContextScripts(vt.getContext());
             }
         }
 	}

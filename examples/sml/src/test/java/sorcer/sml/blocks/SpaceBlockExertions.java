@@ -1,12 +1,14 @@
 package sorcer.sml.blocks;
 
+import jdk.nashorn.internal.ir.annotations.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
-import sorcer.arithmetic.provider.Adder;
-import sorcer.arithmetic.provider.Averager;
+import sorcer.arithmetic.provider.impl.AdderImpl;
+import sorcer.arithmetic.provider.impl.AveragerImpl;
 import sorcer.core.SorcerConstants;
+import sorcer.core.provider.rendezvous.ServiceConcatenator;
 import sorcer.service.Block;
 import sorcer.service.Strategy.Access;
 import sorcer.service.Strategy.Wait;
@@ -28,22 +30,23 @@ import static sorcer.eo.operator.*;
 public class SpaceBlockExertions implements SorcerConstants {
 	private final static Logger logger = Logger.getLogger(SpaceBlockExertions.class.getName());
 
+	@Ignore
 	@Test
 	public void arithmeticSpaceTaskTest() throws Exception {
 		Task spaceTask = task(
 				"space task",
-				sig("add", Adder.class),
+				sig("add", AdderImpl.class),
 				context("add", inEnt("arg/x1", 20.0),
 						inEnt("arg/x2", 80.0), result("result/${name}")),
 				strategy(Access.PULL, Wait.YES));
 		
-		Block spaceBlock = block(loop(10), spaceTask);
+		Block spaceBlock = block(sig(ServiceConcatenator.class), loop(10), spaceTask);
 		
 		logger.info("block size: " + spaceBlock.size());
 		
 		Task  masterTask = task(
 				"t5",
-				sig("average", Averager.class),
+				sig("average", AveragerImpl.class),
 				context(result("result/average")));
 		
 		add(spaceBlock, masterTask);

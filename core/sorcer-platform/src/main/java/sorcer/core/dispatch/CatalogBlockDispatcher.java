@@ -85,6 +85,7 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
         super.afterExec(result);
         try {
             postUpdate(result);
+            Condition.cleanupScripts(result);
             //TODO Not very nice
             /*MonitoringSession monSession = MonitorUtil.getMonitoringSession(result);
             if (result.isBlock() && result.isMonitorable() && monSession!=null) {

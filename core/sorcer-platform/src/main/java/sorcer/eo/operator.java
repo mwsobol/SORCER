@@ -500,11 +500,7 @@ public class operator {
 			} else if (t instanceof InputEntry) {
 				Object par = t.value();
 				if (par instanceof Scopable) {
-					try {
-						((Scopable)par).setScope(pcxt);
-					} catch (RemoteException e) {
-						throw new ContextException(e);
-					}
+					((Scopable)par).setScope(pcxt);
 				}
 				if (t.isPersistent()) {
 					setPar(pcxt, t, i);

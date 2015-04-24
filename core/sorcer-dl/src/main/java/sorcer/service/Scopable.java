@@ -24,8 +24,8 @@ import java.rmi.RemoteException;
  */
 public interface Scopable {
 
-	public Object getScope() throws RemoteException;
+	public Context getScope();
 	
-	public void setScope(Object scope) throws RemoteException, ContextException;
+	public void setScope(Context scope) throws ContextException;
 
 }
