@@ -132,16 +132,15 @@ public class GroovyInvoker<T> extends ServiceInvoker<T> {
 		if (invokeContext != null) {
 			if (pars != null && pars.size() > 0) {
 				for (Arg p : pars) {
-					Object obj = invokeContext.asis(p.getName());
+					Object obj = invokeContext.getValue(p.getName());
 					if (obj == null || obj == Context.none) {
 						// try extended path
 						obj = invokeContext.getValueEndsWith(p.getName());
 					}
 					if (obj != null && obj != Context.none) {
 						((Setter)p).setValue(obj);
-					} 
-					else {
-						invokeContext.putValue(p.getName(), ((Evaluation)p).asis());
+					} else if (((Evaluation)p).asis() != null) {
+						invokeContext.putValue(p.getName(), ((Evaluation) p).asis());
 					}
 				}
 			}
