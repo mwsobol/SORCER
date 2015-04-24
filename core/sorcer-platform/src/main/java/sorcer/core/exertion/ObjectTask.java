@@ -159,6 +159,7 @@ public class ObjectTask extends Task {
 			} else {
 				dataContext.setReturnValue(result);
 			}
+			dataContext.updateContextWith(os.getConnector());
 		} catch (Throwable e) {
 			e.printStackTrace();
 			dataContext.reportException(e);

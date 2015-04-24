@@ -184,20 +184,47 @@ public class Signatures {
 		assertEquals(100.0, exec(as));
 	}
 
-
 	@Test
-	public void sigMapContext() throws Exception {
+	public void localSigConnector() throws Exception {
 
 		Context cxt = context(
 				inEnt("y1", 20.0),
 				inEnt("y2", 80.0),
 				result("result/y"));
 
-		Context out = conn(
-				inEnt("y1", "arg/x1"),
-				inEnt("y2", "arg/x2"));
+		Context connector = conn(
+				inEnt("arg/x1", "y1"),
+				inEnt("arg/x2", "y2"));
 
-		Signature ps = sig("add", Adder.class, prvName("Adder"), out);
+		Signature ps = sig("add", AdderImpl.class, prvName("Adder"), connector);
+
+		// request the remote service
+		Service as = service("as", ps, cxt);
+
+		logger.info("input context: " + context(as));
+
+		Service task = exert(as);
+
+		logger.info("input context: " + context(task));
+
+		assertEquals(20.0, value(context(task), "arg/x1"));
+		assertEquals(80.0, value(context(task), "arg/x2"));
+		assertEquals(100.0, value(context(task), "result/y"));
+	}
+
+	@Test
+	public void rmoteSigConnector() throws Exception {
+
+		Context cxt = context(
+				inEnt("y1", 20.0),
+				inEnt("y2", 80.0),
+				result("result/y"));
+
+		Context connector = conn(
+				inEnt("arg/x1", "y1"),
+				inEnt("arg/x2", "y2"));
+
+		Signature ps = sig("add", Adder.class, prvName("Adder"), connector);
 
 		// request the remote service
 		Service as = service("as", ps, cxt);

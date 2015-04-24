@@ -36,6 +36,7 @@ import sorcer.core.monitor.MonitorUtil;
 import sorcer.core.provider.Provider;
 import sorcer.core.provider.ServiceProvider;
 import sorcer.core.signature.NetSignature;
+import sorcer.core.signature.ServiceSignature;
 import sorcer.eo.operator;
 import sorcer.security.util.SorcerPrincipal;
 import sorcer.service.*;
@@ -1759,7 +1760,20 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 		// needed for ContextFilter
 		return null;
 	}
-	
+
+	// TODO in/out/inout marking as defined in the connector
+	public Context updateContextWith(Context connector) throws ContextException {
+		if (connector != null) {
+			Iterator it = ((Map) connector).entrySet().iterator();
+			while (it.hasNext()) {
+				Map.Entry e = (Map.Entry) it.next();
+				putInValue((String) e.getKey(), asis((String) e.getValue()));
+				removePath((String) e.getValue());
+			}
+		}
+		return this;
+	}
+
 	public Context updateEntries(Context context) throws ContextException {
 		if (context != null) {
 			List<String> inpaths = ((ServiceContext) context).getInPaths();
