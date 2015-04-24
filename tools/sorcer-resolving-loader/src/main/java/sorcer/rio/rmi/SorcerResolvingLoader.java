@@ -34,7 +34,6 @@ import java.util.concurrent.ConcurrentHashMap;
  * Date: 13.03.14
  */
 public class SorcerResolvingLoader extends RMIClassLoaderSpi {
-
     public static final String CODEBASE_SEPARATOR = " ";
     /**
      * A table of artifacts to derived codebases. This improves performance by resolving the classpath once per
@@ -47,26 +46,10 @@ public class SorcerResolvingLoader extends RMIClassLoaderSpi {
      * (local) classpath.
      */
     private static final Logger logger = LoggerFactory.getLogger(SorcerResolvingLoader.class);
-    private static final Map<String, Class<?>> primitiveTypes =
-            new HashMap<String, Class<?>>();
-
     private static SorcerResolver sorcerResolver;
-
     static {
-        primitiveTypes.put("byte", byte.class);
-        primitiveTypes.put("short", short.class);
-        primitiveTypes.put("int", int.class);
-        primitiveTypes.put("long", long.class);
-        primitiveTypes.put("float", float.class);
-        primitiveTypes.put("double", double.class);
-        primitiveTypes.put("boolean", boolean.class);
-        primitiveTypes.put("char", char.class);
-        primitiveTypes.put("void", void.class);
-
         sorcerResolver = SorcerResolver.getInstance();
-
     }
-
     private static final RMIClassLoaderSpi loader = RMIClassLoader.getDefaultProviderInstance();
 
     @Override
@@ -81,16 +64,11 @@ public class SorcerResolvingLoader extends RMIClassLoaderSpi {
         if (logger.isTraceEnabled()) {
             logger.trace("Load class {} using codebase {}, resolved to {}", name, codebase, resolvedCodebase);
         }
-        try {
-            Class primitive = primitiveTypes.get(name);
-            if (primitive!=null)
-                return primitive;
-            return loader.loadClass(resolvedCodebase, name, defaultLoader);
-        } catch (Exception fe) {
-            logger.warn("Problem loading class: {} from: \"{}\" cause: {} (retrying)", name, resolvedCodebase, fe.getMessage());
-            logger.debug("Resolver error", fe);
-            return loader.loadClass(resolvedCodebase, name, defaultLoader);
+        Class<?> cl = loader.loadClass(resolvedCodebase, name, defaultLoader);
+        if(logger.isDebugEnabled()) {
+            logger.debug("Class {} loaded by {}", name, cl.getClassLoader());
         }
+        return cl;
     }
 
     @Override
@@ -139,37 +117,40 @@ public class SorcerResolvingLoader extends RMIClassLoaderSpi {
     }
 
     private String resolveCodebase(final String codebase) {
-            if (codebase==null) return null;
+        String adaptedCodebase;
+        if(codebase!=null && codebase.startsWith("artifact:")) {
             String[] artifacts = codebase.split(CODEBASE_SEPARATOR);
             Set<String> jarsSet = new HashSet<String>();
             for (String artf : artifacts) {
-                if (artf != null && artf.startsWith("artifact:")) {
-                    Set<String> adaptedCodebase;
+                if (artf != null) {
+                    Set<String> adaptedCodebaseSet;
                     synchronized (artf.intern()) {
-                        adaptedCodebase = artifactToCodebase.get(artf);
-                        if (adaptedCodebase == null)
+                        adaptedCodebaseSet = artifactToCodebase.get(artf);
+                        if (adaptedCodebaseSet == null)
                             try {
-                                adaptedCodebase = new HashSet<String>();
+                                adaptedCodebaseSet = new HashSet<String>();
                                 for (String path : sorcerResolver.doResolve(artf)) {
                                     // ignore pom files
-                                    if(path.endsWith(".pom"))
+                                    if (path.endsWith(".pom"))
                                         continue;
-                                    adaptedCodebase.add(new File(path).toURI().toURL().toExternalForm());
+                                    adaptedCodebaseSet.add(new File(path).toURI().toURL().toExternalForm());
                                 }
-                                artifactToCodebase.put(artf, adaptedCodebase);
-                                logger.debug("Resolved {} to {}", artf, adaptedCodebase);
-                        } catch (SorcerResolverException e) {
-                            logger.warn("Unable to resolve {}", artf, e);
-                        } catch (MalformedURLException e) {
-                            logger.warn("The codebase {} is malformed", artf, e);
-                        }
+                                artifactToCodebase.put(artf, adaptedCodebaseSet);
+                                logger.debug("Resolved {} to {}", artf, adaptedCodebaseSet);
+                            } catch (SorcerResolverException e) {
+                                logger.warn("Unable to resolve {}", artf, e);
+                            } catch (MalformedURLException e) {
+                                logger.warn("The codebase {} is malformed", artf, e);
+                            }
                     }
-                    jarsSet.addAll(adaptedCodebase);
-                } else if (artf!=null)
-                    jarsSet.add(artf);
-
+                    jarsSet.addAll(adaptedCodebaseSet);
+                }
             }
-            return join(jarsSet, CODEBASE_SEPARATOR);
+            adaptedCodebase = join(jarsSet, CODEBASE_SEPARATOR);
+        }  else {
+            adaptedCodebase = codebase;
+        }
+        return adaptedCodebase;
     }
 
     /**

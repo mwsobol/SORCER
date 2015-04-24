@@ -303,7 +303,12 @@ startShell ( ) {
     shift
     # Use rlwrap if installed to enable history in nsh
     if [ -n "$(which rlwrap 2>&1 | egrep -v 'no ')" ]; then
-        RLWRAP="rlwrap "
+        # Check to see if we have stdin
+        if [ -t 0 ]; then
+            RLWRAP="rlwrap "
+        else
+             RLWRAP=""
+        fi
     else
         RLWRAP=""
     fi
