@@ -85,17 +85,7 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
         super.afterExec(result);
         try {
             postUpdate(result);
-            if (result.getName().equals("t3")) {
-                System.out.println("ZZZZZZZZZZZZZZ context: " + result.getContext());
-                System.out.println("ZZZZZZZZZZZZZZ scope: " + result.getScope());
-            }
             Condition.cleanupScripts(result);
-
-            if (result.getName().equals("t3")) {
-                System.out.println("ZZZZZZZZZZZZZZ after clean context: " + result.getContext());
-                System.out.println("ZZZZZZZZZZZZZZ after clean scope: " + result.getScope());
-            }
-
             //TODO Not very nice
             /*MonitoringSession monSession = MonitorUtil.getMonitoringSession(result);
             if (result.isBlock() && result.isMonitorable() && monSession!=null) {

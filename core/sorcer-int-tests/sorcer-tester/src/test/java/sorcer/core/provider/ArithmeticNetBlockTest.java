@@ -8,6 +8,7 @@ import sorcer.arithmetic.tester.provider.Adder;
 import sorcer.arithmetic.tester.provider.Averager;
 import sorcer.arithmetic.tester.provider.Multiplier;
 import sorcer.arithmetic.tester.provider.Subtractor;
+import sorcer.arithmetic.tester.provider.impl.AveragerImpl;
 import sorcer.core.SorcerConstants;
 import sorcer.service.Block;
 import sorcer.service.Task;
@@ -84,7 +85,7 @@ public class ArithmeticNetBlockTest implements SorcerConstants {
 				context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
 						result("arg/t5")));
 		
-		Task t6 = task("t6", sig("average", Averager.class), 
+		Task t6 = task("t6", sig("average", Averager.class),
 				context("average", inEnt("arg/t4"), inEnt("arg/t5"),
 						result("block/result")));
 		

@@ -391,14 +391,15 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 	 * @see sorcer.service.Scopable#setScope(java.lang.Object)
 	 */
 	@Override
-	public void setScope(Object scope) throws RemoteException, ContextException {
+	public void setScope(Context scope) throws ContextException {
 		if (scope instanceof ParModel) {
-			this.invokeContext = (ParModel)scope;
-		} else if (scope instanceof Context) {	
-			this.invokeContext = new ParModel((Context)scope);
-		}
-		else {
-			throw new ContextException("Provided scope in not contextual");
+			this.invokeContext = (ParModel) scope;
+		} else if (scope instanceof Context) {
+			try {
+				this.invokeContext = new ParModel(scope);
+			} catch (Exception e) {
+				throw new ContextException();
+			}
 		}
 	}
 	

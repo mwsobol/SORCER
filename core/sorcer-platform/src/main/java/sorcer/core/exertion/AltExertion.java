@@ -65,11 +65,15 @@ public class AltExertion extends Task implements ConditionalExertion {
 				opt = optExertions.get(i);
 				if (opt.condition.isTrue()) {
 					opt.isActive = true;
-					opt.getTarget().getDataContext().setScope(opt.condition.getConditionalContext());
-					opt.getTarget().getDataContext().append(opt.getDataContext());
-					opt.setTarget((Exertion) opt.getTarget().exert(txn));
-					dataContext = (ServiceContext)opt.getTarget().getContext();
-					controlContext.append(opt.getTarget().getControlContext());
+					Context cxt = opt.condition.getConditionalContext();
+					if (cxt != null) {
+						Condition.clenupContextScripts(cxt);
+						((ServiceContext) opt.getTarget().getDataContext()).updateEntries(cxt);
+					}
+					Exertion out = opt.getTarget().exert(txn);
+					opt.setTarget(out);
+					dataContext = (ServiceContext) out.getContext();
+					controlContext.append(out.getControlContext());
 					dataContext.putValue(Condition.CONDITION_VALUE, true);
 					dataContext.putValue(Condition.CONDITION_TARGET, opt.getName());
 					return this;
@@ -79,6 +83,7 @@ public class AltExertion extends Task implements ConditionalExertion {
 			dataContext.putValue(Condition.CONDITION_TARGET, opt.getName());
 			dataContext.setExertion(null);
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new ExertionException(e);
 		}
 		return this;

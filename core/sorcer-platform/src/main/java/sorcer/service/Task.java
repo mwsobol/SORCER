@@ -392,12 +392,4 @@ public class Task extends ServiceExertion {
 		}
 	}
 
-	public Context updateContext() throws ContextException {
-		return ((ServiceContext)getDataContext()).updateContext();
-	}
-
-	protected Context getCurrentContext() throws ContextException {
-		return getDataContext().getCurrentContext();
-	}
-
 }

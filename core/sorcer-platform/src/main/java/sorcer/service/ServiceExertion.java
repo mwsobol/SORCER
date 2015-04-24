@@ -1367,7 +1367,7 @@ public abstract class ServiceExertion implements Exertion, SorcerConstants, Exec
      * @param scope
      *            the scope to set
      */
-    public void setScope(Object scope) throws RemoteException, ContextException {
+    public void setScope(Context scope) {
         dataContext.setScope((Context)scope);
     }
 
@@ -1523,6 +1523,14 @@ public abstract class ServiceExertion implements Exertion, SorcerConstants, Exec
             this.dependers = new ArrayList<Evaluation>();
         for (Evaluation depender : dependers)
             this.dependers.add(depender);
+    }
+
+    public Context updateContext() throws ContextException {
+        return ((ServiceContext)getDataContext()).updateContext();
+    }
+
+    protected Context getCurrentContext() throws ContextException {
+        return getDataContext().getCurrentContext();
     }
 
     public Exertion clearScope() throws ContextException {

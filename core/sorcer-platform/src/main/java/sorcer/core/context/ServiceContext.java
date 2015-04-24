@@ -265,11 +265,7 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 		lastUpdateDate = cntxt.getLastUpdateDate();
 		description = cntxt.getDescription();
 		scopeCode = cntxt.getScopeCode();
-		try {
-			scopeContext = (Context)cntxt.getScope();
-		} catch (RemoteException e1) {
-			throw new ContextException();
-		}
+		scopeContext = cntxt.getScope();
 		initContext = ((ServiceContext) cntxt).getInitContext();
 		ownerId = cntxt.getOwnerID();
 		subjectId = cntxt.getSubjectID();
@@ -416,8 +412,8 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 	}
 
 	@Override
-	public void setScope(Object scope) throws RemoteException, ContextException {
-		scopeContext = (Context)scope;
+	public void setScope(Context scope) {
+		scopeContext = scope;
 	}
 
 	public Context getInitContext() {
@@ -1778,7 +1774,7 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 						putInValue(path, (T) val);
 					else if (outpaths.contains(path))
 						putOutValue(path, (T) val);
-					else if (outpaths.contains(path))
+					else
 						putValue(path, (T) val);
 				}
 			}
@@ -3465,6 +3461,14 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
     }
 
 	public Context updateContext(String... paths) throws ContextException {
+		if (containsKey(Condition._closure_)) {
+			remove(Condition._closure_);
+		}
+		if (scopeContext != null &&
+				((ServiceContext)scopeContext).containsKey(Condition._closure_)) {
+			scopeContext.remove(Condition._closure_);
+		}
+
 		if (scopeContext != null && scopeContext.size() > 0) {
 			List<String> allPaths = null;
 			List<String> cxtPaths = getPaths();

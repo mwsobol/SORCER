@@ -33,7 +33,7 @@ task bootSorcer(type: Exec) {
     args << "ant"
     args << "-f"
     args << "${file("${sorcerDistHome}").path}/bin/sorcer/bin/boot-sorcer.xml"
-//    args << "spawn"
+    args << "spawn"
     commandLine args
 }
 bootSorcer.onlyIf {

@@ -20,6 +20,7 @@ package sorcer.service;
 import groovy.lang.Closure;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.par.Par;
+import sorcer.core.context.model.par.ParModel;
 import sorcer.core.exertion.AltExertion;
 import sorcer.core.exertion.LoopExertion;
 import sorcer.core.exertion.OptExertion;
@@ -134,11 +135,7 @@ import java.util.logging.Logger;
 				ps.add(new Par(name));
 			}			
 			ServiceInvoker invoker = new GroovyInvoker(closureExpression, ps.toArray());
-			try {
-				invoker.setScope(conditionalContext);
-			} catch (RemoteException re) {
-				throw new ContextException(re);
-			}
+			invoker.setScope(conditionalContext);
 			conditionalContext.putValue(_closure_, invoker);
 			closure = (Closure)conditionalContext.getValue(_closure_);
 			args = new Object[pars.length];
@@ -218,7 +215,6 @@ import java.util.logging.Logger;
 	}
 	
 	static public void cleanupScripts(Exertion exertion) throws ContextException {
-		System.out.println(("ZZZZZZZZZZZ cleanupScripts exertion context: " + exertion.getContext()));
 		clenupContextScripts(exertion.getContext());
 		for (Mogram e : exertion.getMograms()) {
 			if (e instanceof Exertion) {
@@ -229,38 +225,25 @@ import java.util.logging.Logger;
 	}
 
 	static public void clenupContextScripts(Context context) {
-		System.out.println(("ZZZZZZZZZZZ clenupContextScripts context: " + context));
-
-		if (((ServiceContext)context).getScope() != null) {
-			clenupContextScripts(((ServiceContext)context).getScope());
-		}
-		Iterator i = ((ServiceContext) context).entrySet().iterator();
+		context.remove(Condition._closure_);
+		Iterator i = ((Map) context).entrySet().iterator();
 		while (i.hasNext()) {
 			Map.Entry entry = (Map.Entry) i.next();
-			String path = (String) entry.getKey();
-			if (path.equals(_closure_)) {
-				i.remove();
-			} else if (entry.getValue() instanceof ServiceInvoker) {
+			// now check entries
+			if (entry.getValue() instanceof ServiceInvoker) {
 				clenupContextScripts(((ServiceInvoker) entry.getValue())
 						.getScope());
 			} else if (entry.getValue() instanceof Par) {
-				ServiceContext cxt = (ServiceContext) ((Par) entry.getValue()).getScope();
-				if (cxt.containsKey(Condition._closure_)) {
-					cxt.remove(Condition._closure_);
-				}
-				cxt = (ServiceContext) ((ServiceContext) entry.getValue()).getScope();
-				if (cxt != null && cxt.containsKey(Condition._closure_)) {
-					cxt.remove(Condition._closure_);
-				}
+				Context cxt =  ((Par) entry.getValue()).getScope();
+				if (cxt != null) cxt.remove(Condition._closure_);
+				cxt = ((Par)entry.getValue()).getScope();
+				if (cxt != null) cxt.remove(Condition._closure_);
 			} else if (entry.getValue() instanceof ServiceContext) {
 				ServiceContext cxt = (ServiceContext)entry.getValue();
-				if (cxt.containsKey(Condition._closure_)) {
-					cxt.remove(Condition._closure_);
-				}
+				if (cxt != null) cxt.remove(Condition._closure_);
+
 				cxt = (ServiceContext) ((ServiceContext) entry.getValue()).getScope();
-				if (cxt != null && cxt.containsKey(Condition._closure_)) {
-					cxt.remove(Condition._closure_);
-				}
+				if (cxt != null) cxt.remove(Condition._closure_);
 			}
 		}
 	}
@@ -275,8 +258,8 @@ import java.util.logging.Logger;
 			}
 			List<Exertion> tl = ((ConditionalExertion) exertion).getTargets();
 			for (Exertion vt : tl) {
-                if(vt!=null)
-					cleanupScripts(vt);
+				if (vt!=null)
+					clenupContextScripts(vt.getContext());
             }
         }
 	}
