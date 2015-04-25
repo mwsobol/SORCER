@@ -8,7 +8,6 @@ import sorcer.arithmetic.provider.impl.SubtractorImpl;
 import sorcer.core.provider.rendezvous.ServiceConcatenator;
 import sorcer.service.Block;
 import sorcer.service.Context;
-import sorcer.service.Task;
 import sorcer.service.modeling.Model;
 
 import java.util.logging.Logger;
@@ -18,6 +17,7 @@ import static sorcer.co.operator.*;
 import static sorcer.co.operator.inPaths;
 import static sorcer.co.operator.srv;
 import static sorcer.eo.operator.*;
+import static sorcer.eo.operator.value;
 import static sorcer.po.operator.invoker;
 
 /**
@@ -95,9 +95,10 @@ public class SrvModels {
 
 
     @Test
-    public void modelConnector() throws Exception {
+    public void modelToTaskMogram() throws Exception {
 
-        Context modelConnector = context(inEnt("y1", "add"), inEnt("y2", "multiply"), inEnt("y3", "subtract"));
+        // output connector from model to exertion
+        Context outConnector = context(inEnt("y1", "add"), inEnt("y2", "multiply"), inEnt("y3", "subtract"));
 
         Model model = srvModel(
                 inEnt("multiply/x1", 10.0), inEnt("multiply/x2", 50.0),
@@ -113,7 +114,7 @@ public class SrvModels {
         addResponse(model, "add", "multiply", "subtract");
         dependsOn(model, "subtract", paths("multiply", "add"));
         // specify how model connects to exertion
-        conn(model, modelConnector);
+        outConn(model, outConnector);
 
 //        Context out = responses(model);
 //        logger.info("out: " + out);

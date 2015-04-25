@@ -1,14 +1,13 @@
 package sorcer.core.context;
 
-import net.jini.id.UuidFactory;
-import sorcer.service.Arg;
-
-import java.util.Hashtable;
-
 /**
  * Created by Mike Sobolewski on 02/13/15.
  */
 public class MapContext extends ServiceContext {
+
+    public enum Direction { IN, OUT }
+
+    public Direction direction;
 
     public MapContext() {
         super();

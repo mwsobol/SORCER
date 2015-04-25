@@ -36,7 +36,6 @@ import sorcer.core.monitor.MonitorUtil;
 import sorcer.core.provider.Provider;
 import sorcer.core.provider.ServiceProvider;
 import sorcer.core.signature.NetSignature;
-import sorcer.core.signature.ServiceSignature;
 import sorcer.eo.operator;
 import sorcer.security.util.SorcerPrincipal;
 import sorcer.service.*;
@@ -175,8 +174,11 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 	// dependency management for this Context
 	protected List<Evaluation> dependers = new ArrayList<Evaluation>();
 
+	// mapping from paths of this connector to input paths of this context
+	protected Context inConnector;
+
 	// mapping from paths of this context to input paths of requestors
-	protected Context connector;
+	protected Context outConnector;
 
     protected Map<String, List<String>> dependentPaths;
     
@@ -3076,14 +3078,14 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 
 	@Override
     public Context getResponses(Arg... args) throws ContextException, RemoteException {
-        if (connector != null) {
+        if (outConnector != null) {
             ServiceContext mc = null;
             try {
-                mc = (ServiceContext) ObjectCloner.clone(connector);
+                mc = (ServiceContext) ObjectCloner.clone(outConnector);
             } catch (Exception e) {
                 throw new ContextException(e);
             }
-            Iterator it = ((Map) connector).entrySet().iterator();
+            Iterator it = ((Map) outConnector).entrySet().iterator();
             while (it.hasNext()) {
                 Map.Entry pairs = (Map.Entry) it.next();
                 mc.putInValue((String) pairs.getKey(), getValue((String) pairs.getValue()));
@@ -3116,9 +3118,22 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
     }
 
 	@Override
-    public Context getConnector(Arg... args) throws ContextException, RemoteException {
-        return connector;
+	public Context getInConnector(Arg... arg) {
+		return inConnector;
+	}
+
+	public void setInConnector(Context inConnector) {
+		this.inConnector = inConnector;
+	}
+
+	@Override
+    public Context getOutConnector(Arg... args) {
+        return outConnector;
     }
+
+	public void setOutConnector(Context outConnector) {
+		this.outConnector = outConnector;
+	}
 
 	public Context getResponses(String path, String... paths) throws ContextException, RemoteException {
 		Context results = getMergedSubcontext(null, Arrays.asList(paths));
@@ -3404,10 +3419,6 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 
 	public void setStatus(int value) {
 		status = value;
-	}
-
-	public void setConnector(Context connector) {
-		this.connector = connector;
 	}
 
 	public Map<String, List<String>> getDependentPaths() {

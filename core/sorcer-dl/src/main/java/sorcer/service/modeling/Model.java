@@ -43,15 +43,26 @@ public interface Model extends Mogram, Dependency {
     public Context getResponses(Arg... args)  throws ContextException, RemoteException;
 
     /**
-     *  Returns a context as a map of input path mapped to existing path of this model.
-     *  A map context specifies a map of an input context for other collaborating mograms.
+     *  Returns a connector as a map of input paths of tis model mapped to output paths of the sender.
+     *  A connector specifies a map of an input context of this model.
      *
      * @param args  optional configuration arguments
      * @return
      * @throws ContextException
      * @throws RemoteException
      */
-    public Context getConnector(Arg... args)  throws ContextException, RemoteException;
+    public Context getInConnector(Arg... args)  throws ContextException, RemoteException;
+
+    /**
+     *  Returns a connector as a map of input paths of the receiver to output path of this model.
+     *  A connector specifies a map of an input context as needed by another collaborating service.
+     *
+     * @param args  optional configuration arguments
+     * @return                                                                                  s
+     * @throws ContextException
+     * @throws RemoteException
+     */
+    public Context getOutConnector(Arg... args)  throws ContextException, RemoteException;
 
     /**
      * Returns a response for a given <code>path</code>

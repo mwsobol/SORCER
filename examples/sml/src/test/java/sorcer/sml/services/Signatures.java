@@ -192,7 +192,7 @@ public class Signatures {
 				inEnt("y2", 80.0),
 				result("result/y"));
 
-		Context connector = conn(
+		Context connector = inConn(
 				inEnt("arg/x1", "y1"),
 				inEnt("arg/x2", "y2"));
 
@@ -220,7 +220,7 @@ public class Signatures {
 				inEnt("y2", 80.0),
 				result("result/y"));
 
-		Context connector = conn(
+		Context connector = inConn(
 				inEnt("arg/x1", "y1"),
 				inEnt("arg/x2", "y2"));
 

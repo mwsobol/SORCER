@@ -255,8 +255,17 @@ public class operator {
 		return context(dest);
 	}
 
-	public static Model conn(Model model, Context out) throws ContextException {
-		((ServiceContext)model).setConnector(out);
+	public static Model inConn(Model model, Context inConnector) {
+		((ServiceContext)model).setInConnector(inConnector);
+		if (inConnector instanceof MapContext)
+			((MapContext)inConnector).direction =  MapContext.Direction.IN;
+		return model;
+	}
+
+	public static Model outConn(Model model, Context outConnector) {
+		((ServiceContext) model).setOutConnector(outConnector);
+		if (outConnector instanceof MapContext)
+			((MapContext)outConnector).direction = MapContext.Direction.OUT;
 		return model;
 	}
 
@@ -311,14 +320,31 @@ public class operator {
 		return  context(args);
 	}
 
-	public static Context conn(List<Tuple2<String, ?>> entries) throws ContextException {
-		Context map = new MapContext();
+	public static Context inConn(List<Tuple2<String, ?>> entries) throws ContextException {
+		MapContext map = new MapContext();
+		map.direction = MapContext.Direction.IN;
 		populteContext(map, entries);
 		return map;
 	}
 
-	public static Context conn(Tuple2<String, ?>... entries) throws ContextException {
-		Context map = new MapContext();
+	public static Context inConn(Tuple2<String, ?>... entries) throws ContextException {
+		MapContext map = new MapContext();
+		map.direction = MapContext.Direction.IN;
+		List<Tuple2<String, ?>> items = Arrays.asList(entries);
+		populteContext(map, items);
+		return map;
+	}
+
+	public static Context outConn(List<Tuple2<String, ?>> entries) throws ContextException {
+		MapContext map = new MapContext();
+		map.direction = MapContext.Direction.OUT;
+		populteContext(map, entries);
+		return map;
+	}
+
+	public static Context outConn(Tuple2<String, ?>... entries) throws ContextException {
+		MapContext map = new MapContext();
+		map.direction = MapContext.Direction.OUT;
 		List<Tuple2<String, ?>> items = Arrays.asList(entries);
 		populteContext(map, items);
 		return map;
