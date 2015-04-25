@@ -474,7 +474,28 @@ public class Job extends ServiceExertion implements CompoundExertion {
 	public Mogram getExertion(int index) {
 		return exertions.get(index);
 	}
-	
+
+	public Context finalizeOutDataContext() throws ContextException {
+		if (dataContext.getOutConnector() != null) {
+			updateContextWith(dataContext.getOutConnector());
+		}
+		return dataContext;
+	}
+
+	// TODO in/out/inout marking as defined in the connector
+	public Context updateContextWith(Context connector) throws ContextException {
+		if (connector != null) {
+			Context jobContext =  getJobContext();
+			Iterator it = ((Map) connector).entrySet().iterator();
+			while (it.hasNext()) {
+				Map.Entry e = (Map.Entry) it.next();
+				dataContext.putInValue((String) e.getKey(), jobContext.getValue((String) e.getValue()));
+				dataContext.removePath((String) e.getValue());
+			}
+		}
+		return dataContext;
+	}
+
 	public Context getContext() {
 		 return getJobContext();
 	}

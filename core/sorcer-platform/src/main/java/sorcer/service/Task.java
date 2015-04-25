@@ -160,7 +160,7 @@ public class Task extends ServiceExertion {
 			throws EvaluationException, ContextException {
 		// implement is subclasses
 	}
-	
+
 	public void undoTask() throws ExertionException, SignatureException,
 			RemoteException {
 		throw new ExertionException("Not implemneted by this Task: " + this);

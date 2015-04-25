@@ -112,6 +112,7 @@ abstract public class ExertDispatcher implements Dispatcher {
             beforeParent(xrt);
             doExec();
             afterExec(xrt);
+            xrt.finalizeOutDataContext();
         } catch (Exception e) {
             logger.warn("Exertion dispatcher thread killed by exception: {}", e.getMessage());
             xrt.setStatus(Exec.FAILED);

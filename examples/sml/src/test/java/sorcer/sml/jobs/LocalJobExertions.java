@@ -110,20 +110,20 @@ public class LocalJobExertions implements SorcerConstants {
 		Task t3 = task(
 				"t3",
 				sig("subtract", SubtractorImpl.class),
-				context("subtract", inEnt("arg/x1", null), inEnt("arg/x2", null),
+				context("subtract", inEnt("arg/x1"), inEnt("arg/x2"),
 						outEnt("result/y", null)));
 
 		Task t4 = task(
 				"t4",
 				sig("multiply", MultiplierImpl.class),
 				context("multiply", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
-						outEnt("result/y", null)));
+						outEnt("result/y")));
 
 		Task t5 = task(
 				"t5",
 				sig("add", AdderImpl.class),
 				context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
-						outEnt("result/y", null)));
+						outEnt("result/y")));
 
 		// Service Composition j1(j2(t4(x1, x2), t5(x1, x2)), t3(x1, x2))
 		Job job = job(

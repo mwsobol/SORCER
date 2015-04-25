@@ -192,11 +192,11 @@ public class Signatures {
 				inEnt("y2", 80.0),
 				result("result/y"));
 
-		Context connector = inConn(
+		Context outConnector = outConn(
 				inEnt("arg/x1", "y1"),
 				inEnt("arg/x2", "y2"));
 
-		Signature ps = sig("add", AdderImpl.class, prvName("Adder"), connector);
+		Signature ps = sig("add", AdderImpl.class, prvName("Adder"), outConnector);
 
 		// request the remote service
 		Service as = service("as", ps, cxt);

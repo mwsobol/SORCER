@@ -1763,7 +1763,7 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 		return null;
 	}
 
-	// TODO in/out/inout marking as defined in the inConnector
+	// TODO in/out/inout marking as defined in the connector
 	public Context updateContextWith(Context connector) throws ContextException {
 		if (connector != null) {
 			Iterator it = ((Map) connector).entrySet().iterator();
@@ -2530,14 +2530,9 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 
 	protected Context updateLinkedContext(ContextLink link)
 			throws ContextException {
-		// return the linked context, converting it to a ServiceContextImpl if
-		// necessary
+		// return the linked context
 		Context sc = link.getContext(principal);
-		if (sc.getClass() != this.getClass()) {
-			 logger.warning("converting linked context to " + this.getClass());
-			sc = new ServiceContext(sc);
-			link.setContext(sc);
-		}
+		link.setContext(sc);
 		return sc;
 	}
 

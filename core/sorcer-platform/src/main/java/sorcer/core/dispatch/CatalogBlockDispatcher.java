@@ -144,8 +144,10 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
 	}
 	
 	private void postUpdate(Exertion exertion) throws ContextException, RemoteException {
-		if (exertion instanceof AltExertion) {
-			xrt.getContext().append(((AltExertion)exertion).getActiveOptExertion().getContext());
+        if (exertion instanceof Job) {
+            xrt.getDataContext().append(exertion.getDataContext());
+        } else if (exertion instanceof AltExertion) {
+			xrt.getContext().append(((AltExertion)exertion).getActiveOptExertion().getDataContext());
             /*MonitoringSession monSession = MonitorUtil.getMonitoringSession(exertion);
             if (exertion.isMonitorable() && monSession!=null) {
                 try {
@@ -160,7 +162,7 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
                 }
             } */
 		} else if (exertion instanceof OptExertion) {
-			xrt.getContext().append(exertion.getContext());
+			xrt.getContext().append(exertion.getDataContext());
 		}
 
 //		if (exertion instanceof AltExertion) {
@@ -169,15 +171,15 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
 //			((ParModel)((Block)xrt).getContext()).appendNew(((OptExertion)exertion).getContext());
 //		}
 		
-		ServiceContext cxt = (ServiceContext)xrt.getContext();
-		if (exertion.getContext().getReturnPath() != null)
+		ServiceContext cxt = (ServiceContext)xrt.getDataContext();
+		if (exertion.getDataContext().getReturnPath() != null)
             cxt.putInValue(exertion.getContext().getReturnPath().path,
-                    exertion.getContext().getReturnValue());
+                    exertion.getDataContext().getReturnValue());
 		else
-             cxt.updateEntries(exertion.getContext());
+             cxt.updateEntries(exertion.getDataContext());
 
         if (! (exertion instanceof Block))
-		    ((ServiceContext)exertion.getContext()).setScope(null);
+		    ((ServiceContext)exertion.getDataContext()).setScope(null);
 //		if (cxt.getReturnPath() != null)
 //			cxt.putValue(cxt.getReturnPath().path, cxt.getReturnValue());
 	}

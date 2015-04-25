@@ -1345,6 +1345,7 @@ public class operator {
 		List<Pipe> pipes = new ArrayList<Pipe>();
 		List<ServiceFidelity> fidelities = null;
 		List<FidelityContext> fiContexts = null;
+		List<MapContext> connList = new ArrayList<MapContext>();
 
 		for (int i = 0; i < elems.length; i++) {
 			if (elems[i] instanceof String) {
@@ -1353,6 +1354,8 @@ public class operator {
 				exertions.add((Exertion) elems[i]);
 			} else if (elems[i] instanceof ControlContext) {
 				control = (ControlContext) elems[i];
+			} else if (elems[i] instanceof MapContext) {
+				connList.add(((MapContext)elems[i]));
 			} else if (elems[i] instanceof Context) {
 				data = (Context<?>) elems[i];
 			} else if (elems[i] instanceof Pipe) {
@@ -1426,6 +1429,15 @@ public class operator {
 				job.setFidelityContexts(fiMap);
 			}
 		}
+		if (connList != null) {
+			for (MapContext conn : connList) {
+				if (conn.direction == MapContext.Direction.IN)
+					((ServiceContext)job.getDataContext()).setInConnector(conn);
+				else
+					((ServiceContext)job.getDataContext()).setOutConnector(conn);
+			}
+		}
+
 		if (exertions.size() > 0) {
 			for (Exertion ex : exertions) {
 				job.addMogram(ex);

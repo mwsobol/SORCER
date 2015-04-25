@@ -976,6 +976,13 @@ public abstract class ServiceExertion implements Exertion, SorcerConstants, Exec
     abstract public Context linkControlContext(Context context, String path)
             throws ContextException;
 
+    public Context finalizeOutDataContext() throws ContextException {
+        if (dataContext.getOutConnector() != null) {
+            dataContext.updateContextWith(dataContext.getOutConnector());
+        }
+        return dataContext;
+    }
+
     /*
      * Subclasses implement this to support the isTree() algorithm.
      */

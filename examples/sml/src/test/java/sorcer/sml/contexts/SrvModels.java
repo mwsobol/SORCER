@@ -6,8 +6,12 @@ import sorcer.arithmetic.provider.impl.AveragerImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.provider.impl.SubtractorImpl;
 import sorcer.core.provider.rendezvous.ServiceConcatenator;
+import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.service.Block;
 import sorcer.service.Context;
+import sorcer.service.Job;
+import sorcer.service.Strategy.Flow;
+import sorcer.service.Task;
 import sorcer.service.modeling.Model;
 
 import java.util.logging.Logger;
@@ -56,7 +60,7 @@ public class SrvModels {
 
 
     @Test
-    public void queryResponseServiceModel() throws Exception {
+    public void evaluateServiceModel() throws Exception {
 
         // get responses from a service model
 
@@ -95,7 +99,7 @@ public class SrvModels {
 
 
     @Test
-    public void modelToTaskMogram() throws Exception {
+    public void exertModelToTaskMogram() throws Exception {
 
         // output connector from model to exertion
         Context outConnector = outConn(inEnt("y1", "add"), inEnt("y2", "multiply"), inEnt("y3", "subtract"));
@@ -134,4 +138,63 @@ public class SrvModels {
         assertTrue(value(result, "average/response").equals(333.3333333333333));
     }
 
+
+    @Test
+    public void exertExertionToModelMogram() throws Exception {
+
+        // usage of in and out connectors associated with model
+        Task t4 = task(
+                "t4",
+                sig("multiply", MultiplierImpl.class),
+                context("multiply", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
+                        outEnt("multiply/result/y")));
+
+        Task t5 = task(
+                "t5",
+                sig("add", AdderImpl.class),
+                context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
+                        outEnt("add/result/y")));
+
+        // in connector from exertion to model
+        Context taskOutConnector = outConn(inEnt("add/x1", "j2/t4/multiply/result/y"),
+                inEnt("multiply/x1", "j2/t5/add/result/y"));
+
+        Job j2 = job("j2", sig("service", ServiceJobber.class),
+                    t4, t5, strategy(Flow.PAR),
+                    taskOutConnector);
+
+        // out connector from model
+        Context modelOutConnector = outConn(inEnt("y1", "add"), inEnt("y2", "multiply"), inEnt("y3", "subtract"));
+
+        Model model = srvModel(
+                inEnt("multiply/x1", 10.0), inEnt("multiply/x2", 50.0),
+                inEnt("add/x1", 20.0), inEnt("add/x2", 80.0),
+                srv(sig("multiply", MultiplierImpl.class, result("multiply/out",
+                        inPaths("multiply/x1", "multiply/x2")))),
+                srv(sig("add", AdderImpl.class, result("add/out",
+                        inPaths("add/x1", "add/x2")))),
+                srv(sig("subtract", SubtractorImpl.class, result("subtract/response",
+                        inPaths("multiply/out", "add/out")))),
+                srv("y1", "multiply/x1"), srv("y2", "add/x2"), srv("y3", "subtract/response"));
+
+        addResponse(model, "add", "multiply", "subtract");
+        dependsOn(model, "subtract", paths("multiply", "add"));
+        // specify how model connects to exertion
+        outConn(model, modelOutConnector);
+
+
+        Block block = block(sig(ServiceConcatenator.class),
+                j2,
+                model);
+
+        Context result = context(exert(block));
+
+//        logger.info("result: " + result);
+
+        assertTrue(value(result, "add").equals(580.0));
+        assertTrue(value(result, "multiply").equals(5000.0));
+        assertTrue(value(result, "y1").equals(580.0));
+        assertTrue(value(result, "y2").equals(5000.0));
+        assertTrue(value(result, "y3").equals(4420.0));
+    }
 }
