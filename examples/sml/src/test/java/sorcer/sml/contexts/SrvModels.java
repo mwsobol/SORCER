@@ -98,7 +98,7 @@ public class SrvModels {
     public void modelToTaskMogram() throws Exception {
 
         // output connector from model to exertion
-        Context outConnector = context(inEnt("y1", "add"), inEnt("y2", "multiply"), inEnt("y3", "subtract"));
+        Context outConnector = outConn(inEnt("y1", "add"), inEnt("y2", "multiply"), inEnt("y3", "subtract"));
 
         Model model = srvModel(
                 inEnt("multiply/x1", 10.0), inEnt("multiply/x2", 50.0),

@@ -1410,7 +1410,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
             ServiceContext cxt;
             try {
                 cxt = (ServiceContext) ((Task)mogram).getDataContext();
-				cxt.updateContextWith(mogram.getProcessSignature().getConnector());
+				cxt.updateContextWith(mogram.getProcessSignature().getInConnector());
                 Uuid id = cxt.getId();
                 ProviderSession ps = sessions.get(id);
                 if (ps == null) {
@@ -1461,9 +1461,9 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
         return out;
     }
 
-	// TODO in/out/inout marking as defined in the connector
+	// TODO in/out/inout marking as defined in the inConnector
 	private void updateContext(Task task) throws ContextException {
-		Context connector = ((ServiceSignature)task.getProcessSignature()).getConnector();
+		Context connector = ((ServiceSignature)task.getProcessSignature()).getInConnector();
 		if (connector != null){
 			Context dataContext = task.getDataContext();
 			Iterator it = ((Map) connector).entrySet().iterator();

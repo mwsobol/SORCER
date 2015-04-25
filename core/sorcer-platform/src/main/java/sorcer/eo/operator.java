@@ -353,6 +353,7 @@ public class operator {
 	public static Context context(Object... entries)
 			throws ContextException {
 		Context cxt = null;
+		List<MapContext> connList = new ArrayList<MapContext>();
 		if (entries[0] instanceof Exertion) {
 			Exertion xrt = (Exertion) entries[0];
 			if (entries.length >= 2 && entries[1] instanceof String)
@@ -413,6 +414,8 @@ public class operator {
 				parList.add((Par) o);
 			} else if (o instanceof EntryList) {
 				entryLists.add((EntryList) o);
+			}  else if (o instanceof MapContext) {
+				connList.add((MapContext) o);
 			}
 		}
 
@@ -491,8 +494,18 @@ public class operator {
 			}
 			((ServiceContext) cxt).setResponse(response.path(), response.target);
 		}
-		if (entryLists.size() > 0)
-			((ServiceContext)cxt).setEntryLists(entryLists);
+		if (entryLists.size() > 0) {
+			((ServiceContext) cxt).setEntryLists(entryLists);
+		}
+		if (connList != null) {
+			for (MapContext conn : connList) {
+				if (conn.direction == MapContext.Direction.IN) {
+					((ServiceContext) cxt).setInConnector(conn);
+				} else {
+					((ServiceContext) cxt).setOutConnector(conn);
+				}
+			}
+		}
 		return cxt;
 	}
 
@@ -875,7 +888,7 @@ public class operator {
 			throws SignatureException {
 		String providerName = null;
 		Provision p = null;
-		MapContext mc = null;
+		List<MapContext> connList = new ArrayList<MapContext>();
 		if (args != null) {
 			for (Object o : args) {
 				if (o instanceof ProviderName) {
@@ -883,7 +896,7 @@ public class operator {
 				} else if (o instanceof Provision) {
 					  p = (Provision) o;
 				} else if (o instanceof MapContext) {
-					mc = ((MapContext)o);
+					connList.add(((MapContext)o));
 				}
 			}
 		}
@@ -896,8 +909,14 @@ public class operator {
 		}
         ((ServiceSignature)sig).setName(operation);
 
-		if (mc != null)
-			((ServiceSignature)sig).setConnector(mc);
+		if (connList != null) {
+			for (MapContext conn : connList) {
+				if (conn.direction == MapContext.Direction.IN)
+					((ServiceSignature) sig).setInConnector(conn);
+				else
+					((ServiceSignature) sig).setOutConnector(conn);
+			}
+		}
 
 		if (p != null)
 			((ServiceSignature)sig).setProvisionable(p);

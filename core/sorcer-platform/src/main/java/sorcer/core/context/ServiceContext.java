@@ -174,7 +174,7 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 	// dependency management for this Context
 	protected List<Evaluation> dependers = new ArrayList<Evaluation>();
 
-	// mapping from paths of this connector to input paths of this context
+	// mapping from paths of this inConnector to input paths of this context
 	protected Context inConnector;
 
 	// mapping from paths of this context to input paths of requestors
@@ -1763,7 +1763,7 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 		return null;
 	}
 
-	// TODO in/out/inout marking as defined in the connector
+	// TODO in/out/inout marking as defined in the inConnector
 	public Context updateContextWith(Context connector) throws ContextException {
 		if (connector != null) {
 			Iterator it = ((Map) connector).entrySet().iterator();

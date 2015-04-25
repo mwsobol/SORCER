@@ -134,12 +134,12 @@ public interface Signature extends Serializable, Comparable, Dependency, Identif
 	public Type getType();
 
 	/**
-	 * Returns a connector specifying output paths for existing
+	 * Returns a inConnector specifying output paths for existing
 	 * paths in returned context for this signature.
 	 *
 	 * @return a context mapping output paths to existing path
 	 */
-	public Context getConnector();
+	public Context getInConnector();
 
 	/**
 	 * Assigns a signature <code>type</code> for this service signature.
