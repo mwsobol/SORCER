@@ -60,11 +60,10 @@ public class ContextLink implements SorcerConstants, Link {
 	 * have already been persisted in database.
 	 */
 	public ContextLink(Uuid id, float version, String offset,
-			SorcerPrincipal principal) throws ContextException {
+					   SorcerPrincipal principal) throws ContextException {
 		contextId = id;
 		this.version = version;
-		if (principal != null)
-			linkedContext = getContext(principal);
+		linkedContext = getContext();
 		if (linkedContext == null) {
 		} else if (offset == null) {
 			this.name = linkedContext.getName();
@@ -204,23 +203,6 @@ public class ContextLink implements SorcerConstants, Link {
 	 * fetched yet.
 	 */
 	public Context getContext() throws ContextException {
-		if (linkPrincipal != null)
-			return getContext(linkPrincipal);
-		else
-			return linkedContext;
-	}
-	
-	/**
-	 * Return the context. The {@link SorcerPrincipal} is given for authorization.
-	 */
-	public Context getContext(Principal principal)
-			throws ContextException {
-		if (!fetched) {
-			if (principal != null)
-				linkedContext = cntxtAccessor.getContext(contextId, version,
-						principal);
-			fetched = true;
-		}
 		return linkedContext;
 	}
 

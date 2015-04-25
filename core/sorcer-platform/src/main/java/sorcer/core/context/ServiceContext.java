@@ -251,9 +251,6 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 		while (e.hasMoreElements()) {
 			path = (String) e.nextElement();
 			obj = cntxt.get(path);
-			if (obj instanceof ContextLink
-					&& ((ContextLink) obj).isFetched())
-				updateLinkedContext((ContextLink) obj);
 			if (obj == null)
 				put(path, (T)none);
 			else
@@ -579,12 +576,7 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 		Object result = get(path);
 		if (result instanceof ContextLink) {
 			String offset = ((ContextLink) result).getOffset();
-			Context linkedCntxt = null;
-			try {
-				linkedCntxt = ((ContextLink) result).getContext(principal);
-			} catch (Exception ex) {
-				throw new ContextException(ex);
-			}
+			Context linkedCntxt = ((ContextLink) result).getContext();
 			result = linkedCntxt.getValue(offset);
 		}
 		if (result == null) {
@@ -2525,15 +2517,7 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 
 	protected Context getLinkedContext(ContextLink link)
 			throws ContextException {
-		return updateLinkedContext(link);
-	}
-
-	protected Context updateLinkedContext(ContextLink link)
-			throws ContextException {
-		// return the linked context
-		Context sc = link.getContext(principal);
-		link.setContext(sc);
-		return sc;
+		return link.getContext();
 	}
 
 	public String getPath(Object obj) throws ContextException {
@@ -2597,7 +2581,7 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 
 		while (e.hasMoreElements()) {
 			link = (ContextLink) e.nextElement();
-			linkedCntxt = (ServiceContext) link.getContext(principal);
+			linkedCntxt = (ServiceContext) link.getContext();
 			e1 = linkedCntxt.getDataAttributeMap().keys();
 			while (e1.hasMoreElements()) {
 				attr = (String) e1.nextElement();
@@ -2643,7 +2627,7 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 
 		while (e.hasMoreElements()) {
 			link = (ContextLink) e.nextElement();
-			linkedCntxt = (ServiceContext) link.getContext(principal);
+			linkedCntxt = (ServiceContext) link.getContext();
 			e1 = linkedCntxt.getDataAttributeMap().keys();
 			while (e1.hasMoreElements()) {
 				attr = (String) e1.nextElement();
