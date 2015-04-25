@@ -104,7 +104,7 @@ public class Job extends ServiceExertion implements CompoundExertion {
 	 * @throws ContextException 
 	 */
 	public Job(Exertion exertion) throws ExertionException {
-		addMgram(exertion);
+		addMogram(exertion);
 	}
 
 	public Job(String name, String description) {
@@ -221,10 +221,10 @@ public class Job extends ServiceExertion implements CompoundExertion {
 	}
 
 	/* (non-Javadoc)
-	 * @see sorcer.service.Exertion#addMgram(sorcer.service.Exertion)
+	 * @see sorcer.service.Exertion#addMogram(sorcer.service.Exertion)
 	 */
 	@Override
-	public Mogram addMgram(Mogram ex) throws ExertionException {
+	public Mogram addMogram(Mogram ex) throws ExertionException {
 		exertions.add(ex);
 		((ServiceExertion) ex).setIndex(exertions.indexOf(ex));
 		try {
@@ -251,7 +251,7 @@ public class Job extends ServiceExertion implements CompoundExertion {
 	}
 
 	public Job addExertion(Exertion exertion, int priority) throws ExertionException {
-		addMgram(exertion);
+		addMogram(exertion);
 		controlContext.setPriority(exertion, priority);
 		return this;
 	}
@@ -316,7 +316,7 @@ public class Job extends ServiceExertion implements CompoundExertion {
 			}
 			if (exertions.size() > 0) {
 				for (Mogram ex : exertions) {
-					delegate.addMgram(ex);
+					delegate.addMogram(ex);
 				}
 			}
 		}

@@ -51,9 +51,9 @@ public class ArithmeticNoNetTest implements SorcerConstants {
 		Task task3 = getSubtractTask();
 
 		Exertion job = new ObjectJob("3tasks");
-		job.addMgram(task1);
-		job.addMgram(task2);
-		job.addMgram(task3);
+		job.addMogram(task1);
+		job.addMogram(task2);
+		job.addMogram(task3);
 		
 		// make the result of second task as the first argument of task
 		// three
@@ -76,12 +76,12 @@ public class ArithmeticNoNetTest implements SorcerConstants {
 		Task task3 = getSubtractTask();
 
 		Job internal = new ObjectJob("2tasks");
-		internal.addMgram(task2);
-		internal.addMgram(task1);
+		internal.addMogram(task2);
+		internal.addMogram(task1);
 		
 		Exertion job = new ObjectJob("1job1task");
-		job.addMgram(internal);
-		job.addMgram(task3);
+		job.addMogram(internal);
+		job.addMogram(task3);
 		
 		// make the result of second task as the first argument of task
 		// three
@@ -104,14 +104,14 @@ public class ArithmeticNoNetTest implements SorcerConstants {
 		Task task3 = getSubtractTask();
 		
 		Job internal = new ObjectJob("2tasks");
-		internal.addMgram(task2);
-		internal.addMgram(task1);
+		internal.addMogram(task2);
+		internal.addMogram(task1);
 		internal.getControlContext().setFlowType(Flow.PAR);
 		internal.getControlContext().setAccessType(Access.PUSH);
 
 		Exertion job = new ObjectJob("1job1task");
-		job.addMgram(internal);
-		job.addMgram(task3);
+		job.addMogram(internal);
+		job.addMogram(task3);
 		internal.getControlContext().setFlowType(Flow.SEQ);
 		internal.getControlContext().setAccessType(Access.PUSH);
 		

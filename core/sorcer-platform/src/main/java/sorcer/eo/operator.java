@@ -1383,7 +1383,7 @@ public class operator {
 		}
 		if (exertions.size() > 0) {
 			for (Exertion ex : exertions) {
-				job.addMgram(ex);
+				job.addMogram(ex);
 			}
 			for (Pipe p : pipes) {
 //				logger.finer("from context: "
@@ -2576,7 +2576,7 @@ public class operator {
 			}
 
 			for (Mogram e :mograms)
-				block.addMgram(e);
+				block.addMogram(e);
 		} catch (Exception se) {
 			throw new ExertionException(se);
 		}
@@ -2869,7 +2869,7 @@ public class operator {
 
 	public static Exertion add(Exertion compound, Exertion component)
 			throws ExertionException {
-		compound.addMgram(component);
+		compound.addMogram(component);
 		return compound;
 	}
 
@@ -2887,7 +2887,7 @@ public class operator {
 		for (String name : names) {
 			xrt = (Exertion) ObjectCloner.cloneAnnotatedWithNewIDs(exertion);
 			((ServiceExertion) xrt).setName(name);
-			block.addMgram(xrt);
+			block.addMogram(xrt);
 		}
 		return block;
 	}

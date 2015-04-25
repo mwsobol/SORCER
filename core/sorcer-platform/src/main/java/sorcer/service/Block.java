@@ -73,10 +73,10 @@ public abstract class Block extends ServiceExertion implements CompoundExertion 
 		SignatureException, RemoteException, TransactionException;
 	
 	/* (non-Javadoc)
-	 * @see sorcer.service.Exertion#addMgram(sorcer.service.Exertion)
+	 * @see sorcer.service.Exertion#addMogram(sorcer.service.Exertion)
 	 */
 	@Override
-	public Mogram addMgram(Mogram mogram) throws ExertionException {
+	public Mogram addMogram(Mogram mogram) throws ExertionException {
 		mograms.add(mogram);
 		mogram.setIndex(mograms.indexOf(mogram));
 		try {
@@ -94,7 +94,7 @@ public abstract class Block extends ServiceExertion implements CompoundExertion 
 
 	public void setMograms(Mogram[] mograms) throws ExertionException {
 		for (Mogram mo :mograms)
-			addMgram(mo);
+			addMogram(mo);
 	}
 	
 	/* (non-Javadoc)
