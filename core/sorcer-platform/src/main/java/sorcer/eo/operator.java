@@ -2622,7 +2622,7 @@ public class operator {
 			} else {
 				// default signature
 //				block = new NetBlock(name);
-                block = new NetBlock(name);
+                block = new ObjectBlock(name);
 			}
 
 			if (context != null) {
