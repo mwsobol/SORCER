@@ -645,9 +645,18 @@ public class operator {
        return Arrays.asList(paths);
     }
     
-    public static void dependsOn(Model model, String path, List<String> dependentPaths) {
+    public static void dependsOn(Model model, Entry... entries) {
         Map<String, List<String>> dm = ((ServiceContext)model).getDependentPaths();
-        dm.put(path, dependentPaths);
+        String path = null;
+        Object dependentPaths = null;
+        for (Entry e : entries) {
+            dependentPaths = e.value();
+            if (dependentPaths instanceof List){
+                path = e.getName();
+                dependentPaths =  e.value();
+                dm.put(path, (List<String>)dependentPaths);
+            }
+        }
     }
 
     public static Map<String, List<String>> dependentPaths(Model model) {
