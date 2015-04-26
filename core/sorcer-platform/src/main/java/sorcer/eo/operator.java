@@ -2621,7 +2621,8 @@ public class operator {
 					block = new NetBlock(name);
 			} else {
 				// default signature
-				block = new NetBlock(name);
+//				block = new NetBlock(name);
+                block = new NetBlock(name);
 			}
 
 			if (context != null) {

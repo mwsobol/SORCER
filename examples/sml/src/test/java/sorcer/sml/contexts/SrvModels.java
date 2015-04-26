@@ -5,7 +5,6 @@ import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.arithmetic.provider.impl.AveragerImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.provider.impl.SubtractorImpl;
-import sorcer.core.provider.rendezvous.ServiceConcatenator;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.service.Block;
 import sorcer.service.Context;
@@ -123,7 +122,7 @@ public class SrvModels {
 //        Context out = responses(model);
 //        logger.info("out: " + out);
 
-        Block block = block(sig(ServiceConcatenator.class),
+        Block block = block("mogram",
                 model,
                 task(sig("average", AveragerImpl.class,
                         result("average/response", inPaths("y1", "y2", "y3")))));
@@ -183,9 +182,7 @@ public class SrvModels {
         outConn(model, modelOutConnector);
 
 
-        Block block = block(sig(ServiceConcatenator.class),
-                j2,
-                model);
+        Block block = block("mogram", j2, model);
 
         Context result = context(exert(block));
 

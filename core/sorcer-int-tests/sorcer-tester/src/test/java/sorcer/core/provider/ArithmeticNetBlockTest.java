@@ -8,7 +8,6 @@ import sorcer.arithmetic.tester.provider.Adder;
 import sorcer.arithmetic.tester.provider.Averager;
 import sorcer.arithmetic.tester.provider.Multiplier;
 import sorcer.arithmetic.tester.provider.Subtractor;
-import sorcer.arithmetic.tester.provider.impl.AveragerImpl;
 import sorcer.core.SorcerConstants;
 import sorcer.service.Block;
 import sorcer.service.Task;
@@ -56,7 +55,8 @@ public class ArithmeticNetBlockTest implements SorcerConstants {
 				context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
 						result("block/result")));
 		
-		Block block = block("block", context(ent("y1", 100), ent("y2", 200)),
+		Block block = block("block", sig(Concatenator.class),
+				context(ent("y1", 100), ent("y2", 200)),
 				alt(opt(condition("{ y1, y2 -> y1 > y2 }", "y1", "y2"), t4), 
 					opt(condition("{ y1, y2 -> y1 <= y2 }", "y1", "y2"), t5)));
 		
@@ -89,7 +89,8 @@ public class ArithmeticNetBlockTest implements SorcerConstants {
 				context("average", inEnt("arg/t4"), inEnt("arg/t5"),
 						result("block/result")));
 		
-		Block block = block("block", t4, t5, alt(
+		Block block = block("block", sig(Concatenator.class),
+				t4, t5, alt(
 				opt(condition("{ t4, t5 -> t4 > t5 }", "t4", "t5"), t3), 
 				opt(condition("{ t4, t5 -> t4 <= t5 }", "t4", "t5"), t6)));
 
@@ -114,7 +115,8 @@ public class ArithmeticNetBlockTest implements SorcerConstants {
 				context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
 						result("out")));
 		
-		Block block = block("block", t4,
+		Block block = block("block", sig(Concatenator.class),
+				t4,
 				opt(condition("{ out -> out > 600 }", "out"), t5));
 		
 		block = exert(block);
