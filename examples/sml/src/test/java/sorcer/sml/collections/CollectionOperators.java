@@ -45,6 +45,8 @@ import static sorcer.po.operator.add;
 import static sorcer.po.operator.asis;
 import static sorcer.po.operator.*;
 import static sorcer.po.operator.set;
+import static sorcer.mo.operator.*;
+
 
 /**
  * @author Mike Sobolewski

@@ -30,7 +30,7 @@ import static org.junit.Assert.*;
 import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
 import static sorcer.po.operator.*;
-
+import static sorcer.mo.operator.*;
 
 
 /**

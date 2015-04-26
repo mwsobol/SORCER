@@ -22,7 +22,7 @@ import static sorcer.co.operator.srv;
 import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.value;
 import static sorcer.po.operator.invoker;
-
+import static sorcer.mo.operator.*;
 /**
  * Created by Mike Sobolewski on 4/15/15.
  */

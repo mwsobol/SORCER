@@ -30,12 +30,13 @@ import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.par.Par;
 import sorcer.core.context.model.par.ParModel;
 import sorcer.core.context.model.srv.Srv;
-import sorcer.core.context.model.srv.SrvModel;
 import sorcer.core.deploy.ServiceDeployment;
 import sorcer.core.exertion.*;
 import sorcer.core.provider.*;
-import sorcer.core.provider.rendezvous.*;
-import sorcer.service.Scopable;
+import sorcer.core.provider.rendezvous.ServiceConcatenator;
+import sorcer.core.provider.rendezvous.ServiceJobber;
+import sorcer.core.provider.rendezvous.ServiceRendezvous;
+import sorcer.core.provider.rendezvous.ServiceSpacer;
 import sorcer.core.signature.EvaluationSignature;
 import sorcer.core.signature.NetSignature;
 import sorcer.core.signature.ObjectSignature;
@@ -238,116 +239,11 @@ public class operator {
 		return fiCxt;
 	}
 
-	public static Context entModel(Object... entries)
-			throws ContextException {
-		if (entries != null && entries.length == 1 && entries[0] instanceof Context) {
-			((Context)entries[0]).setModeling(true);
-			try {
-				return new EntModel((Context)entries[0]);
-			} catch (RemoteException e) {
-				throw new ContextException(e);
-			}
-		}
-		EntModel model = new EntModel();
-		Object[] dest = new Object[entries.length+1];
-		System.arraycopy(entries,  0, dest,  1, entries.length);
-		dest[0] = model;
-		return context(dest);
-	}
-
-	public static Model inConn(Model model, Context inConnector) {
-		((ServiceContext)model).setInConnector(inConnector);
-		if (inConnector instanceof MapContext)
-			((MapContext)inConnector).direction =  MapContext.Direction.IN;
-		return model;
-	}
-
-	public static Model outConn(Model model, Context outConnector) {
-		((ServiceContext) model).setOutConnector(outConnector);
-		if (outConnector instanceof MapContext)
-			((MapContext)outConnector).direction = MapContext.Direction.OUT;
-		return model;
-	}
-
-    public static Model addResponse(Model model, String... responsePaths) throws ContextException {
-        for (String path : responsePaths)
-            ((ServiceContext)model).addResponsePath(path);
-        return model;
-    }
-    
-//	public static <T extends Model> T response(T model, String... responsePaths) throws ContextException {
-//		for (String path : responsePaths)
-//		 	((ServiceContext)model).addResponsePath(path);
-//		return model;
-//	}
-
-	public static <T> T response(Context<T> context, String add, String multiply) throws ContextException, RemoteException {
-		return ((ServiceContext<T>)context).getResponse();
-	}
-
-	public static Context responses(Model model) throws ContextException {
-        try {
-            return model.getResponses();
-        } catch (RemoteException e) {
-            throw new ContextException(e);
-        }
-    }
-
-    public static Object response(Model model, String path) throws ContextException {
-        try {
-            return model.getResponse(path);
-        } catch (RemoteException e) {
-            throw new ContextException(e);
-        }
-    }
-
-    public static Object response(Model model) throws ContextException {
-        try {
-            return model.getResponse();
-        } catch (RemoteException e) {
-            throw new ContextException(e);
-        }
-    }
-    
-    public static Entry Entry(Model model, String path) throws ContextException {
-        return new Entry(path, ((Context)model).asis(path));
-    }
-    
 	public static Context scope(Object... entries) throws ContextException {
 		Object[] args = new Object[entries.length + 1];
 		System.arraycopy(entries, 0, args, 1, entries.length);
 		args[0] = Context.Type.SCOPE;
 		return  context(args);
-	}
-
-	public static Context inConn(List<Tuple2<String, ?>> entries) throws ContextException {
-		MapContext map = new MapContext();
-		map.direction = MapContext.Direction.IN;
-		populteContext(map, entries);
-		return map;
-	}
-
-	public static Context inConn(Tuple2<String, ?>... entries) throws ContextException {
-		MapContext map = new MapContext();
-		map.direction = MapContext.Direction.IN;
-		List<Tuple2<String, ?>> items = Arrays.asList(entries);
-		populteContext(map, items);
-		return map;
-	}
-
-	public static Context outConn(List<Tuple2<String, ?>> entries) throws ContextException {
-		MapContext map = new MapContext();
-		map.direction = MapContext.Direction.OUT;
-		populteContext(map, entries);
-		return map;
-	}
-
-	public static Context outConn(Tuple2<String, ?>... entries) throws ContextException {
-		MapContext map = new MapContext();
-		map.direction = MapContext.Direction.OUT;
-		List<Tuple2<String, ?>> items = Arrays.asList(entries);
-		populteContext(map, items);
-		return map;
 	}
 
 	public static Context context(Object... entries)
@@ -570,8 +466,8 @@ public class operator {
 		}
 	}
 
-	protected static void populteContext(Context cxt,
-										 List<Tuple2<String, ?>> entryList) throws ContextException {
+	public static void populteContext(Context cxt,
+									  List<Tuple2<String, ?>> entryList) throws ContextException {
 		for (int i = 0; i < entryList.size(); i++) {
 			if (entryList.get(i) instanceof InputEntry) {
 				if (((InputEntry) entryList.get(i)).isPersistent()) {
@@ -821,16 +717,6 @@ public class operator {
 				return ((Evaluation<T>) paradigm).getValue(entries);
 		}
 		return null;
-	}
-
-	public static Paradigmatic modeling(Paradigmatic paradigm) {
-		paradigm.setModeling(true);
-		return paradigm;
-	}
-
-	public static Paradigmatic modeling(Paradigmatic paradigm, boolean modeling) {
-		paradigm.setModeling(modeling);
-		return paradigm;
 	}
 
 	/**
@@ -2514,37 +2400,6 @@ public class operator {
         ((ServiceSignature)signature).addRank(new Kind[]{Kind.MODEL, Kind.TASKER});
         return signature;
     }
-    
-    public static Model srvModel(Object... items) throws ContextException {
-        ServiceFidelity fidelity = null;
-        Complement complement = null;
-        for (Object item : items) {
-           if (item instanceof Signature) {
-               if (fidelity == null)
-                   fidelity = new ServiceFidelity();
-               fidelity.add((Signature) item);
-            } else if (item instanceof Complement) {
-               complement = (Complement)item;
-           }
-        }
-        SrvModel model = null;
-        try {
-            model = new SrvModel();
-        } catch (SignatureException e) {
-            throw new ContextException(e);
-        }
-        if (fidelity != null) {
-            model.setFidelity(fidelity);
-        } else if (complement != null) {
-            model.setSubject(complement.path(), complement.value());
-        } else {
-            model.setSubject("execute", ServiceModeler.class);
-        }
-        Object[] dest = new Object[items.length+1];
-        System.arraycopy(items,  0, dest,  1, items.length);
-        dest[0] = model;
-        return context(dest);
-    }
 
 	public static Signature modelManager(Signature signature) {
 		((ServiceSignature)signature).addRank(Kind.MODEL, Kind.MODEL_MANAGER);
@@ -2560,40 +2415,6 @@ public class operator {
 		((ServiceSignature)signature).addRank(Kind.EXPLORER, Kind.TASKER);
 		return signature;
 	}
-
-//	public static Exertion clearScope(Service service) throws ContextException, RemoteException {
-//		return clearScope((Exertion) service);
-//	}
-//	public static Exertion clearScope(Exertion exertion) throws ContextException, RemoteException {
-//		if (exertion instanceof Block) {
-//			Object[] paths = ((Map) exertion.getDataContext()).keySet().toArray();
-//			for (Object path : paths)
-//				exertion.getDataContext().removePath((String) path);
-//
-//			Signature.ReturnPath rp = exertion.getDataContext().getReturnPath();
-//			if (rp != null && rp.path != null)
-//				exertion.getDataContext().removePath(rp.path);
-//		}
-//		List<Mogram> mograms = exertion.getAllMograms();
-//		Context cxt = null;
-//		for (Mogram mo : mograms) {
-//			if (mo instanceof Exertion)
-//				cxt = ((Exertion)mo).getContext();
-//			else
-//				cxt = (Context) mo;
-//
-//			if (!(exertion instanceof Block)) {
-//				cxt.setScope(null);
-//			}
-//			if (mo instanceof Exertion)
-//				clearScope((Exertion)mo);
-////			rp = cxt.getReturnPath();
-////			if (rp != null && rp.path != null)
-////				cxt.removePath(rp.path);
-//		}
-//
-//		return exertion;
-//	}
 
 	public static Block block(Object...  items) throws ExertionException {
 		List<Mogram> mograms = new ArrayList<Mogram>();
