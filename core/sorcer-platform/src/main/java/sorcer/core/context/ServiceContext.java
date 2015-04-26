@@ -174,8 +174,11 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 	// dependency management for this Context
 	protected List<Evaluation> dependers = new ArrayList<Evaluation>();
 
+	// mapping from paths of this inConnector to input paths of this context
+	protected Context inConnector;
+
 	// mapping from paths of this context to input paths of requestors
-	protected Context connector;
+	protected Context outConnector;
 
     protected Map<String, List<String>> dependentPaths;
     
@@ -248,9 +251,6 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 		while (e.hasMoreElements()) {
 			path = (String) e.nextElement();
 			obj = cntxt.get(path);
-			if (obj instanceof ContextLink
-					&& ((ContextLink) obj).isFetched())
-				updateLinkedContext((ContextLink) obj);
 			if (obj == null)
 				put(path, (T)none);
 			else
@@ -576,12 +576,7 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 		Object result = get(path);
 		if (result instanceof ContextLink) {
 			String offset = ((ContextLink) result).getOffset();
-			Context linkedCntxt = null;
-			try {
-				linkedCntxt = ((ContextLink) result).getContext(principal);
-			} catch (Exception ex) {
-				throw new ContextException(ex);
-			}
+			Context linkedCntxt = ((ContextLink) result).getContext();
 			result = linkedCntxt.getValue(offset);
 		}
 		if (result == null) {
@@ -1759,7 +1754,20 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 		// needed for ContextFilter
 		return null;
 	}
-	
+
+	// TODO in/out/inout marking as defined in the connector
+	public Context updateContextWith(Context connector) throws ContextException {
+		if (connector != null) {
+			Iterator it = ((Map) connector).entrySet().iterator();
+			while (it.hasNext()) {
+				Map.Entry e = (Map.Entry) it.next();
+				putInValue((String) e.getKey(), asis((String) e.getValue()));
+				removePath((String) e.getValue());
+			}
+		}
+		return this;
+	}
+
 	public Context updateEntries(Context context) throws ContextException {
 		if (context != null) {
 			List<String> inpaths = ((ServiceContext) context).getInPaths();
@@ -2509,20 +2517,7 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 
 	protected Context getLinkedContext(ContextLink link)
 			throws ContextException {
-		return updateLinkedContext(link);
-	}
-
-	protected Context updateLinkedContext(ContextLink link)
-			throws ContextException {
-		// return the linked context, converting it to a ServiceContextImpl if
-		// necessary
-		Context sc = link.getContext(principal);
-		if (sc.getClass() != this.getClass()) {
-			 logger.warning("converting linked context to " + this.getClass());
-			sc = new ServiceContext(sc);
-			link.setContext(sc);
-		}
-		return sc;
+		return link.getContext();
 	}
 
 	public String getPath(Object obj) throws ContextException {
@@ -2586,7 +2581,7 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 
 		while (e.hasMoreElements()) {
 			link = (ContextLink) e.nextElement();
-			linkedCntxt = (ServiceContext) link.getContext(principal);
+			linkedCntxt = (ServiceContext) link.getContext();
 			e1 = linkedCntxt.getDataAttributeMap().keys();
 			while (e1.hasMoreElements()) {
 				attr = (String) e1.nextElement();
@@ -2632,7 +2627,7 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 
 		while (e.hasMoreElements()) {
 			link = (ContextLink) e.nextElement();
-			linkedCntxt = (ServiceContext) link.getContext(principal);
+			linkedCntxt = (ServiceContext) link.getContext();
 			e1 = linkedCntxt.getDataAttributeMap().keys();
 			while (e1.hasMoreElements()) {
 				attr = (String) e1.nextElement();
@@ -3062,14 +3057,14 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 
 	@Override
     public Context getResponses(Arg... args) throws ContextException, RemoteException {
-        if (connector != null) {
+        if (outConnector != null) {
             ServiceContext mc = null;
             try {
-                mc = (ServiceContext) ObjectCloner.clone(connector);
+                mc = (ServiceContext) ObjectCloner.clone(outConnector);
             } catch (Exception e) {
                 throw new ContextException(e);
             }
-            Iterator it = ((Map) connector).entrySet().iterator();
+            Iterator it = ((Map) outConnector).entrySet().iterator();
             while (it.hasNext()) {
                 Map.Entry pairs = (Map.Entry) it.next();
                 mc.putInValue((String) pairs.getKey(), getValue((String) pairs.getValue()));
@@ -3102,9 +3097,22 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
     }
 
 	@Override
-    public Context getConnector(Arg... args) throws ContextException, RemoteException {
-        return connector;
+	public Context getInConnector(Arg... arg) {
+		return inConnector;
+	}
+
+	public void setInConnector(Context inConnector) {
+		this.inConnector = inConnector;
+	}
+
+	@Override
+    public Context getOutConnector(Arg... args) {
+        return outConnector;
     }
+
+	public void setOutConnector(Context outConnector) {
+		this.outConnector = outConnector;
+	}
 
 	public Context getResponses(String path, String... paths) throws ContextException, RemoteException {
 		Context results = getMergedSubcontext(null, Arrays.asList(paths));
@@ -3390,10 +3398,6 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 
 	public void setStatus(int value) {
 		status = value;
-	}
-
-	public void setConnector(Context connector) {
-		this.connector = connector;
 	}
 
 	public Map<String, List<String>> getDependentPaths() {

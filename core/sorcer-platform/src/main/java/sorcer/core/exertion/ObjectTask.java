@@ -22,7 +22,6 @@ import net.jini.core.transaction.Transaction;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.invoker.MethodInvoker;
 import sorcer.core.signature.ObjectSignature;
-import sorcer.core.signature.ServiceSignature;
 import sorcer.service.*;
 
 import java.lang.reflect.InvocationTargetException;
@@ -129,9 +128,6 @@ public class ObjectTask extends Task {
 					// assume this task context is used by the signature's
 					// provider
 					if (dataContext != null) {
-//						if (getScope() != null && ((Context)getScope()).size() > 0) {
-//							currentContext = getCurrentContext();
-//						}
 						evaluator
 								.setParameterTypes(new Class[] { Context.class });
 						evaluator.setContext(dataContext);
@@ -159,6 +155,7 @@ public class ObjectTask extends Task {
 			} else {
 				dataContext.setReturnValue(result);
 			}
+			dataContext.updateContextWith(os.getOutConnector());
 		} catch (Throwable e) {
 			e.printStackTrace();
 			dataContext.reportException(e);

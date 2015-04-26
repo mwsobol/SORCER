@@ -164,9 +164,11 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 	
 	private void initExecState(Arg... entries) throws ContextException, RemoteException {
 		Context argCxt = null;
-		for (Arg arg : entries) {
-			if (arg instanceof Context && ((Context)arg).size() > 0) {
-				argCxt = (Context)arg;
+		if (entries!=null) {
+			for (Arg arg : entries) {
+				if (arg instanceof Context && ((Context)arg).size() > 0) {
+					argCxt = (Context)arg;
+				}
 			}
 		}
 		if (exertion instanceof Block) {

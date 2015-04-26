@@ -15,10 +15,13 @@
  */
 package sorcer.core.deploy;
 
+import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
+import org.sorcer.test.TestsRequiringRio;
 import sorcer.core.dispatch.ProvisionManager;
 import sorcer.service.Job;
 import sorcer.util.StringUtils;
@@ -41,6 +44,7 @@ import static org.junit.Assert.assertTrue;
 @ProjectContext("core/sorcer-int-tests/deploy-tests")
 public class ProvisionManagerTest extends DeploySetup {
 
+    @Category(TestsRequiringRio.class)
     @Test
     public void testDeploy() throws Exception {
         banner("testDeploy");
@@ -55,6 +59,7 @@ public class ProvisionManagerTest extends DeploySetup {
         assertTrue(provisionManager.getDeploymentNames().size()==0);
     }
 
+    @Category(TestsRequiringRio.class)
     @Test(timeout = 90000)
     public void testConcurrentDeploy2() throws Exception {
         banner("testConcurrentDeploy2");
@@ -86,6 +91,7 @@ public class ProvisionManagerTest extends DeploySetup {
         assertTrue(provisionManager.getDeploymentNames().size()==0);
     }
 
+    @Category(TestsRequiringRio.class)
     @Test(timeout = 90000)
     public void testConcurrentDeploy() throws Exception {
         banner("testConcurrentDeploy");

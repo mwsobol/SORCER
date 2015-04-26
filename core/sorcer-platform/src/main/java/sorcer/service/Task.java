@@ -160,7 +160,7 @@ public class Task extends ServiceExertion {
 			throws EvaluationException, ContextException {
 		// implement is subclasses
 	}
-	
+
 	public void undoTask() throws ExertionException, SignatureException,
 			RemoteException {
 		throw new ExertionException("Not implemneted by this Task: " + this);
@@ -334,10 +334,10 @@ public class Task extends ServiceExertion {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see sorcer.service.Exertion#addMgram(sorcer.service.Exertion)
+	 * @see sorcer.service.Exertion#addMogram(sorcer.service.Exertion)
 	 */
 	@Override
-	public Mogram addMgram(Mogram component) {
+	public Mogram addMogram(Mogram component) {
 		throw new RuntimeException("Tasks do not contain component exertions!");
 	}
 

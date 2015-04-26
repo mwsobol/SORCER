@@ -92,7 +92,10 @@ public class ServiceSignature implements Signature, Service, Evaluation<Object>,
 	// shell can be used to execute exertions locally or remotely (as ServiceProvider)
 	protected boolean isShellRemote = false;
 
-	protected Context connector;
+	protected Context inConnector;
+
+	protected Context outConnector;
+
 	/**
 	 * a context template to define the context appended from a provider
 	 * identified by this method
@@ -601,12 +604,20 @@ public class ServiceSignature implements Signature, Service, Evaluation<Object>,
 		return this;
 	}
 
-	public Context getConnector() {
-		return connector;
+	public Context getInConnector() {
+		return inConnector;
 	}
 
-	public void setConnector(Context connector) {
-		this.connector = connector;
+	public void setInConnector(Context inConnector) {
+		this.inConnector = inConnector;
+	}
+
+	public Context getOutConnector() {
+		return outConnector;
+	}
+
+	public void setOutConnector(Context outConnector) {
+		this.outConnector = outConnector;
 	}
 
     @Override

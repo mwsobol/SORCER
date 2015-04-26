@@ -255,8 +255,17 @@ public class operator {
 		return context(dest);
 	}
 
-	public static Model conn(Model model, Context out) throws ContextException {
-		((ServiceContext)model).setConnector(out);
+	public static Model inConn(Model model, Context inConnector) {
+		((ServiceContext)model).setInConnector(inConnector);
+		if (inConnector instanceof MapContext)
+			((MapContext)inConnector).direction =  MapContext.Direction.IN;
+		return model;
+	}
+
+	public static Model outConn(Model model, Context outConnector) {
+		((ServiceContext) model).setOutConnector(outConnector);
+		if (outConnector instanceof MapContext)
+			((MapContext)outConnector).direction = MapContext.Direction.OUT;
 		return model;
 	}
 
@@ -311,14 +320,31 @@ public class operator {
 		return  context(args);
 	}
 
-	public static Context conn(List<Tuple2<String, ?>> entries) throws ContextException {
-		Context map = new MapContext();
+	public static Context inConn(List<Tuple2<String, ?>> entries) throws ContextException {
+		MapContext map = new MapContext();
+		map.direction = MapContext.Direction.IN;
 		populteContext(map, entries);
 		return map;
 	}
 
-	public static Context conn(Tuple2<String, ?>... entries) throws ContextException {
-		Context map = new MapContext();
+	public static Context inConn(Tuple2<String, ?>... entries) throws ContextException {
+		MapContext map = new MapContext();
+		map.direction = MapContext.Direction.IN;
+		List<Tuple2<String, ?>> items = Arrays.asList(entries);
+		populteContext(map, items);
+		return map;
+	}
+
+	public static Context outConn(List<Tuple2<String, ?>> entries) throws ContextException {
+		MapContext map = new MapContext();
+		map.direction = MapContext.Direction.OUT;
+		populteContext(map, entries);
+		return map;
+	}
+
+	public static Context outConn(Tuple2<String, ?>... entries) throws ContextException {
+		MapContext map = new MapContext();
+		map.direction = MapContext.Direction.OUT;
 		List<Tuple2<String, ?>> items = Arrays.asList(entries);
 		populteContext(map, items);
 		return map;
@@ -327,6 +353,7 @@ public class operator {
 	public static Context context(Object... entries)
 			throws ContextException {
 		Context cxt = null;
+		List<MapContext> connList = new ArrayList<MapContext>();
 		if (entries[0] instanceof Exertion) {
 			Exertion xrt = (Exertion) entries[0];
 			if (entries.length >= 2 && entries[1] instanceof String)
@@ -387,6 +414,8 @@ public class operator {
 				parList.add((Par) o);
 			} else if (o instanceof EntryList) {
 				entryLists.add((EntryList) o);
+			}  else if (o instanceof MapContext) {
+				connList.add((MapContext) o);
 			}
 		}
 
@@ -465,8 +494,18 @@ public class operator {
 			}
 			((ServiceContext) cxt).setResponse(response.path(), response.target);
 		}
-		if (entryLists.size() > 0)
-			((ServiceContext)cxt).setEntryLists(entryLists);
+		if (entryLists.size() > 0) {
+			((ServiceContext) cxt).setEntryLists(entryLists);
+		}
+		if (connList != null) {
+			for (MapContext conn : connList) {
+				if (conn.direction == MapContext.Direction.IN) {
+					((ServiceContext) cxt).setInConnector(conn);
+				} else {
+					((ServiceContext) cxt).setOutConnector(conn);
+				}
+			}
+		}
 		return cxt;
 	}
 
@@ -849,7 +888,7 @@ public class operator {
 			throws SignatureException {
 		String providerName = null;
 		Provision p = null;
-		MapContext mc = null;
+		List<MapContext> connList = new ArrayList<MapContext>();
 		if (args != null) {
 			for (Object o : args) {
 				if (o instanceof ProviderName) {
@@ -857,7 +896,7 @@ public class operator {
 				} else if (o instanceof Provision) {
 					  p = (Provision) o;
 				} else if (o instanceof MapContext) {
-					mc = ((MapContext)o);
+					connList.add(((MapContext)o));
 				}
 			}
 		}
@@ -870,8 +909,14 @@ public class operator {
 		}
         ((ServiceSignature)sig).setName(operation);
 
-		if (mc != null)
-			((ServiceSignature)sig).setConnector(mc);
+		if (connList != null) {
+			for (MapContext conn : connList) {
+				if (conn.direction == MapContext.Direction.IN)
+					((ServiceSignature) sig).setInConnector(conn);
+				else
+					((ServiceSignature) sig).setOutConnector(conn);
+			}
+		}
 
 		if (p != null)
 			((ServiceSignature)sig).setProvisionable(p);
@@ -1300,6 +1345,7 @@ public class operator {
 		List<Pipe> pipes = new ArrayList<Pipe>();
 		List<ServiceFidelity> fidelities = null;
 		List<FidelityContext> fiContexts = null;
+		List<MapContext> connList = new ArrayList<MapContext>();
 
 		for (int i = 0; i < elems.length; i++) {
 			if (elems[i] instanceof String) {
@@ -1308,6 +1354,8 @@ public class operator {
 				exertions.add((Exertion) elems[i]);
 			} else if (elems[i] instanceof ControlContext) {
 				control = (ControlContext) elems[i];
+			} else if (elems[i] instanceof MapContext) {
+				connList.add(((MapContext)elems[i]));
 			} else if (elems[i] instanceof Context) {
 				data = (Context<?>) elems[i];
 			} else if (elems[i] instanceof Pipe) {
@@ -1381,9 +1429,18 @@ public class operator {
 				job.setFidelityContexts(fiMap);
 			}
 		}
+		if (connList != null) {
+			for (MapContext conn : connList) {
+				if (conn.direction == MapContext.Direction.IN)
+					((ServiceContext)job.getDataContext()).setInConnector(conn);
+				else
+					((ServiceContext)job.getDataContext()).setOutConnector(conn);
+			}
+		}
+
 		if (exertions.size() > 0) {
 			for (Exertion ex : exertions) {
-				job.addMgram(ex);
+				job.addMogram(ex);
 			}
 			for (Pipe p : pipes) {
 //				logger.finer("from context: "
@@ -2576,7 +2633,7 @@ public class operator {
 			}
 
 			for (Mogram e :mograms)
-				block.addMgram(e);
+				block.addMogram(e);
 		} catch (Exception se) {
 			throw new ExertionException(se);
 		}
@@ -2869,7 +2926,7 @@ public class operator {
 
 	public static Exertion add(Exertion compound, Exertion component)
 			throws ExertionException {
-		compound.addMgram(component);
+		compound.addMogram(component);
 		return compound;
 	}
 
@@ -2887,7 +2944,7 @@ public class operator {
 		for (String name : names) {
 			xrt = (Exertion) ObjectCloner.cloneAnnotatedWithNewIDs(exertion);
 			((ServiceExertion) xrt).setName(name);
-			block.addMgram(xrt);
+			block.addMogram(xrt);
 		}
 		return block;
 	}

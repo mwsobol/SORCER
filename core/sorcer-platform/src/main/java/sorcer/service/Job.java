@@ -104,7 +104,7 @@ public class Job extends ServiceExertion implements CompoundExertion {
 	 * @throws ContextException 
 	 */
 	public Job(Exertion exertion) throws ExertionException {
-		addMgram(exertion);
+		addMogram(exertion);
 	}
 
 	public Job(String name, String description) {
@@ -221,10 +221,10 @@ public class Job extends ServiceExertion implements CompoundExertion {
 	}
 
 	/* (non-Javadoc)
-	 * @see sorcer.service.Exertion#addMgram(sorcer.service.Exertion)
+	 * @see sorcer.service.Exertion#addMogram(sorcer.service.Exertion)
 	 */
 	@Override
-	public Mogram addMgram(Mogram ex) throws ExertionException {
+	public Mogram addMogram(Mogram ex) throws ExertionException {
 		exertions.add(ex);
 		((ServiceExertion) ex).setIndex(exertions.indexOf(ex));
 		try {
@@ -251,7 +251,7 @@ public class Job extends ServiceExertion implements CompoundExertion {
 	}
 
 	public Job addExertion(Exertion exertion, int priority) throws ExertionException {
-		addMgram(exertion);
+		addMogram(exertion);
 		controlContext.setPriority(exertion, priority);
 		return this;
 	}
@@ -316,7 +316,7 @@ public class Job extends ServiceExertion implements CompoundExertion {
 			}
 			if (exertions.size() > 0) {
 				for (Mogram ex : exertions) {
-					delegate.addMgram(ex);
+					delegate.addMogram(ex);
 				}
 			}
 		}
@@ -474,7 +474,28 @@ public class Job extends ServiceExertion implements CompoundExertion {
 	public Mogram getExertion(int index) {
 		return exertions.get(index);
 	}
-	
+
+	public Context finalizeOutDataContext() throws ContextException {
+		if (dataContext.getOutConnector() != null) {
+			updateContextWith(dataContext.getOutConnector());
+		}
+		return dataContext;
+	}
+
+	// TODO in/out/inout marking as defined in the connector
+	public Context updateContextWith(Context connector) throws ContextException {
+		if (connector != null) {
+			Context jobContext =  getJobContext();
+			Iterator it = ((Map) connector).entrySet().iterator();
+			while (it.hasNext()) {
+				Map.Entry e = (Map.Entry) it.next();
+				dataContext.putInValue((String) e.getKey(), jobContext.getValue((String) e.getValue()));
+				dataContext.removePath((String) e.getValue());
+			}
+		}
+		return dataContext;
+	}
+
 	public Context getContext() {
 		 return getJobContext();
 	}

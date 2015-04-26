@@ -486,6 +486,27 @@ public class ServiceCataloger extends ServiceProvider implements Cataloger {
             }
         }
 
+
+		public void removeServiceItem(ServiceItem sItem) {
+			InterfaceList searchInterfaceList = new InterfaceList(sItem.service
+					.getClass().getInterfaces());
+			List<ServiceItem> value;
+            logger.info("Removing ServiceItem from Cataloger: " + sItem.toString());
+
+			for (InterfaceList key : interfaceListMap.keySet()) {
+                if (key.containsAllInterfaces(searchInterfaceList)) {
+					value = interfaceListMap.get(key);
+                    if (value != null) {
+						if (value.size() == 1)
+							remove(key);
+						else
+							removeFrom(value, sItem);
+					}
+				}
+			}
+			observable.tellOfAction("UPDATEDPLEASE");
+		}
+
 		public void addObserver(Observer observer) {
 			// lookupMgr.setGUIBrowser(model);
 			observable.addObserver(observer);
@@ -528,10 +549,6 @@ public class ServiceCataloger extends ServiceProvider implements Cataloger {
 			}
 			logger.info("adding new service, calling notifiy");
 			observable.tellOfAction("UPDATEDPLEASE");
-		}
-
-		public void removeServiceItem(ServiceItem sItem) {
-			remove(sItem);
 		}
 
         private void removeFrom(List<ServiceItem> sis, ServiceItem si) {

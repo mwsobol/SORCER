@@ -82,9 +82,9 @@ public class WorkerJobApplication {
 		Task task2 = new NetTask("work2", signature2, context2);
 		Task task3 = new NetTask("work3", signature3, context3);
 		Job job = new NetJob();
-		job.addMgram(task1);
-		job.addMgram(task2);
-		job.addMgram(task3);
+		job.addMogram(task1);
+		job.addMogram(task2);
+		job.addMogram(task3);
 		return job;
 	}
 }
