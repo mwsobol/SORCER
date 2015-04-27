@@ -18,7 +18,7 @@
 package sorcer.core.invoker;
 
 import sorcer.core.context.ServiceContext;
-import sorcer.core.context.model.par.Par;
+import sorcer.core.context.model.par.ParEntry;
 import sorcer.service.*;
 import sorcer.util.SorcerUtil;
 
@@ -86,41 +86,41 @@ public class MethodInvoker<T> extends ServiceInvoker<T> implements MethodInvokin
 		selector = methodName;
 	}
 
-	public MethodInvoker(Object target, Par... pars) {
+	public MethodInvoker(Object target, ParEntry... parEntries) {
 		this.target = target;
-		this.pars = new ArgSet(pars);
+		this.pars = new ArgSet(parEntries);
 	}
 
-	public MethodInvoker(Object target, String methodName, Par... pars) {
+	public MethodInvoker(Object target, String methodName, ParEntry... parEntries) {
 		this(methodName, target, methodName);
-		this.pars = new ArgSet(pars);
+		this.pars = new ArgSet(parEntries);
 	}
 
 	public MethodInvoker(String name, Object target, String methodName,
-			Par... pars) {
+			ParEntry... parEntries) {
 		this(name);
 		this.target = target;
 		selector = methodName;
-		this.pars = new ArgSet(pars);
+		this.pars = new ArgSet(parEntries);
 	}
 
 	public MethodInvoker(String name, String className, String methodName,
-			Par... pars) {
-		this(name, className, methodName, null, null, pars);
+			ParEntry... parEntries) {
+		this(name, className, methodName, null, null, parEntries);
 	}
 
 	public MethodInvoker(String name, String className, String methodName,
-			Class<?>[] signature, Par... pars) {
-		this(name, className, methodName, signature, null, pars);
+			Class<?>[] signature, ParEntry... parEntries) {
+		this(name, className, methodName, signature, null, parEntries);
 	}
 
 	public MethodInvoker(String name, String className, String methodName,
-			Class<?>[] paramTypes, String distributionParameter, Par... pars) {
+			Class<?>[] paramTypes, String distributionParameter, ParEntry... parEntries) {
 		this(name);
 		this.className = className;
 		selector = methodName;
 		this.paramTypes = paramTypes;
-		this.pars = new ArgSet(pars);
+		this.pars = new ArgSet(parEntries);
 		if (distributionParameter != null)
 			params = new Object[] { distributionParameter };
 	}

@@ -9,7 +9,7 @@ import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.provider.impl.SubtractorImpl;
 import sorcer.co.tuple.*;
 import sorcer.core.context.model.ent.Entry;
-import sorcer.core.context.model.par.Par;
+import sorcer.core.context.model.par.ParEntry;
 import sorcer.core.context.model.par.ParModel;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.core.provider.rendezvous.ServiceJobber;
@@ -257,7 +257,7 @@ public class CollectionOperators {
 	@Test
 	public void parOperator() throws Exception {
 		
-		Par add = par("add", invoker("x + y", pars("x", "y")));
+		ParEntry add = par("add", invoker("x + y", pars("x", "y")));
 		Context<Double> cxt = context(ent("x", 10.0), ent("y", 20.0));
 		logger.info("par value: " + value(add, cxt));
 		assertTrue(value(add, cxt).equals(30.0));
@@ -274,8 +274,8 @@ public class CollectionOperators {
 	public void dbParOperator() throws Exception {
 
 		// persist values (arguments) of pars
-		Par<Double> dbp1 = persistent(par("design/in", 25.0));
-		Par<String> dbp2 = dbPar("url/sobol", "http://sorcersoft.org/sobol");
+		ParEntry<Double> dbp1 = persistent(par("design/in", 25.0));
+		ParEntry<String> dbp2 = dbPar("url/sobol", "http://sorcersoft.org/sobol");
 
 		assertFalse(asis(dbp1) instanceof URL);
 		assertTrue(asis(dbp2) instanceof URL);
@@ -290,8 +290,8 @@ public class CollectionOperators {
 		URL p1Url = store(par("design/in", 30.0));
 		URL p2Url = store(par("url/sorcer", "http://sorcersoft.org"));
 		
-		assertEquals(value((Par)content(p1Url)), 30.0);
-		assertEquals(value((Par)content(p2Url)), "http://sorcersoft.org");
+		assertEquals(value((ParEntry)content(p1Url)), 30.0);
+		assertEquals(value((ParEntry)content(p2Url)), "http://sorcersoft.org");
 
 	}
 	
@@ -453,9 +453,9 @@ public class CollectionOperators {
 
 
 		// context and exertion parameters
-		Par x1p = par("x1p", "arg/x1", c4);
-		Par x2p = par("x2p", "arg/x2", c4);
-		Par j1p = par("j1p", "j1/t3/result/y", j1);
+		ParEntry x1p = par("x1p", "arg/x1", c4);
+		ParEntry x2p = par("x2p", "arg/x2", c4);
+		ParEntry j1p = par("j1p", "j1/t3/result/y", j1);
 
 		// par model with contexts and exertion
 		ParModel pc = parModel(x1p, x2p, j1p);

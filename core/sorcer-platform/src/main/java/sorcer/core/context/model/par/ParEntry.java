@@ -46,12 +46,12 @@ import java.util.logging.Logger;
  * @author Mike Sobolewski
  */
 @SuppressWarnings({"unchecked", "rawtypes" })
-public class Par<T> extends Entry<T> implements Variability<T>, Arg, Mappable<T>, Evaluation<T>, 
+public class ParEntry<T> extends Entry<T> implements Variability<T>, Arg, Mappable<T>, Evaluation<T>,
 	Invocation<T>, Setter, Scopable, Comparable<T>, Reactive<T>, Serializable {
 
 	private static final long serialVersionUID = 7495489980319169695L;
 	 
-	private static Logger logger = Logger.getLogger(Par.class.getName());
+	private static Logger logger = Logger.getLogger(ParEntry.class.getName());
 
 	protected final String name;
 	
@@ -74,19 +74,19 @@ public class Par<T> extends Entry<T> implements Variability<T>, Arg, Mappable<T>
 	// par fidelities for this par
 	protected Map<String, Object> fidelities;
 
-	public Par(String parname) {
+	public ParEntry(String parname) {
 		super(parname);
 		name = parname;
 		value = null;
 	}
 	
-	public Par(Identifiable identifiable) {
+	public ParEntry(Identifiable identifiable) {
 		super(identifiable.getName());
 		name = identifiable.getName();
 		value = (T)identifiable;
 	}
 	
-	public Par(String path, T argument) throws EvaluationException {
+	public ParEntry(String path, T argument) throws EvaluationException {
 		super(path);
 		name = path;
 		
@@ -105,7 +105,7 @@ public class Par<T> extends Entry<T> implements Variability<T>, Arg, Mappable<T>
 		}
 	}
 	
-	public Par(String path, Object argument, Context scope)
+	public ParEntry(String path, Object argument, Context scope)
 			throws RemoteException, ContextException {
 		this(path, (T)argument);
 		if (((ServiceContext)scope).containsKey(Condition._closure_))
@@ -115,7 +115,7 @@ public class Par<T> extends Entry<T> implements Variability<T>, Arg, Mappable<T>
 			((Scopable)argument).setScope(this.scope);
 	}
 	
-	public Par(String name, String path, Service map) {
+	public ParEntry(String name, String path, Service map) {
 		this(name);
 		value =  (T)path;
 		mappable = (Mappable)map;
@@ -145,14 +145,14 @@ public class Par<T> extends Entry<T> implements Variability<T>, Arg, Mappable<T>
 		if (mappable != null && this.value instanceof String ) {
 			try {
 				Object val = mappable.asis((String)this.value);
-				if (val instanceof Par) {
-					((Par)val).setValue(value);
+				if (val instanceof ParEntry) {
+					((ParEntry)val).setValue(value);
 				} else if (isPersistent) {
 					if (SdbUtil.isSosURL(val)) {
 						SdbUtil.update((URL)val, value);
 					} else {
 						URL url = SdbUtil.store(value);
-						Par p = new Par((String)this.value, url);
+						ParEntry p = new ParEntry((String)this.value, url);
 						p.setPersistent(true);
 						if (mappable instanceof ServiceContext)
 							((ServiceContext)mappable).put((String)this.value, p);
@@ -200,8 +200,8 @@ public class Par<T> extends Entry<T> implements Variability<T>, Arg, Mappable<T>
 			}
 			if (mappable != null && value instanceof String) {
 				Object obj = mappable.asis((String) value);
-				if (obj instanceof Par && ((Par)obj).isPersistent())
-					return (T)((Par)obj).getValue();
+				if (obj instanceof ParEntry && ((ParEntry)obj).isPersistent())
+					return (T)((ParEntry)obj).getValue();
 				else
 					val = (T) mappable.getValue((String) value);
 			} else if (value == null && scope != null) {
@@ -210,7 +210,7 @@ public class Par<T> extends Entry<T> implements Variability<T>, Arg, Mappable<T>
 				val = value;
 			}
 			if (val instanceof Evaluation) {
-				if (val instanceof Par && ((Par)val).asis() == null && value == null) {
+				if (val instanceof ParEntry && ((ParEntry)val).asis() == null && value == null) {
 					logger.warning("undefined par: " + val);
 					return null;
 				}
@@ -248,14 +248,14 @@ public class Par<T> extends Entry<T> implements Variability<T>, Arg, Mappable<T>
 					val = (T) ((URL) val).getContent();
 				} else {
 					URL url = SdbUtil.store(val);
-					Par p = null;
+					ParEntry p = null;
 					if (mappable != null && this.value instanceof String
 							&& mappable.asis((String) this.value) != null) {
-						p = new Par((String) this.value, url);
+						p = new ParEntry((String) this.value, url);
 						p.setPersistent(true);
 						mappable.putValue((String) this.value, p);
 					} else if (this.value instanceof Identifiable) {
-						p = new Par((String) ((Identifiable) this.value).getName(), url);
+						p = new ParEntry((String) ((Identifiable) this.value).getName(), url);
 						p.setPersistent(true);
 					} else {
 						this.value = (T)url;
@@ -279,11 +279,11 @@ public class Par<T> extends Entry<T> implements Variability<T>, Arg, Mappable<T>
 			return this;
 		for (Arg p : parameters) {
 			try {
-				if (p instanceof Par) {
-					if (name.equals(((Par<T>) p).name)) {
-						value = ((Par<T>) p).value;
-						if (((Par<T>) p).getScope() != null)
-							scope.append(((Par<T>) p).getScope());
+				if (p instanceof ParEntry) {
+					if (name.equals(((ParEntry<T>) p).name)) {
+						value = ((ParEntry<T>) p).value;
+						if (((ParEntry<T>) p).getScope() != null)
+							scope.append(((ParEntry<T>) p).getScope());
 
 					}
 				} else if (p instanceof SelectionFidelity && fidelities != null) {
@@ -334,8 +334,8 @@ public class Par<T> extends Entry<T> implements Variability<T>, Arg, Mappable<T>
 	public int compareTo(T o) {
 		if (o == null)
 			throw new NullPointerException();
-		if (o instanceof Par<?>)
-			return name.compareTo(((Par<?>) o).getName());
+		if (o instanceof ParEntry<?>)
+			return name.compareTo(((ParEntry<?>) o).getName());
 		else
 			return -1;
 	}
@@ -578,9 +578,9 @@ public class Par<T> extends Entry<T> implements Variability<T>, Arg, Mappable<T>
 	public void addArgs(ArgSet set) throws EvaluationException {
 		Iterator<Arg> i = set.iterator();
 		while (i.hasNext()) {
-			Par par = (Par)i.next();
+			ParEntry parEntry = (ParEntry)i.next();
 			try {
-				putValue(par.getName(), par.asis());
+				putValue(parEntry.getName(), parEntry.asis());
 			} catch (Exception e) {
 				throw new EvaluationException(e);
 			} 
@@ -596,8 +596,8 @@ public class Par<T> extends Entry<T> implements Variability<T>, Arg, Mappable<T>
 	
 	@Override
 	public boolean equals(Object object) {
-		if (object instanceof Par
-				&& ((Par) object).name.equals(name))
+		if (object instanceof ParEntry
+				&& ((ParEntry) object).name.equals(name))
 			return true;
 		else
 			return false;

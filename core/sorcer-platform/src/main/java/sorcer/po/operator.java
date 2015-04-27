@@ -20,7 +20,7 @@ import sorcer.co.tuple.*;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.par.Agent;
-import sorcer.core.context.model.par.Par;
+import sorcer.core.context.model.par.ParEntry;
 import sorcer.core.context.model.par.ParModel;
 import sorcer.core.invoker.*;
 import sorcer.service.*;
@@ -39,61 +39,61 @@ public class operator {
 	private static final Logger logger = Logger.getLogger(operator.class.getName());
 
 
-	public static <T> Par<T> par(String path, T argument) throws EvaluationException, RemoteException {
-		return new Par(path, argument);
+	public static <T> ParEntry<T> par(String path, T argument) throws EvaluationException, RemoteException {
+		return new ParEntry(path, argument);
 	}
 	
-	public static Par dbPar(String path, Object argument) throws EvaluationException, RemoteException {
-		Par p = new Par(path, argument);
+	public static ParEntry dbPar(String path, Object argument) throws EvaluationException, RemoteException {
+		ParEntry p = new ParEntry(path, argument);
 		p.setPersistent(true);
 		p.getValue();
 		return p;
 	}
 	
-	public static Par par(Context context, Identifiable identifiable) throws EvaluationException, RemoteException {
-		Par p = new Par(identifiable.getName(), identifiable);
+	public static ParEntry par(Context context, Identifiable identifiable) throws EvaluationException, RemoteException {
+		ParEntry p = new ParEntry(identifiable.getName(), identifiable);
 		p.setScope(context);
 		return p;
 	}
 	
-	public static Par par(Context context, String path, Object argument) throws EvaluationException, RemoteException {
-		Par p = new Par(path, argument);
+	public static ParEntry par(Context context, String path, Object argument) throws EvaluationException, RemoteException {
+		ParEntry p = new ParEntry(path, argument);
 		p.setScope(context);
 		return p;
 	}
 	
-	public static Par dPar(Context context, Identifiable identifiable) throws EvaluationException, RemoteException {
-		Par p = new Par(identifiable.getName(), identifiable);
+	public static ParEntry dPar(Context context, Identifiable identifiable) throws EvaluationException, RemoteException {
+		ParEntry p = new ParEntry(identifiable.getName(), identifiable);
 		p.setPersistent(true);
 		p.setScope(context);
 		return p;
 	}
 	
-	public static Par dbPar(Context context, String path, Object argument) throws EvaluationException, RemoteException {
-		Par p = new Par(path, argument);
+	public static ParEntry dbPar(Context context, String path, Object argument) throws EvaluationException, RemoteException {
+		ParEntry p = new ParEntry(path, argument);
 		p.setPersistent(true);
 		p.setScope(context);
 		return p;
 	}
 	
-	public static Par par(String name, String path, Service argument) {
-		Par p = new Par(name, path, argument);
+	public static ParEntry par(String name, String path, Service argument) {
+		ParEntry p = new ParEntry(name, path, argument);
 		return p;
 	}
 	
-	public static Par pipe(Mappable in, String name, String path, Service out) throws ContextException {
-		Par p = new Par(name, path, out);
+	public static ParEntry pipe(Mappable in, String name, String path, Service out) throws ContextException {
+		ParEntry p = new ParEntry(name, path, out);
 		add(p, in);
 		return p;
 	}
 	
-	public static Par storeUrl(Par par, URL url) {
-		par.setDbURL(url);
-		return par;
+	public static ParEntry storeUrl(ParEntry parEntry, URL url) {
+		parEntry.setDbURL(url);
+		return parEntry;
 	}
 	
-	public static Par par(ParModel pm, String name) throws ContextException, RemoteException {
-		Par parameter = new Par(name, pm.asis(name));
+	public static ParEntry par(ParModel pm, String name) throws ContextException, RemoteException {
+		ParEntry parameter = new ParEntry(name, pm.asis(name));
 		parameter.setScope(pm);
 		return parameter;
 	}
@@ -110,9 +110,9 @@ public class operator {
 		return new SelectionFidelity(name);
 	}
 	
-	public static Entry parFi(Par par) {
-		Entry fi = new Entry(par.getSelectedFidelity(), par.getFidelities()
-				.get(par.getSelectedFidelity()));
+	public static Entry parFi(ParEntry parEntry) {
+		Entry fi = new Entry(parEntry.getSelectedFidelity(), parEntry.getFidelities()
+				.get(parEntry.getSelectedFidelity()));
 		return fi;
 	}
 	
@@ -126,15 +126,15 @@ public class operator {
 	public static <T> T get(ParModel<T> pm, String parname, Arg... parametrs)
 			throws ContextException, RemoteException {
 		Object obj = pm.asis(parname);
-		if (obj instanceof Par)
-			obj = ((Par)obj).getValue(parametrs);
+		if (obj instanceof ParEntry)
+			obj = ((ParEntry)obj).getValue(parametrs);
 		return (T)obj;
 	}
 		
 	public static Invocation invoker(Mappable mappable, String path)
 			throws ContextException {
 		Object obj = ((ServiceContext) mappable).asis(path);
-		while (obj instanceof Mappable || obj instanceof Par) {
+		while (obj instanceof Mappable || obj instanceof ParEntry) {
 			try {
 				obj = ((Evaluation) obj).asis();
 			} catch (RemoteException e) {
@@ -147,9 +147,9 @@ public class operator {
 			throw new NoneException("No such invoker at: " + path + " in: " + mappable.getName());
 	}
 	
-	public static Object asis(Par par) throws EvaluationException,
+	public static Object asis(ParEntry parEntry) throws EvaluationException,
 			RemoteException {
-		return par.asis();
+		return parEntry.asis();
 	}
 	
 	public static void clearPars(Object invoker) throws EvaluationException {
@@ -174,7 +174,7 @@ public class operator {
 		return parContext;
 	}
 	
-	public static Par put(ParModel parModel, String name, Object value) throws ContextException, RemoteException {
+	public static ParEntry put(ParModel parModel, String name, Object value) throws ContextException, RemoteException {
 		parModel.putValue(name, value);
 		parModel.setContextChanged(true);
 		return par(parModel, name);
@@ -188,55 +188,55 @@ public class operator {
 		return parModel;
 	}
 	
-	public static Par set(Par par, Object value)
+	public static ParEntry set(ParEntry parEntry, Object value)
 			throws ContextException {
 		try {
-			par.setValue(value);
+			parEntry.setValue(value);
 		} catch (RemoteException e) {
 			throw new ContextException(e);
 		}
-		if (par.getScope() != null && par.getContextable() == null) {
-			par.getScope().putValue(par.getName(), value);
+		if (parEntry.getScope() != null && parEntry.getContextable() == null) {
+			parEntry.getScope().putValue(parEntry.getName(), value);
 		}
-		return par;
+		return parEntry;
 	}
 	
-	public static Par set(ParModel context, String parname, Object value)
+	public static ParEntry set(ParModel context, String parname, Object value)
 			throws ContextException {
-		Par par = context.getPar(parname);
-		if (par == null)
-			par = context.addPar(parname, value);
+		ParEntry parEntry = context.getPar(parname);
+		if (parEntry == null)
+			parEntry = context.addPar(parname, value);
 		else
 			try {
-				par.setValue(value);
+				parEntry.setValue(value);
 			} catch (RemoteException e) {
 				throw new ContextException(e);
 			}
-		if (par.getScope() != null && par.getContextable() == null) {
-			par.getScope().putValue(par.getName(), value);
+		if (parEntry.getScope() != null && parEntry.getContextable() == null) {
+			parEntry.getScope().putValue(parEntry.getName(), value);
 		}
-		return par;
+		return parEntry;
 	}
 	
-	public static Par add(Par par, Object to)
+	public static ParEntry add(ParEntry parEntry, Object to)
 			throws ContextException {
 		if (to instanceof Exertion) {
-			((ServiceExertion)to).addPersister(par);
-			return par;
+			((ServiceExertion)to).addPersister(parEntry);
+			return parEntry;
 		}
-		return par;
+		return parEntry;
 	}
 	
-	public static Par connect(Object to, Par par)
+	public static ParEntry connect(Object to, ParEntry parEntry)
 			throws ContextException {
-		return add(par, to);
+		return add(parEntry, to);
 	}
 	
-	public static Par par(Object object) throws EvaluationException, RemoteException {
+	public static ParEntry par(Object object) throws EvaluationException, RemoteException {
 		if (object instanceof String)
-			return new Par((String)object);
+			return new ParEntry((String)object);
 		else if (object instanceof Identifiable)
-			return new Par(((Identifiable) object).getName(), object);
+			return new ParEntry(((Identifiable) object).getName(), object);
 		return null;
 	}
 	
@@ -258,9 +258,9 @@ public class operator {
 			// assume that the first argument is always context if provided
 			if (parameters.length > 0 && parameters[0] instanceof Context)
 				scope = (Context)parameters[0];
-			if (obj instanceof Par
-					&& ((Par) obj).asis() instanceof Invocation) {
-				Invocation invoker = (Invocation) ((Par) obj).asis();
+			if (obj instanceof ParEntry
+					&& ((ParEntry) obj).asis() instanceof Invocation) {
+				Invocation invoker = (Invocation) ((ParEntry) obj).asis();
 				//return invoker.invoke(parModel, parameters);
 				if (scope != null)
 					return invoker.invoke(scope, parameters);
@@ -291,7 +291,7 @@ public class operator {
 			throws ContextException {
 		ArgSet ps = new ArgSet();
 		for (String name : parnames) {
-			ps.add(new Par(name));
+			ps.add(new ParEntry(name));
 		}
 		return ps.toArray();
 	}
@@ -309,16 +309,16 @@ public class operator {
 		return new ServiceInvoker(evaluator,pars);
 	}
 	
-	public static ServiceInvoker invoker(Evaluator evaluator, Par... pars) {
-		return new ServiceInvoker(evaluator,pars);
+	public static ServiceInvoker invoker(Evaluator evaluator, ParEntry... parEntries) {
+		return new ServiceInvoker(evaluator, parEntries);
 	}
 	
 	public static ServiceInvoker invoker(String name, String expression, Arg... pars) {
 		return new GroovyInvoker(name, expression, pars);
 	}
 	
-	public static ServiceInvoker invoker(String name, String expression, Par... pars) {
-		return new GroovyInvoker(name, expression, pars);
+	public static ServiceInvoker invoker(String name, String expression, ParEntry... parEntries) {
+		return new GroovyInvoker(name, expression, parEntries);
 	}
 	
 	public static ServiceInvoker invoker(String expression, Arg... pars) {
@@ -359,41 +359,41 @@ public class operator {
 		return inceremntor.next();
 	}	
 	
-	public static MethodInvoker methodInvoker(String selector, Object methodObject, Par... pars) {
-		return new MethodInvoker(selector, methodObject, selector, pars);
+	public static MethodInvoker methodInvoker(String selector, Object methodObject, ParEntry... parEntries) {
+		return new MethodInvoker(selector, methodObject, selector, parEntries);
 	}
 	
 	public static MethodInvoker methodInvoker(String selector, Object methodObject,
-			Context context, Par... pars) {
+			Context context, ParEntry... parEntries) {
 		MethodInvoker mi = new MethodInvoker(selector, methodObject, selector,
-				pars);
+				parEntries);
 		mi.setArgs(new Class[] { Context.class });
 		mi.setContext(context);
 		return mi;
 	}
 	
-	public static ExertInvoker exertInvoker(String name, Exertion exertion, String path, Par... pars) {
-		return new ExertInvoker(name, exertion, path, pars);
+	public static ExertInvoker exertInvoker(String name, Exertion exertion, String path, ParEntry... parEntries) {
+		return new ExertInvoker(name, exertion, path, parEntries);
 	}
 	
-	public static ExertInvoker exertInvoker(Exertion exertion, String path, Par... pars) {
-		return new ExertInvoker(exertion, path, pars);
+	public static ExertInvoker exertInvoker(Exertion exertion, String path, ParEntry... parEntries) {
+		return new ExertInvoker(exertion, path, parEntries);
 	}
 	
-	public static ExertInvoker exertInvoker(Exertion exertion, Par... pars) {
-		return new ExertInvoker(exertion, pars);
+	public static ExertInvoker exertInvoker(Exertion exertion, ParEntry... parEntries) {
+		return new ExertInvoker(exertion, parEntries);
 	}
 	
-	public static CmdInvoker cmdInvoker(String name, String cmd, Par... pars) {
-		return new CmdInvoker(name, cmd, pars);
+	public static CmdInvoker cmdInvoker(String name, String cmd, ParEntry... parEntries) {
+		return new CmdInvoker(name, cmd, parEntries);
 	}
 	
-	public static RunnableInvoker runnableInvoker(String name, Runnable runnable, Par... pars) {
-		 return new RunnableInvoker(name, runnable, pars);
+	public static RunnableInvoker runnableInvoker(String name, Runnable runnable, ParEntry... parEntries) {
+		 return new RunnableInvoker(name, runnable, parEntries);
 	}
 	
-	public static CallableInvoker callableInvoker(String name, Callable callable, Par... pars) {
-		 return new CallableInvoker(name, callable, pars);
+	public static CallableInvoker callableInvoker(String name, Callable callable, ParEntry... parEntries) {
+		 return new CallableInvoker(name, callable, parEntries);
 	}
 
 	public static OptInvoker opt(String name, ServiceInvoker target) {
@@ -412,9 +412,9 @@ public class operator {
 		return new LoopInvoker(name, condition, target);
 	}
 
-	public static LoopInvoker loop(String name, Condition condition, Par target)
+	public static LoopInvoker loop(String name, Condition condition, ParEntry target)
 			throws EvaluationException, RemoteException {
-		return new LoopInvoker(name, condition, (ServiceInvoker) ((Par) target).asis());
+		return new LoopInvoker(name, condition, (ServiceInvoker) ((ParEntry) target).asis());
 	}
 	
 	public static OptInvoker get(AltInvoker invoker, int index) {
@@ -434,21 +434,21 @@ public class operator {
 		return new ExecPath(name, invoker);
 	}
 	
-	public static InputEntry input(Par par) {
-		return new InputEntry(par.getName(), par, 0);
+	public static InputEntry input(ParEntry parEntry) {
+		return new InputEntry(parEntry.getName(), parEntry, 0);
 	}
 
-	public static InputEntry in(Par par) {
-		return input(par);
+	public static InputEntry in(ParEntry parEntry) {
+		return input(parEntry);
 	}
 	
-	public static Context scope(Par par) {
-		return par.getScope();
+	public static Context scope(ParEntry parEntry) {
+		return parEntry.getScope();
 	}
 	
-	public static Context invokeScope(Par par) throws EvaluationException,
+	public static Context invokeScope(ParEntry parEntry) throws EvaluationException,
 			RemoteException {
-		Object obj = par.asis();
+		Object obj = parEntry.asis();
 		if (obj instanceof ServiceInvoker)
 			return ((ServiceInvoker) obj).getScope();
 		else

@@ -11,7 +11,7 @@ import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.provider.impl.SubtractorImpl;
-import sorcer.core.context.model.par.Par;
+import sorcer.core.context.model.par.ParEntry;
 import sorcer.core.context.model.par.ParModel;
 import sorcer.core.invoker.AltInvoker;
 import sorcer.core.invoker.Invocable;
@@ -58,9 +58,9 @@ public class Invokers {
 			.getName());
 
 	private ParModel pm; 
-	private Par<Double> x;
-	private Par<Double> y;
-	private Par z;
+	private ParEntry<Double> x;
+	private ParEntry<Double> y;
+	private ParEntry z;
 
 	// member subclass of Invocable with Context parameter used below with
 	// contextMethodAttachmentWithArgs()
@@ -198,7 +198,7 @@ public class Invokers {
 	public void invokerParTest() throws RemoteException, ContextException,
 			SignatureException, ExertionException {
 
-		Par<Double> x1 = par("x1", 1.0);
+		ParEntry<Double> x1 = par("x1", 1.0);
 
 		// logger.info("invoke value:" + invoke(x1));
 		assertEquals(invoke(x1), 1.0);
@@ -207,7 +207,7 @@ public class Invokers {
 	@Test
 	public void substituteArgsTest() throws RemoteException, ContextException,
 			SignatureException, ExertionException {
-		Par x1, x2, y;
+		ParEntry x1, x2, y;
 
 		x1 = par("x1", 1.0);
 		x2 = par("x2", 2.0);
@@ -496,7 +496,7 @@ public class Invokers {
 
 		add(pm,
 				loop("loop", condition(pm, "{ x -> x < 20 }", "x"),
-						(ServiceInvoker) asis((Par) asis(pm, "y"))));
+						(ServiceInvoker) asis((ParEntry) asis(pm, "y"))));
 
 		// logger.info("loop value: " + value(pm, "loop"));
 		assertTrue((Integer) value(pm, "loop") == 20);

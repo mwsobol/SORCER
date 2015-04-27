@@ -28,7 +28,7 @@ import sorcer.core.context.ControlContext;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.ThrowableTrace;
 import sorcer.core.context.model.ent.Entry;
-import sorcer.core.context.model.par.Par;
+import sorcer.core.context.model.par.ParEntry;
 import sorcer.core.deploy.ServiceDeployment;
 import sorcer.core.dispatch.*;
 import sorcer.core.provider.*;
@@ -475,8 +475,8 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 				List<Setter> ps = ((ServiceExertion) mogram).getPersisters();
 				if (ps != null) {
 					for (Setter p : ps) {
-						if (p != null && (p instanceof Par) && ((Par) p).isMappable()) {
-							String from = (String) ((Par) p).getName();
+						if (p != null && (p instanceof ParEntry) && ((ParEntry) p).isMappable()) {
+							String from = (String) ((ParEntry) p).getName();
 							Object obj = null;
 							if (mogram instanceof Job)
 								obj = ((Job) mogram).getJobContext().getValue(from);

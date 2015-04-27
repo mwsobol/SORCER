@@ -21,8 +21,8 @@ import sorcer.core.context.Copier;
 import sorcer.core.context.ListContext;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.ent.Entry;
-import sorcer.core.context.model.par.Par;
-import sorcer.core.context.model.srv.Srv;
+import sorcer.core.context.model.par.ParEntry;
+import sorcer.core.context.model.srv.SrvEntry;
 import sorcer.core.provider.DatabaseStorer;
 import sorcer.service.Scopable;
 import sorcer.service.*;
@@ -196,24 +196,24 @@ public class operator {
         return new Entry(path, ((Context)model).asis(path));
     }
 
-    public static Srv srv(Identifiable item) {
+    public static SrvEntry srv(Identifiable item) {
         if (item instanceof Signature)
-            return new Srv(item.getName(),
+            return new SrvEntry(item.getName(),
                     new SignatureEntry(item.getName(), (Signature) item));
         else
-            return new Srv(item.getName(), item);
+            return new SrvEntry(item.getName(), item);
     }
 
-	public static Srv srv(String name, String path, Model model) {
-		return new Srv(path, model, name);
+	public static SrvEntry srv(String name, String path, Model model) {
+		return new SrvEntry(path, model, name);
 	}
 
-	public static Srv srv(String name, String path, Model model, Variability.Type type) {
-		return new Srv(path, model, name, type);
+	public static SrvEntry srv(String name, String path, Model model, Variability.Type type) {
+		return new SrvEntry(path, model, name, type);
 	}
 
-	public static Srv srv(String name, String path) {
-		return new Srv(path, null, name);
+	public static SrvEntry srv(String name, String path) {
+		return new SrvEntry(path, null, name);
 	}
 
 	public static <T> Entry<T> ent(String path, T value) {
@@ -421,8 +421,8 @@ public class operator {
 
 	public static void dbURL(Object object, URL dbUrl)
 			throws MalformedURLException {
-		if (object instanceof Par)
-			((Par) object).setDbURL(dbUrl);
+		if (object instanceof ParEntry)
+			((ParEntry) object).setDbURL(dbUrl);
 		else if (object instanceof ServiceContext)
 			((ServiceContext) object).setDbUrl("" + dbUrl);
 		else
@@ -430,8 +430,8 @@ public class operator {
 	}
 
 	public static URL dbURL(Object object) throws MalformedURLException {
-		if (object instanceof Par)
-			return ((Par) object).getDbURL();
+		if (object instanceof ParEntry)
+			return ((ParEntry) object).getDbURL();
 		else if (object instanceof ServiceContext)
 			return new URL(((ServiceContext) object).getDbUrl());
 		return null;
@@ -477,7 +477,7 @@ public class operator {
 	}
 
 	public static <T> Entry<T> dbEnt(String path) {
-		Entry<T> e = new Par<T>(path);
+		Entry<T> e = new ParEntry<T>(path);
 		e.setPersistent(true);
 		return e;
 	}

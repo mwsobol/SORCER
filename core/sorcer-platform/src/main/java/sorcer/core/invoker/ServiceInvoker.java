@@ -20,7 +20,7 @@ package sorcer.core.invoker;
 import net.jini.id.Uuid;
 import net.jini.id.UuidFactory;
 import sorcer.core.context.model.ent.Entry;
-import sorcer.core.context.model.par.Par;
+import sorcer.core.context.model.par.ParEntry;
 import sorcer.core.context.model.par.ParModel;
 import sorcer.service.Scopable;
 import sorcer.service.*;
@@ -114,10 +114,10 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 		invokeContext = context;
 	}
 	
-	public ServiceInvoker(ParModel context, Evaluator evaluator, Par... pars) {
+	public ServiceInvoker(ParModel context, Evaluator evaluator, ParEntry... parEntries) {
 		this(context);
 		this.evaluator = evaluator;
-		this.pars = new ArgSet(pars);
+		this.pars = new ArgSet(parEntries);
 	}
 	
 	public ServiceInvoker(ParModel context, Evaluator evaluator, ArgSet pars) {
@@ -132,10 +132,10 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 		this.pars = pars;
 	}
 	
-	public ServiceInvoker(Evaluator evaluator, Par... pars) {
+	public ServiceInvoker(Evaluator evaluator, ParEntry... parEntries) {
 		this(((Identifiable)evaluator).getName());
 		this.evaluator = evaluator;
-		this.pars = new ArgSet(pars);
+		this.pars = new ArgSet(parEntries);
 	}
 	
 	/**
@@ -230,11 +230,11 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 	 * @throws RemoteException
 	 */
 	public ServiceInvoker addPar(Object par) throws EvaluationException, RemoteException {
-		if (par instanceof Par) {
-			invokeContext.put(((Par) par).getName(), par);
-			if (((Par) par).asis() instanceof ServiceInvoker) {
-				((ServiceInvoker) ((Par) par).getValue()).addObserver(this);
-				pars.add((Par) par);
+		if (par instanceof ParEntry) {
+			invokeContext.put(((ParEntry) par).getName(), par);
+			if (((ParEntry) par).asis() instanceof ServiceInvoker) {
+				((ServiceInvoker) ((ParEntry) par).getValue()).addObserver(this);
+				pars.add((ParEntry) par);
 				value = null;
 				setChanged();
 				notifyObservers(this);
@@ -242,7 +242,7 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 			}
 		} else if (par instanceof Identifiable) {
 			try {
-				Par p = new Par(((Identifiable) par).getName(), par, invokeContext);	
+				ParEntry p = new ParEntry(((Identifiable) par).getName(), par, invokeContext);
 				invokeContext.putValue(p.getName(), p);
 			} catch (ContextException e) {
 				throw new EvaluationException(e);
@@ -258,16 +258,16 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 		}
 	}
 	
-	synchronized public void addPars(List<Par> parList)
+	synchronized public void addPars(List<ParEntry> parEntryList)
 			throws EvaluationException, RemoteException {
-		for (Par p : parList) {
+		for (ParEntry p : parEntryList) {
 			addPar(p);
 		}
 	}
 	
-	synchronized public void addPars(Par... pars) throws EvaluationException,
+	synchronized public void addPars(ParEntry... parEntries) throws EvaluationException,
 			RemoteException {
-		for (Par p : pars) {
+		for (ParEntry p : parEntries) {
 			addPar(p);
 		}
 	}
@@ -346,8 +346,8 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 	
 	private void init(ArgSet set){
 		for (Arg p : set) {
-			if (((Par)p).getScope() == null)
-				((Par)p).setScope(invokeContext);
+			if (((ParEntry)p).getScope() == null)
+				((ParEntry)p).setScope(invokeContext);
 		}
 	}
 	
@@ -432,7 +432,7 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 	public void clearPars() throws EvaluationException {
 		for (Arg p : pars) {
 			try {
-				((Par) p).setValue(null);
+				((ParEntry) p).setValue(null);
 			} catch (Exception e) {
 				throw new EvaluationException(e);
 			}

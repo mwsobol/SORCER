@@ -26,14 +26,12 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import sorcer.service.EvaluationException;
-import sorcer.service.Identity;
-import sorcer.service.SetterException;
 
 /**
  * @author Mike Sobolewski
  */
 @SuppressWarnings("rawtypes")
-public class ParSet extends TreeSet<Par> {
+public class ParSet extends TreeSet<ParEntry> {
 	
 	private static final long serialVersionUID = -4662755904016297879L;
 	
@@ -45,8 +43,8 @@ public class ParSet extends TreeSet<Par> {
 		addAll(parList);
 	}
 	
-	public ParSet(Set<Par> parSet) {
-		addAll(parSet);
+	public ParSet(Set<ParEntry> parEntrySet) {
+		addAll(parEntrySet);
 	}
 
 	
@@ -56,14 +54,14 @@ public class ParSet extends TreeSet<Par> {
 		}
 	}
 	
-	public ParSet(Par<?>...  pars) {
-		for (Par<?> v : pars) {
+	public ParSet(ParEntry<?>... parEntries) {
+		for (ParEntry<?> v : parEntries) {
 			add(v);
 		}
 	}
 	
-	public Par<?> getPar(String parName) throws ParException {
-		for (Par<?> v : this) {
+	public ParEntry<?> getPar(String parName) throws ParException {
+		for (ParEntry<?> v : this) {
 			if (v.getName().equals(parName))
 				return v;
 		}
@@ -72,19 +70,19 @@ public class ParSet extends TreeSet<Par> {
 	
 	public void setValue(String parName, Object value)
 			throws EvaluationException {
-		Par par = null;
-		for (Par<?> p : this) {
+		ParEntry parEntry = null;
+		for (ParEntry<?> p : this) {
 			if (p.getName().equals(parName)) {
-				par = p;
+				parEntry = p;
 				try {
-					par.setValue(value);
+					parEntry.setValue(value);
 				} catch (Exception e) {
 					throw new EvaluationException(e);
 				}
 				break;
 			}
 		}
-		if (par == null)
+		if (parEntry == null)
 			throw new ParException("No such Par in the list: " + parName);
 	}
 	
@@ -94,7 +92,7 @@ public class ParSet extends TreeSet<Par> {
 			allParNames.addAll(nl);
 		}
 		ParList out = new ParList();
-		for (Par<?> v : this) {
+		for (ParEntry<?> v : this) {
 			if (allParNames.contains(v.getName())) {
 				out.add(v);
 			}
@@ -105,7 +103,7 @@ public class ParSet extends TreeSet<Par> {
 	public ParSet selectPars(String... parnames) {
 		List<String> vnames = Arrays.asList(parnames);
 		ParSet out = new ParSet();
-		for (Par<?> v : this) {
+		for (ParEntry<?> v : this) {
 			if (vnames.contains(v.getName())) {
 				out.add(v);
 			}
@@ -115,11 +113,11 @@ public class ParSet extends TreeSet<Par> {
 
 	@Override
 	public boolean contains(Object obj) {
-		if (!(obj instanceof Par<?>))
+		if (!(obj instanceof ParEntry<?>))
 			return false;
 		else {
-			for (Par<?> v : this) {
-				if (v.getName().equals(((Par<?>)obj).getName()))
+			for (ParEntry<?> v : this) {
+				if (v.getName().equals(((ParEntry<?>)obj).getName()))
 					return true;
 			}
 		}
@@ -128,11 +126,11 @@ public class ParSet extends TreeSet<Par> {
 	
 	@Override
 	public boolean remove(Object obj) {
-		if (obj == null || !(obj instanceof Par<?>)) {
+		if (obj == null || !(obj instanceof ParEntry<?>)) {
 			return false;
 		} else {
-			for (Par<?> v : this) {
-				if (v.getName().equals(((Par<?>) obj).getName())) {
+			for (ParEntry<?> v : this) {
+				if (v.getName().equals(((ParEntry<?>) obj).getName())) {
 					super.remove(v);
 					return true;
 				}
@@ -143,7 +141,7 @@ public class ParSet extends TreeSet<Par> {
 	
 	 public List<String> getNames() {
 		 List<String> names = new ArrayList<String>(size());
-		 Iterator<Par> i = iterator();
+		 Iterator<ParEntry> i = iterator();
 		 while (i.hasNext()) {
 			 names.add(i.next().getName());
 		 }
@@ -152,21 +150,21 @@ public class ParSet extends TreeSet<Par> {
 	 
 	 public List<Object> getValues() throws EvaluationException, RemoteException {
 		 List<Object> values = new ArrayList<Object>(size());
-		 Iterator<Par> i = iterator();
+		 Iterator<ParEntry> i = iterator();
 		 while (i.hasNext()) {
 			 values.add(i.next().getValue());
 		 }
 		 return values;
 	 }
 	 
-	 public Par<?>[] toArray() {
-		 Par<?>[] va = new Par[size()];
+	 public ParEntry<?>[] toArray() {
+		 ParEntry<?>[] va = new ParEntry[size()];
 		 return toArray(va);
 	 }
 			
 	 public ParList toParList() {
 		 ParList vl = new ParList(size());
-		 for (Par<?> v : this)
+		 for (ParEntry<?> v : this)
 			 vl.add(v);
 		 return vl;
 	 }
@@ -175,15 +173,15 @@ public class ParSet extends TreeSet<Par> {
 		 return new ParSet(list);
 	 }
 
-	 public static ParList asList(Par<?>[] array) {
+	 public static ParList asList(ParEntry<?>[] array) {
 		 ParList vl = new ParList(array.length);
-		 for (Par<?> v : array)
+		 for (ParEntry<?> v : array)
 			 vl.add(v);
 		 return vl;
 	 }
 
 	 public void clearPars() throws EvaluationException {
-			for (Par p : this) {
+			for (ParEntry p : this) {
 				try {
 					p.setValue(null);
 				} catch (Exception e) {

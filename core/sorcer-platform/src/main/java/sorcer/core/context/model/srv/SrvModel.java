@@ -99,9 +99,9 @@ public class SrvModel extends ParModel<Object> implements Model {
                     val = super.getValue(path, entries);
             }
 
-            if (val instanceof Srv) {
-                if (((Srv) val).asis() instanceof SignatureEntry) {
-                    ServiceSignature sig = (ServiceSignature) ((SignatureEntry) ((Srv) val).asis()).value();
+            if (val instanceof SrvEntry) {
+                if (((SrvEntry) val).asis() instanceof SignatureEntry) {
+                    ServiceSignature sig = (ServiceSignature) ((SignatureEntry) ((SrvEntry) val).asis()).value();
                     Context out = execSignature(sig);
                     if (sig.getReturnPath() != null && sig.getReturnPath().path != null) {
                         return getValue(sig.getReturnPath().path);
@@ -109,8 +109,8 @@ public class SrvModel extends ParModel<Object> implements Model {
                         return out;
                     }
                 } else {
-                    if (((Srv) val).getValue() == Context.none) {
-                        return getValue(((Srv) val).getName());
+                    if (((SrvEntry) val).getValue() == Context.none) {
+                        return getValue(((SrvEntry) val).getName());
                     }
                 }
             } else {

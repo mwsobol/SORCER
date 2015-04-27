@@ -100,8 +100,8 @@ public class ParModel<T> extends EntModel<T> implements Invocation<T>, Mappable<
 					val = (T) super.getValue(path, entries);
 			}
 
-			if ((val instanceof Par) && (((Par) val).asis() instanceof Variability)) {
-				bindVar((Variability) ((Par) val).asis());
+			if ((val instanceof ParEntry) && (((ParEntry) val).asis() instanceof Variability)) {
+				bindVar((Variability) ((ParEntry) val).asis());
 			}
 
 			if (val != null && val instanceof Evaluation) {
@@ -138,8 +138,8 @@ public class ParModel<T> extends EntModel<T> implements Invocation<T>, Mappable<
 		contextChanged = true;
 		Object obj = get(path);
 		try {
-			if (obj instanceof Par) {
-				((Par) obj).setValue(value);
+			if (obj instanceof ParEntry) {
+				((ParEntry) obj).setValue(value);
 				return (T) value;
 			} else {
 				if (value instanceof Scopable) {
@@ -157,13 +157,13 @@ public class ParModel<T> extends EntModel<T> implements Invocation<T>, Mappable<
 		}
 	}
 
-	public Par<Object> getPar(String name) throws ContextException {
+	public ParEntry<Object> getPar(String name) throws ContextException {
 		Object obj = get(name);
-		if (obj instanceof Par)
-			return (Par<Object>) obj;
+		if (obj instanceof ParEntry)
+			return (ParEntry<Object>) obj;
 		else
 			try {
-				return new Par<Object>(name, asis(name), this);
+				return new ParEntry<Object>(name, asis(name), this);
 			} catch (RemoteException e) {
 				throw new ContextException(e);
 			}
@@ -189,17 +189,17 @@ public class ParModel<T> extends EntModel<T> implements Invocation<T>, Mappable<
 
 	public ParModel append(Arg... objects) throws ContextException,
 			RemoteException {
-		Par p = null;
+		ParEntry p = null;
 		for (Arg obj : objects) {
-			if (obj instanceof Par) {
-				p = (Par) obj;
+			if (obj instanceof ParEntry) {
+				p = (ParEntry) obj;
 				addPar(p);
 			} else if (obj instanceof Entry) {
 				putValue((String) ((Entry) obj).key(),
 						((Entry) obj).value());
 			} else if (obj instanceof Identifiable) {
 				String pn = ((Identifiable) obj).getName();
-				p = new Par(pn, obj, new ParModel(pn).append(this));
+				p = new ParEntry(pn, obj, new ParModel(pn).append(this));
 			}
 
 			if (p != null)
@@ -211,16 +211,16 @@ public class ParModel<T> extends EntModel<T> implements Invocation<T>, Mappable<
 	
 	public ParModel add(Identifiable... objects) throws ContextException,
 			RemoteException {
-		Par p = null;
+		ParEntry p = null;
 		for (Identifiable obj : objects) {
-			if (obj instanceof Par) {
-				p = (Par) obj;
+			if (obj instanceof ParEntry) {
+				p = (ParEntry) obj;
 			} else if (obj instanceof Entry) {
 				putValue((String) ((Entry) obj).key(),
 						((Entry) obj).value());
 			} else {
 				String pn = ((Identifiable) obj).getName();
-				p = new Par(pn, obj, this);
+				p = new ParEntry(pn, obj, this);
 			}
 			
 			if (p != null)
@@ -262,7 +262,7 @@ public class ParModel<T> extends EntModel<T> implements Invocation<T>, Mappable<
 				if (((ServiceContext) context).getExecPath() != null) {
 					Object o = get(((ServiceContext) context).getExecPath()
 							.path());
-					if (o instanceof Par) {
+					if (o instanceof ParEntry) {
 						if (o instanceof Agent) {
 							if (((Agent) o).getScope() == null)
 								((Agent) o).setScope(this);
@@ -270,7 +270,7 @@ public class ParModel<T> extends EntModel<T> implements Invocation<T>, Mappable<
 								((Agent) o).getScope().append(this);
 							result = ((Agent) o).getValue(entries);
 						} else {
-							Object i = ((Par) get(((ServiceContext) context)
+							Object i = ((ParEntry) get(((ServiceContext) context)
 									.getExecPath().path())).asis();
 							if (i instanceof ServiceInvoker) {
 								result = ((ServiceInvoker) i).invoke(entries);
@@ -335,11 +335,11 @@ public class ParModel<T> extends EntModel<T> implements Invocation<T>, Mappable<
 		throw new ContextException("No such variability in context: " + name);
 	}
 	
-	private Par putVar(String path, Variability value) throws ContextException {
+	private ParEntry putVar(String path, Variability value) throws ContextException {
 		putValue(path, value);
 		markVar(this, path, value);
 		try {
-			return new Par(path, value, this);
+			return new ParEntry(path, value, this);
 		} catch (RemoteException e) {
 			throw new ContextException(e);
 		}
