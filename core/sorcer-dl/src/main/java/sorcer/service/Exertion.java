@@ -24,11 +24,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import net.jini.core.transaction.Transaction;
-import net.jini.core.transaction.TransactionException;
 import net.jini.id.Uuid;
-import sorcer.core.context.IControlContext;
-import sorcer.service.*;
+import sorcer.core.context.StrategyContext;
 import sorcer.core.context.ThrowableTrace;
 import sorcer.core.provider.Jobber;
 import sorcer.service.Strategy.Access;
@@ -171,7 +168,7 @@ public interface Exertion extends Mogram, Dependency, Invocation<Object>, Evalua
 	 * @return a control context
 	 * @see #getSignatures
 	 */
-	public IControlContext getControlContext();
+	public StrategyContext getControlContext();
 	
 	public String getExecTime();
 	

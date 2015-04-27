@@ -37,7 +37,7 @@ package sorcer.core.monitor;
 import net.jini.core.lease.Lease;
 import net.jini.core.transaction.server.TransactionConstants;
 import net.jini.id.Uuid;
-import sorcer.core.context.IControlContext;
+import sorcer.core.context.StrategyContext;
 import sorcer.service.Monitorable;
 import sorcer.service.Context;
 import sorcer.service.MonitorException;
@@ -203,7 +203,7 @@ public class MonitorableSession implements MonitoringSession {
 	 *             if there is a communication error
 	 **/
 
-	public void changed(Context ctx, IControlContext controlContext, int aspect) throws RemoteException,
+	public void changed(Context ctx, StrategyContext controlContext, int aspect) throws RemoteException,
 			MonitorException {
 		msm.update(cookie, ctx, controlContext, aspect);
 

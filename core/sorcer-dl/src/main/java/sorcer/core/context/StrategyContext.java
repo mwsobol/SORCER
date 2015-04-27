@@ -22,7 +22,7 @@ import sorcer.service.Strategy;
 /**
  * @author Rafał Krupiński
  */
-public interface IControlContext extends Context<Object>, Strategy {
+public interface StrategyContext extends Context<Object>, Strategy {
     boolean isMonitorable();
 
     void isMonitorable(Strategy.Monitor value);

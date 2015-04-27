@@ -16,9 +16,10 @@ public class ScriptExerterTest {
     final static String SCRIPT_FILE="src/test/resources/f1.ntl";
 
     @Test
-    public void testLoadNetletFromFile() throws Exception {
+    public void testLoadNetletFromFile() throws Throwable {
         ScriptExerter se = new ScriptExerter(new File(SCRIPT_FILE));
-        Assert.assertNotNull(se.getScript());
+        se.parse();
+        Assert.assertNotNull(se.getTarget());
     }
 
     @Test

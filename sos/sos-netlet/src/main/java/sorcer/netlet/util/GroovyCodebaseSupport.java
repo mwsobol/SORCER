@@ -40,7 +40,7 @@ public class GroovyCodebaseSupport extends AbstractASTTransformation {
     }
 
     private List<URL> expand(List<String> entries) {
-        List<URL> result = new LinkedList<>();
+        List<URL> result = new LinkedList<URL>();
         for (String entry : entries) {
             result.addAll(LoaderConfigurationHelper.load(entry));
         }
@@ -63,9 +63,10 @@ public class GroovyCodebaseSupport extends AbstractASTTransformation {
             for (AnnotationNode anno : node.getAnnotations()) {
                 String annotationClassName = anno.getClassNode().getName();
                 if ("Codebase".equals(annotationClassName)) {
-                    String value = anno.getMember("value").getText();
-                    codebase.add(value);
-
+                    if (anno.getMember("value")!=null) {
+                        String value = anno.getMember("value").getText();
+                        codebase.add(value);
+                    }
                 } else if ("Load".equals(annotationClassName)) {
                     String value = anno.getMember("value").getText();
                     classpath.add(value);

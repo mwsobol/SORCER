@@ -33,16 +33,8 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.logging.Logger;
 
-import sorcer.core.exertion.NetJob;
-import sorcer.core.exertion.NetTask;
-import sorcer.core.signature.ServiceSignature;
-import sorcer.service.*;
-import sorcer.util.Stopwatch;
-
-import static sorcer.core.SorcerConstants.*;
-
 @SuppressWarnings({"rawtypes", "unchecked"})
-public class ControlContext extends ServiceContext<Object> implements Strategy, IControlContext {
+public class ControlContext extends ServiceContext<Object> implements StrategyContext {
 
 	private static final long serialVersionUID = 7280700425027799253L;
 
