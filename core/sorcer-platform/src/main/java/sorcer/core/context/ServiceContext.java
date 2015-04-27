@@ -3385,9 +3385,14 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 		return true;
 	}
 
+	public int getIndex() {
+		return (index == null) ? -1 : index;
+	}
+
 	public void setIndex(int i) {
 		index = i;
 	}
+
 
 	public Signature getProcessSignature() {
 		if (subjectValue instanceof Signature)

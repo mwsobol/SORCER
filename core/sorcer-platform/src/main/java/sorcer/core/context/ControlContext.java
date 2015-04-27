@@ -33,14 +33,6 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.logging.Logger;
 
-import sorcer.core.exertion.NetJob;
-import sorcer.core.exertion.NetTask;
-import sorcer.core.signature.ServiceSignature;
-import sorcer.service.*;
-import sorcer.util.Stopwatch;
-
-import static sorcer.core.SorcerConstants.*;
-
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class ControlContext extends ServiceContext<Object> implements Strategy, IControlContext {
 
@@ -516,9 +508,11 @@ public class ControlContext extends ServiceContext<Object> implements Strategy, 
 		setExecTimeRequested(((Exertion)mogram), true);
 	}
 
-	public void deregisterExertion(Job job, Exertion exertion)
+	public void deregisterExertion(Mogram mogram, Mogram componentMogram)
 			throws ContextException {
-		String path = exertion.getContext().getName();
+		CompoundExertion parent = (CompoundExertion)mogram;
+		Exertion component = (Exertion)componentMogram;
+		String path = component.getContext().getName();
 		// String datafileid = (String)getPathIds().get(path);
 
 		// if ((GApp.NEW+":"+GApp.NEW+":"+GApp.NEW).equals(datafileid))
@@ -542,10 +536,10 @@ public class ControlContext extends ServiceContext<Object> implements Strategy, 
 		// ((Hashtable)getMetacontext().get((String)e.nextElement())).remove(path
 		// );
 
-		for (int i = ((ServiceExertion) exertion).getIndex(); i < job.size(); i++) {
-			String oldPath = job.get(i).getContext().getName();
-			((ServiceExertion) job.get(i)).setIndex(i);
-			put(job.get(i).getContext().getName(), remove(oldPath));
+		for (int i = ((ServiceExertion) component).getIndex(); i < parent.size(); i++) {
+			String oldPath = parent.get(i).getContext().getName();
+			((ServiceExertion) parent.get(i)).setIndex(i);
+			put(parent.get(i).getContext().getName(), remove(oldPath));
 			Hashtable map;
 			Hashtable imc = getMetacontext();
 			String key;
@@ -554,7 +548,7 @@ public class ControlContext extends ServiceContext<Object> implements Strategy, 
 				key = (String) e2.nextElement();
 				map = (Hashtable) getMetacontext().get(key);
 				if (map != null && map.size() > 0 && map.containsKey(oldPath))
-					map.put(job.get(i).getContext().getName(),
+					map.put(parent.get(i).getContext().getName(),
 							map.remove(oldPath));
 			}
 		}
@@ -611,7 +605,7 @@ public class ControlContext extends ServiceContext<Object> implements Strategy, 
 		Enumeration e = keys();
 		while (e.hasMoreElements()) {
 			key = (String) e.nextElement();
-			if (key.endsWith("[" + ((ServiceExertion) exertion).getIndex()
+			if (key.endsWith("[" + ((CompoundExertion) exertion).getIndex()
 					+ "]" + ID)) {
 				oldPath = key;
 				break;

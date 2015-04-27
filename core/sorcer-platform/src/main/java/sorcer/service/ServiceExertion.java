@@ -84,10 +84,10 @@ public abstract class ServiceExertion implements Exertion, SorcerConstants, Exec
 
     protected Uuid sessionId;
 
-    protected MonitoringSession monitorSession;
+    /** position of component Mogram in a compund exertion */
+    protected Integer index = new Integer(-1);;
 
-    /** position of Exertion in a job */
-    protected Integer index;
+    protected MonitoringSession monitorSession;
 
     protected String name;
 
@@ -171,7 +171,6 @@ public abstract class ServiceExertion implements Exertion, SorcerConstants, Exec
         exertionId = UuidFactory.generate();
         domainId = "0";
         subdomainId = "0";
-        index = new Integer(-1);
         accessClass = PUBLIC;
         isExportControlled = Boolean.FALSE;
         scopeCode = new Integer(PRIVATE_SCOPE);
@@ -378,6 +377,17 @@ public abstract class ServiceExertion implements Exertion, SorcerConstants, Exec
         SorcerPrincipal p = getSorcerPrincipal();
         if (p != null)
             p.setId(id);
+    }
+
+    /**
+     * Returns the exertion at the specified index.
+     */
+    public int getIndex() {
+        return (index == null) ? -1 : index;
+    }
+
+    public void setIndex(int i) {
+        index = i;
     }
 
     public void removeSignature(int index) {
@@ -702,14 +712,6 @@ public abstract class ServiceExertion implements Exertion, SorcerConstants, Exec
         this.description = description;
     }
 
-    public int getIndex() {
-        return (index == null) ? -1 : index;
-    }
-
-    public void setIndex(int i) {
-        index = i;
-    }
-
     public boolean isMonitorable() {
         return controlContext.isMonitorable();
     }
@@ -749,8 +751,8 @@ public abstract class ServiceExertion implements Exertion, SorcerConstants, Exec
 
     public void setSessionId(Uuid id) {
         sessionId = id;
-        if (this instanceof Job) {
-            List<Mogram> v = ((Job) this).getMograms();
+        if (this instanceof CompoundExertion) {
+            List<Mogram> v = ((CompoundExertion) this).getMograms();
             for (int i = 0; i < v.size(); i++) {
                 ((ServiceExertion) v.get(i)).setSessionId(id);
             }
@@ -861,20 +863,34 @@ public abstract class ServiceExertion implements Exertion, SorcerConstants, Exec
         return (method == null) ? null : method.getSelector();
     }
 
-    public int compareByIndex(Exertion e) {
-        if (this.getIndex() > ((ServiceExertion) e).getIndex())
-            return 1;
-        else if (this.getIndex() < ((ServiceExertion) e).getIndex())
-            return -1;
-        else
-            return 0;
-    }
-
     public boolean isExecutable() {
         if (getServiceType() != null)
             return true;
         else
             return false;
+    }
+
+    public List<Mogram> getMograms(List<Mogram> exs) {
+        exs.add(this);
+        return exs;
+    }
+
+    /*
+	 * (non-Javadoc)
+	 *
+	 * @see sorcer.service.Exertion#getMograms()
+	 */
+    @Override
+    public List<Mogram> getMograms() {
+        ArrayList<Mogram> list = new ArrayList<Mogram>(1);
+        list.add(this);
+        return list;
+    }
+
+    public List<Mogram> getAllMograms() {
+        List<Mogram> exs = new ArrayList<Mogram>();
+        getMograms(exs);
+        return exs;
     }
 
     public Exertion getParent() {
@@ -1117,12 +1133,6 @@ public abstract class ServiceExertion implements Exertion, SorcerConstants, Exec
         return info.toString();
     }
 
-    public List<Mogram> getAllMograms() {
-        List<Mogram> exs = new ArrayList<Mogram>();
-        getMograms(exs);
-        return exs;
-    }
-
     public List<ServiceDeployment> getDeployments() {
         List<Signature> nsigs = getAllNetSignatures();
         List<ServiceDeployment> deploymnets = new ArrayList<ServiceDeployment>();
@@ -1226,8 +1236,6 @@ public abstract class ServiceExertion implements Exertion, SorcerConstants, Exec
         }
         return allDeployments;
     }
-
-    abstract public List<Mogram> getMograms(List<Mogram> exs);
 
     public void updateValue(Object value) throws ContextException {
         List<Mogram> exertions = getAllMograms();
@@ -1584,7 +1592,6 @@ public abstract class ServiceExertion implements Exertion, SorcerConstants, Exec
                 .append("\tlsb ID:               " + lsbId + "\n")
                 .append("\tmsb ID:               " + msbId + "\n")
                 .append("\tSession ID:           " + sessionId + "\n")
-                .append("\tIndex:                " + index + "\n")
                 .append("\tDescription:          " + description + "\n")
                 .append("\tProject:              " + project + "\n")
                 .append("\tGood Until Date:      " + goodUntilDate + "\n")

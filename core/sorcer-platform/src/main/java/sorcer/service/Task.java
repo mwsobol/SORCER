@@ -26,7 +26,6 @@ import sorcer.core.signature.NetSignature;
 import sorcer.core.signature.ObjectSignature;
 
 import java.rmi.RemoteException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -164,10 +163,6 @@ public class Task extends ServiceExertion {
 	public void undoTask() throws ExertionException, SignatureException,
 			RemoteException {
 		throw new ExertionException("Not implemneted by this Task: " + this);
-	}
-
-	public void setIndex(int i) {
-		index = new Integer(i);
 	}
 
 	@Override
@@ -317,23 +312,6 @@ public class Task extends ServiceExertion {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see sorcer.service.Exertion#getMograms()
-	 */
-	@Override
-	public List<Mogram> getMograms() {
-		ArrayList<Mogram> list = new ArrayList<Mogram>(1);
-		list.add(this);
-		return list;
-	}
-
-	public List<Mogram> getMograms(List<Mogram> exs) {
-		exs.add(this);
-		return exs;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see sorcer.service.Exertion#addMogram(sorcer.service.Exertion)
 	 */
 	@Override
@@ -391,5 +369,4 @@ public class Task extends ServiceExertion {
 			return dataContext.getValue(path, args);
 		}
 	}
-
 }
