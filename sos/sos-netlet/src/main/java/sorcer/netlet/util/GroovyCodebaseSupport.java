@@ -63,14 +63,22 @@ public class GroovyCodebaseSupport extends AbstractASTTransformation {
             for (AnnotationNode anno : node.getAnnotations()) {
                 String annotationClassName = anno.getClassNode().getName();
                 if ("Codebase".equals(annotationClassName)) {
-                    if (anno.getMember("value")!=null) {
-                        String value = anno.getMember("value").getText();
-                        codebase.add(value);
-                    }
+                    codebase.add(parseParameters(anno));
                 } else if ("Load".equals(annotationClassName)) {
-                    String value = anno.getMember("value").getText();
-                    classpath.add(value);
+                    classpath.add(parseParameters(anno));
                 }
+            }
+        }
+
+        private String parseParameters(AnnotationNode anno) {
+            if (anno.getMember("value")!=null) {
+                return anno.getMember("value").getText();
+            } else {
+                String group = (anno.getMember("group")!=null) ? anno.getMember("group").getText() : null;
+                String module = (anno.getMember("module")!=null) ? anno.getMember("module").getText() : null;
+                String version = (anno.getMember("version")!=null) ? anno.getMember("version").getText() : null;
+                String classifier = (anno.getMember("classifier")!=null) ? anno.getMember("classifier").getText() : null;
+                return group + ":" + module + ":jar:" + (classifier!=null ? classifier + ":" : "") + version;
             }
         }
 

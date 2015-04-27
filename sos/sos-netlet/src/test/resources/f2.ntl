@@ -1,11 +1,12 @@
 #!/usr/bin/env nsh
 
-//@Codebase('org.sorcer:arithmetic:jar:dl:${sorcer.version}')
-@Codebase(group='org.sorcer', module='arithmetic', version='${sorcer.version}', classifier='dl')
+@Codebase('org.sorcer:arithmetic:jar:dl:${sorcer.version}')
+@Load('commons-io:commons-io:2.4')
 import sorcer.arithmetic.provider.Adder;
 import sorcer.arithmetic.provider.Multiplier;
 import sorcer.arithmetic.provider.Subtractor;
 import sorcer.service.Task
+
 
 //println "Codebase: " + System.getProperty("java.rmi.server.codebase");
 

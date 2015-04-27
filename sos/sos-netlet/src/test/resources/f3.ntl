@@ -1,7 +1,6 @@
 #!/usr/bin/env nsh
 
-//@Codebase('org.sorcer:arithmetic:jar:dl:${sorcer.version}')
-@Codebase(group='org.sorcer', module='arithmetic', version='${sorcer.version}', classifier='dl')
+@Load('org.sorcer:arithmetic:jar:dl:${sorcer.version}')
 import sorcer.arithmetic.provider.Adder;
 import sorcer.arithmetic.provider.Multiplier;
 import sorcer.arithmetic.provider.Subtractor;
