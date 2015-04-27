@@ -15,8 +15,7 @@
  * limitations under the License.
  */
 
-@Codebase('org.sorcer:arithmetic:jar:dl:5.2.0')
-//@Load('org.sorcer:arithmetic:jar:dl:5.2.0')
+@Codebase(group='org.sorcer', module='arithmetic', version='${sorcer.version}', classifier='dl')
 import sorcer.arithmetic.provider.Adder
 
 Double v1 = 100.0;

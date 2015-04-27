@@ -76,10 +76,7 @@ import sorcer.service.txmgr.TransactionManagerAccessor;
 import sorcer.util.*;
 
 import javax.security.auth.Subject;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
@@ -1816,11 +1813,12 @@ public class ProviderDelegate implements SorcerConstants {
                     if (spaceTakerThreads.isEmpty())
                         break;
                 }
-/*                for (Thread thread : spaceTakerThreads) {
-                    if (thread.isAlive())
-//                        thread.interrupt();
-                        threadLogger.warn("Thread alive {}", thread);
-                }*/
+                for (Thread thread : spaceTakerThreads) {
+                    if (thread.isAlive()) {
+						thread.interrupt();
+						logger.warning("Thread alive " + thread.getName());
+					}
+                }
             }
 		}
 /*        if (beanListener != null && serviceBeans != null)
@@ -2841,9 +2839,11 @@ public class ProviderDelegate implements SorcerConstants {
 					serviceComponents.put(publishedType, serviceBean);
 					exposedInterfaces.add(publishedType);
 					for (Class iface : publishedType.getInterfaces()) {
-						if (!iface.getCanonicalName().equals(Remote.class.getCanonicalName()))
+						if (!iface.equals(Remote.class)
+								&& !iface.equals(Serializable.class)) {
 							serviceComponents.put(iface, serviceBean);
 							exposedInterfaces.add(iface);
+						}
 					}
 				}
 			}
