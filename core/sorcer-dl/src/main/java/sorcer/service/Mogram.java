@@ -50,6 +50,8 @@ public interface Mogram extends Service, Scopable, Identifiable {
     public <T extends Mogram> T exert(Arg... entries) throws TransactionException, ExertionException,
             RemoteException;
 
+    public int getIndex();
+
     public void setIndex(int i);
 
     public void setParentId(Uuid parentId);

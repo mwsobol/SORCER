@@ -157,8 +157,7 @@ public interface Exertion extends Mogram, Dependency, Invocation<Object>, Evalua
 	 * Returns a service context (service data) of the component exertion.
 	 * 
 	 * @return a service context
-	 * @throws ContextException 
-	 * @see #getSignatures
+	 * @throws ContextException
 	 */
 	public Context getContext(String componentExertionName) throws ContextException;
 	
@@ -169,7 +168,7 @@ public interface Exertion extends Mogram, Dependency, Invocation<Object>, Evalua
 	 * realized by a tasker, rendezvous or spacer.
 	 * 
 	 * @return a control context
-	 * @see #getSignatures
+
 	 */
 	public IControlContext getControlContext();
 	
@@ -352,20 +351,11 @@ public interface Exertion extends Mogram, Dependency, Invocation<Object>, Evalua
 	 */
 	public static final int THIN = 0;
 
-	/**
-	 * The exertion format for thick exertions (with RMI and Jini classes)
-	 */
-	public static final int STANDARD = 1;
-
-    int getIndex();
-
-    void setIndex(int i);
-
-    Uuid getParentId();
+    public Uuid getParentId();
 
     /**
      * Return date when exertion was created
      * @return
      */
-    Date getCreationDate();
+    public Date getCreationDate();
 }
