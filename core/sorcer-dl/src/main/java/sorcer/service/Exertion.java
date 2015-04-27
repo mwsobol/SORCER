@@ -76,7 +76,7 @@ import sorcer.service.Strategy.Flow;
  */
 @SuppressWarnings("rawtypes")
 public interface Exertion extends Mogram, Dependency, Invocation<Object>, Evaluation<Object>,
-		Paradigmatic, Mappable, Serializable, Identifiable {
+		Paradigmatic, Mappable, Serializable {
 
 	/**
 	 * Returns a name of this exertion.
@@ -113,7 +113,7 @@ public interface Exertion extends Mogram, Dependency, Invocation<Object>, Evalua
 	 * @return an added component exertion
 	 * @throws ContextException 
 	 */
-	public Exertion addExertion(Mogram component) throws ExertionException;
+	public Mogram addMogram(Mogram component) throws ExertionException;
 	
 	/**
 	 * Returns a data service context (service data) of this exertion to be
@@ -136,7 +136,7 @@ public interface Exertion extends Mogram, Dependency, Invocation<Object>, Evalua
 	/**
 	 * Returns a component exertion at a given path.
 	 */
-	public Mogram getComponentExertion(String path);
+	public Mogram getComponentMogram(String path);
 	
 	/**
 	 * Returns a value associated with a path (key) in this exertion's context.
@@ -270,13 +270,13 @@ public interface Exertion extends Mogram, Dependency, Invocation<Object>, Evalua
 	 * Returns the list of direct component exertions.
 	 * @return Exertion list
 	 */ 
-	public List<Mogram> getExertions();
+	public List<Mogram> getMograms();
 	
 	/**
 	 * Returns the list of all nested component exertions/
 	 * @return Exertion list
 	 */ 
-	public List<Mogram> getAllExertions();
+	public List<Mogram> getAllMograms();
 	
 	/**
 	 * Returns <code>true</code> if this exertion should be monitored for its
@@ -344,7 +344,9 @@ public interface Exertion extends Mogram, Dependency, Invocation<Object>, Evalua
 	 * Returns true if this exertion is composed of other exertions.
 	 */
 	public boolean isCompound();
-	
+
+
+	public Exertion clearScope() throws ContextException;
 	/**
 	 * The exertion format for thin exertions (no RMI and Jini classes)
 	 */

@@ -1410,9 +1410,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
             ServiceContext cxt;
             try {
                 cxt = (ServiceContext) ((Task)mogram).getDataContext();
-				if (((ServiceSignature)((Task)mogram).getProcessSignature()).getMapContext() != null) {
-					updateContext((Task) mogram);
-				}
+				cxt.updateContextWith(mogram.getProcessSignature().getInConnector());
                 Uuid id = cxt.getId();
                 ProviderSession ps = sessions.get(id);
                 if (ps == null) {
@@ -1463,15 +1461,17 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
         return out;
     }
 
-	// TODO in/out/inout marking as defined in the mapContext
+	// TODO in/out/inout marking as defined in the inConnector
 	private void updateContext(Task task) throws ContextException {
-		Context mapContext = ((ServiceSignature)task.getProcessSignature()).getMapContext();
-		Context dataContext = task.getDataContext();
-		Iterator it = ((Map)mapContext).entrySet().iterator();
-		while (it.hasNext()) {
-			Map.Entry e = (Map.Entry) it.next();
-			dataContext.putInValue((String) e.getValue(), dataContext.asis((String) e.getKey()));
-			dataContext.removePath((String)e.getKey());
+		Context connector = ((ServiceSignature)task.getProcessSignature()).getInConnector();
+		if (connector != null){
+			Context dataContext = task.getDataContext();
+			Iterator it = ((Map) connector).entrySet().iterator();
+			while (it.hasNext()) {
+				Map.Entry e = (Map.Entry) it.next();
+				dataContext.putInValue((String) e.getKey(), dataContext.asis((String) e.getValue()));
+				dataContext.removePath((String) e.getKey());
+			}
 		}
 	}
 

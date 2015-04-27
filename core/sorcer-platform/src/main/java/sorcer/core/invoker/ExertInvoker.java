@@ -19,7 +19,7 @@ package sorcer.core.invoker;
 import java.rmi.RemoteException;
 
 import net.jini.core.transaction.Transaction;
-import sorcer.co.tuple.Entry;
+import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.par.Par;
 import sorcer.service.Arg;

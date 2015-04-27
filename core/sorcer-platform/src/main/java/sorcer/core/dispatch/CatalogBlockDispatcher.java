@@ -18,13 +18,8 @@
 
 package sorcer.core.dispatch;
 
-import java.rmi.RemoteException;
-import java.util.List;
-import java.util.Set;
-
 import net.jini.core.lease.Lease;
 import net.jini.lease.LeaseRenewalManager;
-import sorcer.core.SorcerConstants;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.par.ParModel;
 import sorcer.core.exertion.AltExertion;
@@ -34,6 +29,10 @@ import sorcer.core.monitor.MonitorUtil;
 import sorcer.core.monitor.MonitoringSession;
 import sorcer.core.provider.Provider;
 import sorcer.service.*;
+
+import java.rmi.RemoteException;
+import java.util.List;
+import java.util.Set;
 
 /**
  * A dispatching class for exertion blocks in the PUSH mode.
@@ -46,9 +45,10 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
 
 	public CatalogBlockDispatcher(Exertion block, Set<Context> sharedContext,
 			boolean isSpawned, Provider provider,
-            ProvisionManager provisionManager) {
+            ProvisionManager provisionManager) throws ContextException, RemoteException {
 		super(block, sharedContext, isSpawned, provider, provisionManager);
-	}
+        block.getDataContext().append((Context) block.getScope());
+    }
 
 
     @Override
@@ -66,8 +66,16 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
         super.beforeExec(exertion);
         try {
             preUpdate(exertion);
-            ((ServiceContext)exertion.getContext()).setBlockScope(xrt.getContext());
-        } catch (ContextException ex) {
+            if (exertion.getDataContext() != null) {
+                if (exertion.getScope() != null)
+                    ((Context) exertion.getScope()).append(xrt.getContext());
+                else {
+//                    exertion.setScope(xrt.getContext());
+                    exertion.setScope(new ParModel());
+                    ((Context)exertion.getScope()).append(xrt.getContext());
+                }
+            }
+        } catch (Exception ex) {
             throw new ExertionException(ex);
         }
     }
@@ -77,11 +85,12 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
         super.afterExec(result);
         try {
             postUpdate(result);
+            Condition.cleanupScripts(result);
             //TODO Not very nice
             /*MonitoringSession monSession = MonitorUtil.getMonitoringSession(result);
             if (result.isBlock() && result.isMonitorable() && monSession!=null) {
                 boolean isFailed = false;
-                for (Exertion xrt : result.getAllExertions()) {
+                for (Exertion xrt : result.getAllMograms()) {
                     if (xrt.getStatus()==Exec.FAILED || xrt.getStatus()==Exec.ERROR) {
                         isFailed = true;
                         break;
@@ -99,7 +108,7 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
     private void preUpdate(Exertion exertion) throws ContextException {
 		if (exertion instanceof AltExertion) {
 			for (OptExertion oe : ((AltExertion)exertion).getOptExertions()) {
-				oe.getCondition().getConditionalContext().append(xrt.getContext());
+                oe.getCondition().getConditionalContext().append(xrt.getContext());
 				oe.getCondition().setStatus(null);
 			}
             MonitoringSession monSession = MonitorUtil.getMonitoringSession(exertion);
@@ -121,8 +130,8 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
 			if (pc == null) {
 				pc = new ParModel(exertion.getName());
 				((OptExertion)exertion).getCondition().setConditionalContext(pc);
-			}
-			pc.append(xrt.getContext());
+            }
+            pc.append(xrt.getContext());
 		} else if (exertion instanceof LoopExertion) {
 			((LoopExertion)exertion).getCondition().setStatus(null);
 			Context pc = ((LoopExertion)exertion).getCondition().getConditionalContext();			
@@ -135,8 +144,10 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
 	}
 	
 	private void postUpdate(Exertion exertion) throws ContextException, RemoteException {
-		if (exertion instanceof AltExertion) {
-			xrt.getContext().append(((AltExertion)exertion).getActiveOptExertion().getContext());
+        if (exertion instanceof Job) {
+            xrt.getDataContext().append(exertion.getDataContext());
+        } else if (exertion instanceof AltExertion) {
+			xrt.getContext().append(((AltExertion)exertion).getActiveOptExertion().getDataContext());
             /*MonitoringSession monSession = MonitorUtil.getMonitoringSession(exertion);
             if (exertion.isMonitorable() && monSession!=null) {
                 try {
@@ -151,27 +162,30 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
                 }
             } */
 		} else if (exertion instanceof OptExertion) {
-			xrt.getContext().append(exertion.getContext());
+			xrt.getContext().append(exertion.getDataContext());
 		}
-		
+
 //		if (exertion instanceof AltExertion) {
 //			((ParModel)((Block)xrt).getContext()).appendNew(((AltExertion)exertion).getActiveOptExertion().getContext());
 //		} else if (exertion instanceof OptExertion) {
 //			((ParModel)((Block)xrt).getContext()).appendNew(((OptExertion)exertion).getContext());
 //		}
 		
-		ServiceContext cxt = (ServiceContext)xrt.getContext();
-		if (exertion.getContext().getReturnPath() != null)
-			cxt.putOutValue(exertion.getContext().getReturnPath().path, exertion.getContext().getReturnValue()); 
-		else 
-			cxt.appendNewEntries(exertion.getContext());
-		
-		((ServiceContext)exertion.getContext()).setBlockScope(null);
+		ServiceContext cxt = (ServiceContext)xrt.getDataContext();
+		if (exertion.getDataContext().getReturnPath() != null)
+            cxt.putInValue(exertion.getContext().getReturnPath().path,
+                    exertion.getDataContext().getReturnValue());
+		else
+             cxt.updateEntries(exertion.getDataContext());
+
+        if (! (exertion instanceof Block))
+		    ((ServiceContext)exertion.getDataContext()).setScope(null);
 //		if (cxt.getReturnPath() != null)
-//			cxt.putValue(cxt.getReturnPath().path, cxt.getReturnValue()); 
+//			cxt.putValue(cxt.getReturnPath().path, cxt.getReturnValue());
 	}
 
     protected List<Mogram> getInputExertions() {
-        return xrt.getExertions();
+        return xrt.getMograms();
 	}
+
 }

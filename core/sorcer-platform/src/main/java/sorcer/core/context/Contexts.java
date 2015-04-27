@@ -670,7 +670,7 @@ public class Contexts implements SorcerConstants {
 		List allNodes = new ArrayList();
 		List additional = null;
 
-		List<Mogram> exertions = ((Job) job).getExertions();
+		List<Mogram> exertions = ((Job) job).getMograms();
 		for (Object exertion : exertions) {
 			if (exertion instanceof ServiceExertion) {
 				additional = Arrays
@@ -1079,7 +1079,7 @@ public class Contexts implements SorcerConstants {
 				if (!linkStop) {
 					// get subcontext for recursion
 					try {
-						subcntxt = link.getContext(principal).getContext(
+						subcntxt = link.getContext().getContext(
 								link.getOffset().trim());
 					} catch (RemoteException ex) {
 						throw new ContextException(ex);
@@ -1117,7 +1117,7 @@ public class Contexts implements SorcerConstants {
 			if ((contextTree.getValue(key1) instanceof ContextLink)) {
 				link = (ContextLink) contextTree.getValue(key1);
 				try {
-					subcntxt = link.getContext(principal).getContext(
+					subcntxt = link.getContext().getContext(
 							link.getOffset().trim());
 				} catch (RemoteException ex) {
 					throw new ContextException(ex);

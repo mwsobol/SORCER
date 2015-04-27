@@ -19,7 +19,7 @@ package sorcer.core.context.model.par;
 
 import java.util.ArrayList;
 
-import sorcer.co.tuple.Entry;
+import sorcer.core.context.model.ent.Entry;
 
 /**
  * @author Mike Sobolewski

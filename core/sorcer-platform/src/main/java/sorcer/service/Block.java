@@ -19,7 +19,7 @@ package sorcer.service;
 
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
-import sorcer.co.tuple.Entry;
+import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.par.ParModel;
 import sorcer.core.exertion.AltExertion;
@@ -31,10 +31,7 @@ import sorcer.util.url.sos.SdbUtil;
 import java.io.IOException;
 import java.net.URL;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 
 /**
@@ -42,7 +39,7 @@ import java.util.Set;
  */
 public abstract class Block extends ServiceExertion implements CompoundExertion {
 
-	private List<Mogram> exertions = new ArrayList<Mogram>();
+	private List<Mogram> mograms = new ArrayList<Mogram>();
 	
 	private URL contextURL;
 	
@@ -76,28 +73,28 @@ public abstract class Block extends ServiceExertion implements CompoundExertion 
 		SignatureException, RemoteException, TransactionException;
 	
 	/* (non-Javadoc)
-	 * @see sorcer.service.Exertion#addExertion(sorcer.service.Exertion)
+	 * @see sorcer.service.Exertion#addMogram(sorcer.service.Exertion)
 	 */
 	@Override
-	public Exertion addExertion(Mogram ex) throws ExertionException {
-		exertions.add(ex);
-		((ServiceExertion) ex).setIndex(exertions.indexOf(ex));
+	public Mogram addMogram(Mogram mogram) throws ExertionException {
+		mograms.add(mogram);
+		mogram.setIndex(mograms.indexOf(mogram));
 		try {
-			controlContext.registerExertion(ex);
+			controlContext.registerExertion(mogram);
 		} catch (ContextException e) {
 			throw new ExertionException(e);
 		}
-		((ServiceExertion) ex).setParentId(getId());
+		mogram.setParentId(getId());
 		return this;
 	}
 
-	public void setExertions(List<Mogram> exertions) {
-		this.exertions = exertions;
+	public void setMograms(List<Mogram> mograms) {
+		this.mograms = mograms;
 	}
 
-	public void setExertions(Exertion[] exertions) throws ExertionException {
-		for (Exertion e :exertions)
-			addExertion(e);
+	public void setMograms(Mogram[] mograms) throws ExertionException {
+		for (Mogram mo :mograms)
+			addMogram(mo);
 	}
 	
 	/* (non-Javadoc)
@@ -123,15 +120,15 @@ public abstract class Block extends ServiceExertion implements CompoundExertion 
 	}
 
 	/* (non-Javadoc)
-	 * @see sorcer.service.Exertion#getExertions()
+	 * @see sorcer.service.Exertion#getMograms()
 	 */
 	@Override
-	public List<Mogram> getExertions() {
-		return exertions;
+	public List<Mogram> getMograms() {
+		return mograms;
 	}
 
-	public List<Mogram> getAllExertions() {
-		return exertions;
+	public List<Mogram> getAllMograms() {
+		return mograms;
 	}
 	
 	/* (non-Javadoc)
@@ -164,7 +161,7 @@ public abstract class Block extends ServiceExertion implements CompoundExertion 
 	@Override
 	public boolean isTree(Set visited) {
 		visited.add(this);
-		Iterator i = exertions.iterator();
+		Iterator i = mograms.iterator();
 		while (i.hasNext()) {
 			ServiceExertion e = (ServiceExertion) i.next();
 			if (visited.contains(e) || !e.isTree(visited)) {
@@ -175,12 +172,12 @@ public abstract class Block extends ServiceExertion implements CompoundExertion 
 	}
 
 	/* (non-Javadoc)
-	 * @see sorcer.service.ServiceExertion#getExertions(java.util.List)
+	 * @see sorcer.service.ServiceExertion#getMograms(java.util.List)
 	 */
 	@Override
-	public List<Mogram> getExertions(List<Mogram> exs) {
-		for (Mogram e : exertions)
-			((ServiceExertion) e).getExertions(exs);
+	public List<Mogram> getMograms(List<Mogram> exs) {
+		for (Mogram e : mograms)
+			((ServiceExertion) e).getMograms(exs);
 		exs.add(this);
 		return exs;
 	}
@@ -196,32 +193,32 @@ public abstract class Block extends ServiceExertion implements CompoundExertion 
 	}
 
 	/**
-	 * Returns the number of exertions in this Block.
+	 * Returns the number of mograms in this Block.
 	 * 
-	 * @return the number of exertions in this Block.
+	 * @return the number of mograms in this Block.
 	 */
 	public int size() {
-		return exertions.size();
+		return mograms.size();
 	}
 
 	public void remove(int index) {
 		new RuntimeException().printStackTrace();
-		exertions.remove(index);
+		mograms.remove(index);
 	}
 
 	/**
 	 * Replaces the exertion at the specified position in this list with the
      * specified element.
 	 */
-	public void setExertionAt(Exertion ex, int i) {
-		exertions.set(i, ex);
+	public void setMogramAt(Mogram ex, int i) {
+		mograms.set(i, ex);
 	}
 	
 	/**
 	 * Returns the exertion at the specified index.
 	 */
 	public Exertion get(int index) {
-		return (Exertion) exertions.get(index);
+		return (Exertion) mograms.get(index);
 	}
 	
 	/* (non-Javadoc)
@@ -233,7 +230,7 @@ public abstract class Block extends ServiceExertion implements CompoundExertion 
 	}
 	
 	public boolean hasChild(String childName) {
-		for (Mogram ext : exertions) {
+		for (Mogram ext : mograms) {
 			if (ext.getName().equals(childName))
 				return true;
 		}
@@ -241,14 +238,14 @@ public abstract class Block extends ServiceExertion implements CompoundExertion 
 	}
 
 	public Mogram getChild(String childName) {
-		for (Mogram ext : exertions) {
+		for (Mogram ext : mograms) {
 			if (ext.getName().equals(childName))
 				return ext;
 		}
 		return null;
 	}
 
-	public Mogram getComponentExertion(String path) {
+	public Mogram getComponentMogram(String path) {
 		// TODO
 		return getChild(path);
 	}
@@ -287,7 +284,7 @@ public abstract class Block extends ServiceExertion implements CompoundExertion 
 	}
 	
 	public void reset(int state) {
-		for(Mogram e : exertions)
+		for(Mogram e : mograms)
 			((ServiceExertion)e).reset(state);
 		
 		this.setStatus(state);
@@ -326,7 +323,7 @@ public abstract class Block extends ServiceExertion implements CompoundExertion 
 	}
 	
 	private void updateConditions() throws ContextException {
-		for (Mogram e : exertions) {
+		for (Mogram e : mograms) {
 			if (e instanceof Exertion && ((Exertion)e).isConditional()) {
 				if (e instanceof OptExertion) { 
 					((OptExertion)e).getCondition().getConditionalContext().append(dataContext);
@@ -340,4 +337,53 @@ public abstract class Block extends ServiceExertion implements CompoundExertion 
 			}
 		}
 	}
+
+	public Exertion clearScope() throws ContextException {
+		Object[] paths = ((Map)getDataContext()).keySet().toArray();
+		for (Object path : paths) {
+			dataContext.removePath((String) path);
+//			dataContext.getScope().removePath((String) path);
+		}
+
+		Signature.ReturnPath rp = dataContext.getReturnPath();
+		if (rp != null && rp.path != null)
+			dataContext.removePath(rp.path);
+
+		List<Mogram> mograms = getAllMograms();
+		Context cxt = null;
+		for (Mogram mo : mograms) {
+			if (mo instanceof Exertion )
+				((Exertion)mo).clearScope();
+
+//			if (mo instanceof Exertion)
+//				cxt = ((Exertion)mo).getContext();
+//			else
+//				cxt = (Context) mo;
+
+//			if (!(mo instanceof Block)) {
+//				try {
+//					cxt.setScope(null);
+//				} catch (RemoteException e) {
+//					throw new ContextException(e);
+//				}
+//			}
+//			try {
+//				if (mo instanceof Exertion) {
+//					((Exertion) mo).clearScope();
+//					// set the initial scope from the block
+//					mo.setScope((Context) dataContext.getScope());
+//				}
+//			} catch (RemoteException e) {
+//				throw new ContextException(e);
+//			}
+		}
+
+		// restore initial context
+		if (dataContext.getInitContext() != null) {
+			dataContext.append(dataContext.getInitContext());
+		}
+
+		return this;
+	}
+
 }

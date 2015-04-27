@@ -25,7 +25,9 @@ import org.dancres.blitz.jini.lockmgr.LockResult;
 import org.dancres.blitz.jini.lockmgr.MutualExclusion;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.ControlContext;
+import sorcer.core.context.ServiceContext;
 import sorcer.core.context.ThrowableTrace;
+import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.par.Par;
 import sorcer.core.deploy.ServiceDeployment;
 import sorcer.core.dispatch.*;
@@ -39,7 +41,6 @@ import sorcer.service.Exec.State;
 import sorcer.service.Strategy.Access;
 import sorcer.service.modeling.ModelingTask;
 import sorcer.service.txmgr.TransactionManagerAccessor;
-import sorcer.util.ProviderAccessor;
 import sorcer.util.ProviderLookup;
 import sorcer.util.Sorcer;
 
@@ -140,7 +141,7 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 	public <T extends Mogram> T  exert(Transaction txn, String providerName, Arg... entries)
 			throws TransactionException, ExertionException, RemoteException {
 		try {
-			exertion.selectFidelity(entries); 
+			exertion.selectFidelity(entries);
 			Exertion xrt = postProcessExertion(exert0(txn, providerName,
 					entries));
 			if (exertion.isProxy()) {
@@ -148,8 +149,8 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 				exertion.setControlContext((ControlContext)xrt.getControlContext());
 				if (exertion.isCompound()) {
 					((CompoundExertion) exertion)
-							.setExertions(((CompoundExertion) xrt)
-									.getExertions());
+							.setMograms(((CompoundExertion) xrt)
+									.getMograms());
 				}
 
 				return (T) exertion;
@@ -161,26 +162,59 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 		}
 	}
 	
-	private void initExecState() {
+	private void initExecState(Arg... entries) throws ContextException, RemoteException {
+		Context argCxt = null;
+		if (entries!=null) {
+			for (Arg arg : entries) {
+				if (arg instanceof Context && ((Context)arg).size() > 0) {
+					argCxt = (Context)arg;
+				}
+			}
+		}
+		if (exertion instanceof Block) {
+			resetScope(exertion, argCxt, entries);
+		}
+//		else if (exertion.getScope() != null) {
+//			exertion.getDataContext().append((Context)exertion.getScope());
+//		}
 		Exec.State state = exertion.getControlContext().getExecState();
 		if (state == State.INITIAL) {
-			for (Mogram e : exertion.getAllExertions()) {
+			for (Mogram e : exertion.getAllMograms()) {
 				if (e instanceof Exertion) {
 					if (((ControlContext) ((Exertion)e).getControlContext()).getExecState() == State.INITIAL) {
-						((ServiceExertion) e).setStatus(Exec.INITIAL);
+						e.setStatus(Exec.INITIAL);
 					}
+				}
+				if (e instanceof Block) {
+					resetScope((Exertion)e, argCxt);
 				}
 			}
 		}
 	}
-	
+
+	private void resetScope(Exertion exertion, Context context, Arg... entries) throws ContextException, RemoteException {
+		exertion.clearScope();
+		exertion.getDataContext().append(((ServiceContext)exertion.getDataContext()).getInitContext());
+		if (entries != null) {
+			for (Arg a : entries) {
+				if (a instanceof Entry) {
+					exertion.getContext().putValue(
+							((Entry) a).path(), ((Entry) a).value());
+				}
+			}
+		}
+		if (context != null) {
+			exertion.getDataContext().append(context);
+		}
+	}
+
 	private void realizeDependencies(Arg... entries) throws RemoteException,
 			ExertionException {
 		List<Evaluation> dependers = exertion.getDependers();
 		if (dependers != null && dependers.size() > 0) {
 			for (Evaluation<Object> depender : dependers) {
 				try {
-					((Invocation)depender).invoke((Context)exertion.getScope(), entries);
+					((Invocation)depender).invoke((Context)exertion.getExertionScope(), entries);
 				} catch (InvocationException e) {
 					throw new ExertionException(e);
 				}
@@ -190,13 +224,12 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 	
 	public Exertion exert0(Transaction txn, String providerName, Arg... entries)
 			throws TransactionException, ExertionException, RemoteException {
-		initExecState();
-		realizeDependencies(entries);
-		
 		try {
 			if (entries != null && entries.length > 0) {
 				exertion.substitute(entries);
 			}
+			initExecState(entries);
+			realizeDependencies(entries);
 			if (exertion.isTask() && exertion.isProvisionable()) {
 				try {
 					List<ServiceDeployment> deploymnets = ((ServiceExertion) exertion)
@@ -308,6 +341,7 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
                 }
             }
         }
+
 		// Provider tasker = ProviderLookup.getProvider(exertion.getProcessSignature());		 
 		// provider = ProviderAccessor.getProvider(null, signature
 		// .getServiceInfo());
@@ -356,9 +390,9 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 	
 	private Exertion processAsTask() throws RemoteException,
 			TransactionException, ExertionException {
-		Task task = (Task) exertion.getExertions().get(0);
+		Task task = (Task) exertion.getMograms().get(0);
 		task = (Task) task.exert();
-		exertion.getExertions().set(0, task);
+		exertion.getMograms().set(0, task);
 		exertion.setStatus(task.getStatus());
 		return exertion;
 	}
@@ -435,22 +469,24 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 	
 	public static Exertion postProcessExertion(Exertion exertion)
 			throws ContextException, RemoteException {
-		List<Mogram> mograms = exertion.getAllExertions();
+		List<Mogram> mograms = exertion.getAllMograms();
 		for (Mogram mogram : mograms) {
-			List<Setter> ps = ((ServiceExertion) mogram).getPersisters();
-			if (ps != null) {
-				for (Setter p : ps) {
-					if (p != null && (p instanceof Par) && ((Par) p).isMappable()) {
-						String from = (String) ((Par) p).getName();
-						Object obj = null;
-						if (mogram instanceof Job)
-							obj = ((Job) mogram).getJobContext().getValue(from);
-						else {
-							obj = ((Exertion)mogram).getContext().getValue(from);
+			if (mogram instanceof Exertion) {
+				List<Setter> ps = ((ServiceExertion) mogram).getPersisters();
+				if (ps != null) {
+					for (Setter p : ps) {
+						if (p != null && (p instanceof Par) && ((Par) p).isMappable()) {
+							String from = (String) ((Par) p).getName();
+							Object obj = null;
+							if (mogram instanceof Job)
+								obj = ((Job) mogram).getJobContext().getValue(from);
+							else {
+								obj = ((Exertion) mogram).getContext().getValue(from);
+							}
+
+							if (obj != null)
+								p.setValue(obj);
 						}
-						
-						if (obj != null)
-							p.setValue(obj);
 					}
 				}
 			}

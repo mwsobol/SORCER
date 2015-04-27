@@ -33,6 +33,7 @@ dependencies {
     compile files("${System.properties['java.home']}/../lib/tools.jar")
     /* Depend on Rio webster for running a test so we do not create a circular dependency on Sorcer Webster */
 //    testCompile "org.rioproject:webster:${rioVersion}"
+    testCompile project(':sorcer-test')
     testCompile libs.junit
     testRuntime libs.slf4j
 }

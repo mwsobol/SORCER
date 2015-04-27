@@ -29,7 +29,7 @@ import net.jini.core.lease.Lease;
 import net.jini.entry.UnusableEntriesException;
 import net.jini.id.Uuid;
 import net.jini.space.JavaSpace05;
-import sorcer.core.exertion.Jobs;
+import sorcer.core.exertion.Mograms;
 import sorcer.core.monitor.MonitorUtil;
 import sorcer.core.monitor.MonitoringSession;
 import sorcer.core.provider.Provider;
@@ -78,9 +78,9 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
     @Override
     protected List<Mogram> getInputExertions() throws ContextException {
         if (xrt instanceof Job)
-            return Jobs.getInputExertions((Job) xrt);
+            return Mograms.getInputExertions((Job) xrt);
         else if (xrt instanceof Block)
-            return xrt.getAllExertions();
+            return xrt.getAllMograms();
         else
             return null;
     }
@@ -330,7 +330,7 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
             result.getControlContext().appendTrace(provider.getProviderName()
                     + " dispatcher: " + getClass().getName());
 
-            ((NetJob) xrt).setExertionAt(result, ex.getIndex());
+            ((NetJob) xrt).setMogramAt(result, ex.getIndex());
             ServiceExertion ser = (ServiceExertion) result;
             if (ser.getStatus() > FAILED && ser.getStatus() != SUSPENDED) {
                 ser.setStatus(DONE);
@@ -344,7 +344,7 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
 
     protected void handleError(Exertion exertion) {
         if (exertion != xrt)
-            ((NetJob) xrt).setExertionAt(exertion,
+            ((NetJob) xrt).setMogramAt(exertion,
                     exertion.getIndex());
 
         // notify monitor about failure

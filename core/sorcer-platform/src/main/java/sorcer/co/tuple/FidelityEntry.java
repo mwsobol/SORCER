@@ -19,6 +19,7 @@ package sorcer.co.tuple;
 /**
  * @author Mike Sobolewski
  */
+import sorcer.core.context.model.ent.Entry;
 import sorcer.service.SelectionFidelity;
 
 public class FidelityEntry<T> extends Entry<T> {

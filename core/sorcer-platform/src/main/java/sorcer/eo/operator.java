@@ -25,14 +25,18 @@ import sorcer.core.ComponentSelectionFidelity;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.*;
 import sorcer.core.context.model.PoolStrategy;
+import sorcer.core.context.model.ent.EntModel;
+import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.par.Par;
 import sorcer.core.context.model.par.ParModel;
 import sorcer.core.context.model.srv.Srv;
-import sorcer.core.context.model.srv.SrvModel;
 import sorcer.core.deploy.ServiceDeployment;
 import sorcer.core.exertion.*;
 import sorcer.core.provider.*;
-import sorcer.core.provider.rendezvous.*;
+import sorcer.core.provider.rendezvous.ServiceConcatenator;
+import sorcer.core.provider.rendezvous.ServiceJobber;
+import sorcer.core.provider.rendezvous.ServiceRendezvous;
+import sorcer.core.provider.rendezvous.ServiceSpacer;
 import sorcer.core.signature.EvaluationSignature;
 import sorcer.core.signature.NetSignature;
 import sorcer.core.signature.ObjectSignature;
@@ -42,7 +46,9 @@ import sorcer.service.Signature.*;
 import sorcer.service.Strategy.*;
 import sorcer.service.modeling.Model;
 import sorcer.service.modeling.Variability;
-import sorcer.util.*;
+import sorcer.util.Loop;
+import sorcer.util.ObjectCloner;
+import sorcer.util.Sorcer;
 import sorcer.util.url.sos.SdbUtil;
 
 import java.io.IOException;
@@ -50,7 +56,6 @@ import java.net.InetAddress;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.*;
-import java.util.Collections;
 import java.util.logging.Logger;
 
 
@@ -234,66 +239,6 @@ public class operator {
 		return fiCxt;
 	}
 
-	public static Context entModel(Object... entries)
-			throws ContextException {
-		if (entries != null && entries.length == 1 && entries[0] instanceof Context) {
-			((Context)entries[0]).setModeling(true);
-			return (Context)entries[0];
-		}
-		Context cxt = context(entries);
-		cxt.setModeling(true);
-		return cxt;
-	}
-
-	public static Model mapContext(Model model, Context out) throws ContextException {
-		((ServiceContext)model).setMapContext(out);
-		return model;
-	}
-
-    public static Model addResponse(Model model, String... responsePaths) throws ContextException {
-        for (String path : responsePaths)
-            ((ServiceContext)model).addResponsePath(path);
-        return model;
-    }
-    
-//	public static <T extends Model> T response(T model, String... responsePaths) throws ContextException {
-//		for (String path : responsePaths)
-//		 	((ServiceContext)model).addResponsePath(path);
-//		return model;
-//	}
-
-	public static <T> T response(Context<T> context, String add, String multiply) throws ContextException, RemoteException {
-		return ((ServiceContext<T>)context).getResponse();
-	}
-
-	public static Context responses(Model model) throws ContextException {
-        try {
-            return ((ServiceContext)model).getResponses();
-        } catch (RemoteException e) {
-            throw new ContextException(e);
-        }
-    }
-
-    public static Object response(Model model, String path) throws ContextException {
-        try {
-            return ((ServiceContext)model).getResponse(path);
-        } catch (RemoteException e) {
-            throw new ContextException(e);
-        }
-    }
-
-    public static Object response(Model model) throws ContextException {
-        try {
-            return ((ServiceContext)model).getResponse();
-        } catch (RemoteException e) {
-            throw new ContextException(e);
-        }
-    }
-    
-    public static Entry Entry(Model model, String path) throws ContextException {
-        return new Entry(path, ((Context)model).asis(path));
-    }
-    
 	public static Context scope(Object... entries) throws ContextException {
 		Object[] args = new Object[entries.length + 1];
 		System.arraycopy(entries, 0, args, 1, entries.length);
@@ -301,26 +246,14 @@ public class operator {
 		return  context(args);
 	}
 
-	public static Context mapContext(List<Tuple2<String, ?>> entries) throws ContextException {
-		Context map = new MapContext();
-		populteContext(map, entries);
-		return map;
-	}
-
-	public static Context mapContext(Tuple2<String, ?>... entries) throws ContextException {
-		Context map = new MapContext();
-		List<Tuple2<String, ?>> items = Arrays.asList(entries);
-		populteContext(map, items);
-		return map;
-	}
-
 	public static Context context(Object... entries)
 			throws ContextException {
 		Context cxt = null;
+		List<MapContext> connList = new ArrayList<MapContext>();
 		if (entries[0] instanceof Exertion) {
 			Exertion xrt = (Exertion) entries[0];
 			if (entries.length >= 2 && entries[1] instanceof String)
-				xrt = (Exertion)((CompoundExertion) xrt).getComponentExertion((String) entries[1]);
+				xrt = (Exertion)((CompoundExertion) xrt).getComponentMogram((String) entries[1]);
 			return xrt.getDataContext();
 		} else if (entries[0] instanceof Link) {
 			return ((Link)entries[0] ).getContext();
@@ -328,12 +261,12 @@ public class operator {
 			return new PositionalContext((String) entries[0]);
 		} else if (entries.length == 2 && entries[0] instanceof String
 				&& entries[1] instanceof Exertion) {
-			return ((Exertion)((CompoundExertion) entries[1]).getComponentExertion(
+			return ((Exertion)((CompoundExertion) entries[1]).getComponentMogram(
 					(String) entries[0])).getContext();
 		} else if (entries[0] instanceof Context && entries[1] instanceof List) {
 			return ((ServiceContext)entries[0]).getSubcontext((List)entries[1]);
-		} else if (entries[0] instanceof SrvModel) {
-            cxt = (SrvModel)entries[0];
+		} else if (entries[0] instanceof Model) {
+            cxt = (PositionalContext)entries[0];
         } else {
 			cxt = getPersistedContext(entries);
 			if (cxt != null) return cxt;
@@ -377,6 +310,8 @@ public class operator {
 				parList.add((Par) o);
 			} else if (o instanceof EntryList) {
 				entryLists.add((EntryList) o);
+			}  else if (o instanceof MapContext) {
+				connList.add((MapContext) o);
 			}
 		}
 
@@ -455,8 +390,18 @@ public class operator {
 			}
 			((ServiceContext) cxt).setResponse(response.path(), response.target);
 		}
-		if (entryLists.size() > 0)
-			((ServiceContext)cxt).setEntryLists(entryLists);
+		if (entryLists.size() > 0) {
+			((ServiceContext) cxt).setEntryLists(entryLists);
+		}
+		if (connList != null) {
+			for (MapContext conn : connList) {
+				if (conn.direction == MapContext.Direction.IN) {
+					((ServiceContext) cxt).setInConnector(conn);
+				} else {
+					((ServiceContext) cxt).setOutConnector(conn);
+				}
+			}
+		}
 		return cxt;
 	}
 
@@ -490,11 +435,7 @@ public class operator {
 			} else if (t instanceof InputEntry) {
 				Object par = t.value();
 				if (par instanceof Scopable) {
-					try {
-						((Scopable)par).setScope(pcxt);
-					} catch (RemoteException e) {
-						throw new ContextException(e);
-					}
+					((Scopable)par).setScope(pcxt);
 				}
 				if (t.isPersistent()) {
 					setPar(pcxt, t, i);
@@ -525,8 +466,8 @@ public class operator {
 		}
 	}
 
-	protected static void populteContext(Context cxt,
-										 List<Tuple2<String, ?>> entryList) throws ContextException {
+	public static void populteContext(Context cxt,
+									  List<Tuple2<String, ?>> entryList) throws ContextException {
 		for (int i = 0; i < entryList.size(); i++) {
 			if (entryList.get(i) instanceof InputEntry) {
 				if (((InputEntry) entryList.get(i)).isPersistent()) {
@@ -592,7 +533,7 @@ public class operator {
 						pc.putInoutValueAt(i.getName(), ((Entry) i).value(), pc.getTally()+1);
 					}
 				} else {
-					if (isReactive) {
+					if (model instanceof EntModel || isReactive) {
 						pc.putValueAt(i.getName(), i, pc.getTally()+1);
 					} else {
 						pc.putValueAt(i.getName(), ((Entry) i).value(), pc.getTally()+1);
@@ -650,6 +591,11 @@ public class operator {
 		}
 		context.putValue(path, value);
 		return context;
+	}
+
+	public static Context put(Model model, Identifiable... objects)
+			throws RemoteException, ContextException {
+		return put((Context) model, objects);
 	}
 
 	public static Context put(Context context, Identifiable... objects)
@@ -773,16 +719,6 @@ public class operator {
 		return null;
 	}
 
-	public static Paradigmatic modeling(Paradigmatic paradigm) {
-		paradigm.setModeling(true);
-		return paradigm;
-	}
-
-	public static Paradigmatic modeling(Paradigmatic paradigm, boolean modeling) {
-		paradigm.setModeling(modeling);
-		return paradigm;
-	}
-
 	/**
 	 * Returns the Evaluation with a realized substitution for its arguments.
 	 *
@@ -838,7 +774,7 @@ public class operator {
 			throws SignatureException {
 		String providerName = null;
 		Provision p = null;
-		MapContext mc = null;
+		List<MapContext> connList = new ArrayList<MapContext>();
 		if (args != null) {
 			for (Object o : args) {
 				if (o instanceof ProviderName) {
@@ -846,7 +782,7 @@ public class operator {
 				} else if (o instanceof Provision) {
 					  p = (Provision) o;
 				} else if (o instanceof MapContext) {
-					mc = ((MapContext)o);
+					connList.add(((MapContext)o));
 				}
 			}
 		}
@@ -859,8 +795,14 @@ public class operator {
 		}
         ((ServiceSignature)sig).setName(operation);
 
-		if (mc != null)
-			((ServiceSignature)sig).setMapContext(mc);
+		if (connList != null) {
+			for (MapContext conn : connList) {
+				if (conn.direction == MapContext.Direction.IN)
+					((ServiceSignature) sig).setInConnector(conn);
+				else
+					((ServiceSignature) sig).setOutConnector(conn);
+			}
+		}
 
 		if (p != null)
 			((ServiceSignature)sig).setProvisionable(p);
@@ -981,7 +923,11 @@ public class operator {
 	}
 
 	public static EvaluationTask task(Evaluation evaluator) throws ExertionException, SignatureException {
-		return new EvaluationTask(evaluator);
+		try {
+			return new EvaluationTask(evaluator);
+		} catch (Exception e) {
+			throw new ExertionException(e);
+		}
 	}
 
 	public static Signature type(Signature signature, Signature.Type type) {
@@ -1207,7 +1153,7 @@ public class operator {
 		}
 
 		if (context == null) {
-			context = new ServiceContext();
+			context = new PositionalContext();
 		}
 		task.setContext(context);
 
@@ -1249,12 +1195,12 @@ public class operator {
 
 	public static <E extends Exertion> E exertion(String name, Object... items) throws ExertionException,
 			ContextException, SignatureException {
-		List<Exertion> exertions = new ArrayList<Exertion>();
+		List<Mogram> exertions = new ArrayList<Mogram>();
 		Signature sig = null;
 		Context cxt = null;
 		for (int i = 0; i < items.length; i++) {
-			if (items[i] instanceof Exertion) {
-				exertions.add((Exertion) items[i]);
+			if (items[i] instanceof Exertion || items[i] instanceof EntModel ) {
+				exertions.add((Mogram) items[i]);
 			} else if (items[i] instanceof Signature) {
 				sig = (Signature) items[i];
 			} else if (items[i] instanceof String) {
@@ -1265,7 +1211,7 @@ public class operator {
 				&& (sig.getServiceType() == Concatenator.class
 				|| sig.getServiceType() == ServiceConcatenator.class)) {
 			return (E) block(items);
-		} else if (exertions.size() > 0) {
+		} else if (exertions.size() > 1) {
 			Job j = job(items);
 			j.setName(name);
 			return (E) j;
@@ -1285,6 +1231,7 @@ public class operator {
 		List<Pipe> pipes = new ArrayList<Pipe>();
 		List<ServiceFidelity> fidelities = null;
 		List<FidelityContext> fiContexts = null;
+		List<MapContext> connList = new ArrayList<MapContext>();
 
 		for (int i = 0; i < elems.length; i++) {
 			if (elems[i] instanceof String) {
@@ -1293,6 +1240,8 @@ public class operator {
 				exertions.add((Exertion) elems[i]);
 			} else if (elems[i] instanceof ControlContext) {
 				control = (ControlContext) elems[i];
+			} else if (elems[i] instanceof MapContext) {
+				connList.add(((MapContext)elems[i]));
 			} else if (elems[i] instanceof Context) {
 				data = (Context<?>) elems[i];
 			} else if (elems[i] instanceof Pipe) {
@@ -1366,9 +1315,18 @@ public class operator {
 				job.setFidelityContexts(fiMap);
 			}
 		}
+		if (connList != null) {
+			for (MapContext conn : connList) {
+				if (conn.direction == MapContext.Direction.IN)
+					((ServiceContext)job.getDataContext()).setInConnector(conn);
+				else
+					((ServiceContext)job.getDataContext()).setOutConnector(conn);
+			}
+		}
+
 		if (exertions.size() > 0) {
 			for (Exertion ex : exertions) {
-				job.addExertion(ex);
+				job.addMogram(ex);
 			}
 			for (Pipe p : pipes) {
 //				logger.finer("from context: "
@@ -1379,8 +1337,8 @@ public class operator {
 //						+ " path: " + p.outPath);
 				// find component exertions for thir paths
 				if (!p.isExertional()) {
-					p.out = job.getComponentExertion(p.outComponentPath);
-					p.in = job.getComponentExertion(p.inComponentPath);
+					p.out = (Exertion)job.getComponentMogram(p.outComponentPath);
+					p.in = (Exertion)job.getComponentMogram(p.inComponentPath);
 				}
 				((Exertion) p.out).getDataContext().connect(p.outPath,
 						p.inPath, ((Exertion) p.in).getContext());
@@ -1524,6 +1482,11 @@ public class operator {
 		}
 	}
 
+	public static Object value(Model model, String evalSelector,
+							  Arg... entries) throws ContextException {
+		return value((Context<Object>) model, evalSelector, entries);
+	}
+
     public static <T> T value(Context<T> model, String evalSelector,
                               Arg... entries) throws ContextException {
         if (model instanceof ParModel) {
@@ -1651,13 +1614,13 @@ public class operator {
 
 	public static List<Mogram> exertions(Mogram mogram) {
 		if (mogram instanceof Exertion)
-			return ((Exertion)mogram).getAllExertions();
+			return ((Exertion)mogram).getAllMograms();
 		else
 			return null;
 	}
 
 	public static Mogram exertion(Exertion xrt, String componentExertionName) {
-		return xrt.getComponentExertion(componentExertionName);
+		return xrt.getComponentMogram(componentExertionName);
 	}
 
 	public static List<String> trace(Mogram xrt) {
@@ -2437,37 +2400,6 @@ public class operator {
         ((ServiceSignature)signature).addRank(new Kind[]{Kind.MODEL, Kind.TASKER});
         return signature;
     }
-    
-    public static Model srvModel(Object... items) throws ContextException {
-        ServiceFidelity fidelity = null;
-        Complement complement = null;
-        for (Object item : items) {
-           if (item instanceof Signature) {
-               if (fidelity == null)
-                   fidelity = new ServiceFidelity();
-               fidelity.add((Signature) item);
-            } else if (item instanceof Complement) {
-               complement = (Complement)item;
-           }
-        }
-        SrvModel model = null;
-        try {
-            model = new SrvModel();
-        } catch (SignatureException e) {
-            throw new ContextException(e);
-        }
-        if (fidelity != null) {
-            model.setFidelity(fidelity);
-        } else if (complement != null) {
-            model.setSubject(complement.path(), complement.value());
-        } else {
-            model.setSubject("execute", ServiceModeler.class);
-        }
-        Object[] dest = new Object[items.length+1];
-        System.arraycopy(items,  0, dest,  1, items.length);
-        dest[0] = model;
-        return context(dest);
-    }
 
 	public static Signature modelManager(Signature signature) {
 		((ServiceSignature)signature).addRank(Kind.MODEL, Kind.MODEL_MANAGER);
@@ -2490,8 +2422,8 @@ public class operator {
 		Signature sig = null;
 		Context context = null;
 		for (int i = 0; i < items.length; i++) {
-			if (items[i] instanceof Exertion) {
-				mograms.add((Exertion) items[i]);
+			if (items[i] instanceof Exertion || items[i] instanceof EntModel) {
+				mograms.add((Mogram) items[i]);
 			} else if (items[i] instanceof Context) {
 				context = (Context)items[i];
 			} else if (items[i] instanceof Signature) {
@@ -2510,13 +2442,20 @@ public class operator {
 					block = new NetBlock(name);
 			} else {
 				// default signature
-				block = new NetBlock(name);
+//				block = new NetBlock(name);
+                block = new ObjectBlock(name);
 			}
 
-			if (context != null)
+			if (context != null) {
+				// block scope is its own context
 				block.setContext(context);
+				context.setScope(context);
+				// context for resetting to initial state after cleaning scopes
+				((ServiceContext)context).setInitContext((Context)ObjectCloner.clone(context));
+			}
+
 			for (Mogram e :mograms)
-				block.addExertion(e);
+				block.addMogram(e);
 		} catch (Exception se) {
 			throw new ExertionException(se);
 		}
@@ -2533,8 +2472,10 @@ public class operator {
 				pm = (ParModel)cxt;
 			} else {
 				pm = new ParModel("block context: " + cxt.getName());
-				pm.append(cxt);
 				block.setContext(pm);
+				pm.append(cxt);
+				pm.setScope(pm);
+				pm.setInitContext(context);
 			}
 			for (Mogram e : mograms) {
 				if (e instanceof AltExertion) {
@@ -2556,11 +2497,16 @@ public class operator {
 //				} else if (e instanceof VarTask) {
 //					pm.append(((VarSignature)e.getProcessSignature()).getVariability());
 				} else if (e instanceof EvaluationTask) {
-					((EvaluationTask)e).setContext(pm);
+					e.setScope(pm.getScope());
 					if (((EvaluationTask)e).getEvaluation() instanceof Par) {
 						Par p = (Par)((EvaluationTask)e).getEvaluation();
-						pm.addPar(p);
+						pm.getScope().addPar(p);
+//						pm.addPar(p);
+
 					}
+				} else {
+					e.setScope(pm.getScope());
+
 				}
 			}
 		} catch (Exception ex) {
@@ -2802,7 +2748,7 @@ public class operator {
 
 	public static Exertion add(Exertion compound, Exertion component)
 			throws ExertionException {
-		compound.addExertion(component);
+		compound.addMogram(component);
 		return compound;
 	}
 
@@ -2820,7 +2766,7 @@ public class operator {
 		for (String name : names) {
 			xrt = (Exertion) ObjectCloner.cloneAnnotatedWithNewIDs(exertion);
 			((ServiceExertion) xrt).setName(name);
-			block.addExertion(xrt);
+			block.addMogram(xrt);
 		}
 		return block;
 	}

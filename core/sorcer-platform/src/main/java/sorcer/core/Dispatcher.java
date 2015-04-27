@@ -20,9 +20,12 @@ package sorcer.core;
 import net.jini.lease.LeaseRenewalManager;
 
 public interface Dispatcher {
+
     void exec();
+
     DispatchResult getResult();
 
     LeaseRenewalManager getLrm();
+
     void setLrm(LeaseRenewalManager lrm);
 }

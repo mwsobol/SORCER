@@ -16,11 +16,12 @@
  */
 package sorcer.core.context.model.par;
 
-import sorcer.co.tuple.Entry;
+import sorcer.core.context.model.ent.Entry;
 import sorcer.co.tuple.EntryList;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.ApplicationDescription;
 import sorcer.core.context.ServiceContext;
+import sorcer.service.Scopable;
 import sorcer.service.*;
 import sorcer.service.modeling.Variability;
 import sorcer.util.url.sos.SdbUtil;
@@ -215,7 +216,7 @@ public class Par<T> extends Entry<T> implements Variability<T>, Arg, Mappable<T>
 				}
 				// direct scope
 				if (val instanceof Scopable && ((Scopable)val).getScope() != null) {
-					((Context)((Scopable)val).getScope()).append(scope);
+					((Scopable)val).getScope().append(scope);
 				}
 
 				// indirect scope for enty values

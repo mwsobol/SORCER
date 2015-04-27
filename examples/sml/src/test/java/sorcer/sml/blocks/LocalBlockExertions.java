@@ -9,11 +9,12 @@ import sorcer.arithmetic.provider.impl.AveragerImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.provider.impl.SubtractorImpl;
 import sorcer.core.SorcerConstants;
+import sorcer.core.exertion.Mograms;
 import sorcer.core.provider.rendezvous.ServiceConcatenator;
-import sorcer.service.Block;
-import sorcer.service.Service;
-import sorcer.service.Task;
+import sorcer.service.*;
+import sorcer.service.Signature.Direction;
 
+import java.util.List;
 import java.util.logging.Logger;
 
 import static org.junit.Assert.assertEquals;
@@ -36,7 +37,9 @@ public class LocalBlockExertions implements SorcerConstants {
 	private final static Logger logger = Logger.getLogger(LocalBlockExertions.class.getName());
 
 	@Test
-	public void altServiceTest() throws Exception {
+	public void altServceTest() throws Exception {
+
+//		Context scopeContext = context(ent("y1", 100), ent("y2", 200));
 
 		Task t4 = task("t4", sig("multiply", MultiplierImpl.class),
 				context("multiply", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
@@ -52,12 +55,13 @@ public class LocalBlockExertions implements SorcerConstants {
 						opt(condition("{ y1, y2 -> y1 <= y2 }", "y1", "y2"), t5)));
 
 		block = exert(block);
-//		logger.info("block context: " + context(block));
+//		logger.info("block context1: " + context(block));
 //		logger.info("result: " + value(context(block), "block/result"));
 		assertEquals(value(context(block), "block/result"), 100.00);
 
+		// the initial scope of block is cleared
 		block = exert(block, ent("y1", 200.0), ent("y2", 100.0));
-//		logger.info("block context: " + context(block));
+//		logger.info("block context2: " + context(block));
 //		logger.info("result: " + value(context(block), "block/result"));
 		assertEquals(value(context(block), "block/result"), 500.0);
 
@@ -93,24 +97,24 @@ public class LocalBlockExertions implements SorcerConstants {
 	
 	
 	@Test
-	public void altBlocTest() throws Exception {
+	public void altBlockTest() throws Exception {
 		Task t3 = task("t3", sig("subtract", SubtractorImpl.class), 
 				context("subtract", inEnt("arg/t4"), inEnt("arg/t5"),
-						result("block/result")));
+						result("block/result", Direction.OUT)));
 
 		Task t4 = task("t4", sig("multiply", MultiplierImpl.class), 
 				context("multiply", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
-						result("arg/t4")));
+						result("arg/t4", Direction.IN)));
 
 		Task t5 = task("t5", sig("add", AdderImpl.class), 
 				context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
-						result("arg/t5")));
+						result("arg/t5", Direction.IN)));
 		
 		Task t6 = task("t6", sig("average", AveragerImpl.class), 
 				context("average", inEnt("arg/t4"), inEnt("arg/t5"),
-						result("block/result")));
+						result("block/result", Direction.OUT)));
 		
-		Block block = block("block", sig("execute", ServiceConcatenator.class), 
+		Block block = block("block", sig("execute", ServiceConcatenator.class),
 				t4, t5, 
 				alt(opt(condition("{ t4, t5 -> t4 > t5 }", "t4", "t5"), t3),
 					opt(condition("{ t4, t5 -> t4 <= t5 }", "t4", "t5"), t6)));
@@ -119,14 +123,15 @@ public class LocalBlockExertions implements SorcerConstants {
 //		logger.info("exertions: " + exertions(block));
 //		logger.info("block context: " + context(block));
 
-		block = exert(block);
-//		logger.info("result: " + value(context(block), "block/result"));
-		assertEquals(value(context(block), "block/result"), 400.00);
-		
-		block = exert(block, ent("block/t5/arg/x1", 200.0), ent("block/t5/arg/x2", 800.0));
-//		logger.info("block context: " + context(block));
-		logger.info("result: " + value(context(block), "block/result"));
-		assertEquals(value(context(block), "block/result"), 750.00);
+		Block result = exert(block);
+//		logger.info("block context: " + context(result));
+//		logger.info("result: " + value(context(result), "block/result"));
+		assertEquals(value(context(result), "block/result"), 400.00);
+
+		result = exert(block, ent("block/t5/arg/x1", 200.0), ent("block/t5/arg/x2", 800.0));
+//		logger.info("block context: " + context(result));
+//		logger.info("result: " + value(context(result), "block/result"));
+		assertEquals(value(context(result), "block/result"), 750.00);
 	}
 	
 	
@@ -144,13 +149,14 @@ public class LocalBlockExertions implements SorcerConstants {
 				opt(condition("{ out -> out > 600 }", "out"), t5));
 		
 		block = exert(block);
-		logger.info("block context: " + context(block));
-		logger.info("result: " + value(context(block), "out"));
+//		logger.info("block context: " + context(block));
+//		logger.info("result: " + value(context(block), "out"));
+		assertEquals(value(context(block), "condition/value"), false);
 		assertEquals(value(context(block), "out"), 500.0);
-		
+
 		block = exert(block, ent("block/t4/arg/x1", 200.0), ent("block/t4/arg/x2", 800.0));
-		logger.info("block context: " + context(block));
-		logger.info("result: " + value(context(block), "out"));
+//		logger.info("block context: " + context(block));
+//		logger.info("result: " + value(context(block), "out"));
 		assertEquals(value(context(block), "out"), 100.0);
 	}
 	
@@ -163,14 +169,15 @@ public class LocalBlockExertions implements SorcerConstants {
 						task(par("x1", invoker("x1 + 3", par("x1"))))));
 		
 		block = exert(block);
-		logger.info("block context: " + context(block));
-		logger.info("result: " + value(context(block), "x1"));
+//		logger.info("block context: " + context(block));
+//		logger.info("result: " + value(context(block), "x1"));
 		assertEquals(value(context(block), "x1"), 82.00);
 	}
 
 	
 	@Test
 	public void parBlockTest() throws Exception {
+
 		Task t4 = task("t4", sig("multiply", MultiplierImpl.class),
 				context("multiply", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
 						result("block/result")));
@@ -180,24 +187,25 @@ public class LocalBlockExertions implements SorcerConstants {
 						result("block/result")));
 
 		Block block = block("block", sig("execute", ServiceConcatenator.class),
-				context(ent("x1", 4), ent("x2", 5)),
+				context(inEnt("x1", 4), inEnt("x2", 5)),
 				task(par("y", invoker("x1 * x2", pars("x1", "x2")))),
 				alt(opt(condition("{ y -> y > 50 }", "y"), t4),
 						opt(condition("{ y -> y <= 50 }", "y"), t5)));
 
-//		logger.info("block: " + block);
-//		logger.info("exertions: " + exertions(block));
-//		logger.info("block context: " + context(block));
-//
-		block = exert(block);
+		logger.info("block: " + block);
+		logger.info("exertions: " + exertions(block));
 		logger.info("block context: " + context(block));
-		logger.info("result: " + value(context(block), "block/result"));
+
+		block = exert(block);
+//		logger.info("block context: " + context(block));
+//		logger.info("result: " + value(context(block), "block/result"));
 		assertEquals(value(context(block), "block/result"), 100.00);
 
-		block = exert(block, ent("block/x1", 10.0), ent("block/x2", 6.0));
-		logger.info("block context: " + context(block));
-		logger.info("result: " + value(context(block), "block/result"));
+		block = exert(block, ent("x1", 10.0), ent("x2", 6.0));
+//		logger.info("block context: " + context(block));
+//		logger.info("result: " + value(context(block), "block/result"));
 		assertEquals(value(context(block), "block/result"), 500.00);
+
 	}
 	
 }

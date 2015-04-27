@@ -871,6 +871,7 @@ public class ProviderDelegate implements SorcerConstants {
 		if (isValidTask(task)) {
             logger.info("Task " + task.getName() + " is valid");
 			try {
+				task.updateContext();
 				task.startExecTime();
 				exertionStateTable.put(task.getId(), new Integer(
 						Exec.RUNNING));
@@ -2839,6 +2840,11 @@ public class ProviderDelegate implements SorcerConstants {
 				if (publishedType.isInstance(serviceBean)) {
 					serviceComponents.put(publishedType, serviceBean);
 					exposedInterfaces.add(publishedType);
+					for (Class iface : publishedType.getInterfaces()) {
+						if (!iface.getCanonicalName().equals(Remote.class.getCanonicalName()))
+							serviceComponents.put(iface, serviceBean);
+							exposedInterfaces.add(iface);
+					}
 				}
 			}
 			logger.fine("service component exposed interfaces" + exposedInterfaces);

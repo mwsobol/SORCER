@@ -16,10 +16,13 @@
 package sorcer.core.deploy;
 
 import junit.framework.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
+import org.sorcer.test.TestsRequiringRio;
 import sorcer.core.SorcerConstants;
 import sorcer.core.provider.Provider;
 import sorcer.service.*;
@@ -40,6 +43,7 @@ import static sorcer.eo.operator.*;
 public class DeployExertionTest2 extends DeploySetup implements SorcerConstants {
     private final static Logger logger = Logger.getLogger(DeployExertionTest.class.getName());
 
+    @Category(TestsRequiringRio.class)
     @Test
     public void deployAndExec() throws Exception {
     	long t0 = System.currentTimeMillis();

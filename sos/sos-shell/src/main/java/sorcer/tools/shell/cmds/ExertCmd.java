@@ -283,7 +283,7 @@ public class ExertCmd extends ShellCmd {
 
     public static List<String> getAllExertionIdFromExertion(Exertion xrt) {
         List<String> xrtIdsList = new ArrayList<String>();
-        for (Mogram exertion : xrt.getAllExertions()) {
+        for (Mogram exertion : xrt.getAllMograms()) {
             xrtIdsList.add(exertion.getId().toString());
         }
         return xrtIdsList;

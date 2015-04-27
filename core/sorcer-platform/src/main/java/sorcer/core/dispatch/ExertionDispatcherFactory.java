@@ -33,7 +33,7 @@ import sorcer.core.monitor.MonitoringSession;
 import sorcer.core.provider.Cataloger;
 import sorcer.core.Dispatcher;
 import sorcer.core.provider.Provider;
-import sorcer.core.exertion.Jobs;
+import sorcer.core.exertion.Mograms;
 import sorcer.core.loki.member.LokiMemberUtil;
 import sorcer.core.signature.ServiceSignature;
 import sorcer.service.*;
@@ -79,7 +79,7 @@ public class ExertionDispatcherFactory implements DispatcherFactory {
             if(exertion instanceof Job)
                 exertion = new ExertionSorter(exertion).getSortedJob();
 
-			if (Jobs.isCatalogBlock(exertion) && exertion instanceof Block) {
+			if (Mograms.isCatalogBlock(exertion) && exertion instanceof Block) {
 				logger.info("Running Catalog Block Dispatcher...");
                 dispatcher = new CatalogBlockDispatcher(exertion,
 						                                  sharedContexts,
@@ -97,7 +97,7 @@ public class ExertionDispatcherFactory implements DispatcherFactory {
 			}
             if (dispatcher==null && exertion instanceof Job) {
                 Job job = (Job) exertion;
-                if (Jobs.isSpaceParallel(job)) {
+                if (Mograms.isSpaceParallel(job)) {
                     logger.info("Running Space Parallel Dispatcher...");
                     dispatcher = new SpaceParallelDispatcher(job,
                             sharedContexts,
@@ -105,14 +105,14 @@ public class ExertionDispatcherFactory implements DispatcherFactory {
                             loki,
                             provider,
                             provisionManager);
-                } else if (Jobs.isCatalogParallel(job)) {
+                } else if (Mograms.isCatalogParallel(job)) {
                     logger.info("Running Catalog Parallel Dispatcher...");
                     dispatcher = new CatalogParallelDispatcher(job,
                             sharedContexts,
                             isSpawned,
                             provider,
                             provisionManager);
-                } else if (Jobs.isCatalogSequential(job)) {
+                } else if (Mograms.isCatalogSequential(job)) {
                     logger.info("Running Catalog Sequential Dispatcher...");
                     dispatcher = new CatalogSequentialDispatcher(job,
                             sharedContexts,
@@ -155,9 +155,9 @@ public class ExertionDispatcherFactory implements DispatcherFactory {
     protected boolean isSpaceSequential(Exertion exertion) {
         if(exertion instanceof Job) {
             Job job = (Job) exertion;
-            return Jobs.isSpaceSingleton(job) || Jobs.isSpaceSequential(job);
+            return Mograms.isSpaceSingleton(job) || Mograms.isSpaceSequential(job);
         }
-        return Jobs.isSpaceBlock(exertion);
+        return Mograms.isSpaceBlock(exertion);
     }
 
     /**

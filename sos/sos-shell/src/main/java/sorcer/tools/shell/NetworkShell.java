@@ -585,19 +585,16 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 		disco = null;
 		try {
             DynamicConfiguration config = new DynamicConfiguration();
-            config.setEntry("net.jini.discovery.LookupDiscovery", "multicastRequestHost",
-                    String.class, Sorcer.getLocalHost().getHostAddress());
-			disco = new LookupDiscovery(LookupDiscovery.NO_GROUPS, config);
-			disco.addDiscoveryListener(instance);
+            config.setEntry("net.jini.discovery.LookupDiscovery",
+                            "multicastRequestHost",
+                            String.class,
+                            Sorcer.getLocalHost().getHostAddress());
 			if (ingroups == null || ingroups.length == 0) {
-				// System.out.println("SORCER groups: " +
-				// Arrays.toString(Sorcer.getGroups()));
-				 disco.setGroups(SorcerEnv.getLookupGroups());
-				// disco.setGroups(LookupDiscovery.ALL_GROUPS);
-				disco.setGroups(LookupDiscovery.ALL_GROUPS);
+                disco = new LookupDiscovery(LookupDiscovery.ALL_GROUPS, config);
 			} else {
-				disco.setGroups(ingroups);
+                disco = new LookupDiscovery(ingroups, config);
 			}
+            disco.addDiscoveryListener(instance);
 		} catch (IOException e) {
 			System.err.println(e.toString());
 			e.printStackTrace();
@@ -625,9 +622,10 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 		// shellOutput.println("NOTICE: discovery made");
 		// shellOutput.print(SYSTEM_PROMPT);
 		// shellOutput.flush();
-		for (int i = 0; i < regs.length; i++)
-			if (!registrars.contains(regs[i]))
-				registrars.add(regs[i]);
+        for (ServiceRegistrar reg : regs) {
+            if (!registrars.contains(reg))
+                registrars.add(reg);
+        }
 	}
 
 	public void discarded(DiscoveryEvent evt) {
@@ -740,8 +738,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 					+ " non-interactive network shell\n"
 					+ "Log creation: " + new Date(startTime).toString() + "\n"
 					+ "Operator: " + System.getProperty("user.name"));
-			System.err
-					.println("===============================================");
+			System.err.println("===============================================");
 			if (addedProps.size() > 0) {
 				StringBuilder buff = new StringBuilder();
 				for (Map.Entry<Object, Object> entry : addedProps.entrySet()) {
@@ -750,8 +747,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 					buff.append("\n");
 					buff.append("    ").append(key).append("=").append(value);
 				}
-				System.err.println("Added System Properties {"
-						+ buff.toString() + "\n}");
+				System.err.println("Added System Properties {"+ buff.toString() + "\n}");
 			}
 		}
 
@@ -813,26 +809,20 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 		return disco;
 	}
 
-	public static List<ServiceRegistrar> getRegistrars() {
+    public static List<ServiceRegistrar> getRegistrars() {
         // Remove non-existent registrars                                                                                       T
         List<ServiceRegistrar> regsToRemove = new ArrayList<ServiceRegistrar>();
-        synchronized (registrars) {
-            for (ServiceRegistrar sr : registrars) {
-                try {
-                    sr.getGroups();
-                } catch (Exception e) {
-                    regsToRemove.add(sr);
-                }
+        for (ServiceRegistrar sr : registrars) {
+            try {
+                sr.getGroups();
+            } catch (Exception e) {
+                regsToRemove.add(sr);
             }
-            if (!regsToRemove.isEmpty()) registrars.removeAll(regsToRemove);
         }
-        if (registrars.isEmpty()) {
-            NetworkShell.getDisco().terminate();
-            // start new lookup discovery
-            NetworkShell.setLookupDiscovery(NetworkShell.getGroups());
-        }
-		return registrars;
-	}
+        if (!regsToRemove.isEmpty())
+            registrars.removeAll(regsToRemove);
+        return registrars;
+    }
 
 	/**
 	 * Get the Configuration
@@ -1059,10 +1049,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 			}
 			shellOutput.println();
 			
-			shellOutput
-					.println("Lookup groups: "
-							+ (groups == null ? "all groups" : Arrays
-									.toString(groups)));
+			shellOutput.println("Lookup groups: "+ (groups == null ? "all groups" : Arrays.toString(groups)));
 			
 			DiscoCmd.printCurrentLus();
 			EmxCmd.printCurrentMonitor();

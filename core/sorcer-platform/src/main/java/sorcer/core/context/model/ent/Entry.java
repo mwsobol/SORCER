@@ -15,8 +15,9 @@
  * limitations under the License.
  */
 
-package sorcer.co.tuple;
+package sorcer.core.context.model.ent;
 
+import sorcer.co.tuple.Tuple2;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.service.*;
 import sorcer.util.bdb.objects.UuidObject;

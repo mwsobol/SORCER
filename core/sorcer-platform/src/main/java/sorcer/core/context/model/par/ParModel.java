@@ -17,9 +17,11 @@
 package sorcer.core.context.model.par;
 
 import sorcer.core.context.Contexts;
-import sorcer.core.context.PositionalContext;
 import sorcer.core.context.ServiceContext;
+import sorcer.core.context.model.ent.EntModel;
+import sorcer.core.context.model.ent.Entry;
 import sorcer.core.invoker.ServiceInvoker;
+import sorcer.service.Scopable;
 import sorcer.service.*;
 import sorcer.service.modeling.Variability;
 import sorcer.util.Response;
@@ -57,14 +59,14 @@ import static sorcer.eo.operator.returnPath;
  * @author Mike Sobolewski
  */
 @SuppressWarnings({"unchecked", "rawtypes"  })
-public class ParModel<T> extends PositionalContext<T> implements Invocation<T>, Mappable<T>, ParModeling {
+public class ParModel<T> extends EntModel<T> implements Invocation<T>, Mappable<T>, ParModeling {
 
     private static final long serialVersionUID = -6932730998474298653L;
 
     public ParModel() {
         super();
         name = PAR_MODEL;
-        setSubject("model/pars", new Date());
+        setSubject("par/model", new Date());
 
     }
 
@@ -75,7 +77,7 @@ public class ParModel<T> extends PositionalContext<T> implements Invocation<T>, 
     public ParModel(Context context) throws RemoteException, ContextException {
         super(context);
         name = PAR_MODEL;
-        setSubject("model/pars", new Date());
+        setSubject("par/model", new Date());
     }
 
     public ParModel(Identifiable... objects) throws RemoteException,
@@ -192,9 +194,9 @@ public class ParModel<T> extends PositionalContext<T> implements Invocation<T>, 
 			if (obj instanceof Par) {
 				p = (Par) obj;
 				addPar(p);
-			} else if (obj instanceof sorcer.co.tuple.Entry) {
-				putValue((String) ((sorcer.co.tuple.Entry) obj).key(),
-						((sorcer.co.tuple.Entry) obj).value());
+			} else if (obj instanceof Entry) {
+				putValue((String) ((Entry) obj).key(),
+						((Entry) obj).value());
 			} else if (obj instanceof Identifiable) {
 				String pn = ((Identifiable) obj).getName();
 				p = new Par(pn, obj, new ParModel(pn).append(this));
@@ -213,9 +215,9 @@ public class ParModel<T> extends PositionalContext<T> implements Invocation<T>, 
 		for (Identifiable obj : objects) {
 			if (obj instanceof Par) {
 				p = (Par) obj;
-			} else if (obj instanceof sorcer.co.tuple.Entry) {
-				putValue((String) ((sorcer.co.tuple.Entry) obj).key(),
-						((sorcer.co.tuple.Entry) obj).value());
+			} else if (obj instanceof Entry) {
+				putValue((String) ((Entry) obj).key(),
+						((Entry) obj).value());
 			} else {
 				String pn = ((Identifiable) obj).getName();
 				p = new Par(pn, obj, this);

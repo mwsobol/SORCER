@@ -19,6 +19,7 @@ package sorcer.service;
 
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
+import net.jini.id.Uuid;
 
 import java.rmi.RemoteException;
 
@@ -27,7 +28,7 @@ import java.rmi.RemoteException;
  *
  * @author Mike Sobolewski
  */
-public interface Mogram extends Service, Identifiable {
+public interface Mogram extends Service, Scopable, Identifiable {
 
     /**
      * Exerts this mogram by the assigned service provider if it is set. If a service
@@ -49,4 +50,13 @@ public interface Mogram extends Service, Identifiable {
     public <T extends Mogram> T exert(Arg... entries) throws TransactionException, ExertionException,
             RemoteException;
 
+    public void setIndex(int i);
+
+    public void setParentId(Uuid parentId);
+
+    public Signature getProcessSignature();
+
+    public int getStatus();
+
+    public void setStatus(int value);
 }

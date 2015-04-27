@@ -28,9 +28,9 @@ import java.rmi.RemoteException;
  */
 public interface Model extends Mogram, Dependency {
     
-    public Context getInputs()  throws ContextException, RemoteException;
+    public Context getInContext()  throws ContextException, RemoteException;
     
-    public Context getOutputs()  throws ContextException, RemoteException;
+    public Context getOutContext()  throws ContextException, RemoteException;
 
     /**
      *  Returns a context of all specified responses of this model.
@@ -43,15 +43,26 @@ public interface Model extends Mogram, Dependency {
     public Context getResponses(Arg... args)  throws ContextException, RemoteException;
 
     /**
-     *  Returns a context as a map of input path mapped to existing path of this model.
-     *  A map context specifies a map of an input context for other collaborating mograms.
+     *  Returns a inConnector as a map of input paths of tis model mapped to output paths of the sender.
+     *  A inConnector specifies a map of an input context of this model.
      *
      * @param args  optional configuration arguments
      * @return
      * @throws ContextException
      * @throws RemoteException
      */
-    public Context getMapContext(Arg... args)  throws ContextException, RemoteException;
+    public Context getInConnector(Arg... args)  throws ContextException, RemoteException;
+
+    /**
+     *  Returns a inConnector as a map of input paths of the receiver to output path of this model.
+     *  A inConnector specifies a map of an input context as needed by another collaborating service.
+     *
+     * @param args  optional configuration arguments
+     * @return                                                                                  s
+     * @throws ContextException
+     * @throws RemoteException
+     */
+    public Context getOutConnector(Arg... args)  throws ContextException, RemoteException;
 
     /**
      * Returns a response for a given <code>path</code>

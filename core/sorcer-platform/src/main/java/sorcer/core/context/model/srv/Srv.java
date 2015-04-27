@@ -1,6 +1,6 @@
 package sorcer.core.context.model.srv;
 
-import sorcer.co.tuple.Entry;
+import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.ApplicationDescription;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;

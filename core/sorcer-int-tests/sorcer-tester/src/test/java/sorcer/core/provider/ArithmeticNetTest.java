@@ -50,14 +50,16 @@ public class ArithmeticNetTest implements SorcerConstants {
 			.getLogger(ArithmeticNetTest.class.getName());
 	
 	@Test
-	public void getPoviderTest() throws Exception {
+	public void getProviderTest() throws Exception {
 		Cataloger catalog = ProviderAccessor.getCataloger();
 		Object proxy = catalog.lookup(Adder.class);
 		if (proxy != null)
-			System.out.println("Averager: " + Arrays.toString(proxy.getClass().getInterfaces()));
+			System.out.println("Adder: " + Arrays.toString(proxy.getClass().getInterfaces()));
+
+		String[] pnames = catalog.getProviderList();
+		logger.info("cataloger pnames: " + Arrays.toString(pnames));
+
 		assertNotNull(proxy);
-//		String[] pnames = catalog.getProviderList();
-//		logger.info("cataloger pnames: " + Arrays.toString(pnames));
 	}
 	
 	@Test

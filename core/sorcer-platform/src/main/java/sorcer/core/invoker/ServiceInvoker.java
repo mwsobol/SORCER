@@ -19,9 +19,10 @@ package sorcer.core.invoker;
 
 import net.jini.id.Uuid;
 import net.jini.id.UuidFactory;
-import sorcer.co.tuple.Entry;
+import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.par.Par;
 import sorcer.core.context.model.par.ParModel;
+import sorcer.service.Scopable;
 import sorcer.service.*;
 
 import java.io.Serializable;
@@ -390,14 +391,15 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 	 * @see sorcer.service.Scopable#setScope(java.lang.Object)
 	 */
 	@Override
-	public void setScope(Object scope) throws RemoteException, ContextException {
+	public void setScope(Context scope) throws ContextException {
 		if (scope instanceof ParModel) {
-			this.invokeContext = (ParModel)scope;
-		} else if (scope instanceof Context) {	
-			this.invokeContext = new ParModel((Context)scope);
-		}
-		else {
-			throw new ContextException("Provided scope in not contextual");
+			this.invokeContext = (ParModel) scope;
+		} else if (scope instanceof Context) {
+			try {
+				this.invokeContext = new ParModel(scope);
+			} catch (Exception e) {
+				throw new ContextException();
+			}
 		}
 	}
 	

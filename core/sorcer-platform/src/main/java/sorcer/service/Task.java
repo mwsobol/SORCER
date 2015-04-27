@@ -160,7 +160,7 @@ public class Task extends ServiceExertion {
 			throws EvaluationException, ContextException {
 		// implement is subclasses
 	}
-	
+
 	public void undoTask() throws ExertionException, SignatureException,
 			RemoteException {
 		throw new ExertionException("Not implemneted by this Task: " + this);
@@ -246,7 +246,10 @@ public class Task extends ServiceExertion {
 		if (time != null && time.length() > 0)
 			sb.append("\n\texec time=").append(time);
 		sb.append(controlContext).append("\n");
-		sb.append(dataContext);
+//		sb.append(dataContext);
+		sb.append(dataContext.getName() + ": ");
+		sb.append(dataContext.getSubjectPath() + " = ");
+		sb.append(dataContext.getSubjectValue());
 		sb.append("\n=== DONE PRINTING TASK ===\n");
 
 		return sb.toString();
@@ -314,16 +317,16 @@ public class Task extends ServiceExertion {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see sorcer.service.Exertion#getExertions()
+	 * @see sorcer.service.Exertion#getMograms()
 	 */
 	@Override
-	public List<Mogram> getExertions() {
+	public List<Mogram> getMograms() {
 		ArrayList<Mogram> list = new ArrayList<Mogram>(1);
 		list.add(this);
 		return list;
 	}
 
-	public List<Mogram> getExertions(List<Mogram> exs) {
+	public List<Mogram> getMograms(List<Mogram> exs) {
 		exs.add(this);
 		return exs;
 	}
@@ -331,10 +334,10 @@ public class Task extends ServiceExertion {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see sorcer.service.Exertion#addExertion(sorcer.service.Exertion)
+	 * @see sorcer.service.Exertion#addMogram(sorcer.service.Exertion)
 	 */
 	@Override
-	public Exertion addExertion(Mogram component) {
+	public Mogram addMogram(Mogram component) {
 		throw new RuntimeException("Tasks do not contain component exertions!");
 	}
 

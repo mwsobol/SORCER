@@ -17,6 +17,7 @@
 
 package sorcer.co.tuple;
 
+import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.par.Par;
 import sorcer.core.context.model.par.ParSet;
 import sorcer.service.EvaluationException;

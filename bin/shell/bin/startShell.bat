@@ -34,6 +34,9 @@ set LIB_DIR=%SORCER_HOME%\lib
 
 FOR /F "usebackq tokens=1,2 delims==" %%G IN ("%SORCER_HOME%\configs\versions.properties") DO (set %%G=%%H)
 
+IF NOT DEFINED RIO_HOME (
+    SET RIO_HOME=%SORCER_HOME%\rio-%rio.version%
+)
 
 set JINI_BASE=
 set JINI_BASE=%JINI_BASE%;%LIB_DIR%\river\jsk-platform-%river.version%.jar

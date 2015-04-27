@@ -6,9 +6,7 @@ import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.Adder;
 import sorcer.arithmetic.provider.impl.AdderImpl;
-import sorcer.core.context.MapContext;
 import sorcer.service.Context;
-import sorcer.service.Exertion;
 import sorcer.service.Service;
 import sorcer.service.Signature;
 
@@ -20,6 +18,7 @@ import java.util.logging.Logger;
 import static org.junit.Assert.*;
 import static sorcer.co.operator.inEnt;
 import static sorcer.eo.operator.*;
+import static sorcer.mo.operator.*;
 
 
 /**
@@ -186,20 +185,47 @@ public class Signatures {
 		assertEquals(100.0, exec(as));
 	}
 
-
 	@Test
-	public void sigMapContext() throws Exception {
+	public void localSigConnector() throws Exception {
 
 		Context cxt = context(
 				inEnt("y1", 20.0),
 				inEnt("y2", 80.0),
 				result("result/y"));
 
-		Context out = mapContext(
-				inEnt("y1", "arg/x1"),
-				inEnt("y2", "arg/x2"));
+		Context outConnector = outConn(
+				inEnt("arg/x1", "y1"),
+				inEnt("arg/x2", "y2"));
 
-		Signature ps = sig("add", Adder.class, prvName("Adder"), out);
+		Signature ps = sig("add", AdderImpl.class, prvName("Adder"), outConnector);
+
+		// request the remote service
+		Service as = service("as", ps, cxt);
+
+		logger.info("input context: " + context(as));
+
+		Service task = exert(as);
+
+		logger.info("input context: " + context(task));
+
+		assertEquals(20.0, value(context(task), "arg/x1"));
+		assertEquals(80.0, value(context(task), "arg/x2"));
+		assertEquals(100.0, value(context(task), "result/y"));
+	}
+
+	@Test
+	public void rmoteSigConnector() throws Exception {
+
+		Context cxt = context(
+				inEnt("y1", 20.0),
+				inEnt("y2", 80.0),
+				result("result/y"));
+
+		Context inc = inConn(
+				inEnt("arg/x1", "y1"),
+				inEnt("arg/x2", "y2"));
+
+		Signature ps = sig("add", Adder.class, prvName("Adder"), inc);
 
 		// request the remote service
 		Service as = service("as", ps, cxt);

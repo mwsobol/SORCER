@@ -20,9 +20,11 @@ import sorcer.co.tuple.*;
 import sorcer.core.context.Copier;
 import sorcer.core.context.ListContext;
 import sorcer.core.context.ServiceContext;
+import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.par.Par;
 import sorcer.core.context.model.srv.Srv;
 import sorcer.core.provider.DatabaseStorer;
+import sorcer.service.Scopable;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
 import sorcer.service.modeling.Variability;
@@ -643,9 +645,18 @@ public class operator {
        return Arrays.asList(paths);
     }
     
-    public static void dependsOn(Model model, String path, List<String> dependentPaths) {
+    public static void dependsOn(Model model, Entry... entries) {
         Map<String, List<String>> dm = ((ServiceContext)model).getDependentPaths();
-        dm.put(path, dependentPaths);
+        String path = null;
+        Object dependentPaths = null;
+        for (Entry e : entries) {
+            dependentPaths = e.value();
+            if (dependentPaths instanceof List){
+                path = e.getName();
+                dependentPaths =  e.value();
+                dm.put(path, (List<String>)dependentPaths);
+            }
+        }
     }
 
     public static Map<String, List<String>> dependentPaths(Model model) {
@@ -654,7 +665,7 @@ public class operator {
     
     public static Dependency dependsOn(Dependency dependee,  Evaluation... dependers) throws ContextException {
         for (Evaluation d : dependers)
-            ((Dependency) dependee).getDependers().add(d);
+            	dependee.getDependers().add(d);
         
         return dependee;
     }
@@ -664,9 +675,9 @@ public class operator {
         if (dependee instanceof Scopable) {
             Context context = null;
             try {
-                context = (Context) ((Scopable) dependee).getScope();
+                context = (Context) ((ServiceExertion) dependee).getExertionScope();
                 if (context == null)
-                    ((Scopable) dependee).setScope(scope);
+                    ((ServiceExertion) dependee).setExertionScope(scope);
                 else
                     context.append(scope);
             } catch (RemoteException e) {
