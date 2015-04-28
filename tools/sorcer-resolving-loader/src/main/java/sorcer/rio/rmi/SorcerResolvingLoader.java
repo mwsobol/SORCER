@@ -153,39 +153,6 @@ public class SorcerResolvingLoader extends RMIClassLoaderSpi {
         return adaptedCodebase;
     }
 
-/*    private String resolveCodebase(final String codebase) {
-        if (codebase==null) return null;
-        String[] artifacts = codebase.split(CODEBASE_SEPARATOR);
-        Set<String> jarsSet = new HashSet<String>();
-        for (String artf : artifacts) {
-            if (artf != null && artf.startsWith("artifact:")) {
-                Set<String> adaptedCodebase;
-                synchronized (artf.intern()) {
-                    adaptedCodebase = artifactToCodebase.get(artf);
-                    if (adaptedCodebase == null)
-                        try {
-                            adaptedCodebase = new HashSet<String>();
-                            for (String path : sorcerResolver.doResolve(artf)) {
-                                // ignore pom files
-                                if(path.endsWith(".pom"))
-                                    continue;
-                                adaptedCodebase.add(new File(path).toURI().toURL().toExternalForm());
-                            }
-                            artifactToCodebase.put(artf, adaptedCodebase);
-                            logger.debug("Resolved {} to {}", artf, adaptedCodebase);
-                        } catch (SorcerResolverException e) {
-                            logger.warn("Unable to resolve {}", artf, e);
-                        } catch (MalformedURLException e) {
-                            logger.warn("The codebase {} is malformed", artf, e);
-                        }
-                }
-                jarsSet.addAll(adaptedCodebase);
-            } else if (artf!=null)
-                jarsSet.add(artf);
-
-        }
-        return join(jarsSet, CODEBASE_SEPARATOR);
-    }*/
 
     /**
      * Copied from StringUtils to avoid dependency on sorcer-platform
