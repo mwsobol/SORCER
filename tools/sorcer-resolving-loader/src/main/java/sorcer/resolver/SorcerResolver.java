@@ -44,7 +44,22 @@ public abstract class SorcerResolver {
         return instance;
     }
 
-    public abstract String[] doResolve(String artifact) throws SorcerResolverException;
+    public String[] doResolve(String artifact) throws SorcerResolverException {
+        String[] cp = null;
+
+        if (artifact.startsWith("artifact:")) {
+            cp = resolveUrl(artifact);
+        } else if (artifact.indexOf(':') >= 0) {
+            cp = resolveCoords(artifact);
+        }
+        if (cp == null || cp.length == 0)
+            throw new SorcerResolverException("Failed to resolve: " + artifact + " after 5 attempts");
+        return cp;
+    }
+
+    public abstract String[] resolveUrl(String artifact);
+
+    public abstract String[] resolveCoords(String coords);
 
     public abstract URL getLocation(String path) throws SorcerResolverException;
 
