@@ -16,8 +16,7 @@
 
 package sorcer.core.monitor;
 
-import sorcer.core.context.IControlContext;
-import sorcer.core.monitor.MonitoringSession;
+import sorcer.core.context.StrategyContext;
 import sorcer.service.*;
 import sorcer.util.StringUtils;
 
@@ -36,7 +35,7 @@ public class MonitorUtil {
         Exertion mxrt = context.getExertion();
         if (mxrt == null)
             return;
-        IControlContext controlContext = mxrt.getControlContext();
+        StrategyContext controlContext = mxrt.getControlContext();
         MonitoringSession monSession = getMonitoringSession(controlContext);
         if (controlContext.isMonitorable() && monSession != null) {
             try {
@@ -60,7 +59,7 @@ public class MonitorUtil {
         Exertion mxrt = context.getExertion();
         if (mxrt == null)
             return;
-        IControlContext controlContext = mxrt.getControlContext();
+        StrategyContext controlContext = mxrt.getControlContext();
         MonitoringSession monSession = getMonitoringSession(controlContext);
         if (mxrt.isMonitorable() && monSession != null) {
             monSession.changed(context, controlContext, aspect.ordinal());
@@ -71,7 +70,7 @@ public class MonitorUtil {
         setMonitoringSession(exertion.getControlContext(), monitorSession);
     }
 
-    public static void setMonitoringSession(IControlContext controlContext, MonitoringSession monitorSession) {
+    public static void setMonitoringSession(StrategyContext controlContext, MonitoringSession monitorSession) {
         try {
             controlContext.putValue(KEY_MONITORING_SESSION, monitorSession);
         } catch (ContextException e) {
@@ -83,7 +82,7 @@ public class MonitorUtil {
         return getMonitoringSession(exertion.getControlContext());
     }
 
-    public static MonitoringSession getMonitoringSession(IControlContext controlContext) {
+    public static MonitoringSession getMonitoringSession(StrategyContext controlContext) {
         try {
             return (MonitoringSession) controlContext.getValue(KEY_MONITORING_SESSION);
         } catch (ContextException e) {

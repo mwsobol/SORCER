@@ -23,7 +23,7 @@ import net.jini.id.UuidFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.context.ControlContext;
-import sorcer.core.context.IControlContext;
+import sorcer.core.context.StrategyContext;
 import sorcer.core.exertion.AltExertion;
 import sorcer.core.monitor.MonitorEvent;
 import sorcer.core.monitor.MonitorableSession;
@@ -32,7 +32,7 @@ import sorcer.core.provider.MonitorManagementSession;
 import sorcer.core.provider.Provider;
 import sorcer.core.provider.exertmonitor.lease.MonitorLandlord;
 import sorcer.service.*;
-import sorcer.util.ObjectClonerSimple;
+import sorcer.util.ObjectCloner;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -112,7 +112,7 @@ public class MonitorSession extends ArrayList<MonitorSession> implements
 					"Assertion Failed: initialExertion cannot be NULL");
 
 		this.initialExertion = (ServiceExertion) ex;
-		runtimeExertion = (ServiceExertion) ObjectClonerSimple.cloneAnnotated(ex);
+		runtimeExertion = (ServiceExertion) ObjectCloner.cloneAnnotated(ex);
 		this.listener = listener;
 		init();
 		runtimeExertion.setStatus(Exec.INITIAL);
@@ -260,7 +260,7 @@ public class MonitorSession extends ArrayList<MonitorSession> implements
 		return lease;
 	}
 
-	public void update(Context<?> ctx, IControlContext controlContext, int aspect) {
+	public void update(Context<?> ctx, StrategyContext controlContext, int aspect) {
 		if (ctx == null)
 			throw new NullPointerException(
 					"Assertion Failed: ctx cannot be NULL");
@@ -274,7 +274,7 @@ public class MonitorSession extends ArrayList<MonitorSession> implements
 		persist();
 	}
 
-	public void done(Context<?> ctx, IControlContext controlContext) throws MonitorException {
+	public void done(Context<?> ctx, StrategyContext controlContext) throws MonitorException {
         logger.info("Done exertion: " + runtimeExertion.getName());
 		if (ctx == null)
 			throw new NullPointerException("Assertion Failed: ctx cannot be null");
@@ -302,7 +302,7 @@ public class MonitorSession extends ArrayList<MonitorSession> implements
 		mLandlord.remove(this);
 	}
 
-	public void failed(Context<?> ctx, IControlContext controlContext) throws MonitorException {
+	public void failed(Context<?> ctx, StrategyContext controlContext) throws MonitorException {
 		if (ctx == null)
 			throw new NullPointerException(
 					"Assertion Failed: ctx cannot be NULL");

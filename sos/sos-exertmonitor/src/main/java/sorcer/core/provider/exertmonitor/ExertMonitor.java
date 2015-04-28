@@ -33,7 +33,7 @@ import net.jini.core.event.RemoteEventListener;
 import net.jini.core.lease.Lease;
 import net.jini.id.Uuid;
 import sorcer.core.UEID;
-import sorcer.core.context.IControlContext;
+import sorcer.core.context.StrategyContext;
 import sorcer.core.monitor.MonitoringManagement;
 import sorcer.core.provider.MonitorManagementSession;
 import sorcer.core.provider.ServiceProvider;
@@ -42,7 +42,6 @@ import sorcer.core.provider.exertmonitor.db.SessionDatabaseViews;
 import sorcer.core.provider.exertmonitor.lease.MonitorLandlord;
 import sorcer.security.util.SorcerPrincipal;
 import sorcer.service.*;
-import sorcer.service.Exec.State;
 import sorcer.util.bdb.objects.UuidKey;
 
 import com.sleepycat.collections.StoredMap;
@@ -277,7 +276,7 @@ public class ExertMonitor extends ServiceProvider implements MonitoringManagemen
 	 *             if there is a communication error
 	 */
 
-	private void update(int aspect, Uuid cookie, Context ctx, IControlContext controlContext) throws RemoteException,
+	private void update(int aspect, Uuid cookie, Context ctx, StrategyContext controlContext) throws RemoteException,
 			MonitorException {
 		// Get the SessionResource corresponding to this cookie
 		MonitorSession resource = findSessionResource(cookie);
@@ -302,7 +301,7 @@ public class ExertMonitor extends ServiceProvider implements MonitoringManagemen
 	 *             if there is a communication error
 	 */
 
-	private void done(Uuid cookie, Context ctx, IControlContext controlContext) throws RemoteException,
+	private void done(Uuid cookie, Context ctx, StrategyContext controlContext) throws RemoteException,
 			MonitorException {
 		// Get the SessionResource correspoding to this cookie
 		MonitorSession resource = findSessionResource(cookie);
@@ -326,7 +325,7 @@ public class ExertMonitor extends ServiceProvider implements MonitoringManagemen
 	 * @throws RemoteException
 	 *             if there is a communication error
 	 */
-	private void failed(Uuid cookie, Context ctx, IControlContext controlContext) throws RemoteException,
+	private void failed(Uuid cookie, Context ctx, StrategyContext controlContext) throws RemoteException,
 			MonitorException {
 		MonitorSession resource = findSessionResource(cookie);
 
@@ -450,7 +449,7 @@ public class ExertMonitor extends ServiceProvider implements MonitoringManagemen
 	 * sorcer.core.monitor.MonitorSessionManagement.Aspect)
 	 */
 	@Override
-	public void update(Uuid cookie, Context ctx, IControlContext controlContext, int aspect)
+	public void update(Uuid cookie, Context ctx, StrategyContext controlContext, int aspect)
 			throws RemoteException, MonitorException {
 		if (aspect==Exec.UPDATED || aspect==Exec.PROVISION) {
 			update(aspect, cookie, ctx, controlContext);

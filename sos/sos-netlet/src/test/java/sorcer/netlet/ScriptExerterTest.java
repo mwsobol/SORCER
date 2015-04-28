@@ -13,20 +13,29 @@ import java.io.*;
  */
 public class ScriptExerterTest {
 
-    final static String SCRIPT_FILE="src/test/resources/f1.ntl";
+    final static String SCRIPT_FILE1="src/test/resources/f1.ntl";
+    final static String SCRIPT_FILE2="src/test/resources/f2.ntl";
+    final static String SCRIPT_FILE3="src/test/resources/f3.ntl";
 
     @Test
-    public void testLoadNetletFromFile() throws Exception {
-        ScriptExerter se = new ScriptExerter(new File(SCRIPT_FILE));
-        Assert.assertNotNull(se.getScript());
-    }
-
-    @Test
-    public void testParseNetlet() throws Throwable {
-        ScriptExerter se = new ScriptExerter(new File(SCRIPT_FILE));
+    public void testParseNetletF1() throws Throwable {
+        ScriptExerter se = new ScriptExerter(new File(SCRIPT_FILE1));
         se.parse();
         Assert.assertNotNull(se.getTarget() instanceof Job);
     }
 
+    @Test
+    public void testParseNetletF2() throws Throwable {
+        ScriptExerter se = new ScriptExerter(new File(SCRIPT_FILE2));
+        se.parse();
+        Assert.assertNotNull(se.getTarget() instanceof Job);
+    }
+
+    @Test
+    public void testParseNetletF3() throws Throwable {
+        ScriptExerter se = new ScriptExerter(new File(SCRIPT_FILE3));
+        se.parse();
+        Assert.assertNotNull(se.getTarget() instanceof Job);
+    }
 
 }

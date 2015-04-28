@@ -34,7 +34,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
-public class ControlContext extends ServiceContext<Object> implements Strategy, IControlContext {
+public class ControlContext extends ServiceContext<Object> implements StrategyContext {
 
 	private static final long serialVersionUID = 7280700425027799253L;
 

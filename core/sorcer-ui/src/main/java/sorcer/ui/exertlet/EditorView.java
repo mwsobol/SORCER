@@ -1,7 +1,8 @@
 /*
  * Copyright 2014 the original author or authors.
  * Copyright 2014 SorcerSoft.org.
- *  
+ * Copyright 2015 SorcerSoft.com.
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -104,7 +105,6 @@ public class EditorView extends JPanel implements HyperlinkListener {
 		WindowUtilities.setNativeLookAndFeel();
 		setLayout(new BorderLayout());
 		boolean isURL = false;
-        scriptExerter = new ScriptExerter(null, this.getClass().getClassLoader(), Sorcer.getWebsterUrl().toString(), debug);
 
 		if (input!=null) {
 			File ntlFile = new File(input);
@@ -361,7 +361,7 @@ public class EditorView extends JPanel implements HyperlinkListener {
 					}
 					logger.fine(">>> executing script: " + sb.toString());
                     try {
-                        scriptExerter.readScriptWithHeaders(sb.toString());
+						scriptExerter = new ScriptExerter(sb.toString(), System.out,this.getClass().getClassLoader(), Sorcer.getWebsterUrl().toString());
                         scriptExerter.parse();
                         Object result = scriptExerter.execute();
                         if (result instanceof Exertion)

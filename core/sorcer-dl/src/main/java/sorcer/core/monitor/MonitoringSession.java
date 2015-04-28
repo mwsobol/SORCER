@@ -20,7 +20,7 @@ package sorcer.core.monitor;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 
-import sorcer.core.context.IControlContext;
+import sorcer.core.context.StrategyContext;
 import sorcer.service.Context;
 import sorcer.service.MonitorException;
 import sorcer.service.Monitorable;
@@ -152,7 +152,7 @@ public interface MonitoringSession extends Serializable {
 	 *             if there is a communication error
 	 **/
 
-	public void changed(Context ctx, IControlContext controlContext, int aspect) throws RemoteException,
+	public void changed(Context ctx, StrategyContext controlContext, int aspect) throws RemoteException,
 			MonitorException;
 
 	/**

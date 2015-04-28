@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 
+@Codebase(group='org.sorcer', module='arithmetic', version='${sorcer.version}', classifier='dl')
+
 import sorcer.arithmetic.provider.Adder
 import sorcer.arithmetic.provider.Multiplier
 import sorcer.arithmetic.provider.Subtractor
@@ -22,8 +24,6 @@ import sorcer.service.Strategy.Monitor
 import sorcer.service.Task
 import static sorcer.co.operator.*
 import static sorcer.eo.operator.*
-
-codebase artifact:org.sorcer/arithmetic/jar/dl/5.2.0
 
 Task t3 = task("t3", sig("subtract", Subtractor.class),
         context("subtract", inEnt("arg/x1"), inEnt("arg/x2"),
