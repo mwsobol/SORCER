@@ -34,6 +34,8 @@ subprojects {
 					systemProperty "sorcer.version", "${sorcerVersion}"
 					systemProperty "river.version", "${riverVersion}"
                     systemProperty "plexus.version", "${plexusVersion}"
+                    systemProperty "slf4j.version", "${slf4jVersion}"
+                    systemProperty "logback.version", "${logbackVersion}"
                     systemProperty "rio.home", "${rioHome}"
 					systemProperty "project.build.dir", project.buildDir
                     environment("SORCER_HOME":"${sorcerDistHome}", "RIO_HOME": "${rioHome}")

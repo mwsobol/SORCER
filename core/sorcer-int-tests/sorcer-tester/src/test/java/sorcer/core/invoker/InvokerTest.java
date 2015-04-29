@@ -251,10 +251,15 @@ public class InvokerTest {
 			ContextException, IOException {
 		String riverVersion = System.getProperty("river.version");
 		String sorcerVersion = System.getProperty("sorcer.version");
+		String slf4jVersion = System.getProperty("slf4j.version");
+		String logbackVersion = System.getProperty("logback.version");
 		String buildDir = System.getProperty("project.build.dir");
 
 		String cp = buildDir + "/libs/sorcer-tester-" + sorcerVersion + ".jar" + File.pathSeparator
 				+ Sorcer.getHome() + "/lib/sorcer/lib/sorcer-platform-" + sorcerVersion + ".jar"  + File.pathSeparator
+				+ Sorcer.getHome() + "/lib/logging/slf4j-api-" + slf4jVersion + ".jar"  + File.pathSeparator
+				+ Sorcer.getHome() + "/lib/logging/logback-core-" + logbackVersion + ".jar"  + File.pathSeparator
+				+ Sorcer.getHome() + "/lib/logging/logback-classic-" + logbackVersion + ".jar"  + File.pathSeparator
 				+ Sorcer.getHome() + "/lib/river/jsk-platform-" + riverVersion + ".jar"  + File.pathSeparator
 				+ Sorcer.getHome() + "/lib/river/jsk-lib-" + riverVersion + ".jar ";
 
