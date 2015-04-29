@@ -151,7 +151,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	public static final String COMPONENT = ServiceProvider.class.getName();
 
 	/** Logger for logging information about this instance */
-	protected static final Logger logger = LoggerFactory.getLogger(COMPONENT);
+	private static final Logger logger = LoggerFactory.getLogger(COMPONENT);
 
 	static {
 		try {

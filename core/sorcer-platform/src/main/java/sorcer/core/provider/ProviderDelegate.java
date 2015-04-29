@@ -41,6 +41,7 @@ import net.jini.security.AccessPermission;
 import net.jini.security.TrustVerifier;
 import net.jini.space.JavaSpace05;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sorcer.container.jeri.AbstractExporterFactory;
 import sorcer.container.jeri.ExporterFactories;
 import sorcer.core.SorcerConstants;
@@ -124,7 +125,7 @@ public class ProviderDelegate implements SorcerConstants {
 	// visited exertion for forwardExertion to check for potential looping
 	private static Set visited;
 
-	private static final Logger logger = ServiceProvider.logger;
+	private static final Logger logger = LoggerFactory.getLogger(ProviderDelegate.class);
 
 	private Logger remoteLogger;
 

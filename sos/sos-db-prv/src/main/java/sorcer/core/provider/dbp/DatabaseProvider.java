@@ -20,11 +20,12 @@ package sorcer.core.provider.dbp;
 import com.sleepycat.collections.StoredMap;
 import com.sleepycat.collections.StoredValueSet;
 import com.sleepycat.je.DatabaseException;
-import com.sleepycat.je.EnvironmentConfig;
 import com.sun.jini.start.LifeCycle;
 import net.jini.config.Configuration;
 import net.jini.id.Uuid;
 import net.jini.id.UuidFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.provider.DatabaseStorer;
 import sorcer.core.provider.ServiceProvider;
@@ -55,7 +56,7 @@ import java.util.*;
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class DatabaseProvider extends ServiceProvider implements DatabaseStorer {
-
+    static final Logger logger = LoggerFactory.getLogger(DatabaseProvider.class);
 	static {
 		Handler.register();
 	}
