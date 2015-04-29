@@ -1,18 +1,16 @@
 package sorcer.worker.requestor;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.exertion.NetTask;
 import sorcer.core.signature.NetSignature;
 import sorcer.service.Context;
 import sorcer.service.Exertion;
 import sorcer.service.Task;
-import sorcer.util.Log;
 import sorcer.util.Sorcer;
 import sorcer.util.SorcerEnv;
 import sorcer.worker.provider.Worker;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author Mike Sobolewski
@@ -21,7 +19,7 @@ import org.slf4j.LoggerFactory;
 @SuppressWarnings("rawtypes")
 public class WorkerTaskApplication {
 
-	private static Logger logger = Log.getTestLog();
+	private final static Logger logger = LoggerFactory.getLogger(WorkerTaskApplication.class);
 
 	public static void main(String[] args) throws Exception {
 		System.setSecurityManager(new SecurityManager());
