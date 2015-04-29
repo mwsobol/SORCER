@@ -25,7 +25,7 @@ import static sorcer.po.operator.invoker;
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/sml")
 public class EntModels {
-	private final static Logger logger = LoggerFactory.getLogger(EntModels.class.getName());
+	private final static Logger logger = LoggerFactory.getLogger(EntModels.class);
 
 	@Test
 	public void entryModel() throws Exception {

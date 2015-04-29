@@ -29,7 +29,7 @@ import static sorcer.eo.operator.value;
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/sml")
 public class Services {
-	private final static Logger logger = LoggerFactory.getLogger(Services.class.getName());
+	private final static Logger logger = LoggerFactory.getLogger(Services.class);
 	
 	@Test
 	public void exertTask() throws Exception  {

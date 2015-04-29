@@ -5,6 +5,8 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.core.SorcerConstants;
@@ -16,8 +18,6 @@ import sorcer.util.SorcerUtil;
 import java.io.File;
 import java.net.URL;
 import java.util.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertEquals;
 import static sorcer.co.operator.list;
@@ -29,8 +29,7 @@ import static sorcer.co.operator.list;
 @ProjectContext("core/sorcer-int-tests/sorcer-tester")
 public class SorcerDatabaseTest implements SorcerConstants {
 
-	private final static Logger logger = Logger
-			.getLogger(SorcerDatabaseTest.class.getName());
+	private final static Logger logger = LoggerFactory.getLogger(SorcerDatabaseTest.class);
 
 	private static SorcerDatabaseRunner runner;
 	private static File dbDir;

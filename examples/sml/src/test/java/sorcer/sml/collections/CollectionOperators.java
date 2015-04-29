@@ -2,6 +2,8 @@ package sorcer.sml.collections;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.impl.AdderImpl;
@@ -23,8 +25,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.*;
 import static sorcer.co.operator.*;
@@ -42,11 +42,11 @@ import static sorcer.eo.operator.pipe;
 import static sorcer.eo.operator.put;
 import static sorcer.eo.operator.srv;
 import static sorcer.eo.operator.value;
+import static sorcer.mo.operator.entModel;
 import static sorcer.po.operator.add;
 import static sorcer.po.operator.asis;
 import static sorcer.po.operator.*;
 import static sorcer.po.operator.set;
-import static sorcer.mo.operator.*;
 
 
 /**
@@ -56,7 +56,7 @@ import static sorcer.mo.operator.*;
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/sml")
 public class CollectionOperators {
-	private final static Logger logger = LoggerFactory.getLogger(CollectionOperators.class.getName());
+	private final static Logger logger = LoggerFactory.getLogger(CollectionOperators.class);
 
 
 	@Test

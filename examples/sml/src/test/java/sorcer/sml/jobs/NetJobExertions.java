@@ -43,7 +43,7 @@ import static sorcer.po.operator.put;
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/sml")
 public class NetJobExertions implements SorcerConstants {
-	private final static Logger logger = LoggerFactory.getLogger(NetJobExertions.class.getName());
+	private final static Logger logger = LoggerFactory.getLogger(NetJobExertions.class);
 	
 	@Test
 	public void exertAdderProviderTest() throws Exception {

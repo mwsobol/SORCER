@@ -4,6 +4,8 @@ package sorcer.core.exertion;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.tester.provider.impl.AdderImpl;
@@ -14,8 +16,6 @@ import sorcer.service.*;
 import sorcer.util.Sorcer;
 
 import java.rmi.RemoteException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -31,8 +31,7 @@ import static sorcer.eo.operator.path;
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("core/sorcer-int-tests/sorcer-tester")
 public class ServiceExertionTest {
-	private final static Logger logger = Logger
-			.getLogger(ServiceExertionTest.class.getName());
+	private final static Logger logger = LoggerFactory.getLogger(ServiceExertionTest.class);
 
 	private Exertion eTask, eJob;
 	// to avoid spelling errors in test cases define instance variables

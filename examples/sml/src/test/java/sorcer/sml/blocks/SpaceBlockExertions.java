@@ -29,7 +29,7 @@ import static sorcer.eo.operator.*;
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/sml")
 public class SpaceBlockExertions implements SorcerConstants {
-	private final static Logger logger = LoggerFactory.getLogger(SpaceBlockExertions.class.getName());
+	private final static Logger logger = LoggerFactory.getLogger(SpaceBlockExertions.class);
 
 	@Ignore
 	@Test

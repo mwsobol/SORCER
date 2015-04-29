@@ -6,6 +6,8 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.core.SorcerConstants;
@@ -19,8 +21,6 @@ import java.io.File;
 import java.io.IOException;
 import java.rmi.RMISecurityManager;
 import java.util.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertEquals;
 import static sorcer.co.operator.list;
@@ -33,9 +33,8 @@ import static sorcer.co.operator.list;
 @ProjectContext("core/sorcer-int-tests/sorcer-tester")
 public class SessionDatabaseTest implements SorcerConstants {
 
-	private final static Logger logger = Logger
-			.getLogger(SessionDatabaseTest.class.getName());
-	
+	private final static Logger logger = LoggerFactory.getLogger(SessionDatabaseTest.class);
+
 	static {
 		System.setProperty("java.security.policy", Sorcer.getHome()
 				+ "/configs/policy.all");

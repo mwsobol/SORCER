@@ -1,21 +1,21 @@
 package sorcer.sml.services;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.core.SorcerConstants;
-import sorcer.core.provider.*;
+import sorcer.core.provider.Concatenator;
+import sorcer.core.provider.Jobber;
+import sorcer.core.provider.Provider;
+import sorcer.core.provider.Spacer;
 import sorcer.service.Accessor;
-import sorcer.service.Service;
 import sorcer.util.ProviderAccessor;
 import sorcer.util.ProviderLocator;
 import sorcer.util.ProviderLookup;
 import sorcer.util.Stopwatch;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -29,7 +29,7 @@ import static sorcer.eo.operator.sig;
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/sml")
 public class ServiceAccessors implements SorcerConstants {
-	private final static Logger logger = LoggerFactory.getLogger(ServiceAccessors.class.getName());
+	private final static Logger logger = LoggerFactory.getLogger(ServiceAccessors.class);
 
 	@Test
 	public void getProvider() throws Exception {

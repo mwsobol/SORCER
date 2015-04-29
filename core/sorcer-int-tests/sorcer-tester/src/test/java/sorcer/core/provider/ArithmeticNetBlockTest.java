@@ -31,9 +31,8 @@ import static sorcer.eo.operator.*;
 @ProjectContext("core/sorcer-int-tests/sorcer-tester")
 public class ArithmeticNetBlockTest implements SorcerConstants {
 
-	private final static Logger logger = Logger
-			.getLogger(ArithmeticNetBlockTest.class.getName());
-	
+	private static final Logger logger = LoggerFactory.getLogger(ArithmeticNetBlockTest.class);
+
 	@Test
 	public void getProxy() throws Exception {
 		Object proxy = ProviderLookup.getProvider(sig("multiply", Multiplier.class));

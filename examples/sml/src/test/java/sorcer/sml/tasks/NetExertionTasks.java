@@ -30,7 +30,7 @@ import static sorcer.eo.operator.value;
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/sml")
 public class NetExertionTasks {
-	private final static Logger logger = LoggerFactory.getLogger(NetExertionTasks.class.getName());
+	private final static Logger logger = LoggerFactory.getLogger(NetExertionTasks.class);
 	
 	@Test
 	public void exertTask() throws Exception  {

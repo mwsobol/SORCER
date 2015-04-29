@@ -3,6 +3,8 @@ package sorcer.core.provider;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.tester.provider.Adder;
@@ -30,12 +32,9 @@ import sorcer.util.Stopwatch;
 import java.rmi.RemoteException;
 import java.util.Arrays;
 import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.*;
 import static sorcer.co.operator.*;
-import static sorcer.co.operator.input;
 import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.value;
 
@@ -47,9 +46,8 @@ import static sorcer.eo.operator.value;
 @ProjectContext("core/sorcer-int-tests/sorcer-tester")
 public class ArithmeticNetTest implements SorcerConstants {
 
-	private final static Logger logger = Logger
-			.getLogger(ArithmeticNetTest.class.getName());
-	
+	private static final Logger logger = LoggerFactory.getLogger(ArithmeticNetTest.class);
+
 	@Test
 	public void getProviderTest() throws Exception {
 		Cataloger catalog = ProviderAccessor.getCataloger();

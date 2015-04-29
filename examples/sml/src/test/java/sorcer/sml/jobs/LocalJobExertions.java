@@ -31,7 +31,7 @@ import static sorcer.eo.operator.*;
 @ProjectContext("examples/sml")
 public class LocalJobExertions implements SorcerConstants {
 
-	private final static Logger logger = LoggerFactory.getLogger(LocalJobExertions.class.getName());
+	private final static Logger logger = LoggerFactory.getLogger(LocalJobExertions.class);
 	
 	@Test
 	public void exertAdderProvider() throws Exception {

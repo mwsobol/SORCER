@@ -29,7 +29,7 @@ import static sorcer.mo.operator.*;
  */
 public class SrvModels {
 
-    private final static Logger logger = LoggerFactory.getLogger(SrvModels.class.getName());
+    private final static Logger logger = LoggerFactory.getLogger(SrvModels.class);
 
     @Test
     public void exertServiceModel() throws Exception {

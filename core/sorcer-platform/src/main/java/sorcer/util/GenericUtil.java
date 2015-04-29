@@ -2616,17 +2616,14 @@ public class GenericUtil {
 		}
 
 		try {
-			logger.info("M0");
 			BufferedReader is = new BufferedReader(new InputStreamReader(
 					con.getInputStream()));
-			logger.info("M1");
 
 			// empty server's input stream
 			String line;
 			while ((line = is.readLine()) != null) {
 				logger.info("server reply: " + line);
 			}
-			logger.info("M2");
 			// close the inputstream
 			is.close();
 		} catch (SocketTimeoutException e) {
@@ -2635,7 +2632,6 @@ public class GenericUtil {
 			e.printStackTrace();
 		}
 
-		logger.info("M3");
 		out.close();
 		con.disconnect();
 

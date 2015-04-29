@@ -32,20 +32,19 @@ import static sorcer.po.operator.*;
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/sml")
 public class NetBlockExertions implements SorcerConstants {
-	private final static Logger logger = LoggerFactory.getLogger(NetBlockExertions.class.getName());
+	private final static Logger logger = LoggerFactory.getLogger(NetBlockExertions.class);
 
 	@Test
 	public void contextAltTest() throws Exception {
-		Task t4 = task("t4", sig("multiply", Multiplier.class), 
-				context("multiply", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
+		Task t4 = task(sig("multiply", Multiplier.class),
+				context(inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
 						result("block/result")));
 
-		Task t5 = task("t5", sig("add", Adder.class), 
-				context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
+		Task t5 = task(sig("add", Adder.class),
+				context(inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
 						result("block/result")));
 		
-		Block block = block("block", sig(Concatenator.class),
-				context(ent("y1", 100), ent("y2", 200)),
+		Block block = block(context(ent("y1", 100), ent("y2", 200)),
 				alt(opt(condition("{ y1, y2 -> y1 > y2 }", "y1", "y2"), t4), 
 					opt(condition("{ y1, y2 -> y1 <= y2 }", "y1", "y2"), t5)));
 		
@@ -53,6 +52,9 @@ public class NetBlockExertions implements SorcerConstants {
 		logger.info("block context: " + context(block));
 //		logger.info("result: " + value(context(block), "block/result"));
 		assertEquals(value(context(block), "block/result"), 100.00);
+
+//		bind(block, ent("y1", 200.0), ent("y2", 100.0));
+//		block = exert(block);
 
 		block = exert(block, ent("y1", 200.0), ent("y2", 100.0));
 		logger.info("block context: " + context(block));
