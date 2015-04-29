@@ -21,8 +21,10 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The CommonClassLoader implements {@link sorcer.provider.core.jsb.ComponentLoader} 
@@ -81,7 +83,7 @@ Codebase: "serviceX-dl.jar rio-api.jar jsk-lib-dl.jar"<br>
  */
 public class CommonClassLoader extends URLClassLoader {
     private static final String COMPONENT = "sorcer.provider.boot";
-    private static Logger logger = Logger.getLogger(COMPONENT);
+    private static Logger logger = LoggerFactory.getLogger(COMPONENT);
     private static final Map<String, URL[]> components = new HashMap<String, URL[]>();
     private static ArrayList<URL> codebaseComponents = new ArrayList<URL>();
     private static CommonClassLoader instance;
@@ -116,14 +118,14 @@ public class CommonClassLoader extends URLClassLoader {
     public URL[] getURLs() {
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
         URL[] urls = doGetURLs(cl);
-        if(logger.isLoggable(Level.FINEST)) {
+        if(logger.isTraceEnabled()) {
             StringBuffer buffer = new StringBuffer();
             for(int i=0; i<urls.length; i++) {
                 if(i>0)
                     buffer.append(", ");
                 buffer.append(urls[i].toExternalForm());
             }
-            logger.log(Level.FINEST, 
+            logger.trace(
                        "Context ClassLoader={0} URLs={1}",
                        new Object[] {cl.toString(),
                                      buffer.toString()
@@ -172,8 +174,8 @@ public class CommonClassLoader extends URLClassLoader {
 				loadClass(name);
 				exists = true;
 			} catch(Throwable t) {
-				if(logger.isLoggable(Level.FINEST))
-					logger.finest("Failed to find class "+name);
+				if(logger.isTraceEnabled())
+					logger.trace("Failed to find class "+name);
 			}
 		}        
 		return(exists);
@@ -245,13 +247,13 @@ public class CommonClassLoader extends URLClassLoader {
             
 			if(toAdd || toReplace) {
                 added = true;
-                if(logger.isLoggable(Level.FINEST)) {
+                if(logger.isTraceEnabled()) {
                     String action = (toAdd?"Adding":"Replacing");
-                    logger.finest(action+" Component "+name);
+                    logger.trace(action+" Component "+name);
                 }
                 components.put(name, urls);
             } else {
-                if(logger.isLoggable(Level.FINEST)) {
+                if(logger.isTraceEnabled()) {
                     StringBuffer buffer = new StringBuffer();
                     URL[] codebase = components.get(name);
                     for(int i=0; i<codebase.length; i++) {
@@ -259,7 +261,7 @@ public class CommonClassLoader extends URLClassLoader {
                             buffer.append(":");
                         buffer.append(codebase[i].toExternalForm());
                     }
-                    logger.log(Level.FINEST, 
+                    logger.trace(
                                "Component "+name+" has "+
                                "already been registered with a "+
                                "codebase of "+buffer.toString());
@@ -288,8 +290,8 @@ public class CommonClassLoader extends URLClassLoader {
 	    }		
 	    if(!registered) {
 	        if(testComponentExistence(name)) {
-	            if(logger.isLoggable(Level.FINEST))
-	                logger.finest("Loading unregistered component "+name);
+	            if(logger.isTraceEnabled())
+	                logger.trace("Loading unregistered component "+name);
 	        } else { 
 	            throw new ClassNotFoundException ("Unregistered component "+name);
 	        }

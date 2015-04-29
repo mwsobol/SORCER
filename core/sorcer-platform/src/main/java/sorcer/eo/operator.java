@@ -56,7 +56,8 @@ import java.net.InetAddress;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.*;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -69,7 +70,7 @@ public class operator {
 
 	protected static int count = 0;
 
-	protected static final Logger logger = Logger.getLogger(operator.class.getName());
+	protected static final Logger logger = LoggerFactory.getLogger(operator.class.getName());
 
 	public static void requestTime(Exertion exertion) {
 		((ServiceExertion)exertion).setExecTimeRequested(true);
@@ -1335,10 +1336,10 @@ public class operator {
 				job.addMogram(ex);
 			}
 			for (Pipe p : pipes) {
-//				logger.finer("from context: "
+//				logger.debug("from context: "
 //						+ ((Exertion) p.in).getDataContext().getName()
 //						+ " path: " + p.inPath);
-//				logger.finer("to context: "
+//				logger.debug("to context: "
 //						+ ((Exertion) p.out).getDataContext().getName()
 //						+ " path: " + p.outPath);
 				// find component exertions for thir paths
@@ -1710,7 +1711,7 @@ public class operator {
 								.getValue(rPath.path);
 					else if (result == null) {
 						Context out = new ServiceContext();
-						logger.fine("\nselected paths: " + Arrays.toString(rPath.outPaths)
+						logger.debug("\nselected paths: " + Arrays.toString(rPath.outPaths)
 								+ "\nfrom context: " + acxt);
 						for (String p : rPath.outPaths) {
 							out.putValue(p, acxt.getValue(p));
@@ -2728,11 +2729,11 @@ public class operator {
 					try {
 						InetAddress inetAddress = InetAddress.getByName(ipAddress);
 						if(inetAddress.isReachable(1000)) {
-							logger.warning(getWarningBanner("The signature declares an ip address or hostname.\n" +
+							logger.warn(getWarningBanner("The signature declares an ip address or hostname.\n" +
 									ipAddress+" is not reachable on the current network"));
 						}
 					} catch (Exception e) {
-						logger.warning(getWarningBanner(ipAddress+" is not found on the current network.\n"
+						logger.warn(getWarningBanner(ipAddress+" is not found on the current network.\n"
 								+e.getClass().getName()+": "+e.getMessage()));
 					}
 				}

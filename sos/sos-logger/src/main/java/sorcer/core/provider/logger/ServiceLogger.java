@@ -16,36 +16,13 @@
  */
 package sorcer.core.provider.logger;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.RandomAccessFile;
-import java.net.URL;
-import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Vector;
-import java.util.logging.FileHandler;
-import java.util.logging.Level;
-import java.util.logging.LogManager;
-import java.util.logging.LogRecord;
-import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
-
+import com.sun.jini.start.LifeCycle;
 import net.jini.config.Configuration;
 import net.jini.config.ConfigurationException;
 import net.jini.config.ConfigurationProvider;
 import net.jini.lookup.entry.UIDescriptor;
 import net.jini.lookup.ui.MainUI;
 import net.jini.lookup.ui.factory.JFrameFactory;
-import sorcer.core.SorcerConstants;
 import sorcer.core.provider.RemoteLogger;
 import sorcer.core.provider.ServiceProvider;
 import sorcer.core.provider.logger.ui.LoggerFrameUI;
@@ -54,22 +31,29 @@ import sorcer.serviceui.UIFrameFactory;
 import sorcer.util.SOS;
 import sorcer.util.Sorcer;
 
-import com.sun.jini.start.LifeCycle;
+import java.io.*;
+import java.net.URL;
+import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.Vector;
+import java.util.logging.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
-public class ServiceLogger extends ServiceProvider implements RemoteLogger,
-		SorcerConstants {
+public class ServiceLogger extends ServiceProvider implements RemoteLogger {
 	// The list of all known loggers.
 	private static List<LoggingConfig> knownLoggers;
 	// The logger for this application
-	private static Logger logger = Logger.getLogger(ServiceLogger.class
-			.getName());
+	private static Logger logger = Logger.getLogger(ServiceLogger.class.getName());
 	// The directory to store the logs in
 	private String logDir = null;
 	public RandomAccessFile logFile;
 
 	// require ctor for Jini 2 NonActivatableServiceDescriptor
-	public ServiceLogger(String[] args, LifeCycle lifeCycle)
-			throws Exception {
+	public ServiceLogger(String[] args, LifeCycle lifeCycle) throws Exception {
 		super(args, lifeCycle);
 
 		init(args);
@@ -258,8 +242,6 @@ public class ServiceLogger extends ServiceProvider implements RemoteLogger,
 	/**
 	 * Returns a service UI descriptor for LoggerManagerUI. The service
 	 * UI allows for viewing remote logs of selected providers.
-	 * 
-	 * @see sorcer.core.provider.Provider#getMainUIDescriptor()
 	 */
 	/*
 	 * (non-Java doc)

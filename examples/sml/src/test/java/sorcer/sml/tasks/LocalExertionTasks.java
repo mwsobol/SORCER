@@ -9,7 +9,8 @@ import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.provider.impl.SubtractorImpl;
 import sorcer.service.*;
 
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -23,7 +24,7 @@ import static sorcer.eo.operator.*;
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/sml")
 public class LocalExertionTasks {
-	private final static Logger logger = Logger.getLogger(LocalExertionTasks.class.getName());
+	private final static Logger logger = LoggerFactory.getLogger(LocalExertionTasks.class.getName());
 	
 	@Test
 	public void exertTask() throws Exception  {

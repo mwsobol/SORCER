@@ -9,7 +9,8 @@ import sorcer.core.context.model.par.ParModel;
 import sorcer.service.Context;
 
 import java.net.URL;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -24,7 +25,7 @@ import static sorcer.po.operator.*;
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/pml")
 public class Pars {
-	private final static Logger logger = Logger.getLogger(Pars.class.getName());
+	private final static Logger logger = LoggerFactory.getLogger(Pars.class.getName());
 
 	@Test
 	public void parScope() throws Exception {

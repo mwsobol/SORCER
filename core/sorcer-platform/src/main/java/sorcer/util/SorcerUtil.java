@@ -27,10 +27,11 @@ import java.net.URI;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SorcerUtil implements SorcerConstants {
-	final static Logger logger = Logger.getLogger("sorcer");
+	final static Logger logger = LoggerFactory.getLogger("sorcer");
 	private static Calendar calendar = null;
 
 	public static String[] pathToArray(String arg) {

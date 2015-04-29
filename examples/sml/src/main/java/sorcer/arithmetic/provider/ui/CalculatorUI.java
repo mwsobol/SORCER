@@ -4,6 +4,8 @@ import groovy.lang.GroovyShell;
 import net.jini.core.lookup.ServiceItem;
 import net.jini.lookup.entry.UIDescriptor;
 import net.jini.lookup.ui.MainUI;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sorcer.core.provider.Provider;
 import sorcer.core.provider.ServiceProvider;
 import sorcer.service.Service;
@@ -16,7 +18,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.URL;
-import java.util.logging.Logger;
 
 public class CalculatorUI extends JPanel implements ActionListener {
 
@@ -47,7 +48,7 @@ public class CalculatorUI extends JPanel implements ActionListener {
 	private int flag, // Record the state after calculating
 			errLevel; // State the error level
 
-	private final static Logger logger = Logger.getLogger(CalculatorUI.class
+	private final static Logger logger = LoggerFactory.getLogger(CalculatorUI.class
 			.getName());
 
 	private ServiceItem item;
@@ -387,9 +388,7 @@ public class CalculatorUI extends JPanel implements ActionListener {
 							+ "/calculator-ui.jar") }, CalculatorUI.class
 							.getName()));
 		} catch (Exception ex) {
-			logger
-					.throwing(CalculatorUI.class.getName(), "getCalculatorDescriptor",
-							ex);
+			logger.warn("getCalculatorDescriptor", ex);
 		}
 		return uiDesc;
 	}

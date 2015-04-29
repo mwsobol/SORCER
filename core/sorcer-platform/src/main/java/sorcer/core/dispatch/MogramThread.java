@@ -69,7 +69,7 @@ public class MogramThread implements Runnable {
 					&& dispatcher.getState() != Exec.SUSPENDED) {
 				 count--;
 				 if (count < 0) {
-				 logger.finer("*** Mogramber's Exertion Dispatcher waiting in state: "
+				 logger.debug("*** Mogramber's Exertion Dispatcher waiting in state: "
 				 + dispatcher.getState());
 				 count = COUNT;
 				 }

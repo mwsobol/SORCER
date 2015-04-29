@@ -35,7 +35,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * In service-based modeling, a parameter (for short a par) is a special kind of
@@ -51,7 +52,7 @@ public class ParEntry<T> extends Entry<T> implements Variability<T>, Arg, Mappab
 
 	private static final long serialVersionUID = 7495489980319169695L;
 	 
-	private static Logger logger = Logger.getLogger(ParEntry.class.getName());
+	private static Logger logger = LoggerFactory.getLogger(ParEntry.class.getName());
 
 	protected final String name;
 	
@@ -211,7 +212,7 @@ public class ParEntry<T> extends Entry<T> implements Variability<T>, Arg, Mappab
 			}
 			if (val instanceof Evaluation) {
 				if (val instanceof ParEntry && ((ParEntry)val).asis() == null && value == null) {
-					logger.warning("undefined par: " + val);
+					logger.warn("undefined par: " + val);
 					return null;
 				}
 				// direct scope

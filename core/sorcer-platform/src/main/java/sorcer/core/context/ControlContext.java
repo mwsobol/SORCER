@@ -17,6 +17,8 @@
 
 package sorcer.core.context;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sorcer.core.exertion.NetJob;
 import sorcer.core.exertion.NetTask;
 import sorcer.core.monitor.MonitoringManagement;
@@ -31,7 +33,6 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.logging.Logger;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class ControlContext extends ServiceContext<Object> implements StrategyContext {
@@ -165,7 +166,7 @@ public class ControlContext extends ServiceContext<Object> implements StrategyCo
 	private Stopwatch stopwatch;
 
 	// this class logger
-	private static Logger logger = Logger.getLogger(ControlContext.class.getName());
+	private static Logger logger = LoggerFactory.getLogger(ControlContext.class.getName());
 
 	public ControlContext() {
 		super(CONTROL_CONTEXT, CONTROL_CONTEXT);
@@ -476,7 +477,7 @@ public class ControlContext extends ServiceContext<Object> implements StrategyCo
 			String i = getAttributeValue(exertion, PRIORITY);
 			result = (i == NULL) ? NORMAL_PRIORITY : Integer.parseInt(i);
 		} catch (java.lang.ClassCastException ex) {
-			logger.throwing(ControlContext.class.getName(), "getPriority", ex);
+			logger.warn("getPriority", ex);
 			return -1;
 		}
 		return result;

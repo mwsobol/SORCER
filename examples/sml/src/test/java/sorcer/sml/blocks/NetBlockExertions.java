@@ -13,7 +13,8 @@ import sorcer.core.provider.Concatenator;
 import sorcer.service.Block;
 import sorcer.service.Task;
 
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertEquals;
 import static sorcer.co.operator.ent;
@@ -31,7 +32,7 @@ import static sorcer.po.operator.*;
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/sml")
 public class NetBlockExertions implements SorcerConstants {
-	private final static Logger logger = Logger.getLogger(NetBlockExertions.class.getName());
+	private final static Logger logger = LoggerFactory.getLogger(NetBlockExertions.class.getName());
 
 	@Test
 	public void contextAltTest() throws Exception {

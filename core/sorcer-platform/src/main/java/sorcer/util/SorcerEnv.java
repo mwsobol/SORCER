@@ -16,6 +16,8 @@
 package sorcer.util;
 
 import org.rioproject.net.HostUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sorcer.core.SorcerConstants;
 import sorcer.service.ConfigurationException;
 import sorcer.service.Context;
@@ -28,8 +30,6 @@ import java.net.UnknownHostException;
 import java.security.AccessControlException;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * The Sorcer utility class provides the global environment configuration for
@@ -83,7 +83,7 @@ import java.util.logging.Logger;
  * @author M. W. Sobolewski
  */
 public class SorcerEnv extends SOS {
-	final static Logger logger = Logger.getLogger(SorcerEnv.class.getName());
+	final static Logger logger = LoggerFactory.getLogger(SorcerEnv.class.getName());
 
 	/**
 	 * Collects all the properties from sorcer.env, related properties from a
@@ -107,7 +107,7 @@ public class SorcerEnv extends SOS {
 				loadEnvironment();
 			}
 		} catch (ConfigurationException e) {
-			logger.warning("Failed to load the SORCER environment configuration");
+			logger.warn("Failed to load the SORCER environment configuration");
 		}
 	}
 
@@ -193,7 +193,7 @@ public class SorcerEnv extends SOS {
 		try {
 			hn = getHostName();
 		} catch (UnknownHostException e) {
-			logger.severe("Cannot determine the webster hostname.");
+			logger.error("Cannot determine the webster hostname.");
 		}
 
 		return hn;
@@ -330,10 +330,10 @@ public class SorcerEnv extends SOS {
 		reconcileProperties(props, false);
 		logger.info("*** loaded env properties:" + envFile + "\n"+ GenericUtil.getPropertiesString(props));
 
-		logger.finer("* Sorcer provider accessor:"+ getProperty(SorcerConstants.S_SERVICE_ACCESSOR_PROVIDER_NAME));
+		logger.debug("* Sorcer provider accessor:"+ getProperty(SorcerConstants.S_SERVICE_ACCESSOR_PROVIDER_NAME));
 
 		updateCodebase();
-		logger.finer("java.rmi.server.codebase: " + System.getProperty("java.rmi.server.codebase"));
+		logger.debug("java.rmi.server.codebase: " + System.getProperty("java.rmi.server.codebase"));
 	}
 
 	/**
@@ -391,8 +391,8 @@ public class SorcerEnv extends SOS {
 				File file = new File(filename);
                 String fn = "configs/" + file.getName();
                 ClassLoader resourceLoader = Thread.currentThread().getContextClassLoader();
-                if(logger.isLoggable(Level.FINE)) {
-                    logger.fine("Using "+resourceLoader.getClass().getName()+": "+resourceLoader);
+                if(logger.isDebugEnabled()) {
+                    logger.debug("Using "+resourceLoader.getClass().getName()+": "+resourceLoader);
                     Enumeration<URL> resources = resourceLoader.getResources(fn);
                     StringBuilder sb = new StringBuilder();
                     while(resources.hasMoreElements()) {
@@ -401,7 +401,7 @@ public class SorcerEnv extends SOS {
                         }
                         sb.append("\t").append(resources.nextElement().toExternalForm());
                     }
-                    logger.fine("Found Resources\n"+(sb.length()==0?"<No configs/sorcer.env found>":sb.toString()));
+                    logger.debug("Found Resources\n"+(sb.length()==0?"<No configs/sorcer.env found>":sb.toString()));
                 }
                 URL resourceURL = resourceLoader.getResource(fn);
                 if(resourceURL!=null) {
@@ -416,7 +416,7 @@ public class SorcerEnv extends SOS {
                 }
 			}
 		} catch (Exception le) {
-			logger.warning("* could not load properties: " + filename);
+			logger.warn("* could not load properties: " + filename);
 			throw new ConfigurationException(le);
 		}
 
@@ -469,7 +469,7 @@ public class SorcerEnv extends SOS {
 				}
 			}
 		} catch (Exception le) {
-			logger.warning("* could not load data formats: " + filename);
+			logger.warn("* could not load data formats: " + filename);
 			throw new ConfigurationException(le);
 		}
 	}
@@ -493,7 +493,7 @@ public class SorcerEnv extends SOS {
 		try {
 			return loadProperties(filename);
 		} catch (ConfigurationException e) {
-			logger.warning(e.toString());
+			logger.warn(e.toString());
 			// e.printStackTrace();
 		}
 		logger.info("after loading, props = " + props);
@@ -508,11 +508,11 @@ public class SorcerEnv extends SOS {
 		String rootDir = null, dataDir = null;
 		rootDir = properties.getProperty(P_DATA_ROOT_DIR);
 		dataDir = properties.getProperty(P_DATA_DIR);
-		// logger.fine("\n1. rootDir = " + rootDir + "\ndataDir = " + dataDir);
+		// logger.debug("\n1. rootDir = " + rootDir + "\ndataDir = " + dataDir);
 
 		if (rootDir != null && dataDir != null) {
 			System.setProperty(DOC_ROOT_DIR, rootDir + File.separator + dataDir);
-			// logger.fine("1. DOC_ROOT_DIR = " +
+			// logger.debug("1. DOC_ROOT_DIR = " +
 			// System.getProperty(DOC_ROOT_DIR));
 		} else {
 			rootDir = properties.getProperty(R_DATA_ROOT_DIR);
@@ -521,20 +521,20 @@ public class SorcerEnv extends SOS {
 				System.setProperty(DOC_ROOT_DIR, rootDir + File.separator
 						+ dataDir);
 			}
-			// logger.fine("\n2 .rootDir = " + rootDir + "\ndataDir = " +
+			// logger.debug("\n2 .rootDir = " + rootDir + "\ndataDir = " +
 			// dataDir);
-			// logger.fine("2. DOC_ROOT_DIR = " +
+			// logger.debug("2. DOC_ROOT_DIR = " +
 			// System.getProperty(DOC_ROOT_DIR));
 		}
 		dataDir = properties.getProperty(P_SCRATCH_DIR);
-		// logger.fine("\n3. dataDir = " + dataDir);
+		// logger.debug("\n3. dataDir = " + dataDir);
 		if (dataDir != null) {
 			System.setProperty(SCRATCH_DIR, dataDir);
 			// logger.info("3. SCRATCH_DIR = " +
 			// System.getProperty(SCRATCH_DIR));
 		} else {
 			dataDir = properties.getProperty(R_SCRATCH_DIR);
-			// logger.fine("\n4. dataDir = " + dataDir);
+			// logger.debug("\n4. dataDir = " + dataDir);
 			if (dataDir != null) {
 				System.setProperty(SCRATCH_DIR, dataDir);
 				// logger.info("4. SCRATCH_DIR = " +
@@ -705,31 +705,31 @@ public class SorcerEnv extends SOS {
 		String hn = System.getenv("DATA_SERVER_INTERFACE");
 
 		if (hn != null && hn.length() > 0) {
-			logger.finer("data server hostname as the system environment value: "
+			logger.debug("data server hostname as the system environment value: "
 					+ hn);
 			return hn;
 		}
 
 		hn = System.getProperty(DATA_SERVER_INTERFACE);
 		if (hn != null && hn.length() > 0) {
-			logger.finer("data server hostname as 'data.server.interface' system property value: "
+			logger.debug("data server hostname as 'data.server.interface' system property value: "
 					+ hn);
 			return hn;
 		}
 
 		hn = props.getProperty(DATA_SERVER_INTERFACE);
 		if (hn != null && hn.length() > 0) {
-			logger.finer("data server hostname as 'data.server.interface' provider property value: "
+			logger.debug("data server hostname as 'data.server.interface' provider property value: "
 					+ hn);
 			return hn;
 		}
 
 		try {
 			hn = getHostName();
-			logger.finer("data.server.interface hostname as the local host value: "
+			logger.debug("data.server.interface hostname as the local host value: "
 					+ hn);
 		} catch (UnknownHostException e) {
-			logger.severe("Cannot determine the data.server.interface hostname.");
+			logger.error("Cannot determine the data.server.interface hostname.");
 		}
 
 		return hn;
@@ -743,13 +743,13 @@ public class SorcerEnv extends SOS {
 	public static int getDataServerPort() {
 		String wp = System.getenv("DATA_SERVER_PORT");
 		if (wp != null && wp.length() > 0) {
-			// logger.finer("data server port as 'DATA_SERVER_PORT': " + wp);
+			// logger.debug("data server port as 'DATA_SERVER_PORT': " + wp);
 			return new Integer(wp);
 		}
 
 		wp = System.getProperty(DATA_SERVER_PORT);
 		if (wp != null && wp.length() > 0) {
-			// logger.finer("data server port as System 'data.server.port': "
+			// logger.debug("data server port as System 'data.server.port': "
 			// + wp);
 			return new Integer(wp);
 		}
@@ -760,7 +760,7 @@ public class SorcerEnv extends SOS {
 			return new Integer(wp);
 		}
 
-		// logger.severe("Cannot determine the 'data.server.port'.");
+		// logger.error("Cannot determine the 'data.server.port'.");
 		throw new RuntimeException("Cannot determine the 'data.server.port'.");
 	}
 
@@ -1308,7 +1308,7 @@ public class SorcerEnv extends SOS {
 				List<String> pathList = IOUtils.readLines(new File(filePath));
 				paths = pathList.toArray(new String[pathList.size()]);
 			} catch (IOException e) {
-				logger.warning("Error while reading " + filePath  + " " + e.getMessage());
+				logger.warn("Error while reading " + filePath  + " " + e.getMessage());
 				paths = new String[]{};
 			}
 			props.put(S_SHARED_DIRS, StringUtils.join(paths, File.pathSeparator));
@@ -1668,8 +1668,8 @@ public class SorcerEnv extends SOS {
             sb.append(codebseUrl).append("/").append(jars[jars.length - 1]);
         codebase = sb.toString();
         System.setProperty("java.rmi.server.codebase", codebase);
-        if (logger.isLoggable(Level.FINE))
-            logger.fine("Setting codebase 'java.rmi.server.codebase': "
+        if (logger.isDebugEnabled())
+            logger.debug("Setting codebase 'java.rmi.server.codebase': "
                     + codebase);
 	}
 	
@@ -1755,12 +1755,10 @@ public class SorcerEnv extends SOS {
                 if (stream != null)
                     props.load(stream);
                 else
-                    logger.severe("could not load data node types from: "
+                    logger.error("could not load data node types from: "
                             + filename);
             } catch (Throwable t2) {
-                logger.severe("could not load data node types: \n"
-                        + t2.getMessage());
-                logger.throwing(Sorcer.class.getName(), "loadDataNodeTypes", t2);
+                logger.error("could not load data node types: \n"+ t2.getMessage());
             }
 
         }
@@ -1799,9 +1797,9 @@ public class SorcerEnv extends SOS {
 					JavaSystemProperties.ensure(propName, props.getProperty(propName));
 				}
 			} else
-				logger.severe("Cannot read versions, file does not exist: " + versionPropsFile.getAbsolutePath());
+				logger.error("Cannot read versions, file does not exist: " + versionPropsFile.getAbsolutePath());
 		} catch (IOException e) {
-			logger.severe("Cannot read versions from: " + versionPropsFile.getAbsolutePath());
+			logger.error("Cannot read versions from: " + versionPropsFile.getAbsolutePath());
 		}
 	}
 

@@ -13,7 +13,8 @@ import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Timestamp;
 import java.util.Vector;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyAgreement;
@@ -70,7 +71,7 @@ public class LokiMemberUtil
 	/** debug db switch */
 	private boolean debugdb = true;
 	/** Logger object */
-	protected static Logger logger = Logger.getLogger(LokiMemberUtil.class.getName());
+	protected static Logger logger = LoggerFactory.getLogger(LokiMemberUtil.class.getName());
 	//------------------------------------------------------------------------------------------------------------
 	
 	/**

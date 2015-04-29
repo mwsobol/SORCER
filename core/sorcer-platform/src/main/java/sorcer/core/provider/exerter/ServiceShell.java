@@ -47,14 +47,15 @@ import sorcer.util.Sorcer;
 import java.rmi.RemoteException;
 import java.util.List;
 import java.util.concurrent.Callable;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Mike Sobolewski
  */
 @SuppressWarnings("rawtypes")
 public class ServiceShell implements Shell, Service, Exerter, Callable {
-	protected final static Logger logger = Logger.getLogger(ServiceShell.class
+	protected final static Logger logger = LoggerFactory.getLogger(ServiceShell.class
 			.getName());
 
 	private ServiceExertion exertion;
@@ -299,14 +300,14 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 				exertion.reportException(new ExertionException(
 						"No such operation in the requested signature: "
 								+ signature));
-				logger.warning("Not selectable exertion operation: " + signature);
+				logger.warn("Not selectable exertion operation: " + signature);
 				return exertion;
 			}
 
 			if (providerName != null && providerName.length() > 0) {
 				signature.setProviderName(providerName);
 			}
-			logger.finer("* ExertProcessor's servicer accessor: "
+			logger.debug("* ExertProcessor's servicer accessor: "
 					+ Accessor.getAccessorType());
 			provider = ((NetSignature) signature).getService();
 		} catch (SignatureException e) {
@@ -329,10 +330,10 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
                 provider = (Service) Accessor.getService(signature);
                 if (provider == null && exertion.isProvisionable() && signature instanceof NetSignature) {
                     try {
-                        logger.fine("Provisioning: " + signature);
+                        logger.debug("Provisioning: " + signature);
                         provider = ServiceDirectoryProvisioner.getProvisioner().provision(signature);
                     } catch (ProvisioningException pe) {
-                        logger.warning("Provider not available and not provisioned: " + pe.getMessage());
+                        logger.warn("Provider not available and not provisioned: " + pe.getMessage());
                         exertion.setStatus(Exec.FAILED);
                         exertion.reportException(new RuntimeException(
                                 "Cannot find provider and provisioning returned error: " + pe.getMessage()));
@@ -346,7 +347,7 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 		// provider = ProviderAccessor.getProvider(null, signature
 		// .getServiceInfo());
 		if (provider == null) {
-			logger.warning("* Provider not available for: " + signature);
+			logger.warn("* Provider not available for: " + signature);
 			exertion.setStatus(Exec.FAILED);
 			exertion.reportException(new RuntimeException(
 					"Cannot find provider for: " + signature));
@@ -372,8 +373,8 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 			if (result != null && result.getExceptions().size() > 0) {
 				for (ThrowableTrace et : result.getExceptions()) {
                     Throwable t = et.getThrowable();
-                    logger.severe("Got exception running: "  + exertion.getName() + " " + t.getMessage());
-                    logger.fine("Exception details: " + t.getMessage());
+                    logger.error("Got exception running: "  + exertion.getName() + " " + t.getMessage());
+                    logger.debug("Exception details: " + t.getMessage());
                     if (t instanceof Error)
                         ((ServiceExertion) result).setStatus(Exec.ERROR);
 				}

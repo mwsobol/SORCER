@@ -8,7 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
@@ -35,7 +36,7 @@ import sorcer.core.provider.logger.LogFilter;
  */
 public class LoggerUI extends JPanel implements Observer {
 	private static final long serialVersionUID = 1L;
-	private final static Logger logger = Logger.getLogger(LoggerUI.class
+	private final static Logger logger = LoggerFactory.getLogger(LoggerUI.class
 			.getName());
 	private boolean activeLoggers = false;
 	private boolean isOpen = false;
@@ -64,7 +65,7 @@ public class LoggerUI extends JPanel implements Observer {
 				remoteLogger = (RemoteLogger) svcItem.service;
 			}
 		} else {
-			logger.severe("Could not find Logger.");
+			logger.error("Could not find Logger.");
 		}
 		filterComponent = new FilterPane();
 		filterComponent.addObserver(this);
@@ -289,7 +290,7 @@ public class LoggerUI extends JPanel implements Observer {
 				try {
 					logFile.close();
 				} catch (Exception ex) {
-					logger.warning("Error Closing File: " + ex.toString());
+					logger.warn("Error Closing File: " + ex.toString());
 				}
 				isOpen = false;
 			}

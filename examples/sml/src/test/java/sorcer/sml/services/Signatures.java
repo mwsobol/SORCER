@@ -13,7 +13,8 @@ import sorcer.service.Signature;
 import java.lang.reflect.Proxy;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.*;
 import static sorcer.co.operator.inEnt;
@@ -28,7 +29,7 @@ import static sorcer.mo.operator.*;
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/sml")
 public class Signatures {
-	private final static Logger logger = Logger.getLogger(Signatures.class.getName());
+	private final static Logger logger = LoggerFactory.getLogger(Signatures.class.getName());
 
 	@Test
 	public void newInstance() throws Exception {

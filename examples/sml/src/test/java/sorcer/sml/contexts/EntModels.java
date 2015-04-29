@@ -8,7 +8,8 @@ import sorcer.core.context.Copier;
 import sorcer.service.Context;
 import sorcer.service.modeling.Model;
 
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
@@ -24,7 +25,7 @@ import static sorcer.po.operator.invoker;
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/sml")
 public class EntModels {
-	private final static Logger logger = Logger.getLogger(EntModels.class.getName());
+	private final static Logger logger = LoggerFactory.getLogger(EntModels.class.getName());
 
 	@Test
 	public void entryModel() throws Exception {

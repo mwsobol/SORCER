@@ -14,7 +14,8 @@ import sorcer.service.Job;
 import sorcer.service.Strategy;
 import sorcer.service.Task;
 
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static sorcer.co.operator.inEnt;
 import static sorcer.co.operator.outEnt;
@@ -27,7 +28,7 @@ import static sorcer.eo.operator.*;
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("core/sorcer-int-tests/sorcer-tester")
 public class JobTest {
-	private final static Logger logger = Logger.getLogger(TaskTest.class
+	private final static Logger logger = LoggerFactory.getLogger(TaskTest.class
 			.getName());
 
 	@Test

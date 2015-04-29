@@ -23,7 +23,8 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.rmi.RemoteException;
 import java.util.Properties;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -48,7 +49,7 @@ import static sorcer.po.operator.set;
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("core/sorcer-int-tests/sorcer-tester")
 public class InvokerTest {
-	private final static Logger logger = Logger.getLogger(InvokerTest.class
+	private final static Logger logger = LoggerFactory.getLogger(InvokerTest.class
 			.getName());
 
 	private ParModel pm; 

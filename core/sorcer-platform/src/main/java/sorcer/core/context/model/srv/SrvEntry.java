@@ -9,7 +9,8 @@ import sorcer.service.modeling.Variability;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.Map;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created by Mike Sobolewski on 4/14/15.
@@ -17,7 +18,7 @@ import java.util.logging.Logger;
 public class SrvEntry extends Entry<Object> implements Variability<Object>, Arg, Evaluation<Object>,
         Comparable<Object>, Reactive<Object>, Serializable {
 
-    private static Logger logger = Logger.getLogger(SrvEntry.class.getName());
+    private static Logger logger = LoggerFactory.getLogger(SrvEntry.class.getName());
 
     protected final String name;
 

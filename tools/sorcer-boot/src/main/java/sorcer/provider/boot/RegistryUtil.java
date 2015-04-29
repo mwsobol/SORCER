@@ -18,8 +18,10 @@ package sorcer.provider.boot;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import net.jini.config.Configuration;
 import net.jini.config.ConfigurationException;
@@ -114,7 +116,7 @@ public class RegistryUtil {
     public static final int DEFAULT_PORT = 1099;
     public static final int DEFAULT_RETRY_COUNT = 50;
     static final String COMPONENT = "sorcer.provider.rmi";
-    static final Logger logger = Logger.getLogger(COMPONENT);
+    static final Logger logger = LoggerFactory.getLogger(COMPONENT);
     
     static final String BASE_COMPONENT = "sorcer.provider";
     /**
@@ -171,21 +173,21 @@ public class RegistryUtil {
                     registry = LocateRegistry.createRegistry(registryPort);
                     break;
                 } catch(RemoteException e1) {
-                    if(logger.isLoggable(Level.FINEST))
-                        logger.finest("Failed to create RMI Registry using "+
+                    if(logger.isTraceEnabled())
+                        logger.trace("Failed to create RMI Registry using "+
                                       "port ["+registryPort+"], increment " +
                                       "port and try again");
                 }
                 registryPort++;
             }
             if(registry==null) {
-                logger.warning("Unable to create RMI Registry using " +
+                logger.warn("Unable to create RMI Registry using " +
                                "ports "+originalPort+
                                " through "+registryPort);
                 registryPort = -1;
             } else {
-                if(logger.isLoggable(Level.CONFIG))
-                    logger.config("Created RMI Registry on port="+
+                if(logger.isDebugEnabled())
+                    logger.debug("Created RMI Registry on port="+
                                   System.getProperty(REGISTRY_PORT));
             }
         }
@@ -211,7 +213,7 @@ public class RegistryUtil {
                                                      int.class,
                                                      DEFAULT_PORT);
         } catch(ConfigurationException e) {
-            logger.log(Level.WARNING,
+            logger.warn(
                        "Reading "+COMPONENT+".registryPort",
                        e);
         }
@@ -238,7 +240,7 @@ public class RegistryUtil {
                                           Integer.class,
                                           DEFAULT_RETRY_COUNT);
         } catch(ConfigurationException e) {
-            logger.log(Level.WARNING,
+            logger.warn(
                        "Reading "+COMPONENT+".registryRetries",
                        e);
         }

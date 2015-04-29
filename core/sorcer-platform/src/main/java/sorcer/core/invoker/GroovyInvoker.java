@@ -122,7 +122,7 @@ public class GroovyInvoker<T> extends ServiceInvoker<T> {
 				}
 			}
 		} catch (RuntimeException e) {
-			logger.severe("Error Occurred in Groovy Shell: " + e.getMessage());
+			logger.error("Error Occurred in Groovy Shell: " + e.getMessage());
 		}
 		return (T) result;
 	}

@@ -22,6 +22,8 @@ dependencies {
 			"org.rioproject:rio-platform:${rioVersion}",
 			"org.rioproject:rio-lib:${rioVersion}",
     		"org.rioproject:rio-api:${rioVersion}"
+    runtime libs.logback
+    runtime "org.slf4j:jul-to-slf4j:${slf4jVersion}"
 }
 
 jar {

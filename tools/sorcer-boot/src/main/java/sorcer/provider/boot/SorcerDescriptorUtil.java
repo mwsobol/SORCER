@@ -25,7 +25,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Holds static attributes used during the startup of services and provides
@@ -33,7 +34,7 @@ import java.util.logging.Logger;
  * for SORCER services
  */
 public class SorcerDescriptorUtil {
-	final static Logger logger = Logger.getLogger("sorcer.provider.boot");
+	final static Logger logger = LoggerFactory.getLogger("sorcer.provider.boot");
 	
 	private static String sorcerVersion = System.getProperty("sorcer.version");
 	private static String riverVersion = System.getProperty("river.version");

@@ -27,8 +27,10 @@ import java.rmi.RemoteException;
 import java.rmi.server.RMIClassLoader;
 import java.util.Arrays;
 import java.util.StringTokenizer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.ImageIcon;
 import javax.swing.JTree;
@@ -75,7 +77,7 @@ public class LusTree {
 
 	private SSBrowserFilter _plugin;
 
-	private static Logger _logger = Logger.getLogger(LusTree.class.getName());
+	private static Logger _logger = LoggerFactory.getLogger(LusTree.class.getName());
 
 	public LusTree(ServiceRegistrar lus, final JTree tree, ServiceTemplate tmpl,
 			String[] inf, String[] names, ProxyPreparer pp,
@@ -393,7 +395,7 @@ public class LusTree {
                 try {
                     urls[i] = new URL(url);
                 } catch (MalformedURLException e) {
-                    _logger.log(Level.WARNING, " Unable to create URL for ["+url+"]", e);
+                    _logger.warn(" Unable to create URL for ["+url+"]", e);
                 }
                 i++;
             }

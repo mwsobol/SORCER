@@ -19,20 +19,19 @@ package sorcer.core.provider.cataloger.ui;
 
 //Main Dispatcher/Listener for all UI components
 
-import java.awt.event.ActionEvent;
-import java.rmi.RemoteException;
-import java.util.logging.Logger;
-
-import javax.swing.JList;
-import javax.swing.JTextField;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.provider.Cataloger;
 import sorcer.core.provider.Provider;
 import sorcer.service.Context;
 import sorcer.service.ContextManagement;
+
+import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import java.awt.event.ActionEvent;
+import java.rmi.RemoteException;
 
 /**
  * Implementation of the SignatureDispatcherInterface to provide support for
@@ -45,8 +44,7 @@ import sorcer.service.ContextManagement;
  */
 public class SignatureDispatcherForCataloger implements SignatureDispatchment {
 
-	protected static final Logger logger = Logger
-			.getLogger(SignatureDispatcherForCataloger.class.getName());
+	protected static final Logger logger = LoggerFactory.getLogger(SignatureDispatcherForCataloger.class.getName());
 	/**
 	 * The Cataloger service object. Passed in by constructor from CatalogerUI
 	 * class

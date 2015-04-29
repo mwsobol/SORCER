@@ -19,7 +19,8 @@ import static sorcer.po.operator.parModel;
 import static sorcer.po.operator.put;
 
 import java.rmi.RemoteException;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

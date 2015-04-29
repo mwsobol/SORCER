@@ -23,7 +23,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.*;
 import static sorcer.co.operator.*;
@@ -55,7 +56,7 @@ import static sorcer.mo.operator.*;
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/sml")
 public class CollectionOperators {
-	private final static Logger logger = Logger.getLogger(CollectionOperators.class.getName());
+	private final static Logger logger = LoggerFactory.getLogger(CollectionOperators.class.getName());
 
 
 	@Test

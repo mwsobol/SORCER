@@ -18,7 +18,6 @@ package sorcer.core.provider.logger;
 
 import java.io.Serializable;
 import java.util.logging.Level;
-import java.util.logging.LogManager;
 
 /**
  * Stores the name of a logger and the Level of that logger. This class is used

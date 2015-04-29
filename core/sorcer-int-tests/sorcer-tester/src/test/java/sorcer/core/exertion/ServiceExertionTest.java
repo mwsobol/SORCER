@@ -14,7 +14,8 @@ import sorcer.service.*;
 import sorcer.util.Sorcer;
 
 import java.rmi.RemoteException;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;

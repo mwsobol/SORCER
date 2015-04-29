@@ -19,7 +19,8 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.rmi.RemoteException;
 import java.util.List;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static sorcer.eo.operator.path;
 import static sorcer.eo.operator.revalue;
@@ -42,7 +43,7 @@ public class Arithmometer implements SorcerConstants, Serializable {
 
 	public static final String RESULT_PATH = "result/value";
 			
-	public final static Logger logger = Logger.getLogger(Arithmometer.class
+	public final static Logger logger = LoggerFactory.getLogger(Arithmometer.class
 			.getName());
 
 	/**

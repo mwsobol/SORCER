@@ -20,11 +20,12 @@ package sorcer.core.provider.dbp;
 import com.sleepycat.collections.StoredMap;
 import com.sleepycat.collections.StoredValueSet;
 import com.sleepycat.je.DatabaseException;
-import com.sleepycat.je.EnvironmentConfig;
 import com.sun.jini.start.LifeCycle;
 import net.jini.config.Configuration;
 import net.jini.id.Uuid;
 import net.jini.id.UuidFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.provider.DatabaseStorer;
 import sorcer.core.provider.ServiceProvider;
@@ -55,7 +56,7 @@ import java.util.*;
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class DatabaseProvider extends ServiceProvider implements DatabaseStorer {
-
+    static final Logger logger = LoggerFactory.getLogger(DatabaseProvider.class);
 	static {
 		Handler.register();
 	}
@@ -130,7 +131,7 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
             try {
                 Thread.sleep(50);
             } catch (InterruptedException ie) {
-                logger.warning("Interrupted while waiting for retrieved object: " + uuid);
+                logger.warn("Interrupted while waiting for retrieved object: " + uuid);
             }
         }
     }
@@ -147,7 +148,7 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
 //                logger.info("currentlyBusy size: " + currentlyBusy.size());
                 Thread.sleep(50);
             } catch (InterruptedException ie) {
-                logger.warning("Interrupted while busy :" + currentlyBusy.size());
+                logger.warn("Interrupted while busy :" + currentlyBusy.size());
             }
         }
     }
@@ -281,7 +282,7 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
                     storedMap.replace(key, object);
                 }
             } catch (IllegalArgumentException ie) {
-                logger.warning("Problem updating object with key: " + key.toString()
+                logger.warn("Problem updating object with key: " + key.toString()
 						+ "\n" + storedMap.get(key).toString());
                 objectsQueue.remove(this.uuid);
                 throw (ie);
@@ -521,7 +522,7 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
 		if (!dbHomeFile.isDirectory() && !dbHomeFile.exists()) {
 			boolean done = dbHomeFile.mkdirs();
 			if (!done) {
-				logger.warning("Not able to create session database home: "
+				logger.warn("Not able to create session database home: "
                          + dbHomeFile.getAbsolutePath());
 				destroy();
 				return;
@@ -545,14 +546,14 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
                     Thread.sleep(50);
                     tries++;
                 }
-                if (tries==80) logger.warning("Interrupted while objects where still being used; size: "
+                if (tries==80) logger.warn("Interrupted while objects where still being used; size: "
                 + objectsQueue.size());
             } catch (InterruptedException ie) {}
 			if (db != null) {
 				db.close();
 			}
 		} catch (DatabaseException e) {
-			logger.severe("Failed to close provider's database: " +
+			logger.error("Failed to close provider's database: " +
                     e.getMessage());
 		}
 		super.destroy();

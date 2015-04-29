@@ -29,7 +29,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -53,7 +54,7 @@ import static org.junit.Assert.assertTrue;
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("core/sorcer-int-tests/deploy-tests")
 public class DeployConstrainedExertionTest  extends DeploySetup implements SorcerConstants {
-    private final static Logger logger = Logger.getLogger(DeployConstrainedExertionTest.class.getName());
+    private final static Logger logger = LoggerFactory.getLogger(DeployConstrainedExertionTest.class.getName());
 
     @Category(TestsRequiringRio.class)
     @Test
@@ -193,7 +194,7 @@ public class DeployConstrainedExertionTest  extends DeploySetup implements Sorce
         }
 
         public void failed(ServiceElement serviceElement, boolean resubmitted) throws RemoteException {
-            logger.warning(String.format("Service [%s/%s] failed, undeploy",
+            logger.warn(String.format("Service [%s/%s] failed, undeploy",
                                          serviceElement.getServiceBeanConfig().getOperationalStringName(),
                                          serviceElement.getServiceBeanConfig().getName()));
             success.set(false);

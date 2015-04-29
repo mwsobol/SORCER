@@ -24,7 +24,8 @@ import sorcer.util.Sorcer;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.concurrent.Callable;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.*;
 import static sorcer.co.operator.*;
@@ -41,7 +42,7 @@ import static sorcer.mo.operator.*;
 @ProjectContext("examples/pml")
 public class ParModels {
 
-	private final static Logger logger = Logger.getLogger(ParModels.class.getName());
+	private final static Logger logger = LoggerFactory.getLogger(ParModels.class.getName());
 
 	private ParModel pm;
 	private ParEntry<Double> x;

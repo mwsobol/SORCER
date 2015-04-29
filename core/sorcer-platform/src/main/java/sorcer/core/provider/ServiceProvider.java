@@ -41,6 +41,8 @@ import net.jini.lookup.ui.factory.JFrameFactory;
 import net.jini.security.TrustVerifier;
 import net.jini.security.proxytrust.ServerProxyTrust;
 import net.jini.security.proxytrust.TrustEquivalence;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.ControlContext;
 import sorcer.core.context.ServiceContext;
@@ -68,9 +70,6 @@ import java.rmi.RemoteException;
 import java.security.*;
 import java.util.*;
 import java.util.concurrent.*;
-import java.util.logging.Level;
-import java.util.logging.LogRecord;
-import java.util.logging.Logger;
 
 import static sorcer.util.StringUtils.tName;
 
@@ -126,7 +125,7 @@ import static sorcer.util.StringUtils.tName;
  * beans can be specified in a provider's Jini configuration as the
  * <code>beans</code> entry. In this case a proxy implementing all interfaces
  * implemented by service beans are dynamically created and registered with
- * lookup services. Multiple SORECER servers can be deployed within a single
+ * lookup services. Multiple SORCER servers can be deployed within a single
  * {@link sorcer.core.provider.ServiceProvider} as its own service beans.
  *
  * @see sorcer.core.provider.Provider
@@ -152,7 +151,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	public static final String COMPONENT = ServiceProvider.class.getName();
 
 	/** Logger for logging information about this instance */
-	protected static final Logger logger = Logger.getLogger(COMPONENT);
+	private static final Logger logger = LoggerFactory.getLogger(COMPONENT);
 
 	static {
 		try {
@@ -229,7 +228,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		final Configuration config = ConfigurationProvider.getInstance(args, serviceClassLoader);
 		delegate.setJiniConfig(config);
 		// inspect class loader tree
-		if(logger.isLoggable(Level.FINEST))
+		if(logger.isTraceEnabled())
 			com.sun.jini.start.ClassLoaderUtil.displayContextClassLoaderTree();
 		// System.out.println("service provider class loader: " +
 		// serviceClassLoader);
@@ -239,7 +238,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 					COMPONENT, "properties", String.class, "");
 		} catch (ConfigurationException e) {
 			// e.printStackTrace();
-			logger.throwing(ServiceProvider.class.getName(), "init", e);
+			logger.warn("init", e);
 		}
 		// configure the provider's delegate
 		delegate.getProviderConfig().init(true, providerProperties);
@@ -334,7 +333,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	 */
 	public void addLookupAttributes(Entry[] attrSets) {
 		joinManager.addAttributes(attrSets, true);
-		logger.log(Level.CONFIG, "Added attributes");
+		logger.debug( "Added attributes");
 	}
 
 	/**
@@ -354,7 +353,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	public void modifyLookupAttributes(Entry[] attrSetTemplates,
 									   Entry[] attrSets) {
 		joinManager.modifyAttributes(attrSetTemplates, attrSets, true);
-		logger.log(Level.CONFIG, "Modified attributes");
+		logger.debug("Modified attributes");
 	}
 
 	/**
@@ -384,12 +383,12 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		try {
 			ldmgr.addGroups(groups);
 		} catch (Exception e) {
-			if (logger.isLoggable(Level.SEVERE)) {
-				logger.log(Level.SEVERE, "Error while adding groups : {0}", e);
+			if (logger.isErrorEnabled()) {
+				logger.error("Error while adding groups : {0}", e);
 			}
 		}
-		if (logger.isLoggable(Level.CONFIG)) {
-			logger.log(Level.CONFIG, "Added lookup groups: {0}",
+		if (logger.isDebugEnabled()) {
+			logger.debug("Added lookup groups: {0}",
 					SorcerUtil.arrayToString(groups));
 		}
 	}
@@ -418,13 +417,13 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		try {
 			ldmgr.removeGroups(groups);
 		} catch (Exception e) {
-			if (logger.isLoggable(Level.SEVERE)) {
-				logger.log(Level.SEVERE, "Error while removing groups : {0}", e);
+			if (logger.isErrorEnabled()) {
+				logger.error("Error while removing groups : {0}", e);
 			}
 		}
 
-		if (logger.isLoggable(Level.CONFIG)) {
-			logger.log(Level.CONFIG, "Removed lookup groups: {0}",
+		if (logger.isDebugEnabled()) {
+			logger.debug("Removed lookup groups: {0}",
 					SorcerUtil.arrayToString(groups));
 		}
 	}
@@ -443,13 +442,13 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		try {
 			ldmgr.setGroups(groups);
 		} catch (Exception e) {
-			if (logger.isLoggable(Level.SEVERE)) {
-				logger.log(Level.SEVERE, "Error while setting groups : {0}", e);
+			if (logger.isErrorEnabled()) {
+				logger.error("Error while setting groups : {0}", e);
 			}
 		}
 
-		if (logger.isLoggable(Level.CONFIG)) {
-			logger.log(Level.CONFIG, "Set lookup groups: {0}",
+		if (logger.isDebugEnabled()) {
+			logger.debug("Set lookup groups: {0}",
 					SorcerUtil.arrayToString(groups));
 		}
 	}
@@ -479,8 +478,8 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		// locatorPreparer.prepareProxy(locators[i]);
 		// }
 		ldmgr.addLocators(locators);
-		if (logger.isLoggable(Level.CONFIG)) {
-			logger.log(Level.CONFIG, "Added lookup locators: {0}",
+		if (logger.isDebugEnabled()) {
+			logger.debug("Added lookup locators: {0}",
 					SorcerUtil.arrayToString(locators));
 		}
 	}
@@ -500,8 +499,8 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		// locators[i]);
 		// }
 		ldmgr.removeLocators(locators);
-		if (logger.isLoggable(Level.CONFIG)) {
-			logger.log(Level.CONFIG, "Removed lookup locators: {0}",
+		if (logger.isDebugEnabled()) {
+			logger.debug("Removed lookup locators: {0}",
 					SorcerUtil.arrayToString(locators));
 		}
 	}
@@ -513,8 +512,8 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		// locatorPreparer.prepareProxy(locators[i]);
 		// }
 		ldmgr.setLocators(locators);
-		if (logger.isLoggable(Level.CONFIG)) {
-			logger.log(Level.CONFIG, "Set lookup locators: {0}",
+		if (logger.isDebugEnabled()) {
+			logger.debug("Set lookup locators: {0}",
 					SorcerUtil.arrayToString(locators));
 		}
 	}
@@ -532,7 +531,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	 *         otherwise.
 	 */
 	public boolean unregister(Object impl) {
-		logger.log(Level.INFO, "Unregistering service");
+		logger.info("Unregistering service");
         if (this == impl)
             this.destroy();
 		return true;
@@ -570,7 +569,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
             unexported = delegate.unexport(force);
         } catch (NoSuchObjectException e) {
             unexported= false;
-            logger.log(Level.WARNING, "Could not unexport", e);
+            logger.warn("Could not unexport", e);
         }
         return unexported;
     }
@@ -653,22 +652,22 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	 */
 	public void init(String[] configOptions, LifeCycle lifeCycle)
 			throws Exception {
-		logger.entering(this.getClass().toString(), "init");
+		logger.debug("Entering init");
 		this.lifeCycle = lifeCycle;
 		try {
 			// Take the login context entry from the configuration file, if this
 			// entry is null, server will start without a subject
 			loginContext = (LoginContext) delegate.getDeploymentConfig().getEntry(
 					COMPONENT, "loginContext", LoginContext.class, null);
-			logger.finer("loginContext " + loginContext);
+			logger.debug("loginContext " + loginContext);
 			if (loginContext == null) {
-				logger.finer("Login Context was null when the service was Started");
+				logger.debug("Login Context was null when the service was Started");
 				// Starting the Service with NO subject provided
 				initAsSubject();
 			} else {
-				logger.finer("Login Context was not null when the service was Started");
+				logger.debug("Login Context was not null when the service was Started");
 				loginContext.login();
-				logger.finer("Login Context subject= "
+				logger.debug("Login Context subject= "
 						+ loginContext.getSubject());
 
 				try {
@@ -681,11 +680,11 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 								}
 							}, null);
 				} catch (PrivilegedActionException e) {
-					logger.warning("######## Priviledged Exception Occured ########");
+					logger.warn("######## Priviledged Exception Occured ########");
 					throw e.getCause();
 				}
 			}
-			logger.log(Level.INFO, "Provider service started: "
+			logger.info("Provider service started: "
 					+ getProviderName(), this);
 
 			// allow for enough time to export the provider's proxy and stay alive
@@ -714,13 +713,11 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 			message = throwable.getMessage();
 			throwable = throwable.getCause();
 		}
-		if (logger.isLoggable(Level.SEVERE)) {
+		if (logger.isErrorEnabled()) {
 			if (message != null) {
-				logThrow(Level.SEVERE, "initFailed",
-						"Unable to start provider service: {0}",
-						new Object[] { message }, throwable);
+                logger.error("initFailed, Unable to start provider service: "+message, throwable);
 			} else {
-				logger.log(Level.SEVERE, "Unable to start provider service", throwable);
+				logger.error("Unable to start provider service", throwable);
 			}
 		}
 		if (throwable instanceof Exception) {
@@ -733,18 +730,6 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 			ise.initCause(throwable);
 			throw ise;
 		}
-	}
-
-	/** Logs a throw */
-	private static void logThrow(Level level, String method, String msg,
-								 Object[] msgParams, Throwable t) {
-		LogRecord r = new LogRecord(level, msg);
-		r.setLoggerName(logger.getName());
-		r.setSourceClassName(Provider.class.getName());
-		r.setSourceMethodName(method);
-		r.setParameters(msgParams);
-		r.setThrown(t);
-		logger.log(r);
 	}
 
 	/**
@@ -774,7 +759,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 			if (locators != null && locators.length() > 0) {
 				lookupLocators = locators.split("[ ,]");
 			}
-			logger.finer("provider lookup locators: "
+			logger.debug("provider lookup locators: "
 					+ (lookupLocators.length == 0 ? "no locators" : Arrays
 					.toString(lookupLocators)));
 
@@ -783,7 +768,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 					String[].class, new String[] {});
 			if (lookupGroups.length == 0)
 				lookupGroups = DiscoveryGroupManagement.ALL_GROUPS;
-			logger.finer("provider lookup groups: "
+			logger.debug("provider lookup groups: "
 					+ (lookupGroups != null ? "all groups" : Arrays
 					.toString(lookupGroups)));
 
@@ -792,22 +777,22 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 					String[].class, new String[] {});
 			if (accessorGroups.length == 0)
 				accessorGroups = lookupGroups;
-			logger.finer("service accessor groups: "
+			logger.debug("service accessor groups: "
 					+ (accessorGroups != null ? "all groups" : Arrays
 					.toString(accessorGroups)));
 
 			Entry[] serviceAttributes = getAttributes();
 			serviceAttributes = addServiceUIDesciptors(serviceAttributes);
 
-			logger.finer("service attributes: "
+			logger.debug("service attributes: "
 					+ Arrays.toString(serviceAttributes));
 			ServiceID sid = getProviderID();
 			if (sid != null) {
 				delegate.setProviderUuid(sid);
 			} else {
-				logger.fine("Provider does not provide ServiceID, using default");
+				logger.debug("Provider does not provide ServiceID, using default");
 			}
-			logger.fine("ServiceID: " + delegate.getServiceID());
+			logger.debug("ServiceID: " + delegate.getServiceID());
 			LookupLocator[] locs = new LookupLocator[lookupLocators.length];
 			for (int i = 0; i < locs.length; i++) {
 				locs[i] = new LookupLocator(lookupLocators[i]);
@@ -819,10 +804,10 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 					groups = lookupGroups;
 				else
 					groups = delegate.groupsToDiscover;
-				logger.warning(">>>> USING MULTICAST");
+				logger.warn(">>>> USING MULTICAST");
 			} else {
 				groups = LookupDiscoveryManager.NO_GROUPS;
-				logger.warning(">>>> USING UNICAST ONLY");
+				logger.warn(">>>> USING UNICAST ONLY");
 			}
 
 			logger.info(">>>LookupDiscoveryManager with groups: "
@@ -847,15 +832,13 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 					ldmgr, null);
 			done = true;
 		} catch (Throwable e) {
-			logger.log(Level.SEVERE, "Error initializing service: ", e);
+			logger.error("Error initializing service: ", e);
 		} finally {
 			if (!done) {
 				try {
 					unexport(true);
 				} catch (Exception e) {
-					logger.log(Level.INFO,
-							"unable to unexport after failure during startup",
-							e);
+					logger.info("unable to unexport after failure during startup", e);
 				}
 			}
 		}
@@ -926,7 +909,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 					},
 							"sorcer.ui.provider.ProviderUI"));
 		} catch (Exception ex) {
-			logger.throwing(ServiceProvider.class.getName(), "getServiceUI", ex);
+			logger.debug("getServiceUI", ex);
 		}
 		return descriptor;
 	}
@@ -950,7 +933,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 					},
 							"sorcer.ui.exertlet.NetletEditor"));
 		} catch (Exception ex) {
-			logger.throwing(ServiceProvider.class.getName(), "getServiceUI", ex);
+			logger.debug("getServiceUI", ex);
 		}
 
 		UIDescriptor uiDesc2 = null;
@@ -965,7 +948,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 							"sorcer.ui.exertlet.NetletUI", "Netlet Editor",
 							helpUrl));
 		} catch (Exception ex) {
-			ex.printStackTrace();
+            logger.debug("getServiceUI", ex);
 		}
 
 		return new UIDescriptor[] { getProviderUIDescriptor(), uiDesc1/*, uiDesc2 */};
@@ -1052,14 +1035,13 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 			try {
 				theContextMap = (HashMap<String, Context>) in.readObject();
 			} catch (ClassNotFoundException e) {
-				logger.throwing(this.getClass().getName(),
-						"currentContextList", e);
+				logger.warn("currentContextList", e);
 			}
 			in.close();
 			fis.close();
 			contextLoaded = true;
 		} catch (IOException e) {
-			logger.throwing(this.getClass().getName(), "currentContextList", e);
+			logger.warn( "currentContextList", e);
 			contextLoaded = false;
 		}
 		String[] toReturn = new String[0];
@@ -1099,12 +1081,12 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 			try {
 				theContextMap = (HashMap<String, Context>) in.readObject();
 			} catch (ClassNotFoundException e) {
-				logger.throwing(this.getClass().getName(), "deleteContext", e);
+				logger.warn( "deleteContext", e);
 			}
 			in.close();
 			contextLoaded = true;
 		} catch (IOException e) {
-			logger.throwing(this.getClass().getName(), "deleteContext", e);
+			logger.warn( "deleteContext", e);
 			contextLoaded = false;
 		}
 
@@ -1120,7 +1102,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 			out.close();
 			fos.close();
 		} catch (IOException e) {
-			logger.throwing(this.getClass().getName(), "deleteContext", e);
+			logger.warn( "deleteContext", e);
 			return false;
 		}
 		return true;
@@ -1137,14 +1119,14 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 			try {
 				theContextMap = (HashMap<String, Context>) in.readObject();
 			} catch (ClassNotFoundException e) {
-				logger.throwing(this.getClass().getName(), "getMethodContext",
+				logger.warn( "getMethodContext",
 						e);
 			}
 			in.close();
 			fis.close();
 			contextLoaded = true;
 		} catch (IOException ioe) {
-			// logger.throwing(this.getClass().getName(), "getMethodContext",
+			// logger.warn( "getMethodContext",
 			// ioe);
 			// logger.info("no context file availabe for the provider: " +
 			// getProviderName());
@@ -1168,13 +1150,13 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 			try {
 				theContextMap = (HashMap<String, Context>) in.readObject();
 			} catch (ClassNotFoundException e) {
-				logger.throwing(this.getClass().getName(), "saveMethodContext",
+				logger.warn( "saveMethodContext",
 						e);
 			}
 			in.close();
 			contextLoaded = true;
 		} catch (IOException e) {
-			logger.throwing(this.getClass().getName(), "saveMethodContext", e);
+			logger.warn( "saveMethodContext", e);
 			contextLoaded = false;
 		}
 		theContextMap.put(interfaceName + "core/sorcer-ui/src/main" + methodName, theContext);
@@ -1187,7 +1169,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 			out.close();
 			fos.close();
 		} catch (IOException e) {
-			logger.throwing(this.getClass().getName(), "put", e);
+			logger.warn( "put", e);
 			return false;
 		}
 		return true;
@@ -1375,7 +1357,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	 */
 	public Exertion doExertion(final Exertion exertion, Transaction txn)
 			throws ExertionException {
-        logger.fine("service: " + exertion.getName());
+        logger.debug("service: " + exertion.getName());
 		// create an instance of the ControlFlowManager and call on the
 		// process method, returns an Exertion
         return (Exertion)getControlFlownManager(exertion).process();
@@ -1554,7 +1536,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		try {
 			scratchDir = delegate.getScratchDir(context, scratchDirNamePrefix);
 		} catch (Exception e) {
-			logger.log(Level.WARNING, "Getting scratch directory failed", e);
+			logger.warn("Getting scratch directory failed", e);
 			throw new ContextException("***error: problem getting scratch "
 					+ "directory and adding path/url to context"
 					+ "\ncontext name = " + context.getName() + "\ncontext = "
@@ -1700,7 +1682,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	 */
 	public void destroy() {
 		try {
-			logger.log(Level.INFO, "Destroying service " + getProviderName());
+			logger.info("Destroying service " + getProviderName());
 			if (ldmgr != null)
 				ldmgr.terminate();
 			if (joinManager != null)
@@ -1720,7 +1702,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 			}
 
 		} catch(Exception e) {
-			logger.log(Level.SEVERE, "Problem destroying service "+getProviderName(), e);
+			logger.error("Problem destroying service "+getProviderName(), e);
 		} finally {
 			// stop KeepAwake thread
 			running = false;
@@ -1755,7 +1737,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 			try {
 				provider.destroyNode();
 			} catch(Throwable t) {
-				logger.log(Level.SEVERE, "Terminating ServiceProvider", t);
+				logger.error("Terminating ServiceProvider", t);
 			}
 		}
 	}
@@ -1838,7 +1820,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		if (!threadManagement) {
 			return;
 		}
-        logger.fine("Initialized scheduler: " + scheduler.toString());
+        logger.debug("Initialized scheduler: " + scheduler.toString());
 		try {
 			maxThreads = (Integer) config.getEntry(ServiceProvider.COMPONENT,
 					MAX_THREADS, int.class);
@@ -1955,10 +1937,6 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	 */
 	public boolean isContextValid(Context<?> dataContext, Signature forSignature) {
 		return true;
-	}
-
-	public Logger getLogger() {
-		return logger;
 	}
 
 	private final int SLEEP_TIME = 250;

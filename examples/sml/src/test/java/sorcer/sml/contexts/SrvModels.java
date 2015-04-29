@@ -13,7 +13,8 @@ import sorcer.service.Strategy.Flow;
 import sorcer.service.Task;
 import sorcer.service.modeling.Model;
 
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
@@ -28,7 +29,7 @@ import static sorcer.mo.operator.*;
  */
 public class SrvModels {
 
-    private final static Logger logger = Logger.getLogger(SrvModels.class.getName());
+    private final static Logger logger = LoggerFactory.getLogger(SrvModels.class.getName());
 
     @Test
     public void exertServiceModel() throws Exception {

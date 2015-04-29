@@ -20,6 +20,8 @@ package sorcer.core.requestor;
 import groovy.lang.GroovyShell;
 import net.jini.core.transaction.Transaction;
 import org.codehaus.groovy.control.CompilationFailedException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.ControlContext;
 import sorcer.service.*;
@@ -33,13 +35,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 import java.util.StringTokenizer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 abstract public class ServiceRequestor implements Requestor, SorcerConstants {
 	/** Logger for logging information about this instance */
-	protected static final Logger logger = Logger
-			.getLogger(ServiceRequestor.class.getName());
+	protected static final Logger logger = LoggerFactory.getLogger(ServiceRequestor.class.getName());
 
 	protected Properties props;
 	protected Exertion exertion;
@@ -117,8 +116,8 @@ abstract public class ServiceRequestor implements Requestor, SorcerConstants {
 		Exertion in = null;
 		try {
 			in = requestor.getExertion(args);
-			if (logger.isLoggable(Level.FINE))
-				logger.fine("ServiceRequestor java.rmi.server.codebase: "
+			if (logger.isDebugEnabled())
+				logger.debug("ServiceRequestor java.rmi.server.codebase: "
 						+ System.getProperty("java.rmi.server.codebase"));
 
 			if (in != null)
@@ -126,7 +125,7 @@ abstract public class ServiceRequestor implements Requestor, SorcerConstants {
 			if (exertion != null)
 				logger.info(">>>>>>>>>> Input context: \n" + exertion.getContext());
 		} catch (Exception e) {
-			logger.throwing(ServiceRequestor.class.getName(), "main", e);
+			logger.error("main", e);
 			System.exit(1);
 		}
 	}
@@ -158,7 +157,7 @@ abstract public class ServiceRequestor implements Requestor, SorcerConstants {
 		try {
 			obj = shell.evaluate(scriptFile);
 		} catch (CompilationFailedException e) {
-			logger.throwing(ServiceRequestor.class.getName(), "evaluate", e);
+			logger.warn("evaluate", e);
 		}
 		return obj;
 	}

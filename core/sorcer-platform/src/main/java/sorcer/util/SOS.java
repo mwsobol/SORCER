@@ -24,7 +24,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SOS implements SorcerConstants {
 	/**
@@ -61,7 +62,7 @@ public class SOS implements SorcerConstants {
 
     private static String sorcerVersion;
 
-    private static final Logger logger = Logger.getLogger(SOS.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(SOS.class.getName());
 
 	/**
 	 * <p>

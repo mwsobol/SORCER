@@ -103,7 +103,8 @@ task gatherDeps() {
                 println "Processing ${project.path}"
                 ["jsk, start, service-ui"  : "lib/river",
                  "blitz, lockmgr"          : "lib/blitz",
-                 "je, xerces, xml, javax.inject, slf4j, plexus-utils, jansi, commons-io, guava"         : "lib/common",
+                 "je, xerces, xml, javax.inject, plexus-utils, jansi, commons-io, guava"  : "lib/common",
+                 "slf4j, logback"          : "lib/logging",
                  "groovy"                  : "lib/common/groovy",
                  "junit"                   : "lib/common/buildsupport"].each {
                     prefix, dest ->
@@ -215,6 +216,7 @@ task createDistribution(dependsOn: [":sorcer-boot:install",
                 include "configs/all-sorcer.env"
                 include "configs/versions.properties"
                 include "configs/opstrings/**"
+                include "configs/sorcer-logging.groovy"
                 include "configs/sorcer.logging"
                 include "configs/standalone.sorcer.env"
 				include "configs/startup-prv.config"
@@ -249,6 +251,7 @@ task createDistribution(dependsOn: [":sorcer-boot:install",
                 include "bin/nsh.bat"
                 include "bin/browser/bin/sorcer-browser.xml"
                 include "bin/browser/configs/ssb.config"
+                include "bin/browser/configs/browser-logging.groovy"
                 include "bin/browser/configs/browser-logging.properties"
                 include "bin/browser/policy/ssb.policy"
 
@@ -280,17 +283,17 @@ task createDistribution(dependsOn: [":sorcer-boot:install",
         }
 
         /* Move the SLF4J logback jars out of the way and slide SLF4J JUL logging support in */
-        File rioLoggingLib = file("${distDir}-${version}/rio-${rioVersion}/lib/logging")
+        /*File rioLoggingLib = file("${distDir}-${version}/rio-${rioVersion}/lib/logging")
         for(File jar : rioLoggingLib.listFiles()) {
             if(jar.name.startsWith("logback") && !jar.isDirectory())
                 jar.delete()
         }
         copy {
             from(file("${rioLoggingLib.path}/jul")) {
-                include "**/slf4j-jdk14*.jar"
+                include "**//*slf4j-jdk14*.jar"
             }
             into rioLoggingLib
-        }
+        }*/
         /* Create a versions.properties file based on the versions in this build */
         Properties versionProps = new Properties()
         File versionPropsFile = file("${distDir}-${version}/configs/versions.properties")
@@ -301,6 +304,7 @@ task createDistribution(dependsOn: [":sorcer-boot:install",
         versionProps.setProperty("je.version", jeVersion)
         versionProps.setProperty("groovy.version", groovyVersion)
         versionProps.setProperty("slf4j.version", slf4jVersion)
+        versionProps.setProperty("logback.version", logbackVersion)
         versionProps.setProperty("plexus.version", plexusVersion)
         versionProps.setProperty("jansi.version", jansiVersion)
         versionProps.setProperty("commonsio.version", commonsIoVersion)

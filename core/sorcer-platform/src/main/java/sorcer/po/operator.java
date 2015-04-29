@@ -28,7 +28,8 @@ import sorcer.service.*;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.concurrent.Callable;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Mike Sobolewski
@@ -36,7 +37,7 @@ import java.util.logging.Logger;
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class operator {
 
-	private static final Logger logger = Logger.getLogger(operator.class.getName());
+	private static final Logger logger = LoggerFactory.getLogger(operator.class.getName());
 
 
 	public static <T> ParEntry<T> par(String path, T argument) throws EvaluationException, RemoteException {

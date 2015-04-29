@@ -24,7 +24,8 @@ import java.net.URL;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Vector;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.Contexts;

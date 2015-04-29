@@ -22,7 +22,8 @@ import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.service.*;
 import sorcer.service.Strategy.*;
 
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -42,7 +43,7 @@ import static sorcer.po.operator.put;
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/sml")
 public class NetJobExertions implements SorcerConstants {
-	private final static Logger logger = Logger.getLogger(NetJobExertions.class.getName());
+	private final static Logger logger = LoggerFactory.getLogger(NetJobExertions.class.getName());
 	
 	@Test
 	public void exertAdderProviderTest() throws Exception {

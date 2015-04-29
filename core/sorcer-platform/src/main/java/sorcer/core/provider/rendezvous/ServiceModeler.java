@@ -25,7 +25,8 @@ import sorcer.service.*;
 import sorcer.service.modeling.Model;
 
 import java.rmi.RemoteException;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static sorcer.eo.operator.sig;
 import static sorcer.eo.operator.task;
@@ -38,7 +39,7 @@ import static sorcer.eo.operator.task;
  * @author Mike Sobolewski
  */
 public class ServiceModeler extends RendezvousBean implements Modeler {
-    private Logger logger = Logger.getLogger(ServiceModeler.class.getName());
+    private Logger logger = LoggerFactory.getLogger(ServiceModeler.class.getName());
 
     public ServiceModeler() throws RemoteException {
         // do nothing
@@ -54,13 +55,13 @@ public class ServiceModeler extends RendezvousBean implements Modeler {
             if (model.getFidelity().size() == 0 && model.getSubjectValue() instanceof Class) {
                 Task task = task(model.getName(), sig(model.getSubjectPath(), model.getSubjectValue()), model);
                 Task out = task.exert();
-                logger.finest("<==== Result: " + out);
+                logger.trace("<==== Result: " + out);
                 result = out.getDataContext();
             } else {
                 Task task = task(model.getName(), model);
                 task.setFidelity(model.getFidelity());
                 Task out = task.exert();                
-                logger.finest("<==== Result: " + out);
+                logger.trace("<==== Result: " + out);
                 result = out.getDataContext();
             }
         } catch (Throwable e) {

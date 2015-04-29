@@ -13,7 +13,8 @@ import sorcer.core.provider.rendezvous.ServiceConcatenator;
 import sorcer.service.Block;
 import sorcer.service.Task;
 
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertEquals;
 import static sorcer.co.operator.ent;

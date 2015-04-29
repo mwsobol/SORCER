@@ -1,5 +1,7 @@
 package sorcer.provider.adder.impl;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sorcer.core.context.PositionalContext;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.provider.Provider;
@@ -11,21 +13,15 @@ import sorcer.service.ServiceSession;
 
 import java.rmi.RemoteException;
 import java.util.List;
-import java.util.logging.Logger;
 
 @SuppressWarnings("rawtypes")
 public class AdderImpl implements Adder {
 	public static final String RESULT_PATH = "result/value";
 	private ServiceProvider provider;
-	private static Logger logger = Logger.getLogger(AdderImpl.class.getName());
+	private static Logger logger = LoggerFactory.getLogger(AdderImpl.class.getName());
 	
 	public void init(Provider provider) {
 		this.provider = (ServiceProvider)provider;
-		try {
-			logger = provider.getLogger();
-		} catch (RemoteException e) {
-			// ignore it, local call
-		}
 	}
 
     @Override

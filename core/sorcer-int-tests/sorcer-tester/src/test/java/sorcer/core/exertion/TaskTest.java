@@ -13,7 +13,8 @@ import sorcer.service.Strategy.Provision;
 import sorcer.service.Strategy.Wait;
 
 import java.rmi.RemoteException;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -28,7 +29,7 @@ import static sorcer.eo.operator.value;
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("core/sorcer-int-tests/sorcer-tester")
 public class TaskTest {
-	private final static Logger logger = Logger.getLogger(TaskTest.class
+	private final static Logger logger = LoggerFactory.getLogger(TaskTest.class
 			.getName());
 
 	@Test

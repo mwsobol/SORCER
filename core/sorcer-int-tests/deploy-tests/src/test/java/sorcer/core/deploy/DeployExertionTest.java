@@ -29,7 +29,8 @@ import sorcer.service.ExertionException;
 import sorcer.service.Job;
 
 import java.util.Collection;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.*;
 import static sorcer.eo.operator.*;
@@ -40,7 +41,7 @@ import static sorcer.eo.operator.*;
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("core/sorcer-int-tests/deploy-tests")
 public class DeployExertionTest extends DeploySetup implements SorcerConstants {
-    private final static Logger logger = Logger.getLogger(DeployExertionTest.class.getName());
+    private final static Logger logger = LoggerFactory.getLogger(DeployExertionTest.class.getName());
 
     @Category(TestsRequiringRio.class)
     @Test
