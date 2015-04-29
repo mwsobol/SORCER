@@ -2,6 +2,7 @@ package sorcer.core.provider.exertmonitor;
 
 import net.jini.id.Uuid;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -12,6 +13,7 @@ import sorcer.arithmetic.tester.provider.Adder;
 import sorcer.arithmetic.tester.provider.Multiplier;
 import sorcer.arithmetic.tester.provider.Subtractor;
 import sorcer.core.exertion.TaskTest;
+import sorcer.core.provider.Concatenator;
 import sorcer.service.*;
 import sorcer.util.Sorcer;
 import sorcer.util.StringUtils;
@@ -20,9 +22,8 @@ import sorcer.util.exec.ExecUtils;
 import java.io.IOException;
 import java.util.UUID;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
+import static sorcer.co.operator.ent;
 import static sorcer.co.operator.inEnt;
 import static sorcer.co.operator.outEnt;
 import static sorcer.eo.operator.*;
@@ -58,6 +59,7 @@ public class MonitoringTest {
 
 		t5 = exert(t5);
 		logger.info("t5 context: " + context(t5));
+		assertNotNull(context(t5).get("context/checkpoint/time"));
 		logger.info("t5 value: " + get(t5, "result/y"));
 		assertEquals("Wrong value for 100.0", get(t5, "result/y"), 100.0);
 
@@ -129,6 +131,33 @@ public class MonitoringTest {
 				strategy(Strategy.Monitor.YES));
 
 		return job;
+	}
+
+	@Ignore
+	@Test
+	public void optBlockTest() throws Exception {
+		Task t4 = task("t4", sig("multiply", Multiplier.class), strategy(Strategy.Monitor.YES),
+				context("multiply", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
+						result("out")));
+
+		Task t5 = task("t5", sig("add", Adder.class), strategy(Strategy.Monitor.YES),
+				context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
+						result("out")));
+
+		Block block = block("block", sig(Concatenator.class), strategy(Strategy.Monitor.YES),
+				t4,
+				opt(condition("{ out -> out > 600 }", "out"), t5));
+
+		block = exert(block);
+		logger.info("block context 1: " + context(block));
+//		logger.info("result: " + value(context(block), "out"));
+		assertEquals(value(context(block), "out"), 500.0);
+
+		block = exert(block, ent("block/t4/arg/x1", 200.0), ent("block/t4/arg/x2", 800.0));
+		logger.info("block context 2: " + context(block));
+//		logger.info("result: " + value(context(block), "out"));
+		assertEquals(value(context(block), "out"), 100.0);
+
 	}
 
 	private static void verifyExertionMonitorStatus(Exertion exertion, String state) throws IOException, InterruptedException {
