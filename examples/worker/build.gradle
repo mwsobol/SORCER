@@ -60,7 +60,7 @@ bootme {
 	starterConfig = file("${projectDir.path}/configs/StartAll.groovy")
     systemProperties = ["local.repo.path" : repoPath(),
                         "project.dir" : "${project.projectDir.path}"]
-    spawn = false
+    spawn = true
 }
 
 test {
