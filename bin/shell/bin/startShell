@@ -162,9 +162,8 @@ $RIO_HOME/lib/rio-start-$rio_version.jar:\
 $RIO_HOME/lib-dl/rio-api-$rio_version.jar:\
 $RIO_HOME/lib-dl/monitor-api-$rio_version.jar:\
 $RIO_HOME/lib/logging/slf4j-api-$slf4j_version.jar:\
-$RIO_HOME/lib/logging/slf4j-jdk14-$slf4j_version.jar"
-$RIO_HOME/lib/logging/logback-core-$logback_version.jar"
-$RIO_HOME/lib/logging/logback-classic-$logback_version.jar"
+$RIO_HOME/lib/logging/logback-core-$logback_version.jar:\
+$RIO_HOME/lib/logging/logback-classic-$logback_version.jar:\
 $RIO_HOME/lib/logging/jul-to-slf4j-$slf4j_version.jar"
 
 # the classpath to start nsh then application specific classpath is defined in nsh-start.config
@@ -336,7 +335,8 @@ startShell ( ) {
             -Drio.home="$RIO_HOME" \
             -Djava.protocol.handler.pkgs="net.jini.url|sorcer.util.url|org.rioproject.url" \
             -Dtools.jar="$TOOLS_JAR" \
-            -Djava.util.logging.config.file="$SORCER_HOME"/bin/shell/configs/sorcer.logging \
+            -Djava.util.logging.config.file="$SORCER_HOME"/bin/shell/configs/shell-logging.properties \
+            -Dlogback.configurationFile="$SORCER_HOME"/bin/shell/configs/shell-logging.groovy \
             $STARTER_MAIN_CLASS \
             "$@"
     fi
