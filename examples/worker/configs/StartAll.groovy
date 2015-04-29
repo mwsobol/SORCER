@@ -17,6 +17,8 @@ package examples.eol
 
 import com.sun.jini.start.ServiceDescriptor
 import org.rioproject.config.Component
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import sorcer.provider.boot.SorcerServiceDescriptor
 
 /**
@@ -36,6 +38,10 @@ class StartAll {
         String buildLibPath = "${projectBuildDir}/libs";
         String configPath = "${projectBuildDir}/../configs"
 
+        Logger logger = LoggerFactory.getLogger("StartAll")
+        logger.info("projectBuildDir: {}", projectBuildDir)
+        logger.info("buildLibPath:    {}", buildLibPath)
+        logger.info("configPath:      {}", configPath)
         def descriptors = []
         ["worker1", "worker2", "worker3"].each { provider ->
             def configArg = ["${configPath}/${provider}-prv.config"]

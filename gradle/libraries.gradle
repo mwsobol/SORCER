@@ -66,6 +66,7 @@ ext {
 
     startClassPath = files("${rioHome}/lib/groovy-all-${groovyVersion}.jar",
                              "${rioHome}/lib/logging/slf4j-api-${slf4jVersion}.jar",
+                             "${rioHome}/lib/logging/jul-to-slf4j-${slf4jVersion}.jar",
                              "${rioHome}/lib/logging/logback-core-${logbackVersion}.jar",
                              "${rioHome}/lib/logging/logback-classic-${logbackVersion}.jar",
                              "${rioHome}/lib/logging/rio-logging-support-${rioVersion}.jar",

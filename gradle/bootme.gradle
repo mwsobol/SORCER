@@ -67,6 +67,8 @@ class BootMe extends DefaultTask {
         else
             args << "-Dlogback.configurationFile=${project.sorcerDistHome}/configs/sorcer-logging.groovy"
 
+        if(!spawn)
+            args << "-DforceConsoleLogging=true"
         args << "-Drio.log.dir=${project.sorcerDistHome}/logs"
         args << "-Dorg.rioproject.service=sorcer"
         args << "-Djava.security.policy=${project.sorcerDistHome}/policy/policy.all"
