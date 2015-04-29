@@ -33,6 +33,8 @@ appenders << "CONSOLE"
 
 /* Set up loggers */
 logger("sorcer", INFO)
+logger("sorcer.ssb", WARN)
+logger("sorcer.ui", WARN)
 
 root(INFO, appenders)
 
