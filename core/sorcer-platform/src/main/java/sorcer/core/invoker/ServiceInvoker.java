@@ -28,7 +28,8 @@ import sorcer.service.*;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.List;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Mike Sobolewski
@@ -94,7 +95,7 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 	protected ArgSet pars = new ArgSet();
 
 	/** Logger for logging information about instances of this type */
-	static final Logger logger = Logger.getLogger(ServiceInvoker.class
+	static final Logger logger = LoggerFactory.getLogger(ServiceInvoker.class
 			.getName());
 
 	public ServiceInvoker() {

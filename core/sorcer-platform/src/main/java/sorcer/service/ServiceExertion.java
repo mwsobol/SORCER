@@ -21,10 +21,12 @@ import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
 import net.jini.id.Uuid;
 import net.jini.id.UuidFactory;
-import sorcer.core.context.model.ent.Entry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sorcer.core.ComponentSelectionFidelity;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.*;
+import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.par.ParEntry;
 import sorcer.core.deploy.ServiceDeployment;
 import sorcer.core.invoker.ExertInvoker;
@@ -47,7 +49,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.Principal;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.logging.Logger;
 
 /**
  * @author Mike Sobolewski
@@ -57,8 +58,7 @@ public abstract class ServiceExertion implements Exertion, SorcerConstants, Exec
 
     static final long serialVersionUID = -3907402419486719293L;
 
-    protected final static Logger logger = Logger
-            .getLogger(ServiceExertion.class.getName());
+    protected final static Logger logger = LoggerFactory.getLogger(ServiceExertion.class.getName());
 
     protected Uuid exertionId;
 
@@ -85,7 +85,7 @@ public abstract class ServiceExertion implements Exertion, SorcerConstants, Exec
     protected Uuid sessionId;
 
     /** position of component Mogram in a compund exertion */
-    protected Integer index = new Integer(-1);;
+    protected Integer index = new Integer(-1);
 
     protected MonitoringSession monitorSession;
 

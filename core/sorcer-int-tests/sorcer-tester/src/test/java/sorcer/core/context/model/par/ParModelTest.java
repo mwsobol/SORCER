@@ -18,7 +18,8 @@ import sorcer.util.Sorcer;
 import java.io.IOException;
 import java.net.URL;
 import java.rmi.RemoteException;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.*;
 import static sorcer.co.operator.asis;
@@ -43,7 +44,7 @@ import static sorcer.mo.operator.*;
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("core/sorcer-int-tests/sorcer-tester")
 public class ParModelTest {
-	private final static Logger logger = Logger.getLogger(ParModelTest.class.getName());
+	private final static Logger logger = LoggerFactory.getLogger(ParModelTest.class.getName());
 	public static String sorcerVersion = System.getProperty("sorcer.version");
 
 	@Test

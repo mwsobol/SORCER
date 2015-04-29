@@ -134,6 +134,7 @@ fi
 
 jansi_version=$(getVersion jansi.version)
 slf4j_version=$(getVersion slf4j.version)
+logback_version=$(getVersion logback.version)
 plexus_version=$(getVersion plexus.version)
 groovy_version=$(getVersion groovy.version)
 river_version=$(getVersion river.version)
@@ -162,6 +163,10 @@ $RIO_HOME/lib-dl/rio-api-$rio_version.jar:\
 $RIO_HOME/lib-dl/monitor-api-$rio_version.jar:\
 $RIO_HOME/lib/logging/slf4j-api-$slf4j_version.jar:\
 $RIO_HOME/lib/logging/slf4j-jdk14-$slf4j_version.jar"
+$RIO_HOME/lib/logging/logback-core-$logback_version.jar"
+$RIO_HOME/lib/logging/logback-classic-$logback_version.jar"
+$RIO_HOME/lib/logging/jul-to-slf4j-$slf4j_version.jar"
+
 # the classpath to start nsh then application specific classpath is defined in nsh-start.config
 STARTER_CLASSPATH="$SORCER_HOME/lib/common/groovy/groovy-all-$groovy_version.jar:\
 $SORCER_HOME/lib/common/plexus-utils-$plexus_version.jar:\

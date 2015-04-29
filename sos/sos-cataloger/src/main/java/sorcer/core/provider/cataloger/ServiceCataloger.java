@@ -34,6 +34,8 @@ import net.jini.lookup.entry.Name;
 import net.jini.lookup.entry.UIDescriptor;
 import net.jini.lookup.ui.MainUI;
 import org.rioproject.admin.ServiceActivityProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import sorcer.core.exertion.NetTask;
 import sorcer.core.provider.Cataloger;
@@ -54,7 +56,6 @@ import sorcer.util.Sorcer;
 import sorcer.util.SorcerUtil;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.lang.reflect.Type;
@@ -64,9 +65,6 @@ import java.rmi.RemoteException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.logging.*;
-
-import static sorcer.util.StringUtils.tName;
 
 /**
  * The facility for maintaining a cache of all SORCER providers {@link Service}s
@@ -116,7 +114,7 @@ import static sorcer.util.StringUtils.tName;
 public class ServiceCataloger extends ServiceProvider implements Cataloger {
 
 	/** Logger for logging information about this instance */
-	private static Logger logger;
+	private static Logger logger = LoggerFactory.getLogger(ServiceCataloger.class);
 
 	public boolean debug = false;
 	
@@ -198,7 +196,6 @@ public class ServiceCataloger extends ServiceProvider implements Cataloger {
 
 	public void init() {
 		try {
-			initLogger();
 			LookupLocator[] specificLocators = null;
 			String sls = getProperty(P_LOCATORS);
 
@@ -234,32 +231,6 @@ public class ServiceCataloger extends ServiceProvider implements Cataloger {
 			ex.printStackTrace();
 		} catch (ClassNotFoundException cnfe) {
 			cnfe.printStackTrace();
-		}
-	}
-
-	private void initLogger() {
-		if (debug) {
-			Handler h = null;
-			try {
-				logger = Logger.getLogger("local."
-						+ ServiceCataloger.class.getName() + "."
-						+ getProviderName());
-				h = new FileHandler(System.getProperty(SORCER_HOME)
-						+ "/logs/remote/local-Cataloger-" + delegate.getHostName()
-						+ "-" + getProviderName() + "%g.log", 2000000, 8, true);
-				if (h != null) {
-					h.setFormatter(new SimpleFormatter());
-					logger.addHandler(h);
-				}
-				logger.setUseParentHandlers(false);
-			} catch (SecurityException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		} else {
-			logger = Logger.getLogger(ServiceCataloger.class.getName());
-
 		}
 	}
 
@@ -320,7 +291,7 @@ public class ServiceCataloger extends ServiceProvider implements Cataloger {
 			if (sItem != null && (sItem.service instanceof Provider))
 				return (Provider) sItem.service;
 		} catch (Exception t) {
-            logger.warning("Error while getting service item: " + t.getMessage());
+            logger.warn("Error while getting service item: " + t.getMessage());
         } finally {
             if (mdcRemoteCall != null)
                 MDC.put(MDC_SORCER_REMOTE_CALL, mdcRemoteCall);
@@ -515,8 +486,8 @@ public class ServiceCataloger extends ServiceProvider implements Cataloger {
 		public List<ServiceItem> getAll(InterfaceList interfaceList) {
 			List<ServiceItem> sItems = new ArrayList<ServiceItem>();
 			for (Map.Entry<InterfaceList, List<ServiceItem>> entry : interfaceListMap.entrySet()) {
-                if(logger.isLoggable(Level.FINE))
-				logger.fine("list = " + entry.getValue());
+                if(logger.isDebugEnabled())
+				logger.debug("list = " + entry.getValue());
 				if (entry.getKey().containsAllInterfaces(interfaceList)) {
 					logger.info("Cataloger found matching interface list: "+ entry.getValue());
 					sItems.addAll(interfaceListMap.get(entry.getKey()));
@@ -540,7 +511,7 @@ public class ServiceCataloger extends ServiceProvider implements Cataloger {
 						interfaceListMap.put(keyList, sItems);
 					}
 				} catch (ClassCastException e) {
-					logger.warning("ReferentUuid not implemented by: " + si);
+					logger.warn("ReferentUuid not implemented by: " + si);
 				}
 			}
 			if (sItems.isEmpty()) {
@@ -690,10 +661,10 @@ public class ServiceCataloger extends ServiceProvider implements Cataloger {
 				maxItems = Integer.MAX_VALUE;
 			if (providerName != null && providerName.equals(ANY))
 				providerName = null;
-			// logger.fine("Looking for interfaces: " + interfaces);
+			// logger.debug("Looking for interfaces: " + interfaces);
 			List<ServiceItem> list = interfaceListMap.get(new InterfaceList(
 					interfaces));
-			// logger.fine("Got list: " + list.toString());
+			// logger.debug("Got list: " + list.toString());
 			if (list == null)
 				return null;
 
@@ -1132,10 +1103,10 @@ public class ServiceCataloger extends ServiceProvider implements Cataloger {
 		}
 
 		public void run() {
-            if (cinfo != null && logger.isLoggable(Level.FINE)) {
+            if (cinfo != null && logger.isDebugEnabled()) {
 				StringBuilder buffer = new StringBuilder(msg).append("\n");
 				buffer.append(cinfo).append("\n");
-				logger.fine(buffer.toString());
+				logger.debug(buffer.toString());
 			}
 		}
 	}
@@ -1158,7 +1129,7 @@ public class ServiceCataloger extends ServiceProvider implements Cataloger {
             }
             return true;
         } catch (Exception e) {
-            logger.warning("Service ID: " + si.serviceID
+            logger.warn("Service ID: " + si.serviceID
                     + " is not Alive anymore");
             // throw e;
             return false;
@@ -1187,7 +1158,7 @@ public class ServiceCataloger extends ServiceProvider implements Cataloger {
 			throws RemoteException {
         List<ServiceItem> result = new LinkedList<ServiceItem>();
         if(cinfo==null){
-            logger.warning("Cataloger not initialized");
+            logger.warn("Cataloger not initialized");
         } else
         for (Map.Entry<InterfaceList, List<ServiceItem>> entry : cinfo.getInterfaceListMap().entrySet()) {
             List<ServiceItem> serviceItems;

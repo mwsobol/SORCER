@@ -18,7 +18,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.junit.Test;
 
@@ -32,7 +33,7 @@ import sorcer.util.Table;
  */
 @SuppressWarnings({ "unchecked" })
 public class CollectionOperatorsTest {
-	private final static Logger logger = Logger.getLogger(CollectionOperatorsTest.class.getName());
+	private final static Logger logger = LoggerFactory.getLogger(CollectionOperatorsTest.class.getName());
 	
 	@Test
 	public void arrayOperatorTest() throws EvaluationException {

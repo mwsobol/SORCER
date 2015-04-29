@@ -17,15 +17,10 @@
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder
 import ch.qos.logback.core.ConsoleAppender
 import ch.qos.logback.classic.jul.LevelChangePropagator
-
-import java.lang.management.ManagementFactory
-
 import static ch.qos.logback.classic.Level.*
 
-def lcp = new LevelChangePropagator()
-lcp.context = context
-lcp.resetJUL = true
-context.addListener(lcp)
+context = new LevelChangePropagator()
+context.resetJUL = true
 
 def appenders = []
 
@@ -37,9 +32,7 @@ appender("CONSOLE", ConsoleAppender) {
 appenders << "CONSOLE"
 
 /* Set up loggers */
-
-logger("net.jini", TRACE)
-logger("sorcer", DEBUG)
+logger("sorcer", INFO)
 
 root(INFO, appenders)
 

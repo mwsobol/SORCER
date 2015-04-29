@@ -19,7 +19,8 @@ import java.io.File;
 import java.io.IOException;
 import java.rmi.RMISecurityManager;
 import java.util.*;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertEquals;
 import static sorcer.co.operator.list;

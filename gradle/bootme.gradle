@@ -54,12 +54,19 @@ class BootMe extends DefaultTask {
         args << "-Dproject.id=${project.name}"
         args << '-Djava.protocol.handler.pkgs="net.jini.url|sorcer.util.url|org.rioproject.url"'
         //args << '-Djava.rmi.server.RMIClassLoaderSpi","org.rioproject.rmi.ResolvingLoader'
-        args << '-Djava.rmi.server.RMIClassLoaderSpi=sorcer.rio.rmi.SorcerResolvingLoader'
+        //args << '-Djava.rmi.server.RMIClassLoaderSpi=sorcer.rio.rmi.SorcerResolvingLoader'
         // use distribution or project specific java.util.logging.config.file
+
         if (System.getProperty("java.util.logging.config.file") != null)
             args << "-Djava.util.logging.config.file=${System.getProperty("java.util.logging.config.file")}"
         else
             args << "-Djava.util.logging.config.file=${project.sorcerDistHome}/configs/sorcer.logging"
+
+        if (System.getProperty("logback.configurationFile") != null)
+            args << "-Dlogback.configurationFile=${System.getProperty("logback.configurationFile")}"
+        else
+            args << "-Dlogback.configurationFile=${project.sorcerDistHome}/configs/sorcer-logging.groovy"
+
         args << "-Djava.security.policy=${project.sorcerDistHome}/policy/policy.all"
         args << "-Djava.rmi.server.useCodebaseOnly=false"
         args << "-Dplexus.version=${project.plexusVersion}"

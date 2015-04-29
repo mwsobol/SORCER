@@ -28,7 +28,8 @@ import sorcer.core.signature.ObjectSignature;
 import java.rmi.RemoteException;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A <code>Task</code> is an elementary service-oriented message
@@ -51,7 +52,7 @@ public class Task extends ServiceExertion {
 	private static final long serialVersionUID = 5179772214884L;
 
 	/** our logger */
-	protected final static Logger logger = Logger.getLogger(Task.class
+	protected final static Logger logger = LoggerFactory.getLogger(Task.class
 			.getName());
 
 	public final static String argsPath = "method/args";

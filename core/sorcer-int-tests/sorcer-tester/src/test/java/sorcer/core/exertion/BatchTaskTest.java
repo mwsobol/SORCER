@@ -12,7 +12,8 @@ import sorcer.service.Signature;
 import sorcer.service.Signature.Direction;
 import sorcer.service.Task;
 
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertEquals;
 import static sorcer.co.operator.inPaths;
@@ -26,7 +27,7 @@ import static sorcer.eo.operator.*;
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("core/sorcer-int-tests/sorcer-tester")
 public class BatchTaskTest {
-	private final static Logger logger = Logger.getLogger(BatchTaskTest.class
+	private final static Logger logger = LoggerFactory.getLogger(BatchTaskTest.class
 			.getName());
 	
 	@Test

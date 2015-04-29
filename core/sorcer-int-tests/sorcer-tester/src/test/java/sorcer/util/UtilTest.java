@@ -4,7 +4,8 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.File;
 import java.util.Properties;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import net.jini.core.entry.Entry;
 import net.jini.core.lookup.ServiceItem;
@@ -27,7 +28,7 @@ import sorcer.util.Sorcer;
  */
 
 public class UtilTest {
-	private final static Logger logger = Logger.getLogger(UtilTest.class
+	private final static Logger logger = LoggerFactory.getLogger(UtilTest.class
 			.getName());
 	
 	

@@ -68,7 +68,7 @@ public class SpaceIsReadyTaker extends SpaceTaker {
 				}
 
 				Transaction.Created txnCreated = null;
-				// logger.log(Level.INFO, "worker space template envelop = "
+				// logger.info("worker space template envelop = "
 				// + data.entry.describe() + "\n service provider = "
 				// + provider);
 				if (isTransactional) {

@@ -31,7 +31,8 @@ import sorcer.service.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static junit.framework.Assert.assertNotNull;
 import static org.junit.Assert.assertEquals;
@@ -45,7 +46,7 @@ import static sorcer.eo.operator.*;
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("core/sorcer-int-tests/deploy-tests")
 public class OperationalStringFactoryTest {
-	private final static Logger logger = Logger.getLogger(OperationalStringFactoryTest.class.getName());
+	private final static Logger logger = LoggerFactory.getLogger(OperationalStringFactoryTest.class.getName());
 
     @Test
     public void testOperationalStringCreation() throws Exception {

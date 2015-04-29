@@ -22,7 +22,7 @@ import java.rmi.RemoteException;
 import java.security.Policy;
 import java.util.List;
 import java.util.Properties;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
 
 import net.jini.admin.Administrable;
 import net.jini.core.entry.Entry;
@@ -103,8 +103,6 @@ public interface Provider extends Service, Monitorable, Administrable, Remote {
 	public Object getProxy() throws RemoteException;
 
 	public void updatePolicy(Policy policy) throws RemoteException;
-
-	public Logger getLogger() throws RemoteException;
 
 	public Logger getContextLogger() throws RemoteException;
 

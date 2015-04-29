@@ -28,8 +28,10 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Mike Sobolewski
@@ -40,7 +42,7 @@ public class MethodInvoker<T> extends ServiceInvoker<T> implements MethodInvokin
 
 	private static final long serialVersionUID = -1158778636907725414L;
 
-	final protected static Logger logger = Logger.getLogger(MethodInvoker.class
+	final protected static Logger logger = LoggerFactory.getLogger(MethodInvoker.class
 			.getName());
 
 	protected String className;
@@ -262,7 +264,7 @@ public class MethodInvoker<T> extends ServiceInvoker<T> implements MethodInvokin
 					.append((paramTypes == null ? "null" : SorcerUtil.arrayToString(paramTypes))).append("\n");
 			message.append("parameters: ")
 					.append((parameters == null ? "null" : SorcerUtil.arrayToString(parameters)));
-			logger.log(Level.SEVERE, message.toString(), e);
+			logger.error(message.toString(), e);
 			throw new EvaluationException(message.toString(), e);
 		}
 		return (T) val;

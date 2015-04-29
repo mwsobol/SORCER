@@ -2,6 +2,8 @@ package sorcer.arithmetic.provider.impl;
 
 import net.jini.lookup.entry.UIDescriptor;
 import net.jini.lookup.ui.MainUI;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sorcer.arithmetic.provider.Adder;
 import sorcer.arithmetic.provider.ui.CalculatorUI;
 import sorcer.core.provider.Provider;
@@ -15,22 +17,16 @@ import sorcer.util.Sorcer;
 import java.io.Serializable;
 import java.net.URL;
 import java.rmi.RemoteException;
-import java.util.logging.Logger;
 
 @SuppressWarnings("rawtypes")
 public class AdderImpl implements Adder, Serializable {
     private static final long serialVersionUID = -8098772962245123252L;
 	private Arithmometer arithmometer = new Arithmometer();
 	private Provider provider;
-	private Logger logger = Logger.getLogger(Arithmometer.class.getName());
+	private Logger logger = LoggerFactory.getLogger(Arithmometer.class.getName());
 	
 	public void init(Provider provider) {
 		this.provider = provider;
-		try {
-			logger = provider.getLogger();
-		} catch (RemoteException e) {
-			// ignore it, local call
-		}
 	}
 	
 	public Context add(Context context) throws RemoteException,

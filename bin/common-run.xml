@@ -73,7 +73,9 @@ To include this file in your custom *-run-buld.xml have the import line:
 	<path id="provider.starter.path">
 		<pathelement location="${rio.lib}/groovy-all-${groovy.version}.jar" />
 		<pathelement location="${rio.lib}/logging/slf4j-api-${slf4j.version}.jar" />
-		<pathelement location="${rio.lib}/logging/slf4j-jdk14-${slf4j.version}.jar" />
+		<pathelement location="${rio.lib}/logging/logback-core-${logback.version}.jar" />
+        <pathelement location="${rio.lib}/logging/logback-classic-${logback.version}.jar" />
+        <pathelement location="${rio.lib}/logging/jul-to-slf4j-${slf4j.version}.jar" />
 		<pathelement location="${rio.lib}/rio-platform-${rio.version}.jar" />
 		<pathelement location="${rio-dl.lib}/rio-api-${rio.version}.jar" />
 		<pathelement location="${jini.lib}/start-${river.version}.jar" />

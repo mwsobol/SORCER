@@ -20,7 +20,8 @@ package sorcer.core.context;
 import java.net.MalformedURLException;
 import java.rmi.RemoteException;
 import java.util.*;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.regex.Pattern;
 
 import net.jini.id.Uuid;
@@ -40,7 +41,7 @@ import sorcer.util.StringUtils;
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class Contexts implements SorcerConstants {
 
-	private static Logger logger = Logger.getLogger(Contexts.class.getName());
+	private static Logger logger = LoggerFactory.getLogger(Contexts.class.getName());
 	
 	// job broker
 	final static String JOBBER_IS_DIRECT = "jobber" + CPS + "is direct";

@@ -17,24 +17,14 @@
 
 package sorcer.core.loki.crypt;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PipedReader;
-import java.io.PipedWriter;
-import java.io.Reader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.crypto.*;
+import java.io.*;
 import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
-import java.util.logging.Logger;
-
-import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
-import javax.crypto.CipherInputStream;
-import javax.crypto.CipherOutputStream;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.KeyAgreement;
-import javax.crypto.NoSuchPaddingException;
 
 /**
  * The encryption manager class implements block, stream, and threaded pipe
@@ -54,8 +44,7 @@ public class EncryptionManager implements EncryptionManagement {
 	private Cipher decryptionCipher;
 
 	/** class logger */
-	private final static Logger logger = Logger
-			.getLogger(EncryptionManager.class.getName());
+	private final static Logger logger = LoggerFactory.getLogger(EncryptionManager.class.getName());
 
 	// ----------------------------------------------------------------
 
@@ -77,11 +66,11 @@ public class EncryptionManager implements EncryptionManagement {
 			decryptionCipher = Cipher.getInstance("DES");
 			decryptionCipher.init(Cipher.DECRYPT_MODE, myKey);
 		} catch (InvalidKeyException e) {
-			logger.severe(e.toString());
+			logger.error(e.toString());
 		} catch (NoSuchAlgorithmException e) {
-			logger.severe(e.toString());
+			logger.error(e.toString());
 		} catch (NoSuchPaddingException e) {
-			logger.severe(e.toString());
+			logger.error(e.toString());
 		}
 	}
 
@@ -105,10 +94,10 @@ public class EncryptionManager implements EncryptionManagement {
 		try {
 			return encryptionCipher.doFinal(plaintext);
 		} catch (BadPaddingException e) {
-			logger.severe(e.toString());
+			logger.error(e.toString());
 			return e.toString().getBytes();
 		} catch (IllegalBlockSizeException e) {
-			logger.severe(e.toString());
+			logger.error(e.toString());
 			return e.toString().getBytes();
 		}
 	}
@@ -175,10 +164,10 @@ public class EncryptionManager implements EncryptionManagement {
 		try {
 			return decryptionCipher.doFinal(ciphertext);
 		} catch (BadPaddingException e) {
-			logger.severe(e.toString());
+			logger.error(e.toString());
 			return e.toString().getBytes();
 		} catch (IllegalBlockSizeException e) {
-			logger.severe(e.toString());
+			logger.error(e.toString());
 			return e.toString().getBytes();
 		}
 	}

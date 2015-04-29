@@ -40,7 +40,9 @@
                 <path refid="rio.path" />
                 <pathelement location="${rio.home}/lib-dl/cybernode-api-${rio.version}.jar" />
                 <pathelement location="${rio.home}/lib-dl/monitor-api-${rio.version}.jar" />
-                <pathelement location="${rio.home}/lib/logging/jul/slf4j-jdk14-${slf4j.version}.jar" />
+                <pathelement location="${rio.home}/lib/logging/logback-core-${logback.version}.jar" />
+                <pathelement location="${rio.home}/lib/logging/logback-classic-${logback.version}.jar" />
+                <pathelement location="${rio.home}/lib/logging/jul-to-slf4j-${slf4j.version}.jar" />
                 <pathelement location="${java.home}/../lib/tools.jar" />
             </classpath>
             <sysproperty key="java.security.policy" value="${sorcer.home}/policy/sorcer.policy" />

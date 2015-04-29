@@ -14,7 +14,8 @@ import sorcer.service.Strategy.Access;
 import sorcer.service.Strategy.Monitor;
 import sorcer.service.Strategy.Wait;
 
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -29,7 +30,7 @@ import static sorcer.eo.operator.value;
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/sml")
 public class NetExertionTasks {
-	private final static Logger logger = Logger.getLogger(NetExertionTasks.class.getName());
+	private final static Logger logger = LoggerFactory.getLogger(NetExertionTasks.class.getName());
 	
 	@Test
 	public void exertTask() throws Exception  {

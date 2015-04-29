@@ -30,7 +30,8 @@ import sorcer.util.Stopwatch;
 import java.rmi.RemoteException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.*;
 import static sorcer.co.operator.*;

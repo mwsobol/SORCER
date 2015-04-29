@@ -129,7 +129,7 @@ public class NetSignature extends ObjectSignature {
             if (serviceType!=null) this.version = MavenUtil.findVersion(serviceType);
             setSelector(selector);
         } catch (ClassNotFoundException e) {
-            logger.severe("Problem creating NetSignature: " + e.getMessage());
+            logger.error("Problem creating NetSignature: " + e.getMessage());
         }
     }
 

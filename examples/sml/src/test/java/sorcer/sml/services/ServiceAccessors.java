@@ -14,7 +14,8 @@ import sorcer.util.ProviderLocator;
 import sorcer.util.ProviderLookup;
 import sorcer.util.Stopwatch;
 
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -28,7 +29,7 @@ import static sorcer.eo.operator.sig;
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/sml")
 public class ServiceAccessors implements SorcerConstants {
-	private final static Logger logger = Logger.getLogger(ServiceAccessors.class.getName());
+	private final static Logger logger = LoggerFactory.getLogger(ServiceAccessors.class.getName());
 
 	@Test
 	public void getProvider() throws Exception {

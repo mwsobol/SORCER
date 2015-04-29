@@ -25,7 +25,8 @@ import sorcer.core.provider.Jobber;
 import sorcer.service.*;
 
 import java.rmi.RemoteException;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * ServiceJobber - The SORCER rendezvous service provider that provides
@@ -34,7 +35,7 @@ import java.util.logging.Logger;
  * @author Mike Sobolewski
  */
 public class ServiceJobber extends RendezvousBean implements Jobber {
-	private Logger logger = Logger.getLogger(ServiceJobber.class.getName());
+	private Logger logger = LoggerFactory.getLogger(ServiceJobber.class.getName());
 
 	public ServiceJobber() throws RemoteException {
 		// do nothing
@@ -55,12 +56,12 @@ public class ServiceJobber extends RendezvousBean implements Jobber {
                 } else {
                     mogramThread.run();
                     Mogram result = mogramThread.getResult();
-                    logger.fine("<== Result: " + result);
+                    logger.debug("<== Result: " + result);
                     return result;
                 }
             } catch (Exception e) {
                 ((ServiceExertion)mogram).reportException(e);
-                logger.warning("Error: " + e.getMessage());
+                logger.warn("Error: " + e.getMessage());
                 return mogram;
             }
 	}

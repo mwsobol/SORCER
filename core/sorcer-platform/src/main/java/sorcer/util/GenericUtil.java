@@ -16,62 +16,24 @@
  */
 package sorcer.util;
 
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
-import java.io.PrintStream;
-import java.io.PrintWriter;
-import java.io.Reader;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.SocketTimeoutException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.net.URLConnection;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.Formatter;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Scanner;
-import java.util.Set;
-import java.util.StringTokenizer;
-import java.util.UUID;
-import java.util.Vector;
-import java.util.jar.JarEntry;
-import java.util.jar.JarInputStream;
-import java.util.jar.JarOutputStream;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
+import edu.emory.mathcs.util.classloader.URIClassLoader;
 import org.rioproject.loader.ServiceClassLoader;
 import org.rioproject.resolver.ResolverHelper;
 import org.rioproject.url.artifact.ArtifactURLConfiguration;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sorcer.core.provider.ServiceProvider;
-import edu.emory.mathcs.util.classloader.URIClassLoader;
+
+import java.io.*;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.net.*;
+import java.util.*;
+import java.util.Collections;
+import java.util.jar.JarEntry;
+import java.util.jar.JarInputStream;
+import java.util.jar.JarOutputStream;
 
 /**
  * SORCER generic utility class. It implements the interface
@@ -172,8 +134,7 @@ public class GenericUtil {
 	/**
 	 * Logger
 	 */
-	private static Logger logger = Logger
-			.getLogger(GenericUtil.class.getName());
+	private static Logger logger = LoggerFactory.getLogger(GenericUtil.class.getName());
 
 	/**
 	 * This is a function that appends a File object to open jar archive
@@ -185,7 +146,6 @@ public class GenericUtil {
 	 */
 	public static void addToArchive(File fileObj, JarOutputStream jarOut) {
 		addToArchive(fileObj, null, jarOut);
-		return;
 	}
 
 	/**
@@ -373,7 +333,7 @@ public class GenericUtil {
 	
 	
 	public static void logStackTrace(Logger logger, String msg) {
-		logger.log(Level.WARNING, msg, new Throwable());	
+		logger.warn(msg, new Throwable());	
 	}
 	
 //	public File downloadNonStatic(Var<URL> var, File destinationFile)
@@ -1952,7 +1912,7 @@ public class GenericUtil {
 		try {
 			
 			if(!file.exists()) {
-                logger.warning("***error: file does not exist or is not readable = "+ file.getAbsolutePath());
+                logger.warn("***error: file does not exist or is not readable = "+ file.getAbsolutePath());
 				if (sp != null) sp.destroy();
 				throw new IOException("***error: file does not exist or is not readable = " 
 						+ file.getAbsolutePath());
@@ -1960,13 +1920,13 @@ public class GenericUtil {
 			}
 					
 			if (!file.canRead()){
-                logger.warning("***error: file does not have read permission = "+ file.getAbsolutePath());
+                logger.warn("***error: file does not have read permission = "+ file.getAbsolutePath());
 				if (sp != null) sp.destroy();				
 				throw new IOException("***error: file does not have read permission = "+ file.getAbsolutePath());
 			}
 					
 		} catch (IOException e) {
-            logger.log(Level.WARNING, "***error:  problem with file = " + file.getAbsolutePath(), e);
+            logger.warn("***error:  problem with file = " + file.getAbsolutePath(), e);
 			throw new RuntimeException(e);
 		}
 	}
@@ -2074,7 +2034,7 @@ public class GenericUtil {
 					String msg = "***warn: CYGWIN_HOME location is not readable: " 
 							+ cygwinHomeTest;
 					System.out.println(msg);
-					logger.warning(msg);
+					logger.warn(msg);
 				}
 			}
 			
@@ -2086,7 +2046,7 @@ public class GenericUtil {
 				} else {
 					String msg = "***error: the environment variable CYGWIN_HOME is not set correctly." 
 							+ "(Check env and make sure to use DOS file path format.)";
-					logger.severe(msg);
+					logger.error(msg);
 					throw new Exception(msg);
 				}
 			}
@@ -2097,7 +2057,7 @@ public class GenericUtil {
 				GenericUtil.checkFileExistsAndIsReadable(new File(shExec), null);
 			} catch (Exception e) {
 				String msg = "***error: the cygwin \"sh.exe\" must be installed in: " + shExec;
-				logger.log(Level.SEVERE, msg, e);
+				logger.error(msg, e);
 				throw e;
 			}
 			
@@ -2611,7 +2571,7 @@ public class GenericUtil {
 	}
 
 	public static void upload(File fromFile, URL toUrl) throws IOException {
-		logger.log(Level.WARNING, "********** WARNING: using GenericUtil.upload() "
+		logger.warn("********** WARNING: using GenericUtil.upload() "
 				+ "will corrupt binary files! Use at your own risk.");
 		upload(vect2String(getFileContents(fromFile)), toUrl);
 	}
@@ -2649,7 +2609,7 @@ public class GenericUtil {
 				}
 				er.close();
 			} catch (SocketTimeoutException e) {
-				logger.warning("Socket Timeout " + con.getReadTimeout()
+				logger.warn("Socket Timeout " + con.getReadTimeout()
 						+ " (ms) Exceeded");
 				e.printStackTrace();
 			}
@@ -2670,7 +2630,7 @@ public class GenericUtil {
 			// close the inputstream
 			is.close();
 		} catch (SocketTimeoutException e) {
-			logger.warning("Socket Timeout " + con.getReadTimeout()
+			logger.warn("Socket Timeout " + con.getReadTimeout()
 					+ " (ms) Exceeded");
 			e.printStackTrace();
 		}
@@ -2927,23 +2887,23 @@ public class GenericUtil {
 				throw new RuntimeException(errorMessage);
 			} catch (InterruptedException ex) {
 				GenericUtil.appendFileContents("executeCommandWithWorker(): ***exception in executeCommandWithWorker: " + ex, dir);
-				logger.log(Level.WARNING, "***exception in executeCommandWithWorker", ex);
+				logger.warn("***exception in executeCommandWithWorker", ex);
 				throw ex;
 			}
 		} catch (InterruptedException ex) {
 			String errorMessage = "the command: " + arrayToOneLineSpaceDelimitedString(command)
 					+ ", did not complete due to an "
 					+ "unexpected interruption.";
-            logger.log(Level.WARNING, errorMessage, ex);
+            logger.warn(errorMessage, ex);
 			throw new RuntimeException(errorMessage, ex);
 		} catch (FileNotFoundException ex) {
 			String errorMessage = "the log file was not found.";
-            logger.log(Level.WARNING, errorMessage, ex);
+            logger.warn(errorMessage, ex);
 			throw new RuntimeException(errorMessage, ex);
 		} catch (IOException ex) {
 			String errorMessage = "the command: " + arrayToOneLineSpaceDelimitedString(command)
 					+ ", did not complete due to an " + "io error.";
-            logger.log(Level.WARNING, errorMessage, ex);
+            logger.warn(errorMessage, ex);
 			throw new RuntimeException(errorMessage, ex);
 		}
 	}
@@ -3006,7 +2966,7 @@ public class GenericUtil {
                             }
                         }
                     } catch(Exception e) {
-                        logger.log(Level.WARNING, "Could not get or access field \"ucp\", just call getURLs()", e);
+                        logger.warn("Could not get or access field \"ucp\", just call getURLs()", e);
                         urls = ((URLClassLoader) cl).getURLs();
                     }
                 } finally {
@@ -3016,8 +2976,8 @@ public class GenericUtil {
 
 			if (urls != null) {
 				for (URL url : urls) {
-					if (logger.isLoggable(Level.FINE))
-						logger.fine("Processing url: " + url.toExternalForm());
+					if (logger.isDebugEnabled())
+						logger.debug("Processing url: " + url.toExternalForm());
 					if (url.getProtocol().equals("artifact")) {
 						String artifact = new ArtifactURLConfiguration(
 								url.toExternalForm()).getArtifact();
@@ -3453,7 +3413,7 @@ public class GenericUtil {
 						+ tries + "\n\tslurmScriptFile = "
 						+ slurmScriptFile.getAbsolutePath();
 				logger.info(msg);
-				logger.warning(msg);
+				logger.warn(msg);
 				throw new Exception(msg);
 			}
 
@@ -3484,7 +3444,7 @@ public class GenericUtil {
 			// + "\n\tcanRead() = " + middleScriptDoneFile.canRead()
 			// + "\n\texists() = " + middleScriptDoneFile.exists();
 			// logger.info(msg);
-			// logger.warning(msg);
+			// logger.warn(msg);
 			// throw new Exception(msg);
 			// }
 		} catch (Exception ioe) {
@@ -3832,7 +3792,7 @@ public class GenericUtil {
 						+ tries + "\n\tslurmScriptFile = "
 						+ slurmScriptFile.getAbsolutePath();
 				logger.info(msg);
-				logger.warning(msg);
+				logger.warn(msg);
 				throw new Exception(msg);
 			}
 
@@ -3863,7 +3823,7 @@ public class GenericUtil {
 			// + "\n\tcanRead() = " + middleScriptDoneFile.canRead()
 			// + "\n\texists() = " + middleScriptDoneFile.exists();
 			// logger.info(msg);
-			// logger.warning(msg);
+			// logger.warn(msg);
 			// throw new Exception(msg);
 			// }
 		} catch (Exception ioe) {
@@ -3952,12 +3912,12 @@ public class GenericUtil {
 					+ tries;
 
 			logger.info(msg);
-			logger.warning(msg);
+			logger.warn(msg);
 			throw new Exception(msg);
 		}
 		// } catch (Exception ioe) {
 		// logger.info(ioe.toString());
-		// logger.warning(ioe.toString());
+		// logger.warn(ioe.toString());
 		// ioe.printStackTrace();
 		// }
 		logger.info("GenericUtil.runShellScriptViaSlurm(): exitValue = "

@@ -13,7 +13,8 @@ import sorcer.service.Signature;
 import java.lang.reflect.Proxy;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.*;
 import static sorcer.co.operator.inEnt;

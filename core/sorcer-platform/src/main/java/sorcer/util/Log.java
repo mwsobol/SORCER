@@ -17,15 +17,14 @@
 
 package sorcer.util;
 
-import java.util.logging.FileHandler;
-import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Generic SORCER Logging Utility defines SORCER loggers for your providers. <br>
  * Here is an example: <br>
  * <code>Log.getProviderLog().info("some informal message");</code><br>
- * <code>Log.getProviderLog().severe(jgapp.util.Debug.stackTraceToString(ex));</code>
+ * <code>Log.getProviderLog().error(jgapp.util.Debug.stackTraceToString(ex));</code>
  * <br>
  * <p>
  * The loggers can be configured via the standard java logger configuration
@@ -80,36 +79,34 @@ import java.util.logging.SimpleFormatter;
  * @author Max Berger
  * @version $Id: Log.java,v 1.3 2007/07/27 18:35:06 sobolemw Exp $
  * @see java.util.logging.Logger
- * @see jgapp.util.Debug#stackTraceToString(Throwable)
+
  */
 
 public class Log {
 
 	/** Our main SORCER logger */
-	private static Logger sorcer = Logger.getLogger("sorcer");
+	private static Logger sorcer = LoggerFactory.getLogger("sorcer");
 
 	/** For all sorcer.core.* core packages except core providers */
-	private static Logger sorcerCore = Logger.getLogger("sorcer.core");
+	private static Logger sorcerCore = LoggerFactory.getLogger("sorcer.core");
 
 	/** Used by service providers except core providers */
-	private static Logger provider = Logger.getLogger("sorcer.core.provider");
+	private static Logger provider = LoggerFactory.getLogger("sorcer.core.provider");
 
 	/** Used by service dispatchers */
-	private static Logger dispatch = Logger.getLogger("sorcer.core.dispatch");
+	private static Logger dispatch = LoggerFactory.getLogger("sorcer.core.dispatch");
 
 	/** Used by SORCER core service providers */
-	private static Logger coreProvider = Logger
-			.getLogger("sorcer.core.provider.ServiceProvider");
+	private static Logger coreProvider = LoggerFactory.getLogger("sorcer.core.provider.ServiceProvider");
 
 	/** Logger solely for testing purposes */
-	private static Logger test = Logger.getLogger("sorcer.test");
+	private static Logger test = LoggerFactory.getLogger("sorcer.test");
 
 	/** SORCER security logging */
-	private static Logger securityLogger = Logger
-			.getLogger("sorcer.core.security");
+	private static Logger securityLogger = LoggerFactory.getLogger("sorcer.core.security");
 
 	/** Everything that doesn't fit anywhere else */
-	private static Logger random = Logger.getLogger("sorcer.random");
+	private static Logger random = LoggerFactory.getLogger("sorcer.random");
 
 	/** Loggers for security related logging */
 	private static final String TRUST_LOG = "net.jini.security.trust";
@@ -118,62 +115,11 @@ public class Log {
 
 	private static final String POLICY_LOG = "net.jini.security.policy";
 
-	private static Logger trustLogger;
+	private static Logger trustLogger = LoggerFactory.getLogger(TRUST_LOG);
 
-	private static Logger integrityLogger;
+	private static Logger integrityLogger = LoggerFactory.getLogger(INTEGRITY_LOG);
 
-	private static Logger policyLogger;
-
-	private static FileHandler trustFh;
-
-	private static FileHandler integrityFh;
-
-	private static FileHandler policyFh;
-
-	/**
-	 * Is automatically called from the logging framework using the config
-	 * property in the "sorcer.logging" configuration file.
-	 */
-	public Log() {
-		/*
-		 * Set additional Formatters, Filters and Handlers for the loggers here.
-		 * You cannot specify the Handlers for loggers except the root logger
-		 * from the sorcer.logging configuration file.
-		 */
-		initializeSecurityLoggers();
-	}
-
-	/**
-	 * Installs three security loggers: trust, integrity, and policy.
-	 */
-	public static void initializeSecurityLoggers() {
-		try {
-			trustLogger = Logger.getLogger(TRUST_LOG);
-			integrityLogger = Logger.getLogger(INTEGRITY_LOG);
-			policyLogger = Logger.getLogger(POLICY_LOG);
-
-			// this handler will save ALL log messages in the file
-			trustFh = new FileHandler("../logs/trust.log");
-			integrityFh = new FileHandler("../logs/integrity.log");
-			policyFh = new FileHandler("../logs/policy.log");
-
-			// the format is simple rather than XML
-			trustFh.setFormatter(new SimpleFormatter());
-			integrityFh.setFormatter(new SimpleFormatter());
-			policyFh.setFormatter(new SimpleFormatter());
-
-			trustLogger.addHandler(trustFh);
-			integrityLogger.addHandler(integrityFh);
-			policyLogger.addHandler(policyFh);
-
-			trustLogger.setLevel(java.util.logging.Level.ALL);
-			integrityLogger.setLevel(java.util.logging.Level.ALL);
-			policyLogger.setLevel(java.util.logging.Level.ALL);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-	}
+	private static Logger policyLogger = LoggerFactory.getLogger(POLICY_LOG);
 
 	/**
 	 * This can be used to test the logging configuration. Call this class with
@@ -201,15 +147,11 @@ public class Log {
 	 * @param logger
 	 */
 	private static void sendLogMessages(Logger logger) {
-		System.out.println(" Logger Name : " + logger.getName() + " Level: "
-				+ logger.getLevel());
-		logger.finest("Finest");
-		logger.finer("Finer");
-		logger.fine("Fine");
-		logger.config("Config");
+		logger.trace("Trace");
+		logger.debug("Debug");
 		logger.info("Info");
-		logger.warning("Warning");
-		logger.severe("Severe");
+		logger.warn("Warn");
+		logger.error("Error");
 	}
 
 	/**

@@ -27,7 +27,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.net.URL;
 import java.rmi.RemoteException;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class NetletEditor extends JPanel { 
 	

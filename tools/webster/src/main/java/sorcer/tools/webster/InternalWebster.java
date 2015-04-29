@@ -20,8 +20,10 @@ import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.util.StringTokenizer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Helper class for starting an Internal Webster
@@ -29,7 +31,7 @@ import java.util.logging.Logger;
  * @author Dennis Reedy and Mike Sobolewski
  */
 public class InternalWebster {
-	private static Logger logger = Logger.getLogger(InternalWebster.class.getName());
+	private static Logger logger = LoggerFactory.getLogger(InternalWebster.class.getName());
 	private static boolean debug = false;
 	public static final String WEBSTER_ROOTS = "sorcer.webster.roots";
 
@@ -108,7 +110,7 @@ public class InternalWebster {
 		try {
 			minThreads = Integer.parseInt(sMinThreads);
 		} catch (NumberFormatException e) {
-			logger.log(Level.WARNING, "Bad Min Threads Number [" + sMinThreads
+			logger.warn("Bad Min Threads Number [" + sMinThreads
 					+ "], " + "default to " + minThreads, e);
 		}
 		String sMaxThreads = System.getProperty("webster.maxThreads",
@@ -117,7 +119,7 @@ public class InternalWebster {
 		try {
 			maxThreads = Integer.parseInt(sMaxThreads);
 		} catch (NumberFormatException e) {
-			logger.log(Level.WARNING, "Bad Max Threads Number [" + sMaxThreads
+			logger.warn("Bad Max Threads Number [" + sMaxThreads
 					+ "], " + "default to " + maxThreads, e);
 		}
 		String sPort = System.getProperty("webster.port", "0");
@@ -125,19 +127,19 @@ public class InternalWebster {
 		try {
 			port = Integer.parseInt(sPort);
 		} catch (NumberFormatException e) {
-			logger.log(Level.WARNING, "Bad port Number [" + sPort + "], "
+			logger.warn("Bad port Number [" + sPort + "], "
 					+ "default to " + port, e);
 		}
 
 		String address = System.getProperty("webster.interface");
 		Webster webster = new Webster(port, roots, address, minThreads, maxThreads, true);
 		port = Webster.getWebsterPort();
-		if (logger.isLoggable(Level.FINEST))
-			logger.finest("Webster MinThreads=" + minThreads + ", "
+		if (logger.isTraceEnabled())
+			logger.trace("Webster MinThreads=" + minThreads + ", "
 					+ "MaxThreads=" + maxThreads);
 
-		if (logger.isLoggable(Level.FINE))
-			logger.fine("Webster serving on port=" + port);
+		if (logger.isDebugEnabled())
+			logger.debug("Webster serving on port=" + port);
 
 		String[] jars = null;
 		String jarsList = null;
@@ -162,8 +164,8 @@ public class InternalWebster {
 				.append("/").append(jars[jars.length - 1]);
 		codebase = sb.toString();
 		System.setProperty("java.rmi.server.codebase", codebase);
-		if (logger.isLoggable(Level.FINE))
-			logger.fine("Setting 'java.rmi.server.codebase': " + codebase);
+		if (logger.isDebugEnabled())
+			logger.debug("Setting 'java.rmi.server.codebase': " + codebase);
 
 		return webster;
 	}

@@ -7,7 +7,8 @@ import org.sorcer.test.SorcerTestRunner;
 import sorcer.provider.adder.impl.AdderImpl;
 import sorcer.service.*;
 
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -22,7 +23,7 @@ import static sorcer.eo.operator.value;
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/service")
 public class LocalTasks {
-	private final static Logger logger = Logger.getLogger(LocalTasks.class.getName());
+	private final static Logger logger = LoggerFactory.getLogger(LocalTasks.class.getName());
 	
 	@Test
 	public void exertTask() throws Exception  {

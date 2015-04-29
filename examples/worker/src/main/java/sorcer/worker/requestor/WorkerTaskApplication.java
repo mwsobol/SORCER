@@ -11,7 +11,8 @@ import sorcer.util.Sorcer;
 import sorcer.util.SorcerEnv;
 import sorcer.worker.provider.Worker;
 
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Mike Sobolewski

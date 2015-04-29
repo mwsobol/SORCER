@@ -29,7 +29,8 @@ import java.io.Serializable;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Attributes related to signature based deployment.
@@ -71,7 +72,7 @@ public class ServiceDeployment implements Serializable, Deployment {
     private Boolean fork;
     private String jvmArgs;
     private final List<String> deployedNames = new ArrayList<String>();
-    private static final Logger logger = Logger.getLogger(ServiceDeployment.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(ServiceDeployment.class.getName());
 
     public ServiceDeployment() {
     }

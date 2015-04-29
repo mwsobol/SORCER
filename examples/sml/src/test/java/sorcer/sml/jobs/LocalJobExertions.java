@@ -15,7 +15,8 @@ import sorcer.service.Job;
 import sorcer.service.Signature;
 import sorcer.service.Task;
 
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.*;
 import static sorcer.co.operator.*;
@@ -30,7 +31,7 @@ import static sorcer.eo.operator.*;
 @ProjectContext("examples/sml")
 public class LocalJobExertions implements SorcerConstants {
 
-	private final static Logger logger = Logger.getLogger(LocalJobExertions.class.getName());
+	private final static Logger logger = LoggerFactory.getLogger(LocalJobExertions.class.getName());
 	
 	@Test
 	public void exertAdderProvider() throws Exception {

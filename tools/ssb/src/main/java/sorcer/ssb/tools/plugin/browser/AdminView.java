@@ -225,7 +225,7 @@ public class AdminView {
 	private JDesktopPane getRuntimeIfPanel(Entry[] atts, LookupLocator[] locs,
 			String[] grps, Object adminProxy) {
 
-		ServiceBrowserUI._logger.fine("start");
+		ServiceBrowserUI._logger.debug("start");
 
 		JComponent c1 = new AttribsPanel(atts, false);
 		JComponent c2 = createPropertiesView(locs,
@@ -253,7 +253,7 @@ public class AdminView {
 		for (int i = 0; i < _jif.length; i++)
 			mdiPane.add(_jif[i], JLayeredPane.PALETTE_LAYER);
 
-		ServiceBrowserUI._logger.fine("end");
+		ServiceBrowserUI._logger.debug("end");
 
 		return mdiPane;
 	}
@@ -261,7 +261,7 @@ public class AdminView {
 	private JSplitPane getRuntimePanel(Entry[] atts, LookupLocator[] locs,
 			String[] grps, Object adminProxy) {
 
-		ServiceBrowserUI._logger.fine("start");
+		ServiceBrowserUI._logger.debug("start");
 
 		JComponent c1 = new AttribsPanel(atts, false);
 		JComponent c2 = createPropertiesView(locs,
@@ -298,7 +298,7 @@ public class AdminView {
 		splitPane.setDividerLocation(0.75);
 		// splitPane.setResizeWeight(0.75);
 
-		ServiceBrowserUI._logger.fine("end");
+		ServiceBrowserUI._logger.debug("end");
 		// splitPane.resetToPreferredSizes();
 		return splitPane;
 	}

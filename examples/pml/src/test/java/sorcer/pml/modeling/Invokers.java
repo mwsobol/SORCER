@@ -28,7 +28,8 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.rmi.RemoteException;
 import java.util.Properties;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -54,7 +55,7 @@ import static sorcer.po.operator.set;
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/pml")
 public class Invokers {
-	private final static Logger logger = Logger.getLogger(Invokers.class
+	private final static Logger logger = LoggerFactory.getLogger(Invokers.class
 			.getName());
 
 	private ParModel pm; 

@@ -29,7 +29,8 @@ import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Properties;
 import java.util.StringTokenizer;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.rioproject.net.HostUtil;
 import sorcer.core.SorcerConstants;
@@ -44,7 +45,7 @@ import sorcer.util.SOS;
  */
 public class Booter implements SorcerConstants {
 	private static final String COMPONENT = "sorcer.provider.boot";
-	private static Logger logger = Logger.getLogger(COMPONENT);
+	private static Logger logger = LoggerFactory.getLogger(COMPONENT);
 
 	/**
 	 * Code server (wester) port
@@ -72,7 +73,7 @@ public class Booter implements SorcerConstants {
 		try {
 			loadEnvironment();
 		} catch (IOException e) {
-			logger.severe("Cannot load the SORCER environment");
+			logger.error("Cannot load the SORCER environment");
 		}
 	}
 
@@ -487,7 +488,7 @@ public class Booter implements SorcerConstants {
 				if (stream != null)
 					props.load(stream);
 				else
-					logger.severe("could not load the SORCER Env properties");
+					logger.error("could not load the SORCER Env properties");
 			} catch (Throwable t2) {
 				throw new IOException();
 			}
@@ -515,7 +516,7 @@ public class Booter implements SorcerConstants {
 	public static String getProperty(String property) {
 		String p = props.getProperty(property);
 		if (p == null) {
-			logger.finer("SORCER Env property not set: " + property);
+			logger.debug("SORCER Env property not set: " + property);
 		}
 		return p;
 	}
@@ -541,29 +542,29 @@ public class Booter implements SorcerConstants {
 		String intf = System.getenv("WEBSTER_INTERFACE");
 
 		if (intf != null && intf.length() > 0) {
-			logger.finer("webster interface as the system environment value: "
+			logger.debug("webster interface as the system environment value: "
 					+ intf);
 			return intf;
 		}
 
 		intf = System.getProperty(P_WEBSTER_INTERFACE);
 		if (intf != null && intf.length() > 0) {
-			logger.finer("webster interface as 'provider.webster.interface' property value: "
+			logger.debug("webster interface as 'provider.webster.interface' property value: "
 					+ intf);
 			return intf;
 		}
 
 		intf = props.getProperty(P_WEBSTER_INTERFACE);
 		if (intf != null && intf.length() > 0) {
-			logger.finer("webster interface as 'provider.webster.interface' property value: "
+			logger.debug("webster interface as 'provider.webster.interface' property value: "
 					+ intf);
 			return intf;
 		}
 		try {
-			logger.finer("webster interface  as the local host value: " + intf);
+			logger.debug("webster interface  as the local host value: " + intf);
 			intf = Booter.getHostAddress();
 		} catch (UnknownHostException e) {
-			logger.severe("Cannot determine the webster interface.");
+			logger.error("Cannot determine the webster interface.");
 			e.printStackTrace();
 		}
 		return intf;
@@ -589,7 +590,7 @@ public class Booter implements SorcerConstants {
 
 		wp = props.getProperty(P_WEBSTER_PORT);
 		if (wp != null && wp.length() > 0) {
-			// logger.finer("webster port as in sorcer.env 'provider.webster.port': "
+			// logger.debug("webster port as in sorcer.env 'provider.webster.port': "
 			// + wp);
 			return new Integer(wp);
 		}

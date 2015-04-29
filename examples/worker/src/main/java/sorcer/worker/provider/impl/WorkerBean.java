@@ -11,7 +11,8 @@ import sorcer.worker.provider.Worker;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.rmi.RemoteException;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Mike Sobolewski
@@ -20,7 +21,7 @@ import java.util.logging.Logger;
 @SuppressWarnings("rawtypes")
 public class WorkerBean implements Worker {
 
-	private Logger logger = Logger.getLogger(WorkerBean.class.getName());
+	private Logger logger = LoggerFactory.getLogger(WorkerBean.class.getName());
 
 	private Provider provider;
 

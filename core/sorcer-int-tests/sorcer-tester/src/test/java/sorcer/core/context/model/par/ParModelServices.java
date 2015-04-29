@@ -8,7 +8,8 @@ import sorcer.arithmetic.tester.provider.impl.ParModelImpl;
 import sorcer.service.*;
 
 import java.rmi.RemoteException;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertEquals;
 import static sorcer.co.operator.outPaths;
@@ -22,7 +23,7 @@ import static sorcer.po.operator.invoke;
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("core/sorcer-int-tests/sorcer-tester")
 public class ParModelServices {
-	private final static Logger logger = Logger.getLogger(ParModelServices.class
+	private final static Logger logger = LoggerFactory.getLogger(ParModelServices.class
 			.getName());
 
 	public static String sorcerVersion = System.getProperty("sorcer.version");

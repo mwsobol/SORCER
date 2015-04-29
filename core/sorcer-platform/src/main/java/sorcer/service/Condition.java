@@ -31,7 +31,8 @@ import java.rmi.RemoteException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -51,7 +52,7 @@ import java.util.logging.Logger;
 	
 	private static final long serialVersionUID = -7310117070480410642L;
 	 
-	protected final static Logger logger = Logger.getLogger(Condition.class
+	protected final static Logger logger = LoggerFactory.getLogger(Condition.class
 			.getName());
 
 	

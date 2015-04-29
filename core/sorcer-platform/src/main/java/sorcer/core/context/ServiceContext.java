@@ -49,7 +49,8 @@ import java.net.URL;
 import java.rmi.RemoteException;
 import java.security.Principal;
 import java.util.*;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.regex.Pattern;
 
 import static sorcer.eo.operator.sig;
@@ -198,7 +199,7 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 	public final static String EMPTY_LEAF = ":Empty";
 
 	// this class logger
-	protected static Logger logger = Logger.getLogger(ServiceContext.class
+	protected static Logger logger = LoggerFactory.getLogger(ServiceContext.class
 			.getName());
 
 	/**
@@ -2788,7 +2789,7 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
         if (exertion != null)
             exertion.getControlContext().addException(t);
         else
-            logger.warning("Error (could not report) " + t.getMessage());
+            logger.warn("Error (could not report) " + t.getMessage());
 	}
 
 	public void reportException(String message, Throwable t) {
@@ -3026,7 +3027,7 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 
 			return (T) obj;
 		} catch (Throwable e) {
-			logger.warning(e.getMessage());
+			logger.warn(e.getMessage());
 //			e.printStackTrace();
 			return (T) Context.none;
 		}

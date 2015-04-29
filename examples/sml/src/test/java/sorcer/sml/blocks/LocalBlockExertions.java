@@ -15,7 +15,8 @@ import sorcer.service.*;
 import sorcer.service.Signature.Direction;
 
 import java.util.List;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertEquals;
 import static sorcer.co.operator.ent;
@@ -34,7 +35,7 @@ import static sorcer.po.operator.*;
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/sml")
 public class LocalBlockExertions implements SorcerConstants {
-	private final static Logger logger = Logger.getLogger(LocalBlockExertions.class.getName());
+	private final static Logger logger = LoggerFactory.getLogger(LocalBlockExertions.class.getName());
 
 	@Test
 	public void altServceTest() throws Exception {
