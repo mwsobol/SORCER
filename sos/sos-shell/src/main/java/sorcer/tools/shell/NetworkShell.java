@@ -243,6 +243,8 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 		}
 
 		try {
+
+
 			// default shellOutput
 			shellOutput = System.out;
 			if (interactive) {
@@ -252,6 +254,9 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 			}
 			
 			argv = buildInstance(true, argv);
+			principal = new SorcerPrincipal(NetworkShell.getUserName());
+			principal.setId(NetworkShell.getUserName());
+
 			instance.loadExternalCommands();
 			if (!instance.interactive) {
 				// System.out.println("main appMap: " + appMap);
@@ -264,24 +269,6 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 				shellOutput.flush();
 				System.exit(1);
 			}
-
-            argv = buildInstance(true, argv);
-
-			principal = new SorcerPrincipal(NetworkShell.getUserName());
-			principal.setId(NetworkShell.getUserName());
-
-            instance.loadExternalCommands();
-            if (!instance.interactive) {
-                // System.out.println("main appMap: " + appMap);
-                execNoninteractiveCommand(argv);
-                shellOutput.println();
-                System.exit(0);
-            }
-            if (argv.length == 1 && argv[0].indexOf("-") == 0) {
-                shellOutput.println(UNKNOWN_COMMAND_MSG);
-                shellOutput.flush();
-                System.exit(1);
-            }
 
             shellOutput.print(SYSTEM_PROMPT);
 			shellOutput.flush();
@@ -438,7 +425,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
         System.err.println("----------------------------------------------------");
         System.err.println("Starting non-interactive exec of request: " + request);
 
-		shellOutput.println("initializing nsh: " + (System.currentTimeMillis() - startTime) + "ms");
+		if (debug) shellOutput.println("initializing nsh: " + (System.currentTimeMillis() - startTime) + "ms");
         try {
             if (args.length == 1) {
                 if (args[0].equals("-version")) {
@@ -1370,7 +1357,6 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 
 		userName = (String) sysConfig.getEntry(CONFIG_COMPONENT, "userName",
 				String.class, null);
-		// System.out.println("userName: " + userName);
 		loginContext = null;
 		try {
 			loginContext = (LoginContext) Config.getNonNullEntry(sysConfig,
