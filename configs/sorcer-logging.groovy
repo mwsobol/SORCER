@@ -21,7 +21,6 @@ import ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP
 import ch.qos.logback.core.rolling.TimeBasedRollingPolicy
 import ch.qos.logback.classic.jul.LevelChangePropagator
 
-import java.lang.management.ManagementFactory
 import static ch.qos.logback.classic.Level.*
 
 context = new LevelChangePropagator()
@@ -51,25 +50,7 @@ def checkEndsWithFileSeparator(String s) {
  */
 def getLogLocationAndName() {
     String logDir = checkEndsWithFileSeparator(System.getProperty("rio.log.dir"))
-    String name = ManagementFactory.getRuntimeMXBean().getName();
-    String pid = name;
-    int ndx = name.indexOf("@");
-    if(ndx>=1) {
-        pid = name.substring(0, ndx);
-    }
-    return "$logDir${System.getProperty("org.rioproject.service")}-$pid"
-}
-
-/*
- * Get the location of the watch.log. If the "RIO_WATCH_LOG_DIR" System property is not set, use
- * the "RIO_HOME" System property appended by /logs
- */
-def getWatchLogDir() {
-    String watchLogDir = System.getProperty("rio.watch.log.dir")
-    if(watchLogDir==null) {
-        watchLogDir = checkEndsWithFileSeparator(System.getProperty("rio.home"))+"logs"
-    }
-    return checkEndsWithFileSeparator(watchLogDir)
+    return "$logDir${System.getProperty("org.rioproject.service")}"
 }
 
 def appenders = []
@@ -77,7 +58,7 @@ def appenders = []
 /*
  * Only add the CONSOLE appender if we have a console
  */
-if (System.console() != null) {
+if (System.getProperty("forceConsoleLogging")!=null || System.console() != null) {
     appender("CONSOLE", ConsoleAppender) {
         if(!System.getProperty("os.name").startsWith("Windows")) {
             withJansi = true
@@ -123,39 +104,10 @@ if (System.getProperty("org.rioproject.service")!=null) {
     appenders << "ROLLING"
 }
 
-/*
- * This method needs to be called if watch logging is to be used
- */
-def createWatchAppender() {
-    String watchLogName = getWatchLogDir()+"watches"
-    appender("WATCH-LOG", RollingFileAppender) {
-        /*
-         * In prudent mode, RollingFileAppender will safely write to the specified file,
-         * even in the presence of other FileAppender instances running in different JVMs
-         */
-        prudent = true
-
-        rollingPolicy(TimeBasedRollingPolicy) {
-
-            /* Rollover daily */
-            fileNamePattern = "${watchLogName}-%d{yyyy-MM-dd}.%i.log"
-
-            /* Or whenever the file size reaches 10MB */
-            timeBasedFileNamingAndTriggeringPolicy(SizeAndTimeBasedFNATP) {
-                maxFileSize = "10MB"
-            }
-
-            /* Keep 5 archived logs */
-            maxHistory = 5
-
-        }
-        encoder(PatternLayoutEncoder) {
-            pattern = "%msg%n"
-        }
-    }
-}
-
 /* Set up loggers */
+/* ==================================================================
+ *  Rio Loggers
+ * ==================================================================*/
 logger("org.rioproject.cybernode", DEBUG)
 logger("org.rioproject.cybernode.loader", DEBUG)
 logger("org.rioproject.config", INFO)
@@ -237,27 +189,5 @@ logger("sorcer.ui.tools", DEBUG)
 logger("sorcer.util", TRACE)
 
 root(INFO, appenders)
-
-/*
- * The following method call to create the Watch appender must be uncommented if you want to have watches log to a
- * file
- */
-//createWatchAppender()
-
-/* The following loggers are system watch loggers. When set to debug they will use the WATCH-LOG appender,
- * and have as output values being logged for these particular watches. Uncomment out the loggers you would like
- * to have logged.
- *
- * If you have watches in your service that you want put into a watch-log, then add them as needed, with the
- * logger name of:
- *     "watch.<name of your watch>"
- */
-/*
-logger("watch.CPU", DEBUG, ["WATCH-LOG"], false)
-logger("watch.CPU (Proc)", DEBUG, ["WATCH-LOG"], false)
-logger("watch.System Memory", DEBUG, ["WATCH-LOG"], false)
-logger("watch.Process Memory", DEBUG, ["WATCH-LOG"], false)
-logger("watch.Perm Gen", DEBUG, ["WATCH-LOG"], false)
-*/
 
 

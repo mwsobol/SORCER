@@ -91,8 +91,23 @@ args << java.toString()
     args << "-D${key}=${value}"
 }
 args << "-Xmx450M"
-args << "-jar"
-args << "${sorcerHome}/lib/sorcer/lib-ext/webster-${versions['sorcer.version']}.jar"
+args << "-cp"
+
+StringBuilder cp = new StringBuilder()
+String rioHome = "${sorcerHome}/rio-${versions['rio.version']}"
+def jars = ["${rioHome}/lib/logging/slf4j-api-${versions['slf4j.version']}.jar",
+            "${rioHome}/lib/logging/logback-core-${versions['logback.version']}.jar",
+            "${rioHome}/lib/logging/logback-classic-${versions['logback.version']}.jar",
+            "${sorcerHome}/lib/sorcer/lib/sorcer-platform-${versions['sorcer.version']}.jar",
+            "${sorcerHome}/lib/sorcer/lib-ext/webster-${versions['sorcer.version']}.jar"]
+for(String jar : jars) {
+    if(cp.length()>0)
+        cp.append(File.pathSeparator)
+    cp.append(jar)
+}
+
+args << cp.toString()
+args << "sorcer.tools.webster.Webster"
 
 ProcessBuilder pb = new ProcessBuilder(args as String[])
 Map<String, String> env = pb.environment()

@@ -20,9 +20,7 @@ import java.rmi.RemoteException;
  */
 @SuppressWarnings("rawtypes")
 public class WorkerProvider extends ServiceTasker implements Worker {
-
-	private static final Logger logger = LoggerFactory.getLogger(ServiceTasker.class);
-
+	private static final Logger logger = LoggerFactory.getLogger(WorkerProvider.class);
 	private String hostName;
 	
 	public WorkerProvider() throws Exception {
