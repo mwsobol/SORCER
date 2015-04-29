@@ -1,7 +1,7 @@
 /*
- * Copyright 2009 the original author or authors.
- * Copyright 2009 SorcerSoft.org.
- *  
+ * Copyright 2013 the original author or authors.
+ * Copyright 2013 SorcerSoft.org.
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,25 +15,31 @@
  * limitations under the License.
  */
 
-package sorcer.service;
-
-public class GetterException extends ContextException {
-
-	private static final long serialVersionUID = -1L;
+package sorcer.service.modeling;
 
 
-	public GetterException() {
+public class FiltrationException extends Exception {
+
+	private static final long serialVersionUID = -3387516993214229948L;
+
+	public FiltrationException() {
 	}
 
-	public GetterException(Exception exception) {
+	/**
+	 * Constructs a new FiltrationException with an embedded exception.
+	 *
+	 * @param exception
+	 *            embedded exception
+	 */
+	public FiltrationException(Exception exception) {
 		super(exception);
 	}
-	
-	public GetterException(String msg, Exception e) {
-		super(msg, e);
+
+	public FiltrationException(String msg, Exception e) {
+		super(msg);
 	}
 
-	public GetterException(String msg) {
+	public FiltrationException(String msg) {
 		super(msg);
 	}
 	

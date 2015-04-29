@@ -733,6 +733,12 @@ public class operator {
 		return evaluation.substitute(entries);
 	}
 
+	public static Evaluation bind(Mogram mogram, Arg... entries)
+			throws SetterException, RemoteException {
+		return ((Evaluation)mogram).substitute(entries);
+	}
+
+
 	public static Class type(Signature signature) {
 		return signature.getServiceType();
 	}
@@ -1581,7 +1587,7 @@ public class operator {
 	public static <T> T getAt(Context<T> context, int i) throws ContextException {
 		if (!(context instanceof Positioning))
 			throw new ContextException("Not positional Context: " + context.getName());
-		return ((List<T>)context.getMarkedValues("i|" + i)).get(0);
+		return context.getMarkedValues("i|" + i).get(0);
 	}
 
 	public static <T> List<T> select(Context<T> context, int... positions) throws ContextException {
@@ -1624,7 +1630,7 @@ public class operator {
 	}
 
 	public static List<String> trace(Mogram xrt) {
-		return ((ControlContext) ((Exertion)xrt).getControlContext()).getTrace();
+		return ((Exertion)xrt).getControlContext().getTrace();
 	}
 
 	public static void print(Object obj) {
@@ -1681,7 +1687,7 @@ public class operator {
 
 	private static Object finalize(Exertion xrt, Arg... args) throws ContextException, RemoteException {
 		Context dcxt = xrt.getDataContext();
-		ReturnPath rPath =	((ServiceContext)dcxt).getReturnPath();
+		ReturnPath rPath =	dcxt.getReturnPath();
 		// check if it was already finalized
 		if (((ServiceContext) dcxt).isFinalized()) {
 			return dcxt.getValue(rPath.path);
@@ -1736,10 +1742,10 @@ public class operator {
 			}
 		}
 
-		Object obj = ((ServiceExertion) xrt).getReturnValue(args);
+		Object obj = xrt.getReturnValue(args);
 		if (obj == null) {
 			if (rPath != null) {
-				return ((ServiceExertion) xrt).getReturnValue(args);
+				return xrt.getReturnValue(args);
 			} else {
 				return xrt.getContext();
 			}
@@ -1784,7 +1790,7 @@ public class operator {
 	public static Object get(Exertion xrt, String path)
 			throws ExertionException {
 		try {
-			return ((ServiceExertion) xrt).getValue(path);
+			return xrt.getValue(path);
 		} catch (ContextException e) {
 			throw new ExertionException(e);
 		}
