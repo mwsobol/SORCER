@@ -32,7 +32,7 @@ import static sorcer.po.operator.*;
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/sml")
 public class NetBlockExertions implements SorcerConstants {
-	private final static Logger logger = LoggerFactory.getLogger(NetBlockExertions.class.getName());
+	private final static Logger logger = LoggerFactory.getLogger(NetBlockExertions.class);
 
 	@Test
 	public void contextAltTest() throws Exception {

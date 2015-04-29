@@ -2,13 +2,11 @@ package sorcer.shell;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
-import org.sorcer.test.TestsRequiringRio;
 import sorcer.util.Sorcer;
 import sorcer.util.StringUtils;
 import sorcer.util.exec.ExecUtils;
@@ -27,7 +25,7 @@ import static org.junit.Assert.assertTrue;
 @ProjectContext("core/sorcer-int-tests/sorcer-tester")
 public class NshTest {
 
-    private final static Logger logger = LoggerFactory.getLogger(NshTest.class.getName());
+    private final static Logger logger = LoggerFactory.getLogger(NshTest.class);
     private static final String EXCEPTION = "Exception";
     private static String baseCmd;
     private String[] cmds;

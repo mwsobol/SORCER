@@ -29,8 +29,7 @@ import static sorcer.eo.operator.*;
 @ProjectContext("core/sorcer-int-tests/sorcer-tester")
 public class ArithmeticNoNetBlockTest implements SorcerConstants {
 
-	private final static Logger logger = Logger
-			.getLogger(ArithmeticNoNetTest.class.getName());
+	private static final Logger logger = LoggerFactory.getLogger(ArithmeticNoNetBlockTest.class);
 
 	@Test
 	public void contextAltTest() throws Exception {

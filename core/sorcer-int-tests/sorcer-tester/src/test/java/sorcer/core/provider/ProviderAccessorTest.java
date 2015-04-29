@@ -23,8 +23,7 @@ import static org.junit.Assert.assertNotNull;
 @ProjectContext("core/sorcer-int-tests/sorcer-tester")
 public class ProviderAccessorTest implements SorcerConstants {
 
-	private final static Logger logger = Logger
-			.getLogger(ProviderAccessorTest.class.getName());
+	private static final Logger logger = LoggerFactory.getLogger(ProviderAccessorTest.class);
 
 	@Test
 	public void providerAcessorTest() throws Exception {

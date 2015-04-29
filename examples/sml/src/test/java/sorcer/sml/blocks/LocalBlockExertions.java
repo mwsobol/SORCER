@@ -2,6 +2,8 @@ package sorcer.sml.blocks;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.impl.AdderImpl;
@@ -9,14 +11,11 @@ import sorcer.arithmetic.provider.impl.AveragerImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.provider.impl.SubtractorImpl;
 import sorcer.core.SorcerConstants;
-import sorcer.core.exertion.Mograms;
 import sorcer.core.provider.rendezvous.ServiceConcatenator;
-import sorcer.service.*;
+import sorcer.service.Block;
+import sorcer.service.Service;
 import sorcer.service.Signature.Direction;
-
-import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import sorcer.service.Task;
 
 import static org.junit.Assert.assertEquals;
 import static sorcer.co.operator.ent;
@@ -35,7 +34,7 @@ import static sorcer.po.operator.*;
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/sml")
 public class LocalBlockExertions implements SorcerConstants {
-	private final static Logger logger = LoggerFactory.getLogger(LocalBlockExertions.class.getName());
+	private final static Logger logger = LoggerFactory.getLogger(LocalBlockExertions.class);
 
 	@Test
 	public void altServceTest() throws Exception {

@@ -2,6 +2,8 @@ package sorcer.sml.contexts;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.core.context.ListContext;
@@ -9,8 +11,6 @@ import sorcer.core.context.model.ent.Entry;
 import sorcer.service.Context;
 
 import java.net.URL;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.*;
 import static sorcer.co.operator.asis;
@@ -28,7 +28,7 @@ import static sorcer.eo.operator.value;
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/sml")
 public class DataModels {
-    private final static Logger logger = LoggerFactory.getLogger(EntModels.class.getName());
+    private final static Logger logger = LoggerFactory.getLogger(EntModels.class);
 
     @Test
     public void contextOperator() throws Exception {

@@ -27,8 +27,7 @@ import static sorcer.eo.operator.*;
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("core/sorcer-int-tests/sorcer-tester")
 public class BatchTaskTest {
-	private final static Logger logger = LoggerFactory.getLogger(BatchTaskTest.class
-			.getName());
+	private final static Logger logger = LoggerFactory.getLogger(BatchTaskTest.class);
 	
 	@Test
 	public void batchTaskTest() throws Exception {

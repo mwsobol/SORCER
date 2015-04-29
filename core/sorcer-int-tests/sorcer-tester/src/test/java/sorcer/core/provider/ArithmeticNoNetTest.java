@@ -42,9 +42,8 @@ import static sorcer.eo.operator.value;
 @ProjectContext("core/sorcer-int-tests/sorcer-tester")
 public class ArithmeticNoNetTest implements SorcerConstants {
 
-	private final static Logger logger = Logger
-			.getLogger(ArithmeticNoNetTest.class.getName());
-	
+	private static final Logger logger = LoggerFactory.getLogger(ArithmeticNoNetTest.class);
+
 	@Test
 	public void testTaskConcatenation() throws Exception {
 		Task task1 = getAddTask();

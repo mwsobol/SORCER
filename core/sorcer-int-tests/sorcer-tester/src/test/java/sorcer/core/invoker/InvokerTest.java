@@ -5,6 +5,8 @@ import net.jini.core.transaction.TransactionException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.tester.provider.impl.AdderImpl;
@@ -23,8 +25,6 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.rmi.RemoteException;
 import java.util.Properties;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -49,8 +49,7 @@ import static sorcer.po.operator.set;
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("core/sorcer-int-tests/sorcer-tester")
 public class InvokerTest {
-	private final static Logger logger = LoggerFactory.getLogger(InvokerTest.class
-			.getName());
+	private final static Logger logger = LoggerFactory.getLogger(InvokerTest.class);
 
 	private ParModel pm; 
 	private ParEntry<Double> x;

@@ -1,35 +1,29 @@
 package sorcer.util;
 
-import static org.junit.Assert.assertEquals;
-
-import java.io.File;
-import java.util.Properties;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import net.jini.core.entry.Entry;
 import net.jini.core.lookup.ServiceItem;
 import net.jini.core.lookup.ServiceTemplate;
 import net.jini.lookup.entry.Name;
 import net.jini.space.JavaSpace05;
-
 import org.junit.Ignore;
 import org.junit.Test;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sorcer.service.*;
 import sorcer.service.space.SpaceAccessor;
-import sorcer.util.GenericUtil;
-import sorcer.util.ProviderAccessor;
-import sorcer.util.ServiceAccessor;
-import sorcer.util.Sorcer;
+
+import java.io.File;
+import java.util.Properties;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * @author Mike Sobolewski
  */
 
 public class UtilTest {
-	private final static Logger logger = LoggerFactory.getLogger(UtilTest.class
-			.getName());
+
+	private final static Logger logger = LoggerFactory.getLogger(UtilTest.class);
 	
 	
 	@Test

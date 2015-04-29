@@ -44,7 +44,7 @@ import static sorcer.mo.operator.*;
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("core/sorcer-int-tests/sorcer-tester")
 public class ParModelTest {
-	private final static Logger logger = LoggerFactory.getLogger(ParModelTest.class.getName());
+	private final static Logger logger = LoggerFactory.getLogger(ParModelTest.class);
 	public static String sorcerVersion = System.getProperty("sorcer.version");
 
 	@Test

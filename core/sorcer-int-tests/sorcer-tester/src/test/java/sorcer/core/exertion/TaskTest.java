@@ -3,6 +3,8 @@ package sorcer.core.exertion;
 //import com.gargoylesoftware,base,testing,TestUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.tester.provider.Adder;
@@ -13,8 +15,6 @@ import sorcer.service.Strategy.Provision;
 import sorcer.service.Strategy.Wait;
 
 import java.rmi.RemoteException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -29,8 +29,7 @@ import static sorcer.eo.operator.value;
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("core/sorcer-int-tests/sorcer-tester")
 public class TaskTest {
-	private final static Logger logger = LoggerFactory.getLogger(TaskTest.class
-			.getName());
+	private final static Logger logger = LoggerFactory.getLogger(TaskTest.class);
 
 	@Test
 	public void freeArithmeticTaskTest() throws ExertionException, SignatureException, ContextException {

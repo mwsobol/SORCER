@@ -24,7 +24,7 @@ import static sorcer.eo.operator.*;
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/sml")
 public class LocalExertionTasks {
-	private final static Logger logger = LoggerFactory.getLogger(LocalExertionTasks.class.getName());
+	private final static Logger logger = LoggerFactory.getLogger(LocalExertionTasks.class);
 	
 	@Test
 	public void exertTask() throws Exception  {
