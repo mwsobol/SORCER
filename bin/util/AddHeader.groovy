@@ -19,35 +19,20 @@ import groovy.io.FileVisitResult
 
 import static groovy.io.FileType.*
 
-/*
- * Copyright to the original author or authors.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 def text = []
-text << " Copyright to the original author or authors."
+text << "Distribution Statement"
 text << ""
-text << "Licensed under the Apache License, Version 2.0 (the \"License\");"
-text << "you may not use this file except in compliance with the License."
-text << "You may obtain a copy of the License at"
+text << "This computer software has been developed under sponsorship of the United States Air Force Research Lab. Any further"
+text << "distribution or use by anyone or any data contained therein, unless otherwise specifically provided for,"
+text << "is prohibited without the written approval of AFRL/RQVC-MSTC, 2210 8th Street Bldg 146, Room 218, WPAFB, OH  45433"
 text << ""
-text << "     http://www.apache.org/licenses/LICENSE-2.0"
+text << "Disclaimer"
 text << ""
-text << "Unless required by applicable law or agreed to in writing, software"
-text << "distributed under the License is distributed on an \"AS IS\" BASIS"
-text << "WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied."
-text << "See the License for the specific language governing permissions and"
-text << "limitations under the License."
+text << "This material was prepared as an account of work sponsored by an agency of the United States Government. Neither"
+text << "the United States Government nor the United States Air Force, nor any of their employees, makes any warranty,"
+text << "express or implied, or assumes any legal liability or responsibility for the accuracy, completeness, or usefulness"
+text << "of any information, apparatus, product, or process disclosed, or represents that its use would not infringe privately"
+text << "owned rights."
 
 def commentLineStarters = [
         "java":   ["/*", " * ", " */"],
