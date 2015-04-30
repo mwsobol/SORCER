@@ -54,13 +54,13 @@ public class LocalBlockExertions implements SorcerConstants {
 				alt(opt(condition("{ y1, y2 -> y1 > y2 }", "y1", "y2"), t4),
 						opt(condition("{ y1, y2 -> y1 <= y2 }", "y1", "y2"), t5)));
 
-//		Service out = exert(sb);
-////		logger.info("block context1: " + context(block));
-////		logger.info("result: " + value(context(block), "block/result"));
-//		assertEquals(value(context(out), "block/result"), 100.00);
-
-		bind(sb, ent("y1", 200.0), ent("y2", 100.0));
 		Service out = exert(sb);
+//		logger.info("block context1: " + context(block));
+//		logger.info("result: " + value(context(block), "block/result"));
+		assertEquals(value(context(out), "block/result"), 100.00);
+
+//		bind(sb, ent("y1", 200.0), ent("y2", 100.0));
+//		Service out = exert(sb);
 
 		// the initial scope of block is cleared
 		out = exert(sb, ent("y1", 200.0), ent("y2", 100.0));

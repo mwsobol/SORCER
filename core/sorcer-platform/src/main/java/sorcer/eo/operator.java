@@ -732,7 +732,11 @@ public class operator {
 	 */
 	public static Substitutable bind(Substitutable scopable, Arg... entries)
 			throws ContextException {
+		try {
 			scopable.substitute(entries);
+		} catch (RemoteException e) {
+			throw new ContextException(e);
+		}
 		return scopable;
 	}
 

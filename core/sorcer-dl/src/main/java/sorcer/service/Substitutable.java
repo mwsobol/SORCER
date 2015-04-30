@@ -18,6 +18,8 @@
 package sorcer.service;
 
 
+import java.rmi.RemoteException;
+
 /**
  * Created by Mike Sobolewski.
  */
@@ -30,6 +32,6 @@ public interface Substitutable {
      * @throws EvaluationException
      * @throws ContextException
      */
-    public Substitutable substitute(Arg... entries) throws SetterException;
+    public Substitutable substitute(Arg... entries) throws SetterException, RemoteException;
 
 }
