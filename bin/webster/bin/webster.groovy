@@ -82,6 +82,7 @@ args << java.toString()
 ["java.protocol.handler.pkgs": "net.jini.url|sorcer.util.url|org.rioproject.url",
  "java.security.policy" : "${sorcerHome}/policy/policy.all",
  "java.rmi.server.useCodebaseOnly" : "false",
+ "logback.configurationFile" : "${sorcerHome}/configs/sorcer-logging.groovy",
  "webster.debug" : "true",
  "webster.port" : "${sorcerEnv['provider.webster.port']}",
  "webster.interface" : "${config.webster.address}",
