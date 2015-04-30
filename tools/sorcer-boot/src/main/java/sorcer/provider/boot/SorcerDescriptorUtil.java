@@ -37,6 +37,7 @@ public class SorcerDescriptorUtil {
 	final static Logger logger = LoggerFactory.getLogger("sorcer.provider.boot");
 	
 	private static String sorcerVersion = System.getProperty("sorcer.version");
+	private static String commonsIoVersion = System.getProperty("commonsio.version");
 	private static String riverVersion = System.getProperty("river.version");
 	private static String jeVersion = System.getProperty("je.version");
 	private static String rioVersion = System.getProperty("rio.version");
@@ -277,6 +278,8 @@ public class SorcerDescriptorUtil {
                              "jsk-dl-"+riverVersion+".jar",
                              "serviceui-"+riverVersion+".jar",
                              "sorcer-ui-"+sorcerVersion+".jar",
+							 "sos-netlet-"+sorcerVersion+".jar",
+				 			 "commons-io-"+commonsIoVersion+".jar",
                              getRioDlJar()};
     }
 	

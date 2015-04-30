@@ -29,6 +29,7 @@ class Sorcer {
     static String sorcerVersion = SorcerEnv.getSorcerVersion()
     static String riverVersion = versionProps.getProperty("river.version")
     static String blitzVersion = versionProps.getProperty("blitz.version")
+    static String commonsIoVersion = versionProps.getProperty("commonsio.version")
 
     static getSorcerHome() {
         String sorcerHome = System.getProperty("sorcer.home", System.getenv("SORCER_HOME"))
@@ -55,7 +56,9 @@ def getCommonDLs() {
     return ["sorcer-dl-${Sorcer.sorcerVersion}.jar",
             "jsk-dl-${Sorcer.riverVersion}.jar",
             "rio-api-${RioVersion.VERSION}.jar",
-            "serviceui-${Sorcer.riverVersion}.jar"]
+            "serviceui-${Sorcer.riverVersion}.jar",
+            "sos-netlet-${Sorcer.sorcerVersion}.jar",
+            "commons-io-${Sorcer.commonsIoVersion}.jar"]
 }
 
 def getForkMode() {

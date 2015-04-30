@@ -17,6 +17,7 @@
 
 package sorcer.core.provider;
 
+import java.net.URL;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.Map;
@@ -117,6 +118,16 @@ public interface Cataloger extends Service, Remote {
 	 * @throws RemoteException
 	 */
 	public Map<String, String> getProviderMethods() throws RemoteException;
+
+	/**
+	 * Returns a map with a key as service name (only those services that implement sorcer.service.Service interface)
+	 * and a list of Codebase URLs for that service
+	 *
+	 * @return a hash map of all SORCER provider names with corresponding
+	 *         codebase URLs.
+	 * @throws RemoteException
+	 */
+	public Map<String, URL[]>  getProviderCodebaseURLs() throws RemoteException;
 
 	/**
 	 * Returns a String array of the providers currently on the network.

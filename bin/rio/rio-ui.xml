@@ -31,7 +31,6 @@
             <sysproperty key="java.rmi.server.useCodebaseOnly" value="false" />
             <sysproperty key="java.security.policy" value="${rio.home}/policy/policy.all" />
             <sysproperty key="java.protocol.handler.pkgs" value="net.jini.url|sorcer.util.url|org.rioproject.url" />
-            <sysproperty key="java.rmi.server.RMIClassLoaderSpi" value="sorcer.rio.rmi.SorcerResolvingLoader" />
             <sysproperty key="rio.home" value="${rio.home}"/>
             <sysproperty key="java.rmi.server.useCodebaseOnly" value="false" />
         </java>
