@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory;
 import sorcer.core.provider.exerter.ServiceShell;
 import sorcer.service.Exertion;
 import sorcer.service.ExertionException;
+import sorcer.service.modeling.Model;
 
 import java.rmi.RemoteException;
 
@@ -98,6 +99,16 @@ public class ScriptThread extends Thread {
                 } catch (TransactionException e) {
                     e.printStackTrace();
                 } catch (ExertionException e) {
+                    e.printStackTrace();
+                }
+            } else if (target instanceof Model) {
+                try {
+                    result = ((Model)target).exert();
+                } catch (TransactionException e) {
+                    e.printStackTrace();
+                } catch (ExertionException e) {
+                    e.printStackTrace();
+                } catch (RemoteException e) {
                     e.printStackTrace();
                 }
             }

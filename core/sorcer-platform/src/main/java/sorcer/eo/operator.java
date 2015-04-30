@@ -36,6 +36,7 @@ import sorcer.core.context.model.srv.Srv;
 import sorcer.core.deploy.ServiceDeployment;
 import sorcer.core.exertion.*;
 import sorcer.core.provider.*;
+import sorcer.core.provider.exerter.Binder;
 import sorcer.core.provider.rendezvous.ServiceConcatenator;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.core.provider.rendezvous.ServiceRendezvous;
@@ -730,15 +731,13 @@ public class operator {
 	 * @throws EvaluationException
 	 * @throws RemoteException
 	 */
-	public static Object bind(Object scopable, Arg... entries)
+	public static Object bind(Object model, Arg... entries)
 			throws ContextException {
-		try {
-			if (scopable instanceof Substitutable)
-				((Substitutable)scopable).substitute(entries);
-		} catch (RemoteException e) {
-			throw new ContextException(e);
+		if (model instanceof Substitutable) {
+			Binder binder = new Binder((Mogram)model);
+			binder.bind(entries);
 		}
-		return scopable;
+		return model;
 	}
 
 	public static Class type(Signature signature) {

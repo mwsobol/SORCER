@@ -3070,11 +3070,18 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
                 Map.Entry pairs = (Map.Entry) it.next();
                 mc.putInValue((String) pairs.getKey(), getValue((String) pairs.getValue()));
             }
-            getMergedSubcontext(mc, responsePaths, args);
-            return mc;
+			if (responsePaths != null && responsePaths.size() > 0) {
+				getMergedSubcontext(mc, responsePaths, args);
+				return mc;
+			}
         } else {
-            return getMergedSubcontext(null, responsePaths, args);
+			if (responsePaths != null && responsePaths.size() > 0) {
+				return getMergedSubcontext(null, responsePaths, args);
+			} else {
+				return substitute(args);
+			}
         }
+		return this;
     }
 
 	@Override
@@ -3432,9 +3439,9 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
                 signature = sig(subjectPath, subjectValue);
                 return operator.exertion(name, signature, this).exert(txn, entries);
             } else {
-                // evaluates model targets - responses
-                getValue(entries);
-                return (T) this;
+                // evaluates model otputs - responses
+				getResponses(entries);
+				return (T) this;
             }
         } catch (Exception e) {
             throw new ExertionException(e);
