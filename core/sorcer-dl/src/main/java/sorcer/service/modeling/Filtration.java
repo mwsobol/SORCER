@@ -29,8 +29,8 @@ public interface Filtration<T> {
      * Returns the filtered out value from the given input.
      *
      * @return the filtered out value
-     * @throws FiltrationException
+     * @throws FilterException
      * @throws RemoteException
      */
-    public Object doFilter(Object input) throws FiltrationException, RemoteException;
+    public Object doFilter(Object input) throws FilterException, RemoteException;
 }
