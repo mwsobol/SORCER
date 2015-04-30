@@ -15,10 +15,9 @@
  * limitations under the License.
  */
 
-package sorcer.co.tuple;
+package sorcer.core.context.model.ent;
 
-import sorcer.core.context.model.ent.Entry;
-import sorcer.core.context.model.par.ParEntry;
+import sorcer.core.context.model.par.Par;
 import sorcer.core.context.model.par.ParSet;
 import sorcer.service.EvaluationException;
 
@@ -83,7 +82,7 @@ public class EntryList extends ArrayList<Entry> {
 	
 	public EntryList(ParSet parSet) {
 		super();
-		for (ParEntry<?> p : parSet) {
+		for (Par<?> p : parSet) {
 			add(new Entry(p.getName(), p));
 		}
 	}

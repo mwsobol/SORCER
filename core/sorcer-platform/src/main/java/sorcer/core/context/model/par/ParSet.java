@@ -31,7 +31,7 @@ import sorcer.service.EvaluationException;
  * @author Mike Sobolewski
  */
 @SuppressWarnings("rawtypes")
-public class ParSet extends TreeSet<ParEntry> {
+public class ParSet extends TreeSet<Par> {
 	
 	private static final long serialVersionUID = -4662755904016297879L;
 	
@@ -43,7 +43,7 @@ public class ParSet extends TreeSet<ParEntry> {
 		addAll(parList);
 	}
 	
-	public ParSet(Set<ParEntry> parEntrySet) {
+	public ParSet(Set<Par> parEntrySet) {
 		addAll(parEntrySet);
 	}
 
@@ -54,14 +54,14 @@ public class ParSet extends TreeSet<ParEntry> {
 		}
 	}
 	
-	public ParSet(ParEntry<?>... parEntries) {
-		for (ParEntry<?> v : parEntries) {
+	public ParSet(Par<?>... parEntries) {
+		for (Par<?> v : parEntries) {
 			add(v);
 		}
 	}
 	
-	public ParEntry<?> getPar(String parName) throws ParException {
-		for (ParEntry<?> v : this) {
+	public Par<?> getPar(String parName) throws ParException {
+		for (Par<?> v : this) {
 			if (v.getName().equals(parName))
 				return v;
 		}
@@ -70,8 +70,8 @@ public class ParSet extends TreeSet<ParEntry> {
 	
 	public void setValue(String parName, Object value)
 			throws EvaluationException {
-		ParEntry parEntry = null;
-		for (ParEntry<?> p : this) {
+		Par parEntry = null;
+		for (Par<?> p : this) {
 			if (p.getName().equals(parName)) {
 				parEntry = p;
 				try {
@@ -92,7 +92,7 @@ public class ParSet extends TreeSet<ParEntry> {
 			allParNames.addAll(nl);
 		}
 		ParList out = new ParList();
-		for (ParEntry<?> v : this) {
+		for (Par<?> v : this) {
 			if (allParNames.contains(v.getName())) {
 				out.add(v);
 			}
@@ -103,7 +103,7 @@ public class ParSet extends TreeSet<ParEntry> {
 	public ParSet selectPars(String... parnames) {
 		List<String> vnames = Arrays.asList(parnames);
 		ParSet out = new ParSet();
-		for (ParEntry<?> v : this) {
+		for (Par<?> v : this) {
 			if (vnames.contains(v.getName())) {
 				out.add(v);
 			}
@@ -113,11 +113,11 @@ public class ParSet extends TreeSet<ParEntry> {
 
 	@Override
 	public boolean contains(Object obj) {
-		if (!(obj instanceof ParEntry<?>))
+		if (!(obj instanceof Par<?>))
 			return false;
 		else {
-			for (ParEntry<?> v : this) {
-				if (v.getName().equals(((ParEntry<?>)obj).getName()))
+			for (Par<?> v : this) {
+				if (v.getName().equals(((Par<?>)obj).getName()))
 					return true;
 			}
 		}
@@ -126,11 +126,11 @@ public class ParSet extends TreeSet<ParEntry> {
 	
 	@Override
 	public boolean remove(Object obj) {
-		if (obj == null || !(obj instanceof ParEntry<?>)) {
+		if (obj == null || !(obj instanceof Par<?>)) {
 			return false;
 		} else {
-			for (ParEntry<?> v : this) {
-				if (v.getName().equals(((ParEntry<?>) obj).getName())) {
+			for (Par<?> v : this) {
+				if (v.getName().equals(((Par<?>) obj).getName())) {
 					super.remove(v);
 					return true;
 				}
@@ -141,7 +141,7 @@ public class ParSet extends TreeSet<ParEntry> {
 	
 	 public List<String> getNames() {
 		 List<String> names = new ArrayList<String>(size());
-		 Iterator<ParEntry> i = iterator();
+		 Iterator<Par> i = iterator();
 		 while (i.hasNext()) {
 			 names.add(i.next().getName());
 		 }
@@ -150,21 +150,21 @@ public class ParSet extends TreeSet<ParEntry> {
 	 
 	 public List<Object> getValues() throws EvaluationException, RemoteException {
 		 List<Object> values = new ArrayList<Object>(size());
-		 Iterator<ParEntry> i = iterator();
+		 Iterator<Par> i = iterator();
 		 while (i.hasNext()) {
 			 values.add(i.next().getValue());
 		 }
 		 return values;
 	 }
 	 
-	 public ParEntry<?>[] toArray() {
-		 ParEntry<?>[] va = new ParEntry[size()];
+	 public Par<?>[] toArray() {
+		 Par<?>[] va = new Par[size()];
 		 return toArray(va);
 	 }
 			
 	 public ParList toParList() {
 		 ParList vl = new ParList(size());
-		 for (ParEntry<?> v : this)
+		 for (Par<?> v : this)
 			 vl.add(v);
 		 return vl;
 	 }
@@ -173,15 +173,15 @@ public class ParSet extends TreeSet<ParEntry> {
 		 return new ParSet(list);
 	 }
 
-	 public static ParList asList(ParEntry<?>[] array) {
+	 public static ParList asList(Par<?>[] array) {
 		 ParList vl = new ParList(array.length);
-		 for (ParEntry<?> v : array)
+		 for (Par<?> v : array)
 			 vl.add(v);
 		 return vl;
 	 }
 
 	 public void clearPars() throws EvaluationException {
-			for (ParEntry p : this) {
+			for (Par p : this) {
 				try {
 					p.setValue(null);
 				} catch (Exception e) {

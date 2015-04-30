@@ -18,7 +18,7 @@
 package sorcer.core.invoker;
 
 import sorcer.core.context.ServiceContext;
-import sorcer.core.context.model.par.ParEntry;
+import sorcer.core.context.model.par.Par;
 import sorcer.service.*;
 import sorcer.util.SorcerUtil;
 
@@ -28,8 +28,6 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -88,18 +86,18 @@ public class MethodInvoker<T> extends ServiceInvoker<T> implements MethodInvokin
 		selector = methodName;
 	}
 
-	public MethodInvoker(Object target, ParEntry... parEntries) {
+	public MethodInvoker(Object target, Par... parEntries) {
 		this.target = target;
 		this.pars = new ArgSet(parEntries);
 	}
 
-	public MethodInvoker(Object target, String methodName, ParEntry... parEntries) {
+	public MethodInvoker(Object target, String methodName, Par... parEntries) {
 		this(methodName, target, methodName);
 		this.pars = new ArgSet(parEntries);
 	}
 
 	public MethodInvoker(String name, Object target, String methodName,
-			ParEntry... parEntries) {
+			Par... parEntries) {
 		this(name);
 		this.target = target;
 		selector = methodName;
@@ -107,17 +105,17 @@ public class MethodInvoker<T> extends ServiceInvoker<T> implements MethodInvokin
 	}
 
 	public MethodInvoker(String name, String className, String methodName,
-			ParEntry... parEntries) {
+			Par... parEntries) {
 		this(name, className, methodName, null, null, parEntries);
 	}
 
 	public MethodInvoker(String name, String className, String methodName,
-			Class<?>[] signature, ParEntry... parEntries) {
+			Class<?>[] signature, Par... parEntries) {
 		this(name, className, methodName, signature, null, parEntries);
 	}
 
 	public MethodInvoker(String name, String className, String methodName,
-			Class<?>[] paramTypes, String distributionParameter, ParEntry... parEntries) {
+			Class<?>[] paramTypes, String distributionParameter, Par... parEntries) {
 		this(name);
 		this.className = className;
 		selector = methodName;

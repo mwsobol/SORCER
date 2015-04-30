@@ -13,7 +13,7 @@ import sorcer.arithmetic.tester.provider.impl.AdderImpl;
 import sorcer.arithmetic.tester.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.tester.provider.impl.SubtractorImpl;
 import sorcer.arithmetic.tester.volume.Volume;
-import sorcer.core.context.model.par.ParEntry;
+import sorcer.core.context.model.par.Par;
 import sorcer.core.context.model.par.ParModel;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.service.*;
@@ -52,9 +52,9 @@ public class InvokerTest {
 	private final static Logger logger = LoggerFactory.getLogger(InvokerTest.class);
 
 	private ParModel pm; 
-	private ParEntry<Double> x;
-	private ParEntry<Double> y;
-	private ParEntry z;
+	private Par<Double> x;
+	private Par<Double> y;
+	private Par z;
 		
 	@Before
 	public void initParModel() throws EvaluationException, RemoteException {
@@ -190,7 +190,7 @@ public class InvokerTest {
 	public void invokeParTest() throws RemoteException, ContextException,
 			SignatureException, ExertionException {
 
-		ParEntry<Double> x1 = par("x1", 1.0);
+		Par<Double> x1 = par("x1", 1.0);
 		// logger.info("invoke value:" + invoke(x1));
 		assertEquals(invoke(x1), 1.0);
 	}
@@ -198,7 +198,7 @@ public class InvokerTest {
 	@Test
 	public void invokeParArgTest() throws RemoteException, ContextException,
 			SignatureException, ExertionException {
-		ParEntry x1, x2, y;
+		Par x1, x2, y;
 		x1 = par("x1", 1.0);
 		x2 = par("x2", 2.0);
 		y = par("y", invoker("x1 + x2", args(x1, x2)));

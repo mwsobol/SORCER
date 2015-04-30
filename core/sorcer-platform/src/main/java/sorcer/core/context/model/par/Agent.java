@@ -23,7 +23,7 @@ import sorcer.service.EvaluationException;
  *
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
-public class Agent<T> extends ParEntry<T> implements Serializable {
+public class Agent<T> extends Par<T> implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
@@ -125,11 +125,11 @@ public class Agent<T> extends ParEntry<T> implements Serializable {
 		return (T) invoker;
 	}
 	
-	private ParEntry[] getPars(Arg... entries) {
-		ParEntry[] pa = new ParEntry[entries.length];
+	private Par[] getPars(Arg... entries) {
+		Par[] pa = new Par[entries.length];
 		if (entries != null && entries.length > 0) {
 			for (int i = 0; i < entries.length; i++)
-				pa[i] = (ParEntry) entries[i];
+				pa[i] = (Par) entries[i];
 		}
 		return pa;
 	}

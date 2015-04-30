@@ -31,7 +31,7 @@ import sorcer.service.EvaluationException;
  * @author Mike Sobolewski
  */
 @SuppressWarnings("rawtypes")
-public class ParList extends ArrayList<ParEntry> {
+public class ParList extends ArrayList<Par> {
 
 	static final long serialVersionUID = -4997255102658715823L;
 
@@ -43,7 +43,7 @@ public class ParList extends ArrayList<ParEntry> {
 		super(size);
 	}
 
-	public ParList(Set<ParEntry> parEntrySet) {
+	public ParList(Set<Par> parEntrySet) {
 		addAll(parEntrySet);
 	}
 
@@ -54,22 +54,22 @@ public class ParList extends ArrayList<ParEntry> {
 		}
 	}
 
-	public ParList(ParEntry<?>[] parEntryArray) {
+	public ParList(Par<?>[] parEntryArray) {
 		super();
-		for (ParEntry<?> p : parEntryArray) {
+		for (Par<?> p : parEntryArray) {
 			add(p);
 		}
 	}
 
-	public <T> ParList(List<ParEntry<T>> parEntryList) {
+	public <T> ParList(List<Par<T>> parEntryList) {
 		super();
-		for (ParEntry<T> p : parEntryList) {
+		for (Par<T> p : parEntryList) {
 			add(p);
 		}
 	}
 
-	public ParEntry<? extends Object> getPar(String parName) throws ParException {
-		for (ParEntry<?> p : this) {
+	public Par<? extends Object> getPar(String parName) throws ParException {
+		for (Par<?> p : this) {
 			if (p.getName().equals(parName)) {
 				return p;
 			}
@@ -79,8 +79,8 @@ public class ParList extends ArrayList<ParEntry> {
 
 	public void setParValue(String parName, Object value)
 			throws EvaluationException {
-		ParEntry parEntry = null;
-		for (ParEntry p : this) {
+		Par parEntry = null;
+		for (Par p : this) {
 			if (p.getName().equals(parName)) {
 				parEntry = p;
 				try {
@@ -101,7 +101,7 @@ public class ParList extends ArrayList<ParEntry> {
 			allParNames.addAll(nl);
 		}
 		ParList out = new ParList();
-		for (ParEntry<?> v : this) {
+		for (Par<?> v : this) {
 			if (allParNames.contains(v.getName())) {
 				out.add(v);
 			}
@@ -112,7 +112,7 @@ public class ParList extends ArrayList<ParEntry> {
 	public ParList selectPars(String... parNames) {
 		List<String> vnames = Arrays.asList(parNames);
 		ParList out = new ParList();
-		for (ParEntry<?> v : this) {
+		for (Par<?> v : this) {
 			if (vnames.contains(v.getName())) {
 				out.add(v);
 			}
@@ -121,16 +121,16 @@ public class ParList extends ArrayList<ParEntry> {
 	}
 
 	public boolean containsParName(String name) {
-		return contains(new ParEntry(name));
+		return contains(new Par(name));
 	}
 
 	@Override
 	public boolean contains(Object obj) {
-		if (!(obj instanceof ParEntry<?>))
+		if (!(obj instanceof Par<?>))
 			return false;
 		else {
-			for (ParEntry<?> v : this) {
-				if (v.getName().equals(((ParEntry<?>) obj).getName()))
+			for (Par<?> v : this) {
+				if (v.getName().equals(((Par<?>) obj).getName()))
 					return true;
 			}
 		}
@@ -139,11 +139,11 @@ public class ParList extends ArrayList<ParEntry> {
 
 	@Override
 	public boolean remove(Object obj) {
-		if (obj == null || !(obj instanceof ParEntry<?>)) {
+		if (obj == null || !(obj instanceof Par<?>)) {
 			return false;
 		} else {
-			for (ParEntry<?> v : this) {
-				if (v.getName().equals(((ParEntry<?>) obj).getName())) {
+			for (Par<?> v : this) {
+				if (v.getName().equals(((Par<?>) obj).getName())) {
 					super.remove(v);
 					return true;
 				}
@@ -168,14 +168,14 @@ public class ParList extends ArrayList<ParEntry> {
 		return values;
 	}
 
-	public ParEntry<?>[] toArray() {
-		ParEntry<?>[] pa = new ParEntry[size()];
+	public Par<?>[] toArray() {
+		Par<?>[] pa = new Par[size()];
 		return toArray(pa);
 	}
 
-	public static ParList asList(ParEntry<?>[] array) {
+	public static ParList asList(Par<?>[] array) {
 		ParList pl = new ParList(array.length);
-		for (ParEntry<?> p : array)
+		for (Par<?> p : array)
 			pl.add(p);
 		return pl;
 	}
@@ -213,9 +213,9 @@ public class ParList extends ArrayList<ParEntry> {
 	public ParSet toParSet() {
 		ParSet out = new ParSet();
 		for (Arg a : this) {
-			if (!(a instanceof ParEntry<?>))
+			if (!(a instanceof Par<?>))
 				throw new RuntimeException("wrong argument");
-			out.add((ParEntry<?>)a);
+			out.add((Par<?>)a);
 		}
 		return out;
 	}
@@ -223,9 +223,9 @@ public class ParList extends ArrayList<ParEntry> {
 	public ParList toParList() {
 		ParList out = new ParList();
 		for (Arg a : this) {
-			if (!(a instanceof ParEntry<?>))
+			if (!(a instanceof Par<?>))
 				throw new RuntimeException("wrong argument");
-			out.add((ParEntry<?>)a);
+			out.add((Par<?>)a);
 		}
 		return out;
 	}
