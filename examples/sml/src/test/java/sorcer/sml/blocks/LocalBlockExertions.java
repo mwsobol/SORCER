@@ -49,21 +49,21 @@ public class LocalBlockExertions implements SorcerConstants {
 				context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
 						result("block/result")));
 
-		Service sb = service("block", sig(ServiceConcatenator.class),
+		Service sb = service("block",
 				context(ent("y1", 100), ent("y2", 200)),
 				alt(opt(condition("{ y1, y2 -> y1 > y2 }", "y1", "y2"), t4),
 						opt(condition("{ y1, y2 -> y1 <= y2 }", "y1", "y2"), t5)));
 
-		Service out = exert(sb);
-//		logger.info("block context1: " + context(block));
-//		logger.info("result: " + value(context(block), "block/result"));
-		assertEquals(value(context(out), "block/result"), 100.00);
+//		Service out = exert(sb);
+////		logger.info("block context1: " + context(block));
+////		logger.info("result: " + value(context(block), "block/result"));
+//		assertEquals(value(context(out), "block/result"), 100.00);
 
 //		bind(sb, ent("y1", 200.0), ent("y2", 100.0));
 //		Service out = exert(sb);
 
 		// the initial scope of block is cleared
-		out = exert(sb, ent("y1", 200.0), ent("y2", 100.0));
+		Service out = exert(sb, ent("y1", 200.0), ent("y2", 100.0));
 		logger.info("block context2: " + context(out));
 //		logger.info("result: " + value(context(block), "block/result"));
 		assertEquals(value(context(out), "block/result"), 500.0);
@@ -81,7 +81,7 @@ public class LocalBlockExertions implements SorcerConstants {
 				context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
 						result("block/result")));
 		
-		Block block = block("block", sig("execute", ServiceConcatenator.class), 
+		Block block = block("block",
 				context(ent("y1", 100), ent("y2", 200)),
 				alt(opt(condition("{ y1, y2 -> y1 > y2 }", "y1", "y2"), t4), 
 					opt(condition("{ y1, y2 -> y1 <= y2 }", "y1", "y2"), t5)));
@@ -117,8 +117,9 @@ public class LocalBlockExertions implements SorcerConstants {
 				context("average", inEnt("arg/t4"), inEnt("arg/t5"),
 						result("block/result", Direction.OUT)));
 		
-		Block block = block("block", sig("execute", ServiceConcatenator.class),
-				t4, t5, 
+		Block block = block("block",
+				t4,
+				t5,
 				alt(opt(condition("{ t4, t5 -> t4 > t5 }", "t4", "t5"), t3),
 					opt(condition("{ t4, t5 -> t4 <= t5 }", "t4", "t5"), t6)));
 		
@@ -148,7 +149,8 @@ public class LocalBlockExertions implements SorcerConstants {
 				context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
 						result("out")));
 		
-		Block block = block("block", sig("execute", ServiceConcatenator.class), t4,
+		Block block = block("block",
+				t4,
 				opt(condition("{ out -> out > 600 }", "out"), t5));
 		
 		block = exert(block);
@@ -166,7 +168,7 @@ public class LocalBlockExertions implements SorcerConstants {
 	
 	@Test
 	public void loopBlockTest() throws Exception {
-		Block block = block("block", sig("execute", ServiceConcatenator.class), 
+		Block block = block("block",
 				context(ent("x1", 10.0), ent("x2", 20.0), ent("z", 100.0)),
 				loop(condition("{ x1, x2, z -> x1 + x2 < z }", "x1", "x2", "z"), 
 						task(par("x1", invoker("x1 + 3", par("x1"))))));

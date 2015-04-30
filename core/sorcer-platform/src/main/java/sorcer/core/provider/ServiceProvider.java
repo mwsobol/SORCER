@@ -537,11 +537,6 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		return true;
 	}
 
-	@Override
-	public Substitutable substitute(Arg... entries) throws SetterException {
-		throw new  SetterException(getClass().getName() + "not substitutable");
-	}
-
 	/**
 	 * This method spawns a separate thread to destroy this provider after 2
 	 * sec, should make a reasonable attempt to let this remote call return

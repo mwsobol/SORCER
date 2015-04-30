@@ -79,23 +79,19 @@ public class NetBlockExertions implements SorcerConstants {
 		Task t6 = task("t6", sig("average", Averager.class), 
 				context("average", inEnt("arg/t4"), inEnt("arg/t5"),
 						result("block/result")));
-		
-//		Block block = block("block", t4, t5);
-//		block = exert(block);
-//		logger.info("block context 0: " + context(block));
 
-		
 		Block block = block("block", sig(Concatenator.class),
 				t4, t5, alt(
 				opt(condition("{ t4, t5 -> t4 > t5 }", "t4", "t5"), t3),
 				opt(condition("{ t4, t5 -> t4 <= t5 }", "t4", "t5"), t6)));
+
 		block = exert(block);
-		logger.info("block context 1: " + context(block));
+//		logger.info("block context 1: " + context(block));
 //		logger.info("result: " + value(context(block), "block/result"));
 		assertEquals(value(context(block), "block/result"), 400.00);
 
 		block = exert(block, ent("block/t5/arg/x1", 200.0), ent("block/t5/arg/x2", 800.0));
-		logger.info("block context 2: " + context(block));
+//		logger.info("block context 2: " + context(block));
 //		logger.info("result: " + value(context(block), "block/result"));
 		assertEquals(value(context(block), "block/result"), 750.00);
 	}

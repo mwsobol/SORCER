@@ -525,8 +525,4 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 		return exertion.exert(transaction);
 	}
 
-	@Override
-	public Substitutable substitute(Arg... entries) throws SetterException {
-		throw new  SetterException(getClass().getName() + "not substitutable");
-	}
 }

@@ -730,10 +730,11 @@ public class operator {
 	 * @throws EvaluationException
 	 * @throws RemoteException
 	 */
-	public static Substitutable bind(Substitutable scopable, Arg... entries)
+	public static Object bind(Object scopable, Arg... entries)
 			throws ContextException {
 		try {
-			scopable.substitute(entries);
+			if (scopable instanceof Substitutable)
+				((Substitutable)scopable).substitute(entries);
 		} catch (RemoteException e) {
 			throw new ContextException(e);
 		}
@@ -1205,16 +1206,19 @@ public class operator {
 		List<Mogram> exertions = new ArrayList<Mogram>();
 		Signature sig = null;
 		Context cxt = null;
+		boolean isBlock =false;
 		for (int i = 0; i < items.length; i++) {
 			if (items[i] instanceof Exertion || items[i] instanceof EntModel ) {
 				exertions.add((Mogram) items[i]);
-			} else if (items[i] instanceof Signature) {
-				sig = (Signature) items[i];
-			} else if (items[i] instanceof String) {
-				name = (String) items[i];
+				if (items[i] instanceof ConditionalExertion)
+					isBlock = true;
+				} else if (items[i] instanceof Signature) {
+					sig = (Signature) items[i];
+				} else if (items[i] instanceof String) {
+					name = (String) items[i];
+				}
 			}
-		}
-		if (exertions.size() > 0 && sig != null
+		if (isBlock || exertions.size() > 0 && sig != null
 				&& (sig.getServiceType() == Concatenator.class
 				|| sig.getServiceType() == ServiceConcatenator.class)) {
 			return (E) block(items);
