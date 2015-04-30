@@ -49,21 +49,24 @@ public class LocalBlockExertions implements SorcerConstants {
 				context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
 						result("block/result")));
 
-		Service block = service("block", sig(ServiceConcatenator.class),
+		Service sb = service("block", sig(ServiceConcatenator.class),
 				context(ent("y1", 100), ent("y2", 200)),
 				alt(opt(condition("{ y1, y2 -> y1 > y2 }", "y1", "y2"), t4),
 						opt(condition("{ y1, y2 -> y1 <= y2 }", "y1", "y2"), t5)));
 
-		block = exert(block);
-//		logger.info("block context1: " + context(block));
-//		logger.info("result: " + value(context(block), "block/result"));
-		assertEquals(value(context(block), "block/result"), 100.00);
+//		Service out = exert(sb);
+////		logger.info("block context1: " + context(block));
+////		logger.info("result: " + value(context(block), "block/result"));
+//		assertEquals(value(context(out), "block/result"), 100.00);
+
+		bind(sb, ent("y1", 200.0), ent("y2", 100.0));
+		Service out = exert(sb);
 
 		// the initial scope of block is cleared
-		block = exert(block, ent("y1", 200.0), ent("y2", 100.0));
-//		logger.info("block context2: " + context(block));
+		out = exert(sb, ent("y1", 200.0), ent("y2", 100.0));
+		logger.info("block context2: " + context(out));
 //		logger.info("result: " + value(context(block), "block/result"));
-		assertEquals(value(context(block), "block/result"), 500.0);
+		assertEquals(value(context(out), "block/result"), 500.0);
 
 	}
 	

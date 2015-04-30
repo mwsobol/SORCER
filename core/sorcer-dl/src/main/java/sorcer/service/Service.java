@@ -29,7 +29,7 @@ import java.rmi.RemoteException;
  *
  * @author Mike Sobolewski
  */
-public interface Service  {
+public interface Service extends Substitutable {
 
 	/**
 	 * A generic service request as specified by a mogram - a generic service

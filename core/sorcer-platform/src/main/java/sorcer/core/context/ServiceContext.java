@@ -21,11 +21,13 @@ import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
 import net.jini.id.Uuid;
 import net.jini.id.UuidFactory;
-import sorcer.core.context.model.ent.EntryList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sorcer.co.tuple.ExecPath;
 import sorcer.co.tuple.Tuple2;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.model.ent.Entry;
+import sorcer.core.context.model.ent.EntryList;
 import sorcer.core.context.model.par.Par;
 import sorcer.core.context.model.par.ParList;
 import sorcer.core.context.model.par.ParModel;
@@ -49,8 +51,6 @@ import java.net.URL;
 import java.rmi.RemoteException;
 import java.security.Principal;
 import java.util.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import java.util.regex.Pattern;
 
 import static sorcer.eo.operator.sig;
@@ -2840,7 +2840,7 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 			return null;
 	}
 
-	public ServiceContext substitute(Arg... entries) throws SetterException, RemoteException {
+	public ServiceContext substitute(Arg... entries) throws SetterException {
 		if (entries == null)
 			return this;
 		ReturnPath rPath = null;

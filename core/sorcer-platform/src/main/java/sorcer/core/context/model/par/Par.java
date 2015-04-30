@@ -273,8 +273,7 @@ public class Par<T> extends Entry<T> implements Variability<T>, Arg, Mappable<T>
 	 * @see sorcer.service.Evaluation#substitute(sorcer.co.tuple.Parameter[])
 	 */
 	@Override
-	public Evaluation<T> substitute(Arg... parameters) throws SetterException,
-			RemoteException {
+	public Par<T> substitute(Arg... parameters) throws SetterException {
 		if (parameters == null)
 			return this;
 		for (Arg p : parameters) {

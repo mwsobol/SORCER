@@ -198,4 +198,8 @@ abstract public class RendezvousBean implements Service, Executor {
 		return execute(mogram, null);
 	}
 
+	@Override
+	public Substitutable substitute(Arg... entries) throws SetterException {
+		throw new  SetterException(getClass().getName() + "not substitutable");
+	}
 }

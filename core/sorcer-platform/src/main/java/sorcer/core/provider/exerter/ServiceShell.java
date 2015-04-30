@@ -23,6 +23,8 @@ import net.jini.core.transaction.TransactionException;
 import net.jini.core.transaction.server.TransactionManager;
 import org.dancres.blitz.jini.lockmgr.LockResult;
 import org.dancres.blitz.jini.lockmgr.MutualExclusion;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.ControlContext;
 import sorcer.core.context.ServiceContext;
@@ -47,8 +49,6 @@ import sorcer.util.Sorcer;
 import java.rmi.RemoteException;
 import java.util.List;
 import java.util.concurrent.Callable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author Mike Sobolewski
@@ -525,4 +525,8 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 		return exertion.exert(transaction);
 	}
 
+	@Override
+	public Substitutable substitute(Arg... entries) throws SetterException {
+		throw new  SetterException(getClass().getName() + "not substitutable");
+	}
 }
