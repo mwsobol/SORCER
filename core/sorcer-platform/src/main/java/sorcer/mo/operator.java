@@ -22,12 +22,14 @@ import sorcer.core.context.MapContext;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.ent.EntModel;
 import sorcer.core.context.model.ent.Entry;
+import sorcer.core.context.model.srv.ProductMogram;
 import sorcer.core.context.model.srv.SrvModel;
 import sorcer.core.provider.rendezvous.ServiceModeler;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -142,30 +144,42 @@ public class operator {
         return paradigm;
     }
 
+    public static Model mfiModel(Object... items) throws ContextException {
+        List<SelectionFidelity> fidelities = new ArrayList<SelectionFidelity>();
+        for (Object item : items) {
+            if (item instanceof SelectionFidelity) {
+                fidelities.add((SelectionFidelity)item);
+        }
+    }
+        ProductMogram model = new ProductMogram();
+        model.addFidelities(fidelities);
+        return srvModel(items);
+    }
+
     public static Model srvModel(Object... items) throws ContextException {
-        ServiceFidelity fidelity = null;
         sorcer.eo.operator.Complement complement = null;
+        Signature sig = null;
+        Model model = null;
         for (Object item : items) {
             if (item instanceof Signature) {
-                if (fidelity == null)
-                    fidelity = new ServiceFidelity();
-                fidelity.add((Signature) item);
+                sig = ((Signature)item);
             } else if (item instanceof sorcer.eo.operator.Complement) {
                 complement = (sorcer.eo.operator.Complement)item;
+            } else if (item instanceof Model) {
+                model = ((Model)item);
             }
         }
-        SrvModel model = null;
-        try {
+        if (model == null)
             model = new SrvModel();
-        } catch (SignatureException e) {
-            throw new ContextException(e);
+
+        if (sig != null) {
+            ((SrvModel)model).setSubject(sig.getName(), sig);
         }
-        if (fidelity != null) {
-            model.setFidelity(fidelity);
-        } else if (complement != null) {
-            model.setSubject(complement.path(), complement.value());
+
+        if (complement != null) {
+            ((SrvModel)model).setSubject(complement.path(), complement.value());
         } else {
-            model.setSubject("execute", ServiceModeler.class);
+            ((SrvModel)model).setSubject("execute", ServiceModeler.class);
         }
         Object[] dest = new Object[items.length+1];
         System.arraycopy(items,  0, dest,  1, items.length);

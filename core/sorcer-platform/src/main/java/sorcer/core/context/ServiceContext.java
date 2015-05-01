@@ -1740,7 +1740,7 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 				else if (outpaths.contains(path))
 					subcntxt.putOutValue(path, getValue(path, args));
 				else
-					subcntxt.put(path, getValue(path, args));
+					subcntxt.putValue(path, getValue(path, args));
 			}
 		}
 		return subcntxt;
@@ -2296,7 +2296,7 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 	public ServiceContext setParameterTypes(Class... types) throws ContextException {
 		if (parameterTypesPath == null) 
 			parameterTypesPath = Context.PARAMETER_TYPES;
-		putValue(parameterTypesPath, (T)types);
+		putValue(parameterTypesPath, (T) types);
 		return this;
 	}
 	
@@ -3028,7 +3028,7 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 			return (T) obj;
 		} catch (Throwable e) {
 			logger.warn(e.getMessage());
-//			e.printStackTrace();
+			e.printStackTrace();
 			return (T) Context.none;
 		}
 	}
