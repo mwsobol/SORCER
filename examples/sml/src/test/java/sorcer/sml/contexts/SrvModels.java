@@ -37,7 +37,7 @@ public class SrvModels {
         // get a context from a subject provider
         // exerting a model with the subject provider as its service context
 
-        Model m = srvModel(sig("adder", AdderImpl.class),
+        Model m = srvModel(sig("add", AdderImpl.class),
                 inEnt("arg/x1", 1.0), inEnt("arg/x2", 2.0),
                 ent("arg/x3", 3.0), ent("arg/x4", 4.0), ent("arg/x5", 5.0));
 
@@ -46,7 +46,7 @@ public class SrvModels {
         add(m, ent("multiply", invoker("x4 * x5", ents("x4", "x5"))));
 
         // two responses declared
-        addResponse(m, "add", "multiply");
+        addResponse(m, "add", "multiply", "result/value");
         // exert the model
         Model model = exert(m);
         logger.info("model: " + model);
@@ -55,7 +55,7 @@ public class SrvModels {
         System.out.println("responses: " + responses(model));
 
         assertTrue(responses(model).equals(
-                context(ent("add", 4.0), ent("multiply", 20.0))));
+                context(ent("add", 4.0), ent("multiply", 20.0), ent("result/value", 3.0))));
 
     }
 

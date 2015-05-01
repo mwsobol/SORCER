@@ -174,13 +174,14 @@ public class operator {
 
         if (sig != null) {
             ((SrvModel)model).setSubject(sig.getName(), sig);
+        } else {
+            ((SrvModel)model).setSubject("execute", ServiceModeler.class);
         }
 
         if (complement != null) {
             ((SrvModel)model).setSubject(complement.path(), complement.value());
-        } else {
-            ((SrvModel)model).setSubject("execute", ServiceModeler.class);
         }
+
         Object[] dest = new Object[items.length+1];
         System.arraycopy(items,  0, dest,  1, items.length);
         dest[0] = model;
