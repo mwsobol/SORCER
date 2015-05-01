@@ -24,7 +24,6 @@ import sorcer.core.context.model.ent.EntModel;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.srv.ProductMogram;
 import sorcer.core.context.model.srv.SrvModel;
-import sorcer.core.provider.rendezvous.ServiceModeler;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
 
@@ -152,17 +151,17 @@ public class operator {
         }
     }
         ProductMogram model = new ProductMogram();
-        model.addFidelities(fidelities);
+        model.addSelectionFidelities(fidelities);
         return srvModel(items);
     }
 
     public static Model srvModel(Object... items) throws ContextException {
         sorcer.eo.operator.Complement complement = null;
-        Signature sig = null;
+        List<Signature> sigs = new ArrayList<Signature>();
         Model model = null;
         for (Object item : items) {
             if (item instanceof Signature) {
-                sig = ((Signature)item);
+                sigs.add((Signature)item);
             } else if (item instanceof sorcer.eo.operator.Complement) {
                 complement = (sorcer.eo.operator.Complement)item;
             } else if (item instanceof Model) {
@@ -172,11 +171,16 @@ public class operator {
         if (model == null)
             model = new SrvModel();
 
-        if (sig != null) {
-            ((SrvModel)model).setSubject(sig.getName(), sig);
-        } else {
-            ((SrvModel)model).setSubject("execute", ServiceModeler.class);
+        if (sigs != null && sigs.size() > 0) {
+            ServiceFidelity fidelity = new ServiceFidelity();
+            for (Signature sig : sigs)
+                fidelity.add(sig);
+            ((SrvModel)model).addServiceFidelity(fidelity);
+            ((SrvModel)model).setSelectedServiceFidelity(fidelity);
         }
+//        else {
+//            ((SrvModel)model).setSubject("execute", ServiceModeler.class);
+//        }
 
         if (complement != null) {
             ((SrvModel)model).setSubject(complement.path(), complement.value());

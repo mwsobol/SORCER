@@ -28,6 +28,7 @@ import sorcer.service.*;
 import sorcer.service.modeling.Model;
 
 import java.rmi.RemoteException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -46,6 +47,16 @@ import static sorcer.eo.operator.*;
  */
 public class SrvModel extends ParModel<Object> implements Model {
 
+    // service fidelities for this model
+    protected Map<String, ServiceFidelity> serviceFidelities;
+
+    protected ServiceFidelity selectedServiceFidelity = new ServiceFidelity();
+
+    // the current fidelity alias, as it is named in 'fidelities'
+    // its original name is different if aliasing is used for already
+    // existing names
+    protected String selectedFidelitySelector;
+
     private ParModel modelScope = new ParModel();
 
     public SrvModel() {
@@ -62,12 +73,14 @@ public class SrvModel extends ParModel<Object> implements Model {
 
     public SrvModel(Signature signature) {
         super();
-        setSignature(signature.getName(), signature);
+//        setSignature(signature.getName(), signature);
+        addSignature(signature);
     }
 
     public SrvModel(String name, Signature signature) {
         this(name);
-        setSignature(signature.getName(), signature);
+//        setSignature(signature.getName(), signature);
+        addSignature(signature);
     }
 
     private void setSignature() {
@@ -89,6 +102,69 @@ public class SrvModel extends ParModel<Object> implements Model {
         else
             subjectPath = path;
         subjectValue = signature;
+    }
+
+    public boolean isBatch() {
+        for (Signature s : selectedServiceFidelity) {
+            if (s.getType() != Signature.Type.SRV)
+                return false;
+        }
+        return true;
+    }
+
+    public void setSelectedServiceFidelity(ServiceFidelity fidelity) {
+        this.selectedServiceFidelity = fidelity;
+    }
+
+    public void putServiceFidelity(ServiceFidelity fidelity) {
+        if (serviceFidelities == null)
+            serviceFidelities = new HashMap<String, ServiceFidelity>();
+        serviceFidelities.put(fidelity.getName(), fidelity);
+    }
+
+    public void addServiceFidelity(ServiceFidelity fidelity) {
+        putServiceFidelity(fidelity.getName(), fidelity);
+        selectedFidelitySelector = name;
+        this.selectedServiceFidelity = fidelity;
+    }
+
+    public void setFidelity(String name, ServiceFidelity fidelity) {
+        this.selectedServiceFidelity = new ServiceFidelity(name, fidelity);
+        putServiceFidelity(name, fidelity);
+        selectedFidelitySelector = name;
+    }
+
+    public void putServiceFidelity(String name, ServiceFidelity fidelity) {
+        if (serviceFidelities == null)
+            serviceFidelities = new HashMap<String, ServiceFidelity>();
+        serviceFidelities.put(name, new ServiceFidelity(name, fidelity));
+    }
+
+    public void addServiceFidelity(String name, ServiceFidelity fidelity) {
+        ServiceFidelity nf = new ServiceFidelity(name, fidelity);
+        putServiceFidelity(name, nf);
+        selectedFidelitySelector = name;
+        fidelity = nf;
+    }
+
+    public Signature getProcessSignature() {
+        for (Signature s : selectedServiceFidelity) {
+            if (s.getType() == Signature.Type.SRV)
+                return s;
+        }
+        return null;
+    }
+
+    public void selectServiceFidelity(String selector) throws ExertionException {
+        if (selector != null && serviceFidelities != null
+                && serviceFidelities.containsKey(selector)) {
+            ServiceFidelity sf = serviceFidelities.get(selector);
+
+            if (sf == null)
+                throw new ExertionException("no such service fidelity: " + selector + " at: " + this);
+            selectedServiceFidelity = sf;
+            selectedFidelitySelector = selector;
+        }
     }
 
     public Object getValue(String path, Arg... entries) throws ContextException {
@@ -158,11 +234,40 @@ public class SrvModel extends ParModel<Object> implements Model {
         }
     }
 
+    /**
+     * Appends a signature <code>signature</code> for this model.
+     **/
+    public void addSignature(Signature signature) {
+        if (signature == null)
+            return;
+        ((ServiceSignature) signature).setOwnerId(getOwnerId());
+        selectedServiceFidelity.add(signature);
+    }
+
+    public ServiceFidelity getServiceFidelity() {
+        return selectedServiceFidelity;
+    }
+
+    public void addSignatures(ServiceFidelity signatures) {
+        if (this.selectedServiceFidelity != null)
+            this.selectedServiceFidelity.addAll(signatures);
+        else {
+            this.selectedServiceFidelity = new ServiceFidelity();
+            this.selectedServiceFidelity.addAll(signatures);
+        }
+    }
+
     @Override
     public Model exert(Transaction txn, Arg... entries) throws TransactionException,
             ExertionException, RemoteException {
+        Signature signature = null;
         try {
-            if (subjectValue != null && subjectValue instanceof Signature) {
+            if (selectedServiceFidelity != null) {
+                signature = getProcessSignature();
+            } else if (subjectValue != null && subjectValue instanceof Signature) {
+                signature = (Signature)subjectValue;
+            }
+            if (signature != null) {
                 Exertion out = operator.exertion(name, subjectValue, this).exert(txn, entries);
                 Exertion xrt = out.exert();
                 return xrt.getDataContext();
