@@ -22,7 +22,7 @@ import sorcer.core.context.MapContext;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.ent.EntModel;
 import sorcer.core.context.model.ent.Entry;
-import sorcer.core.context.model.srv.ProductMogram;
+import sorcer.core.context.model.srv.SrvProduct;
 import sorcer.core.context.model.srv.SrvModel;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
@@ -150,7 +150,7 @@ public class operator {
                 fidelities.add((SelectionFidelity)item);
         }
     }
-        ProductMogram model = new ProductMogram();
+        SrvProduct model = new SrvProduct();
         model.addSelectionFidelities(fidelities);
         return srvModel(items);
     }
