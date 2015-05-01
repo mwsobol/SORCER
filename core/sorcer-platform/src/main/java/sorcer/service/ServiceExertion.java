@@ -84,7 +84,7 @@ public abstract class ServiceExertion implements Exertion, SorcerConstants, Exec
 
     protected Uuid sessionId;
 
-    /** position of component Mogram in a compund exertion */
+    /** position of component Mogram in a compund mogram */
     protected Integer index = new Integer(-1);
 
     protected MonitoringSession monitorSession;
@@ -380,7 +380,7 @@ public abstract class ServiceExertion implements Exertion, SorcerConstants, Exec
     }
 
     /**
-     * Returns the exertion at the specified index.
+     * Returns the index assigned by the container.
      */
     public int getIndex() {
         return (index == null) ? -1 : index;

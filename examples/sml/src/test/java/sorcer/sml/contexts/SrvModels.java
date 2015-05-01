@@ -46,15 +46,17 @@ public class SrvModels {
         add(m, ent("multiply", invoker("x4 * x5", ents("x4", "x5"))));
 
         // two responses declared
-        addResponse(m, "add", "multiply", "result/value");
+//        addResponse(m, "add", "multiply", "result/value");
+        addResponse(m, "add", "multiply");
         // exert the model
         Model model = exert(m);
         logger.info("model: " + model);
 
         assertTrue(response(model, "add").equals(4.0));
+        System.out.println("responses: " + responses(model));
 
-        assertTrue(responses(model).equals(
-                context(ent("add", 4.0), ent("multiply", 20.0), ent("result/value", 3.0))));
+        assertTrue(responses(model).equals(context(ent("add", 4.0), ent("multiply", 20.0))));
+//                context(ent("add", 4.0), ent("multiply", 20.0), ent("result/value", 3.0))));
 
     }
 

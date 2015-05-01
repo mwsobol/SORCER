@@ -19,17 +19,16 @@ package sorcer.core.invoker;
 
 import net.jini.id.Uuid;
 import net.jini.id.UuidFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.par.Par;
 import sorcer.core.context.model.par.ParModel;
-import sorcer.service.Scopable;
 import sorcer.service.*;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author Mike Sobolewski
@@ -369,7 +368,7 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 	 */
 	@Override
 	public Evaluation substitute(Arg... entries)
-			throws SetterException, RemoteException {
+			throws SetterException {
 		for (Arg e : entries) {
 			if (e instanceof Entry<?>) {
 				try {

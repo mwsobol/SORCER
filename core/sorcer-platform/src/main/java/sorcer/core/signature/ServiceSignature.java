@@ -20,6 +20,7 @@ package sorcer.core.signature;
 import net.jini.core.lookup.ServiceID;
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
+import org.slf4j.Logger;
 import sorcer.core.SorcerConstants;
 import sorcer.core.deploy.ServiceDeployment;
 import sorcer.core.provider.Provider;
@@ -33,8 +34,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
 import java.util.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static sorcer.eo.operator.provider;
 
@@ -601,7 +600,7 @@ public class ServiceSignature implements Signature, Service, Evaluation<Object>,
 	}
 
 	@Override
-	public Evaluation substitute(Arg... entries) throws SetterException, RemoteException {
+	public Evaluation substitute(Arg... entries) throws SetterException {
 		return this;
 	}
 

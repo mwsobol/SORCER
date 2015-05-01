@@ -21,11 +21,13 @@ import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
 import net.jini.id.Uuid;
 import net.jini.id.UuidFactory;
-import sorcer.core.context.model.ent.EntryList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sorcer.co.tuple.ExecPath;
 import sorcer.co.tuple.Tuple2;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.model.ent.Entry;
+import sorcer.core.context.model.ent.EntryList;
 import sorcer.core.context.model.par.Par;
 import sorcer.core.context.model.par.ParList;
 import sorcer.core.context.model.par.ParModel;
@@ -49,8 +51,6 @@ import java.net.URL;
 import java.rmi.RemoteException;
 import java.security.Principal;
 import java.util.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import java.util.regex.Pattern;
 
 import static sorcer.eo.operator.sig;
@@ -1740,7 +1740,7 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 				else if (outpaths.contains(path))
 					subcntxt.putOutValue(path, getValue(path, args));
 				else
-					subcntxt.put(path, getValue(path, args));
+					subcntxt.putValue(path, getValue(path, args));
 			}
 		}
 		return subcntxt;
@@ -2296,7 +2296,7 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 	public ServiceContext setParameterTypes(Class... types) throws ContextException {
 		if (parameterTypesPath == null) 
 			parameterTypesPath = Context.PARAMETER_TYPES;
-		putValue(parameterTypesPath, (T)types);
+		putValue(parameterTypesPath, (T) types);
 		return this;
 	}
 	
@@ -2840,7 +2840,7 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 			return null;
 	}
 
-	public ServiceContext substitute(Arg... entries) throws SetterException, RemoteException {
+	public ServiceContext substitute(Arg... entries) throws SetterException {
 		if (entries == null)
 			return this;
 		ReturnPath rPath = null;
@@ -3028,7 +3028,7 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 			return (T) obj;
 		} catch (Throwable e) {
 			logger.warn(e.getMessage());
-//			e.printStackTrace();
+			e.printStackTrace();
 			return (T) Context.none;
 		}
 	}
@@ -3070,11 +3070,18 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
                 Map.Entry pairs = (Map.Entry) it.next();
                 mc.putInValue((String) pairs.getKey(), getValue((String) pairs.getValue()));
             }
-            getMergedSubcontext(mc, responsePaths, args);
-            return mc;
+			if (responsePaths != null && responsePaths.size() > 0) {
+				getMergedSubcontext(mc, responsePaths, args);
+				return mc;
+			}
         } else {
-            return getMergedSubcontext(null, responsePaths, args);
+			if (responsePaths != null && responsePaths.size() > 0) {
+				return getMergedSubcontext(null, responsePaths, args);
+			} else {
+				return substitute(args);
+			}
         }
+		return this;
     }
 
 	@Override
@@ -3432,9 +3439,9 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
                 signature = sig(subjectPath, subjectValue);
                 return operator.exertion(name, signature, this).exert(txn, entries);
             } else {
-                // evaluates model targets - responses
-                getValue(entries);
-                return (T) this;
+                // evaluates model otputs - responses
+				getResponses(entries);
+				return (T) this;
             }
         } catch (Exception e) {
             throw new ExertionException(e);

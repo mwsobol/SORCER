@@ -55,8 +55,7 @@ import static sorcer.util.StringUtils.tName;
 public class EditorView extends JPanel implements HyperlinkListener {
 	static final long serialVersionUID = 4473215204301624571L;
 	
-	private final static Logger logger = LoggerFactory.getLogger(EditorView.class
-			.getName());
+	private final static Logger logger = LoggerFactory.getLogger(EditorView.class);
 	private static boolean debug = false;
 	private final JFileChooser fileChooser = new JFileChooser(
 			System.getProperty("sorcer.home"));
@@ -362,14 +361,15 @@ public class EditorView extends JPanel implements HyperlinkListener {
 						sb.append("\n");
 					}
 					logger.debug(">>> executing script: " + sb.toString());
-                    try {
-						scriptExerter = new ScriptExerter(sb.toString(), System.out,this.getClass().getClassLoader(), Sorcer.getWebsterUrl().toString());
+					try {
+						scriptExerter = new ScriptExerter(sb.toString(), System.out, this.getClass().getClassLoader(),
+								Sorcer.getWebsterUrl().toString());
                         scriptExerter.parse();
                         Object result = scriptExerter.execute();
-                        if (result instanceof Exertion)
-                            processExerion((Exertion) result);
-                        else if (result != null) {
-                            openOutPanel(result.toString());
+						if (result instanceof Exertion) {
+							processExerion((Exertion) result);
+						} else if (result != null) {
+							openOutPanel(result.toString());
                         }
                     } catch (IOException io) {
                         logger.error("Caught exception while executing script: " + io.getMessage());
@@ -474,7 +474,10 @@ public class EditorView extends JPanel implements HyperlinkListener {
 			if (result instanceof Exertion)
 				processExerion((Exertion) result);
 			else if (result != null) {
+				logger.debug("<< executing scrip: " + script);
+				logger.debug(">> scrip result: " + script);
 				openOutPanel(result.toString());
+				showResults(result);
 			}
 		} catch (IOException io) {
 			logger.error("Caught exception while executing script: " + io.getMessage());
@@ -535,20 +538,25 @@ public class EditorView extends JPanel implements HyperlinkListener {
 		showResults(out);
 	}
 
-	private void showResults(Exertion exertion)  throws ContextException {
-		if (exertion == null) {
-			openOutPanel("Failed to process the exertlet!");
+	private void showResults(Object mogram)  throws ContextException {
+		if (mogram == null) {
+			openOutPanel("Failed to process the netlet!");
 			return;
 		}
-		if (exertion.getExceptions().size() > 0) {
-			openOutPanel(exertion.getExceptions().toString());
-		}
-		else {
-			StringBuilder sb = new StringBuilder(exertion.getContext().toString());
-			if (debug) {
-				sb.append("\n");
-				sb.append(((ServiceExertion)exertion).getControlInfo().toString());
+		if (mogram instanceof Exertion) {
+			Exertion exertion = (Exertion)mogram;
+			if (exertion.getExceptions().size() > 0) {
+				openOutPanel(exertion.getExceptions().toString());
+			} else {
+				StringBuilder sb = new StringBuilder(exertion.getContext().toString());
+				if (debug) {
+					sb.append("\n");
+					sb.append(((ServiceExertion) exertion).getControlInfo().toString());
+				}
+				openOutPanel(sb.toString());
 			}
+		} else {
+			StringBuilder sb = new StringBuilder(mogram.toString());
 			openOutPanel(sb.toString());
 		}
 	}

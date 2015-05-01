@@ -18,6 +18,8 @@
 package sorcer.service;
 
 import groovy.lang.Closure;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.par.Par;
 import sorcer.core.exertion.AltExertion;
@@ -31,8 +33,6 @@ import java.rmi.RemoteException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 /**
@@ -181,7 +181,7 @@ import org.slf4j.LoggerFactory;
 
     @Override
     public Evaluation<Object> substitute(Arg... entries)
-			throws SetterException, RemoteException {
+			throws SetterException {
         ((ServiceContext)conditionalContext).substitute(entries);
 		return this;
 	}

@@ -19,6 +19,8 @@ package sorcer.eo;
 import net.jini.core.lookup.ServiceItem;
 import net.jini.core.lookup.ServiceTemplate;
 import net.jini.core.transaction.Transaction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sorcer.co.operator.DataEntry;
 import sorcer.co.tuple.*;
 import sorcer.core.ComponentSelectionFidelity;
@@ -34,6 +36,7 @@ import sorcer.core.context.model.srv.Srv;
 import sorcer.core.deploy.ServiceDeployment;
 import sorcer.core.exertion.*;
 import sorcer.core.provider.*;
+import sorcer.core.provider.exerter.Binder;
 import sorcer.core.provider.rendezvous.ServiceConcatenator;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.core.provider.rendezvous.ServiceRendezvous;
@@ -57,8 +60,6 @@ import java.net.InetAddress;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 /**
@@ -724,22 +725,20 @@ public class operator {
 	/**
 	 * Returns the Evaluation with a realized substitution for its arguments.
 	 *
-	 * @param evaluation
+	 * @param scopable
 	 * @param entries
 	 * @return an evaluation with a realized substitution
 	 * @throws EvaluationException
 	 * @throws RemoteException
 	 */
-	public static Evaluation substitute(Evaluation evaluation, Arg... entries)
-			throws SetterException, RemoteException {
-		return evaluation.substitute(entries);
+	public static Object bind(Object model, Arg... entries)
+			throws ContextException {
+		if (model instanceof Substitutable) {
+			Binder binder = new Binder((Mogram)model);
+			binder.bind(entries);
+		}
+		return model;
 	}
-
-	public static Evaluation bind(Mogram mogram, Arg... entries)
-			throws SetterException, RemoteException {
-		return ((Evaluation)mogram).substitute(entries);
-	}
-
 
 	public static Class type(Signature signature) {
 		return signature.getServiceType();
@@ -1206,16 +1205,19 @@ public class operator {
 		List<Mogram> exertions = new ArrayList<Mogram>();
 		Signature sig = null;
 		Context cxt = null;
+		boolean isBlock =false;
 		for (int i = 0; i < items.length; i++) {
 			if (items[i] instanceof Exertion || items[i] instanceof EntModel ) {
 				exertions.add((Mogram) items[i]);
-			} else if (items[i] instanceof Signature) {
-				sig = (Signature) items[i];
-			} else if (items[i] instanceof String) {
-				name = (String) items[i];
+				if (items[i] instanceof ConditionalExertion)
+					isBlock = true;
+				} else if (items[i] instanceof Signature) {
+					sig = (Signature) items[i];
+				} else if (items[i] instanceof String) {
+					name = (String) items[i];
+				}
 			}
-		}
-		if (exertions.size() > 0 && sig != null
+		if (isBlock || exertions.size() > 0 && sig != null
 				&& (sig.getServiceType() == Concatenator.class
 				|| sig.getServiceType() == ServiceConcatenator.class)) {
 			return (E) block(items);
@@ -1641,12 +1643,8 @@ public class operator {
 
 	public static Object exec(Context context, Arg... args)
 			throws ExertionException, ContextException {
-		try {
-            ((ServiceContext)context).substitute(args);
-		} catch (RemoteException e) {
-			throw new ContextException(e);
-		}
-		ReturnPath returnPath = ((ServiceContext)context).getReturnPath();
+		((ServiceContext)context).substitute(args);
+		ReturnPath returnPath = context.getReturnPath();
 		if (returnPath != null) {
 			return context.getValue(returnPath.path, args);
 		} else
