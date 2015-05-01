@@ -41,6 +41,7 @@ import java.awt.event.MouseEvent;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.rmi.RemoteException;
 import java.util.Scanner;
 import org.slf4j.Logger;
@@ -451,51 +452,36 @@ public class EditorView extends JPanel implements HyperlinkListener {
 		}
 	}
 	
-	private ExertionThread runTaskScript(String script) {
+	private void runTaskScript(String script) {
 		System.out.println("task: \n" + script);
 
 		String serviceType = model.getServiceType();
 		String selector = model.getSelector();
+		URL[] codebaseURLs = model.getCodebaseURLs();
+		URLClassLoader taskClassLoader = new URLClassLoader(codebaseURLs, this.getClass().getClassLoader());
+
 		StringBuilder sb = new StringBuilder();
 		sb.append(staticImports.toString()).append("\nimport ").append(
 				serviceType).append(";\n").append("task(sig(\"")
 				.append(selector).append("\",").append(serviceType).append(
 						".class),\n").append(script).append(");");
 
-		// logger.info(">>> executing task script: " + sb.toString());
-		ExertionThread eThread = new ExertionThread(sb.toString());
-		eThread.start();
-		return eThread;
-	}
-	
-	
-	
-	private class ExertionThread extends Thread {
-		String script;
-		Object result;
-
-		public ExertionThread(String script) {
-            super(tName("Exertion"));
-			this.script = script;
-		}
-
-		public void run() {
-			System.out.println("netlet: " + script);
-			try {
-				shell = new GroovyShell();
-				Object result = shell.evaluate(script);
-				if (result instanceof Exertion)
-					processExerion((Exertion) result);
-				else if (result != null) {
-					openOutPanel(result.toString());
-				}
-			} catch (Exception e) {
-				openOutPanel(SorcerUtil.stackTraceToString(e));
+		logger.info(">>> executing task script: " + sb.toString());
+		try {
+			scriptExerter = new ScriptExerter(sb.toString(), System.out, taskClassLoader, Sorcer.getWebsterUrl().toString());
+			scriptExerter.parse();
+			Object result = scriptExerter.execute();
+			if (result instanceof Exertion)
+				processExerion((Exertion) result);
+			else if (result != null) {
+				openOutPanel(result.toString());
 			}
-		}
-
-		public Object getResult() {
-			return result;
+		} catch (IOException io) {
+			logger.error("Caught exception while executing script: " + io.getMessage());
+			openOutPanel(StringUtils.stackTraceToString(io));
+		} catch (Throwable th) {
+			openOutPanel(StringUtils.stackTraceToString(th));
+			logger.error("Caught exception while executing script: " + th.getMessage());
 		}
 	}
 

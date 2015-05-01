@@ -46,6 +46,7 @@
 			<sysproperty key="river.version" value="${river.version}" />
 			<sysproperty key="blitz.version" value="${blitz.version}" />
 			<sysproperty key="je.version" value="${je.version}" />
+			<sysproperty key="commonsio.version" value="${commonsio.version}" />
 			<sysproperty key="rio.version" value="${rio.version}" />
             <sysproperty key="plexus.version" value="${plexus.version}" />
 			<sysproperty key="rio.home" value="${sorcer.home}/rio-${rio.version}" />
@@ -60,7 +61,7 @@
 			<jvmarg value="-Xms512m"/>
 			<jvmarg value="-Xmx1g"/>
 			<sysproperty key="java.protocol.handler.pkgs" value="net.jini.url|sorcer.util.url|org.rioproject.url" />
-			<sysproperty key="java.rmi.server.RMIClassLoaderSpi" value="sorcer.rio.rmi.SorcerResolvingLoader"/>
+			<!--<sysproperty key="java.rmi.server.RMIClassLoaderSpi" value="sorcer.rio.rmi.SorcerResolvingLoader"/>-->
 			<!--<sysproperty key="java.rmi.server.RMIClassLoaderSpi" value="org.rioproject.rmi.ResolvingLoader"/>-->
 			<!--sysproperty key=""webster.debug"" value="true" /-->
 			<!--sysproperty key="webster.port" value="60009" /-->

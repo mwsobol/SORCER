@@ -4,7 +4,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
-import sorcer.core.context.model.par.ParEntry;
+import sorcer.core.context.model.par.Par;
 import sorcer.core.context.model.par.ParModel;
 import sorcer.service.Context;
 
@@ -33,7 +33,7 @@ public class Pars {
 		Context<Double> cxt = context(ent("x", 20.0), ent("y", 30.0));
 
 		// par with its context scope
-		ParEntry<?> add = par(cxt, "add", invoker("x + y", pars("x", "y")));
+		Par<?> add = par(cxt, "add", invoker("x + y", pars("x", "y")));
 		logger.info("par value: " + value(add));
 		assertTrue(value(add).equals(50.0));
 
@@ -44,7 +44,7 @@ public class Pars {
 	public void contextScope() throws Exception {
 
 		Context<Double> cxt = context(ent("x", 20.0), ent("y", 30.0));
-		ParEntry<?> add = par(cxt, "add", invoker("x + y", pars("x", "y")));
+		Par<?> add = par(cxt, "add", invoker("x + y", pars("x", "y")));
 
 		// adding a par to the context updates par's scope
 		add(cxt, add);
@@ -58,7 +58,7 @@ public class Pars {
 	
 	@Test
 	public void closingParWihEntries() throws Exception {
-		ParEntry y = par("y",
+		Par y = par("y",
 				invoker("(x1 * x2) - (x3 + x4)", pars("x1", "x2", "x3", "x4")));
 		Object val = value(y, ent("x1", 10.0), ent("x2", 50.0), ent("x3", 20.0), ent("x4", 80.0));
 		// logger.info("y value: " + val);
@@ -69,7 +69,7 @@ public class Pars {
 	public void closingParWitScope() throws Exception {
 
 		// invokers use contextual scope of pars
-		ParEntry<?> add = par("add", invoker("x + y", pars("x", "y")));
+		Par<?> add = par("add", invoker("x + y", pars("x", "y")));
 
 		Context<Double> cxt = context(ent("x", 10.0), ent("y", 20.0));
 		logger.info("par value: " + value(add, cxt));
@@ -81,8 +81,8 @@ public class Pars {
 	@Test
 	public void dbParOperator() throws Exception {	
 		
-		ParEntry<Double> dbp1 = persistent(par("design/in", 25.0));
-		ParEntry<String> dbp2 = dbPar("url/sobol", "http://sorcersoft.org/sobol");
+		Par<Double> dbp1 = persistent(par("design/in", 25.0));
+		Par<String> dbp2 = dbPar("url/sobol", "http://sorcersoft.org/sobol");
 
 		assertEquals(asis(dbp1), 25.0);
 		assertTrue(asis(dbp2) instanceof URL);
@@ -112,9 +112,9 @@ public class Pars {
 	@Test
 	public void parFidelities() throws Exception {
 		
-		ParEntry<Double> dbp = dbPar("shared/value", 25.0);
+		Par<Double> dbp = dbPar("shared/value", 25.0);
 		
-		ParEntry multi = par("multi",
+		Par multi = par("multi",
 				parFi(ent("init/value"), 
 				dbp,
 				ent("invoke", invoker("x + y", pars("x", "y")))));

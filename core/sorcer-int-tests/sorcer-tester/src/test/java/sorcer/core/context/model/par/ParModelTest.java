@@ -93,9 +93,9 @@ public class ParModelTest {
 
 	@Test
 	public void parModelTest() throws RemoteException, ContextException {
-		ParEntry x = new ParEntry("x", 10.0);
-		ParEntry y = new ParEntry("y", 20.0);
-		ParEntry add = new ParEntry("add", invoker("x + y", pars("x", "y")));
+		Par x = new Par("x", 10.0);
+		Par y = new Par("y", 20.0);
+		Par add = new Par("add", invoker("x + y", pars("x", "y")));
 
 		ParModel pm = new ParModel("arithmetic-model");
 		pm.add(x, y, add);
@@ -146,7 +146,7 @@ public class ParModelTest {
 
         addResponse(pm, "add");
 
-		ParEntry x = par(pm, "x");
+		Par x = par(pm, "x");
 		logger.info("par x: " + x);
 		set(x, 20.0);
 		logger.info("val x: " + value(x));
@@ -185,12 +185,12 @@ public class ParModelTest {
 		Context cxt = context(ent("url", "myUrl"), ent("design/in", 25.0));
 
 		// mapping parameters to cxt, m1 and m2 are par aliases 
-		ParEntry p1 = par("p1", "design/in", cxt);
+		Par p1 = par("p1", "design/in", cxt);
 		assertEquals(value(p1), 25.0);
 		set(p1, 30.0);
 		assertEquals(value(p1), 30.0);
 		
-		ParEntry p2 = par("p2", "url", cxt);
+		Par p2 = par("p2", "url", cxt);
 		assertEquals(value(p2), "myUrl");
 		set(p2, "newUrl");
 		assertEquals(value(p2), "newUrl");
@@ -206,7 +206,7 @@ public class ParModelTest {
 		assertEquals(value(c4, "arg/x1"), 10.0);
 		assertEquals(value(c4, "arg/x2"), 50.0);
 
-		assertTrue(asis(c4, "arg/x1") instanceof ParEntry);
+		assertTrue(asis(c4, "arg/x1") instanceof Par);
 		assertEquals(asis(c4, "arg/x2"), 50.0);
 
 		assertTrue(storeArg(c4, "arg/x1") instanceof URL);
@@ -218,8 +218,8 @@ public class ParModelTest {
 		assertEquals(value(c4, "arg/x1"), 110.0);
 		assertEquals(value(c4, "arg/x2"), 150.0);
 
-		assertTrue(asis(c4, "arg/x1") instanceof ParEntry);
-		assertFalse(asis(c4, "arg/x2") instanceof ParEntry);
+		assertTrue(asis(c4, "arg/x1") instanceof Par);
+		assertFalse(asis(c4, "arg/x2") instanceof Par);
 	}
 	
 	@Test
@@ -232,9 +232,9 @@ public class ParModelTest {
 		assertEquals(value(c4, "arg/x1"), 10.0);
 		assertEquals(value(c4, "arg/x2"), 50.0);
 		
-		assertTrue(asis(c4, "arg/x0") instanceof ParEntry);
-		assertTrue(asis(c4, "arg/x1") instanceof ParEntry);
-		assertTrue(asis(c4, "arg/x2") instanceof ParEntry);
+		assertTrue(asis(c4, "arg/x0") instanceof Par);
+		assertTrue(asis(c4, "arg/x1") instanceof Par);
+		assertTrue(asis(c4, "arg/x2") instanceof Par);
 		
 		logger.info("arg/x0 URL: " + storeArg(c4, "arg/x0"));
 		logger.info("arg/x1 URL: " + storeArg(c4, "arg/x1"));
@@ -251,17 +251,17 @@ public class ParModelTest {
 		assertEquals(value(c4, "arg/x1"), 110.0);
 		assertEquals(value(c4, "arg/x2"), 150.0);
 
-		assertTrue(asis(c4, "arg/x0") instanceof ParEntry);
-		assertTrue(asis(c4, "arg/x1") instanceof ParEntry);
-		assertTrue(asis(c4, "arg/x2") instanceof ParEntry);
+		assertTrue(asis(c4, "arg/x0") instanceof Par);
+		assertTrue(asis(c4, "arg/x1") instanceof Par);
+		assertTrue(asis(c4, "arg/x2") instanceof Par);
 	}
 	
 	@Test
 	public void persistableParsTest() throws SignatureException, ExertionException, ContextException, IOException {	
 		// persistable just indicates that parameter is set given value that can be persist,
 		// for example when value(par) is invoked
-		ParEntry dbp1 = persistent(par("design/in", 25.0));
-		ParEntry dbp2 = dbPar("url", "myUrl1");
+		Par dbp1 = persistent(par("design/in", 25.0));
+		Par dbp2 = dbPar("url", "myUrl1");
 
 		assertFalse(asis(dbp1) instanceof URL);
 		assertTrue(asis(dbp2) instanceof URL);
@@ -285,12 +285,12 @@ public class ParModelTest {
 		Context cxt = context(ent("url", "myUrl"), ent("design/in", 25.0));
 
 		// persistent par
-		ParEntry dbIn = persistent(par("dbIn", "design/in", cxt));
+		Par dbIn = persistent(par("dbIn", "design/in", cxt));
 		assertEquals(value(dbIn), 25.0);  	// is persisted
 		logger.info("value dbIn asis design/in 1: " + dbIn.getMappable().asis("design/in"));
 
-		assertTrue(asis(cxt,"design/in") instanceof ParEntry);
-		assertEquals(value((ParEntry)asis(cxt, "design/in")), 25.0);
+		assertTrue(asis(cxt,"design/in") instanceof Par);
+		assertEquals(value((Par)asis(cxt, "design/in")), 25.0);
 		assertEquals(value(cxt, "design/in"), 25.0);
 
 		set(dbIn, 30.0); 	// is persisted
@@ -302,7 +302,7 @@ public class ParModelTest {
 		assertEquals(value(dbIn), 30.0);
 		
 		// not persistent par
-		ParEntry up = par("up", "url", cxt);
+		Par up = par("up", "url", cxt);
 		assertEquals(value(up), "myUrl");
 		
 		set(up, "newUrl");
@@ -313,8 +313,8 @@ public class ParModelTest {
 	public void aliasedParsTest() throws ContextException, RemoteException {
 		Context cxt = context(ent("design/in1", 25.0), ent("design/in2", 35.0));
 		
-		ParEntry x1 = par("x1", "design/in1", cxt);
-		ParEntry x2 = par("x2", "design/in2", cxt);
+		Par x1 = par("x1", "design/in1", cxt);
+		Par x2 = par("x2", "design/in2", cxt);
 	
 		assertEquals(value(x1), 25.0);
 		set(x1, 45.0);
@@ -355,9 +355,9 @@ public class ParModelTest {
 		
 		
 		// context and job parameters
-		ParEntry x1p = par("x1p", "arg/x1", c4);
-		ParEntry x2p = par("x2p", "arg/x2", c4);
-		ParEntry j1p = par("j1p", "j1/t3/result/y", j1);
+		Par x1p = par("x1p", "arg/x1", c4);
+		Par x2p = par("x2p", "arg/x2", c4);
+		Par j1p = par("j1p", "j1/t3/result/y", j1);
 		
 		// setting context parameters in a job
 		set(x1p, 10.0);
@@ -408,11 +408,11 @@ public class ParModelTest {
 				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
 		
 		
-		ParEntry c4x1p = par("c4x1p", "arg/x1", c4);
-		ParEntry c4x2p = par("c4x2p", "arg/x2", c4);
+		Par c4x1p = par("c4x1p", "arg/x1", c4);
+		Par c4x2p = par("c4x2p", "arg/x2", c4);
 		// job j1 parameter j1/t3/result/y is used in the context of task t6
-		ParEntry j1p = par("j1p", "j1/t3/result/y", j1);
-		ParEntry t4x1p = par("t4x1p", "j1/j2/t4/arg/x1", j1);
+		Par j1p = par("j1p", "j1/t3/result/y", j1);
+		Par t4x1p = par("t4x1p", "j1/j2/t4/arg/x1", j1);
 		
 		// setting context parameters in a job
 		set(c4x1p, 10.0);
@@ -526,9 +526,9 @@ public class ParModelTest {
 		String sorcerVersion = System.getProperty("sorcer.version");
 
 		ParModel pm = new ParModel();
-		ParEntry<Double> x = par("x", 10.0);
-		ParEntry<Double> y = par("y", 20.0);
-		ParEntry z = par("z", invoker("x - y", x, y));
+		Par<Double> x = par("x", 10.0);
+		Par<Double> y = par("y", 20.0);
+		Par z = par("z", invoker("x - y", x, y));
 		
 		// set the sphere/radius in the model
 		put(pm, "sphere/radius", 20.0);

@@ -31,7 +31,10 @@ import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.event.ActionEvent;
+import java.net.URL;
 import java.rmi.RemoteException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Implementation of the SignatureDispatcherInterface to provide support for
@@ -213,6 +216,7 @@ public class SignatureDispatcherForCataloger implements SignatureDispatchment {
 	 */
 	public void fillModel() {
 		model.setProviders(getProviders());
+		model.setCodebaseURLs(getCodebaseURLs());
 	}
 
 	/**
@@ -255,6 +259,23 @@ public class SignatureDispatcherForCataloger implements SignatureDispatchment {
 		 * return provList;
 		 */
 	}
+
+	/**
+	 * Gets the list of codebase URLs for providers
+	 *
+	 * @return Map of provider name to codebase URLs
+	 */
+	public Map<String, URL[]> getCodebaseURLs() {
+		int i = 0;
+		Map<String, URL[]> codebaseUrls = new HashMap<String, URL[]>();
+		try {
+			codebaseUrls = catalog.getProviderCodebaseURLs();
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		return codebaseUrls;
+	}
+
 
 	/**
 	 * Gets the list of interfaces for the given provider

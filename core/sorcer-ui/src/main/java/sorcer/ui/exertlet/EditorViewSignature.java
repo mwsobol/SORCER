@@ -17,10 +17,15 @@
 
 package sorcer.ui.exertlet;
 
+import java.net.URL;
+
 public interface EditorViewSignature {
 
-	public String getServiceType();
+	String getServiceType();
 
-	public String getSelector();
+	String getSelector();
 
+	String getSelectedProvider();
+
+	URL[] getCodebaseURLs();
 }

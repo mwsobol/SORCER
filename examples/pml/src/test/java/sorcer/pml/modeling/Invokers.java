@@ -6,12 +6,14 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.provider.impl.SubtractorImpl;
-import sorcer.core.context.model.par.ParEntry;
+import sorcer.core.context.model.par.Par;
 import sorcer.core.context.model.par.ParModel;
 import sorcer.core.invoker.AltInvoker;
 import sorcer.core.invoker.Invocable;
@@ -28,8 +30,6 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.rmi.RemoteException;
 import java.util.Properties;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -59,9 +59,9 @@ public class Invokers {
 			.getName());
 
 	private ParModel pm; 
-	private ParEntry<Double> x;
-	private ParEntry<Double> y;
-	private ParEntry z;
+	private Par<Double> x;
+	private Par<Double> y;
+	private Par z;
 
 	// member subclass of Invocable with Context parameter used below with
 	// contextMethodAttachmentWithArgs()
@@ -199,7 +199,7 @@ public class Invokers {
 	public void invokerParTest() throws RemoteException, ContextException,
 			SignatureException, ExertionException {
 
-		ParEntry<Double> x1 = par("x1", 1.0);
+		Par<Double> x1 = par("x1", 1.0);
 
 		// logger.info("invoke value:" + invoke(x1));
 		assertEquals(invoke(x1), 1.0);
@@ -208,7 +208,7 @@ public class Invokers {
 	@Test
 	public void substituteArgsTest() throws RemoteException, ContextException,
 			SignatureException, ExertionException {
-		ParEntry x1, x2, y;
+		Par x1, x2, y;
 
 		x1 = par("x1", 1.0);
 		x2 = par("x2", 2.0);
@@ -260,14 +260,18 @@ public class Invokers {
 	public void cmdInvokerTest() throws SignatureException, ExertionException,
 	ContextException, IOException {
 		String riverVersion = System.getProperty("river.version");
-        String sorcerVersion = System.getProperty("sorcer.version");
-        String buildDir = System.getProperty("project.build.dir");
+		String sorcerVersion = System.getProperty("sorcer.version");
+		String slf4jVersion = System.getProperty("slf4j.version");
+		String logbackVersion = System.getProperty("logback.version");
+		String buildDir = System.getProperty("project.build.dir");
 
         String cp = buildDir + "/libs/pml-" + sorcerVersion + "-bean.jar" + File.pathSeparator
         		+ Sorcer.getHome() + "/lib/sorcer/lib/sorcer-platform-" + sorcerVersion + ".jar"  + File.pathSeparator
+				+ Sorcer.getHome() + "/lib/logging/slf4j-api-" + slf4jVersion + ".jar"  + File.pathSeparator
+				+ Sorcer.getHome() + "/lib/logging/logback-core-" + logbackVersion + ".jar"  + File.pathSeparator
+				+ Sorcer.getHome() + "/lib/logging/logback-classic-" + logbackVersion + ".jar"  + File.pathSeparator
 				+ Sorcer.getHome() + "/lib/river/jsk-platform-" + riverVersion + ".jar"  + File.pathSeparator
 				+ Sorcer.getHome() + "/lib/river/jsk-lib-" + riverVersion + ".jar ";
-
 
 		ServiceInvoker cmd = cmdInvoker("volume",
 				"java -cp  " + cp + Volume.class.getName() + " cylinder");
@@ -497,7 +501,7 @@ public class Invokers {
 
 		add(pm,
 				loop("loop", condition(pm, "{ x -> x < 20 }", "x"),
-						(ServiceInvoker) asis((ParEntry) asis(pm, "y"))));
+						(ServiceInvoker) asis((Par) asis(pm, "y"))));
 
 		// logger.info("loop value: " + value(pm, "loop"));
 		assertTrue((Integer) value(pm, "loop") == 20);

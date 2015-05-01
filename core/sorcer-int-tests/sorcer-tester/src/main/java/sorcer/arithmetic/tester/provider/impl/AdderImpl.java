@@ -24,7 +24,9 @@ public class AdderImpl implements Adder {
 	@SuppressWarnings("rawtypes")
 	public Context add(Context context) throws RemoteException,
 			ContextException {
-		return arithmometer.add(context);
+		Context out = arithmometer.add(context);
+		out.checkpoint();
+		return out;
 	}
 
 }

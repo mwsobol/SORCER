@@ -1,7 +1,9 @@
 package sorcer.core.context.model.srv;
 
-import sorcer.core.context.model.ent.Entry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sorcer.core.context.ApplicationDescription;
+import sorcer.core.context.model.ent.Entry;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
 import sorcer.service.modeling.Variability;
@@ -9,16 +11,14 @@ import sorcer.service.modeling.Variability;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.Map;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Created by Mike Sobolewski on 4/14/15.
  */
-public class SrvEntry extends Entry<Object> implements Variability<Object>, Arg, Evaluation<Object>,
+public class Srv extends Entry<Object> implements Variability<Object>, Arg, Evaluation<Object>,
         Comparable<Object>, Reactive<Object>, Serializable {
 
-    private static Logger logger = LoggerFactory.getLogger(SrvEntry.class.getName());
+    private static Logger logger = LoggerFactory.getLogger(Srv.class.getName());
 
     protected final String name;
 
@@ -29,33 +29,33 @@ public class SrvEntry extends Entry<Object> implements Variability<Object>, Arg,
     // srv fidelities
     protected Map<String, Object> fidelities;
 
-    public SrvEntry(String name) {
+    public Srv(String name) {
         super(name);
         this.name = name;
     }
 
-    public SrvEntry(String name, String path, Type type) {
+    public Srv(String name, String path, Type type) {
         super(name);
         this.name = name;
         this.type = type;
     }
 
-    public SrvEntry(String path, Object value) {
+    public Srv(String path, Object value) {
         super(path, value);
         this.name = path;
     }
 
-    public SrvEntry(String name, Object value, String path) {
+    public Srv(String name, Object value, String path) {
         super(path, value);
         this.name = name;
     }
 
-    public SrvEntry(String name, Object value, String path, Type type) {
+    public Srv(String name, Object value, String path, Type type) {
         this(name, value, path);
         this.type = type;
     }
 
-    public SrvEntry(String name, Model model, String path) {
+    public Srv(String name, Model model, String path) {
         super(path, model);
         this.name = name;
     }

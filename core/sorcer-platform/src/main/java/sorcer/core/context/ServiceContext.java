@@ -21,12 +21,12 @@ import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
 import net.jini.id.Uuid;
 import net.jini.id.UuidFactory;
-import sorcer.co.tuple.EntryList;
+import sorcer.core.context.model.ent.EntryList;
 import sorcer.co.tuple.ExecPath;
 import sorcer.co.tuple.Tuple2;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.model.ent.Entry;
-import sorcer.core.context.model.par.ParEntry;
+import sorcer.core.context.model.par.Par;
 import sorcer.core.context.model.par.ParList;
 import sorcer.core.context.model.par.ParModel;
 import sorcer.core.context.node.ContextNode;
@@ -1556,8 +1556,8 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 		Map.Entry<String, T> entry;
 		while (i.hasNext()) {
 			entry = i.next();
-			if (entry.getValue() instanceof ParEntry) {
-				pl.add((ParEntry)entry.getValue());
+			if (entry.getValue() instanceof Par) {
+				pl.add((Par)entry.getValue());
 			}
 		}
 		return pl;
@@ -2058,8 +2058,8 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 			// sb.append(val.toString() + " ");
 			// }
 			try {
-				if (val instanceof ParEntry)
-					val = "par: " + ((ParEntry)val).getName();
+				if (val instanceof Par)
+					val = "par: " + ((Par)val).getName();
 				else
 					val = getValue(path);
 			} catch (Exception ex) {
@@ -2958,8 +2958,8 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 		return this;
 	}
 
-	public ParEntry getPar(String path) throws ContextException, RemoteException {
-		return new ParEntry(path, this);
+	public Par getPar(String path) throws ContextException, RemoteException {
+		return new Par(path, this);
 	}
 
 	public T getValue(Arg... entries) throws EvaluationException, RemoteException {
@@ -3190,7 +3190,7 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 	 */
 	@Override
 	public Object putDbValue(String path, Object value) throws ContextException, RemoteException {
-		ParEntry parEntry = new ParEntry(path, value == null ? Context.none : value);
+		Par parEntry = new Par(path, value == null ? Context.none : value);
 		parEntry.setPersistent(true);
 		return putValue(path, parEntry);
 	}
@@ -3201,7 +3201,7 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 	@Override
 	public Object putDbValue(String path, Object value, URL datastoreUrl)
 			throws ContextException, RemoteException {
-		ParEntry parEntry = new ParEntry(path, value == null ? Context.none : value);
+		Par parEntry = new Par(path, value == null ? Context.none : value);
 		parEntry.setPersistent(true);
 		parEntry.setDbURL(datastoreUrl);
 		return putValue(path, parEntry);
@@ -3253,7 +3253,7 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 	 */
 	@Override
 	public Arg addPar(Arg par) throws ContextException {
-		ParEntry p = (ParEntry)par;
+		Par p = (Par)par;
 		put(p.getName(), (T)p);
 		if (p.getScope() == null || p.getScope().size() == 0)
 			p.setScope(this);
@@ -3268,7 +3268,7 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 		return p;
 	}
 	
-	public ParEntry appendPar(ParEntry p) throws ContextException {
+	public Par appendPar(Par p) throws ContextException {
 		put(p.getName(), (T)p);
 		if (p.getScope() == null)
 			p.setScope(new ParModel(p.getName()).append(this));
@@ -3287,10 +3287,10 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
 	 * @see sorcer.service.Context#addPar(java.lang.String, java.lang.Object)
 	 */
 	@Override
-	public ParEntry addPar(String path, Object value) throws ContextException {
-		ParEntry parEntry;
+	public Par addPar(String path, Object value) throws ContextException {
+		Par parEntry;
 		try {
-			parEntry = new ParEntry(path, value, this);
+			parEntry = new Par(path, value, this);
 		} catch (RemoteException e) {
 			throw new ContextException(e);
 		}

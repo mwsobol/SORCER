@@ -27,7 +27,7 @@ import java.rmi.RemoteException;
 import java.util.Arrays;
 import java.util.List;
 
-import sorcer.core.context.model.par.ParEntry;
+import sorcer.core.context.model.par.Par;
 import sorcer.service.Arg;
 import sorcer.service.ArgSet;
 import sorcer.service.ContextException;
@@ -66,19 +66,19 @@ public class CmdInvoker extends ServiceInvoker implements CmdInvoking {
 		this.cmdarray = (String[]) list.toArray();
 	}
 	
-	public CmdInvoker(String name, String cmd, ParEntry... parEntries) {
+	public CmdInvoker(String name, String cmd, Par... parEntries) {
 		super(name);
 		this.cmd = cmd;
 		this.pars = new ArgSet(parEntries);
 	}
 
-	public CmdInvoker(String[] cmdarray, ParEntry... parEntries) {
+	public CmdInvoker(String[] cmdarray, Par... parEntries) {
 		this.cmdarray = cmdarray;
 		this.pars = new ArgSet(parEntries);
 	}
 
 	public CmdInvoker(String shcmd, File scriptFile, boolean background,
-			File logFile, ParEntry... parEntries) throws EvaluationException {
+			File logFile, Par... parEntries) throws EvaluationException {
 		cmd = shcmd;
 		this.scriptFile = scriptFile;
 		this.logFile = logFile;
@@ -106,7 +106,7 @@ public class CmdInvoker extends ServiceInvoker implements CmdInvoking {
 	 * @throws EvaluationException
 	 */
 	public CmdInvoker(String argarray[], File script, boolean background,
-			InputStream stdin, File logFile, ParEntry... parEntries) throws EvaluationException {
+			InputStream stdin, File logFile, Par... parEntries) throws EvaluationException {
 		cmdarray = new String[argarray.length + 1];
 		this.scriptFile = script;
 		this.pars = new ArgSet(parEntries);

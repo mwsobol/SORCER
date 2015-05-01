@@ -62,6 +62,7 @@ import java.lang.reflect.Type;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.rmi.RemoteException;
+import java.rmi.server.RMIClassLoader;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -246,6 +247,7 @@ public class ServiceCataloger extends ServiceProvider implements Cataloger {
 	 * 
 	 * @see sorcer.core.provider.Cataloger#lookup(Class[])
 	 */
+	@Override
 	public ServiceItem lookupItem(String providerName, Class... serviceTypes)
 			throws RemoteException {
 		return cinfo.getServiceItem(serviceTypes, providerName);
@@ -258,6 +260,7 @@ public class ServiceCataloger extends ServiceProvider implements Cataloger {
 	 * @return a SORCER service provider
 	 * @throws RemoteException
 	 */
+	@Override
 	public Provider lookup(Class... serviceTypes) throws RemoteException {
 		return lookup(null, serviceTypes);
 
@@ -274,6 +277,7 @@ public class ServiceCataloger extends ServiceProvider implements Cataloger {
 	 * @return a SORCER service provider
 	 * @throws RemoteException
 	 */
+	@Override
 	public Provider lookup(String providerName, Class... serviceTypes)
 			throws RemoteException {
         // TODO RemoteLoggerAppender may call Cataloger to look for RemoteLogger which introduces recursion; make RLA not use Cataloger
@@ -309,6 +313,7 @@ public class ServiceCataloger extends ServiceProvider implements Cataloger {
 	 * @return a SORCER service provider
 	 * @throws RemoteException
 	 */
+	@Override
 	public Provider lookup(ServiceID sid) throws RemoteException {
 		if (sid == null)
 			return null;
@@ -317,12 +322,22 @@ public class ServiceCataloger extends ServiceProvider implements Cataloger {
 				: null;
 	}
 
-    public Map<String, String> getProviderMethods() throws RemoteException {
+	@Override
+	public Map<String, String> getProviderMethods() throws RemoteException {
 		if (cinfo == null)
 			return new HashMap();
 		else
 			return cinfo.getProviderMethods();
 	}
+
+	@Override
+	public Map<String, URL[]>  getProviderCodebaseURLs() throws RemoteException {
+		if (cinfo == null)
+			return new HashMap();
+		else
+			return cinfo.getProviderCodebaseURLs();
+	}
+
 
 	/**
 	 * Returns the list of available providers in this catalog.
@@ -330,6 +345,7 @@ public class ServiceCataloger extends ServiceProvider implements Cataloger {
 	 * @return
 	 * @throws RemoteException
 	 */
+	@Override
 	public String[] getProviderList() throws RemoteException {
 		List<ServiceItem> items = cinfo.getAllServiceItems();
 
@@ -346,6 +362,7 @@ public class ServiceCataloger extends ServiceProvider implements Cataloger {
 		return names.toArray(new String[names.size()]);
 	}
 
+	@Override
 	public String[] getInterfaceList(String providerName)
 			throws RemoteException {
 		if (cinfo == null) {
@@ -354,6 +371,7 @@ public class ServiceCataloger extends ServiceProvider implements Cataloger {
 		return cinfo.getInterfaceList(providerName);
 	}
 
+	@Override
 	public String[] getMethodsList(String providerName, String interfaceName)
 			throws RemoteException {
 		if (cinfo == null) {
@@ -362,12 +380,14 @@ public class ServiceCataloger extends ServiceProvider implements Cataloger {
 		return cinfo.getMethodsList(providerName, interfaceName);
 	}
 
+	@Override
 	public Context exertService(String providerName, Class serviceType,
 			String methodName, Context theContext) throws RemoteException {
 		return cinfo.exertService(providerName, serviceType, methodName,
 				theContext);
 	}
 
+	@Override
 	public String getServiceInfo() throws RemoteException {
 		return cinfo.toString();
 	}
@@ -747,6 +767,59 @@ public class ServiceCataloger extends ServiceProvider implements Cataloger {
 				}
 			}
 			logger.info("getProviderMethods>>map:\n" + map);
+			return map;
+		}
+
+		public Map<String, URL[]> getProviderCodebaseURLs() throws RemoteException {
+			logger.info("Inside GetProviderMethods");
+			observable.tellOfAction("UPDATEDPLEASEPM");
+			Map<String, URL[]> map = new HashMap<String, URL[]>();
+			Collection<List<ServiceItem>> c = interfaceListMap.values();
+			if (c == null) {
+				return map;
+			}
+			Type[] clazz;
+			Object service;
+			String serviceName = null;
+			net.jini.core.entry.Entry[] attributes;
+			for (List<ServiceItem> sItems : c) {
+				// get the first service proxy
+				service = sItems.get(0).service;
+				// get proxy interfaces
+
+				attributes = sItems.get(0).attributeSets;
+				for (int i = 0; i < attributes.length; i++) {
+					if (service instanceof Proxy) {
+						if (attributes[i] instanceof Name) {
+							serviceName = ((Name) attributes[i]).name;
+							break;
+						}
+					} else
+						serviceName = service.getClass().getName();
+				}
+				// list only interfaces of the Service type in package name
+				if (service instanceof Service) {
+					String annotation = RMIClassLoader.getClassAnnotation(service.getClass());
+					if(annotation!=null && annotation.length()>0) {
+						StringTokenizer tok = new StringTokenizer(annotation, " ");
+						URL[] urls = new URL[tok.countTokens()];
+						int i=0;
+						while(tok.hasMoreTokens()) {
+							String url = tok.nextToken();
+							try {
+								urls[i] = new URL(url);
+							} catch (MalformedURLException e) {
+								logger.warn(" Unable to create URL for ["+url+"]", e);
+							}
+							i++;
+						}
+						if (map.get(serviceName) == null) {
+							map.put(serviceName, urls);
+						}
+					}
+				}
+			}
+			logger.info("getProviderCodebaseURLs>>map:\n" + map);
 			return map;
 		}
 
@@ -1130,7 +1203,7 @@ public class ServiceCataloger extends ServiceProvider implements Cataloger {
             return true;
         } catch (Exception e) {
             logger.warn("Service ID: " + si.serviceID
-                    + " is not Alive anymore");
+					+ " is not Alive anymore");
             // throw e;
             return false;
         }

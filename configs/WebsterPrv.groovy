@@ -28,6 +28,7 @@ class WebsterProv {
         // webster root directories
         roots << "${libPath}/sorcer/lib"
         roots <<  "${libPath}/sorcer/lib-dl"
+        roots <<  "${libPath}/common"
         roots <<  "${libPath}/river"
         roots <<  "${sorcerHome}/rio-${System.properties['rio.version']}/lib-dl"
         roots <<  "${libPath}/blitz"

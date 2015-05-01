@@ -1,6 +1,6 @@
 /*
- * Copyright 2013 the original author or authors.
- * Copyright 2013 SorcerSoft.org.
+ * Copyright 2009 the original author or authors.
+ * Copyright 2009 SorcerSoft.org.
  *  
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,22 +15,26 @@
  * limitations under the License.
  */
 
-package sorcer.service.modeling;
+package sorcer.service;
 
-import java.rmi.RemoteException;
+public class GetterException extends ContextException {
 
-/**
- *
- * @author Mike Sobolewski
- */
-public interface Filtration<T> {
+    private static final long serialVersionUID = -1L;
 
-    /**
-     * Returns the filtered out value from the given input.
-     *
-     * @return the filtered out value
-     * @throws FilterException
-     * @throws RemoteException
-     */
-    public Object doFilter(Object input) throws FilterException, RemoteException;
+
+    public GetterException() {
+    }
+
+    public GetterException(Exception exception) {
+        super(exception);
+    }
+
+    public GetterException(String msg, Exception e) {
+        super(msg, e);
+    }
+
+    public GetterException(String msg) {
+        super(msg);
+    }
+
 }

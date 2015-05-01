@@ -18,7 +18,7 @@
 package sorcer.core.exertion;
 
 import net.jini.core.transaction.Transaction;
-import sorcer.core.context.model.par.ParEntry;
+import sorcer.core.context.model.par.Par;
 import sorcer.core.context.model.par.ParModel;
 import sorcer.core.signature.EvaluationSignature;
 import sorcer.core.signature.ServiceSignature;
@@ -48,10 +48,10 @@ public class EvaluationTask extends Task {
 		addSignature(es);
 		es.setEvaluator(evaluator);
 		dataContext.setExertion(this);
-		if (es.getEvaluator() instanceof ParEntry) {
+		if (es.getEvaluator() instanceof Par) {
 			if (dataContext.getScope() == null)
 				dataContext.setScope(new ParModel(name));
-			((ParEntry) es.getEvaluator()).setScope(dataContext.getScope());
+			((Par) es.getEvaluator()).setScope(dataContext.getScope());
 		}
 	}
 
@@ -73,8 +73,8 @@ public class EvaluationTask extends Task {
 		super(name);
 		addSignature(signature);
 		if (context != null) {
-			if (signature.getEvaluator() instanceof ParEntry) {
-				((ParEntry) signature.getEvaluator()).setScope(context);
+			if (signature.getEvaluator() instanceof Par) {
+				((Par) signature.getEvaluator()).setScope(context);
 			}
 			setContext(context);
 		}
@@ -123,8 +123,8 @@ public class EvaluationTask extends Task {
 						}
 				}
 			} else {
-				if (evaluator instanceof ParEntry && dataContext.getScope() != null)
-					((ParEntry) evaluator).getScope().append(dataContext.getScope());
+				if (evaluator instanceof Par && dataContext.getScope() != null)
+					((Par) evaluator).getScope().append(dataContext.getScope());
 			}
 			Object result = evaluator.getValue();
 			if (getProcessSignature().getReturnPath() != null)
@@ -133,8 +133,8 @@ public class EvaluationTask extends Task {
 			if (evaluator instanceof Scopable) {
 				((Context)((Scopable)evaluator).getScope()).putValue(dataContext.getReturnPath().path, result);
 			}
-			if (evaluator instanceof ParEntry && dataContext.getScope() != null)
-				dataContext.getScope().putValue(((ParEntry) evaluator).getName(), result);
+			if (evaluator instanceof Par && dataContext.getScope() != null)
+				dataContext.getScope().putValue(((Par) evaluator).getName(), result);
 		} catch (Exception e) {
 			e.printStackTrace();
 			dataContext.reportException(e);

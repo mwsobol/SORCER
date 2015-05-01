@@ -28,16 +28,17 @@ subprojects {
                     systemProperty "java.security.policy", "${sorcerDistHome}/policy/policy.all"
                     systemProperty "java.protocol.handler.pkgs", "net.jini.url|sorcer.util.url|org.rioproject.url"
                     systemProperty "java.rmi.server.useCodebaseOnly", "false"
-                    systemProperty "java.rmi.server.RMIClassLoaderSpi","sorcer.rio.rmi.SorcerResolvingLoader"
-                    //systemProperty "java.rmi.server.RMIClassLoaderSpi","org.rioproject.rmi.ResolvingLoader"
+                    //systemProperty "java.rmi.server.RMIClassLoaderSpi","sorcer.rio.rmi.SorcerResolvingLoader"
                     systemProperty "sorcer.home", "${sorcerDistHome}"
 					systemProperty "sorcer.version", "${sorcerVersion}"
 					systemProperty "river.version", "${riverVersion}"
                     systemProperty "plexus.version", "${plexusVersion}"
+                    systemProperty "slf4j.version", "${slf4jVersion}"
+                    systemProperty "logback.version", "${logbackVersion}"
                     systemProperty "rio.home", "${rioHome}"
 					systemProperty "project.build.dir", project.buildDir
+                    systemProperty "logback.configurationFile", "${sorcerDistHome}/configs/sorcer-logging.groovy"
                     environment("SORCER_HOME":"${sorcerDistHome}", "RIO_HOME": "${rioHome}")
-//                  systemProperty "java.util.logging.config.file", "${sorcerDistHome}/configs/sorcer.logging"
                 }
             }
         }

@@ -18,11 +18,11 @@
 package sorcer.service.modeling;
 
 
-public class FiltrationException extends Exception {
+public class FilterException extends Exception {
 
 	private static final long serialVersionUID = -3387516993214229948L;
 
-	public FiltrationException() {
+	public FilterException() {
 	}
 
 	/**
@@ -31,15 +31,15 @@ public class FiltrationException extends Exception {
 	 * @param exception
 	 *            embedded exception
 	 */
-	public FiltrationException(Exception exception) {
+	public FilterException(Exception exception) {
 		super(exception);
 	}
 
-	public FiltrationException(String msg, Exception e) {
+	public FilterException(String msg, Exception e) {
 		super(msg);
 	}
 
-	public FiltrationException(String msg) {
+	public FilterException(String msg) {
 		super(msg);
 	}
 	

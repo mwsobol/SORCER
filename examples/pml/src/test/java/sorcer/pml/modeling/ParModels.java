@@ -12,7 +12,7 @@ import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.provider.impl.SubtractorImpl;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.par.Agent;
-import sorcer.core.context.model.par.ParEntry;
+import sorcer.core.context.model.par.Par;
 import sorcer.core.context.model.par.ParModel;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.core.provider.rendezvous.ServiceJobber;
@@ -45,8 +45,8 @@ public class ParModels {
 	private final static Logger logger = LoggerFactory.getLogger(ParModels.class.getName());
 
 	private ParModel pm;
-	private ParEntry<Double> x;
-	private ParEntry<Double> y;
+	private Par<Double> x;
+	private Par<Double> y;
 
 
 	@Before
@@ -63,7 +63,7 @@ public class ParModels {
 	public void closingParScope() throws Exception {
 
 		// a par is a variable (entry) evaluated in its own scope (context)
-		ParEntry y = par("y",
+		Par y = par("y",
 				invoker("(x1 * x2) - (x3 + x4)", pars("x1", "x2", "x3", "x4")));
 		Object val = value(y, ent("x1", 10.0), ent("x2", 50.0),
 				ent("x3", 20.0), ent("x4", 80.0));
@@ -187,7 +187,7 @@ public class ParModels {
 		ParModel pm = parModel(par("x", 10.0), par("y", 20.0),
 				par("add", invoker("x + y", pars("x", "y"))));
 
-		ParEntry x = par(pm, "x");
+		Par x = par(pm, "x");
 		logger.info("par x: " + x);
 		set(x, 20.0);
 		logger.info("val x: " + value(x));
@@ -224,9 +224,9 @@ public class ParModels {
 	public void parInvokers() throws Exception {
 
 		// all var parameters (x1, y1, y2) are not initialized
-		ParEntry y3 = par("y3", invoker("x + y2", pars("x", "y2")));
-		ParEntry y2 = par("y2", invoker("x * y1", pars("x", "y1")));
-		ParEntry y1 = par("y1", invoker("x1 * 5", par("x1")));
+		Par y3 = par("y3", invoker("x + y2", pars("x", "y2")));
+		Par y2 = par("y2", invoker("x * y1", pars("x", "y1")));
+		Par y1 = par("y1", invoker("x1 * 5", par("x1")));
 
 		ParModel pc = parModel(y1, y2, y3);
 		// any dependent values or pars can be updated or added any time
@@ -247,9 +247,9 @@ public class ParModels {
 		assertEquals(value(cxt, "arg/x1"), 10.0);
 		assertEquals(value(cxt, "arg/x2"), 50.0);
 
-		assertTrue(asis(cxt, "arg/x0") instanceof ParEntry);
-		assertTrue(asis(cxt, "arg/x1") instanceof ParEntry);
-		assertTrue(asis(cxt, "arg/x2") instanceof ParEntry);
+		assertTrue(asis(cxt, "arg/x0") instanceof Par);
+		assertTrue(asis(cxt, "arg/x1") instanceof Par);
+		assertTrue(asis(cxt, "arg/x2") instanceof Par);
 
 		put(cxt, "arg/x0", 11.0);
 		put(cxt, "arg/x1", 110.0);
@@ -259,9 +259,9 @@ public class ParModels {
 		assertEquals(value(cxt, "arg/x1"), 110.0);
 		assertEquals(value(cxt, "arg/x2"), 150.0);
 
-		assertTrue(asis(cxt, "arg/x0") instanceof ParEntry);
-		assertTrue(asis(cxt, "arg/x1") instanceof ParEntry);
-		assertTrue(asis(cxt, "arg/x2") instanceof ParEntry);
+		assertTrue(asis(cxt, "arg/x0") instanceof Par);
+		assertTrue(asis(cxt, "arg/x1") instanceof Par);
+		assertTrue(asis(cxt, "arg/x2") instanceof Par);
 	}
 
 	@Test
@@ -269,8 +269,8 @@ public class ParModels {
 
 		// persistable just indicates that argument is persistent,
 		// for example when value(par) is invoked
-		ParEntry dbp1 = persistent(par("design/in", 25.0));
-		ParEntry dbp2 = dbPar("url", "myUrl1");
+		Par dbp1 = persistent(par("design/in", 25.0));
+		Par dbp2 = dbPar("url", "myUrl1");
 
 		assertFalse(asis(dbp1) instanceof URL);
 		assertTrue(asis(dbp2) instanceof URL);
@@ -283,8 +283,8 @@ public class ParModels {
 
 		// store par args in the data store
 		URL sUrl = new URL("http://sorcersoft.org");
-		ParEntry p1 = par("design/in", 30.0);
-		ParEntry p2 = par("url", sUrl);
+		Par p1 = par("design/in", 30.0);
+		Par p2 = par("url", sUrl);
 		URL url1 = storeArg(p1);
 		URL url2 = storeArg(p2);
 //
@@ -318,8 +318,8 @@ public class ParModels {
 		Context cxt = context(ent("design/in1", 25.0), ent("design/in2", 35.0));
 
 		// mapping parameters to cxt, z1 and x2 are par aliases
-		ParEntry x1 = par("x1", "design/in1", cxt);
-		ParEntry x2 = par("x2", "design/in2", cxt);
+		Par x1 = par("x1", "design/in1", cxt);
+		Par x2 = par("x2", "design/in2", cxt);
 
 		assertEquals(value(x1), 25.0);
 		set(x1, 45.0);
@@ -342,7 +342,7 @@ public class ParModels {
 		Context cxt = context(ent("url", "myUrl"), ent("design/in", 25.0));
 
 		// persistent par
-		ParEntry dbIn = persistent(par("dbIn", "design/in", cxt));
+		Par dbIn = persistent(par("dbIn", "design/in", cxt));
 		assertEquals(value(dbIn), 25.0);  	// is persisted
 		assertEquals(dbIn.asis(), "design/in");
 		assertEquals(value((Evaluation)asis(cxt, "design/in")), 25.0);
@@ -353,11 +353,11 @@ public class ParModels {
 
 		// associated context is updated accordingly
 		assertEquals(value(cxt, "design/in"), 30.0);
-		assertTrue(asis(cxt, "design/in") instanceof ParEntry);
-		assertTrue(asis((ParEntry)asis(cxt, "design/in")) instanceof URL);
+		assertTrue(asis(cxt, "design/in") instanceof Par);
+		assertTrue(asis((Par)asis(cxt, "design/in")) instanceof URL);
 
 		// not persistent par
-		ParEntry up = par("up", "url", cxt);
+		Par up = par("up", "url", cxt);
 		assertEquals(value(up), "myUrl");
 
 		set(up, "newUrl");
@@ -390,9 +390,9 @@ public class ParModels {
 
 
 		// context and job parameters
-		ParEntry x1p = par("x1p", "arg/x1", c4);
-		ParEntry x2p = par("x2p", "arg/x2", c4);
-		ParEntry j1p = par("j1p", "j1/t3/result/y", j1);
+		Par x1p = par("x1p", "arg/x1", c4);
+		Par x2p = par("x2p", "arg/x2", c4);
+		Par j1p = par("j1p", "j1/t3/result/y", j1);
 
 		// setting context parameters in a job
 		set(x1p, 10.0);
@@ -442,11 +442,11 @@ public class ParModels {
 				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
 
 
-		ParEntry c4x1p = par("c4x1p", "arg/x1", c4);
-		ParEntry c4x2p = par("c4x2p", "arg/x2", c4);
+		Par c4x1p = par("c4x1p", "arg/x1", c4);
+		Par c4x2p = par("c4x2p", "arg/x2", c4);
 		// job j1 parameter j1/t3/result/y is used in the context of task t6
-		ParEntry j1p = par("j1p", "j1/t3/result/y", j1);
-		ParEntry t4x1p = par("t4x1p", "j1/j2/t4/arg/x1", j1);
+		Par j1p = par("j1p", "j1/t3/result/y", j1);
+		Par t4x1p = par("t4x1p", "j1/j2/t4/arg/x1", j1);
 
 		// setting context parameters in a job
 		set(c4x1p, 10.0);
@@ -542,9 +542,9 @@ public class ParModels {
 	public void runnableAttachment() throws Exception {
 
 		ParModel pm = parModel();
-		final ParEntry x = par("x", 10.0);
-		final ParEntry y = par("y", 20.0);
-		ParEntry z = par("z", invoker("x + y", x, y));
+		final Par x = par("x", 10.0);
+		final Par y = par("y", 20.0);
+		Par z = par("z", invoker("x + y", x, y));
 		add(pm, x, y, z);
 
 		// update vars x and y that loop condition (var z) depends on
@@ -576,9 +576,9 @@ public class ParModels {
 	public void callableAttachment() throws Exception {
 
 		final ParModel pm = parModel();
-		final ParEntry<Double> x = par("x", 10.0);
-		final ParEntry<Double> y = par("y", 20.0);
-		ParEntry z = par("z", invoker("x + y", x, y));
+		final Par<Double> x = par("x", 10.0);
+		final Par<Double> y = par("y", 20.0);
+		Par z = par("z", invoker("x + y", x, y));
 		add(pm, x, y, z);
 
 		// update vars x and y that loop condition (var z) depends on
@@ -602,9 +602,9 @@ public class ParModels {
 	public void callableAttachmentWithArgs() throws Exception {
 
 		final ParModel pm = parModel();
-		final ParEntry<Double> x = par("x", 10.0);
-		final ParEntry<Double> y = par("y", 20.0);
-		ParEntry z = par("z", invoker("x + y", x, y));
+		final Par<Double> x = par("x", 10.0);
+		final Par<Double> y = par("y", 20.0);
+		Par z = par("z", invoker("x + y", x, y));
 		add(pm, x, y, z, par("limit", 60.0));
 
 		// anonymous local class implementing Callable interface
@@ -639,7 +639,7 @@ public class ParModels {
 	@Test
 	public void methodAttachmentWithArgs() throws Exception {
 
-		ParEntry z = par("z", invoker("x + y", x, y));
+		Par z = par("z", invoker("x + y", x, y));
 		add(pm, x, y, z, par("limit", 60.0));
 
 		add(pm, methodInvoker("call", new Config()));

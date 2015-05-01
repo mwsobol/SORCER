@@ -29,6 +29,7 @@ class Sorcer {
     static String sorcerVersion = SorcerEnv.getSorcerVersion()
     static String riverVersion = versionProps.getProperty("river.version")
     static String blitzVersion = versionProps.getProperty("blitz.version")
+    static String commonsIoVersion = versionProps.getProperty("commonsio.version")
 
     static getSorcerHome() {
         String sorcerHome = System.getProperty("sorcer.home", System.getenv("SORCER_HOME"))
@@ -55,7 +56,9 @@ def getCommonDLs() {
     return ["sorcer-dl-${Sorcer.sorcerVersion}.jar",
             "jsk-dl-${Sorcer.riverVersion}.jar",
             "rio-api-${RioVersion.VERSION}.jar",
-            "serviceui-${Sorcer.riverVersion}.jar"]
+            "serviceui-${Sorcer.riverVersion}.jar",
+            "sos-netlet-${Sorcer.sorcerVersion}.jar",
+            "commons-io-${Sorcer.commonsIoVersion}.jar"]
 }
 
 def getForkMode() {
@@ -125,34 +128,20 @@ deployment(name: "Sorcer OS") {
         maintain 1
     }
 
+    service(name: SorcerEnv.getActualName("Exert Monitor"), fork: getForkMode()) {
+        interfaces {
+            classes 'sorcer.core.monitor.MonitoringManagement'
+            resources appendJars(["sorcer-ui-${Sorcer.sorcerVersion}.jar"])
+        }
+        implementation(class: 'sorcer.core.provider.exertmonitor.ExertMonitor') {
+            resources "sos-exertmonitor-${Sorcer.sorcerVersion}.jar",
+                      "sorcer-lib-${Sorcer.sorcerVersion}.jar"
+        }
+        configuration new File("${Sorcer.sorcerHome}/bin/sorcer/exertmonitor/configs/exertmonitor-prv.config").text
+        maintain 1
+    }
+
     if(System.getenv('sorcer.start.all')!=null || System.getProperty('sorcer.start.all')!=null) {
-
-        service(name: SorcerEnv.getActualName("Logger")) {
-            interfaces {
-                classes 'sorcer.core.provider.RemoteLogger'
-                resources appendJars(["sos-logger-${Sorcer.sorcerVersion}-ui.jar",
-                                      "sorcer-ui-${Sorcer.sorcerVersion}.jar"])
-            }
-            implementation(class: 'sorcer.core.provider.logger.ServiceLogger') {
-                resources "sos-logger-${Sorcer.sorcerVersion}.jar",
-                          "sorcer-lib-${Sorcer.sorcerVersion}.jar"
-            }
-            configuration new File("${Sorcer.sorcerHome}/bin/sorcer/logger/configs/logger-prv.config").text
-            maintain 1
-        }
-
-        service(name: SorcerEnv.getActualName("Exert Monitor"), fork: getForkMode()) {
-            interfaces {
-                classes 'sorcer.core.monitor.MonitoringManagement'
-                resources appendJars(["sorcer-ui-${Sorcer.sorcerVersion}.jar"])
-            }
-            implementation(class: 'sorcer.core.provider.exertmonitor.ExertMonitor') {
-                resources "sos-exertmonitor-${Sorcer.sorcerVersion}.jar",
-                          "sorcer-lib-${Sorcer.sorcerVersion}.jar"
-            }
-            configuration new File("${Sorcer.sorcerHome}/bin/sorcer/exertmonitor/configs/exertmonitor-prv.config").text
-            maintain 1
-        }
 
         service(name: SorcerEnv.getActualName("Exerter")) {
             interfaces {

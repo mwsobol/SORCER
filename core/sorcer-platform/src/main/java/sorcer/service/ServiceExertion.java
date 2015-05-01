@@ -27,7 +27,7 @@ import sorcer.core.ComponentSelectionFidelity;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.*;
 import sorcer.core.context.model.ent.Entry;
-import sorcer.core.context.model.par.ParEntry;
+import sorcer.core.context.model.par.Par;
 import sorcer.core.deploy.ServiceDeployment;
 import sorcer.core.invoker.ExertInvoker;
 import sorcer.core.monitor.MonitoringSession;
@@ -982,8 +982,8 @@ public abstract class ServiceExertion implements Exertion, SorcerConstants, Exec
         return controlContext.isExecTimeRequested();
     }
 
-    public ParEntry getPar(String path) throws EvaluationException, RemoteException {
-        return new ParEntry(path, this);
+    public Par getPar(String path) throws EvaluationException, RemoteException {
+        return new Par(path, this);
     }
 
     abstract public Context linkContext(Context context, String path)

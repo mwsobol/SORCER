@@ -27,9 +27,10 @@ import sorcer.core.context.*;
 import sorcer.core.context.model.PoolStrategy;
 import sorcer.core.context.model.ent.EntModel;
 import sorcer.core.context.model.ent.Entry;
-import sorcer.core.context.model.par.ParEntry;
+import sorcer.core.context.model.ent.EntryList;
+import sorcer.core.context.model.par.Par;
 import sorcer.core.context.model.par.ParModel;
-import sorcer.core.context.model.srv.SrvEntry;
+import sorcer.core.context.model.srv.Srv;
 import sorcer.core.deploy.ServiceDeployment;
 import sorcer.core.exertion.*;
 import sorcer.core.provider.*;
@@ -274,7 +275,7 @@ public class operator {
 		}
 		String name = getUnknown();
 		List<Tuple2<String, ?>> entryList = new ArrayList<Tuple2<String, ?>>();
-		List<ParEntry> parEntryList = new ArrayList<ParEntry>();
+		List<Par> parEntryList = new ArrayList<Par>();
 		List<Context.Type> types = new ArrayList<Context.Type>();
 		List<EntryList> entryLists = new ArrayList<EntryList>();
 		Complement subject = null;
@@ -307,8 +308,8 @@ public class operator {
 				name = (String) o;
 			} else if (o instanceof PoolStrategy) {
 				modelStrategy = (PoolStrategy) o;
-			} else if (o instanceof ParEntry) {
-				parEntryList.add((ParEntry) o);
+			} else if (o instanceof Par) {
+				parEntryList.add((Par) o);
 			} else if (o instanceof EntryList) {
 				entryLists.add((EntryList) o);
 			}  else if (o instanceof MapContext) {
@@ -359,7 +360,7 @@ public class operator {
 				populteContext(cxt, entryList);
 		}
 		if (parEntryList != null) {
-			for (ParEntry p : parEntryList)
+			for (Par p : parEntryList)
 				cxt.putValue(p.getName(), p);
 		}
 		if (returnPath != null)
@@ -425,7 +426,7 @@ public class operator {
 												   List<Tuple2<String, ?>> entryList) throws ContextException {
 		for (int i = 0; i < entryList.size(); i++) {
 			Tuple2 t = entryList.get(i);
-			if (t instanceof SrvEntry) {
+			if (t instanceof Srv) {
 //				try {
 //					if (t.getValue() == Context.none && !t.getName().equals(t.path()))
 //                        t.setValue(pcxt);
@@ -645,7 +646,7 @@ public class operator {
 
 	protected static void setPar(PositionalContext pcxt, Tuple2 entry, int i)
 			throws ContextException {
-		ParEntry p = new ParEntry(entry.path(), entry.value());
+		Par p = new Par(entry.path(), entry.value());
 		p.setPersistent(true);
 		if (entry instanceof InputEntry)
 			pcxt.putInValueAt(entry.path(), p, i + 1);
@@ -659,7 +660,7 @@ public class operator {
 
 	protected static void setPar(Context cxt, Tuple2 entry)
 			throws ContextException {
-		ParEntry p = new ParEntry(entry.path(), entry.value());
+		Par p = new Par(entry.path(), entry.value());
 		p.setPersistent(true);
 		if (entry instanceof InputEntry)
 			cxt.putInValue(entry.path(), p);
@@ -906,7 +907,7 @@ public class operator {
 										  ReturnPath returnPath) throws SignatureException {
 		EvaluationSignature sig = null;
 		if (evaluator instanceof Scopable) {
-			sig = new EvaluationSignature(new ParEntry((Identifiable)evaluator));
+			sig = new EvaluationSignature(new Par((Identifiable)evaluator));
 		} else {
 			sig = new EvaluationSignature(evaluator);
 		}
@@ -1476,8 +1477,8 @@ public class operator {
 			synchronized (evaluation) {
 				if (evaluation instanceof Exertion) {
 					return (T) getValue((Exertion) evaluation, entries);
-				} else if (evaluation instanceof ParEntry){
-					return ((ParEntry<T>)evaluation).getValue(entries);
+				} else if (evaluation instanceof Par){
+					return ((Par<T>)evaluation).getValue(entries);
 				} else if (evaluation instanceof Entry){
 					return ((Entry<T>)evaluation).getValue(entries);
 				} else {
@@ -2132,7 +2133,7 @@ public class operator {
 		String outComponentPath;
 		String inComponentPath;
 
-		ParEntry parEntry;
+		Par parEntry;
 
 		Pipe(Exertion out, String outPath, Mappable in, String inPath) {
 			this.out = out;
@@ -2140,7 +2141,7 @@ public class operator {
 			this.in = in;
 			this.inPath = inPath;
 			if ((in instanceof Exertion) && (out instanceof Exertion)) {
-				parEntry = new ParEntry(outPath, inPath, (Exertion)in);
+				parEntry = new Par(outPath, inPath, (Exertion)in);
 				((ServiceExertion) out).addPersister(parEntry);
 			}
 		}
@@ -2154,7 +2155,7 @@ public class operator {
 			this.inComponentPath = inEndPoint.inComponentPath;
 
 			if ((in instanceof Exertion) && (out instanceof Exertion)) {
-				parEntry = new ParEntry(outPath, inPath, (Exertion)in);
+				parEntry = new Par(outPath, inPath, (Exertion)in);
 				((ServiceExertion) out).addPersister(parEntry);
 			}
 		}
@@ -2164,7 +2165,7 @@ public class operator {
 		}
 	}
 
-	public static ParEntry persistent(Pipe pipe) {
+	public static Par persistent(Pipe pipe) {
 		pipe.parEntry.setPersistent(true);
 		return pipe.parEntry;
 	}
@@ -2384,7 +2385,7 @@ public class operator {
 	public static Exertion exertion(Mappable mappable, String path)
 			throws ContextException {
 		Object obj = ((ServiceContext) mappable).asis(path);
-		while (obj instanceof Mappable || obj instanceof ParEntry) {
+		while (obj instanceof Mappable || obj instanceof Par) {
 			try {
 				obj = ((Evaluation) obj).asis();
 			} catch (RemoteException e) {
@@ -2495,8 +2496,8 @@ public class operator {
 				} else if (e instanceof LoopExertion) {
 					((LoopExertion)e).getCondition().setConditionalContext(pm);
 					Exertion target = ((LoopExertion)e).getTarget();
-					if (target instanceof EvaluationTask && ((EvaluationTask)target).getEvaluation() instanceof ParEntry) {
-						ParEntry p = (ParEntry)((EvaluationTask)target).getEvaluation();
+					if (target instanceof EvaluationTask && ((EvaluationTask)target).getEvaluation() instanceof Par) {
+						Par p = (Par)((EvaluationTask)target).getEvaluation();
 						p.setScope(pm);
 						if (((ServiceContext)target.getContext()).getReturnPath() == null)
 							((ServiceContext)target.getContext()).setReturnPath(p.getName());
@@ -2505,8 +2506,8 @@ public class operator {
 //					pm.append(((VarSignature)e.getProcessSignature()).getVariability());
 				} else if (e instanceof EvaluationTask) {
 					e.setScope(pm.getScope());
-					if (((EvaluationTask)e).getEvaluation() instanceof ParEntry) {
-						ParEntry p = (ParEntry)((EvaluationTask)e).getEvaluation();
+					if (((EvaluationTask)e).getEvaluation() instanceof Par) {
+						Par p = (Par)((EvaluationTask)e).getEvaluation();
 						pm.getScope().addPar(p);
 //						pm.addPar(p);
 

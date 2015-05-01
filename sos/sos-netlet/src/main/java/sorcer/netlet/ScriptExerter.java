@@ -93,9 +93,9 @@ public class ScriptExerter {
     public Object parse() throws Throwable {
 
         try {
-            if (out!=null) out.println("creating scriptThread..."+ (System.currentTimeMillis()-startTime)+"ms");
+            if (out!=null && debug) out.println("creating scriptThread..."+ (System.currentTimeMillis()-startTime)+"ms");
             scriptThread = new ScriptThread(script, classLoader);
-            if (out!=null) out.println("get target..." + (System.currentTimeMillis()-startTime)+"ms");
+            if (out!=null && debug) out.println("get target..." + (System.currentTimeMillis()-startTime)+"ms");
             this.target = scriptThread.getTarget();
             return target;
         }
