@@ -3037,7 +3037,7 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
         if (responsePaths != null && responsePaths.size() == 1)
             return responsePaths.get(0);
         else
-            throw new ContextException("No valid unique response available");
+            throw new ContextException("No siingle response available");
     }
 
 	@Override
@@ -3045,7 +3045,12 @@ public class ServiceContext<T> extends Hashtable<String, T> implements
         return getValue(path, entries);
     }
 
-    public T getResponse(Arg... entries) throws ContextException, RemoteException {
+	@Override
+	public void addResponse(String responseName) throws ContextException, RemoteException {
+		responsePaths.add(responseName);
+	}
+
+	public T getResponse(Arg... entries) throws ContextException, RemoteException {
         try {
             if (responsePaths != null && responsePaths.size() == 1)
                 return getValue(responsePaths.get(0), entries);

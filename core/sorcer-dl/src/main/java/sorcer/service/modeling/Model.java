@@ -43,6 +43,36 @@ public interface Model extends Mogram, Dependency {
     public Context getResponses(Arg... args)  throws ContextException, RemoteException;
 
     /**
+     * Returns a response for a given <code>path</code>
+     *
+     * @param path a path of the response in the model
+     * @param args  optional configuration arguments
+     * @return
+     * @throws ContextException
+     * @throws RemoteException
+     */
+    public Object getResponse(String path, Arg... args)  throws ContextException, RemoteException;
+
+    /**
+     * Returns a default response of this model
+     *
+     * @param responseName a response name of the model
+     * @throws ContextException
+     * @throws RemoteException
+     */
+    public void addResponse(String responseName) throws ContextException, RemoteException;
+
+
+    /**
+     * Returns a default response of this model
+     *
+     * @return  a default response
+     * @throws ContextException
+     * @throws RemoteException
+     */
+    public Object getResponse(Arg... entries) throws ContextException, RemoteException;
+
+    /**
      *  Returns a inConnector as a map of input paths of tis model mapped to output paths of the sender.
      *  A inConnector specifies a map of an input context of this model.
      *
@@ -63,25 +93,5 @@ public interface Model extends Mogram, Dependency {
      * @throws RemoteException
      */
     public Context getOutConnector(Arg... args)  throws ContextException, RemoteException;
-
-    /**
-     * Returns a response for a given <code>path</code>
-     *  
-     * @param path a path of the response in the model
-     * @param args  optional configuration arguments
-     * @return
-     * @throws ContextException
-     * @throws RemoteException
-     */
-    public Object getResponse(String path, Arg... args)  throws ContextException, RemoteException;
-
-    /**
-     * Returns a default response of this model
-     *
-     * @return  a default response
-     * @throws ContextException
-     * @throws RemoteException
-     */
-    public Object getResponse(Arg... entries) throws ContextException, RemoteException;
 
 }
