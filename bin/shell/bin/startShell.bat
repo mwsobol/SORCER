@@ -56,7 +56,9 @@ set RIO_CLASSPATH=%RIO_CLASSPATH%;%RIO_HOME%\lib\rio-start-%rio.version%.jar
 set RIO_CLASSPATH=%RIO_CLASSPATH%;%RIO_HOME%\lib-dl\rio-api-%rio.version%.jar
 set RIO_CLASSPATH=%RIO_CLASSPATH%;%RIO_HOME%\lib-dl\monitor-api-%rio.version%.jar
 set RIO_CLASSPATH=%RIO_CLASSPATH%;%RIO_HOME%\lib\logging\slf4j-api-%slf4j.version%.jar
-set RIO_CLASSPATH=%RIO_CLASSPATH%;%RIO_HOME%\lib\logging\slf4j-jdk14-%slf4j.version%.jar
+set RIO_CLASSPATH=%RIO_CLASSPATH%;%RIO_HOME%\lib\logging\logback-core-%logback.version%.jar
+set RIO_CLASSPATH=%RIO_CLASSPATH%;%RIO_HOME%\lib\logging\logback-classic-%logback.version%.jar
+set RIO_CLASSPATH=%RIO_CLASSPATH%;%RIO_HOME%\lib\logging\jul-to-slf4j-%slf4j.version%.jar
 
 set SORCER_PATH=
 set SORCER_PATH=%SORCER_PATH%;%LIB_DIR%\sorcer\lib\sorcer-resolving-loader-%sorcer.version%.jar
@@ -67,7 +69,7 @@ set SORCER_PATH=%SORCER_PATH%;%LIB_DIR%\sorcer\lib-ext\webster-%sorcer.version%.
 
 
 set SHELL_CLASSPATH=
-set SHELL_CLASSPATH=%JINI_BASE%;%SORCER_COMMON%;%RIO_CLASSPATH%;%SORCER_PATH%
+set SHELL_CLASSPATH=%JINI_BASE%;%SORCER_COMMON%;%SORCER_PATH%;%RIO_CLASSPATH%
  
 rem Determine webster url
 IF "%provider.webster.interface%"=="${localhost}" (
@@ -86,7 +88,7 @@ set JAVA_OPTS=-Dsun.net.maxDatagramSockets=1024
 set JAVA_OPTS=%JAVA_OPTS% -Dsorcer.env.file="%SORCER_HOME%\configs\sorcer.env"
 set JAVA_OPTS=%JAVA_OPTS% -Djava.net.preferIPv4Stack=true
 set JAVA_OPTS=%JAVA_OPTS% "-Djava.protocol.handler.pkgs=net.jini.url|sorcer.util.url|org.rioproject.url"
-set JAVA_OPTS=%JAVA_OPTS% -Djava.rmi.server.RMIClassLoaderSpi=sorcer.rio.rmi.SorcerResolvingLoader
+set JAVA_OPTS=%JAVA_OPTS% -Dlogback.configurationFile="%SORCER_HOME%\bin\shell\configs\shell-logging.groovy"
 set JAVA_OPTS=%JAVA_OPTS% -Djava.rmi.server.useCodebaseOnly=false
 set JAVA_OPTS=%JAVA_OPTS% -Dwebster.tmp.dir="%SORCER_HOME%\data"
 set JAVA_OPTS=%JAVA_OPTS% -Dwebster.put.dir="%SORCER_HOME%\data"
@@ -102,4 +104,4 @@ IF DEFINED DEBUG (
   SET JAVA_OPTS=%JAVA_OPTS% -Xdebug -Xrunjdwp:transport=dt_socket,server=y,address=8000
 )
 rem ECHO %WEBSTER_URL%
-ECHO %SHELL_CLASSPATH%
+rem ECHO %SHELL_CLASSPATH%

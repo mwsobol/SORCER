@@ -144,6 +144,7 @@ logger("org.rioproject.resolver.aether.util.ConsoleRepositoryListener", WARN)
  * ==================================================================*/
 
 logger("sorcer.util.ProviderAccessor", OFF)
+logger("sorcer.util.SorcerEnv", OFF)
 logger("sorcer.core.provider.cataloger.ServiceCataloger", OFF)
 //logger("sorcer.modeling.vfe.persist.TaskContextSetter", OFF)
 //logger("sorcer.core.context.model.var.ResponseModel", TRACE)
