@@ -158,8 +158,8 @@ public class ServiceCataloger extends ServiceProvider implements Cataloger {
                                                                             "Cataloger UI",
                                                                             null));
         } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+			logger.warn("Could not create UI descriptor", ex);
+		}
         return uiDesc;
     }
 

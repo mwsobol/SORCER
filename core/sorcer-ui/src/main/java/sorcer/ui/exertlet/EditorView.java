@@ -17,7 +17,6 @@
  */
 package sorcer.ui.exertlet;
 
-import groovy.lang.GroovyShell;
 import net.jini.core.transaction.TransactionException;
 import sorcer.core.provider.Provider;
 import sorcer.netlet.ScriptExerter;
@@ -43,11 +42,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.rmi.RemoteException;
-import java.util.Scanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static sorcer.util.StringUtils.tName;
 
 /**
  * HTML file browser and file editor
@@ -60,7 +56,7 @@ public class EditorView extends JPanel implements HyperlinkListener {
 	private final JFileChooser fileChooser = new JFileChooser(
 			System.getProperty("sorcer.home"));
 	private JIconButton homeButton;
-	private JButton editButton, saveButton, openButton,
+	private JButton saveButton, openButton,
 			saveAsButton, exertButton;
 
 	private JTextField urlField;
@@ -78,9 +74,7 @@ public class EditorView extends JPanel implements HyperlinkListener {
 	private static String GET_CONTEXT_LABEL = "Get Context Template...";
 	private JMenuItem openMenuItem, editMenuItem, saveMenuItem, saveAsMenuItem, getContextMenuItem, exertMenuItem, closeMenuItem;
 	private Provider provider;
-	private GroovyShell shell;
 	private EditorViewSignature model;
-	private static StringBuilder staticImports;
     private ScriptExerter scriptExerter;
 
 	public EditorView(String url, boolean withLocator) {
@@ -127,11 +121,7 @@ public class EditorView extends JPanel implements HyperlinkListener {
 		this.source = input;
 		
 		EditActionListener actionListener = new EditActionListener();
-		// get static imports for exertlets
-		if (staticImports == null) {
-			staticImports = readTextFromJar("static-imports.txt");
-			//System.out.println("get staticImports: " + staticImports.toString());
-		}
+
 		if (withLocator) {
 			URL infoURL = getClass().getResource("icon-info16.png");
 			JPanel topPanel = new JPanel();
@@ -350,19 +340,8 @@ public class EditorView extends JPanel implements HyperlinkListener {
 				if (model != null) {
 					runTaskScript(script);
 				} else {
-					StringBuilder sb = new StringBuilder(
-							staticImports.toString());
-					Scanner scanner = new Scanner(script);
-					while (scanner.hasNextLine()) {
-						String line = scanner.nextLine().trim();
-						if (line.length() > 0 && line.charAt(0) != '#') {
-							sb.append(line);
-						}
-						sb.append("\n");
-					}
-					logger.debug(">>> executing script: " + sb.toString());
 					try {
-						scriptExerter = new ScriptExerter(sb.toString(), System.out, this.getClass().getClassLoader(),
+						scriptExerter = new ScriptExerter(script, System.out, this.getClass().getClassLoader(),
 								Sorcer.getWebsterUrl().toString());
                         scriptExerter.parse();
                         Object result = scriptExerter.execute();
@@ -461,7 +440,7 @@ public class EditorView extends JPanel implements HyperlinkListener {
 		URLClassLoader taskClassLoader = new URLClassLoader(codebaseURLs, this.getClass().getClassLoader());
 
 		StringBuilder sb = new StringBuilder();
-		sb.append(staticImports.toString()).append("\nimport ").append(
+		sb.append("\nimport ").append(
 				serviceType).append(";\n").append("task(sig(\"")
 				.append(selector).append("\",").append(serviceType).append(
 						".class),\n").append(script).append(");");

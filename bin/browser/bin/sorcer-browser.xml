@@ -42,6 +42,7 @@
         <pathelement location="${rio.lib}/logging/jul-to-slf4j-${slf4j.version}.jar" />
         <pathelement location="${rio.lib}/logging/logback-classic-${logback.version}.jar" />
         <pathelement location="${rio.lib}/logging/logback-core-${logback.version}.jar" />
+        <pathelement location="${common.lib}/plexus-utils-${plexus.version}.jar" />
         <!--<pathelement location="${env.SORCER_HOME}/classes" />-->
     </path>
 
