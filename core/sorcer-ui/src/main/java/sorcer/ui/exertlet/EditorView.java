@@ -181,7 +181,9 @@ public class EditorView extends JPanel implements HyperlinkListener {
 
 		JPopupMenu popup = new JPopupMenu("Netlet Editor");
 
-		if (isEditor || !isDisposable || withLocator) {
+		// I don't see any reason to check disposable here
+		// if (isEditor || !isDisposable || withLocator) {
+		if (isEditor || withLocator) {
 			openMenuItem = new JMenuItem(OPEN_LABEL);
 			openMenuItem.setActionCommand(OPEN_LABEL); 
 			openMenuItem.addActionListener(actionListener);
