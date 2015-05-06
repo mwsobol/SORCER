@@ -30,8 +30,6 @@ import sorcer.util.StringUtils;
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
-import javax.swing.text.html.HTMLDocument;
-import javax.swing.text.html.HTMLFrameHyperlinkEvent;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -149,25 +147,10 @@ public class EditorView extends JPanel implements HyperlinkListener {
 				editMenuItem = new JMenuItem(EDIT_LABEL);
 				add(topPanel, BorderLayout.NORTH);
 			}
-//			if (withEditing) {
-//				editButton = new JButton(EDIT_BUTTON_LABEL);
-//				editButton.setActionCommand(EDIT_BUTTON_LABEL);
-//				editButton.addActionListener(actionListener);
-//				editMenuItem = new JMenuItem(EDIT_BUTTON_LABEL);
-//				topPanel.add(editButton);
-//				add(topPanel, BorderLayout.NORTH);
-//			}
-//			exertButton = new JButton(EXERT_BUTTON_LABEL);
-//			exertButton.setActionCommand(EXERT_BUTTON_LABEL);
-//			exertButton.addActionListener(actionListener);
-//			topPanel.add(exertButton);
 			exertMenuItem = new JMenuItem(EXERT_LABEL);
 		}
 
 		if (isEditor || isDisposable) {
-//			exitButton = new JButton(EXIT_BUTTON_LABEL);
-//			exitButton.setActionCommand(EXIT_BUTTON_LABEL);
-//			exitButton.addActionListener(new BtnActionListener());
 			if (!isDisposable) {
 				saveButton = new JButton(SAVE_LABEL);
 				saveButton.setActionCommand(SAVE_LABEL);
@@ -188,7 +171,6 @@ public class EditorView extends JPanel implements HyperlinkListener {
 
 			JPanel bpanel = new JPanel();
 			((FlowLayout) bpanel.getLayout()).setAlignment(FlowLayout.TRAILING);
-			//bpanel.add(exitButton);
 			bpanel.add(saveAsButton);
 			if (!isDisposable) {
 				bpanel.add(saveButton);
@@ -198,7 +180,7 @@ public class EditorView extends JPanel implements HyperlinkListener {
 		}
 
 		JPopupMenu popup = new JPopupMenu("Netlet Editor");
-	
+
 		if (isEditor || !isDisposable || withLocator) {
 			openMenuItem = new JMenuItem(OPEN_LABEL);
 			openMenuItem.setActionCommand(OPEN_LABEL); 
@@ -263,21 +245,6 @@ public class EditorView extends JPanel implements HyperlinkListener {
 
 			editPane.setEditable(editable);
 			editPane.addHyperlinkListener(this);
-
-			// change font size in HTML docs
-			// SimpleAttributeSet attr = new SimpleAttributeSet();
-			// attr.addAttribute(StyleConstants.FontSize, new Integer(10));
-			// htmlPane.getStyledDocument().setCharacterAttributes(0,htmlPane.
-			// getDocument
-			// ().getText(0,htmlPane.getDocument().getLength()),attr,false);
-
-			// HTMLEditorKit kit = new HTMLEditorKit();
-			// MutableAttributeSet set = kit.getInputAttributes();
-			// HTMLDocument doc = (HTMLDocument) kit.createDefaultDocument();
-			// StyleConstants.setFontSize(set, 8);
-			// doc.setCharacterAttributes(0, doc.getLength(), set, false);
-			// htmlPane.setEditorKit(kit);
-
 			editPane.addMouseListener(new PopupListener(popup));
 			JScrollPane scrollPane = new JScrollPane(editPane);
 			add(scrollPane, BorderLayout.CENTER);
@@ -342,7 +309,7 @@ public class EditorView extends JPanel implements HyperlinkListener {
 				} else {
 					try {
 						scriptExerter = new ScriptExerter(script, System.out, this.getClass().getClassLoader(),
-								Sorcer.getWebsterUrl().toString());
+								Sorcer.getWebsterUrl());
                         scriptExerter.parse();
                         Object result = scriptExerter.execute();
 						if (result instanceof Exertion) {
@@ -379,7 +346,6 @@ public class EditorView extends JPanel implements HyperlinkListener {
 				return;
 			}
 			// Clicked "home" button instead of entering URL
-			// url = initialURL;
 			url = "http://sorcersoft.org";
             try {
 			    displayUrl(new URL(url));
@@ -391,7 +357,6 @@ public class EditorView extends JPanel implements HyperlinkListener {
 
 	private void openFile() {
 		int returnVal = fileChooser.showOpenDialog(EditorView.this);
-		BufferedWriter br = null;
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			File file = fileChooser.getSelectedFile();
 			if (file != null) {
@@ -410,7 +375,6 @@ public class EditorView extends JPanel implements HyperlinkListener {
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			File file = fileChooser.getSelectedFile();
 			if (file != null) {
-				//logger.info("Saving edited file as: " + file);
 				try {
 					String content = editPane.getText();
 					br = new BufferedWriter(new FileWriter(file));
@@ -447,7 +411,7 @@ public class EditorView extends JPanel implements HyperlinkListener {
 
 		logger.info(">>> executing task script: " + sb.toString());
 		try {
-			scriptExerter = new ScriptExerter(sb.toString(), System.out, taskClassLoader, Sorcer.getWebsterUrl().toString());
+			scriptExerter = new ScriptExerter(sb.toString(), System.out, taskClassLoader, Sorcer.getWebsterUrl());
 			scriptExerter.parse();
 			Object result = scriptExerter.execute();
 			if (result instanceof Exertion)
@@ -471,8 +435,7 @@ public class EditorView extends JPanel implements HyperlinkListener {
 		String codebase = System.getProperty("java.rmi.server.codebase");
 		logger.debug("Using exertlet codebase: " + codebase);
 		
-		if (((ServiceExertion) exertion).getStatus() == Exec.DONE) {
-		//logger.debug(">>> done by Groovy Shell");
+		if (exertion.getStatus() == Exec.DONE) {
 		showResults(exertion);
 		return;
 		}
@@ -480,8 +443,6 @@ public class EditorView extends JPanel implements HyperlinkListener {
 		boolean done = false;
 		try {
 			Class<?>[] interfaces = provider.getClass().getInterfaces();
-			//logger.debug(">>> signature: " + exertion.getProcessSignature());
-			//logger.debug(">>> interfaces: " + Arrays.toString(interfaces));
 			for (int i = 0; i < interfaces.length; i++) {
 				if (interfaces[i] == exertion.getProcessSignature()
 						.getServiceType()) {
@@ -495,11 +456,8 @@ public class EditorView extends JPanel implements HyperlinkListener {
 				logger.debug(">> executing by exert: " + exertion.getName());
 				// inspect class loader tree
 				com.sun.jini.start.ClassLoaderUtil.displayContextClassLoaderTree();
-//				com.sun.jini.start.ClassLoaderUtil.displayClassLoaderTree(exertion
-//						 .getClass().getClassLoader());
 
 				out = exertion.exert();
-				//logger.debug(">>> done by SSB");
 			}
 		} catch (RemoteException e) {
 			openOutPanel(SorcerUtil.stackTraceToString(e));
@@ -535,8 +493,7 @@ public class EditorView extends JPanel implements HyperlinkListener {
 				openOutPanel(sb.toString());
 			}
 		} else {
-			StringBuilder sb = new StringBuilder(mogram.toString());
-			openOutPanel(sb.toString());
+			openOutPanel(mogram.toString());
 		}
 	}
 	
@@ -548,7 +505,6 @@ public class EditorView extends JPanel implements HyperlinkListener {
 			if (index == 0)
 				fn = source.substring("file://".length());
 		}
-		//logger.info("Saving edited file: " + fn);
 		File file = new File(fn);
 		try {
 			String content = editPane.getText();
@@ -580,10 +536,7 @@ public class EditorView extends JPanel implements HyperlinkListener {
 	}
 
 	private void openEditor(String url) {
-		if (model != null)
-			editor = new EditorView(url, false, true, true, true, false, model);
-		else
-			editor = new EditorView(url, false, true, true, true, false);
+		editor = new EditorView(url, false, true, true, true, false, model);
 		editor.provider = provider;
 		editor.setTabbedPane(tabbedPane);
 		tabbedPane.addTab("Editor", null, editor, "Editor");
@@ -596,10 +549,7 @@ public class EditorView extends JPanel implements HyperlinkListener {
 		if (script == null || script.length() == 0) {
 			script = "No context script availble from the provider: \n" + provider;
 		}
-		if (model != null)
-			editor = new EditorView(script, false, true, true, true, false, model);
-		else
-			editor = new EditorView(script, false, true, true, true, false);
+		editor = new EditorView(script, false, true, true, true, false, model);
 		editor.provider = provider;
 		editor.setTabbedPane(tabbedPane);
 		tabbedPane.addTab("Editor", null, editor, "Editor");
@@ -607,10 +557,7 @@ public class EditorView extends JPanel implements HyperlinkListener {
 	}
 	
 	private void openOutPanel(String text) {
-		if (model != null)
-			editor = new EditorView(text, false, false, false, false, true, model);
-		else
-			editor = new EditorView(text, false, false, false, false, true);
+		editor = new EditorView(text, false, false, false, false, true, model);
 		editor.provider = provider;
 		editor.setTabbedPane(tabbedPane);
 		tabbedPane.addTab("Output", null, editor, "Exertion");
@@ -618,7 +565,6 @@ public class EditorView extends JPanel implements HyperlinkListener {
 	}
 
 	public void setText(String content) {
-		//logger.info("content type: " + htmlPane.getContentType());
 		editPane.setContentType("text/html");
 		editPane.setText(content);
 	}
@@ -640,26 +586,6 @@ public class EditorView extends JPanel implements HyperlinkListener {
 			} catch (IOException ioe) {
 				warnUser("Can't follow link to "
 						+ event.getURL().toExternalForm() + ": " + ioe);
-			}
-		}
-	}
-
-	class Hyperactive implements HyperlinkListener {
-
-		public void hyperlinkUpdate(HyperlinkEvent e) {
-			if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-				JEditorPane pane = (JEditorPane) e.getSource();
-				if (e instanceof HTMLFrameHyperlinkEvent) {
-					HTMLFrameHyperlinkEvent evt = (HTMLFrameHyperlinkEvent) e;
-					HTMLDocument doc = (HTMLDocument) pane.getDocument();
-					doc.processHTMLFrameHyperlinkEvent(evt);
-				} else {
-					try {
-						pane.setPage(e.getURL());
-					} catch (Throwable t) {
-						t.printStackTrace();
-					}
-				}
 			}
 		}
 	}
@@ -701,36 +627,6 @@ public class EditorView extends JPanel implements HyperlinkListener {
 		this.editPane = htmlPane;
 	}
 
-	private StringBuilder readTextFromJar(String filename) {
-		InputStream is = null;
-		BufferedReader br = null;
-		String line;
-		StringBuilder sb = new StringBuilder();;
-
-		try {
-			is = getClass().getResourceAsStream(filename);
-			if (is != null) {
-				br = new BufferedReader(new InputStreamReader(is));
-				while (null != (line = br.readLine())) {
-					sb.append(line);
-					sb.append("\n");
-				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				if (br != null)
-					br.close();
-				if (is != null)
-					is.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-		return sb;
-	}
-	
 	/**
 	 * Create the GUI and show it. For thread safety, this method should be
 	 * invoked from the event-dispatching thread.
@@ -741,7 +637,7 @@ public class EditorView extends JPanel implements HyperlinkListener {
 
 		// Create and set up the window.
 		JFrame frame = new JFrame("Context Path Browser");
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
 		// Create and set up the content pane.
 		EditorView pane = new EditorView("http://localhost", false);
