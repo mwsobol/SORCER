@@ -23,6 +23,7 @@ import sorcer.netlet.ScriptExerter;
 import sorcer.service.*;
 import sorcer.ui.util.JIconButton;
 import sorcer.ui.util.WindowUtilities;
+import sorcer.util.IOUtils;
 import sorcer.util.Sorcer;
 import sorcer.util.SorcerUtil;
 import sorcer.util.StringUtils;
@@ -343,7 +344,7 @@ public class EditorView extends JPanel implements HyperlinkListener {
 					getContextFromProvider();
 				} catch (RemoteException e) {
 					openEditor(SorcerUtil.stackTraceToString(e));
-					e.printStackTrace();
+					logger.warn("Error while getting context provider", e);
 				}
 				return;
 			}
@@ -381,22 +382,19 @@ public class EditorView extends JPanel implements HyperlinkListener {
 					String content = editPane.getText();
 					br = new BufferedWriter(new FileWriter(file));
 					br.write(content);
+					br.flush();
+					br.close();
 				} catch (IOException e) {
 					JOptionPane.showMessageDialog(this, "File Not Saved",
 							"ERROR", JOptionPane.ERROR_MESSAGE);
-					e.printStackTrace();
+					logger.warn("Error saving file {}", file, e);
 				} finally {
-					if (br != null)
-						try {
-							br.close();
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
+					IOUtils.closeQuietly(br);
 				}
 			}
 		}
 	}
-	
+
 	private void runTaskScript(String script) {
 		System.out.println("task: \n" + script);
 
@@ -463,15 +461,15 @@ public class EditorView extends JPanel implements HyperlinkListener {
 			}
 		} catch (RemoteException e) {
 			openOutPanel(SorcerUtil.stackTraceToString(e));
-			e.printStackTrace();
+			logger.warn("Error while processing exertion", e);
 			return;
 		} catch (TransactionException e) {
 			openOutPanel(SorcerUtil.stackTraceToString(e));
-			e.printStackTrace();
+			logger.warn("Error while processing exertion", e);
 			return;
 		} catch (ExertionException e) {
 			openOutPanel(SorcerUtil.stackTraceToString(e));
-			e.printStackTrace();
+			logger.warn("Error while processing exertion", e);
 			return;
 		}
 		showResults(out);
@@ -513,14 +511,10 @@ public class EditorView extends JPanel implements HyperlinkListener {
 			br = new BufferedWriter(new FileWriter(file));
 			br.write(content);
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.warn("Error saving file",e);
+			warnUser(e.getMessage());
 		} finally {
-			if (br != null)
-				try {
-					br.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+			IOUtils.closeQuietly(br);
 		}
 	}
 
