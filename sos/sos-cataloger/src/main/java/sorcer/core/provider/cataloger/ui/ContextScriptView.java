@@ -49,7 +49,7 @@ public class ContextScriptView extends JPanel {
 	/**
 	 * Constructor for creating the context view panel
 	 * 
-	 * @param signatureDispatcher
+	 * @param dispatcher
 	 *            Remote dispatcher to use.
 	 */
 	public ContextScriptView(SignatureDispatchment dispatcher, BrowserModel model) {

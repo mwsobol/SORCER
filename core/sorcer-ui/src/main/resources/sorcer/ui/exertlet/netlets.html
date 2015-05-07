@@ -74,15 +74,25 @@ green {
 <p class="basicText">
 A  <em>block</em> is a concatenation of exertions with control-flow exertions to define branching and looping for service-oriented algorithmic logic.
 </p>
-<p class="basicText">To use classes that come from external providers in your code you can add a codebase declaration to specify
-    the jar files to be loaded from external http code servers (websters). You can specify the codebase as:
+<p class="basicText">To use classes that come from external providers in your code you can dynamically load a jar file by using the following declaration.
+    The jar files specified this way will be loaded from external http code servers (websters).
 </p>
 <p class="basicText">
-    <span class="green"><span class="light-green"><code>codebase http://host:port/file.jar</code></span></span>
-    - a remote jar file using a direct URL or  <br>
-    <span class="green"><span class="light-green"><code>codebase artifact:groupId/artifactId[/type][/classifier]/version</code></span></span>
-    - a jar file and its dependencies from a local or remote maven repository.
+    <span class="green"><span class="light-green"><code>@Load(group='xxxxx.xxxxxx', module='yyyy', version='vv.vv' [,classifier='zz'])</code></span></span>
+    - a jar file that will be loaded from local or remote maven repository <br>
+    <span class="green"><span class="light-green"><code>@Load('group:module[:type:classifier]:version')</code></span></span>
+    - in a shorter notation
 </p>
+<p class="basicText">If you want to use these external classes in the elements that are being sent to remote providers please use the @Codebase annotation instead of @Load:
+</p>
+<p class="basicText">
+    <span class="green"><span class="light-green"><code>@Codebase(group='xxxxx.xxxxxx', module='yyyy', version='vv.vv' [,classifier='zz'])</code></span></span>
+    - a jar file that will be loaded from local or remote maven repository <br>
+    <span class="green"><span class="light-green"><code>@Codebase('group:module[:type:classifier]:version')</code></span></span>
+    - in a shorter notation
+</p>
+
+
 
 
 

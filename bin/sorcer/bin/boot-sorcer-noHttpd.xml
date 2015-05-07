@@ -20,11 +20,13 @@
 		</antcall>
 	</target>
 
+<!--
 	<target name="log-dir">
 		<mkdir dir="${basedir}/../logs" />
 	</target>
+-->
 
-	<target name="kernel" depends="log-dir">
+	<target name="kernel">
 		<!--java jar="${lib}/sorcer-boot.jar" fork="yes"-->
 		<java classname="com.sun.jini.start.ServiceStarter" fork="yes" spawn="${spawn}">
 			<classpath>
@@ -57,8 +59,6 @@
 			<jvmarg value="-Xms512m"/>
 			<jvmarg value="-Xmx1g"/>
 			<sysproperty key="java.protocol.handler.pkgs" value="net.jini.url|sorcer.util.url|org.rioproject.url" />
-			<!--<sysproperty key="java.rmi.server.RMIClassLoaderSpi" value="sorcer.rio.rmi.SorcerResolvingLoader"/>-->
-			<!--<sysproperty key="java.rmi.server.RMIClassLoaderSpi" value="org.rioproject.rmi.ResolvingLoader"/>-->
 			<!--sysproperty key=""webster.debug"" value="true" /-->
 			<!--sysproperty key="webster.port" value="60009" /-->
 			<!--jvmarg value="-Xdebug"/>
