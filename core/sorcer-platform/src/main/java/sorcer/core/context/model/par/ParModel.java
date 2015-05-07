@@ -102,6 +102,8 @@ public class ParModel<T> extends EntModel<T> implements Invocation<T>, Mappable<
 
 			if ((val instanceof Par) && (((Par) val).asis() instanceof Variability)) {
 				bindVar((Variability) ((Par) val).asis());
+			} else if (val instanceof Scopable) {
+				((Scopable)val).getScope().append(this);
 			}
 
 			if (val != null && val instanceof Evaluation) {
@@ -219,7 +221,7 @@ public class ParModel<T> extends EntModel<T> implements Invocation<T>, Mappable<
 				putValue((String) ((Entry) obj).key(),
 						((Entry) obj).value());
 			} else {
-				String pn = ((Identifiable) obj).getName();
+				String pn = obj.getName();
 				p = new Par(pn, obj, this);
 			}
 			
@@ -323,9 +325,9 @@ public class ParModel<T> extends EntModel<T> implements Invocation<T>, Mappable<
 	public Variability getVar(String name) throws ContextException {
 		String key;
 		Object val = null;
-		Enumeration e = contextPaths();
-		while (e.hasMoreElements()) {
-			key = (String) e.nextElement();
+		Iterator e = keyIterator();
+		while (e.hasNext()) {
+			key = (String) e.next();
 			val = getValue(key);
 			if (val instanceof Variability) {
 				if (((Variability) val).getName().equals(name))
@@ -392,10 +394,10 @@ public class ParModel<T> extends EntModel<T> implements Invocation<T>, Mappable<
 	public Context<T> appendNew(Context<T> context)
 			throws ContextException, RemoteException {
 		ServiceContext cxt = (ServiceContext) context;
-		Iterator<Map.Entry<String, Object>> i = cxt.entrySet().iterator();
+		Iterator<Map.Entry<String, Object>> i = cxt.entryIterator();
 		while (i.hasNext()) {
 			Map.Entry<String, Object> e = i.next();
-			if (!contains(e.getKey()) && e.getKey().equals("script")) {
+			if (!containsKey(e.getKey()) && e.getKey().equals("script")) {
 				put(e.getKey(), context.asis(e.getKey()));
 			}
 		}

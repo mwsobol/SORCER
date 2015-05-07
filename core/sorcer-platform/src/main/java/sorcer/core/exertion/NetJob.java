@@ -40,19 +40,20 @@ public class NetJob extends Job implements Evaluation<Object>, Invocation<Object
 	private static final long serialVersionUID = 7060442151643838169L;
 
 	public NetJob() {
-		// do nothing
+		this("net job-" + count++);
 	}
 
 	public NetJob(String name) {
 		super(name);
 		try {
-			fidelity.add(new NetSignature("service", Jobber.class, Type.SRV));
+			addSignature(new NetSignature("service", Jobber.class, Type.SRV));
 		} catch (SignatureException e) {
 			e.printStackTrace();
 		}
 	}
 	
 	public NetJob(String name, Signature signature) {
+		super(name);
 		addSignature(signature);
 	}
 	

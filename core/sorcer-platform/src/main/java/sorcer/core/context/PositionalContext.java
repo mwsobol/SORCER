@@ -55,8 +55,8 @@ public class PositionalContext<T> extends ServiceContext<T> implements
         PositionalContext subcntxt = new PositionalContext();
         subcntxt.setSubject(subjectPath, subjectValue);
         subcntxt.setName(getName() + "-subcontext");
-        subcntxt.setDomainID(getDomainID());
-        subcntxt.setSubdomainID(getSubdomainID());
+        subcntxt.setDomainId(getDomainId());
+        subcntxt.setSubdomainId(getSubdomainId());
         if  (paths != null && paths.length > 0) {
             for (int i = 0; i < paths.length; i++)
                 subcntxt.putInoutValueAt(paths[i], getValue(paths[i]), tally + 1);
@@ -65,7 +65,7 @@ public class PositionalContext<T> extends ServiceContext<T> implements
     }
 
     public Context appendInout(Context context) throws ContextException {
-        Iterator it = ((Map)context).entrySet().iterator();
+        Iterator it = ((ServiceContext)context).entryIterator();
         while (it.hasNext()) {
             Map.Entry<String, Object> pairs = (Map.Entry) it.next();
             putInoutValueAt(pairs.getKey(), pairs.getValue(), tally + 1);

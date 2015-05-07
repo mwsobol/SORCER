@@ -226,7 +226,7 @@ import java.util.Map;
 
 	static public void clenupContextScripts(Context context) {
 		context.remove(Condition._closure_);
-		Iterator i = ((Map) context).entrySet().iterator();
+		Iterator i = ((ServiceContext) context).entryIterator();
 		while (i.hasNext()) {
 			Map.Entry entry = (Map.Entry) i.next();
 			// now check entries

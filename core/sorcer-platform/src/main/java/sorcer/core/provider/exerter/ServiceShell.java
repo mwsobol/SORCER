@@ -268,14 +268,14 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 				exertion = (ServiceExertion)es.getSortedJob();
 			}
 //			 execute modeling tasks
-			if (exertion instanceof ModelingTask && exertion.getFidelity().size() == 1) {
+			if (exertion instanceof ModelingTask && exertion.getFidelity().getSelects().size() == 1) {
 				return ((Task) exertion).doTask(txn);
 			}
 
 			// execute object tasks and jobs
 			if (!(signature instanceof NetSignature)) {
 				if (exertion instanceof Task) {
-					if (exertion.getFidelity().size() == 1) {
+					if (exertion.getFidelity().getSelects().size() == 1) {
 						return ((Task) exertion).doTask(txn);
 					} else {
 						try {

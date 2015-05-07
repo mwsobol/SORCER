@@ -22,7 +22,7 @@ import sorcer.core.context.MapContext;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.ent.EntModel;
 import sorcer.core.context.model.ent.Entry;
-import sorcer.core.context.model.srv.SrvProduct;
+import sorcer.core.context.model.srv.MultiFidelitySrvModel;
 import sorcer.core.context.model.srv.SrvModel;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
@@ -144,13 +144,13 @@ public class operator {
     }
 
     public static Model mfiModel(Object... items) throws ContextException {
-        List<SelectionFidelity> fidelities = new ArrayList<SelectionFidelity>();
+        List<Fidelity<String>> fidelities = new ArrayList<Fidelity<String>>();
         for (Object item : items) {
-            if (item instanceof SelectionFidelity) {
-                fidelities.add((SelectionFidelity)item);
+            if (item instanceof Fidelity) {
+                fidelities.add((Fidelity)item);
         }
     }
-        SrvProduct model = new SrvProduct();
+        MultiFidelitySrvModel model = new MultiFidelitySrvModel();
         model.addSelectionFidelities(fidelities);
         return srvModel(items);
     }
@@ -172,9 +172,9 @@ public class operator {
             model = new SrvModel();
 
         if (sigs != null && sigs.size() > 0) {
-            ServiceFidelity fidelity = new ServiceFidelity();
+            Fidelity fidelity = new Fidelity();
             for (Signature sig : sigs)
-                fidelity.add(sig);
+                fidelity.getSelects().add(sig);
             ((SrvModel)model).addServiceFidelity(fidelity);
             ((SrvModel)model).setSelectedServiceFidelity(fidelity);
         }

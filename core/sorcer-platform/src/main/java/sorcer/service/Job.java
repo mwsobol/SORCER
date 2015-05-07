@@ -20,7 +20,9 @@ package sorcer.service;
 import net.jini.core.lookup.ServiceID;
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
-import sorcer.core.ComponentSelectionFidelity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import sorcer.core.SelectFidelity;
 import sorcer.core.context.ControlContext;
 import sorcer.core.context.FidelityContext;
 import sorcer.core.context.ServiceContext;
@@ -42,8 +44,6 @@ import javax.security.auth.Subject;
 import java.rmi.RemoteException;
 import java.security.Principal;
 import java.util.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A job is a composite service-oriented message comprised of {@link sorcer.service.Exertion}
@@ -74,9 +74,8 @@ public class Job extends CompoundExertion {
 	 * @throws sorcer.service.SignatureException
 	 */
 	public Job() {
-		super(null);
+		this("job-" + count++);
 		// exertions = Collections.synchronizedList(new ArrayList<Exertion>());
-		init();
 	}
 
 	/**
@@ -98,7 +97,7 @@ public class Job extends CompoundExertion {
 	 * @throws ContextException 
 	 */
 	public Job(Mogram mogram) throws ExertionException {
-		super(null);
+		this("job-" + count++);
 		addMogram(mogram);
 	}
 
@@ -107,9 +106,9 @@ public class Job extends CompoundExertion {
 		this.description = description;
 	}
 
-	public Job(String name, String description, ServiceFidelity fidelity) {
+	public Job(String name, String description, Fidelity fidelity) {
 		this(name, description);
-		this.fidelity = fidelity;
+		this.serviceFidelity = fidelity;
 	}
 
 	/**
@@ -118,20 +117,21 @@ public class Job extends CompoundExertion {
 	 * "service" and providerName "*"
 	 * @throws sorcer.service.SignatureException
 	 */
-	private void init() {
+	protected void init() {
+		super.init();
 		NetSignature s = new NetSignature("service", Jobber.class);
 		// Needs to be RemoteJobber for Cataloger to find it
 		// s.setServiceType(Jobber.class.getName());
 		s.setProviderName(null);
 		s.setType(Signature.Type.SRV);
-		fidelity.add(s); // Add the signature
+		serviceFidelity.selects.add(s); // Add the signature
 	}
 
-	public ServiceFidelity getFidelity() {
+	public Fidelity getFidelity() {
 //		if (fidelity != null)
 //			for (int i = 0; i < fidelity.size(); i++)
 //				signatures.get(i).setProviderName(controlContext.getRendezvousName());
-		return fidelity;
+		return serviceFidelity;
 	}
 
 	@Override
@@ -203,12 +203,12 @@ public class Job extends CompoundExertion {
 	public Job doJob(Transaction txn) throws ExertionException,
 			SignatureException, RemoteException, TransactionException {
 		if (delegate == null) {
-			if (fidelity != null) {
+			if (serviceFidelity != null) {
 				Signature ss = null;
-				if (fidelity.size() == 1) {
-					ss = fidelity.get(0);
-				} else if (fidelity.size() > 1) {
-					for (Signature s : fidelity) {
+				if (serviceFidelity.selects.size() == 1) {
+					ss = serviceFidelity.selects.get(0);
+				} else if (serviceFidelity.selects.size() > 1) {
+					for (Signature s : serviceFidelity.selects) {
 						if (s.getType() == Signature.SRV) {
 							ss = s;
 							break;
@@ -225,7 +225,7 @@ public class Job extends CompoundExertion {
 
 					delegate.setFidelities(getFidelities());
 					delegate.setFidelity(getFidelity());
-					delegate.setSelectedFidelitySelector(selectedFidelitySelector);
+					delegate.setSelectedFidelitySelector(namedServiceFidelity);
 					delegate.setContext(dataContext);
 					delegate.setControlContext(controlContext);
 					delegate.setFidelityContexts(fidelityContexts);
@@ -236,7 +236,7 @@ public class Job extends CompoundExertion {
 				if (controlContext.getAccessType().equals(Access.PULL)) {
 					Signature procSig = delegate.getProcessSignature();
 					procSig.setServiceType(Spacer.class);
-					delegate.getFidelity().clear();
+					delegate.serviceFidelity.selects.clear();
 					delegate.addSignature(procSig);
 				}
 			}
@@ -329,7 +329,7 @@ public class Job extends CompoundExertion {
 	public void setOwnerId(String id) {
 		ownerId = id;
 		if (controlContext != null)
-			controlContext.setOwnerID(id);
+			controlContext.setOwnerId(id);
 		for (int i = 0; i < exertions.size(); i++)
 			(((ServiceExertion) get(i))).setOwnerId(id);
 	}
@@ -487,7 +487,7 @@ public class Job extends CompoundExertion {
 	@Override
 	public Object getValue(String path, Arg... args) throws ContextException {
 		if (path.startsWith("super")) {
-			return parent.getContext().getValue(path.substring(6), args);
+			return ((Exertion)parent).getContext().getValue(path.substring(6), args);
 		} else {
 			if (path.indexOf(name) >= 0)
 				return getJobValue(path);
@@ -591,11 +591,11 @@ public class Job extends CompoundExertion {
 	}
 	
 	public void applyFidelityContext(FidelityContext fiContext) throws ExertionException {
-		Collection<SelectionFidelity> fidelities = fiContext.values();
+		Collection<Fidelity> fidelities = fiContext.values();
 		ServiceExertion se = null;
-		for (SelectionFidelity fi : fidelities) {
-			if (fi instanceof ComponentSelectionFidelity) {
-				se = (ServiceExertion) getComponentMogram(((ComponentSelectionFidelity) fi).getPath());
+		for (Fidelity fi : fidelities) {
+			if (fi instanceof SelectFidelity) {
+				se = (ServiceExertion) getComponentMogram(((SelectFidelity) fi).getPath());
 				se.selectFidelity(fi.getName());
 			}
 		}

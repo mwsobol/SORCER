@@ -18,6 +18,8 @@
 package sorcer.service;
 
 import net.jini.core.transaction.Transaction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.exertion.NetTask;
 import sorcer.core.exertion.ObjectTask;
@@ -28,8 +30,6 @@ import sorcer.core.signature.ObjectSignature;
 import java.rmi.RemoteException;
 import java.util.List;
 import java.util.Set;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A <code>Task</code> is an elementary service-oriented message
@@ -103,8 +103,8 @@ public class Task extends ServiceExertion {
 
 	public Task(String name, String description, List<Signature> signatures) {
 		this(name, description);
-		if (this.fidelity != null) {
-			this.fidelity.addAll(signatures);
+		if (this.serviceFidelity != null) {
+			this.serviceFidelity.selects.addAll(signatures);
 		}
 	}
 
@@ -116,12 +116,12 @@ public class Task extends ServiceExertion {
 	public Task doTask(Transaction txn) throws ExertionException,
 			SignatureException, RemoteException {
 		if (delegate == null) {
-			if (fidelity != null) {
+			if (serviceFidelity != null) {
 				Signature ss = null;
-				if (fidelity.size() == 1) {
-					ss = fidelity.get(0);
-				} else if (fidelity.size() > 1) {
-					for (Signature s : fidelity) {
+				if (serviceFidelity.selects.size() == 1) {
+					ss = serviceFidelity.selects.get(0);
+				} else if (serviceFidelity.selects.size() > 1) {
+					for (Signature s : serviceFidelity.selects) {
 						if (s.getType() == Signature.SRV) {
 							ss = s;
 							break;
@@ -142,7 +142,7 @@ public class Task extends ServiceExertion {
 					} 
 					delegate.setFidelities(getFidelities());
 					delegate.setFidelity(getFidelity());
-					delegate.setSelectedFidelitySelector(selectedFidelitySelector);
+					delegate.setSelectedFidelitySelector(namedServiceFidelity);
 					delegate.setContext(dataContext);
 					delegate.setControlContext(controlContext);
 				}
@@ -173,7 +173,7 @@ public class Task extends ServiceExertion {
 	
 	@Override
 	public boolean isCmd()  {
-		return (fidelity.size() == 1);
+		return (serviceFidelity.selects.size() == 1);
 	}
 	
 	public boolean hasChild(String childName) {
@@ -188,12 +188,12 @@ public class Task extends ServiceExertion {
 	public void setOwnerId(String oid) {
 		// Util.debug("Owner ID: " +oid);
 		this.ownerId = oid;
-		if (fidelity != null)
-			for (int i = 0; i < fidelity.size(); i++)
-				((NetSignature) fidelity.get(i)).setOwnerId(oid);
+		if (serviceFidelity.selects != null)
+			for (int i = 0; i < serviceFidelity.selects.size(); i++)
+				((NetSignature) serviceFidelity.selects.get(i)).setOwnerId(oid);
 		// Util.debug("Context : "+ context);
 		if (dataContext != null)
-			dataContext.setOwnerID(oid);
+			dataContext.setOwnerId(oid);
 	}
 
 	public ServiceContext doIt() throws ExertionException {
@@ -231,10 +231,10 @@ public class Task extends ServiceExertion {
 		sb.append(", selector: ").append(getSelector());
 		sb.append(", parent ID: ").append(parentId);
 
-		if (fidelity.size() == 1) {
+		if (serviceFidelity.selects.size() == 1) {
 			sb.append(getProcessSignature().getProviderName());
 		} else {
-			for (Signature s : fidelity) {
+			for (Signature s : serviceFidelity.selects) {
 				sb.append("\n  ").append(s);
 			}
 		}
@@ -365,7 +365,7 @@ public class Task extends ServiceExertion {
 	@Override
 	public Object getValue(String path, Arg... args) throws ContextException {
 		if (path.startsWith("super")) {
-			return parent.getContext().getValue(path.substring(6));
+			return ((Exertion)parent).getContext().getValue(path.substring(6));
 		} else {
 			return dataContext.getValue(path, args);
 		}

@@ -50,7 +50,7 @@ public abstract class Block extends CompoundExertion {
 	public Block(String name, Signature signature) {
 		super(name);
 		try {
-			fidelity.add(signature);
+			serviceFidelity.selects.add(signature);
 			try {
 				setContext(new ParModel("block context: " + getName()));
 //				persistContext();
@@ -339,7 +339,7 @@ public abstract class Block extends CompoundExertion {
 	}
 
 	public Exertion clearScope() throws ContextException {
-		Object[] paths = ((Map)getDataContext()).keySet().toArray();
+		Object[] paths = ((ServiceContext)getDataContext()).keySet().toArray();
 		for (Object path : paths) {
 			dataContext.removePath((String) path);
 //			dataContext.getScope().removePath((String) path);

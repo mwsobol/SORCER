@@ -347,12 +347,12 @@ public class Invokers {
 		logger.info("y: " + value(pm, "y"));
 		logger.info("opt" + value(pm, "opt"));
 		
-//		assertEquals(opt.getValue(), null);
-//
-//		pm.putValue("x", 300.0);
-//		pm.putValue("y", 200.0);
-//		logger.info("opt value: " + opt.getValue());
-//		assertEquals(opt.getValue(), 500.0);
+		assertEquals(opt.getValue(), null);
+
+		pm.putValue("x", 300.0);
+		pm.putValue("y", 200.0);
+		logger.info("opt value: " + opt.getValue());
+		assertEquals(opt.getValue(), 500.0);
 	}
 
 	@Test

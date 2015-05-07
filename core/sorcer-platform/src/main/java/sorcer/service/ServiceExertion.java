@@ -20,17 +20,14 @@ package sorcer.service;
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
 import net.jini.id.Uuid;
-import net.jini.id.UuidFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sorcer.core.ComponentSelectionFidelity;
-import sorcer.core.SorcerConstants;
+import sorcer.core.SelectFidelity;
 import sorcer.core.context.*;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.par.Par;
 import sorcer.core.deploy.ServiceDeployment;
 import sorcer.core.invoker.ExertInvoker;
-import sorcer.core.monitor.MonitoringSession;
 import sorcer.core.provider.Jobber;
 import sorcer.core.provider.Spacer;
 import sorcer.core.provider.exerter.ServiceShell;
@@ -43,7 +40,6 @@ import sorcer.service.Strategy.Access;
 import sorcer.service.Strategy.Flow;
 
 import javax.security.auth.Subject;
-import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.security.NoSuchAlgorithmException;
 import java.security.Principal;
@@ -54,84 +50,13 @@ import java.util.*;
  * @author Mike Sobolewski
  */
 @SuppressWarnings("rawtypes")
-public abstract class ServiceExertion implements Exertion, SorcerConstants, Exec, Serializable {
+public abstract class ServiceExertion extends ServiceMogram implements Exertion {
 
     static final long serialVersionUID = -3907402419486719293L;
 
     protected final static Logger logger = LoggerFactory.getLogger(ServiceExertion.class.getName());
 
-    protected Uuid exertionId;
-
-    protected String runtimeId;
-
-    protected Uuid parentId;
-
-    protected Exertion parent;
-
-    protected String ownerId;
-
-    protected String subjectId;
-
-    protected Subject subject;
-
-    protected String domainId;
-
-    protected String subdomainId;
-
-    protected Long lsbId;
-
-    protected Long msbId;
-
-    protected Uuid sessionId;
-
-    /** position of component Mogram in a compund mogram */
-    protected Integer index = new Integer(-1);
-
-    protected MonitoringSession monitorSession;
-
-    protected String name;
-
-    protected String description;
-
-    protected String project;
-
-    protected String goodUntilDate;
-
-    protected String accessClass;
-
-    protected Boolean isExportControlled;
-
-    protected Integer scopeCode;
-
-    // Date of creation of this Exertion
-    protected Date creationDate = new Date();
-
-    /** execution status: INITIAL|DONE|RUNNING|SUSPENDED|HALTED */
-    protected Integer status = Exec.INITIAL;
-
-    protected Integer priority;
-
-    // service fidelities for this exertions
-    protected Map<String, ServiceFidelity> fidelities;
-
-    protected ServiceFidelity fidelity = new ServiceFidelity();
-
-    // the current fidelity alias, as it is named in 'fidelities'
-    // its original name is different if aliasing is used for already
-    // existing names
-    protected String selectedFidelitySelector;
-
-    // fidelity Contexts for its component exertions
-    protected Map<String, FidelityContext> fidelityContexts;
-
     protected ServiceContext dataContext;
-
-    public static boolean debug = false;
-
-    private static String defaultName = "xrt-";
-
-    // sequence number for unnamed Exertion instances
-    public static int count = 0;
 
     /**
      * A form of service context that describes the control strategy of this
@@ -141,51 +66,26 @@ public abstract class ServiceExertion implements Exertion, SorcerConstants, Exec
 
     protected List<Setter> setters;
 
-    protected SorcerPrincipal principal;
-
-    protected boolean isRevaluable = false;
-
     // if isProxy is true then the identity of returned exertion
     // after exerting it is preserved
     protected boolean isProxy = false;
 
-    // the exertions's dependency scope
-    protected Context scope;
 
     // dependency management for this exertion
     protected List<Evaluation> dependers = new ArrayList<Evaluation>();
 
     public ServiceExertion() {
-        this(defaultName + count++);
+        super("xrt" +  count++);
     }
 
     public ServiceExertion(String name) {
-        init(name);
+        super(name);
     }
 
-    protected void init(String name) {
-        if (name == null || name.length() == 0)
-            this.name = defaultName + count++;
-        else
-            this.name = name;
-        exertionId = UuidFactory.generate();
-        domainId = "0";
-        subdomainId = "0";
-        accessClass = PUBLIC;
-        isExportControlled = Boolean.FALSE;
-        scopeCode = new Integer(PRIVATE_SCOPE);
-        status = new Integer(INITIAL);
+    protected void init() {
+        super.init();
         dataContext = new PositionalContext(name);
         controlContext = new ControlContext(this);
-        principal = new SorcerPrincipal(System.getProperty("user.name"));
-        principal.setId(principal.getName());
-        setSubject(principal);
-
-        Calendar c = new GregorianCalendar();
-        c.roll(Calendar.YEAR, true);
-        goodUntilDate = Integer.toString(c.get(Calendar.MONTH)) + "/"
-                + Integer.toString(c.get(Calendar.DAY_OF_MONTH)) + "/"
-                + Integer.toString(c.get(Calendar.YEAR));
     }
 
     /*
@@ -379,19 +279,8 @@ public abstract class ServiceExertion implements Exertion, SorcerConstants, Exec
             p.setId(id);
     }
 
-    /**
-     * Returns the index assigned by the container.
-     */
-    public int getIndex() {
-        return (index == null) ? -1 : index;
-    }
-
-    public void setIndex(int i) {
-        index = i;
-    }
-
     public void removeSignature(int index) {
-        fidelity.remove(index);
+        serviceFidelity.selects.remove(index);
     }
 
     public void setAccess(Access access) {
@@ -402,67 +291,67 @@ public abstract class ServiceExertion implements Exertion, SorcerConstants, Exec
         controlContext.setFlowType(type);
     }
 
-    public ServiceFidelity getFidelity() {
-        return fidelity;
+    public Fidelity<Signature> getFidelity() {
+        return serviceFidelity;
     }
 
-    public void addSignatures(ServiceFidelity signatures) {
-        if (this.fidelity != null)
-            this.fidelity.addAll(signatures);
+    public void addSignatures(Fidelity<Signature> fidelity) {
+        if (this.serviceFidelity != null)
+            this.serviceFidelity.selects.addAll(fidelity.selects);
         else {
-            this.fidelity = new ServiceFidelity();
-            this.fidelity.addAll(signatures);
+            this.serviceFidelity = new Fidelity();
+            this.serviceFidelity.selects.addAll(fidelity.selects);
         }
     }
 
     public boolean isBatch() {
-        for (Signature s : fidelity) {
+        for (Signature s : serviceFidelity.selects) {
             if (s.getType() != Signature.Type.SRV)
                 return false;
         }
         return true;
     }
 
-    public void setFidelity(ServiceFidelity fidelity) {
-        this.fidelity = fidelity;
+    public void setFidelity(Fidelity fidelity) {
+        this.serviceFidelity = fidelity;
     }
 
-    public void putFidelity(ServiceFidelity fidelity) {
-        if (fidelities == null)
-            fidelities = new HashMap<String, ServiceFidelity>();
-        fidelities.put(fidelity.getName(), fidelity);
+    public void putFidelity(Fidelity fidelity) {
+        if (serviceFidelities == null)
+            serviceFidelities = new HashMap<String, Fidelity<Signature>>();
+        serviceFidelities.put(fidelity.getName(), fidelity);
     }
 
-    public void addFidelity(ServiceFidelity fidelity) {
+    public void addFidelity(Fidelity<Signature> fidelity) {
         putFidelity(fidelity.getName(), fidelity);
-        selectedFidelitySelector = name;
-        this.fidelity = fidelity;
+        namedServiceFidelity = name;
+        this.serviceFidelity = fidelity;
     }
 
-    public void setFidelity(String name, ServiceFidelity fidelity) {
-        this.fidelity = new ServiceFidelity(name, fidelity);
-        putFidelity(name, fidelity);
-        selectedFidelitySelector = name;
+    public void setFidelity(String name, Fidelity<Signature> fidelity) {
+        this.serviceFidelity = new Fidelity(name, fidelity);
+        putFidelity(name, serviceFidelity);
+        namedServiceFidelity = name;
     }
 
-    public void putFidelity(String name, ServiceFidelity fidelity) {
-        if (fidelities == null)
-            fidelities = new HashMap<String, ServiceFidelity>();
-        fidelities.put(name, new ServiceFidelity(name, fidelity));
+    public void putFidelity(String name, Fidelity<Signature> fidelity) {
+        if (serviceFidelities == null)
+            serviceFidelities = new HashMap<String, Fidelity<Signature>>();
+        serviceFidelities.put(name, new Fidelity(fidelity));
     }
 
-    public void addFidelity(String name, ServiceFidelity fidelity) {
-        ServiceFidelity nf = new ServiceFidelity(name, fidelity);
+    public void addFidelity(String name, Fidelity fidelity) {
+        Fidelity nf = new Fidelity(name, fidelity);
         putFidelity(name, nf);
-        selectedFidelitySelector = name;
+        namedServiceFidelity = name;
         fidelity = nf;
     }
 
     public void selectFidelity(Arg... entries) throws ExertionException {
         if (entries != null && entries.length > 0) {
             for (Arg a : entries)
-                if (a instanceof ComponentSelectionFidelity) {
-                    selectComponentFidelity((ComponentSelectionFidelity) a);
+                if (a instanceof SelectFidelity) {
+                    selectComponentFidelity((SelectFidelity) a);
                 } else if (a instanceof SelectionFidelity) {
                     selectFidelity(((SelectionFidelity) a).getName());
                 } else if (a instanceof FidelityContext) {
@@ -477,25 +366,25 @@ public abstract class ServiceExertion implements Exertion, SorcerConstants, Exec
     }
 
     public void selectFidelity(String selector) throws ExertionException {
-        if (selector != null && fidelities != null
-                && fidelities.containsKey(selector)) {
-            ServiceFidelity sf = fidelities.get(selector);
+        if (selector != null && serviceFidelities != null
+                && serviceFidelities.containsKey(selector)) {
+            Fidelity sf = serviceFidelities.get(selector);
 
             if (sf == null)
                 throw new ExertionException("no such service fidelity: " + selector + " at: " + this);
-            fidelity = sf;
-            selectedFidelitySelector = selector;
+            serviceFidelity = sf;
+            namedServiceFidelity = selector;
         }
     }
 
-    public void selectComponentFidelity(ComponentSelectionFidelity componetFiInfo) throws ExertionException {
+    public void selectComponentFidelity(SelectFidelity componetFiInfo) throws ExertionException {
         Exertion ext = (Exertion) getComponentMogram(componetFiInfo.getPath());
         String fn = componetFiInfo.getName();
         if (ext != null && ext.getFidelity() != null
-                && fidelities.containsKey(componetFiInfo.getName())) {
-            ServiceFidelity sf = null;
-            if (componetFiInfo.getSelectors() != null && componetFiInfo.getSelectors().length > 0)
-                sf = new ServiceFidelity(ext.getFidelities().get(componetFiInfo.getName()), componetFiInfo.getSelectors());
+                && serviceFidelities.containsKey(componetFiInfo.getName())) {
+            Fidelity<Signature> sf = null;
+            if (componetFiInfo.selects != null && componetFiInfo.selects.size() > 0)
+                sf = new Fidelity(ext.getFidelities().get(componetFiInfo.getName()), componetFiInfo.selects);
             else
                 sf = ext.getFidelities().get(componetFiInfo.getName());
 
@@ -511,23 +400,23 @@ public abstract class ServiceExertion implements Exertion, SorcerConstants, Exec
     }
 
     public void selectFidelity() throws ExertionException {
-        if (selectedFidelitySelector != null && fidelities != null
-                && fidelities.containsKey(selectedFidelitySelector)) {
-            ServiceFidelity sf = fidelities.get(selectedFidelitySelector);
+        if (namedServiceFidelity != null && serviceFidelities != null
+                && serviceFidelities.containsKey(namedServiceFidelity)) {
+            Fidelity sf = serviceFidelities.get(namedServiceFidelity);
             if (sf == null)
                 throw new ExertionException("no such service fidelity: "
-                        + selectedFidelitySelector);
-            fidelity = sf;
+                        + namedServiceFidelity);
+            serviceFidelity = sf;
         }
     }
 
     public void setProcessSignature(Signature signature) {
-        for (Signature sig : this.fidelity) {
+        for (Signature sig : this.serviceFidelity.selects) {
             if (sig.getType() != Type.SRV) {
-                this.fidelity.remove(sig);
+                this.serviceFidelity.selects.remove(sig);
             }
         }
-        this.fidelity.add(signature);
+        this.serviceFidelity.selects.add(signature);
     }
 
     public void setService(Service provider) {
@@ -556,101 +445,6 @@ public abstract class ServiceExertion implements Exertion, SorcerConstants, Exec
         controlContext.setAccessType(accessType);
     }
 
-    public int getScopeCode() {
-        return (scopeCode == null) ? -1 : scopeCode.intValue();
-    }
-
-    public void setScopeCode(int value) {
-        scopeCode = new Integer(value);
-    }
-
-    public SorcerPrincipal getPrincipal() {
-        return principal;
-    }
-
-    public void setPrincipal(SorcerPrincipal principal) {
-        this.principal = principal;
-    }
-
-    public Uuid getParentId() {
-        return parentId;
-    }
-
-    public void setParentId(Uuid parentId) {
-        this.parentId = parentId;
-    }
-
-    public String getOwnerId() {
-        return ownerId;
-    }
-
-    public void setOwnerId(String id) {
-        ownerId = id;
-    }
-
-    public int getStatus() {
-        return status;
-    }
-
-    public void setStatus(int value) {
-        status = value;
-    }
-
-    public void setSubjectId(String id) {
-        subjectId = id;
-    }
-
-    public String getSubjectId() {
-        return subjectId;
-    }
-
-    public Subject getSubject() {
-        return subject;
-    }
-
-    public void setSubject(Subject subject) {
-        this.subject = subject;
-    }
-
-    public void setProject(String projectName) {
-        project = projectName;
-    }
-
-    public String getProject() {
-        return project;
-    }
-
-    public void setAccessClass(String s) {
-        if (SENSITIVE.equals(s) || CONFIDENTIAL.equals(s) || SECRET.equals(s))
-            accessClass = s;
-        else
-            accessClass = PUBLIC;
-    }
-
-    public String getAccessClass() {
-        return (accessClass == null) ? PUBLIC : accessClass;
-    }
-
-    public void isExportControlled(boolean b) {
-        isExportControlled = new Boolean(b);
-    }
-
-    public boolean isExportControlled() {
-        return isExportControlled.booleanValue();
-    }
-
-    public String getGoodUntilDate() {
-        return goodUntilDate;
-    }
-
-    public void setGoodUntilDate(String date) {
-        goodUntilDate = date;
-    }
-
-    public Uuid getId() {
-        return exertionId;
-    }
-
     public String getDeploymentId(List<Signature> list) throws NoSuchAlgorithmException {
         StringBuilder ssb = new StringBuilder();
         for (Signature s : list) {
@@ -664,52 +458,8 @@ public abstract class ServiceExertion implements Exertion, SorcerConstants, Exec
         return getDeploymentId(getAllNetTaskSignatures());
     }
 
-    public String getRuntimeId() {
-        return runtimeId;
-    }
-
-    public void setRuntimeId(String id) {
-        runtimeId = id;
-    }
-
-    public void setId(Uuid id) {
-        exertionId = id;
-    }
-
-    public String getDomainId() {
-        return domainId;
-    }
-
-    public void setDomainId(String domainId) {
-        this.domainId = domainId;
-    }
-
-    public void setSubdomainId(String subdomaindId) {
-        this.subdomainId = subdomaindId;
-    }
-
-    public String getSubdomainId() {
-        return subdomainId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public String getRendezvousName() {
         return controlContext.getRendezvousName();
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public boolean isMonitorable() {
@@ -733,22 +483,6 @@ public abstract class ServiceExertion implements Exertion, SorcerConstants, Exec
         return false;
     }
 
-    public long getMsbId() {
-        return (msbId == null) ? -1 : msbId.longValue();
-    }
-
-    public void setLsbId(long leastSig) {
-        if (leastSig != -1) {
-            lsbId = new Long(leastSig);
-        }
-    }
-
-    public void setMsbId(long mostSig) {
-        if (mostSig != -1) {
-            msbId = new Long(mostSig);
-        }
-    }
-
     public void setSessionId(Uuid id) {
         sessionId = id;
         if (this instanceof CompoundExertion) {
@@ -757,10 +491,6 @@ public abstract class ServiceExertion implements Exertion, SorcerConstants, Exec
                 ((ServiceExertion) v.get(i)).setSessionId(id);
             }
         }
-    }
-
-    public Uuid getSessionId() {
-        return sessionId;
     }
 
     public ServiceExertion setContext(Context context) {
@@ -784,68 +514,6 @@ public abstract class ServiceExertion implements Exertion, SorcerConstants, Exec
         controlContext.setWaitable(context.isWaitable());
         controlContext.setSignatures(context.getSignatures());
         return this;
-    }
-
-    public void setPriority(int p) {
-        priority = p;
-    }
-
-    public int getPriority() {
-        return (priority == null) ? MIN_PRIORITY : priority;
-    }
-
-    public Signature getProcessSignature() {
-        for (Signature s : fidelity) {
-            if (s.getType() == Signature.Type.SRV)
-                return s;
-        }
-        return null;
-    }
-
-    public List<Signature> getApdProcessSignatures() {
-        List<Signature> sl = new ArrayList<Signature>();
-        for (Signature s : fidelity) {
-            if (s.getType() == Signature.Type.APD_DATA)
-                sl.add(s);
-        }
-        return sl;
-    }
-
-    public List<Signature> getPreprocessSignatures() {
-        List<Signature> sl = new ArrayList<Signature>();
-        for (Signature s : fidelity) {
-            if (s.getType() == Signature.Type.PRE)
-                sl.add(s);
-        }
-        return sl;
-    }
-
-    public List<Signature> getPostprocessSignatures() {
-        List<Signature> sl = new ArrayList<Signature>();
-        for (Signature s : fidelity) {
-            if (s.getType() == Signature.Type.POST)
-                sl.add(s);
-        }
-        return sl;
-    }
-
-    /**
-     * Appends a signature <code>signature</code> for this exertion.
-     **/
-    public void addSignature(Signature signature) {
-        if (signature == null)
-            return;
-        ((ServiceSignature) signature).setOwnerId(getOwnerId());
-        fidelity.add(signature);
-    }
-
-    /**
-     * Removes a signature <code>signature</code> for this exertion.
-     *
-     * @see #addSignature
-     */
-    public void removeSignature(Signature signature) {
-        fidelity.remove(signature);
     }
 
     public Class getServiceType() {
@@ -891,14 +559,6 @@ public abstract class ServiceExertion implements Exertion, SorcerConstants, Exec
         List<Mogram> exs = new ArrayList<Mogram>();
         getMograms(exs);
         return exs;
-    }
-
-    public Exertion getParent() {
-        return parent;
-    }
-
-    public void setParent(Exertion parent) {
-        this.parent = parent;
     }
 
     public String contextToString() {
@@ -1095,41 +755,11 @@ public abstract class ServiceExertion implements Exertion, SorcerConstants, Exec
                 .append(this.getClass().getName()).append(": " + name);
         info.append("\n  process sig=").append(getProcessSignature());
         info.append("\n  status=").append(status);
-        info.append(", exertion ID=").append(exertionId);
+        info.append(", exertion ID=").append(mogramId);
         String time = getControlContext().getExecTime();
         if (time != null && time.length() > 0) {
             info.append("\n  Execution Time = " + time);
         }
-        return info.toString();
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see sorcer.service.Evaluation#isEvaluable()
-     */
-    public boolean isModeling() {
-        return isRevaluable;
-    }
-
-    public void setModeling(boolean isRevaluable) {
-        this.isRevaluable = isRevaluable;
-    }
-
-    public String toString() {
-        if (debug)
-            return describe();
-
-        StringBuffer info = new StringBuffer()
-                .append(this.getClass().getName()).append(": " + name);
-        info.append("\n  status=").append(status);
-        info.append(", exertion ID=").append(exertionId);
-        String time = getControlContext().getExecTime();
-        if (time != null && time.length() > 0) {
-            info.append("\n  Execution Time = " + time);
-        }
-        info.append("\n  [Control Context]\n");
-        info.append(getControlContext() + "\n");
         return info.toString();
     }
 
@@ -1306,30 +936,7 @@ public abstract class ServiceExertion implements Exertion, SorcerConstants, Exec
         status = state;
     }
 
-    /**
-     * <p>
-     * Returns the monitor session of this exertion.
-     * </p>
-     *
-     * @return the monitorSession
-     */
-    public MonitoringSession getMonitorSession() {
-        return monitorSession;
-    }
-
-    /**
-     * <p>
-     * Assigns a monitor session for this exertions.
-     * </p>
-     *
-     * @param monitorSession
-     *            the monitorSession to set
-     */
-    public void setMonitorSession(MonitoringSession monitorSession) {
-        this.monitorSession = monitorSession;
-    }
-
-    /*
+   /*
      * (non-Javadoc)
      *
      * @see sorcer.service.Evaluation#getValue()
@@ -1446,20 +1053,20 @@ public abstract class ServiceExertion implements Exertion, SorcerConstants, Exec
         return cxt.putValue(path, value);
     }
 
-    public Map<String, ServiceFidelity> getFidelities() {
-        return fidelities;
+    public Map<String, Fidelity<Signature>> getFidelities() {
+        return serviceFidelities;
     }
 
-    public void setFidelities(Map<String, ServiceFidelity> fidelities) {
-        this.fidelities = fidelities;
+    public void setFidelities(Map<String, Fidelity<Signature>> fidelities) {
+        this.serviceFidelities = fidelities;
     }
 
     public String getSelectedFidelitySelector() {
-        return selectedFidelitySelector;
+        return namedServiceFidelity;
     }
 
     public void setSelectedFidelitySelector(String selectedFidelitySelector) {
-        this.selectedFidelitySelector = selectedFidelitySelector;
+        this.namedServiceFidelity = selectedFidelitySelector;
     }
 
     public Map<String, FidelityContext> getFidelityContexts() {
@@ -1581,7 +1188,7 @@ public abstract class ServiceExertion implements Exertion, SorcerConstants, Exec
                         + "\n")
                 .append("\tExertion Name:        " + name + "\n")
                 .append("\tExertion Status:      " + status + "\n")
-                .append("\tExertion ID:          " + exertionId + "\n")
+                .append("\tExertion ID:          " + mogramId + "\n")
              	.append("\tCreation Date:        " + sdf.format(creationDate) + "\n")
                 .append("\tRuntime ID:           " + runtimeId + "\n")
                 .append("\tParent ID:            " + parentId + "\n")
@@ -1593,7 +1200,7 @@ public abstract class ServiceExertion implements Exertion, SorcerConstants, Exec
                 .append("\tmsb ID:               " + msbId + "\n")
                 .append("\tSession ID:           " + sessionId + "\n")
                 .append("\tDescription:          " + description + "\n")
-                .append("\tProject:              " + project + "\n")
+                .append("\tProject:              " + projectName + "\n")
                 .append("\tGood Until Date:      " + goodUntilDate + "\n")
                 .append("\tAccess Class:         " + accessClass + "\n")
                 .append("\tIs Export Controlled: " + isExportControlled + "\n")

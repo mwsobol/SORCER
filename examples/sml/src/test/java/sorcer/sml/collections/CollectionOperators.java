@@ -204,7 +204,10 @@ public class CollectionOperators {
 		assertEquals(access(se1), Strategy.Access.PULL);
 
 		// store the argument of entry (parameter)
+		System.out.println("ZZZZZZZZZZZ se1: " + se1);
 		URL se1Url = storeArg(se1);
+		System.out.println("ZZZZZZZZZZZ se1Url: " + se1Url);
+
 		Strategy st1 = (Strategy)content(se1Url);
 		assertTrue(isPersistent(se1));
 		assertTrue(asis(se1) instanceof URL);
@@ -377,7 +380,7 @@ public class CollectionOperators {
 		assertTrue(value(cxt, "arg/x6").equals(40.0));
 
 		// repeatedly reactive evaluations
-		assertTrue((Object) get(cxt, "arg/x7") instanceof ServiceInvoker);
+		assertTrue(get(cxt, "arg/x7") instanceof ServiceInvoker);
 		rrvEnt(cxt, "arg/x7");
 		assertEquals(2.4, (Double) value(cxt, "arg/x7"), 0.0000001);
 

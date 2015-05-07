@@ -35,7 +35,7 @@ public class NetBlock extends Block implements Evaluation<Object>, Invocation<Ob
 	private static final long serialVersionUID = 3420416993635766567L;
 	
 	public NetBlock() throws SignatureException  {
-		super(null, new NetSignature("service", Concatenator.class, Type.SRV));
+		this("net block-" + count++);
 	}
 
 	public NetBlock(String name) throws SignatureException {
@@ -50,7 +50,7 @@ public class NetBlock extends Block implements Evaluation<Object>, Invocation<Ob
 	}
 	
 	public NetBlock(SorcerPrincipal principal) throws ExertionException {
-		this("undefined" + count++, principal);
+		this("net block-" + count++, principal);
 	}
 
 	public NetBlock(String name, SorcerPrincipal principal)

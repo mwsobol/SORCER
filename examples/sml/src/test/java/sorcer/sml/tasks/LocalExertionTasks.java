@@ -75,7 +75,7 @@ public class LocalExertionTasks {
                 context(inEnt("multiply/x1", 10.0), inEnt("multiply/x2", 50.0),
                         inEnt("add/x1", 20.0), inEnt("add/x2", 80.0)));
 
-        logger.info("task getSignatures:" + batch3.getFidelity());
+        logger.info("task getSelects:" + batch3.getFidelity());
 
         batch3 = exert(batch3);
 //		//logger.info("task result/y: " + get(batch3, "result/y"));

@@ -488,7 +488,8 @@ public class ControlFlowManager {
 
     public Task doBatchTask(Task task) throws ExertionException,
             SignatureException, RemoteException, ContextException {
-		ServiceFidelity alls = task.getFidelity();
+        Fidelity tf = task.getFidelity();
+        List<Signature> alls = task.getFidelity().getSelects();
 		Signature lastSig = alls.get(alls.size()-1);
 		if (alls.size() > 1 &&  task.isBatch() && !(lastSig instanceof NetSignature)) {
 			for (int i = 0; i< alls.size()-1; i++) {
@@ -509,12 +510,12 @@ public class ControlFlowManager {
             task.setContext(cxt);
         }
         // execute service task
-		ServiceFidelity ts = new ServiceFidelity(1);
+		Fidelity<Signature> ts = new Fidelity<Signature>();
         Signature tsig = task.getProcessSignature();
         ((ServiceContext)task.getContext()).setCurrentSelector(tsig.getSelector());
         ((ServiceContext)task.getContext()).setCurrentPrefix(tsig.getPrefix());
 
-        ts.add(tsig);
+        ts.getSelects().add(tsig);
         task.setFidelity(ts);
         if (tsig.getReturnPath() != null)
             ((ServiceContext)task.getContext()).setReturnPath(tsig.getReturnPath());
@@ -526,10 +527,10 @@ public class ControlFlowManager {
                     + task.getName());
             task.reportException(ex);
             task.setStatus(Exec.FAILED);
-            task.setFidelity(alls);
+            task.setFidelity(tf);
             return task;
         }
-        task.setFidelity(alls);
+        task.setFidelity(tf);
         // do postprocessing
         if (task.getPostprocessSignatures().size() > 0) {
             Context cxt = postprocess(task);
@@ -542,10 +543,10 @@ public class ControlFlowManager {
                     + task.getName());
             task.reportException(ex);
             task.setStatus(Exec.FAILED);
-            task.setFidelity(alls);
+            task.setFidelity(tf);
             return task;
         }
-        task.setFidelity(alls);
+        task.setFidelity(tf);
         task.stopExecTime();
         return task;
     }
@@ -574,8 +575,8 @@ public class ControlFlowManager {
                 ((ServiceContext)shared).setCurrentSelector(signatures.get(i).getSelector());
                 ((ServiceContext)shared).setCurrentPrefix(signatures.get(i).getPrefix());
 
-                ServiceFidelity tmp = new ServiceFidelity(1);
-                tmp.add(signatures.get(i));
+                Fidelity<Signature> tmp = new Fidelity<Signature>();
+                tmp.getSelects().add(signatures.get(i));
                 t.setFidelity(tmp);
                 t.setContinous(true);
                 t.setContext(shared);

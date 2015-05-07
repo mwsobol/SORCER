@@ -32,10 +32,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.security.Principal;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * In service-based modeling, a parameter (for short a par) is a special kind of
@@ -109,7 +106,7 @@ public class Par<T> extends Entry<T> implements Variability<T>, Arg, Mappable<T>
 			throws RemoteException, ContextException {
 		this(path, (T)argument);
 		if (((ServiceContext)scope).containsKey(Condition._closure_))
-			((ServiceContext) scope).remove(Condition._closure_);
+			 scope.remove(Condition._closure_);
 		this.scope = scope;
 		if (argument instanceof Scopable)
 			((Scopable)argument).setScope(this.scope);
@@ -154,10 +151,11 @@ public class Par<T> extends Entry<T> implements Variability<T>, Arg, Mappable<T>
 						URL url = SdbUtil.store(value);
 						Par p = new Par((String)this.value, url);
 						p.setPersistent(true);
-						if (mappable instanceof ServiceContext)
-							((ServiceContext)mappable).put((String)this.value, p);
-						else
-							mappable.putValue((String)this.value, p);
+						if (mappable instanceof ServiceContext) {
+							((ServiceContext) mappable).put((String) this.value, p);
+						} else {
+							mappable.putValue((String) this.value, p);
+						}
 					}
 				} else {
 					mappable.putValue((String)this.value, value);
@@ -231,7 +229,7 @@ public class Par<T> extends Entry<T> implements Variability<T>, Arg, Mappable<T>
 					// TODO context binding for all exertions, works for tasks only
 					Context cxt = ((Exertion)val).getDataContext();
 					List<String> paths = ((ServiceContext)cxt).getPaths();
-					for (String an : ((Map<String, Object>)scope).keySet()) {
+					for (String an : (Set<String>)((ServiceContext)scope).keySet()) {
 						for (String p : paths) {
 							if (p.endsWith(an)) {
 								cxt.putValue(p, scope.getValue(an));

@@ -19,6 +19,7 @@ package sorcer.core.context;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sorcer.core.SorcerConstants;
 import sorcer.core.exertion.NetJob;
 import sorcer.core.exertion.NetTask;
 import sorcer.core.monitor.MonitoringManagement;
@@ -29,10 +30,7 @@ import sorcer.util.Stopwatch;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.List;
+import java.util.*;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class ControlContext extends ServiceContext<Object> implements StrategyContext {
@@ -170,8 +168,8 @@ public class ControlContext extends ServiceContext<Object> implements StrategyCo
 
 	public ControlContext() {
 		super(CONTROL_CONTEXT, CONTROL_CONTEXT);
-		setDomainID("0");
-		setSubdomainID("0");
+		setDomainId("0");
+		setSubdomainId("0");
 		setExecTimeRequested(true);
         // Changed for Sorter
 		setFlowType(Flow.AUTO);
@@ -214,35 +212,8 @@ public class ControlContext extends ServiceContext<Object> implements StrategyCo
 
 	public void setMasterExertion(Exertion e) {
 		put(MASTER_EXERTION, ((ServiceExertion) e).getId());
-		// for(int i = 0; i< job.size(); i++)
-		// addAttributeValue(job.exertionAt(i), IO, DA_IN);
-		// Set exertion e as out Exertion.
-		// addAttributeValue(e, IO, DA_OUT);
 	}
 
-	// SERVME: QOS SPACER related parameters
-
-	/*
-	 * public void setQosSpacerRepeatTimes(Integer times) { if (times != null)
-	 * put(QOSSPACER_REPEAT_TIMES, times); }
-	 * 
-	 * public Integer getQosSpacerRepeatTimes() { return (Integer)
-	 * get(QOSSPACER_REPEAT_TIMES); }
-	 * 
-	 * public void setQosSpacerTimeout(Long timeout) { if (timeout != null)
-	 * put(QOSSPACER_TIMEOUT, timeout); }
-	 * 
-	 * public Long getQosSpacerTimeout() { return (Long) get(QOSSPACER_TIMEOUT);
-	 * }
-	 * 
-	 * public void setQosSpacerMinProviders(Integer prov) { if (prov != null)
-	 * put(QOSSPACER_MIN_PROVIDERS, prov); }
-	 * 
-	 * public Integer getQosSpacerMinProviders() { return (Integer)
-	 * get(QOSSPACER_MIN_PROVIDERS); }
-	 * 
-	 * // end of SERVME QOS SPACER related parameters
-	 */
 	public boolean isSequential() {
 		return SEQUENTIAL.equals(get(EXERTION_FLOW));
 	}
@@ -475,7 +446,7 @@ public class ControlContext extends ServiceContext<Object> implements StrategyCo
 		int result;
 		try {
 			String i = getAttributeValue(exertion, PRIORITY);
-			result = (i == NULL) ? NORMAL_PRIORITY : Integer.parseInt(i);
+			result = (i == SorcerConstants.NULL) ? NORMAL_PRIORITY : Integer.parseInt(i);
 		} catch (java.lang.ClassCastException ex) {
 			logger.warn("getPriority", ex);
 			return -1;
@@ -485,7 +456,7 @@ public class ControlContext extends ServiceContext<Object> implements StrategyCo
 
 	public void setNotifyList(Exertion exertion, String list) {
 		if (list == null || list.trim().length() == 0)
-			addAttributeValue(exertion, NOTIFY_EXEC, NULL);
+			addAttributeValue(exertion, NOTIFY_EXEC, SorcerConstants.NULL);
 		addAttributeValue(exertion, NOTIFY_EXEC, list);
 	}
 
@@ -514,39 +485,17 @@ public class ControlContext extends ServiceContext<Object> implements StrategyCo
 		CompoundExertion parent = (CompoundExertion)mogram;
 		Exertion component = (Exertion)componentMogram;
 		String path = component.getContext().getName();
-		// String datafileid = (String)getPathIds().get(path);
-
-		// if ((GApp.NEW+":"+GApp.NEW+":"+GApp.NEW).equals(datafileid))
-		// removePath(path);q
-		// else
-		// if (datafileid!=null)
-		// {
 		remove(path);
-		// String value = (String)getValue(path);
-		// remove(path);
-		// String[] tokens = Util.tokenize(datafileid ,":");
-		// String tempdatafileid = GApp.DELETED + ":" + tokens[1] + ":" +
-		// tokens[2];q
-		// Util.debug(this, "temp data file id : " + tempdatafileid);
-		// getDelPathIds().put(path,tempdatafileid);
-		// }
-		// remove attribute values
-		// Enumeration e =
-		// ((Hashtable)getMetacontext().get(CONTEXT_ATTRIBUTES)).keys();
-		// while (e.hasMoreElements())
-		// ((Hashtable)getMetacontext().get((String)e.nextElement())).remove(path
-		// );
-
 		for (int i = ((ServiceExertion) component).getIndex(); i < parent.size(); i++) {
 			String oldPath = parent.get(i).getContext().getName();
 			((ServiceExertion) parent.get(i)).setIndex(i);
 			put(parent.get(i).getContext().getName(), remove(oldPath));
 			Hashtable map;
-			Hashtable imc = getMetacontext();
+			Map<String, Map<String, String>> imc = getMetacontext();
 			String key;
-			Enumeration e2 = ((Hashtable) imc.get(CONTEXT_ATTRIBUTES)).keys();
-			while (e2.hasMoreElements()) {
-				key = (String) e2.nextElement();
+			Iterator e2 = ((Hashtable) imc.get(CONTEXT_ATTRIBUTES)).keySet().iterator();
+			while (e2.hasNext()) {
+				key = (String) e2.next();
 				map = (Hashtable) getMetacontext().get(key);
 				if (map != null && map.size() > 0 && map.containsKey(oldPath))
 					map.put(parent.get(i).getContext().getName(),
@@ -577,7 +526,7 @@ public class ControlContext extends ServiceContext<Object> implements StrategyCo
 	public Context addComponentAssociation(String path, String attributeName,
 			String attributeValue) throws ContextException {
 		if (!containsKey(path))
-			put(path, NULL);
+			put(path, SorcerConstants.NULL);
 		return super.addComponentAssociation(path, attributeName,
 				attributeValue);
 	}
@@ -603,9 +552,9 @@ public class ControlContext extends ServiceContext<Object> implements StrategyCo
 
 	public void updateExertionName(Exertion exertion) throws ContextException {
 		String key, oldPath = null;
-		Enumeration e = keys();
-		while (e.hasMoreElements()) {
-			key = (String) e.nextElement();
+		Iterator e = keyIterator();
+		while (e.hasNext()) {
+			key = (String) e.next();
 			if (key.endsWith("[" + ((CompoundExertion) exertion).getIndex()
 					+ "]" + ID)) {
 				oldPath = key;
@@ -613,11 +562,11 @@ public class ControlContext extends ServiceContext<Object> implements StrategyCo
 			}
 		}
 		String newPath = exertion.getContext().getName();
-		Hashtable map;
-		Hashtable imc = getMetacontext();
-		e = ((Hashtable) imc.get(CONTEXT_ATTRIBUTES)).keys();
-		while (e.hasMoreElements()) {
-			key = (String) e.nextElement();
+		Map map;
+		Map<String, Map<String, String>> imc = getMetacontext();
+		e = ((Hashtable) imc.get(CONTEXT_ATTRIBUTES)).keySet().iterator();
+		while (e.hasNext()) {
+			key = (String) e.next();
 			map = (Hashtable) imc.get(key);
 			if (map != null && map.size() > 0 && map.containsKey(oldPath))
 				map.put(newPath, map.remove(oldPath));

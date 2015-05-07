@@ -47,7 +47,7 @@ public class ObjectTask extends Task {
 	}
 
 	public ObjectTask(String name, Signature... signatures) {
-		super(name);
+		this(name);
 		for (Signature s : signatures) {
 			if (s instanceof ObjectSignature)
 				addSignature(s);
@@ -56,7 +56,7 @@ public class ObjectTask extends Task {
 
 	public ObjectTask(String name, String description, Signature signature)
 			throws SignatureException {
-		super(name);
+		this(name);
 		if (signature instanceof ObjectSignature)
 			addSignature(signature);
 		else

@@ -91,7 +91,7 @@ public class EvaluationTask extends Task {
 		dataContext.setCurrentSelector(getProcessSignature().getSelector());
 		dataContext.setCurrentPrefix(((ServiceSignature) getProcessSignature()).getPrefix());
 
-		if (fidelity.size() > 1) {
+		if (serviceFidelity.getSelects().size() > 1) {
 			try {
 				return super.doBatchTask(txn);
 			} catch (Exception e) {

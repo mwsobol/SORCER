@@ -48,8 +48,8 @@ public class ArithmeticServiceRequestor extends ServiceRequestor {
 					t3,
 					pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
 					pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")),
-					fiContext("mix1", srvFi("j1", "net"), csFi("j1/j2/t4", "net")),
-					fiContext("mix2", srvFi("j1", "net"), csFi("j1/j2/t4", "net"), csFi("j1/j2/t5", "net")));
+					fiContext("mix1", fi("j1", "net"), fi("j1/j2/t4", "net")),
+					fiContext("mix2", fi("j1", "net"), fi("j1/j2/t4", "net"), fi("j1/j2/t5", "net")));
 
 			return job;
 

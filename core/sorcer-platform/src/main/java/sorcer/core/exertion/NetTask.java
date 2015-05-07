@@ -52,6 +52,7 @@ public class NetTask extends ObjectTask implements Evaluation<Object>, Invocatio
 	}
 
 	public NetTask(Uuid jobId, int jobState) {
+		this("net task-" + count++);
 		setParentId(jobId);
 		status = jobState;
 	}
@@ -108,7 +109,7 @@ public class NetTask extends ObjectTask implements Evaluation<Object>, Invocatio
 		} catch (ExertionException e) {
 			e.printStackTrace();
 		}
-		this.fidelity.addAll(Arrays.asList(signatures));
+		this.serviceFidelity.getSelects().addAll(Arrays.asList(signatures));
 	}
 
 	public void setService(Service provider) {
@@ -134,7 +135,7 @@ public class NetTask extends ObjectTask implements Evaluation<Object>, Invocatio
 		temp.status = INITIAL;
 		temp.priority = null;
 		temp.index = null;
-		temp.fidelity = null;
+		temp.serviceFidelity = null;
 		return temp;
 	}
 

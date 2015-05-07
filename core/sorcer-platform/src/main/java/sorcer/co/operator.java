@@ -387,7 +387,7 @@ public class operator {
 				else {
 					if (entry instanceof Setter) {
 						((Setter) entry).setPersistent(true);
-						dburl = (URL) SdbUtil.store(obj);
+						dburl = SdbUtil.store(obj);
 						((Setter)entry).setValue(dburl);
 						return dburl;
 					}

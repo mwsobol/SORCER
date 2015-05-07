@@ -24,7 +24,6 @@ import sorcer.service.ContextException;
 import sorcer.service.SpaceContext;
 import sorcer.service.space.SpaceAccessor;
 import sorcer.space.array.DistribArray05;
-import sorcer.util.ProviderAccessor;
 
 /**
  * SpaceContext persists its context nodes in a distributed array in JavaSpace with 
@@ -40,7 +39,7 @@ public class SharedAssociativeContext extends ServiceContext implements SpaceCon
 		super();
 		this.spaceName = spaceName;
 		JavaSpace05 space = SpaceAccessor.getSpace(spaceName);
-		spaceElements = new DistribArray05(space, "" + contextId);
+		spaceElements = new DistribArray05(space, "" + mogramId);
 	}
 	
 	/* (non-Javadoc)

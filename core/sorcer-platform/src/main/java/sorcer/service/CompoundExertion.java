@@ -34,6 +34,10 @@ abstract public class CompoundExertion extends ServiceExertion {
 	 */
 	protected List<Mogram> exertions = new ArrayList<Mogram>();
 
+	public CompoundExertion() {
+		this("compound xrt=" + count++);
+	}
+
 	public CompoundExertion(String name) {
 		super(name);
 		exertions = new ArrayList<Mogram>();
