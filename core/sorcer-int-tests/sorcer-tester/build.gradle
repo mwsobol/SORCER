@@ -21,6 +21,7 @@ dependencies {
     testCompile project(':sos-exertmonitor')
     testCompile project(':sorcer-test')
     testRuntime libs.slf4j
+    testRuntime libs.logback
 }
 
 task arithmeticPrvDlJar(type: Jar) {

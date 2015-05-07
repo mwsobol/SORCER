@@ -22,6 +22,7 @@ dependencies {
     testCompile project(":sorcer-int-tests:sorcer-tester")
     testCompile libs.junit
     testRuntime libs.slf4j
+    testRuntime libs.logback
 }
 
 def repoPath() {

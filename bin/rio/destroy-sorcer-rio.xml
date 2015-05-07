@@ -25,6 +25,7 @@
             </classpath>
             <sysproperty key="java.security.policy" value="${sorcer.home}/policy/sorcer.policy" />
             <sysproperty key="java.protocol.handler.pkgs" value="net.jini.url|sorcer.util.bdb.sos|org.rioproject.url" />
+            <sysproperty key="logback.configurationFile" value="${sorcer.home}/configs/sorcer-logging.groovy"/>
             <sysproperty key="rio.home" value="${rio.home}" />
             <arg value="monitor" />
             <arg value="jvm:cybernode" />

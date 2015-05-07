@@ -78,6 +78,7 @@ dependencies {
     compile project(':sos-db-prv')
     testCompile project(':sorcer-test')
     testRuntime libs.slf4j
+    testRuntime libs.logback
 }
 
 def deployConfig = file("configs/adder-prv.config")

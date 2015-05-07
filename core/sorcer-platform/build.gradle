@@ -36,6 +36,7 @@ dependencies {
     testCompile project(':sorcer-test')
     testCompile libs.junit
     testRuntime libs.slf4j
+    testRuntime libs.logback
 }
 
 jar {
