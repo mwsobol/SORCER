@@ -55,6 +55,8 @@
             </classpath>
             <sysproperty key="sorcer.home" value="${sorcer.home}" />
             <sysproperty key="sorcer.version" value="${sorcer.version}" />
+            <sysproperty key="river.version" value="${river.version}" />
+            <sysproperty key="rio.version" value="${rio.version}" />
             <sysproperty key="java.protocol.handler.pkgs" value="net.jini.url|sorcer.util.bdb.sos|org.rioproject.url" />
             <sysproperty key="java.security.policy" value="../policy/ssb.policy" />
             <sysproperty key="rio.home" value="${rio.home}"/>

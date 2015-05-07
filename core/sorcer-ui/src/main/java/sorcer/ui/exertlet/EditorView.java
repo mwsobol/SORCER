@@ -455,8 +455,7 @@ public class EditorView extends JPanel implements HyperlinkListener {
 			if (!done) {
 				logger.debug(">> executing by exert: " + exertion.getName());
 				// inspect class loader tree
-				com.sun.jini.start.ClassLoaderUtil.displayContextClassLoaderTree();
-
+				//com.sun.jini.start.ClassLoaderUtil.displayContextClassLoaderTree();
 				out = exertion.exert();
 			}
 		} catch (RemoteException e) {
