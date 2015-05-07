@@ -4,6 +4,7 @@ import groovy.lang.GroovyRuntimeException;
 import net.jini.config.Configuration;
 import org.apache.commons.io.IOUtils;
 import org.codehaus.groovy.control.CompilationFailedException;
+import org.rioproject.RioVersion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.netlet.util.NetletClassLoader;
@@ -14,6 +15,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.util.regex.Matcher;
@@ -57,6 +59,18 @@ public class ScriptExerter {
     }
 
     public final static long startTime = System.currentTimeMillis();
+
+    final protected static URL[] defaultCodebase;
+
+    static {
+        try {
+            defaultCodebase = new URL[]{
+                    new URL("artifact:org.rioproject/rio-api/" + RioVersion.VERSION),
+            };
+        } catch (MalformedURLException e) {
+            throw new ExceptionInInitializerError(e);
+        }
+    }
 
     public ScriptExerter(PrintStream out, ClassLoader classLoader, String websterStrUrl, boolean debug) {
         this.out = out;

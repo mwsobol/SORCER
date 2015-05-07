@@ -81,6 +81,7 @@ import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.UnknownHostException;
+import java.nio.file.Paths;
 import java.rmi.NoSuchObjectException;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
@@ -2171,8 +2172,8 @@ public class ProviderDelegate implements SorcerConstants {
 			try {
 				// check the class resource
                 ClassLoader resourceLoader = Thread.currentThread().getContextClassLoader();
-                String name = "configs/"+ filename;
-                logger.info("Try to load configuration: " + filename);
+                String name = Paths.get("configs", filename).toString();
+				logger.info("Try to load configuration: [{}] {}", System.getProperty(JavaSystemProperties.USER_DIR), filename);
                 URL resourceURL = resourceLoader.getResource(name);
                 InputStream is = null;
                 if(resourceURL!=null) {
@@ -2182,7 +2183,7 @@ public class ProviderDelegate implements SorcerConstants {
                 }
 				// next check local resource
 				if (is == null) {
-					is = new FileInputStream(new File(filename));
+					is = new FileInputStream(new File(name));
 				}
 				String expandingEnv = null;
 				if (is != null) {

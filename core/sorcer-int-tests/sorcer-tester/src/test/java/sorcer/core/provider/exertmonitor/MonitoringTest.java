@@ -61,7 +61,7 @@ public class MonitoringTest {
 		logger.info("t5 context: " + context(t5));
 		assertNotNull(context(t5).get("context/checkpoint/time"));
 		logger.info("t5 value: " + get(t5, "result/y"));
-		assertEquals("Wrong value for 100.0", get(t5, "result/y"), 100.0);
+		assertEquals("Wrong value for 100.0", 100d, get(t5, "result/y"));
 
 		verifyExertionMonitorStatus(t5, "DONE");
 	}
@@ -93,7 +93,7 @@ public class MonitoringTest {
 		Job job = createJob(Strategy.Flow.PAR, Strategy.Access.PULL);
 		job = exert(job);
 		logger.info("job j1 job context: " + serviceContext(job));
-		assertEquals(get(job, "j1/t3/result/y"), 400.00);
+		assertEquals(400d, get(job, "j1/t3/result/y"));
 		verifyExertionMonitorStatus(job, "DONE");
 	}
 
@@ -103,7 +103,7 @@ public class MonitoringTest {
 		Job job = createJob(Strategy.Flow.SEQ, Strategy.Access.PULL);
 		job = exert(job);
 		logger.info("job j1 job context: " + serviceContext(job));
-		assertEquals(get(job, "j1/t3/result/y"), 400.00);
+		assertEquals(400d, get(job, "j1/t3/result/y"));
 		verifyExertionMonitorStatus(job, "DONE");
 	}
 
