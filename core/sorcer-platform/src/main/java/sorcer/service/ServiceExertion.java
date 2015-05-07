@@ -521,11 +521,6 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
         return (signature == null) ? null : signature.getServiceType();
     }
 
-    @Override
-    public Context getScope() {
-        return dataContext.getScope();
-    }
-
     public String getSelector() {
         Signature method = getProcessSignature();
         return (method == null) ? null : method.getSelector();
@@ -979,30 +974,6 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
         return cxt;
     }
 
-    public Object getExertionScope() throws RemoteException {
-        return scope;
-    }
-
-    /**
-     * Assigns the dependency scope for this exertion.
-     *
-     * @param scope
-     *            the scope to set
-     */
-    public void setScope(Context scope) {
-        dataContext.setScope((Context)scope);
-    }
-
-    /**
-     * Assigns the dependency scope for this exertion.
-     *
-     * @param scope
-     *            the scope to set
-     */
-    public void setExertionScope(Object scope) throws RemoteException, ContextException {
-        this.scope = (Context)scope;
-    }
-
     /**
      * Return a list of dependent agents.
      *
@@ -1153,14 +1124,6 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
 
     protected Context getCurrentContext() throws ContextException {
         return getDataContext().getCurrentContext();
-    }
-
-    public Exertion clearScope() throws ContextException {
-        Signature.ReturnPath rp = dataContext.getReturnPath();
-        if (rp != null && rp.path != null)
-            dataContext.removePath(rp.path);
-
-        return this;
     }
 
     /* (non-Javadoc)

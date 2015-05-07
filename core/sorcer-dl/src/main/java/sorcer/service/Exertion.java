@@ -340,8 +340,6 @@ public interface Exertion extends Mogram, Dependency, Invocation<Object>, Evalua
 	 */
 	public boolean isCompound();
 
-
-	public Exertion clearScope() throws ContextException;
 	/**
 	 * The exertion format for thin exertions (no RMI and Jini classes)
 	 */

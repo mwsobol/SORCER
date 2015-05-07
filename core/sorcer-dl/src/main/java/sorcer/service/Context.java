@@ -455,6 +455,7 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 
 	public Context<T> append(Context<T> context) throws ContextException;
 
+	public Context<T> updateEntries(Context<T> context) throws ContextException;
 	/**
 	 * Returns this context within its cuureent scope.
 	 *
@@ -601,7 +602,7 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 	 * @return the enumeration of matches for the given association
 	 * @throws ContextException
 	 */
-	public Enumeration<?> markedPaths(String association)
+	public List<String> markedPaths(String association)
 			throws ContextException;
 
 	/**
@@ -826,7 +827,7 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 	 * @throws ContextException
 	 * @see ContextLink
 	 */
-	public Enumeration<?> localLinkPaths() throws ContextException;
+	public List<String> localLinkPaths() throws ContextException;
 
 	/**
 	 * Returns an {@link Enumeration} of the locations of the
@@ -858,7 +859,7 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 	 * @throws ContextException
 	 * @see ContextLink
 	 */
-	public Enumeration<?> localLinks() throws ContextException;
+	public List<Link> localLinks() throws ContextException;
 
 	/**
 	 * Links the argument <code>context</code> to this context at a given path

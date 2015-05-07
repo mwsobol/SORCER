@@ -670,22 +670,18 @@ public class operator {
         return dependee;
     }
 
-    public static Dependency dependsOn(Dependency dependee, Context scope, Evaluation... dependers) 
-            throws ContextException {
-        if (dependee instanceof Scopable) {
-            Context context = null;
-            try {
-                context = (Context) ((ServiceExertion) dependee).getExertionScope();
-                if (context == null)
-                    ((ServiceExertion) dependee).setExertionScope(scope);
-                else
-                    context.append(scope);
-            } catch (RemoteException e) {
-                e.printStackTrace();
-            }
-        }
-        return dependsOn(dependee, dependers);
-    }
+	public static Dependency dependsOn(Dependency dependee, Context scope, Evaluation... dependers)
+			throws ContextException {
+		if (dependee instanceof Scopable) {
+			Context context = null;
+			context = ((Mogram) dependee).getScope();
+			if (context == null)
+				((Mogram) dependee).setScope(scope);
+			else
+				context.append(scope);
+		}
+		return dependsOn(dependee, dependers);
+	}
 
 	public static Loop loop(int to) {
 		Loop loop = new Loop(to);

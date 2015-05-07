@@ -353,7 +353,7 @@ public abstract class Block extends CompoundExertion {
 		Context cxt = null;
 		for (Mogram mo : mograms) {
 			if (mo instanceof Exertion )
-				((Exertion)mo).clearScope();
+				((ServiceContext)((Exertion)mo).getDataContext()).clearScope();
 
 //			if (mo instanceof Exertion)
 //				cxt = ((Exertion)mo).getContext();

@@ -194,7 +194,7 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 	}
 
 	private void resetScope(Exertion exertion, Context context, Arg... entries) throws ContextException, RemoteException {
-		exertion.clearScope();
+		((ServiceContext)exertion.getDataContext()).clearScope();
 		exertion.getDataContext().append(((ServiceContext)exertion.getDataContext()).getInitContext());
 		if (entries != null) {
 			for (Arg a : entries) {
@@ -215,7 +215,7 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 		if (dependers != null && dependers.size() > 0) {
 			for (Evaluation<Object> depender : dependers) {
 				try {
-					((Invocation)depender).invoke((Context)exertion.getExertionScope(), entries);
+					((Invocation)depender).invoke(exertion.getScope(), entries);
 				} catch (InvocationException e) {
 					throw new ExertionException(e);
 				}

@@ -1152,11 +1152,10 @@ public class Contexts implements SorcerConstants {
 		// above we just checked the top-level context; next, check
 		// all the top-level LINKED contexts (which in turn will check
 		// all their top-level linked contexts, etc.)
-		Enumeration e = cntxt.localLinkPaths();
+		List<String> paths = cntxt.localLinkPaths();
 		ContextLink link;
-		String keysInLink[], linkPath;
-		while (e.hasMoreElements()) {
-			linkPath = (String) e.nextElement();
+		String keysInLink[];
+		for (String linkPath : paths) {
 			link = (ContextLink) ((ServiceContext) cntxt).get(linkPath);
 			keysInLink = getPathsWithAttribute(((ServiceContext) cntxt)
 					.getLinkedContext(link), attribute);
@@ -1271,12 +1270,11 @@ public class Contexts implements SorcerConstants {
 		// above we just checked the top-level context; next, check
 		// all the top-level LINKED contexts (which in turn will check
 		// all their top-level linked contexts, etc.)
-		Enumeration e = cntxt.localLinkPaths();
+		List<String> paths = cntxt.localLinkPaths();
 		ContextLink link;
-		String keysInLink[], linkPath;
-		while (e.hasMoreElements()) {
-			linkPath = (String) e.nextElement();
-			link = (ContextLink) ((ServiceContext) cntxt).get(linkPath);
+		String keysInLink[];
+		for (String linkPath : paths) {
+			link = (ContextLink) cntxt.get(linkPath);
 			keysInLink = getMarkedPaths(((ServiceContext) cntxt)
 					.getLinkedContext(link), association);
 			if (keysInLink != null)
@@ -1339,20 +1337,17 @@ public class Contexts implements SorcerConstants {
 		// we just added all the attribute-value pairs from
 		// the top-level context; check first level links,
 		// which in turn will check their links, etc., etc.
-		Enumeration e2 = context.localLinkPaths();
+		List<String> paths= context.localLinkPaths();
 		ContextLink link;
-		String linkPath;
-		if (e2 != null)
-			while (e2.hasMoreElements()) {
-				linkPath = (String) e2.nextElement();
-				link = (ContextLink) ((ServiceContext) context).get(linkPath);
-				List<String> associations = getAssociations(((ServiceContext) context)
-						.getLinkedContext(link));
-				for (String assoc : associations) {
-						if (!values.contains(assoc))
-							values.add(assoc);
-					}
+		for (String linkPath : paths) {
+			link = (ContextLink) ((ServiceContext) context).get(linkPath);
+			List<String> associations = getAssociations(((ServiceContext) context)
+					.getLinkedContext(link));
+			for (String assoc : associations) {
+				if (!values.contains(assoc))
+					values.add(assoc);
 			}
+		}
 		return values;
 	}
 

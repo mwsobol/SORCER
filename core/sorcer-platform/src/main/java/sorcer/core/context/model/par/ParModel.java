@@ -137,7 +137,7 @@ public class ParModel<T> extends EntModel<T> implements Invocation<T>, Mappable<
 	
 	@Override
 	public T putValue(String path, Object value) throws ContextException {
-		contextChanged = true;
+		isChanged = true;
 		Object obj = get(path);
 		try {
 			if (obj instanceof Par) {
@@ -207,7 +207,7 @@ public class ParModel<T> extends EntModel<T> implements Invocation<T>, Mappable<
 			if (p != null)
 				appendPar(p);
 		}
-		contextChanged = true;
+		isChanged = true;
 		return this;
 	}
 	
@@ -228,7 +228,7 @@ public class ParModel<T> extends EntModel<T> implements Invocation<T>, Mappable<
 			if (p != null)
 				addPar(p);
 		}
-		contextChanged = true;
+		isChanged = true;
 		return this;
 	}
 
@@ -315,11 +315,11 @@ public class ParModel<T> extends EntModel<T> implements Invocation<T>, Mappable<
 	}
 
 	public boolean isContextChanged() {
-		return contextChanged;
+		return isChanged;
 	}
 
 	public void setContextChanged(boolean contextChanged) {
-		this.contextChanged = contextChanged;
+		this.isChanged = contextChanged;
 	}
 	
 	public Variability getVar(String name) throws ContextException {

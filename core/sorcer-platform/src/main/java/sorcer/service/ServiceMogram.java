@@ -2,6 +2,7 @@ package sorcer.service;
 
 import net.jini.id.Uuid;
 import net.jini.id.UuidFactory;
+import sorcer.co.tuple.ExecPath;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.FidelityContext;
 import sorcer.core.monitor.MonitoringSession;
@@ -28,6 +29,10 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
     protected Mogram parent;
 
     protected Uuid parentId;
+
+    protected String parentPath = "";
+
+    protected ExecPath execPath;
 
     protected Uuid sessionId;
 
@@ -59,7 +64,7 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
 
     protected Integer priority;
 
-    // the exertions's dependency scope
+    // the mogram's scope
     protected Context scope;
 
     protected Integer scopeCode = PRIVATE_SCOPE;
@@ -69,6 +74,10 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
     protected String projectName;
 
     protected boolean isRevaluable = false;
+
+    protected boolean isChanged = false;
+
+    protected String dbUrl;
 
     // service fidelities for this exertions
     protected Map<String, Fidelity<Signature>> serviceFidelities;
@@ -229,8 +238,13 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
     }
 
     @Override
-    public void setScope(Context scope) throws ContextException {
+    public Context getScope() {
+        return scope;
+    }
 
+    @Override
+    public void setScope(Context scope) throws ContextException {
+        this.scope = scope;
     }
 
     public Mogram getParent() {
@@ -455,6 +469,41 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
     public void setSubjectId(String subjectId) {
         this.subjectId = subjectId;
     }
+
+    public String getParentPath() {
+        return parentPath;
+    }
+
+    public void setParentPath(String path) {
+        parentPath = path;
+    }
+
+    public Mogram setExecPath(ExecPath execPath)
+            throws ContextException {
+        this.execPath = execPath;
+        return this;
+    }
+
+    public ExecPath getExecPath() {
+        return execPath;
+    }
+
+    public boolean isChanged() {
+        return isChanged;
+    }
+
+    public void setIsChanged(boolean isChanged) {
+        this.isChanged = isChanged;
+    }
+
+    public String getDbUrl() {
+        return dbUrl;
+    }
+
+    public void setDbUrl(String dbUrl) {
+        this.dbUrl = dbUrl;
+    }
+
 
     /**
      * <p>

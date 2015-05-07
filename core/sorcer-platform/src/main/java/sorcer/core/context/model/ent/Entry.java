@@ -81,7 +81,7 @@ public class Entry<T> extends Tuple2<String, T> implements Dependency, Comparabl
 		T val = this._2;
 		URL url = null;
 		try {
-			substitute(entries);
+//			substitute(entries);
 			if (isPersistent) {
 				if (SdbUtil.isSosURL(val)) {
 					val = (T) ((URL) val).getContent();
@@ -100,6 +100,7 @@ public class Entry<T> extends Tuple2<String, T> implements Dependency, Comparabl
 			} else if (val instanceof ServiceInvoker) {
 				return ((ServiceInvoker<T>) val).invoke(entries);
 			} else if (val instanceof Evaluation) {
+				System.out.println("ZZZZZZ val: " + val);
 				return ((Evaluation<T>) val).getValue(entries);
 			}
 		} catch (Exception e) {
@@ -190,7 +191,19 @@ public class Entry<T> extends Tuple2<String, T> implements Dependency, Comparabl
     
 	@Override
 	public String toString() {
-		return "[" + _1 + ":" + _2 + ":" + index + "]";
+		String en = "";
+		if (_2 instanceof Evaluation)
+			try {
+				en = ((Evaluation)_2).asis().toString();
+			} catch (EvaluationException e) {
+				e.printStackTrace();
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			}
+		else
+			en = _2.toString();
+
+		return "[" + _1 + ":" + en + ":" + index + "]";
 	}
 
 	@Override

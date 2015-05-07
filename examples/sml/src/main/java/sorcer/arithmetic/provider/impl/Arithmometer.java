@@ -255,6 +255,9 @@ public class Arithmometer implements SorcerConstants, Serializable {
 					result -= (Double) revalue(context.getInValueAt(2));
 				}
 			} else if (selector.equals(MULTIPLY)) {
+				System.out.println("ZZZZZZZZZ context: " + context);
+				System.out.println("ZZZZZZZ inputs: " + inputs);
+
 				result = (Double)revalue(inputs.get(0));
 				for (int i = 1; i < inputs.size(); i++)
 					result *= (Double)revalue(inputs.get(i));
