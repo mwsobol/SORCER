@@ -5,6 +5,7 @@ import org.junit.runner.RunWith;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.Adder;
+import sorcer.arithmetic.provider.Averager;
 import sorcer.arithmetic.provider.Multiplier;
 import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
@@ -29,8 +30,8 @@ import static sorcer.eo.operator.value;
 @SuppressWarnings({ "unchecked", "rawtypes" })
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/sml")
-public class NetExertionTasks {
-	private final static Logger logger = LoggerFactory.getLogger(NetExertionTasks.class);
+public class NetTaskExertions {
+	private final static Logger logger = LoggerFactory.getLogger(NetTaskExertions.class);
 	
 	@Test
 	public void exertTask() throws Exception  {
@@ -55,7 +56,7 @@ public class NetExertionTasks {
 	
 	
 	@Test
-	public void valueTask() throws SignatureException, ExertionException, ContextException  {
+	public void evaluateTask() throws SignatureException, ExertionException, ContextException  {
 
 		Task t5 = srv("t5", sig("add", Adder.class),
 				cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0), result("result/y")));
@@ -69,7 +70,41 @@ public class NetExertionTasks {
 
 	}
 
-	
+	@Test
+	public void evaluateAverager() throws Exception {
+
+		Task t5 = task(
+				"t6",
+				sig("average", Averager.class),
+				context("average", inEnt("arg, x1", 20.0),
+						inEnt("arg, x2", 80.0), result("result/y")));
+		t5 = exert(t5);
+		logger.info("t6 context: " + context(t5));
+		assertEquals(value(context(t5), "result/y"), 50.0);
+
+	}
+
+	@Test
+	public void arithmeticNetFiTask() throws Exception {
+
+		Task task = task("add",
+				srvFi("net", sig("add", Adder.class)),
+				srvFi("object", sig("add", AdderImpl.class)),
+				context(inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
+						result("result/y")));
+
+		logger.info("sFi: " + srvFi(task));
+		logger.info("sFis: " + srvFis(task));
+
+//		task = exert(task, sFi("object"));
+//		logger.info("exerted: " + task);
+//		assertTrue((Double)get(task) == 100.0);
+
+		task = exert(task, srvFi("net"));
+		logger.info("exerted: " + task);
+		assertTrue("Wrong value for 100.0", (Double) get(task) == 100.0);
+	}
+
 	@Test
 	public void spaceTask() throws Exception {
 

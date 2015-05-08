@@ -23,8 +23,8 @@ import static sorcer.eo.operator.*;
 @SuppressWarnings({ "unchecked", "rawtypes" })
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/sml")
-public class LocalExertionTasks {
-	private final static Logger logger = LoggerFactory.getLogger(LocalExertionTasks.class);
+public class LocalTaskExertions {
+	private final static Logger logger = LoggerFactory.getLogger(LocalTaskExertions.class);
 	
 	@Test
 	public void exertTask() throws Exception  {
