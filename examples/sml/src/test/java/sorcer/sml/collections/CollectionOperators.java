@@ -382,7 +382,7 @@ public class CollectionOperators {
 		// repeatedly reactive evaluations
 		assertTrue(get(cxt, "arg/x7") instanceof ServiceInvoker);
 		rrvEnt(cxt, "arg/x7");
-		assertTrue(value(cxt, "arg/x7").equals(4.0));
+		assertEquals(2.4, (Double) value(cxt, "arg/x7"), 0.0000001);
 
 	}
 	
@@ -393,28 +393,28 @@ public class CollectionOperators {
 		Context cxt = entModel(ent("arg/x1", 1.0), ent("arg/x2", 2.0),
 				 ent("arg/x3", 3.0), ent("arg/x4", 4.0), ent("arg/x5", 5.0));
 		
-		add(cxt, ent("arg/x6", 6.0));
-		assertTrue(value(cxt, "arg/x6").equals(6.0));
+//		add(cxt, ent("arg/x6", 6.0));
+//		assertTrue(value(cxt, "arg/x6").equals(6.0));
+//
+//		put(cxt, ent("arg/x6", ent("overwrite", 20.0)));
+//		assertTrue(value(cxt, "arg/x6").equals(20.0));
+//
+//		// model with invoker
+//		add(cxt, ent("arg/x7", invoker("x1 + x3", ents("x1", "x3"))));
+//
+//		assertTrue(value(cxt, "arg/x7").equals(4.0));
+//
+//		// model with local service entry, own arguments
+//		add(cxt, ent("arg/x8", service(sig("add", AdderImpl.class),
+//				cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
+//						result("result/y")))));
+//		assertTrue(value(cxt, "arg/x8").equals(100.0));
 
-		put(cxt, ent("arg/x6", ent("overwrite", 20.0)));
-		assertTrue(value(cxt, "arg/x6").equals(20.0));
-
-		// model with invoker
-		add(cxt, ent("arg/x7", invoker("x1 + x3", ents("x1", "x3"))));
-		assertTrue(value(cxt, "arg/x7").equals(4.0));
-
-		// model with local service entry, own arguments
-		add(cxt, ent("arg/x8", service(sig("add", AdderImpl.class),
-				cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
-						result("result/y")))));
-		assertTrue(value(cxt, "arg/x8").equals(100.0));
-		
 		// model with local service entry, no arguments
 		add(cxt, ent("arg/x9", service(sig("multiply", MultiplierImpl.class),
 			cxt("add", inEnt("arg/x1"), inEnt("arg/x2"), result("result/y")))));
 
-		value(cxt, "arg/x9");
-//		assertTrue(value(cxt, "arg/x9").equals(2.0));
+		assertTrue(value(cxt, "arg/x9").equals(2.0));
 	}
 	
 	

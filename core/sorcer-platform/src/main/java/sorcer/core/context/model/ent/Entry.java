@@ -100,7 +100,6 @@ public class Entry<T> extends Tuple2<String, T> implements Dependency, Comparabl
 			} else if (val instanceof ServiceInvoker) {
 				return ((ServiceInvoker<T>) val).invoke(entries);
 			} else if (val instanceof Evaluation) {
-				System.out.println("ZZZZZZ val: " + val);
 				return ((Evaluation<T>) val).getValue(entries);
 			}
 		} catch (Exception e) {
@@ -192,7 +191,7 @@ public class Entry<T> extends Tuple2<String, T> implements Dependency, Comparabl
 	@Override
 	public String toString() {
 		String en = "";
-		if (_2 instanceof Evaluation)
+		if (_2 instanceof Evaluation || _2 instanceof Invocation)
 			try {
 				en = ((Evaluation)_2).asis().toString();
 			} catch (EvaluationException e) {

@@ -175,7 +175,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		// new references
 		String path;
 		T obj;
-		Iterator i = keyIterator();
+		Iterator i = ((ServiceContext)cntxt).keyIterator();
 		while (i.hasNext()) {
 			path = (String) i.next();
 			obj = cntxt.get(path);
@@ -185,9 +185,8 @@ public class ServiceContext<T> extends ServiceMogram implements
 				put(path, obj);
 		}
 		setMetacontext(cntxt.getMetacontext());
-		// copy instance vars
+		// copy instance fields
 		mogramId = cntxt.getId();
-		data = cntxt.getData();
 		parentPath = cntxt.getParentPath();
 		parentId = cntxt.getParentId();
 		creationDate = new Date();
@@ -473,9 +472,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		if(path==null)
 			throw new IllegalArgumentException("path must not be null");
 		// first test if path is in a linked context
-		Enumeration e = null;
 		List<String> paths = localLinkPaths();
-		int len;
 		for (String linkPath : paths) {
 			// path has to start with linkPath+last_piece_of_offset
 			ContextLink link = null;
@@ -499,7 +496,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 					extendedLinkPath = linkPath + CPS + offset;
 			} else
 				extendedLinkPath = linkPath + offset.substring(index);
-			len = extendedLinkPath.length();
+			int len = extendedLinkPath.length();
 			if (path.startsWith(extendedLinkPath)
 					&& (path.indexOf(CPS, len) == len || path.length() == len)) {
 				String keyInLinkedCntxt;
@@ -535,7 +532,6 @@ public class ServiceContext<T> extends ServiceMogram implements
 			}
 		}
 		return obj;
-
 	}
 
 	public Object putValue(String path, Object value, String association)
@@ -2625,7 +2621,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 						}
 					} else if (obj instanceof Entry
 							&& ((Entry)obj).value() instanceof Scopable) {
-						((Scopable)((Entry)obj).asis()).getScope().append(this);
+						((Scopable)((Entry)obj).asis()).setScope(this);
 					}
 					obj = ((Evaluation<T>)obj).getValue(entries);
 				} else if ((obj instanceof Paradigmatic)

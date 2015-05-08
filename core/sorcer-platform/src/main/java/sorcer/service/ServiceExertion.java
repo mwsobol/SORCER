@@ -696,6 +696,14 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
                 }
             }
         }
+        Context xrtScope = getScope();
+        if (xrtScope != null && xrtScope.size() > 0) {
+            try {
+                getDataContext().updateEntries(xrtScope);
+            } catch (ContextException e) {
+                throw new SetterException(e);
+            }
+        }
         return this;
     }
 
