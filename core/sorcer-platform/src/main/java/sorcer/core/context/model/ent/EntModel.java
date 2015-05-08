@@ -1,8 +1,7 @@
 package sorcer.core.context.model.ent;
 
 import sorcer.core.context.PositionalContext;
-import sorcer.service.Context;
-import sorcer.service.ContextException;
+import sorcer.service.*;
 import sorcer.service.modeling.Model;
 
 import java.rmi.RemoteException;
@@ -35,7 +34,7 @@ import java.util.Date;
  *
  * @author Mike Sobolewski
  */
-public class EntModel<T> extends PositionalContext<T> implements Model {
+public class EntModel<T> extends PositionalContext<T> implements Model, Invocation<T>, Contexter<T> {
 
     public EntModel() {
         super();
@@ -55,4 +54,19 @@ public class EntModel<T> extends PositionalContext<T> implements Model {
         setSubject("ent/model", new Date());
         setModeling(true);
     }
+
+    /* (non-Javadoc)
+     * @see sorcer.service.Invocation#invoke(sorcer.service.Context, sorcer.service.Arg[])
+     */
+    @Override
+    public T invoke(Context<T> context, Arg... entries) throws RemoteException,
+            InvocationException {
+        try {
+            appendContext(context);
+            return getValue(entries);
+        } catch (Exception e) {
+            throw new InvocationException(e);
+        }
+    }
+
 }

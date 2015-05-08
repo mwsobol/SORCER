@@ -58,8 +58,7 @@ import static sorcer.eo.operator.sig;
  */
 @SuppressWarnings({ "unchecked", "rawtypes"})
 public class ServiceContext<T> extends ServiceMogram implements
-		Context<T>, AssociativeContext<T>, Invocation<T>,
-		Contexter<T>, SorcerConstants {
+		Context<T>, AssociativeContext<T>, Contexter<T>, SorcerConstants {
 
 	private static final long serialVersionUID = 3311956866023311727L;
 
@@ -1052,12 +1051,12 @@ public class ServiceContext<T> extends ServiceMogram implements
 				List<String> mps;
 				int ii = -1;
 				for (int i = 0; i < attrs.length; i++) {
-					mps = markedPaths(attrs[i] + SorcerConstants.APS + vals[i]);
-					if (mps.get(i) == null) {
+					paths[i] = markedPaths(attrs[i] + SorcerConstants.APS + vals[i]).toArray();;
+					if (paths[i] == null) {
 						ii = -1;
 						break; // i.e. no possible match
 					}
-					if (ii < 0 || paths[i].length > paths[ii].length) {
+					if (paths[i] != null && (ii < 0 || paths[i].length > paths[ii].length)) {
 						ii = i;
 					}
 				}
@@ -2915,19 +2914,6 @@ public class ServiceContext<T> extends ServiceMogram implements
 		return parEntry;
 	}
 
-	/* (non-Javadoc)
-	 * @see sorcer.service.Invocation#invoke(sorcer.service.Context, sorcer.service.Arg[])
-	 */
-	@Override
-	public T invoke(Context<T> context, Arg... entries) throws RemoteException,
-			InvocationException {
-		try {
-			appendContext(context);
-			return getValue(entries);
-		} catch (Exception e) {
-			throw new InvocationException(e);
-		}
-	}
 
 	@Override
 	public String[] getMarkedPaths(String association)

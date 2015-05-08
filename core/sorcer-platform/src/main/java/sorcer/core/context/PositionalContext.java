@@ -29,7 +29,7 @@ import java.util.Map;
  */
 @SuppressWarnings("unchecked")
 public class PositionalContext<T> extends ServiceContext<T> implements
-		Positioning, Invocation<T>, Contexter<T> {
+		Positioning {
 
 	private static final long serialVersionUID = -8607789835474515562L;
 	private int tally = 0;
