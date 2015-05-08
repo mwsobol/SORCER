@@ -486,17 +486,17 @@ public class ControlContext extends ServiceContext<Object> implements StrategyCo
 		Exertion component = (Exertion)componentMogram;
 		String path = component.getContext().getName();
 		remove(path);
-		for (int i = ((ServiceExertion) component).getIndex(); i < parent.size(); i++) {
+		for (int i = component.getIndex(); i < parent.size(); i++) {
 			String oldPath = parent.get(i).getContext().getName();
-			((ServiceExertion) parent.get(i)).setIndex(i);
+			parent.get(i).setIndex(i);
 			put(parent.get(i).getContext().getName(), remove(oldPath));
-			Hashtable map;
+			Map map;
 			Map<String, Map<String, String>> imc = getMetacontext();
 			String key;
-			Iterator e2 = ((Hashtable) imc.get(CONTEXT_ATTRIBUTES)).keySet().iterator();
-			while (e2.hasNext()) {
-				key = (String) e2.next();
-				map = (Hashtable) getMetacontext().get(key);
+			Iterator keys = ((Map) imc.get(CONTEXT_ATTRIBUTES)).keySet().iterator();
+			while (keys.hasNext()) {
+				key = (String) keys.next();
+				map = (Map) getMetacontext().get(key);
 				if (map != null && map.size() > 0 && map.containsKey(oldPath))
 					map.put(parent.get(i).getContext().getName(),
 							map.remove(oldPath));
@@ -564,10 +564,10 @@ public class ControlContext extends ServiceContext<Object> implements StrategyCo
 		String newPath = exertion.getContext().getName();
 		Map map;
 		Map<String, Map<String, String>> imc = getMetacontext();
-		e = ((Hashtable) imc.get(CONTEXT_ATTRIBUTES)).keySet().iterator();
+		e = ((Map) imc.get(CONTEXT_ATTRIBUTES)).keySet().iterator();
 		while (e.hasNext()) {
 			key = (String) e.next();
-			map = (Hashtable) imc.get(key);
+			map = (Map) imc.get(key);
 			if (map != null && map.size() > 0 && map.containsKey(oldPath))
 				map.put(newPath, map.remove(oldPath));
 		}

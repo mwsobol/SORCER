@@ -2,6 +2,8 @@ package sorcer.sml.tasks;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.Adder;
@@ -15,13 +17,12 @@ import sorcer.service.Strategy.Access;
 import sorcer.service.Strategy.Monitor;
 import sorcer.service.Strategy.Wait;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
+import static sorcer.co.operator.outPaths;
 import static sorcer.eo.operator.*;
+import static sorcer.eo.operator.srv;
 import static sorcer.eo.operator.value;
 
 /**
