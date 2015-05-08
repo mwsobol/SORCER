@@ -207,9 +207,9 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
         try {
             result = se.exert(txn, null, entries);
         } catch (Exception e) {
-            e.printStackTrace();
-            if (result != null)
-                ((ServiceExertion) result).reportException(e);
+            logger.error("Error in exertion {}", exertionId, e);
+            result = this;
+            reportException(e);
         }
         return (T) result;
     }
