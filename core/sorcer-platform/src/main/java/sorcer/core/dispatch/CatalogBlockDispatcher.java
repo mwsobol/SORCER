@@ -173,7 +173,7 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
 		
 		ServiceContext cxt = (ServiceContext)xrt.getDataContext();
 		if (exertion.getDataContext().getReturnPath() != null)
-            cxt.putInValue(exertion.getContext().getReturnPath().path,
+            cxt.putValue(exertion.getContext().getReturnPath().path,
                     exertion.getDataContext().getReturnValue());
 		else
              cxt.updateEntries(exertion.getDataContext());

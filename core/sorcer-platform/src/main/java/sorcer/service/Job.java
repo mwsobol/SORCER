@@ -157,11 +157,11 @@ public class Job extends CompoundExertion {
 	 * @return the number of exertions in this Job.
 	 */
 	public int size() {
-		return exertions.size();
+		return mograms.size();
 	}
 
 	public int indexOf(Exertion ex) {
-		return exertions.indexOf(ex);
+		return mograms.indexOf(ex);
 	}
 
 	public void setRendezvousName(String jobberName) {
@@ -173,8 +173,8 @@ public class Job extends CompoundExertion {
 	 */
 	@Override
 	public Mogram addMogram(Mogram ex) throws ExertionException {
-		exertions.add(ex);
-		((ServiceExertion) ex).setIndex(exertions.indexOf(ex));
+		mograms.add(ex);
+		((ServiceExertion) ex).setIndex(mograms.indexOf(ex));
 		try {
 			controlContext.registerExertion(ex);
 		} catch (ContextException e) {
@@ -185,16 +185,16 @@ public class Job extends CompoundExertion {
 	}
 
 	public void addExertions(List<Exertion> Mogram) {
-		if (this.exertions != null)
-			this.exertions.addAll(exertions);
+		if (this.mograms != null)
+			this.mograms.addAll(mograms);
 		else {
-			this.exertions = new ArrayList<Mogram>();
-			this.exertions.addAll(exertions);
+			this.mograms = new ArrayList<Mogram>();
+			this.mograms.addAll(mograms);
 		}
 	}
 
 	public List<Mogram> getMograms(List<Mogram> exs) {
-		for (Mogram e : exertions)
+		for (Mogram e : mograms)
 			((ServiceExertion) e).getMograms(exs);
 		exs.add(this);
 		return exs;
@@ -240,8 +240,8 @@ public class Job extends CompoundExertion {
 					delegate.addSignature(procSig);
 				}
 			}
-			if (exertions.size() > 0) {
-				for (Mogram ex : exertions) {
+			if (mograms.size() > 0) {
+				for (Mogram ex : mograms) {
 					delegate.addMogram(ex);
 				}
 			}
@@ -313,7 +313,7 @@ public class Job extends CompoundExertion {
 	 */
 	public String jobContextToString() throws ExertionException {
 		StringBuffer sb = new StringBuffer();
-		for (int i = 0; i < exertions.size(); i++) {
+		for (int i = 0; i < mograms.size(); i++) {
 			if (((ServiceExertion) get(i)).isJob())
 				sb.append(((Job) get(i)).jobContextToString());
 			else
@@ -330,7 +330,7 @@ public class Job extends CompoundExertion {
 		ownerId = id;
 		if (controlContext != null)
 			controlContext.setOwnerId(id);
-		for (int i = 0; i < exertions.size(); i++)
+		for (int i = 0; i < mograms.size(); i++)
 			(((ServiceExertion) get(i))).setOwnerId(id);
 	}
 
@@ -355,7 +355,7 @@ public class Job extends CompoundExertion {
 	@Override
 	public List<ThrowableTrace> getExceptions() {
 		List<ThrowableTrace> exceptions = new ArrayList<ThrowableTrace>();
-		for (Mogram ext : exertions) {
+		for (Mogram ext : mograms) {
 			exceptions.addAll(((Exertion)ext).getExceptions());
 		}
 		return exceptions;
@@ -371,7 +371,7 @@ public class Job extends CompoundExertion {
 	 */
 	public boolean isTree(Set visited) {
 		visited.add(this);
-		Iterator i = exertions.iterator();
+		Iterator i = mograms.iterator();
 		while (i.hasNext()) {
 			ServiceExertion e = (ServiceExertion) i.next();
 			if (visited.contains(e) || !e.isTree(visited)) {
@@ -382,7 +382,7 @@ public class Job extends CompoundExertion {
 	}
 
 	public Mogram getExertion(int index) {
-		return exertions.get(index);
+		return mograms.get(index);
 	}
 
 	public Context finalizeOutDataContext() throws ContextException {
@@ -428,7 +428,7 @@ public class Job extends CompoundExertion {
 	public Context linkContext(Context context, String path) {
 		Mogram ext;
 		for (int i = 0; i < size(); i++) {
-			ext = exertions.get(i);
+			ext = mograms.get(i);
 			try {
 				((ServiceExertion) ext).linkContext(context, path + CPS + ext.getName());
 			} catch (ContextException e) {
@@ -442,7 +442,7 @@ public class Job extends CompoundExertion {
 	public Context linkControlContext(Context context, String path) {
 		Mogram ext;
 		for (int i = 0; i < size(); i++) {
-			ext = exertions.get(i);
+			ext = mograms.get(i);
 			try {
 				((ServiceExertion) ext).linkControlContext(context, path + CPS
 						+ ext.getName());

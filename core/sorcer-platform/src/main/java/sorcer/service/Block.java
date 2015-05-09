@@ -38,8 +38,6 @@ import java.util.*;
  * @author Mike Sobolewski
  */
 public abstract class Block extends CompoundExertion {
-
-	private List<Mogram> mograms = new ArrayList<Mogram>();
 	
 	private URL contextURL;
 	
