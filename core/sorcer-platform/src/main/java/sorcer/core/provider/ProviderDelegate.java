@@ -2183,7 +2183,7 @@ public class ProviderDelegate implements SorcerConstants {
                 }
 				// next check local resource
 				if (is == null) {
-					is = new FileInputStream(new File(name));
+					is = new FileInputStream(new File(filename));
 				}
 				String expandingEnv = null;
 				if (is != null) {
