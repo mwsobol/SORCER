@@ -20,7 +20,6 @@ import sorcer.util.Sorcer;
 import java.io.IOException;
 import java.net.URL;
 import java.rmi.RemoteException;
-import java.util.Arrays;
 
 import static org.junit.Assert.*;
 import static sorcer.co.operator.asis;
@@ -456,12 +455,8 @@ public class ParModelTest {
 			@Override
 			public boolean isTrue() throws ContextException {
 				Closure c = (Closure)conditionalContext.getValue(Condition._closure_);
-				System.out.println("ZZZZZZZZZ: " + conditionalContext);
 				Object[] args = new Object[] { conditionalContext.getValue("x"),
 						conditionalContext.getValue("y") };
-				System.out.println("ZZZZZZZZZ: " + Arrays.toString(args));
-				System.out.println("ZZZZZZZZZ c: " + c);
-
 				return (Boolean) c.call(args);
 			}
 		};

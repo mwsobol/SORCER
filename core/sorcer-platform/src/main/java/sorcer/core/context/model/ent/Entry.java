@@ -187,22 +187,21 @@ public class Entry<T> extends Tuple2<String, T> implements Dependency, Comparabl
     public List<Evaluation> getDependers() {
         return dependers;
     }
-    
+
 	@Override
 	public String toString() {
 		String en = "";
-		if (_2 instanceof Evaluation) {
-			try {
+		try {
+			if (_2 instanceof Evaluation && ((Evaluation) _2).asis() != null) {
 				en = ((Evaluation) _2).asis().toString();
-			} catch (EvaluationException e) {
-				e.printStackTrace();
-			} catch (RemoteException e) {
-				e.printStackTrace();
+			} else {
+				en = "" + _2;
 			}
-		} else {
-			en = _2.toString();
+		}catch (EvaluationException e) {
+			e.printStackTrace();
+		} catch (RemoteException e) {
+			e.printStackTrace();
 		}
-
 		return "[" + _1 + ":" + en + ":" + index + "]";
 	}
 

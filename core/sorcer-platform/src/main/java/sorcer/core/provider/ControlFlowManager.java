@@ -248,7 +248,7 @@ public class ControlFlowManager {
      * @throws TransactionException
      * @throws ContextException
      */
-    public Task doTask(Task task) throws RemoteException, ExertionException,
+    public Task doTask(Task task) throws RemoteException, MogramException,
             SignatureException, TransactionException, ContextException {
         Task result;
         if (task.getControlContext().getAccessType() == Access.PULL) {
@@ -264,7 +264,7 @@ public class ControlFlowManager {
         return result;
     }
 
-	public Block doBlock(Block block) throws RemoteException, ExertionException,
+	public Block doBlock(Block block) throws RemoteException, MogramException,
 			SignatureException, TransactionException, ContextException {
 
 
@@ -295,7 +295,7 @@ public class ControlFlowManager {
      * @throws RemoteException
      * @throws ExertionException
      */
-    public Mogram doRendezvousExertion(ServiceExertion xrt) throws RemoteException, ExertionException {
+    public Mogram doRendezvousExertion(ServiceExertion xrt) throws RemoteException, MogramException {
         try {
             if (xrt.isSpacable()) {
                 logger.info("exertion isSpacable");
@@ -357,7 +357,7 @@ public class ControlFlowManager {
      * @throws RemoteException
      */
     public Task doConditional(Exertion exertion) throws RemoteException,
-            ExertionException, SignatureException {
+            MogramException, SignatureException {
         return ((Task) exertion).doTask();
     }
 
@@ -486,7 +486,7 @@ public class ControlFlowManager {
     }
 */
 
-    public Task doBatchTask(Task task) throws ExertionException,
+    public Task doBatchTask(Task task) throws MogramException,
             SignatureException, RemoteException, ContextException {
         Fidelity tf = task.getFidelity();
         List<Signature> alls = task.getFidelity().getSelects();

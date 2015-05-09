@@ -68,7 +68,7 @@ public abstract class Block extends CompoundExertion {
 	}
 	
 	public abstract Block doBlock(Transaction txn) throws ExertionException,
-		SignatureException, RemoteException, TransactionException;
+		SignatureException, RemoteException, TransactionException, MogramException;
 	
 	/* (non-Javadoc)
 	 * @see sorcer.service.Exertion#addMogram(sorcer.service.Exertion)
@@ -336,7 +336,7 @@ public abstract class Block extends CompoundExertion {
 		}
 	}
 
-	public Exertion clearScope() throws ContextException {
+	public Mogram clearScope() throws ContextException {
 		Object[] paths = ((ServiceContext)getDataContext()).keySet().toArray();
 		for (Object path : paths) {
 			dataContext.removePath((String) path);

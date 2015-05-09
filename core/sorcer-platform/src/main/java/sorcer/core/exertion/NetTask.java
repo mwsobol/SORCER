@@ -17,22 +17,15 @@
 
 package sorcer.core.exertion;
 
-import java.rmi.RemoteException;
-import java.util.Arrays;
-
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
 import net.jini.id.Uuid;
 import sorcer.core.provider.exerter.ServiceShell;
 import sorcer.core.signature.NetSignature;
-import sorcer.service.Context;
-import sorcer.service.Evaluation;
-import sorcer.service.ExertionException;
-import sorcer.service.Invocation;
-import sorcer.service.Service;
-import sorcer.service.Signature;
-import sorcer.service.SignatureException;
-import sorcer.service.Task;
+import sorcer.service.*;
+
+import java.rmi.RemoteException;
+import java.util.Arrays;
 
 /**
  * The SORCER service task extending the abstract task {@link Task}.
@@ -120,7 +113,7 @@ public class NetTask extends ObjectTask implements Evaluation<Object>, Invocatio
 		return ((NetSignature) getProcessSignature()).getService();
 	}
 
-	public Task doTask(Transaction txn) throws ExertionException,
+	public Task doTask(Transaction txn) throws MogramException,
 			SignatureException, RemoteException {
 		ServiceShell se = new ServiceShell(this);
 		try {

@@ -102,7 +102,7 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
         afterExec(result);
     }
 
-    protected Task execTask(Task task) throws ExertionException,
+    protected Task execTask(Task task) throws MogramException,
             SignatureException, RemoteException {
         if (task instanceof NetTask) {
             return execServiceTask(task);
@@ -270,7 +270,7 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
 
 	private Block execBlock(Block block)
 			throws DispatcherException, InterruptedException,
-			ExertionException, RemoteException {
+			MogramException, RemoteException {
 
 		try {
 			ServiceTemplate st = Accessor.getServiceTemplate(null,
@@ -291,7 +291,7 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
 								+ concatenators[i].serviceID);
 						Provider rconcatenator = (Provider) concatenators[i].service;
 
-						return (Block) rconcatenator.service(block, null);
+						return rconcatenator.service(block, null);
 					}
 				}
 			}

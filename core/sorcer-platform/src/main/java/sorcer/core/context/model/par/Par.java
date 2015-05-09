@@ -217,7 +217,7 @@ public class Par<T> extends Entry<T> implements Variability<T>, Arg, Mappable<T>
 					((Scopable)val).getScope().append(scope);
 				}
 
-				// indirect scope for enty values
+				// indirect scope for entry values
 				if (val instanceof Entry) {
 					Object ev = ((Entry)val).asis();
 					if (ev instanceof Scopable && ((Scopable)ev).getScope() != null) {
@@ -319,8 +319,8 @@ public class Par<T> extends Entry<T> implements Variability<T>, Arg, Mappable<T>
 	}
 
 	public void setScope(Context scope) {
-		if (((ServiceContext)scope).containsKey(Condition._closure_))
-			((ServiceContext) scope).remove(Condition._closure_);
+		if (scope != null && ((ServiceContext)scope).containsKey(Condition._closure_))
+			scope.remove(Condition._closure_);
 		this.scope = scope;
 	}
 	
@@ -336,11 +336,24 @@ public class Par<T> extends Entry<T> implements Variability<T>, Arg, Mappable<T>
 		else
 			return -1;
 	}
-	
+
 	@Override
 	public String toString() {
-		return "par [name: " + name + ", value: " + value + ", path: "+_1+"]";
-	}
+        String ps = "";
+        if (value instanceof Evaluation) {
+            try {
+                ps = "" + ((Evaluation) value).asis();
+            } catch (EvaluationException e) {
+                e.printStackTrace();
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        } else {
+            ps = "" + value;
+        }
+
+        return "par [name: " + name + ", value: " + ps + ", path: " + _1 + "]";
+    }
 
 	/* (non-Javadoc)
 	 * @see sorcer.service.Perturbation#getPerturbedValue(java.lang.String)

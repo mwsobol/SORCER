@@ -234,12 +234,6 @@ public class Arithmometer implements SorcerConstants, Serializable {
 				inputs = (List<Double>)context.getInValues();
 			logger.info("inputs: \n" + inputs);
 			logger.info("inputs paths: \n" + Contexts.getInPaths(context));
-
-			System.out.println("ZZZZZZZ selector: " + selector);
-			System.out.println("ZZZZZZZZZ context: " + context);
-			System.out.println("ZZZZZZZ inputs: " + inputs);
-
-
 			List<String> outpaths = context.getOutPaths();
 			//logger.info("outpaths: \n" + outpaths);
 			double result = 0.0;

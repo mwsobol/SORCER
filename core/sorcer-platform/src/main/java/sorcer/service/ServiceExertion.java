@@ -91,14 +91,14 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
     /*
      * (non-Javadoc)
      *
-     * @see sorcer.service.Service#service(sorcer.service.Exertion)
+     * @see sorcer.service.Service#service(sorcer.service.Mogram)
      */
-    public <T extends Mogram> T  service(T exertion) throws TransactionException,
-            ExertionException, RemoteException {
-        if (exertion == null)
+    public <T extends Mogram> T  service(T mogram) throws TransactionException,
+            MogramException, RemoteException {
+        if (mogram == null)
             return exert();
         else
-            return (T) exertion.exert();
+            return (T) mogram.exert();
     }
 
     /*
@@ -108,7 +108,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
      * net.jini.core.transaction.Transaction)
      */
     public <T extends Mogram> T service(T exertion, Transaction txn)
-            throws TransactionException, ExertionException, RemoteException {
+            throws TransactionException, MogramException, RemoteException {
         if (exertion == null)
             return exert();
         else
@@ -220,7 +220,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
      * @see sorcer.service.Exertion#exert(sorcer.core.context.Path.Entry[])
      */
     public <T extends Mogram> T  exert(Arg... entries) throws TransactionException,
-            ExertionException, RemoteException {
+            MogramException, RemoteException {
         try {
             substitute(entries);
         } catch (SetterException e) {
@@ -233,12 +233,12 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
     }
 
     public Exertion exert(Transaction txn, String providerName, Arg... entries)
-            throws TransactionException, ExertionException, RemoteException {
+            throws TransactionException, MogramException, RemoteException {
         try {
             substitute(entries);
         } catch (SetterException e) {
             e.printStackTrace();
-            throw new ExertionException(e);
+            throw new MogramException(e);
         }
         ServiceShell se = new ServiceShell(this);
         return se.exert(txn, providerName);
@@ -939,7 +939,12 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
         status = state;
     }
 
-   /*
+    public Mogram clearScope() throws MogramException {
+        getDataContext().clearScope();
+        return this;
+    }
+
+    /*
      * (non-Javadoc)
      *
      * @see sorcer.service.Evaluation#getValue()
@@ -1140,10 +1145,6 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
     @Override
     public Mogram getComponentMogram(String path) {
         return this;
-    }
-
-    public Date getCreationDate() {
-        return creationDate;
     }
 
     public String describe() {

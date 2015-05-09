@@ -108,13 +108,13 @@ public class Task extends ServiceExertion {
 		}
 	}
 
-	public Task doTask() throws ExertionException, SignatureException,
+	public Task doTask() throws MogramException, SignatureException,
 			RemoteException {
 		return doTask(null);
 	}
 	
 	public Task doTask(Transaction txn) throws ExertionException,
-			SignatureException, RemoteException {
+			SignatureException, RemoteException, MogramException {
 		if (delegate == null) {
 			if (serviceFidelity != null) {
 				Signature ss = null;
@@ -354,7 +354,7 @@ public class Task extends ServiceExertion {
 	}
 
 	protected Task doBatchTask(Transaction txn) throws RemoteException,
-			ExertionException, SignatureException, ContextException {
+			MogramException, SignatureException, ContextException {
 		ControlFlowManager ep = new ControlFlowManager();
 		return ep.doBatchTask(this);
 	}

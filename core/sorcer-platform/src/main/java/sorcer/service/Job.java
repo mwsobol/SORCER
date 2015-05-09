@@ -200,7 +200,7 @@ public class Job extends CompoundExertion {
 		return exs;
 	}
 
-	public Job doJob(Transaction txn) throws ExertionException,
+	public Job doJob(Transaction txn) throws MogramException,
 			SignatureException, RemoteException, TransactionException {
 		if (delegate == null) {
 			if (serviceFidelity != null) {

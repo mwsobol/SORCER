@@ -51,7 +51,8 @@ public class EvaluationTask extends Task {
 		if (es.getEvaluator() instanceof Par) {
 			if (dataContext.getScope() == null)
 				dataContext.setScope(new ParModel(name));
-			((Par) es.getEvaluator()).setScope(dataContext.getScope());
+//			((Par) es.getEvaluator()).setScope(dataContext.getScope());
+//			((Par) es.getEvaluator()).getScope().remove(((Par)es.getEvaluator()).key());
 		}
 	}
 

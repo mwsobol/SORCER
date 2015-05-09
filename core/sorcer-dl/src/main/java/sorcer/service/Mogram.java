@@ -45,9 +45,9 @@ public interface Mogram extends Service, Scopable, Substitutable, Identifiable {
      *             if processing this exertion causes an error
      */
     public <T extends Mogram> T exert(Transaction txn, Arg... entries) throws TransactionException,
-            ExertionException, RemoteException;
+            MogramException, RemoteException;
 
-    public <T extends Mogram> T exert(Arg... entries) throws TransactionException, ExertionException,
+    public <T extends Mogram> T exert(Arg... entries) throws TransactionException, MogramException,
             RemoteException;
 
     public int getIndex();
@@ -61,4 +61,6 @@ public interface Mogram extends Service, Scopable, Substitutable, Identifiable {
     public int getStatus();
 
     public void setStatus(int value);
+
+    public Mogram clearScope() throws MogramException;
 }

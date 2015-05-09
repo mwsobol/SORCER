@@ -13,7 +13,6 @@ import javax.security.auth.Subject;
 import java.io.Serializable;
 import java.security.Principal;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by sobolemw on 5/4/15.
@@ -504,6 +503,13 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
         this.dbUrl = dbUrl;
     }
 
+
+    public Mogram clearScope() throws MogramException {
+        if (scope != null) {
+            scope.getData().clear();
+        }
+        return this;
+    }
 
     /**
      * <p>

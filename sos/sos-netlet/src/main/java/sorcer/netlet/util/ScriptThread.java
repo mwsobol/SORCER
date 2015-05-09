@@ -27,7 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.provider.exerter.ServiceShell;
 import sorcer.service.Exertion;
-import sorcer.service.ExertionException;
+import sorcer.service.MogramException;
 import sorcer.service.modeling.Model;
 
 import java.rmi.RemoteException;
@@ -70,12 +70,11 @@ public class ScriptThread extends Thread {
             }
         }
 
-		public void run() {
-            if (target==null) parseScript();
+    public void run() {
+        if (target==null) parseScript();
+        try {
             if (target instanceof Exertion) {
                 ServiceShell esh = new ServiceShell((Exertion) target);
-                try {
-
 /*
                     if (((Exertion) target).isProvisionable() && config!=null) {
                         String configFile;
@@ -93,26 +92,18 @@ public class ScriptThread extends Thread {
                         }
                     } else
 */
-                        result = esh.exert();
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                } catch (TransactionException e) {
-                    e.printStackTrace();
-                } catch (ExertionException e) {
-                    e.printStackTrace();
-                }
+                result = esh.exert();
             } else if (target instanceof Model) {
-                try {
-                    result = ((Model)target).exert();
-                } catch (TransactionException e) {
-                    e.printStackTrace();
-                } catch (ExertionException e) {
-                    e.printStackTrace();
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
-            }
-		}
+                result = ((Model)target).exert();
+
+            }   } catch (TransactionException e) {
+            e.printStackTrace();
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        } catch (MogramException e) {
+            e.printStackTrace();
+        }
+    }
 
 		public Object getResult() {
 			return result;

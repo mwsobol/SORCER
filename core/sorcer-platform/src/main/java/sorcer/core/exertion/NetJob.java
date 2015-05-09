@@ -17,8 +17,6 @@
 
 package sorcer.core.exertion;
 
-import java.rmi.RemoteException;
-
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
 import sorcer.core.provider.Jobber;
@@ -26,14 +24,10 @@ import sorcer.core.provider.exerter.ServiceShell;
 import sorcer.core.signature.NetSignature;
 import sorcer.security.util.Auth;
 import sorcer.security.util.SorcerPrincipal;
-import sorcer.service.Evaluation;
-import sorcer.service.ExertionException;
-import sorcer.service.Invocation;
-import sorcer.service.Job;
-import sorcer.service.ServiceExertion;
-import sorcer.service.Signature;
+import sorcer.service.*;
 import sorcer.service.Signature.Type;
-import sorcer.service.SignatureException;
+
+import java.rmi.RemoteException;
 
 public class NetJob extends Job implements Evaluation<Object>, Invocation<Object> {
 
@@ -78,7 +72,7 @@ public class NetJob extends Job implements Evaluation<Object>, Invocation<Object
 	 * @see sorcer.service.Job#doJob(net.jini.core.transaction.Transaction)
 	 */
 	@Override
-	public Job doJob(Transaction txn) throws ExertionException,
+	public Job doJob(Transaction txn) throws MogramException,
 			SignatureException, RemoteException, TransactionException {
 		ServiceShell se = new ServiceShell(this);
 		return (Job)se.exert(txn, null);

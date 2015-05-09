@@ -406,7 +406,7 @@ public class ParModel<T> extends EntModel<T> implements Invocation<T>, Mappable<
     
 	@Override
 	public String toString() {
-		return this.getClass().getName() + ":" + getName() + "\nkeys: " + keySet() 
+		return this.getClass().getName() + ":" + getName() + "\nkeys: " + keySet()
 				+ "\n" + super.toString();
 	}
 

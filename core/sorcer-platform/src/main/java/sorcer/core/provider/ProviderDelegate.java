@@ -771,7 +771,7 @@ public class ProviderDelegate implements SorcerConstants {
 	}
 
 	public Task doTask(Task task, Transaction transaction)
-			throws ExertionException, SignatureException, RemoteException,
+			throws MogramException, SignatureException, RemoteException,
 			ContextException {
 		// prepare a default net batch task (has all sigs of SRV type) 
 		// and make the last signature as master SRV type only.
@@ -1106,7 +1106,7 @@ public class ProviderDelegate implements SorcerConstants {
 	}
 
 	protected ServiceExertion forwardTask(ServiceExertion task,
-			Provider requestor) throws ExertionException,
+			Provider requestor) throws MogramException,
 			RemoteException, SignatureException, ContextException {
 		// check if we do not look with the same exertion
 		Service recipient = null;
@@ -1182,7 +1182,7 @@ public class ProviderDelegate implements SorcerConstants {
 		return null;
 	}
 
-	public static Job doJob(Job job) throws ExertionException, RemoteException,
+	public static Job doJob(Job job) throws MogramException, RemoteException,
 	ContextException {
 		String jobberName = job.getRendezvousName();
 		Jobber jobber;

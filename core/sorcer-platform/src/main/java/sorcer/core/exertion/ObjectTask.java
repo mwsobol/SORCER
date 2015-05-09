@@ -86,7 +86,7 @@ public class ObjectTask extends Task {
 	}
 
 	@SuppressWarnings("unchecked")
-	public Task doTask(Transaction txn) throws ExertionException, SignatureException, RemoteException {
+	public Task doTask(Transaction txn) throws ExertionException, SignatureException, RemoteException, MogramException {
 		MethodInvoker evaluator = null;
 		ObjectSignature os = (ObjectSignature) getProcessSignature();
 		dataContext.setCurrentSelector(os.getSelector());

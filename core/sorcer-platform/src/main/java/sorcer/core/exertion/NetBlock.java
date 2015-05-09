@@ -71,7 +71,7 @@ public class NetBlock extends Block implements Evaluation<Object>, Invocation<Ob
 		return temp;
 	}
 
-	public Block doBlock(Transaction txn) throws ExertionException,
+	public Block doBlock(Transaction txn) throws  MogramException,
 			SignatureException, RemoteException, TransactionException {
 		ServiceShell se = new ServiceShell(this);
 		return (Block)se.exert(txn, null);

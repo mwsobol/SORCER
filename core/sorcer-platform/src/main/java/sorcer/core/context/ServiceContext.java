@@ -1494,7 +1494,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	 * @see sorcer.service.Context#append(sorcer.service.Context)
 	 */
 	public Context append(Context context) throws ContextException {
-		if (context != null) {
+		if (context != null && this != context) {
 			putAll(context);
 			// annotate as in the argument context
 			List<String> inpaths = ((ServiceContext) context).getInPaths();
