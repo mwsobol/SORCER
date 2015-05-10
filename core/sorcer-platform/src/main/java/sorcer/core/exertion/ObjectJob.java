@@ -42,6 +42,7 @@ public class ObjectJob extends Job {
 
 	public ObjectJob(String name) throws SignatureException {
 		super(name);
+		serviceFidelity.getSelects().clear();
 		addSignature(new ObjectSignature("execute", ServiceJobber.class));
 	}
 
