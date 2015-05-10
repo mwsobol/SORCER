@@ -1,5 +1,6 @@
 package sorcer.core.context.model.srv;
 
+import sorcer.core.SelectFidelity;
 import sorcer.service.*;
 
 import java.rmi.RemoteException;
@@ -21,7 +22,7 @@ public class MultiFidelitySrvModel extends SrvModel {
     // service fidelities for this model
     protected Map<String, Fidelity<String>> selectionFidelities;
 
-    protected SelectionFidelity selectedFidelity;
+    protected SelectFidelity selectedFidelity;
 
     public MultiFidelitySrvModel() {
     }
@@ -126,11 +127,11 @@ public class MultiFidelitySrvModel extends SrvModel {
         return getValue(entries);
     }
 
-    public SelectionFidelity getSelectedSelectionFidelity() {
+    public SelectFidelity getSelectedSelectionFidelity() {
         return selectedFidelity;
     }
 
-    public void setSelectedSelectionFidelity(SelectionFidelity selectedFidelity) {
+    public void setSelectedSelectionFidelity(SelectFidelity selectedFidelity) {
         this.selectedFidelity = selectedFidelity;
     }
 

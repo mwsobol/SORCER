@@ -352,8 +352,8 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
             for (Arg a : entries)
                 if (a instanceof SelectFidelity) {
                     selectComponentFidelity((SelectFidelity) a);
-                } else if (a instanceof SelectionFidelity) {
-                    selectFidelity(((SelectionFidelity) a).getName());
+                } else if (a instanceof SelectFidelity) {
+                    selectFidelity(((SelectFidelity) a).getName());
                 } else if (a instanceof FidelityContext) {
                     if (((FidelityContext) a).size() == 0
                             && ((FidelityContext) a).getName() != null)

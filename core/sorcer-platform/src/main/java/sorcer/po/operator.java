@@ -16,7 +16,12 @@
  */
 package sorcer.po;
 
-import sorcer.co.tuple.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import sorcer.co.tuple.ExecPath;
+import sorcer.co.tuple.InputEntry;
+import sorcer.co.tuple.Tuple2;
+import sorcer.core.SelectFidelity;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.EntryList;
@@ -29,8 +34,6 @@ import sorcer.service.*;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.concurrent.Callable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author Mike Sobolewski
@@ -108,8 +111,8 @@ public class operator {
 		return new EntryList(entries);
 	}
 
-	public static SelectionFidelity parFi(String name) {
-		return new SelectionFidelity(name);
+	public static SelectFidelity parFi(String name) {
+		return new SelectFidelity(name);
 	}
 	
 	public static Entry parFi(Par parEntry) {

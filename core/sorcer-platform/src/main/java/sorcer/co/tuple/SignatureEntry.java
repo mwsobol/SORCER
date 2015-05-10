@@ -17,7 +17,7 @@
 
 package sorcer.co.tuple;
 
-import sorcer.service.SelectionFidelity;
+import sorcer.core.SelectFidelity;
 import sorcer.service.Signature;
 
 /**
@@ -32,7 +32,7 @@ public class SignatureEntry extends FidelityEntry<Signature> {
     }
 
 
-    public SignatureEntry(String path, SelectionFidelity fidelity) {
+    public SignatureEntry(String path, SelectFidelity fidelity) {
         super(path, fidelity);
     }
 }

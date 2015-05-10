@@ -18,6 +18,7 @@ package sorcer.core.context.model.par;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sorcer.core.SelectFidelity;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.ApplicationDescription;
 import sorcer.core.context.ServiceContext;
@@ -283,7 +284,7 @@ public class Par<T> extends Entry<T> implements Variability<T>, Arg, Mappable<T>
 							scope.append(((Par<T>) p).getScope());
 
 					}
-				} else if (p instanceof SelectionFidelity && fidelities != null) {
+				} else if (p instanceof SelectFidelity && fidelities != null) {
 					selectedFidelity = p.getName();
 				} else if (p instanceof Context) {
 					if (scope == null)

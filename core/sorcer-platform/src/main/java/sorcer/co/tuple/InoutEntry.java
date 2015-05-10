@@ -16,8 +16,8 @@
  */
 package sorcer.co.tuple;
 
+import sorcer.core.SelectFidelity;
 import sorcer.service.Context;
-import sorcer.service.SelectionFidelity;
 
 public class InoutEntry<T> extends FidelityEntry<T> {
 	private static final long serialVersionUID = 1L;
@@ -33,7 +33,7 @@ public class InoutEntry<T> extends FidelityEntry<T> {
 		this.isPersistent = isPersistant;
 	}
 
-	 public InoutEntry(String path, SelectionFidelity fidelity) {
+	 public InoutEntry(String path, SelectFidelity fidelity) {
 		super(path, fidelity);
 	}
 }
