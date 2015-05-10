@@ -581,7 +581,7 @@ public class ControlFlowManager {
                 t.setContinous(true);
                 t.setContext(shared);
 
-                logger.info("Sending one of the batch tasks to exert: " + t.getName() + " " + t.getFidelity().toString());
+                logger.info("Sending one of the batch tasks to exert: " + t.getName() + " " + t.getFidelity());
                 t = t.doTask();
                 signatures.get(i).setType(type);
                 shared = t.getContext();

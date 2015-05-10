@@ -101,7 +101,7 @@ public class Fidelity<S> implements Arg, Serializable {
 	
 	@Override
 	public String toString() {
-		return "Fi: " + name + " " + super.toString();
+		return "Fi: " + name + " " + selects;
 	}
 	
 }

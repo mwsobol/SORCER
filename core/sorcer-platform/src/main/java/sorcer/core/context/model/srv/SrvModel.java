@@ -48,8 +48,6 @@ import static sorcer.eo.operator.*;
  */
 public class SrvModel extends ParModel<Object> implements Model {
 
-    private ParModel modelScope = new ParModel();
-
     public SrvModel() {
         super();
         isRevaluable = true;
