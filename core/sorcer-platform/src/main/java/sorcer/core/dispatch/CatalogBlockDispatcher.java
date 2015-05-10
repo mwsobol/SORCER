@@ -67,12 +67,12 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
         try {
             preUpdate(exertion);
             if (exertion.getDataContext() != null) {
-                if (exertion.getScope() != null)
-                    ((Context) exertion.getScope()).append(xrt.getContext());
+                if (exertion.getDataContext().getScope() != null)
+                    exertion.getDataContext().getScope().append(xrt.getDataContext());
                 else {
-//                    exertion.setScope(xrt.getContext());
-                    exertion.setScope(new ParModel());
-                    ((Context)exertion.getScope()).append(xrt.getContext());
+//                  exertion.getDataContext().setScope(xrt.getContext());
+                    exertion.getDataContext().setScope(new ParModel());
+                    exertion.getDataContext().getScope().append(xrt.getContext());
                 }
             }
         } catch (Exception ex) {

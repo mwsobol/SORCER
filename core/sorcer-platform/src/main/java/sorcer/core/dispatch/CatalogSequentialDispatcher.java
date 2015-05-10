@@ -67,12 +67,20 @@ public class CatalogSequentialDispatcher extends CatalogExertDispatcher {
         for (Mogram mogram: inputXrts) {
             if (xrt.isBlock()) {
                 try {
-                    if (mogram.getScope() != null)
-                        ((Context) mogram.getScope()).append(xrt.getContext());
-                    else {
-                        mogram.setScope(xrt.getContext());
-//                        mogram.setScope(new ParModel());
-//                        ((Context)mogram.getScope()).append(xrt.getContext());
+                    if (mogram instanceof Exertion) {
+                        if (((Exertion) mogram).getScope() != null) {
+                            ((Exertion) mogram).getScope().append(xrt.getContext());
+                        } else {
+                            ((Exertion) mogram).setScope(xrt.getContext());
+//                        ((Exertion) mogram).setScope(new ParModel());
+//                        ((Exertion) mogram).getScope()).append(xrt.getContext());
+                        }
+                    } else {
+                        if (mogram.getScope() != null)
+                            mogram.getScope().append(xrt.getContext());
+                        else {
+                            mogram.setScope(xrt.getContext());
+                        }
                     }
                 } catch (Exception ce) {
                     throw new ExertionException(ce);
@@ -90,9 +98,10 @@ public class CatalogSequentialDispatcher extends CatalogExertDispatcher {
                     previous = se.getContext();
                 } else if (mogram instanceof EntModel) {
                     ((EntModel)mogram).updateEntries(xrt.getContext());
-                    xrt.getContext().append(((Model) mogram).getResponses());
+                    xrt.getDataContext().append(((Model) mogram).getResponses());
                 }
             } catch (Exception e) {
+                e.printStackTrace();
                 throw new ExertionException(e);
             }
 
