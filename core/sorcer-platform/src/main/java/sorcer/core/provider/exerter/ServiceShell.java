@@ -313,7 +313,8 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 			if (providerName != null && providerName.length() > 0) {
 				signature.setProviderName(providerName);
 			}
-			logger.debug("* ExertProcessor's servicer accessor: "
+			if (logger.isDebugEnabled())
+				logger.debug("* ExertProcessor's servicer accessor: "
 					+ Accessor.getAccessorType());
 			provider = ((NetSignature) signature).getService();
 		} catch (SignatureException e) {
