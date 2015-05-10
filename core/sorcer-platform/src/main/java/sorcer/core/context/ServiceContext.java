@@ -847,7 +847,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 			List<Link> links = localLinks();
 			for(Link link : links) {
 				result = getLinkedContext((ContextLink)link).isSingletonAttribute(
-						attributeName);
+                        attributeName);
 				if (result)
 					break;
 			}
@@ -1724,15 +1724,13 @@ public class ServiceContext<T> extends ServiceMogram implements
 		}
 	}
 
-	public String toString(String cr, StringBuilder sb, boolean withMetacontext) {
+	public String toString(String cr, StringBuilder sb, boolean withMetacontext) throws ContextException {
 		sb.append(subjectPath.length() == 0 ? "" : "\n  subject: "
 				+ subjectPath + ":" + subjectValue + cr);
-		Iterator e = keyIterator(); // sorted enumeration
-		String path;
+
 		Object val;
 		int count = 0;
-		while (e.hasNext()) {
-			path = (String) e.next();
+		for (String path : getPaths()) {
 			val = get(path);
 			if (!(val instanceof ContextLink)) {
 				if (count >= 1)
@@ -1859,17 +1857,22 @@ public class ServiceContext<T> extends ServiceMogram implements
 	}
 
 	public String toString() {
-		return toString(false, false);
+		try {
+			return toString(false, false);
+		} catch (ContextException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
-	public String toString(boolean isHTML) {
+	public String toString(boolean isHTML) throws ContextException {
 		if (isHTML)
 			return toString(isHTML, false);
 		else
 			return toString(isHTML, true);
 	}
 
-	public String toString(boolean isHTML, boolean withMetacontext) {
+	public String toString(boolean isHTML, boolean withMetacontext) throws ContextException {
 		String cr; // Carriage return
 		StringBuilder sb; // String buffer
 		if (isHTML) {
@@ -2675,7 +2678,7 @@ public class ServiceContext<T> extends ServiceMogram implements
             } catch (Exception e) {
                 throw new ContextException(e);
             }
-            Iterator it = ((ServiceContext)outConnector).entryIterator();
+            Iterator it = mc.entryIterator();
             while (it.hasNext()) {
                 Map.Entry pairs = (Map.Entry) it.next();
                 mc.putInValue((String) pairs.getKey(), getValue((String) pairs.getValue()));

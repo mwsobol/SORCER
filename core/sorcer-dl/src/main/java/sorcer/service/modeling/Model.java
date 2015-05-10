@@ -92,6 +92,7 @@ public interface Model extends Mogram, Dependency {
      * @throws ContextException
      * @throws RemoteException
      */
+
     public Context getOutConnector(Arg... args)  throws ContextException, RemoteException;
 
 }

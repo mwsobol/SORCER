@@ -52,7 +52,7 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
 
 
     @Override
-    protected void doExec() throws ExertionException, SignatureException {
+    protected void doExec() throws MogramException, SignatureException {
         super.doExec();
 		try {
 			Condition.cleanupScripts(xrt);

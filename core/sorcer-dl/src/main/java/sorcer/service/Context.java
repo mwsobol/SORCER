@@ -969,7 +969,7 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 	 * @param isHTML
 	 * @return a plain string if isHTML is false, otherwise in the HTML format.
 	 */
-	public String toString(boolean isHTML);
+	public String toString(boolean isHTML) throws ContextException;
 
 	/**
 	 * Check if this context is export controlled, accessible to principals from

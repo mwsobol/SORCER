@@ -11,6 +11,7 @@ import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.service.Block;
 import sorcer.service.Context;
 import sorcer.service.Job;
+import sorcer.service.Strategy.Flow;
 import sorcer.service.Task;
 import sorcer.service.modeling.Model;
 
@@ -160,52 +161,39 @@ public class SrvModels {
                 inEnt("multiply/x1", "j2/t5/add/result/y"));
 
         Job j2 = job("j2", sig("service", ServiceJobber.class),
-//                    t4, t5, strategy(Flow.PAR),
-                        t4, t5,
-                    taskOutConnector);
+                t4, t5, strategy(Flow.PAR),
+                taskOutConnector);
 
+        // out connector from model
+        Context modelOutConnector = outConn(inEnt("y1", "add"), inEnt("y2", "multiply"), inEnt("y3", "subtract"));
 
-        System.out.println("ZZZZZZZZZZ  t4: " + context(t4));
-        System.out.println("ZZZZZZZZZZ  t5: " + context(t5));
-        System.out.println("ZZZZZZZZZZ: " + serviceContext(j2).toString());
+        Model model = srvModel(
+                inEnt("multiply/x1", 10.0), inEnt("multiply/x2", 50.0),
+                inEnt("add/x1", 20.0), inEnt("add/x2", 80.0),
+                srv(sig("multiply", MultiplierImpl.class, result("multiply/out",
+                        inPaths("multiply/x1", "multiply/x2")))),
+                srv(sig("add", AdderImpl.class, result("add/out",
+                        inPaths("add/x1", "add/x2")))),
+                srv(sig("subtract", SubtractorImpl.class, result("subtract/out",
+                        inPaths("multiply/out", "add/out")))));
 
-//        Job out = exert(j2);
-//
-//        System.out.println("ZZZZZZZZZZ: " + serviceContext(out));
-//        System.out.println("ZZZZZZZZZZ  j2/t4: " + context("j1/t4", out));
-//        System.out.println("ZZZZZZZZZZ  j2/t5: " + context("j1/t5", out));
+//                srv("z1", "multiply/x1"), srv("z2", "add/x2"), srv("z3", "subtract/out"));
 
+        addResponse(model, "add", "multiply", "subtract");
+        dependsOn(model, ent("subtract", paths("multiply", "add")));
+        // specify how model connects to exertion
+        outConn(model, modelOutConnector);
 
-//        // out connector from model
-//        Context modelOutConnector = outConn(inEnt("y1", "add"), inEnt("y2", "multiply"), inEnt("y3", "subtract"));
-//
-//        Model model = srvModel(
-//                inEnt("multiply/x1", 10.0), inEnt("multiply/x2", 50.0),
-//                inEnt("add/x1", 20.0), inEnt("add/x2", 80.0),
-//                srv(sig("multiply", MultiplierImpl.class, result("multiply/out",
-//                        inPaths("multiply/x1", "multiply/x2")))),
-//                srv(sig("add", AdderImpl.class, result("add/out",
-//                        inPaths("add/x1", "add/x2")))),
-//                srv(sig("subtract", SubtractorImpl.class, result("subtract/response",
-//                        inPaths("multiply/out", "add/out")))),
-//                srv("y1", "multiply/x1"), srv("y2", "add/x2"), srv("y3", "subtract/response"));
-//
-//        addResponse(model, "add", "multiply", "subtract");
-//        dependsOn(model, ent("subtract", paths("multiply", "add")));
-//        // specify how model connects to exertion
-//        outConn(model, modelOutConnector);
-//
-//
-//        Block block = block("mogram", j2, model);
-//
-//        Context result = context(exert(block));
-//
-////        logger.info("result: " + result);
-//
-//        assertTrue(value(result, "add").equals(580.0));
-//        assertTrue(value(result, "multiply").equals(5000.0));
-//        assertTrue(value(result, "y1").equals(580.0));
-//        assertTrue(value(result, "y2").equals(5000.0));
-//        assertTrue(value(result, "y3").equals(4420.0));
+        Block block = block("mogram", j2, model);
+
+        Context result = context(exert(block));
+
+        logger.info("result: " + result);
+
+        assertTrue(value(result, "add").equals(580.0));
+        assertTrue(value(result, "multiply").equals(5000.0));
+        assertTrue(value(result, "y1").equals(580.0));
+        assertTrue(value(result, "y2").equals(5000.0));
+        assertTrue(value(result, "y3").equals(4420.0));
     }
 }
