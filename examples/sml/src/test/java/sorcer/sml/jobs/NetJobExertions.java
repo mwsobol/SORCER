@@ -157,23 +157,28 @@ public class NetJobExertions implements SorcerConstants {
 		
 		Task t3 = task("t3", sig("subtract", Subtractor.class), 
 				context("subtract", inEnt("arg/x1"), inEnt("arg/x2"),
-						outEnt("result/y")), strategy(Monitor.YES));
-
+//						outEnt("result/y")), strategy(Monitor.YES));
+						outEnt("result/y")));
 		Task t4 = task("t4", sig("multiply", Multiplier.class), 
 				context("multiply", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
-						outEnt("result/y")), strategy(Monitor.YES));
+//						outEnt("result/y")), strategy(Monitor.YES));
+						outEnt("result/y")));
 
 		Task t5 = task("t5", sig("add", Adder.class), 
 				context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
-						outEnt("result/y")), strategy(Monitor.YES));
+//						outEnt("result/y")), strategy(Monitor.YES));
+						outEnt("result/y")));
+
 
 		// Service Composition j1(j2(t4(x1, x2), t5(x1, x2)), t3(x1, x2))
 		Job job = job("j1", 
-				job("j2", t4, t5, strategy(flow, access, Monitor.YES)),
+//				job("j2", t4, t5, strategy(flow, access, Monitor.YES)),
 				t3,
-				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
-				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")),
-                strategy(Monitor.YES));
+                job("j2", t4, t5, strategy(flow, access)),
+
+                pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
+				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
+//                strategy(Monitor.YES));
 				
 		return job;
 	}
@@ -211,6 +216,7 @@ public class NetJobExertions implements SorcerConstants {
 	
 	@Test
 	public void exertJobPullParTest() throws Exception {
+
 		Job job = createJob(Flow.PAR, Access.PULL);
 		job = exert(job);
 		//logger.info("job j1: " + job);
@@ -218,6 +224,7 @@ public class NetJobExertions implements SorcerConstants {
 		logger.info("job j1 job context: " + serviceContext(job));
 		//logger.info("job j1 value @ j1/t3/result/y = " + get(job, "j1/t3/result/y"));
 		assertEquals(get(job, "j1/t3/result/y"), 400.00);
+
 	}
 	
 	@Test
