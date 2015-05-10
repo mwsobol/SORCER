@@ -57,28 +57,29 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
         // ex.setSubject(subject);
         ServiceExertion result = null;
         try {
-			if (ex.isTask()) {
-				result = execTask((Task) ex);
-			} else if (ex.isJob()) {
-				result = execJob((Job) ex);
-			} else if (ex.isBlock()) {
-				result = execBlock((Block) ex);
-			} else {
-				logger.warn("Unknown ServiceExertion: {}", ex);
-			}
+            if (ex.isTask()) {
+                result = execTask((Task) ex);
+            } else if (ex.isJob()) {
+                result = execJob((Job) ex);
+            } else if (ex.isBlock()) {
+                result = execBlock((Block) ex);
+            } else {
+                logger.warn("Unknown ServiceExertion: {}", ex);
+            }
             afterExec(ex, result);
-		} catch (Exception e) {
+            // set subject after result is received
+            // result.setSubject(subject);
+            result.setStatus(DONE);
+        } catch (Exception e) {
             logger.warn("Error while executing exertion: ", e);
-			// return original exertion with exception
-			result = (ServiceExertion) ex;
+            // return original exertion with exception
+            result = (ServiceExertion) ex;
             result.reportException(e);
-			result.setStatus(FAILED);
-			setState(Exec.FAILED);
-			return result;
-		}
-		// set subject after result is received
-		// result.setSubject(subject);
-		return result;
+            result.setStatus(FAILED);
+            setState(Exec.FAILED);
+            return result;
+        }
+        return result;
     }
 
     protected void afterExec(Exertion ex, Exertion result)
@@ -262,7 +263,6 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
         Job out = (Job) dispatcher.getResult().exertion;
         // Not sure if good place
         out.stopExecTime();
-        //
         out.getControlContext().appendTrace(provider.getProviderName()
                 + " dispatcher: " + getClass().getName());
         return out;

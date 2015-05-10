@@ -293,7 +293,7 @@ public class Task extends ServiceExertion {
 	@Override
 	public Context linkContext(Context context, String path) {
 		try {
-			((ServiceContext) context).putLink(path, getContext());
+			((ServiceContext) context).putLink(path, getDataContext());
 		} catch (ContextException e) {
 			e.printStackTrace();
 		}

@@ -396,7 +396,7 @@ public class Job extends CompoundExertion {
 	public Context updateContextWith(Context connector) throws ContextException {
 		if (connector != null) {
 			Context jobContext =  getJobContext();
-			Iterator it = ((Map) connector).entrySet().iterator();
+			Iterator it = ((ServiceContext)connector).entryIterator();
 			while (it.hasNext()) {
 				Map.Entry e = (Map.Entry) it.next();
 				dataContext.putInValue((String) e.getKey(), jobContext.getValue((String) e.getValue()));
