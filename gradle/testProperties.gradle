@@ -36,6 +36,7 @@ subprojects {
                     systemProperty "logback.version", "${logbackVersion}"
                     systemProperty "rio.home", "${rioHome}"
 					systemProperty "project.build.dir", project.buildDir
+                    systemProperty "forceConsoleLogging", "true"
                     systemProperty "logback.configurationFile", "${sorcerDistHome}/configs/sorcer-logging.groovy"
                     environment("SORCER_HOME":"${sorcerDistHome}", "RIO_HOME": "${rioHome}")
                 }

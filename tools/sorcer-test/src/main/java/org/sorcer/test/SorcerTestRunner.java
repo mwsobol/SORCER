@@ -18,6 +18,8 @@ package org.sorcer.test;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.InitializationError;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -28,14 +30,11 @@ import java.net.URLClassLoader;
 import java.security.*;
 import java.util.Map;
 import java.util.Properties;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author Dennis Reedy
  */
 public class SorcerTestRunner extends BlockJUnit4ClassRunner {
-    private static final Logger logger = LoggerFactory.getLogger(SorcerTestRunner.class.getName());
     static {
         Policy.setPolicy(new Policy() {
             public PermissionCollection getPermissions(CodeSource codesource) {
@@ -50,6 +49,7 @@ public class SorcerTestRunner extends BlockJUnit4ClassRunner {
         if(System.getSecurityManager()==null)
             System.setSecurityManager(new SecurityManager());
     }
+    private static final Logger logger = LoggerFactory.getLogger(SorcerTestRunner.class.getName());
 
     /**
      * Constructs a new <code>SorcerTestRunner</code>
@@ -113,11 +113,11 @@ public class SorcerTestRunner extends BlockJUnit4ClassRunner {
                         e.printStackTrace();
                     }
                 } else {
-                    System.err.println("Unable to load " +testProperties.getPath() +
+                    logger.warn("Unable to load " +testProperties.getPath() +
                                        " for "+getTestClass().getJavaClass().getName()+", test bootstrapping short-circuited");
                 }
             } else {
-                System.err.println("The "+getTestClass().getJavaClass().getName()+
+                logger.warn("The "+getTestClass().getJavaClass().getName()+
                                    " does not declare a ProjectContext annotation," +
                                    " test bootstrapping short-circuited");
             }

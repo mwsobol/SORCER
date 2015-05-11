@@ -14,7 +14,7 @@ dependencies {
             "org.slf4j:slf4j-api:${slf4jVersion}",
             "net.jini:jsk-platform:${riverVersion}"
     testCompile "junit:junit:${junitVersion}"
-    testCompile "org.slf4j:slf4j-simple:" + slf4jVersion
     testCompile project(':sorcer-test')
+    testRuntime libs.logback
 
 }
