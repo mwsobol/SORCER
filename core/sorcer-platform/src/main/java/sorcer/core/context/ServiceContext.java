@@ -847,7 +847,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 			List<Link> links = localLinks();
 			for(Link link : links) {
 				result = getLinkedContext((ContextLink)link).isSingletonAttribute(
-                        attributeName);
+						attributeName);
 				if (result)
 					break;
 			}
@@ -3078,6 +3078,10 @@ public class ServiceContext<T> extends ServiceMogram implements
 
 	public Set<String> keySet() {
 		return data.keySet();
+	}
+
+	Collection<T> values() {
+		return data.values();
 	}
 
 	public T put(String key, T value) {
