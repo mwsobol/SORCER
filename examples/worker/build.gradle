@@ -61,6 +61,7 @@ bootme {
     systemProperties = ["local.repo.path" : repoPath(),
                         "project.dir" : "${project.projectDir.path}"]
     spawn = true
+	//debug = true
 }
 
 test {

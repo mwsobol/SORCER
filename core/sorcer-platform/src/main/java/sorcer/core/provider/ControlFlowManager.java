@@ -24,7 +24,6 @@ import sorcer.core.context.ServiceContext;
 import sorcer.core.exertion.*;
 import sorcer.core.provider.rendezvous.RendezvousBean;
 import sorcer.core.provider.rendezvous.ServiceConcatenator;
-import sorcer.core.signature.NetSignature;
 import sorcer.service.*;
 import sorcer.service.Strategy.Access;
 import sorcer.service.jobber.JobberAccessor;
@@ -489,13 +488,7 @@ public class ControlFlowManager {
     public Task doBatchTask(Task task) throws MogramException,
             SignatureException, RemoteException, ContextException {
         Fidelity tf = task.getFidelity();
-        List<Signature> alls = task.getFidelity().getSelects();
-		Signature lastSig = alls.get(alls.size()-1);
-		if (alls.size() > 1 &&  task.isBatch() && !(lastSig instanceof NetSignature)) {
-			for (int i = 0; i< alls.size()-1; i++) {
-				alls.get(i).setType(Signature.PRE);
-			}
-		}
+        task.correctBatchSignatures();
         task.startExecTime();
         // append context from Contexters
         if (task.getApdProcessSignatures().size() > 0) {

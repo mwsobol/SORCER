@@ -370,4 +370,28 @@ public class Task extends ServiceExertion {
 			return dataContext.getValue(path, args);
 		}
 	}
+
+	public Mogram clearScope() throws MogramException {
+		if (!isContinous()) getDataContext().clearScope();
+		return this;
+	}
+
+	public void correctBatchSignatures() {
+		List<Signature> alls = this.getFidelity().getSelects();
+		Signature lastSig = alls.get(alls.size()-1);
+		if (alls.size() > 1 &&  this.isBatch() && !(lastSig instanceof NetSignature)) {
+			boolean allSrvType = true;
+			for (Signature sig : alls) {
+				if (!sig.getType().equals(Signature.SRV)) {
+					allSrvType = false;
+					break;
+				}
+			}
+			if (allSrvType) {
+				for (int i = 0; i < alls.size() - 1; i++) {
+					alls.get(i).setType(Signature.PRE);
+				}
+			}
+		}
+	}
 }

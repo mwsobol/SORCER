@@ -305,11 +305,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
     }
 
     public boolean isBatch() {
-        for (Signature s : serviceFidelity.selects) {
-            if (s.getType() != Signature.Type.SRV)
-                return false;
-        }
-        return true;
+        return serviceFidelity.selects.size()>1;
     }
 
     public void setFidelity(Fidelity fidelity) {
