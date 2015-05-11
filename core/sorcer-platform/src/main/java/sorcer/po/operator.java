@@ -57,6 +57,12 @@ public class operator {
 	
 	public static Par par(Context context, Identifiable identifiable) throws EvaluationException, RemoteException {
 		Par p = new Par(identifiable.getName(), identifiable);
+		if (identifiable instanceof Scopable)
+			try {
+				((Scopable)identifiable).setScope(context);
+			} catch (ContextException e) {
+				throw new EvaluationException(e);
+			}
 		p.setScope(context);
 		return p;
 	}
@@ -167,10 +173,10 @@ public class operator {
 		return new ParModel(objects);
 	}
 
-	public static ParModel add(ParModel parContext, Identifiable... objects)
+	public static ParModel add(ParModel parModel, Identifiable... objects)
 			throws RemoteException, ContextException {
-		parContext.add(objects);
-		return parContext;
+		parModel.add(objects);
+		return parModel;
 	}
 
 	public static ParModel append(ParModel parContext, Arg... objects)
