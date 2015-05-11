@@ -3080,7 +3080,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		return data.keySet();
 	}
 
-	Collection<T> values() {
+	public Collection<T> values() {
 		return data.values();
 	}
 
