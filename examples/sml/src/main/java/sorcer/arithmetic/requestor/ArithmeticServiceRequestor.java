@@ -26,23 +26,23 @@ public class ArithmeticServiceRequestor extends ServiceRequestor {
 	public Exertion getExertion(String... args) throws ExertionException, ContextException, SignatureException {
 
 			Task t3 = task("t3",
-					srvFi("object", sig("subtract", SubtractorImpl.class), sig("average", AveragerImpl.class)),
-					srvFi("net", sig("subtract", Subtractor.class), sig("average", Averager.class)),
+					sFi("object", sig("subtract", SubtractorImpl.class), sig("average", AveragerImpl.class)),
+					sFi("net", sig("subtract", Subtractor.class), sig("average", Averager.class)),
 					context("t3-cxt", inEnt("arg/x1", null), inEnt("arg/x2", null),
 							outEnt("result/y", null)));
 
-			Task t4 = task("t4", srvFi("object", sig("multiply", MultiplierImpl.class)),
-					srvFi("net", sig("multiply", Multiplier.class)),
+			Task t4 = task("t4", sFi("object", sig("multiply", MultiplierImpl.class)),
+					sFi("net", sig("multiply", Multiplier.class)),
 					context("multiply", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
 							outEnt("result/y", null)));
 
-			Task t5 = task("t5", srvFi("object", sig("add", AdderImpl.class)),
-					srvFi("net", sig("add", Adder.class)),
+			Task t5 = task("t5", sFi("object", sig("add", AdderImpl.class)),
+					sFi("net", sig("add", Adder.class)),
 					context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
 							outEnt("result/y")));
 
-			Job job = job("j1", srvFi("object", sig("service", ServiceJobber.class)),
-					srvFi("net", sig("service", Jobber.class)),
+			Job job = job("j1", sFi("object", sig("service", ServiceJobber.class)),
+					sFi("net", sig("service", Jobber.class)),
 					job("j2", sig("service", ServiceJobber.class), t4, t5),
 					t3,
 					pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),

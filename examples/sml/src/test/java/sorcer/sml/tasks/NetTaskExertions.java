@@ -89,19 +89,19 @@ public class NetTaskExertions {
 	public void arithmeticNetFiTask() throws Exception {
 
 		Task task = task("add",
-				srvFi("net", sig("add", Adder.class)),
-				srvFi("object", sig("add", AdderImpl.class)),
+				sFi("net", sig("add", Adder.class)),
+				sFi("object", sig("add", AdderImpl.class)),
 				context(inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
 						result("result/y")));
 
-		logger.info("sFi: " + srvFi(task));
+		logger.info("sFi: " + sFi(task));
 		logger.info("sFis: " + srvFis(task));
 
 //		task = exert(task, sFi("object"));
 //		logger.info("exerted: " + task);
 //		assertTrue((Double)get(task) == 100.0);
 
-		task = exert(task, srvFi("net"));
+		task = exert(task, sFi("net"));
 		logger.info("exerted: " + task);
 		assertTrue("Wrong value for 100.0", (Double) get(task) == 100.0);
 	}
@@ -143,15 +143,15 @@ public class NetTaskExertions {
 	@Test
 	public void localFiBatchTask() throws Exception {
 
-		Task t4 = task("t4", srvFi("object", sig("multiply", MultiplierImpl.class), sig("add", AdderImpl.class)),
-				srvFi("net", sig("multiply", Multiplier.class), sig("add", Adder.class)),
+		Task t4 = task("t4", sFi("object", sig("multiply", MultiplierImpl.class), sig("add", AdderImpl.class)),
+				sFi("net", sig("multiply", Multiplier.class), sig("add", Adder.class)),
 				context("shared", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
 						outEnt("result/y")));
 
 		t4 = exert(t4);
 		logger.info("task cont4text: " + context(t4));
 
-		t4 = exert(t4, srvFi("net"));
+		t4 = exert(t4, sFi("net"));
 		logger.info("task cont4text: " + context(t4));
 
 	}
@@ -159,19 +159,19 @@ public class NetTaskExertions {
 	@Test
 	public void netLocalFiTask() throws Exception {
 		Task task = task("add",
-				srvFi("net", sig("add", Adder.class)),
-				srvFi("object", sig("add", AdderImpl.class)),
+				sFi("net", sig("add", Adder.class)),
+				sFi("object", sig("add", AdderImpl.class)),
 				context(inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
 						result("result/y")));
 		
-		logger.info("sFi: " + srvFi(task));
+		logger.info("sFi: " + sFi(task));
 		logger.info("sFis: " + srvFis(task));
 
 //		task = exert(task, sFi("object"));
 //		logger.info("exerted: " + task);
 //		assertTrue("Wrong value for 100.0", (Double)get(task) == 100.0);
 		
-		task = exert(task, srvFi("net"));
+		task = exert(task, sFi("net"));
 		logger.info("exerted: " + task);
 		assertTrue("Wrong value for 100.0", (Double)get(task) == 100.0);
 	

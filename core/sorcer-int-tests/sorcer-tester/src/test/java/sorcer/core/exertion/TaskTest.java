@@ -111,15 +111,15 @@ public class TaskTest {
 		ServiceExertion.debug = true;
 		
 		Task task = task("add",
-				srvFi("net", sig("add", Adder.class)),
-				srvFi("object", sig("add", AdderImpl.class)),
+				sFi("net", sig("add", Adder.class)),
+				sFi("object", sig("add", AdderImpl.class)),
 				context(inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
 						result("result/y")));
 		
 //		logger.info("sFi: " + sFi(task));
 //		logger.info("sFis: " + sFis(task));
 
-		task = exert(task, srvFi("object"));
+		task = exert(task, sFi("object"));
 		logger.info("exerted: " + task);
 		assertTrue("Wrong value for 100.0", (Double)get(task) == 100.0);
 		

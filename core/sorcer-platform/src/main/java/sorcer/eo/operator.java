@@ -961,7 +961,7 @@ public class operator {
 	}
 
 
-	public static Fidelity<Signature> srvFi(Exertion exertion) {
+	public static Fidelity<Signature> sFi(Exertion exertion) {
 		return exertion.getFidelity();
 	}
 
@@ -969,11 +969,11 @@ public class operator {
 		return exertion.getFidelities();
 	}
 
-	public static Fidelity<Signature> srvFi(Signature... signatures) {
+	public static Fidelity<Signature> sFi(Signature... signatures) {
 		return new Fidelity(signatures);
 	}
 
-	public static Fidelity<Signature> srvFi(String name, Signature... signatures) {
+	public static Fidelity<Signature> sFi(String name, Signature... signatures) {
 		return new Fidelity<Signature>(name, signatures);
 	}
 
