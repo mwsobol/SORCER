@@ -1,6 +1,8 @@
 package sorcer.sml.contexts;
 
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.arithmetic.provider.impl.AveragerImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
@@ -13,17 +15,14 @@ import sorcer.service.Strategy.Flow;
 import sorcer.service.Task;
 import sorcer.service.modeling.Model;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
 import static sorcer.co.operator.inPaths;
 import static sorcer.co.operator.srv;
 import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.value;
-import static sorcer.po.operator.invoker;
 import static sorcer.mo.operator.*;
+import static sorcer.po.operator.invoker;
 /**
  * Created by Mike Sobolewski on 4/15/15.
  */
@@ -130,9 +129,9 @@ public class SrvModels {
                 task(sig("average", AveragerImpl.class,
                         result("average/response", inPaths("y1", "y2", "y3")))));
 
+//        logger.info("block context: " + block.getContext());
         Context result = context(exert(block));
-
-        logger.info("result: " + result);
+//        logger.info("result: " + result);
 
         assertTrue(value(result, "y1").equals(100.0));
         assertTrue(value(result, "y2").equals(500.0));
@@ -162,8 +161,8 @@ public class SrvModels {
                 inEnt("multiply/x1", "j2/t5/add/result/y"));
 
         Job j2 = job("j2", sig("service", ServiceJobber.class),
-                    t4, t5, strategy(Flow.PAR),
-                    taskOutConnector);
+                t4, t5, strategy(Flow.PAR),
+                taskOutConnector);
 
         // out connector from model
         Context modelOutConnector = outConn(inEnt("y1", "add"), inEnt("y2", "multiply"), inEnt("y3", "subtract"));
@@ -175,21 +174,21 @@ public class SrvModels {
                         inPaths("multiply/x1", "multiply/x2")))),
                 srv(sig("add", AdderImpl.class, result("add/out",
                         inPaths("add/x1", "add/x2")))),
-                srv(sig("subtract", SubtractorImpl.class, result("subtract/response",
-                        inPaths("multiply/out", "add/out")))),
-                srv("y1", "multiply/x1"), srv("y2", "add/x2"), srv("y3", "subtract/response"));
+                srv(sig("subtract", SubtractorImpl.class, result("subtract/out",
+                        inPaths("multiply/out", "add/out")))));
+
+//                srv("z1", "multiply/x1"), srv("z2", "add/x2"), srv("z3", "subtract/out"));
 
         addResponse(model, "add", "multiply", "subtract");
         dependsOn(model, ent("subtract", paths("multiply", "add")));
         // specify how model connects to exertion
         outConn(model, modelOutConnector);
 
-
         Block block = block("mogram", j2, model);
 
         Context result = context(exert(block));
 
-//        logger.info("result: " + result);
+        logger.info("result: " + result);
 
         assertTrue(value(result, "add").equals(580.0));
         assertTrue(value(result, "multiply").equals(5000.0));

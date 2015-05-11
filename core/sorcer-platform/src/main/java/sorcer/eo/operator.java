@@ -23,7 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.co.operator.DataEntry;
 import sorcer.co.tuple.*;
-import sorcer.core.ComponentSelectionFidelity;
+import sorcer.core.SelectFidelity;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.*;
 import sorcer.core.context.model.PoolStrategy;
@@ -219,16 +219,16 @@ public class operator {
 			throw new ContextException("Service not an exertion: " + service);
 	}
 
-	public static FidelityContext fiContext(SelectionFidelity... fidelityInfos)
+	public static FidelityContext fiContext(Fidelity... fidelityInfos)
 			throws ContextException {
 		return fiContext(null, fidelityInfos);
 	}
 
-	public static FidelityContext fiContext(String name, SelectionFidelity... fidelityInfos)
+	public static FidelityContext fiContext(String name, Fidelity... fidelityInfos)
 			throws ContextException {
 		FidelityContext fiCxt = new FidelityContext(name);
-		for (SelectionFidelity e : fidelityInfos) {
-			if (e instanceof SelectionFidelity) {
+		for (Fidelity e : fidelityInfos) {
+			if (e instanceof Fidelity) {
 				try {
 					fiCxt.put(e.getName(), e);
 				} catch (Exception ex) {
@@ -605,7 +605,7 @@ public class operator {
 			throws RemoteException, ContextException {
 		for (Identifiable i : objects) {
 			// just replace the value
-			if (((Map)context).containsKey(i.getName())) {
+			if (((ServiceContext)context).containsKey(i.getName())) {
 				context.putValue(i.getName(), i);
 				continue;
 			}
@@ -947,38 +947,34 @@ public class operator {
 		return new EvaluationTask(signature, context);
 	}
 
-	public static SelectionFidelity srvFi(String name) {
-		return new SelectionFidelity(name);
+	public static SelectFidelity fiFi(String name) {
+		return new SelectFidelity(name);
 	}
 
-	public static SelectionFidelity srvFi(String name, String... selectors) {
-		return new SelectionFidelity(name, selectors);
-	}
-
-	public static ComponentSelectionFidelity csFi(String path, String name) {
-		return new ComponentSelectionFidelity(name, path);
+	public static SelectFidelity fi(String path, String name) {
+		return new SelectFidelity(name, path);
 	}
 
 
-	public static ComponentSelectionFidelity csFi(String path, String name, String... selectors) {
-		return new ComponentSelectionFidelity(name, path, selectors);
+	public static SelectFidelity fi(String path, String name, String... selectors) {
+		return new SelectFidelity(name, path, selectors);
 	}
 
 
-	public static ServiceFidelity srvFi(Exertion exertion) {
+	public static Fidelity<Signature> srvFi(Exertion exertion) {
 		return exertion.getFidelity();
 	}
 
-	public static Map<String, ServiceFidelity> srvFis(Exertion exertion) {
+	public static Map<String, Fidelity<Signature>> srvFis(Exertion exertion) {
 		return exertion.getFidelities();
 	}
 
-	public static ServiceFidelity srvFi(Signature... signatures) {
-		return new ServiceFidelity(signatures);
+	public static Fidelity<Signature> srvFi(Signature... signatures) {
+		return new Fidelity(signatures);
 	}
 
-	public static ServiceFidelity srvFi(String name, Signature... signatures) {
-		return new ServiceFidelity(name, signatures);
+	public static Fidelity<Signature> srvFi(String name, Signature... signatures) {
+		return new Fidelity<Signature>(name, signatures);
 	}
 
 	public static ObjectSignature sig(String operation, Object object)
@@ -1078,7 +1074,7 @@ public class operator {
 	public static Task batch(String name, Object... elems)
 			throws ExertionException {
 		Task batch = task(name, elems);
-		if (batch.getFidelity().size() > 1)
+		if (batch.getFidelity().getSelects().size() > 1)
 			return batch;
 		else
 			throw new ExertionException(
@@ -1097,7 +1093,7 @@ public class operator {
 		Task task = null;
 		Access access = null;
 		Flow flow = null;
-		List<ServiceFidelity> fidelities = null;
+		List<Fidelity> fidelities = null;
 		ControlContext cc = null;
 		for (Object o : elems) {
 			if (o instanceof ControlContext) {
@@ -1112,10 +1108,10 @@ public class operator {
 				access = (Access) o;
 			} else if (o instanceof Flow) {
 				flow = (Flow) o;
-			} else if (o instanceof ServiceFidelity) {
+			} else if (o instanceof Fidelity) {
 				if (fidelities == null)
-					fidelities = new ArrayList<ServiceFidelity>();
-				fidelities.add((ServiceFidelity) o);
+					fidelities = new ArrayList<Fidelity>();
+				fidelities.add((Fidelity) o);
 			}
 		}
 		Signature ss = null;
@@ -1239,7 +1235,7 @@ public class operator {
 		ReturnPath rp = null;
 		List<Exertion> exertions = new ArrayList<Exertion>();
 		List<Pipe> pipes = new ArrayList<Pipe>();
-		List<ServiceFidelity> fidelities = null;
+		List<Fidelity> fidelities = null;
 		List<FidelityContext> fiContexts = null;
 		List<MapContext> connList = new ArrayList<MapContext>();
 
@@ -1260,10 +1256,10 @@ public class operator {
 				signature = ((Signature) elems[i]);
 			} else if (elems[i] instanceof ReturnPath) {
 				rp = ((ReturnPath) elems[i]);
-			} else if (elems[i] instanceof ServiceFidelity) {
+			} else if (elems[i] instanceof Fidelity) {
 				if (fidelities == null)
-					fidelities = new ArrayList<ServiceFidelity>();
-				fidelities.add((ServiceFidelity) elems[i]);
+					fidelities = new ArrayList<Fidelity>();
+				fidelities.add((Fidelity) elems[i]);
 			} else if (elems[i] instanceof FidelityContext) {
 				if (fiContexts == null)
 					fiContexts = new ArrayList<FidelityContext>();
@@ -1284,7 +1280,7 @@ public class operator {
 		}
 		if (fidelities == null) {
 			if (!defaultSig) {
-				job.getFidelity().clear();
+				job.getFidelity().getSelects().clear();
 				job.addSignature(signature);
 			} else {
 				job.addSignature(signature);
@@ -1313,7 +1309,7 @@ public class operator {
 			if (control.getAccessType().equals(Access.PULL)) {
 				Signature procSig = job.getProcessSignature();
 				procSig.setServiceType(Spacer.class);
-				job.getFidelity().clear();
+				job.getFidelity().getSelects().clear();
 				job.addSignature(procSig);
 				job.getDataContext().setExertion(job);
 			}

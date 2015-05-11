@@ -18,6 +18,8 @@
 package sorcer.ui.exertlet;
 
 import net.jini.core.transaction.TransactionException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sorcer.core.provider.Provider;
 import sorcer.netlet.ScriptExerter;
 import sorcer.service.*;
@@ -36,13 +38,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.rmi.RemoteException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * HTML file browser and file editor
@@ -431,7 +434,7 @@ public class EditorView extends JPanel implements HyperlinkListener {
 		}
 	}
 
-	private void processExerion(Exertion exertion) throws ContextException{
+	private void processExerion(Exertion exertion) throws MogramException{
 		String codebase = System.getProperty("java.rmi.server.codebase");
 		logger.debug("Using exertlet codebase: " + codebase);
 		

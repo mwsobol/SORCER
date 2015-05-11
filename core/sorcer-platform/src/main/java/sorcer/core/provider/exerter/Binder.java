@@ -113,7 +113,7 @@ public class Binder {
     }
 
     private void resetScope(Exertion exertion) throws ContextException, RemoteException {
-        exertion.clearScope();
+        ((ServiceContext)exertion.getDataContext()).clearScope();
         exertion.getDataContext().append(((ServiceContext)exertion.getDataContext()).getInitContext());
     }
 

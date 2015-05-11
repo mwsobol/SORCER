@@ -24,6 +24,7 @@ import sorcer.service.Exertion;
 import sorcer.service.ExertionException;
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
+import sorcer.service.MogramException;
 
 /**
  * A functionality required for running exertions with given parameters.
@@ -33,9 +34,9 @@ import net.jini.core.transaction.TransactionException;
 public interface Exerter {
 	
 	public Exertion exert(Exertion xrt, Arg... entries) throws TransactionException,
-			ExertionException, RemoteException;
+			ExertionException, RemoteException, MogramException;
 
 	public Exertion exert(Exertion xrt, Transaction txn, Arg... entries)
-			throws TransactionException, ExertionException, RemoteException;
+			throws TransactionException, MogramException, RemoteException;
 
 }

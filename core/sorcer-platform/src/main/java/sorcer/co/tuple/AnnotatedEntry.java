@@ -17,6 +17,7 @@
 
 package sorcer.co.tuple;
 
+import sorcer.core.SelectFidelity;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.service.*;
 
@@ -30,7 +31,7 @@ public class AnnotatedEntry<T> extends Tuple3<String, T, String> implements Arg,
 	public int index;
 	public boolean isPersistant = false;
 	public URL datastoreURL;
-	public SelectionFidelity fidelity;
+	public SelectFidelity fidelity;
 	
 	public AnnotatedEntry() {
 	}

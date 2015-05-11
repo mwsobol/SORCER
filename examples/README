@@ -47,7 +47,7 @@ SML examples in the SORCER Project
 1. Collections used in SML
 	eol/src/test/java/sorcer/arithmetic/collections
 	
-2. Service signatures, providers, services (exertions), 
+2. Service selects, providers, services (exertions),
    and service data (contexts) in  SML
 	eol/test/java/sorcer/eol/services
 		

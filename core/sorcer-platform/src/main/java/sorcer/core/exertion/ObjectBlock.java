@@ -37,7 +37,7 @@ public class ObjectBlock extends Block {
 	private static final long serialVersionUID = -3917210130874207557L;
 	
 	public ObjectBlock() throws SignatureException {
-		super(null, new ObjectSignature("execute", ServiceConcatenator.class));
+		this("object block-" + count++);
 	}
 	
 	public ObjectBlock(String name) throws SignatureException {

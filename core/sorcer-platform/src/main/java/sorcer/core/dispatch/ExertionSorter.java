@@ -233,8 +233,8 @@ public class ExertionSorter {
      * @throws SortingException
      */
     private void checkParentCycle(Exertion topXrt) throws CycleDetectedException, ContextException, SortingException {
-        if (topXrt.getDataContext().getParentID() != null) {
-            String parentId = topXrt.getDataContext().getParentID().toString();
+        if (topXrt.getDataContext().getParentId() != null) {
+            String parentId = topXrt.getDataContext().getParentId().toString();
             if (dag.getVertex(parentId) != null) {
                 // Parent is added as an edge, but must not cause a cycle - so we remove any other edges it has in conflict
                 if (dag.hasEdge(parentId, topXrt.getId().toString())) {

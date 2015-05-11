@@ -574,14 +574,14 @@ public class ServiceSignature implements Signature, Service, Evaluation<Object>,
 
 	@Override
 	public Mogram service(Mogram exertion, Transaction txn) throws TransactionException,
-		ExertionException, RemoteException {
+		MogramException, RemoteException {
 		Provider prv = (Provider)Accessor.getService(this);
 		return prv.service(exertion, txn);
 	}
 
 	@Override
 	public Mogram service(Mogram exertion) throws TransactionException,
-			ExertionException, RemoteException {
+			MogramException, RemoteException {
 		return service(exertion, null);
 	}
 

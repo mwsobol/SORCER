@@ -81,7 +81,7 @@ public class Entry<T> extends Tuple2<String, T> implements Dependency, Comparabl
 		T val = this._2;
 		URL url = null;
 		try {
-			substitute(entries);
+//			substitute(entries);
 			if (isPersistent) {
 				if (SdbUtil.isSosURL(val)) {
 					val = (T) ((URL) val).getContent();
@@ -187,10 +187,22 @@ public class Entry<T> extends Tuple2<String, T> implements Dependency, Comparabl
     public List<Evaluation> getDependers() {
         return dependers;
     }
-    
+
 	@Override
 	public String toString() {
-		return "[" + _1 + ":" + _2 + ":" + index + "]";
+		String en = "";
+		try {
+			if (_2 instanceof Evaluation && ((Evaluation) _2).asis() != null) {
+				en = ((Evaluation) _2).asis().toString();
+			} else {
+				en = "" + _2;
+			}
+		}catch (EvaluationException e) {
+			e.printStackTrace();
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		return "[" + _1 + ":" + en + ":" + index + "]";
 	}
 
 	@Override

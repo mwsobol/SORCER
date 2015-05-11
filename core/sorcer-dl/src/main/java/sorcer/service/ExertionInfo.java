@@ -48,7 +48,7 @@ public class ExertionInfo implements Comparable, Serializable {
 
     private Date creationDate;
 
-    private String lastUpdateDate;
+    private Date lastUpdateDate;
 
     private Exertion exertion;
 
@@ -64,7 +64,7 @@ public class ExertionInfo implements Comparable, Serializable {
 		status = exertion.getStatus();
 		trace = exertion.getTrace();
         creationDate = exertion.getCreationDate();
-        lastUpdateDate = exertion.getControlContext().getLastUpdateDate();
+        lastUpdateDate = new Date();
 		signature = exertion.getProcessSignature();
         this.exertion = exertion;
 	}
@@ -78,7 +78,7 @@ public class ExertionInfo implements Comparable, Serializable {
         return creationDate;
     }
 
-    public String getLastUpdateDate() {
+    public Date getLastUpdateDate() {
         return lastUpdateDate;
     }
 

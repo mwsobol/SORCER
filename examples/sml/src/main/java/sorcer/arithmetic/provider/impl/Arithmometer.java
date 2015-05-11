@@ -1,6 +1,8 @@
 package sorcer.arithmetic.provider.impl;
 
 import groovy.lang.GroovyShell;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sorcer.arithmetic.provider.Adder;
 import sorcer.arithmetic.provider.Divider;
 import sorcer.arithmetic.provider.Multiplier;
@@ -19,8 +21,6 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.rmi.RemoteException;
 import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static sorcer.eo.operator.path;
 import static sorcer.eo.operator.revalue;
@@ -236,7 +236,6 @@ public class Arithmometer implements SorcerConstants, Serializable {
 			logger.info("inputs paths: \n" + Contexts.getInPaths(context));
 			List<String> outpaths = context.getOutPaths();
 			//logger.info("outpaths: \n" + outpaths);
-
 			double result = 0.0;
 			if (selector.equals(ADD)) {				
 					result = (Double)revalue(inputs.get(0));

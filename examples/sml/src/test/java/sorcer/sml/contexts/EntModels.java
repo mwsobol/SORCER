@@ -5,6 +5,7 @@ import org.junit.runner.RunWith;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.core.context.Copier;
+import sorcer.core.invoker.ServiceInvoker;
 import sorcer.service.Context;
 import sorcer.service.modeling.Model;
 

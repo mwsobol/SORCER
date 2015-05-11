@@ -125,19 +125,19 @@ public class Mograms implements SorcerConstants {
 		cc.setName(sc.getName());
 		cc.setId(sc.getId());
 		cc.setParentPath(sc.getParentPath());
-		cc.setParentID((sc.getParentID() == null) ? null : sc.getParentID());
+		cc.setParentId((sc.getParentId() == null) ? null : sc.getParentId());
 		cc.setSubject(sc.getSubjectPath(), sc.getSubjectValue());
 		cc.setLastUpdateDate(sc.getLastUpdateDate());
 		cc.setDescription(sc.getDescription());
 		cc.setScopeCode(sc.getScopeCode());
-		cc.setOwnerID(sc.getOwnerID());
-		cc.setSubjectID(sc.getSubjectID());
-		cc.setProject(sc.getProject());
+		cc.setOwnerId(sc.getOwnerId());
+		cc.setSubjectId(sc.getSubjectId());
+		cc.setProjectName(sc.getProjectName());
 		cc.setAccessClass(sc.getAccessClass());
-		cc.setExportControl(sc.getExportControl());
+		cc.isExportControlled(sc.isExportControlled());
 		cc.setGoodUntilDate(sc.getGoodUntilDate());
-		cc.setDomainID(sc.getDomainID());
-		cc.setSubdomainID(sc.getSubdomainID());
+		cc.setDomainId(sc.getDomainId());
+		cc.setSubdomainId(sc.getSubdomainId());
 		cc.setDomainName(sc.getDomainName());
 		cc.setMetacontext(sc.getMetacontext());
 		cc.isPersistantTaskAssociated = ((ServiceContext) sc).isPersistantTaskAssociated;
@@ -156,8 +156,9 @@ public class Mograms implements SorcerConstants {
 	}
 
 	public static void removeExceptions(Context sc) {
-		for (Enumeration e = ((ServiceContext) sc).keys(); e.hasMoreElements();) {
-			String path = (String) e.nextElement();
+		Iterator e = ((ServiceContext) sc).keyIterator();
+		while (e.hasNext()) {
+			String path = (String) e.next();
 			if (path.startsWith(SorcerConstants.EXCEPTIONS))
 				try {
 					sc.removePath(path);

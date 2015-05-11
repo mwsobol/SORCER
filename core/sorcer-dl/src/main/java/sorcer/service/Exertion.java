@@ -180,18 +180,17 @@ public interface Exertion extends Mogram, Dependency, Invocation<Object>, Evalua
 	 * @return a collection of all service signatures
 	 * @see #getProcessSignature
 	 */
-	public ServiceFidelity getFidelity();
+	public Fidelity<Signature> getFidelity();
 
 	/**
 	 * Returns a map of all available service fidelities of this exertion.
 	 */
-	public Map<String, ServiceFidelity> getFidelities();
+	public Map<String, Fidelity<Signature>> getFidelities();
 	
 	/**
 	 * Returns a signature of the <code>PROCESS</code> type for this exertion.
 	 * 
 	 * @return a process service signature
-	 * @see #getSignatures
 	 */
 	public Signature getProcessSignature();
 
@@ -341,8 +340,6 @@ public interface Exertion extends Mogram, Dependency, Invocation<Object>, Evalua
 	 */
 	public boolean isCompound();
 
-
-	public Exertion clearScope() throws ContextException;
 	/**
 	 * The exertion format for thin exertions (no RMI and Jini classes)
 	 */

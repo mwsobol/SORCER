@@ -39,7 +39,7 @@ public class LocalBlockExertions implements SorcerConstants {
 	@Test
 	public void altServceTest() throws Exception {
 
-//		Context scopeContext = context(ent("y1", 100), ent("y2", 200));
+//		Context scope = context(ent("y1", 100), ent("y2", 200));
 
 		Task t4 = task("t4", sig("multiply", MultiplierImpl.class),
 				context("multiply", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
@@ -172,11 +172,11 @@ public class LocalBlockExertions implements SorcerConstants {
 		Block block = block("block",
 				context(ent("x1", 10.0), ent("x2", 20.0), ent("z", 100.0)),
 				loop(condition("{ x1, x2, z -> x1 + x2 < z }", "x1", "x2", "z"), 
-						task(par("x1", invoker("x1 + 3", par("x1"))))));
-		
+						task(par("x1", invoker("x1 + 3", pars("x1"))))));
+
 		block = exert(block);
-//		logger.info("block context: " + context(block));
-//		logger.info("result: " + value(context(block), "x1"));
+		logger.info("block context: " + context(block));
+		logger.info("result: " + value(context(block), "x1"));
 		assertEquals(value(context(block), "x1"), 82.00);
 	}
 
@@ -207,10 +207,10 @@ public class LocalBlockExertions implements SorcerConstants {
 //		logger.info("result: " + value(context(block), "block/result"));
 		assertEquals(value(context(block), "block/result"), 100.00);
 
-		block = exert(block, ent("x1", 10.0), ent("x2", 6.0));
-//		logger.info("block context: " + context(block));
-//		logger.info("result: " + value(context(block), "block/result"));
-		assertEquals(value(context(block), "block/result"), 500.00);
+//		block = exert(block, ent("x1", 10.0), ent("x2", 6.0));
+////		logger.info("block context: " + context(block));
+////		logger.info("result: " + value(context(block), "block/result"));
+//		assertEquals(value(context(block), "block/result"), 500.00);
 
 	}
 	

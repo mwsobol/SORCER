@@ -17,32 +17,37 @@
 
 package sorcer.core;
 
-import sorcer.service.SelectionFidelity;
+import sorcer.service.Fidelity;
 
 import java.util.Arrays;
 
 /**
  * @author Mike Sobolewski
  */
-public class ComponentSelectionFidelity extends SelectionFidelity {
+public class SelectFidelity extends Fidelity<String> {
 
 	private static final long serialVersionUID = 1L;
 	
 	// component exertion path
 	protected String path;
 
-	public ComponentSelectionFidelity() {
+	public SelectFidelity() {
 		// fidelityName undefined
 	}
 
-	public ComponentSelectionFidelity(String fidelityName, String path) {
+	public SelectFidelity(String fidelityName, String path) {
 		this.name = fidelityName;
 		this.path = path;
 	}
 
-	public ComponentSelectionFidelity(String fidelityName, String path, String... selectors) {
+	public SelectFidelity(String fidelityName, String... selectors) {
+		this(fidelityName, (String)null);
+		this.selects = Arrays.asList(selectors);
+	}
+
+	public SelectFidelity(String fidelityName, String path, String... selectors) {
 		this(fidelityName, path);
-		this.selectors = selectors;
+		this.selects = Arrays.asList(selectors);
 	}
 
 	public String getPath() {
@@ -56,7 +61,7 @@ public class ComponentSelectionFidelity extends SelectionFidelity {
 	@Override
 	public String toString() {
 		return "Fidelity: " + name +"@" + path 
-				+ (selectors == null ? "" : ":" + " with: " + Arrays.toString(selectors));
+				+ (selects == null ? "" : ":" + " with: " + selects);
 	}
 
 }

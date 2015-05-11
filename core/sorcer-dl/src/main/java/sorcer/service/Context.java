@@ -28,10 +28,7 @@ import java.io.Serializable;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.security.Principal;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Service context classes that implement this interface provide SORCER generic
@@ -190,7 +187,7 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 			return "none";
 		}
 	}
-	final static Object none = new none();
+	final public static Object none = new none();
 
 	/**
 	 * Returns a name of this service context.
@@ -247,67 +244,53 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 
 	/**
 	 */
-	public Uuid getParentID();
+	public Uuid getParentId();
 
-	public void setParentID(Uuid parentId);
-
-	/**
-	 */
-	public long getCreationTime();
+	public void setParentId(Uuid parentId);
 
 	/**
 	 */
-	public String getLastUpdateDate();
+	public Date getCreationDate();
+
+	/**
+	 */
+	public Date getLastUpdateDate();
 
 	/**
 	 * @param date
 	 *            The lastUpdateDate to set.
 	 */
-	public void setLastUpdateDate(String date);
+	public void setLastUpdateDate(Date date);
 
 	/**
-	 * @param date
+	 * @param description
 	 *            The description to set.
 	 */
-	public void setDescription(String date);
+	public void setDescription(String description);
 
 	/**
 	 */
 	public String getDescription();
 
-	public int getScopeCode();
-
-	public void setScopeCode(int scope);
+	public Integer getScopeCode();
 
 	/**
 	 */
-	public String getOwnerID();
-
-	/**
-	 * @param id
-	 *            The ownerID to set.
-	 */
-	public void setOwnerID(String id);
-
-	/**
-	 * @param id
-	 *            The subjectID to set.
-	 */
-	public void setSubjectID(String id);
+	public String getOwnerId();
 
 	/**
 	 */
-	public String getSubjectID();
+	public String getSubjectId();
 
 	/**
 	 * @param projectName
 	 *            The project to set.
 	 */
-	public void setProject(String projectName);
+	public void setProjectName(String projectName);
 
 	/**
 	 */
-	public String getProject();
+	public String getProjectName();
 
 	/**
 	 * @param accessClass
@@ -320,44 +303,34 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 	public String getAccessClass();
 
 	/**
-	 * @param exportControl
-	 *            The exportControl to set.
 	 */
-	public void setExportControl(String exportControl);
-
-	/**
-	 */
-	public String getExportControl();
-
-	/**
-	 */
-	public String getGoodUntilDate();
+	public Date getGoodUntilDate();
 
 	/**
 	 * @param date
 	 *            The goodUntilDate to set.
 	 */
-	public void setGoodUntilDate(String date);
+	public void setGoodUntilDate(Date date);
 
 	/**
 	 */
-	public String getDomainID();
+	public String getDomainId();
 
 	/**
 	 * @param id
 	 *            The domainID to set.
 	 */
-	public void setDomainID(String id);
+	public void setDomainId(String id);
 
 	/**
 	 */
-	public String getSubdomainID();
+	public String getSubdomainId();
 
 	/**
 	 * @param id
 	 *            The subdomainID to set.
 	 */
-	public void setSubdomainID(String id);
+	public void setSubdomainId(String id);
 
 	/**
 	 */
@@ -386,28 +359,16 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 	 */
 	public Principal getPrincipal();
 
-	/**
-	 * Assigns a principal to this service context.
-	 *
-	 * @param principal
-	 *            the principal to set.
-	 */
-	public void setPrincipal(Principal principal);
-
-	public float getVersion();
-
-	public void setVersion(float version);
-
 	public boolean containsPath(String path);
 
-	public Hashtable<String, Map<String, String>> getMetacontext();
+	public Map<String, Map<String, String>> getMetacontext();
 
 	/**
 	 * @param metacontext
 	 *            The metacontext to set.
 	 */
 	public void setMetacontext(
-			Hashtable<String, Map<String, String>> metacontext);
+			Map<String, Map<String, String>> metacontext);
 
 	/**
 	 * Returns the exertion associated with this context.
@@ -494,6 +455,7 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 
 	public Context<T> append(Context<T> context) throws ContextException;
 
+	public Context<T> updateEntries(Context<T> context) throws ContextException;
 	/**
 	 * Returns this context within its cuureent scope.
 	 *
@@ -537,12 +499,6 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 
 	public Object putLink(String name, String path, Context cntxt, String offset)
 			throws ContextException;
-
-	public Object putLink(String name, String path, String id, String offset)
-			throws ContextException;
-
-	public Object putLink(String name, String path, String lnkedCntxtID,
-						  float version, String offset) throws ContextException;
 
 	public Object remove(Object path);
 
@@ -646,7 +602,7 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 	 * @return the enumeration of matches for the given association
 	 * @throws ContextException
 	 */
-	public Enumeration<?> markedPaths(String association)
+	public List<String> markedPaths(String association)
 			throws ContextException;
 
 	/**
@@ -834,17 +790,6 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 	public boolean isValid(Signature method) throws ContextException;
 
 	/**
-	 * Returns an {@link Enumeration} of the locations of all the objects in
-	 * this context. The enumeration includes objects that reside in linked
-	 * contexts.
-	 *
-	 * @return <code>Enumeration</code>
-	 * @throws ContextException
-	 * @see ContextLink
-	 */
-	public Enumeration<?> contextPaths() throws ContextException;
-
-	/**
 	 * Returns a list of all paths of this context. 
 	 *
 	 * @return <code>List</code>
@@ -860,10 +805,10 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 	 * @param regex
 	 *            the regular expression to which paths of this context are to
 	 *            be matched
-	 * @return an enumeration of matches for the given regular expression
+	 * @return a List of matches for the given regular expression
 	 * @throws ContextException
 	 */
-	public Enumeration<?> paths(String regex) throws ContextException;
+	public List<String> paths(String regex) throws ContextException;
 
 	/**
 	 * Returns an enumeration of all values of this service context.
@@ -882,7 +827,7 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 	 * @throws ContextException
 	 * @see ContextLink
 	 */
-	public Enumeration<?> localLinkPaths() throws ContextException;
+	public List<String> localLinkPaths() throws ContextException;
 
 	/**
 	 * Returns an {@link Enumeration} of the locations of the
@@ -914,7 +859,7 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 	 * @throws ContextException
 	 * @see ContextLink
 	 */
-	public Enumeration<?> localLinks() throws ContextException;
+	public List<Link> localLinks() throws ContextException;
 
 	/**
 	 * Links the argument <code>context</code> to this context at a given path
@@ -1024,7 +969,7 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 	 * @param isHTML
 	 * @return a plain string if isHTML is false, otherwise in the HTML format.
 	 */
-	public String toString(boolean isHTML);
+	public String toString(boolean isHTML) throws ContextException;
 
 	/**
 	 * Check if this context is export controlled, accessible to principals from
@@ -1057,22 +1002,22 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 	 * descend into linked contexts to retrieve attributes (see
 	 * {@link #getAttributes} which does look in linked contexts).
 	 *
-	 * @return Enumeration of singleton attributes (all of type
+	 * @return List of singleton attributes (all of type
 	 *         <code>String</code>)
 	 * @see #getAttributes
 	 */
-	public Enumeration<?> localSimpleAttributes();
+	public List<String> localSimpleAttributes();
 
 	/**
 	 * Returns all singleton attributes for the context. Descends into linked
 	 * contexts to retrieve underlying singleton attributes (see
 	 * {@link #getAttributes} which does not look in linked contexts).
 	 *
-	 * @return Enumeration of meta attributes (all of type <code>String</code>)
+	 * @return List of meta attributes (all of type <code>String</code>)
 	 * @throws ContextException
 	 * @see #getAttributes
 	 */
-	public Enumeration<?> simpleAttributes() throws ContextException;
+	public List<String> simpleAttributes() throws ContextException;
 
 	/**
 	 * Get all meta associations (meta attribute-meta value pairs) at the
@@ -1080,28 +1025,28 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 	 *
 	 * @param path
 	 *            the location in the context
-	 * @return Enumeration of meta associations (of type <code>String</code>)
+	 * @return List of meta associations (of type <code>String</code>)
 	 * @throws ContextException
 	 */
-	public Enumeration<?> metaassociations(String path) throws ContextException;
+	public List<String> metaassociations(String path) throws ContextException;
 
 	/**
 	 * Returns all locally defined attributes in this context (metacontext).
 	 *
-	 * @return Enumeration of local attributes (all of type <code>String</code>)
+	 * @return Set of local attributes (all of type <code>String</code>)
 	 * @see #getAttributes
 	 */
-	public Enumeration<?> localAttributes();
+	public Set<String> localAttributes();
 
 	/**
 	 * Returns all composite attributes for the top-level context. Does not
 	 * descend into linked contexts to retrieve meta attributes (see
 	 * {@link #compositeAttributes} which does look in linked contexts).
 	 *
-	 * @return Enumeration of meta attributes (all of type <code>String</code>)
+	 * @return List of meta attributes (all of type <code>String</code>)
 	 * @see #compositeAttributes
 	 */
-	public Enumeration<?> localCompositeAttributes();
+	public List<String> localCompositeAttributes();
 
 	/**
 	 * Returns all meta attributes for the context. Descends into linked
@@ -1109,11 +1054,11 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 	 * {@link #localCompositeAttributes} which does not look in linked
 	 * contexts).
 	 *
-	 * @return Enumeration of meta attributes (all of type <code>String</code>)
+	 * @return List of meta attributes (all of type <code>String</code>)
 	 * @throws ContextException
 	 * @see #getAttributes
 	 */
-	public Enumeration<?> compositeAttributes() throws ContextException;
+	public List<String> compositeAttributes() throws ContextException;
 
 	/**
 	 * Returns all attributes (singleton and meta) for the context. Descends
@@ -1121,26 +1066,24 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 	 * {@link #localCompositeAttributes} or {@link #getAttributes} which do not
 	 * look in linked contexts).
 	 *
-	 * @return Enumeration of attributes (all of type <code>String</code>)
+	 * @return List of attributes (all of type <code>String</code>)
 	 * @throws ContextException
 	 */
-	public Enumeration<?> getAttributes() throws ContextException;
+	public List<String> getAttributes() throws ContextException;
 
 	/**
 	 * Returns all attributes (simple and composite) at path in the context.
 	 *
 	 * @param path
 	 *            the location in the context
-	 * @return Enumeration of attributes (all of type <code>String</code>)
+	 * @return List of attributes (all of type <code>String</code>)
 	 * @throws ContextException
 	 */
-	public Enumeration<?> getAttributes(String path) throws ContextException;
+	public List<String> getAttributes(String path) throws ContextException;
 
-	public Object getData();
+	public Map<String, T> getData();
 
 	public int size();
-
-	String getUserName();
 
 	Signature.ReturnPath getReturnPath();
 

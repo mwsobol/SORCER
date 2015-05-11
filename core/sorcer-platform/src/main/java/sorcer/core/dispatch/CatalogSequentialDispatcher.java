@@ -40,7 +40,7 @@ public class CatalogSequentialDispatcher extends CatalogExertDispatcher {
         super(job, sharedContext, isSpawned, provider, provisionManager);
     }
 
-    protected void doExec() throws ExertionException,
+    protected void doExec() throws MogramException,
             SignatureException {
 
         String pn;
@@ -68,14 +68,12 @@ public class CatalogSequentialDispatcher extends CatalogExertDispatcher {
             if (xrt.isBlock()) {
                 try {
                     if (mogram.getScope() != null)
-                        ((Context) mogram.getScope()).append(xrt.getContext());
+                        mogram.getScope().append(xrt.getContext());
                     else {
                         mogram.setScope(xrt.getContext());
-//                        mogram.setScope(new ParModel());
-//                        ((Context)mogram.getScope()).append(xrt.getContext());
                     }
                 } catch (Exception ce) {
-                    throw new ExertionException(ce);
+                    throw new MogramException(ce);
                 }
             }
 
@@ -90,9 +88,10 @@ public class CatalogSequentialDispatcher extends CatalogExertDispatcher {
                     previous = se.getContext();
                 } else if (mogram instanceof EntModel) {
                     ((EntModel)mogram).updateEntries(xrt.getContext());
-                    xrt.getContext().append(((Model) mogram).getResponses());
+                    xrt.getDataContext().append(((Model) mogram).getResponses());
                 }
             } catch (Exception e) {
+                e.printStackTrace();
                 throw new ExertionException(e);
             }
 

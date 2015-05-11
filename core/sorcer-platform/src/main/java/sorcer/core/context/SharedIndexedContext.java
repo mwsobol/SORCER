@@ -32,7 +32,6 @@ import sorcer.service.IndexedContext;
 import sorcer.service.SpaceContext;
 import sorcer.service.space.SpaceAccessor;
 import sorcer.space.array.DistribArray05;
-import sorcer.util.ProviderAccessor;
 
 /**
  * ServiceContext implementing the java.util.List interface.
@@ -49,7 +48,7 @@ public class SharedIndexedContext<T extends Object> extends ServiceContext imple
 		super();
 		this.spaceName = spaceName;
 		JavaSpace05 space = SpaceAccessor.getSpace(spaceName);
-		spaceElements = new DistribArray05(space, "" + contextId);
+		spaceElements = new DistribArray05(space, "" + mogramId);
 	}
 	
 	public SharedIndexedContext(String spaceName, T... elements) throws ContextException {
@@ -110,9 +109,9 @@ public class SharedIndexedContext<T extends Object> extends ServiceContext imple
 		String path;
 		int i;
 		elements.add(index, element);
-		Enumeration en = contextPaths();
-		while (en.hasMoreElements()) {
-			path = (String)en.nextElement();
+		Iterator en = keyIterator();
+		while (en.hasNext()) {
+			path = (String)en.next();
 			i = pathIndex(path);
 			if (i > index) {
 				putValue(pathFor(i+1), elements.get(i+1));

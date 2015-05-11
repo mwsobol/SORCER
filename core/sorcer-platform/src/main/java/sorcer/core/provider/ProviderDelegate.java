@@ -81,7 +81,6 @@ import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.UnknownHostException;
-import java.nio.file.Paths;
 import java.rmi.NoSuchObjectException;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
@@ -771,18 +770,11 @@ public class ProviderDelegate implements SorcerConstants {
 	}
 
 	public Task doTask(Task task, Transaction transaction)
-			throws ExertionException, SignatureException, RemoteException,
+			throws MogramException, SignatureException, RemoteException,
 			ContextException {
 		// prepare a default net batch task (has all sigs of SRV type) 
 		// and make the last signature as master SRV type only.
-		List<Signature> alls = task.getFidelity();
-		Signature lastSig = alls.get(alls.size() - 1);
-		if (alls.size() > 1 && task.isBatch()
-				&& (lastSig instanceof NetSignature)) {
-			for (int i = 0; i < alls.size() - 1; i++) {
-				alls.get(i).setType(Signature.PRE);
-			}
-		}
+		task.correctBatchSignatures();
 		task.getControlContext().appendTrace(
 				provider.getProviderName() + " execute: "
 						+ (task.getProcessSignature()!=null ? task.getProcessSignature().getSelector() : "null") + ":"
@@ -1106,7 +1098,7 @@ public class ProviderDelegate implements SorcerConstants {
 	}
 
 	protected ServiceExertion forwardTask(ServiceExertion task,
-			Provider requestor) throws ExertionException,
+			Provider requestor) throws MogramException,
 			RemoteException, SignatureException, ContextException {
 		// check if we do not look with the same exertion
 		Service recipient = null;
@@ -1182,7 +1174,7 @@ public class ProviderDelegate implements SorcerConstants {
 		return null;
 	}
 
-	public static Job doJob(Job job) throws ExertionException, RemoteException,
+	public static Job doJob(Job job) throws MogramException, RemoteException,
 	ContextException {
 		String jobberName = job.getRendezvousName();
 		Jobber jobber;
@@ -2172,7 +2164,7 @@ public class ProviderDelegate implements SorcerConstants {
 			try {
 				// check the class resource
                 ClassLoader resourceLoader = Thread.currentThread().getContextClassLoader();
-                String name = Paths.get("configs", filename).toString();
+                String name = "configs" + File.separator + filename;
 				logger.info("Try to load configuration: [{}] {}", System.getProperty(JavaSystemProperties.USER_DIR), filename);
                 URL resourceURL = resourceLoader.getResource(name);
                 InputStream is = null;
@@ -2184,6 +2176,9 @@ public class ProviderDelegate implements SorcerConstants {
 				// next check local resource
 				if (is == null) {
 					is = new FileInputStream(new File(filename));
+				}
+				if (is == null) {
+					is = new FileInputStream(new File(name));
 				}
 				String expandingEnv = null;
 				if (is != null) {

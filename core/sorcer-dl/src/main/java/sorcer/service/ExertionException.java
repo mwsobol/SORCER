@@ -25,20 +25,15 @@ package sorcer.service;
  * 
  * @author Mike Sobolewski
  */
-public class ExertionException extends Exception {
+public class ExertionException extends MogramException {
 
 	private static final long serialVersionUID = 3961573000741782514L;
-
-	/**
-	 * The exertion relevant to this exception.
-	 */
-	private Exertion exertion;
 
 	public ExertionException() {
 	}
 
 	public ExertionException(Exertion exertion) {
-		this.exertion = exertion;
+		this.mogram = exertion;
 	}
 
 	public ExertionException(String msg) {
@@ -60,7 +55,7 @@ public class ExertionException extends Exception {
 	 */
 	public ExertionException(String message, Exertion exertion) {
 		super(message);
-		this.exertion = exertion;
+		this.mogram = exertion;
 	}
 
 	public ExertionException(String message, Throwable cause) {
@@ -78,7 +73,7 @@ public class ExertionException extends Exception {
 	 */
 	public ExertionException(String message, Exertion exertion, Throwable cause) {
 		super(message, cause);
-		this.exertion = exertion;
+		this.mogram = exertion;
 	}
 
 	/**
@@ -87,7 +82,7 @@ public class ExertionException extends Exception {
 	 * @return embedded exertion
 	 */
 	public Exertion getExertion() {
-		return exertion;
+		return (Exertion)mogram;
 	}
 	
 }

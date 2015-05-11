@@ -44,10 +44,10 @@ public interface Service {
 	 * @throws RemoteException
 	 */
 	public <T extends Mogram> T service(T mogram, Transaction txn)
-			throws TransactionException, ExertionException, RemoteException;
+			throws TransactionException, MogramException, RemoteException;
 
 
 	public <T extends Mogram> T service(T mogram)
-			throws TransactionException, ExertionException, RemoteException;
+			throws TransactionException, MogramException, RemoteException;
 
 }

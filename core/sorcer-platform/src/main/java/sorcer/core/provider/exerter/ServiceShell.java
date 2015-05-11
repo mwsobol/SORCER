@@ -83,7 +83,7 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 	}
 	
 	public <T extends Mogram> T  exert(Arg... entries) throws TransactionException,
-			ExertionException, RemoteException {
+			MogramException, RemoteException {
 		return exert((Transaction) null, (String) null, entries);
 	}
 
@@ -92,7 +92,7 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 	 */
 	@Override
 	public Exertion exert(Exertion xrt, Arg... entries)
-			throws TransactionException, ExertionException, RemoteException {
+			throws TransactionException, MogramException, RemoteException {
 		try {
 			xrt.substitute(entries);
 		} catch (Exception e) {
@@ -106,7 +106,7 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 	 */
 	@Override
 	public Exertion exert(Exertion xrt, Transaction txn, Arg... entries)
-			throws TransactionException, ExertionException, RemoteException {
+			throws TransactionException, MogramException, RemoteException {
 		try {
 			xrt.substitute(entries);
 		} catch (Exception e) {
@@ -117,22 +117,22 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 	}
 
 	public  <T extends Mogram> T exert(String providerName) throws TransactionException,
-			ExertionException, RemoteException {
+			MogramException, RemoteException {
 		return exert(null, providerName);
 	}
 
 	@Override
-	public Exertion service(Mogram exertion, Transaction txn) throws TransactionException, ExertionException, RemoteException {
+	public Exertion service(Mogram exertion, Transaction txn) throws TransactionException, MogramException, RemoteException {
 		return exert((Exertion)exertion, txn);
 	}
 
 	@Override
-	public Exertion service(Mogram exertion) throws TransactionException, ExertionException, RemoteException {
+	public Exertion service(Mogram exertion) throws TransactionException, MogramException, RemoteException {
 		return exert((Exertion)exertion);
 	}
 
 	public  <T extends Mogram> T exert(T xrt, Transaction txn, String providerName)
-			throws TransactionException, ExertionException, RemoteException {
+			throws TransactionException, MogramException, RemoteException {
 		this.exertion = (ServiceExertion) xrt;
 		transaction = txn;
 		return exert(txn, providerName);
@@ -140,7 +140,7 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 	
 	
 	public <T extends Mogram> T  exert(Transaction txn, String providerName, Arg... entries)
-			throws TransactionException, ExertionException, RemoteException {
+			throws TransactionException, MogramException, RemoteException {
 		try {
 			exertion.selectFidelity(entries);
 			Exertion xrt = postProcessExertion(exert0(txn, providerName,
@@ -163,7 +163,7 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 		}
 	}
 	
-	private void initExecState(Arg... entries) throws ContextException, RemoteException {
+	private void initExecState(Arg... entries) throws MogramException, RemoteException {
 		Context argCxt = null;
 		if (entries!=null) {
 			for (Arg arg : entries) {
@@ -172,9 +172,9 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 				}
 			}
 		}
-		if (exertion instanceof Block) {
-			resetScope(exertion, argCxt, entries);
-		}
+//		if (exertion instanceof Block) {
+//			resetScope(exertion, argCxt, entries);
+//		}
 //		else if (exertion.getScope() != null) {
 //			exertion.getDataContext().append((Context)exertion.getScope());
 //		}
@@ -188,13 +188,15 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 				}
 				if (e instanceof Block) {
 					resetScope((Exertion)e, argCxt);
+				} else {
+					e.clearScope();
 				}
 			}
 		}
 	}
 
-	private void resetScope(Exertion exertion, Context context, Arg... entries) throws ContextException, RemoteException {
-		exertion.clearScope();
+	private void resetScope(Exertion exertion, Context context, Arg... entries) throws MogramException, RemoteException {
+		((ServiceContext)exertion.getDataContext()).clearScope();
 		exertion.getDataContext().append(((ServiceContext)exertion.getDataContext()).getInitContext());
 		if (entries != null) {
 			for (Arg a : entries) {
@@ -207,7 +209,11 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 		if (context != null) {
 			exertion.getDataContext().append(context);
 		}
+		for (Mogram mogram : exertion.getMograms()) {
+			mogram.clearScope();
+		}
 	}
+
 
 	private void realizeDependencies(Arg... entries) throws RemoteException,
 			ExertionException {
@@ -215,7 +221,7 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 		if (dependers != null && dependers.size() > 0) {
 			for (Evaluation<Object> depender : dependers) {
 				try {
-					((Invocation)depender).invoke((Context)exertion.getExertionScope(), entries);
+					((Invocation)depender).invoke(exertion.getScope(), entries);
 				} catch (InvocationException e) {
 					throw new ExertionException(e);
 				}
@@ -224,7 +230,7 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 	}
 	
 	public Exertion exert0(Transaction txn, String providerName, Arg... entries)
-			throws TransactionException, ExertionException, RemoteException {
+			throws TransactionException, MogramException, RemoteException {
 		try {
 			if (entries != null && entries.length > 0) {
 				exertion.substitute(entries);
@@ -268,14 +274,14 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 				exertion = (ServiceExertion)es.getSortedJob();
 			}
 //			 execute modeling tasks
-			if (exertion instanceof ModelingTask && exertion.getFidelity().size() == 1) {
+			if (exertion instanceof ModelingTask && exertion.getFidelity().getSelects().size() == 1) {
 				return ((Task) exertion).doTask(txn);
 			}
 
 			// execute object tasks and jobs
 			if (!(signature instanceof NetSignature)) {
 				if (exertion instanceof Task) {
-					if (exertion.getFidelity().size() == 1) {
+					if (exertion.getFidelity().getSelects().size() == 1) {
 						return ((Task) exertion).doTask(txn);
 					} else {
 						try {
@@ -307,7 +313,8 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 			if (providerName != null && providerName.length() > 0) {
 				signature.setProviderName(providerName);
 			}
-			logger.debug("* ExertProcessor's servicer accessor: "
+			if (logger.isDebugEnabled())
+				logger.debug("* ExertProcessor's servicer accessor: "
 					+ Accessor.getAccessorType());
 			provider = ((NetSignature) signature).getService();
 		} catch (SignatureException e) {
@@ -390,7 +397,7 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 	}
 	
 	private Exertion processAsTask() throws RemoteException,
-			TransactionException, ExertionException {
+			TransactionException, MogramException {
 		Task task = (Task) exertion.getMograms().get(0);
 		task = (Task) task.exert();
 		exertion.getMograms().set(0, task);
@@ -400,7 +407,7 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 
 	private Exertion serviceMutualExclusion(Provider provider,
 			Exertion exertion, Transaction transaction) throws RemoteException,
-			TransactionException, ExertionException {
+			TransactionException, MogramException {
 		ServiceID mutexId = provider.getProviderID();
 		if (locker == null) {
 			locker = (MutualExclusion) ProviderLookup

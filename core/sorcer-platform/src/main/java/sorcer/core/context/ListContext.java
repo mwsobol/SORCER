@@ -101,9 +101,9 @@ public class ListContext<T extends Object> extends ServiceContext<T> implements 
 		String path;
 		int i;
 		elements.add(index, element);
-		Enumeration en = contextPaths();
-		while (en.hasMoreElements()) {
-			path = (String)en.nextElement();
+		Iterator en = keyIterator();
+		while (en.hasNext()) {
+			path = (String)en.next();
 			i = pathIndex(path);
 			if (i > index) {
 				putValue(pathFor(i+1), elements.get(i+1));

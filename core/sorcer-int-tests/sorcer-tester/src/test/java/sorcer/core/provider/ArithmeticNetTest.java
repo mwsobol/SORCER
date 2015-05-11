@@ -175,8 +175,8 @@ public class ArithmeticNetTest implements SorcerConstants {
 				t3,
 				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
 				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")),
-				fiContext("mix1", srvFi("j1", "net"), csFi("j1/j2/t4", "net")),
-				fiContext("mix2", srvFi("j1", "net"), csFi("j1/j2/t4", "net"), csFi("j1/j2/t5", "net")));
+				fiContext("mix1", fi("j1", "net"), fi("j1/j2/t4", "net")),
+				fiContext("mix2", fi("j1", "net"), fi("j1/j2/t4", "net"), fi("j1/j2/t5", "net")));
 		
 //		logger.info("sFi j1: " + sFi(job));
 //		logger.info("sFis j1: " + sFis(job));
@@ -198,17 +198,17 @@ public class ArithmeticNetTest implements SorcerConstants {
 		assertTrue((Double)get(job, "j1/t3/result/y") == 400.0);
 
 		// The local Jobber with the remote Adder
-		job = exert(job, csFi("j1/j2/t4", "net"));
+		job = exert(job, fi("j1/j2/t4", "net"));
 		logger.info("job context: " + serviceContext(job));
 		assertTrue((Double)get(job, "j1/t3/result/y") == 400.0);
 		
 		// The remote Jobber with the remote Adder
 //		job = exert(job, cFi("j1/j2/t5", "net"));
-		job = exert(job, srvFi("object"), csFi("j1/j2/t4", "net"), csFi("j1/j2/t5", "net"));
+		job = exert(job, srvFi("object"), fi("j1/j2/t4", "net"), fi("j1/j2/t5", "net"));
 		logger.info("job context: " + serviceContext(job));
 		assertTrue((Double) get(job, "j1/t3/result/y") == 400.0);
 				
-		job = exert(job, fiContext(srvFi("j1", "net"), csFi("j1/j2/t4", "net")));
+		job = exert(job, fiContext(fi("j1", "net"), fi("j1/j2/t4", "net")));
 		logger.info("job context: " + serviceContext(job));
 		assertTrue((Double)get(job, "j1/t3/result/y") == 400.0);
 		
@@ -256,11 +256,11 @@ public class ArithmeticNetTest implements SorcerConstants {
 				t3,
 				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
 				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")),
-				fiContext("mix1", srvFi("j1", "net"), csFi("j1/j2/t4", "net")),
-				fiContext("mix2", srvFi("j1", "net"), csFi("j1/j2/t4", "net"), csFi("j1/j2/t5", "net")));
+				fiContext("mix1", fi("j1", "net"), fi("j1/j2/t4", "net")),
+				fiContext("mix2", fi("j1", "net"), fi("j1/j2/t4", "net"), fi("j1/j2/t5", "net")));
 
 		//The Jobber and  all tasks are local with 'subtract' signature
-		Job result = exert(job, srvFi("object"), csFi("j1/t3", "object", "subtract"));
+		Job result = exert(job, fi("j1", "object"), fi("j1/t3", "object", "subtract"));
 		logger.info("result context: " + serviceContext(result));
 		assertTrue((Double)get(result, "j1/t3/result/y") == 400.0);		
 

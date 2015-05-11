@@ -167,7 +167,6 @@ public class ContextLink implements SorcerConstants, Link {
 		} else if (result[0] != linkedContext) {
 			this.offset = (String) result[1];
 			this.linkedContext = (Context) result[0];
-			this.version = linkedContext.getVersion();
 			this.contextId = linkedContext.getId();
 			this.fetched = true;
 			// status = BROKEN_LINK;
@@ -190,7 +189,6 @@ public class ContextLink implements SorcerConstants, Link {
 		if (cntxt != linkedContext) {
 			this.offset = (String) offset;
 			this.linkedContext = (Context) cntxt;
-			this.version = linkedContext.getVersion();
 			this.contextId = linkedContext.getId();
 			this.fetched = true;
 			return true;

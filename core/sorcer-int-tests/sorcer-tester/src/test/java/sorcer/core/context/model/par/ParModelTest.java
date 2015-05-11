@@ -3,6 +3,8 @@ package sorcer.core.context.model.par;
 import groovy.lang.Closure;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.tester.provider.impl.AdderImpl;
@@ -18,8 +20,6 @@ import sorcer.util.Sorcer;
 import java.io.IOException;
 import java.net.URL;
 import java.rmi.RemoteException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.*;
 import static sorcer.co.operator.asis;
@@ -29,12 +29,12 @@ import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.get;
 import static sorcer.eo.operator.pipe;
 import static sorcer.eo.operator.value;
+import static sorcer.mo.operator.addResponse;
 import static sorcer.po.operator.add;
-import static sorcer.po.operator.*;
 import static sorcer.po.operator.asis;
+import static sorcer.po.operator.*;
 import static sorcer.po.operator.put;
 import static sorcer.po.operator.set;
-import static sorcer.mo.operator.*;
 
 
 /**
@@ -63,28 +63,22 @@ public class ParModelTest {
 	@Test
 	public void contextInvoker() throws RemoteException, ContextException {
 		ParModel pm = new ParModel("par-model");
-		pm.putValue("x", 10.0);
-		pm.putValue("y", 20.0);
-		pm.putValue("add", new ServiceInvoker(pm));
-		((ServiceInvoker)pm.get("add"))
-			.setPars(pars("x", "y"))
-			.setEvaluator(invoker("x + y", pars("x", "y")));
-		
+		add(pm, ent("x", 10.0));
+		add(pm, ent("y", 20.0));
+		add(pm, ent("add", invoker("x + y", pars("x", "y"))));
+
 		assertEquals(pm.getValue("x"), 10.0);
 		assertEquals(pm.getValue("y"), 20.0);
-		logger.info("add value: " + pm.getValue("add"));
+//		logger.info("add value: " + pm.getValue("add"));
 		assertEquals(pm.getValue("add"), 30.0);
 
-		logger.info("invoker value: " 
-				+ ((ServiceInvoker) pm.get("add")).invoke());
-
 		pm.addResponsePath("add");
-		logger.info("pm context value: " + pm.getValue());
+//		logger.info("pm context value: " + pm.getValue());
 		assertEquals(pm.getValue(), 30.0);
 		
 		pm.putValue("x", 100.0);
 		pm.putValue("y", 200.0);
-		logger.info("add value: " + pm.getValue("add"));
+//		logger.info("add value: " + pm.getValue("add"));
 		assertEquals(pm.getValue("add"), 300.0);		
 
 		assertEquals(pm.invoke(context(inEnt("x", 200.0), inEnt("y", 300.0))), 500.0);

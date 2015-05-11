@@ -57,28 +57,29 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
         // ex.setSubject(subject);
         ServiceExertion result = null;
         try {
-			if (ex.isTask()) {
-				result = execTask((Task) ex);
-			} else if (ex.isJob()) {
-				result = execJob((Job) ex);
-			} else if (ex.isBlock()) {
-				result = execBlock((Block) ex);
-			} else {
-				logger.warn("Unknown ServiceExertion: {}", ex);
-			}
+            if (ex.isTask()) {
+                result = execTask((Task) ex);
+            } else if (ex.isJob()) {
+                result = execJob((Job) ex);
+            } else if (ex.isBlock()) {
+                result = execBlock((Block) ex);
+            } else {
+                logger.warn("Unknown ServiceExertion: {}", ex);
+            }
             afterExec(ex, result);
-		} catch (Exception e) {
+            // set subject after result is received
+            // result.setSubject(subject);
+            result.setStatus(DONE);
+        } catch (Exception e) {
             logger.warn("Error while executing exertion: ", e);
-			// return original exertion with exception
-			result = (ServiceExertion) ex;
+            // return original exertion with exception
+            result = (ServiceExertion) ex;
             result.reportException(e);
-			result.setStatus(FAILED);
-			setState(Exec.FAILED);
-			return result;
-		}
-		// set subject after result is received
-		// result.setSubject(subject);
-		return result;
+            result.setStatus(FAILED);
+            setState(Exec.FAILED);
+            return result;
+        }
+        return result;
     }
 
     protected void afterExec(Exertion ex, Exertion result)
@@ -102,7 +103,7 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
         afterExec(result);
     }
 
-    protected Task execTask(Task task) throws ExertionException,
+    protected Task execTask(Task task) throws MogramException,
             SignatureException, RemoteException {
         if (task instanceof NetTask) {
             return execServiceTask(task);
@@ -262,7 +263,6 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
         Job out = (Job) dispatcher.getResult().exertion;
         // Not sure if good place
         out.stopExecTime();
-        //
         out.getControlContext().appendTrace(provider.getProviderName()
                 + " dispatcher: " + getClass().getName());
         return out;
@@ -270,7 +270,7 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
 
 	private Block execBlock(Block block)
 			throws DispatcherException, InterruptedException,
-			ExertionException, RemoteException {
+			MogramException, RemoteException {
 
 		try {
 			ServiceTemplate st = Accessor.getServiceTemplate(null,
@@ -291,7 +291,7 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
 								+ concatenators[i].serviceID);
 						Provider rconcatenator = (Provider) concatenators[i].service;
 
-						return (Block) rconcatenator.service(block, null);
+						return rconcatenator.service(block, null);
 					}
 				}
 			}

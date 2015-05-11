@@ -7,6 +7,8 @@ import sorcer.service.ContextException;
 import sorcer.service.ServiceSession;
 
 import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.List;
 
 
 public class ProviderSession extends ServiceContext implements ServiceSession {
@@ -96,7 +98,7 @@ public class ProviderSession extends ServiceContext implements ServiceSession {
     }
 
     /**
-     * Returns an <code>Enumeration</code> of <code>String</code> objects
+     * Returns an <code>Iterator</code> of <code>String</code> objects
      * containing the names of all the objects bound to this session.
      *
      * @return an <code>Enumeration</code> of <code>String</code> objects
@@ -104,11 +106,11 @@ public class ProviderSession extends ServiceContext implements ServiceSession {
      * @exception ContextException
      *                if this method is called on an invalidated session
      */
-    public Enumeration<String> getAttributeNames() throws ContextException {
+    public Iterator<String> getAttributeNames() throws ContextException {
         if (isInvalid)
             throw new  ContextException("Invalid session: " + getId());
         
-        return contextPaths();
+        return keyIterator();
     }
 
 

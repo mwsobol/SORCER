@@ -86,7 +86,7 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 	private boolean isReactive = false;
 
 	// indication that value has been calculated with recent arguments
-	protected boolean valueIsValid = false;
+	private boolean valueIsValid = false;
 		
 	protected ParModel invokeContext;
 
@@ -98,8 +98,7 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 			.getName());
 
 	public ServiceInvoker() {
-		this.name = defaultName + count++;
-		invokeContext = new ParModel("model/par");
+		this("invoker-" + count++);
 	}
 	
 	public ServiceInvoker(String name) {
@@ -107,6 +106,7 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 			this.name = defaultName + count++;
 		else
 			this.name = name;
+		invokeContext = new ParModel("model/par");
 	}
 	
 	public ServiceInvoker(ParModel context) {

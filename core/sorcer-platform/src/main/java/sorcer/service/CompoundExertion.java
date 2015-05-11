@@ -32,11 +32,15 @@ abstract public class CompoundExertion extends ServiceExertion {
 	/**
 	 * Component exertions of this job (the Composite Design pattern)
 	 */
-	protected List<Mogram> exertions = new ArrayList<Mogram>();
+	protected List<Mogram> mograms = new ArrayList<Mogram>();
+
+	public CompoundExertion() {
+		this("compound xrt=" + count++);
+	}
 
 	public CompoundExertion(String name) {
 		super(name);
-		exertions = new ArrayList<Mogram>();
+		mograms = new ArrayList<Mogram>();
 	}
 
 	public boolean isCompound() {
@@ -44,11 +48,11 @@ abstract public class CompoundExertion extends ServiceExertion {
 	};
 
 	public int size() {
-		return   exertions.size();
+		return   mograms.size();
 	};
 
 	public void reset(int state) {
-		for(Mogram e : exertions)
+		for(Mogram e : mograms)
 			((ServiceExertion)e).reset(state);
 
 		this.setStatus(state);
@@ -59,7 +63,7 @@ abstract public class CompoundExertion extends ServiceExertion {
 	 * specified element.
 	 */
 	public void setMogramAt(Mogram ex, int i) {
-		exertions.set(i, ex);
+		mograms.set(i, ex);
 	}
 
 	public Exertion getMasterExertion() {
@@ -87,7 +91,7 @@ abstract public class CompoundExertion extends ServiceExertion {
 
 	public Mogram removeExertion(Mogram mogram) throws ContextException {
 		// int index = ((ExertionImpl)exertion).getIndex();
-		exertions.remove(mogram);
+		mograms.remove(mogram);
 		controlContext.deregisterExertion(this, mogram);
 		return mogram;
 	}
@@ -100,11 +104,11 @@ abstract public class CompoundExertion extends ServiceExertion {
 	 * Returns the exertion at the specified index.
 	 */
 	public Exertion get(int index) {
-		return (Exertion) exertions.get(index);
+		return (Exertion) mograms.get(index);
 	}
 
-	public void setMograms(List<Mogram> exertions) {
-		this.exertions = exertions;
+	public void setMograms(List<Mogram> mograms) {
+		this.mograms = mograms;
 
 	}
 
@@ -120,11 +124,11 @@ abstract public class CompoundExertion extends ServiceExertion {
 	 * @return all component exertions
 	 */
 	public List<Mogram> getMograms() {
-		return exertions;
+		return mograms;
 	}
 
 	public boolean hasChild(String childName) {
-		for (Mogram ext : exertions) {
+		for (Mogram ext : mograms) {
 			if (ext.getName().equals(childName))
 				return true;
 		}
@@ -132,7 +136,7 @@ abstract public class CompoundExertion extends ServiceExertion {
 	}
 
 	public Mogram getChild(String childName) {
-		for (Mogram ext : exertions) {
+		for (Mogram ext : mograms) {
 			if (ext.getName().equals(childName))
 				return ext;
 		}

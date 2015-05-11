@@ -48,12 +48,11 @@ public class GroovyInvoker<T> extends ServiceInvoker<T> {
 	private File scriptFile = null;
 
 	public GroovyInvoker() {
-		super();
-		this.name = defaultName + count++;
+		super(defaultName + count++);
 	}
 
 	public GroovyInvoker(String expression) {
-		this.name = defaultName + count++;
+		this();
 		this.expression = expression;
 	}
 	
@@ -62,9 +61,8 @@ public class GroovyInvoker<T> extends ServiceInvoker<T> {
 	}
 
 	public GroovyInvoker(String name, String expression, ArgSet parameters) {
-		if (name == null)
-			this.name = defaultName + count++;
-		else
+		this();
+		if (name != null && name.length() > 0)
 			this.name = name;
 		this.expression = expression;
 		this.pars = parameters;
@@ -75,16 +73,12 @@ public class GroovyInvoker<T> extends ServiceInvoker<T> {
 	}
 	
 	public GroovyInvoker(String name, String expression, Arg... parameters) {
-		if (name == null)
-			this.name = defaultName + count++;
-		else
-			this.name = name;
-		this.expression = expression;
-		this.pars =  ArgSet.asSet(parameters);
+		this(name, expression, ArgSet.asSet(parameters));
 	}
 
 	public GroovyInvoker(File scriptFile, Par... parameters)
 			throws EvaluationException {
+		this();
 		this.scriptFile = scriptFile;
 		this.pars = new ArgSet(parameters);
 	}
@@ -151,7 +145,7 @@ public class GroovyInvoker<T> extends ServiceInvoker<T> {
 		while (i.hasNext()) {
 			Arg entry = i.next();
 			val = ((Evaluation)entry).getValue();
-			key = (String) entry.getName();
+			key = entry.getName();
 			if (val instanceof Evaluation) {
 				val = ((Evaluation) val).getValue();
 			}

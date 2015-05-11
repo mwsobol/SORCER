@@ -1,5 +1,6 @@
 package sorcer.core.context.model.srv;
 
+import sorcer.core.SelectFidelity;
 import sorcer.service.*;
 
 import java.rmi.RemoteException;
@@ -16,25 +17,25 @@ import java.util.Map;
  *
  * Created by Mike Sobolewski
  */
-public class SrvProduct extends SrvModel {
+public class MultiFidelitySrvModel extends SrvModel {
 
     // service fidelities for this model
-    private Map<String, SelectionFidelity> selectionFidelities;
+    protected Map<String, Fidelity<String>> selectionFidelities;
 
-    private SelectionFidelity selectedFidelity;
+    protected SelectFidelity selectedFidelity;
 
-    public SrvProduct() {
+    public MultiFidelitySrvModel() {
     }
 
-    public SrvProduct(String name) throws SignatureException {
+    public MultiFidelitySrvModel(String name) throws SignatureException {
         super(name);
     }
 
-    public SrvProduct(Signature signature) {
+    public MultiFidelitySrvModel(Signature signature) {
         super(signature);
     }
 
-    public SrvProduct(String name, Signature signature) throws SignatureException {
+    public MultiFidelitySrvModel(String name, Signature signature) throws SignatureException {
         super(name, signature);
     }
 
@@ -45,39 +46,39 @@ public class SrvProduct extends SrvModel {
      * @throws EvaluationException
      * @throws RemoteException
      */
-    public SrvProduct setProjection(String... fidelities) throws EvaluationException, RemoteException {
+    public MultiFidelitySrvModel setProjection(String... fidelities) throws EvaluationException, RemoteException {
         for (String path : fidelities)
             addResponsePath(path);
         return this;
     }
 
     public void setSelectionFidelities(String fidelityName) {
-        SelectionFidelity fi = selectionFidelities.get(fidelityName);
+        Fidelity fi = selectionFidelities.get(fidelityName);
         currentSelector = fi.getName();
     }
 
-    public void setSelectionFidelities(SelectionFidelity fidelity) {
+    public void setSelectionFidelities(Fidelity<String> fidelity) {
         selectionFidelities.put(fidelity.getName(), fidelity);
         currentSelector = fidelity.getName();
     }
 
-    public SelectionFidelity getSelectionFidelity() {
+    public Fidelity<String> getSelectionFidelity() {
         return selectionFidelities.get(currentSelector);
     }
 
-    public void addSelectionFidelities(List<SelectionFidelity> fidelities) {
-        for (SelectionFidelity fi : fidelities)
+    public void addSelectionFidelities(List<Fidelity<String>> fidelities) {
+        for (Fidelity<String> fi : fidelities)
             addSelectionFidelity(fi);
     }
 
-    public void addSelectionFidelities(SelectionFidelity... fidelities) {
-        for (SelectionFidelity fi : fidelities)
+    public void addSelectionFidelities(Fidelity<String>... fidelities) {
+        for (Fidelity<String> fi : fidelities)
             addSelectionFidelity(fi);
     }
 
-    public void addSelectionFidelity(SelectionFidelity fidelity) {
+    public void addSelectionFidelity(Fidelity<String> fidelity) {
         if (selectionFidelities == null)
-            selectionFidelities = new HashMap<String, SelectionFidelity>();
+            selectionFidelities = new HashMap<String, Fidelity<String>>();
         selectionFidelities.put(fidelity.getName(), fidelity);
     }
 
@@ -126,11 +127,11 @@ public class SrvProduct extends SrvModel {
         return getValue(entries);
     }
 
-    public SelectionFidelity getSelectedSelectionFidelity() {
+    public SelectFidelity getSelectedSelectionFidelity() {
         return selectedFidelity;
     }
 
-    public void setSelectedSelectionFidelity(SelectionFidelity selectedFidelity) {
+    public void setSelectedSelectionFidelity(SelectFidelity selectedFidelity) {
         this.selectedFidelity = selectedFidelity;
     }
 

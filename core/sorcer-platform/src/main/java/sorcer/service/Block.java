@@ -38,8 +38,6 @@ import java.util.*;
  * @author Mike Sobolewski
  */
 public abstract class Block extends CompoundExertion {
-
-	private List<Mogram> mograms = new ArrayList<Mogram>();
 	
 	private URL contextURL;
 	
@@ -50,7 +48,7 @@ public abstract class Block extends CompoundExertion {
 	public Block(String name, Signature signature) {
 		super(name);
 		try {
-			fidelity.add(signature);
+			serviceFidelity.selects.add(signature);
 			try {
 				setContext(new ParModel("block context: " + getName()));
 //				persistContext();
@@ -70,7 +68,7 @@ public abstract class Block extends CompoundExertion {
 	}
 	
 	public abstract Block doBlock(Transaction txn) throws ExertionException,
-		SignatureException, RemoteException, TransactionException;
+		SignatureException, RemoteException, TransactionException, MogramException;
 	
 	/* (non-Javadoc)
 	 * @see sorcer.service.Exertion#addMogram(sorcer.service.Exertion)
@@ -338,8 +336,8 @@ public abstract class Block extends CompoundExertion {
 		}
 	}
 
-	public Exertion clearScope() throws ContextException {
-		Object[] paths = ((Map)getDataContext()).keySet().toArray();
+	public Mogram clearScope() throws ContextException {
+		Object[] paths = ((ServiceContext)getDataContext()).keySet().toArray();
 		for (Object path : paths) {
 			dataContext.removePath((String) path);
 //			dataContext.getScope().removePath((String) path);
@@ -353,7 +351,7 @@ public abstract class Block extends CompoundExertion {
 		Context cxt = null;
 		for (Mogram mo : mograms) {
 			if (mo instanceof Exertion )
-				((Exertion)mo).clearScope();
+				((ServiceContext)((Exertion)mo).getDataContext()).clearScope();
 
 //			if (mo instanceof Exertion)
 //				cxt = ((Exertion)mo).getContext();

@@ -18,6 +18,7 @@ package sorcer.core.context.model.par;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sorcer.core.SelectFidelity;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.ApplicationDescription;
 import sorcer.core.context.ServiceContext;
@@ -32,10 +33,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.security.Principal;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * In service-based modeling, a parameter (for short a par) is a special kind of
@@ -109,7 +107,7 @@ public class Par<T> extends Entry<T> implements Variability<T>, Arg, Mappable<T>
 			throws RemoteException, ContextException {
 		this(path, (T)argument);
 		if (((ServiceContext)scope).containsKey(Condition._closure_))
-			((ServiceContext) scope).remove(Condition._closure_);
+			 scope.remove(Condition._closure_);
 		this.scope = scope;
 		if (argument instanceof Scopable)
 			((Scopable)argument).setScope(this.scope);
@@ -154,10 +152,11 @@ public class Par<T> extends Entry<T> implements Variability<T>, Arg, Mappable<T>
 						URL url = SdbUtil.store(value);
 						Par p = new Par((String)this.value, url);
 						p.setPersistent(true);
-						if (mappable instanceof ServiceContext)
-							((ServiceContext)mappable).put((String)this.value, p);
-						else
-							mappable.putValue((String)this.value, p);
+						if (mappable instanceof ServiceContext) {
+							((ServiceContext) mappable).put((String) this.value, p);
+						} else {
+							mappable.putValue((String) this.value, p);
+						}
 					}
 				} else {
 					mappable.putValue((String)this.value, value);
@@ -219,7 +218,7 @@ public class Par<T> extends Entry<T> implements Variability<T>, Arg, Mappable<T>
 					((Scopable)val).getScope().append(scope);
 				}
 
-				// indirect scope for enty values
+				// indirect scope for entry values
 				if (val instanceof Entry) {
 					Object ev = ((Entry)val).asis();
 					if (ev instanceof Scopable && ((Scopable)ev).getScope() != null) {
@@ -231,7 +230,7 @@ public class Par<T> extends Entry<T> implements Variability<T>, Arg, Mappable<T>
 					// TODO context binding for all exertions, works for tasks only
 					Context cxt = ((Exertion)val).getDataContext();
 					List<String> paths = ((ServiceContext)cxt).getPaths();
-					for (String an : ((Map<String, Object>)scope).keySet()) {
+					for (String an : (Set<String>)((ServiceContext)scope).keySet()) {
 						for (String p : paths) {
 							if (p.endsWith(an)) {
 								cxt.putValue(p, scope.getValue(an));
@@ -285,7 +284,7 @@ public class Par<T> extends Entry<T> implements Variability<T>, Arg, Mappable<T>
 							scope.append(((Par<T>) p).getScope());
 
 					}
-				} else if (p instanceof SelectionFidelity && fidelities != null) {
+				} else if (p instanceof SelectFidelity && fidelities != null) {
 					selectedFidelity = p.getName();
 				} else if (p instanceof Context) {
 					if (scope == null)
@@ -321,8 +320,8 @@ public class Par<T> extends Entry<T> implements Variability<T>, Arg, Mappable<T>
 	}
 
 	public void setScope(Context scope) {
-		if (((ServiceContext)scope).containsKey(Condition._closure_))
-			((ServiceContext) scope).remove(Condition._closure_);
+		if (scope != null && ((ServiceContext)scope).containsKey(Condition._closure_))
+			scope.remove(Condition._closure_);
 		this.scope = scope;
 	}
 	
@@ -338,11 +337,24 @@ public class Par<T> extends Entry<T> implements Variability<T>, Arg, Mappable<T>
 		else
 			return -1;
 	}
-	
+
 	@Override
 	public String toString() {
-		return "par [name: " + name + ", value: " + value + ", path: "+_1+"]";
-	}
+        String ps = "";
+        if (value instanceof Evaluation) {
+            try {
+                ps = "" + ((Evaluation) value).asis();
+            } catch (EvaluationException e) {
+                e.printStackTrace();
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        } else {
+            ps = "" + value;
+        }
+
+        return "par [name: " + name + ", value: " + ps + ", path: " + _1 + "]";
+    }
 
 	/* (non-Javadoc)
 	 * @see sorcer.service.Perturbation#getPerturbedValue(java.lang.String)

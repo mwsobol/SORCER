@@ -2,6 +2,8 @@ package sorcer.pml.modeling;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.core.context.model.par.Par;
@@ -9,14 +11,18 @@ import sorcer.core.context.model.par.ParModel;
 import sorcer.service.Context;
 
 import java.net.URL;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
+import static sorcer.co.operator.persistent;
+import static sorcer.eo.operator.add;
 import static sorcer.eo.operator.*;
+import static sorcer.eo.operator.value;
+import static sorcer.po.operator.add;
+import static sorcer.po.operator.asis;
 import static sorcer.po.operator.*;
+import static sorcer.po.operator.set;
 
 /**
  * @author Mike Sobolewski
@@ -147,7 +153,7 @@ public class Pars {
 		// change the scope of add1
 		set(pm, "x", 20.0);
 		assertEquals(value(pm, "add1"), 40.0);
-		
+
 		assertEquals(value(pm, "add2"), 70.0);
 		// x is changed but add2 value is the same, has its own scope
 		set(pm, "x", 20.0);
