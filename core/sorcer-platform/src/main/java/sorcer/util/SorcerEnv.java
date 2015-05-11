@@ -1004,8 +1004,10 @@ public class SorcerEnv extends SOS {
 	 * @return the string value of that property
 	 */
 	public static String getProperty(String property) {
-		String p = props.getProperty(property);
-		return p;
+        String p = null;
+        if(props!=null)
+            p = props.getProperty(property);
+        return p;
 	}
 
 	/**

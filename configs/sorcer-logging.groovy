@@ -60,7 +60,7 @@ def appenders = []
  */
 if (System.getProperty("forceConsoleLogging")!=null || System.console() != null) {
     appender("CONSOLE", ConsoleAppender) {
-        if(!System.getProperty("os.name").startsWith("Windows")) {
+        if(!System.getProperty("os.name").startsWith("Windows") && System.console() != null) {
             withJansi = true
 
             encoder(PatternLayoutEncoder) {
