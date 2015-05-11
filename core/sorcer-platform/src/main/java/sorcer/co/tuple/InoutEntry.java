@@ -16,15 +16,14 @@
  */
 package sorcer.co.tuple;
 
-import sorcer.core.SelectFidelity;
-import sorcer.service.Context;
+import sorcer.core.context.model.ent.Entry;
 
-public class InoutEntry<T> extends FidelityEntry<T> {
+public class InoutEntry<T> extends Entry<T> {
 	private static final long serialVersionUID = 1L;
 
 	@SuppressWarnings("unchecked")
 	public InoutEntry(String path, T value, int index) {
-		super(path, value==null?(T) Context.none: value);
+		super(path, value);
 		this.index = index;
 	}
 
@@ -33,7 +32,4 @@ public class InoutEntry<T> extends FidelityEntry<T> {
 		this.isPersistent = isPersistant;
 	}
 
-	 public InoutEntry(String path, SelectFidelity fidelity) {
-		super(path, fidelity);
-	}
 }

@@ -17,13 +17,13 @@
 
 package sorcer.co.tuple;
 
-import sorcer.core.SelectFidelity;
+import sorcer.core.context.model.ent.Entry;
 import sorcer.service.Signature;
 
 /**
  * Created by Mike Sobolewski
  */
-public class SignatureEntry extends FidelityEntry<Signature> {
+public class SignatureEntry extends Entry<Signature> {
 
     private static final long serialVersionUID = 1L;
 
@@ -31,8 +31,4 @@ public class SignatureEntry extends FidelityEntry<Signature> {
         super(path, value);
     }
 
-
-    public SignatureEntry(String path, SelectFidelity fidelity) {
-        super(path, fidelity);
-    }
 }
