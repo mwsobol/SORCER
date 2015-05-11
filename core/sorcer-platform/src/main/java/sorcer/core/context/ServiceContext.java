@@ -3084,6 +3084,10 @@ public class ServiceContext<T> extends ServiceMogram implements
 		return data.values();
 	}
 
+	public void clear() {
+		data.clear();
+	}
+
 	public T put(String key, T value) {
 		if (value == null)
 			return data.put(key, (T)none);
