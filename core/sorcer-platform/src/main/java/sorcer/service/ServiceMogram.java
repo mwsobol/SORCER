@@ -503,6 +503,15 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
         this.dbUrl = dbUrl;
     }
 
+    @Override
+    public Fidelity getServiceFidelity() {
+        return serviceFidelity;
+    }
+
+    @Override
+    public void setServiceFidelity(Fidelity fidelity) {
+        serviceFidelity =  fidelity;
+    }
 
     public Mogram clearScope() throws MogramException {
         if (scope != null) {

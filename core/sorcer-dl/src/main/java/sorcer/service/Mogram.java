@@ -28,7 +28,7 @@ import java.rmi.RemoteException;
  *
  * @author Mike Sobolewski
  */
-public interface Mogram extends Service, Scopable, Substitutable, Identifiable {
+public interface Mogram extends Service, ServiceProjection, Scopable, Substitutable, Identifiable {
 
     /**
      * Exerts this mogram by the assigned service provider if it is set. If a service

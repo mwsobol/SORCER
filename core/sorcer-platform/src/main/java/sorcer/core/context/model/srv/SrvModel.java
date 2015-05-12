@@ -101,8 +101,28 @@ public class SrvModel extends ParModel<Object> implements Model {
         return true;
     }
 
-    public void setSelectedServiceFidelity(Fidelity fidelity) {
+    public void selectedServiceFidelity(String name) {
+        Fidelity<Signature> fidelity = serviceFidelities.get(name);
+        namedServiceFidelity = name;
         this.serviceFidelity = fidelity;
+    }
+
+    public void addServiceFidelity(Fidelity fidelity) {
+        putServiceFidelity(fidelity.getName(), fidelity);
+        namedServiceFidelity = fidelity.getName();
+        this.serviceFidelity = fidelity;
+    }
+
+    public void setServiceFidelity(Fidelity fidelity) {
+        this.serviceFidelity = fidelity;
+        putServiceFidelity(fidelity.getName(), fidelity);
+        namedServiceFidelity = fidelity.getName();
+    }
+
+    public void setServiceFidelity(String name, Fidelity fidelity) {
+        this.serviceFidelity = fidelity;
+        putServiceFidelity(name, fidelity);
+        namedServiceFidelity = name;
     }
 
     public void putServiceFidelity(Fidelity fidelity) {
@@ -111,29 +131,10 @@ public class SrvModel extends ParModel<Object> implements Model {
         serviceFidelities.put(fidelity.getName(), fidelity);
     }
 
-    public void addServiceFidelity(Fidelity fidelity) {
-        putServiceFidelity(fidelity.getName(), fidelity);
-        namedServiceFidelity = name;
-        this.serviceFidelity = fidelity;
-    }
-
-    public void setFidelity(String name, Fidelity fidelity) {
-        this.serviceFidelity = new Fidelity(name, fidelity);
-        putServiceFidelity(name, fidelity);
-        namedServiceFidelity = name;
-    }
-
     public void putServiceFidelity(String name, Fidelity fidelity) {
         if (serviceFidelities == null)
             serviceFidelities = new HashMap<String, Fidelity<Signature>>();
-        serviceFidelities.put(name, new Fidelity(name, fidelity));
-    }
-
-    public void addServiceFidelity(String name, Fidelity fidelity) {
-        Fidelity nf = new Fidelity(name, fidelity);
-        putServiceFidelity(name, nf);
-        namedServiceFidelity = name;
-        fidelity = nf;
+        serviceFidelities.put(name, fidelity);
     }
 
     public Signature getProcessSignature() {

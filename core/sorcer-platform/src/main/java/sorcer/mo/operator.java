@@ -176,7 +176,7 @@ public class operator {
             for (Signature sig : sigs)
                 fidelity.getSelects().add(sig);
             ((SrvModel)model).addServiceFidelity(fidelity);
-            ((SrvModel)model).setSelectedServiceFidelity(fidelity);
+            ((SrvModel)model).selectedServiceFidelity(fidelity.getName());
         }
 //        else {
 //            ((SrvModel)model).setSubject("execute", ServiceModeler.class);
