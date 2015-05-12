@@ -70,6 +70,7 @@ import java.rmi.RemoteException;
 import java.security.*;
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static sorcer.util.StringUtils.tName;
 
@@ -185,13 +186,13 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	private LifeCycle lifeCycle;
 
 	// all providers in the same shared JVM
-	private static List<ServiceProvider> providers = new ArrayList<ServiceProvider>();
+	private static Collection<ServiceProvider> providers = new CopyOnWriteArraySet<>();
 
 	private ClassLoader serviceClassLoader;
 
 	private String[] accessorGroups = DiscoveryGroupManagement.ALL_GROUPS;
 
-	private volatile boolean running = true;
+	private final AtomicBoolean running = new AtomicBoolean(true);
 
 	private Map<Uuid, ProviderSession> sessions;
 
@@ -1681,12 +1682,19 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	 * @see Provider#destroy()
 	 */
 	public void destroy() {
+		// stop KeepAwake thread
+		if (!running.compareAndSet(true, false)) {
+			logger.debug("destroy called another time");
+			return;
+		}
+
 		try {
 			logger.info("Destroying service " + getProviderName());
 			if (ldmgr != null)
 				ldmgr.terminate();
 			if (joinManager != null)
 				joinManager.terminate();
+			providers.remove(this);
 			tally = tally - 1;
 
 			logger.info("destroyed provider: " + getProviderName() + ", providers left: " + tally);
@@ -1703,9 +1711,6 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 
 		} catch(Exception e) {
 			logger.error("Problem destroying service "+getProviderName(), e);
-		} finally {
-			// stop KeepAwake thread
-			running = false;
 		}
 	}
 
@@ -1735,7 +1740,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 
 		public void run() {
 			try {
-				provider.destroyNode();
+				provider.destroy();
 			} catch(Throwable t) {
 				logger.error("Terminating ServiceProvider", t);
 			}
@@ -1753,11 +1758,6 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		for (ServiceProvider provider : providers) {
 			logger.info("calling destroy on provider name = " + provider.getName());
 			provider.destroy();
-			try {
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
 		}
 		logger.info("Returning from destroyNode()");
 		//checkAndMaybeKillJVM();
@@ -1905,7 +1905,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		public void run() {
 			try {
 				delegate.initSpaceSupport();
-				while (running) {
+				while (running.get()) {
 					Thread.sleep(ProviderDelegate.KEEP_ALIVE_TIME);
                     
                     // remove inactive sessions
