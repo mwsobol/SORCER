@@ -81,6 +81,8 @@ import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.UnknownHostException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.rmi.NoSuchObjectException;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
@@ -2163,25 +2165,24 @@ public class ProviderDelegate implements SorcerConstants {
 		public void loadConfiguration(String filename) {
 			try {
 				// check the class resource
-                ClassLoader resourceLoader = Thread.currentThread().getContextClassLoader();
-                String name = "configs" + File.separator + filename;
-				logger.info("Try to load configuration: [{}] {}", System.getProperty(JavaSystemProperties.USER_DIR), filename);
-                URL resourceURL = resourceLoader.getResource(name);
-                InputStream is = null;
-                if(resourceURL!=null) {
-                    logger.info("Loaded from " + resourceURL.toExternalForm());
-                    is = resourceURL.openStream();
-                    logger.info("* Loading properties using: " + is);
-                }
+				InputStream is = null;
+				Path filePath = Paths.get("configs").resolve(filename);
+				if (!filePath.isAbsolute()) {
+					String name = filePath.toString();
+					logger.info("Try to load configuration: [{}] {}", System.getProperty(JavaSystemProperties.USER_DIR), filename);
+					ClassLoader resourceLoader = Thread.currentThread().getContextClassLoader();
+					URL resourceURL = resourceLoader.getResource(name);
+					if (resourceURL != null) {
+						logger.info("Loaded from " + resourceURL.toExternalForm());
+						is = resourceURL.openStream();
+						logger.info("* Loading properties using: " + is);
+					}
+				}
 				// next check local resource
 				if (is == null) {
-					is = new FileInputStream(new File(filename));
-				}
-				if (is == null) {
-					is = new FileInputStream(new File(name));
+					is = new FileInputStream(filePath.toFile());
 				}
 				String expandingEnv = null;
-				if (is != null) {
 					try {
 						if (jiniConfig != null)
 							expandingEnv = (String) jiniConfig.getEntry(
@@ -2202,7 +2203,6 @@ public class ProviderDelegate implements SorcerConstants {
 					}
 //					logger.debug("*** loaded provider properties: /configs/" + filename + ":\n"
 //							+ GenericUtil.getPropertiesString(props));
-				}
 			} catch (Exception ex) {
 				logger.warn("Not able to load provider's properties: " + filename, ex);
 			}

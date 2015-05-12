@@ -256,7 +256,7 @@ abstract public class ServiceRequestor implements Requestor, SorcerConstants {
         System.setProperty("java.rmi.server.useCodebaseOnly", "false");
         System.setProperty("java.protocol.handler.pkgs", "net.jini.url|sorcer.util.url|org.rioproject.url");
         System.setProperty("java.security.policy", Sorcer.getHome() + "/policy/sorcer.policy");
-        System.setProperty("java.util.logging.config.file", Sorcer.getHome() + "/configs/sorcer.logging");
+        System.setProperty("logback.configurationFile", Sorcer.getHome() + "/configs/sorcer-logging.groovy");
         System.setSecurityManager(new SecurityManager());
     }
 
