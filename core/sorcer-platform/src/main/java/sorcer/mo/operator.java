@@ -83,6 +83,14 @@ public class operator {
         }
     }
 
+    public static Object result(Model model, String path) throws ContextException {
+        return ((ServiceContext)model).getResult().get(path);
+    }
+
+    public static Context result(Model model) throws ContextException {
+        return ((ServiceContext)model).getResult();
+    }
+
     public static Object response(Model model, String path) throws ContextException {
         try {
             return ((ServiceContext)model).getResponseAt(path);

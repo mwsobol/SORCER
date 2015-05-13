@@ -99,7 +99,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	protected Context initContext;
 
 	// evalauted model responses
-	protected Context results;
+	protected Context result;
 
 	/** The exertion that uses this context */
 	protected ServiceExertion exertion;
@@ -2693,16 +2693,16 @@ public class ServiceContext<T> extends ServiceMogram implements
             }
 			if (responsePaths != null && responsePaths.size() > 0) {
 				getMergedSubcontext(mc, responsePaths, args);
-				results = mc;
-				return results;
+				result = mc;
+				return result;
 			}
         } else {
 			if (responsePaths != null && responsePaths.size() > 0) {
-				results = getMergedSubcontext(null, responsePaths, args);
+				result = getMergedSubcontext(null, responsePaths, args);
 			} else {
-				results = substitute(args);
+				result = substitute(args);
 			}
-			return results;
+			return result;
         }
 		return this;
     }
@@ -3073,12 +3073,12 @@ public class ServiceContext<T> extends ServiceMogram implements
 		return this;
 	}
 
-	public Context getResults() {
-		return results;
+	public Context getResult() {
+		return result;
 	}
 
-	public void setResults(Context results) {
-		this.results = results;
+	public void setResult(Context result) {
+		this.result = result;
 	}
 
 	@Override
