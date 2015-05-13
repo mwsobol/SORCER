@@ -145,9 +145,11 @@ logger("org.rioproject.resolver.aether.util.ConsoleRepositoryListener", WARN)
 
 logger("sorcer.util.ProviderAccessor", OFF)
 logger("sorcer.core.provider.cataloger.ServiceCataloger", OFF)
-//logger("sorcer.modeling.vfe.persist.TaskContextSetter", OFF)
-//logger("sorcer.core.context.model.var.ResponseModel", TRACE)
 //logger("sorcer.provider.boot", TRACE)
+logger("sorcer.core.provider.ServiceProvider", OFF)
+logger("sorcer.core.provider.ProviderDelegate", OFF)
+logger("sorcer.tools.shell.NetworkShell", OFF)
+logger("sorcer.core.provider.exertmonitor.ExertMonitor", OFF)
 logger("sorcer.core.provider.SpaceTaker", OFF)
 logger("sorcer.core.provider.exertmonitor", TRACE)
 logger("sorcer.core.monitor", TRACE)
@@ -156,6 +158,8 @@ logger("sorcer.core.dispatch.ExertionSorter", INFO)
 logger("sorcer.rio.rmi", INFO)
 logger("sorcer.service.Accessor", INFO)
 logger("sorcer.core.provider.exerter", INFO)
+
+
 
 /* ==================================================================
  *  SORCER Variable oriented loggers
@@ -176,6 +180,8 @@ logger("sorcer.core.context.model.explore.Explorer", TRACE)
 logger("sorcer.core.context.model.explore.ExploreDispatcher", TRACE)
 logger("sorcer.core.context.model.explore.ModelManager", TRACE)
 logger("sorcer.core.context.model.opti", TRACE)
+logger("sorcer.modeling.vfe.persist.TaskContextSetter", OFF)
+logger("sorcer.core.context.model.var.ResponseModel", TRACE)
 */
 
 /* ==================================================================
