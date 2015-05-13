@@ -111,13 +111,12 @@ public class MultiFidelitySrvModel extends SrvModel {
             if (mogram instanceof Exertion)
                 return ((Exertion)mogram).getContext();
             else
-                return getResponses();
+                return getResponse();
         } catch (Exception e) {
             throw new EvaluationException(e);
         }
     }
 
-    @Override
     public Object getResponse(String fidelity, Arg... entries) throws ContextException {
         try {
             selectSelectionFidelity(fidelity);

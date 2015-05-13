@@ -2605,7 +2605,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 					if (responsePaths.size() == 1)
 						currentPath = responsePaths.get(0);
 					else
-						return (T) getResponses();
+						return (T) getResponse();
 				}
 				else if (returnPath != null)
 					return getReturnValue(entries);
@@ -2654,8 +2654,7 @@ public class ServiceContext<T> extends ServiceMogram implements
             throw new ContextException("No siingle response available");
     }
 
-	@Override
-    public Object getResponse(String path, Arg... entries) throws ContextException, RemoteException {
+    public Object getResponseAt(String path, Arg... entries) throws ContextException, RemoteException {
         return getValue(path, entries);
     }
 
@@ -2664,19 +2663,19 @@ public class ServiceContext<T> extends ServiceMogram implements
 		responsePaths.add(responseName);
 	}
 
-	public T getResponse(Arg... entries) throws ContextException, RemoteException {
-        try {
-            if (responsePaths != null && responsePaths.size() == 1)
-                return getValue(responsePaths.get(0), entries);
-            else 
-                throw new ContextException("No valid unique response available");
-        } catch (Exception e) {
-            throw new ContextException(e);
-        }
-    }
+//	public T getResponse(Arg... entries) throws ContextException, RemoteException {
+//        try {
+//            if (responsePaths != null && responsePaths.size() == 1)
+//                return getValue(responsePaths.get(0), entries);
+//            else
+//                throw new ContextException("No valid unique response available");
+//        } catch (Exception e) {
+//            throw new ContextException(e);
+//        }
+//    }
 
 	@Override
-    public Context getResponses(Arg... args) throws ContextException, RemoteException {
+    public Context getResponse(Arg... args) throws ContextException, RemoteException {
         if (outConnector != null) {
             ServiceContext mc = null;
             try {
@@ -2996,7 +2995,7 @@ public class ServiceContext<T> extends ServiceMogram implements
                 return operator.exertion(name, signature, this).exert(txn, entries);
             } else {
                 // evaluates model otputs - responses
-				getResponses(entries);
+				getResponse(entries);
 				return (T) this;
             }
         } catch (Exception e) {

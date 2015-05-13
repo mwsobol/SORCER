@@ -88,7 +88,7 @@ public class CatalogSequentialDispatcher extends CatalogExertDispatcher {
                     previous = se.getContext();
                 } else if (mogram instanceof EntModel) {
                     ((EntModel)mogram).updateEntries(xrt.getContext());
-                    xrt.getDataContext().append(((Model) mogram).getResponses());
+                    xrt.getDataContext().append(((Model) mogram).getResponse());
                 }
             } catch (Exception e) {
                 e.printStackTrace();

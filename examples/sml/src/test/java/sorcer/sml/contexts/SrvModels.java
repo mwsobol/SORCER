@@ -80,17 +80,18 @@ public class SrvModels {
         // get a scalar response
         addResponse(m, "subtract");
         dependsOn(m, ent("subtract", paths("multiply", "add")));
-//		logger.info("response: " + response(m));
+		logger.info("response: " + response(m));
+        Context out = response(m);
 
-        assertTrue(response(m).equals(400.0));
+        assertTrue(get(out, "subtract").equals(400.0));
 
         // get a response context
         addResponse(m, "add", "multiply", "y1");
-        Context out = responses(m);
+        out = responses(m);
         logger.info("out: " + out);
-        assertTrue(response(out, "add").equals(100.0));
-        assertTrue(response(out, "multiply").equals(500.0));
-        assertTrue(response(out, "subtract").equals(400.0));
+        assertTrue(get(out, "add").equals(100.0));
+        assertTrue(get(out, "multiply").equals(500.0));
+        assertTrue(get(out, "subtract").equals(400.0));
 
         assertTrue(response(out, "y1").equals(10.0));
 

@@ -77,7 +77,7 @@ public class operator {
 
     public static Context responses(Model model) throws ContextException {
         try {
-            return model.getResponses();
+            return model.getResponse();
         } catch (RemoteException e) {
             throw new ContextException(e);
         }
@@ -85,13 +85,13 @@ public class operator {
 
     public static Object response(Model model, String path) throws ContextException {
         try {
-            return model.getResponse(path);
+            return ((ServiceContext)model).getResponseAt(path);
         } catch (RemoteException e) {
             throw new ContextException(e);
         }
     }
 
-    public static Object response(Model model) throws ContextException {
+    public static Context response(Model model) throws ContextException {
         try {
             return model.getResponse();
         } catch (RemoteException e) {
