@@ -28,9 +28,9 @@ import java.rmi.RemoteException;
  */
 public interface Model extends Mogram, Dependency {
     
-    public Context getInContext()  throws ContextException, RemoteException;
+    public Context getInputs()  throws ContextException, RemoteException;
     
-    public Context getOutContext()  throws ContextException, RemoteException;
+    public Context getOutputs()  throws ContextException, RemoteException;
 
     /**
      *  Returns a context of all specified responses of this model.

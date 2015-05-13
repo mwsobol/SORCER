@@ -98,6 +98,9 @@ public class ServiceContext<T> extends ServiceMogram implements
 
 	protected Context initContext;
 
+	// evalauted model responses
+	protected Context results;
+
 	/** The exertion that uses this context */
 	protected ServiceExertion exertion;
 
@@ -2690,20 +2693,22 @@ public class ServiceContext<T> extends ServiceMogram implements
             }
 			if (responsePaths != null && responsePaths.size() > 0) {
 				getMergedSubcontext(mc, responsePaths, args);
-				return mc;
+				results = mc;
+				return results;
 			}
         } else {
 			if (responsePaths != null && responsePaths.size() > 0) {
-				return getMergedSubcontext(null, responsePaths, args);
+				results = getMergedSubcontext(null, responsePaths, args);
 			} else {
-				return substitute(args);
+				results = substitute(args);
 			}
+			return results;
         }
 		return this;
     }
 
 	@Override
-    public Context getInContext() throws ContextException, RemoteException {
+    public Context getInputs() throws ContextException, RemoteException {
         List<String> paths = Contexts.getInPaths(this);
         Context<T> inputs = new ServiceContext();
         for (String path : paths)
@@ -2713,7 +2718,7 @@ public class ServiceContext<T> extends ServiceMogram implements
     }
 
     @Override
-    public Context getOutContext() throws ContextException, RemoteException {
+    public Context getOutputs() throws ContextException, RemoteException {
         List<String> paths = Contexts.getOutPaths(this);
         Context<T> inputs = new ServiceContext();
         for (String path : paths)
@@ -3066,6 +3071,14 @@ public class ServiceContext<T> extends ServiceMogram implements
 			}
 		}
 		return this;
+	}
+
+	public Context getResults() {
+		return results;
+	}
+
+	public void setResults(Context results) {
+		this.results = results;
 	}
 
 	@Override
