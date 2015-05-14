@@ -64,6 +64,7 @@ import java.net.URLClassLoader;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import static org.fusesource.jansi.Ansi.ansi;
 import static sorcer.util.StringUtils.tName;
@@ -100,7 +101,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 
     public static int selectedRegistrar = 0;
 
-    private static List<ServiceRegistrar> registrars = java.util.Collections.synchronizedList(new ArrayList<ServiceRegistrar>());
+    private static List<ServiceRegistrar> registrars = new CopyOnWriteArrayList<ServiceRegistrar>();
 
 //    static private boolean isRemoteLogging = true;
 
