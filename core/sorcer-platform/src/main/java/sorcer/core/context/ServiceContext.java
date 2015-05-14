@@ -104,6 +104,8 @@ public class ServiceContext<T> extends ServiceMogram implements
 	/** The exertion that uses this context */
 	protected ServiceExertion exertion;
 
+	private List<ThrowableTrace> exceptions;
+
 	protected String currentSelector;
 
 	protected String currentPrefix;
@@ -2981,6 +2983,15 @@ public class ServiceContext<T> extends ServiceMogram implements
 			return (Signature)subjectValue;
 		else
 			return null;
+	}
+
+	@Override
+	public List<ThrowableTrace> getExceptions() {
+		exceptions = new ArrayList<ThrowableTrace>();
+		if (exceptions != null)
+			return exceptions;
+		else
+			return new ArrayList<ThrowableTrace>();
 	}
 
 	public Map<String, List<String>> getDependentPaths() {
