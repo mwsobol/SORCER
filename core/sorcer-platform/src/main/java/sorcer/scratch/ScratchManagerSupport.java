@@ -30,8 +30,7 @@ import java.util.Calendar;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static sorcer.core.SorcerConstants.SCRATCH_DIR_KEY;
-import static sorcer.core.SorcerConstants.SCRATCH_URL_KEY;
+import static sorcer.core.SorcerConstants.*;
 
 /**
  * Provides support for a {@link ScratchManager}
@@ -49,8 +48,13 @@ public class ScratchManagerSupport implements ScratchManager, Serializable {
 
     @Override public File getScratchDir(String suffix) {
         String dataDir = System.getProperty(DataService.DATA_DIR);
-        String scratchDirName = SorcerEnv.getProperty("provider.scratch.dir");
-
+        String scratchDirName = SorcerEnv.getProperty(SCRATCH_DIR);
+        if(scratchDirName==null)
+            scratchDirName = SorcerEnv.getProperty(P_SCRATCH_DIR)==null?
+                             SorcerEnv.getProperty(R_SCRATCH_DIR):SorcerEnv.getProperty(P_SCRATCH_DIR);
+        if(scratchDirName==null)
+            throw new IllegalArgumentException("scratch directory cannot be obtained from any of the following properties: "+
+                                               SCRATCH_DIR+", "+P_SCRATCH_DIR+", "+R_SCRATCH_DIR);
         logger.info("scratch_dir = " + scratchDirName);
         String dirName = String.format("%s/%s/%s", dataDir, scratchDirName, getUniqueId());
         File tempDir = new File(dirName);
