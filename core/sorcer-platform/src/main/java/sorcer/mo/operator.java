@@ -84,7 +84,7 @@ public class operator {
     }
 
     public static Object result(Model model, String path) throws ContextException {
-        return ((ServiceContext)((ServiceContext)model).getResult()).get(path);
+        return ((ServiceContext)((ServiceContext)model).getResponseResult()).get(path);
     }
 
     public static Object response(Model model, String path) throws ContextException {

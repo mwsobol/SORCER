@@ -3084,7 +3084,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		return this;
 	}
 
-	public Object getResult() {
+	public Context getResponseResult() {
 		return result;
 	}
 
