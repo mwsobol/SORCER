@@ -20,7 +20,6 @@ import com.google.common.io.Closer;
 import com.google.common.io.Resources;
 import sorcer.file.ScratchDirManager;
 import sorcer.util.IOUtils;
-import sorcer.util.Sorcer;
 
 import java.io.*;
 import java.net.URL;
@@ -64,7 +63,7 @@ public class WebFile extends AbstractRemoteFile implements Serializable {
         if (!IOUtils.isChild(dataDir, localFile)) {
             File my = new File(dataDir, localFile.getName());
             IOUtils.copyLarge(new FileInputStream(localFile), new FileOutputStream(my));
-            remoteUrl = Sorcer.getDataURL(my);
+            //remoteUrl = Sorcer.getDataURL(my);
         }
     }
 }

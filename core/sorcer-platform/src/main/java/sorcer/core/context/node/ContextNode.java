@@ -17,51 +17,32 @@
 
 package sorcer.core.context.node;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.Serializable;
-import java.lang.reflect.Method;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.StringTokenizer;
-import java.util.Vector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import sorcer.core.SorcerConstants;
 import sorcer.core.context.ServiceContext;
 import sorcer.service.Evaluation;
 import sorcer.service.EvaluationException;
 import sorcer.service.modeling.Variability;
 import sorcer.util.GenericUtil;
-import sorcer.util.Log;
 import sorcer.util.Sorcer;
 
+import java.io.*;
+import java.lang.reflect.Method;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.*;
+
+import static sorcer.core.SorcerConstants.DOC_ROOT_DIR;
+import static sorcer.core.SorcerConstants.P_DATA_DIR;
 /**
  * The class <code>ContextNode</code> is a wrapper for externally persisted
  * data, for example in files or databases. The data is exposed via references
  * called "data items" that can be used as arguments to a setters (setItemValue)
  * and getter (getItemValue) in externally persisted data.
  */
-public class ContextNode implements Serializable, SorcerConstants {
-
-	// this class logger
-	private static Logger logger = Log.getSorcerCoreLog();
-
-	private static Logger tesLog = Log.getTestLog();
-
+public class ContextNode implements Serializable {
+	private static Logger logger = LoggerFactory.getLogger(ContextNode.class);
 	private static final long serialVersionUID = 3597662074450280684L;
 
 	private String name;
@@ -169,8 +150,7 @@ public class ContextNode implements Serializable, SorcerConstants {
 		return da.equals(ServiceContext.DA_INOUT);
 	}
 
-	public InputStream openStream() throws IOException, MalformedURLException,
-			ContextNodeException {
+	public InputStream openStream() throws IOException, ContextNodeException {
 		URL myURL = getURL();
 		URLConnection myConnect = myURL.openConnection();
 		myConnect.setDoInput(true);
@@ -196,11 +176,9 @@ public class ContextNode implements Serializable, SorcerConstants {
 		inStream.close();
 	}
 
-	public void download(File outFile, URL url) throws IOException,
-			ContextNodeException {
+	public void download(File outFile, URL url) throws IOException, ContextNodeException {
 		this.download(outFile);
 		data = url;
-		return;
 	}
 
 	public String toString() {
@@ -209,7 +187,7 @@ public class ContextNode implements Serializable, SorcerConstants {
 	}
 
 	public String toFullString() {
-		StringBuffer result = new StringBuffer();
+		StringBuilder result = new StringBuilder();
 		if (!isEmpty())
 			result.append(name).append(" (").append(data).append(", ").append(
 					"IO Type = ").append(da).append(", Transient = ").append(
@@ -502,8 +480,8 @@ public class ContextNode implements Serializable, SorcerConstants {
 		if (itemDataVect.elementAt(0).equals("Keyword Filter4")) {
 
 			String keyword = (String) itemDataVect.elementAt(2);
-			int lineAfter = ((Integer) itemDataVect.elementAt(3)).intValue();
-			int field = ((Integer) itemDataVect.elementAt(4)).intValue();
+			int lineAfter = (Integer) itemDataVect.elementAt(3);
+			int field = (Integer) itemDataVect.elementAt(4);
 			String delimiter = (String) itemDataVect.elementAt(5);
 
 			this.setFileItemValue(obj, keyword, lineAfter, field, delimiter);
@@ -681,8 +659,8 @@ public class ContextNode implements Serializable, SorcerConstants {
 							+ "\"; no such data item.");
 		Object obj = null;
 		if (itemDataVect.elementAt(0).equals("File")) {
-			int line = ((Integer) itemDataVect.elementAt(2)).intValue();
-			int field = ((Integer) itemDataVect.elementAt(3)).intValue();
+			int line = (Integer) itemDataVect.elementAt(2);
+			int field = (Integer) itemDataVect.elementAt(3);
 			String delimiter = (String) itemDataVect.elementAt(4);
 			obj = this.getFileItemValue(line, field, delimiter);
 			// convert to proper type
@@ -693,10 +671,10 @@ public class ContextNode implements Serializable, SorcerConstants {
 			if (((String) itemDataVect.elementAt(1)).equals("String"))
 				obj = obj.toString();
 		} else if (itemDataVect.elementAt(0).equals("File2")) {
-			int line = ((Integer) itemDataVect.elementAt(2)).intValue();
-			int field = ((Integer) itemDataVect.elementAt(3)).intValue();
+			int line = (Integer) itemDataVect.elementAt(2);
+			int field = (Integer) itemDataVect.elementAt(3);
 			String delimiter = (String) itemDataVect.elementAt(4);
-			int field2 = ((Integer) itemDataVect.elementAt(5)).intValue();
+			int field2 = (Integer) itemDataVect.elementAt(5);
 			String delimiter2 = (String) itemDataVect.elementAt(6);
 
 			// System.out.println("Line: "+line);
@@ -714,7 +692,7 @@ public class ContextNode implements Serializable, SorcerConstants {
 				obj = obj.toString();
 		} else if (itemDataVect.elementAt(0).equals("Keyword Filter")) {
 			String keyword = (String) itemDataVect.elementAt(2);
-			int field = ((Integer) itemDataVect.elementAt(3)).intValue();
+			int field = (Integer) itemDataVect.elementAt(3);
 			String delimiter = (String) itemDataVect.elementAt(4);
 
 			// System.out.println("Line: "+line);
@@ -1386,7 +1364,7 @@ public class ContextNode implements Serializable, SorcerConstants {
 		this.data = data;
 	}
 
-	public void getLocalFileCopyIn(String dir) {
+	/*public void getLocalFileCopyIn(String dir) {
 		if (isURL()) {
 			String fileName = GenericUtil.getUniqueString() + ".dn";
 			getLocalFileCopyIn(dir, fileName);
@@ -1419,7 +1397,7 @@ public class ContextNode implements Serializable, SorcerConstants {
 
 	public void getLocalFileCopy() {
 		getLocalFileCopyIn(""+Sorcer.getDataDir());
-	}
+	}*/
 
 	public Object getValue() {
 		return value;

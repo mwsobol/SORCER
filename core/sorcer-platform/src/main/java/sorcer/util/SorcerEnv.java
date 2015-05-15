@@ -19,17 +19,20 @@ import org.rioproject.net.HostUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.SorcerConstants;
+import sorcer.data.DataService;
 import sorcer.service.ConfigurationException;
-import sorcer.service.Context;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.InetAddress;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.security.AccessControlException;
-import java.text.SimpleDateFormat;
 import java.util.*;
+
+import static sorcer.core.SorcerConstants.*;
 
 /**
  * The Sorcer utility class provides the global environment configuration for
@@ -84,7 +87,7 @@ import java.util.*;
  */
 public class SorcerEnv extends SOS {
 	final static Logger logger = LoggerFactory.getLogger(SorcerEnv.class.getName());
-
+    private static final DataService dataService = DataService.getPlatformDataService();
 	/**
 	 * Collects all the properties from sorcer.env, related properties from a
 	 * provider properties file, provider Jini configuration file, and JVM
@@ -503,28 +506,25 @@ public class SorcerEnv extends SOS {
 	protected static void reconcileProperties(Properties properties, boolean expanding)
         throws ConfigurationException {
 		update(properties, expanding);
-		// set the document root for HTTP server either for provider or
+		// set the document root for HTTP server either for provider ormstc.data.dir
 		// requestor
-		String rootDir = null, dataDir = null;
-		rootDir = properties.getProperty(P_DATA_ROOT_DIR);
-		dataDir = properties.getProperty(P_DATA_DIR);
-		// logger.debug("\n1. rootDir = " + rootDir + "\ndataDir = " + dataDir);
+        //rootDir = properties.getProperty(P_DATA_ROOT_DIR);
+		String rootDir = DataService.getDataDir();
+        String dataDir = dataDir = properties.getProperty(P_DATA_DIR);
 
-		if (rootDir != null && dataDir != null) {
+		logger.debug("\n1. rootDir = " + rootDir + "\ndataDir = " + dataDir);
+
+		if (dataDir != null) {
 			System.setProperty(DOC_ROOT_DIR, rootDir + File.separator + dataDir);
-			// logger.debug("1. DOC_ROOT_DIR = " +
-			// System.getProperty(DOC_ROOT_DIR));
+			logger.debug("1. DOC_ROOT_DIR = " +System.getProperty(DOC_ROOT_DIR));
 		} else {
-			rootDir = properties.getProperty(R_DATA_ROOT_DIR);
+			//rootDir = properties.getProperty(R_DATA_ROOT_DIR);
 			dataDir = properties.getProperty(R_DATA_DIR);
 			if (rootDir != null && dataDir != null) {
-				System.setProperty(DOC_ROOT_DIR, rootDir + File.separator
-						+ dataDir);
+				System.setProperty(DOC_ROOT_DIR, rootDir + File.separator+ dataDir);
 			}
-			// logger.debug("\n2 .rootDir = " + rootDir + "\ndataDir = " +
-			// dataDir);
-			// logger.debug("2. DOC_ROOT_DIR = " +
-			// System.getProperty(DOC_ROOT_DIR));
+			 logger.debug("\n2 .rootDir = " + rootDir + "\ndataDir = " +dataDir);
+			 logger.debug("2. DOC_ROOT_DIR = " + System.getProperty(DOC_ROOT_DIR));
 		}
 		dataDir = properties.getProperty(P_SCRATCH_DIR);
 		// logger.debug("\n3. dataDir = " + dataDir);
@@ -1245,9 +1245,9 @@ public class SorcerEnv extends SOS {
 	 * 
 	 * @return a provider data root directory
 	 */
-	public File getDataRootDir() {
+	/*public File getDataRootDir() {
 		return new File(getProperty(P_DATA_ROOT_DIR));
-	}
+	}*/
 
 	/**
 	 * Returns the provider's data directory.
@@ -1264,41 +1264,39 @@ public class SorcerEnv extends SOS {
 	 * @return a HTTP document root directory
 	 */
 	public static File getDocRootDir() {
-		String drd = System
-				.getProperty(DOC_ROOT_DIR, Sorcer.getHome() + File.separator + "data");
-		return new File(drd);
+		return new File(DataService.getDataDir());
 	}
 
-	public static File getDataFile(String filename) {
-		return new File(getDataDir() + File.separator + filename);
-	}
+	/*public static File getDataFile(String filename) throws IOException {
+        return dataService.getDataFile(new File(filename).toURI().toURL());
+	}*/
 
 	/**
 	 * Returns a directory for providers's scratch files
 	 * 
 	 * @return a scratch directory
 	 */
-	static public File getUserHomeDir() {
+	/*static public File getUserHomeDir() {
 		return new File(System.getProperty("user.home"));
-	}
+	}*/
 
 	/**
 	 * Returns a directory for providers's scratch files
 	 * 
 	 * @return a scratch directory
 	 */
-	static public File getSorcerHomeDir() {
+/*	static public File getSorcerHomeDir() {
 		return new File(System.getProperty(SORCER_HOME));
-	}
+	}*/
 
 	/**
 	 * Returns a directory for providers's scratch files
 	 * 
 	 * @return a scratch directory
 	 */
-	static public File getScratchDir() {
+	/*static public File getScratchDir() {
 		return getNewScratchDir();
-	}
+	}*/
 
 
 	public static File[] getSharedDirs() {
@@ -1331,129 +1329,6 @@ public class SorcerEnv extends SOS {
 	}
 
 	/**
-	 * Deletes a direcory and all its files.
-	 * 
-	 * @param dir
-	 *            to be deleted
-	 * @return true if the directory is deleted
-	 * @throws Exception
-	 */
-	public boolean deleteDir(File dir) throws Exception {
-		return SorcerUtil.deleteDir(dir);
-	}
-
-	public static synchronized String getUniqueId() {
-		// SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd-HHmmss");
-		SimpleDateFormat sdf = new SimpleDateFormat("dd-HHmmss");
-		Calendar c = Calendar.getInstance();
-		long time = c.getTime().getTime();
-
-		String uid = UUID.randomUUID().toString();
-		// return sdf.format(time) + "-" + Long.toHexString(time);
-		return sdf.format(time) + "-" + uid;
-	}
-
-	/**
-	 * Returns a directory for providers's new scratch files
-	 * 
-	 * @return a scratch directory
-	 */
-	static public File getNewScratchDir() {
-		return getNewScratchDir("");
-	}
-
-	static int subDirCounter = 0;
-
-	static public File getNewScratchDir(String scratchDirNamePrefix) {
-		String scratchDirName = System.getProperty(SCRATCH_DIR,
-				props.getProperty(SCRATCH_DIR));
-		logger.info("scratch_dir = " + scratchDirName);
-		logger.info("dataDir = " + getDataDir());
-		String dirName = getDataDir() + File.separator + scratchDirName
-				+ File.separator + getUniqueId();
-		File tempdir = new File(dirName);
-		File scratchDir = null;
-		if (scratchDirNamePrefix == null || scratchDirNamePrefix.length() == 0) {
-			scratchDir = tempdir;
-		} else {
-			scratchDir = new File(tempdir.getParentFile(), scratchDirNamePrefix
-					+ tempdir.getName());
-		}
-		boolean madeDirs = scratchDir.mkdirs();
-		// logger.info("madeDirs = " + madeDirs);
-		// logger.info("can read? " + scratchDir.canRead());
-
-		return scratchDir;
-	}
-
-	public static String getAbsoluteScrachFilename(String filename) {
-		return getNewScratchDir() + File.separator + filename;
-	}
-
-	/**
-	 * Returns the URL of a scratch file at the provider HTTP data server.
-	 * 
-	 * @param scratchFile
-	 * @return the URL of a scratch file
-	 * @throws java.net.MalformedURLException
-	 */
-	public static URL getScratchURL(File scratchFile)
-			throws MalformedURLException {
-
-		String dataUrl = getDataServerUrl();
-
-		String path = scratchFile.getAbsolutePath();
-
-		// String scratchDir = System.getProperty(SCRATCH_DIR);
-
-		// File scratchDirFile = new File(scratchDir);
-		// scratchDir = scratchDirFile.getPath();
-
-		// int index = path.indexOf(scratchDir);
-
-		logger.info("dataUrl = " + dataUrl);
-		logger.info("scratchFile = " + scratchFile.getAbsolutePath());
-		// logger.info("scratchDir = " + scratchDir);
-		// logger.info("index = " + index);
-
-		logger.info("DOC_ROOT_DIR = " + System.getProperty(DOC_ROOT_DIR));
-		logger.info("substring = "
-				+ path.substring(System.getProperty(DOC_ROOT_DIR).length() + 1));
-		// if (index < 0) {
-		// throw new MalformedURLException("Scratch file: " + path
-		// + " is not in: " + scratchDir);
-		// }
-		String url = dataUrl + File.separator
-				+ path.substring(System.getProperty(DOC_ROOT_DIR).length() + 1);
-		url = url.replaceAll("\\\\+", "/");
-		logger.info("url = " + url);
-
-		return new URL(url);
-	}
-
-	/**
-	 * Returns the URL of a dataFile at the provider HTTP data server.
-	 * 
-	 * @param dataFile
-	 * @return the URL of a data file
-	 * @throws MalformedURLException
-	 */
-	public static URL getDataURL(File dataFile) throws MalformedURLException {
-		String dataUrl = getDataServerUrl();
-		String path = dataFile.getAbsolutePath();
-		String docDir = System.getProperty(DOC_ROOT_DIR);
-		if (docDir == null)
-			throw new MalformedURLException("no system property 'doc.root.dir' defined!");
-		int index = path.indexOf(docDir);
-		if (index < 0 || path == null) {
-			throw new MalformedURLException("Data file: " + path
-					+ " is not in: " + docDir);
-		}
-		return new URL(dataUrl + File.separator
-				+ path.substring(docDir.length() + 1));
-	}
-
-	/**
 	 * Get an anonymous port.
 	 * 
 	 * @return An anonymous port created by invoking {@code getPortAvailable()}.
@@ -1466,25 +1341,6 @@ public class SorcerEnv extends SOS {
 		if (port == 0)
 			port = getPortAvailable();
 		return port;
-	}
-
-	private static void storeEnvironment(String filename) {
-		props.setProperty(P_WEBSTER_PORT, "" + port);
-		try {
-			props.setProperty(P_WEBSTER_INTERFACE, getHostName());
-		} catch (UnknownHostException e) {
-			e.printStackTrace();
-			return;
-		}
-		try {
-			if (filename != null) {
-				props.store(new FileOutputStream(filename),
-						"SORCER auto-generated environment properties");
-			}
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 	}
 
 	/**
@@ -1500,28 +1356,6 @@ public class SorcerEnv extends SOS {
 		int port = socket.getLocalPort();
 		socket.close();
 		return port;
-	}
-
-	/**
-	 * Return the local host address based on the value of a system property.
-	 * using {@link java.net.InetAddress#getByName(String)}. If the system
-	 * property is not resolvable, return the default host address obtained from
-	 * {@link java.net.InetAddress#getLocalHost()}
-	 * 
-	 * @param property
-	 *            The property name to use
-	 * @return The local host address
-	 * @throws java.net.UnknownHostException
-	 *             if no IP address for the host name could be found.
-	 */
-	public static String getHostAddressFromProperty(String property)
-			throws java.net.UnknownHostException {
-		String host = getHostAddress();
-		String value = System.getProperty(property);
-		if (value != null) {
-			host = java.net.InetAddress.getByName(value).getHostAddress();
-		}
-		return (host);
 	}
 
 	/**
@@ -1722,88 +1556,5 @@ public class SorcerEnv extends SOS {
 		}
 		return name;
 	}
-
-	public static String getSuffixedName(String name, int suffixLength) {
-		return name + "-" + getDefaultNameSuffix(suffixLength);
-	}
-
-    public static boolean isIGrid() {
-        return true;
-    }
-
-
-
-    /**
-     * Loads data node (value) types from the SORCER data store or file. Data
-     *
-     * node types specify application types of data nodes in service contexts.
-     * It is analogous to MIME types in SORCER. Each type has a format
-     * 'cnt/application/format/modifiers' or in the association format
-     * 'cnt|application|format|modifiers' when used with
-     * {@code Context.getMarkedPaths}.
-     *
-     * @param filename
-     *            name of file containing service context node type definitions.
-     */
-    private static void loadDataNodeTypes(String filename) {
-        try {
-            // Try in local directory first
-            props.load((new FileInputStream(new File(filename))));
-        } catch (Throwable t1) {
-            try {
-                // Can not access "filename" give try as resource
-                // sorcer/util/data.formats
-                InputStream stream = Sorcer.class.getResourceAsStream(filename);
-                if (stream != null)
-                    props.load(stream);
-                else
-                    logger.error("could not load data node types from: "
-                            + filename);
-            } catch (Throwable t2) {
-                logger.error("could not load data node types: \n"+ t2.getMessage());
-            }
-
-        }
-    }
-
-
-    /**
-     * Load context node (value) types from default 'node.types'. SORCER node
-     * types specify application types of data nodes in SORCER service contexts.
-     * It is an analog of MIME types in SORCER. Each type has a format
-     * 'cnt/application/format/modifiers'.
-     */
-    public static void loadContextNodeTypes(Hashtable<?, ?> map) {
-        if (map != null && !map.isEmpty()) {
-            String idName = null, cntName = null;
-            String[] tokens;
-            for (Enumeration<?> e = map.keys(); e.hasMoreElements();) {
-                idName = (String) e.nextElement();
-                tokens = toArray(idName);
-                cntName = ("".equals(tokens[1])) ? tokens[0] : tokens[1];
-                props.put(cntName,
-                        Context.DATA_NODE_TYPE + APS + map.get(idName));
-            }
-        }
-    }
-
-	public static void loadVersions() {
-		// Read version.properties - sometimes used in deploy.config files
-		File versionPropsFile = new File(Sorcer.getHomeDir(), "configs/versions.properties");
-		try {
-			if (versionPropsFile.exists()) {
-				Properties props = new Properties();
-				props.load(new FileInputStream(versionPropsFile));
-				for (Enumeration e = props.propertyNames(); e.hasMoreElements();) {
-					String propName = (String) e.nextElement();
-					JavaSystemProperties.ensure(propName, props.getProperty(propName));
-				}
-			} else
-				logger.error("Cannot read versions, file does not exist: " + versionPropsFile.getAbsolutePath());
-		} catch (IOException e) {
-			logger.error("Cannot read versions from: " + versionPropsFile.getAbsolutePath());
-		}
-	}
-
 
 }

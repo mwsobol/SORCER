@@ -17,17 +17,16 @@
 
 package sorcer.util;
 
-import sorcer.core.SorcerConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class SOS implements SorcerConstants {
+public class SOS {
 	/**
 	 * General database prefix for the SORCER database schema.
 	 */

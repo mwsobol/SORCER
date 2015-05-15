@@ -21,6 +21,7 @@ import net.jini.core.transaction.TransactionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.context.ServiceContext;
+import sorcer.core.context.ThrowableTrace;
 import sorcer.core.exertion.*;
 import sorcer.core.provider.rendezvous.RendezvousBean;
 import sorcer.core.provider.rendezvous.ServiceConcatenator;
@@ -221,6 +222,9 @@ public class ControlFlowManager {
                 logger.info("exertion isTask()");
                 result = doTask((Task) exertion);
                 logger.info("exertion isTask(); result: " + result);
+                for(ThrowableTrace t : ((Task)result).getExceptions()) {
+                    logger.warn("Exception processing Task", t.getThrowable());
+                }
             }
             return result;
         } catch (RuntimeException e) {

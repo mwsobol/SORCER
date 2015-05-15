@@ -17,32 +17,14 @@
 
 package sorcer.core.provider.util;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Vector;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import sorcer.core.SorcerConstants;
-import sorcer.core.context.Contexts;
-import sorcer.core.context.ServiceContext;
-import sorcer.core.context.node.ContextNode;
 import sorcer.core.context.node.ContextNodeException;
-import sorcer.service.Context;
-import sorcer.service.ContextException;
 import sorcer.service.EvaluationException;
-import sorcer.service.Job;
-import sorcer.service.ServiceExertion;
-import sorcer.util.GenericUtil;
-import sorcer.util.Log;
-import sorcer.util.Sorcer;
+
+import java.io.IOException;
 
 public class Providers implements SorcerConstants {
-	private final static Logger logger = Log.getTestLog();
+	/*private final static Logger logger = Log.getTestLog();
 
 	private Providers() {
 		// utility class only
@@ -157,7 +139,7 @@ public class Providers implements SorcerConstants {
 		return fJA;
 	}
 
-	/**
+	*//**
 	 * Makes all URL-based context nodes in the <code>context</code> available
 	 * as local files in a scratch directory (see <code>sorcer.env</code>
 	 * configuration file)
@@ -167,8 +149,8 @@ public class Providers implements SorcerConstants {
 	 * @throws ContextNodeException
 	 * @throws EvaluationException
 	 * @throws IOException
-	 */
-	public static Context makeUrlContextDataAsLocal(Context context,
+	 *//*
+*//*	public static Context makeUrlContextDataAsLocal(Context context,
 			boolean isUniqueName) throws IOException, ContextNodeException,
 			EvaluationException {
 		File dataDir = Sorcer.getDataDir();
@@ -196,9 +178,9 @@ public class Providers implements SorcerConstants {
 			}
 		}
 		return context;
-	}
+	}*//*
 
-	/**
+	*//**
 	 * Makes all URL-based context nodes in the <code>context</code> available
 	 * as local files in a scratch directory (see <code>sorcer.env</code>
 	 * configuration file)
@@ -208,8 +190,8 @@ public class Providers implements SorcerConstants {
 	 * @throws ContextNodeException
 	 * @throws EvaluationException
 	 * @throws IOException
-	 */
-	public static Context makeUrlContextDataAsScratch(Context context)
+	 *//*
+*//*	public static Context makeUrlContextDataAsScratch(Context context)
 			throws IOException, ContextNodeException, EvaluationException {
 		File scratchDir = Sorcer.getNewScratchDir();
 		Iterator it = ((ServiceContext) context).entryIterator();
@@ -228,6 +210,6 @@ public class Providers implements SorcerConstants {
 			}
 		}
 		return context;
-	}
+	}*/
 
 }
