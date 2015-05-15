@@ -538,7 +538,7 @@ public class Contexts implements SorcerConstants {
 				nodes.add(obj);
             // Look for ContextNodes also in values and set the ContextNode's direction
             else {
-                Object val = context.get((String)obj);
+                Object val = ((ServiceContext)context).get((String)obj);
                 if (val!= null && val instanceof ContextNode) {
                     String dire = Contexts.getDirection(context, (String)obj);
 
@@ -1274,7 +1274,7 @@ public class Contexts implements SorcerConstants {
 		ContextLink link;
 		String keysInLink[];
 		for (String linkPath : paths) {
-			link = (ContextLink) cntxt.get(linkPath);
+			link = (ContextLink) ((ServiceContext)cntxt).get(linkPath);
 			keysInLink = getMarkedPaths(((ServiceContext) cntxt)
 					.getLinkedContext(link), association);
 			if (keysInLink != null)

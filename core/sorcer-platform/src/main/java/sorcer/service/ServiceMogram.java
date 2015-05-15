@@ -528,12 +528,7 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
         serviceFidelity =  fidelity;
     }
 
-    public Mogram clearScope() throws MogramException {
-        if (scope != null) {
-            scope.getData().clear();
-        }
-        return this;
-    }
+    abstract public Mogram clearScope() throws MogramException;
 
     /**
      * <p>
@@ -584,5 +579,34 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
         this.monitorSession = monitorSession;
     }
 
+    @Override
+    public Fidelity<Signature> getFidelity() {
+        return serviceFidelity;
+    }
+
+    @Override
+    public Map<String, Fidelity<Signature>> getFidelities() {
+        return serviceFidelities;
+    }
+
+    public void setFidelities(Map<String, Fidelity<Signature>> fidelities) {
+        this.serviceFidelities = fidelities;
+    }
+
+    public String getSelectedFidelitySelector() {
+        return namedServiceFidelity;
+    }
+
+    public void setSelectedFidelitySelector(String selectedFidelitySelector) {
+        this.namedServiceFidelity = selectedFidelitySelector;
+    }
+
+    public Map<String, FidelityContext> getFidelityContexts() {
+        return fidelityContexts;
+    }
+
+    public void setFidelityContexts(Map<String, FidelityContext> fidelityContexts) {
+        this.fidelityContexts = fidelityContexts;
+    }
 
 }

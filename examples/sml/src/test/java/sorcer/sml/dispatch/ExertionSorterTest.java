@@ -159,7 +159,7 @@ public class ExertionSorterTest {
         System.out.println("After sorting");
         printAllExertions(es.getSortedJob());
         Assert.assertEquals(Strategy.Flow.SEQ, es.getSortedJob().getFlowType());
-        Assert.assertEquals(Strategy.Flow.PAR, ((Exertion)es.getSortedJob().getExertion("j2")).getFlowType());
+        Assert.assertEquals(Strategy.Flow.PAR, ((Exertion)es.getSortedJob().getMogram("j2")).getFlowType());
 
     }
 
@@ -171,7 +171,7 @@ public class ExertionSorterTest {
         ExertionSorter es = new ExertionSorter(job);
         System.out.println("After sorting");
         printAllExertions(es.getSortedJob());
-        Assert.assertEquals(Strategy.Flow.PAR, ((Exertion)es.getSortedJob().getExertion("j2")).getFlowType());
+        Assert.assertEquals(Strategy.Flow.PAR, ((Exertion)es.getSortedJob().getMogram("j2")).getFlowType());
     }
 
     @Test
@@ -182,10 +182,10 @@ public class ExertionSorterTest {
         ExertionSorter es = new ExertionSorter(job);
         System.out.println("After sorting");
         printAllExertions(es.getSortedJob());
-        final Exertion f3 = job.getExertion("Task_f3");
-        final Exertion j2 = job.getExertion("Job_f2");
-        final Exertion j8 = job.getExertion("Job_f8");
-        final Exertion j20 = job.getExertion("Job_f20");
+        final Exertion f3 = job.getMogram("Task_f3");
+        final Exertion j2 = job.getMogram("Job_f2");
+        final Exertion j8 = job.getMogram("Job_f8");
+        final Exertion j20 = job.getMogram("Job_f20");
         List<Exertion> expList = new ArrayList<Exertion>();
         expList.add(j2);
         expList.add(f3);

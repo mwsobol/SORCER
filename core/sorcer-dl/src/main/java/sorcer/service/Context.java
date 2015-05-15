@@ -190,40 +190,6 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 	final public static Object none = new none();
 
 	/**
-	 * Returns a name of this service context.
-	 *
-	 * @return context name
-	 */
-	public String getName();
-
-	/**
-	 * Assigns a name for this service context.
-	 *
-	 * @param name
-	 *            a context name to set.
-	 */
-	public void setName(String name);
-
-	// /**
-	// * Returns a name of the root context node.
-	// *
-	// * @return name of the root context node
-	// */
-	// public String getRootName();
-	//
-	// /**
-	// * Assigns a root name for this service context.
-	// *
-	// * @param rootName
-	// * name of the root context node
-	// */
-	// public void setRootName(String rootName);
-
-	/**
-	 */
-	public Uuid getId();
-
-	/**
 	 * Returns a value at the path if exists, otherwise a value of the path that
 	 * ends with the last attribute of the given path.
 	 *
@@ -243,56 +209,6 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 	public void setParentPath(String path);
 
 	/**
-	 */
-	public Uuid getParentId();
-
-	public void setParentId(Uuid parentId);
-
-	/**
-	 */
-	public Date getCreationDate();
-
-	/**
-	 */
-	public Date getLastUpdateDate();
-
-	/**
-	 * @param date
-	 *            The lastUpdateDate to set.
-	 */
-	public void setLastUpdateDate(Date date);
-
-	/**
-	 * @param description
-	 *            The description to set.
-	 */
-	public void setDescription(String description);
-
-	/**
-	 */
-	public String getDescription();
-
-	public Integer getScopeCode();
-
-	/**
-	 */
-	public String getOwnerId();
-
-	/**
-	 */
-	public String getSubjectId();
-
-	/**
-	 * @param projectName
-	 *            The project to set.
-	 */
-	public void setProjectName(String projectName);
-
-	/**
-	 */
-	public String getProjectName();
-
-	/**
 	 * @param accessClass
 	 *            The accessClass to set.
 	 */
@@ -301,63 +217,6 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 	/**
 	 */
 	public String getAccessClass();
-
-	/**
-	 */
-	public Date getGoodUntilDate();
-
-	/**
-	 * @param date
-	 *            The goodUntilDate to set.
-	 */
-	public void setGoodUntilDate(Date date);
-
-	/**
-	 */
-	public String getDomainId();
-
-	/**
-	 * @param id
-	 *            The domainID to set.
-	 */
-	public void setDomainId(String id);
-
-	/**
-	 */
-	public String getSubdomainId();
-
-	/**
-	 * @param id
-	 *            The subdomainID to set.
-	 */
-	public void setSubdomainId(String id);
-
-	/**
-	 */
-	public String getDomainName();
-
-	/**
-	 * @param name
-	 *            The domainName to set.
-	 */
-	public void setDomainName(String name);
-
-	/**
-	 */
-	public String getSubdomainName();
-
-	/**
-	 * @param name
-	 *            The subdomainName to set.
-	 */
-	public void setSubdomainName(String name);
-
-	/**
-	 * Returns a principal using this service context.
-	 *
-	 * @return a Principal
-	 */
-	public Principal getPrincipal();
 
 	public boolean containsPath(String path);
 
@@ -371,11 +230,11 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 			Map<String, Map<String, String>> metacontext);
 
 	/**
-	 * Returns the exertion associated with this context.
+	 * Returns the mogram associated with this context.
 	 *
 	 * @return Exertion
 	 */
-	public Exertion getExertion();
+	public Exertion getMogram();
 
 	/**
 	 * Returns the service provider associated with this context
@@ -384,22 +243,15 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 	 */
 	public Provider getProvider();
 
-//	/**
-//	 * Returns the path of the return value associated with this context
-//	 * 
-//	 * @return The context path
-//	 */
-//	public ReturnPath<T> getReturnPath();
-
+	/**
+	 * Returns the result value associated with this context.
+	 *
+	 * @param entries data for closing free variables
+	 *
+	 * @return The context path
+	 */
 	public T getReturnValue(Arg... entries) throws ContextException,
 			RemoteException;
-
-//	/**
-//	 * Returns the path of the executor associated with this context
-//	 * 
-//	 * @return The context path
-//	 */
-//	public ExecPath getExecPath();
 
 	/**
 	 * @param task
@@ -465,15 +317,14 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 	public Context getCurrentContext() throws ContextException;
 
 	/**
-	 * Returns a value of the key object as is.
+	 * Returns a value of the object at the path as is
+	 * (no evaluation or invocation on this object).
 	 *
 	 * @param path
-	 *            the attribute-based key
-	 * @return this context value
+	 *            the key (path)
+	 * @return this context value at the path
 	 * @throws ContextException
 	 */
-	public T get(String path);
-
 	public T asis(String path) throws ContextException;
 
 	public void setReturnValue(Object value) throws ContextException;
@@ -963,31 +814,6 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 	public String toString();
 
 	/**
-	 * Returns a plain string representation of this context or in the HTML
-	 * format.
-	 *
-	 * @param isHTML
-	 * @return a plain string if isHTML is false, otherwise in the HTML format.
-	 */
-	public String toString(boolean isHTML) throws ContextException;
-
-	/**
-	 * Check if this context is export controlled, accessible to principals from
-	 * export controlled countries.
-	 *
-	 * @return true if is export controlled
-	 */
-	public boolean isExportControlled();
-
-	/**
-	 * Assigns export control for this context to <code>state</code> boolean.
-	 *
-	 * @param state
-	 *            of export control for this context
-	 */
-	public void isExportControlled(boolean state);
-
-	/**
 	 * Returns path of first occurrence of object in the context. Returns null
 	 * if not found. This method is useful for orphaned objects, but should be
 	 * used with caution, since the same object can appear in the context in
@@ -1081,7 +907,7 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 	 */
 	public List<String> getAttributes(String path) throws ContextException;
 
-	public Map<String, T> getData();
+//	public Map<String, T> getData();
 
 	public int size();
 

@@ -20,7 +20,7 @@ import static sorcer.eo.operator.*;
 public class ArithmeticServiceRequestor extends ServiceRequestor {
 
 	/* (non-Javadoc)
-	 * @see sorcer.core.requestor.ServiceRequestor#getExertion(java.lang.String[])
+	 * @see sorcer.core.requestor.ServiceRequestor#getMogram(java.lang.String[])
 	 */
 	@Override
 	public Exertion getExertion(String... args) throws ExertionException, ContextException, SignatureException {

@@ -137,6 +137,8 @@ public class ServiceContext<T> extends ServiceMogram implements
     /** EMPTY LEAF NODE ie. node with no data and not empty string */
 	public final static String EMPTY_LEAF = ":Empty";
 
+	protected boolean isMonitorable = false;
+
 	// this class logger
 	protected static Logger logger = LoggerFactory.getLogger(ServiceContext.class
 			.getName());
@@ -188,7 +190,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		Iterator i = ((ServiceContext)cntxt).keyIterator();
 		while (i.hasNext()) {
 			path = (String) i.next();
-			obj = cntxt.get(path);
+			obj = (T) ((ServiceContext)cntxt).get(path);
 			if (obj == null)
 				put(path, (T)none);
 			else
@@ -214,7 +216,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		subdomainId = cntxt.getSubdomainId();
 		domainName = cntxt.getDomainName();
 		subdomainName = cntxt.getSubdomainName();
-		exertion = (ServiceExertion) cntxt.getExertion();
+		exertion = (ServiceExertion) cntxt.getMogram();
 		principal = (SorcerPrincipal)cntxt.getPrincipal();
 		isPersistantTaskAssociated = ((ServiceContext) cntxt).isPersistantTaskAssociated;
 	}
@@ -300,7 +302,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		this.initContext = initContext;
 	}
 
-	public Exertion getExertion() {
+	public Exertion getMogram() {
 		return exertion;
 	}
 
@@ -2420,11 +2422,14 @@ public class ServiceContext<T> extends ServiceMogram implements
         if (exertion != null)
             exertion.getControlContext().addException(t);
         else
-            logger.warn("Error (could not report) " + t.getMessage());
+			exceptions.add(new ThrowableTrace(t));
 	}
 
 	public void reportException(String message, Throwable t) {
-		exertion.getControlContext().addException(message, t);
+		if (exertion != null)
+			exertion.getControlContext().addException(message, t);
+		else
+			exceptions.add(new ThrowableTrace(message, t));
 	}
 
 	public void reportException(String message, Throwable t, ProviderInfo info) {
@@ -2553,7 +2558,6 @@ public class ServiceContext<T> extends ServiceMogram implements
         MonitorUtil.checkpoint(this);
 	}
 
-
 	public T asis(String path) throws ContextException {
 		T val;
 		synchronized (this) {
@@ -2566,6 +2570,10 @@ public class ServiceContext<T> extends ServiceMogram implements
 			}
 		}
 		return val;
+	}
+
+	public T get(String path) {
+		return data.get(path);
 	}
 
 	public Context setOutValues(Context<T> context) throws ContextException,
@@ -2769,10 +2777,6 @@ public class ServiceContext<T> extends ServiceMogram implements
 		this.currentPrefix = currentPrefix;
 	}
 
-	/* (non-Javadoc)
-	 * @see sorcer.service.Context#getData()
-	 */
-	@Override
 	public Map<String, T> getData() {
 		// to reimplemented in subclasses
 		return data;
@@ -2994,6 +2998,11 @@ public class ServiceContext<T> extends ServiceMogram implements
 			return new ArrayList<ThrowableTrace>();
 	}
 
+	@Override
+	public List<ThrowableTrace> getAllExceptions() {
+		return getExceptions();
+	}
+
 	public Map<String, List<String>> getDependentPaths() {
         if (dependentPaths == null) {
             dependentPaths = new HashMap<String, List<String>>();
@@ -3092,11 +3101,6 @@ public class ServiceContext<T> extends ServiceMogram implements
 		this.result = result;
 	}
 
-	@Override
-	public T get(String path) {
-		return data.get(path);
-	}
-
 	public boolean containsKey(Object key) {
 		return data.containsKey(key);
 	}
@@ -3133,11 +3137,11 @@ public class ServiceContext<T> extends ServiceMogram implements
 	}
 
 	public void putAll(Context<T> context) {
-		data.putAll((Map<? extends String, ? extends T>) context.getData());
+		data.putAll((Map<? extends String, ? extends T>) ((ServiceContext) context).data);
 	}
 
 	@Override
-	public SelectFidelity getSelecteFidelity() {
+	public SelectFidelity getSelectFidelity() {
 		return selectFidelity;
 	}
 
@@ -3154,4 +3158,11 @@ public class ServiceContext<T> extends ServiceMogram implements
 		this.selectFidelities = selectFidelities;
 	}
 
+	public boolean isMonitorable() {
+		return isMonitorable;
+	}
+
+	public void setMonitored(boolean isMonitorable) {
+		this.isMonitorable = isMonitorable;
+	}
 }

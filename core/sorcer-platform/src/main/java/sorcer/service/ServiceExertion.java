@@ -122,7 +122,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
      */
     public Object invoke() throws RemoteException,
             InvocationException {
-        return invoke(new Arg[] {});
+        return invoke(new Arg[]{});
     }
 
     /*
@@ -289,10 +289,6 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
 
     public void setFlow(Flow type) {
         controlContext.setFlowType(type);
-    }
-
-    public Fidelity<Signature> getFidelity() {
-        return serviceFidelity;
     }
 
     public void addSignatures(Fidelity<Signature> fidelity) {
@@ -588,17 +584,17 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
 
     public Context getContext(String componentExertionName)
             throws ContextException {
-        Exertion component = getExertion(componentExertionName);
+        Exertion component = getMogram(componentExertionName);
         if (component != null)
-            return getExertion(componentExertionName).getContext();
+            return getMogram(componentExertionName).getContext();
         else
             return null;
     }
 
     public Context getControlContext(String componentExertionName) {
-        Exertion component = getExertion(componentExertionName);
+        Exertion component = getMogram(componentExertionName);
         if (component != null)
-            return getExertion(componentExertionName).getControlContext();
+            return getMogram(componentExertionName).getControlContext();
         else
             return null;
     }
@@ -880,7 +876,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
         }
     }
 
-    public Exertion getExertion(String componentExertionName) {
+    public Exertion getMogram(String componentExertionName) {
         if (name.equals(componentExertionName)) {
             return this;
         } else {
@@ -1014,9 +1010,9 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
     }
 
     public Object asis(String path) throws ContextException {
-        Context cxt = null;
+        ServiceContext cxt = null;
         if (isJob()) {
-            cxt = ((Job) this).getJobContext();
+            cxt = (ServiceContext)((Job) this).getJobContext();
         } else {
             cxt = dataContext;
         }
@@ -1031,30 +1027,6 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
             cxt = dataContext;
         }
         return cxt.putValue(path, value);
-    }
-
-    public Map<String, Fidelity<Signature>> getFidelities() {
-        return serviceFidelities;
-    }
-
-    public void setFidelities(Map<String, Fidelity<Signature>> fidelities) {
-        this.serviceFidelities = fidelities;
-    }
-
-    public String getSelectedFidelitySelector() {
-        return namedServiceFidelity;
-    }
-
-    public void setSelectedFidelitySelector(String selectedFidelitySelector) {
-        this.namedServiceFidelity = selectedFidelitySelector;
-    }
-
-    public Map<String, FidelityContext> getFidelityContexts() {
-        return fidelityContexts;
-    }
-
-    public void setFidelityContexts(Map<String, FidelityContext> fidelityContexts) {
-        this.fidelityContexts = fidelityContexts;
     }
 
     public List<Setter> getSetters() {

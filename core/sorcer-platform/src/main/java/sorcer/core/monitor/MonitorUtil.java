@@ -32,7 +32,7 @@ public class MonitorUtil {
      * Record this context as updated if the related exertion is monitored.
      */
     public static void checkpoint(Context context) throws ContextException {
-        Exertion mxrt = context.getExertion();
+        Exertion mxrt = context.getMogram();
         if (mxrt == null)
             return;
         StrategyContext controlContext = mxrt.getControlContext();
@@ -56,7 +56,7 @@ public class MonitorUtil {
      */
     public void changed(Context context, Exec.State aspect) throws RemoteException,
             MonitorException {
-        Exertion mxrt = context.getExertion();
+        Exertion mxrt = context.getMogram();
         if (mxrt == null)
             return;
         StrategyContext controlContext = mxrt.getControlContext();

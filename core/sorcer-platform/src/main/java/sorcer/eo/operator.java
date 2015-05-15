@@ -198,7 +198,7 @@ public class operator {
 
 	public static ControlContext control(Exertion exertion, String childName)
 			throws ContextException {
-		return (ControlContext)((Exertion)exertion.getExertion(childName)).getControlContext();
+		return (ControlContext)((Exertion)exertion.getMogram(childName)).getControlContext();
 	}
 
 	public static Context cxt(Object... entries) throws ContextException {
@@ -409,12 +409,12 @@ public class operator {
 	}
 
 	private static Context getPersistedContext(Object... entries) throws ContextException {
-		Context cxt = null;
+		ServiceContext cxt = null;
 		try {
 			if (entries.length == 1 && SdbUtil.isSosURL(entries[0]))
-				cxt = (Context)((URL)entries[0]).getContent();
+				cxt = (ServiceContext)((URL)entries[0]).getContent();
 			else if (entries.length == 2 && entries[0] instanceof String && SdbUtil.isSosURL(entries[1])) {
-				cxt = (Context)((URL)entries[1]).getContent();
+				cxt = (ServiceContext)((URL)entries[1]).getContent();
 				cxt.setName((String)entries[0]);
 			}
 		} catch (IOException e) {
@@ -919,7 +919,7 @@ public class operator {
 	}
 
 	public static Signature sig(Exertion exertion, String componentExertionName) {
-		Exertion component = (Exertion)exertion.getExertion(componentExertionName);
+		Exertion component = (Exertion)exertion.getMogram(componentExertionName);
 		return component.getProcessSignature();
 	}
 
@@ -1405,7 +1405,7 @@ public class operator {
 
 	public static Object get(Exertion exertion, String component, String path)
 			throws ExertionException {
-		Exertion c = (Exertion) exertion.getExertion(component);
+		Exertion c = (Exertion) exertion.getMogram(component);
 		return get(c, path);
 	}
 
