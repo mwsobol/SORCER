@@ -40,7 +40,7 @@ public interface Model extends Mogram, Dependency {
      * @throws ContextException
      * @throws RemoteException
      */
-    public Context getResponse(Arg... args)  throws ContextException, RemoteException;
+    public Object getResponse(Arg... args)  throws ContextException, RemoteException;
 
     /**
      * Returns a default response of this model

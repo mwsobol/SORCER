@@ -77,7 +77,7 @@ public class operator {
 
     public static Context responses(Model model) throws ContextException {
         try {
-            return model.getResponse();
+            return (Context) model.getResponse();
         } catch (RemoteException e) {
             throw new ContextException(e);
         }
@@ -101,7 +101,7 @@ public class operator {
 
     public static Context response(Model model) throws ContextException {
         try {
-            return model.getResponse();
+            return (Context) model.getResponse();
         } catch (RemoteException e) {
             throw new ContextException(e);
         }

@@ -256,7 +256,7 @@ abstract public class ExertDispatcher implements Dispatcher {
             }
         } else if (mo instanceof Model) {
             try {
-                sharedContexts.add(((Model)mo).getResponse());
+                sharedContexts.add((Context) ((Model)mo).getResponse());
                 logger.debug("Added model shared context: " + mo);
             } catch (RemoteException e) {
                 throw new ContextException(e);
