@@ -2422,11 +2422,14 @@ public class ServiceContext<T> extends ServiceMogram implements
         if (exertion != null)
             exertion.getControlContext().addException(t);
         else
-            logger.warn("Error (could not report) " + t.getMessage());
+			exceptions.add(new ThrowableTrace(t));
 	}
 
 	public void reportException(String message, Throwable t) {
-		exertion.getControlContext().addException(message, t);
+		if (exertion != null)
+			exertion.getControlContext().addException(message, t);
+		else
+			exceptions.add(new ThrowableTrace(message, t));
 	}
 
 	public void reportException(String message, Throwable t, ProviderInfo info) {
@@ -3134,7 +3137,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	}
 
 	public void putAll(Context<T> context) {
-		data.putAll((Map<? extends String, ? extends T>) ((ServiceContext)context).data);
+		data.putAll((Map<? extends String, ? extends T>) ((ServiceContext) context).data);
 	}
 
 	@Override
