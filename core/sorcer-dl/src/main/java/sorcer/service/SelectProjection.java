@@ -24,7 +24,7 @@ import sorcer.core.SelectFidelity;
  */
 public interface SelectProjection {
 
-    public SelectFidelity getSelecteFidelity();
+    public SelectFidelity getSelectFidelity();
 
     public void setSelectFidelity(SelectFidelity fidelity);
 }

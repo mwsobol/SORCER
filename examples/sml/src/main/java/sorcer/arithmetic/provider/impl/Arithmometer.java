@@ -279,7 +279,7 @@ public class Arithmometer implements SorcerConstants, Serializable {
 				String outpath = ((ServiceContext)context).getReturnPath().path;
 				if (outpath.indexOf("${name}") >= 0) {
 					String out = outpath.replace("${name}", 
-							((ServiceContext)context).getExertion().getName());
+							((ServiceContext)context).getMogram().getName());
 					((ServiceContext)context).getReturnPath().path = out;
 				}
 				((ServiceContext)context).setReturnValue(result);
@@ -290,7 +290,7 @@ public class Arithmometer implements SorcerConstants, Serializable {
 				if (outpath.indexOf("${name}") >= 0) {
 					if (outpath.indexOf("${name}") >= 0) {
 						outpath = outpath.replace("${name}", 
-							((ServiceContext)context).getExertion().getName());
+							((ServiceContext)context).getMogram().getName());
 					}
 				}
 				cxt.putValue(outpath, result);
@@ -321,7 +321,7 @@ public class Arithmometer implements SorcerConstants, Serializable {
 				String outpath = ((ServiceContext) context).getReturnPath().path;
 				if (outpath.indexOf("${name}") >= 0) {
 					String out = outpath.replace("${name}",
-							((ServiceContext) context).getExertion().getName());
+							((ServiceContext) context).getMogram().getName());
 					((ServiceContext) context).getReturnPath().path = out;
 				}
 				((ServiceContext) context).setReturnValue(result);
@@ -331,7 +331,7 @@ public class Arithmometer implements SorcerConstants, Serializable {
 				if (outpath.indexOf("${name}") >= 0) {
 					if (outpath.indexOf("${name}") >= 0) {
 						outpath = outpath.replace("${name}",
-								((ServiceContext) context).getExertion()
+								((ServiceContext) context).getMogram()
 										.getName());
 					}
 				}

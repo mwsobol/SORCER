@@ -59,7 +59,7 @@ public class MonitoringTest {
 
 		t5 = exert(t5);
 		logger.info("t5 context: " + context(t5));
-		assertNotNull(context(t5).get("context/checkpoint/time"));
+		assertNotNull(context(t5).asis("context/checkpoint/time"));
 		logger.info("t5 value: " + get(t5, "result/y"));
 		assertEquals("Wrong value for 100.0", 100d, get(t5, "result/y"));
 

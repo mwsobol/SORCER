@@ -22,7 +22,6 @@ import net.jini.lookup.entry.Name;
 import sorcer.core.provider.Provider;
 import sorcer.core.provider.ServiceProvider;
 import sorcer.core.provider.Version;
-import sorcer.eo.operator;
 import sorcer.service.*;
 import sorcer.util.MavenUtil;
 
@@ -30,8 +29,6 @@ import java.lang.reflect.Method;
 import java.rmi.RemoteException;
 import java.util.Arrays;
 import java.util.List;
-
-import static sorcer.eo.operator.prvName;
 
 public class NetSignature extends ObjectSignature {
 
@@ -370,7 +367,7 @@ public class NetSignature extends ObjectSignature {
 						"Not supported method: " + serviceType + "#" + selector
 								+ " by: "
 								+ ((Provider) provider).getProviderName());
-				((ServiceProvider) provider).notifyException(context.getExertion(),
+				((ServiceProvider) provider).notifyException(context.getMogram(),
 						"unsupported method", eme);
 				throw eme;
 			}

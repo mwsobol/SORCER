@@ -100,7 +100,7 @@ public class BlockThread extends Thread {
         } catch (DispatcherException de) {
 			de.printStackTrace();
 		}
-		//result = (Block) dispatcher.getExertion();
+		//result = (Block) dispatcher.getMogram();
 	}
 
 	public Block getBlock() {

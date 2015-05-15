@@ -386,7 +386,7 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
 //		if (storeType == Store.context)
 //			obj = getContext(uuid);
 //		else if (storeType == Store.exertion)
-//			obj = getExertion(uuid);
+//			obj = getMogram(uuid);
 //        else if (storeType == Store.table)
 //            obj = getTable(uuid);
 //        else if (storeType == Store.object)

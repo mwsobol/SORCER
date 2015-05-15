@@ -76,27 +76,6 @@ public interface Exertion extends Mogram, Dependency, Invocation<Object>, Evalua
 		Paradigmatic, Mappable, Serializable {
 
 	/**
-	 * Returns a name of this exertion.
-	 * 
-	 * @return a name
-	 */
-	public String getName();
-
-	/**
-	 * Returns a status of this exertion.
-	 * 
-	 * @return a status 
-	 */
-	public int getStatus();
-		
-	/**
-	 * Returns an ID of this exertion.
-	 * 
-	 * @return a unique identifier 
-	 */
-	public Uuid getId();
-	
-	/**
 	 * Returns a deployment ID for this exertion.
 	 * 
 	 * @return a deployment identifier 
@@ -172,22 +151,6 @@ public interface Exertion extends Mogram, Dependency, Invocation<Object>, Evalua
 	public String getExecTime();
 	
 	/**
-	 * Returns a service fidelity of this exertion that consists of process
-	 * signature, all pre-processing, post-processing, and append signatures.
-	 * There is only one process signature defining late binding to the service
-	 * provider processing this exertion.
-	 * 
-	 * @return a collection of all service signatures
-	 * @see #getProcessSignature
-	 */
-	public Fidelity<Signature> getFidelity();
-
-	/**
-	 * Returns a map of all available service fidelities of this exertion.
-	 */
-	public Map<String, Fidelity<Signature>> getFidelities();
-	
-	/**
 	 * Returns a signature of the <code>PROCESS</code> type for this exertion.
 	 * 
 	 * @return a process service signature
@@ -220,12 +183,6 @@ public interface Exertion extends Mogram, Dependency, Invocation<Object>, Evalua
     // Check if this is a Job that will be performed by Spacer
     boolean isSpacable();
 
-    /**
-	 * Returns the list of traces of thrown exceptions.
-	 * @return ThrowableTrace list
-	 */ 
-	public List<ThrowableTrace> getExceptions();
-	
 	/**
 	 * Returns the list of all signatures of component exertions.
 	 * 
@@ -246,20 +203,12 @@ public interface Exertion extends Mogram, Dependency, Invocation<Object>, Evalua
 	 * @return Signature list
 	 */
 	public List<Signature> getAllNetTaskSignatures();
-	
-	/**
-	 * Returns the list of all traces of thrown exceptions including from all
-	 * component.
-	 * 
-	 * @return ThrowableTrace list
-	 */
-	public List<ThrowableTrace> getAllExceptions();
 
 	/**
 	 * Returns a component exertion with a given name.
 	 * @return Exertion list
 	 */ 
-	public Mogram getExertion(String name);
+	public Mogram getMogram(String name);
 
 	/**
 	 * Returns the list of direct component exertions.
@@ -272,15 +221,6 @@ public interface Exertion extends Mogram, Dependency, Invocation<Object>, Evalua
 	 * @return Exertion list
 	 */ 
 	public List<Mogram> getAllMograms();
-	
-	/**
-	 * Returns <code>true</code> if this exertion should be monitored for its
-	 * execution, otherwise <code>false</code>.
-	 * 
-	 * @return <code>true</code> if this exertion requires its execution to be
-	 *         monitored.
-	 */
-	public boolean isMonitorable();
 	
 	/**
 	 * Returns <code>true</code> if this exertion can be provisioned for its
@@ -318,9 +258,7 @@ public interface Exertion extends Mogram, Dependency, Invocation<Object>, Evalua
 	public boolean isCmd();
 	
 	public void setProvisionable(boolean state);
-		
-	public Exertion substitute(Arg... entries) throws SetterException;
-	
+
 	/**
 	 * Returns true if this exertion is atop an acyclic graph in which no node
 	 * has two parents (two references to it).
@@ -340,16 +278,4 @@ public interface Exertion extends Mogram, Dependency, Invocation<Object>, Evalua
 	 */
 	public boolean isCompound();
 
-	/**
-	 * The exertion format for thin exertions (no RMI and Jini classes)
-	 */
-	public static final int THIN = 0;
-
-    public Uuid getParentId();
-
-    /**
-     * Return date when exertion was created
-     * @return
-     */
-    public Date getCreationDate();
 }
