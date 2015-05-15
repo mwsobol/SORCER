@@ -87,6 +87,7 @@ To include this file in your custom *-run-buld.xml have the import line:
 	<propertyset id="provider.system.properties">
 		<propertyref prefix="java.protocol.handler.pkgs" />
 		<propertyref prefix="java.util.logging.config.file" />
+		<propertyref prefix="logback.configurationFile" />
 		<propertyref prefix="java.rmi.server.useCodebaseOnly" />
 		<propertyref name="sorcer.home" />
 		<propertyref name="sorcer.version" />
@@ -94,6 +95,7 @@ To include this file in your custom *-run-buld.xml have the import line:
 		<propertyref name="river.version" />
         <propertyref name="plexus.version" />
         <propertyref name="slf4j.version" />
+		<propertyref name="logback.version" />
 		<propertyref name="org.rioproject.resolver.jar" />
 	</propertyset>
 

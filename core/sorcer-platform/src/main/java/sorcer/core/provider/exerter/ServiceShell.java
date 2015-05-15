@@ -235,7 +235,11 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 			if (entries != null && entries.length > 0) {
 				exertion.substitute(entries);
 			}
-			initExecState(entries);
+			// check if the exertion has to be initialized (to original state)
+			// or used as is after resuming from suspension or failure
+			if (exertion.isInitializable()) {
+				initExecState(entries);
+			}
 			realizeDependencies(entries);
 			if (exertion.isTask() && exertion.isProvisionable()) {
 				try {

@@ -5,6 +5,7 @@ import net.jini.id.UuidFactory;
 import sorcer.co.tuple.ExecPath;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.FidelityContext;
+import sorcer.core.context.ThrowableTrace;
 import sorcer.core.monitor.MonitoringSession;
 import sorcer.core.signature.ServiceSignature;
 import sorcer.security.util.SorcerPrincipal;
@@ -75,6 +76,10 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
     protected boolean isRevaluable = false;
 
     protected boolean isChanged = false;
+
+    // true if the exertion has to be initialized (to original state)
+    // or used as is after resuming from suspension or failure
+    protected boolean isInitializable = true;
 
     protected String dbUrl;
 
@@ -475,6 +480,16 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
 
     public void setParentPath(String path) {
         parentPath = path;
+    }
+
+    abstract public List<ThrowableTrace> getExceptions();
+
+    public boolean isInitializable() {
+        return isInitializable;
+    }
+
+    public void setIsInitializable(boolean isInitializable) {
+        this.isInitializable = isInitializable;
     }
 
     public Mogram setExecPath(ExecPath execPath)

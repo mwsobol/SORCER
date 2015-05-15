@@ -76,6 +76,7 @@ class BootMe extends DefaultTask {
         args << "-Driver.version=${project.riverVersion}"
         args << "-Dsorcer.version=${project.sorcerVersion}"
         args << "-Dsorcer.home=${project.sorcerDistHome}"
+        args << "-Drio.home=${project.rioHome}"
         args << "-Dsorcer.env.file=${project.sorcerDistHome}/configs/sorcer.env"
         args << "-Dproject.build.dir=${project.buildDir.path}"
         systemProperties.each { k, v ->

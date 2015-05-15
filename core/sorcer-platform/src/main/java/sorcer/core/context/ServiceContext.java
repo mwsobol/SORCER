@@ -98,8 +98,13 @@ public class ServiceContext<T> extends ServiceMogram implements
 
 	protected Context initContext;
 
+	// evalauted model responses
+	protected Context result;
+
 	/** The exertion that uses this context */
 	protected ServiceExertion exertion;
+
+	private List<ThrowableTrace> exceptions;
 
 	protected String currentSelector;
 
@@ -2605,7 +2610,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 					if (responsePaths.size() == 1)
 						currentPath = responsePaths.get(0);
 					else
-						return (T) getResponses();
+						return (T) getResponse();
 				}
 				else if (returnPath != null)
 					return getReturnValue(entries);
@@ -2654,8 +2659,7 @@ public class ServiceContext<T> extends ServiceMogram implements
             throw new ContextException("No siingle response available");
     }
 
-	@Override
-    public Object getResponse(String path, Arg... entries) throws ContextException, RemoteException {
+    public Object getResponseAt(String path, Arg... entries) throws ContextException, RemoteException {
         return getValue(path, entries);
     }
 
@@ -2664,19 +2668,19 @@ public class ServiceContext<T> extends ServiceMogram implements
 		responsePaths.add(responseName);
 	}
 
-	public T getResponse(Arg... entries) throws ContextException, RemoteException {
-        try {
-            if (responsePaths != null && responsePaths.size() == 1)
-                return getValue(responsePaths.get(0), entries);
-            else 
-                throw new ContextException("No valid unique response available");
-        } catch (Exception e) {
-            throw new ContextException(e);
-        }
-    }
+//	public T getResponse(Arg... entries) throws ContextException, RemoteException {
+//        try {
+//            if (responsePaths != null && responsePaths.size() == 1)
+//                return getValue(responsePaths.get(0), entries);
+//            else
+//                throw new ContextException("No valid unique response available");
+//        } catch (Exception e) {
+//            throw new ContextException(e);
+//        }
+//    }
 
 	@Override
-    public Context getResponses(Arg... args) throws ContextException, RemoteException {
+    public Context getResponse(Arg... args) throws ContextException, RemoteException {
         if (outConnector != null) {
             ServiceContext mc = null;
             try {
@@ -2691,20 +2695,22 @@ public class ServiceContext<T> extends ServiceMogram implements
             }
 			if (responsePaths != null && responsePaths.size() > 0) {
 				getMergedSubcontext(mc, responsePaths, args);
-				return mc;
+				result = mc;
+				return result;
 			}
         } else {
 			if (responsePaths != null && responsePaths.size() > 0) {
-				return getMergedSubcontext(null, responsePaths, args);
+				result = getMergedSubcontext(null, responsePaths, args);
 			} else {
-				return substitute(args);
+				result = substitute(args);
 			}
+			return result;
         }
 		return this;
     }
 
 	@Override
-    public Context getInContext() throws ContextException, RemoteException {
+    public Context getInputs() throws ContextException, RemoteException {
         List<String> paths = Contexts.getInPaths(this);
         Context<T> inputs = new ServiceContext();
         for (String path : paths)
@@ -2714,7 +2720,7 @@ public class ServiceContext<T> extends ServiceMogram implements
     }
 
     @Override
-    public Context getOutContext() throws ContextException, RemoteException {
+    public Context getOutputs() throws ContextException, RemoteException {
         List<String> paths = Contexts.getOutPaths(this);
         Context<T> inputs = new ServiceContext();
         for (String path : paths)
@@ -2979,6 +2985,15 @@ public class ServiceContext<T> extends ServiceMogram implements
 			return null;
 	}
 
+	@Override
+	public List<ThrowableTrace> getExceptions() {
+		exceptions = new ArrayList<ThrowableTrace>();
+		if (exceptions != null)
+			return exceptions;
+		else
+			return new ArrayList<ThrowableTrace>();
+	}
+
 	public Map<String, List<String>> getDependentPaths() {
         if (dependentPaths == null) {
             dependentPaths = new HashMap<String, List<String>>();
@@ -2996,7 +3011,7 @@ public class ServiceContext<T> extends ServiceMogram implements
                 return operator.exertion(name, signature, this).exert(txn, entries);
             } else {
                 // evaluates model otputs - responses
-				getResponses(entries);
+				getResponse(entries);
 				return (T) this;
             }
         } catch (Exception e) {
@@ -3067,6 +3082,14 @@ public class ServiceContext<T> extends ServiceMogram implements
 			}
 		}
 		return this;
+	}
+
+	public Context getResponseResult() {
+		return result;
+	}
+
+	public void setResult(Context result) {
+		this.result = result;
 	}
 
 	@Override

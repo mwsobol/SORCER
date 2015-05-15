@@ -80,7 +80,6 @@
             <sysproperty key="plexus.version" value="${plexus.version}"/>
             <sysproperty key="commonsio.version" value="${commonsio.version}" />
             <sysproperty key="org.rioproject.exec.monitor.reap.interval" value="1"/>
-            <sysproperty key="java.rmi.server.RMIClassLoaderSpi" value="sorcer.rio.rmi.SorcerResolvingLoader" />
             <arg value="${rio.home}/config/start-${service}.groovy"/>
         </java>
     </target>

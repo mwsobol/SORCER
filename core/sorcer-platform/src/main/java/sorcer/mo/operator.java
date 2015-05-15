@@ -77,23 +77,27 @@ public class operator {
 
     public static Context responses(Model model) throws ContextException {
         try {
-            return model.getResponses();
+            return (Context) model.getResponse();
         } catch (RemoteException e) {
             throw new ContextException(e);
         }
+    }
+
+    public static Object result(Model model, String path) throws ContextException {
+        return ((ServiceContext)((ServiceContext)model).getResponseResult()).get(path);
     }
 
     public static Object response(Model model, String path) throws ContextException {
         try {
-            return model.getResponse(path);
+            return ((ServiceContext)model).getResponseAt(path);
         } catch (RemoteException e) {
             throw new ContextException(e);
         }
     }
 
-    public static Object response(Model model) throws ContextException {
+    public static Context response(Model model) throws ContextException {
         try {
-            return model.getResponse();
+            return (Context) model.getResponse();
         } catch (RemoteException e) {
             throw new ContextException(e);
         }
@@ -133,6 +137,10 @@ public class operator {
         return map;
     }
 
+    public static Fidelity<String> responses(String... paths) {
+        return  new Fidelity<String>(paths);
+    }
+
     public static Paradigmatic modeling(Paradigmatic paradigm) {
         paradigm.setModeling(true);
         return paradigm;
@@ -158,6 +166,7 @@ public class operator {
     public static Model srvModel(Object... items) throws ContextException {
         sorcer.eo.operator.Complement complement = null;
         List<Signature> sigs = new ArrayList<Signature>();
+        Fidelity<String> responsePaths = null;
         Model model = null;
         for (Object item : items) {
             if (item instanceof Signature) {
@@ -166,6 +175,8 @@ public class operator {
                 complement = (sorcer.eo.operator.Complement)item;
             } else if (item instanceof Model) {
                 model = ((Model)item);
+            } else if (item instanceof Fidelity) {
+                responsePaths = ((Fidelity)item);
             }
         }
         if (model == null)
@@ -182,6 +193,10 @@ public class operator {
 //            ((SrvModel)model).setSubject("execute", ServiceModeler.class);
 //        }
 
+        if (responsePaths != null) {
+            ((ServiceContext)model).setResponsePaths(((Fidelity)responsePaths).getSelects());
+
+        }
         if (complement != null) {
             ((SrvModel)model).setSubject(complement.path(), complement.value());
         }

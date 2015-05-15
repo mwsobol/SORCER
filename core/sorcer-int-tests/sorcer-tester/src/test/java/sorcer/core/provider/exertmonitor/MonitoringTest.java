@@ -169,6 +169,9 @@ public class MonitoringTest {
 
 	private static void verifyMonitorStatus(String output, Uuid exertionId, String state) {
 		int posExertionId = output.indexOf(exertionId.toString());
+		if (posExertionId<0) {
+			logger.error("Cannot find exertion ID: " + exertionId.toString() + " in:\n" + output);
+		}
 		assertTrue(posExertionId > 0);
 		String cutString = output.substring(posExertionId);
 		int lineEnds = cutString.indexOf('\n');

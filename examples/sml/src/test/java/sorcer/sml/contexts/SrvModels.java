@@ -59,6 +59,30 @@ public class SrvModels {
 
     }
 
+    @Test
+    public void serviceResponses() throws Exception {
+
+        // get responses from a service model
+
+        Model m = srvModel(
+                inEnt("multiply/x1", 10.0), inEnt("multiply/x2", 50.0),
+                inEnt("add/x1", 20.0), inEnt("add/x2", 80.0),
+                srv(sig("multiply", MultiplierImpl.class, result("multiply/out",
+                        inPaths("multiply/x1", "multiply/x2")))),
+                srv(sig("add", AdderImpl.class, result("add/out",
+                        inPaths("add/x1", "add/x2")))),
+                srv(sig("subtract", SubtractorImpl.class, result("model/response",
+                        inPaths("multiply/out", "add/out")))),
+                srv("y1", "multiply/x1"),
+                responses("subtract"));
+
+        dependsOn(m, ent("subtract", paths("multiply", "add")));
+        logger.info("response: " + response(m));
+        Context out = response(m);
+
+        assertTrue(get(out, "subtract").equals(400.0));
+
+    }
 
     @Test
     public void evaluateServiceModel() throws Exception {
@@ -80,17 +104,18 @@ public class SrvModels {
         // get a scalar response
         addResponse(m, "subtract");
         dependsOn(m, ent("subtract", paths("multiply", "add")));
-//		logger.info("response: " + response(m));
+		logger.info("response: " + response(m));
+        Context out = response(m);
 
-        assertTrue(response(m).equals(400.0));
+        assertTrue(get(out, "subtract").equals(400.0));
 
         // get a response context
         addResponse(m, "add", "multiply", "y1");
-        Context out = responses(m);
+        out = responses(m);
         logger.info("out: " + out);
-        assertTrue(response(out, "add").equals(100.0));
-        assertTrue(response(out, "multiply").equals(500.0));
-        assertTrue(response(out, "subtract").equals(400.0));
+        assertTrue(get(out, "add").equals(100.0));
+        assertTrue(get(out, "multiply").equals(500.0));
+        assertTrue(get(out, "subtract").equals(400.0));
 
         assertTrue(response(out, "y1").equals(10.0));
 
@@ -121,7 +146,7 @@ public class SrvModels {
         // specify how model connects to exertion
         outConn(model, outConnector);
 
-//        Context out = responses(model);
+//        Context out = response(model);
 //        logger.info("out: " + out);
 
         Block block = block("mogram",
