@@ -41,20 +41,24 @@ public class ScratchManagerSupport implements ScratchManager, Serializable {
     static final long serialVersionUID = 1l;
     private static final Logger logger = LoggerFactory.getLogger(ScratchManagerSupport.class);
     private final AtomicReference<DataService> dataServiceRef = new AtomicReference<>();
+    static final String DEFAULT_SCRATCH_DIR = "default-scratch";
 
     @Override public File getScratchDir() {
         return getScratchDir("");
     }
 
     @Override public File getScratchDir(String suffix) {
-        String dataDir = System.getProperty(DataService.DATA_DIR);
+        String dataDir = DataService.getDataDir();
         String scratchDirName = SorcerEnv.getProperty(SCRATCH_DIR);
         if(scratchDirName==null)
             scratchDirName = SorcerEnv.getProperty(P_SCRATCH_DIR)==null?
                              SorcerEnv.getProperty(R_SCRATCH_DIR):SorcerEnv.getProperty(P_SCRATCH_DIR);
-        if(scratchDirName==null)
-            throw new IllegalArgumentException("scratch directory cannot be obtained from any of the following properties: "+
-                                               SCRATCH_DIR+", "+P_SCRATCH_DIR+", "+R_SCRATCH_DIR);
+        if(scratchDirName==null) {
+            scratchDirName = String.format("%s-%s", DEFAULT_SCRATCH_DIR, getNext(dataDir));
+            logger.error("scratch directory name cannot be derived from any of the " +
+                         "following properties: {}, {}, {}, will default to {}",
+                         SCRATCH_DIR, P_SCRATCH_DIR, R_SCRATCH_DIR, scratchDirName);
+        }
         logger.info("scratch_dir = " + scratchDirName);
         String dirName = String.format("%s/%s/%s", dataDir, scratchDirName, getUniqueId());
         File tempDir = new File(dirName);
@@ -113,6 +117,24 @@ public class ScratchManagerSupport implements ScratchManager, Serializable {
 
         String uid = UUID.randomUUID().toString();
         return sdf.format(time) + "-" + uid;
+    }
+
+    String getNext(String dataDir) {
+        File dir = new File(dataDir);
+        int last = 0;
+        for(String f : dir.list()) {
+            if(f.startsWith(DEFAULT_SCRATCH_DIR)) {
+                String s = f.substring(f.lastIndexOf("-")+1);
+                try {
+                    int i = Integer.parseInt(s);
+                    last = i>last?i:last;
+                } catch(NumberFormatException e) {
+                    //ignore
+                }
+            }
+        }
+        int next = last+1;
+        return Integer.toString(next);
     }
 
 }

@@ -15,6 +15,7 @@
  */
 package sorcer.data;
 
+import org.rioproject.config.Constants;
 import org.rioproject.net.HostUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,7 +54,7 @@ public class DataService {
      */
     public static DataService getPlatformDataService() {
         DataService dataService;
-        String webster = System.getProperty(Webster.CODESERVER);
+        String webster = System.getProperty(Constants.WEBSTER);
         if(webster!=null) {
             int ndx = webster.lastIndexOf(":");
             int port = Integer.parseInt(webster.substring(ndx+1));
@@ -122,6 +123,7 @@ public class DataService {
                 logger.info(String.format("Started data service on: %s:%d\n%s",
                                           websterRef.get().getAddress(), port, formatRoots()));
                 System.setProperty(DATA_URL, String.format("http://%s:%d", websterRef.get().getAddress(), port));
+                System.setProperty(Constants.WEBSTER, String.format("http://%s:%d", websterRef.get().getAddress(), port));
             } catch (IOException e) {
                 try {
                     address = HostUtil.getInetAddress().getHostAddress();

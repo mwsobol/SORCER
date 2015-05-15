@@ -87,7 +87,7 @@ import static sorcer.core.SorcerConstants.*;
  */
 public class SorcerEnv extends SOS {
 	final static Logger logger = LoggerFactory.getLogger(SorcerEnv.class.getName());
-    private static final DataService dataService = DataService.getPlatformDataService();
+
 	/**
 	 * Collects all the properties from sorcer.env, related properties from a
 	 * provider properties file, provider Jini configuration file, and JVM
@@ -108,6 +108,7 @@ public class SorcerEnv extends SOS {
 			if (home != null) {
 				System.setProperty("sorcer.home", getHome());
 				loadEnvironment();
+                DataService.getPlatformDataService();
 			}
 		} catch (ConfigurationException e) {
 			logger.warn("Failed to load the SORCER environment configuration");
@@ -1000,13 +1001,16 @@ public class SorcerEnv extends SOS {
 	/**
 	 * Gets the value of a certain property.
 	 * 
-	 * @param property
+	 * @param property the property to get
 	 * @return the string value of that property
 	 */
 	public static String getProperty(String property) {
         String p = null;
-        if(props!=null)
+        if(props!=null) {
             p = props.getProperty(property);
+        } else {
+            logger.warn("No loaded properties");
+        }
         return p;
 	}
 

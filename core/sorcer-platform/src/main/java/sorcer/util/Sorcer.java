@@ -82,7 +82,6 @@ import java.util.Hashtable;
 @SuppressWarnings("rawtypes")
 public class Sorcer extends SorcerEnv implements SorcerConstants {
 	final static Logger logger = LoggerFactory.getLogger(Sorcer.class.getName());
-
 	protected Sorcer() {
 		super();
 	}
