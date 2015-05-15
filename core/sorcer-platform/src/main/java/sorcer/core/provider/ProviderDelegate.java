@@ -2169,19 +2169,37 @@ public class ProviderDelegate implements SorcerConstants {
 				Path filePath = Paths.get("configs").resolve(filename);
 				if (!filePath.isAbsolute()) {
 					String name = filePath.toString();
-					logger.info("Try to load configuration: [{}] {}", System.getProperty(JavaSystemProperties.USER_DIR), filename);
+					logger.info("Try to load configuration: [{}] {}", System.getProperty(JavaSystemProperties.USER_DIR), name);
 					ClassLoader resourceLoader = Thread.currentThread().getContextClassLoader();
 					URL resourceURL = resourceLoader.getResource(name);
 					if (resourceURL != null) {
 						logger.info("Loaded from " + resourceURL.toExternalForm());
 						is = resourceURL.openStream();
 						logger.info("* Loading properties using: " + is);
+					} else {
+						logger.info("Try to load configuration: [{}] {}", System.getProperty(JavaSystemProperties.USER_DIR), filename);
+						resourceURL = resourceLoader.getResource(filename);
+						if (resourceURL != null) {
+							logger.info("Loaded from " + resourceURL.toExternalForm());
+							is = resourceURL.openStream();
+							logger.info("* Loading properties using: " + is);
+						}
 					}
 				}
 				// next check local resource
 				if (is == null) {
-					is = new FileInputStream(filePath.toFile());
+					if (filePath.toFile().exists())
+						is = new FileInputStream(filePath.toFile());
+					else if (Paths.get(filename).toFile().exists())
+						is = new FileInputStream(filePath.toFile());
+					else {
+						logger.warn("Could not load configuration from: " + filename +
+								"\nchecked in resources: " + filePath.toString() + ", and files: " + filePath.toFile().getAbsolutePath()
+								+ ", and: " + Paths.get(filename).toFile().getAbsolutePath());
+						return;
+					}
 				}
+
 				String expandingEnv = null;
 					try {
 						if (jiniConfig != null)
