@@ -35,13 +35,7 @@ public class UtilTest {
 	public void getWebsterUrl() throws ConfigurationException {
 		logger.info("*** WebsterUrl: " + Sorcer.getWebsterUrl());
 	}
-	
-	@Test
-	public void getScratchDir() throws ConfigurationException {
-		logger.info("*** DocRootDir(): " + Sorcer.getDocRootDir());
-		logger.info("*** ScratchDir(): " + Sorcer.getScratchDir());
-	}
-	
+
 	@Test
 	public void loadEnv() throws ConfigurationException {
 		Properties props = Sorcer.getEnvironment();

@@ -1102,7 +1102,7 @@ public class Webster implements Runnable {
                         putFile = parseFileName(fileName);
                     }
                     if (debug)
-                        System.out.println("tempDir: " +
+                        logger.info("tempDir: " +
                                            tempDir +
                                            ", fileName: " +
                                            fileName +
@@ -1136,7 +1136,7 @@ public class Webster implements Runnable {
 
                     int length = Integer.parseInt(ignoreCaseProperty(rheader, "Content-Length"));
                     if (debug)
-                        System.out.println("Putting " + fileName + " size: " + length + ", header: " + rheader);
+                        logger.info("Putting " + fileName + " size: " + length + ", header: " + rheader);
                     try {
                         requestedFileOutputStream = new DataOutputStream(new FileOutputStream(putFile));
                         int read;
