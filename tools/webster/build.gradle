@@ -10,5 +10,8 @@ jar {
 }
 
 dependencies {
-    compile project(':sorcer-platform')
+    compile "net.jini:jsk-platform:${riverVersion}"
+    compile "org.rioproject:rio-platform:${rioVersion}"
+    compile  "org.apache.river:start:${riverVersion}"
+    compile "org.slf4j:slf4j-api:${slf4jVersion}"
 }

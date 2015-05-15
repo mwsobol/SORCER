@@ -78,7 +78,6 @@ import javax.security.auth.Subject;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.nio.file.Path;
@@ -98,6 +97,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import static sorcer.core.SorcerConstants.*;
 import static sorcer.util.StringUtils.tName;
 
 /**
@@ -113,7 +113,7 @@ import static sorcer.util.StringUtils.tName;
  * @author Mike Sobolewski
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })
-public class ProviderDelegate implements SorcerConstants {
+public class ProviderDelegate {
 
 	static ThreadGroup threadGroup = new ThreadGroup(PROVIDER_THREAD_GROUP);
 
@@ -873,8 +873,7 @@ public class ProviderDelegate implements SorcerConstants {
 			} finally {
                 processedExertionsCount++;
                 logger.warn("EXERTIONS PROCESSED: " + processedExertionsCount);
-                exertionStateTable.remove(exertionStateTable.remove(task
-						.getId()));
+                exertionStateTable.remove(exertionStateTable.remove(task.getId()));
 			}
 		}
 		return (Task) forwardTask(task, provider);
@@ -1028,7 +1027,7 @@ public class ProviderDelegate implements SorcerConstants {
 	private Context execContextualBean(Method m, Task task, Object impl)
 			throws ContextException, IllegalArgumentException,
 			IllegalAccessException, InvocationTargetException {
-		Context result = null;
+		Context result;
 		result = task.getContext();
 		String selector = task.getProcessSignature().getSelector();
 		Object[] args = new Object[] { task.getContext() };
@@ -1067,7 +1066,7 @@ public class ProviderDelegate implements SorcerConstants {
 		Context result = task.getContext();
 		String selector = task.getProcessSignature().getSelector();
 		Class[] argTypes = ((ServiceContext)result).getParameterTypes();
-		Object[] args = (Object[]) ((ServiceContext)result).getArgs();
+		Object[] args = ((ServiceContext)result).getArgs();
 		if (selector.equals("exert") && impl instanceof ServiceShell) {
 			Exertion xrt = null;
 			if (args.length == 1) {
@@ -1326,81 +1325,6 @@ public class ProviderDelegate implements SorcerConstants {
 				return null;
 			}
 		});
-	}
-
-	/**
-	 * Returns a name of directory for SORCER data as specified in the SORCER
-	 * provider configuration.
-	 * 
-	 * @return data directory name
-	 */
-	public File getDataDir() {
-		return Sorcer.getDataDir();
-	}
-
-	/**
-	 * Returns a directory for provider's scratch files containing service
-	 * context values.
-	 * 
-	 * @return a scratch directory
-	 */
-	public File getScratchDir() {
-		return Sorcer.getNewScratchDir();
-	}
-
-	public File getScratchDir(String scratchDirNamePrefix) {
-		return Sorcer.getNewScratchDir(scratchDirNamePrefix);
-	}
-
-	// adds scratch dir to context
-	public File getScratchDir(Context context, String scratchDirPrefix)
-			throws ContextException, MalformedURLException {
-
-		File scratchDir = getScratchDir(scratchDirPrefix);
-
-		if (context.containsPath(SCRATCH_DIR_KEY)
-				|| context.containsPath(SCRATCH_URL_KEY)) {
-			// throw new ContextException(
-			// "***error: context already contains scratch dir or scratch url key; "
-			// + "do not use this method twice on the same context argument "
-			// + "(use getScratchDir() and add scratch dir key and value "
-			// + "yourself)");
-			logger.warn("***warning: context already contains scratch dir or scratch url key; "
-					+ "beware of using this method twice on the same context argument "
-					+ "(using getScratchDir() and add scratch dir key and value "
-					+ "yourself may be better)."
-					+ "\n\tcontext name = "
-					+ context.getName() + "\n\tcontext = " + context);
-		}
-
-		Contexts.putOutValue(context, SCRATCH_DIR_KEY,
-				scratchDir.getAbsolutePath(),
-				Sorcer.getProperty("engineering.provider.scratchdir"));
-
-		Contexts.putOutValue(context, SCRATCH_URL_KEY,
-				getScratchURL(scratchDir),
-				Sorcer.getProperty("engineering.provider.scratchurl"));
-
-		return scratchDir;
-	}
-
-	// adds scratch dir to context
-	public File getScratchDir(Context context) throws ContextException,
-	MalformedURLException {
-		return getScratchDir(context, "");
-	}
-
-
-	/**
-	 * Returns the URL of a data HTTP server handling remote scratch files.
-	 * 
-	 * @param scratchFile
-	 * @return a URL of the data HTTP server
-	 * 
-	 * @throws MalformedURLException
-	 */
-	public URL getScratchURL(File scratchFile) throws MalformedURLException {
-		return Sorcer.getScratchURL(scratchFile);
 	}
 
 	/**
@@ -1923,8 +1847,7 @@ public class ProviderDelegate implements SorcerConstants {
 						" No exertion exists corresponding to "
 								+ uuid);
 
-			exertionStateTable.put(uuid, new Integer(
-					Exec.STOPPED));
+			exertionStateTable.put(uuid, Exec.STOPPED);
 		}
 	}
 
@@ -2169,19 +2092,37 @@ public class ProviderDelegate implements SorcerConstants {
 				Path filePath = Paths.get("configs").resolve(filename);
 				if (!filePath.isAbsolute()) {
 					String name = filePath.toString();
-					logger.info("Try to load configuration: [{}] {}", System.getProperty(JavaSystemProperties.USER_DIR), filename);
+					logger.info("Try to load configuration: [{}] {}", System.getProperty(JavaSystemProperties.USER_DIR), name);
 					ClassLoader resourceLoader = Thread.currentThread().getContextClassLoader();
 					URL resourceURL = resourceLoader.getResource(name);
 					if (resourceURL != null) {
 						logger.info("Loaded from " + resourceURL.toExternalForm());
 						is = resourceURL.openStream();
 						logger.info("* Loading properties using: " + is);
+					} else {
+						logger.info("Try to load configuration: [{}] {}", System.getProperty(JavaSystemProperties.USER_DIR), filename);
+						resourceURL = resourceLoader.getResource(filename);
+						if (resourceURL != null) {
+							logger.info("Loaded from " + resourceURL.toExternalForm());
+							is = resourceURL.openStream();
+							logger.info("* Loading properties using: " + is);
+						}
 					}
 				}
 				// next check local resource
 				if (is == null) {
-					is = new FileInputStream(filePath.toFile());
+					if (filePath.toFile().exists())
+						is = new FileInputStream(filePath.toFile());
+					else if (Paths.get(filename).toFile().exists())
+						is = new FileInputStream(filePath.toFile());
+					else {
+						logger.warn("Could not load configuration from: " + filename +
+								"\nchecked in resources: " + filePath.toString() + ", and files: " + filePath.toFile().getAbsolutePath()
+								+ ", and: " + Paths.get(filename).toFile().getAbsolutePath());
+						return;
+					}
 				}
+
 				String expandingEnv = null;
 					try {
 						if (jiniConfig != null)

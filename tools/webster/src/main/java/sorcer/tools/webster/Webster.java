@@ -18,6 +18,7 @@ package sorcer.tools.webster;
 
 import net.jini.config.Configuration;
 import net.jini.config.ConfigurationProvider;
+import org.rioproject.net.HostUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,7 +50,7 @@ import java.util.concurrent.ThreadPoolExecutor;
  */
 public class Webster implements Runnable {
     static final String BASE_COMPONENT = "sorcer.tools";
-    static final String CODESERVER = BASE_COMPONENT + ".codeserver";
+    public static final String CODESERVER = BASE_COMPONENT + ".codeserver";
 
     static final int DEFAULT_MIN_THREADS = 1;
     static final int DEFAULT_MAX_THREADS = 10;
@@ -83,7 +84,7 @@ public class Webster implements Runnable {
      */
     public Webster() throws IOException {
         String s = System.getProperty("webster.port");
-        if (s != null && s != "0") {
+        if (s != null && !s.equals("0")) {
             try {
                 port = new Integer(s);
             } catch (NumberFormatException e) {
@@ -145,6 +146,20 @@ public class Webster implements Runnable {
     /**
      * Create a new Webster
      *
+     * @param port  The port to use
+     * @param roots The root(s) to serve code from. This is a semi-colin
+     *              delimited list of directories
+     * @throws IOException if Webster cannot create a socket
+     */
+    public Webster(int port, String roots, String tempDir) throws IOException {
+        this.port = port;
+        this.tempDir  = tempDir;
+        initialize(roots);
+    }
+
+    /**
+     * Create a new Webster
+     *
      * @param port        The port to use
      * @param roots       The root(s) to serve code from. This is a semi-colin
      *                    delimited list of directories
@@ -152,15 +167,13 @@ public class Webster implements Runnable {
      *                    implies no specific address)
      * @throws IOException if Webster cannot create a socket
      */
-    public Webster(int port, String roots, String bindAddress, boolean isDaemon)
-            throws IOException {
+    public Webster(int port, String roots, String bindAddress, boolean isDaemon) throws IOException {
         this.port = port;
         this.isDaemon = isDaemon;
         initialize(roots, bindAddress);
     }
 
-    public Webster(int port, String[] roots, String bindAddress,
-                   boolean isDaemon) throws IOException {
+    public Webster(int port, String[] roots, String bindAddress,boolean isDaemon) throws IOException {
         this.port = port;
         this.isDaemon = isDaemon;
         initialize(roots, bindAddress);
@@ -242,7 +255,7 @@ public class Webster implements Runnable {
         String[] configRoots = null;
         String[] configArgs = null;
         String roots = null;
-        String[] options = null;
+        String[] options;
         String bindAddress = null;
         if (args.length == 1 && new File(args[0]).isFile()) {
             final Configuration config = ConfigurationProvider.getInstance(args);
@@ -340,8 +353,7 @@ public class Webster implements Runnable {
         init(bindAddress);
     }
 
-    private void initialize(String[] roots, String bindAddress)
-            throws IOException {
+    private void initialize(String[] roots, String bindAddress) throws IOException {
         websterRoot = roots;
         init(bindAddress);
     }
@@ -352,9 +364,8 @@ public class Webster implements Runnable {
      * @param roots The root(s) to serve code from. This is a semicolon
      * delimited list of directories
      */
-    private void init(String bindAddress)
-        throws IOException {
-        String str = null;
+    private void init(String bindAddress) throws IOException {
+        String str;
         if (!debug) {
             str = System.getProperty("webster.debug");
             if (str != null && str.equals("true"))
@@ -363,9 +374,9 @@ public class Webster implements Runnable {
         str = System.getProperty("webster.tmp.dir");
         if (str != null) {
             tempDir = str;
-            if (debug)
-                System.out.println("tempDir: " + tempDir);
         }
+        if(tempDir!=null)
+            logger.debug("tempDir: " + tempDir);
 
         for (int j = 0; j < websterRoot.length; j++) {
             if (debug) {
@@ -382,7 +393,7 @@ public class Webster implements Runnable {
                 bindAddress = System.getProperty("webster.interface");
             }
             if (bindAddress == null)
-                bindAddress = InetAddress.getLocalHost().getHostAddress();
+                bindAddress = HostUtil.getInetAddress().getHostAddress();
 
             addr = InetAddress.getByName(bindAddress);
         } catch (UnknownHostException e) {
@@ -406,12 +417,8 @@ public class Webster implements Runnable {
         }
 
         for (int i = startPort; i <= endPort; i++) {
-            try {
-                start(i, addr);
-                return;
-            } catch (Exception ex) {
-                logger.error("Cannot start", ex);
-            }
+            start(i, addr);
+            return;
         }
     }
 
@@ -427,10 +434,9 @@ public class Webster implements Runnable {
             ss = new ServerSocket(port, 0, address);
         } catch (IOException ioe) {
             if (startPort == endPort) {
-                logger.error("Port bind server socket failure: " + endPort, ioe);
-                System.exit(1);
+                throw new IOException("Port bind server socket failure: " + endPort, ioe);
             } else {
-                System.err.println("Port bind server socket failure: " + port);
+                logger.error("Port bind server socket failure: " + port);
                 throw ioe;
             }
         }
@@ -468,8 +474,7 @@ public class Webster implements Runnable {
                                     + "] millis");
         }
         /* Set system property */
-        System.setProperty(CODESERVER, "http://" + getAddress() + ":"
-                + getPort());
+        System.setProperty(CODESERVER, "http://" + getAddress() + ":"+ getPort());
 
         if (logger.isDebugEnabled())
             logger.debug("Webster isDaemon: " + isDaemon);
@@ -628,7 +633,7 @@ public class Webster implements Runnable {
                         if (logger.isDebugEnabled())
                             logger.debug(buff.toString());
                     }
-                    if (line != null && line.length()>0) {
+                    if (line.length() > 0) {
                         tokenizer = new StringTokenizer(line, " ");
                         if (!tokenizer.hasMoreTokens())
                             break;
@@ -655,38 +660,38 @@ public class Webster implements Runnable {
                         if (header.getProperty("GET") != null) {
                             pool.execute(new GetFile(s, fileName));
                         } else if (header.getProperty("PUT") != null) {
-                            pool.execute(new PutFile(s, fileName, header, inputStream));
+                            if(tempDir==null) {
+                                DataOutputStream clientStream = new DataOutputStream(new BufferedOutputStream(s.getOutputStream()));
+                                clientStream.writeBytes("HTTP/1.1 405 Method Not Allowed\nWebster is in read-only mode\r\n\r\n");
+                                clientStream.flush();
+                                clientStream.close();
+                            } else {
+                                pool.execute(new PutFile(s, fileName, header, inputStream));
+                            }
                         } else if (header.getProperty("DELETE") != null) {
                             pool.execute(new DelFile(s, fileName));
                         } else if (header.getProperty("HEAD") != null) {
                             pool.execute(new Head(s, fileName));
                         } else {
                             if (debug)
-                                System.out.println(
-                                        "bad request [" + line + "] from " + from);
+                                System.out.println("bad request [" + line + "] from " + from);
                             if (logger.isDebugEnabled())
                                 logger.debug("bad request [" + line + "] from " + from);
                             DataOutputStream clientStream =
-                                    new DataOutputStream(
-                                            new BufferedOutputStream(
-                                                    s.getOutputStream()));
-                            clientStream.writeBytes(
-                                    "HTTP/1.0 400 Bad Request\r\n\r\n");
+                                new DataOutputStream(new BufferedOutputStream(s.getOutputStream()));
+                            clientStream.writeBytes("HTTP/1.0 400 Bad Request\r\n\r\n");
                             clientStream.flush();
                             clientStream.close();
                         }
                     } /* if line != null */
                 } catch (Exception e) {
                     DataOutputStream clientStream =
-                            new DataOutputStream(
-                                    new BufferedOutputStream(
-                                            s.getOutputStream()));
-                    clientStream.writeBytes(
-                            "HTTP/1.0 500 Internal Server Error\n" +
-                                    "MIME-Version: 1.0\n" +
-                                    "Server: " + SERVER_DESCRIPTION + "\n" +
-                                    "\n\n<H1>500 Internal Server Error</H1>\n"
-                                    + e);
+                            new DataOutputStream(new BufferedOutputStream(s.getOutputStream()));
+                    clientStream.writeBytes("HTTP/1.0 500 Internal Server Error\n" +
+                                            "MIME-Version: 1.0\n" +
+                                            "Server: " + SERVER_DESCRIPTION + "\n" +
+                                            "\n\n<H1>500 Internal Server Error</H1>\n"
+                                            + e);
                     clientStream.flush();
                     clientStream.close();
                     inputStream.close();
@@ -767,7 +772,7 @@ public class Webster implements Runnable {
     } // end of loadMimes
 
     protected File parseFileName(String filename) {
-        StringBuffer fn = new StringBuffer(filename);
+        StringBuilder fn = new StringBuilder(filename);
         for (int i = 0; i < fn.length(); i++) {
             if (fn.charAt(i) == '/')
                 fn.replace(i, i + 1, File.separator);
@@ -786,7 +791,7 @@ public class Webster implements Runnable {
     }
 
     protected String[] expandRoots() {
-        List<String> expandedRoots = new LinkedList<String>();
+        List<String> expandedRoots = new LinkedList<>();
         if (hasWildcard()) {
             String[] rawRoots = websterRoot;
             for (String root : rawRoots) {
@@ -844,8 +849,8 @@ public class Webster implements Runnable {
         }
 
         public void run() {
-            StringBuffer dirData = new StringBuffer();
-            StringBuffer logData = new StringBuffer();
+            StringBuilder dirData = new StringBuilder();
+            StringBuilder logData = new StringBuilder();
             try {
                 File getFile = parseFileName(fileName);
                 logData.append("Do HEAD: input=")
@@ -942,8 +947,8 @@ public class Webster implements Runnable {
         }
 
         public void run() {
-            StringBuffer dirData = new StringBuffer();
-            StringBuffer logData = new StringBuffer();
+            StringBuilder dirData = new StringBuilder();
+            StringBuilder logData = new StringBuilder();
             try {
                 File getFile = parseFileName(fileName);
                 logData.append("Do GET: input=")
@@ -1097,8 +1102,12 @@ public class Webster implements Runnable {
                         putFile = parseFileName(fileName);
                     }
                     if (debug)
-                        System.out
-                              .println("tempDir: " + tempDir + ", fileName: " + fileName + ", putFile: " + putFile.getPath());
+                        System.out.println("tempDir: " +
+                                           tempDir +
+                                           ", fileName: " +
+                                           fileName +
+                                           ", putFile: " +
+                                           putFile.getPath());
 
                     if (putFile.exists()) {
                         header = "HTTP/1.0 200 OK\n"

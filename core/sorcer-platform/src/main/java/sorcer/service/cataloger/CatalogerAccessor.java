@@ -62,19 +62,19 @@ public class CatalogerAccessor extends ServiceAccessor {
     public Cataloger doGetCataloger(String name) {
         String CatalogerName = (name == null) ? providerNameUtil.getName(Cataloger.class)
                 : name;
-        Cataloger Cataloger = (Cataloger) cache.get(Cataloger.class.getName());
+        Cataloger cataloger = (Cataloger) cache.get(Cataloger.class.getName());
 
         try {
-            if (Accessor.isAlive((Provider) Cataloger)) {
-                log.info(">>>returned cached Cataloger ("
-                        + ((Provider) Cataloger).getProviderID() + ") by "
+            if (Accessor.isAlive((Provider) cataloger)) {
+                log.info(">>>returned cached cataloger ("
+                        + ((Provider) cataloger).getProviderID() + ") by "
                         + Accessor.getAccessorType());
             } else {
-                Cataloger = Accessor.getService(CatalogerName, Cataloger.class);
-                if (Cataloger!=null)
-                    cache.put(Cataloger.class.getName(), Cataloger);
+                cataloger = Accessor.getService(CatalogerName, Cataloger.class);
+                if (cataloger!=null)
+                    cache.put(Cataloger.class.getName(), cataloger);
             }
-            return Cataloger;
+            return cataloger;
         } catch (Exception e) {
             log.error("getCataloger", e);
             return null;

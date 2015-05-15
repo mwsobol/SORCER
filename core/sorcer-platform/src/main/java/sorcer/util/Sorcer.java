@@ -19,6 +19,7 @@ package sorcer.util;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sorcer.core.SorcerConstants;
 import sorcer.core.provider.DatabaseStorer;
 import sorcer.core.provider.DataspaceStorer;
 import sorcer.core.provider.Provider;
@@ -79,7 +80,7 @@ import java.util.Hashtable;
  * nodes in service contexts {@code Contexts.getMarkedPaths}.
  */
 @SuppressWarnings("rawtypes")
-public class Sorcer extends SorcerEnv {
+public class Sorcer extends SorcerEnv implements SorcerConstants {
 	final static Logger logger = LoggerFactory.getLogger(Sorcer.class.getName());
 
 	protected Sorcer() {

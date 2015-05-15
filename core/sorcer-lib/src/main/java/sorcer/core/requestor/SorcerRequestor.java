@@ -20,6 +20,8 @@ package sorcer.core.requestor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.SorcerConstants;
+import sorcer.scratch.ScratchManager;
+import sorcer.scratch.ScratchManagerSupport;
 import sorcer.service.ConfigurationException;
 import sorcer.tools.webster.InternalWebster;
 import sorcer.util.Sorcer;
@@ -28,7 +30,6 @@ import sorcer.util.SorcerUtil;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.Properties;
@@ -52,7 +53,7 @@ import java.util.StringTokenizer;
 abstract public class SorcerRequestor implements SorcerConstants {
 	/** Logger for logging information about this instance */
 	protected static final Logger logger = LoggerFactory.getLogger(SorcerRequestor.class.getName());
-
+    private final ScratchManager scratchManager = new ScratchManagerSupport();
 	public static String R_PROPERTIES_FILENAME = "requestor.properties";
 	protected static SorcerRequestor requestor = null;
 	protected Properties props;
@@ -267,33 +268,9 @@ abstract public class SorcerRequestor implements SorcerConstants {
 		}
 		return port;
 	}
-
-	/**
-	 * Returns the URL for the requestor's <code>filename</code>
-	 * 
-	 * @return the current URL for the SORCER requestor data server.
-	 * @throws MalformedURLException 
-	 */
-	public URL getRequestorDataFileURL(String filename) throws MalformedURLException {
-		return new URL("http://" + getDataServerUrl() + '/'
-				+ getProperty(R_DATA_DIR) + '/' + filename);
-	}
-
-	public File getScrachFile(String filename) {
-		return new File(getNewScratchDir() + File.separator + filename);
-	}
-
-	/**
-	 * Returns a directory for requestor's scratch files
-	 * 
-	 * @return a scratch directory
-	 */
-	 public File getScratchDir() {
-		 return Sorcer.getNewScratchDir();
-	}
 	
 	/**
-	 * Deletes a direcory and all its files.
+	 * Deletes a directory and all its files.
 	 * 
 	 * @param dir
 	 *            to be deleted
@@ -310,7 +287,7 @@ abstract public class SorcerRequestor implements SorcerConstants {
 	 * @return a scratch directory
 	 */
 	public File getNewScratchDir() {
-		return Sorcer.getNewScratchDir();
+		return scratchManager.getScratchDir();
 	}
 
 	public File getDataFile(String filename) {
@@ -377,30 +354,6 @@ abstract public class SorcerRequestor implements SorcerConstants {
 	 public Properties getProperties() {
 		 return props;
 	 }
-	 
-	/**
-	 * Returns the URL of a scratch file at the requestor HTTP data server.
-	 * 
-	 * @param scratchFile
-	 * @return the URL of a scratch file
-	 * @throws MalformedURLException
-	 */
-	public URL getScratchURL(File scratchFile)
-			throws MalformedURLException {
-		return Sorcer.getScratchURL(scratchFile);
-	}
-
-	/**
-	 * Returns the URL of a dataFile at the requestor HTTP data server.
-	 * 
-	 * @param dataFile
-	 * @return the URL of a data file
-	 * @throws MalformedURLException
-	 */
-	public static URL getDataURL(File dataFile)
-			throws MalformedURLException {
-		return Sorcer.getDataURL(dataFile);
-	}
 	
 	protected static String[] toArray(String arg) {
 		StringTokenizer token = new StringTokenizer(arg, " ,;");

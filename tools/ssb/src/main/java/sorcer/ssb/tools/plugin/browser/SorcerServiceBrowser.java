@@ -17,35 +17,20 @@
 
 package sorcer.ssb.tools.plugin.browser;
 
-import java.awt.BorderLayout;
-import java.awt.Rectangle;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
-import java.io.PrintStream;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-import javax.swing.plaf.metal.MetalLookAndFeel;
-
 import net.jini.config.Configuration;
 import sorcer.core.SorcerConstants;
 import sorcer.ssb.jini.studio.CodeServer;
 import sorcer.ssb.jini.studio.StudioTheme;
+
+import javax.swing.*;
+import javax.swing.plaf.metal.MetalLookAndFeel;
+import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.*;
+import java.util.ArrayList;
+
 //import sorcer.ssb.osx.OSXApplication;
-import sorcer.util.Sorcer;
 
 public class SorcerServiceBrowser {
 
@@ -168,7 +153,7 @@ public class SorcerServiceBrowser {
 			 * } });
 			 */
 			ABOUT += "\n(c)2009-2010 SORCERsoft.org";
-			boolean useCodeServer = "true".equals(System.getProperty(Sorcer.SORCER_CODE_SERVER_INTERNAL));
+			boolean useCodeServer = "true".equals(System.getProperty(SorcerConstants.SORCER_CODE_SERVER_INTERNAL));
 			if (!StartSorcerBrowser.isWebsterInt && useCodeServer) {
 				CodeServer.autoStart(tr.getClass(), ServiceBrowserConfig.getConfiguration());
 			}

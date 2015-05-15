@@ -46,6 +46,8 @@ import org.slf4j.LoggerFactory;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.ControlContext;
 import sorcer.core.context.ServiceContext;
+import sorcer.scratch.ScratchManager;
+import sorcer.scratch.ScratchManagerSupport;
 import sorcer.core.proxy.Outer;
 import sorcer.core.proxy.Partner;
 import sorcer.core.proxy.Partnership;
@@ -62,7 +64,6 @@ import sorcer.util.url.sos.SdbURLStreamHandlerFactory;
 import javax.security.auth.Subject;
 import javax.security.auth.login.LoginContext;
 import java.io.*;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.rmi.NoSuchObjectException;
 import java.rmi.Remote;
@@ -85,7 +86,7 @@ import static sorcer.util.StringUtils.tName;
  * interface and each outer proxy is registered with the inner proxy allocated
  * with {@link Outer#getInner} invoked on the outer proxy. Obviously an outer
  * proxy can implement own interfaces with the help of its embedded inner proxy
- * that in turn can consit of multiple own inner proxies as needed. This class
+ * that in turn can consist of multiple own inner proxies as needed. This class
  * implements the {@link sorcer.core.proxy.Outer} interface, so can extend its functionality by
  * inner proxying.
  * <p>
@@ -145,7 +146,7 @@ import static sorcer.util.StringUtils.tName;
  */
 public class ServiceProvider implements Identifiable, Provider, ServiceIDListener,
 		ReferentUuid, ProxyAccessor, ServerProxyTrust,
-		RemoteMethodControl, LifeCycle, Partner, Partnership, SorcerConstants, AdministratableProvider {
+		RemoteMethodControl, LifeCycle, Partner, Partnership, SorcerConstants, AdministratableProvider, ScratchManager {
 	// RemoteMethodControl is needed to enable Proxy Constraints
 
 	/** Logger and configuration component name for service provider. */
@@ -162,7 +163,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		}
 	}
 
-
+    private ScratchManager scratchManager = new ScratchManagerSupport();
 	protected ProviderDelegate delegate;
 
 	static final String DEFAULT_PROVIDER_PROPERTY = "provider.properties";
@@ -258,6 +259,18 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		delegate.getProviderConfig().loadConfiguration(providerPropertiesFile);
 	}
 
+    protected void setScratchManager(final ScratchManager scratchManager) {
+        if(scratchManager!=null) {
+            this.scratchManager = scratchManager;
+            logger.info("Set ScratchManager with {}", this.scratchManager.getClass().getName());
+        } else {
+            logger.warn("Attempt to set null ScratchManager avoided");
+        }
+    }
+
+    public ScratchManager getScratchManager() {
+        return scratchManager;
+    }
 
 	// Implement ServerProxyTrust
 	/**
@@ -1521,48 +1534,23 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	}
 
 	public File getScratchDir() {
-		return delegate.getScratchDir();
+		return scratchManager.getScratchDir("");
 	}
 
-	public File getScratchDir(String scratchDirNamePrefix) {
-		return delegate.getScratchDir(scratchDirNamePrefix);
+	public File getScratchDir(String suffix) {
+		return scratchManager.getScratchDir(suffix);
 	}
 
-	// this methods generates a scratch directory with a prefix on the unique
-	// directory name
-	// and puts the directory into the context under a fixed path (path is in
-	// SorcerConstants)
-	public File getScratchDir(Context context, String scratchDirNamePrefix) throws ContextException {
-		File scratchDir;
-		try {
-			scratchDir = delegate.getScratchDir(context, scratchDirNamePrefix);
-		} catch (Exception e) {
-			logger.warn("Getting scratch directory failed", e);
-			throw new ContextException("***error: problem getting scratch "
-					+ "directory and adding path/url to context"
-					+ "\ncontext name = " + context.getName() + "\ncontext = "
-					+ context + "\nscratchDirNamePrefix = "
-					+ scratchDirNamePrefix + "\nexception = " + e.toString());
-		}
-		return scratchDir;
+	public File getScratchDir(Context context, String suffix)  {
+		return scratchManager.getScratchDir(context, suffix);
 	}
 
-	// method adds scratch dir to context
-	public File getScratchDir(Context context) throws ContextException {
-		return getScratchDir(context, "");
-		// File scratchDir;
-		// try {
-		// scratchDir = delegate.getScratchDir(context);
-		// } catch (Exception e) {
-		// throw new RemoteException("***error: problem getting scratch "
-		// + "directory and adding path/url to context, exception "
-		// + "follows:\n" + e.toString());
-		// }
-		// return scratchDir;
-	}
+    public File getScratchDir(Context context) {
+        return getScratchDir(context, "");
+    }
 
-	public URL getScratchURL(File scratchFile) throws MalformedURLException {
-		return delegate.getScratchURL(scratchFile);
+    public URL getScratchURL(File scratchFile) {
+        return scratchManager.getScratchURL(scratchFile);
 	}
 
 	public String getProperty(String key) {
@@ -1689,7 +1677,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		}
 
 		try {
-			logger.info("Destroying service " + getProviderName());
+			logger.debug("Destroying service " + getProviderName());
 			if (ldmgr != null)
 				ldmgr.terminate();
 			if (joinManager != null)
@@ -1697,14 +1685,14 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 			providers.remove(this);
 			tally = tally - 1;
 
-			logger.info("destroyed provider: " + getProviderName() + ", providers left: " + tally);
+			logger.debug("destroyed provider: " + getProviderName() + ", providers left: " + tally);
 			//if (threadManager != null)
 			//	threadManager.terminate();
 
 			unexport(true);
-			logger.info("calling destroy on the delegate...");
+			logger.debug("calling destroy on the delegate...");
 			delegate.destroy();
-			logger.info("DONE calling destroy on the delegate.");
+			logger.debug("DONE calling destroy on the delegate.");
 			if (lifeCycle != null) {
 				lifeCycle.unregister(this);
 			}
