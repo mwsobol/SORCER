@@ -154,6 +154,7 @@ public class Webster implements Runnable {
     public Webster(int port, String roots, String tempDir) throws IOException {
         this.port = port;
         this.tempDir  = tempDir;
+        isDaemon = true;
         initialize(roots);
     }
 
