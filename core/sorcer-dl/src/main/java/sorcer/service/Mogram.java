@@ -88,6 +88,12 @@ public interface Mogram extends Service, ServiceProjection, Scopable, Substituta
     public List<ThrowableTrace> getExceptions();
 
     /**
+     * Returns the list of traces left by collborating services.
+     * @return ThrowableTrace list
+     */
+    public List<String> getTrace();
+
+    /**
      * Returns the list of all traces of thrown exceptions with exceptions of
      * component mograms.
      *

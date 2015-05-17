@@ -556,11 +556,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
         return controlContext.getExceptions().size();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see sorcer.service.Exertion#getTrace()
-     */
+    @Override
     public List<String> getTrace() {
         return controlContext.getTrace();
     }

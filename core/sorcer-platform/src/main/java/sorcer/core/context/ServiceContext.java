@@ -276,7 +276,12 @@ public class ServiceContext<T> extends ServiceMogram implements
 		return runtime.getExceptions();
 	}
 
-	@Override
+    @Override
+    public List<String> getTrace() {
+        return runtime.getTraceList();
+    }
+
+    @Override
 	public List<ThrowableTrace> getAllExceptions() {
 		return runtime.getAllExceptions();
 	}

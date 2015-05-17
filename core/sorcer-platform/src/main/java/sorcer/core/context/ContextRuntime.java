@@ -19,6 +19,8 @@ public class ContextRuntime implements SelectProjection, Serializable {
 
     protected List<ThrowableTrace> exceptions;
 
+    private List<String> traceList;
+
     private boolean isMonitorable = false;
 
      private ServiceContext target;
@@ -64,6 +66,14 @@ public class ContextRuntime implements SelectProjection, Serializable {
             return exceptions;
         else
             return new ArrayList<ThrowableTrace>();
+    }
+
+    public List<String> getTraceList() {
+        return traceList;
+    }
+
+    public void setTraceList(List<String> traceList) {
+        this.traceList = traceList;
     }
 
     public List<ThrowableTrace> getAllExceptions() {
