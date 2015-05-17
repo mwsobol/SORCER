@@ -21,12 +21,12 @@
  * the webster.groovy script
  */
 
-@Grab(group="org.rioproject", module="rio-platform", version="5.1.5")
-import org.rioproject.net.HostUtil;
+/*@Grab(group="org.rioproject", module="rio-platform", version="5.1.5")
+import org.rioproject.net.HostUtil;*/
 
 webster {
 //    address = org.rioproject.net.HostUtil.getInetAddress().toString()
-    address = HostUtil.getInetAddress().getHostAddress()
+//    address = HostUtil.getInetAddress().getHostAddress()
 
     roots = ["${sorcerHome}/lib/sorcer/lib-dl",
              "${sorcerHome}/lib/sorcer/lib",

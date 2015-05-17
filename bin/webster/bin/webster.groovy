@@ -85,7 +85,7 @@ args << java.toString()
  "logback.configurationFile" : "${sorcerHome}/configs/sorcer-logging.groovy",
  "webster.debug" : "true",
  "webster.port" : "${sorcerEnv['provider.webster.port']}",
- "webster.interface" : "${config.webster.address}",
+ //"webster.interface" : "${config.webster.address}",
  "webster.tmp.dir" : "${sorcerHome}/data",
  "webster.root" : "${websterRoots.toString()}"
 ].each { key, value ->
@@ -99,6 +99,7 @@ String rioHome = "${sorcerHome}/rio-${versions['rio.version']}"
 def jars = ["${rioHome}/lib/logging/slf4j-api-${versions['slf4j.version']}.jar",
             "${rioHome}/lib/logging/logback-core-${versions['logback.version']}.jar",
             "${rioHome}/lib/logging/logback-classic-${versions['logback.version']}.jar",
+            "${rioHome}/lib/rio-platform-${versions['rio.version']}.jar",
             "${sorcerHome}/lib/sorcer/lib/sorcer-platform-${versions['sorcer.version']}.jar",
             "${sorcerHome}/lib/sorcer/lib-ext/webster-${versions['sorcer.version']}.jar"]
 for(String jar : jars) {
@@ -125,7 +126,6 @@ if (!spawn) {
     config.webster.roots.each { root ->
         println "Root ${rootNum++} = $root"
     }
-    println "Webster serving on : ${config.webster.address}:${sorcerEnv['provider.webster.port']}"
     process.in.close()
     process.out.close()
     process.err.close()
