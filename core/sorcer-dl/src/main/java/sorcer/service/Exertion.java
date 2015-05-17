@@ -136,9 +136,7 @@ public interface Exertion extends Mogram, Dependency, Invocation<Object>, Evalua
 	 * @throws ContextException
 	 */
 	public Context getContext(String componentExertionName) throws ContextException;
-	
-	public List<String> getTrace();
-	
+
 	/**
 	 * Returns a control context (service control strategy) of this exertion to be 
 	 * realized by a tasker, rendezvous or spacer.

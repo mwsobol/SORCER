@@ -386,8 +386,8 @@ public class Job extends CompoundExertion {
 	}
 
 	public Context finalizeOutDataContext() throws ContextException {
-		if (dataContext.getOutConnector() != null) {
-			updateContextWith(dataContext.getOutConnector());
+		if (dataContext.getRuntime().getOutConnector() != null) {
+			updateContextWith(dataContext.getRuntime().getOutConnector());
 		}
 		return dataContext;
 	}

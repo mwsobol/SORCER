@@ -23,7 +23,6 @@ import net.jini.id.UuidFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.co.tuple.Tuple2;
-import sorcer.core.SelectFidelity;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.EntryList;
@@ -98,13 +97,8 @@ public class ServiceContext<T> extends ServiceMogram implements
 
 	protected Context initContext;
 
-	// evalauted model responses
-	protected Context result;
-
 	/** The exertion that uses this context */
 	protected ServiceExertion exertion;
-
-	private List<ThrowableTrace> exceptions;
 
 	protected String currentSelector;
 
@@ -112,22 +106,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 
 	protected boolean isFinalized = false;
 
-	// dependency management for this Context
-	protected List<Evaluation> dependers = new ArrayList<Evaluation>();
-
-	// mapping from paths of this inConnector to input paths of this context
-	protected Context inConnector;
-
-	// mapping from paths of this context to input paths of requestors
-	protected Context outConnector;
-
-    protected Map<String, List<String>> dependentPaths;
-
-	protected SelectFidelity selectFidelity;
-
-	// select fidelities for this service context
-	protected Map<String, SelectFidelity> selectFidelities;
-
+	protected ContextRuntime runtime = new ContextRuntime(this);
 	/**
 	 * For persistence layers to differentiate with saved context already
 	 * associated to task or not.
@@ -136,8 +115,6 @@ public class ServiceContext<T> extends ServiceMogram implements
 
     /** EMPTY LEAF NODE ie. node with no data and not empty string */
 	public final static String EMPTY_LEAF = ":Empty";
-
-	protected boolean isMonitorable = false;
 
 	// this class logger
 	protected static Logger logger = LoggerFactory.getLogger(ServiceContext.class
@@ -292,6 +269,26 @@ public class ServiceContext<T> extends ServiceMogram implements
 			removePath(rp.path);
 
 		return this;
+	}
+
+	@Override
+	public List<ThrowableTrace> getExceptions() {
+		return runtime.getExceptions();
+	}
+
+    @Override
+    public List<String> getTrace() {
+        return runtime.getTraceList();
+    }
+
+    @Override
+	public List<ThrowableTrace> getAllExceptions() {
+		return runtime.getAllExceptions();
+	}
+
+	@Override
+	public boolean isMonitorable() {
+		return runtime.isMonitorable();
 	}
 
 	public Context getInitContext() {
@@ -2422,14 +2419,14 @@ public class ServiceContext<T> extends ServiceMogram implements
         if (exertion != null)
             exertion.getControlContext().addException(t);
         else
-			exceptions.add(new ThrowableTrace(t));
+			runtime.exceptions.add(new ThrowableTrace(t));
 	}
 
 	public void reportException(String message, Throwable t) {
 		if (exertion != null)
 			exertion.getControlContext().addException(message, t);
 		else
-			exceptions.add(new ThrowableTrace(message, t));
+			runtime.exceptions.add(new ThrowableTrace(message, t));
 	}
 
 	public void reportException(String message, Throwable t, ProviderInfo info) {
@@ -2601,8 +2598,8 @@ public class ServiceContext<T> extends ServiceMogram implements
 			throws ContextException {
 		// first managed dependencies
 		String currentPath = path;
-		if (dependers != null && dependers.size() > 0) {
-			for (Evaluation eval : dependers)  {
+		if (runtime.dependers != null && runtime.dependers.size() > 0) {
+			for (Evaluation eval : runtime.dependers)  {
 				try {
 					eval.getValue(entries);
 				} catch (RemoteException e) {
@@ -2676,6 +2673,16 @@ public class ServiceContext<T> extends ServiceMogram implements
 		responsePaths.add(responseName);
 	}
 
+	@Override
+	public Context getInConnector(Arg... args) throws ContextException, RemoteException {
+		return runtime.getInConnector();
+	}
+
+	@Override
+	public Context getOutConnector(Arg... args) throws ContextException, RemoteException {
+		return runtime.getOutConnector();
+	}
+
 //	public T getResponse(Arg... entries) throws ContextException, RemoteException {
 //        try {
 //            if (responsePaths != null && responsePaths.size() == 1)
@@ -2689,10 +2696,10 @@ public class ServiceContext<T> extends ServiceMogram implements
 
 	@Override
     public Context getResponse(Arg... args) throws ContextException, RemoteException {
-        if (outConnector != null) {
+        if (runtime.outConnector != null) {
             ServiceContext mc = null;
             try {
-                mc = (ServiceContext) ObjectCloner.clone(outConnector);
+                mc = (ServiceContext) ObjectCloner.clone(runtime.outConnector);
             } catch (Exception e) {
                 throw new ContextException(e);
             }
@@ -2703,21 +2710,26 @@ public class ServiceContext<T> extends ServiceMogram implements
             }
 			if (responsePaths != null && responsePaths.size() > 0) {
 				getMergedSubcontext(mc, responsePaths, args);
-				result = mc;
-				return result;
+				runtime.result = mc;
+				return runtime.result;
 			}
         } else {
 			if (responsePaths != null && responsePaths.size() > 0) {
-				result = getMergedSubcontext(null, responsePaths, args);
+				runtime.result = getMergedSubcontext(null, responsePaths, args);
 			} else {
-				result = substitute(args);
+				runtime.result = substitute(args);
 			}
-			return result;
+			return runtime.result;
         }
 		return this;
     }
 
-	@Override
+    @Override
+    public Object getResult() throws EvaluationException, RemoteException {
+        return runtime.getResult();
+    }
+
+    @Override
     public Context getInputs() throws ContextException, RemoteException {
         List<String> paths = Contexts.getInPaths(this);
         Context<T> inputs = new ServiceContext();
@@ -2736,24 +2748,6 @@ public class ServiceContext<T> extends ServiceMogram implements
 
         return inputs;
     }
-
-	@Override
-	public Context getInConnector(Arg... arg) {
-		return inConnector;
-	}
-
-	public void setInConnector(Context inConnector) {
-		this.inConnector = inConnector;
-	}
-
-	@Override
-    public Context getOutConnector(Arg... args) {
-        return outConnector;
-    }
-
-	public void setOutConnector(Context outConnector) {
-		this.outConnector = outConnector;
-	}
 
 	public Context getResponses(String path, String... paths) throws ContextException, RemoteException {
 		Context results = getMergedSubcontext(null, Arrays.asList(paths));
@@ -2942,19 +2936,6 @@ public class ServiceContext<T> extends ServiceMogram implements
 		return Contexts.getMarkedPaths(this, association);
 	}
 
-    @Override
-    public void addDependers(Evaluation... dependers) {
-		if (this.dependers == null)
-			this.dependers = new ArrayList<Evaluation>();
-		for (Evaluation depender : dependers)
-			this.dependers.add(depender);
-	}
-
-	@Override
-	public List<Evaluation> getDependers() {
-		return dependers;
-	}
-
 	public boolean isFinalized() {
 		return isFinalized;
 	}
@@ -2988,27 +2969,6 @@ public class ServiceContext<T> extends ServiceMogram implements
 		else
 			return null;
 	}
-
-	@Override
-	public List<ThrowableTrace> getExceptions() {
-		exceptions = new ArrayList<ThrowableTrace>();
-		if (exceptions != null)
-			return exceptions;
-		else
-			return new ArrayList<ThrowableTrace>();
-	}
-
-	@Override
-	public List<ThrowableTrace> getAllExceptions() {
-		return getExceptions();
-	}
-
-	public Map<String, List<String>> getDependentPaths() {
-        if (dependentPaths == null) {
-            dependentPaths = new HashMap<String, List<String>>();
-        }
-        return dependentPaths;
-    }
 
 	@Override
     public <T extends Mogram> T exert(Transaction txn, Arg... entries) throws TransactionException,
@@ -3093,14 +3053,6 @@ public class ServiceContext<T> extends ServiceMogram implements
 		return this;
 	}
 
-	public Context getResponseResult() {
-		return result;
-	}
-
-	public void setResult(Context result) {
-		this.result = result;
-	}
-
 	public boolean containsKey(Object key) {
 		return data.containsKey(key);
 	}
@@ -3140,29 +3092,17 @@ public class ServiceContext<T> extends ServiceMogram implements
 		data.putAll((Map<? extends String, ? extends T>) ((ServiceContext) context).data);
 	}
 
-	@Override
-	public SelectFidelity getSelectFidelity() {
-		return selectFidelity;
+	public ContextRuntime getRuntime() {
+		return runtime;
 	}
 
 	@Override
-	public void setSelectFidelity(SelectFidelity fidelity) {
-		selectFidelity= fidelity;
+	public void addDependers(Evaluation... dependers) {
+		runtime.addDependers(dependers);
 	}
 
-	public Map<String, SelectFidelity> getSelectFidelities() {
-		return selectFidelities;
-	}
-
-	public void setSelectFidelities(Map<String, SelectFidelity> selectFidelities) {
-		this.selectFidelities = selectFidelities;
-	}
-
-	public boolean isMonitorable() {
-		return isMonitorable;
-	}
-
-	public void setMonitored(boolean isMonitorable) {
-		this.isMonitorable = isMonitorable;
+	@Override
+	public List<Evaluation> getDependers() {
+		return runtime.getDependers();
 	}
 }

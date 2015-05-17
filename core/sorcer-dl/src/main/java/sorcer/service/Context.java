@@ -78,7 +78,7 @@ import java.util.*;
  */
 @SuppressWarnings("rawtypes")
 public interface Context<T> extends Model, Mappable<T>, Serializable,
-		Dependency, Contexter<T>, SelectProjection, Paradigmatic, Arg {
+		Contexter<T>, Paradigmatic, Arg {
 
 	/** parameter (par) */
 	final static String PATH_PAR = "par";

@@ -556,11 +556,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
         return controlContext.getExceptions().size();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see sorcer.service.Exertion#getTrace()
-     */
+    @Override
     public List<String> getTrace() {
         return controlContext.getTrace();
     }
@@ -640,8 +636,8 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
             throws ContextException;
 
     public Context finalizeOutDataContext() throws ContextException {
-        if (dataContext.getOutConnector() != null) {
-            dataContext.updateContextWith(dataContext.getOutConnector());
+        if (dataContext.getRuntime().getOutConnector() != null) {
+            dataContext.updateContextWith(dataContext.getRuntime().getOutConnector());
         }
         return dataContext;
     }
