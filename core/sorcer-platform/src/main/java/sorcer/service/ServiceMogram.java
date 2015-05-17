@@ -5,7 +5,6 @@ import net.jini.id.UuidFactory;
 import sorcer.co.tuple.ExecPath;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.FidelityContext;
-import sorcer.core.context.ThrowableTrace;
 import sorcer.core.monitor.MonitoringSession;
 import sorcer.core.signature.ServiceSignature;
 import sorcer.security.util.SorcerPrincipal;
@@ -481,8 +480,6 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
     public void setParentPath(String path) {
         parentPath = path;
     }
-
-    abstract public List<ThrowableTrace> getExceptions();
 
     public boolean isInitializable() {
         return isInitializable;

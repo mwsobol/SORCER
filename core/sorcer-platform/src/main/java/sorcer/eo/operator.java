@@ -399,9 +399,9 @@ public class operator {
 		if (connList != null) {
 			for (MapContext conn : connList) {
 				if (conn.direction == MapContext.Direction.IN) {
-					((ServiceContext) cxt).setInConnector(conn);
+					((ServiceContext) cxt).getRuntime().setInConnector(conn);
 				} else {
-					((ServiceContext) cxt).setOutConnector(conn);
+					((ServiceContext) cxt).getRuntime().setOutConnector(conn);
 				}
 			}
 		}
@@ -1324,9 +1324,9 @@ public class operator {
 		if (connList != null) {
 			for (MapContext conn : connList) {
 				if (conn.direction == MapContext.Direction.IN)
-					((ServiceContext)job.getDataContext()).setInConnector(conn);
+					((ServiceContext)job.getDataContext()).getRuntime().setInConnector(conn);
 				else
-					((ServiceContext)job.getDataContext()).setOutConnector(conn);
+					((ServiceContext)job.getDataContext()).getRuntime().setOutConnector(conn);
 			}
 		}
 

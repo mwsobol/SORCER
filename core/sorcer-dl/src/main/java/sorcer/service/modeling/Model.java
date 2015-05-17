@@ -33,7 +33,7 @@ public interface Model extends Mogram, Dependency {
     public Context getOutputs()  throws ContextException, RemoteException;
 
     /**
-     *  Returns a context of all specified responses of this model.
+     *  Requests a context of all evaluated responses of this model.
      *
      * @param args  optional configuration arguments
      * @return
@@ -49,7 +49,7 @@ public interface Model extends Mogram, Dependency {
      * @throws ContextException
      * @throws RemoteException
      */
-    public Context getResponseResult() throws ContextException, RemoteException;
+    public Object getResult() throws ContextException, RemoteException;
 
     /**
      * Returns a default response of this model

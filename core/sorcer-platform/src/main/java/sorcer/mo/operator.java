@@ -56,14 +56,14 @@ public class operator {
     }
 
     public static Model inConn(Model model, Context inConnector) {
-        ((ServiceContext)model).setInConnector(inConnector);
+        ((ServiceContext)model).getRuntime().setInConnector(inConnector);
         if (inConnector instanceof MapContext)
             ((MapContext)inConnector).direction =  MapContext.Direction.IN;
         return model;
     }
 
     public static Model outConn(Model model, Context outConnector) {
-        ((ServiceContext) model).setOutConnector(outConnector);
+        ((ServiceContext) model).getRuntime().setOutConnector(outConnector);
         if (outConnector instanceof MapContext)
             ((MapContext)outConnector).direction = MapContext.Direction.OUT;
         return model;
@@ -84,7 +84,7 @@ public class operator {
     }
 
     public static Object result(Model model, String path) throws ContextException {
-        return ((ServiceContext)((ServiceContext)model).getResponseResult()).get(path);
+        return ((ServiceContext)((ServiceContext)model).getRuntime().getResult()).get(path);
     }
 
     public static Object response(Model model, String path) throws ContextException {
