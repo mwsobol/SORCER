@@ -1,14 +1,13 @@
 package sorcer.scratch;
 
 import org.junit.Assert;
-import org.junit.Test;
 import sorcer.data.DataService;
 
 import java.io.File;
 
 public class ScratchManagerSupportTest {
 
-    @Test
+    //@Test
     public void testGetScratchDir() throws Exception {
         ScratchManager scratchManager = new ScratchManagerSupport();
         File dataDir = new File(DataService.getDataDir());

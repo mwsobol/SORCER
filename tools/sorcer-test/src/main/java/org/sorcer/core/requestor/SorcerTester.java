@@ -17,26 +17,17 @@
 
 package org.sorcer.core.requestor;
 
-import junitx.framework.FileAssert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.SorcerConstants;
-import sorcer.core.context.Contexts;
 import sorcer.data.DataService;
 import sorcer.scratch.ScratchManager;
 import sorcer.scratch.ScratchManagerSupport;
-import sorcer.service.Context;
-import sorcer.service.ContextException;
 import sorcer.tools.webster.InternalWebster;
-import sorcer.util.GenericUtil;
 import sorcer.util.Sorcer;
 
-import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.util.*;
-
-import static org.junit.Assert.assertTrue;
 
 /**
  * This class defines the JUnit requestor's scaffolding. The init method of the
@@ -117,26 +108,14 @@ import static org.junit.Assert.assertTrue;
 	}
 	
 	public String getProperty(String property, String defaultValue) {
-		return tester.getProps().getProperty(property, defaultValue);
-	}
+        return tester.getProps().getProperty(property, defaultValue);
+    }
 
-	 public Properties getProperties() {
-		 return tester.getProps();
-	 }
-	 
-	/**
-	 * Returns the URL of a scratch file at the tester HTTP data server.
-	 * 
-	 * @param scratchFile
-	 * @return the URL of a scratch file
-	 * @throws IOException
-	 */
-	public static URL getScratchURL(File scratchFile) throws IOException {
-		return scratchManager.getScratchURL(scratchFile);
-	}
+    public Properties getProperties() {
+        return tester.getProps();
+    }
 
-	
-	protected static String[] toArray(String arg) {
+    protected static String[] toArray(String arg) {
 		StringTokenizer token = new StringTokenizer(arg, " ,;");
 		String[] array = new String[token.countTokens()];
 		int i = 0;
@@ -146,97 +125,6 @@ import static org.junit.Assert.assertTrue;
 		}
 		return (array);
 	}
-	
-    protected void assertFilesWithMarkedValue(Context<?> context,
-                                              File scratchDir,
-                                              String junitCaseOutputDir,
-                                              String dataFormatType)
-        throws ContextException {
-
-		assertTrue(dataFormatType + " not found in return context",Contexts.hasMarkedValue(context, dataFormatType));
-		List<File> localResultFiles = makeOutFilesLocal(context, scratchDir,dataFormatType);
-
-		for (int i = 0; i < localResultFiles.size(); i++) {
-			String[] fn = localResultFiles.get(i).getName().split("_computed");
-			File iTruthFile = new File(junitCaseOutputDir + File.separator+ fn[0]);
-			logger.info(" ith truth file >" + iTruthFile + "<");
-			logger.info(" ith  computed file >" + localResultFiles.get(i) + "<");
-			FileAssert.assertEquals("ith file returned in context does not equal"+ iTruthFile, iTruthFile, localResultFiles.get(i));
-		}
-
-	}
-
-	protected void assertBinaryFilesWithMarkedValue(Context<?> context, File scratchDir,
-			String junitCaseOutputDir, String dataFormatType)
-			throws ContextException {
-
-		assertTrue(dataFormatType + " not found in return context",Contexts.hasMarkedValue(context, dataFormatType));
-		List<File> localResultFiles = makeOutFilesLocal(context, scratchDir,dataFormatType);
-
-		for (int i = 0; i < localResultFiles.size(); i++) {
-			String[] fn = localResultFiles.get(i).getName().split("_computed");
-			File iTruthFile = new File(junitCaseOutputDir + File.separator+ fn[0]);
-			logger.info(" ith truth file >" + iTruthFile + "<");
-			logger.info(" ith  computed file >" + localResultFiles.get(i) + "<");
-			FileAssert.assertBinaryEquals("ith file returned in context does not equal"+ iTruthFile, iTruthFile, localResultFiles.get(i));
-		}
-
-	}
-
-	protected List<File> makeOutFilesLocal(Context<?> context, File scratchDir, String engineeringDataFormat) {
-		List<URL> markedURLs = new ArrayList<URL>(); 
-		List<File> localFile = new ArrayList<File>();
-		try {
-			markedURLs = (List<URL>)context.getMarkedValues(engineeringDataFormat);
-
-			for (int i = 0; i<markedURLs.size(); i++){
-				String[] fn = markedURLs.get(i).getFile().split("/");
-				localFile.add(new File(scratchDir + File.separator+ fn[fn.length - 1]+"_computed"));
-				GenericUtil.download(markedURLs.get(i), localFile.get(i));
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		 return localFile;
-	}
-
-	public static URL copyFileToScratchAndGetUrl(File source, File scratchDir)
-			throws IOException {
-		
-		File dest = new File(scratchDir, source.getName());
-		
-		logger.info("source = " + source.getAbsolutePath()
-				+ "\nscratchDir = " + scratchDir.getAbsolutePath()
-				+ "\ndestination = " + dest.getAbsolutePath());
-		
-		GenericUtil.copyFile(source, dest);
-		
-		URL url = getScratchURL(dest);
-		
-		logger.info("url = " + url);
-		return url; 
-	}
-	
-	public static URL copyDirectoryToScratchAndGetUrl(File dir, File scratchDir) throws IOException {
-		
-		if (dir.isFile()) return copyFileToScratchAndGetUrl(dir, scratchDir);
-		
-		File destDir = new File(scratchDir, dir.getName());
-		destDir.mkdirs();
-		URL destDirUrl = getScratchURL(destDir);
-		
-		for (File file : dir.listFiles()) {
-			if (file.isFile()) {
-				GenericUtil.copyFile(file, new File(destDir, file.getName()));
-			} else {
-				if (file.getName().equals(".svn")) continue;
-				copyDirectoryToScratchAndGetUrl(file, destDir);
-			}
-		}
-		
-		return destDirUrl;
-	}
-
 
 	public Properties getProps() {
 		return props;
@@ -248,13 +136,5 @@ import static org.junit.Assert.assertTrue;
 	
 	public String getVersion(String prop) {
 			return versions.getProperty(prop);
-	}
-	
-	public String[] getSorcerCodebaseJars(String... provided) {
-		List<String> codebase = new ArrayList<String>();
-		Collections.addAll(codebase, provided);
-		codebase.add("sorcer-dl-" + getVersion("sorcer.version") + ".jar");
-		codebase.add("sorcer-modeling-lib-" + getVersion("sorcer.modeling.version") + ".jar");
-		return codebase.toArray(new String[codebase.size()]);
 	}
 }

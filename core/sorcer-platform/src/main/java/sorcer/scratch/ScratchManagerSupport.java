@@ -48,13 +48,16 @@ public class ScratchManagerSupport implements ScratchManager, Serializable {
     }
 
     @Override public File getScratchDir(String suffix) {
+        if(suffix==null)
+            throw new IllegalArgumentException("suffix must not be null");
         String dataDir = DataService.getDataDir();
         String scratchDirName = SorcerEnv.getProperty(SCRATCH_DIR);
         if(scratchDirName==null)
             scratchDirName = SorcerEnv.getProperty(P_SCRATCH_DIR)==null?
                              SorcerEnv.getProperty(R_SCRATCH_DIR):SorcerEnv.getProperty(P_SCRATCH_DIR);
         if(scratchDirName==null) {
-            scratchDirName = String.format("%s-%s", DEFAULT_SCRATCH_DIR, getNext(dataDir));
+            //scratchDirName = String.format("%s-%s", DEFAULT_SCRATCH_DIR, getNext(dataDir));
+            scratchDirName = DEFAULT_SCRATCH_DIR;
             logger.error("scratch directory name cannot be derived from any of the " +
                          "following properties: {}, {}, {}, will default to {}",
                          SCRATCH_DIR, P_SCRATCH_DIR, R_SCRATCH_DIR, scratchDirName);
@@ -73,6 +76,10 @@ public class ScratchManagerSupport implements ScratchManager, Serializable {
             logger.info("Created "+scratchDir.getPath());
         }
         return scratchDir;
+    }
+
+    public DataService getDataService() {
+        return dataServiceRef.get();
     }
 
     @Override public File getScratchDir(Context context, String suffix) {

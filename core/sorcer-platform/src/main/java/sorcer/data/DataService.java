@@ -121,9 +121,9 @@ public class DataService {
                 port = websterRef.get().getPort();
                 address = websterRef.get().getAddress();
                 logger.info(String.format("Started data service on: %s:%d\n%s",
-                                          websterRef.get().getAddress(), port, formatRoots()));
-                System.setProperty(DATA_URL, String.format("http://%s:%d", websterRef.get().getAddress(), port));
-                System.setProperty(Constants.WEBSTER, String.format("http://%s:%d", websterRef.get().getAddress(), port));
+                                          address, port, formatRoots()));
+                System.setProperty(DATA_URL, String.format("http://%s:%d", address, port));
+                System.setProperty(Constants.WEBSTER, String.format("http://%s:%d", address, port));
             } catch (IOException e) {
                 try {
                     address = HostUtil.getInetAddress().getHostAddress();
@@ -306,6 +306,15 @@ public class DataService {
             System.setProperty(DATA_DIR, dataDir);
         }
         return dataDir;
+    }
+
+    /**
+     * Get the value of the DATA_URL system property
+     *
+     * @return The value of the DATA_URL system property
+     */
+    public String getDataUrl() {
+        return String.format("http://%s:%d", address, port);
     }
 
 }
