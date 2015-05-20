@@ -66,7 +66,7 @@ public class ScratchManagerSupport implements ScratchManager, Serializable {
         String dirName = String.format("%s/%s/%s", dataDir, scratchDirName, getUniqueId());
         File tempDir = new File(dirName);
         File scratchDir;
-        if (suffix == null || suffix.length() == 0) {
+        if (suffix.length() == 0) {
             scratchDir = tempDir;
         } else {
             scratchDir = new File(tempDir.getParentFile(),

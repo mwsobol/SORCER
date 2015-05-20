@@ -16,17 +16,11 @@
  */
 package sorcer.core.provider;
 
-import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-
 import net.jini.config.Configuration;
 import net.jini.core.entry.Entry;
 import net.jini.core.lease.Lease;
 import net.jini.core.lease.UnknownLeaseException;
-import net.jini.core.transaction.*;
+import net.jini.core.transaction.Transaction;
 import net.jini.lease.LeaseListener;
 import net.jini.lease.LeaseRenewalManager;
 import net.jini.space.JavaSpace;
@@ -43,6 +37,12 @@ import sorcer.core.monitor.MonitoringSession;
 import sorcer.river.TX;
 import sorcer.service.*;
 import sorcer.service.space.SpaceAccessor;
+
+import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * This is a class creates a JavaSpace taker that extends the {@link Thread}
@@ -191,7 +191,7 @@ public class SpaceTaker implements Runnable {
 			numCallsTaker++;
 			numThreadsTaker++;
 			prefix = "adding taker thread";
-			threadIdString = new Integer(numCallsTaker).toString();
+			threadIdString = Integer.toString(numCallsTaker);
 			//threadIdString = this.toString();
 			threadIdsTaker.add(threadIdString);
 		} else {
@@ -221,7 +221,7 @@ public class SpaceTaker implements Runnable {
 			numCallsWorker++;
 			numThreadsWorker++;
 			prefix = "adding worker thread";
-			threadIdString = new Integer(numCallsWorker).toString();
+			threadIdString = Integer.toString(numCallsWorker);
 			//threadIdString = this.toString();
 			threadIdsWorker.add(threadIdString);
 		} else {

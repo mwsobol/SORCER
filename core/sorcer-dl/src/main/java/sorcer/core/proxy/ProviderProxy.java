@@ -18,6 +18,20 @@
 
 package sorcer.core.proxy;
 
+import com.sun.jini.admin.DestroyAdmin;
+import net.jini.admin.Administrable;
+import net.jini.admin.JoinAdmin;
+import net.jini.core.constraint.RemoteMethodControl;
+import net.jini.id.ReferentUuid;
+import net.jini.id.Uuid;
+import net.jini.security.proxytrust.SingletonProxyTrustIterator;
+import org.rioproject.admin.ServiceActivityProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
+import sorcer.core.provider.AdministratableProvider;
+import sorcer.core.provider.Provider;
+
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
@@ -31,22 +45,6 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import net.jini.admin.Administrable;
-import net.jini.admin.JoinAdmin;
-import net.jini.core.constraint.RemoteMethodControl;
-import net.jini.id.ReferentUuid;
-import net.jini.id.Uuid;
-import net.jini.security.proxytrust.SingletonProxyTrustIterator;
-
-import org.rioproject.admin.ServiceActivityProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.MDC;
-import sorcer.core.provider.AdministratableProvider;
-import sorcer.core.provider.Provider;
-
-import com.sun.jini.admin.DestroyAdmin;
 
 /**
  * The Service provider should wrap up the smart proxy/stub. The
@@ -121,9 +119,9 @@ public class ProviderProxy implements Serializable {
 	
 	private static class ReferentUuidInvocationHandler implements InvocationHandler, Serializable {
 		private static final long serialVersionUID = 242006752320266247L;
-		protected final Object proxy;
-		protected final Uuid proxyID;
-		protected final Object adminProxy;
+		protected Object proxy;
+		protected Uuid proxyID;
+		protected Object adminProxy;
 
 		public ReferentUuidInvocationHandler(Object proxy, Uuid proxyID, Object adminProxy) {
 			this.proxy = proxy;
