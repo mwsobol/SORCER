@@ -17,7 +17,12 @@
 
 package sorcer.core.context;
 
-import sorcer.core.provider.MonitoringManagement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import sorcer.core.SorcerConstants;
+import sorcer.core.exertion.NetJob;
+import sorcer.core.exertion.NetTask;
+import sorcer.core.monitor.MonitoringManagement;
 import sorcer.core.signature.ServiceSignature;
 import sorcer.service.*;
 import sorcer.service.Signature.Kind;
@@ -25,14 +30,10 @@ import sorcer.util.Stopwatch;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.logging.Logger;
+import java.util.*;
 
-@SuppressWarnings({ "rawtypes", "unchecked" })
-public class ControlContext extends ServiceContext implements Strategy {
+@SuppressWarnings({"rawtypes", "unchecked"})
+public class ControlContext extends ServiceContext<Object> implements StrategyContext {
 
 	private static final long serialVersionUID = 7280700425027799253L;
 
@@ -123,6 +124,8 @@ public class ControlContext extends ServiceContext implements Strategy {
 
 	public final static String DIRECT = "direct";
 
+    public final static String AUTO = "auto";
+
 	public final static String PARALLEL = "parallel";
 
 	public final static String SEQUENTIAL = "sequential";
@@ -161,14 +164,17 @@ public class ControlContext extends ServiceContext implements Strategy {
 	private Stopwatch stopwatch;
 
 	// this class logger
-	private static Logger logger = Logger.getLogger(ControlContext.class.getName());
+	private static Logger logger = LoggerFactory.getLogger(ControlContext.class.getName());
 
 	public ControlContext() {
 		super(CONTROL_CONTEXT, CONTROL_CONTEXT);
-		setDomainID("0");
-		setSubdomainID("0");
+		setDomainId("0");
+		setSubdomainId("0");
 		setExecTimeRequested(true);
-		setFlowType(Flow.SEQ);
+        // Changed for Sorter
+		setFlowType(Flow.AUTO);
+        //setFlowType(Flow.SEQ);
+
 		setAccessType(Access.PUSH);
 		setExecState(Exec.State.INITIAL);
 		setComponentAttribute(GET_EXEC_TIME);
@@ -194,6 +200,10 @@ public class ControlContext extends ServiceContext implements Strategy {
 			Exertion erxt = (Exertion) getValue(EXERTION);
 			if (exertion != null) {
 				putValue(EXERTION, exertion);
+                //
+                if (exertion instanceof NetTask || exertion instanceof NetJob)
+                    setProvisionable(true);
+
 			}
 		} catch (ContextException e) {
 			e.printStackTrace();
@@ -202,35 +212,8 @@ public class ControlContext extends ServiceContext implements Strategy {
 
 	public void setMasterExertion(Exertion e) {
 		put(MASTER_EXERTION, ((ServiceExertion) e).getId());
-		// for(int i = 0; i< job.size(); i++)
-		// addAttributeValue(job.exertionAt(i), IO, DA_IN);
-		// Set exertion e as out Exertion.
-		// addAttributeValue(e, IO, DA_OUT);
 	}
 
-	// SERVME: QOS SPACER related parameters
-
-	/*
-	 * public void setQosSpacerRepeatTimes(Integer times) { if (times != null)
-	 * put(QOSSPACER_REPEAT_TIMES, times); }
-	 * 
-	 * public Integer getQosSpacerRepeatTimes() { return (Integer)
-	 * get(QOSSPACER_REPEAT_TIMES); }
-	 * 
-	 * public void setQosSpacerTimeout(Long timeout) { if (timeout != null)
-	 * put(QOSSPACER_TIMEOUT, timeout); }
-	 * 
-	 * public Long getQosSpacerTimeout() { return (Long) get(QOSSPACER_TIMEOUT);
-	 * }
-	 * 
-	 * public void setQosSpacerMinProviders(Integer prov) { if (prov != null)
-	 * put(QOSSPACER_MIN_PROVIDERS, prov); }
-	 * 
-	 * public Integer getQosSpacerMinProviders() { return (Integer)
-	 * get(QOSSPACER_MIN_PROVIDERS); }
-	 * 
-	 * // end of SERVME QOS SPACER related parameters
-	 */
 	public boolean isSequential() {
 		return SEQUENTIAL.equals(get(EXERTION_FLOW));
 	}
@@ -360,7 +343,7 @@ public class ControlContext extends ServiceContext implements Strategy {
 	}
 
 	public void setExecTimeRequested(boolean state) {
-		if (state == false)
+		if (!state)
 			remove(GET_EXEC_TIME);
 		else
 			put(GET_EXEC_TIME, new Boolean(state));
@@ -407,23 +390,6 @@ public class ControlContext extends ServiceContext implements Strategy {
 			addAttributeValue(exertion, GET_EXEC_TIME, FALSE);
 	}
 
-	public boolean isExecTimeRequested(Exertion exertion)
-			throws ContextException {
-		boolean result;
-		try {
-			String b = getAttributeValue(exertion, GET_EXEC_TIME);
-			result = TRUE.equals(b);
-		} catch (java.lang.ClassCastException ex) {
-			// v04 control context
-			Hashtable table = (Hashtable) metacontext.get(GET_EXEC_TIME);
-			result = ((Boolean) table.get(exertion.getContext().getName()))
-					.booleanValue();
-			// upgrade to v05
-			setExecTimeRequested(exertion, result);
-		}
-		return result;
-	}
-
 	public void setSkipped(Exertion exertion, boolean b) {
 		if (b)
 			addAttributeValue(exertion, SKIPPED_, TRUE);
@@ -464,10 +430,7 @@ public class ControlContext extends ServiceContext implements Strategy {
 	}
 
 	public void setReview(Exertion ex, boolean b) {
-		if (b)
-			addAttributeValue(ex, EXERTION_REVIEW, TRUE);
-		else
-			addAttributeValue(ex, EXERTION_REVIEW, FALSE);
+        addAttributeValue(ex, EXERTION_REVIEW, Boolean.toString(b));
 	}
 
 	public boolean isReview(Exertion exertion) {
@@ -483,9 +446,9 @@ public class ControlContext extends ServiceContext implements Strategy {
 		int result;
 		try {
 			String i = getAttributeValue(exertion, PRIORITY);
-			result = (i == NULL) ? NORMAL_PRIORITY : Integer.parseInt(i);
+			result = (i == SorcerConstants.NULL) ? NORMAL_PRIORITY : Integer.parseInt(i);
 		} catch (java.lang.ClassCastException ex) {
-			logger.throwing(ControlContext.class.getName(), "getPriority", ex);
+			logger.warn("getPriority", ex);
 			return -1;
 		}
 		return result;
@@ -493,7 +456,7 @@ public class ControlContext extends ServiceContext implements Strategy {
 
 	public void setNotifyList(Exertion exertion, String list) {
 		if (list == null || list.trim().length() == 0)
-			addAttributeValue(exertion, NOTIFY_EXEC, NULL);
+			addAttributeValue(exertion, NOTIFY_EXEC, SorcerConstants.NULL);
 		addAttributeValue(exertion, NOTIFY_EXEC, list);
 	}
 
@@ -501,57 +464,41 @@ public class ControlContext extends ServiceContext implements Strategy {
 		return getAttributeValue(ex, NOTIFY_EXEC);
 	}
 
-	public void registerExertion(Exertion ex) throws ContextException {
-		if (ex instanceof Job)
-			put(ex.getControlContext().getName(),
-					((ServiceExertion) ex).getId());
-		else {
-			put(ex.getContext().getName(), ((ServiceExertion) ex).getId());
+	public void registerExertion(Mogram mogram) throws ContextException {
+		if (mogram instanceof Job)
+			put(((Job)mogram).getControlContext().getName(),
+					((ServiceExertion) mogram).getId());
+		else if (mogram instanceof Exertion) {
+			put(((Exertion) mogram).getContext().getName(), mogram.getId());
+		} else {
+			// TODO explain if registration is still needed
+			put(mogram.getName(), mogram.getId());
+			return;
 		}
-		setPriority((Exertion) ex,
-				MAX_PRIORITY - ((ServiceExertion) ex).getIndex());
-		setExecTimeRequested(ex, true);
+		setPriority((Exertion) mogram,
+				MAX_PRIORITY - ((ServiceExertion) mogram).getIndex());
+		setExecTimeRequested(((Exertion)mogram), true);
 	}
 
-	public void deregisterExertion(Job job, Exertion exertion)
+	public void deregisterExertion(Mogram mogram, Mogram componentMogram)
 			throws ContextException {
-		String path = exertion.getContext().getName();
-		// String datafileid = (String)getPathIds().get(path);
-
-		// if ((GApp.NEW+":"+GApp.NEW+":"+GApp.NEW).equals(datafileid))
-		// removePath(path);q
-		// else
-		// if (datafileid!=null)
-		// {
+		CompoundExertion parent = (CompoundExertion)mogram;
+		Exertion component = (Exertion)componentMogram;
+		String path = component.getContext().getName();
 		remove(path);
-		// String value = (String)getValue(path);
-		// remove(path);
-		// String[] tokens = Util.tokenize(datafileid ,":");
-		// String tempdatafileid = GApp.DELETED + ":" + tokens[1] + ":" +
-		// tokens[2];q
-		// Util.debug(this, "temp data file id : " + tempdatafileid);
-		// getDelPathIds().put(path,tempdatafileid);
-		// }
-		// remove attribute values
-		// Enumeration e =
-		// ((Hashtable)getMetacontext().get(CONTEXT_ATTRIBUTES)).keys();
-		// while (e.hasMoreElements())
-		// ((Hashtable)getMetacontext().get((String)e.nextElement())).remove(path
-		// );
-
-		for (int i = ((ServiceExertion) exertion).getIndex(); i < job.size(); i++) {
-			String oldPath = job.get(i).getContext().getName();
-			((ServiceExertion) job.get(i)).setIndex(i);
-			put(job.get(i).getContext().getName(), remove(oldPath));
-			Hashtable map;
-			Hashtable imc = getMetacontext();
+		for (int i = component.getIndex(); i < parent.size(); i++) {
+			String oldPath = parent.get(i).getContext().getName();
+			parent.get(i).setIndex(i);
+			put(parent.get(i).getContext().getName(), remove(oldPath));
+			Map map;
+			Map<String, Map<String, String>> imc = getMetacontext();
 			String key;
-			Enumeration e2 = ((Hashtable) imc.get(CONTEXT_ATTRIBUTES)).keys();
-			while (e2.hasMoreElements()) {
-				key = (String) e2.nextElement();
-				map = (Hashtable) getMetacontext().get(key);
+			Iterator keys = ((Map) imc.get(CONTEXT_ATTRIBUTES)).keySet().iterator();
+			while (keys.hasNext()) {
+				key = (String) keys.next();
+				map = (Map) getMetacontext().get(key);
 				if (map != null && map.size() > 0 && map.containsKey(oldPath))
-					map.put(job.get(i).getContext().getName(),
+					map.put(parent.get(i).getContext().getName(),
 							map.remove(oldPath));
 			}
 		}
@@ -579,7 +526,7 @@ public class ControlContext extends ServiceContext implements Strategy {
 	public Context addComponentAssociation(String path, String attributeName,
 			String attributeValue) throws ContextException {
 		if (!containsKey(path))
-			put(path, NULL);
+			put(path, SorcerConstants.NULL);
 		return super.addComponentAssociation(path, attributeName,
 				attributeValue);
 	}
@@ -605,22 +552,22 @@ public class ControlContext extends ServiceContext implements Strategy {
 
 	public void updateExertionName(Exertion exertion) throws ContextException {
 		String key, oldPath = null;
-		Enumeration e = keys();
-		while (e.hasMoreElements()) {
-			key = (String) e.nextElement();
-			if (key.endsWith("[" + ((ServiceExertion) exertion).getIndex()
+		Iterator e = keyIterator();
+		while (e.hasNext()) {
+			key = (String) e.next();
+			if (key.endsWith("[" + ((CompoundExertion) exertion).getIndex()
 					+ "]" + ID)) {
 				oldPath = key;
 				break;
 			}
 		}
 		String newPath = exertion.getContext().getName();
-		Hashtable map;
-		Hashtable imc = getMetacontext();
-		e = ((Hashtable) imc.get(CONTEXT_ATTRIBUTES)).keys();
-		while (e.hasMoreElements()) {
-			key = (String) e.nextElement();
-			map = (Hashtable) imc.get(key);
+		Map map;
+		Map<String, Map<String, String>> imc = getMetacontext();
+		e = ((Map) imc.get(CONTEXT_ATTRIBUTES)).keySet().iterator();
+		while (e.hasNext()) {
+			key = (String) e.next();
+			map = (Map) imc.get(key);
 			if (map != null && map.size() > 0 && map.containsKey(oldPath))
 				map.put(newPath, map.remove(oldPath));
 		}
@@ -661,7 +608,7 @@ public class ControlContext extends ServiceContext implements Strategy {
 		if (exceptions.size() == 0)
 			return "no exceptions thrown\n";
 
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		for (ThrowableTrace exceptionTrace : exceptions) {
 			sb.append(exceptionTrace.stackTrace).append("\n");
 		}
@@ -706,7 +653,7 @@ public class ControlContext extends ServiceContext implements Strategy {
 	}
 
 	public String toString() {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append(super.toString());
 		if (ServiceExertion.debug) {
 			sb.append("\nControl Context Exceptions: \n");

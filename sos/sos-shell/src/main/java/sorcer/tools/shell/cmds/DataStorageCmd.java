@@ -18,16 +18,15 @@
 package sorcer.tools.shell.cmds;
 import net.jini.core.lookup.ServiceItem;
 import net.jini.id.Uuid;
+import sorcer.core.monitor.MonitorUIManagement;
 import sorcer.core.provider.DatabaseStorer;
 import sorcer.core.provider.DatabaseStorer.Store;
-import sorcer.core.provider.MonitorUIManagement;
 import sorcer.core.provider.Provider;
-import sorcer.core.provider.StorageManagement;
 import sorcer.jini.lookup.AttributesUtil;
 import sorcer.service.*;
 import sorcer.tools.shell.NetworkShell;
 import sorcer.tools.shell.ShellCmd;
-import sorcer.util.WhitespaceTokenizer;
+import sorcer.tools.shell.WhitespaceTokenizer;
 import sorcer.util.bdb.objects.ObjectInfo;
 import sorcer.util.url.sos.SdbUtil;
 
@@ -213,7 +212,7 @@ public class DataStorageCmd extends ShellCmd {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				out.println(cxt.getValue(StorageManagement.store_content_list));
+				out.println(cxt.getValue(DatabaseStorer.store_content_list));
 //			} catch (ExertionException e) {
 //				e.printStackTrace();
 //			} catch (SignatureException e) {
@@ -235,7 +234,7 @@ public class DataStorageCmd extends ShellCmd {
 						+ AttributesUtil
 								.getHostName(dataStorers[i].attributeSets));
 
-				StorageManagement emx = (StorageManagement) dataStorers[i].service;
+				DatabaseStorer emx = (DatabaseStorer) dataStorers[i].service;
 //				ri = emx.getMonitorableExertionInfo(type,
 //						NetworkShell.getPrincipal());
 				if (ri != null && ri.size() > 0) {
@@ -270,6 +269,13 @@ public class DataStorageCmd extends ShellCmd {
 	}
 
 	private void printStorageServices() {
+		if (dataStorers==null || dataStorers.length==0) {
+			try {
+				findStorers();
+			} catch (RemoteException re) {
+				out.println("Problem retrieving data storers: " + re.getMessage());
+			}
+		}
 		if ((dataStorers != null) && (dataStorers.length > 0)) {
 			for (int i = 0; i < dataStorers.length; i++) {
 				describeStorer(i);
@@ -335,7 +341,7 @@ public class DataStorageCmd extends ShellCmd {
 	}
 
 	static ServiceItem[] findStorers() throws RemoteException {
-		dataStorers = ShellCmd.lookup(new Class[] { StorageManagement.class });
+		dataStorers = ShellCmd.lookup(new Class[] { DatabaseStorer.class });
 		return dataStorers;
 	}
 	
@@ -352,10 +358,10 @@ public class DataStorageCmd extends ShellCmd {
 //		return dataStorers;
 //	}
 
-	public static ArrayList<StorageManagement> getDataStorers() {
-		ArrayList<StorageManagement> dataStorerList = new ArrayList<StorageManagement>();
+	public static ArrayList<DatabaseStorer> getDataStorers() {
+		ArrayList<DatabaseStorer> dataStorerList = new ArrayList<DatabaseStorer>();
 		for (int i = 0; i < dataStorers.length; i++) {
-			dataStorerList.add((StorageManagement) dataStorers[i].service);
+			dataStorerList.add((DatabaseStorer) dataStorers[i].service);
 		}
 		return dataStorerList;
 	}

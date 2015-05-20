@@ -11,16 +11,21 @@
                 <pathelement location="${lib}/river/jsk-platform-${river.version}.jar" />
                 <pathelement location="${lib}/river/jsk-lib-${river.version}.jar" />
                 <pathelement location="${sorcer.lib}/sorcer-platform-${sorcer.version}.jar" />
+                <pathelement location="${sorcer.lib}/sorcer-resolving-loader-${sorcer.version}.jar" />
                 <path refid="rio.path" />
                 <pathelement location="${rio.home}/lib-dl/rio-api-${rio.version}.jar" />
                 <pathelement location="${rio.home}/lib/rio-lib-${rio.version}.jar" />
                 <pathelement location="${rio.home}/lib-dl/cybernode-api-${rio.version}.jar" />
                 <pathelement location="${rio.home}/lib-dl/monitor-api-${rio.version}.jar" />
+                <pathelement location="${rio.lib}/logging/slf4j-api-${slf4j.version}.jar" />
+                <pathelement location="${rio.lib}/logging/logback-core-${logback.version}.jar" />
+                <pathelement location="${rio.lib}/logging/jul-to-slf4j-${slf4j.version}.jar" />
+                <pathelement location="${rio.lib}/logging/logback-classic-${logback.version}.jar" />
                 <pathelement location="${java.home}/../lib/tools.jar" />
             </classpath>
             <sysproperty key="java.security.policy" value="${sorcer.home}/policy/sorcer.policy" />
             <sysproperty key="java.protocol.handler.pkgs" value="net.jini.url|sorcer.util.bdb.sos|org.rioproject.url" />
-            <sysproperty key="java.rmi.server.RMIClassLoaderSpi" value="org.rioproject.rmi.ResolvingLoader" />
+            <sysproperty key="logback.configurationFile" value="${sorcer.home}/configs/sorcer-logging.groovy"/>
             <sysproperty key="rio.home" value="${rio.home}" />
             <arg value="monitor" />
             <arg value="jvm:cybernode" />

@@ -10,6 +10,7 @@ import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.provider.impl.SubtractorImpl;
+import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.par.Agent;
 import sorcer.core.context.model.par.Par;
 import sorcer.core.context.model.par.ParModel;
@@ -23,13 +24,14 @@ import sorcer.util.Sorcer;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.concurrent.Callable;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.*;
 import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
 import static sorcer.po.operator.*;
-
+import static sorcer.mo.operator.*;
 
 
 /**
@@ -40,7 +42,7 @@ import static sorcer.po.operator.*;
 @ProjectContext("examples/pml")
 public class ParModels {
 
-	private final static Logger logger = Logger.getLogger(ParModels.class.getName());
+	private final static Logger logger = LoggerFactory.getLogger(ParModels.class.getName());
 
 	private ParModel pm;
 	private Par<Double> x;
@@ -74,7 +76,7 @@ public class ParModels {
 	@Test
 	public void createParModel() throws Exception {
 
-		ParModel vm = parModel(
+		ParModel model = parModel(
 				"Hello Arithmetic Model #1",
 				// inputs
 				par("x1"), par("x2"), par("x3", 20.0),
@@ -84,23 +86,29 @@ public class ParModels {
 				par("t5", invoker("x3 + x4", pars("x3", "x4"))),
 				par("j1", invoker("t4 - t5", pars("t4", "t5"))));
 
-		assertEquals(value(par(vm, "t4")), null);
+		logger.info("model: " + model);
 
-		assertEquals(value(par(vm, "t5")), 100.0);
+		assertEquals(value(par(model, "t4")), null);
 
-		assertEquals(value(par(vm, "j1")), null);
+		assertEquals(value(par(model, "t5")), 100.0);
 
-		assertTrue(value(vm, "j1", ent("x1", 10.0), ent("x2", 50.0)).equals(400.0));
+		assertEquals(value(par(model, "j1")), null);
 
-		// equivalent to the above line
+		logger.info("model: " + model);
+
+		value(model, "j1", ent("x1", 10.0), ent("x2", 50.0)).equals(400.0);
+
+		assertTrue(value(model, "j1", ent("x1", 10.0), ent("x2", 50.0)).equals(400.0));
+
+//		// equivalent to the above line
 //		assertEquals(
-//				value(par(put(vm, ent("x1", 10.0), ent("x2", 50.0)), "j1")),
+//				value(par(put(model, ent("x1", 10.0), ent("x2", 50.0)), "j1")),
 //				400.0);
 
-		assertEquals(value(par(vm, "j1")), 400.0);
+		assertEquals(value(par(model, "j1")), 400.0);
 
 		// get model response
-		Response mr = (Response) value(vm, //ent("x1", 10.0), ent("x2", 50.0),
+		Response mr = (Response) value(model, //ent("x1", 10.0), ent("x2", 50.0),
 				result("y", outPaths("t4", "t5", "j1")));
 		assertTrue(names(mr).equals(list("t4", "t5", "j1")));
 		assertTrue(values(mr).equals(list(500.0, 100.0, 400.0)));
@@ -652,38 +660,21 @@ public class ParModels {
 				Volume.class.getName(), new URL(Sorcer
 				.getWebsterUrl() + "/pml-"+sorcerVersion+".jar")));
 
-		Object val =  get((Context)value(pm,"getSphereVolume"), "sphere/volume");
+		Entry ent = (Entry) get((Context)value(pm,"getSphereVolume"), "sphere/volume");
 
-//		 logger.info("call getSphereVolume:" + get((Context)value(pm,
-//				 "getSphereVolume"), "sphere/volume"));
-		assertEquals(
-				get((Context) value(pm, "getSphereVolume"), "sphere/volume"),
-				33510.32163829113);
-		assertEquals(
-				get((Context) invoke(pm, "getSphereVolume"), "sphere/volume"),
-				33510.32163829113);
+//		logger.info("val: " + value(ent));
+		assertEquals(value(ent), 33510.32163829113);
 
 		// invoke the agent directly
 		invoke(pm,
 				"getSphereVolume",
 				new Agent("getSphereVolume",
-						Volume.class.getName(), new URL(
-						Sorcer.getWebsterUrl() + "/pml-"+sorcerVersion+".jar")));
+						"sorcer.arithmetic.tester.volume.Volume",
+						new URL(Sorcer.getWebsterUrl()
+								+ "/sorcer-tester-"+sorcerVersion+".jar")));
 
-//		logger.info("call getSphereVolume:"
-//				+ invoke(pm, "getSphereVolume",
-//						agent("getSphereVolume",
-//								"junit.sorcer.vfe.evaluator.service.Volume",
-//								new URL(Sorcer.getWebsterUrl()
-//										+ "/ju-volume-bean.jar"))));
-
-		assertEquals(
-				get((Context) invoke(pm, "getSphereVolume",
-								agent("getSphereVolume",
-										Volume.class.getName(),
-										new URL(Sorcer.getWebsterUrl()
-												+ "/pml-"+sorcerVersion+".jar"))),
-						"sphere/volume"), 33510.32163829113);
+//		logger.info("val: " + value(pm, "sphere/volume"));
+		assertEquals(value(pm, "sphere/volume"), 33510.32163829113);
 
 	}
 

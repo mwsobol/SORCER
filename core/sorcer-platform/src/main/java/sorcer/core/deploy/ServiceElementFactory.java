@@ -40,8 +40,10 @@ import java.io.*;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Create a {@link ServiceElement} from a {@link ServiceSignature}.
@@ -49,7 +51,7 @@ import java.util.logging.Logger;
  * @author Dennis Reedy
  */
 public final class ServiceElementFactory  {
-    static final Logger logger = Logger.getLogger(ServiceElementFactory.class.getName());
+    static final Logger logger = LoggerFactory.getLogger(ServiceElementFactory.class.getName());
     /* The default provider codebase jars */
     static final List<String> commonDLJars = Arrays.asList("rio-api-"+ RioVersion.VERSION+".jar");
 
@@ -196,8 +198,8 @@ public final class ServiceElementFactory  {
                                                            excludeIPs,
                                                            webster);
         ServiceElement service = create(serviceDetails, deployment);
-        if(logger.isLoggable(Level.FINE))
-            logger.fine(String.format("Created ServiceElement\n=================\n%s\n=================\nFrom [%s]", service, deployment));
+        if(logger.isDebugEnabled())
+            logger.debug(String.format("Created ServiceElement\n=================\n%s\n=================\nFrom [%s]", service, deployment));
         return service;
     }
 
@@ -209,12 +211,12 @@ public final class ServiceElementFactory  {
         if(serviceDetails.webster==null) {
             if(deployment.getWebsterUrl()==null) {
                 websterUrl = Sorcer.getWebsterUrl();
-                if(logger.isLoggable(java.util.logging.Level.FINE))
-                    logger.fine("Set code base derived from Sorcer.getWebsterUrl: "+websterUrl);
+                if(logger.isDebugEnabled())
+                    logger.debug("Set code base derived from Sorcer.getWebsterUrl: "+websterUrl);
             } else {
                 websterUrl = deployment.getWebsterUrl();
-                if(logger.isLoggable(java.util.logging.Level.FINE))
-                    logger.fine("Set code base derived from Deployment: "+websterUrl);
+                if(logger.isDebugEnabled())
+                    logger.debug("Set code base derived from Deployment: "+websterUrl);
             }
         } else {
             websterUrl = serviceDetails.webster;
@@ -324,8 +326,8 @@ public final class ServiceElementFactory  {
                 service.setExecDescriptor(execDescriptor);
             }
         }
-        if(logger.isLoggable(Level.FINE))
-            logger.fine("Generated Service Element :"+service);
+        if(logger.isDebugEnabled())
+            logger.debug("Generated Service Element :"+service);
         return service;
     }
 

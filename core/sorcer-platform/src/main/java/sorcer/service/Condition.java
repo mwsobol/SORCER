@@ -18,6 +18,8 @@
 package sorcer.service;
 
 import groovy.lang.Closure;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.par.Par;
 import sorcer.core.exertion.AltExertion;
@@ -31,7 +33,6 @@ import java.rmi.RemoteException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 
 
 /**
@@ -51,7 +52,7 @@ import java.util.logging.Logger;
 	
 	private static final long serialVersionUID = -7310117070480410642L;
 	 
-	protected final static Logger logger = Logger.getLogger(Condition.class
+	protected final static Logger logger = LoggerFactory.getLogger(Condition.class
 			.getName());
 
 	
@@ -134,11 +135,7 @@ import java.util.logging.Logger;
 				ps.add(new Par(name));
 			}			
 			ServiceInvoker invoker = new GroovyInvoker(closureExpression, ps.toArray());
-			try {
-				invoker.setScope(conditionalContext);
-			} catch (RemoteException re) {
-				throw new ContextException(re);
-			}
+			invoker.setScope(conditionalContext);
 			conditionalContext.putValue(_closure_, invoker);
 			closure = (Closure)conditionalContext.getValue(_closure_);
 			args = new Object[pars.length];
@@ -184,7 +181,7 @@ import java.util.logging.Logger;
 
     @Override
     public Evaluation<Object> substitute(Arg... entries)
-			throws SetterException, RemoteException {
+			throws SetterException {
         ((ServiceContext)conditionalContext).substitute(entries);
 		return this;
 	}
@@ -219,32 +216,38 @@ import java.util.logging.Logger;
 	
 	static public void cleanupScripts(Exertion exertion) throws ContextException {
 		clenupContextScripts(exertion.getContext());
-		for (Exertion e : exertion.getExertions()) {
-					clenupExertionScripts(e);
-					clenupContextScripts((ServiceContext)e.getContext());
+		for (Mogram e : exertion.getMograms()) {
+			if (e instanceof Exertion) {
+				clenupContextScripts(((Exertion) e).getContext());
+				clenupExertionScripts((Exertion) e);
+			}
 		}
 	}
-	
+
 	static public void clenupContextScripts(Context context) {
-		Iterator i = ((ServiceContext) context).entrySet().iterator();
+		context.remove(Condition._closure_);
+		Iterator i = ((ServiceContext) context).entryIterator();
 		while (i.hasNext()) {
 			Map.Entry entry = (Map.Entry) i.next();
-			String path = (String) entry.getKey();
-			if (path.equals(_closure_)) {
-				i.remove();
-			}
+			// now check entries
 			if (entry.getValue() instanceof ServiceInvoker) {
 				clenupContextScripts(((ServiceInvoker) entry.getValue())
 						.getScope());
-			} else if (entry.getValue() instanceof Par
-					&& ((ServiceContext) ((Par) entry.getValue()).getScope())
-							.containsKey(Condition._closure_)) {
-				((ServiceContext) ((Par) entry.getValue()).getScope())
-						.remove(Condition._closure_);
+			} else if (entry.getValue() instanceof Par) {
+				Context cxt =  ((Par) entry.getValue()).getScope();
+				if (cxt != null) cxt.remove(Condition._closure_);
+				cxt = ((Par)entry.getValue()).getScope();
+				if (cxt != null) cxt.remove(Condition._closure_);
+			} else if (entry.getValue() instanceof ServiceContext) {
+				ServiceContext cxt = (ServiceContext)entry.getValue();
+				if (cxt != null) cxt.remove(Condition._closure_);
+
+				cxt = (ServiceContext) ((ServiceContext) entry.getValue()).getScope();
+				if (cxt != null) cxt.remove(Condition._closure_);
 			}
 		}
 	}
-	
+
 	public static void clenupExertionScripts(Exertion exertion)
 			throws ContextException {
 		if (exertion instanceof ConditionalExertion) {
@@ -255,8 +258,8 @@ import java.util.logging.Logger;
 			}
 			List<Exertion> tl = ((ConditionalExertion) exertion).getTargets();
 			for (Exertion vt : tl) {
-                if(vt!=null)
-                    clenupContextScripts(vt.getContext());
+				if (vt!=null)
+					clenupContextScripts(vt.getContext());
             }
         }
 	}

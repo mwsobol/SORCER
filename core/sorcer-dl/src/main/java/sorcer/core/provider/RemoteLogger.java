@@ -16,20 +16,19 @@
  */
 package sorcer.core.provider;
 
+import sorcer.core.provider.logger.LoggingConfig;
+
 import java.io.IOException;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.List;
 import java.util.logging.LogRecord;
 
-import sorcer.core.provider.logger.LoggingConfig;
-
 public interface RemoteLogger extends Remote {
 
 	public void publish(LogRecord record) throws RemoteException;
 
-	public List<LoggingConfig> getLoggers() throws IOException,
-			RemoteException;
+	public List<LoggingConfig> getLoggers() throws IOException;
 
 	public String[] getLogNames() throws RemoteException;
 

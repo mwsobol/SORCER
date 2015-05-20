@@ -15,12 +15,16 @@
  */
 package sorcer.core.deploy;
 
+import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
+import org.sorcer.test.TestsRequiringRio;
 import sorcer.core.dispatch.ProvisionManager;
 import sorcer.service.Job;
+import sorcer.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +44,7 @@ import static org.junit.Assert.assertTrue;
 @ProjectContext("core/sorcer-int-tests/deploy-tests")
 public class ProvisionManagerTest extends DeploySetup {
 
+    @Category(TestsRequiringRio.class)
     @Test
     public void testDeploy() throws Exception {
         banner("testDeploy");
@@ -54,7 +59,40 @@ public class ProvisionManagerTest extends DeploySetup {
         assertTrue(provisionManager.getDeploymentNames().size()==0);
     }
 
-    @Test
+    @Category(TestsRequiringRio.class)
+    @Test(timeout = 90000)
+    public void testConcurrentDeploy2() throws Exception {
+        banner("testConcurrentDeploy2");
+        Job f1 = JobUtil.createJob(true);
+        List<ProvisionManager> provisionManagers = new ArrayList<ProvisionManager>();
+        for(int i=0; i<100; i++) {
+            provisionManagers.add(new ProvisionManager(f1));
+        }
+        System.out.println("Created "+provisionManagers.size()+" ProvisionManagers");
+        List<Future<Boolean>> futures = new ArrayList<Future<Boolean>>();
+        for(ProvisionManager provisionManager : provisionManagers) {
+            Callable<Boolean> exertionVerifier = new DeployVerifier(provisionManager);
+            FutureTask<Boolean> task = new FutureTask<Boolean>(exertionVerifier);
+            futures.add(task);
+            new Thread(task).start();
+        }
+        System.out.println("Started provisionManager threads now getting them");
+        for(Future<Boolean> future : futures) {
+            assertTrue(future.get());
+        }
+        ProvisionManager provisionManager = provisionManagers.get(0);
+        System.out.println("Got provisionManager: " + provisionManager);
+        List<String> deployed = provisionManager.getDeploymentNames();
+        System.out.println("Deployed: " + deployed);
+        assertTrue(deployed.size()==2);
+        provisionManager.undeploy();
+        assertFalse(provisionManager.getDeployAdmin().hasDeployed(deployed.get(0)));
+        assertFalse(provisionManager.getDeployAdmin().hasDeployed(deployed.get(1)));
+        assertTrue(provisionManager.getDeploymentNames().size()==0);
+    }
+
+    @Category(TestsRequiringRio.class)
+    @Test(timeout = 90000)
     public void testConcurrentDeploy() throws Exception {
         banner("testConcurrentDeploy");
         Job f1 = JobUtil.createJob();
@@ -86,33 +124,6 @@ public class ProvisionManagerTest extends DeploySetup {
         assertTrue(provisionManager.getDeploymentNames().size()==0);
     }
 
-    @Test
-    public void testConcurrentDeploy2() throws Exception {
-        banner("testConcurrentDeploy2");
-        Job f1 = JobUtil.createJob(true);
-        List<ProvisionManager> provisionManagers = new ArrayList<ProvisionManager>();
-        for(int i=0; i<100; i++) {
-            provisionManagers.add(new ProvisionManager(f1));
-        }
-        System.out.println("Created "+provisionManagers.size()+" ProvisionManagers");
-        List<Future<Boolean>> futures = new ArrayList<Future<Boolean>>();
-        for(ProvisionManager provisionManager : provisionManagers) {
-            Callable<Boolean> exertionVerifier = new DeployVerifier(provisionManager);
-            FutureTask<Boolean> task = new FutureTask<Boolean>(exertionVerifier);
-            futures.add(task);
-            new Thread(task).start();
-        }
-        for(Future<Boolean> future : futures) {
-            assertTrue(future.get());
-        }
-        ProvisionManager provisionManager = provisionManagers.get(0);
-        List<String> deployed = provisionManager.getDeploymentNames();
-        assertTrue(deployed.size()==2);
-        provisionManager.undeploy();
-        assertFalse(provisionManager.getDeployAdmin().hasDeployed(deployed.get(0)));
-        assertFalse(provisionManager.getDeployAdmin().hasDeployed(deployed.get(1)));
-        assertTrue(provisionManager.getDeploymentNames().size()==0);
-    }
 
     class DeployVerifier implements Callable<Boolean> {
         final ProvisionManager provisionManager;

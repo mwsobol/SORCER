@@ -20,13 +20,12 @@ package sorcer.service;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.security.NoSuchAlgorithmException;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import net.jini.core.transaction.Transaction;
-import net.jini.core.transaction.TransactionException;
 import net.jini.id.Uuid;
-import sorcer.service.*;
+import sorcer.core.context.StrategyContext;
 import sorcer.core.context.ThrowableTrace;
 import sorcer.core.provider.Jobber;
 import sorcer.service.Strategy.Access;
@@ -74,29 +73,8 @@ import sorcer.service.Strategy.Flow;
  */
 @SuppressWarnings("rawtypes")
 public interface Exertion extends Mogram, Dependency, Invocation<Object>, Evaluation<Object>,
-		Paradigmatic, Mappable, Serializable, Identifiable {
+		Paradigmatic, Mappable, Serializable {
 
-	/**
-	 * Returns a name of this exertion.
-	 * 
-	 * @return a name
-	 */
-	public String getName();
-
-	/**
-	 * Returns a status of this exertion.
-	 * 
-	 * @return a status 
-	 */
-	public int getStatus();
-		
-	/**
-	 * Returns an ID of this exertion.
-	 * 
-	 * @return a unique identifier 
-	 */
-	public Uuid getId();
-	
 	/**
 	 * Returns a deployment ID for this exertion.
 	 * 
@@ -111,7 +89,7 @@ public interface Exertion extends Mogram, Dependency, Invocation<Object>, Evalua
 	 * @return an added component exertion
 	 * @throws ContextException 
 	 */
-	public Exertion addExertion(Exertion component) throws ExertionException;
+	public Mogram addMogram(Mogram component) throws ExertionException;
 	
 	/**
 	 * Returns a data service context (service data) of this exertion to be
@@ -134,7 +112,7 @@ public interface Exertion extends Mogram, Dependency, Invocation<Object>, Evalua
 	/**
 	 * Returns a component exertion at a given path.
 	 */
-	public Exertion getComponentExertion(String path);
+	public Mogram getComponentMogram(String path);
 	
 	/**
 	 * Returns a value associated with a path (key) in this exertion's context.
@@ -155,45 +133,25 @@ public interface Exertion extends Mogram, Dependency, Invocation<Object>, Evalua
 	 * Returns a service context (service data) of the component exertion.
 	 * 
 	 * @return a service context
-	 * @throws ContextException 
-	 * @see #getSignatures
+	 * @throws ContextException
 	 */
 	public Context getContext(String componentExertionName) throws ContextException;
-	
-	public List<String> getTrace();
-	
-	/**
-	 * Returns a control context (service control strategy) of this exertion to be 
-	 * realized by a tasker, jobber or spacer.
-	 * 
-	 * @return a control context
-	 * @see #getSignatures
-	 */
-	public Context getControlContext();
-	
-	public String getExecTime();
-	
-	/**
-	 * Returns a service fidelity of this exertion that consists of process
-	 * signature, all pre-processing, post-processing, and append signatures.
-	 * There is only one process signature defining late binding to the service
-	 * provider processing this exertion.
-	 * 
-	 * @return a collection of all service signatures
-	 * @see #getProcessSignature
-	 */
-	public ServiceFidelity getFidelity();
 
 	/**
-	 * Returns a map of all available service fidelities of this exertion.
+	 * Returns a control context (service control strategy) of this exertion to be 
+	 * realized by a tasker, rendezvous or spacer.
+	 * 
+	 * @return a control context
+
 	 */
-	public Map<String, ServiceFidelity> getFidelities();
+	public StrategyContext getControlContext();
+	
+	public String getExecTime();
 	
 	/**
 	 * Returns a signature of the <code>PROCESS</code> type for this exertion.
 	 * 
 	 * @return a process service signature
-	 * @see #getSignatures
 	 */
 	public Signature getProcessSignature();
 
@@ -220,12 +178,9 @@ public interface Exertion extends Mogram, Dependency, Invocation<Object>, Evalua
 	 */
 	public Access getAccessType();
 
-	/**
-	 * Returns the list of traces of thrown exceptions.
-	 * @return ThrowableTrace list
-	 */ 
-	public List<ThrowableTrace> getExceptions();
-	
+    // Check if this is a Job that will be performed by Spacer
+    boolean isSpacable();
+
 	/**
 	 * Returns the list of all signatures of component exertions.
 	 * 
@@ -246,41 +201,24 @@ public interface Exertion extends Mogram, Dependency, Invocation<Object>, Evalua
 	 * @return Signature list
 	 */
 	public List<Signature> getAllNetTaskSignatures();
-	
-	/**
-	 * Returns the list of all traces of thrown exceptions including from all
-	 * component.
-	 * 
-	 * @return ThrowableTrace list
-	 */
-	public List<ThrowableTrace> getAllExceptions();
 
 	/**
 	 * Returns a component exertion with a given name.
 	 * @return Exertion list
 	 */ 
-	public Exertion getExertion(String name);
+	public Mogram getMogram(String name);
 
 	/**
 	 * Returns the list of direct component exertions.
 	 * @return Exertion list
 	 */ 
-	public List<Exertion> getExertions();
+	public List<Mogram> getMograms();
 	
 	/**
 	 * Returns the list of all nested component exertions/
 	 * @return Exertion list
 	 */ 
-	public List<Exertion> getAllExertions();
-	
-	/**
-	 * Returns <code>true</code> if this exertion should be monitored for its
-	 * execution, otherwise <code>false</code>.
-	 * 
-	 * @return <code>true</code> if this exertion requires its execution to be
-	 *         monitored.
-	 */
-	public boolean isMonitorable();
+	public List<Mogram> getAllMograms();
 	
 	/**
 	 * Returns <code>true</code> if this exertion can be provisioned for its
@@ -318,9 +256,7 @@ public interface Exertion extends Mogram, Dependency, Invocation<Object>, Evalua
 	public boolean isCmd();
 	
 	public void setProvisionable(boolean state);
-		
-	public Exertion substitute(Arg... entries) throws SetterException;
-	
+
 	/**
 	 * Returns true if this exertion is atop an acyclic graph in which no node
 	 * has two parents (two references to it).
@@ -339,15 +275,5 @@ public interface Exertion extends Mogram, Dependency, Invocation<Object>, Evalua
 	 * Returns true if this exertion is composed of other exertions.
 	 */
 	public boolean isCompound();
-	
-	/**
-	 * The exertion format for thin exertions (no RMI and Jini classes)
-	 */
-	public static final int THIN = 0;
 
-	/**
-	 * The exertion format for thick exertions (with RMI and Jini classes)
-	 */
-	public static final int STANDARD = 1;
-	
 }

@@ -1,7 +1,7 @@
 /*
  * Copyright 2011 the original author or authors.
  * Copyright 2011 SorcerSoft.org.
- *  
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -27,6 +27,7 @@ import net.jini.core.lookup.ServiceMatches;
 import net.jini.core.lookup.ServiceRegistrar;
 import net.jini.core.lookup.ServiceTemplate;
 import net.jini.lookup.entry.Name;
+import sorcer.service.Accessor;
 import sorcer.tools.shell.cmds.DiscoCmd;
 import sorcer.util.ServiceAccessor;
 
@@ -129,14 +130,14 @@ abstract public class ShellCmd {
 	public static ServiceItem[] serviceLookup(
 			Class[] serviceTypes) throws RemoteException {
 		ServiceTemplate st = new ServiceTemplate(null, serviceTypes, null);
-		ServiceItem[] serviceItems = ServiceAccessor.getServiceItems(st, null,
-				NetworkShell.getGroups());
+		ServiceItem[] serviceItems = Accessor.getServiceItems(st, null,
+                NetworkShell.getGroups());
 		return serviceItems;
 	}
 	
 	static ServiceItem[] serviceLookup(Class[] serviceTypes, String[] groups) {
 		ServiceTemplate st = new ServiceTemplate(null, serviceTypes, null);
-		ServiceItem[] serviceItems = ServiceAccessor.getServiceItems(st, null,
+		ServiceItem[] serviceItems = Accessor.getServiceItems(st, null,
 				groups);
 		return serviceItems;
 	}

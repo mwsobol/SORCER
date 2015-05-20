@@ -20,14 +20,16 @@ package sorcer.provider.adder.ui;
 import net.jini.core.lookup.ServiceItem;
 import net.jini.lookup.entry.UIDescriptor;
 import net.jini.lookup.ui.MainUI;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.PositionalContext;
 import sorcer.core.provider.Provider;
 import sorcer.provider.adder.Adder;
 import sorcer.service.ContextException;
 import sorcer.service.Service;
-import sorcer.ui.serviceui.UIComponentFactory;
-import sorcer.ui.serviceui.UIDescriptorFactory;
+import sorcer.serviceui.UIComponentFactory;
+import sorcer.serviceui.UIDescriptorFactory;
 import sorcer.util.Sorcer;
 import sorcer.util.SorcerUtil;
 
@@ -36,19 +38,15 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.URL;
-import java.util.logging.Logger;
 
 /**
  * Component Service UI for SORCER Arithmetic - an example service
  */
 public class AdderUI extends JPanel implements SorcerConstants {
 
-	private final static Logger logger = Logger.getLogger(AdderUI.class
-			.getName());
+	private final static Logger logger = LoggerFactory.getLogger(AdderUI.class.getName());
 
-	private ServiceItem item;
-
-	private Service provider;
+    private Service provider;
 
 	private PositionalContext context;
 
@@ -61,7 +59,7 @@ public class AdderUI extends JPanel implements SorcerConstants {
 		super();
 		getAccessibleContext().setAccessibleName("Adder");
 		try {
-			item = (ServiceItem) obj;
+            ServiceItem item = (ServiceItem) obj;
 			logger.info("service class: " + item.service.getClass().getName()
 					+ "\nservice object: " + item.service);
 
@@ -150,13 +148,11 @@ public class AdderUI extends JPanel implements SorcerConstants {
 				inField.setText("");
 				outText.setText("");
 				context = null;
-				return;
 			} else if (selector.equals("context")) {
 				outText.setText("");
 				outText.append("Input Data/n");
 				context = createServiceContext(inField.getText());
 				outText.append(context.toString());
-				return;
 			} else if (selector.equals("add")) {
 				try {
 					context = createServiceContext(inField.getText());
@@ -166,8 +162,7 @@ public class AdderUI extends JPanel implements SorcerConstants {
 					outText.append("\n\nOutput Data Context\n");
 					outText.append(((Adder) provider).add(context).toString());
 				} catch (Exception ex) {
-					logger.throwing(AdderUI.class.getName(),
-							"actionPerformed", ex);
+					logger.warn("actionPerformed", ex);
 				}
 			}
 		}
@@ -188,7 +183,7 @@ public class AdderUI extends JPanel implements SorcerConstants {
 					new UIComponentFactory(new URL[] { new URL(Sorcer.getWebsterUrl() + "/adder-" + serverVersion + "-ui.jar") },
 							AdderUI.class.getName()));
 		} catch (Exception ex) {
-			logger.throwing(AdderUI.class.getName(), "getCalculatorDescriptor", ex);
+			logger.warn("getCalculatorDescriptor", ex);
 		}
 		return uiDesc;
 	}

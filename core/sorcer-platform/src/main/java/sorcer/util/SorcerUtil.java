@@ -27,10 +27,11 @@ import java.net.URI;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SorcerUtil implements SorcerConstants {
-	final static Logger logger = Logger.getLogger("sorcer");
+	final static Logger logger = LoggerFactory.getLogger("sorcer");
 	private static Calendar calendar = null;
 
 	public static String[] pathToArray(String arg) {
@@ -199,16 +200,16 @@ public class SorcerUtil implements SorcerConstants {
 		return out;
 	}
 
-	public static void bubbleSort(List coll) {
-		int i = coll.size();
+	public static void bubbleSort(List list) {
+		int i = list.size();
 		while (--i >= 0) {
 			for (int j = 0; j < i; j++) {
-				if (((String) coll.get(j)).compareTo((String) coll
+				if (((String) list.get(j)).compareTo((String) list
 						.get(j + 1)) > 0) {
 					/* swap objects */
-					Object temp = coll.get(j);
-					coll.set(j, coll.get(j + 1));
-					coll.set(j + 1, temp);
+					Object temp = list.get(j);
+					list.set(j, list.get(j + 1));
+					list.set(j + 1, temp);
 				}
 			}
 		}

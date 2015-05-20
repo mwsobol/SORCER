@@ -1,7 +1,8 @@
 /*
  * Copyright 2010 the original author or authors.
  * Copyright 2010 SorcerSoft.org.
- *  
+ * Copyright 2013, 2014 Sorcersoft.com S.A.
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -17,32 +18,33 @@
 
 package sorcer.core.proxy;
 
-import java.io.IOException;
-import java.io.InvalidObjectException;
-import java.io.ObjectInputStream;
-import java.io.Serializable;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
+import com.sun.jini.admin.DestroyAdmin;
 import net.jini.admin.Administrable;
 import net.jini.admin.JoinAdmin;
 import net.jini.core.constraint.RemoteMethodControl;
 import net.jini.id.ReferentUuid;
 import net.jini.id.Uuid;
 import net.jini.security.proxytrust.SingletonProxyTrustIterator;
-
 import org.rioproject.admin.ServiceActivityProvider;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import sorcer.core.provider.AdministratableProvider;
 import sorcer.core.provider.Provider;
 
-import com.sun.jini.admin.DestroyAdmin;
+import java.io.IOException;
+import java.io.InvalidObjectException;
+import java.io.ObjectInputStream;
+import java.io.Serializable;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+import java.net.ConnectException;
+import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * The Service provider should wrap up the smart proxy/stub. The
@@ -64,7 +66,7 @@ import com.sun.jini.admin.DestroyAdmin;
 @SuppressWarnings("rawtypes")
 public class ProviderProxy implements Serializable {
 	private static final long serialVersionUID = -242006752320266252L;
-	protected final static Logger logger = Logger.getLogger("sorcer.test");
+	protected final static Logger logger = LoggerFactory.getLogger(ProviderProxy.class);
 
 	/**
 	 * Public static factory method that creates and returns an instance of
@@ -117,9 +119,9 @@ public class ProviderProxy implements Serializable {
 	
 	private static class ReferentUuidInvocationHandler implements InvocationHandler, Serializable {
 		private static final long serialVersionUID = 242006752320266247L;
-		protected final Object proxy;
-		protected final Uuid proxyID;
-		protected final Object adminProxy;
+		protected Object proxy;
+		protected Uuid proxyID;
+		protected Object adminProxy;
 
 		public ReferentUuidInvocationHandler(Object proxy, Uuid proxyID, Object adminProxy) {
 			this.proxy = proxy;
@@ -173,20 +175,39 @@ public class ProviderProxy implements Serializable {
 
             Object obj = null;
             try {
-            	obj  = m.invoke(proxy, args);
+            	return doInvoke(server, selector, m, args);
+            } catch (InvocationTargetException ie) {
+                Throwable cause = ie.getCause();
+                // disable logging for calls coming from ServiceCataloger
+                if (cause instanceof ConnectException && MDC.get("java.net.ConnectException.ignore") == null) {
+                    logger.warn("Proxy Connection problem to : {} to perform: {} for args: {}", proxyID, m, Arrays.toString(args), ie);
+                }
+                for (Class<?> throwableType : m.getExceptionTypes()) {
+                    if(throwableType.isInstance(cause))
+                        throw cause;
+                }
+                throw ie;
             } catch (Throwable e) {
-            	// do not report broken network connection on destruction
-            	if ((selector.equals("destroyNode") || selector.equals("destroy"))) {
-            		logger.log(Level.INFO, "proxy method: " + m + " for args: "
-            			+ Arrays.toString(args), e);
-            	} else {
-            		throw e;
-            	}
+                // this block is for debugging, can be deleted
+                // do not report broken network connection on destruction or getAdmin after the service is
+				// undeployed by Rio
+                if (!selector.equals("getAdmin")) logger.warn("proxy method: {} for args: {}", m, Arrays.toString(args), e);
+                if (!(selector.equals("destroyNode") || selector.equals("destroy"))) {
+                    throw e;
+                } else
+                    return null;
             }
-            return obj;
+        }
+
+        protected Object doInvoke(Object server, String selector, Method m, Object[] args) throws IllegalAccessException, InvocationTargetException, RemoteException {
+            return m.invoke(proxy, args);
         }
 
         private void readObject(ObjectInputStream s) throws IOException, ClassNotFoundException {
+            doReadObject(s);
+		}
+
+        protected void doReadObject(ObjectInputStream s) throws IOException, ClassNotFoundException {
 			s.defaultReadObject();
 			/* Verify server */
 			if (proxy == null) {
@@ -221,56 +242,24 @@ public class ProviderProxy implements Serializable {
 			return super.getInterfaces(proxy, interfaces);
 		}
 
-		public Object invoke(Object server, Method m, Object[] args) throws Throwable {
-			Object obj = null;
-			String selector = m.getName();
-			try {
-				if ("getReferentUuid".equals(selector)) {
-					return proxyID;
-				} else if ("hashCode".equals(selector)) {
-					return proxyID.hashCode();
-				} else if ("equals".equals(selector)) {
-					return !(args.length != 1 || !(args[0] instanceof ReferentUuid))
-							&& proxyID.equals(((ReferentUuid) args[0]).getReferentUuid());
-				} else if ("toString".equals(selector)) {
-					return "refID=" + proxyID + " : proxy=" + proxy;
-				} else if ("getConstraints".equals(selector)) {
-					return ((RemoteMethodControl) proxy).getConstraints();
-				} else if ("setConstraints".equals(selector)) {
-					return server;
-				} else if ("getProxyTrustIterator".equals(selector)) {
-					return new SingletonProxyTrustIterator(server);
+		public Object doInvoke(Object server, String selector, Method m, Object[] args) throws RemoteException, InvocationTargetException, IllegalAccessException {
+            if ("getConstraints".equals(selector)) {
+                    return ((RemoteMethodControl) proxy).getConstraints();
+                } else if ("setConstraints".equals(selector)) {
+                    return server;
+                } else if ("getProxyTrustIterator".equals(selector)) {
+                    return new SingletonProxyTrustIterator(server);
                 } else if ("isActive".equals(selector)) {
-                    return ((Provider)proxy).isBusy();
+                    return ((Provider) proxy).isBusy();
                 } else if ("getAdmin".equals(selector)) {
-				    return ((Administrable) proxy).getAdmin();
-                } else if (adminProxy == proxy) {
-					obj = m.invoke(adminProxy, args);
-				} else {
-					obj = m.invoke(proxy, args);
-				}
-			} catch (Throwable e) {
-				// this block is for debugging, can be deleted
-				// do not report broken network connection on destruction
-				if ((selector.equals("destroyNode") || selector.equals("destroy"))) {
-					logger.fine("proxy method: " + m);
-				} else {
-					throw e;
-				}
-			}
-			return obj;
+                    return ((Administrable) proxy).getAdmin();
+                } else {
+                    return super.doInvoke(server, selector, m, args);
+                }
 		}
 
 		private void readObject(ObjectInputStream s) throws IOException, ClassNotFoundException {
-			s.defaultReadObject();
-			/* Verify server */
-			if (proxy == null) {
-				throw new InvalidObjectException("ProviderProxy.readObject failure - server " + "field is null");
-			}// endif
-			/* Verify proxyID */
-			if (proxyID == null) {
-				throw new InvalidObjectException("ProviderProxy.readObject failure - proxyID " + "field is null");
-			}// endif
+			doReadObject(s);
 		}// end readObject
 
 		private void readObjectNoData() throws InvalidObjectException {

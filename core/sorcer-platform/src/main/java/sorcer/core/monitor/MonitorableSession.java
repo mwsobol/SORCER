@@ -1,3 +1,20 @@
+/**
+ *
+ * Copyright 2013 the original author or authors.
+ * Copyright 2013 Sorcersoft.com S.A.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 /*
        * Copyright 2010 the original author or authors.
  * Copyright 2010 SorcerSoft.org.
@@ -17,16 +34,15 @@
 
 package sorcer.core.monitor;
 
-import java.rmi.RemoteException;
-
 import net.jini.core.lease.Lease;
 import net.jini.core.transaction.server.TransactionConstants;
 import net.jini.id.Uuid;
-import sorcer.core.provider.MonitorSessionManagement;
-import sorcer.core.provider.MonitoringSession;
+import sorcer.core.context.StrategyContext;
+import sorcer.service.Monitorable;
 import sorcer.service.Context;
 import sorcer.service.MonitorException;
-import sorcer.service.Monitorable;
+
+import java.rmi.RemoteException;
 
 /**
  * A proxy for controlling the session in the server. The session is activated
@@ -79,7 +95,7 @@ public class MonitorableSession implements MonitoringSession {
 	}
 
 	/**
-	 * Makes this an active session. The jobber decides the lease duration and
+	 * Makes this an active session. The rendezvous decides the lease duration and
 	 * the timeout after which the monitor will call on monitorables that the
 	 * job is failed and report back to the Listener that the exertion of this
 	 * session has failed.
@@ -173,23 +189,23 @@ public class MonitorableSession implements MonitoringSession {
 	/**
 	 * Providers use this method to update the monitoring session
 	 * 
-	 * @param xtc
-	 *            The service context changed.
+	 * @param ctx
+	 *            The service dataContext changed.
 	 * 
 	 *  * @param aspect
-	 *            The aspect of context change.
+	 *            The aspect of dataContext change.
 	 * 
 	 * @throws MonitorException
-	 *             1) If there is no such session 2) The context does not
+	 *             1) If there is no such session 2) The dataContext does not
 	 *             belong to this session
 	 * 
 	 * @throws RemoteException
 	 *             if there is a communication error
 	 **/
 
-	public void changed(Context ctx, Object aspect) throws RemoteException,
+	public void changed(Context ctx, StrategyContext controlContext, int aspect) throws RemoteException,
 			MonitorException {
-		msm.update(cookie, ctx, aspect);
+		msm.update(cookie, ctx, controlContext, aspect);
 
 	}
 

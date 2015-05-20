@@ -19,6 +19,9 @@ package sorcer.core.provider.cataloger.ui;
 
 //Main Browser Model
 import java.io.Serializable;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Observable;
 
 import sorcer.core.context.ServiceContext;
@@ -32,10 +35,13 @@ import sorcer.ui.exertlet.EditorViewSignature;
  */
 public class BrowserModel extends Observable implements Serializable, EditorViewSignature {
 	private static final long serialVersionUID = 5311936826023311727L;
-	String selectedProvider, selectedInterfaceName, selectedMethod;
+	String selectedProvider;
+	String selectedInterfaceName;
+	String selectedMethod;
 	Class selectedInterface;
 	String providerList[], interfaceList[], methodList[], bkproviderList[],
 			bkinterfaceList[], bkmethodList[];
+	Map<String, URL[]> codebaseURLs = new HashMap<String, URL[]>();
 	Context context;
 	String contextScript;
 	public static final String PROVIDER_UPDATED = "ProvUp";
@@ -84,6 +90,10 @@ public class BrowserModel extends Observable implements Serializable, EditorView
 		bkproviderList = providers;
 		setChanged();
 		notifyObservers(PROVIDER_UPDATED);
+	}
+
+	public void setCodebaseURLs(Map<String, URL[]> codebaseURLs) {
+		this.codebaseURLs = codebaseURLs;
 	}
 
 	/**
@@ -367,9 +377,18 @@ public class BrowserModel extends Observable implements Serializable, EditorView
 		return getSelectedInterfaceName();
 	}
 
+	public void setSelectedMethod(String selectedMethod) {
+		this.selectedMethod = selectedMethod;
+	}
+
 	@Override
 	public String getSelector() {
 		return getSelectedMethod();
+	}
+
+	@Override
+	public URL[] getCodebaseURLs() {
+		return codebaseURLs.get(selectedProvider);
 	}
 
 }

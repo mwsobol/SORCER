@@ -17,7 +17,10 @@
 
 package sorcer.service;
 
+import net.jini.id.Uuid;
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import net.jini.id.Uuid;
@@ -27,7 +30,7 @@ import sorcer.service.Exec.State;
  * @author Mike Sobolewski
  * 
  */
-public class ExertionInfo implements Serializable {
+public class ExertionInfo implements Comparable, Serializable {
 
 	static final long serialVersionUID = -2197284663002185050L;
 	
@@ -43,7 +46,15 @@ public class ExertionInfo implements Serializable {
 
 	private Signature signature;
 
-	public ExertionInfo(String name) {
+    private Date creationDate;
+
+    private Date lastUpdateDate;
+
+    private Exertion exertion;
+
+    private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+    public ExertionInfo(String name) {
 		this.name = name;
 	}
 	
@@ -52,15 +63,26 @@ public class ExertionInfo implements Serializable {
 		id = exertion.getId();
 		status = exertion.getStatus();
 		trace = exertion.getTrace();
+        creationDate = exertion.getCreationDate();
+        lastUpdateDate = new Date();
 		signature = exertion.getProcessSignature();
+        this.exertion = exertion;
 	}
 
 	public ExertionInfo(Exertion exertion, Uuid storeId) {
 		this(exertion);
 		this.storeId = storeId;
 	}
-	
-	public String getName() {
+
+    public Date getCreationDate() {
+        return creationDate;
+    }
+
+    public Date getLastUpdateDate() {
+        return lastUpdateDate;
+    }
+
+    public String getName() {
 		return name;
 	}
 
@@ -108,11 +130,17 @@ public class ExertionInfo implements Serializable {
 		this.signature = signature;
 	}
 
-	public String describe() {
+    public Exertion getExertion() {
+        return exertion;
+    }
+
+    public String describe() {
 		StringBuilder info = new StringBuilder().append("name: ").append(name);
 		info.append("  ID: ").append(id);
-		info.append("  state: ").append(State.name(status));
-		info.append("\nsignature: ").append(signature);
+		info.append("  state: ").append(Exec.State.name(status));
+        info.append("\ncreated at: ").append((creationDate!=null) ? sdf.format(creationDate) : "");
+        info.append(",  last updated at: ").append(lastUpdateDate);
+        info.append("\nsignature: ").append(signature);
 		info.append("\ntrace: ").append(trace);
 		return info.toString();
 	}
@@ -120,9 +148,16 @@ public class ExertionInfo implements Serializable {
 	public String toString() {
 		StringBuilder info = new StringBuilder().append(
 				this.getClass().getName()).append(": " + name);
-		info.append("\n\tstatus: ").append(status);
-		info.append(", \n\tsignature: ").append(signature);
+		info.append("\n\tstatus: ").append(Exec.State.name(status));
+        info.append(", \n\tcreated at: ").append((creationDate!=null) ? sdf.format(creationDate) : "");
+        info.append(", \n\tlast updated at: ").append(lastUpdateDate);
+        info.append(", \n\tsignature: ").append(signature);
 		info.append(", \n\ttrace: ").append(trace);
 		return info.toString();
 	}
+
+    @Override
+    public int compareTo(Object o) {
+        return getCreationDate().compareTo(((ExertionInfo)o).getCreationDate());
+    }
 }

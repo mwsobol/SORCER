@@ -19,26 +19,25 @@ package sorcer.core.provider.cataloger.ui;
 
 //Main Dispatcher/Listener for all UI components
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import sorcer.core.context.ServiceContext;
+import sorcer.core.exertion.NetTask;
+import sorcer.core.provider.Provider;
+import sorcer.core.signature.NetSignature;
+import sorcer.service.Context;
+import sorcer.service.ContextManagement;
+import sorcer.service.Service;
+import sorcer.service.Task;
+
+import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import java.awt.event.ActionEvent;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.logging.Logger;
-
-import javax.swing.JList;
-import javax.swing.JTextField;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-
-import sorcer.core.context.ServiceContext;
-import sorcer.core.exertion.NetTask;
-import sorcer.core.provider.Provider;
-import sorcer.service.ContextManagement;
-import sorcer.core.signature.NetSignature;
-import sorcer.service.Context;
-import sorcer.service.Service;
-import sorcer.service.Task;
 
 /**
  * Implementation of the SignatureDispatcherInterface to provide support for
@@ -51,8 +50,7 @@ import sorcer.service.Task;
  */
 public class SignatureDispatcherForProvider implements SignatureDispatchment {
 
-	protected static final Logger logger = Logger
-			.getLogger(SignatureDispatcherForProvider.class.getName());
+	protected static final Logger logger = LoggerFactory.getLogger(SignatureDispatcherForProvider.class.getName());
 	/**
 	 * The Cataloger service object. Passed in by constructor from CatalogerUI
 	 * class
@@ -165,10 +163,11 @@ public class SignatureDispatcherForProvider implements SignatureDispatchment {
 					if (!e.getValueIsAdjusting()) // make it only run on the
 					// final event
 					{
-						String selProv = (String) list.getSelectedValue();
-						model.setContext(selProv,
+						String selMethod = (String) list.getSelectedValue();
+						model.setContext(selMethod,
 								SignatureDispatcherForProvider.this
-										.getContext(selProv));
+										.getContext(selMethod));
+						model.setSelectedMethod(selMethod);
 					}
 				}
 			};
@@ -210,6 +209,7 @@ public class SignatureDispatcherForProvider implements SignatureDispatchment {
 	 */
 	public void actionPerformed(ActionEvent e) {
 		String comm = e.getActionCommand();
+
 		if (comm == SignatureView.PROVIDER_SEARCH) {
 			String searchedProvider = ((JTextField) (e.getSource())).getText();
 			model.setProviders(processSearch(searchedProvider, model

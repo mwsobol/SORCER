@@ -20,10 +20,14 @@ import sorcer.co.tuple.*;
 import sorcer.core.context.Copier;
 import sorcer.core.context.ListContext;
 import sorcer.core.context.ServiceContext;
+import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.par.Par;
+import sorcer.core.context.model.srv.Srv;
 import sorcer.core.provider.DatabaseStorer;
+import sorcer.service.Scopable;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
+import sorcer.service.modeling.Variability;
 import sorcer.util.Loop;
 import sorcer.util.Response;
 import sorcer.util.Sorcer;
@@ -192,14 +196,26 @@ public class operator {
         return new Entry(path, ((Context)model).asis(path));
     }
 
-    public static Entry ent(Identifiable item) {
+    public static Srv srv(Identifiable item) {
         if (item instanceof Signature)
-            return new Entry<Identifiable>(item.getName(),
+            return new Srv(item.getName(),
                     new SignatureEntry(item.getName(), (Signature) item));
         else
-            return new Entry<Identifiable>(item.getName(), item);
+            return new Srv(item.getName(), item);
     }
-    
+
+	public static Srv srv(String name, String path, Model model) {
+		return new Srv(path, model, name);
+	}
+
+	public static Srv srv(String name, String path, Model model, Variability.Type type) {
+		return new Srv(path, model, name, type);
+	}
+
+	public static Srv srv(String name, String path) {
+		return new Srv(path, null, name);
+	}
+
 	public static <T> Entry<T> ent(String path, T value) {
 		return new Entry<T>(path, value);
 	}
@@ -371,7 +387,7 @@ public class operator {
 				else {
 					if (entry instanceof Setter) {
 						((Setter) entry).setPersistent(true);
-						dburl = (URL) SdbUtil.store(obj);
+						dburl = SdbUtil.store(obj);
 						((Setter)entry).setValue(dburl);
 						return dburl;
 					}
@@ -629,38 +645,43 @@ public class operator {
        return Arrays.asList(paths);
     }
     
-    public static void dependsOn(Model model, String path, List<String> dependentPaths) {
-        Map<String, List<String>> dm = ((ServiceContext)model).getDependentPaths();
-        dm.put(path, dependentPaths);
+    public static void dependsOn(Model model, Entry... entries) {
+        Map<String, List<String>> dm = ((ServiceContext)model).getRuntime().getDependentPaths();
+        String path = null;
+        Object dependentPaths = null;
+        for (Entry e : entries) {
+            dependentPaths = e.value();
+            if (dependentPaths instanceof List){
+                path = e.getName();
+                dependentPaths =  e.value();
+                dm.put(path, (List<String>)dependentPaths);
+            }
+        }
     }
 
     public static Map<String, List<String>> dependentPaths(Model model) {
-         return ((ServiceContext)model).getDependentPaths();
+         return ((ServiceContext)model).getRuntime().getDependentPaths();
     }
     
     public static Dependency dependsOn(Dependency dependee,  Evaluation... dependers) throws ContextException {
         for (Evaluation d : dependers)
-            ((Dependency) dependee).getDependers().add(d);
+            	dependee.getDependers().add(d);
         
         return dependee;
     }
 
-    public static Dependency dependsOn(Dependency dependee, Context scope, Evaluation... dependers) 
-            throws ContextException {
-        if (dependee instanceof Scopable) {
-            Context context = null;
-            try {
-                context = (Context) ((Scopable) dependee).getScope();
-                if (context == null)
-                    ((Scopable) dependee).setScope(scope);
-                else
-                    context.append(scope);
-            } catch (RemoteException e) {
-                e.printStackTrace();
-            }
-        }
-        return dependsOn(dependee, dependers);
-    }
+	public static Dependency dependsOn(Dependency dependee, Context scope, Evaluation... dependers)
+			throws ContextException {
+		if (dependee instanceof Scopable) {
+			Context context = null;
+			context = ((Mogram) dependee).getScope();
+			if (context == null)
+				((Mogram) dependee).setScope(scope);
+			else
+				context.append(scope);
+		}
+		return dependsOn(dependee, dependers);
+	}
 
 	public static Loop loop(int to) {
 		Loop loop = new Loop(to);

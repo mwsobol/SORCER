@@ -18,6 +18,7 @@
 package sorcer.util.bdb.objects;
 
 import java.io.File;
+import java.util.concurrent.TimeUnit;
 
 import sorcer.core.provider.ProviderRuntime;
 import sorcer.service.ServiceExertion;
@@ -44,6 +45,7 @@ import com.sleepycat.je.SecondaryDatabase;
  */
 public class SorcerDatabase {
 
+    private static final long LOCK_TIMEOUT = 1000L;
     private static final String CLASS_CATALOG = "java_class_catalog";
     private static final String RUNTIME_STORE = "runtime_store";
     private static final String EXERTION_STORE = "exertion_store";
@@ -76,6 +78,7 @@ public class SorcerDatabase {
         // Open the Berkeley DB environment in transactional mode.
         //System.out.println("Opening environment in: " + homeDirectory);
         EnvironmentConfig envConfig = new EnvironmentConfig();
+        envConfig.setLockTimeout(LOCK_TIMEOUT, TimeUnit.MILLISECONDS);
         envConfig.setTransactional(true);
         envConfig.setAllowCreate(true);
         envConfig.setSharedCache(true);

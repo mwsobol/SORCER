@@ -6,6 +6,8 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.impl.AdderImpl;
@@ -28,7 +30,6 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.rmi.RemoteException;
 import java.util.Properties;
-import java.util.logging.Logger;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -54,7 +55,7 @@ import static sorcer.po.operator.set;
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/pml")
 public class Invokers {
-	private final static Logger logger = Logger.getLogger(Invokers.class
+	private final static Logger logger = LoggerFactory.getLogger(Invokers.class
 			.getName());
 
 	private ParModel pm; 
@@ -259,14 +260,18 @@ public class Invokers {
 	public void cmdInvokerTest() throws SignatureException, ExertionException,
 	ContextException, IOException {
 		String riverVersion = System.getProperty("river.version");
-        String sorcerVersion = System.getProperty("sorcer.version");
-        String buildDir = System.getProperty("project.build.dir");
+		String sorcerVersion = System.getProperty("sorcer.version");
+		String slf4jVersion = System.getProperty("slf4j.version");
+		String logbackVersion = System.getProperty("logback.version");
+		String buildDir = System.getProperty("project.build.dir");
 
         String cp = buildDir + "/libs/pml-" + sorcerVersion + "-bean.jar" + File.pathSeparator
         		+ Sorcer.getHome() + "/lib/sorcer/lib/sorcer-platform-" + sorcerVersion + ".jar"  + File.pathSeparator
+				+ Sorcer.getHome() + "/lib/logging/slf4j-api-" + slf4jVersion + ".jar"  + File.pathSeparator
+				+ Sorcer.getHome() + "/lib/logging/logback-core-" + logbackVersion + ".jar"  + File.pathSeparator
+				+ Sorcer.getHome() + "/lib/logging/logback-classic-" + logbackVersion + ".jar"  + File.pathSeparator
 				+ Sorcer.getHome() + "/lib/river/jsk-platform-" + riverVersion + ".jar"  + File.pathSeparator
 				+ Sorcer.getHome() + "/lib/river/jsk-lib-" + riverVersion + ".jar ";
-
 
 		ServiceInvoker cmd = cmdInvoker("volume",
 				"java -cp  " + cp + Volume.class.getName() + " cylinder");
@@ -342,12 +347,12 @@ public class Invokers {
 		logger.info("y: " + value(pm, "y"));
 		logger.info("opt" + value(pm, "opt"));
 		
-//		assertEquals(opt.getValue(), null);
-//
-//		pm.putValue("x", 300.0);
-//		pm.putValue("y", 200.0);
-//		logger.info("opt value: " + opt.getValue());
-//		assertEquals(opt.getValue(), 500.0);
+		assertEquals(opt.getValue(), null);
+
+		pm.putValue("x", 300.0);
+		pm.putValue("y", 200.0);
+		logger.info("opt value: " + opt.getValue());
+		assertEquals(opt.getValue(), 500.0);
 	}
 
 	@Test

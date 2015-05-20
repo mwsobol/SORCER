@@ -11,7 +11,8 @@ import sorcer.service.Strategy.Access;
 import sorcer.service.Strategy.Flow;
 import sorcer.service.Task;
 
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static sorcer.co.operator.inEnt;
 import static sorcer.co.operator.outEnt;
@@ -23,8 +24,7 @@ import static sorcer.eo.operator.*;
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class ArithmeticUtil implements SorcerConstants {
 
-	private final static Logger logger = Logger
-			.getLogger(ArithmeticUtil.class.getName());
+	private final static Logger logger = LoggerFactory.getLogger(ArithmeticUtil.class.getName());
 	
 	// two level job composition with PULL and PAR execution
 	private static Job createJob(Flow flow, Access access) throws Exception {

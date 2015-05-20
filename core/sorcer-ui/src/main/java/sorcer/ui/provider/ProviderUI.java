@@ -18,7 +18,8 @@
 package sorcer.ui.provider;
 
 import java.awt.GridLayout;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;

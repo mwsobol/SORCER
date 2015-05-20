@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package examples.eol
+package examples.sml.configs
 
 import com.sun.jini.start.ServiceDescriptor
 import org.rioproject.config.Component
@@ -40,7 +40,7 @@ class StartAll {
         def descriptors = []
         ["adder", "multiplier", "divider", "subtractor", "averager", "exertleter", "contexter"].each { provider ->
             def configArg = ["${configPath}/${provider}-prv.config"]
-            def codebase = "${relativeRepoPath}/arithmetic-${sorcerVersion}-dl.jar sorcer-dl-${sorcerVersion}.jar jsk-dl-${riverVersion}.jar"
+            def codebase = "${relativeRepoPath}/arithmetic-${sorcerVersion}-dl.jar sorcer-dl-${sorcerVersion}.jar sorcer-ui-${sorcerVersion}.jar jsk-dl-${riverVersion}.jar"
 
             descriptors << new SorcerServiceDescriptor(codebase,
                                                        policy,

@@ -17,26 +17,27 @@
 
 package sorcer.tools.shell.cmds;
 
+import net.jini.core.lookup.ServiceItem;
+import net.jini.id.Uuid;
+import sorcer.core.monitor.MonitorUIManagement;
+import sorcer.core.monitor.MonitoringManagement;
+import sorcer.core.provider.Provider;
+import sorcer.jini.lookup.AttributesUtil;
+import sorcer.service.*;
+import sorcer.service.Exec.State;
+import sorcer.tools.shell.NetworkShell;
+import sorcer.tools.shell.ShellCmd;
+import sorcer.tools.shell.WhitespaceTokenizer;
+
 import java.io.PrintStream;
 import java.rmi.RemoteException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.jini.core.lookup.ServiceItem;
-import net.jini.id.Uuid;
-import sorcer.core.provider.MonitorUIManagement;
-import sorcer.core.provider.MonitoringManagement;
-import sorcer.jini.lookup.AttributesUtil;
-import sorcer.service.ContextException;
-import sorcer.service.Exec.State;
-import sorcer.service.Exertion;
-import sorcer.service.ExertionInfo;
-import sorcer.service.MonitorException;
-import sorcer.service.ServiceExertion;
-import sorcer.tools.shell.NetworkShell;
-import sorcer.tools.shell.ShellCmd;
-import sorcer.util.WhitespaceTokenizer;
+import static org.fusesource.jansi.Ansi.ansi;
 
 public class EmxCmd extends ShellCmd {
 
@@ -45,11 +46,12 @@ public class EmxCmd extends ShellCmd {
 
 		NOT_LOADED_MSG = "***command not loaded due to conflict";
 
-		COMMAND_USAGE = "emx [-xrt | -emx | <EMX/exertion index> | -v | -x]"
+		COMMAND_USAGE = "emx [-xrt | -emx | -mode | <EMX/exertion index> | -v | -x]"
 			+ "\n\t\t\t  | [ -a | -d | -f | -r | -y | <exertion index>] "
 			+ "\n\t\t\t  | (-e | -c | -cc | -ccc) [<exertion index>] [-s <filename>]";
 
 		COMMAND_HELP = "Support for monitoring runtime exertions;"
+				+ "\n  -mode   show current mode"
 				+ "\n  ('emx' mode) show EMX services or ('xrt' mode) print the selected exertion"
 				+ "\n  <EMX index>   select the EMX given <EMX index>"
 				+ "\n  -v   print the selected EMX service/exertion"
@@ -68,6 +70,7 @@ public class EmxCmd extends ShellCmd {
 
 	}
 
+    private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	static private PrintStream out;
 	private boolean isEmxMode = true;
 	static private ServiceItem[] emxMonitors;
@@ -144,13 +147,19 @@ public class EmxCmd extends ShellCmd {
 			} else {
 				if (isEmxMode) {
 					try {
-						next = myTk.nextToken();
+//						String oldNext = next;
+//						next = myTk.nextToken();
+//						if (next.length() == 0) {
+//							out.println("Invalid command option: " + oldNext);
+//							return;
+//						}
 						myIdx = Integer.parseInt(next);
 						selectedMonitor = myIdx;
 					} catch (NumberFormatException e) {
 						selectedMonitor = selectMonitorByName(next);
 						if (selectedMonitor < 0)
 							out.println("No such EMX for: " + next);
+						return;
 					}
 					if (selectedMonitor >= 0) {
 						describeMonitor(selectedMonitor, "SELECTED");
@@ -210,24 +219,33 @@ public class EmxCmd extends ShellCmd {
 
 	private void printExertion(Uuid id, boolean isContext,
 			boolean isControlContext) throws RemoteException, MonitorException, ContextException {
-		Exertion xrt = null;
+        Exertion xrt = null;
+        if (emxMonitors == null || emxMonitors.length == 0) {
+            findMonitors();
+        }
+        try {
+            ((Provider)emxMonitors[selectedMonitor]).getProviderName();
+        } catch (Exception e) {
+            findMonitors();
+        }
 		if (selectedMonitor >= 0) {
 			xrt = ((MonitorUIManagement) emxMonitors[selectedMonitor].service)
 					.getMonitorableExertion(id, NetworkShell.getPrincipal());
 		} else {
-			xrt = ((MonitorUIManagement) monitorMap.get(id).service)
+            if (monitorMap.size()>0) xrt = ((MonitorUIManagement) monitorMap.get(id).service)
 					.getMonitorableExertion(id, NetworkShell.getPrincipal());
 		}
 
-		out.println("--------- EXERTION # " + selectedExertion + " ---------");
-		out.println(((ServiceExertion) xrt).describe());
-		if (isContext) {
-			out.println("\nData Context:");
-			out.println(xrt.getContext());
+        out.println(ansi().render("@|blue ---------"
+                + "|@ @|bold,blue EXERTION # " + selectedExertion + "|@ @|blue ---------|@"));
+		out.println(ansi().render("@|bold " + ((ServiceExertion) xrt).describe() + "|@"));
+        if (isContext) {
+			out.println(ansi().render("@|yellow " + "\nData Context:" + "|@"));
+			out.println(ansi().render("@|bold,yellow " + xrt.getContext() + "|@"));
 		}
 		if (isControlContext) {
-			out.print("\nControl Context:");
-			out.println(xrt.getControlContext());
+            out.println(ansi().render("@|green " + "\nControl Context:" + "|@"));
+            out.println(ansi().render("@|bold,greeb " + xrt.getControlContext() + "|@"));
 		}
 	}
 
@@ -236,38 +254,43 @@ public class EmxCmd extends ShellCmd {
 		if (emxMonitors == null || emxMonitors.length == 0) {
 			findMonitors();
 		}
+		try {
+			((Provider)emxMonitors[selectedMonitor]).getProviderName();
+		} catch (Exception e) {
+			findMonitors();
+		}
 		Map<Uuid, ExertionInfo> all;
 		if (selectedMonitor >= 0) {
-			out.println("From EMX "
-					+ AttributesUtil
-							.getProviderName(emxMonitors[selectedMonitor].attributeSets)
-					+ " at: "
-					+ AttributesUtil
-							.getHostName(emxMonitors[selectedMonitor].attributeSets));
+
+
+            out.println(ansi().render("From EMX @|bold " + AttributesUtil
+                    .getProviderName(emxMonitors[selectedMonitor].attributeSets) + "|@ at: @|bold "
+                    + AttributesUtil.getHostName(emxMonitors[selectedMonitor].attributeSets) + "|@"));
+
 			all = ((MonitorUIManagement) emxMonitors[selectedMonitor].service)
 					.getMonitorableExertionInfo(xetType,
 							NetworkShell.getPrincipal());
 		} else {
 			Map<Uuid, ExertionInfo> hm;
 			all = new HashMap<Uuid, ExertionInfo>();
-			for (int i = 0; i < emxMonitors.length; i++) {
-				out.println("From EMX "
-						+ AttributesUtil
-								.getProviderName(emxMonitors[i].attributeSets)
-						+ " at: "
-						+ AttributesUtil
-								.getHostName(emxMonitors[i].attributeSets));
-
-				MonitorUIManagement emx = (MonitorUIManagement) emxMonitors[i].service;
-				hm = emx.getMonitorableExertionInfo(xetType,
-						NetworkShell.getPrincipal());
-				if (hm != null && hm.size() > 0) {
-					all.putAll(hm);
-				}
-				// populate exertion/EMX map
+            if (emxMonitors!=null) {
 				monitorMap.clear();
-				for (ExertionInfo ei : hm.values()) {
-					monitorMap.put(ei.getStoreId(), emxMonitors[i]);
+				for (int i = 0; i < emxMonitors.length; i++) {
+
+					out.println(ansi().render("From EMX @|bold " + AttributesUtil
+							.getProviderName(emxMonitors[i].attributeSets) + "|@ at: @|bold "
+							+ AttributesUtil.getHostName(emxMonitors[i].attributeSets) + "|@"));
+
+					MonitorUIManagement emx = (MonitorUIManagement) emxMonitors[i].service;
+					hm = emx.getMonitorableExertionInfo(xetType,
+							NetworkShell.getPrincipal());
+					if (hm != null && hm.size() > 0) {
+						all.putAll(hm);
+					}
+					// populate exertion/EMX map
+					for (ExertionInfo ei : hm.values()) {
+						monitorMap.put(ei.getStoreId(), emxMonitors[i]);
+					}
 				}
 			}
 		}
@@ -275,15 +298,42 @@ public class EmxCmd extends ShellCmd {
 			out.println("No monitored exertions at this time.");
 			return;
 		}
-		exertionInfos = new ExertionInfo[all.size()];
-		all.values().toArray(exertionInfos);
+
+        ArrayList<ExertionInfo> eInfos =  new ArrayList<ExertionInfo>(all.values());
+        Collections.sort(eInfos);
+        exertionInfos = new ExertionInfo[all.size()];
+        eInfos.toArray(exertionInfos);
 		printExerionInfos(exertionInfos);
 	}
 
 	private void printExerionInfos(ExertionInfo[] exertionInfos) {
+
 		for (int i = 0; i < exertionInfos.length; i++) {
-			out.println("--------- EXERTION # " + i + " ---------");
-			out.println(exertionInfos[i].describe());
+			out.println(ansi().render("@|blue ---------"
+                    + "|@ @|bold,blue EXERTION # " + i + "|@ @|blue ---------|@"));
+
+            String color = "bold ";
+            switch (Exec.State.val(exertionInfos[i].getStatus())) {
+                case INITIAL : color = "yellow ";
+                    break;
+                case INSPACE : color = "bold,yellow ";
+                    break;
+                case FAILED : color = "bold,red ";
+                    break;
+                case RUNNING: color = "red ";
+                    break;
+                case DONE: color = "green ";
+                    break;
+            }
+
+            StringBuilder info = new StringBuilder().append("name: ").append("@|bold,green ").append(exertionInfos[i].getName()).append("|@");
+            info.append("  ID: ").append("@|bold ").append(exertionInfos[i].getId()).append("|@");
+            info.append("  state: ").append("@|").append(color).append(Exec.State.name(exertionInfos[i].getStatus())).append("|@");
+            info.append("\ncreated at: ").append("@|yellow ").append((exertionInfos[i].getCreationDate() != null) ? sdf.format(exertionInfos[i].getCreationDate()) : "").append("|@");
+            info.append(",  last updated at: ").append(exertionInfos[i].getLastUpdateDate());
+            info.append("\nsignature: ").append("@|bold ").append(exertionInfos[i].getSignature()).append("|@");
+            if (exertionInfos[i].getTrace().size()>0) info.append("\ntrace: ").append("@|bold,red ").append(exertionInfos[i].getTrace()).append("|@");
+            out.println(ansi().render(info.toString()));
 		}
 	}
 
@@ -316,18 +366,18 @@ public class EmxCmd extends ShellCmd {
 	}
 
 	static private void describeMonitor(int index, String msg) {
-		out.println("---------" + (msg != null ? " " + msg : "")
-				+ " EMX SERVICE # " + index + " ---------");
-		out.println("EMX: " + emxMonitors[index].serviceID + " at: "
-				+ AttributesUtil.getHostName(emxMonitors[index].attributeSets));
+        out.println(ansi().render("@|blue ---------" + (msg != null ? " " + msg : "")
+                + "|@ @|bold,blue EMX SERVICE # " +index + "|@ @|blue ---------|@"));
+      	out.println(ansi().render("EMX: @|bold " + emxMonitors[index].serviceID + "|@ at: @|bold "
+				+ AttributesUtil.getHostName(emxMonitors[index].attributeSets) + "|@"));
 		out.println("Home: "
 				+ AttributesUtil.getUserDir(emxMonitors[index].attributeSets));
 		String groups = AttributesUtil
 				.getGroups(emxMonitors[index].attributeSets);
-		out.println("Provider name: "
+		out.println(ansi().render("Provider name: @|bold "
 				+ AttributesUtil
-						.getProviderName(emxMonitors[index].attributeSets));
-		out.println("Groups supported: " + groups);
+						.getProviderName(emxMonitors[index].attributeSets) + "|@"));
+		out.println(ansi().render("Groups supported: @|bold " + groups + "|@"));
 	}
 
 	private int selectMonitorByName(String name) {

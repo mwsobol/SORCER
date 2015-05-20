@@ -1,7 +1,8 @@
-/*
- * Copyright 2010 the original author or authors.
- * Copyright 2010 SorcerSoft.org.
- *  
+/**
+ *
+ * Copyright 2013 the original author or authors.
+ * Copyright 2013 Sorcersoft.com S.A.
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -14,24 +15,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package sorcer.core.monitor;
-
-import java.io.Serializable;
 
 import sorcer.service.Exec;
 import sorcer.service.Exertion;
 import sorcer.service.RemoteServiceEvent;
+
+import java.io.Serializable;
 
 /**
  * Monitor Event is passed back by MonitorManager to notify the Service Broker
  * about any monitoring events.
  */
 public class MonitorEvent extends RemoteServiceEvent implements Serializable,
-		Exec {
+        Exec {
 
 	static final long serialVersionUID = -5433981459997252761L;
-	public static final long ID = 9999699999899L;
 	private int cause;
 	private Exertion ex;
 

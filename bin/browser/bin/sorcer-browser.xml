@@ -2,62 +2,74 @@
 
 <project name="SORCER Service Browser" default="browser.run" basedir="">
 
-	<!-- load system environment variables -->
-	<property environment="env" />
-	<dirname file="${basedir}/../../" property="sorcer.basedir" />
-	<import file="${sorcer.basedir}/bin/common-run.xml" />
+    <!-- load system environment variables -->
+    <property environment="env" />
+    <dirname file="${basedir}/../../" property="sorcer.basedir" />
+    <import file="${sorcer.basedir}/bin/common-run.xml" />
 
-	<target name="browser.run">
-		<antcall target="runBrowser">
-			<param name="spawn" value="no" />
-		</antcall>
-	</target>
+    <target name="browser.run">
+        <antcall target="runBrowser">
+            <param name="spawn" value="no" />
+        </antcall>
+    </target>
 
-	<target name="browser.spawn">
-		<antcall target="runBrowser">
-			<param name="spawn" value="yes" />
-		</antcall>
-	</target>
+    <target name="browser.spawn">
+        <antcall target="runBrowser">
+            <param name="spawn" value="yes" />
+        </antcall>
+    </target>
 
-	<target name="log-dir">
-		<mkdir dir="${sorcer.home}/bin/browser/logs" />
-	</target>
+    <target name="log-dir">
+        <mkdir dir="${sorcer.home}/bin/browser/logs" />
+    </target>
 
-	<target name="runBrowser" depends="log-dir, SSB" />
+    <target name="runBrowser" depends="log-dir, SSB" />
 
-	<path id="run.classpath">
-		<!--pathelement location="${sorcer-ext.lib}/sb.jar" /-->
-		<pathelement location="${sorcer-ext.lib}/ssb-${sorcer.version}.jar" />
-		<pathelement location="${sorcer.lib}/sorcer-platform-${sorcer.version}.jar" />
-		<pathelement location="${rio.lib}/groovy-all-${groovy.version}.jar" />
-		<pathelement location="${jini.lib}/jsk-lib-${river.version}.jar" />
-		<pathelement location="${jini.lib}/jsk-platform-${river.version}.jar" />
-		<pathelement location="${jini.lib}/outrigger-dl-${river.version}.jar" />
-		<pathelement location="${jini.lib}/serviceui-${river.version}.jar" />
+    <path id="run.classpath">
+        <!--pathelement location="${sorcer-ext.lib}/sb.jar" /-->
+        <pathelement location="${sorcer-ext.lib}/ssb-${sorcer.version}.jar" />
+        <pathelement location="${sorcer.lib}/sorcer-platform-${sorcer.version}.jar" />
+        <pathelement location="${sorcer.lib}/sorcer-resolving-loader-${sorcer.version}.jar" />
+        <pathelement location="${rio.lib}/groovy-all-${groovy.version}.jar" />
+        <pathelement location="${jini.lib}/jsk-lib-${river.version}.jar" />
+        <pathelement location="${jini.lib}/jsk-platform-${river.version}.jar" />
+        <pathelement location="${jini.lib}/outrigger-dl-${river.version}.jar" />
+        <pathelement location="${jini.lib}/serviceui-${river.version}.jar" />
         <pathelement location="${rio.lib}/rio-platform-${rio.version}.jar" />
         <pathelement location="${rio-dl.lib}/rio-api-${rio.version}.jar" />
+        <pathelement location="${rio.lib}/rio-lib-${rio.version}.jar" />
         <pathelement location="${rio.lib}/logging/slf4j-api-${slf4j.version}.jar" />
-		<pathelement location="${rio.lib}/logging/slf4j-jdk14-${slf4j.version}.jar" />
-		<!--<pathelement location="${env.SORCER_HOME}/classes" />-->
-	</path>
+        <pathelement location="${rio.lib}/logging/jul-to-slf4j-${slf4j.version}.jar" />
+        <pathelement location="${rio.lib}/logging/logback-classic-${logback.version}.jar" />
+        <pathelement location="${rio.lib}/logging/logback-core-${logback.version}.jar" />
+        <pathelement location="${common.lib}/plexus-utils-${plexus.version}.jar" />
+        <!--<pathelement location="${env.SORCER_HOME}/classes" />-->
+    </path>
 
 
-	<target name="SSB">
-		<java classname="sorcer.ssb.ServiceBrowser" fork="yes" maxmemory="1g" spawn="${spawn}">
-			<arg value="../configs/ssb.config" />
-			<classpath>
-				<path refid="run.classpath" />
-			</classpath>
-			<sysproperty key="sorcer.home" value="${sorcer.home}" />
-			<sysproperty key="java.protocol.handler.pkgs" value="net.jini.url|sorcer.util.bdb.sos|org.rioproject.url" />
-			<sysproperty key="java.rmi.server.RMIClassLoaderSpi" value="org.rioproject.rmi.ResolvingLoader" />
-			<sysproperty key="java.security.policy" value="../policy/ssb.policy" />
-            <sysproperty key="RIO_HOME" value="${rio.home}"/>
-			<sysproperty key="java.rmi.server.useCodebaseOnly" value="false" />
-			<sysproperty key="ssb.logFile" value="${sorcer.home}/bin/browser/logs/browser.log" />
-			<sysproperty key="java.util.logging.config.file" value="../configs/browser-logging.properties" />
-			<sysproperty key="ssb.logLen" value="300" />
-		</java>
-	</target>
+    <target name="SSB">
+        <java classname="sorcer.ssb.ServiceBrowser" fork="yes" maxmemory="1g" spawn="${spawn}">
+            <arg value="../configs/ssb.config" />
+            <classpath>
+                <path refid="run.classpath" />
+            </classpath>
+            <sysproperty key="sorcer.home" value="${sorcer.home}" />
+            <sysproperty key="sorcer.version" value="${sorcer.version}" />
+            <sysproperty key="river.version" value="${river.version}" />
+            <sysproperty key="rio.version" value="${rio.version}" />
+            <sysproperty key="java.protocol.handler.pkgs" value="net.jini.url|sorcer.util.bdb.sos|org.rioproject.url" />
+            <sysproperty key="java.security.policy" value="../policy/ssb.policy" />
+            <sysproperty key="rio.home" value="${rio.home}"/>
+            <sysproperty key="java.rmi.server.useCodebaseOnly" value="false" />
+            <sysproperty key="ssb.logFile" value="${sorcer.home}/bin/browser/logs/browser.log" />
+            <sysproperty key="java.util.logging.config.file" value="../configs/browser-logging.properties" />
+            <sysproperty key="logback.configurationFile" value="../configs/browser-logging.groovy"/>
+            <sysproperty key="ssb.logLen" value="300" />
+<!--
+            <jvmarg value="-Xdebug"/>
+            <jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,address=8000"/>
+-->
+        </java>
+    </target>
 
 </project>

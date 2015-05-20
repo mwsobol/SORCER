@@ -10,5 +10,7 @@ jar {
 
 dependencies {
     compile project(':sorcer-platform')
+    compile project(':sos-netlet')
+    compile "commons-io:commons-io:${commonsIoVersion}"
 }
 

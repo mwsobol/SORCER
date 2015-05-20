@@ -15,10 +15,13 @@
  */
 package sorcer.core.deploy;
 
+import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
+import org.sorcer.test.TestsRequiringRio;
 import sorcer.core.SorcerConstants;
 import sorcer.service.ContextException;
 import sorcer.service.Exertion;
@@ -26,7 +29,8 @@ import sorcer.service.ExertionException;
 import sorcer.service.Job;
 
 import java.util.Collection;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.*;
 import static sorcer.eo.operator.*;
@@ -37,8 +41,9 @@ import static sorcer.eo.operator.*;
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("core/sorcer-int-tests/deploy-tests")
 public class DeployExertionTest extends DeploySetup implements SorcerConstants {
-    private final static Logger logger = Logger.getLogger(DeployExertionTest.class.getName());
+    private final static Logger logger = LoggerFactory.getLogger(DeployExertionTest.class.getName());
 
+    @Category(TestsRequiringRio.class)
     @Test
     public void deployAndExec() throws Exception {
         Job f1 = JobUtil.createJob();

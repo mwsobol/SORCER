@@ -37,7 +37,7 @@ class StartAll {
 
         def descriptors = []
         def configArg = ["${configPath}/adder-prv.config"]
-        def codebase = "${relativeRepoPath}/adder-${sorcerVersion}-dl.jar ${relativeRepoPath}/adder-${sorcerVersion}-ui.jar sorcer-dl-${sorcerVersion}.jar jsk-dl-${riverVersion}.jar"
+        def codebase = "${relativeRepoPath}/adder-${sorcerVersion}-dl.jar ${relativeRepoPath}/adder-${sorcerVersion}-ui.jar sorcer-dl-${sorcerVersion}.jar sorcer-ui-${sorcerVersion}.jar jsk-dl-${riverVersion}.jar"
 
         descriptors << new SorcerServiceDescriptor(codebase,
                                                    policy,

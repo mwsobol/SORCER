@@ -22,7 +22,8 @@ import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.service.*;
 import sorcer.service.Strategy.*;
 
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -42,116 +43,38 @@ import static sorcer.po.operator.put;
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/sml")
 public class NetJobExertions implements SorcerConstants {
-	private final static Logger logger = Logger.getLogger(NetJobExertions.class.getName());
-	
-	@Test
-	public void exertAdderProviderTest() throws Exception {
-		
-		Task t5 = task("t5",
-				sig("add", Adder.class),
-				context("add", inEnt("arg, x1", 20.0),
-						inEnt("arg, x2", 80.0), result("result/y")));
-		
-		t5 = exert(t5);
-		logger.info("t5 context: " + context(t5));
-		assertEquals(value(context(t5), "result/y"), 100.0);
-		
-	}
-	
-	@Test
-	public void evaluateAdder() throws Exception {
-		
-		Task t5 = task("t5",
-				sig("add", Adder.class),
-				context("add", inEnt("arg, x1", 20.0),
-						inEnt("arg, x2", 80.0), result("result/y")));
-		
-		assertEquals(value(t5), 100.0);
-		
-	}
-	
-	@Test
-	public void evaluateAverager() throws Exception {
-		
-		Task t5 = task(
-				"t5",
-				sig("average", Averager.class),
-				context("average", inEnt("arg, x1", 20.0),
-						inEnt("arg, x2", 80.0), result("result/y")));
-		t5 = exert(t5);
-		logger.info("t5 context: " + context(t5));
-		assertEquals(value(context(t5), "result/y"), 50.0);
-		
-	}
-	
-	@Test
-	public void arithmeticNetFiTask() throws Exception {
-		
-		Task task = task("add",
-				srvFi("net", sig("add", Adder.class)),
-				srvFi("object", sig("add", AdderImpl.class)),
-				context(inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
-						result("result/y")));
-		
-		logger.info("sFi: " + srvFi(task));
-		logger.info("sFis: " + srvFis(task));
-
-//		task = exert(task, sFi("object"));
-//		logger.info("exerted: " + task);
-//		assertTrue((Double)get(task) == 100.0);
-		
-		task = exert(task, srvFi("net"));
-		logger.info("exerted: " + task);
-		assertTrue("Wrong value for 100.0", (Double)get(task) == 100.0);
-	}
-	
-	@Test
-	public void arithmeticSpaceTaskTest() throws Exception {
-		
-		Task t5 = task(
-				"t5",
-				sig("add", Adder.class),
-				context("add", inEnt("arg/x1", 20.0),
-						inEnt("arg/x2", 80.0), outEnt("result/y")),
-				strategy(Access.PULL, Wait.YES));
-
-		t5 = exert(t5);
-		logger.info("t5 context: " + context(t5));
-		logger.info("t5 value: " + get(t5, "result/y"));
-		assertEquals("Wrong value for 100.0", get(t5, "result/y"), 100.0);
-		
-	}
+	private final static Logger logger = LoggerFactory.getLogger(NetJobExertions.class);
 	
 	@Test
 	public void arithmeticFiBatchJob() throws Exception {
 		
 		Task t3 = task("t3", 
-				srvFi("object", sig("subtract", SubtractorImpl.class), sig("average", AveragerImpl.class)),
-				srvFi("net", sig("subtract", Subtractor.class), sig("average", Averager.class)),
+				sFi("object", sig("subtract", SubtractorImpl.class), sig("average", AveragerImpl.class)),
+				sFi("net", sig("subtract", Subtractor.class), sig("average", Averager.class)),
 				context("t3-cxt", inEnt("arg/x1", null), inEnt("arg/x2", null),
 						outEnt("result/y", null)));
 				
-		Task t4 = task("t4", srvFi("object", sig("multiply", MultiplierImpl.class)),
-				srvFi("net", sig("multiply", Multiplier.class)),
+		Task t4 = task("t4", sFi("object", sig("multiply", MultiplierImpl.class)),
+				sFi("net", sig("multiply", Multiplier.class)),
 				context("multiply", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
 						outEnt("result/y", null)));
 
-		Task t5 = task("t5", srvFi("object", sig("add", AdderImpl.class)),
-				srvFi("net", sig("add", Adder.class)),
+		Task t5 = task("t5", sFi("object", sig("add", AdderImpl.class)),
+				sFi("net", sig("add", Adder.class)),
 				context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
 						outEnt("result/y")));
 
-		Job job = job("j1", srvFi("object", sig("service", ServiceJobber.class)),
-				srvFi("net", sig("service", Jobber.class)),
+		Job job = job("j1", sFi("object", sig("service", ServiceJobber.class)),
+				sFi("net", sig("service", Jobber.class)),
 				job("j2", sig("service", ServiceJobber.class), t4, t5), 
 				t3,
 				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
 				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")),
-				fiContext("mix1", srvFi("j1", "net"), csFi("j1/j2/t4", "net")),
-				fiContext("mix2", srvFi("j1", "net"), csFi("j1/j2/t4", "net"), csFi("j1/j2/t5", "net")));
+				fiContext("mix1", fi("j1", "net"), fi("j1/j2/t4", "net")),
+				fiContext("mix2", fi("j1", "net"), fi("j1/j2/t4", "net"), fi("j1/j2/t5", "net")));
 
 		//The Jobber and  all tasks are local with 'subtract' signature
-		Job result = exert(job, srvFi("object"), csFi("j1/t3", "object", "subtract"));
+		Job result = exert(job, sFi("object"), fi("j1/t3", "object", "subtract"));
 		logger.info("result context: " + serviceContext(result));
 		assertTrue((Double)get(result, "j1/t3/result/y") == 400.0);		
 
@@ -165,29 +88,29 @@ public class NetJobExertions implements SorcerConstants {
 	@Test
 	public void arithmeticFiJobTest() throws Exception {
 		
-		Task t3 = task("t3", srvFi("object", sig("subtract", SubtractorImpl.class)),
-				srvFi("net", sig("subtract", Subtractor.class)),
+		Task t3 = task("t3", sFi("object", sig("subtract", SubtractorImpl.class)),
+				sFi("net", sig("subtract", Subtractor.class)),
 				context("subtract", inEnt("arg/x1", null), inEnt("arg/x2", null),
 						outEnt("result/y")));
 
-		Task t4 = task("t4", srvFi("object", sig("multiply", MultiplierImpl.class)),
-				srvFi("net", sig("multiply", Multiplier.class)),
+		Task t4 = task("t4", sFi("object", sig("multiply", MultiplierImpl.class)),
+				sFi("net", sig("multiply", Multiplier.class)),
 				context("multiply", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
 						outEnt("result/y")));
 
-		Task t5 = task("t5", srvFi("object", sig("add", AdderImpl.class)),
-				srvFi("net", sig("add", Adder.class)),
+		Task t5 = task("t5", sFi("object", sig("add", AdderImpl.class)),
+				sFi("net", sig("add", Adder.class)),
 				context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
 						outEnt("result/y")));
 
-		Job job = job("j1", srvFi("object", sig("service", ServiceJobber.class)),
-				srvFi("net", sig("service", Jobber.class)),
+		Job job = job("j1", sFi("object", sig("service", ServiceJobber.class)),
+				sFi("net", sig("service", Jobber.class)),
 				job("j2", sig("service", ServiceJobber.class), t4, t5), 
 				t3,
 				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
 				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")),
-				fiContext("mix1", srvFi("j1", "net"), csFi("j1/j2/t4", "net")),
-				fiContext("mix2", srvFi("j1", "net"), csFi("j1/j2/t4", "net"), csFi("j1/j2/t5", "net")));
+				fiContext("mix1", fi("j1", "net"), fi("j1/j2/t4", "net")),
+				fiContext("mix2", fi("j1", "net"), fi("j1/j2/t4", "net"), fi("j1/j2/t5", "net")));
 		
 //		logger.info("sFi j1: " + sFi(job));
 //		logger.info("sFis j1: " + sFis(job));
@@ -204,22 +127,22 @@ public class NetJobExertions implements SorcerConstants {
 		assertTrue((Double)get(job, "j1/t3/result/y") == 400.0);
 		
 		// The remote Jobber with the all local task
-		job = exert(job, srvFi("net"));
+		job = exert(job, sFi("net"));
 		logger.info("job context: " + serviceContext(job));
 		assertTrue((Double)get(job, "j1/t3/result/y") == 400.0);
 
 		// The local Jobber with the remote Adder
-		job = exert(job, csFi("j1/j2/t4", "net"));
+		job = exert(job, fi("j1/j2/t4", "net"));
 		logger.info("job context: " + serviceContext(job));
 		assertTrue((Double)get(job, "j1/t3/result/y") == 400.0);
 		
 		// The remote Jobber with the remote Adder
 //		job = exert(job, cFi("j1/j2/t5", "net"));
-		job = exert(job, srvFi("object"), csFi("j1/j2/t4", "net"), csFi("j1/j2/t5", "net"));
+		job = exert(job, sFi("object"), fi("j1/j2/t4", "net"),fi("j1/j2/t5", "net"));
 		logger.info("job context: " + serviceContext(job));
 		assertTrue((Double) get(job, "j1/t3/result/y") == 400.0);
 				
-		job = exert(job, fiContext(srvFi("j1", "net"), csFi("j1/j2/t4", "net")));
+		job = exert(job, fiContext(fi("j1", "net"), fi("j1/j2/t4", "net")));
 		logger.info("job context: " + serviceContext(job));
 		assertTrue((Double)get(job, "j1/t3/result/y") == 400.0);
 		
@@ -234,22 +157,28 @@ public class NetJobExertions implements SorcerConstants {
 		
 		Task t3 = task("t3", sig("subtract", Subtractor.class), 
 				context("subtract", inEnt("arg/x1"), inEnt("arg/x2"),
+//						outEnt("result/y")), strategy(Monitor.YES));
 						outEnt("result/y")));
-
 		Task t4 = task("t4", sig("multiply", Multiplier.class), 
 				context("multiply", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
+//						outEnt("result/y")), strategy(Monitor.YES));
 						outEnt("result/y")));
 
 		Task t5 = task("t5", sig("add", Adder.class), 
 				context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
+//						outEnt("result/y")), strategy(Monitor.YES));
 						outEnt("result/y")));
+
 
 		// Service Composition j1(j2(t4(x1, x2), t5(x1, x2)), t3(x1, x2))
 		Job job = job("j1", 
-				job("j2", t4, t5, strategy(flow, access)), 
+//				job("j2", t4, t5, strategy(flow, access, Monitor.YES)),
 				t3,
-				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
+                job("j2", t4, t5, strategy(flow, access)),
+
+                pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
 				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
+//                strategy(Monitor.YES));
 				
 		return job;
 	}
@@ -287,6 +216,7 @@ public class NetJobExertions implements SorcerConstants {
 	
 	@Test
 	public void exertJobPullParTest() throws Exception {
+
 		Job job = createJob(Flow.PAR, Access.PULL);
 		job = exert(job);
 		//logger.info("job j1: " + job);
@@ -294,6 +224,7 @@ public class NetJobExertions implements SorcerConstants {
 		logger.info("job j1 job context: " + serviceContext(job));
 		//logger.info("job j1 value @ j1/t3/result/y = " + get(job, "j1/t3/result/y"));
 		assertEquals(get(job, "j1/t3/result/y"), 400.00);
+
 	}
 	
 	@Test

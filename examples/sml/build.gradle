@@ -80,6 +80,7 @@ dependencies {
     compile project(':sos-db-prv')
     testCompile project(':sorcer-test')
     testRuntime libs.slf4j
+	testRuntime libs.logback
 }
 
 def repoPath() {
@@ -90,7 +91,22 @@ bootme {
     starterConfig = file("${projectDir.path}/configs/StartAll.groovy")
     systemProperties = ["relative.repo.path" : repoPath()]
 //  spawn = false
+//	debug = true
 }
+
+def deployConfig = file("configs/arithmetic-prv.config")
+artifacts {
+	archives file: deployConfig, classifier: "deploy"
+}
+
+/*
+configbuilder {
+	codebase = "${project.group}:arithmetic:dl:$version"
+	serviceConfig = file("${project.projectDir.path}/configs/arithmetic-prv.config")
+	providerClass = 'sorcer.arithmetic.provider.impl.ArithmeticImpl'
+	configFile = deployConfig
+	jvmArgs = "-Xms512m -Xmx2g"
+}*/
 
 //task runRequestor(type:JavaExec, dependsOn:[jar, "bootme"]) {
 task runRequestor(type:JavaExec, dependsOn:[jar]) {

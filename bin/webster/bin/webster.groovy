@@ -82,17 +82,34 @@ args << java.toString()
 ["java.protocol.handler.pkgs": "net.jini.url|sorcer.util.url|org.rioproject.url",
  "java.security.policy" : "${sorcerHome}/policy/policy.all",
  "java.rmi.server.useCodebaseOnly" : "false",
+ "logback.configurationFile" : "${sorcerHome}/configs/sorcer-logging.groovy",
  "webster.debug" : "true",
  "webster.port" : "${sorcerEnv['provider.webster.port']}",
- "webster.interface" : "${config.webster.address}",
+ //"webster.interface" : "${config.webster.address}",
  "webster.tmp.dir" : "${sorcerHome}/data",
  "webster.root" : "${websterRoots.toString()}"
 ].each { key, value ->
     args << "-D${key}=${value}"
 }
 args << "-Xmx450M"
-args << "-jar"
-args << "${sorcerHome}/lib/sorcer/lib-ext/webster-${versions['sorcer.version']}.jar"
+args << "-cp"
+
+StringBuilder cp = new StringBuilder()
+String rioHome = "${sorcerHome}/rio-${versions['rio.version']}"
+def jars = ["${rioHome}/lib/logging/slf4j-api-${versions['slf4j.version']}.jar",
+            "${rioHome}/lib/logging/logback-core-${versions['logback.version']}.jar",
+            "${rioHome}/lib/logging/logback-classic-${versions['logback.version']}.jar",
+            "${rioHome}/lib/rio-platform-${versions['rio.version']}.jar",
+            "${sorcerHome}/lib/sorcer/lib/sorcer-platform-${versions['sorcer.version']}.jar",
+            "${sorcerHome}/lib/sorcer/lib-ext/webster-${versions['sorcer.version']}.jar"]
+for(String jar : jars) {
+    if(cp.length()>0)
+        cp.append(File.pathSeparator)
+    cp.append(jar)
+}
+
+args << cp.toString()
+args << "sorcer.tools.webster.Webster"
 
 ProcessBuilder pb = new ProcessBuilder(args as String[])
 Map<String, String> env = pb.environment()
@@ -109,7 +126,6 @@ if (!spawn) {
     config.webster.roots.each { root ->
         println "Root ${rootNum++} = $root"
     }
-    println "Webster serving on : ${config.webster.address}:${sorcerEnv['provider.webster.port']}"
     process.in.close()
     process.out.close()
     process.err.close()

@@ -24,8 +24,10 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.StringTokenizer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -46,7 +48,7 @@ import sorcer.core.provider.util.PropertyHelper;
  */
 public class PlatformLoader {
     static final String COMPONENT = "sorcer.provider.boot";
-    static final Logger logger = Logger.getLogger(COMPONENT);
+    static final Logger logger = LoggerFactory.getLogger(COMPONENT);
 
     /**
      * Parse the platform
@@ -73,7 +75,7 @@ public class PlatformLoader {
                                 platformList.addAll(
                                     parsePlatform(file.toURI().toURL()));
                             } catch (Exception e) {
-                                logger.log(Level.WARNING,
+                                logger.warn(
                                            "Could not parse ["+file.getAbsolutePath()+"], " +
                                            "continue building platform",
                                            e);
@@ -81,18 +83,18 @@ public class PlatformLoader {
                         }
                     }
                 } else {
-                    logger.warning("No read permissions for platform " +
+                    logger.warn("No read permissions for platform " +
                                    "directory ["+directory+"]");
                 }
             } else {
-                logger.warning("Platform directory ["+dir+"] " +
+                logger.warn("Platform directory ["+dir+"] " +
                                "is not a directory");
             }
         } else {
-            logger.warning("Platform directory ["+directory+"] not found");
+            logger.warn("Platform directory ["+directory+"] not found");
         }
         Capability[] caps = platformList.toArray(new Capability[platformList.size()]);
-        logger.finer("Platform capabilities: " + Arrays.toString(caps));
+        logger.debug("Platform capabilities: " + Arrays.toString(caps));
         return caps;
     }
 
@@ -136,7 +138,7 @@ public class PlatformLoader {
                         if(file.exists())
                             capabilities.add(cap);
                         else
-                            logger.warning("Platform configuration " +
+                            logger.warn("Platform configuration " +
                                            "for ["+cap+"] not loaded, " +
                                            "the path ["+cap.getPath()+"] " +
                                            "does not exist. Make sure the " +
@@ -166,7 +168,7 @@ public class PlatformLoader {
                                     sb.append(" ");
                                 sb.append(s);
                             }
-                            logger.warning("Platform configuration " +
+                            logger.warn("Platform configuration " +
                                            "for ["+cap+"] not loaded, " +
                                            "could not locate classpath " +
                                            "entry ["+failedClassPathEntry+"]. The "+

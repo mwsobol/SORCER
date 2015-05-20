@@ -65,10 +65,15 @@ public class AltExertion extends Task implements ConditionalExertion {
 				opt = optExertions.get(i);
 				if (opt.condition.isTrue()) {
 					opt.isActive = true;
-					opt.getTarget().getDataContext().append(opt.condition.getConditionalContext());					
-					opt.setTarget((Exertion)opt.getTarget().exert(txn));
-					dataContext = (ServiceContext)opt.getTarget().getContext();
-					controlContext.append(opt.getTarget().getControlContext());
+					Context cxt = opt.condition.getConditionalContext();
+					if (cxt != null) {
+						Condition.clenupContextScripts(cxt);
+						((ServiceContext) opt.getTarget().getDataContext()).updateEntries(cxt);
+					}
+					Exertion out = opt.getTarget().exert(txn);
+					opt.setTarget(out);
+					dataContext = (ServiceContext) out.getContext();
+					controlContext.append(out.getControlContext());
 					dataContext.putValue(Condition.CONDITION_VALUE, true);
 					dataContext.putValue(Condition.CONDITION_TARGET, opt.getName());
 					return this;
@@ -78,6 +83,7 @@ public class AltExertion extends Task implements ConditionalExertion {
 			dataContext.putValue(Condition.CONDITION_TARGET, opt.getName());
 			dataContext.setExertion(null);
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new ExertionException(e);
 		}
 		return this;
@@ -109,8 +115,8 @@ public class AltExertion extends Task implements ConditionalExertion {
 	}
 	
 	public void reset(int state) {
-		for(ServiceExertion e : optExertions)
-			e.reset(state);
+			for (ServiceExertion e : optExertions)
+				e.reset(state);
 		
 		this.setStatus(state);
 	}
@@ -138,18 +144,18 @@ public class AltExertion extends Task implements ConditionalExertion {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see sorcer.service.Exertion#getExertions()
+	 * @see sorcer.service.Exertion#getMograms()
 	 */
 	@Override
-	public List<Exertion> getExertions() {
-		ArrayList<Exertion> list = new ArrayList<Exertion>(1);
+	public List<Mogram> getMograms() {
+		ArrayList<Mogram> list = new ArrayList<Mogram>(1);
 		list.addAll(optExertions);
 		return list;
 	}
 	
-	public List<Exertion> getExertions(List<Exertion> exs) {
+	public List<Mogram> getMograms(List<Mogram> exs) {
 		for (Exertion e : optExertions)
-			((ServiceExertion) e).getExertions(exs);
+			((ServiceExertion) e).getMograms(exs);
 		exs.add(this);
 		return exs;
 	}

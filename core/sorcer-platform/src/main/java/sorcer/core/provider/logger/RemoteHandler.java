@@ -22,6 +22,7 @@ import java.util.logging.Level;
 import java.util.logging.LogRecord;
 
 import sorcer.core.provider.RemoteLogger;
+import sorcer.service.Accessor;
 import sorcer.util.ProviderLookup;
 
 /**
@@ -54,8 +55,8 @@ public class RemoteHandler extends Handler {
 			savedCcl = t.getContextClassLoader();
 			t.setContextClassLoader(ccl);
 
-			RemoteLogger logger = (RemoteLogger) ProviderLookup.getProvider(
-					RemoteLogger.class, providerName);
+			RemoteLogger logger = (RemoteLogger)Accessor.getServiceItem(providerName,
+                    RemoteLogger.class).service;
 			
 			if (isLoggable(record) && logger != null)
 				logger.publish(record);

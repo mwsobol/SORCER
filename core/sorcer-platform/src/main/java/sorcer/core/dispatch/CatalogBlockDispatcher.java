@@ -1,7 +1,8 @@
 /*
  * Copyright 2013 the original author or authors.
  * Copyright 2013 SorcerSoft.org.
- *  
+ * Copyright 2014 SorcerSoft.com S.A.
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -17,25 +18,21 @@
 
 package sorcer.core.dispatch;
 
-import java.rmi.RemoteException;
-import java.util.Set;
-
-import sorcer.core.SorcerConstants;
+import net.jini.core.lease.Lease;
+import net.jini.lease.LeaseRenewalManager;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.par.ParModel;
 import sorcer.core.exertion.AltExertion;
 import sorcer.core.exertion.LoopExertion;
 import sorcer.core.exertion.OptExertion;
+import sorcer.core.monitor.MonitorUtil;
+import sorcer.core.monitor.MonitoringSession;
 import sorcer.core.provider.Provider;
-import sorcer.service.Block;
-import sorcer.service.Condition;
-import sorcer.service.Context;
-import sorcer.service.ContextException;
-import sorcer.service.Exertion;
-import sorcer.service.ExertionException;
-import sorcer.service.ServiceExertion;
-import sorcer.service.SignatureException;
-import sorcer.service.Task;
+import sorcer.service.*;
+
+import java.rmi.RemoteException;
+import java.util.List;
+import java.util.Set;
 
 /**
  * A dispatching class for exertion blocks in the PUSH mode.
@@ -44,23 +41,19 @@ import sorcer.service.Task;
  */
 @SuppressWarnings({"rawtypes", "unchecked" })
 
-public class CatalogBlockDispatcher extends CatalogExertDispatcher implements
-		SorcerConstants {
+public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
 
-	public CatalogBlockDispatcher(Block block, Set<Context> sharedContext,
+	public CatalogBlockDispatcher(Exertion block, Set<Context> sharedContext,
 			boolean isSpawned, Provider provider,
-			ProvisionManager provisionManager) throws Throwable {
+            ProvisionManager provisionManager) throws ContextException, RemoteException {
 		super(block, sharedContext, isSpawned, provider, provisionManager);
-	}
-	
-	public void dispatchExertions() throws ExertionException,
-			SignatureException {
-        checkAndDispatchExertions();
-		inputXrts = xrt.getExertions();
-		reset();
-		// reconcileInputExertions(xrt);
-		collectResults();
-		
+        block.getDataContext().append((Context) block.getScope());
+    }
+
+
+    @Override
+    protected void doExec() throws MogramException, SignatureException {
+        super.doExec();
 		try {
 			Condition.cleanupScripts(xrt);
 		} catch (ContextException e) {
@@ -68,117 +61,80 @@ public class CatalogBlockDispatcher extends CatalogExertDispatcher implements
 		}
 	}
 
-	public void collectResults() throws ExertionException, SignatureException {
-		try {
-			String pn = null;
-			if (inputXrts == null || inputXrts.size() == 0) {
-				xrt.setStatus(FAILED);
-				state = FAILED;
-				try {
-					pn = provider.getProviderName();
-					if (pn == null)
-						pn = provider.getClass().getName();
-					ExertionException fe = new ExertionException(pn + " received invalid job: "
-							+ xrt.getName(), xrt);
+    @Override
+    protected void beforeExec(Exertion exertion) throws ExertionException, SignatureException {
+        super.beforeExec(exertion);
+        try {
+            preUpdate(exertion);
+            if (exertion.getDataContext() != null) {
+                if (exertion.getDataContext().getScope() != null)
+                    exertion.getDataContext().getScope().append(xrt.getDataContext());
+                else {
+//                  exertion.getDataContext().setScope(xrt.getContext());
+                    exertion.getDataContext().setScope(new ParModel());
+                    exertion.getDataContext().getScope().append(xrt.getContext());
+                }
+            }
+        } catch (Exception ex) {
+            throw new ExertionException(ex);
+        }
+    }
 
-					xrt.reportException(fe);
-					dispatchers.remove(xrt.getId());
-					throw fe;
-				} catch (RemoteException e) {
-					// ignore it, local call
-				}
-			}
+    @Override
+    protected void afterExec(Exertion result) throws ContextException, ExertionException {
+        super.afterExec(result);
+        try {
+            postUpdate(result);
+            Condition.cleanupScripts(result);
+            //TODO Not very nice
+            /*MonitoringSession monSession = MonitorUtil.getMonitoringSession(result);
+            if (result.isBlock() && result.isMonitorable() && monSession!=null) {
+                boolean isFailed = false;
+                for (Exertion xrt : result.getAllMograms()) {
+                    if (xrt.getStatus()==Exec.FAILED || xrt.getStatus()==Exec.ERROR) {
+                        isFailed = true;
+                        break;
+                    }
+                }
+                monSession.changed(result.getContext(), (isFailed ? Exec.FAILED : Exec.DONE));
+            }*/
+        } catch (RemoteException e) {
+            throw new ExertionException(e);
+        /*} catch (MonitorException e) {
+            throw new ExertionException(e);*/
+        }
+    }
 
-			ServiceExertion se = null;
-			xrt.startExecTime();
-			for (int i = 0; i < inputXrts.size(); i++) {
-				se = (ServiceExertion) inputXrts.get(i);
-				try {
-					((ServiceContext)se.getContext()).setBlockScope(xrt.getContext());
-				} catch (ContextException ce) {
-					throw new ExertionException(ce);
-				}
-				// Provider is expecting exertion to be in context
-				try {
-					se.getContext().setExertion(se);
-				
-				// support for continuous pre and post execution of task
-				// signatures
-				if (i > 0 && se.isTask() && ((Task) se).isContinous())
-					se.setContext(inputXrts.get(i - 1).getContext());
-				} catch (ContextException ex) {
-					throw new ExertionException(ex);
-				}
-				if (isInterupted(se)) {
-					se.stopExecTime();
-					dispatchers.remove(xrt.getId());
-					return;
-				}
-
-				try {
-					preUpdate(se);
-					se = (ServiceExertion) execExertion(se);
-				} catch (ContextException ce) {
-					throw new ExertionException(ce);
-				}
-				
-				if (se.getStatus() <= FAILED) {
-					xrt.setStatus(FAILED);
-					state = FAILED;
-					try {
-						pn = provider.getProviderName();
-						if (pn == null)
-							pn = provider.getClass().getName();
-						ExertionException fe = new ExertionException(pn
-								+ " received failed task: " + se.getName(), se);
-						xrt.reportException(fe);
-						dispatchers.remove(xrt.getId());
-						throw fe;
-					} catch (RemoteException e) {
-						// ignore it, local call
-					}
-				} else if (se.getStatus() == SUSPENDED
-						|| xrt.getControlContext().isReview(se)) {
-					xrt.setStatus(SUSPENDED);
-					ExertionException ex = new ExertionException(
-							"exertion suspended", se);
-					se.reportException(ex);
-					dispatchers.remove(xrt.getId());
-					throw ex;
-				}
-				try {
-					postUpdate(se);
-				} catch (Exception e) {
-					throw new ExertionException(e);
-				}
-			}
-
-			state = DONE;
-			dispatchers.remove(xrt.getId());
-			xrt.stopExecTime();
-			xrt.setStatus(DONE);
-		} finally {
-			dThread.stop = true;
-		}
-	}
-
-	private void preUpdate(ServiceExertion exertion) throws ContextException {
+    private void preUpdate(Exertion exertion) throws ContextException {
 		if (exertion instanceof AltExertion) {
 			for (OptExertion oe : ((AltExertion)exertion).getOptExertions()) {
-				oe.getCondition().getConditionalContext().append(xrt.getContext());
-				((OptExertion)oe).getCondition().setStatus(null);
+                oe.getCondition().getConditionalContext().append(xrt.getContext());
+				oe.getCondition().setStatus(null);
 			}
+            MonitoringSession monSession = MonitorUtil.getMonitoringSession(exertion);
+            if (exertion.isMonitorable() && monSession!=null) {
+                try {
+                    monSession.init((Monitorable) provider.getProxy(), ExertionDispatcherFactory.LEASE_RENEWAL_PERIOD,
+                            ExertionDispatcherFactory.DEFAULT_TIMEOUT_PERIOD);
+                    if (getLrm()==null) setLrm(new LeaseRenewalManager());
+                    getLrm().renewUntil(monSession.getLease(), Lease.FOREVER, ExertionDispatcherFactory.LEASE_RENEWAL_PERIOD, null);
+                } catch (RemoteException re) {
+                    logger.error("Problem initializing Monitor Session for: " + exertion.getName(), re);
+                } catch (MonitorException e) {
+                    logger.error("Problem initializing Monitor Session for: " + exertion.getName(), e);
+                }
+            }
 		} else if (exertion instanceof OptExertion) {
 			Context pc = ((OptExertion)exertion).getCondition().getConditionalContext();
 			((OptExertion)exertion).getCondition().setStatus(null);
 			if (pc == null) {
 				pc = new ParModel(exertion.getName());
 				((OptExertion)exertion).getCondition().setConditionalContext(pc);
-			}
-			pc.append(xrt.getContext());
+            }
+            pc.append(xrt.getContext());
 		} else if (exertion instanceof LoopExertion) {
-			Context pc = ((LoopExertion)exertion).getCondition().getConditionalContext();
-			((Condition)((LoopExertion)exertion).getCondition()).setStatus(null);
+			((LoopExertion)exertion).getCondition().setStatus(null);
+			Context pc = ((LoopExertion)exertion).getCondition().getConditionalContext();			
 			if (pc == null) {
 				pc = new ParModel(exertion.getName());
 				((LoopExertion)exertion).getCondition().setConditionalContext(pc);
@@ -187,32 +143,49 @@ public class CatalogBlockDispatcher extends CatalogExertDispatcher implements
 		}
 	}
 	
-	private void postUpdate(ServiceExertion exertion) throws ContextException, RemoteException {
-		if (exertion instanceof AltExertion) {
-			((Block)xrt).getContext().append(((AltExertion)exertion).getActiveOptExertion().getContext());
+	private void postUpdate(Exertion exertion) throws ContextException, RemoteException {
+        if (exertion instanceof Job) {
+            xrt.getDataContext().append(exertion.getDataContext());
+        } else if (exertion instanceof AltExertion) {
+			xrt.getContext().append(((AltExertion)exertion).getActiveOptExertion().getDataContext());
+            /*MonitoringSession monSession = MonitorUtil.getMonitoringSession(exertion);
+            if (exertion.isMonitorable() && monSession!=null) {
+                try {
+                    monSession.changed(exertion.getContext(), exertion.getStatus());
+                    getLrm().remove(monSession.getLease());
+                } catch (RemoteException re) {
+                    logger.error("Problem initializing Monitor Session for: " + exertion.getName(), re);
+                } catch (MonitorException e) {
+                    logger.error("Problem initializing Monitor Session for: " + exertion.getName(), e);
+                } catch (UnknownLeaseException e) {
+                    logger.error("Problem removing monitoring lease for: " + exertion.getName(), e);
+                }
+            } */
 		} else if (exertion instanceof OptExertion) {
-			((Block)xrt).getContext().append(((OptExertion)exertion).getContext());
+			xrt.getContext().append(exertion.getDataContext());
 		}
-		
+
 //		if (exertion instanceof AltExertion) {
 //			((ParModel)((Block)xrt).getContext()).appendNew(((AltExertion)exertion).getActiveOptExertion().getContext());
 //		} else if (exertion instanceof OptExertion) {
 //			((ParModel)((Block)xrt).getContext()).appendNew(((OptExertion)exertion).getContext());
 //		}
 		
-		ServiceContext cxt = (ServiceContext)xrt.getContext();
-		if (((ServiceContext)exertion.getContext()).getReturnPath() != null)
-			cxt.putOutValue(((ServiceContext)exertion.getContext()).getReturnPath().path, 
-					exertion.getContext().getReturnValue()); 
-		else 
-			cxt.appendNewEntries(exertion.getContext());
-		
-		((ServiceContext)exertion.getContext()).setBlockScope(null);
+		ServiceContext cxt = (ServiceContext)xrt.getDataContext();
+		if (exertion.getDataContext().getReturnPath() != null)
+            cxt.putValue(exertion.getContext().getReturnPath().path,
+                    exertion.getDataContext().getReturnValue());
+		else
+             cxt.updateEntries(exertion.getDataContext());
+
+        if (! (exertion instanceof Block))
+		    ((ServiceContext)exertion.getDataContext()).setScope(null);
+//		if (cxt.getReturnPath() != null)
+//			cxt.putValue(cxt.getReturnPath().path, cxt.getReturnValue());
 	}
-	
-	private void reset() {
-		xrt.setStatus(INITIAL);
-		for (Exertion e : ((Block)xrt).getExertions())
-			((ServiceExertion)e).reset(INITIAL);
+
+    protected List<Mogram> getInputExertions() {
+        return xrt.getMograms();
 	}
+
 }

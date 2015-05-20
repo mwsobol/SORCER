@@ -32,7 +32,8 @@ import sorcer.util.bdb.objects.SorcerDatabaseViews;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.List;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static sorcer.co.operator.inEnt;
 import static sorcer.eo.operator.*;
@@ -42,7 +43,7 @@ import static sorcer.eo.operator.*;
  */
 @SuppressWarnings({ "rawtypes", "unchecked" } )
 public class SdbUtil {
-	private static final Logger logger = Logger.getLogger(SdbUtil.class.getName());
+	private static final Logger logger = LoggerFactory.getLogger(SdbUtil.class.getName());
 
 	public static boolean isSosURL(Object url) {
 		if (url instanceof URL && ((URL)url).getProtocol().equals("sos"))

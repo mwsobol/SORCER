@@ -20,6 +20,7 @@ package sorcer.util;
 import java.rmi.RemoteException;
 
 import sorcer.core.provider.Provider;
+import sorcer.service.Accessor;
 
 public class ProviderDestroyer {
 
@@ -31,8 +32,7 @@ public class ProviderDestroyer {
 		// args: providerName, serviceInfo
 		if (args.length == 3) {
 			Class serviceType = Class.forName(args[1]);
-			Provider prv = (Provider) ProviderLookup.getProvider(
-					serviceType, Sorcer.getActualName(args[0]));
+			Provider prv = (Provider) Accessor.getServiceItem(Sorcer.getActualName(args[0]), serviceType).service;
 			try {
 				if (args[2].equals("true")) {
 

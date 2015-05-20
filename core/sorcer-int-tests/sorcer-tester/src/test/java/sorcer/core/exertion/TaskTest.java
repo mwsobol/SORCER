@@ -3,6 +3,8 @@ package sorcer.core.exertion;
 //import com.gargoylesoftware,base,testing,TestUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.tester.provider.Adder;
@@ -13,7 +15,6 @@ import sorcer.service.Strategy.Provision;
 import sorcer.service.Strategy.Wait;
 
 import java.rmi.RemoteException;
-import java.util.logging.Logger;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -28,8 +29,7 @@ import static sorcer.eo.operator.value;
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("core/sorcer-int-tests/sorcer-tester")
 public class TaskTest {
-	private final static Logger logger = Logger.getLogger(TaskTest.class
-			.getName());
+	private final static Logger logger = LoggerFactory.getLogger(TaskTest.class);
 
 	@Test
 	public void freeArithmeticTaskTest() throws ExertionException, SignatureException, ContextException {
@@ -111,15 +111,15 @@ public class TaskTest {
 		ServiceExertion.debug = true;
 		
 		Task task = task("add",
-				srvFi("net", sig("add", Adder.class)),
-				srvFi("object", sig("add", AdderImpl.class)),
+				sFi("net", sig("add", Adder.class)),
+				sFi("object", sig("add", AdderImpl.class)),
 				context(inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
 						result("result/y")));
 		
 //		logger.info("sFi: " + sFi(task));
 //		logger.info("sFis: " + sFis(task));
 
-		task = exert(task, srvFi("object"));
+		task = exert(task, sFi("object"));
 		logger.info("exerted: " + task);
 		assertTrue("Wrong value for 100.0", (Double)get(task) == 100.0);
 		

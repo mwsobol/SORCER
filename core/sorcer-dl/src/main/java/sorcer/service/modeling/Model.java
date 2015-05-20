@@ -33,33 +33,54 @@ public interface Model extends Mogram, Dependency {
     public Context getOutputs()  throws ContextException, RemoteException;
 
     /**
-     *  Returns a context od all specified responses of this model. 
+     *  Requests a context of all evaluated responses of this model.
      *
-     * @param entries  optional configuration arguments
+     * @param args  optional configuration arguments
      * @return
      * @throws ContextException
      * @throws RemoteException
      */
-    public Context getResponses(Arg... entries)  throws ContextException, RemoteException;
+    public Object getResponse(Arg... args)  throws ContextException, RemoteException;
 
     /**
-     * Returns a response for a given <code>path</code>
-     *  
-     * @param path a path of the response in the model
-     * @param entries  optional configuration arguments
+     *  Returns a context of current responses of this model.
+     *
      * @return
      * @throws ContextException
      * @throws RemoteException
      */
-    public Object getResponse(String path, Arg... entries)  throws ContextException, RemoteException;
+    public Object getResult() throws ContextException, RemoteException;
 
     /**
      * Returns a default response of this model
      *
-     * @return  a default response
+     * @param responseName a response name of the model
      * @throws ContextException
      * @throws RemoteException
      */
-    public Object getResponse(Arg... entries) throws ContextException, RemoteException;
+    public void addResponse(String responseName) throws ContextException, RemoteException;
+
+    /**
+     *  Returns a inConnector as a map of input paths of tis model mapped to output paths of the sender.
+     *  A inConnector specifies a map of an input context of this model.
+     *
+     * @param args  optional configuration arguments
+     * @return
+     * @throws ContextException
+     * @throws RemoteException
+     */
+    public Context getInConnector(Arg... args)  throws ContextException, RemoteException;
+
+    /**
+     *  Returns a inConnector as a map of input paths of the receiver to output path of this model.
+     *  A inConnector specifies a map of an input context as needed by another collaborating service.
+     *
+     * @param args  optional configuration arguments
+     * @return                                                                                  s
+     * @throws ContextException
+     * @throws RemoteException
+     */
+
+    public Context getOutConnector(Arg... args)  throws ContextException, RemoteException;
 
 }

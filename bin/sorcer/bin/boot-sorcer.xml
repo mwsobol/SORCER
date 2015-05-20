@@ -20,19 +20,25 @@
 		</antcall>
 	</target>
 
+<!--
     <target name="log-dir">
         <mkdir dir="${basedir}/../logs" />
     </target>
-				
-	<target name="kernel" depends="log-dir">
+-->
+
+	<target name="kernel">
 		<!--java jar="${lib}/sorcer-boot.jar" fork="yes"-->
 		<java classname="com.sun.jini.start.ServiceStarter" fork="yes" spawn="${spawn}">
             <classpath>
                 <pathelement location="${lib}/river/start-${river.version}.jar"/>
                 <pathelement location="${sorcer.lib}/sorcer-boot-${sorcer.version}.jar"/>
+				<pathelement location="${sorcer.lib}/sorcer-resolving-loader-${sorcer.version}.jar" />
                 <pathelement location="${rio.lib}/rio-platform-${rio.version}.jar" />
                 <pathelement location="${rio.lib}/rio-start-${rio.version}.jar" />
-                <pathelement location="${rio.lib}/logging/slf4j-jdk14-${slf4j.version}.jar" />
+                <pathelement location="${rio.lib}/logging/slf4j-api-${slf4j.version}.jar" />
+                <pathelement location="${rio.lib}/logging/logback-core-${logback.version}.jar" />
+                <pathelement location="${rio.lib}/logging/jul-to-slf4j-${slf4j.version}.jar" />
+                <pathelement location="${rio.lib}/logging/logback-classic-${logback.version}.jar" />
             </classpath>
             <env key="SORCER_HOME" value="${sorcer.home}"/>
 			<env key="RIO_HOME" value="${sorcer.home}/rio-${rio.version}"/>
@@ -42,21 +48,25 @@
 			<sysproperty key="river.version" value="${river.version}" />
 			<sysproperty key="blitz.version" value="${blitz.version}" />
 			<sysproperty key="je.version" value="${je.version}" />
+			<sysproperty key="commonsio.version" value="${commonsio.version}" />
 			<sysproperty key="rio.version" value="${rio.version}" />
+            <sysproperty key="plexus.version" value="${plexus.version}" />
 			<sysproperty key="rio.home" value="${sorcer.home}/rio-${rio.version}" />
+            <sysproperty key="rio.log.dir" value="${sorcer.home}/logs"/>
+            <sysproperty key="org.rioproject.service" value="sorcer"/>
 			<sysproperty key="sorcer.env.file" value="${sorcer.home}/configs/sorcer.env" />
 			<sysproperty key="java.rmi.server.useCodebaseOnly" value="false" />
 			<sysproperty key="java.security.policy" value="${sorcer.home}/policy/sorcer.policy" />
 			<sysproperty key="java.util.logging.config.file" value="${sorcer.home}/configs/sorcer.logging" />
+            <sysproperty key="logback.configurationFile" value="${sorcer.home}/configs/sorcer-logging.groovy"/>
 			<sysproperty key="webster.tmp.dir" value="${sorcer.data}" />
 			<jvmarg value="-Xms512m"/>
 			<jvmarg value="-Xmx1g"/>
 			<sysproperty key="java.protocol.handler.pkgs" value="net.jini.url|sorcer.util.url|org.rioproject.url" />
-			<sysproperty key="java.rmi.server.RMIClassLoaderSpi" value="org.rioproject.rmi.ResolvingLoader"/>
 			<!--sysproperty key=""webster.debug"" value="true" /-->
 			<!--sysproperty key="webster.port" value="60009" /-->
-			<!--jvmarg value="-Xdebug"/>
-			<jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,address=8000"/-->
+<!--			<jvmarg value="-Xdebug"/>
+			<jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,address=8000"/>-->
 		</java>
 	</target>
 

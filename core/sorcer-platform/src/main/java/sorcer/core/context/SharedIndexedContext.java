@@ -30,8 +30,8 @@ import net.jini.space.JavaSpace05;
 import sorcer.service.ContextException;
 import sorcer.service.IndexedContext;
 import sorcer.service.SpaceContext;
+import sorcer.service.space.SpaceAccessor;
 import sorcer.space.array.DistribArray05;
-import sorcer.util.ProviderAccessor;
 
 /**
  * ServiceContext implementing the java.util.List interface.
@@ -47,8 +47,8 @@ public class SharedIndexedContext<T extends Object> extends ServiceContext imple
 	public SharedIndexedContext(String spaceName) {
 		super();
 		this.spaceName = spaceName;
-		JavaSpace05 space = ProviderAccessor.getSpace(spaceName);
-		spaceElements = new DistribArray05(space, "" + contextId);
+		JavaSpace05 space = SpaceAccessor.getSpace(spaceName);
+		spaceElements = new DistribArray05(space, "" + mogramId);
 	}
 	
 	public SharedIndexedContext(String spaceName, T... elements) throws ContextException {
@@ -109,9 +109,9 @@ public class SharedIndexedContext<T extends Object> extends ServiceContext imple
 		String path;
 		int i;
 		elements.add(index, element);
-		Enumeration en = contextPaths();
-		while (en.hasMoreElements()) {
-			path = (String)en.nextElement();
+		Iterator en = keyIterator();
+		while (en.hasNext()) {
+			path = (String)en.next();
 			i = pathIndex(path);
 			if (i > index) {
 				putValue(pathFor(i+1), elements.get(i+1));
@@ -312,7 +312,7 @@ public class SharedIndexedContext<T extends Object> extends ServiceContext imple
 	}
 	
 	private void setSpace() {
-		JavaSpace05 space = ProviderAccessor.getSpace(spaceName);
+		JavaSpace05 space = SpaceAccessor.getSpace(spaceName);
 		spaceElements.setSpace(space);
 	}
 

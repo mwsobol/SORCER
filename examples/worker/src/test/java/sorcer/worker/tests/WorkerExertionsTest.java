@@ -3,12 +3,13 @@ package sorcer.worker.tests;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.service.*;
 import sorcer.service.Strategy.Access;
 import sorcer.service.Strategy.Flow;
-import sorcer.util.Log;
 import sorcer.worker.provider.Worker;
 import sorcer.worker.provider.impl.WorkerBean;
 import sorcer.worker.provider.impl.WorkerProvider;
@@ -16,7 +17,6 @@ import sorcer.worker.requestor.Works;
 
 import java.net.InetAddress;
 import java.net.URL;
-import java.util.logging.Logger;
 
 import static org.junit.Assert.assertEquals;
 import static sorcer.co.operator.*;
@@ -30,7 +30,7 @@ import static sorcer.eo.operator.*;
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/worker")
 public class WorkerExertionsTest {
-	private static Logger logger = Log.getTestLog();
+	private final static Logger logger = LoggerFactory.getLogger(WorkerExertionsTest.class);
 
 	static private Context context;
 	static private String hostname;

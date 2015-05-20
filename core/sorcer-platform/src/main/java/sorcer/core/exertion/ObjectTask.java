@@ -27,7 +27,6 @@ import sorcer.service.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
-import java.util.List;
 
 import static sorcer.eo.operator.provider;
 
@@ -48,7 +47,7 @@ public class ObjectTask extends Task {
 	}
 
 	public ObjectTask(String name, Signature... signatures) {
-		super(name);
+		this(name);
 		for (Signature s : signatures) {
 			if (s instanceof ObjectSignature)
 				addSignature(s);
@@ -57,7 +56,7 @@ public class ObjectTask extends Task {
 
 	public ObjectTask(String name, String description, Signature signature)
 			throws SignatureException {
-		super(name);
+		this(name);
 		if (signature instanceof ObjectSignature)
 			addSignature(signature);
 		else
@@ -82,16 +81,22 @@ public class ObjectTask extends Task {
 	public ObjectTask(Signature signature, Context context)
 			throws SignatureException {
 		addSignature(signature);
-		this.dataContext = (ServiceContext) context;
+		if (context != null)
+			this.dataContext = (ServiceContext) context;
 	}
 
 	@SuppressWarnings("unchecked")
-	public Task doTask(Transaction txn) throws ExertionException, SignatureException, RemoteException {
+	public Task doTask(Transaction txn) throws ExertionException, SignatureException, RemoteException, MogramException {
 		MethodInvoker evaluator = null;
 		ObjectSignature os = (ObjectSignature) getProcessSignature();
 		dataContext.setCurrentSelector(os.getSelector());
 		dataContext.setCurrentPrefix(os.getPrefix());
 		try {
+			if (getProcessSignature().getReturnPath() != null && getProcessSignature().getReturnPath().inPaths != null)
+				dataContext.updateContext(getProcessSignature().getReturnPath().inPaths);
+			else
+				dataContext.updateContext();
+//			dataContext = (ServiceContext)dataContext.getCurrentContext();
 			if (dataContext.getArgs() != null)
 				os.setArgs(dataContext.getArgs());
 			if (dataContext.getParameterTypes() != null)
@@ -117,14 +122,12 @@ public class ObjectTask extends Task {
 			if (os.getReturnPath() != null)
 				dataContext.setReturnPath(os.getReturnPath());
 
+//			Context currentContext = dataContext;
 			if (result == null) {
 				if (getArgs() == null && os.getParameterTypes() == null) {
 					// assume this task context is used by the signature's
 					// provider
 					if (dataContext != null) {
-						if (scope != null && scope.size() > 0) {
-							appendScope();
-						}
 						evaluator
 								.setParameterTypes(new Class[] { Context.class });
 						evaluator.setContext(dataContext);
@@ -146,12 +149,13 @@ public class ObjectTask extends Task {
 						Context out = dataContext.getSubcontext(rp.outPaths);
 						dataContext.setReturnValue(out);
 					}
-				} else {
-					dataContext.append((Context)result);
+				} else if (dataContext.getScope() != null) {
+					dataContext.getScope().append((Context)result);
 				}
 			} else {
 				dataContext.setReturnValue(result);
 			}
+			dataContext.updateContextWith(os.getOutConnector());
 		} catch (Throwable e) {
 			e.printStackTrace();
 			dataContext.reportException(e);
@@ -183,17 +187,6 @@ public class ObjectTask extends Task {
 			result = method.invoke(null, (Object[])null);
 		}
 		return result;
-	}
-
-	private void appendScope() throws ContextException {
-		if (scope != null) {
-			List<String> paths = dataContext.getPaths();
-			for (String path : paths) {
-				if (dataContext.getValue(path) == Context.none) {
-					dataContext.putValue(path, scope.getValue(path));
-				}
-			}
-		}
 	}
 
 	public Object getArgs() throws ContextException {

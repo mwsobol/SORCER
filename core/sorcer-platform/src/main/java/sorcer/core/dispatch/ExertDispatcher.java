@@ -17,251 +17,266 @@
 
 package sorcer.core.dispatch;
 
-import net.jini.core.event.RemoteEvent;
 import net.jini.id.Uuid;
 import net.jini.id.UuidFactory;
+import net.jini.lease.LeaseRenewalManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sorcer.co.tuple.Tuple2;
+import sorcer.core.DispatchResult;
 import sorcer.core.Dispatcher;
-import sorcer.core.SorcerConstants;
-import sorcer.core.SorcerNotifierProtocol;
 import sorcer.core.context.Contexts;
-import sorcer.core.context.ControlContext;
 import sorcer.core.context.ServiceContext;
-import sorcer.core.exertion.Jobs;
-import sorcer.core.exertion.NetJob;
-import sorcer.core.misc.MsgRef;
-import sorcer.core.provider.Cataloger;
+import sorcer.core.exertion.Mograms;
+import sorcer.core.monitor.MonitorUtil;
+import sorcer.core.monitor.MonitoringSession;
 import sorcer.core.provider.Provider;
 import sorcer.service.*;
-import sorcer.util.Log;
-import sorcer.util.ProviderAccessor;
-import sorcer.util.Sorcer;
-import sorcer.util.SorcerUtil;
+import sorcer.service.modeling.Model;
 
 import javax.security.auth.Subject;
-import java.io.File;
 import java.lang.reflect.Array;
 import java.rmi.RemoteException;
-import java.rmi.server.UID;
 import java.util.*;
-import java.util.logging.Logger;
+import static sorcer.service.Exec.*;
 
 @SuppressWarnings("rawtypes")
-abstract public class ExertDispatcher implements Dispatcher,
-		SorcerConstants, Exec {
-	protected final static Logger logger = Log.getDispatchLog();
+abstract public class ExertDispatcher implements Dispatcher {
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-	protected ServiceExertion xrt;
+    protected ServiceExertion xrt;
 
-	protected ServiceExertion masterXrt;
+    protected ServiceExertion masterXrt;
 
-	protected List<Exertion> inputXrts;
+    protected List<Mogram> inputXrts;
 
-	protected volatile int state = INITIAL;
+	protected volatile int state = Exec.INITIAL;
 
-	protected boolean isMonitored;
+    protected boolean isMonitored;
 
-	protected Set<Context> sharedContexts;
+    protected Set<Context> sharedContexts;
 
-	// If it is spawned by another dispatcher.
-	protected boolean isSpawned;
+    // All dispatchers spawned by this one.
+    protected List<Uuid> runningExertionIDs = Collections.synchronizedList(new LinkedList<Uuid>());
 
-	// All dispatchers spawned by this one.
-	protected Vector runningExertionIDs = new Vector();
+    // subject for whom this dispatcher is running.
+    // make sure subject is set before and after any object goes out and comes
+    // in dispatcher.
+    protected Subject subject;
 
-	// subject for whom this dispatcher is running.
-	// make sure subject is set before and after any object goes out and comes
-	// in dispatcher.
-	protected Subject subject;
+    protected Provider provider;
 
-	protected Provider provider;
-
-	protected static Cataloger catalog; // The SORCER catalog
-
-	protected static Hashtable<Uuid, ExertDispatcher> dispatchers 
-		= new Hashtable<Uuid, ExertDispatcher>();
+    protected static Map<Uuid, Dispatcher> dispatchers
+            = new HashMap<Uuid, Dispatcher>();
 
 	protected ThreadGroup disatchGroup;
-	
-	protected DispatchThread dThread;
-	
-	protected ProvisionManager provisionManager;
+    protected ProvisionManager provisionManager;
 
-	public static Hashtable<Uuid, ExertDispatcher> getDispatchers() {
+    public static Map<Uuid, Dispatcher> getDispatchers() {
 		return dispatchers;
 	}
 
-	public static void setDispatchers(Hashtable<Uuid, ExertDispatcher> dispatchers) {
-		ExertDispatcher.dispatchers = dispatchers;
-	}
+    public Provider getProvider() {
+        return provider;
+    }
 
-	public Provider getProvider() {
-		return provider;
-	}
+    public void setProvider(Provider provider) {
+        this.provider = provider;
+    }
 
-	public void setProvider(Provider provider) {
-		this.provider = provider;
-	}
 
-	public ExertDispatcher() {
-	}
+    private LeaseRenewalManager lrm = null;
 
-	public ExertDispatcher(Exertion exertion, 
-            Set<Context> sharedContexts,
-            boolean isSpawned, 
-            Provider provider,
-            ProvisionManager provisionManager) {
-		ServiceExertion sxrt = (ServiceExertion)exertion;
-		this.xrt = (ServiceExertion)sxrt;
-		this.subject = sxrt.getSubject();
-		this.sharedContexts = sharedContexts;
-		this.isSpawned = isSpawned;
-		this.isMonitored = sxrt.isMonitorable();
-		this.provider = provider;
-		sxrt.setStatus(RUNNING);
-		this.provisionManager = provisionManager;
-		initialize();
-	}
+	public ExertDispatcher(Exertion exertion,
+                           Set<Context> sharedContexts,
+                           boolean isSpawned,
+                           Provider provider,
+                           ProvisionManager provisionManager) {
+        ServiceExertion sxrt = (ServiceExertion)exertion;
+		this.xrt = sxrt;
+        this.subject = sxrt.getSubject();
+        this.sharedContexts = sharedContexts;
+        this.isMonitored = sxrt.isMonitorable();
+        this.provider = provider;
+        this.provisionManager = provisionManager;
+    }
 
-	protected void initialize() {
-		dispatchers.put(xrt.getId(), this);
-		state = RUNNING;
-		if (xrt instanceof NetJob) {
-			masterXrt = (ServiceExertion) ((NetJob) xrt)
-					.getMasterExertion();
-		}
-	}
+    public void exec() {
+        dispatchers.put(xrt.getId(), this);
+        state = Exec.RUNNING;
+        xrt.setStatus(state);
+        if (xrt instanceof Job) {
+            masterXrt = (ServiceExertion) ((Job) xrt).getMasterExertion();
+        }
+        try {
+            beforeParent(xrt);
+            doExec();
+            afterExec(xrt);
+            xrt.finalizeOutDataContext();
+        } catch (Exception e) {
+            logger.warn("Exertion dispatcher thread killed by exception: {}", e.getMessage());
+            xrt.setStatus(Exec.FAILED);
+            state = Exec.FAILED;
+            xrt.reportException(e);
+        } finally {
+            try {
+                MonitoringSession monSession = MonitorUtil.getMonitoringSession(xrt);
+                if (lrm!=null && monSession!=null) lrm.remove(monSession.getLease());
+            } catch (Exception ce) {
+                logger.warn("Problem removing lease for : " + xrt.getName() + " " + Exec.State.name(xrt.getStatus()) , ce);
+            }
+            dispatchers.remove(xrt.getId());
+        }
+    }
 
-	abstract public void dispatchExertions() throws ExertionException,
-			SignatureException;
+    abstract protected void doExec() throws SignatureException, ExertionException, RemoteException, MogramException;
+    abstract protected List<Mogram> getInputExertions() throws ContextException;
+
+    protected void beforeParent(Exertion exertion) throws ContextException, ExertionException {
+        logger.debug("before parent {}", exertion);
+        reconcileInputExertions(exertion);
+        updateInputs(exertion);
+        checkProvision();
+        inputXrts = getInputExertions();
+    }
+
+    protected void beforeExec(Exertion exertion) throws ExertionException, SignatureException {
+        logger.debug("before exert {}", exertion);
+        try {
+            // Provider is expecting exertion to be in context
+            exertion.getContext().setExertion(exertion);
+            updateInputs(exertion);
+        } catch (ContextException e) {
+            throw new ExertionException(e);
+        }
+        // If Job, new dispatcher will update inputs for it's Exertion
+        // in catalog dispatchers, if it is a job, then new dispatcher is
+        // spawned
+        // and the shared contexts are passed. So the new dispatcher will update
+        // inputs
+        // of tasks inside the jobExertion. But in space, all inputs to a new
+        // job are
+        // to be updated before dropping.
+        try {
+            exertion.getControlContext().appendTrace(provider.getProviderName()
+                    + " dispatcher: " + getClass().getName());
+        } catch (RemoteException e) {
+            logger.warn("Exception on local call", e);
+        }
+        ((ServiceExertion) exertion).startExecTime();
+        exertion.setStatus(Exec.RUNNING);
+
+    }
+
+    protected void afterExec(Exertion result) throws ContextException, ExertionException {
+        logger.debug("After exert {}", result);
+    }
+
+    @Override
+    public DispatchResult getResult() {
+        /**
+         * The default implementation - wait for status to be changed by another thread
+         */
+
+        try {
+            while (!finished())
+                Thread.sleep(50);
+        } catch (InterruptedException e) {
+            logger.warn("Interrupted!", e);
+        }
+        return new DispatchResult(State.values()[state], xrt);
+    }
+
+    private boolean finished(){
+        return state == State.DONE.ordinal() || state == State.FAILED.ordinal();
+    }
 
     /**
      * If the {@code Exertion} is provisionable, deploy services.
      *
      * @throws ExertionException if there are issues dispatching the {@code Exertion}
      */
-    protected void checkAndDispatchExertions() throws ExertionException {
-    	
-    	logger.info("Task isProvisionable = "+xrt.isProvisionable());
-        if(xrt.isProvisionable()) {
+    protected void checkProvision() throws ExertionException {
+        if(xrt.isProvisionable() && xrt.getDeployments().size()>0) {
             try {
-                getProvisionManager().deployServices();
+                provisionManager.deployServices();
             } catch (DispatcherException e) {
-            	logger.severe("Unable to deploy services, exception = " + e);
+            	logger.warn("Unable to deploy services, exception = " + e);
             	e.printStackTrace();
                 throw new ExertionException("Unable to deploy services", e);
             }
         }
     }
 
-	abstract public void collectResults() throws ExertionException,
-			SignatureException;
+    public Exertion getExertion() {
+        return xrt;
+    }
 
-	// Pre-processing before execution/writing into space
-	abstract protected void preExecExertion(Exertion ex)
-			throws ExertionException, SignatureException;
+    public int getState() {
+        return state;
+    }
 
-	// Post Processing after execution/taking from space.
-	abstract protected void postExecExertion(Exertion input, Exertion result)
-			throws ExertionException, SignatureException;
+    public void setState(int state) {
+        this.state = state;
+    }
 
-	public Exertion getExertion() {
-		return xrt;
-	}
+    protected class CollectResultThread implements Runnable {
+        public void run() {
+            xrt.startExecTime();
+            try {
+                collectResults();
+                xrt.setStatus(DONE);
+            } catch (Exception ex) {
+                xrt.setStatus(FAILED);
+                xrt.reportException(ex);
+                ex.printStackTrace();
+            }
+            if (xrt.isExecTimeRequested())
+                xrt.stopExecTime();
+            dispatchers.remove(xrt.getId());
+        }
+    }
 
-	public static ExertDispatcher getDispatcher(String jobID) {
-		return dispatchers.get(jobID);
-	}
+    protected void collectResults() throws ExertionException, SignatureException{}
+    //protected abstract void dispatchExertions() throws ExertionException, SignatureException;
 
-	public int getState() {
-		return state;
-	}
+    protected void collectOutputs(Mogram mo) throws ContextException {
+        if (sharedContexts == null) {
+            logger.warn("Trying to update sharedContexts but it is null for exertion: " + mo);
+            return;
+        }
+        if (mo instanceof Exertion) {
+            List<Context> contexts = Mograms.getTaskContexts((Exertion) mo);
+            logger.debug("Contexts to check if shared: " + contexts.toString());
+            for (Context ctx : contexts) {
+                if (((ServiceContext) ctx).isShared()) {
+                    sharedContexts.add(ctx);
+                    logger.debug("Added exertion shared context: " + ctx);
+                }
+            }
+        } else if (mo instanceof Model) {
+            try {
+                sharedContexts.add((Context) ((Model)mo).getResponse());
+                logger.debug("Added model shared context: " + mo);
+            } catch (RemoteException e) {
+                throw new ContextException(e);
+            }
+        }
 
-	public void setState(int state) {
-		this.state = state;
-	}
-	
-	protected class DispatchThread extends Thread {
-		volatile boolean stop = false;
-		
-		public DispatchThread() {
-		}
-
-		public DispatchThread(ThreadGroup disatchGroup) {
-			super(disatchGroup, "exertionDispatcher");
-		}
-
-		public void run() {
-			try {
-				while (!stop) {
-					dispatchExertions();
-				}
-			} catch (Exception e) {
-				interrupt();
-				e.printStackTrace();
-				xrt.setStatus(FAILED);
-				state = FAILED;
-				xrt.reportException(e);
-			}
-			dispatchers.remove(xrt.getId());
-		}
-	}
-
-	protected class CollectResultThread extends Thread {
-
-		public CollectResultThread(ThreadGroup disatchGroup) {
-			super(disatchGroup, "Result collector");
-		}
-
-		public void run() {
-			if (xrt.isExecTimeRequested())
-				xrt.startExecTime();
-			try {
-				collectResults();
-				xrt.setStatus(DONE);
-				if (dThread != null)
-					dThread.stop = true;
-			} catch (Throwable ex) {
-				xrt.setStatus(FAILED);
-				xrt.reportException(ex);
-				ex.printStackTrace();
-			}
-			if (xrt.isExecTimeRequested())
-				xrt.stopExecTime();
-			dispatchers.remove(xrt.getId());
-		}
-	}
-
-	public static String createExertionID(ServiceExertion ex) {
-		// create unique identifier for job
-		return new UID().toString() + ex.getName();
-	}
-
-	// Recursively collect shared contexts for inner jobs
-	protected void collectSharedContexts(Exertion ex) throws ContextException {
-		for (Exertion innerEx: ex.getExertions()) { 
-			if (!innerEx.isJob()) 
-				collectOutputs(innerEx);
-			else
-				collectSharedContexts(innerEx);
-		}
-	}
-	
-	protected void collectOutputs(Exertion ex) throws ContextException {
-		List<Context> contexts = Jobs.getTaskContexts(ex);
-		for (int i = 0; i < contexts.size(); i++) {
+//      for (int i = 0; i < contexts.size(); i++) {
 //			if (!sharedContexts.contains(contexts.get(i)))
 //				sharedContexts.add(contexts.get(i));
-		if (((ServiceContext)contexts.get(i)).isShared())
-			sharedContexts.add(contexts.get(i));
-		}
-	}
+//            if (((ServiceContext)contexts.get(i)).isShared())
+//                sharedContexts.add(contexts.get(i));
+//        }
+    }
 
-	protected void updateInputs(Exertion ex) throws ExertionException, ContextException {
-		List<Context> inputContexts = Jobs.getTaskContexts(ex);
-		for (int i = 0; i < inputContexts.size(); i++)
-			updateInputs((ServiceContext) inputContexts.get(i));
-	}
+    protected void updateInputs(Exertion ex) throws ExertionException, ContextException {
+        logger.debug("updating inputs for {}", ex.getName());
+        List<Context> inputContexts = Mograms.getTaskContexts(ex);
+        for (Context inputContext : inputContexts)
+            updateInputs((ServiceContext) inputContext);
+    }
 
 	protected void updateInputs(ServiceContext toContext)
 			throws ExertionException {
@@ -269,11 +284,13 @@ abstract public class ExertDispatcher implements Dispatcher,
 		String toPath = null, newToPath = null, toPathcp, fromPath = null;
 		int argIndex = -1;
 		try {
-			Hashtable toInMap = Contexts.getInPathsMap(toContext);
-//			logger.info("**************** updating inputs in context toContext = " + toContext);
-//			logger.info("**************** updating based on = " + toInMap);
-			for (Enumeration e = toInMap.keys(); e.hasMoreElements();) {
-				toPath = (String) e.nextElement();
+			Map<String, String> toInMap = Contexts.getInPathsMap(toContext);
+			if (toInMap.size()>0) {
+                logger.debug("updating inputs in context toContext = {}", toContext);
+                logger.debug("updating based on = {}", toInMap);
+            }
+			for (Map.Entry<String, String> e  : toInMap.entrySet()) {
+                toPath = e.getKey();
 				// find argument for parametric context
 				if (toPath.endsWith("]")) {
 					Tuple2<String, Integer> pair = getPathIndex(toPath);
@@ -282,399 +299,106 @@ abstract public class ExertDispatcher implements Dispatcher,
 						newToPath = pair._1;
 					}
 				}
-				toPathcp = (String) toInMap.get(toPath);
-//				logger.info("**************** toPathcp = " + toPathcp);
+				toPathcp = e.getValue();
+				logger.debug("toPathcp = {}", toPathcp);
 				fromPath = Contexts.getContextParameterPath(toPathcp);
-//				logger.info("**************** context ID = " + Contexts.getContextParameterID(toPathcp));
-				fromContext = getSharedContext(fromPath, Contexts.getContextParameterID(toPathcp));
-//				logger.info("**************** fromContext = " + fromContext);
-//				logger.info("**************** before updating toContext: " + toContext
-//						+ "\n>>> TO path: " + toPath + "\nfromContext: "
-//						+ fromContext + "\n>>> FROM path: " + fromPath);
-				if (fromContext != null) {
-//					logger.info("**************** updating toContext: " + toContext
-//							+ "\n>>> TO path: " + toPath + "\nfromContext: "
-//							+ fromContext + "\n>>> FROM path: " + fromPath);
-					// make parametric substitution if needed
-					if (argIndex >=0 ) {
-						Object args = toContext.getValue(Context.PARAMETER_VALUES);
-						if (args.getClass().isArray()) {
-							if (Array.getLength(args) > 0) {
-								Array.set(args, argIndex, fromContext.getValue(fromPath));
-							} else {
-								// the parameter array is empty
-								Object[] newArgs = null;
-								newArgs = new Object[] { fromContext.getValue(fromPath) };
-								toContext.putValue(newToPath, newArgs);
-							}
-						}
-					} else {
-						// make contextual substitution
-						Contexts.copyValue(fromContext, fromPath, toContext, toPath);
-					}
-//					logger.info("**************** updated context:\n" + toContext);
-				}
-			}
-		} catch (Exception ex) {
-			throw new ExertionException("Failed to update data context: " + toContext.getName() 
-					+ " at: " + toPath + " from: " + fromPath, ex);
-		}
-	}
+                String ctxId = Contexts.getContextParameterID(toPathcp);
+				if (ctxId.length()>0) logger.debug("context ID = {}", ctxId);
+				fromContext = getSharedContext(fromPath, ctxId);
+				logger.debug("fromContext = {}", fromContext);
+				logger.debug("before updating toContext: {}", toContext
+                        + "\n>>> TO path: " + toPath + "\nfromContext: "
+                        + fromContext + "\n>>> FROM path: " + fromPath);
+                if (fromContext != null) {
+					//logger.debug("updating toContext: {}", toContext
+                    //        + "\n>>> TO path: " + toPath + "\nfromContext: "
+                     //       + fromContext + "\n>>> FROM path: " + fromPath);
+                    // make parametric substitution if needed
+                    if (argIndex >=0 ) {
+                        Object args = toContext.getValue(Context.PARAMETER_VALUES);
+                        if (args.getClass().isArray()) {
+                            if (Array.getLength(args) > 0) {
+                                Array.set(args, argIndex, fromContext.getValue(fromPath));
+                            } else {
+                                // the parameter array is empty
+								Object[] newArgs;
+                                newArgs = new Object[] { fromContext.getValue(fromPath) };
+                                toContext.putValue(newToPath, newArgs);
+                            }
+                        }
+                    } else {
+                        // make contextual substitution
+                        Contexts.copyValue(fromContext, fromPath, toContext, toPath);
+                    }
+					logger.debug("updated dataContext:\n" + toContext);
+                }
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+			throw new ExertionException("Failed to update data dataContext: " + toContext.getName()
+                    + " at: " + toPath + " from: " + fromPath + "\n" + ex.getMessage(), ex);
+        }
+    }
 
-	private Tuple2<String, Integer> getPathIndex(String path) {
-		int index = -1;
-		String newPath = null;
-		int i1 = path.lastIndexOf('/');
-		String lastAttribute = path.substring(i1+1);
-		if (lastAttribute.charAt(0) == '[' && lastAttribute.charAt(lastAttribute.length()-1) == ']') {
-			index = Integer.parseInt(lastAttribute.substring(1, lastAttribute.length()-1));
-			newPath = path.substring(0, i1+1);
-		}
-		return new Tuple2<String, Integer>(newPath, index);
-	}
-	
-	protected ServiceContext getSharedContext(String path, String id) {
-		// try to get the context with particular id.
-		// If not found, then find a context with particular path.
-		Context hc;
-		if (ServiceContext.EMPTY_LEAF.equals(path) || "".equals(path))
-			return null;
-		if (id != null && id.length() > 0) {
-			Iterator<Context> it = sharedContexts.iterator();
-			while (it.hasNext()) {
-				hc = it.next();
-				if (UuidFactory.create(id).equals(hc.getId()))
-					return (ServiceContext)hc;
-			}
-		}
-		else {
-			Iterator<Context> it = sharedContexts.iterator();
-			while (it.hasNext()) {
-				hc = it.next();
-				if (hc.containsPath(path))
-					return (ServiceContext)hc;
-			}
-		}
-		return null;
-	}
+    private Tuple2<String, Integer> getPathIndex(String path) {
+        int index = -1;
+        String newPath = null;
+        int i1 = path.lastIndexOf('/');
+        String lastAttribute = path.substring(i1+1);
+        if (lastAttribute.charAt(0) == '[' && lastAttribute.charAt(lastAttribute.length() - 1) == ']') {
+            index = Integer.parseInt(lastAttribute.substring(1, lastAttribute.length()-1));
+            newPath = path.substring(0, i1+1);
+        }
+        return new Tuple2<String, Integer>(newPath, index);
+    }
 
-	public void notifyExertionExecution(Exertion inex, Exertion outex) throws ContextException {
-		notifyExertionExecution(xrt, inex, outex);
-	}
-	
-	public void notifyExertionExecution(Exertion parent, Exertion inex, Exertion outex) throws ContextException {
-		if (inex instanceof Conditional && outex instanceof Conditional) {
-			// do nothing for now
-		} else if (inex.isTask()
-				&& outex.isTask())
-			notifyTaskExecution(parent, (ServiceExertion) inex, (ServiceExertion) outex);
-	}
+    protected ServiceContext getSharedContext(String path, String id) {
+		// try to get the dataContext with particular id.
+		// If not found, then find a dataContext with particular path.
+		if (Context.EMPTY_LEAF.equals(path) || "".equals(path))
+            return null;
+        synchronized (sharedContexts) {
+            if (id != null && id.length() > 0) {
+                for (Context hc : sharedContexts) {
+                    Uuid sharedCtxId = UuidFactory.create(id);
+                    logger.debug("Comparing: " + sharedCtxId + " with: " + hc.getId() + "\n" + hc);
+                    if (sharedCtxId.equals(hc.getId()))
+                        return (ServiceContext) hc;
+                }
+            } else {
+                for (Context hc : sharedContexts) {
+                    if (hc.containsPath(path))
+                        return (ServiceContext) hc;
+                }
+            }
+        }
+        return null;
+    }
 
-	private void notifyTaskExecution(Exertion parent, ServiceExertion inTask,
-			ServiceExertion outTask) throws ContextException {
-		// notify o MASTER task completion
-		Vector recipients = null;
-		String notifyees = ((ControlContext)parent.getControlContext()).getNotifyList(inTask);
-		if (notifyees != null) {
-			String[] list = SorcerUtil.tokenize(notifyees, MAIL_SEP);
-			recipients = new Vector(list.length);
-			for (int i = 0; i < list.length; i++)
-				recipients.addElement(list[i]);
-		}
+    public boolean isMonitorable() {
+        return isMonitored;
+    }
 
-		String to = "", admin = Sorcer.getProperty("sorcer.admin");
-		if (recipients == null) {
-			if (admin != null) {
-				recipients = new Vector();
-				recipients.addElement(admin);
-			}
-		} else if (admin != null && !recipients.contains(admin))
-			recipients.addElement(admin);
+    protected void reconcileInputExertions(Mogram mo) throws ContextException {
+        if (mo.getStatus() == DONE) {
+            collectOutputs(mo);
+            if (inputXrts != null)
+                inputXrts.remove(mo);
+        } else {
+            mo.setStatus(INITIAL);
+            if (mo instanceof CompoundExertion) {
+                CompoundExertion ce = (CompoundExertion) mo;
+                for (Mogram sub : ce.getMograms())
+                    reconcileInputExertions(sub);
+            }
+        }
+    }
 
-		if (recipients == null || recipients.size() == 0)
-			return;
+    public LeaseRenewalManager getLrm() {
+        return lrm;
+    }
 
-		StringBuffer sb;
-		if (inTask == masterXrt)
-			sb = new StringBuffer("SORCER Master Task ");
-		else
-			sb = new StringBuffer("SORCER Task ");
-
-		sb.append(outTask.getName()).append("\n\nDescription:\n").append(
-				outTask.getDescription());
-		if (outTask.getStatus() > 0)
-			sb
-					.append("\n\nTask executed sucessfully with the input context:\n");
-		else
-			sb.append("\n\nTask execution FAILED; The input context was:\n");
-		sb.append(inTask.contextToString()).append(
-				"\n\nincluding the following output context:\n").append(
-				outTask.getContext());
-		sb.append("\n\nincluding the specific output paths:\n").append(
-				Contexts.getFormattedOut(outTask.getContext(), true));
-
-		for (int i = 0; i < recipients.size() - 1; i++)
-			to = to + recipients.elementAt(i) + ",";
-
-		to = to + recipients.lastElement();
-
-		// sendMailWithSubject(sb.toString(), outTask.getName(), to);
-	}
-
-	protected String getDataURL(String filename) {
-		String dataURL = Sorcer.getProperty("sorcer.dataURL");
-		dataURL.replace('/', File.separatorChar);
-		if (!dataURL.endsWith(File.separator))
-			dataURL += File.separator;
-		return dataURL + filename;
-	}
-
-	protected String getDataFilename(String filename) {
-		if (filename.charAt(0) == File.separatorChar)
-			return filename;
-
-		String baseDir = Sorcer.getProperty("sorcer.baseDir");
-		String dataDir = Sorcer.getProperty("sorcer.dataDir");
-		baseDir.replace('/', File.separatorChar);
-		dataDir.replace('/', File.separatorChar);
-		if (!baseDir.endsWith(File.separator)) {
-			baseDir += File.separator;
-		}
-		if (!dataDir.endsWith(File.separator)) {
-			dataDir += File.separator;
-		}
-		return baseDir + dataDir + filename;
-	}
-
-	public boolean isMonitorable() {
-		return isMonitored;
-	}
-
-	/*
-	 * protected void setTaskProvider(RemoteServiceTask task, String name) {
-	 * ServiceContext[] ctxs = task.getContexts(); String providerPath =
-	 * TASK_PROVIDER + "/" + task.getName() + "/ind" + task.index;
-	 * ctxs[0].putValue(OUT_PATH_PROVIDER, providerPath);
-	 * ctxs[0].putValue(providerPath, name); }
-	 */
-
-	protected void notifyFailure(String msg, ServiceExertion t, long seqNum) {
-		SorcerNotifierProtocol fni = null;// SorcerNotifierImpl.getSorcerNotifier();
-		// CacheServer cs = (CacheServer) ServiceProviderAccessor.getCache();
-		String msgID = null;
-		String UserID = null;
-
-		long dummy = 0;/* dummy eventID value for the remote event */
-
-		/* persist the message to the DB and get back the MsgId */
-		// msgID = cs.storeMessage(msg, String jobID, t.taskID,
-		// NOTIFY_FAILEDURE);
-		MsgRef mr = null;// new MsgRef(t.taskID, this.job.getID(), msgID ,
-		// UserID, NOTIFY_FAILEDURE);
-		RemoteEvent re = new RemoteEvent(mr, dummy, seqNum, null);
-	}
-
-	protected void notifyException(String msg, ServiceExertion t, long seqNum) {
-		SorcerNotifierProtocol fni = null;// SorcerNotifierImpl.getSorcerNotifier();
-		// CacheServer cs = (CacheServer) ServiceProviderAccessor.getCache();
-		String msgID = null;
-		String UserID = null;
-
-		long dummy = 0;/* dummy eventID value for the remote event */
-
-		/* persist the message to the DB and get back the MsgId */
-		// msgID = cs.storeMessage(msg, String jobID, t.taskID,
-		// NOTIFY_EXCEPTION);
-		MsgRef mr = null;// new MsgRef(t.taskID, this.job.getID(), msgID ,
-		// UserID, NOTIFY_EXCEPTION);
-		RemoteEvent re = new RemoteEvent(mr, dummy, seqNum, null);
-	}
-
-	protected void notifyInformation(String msg, ServiceExertion t, long seqNum) {
-		SorcerNotifierProtocol fni = null; // SorcerNotifierImpl.getSorcerNotifier();
-		// CacheServer cs = (CacheServer) ServiceProviderAccessor.getCache();
-		String msgID = null;
-		String UserID = null;
-
-		long dummy = 0;/* dummy eventID value for the remote event */
-
-		/* persist the message to the DB and get back the MsgId */
-		// msgID = cs.storeMessage(msg, String jobID, t.taskID,
-		// NOTIFY_INFORMATION);
-		MsgRef mr = null;// new MsgRef(t.taskID, this.job.getID(), msgID ,
-		// UserID, NOTIFY_INFORMATION);
-		RemoteEvent re = new RemoteEvent(mr, dummy, seqNum, null);
-	}
-
-	protected void notifyWarning(String msg, ServiceExertion t, long seqNum) {
-		SorcerNotifierProtocol fni = null; // SorcerNotifierImpl.getSorcerNotifier();
-		// CacheServer cs = (CacheServer) ServiceProviderAccessor.getCache();
-		String msgID = null;
-		String UserID = null;
-		long dummy = 0;/* dummy eventID value for the remote event */
-
-		/* persist the message to the DB and get back the MsgId */
-		// msgID = cs.storeMessage(msg, String jobID, t.taskID, NOTIFY_WARNING);
-		MsgRef mr = null;// new MsgRef(t.taskID, this.job.getID(), msgID ,
-		// UserID, NOTIFY_WARNING);
-		RemoteEvent re = new RemoteEvent(mr, dummy, seqNum, null);
-	}
-
-	public NetJob stopJob() throws RemoteException {
-
-		// job.setStatus(HALTED);
-		// for (int i=0;i<runningExertionIDs.size();i++) {
-		// dispatcher = getDispatcher((String)runningExertionIDs.elementAt(i));
-		// if (dispatcher!=null)
-		// dispatcher.stopJob();
-		// }
-		return (NetJob)xrt;
-	}
-
-	public NetJob suspendJob() throws RemoteException {
-		ExertDispatcher dispatcher = null;
-		// job.setStatus(SUSPENDED);
-		// for (int i=0;i<runningExertionIDs.size();i++) {
-		// dispatcher = getDispatcher((String)runningExertionIDs.elementAt(i));
-		// if (dispatcher!=null)
-		// dispatcher.suspendJob();
-		// }
-		return (NetJob)xrt;
-	}
-
-	protected boolean isInterupted(Exertion ex) throws ExertionException,
-			SignatureException {
-		// if (job.getStatus() == FAILED) {
-		// runtimeStore(job, UPDATE_EXERTION);
-		// dispatchers.remove(job.getID());
-		// state = FAILED;
-		// return true;
-		// }
-		// else if (ex.getStatus() == SUSPENDED || job.getStatus() == SUSPENDED)
-		// {
-		// job.setStatus(SUSPENDED);
-		// ex.setStatus(SUSPENDED);
-		// runtimeStore(job, UPDATE_EXERTION);
-		// dispatchers.remove(job.getID());
-		// state = SUSPENDED;
-		// return true;
-		// }
-		// if (job.getStatus() == HALTED) {
-		// runtimeStore(job, REMOVE_JOB);
-		// dispatchers.remove(job.getID());
-		// state = HALTED;
-		// return true;
-		// }
-		return false;
-	}
-
-	public NetJob resumeJob() throws RemoteException, ExertionException {
-		return null;
-	}
-
-	public NetJob stepJob() throws RemoteException, ExertionException {
-		return null;
-	}
-
-	// All these codes needs to be revisited
-	private void setExertionFlags(Exertion ex) {
-		ServiceExertion exi = (ServiceExertion) ex;
-		if (exi.isJob()) {
-			for (int j = 0; j < ((Job) ex).size(); j++) {
-				setExertionFlags(((Job) ex).get(j));
-			}
-		}
-	}
-
-	protected Cataloger getCatalog() {
-		try {
-			if (catalog == null)
-				catalog = ProviderAccessor.getCataloger();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return catalog;
-	}
-
-	public ProvisionManager getProvisionManager() {
-		return provisionManager;
-	}
-	
-	public static void sendCheckPointEmail(ServiceExertion task, NetJob job) {
-		// notify o MASTER task completion
-		Vector recipents = null;
-		String notifyees = job.getControlContext().getNotifyList(task);
-		if (notifyees != null) {
-			String[] list = SorcerUtil.tokenize(notifyees, MAIL_SEP);
-			recipents = new Vector(list.length);
-			for (int i = 0; i < list.length; i++)
-				recipents.addElement(list[i]);
-		}
-
-		String to = "", admin = Sorcer.getProperty("sorcer.admin");
-		if (recipents == null) {
-			if (admin != null) {
-				recipents = new Vector();
-				recipents.addElement(admin);
-			}
-		} else if (admin != null && !recipents.contains(admin))
-			recipents.addElement(admin);
-
-		if (recipents == null || recipents.size() == 0)
-			return;
-
-		StringBuffer sb;
-
-		sb = new StringBuffer("CHECKPOINT: SORCER Task ");
-
-		sb.append(task.getName()).append("\n\nDescription:\n").append(
-				task.getDescription()).append("\n" + task.contextToString());
-
-		for (int i = 0; i < recipents.size() - 1; i++)
-			to = to + recipents.elementAt(i) + ",";
-
-		to = to + recipents.lastElement();
-
-		if (to == null)
-			to = Sorcer.getProperty("sorcer.admin");
-
-		// sendMailWithSubject(sb.toString(), "Checkpoint, "+task.getName(),
-		// to);
-	}
-
-	protected void reconcileInputExertions(Exertion ex) throws ContextException {
-		ServiceExertion ext = (ServiceExertion)ex;
-		if (ext.getStatus() == DONE) {
-			collectOutputs(ex);
-			if (inputXrts != null)
-				inputXrts.remove(ex);
-		} else {
-			ext.setStatus(INITIAL);
-			if (!ex.isTask()) {
-				for (int i = 0; i < ((CompoundExertion) ex).size(); i++)
-					reconcileInputExertions(((CompoundExertion) ex).get(i));
-			}
-		}
-	}
-
-	protected void prepareJob() throws ExertionException, ContextException {
-		Jobs.removeExceptions((Job)xrt);
-		if (xrt != null
-				&& ((xrt.getStatus() == SUSPENDED)
-						|| (xrt.getStatus() == INITIAL) || (xrt.getStatus() <= ERROR))) {
-			ServiceExertion ft = null;
-			for (int i = 0; i < ((Job)xrt).size() - 1; i++) {
-				if (((Job)xrt).get(i).isTask()) {
-					ft = (ServiceExertion) ((Job)xrt).get(i);
-					if (ft.getStatus() != DONE
-							&& xrt.getControlContext().isReview(ft)
-							&& (ft != ((Job)xrt).getMasterExertion())) {
-						((ServiceExertion) ((Job)xrt).get(i + 1))
-								.setStatus(SUSPENDED);
-						return;
-					}
-				}
-			}
-		}
-	}
+    public void setLrm(LeaseRenewalManager lrm) {
+        this.lrm = lrm;
+    }
 }

@@ -35,6 +35,8 @@ class SorcerPlatformConfig {
         File sorcerHomeDir = new File(sorcerHome)
         if(sorcerHomeDir.exists()) {
             def jars = ["JE-"             : "lib/common | Sleepy Cat",
+                        "javax.inject-"   : "lib/common | Javax Inject",
+                        "plexus-utils-"   : "lib/common | Plexus Utils",
                         "Sorcer-Platform" : "lib/sorcer/lib | Sorcer Platform"]
             jars.each { jar, data ->
                 String[] parts = data.split("\\|")

@@ -34,16 +34,15 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import net.jini.id.Uuid;
 import net.jini.id.UuidFactory;
 import sorcer.core.provider.DatabaseStorer;
 import sorcer.core.provider.Provider;
 import sorcer.core.provider.StorageManagement;
-import sorcer.service.Context;
-import sorcer.service.EvaluationException;
-import sorcer.service.Signature;
+import sorcer.service.*;
 import sorcer.core.provider.DatabaseStorer.Store;
 import sorcer.util.url.sos.SdbUtil;
 
@@ -61,7 +60,7 @@ public class Table implements ModelTable {
 	/** Serial version user identification number */
 	static final long serialVersionUID = -1968282524723965792L;
 	/** Logger */
-	protected static Logger logger = Logger.getLogger(Table.class.getName());
+	protected static Logger logger = LoggerFactory.getLogger(Table.class.getName());
 	/** Encoding for the table */
 	protected static String ENCODING = "UTF-8";
 	/**
@@ -1023,15 +1022,15 @@ public class Table implements ModelTable {
 			// empty server's input stream
 			String line;
 			while ((line = is.readLine()) != null) {
-				logger.fine("server reply: " + line);
+				logger.debug("server reply: " + line);
 			}
 
 			int rc = con.getResponseCode();
 			String msg = con.getResponseMessage();
 			if (rc == 200) {
-				logger.fine("response message: " + msg + " at: " + url);
+				logger.debug("response message: " + msg + " at: " + url);
 			} else if (rc == 201) {
-				logger.fine("response message: " + msg + " at: " + url);
+				logger.debug("response message: " + msg + " at: " + url);
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -1055,13 +1054,13 @@ public class Table implements ModelTable {
 			Context cxt = SdbUtil.getStoreContext(this);
 			if (outputStorageSignature != null) {
 				if (outputStorageSignature.getServiceType() == DatabaseStorer.class) {
-					DatabaseStorer objectStore = ((DatabaseStorer) ProviderLookup
-							.getProvider(outputStorageSignature));
+					DatabaseStorer objectStore = ((DatabaseStorer) Accessor
+							.getService(outputStorageSignature));
 					outputTableURL = (URL)objectStore.contextStore(cxt).getValue("object/url");
 
 				} else {
-					StorageManagement objectStore = ((StorageManagement) ProviderLookup
-							.getProvider(outputStorageSignature));
+					StorageManagement objectStore = ((StorageManagement) Accessor
+							.getService(outputStorageSignature));
 					outputTableURL = (URL)objectStore.contextStore(cxt).getValue("object/url");;
 				}
 			} else if (url.getHost().equals("self")) {

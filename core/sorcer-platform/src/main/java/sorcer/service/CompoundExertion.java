@@ -17,45 +17,143 @@
 
 package sorcer.service;
 
-import sorcer.core.context.FidelityContext;
+import net.jini.id.Uuid;
+import sorcer.core.context.ControlContext;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
 /**
  * @author Mike Sobolewski
  */
-public interface CompoundExertion {
-	
+abstract public class CompoundExertion extends ServiceExertion {
 
-	public boolean isCompound();
+	/**
+	 * Component exertions of this job (the Composite Design pattern)
+	 */
+	protected List<Mogram> mograms = new ArrayList<Mogram>();
 
-	public int size();
+	public CompoundExertion() {
+		this("compound xrt=" + count++);
+	}
+
+	public CompoundExertion(String name) {
+		super(name);
+		mograms = new ArrayList<Mogram>();
+	}
+
+	public boolean isCompound() {
+		return true;
+	};
+
+	public int size() {
+		return   mograms.size();
+	};
+
+	public void reset(int state) {
+		for(Mogram e : mograms)
+			((ServiceExertion)e).reset(state);
+
+		this.setStatus(state);
+	}
+
+	/**
+	 * Replaces the exertion at the specified position in this list with the
+	 * specified element.
+	 */
+	public void setMogramAt(Mogram ex, int i) {
+		mograms.set(i, ex);
+	}
+
+	public Exertion getMasterExertion() {
+		Uuid uuid = null;
+		try {
+			uuid = (Uuid) controlContext.getValue(ControlContext.MASTER_EXERTION);
+		} catch (ContextException ex) {
+			ex.printStackTrace();
+		}
+		if (uuid == null
+				&& controlContext.getFlowType().equals(ControlContext.SEQUENTIAL)) {
+			return (size() > 0) ? get(size() - 1) : null;
+		} else {
+			Exertion master = null;
+			for (int i = 0; i < size(); i++) {
+				if (((ServiceExertion) get(i)).getId().equals(
+						uuid)) {
+					master = get(i);
+					break;
+				}
+			}
+			return master;
+		}
+	}
+
+	public Mogram removeExertion(Mogram mogram) throws ContextException {
+		// int index = ((ExertionImpl)exertion).getIndex();
+		mograms.remove(mogram);
+		controlContext.deregisterExertion(this, mogram);
+		return mogram;
+	}
+
+	public void remove(int index) throws ContextException {
+		removeExertion(get(index));
+	}
 
 	/**
 	 * Returns the exertion at the specified index.
 	 */
-	public Exertion get(int index);
-	
+	public Exertion get(int index) {
+		return (Exertion) mograms.get(index);
+	}
+
+	public void setMograms(List<Mogram> mograms) {
+		this.mograms = mograms;
+
+	}
+
+	public Mogram addExertion(Exertion exertion, int priority) throws ExertionException {
+		addMogram(exertion);
+		controlContext.setPriority(exertion, priority);
+		return this;
+	}
+
 	/**
-	 * Replaces the exertion at the specified position in this list with the
-     * specified element.
+	 * Returns all component <code>Mograms</code>s of this composite exertion.
+	 *
+	 * @return all component exertions
 	 */
-	public void setExertionAt(Exertion ex, int i);
-	
-	public void setExertions(List<Exertion> exertions);
-	
-	public List<Exertion> getExertions();
-		
-	public void remove(int index) throws ContextException;
-	
-	public List<Exertion> getAllExertions();
-	
-	public Exertion getChild(String childName);
+	public List<Mogram> getMograms() {
+		return mograms;
+	}
 
-	public Exertion getComponentExertion(String path);
-	
-	public Context getComponentContext(String path) throws ContextException;
+	public boolean hasChild(String childName) {
+		for (Mogram ext : mograms) {
+			if (ext.getName().equals(childName))
+				return true;
+		}
+		return false;
+	}
 
-	public void applyFidelityContext(FidelityContext fiContext) throws ExertionException;
+	public Mogram getChild(String childName) {
+		for (Mogram ext : mograms) {
+			if (ext.getName().equals(childName))
+				return ext;
+		}
+		return null;
+	}
+
+	public int compareByIndex(Exertion e) {
+		if (this.getIndex() > ((CompoundExertion) e).getIndex())
+			return 1;
+		else if (this.getIndex() < ((CompoundExertion) e).getIndex())
+			return -1;
+		else
+			return 0;
+	}
+
+	abstract public Mogram getComponentMogram(String path);
+	
+	abstract public Context getComponentContext(String path) throws ContextException;
+
 }

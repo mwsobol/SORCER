@@ -1,7 +1,7 @@
 /*
  * Copyright 2011 the original author or authors.
  * Copyright 2011 SorcerSoft.org.
- * Copyright 2015 SorcerSoft.con.
+ * Copyright 2015 SorcerSoft.com.
  *  
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,31 +18,9 @@
 
 package sorcer.tools.shell;
 
+import com.sun.jini.config.Config;
 import groovy.lang.GroovyRuntimeException;
-
-import java.io.*;
-import java.lang.reflect.Array;
-import java.net.InetAddress;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.rmi.RMISecurityManager;
-import java.security.PrivilegedActionException;
-import java.security.PrivilegedExceptionAction;
-import java.util.*;
-
-import org.rioproject.impl.config.DynamicConfiguration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.security.auth.Subject;
-import javax.security.auth.login.LoginContext;
-
-import net.jini.config.Configuration;
-import net.jini.config.ConfigurationException;
-import net.jini.config.ConfigurationProvider;
-import net.jini.config.EmptyConfiguration;
-import net.jini.config.NoSuchEntryException;
+import net.jini.config.*;
 import net.jini.core.discovery.LookupLocator;
 import net.jini.core.entry.Entry;
 import net.jini.core.lookup.ServiceItem;
@@ -53,22 +31,42 @@ import net.jini.discovery.DiscoveryListener;
 import net.jini.discovery.LookupDiscovery;
 import net.jini.entry.AbstractEntry;
 import net.jini.lookup.entry.UIDescriptor;
-
 import org.codehaus.groovy.runtime.DefaultGroovyMethods;
-
+import org.fusesource.jansi.Ansi;
+import org.fusesource.jansi.AnsiConsole;
+import org.rioproject.impl.config.DynamicConfiguration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sorcer.jini.lookup.entry.SorcerServiceInfo;
+import sorcer.netlet.util.LoaderConfiguration;
+import sorcer.netlet.util.ScriptExertException;
 import sorcer.security.util.SorcerPrincipal;
 import sorcer.service.EvaluationException;
 import sorcer.service.ExertionInfo;
 import sorcer.tools.shell.cmds.*;
 import sorcer.tools.webster.Webster;
-import sorcer.util.*;
+import sorcer.util.Sorcer;
+import sorcer.util.SorcerEnv;
+import sorcer.util.TimeUtil;
+import sorcer.util.eval.PropertyEvaluator;
 import sorcer.util.exec.ExecUtils;
 import sorcer.util.exec.ExecUtils.CmdResult;
 import sorcer.util.url.sos.SdbURLStreamHandlerFactory;
 
-import com.sun.jini.config.Config;
+import javax.security.auth.Subject;
+import javax.security.auth.login.LoginContext;
+import java.io.*;
+import java.lang.reflect.Array;
+import java.net.InetAddress;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.security.PrivilegedActionException;
+import java.security.PrivilegedExceptionAction;
+import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 
+import static org.fusesource.jansi.Ansi.ansi;
 import static sorcer.util.StringUtils.tName;
 
 /**
@@ -91,16 +89,19 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 
 
 
-/*
-    public static final String CONFIG_EXT_PATH = Sorcer.getEnvironment().getSorcerExtDir() + "/configs/shell/configs/nsh-start-ext.config";
-    public static final String CONFIG_PATH = SorcerEnv.getEnvironment().getSorcerHome() + "/configs/shell/configs/nsh-start.config";
 
-    public static final String[] CONFIG_FILES = { CONFIG_EXT_PATH, CONFIG_PATH };
-*/
+    //public static final String CONFIG_EXT_PATH = Sorcer.get + "/configs/shell/configs/nsh-start-ext.config";
+    public static final String CONFIG_PATH = SorcerEnv.getHome() + "/bin/shell/configs/nsh-start.config";
+
+	static private boolean debug = false;
+
+    public static final String[] CONFIG_FILES = { CONFIG_PATH };
+    //CONFIG_EXT_PATH,
+
 
     public static int selectedRegistrar = 0;
 
-    private static List<ServiceRegistrar> registrars = java.util.Collections.synchronizedList(new ArrayList<ServiceRegistrar>());
+    private static List<ServiceRegistrar> registrars = new CopyOnWriteArrayList<ServiceRegistrar>();
 
 //    static private boolean isRemoteLogging = true;
 
@@ -134,7 +135,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 
 	private static LoginContext loginContext;
 
-	final static long startTime = System.currentTimeMillis();
+	public final static long startTime = System.currentTimeMillis();
 
 	private static LookupDiscovery disco;
 
@@ -142,13 +143,20 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 
 	static final int MAX_MATCHES = 5;
 
-	static final String CUR_VERSION = "1.2";
+	static final String CUR_VERSION = System.getProperty("sorcer.version");
 
 	static final String BUILTIN_QUIT_COMMAND = "quit,exit,bye";
 	
-	static final String UNKNOWN_COMMAND_MSG = "Sorry, unknown command.";
+	static final Ansi UNKNOWN_COMMAND_MSG = ansi().render("@|red Sorry, unknown command.|@");
 
-	static final String SYSTEM_PROMPT = "nsh> ";
+	static final Ansi SYSTEM_PROMPT = ansi().render("@|bold nsh> |@");
+
+	static final Ansi WELCOME_HEADER_1 = ansi().render("@|green SORCER Network Shell |@ @|bold nsh "
+			+ CUR_VERSION + ", JVM: " + System.getProperty("java.version")+ "|@");
+
+	static final Ansi WELCOME_HEADER_2 = ansi().render("Type '@|bold quit|@' to terminate the shell");
+
+	static final Ansi WELCOME_HEADER_3 = ansi().render("Type '@|bold help|@' for command help");
 
 	private final Map<String, Object> settings = new HashMap<String, Object>();
 
@@ -172,7 +180,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 
 	private Webster webster;
 
-	private String[] httpJars;
+	private String[] httpJars = new String[0];
 
 	private String[] httpRoots;
 
@@ -209,23 +217,26 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 	 */
 	protected synchronized static void ensureSecurityManager() {
 		if (System.getSecurityManager() == null) {
-			System.setSecurityManager(new RMISecurityManager());
+			System.setSecurityManager(new SecurityManager());
 		}
 	}
 
 	static public void main(String argv[]) {
+        AnsiConsole.systemInstall();
+        //Ansi.setDetector(new AnsiDetector());
 		URL.setURLStreamHandlerFactory(new SdbURLStreamHandlerFactory());
 		String curToken = null;
 		//System.out.println("nsh main args: " + Arrays.toString(argv));	
 		if (argv.length > 0) {
 			if ((argv.length == 1 && argv[0].startsWith("--"))
-					|| (argv.length == 2 && (argv[0].equals("-e"))
-							|| argv[0].equals("-f")
-                            || argv[0].equals("-c")
-                            || argv[0].equals("-b")
-							|| argv[0].equals("-n")
-							|| argv[0].equals("-version") || argv[0]
-							.equals("-help"))) {
+						|| (argv.length == 2 && (argv[0].equals("-e"))
+						|| argv[0].equals("-f")
+						|| argv[0].equals("-c")
+						|| argv[0].equals("-b")
+						|| argv[0].equals("-n")
+						|| argv[0].equals("-version") || argv[0]
+						.equals("-help")) || argv.length == 1) {
+
 				interactive = false;
 			} else {
 				interactive = true;
@@ -233,16 +244,20 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 		}
 
 		try {
+
+
 			// default shellOutput
 			shellOutput = System.out;
 			if (interactive) {
-				shellOutput.println("SORCER Network Shell (nsh " + CUR_VERSION
-						+ ", JVM: " + System.getProperty("java.version"));
-				shellOutput.println("Type 'quit' to terminate the shell");
-				shellOutput.println("Type 'help' for command help");
+                shellOutput.println(WELCOME_HEADER_1);
+				shellOutput.println(WELCOME_HEADER_2);
+				shellOutput.println(WELCOME_HEADER_3);
 			}
 			
 			argv = buildInstance(true, argv);
+			principal = new SorcerPrincipal(NetworkShell.getUserName());
+			principal.setId(NetworkShell.getUserName());
+
 			instance.loadExternalCommands();
 			if (!instance.interactive) {
 				// System.out.println("main appMap: " + appMap);
@@ -256,10 +271,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 				System.exit(1);
 			}
 
-			principal = new SorcerPrincipal(NetworkShell.getUserName());
-			principal.setId(NetworkShell.getUserName());
-
-			shellOutput.print(SYSTEM_PROMPT);
+            shellOutput.print(SYSTEM_PROMPT);
 			shellOutput.flush();
 			request = "";
 			request = shellInput.readLine();
@@ -271,18 +283,29 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 		nshUrl = getWebsterUrl();
 		//System.out.println("main request: " + request);
 		//ClassLoaderUtil.displayContextClassLoaderTree();    	
-		
-		while ((request.length() > 0 && BUILTIN_QUIT_COMMAND.indexOf(request) < 0)
-				|| request.length() == 0) {
+
+		if (request==null || request.equals("q")) {
+			// Exit when CTRL+D is pressed
+			System.exit(0);
+		}
+		while (request != null && ((request.length() > 0 && BUILTIN_QUIT_COMMAND.indexOf(request) < 0)
+				|| request.length() == 0)) {
+            processRequest(false);
+		}
+		// shellOutput.println("Thanks for using the SORCER Network Shell!");
+	}
+
+    public static void processRequest(boolean outsideCall) {
+        ShellCmd cmd;
 			shellTokenizer = new WhitespaceTokenizer(request);
-			curToken = "";
+        String curToken = "";
 			if (shellTokenizer.hasMoreTokens()) {
 				curToken = shellTokenizer.nextToken();
 			}
 			try {
 				if (commandTable.containsKey(curToken)) {
 					cmd = commandTable.get(curToken);
-					cmd.execute();
+                cmd.execute();
 				}
 				// admissible shortcuts in the 'synonyms' map
 				else if (aliases.containsKey(curToken)) {
@@ -298,7 +321,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 						shellTokenizer = new WhitespaceTokenizer(request);
 					}
 					cmd = commandTable.get(cmdName);
-					cmd.execute();
+                	cmd.execute();
 				} else if (request.length() > 0) {
 					if (request.equals("?")) {
 						instance.listCommands();
@@ -307,15 +330,38 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 						shellOutput.println(UNKNOWN_COMMAND_MSG);
 					}
 				}
-				shellOutput.print(SYSTEM_PROMPT);
+				if(outsideCall) {
+					return;
+				}
+                shellOutput.print(SYSTEM_PROMPT);
 				shellOutput.flush();
 				String in = shellInput.readLine();
+            // Exit if CTRL+D pressed
+            if (in==null || in.equals("q")) System.exit(0);
+            for (String q : BUILTIN_QUIT_COMMAND.split(",")) {
+                if (in != null && in.equals(q)) System.exit(0);
+            }
+
 				// fore !! run the previous command
-				if (!in.equals("!!")) {
+				if (in!=null && !in.equals("!!")) {
 					instance.request = in;
 				}
+        } catch (IOException io) {
+            shellOutput.println(io.getMessage());
+            try {
+                request = shellInput.readLine();
+            } catch (IOException e) {
+                e.printStackTrace();
+                System.exit(1);
+            }
 			} catch (Throwable ex) {
-				ex.printStackTrace();
+            if (ex instanceof ScriptExertException) {
+                String msg = "Problem parsing script @ line: " +
+                        ((ScriptExertException)ex).getLineNum() + ":\n" + ex.getLocalizedMessage();
+                logger.error(msg);
+                shellOutput.println(ansi().render("@|red " + msg + "|@"));
+            } else
+                ex.printStackTrace(shellOutput);
 				try {
 					request = shellInput.readLine();
 				} catch (IOException e) {
@@ -325,11 +371,14 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 			}
 		}
 		// shellOutput.println("Thanks for using the SORCER Network Shell!");
-	}
 
 	public static String getUserName() {
 		return userName;
 	}
+
+    public boolean isDebug() {
+        return debug;
+    }
 
 	public static SorcerPrincipal getPrincipal() {
 		return principal;
@@ -364,58 +413,67 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
             if (path!=null)
                 startApplication(path);
             else
-                shellOutput.println("No such internal command available: " + args[0].substring(2));
+                shellOutput.println(ansi().render("@|red No such internal command available: " + args[0].substring(2) + "|@"));
 			System.exit(0);
 		}
+        PropertyEvaluator propsEval = new PropertyEvaluator();
+        propsEval.addDefaultSources();
+        for (int i = 0; i < args.length; i++) {
+            args[i] = propsEval.eval(args[i]);
+        }
 		request = arrayToRequest(args);
         shellTokenizer = new WhitespaceTokenizer(request);
         System.err.println("----------------------------------------------------");
         System.err.println("Starting non-interactive exec of request: " + request);
 
-        // Wait for DiscoveryListener to find Reggies
-        int i=0;
-        while (getRegistrars().isEmpty() && i<20)
-            Thread.sleep(100);
+		if (debug) shellOutput.println("initializing nsh: " + (System.currentTimeMillis() - startTime) + "ms");
         try {
             if (args.length == 1) {
                 if (args[0].equals("-version")) {
-				shellOutput.println("SORCER Network Shell (nsh " + CUR_VERSION
-                            + ", JVM: " + System.getProperty("java.version"));
+					shellOutput.println(WELCOME_HEADER_1);
                 } else if (args[0].equals("-help")) {
                     shellOutput.println(NSH_HELP);
                 } else {
                     // Added reading the file as default first argument
                     // Check if file exists
-				ShellCmd cmd = (HelpCmd) commandTable.get("help");
-				cmd.execute();
-			}
+					shellOutput.println("exerting nsh: " + (System.currentTimeMillis() - startTime) + "ms");
+                    ShellCmd cmd = commandTable.get("exert");
+					waitForReggie();
+					shellOutput.println("found reggie: " + (System.currentTimeMillis() - startTime) + "ms");
+                    cmd.execute();
+                }
             } else if (args.length > 1) {
 			if (args[0].equals("-f") || args[0].equals("-n")) {
 				// evaluate file
                     ShellCmd cmd = commandTable.get("exert");
+					waitForReggie();
                     cmd.execute();
 			} else if (args[0].equals("-e")) {
 				// evaluate command line expression
 				ExertCmd cmd = (ExertCmd) commandTable.get("exert");
 				// cmd.setScript(instance.getText(args[1]));
 				cmd.setScript(ExertCmd.readFile(huntForTheScriptFile(args[1])));
-                    cmd.execute();
-                } else if (args[0].equals("-c")) {
+				waitForReggie();
+				cmd.execute();
+			} else if (args[0].equals("-c")) {
                     ShellCmd cmd = commandTable.get(args[1]);
                     if (args.length > 2)
                         shellTokenizer = new WhitespaceTokenizer(request.substring(4 + args[1].length()));
                     else
                         shellTokenizer = new WhitespaceTokenizer(request.substring(3 + args[1].length()));
-                    if (cmd!=null)
-                        cmd.execute();
+                    if (cmd!=null) {
+						waitForReggie();
+						cmd.execute();
+					}
                     else
-                        shellOutput.println("Command: " + args[1] + " not found. " +
-                                "Please run 'nsh -help' to see the list of available commands");
+                        shellOutput.println(ansi().render("@|red Command: " + args[1] + " not found. |@" +
+                                "Please run 'nsh -help' to see the list of available commands"));
                 } else if (args[0].equals("-b")) {
                     File batchFile = huntForTheScriptFile(args[1], new String[] { "nsh", "nbat" });
                     System.err.println("Processing batch request on file: " + batchFile.getAbsolutePath());
                     String batchCmds = readScript(batchFile);
                     shellOutput.println("Executing batch file: " + batchFile.getAbsolutePath());
+					waitForReggie();
                     for (String batchCmd : batchCmds.split("\n")) {
                         WhitespaceTokenizer tok = new WhitespaceTokenizer(batchCmd);
                         List<String> argsList = new ArrayList<String>();
@@ -433,8 +491,8 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
                         if (cmd!=null)
                             cmd.execute();
                         else
-                            shellOutput.println("Command: " + args[1] + " not found. " +
-                                    "Please run 'nsh -help' to see the list of available commands");
+                            shellOutput.println(ansi().render("@|red Command: " + args[1] + " not found. |@" +
+									"Please run 'nsh -help' to see the list of available commands"));
                         System.err.println("Execution of command: '" + batchCmd + "' finished");
                         request = originalRequest;
                     }
@@ -448,6 +506,19 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
         System.err.println("----------------------------------------------------");
     }
 
+	private static void waitForReggie() throws InterruptedException {
+		// Wait for DiscoveryListener to find Reggies
+		int i=0;
+		long waitTimes = (Long)instance.getSettings().get(DISCOVERY_TIMEOUT)/20;
+		while (getRegistrars().isEmpty() && i<waitTimes) {
+			Thread.sleep(200);
+			i++;
+		}
+		// Needs 2 seconds to get the Rio resolver settled
+		//if (i<11)
+		//		Thread.sleep(3000-i*200);
+	}
+
 	protected ClassLoader getExtClassLoader() {
 		String sorcerExtPath = Sorcer.getHome() + File.separator
 				+ "lib" + File.separator + "sorcer" + File.separator
@@ -456,7 +527,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 		File[] files = extDir.listFiles(new FilenameFilter() {
 			@Override
 			public boolean accept(File dir, String name) {
-				return name.endsWith("-shell.jar");
+				return name.contains("-shell-");
 			}
 		});
 
@@ -476,7 +547,23 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 	}
 
 	protected void loadExternalCommands() {
-		ServiceLoader<IShellCmdFactory> loader = ServiceLoader.load(IShellCmdFactory.class, getExtClassLoader());
+        try {
+            LoaderConfiguration lc = new LoaderConfiguration();
+            for (String configFile : CONFIG_FILES) {
+                File cfgFile = new File(configFile);
+                if (cfgFile.exists()) {
+                    lc.configure(new FileInputStream(cfgFile));
+                }
+            }
+            final ClassLoader cl = new URLClassLoader(lc.getClassPathUrls(), NetworkShell.class.getClassLoader());
+            Thread.currentThread().setContextClassLoader(cl);
+            //new Activator().activate(((URLClassLoader) Thread.currentThread().getContextClassLoader()).getURLs());
+        } catch (Exception e) {
+            e.printStackTrace(shellOutput);
+            System.exit(-1);
+        }
+
+        ServiceLoader<IShellCmdFactory> loader = ServiceLoader.load(IShellCmdFactory.class, getExtClassLoader());
 		for (IShellCmdFactory factory : loader) {
 			factory.instantiateCommands(this);
 		}
@@ -486,19 +573,16 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 		disco = null;
 		try {
             DynamicConfiguration config = new DynamicConfiguration();
-            config.setEntry("net.jini.discovery.LookupDiscovery", "multicastRequestHost",
-                    String.class, InetAddress.getLocalHost().getHostAddress());
-			disco = new LookupDiscovery(LookupDiscovery.NO_GROUPS, config);
-			disco.addDiscoveryListener(instance);
+            config.setEntry("net.jini.discovery.LookupDiscovery",
+                            "multicastRequestHost",
+                            String.class,
+                            Sorcer.getLocalHost().getHostAddress());
 			if (ingroups == null || ingroups.length == 0) {
-				// System.out.println("SORCER groups: " +
-				// Arrays.toString(Sorcer.getGroups()));
-				 disco.setGroups(SorcerEnv.getLookupGroups());
-				// disco.setGroups(LookupDiscovery.ALL_GROUPS);
-				disco.setGroups(LookupDiscovery.ALL_GROUPS);
+                disco = new LookupDiscovery(LookupDiscovery.ALL_GROUPS, config);
 			} else {
-				disco.setGroups(ingroups);
+                disco = new LookupDiscovery(ingroups, config);
 			}
+            disco.addDiscoveryListener(instance);
 		} catch (IOException e) {
 			System.err.println(e.toString());
 			e.printStackTrace();
@@ -526,9 +610,10 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 		// shellOutput.println("NOTICE: discovery made");
 		// shellOutput.print(SYSTEM_PROMPT);
 		// shellOutput.flush();
-		for (int i = 0; i < regs.length; i++)
-			if (!registrars.contains(regs[i]))
-				registrars.add(regs[i]);
+        for (ServiceRegistrar reg : regs) {
+            if (!registrars.contains(reg))
+                registrars.add(reg);
+        }
 	}
 
 	public void discarded(DiscoveryEvent evt) {
@@ -581,7 +666,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 			ShellCmd cmdInstance = inCls.newInstance();
 			addToCommandTable(cmd, cmdInstance);
 		} catch (Exception e) {
-			e.printStackTrace();
+			shellOutput.println(e);
 		}
 	}
 
@@ -593,10 +678,10 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 		settings.put(GROUPS, groups);
 		settings.put(LOCATORS, locators);
 		Properties props = new Properties();
-		String iGridHome = Sorcer.getHome();
-		if (iGridHome == null)
+		String sorcerHome = Sorcer.getHome();
+		if (sorcerHome == null)
 			throw new RuntimeException("SORCER_HOME must be set");
-		props.put("java.protocol.handler.pkgs", "net.jini.url|sorcer.util.bdb.sos");
+		props.put("java.protocol.handler.pkgs", "net.jini.url|sorcer.util.url|org.rioproject.url");
 		Properties addedProps = getConfiguredSystemProperties();
 		props.putAll(addedProps);
 		Properties sysProps = System.getProperties();
@@ -610,13 +695,13 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 
 		if (!interactive && (args.length==0 || (!args[0].equals("-c")
                 && !args[0].equals("-help") && !args[0].equals("-version")))) {
-			String logDirPath = System.getProperty(COMPONENT + "logDir",
-					iGridHome + File.separator + "bin" + File.separator
+			String logDirPath = System.getProperty(COMPONENT + ".logDir",
+					sorcerHome + File.separator + "bin" + File.separator
 							+ "shell" + File.separator + "logs");
-		
+
 			File logDir = new File(logDirPath);
 			if (!logDir.exists()) {
-				if (!logDir.mkdir()) {
+				if (!logDir.mkdirs()) {
 					System.err.println("Unable to create log directory at "
 							+ logDir.getAbsolutePath());
 				}
@@ -641,8 +726,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 					+ " non-interactive network shell\n"
 					+ "Log creation: " + new Date(startTime).toString() + "\n"
 					+ "Operator: " + System.getProperty("user.name"));
-			System.err
-					.println("===============================================");
+			System.err.println("===============================================");
 			if (addedProps.size() > 0) {
 				StringBuilder buff = new StringBuilder();
 				for (Map.Entry<Object, Object> entry : addedProps.entrySet()) {
@@ -651,8 +735,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 					buff.append("\n");
 					buff.append("    ").append(key).append("=").append(value);
 				}
-				System.err.println("Added System Properties {"
-						+ buff.toString() + "\n}");
+				System.err.println("Added System Properties {"+ buff.toString() + "\n}");
 			}
 		}
 
@@ -714,26 +797,20 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 		return disco;
 	}
 
-	public static List<ServiceRegistrar> getRegistrars() {
+    public static List<ServiceRegistrar> getRegistrars() {
         // Remove non-existent registrars                                                                                       T
         List<ServiceRegistrar> regsToRemove = new ArrayList<ServiceRegistrar>();
-        synchronized (registrars) {
-            for (ServiceRegistrar sr : registrars) {
-                try {
-                    sr.getGroups();
-                } catch (Exception e) {
-                    regsToRemove.add(sr);
-                }
+        for (ServiceRegistrar sr : registrars) {
+            try {
+                sr.getGroups();
+            } catch (Exception e) {
+                regsToRemove.add(sr);
             }
-            if (!regsToRemove.isEmpty()) registrars.removeAll(regsToRemove);
         }
-        if (registrars.isEmpty()) {
-            NetworkShell.getDisco().terminate();
-            // start new lookup discovery
-            NetworkShell.setLookupDiscovery(NetworkShell.getGroups());
-        }
-		return registrars;
-	}
+        if (!regsToRemove.isEmpty())
+            registrars.removeAll(regsToRemove);
+        return registrars;
+    }
 
 	/**
 	 * Get the Configuration
@@ -768,6 +845,10 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 
 	public void setShellLog(File shellLog) {
 		this.shellLog = shellLog;
+	}
+
+	public Map<String, Object> getSettings() {
+		return settings;
 	}
 
 	public static boolean isInteractive() {
@@ -945,9 +1026,10 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 			
 			shellOutput.println();
 			Webster web = instance.getWebster();
+
 			if (web == null) {
 				shellOutput.println("Class server: No HTTP server started");
-			} else {
+			} else if (debug) {
 				shellOutput.println("Webster URL: \n  URL: http://"
 						+ web.getAddress() + ":" + web.getPort()
 						+ "\n  Roots: " + web.getRoots());
@@ -955,10 +1037,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 			}
 			shellOutput.println();
 			
-			shellOutput
-					.println("Lookup groups: "
-							+ (groups == null ? "all groups" : Arrays
-									.toString(groups)));
+			shellOutput.println("Lookup groups: "+ (groups == null ? "all groups" : Arrays.toString(groups)));
 			
 			DiscoCmd.printCurrentLus();
 			EmxCmd.printCurrentMonitor();
@@ -997,7 +1076,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 
 			COMMAND_USAGE = "http [port=<port-num>] [roots=<roots>] [jars=<codebase jars>] | stop";
 
-			COMMAND_HELP = "Start and stop the nsf shell's code server;"
+			COMMAND_HELP = "Start and stop the nsh shell's code server;"
 					+ "  <roots> is semicolon separated list of directories.\n"
 					+ "  If not provided the root directory will be:\n"
 					+ "  [" + debugGetDefaultRoots() + "]";
@@ -1143,6 +1222,9 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 				String[] systemRoots = { sorcerLibDir, sorcerLibDLDir, sorcerExtDir };
 				String[] realRoots = (roots == null ? systemRoots : roots);
 				
+                if (debug)
+                    System.setProperty("webster.debug", "true");
+
 				instance.webster = new Webster(port, realRoots,
 						instance.hostAddress, true);
 
@@ -1160,7 +1242,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 
 			setCodeBase(jars);
 			
-			if (!quiet) {
+			if (debug) {
 				out.println("Webster URL: http://" + instance.webster.getAddress()
 						+ ":" + instance.webster.getPort());
 				out.println("  Roots: " + instance.webster.getRoots());
@@ -1177,7 +1259,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 				sb.append("http://").append(localIPAddress).append(":")
 						.append(port).append("/").append(jars[i]).append(" ");
 			}
-			sb.append("http://").append(localIPAddress).append(":")
+			if (jars.length>1) sb.append("http://").append(localIPAddress).append(":")
 					.append(port).append("/").append(jars[jars.length - 1]);
 			codebase = sb.toString();
 			System.setProperty("java.rmi.server.codebase", codebase);
@@ -1268,7 +1350,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 					+ " in: " + new File(".").getCanonicalPath());
 		} else {
 			sysConfig = ConfigurationProvider
-					.getInstance(new String[] { configFilename }, Thread.currentThread().getContextClassLoader().getParent());
+					.getInstance(new String[] { configFilename });
 		}
 
 		if (sysConfig == null)
@@ -1276,7 +1358,6 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 
 		userName = (String) sysConfig.getEntry(CONFIG_COMPONENT, "userName",
 				String.class, null);
-		// System.out.println("userName: " + userName);
 		loginContext = null;
 		try {
 			loginContext = (LoginContext) Config.getNonNullEntry(sysConfig,
@@ -1323,6 +1404,9 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 
 		LookupLocator[] locators = (LookupLocator[]) sysConfig.getEntry(
 				CONFIG_COMPONENT, "locators", LookupLocator[].class, null);
+
+        debug = (Boolean) sysConfig.getEntry(CONFIG_COMPONENT,
+                "debug", boolean.class, Boolean.FALSE);
 
 		long discoveryTimeout = (Long) sysConfig.getEntry(CONFIG_COMPONENT,
 				"discoveryTimeout", long.class, (long) 1000 * 5);
@@ -1413,7 +1497,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 			DirCmd.changeDir(homeDir, false, shellOutput);
 		}
 
-		InetAddress inetAddress = InetAddress.getLocalHost();
+		InetAddress inetAddress = Sorcer.getLocalHost();
 		instance.hostName = inetAddress.getHostName();
 		instance.hostAddress = inetAddress.getHostAddress();
 		instance.httpJars = jars;
@@ -1544,12 +1628,15 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 	}
 
     public static String readScript(File file) throws IOException {
+        PropertyEvaluator propsEval = new PropertyEvaluator();
+        propsEval.addDefaultSources();
         String lineSep = "\n";
         BufferedReader br = new BufferedReader(new FileReader(file));
-        String nextLine;
+        String nextLine = br.readLine();
         StringBuilder sb = new StringBuilder();
         while ((nextLine = br.readLine()) != null) {
             if (!nextLine.startsWith("#")) {
+                nextLine = propsEval.eval(nextLine);
                 sb.append(nextLine);
                 sb.append(lineSep);
             }
@@ -1660,13 +1747,13 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 
     static final String[] shellCommands = { "start", "disco", "ls", "chgrp",
 			"groups", "lup", "chgrp", "chport", "help", "exert", "http", "emx",
-			"gvy", "edit", "clear", "exec", "about", "ig", "ds", "sp" };
+			"gvy", "edit", "clear", "exec", "about", "sos", "ds", "sp" };
 
 	static final Class[] shellCmdClasses = { StartStopCmd.class, DiscoCmd.class,
 			DirCmd.class, ChgrpCmd.class, GroupsCmd.class, LookupCmd.class,
 			ChgrpCmd.class, SetPortCmd.class, HelpCmd.class, ExertCmd.class,
 			HttpCmd.class, EmxCmd.class, GroovyCmd.class, EditCmd.class,
-			ClearCmd.class, ExecCmd.class, InfoCmd.class, iGridCmd.class, DataStorageCmd.class,
+			ClearCmd.class, ExecCmd.class, InfoCmd.class, SosCmd.class, DataStorageCmd.class,
 			SpaceCmd.class };
 
 	// a map of application name/ filename
@@ -1675,52 +1762,52 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 	static private Map<String, String> nishAppMap = new TreeMap<String, String>();
 
 	static { 
-		String iGridHome = System.getenv("SORCER_HOME");
+		String sorcerHome = System.getenv("SORCER_HOME");
 		String[] apps = new String[] { 
 				"browser", 
-				iGridHome + "/bin/browser/bin/sorcer-browser-spawn.xml",
+				sorcerHome + "/bin/browser/bin/sorcer-browser-spawn.xml",
 				"webster", 
-				iGridHome + "/bin/webster/bin/webster-run.xml",
+				sorcerHome + "/bin/webster/bin/webster-run.xml",
 				"iGrid", 
-				iGridHome + "/bin/iGrid-boot-http-spawn.xml",
+				sorcerHome + "/bin/iGrid-boot-http-spawn.xml",
 				"sos", 
-				iGridHome + "/bin/sorcer/bin/sorcer-boot-spawn.xml",
+				sorcerHome + "/bin/sorcer/bin/sorcer-boot-spawn.xml",
 				"jobber",
-				iGridHome + "/bin/sorcer/jobber/bin/jeri-jobber-boot-spawn.xml",
+				sorcerHome + "/bin/sorcer/jobber/bin/jeri-jobber-boot-spawn.xml",
 				"spacer",
-				iGridHome + "/bin/sorcer/jobber/bin/jeri-spacer-boot-spawn.xml",
+				sorcerHome + "/bin/sorcer/jobber/bin/jeri-spacer-boot-spawn.xml",
 				"cataloger",
-				iGridHome + "/bin/sorcer/cataloger/bin/jeri-cataloger-boot-spawn.xml",
+				sorcerHome + "/bin/sorcer/cataloger/bin/jeri-cataloger-boot-spawn.xml",
 				"logger",
-				iGridHome + "/bin/sorcer/logger/bin/jeri-logger-boot-spawn.xml",
+				sorcerHome + "/bin/sorcer/logger/bin/jeri-logger-boot-spawn.xml",
 				"locker", 
-				iGridHome + "/bin/sorcer/blitz/bin/locker-boot-spawn.xml",
+				sorcerHome + "/bin/sorcer/blitz/bin/locker-boot-spawn.xml",
 				"blitz",
-				iGridHome + "/bin/sorcer/blitz/bin/blitz-boot-spawn.xml" };
+				sorcerHome + "/bin/sorcer/blitz/bin/blitz-boot-spawn.xml" };
 		
 			appendApps(apps);
 			
 			String[] nishApps = new String[] { 
 					"browser", 
-					iGridHome + "/bin/browser/bin/sorcer-browser.xml",
+					sorcerHome + "/bin/browser/bin/sorcer-browser.xml",
 					"webster", 
-					iGridHome + "/bin/webster/bin/webster-run.xml",
+					sorcerHome + "/bin/webster/bin/webster-run.xml",
 					"iGrid", 
-					iGridHome + "/bin/iGrid-boot-http.xml",
+					sorcerHome + "/bin/iGrid-boot-http.xml",
 					"sos", 
-					iGridHome + "/bin/iGrid-boot-http.xml",
+					sorcerHome + "/bin/iGrid-boot-http.xml",
 					"jobber",
-					iGridHome + "/bin/sorcer/jobber/bin/jeri-jobber-boot.xml",
+					sorcerHome + "/bin/sorcer/jobber/bin/jeri-jobber-boot.xml",
 					"spacer",
-					iGridHome + "/bin/sorcer/jobber/bin/jeri-spacer-boot.xml",
+					sorcerHome + "/bin/sorcer/jobber/bin/jeri-spacer-boot.xml",
 					"cataloger",
-					iGridHome + "/bin/sorcer/cataloger/bin/jeri-cataloger-boot.xml",
+					sorcerHome + "/bin/sorcer/cataloger/bin/jeri-cataloger-boot.xml",
 					"logger",
-					iGridHome + "/bin/sorcer/logger/bin/jeri-logger-boot.xml",
+					sorcerHome + "/bin/sorcer/logger/bin/jeri-logger-boot.xml",
 					"locker", 
-					iGridHome + "/bin/sorcer/blitz/bin/locker-boot.xml",
+					sorcerHome + "/bin/sorcer/blitz/bin/locker-boot.xml",
 					"blitz",
-					iGridHome + "/bin/sorcer/blitz/bin/blitz-boot.xml" };
+					sorcerHome + "/bin/sorcer/blitz/bin/blitz-boot.xml" };
 			
 				appendNishApps(nishApps);
 	}

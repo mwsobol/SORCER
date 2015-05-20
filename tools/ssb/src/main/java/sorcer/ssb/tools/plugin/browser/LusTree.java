@@ -17,6 +17,7 @@
 
 package sorcer.ssb.tools.plugin.browser;
 
+import java.awt.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
@@ -26,8 +27,10 @@ import java.rmi.RemoteException;
 import java.rmi.server.RMIClassLoader;
 import java.util.Arrays;
 import java.util.StringTokenizer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.ImageIcon;
 import javax.swing.JTree;
@@ -36,6 +39,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 
+import sorcer.jini.lookup.entry.SorcerServiceInfo;
 import sorcer.ssb.browser.api.SSBrowserFilter;
 
 import net.jini.admin.Administrable;
@@ -73,7 +77,7 @@ public class LusTree {
 
 	private SSBrowserFilter _plugin;
 
-	private static Logger _logger = Logger.getLogger(LusTree.class.getName());
+	private static Logger _logger = LoggerFactory.getLogger(LusTree.class.getName());
 
 	public LusTree(ServiceRegistrar lus, final JTree tree, ServiceTemplate tmpl,
 			String[] inf, String[] names, ProxyPreparer pp,
@@ -391,15 +395,15 @@ public class LusTree {
                 try {
                     urls[i] = new URL(url);
                 } catch (MalformedURLException e) {
-                    _logger.log(Level.WARNING, " Unable to create URL for ["+url+"]", e);
+                    _logger.warn(" Unable to create URL for ["+url+"]", e);
                 }
                 i++;
             }
             addCodebase(urls, service);
         }
-        /*
+
         ClassLoader cl = si.service.getClass().getClassLoader();
-        if (cl instanceof URLClassLoader) {
+        /*if (cl instanceof URLClassLoader) {
 			addCodebase(((URLClassLoader) cl).getURLs(), service);
 		}*/
 
@@ -428,13 +432,18 @@ public class LusTree {
 				System.err.println(ex);
 			}
 		}
-		addAttributes(service, si);
+		addAttributes(service, si, cl);
 		service.add(methodsNode);
 		return true;
 	}
 
 	public static DefaultMutableTreeNode addAttributes(
 			DefaultMutableTreeNode service, ServiceItem si) {
+		return addAttributes(service, si, LusTree.class.getClassLoader());
+	}
+
+	public static DefaultMutableTreeNode addAttributes(
+			DefaultMutableTreeNode service, ServiceItem si, ClassLoader cl) {
 		// add attributes
 		DefaultMutableTreeNode attsNode = new DefaultMutableTreeNode(ATTS_NAME);
 		service.add(attsNode);
@@ -450,6 +459,16 @@ public class LusTree {
 
 					java.awt.Image image = st
 							.getIcon(java.beans.BeanInfo.ICON_COLOR_16x16);
+					if (image==null && cl!=null && st instanceof SorcerServiceInfo) {
+						SorcerServiceInfo ssi = (SorcerServiceInfo) atts[i];
+						String iconName = ssi.iconName;
+						if (iconName!=null) {
+							java.net.URL url = cl.getResource(iconName);
+							if (url!=null) {
+								image = Toolkit.getDefaultToolkit().getImage(url);
+							}
+						}
+					}
 					if (image != null) {
 						image = image.getScaledInstance(16, 16, 0);
 						TreeRenderer

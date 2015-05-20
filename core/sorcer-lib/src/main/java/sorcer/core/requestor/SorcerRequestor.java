@@ -17,21 +17,23 @@
 
 package sorcer.core.requestor;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.UnknownHostException;
-import java.util.Arrays;
-import java.util.Properties;
-import java.util.StringTokenizer;
-import java.util.logging.Logger;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sorcer.core.SorcerConstants;
+import sorcer.scratch.ScratchManager;
+import sorcer.scratch.ScratchManagerSupport;
 import sorcer.service.ConfigurationException;
 import sorcer.tools.webster.InternalWebster;
 import sorcer.util.Sorcer;
 import sorcer.util.SorcerUtil;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.UnknownHostException;
+import java.util.Arrays;
+import java.util.Properties;
+import java.util.StringTokenizer;
 
 /**
  * This an abstract class with the abstract methods that defines the initialization
@@ -50,9 +52,8 @@ import sorcer.util.SorcerUtil;
  */
 abstract public class SorcerRequestor implements SorcerConstants {
 	/** Logger for logging information about this instance */
-	protected static final Logger logger = Logger
-			.getLogger(SorcerRequestor.class.getName());
-
+	protected static final Logger logger = LoggerFactory.getLogger(SorcerRequestor.class.getName());
+    private final ScratchManager scratchManager = new ScratchManagerSupport();
 	public static String R_PROPERTIES_FILENAME = "requestor.properties";
 	protected static SorcerRequestor requestor = null;
 	protected Properties props;
@@ -199,7 +200,7 @@ abstract public class SorcerRequestor implements SorcerConstants {
 		String hn = System.getenv("IGRID_WEBSTER_INTERFACE");
 
 		if (hn != null && hn.length() > 0) {
-			logger.finer("webster hostname as the system environment value: "
+			logger.debug("webster hostname as the system environment value: "
 					+ hn);
 			return hn;
 		}
@@ -207,7 +208,7 @@ abstract public class SorcerRequestor implements SorcerConstants {
 		hn = System.getProperty(R_WEBSTER_INTERFACE);
 		if (hn != null && hn.length() > 0) {
 			logger
-					.finer("webster hostname as '" + R_WEBSTER_INTERFACE + "' system property value: "
+					.debug("webster hostname as '" + R_WEBSTER_INTERFACE + "' system property value: "
 							+ hn);
 			return hn;
 		}
@@ -215,16 +216,16 @@ abstract public class SorcerRequestor implements SorcerConstants {
 		hn = props.getProperty(R_WEBSTER_INTERFACE);
 		if (hn != null && hn.length() > 0) {
 			logger
-					.finer("webster hostname as '" + R_WEBSTER_INTERFACE + "' provider property value: "
+					.debug("webster hostname as '" + R_WEBSTER_INTERFACE + "' provider property value: "
 							+ hn);
 			return hn;
 		}
 
 		try {
 			hn = Sorcer.getHostName();
-			logger.finer("webster hostname as the local host value: " + hn);
+			logger.debug("webster hostname as the local host value: " + hn);
 		} catch (UnknownHostException e) {
-			logger.severe("Cannot determine the webster hostname.");
+			logger.error("Cannot determine the webster hostname.");
 		}
 
 		return hn;
@@ -241,59 +242,35 @@ abstract public class SorcerRequestor implements SorcerConstants {
 
 		String wp = System.getenv("IGRID_WEBSTER_PORT");
 		if (wp != null && wp.length() > 0) {
-			logger.finer("requestor webster port as 'IGRID_WEBSTER_PORT': " + wp);
+			logger.debug("requestor webster port as 'IGRID_WEBSTER_PORT': " + wp);
 			return new Integer(wp);
 		}
 
 		wp = System.getProperty(R_WEBSTER_PORT);
 		if (wp != null && wp.length() > 0) {
-			logger.finer("requestor webster port as System '" + R_WEBSTER_PORT + "': "
+			logger.debug("requestor webster port as System '" + R_WEBSTER_PORT + "': "
 					+ wp);
 			return new Integer(wp);
 		}
 
 		wp = props.getProperty(R_WEBSTER_PORT);
 		if (wp != null && wp.length() > 0) {
-			logger.finer("requestor webster port as Sorcer '" + R_WEBSTER_PORT + "': "
+			logger.debug("requestor webster port as Sorcer '" + R_WEBSTER_PORT + "': "
 					+ wp);
 			return new Integer(wp);
 		}
 
 		try {
 			port = Sorcer.getAnonymousPort();
-			logger.finer("anonymous requestor webster port: " + wp);
+			logger.debug("anonymous requestor webster port: " + wp);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		return port;
 	}
-
-	/**
-	 * Returns the URL for the requestor's <code>filename</code>
-	 * 
-	 * @return the current URL for the SORCER requestor data server.
-	 * @throws MalformedURLException 
-	 */
-	public URL getRequestorDataFileURL(String filename) throws MalformedURLException {
-		return new URL("http://" + getDataServerUrl() + '/'
-				+ getProperty(R_DATA_DIR) + '/' + filename);
-	}
-
-	public File getScrachFile(String filename) {
-		return new File(getNewScratchDir() + File.separator + filename);
-	}
-
-	/**
-	 * Returns a directory for requestor's scratch files
-	 * 
-	 * @return a scratch directory
-	 */
-	 public File getScratchDir() {
-		 return Sorcer.getNewScratchDir();
-	}
 	
 	/**
-	 * Deletes a direcory and all its files.
+	 * Deletes a directory and all its files.
 	 * 
 	 * @param dir
 	 *            to be deleted
@@ -310,7 +287,7 @@ abstract public class SorcerRequestor implements SorcerConstants {
 	 * @return a scratch directory
 	 */
 	public File getNewScratchDir() {
-		return Sorcer.getNewScratchDir();
+		return scratchManager.getScratchDir();
 	}
 
 	public File getDataFile(String filename) {
@@ -377,30 +354,6 @@ abstract public class SorcerRequestor implements SorcerConstants {
 	 public Properties getProperties() {
 		 return props;
 	 }
-	 
-	/**
-	 * Returns the URL of a scratch file at the requestor HTTP data server.
-	 * 
-	 * @param scratchFile
-	 * @return the URL of a scratch file
-	 * @throws MalformedURLException
-	 */
-	public URL getScratchURL(File scratchFile)
-			throws MalformedURLException {
-		return Sorcer.getScratchURL(scratchFile);
-	}
-
-	/**
-	 * Returns the URL of a dataFile at the requestor HTTP data server.
-	 * 
-	 * @param dataFile
-	 * @return the URL of a data file
-	 * @throws MalformedURLException
-	 */
-	public static URL getDataURL(File dataFile)
-			throws MalformedURLException {
-		return Sorcer.getDataURL(dataFile);
-	}
 	
 	protected static String[] toArray(String arg) {
 		StringTokenizer token = new StringTokenizer(arg, " ,;");

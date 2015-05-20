@@ -3,11 +3,13 @@ package sorcer.arithmetic.tester.provider.impl;
 import static sorcer.eo.operator.path;
 import static sorcer.eo.operator.revalue;
 
+import java.io.Serializable;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.rmi.RemoteException;
 import java.util.List;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.ArrayContext;
@@ -19,7 +21,7 @@ import sorcer.service.ContextException;
 import sorcer.service.Signature.ReturnPath;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
-public class Arithmometer implements SorcerConstants {
+public class Arithmometer implements SorcerConstants, Serializable {
 	
 	public static final String ADD = "add";
 
@@ -33,7 +35,7 @@ public class Arithmometer implements SorcerConstants {
 
 	public static final String RESULT_PATH = "result/value";
 			
-	public final static Logger logger = Logger.getLogger(Arithmometer.class
+	public final static Logger logger = LoggerFactory.getLogger(Arithmometer.class
 			.getName());
 
 	/**

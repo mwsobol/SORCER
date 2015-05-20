@@ -45,6 +45,7 @@ dependencies {
 	compile project(':examples:sml')
 	testCompile project(':sorcer-test')
 	testRuntime libs.slf4j
+	testRuntime libs.logback
 }
 
 def repoPath() {

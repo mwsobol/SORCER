@@ -22,7 +22,8 @@ import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import net.jini.id.Uuid;
 import sorcer.service.EvaluationException;
@@ -31,7 +32,7 @@ import sorcer.service.Identifiable;
 public class Observable implements EvaluationModel, Serializable {
 	static final long serialVersionUID = -6036250788560831439L;
 	protected boolean changed = false;
-	protected static Logger logger = Logger.getLogger(Observable.class
+	protected static Logger logger = LoggerFactory.getLogger(Observable.class
 			.getName());
 	// initialized in addObserver
 	// observer id-observer self

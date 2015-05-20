@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-project.version = '5.1.6'
+project.version = '5.2.0'
+
 
 task printVersion {
     description = 'Prints the current SORCER version.'
@@ -60,6 +61,7 @@ subprojects {
 
         if (project.name != "distribution") {
             apply plugin: "java"
+            compileJava.options.encoding = 'UTF-8'
             apply from: file("${rootProject.projectDir.path}/gradle/bootme.gradle")
 
             publishing {
@@ -92,19 +94,55 @@ subprojects {
 
 }
 
+
+def isAnAggregateTest(graph) {
+    return (graph.hasTask(":tests") || graph.hasTask(":allTests"))
+}
+
+def isAnAllTest(graph, name) {
+    return (graph.hasTask(":allTests") || graph.hasTask(":${name}:allTest"))
+}
+
 gradle.taskGraph.whenReady { graph ->
-    if (graph.hasTask(":allTests")) {
+    boolean runningTests = false
+    graph.getAllTasks().each { t ->
+        if(t.path.endsWith("test")) {
+            runningTests = true
+        }
+    }
+    if (runningTests) {
         project.subprojects { project ->
             tasks.withType(Test) {
-                /* Disable the test report for the individual test task */
-                reports.html.enabled = false
+                if(isAnAggregateTest(graph))
+                    reports.html.enabled = false
+                if(!isAnAllTest(graph, project.name)) {
+                    useJUnit {
+                        excludeCategories 'org.sorcer.test.TestsRequiringRio'
+                    }
+                }
             }
         }
     }
 }
 
+task tests(type: TestReport, dependsOn: "bootSorcer") {
+    description = "Aggregate test runner, runs tests that don't require RIO in the project."
+    destinationDir = file("$buildDir/reports/tests")
+
+    project.subprojects { project ->
+        tasks.withType(Test) {
+            ignoreFailures true
+            reportOn it
+        }
+    }
+    doLast {
+        println "\nThe tests task is complete. See the results at: file://${destinationDir.path}/index.html"
+    }
+    finalizedBy("terminateSorcer")
+}
+
 task allTests(type: TestReport, dependsOn: "bootSorcerRio") {
-    description = 'Aggregates all tests, view them in build/reports/tests/index.html.'
+    description = "Aggregate test runner, runs all tests in the project."
     destinationDir = file("$buildDir/reports/allTests")
     project.subprojects { project ->
         tasks.withType(Test) {
@@ -115,7 +153,6 @@ task allTests(type: TestReport, dependsOn: "bootSorcerRio") {
     doLast {
         println "\nThe allTests task is complete. See the results at: file://${destinationDir.path}/index.html"
     }
-
     finalizedBy("terminateSorcerRio")
 }
 

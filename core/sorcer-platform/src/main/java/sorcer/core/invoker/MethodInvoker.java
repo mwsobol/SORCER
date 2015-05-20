@@ -28,8 +28,8 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Mike Sobolewski
@@ -40,7 +40,7 @@ public class MethodInvoker<T> extends ServiceInvoker<T> implements MethodInvokin
 
 	private static final long serialVersionUID = -1158778636907725414L;
 
-	final protected static Logger logger = Logger.getLogger(MethodInvoker.class
+	final protected static Logger logger = LoggerFactory.getLogger(MethodInvoker.class
 			.getName());
 
 	protected String className;
@@ -86,41 +86,41 @@ public class MethodInvoker<T> extends ServiceInvoker<T> implements MethodInvokin
 		selector = methodName;
 	}
 
-	public MethodInvoker(Object target, Par... pars) {
+	public MethodInvoker(Object target, Par... parEntries) {
 		this.target = target;
-		this.pars = new ArgSet(pars);
+		this.pars = new ArgSet(parEntries);
 	}
 
-	public MethodInvoker(Object target, String methodName, Par... pars) {
+	public MethodInvoker(Object target, String methodName, Par... parEntries) {
 		this(methodName, target, methodName);
-		this.pars = new ArgSet(pars);
+		this.pars = new ArgSet(parEntries);
 	}
 
 	public MethodInvoker(String name, Object target, String methodName,
-			Par... pars) {
+			Par... parEntries) {
 		this(name);
 		this.target = target;
 		selector = methodName;
-		this.pars = new ArgSet(pars);
+		this.pars = new ArgSet(parEntries);
 	}
 
 	public MethodInvoker(String name, String className, String methodName,
-			Par... pars) {
-		this(name, className, methodName, null, null, pars);
+			Par... parEntries) {
+		this(name, className, methodName, null, null, parEntries);
 	}
 
 	public MethodInvoker(String name, String className, String methodName,
-			Class<?>[] signature, Par... pars) {
-		this(name, className, methodName, signature, null, pars);
+			Class<?>[] signature, Par... parEntries) {
+		this(name, className, methodName, signature, null, parEntries);
 	}
 
 	public MethodInvoker(String name, String className, String methodName,
-			Class<?>[] paramTypes, String distributionParameter, Par... pars) {
+			Class<?>[] paramTypes, String distributionParameter, Par... parEntries) {
 		this(name);
 		this.className = className;
 		selector = methodName;
 		this.paramTypes = paramTypes;
-		this.pars = new ArgSet(pars);
+		this.pars = new ArgSet(parEntries);
 		if (distributionParameter != null)
 			params = new Object[] { distributionParameter };
 	}
@@ -262,7 +262,7 @@ public class MethodInvoker<T> extends ServiceInvoker<T> implements MethodInvokin
 					.append((paramTypes == null ? "null" : SorcerUtil.arrayToString(paramTypes))).append("\n");
 			message.append("parameters: ")
 					.append((parameters == null ? "null" : SorcerUtil.arrayToString(parameters)));
-			logger.log(Level.SEVERE, message.toString(), e);
+			logger.error(message.toString(), e);
 			throw new EvaluationException(message.toString(), e);
 		}
 		return (T) val;

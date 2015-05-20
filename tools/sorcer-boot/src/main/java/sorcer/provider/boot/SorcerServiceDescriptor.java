@@ -24,6 +24,8 @@ import net.jini.security.BasicProxyPreparer;
 import net.jini.security.ProxyPreparer;
 import net.jini.security.policy.DynamicPolicyProvider;
 import net.jini.security.policy.PolicyFileProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,7 +33,6 @@ import java.lang.reflect.Constructor;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.rmi.MarshalledObject;
-import java.rmi.RMISecurityManager;
 import java.security.AllPermission;
 import java.security.Permission;
 import java.security.Policy;
@@ -42,8 +43,6 @@ import java.util.Properties;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * The SorcerServiceDescriptor class is a utility that conforms to the
@@ -79,7 +78,7 @@ import java.util.logging.Logger;
  */
 public class SorcerServiceDescriptor implements ServiceDescriptor {
     static String COMPONENT = "sorcer.provider.boot";
-    static Logger logger = Logger.getLogger(COMPONENT);
+    static Logger logger = LoggerFactory.getLogger(COMPONENT);
 
     /**
      * The parameter types for the "activation constructor".
@@ -160,7 +159,7 @@ public class SorcerServiceDescriptor implements ServiceDescriptor {
                 else
                     this.codebase = Booter.getCodebase(jars, address, "" + Booter.getPort());
             } catch (UnknownHostException e) {
-                logger.severe("Cannot get hostname for: " + codebase);
+                logger.error("Cannot get hostname for: " + codebase);
             }
         } else
             this.codebase = descCodebase;
@@ -259,7 +258,7 @@ public class SorcerServiceDescriptor implements ServiceDescriptor {
 
     synchronized void ensureSecurityManager() {
         if (System.getSecurityManager() == null) {
-            System.setSecurityManager(new RMISecurityManager());
+            System.setSecurityManager(new SecurityManager());
         }
     }
 
@@ -293,10 +292,10 @@ public class SorcerServiceDescriptor implements ServiceDescriptor {
 
         String platformDir = (String) config.getEntry(COMPONENT, "platformDir",
                                                       String.class, defaultDir);
-        logger.finer("Platform dir: " + platformDir);
+        logger.debug("Platform dir: " + platformDir);
         caps = platformLoader.parsePlatform(platformDir);
 
-        logger.finer("Capabilities: " + Arrays.toString(caps));
+        logger.debug("Capabilities: " + Arrays.toString(caps));
         for (PlatformLoader.Capability cap : caps) {
             if (cap.getCommon()) {
                 URL[] urls = cap.getClasspathURLs();
@@ -310,14 +309,14 @@ public class SorcerServiceDescriptor implements ServiceDescriptor {
          * if(commonJARs.length==0) throw new
 		 * RuntimeException("No commonJARs have been defined");
 		 */
-        if (logger.isLoggable(Level.FINEST)) {
+        if (logger.isTraceEnabled()) {
             StringBuffer buffer = new StringBuffer();
             for (int i = 0; i < commonJARs.length; i++) {
                 if (i > 0)
                     buffer.append("\n");
                 buffer.append(commonJARs[i].toExternalForm());
             }
-            logger.finest("commonJARs=\n" + buffer.toString());
+            logger.trace("commonJARs=\n" + buffer.toString());
         }
 
         CommonClassLoader commonCL = CommonClassLoader.getInstance();
@@ -332,7 +331,7 @@ public class SorcerServiceDescriptor implements ServiceDescriptor {
         ServiceClassLoader jsbCL =
             new ServiceClassLoader(ServiceClassLoader.getURIs(ClassLoaderUtil.getClasspathURLs(getClasspath())),
                                    annotator, commonCL);
-        if (logger.isLoggable(Level.FINE))
+        if (logger.isDebugEnabled())
             ClassLoaderUtil.displayClassLoaderTree(jsbCL);
 		
 		/*
@@ -353,8 +352,8 @@ public class SorcerServiceDescriptor implements ServiceDescriptor {
                 initialGlobalPolicy = Policy.getPolicy();
                 globalPolicy = new AggregatePolicyProvider(initialGlobalPolicy);
                 Policy.setPolicy(globalPolicy);
-                if (logger.isLoggable(Level.FINEST))
-                    logger.log(Level.FINEST, "Global policy set: {0}",
+                if (logger.isTraceEnabled())
+                    logger.trace("Global policy set: {0}",
                                globalPolicy);
             }
             DynamicPolicyProvider service_policy = new DynamicPolicyProvider(new PolicyFileProvider(getPolicy()));
@@ -374,20 +373,17 @@ public class SorcerServiceDescriptor implements ServiceDescriptor {
         try {
             Class implClass;
             implClass = Class.forName(getImplClassName(), false, jsbCL);
-            if (logger.isLoggable(Level.FINEST))
-                logger.finest("Attempting to get implementation constructor");
+            if (logger.isTraceEnabled())
+                logger.trace("Attempting to get implementation constructor");
             Constructor constructor = implClass
                                           .getDeclaredConstructor(actTypes);
-            if (logger.isLoggable(Level.FINEST))
-                logger.log(Level.FINEST,
-                         "Obtained implementation constructor: ",
-                         constructor);
+            if (logger.isTraceEnabled())
+                logger.trace("Obtained implementation constructor: {}",constructor);
             constructor.setAccessible(true);
             impl = constructor.newInstance(getServerConfigArgs(), lifeCycle);
 
-            if (logger.isLoggable(Level.FINEST))
-                logger.log(Level.FINEST,
-                           "Obtained implementation instance: {0}", impl);
+            if (logger.isTraceEnabled())
+                logger.trace("Obtained implementation instance: {}", impl);
             if (impl instanceof ServiceProxyAccessor) {
                 proxy = ((ServiceProxyAccessor) impl).getServiceProxy();
             } else if (impl instanceof ProxyAccessor) {
@@ -398,8 +394,8 @@ public class SorcerServiceDescriptor implements ServiceDescriptor {
             if (proxy != null) {
                 proxy = servicePreparer.prepareProxy(proxy);
             }
-            if (logger.isLoggable(Level.FINEST))
-                logger.log(Level.FINEST, "Proxy =  {0}", proxy);
+            if (logger.isTraceEnabled())
+                logger.trace("Proxy =  {0}", proxy);
             //currentThread.setContextClassLoader(currentClassLoader);
             proxy = (new MarshalledObject(proxy)).get();
         } finally {
@@ -422,8 +418,8 @@ public class SorcerServiceDescriptor implements ServiceDescriptor {
                 if (!jarPath.endsWith(File.separator)) {
                     jarPath = jarPath + File.separator;
                 }
-                if (logger.isLoggable(Level.FINE))
-                    logger.fine("Creating jar file path from ["
+                if (logger.isDebugEnabled())
+                    logger.debug("Creating jar file path from ["
                                 + f.getCanonicalPath() + "]");
                 JarFile jar = new JarFile(f);
                 Manifest man = jar.getManifest();

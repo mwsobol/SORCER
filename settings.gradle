@@ -26,6 +26,8 @@ project(":sorcer-test").projectDir = file("tools/sorcer-test")
 
 include 'sorcer-ui'
 project(":sorcer-ui").projectDir = file("core/sorcer-ui")
+include 'sos-netlet'
+project(":sos-netlet").projectDir = file("sos/sos-netlet")
 include 'sos-shell'
 project(":sos-shell").projectDir = file("sos/sos-shell")
 include 'sos-cataloger'
@@ -42,7 +44,8 @@ include 'sorcer-boot'
 project(":sorcer-boot").projectDir = file("tools/sorcer-boot")
 include 'ssb'
 project(":ssb").projectDir = file("tools/ssb")
-
+include 'sorcer-resolving-loader'
+project(":sorcer-resolving-loader").projectDir = file("tools/sorcer-resolving-loader")
 include 'sorcer-int-tests:sorcer-tester'
 project(":sorcer-int-tests:sorcer-tester").projectDir = file("core/sorcer-int-tests/sorcer-tester")
 include 'sorcer-int-tests:deploy-tests'

@@ -16,35 +16,25 @@
  */
 package sorcer.core.provider;
 
-import static sorcer.eo.operator.task;
-
-import java.rmi.RemoteException;
-import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Logger;
-
 import net.jini.config.ConfigurationException;
 import net.jini.core.transaction.TransactionException;
-import sorcer.core.SorcerConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sorcer.core.context.ServiceContext;
-import sorcer.core.exertion.AltExertion;
-import sorcer.core.exertion.LoopExertion;
-import sorcer.core.exertion.NetJob;
-import sorcer.core.exertion.NetTask;
-import sorcer.core.exertion.OptExertion;
+import sorcer.core.context.ThrowableTrace;
+import sorcer.core.exertion.*;
 import sorcer.core.provider.rendezvous.RendezvousBean;
-import sorcer.core.provider.rendezvous.ServiceJobber;
-import sorcer.core.provider.rendezvous.ServiceSpacer;
-import sorcer.core.signature.NetSignature;
-import sorcer.core.signature.ServiceSignature;
+import sorcer.core.provider.rendezvous.ServiceConcatenator;
 import sorcer.service.*;
 import sorcer.service.Strategy.Access;
+import sorcer.service.jobber.JobberAccessor;
+import sorcer.service.spacer.SpacerAccessor;
 import sorcer.util.AccessorException;
-import sorcer.util.ProviderAccessor;
 
-import com.sun.jini.thread.TaskManager;
+import java.rmi.RemoteException;
+import java.util.List;
+
+import static sorcer.eo.operator.task;
 
 /**
  * The ControlFlowManager class is responsible for handling control flow
@@ -58,11 +48,11 @@ import com.sun.jini.thread.TaskManager;
 @SuppressWarnings("rawtypes")
 public class ControlFlowManager {
 
-	/**
-	 * Logger for this ExerterController logging.
-	 */
-	protected static final Logger logger = Logger
-			.getLogger(ControlFlowManager.class.getName());
+    /**
+     * Logger for this ExerterController logging.
+     */
+    protected static final Logger logger = LoggerFactory
+            .getLogger(ControlFlowManager.class.getName());
 
 	/**
 	 * ExertionDelegate reference needed for handling exertions.
@@ -74,18 +64,13 @@ public class ControlFlowManager {
 	 */
 	protected Exertion exertion;
 
-	/**
-	 * Reference to a rendezvous service.
-	 */
-	protected Rendezvous rendezvous;
+    /**
+     * Reference to a jobber proxy if available.
+     */
+    protected Jobber jobber;
 
 	/**
-	 * Reference to a jobber service.
-	 */
-	protected Jobber jobber;
-
-	/**
-	 * Reference to a concatenator service.
+	 * Reference to a concatenator proxy if available.
 	 */
 	protected Concatenator concatenator;
 
@@ -93,8 +78,6 @@ public class ControlFlowManager {
 	 * Reference to a spacer service.
 	 */
 	protected Spacer spacer;
-
-	static int WAIT_INCREMENT = 50;
 
 	/**
 	 * Default Constructor.
@@ -116,10 +99,10 @@ public class ControlFlowManager {
             throws RemoteException, ConfigurationException {
 		this.delegate = delegate;
 		this.exertion = exertion;
-		configure();
+        init();
 	}
 
-	 /**
+    /**
      * Overloaded constructor which takes in an Exertion, ExerterDelegate, and
      * Spacer. This constructor is used when handling {@link sorcer.service.Job}s.
      *
@@ -145,30 +128,10 @@ public class ControlFlowManager {
         else if (rendezvousBean instanceof Jobber) {
             jobber = (Jobber) rendezvousBean;
         }
-        configure();
+        init();
     }
 
-    private void configure() throws RemoteException, net.jini.config.ConfigurationException {
-        if (concatenator == null) {
-            Concatenator c = (Concatenator) delegate.getBean(Concatenator.class);
-            if (c != null) {
-                concatenator = c;
-            }
-        }
-        if (jobber == null) {
-            Jobber j = (Jobber) delegate.getBean(Jobber.class);
-            if (j != null) {
-                jobber = j;
-            }
-        }
-        if (spacer == null) {
-            Spacer s = (Spacer) delegate.getBean(Spacer.class);
-            if (s != null) {
-                spacer = s;
-            }
-        }
-    }
-    
+
     /**
      * Overloaded constructor which takes in an Exertion, ExerterDelegate, and
      * Spacer. This constructor is used when handling {@link sorcer.service.Job}s.
@@ -205,492 +168,437 @@ public class ControlFlowManager {
 		this(exertion, delegate);
 		this.concatenator = concatenator;
 	}
-	
-	/**
-	 * Overloaded constructor which takes in an Exertion, ExerterDelegate, and
-	 * Spacer. This constructor is used when handling {@link sorcer.service.Job}s.
-	 * 
-	 * @param exertion
-	 *            Exertion
-	 * @param delegate
-	 *            ExerterDelegate
-	 * @param spacer
-	 *            Spacer
-     * @throws ConfigurationException
+
+    private void init() throws RemoteException, net.jini.config.ConfigurationException {
+        if (concatenator==null) {
+            Concatenator c = (Concatenator) delegate.getBean(Concatenator.class);
+            if (c != null) {
+                concatenator = c;
+            }
+        }
+        if (jobber==null) {
+            Jobber j = (Jobber) delegate.getBean(Jobber.class);
+            if (j != null) {
+                jobber = j;
+            }
+        }
+        if (spacer==null) {
+            Spacer s = (Spacer) delegate.getBean(Spacer.class);
+            if (s != null) {
+                spacer = s;
+            }
+        }
+    }
+
+
+    /**
+     * Process the Exertion accordingly if it is a job, task, or a Conditional
+     * Exertion.
+     *
+     * @return Exertion the result
+     * @see NetJob
+     * @see NetTask
+     * @see Conditional
+     * @throws ExertionException
+     *             exception from other methods
+     */
+    public Mogram process() throws ExertionException {
+        logger.info("process exertion: " + exertion.getName());
+        try {
+            Mogram result = null;
+            if (exertion.isConditional()) {
+                logger.info("exertion Conditional");
+                result = doConditional(exertion);
+                logger.info("exertion Conditional; result: " + result);
+            } else if (exertion.isJob()) {
+                logger.info("exertion isJob()");
+                result = doRendezvousExertion((Job) exertion);
+                logger.info("exertion isJob(); result: " + result);
+            } else if (exertion.isBlock()) {
+                logger.info("exertion isBlock()");
+                result = doBlock((Block) exertion);
+                logger.info("exertion isBlock(); result: " + result);
+            } else if (exertion.isTask()) {
+                logger.info("exertion isTask()");
+                result = doTask((Task) exertion);
+                logger.info("exertion isTask(); result: " + result);
+                for(ThrowableTrace t : ((Task)result).getExceptions()) {
+                    logger.warn("Exception processing Task", t.getThrowable());
+                }
+            }
+            return result;
+        } catch (RuntimeException e) {
+            throw e;
+        } catch (ExertionException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new ExertionException(e.getMessage(), e);
+        }
+    }
+
+    /**
+     * This method delegates the doTask method to the ExertionDelegate.
+     *
+     * @param task
+     *            ServiceTask
+     * @return ServiceTask
      * @throws RemoteException
-	 */
-	public ControlFlowManager(Exertion exertion, ProviderDelegate delegate,
-			Spacer spacer) throws RemoteException, ConfigurationException {
-		this(exertion, delegate);
-		this.spacer = spacer;
-	}
-	
-	/**
-	 * Process the Exertion accordingly if it is a job, task, or a Conditional
-	 * Exertion.
-	 * 
-	 * @return Exertion the result
-	 * @see NetJob
-	 * @see NetTask
-	 * @see Conditional
-	 * @throws RemoteException
-	 *             exception from other methods
-	 * @throws ExertionException
-	 *             exception from other methods
-	 */
-	public Exertion process(TaskManager exertionManager)
-			throws ExertionException {
-		logger.info("********************************************* process exertion: "
-				+ exertion.getName());
-		Exertion result = null;
-		if (exertionManager == null) {
-			logger.info("********************************************* exertionManager is NULL");
+     *             exception from ExertionDelegate
+     * @throws ExertionException
+     *             exception from ExertionDelegate
+     * @throws SignatureException
+     *             exception from ExertionDelegate
+     * @throws TransactionException
+     * @throws ContextException
+     */
+    public Task doTask(Task task) throws RemoteException, MogramException,
+            SignatureException, TransactionException, ContextException {
+        Task result;
+        if (task.getControlContext().getAccessType() == Access.PULL) {
+            result = (Task)doRendezvousExertion(task);
+        } else if (delegate != null) {
+            result = delegate.doTask(task, null);
+        }
+        else if (task.isConditional())
+            result = doConditional(task);
+        else
+            result = doBatchTask(task);
 
-			try {
-				if (exertion.isConditional()) {
-					logger.info("********************************************* exertion Conditional");
-					result = doConditional(exertion);
-					logger.info("********************************************* exertion Conditional; result: "
-							+ result);
-				} else if (((ServiceExertion) exertion).isJob()) {
-					logger.info("********************************************* exertion isJob()");
-					result = doRendezvousExertion((Job) exertion);
-					logger.info("********************************************* exertion isJob(); result: "
-							+ result);
-				} else if (((ServiceExertion) exertion).isBlock()) {
-					logger.info("********************************************* exertion isBlock()");
-					result = doBlock((Block) exertion);
-					logger.info("********************************************* exertion isBlock(); result: "
-							+ result);
-				} else if (((ServiceExertion) exertion).isTask()) {
-					logger.info("********************************************* exertion isTask()");
-					result = doTask((Task) exertion);
-					logger.info("********************************************* exertion isTask(); result: "
-							+ result);
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-				throw new ExertionException(e.getMessage(), e);
-			}
-			return result;
-		} else {
-			logger.info("********************************************* exertionManager is *NOT* null");
-			ExertionRunnable ethread = new ExertionRunnable(exertion);
-			exertionManager.add(ethread);
-			while (!ethread.stopped && ethread.result == null) {
-				try {
-					Thread.sleep(WAIT_INCREMENT);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-					((ServiceExertion) exertion).setStatus(Exec.FAILED);
-					((ServiceExertion) exertion).reportException(e);
-					return exertion;
-				}
-			}
-			return ethread.result;
-		}
-	}
+        return result;
+    }
 
-	/**
-	 * This method delegates the doTask method to the ExertionDelegate.
-	 * 
-	 * @param task
-	 *            ServiceTask
-	 * @return ServiceTask
-	 * @throws RemoteException
-	 *             exception from ExertionDelegate
-	 * @throws ExertionException
-	 *             exception from ExertionDelegate
-	 * @throws SignatureException
-	 *             exception from ExertionDelegate
-	 * @throws TransactionException
-	 * @throws ContextException
-	 */
-	public Task doTask(Task task) throws RemoteException, ExertionException,
+	public Block doBlock(Block block) throws RemoteException, MogramException,
 			SignatureException, TransactionException, ContextException {
-		Task result = null;
-		if (task.getControlContext().getAccessType() == Access.PULL) {
-			result = (Task) doRendezvousExertion(task);
-		} else if (delegate != null) {
-			result = delegate.doTask(task, null);
-		} else if (task.isConditional())
-			result = doConditional(task);
-		else
-			result = doBatchTask(task);
 
-		return result;
+
+        if (concatenator == null) {
+            String spacerName = block.getRendezvousName();
+            if (spacerName != null) {
+                concatenator = Accessor.getService(spacerName, Concatenator.class);
+            } else {
+                try {
+                    concatenator = Accessor.getService(Concatenator.class);
+                } catch (Exception x) {
+                    throw new ExertionException("Could not find Concatenator", x);
+                }
+            }
+            logger.info("Got Concatenator: " + concatenator);
+            return (Block)concatenator.service(block, null);
+        }
+        return (Block)((ServiceConcatenator)concatenator).execute(block);
 	}
 
-	public Block doBlock(Block block) throws RemoteException,
-			ExertionException, SignatureException, TransactionException,
-			ContextException {
-		Block result = (Block) ((Executor)concatenator).execute(block, null);
-		return result;
-	}
+    /**
+     * Selects a Jobber or Spacer for exertion processing. If own Jobber or
+     * Spacer is not available then fetches one and forwards the exertion for
+     * processing.
+     *
+     * @param xrt
+     * 			the exertion to be processed
+     * @throws RemoteException
+     * @throws ExertionException
+     */
+    public Mogram doRendezvousExertion(ServiceExertion xrt) throws RemoteException, MogramException {
+        try {
+            if (xrt.isSpacable()) {
+                logger.info("exertion isSpacable");
 
-	/**
-	 * Selects a Jobber or Spacer for exertion processing. If own Jobber or
-	 * Spacer is not available then fetches one and forwards the exertion for
-	 * processing.
-	 * 
-	 * @param xrt
-	 *            the exertion to be processed
-	 * @return
-	 * @throws RemoteException
-	 * @throws ExertionException
-	 */
-	public Exertion doRendezvousExertion(Exertion xrt)
-			throws RemoteException, ExertionException {
-		try {
-			if (((ServiceExertion)xrt).isSpacable()) {
-				logger.info("********************************************* exertion isSpacable");
+                if (spacer == null) {
+                    String spacerName = xrt.getRendezvousName();
+                    Spacer spacerService;
+                    if (spacerName != null) {
+                        spacerService = SpacerAccessor.getSpacer(spacerName);
+                    } else {
+                        try {
+                            spacerService = SpacerAccessor.getSpacer();
+                        } catch (Exception x) {
+                            throw new ExertionException("Could not find Spacer", x);
+                        }
+                    }
+                    logger.info("Got Spacer: " + spacerService);
+                    return spacerService.service(xrt, null);
+                }
+				Mogram job = ((Executor)spacer).execute(xrt, null);
+                logger.info("spacable exerted = " + job);
+                return job;
+            }
+            else {
+                logger.info("exertion NOT Spacable");
+                if (jobber == null) {
+                    String jobberName = xrt.getRendezvousName();
+					Jobber jobberService;
+                    if (jobberName != null)
+                        jobberService = JobberAccessor.getJobber(jobberName);
+                    else
+                        try {
+                            jobberService = JobberAccessor.getJobber();
+                        } catch (AccessorException e) {
+                            throw new ExertionException("Could not find Jobber", e);
+                        }
+                    logger.info("Got Jobber: " + jobber);
+                    return jobberService.service(xrt, null);
+                }
+				Mogram job = ((Executor)jobber).execute(xrt, null);
+                logger.info("job exerted = " + job);
+                return job;
+            }
+        } catch (TransactionException e) {
+            logger.error( "Error", e);
+        }
+        return null;
+    }
+    /**
+     * This method handles the {@link Conditional} Exertions. It determines if
+     * the conditional Exertion: {@link OptExertion}, {@link AltExertion}, and
+     * {@link LoopExertion}.
+     *
+     * @param exertion
+     *            Conditional type Exertion
+     * @return Exertion
+     * @throws SignatureException
+     * @throws ExertionException
+     * @throws RemoteException
+     */
+    public Task doConditional(Exertion exertion) throws RemoteException,
+            MogramException, SignatureException {
+        return ((Task) exertion).doTask();
+    }
 
-				if (spacer == null) {
-					String spacerName = ((ServiceExertion)xrt).getRendezvousName();
-					Spacer spacerService = null;
-					try {
-						// spacerService =
-						// ProviderAccessor.getSpacer(spacerName);
-						spacerService = ProviderAccessor.getSpacer();
-						logger.info("Got Spacer: " + spacerService);
-						return (Exertion) spacerService.service((Mogram)xrt, null);
-					} catch (AccessorException ae) {
-						ae.printStackTrace();
-						throw new ExertionException("Could not find Spacer: "
-								+ spacerName);
-					}
-				}
-				Exertion job = (Exertion)((ServiceSpacer) spacer).execute(xrt, null);
-				logger.info("********************************************* spacable exerted = "
-						+ job);
-				return job;
-			} else {
-				logger.info("********************************************* exertion NOT Spacable");
-				if (jobber == null) {
-					// return delegate.doJob(job);
-					String jobberName = ((ServiceExertion)xrt).getRendezvousName();
-					Jobber jobberService = null;
-					try {
-						// jobberService =
-						// ProviderAccessor.getJobber(jobberName);
-						jobberService = ProviderAccessor.getJobber();
-						logger.info("Got Jobber: " + jobber);
-						return (Exertion) jobberService.service((Mogram)xrt, null);
-					} catch (AccessorException ae) {
-						ae.printStackTrace();
-						throw new ExertionException("Could not find Jobber: "
-								+ jobberName);
-					}
-				}
-				Exertion job = (Job) ((ServiceJobber) jobber)
-						.execute(xrt, null);
-				logger.info("********************************************* job exerted = "
-						+ job);
+    /*
+     * This mehtod saves all the data nodes of a context and put it on a Map.
+     *
+     * @param mapBackUp
+     *            HashMap where the ServiceContext data nodes are saved
+     * @param context
+     *            ServiceContext to be saved into the HashMap
 
-				return job;
-			}
-		} catch (TransactionException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
+    public static void saveState(Map<String, Object> mapBackUp, Context context) {
+        try {
+            Enumeration e = context.contextPaths();
+			String path;
+            while (e.hasMoreElements()) {
+				path = (String) e.nextElement();
+				mapBackUp.put(path, context.get(path));
+            }
+        } catch (ContextException ce) {
+            logger.info("problem saving state of the ServiceContext " + ce);
+            ce.printStackTrace();
+        }
+    }
+*/
+    /*
+	 * Copies the backup map of the dataContext to the passed dataContext.
+     *
+     * @param mapBackUp
+     *            Saved HashMap which is used to restore from
+     * @param context
+     *            ServiceContext that gets restored from the saved HashMap
 
-	/**
-	 * This method handles the {@link Conditional} Exertions. It determines if
-	 * the conditional Exertion: {@link OptExertion}, {@link AltExertion}, and
-	 * {@link LoopExertion}.
-	 * 
-	 * @param exertion
-	 *            Conditional type Exertion
-	 * @return Exertion
-	 * @throws SignatureException
-	 * @throws ExertionException
-	 * @throws RemoteException
-	 * @see WhileExertion
-	 * @see IfExertion
-	 */
-	public Task doConditional(Exertion exertion) throws RemoteException,
-			ExertionException, SignatureException {
-		return ((Task) exertion).doTask();
-	}
+    public static void restoreState(Map<String, Object> mapBackUp,
+                                    Context context) {
+        Iterator iter = mapBackUp.entrySet().iterator();
+        while (iter.hasNext()) {
+            Map.Entry entry = (Map.Entry) iter.next();
+            String path = (String) entry.getKey();
+			Object value = entry.getValue();
 
-	/**
-	 * This mehtod saves all the data nodes of a context and put it on a Map.
-	 * 
-	 * @param mapBackUp
-	 *            HashMap where the ServiceContext data nodes are saved
-	 * @param context
-	 *            ServiceContext to be saved into the HashMap
-	 */
-	public static void saveState(Map<String, Object> mapBackUp, Context context) {
-		try {
-			Enumeration e = context.contextPaths();
-			String path = null;
+            try {
+                context.putValue(path, value);
+            } catch (ContextException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+*/
 
-			while (e.hasMoreElements()) {
-				path = new String((String) e.nextElement());
-				mapBackUp.put(path, ((ServiceContext) context).get(path));
-			}
-		} catch (ContextException ce) {
-			logger.info("problem saving state of the ServiceContext " + ce);
-			ce.printStackTrace();
-		}
-	}
+    /*
+	 * Copies the data nodes from one dataContext to another (shallow copy).
+     *
+     * @param fromContext
+     *            ServiceContext
+     * @param toContext
+     *            ServiceContext
 
-	/**
-	 * Copies the backup map of the context to the passed context.
-	 * 
-	 * @param mapBackUp
-	 *            Saved HashMap which is used to restore from
-	 * @param context
-	 *            ServiceContext that gets restored from the saved HashMap
-	 */
-	public static void restoreState(Map<String, Object> mapBackUp,
-			Context context) {
-		Iterator iter = mapBackUp.entrySet().iterator();
+    public static void copyContext(Context fromContext, Context toContext) {
+        try {
+            Enumeration e = fromContext.contextPaths();
+			String path;
 
-		while (iter.hasNext()) {
-			Map.Entry entry = (Map.Entry) iter.next();
-			String path = (String) entry.getKey();
-			Object value = (Object) entry.getValue();
+            while (e.hasMoreElements()) {
+				path = (String) e.nextElement();
+                toContext.putValue(path, fromContext.getValue(path));
+            }
+        } catch (ContextException ce) {
+            ce.printStackTrace();
+        }
+    }
+*/
 
-			try {
-				context.putValue(path, value);
-			} catch (ContextException e) {
-				e.printStackTrace();
-			}
-		}
-	}
+    /*
+     * Checks if the Exertion is valid for this provider. Returns true if it is
+     * valid otherwise returns false.
+     *
+     * @param exertion
+     *            Exertion interface
+     * @return boolean
 
-	/**
-	 * Copies the data nodes from one context to another (shallow copy).
-	 * 
-	 * @param fromContext
-	 *            ServiceContext
-	 * @param toContext
-	 *            ServiceContext
-	 */
-	public static void copyContext(Context fromContext, Context toContext) {
-		try {
-			Enumeration e = fromContext.contextPaths();
-			String path = null;
+    public boolean isValidExertion(Exertion exertion) {
+        String pn = exertion.getProcessSignature().getProviderName();
 
-			while (e.hasMoreElements()) {
-				path = new String((String) e.nextElement());
-				toContext.putValue(path, fromContext.getValue(path));
-			}
-		} catch (ContextException ce) {
-			ce.printStackTrace();
-		}
-	}
+        if (!(pn == null || pn.equals(SorcerConstants.NULL) || SorcerConstants.ANY
+                .equals(pn.trim()))) {
+            if (!pn.equals(delegate.config.getProviderName()))
+                return false;
+        }
 
-	/**
-	 * Checks if the Exertion is valid for this provider. Returns true if it is
-	 * valid otherwise returns false.
-	 * 
-	 * @param exertion
-	 *            Exertion interface
-	 * @return boolean
-	 */
-	public boolean isValidExertion(Exertion exertion) {
-		String pn = exertion.getProcessSignature().getProviderName();
+        for (int i = 0; i < delegate.publishedServiceTypes.length; i++) {
+            if (delegate.publishedServiceTypes[i].equals(exertion
+                    .getProcessSignature().getServiceType()))
+                return true;
+        }
 
-		if (!(pn == null || pn.equals(SorcerConstants.NULL) || SorcerConstants.ANY
-				.equals(pn.trim()))) {
-			if (!pn.equals(delegate.config.getProviderName()))
-				return false;
-		}
+        return false;
+    }
 
-		for (int i = 0; i < delegate.publishedServiceTypes.length; i++) {
-			if (delegate.publishedServiceTypes[i].equals(exertion
-					.getProcessSignature().getServiceType()))
-				return true;
-		}
+    public void setConcatenator(ServiceConcatenator concatenator) {
+        this.concatenator = concatenator;
+    }
 
-		return false;
-	}
+    public void setJobber(ServiceJobber rendezvous) {
+        this.rendezvous = rendezvous;
+    }
 
-	public void setJobber(ServiceJobber jobber) {
-		this.jobber = jobber;
-	}
+    public void setSpacer(Spacer spacer) {
+        this.spacer = spacer;
+    }
+*/
 
-	public void setSpacer(ServiceSpacer spacer) {
-		this.spacer = spacer;
-	}
+    /*
+     * Traverses the Job hierarchy and reset the task status to INITIAL.
+     *
+     * @param exertion
+     *            Either a task or job
+    public void resetExertionStatus(Exertion exertion) {
+		if (exertion.isTask()) {
+            ((Task) exertion).setStatus(Exec.INITIAL);
+		} else if (exertion.isJob()) {
+            for (int i = 0; i < ((Job) exertion).size(); i++) {
+                this.resetExertionStatus(((Job) exertion).get(i));
+            }
+        }
+    }
+*/
 
-	/**
-	 * Traverses the Job hierarchy and reset the task status to INITIAL.
-	 * 
-	 * @param exertion
-	 *            Either a task or job
-	 */
-	public void resetExertionStatus(Exertion exertion) {
-		if (((ServiceExertion) exertion).isTask()) {
-			((Task) exertion).setStatus(Exec.INITIAL);
-		} else if (((ServiceExertion) exertion).isJob()) {
-			for (int i = 0; i < ((Job) exertion).size(); i++) {
-				this.resetExertionStatus(((Job) exertion).get(i));
-			}
-		}
-	}
+    public Task doBatchTask(Task task) throws MogramException,
+            SignatureException, RemoteException, ContextException {
+        Fidelity tf = task.getFidelity();
+        task.correctBatchSignatures();
+        task.startExecTime();
+        // append context from Contexters
+        if (task.getApdProcessSignatures().size() > 0) {
+            Context cxt = apdProcess(task);
+            cxt.setExertion(task);
+            task.setContext(cxt);
+        }
+        // do preprocessing
+        if (task.getPreprocessSignatures().size() > 0) {
+            Context cxt = preprocess(task);
+            cxt.setExertion(task);
+            task.setContext(cxt);
+        }
+        // execute service task
+		Fidelity<Signature> ts = new Fidelity<Signature>();
+        Signature tsig = task.getProcessSignature();
+        ((ServiceContext)task.getContext()).setCurrentSelector(tsig.getSelector());
+        ((ServiceContext)task.getContext()).setCurrentPrefix(tsig.getPrefix());
 
-	// com.sun.jini.thread.TaskManager.Task
-	private class ExertionRunnable implements Runnable, TaskManager.Task {
-		volatile boolean stopped = false;
-		private Exertion xrt;
-		private Exertion result;
+        ts.getSelects().add(tsig);
+        task.setFidelity(ts);
+        if (tsig.getReturnPath() != null)
+            ((ServiceContext)task.getContext()).setReturnPath(tsig.getReturnPath());
 
-		ExertionRunnable(Exertion exertion) {
-			xrt = exertion;
-		}
+        task = task.doTask();
+        if (task.getStatus() <= Exec.FAILED) {
+            task.stopExecTime();
+            ExertionException ex = new ExertionException("Batch service task failed: "
+                    + task.getName());
+            task.reportException(ex);
+            task.setStatus(Exec.FAILED);
+            task.setFidelity(tf);
+            return task;
+        }
+        task.setFidelity(tf);
+        // do postprocessing
+        if (task.getPostprocessSignatures().size() > 0) {
+            Context cxt = postprocess(task);
+            cxt.setExertion(task);
+            task.setContext(cxt);
+        }
+        if (task.getStatus() <= Exec.FAILED) {
+            task.stopExecTime();
+            ExertionException ex = new ExertionException("Batch service task failed: "
+                    + task.getName());
+            task.reportException(ex);
+            task.setStatus(Exec.FAILED);
+            task.setFidelity(tf);
+            return task;
+        }
+        task.setFidelity(tf);
+        task.stopExecTime();
+        return task;
+    }
 
-		public void run() {
-			try {
-				if (xrt instanceof Conditional) {
-					result = doConditional(xrt);
-				} else if (((ServiceExertion) xrt).isJob()) {
-					result = doRendezvousExertion((Job) xrt);
-				} else if (((ServiceExertion) xrt).isTask()) {
-					result = doTask((Task) xrt);
-				}
-				stopped = true;
-			} catch (Exception e) {
-				stopped = true;
-				logger.finer("Exertion thread killed by exception: "
-						+ e.getMessage());
-				// e.printStackTrace();
-			}
-		}
+    private Context apdProcess(Task task) throws ExertionException, ContextException {
+        return processContinousely(task, task.getApdProcessSignatures());
+    }
 
-		@Override
-		public boolean runAfter(List tasks, int size) {
-			return false;
-		}
-	}
+    private Context preprocess(Task task) throws ExertionException, ContextException {
+        return processContinousely(task, task.getPreprocessSignatures());
+    }
 
-	public Task doBatchTask(Task task) throws ExertionException,
-			SignatureException, RemoteException, ContextException {
-		ServiceFidelity alls = task.getFidelity();
-		Signature lastSig = alls.get(alls.size() - 1);
-		if (alls.size() > 1 && task.isBatch()
-				&& !(lastSig instanceof NetSignature)) {
-			for (int i = 0; i < alls.size() - 1; i++) {
-				alls.get(i).setType(Signature.PRE);
-			}
-		}
-		task.startExecTime();
-		// append context from Contexters
-		if (task.getApdProcessSignatures().size() > 0) {
-			Context cxt = apdProcess(task);
-			cxt.setExertion(task);
-			task.setContext(cxt);
-		}
-		// do preprocessing
-		if (task.getPreprocessSignatures().size() > 0) {
-			Context cxt = preprocess(task);
-			cxt.setExertion(task);
-			task.setContext(cxt);
-		}
-		// execute service task
-		ServiceFidelity ts = new ServiceFidelity(1);
-		Signature tsig = task.getProcessSignature();
-		((ServiceContext) task.getContext()).setCurrentSelector(tsig
-				.getSelector());
-		((ServiceContext) task.getContext())
-				.setCurrentPrefix(((ServiceSignature) tsig).getPrefix());
+    private Context postprocess(Task task) throws ExertionException, ContextException {
+        return processContinousely(task, task.getPostprocessSignatures());
+    }
 
-		ts.add(tsig);
-		task.setFidelity(ts);
-		if (tsig.getReturnPath() != null)
-			((ServiceContext) task.getContext()).setReturnPath(tsig
-					.getReturnPath());
+    public Context processContinousely(Task task, List<Signature> signatures)
+            throws ExertionException, ContextException {
+        Signature.Type type = signatures.get(0).getType();
+        Task t;
+        Context shared = task.getContext();
+        for (int i = 0; i < signatures.size(); i++) {
+            try {
+                t = task(task.getName() + "-" + i, signatures.get(i), shared);
+                signatures.get(i).setType(Signature.SRV);
+                ((ServiceContext)shared).setCurrentSelector(signatures.get(i).getSelector());
+                ((ServiceContext)shared).setCurrentPrefix(signatures.get(i).getPrefix());
 
-		task = task.doTask();
-		if (task.getStatus() <= Exec.FAILED) {
-			task.stopExecTime();
-			ExertionException ex = new ExertionException(
-					"Batch service task failed: " + task.getName());
-			task.reportException(ex);
-			task.setStatus(Exec.FAILED);
-			task.setFidelity(alls);
-			return task;
-		}
-		task.setFidelity(alls);
-		// do postprocessing
-		if (task.getPostprocessSignatures().size() > 0) {
-			Context cxt = postprocess(task);
-			cxt.setExertion(task);
-			task.setContext(cxt);
-		}
-		if (task.getStatus() <= Exec.FAILED) {
-			task.stopExecTime();
-			ExertionException ex = new ExertionException(
-					"Batch service task failed: " + task.getName());
-			task.reportException(ex);
-			task.setStatus(Exec.FAILED);
-			task.setFidelity(alls);
-			return task;
-		}
-		task.setFidelity(alls);
-		task.stopExecTime();
-		return task;
-	}
+                Fidelity<Signature> tmp = new Fidelity<Signature>();
+                tmp.getSelects().add(signatures.get(i));
+                t.setFidelity(tmp);
+                t.setContinous(true);
+                t.setContext(shared);
 
-	private Context apdProcess(Task task) throws ExertionException,
-			ContextException {
-		return processContinousely(task, task.getApdProcessSignatures());
-	}
-
-	private Context preprocess(Task task) throws ExertionException,
-			ContextException {
-		return processContinousely(task, task.getPreprocessSignatures());
-	}
-
-	private Context postprocess(Task task) throws ExertionException,
-			ContextException {
-		return processContinousely(task, task.getPostprocessSignatures());
-	}
-
-	public Context processContinousely(Task task, List<Signature> signatures)
-			throws ExertionException, ContextException {
-		Signature.Type type = signatures.get(0).getType();
-		Task t = null;
-		Context shared = task.getContext();
-		for (int i = 0; i < signatures.size(); i++) {
-			try {
-				t = task(task.getName() + "-" + i, signatures.get(i), shared);
-				signatures.get(i).setType(Signature.SRV);
-				((ServiceContext) shared).setCurrentSelector(signatures.get(i)
-						.getSelector());
-				((ServiceContext) shared)
-						.setCurrentPrefix(((ServiceSignature) signatures.get(i))
-								.getPrefix());
-
-				ServiceFidelity tmp = new ServiceFidelity(1);
-				tmp.add(signatures.get(i));
-				t.setFidelity(tmp);
-				t.setContinous(true);
-				t.setContext(shared);
-				t = t.doTask();
-				signatures.get(i).setType(type);
-				shared = t.getContext();
-				if (t.getStatus() <= Exec.FAILED) {
-					task.setStatus(Exec.FAILED);
-					ExertionException ne = new ExertionException(
-							"Batch signature failed: " + signatures.get(i));
-					task.reportException(ne);
-					task.setContext(shared);
-					return shared;
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-				task.setStatus(Exec.FAILED);
-				task.reportException(e);
-				task.setContext(shared);
-				return shared;
-			}
-		}
-		// return the service context of the last exertion
-		return shared;
-	}
+                logger.info("Sending one of the batch tasks to exert: " + t.getName() + " " + t.getFidelity());
+                t = t.doTask();
+                signatures.get(i).setType(type);
+                shared = t.getContext();
+                if (t.getStatus() <= Exec.FAILED) {
+                    task.setStatus(Exec.FAILED);
+                    ExertionException ne = new ExertionException(
+                            "Batch signature failed: " + signatures.get(i));
+                    task.reportException(ne);
+                    task.setContext(shared);
+                    return shared;
+                }
+            } catch (Exception e) {
+                logger.error("Error", e);
+                task.setStatus(Exec.FAILED);
+                task.reportException(e);
+                task.setContext(shared);
+                return shared;
+            }
+        }
+        // return the service context of the last exertion
+        return shared;
+    }
 }

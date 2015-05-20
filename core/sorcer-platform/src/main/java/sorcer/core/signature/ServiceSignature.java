@@ -20,6 +20,7 @@ package sorcer.core.signature;
 import net.jini.core.lookup.ServiceID;
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
+import org.slf4j.Logger;
 import sorcer.core.SorcerConstants;
 import sorcer.core.deploy.ServiceDeployment;
 import sorcer.core.provider.Provider;
@@ -27,14 +28,12 @@ import sorcer.service.*;
 import sorcer.service.Strategy.Provision;
 import sorcer.service.modeling.Variability;
 import sorcer.util.Log;
-import sorcer.util.ProviderLookup;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
 import java.util.*;
-import java.util.logging.Logger;
 
 import static sorcer.eo.operator.provider;
 
@@ -80,7 +79,7 @@ public class ServiceSignature implements Signature, Service, Evaluation<Object>,
 
 	protected String group = "";
 
-	protected ServiceExertion exertion;
+	protected Exertion exertion;
 
 	/** preprocess, process, postprocess, append context */
 	protected Type execType = Type.SRV;
@@ -92,6 +91,10 @@ public class ServiceSignature implements Signature, Service, Evaluation<Object>,
 	
 	// shell can be used to execute exertions locally or remotely (as ServiceProvider)
 	protected boolean isShellRemote = false;
+
+	protected Context inConnector;
+
+	protected Context outConnector;
 
 	/**
 	 * a context template to define the context appended from a provider
@@ -135,7 +138,7 @@ public class ServiceSignature implements Signature, Service, Evaluation<Object>,
 	}
 
 	public void setExertion(Exertion exertion) throws ExertionException {
-		this.exertion = (ServiceExertion) exertion;
+		this.exertion = exertion;
 	}
 
 	public Exertion getExertion() {
@@ -389,9 +392,9 @@ public class ServiceSignature implements Signature, Service, Evaluation<Object>,
 		return execType == Type.POST;
 	}
 
-	public boolean isAppendType() {
-		return execType == Type.APD_DATA;
-	}
+    public boolean isAppendType() {
+        return execType == Type.APD_DATA;
+    }
 
 	public String toString() {
 		return this.getClass() + ":" + providerName + ";" + execType + ";"
@@ -571,14 +574,14 @@ public class ServiceSignature implements Signature, Service, Evaluation<Object>,
 
 	@Override
 	public Mogram service(Mogram exertion, Transaction txn) throws TransactionException,
-		ExertionException, RemoteException {
-		Provider prv = ProviderLookup.getProvider(this);
+		MogramException, RemoteException {
+		Provider prv = (Provider)Accessor.getService(this);
 		return prv.service(exertion, txn);
 	}
 
 	@Override
 	public Mogram service(Mogram exertion) throws TransactionException,
-			ExertionException, RemoteException {
+			MogramException, RemoteException {
 		return service(exertion, null);
 	}
 
@@ -597,8 +600,24 @@ public class ServiceSignature implements Signature, Service, Evaluation<Object>,
 	}
 
 	@Override
-	public Evaluation substitute(Arg... entries) throws SetterException, RemoteException {
+	public Evaluation substitute(Arg... entries) throws SetterException {
 		return this;
+	}
+
+	public Context getInConnector() {
+		return inConnector;
+	}
+
+	public void setInConnector(Context inConnector) {
+		this.inConnector = inConnector;
+	}
+
+	public Context getOutConnector() {
+		return outConnector;
+	}
+
+	public void setOutConnector(Context outConnector) {
+		this.outConnector = outConnector;
 	}
 
     @Override

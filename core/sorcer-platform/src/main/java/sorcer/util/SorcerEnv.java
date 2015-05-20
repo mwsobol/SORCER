@@ -15,19 +15,24 @@
  */
 package sorcer.util;
 
+import org.rioproject.net.HostUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sorcer.core.SorcerConstants;
+import sorcer.data.DataService;
 import sorcer.service.ConfigurationException;
-import sorcer.service.Context;
 
-import java.io.*;
-import java.net.MalformedURLException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.InetAddress;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.security.AccessControlException;
-import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import static sorcer.core.SorcerConstants.*;
 
 /**
  * The Sorcer utility class provides the global environment configuration for
@@ -81,7 +86,7 @@ import java.util.logging.Logger;
  * @author M. W. Sobolewski
  */
 public class SorcerEnv extends SOS {
-	final static Logger logger = Logger.getLogger(SorcerEnv.class.getName());
+	final static Logger logger = LoggerFactory.getLogger(SorcerEnv.class.getName());
 
 	/**
 	 * Collects all the properties from sorcer.env, related properties from a
@@ -103,9 +108,10 @@ public class SorcerEnv extends SOS {
 			if (home != null) {
 				System.setProperty("sorcer.home", getHome());
 				loadEnvironment();
+                DataService.getPlatformDataService();
 			}
 		} catch (ConfigurationException e) {
-			logger.warning("Failed to load the SORCER environment configuration");
+			logger.warn("Failed to load the SORCER environment configuration");
 		}
 	}
 
@@ -191,7 +197,7 @@ public class SorcerEnv extends SOS {
 		try {
 			hn = getHostName();
 		} catch (UnknownHostException e) {
-			logger.severe("Cannot determine the webster hostname.");
+			logger.error("Cannot determine the webster hostname.");
 		}
 
 		return hn;
@@ -328,10 +334,10 @@ public class SorcerEnv extends SOS {
 		reconcileProperties(props, false);
 		logger.info("*** loaded env properties:" + envFile + "\n"+ GenericUtil.getPropertiesString(props));
 
-		logger.finer("* Sorcer provider accessor:"+ getProperty(SorcerConstants.S_SERVICE_ACCESSOR_PROVIDER_NAME));
+		logger.debug("* Sorcer provider accessor:"+ getProperty(SorcerConstants.S_SERVICE_ACCESSOR_PROVIDER_NAME));
 
 		updateCodebase();
-		logger.finer("java.rmi.server.codebase: "+ System.getProperty("java.rmi.server.codebase"));
+		logger.debug("java.rmi.server.codebase: " + System.getProperty("java.rmi.server.codebase"));
 	}
 
 	/**
@@ -389,8 +395,8 @@ public class SorcerEnv extends SOS {
 				File file = new File(filename);
                 String fn = "configs/" + file.getName();
                 ClassLoader resourceLoader = Thread.currentThread().getContextClassLoader();
-                if(logger.isLoggable(Level.FINE)) {
-                    logger.fine("Using "+resourceLoader.getClass().getName()+": "+resourceLoader);
+                if(logger.isDebugEnabled()) {
+                    logger.debug("Using "+resourceLoader.getClass().getName()+": "+resourceLoader);
                     Enumeration<URL> resources = resourceLoader.getResources(fn);
                     StringBuilder sb = new StringBuilder();
                     while(resources.hasMoreElements()) {
@@ -399,7 +405,7 @@ public class SorcerEnv extends SOS {
                         }
                         sb.append("\t").append(resources.nextElement().toExternalForm());
                     }
-                    logger.fine("Found Resources\n"+(sb.length()==0?"<No configs/sorcer.env found>":sb.toString()));
+                    logger.debug("Found Resources\n"+(sb.length()==0?"<No configs/sorcer.env found>":sb.toString()));
                 }
                 URL resourceURL = resourceLoader.getResource(fn);
                 if(resourceURL!=null) {
@@ -414,7 +420,7 @@ public class SorcerEnv extends SOS {
                 }
 			}
 		} catch (Exception le) {
-			logger.warning("* could not load properties: " + filename);
+			logger.warn("* could not load properties: " + filename);
 			throw new ConfigurationException(le);
 		}
 
@@ -467,7 +473,7 @@ public class SorcerEnv extends SOS {
 				}
 			}
 		} catch (Exception le) {
-			logger.warning("* could not load data formats: " + filename);
+			logger.warn("* could not load data formats: " + filename);
 			throw new ConfigurationException(le);
 		}
 	}
@@ -491,7 +497,7 @@ public class SorcerEnv extends SOS {
 		try {
 			return loadProperties(filename);
 		} catch (ConfigurationException e) {
-			logger.warning(e.toString());
+			logger.warn(e.toString());
 			// e.printStackTrace();
 		}
 		logger.info("after loading, props = " + props);
@@ -501,38 +507,35 @@ public class SorcerEnv extends SOS {
 	protected static void reconcileProperties(Properties properties, boolean expanding)
         throws ConfigurationException {
 		update(properties, expanding);
-		// set the document root for HTTP server either for provider or
+		// set the document root for HTTP server either for provider ormstc.data.dir
 		// requestor
-		String rootDir = null, dataDir = null;
-		rootDir = properties.getProperty(P_DATA_ROOT_DIR);
-		dataDir = properties.getProperty(P_DATA_DIR);
-		// logger.fine("\n1. rootDir = " + rootDir + "\ndataDir = " + dataDir);
+        //rootDir = properties.getProperty(P_DATA_ROOT_DIR);
+		String rootDir = DataService.getDataDir();
+        String dataDir = dataDir = properties.getProperty(P_DATA_DIR);
 
-		if (rootDir != null && dataDir != null) {
+		logger.debug("\n1. rootDir = " + rootDir + "\ndataDir = " + dataDir);
+
+		if (dataDir != null) {
 			System.setProperty(DOC_ROOT_DIR, rootDir + File.separator + dataDir);
-			// logger.fine("1. DOC_ROOT_DIR = " +
-			// System.getProperty(DOC_ROOT_DIR));
+			logger.debug("1. DOC_ROOT_DIR = " +System.getProperty(DOC_ROOT_DIR));
 		} else {
-			rootDir = properties.getProperty(R_DATA_ROOT_DIR);
+			//rootDir = properties.getProperty(R_DATA_ROOT_DIR);
 			dataDir = properties.getProperty(R_DATA_DIR);
 			if (rootDir != null && dataDir != null) {
-				System.setProperty(DOC_ROOT_DIR, rootDir + File.separator
-						+ dataDir);
+				System.setProperty(DOC_ROOT_DIR, rootDir + File.separator+ dataDir);
 			}
-			// logger.fine("\n2 .rootDir = " + rootDir + "\ndataDir = " +
-			// dataDir);
-			// logger.fine("2. DOC_ROOT_DIR = " +
-			// System.getProperty(DOC_ROOT_DIR));
+			 logger.debug("\n2 .rootDir = " + rootDir + "\ndataDir = " +dataDir);
+			 logger.debug("2. DOC_ROOT_DIR = " + System.getProperty(DOC_ROOT_DIR));
 		}
 		dataDir = properties.getProperty(P_SCRATCH_DIR);
-		// logger.fine("\n3. dataDir = " + dataDir);
+		// logger.debug("\n3. dataDir = " + dataDir);
 		if (dataDir != null) {
 			System.setProperty(SCRATCH_DIR, dataDir);
 			// logger.info("3. SCRATCH_DIR = " +
 			// System.getProperty(SCRATCH_DIR));
 		} else {
 			dataDir = properties.getProperty(R_SCRATCH_DIR);
-			// logger.fine("\n4. dataDir = " + dataDir);
+			// logger.debug("\n4. dataDir = " + dataDir);
 			if (dataDir != null) {
 				System.setProperty(SCRATCH_DIR, dataDir);
 				// logger.info("4. SCRATCH_DIR = " +
@@ -703,31 +706,31 @@ public class SorcerEnv extends SOS {
 		String hn = System.getenv("DATA_SERVER_INTERFACE");
 
 		if (hn != null && hn.length() > 0) {
-			logger.finer("data server hostname as the system environment value: "
+			logger.debug("data server hostname as the system environment value: "
 					+ hn);
 			return hn;
 		}
 
 		hn = System.getProperty(DATA_SERVER_INTERFACE);
 		if (hn != null && hn.length() > 0) {
-			logger.finer("data server hostname as 'data.server.interface' system property value: "
+			logger.debug("data server hostname as 'data.server.interface' system property value: "
 					+ hn);
 			return hn;
 		}
 
 		hn = props.getProperty(DATA_SERVER_INTERFACE);
 		if (hn != null && hn.length() > 0) {
-			logger.finer("data server hostname as 'data.server.interface' provider property value: "
+			logger.debug("data server hostname as 'data.server.interface' provider property value: "
 					+ hn);
 			return hn;
 		}
 
 		try {
 			hn = getHostName();
-			logger.finer("data.server.interface hostname as the local host value: "
+			logger.debug("data.server.interface hostname as the local host value: "
 					+ hn);
 		} catch (UnknownHostException e) {
-			logger.severe("Cannot determine the data.server.interface hostname.");
+			logger.error("Cannot determine the data.server.interface hostname.");
 		}
 
 		return hn;
@@ -741,13 +744,13 @@ public class SorcerEnv extends SOS {
 	public static int getDataServerPort() {
 		String wp = System.getenv("DATA_SERVER_PORT");
 		if (wp != null && wp.length() > 0) {
-			// logger.finer("data server port as 'DATA_SERVER_PORT': " + wp);
+			// logger.debug("data server port as 'DATA_SERVER_PORT': " + wp);
 			return new Integer(wp);
 		}
 
 		wp = System.getProperty(DATA_SERVER_PORT);
 		if (wp != null && wp.length() > 0) {
-			// logger.finer("data server port as System 'data.server.port': "
+			// logger.debug("data server port as System 'data.server.port': "
 			// + wp);
 			return new Integer(wp);
 		}
@@ -758,7 +761,7 @@ public class SorcerEnv extends SOS {
 			return new Integer(wp);
 		}
 
-		// logger.severe("Cannot determine the 'data.server.port'.");
+		// logger.error("Cannot determine the 'data.server.port'.");
 		throw new RuntimeException("Cannot determine the 'data.server.port'.");
 	}
 
@@ -835,7 +838,7 @@ public class SorcerEnv extends SOS {
 	 * @return a name of the system Cataloger
 	 */
 	public static String getCatalogerName() {
-		return props.getProperty(P_CATALOOGER_NAME, "Cataloger");
+		return props.getProperty(P_CATALOGER_NAME, "Cataloger");
 	}
 
 	/**
@@ -922,7 +925,7 @@ public class SorcerEnv extends SOS {
 	}
 
 	public static String getSpacerName() {
-		return props.getProperty(SPACER_NAME, "Spacer");
+		return props.getProperty(SPACER_NAME, "Rendezvous");
 	}
 
 	public static String getActualSpacerName() {
@@ -998,12 +1001,17 @@ public class SorcerEnv extends SOS {
 	/**
 	 * Gets the value of a certain property.
 	 * 
-	 * @param property
+	 * @param property the property to get
 	 * @return the string value of that property
 	 */
 	public static String getProperty(String property) {
-		String p = props.getProperty(property);
-		return p;
+        String p = null;
+        if(props!=null) {
+            p = props.getProperty(property);
+        } else {
+            logger.warn("No loaded properties");
+        }
+        return p;
 	}
 
 	/**
@@ -1241,9 +1249,9 @@ public class SorcerEnv extends SOS {
 	 * 
 	 * @return a provider data root directory
 	 */
-	public File getDataRootDir() {
+	/*public File getDataRootDir() {
 		return new File(getProperty(P_DATA_ROOT_DIR));
-	}
+	}*/
 
 	/**
 	 * Returns the provider's data directory.
@@ -1260,163 +1268,68 @@ public class SorcerEnv extends SOS {
 	 * @return a HTTP document root directory
 	 */
 	public static File getDocRootDir() {
-		String drd = System
-				.getProperty(DOC_ROOT_DIR, Sorcer.getHome() + File.separator + "data");
-		return new File(drd);
+		return new File(DataService.getDataDir());
 	}
 
-	public static File getDataFile(String filename) {
-		return new File(getDataDir() + File.separator + filename);
-	}
+	/*public static File getDataFile(String filename) throws IOException {
+        return dataService.getDataFile(new File(filename).toURI().toURL());
+	}*/
 
 	/**
 	 * Returns a directory for providers's scratch files
 	 * 
 	 * @return a scratch directory
 	 */
-	static public File getUserHomeDir() {
+	/*static public File getUserHomeDir() {
 		return new File(System.getProperty("user.home"));
-	}
+	}*/
 
 	/**
 	 * Returns a directory for providers's scratch files
 	 * 
 	 * @return a scratch directory
 	 */
-	static public File getSorcerHomeDir() {
+/*	static public File getSorcerHomeDir() {
 		return new File(System.getProperty(SORCER_HOME));
-	}
+	}*/
 
 	/**
 	 * Returns a directory for providers's scratch files
 	 * 
 	 * @return a scratch directory
 	 */
-	static public File getScratchDir() {
+	/*static public File getScratchDir() {
 		return getNewScratchDir();
-	}
+	}*/
 
-	/**
-	 * Deletes a direcory and all its files.
-	 * 
-	 * @param dir
-	 *            to be deleted
-	 * @return true if the directory is deleted
-	 * @throws Exception
-	 */
-	public boolean deleteDir(File dir) throws Exception {
-		return SorcerUtil.deleteDir(dir);
-	}
 
-	public static synchronized String getUniqueId() {
-		// SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd-HHmmss");
-		SimpleDateFormat sdf = new SimpleDateFormat("dd-HHmmss");
-		Calendar c = Calendar.getInstance();
-		long time = c.getTime().getTime();
+	public static File[] getSharedDirs() {
+		String filePath = props.getProperty(S_SHARED_DIRS_FILE);
+		String[] paths;
 
-		String uid = UUID.randomUUID().toString();
-		// return sdf.format(time) + "-" + Long.toHexString(time);
-		return sdf.format(time) + "-" + uid;
-	}
-
-	/**
-	 * Returns a directory for providers's new scratch files
-	 * 
-	 * @return a scratch directory
-	 */
-	static public File getNewScratchDir() {
-		return getNewScratchDir("");
-	}
-
-	static int subDirCounter = 0;
-
-	static public File getNewScratchDir(String scratchDirNamePrefix) {
-		String scratchDirName = System.getProperty(SCRATCH_DIR,
-				props.getProperty(SCRATCH_DIR));
-		logger.info("scratch_dir = " + scratchDirName);
-		logger.info("dataDir = " + getDataDir());
-		String dirName = getDataDir() + File.separator + scratchDirName
-				+ File.separator + getUniqueId();
-		File tempdir = new File(dirName);
-		File scratchDir = null;
-		if (scratchDirNamePrefix == null || scratchDirNamePrefix.length() == 0) {
-			scratchDir = tempdir;
+		if (filePath != null) {
+			try {
+				List<String> pathList = IOUtils.readLines(new File(filePath));
+				paths = pathList.toArray(new String[pathList.size()]);
+			} catch (IOException e) {
+				logger.warn("Error while reading " + filePath  + " " + e.getMessage());
+				paths = new String[]{};
+			}
+			props.put(S_SHARED_DIRS, StringUtils.join(paths, File.pathSeparator));
 		} else {
-			scratchDir = new File(tempdir.getParentFile(), scratchDirNamePrefix
-					+ tempdir.getName());
+			String sharedDirs = props.getProperty(S_SHARED_DIRS);
+			if (sharedDirs != null) {
+				paths = sharedDirs.split(File.pathSeparator);
+			} else {
+				paths = new String[0];
+			}
 		}
-		boolean madeDirs = scratchDir.mkdirs();
-		// logger.info("madeDirs = " + madeDirs);
-		// logger.info("can read? " + scratchDir.canRead());
 
-		return scratchDir;
-	}
-
-	public static String getAbsoluteScrachFilename(String filename) {
-		return getNewScratchDir() + File.separator + filename;
-	}
-
-	/**
-	 * Returns the URL of a scratch file at the provider HTTP data server.
-	 * 
-	 * @param scratchFile
-	 * @return the URL of a scratch file
-	 * @throws java.net.MalformedURLException
-	 */
-	public static URL getScratchURL(File scratchFile)
-			throws MalformedURLException {
-
-		String dataUrl = getDataServerUrl();
-
-		String path = scratchFile.getAbsolutePath();
-
-		// String scratchDir = System.getProperty(SCRATCH_DIR);
-
-		// File scratchDirFile = new File(scratchDir);
-		// scratchDir = scratchDirFile.getPath();
-
-		// int index = path.indexOf(scratchDir);
-
-		logger.info("dataUrl = " + dataUrl);
-		logger.info("scratchFile = " + scratchFile.getAbsolutePath());
-		// logger.info("scratchDir = " + scratchDir);
-		// logger.info("index = " + index);
-
-		logger.info("DOC_ROOT_DIR = " + System.getProperty(DOC_ROOT_DIR));
-		logger.info("substring = "
-				+ path.substring(System.getProperty(DOC_ROOT_DIR).length() + 1));
-		// if (index < 0) {
-		// throw new MalformedURLException("Scratch file: " + path
-		// + " is not in: " + scratchDir);
-		// }
-		String url = dataUrl + File.separator
-				+ path.substring(System.getProperty(DOC_ROOT_DIR).length() + 1);
-		url = url.replaceAll("\\\\+", "/");
-		logger.info("url = " + url);
-
-		return new URL(url);
-	}
-
-	/**
-	 * Returns the URL of a dataFile at the provider HTTP data server.
-	 * 
-	 * @param dataFile
-	 * @return the URL of a data file
-	 * @throws MalformedURLException
-	 */
-	public static URL getDataURL(File dataFile) throws MalformedURLException {
-		String dataUrl = getDataServerUrl();
-		String path = dataFile.getAbsolutePath();
-		String docDir = System.getProperty(DOC_ROOT_DIR);
-		if (docDir == null)
-			throw new MalformedURLException("no system property 'doc.root.dir' defined!");
-		int index = path.indexOf(docDir);
-		if (index < 0 || path == null) {
-			throw new MalformedURLException("Data file: " + path
-					+ " is not in: " + docDir);
+		File[] result = new File[paths.length];
+		for (int i = 0; i < paths.length; i++) {
+			result[i] = new File(paths[i]);
 		}
-		return new URL(dataUrl + File.separator
-				+ path.substring(docDir.length() + 1));
+		return result;
 	}
 
 	/**
@@ -1432,25 +1345,6 @@ public class SorcerEnv extends SOS {
 		if (port == 0)
 			port = getPortAvailable();
 		return port;
-	}
-
-	private static void storeEnvironment(String filename) {
-		props.setProperty(P_WEBSTER_PORT, "" + port);
-		try {
-			props.setProperty(P_WEBSTER_INTERFACE, getHostName());
-		} catch (UnknownHostException e) {
-			e.printStackTrace();
-			return;
-		}
-		try {
-			if (filename != null) {
-				props.store(new FileOutputStream(filename),
-						"SORCER auto-generated environment properties");
-			}
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 	}
 
 	/**
@@ -1469,28 +1363,6 @@ public class SorcerEnv extends SOS {
 	}
 
 	/**
-	 * Return the local host address based on the value of a system property.
-	 * using {@link java.net.InetAddress#getByName(String)}. If the system
-	 * property is not resolvable, return the default host address obtained from
-	 * {@link java.net.InetAddress#getLocalHost()}
-	 * 
-	 * @param property
-	 *            The property name to use
-	 * @return The local host address
-	 * @throws java.net.UnknownHostException
-	 *             if no IP address for the host name could be found.
-	 */
-	public static String getHostAddressFromProperty(String property)
-			throws java.net.UnknownHostException {
-		String host = getHostAddress();
-		String value = System.getProperty(property);
-		if (value != null) {
-			host = java.net.InetAddress.getByName(value).getHostAddress();
-		}
-		return (host);
-	}
-
-	/**
 	 * Return the local host address using
 	 * <code>java.net.InetAddress.getLocalHost().getHostAddress()</code>
 	 * 
@@ -1499,7 +1371,7 @@ public class SorcerEnv extends SOS {
 	 *             if no IP address for the local host could be found.
 	 */
 	public static String getHostAddress() throws java.net.UnknownHostException {
-		return java.net.InetAddress.getLocalHost().getHostAddress();
+		return getLocalHost().getHostAddress();
 	}
 
 	/**
@@ -1526,8 +1398,16 @@ public class SorcerEnv extends SOS {
 	 *             if no hostname for the local host could be found.
 	 */
 	public static String getHostName() throws java.net.UnknownHostException {
-		return java.net.InetAddress.getLocalHost().getCanonicalHostName();
+		return getLocalHost().getCanonicalHostName();
 	}
+
+    public static InetAddress getLocalHost() throws UnknownHostException {
+        String hostnameProp = getProperty(JavaSystemProperties.RMI_SERVER_HOSTNAME);
+        if (hostnameProp != null && !hostnameProp.isEmpty())
+            return InetAddress.getByName(hostnameProp);
+        else
+            return HostUtil.getInetAddress();
+    }
 
 	/**
 	 * Return the SORCER environment properties loaded by default from the
@@ -1628,8 +1508,8 @@ public class SorcerEnv extends SOS {
             sb.append(codebseUrl).append("/").append(jars[jars.length - 1]);
         codebase = sb.toString();
         System.setProperty("java.rmi.server.codebase", codebase);
-        if (logger.isLoggable(Level.FINE))
-            logger.fine("Setting codebase 'java.rmi.server.codebase': "
+        if (logger.isDebugEnabled())
+            logger.debug("Setting codebase 'java.rmi.server.codebase': "
                     + codebase);
 	}
 	
@@ -1681,69 +1561,4 @@ public class SorcerEnv extends SOS {
 		return name;
 	}
 
-	public static String getSuffixedName(String name, int suffixLength) {
-		return name + "-" + getDefaultNameSuffix(suffixLength);
-	}
-
-    public static boolean isIGrid() {
-        return true;
-    }
-
-
-
-    /**
-     * Loads data node (value) types from the SORCER data store or file. Data
-     *
-     * node types specify application types of data nodes in service contexts.
-     * It is analogous to MIME types in SORCER. Each type has a format
-     * 'cnt/application/format/modifiers' or in the association format
-     * 'cnt|application|format|modifiers' when used with
-     * {@code Context.getMarkedPaths}.
-     *
-     * @param filename
-     *            name of file containing service context node type definitions.
-     */
-    private static void loadDataNodeTypes(String filename) {
-        try {
-            // Try in local directory first
-            props.load((new FileInputStream(new File(filename))));
-        } catch (Throwable t1) {
-            try {
-                // Can not access "filename" give try as resource
-                // sorcer/util/data.formats
-                InputStream stream = Sorcer.class.getResourceAsStream(filename);
-                if (stream != null)
-                    props.load(stream);
-                else
-                    logger.severe("could not load data node types from: "
-                            + filename);
-            } catch (Throwable t2) {
-                logger.severe("could not load data node types: \n"
-                        + t2.getMessage());
-                logger.throwing(Sorcer.class.getName(), "loadDataNodeTypes", t2);
-            }
-
-        }
-    }
-
-
-    /**
-     * Load context node (value) types from default 'node.types'. SORCER node
-     * types specify application types of data nodes in SORCER service contexts.
-     * It is an analog of MIME types in SORCER. Each type has a format
-     * 'cnt/application/format/modifiers'.
-     */
-    public static void loadContextNodeTypes(Hashtable<?, ?> map) {
-        if (map != null && !map.isEmpty()) {
-            String idName = null, cntName = null;
-            String[] tokens;
-            for (Enumeration<?> e = map.keys(); e.hasMoreElements();) {
-                idName = (String) e.nextElement();
-                tokens = toArray(idName);
-                cntName = ("".equals(tokens[1])) ? tokens[0] : tokens[1];
-                props.put(cntName,
-                        Context.DATA_NODE_TYPE + APS + map.get(idName));
-            }
-        }
-    }
 }

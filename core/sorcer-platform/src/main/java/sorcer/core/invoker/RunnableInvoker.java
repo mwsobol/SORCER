@@ -45,16 +45,16 @@ public class RunnableInvoker<T> extends ServiceInvoker<T> {
 		super(context);
 	}
 	
-	public RunnableInvoker(ParModel context, Runnable runnable, Par... pars) {
+	public RunnableInvoker(ParModel context, Runnable runnable, Par... parEntries) {
 		super(context);
 		this.runnable = runnable;
-		this.pars = new ArgSet(pars);
+		this.pars = new ArgSet(parEntries);
 	}
 
-	public RunnableInvoker(String name, Runnable runnable, Par... pars) {
+	public RunnableInvoker(String name, Runnable runnable, Par... parEntries) {
 		super(name);
 		this.runnable = runnable;
-		this.pars = new ArgSet(pars);
+		this.pars = new ArgSet(parEntries);
 	}
 	
 	@Override

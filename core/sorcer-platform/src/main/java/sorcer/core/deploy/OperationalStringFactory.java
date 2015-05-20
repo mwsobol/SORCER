@@ -15,6 +15,15 @@
  */
 package sorcer.core.deploy;
 
+import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.rioproject.impl.opstring.OpString;
 import org.rioproject.opstring.ClassBundle;
 import org.rioproject.opstring.OperationalString;
@@ -25,21 +34,13 @@ import sorcer.service.Exertion;
 import sorcer.service.ServiceExertion;
 import sorcer.service.Signature;
 
-import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
-
 /**
  * Create an {@link OperationalString} from an {@link Exertion}.
  *
  * @author Dennis Reedy
  */
 public final class OperationalStringFactory {
-    static final Logger logger = Logger.getLogger(OperationalStringFactory.class.getName());
+    static final Logger logger = LoggerFactory.getLogger(OperationalStringFactory.class.getName());
     private OperationalStringFactory() throws Exception {
     }
 
@@ -98,7 +99,7 @@ public final class OperationalStringFactory {
             }
         }
         if(services.isEmpty()) {
-            logger.warning(String.format("No services configured for exertion %s", exertion.getName()));
+            logger.warn(String.format("No services configured for exertion %s", exertion.getName()));
             return null;
         }
         OpString opString = new OpString(exertion.getDeploymentId(), null);

@@ -32,7 +32,7 @@ public interface Strategy extends Arg {
 	 * <code>STEP</code> (stepwise)) for all component exertions at the same level.
 	 */
 	public enum Flow implements Arg {
-		SEQ, PAR, STEP;
+		SEQ, PAR, STEP, AUTO;
 
 		/* (non-Javadoc)
 		 * @see sorcer.service.Arg#getName()
@@ -86,7 +86,7 @@ public interface Strategy extends Arg {
 	 * called monitor.
 	 */
 	public enum Monitor implements Arg {
-		YES, TRUE, NO, FALSE, WAIT, NOTIFY, NOTIFY_ALL;
+		YES, TRUE, NO, FALSE, ALL, WAIT, NOTIFY, NOTIFY_ALL;
 
 		/* (non-Javadoc)
 		 * @see sorcer.service.Arg#getName()

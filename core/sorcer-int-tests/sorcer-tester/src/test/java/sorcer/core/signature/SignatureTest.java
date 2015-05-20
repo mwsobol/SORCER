@@ -2,6 +2,8 @@ package sorcer.core.signature;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.tester.provider.Adder;
@@ -13,7 +15,6 @@ import sorcer.service.Signature;
 import java.lang.reflect.Proxy;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.logging.Logger;
 
 import static org.junit.Assert.*;
 import static sorcer.co.operator.inEnt;
@@ -26,8 +27,8 @@ import static sorcer.eo.operator.*;
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("core/sorcer-int-tests/sorcer-tester")
 public class SignatureTest {
-	private final static Logger logger = Logger
-			.getLogger(SignatureTest.class.getName());
+
+	private static final Logger logger = LoggerFactory.getLogger(SignatureTest.class);
 
 	@Test
 	public void newInstance() throws Exception {

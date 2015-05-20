@@ -180,16 +180,16 @@ public class SignatureView extends JPanel implements Observer {
 	/**
 	 * Updates the interface with the list of providers, interfaces, or methods
 	 * 
-	 * @param Model
+	 * @param observable
 	 *            BrowserModel
 	 * @param updated_interface
 	 *            interface to be updated
 	 */
-	public void update(Observable Model, Object updated_interface) {
+	public void update(Observable observable, Object updated_interface) {
 
 		String list[];
 		if (updated_interface.toString().equals(BrowserModel.PROVIDER_ADDED)) {
-			BrowserModel model = (BrowserModel) Model;
+			BrowserModel model = (BrowserModel) observable;
 			list = model.getProviders();
 			for (int i = 0; i < list.length; i++)
 				if (!listModel.contains(list[i]))
@@ -197,7 +197,7 @@ public class SignatureView extends JPanel implements Observer {
 		}
 
 		if (updated_interface.toString().equals(BrowserModel.PROVIDER_UPDATED)) {
-			BrowserModel model = (BrowserModel) Model;
+			BrowserModel model = (BrowserModel) observable;
 			list = model.getProviders();
 			listModel.clear();
 			for (int i = 0; i < list.length; i++)
@@ -206,7 +206,7 @@ public class SignatureView extends JPanel implements Observer {
 				provider_l.setSelectedIndex(0);
 		}
 		if (updated_interface.toString().equals(BrowserModel.INTERFACE_UPDATED)) {
-			BrowserModel model = (BrowserModel) Model;
+			BrowserModel model = (BrowserModel) observable;
 			list = model.getInterfaces();
 			interface_l.setListData(list);
 
@@ -214,11 +214,14 @@ public class SignatureView extends JPanel implements Observer {
 				interface_l.setSelectedIndex(0);
 		}
 		if (updated_interface.toString().equals(BrowserModel.METHOD_UPDATED)) {
-			BrowserModel model = (BrowserModel) Model;
+			BrowserModel model = (BrowserModel) observable;
 			list = model.getMethods();
 			method_l.setListData(list);
 			if (list.length == 1) // auto select if only one item
+			{
 				method_l.setSelectedIndex(0);
+				model.setSelectedMethod(list[0]);
+			}
 		}
 
 	}

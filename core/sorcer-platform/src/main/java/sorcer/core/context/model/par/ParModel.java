@@ -16,12 +16,12 @@
  */
 package sorcer.core.context.model.par;
 
-import sorcer.co.tuple.SignatureEntry;
 import sorcer.core.context.Contexts;
-import sorcer.core.context.PositionalContext;
 import sorcer.core.context.ServiceContext;
+import sorcer.core.context.model.ent.EntModel;
+import sorcer.core.context.model.ent.Entry;
 import sorcer.core.invoker.ServiceInvoker;
-import sorcer.core.signature.ServiceSignature;
+import sorcer.service.Scopable;
 import sorcer.service.*;
 import sorcer.service.modeling.Variability;
 import sorcer.util.Response;
@@ -30,7 +30,6 @@ import java.rmi.RemoteException;
 import java.util.*;
 
 import static sorcer.eo.operator.returnPath;
-import static sorcer.eo.operator.task;
 
 /*
  * Copyright 2013 the original author or authors.
@@ -60,14 +59,14 @@ import static sorcer.eo.operator.task;
  * @author Mike Sobolewski
  */
 @SuppressWarnings({"unchecked", "rawtypes"  })
-public class ParModel<T> extends PositionalContext<T> implements Invocation<T>, Mappable<T>, ParModeling {
+public class ParModel<T> extends EntModel<T> implements Invocation<T>, Mappable<T>, ParModeling {
 
     private static final long serialVersionUID = -6932730998474298653L;
 
     public ParModel() {
         super();
         name = PAR_MODEL;
-        setSubject("model/pars", new Date());
+        setSubject("par/model", new Date());
 
     }
 
@@ -78,7 +77,7 @@ public class ParModel<T> extends PositionalContext<T> implements Invocation<T>, 
     public ParModel(Context context) throws RemoteException, ContextException {
         super(context);
         name = PAR_MODEL;
-        setSubject("model/pars", new Date());
+        setSubject("par/model", new Date());
     }
 
     public ParModel(Identifiable... objects) throws RemoteException,
@@ -87,76 +86,41 @@ public class ParModel<T> extends PositionalContext<T> implements Invocation<T>, 
         add(objects);
     }
 
-    public T getValue(String path, Arg... entries) throws ContextException {
-        try {
-            append(entries);
-            T val = null;
-            if (path != null) {
-                val = (T) get(path);
-            } else {
-                Signature.ReturnPath rp = returnPath(entries);
-                if (rp != null)
-                    val = (T) getReturnValue(rp);
-                else
-                    val = (T) super.getValue(path, entries);
-            }
-            if ((val instanceof Par) && (((Par) val).asis() instanceof Variability)) {
-                bindVar((Variability) ((Par) val).asis());
-            } else {
-                if (val instanceof SignatureEntry) {
-                    ServiceSignature sig = (ServiceSignature) ((SignatureEntry) val).value();
-                    Context out = execSignature(sig);
-                    if (sig.getReturnPath() != null && sig.getReturnPath().path != null) {
-                        return (T) getValue(sig.getReturnPath().path);
-                    } else {
-                        return (T) out;
-                    }
-                }
-            }
-            if (val != null && val instanceof Evaluation) {
-                return (T) ((Evaluation) val).getValue(entries);
-            } else if (path == null && val == null && responsePaths != null) {
-                if (responsePaths.size() == 1)
-                    return (T) getValue(responsePaths.get(0), entries);
-                else
-                    return (T) getResponses();
-            } else {
-                return (T) val;
-            }
-        } catch (Exception e) {
-            throw new EvaluationException(e);
-        }
-    }
+	public T getValue(String path, Arg... entries) throws ContextException {
+		try {
+			append(entries);
+			T val = null;
+			if (path != null) {
+				val = (T) get(path);
+			} else {
+				Signature.ReturnPath rp = returnPath(entries);
+				if (rp != null)
+					val = (T) getReturnValue(rp);
+				else
+					val = (T) super.getValue(path, entries);
+			}
 
-    private Context execSignature(Signature sig) throws Exception {
-        String[] ips = sig.getReturnPath().inPaths;
-        String[] ops = sig.getReturnPath().outPaths;
-        execDependencies(sig);
-        Context incxt = this;
-        if (ips != null && ips.length > 0) {
-            incxt = this.getEvaluatedSubcontext(ips);
-        }
-        if (sig.getReturnPath() != null) {
-            incxt.setReturnPath(sig.getReturnPath());
-        }
-        Context outcxt = ((Task) task(sig, incxt).exert()).getContext();
-        if (ops != null && ops.length > 0) {
-            outcxt = outcxt.getSubcontext(ops);
-        }
-        this.appendInOut(outcxt);
-        return outcxt;
-    }
-    
-    private void execDependencies(Signature sig, Arg... args) throws ContextException {
-        Map<String, List<String>> dpm = getDependentPaths();
-        List<String> dpl = dpm.get(sig.getName());
-        if (dpl != null && dpl.size() > 0) {
-            for (String p : dpl) {
-               getValue(p, args);
-            }
-        }
-    }
-    
+			if ((val instanceof Par) && (((Par) val).asis() instanceof Variability)) {
+				bindVar((Variability) ((Par) val).asis());
+			} else if (val instanceof Scopable) {
+				((Scopable)val).getScope().setScope(this);
+			}
+
+			if (val != null && val instanceof Evaluation) {
+				return (T) ((Evaluation) val).getValue(entries);
+			} else if (path == null && val == null && responsePaths != null) {
+				if (responsePaths.size() == 1)
+					return (T) getValue(responsePaths.get(0), entries);
+				else
+					return (T) getResponse();
+			} else {
+				return (T) val;
+			}
+		} catch (Exception e) {
+			throw new EvaluationException(e);
+		}
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -173,7 +137,7 @@ public class ParModel<T> extends PositionalContext<T> implements Invocation<T>, 
 	
 	@Override
 	public T putValue(String path, Object value) throws ContextException {
-		contextChanged = true;
+		isChanged = true;
 		Object obj = get(path);
 		try {
 			if (obj instanceof Par) {
@@ -232,9 +196,9 @@ public class ParModel<T> extends PositionalContext<T> implements Invocation<T>, 
 			if (obj instanceof Par) {
 				p = (Par) obj;
 				addPar(p);
-			} else if (obj instanceof sorcer.co.tuple.Entry) {
-				putValue((String) ((sorcer.co.tuple.Entry) obj).key(),
-						((sorcer.co.tuple.Entry) obj).value());
+			} else if (obj instanceof Entry) {
+				putValue((String) ((Entry) obj).key(),
+						((Entry) obj).value());
 			} else if (obj instanceof Identifiable) {
 				String pn = ((Identifiable) obj).getName();
 				p = new Par(pn, obj, new ParModel(pn).append(this));
@@ -243,7 +207,7 @@ public class ParModel<T> extends PositionalContext<T> implements Invocation<T>, 
 			if (p != null)
 				appendPar(p);
 		}
-		contextChanged = true;
+		isChanged = true;
 		return this;
 	}
 	
@@ -253,18 +217,18 @@ public class ParModel<T> extends PositionalContext<T> implements Invocation<T>, 
 		for (Identifiable obj : objects) {
 			if (obj instanceof Par) {
 				p = (Par) obj;
-			} else if (obj instanceof sorcer.co.tuple.Entry) {
-				putValue((String) ((sorcer.co.tuple.Entry) obj).key(),
-						((sorcer.co.tuple.Entry) obj).value());
+			} else if (obj instanceof Entry) {
+				putValue((String) ((Entry) obj).key(),
+						((Entry) obj).value());
 			} else {
-				String pn = ((Identifiable) obj).getName();
+				String pn = obj.getName();
 				p = new Par(pn, obj, this);
 			}
 			
 			if (p != null)
 				addPar(p);
 		}
-		contextChanged = true;
+		isChanged = true;
 		return this;
 	}
 
@@ -351,19 +315,19 @@ public class ParModel<T> extends PositionalContext<T> implements Invocation<T>, 
 	}
 
 	public boolean isContextChanged() {
-		return contextChanged;
+		return isChanged;
 	}
 
 	public void setContextChanged(boolean contextChanged) {
-		this.contextChanged = contextChanged;
+		this.isChanged = contextChanged;
 	}
 	
 	public Variability getVar(String name) throws ContextException {
 		String key;
 		Object val = null;
-		Enumeration e = contextPaths();
-		while (e.hasMoreElements()) {
-			key = (String) e.nextElement();
+		Iterator e = keyIterator();
+		while (e.hasNext()) {
+			key = (String) e.next();
 			val = getValue(key);
 			if (val instanceof Variability) {
 				if (((Variability) val).getName().equals(name))
@@ -430,10 +394,10 @@ public class ParModel<T> extends PositionalContext<T> implements Invocation<T>, 
 	public Context<T> appendNew(Context<T> context)
 			throws ContextException, RemoteException {
 		ServiceContext cxt = (ServiceContext) context;
-		Iterator<Map.Entry<String, Object>> i = cxt.entrySet().iterator();
+		Iterator<Map.Entry<String, Object>> i = cxt.entryIterator();
 		while (i.hasNext()) {
 			Map.Entry<String, Object> e = i.next();
-			if (!contains(e.getKey()) && e.getKey().equals("script")) {
+			if (!containsKey(e.getKey()) && e.getKey().equals("script")) {
 				put(e.getKey(), context.asis(e.getKey()));
 			}
 		}
@@ -442,7 +406,7 @@ public class ParModel<T> extends PositionalContext<T> implements Invocation<T>, 
     
 	@Override
 	public String toString() {
-		return this.getClass().getName() + ":" + getName() + "\nkeys: " + keySet() 
+		return this.getClass().getName() + ":" + getName() + "\nkeys: " + keySet()
 				+ "\n" + super.toString();
 	}
 

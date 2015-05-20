@@ -21,7 +21,9 @@ import net.jini.core.entry.Entry;
 import net.jini.lookup.entry.Name;
 import sorcer.core.provider.Provider;
 import sorcer.core.provider.ServiceProvider;
+import sorcer.core.provider.Version;
 import sorcer.service.*;
+import sorcer.util.MavenUtil;
 
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
@@ -52,6 +54,8 @@ public class NetSignature extends ObjectSignature {
 
 	protected List<Entry> attributes;
 
+    protected String version;
+
 	public NetSignature() {
 		providerName = ANY;
 	}
@@ -71,7 +75,7 @@ public class NetSignature extends ObjectSignature {
 
 	public NetSignature(String selector, Class<?> serviceType,
 			String providerName) {
-		this(selector, serviceType, providerName, null);
+		this(selector, serviceType, providerName, (Type) null);
 	}
 
 	public NetSignature(String selector, Class<?> serviceType,
@@ -89,8 +93,17 @@ public class NetSignature extends ObjectSignature {
 	}
 
 	public NetSignature(String selector, Class<?> serviceType,
-			String providerName, Type methodType) {
+						String providerName, Type methodType) {
+
+		this(selector, serviceType, providerName, methodType, null);
+	}
+
+	public NetSignature(String selector, Class<?> serviceType,
+						String providerName, Type methodType, Version version) {
+		this.version = version!=null ? version.getName() : null;
 		this.serviceType = serviceType;
+        if (serviceType!=null && version==null)
+            this.version = MavenUtil.findVersion(serviceType);
 		if (providerName == null || providerName.length() == 0)
 			this.providerName = ANY;
 		else
@@ -103,8 +116,34 @@ public class NetSignature extends ObjectSignature {
 		setSelector(selector);
 	}
 
-	public void setExertion(Exertion exertion) throws ExertionException {
-		this.exertion = (ServiceExertion) exertion;
+    /**
+    String version of constructor - required i.e. when running from Scilab
+    */
+    public NetSignature(String selector, String strServiceType) {
+        try {
+            Class serviceType = Class.forName(strServiceType);
+            this.serviceType = serviceType;
+            if (serviceType!=null) this.version = MavenUtil.findVersion(serviceType);
+            setSelector(selector);
+        } catch (ClassNotFoundException e) {
+            logger.error("Problem creating NetSignature: " + e.getMessage());
+        }
+    }
+
+    public NetSignature(String selector, Class<?> serviceType, String version,
+                        String providerName, Type methodType) {
+        this(selector, serviceType, providerName, methodType);
+        if (version!=null) this.version = version;
+    }
+
+    public NetSignature(String selector, Class<?> serviceType, String version,
+                        String providerName) {
+        this(selector, serviceType, version, providerName, null);
+    }
+
+
+    public void setExertion(Exertion exertion) throws ExertionException {
+        this.exertion = exertion;
 	}
 
 	public Exertion getExertion() {
@@ -131,27 +170,28 @@ public class NetSignature extends ObjectSignature {
 		attributes.addAll(attributes);
 	}
 
-	public Service getService() {
-		if (provider == null) return provider;
-		try {
-			// ping provider to see if alive
-			provider.getProviderName();
-		} catch (RemoteException e) {
-			// provider is dead; get new one
-			//e.printStackTrace();
-			provider = (Provider)Accessor.getService(this);
-		}
-		
-		return provider;
-	}
+    public Service getService() {
+        if (provider == null) return provider;
+        try {
+            // ping provider to see if alive
+            provider.getProviderName();
+        } catch (RemoteException e) {
+            // provider is dead; get new one
+            //e.printStackTrace();
+            provider = null;
+            provider = (Provider)Accessor.getService(this);
+        }
 
-	public Provider getProvider() {
-		return provider;
-	}
+        return provider;
+    }
 
-	public void setProvider(Service provider) {
-		this.provider = (Provider)provider;
-	}
+    public Provider getProvider() {
+        return provider;
+    }
+
+    public void setProvider(Service provider) {
+        this.provider = (Provider)provider;
+    }
 
 	public String action() {
 		String pn = (providerName == null) ? ANY : providerName;
@@ -327,7 +367,7 @@ public class NetSignature extends ObjectSignature {
 						"Not supported method: " + serviceType + "#" + selector
 								+ " by: "
 								+ ((Provider) provider).getProviderName());
-				((ServiceProvider) provider).notifyException(context.getExertion(),
+				((ServiceProvider) provider).notifyException(context.getMogram(),
 						"unsupported method", eme);
 				throw eme;
 			}
@@ -343,7 +383,15 @@ public class NetSignature extends ObjectSignature {
 	public void setUnicast(boolean isUnicast) {
 		this.isUnicast = isUnicast;
 	}
-	
+
+    public String getVersion() {
+        return version;
+	}
+
+	public void setVersion(String version) {
+		this.version = version;
+	}
+
 	public String toString() {
 		return this.getClass() + ":" + providerName + ";" + execType + ";" + isActive + ";"
 				+ serviceType + ";" + selector 

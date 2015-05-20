@@ -75,11 +75,13 @@ task bootSorcerRio(type: Exec, dependsOn: "webster") {
     args << "ant"
     args << "-f"
     args << "${file("${sorcerDistHome}").path}/bin/rio/boot-sorcer-rio.xml"
-    if(System.properties['sorcer.lite']==null) {
+    //if(System.properties['sorcer.lite']==null) {
         environment "sorcer.start.all": true
-    }
+        environment "RIO_HOME" : "${rioHome}"
+    //}
     commandLine args
 }
+
 bootSorcerRio.onlyIf {
     File sorcerDist = file(sorcerDistHome)
     if(!sorcerDist.exists()) {
@@ -175,9 +177,14 @@ task webster(type: Exec) {
         args << "/C"
         args << "groovy"
     }
+/*
+    args << "-classpath"
+    args << "${sorcerDistHome}/rio-${rioVersion}/lib/rio-platform-${rioVersion}.jar"
+*/
     args << "${sorcerDistHome}/bin/webster/bin/webster.groovy"
     commandLine args
 }
+
 webster.onlyIf {
     File sorcerDist = file(sorcerDistHome)
     if(!sorcerDist.exists()) {
@@ -204,3 +211,4 @@ def jps() {
     s.append("jps -lm")
     s.toString()
 }
+

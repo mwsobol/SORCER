@@ -23,7 +23,8 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A utility that creates a {@link java.net.URLClassLoader} using {@code http} based {@link java.net.URL}s ,
@@ -33,7 +34,7 @@ import java.util.logging.Logger;
  */
 public final class DelegateLauncher {
     public static final String CLASSPATH_PROPERTY="delegate.classpath";
-    static final Logger logger = Logger.getLogger(DelegateLauncher.class.getName());
+    static final Logger logger = LoggerFactory.getLogger(DelegateLauncher.class.getName());
 
     private DelegateLauncher() {}
 

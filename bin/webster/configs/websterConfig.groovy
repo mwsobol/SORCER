@@ -21,8 +21,12 @@
  * the webster.groovy script
  */
 
+/*@Grab(group="org.rioproject", module="rio-platform", version="5.1.5")
+import org.rioproject.net.HostUtil;*/
+
 webster {
-    address = InetAddress.getLocalHost().getHostName()
+//    address = org.rioproject.net.HostUtil.getInetAddress().toString()
+//    address = HostUtil.getInetAddress().getHostAddress()
 
     roots = ["${sorcerHome}/lib/sorcer/lib-dl",
              "${sorcerHome}/lib/sorcer/lib",
@@ -32,8 +36,8 @@ webster {
              "${sorcerHome}/lib/common",
              "${sorcerHome}/lib/blitz",
              "${sorcerHome}/lib",
-             "${m2Repo}",
-             "${sorcerHome}/data"]
+             "${m2Repo}"/*,
+             "${sorcerHome}/data"*/]
 
     spawn = true
 }

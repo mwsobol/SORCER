@@ -16,17 +16,21 @@
 package sorcer.core.deploy;
 
 import junit.framework.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
+import org.sorcer.test.TestsRequiringRio;
 import sorcer.core.SorcerConstants;
 import sorcer.core.provider.Provider;
 import sorcer.service.*;
 import sorcer.util.ProviderLookup;
 import sorcer.util.Sorcer;
 
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -38,8 +42,9 @@ import static sorcer.eo.operator.*;
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("core/sorcer-int-tests/deploy-tests")
 public class DeployExertionTest2 extends DeploySetup implements SorcerConstants {
-    private final static Logger logger = Logger.getLogger(DeployExertionTest.class.getName());
+    private final static Logger logger = LoggerFactory.getLogger(DeployExertionTest.class.getName());
 
+    @Category(TestsRequiringRio.class)
     @Test
     public void deployAndExec() throws Exception {
     	long t0 = System.currentTimeMillis();

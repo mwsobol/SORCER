@@ -25,7 +25,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Holds static attributes used during the startup of services and provides
@@ -33,9 +34,10 @@ import java.util.logging.Logger;
  * for SORCER services
  */
 public class SorcerDescriptorUtil {
-	final static Logger logger = Logger.getLogger("sorcer.provider.boot");
+	final static Logger logger = LoggerFactory.getLogger("sorcer.provider.boot");
 	
 	private static String sorcerVersion = System.getProperty("sorcer.version");
+	private static String commonsIoVersion = System.getProperty("commonsio.version");
 	private static String riverVersion = System.getProperty("river.version");
 	private static String jeVersion = System.getProperty("je.version");
 	private static String rioVersion = System.getProperty("rio.version");
@@ -259,16 +261,16 @@ public class SorcerDescriptorUtil {
 			throw new RuntimeException("'sorcer.home' property not declared");
 		
 		// service provider classpath
-		String jobberClasspath = ConfigUtil.concat(new Object[] {
+		String providerClasspath = ConfigUtil.concat(new Object[] {
 				sorcerLib,fs,"sorcer",fs,"lib",fs,"sorcer-platform-" + sorcerVersion + ".jar"
 		});
 		
 		// service provider codebase
-        String jobberCodebase = Booter.getCodebase(getDefaultSorcerExports(),
+        String providerCodebase = Booter.getCodebase(getDefaultSorcerExports(),
                                                    hostAddress, Integer.toString(port));
         String implClass = "sorcer.core.provider.ServiceProvider";
-        return (new SorcerServiceDescriptor(jobberCodebase, policy,
-                                            jobberClasspath, implClass, jobberConfig));
+        return (new SorcerServiceDescriptor(providerCodebase, policy,
+                                            providerClasspath, implClass, jobberConfig));
 	}
 
     private static String[] getDefaultSorcerExports() {
@@ -276,6 +278,8 @@ public class SorcerDescriptorUtil {
                              "jsk-dl-"+riverVersion+".jar",
                              "serviceui-"+riverVersion+".jar",
                              "sorcer-ui-"+sorcerVersion+".jar",
+							 "sos-netlet-"+sorcerVersion+".jar",
+				 			 "commons-io-"+commonsIoVersion+".jar",
                              getRioDlJar()};
     }
 	
@@ -716,7 +720,7 @@ public class SorcerDescriptorUtil {
 		// service provider classpath
 		String exertmonitor = ConfigUtil.concat(new Object[] {
 				sorcerLib,fs,"sorcer",fs,"lib",fs,"sos-exertmonitor-",sorcerVersion,".jar",
-				ps,sorcerLib,fs,"common",fs,"je-5.0.104.jar"
+				ps,sorcerLib,fs,"common",fs,"je-", jeVersion ,".jar"
 		});
 		
 		// service provider codebase

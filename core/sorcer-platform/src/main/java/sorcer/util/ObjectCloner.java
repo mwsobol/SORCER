@@ -19,15 +19,11 @@ package sorcer.util;
 
 import java.io.IOException;
 import java.rmi.MarshalledObject;
-import java.util.UUID;
 
 import net.jini.id.Uuid;
 import net.jini.id.UuidFactory;
 import net.jini.io.MarshalledInstance;
-import sorcer.service.Exertion;
-import sorcer.service.Job;
-import sorcer.service.ServiceExertion;
-import sorcer.service.Task;
+import sorcer.service.*;
 
 public class ObjectCloner {
 
@@ -81,7 +77,7 @@ public class ObjectCloner {
 		if (obj instanceof Job) {
 			Uuid id = UuidFactory.generate();
 			((ServiceExertion) obj).setId(UuidFactory.generate());
-			for (Exertion each : ((Job) obj).getExertions()) {
+			for (Mogram each : ((Job) obj).getMograms()) {
 				((ServiceExertion) each).setParentId(id);
 				renewIDs(each);
 			}

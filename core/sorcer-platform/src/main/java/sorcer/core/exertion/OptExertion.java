@@ -18,21 +18,14 @@
 
 package sorcer.core.exertion;
 
-import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.List;
-
 import net.jini.core.transaction.Transaction;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.ThrowableTrace;
-import sorcer.service.Condition;
-import sorcer.service.Conditional;
-import sorcer.service.ConditionalExertion;
-import sorcer.service.Exertion;
-import sorcer.service.ExertionException;
-import sorcer.service.ServiceExertion;
-import sorcer.service.SignatureException;
-import sorcer.service.Task;
+import sorcer.service.*;
+
+import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The option Exertion. There is a single target exertion that executes if the
@@ -87,7 +80,12 @@ public class OptExertion extends Task implements ConditionalExertion {
 			if (condition.isTrue()) {
 				isActive = true;
 				target = target.exert(txn);
-				dataContext = (ServiceContext)target.getContext();
+//				if (target.getScope() != null) {
+//					((Context) target.getScope()).append(dataContext);
+//				} else {
+//					target.setScope(dataContext);
+//				}
+				dataContext = (ServiceContext) target.getDataContext();
 				controlContext.append(target.getControlContext());
 				dataContext.putValue(Condition.CONDITION_VALUE, true);
 				dataContext.putValue(Condition.CONDITION_TARGET, target.getName());
@@ -131,7 +129,7 @@ public class OptExertion extends Task implements ConditionalExertion {
 		return cs;
 	}
 	
-	public List<Exertion> getExertions(List<Exertion> exs) {
+	public List<Mogram> getMograms(List<Mogram> exs) {
 		exs.add(target);
 		exs.add(this);
 		return exs;

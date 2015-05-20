@@ -20,6 +20,7 @@ import sorcer.core.context.ServiceContext;
 import sorcer.core.provider.DatabaseStorer.Store;
 import sorcer.core.provider.Provider;
 import sorcer.core.provider.StorageManagement;
+import sorcer.service.Accessor;
 import sorcer.service.Context;
 import sorcer.util.ProviderAccessor;
 import sorcer.util.bdb.objects.SorcerDatabaseViews;
@@ -66,7 +67,7 @@ public class SdbConnection extends URLConnection {
 	public void connect() throws IOException {
 		//Provider provider = (Provider)ProviderLookup.getProvider(providerName, serviceInfo);
         try {
-            Provider provider = (Provider) ProviderAccessor.getProvider(providerName, Class.forName(serviceType));
+            Provider provider = (Provider) Accessor.getService(providerName, Class.forName(serviceType));
             store = (StorageManagement)provider;
             connected = true;
         } catch (ClassNotFoundException e) {

@@ -19,14 +19,13 @@ package sorcer.tools.shell.cmds;
 
 import java.io.PrintStream;
 import java.util.ArrayList;
-import java.util.StringTokenizer;
 
 import net.jini.admin.Administrable;
 import net.jini.core.lookup.ServiceRegistrar;
 import net.jini.lookup.DiscoveryAdmin;
 import sorcer.tools.shell.NetworkShell;
 import sorcer.tools.shell.ShellCmd;
-import sorcer.util.WhitespaceTokenizer;
+import sorcer.tools.shell.WhitespaceTokenizer;
 
 public class SetPortCmd extends ShellCmd {
 	{

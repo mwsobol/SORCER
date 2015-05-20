@@ -38,6 +38,8 @@ public interface Exec {
     final static int ASYNC		   		=  12;
     final static int NULL		   		=  13;
     final static int ASIS		   		=  14;
+
+    final static int PROVISION          =  15;
     
     final static int ERROR            	= -1;  
     public static final int POISONED	= -2;
@@ -53,7 +55,7 @@ public interface Exec {
 	 * executing exertions (see sorcer.core.provider.exertmonitor.ExertMonitor)
 	 */
 	public enum State {
-		FAILED, INITIAL, INSPACE, RUNNING, DONE, STOPPED, SUSPENDED, RESUMED, NEXT_STEP, INSPACE_FOR_SLA, RETURNED, UPDATED, ASYNC, NULL, ASIS;
+		FAILED, INITIAL, INSPACE, RUNNING, DONE, STOPPED, SUSPENDED, RESUMED, NEXT_STEP, INSPACE_FOR_SLA, RETURNED, UPDATED, ASYNC, NULL, ASIS, PROVISION;
 		
 		static public String name(int state) {
 			for (State s : State.values()) {
@@ -62,6 +64,14 @@ public interface Exec {
 			}
 			return null;
 		}
+
+        static public Exec.State val(int state) {
+            for (State s : State.values()) {
+                if (state == s.ordinal())
+                    return s;
+            }
+            return null;
+        }
 	}
 	
 }

@@ -16,7 +16,8 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static sorcer.co.operator.inEnt;
 import static sorcer.co.operator.outEnt;
@@ -357,7 +358,7 @@ private Exertion f1SEQpull() throws Exception {
 		
 		Exertion out = null;
 		long start = System.currentTimeMillis();
-		Exerter exerter = ProviderAccessor.getExerter();
+		Exerter exerter = Accessor.getService(Exerter.class);
 		logger.info("got exerter: " + exerter);
 
 		out = exerter.exert(f5);

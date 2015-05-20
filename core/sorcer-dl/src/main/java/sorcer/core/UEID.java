@@ -18,6 +18,7 @@
 package sorcer.core;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.StringTokenizer;
 
 import net.jini.core.lookup.ServiceID;
@@ -34,7 +35,9 @@ import net.jini.core.lookup.ServiceID;
  * This object is immutable.
  */
 
-public class UEID {
+public class UEID implements Serializable {
+
+	private static final long serialVersionUID = 2366387989071307201L;
 
 	public final ServiceID sid;
 

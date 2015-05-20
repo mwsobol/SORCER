@@ -17,31 +17,14 @@
 
 package sorcer.core.provider.util;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Vector;
-import java.util.logging.Logger;
-
 import sorcer.core.SorcerConstants;
-import sorcer.core.context.Contexts;
-import sorcer.core.context.ServiceContext;
-import sorcer.core.context.node.ContextNode;
 import sorcer.core.context.node.ContextNodeException;
-import sorcer.service.Context;
-import sorcer.service.ContextException;
 import sorcer.service.EvaluationException;
-import sorcer.service.Job;
-import sorcer.service.ServiceExertion;
-import sorcer.util.GenericUtil;
-import sorcer.util.Log;
-import sorcer.util.Sorcer;
+
+import java.io.IOException;
 
 public class Providers implements SorcerConstants {
-	private final static Logger logger = Log.getTestLog();
+	/*private final static Logger logger = Log.getTestLog();
 
 	private Providers() {
 		// utility class only
@@ -156,7 +139,7 @@ public class Providers implements SorcerConstants {
 		return fJA;
 	}
 
-	/**
+	*//**
 	 * Makes all URL-based context nodes in the <code>context</code> available
 	 * as local files in a scratch directory (see <code>sorcer.env</code>
 	 * configuration file)
@@ -166,12 +149,12 @@ public class Providers implements SorcerConstants {
 	 * @throws ContextNodeException
 	 * @throws EvaluationException
 	 * @throws IOException
-	 */
-	public static Context makeUrlContextDataAsLocal(Context context,
+	 *//*
+*//*	public static Context makeUrlContextDataAsLocal(Context context,
 			boolean isUniqueName) throws IOException, ContextNodeException,
 			EvaluationException {
 		File dataDir = Sorcer.getDataDir();
-		Iterator it = ((ServiceContext) context).entrySet().iterator();
+		Iterator it = ((ServiceContext) context).entryIterator();
 		while (it.hasNext()) {
 			Map.Entry pair = (Map.Entry) it.next();
 			Object val = pair.getValue();
@@ -195,9 +178,9 @@ public class Providers implements SorcerConstants {
 			}
 		}
 		return context;
-	}
+	}*//*
 
-	/**
+	*//**
 	 * Makes all URL-based context nodes in the <code>context</code> available
 	 * as local files in a scratch directory (see <code>sorcer.env</code>
 	 * configuration file)
@@ -207,11 +190,11 @@ public class Providers implements SorcerConstants {
 	 * @throws ContextNodeException
 	 * @throws EvaluationException
 	 * @throws IOException
-	 */
-	public static Context makeUrlContextDataAsScratch(Context context)
+	 *//*
+*//*	public static Context makeUrlContextDataAsScratch(Context context)
 			throws IOException, ContextNodeException, EvaluationException {
 		File scratchDir = Sorcer.getNewScratchDir();
-		Iterator it = ((ServiceContext) context).entrySet().iterator();
+		Iterator it = ((ServiceContext) context).entryIterator();
 		while (it.hasNext()) {
 			Map.Entry pair = (Map.Entry) it.next();
 			ContextNode cn = (ContextNode) pair.getValue();
@@ -227,53 +210,6 @@ public class Providers implements SorcerConstants {
 			}
 		}
 		return context;
-	}
+	}*/
 
-	/*
-	 * public static ContextNode[]
-	 * getContextNodesWithKeyStartingWithValue(ServiceJob fJ, String key) throws
-	 * SorcerQueryException, MalformedURLException, ContextException {
-	 * 
-	 * ServiceTask[] fTArray = getServiceTasks(fJ); ServiceContext fCArray =
-	 * getServiceContexts(fTArray);
-	 * 
-	 * ContextNode[] fNA =
-	 * Providers.getContextNodesWithKeysStartingWithValue(fCArray, key);
-	 * 
-	 * return fNA; }
-	 * 
-	 * public ContextNode[]
-	 * getContextNodesWithKeyStartingWithValue(ServiceContext fCA, String key)
-	 * throws SorcerQueryException, MalformedURLException, ContextException {
-	 * 
-	 * ContextNode[] ctxtContextNodes=null; Vector v = new Vector();
-	 * 
-	 * // Iterate for each element of the context array for (int i=0; i <
-	 * fCA.length; i++) { ctxtContextNodes =
-	 * fCA[i].getContextNodesWithMetaAssoc(metaAssoc);
-	 * 
-	 * for (int j=0; j < ctxtContextNodes.length; j++)
-	 * v.add(ctxtContextNodes[j]); }
-	 * 
-	 * ContextNode[] retNodes = new ContextNode[v.size()];
-	 * 
-	 * for (int i=0; i < v.size(); i++) { retNodes[i] =
-	 * (ContextNode)v.elementAt(i); } return(retNodes);
-	 * 
-	 * Vector dNV=new Vector(); Vector values = new Vector(); boolean
-	 * foundAtLeastOneDN=false;
-	 * 
-	 * for (int i=0; i<fCA.length; i++) { if (!(fCA[i]==null)) { values =
-	 * fCA[i].getStartsWithValues(key); if (!(values==null) ) { for (int j=0;
-	 * j<values.size(); j++){ if (values.elementAt(j) instanceof DataNode) {
-	 * dNV.addElement((DataNode)values.elementAt(j)); foundAtLeastOneDN=true; }
-	 * } } } } if (!(foundAtLeastOneDN)) { throw new
-	 * SorcerQueryException("No DataNodes found in ServiceContext with key= "
-	 * +key); }
-	 * 
-	 * DataNode[] dNA=new DataNode[dNV.size()]; for (int i=0; i<dNV.size(); i++)
-	 * { dNA[i]=(DataNode)dNV.elementAt(i); } return dNA;
-	 * 
-	 * }
-	 */
 }
