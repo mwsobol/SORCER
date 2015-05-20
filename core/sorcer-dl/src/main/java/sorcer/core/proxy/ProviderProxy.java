@@ -119,9 +119,9 @@ public class ProviderProxy implements Serializable {
 	
 	private static class ReferentUuidInvocationHandler implements InvocationHandler, Serializable {
 		private static final long serialVersionUID = 242006752320266247L;
-		protected Object proxy;
-		protected Uuid proxyID;
-		protected Object adminProxy;
+		protected final Object proxy;
+		protected final Uuid proxyID;
+		protected final Object adminProxy;
 
 		public ReferentUuidInvocationHandler(Object proxy, Uuid proxyID, Object adminProxy) {
 			this.proxy = proxy;

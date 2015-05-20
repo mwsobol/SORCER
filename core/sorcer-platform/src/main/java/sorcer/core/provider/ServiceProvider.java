@@ -207,7 +207,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		logger.info("\n\t<init> providers.size() = " + providers.size()
 				+ "\n\t<init> providers = " + providers
 				+ "\n\t<init> this.getName = " + this.getName());
-		ShutdownHook shutdownHook =  new ShutdownHook();
+		ShutdownHook shutdownHook =  new ShutdownHook(this);
 		shutdownHook.setDaemon(true);
 		Runtime.getRuntime().addShutdownHook(shutdownHook);
 	}
@@ -1720,13 +1720,15 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	 * ShutdownHook for the ServiceProvider
 	 */
 	static class ShutdownHook extends Thread {
-		ShutdownHook() {
+		final ServiceProvider provider;
+		ShutdownHook(ServiceProvider provider) {
 			super("ShutdownHook");
+			this.provider = provider;
 		}
 
 		public void run() {
 			try {
-				destroy();
+				provider.destroy();
 			} catch(Throwable t) {
 				logger.error("Terminating ServiceProvider", t);
 			}

@@ -208,7 +208,7 @@ public class ProviderDelegate {
 
 	// all exported services with corresponding exporter
 	// <Remote, Exporter> or <service bean, service provider>
-	private Map exports = new HashMap();
+	private static Map exports = new HashMap();
 
 	protected Object providerProxy;
 
