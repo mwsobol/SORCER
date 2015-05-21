@@ -35,17 +35,13 @@ import sorcer.service.*;
  * @author Mike Sobolewski
  * 
  */
-public class LoopExertion extends Task implements ConditionalExertion {
+public class LoopExertion extends ConditionalExertion {
 
 	private static final long serialVersionUID = 8538804142085766935L;
 	
 	private int min = 0;
 
 	private int max = 0;
-
-	protected Condition condition;
-
-	protected Exertion target;
 
 	/**
 	 * Loop: while(true) { operand }
@@ -143,14 +139,6 @@ public class LoopExertion extends Task implements ConditionalExertion {
 			throw new ExertionException(e);
 		}
 		return this;
-	}
-	
-	public Exertion getTarget() {
-		return target;
-	}
-	
-	public Condition getCondition() {
-		return condition;
 	}
 	
 	public boolean isConditional() {
