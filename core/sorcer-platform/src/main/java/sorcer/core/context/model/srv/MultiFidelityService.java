@@ -9,33 +9,33 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * A ProductMogram is a mogram with multiple projections of the product of services
- * (mograms) that can be treated as service fidelities selectable at runtime from
- * multiple mograms available. A fidelity is associated with results of a single mogram
- * or multiple mograms in its service model returnig a service contexts of a requested
- * fidelity.
+ * A MultiFidelityService is a service with multiple projections of the this model entries.
+ * Each projection of thies service model can be treated as a service fidelity selectable
+ * at runtime from multiple componet mograms available. A fidelity is associated with
+ * the result of a single mogram or multiple mograms of this service model and returnig
+ * a merged service context of componet service of this multi-fidelity (compound) service.
  *
  * Created by Mike Sobolewski
  */
-public class MultiFidelitySrvModel extends SrvModel {
+public class MultiFidelityService extends SrvModel {
 
     // service fidelities for this model
     protected Map<String, Fidelity<String>> selectionFidelities;
 
     protected SelectFidelity selectedFidelity;
 
-    public MultiFidelitySrvModel() {
+    public MultiFidelityService() {
     }
 
-    public MultiFidelitySrvModel(String name) throws SignatureException {
+    public MultiFidelityService(String name) throws SignatureException {
         super(name);
     }
 
-    public MultiFidelitySrvModel(Signature signature) {
+    public MultiFidelityService(Signature signature) {
         super(signature);
     }
 
-    public MultiFidelitySrvModel(String name, Signature signature) throws SignatureException {
+    public MultiFidelityService(String name, Signature signature) throws SignatureException {
         super(name, signature);
     }
 
@@ -46,7 +46,7 @@ public class MultiFidelitySrvModel extends SrvModel {
      * @throws EvaluationException
      * @throws RemoteException
      */
-    public MultiFidelitySrvModel setProjection(String... fidelities) throws EvaluationException, RemoteException {
+    public MultiFidelityService setProjection(String... fidelities) throws EvaluationException, RemoteException {
         for (String path : fidelities)
             addResponsePath(path);
         return this;

@@ -22,7 +22,7 @@ import sorcer.core.context.MapContext;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.ent.EntModel;
 import sorcer.core.context.model.ent.Entry;
-import sorcer.core.context.model.srv.MultiFidelitySrvModel;
+import sorcer.core.context.model.srv.MultiFidelityService;
 import sorcer.core.context.model.srv.SrvModel;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
@@ -158,7 +158,7 @@ public class operator {
                 fidelities.add((Fidelity)item);
         }
     }
-        MultiFidelitySrvModel model = new MultiFidelitySrvModel();
+        MultiFidelityService model = new MultiFidelityService();
         model.addSelectionFidelities(fidelities);
         return srvModel(items);
     }
