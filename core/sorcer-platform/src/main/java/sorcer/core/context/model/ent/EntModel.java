@@ -34,7 +34,7 @@ import java.util.Date;
  *
  * @author Mike Sobolewski
  */
-public class EntModel<T> extends PositionalContext<T> implements Model, Invocation<T>, Contexter<T> {
+public class EntModel<T> extends PositionalContext<T> implements Invocation<T>, Contexter<T> {
 
     public EntModel() {
         super();

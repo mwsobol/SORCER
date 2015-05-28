@@ -11,11 +11,13 @@ import sorcer.core.context.model.ent.Entry;
 import sorcer.service.Context;
 
 import java.net.URL;
+import java.util.List;
 
 import static org.junit.Assert.*;
 import static sorcer.co.operator.asis;
 import static sorcer.co.operator.*;
 import static sorcer.co.operator.path;
+import static sorcer.mo.operator.*;
 import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.inPaths;
 import static sorcer.eo.operator.outPaths;
@@ -96,9 +98,9 @@ public class DataModels {
 
 
     @Test
-    public void inputsOutputsOfContexts() throws Exception {
+    public void inputsOutputs() throws Exception {
 
-        // PositionaContext has paths and indexes
+        // PositionalContext maintains both paths and indexes
         Context<Double> cxt = context(ent("arg/x1", 1.1), inEnt("arg/x2", 1.2),
                 inEnt("arg/x3", 1.3), inEnt("arg/x4", 1.4), inEnt("arg/x5", 1.5));
 
@@ -119,6 +121,12 @@ public class DataModels {
 
         // return selected values at given positions in cxt
         assertEquals(select(cxt, 2, 4, 5), list(1.2, 1.4, 1.5));
+
+        // get input and output contexts
+        List<String> inputs = list("arg/x2", "arg/x3", "arg/x4", "arg/x5", "par/z");
+        List<String> outputs = list("out/y1", "out/y2", "par/z");
+        assertTrue(inputs.equals(paths(inputs(cxt))));
+        assertTrue(outputs.equals(paths(outputs(cxt))));
 
         // return all values of inEntries
         assertEquals(inValues(cxt), list(1.5, 1.4, 1.3, 1.2, 1.9));

@@ -644,7 +644,11 @@ public class operator {
     public static List<String> paths(String... paths) {
        return Arrays.asList(paths);
     }
-    
+
+	public static List<String> paths(Context context) throws ContextException {
+		return context.getPaths();
+	}
+
     public static void dependsOn(Model model, Entry... entries) {
         Map<String, List<String>> dm = ((ServiceContext)model).getRuntime().getDependentPaths();
         String path = null;

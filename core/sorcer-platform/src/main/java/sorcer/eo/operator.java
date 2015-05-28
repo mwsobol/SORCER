@@ -1453,7 +1453,7 @@ public class operator {
             throw new ServiceException(e);
         }
     }
-    
+
     public static <T> T value(Context<T> model, Arg... entries)
             throws ContextException {
         try {

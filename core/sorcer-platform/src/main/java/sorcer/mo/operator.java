@@ -37,7 +37,6 @@ import java.util.List;
  */
 public class operator {
 
-
     public static Context entModel(Object... entries)
             throws ContextException {
         if (entries != null && entries.length == 1 && entries[0] instanceof Context) {
@@ -75,16 +74,24 @@ public class operator {
         return model;
     }
 
-    public static Context responses(Model model) throws ContextException {
+    public static Object result(Model model, String path) throws ContextException {
+        return ((ServiceContext)((ServiceContext)model).getRuntime().getResult()).get(path);
+    }
+
+    public static Context inputs(Model model) throws ContextException {
         try {
-            return (Context) model.getResponse();
+            return model.getInputs();
         } catch (RemoteException e) {
             throw new ContextException(e);
         }
     }
 
-    public static Object result(Model model, String path) throws ContextException {
-        return ((ServiceContext)((ServiceContext)model).getRuntime().getResult()).get(path);
+    public static Context outputs(Model model) throws ContextException {
+        try {
+            return model.getOutputs();
+        } catch (RemoteException e) {
+            throw new ContextException(e);
+        }
     }
 
     public static Object response(Model model, String path) throws ContextException {
@@ -137,7 +144,7 @@ public class operator {
         return map;
     }
 
-    public static Fidelity<String> responses(String... paths) {
+    public static Fidelity<String> response(String... paths) {
         return  new Fidelity<String>(paths);
     }
 
