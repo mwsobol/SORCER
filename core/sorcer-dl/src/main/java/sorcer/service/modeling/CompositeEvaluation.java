@@ -27,7 +27,7 @@ public interface CompositeEvaluation<T> extends Evaluation<T> {
 
     public Evaluation getEvaluator();
 
-    public Filtration getFilter();
+    public Getter<T> getGetter();
 
     public Setter getSetter();
 }
