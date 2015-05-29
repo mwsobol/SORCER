@@ -9,8 +9,10 @@ import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.Adder;
 import sorcer.arithmetic.provider.Averager;
 import sorcer.arithmetic.provider.Multiplier;
+import sorcer.arithmetic.provider.Subtractor;
 import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
+import sorcer.arithmetic.provider.impl.SubtractorImpl;
 import sorcer.core.provider.Shell;
 import sorcer.service.*;
 import sorcer.service.Strategy.Access;
@@ -139,22 +141,38 @@ public class NetTaskExertions {
 
 	}
 
+	@Test
+	public void batchTask() throws Exception {
+		// batch for the composition f1(f2(f3((x1, x2), f4(x1, x2)), f5(x1, x2))
+		// shared context with named paths
+		Task batch3 = batch("batch3",
+				type(sig("multiply", Multiplier.class, result("subtract/x1", Signature.Direction.IN)), Signature.PRE),
+				type(sig("add", Adder.class, result("subtract/x2", Signature.Direction.IN)), Signature.PRE),
+				sig("subtract", Subtractor.class, result("result/y", inPaths("subtract/x1", "subtract/x2"))),
+				context(inEnt("multiply/x1", 10.0), inEnt("multiply/x2", 50.0),
+						inEnt("add/x1", 20.0), inEnt("add/x2", 80.0)));
+
+		batch3 = exert(batch3);
+		//logger.info("task result/y: " + get(batch3, "result/y"));
+		assertEquals(get(batch3, "result/y"), 400.0);
+	}
 
 	@Test
 	public void localFiBatchTask() throws Exception {
 
+        //TODO
 		Task t4 = task("t4", sFi("object", sig("multiply", MultiplierImpl.class), sig("add", AdderImpl.class)),
 				sFi("net", sig("multiply", Multiplier.class), sig("add", Adder.class)),
 				context("shared", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
 						outEnt("result/y")));
 
 		t4 = exert(t4);
-		logger.info("task cont4text: " + context(t4));
+		logger.info("task t4 context: " + context(t4));
 
 		t4 = exert(t4, sFi("net"));
-		logger.info("task cont4text: " + context(t4));
+		logger.info("task t4 net context: " + context(t4));
 
-	}
+    }
 
 	@Test
 	public void netLocalFiTask() throws Exception {

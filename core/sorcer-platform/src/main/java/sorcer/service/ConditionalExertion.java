@@ -20,21 +20,49 @@ package sorcer.service;
 import java.util.List;
 
 
-public interface ConditionalExertion {
+abstract public class ConditionalExertion extends Task {
+
+	protected Condition condition;
+
+	protected Exertion target;
+
+	public ConditionalExertion() {
+		super();
+	}
+
+	public ConditionalExertion(String name) {
+		super(name);
+	}
+
+	public Condition getCondition() {
+		return condition;
+	}
+
+	public void setCondition(Condition condition) {
+		this.condition = condition;
+	}
+
+	public Exertion getTarget() {
+		return target;
+	}
+
+	public void setTarget(Exertion target) {
+		this.target = target;
+	}
 
 	/**
 	 * Return all underlying conditions.
 	 * 
 	 * @return conditions
 	 */
-	public List<Conditional> getConditions();
+	abstract public List<Conditional> getConditions();
 	
 	/**
 	 * Return all underlying conditional targets.
 	 * 
 	 * @return exertion targets
 	 */
-	public List<Exertion> getTargets();
+	abstract public List<Exertion> getTargets();
 	
 
 }

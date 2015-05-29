@@ -32,49 +32,9 @@ import static sorcer.eo.operator.*;
 public class LocalJobExertions implements SorcerConstants {
 
 	private final static Logger logger = LoggerFactory.getLogger(LocalJobExertions.class);
-	
+
 	@Test
-	public void exertAdderProvider() throws Exception {
-
-		Task t5 = task("t5",
-				sig("add", AdderImpl.class),
-				context("add", inEnt("arg, x1", 20.0),
-						inEnt("arg, x2", 80.0), result("result/y")));
-		
-		t5 = exert(t5);
-		logger.info("t5 context: " + context(t5));
-		assertEquals(value(context(t5), "result/y"), 100.0);
-
-	}
-	
-	@Test
-	public void evaluateAdderProvider() throws Exception {
-
-		Task t5 = task("t5",
-				sig("add", AdderImpl.class),
-				context("add", inEnt("arg, x1", 20.0),
-						inEnt("arg, x2", 80.0), result("result/y")));
-		
-		assertEquals(value(t5), 100.0);
-
-	}
-	
-	@Test
-	public void exertAveragerProvider() throws Exception {
-
-		Task t5 = task(
-				"t5",
-				sig("average", AveragerImpl.class),
-				context("average", inEnt("arg, x1", 20.0),
-						inEnt("arg, x2", 80.0), result("result/y")));
-		t5 = exert(t5);
-		logger.info("t5 context: " + context(t5));
-		assertEquals(value(context(t5), "result/y"), 50.0);
-
-	}
-	
-	@Test
-	public void taskConcatenation() throws Exception {
+	public void jobPipeline() throws Exception {
 
 		Task t3 = task(
 				"t3",
@@ -98,7 +58,7 @@ public class LocalJobExertions implements SorcerConstants {
 				"j1", t4, t5, t3,
 				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
 				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
-		
+
 		Context context = serviceContext(exert(job));
 		logger.info("job context: " + context);
 		assertEquals(get(context, "j1/t3/result/y"), 400.0);
@@ -106,7 +66,7 @@ public class LocalJobExertions implements SorcerConstants {
 	}
 
 	@Test
-	public void nestingJobComposition() throws Exception {
+	public void nestedJob() throws Exception {
 
 		Task t3 = task(
 				"t3",
@@ -140,7 +100,7 @@ public class LocalJobExertions implements SorcerConstants {
 	}
 
 	@Test
-	public void contexterTest() throws Exception {
+	public void contexterService() throws Exception {
 
 		// get a context for the template context in the task
 		Task cxtt = task("addContext", sig("getContext", NetJobExertions.createContext()),
@@ -154,7 +114,7 @@ public class LocalJobExertions implements SorcerConstants {
 	}
 	
 	@Test
-	public void objectContexterTaskTest() throws Exception {
+	public void objectContexterTask() throws Exception {
 
 		Task t5 = task("t5", sig("add", AdderImpl.class), 
 					type(sig("getContext", NetJobExertions.createContext()), Signature.APD),
@@ -203,5 +163,5 @@ public class LocalJobExertions implements SorcerConstants {
 		assertEquals(get(context, "j1/t3/result/y"), 400.0);
 
 	}
-	
+
 }

@@ -35,7 +35,7 @@ import java.util.List;
  * @author Mike Sobolewski
  */
 @SuppressWarnings("unchecked")
-public class AltExertion extends Task implements ConditionalExertion {
+public class AltExertion extends ConditionalExertion {
 
 	private static final long serialVersionUID = 4012356285896459828L;
 	
@@ -63,12 +63,12 @@ public class AltExertion extends Task implements ConditionalExertion {
 		try {
 			for (int i = 0; i < optExertions.size(); i++) {
 				opt = optExertions.get(i);
-				if (opt.condition.isTrue()) {
+				if (opt.getCondition().isTrue()) {
 					opt.isActive = true;
-					Context cxt = opt.condition.getConditionalContext();
+					Context cxt = opt.getCondition().getConditionalContext();
 					if (cxt != null) {
 						Condition.clenupContextScripts(cxt);
-						((ServiceContext) opt.getTarget().getDataContext()).updateEntries(cxt);
+						opt.getTarget().getDataContext().updateEntries(cxt);
 					}
 					Exertion out = opt.getTarget().exert(txn);
 					opt.setTarget(out);

@@ -52,9 +52,9 @@ public class SrvModels {
         logger.info("model: " + model);
 
         assertTrue(response(model, "add").equals(4.0));
-        System.out.println("responses: " + responses(model));
+        System.out.println("responses: " + response(model));
 
-        assertTrue(responses(model).equals(context(ent("add", 4.0), ent("multiply", 20.0))));
+        assertTrue(response(model).equals(context(ent("add", 4.0), ent("multiply", 20.0))));
 //                context(ent("add", 4.0), ent("multiply", 20.0), ent("result/value", 3.0))));
 
     }
@@ -74,7 +74,7 @@ public class SrvModels {
                 srv(sig("subtract", SubtractorImpl.class, result("model/response",
                         inPaths("multiply/out", "add/out")))),
                 srv("y1", "multiply/x1"),
-                responses("subtract"));
+                response("subtract"));
 
         dependsOn(m, ent("subtract", paths("multiply", "add")));
         logger.info("response: " + response(m));
@@ -111,7 +111,7 @@ public class SrvModels {
 
         // get a response context
         addResponse(m, "add", "multiply", "y1");
-        out = responses(m);
+        out = response(m);
         logger.info("out: " + out);
         assertTrue(get(out, "add").equals(100.0));
         assertTrue(get(out, "multiply").equals(500.0));

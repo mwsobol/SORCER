@@ -34,13 +34,9 @@ import java.util.List;
  * @author Mike Sobolewski
  */
 @SuppressWarnings("rawtypes")
-public class OptExertion extends Task implements ConditionalExertion {
+public class OptExertion extends ConditionalExertion {
 
 	private static final long serialVersionUID = 172930501527871L;
-
-	protected Condition condition;
-
-	protected Exertion target;
 	
 	protected boolean isActive = false;
 	
@@ -65,14 +61,6 @@ public class OptExertion extends Task implements ConditionalExertion {
 		this.target = exertion;
 	}
 
-	public Exertion getTarget() {
-		return target;
-	}
-
-	public void setTarget(Exertion exertion) {
-		this.target = exertion;
-	}
-	
 	public Task doTask(Transaction txn) throws ExertionException,
 			SignatureException, RemoteException {
 		try {
@@ -105,11 +93,7 @@ public class OptExertion extends Task implements ConditionalExertion {
 	public boolean isActive() {
 		return isActive;
 	}
-	
-	public Condition getCondition() {
-		return condition;
-	}
-	
+
 	public boolean isConditional() {
 		return true;
 	}

@@ -35,7 +35,7 @@ import java.util.List;
 @SuppressWarnings("unchecked")
 public class Entry<T> extends Tuple2<String, T> implements Dependency, Comparable<T>, Setter, Evaluation<T>, Reactive<T>, Arg {
 	private static final long serialVersionUID = 5168783170981015779L;
-	
+
 	public int index;
 	
 	protected String annotation;
@@ -45,7 +45,10 @@ public class Entry<T> extends Tuple2<String, T> implements Dependency, Comparabl
 
     // dependency management for this Entry
     protected List<Evaluation> dependers = new ArrayList<Evaluation>();
-    
+
+	public Entry() {
+	}
+
 	public Entry(final String path) {
 		if(path==null)
 			throw new IllegalArgumentException("path must not be null");

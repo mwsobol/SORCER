@@ -15,7 +15,9 @@
  * limitations under the License.
  */
 
-package sorcer.service;
+package sorcer.service.modeling;
+
+import sorcer.service.ContextException;
 
 public class GetterException extends ContextException {
 

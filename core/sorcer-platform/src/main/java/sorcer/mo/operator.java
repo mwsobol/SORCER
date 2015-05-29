@@ -22,7 +22,7 @@ import sorcer.core.context.MapContext;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.ent.EntModel;
 import sorcer.core.context.model.ent.Entry;
-import sorcer.core.context.model.srv.MultiFidelitySrvModel;
+import sorcer.core.context.model.srv.MultiFidelityService;
 import sorcer.core.context.model.srv.SrvModel;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
@@ -36,7 +36,6 @@ import java.util.List;
  * Created by Mike Sobolewski on 4/26/15.
  */
 public class operator {
-
 
     public static Context entModel(Object... entries)
             throws ContextException {
@@ -75,16 +74,24 @@ public class operator {
         return model;
     }
 
-    public static Context responses(Model model) throws ContextException {
+    public static Object result(Model model, String path) throws ContextException {
+        return ((ServiceContext)((ServiceContext)model).getRuntime().getResult()).get(path);
+    }
+
+    public static Context inputs(Model model) throws ContextException {
         try {
-            return (Context) model.getResponse();
+            return model.getInputs();
         } catch (RemoteException e) {
             throw new ContextException(e);
         }
     }
 
-    public static Object result(Model model, String path) throws ContextException {
-        return ((ServiceContext)((ServiceContext)model).getRuntime().getResult()).get(path);
+    public static Context outputs(Model model) throws ContextException {
+        try {
+            return model.getOutputs();
+        } catch (RemoteException e) {
+            throw new ContextException(e);
+        }
     }
 
     public static Object response(Model model, String path) throws ContextException {
@@ -137,7 +144,7 @@ public class operator {
         return map;
     }
 
-    public static Fidelity<String> responses(String... paths) {
+    public static Fidelity<String> response(String... paths) {
         return  new Fidelity<String>(paths);
     }
 
@@ -158,7 +165,7 @@ public class operator {
                 fidelities.add((Fidelity)item);
         }
     }
-        MultiFidelitySrvModel model = new MultiFidelitySrvModel();
+        MultiFidelityService model = new MultiFidelityService();
         model.addSelectionFidelities(fidelities);
         return srvModel(items);
     }

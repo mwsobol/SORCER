@@ -47,7 +47,6 @@ import sorcer.container.jeri.ExporterFactories;
 import sorcer.core.SorcerConstants;
 import sorcer.core.SorcerNotifierProtocol;
 import sorcer.core.context.Contexts;
-import sorcer.core.context.ControlContext;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.par.ParModel;
 import sorcer.core.exertion.ExertionEnvelop;
@@ -1251,8 +1250,11 @@ public class ProviderDelegate {
 						+ provider.getProviderName());
 				task.setContext(cxt);
 				task.setStatus(Exec.DONE);
-				if (cxt.getReturnPath() != null)
+				if (cxt.getReturnPath() != null) {
 					cxt.setReturnValue(cxt.getValue(cxt.getReturnPath().path));
+				} else if (task.getContext().getScope() != null) {
+					task.getContext().getScope().append(cxt);
+				}
 				// clear the exertion and the context
 				cxt.setExertion(null);
 				task.setService(null);
@@ -1276,7 +1278,7 @@ public class ProviderDelegate {
 					.invoke(provider, new Object[] { ex });
 			return result;
 		} catch (Exception e) {
-			((ControlContext)ex.getControlContext()).addException(e);
+			ex.getControlContext().addException(e);
 			throw new ExertionException(e);
 		}
 	}
@@ -1290,7 +1292,7 @@ public class ProviderDelegate {
 			boolean isContextual = true;
 			if (cxt.getParameterTypes() != null & cxt.getArgs() != null) {
 				argTypes = cxt.getParameterTypes();
-				args = (Object[]) cxt.getArgs();
+				args = cxt.getArgs();
 				isContextual = false;
 			}
 			Method execMethod = provider.getClass().getMethod(selector,
@@ -1299,7 +1301,7 @@ public class ProviderDelegate {
 			if (isContextual) {
 				result = (ServiceContext) execMethod.invoke(provider, args);
 				// Setting Return Values
-				if (((ServiceContext)result).getReturnPath() != null) {
+				if (result.getReturnPath() != null) {
 					Object resultValue = result.getValue(((ServiceContext)result).getReturnPath().path);
 					result.setReturnValue(resultValue);
 				} 

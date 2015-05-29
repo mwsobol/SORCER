@@ -5,6 +5,7 @@ import org.junit.runner.RunWith;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.impl.AdderImpl;
+import sorcer.arithmetic.provider.impl.AveragerImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.provider.impl.SubtractorImpl;
 import sorcer.service.*;
@@ -43,26 +44,26 @@ public class LocalTaskExertions {
 		assertEquals(100.0, value(cxt, "result/value"));
 
 		// get the subcontext output from the context
-		assertTrue(context(ent("arg/x1", 20.0), ent("result/value", 100.0)).equals(
-				value(cxt, result("result/value", outPaths("arg/x1", "result/value")))));
+		assertTrue(context(ent("result/value", 100.0), ent("arg/x1", 20.0)).equals(
+				value(cxt, result("result/value", outPaths("result/value", "arg/x1")))));
 
 	}
-
 
 	@Test
 	public void evaluateTask() throws SignatureException, ExertionException, ContextException  {
 
-		Task t5 = task("t5", sig("add", AdderImpl.class),
-				cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0), result("result/y")));
+		Task t6 = task("t6", sig("average", AveragerImpl.class),
+				cxt("average", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0), result("result/y")));
 
 //		// get the result value
-//		assertEquals(100.0, value(t5));
+//		assertEquals(50.0, value(t6));
 
 		// get the subcontext output from the exertion
-		assertTrue(context(ent("arg/x1", 20.0), ent("result/z", 100.0)).equals(
-				value(t5, result("result/z", outPaths("arg/x1", "result/z")))));
+		assertTrue(context(ent("result/y", 50.0), ent("arg/x1", 20.0)).equals(
+				value(t6, result("result/y", outPaths("result/y", "arg/x1")))));
 
 	}
+
 
     @Test
     public void batchTask() throws Exception {
@@ -78,8 +79,8 @@ public class LocalTaskExertions {
         logger.info("task getSelects:" + batch3.getFidelity());
 
         batch3 = exert(batch3);
-//		//logger.info("task result/y: " + get(batch3, "result/y"));
-//		assertEquals("Wrong value for 400.0", get(batch3, "result/y"), 400.0);
+		//logger.info("task result/y: " + get(batch3, "result/y"));
+		assertEquals("Wrong value for 400.0", get(batch3, "result/y"), 400.0);
     }
 
 
