@@ -21,6 +21,7 @@ import com.google.common.io.Files;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sorcer.data.DataService;
 import sorcer.util.Sorcer;
 
 import java.io.File;
@@ -55,7 +56,7 @@ public class ScratchDirManager {
     }
 
     public ScratchDirManager() {
-        this(new File(System.getProperty(SCRATCH_DIR, "scratch")), getScratchTTL());
+        this(new File(DataService.getDataDir()), getScratchTTL());
     }
 
     public File getNewScratchDir() {
