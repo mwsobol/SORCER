@@ -158,6 +158,10 @@ public class SorcerEnv extends SOS {
 		return null;
 	}
 
+    public static URL getDataURL(File file) throws IOException {
+        return DataService.getPlatformDataService().getDataURL(file);
+    }
+
     public static String getModelingDir() {
         String modelDir = props.getProperty(S_SORCER_MODELING);
         if (modelDir == null) {

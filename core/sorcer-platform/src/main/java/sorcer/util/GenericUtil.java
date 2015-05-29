@@ -396,7 +396,6 @@ public class GenericUtil {
 	 *            Source URL
 	 * @param destinationFile
 	 *            Destination file
-	 * @see writeUrlToFile
 	 * @throws IOException
 	 */
 	public static void download(URL sourceUrl, File destinationFile)
@@ -411,7 +410,6 @@ public class GenericUtil {
 	 *            Path to a file where contents are to be appended
 	 * @param afc
 	 *            Contents to append to file dataFile
-	 * @see appendVectorToFile
 	 * @throws IOException
 	 */
 	public static void appendFileContents(File dataFile, Vector<?> afc)
@@ -461,7 +459,6 @@ public class GenericUtil {
 	 * @param sourceFile Source file 
 	 * @param destinationFile Destination file 
 	 * @throws IOException
-	 * @see redirectInputStream2File
 	 */
 	public static void copyFile(File sourceFile, File destinationFile) throws IOException {
 		// If the destination file's parent directory does not exit, create it
@@ -2404,7 +2401,6 @@ public class GenericUtil {
 	 * written by S. A. Burton but modified by E. D. Thompson
 	 * 
 	 * @author S. A. Burton, E. D. Thompson
-	 * @see GenericUtil.setFileContents
 	 */
 	public static void setFileContents(File file, String[] sA)
 			throws IOException {
@@ -2418,7 +2414,6 @@ public class GenericUtil {
 		}
 		// Writing file contents to file
 		setFileContents(file, fileContents);
-		return;
 	}
 
 	public static void setFileContents(File file, String string)
@@ -2434,7 +2429,6 @@ public class GenericUtil {
 	 * @author S. A. Burton
 	 * @since JDK 1.6
 	 *
-	 * @see GenericUtil.writeStringVectorToFile
 	 */
 	public static void setFileContents(File file, Vector<?> fileContents)
 			throws IOException {
@@ -4212,8 +4206,7 @@ public class GenericUtil {
 	/**
 	 * Deep copies a Double[][] to an ArrayList<List<?>>
 	 * 
-	 * @param Double
-	 *            [][] data
+	 * @param data
 	 * @return ArrayList<List<?>> copy of data
 	 * @author Travis Sims
 	 */
