@@ -110,8 +110,8 @@ public class SorcerEnv extends SOS {
 				loadEnvironment();
                 DataService.getPlatformDataService();
 			}
-		} catch (ConfigurationException e) {
-			logger.warn("Failed to load the SORCER environment configuration");
+		} catch (Exception e) {
+			logger.warn("Failed to load the SORCER environment", e);
 		}
 	}
 
