@@ -201,8 +201,7 @@ abstract public class ExertDispatcher implements Dispatcher {
             try {
                 provisionManager.deployServices();
             } catch (DispatcherException e) {
-            	logger.warn("Unable to deploy services, exception = " + e);
-            	e.printStackTrace();
+            	logger.warn("Unable to deploy services", e);
                 throw new ExertionException("Unable to deploy services", e);
             }
         }
