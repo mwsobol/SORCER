@@ -77,7 +77,7 @@ import java.util.*;
  * @author Mike Sobolewski
  */
 @SuppressWarnings("rawtypes")
-public interface Context<T> extends Model, Mappable<T>, Serializable,
+public interface Context<T> extends Model, SelectProjection, Mappable<T>, Serializable,
 		Contexter<T>, Paradigmatic, Arg {
 
 	/** parameter (par) */

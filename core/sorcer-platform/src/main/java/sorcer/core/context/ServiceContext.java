@@ -23,6 +23,7 @@ import net.jini.id.UuidFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.co.tuple.Tuple2;
+import sorcer.core.SelectFidelity;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.EntryList;
@@ -3104,5 +3105,15 @@ public class ServiceContext<T> extends ServiceMogram implements
 	@Override
 	public List<Evaluation> getDependers() {
 		return runtime.getDependers();
+	}
+
+	@Override
+	public SelectFidelity getSelectFidelity() {
+		return runtime.getSelectFidelity();
+	}
+
+	@Override
+	public void setSelectFidelity(SelectFidelity fidelity) {
+		runtime.setSelectFidelity(fidelity);
 	}
 }
