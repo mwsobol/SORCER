@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<shortcuts>
+	<skipIfNotSupported/>
+	<programGroup defaultName="SORCER" location="applications"/>
+
+	<shortcut applications="yes"
+			  description="Start SORCER platform" desktop="yes"
+			  encoding="UTF-8" iconFile="$INSTALL_PATH/bin/icons/sorcer-logo.png" iconIndex="0"
+			  initialState="normal" name="Start SORCER" programGroup="yes"
+			  startMenu="no" startup="no"
+			  target="ant"
+			  commandLine="-f &quot;$INSTALL_PATH/bin/rio/boot-sorcer-rio.xml&quot;"
+			  terminal="true" type="Application"
+			  workingDirectory="$INSTALL_PATH"/>
+	<shortcut applications="yes"
+			  description="Stop SORCER platform" desktop="yes"
+			  encoding="UTF-8" iconFile="$INSTALL_PATH/bin/icons/sorcer-logo.png" iconIndex="0"
+			  initialState="normal" name="Stop SORCER" programGroup="yes"
+			  startMenu="no" startup="no"
+			  target="ant"
+			  commandLine="-f &quot;$INSTALL_PATH/bin/rio/destroy-sorcer-rio.xml&quot;"
+			  terminal="true" type="Application"
+			  workingDirectory="$INSTALL_PATH"/>
+	<shortcut applications="yes" desktop="yes"
+			  encoding="UTF-8" iconFile="$INSTALL_PATH/bin/icons/browser.png"
+			  iconIndex="0" initialState="normal" name="Sorcer Browser"
+			  programGroup="yes" startMenu="no" startup="no"
+			  target="ant"
+			  commandLine="-f &quot;$INSTALL_PATH/bin/browser/bin/sorcer-browser.xml&quot;"
+			  type="Application" workingDirectory="$INSTALL_PATH"
+			  terminal="false"/>
+	<shortcut applications="yes"
+			  description="Sorcer Network Shell" desktop="yes"
+			  encoding="UTF-8" initialState="normal" name="Network Shell"
+			  programGroup="yes" startMenu="no" startup="no"
+			  target="$INSTALL_PATH/bin/nsh" terminal="true"
+			  type="Application" workingDirectory="$INSTALL_PATH"
+			  iconFile="$INSTALL_PATH/bin/icons/nsh.png"/>
+	<shortcut
+		name="Uninstall SORCER"
+		target="java"
+		commandLine="-jar &quot;$INSTALL_PATH\Uninstaller\uninstaller.jar&quot;"
+		description="Uninstalls SORCER"
+		programGroup="yes"
+		desktop="no"
+		applications="no"
+		startMenu="no"
+		startup="no"
+		iconFile="$INSTALL_PATH/bin/icons/uninstaller.png"
+		iconIndex="31"/>
+
+</shortcuts>

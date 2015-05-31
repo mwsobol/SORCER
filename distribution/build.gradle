@@ -282,6 +282,12 @@ task createDistribution(dependsOn: [":sorcer-boot:install",
             into "${distDir}-${version}/rio-${rioVersion}"
         }
 
+        /* Copy icons to bin/icons */
+        copy {
+            from("${projectDir.path}/resources/icons")
+            into "${distDir}-${version}/bin/icons"
+        }
+
         /* Move the SLF4J logback jars out of the way and slide SLF4J JUL logging support in */
         /*File rioLoggingLib = file("${distDir}-${version}/rio-${rioVersion}/lib/logging")
         for(File jar : rioLoggingLib.listFiles()) {

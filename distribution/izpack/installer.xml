@@ -11,14 +11,17 @@ SORCER installation file.
 	-->
 	<info>
 		<appname>SORCER</appname>
-		<appversion>5.0</appversion>
+		<appversion>5.2.0</appversion>
 		<authors>
 			<author name="Mike Sobolewski" email="sobol@sorcersoft.org"/>
 			<author name="Ray Kolonay" email="raymond.kolonay@us.af.mil"/>
 			<author name="Scott A. Burton" email="scottaburton@amopti.com"/>
 			<author name="Dennis Reedy" email="dennis.reedy@gmail.com"/>
+			<author name="Rafał Krupiński" email="rafal.krupinski@sorcersoft.com"/>
+			<author name="Paweł Rubach" email="pawel.rubach@sorcersoft.com"/>
 		</authors>
 		<javaversion>1.8</javaversion>
+		<run-privileged condition="izpack.windowsinstall.vista|izpack.windowsinstall.7"/>
 	</info>
 
 	<variables>
@@ -45,10 +48,11 @@ SORCER installation file.
 	-->
 	<locale>
 		<langpack iso3="eng"/>
-		<langpack iso3="fra"/>
+		<!--<langpack iso3="fra"/>-->
 	</locale>
 
 	<native type="izpack" name="ShellLink.dll"/>
+	<native type="izpack" name="ShellLink_x64.dll"/>
 
 	<!-- 
 	The resources section.
@@ -57,7 +61,8 @@ SORCER installation file.
 	<resources>
 		<res id="LicencePanel.licence" src="LICENSE.txt"/>
 		<res id="installer.langsel.img" src="sorcer-logo.png"/>
-		<res id="shortcutSpec.xml" src="shortcutSpec.xml"/>
+		<res id="Unix_shortcutSpec.xml" src="shortcutSpecUnix.xml"/>
+		<res id="shortcutSpec.xml" src="shortcutSpecWin.xml"/>
 	</resources>
 
 	<!-- 
@@ -82,7 +87,8 @@ SORCER installation file.
 	<packs>
 		<pack name="SORCER Platform" installGroups="All, SORCER Platform" required="yes">
 			<description>SORCER Platform Distribution</description>
-			<fileset dir="../build/sorcer-5.0.2" targetdir="$INSTALL_PATH" defaultexcludes="yes"/>
+			<fileset dir="../build/sorcer-5.2.0" targetdir="$INSTALL_PATH" defaultexcludes="yes"/>
+			<executable targetfile="$INSTALL_PATH/bin/nsh" os="unix"/>
 		</pack>
 
 <!--
