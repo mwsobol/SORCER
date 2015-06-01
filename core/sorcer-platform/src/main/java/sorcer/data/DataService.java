@@ -94,14 +94,10 @@ public class DataService {
         List<String> adjusted = new ArrayList<String>();
         for(String root : roots) {
             File f = new File(root);
-            if(f.exists()) {
-                if (!f.isDirectory())
-                    throw new IllegalArgumentException("The root [" + root + "] is not a directory");
-            } else {
-                logger.debug("Creating root dir [{}]", f);
-                if (!f.mkdirs())
-                    throw new IllegalArgumentException("The root [" + root + "] does not exist and could not be created");
-            }
+            if(!f.exists())
+                throw new IllegalArgumentException("The root ["+root+"] does not exist");
+            if(!f.isDirectory())
+                throw new IllegalArgumentException("The root ["+root+"] is not a directory");
             adjusted.add(root.replace('\\', '/'));
         }
         this.roots = adjusted.toArray(new String[adjusted.size()]);
