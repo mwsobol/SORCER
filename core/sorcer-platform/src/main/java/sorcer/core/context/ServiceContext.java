@@ -2684,17 +2684,6 @@ public class ServiceContext<T> extends ServiceMogram implements
 		return runtime.getOutConnector();
 	}
 
-//	public T getResponse(Arg... entries) throws ContextException, RemoteException {
-//        try {
-//            if (responsePaths != null && responsePaths.size() == 1)
-//                return getValue(responsePaths.get(0), entries);
-//            else
-//                throw new ContextException("No valid unique response available");
-//        } catch (Exception e) {
-//            throw new ContextException(e);
-//        }
-//    }
-
 	@Override
     public Context getResponse(Arg... args) throws ContextException, RemoteException {
         if (runtime.outConnector != null) {
