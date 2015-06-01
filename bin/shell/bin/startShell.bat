@@ -17,6 +17,16 @@ IF NOT DEFINED SORCER_HOME (
         ECHO Problem setting SORCER_HOME, please set this variable and point it to the main SORCER installation directory!
     )
 )
+
+
+rem Create DataService Root Dir if it doesn't exist
+SET DATASERVICE_ROOT_DIR=%TEMP%\sorcer-%USERNAME%\data
+
+IF NOT EXIST "%DATASERVICE_ROOT_DIR%" (
+    ECHO "Creating DATASERVICE ROOT Directory: %DATASERVICE_ROOT_DIR%"
+    mkdir "%DATASERVICE_ROOT_DIR%"
+)
+
 rem read sorcer.env to get the local repo location
 rem FOR /F "usebackq tokens=1,2 delims==" %%G IN ("%SORCER_HOME%\configs\sorcer.env") DO (set %%G=%%H)
 rem set MVN_REPO=%sorcer.local.repo.location%

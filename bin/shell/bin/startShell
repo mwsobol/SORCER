@@ -73,6 +73,14 @@ if [ "$1" = "-cp" -o "$1" = "-classpath" -o "$1" = "--classpath" ] ; then
     shift 2
 fi
 
+# Create DataService Root Dir if it doesn't exist
+DATASERVICE_ROOT_DIR=/tmp/sorcer-$USER/data
+
+if [ ! -e "$DATASERVICE_ROOT_DIR" ]; then
+    echo "Creating DATASERVICE ROOT Directory: $DATASERVICE_ROOT_DIR"
+    mkdir -p $DATASERVICE_ROOT_DIR
+fi
+
 # Attempt to set JAVA_HOME if it's not already set.
 #if [ -z "$JAVA_HOME" ] ; then
 #    if $darwin ; then
