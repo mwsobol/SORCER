@@ -309,9 +309,6 @@ abstract public class ExertDispatcher implements Dispatcher {
                         + "\n>>> TO path: " + toPath + "\nfromContext: "
                         + fromContext + "\n>>> FROM path: " + fromPath);
                 if (fromContext != null) {
-					//logger.debug("updating toContext: {}", toContext
-                    //        + "\n>>> TO path: " + toPath + "\nfromContext: "
-                     //       + fromContext + "\n>>> FROM path: " + fromPath);
                     // make parametric substitution if needed
                     if (argIndex >=0 ) {
                         Object args = toContext.getValue(Context.PARAMETER_VALUES);

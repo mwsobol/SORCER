@@ -2456,8 +2456,9 @@ public class operator {
 				((ServiceContext)context).setInitContext((Context)ObjectCloner.clone(context));
 			}
 
-			for (Mogram e :mograms)
+			for (Mogram e :mograms) {
 				block.addMogram(e);
+			}
 		} catch (Exception se) {
 			throw new ExertionException(se);
 		}
@@ -2506,9 +2507,9 @@ public class operator {
 //						pm.addPar(p);
 
 					}
-				} else {
-					e.setScope(pm.getScope());
-
+				} else if (e instanceof Exertion) {
+					((Exertion)e).getDataContext().setScope(pm.getScope());
+					((Exertion)e).getDataContext().updateEntries(pm.getScope());
 				}
 			}
 		} catch (Exception ex) {

@@ -203,7 +203,7 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
                          * (RemoteServiceTask)provider.service(task); }
                          */
                         logger.debug("getting result from provider...");
-                        result = (Task) service.service(task, null);
+                        result = service.service(task, null);
 
                     } catch (Exception re) {
                         if (tried >= maxTries) {

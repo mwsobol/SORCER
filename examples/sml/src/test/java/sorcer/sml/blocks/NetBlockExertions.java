@@ -102,7 +102,7 @@ public class NetBlockExertions implements SorcerConstants {
 				inEnt("arg/x3", 20.0), inEnt("arg/x4", 80.0)));
 
 		Block result = exert(block);
-		assertEquals(value(context(result), "block/result"), 100.00);
+		assertEquals(value(context(result), "block/result"), 400.00);
 
 	}
 

@@ -33,7 +33,7 @@ import static sorcer.po.operator.*;
 @SuppressWarnings("unchecked")
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/sml")
-public class LocalBlockExertions implements SorcerConstants {
+public class  LocalBlockExertions implements SorcerConstants {
 	private final static Logger logger = LoggerFactory.getLogger(LocalBlockExertions.class);
 
     @Test
@@ -104,7 +104,7 @@ public class LocalBlockExertions implements SorcerConstants {
                 inEnt("arg/x3", 20.0), inEnt("arg/x4", 80.0)));
 
         Block result = exert(block);
-        assertEquals(value(context(result), "block/result"), 100.00);
+        assertEquals(value(context(result), "block/result"), 400.00);
 
     }
 
