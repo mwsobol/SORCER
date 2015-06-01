@@ -47,7 +47,7 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
 			boolean isSpawned, Provider provider,
             ProvisionManager provisionManager) throws ContextException, RemoteException {
 		super(block, sharedContext, isSpawned, provider, provisionManager);
-        block.getDataContext().append((Context) block.getScope());
+        block.getDataContext().append(block.getScope());
     }
 
 
@@ -140,7 +140,9 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
 				((LoopExertion)exertion).getCondition().setConditionalContext(pc);
 			}
 			pc.append(xrt.getContext());
-		}
+		} else {
+            exertion.getDataContext().updateEntries(xrt.getContext());
+        }
 	}
 	
 	private void postUpdate(Exertion exertion) throws ContextException, RemoteException {

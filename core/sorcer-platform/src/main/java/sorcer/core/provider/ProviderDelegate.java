@@ -1252,8 +1252,8 @@ public class ProviderDelegate {
 				task.setStatus(Exec.DONE);
 				if (cxt.getReturnPath() != null) {
 					cxt.setReturnValue(cxt.getValue(cxt.getReturnPath().path));
-				} else if (task.getContext().getScope() != null) {
-					task.getContext().getScope().append(cxt);
+				} else if (task.getDataContext().getScope() != null) {
+					task.getDataContext().getScope().append(cxt);
 				}
 				// clear the exertion and the context
 				cxt.setExertion(null);
