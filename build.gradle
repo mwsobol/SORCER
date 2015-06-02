@@ -52,6 +52,15 @@ apply from: file("gradle/utils.gradle")
 
 allprojects {
     group = 'org.sorcer'
+    String user = System.properties['user.name']
+    String tmpDir = System.properties['java.io.tmpdir']
+    ext {
+        sorcerData = file("${tmpDir}/sorcer-${user}/data").path
+    }
+    File sorcerDataDir = file(sorcerData)
+    if(sorcerDataDir.mkdirs()) {
+        println "Created ${sorcerDataDir.path}"
+    }
 }
 
 subprojects {

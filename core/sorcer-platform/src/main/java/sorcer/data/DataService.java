@@ -42,8 +42,8 @@ public class DataService {
     private final AtomicReference<Webster> websterRef = new AtomicReference<>();
     private String address;
     private static final Logger logger = LoggerFactory.getLogger(DataService.class.getName());
-    public static final String DATA_DIR  ="sorcer.data.dir";
-    public static final String DATA_URL  ="sorcer.data.url";
+    public static final String DATA_DIR = "sorcer.data.dir";
+    public static final String DATA_URL = "sorcer.data.url";
 
     /**
      * Get the DataService that is bound to the platform code server.
@@ -91,7 +91,7 @@ public class DataService {
         this.port = port;
         if(roots==null || roots.length==0)
             throw new IllegalArgumentException("You must provide roots");
-        List<String> adjusted = new ArrayList<String>();
+        List<String> adjusted = new ArrayList<>();
         for(String root : roots) {
             File f = new File(root);
             if(!f.exists())
