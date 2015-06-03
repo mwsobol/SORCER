@@ -32,7 +32,7 @@ import java.awt.event.ActionListener;
  */
 public class TaskEditorController implements ActionListener {
 
-	private final static Logger logger = LoggerFactory.getLogger("engineering.optimization.provider.ui");
+	private final static Logger logger = LoggerFactory.getLogger("open.optimization.provider.ui");
 
 	private SignatureModel model;
 	private DataNodeEditor dataView;

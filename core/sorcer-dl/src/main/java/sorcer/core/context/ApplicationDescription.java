@@ -23,7 +23,7 @@ public interface ApplicationDescription extends Serializable {
 
 	public static final String MECHANICAL = "mechanical";
 
-	public static final String ENGINEERING = "engineering";
+	public static final String ENGINEERING = "open";
 
 	String getDomain();
 

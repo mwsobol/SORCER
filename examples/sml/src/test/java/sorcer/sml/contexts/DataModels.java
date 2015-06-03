@@ -196,8 +196,8 @@ public class DataModels {
         assertTrue(getAt(cxt, "triplet|x|b|x").equals(1.2));
         assertTrue(getAt(cxt, "triplet|x|x|c").equals(1.3));
 
-        mark(cxt, "arg/y", "dnt|engineering|text|mesh");
-        assertTrue(getAt(cxt, "dnt|engineering|text|mesh").equals(1.8));
+        mark(cxt, "arg/y", "dnt|open|text|mesh");
+        assertTrue(getAt(cxt, "dnt|open|text|mesh").equals(1.8));
 
         // still the previous marker 'tag' holds with 'triplet'
         // for the same paths: arg/x1 and arg/x2
