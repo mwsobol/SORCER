@@ -180,10 +180,16 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 //		}
 		Exec.State state = exertion.getControlContext().getExecState();
 		if (state == State.INITIAL) {
+			if(exertion instanceof Exertion) {
+				exertion.getExceptions().clear();
+				exertion.getTrace().clear();
+			}
 			for (Mogram e : exertion.getAllMograms()) {
 				if (e instanceof Exertion) {
 					if (((ControlContext) ((Exertion)e).getControlContext()).getExecState() == State.INITIAL) {
 						e.setStatus(Exec.INITIAL);
+						e.getExceptions().clear();
+						e.getTrace().clear();
 					}
 				}
 				if (e instanceof Block) {
