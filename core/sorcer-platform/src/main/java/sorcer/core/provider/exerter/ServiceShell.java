@@ -220,7 +220,6 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 		}
 	}
 
-
 	private void realizeDependencies(Arg... entries) throws RemoteException,
 			ExertionException {
 		List<Evaluation> dependers = exertion.getDependers();
