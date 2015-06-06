@@ -127,10 +127,10 @@ public class operator {
 		return fi;
 	}
 	
-	public static ParModel parModel(String name, Identifiable... Objects)
+	public static ParModel parModel(String name, Identifiable... objects)
 			throws EvaluationException, RemoteException, ContextException {
 		ParModel pm = new ParModel(name);
-		pm.add(Objects);
+		pm.add(objects);
 		return pm;
 	}
 	

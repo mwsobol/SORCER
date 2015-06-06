@@ -222,7 +222,7 @@ public class ParModel<T> extends EntModel<T> implements Invocation<T>, Mappable<
 						((Entry) obj).value());
 			} else {
 				String pn = obj.getName();
-				p = new Par(pn, obj, this);
+				putValue(pn, obj);
 			}
 			
 			if (p != null)
