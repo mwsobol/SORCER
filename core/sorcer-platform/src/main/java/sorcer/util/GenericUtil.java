@@ -36,7 +36,7 @@ import java.util.jar.JarInputStream;
 import java.util.jar.JarOutputStream;
 
 /**
- * SORCER generic utility class. It implements the interface
+ * SORCER generic utility class.
  */
 public class GenericUtil {
     public static final String LOCAL_JARS = "LOCAL";
@@ -335,58 +335,6 @@ public class GenericUtil {
 	public static void logStackTrace(Logger logger, String msg) {
 		logger.warn(msg, new Throwable());	
 	}
-	
-//	public File downloadNonStatic(Var<URL> var, File destinationFile)
-//			throws IOException, EvaluationException {
-//
-//		Object sourceValue = var.getValue();
-//		URL sourceUrl = null;
-//		if (sourceValue instanceof String) {
-//			sourceUrl = new URL((String) sourceValue);
-//		} else {
-//			sourceUrl = (URL) sourceValue;
-//		}
-//
-//		writeUrlToFile(sourceUrl, destinationFile);
-//
-//		return destinationFile;
-//
-//		// Vector<String> contents = getFileContents(var.getValue());
-//		// setFileContents(destinationFile, contents);
-//		// return destinationFile;
-//	}
-//
-//	public File downloadNonStatic(Var<URL> source, Var<File> destination)
-//			throws IOException, EvaluationException {
-//		// Vector<String> contents = getFileContents(source.getValue());
-//		// Object destinationValue = destination.getValue();
-//		// if (destinationValue instanceof String) {
-//		// destinationValue = new File((String)destinationValue);
-//		// }
-//		// setFileContents((File)destinationValue, contents);
-//		// return (File)destinationValue;
-//
-//		Object sourceValue = source.getValue();
-//		URL sourceUrl = null;
-//		if (sourceValue instanceof String) {
-//			sourceUrl = new URL((String) sourceValue);
-//		} else {
-//			sourceUrl = (URL) sourceValue;
-//		}
-//
-//		Object destValue = destination.getValue();
-//		File destFile = null;
-//		if (destValue instanceof String) {
-//			destFile = new File((String) destValue);
-//		} else {
-//			destFile = (File) destValue;
-//		}
-//
-//		writeUrlToFile(sourceUrl, destFile);
-//
-//		return destFile;
-//
-//	}
 
 	/**
 	 * This method given a URL sourceURL and file path destinationFile writes
