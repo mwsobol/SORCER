@@ -59,7 +59,7 @@ public class ParModelTest {
 		set(pm, "x", 20.0);
 //		assertEquals(value(pm, "add"), 40.0);
 	}
-	
+
 	@Test
 	public void contextInvoker() throws RemoteException, ContextException {
 		ParModel pm = new ParModel("par-model");
@@ -69,17 +69,16 @@ public class ParModelTest {
 
 		assertEquals(pm.getValue("x"), 10.0);
 		assertEquals(pm.getValue("y"), 20.0);
-//		logger.info("add value: " + pm.getValue("add"));
 		assertEquals(pm.getValue("add"), 30.0);
 
 		pm.addResponsePath("add");
 //		logger.info("pm context value: " + pm.getValue());
 		assertEquals(pm.getValue(), 30.0);
-		
+
 		pm.putValue("x", 100.0);
 		pm.putValue("y", 200.0);
 //		logger.info("add value: " + pm.getValue("add"));
-		assertEquals(pm.getValue("add"), 300.0);		
+		assertEquals(pm.getValue("add"), 300.0);
 
 		assertEquals(pm.invoke(context(inEnt("x", 200.0), inEnt("y", 300.0))), 500.0);
 	}
