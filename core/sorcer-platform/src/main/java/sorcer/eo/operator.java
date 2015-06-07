@@ -285,7 +285,7 @@ public class operator {
 		ExecPath execPath = null;
 		Args cxtArgs = null;
 		ParameterTypes parameterTypes = null;
-		Response response = null;
+		PathResponse response = null;
 		PoolStrategy modelStrategy = null;
 		for (Object o : entries) {
 			if (o instanceof Complement) {
@@ -296,8 +296,8 @@ public class operator {
 			} else if (o instanceof ParameterTypes
 					&& ((ParameterTypes) o).parameterTypes.getClass().isArray()) {
 				parameterTypes = (ParameterTypes) o;
-			} else if (o instanceof Response) {
-				response = (Response) o;
+			} else if (o instanceof PathResponse) {
+				response = (PathResponse) o;
 			} else if (o instanceof ReturnPath) {
 				returnPath = (ReturnPath) o;
 			} else if (o instanceof ExecPath) {
@@ -2027,18 +2027,18 @@ public class operator {
 	}
 
 	public static Object target(Object object) {
-		return new Response(object);
+		return new PathResponse(object);
 	}
 
-	public static class Response extends Path {
+	public static class PathResponse extends Path {
 		private static final long serialVersionUID = 1L;
 		public Object target;
 
-		public Response(Object target) {
+		public PathResponse(Object target) {
 			this.target = target;
 		}
 
-		public Response(String path, Object target) {
+		public PathResponse(String path, Object target) {
 			this.target = target;
 			this._1 = path;
 		}
