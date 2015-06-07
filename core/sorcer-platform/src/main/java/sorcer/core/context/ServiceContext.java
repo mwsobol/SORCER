@@ -22,6 +22,8 @@ import net.jini.core.transaction.TransactionException;
 import net.jini.id.UuidFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sorcer.co.tuple.InputEntry;
+import sorcer.co.tuple.OutputEntry;
 import sorcer.co.tuple.Tuple2;
 import sorcer.core.SelectFidelity;
 import sorcer.core.SorcerConstants;
@@ -1409,7 +1411,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		return subcntxt;
 	}
     
-    public Context getEvaluatedSubcontext(String... paths) throws ContextException {
+    public ServiceContext getEvaluatedSubcontext(String... paths) throws ContextException {
         ServiceContext subcntxt = getSubcontext();
 		List<String> inpaths = getInPaths();
 		List<String> outpaths = getOutPaths();
@@ -1425,7 +1427,7 @@ public class ServiceContext<T> extends ServiceMogram implements
         return subcntxt;
     }
 
-	public Context getMergedSubcontext(ServiceContext intial, List<String> paths, Arg... args)
+	public ServiceContext getMergedSubcontext(ServiceContext intial, List<String> paths, Arg... args)
 			throws ContextException {
 		ServiceContext subcntxt = null;
 		if (intial != null) {
@@ -1452,9 +1454,9 @@ public class ServiceContext<T> extends ServiceMogram implements
 		return subcntxt;
 	}
 	
-	public Context getContext(String path) throws ContextException, RemoteException {
-		Context subcntxt = this.getSubcontext();
-		return subcntxt.appendContext(this, path);
+	public ServiceContext getContext(String path) throws ContextException, RemoteException {
+		ServiceContext subcntxt = this.getSubcontext();
+		return (ServiceContext)subcntxt.appendContext(this, path);
 	}
 
 	public Context getTaskContext(String path) throws ContextException {
@@ -2755,7 +2757,33 @@ public class ServiceContext<T> extends ServiceMogram implements
 				putValue(path, results);
 		return results;
 	}
-    
+
+	public ServiceContext getInEntContext() throws ContextException {
+		ServiceContext icxt = new ServiceContext();
+		Iterator ei = entryIterator();
+		Map.Entry<String, T> e;
+		while (ei.hasNext()) {
+			e = (Map.Entry<String, T>) ei.next();
+			if (e.getValue() instanceof InputEntry) {
+				icxt.putValue(e.getKey(), e.getValue());
+			}
+		}
+		return icxt;
+	}
+
+	public ServiceContext getOutEntContext() throws ContextException {
+		ServiceContext ocxt = new ServiceContext();
+		Iterator ei = entryIterator();
+		Map.Entry<String, T> e;
+		while (ei.hasNext()) {
+			e = (Map.Entry<String, T>) ei.next();
+			if (e.getValue() instanceof OutputEntry) {
+				ocxt.putValue(e.getKey(), e.getValue());
+			}
+		}
+		return ocxt;
+	}
+
 	public String getCurrentSelector() {
 		return currentSelector;
 	}

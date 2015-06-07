@@ -17,7 +17,9 @@
 
 package sorcer.core.context;
 
-import sorcer.service.*;
+import sorcer.service.Context;
+import sorcer.service.ContextException;
+import sorcer.service.Positioning;
 
 import java.util.Arrays;
 import java.util.Iterator;
@@ -32,7 +34,7 @@ public class PositionalContext<T> extends ServiceContext<T> implements
 		Positioning {
 
 	private static final long serialVersionUID = -8607789835474515562L;
-	private int tally = 0;
+	protected int tally = 0;
 	
 	public PositionalContext() {
 		super();
@@ -73,7 +75,7 @@ public class PositionalContext<T> extends ServiceContext<T> implements
         return this;
     }
 
-    public PositionalContext getEvaluatedSubcontext(String... paths) throws ContextException {
+    public ServiceContext getEvaluatedInSubcontext(String... paths) throws ContextException {
         PositionalContext subcntxt = getSubcontext();
         List<String>  ips = getInPaths();
         for (String p : paths) {
@@ -84,9 +86,10 @@ public class PositionalContext<T> extends ServiceContext<T> implements
                 }
             }
         }
+		subcntxt.getData().putAll(getInEntContext().getData());
         return subcntxt;
     }
-    
+
 	/* (non-Javadoc)
 	 * @see sorcer.core.context.Positioning#getInValueAt(sorcer.service.Context, int)
 	 */

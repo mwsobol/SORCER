@@ -177,7 +177,7 @@ public class SrvModel extends ParModel<Object> implements Model {
                     ServiceSignature sig = (ServiceSignature) ((SignatureEntry) ((Srv) val).asis()).value();
                     Context out = execSignature(sig);
                     if (sig.getReturnPath() != null && sig.getReturnPath().path != null) {
-                        return getValue(sig.getReturnPath().path);
+                        return out.getValue(sig.getReturnPath().path);
                     } else {
                         return out;
                     }
