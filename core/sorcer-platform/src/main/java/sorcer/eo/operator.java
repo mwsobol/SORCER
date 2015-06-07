@@ -49,6 +49,7 @@ import sorcer.service.*;
 import sorcer.service.Signature.*;
 import sorcer.service.Strategy.*;
 import sorcer.service.modeling.Model;
+import sorcer.service.modeling.Modeling;
 import sorcer.service.modeling.Variability;
 import sorcer.util.Loop;
 import sorcer.util.ObjectCloner;
@@ -777,6 +778,13 @@ public class operator {
 		}
 	}
 
+	public static Signature sig(Class serviceType,  Arg... args) throws SignatureException {
+		if (args == null || args.length == 0)
+			return defaultSig(serviceType);
+		else
+			return sig("?", serviceType, args);
+	}
+
 	public static Signature sig(String operation, Class serviceType,  Arg... args)
 			throws SignatureException {
 		String providerName = null;
@@ -864,7 +872,7 @@ public class operator {
 		return signture;
 	}
 
-	public static Signature sig(Class<?> serviceType) throws SignatureException {
+	public static Signature defaultSig(Class<?> serviceType) throws SignatureException {
 		if (serviceType == ServiceJobber.class ||
 				serviceType == ServiceSpacer.class ||
 				serviceType == ServiceConcatenator.class ||
@@ -875,7 +883,9 @@ public class operator {
 				serviceType == Concatenator.class ||
 				serviceType == Rendezvous.class) {
 			return sig("service", serviceType);
-		} else
+		} else if (Modeling.class.isAssignableFrom(serviceType) ) {
+			return sig("evaluate", serviceType);
+		}
 			return sig(serviceType, (ReturnPath) null);
 	}
 
