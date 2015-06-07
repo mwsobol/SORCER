@@ -27,15 +27,22 @@ import java.rmi.RemoteException;
  * @author Mike Sobolewski
  */
 public interface Model extends Mogram, Dependency {
-    
-    public Context getInputs()  throws ContextException, RemoteException;
-    
-    public Context getOutputs()  throws ContextException, RemoteException;
+
 
     /**
-     *  Requests a context of all evaluated responses of this model.
+     *  Returns a model specific value representing the main model goal.
      *
-     * @param args  optional configuration arguments
+     * @return  a domain specific result
+     * @throws ContextException
+     * @throws RemoteException
+     */
+    public Object getResult() throws ContextException, RemoteException;
+
+
+    /**
+     *  Returns the context of all current outputs of this model with a provided configuration.
+     *
+     * @param args optional configuration arguments
      * @return
      * @throws ContextException
      * @throws RemoteException
@@ -43,13 +50,32 @@ public interface Model extends Mogram, Dependency {
     public Object getResponse(Arg... args)  throws ContextException, RemoteException;
 
     /**
-     *  Returns a context of current responses of this model.
+     *  Returns a requested evaluation context with a provided input context.
      *
-     * @return
+     * @param inputContext  a context for this evaluation
+     * @return the result context of this evaluation
      * @throws ContextException
      * @throws RemoteException
      */
-    public Object getResult() throws ContextException, RemoteException;
+    public Context evaluate(Context inputContext)  throws ContextException, RemoteException;
+
+    /**
+     * Returns the input context of this model.
+     *
+     * @return the input context
+     * @throws ContextException
+     * @throws RemoteException
+     */
+    public Context getInputs()  throws ContextException, RemoteException;
+
+    /**
+     *  Returns the output context of this model.
+     *
+     * @return  the output context
+     * @throws ContextException
+     * @throws RemoteException
+     */
+    public Context getOutputs()  throws ContextException, RemoteException;
 
     /**
      * Returns a default response of this model

@@ -2714,7 +2714,18 @@ public class ServiceContext<T> extends ServiceMogram implements
 		return this;
     }
 
-    @Override
+	@Override
+	public Context evaluate(Context inputContext) throws ContextException, RemoteException {
+		Object args = inputContext.getValue(argsPath);
+		if (args != null && args != Context.none)
+			substitute((Arg[])args);
+		Context inputs = inputContext.getInputs();
+		this.append(inputs);
+		getResponse();
+		return this;
+	}
+
+	@Override
     public Object getResult() throws EvaluationException, RemoteException {
         return runtime.getResult();
     }
