@@ -196,13 +196,21 @@ public class operator {
         return new Entry(path, ((Context)model).asis(path));
     }
 
+	public static Srv srv(String name, Identifiable item) {
+		String srvName = item.getName();
+		if (name != null)
+			srvName = name;
+
+		if (item instanceof Signature)
+			return new Srv(srvName,
+					new SignatureEntry(item.getName(), (Signature) item));
+		else
+			return new Srv(srvName, item);
+	}
+
     public static Srv srv(Identifiable item) {
-        if (item instanceof Signature)
-            return new Srv(item.getName(),
-                    new SignatureEntry(item.getName(), (Signature) item));
-        else
-            return new Srv(item.getName(), item);
-    }
+		return srv(null, item);
+	}
 
 	public static Srv srv(String name, String path, Model model) {
 		return new Srv(path, model, name);
