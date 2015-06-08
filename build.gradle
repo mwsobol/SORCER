@@ -16,6 +16,13 @@
 
 project.version = '5.2.1'
 
+apply plugin: 'idea'
+idea {
+    project {
+        jdkName = '1.8'
+        languageLevel = '1.7'
+    }
+}
 
 task printVersion {
     description = 'Prints the current SORCER version.'
@@ -51,6 +58,7 @@ apply from: file("gradle/testProperties.gradle")
 apply from: file("gradle/utils.gradle")
 
 allprojects {
+    apply plugin: 'idea'
     group = 'org.sorcer'
     String user = System.properties['user.name']
     String tmpDir = System.properties['java.io.tmpdir']
@@ -70,6 +78,12 @@ subprojects {
 
         if (project.name != "distribution") {
             apply plugin: "java"
+            idea {
+                module {
+                    downloadSources = true
+                    downloadJavadoc = false
+                }
+            }
             compileJava.options.encoding = 'UTF-8'
             apply from: file("${rootProject.projectDir.path}/gradle/bootme.gradle")
 
