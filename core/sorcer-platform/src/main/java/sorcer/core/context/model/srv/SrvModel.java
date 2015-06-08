@@ -176,8 +176,16 @@ public class SrvModel extends ParModel<Object> implements Model {
                 if (((Srv) val).asis() instanceof SignatureEntry) {
                     ServiceSignature sig = (ServiceSignature) ((SignatureEntry) ((Srv) val).asis()).value();
                     Context out = execSignature(sig);
-                    if (sig.getReturnPath() != null && sig.getReturnPath().path != null) {
-                        return out.getValue(sig.getReturnPath().path);
+                    if (sig.getReturnPath() != null) {
+                        Object obj = out.getValue(sig.getReturnPath().path);
+                        if (obj == null)
+                            obj = out.getValue(path);
+                        if (obj != null)
+                            return obj;
+                        else {
+                            logger.warn("no value for return path: {} in: {}", sig.getReturnPath().path, out);
+                            return out;
+                        }
                     } else {
                         return out;
                     }
@@ -195,7 +203,7 @@ public class SrvModel extends ParModel<Object> implements Model {
         return val;
     }
 
-    private Context execSignature(Signature sig) throws Exception {
+    public Context execSignature(Signature sig) throws Exception {
         String[] ips = sig.getReturnPath().inPaths;
         String[] ops = sig.getReturnPath().outPaths;
         execDependencies(sig);
@@ -214,7 +222,7 @@ public class SrvModel extends ParModel<Object> implements Model {
         return outcxt;
     }
 
-    private void execDependencies(Signature sig, Arg... args) throws ContextException {
+    protected void execDependencies(Signature sig, Arg... args) throws ContextException {
         Map<String, List<String>> dpm = runtime.getDependentPaths();
         List<String> dpl = dpm.get(sig.getName());
         if (dpl != null && dpl.size() > 0) {
