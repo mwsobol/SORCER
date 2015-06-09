@@ -16,11 +16,9 @@ import sorcer.core.exertion.TaskTest;
 import sorcer.core.provider.Concatenator;
 import sorcer.service.*;
 import sorcer.util.Sorcer;
-import sorcer.util.StringUtils;
 import sorcer.util.exec.ExecUtils;
 
 import java.io.IOException;
-import java.util.UUID;
 
 import static org.junit.Assert.*;
 import static sorcer.co.operator.ent;
@@ -71,7 +69,7 @@ public class MonitoringTest {
 
 		Job job = createJob(Strategy.Flow.PAR, Strategy.Access.PUSH);
 		job = exert(job);
-		logger.info("job j1 job context: " + serviceContext(job));
+		logger.info("job j1 job context: " + upcontext(job));
 		assertEquals(get(job, "j1/t3/result/y"), 400.00);
 		verifyExertionMonitorStatus(job, "DONE");
 	}
@@ -83,7 +81,7 @@ public class MonitoringTest {
 		logger.info("job j1: " + job);
 		job = exert(job);
 		logger.info("job j1: " + job);
-		logger.info("job j1 job context: " + serviceContext(job));
+		logger.info("job j1 job context: " + upcontext(job));
 		assertEquals(get(job, "j1/t3/result/y"), 400.00);
 		verifyExertionMonitorStatus(job, "DONE");
 	}
@@ -92,7 +90,7 @@ public class MonitoringTest {
 	public void exertMonitoredJobPullParTest() throws Exception {
 		Job job = createJob(Strategy.Flow.PAR, Strategy.Access.PULL);
 		job = exert(job);
-		logger.info("job j1 job context: " + serviceContext(job));
+		logger.info("job j1 job context: " + upcontext(job));
 		assertEquals(400d, get(job, "j1/t3/result/y"));
 		verifyExertionMonitorStatus(job, "DONE");
 	}
@@ -102,7 +100,7 @@ public class MonitoringTest {
 
 		Job job = createJob(Strategy.Flow.SEQ, Strategy.Access.PULL);
 		job = exert(job);
-		logger.info("job j1 job context: " + serviceContext(job));
+		logger.info("job j1 job context: " + upcontext(job));
 		assertEquals(400d, get(job, "j1/t3/result/y"));
 		verifyExertionMonitorStatus(job, "DONE");
 	}

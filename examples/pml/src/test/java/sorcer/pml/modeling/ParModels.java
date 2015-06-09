@@ -459,7 +459,7 @@ public class ParModels {
 		// get job parameter value
 		assertEquals(value(j1p), 400.0);
 
-		logger.info("j1 job context: " + serviceContext(j1));
+		logger.info("j1 job context: " + upcontext(j1));
 
 
 		Task t6 = task("t6", sig("add", AdderImpl.class),

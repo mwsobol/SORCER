@@ -20,11 +20,10 @@ package sorcer.core.context;
 import sorcer.service.Context;
 import sorcer.service.ContextException;
 import sorcer.service.Positioning;
+import sorcer.service.Signature;
 
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author Mike Sobolewski
@@ -42,6 +41,10 @@ public class PositionalContext<T> extends ServiceContext<T> implements
 	
 	public PositionalContext(String name) {
 		super(name);
+	}
+
+	public PositionalContext(String name, Signature builder) {
+		super(name, builder);
 	}
 
     public PositionalContext(Context context) throws ContextException {
@@ -64,15 +67,6 @@ public class PositionalContext<T> extends ServiceContext<T> implements
                 subcntxt.putInoutValueAt(paths[i], getValue(paths[i]), tally + 1);
         }
         return subcntxt;
-    }
-
-    public Context appendInout(Context context) throws ContextException {
-        Iterator it = ((ServiceContext)context).entryIterator();
-        while (it.hasNext()) {
-            Map.Entry<String, Object> pairs = (Map.Entry) it.next();
-            putInoutValueAt(pairs.getKey(), pairs.getValue(), tally + 1);
-        }
-        return this;
     }
 
     public ServiceContext getEvaluatedInSubcontext(String... paths) throws ContextException {

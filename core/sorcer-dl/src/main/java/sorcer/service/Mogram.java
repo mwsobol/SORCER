@@ -258,4 +258,15 @@ public interface Mogram extends Service, ServiceProjection, Scopable, Substituta
      */
     public boolean isExportControlled();
 
+    /**
+     *  Returns a signature builder that returns instances of this model.
+     *  A inConnector specifies a map of an input context as needed by another collaborating service.
+     *
+     * @param args  optional configuration arguments
+     * @return  a signature for the builder of this model                                                                                s
+     * @throws ContextException
+     * @throws RemoteException
+     */
+    public Signature getBuilder(Arg... args) throws ContextException, RemoteException;
+
 }

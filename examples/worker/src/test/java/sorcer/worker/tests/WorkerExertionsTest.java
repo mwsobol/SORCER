@@ -164,7 +164,7 @@ public class WorkerExertionsTest {
 
 		requestTime(job);
 		Job out = exert(job);
-		logger.info("job context: " + serviceContext(out));
+		logger.info("job context: " + upcontext(out));
 		assertEquals(get(out, "strategy/work3/prv/result"), 400);
 		
 	}
@@ -195,28 +195,28 @@ public class WorkerExertionsTest {
 		Strategy control4 = strategy(Flow.PAR, Access.PULL);
 
 		Job out = exert(job, control1);
-		logger.info("job context: " + serviceContext(out));
+		logger.info("job context: " + upcontext(out));
 		logger.info("control context: " + control(job));
 		assertEquals(get(out, "strategy/work1/prv/result"), 100);
 		assertEquals(get(out, "strategy/work2/prv/result"), 500);
 		assertEquals(get(out, "strategy/work3/prv/result"), 0);
 		
 		out = exert(job, control2);
-		logger.info("job context: " + serviceContext(out));
+		logger.info("job context: " + upcontext(out));
 		logger.info("control context: " + control(job));
 		assertEquals(get(out, "strategy/work1/prv/result"), 100);
 		assertEquals(get(out, "strategy/work2/prv/result"), 500);
 		assertEquals(get(out, "strategy/work3/prv/result"), 0);
 		
 		out = exert(job, control3);
-		logger.info("job context: " + serviceContext(out));
+		logger.info("job context: " + upcontext(out));
 		logger.info("control context: " + control(job));
 		assertEquals(get(out, "strategy/work1/prv/result"), 100);
 		assertEquals(get(out, "strategy/work2/prv/result"), 500);
 		assertEquals(get(out, "strategy/work3/prv/result"), 0);
 		
 		out = exert(job, control4);
-		logger.info("job context: " + serviceContext(out));
+		logger.info("job context: " + upcontext(out));
 		logger.info("control context: " + control(job));
 		assertEquals(get(out, "strategy/work1/prv/result"), 100);
 		assertEquals(get(out, "strategy/work2/prv/result"), 500);

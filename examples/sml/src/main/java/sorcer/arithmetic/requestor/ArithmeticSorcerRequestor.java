@@ -53,7 +53,7 @@ public class ArithmeticSorcerRequestor extends SorcerRequestor {
     @Override
     public void run(String... args) throws Exception {
         Exertion exertion = exert(getExertion());
-        logger.info("<<<<<<<<<< f5 context: \n" + serviceContext(exertion));
+        logger.info("<<<<<<<<<< f5 context: \n" + upcontext(exertion));
 
     }
 }

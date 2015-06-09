@@ -5,7 +5,6 @@ import org.junit.runner.RunWith;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.impl.AdderImpl;
-import sorcer.arithmetic.provider.impl.AveragerImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.provider.impl.SubtractorImpl;
 import sorcer.core.SorcerConstants;
@@ -59,7 +58,7 @@ public class LocalJobExertions implements SorcerConstants {
 				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
 				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
 
-		Context context = serviceContext(exert(job));
+		Context context = upcontext(exert(job));
 		logger.info("job context: " + context);
 		assertEquals(get(context, "j1/t3/result/y"), 400.0);
 
@@ -93,7 +92,7 @@ public class LocalJobExertions implements SorcerConstants {
 				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
 				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
 
-		Context context = serviceContext(exert(job));
+		Context context = upcontext(exert(job));
 		logger.info("job context: " + context);
 		assertEquals(get(context, "j1/t3/result/y"), 400.0);
 
@@ -155,7 +154,7 @@ public class LocalJobExertions implements SorcerConstants {
 				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
 				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
 
-		Context context = serviceContext(exert(job));
+		Context context = upcontext(exert(job));
 		logger.info("job context: " + context);
 		get(context, "j1/t3/result/y");
 		assertEquals(get(context, "j1/t3/arg/x1"), 500.0);

@@ -193,13 +193,13 @@ public class ArithmeticNoNetTest implements SorcerConstants {
 	@Test
 	public void exertSrvTest() throws Exception {
 		Job srv = createSrv();
-		logger.info("srv job context: " + serviceContext(srv));
+		logger.info("srv job context: " + upcontext(srv));
 		logger.info("srv j1/t3 context: " + context(srv, "j1/t3"));
 		logger.info("srv j1/j2/t4 context: " + context(srv, "j1/j2/t4"));
 		logger.info("srv j1/j2/t5 context: " + context(srv, "j1/j2/t5"));
 
 		srv = exert(srv);
-		logger.info("srv job context: " + serviceContext(srv));
+		logger.info("srv job context: " + upcontext(srv));
 
 		// logger.info("srv value @  t3/arg/x2 = " + get(srv, "j1/t3/arg/x2"));
 		assertEquals(get(srv, "j1/t3/arg/x2"), 100.0);
@@ -332,7 +332,7 @@ public class ArithmeticNoNetTest implements SorcerConstants {
 		job = exert(job);
 		// logger.info("job j1: " + job);
 		// logger.info("job j1 job context: " + context(job));
-		logger.info("job j1 job context: " + serviceContext(job));
+		logger.info("job j1 job context: " + upcontext(job));
 		// logger.info("job j1 value @ j1/t3/result/y = " + get(job,
 		// "j1/t3/result/y"));
 		assertEquals(get(job, "j1/t3/result/y"), 400.00);
@@ -345,7 +345,7 @@ public class ArithmeticNoNetTest implements SorcerConstants {
 		job = exert(job);
 		// logger.info("job j1: " + job);
 		// logger.info("job j1 job context: " + context(job));
-		logger.info("job j1 job context: " + serviceContext(job));
+		logger.info("job j1 job context: " + upcontext(job));
 		// logger.info("job j1 value @ j1/t3/result/y = " + get(job,
 		// "j1/t3/result/y"));
 		assertEquals(get(job, "j1/t3/result/y"), 400.00);

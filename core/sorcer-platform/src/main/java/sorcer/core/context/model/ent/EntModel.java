@@ -2,7 +2,6 @@ package sorcer.core.context.model.ent;
 
 import sorcer.core.context.PositionalContext;
 import sorcer.service.*;
-import sorcer.service.modeling.Model;
 
 import java.rmi.RemoteException;
 import java.util.Date;
@@ -45,6 +44,11 @@ public class EntModel<T> extends PositionalContext<T> implements Invocation<T>, 
 
     public EntModel(String name) {
         super(name);
+        setModeling(true);
+    }
+
+    public EntModel(String name, Signature builder) {
+        super(name, builder);
         setModeling(true);
     }
 

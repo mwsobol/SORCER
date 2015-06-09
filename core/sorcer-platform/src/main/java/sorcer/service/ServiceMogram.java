@@ -7,12 +7,16 @@ import sorcer.core.SorcerConstants;
 import sorcer.core.context.FidelityContext;
 import sorcer.core.monitor.MonitoringSession;
 import sorcer.core.signature.ServiceSignature;
+import sorcer.eo.operator;
 import sorcer.security.util.SorcerPrincipal;
 
 import javax.security.auth.Subject;
 import java.io.Serializable;
+import java.rmi.RemoteException;
 import java.security.Principal;
 import java.util.*;
+
+import static sorcer.eo.operator.sig;
 
 /**
  * Created by sobolemw on 5/4/15.
@@ -117,6 +121,8 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
 
     protected MonitoringSession monitorSession;
 
+    protected Signature builder;
+
     protected ServiceMogram() {
         this(null);
     }
@@ -127,6 +133,11 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
         else
             this.name = name;
         init();
+    }
+
+    public ServiceMogram(String name, Signature builder) {
+        this(name);
+        this.builder = builder;
     }
 
     protected void init() {
@@ -606,4 +617,12 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
         this.fidelityContexts = fidelityContexts;
     }
 
+    @Override
+    public Signature getBuilder(Arg... args) throws ContextException, RemoteException {
+        return builder;
+    }
+
+    public void setBuilder(Signature builder) {
+        this.builder = builder;
+    }
 }

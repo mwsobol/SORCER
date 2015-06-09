@@ -30,13 +30,13 @@ public interface Model extends Mogram, Dependency {
 
 
     /**
-     *  Returns a model specific value representing the main model goal.
+     *  Returns a model specific value representing the main model result.
      *
      * @return  a domain specific result
      * @throws ContextException
      * @throws RemoteException
      */
-    public Object getResult() throws ContextException, RemoteException;
+    public Object getOutcome() throws ContextException, RemoteException;
 
 
     /**

@@ -206,7 +206,7 @@ public class operator {
 		return context(entries);
 	}
 
-	public static Context serviceContext(Service exertion) throws ContextException {
+	public static Context upcontext(Service exertion) throws ContextException {
 		if (exertion instanceof CompoundExertion)
 			return ((ServiceExertion) exertion).getContext();
 		else

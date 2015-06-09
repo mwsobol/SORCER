@@ -74,6 +74,11 @@ public class ParModel<T> extends EntModel<T> implements Invocation<T>, Mappable<
         super(name);
     }
 
+	public ParModel(String name, Signature builder) {
+		this(name);
+		this.builder = builder;
+	}
+
     public ParModel(Context context) throws RemoteException, ContextException {
         super(context);
         name = PAR_MODEL;

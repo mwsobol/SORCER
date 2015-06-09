@@ -189,31 +189,31 @@ public class ArithmeticNetTest implements SorcerConstants {
 		
 		//The Jobber and  all tasks are local
 		job = exert(job);
-		logger.info("job context: " + serviceContext(job));
+		logger.info("job context: " + upcontext(job));
 		assertTrue((Double)get(job, "j1/t3/result/y") == 400.0);
 		
 		// The remote Jobber with the all local task
 		job = exert(job, sFi("net"));
-		logger.info("job context: " + serviceContext(job));
+		logger.info("job context: " + upcontext(job));
 		assertTrue((Double)get(job, "j1/t3/result/y") == 400.0);
 
 		// The local Jobber with the remote Adder
 		job = exert(job, fi("j1/j2/t4", "net"));
-		logger.info("job context: " + serviceContext(job));
+		logger.info("job context: " + upcontext(job));
 		assertTrue((Double)get(job, "j1/t3/result/y") == 400.0);
 		
 		// The remote Jobber with the remote Adder
 //		job = exert(job, cFi("j1/j2/t5", "net"));
 		job = exert(job, sFi("object"), fi("j1/j2/t4", "net"), fi("j1/j2/t5", "net"));
-		logger.info("job context: " + serviceContext(job));
+		logger.info("job context: " + upcontext(job));
 		assertTrue((Double) get(job, "j1/t3/result/y") == 400.0);
 				
 		job = exert(job, fiContext(fi("j1", "net"), fi("j1/j2/t4", "net")));
-		logger.info("job context: " + serviceContext(job));
+		logger.info("job context: " + upcontext(job));
 		assertTrue((Double)get(job, "j1/t3/result/y") == 400.0);
 		
 		job = exert(job, fiContext("mix2"));
-		logger.info("job context: " + serviceContext(job));
+		logger.info("job context: " + upcontext(job));
 		assertTrue((Double)get(job, "j1/t3/result/y") == 400.0);
 	}
 	
@@ -261,12 +261,12 @@ public class ArithmeticNetTest implements SorcerConstants {
 
 		//The Jobber and  all tasks are local with 'subtract' signature
 		Job result = exert(job, fi("j1", "object"), fi("j1/t3", "object", "subtract"));
-		logger.info("result context: " + serviceContext(result));
+		logger.info("result context: " + upcontext(result));
 		assertTrue((Double)get(result, "j1/t3/result/y") == 400.0);		
 
 //		//The Jobber and  all tasks are local with 'average' signature
 //		result = exert(job, sFi("object"), csFi("j1/t3", "object", "average"));
-//		logger.info("result context: " + serviceContext(result));
+//		logger.info("result context: " + upcontext(result));
 //		assertTrue((Double) get(result, "j1/t3/result/y") == 300.0);
 	}
 	
@@ -308,7 +308,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 		job = exert(job);
 		//logger.info("job j1: " + job);
 		//logger.info("job j1 job context: " + context(job));
-		logger.info("job j1 job context: " + serviceContext(job));
+		logger.info("job j1 job context: " + upcontext(job));
 		//logger.info("job j1 value @ j1/t3/result/y = " + get(job, "j1/t3/result/y"));
 		assertEquals(get(job, "j1/t3/result/y"), 400.00);
 	}
@@ -321,7 +321,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 		job = exert(job);
 		logger.info("job j1: " + job);
 		//logger.info("job j1 job context: " + context(job));
-		logger.info("job j1 job context: " + serviceContext(job));
+		logger.info("job j1 job context: " + upcontext(job));
 		//logger.info("job j1 value @ j1/t3/result/y = " + get(job, "j1/t3/result/y"));
 		assertEquals(get(job, "j1/t3/result/y"), 400.00);
 	}
@@ -333,7 +333,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 		job = exert(job);
 		//logger.info("job j1: " + job);
 		//logger.info("job j1 job context: " + context(job));
-		logger.info("job j1 job context: " + serviceContext(job));
+		logger.info("job j1 job context: " + upcontext(job));
 		//logger.info("job j1 value @ j1/t3/result/y = " + get(job, "j1/t3/result/y"));
 		assertEquals(get(job, "j1/t3/result/y"), 400.00);
 	}
@@ -345,7 +345,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 		job = exert(job);
 		//logger.info("job j1: " + job);
 		//logger.info("job j1 job context: " + context(job));
-		logger.info("job j1 job context: " + serviceContext(job));
+		logger.info("job j1 job context: " + upcontext(job));
 		//logger.info("job j1 value @ j1/t3/result/y = " + get(job, "j1/t3/result/y"));
 		assertEquals(get(job, "j1/t3/result/y"), 400.00);
 	}

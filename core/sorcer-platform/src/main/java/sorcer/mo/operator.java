@@ -22,6 +22,7 @@ import sorcer.core.context.MapContext;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.ent.EntModel;
 import sorcer.core.context.model.ent.Entry;
+import sorcer.core.context.model.par.ParModel;
 import sorcer.core.context.model.srv.MultiFidelityService;
 import sorcer.core.context.model.srv.SrvModel;
 import sorcer.service.*;
@@ -32,10 +33,30 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static sorcer.eo.operator.instance;
+
 /**
  * Created by Mike Sobolewski on 4/26/15.
  */
 public class operator {
+
+    public static EntModel entModel(String name, Signature builder) throws SignatureException {
+        EntModel model = (EntModel) instance(builder);
+        model.setBuilder(builder);
+        return model;
+    }
+
+    public static ParModel parModel(String name, Signature builder) throws SignatureException {
+        ParModel model = (ParModel) instance(builder);
+        model.setBuilder(builder);
+        return model;
+    }
+
+    public static SrvModel srvModel(String name, Signature builder) throws SignatureException {
+        SrvModel model = (SrvModel) instance(builder);
+        model.setBuilder(builder);
+        return model;
+    }
 
     public static Context entModel(Object... entries)
             throws ContextException {
@@ -74,8 +95,12 @@ public class operator {
         return model;
     }
 
+    public static Context outcome(Model model) throws ContextException {
+        return ((ServiceContext)model).getRuntime().getOutcome();
+    }
+
     public static Object result(Model model, String path) throws ContextException {
-        return ((ServiceContext)((ServiceContext)model).getRuntime().getResult()).get(path);
+        return ((ServiceContext)((ServiceContext)model).getRuntime().getOutcome()).get(path);
     }
 
     public static Context inputs(Model model) throws ContextException {
@@ -174,14 +199,14 @@ public class operator {
         sorcer.eo.operator.Complement complement = null;
         List<Signature> sigs = new ArrayList<Signature>();
         Fidelity<String> responsePaths = null;
-        Model model = null;
+        SrvModel model = null;
         for (Object item : items) {
             if (item instanceof Signature) {
                 sigs.add((Signature)item);
             } else if (item instanceof sorcer.eo.operator.Complement) {
                 complement = (sorcer.eo.operator.Complement)item;
             } else if (item instanceof Model) {
-                model = ((Model)item);
+                model = ((SrvModel)item);
             } else if (item instanceof Fidelity) {
                 responsePaths = ((Fidelity)item);
             }
@@ -193,19 +218,18 @@ public class operator {
             Fidelity fidelity = new Fidelity();
             for (Signature sig : sigs)
                 fidelity.getSelects().add(sig);
-            ((SrvModel)model).addServiceFidelity(fidelity);
-            ((SrvModel)model).selectedServiceFidelity(fidelity.getName());
+            model.addServiceFidelity(fidelity);
+            model.selectedServiceFidelity(fidelity.getName());
         }
 //        else {
-//            ((SrvModel)model).setSubject("execute", ServiceModeler.class);
+//            model.setSubject("execute", ServiceModeler.class);
 //        }
 
         if (responsePaths != null) {
-            ((ServiceContext)model).setResponsePaths(((Fidelity)responsePaths).getSelects());
-
+            model.setResponsePaths(((Fidelity) responsePaths).getSelects());
         }
         if (complement != null) {
-            ((SrvModel)model).setSubject(complement.path(), complement.value());
+            model.setSubject(complement.path(), complement.value());
         }
 
         Object[] dest = new Object[items.length+1];

@@ -44,6 +44,7 @@ import sorcer.security.util.SorcerPrincipal;
 import sorcer.service.*;
 import sorcer.service.Signature.Direction;
 import sorcer.service.Signature.ReturnPath;
+import sorcer.service.modeling.Model;
 import sorcer.util.ObjectCloner;
 import sorcer.util.SorcerUtil;
 
@@ -65,7 +66,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 
 	private static final long serialVersionUID = 3311956866023311727L;
 
-	private Map<String, T> data = new ConcurrentHashMap<String, T>();
+	protected Map<String, T> data = new ConcurrentHashMap<String, T>();
 
 	protected String subjectPath = "";
 
@@ -147,6 +148,11 @@ public class ServiceContext<T> extends ServiceMogram implements
 		}
 		mogramId = UuidFactory.generate();
 		creationDate = new Date();
+	}
+
+	public ServiceContext(String name, Signature builder) {
+		this(name);
+		this.builder = builder;
 	}
 
 	public ServiceContext(String subjectPath, Object subjectValue) {
@@ -264,6 +270,10 @@ public class ServiceContext<T> extends ServiceMogram implements
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	public Model newInstance() throws SignatureException {
+		return (Model) operator.instance(builder);
 	}
 
 	public Context clearScope() throws ContextException {
@@ -1435,6 +1445,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		} else {
 			subcntxt = getSubcontext();
 		}
+		subcntxt.setModeling(true);
 		Object val = null;
 		for (String path : paths) {
 			val = getValue(path, args);
@@ -1444,11 +1455,11 @@ public class ServiceContext<T> extends ServiceMogram implements
 				List<String> inpaths = getInPaths();
 				List<String> outpaths = getOutPaths();
 				if (inpaths.contains(path))
-					subcntxt.putInValue(path, getValue(path, args));
+					subcntxt.putInValue(path, val);
 				else if (outpaths.contains(path))
-					subcntxt.putOutValue(path, getValue(path, args));
+					subcntxt.putOutValue(path, val);
 				else
-					subcntxt.putValue(path, getValue(path, args));
+					subcntxt.putValue(path, val);
 			}
 		}
 		return subcntxt;
@@ -2103,6 +2114,19 @@ public class ServiceContext<T> extends ServiceMogram implements
 		return value;
 	}
 
+	public Context appendInout(Context context) throws ContextException {
+		Iterator it = ((ServiceContext)context).entryIterator();
+		while (it.hasNext()) {
+			Map.Entry<String, Object> pairs = (Map.Entry) it.next();
+			String path = pairs.getKey();
+			if (data.containsKey(path) && data.get(path) instanceof Evaluation)
+				scope.putInoutValue(pairs.getKey(), pairs.getValue());
+			else
+				putInoutValue(pairs.getKey(), (T) pairs.getValue());
+		}
+		return this;
+	}
+
 	public T putInValue(String path, T value, String association)
 			throws ContextException {
 		putValue(path, value);
@@ -2702,16 +2726,18 @@ public class ServiceContext<T> extends ServiceMogram implements
             }
 			if (responsePaths != null && responsePaths.size() > 0) {
 				getMergedSubcontext(mc, responsePaths, args);
-				runtime.result = mc;
-				return runtime.result;
+				runtime.outcome = mc;
+				runtime.outcome.setModeling(true);
+				return runtime.outcome;
 			}
         } else {
 			if (responsePaths != null && responsePaths.size() > 0) {
-				runtime.result = getMergedSubcontext(null, responsePaths, args);
+				runtime.outcome = getMergedSubcontext(null, responsePaths, args);
 			} else {
-				runtime.result = substitute(args);
+				runtime.outcome = substitute(args);
 			}
-			return runtime.result;
+			runtime.outcome.setModeling(true);
+			return runtime.outcome;
         }
 		return this;
     }
@@ -2728,8 +2754,8 @@ public class ServiceContext<T> extends ServiceMogram implements
 	}
 
 	@Override
-    public Object getResult() throws EvaluationException, RemoteException {
-        return runtime.getResult();
+    public Object getOutcome() throws EvaluationException, RemoteException {
+        return runtime.getOutcome();
     }
 
     @Override

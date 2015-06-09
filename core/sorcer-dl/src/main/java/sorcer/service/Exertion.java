@@ -101,8 +101,8 @@ public interface Exertion extends Mogram, Dependency, Invocation<Object>, Evalua
 	public Context getDataContext() throws ContextException;
 
 	/**
-	 * Returns a composite data context (service data for all component
-	 * exertions) of this exertion to be processed by all exertion's signatures.
+	 * Returns a combined nested data context for parentand
+	 * all component exertions of this exertion.
 	 * 
 	 * @return a service context
 	 * @throws ContextException 

@@ -87,7 +87,7 @@ public class NetJobExertions implements SorcerConstants {
 		job = exert(job);
 		//logger.info("job j1: " + job);
 		//logger.info("job j1 job context: " + context(job));
-		logger.info("job j1 job context: " + serviceContext(job));
+		logger.info("job j1 job context: " + upcontext(job));
 		//logger.info("job j1 value @ j1/t3/result/y = " + get(job, "j1/t3/result/y"));
 		assertEquals(get(job, "j1/t3/result/y"), 400.00);
 		
@@ -101,7 +101,7 @@ public class NetJobExertions implements SorcerConstants {
 		job = exert(job);
 		logger.info("job j1: " + job);
 		//logger.info("job j1 job context: " + context(job));
-		logger.info("job j1 job context: " + serviceContext(job));
+		logger.info("job j1 job context: " + upcontext(job));
 		//logger.info("job j1 value @ j1/t3/result/y = " + get(job, "j1/t3/result/y"));
 		assertEquals(get(job, "j1/t3/result/y"), 400.00);
 		
@@ -114,7 +114,7 @@ public class NetJobExertions implements SorcerConstants {
 		job = exert(job);
 		//logger.info("job j1: " + job);
 		//logger.info("job j1 job context: " + context(job));
-		logger.info("job j1 job context: " + serviceContext(job));
+		logger.info("job j1 job context: " + upcontext(job));
 		//logger.info("job j1 value @ j1/t3/result/y = " + get(job, "j1/t3/result/y"));
 		assertEquals(get(job, "j1/t3/result/y"), 400.00);
 
@@ -127,7 +127,7 @@ public class NetJobExertions implements SorcerConstants {
 		job = exert(job);
 		//logger.info("job j1: " + job);
 		//logger.info("job j1 job context: " + context(job));
-		logger.info("job j1 job context: " + serviceContext(job));
+		logger.info("job j1 job context: " + upcontext(job));
 		//logger.info("job j1 value @ j1/t3/result/y = " + get(job, "j1/t3/result/y"));
 		assertEquals(get(job, "j1/t3/result/y"), 400.00);
 		
@@ -161,7 +161,7 @@ public class NetJobExertions implements SorcerConstants {
 				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
 				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
 
-		Context context = serviceContext(exert(job));
+		Context context = upcontext(exert(job));
 		logger.info("job context: " + context);
 		assertEquals(get(context, "j1/t3/result/y"), 400.0);
 	}
@@ -194,7 +194,7 @@ public class NetJobExertions implements SorcerConstants {
 				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
 				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
 
-		Context context = serviceContext(exert(sig(Shell.class), job));
+		Context context = upcontext(exert(sig(Shell.class), job));
 		logger.info("job context: " + context);
 		assertEquals(get(context, "j1/t3/result/y"), 400.0);
 
@@ -228,7 +228,7 @@ public class NetJobExertions implements SorcerConstants {
 				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
 				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
 
-		Context context = serviceContext(exert(job));
+		Context context = upcontext(exert(job));
 		logger.info("job context: " + context);
 		assertEquals(get(context, "j1/t3/result/y"), 400.0);
 
@@ -426,7 +426,7 @@ public class NetJobExertions implements SorcerConstants {
 
 		//The Jobber and 'subtract' are local services
 		Job result = exert(job, sFi("object"), fi("j1/t3", "object", "subtract"));
-		logger.info("result context: " + serviceContext(result));
+		logger.info("result context: " + upcontext(result));
 		assertTrue((Double)get(result, "j1/t3/result/y") == 400.0);
 
 //		//The Jobber and 'average' are local servics
@@ -474,31 +474,31 @@ public class NetJobExertions implements SorcerConstants {
 
 		//The Jobber and  all tasks are local
 		job = exert(job);
-		logger.info("job context: " + serviceContext(job));
+		logger.info("job context: " + upcontext(job));
 		assertTrue((Double)get(job, "j1/t3/result/y") == 400.0);
 
 		// The remote Jobber with the all local task
 		job = exert(job, sFi("net"));
-		logger.info("job context: " + serviceContext(job));
+		logger.info("job context: " + upcontext(job));
 		assertTrue((Double)get(job, "j1/t3/result/y") == 400.0);
 
 		// The local Jobber with the remote Adder
 		job = exert(job, fi("j1/j2/t4", "net"));
-		logger.info("job context: " + serviceContext(job));
+		logger.info("job context: " + upcontext(job));
 		assertTrue((Double)get(job, "j1/t3/result/y") == 400.0);
 
 		// The remote Jobber with the remote Adder
 //		job = exert(job, cFi("j1/j2/t5", "net"));
 		job = exert(job, sFi("object"), fi("j1/j2/t4", "net"),fi("j1/j2/t5", "net"));
-		logger.info("job context: " + serviceContext(job));
+		logger.info("job context: " + upcontext(job));
 		assertTrue((Double) get(job, "j1/t3/result/y") == 400.0);
 
 		job = exert(job, fiContext(fi("j1", "net"), fi("j1/j2/t4", "net")));
-		logger.info("job context: " + serviceContext(job));
+		logger.info("job context: " + upcontext(job));
 		assertTrue((Double)get(job, "j1/t3/result/y") == 400.0);
 
 		job = exert(job, fiContext("mix2"));
-		logger.info("job context: " + serviceContext(job));
+		logger.info("job context: " + upcontext(job));
 		assertTrue((Double)get(job, "j1/t3/result/y") == 400.0);
 
 	}

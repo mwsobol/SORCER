@@ -359,7 +359,7 @@ public class ParModelTest {
 		// update par references
 		j1 = exert(j1);
 		c4 = taskContext("j1/t4", j1);
-		logger.info("j1 value: " + serviceContext(j1));
+		logger.info("j1 value: " + upcontext(j1));
 		logger.info("j1p value: " + value(j1p));
 		
 		// get job parameter value
@@ -418,7 +418,7 @@ public class ParModelTest {
 		// get job parameter value
 		assertEquals(value(j1p), 400.0);
 		
-		logger.info("j1 job context: " + serviceContext(j1));
+		logger.info("j1 job context: " + upcontext(j1));
 		
 		
 		Task t6 = task("t6", sig("add", AdderImpl.class),

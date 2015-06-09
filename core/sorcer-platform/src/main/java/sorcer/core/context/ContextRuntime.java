@@ -42,7 +42,7 @@ public class ContextRuntime implements SelectProjection, Serializable {
     protected Map<String, SelectFidelity> selectFidelities;
 
     // evaluated model responses
-    protected Context result;
+    protected Context outcome;
 
     ContextRuntime(ServiceContext context) {
         target = context;
@@ -134,8 +134,8 @@ public class ContextRuntime implements SelectProjection, Serializable {
         this.selectFidelities = selectFidelities;
     }
 
-    public Context getResult() {
-        return result;
+    public Context getOutcome() {
+        return outcome;
     }
 
 }
