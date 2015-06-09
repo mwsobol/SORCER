@@ -84,8 +84,6 @@ public class ServiceContext<T> extends ServiceMogram implements
 	
 	protected String parameterTypesPath;
 
-	protected List<String> responsePaths;
-
 	// a flag for the context to be shared
 	// for data piping see: map. connect, pipe
 	protected boolean isShared = false;
@@ -110,7 +108,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 
 	protected boolean isFinalized = false;
 
-	protected ContextRuntime runtime = new ContextRuntime(this);
+	protected ModelRuntime runtime = new ModelRuntime(this);
 	/**
 	 * For persistence layers to differentiate with saved context already
 	 * associated to task or not.
@@ -331,7 +329,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		}
 		if (rp != null) {
 			try {
-				if (rp.path == null || rp.path.equals("self")) {
+				if (rp.path != null && rp.path.equals("self")) {
 					return (T) this;
 				} else if (rp.outPaths != null && rp.outPaths.length > 0) {
 					 val = (T)getSubcontext(rp.outPaths);
@@ -2007,31 +2005,6 @@ public class ServiceContext<T> extends ServiceMogram implements
 		return this;
 	}
 
-	public Context addResponsePath(String path) {
-		if (responsePaths == null)
-			responsePaths = new ArrayList<String>();
-		if (!responsePaths.contains(path))
-			responsePaths.add(path);
-		return this;
-	}
-    
-	
-	public ServiceContext setResponse(String path, Object target) throws ContextException {
-		if (!responsePaths.contains(path))
-			throw new ContextException("no such response: " + path);
-		putValue(path, (T) target);
-		return this;
-	}
-
-	public List<String> getResponsePaths() {
-		return responsePaths;
-	}
-
-	public ServiceContext setResponsePaths(List<String> responsePaths) {
-		this.responsePaths = responsePaths;
-		return this;
-	}
-
 	public ReturnPath getReturnPath() {
 		return returnPath;
 	}
@@ -2638,9 +2611,9 @@ public class ServiceContext<T> extends ServiceMogram implements
 		try {
 			substitute(entries);
 			if (currentPath == null) {
-				if (responsePaths != null) {
-					if (responsePaths.size() == 1)
-						currentPath = responsePaths.get(0);
+				if (runtime.responsePaths != null && runtime.responsePaths.size()>0) {
+					if (runtime.responsePaths.size() == 1)
+						currentPath = runtime.responsePaths.get(0);
 					else
 						return (T) getResponse();
 				}
@@ -2684,21 +2657,9 @@ public class ServiceContext<T> extends ServiceMogram implements
 		}
 	}
 
-    public String getResponsePath() throws ContextException {
-        if (responsePaths != null && responsePaths.size() == 1)
-            return responsePaths.get(0);
-        else
-            throw new ContextException("No siingle response available");
-    }
-
     public Object getResponseAt(String path, Arg... entries) throws ContextException, RemoteException {
         return getValue(path, entries);
     }
-
-	@Override
-	public void addResponse(String responseName) throws ContextException, RemoteException {
-		responsePaths.add(responseName);
-	}
 
 	@Override
 	public Context getInConnector(Arg... args) throws ContextException, RemoteException {
@@ -2724,15 +2685,15 @@ public class ServiceContext<T> extends ServiceMogram implements
                 Map.Entry pairs = (Map.Entry) it.next();
                 mc.putInValue((String) pairs.getKey(), getValue((String) pairs.getValue()));
             }
-			if (responsePaths != null && responsePaths.size() > 0) {
-				getMergedSubcontext(mc, responsePaths, args);
+			if (runtime.responsePaths != null && runtime.responsePaths.size() > 0) {
+				getMergedSubcontext(mc, runtime.responsePaths, args);
 				runtime.outcome = mc;
 				runtime.outcome.setModeling(true);
 				return runtime.outcome;
 			}
         } else {
-			if (responsePaths != null && responsePaths.size() > 0) {
-				runtime.outcome = getMergedSubcontext(null, responsePaths, args);
+			if (runtime.responsePaths != null && runtime.responsePaths.size() > 0) {
+				runtime.outcome = getMergedSubcontext(null, runtime.responsePaths, args);
 			} else {
 				runtime.outcome = substitute(args);
 			}
@@ -2741,6 +2702,11 @@ public class ServiceContext<T> extends ServiceMogram implements
         }
 		return this;
     }
+
+	@Override
+	public Object getResult() throws ContextException, RemoteException {
+		return runtime.getOutcome();
+	}
 
 	@Override
 	public Context evaluate(Context inputContext) throws ContextException, RemoteException {
@@ -2752,11 +2718,6 @@ public class ServiceContext<T> extends ServiceMogram implements
 		getResponse();
 		return this;
 	}
-
-	@Override
-    public Object getOutcome() throws EvaluationException, RemoteException {
-        return runtime.getOutcome();
-    }
 
     @Override
     public Context getInputs() throws ContextException, RemoteException {
@@ -3147,7 +3108,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		data.putAll((Map<? extends String, ? extends T>) ((ServiceContext) context).data);
 	}
 
-	public ContextRuntime getRuntime() {
+	public ModelRuntime getRuntime() {
 		return runtime;
 	}
 

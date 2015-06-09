@@ -24,7 +24,6 @@ import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.par.Par;
 import sorcer.core.context.model.srv.Srv;
 import sorcer.core.provider.DatabaseStorer;
-import sorcer.service.Scopable;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
 import sorcer.service.modeling.Variability;
@@ -657,7 +656,13 @@ public class operator {
 		return context.getPaths();
 	}
 
-    public static void dependsOn(Model model, Entry... entries) {
+	public static void remove(ServiceContext parModel, String... paths)
+			throws RemoteException, ContextException {
+		for (String path : paths)
+			parModel.getData().remove(path);
+	}
+
+	public static void dependsOn(Model model, Entry... entries) {
         Map<String, List<String>> dm = ((ServiceContext)model).getRuntime().getDependentPaths();
         String path = null;
         Object dependentPaths = null;

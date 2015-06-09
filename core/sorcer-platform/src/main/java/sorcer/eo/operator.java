@@ -243,6 +243,14 @@ public class operator {
 		return fiCxt;
 	}
 
+	public static Context subcontext(Context context, List<String> paths) throws ContextException {
+		return context.getSubcontext((String[]) paths.toArray());
+	}
+
+	public static Context subcontext(Context context, String... paths) throws ContextException {
+		return context.getSubcontext(paths);
+	}
+
 	public static Context scope(Object... entries) throws ContextException {
 		Object[] args = new Object[entries.length + 1];
 		System.arraycopy(entries, 0, args, 1, entries.length);
@@ -390,9 +398,9 @@ public class operator {
 		}
 		if (response != null) {
 			if (response.path() != null) {
-				((ServiceContext) cxt).addResponsePath(response.path());
+				((ServiceContext) cxt).getRuntime().getResponsePaths().add(response.path());
 			}
-			((ServiceContext) cxt).setResponse(response.path(), response.target);
+			((ServiceContext) cxt).getRuntime().setResult(response.path(), response.target);
 		}
 		if (entryLists.size() > 0) {
 			((ServiceContext) cxt).setEntryLists(entryLists);

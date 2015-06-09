@@ -29,7 +29,7 @@ import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.get;
 import static sorcer.eo.operator.pipe;
 import static sorcer.eo.operator.value;
-import static sorcer.mo.operator.addResponse;
+import static sorcer.mo.operator.stepupResponse;
 import static sorcer.po.operator.add;
 import static sorcer.po.operator.asis;
 import static sorcer.po.operator.*;
@@ -71,7 +71,7 @@ public class ParModelTest {
 		assertEquals(pm.getValue("y"), 20.0);
 		assertEquals(pm.getValue("add"), 30.0);
 
-		pm.addResponsePath("add");
+		stepupResponse(pm, "add");
 //		logger.info("pm context value: " + pm.getValue());
 		assertEquals(pm.getValue(), 30.0);
 
@@ -104,7 +104,7 @@ public class ParModelTest {
 		assertEquals(add.getValue(), 30.0);
 		assertEquals(pm.getValue("add"), 30.0);
 
-		pm.addResponsePath("add");
+		stepupResponse(pm, "add");
 		logger.info("pm context value: " + pm.invoke(null));
 		assertEquals(pm.invoke(null), 30.0);
 
@@ -122,7 +122,7 @@ public class ParModelTest {
 		ParModel pm = parModel(par("x", 10.0), par("y", 20.0),
 				par("add", invoker("x + y", pars("x", "y"))));
 
-        addResponse(pm, "add");
+		stepupResponse(pm, "add");
 
 		assertEquals(value(pm, "x"), 10.0);
 		assertEquals(value(pm, "y"), 20.0);
@@ -137,7 +137,7 @@ public class ParModelTest {
 		ParModel pm = parModel(par("x", 10.0), par("y", 20.0),
 				par("add", invoker("x + y", pars("x", "y"))));
 
-        addResponse(pm, "add");
+		stepupResponse(pm, "add");
 
 		Par x = par(pm, "x");
 		logger.info("par x: " + x);

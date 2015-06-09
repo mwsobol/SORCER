@@ -48,7 +48,7 @@ public class MultiFidelityService extends SrvModel {
      */
     public MultiFidelityService setProjection(String... fidelities) throws EvaluationException, RemoteException {
         for (String path : fidelities)
-            addResponsePath(path);
+            runtime.getResponsePaths().add(path);
         return this;
     }
 
@@ -86,8 +86,8 @@ public class MultiFidelityService extends SrvModel {
         if (fidelity != null && selectionFidelities != null
                 && selectionFidelities.containsKey(fidelity)) {
             currentSelector = selectionFidelities.get(fidelity).getName();
-            responsePaths.clear();
-            responsePaths.add(currentSelector);
+            runtime.getResponsePaths().clear();
+            runtime.getResponsePaths().add(currentSelector);
         }
     }
 
@@ -106,7 +106,7 @@ public class MultiFidelityService extends SrvModel {
     @Override
     public Context getValue(Arg... entries) throws EvaluationException  {
         try {
-            Mogram mogram = (Mogram) getValue(responsePaths.get(0));
+            Mogram mogram = (Mogram) getValue(runtime.getResponsePaths().get(0));
             mogram = mogram.exert(entries);
             if (mogram instanceof Exertion)
                 return ((Exertion)mogram).getContext();

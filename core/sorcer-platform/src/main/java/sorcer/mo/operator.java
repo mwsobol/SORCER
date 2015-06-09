@@ -89,17 +89,23 @@ public class operator {
         return model;
     }
 
-    public static Model addResponse(Model model, String... responsePaths) throws ContextException {
+    public static Model stepupResponse(Model model, String... responsePaths) throws ContextException {
         for (String path : responsePaths)
-            ((ServiceContext)model).addResponsePath(path);
+            ((ServiceContext)model).getRuntime().getResponsePaths().add(path);
         return model;
     }
 
-    public static Context outcome(Model model) throws ContextException {
+    public static Model stepdownResponse(Model model, String... responsePaths) throws ContextException {
+        for (String path : responsePaths)
+            ((ServiceContext)model).getRuntime().getResponsePaths().remove(path);
+        return model;
+    }
+
+    public static Context result(Model model) throws ContextException {
         return ((ServiceContext)model).getRuntime().getOutcome();
     }
 
-    public static Object result(Model model, String path) throws ContextException {
+    public static Object resultAt(Model model, String path) throws ContextException {
         return ((ServiceContext)((ServiceContext)model).getRuntime().getOutcome()).get(path);
     }
 
@@ -226,7 +232,7 @@ public class operator {
 //        }
 
         if (responsePaths != null) {
-            model.setResponsePaths(((Fidelity) responsePaths).getSelects());
+            model.getRuntime().setResponsePaths(((Fidelity) responsePaths).getSelects());
         }
         if (complement != null) {
             model.setSubject(complement.path(), complement.value());

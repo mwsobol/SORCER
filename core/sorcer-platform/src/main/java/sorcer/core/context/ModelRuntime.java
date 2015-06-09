@@ -1,10 +1,7 @@
 package sorcer.core.context;
 
 import sorcer.core.SelectFidelity;
-import sorcer.service.Arg;
-import sorcer.service.Context;
-import sorcer.service.Evaluation;
-import sorcer.service.SelectProjection;
+import sorcer.service.*;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -15,7 +12,7 @@ import java.util.Map;
 /**
  * Created by Mike Sobolewski
  */
-public class ContextRuntime implements SelectProjection, Serializable {
+public class ModelRuntime implements SelectProjection, Serializable {
 
     protected List<ThrowableTrace> exceptions;
 
@@ -41,10 +38,13 @@ public class ContextRuntime implements SelectProjection, Serializable {
     // select fidelities for this service context
     protected Map<String, SelectFidelity> selectFidelities;
 
-    // evaluated model responses
+    // evaluated model response entries
     protected Context outcome;
 
-    ContextRuntime(ServiceContext context) {
+    // reponse paths of the runtime model
+    protected List<String> responsePaths = new ArrayList<String>();
+
+    ModelRuntime(ServiceContext context) {
         target = context;
     }
 
@@ -138,4 +138,17 @@ public class ContextRuntime implements SelectProjection, Serializable {
         return outcome;
     }
 
+    public void setResult(String path, Object value) throws ContextException {
+        if (!responsePaths.contains(path))
+            throw new ContextException("no such response path: " + path);
+        target.putValue(path, value);
+    }
+
+    public List<String> getResponsePaths() {
+        return responsePaths;
+    }
+
+    public void setResponsePaths(List<String> responsePaths) {
+        this.responsePaths = responsePaths;
+    }
 }
