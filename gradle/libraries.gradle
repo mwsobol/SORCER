@@ -28,7 +28,7 @@ ext {
 	blitzVersion = "2.1.7"
 	lockmgrVersion = "2.1.7"
 	jeVersion = "5.0.104"
-	junitVersion = "4.8.2"
+	junitVersion = "4.12"
 	junitAddonsVersion = "1.4"
 	antVersion = "1.8.2"
     plexusVersion = "3.0.15"
