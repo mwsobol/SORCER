@@ -473,6 +473,14 @@ public class operator {
 		return SdbUtil.clear(type);
 	}
 
+	public static int size(Collection collection) {
+		return collection.size();
+	}
+
+	public static int size(Context context) {
+		return context.size();
+	}
+
 	public static int size(DatabaseStorer.Store type) throws ExertionException,
 			SignatureException, ContextException {
 		return SdbUtil.size(type);

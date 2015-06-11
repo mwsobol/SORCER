@@ -289,7 +289,7 @@ public interface Signature extends Serializable, Comparable, Dependency, Identif
 	 * context.
 	 */
 	public enum Type implements Arg {
-		SRV, PRE, POST, APD_DATA, APD_CONTROL;
+		SRV, PRE, POST, APD_DATA, APD_CONTROL, BUILDER;
 
 		/* (non-Javadoc)
 		 * @see sorcer.service.Arg#getName()

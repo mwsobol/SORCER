@@ -65,7 +65,7 @@ public class EntModels {
 		add(cxt, ent("invoke", invoker("x1 + x3", ents("x1", "x3"))));
 
 		// declare response paths
-        stepupResponse(cxt, "invoke");
+		responseUp(cxt, "invoke");
 		// evaluate the model
 		value(cxt);
 		assertTrue(value(cxt).equals(4.0));
@@ -94,7 +94,7 @@ public class EntModels {
 		// cxt2 depends on values y1 and y2 calculated in cxt1
 		Context<Double> cxt2 = entModel(ent("arg/y3", 8.0), ent("arg/y4", 9.0), ent("arg/y5", 10.0));
 		add(cxt2, ent("invoke", invoker("y1 + y2 + y4 + y5", ents("y1", "y2", "y4", "y5"))));
-        stepupResponse(cxt2, "invoke");
+      	responseUp(cxt2, "invoke");
 
 		// created dependency of cxt2 on cxt1 via a context copier
 		Copier cp = copier(cxt1, ents("arg/x1", "arg/x2"), cxt2, ents("y1", "y2"));
@@ -117,7 +117,7 @@ public class EntModels {
 		add(cxt, ent("multiply", invoker("x4 * x5", ents("x4", "x5"))));
 
 		// two respnse paths declared for the result
-        stepupResponse(cxt, "add", "multiply");
+		responseUp(cxt, "add", "multiply");
 
 		// evaluate the model
 		Context result = response(cxt);
@@ -138,7 +138,7 @@ public class EntModels {
 		add(cxt, ent("multiply", invoker("x4 * x5", ents("x4", "x5"))));
 
 		// two response paths declared
-		stepupResponse(cxt, "add", "multiply");
+		responseUp(cxt, "add", "multiply");
 
         // exert the model
 		Model model = exert(cxt);

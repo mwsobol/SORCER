@@ -89,13 +89,13 @@ public class operator {
         return model;
     }
 
-    public static Model stepupResponse(Model model, String... responsePaths) throws ContextException {
+    public static Model responseUp(Model model, String... responsePaths) throws ContextException {
         for (String path : responsePaths)
             ((ServiceContext)model).getRuntime().getResponsePaths().add(path);
         return model;
     }
 
-    public static Model stepdownResponse(Model model, String... responsePaths) throws ContextException {
+    public static Model responseDown(Model model, String... responsePaths) throws ContextException {
         for (String path : responsePaths)
             ((ServiceContext)model).getRuntime().getResponsePaths().remove(path);
         return model;

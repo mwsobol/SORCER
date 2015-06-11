@@ -39,7 +39,7 @@ import static sorcer.eo.operator.pipe;
 import static sorcer.eo.operator.put;
 import static sorcer.eo.operator.value;
 import static sorcer.mo.operator.response;
-import static sorcer.mo.operator.stepupResponse;
+import static sorcer.mo.operator.responseUp;
 import static sorcer.po.operator.add;
 import static sorcer.po.operator.asis;
 import static sorcer.po.operator.*;
@@ -167,7 +167,7 @@ public class ParModels {
 		logger.info("add value: " + value(pm, "add"));
 		assertEquals(value(pm, "add"), 30.0);
 
-        stepupResponse(pm, "add");
+        responseUp(pm, "add");
 		logger.info("pm context value: " + value(pm));
 		assertEquals(value(pm), 30.0);
 
@@ -191,7 +191,7 @@ public class ParModels {
 		assertEquals(value(pm, "add"), 30.0);
 
 		// now evaluate model for its target       
-        stepupResponse(pm, "add");
+        responseUp(pm, "add");
 		assertEquals(value(pm), 30.0);
 	}
 
@@ -213,7 +213,7 @@ public class ParModels {
 		assertEquals(value(pm, "y"), 40.0);
 		assertEquals(value(pm, "add"), 60.0);
 
-        stepupResponse(pm, "add");
+        responseUp(pm, "add");
 		assertEquals(value(pm), 60.0);
 
 		add(pm, par("x", 10.0), par("y", 20.0));

@@ -45,7 +45,7 @@ public class SrvModels {
         add(m, ent("multiply", invoker("x4 * x5", ents("x4", "x5"))));
 
         // two response paths declared
-        stepupResponse(m, "add", "multiply");
+        responseUp(m, "add", "multiply");
         // exert the model
         Model model = exert(m);
         logger.info("model: " + model);
@@ -101,7 +101,7 @@ public class SrvModels {
 
 
         // get a scalar response
-        stepupResponse(m, "subtract");
+        responseUp(m, "subtract");
         dependsOn(m, ent("subtract", paths("multiply", "add")));
 		logger.info("response: " + response(m));
         Context out = response(m);
@@ -109,7 +109,7 @@ public class SrvModels {
         assertTrue(get(out, "subtract").equals(400.0));
 
         // stepup a response context
-        stepupResponse(m, "add", "multiply", "y1");
+        responseUp(m, "add", "multiply", "y1");
         out = response(m);
         logger.info("out: " + out);
         assertTrue(get(out, "add").equals(100.0));
@@ -140,7 +140,7 @@ public class SrvModels {
                         inPaths("multiply/out", "add/out")))),
                 srv("y1", "multiply/x1"), srv("y2", "add/x2"), srv("y3", "subtract/response"));
 
-        stepupResponse(model, "add", "multiply", "subtract");
+        responseUp(model, "add", "multiply", "subtract");
         dependsOn(model, ent("subtract", paths("multiply", "add")));
         // specify how model connects to exertion
         outConn(model, outConnector);
@@ -203,7 +203,10 @@ public class SrvModels {
 
 //                srv("z1", "multiply/x1"), srv("z2", "add/x2"), srv("z3", "subtract/out"));
 
-        stepupResponse(model, "add", "multiply", "subtract");
+        responseUp
+
+
+                (model, "add", "multiply", "subtract");
         dependsOn(model, ent("subtract", paths("multiply", "add")));
         // specify how model connects to exertion
         outConn(model, modelOutConnector);

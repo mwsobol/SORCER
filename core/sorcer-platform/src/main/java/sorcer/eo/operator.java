@@ -955,6 +955,31 @@ public class operator {
 		}
 	}
 
+	public static Signature builder(Signature signature) {
+		signature.setType(Type.BUILDER);
+		return signature;
+	}
+
+	public static Signature pre(Signature signature) {
+		signature.setType(Type.PRE);
+		return signature;
+	}
+
+	public static Signature post(Signature signature) {
+		signature.setType(Type.POST);
+		return signature;
+	}
+
+	public static Signature srv(Signature signature) {
+		signature.setType(Type.SRV);
+		return signature;
+	}
+
+	public static Signature apd(Signature signature) {
+		signature.setType(Type.APD_DATA);
+		return signature;
+	}
+
 	public static Signature type(Signature signature, Signature.Type type) {
 		signature.setType(type);
 		return signature;
