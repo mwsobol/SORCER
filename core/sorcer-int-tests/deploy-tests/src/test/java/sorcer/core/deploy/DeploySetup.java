@@ -1,7 +1,6 @@
 package sorcer.core.deploy;
 
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.experimental.categories.Categories;
 import org.rioproject.deploy.DeployAdmin;
@@ -18,7 +17,7 @@ public class DeploySetup {
     static ProvisionMonitor monitor;
 
     @BeforeClass
-    public static void verifyIGridRunning() throws Exception {
+    public static void verifySorcerRunning() throws Exception {
         long t0 = System.currentTimeMillis();
         monitor = ServiceUtil.waitForService(ProvisionMonitor.class, 20);
         Assert.assertNotNull(monitor);
