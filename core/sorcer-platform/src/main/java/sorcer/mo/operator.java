@@ -33,27 +33,25 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static sorcer.eo.operator.instance;
-
 /**
  * Created by Mike Sobolewski on 4/26/15.
  */
 public class operator {
 
     public static EntModel entModel(String name, Signature builder) throws SignatureException {
-        EntModel model = (EntModel) instance(builder);
+        EntModel model = (EntModel) sorcer.co.operator.instance(builder);
         model.setBuilder(builder);
         return model;
     }
 
     public static ParModel parModel(String name, Signature builder) throws SignatureException {
-        ParModel model = (ParModel) instance(builder);
+        ParModel model = (ParModel) sorcer.co.operator.instance(builder);
         model.setBuilder(builder);
         return model;
     }
 
     public static SrvModel srvModel(String name, Signature builder) throws SignatureException {
-        SrvModel model = (SrvModel) instance(builder);
+        SrvModel model = (SrvModel) sorcer.co.operator.instance(builder);
         model.setBuilder(builder);
         return model;
     }

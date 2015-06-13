@@ -271,7 +271,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	}
 
 	public Model newInstance() throws SignatureException {
-		return (Model) operator.instance(builder);
+		return (Model) sorcer.co.operator.instance(builder);
 	}
 
 	public Context clearScope() throws ContextException {

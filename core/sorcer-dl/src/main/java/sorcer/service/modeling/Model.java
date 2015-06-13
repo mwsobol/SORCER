@@ -99,4 +99,11 @@ public interface Model extends Mogram, Dependency {
      */
     public Context getOutConnector(Arg... args)  throws ContextException, RemoteException;
 
-}
+    /**
+     * Sets a buider of this model to be used for replication when needed.
+     * @param signature
+     */
+    public void setBuilder(Signature signature);
+
+    }
+
