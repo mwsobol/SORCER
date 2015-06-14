@@ -734,7 +734,7 @@ public class operator {
 	/**
 	 * Returns the Evaluation with a realized substitution for its arguments.
 	 *
-	 * @param scopable
+	 * @param model
 	 * @param entries
 	 * @return an evaluation with a realized substitution
 	 * @throws EvaluationException
@@ -2325,7 +2325,7 @@ public class operator {
 						// utility class returns a utility (class) method
 						provider = ((ObjectSignature) signature).getProviderType();
 					} else {
-						provider = instance(signature);
+						provider = sorcer.co.operator.instance(signature);
 						((ObjectSignature)signature).setTarget(provider);
 					}
 				}
@@ -2336,39 +2336,6 @@ public class operator {
 			throw new SignatureException("No provider available", e);
 		}
 		return provider;
-	}
-
-	/**
-	 * Returns an instance by constructor method initialization or by
-	 * instance/class method initialization.
-	 *
-	 * @param signature
-	 * @return object created
-	 * @throws SignatureException
-	 */
-	public static Object instance(Signature signature)
-			throws SignatureException {
-		if ((signature.getSelector() == null
-					&& ((ObjectSignature) signature).getInitSelector() == null)
-				|| signature.getSelector() != null && signature.getSelector().equals("new")
-				|| (((ObjectSignature) signature).getInitSelector() != null
-					&& ((ObjectSignature) signature).getInitSelector().equals("new")))
-			return ((ObjectSignature) signature).newInstance();
-		else
-			return ((ObjectSignature) signature).initInstance();
-	}
-
-	/**
-	 * Returns an instance by class method initialization with a service
-	 * context.
-	 *
-	 * @param signature
-	 * @return object created
-	 * @throws SignatureException
-	 */
-	public static Object instance(ObjectSignature signature, Context context)
-			throws SignatureException {
-		return signature.build(context);
 	}
 
 	public static Condition condition(ParModel parcontext, String expression,

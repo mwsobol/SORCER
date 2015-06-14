@@ -48,6 +48,12 @@ import static sorcer.eo.operator.*;
  */
 public class SrvModel extends ParModel<Object> implements Model {
 
+    public static SrvModel instance(Signature builder) throws SignatureException {
+        SrvModel model = (SrvModel) sorcer.co.operator.instance(builder);
+        model.setBuilder(builder);
+        return model;
+    }
+
     public SrvModel() {
         super();
         isRevaluable = true;

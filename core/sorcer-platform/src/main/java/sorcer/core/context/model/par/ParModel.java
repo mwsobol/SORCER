@@ -63,6 +63,12 @@ public class ParModel<T> extends EntModel<T> implements Invocation<T>, Mappable<
 
     private static final long serialVersionUID = -6932730998474298653L;
 
+	public static ParModel instance(Signature builder) throws SignatureException {
+		ParModel model = (ParModel) sorcer.co.operator.instance(builder);
+		model.setBuilder(builder);
+		return model;
+	}
+
     public ParModel() {
         super();
         name = PAR_MODEL;
