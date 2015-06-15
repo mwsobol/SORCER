@@ -24,6 +24,7 @@ import net.jini.lookup.ServiceItemFilter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Basic set of simple {@link ServiceItemFilter}s
@@ -89,6 +90,11 @@ public class Filters {
 
     public static ServiceItemFilter serviceId(ServiceID serviceID) {
         return new ServiceIDFilter(serviceID);
+    }
+
+    public static ServiceItemFilter serviceId(String serviceID) {
+        UUID uuid = UUID.fromString(serviceID);
+        return new ServiceIDFilter(new ServiceID(uuid.getMostSignificantBits(), uuid.getLeastSignificantBits()));
     }
 }
 
