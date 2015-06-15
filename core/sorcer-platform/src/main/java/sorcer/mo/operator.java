@@ -23,7 +23,7 @@ import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.ent.EntModel;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.par.ParModel;
-import sorcer.core.context.model.srv.MultiFidelityService;
+import sorcer.core.plexus.MultiFidelityService;
 import sorcer.core.context.model.srv.SrvModel;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;

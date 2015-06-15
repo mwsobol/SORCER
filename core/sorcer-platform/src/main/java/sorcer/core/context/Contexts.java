@@ -17,20 +17,19 @@
 
 package sorcer.core.context;
 
-import java.net.MalformedURLException;
-import java.rmi.RemoteException;
-import java.util.*;
+import net.jini.id.Uuid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.util.regex.Pattern;
-
-import net.jini.id.Uuid;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.node.ContextNode;
-import sorcer.security.util.SorcerPrincipal;
 import sorcer.service.*;
 import sorcer.util.SorcerUtil;
 import sorcer.util.StringUtils;
+
+import java.net.MalformedURLException;
+import java.rmi.RemoteException;
+import java.util.*;
+import java.util.regex.Pattern;
 //import sorcer.vfe.Var;
 
 /**
@@ -748,7 +747,7 @@ public class Contexts implements SorcerConstants {
 
 	public static List getNamedInPaths(Context cntxt) throws ContextException {
 		// get all the in and inout paths
-		String cs = ((ServiceContext)cntxt).getCurrentSelector();
+		String cs = ((ServiceContext)cntxt).getRuntime().getCurrentSelector();
 		if (cs != null)
 			return getPrefixedInPaths(cntxt, cs);
 		else
@@ -811,7 +810,7 @@ public class Contexts implements SorcerConstants {
 
 	public static List getNamedOutPaths(Context cntxt) throws ContextException {
 		// get all the in and out paths
-		return getPrefixedOutPaths(cntxt, ((ServiceContext)cntxt).getCurrentSelector());
+		return getPrefixedOutPaths(cntxt, ((ServiceContext)cntxt).getRuntime().getCurrentSelector());
 	}
 	
 	public static List getPrefixedOutPaths(Context cntxt) throws ContextException {

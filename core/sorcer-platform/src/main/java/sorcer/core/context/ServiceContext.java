@@ -102,13 +102,11 @@ public class ServiceContext<T> extends ServiceMogram implements
 	/** The exertion that uses this context */
 	protected ServiceExertion exertion;
 
-	protected String currentSelector;
-
 	protected String currentPrefix;
 
 	protected boolean isFinalized = false;
 
-	protected ModelRuntime runtime = new ModelRuntime(this);
+	protected ServiceRuntime runtime = new ServiceRuntime(this);
 	/**
 	 * For persistence layers to differentiate with saved context already
 	 * associated to task or not.
@@ -2771,14 +2769,6 @@ public class ServiceContext<T> extends ServiceMogram implements
 		return ocxt;
 	}
 
-	public String getCurrentSelector() {
-		return currentSelector;
-	}
-
-	public void setCurrentSelector(String currentSelector) {
-		this.currentSelector = currentSelector;
-	}
-
 	public String getCurrentPrefix() {
 		return currentPrefix;
 	}
@@ -2993,7 +2983,7 @@ public class ServiceContext<T> extends ServiceMogram implements
         try {
             if (subjectValue instanceof Class) {
                 signature = sig(subjectPath, subjectValue);
-                return operator.exertion(name, signature, this).exert(txn, entries);
+                return (T) operator.exertion(name, signature, this).exert(txn, entries);
             } else {
                 // evaluates model otputs - responses
 				getResponse(entries);
@@ -3108,7 +3098,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		data.putAll((Map<? extends String, ? extends T>) ((ServiceContext) context).data);
 	}
 
-	public ModelRuntime getRuntime() {
+	public ServiceRuntime getRuntime() {
 		return runtime;
 	}
 

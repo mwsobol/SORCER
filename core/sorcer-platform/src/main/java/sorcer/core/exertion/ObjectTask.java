@@ -89,7 +89,7 @@ public class ObjectTask extends Task {
 	public Task doTask(Transaction txn) throws ExertionException, SignatureException, RemoteException, MogramException {
 		MethodInvoker evaluator = null;
 		ObjectSignature os = (ObjectSignature) getProcessSignature();
-		dataContext.setCurrentSelector(os.getSelector());
+		dataContext.getRuntime().setCurrentSelector(os.getSelector());
 		dataContext.setCurrentPrefix(os.getPrefix());
 		try {
 			if (getProcessSignature().getReturnPath() != null && getProcessSignature().getReturnPath().inPaths != null)
