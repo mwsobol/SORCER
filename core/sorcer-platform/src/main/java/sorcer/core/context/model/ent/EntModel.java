@@ -35,6 +35,12 @@ import java.util.Date;
  */
 public class EntModel<T> extends PositionalContext<T> implements Invocation<T>, Contexter<T> {
 
+    public static EntModel instance(Signature builder) throws SignatureException {
+        EntModel model = (EntModel) sorcer.co.operator.instance(builder);
+        model.setBuilder(builder);
+        return model;
+    }
+
     public EntModel() {
         super();
         name = "Ent Model";

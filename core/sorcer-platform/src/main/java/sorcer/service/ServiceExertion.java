@@ -33,7 +33,6 @@ import sorcer.core.provider.Spacer;
 import sorcer.core.provider.exerter.ServiceShell;
 import sorcer.core.signature.NetSignature;
 import sorcer.core.signature.ServiceSignature;
-import sorcer.eo.operator;
 import sorcer.security.util.SorcerPrincipal;
 import sorcer.service.Signature.ReturnPath;
 import sorcer.service.Signature.Type;
@@ -84,7 +83,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
     }
 
     public Exertion newInstance() throws SignatureException {
-        return (Exertion) operator.instance(builder);
+        return (Exertion) sorcer.co.operator.instance(builder);
     }
 
     protected void init() {

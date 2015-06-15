@@ -23,7 +23,7 @@ import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.ent.EntModel;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.par.ParModel;
-import sorcer.core.context.model.srv.MultiFidelityService;
+import sorcer.core.plexus.MultiFidelityService;
 import sorcer.core.context.model.srv.SrvModel;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
@@ -33,27 +33,25 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static sorcer.eo.operator.instance;
-
 /**
  * Created by Mike Sobolewski on 4/26/15.
  */
 public class operator {
 
     public static EntModel entModel(String name, Signature builder) throws SignatureException {
-        EntModel model = (EntModel) instance(builder);
+        EntModel model = (EntModel) sorcer.co.operator.instance(builder);
         model.setBuilder(builder);
         return model;
     }
 
     public static ParModel parModel(String name, Signature builder) throws SignatureException {
-        ParModel model = (ParModel) instance(builder);
+        ParModel model = (ParModel) sorcer.co.operator.instance(builder);
         model.setBuilder(builder);
         return model;
     }
 
     public static SrvModel srvModel(String name, Signature builder) throws SignatureException {
-        SrvModel model = (SrvModel) instance(builder);
+        SrvModel model = (SrvModel) sorcer.co.operator.instance(builder);
         model.setBuilder(builder);
         return model;
     }
@@ -89,17 +87,23 @@ public class operator {
         return model;
     }
 
-    public static Model addResponse(Model model, String... responsePaths) throws ContextException {
+    public static Model responseUp(Model model, String... responsePaths) throws ContextException {
         for (String path : responsePaths)
-            ((ServiceContext)model).addResponsePath(path);
+            ((ServiceContext)model).getRuntime().getResponsePaths().add(path);
         return model;
     }
 
-    public static Context outcome(Model model) throws ContextException {
+    public static Model responseDown(Model model, String... responsePaths) throws ContextException {
+        for (String path : responsePaths)
+            ((ServiceContext)model).getRuntime().getResponsePaths().remove(path);
+        return model;
+    }
+
+    public static Context result(Model model) throws ContextException {
         return ((ServiceContext)model).getRuntime().getOutcome();
     }
 
-    public static Object result(Model model, String path) throws ContextException {
+    public static Object resultAt(Model model, String path) throws ContextException {
         return ((ServiceContext)((ServiceContext)model).getRuntime().getOutcome()).get(path);
     }
 
@@ -226,7 +230,7 @@ public class operator {
 //        }
 
         if (responsePaths != null) {
-            model.setResponsePaths(((Fidelity) responsePaths).getSelects());
+            model.getRuntime().setResponsePaths(((Fidelity) responsePaths).getSelects());
         }
         if (complement != null) {
             model.setSubject(complement.path(), complement.value());

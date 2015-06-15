@@ -38,15 +38,21 @@ import static sorcer.eo.operator.*;
 /**
  * A ServiceModel is a schematic description or representation of something, especially a system, 
  * phenomenon, or service, that accounts for its properties and is used to study its characteristics.
- * Properties of a service model are represented by path of ServiceContext with values that depend
+ * Properties of a service model are represented by path of Context with values that depend
  * on other properties and can be evaluated as specified by ths model. Evaluations of the service 
- * model is the result of exerting a dynamic federation of services as specified by entries 
- * (variables) of the model. A rendezvous service provider orchestrating a choreography of the model
- * is a local or remote Modeler specified by a service signature of the model.
+ * model entries of the Srv type results in exerting a dynamic federation of services as specified by
+ * these entries. A rendezvous service provider orchestrating a choreography of the model
+ * is a local or remote one specified by a service signature of the model.
  *   
  * Created by Mike Sobolewski on 1/29/15.
  */
 public class SrvModel extends ParModel<Object> implements Model {
+
+    public static SrvModel instance(Signature builder) throws SignatureException {
+        SrvModel model = (SrvModel) sorcer.co.operator.instance(builder);
+        model.setBuilder(builder);
+        return model;
+    }
 
     public SrvModel() {
         super();

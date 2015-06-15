@@ -63,6 +63,12 @@ public class ParModel<T> extends EntModel<T> implements Invocation<T>, Mappable<
 
     private static final long serialVersionUID = -6932730998474298653L;
 
+	public static ParModel instance(Signature builder) throws SignatureException {
+		ParModel model = (ParModel) sorcer.co.operator.instance(builder);
+		model.setBuilder(builder);
+		return model;
+	}
+
     public ParModel() {
         super();
         name = PAR_MODEL;
@@ -115,9 +121,9 @@ public class ParModel<T> extends EntModel<T> implements Invocation<T>, Mappable<
 
 			if (val != null && val instanceof Evaluation) {
 				return (T) ((Evaluation) val).getValue(entries);
-			} else if (path == null && val == null && responsePaths != null) {
-				if (responsePaths.size() == 1)
-					return (T) getValue(responsePaths.get(0), entries);
+			} else if (path == null && val == null && runtime.getResponsePaths() != null) {
+				if (runtime.getResponsePaths().size() == 1)
+					return (T) getValue(runtime.getResponsePaths().get(0), entries);
 				else
 					return (T) getResponse();
 			} else {

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-project.version = '5.2.1'
+project.version = '5.2.2'
 
 apply plugin: 'idea'
 idea {

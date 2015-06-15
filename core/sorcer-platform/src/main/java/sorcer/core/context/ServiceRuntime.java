@@ -1,12 +1,12 @@
 package sorcer.core.context;
 
+import net.jini.core.transaction.Transaction;
+import net.jini.core.transaction.TransactionException;
 import sorcer.core.SelectFidelity;
-import sorcer.service.Arg;
-import sorcer.service.Context;
-import sorcer.service.Evaluation;
-import sorcer.service.SelectProjection;
+import sorcer.service.*;
 
 import java.io.Serializable;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,7 +15,7 @@ import java.util.Map;
 /**
  * Created by Mike Sobolewski
  */
-public class ContextRuntime implements SelectProjection, Serializable {
+public class ServiceRuntime implements SelectProjection, Serializable {
 
     protected List<ThrowableTrace> exceptions;
 
@@ -23,10 +23,12 @@ public class ContextRuntime implements SelectProjection, Serializable {
 
     private boolean isMonitorable = false;
 
-     private ServiceContext target;
+    private Mogram target;
 
     // dependency management for this Context
     protected List<Evaluation> dependers = new ArrayList<Evaluation>();
+
+    protected String currentSelector;
 
     // mapping from paths of this inConnector to input paths of this context
     protected Context inConnector;
@@ -41,11 +43,14 @@ public class ContextRuntime implements SelectProjection, Serializable {
     // select fidelities for this service context
     protected Map<String, SelectFidelity> selectFidelities;
 
-    // evaluated model responses
+    // evaluated model response entries
     protected Context outcome;
 
-    ContextRuntime(ServiceContext context) {
-        target = context;
+    // reponse paths of the runtime model
+    protected List<String> responsePaths = new ArrayList<String>();
+
+    public ServiceRuntime(Service service) {
+        target = (ServiceContext)service;
     }
 
     public void setExceptions(List<ThrowableTrace> exceptions) {
@@ -104,6 +109,13 @@ public class ContextRuntime implements SelectProjection, Serializable {
         this.outConnector = outConnector;
     }
 
+    public String getCurrentSelector() {
+        return currentSelector;
+    }
+
+    public void setCurrentSelector(String currentSelector) {
+        this.currentSelector = currentSelector;
+    }
 
     public void addDependers(Evaluation... dependers) {
         if (this.dependers == null)
@@ -136,6 +148,36 @@ public class ContextRuntime implements SelectProjection, Serializable {
 
     public Context getOutcome() {
         return outcome;
+    }
+
+    public void setResult(String path, Object value) throws ContextException {
+        if (!responsePaths.contains(path))
+            throw new ContextException("no such response path: " + path);
+        outcome.putValue(path, value);
+    }
+
+    public List<String> getResponsePaths() {
+        return responsePaths;
+    }
+
+    public void setResponsePaths(List<String> responsePaths) {
+        this.responsePaths = responsePaths;
+    }
+
+    public <T extends Mogram> Mogram exert(Transaction txn, Arg... entries) throws TransactionException, MogramException, RemoteException {
+        return target.exert(txn, entries);
+    }
+
+    public <T extends Mogram> Mogram exert(Arg... entries) throws TransactionException, MogramException, RemoteException {
+        return target.exert(entries);
+    }
+
+    public Mogram getTarget() {
+        return target;
+    }
+
+    public void setTarget(Mogram target) {
+        this.target = target;
     }
 
 }

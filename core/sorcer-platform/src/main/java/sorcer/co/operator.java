@@ -24,7 +24,7 @@ import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.par.Par;
 import sorcer.core.context.model.srv.Srv;
 import sorcer.core.provider.DatabaseStorer;
-import sorcer.service.Scopable;
+import sorcer.core.signature.ObjectSignature;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
 import sorcer.service.modeling.Variability;
@@ -474,6 +474,14 @@ public class operator {
 		return SdbUtil.clear(type);
 	}
 
+	public static int size(Collection collection) {
+		return collection.size();
+	}
+
+	public static int size(Context context) {
+		return context.size();
+	}
+
 	public static int size(DatabaseStorer.Store type) throws ExertionException,
 			SignatureException, ContextException {
 		return SdbUtil.size(type);
@@ -657,7 +665,13 @@ public class operator {
 		return context.getPaths();
 	}
 
-    public static void dependsOn(Model model, Entry... entries) {
+	public static void remove(ServiceContext parModel, String... paths)
+			throws RemoteException, ContextException {
+		for (String path : paths)
+			parModel.getData().remove(path);
+	}
+
+	public static void dependsOn(Model model, Entry... entries) {
         Map<String, List<String>> dm = ((ServiceContext)model).getRuntime().getDependentPaths();
         String path = null;
         Object dependentPaths = null;
@@ -752,6 +766,39 @@ public class operator {
 		public Header(int initialCapacity) {
 			super(initialCapacity);
 		}
+	}
+
+	/**
+	 * Returns an instance by class method initialization with a service
+	 * context.
+	 *
+	 * @param signature
+	 * @return object created
+	 * @throws SignatureException
+	 */
+	public static Object instance(ObjectSignature signature, Context context)
+			throws SignatureException {
+		return signature.build(context);
+	}
+
+	/**
+	 * Returns an instance by constructor method initialization or by
+	 * instance/class method initialization.
+	 *
+	 * @param signature
+	 * @return object created
+	 * @throws SignatureException
+	 */
+	public static Object instance(Signature signature)
+			throws SignatureException {
+		if ((signature.getSelector() == null
+				&& ((ObjectSignature) signature).getInitSelector() == null)
+				|| signature.getSelector() != null && signature.getSelector().equals("new")
+				|| (((ObjectSignature) signature).getInitSelector() != null
+				&& ((ObjectSignature) signature).getInitSelector().equals("new")))
+			return ((ObjectSignature) signature).newInstance();
+		else
+			return ((ObjectSignature) signature).initInstance();
 	}
 
 }

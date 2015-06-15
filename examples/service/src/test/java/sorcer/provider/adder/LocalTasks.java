@@ -43,7 +43,7 @@ public class LocalTasks {
 
 		// get the subcontext output from the context
 		assertTrue(context(ent("arg/x1", 20.0), ent("result/value", 100.0)).equals(
-				value(cxt, result("result/value", outPaths("arg/x1", "result/value")))));
+				subcontext(cxt, paths("arg/x1", "result/value"))));
 
 	}
 

@@ -243,6 +243,14 @@ public class operator {
 		return fiCxt;
 	}
 
+	public static Context subcontext(Context context, List<String> paths) throws ContextException {
+		return context.getSubcontext((String[]) paths.toArray());
+	}
+
+	public static Context subcontext(Context context, String... paths) throws ContextException {
+		return context.getSubcontext(paths);
+	}
+
 	public static Context scope(Object... entries) throws ContextException {
 		Object[] args = new Object[entries.length + 1];
 		System.arraycopy(entries, 0, args, 1, entries.length);
@@ -390,9 +398,9 @@ public class operator {
 		}
 		if (response != null) {
 			if (response.path() != null) {
-				((ServiceContext) cxt).addResponsePath(response.path());
+				((ServiceContext) cxt).getRuntime().getResponsePaths().add(response.path());
 			}
-			((ServiceContext) cxt).setResponse(response.path(), response.target);
+			((ServiceContext) cxt).getRuntime().setResult(response.path(), response.target);
 		}
 		if (entryLists.size() > 0) {
 			((ServiceContext) cxt).setEntryLists(entryLists);
@@ -726,7 +734,7 @@ public class operator {
 	/**
 	 * Returns the Evaluation with a realized substitution for its arguments.
 	 *
-	 * @param scopable
+	 * @param model
 	 * @param entries
 	 * @return an evaluation with a realized substitution
 	 * @throws EvaluationException
@@ -945,6 +953,31 @@ public class operator {
 		} catch (Exception e) {
 			throw new ExertionException(e);
 		}
+	}
+
+	public static Signature builder(Signature signature) {
+		signature.setType(Type.BUILDER);
+		return signature;
+	}
+
+	public static Signature pre(Signature signature) {
+		signature.setType(Type.PRE);
+		return signature;
+	}
+
+	public static Signature post(Signature signature) {
+		signature.setType(Type.POST);
+		return signature;
+	}
+
+	public static Signature srv(Signature signature) {
+		signature.setType(Type.SRV);
+		return signature;
+	}
+
+	public static Signature apd(Signature signature) {
+		signature.setType(Type.APD_DATA);
+		return signature;
 	}
 
 	public static Signature type(Signature signature, Signature.Type type) {
@@ -2292,7 +2325,7 @@ public class operator {
 						// utility class returns a utility (class) method
 						provider = ((ObjectSignature) signature).getProviderType();
 					} else {
-						provider = instance(signature);
+						provider = sorcer.co.operator.instance(signature);
 						((ObjectSignature)signature).setTarget(provider);
 					}
 				}
@@ -2303,39 +2336,6 @@ public class operator {
 			throw new SignatureException("No provider available", e);
 		}
 		return provider;
-	}
-
-	/**
-	 * Returns an instance by constructor method initialization or by
-	 * instance/class method initialization.
-	 *
-	 * @param signature
-	 * @return object created
-	 * @throws SignatureException
-	 */
-	public static Object instance(Signature signature)
-			throws SignatureException {
-		if ((signature.getSelector() == null
-					&& ((ObjectSignature) signature).getInitSelector() == null)
-				|| signature.getSelector() != null && signature.getSelector().equals("new")
-				|| (((ObjectSignature) signature).getInitSelector() != null
-					&& ((ObjectSignature) signature).getInitSelector().equals("new")))
-			return ((ObjectSignature) signature).newInstance();
-		else
-			return ((ObjectSignature) signature).initInstance();
-	}
-
-	/**
-	 * Returns an instance by class method initialization with a service
-	 * context.
-	 *
-	 * @param signature
-	 * @return object created
-	 * @throws SignatureException
-	 */
-	public static Object instance(ObjectSignature signature, Context context)
-			throws SignatureException {
-		return signature.build(context);
 	}
 
 	public static Condition condition(ParModel parcontext, String expression,

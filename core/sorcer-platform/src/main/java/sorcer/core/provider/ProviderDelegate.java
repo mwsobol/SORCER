@@ -994,7 +994,7 @@ public class ProviderDelegate {
 				logger.info("Executing service bean method: " + m + " by: "
 						+ config.getProviderName() + " isContextual: " + isContextual);
 				task.getContext().setExertion(task);
-				((ServiceContext) task.getContext()).setCurrentSelector(selector);
+				((ServiceContext) task.getContext()).getRuntime().setCurrentSelector(selector);
 				String pf = task.getProcessSignature().getPrefix();
 				if (pf != null)
 					((ServiceContext) task.getContext()).setCurrentPrefix(pf);
@@ -1049,12 +1049,10 @@ public class ProviderDelegate {
 				task.getTrace().addAll(((Exertion) obj).getTrace());
 			}
 		} else {
-			//			logger.info("ZZZZZZZZZZZZZZZZZZZZZ getProviderName(): " + getProviderName());
-			//			logger.info("ZZZZZZZZZZZZZZZZZZZZZ invoking: " + m);
-			//			logger.info("ZZZZZZZZZZZZZZZZZZZZZ imp: " + impl);
-			//			logger.info("ZZZZZZZZZZZZZZZZZZZZZ args: " + Arrays.toString(args));
+			logger.debug("getProviderName: {} invoking: {}" + getProviderName(), m);
+			logger.debug("imp: {} args: {}" + impl, Arrays.toString(args));
 			result = (Context) m.invoke(impl, args);
-			//			logger.info("ZZZZZZZZZZZZZZZZZZZZZ result: " + result);
+			logger.debug("result: {}", result);
 		}
 		return result;
 	}
@@ -1234,7 +1232,7 @@ public class ProviderDelegate {
 				if (sig.getReturnPath() != null)
 					cxt.setReturnPath(sig.getReturnPath());
 
-				cxt.setCurrentSelector(sig.getSelector());
+				cxt.getRuntime().setCurrentSelector(sig.getSelector());
 				cxt.setCurrentPrefix(sig.getPrefix());
 
 				cxt.setExertion(task);

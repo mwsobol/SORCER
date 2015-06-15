@@ -2,6 +2,8 @@ package sorcer.sml.services;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.Adder;
@@ -13,13 +15,13 @@ import sorcer.service.Signature;
 import java.lang.reflect.Proxy;
 import java.util.Calendar;
 import java.util.Date;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.*;
 import static sorcer.co.operator.inEnt;
+import static sorcer.co.operator.instance;
 import static sorcer.eo.operator.*;
-import static sorcer.mo.operator.*;
+import static sorcer.mo.operator.inConn;
+import static sorcer.mo.operator.outConn;
 
 
 /**

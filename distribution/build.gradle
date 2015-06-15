@@ -105,8 +105,7 @@ task gatherDeps() {
                  "blitz, lockmgr"          : "lib/blitz",
                  "je, xerces, xml, javax.inject, plexus-utils, jansi, commons-io, guava"  : "lib/common",
                  "slf4j, logback"          : "lib/logging",
-                 "groovy"                  : "lib/common/groovy",
-                 "junit"                   : "lib/common/buildsupport"].each {
+                 "groovy"                  : "lib/common/groovy"].each {
                     prefix, dest ->
                     copy {
                         from filterDeps(project, prefix, dest)
@@ -315,6 +314,11 @@ task createDistribution(dependsOn: [":sorcer-boot:install",
         versionProps.setProperty("jansi.version", jansiVersion)
         versionProps.setProperty("commonsio.version", commonsIoVersion)
         versionProps.setProperty("guava.version", guavaVersion)
+        versionProps.setProperty("jffp.version", jffpVersion)
+        versionProps.setProperty("slf4j.version", slf4jVersion)
+        versionProps.setProperty("jep.version", jepVersion)
+        versionProps.setProperty("jfreechart.version", jfreechartVersion)
+        versionProps.setProperty("jcommon.version", jcommonVersion)
         versionProps.store(versionPropsFile.newWriter(), null)
     }
 }
