@@ -1,16 +1,15 @@
 package sorcer.sml.jobs;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.Adder;
-import sorcer.arithmetic.provider.Averager;
 import sorcer.arithmetic.provider.Multiplier;
 import sorcer.arithmetic.provider.Subtractor;
 import sorcer.arithmetic.provider.impl.AdderImpl;
-import sorcer.arithmetic.provider.impl.AveragerImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.provider.impl.SubtractorImpl;
 import sorcer.core.SorcerConstants;
@@ -20,10 +19,10 @@ import sorcer.core.provider.ServiceTasker;
 import sorcer.core.provider.Shell;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.service.*;
-import sorcer.service.Strategy.*;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import sorcer.service.Strategy.Access;
+import sorcer.service.Strategy.Flow;
+import sorcer.service.Strategy.Provision;
+import sorcer.service.Strategy.ServiceShell;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;

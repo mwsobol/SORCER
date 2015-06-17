@@ -379,13 +379,13 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 			return serviceMutualExclusion((Provider) provider, exertion,
 					transaction);
 		} else {
-			// test exertion for serialization
-			//			 try {
-			//				 logger.info("ExertProcessor.exert0(): going to serialize exertion for testing!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-			//				 ObjectLogger.persistMarshalled("exertionfile", exertion);
-			//			 } catch (Exception e) {
-			//				 e.printStackTrace();
-			//			 }
+//			 test exertion for serialization
+//						 try {
+//							 logger.info("ExertProcessor.exert0(): going to serialize exertion for testing!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+//							 ObjectLogger.persistMarshalled("exertionfile", exertion);
+//						 } catch (Exception e) {
+//							 e.printStackTrace();
+//						 }
 			Exertion result = provider.service(exertion, transaction);
 			if (result != null && result.getExceptions().size() > 0) {
 				for (ThrowableTrace et : result.getExceptions()) {

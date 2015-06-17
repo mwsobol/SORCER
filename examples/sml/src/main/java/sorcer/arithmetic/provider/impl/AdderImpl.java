@@ -14,12 +14,11 @@ import sorcer.serviceui.UIComponentFactory;
 import sorcer.serviceui.UIDescriptorFactory;
 import sorcer.util.Sorcer;
 
-import java.io.Serializable;
 import java.net.URL;
 import java.rmi.RemoteException;
 
 @SuppressWarnings("rawtypes")
-public class AdderImpl implements Adder, Serializable {
+public class AdderImpl implements Adder {
     private static final long serialVersionUID = -8098772962245123252L;
 	private Arithmometer arithmometer = new Arithmometer();
 	private Provider provider;

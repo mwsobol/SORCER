@@ -1,6 +1,5 @@
 package sorcer.core.provider;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -156,19 +155,19 @@ public class ArithmeticNetTest implements SorcerConstants {
 				sFi("object", sig("subtract", SubtractorImpl.class)),
 				sFi("net", sig("subtract", Subtractor.class)),
 				context("subtract", inEnt("arg/x1"), inEnt("arg/x2"),
-						outEnt("result/y", null)));
+						outEnt("result/y")));
 
 		Task t4 = task("t4",
 				sFi("object", sig("multiply", MultiplierImpl.class)),
 				sFi("net", sig("multiply", Multiplier.class)),
 				context("multiply", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
-						outEnt("result/y", null)));
+						outEnt("result/y")));
 
 		Task t5 = task("t5",
 				sFi("object", sig("add", AdderImpl.class)),
 				sFi("net", sig("add", Adder.class)),
 				context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
-						outEnt("result/y", null)));
+						outEnt("result/y")));
 
 		Job job = job("j1",
 				sFi("object", sig("service", ServiceJobber.class)),
@@ -180,11 +179,13 @@ public class ArithmeticNetTest implements SorcerConstants {
 				t3,
 				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
 				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")),
-				sFi("job1", cFi("j1", "object"), cFi("j1/j2/t4", "object")),
-				sFi("job2", cFi("j1", "net"), cFi("j1/t3", "net"),
-						cFi("j1/j2/t4", "net"), cFi("j1/j2/t5", "net")));
+				sFi("job1", cFi("j1/j2/t4", "object"), cFi("j1/j2/t5", "net")),
+				sFi("job2",  cFi("j1/j2", "net"),
+						cFi("j1/t3", "net"), cFi("j1/j2/t4", "net"), cFi("j1/j2/t5", "net")),
+				sFi("job3",  cFi("j1", "net"), cFi("j1/j2", "net"),
+						cFi("j1/t3", "net"), cFi("j1/j2/t4", "net"), cFi("j1/j2/t5", "net")));
 
-		return job;
+		return (Job)tracable(job);
 	}
 
 	@Test
@@ -200,34 +201,46 @@ public class ArithmeticNetTest implements SorcerConstants {
 		logger.info("sFi t4: " + sFi(exertion(job, "j1/j2/t4")));
 		logger.info("sFi t5: " + sFi(exertion(job, "j1/j2/t5")));
 		logger.info("job context: " + upcontext(job));
-		
-		//The Jobber and  all tasks are local
+
+		// Jobbers and  all tasks are local
 		job = exert(job);
 		logger.info("job context: " + upcontext(job));
 		assertTrue(get(job, "j1/t3/result/y").equals(400.0));
 
-		// The local Jobber with the remote Multiplier nad Adder
+		//  Local Jobbers with remote Multiplier nad Adder
 		job = getMultiFiJob();
 		job = exert(job, fi("object"), cFi("j1/j2/t4", "net"), cFi("j1/j2/t5", "net"));
 		logger.info("job context: " + upcontext(job));
+		logger.info("job trace: " + trace(job));
 		assertTrue(get(job, "j1/t3/result/y").equals(400.0));
 
-		// The local Jobber, Adder, and Multiplier with the remote Subtractor
+		// Local Jobbers, Adder, and Multiplier with remote Subtractor
 		job = getMultiFiJob();
 		job = exert(job, cFi("j1", "object"), cFi("j1/t3", "net"));
 		logger.info("job context: " + upcontext(job));
+		logger.info("job trace: " + trace(job));
 		assertTrue(get(job, "j1/t3/result/y").equals(400.0));
 
-		// composite fidelity for local execution
+		// Composite fidelity for local execution with remote Adder
 		job = getMultiFiJob();
 		job = exert(job, fi("job1"));
 		logger.info("job context: " + upcontext(job));
+		logger.info("job trace: " + trace(job));
 		assertTrue(get(job, "j1/t3/result/y").equals(400.0));
 
-		// composite fidelity for network execution
+		// Composite fidelity for j1 local, j2 remote with all
+		// remote component services
 		job = getMultiFiJob();
 		job = exert(job, fi("job2"));
 		logger.info("job context: " + upcontext(job));
+		logger.info("job trace: " + trace(job));
+		assertTrue(get(job, "j1/t3/result/y").equals(400.0));
+
+		// Composite fidelity for all remote services
+		job = getMultiFiJob();
+		job = exert(job, fi("job3"));
+		logger.info("job context: " + upcontext(job));
+		logger.info("job trace: " + trace(job));
 		assertTrue(get(job, "j1/t3/result/y").equals(400.0));
 	}
 

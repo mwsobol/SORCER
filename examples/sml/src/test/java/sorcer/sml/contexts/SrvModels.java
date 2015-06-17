@@ -108,17 +108,17 @@ public class SrvModels {
 
         assertTrue(get(out, "subtract").equals(400.0));
 
-        // stepup a response context
-        responseUp(m, "add", "multiply", "y1");
-        out = response(m);
-        logger.info("out: " + out);
-        assertTrue(get(out, "add").equals(100.0));
-        assertTrue(get(out, "multiply").equals(500.0));
-        assertTrue(get(out, "subtract").equals(400.0));
-
-        assertTrue(response(out, "y1").equals(10.0));
-
-        logger.info("model: " + m);
+//        // stepup a response context
+//        responseUp(m, "add", "multiply", "y1");
+//        out = response(m);
+//        logger.info("out: " + out);
+//        assertTrue(get(out, "add").equals(100.0));
+//        assertTrue(get(out, "multiply").equals(500.0));
+//        assertTrue(get(out, "subtract").equals(400.0));
+//
+//        assertTrue(response(out, "y1").equals(10.0));
+//
+//        logger.info("model: " + m);
 
     }
 

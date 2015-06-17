@@ -192,6 +192,7 @@ public class ControlContext extends ServiceContext<Object> implements StrategyCo
 		setWaitable(true);
 		put(EXCEPTIONS, exceptions);
 		put(TRACE_LIST, traceList);
+		put(EXERTION_TRACABLE, false);
 	}
 
 	public ControlContext(Exertion exertion) {
