@@ -71,12 +71,6 @@ public class BlockThread extends Thread {
 			else
 				dispatcher = ExertionDispatcherFactory.getFactory().createDispatcher(block, provider);
 
-			try {
-				block.getControlContext().appendTrace(provider.getProviderName() +
-						" dispatcher: " + dispatcher.getClass().getName());
-			} catch (RemoteException e) {
-				// ignore it, locall call
-			}
             dispatcher.exec();
             DispatchResult result = dispatcher.getResult();
 

@@ -369,8 +369,9 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 					"Cannot find provider for: " + signature));
 			return exertion;
 		}
+		exertion.trimAllNotSerializableSignatures();
 		exertion.getControlContext().appendTrace(
-				"bootstrapping: " + ((Provider) provider).getProviderName()
+				"shell: " + ((Provider) provider).getProviderName()
 				+ ":" + ((Provider) provider).getProviderID());
 		((NetSignature) signature).setProvider(provider);
 		logger.info("Provider found for: " + signature + "\n\t" + provider);
@@ -392,9 +393,9 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
                     logger.error("Got exception running: "  + exertion.getName() + " " + t.getMessage());
                     logger.debug("Exception details: " + t.getMessage());
                     if (t instanceof Error)
-                        ((ServiceExertion) result).setStatus(Exec.ERROR);
+                        result.setStatus(Exec.ERROR);
 				}
-				((ServiceExertion)result).setStatus(Exec.FAILED); 
+				result.setStatus(Exec.FAILED);
 			} else if (result == null) {
 				exertion.reportException(new ExertionException("ExertionDispatcher failed calling: " 
 						+ exertion.getProcessSignature()));

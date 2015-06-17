@@ -34,6 +34,7 @@ import sorcer.service.*;
 import sorcer.util.SorcerEnv;
 
 import java.rmi.RemoteException;
+import java.util.Arrays;
 import java.util.Set;
 
 import static sorcer.service.Exec.*;
@@ -127,8 +128,8 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
                         result = ((ServiceProvider) provider).getDelegate().doTask(
                                 task, null);
                         result.getControlContext().appendTrace(
-                                "delegate of: " + this.provider.getProviderName()
-                                        + "=>" + this.getClass().getName());
+                                (provider.getProviderName() != null ? provider.getProviderName() + " " : "")
+                                        + "executed task: " + task.getName() + " dispatcher: " + getClass().getName());
                         return result;
                     }
                 } catch (RemoteException re) {
@@ -223,7 +224,7 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
                 }
                 if (result!=null)
                     result.getControlContext().appendTrace(
-                               ((Provider)service).getProviderName() + " dispatcher: "
+                            (provider != null ? provider.getProviderName() + " " : "") + "dispatcher: "
                                         + getClass().getName());
             }
             logger.debug("got result: {}", result);
@@ -263,7 +264,8 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
         Job out = (Job) dispatcher.getResult().exertion;
         // Not sure if good place
         out.stopExecTime();
-        out.getControlContext().appendTrace(provider.getProviderName()
+        out.getControlContext().appendTrace((provider.getProviderName() != null ?
+                provider.getProviderName() + " " : "")  + "executed job: " + job.getName()
                 + " dispatcher: " + getClass().getName());
         return out;
     }
@@ -310,8 +312,9 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
             dispatcher.exec();
 			// wait until a block is done by dispatcher
 			Block out = (Block) dispatcher.getResult().exertion;
-			out.getControlContext().appendTrace(provider.getProviderName() 
-					+ " dispatcher: " + getClass().getName());
+            out.getControlContext().appendTrace((provider.getProviderName() != null
+                    ? provider.getProviderName() + " " : "")
+                    + "executed block: " +  block.getName() + " dispatcher: " + getClass().getName());
 			return out;
 		} catch (RemoteException re) {
 			re.printStackTrace();

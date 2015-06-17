@@ -21,16 +21,17 @@ public class ArithmeticSorcerRequestor extends SorcerRequestor {
 
     public Exertion getExertion(String... args) throws ExertionException, ContextException, SignatureException {
 
-        Task t3 = task("t3",
-                sFi("object", sig("subtract", SubtractorImpl.class), sig("average", AveragerImpl.class)),
-                sFi("net", sig("subtract", Subtractor.class), sig("average", Averager.class)),
-                context("t3-cxt", inEnt("arg/x1", null), inEnt("arg/x2", null),
-                        outEnt("result/y", null)));
+        Task t3 = task("t3", sFi("object/subtract", sig("subtract", SubtractorImpl.class)),
+                sFi("object/average", sig("average", AveragerImpl.class)),
+                sFi("net/subtract", sig("subtract", Subtractor.class)),
+                sFi("net/average", sig("average", Averager.class)),
+                context("t3-cxt", inEnt("arg/x1"), inEnt("arg/x2"),
+                        outEnt("result/y")));
 
         Task t4 = task("t4", sFi("object", sig("multiply", MultiplierImpl.class)),
                 sFi("net", sig("multiply", Multiplier.class)),
                 context("multiply", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
-                        outEnt("result/y", null)));
+                        outEnt("result/y")));
 
         Task t5 = task("t5", sFi("object", sig("add", AdderImpl.class)),
                 sFi("net", sig("add", Adder.class)),
@@ -43,8 +44,8 @@ public class ArithmeticSorcerRequestor extends SorcerRequestor {
                 t3,
                 pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
                 pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")),
-                fiContext("mix1", fi("j1", "net"), fi("j1/j2/t4", "net")),
-                fiContext("mix2", fi("j1", "net"), fi("j1/j2/t4", "net"), fi("j1/j2/t5", "net")));
+                sFi("job1", cFi("j1", "net"), cFi("j1/j2/t4", "net")),
+                sFi("job2", cFi("j1", "net"), cFi("j1/j2/t4", "net"), cFi("j1/j2/t5", "net")));
 
         return job;
 

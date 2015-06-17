@@ -23,7 +23,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.co.operator.DataEntry;
 import sorcer.co.tuple.*;
-import sorcer.core.SelectFidelity;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.*;
 import sorcer.core.context.model.PoolStrategy;
@@ -220,28 +219,28 @@ public class operator {
 			throw new ContextException("Service not an exertion: " + service);
 	}
 
-	public static FidelityContext fiContext(Fidelity... fidelityInfos)
-			throws ContextException {
-		return fiContext(null, fidelityInfos);
-	}
-
-	public static FidelityContext fiContext(String name, Fidelity... fidelityInfos)
-			throws ContextException {
-		FidelityContext fiCxt = new FidelityContext(name);
-		for (Fidelity e : fidelityInfos) {
-			if (e instanceof Fidelity) {
-				try {
-					fiCxt.put(e.getName(), e);
-				} catch (Exception ex) {
-					if (ex instanceof ContextException)
-						throw (ContextException) ex;
-					else
-						throw new ContextException(ex);
-				}
-			}
-		}
-		return fiCxt;
-	}
+//	public static FidelityContext fiContext(Fidelity... fidelityInfos)
+//			throws ContextException {
+//		return fiContext(null, fidelityInfos);
+//	}
+//
+//	public static FidelityContext sFiContext(String name, Fidelity... fidelities)
+//			throws ContextException {
+//		FidelityContext fiCxt = new FidelityContext(name);
+//		for (Fidelity e : fidelities) {
+//			if (e instanceof Fidelity) {
+//				try {
+//					fiCxt.put(e.getName(), e);
+//				} catch (Exception ex) {
+//					if (ex instanceof ContextException)
+//						throw (ContextException) ex;
+//					else
+//						throw new ContextException(ex);
+//				}
+//			}
+//		}
+//		return fiCxt;
+//	}
 
 	public static Context subcontext(Context context, List<String> paths) throws ContextException {
 		return context.getSubcontext((String[]) paths.toArray());
@@ -990,34 +989,72 @@ public class operator {
 		return new EvaluationTask(signature, context);
 	}
 
-	public static SelectFidelity fiFi(String name) {
-		return new SelectFidelity(name);
-	}
-
-	public static SelectFidelity fi(String path, String name) {
-		return new SelectFidelity(name, path);
+	public static Fidelity fiFi(String name) {
+		return new Fidelity(name);
 	}
 
 
-	public static SelectFidelity fi(String path, String name, String... selectors) {
-		return new SelectFidelity(name, path, selectors);
+//	public static Tuple2<String, String> cFi(String componentPath, String fidelityName) {
+//		return new Tuple2<String, String> (componentPath, fidelityName);
+//	}
+
+	public static Fidelity<String> cFi(String componentPath, String fidelityName) {
+		Fidelity<String> fi = new Fidelity(componentPath, fidelityName);
+		fi.setPath(componentPath);
+		fi.type = Fidelity.Type.COMPONENT;
+		return fi;
 	}
 
+	public static Fidelity<String> fi(String name, String... selectors) {
+		Fidelity<String> fi = new Fidelity(name, selectors);
+		fi.type = Fidelity.Type.NAME;
+		return fi;
+	}
 
-	public static Fidelity<Signature> sFi(Exertion exertion) {
+	public static Map<String, Fidelity> sFis(Mogram exertion) {
+		return ((ServiceExertion)exertion).getServiceFidelities();
+	}
+
+	public static Fidelity<Signature> sFi(Mogram exertion) {
 		return exertion.getFidelity();
 	}
 
-	public static Map<String, Fidelity<Signature>> srvFis(Exertion exertion) {
+	public static String selFi(Mogram exertion) {
+		return ((ServiceExertion)exertion).getSelectedFidelitySelector();
+	}
+
+	public static Map<String, Fidelity> srvFis(Exertion exertion) {
 		return exertion.getFidelities();
 	}
 
 	public static Fidelity<Signature> sFi(Signature... signatures) {
-		return new Fidelity(signatures);
+		Fidelity<Signature> fi = new Fidelity(signatures);
+		fi.type = Fidelity.Type.EXERT;
+		return fi;
+	}
+
+	public static Fidelity<?> fi(String name) {
+		Fidelity<?> fi = new Fidelity(name);
+		fi.type = Fidelity.Type.EMPTY;
+		return fi;
+	}
+
+	public static Fidelity<Fidelity> sFi(Fidelity... fidelities) {
+		Fidelity<Fidelity> fi = new Fidelity<Fidelity>(fidelities);
+		fi.type = Fidelity.Type.MULTI;
+		return fi;
+	}
+
+	public static Fidelity<Fidelity> sFi(String name, Fidelity... fidelities) {
+		Fidelity<Fidelity> fi = new Fidelity<Fidelity>(name, fidelities);
+		fi.type = Fidelity.Type.COMPOSITE;
+		return fi;
 	}
 
 	public static Fidelity<Signature> sFi(String name, Signature... signatures) {
-		return new Fidelity<Signature>(name, signatures);
+		Fidelity<Signature> fi = new Fidelity<Signature>(name, signatures);
+		fi.type = Fidelity.Type.EXERT;
+		return fi;
 	}
 
 	public static ObjectSignature sig(String operation, Object object)
@@ -1279,7 +1316,7 @@ public class operator {
 		List<Exertion> exertions = new ArrayList<Exertion>();
 		List<Pipe> pipes = new ArrayList<Pipe>();
 		List<Fidelity> fidelities = null;
-		List<FidelityContext> fiContexts = null;
+		List<Fidelity> fiList = null;
 		List<MapContext> connList = new ArrayList<MapContext>();
 
 		for (int i = 0; i < elems.length; i++) {
@@ -1304,9 +1341,9 @@ public class operator {
 					fidelities = new ArrayList<Fidelity>();
 				fidelities.add((Fidelity) elems[i]);
 			} else if (elems[i] instanceof FidelityContext) {
-				if (fiContexts == null)
-					fiContexts = new ArrayList<FidelityContext>();
-				fiContexts.add((FidelityContext) elems[i]);
+				if (fiList == null)
+					fiList = new ArrayList<Fidelity>();
+				fiList.add((Fidelity) elems[i]);
 			}
 
 		}
@@ -1357,11 +1394,9 @@ public class operator {
 				job.getDataContext().setExertion(job);
 			}
 		}
-		if (fiContexts != null) {
-			Map<String, FidelityContext> fiMap = new HashMap<String, FidelityContext>();
-			for (FidelityContext fiCxt : fiContexts) {
-				fiMap.put(fiCxt.getName(), fiCxt);
-				job.setFidelityContexts(fiMap);
+		if (fiList != null) {
+			for (Fidelity fi : fiList) {
+				job.addFidelity(fi);
 			}
 		}
 		if (connList != null) {
@@ -1672,8 +1707,21 @@ public class operator {
 		return xrt.getComponentMogram(componentExertionName);
 	}
 
+	public static Mogram tracable(Mogram xrt) {
+		List<Mogram> mograms = ((ServiceMogram) xrt).getAllMograms();
+		for (Mogram m : mograms) {
+			((ControlContext) ((Exertion) m).getControlContext()).setTracable(true);
+		}
+		return xrt;
+	}
+
 	public static List<String> trace(Mogram xrt) {
-		return ((Exertion)xrt).getControlContext().getTrace();
+		List<Mogram> mograms = ((ServiceMogram)xrt).getAllMograms();
+		List<String> trace = new ArrayList<String>();
+		for (Mogram m : mograms) {
+			trace.addAll(((Exertion) m).getControlContext().getTrace());
+		}
+		return trace;
 	}
 
 	public static void print(Object obj) {

@@ -482,6 +482,10 @@ public class operator {
 		return context.size();
 	}
 
+	public static int size(Map map) {
+		return map.size();
+	}
+
 	public static int size(DatabaseStorer.Store type) throws ExertionException,
 			SignatureException, ContextException {
 		return SdbUtil.size(type);

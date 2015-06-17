@@ -21,7 +21,6 @@ import org.slf4j.LoggerFactory;
 import sorcer.co.tuple.ExecPath;
 import sorcer.co.tuple.InputEntry;
 import sorcer.co.tuple.Tuple2;
-import sorcer.core.SelectFidelity;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.EntryList;
@@ -117,8 +116,8 @@ public class operator {
 		return new EntryList(entries);
 	}
 
-	public static SelectFidelity parFi(String name) {
-		return new SelectFidelity(name);
+	public static Fidelity<String> parFi(String name) {
+		return new Fidelity(name);
 	}
 	
 	public static Entry parFi(Par parEntry) {
@@ -128,7 +127,7 @@ public class operator {
 	}
 	
 	public static ParModel parModel(String name, Identifiable... objects)
-			throws EvaluationException, RemoteException, ContextException {
+			throws RemoteException, ContextException {
 		ParModel pm = new ParModel(name);
 		pm.add(objects);
 		return pm;

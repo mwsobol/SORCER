@@ -2,7 +2,6 @@ package sorcer.core.context;
 
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
-import sorcer.core.SelectFidelity;
 import sorcer.service.*;
 
 import java.io.Serializable;
@@ -15,7 +14,7 @@ import java.util.Map;
 /**
  * Created by Mike Sobolewski
  */
-public class ServiceRuntime implements SelectProjection, Serializable {
+public class ServiceRuntime implements Projection<String>, Serializable {
 
     protected List<ThrowableTrace> exceptions;
 
@@ -38,10 +37,10 @@ public class ServiceRuntime implements SelectProjection, Serializable {
 
     protected Map<String, List<String>> dependentPaths;
 
-    protected SelectFidelity selectFidelity;
+    protected Fidelity<String> selectedFidelity;
 
     // select fidelities for this service context
-    protected Map<String, SelectFidelity> selectFidelities;
+    protected Map<String, Fidelity<String>> selectFidelities;
 
     // evaluated model response entries
     protected Context outcome;
@@ -49,8 +48,8 @@ public class ServiceRuntime implements SelectProjection, Serializable {
     // reponse paths of the runtime model
     protected List<String> responsePaths = new ArrayList<String>();
 
-    public ServiceRuntime(Service service) {
-        target = (ServiceContext)service;
+    public ServiceRuntime(Mogram service) {
+        target = service;
     }
 
     public void setExceptions(List<ThrowableTrace> exceptions) {
@@ -128,21 +127,7 @@ public class ServiceRuntime implements SelectProjection, Serializable {
         return dependers;
     }
 
-    @Override
-    public SelectFidelity getSelectFidelity() {
-        return selectFidelity;
-    }
-
-    @Override
-    public void setSelectFidelity(SelectFidelity fidelity) {
-        selectFidelity= fidelity;
-    }
-
-    public Map<String, SelectFidelity> getSelectFidelities() {
-        return selectFidelities;
-    }
-
-    public void setSelectFidelities(Map<String, SelectFidelity> selectFidelities) {
+    public void setSelectFidelities(Map<String, Fidelity<String>> selectFidelities) {
         this.selectFidelities = selectFidelities;
     }
 
@@ -178,6 +163,24 @@ public class ServiceRuntime implements SelectProjection, Serializable {
 
     public void setTarget(Mogram target) {
         this.target = target;
+    }
+
+    @Override
+    public Fidelity<String> getFidelity() {
+        return selectedFidelity;
+    }
+
+    @Override
+    public void setFidelity(Fidelity<String> fidelity) {
+        selectedFidelity = fidelity;
+    }
+
+    public void appendTrace(String info) {
+        traceList.add(info);
+    }
+
+    public List<String> getTrace() {
+        return traceList;
     }
 
 }

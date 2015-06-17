@@ -20,10 +20,9 @@ package sorcer.service;
 /**
  * Created by Mike Sobolewski on 5/12/15.
  */
-public interface ServiceProjection<Signature> {
+public interface Projection<T> {
 
-    public Fidelity<Signature> getServiceFidelity();
+    public Fidelity<T> getFidelity();
 
-    public void setServiceFidelity(Fidelity<Signature> fidelity);
-
+    public void setFidelity(Fidelity<T> fidelity);
 }

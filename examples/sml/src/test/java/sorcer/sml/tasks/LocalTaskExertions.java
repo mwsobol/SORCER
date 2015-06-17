@@ -4,10 +4,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
-import sorcer.arithmetic.provider.impl.AdderImpl;
-import sorcer.arithmetic.provider.impl.AveragerImpl;
-import sorcer.arithmetic.provider.impl.MultiplierImpl;
-import sorcer.arithmetic.provider.impl.SubtractorImpl;
+import sorcer.arithmetic.provider.Adder;
+import sorcer.arithmetic.provider.impl.*;
 import sorcer.service.*;
 
 import org.slf4j.Logger;
@@ -100,6 +98,41 @@ public class LocalTaskExertions {
         assertEquals(get(batch3, "result/y"), 400.0);
 
     }
+
+
+	@Test
+	public void arithmeticMultiFiObjectTaskTest() throws Exception {
+		ServiceExertion.debug = true;
+
+		Task task = task("add",
+				sFi("net", sig("add", Adder.class)),
+				sFi("object", sig("add", AdderImpl.class)),
+				context(inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
+						result("result/y")));
+
+		logger.info("sFi: " + sFi(task));
+		assertTrue(sFis(task).size() == 2);
+		logger.info("selFis: " + selFi(task));
+		assertTrue(selFi(task).equals("net"));
+
+		task = exert(task, fi("object"));
+		logger.info("exerted: " + context(task));
+		assertTrue(selFi(task).equals("object"));
+		assertTrue(get(task).equals(100.0));
+	}
+
+
+	@Test
+	public void argTaskTest() throws Exception {
+		Task t4 = task("t4", sig("multiply", new Multiply()),
+				context(
+						parameterTypes( double[].class),
+						args(new double[]{10.0, 50.0}),
+						result("result/y")));
+
+		//logger.info("t4: " + value(t4));
+		assertEquals("Wrong value for 500.0", value(t4), 500.0);
+	}
 }
 	
 	

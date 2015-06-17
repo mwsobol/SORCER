@@ -158,6 +158,9 @@ abstract public class RendezvousBean implements Service, Executor {
 		try {
             logger.info("Got exertion to process: " + mogram.toString());
 			setServiceID(mogram);
+			mogram.appendTrace("mogram: " + mogram.getName() + " rendezvous: " +
+					(provider.getProviderName() != null ? provider.getProviderName() + " " : "")
+					+ this.getClass().getName());
             if (mogram instanceof ObjectJob || mogram instanceof ObjectBlock)
                 return execute(mogram, transaction);
             else

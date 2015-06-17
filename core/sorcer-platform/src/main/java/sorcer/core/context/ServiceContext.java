@@ -25,7 +25,6 @@ import org.slf4j.LoggerFactory;
 import sorcer.co.tuple.InputEntry;
 import sorcer.co.tuple.OutputEntry;
 import sorcer.co.tuple.Tuple2;
-import sorcer.core.SelectFidelity;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.EntryList;
@@ -3112,13 +3111,4 @@ public class ServiceContext<T> extends ServiceMogram implements
 		return runtime.getDependers();
 	}
 
-	@Override
-	public SelectFidelity getSelectFidelity() {
-		return runtime.getSelectFidelity();
-	}
-
-	@Override
-	public void setSelectFidelity(SelectFidelity fidelity) {
-		runtime.setSelectFidelity(fidelity);
-	}
 }
