@@ -103,6 +103,9 @@ public class Fidelity<T> implements Arg, Serializable {
 		this.name = name;
 	}
 
+	public T getSelect() {
+		return selects.get(0);
+	}
 
 	public List<T> getSelects() {
 		return selects;
