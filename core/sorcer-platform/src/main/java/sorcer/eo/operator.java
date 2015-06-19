@@ -1448,7 +1448,7 @@ public class operator {
 
 	public static Object get(Exertion exertion) throws ContextException,
 			RemoteException {
-        return ((ServiceContext) exertion.getContext()).getReturnValue();
+        return exertion.getContext().getReturnValue();
     }
 
 	public static <T extends Evaluation> Object asis(T evaluation) throws EvaluationException {

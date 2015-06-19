@@ -107,6 +107,11 @@ public class operator {
         return ((ServiceContext)((ServiceContext)model).getRuntime().getOutcome()).get(path);
     }
 
+    public static  ServiceContext substitute(ServiceContext model, Entry... entries) throws ContextException {
+        model.substitute(entries);
+        return model;
+    }
+
     public static Context inputs(Model model) throws ContextException {
         try {
             return model.getInputs();
