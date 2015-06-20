@@ -264,7 +264,7 @@ public class CollectionOperators {
 		assertTrue(value(add, cxt).equals(30.0));
 
 		cxt = context(ent("x", 20.0), ent("y", 30.0));
-		add = par(cxt, "add", invoker("x + y", pars("x", "y")));
+		add = par("add", invoker("x + y", pars("x", "y")), cxt);
 		logger.info("par value: " + value(add));
 		assertTrue(value(add).equals(50.0));
 
@@ -456,9 +456,9 @@ public class CollectionOperators {
 
 
 		// context and exertion parameters
-		Par x1p = par("x1p", "arg/x1", c4);
-		Par x2p = par("x2p", "arg/x2", c4);
-		Par j1p = par("j1p", "j1/t3/result/y", j1);
+		Par x1p = map(par("x1p", "arg/x1"), c4);
+		Par x2p = map(par("x2p", "arg/x2"), c4);
+		Par j1p = map(par("j1p", "j1/t3/result/y"), j1);
 
 		// par model with contexts and exertion
 		ParModel pc = parModel(x1p, x2p, j1p);

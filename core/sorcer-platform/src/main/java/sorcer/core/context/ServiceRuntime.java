@@ -3,6 +3,7 @@ package sorcer.core.context;
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
 import sorcer.service.*;
+import sorcer.util.FileURLHandler;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
@@ -23,6 +24,8 @@ public class ServiceRuntime implements Projection<String>, Serializable {
     private boolean isMonitorable = false;
 
     private Mogram target;
+
+    protected transient FileURLHandler dataService;
 
     // dependency management for this Context
     protected List<Evaluation> dependers = new ArrayList<Evaluation>();
@@ -181,6 +184,14 @@ public class ServiceRuntime implements Projection<String>, Serializable {
 
     public List<String> getTrace() {
         return traceList;
+    }
+
+    public FileURLHandler getDataService() {
+        return dataService;
+    }
+
+    public void setDataService(FileURLHandler dataService) {
+        this.dataService = dataService;
     }
 
 }

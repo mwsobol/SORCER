@@ -2925,13 +2925,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	 */
 	@Override
 	public Par addPar(String path, Object value) throws ContextException {
-		Par parEntry;
-		try {
-			parEntry = new Par(path, value, this);
-		} catch (RemoteException e) {
-			throw new ContextException(e);
-		}
-		return parEntry;
+		return new Par(path, value, this);
 	}
 
 

@@ -2226,7 +2226,11 @@ public class operator {
 			this.in = in;
 			this.inPath = inPath;
 			if ((in instanceof Exertion) && (out instanceof Exertion)) {
-				parEntry = new Par(outPath, inPath, (Exertion)in);
+				try {
+					parEntry = new Par(outPath, inPath, in);
+				} catch (ContextException e) {
+					e.printStackTrace();
+				}
 				((ServiceExertion) out).addPersister(parEntry);
 			}
 		}
@@ -2240,7 +2244,11 @@ public class operator {
 			this.inComponentPath = inEndPoint.inComponentPath;
 
 			if ((in instanceof Exertion) && (out instanceof Exertion)) {
-				parEntry = new Par(outPath, inPath, (Exertion)in);
+				try {
+					parEntry = new Par(outPath, inPath, in);
+				} catch (ContextException e) {
+					e.printStackTrace();
+				}
 				((ServiceExertion) out).addPersister(parEntry);
 			}
 		}

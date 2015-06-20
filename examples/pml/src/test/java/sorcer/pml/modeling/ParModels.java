@@ -44,6 +44,7 @@ import static sorcer.po.operator.add;
 import static sorcer.po.operator.asis;
 import static sorcer.po.operator.*;
 import static sorcer.po.operator.loop;
+import static sorcer.po.operator.map;
 import static sorcer.po.operator.put;
 import static sorcer.po.operator.set;
 
@@ -332,8 +333,8 @@ public class ParModels {
 		Context cxt = context(ent("design/in1", 25.0), ent("design/in2", 35.0));
 
 		// mapping parameters to cxt, z1 and x2 are par aliases
-		Par x1 = par("x1", "design/in1", cxt);
-		Par x2 = par("x2", "design/in2", cxt);
+		Par x1 = par(cxt, "x1", "design/in1");
+		Par x2 = map(par("x2", "design/in2"), cxt);
 
 		assertEquals(value(x1), 25.0);
 		set(x1, 45.0);
@@ -356,7 +357,7 @@ public class ParModels {
 		Context cxt = context(ent("url", "myUrl"), ent("design/in", 25.0));
 
 		// persistent par
-		Par dbIn = persistent(par("dbIn", "design/in", cxt));
+		Par dbIn = persistent(map(par("dbIn", "design/in"), cxt));
 		assertEquals(value(dbIn), 25.0);  	// is persisted
 		assertEquals(dbIn.asis(), "design/in");
 		assertEquals(value((Evaluation)asis(cxt, "design/in")), 25.0);
@@ -371,7 +372,7 @@ public class ParModels {
 		assertTrue(asis((Par)asis(cxt, "design/in")) instanceof URL);
 
 		// not persistent par
-		Par up = par("up", "url", cxt);
+		Par up = map(par("up", "url"), cxt);
 		assertEquals(value(up), "myUrl");
 
 		set(up, "newUrl");
@@ -380,7 +381,7 @@ public class ParModels {
 	}
 
 	@Test
-	public void exertionParsTest() throws Exception {
+	public void exertionPars() throws Exception {
 
 		Context c4 = context("multiply", inEnt("arg/x1"), inEnt("arg/x2"),
 				outEnt("result/y"));
@@ -404,9 +405,9 @@ public class ParModels {
 
 
 		// context and job parameters
-		Par x1p = par("x1p", "arg/x1", c4);
-		Par x2p = par("x2p", "arg/x2", c4);
-		Par j1p = par("j1p", "j1/t3/result/y", j1);
+		Par x1p = map(par("x1p", "arg/x1"), c4);
+		Par x2p = map(par("x2p", "arg/x2"), c4);
+		Par j1p = map(par("j1p", "j1/t3/result/y"), j1);
 
 		// setting context parameters in a job
 		set(x1p, 10.0);
@@ -456,8 +457,8 @@ public class ParModels {
 				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
 
 
-		Par c4x1p = par("c4x1p", "arg/x1", c4);
-		Par c4x2p = par("c4x2p", "arg/x2", c4);
+		Par c4x1p = map(par("c4x1p", "arg/x1"), c4);
+		Par c4x2p = map(par("c4x2p", "arg/x2"), c4);
 		// job j1 parameter j1/t3/result/y is used in the context of task t6
 		Par j1p = par("j1p", "j1/t3/result/y", j1);
 		Par t4x1p = par("t4x1p", "j1/j2/t4/arg/x1", j1);

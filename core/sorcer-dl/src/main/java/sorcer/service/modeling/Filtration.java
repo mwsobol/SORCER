@@ -33,4 +33,6 @@ public interface Filtration<T> {
      * @throws RemoteException
      */
     public Object doFilter(Object input) throws FilterException, RemoteException;
+
+    public Object getTarget();
 }

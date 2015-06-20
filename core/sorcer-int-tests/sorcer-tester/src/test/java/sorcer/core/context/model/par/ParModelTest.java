@@ -178,12 +178,12 @@ public class ParModelTest {
 		Context cxt = context(ent("url", "myUrl"), ent("design/in", 25.0));
 
 		// mapping parameters to cxt, m1 and m2 are par aliases 
-		Par p1 = par("p1", "design/in", cxt);
+		Par p1 = map(par("p1", "design/in"), cxt);
 		assertEquals(value(p1), 25.0);
 		set(p1, 30.0);
 		assertEquals(value(p1), 30.0);
 		
-		Par p2 = par("p2", "url", cxt);
+		Par p2 = map(par("p2", "url"), cxt);
 		assertEquals(value(p2), "myUrl");
 		set(p2, "newUrl");
 		assertEquals(value(p2), "newUrl");
@@ -278,7 +278,7 @@ public class ParModelTest {
 		Context cxt = context(ent("url", "myUrl"), ent("design/in", 25.0));
 
 		// persistent par
-		Par dbIn = persistent(par("dbIn", "design/in", cxt));
+		Par dbIn = persistent(map(par("dbIn", "design/in"), cxt));
 		assertEquals(value(dbIn), 25.0);  	// is persisted
 		logger.info("value dbIn asis design/in 1: " + dbIn.getMappable().asis("design/in"));
 
@@ -295,7 +295,7 @@ public class ParModelTest {
 		assertEquals(value(dbIn), 30.0);
 		
 		// not persistent par
-		Par up = par("up", "url", cxt);
+		Par up = map(par("up", "url"), cxt);
 		assertEquals(value(up), "myUrl");
 		
 		set(up, "newUrl");
@@ -306,8 +306,8 @@ public class ParModelTest {
 	public void aliasedParsTest() throws ContextException, RemoteException {
 		Context cxt = context(ent("design/in1", 25.0), ent("design/in2", 35.0));
 		
-		Par x1 = par("x1", "design/in1", cxt);
-		Par x2 = par("x2", "design/in2", cxt);
+		Par x1 = par(cxt, "x1", "design/in1");
+		Par x2 = map(par("x2", "design/in2"), cxt);
 	
 		assertEquals(value(x1), 25.0);
 		set(x1, 45.0);
@@ -348,9 +348,9 @@ public class ParModelTest {
 		
 		
 		// context and job parameters
-		Par x1p = par("x1p", "arg/x1", c4);
-		Par x2p = par("x2p", "arg/x2", c4);
-		Par j1p = par("j1p", "j1/t3/result/y", j1);
+		Par x1p = map(par("x1p", "arg/x1"), c4);
+		Par x2p = map(par("x2p", "arg/x2"), c4);
+		Par j1p = map(par("j1p", "j1/t3/result/y"), j1);
 		
 		// setting context parameters in a job
 		set(x1p, 10.0);
@@ -401,8 +401,8 @@ public class ParModelTest {
 				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
 		
 		
-		Par c4x1p = par("c4x1p", "arg/x1", c4);
-		Par c4x2p = par("c4x2p", "arg/x2", c4);
+		Par c4x1p = map(par("c4x1p", "arg/x1"), c4);
+		Par c4x2p = map(par("c4x2p", "arg/x2"), c4);
 		// job j1 parameter j1/t3/result/y is used in the context of task t6
 		Par j1p = par("j1p", "j1/t3/result/y", j1);
 		Par t4x1p = par("t4x1p", "j1/j2/t4/arg/x1", j1);

@@ -54,7 +54,7 @@ public class operator {
 		return p;
 	}
 	
-	public static Par par(Context context, Identifiable identifiable) throws EvaluationException, RemoteException {
+	public static Par par(Identifiable identifiable, Context context) throws EvaluationException, RemoteException {
 		Par p = new Par(identifiable.getName(), identifiable);
 		if (identifiable instanceof Scopable)
 			try {
@@ -65,29 +65,44 @@ public class operator {
 		p.setScope(context);
 		return p;
 	}
-	
-	public static Par par(Context context, String path, Object argument) throws EvaluationException, RemoteException {
-		Par p = new Par(path, argument);
-		p.setScope(context);
+
+	public static Par map(Par par, Service map) {
+		par.setMappable((Mappable)map);
+		return par;
+	}
+
+	public static Par par(Mappable argument, String name, String path) {
+		Par p = new Par(argument, name, path);
 		return p;
 	}
-	
-	public static Par dPar(Context context, Identifiable identifiable) throws EvaluationException, RemoteException {
+
+	public static Par par(String path, Object argument, Object object) throws ContextException, RemoteException {
+		Par p = null;
+		if (object instanceof Context) {
+			p = new Par(path, argument);
+			p.setScope(object);
+		} else if (object instanceof Service) {
+			p = new Par(path, argument, (Service)object);
+		}
+		return p;
+	}
+
+//	public static Par par(String name, String path, Service argument) throws ContextException {
+//		Par p = new Par(name, path, argument);
+//		return p;
+//	}
+
+	public static Par dPar(Identifiable identifiable, Context context) throws EvaluationException, RemoteException {
 		Par p = new Par(identifiable.getName(), identifiable);
 		p.setPersistent(true);
 		p.setScope(context);
 		return p;
 	}
 	
-	public static Par dbPar(Context context, String path, Object argument) throws EvaluationException, RemoteException {
+	public static Par dbPar(String path, Object argument, Context context) throws EvaluationException, RemoteException {
 		Par p = new Par(path, argument);
 		p.setPersistent(true);
 		p.setScope(context);
-		return p;
-	}
-	
-	public static Par par(String name, String path, Service argument) {
-		Par p = new Par(name, path, argument);
 		return p;
 	}
 	
@@ -211,21 +226,23 @@ public class operator {
 		return parEntry;
 	}
 	
-	public static Par set(ParModel context, String parname, Object value)
+	public static void set(ParModel context, String parname, Object value)
 			throws ContextException {
-		Par parEntry = context.getPar(parname);
+		Object parEntry = context.asis(parname);
 		if (parEntry == null)
 			parEntry = context.addPar(parname, value);
-		else
+		else if (parEntry instanceof Setter) {
 			try {
-				parEntry.setValue(value);
+				((Setter) parEntry).setValue(value);
 			} catch (RemoteException e) {
-				throw new ContextException(e);
+				e.printStackTrace();
 			}
-		if (parEntry.getScope() != null && parEntry.getContextable() == null) {
-			parEntry.getScope().putValue(parEntry.getName(), value);
 		}
-		return parEntry;
+		if (parEntry instanceof Par) {
+			Par par = (Par) parEntry;
+			if (par.getScope() != null && par.getContextable() == null)
+				par.getScope().putValue(par.getName(), value);
+		}
 	}
 	
 	public static Par add(Par parEntry, Object to)
@@ -326,7 +343,7 @@ public class operator {
 	public static ServiceInvoker invoker(String name, String expression, Arg... pars) {
 		return new GroovyInvoker(name, expression, pars);
 	}
-	
+
 	public static ServiceInvoker invoker(String name, String expression, Par... parEntries) {
 		return new GroovyInvoker(name, expression, parEntries);
 	}

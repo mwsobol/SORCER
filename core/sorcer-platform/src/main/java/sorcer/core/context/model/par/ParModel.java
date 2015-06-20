@@ -172,16 +172,12 @@ public class ParModel<T> extends EntModel<T> implements Invocation<T>, Mappable<
 		}
 	}
 
-	public Par<Object> getPar(String name) throws ContextException {
+	public Par getPar(String name) throws ContextException {
 		Object obj = get(name);
 		if (obj instanceof Par)
-			return (Par<Object>) obj;
+			return (Par) obj;
 		else
-			try {
-				return new Par<Object>(name, asis(name), this);
-			} catch (RemoteException e) {
-				throw new ContextException(e);
-			}
+			return new Par(name, asis(name), this);
 	}
 	
 	public Variability bindVar(Variability var) throws EvaluationException,
@@ -352,11 +348,7 @@ public class ParModel<T> extends EntModel<T> implements Invocation<T>, Mappable<
 	private Par putVar(String path, Variability value) throws ContextException {
 		putValue(path, value);
 		markVar(this, path, value);
-		try {
-			return new Par(path, value, this);
-		} catch (RemoteException e) {
-			throw new ContextException(e);
-		}
+		return new Par(path, value, this);
 	}
 	
 	/**

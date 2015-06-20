@@ -101,21 +101,27 @@ public class Par<T> extends Entry<T> implements Variability<T>, Arg, Mappable<T>
 			value = argument;
 		}
 	}
-	
-	public Par(String path, Object argument, Context scope)
-			throws RemoteException, ContextException {
-		this(path, (T)argument);
-		if (((ServiceContext)scope).containsKey(Condition._closure_))
-			 scope.remove(Condition._closure_);
-		this.scope = scope;
+
+	public Par(String path, Object argument, Object scope)
+			throws ContextException {
+		this(path, (T) argument);
+		if (argument instanceof String && scope instanceof Service) {
+			mappable = (Mappable) scope;
+			if (scope instanceof Context) {
+				if (((ServiceContext) scope).containsKey(Condition._closure_))
+					((Context) scope).remove(Condition._closure_);
+				this.scope = (Context) scope;
+
+			}
+		}
 		if (argument instanceof Scopable)
-			((Scopable)argument).setScope(this.scope);
+			((Scopable) argument).setScope(this.scope);
 	}
 	
-	public Par(String name, String path, Service map) {
+	public Par(Mappable map, String name, String path) {
 		this(name);
 		value =  (T)path;
-		mappable = (Mappable)map;
+		mappable = map;
 	}
 	
 	/* (non-Javadoc)
