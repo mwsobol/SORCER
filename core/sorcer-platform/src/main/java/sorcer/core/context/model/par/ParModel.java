@@ -224,12 +224,12 @@ public class ParModel<T> extends EntModel<T> implements Invocation<T>, Mappable<
 			RemoteException {
 		Par p = null;
 		for (Identifiable obj : objects) {
+			String pn = obj.getName();
 			if (obj instanceof Par) {
 				p = (Par) obj;
 			} else if (obj instanceof Entry) {
-				putValue((String) ((Entry) obj).key(), obj);
+				putValue(pn, ((Entry)obj).asis());
 			} else {
-				String pn = obj.getName();
 				putValue(pn, obj);
 			}
 			

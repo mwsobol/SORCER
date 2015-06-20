@@ -2089,10 +2089,13 @@ public class ServiceContext<T> extends ServiceMogram implements
 		while (it.hasNext()) {
 			Map.Entry<String, Object> pairs = (Map.Entry) it.next();
 			String path = pairs.getKey();
-			if (data.containsKey(path) && data.get(path) instanceof Evaluation)
+			if (data.containsKey(path) && data.get(path) instanceof Evaluation) {
+				if (scope == null)
+					scope = new ServiceContext();
 				scope.putInoutValue(pairs.getKey(), pairs.getValue());
-			else
+			} else {
 				putInoutValue(pairs.getKey(), (T) pairs.getValue());
+			}
 		}
 		return this;
 	}

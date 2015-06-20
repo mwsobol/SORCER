@@ -237,12 +237,16 @@ public class operator {
 			} catch (RemoteException e) {
 				e.printStackTrace();
 			}
-		}
-		if (parEntry instanceof Par) {
+		} else if (parEntry instanceof Par) {
 			Par par = (Par) parEntry;
 			if (par.getScope() != null && par.getContextable() == null)
 				par.getScope().putValue(par.getName(), value);
 		}
+		// just assing the value
+		else {
+			context.putValue(parname, value);
+		}
+
 	}
 	
 	public static Par add(Par parEntry, Object to)
