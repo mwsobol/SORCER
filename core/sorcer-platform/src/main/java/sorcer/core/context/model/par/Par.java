@@ -108,7 +108,7 @@ public class Par<T> extends Entry<T> implements Variability<T>, Arg, Mappable<T>
 		if (argument instanceof String && scope instanceof Service) {
 			mappable = (Mappable) scope;
 			if (scope instanceof Context) {
-				if (((ServiceContext) scope).containsKey(Condition._closure_))
+				if (((ServiceContext) scope).containsPath(Condition._closure_))
 					((Context) scope).remove(Condition._closure_);
 				this.scope = (Context) scope;
 
@@ -325,7 +325,7 @@ public class Par<T> extends Entry<T> implements Variability<T>, Arg, Mappable<T>
 	}
 
 	public void setScope(Context scope) {
-		if (scope != null && ((ServiceContext)scope).containsKey(Condition._closure_))
+		if (scope != null && ((ServiceContext)scope).containsPath(Condition._closure_))
 			scope.remove(Condition._closure_);
 		this.scope = scope;
 	}

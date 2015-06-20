@@ -613,7 +613,7 @@ public class operator {
 			throws RemoteException, ContextException {
 		for (Identifiable i : objects) {
 			// just replace the value
-			if (((ServiceContext)context).containsKey(i.getName())) {
+			if (((ServiceContext)context).containsPath(i.getName())) {
 				context.putValue(i.getName(), i);
 				continue;
 			}

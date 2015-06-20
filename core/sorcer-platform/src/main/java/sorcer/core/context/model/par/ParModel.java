@@ -401,7 +401,7 @@ public class ParModel<T> extends EntModel<T> implements Invocation<T>, Mappable<
 		Iterator<Map.Entry<String, Object>> i = cxt.entryIterator();
 		while (i.hasNext()) {
 			Map.Entry<String, Object> e = i.next();
-			if (!containsKey(e.getKey()) && e.getKey().equals("script")) {
+			if (!containsPath(e.getKey()) && e.getKey().equals("script")) {
 				put(e.getKey(), context.asis(e.getKey()));
 			}
 		}

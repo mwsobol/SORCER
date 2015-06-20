@@ -116,7 +116,6 @@ public class CollectionOperators {
 		
 	}
 
-	
 	@Test
 	public void genericListOperator() throws Exception {
 		
