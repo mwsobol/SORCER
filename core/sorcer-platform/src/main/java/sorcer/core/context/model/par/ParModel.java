@@ -21,7 +21,6 @@ import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.ent.EntModel;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.invoker.ServiceInvoker;
-import sorcer.service.Scopable;
 import sorcer.service.*;
 import sorcer.service.modeling.Variability;
 import sorcer.util.Response;
@@ -227,6 +226,8 @@ public class ParModel<T> extends EntModel<T> implements Invocation<T>, Mappable<
 			String pn = obj.getName();
 			if (obj instanceof Par) {
 				p = (Par) obj;
+			} else if (obj instanceof Variability) {
+				putValue(pn, obj);
 			} else if (obj instanceof Entry) {
 				putValue(pn, ((Entry)obj).asis());
 			} else {
