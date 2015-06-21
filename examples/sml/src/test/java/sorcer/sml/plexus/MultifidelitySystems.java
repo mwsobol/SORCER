@@ -10,7 +10,7 @@ import sorcer.arithmetic.provider.Adder;
 import sorcer.arithmetic.provider.Multiplier;
 import sorcer.arithmetic.provider.Subtractor;
 import sorcer.core.plexus.FidelityManager;
-import sorcer.core.plexus.MultiFidelityService;
+import sorcer.core.plexus.MultifidelityService;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.service.Fidelity;
 import sorcer.service.Job;
@@ -32,7 +32,7 @@ public class MultifidelitySystems {
     @Test
     public void multiFideltySystem() throws Exception {
 
-        MultiFidelityService mfs = new MultiFidelityService("plexus");
+        MultifidelityService mfs = new MultifidelityService("plexus");
 
         mfs.put(getTask4());
         mfs.put(getTask5());
