@@ -244,6 +244,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		}
 		// configure the provider's delegate
 		delegate.getProviderConfig().init(true, providerProperties);
+        ((ScratchManagerSupport)scratchManager).setProperties(getProviderProperties());
 		delegate.configure(config);
 		// decide if thread management is needed for ExertionDispatcher
 		setupThreadManager();
@@ -257,6 +258,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	public ServiceProvider(String providerPropertiesFile) {
 		this();
 		delegate.getProviderConfig().loadConfiguration(providerPropertiesFile);
+        ((ScratchManagerSupport)scratchManager).setProperties(getProviderProperties());
 	}
 
     protected void setScratchManager(final ScratchManager scratchManager) {
@@ -1534,7 +1536,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	}
 
 	public File getScratchDir() {
-		return scratchManager.getScratchDir("");
+		return scratchManager.getScratchDir();
 	}
 
 	public File getScratchDir(String suffix) {
