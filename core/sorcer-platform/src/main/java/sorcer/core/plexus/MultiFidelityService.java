@@ -38,7 +38,7 @@ import java.util.Map;
  *
  * Created by Mike Sobolewski
  */
-public class MultiFidelityService extends ServiceMogram {
+public class MultifidelityService extends ServiceMogram {
 
     // subsystems of this system aggregated into systems via system fidelites
     protected Context<Mogram> subsystems = new ParModel<Mogram>();
@@ -50,15 +50,15 @@ public class MultiFidelityService extends ServiceMogram {
 
     protected Fidelity<String> selectedFidelity;
 
-    public MultiFidelityService() {
+    public MultifidelityService() {
     }
 
-    public MultiFidelityService(String name) throws SignatureException {
+    public MultifidelityService(String name) throws SignatureException {
         super(name);
         fidelityManager = new FidelityManager(this);
     }
 
-    public MultiFidelityService(String name, Signature signature) throws SignatureException {
+    public MultifidelityService(String name, Signature signature) throws SignatureException {
         super(name, signature);
     }
 
@@ -109,7 +109,7 @@ public class MultiFidelityService extends ServiceMogram {
      * @throws EvaluationException
      * @throws RemoteException
      */
-    public MultiFidelityService setProjection(String... fidelities) throws EvaluationException, RemoteException {
+    public MultifidelityService setProjection(String... fidelities) throws EvaluationException, RemoteException {
         for (String path : fidelities)
             fidelityManager.runtime.getResponsePaths().add(path);
         return this;
