@@ -261,6 +261,7 @@ public class operator {
 			throws ContextException {
 		Context cxt = null;
 		List<MapContext> connList = new ArrayList<MapContext>();
+
 		if (entries[0] instanceof Exertion) {
 			Exertion xrt = (Exertion) entries[0];
 			if (entries.length >= 2 && entries[1] instanceof String)
@@ -287,6 +288,7 @@ public class operator {
 		List<Par> parEntryList = new ArrayList<Par>();
 		List<Context.Type> types = new ArrayList<Context.Type>();
 		List<EntryList> entryLists = new ArrayList<EntryList>();
+		List<DependencyEntry> depList = new ArrayList<DependencyEntry>();
 		Complement subject = null;
 		ReturnPath returnPath = null;
 		ExecPath execPath = null;
@@ -323,6 +325,8 @@ public class operator {
 				entryLists.add((EntryList) o);
 			}  else if (o instanceof MapContext) {
 				connList.add((MapContext) o);
+			} else if (o instanceof DependencyEntry) {
+				depList.add((DependencyEntry) o);
 			}
 		}
 
@@ -368,7 +372,7 @@ public class operator {
 			if (entryList.size() > 0)
 				populteContext(cxt, entryList);
 		}
-		if (parEntryList != null) {
+		if (parEntryList.size() > 0) {
 			for (Par p : parEntryList)
 				cxt.putValue(p.getName(), p);
 		}
@@ -404,13 +408,23 @@ public class operator {
 		if (entryLists.size() > 0) {
 			((ServiceContext) cxt).setEntryLists(entryLists);
 		}
-		if (connList != null) {
+		if (connList.size() > 0) {
 			for (MapContext conn : connList) {
 				if (conn.direction == MapContext.Direction.IN) {
 					((ServiceContext) cxt).getRuntime().setInConnector(conn);
 				} else {
 					((ServiceContext) cxt).getRuntime().setOutConnector(conn);
 				}
+			}
+		}
+		if (depList.size() > 0) {
+			Map<String, List<String>> dm = ((ServiceContext)cxt).getRuntime().getDependentPaths();
+			String path = null;
+			List<String> dependentPaths = null;
+			for (DependencyEntry e : depList) {
+				path = e.getName();
+				dependentPaths =  e.value();
+				dm.put(path, dependentPaths);
 			}
 		}
 		return cxt;
@@ -613,7 +627,7 @@ public class operator {
 			throws RemoteException, ContextException {
 		for (Identifiable i : objects) {
 			// just replace the value
-			if (((ServiceContext)context).containsKey(i.getName())) {
+			if (((ServiceContext)context).containsPath(i.getName())) {
 				context.putValue(i.getName(), i);
 				continue;
 			}
@@ -1448,7 +1462,7 @@ public class operator {
 
 	public static Object get(Exertion exertion) throws ContextException,
 			RemoteException {
-        return ((ServiceContext) exertion.getContext()).getReturnValue();
+        return exertion.getContext().getReturnValue();
     }
 
 	public static <T extends Evaluation> Object asis(T evaluation) throws EvaluationException {
@@ -2226,7 +2240,11 @@ public class operator {
 			this.in = in;
 			this.inPath = inPath;
 			if ((in instanceof Exertion) && (out instanceof Exertion)) {
-				parEntry = new Par(outPath, inPath, (Exertion)in);
+				try {
+					parEntry = new Par(outPath, inPath, in);
+				} catch (ContextException e) {
+					e.printStackTrace();
+				}
 				((ServiceExertion) out).addPersister(parEntry);
 			}
 		}
@@ -2240,7 +2258,11 @@ public class operator {
 			this.inComponentPath = inEndPoint.inComponentPath;
 
 			if ((in instanceof Exertion) && (out instanceof Exertion)) {
-				parEntry = new Par(outPath, inPath, (Exertion)in);
+				try {
+					parEntry = new Par(outPath, inPath, in);
+				} catch (ContextException e) {
+					e.printStackTrace();
+				}
 				((ServiceExertion) out).addPersister(parEntry);
 			}
 		}

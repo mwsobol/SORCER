@@ -272,6 +272,8 @@ public interface Mogram extends Service, Projection<Signature>, Scopable, Substi
      * @throws ContextException
      * @throws RemoteException
      */
-    public Signature getBuilder(Arg... args) throws ContextException, RemoteException;
+    public Signature getBuilder(Arg... args) throws MogramException;
+
+    public void setBuilder(Signature builder) throws MogramException;
 
 }

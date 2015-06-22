@@ -1,7 +1,7 @@
 /*
- * Copyright 2013 the original author or authors.
- * Copyright 2013 SorcerSoft.org.
- *  
+ * Copyright 2009 the original author or authors.
+ * Copyright 2009 SorcerSoft.org.
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,24 +15,20 @@
  * limitations under the License.
  */
 
-package sorcer.service.modeling;
+package sorcer.co.tuple;
 
-import java.rmi.RemoteException;
+import sorcer.core.context.model.ent.Entry;
+
+import java.util.List;
 
 /**
- *
- * @author Mike Sobolewski
+ * Created by Mike Sobolewski on 6/21/15.
  */
-public interface Filtration<T> {
+public class DependencyEntry extends Entry<List<String>> {
+    private static final long serialVersionUID = 1L;
 
-    /**
-     * Returns the filtered out value from the given input.
-     *
-     * @return the filtered out value
-     * @throws FilterException
-     * @throws RemoteException
-     */
-    public Object doFilter(Object input) throws FilterException, RemoteException;
-
-    public Object getTarget();
+    @SuppressWarnings("unchecked")
+    public DependencyEntry(String path, List<String> paths) {
+        super(path, paths);
+    }
 }

@@ -228,6 +228,10 @@ public class operator {
 		return new Entry<T>(path, value);
 	}
 
+	public static DependencyEntry dep(String path, List<String> paths) {
+		return new DependencyEntry(path, paths);
+	}
+
 	public static <T> Entry<T> rvEnt(String path, T value) {
 		Entry<T> e = new Entry<T>(path, value);
 		return e.setReactive(true);

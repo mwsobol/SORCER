@@ -694,7 +694,7 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
     }
 
     @Override
-    public Signature getBuilder(Arg... args) throws ContextException, RemoteException {
+    public Signature getBuilder(Arg... args) throws ContextException {
         return builder;
     }
 

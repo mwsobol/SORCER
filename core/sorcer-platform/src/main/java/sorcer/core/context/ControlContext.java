@@ -539,7 +539,7 @@ public class ControlContext extends ServiceContext<Object> implements StrategyCo
 
 	public Context addComponentAssociation(String path, String attributeName,
 			String attributeValue) throws ContextException {
-		if (!containsKey(path))
+		if (!containsPath(path))
 			put(path, SorcerConstants.NULL);
 		return super.addComponentAssociation(path, attributeName,
 				attributeValue);

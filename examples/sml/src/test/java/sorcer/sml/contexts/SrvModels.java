@@ -17,8 +17,6 @@ import sorcer.service.modeling.Model;
 
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
-import static sorcer.co.operator.inPaths;
-import static sorcer.co.operator.srv;
 import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.value;
 import static sorcer.mo.operator.*;
@@ -140,6 +138,8 @@ public class SrvModels {
                         inPaths("multiply/out", "add/out")))),
                 srv("y1", "multiply/x1"), srv("y2", "add/x2"), srv("y3", "subtract/response"));
 
+//                dep("subtract", paths("multiply", "add")));
+
         responseUp(model, "add", "multiply", "subtract");
         dependsOn(model, ent("subtract", paths("multiply", "add")));
         // specify how model connects to exertion
@@ -203,10 +203,7 @@ public class SrvModels {
 
 //                srv("z1", "multiply/x1"), srv("z2", "add/x2"), srv("z3", "subtract/out"));
 
-        responseUp
-
-
-                (model, "add", "multiply", "subtract");
+        responseUp(model, "add", "multiply", "subtract");
         dependsOn(model, ent("subtract", paths("multiply", "add")));
         // specify how model connects to exertion
         outConn(model, modelOutConnector);
