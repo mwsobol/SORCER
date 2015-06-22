@@ -23,7 +23,6 @@ import net.jini.core.event.RemoteEventListener;
 import net.jini.core.event.UnknownEventException;
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
-import sorcer.core.SelectFidelity;
 import sorcer.core.context.ServiceRuntime;
 import sorcer.service.Fidelity;
 import sorcer.service.FidelityManagement;
@@ -36,32 +35,42 @@ import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by Mike Sobolewski on 6/14/15.
  */
-public class FidelityManager implements FidelityManagement<String>, Serializable {
+public class FidelityManager<T> implements FidelityManagement<T>, Serializable {
 
     // fidelities for this service
-    protected Map<String, Fidelity<String>> fidelities;
+    protected Map<String, Fidelity<T>> fidelities = new ConcurrentHashMap<String, Fidelity<T>>();
 
-    protected SelectFidelity selectedFidelity;
+    protected Fidelity<T> selectedFidelity;
 
     protected ServiceRuntime runtime;
 
     protected Map<Long, Session> sessions;
 
-    public FidelityManager(ServiceRuntime runtime) {
-        this.runtime = runtime;
+    public FidelityManager(Mogram mogram) {
+        this.runtime = new ServiceRuntime(mogram);
+    }
+
+    public void addFidelity(Fidelity<T>... fidelities) {
+        for (Fidelity f : fidelities)
+            this.fidelities.put(f.getName(), f);
+    }
+
+    public void setSelectedFidelity(String name) {
+        selectedFidelity = fidelities.get(name);
     }
 
     @Override
-    public Map<String, Fidelity<String>> getFidelities() {
+    public Map<String, Fidelity<T>> getFidelities() {
         return fidelities;
     }
 
     @Override
-    public Fidelity<String> getSelectedFidelity() {
+    public Fidelity<T> getSelectedFidelity() {
         return selectedFidelity;
     }
 
@@ -75,6 +84,14 @@ public class FidelityManager implements FidelityManagement<String>, Serializable
     public <T extends Mogram> T service(T mogram) throws TransactionException, MogramException, RemoteException {
         runtime.setTarget(mogram);
         return (T) runtime.exert();
+    }
+
+    public ServiceRuntime getRuntime() {
+        return runtime;
+    }
+
+    public void setRuntime(ServiceRuntime runtime) {
+        this.runtime = runtime;
     }
 
     @Override

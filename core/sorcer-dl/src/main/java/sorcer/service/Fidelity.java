@@ -25,19 +25,32 @@ import java.util.List;
  * @author Mike Sobolewski
  *
  */
-public class Fidelity<S> implements Arg, Serializable {
+public class Fidelity<T> implements Arg, Serializable {
 	
 	private static final long serialVersionUID = -875629011139790420L;
-	
+
+	public enum Type implements Arg {
+		EMPTY, NAME, SYS, SIG, EXERT, CONTEXT, COMPONENT, COMPOSITE, MULTI, VAR;
+
+		public String getName() {
+			return toString();
+		}
+	}
+
 	private static int count = 0;
 
-	public void setSelects(List<S> selects) {
+	public void setSelects(List<T> selects) {
 		this.selects = selects;
 	}
 
 	protected String name;
 
-	protected List<S> selects = new ArrayList<S>();
+	protected List<T> selects = new ArrayList<T>();
+
+	// component exertion path
+	protected String path = "";
+
+	public Type type = Type.NAME;
 
 	public Fidelity() {
 		super();
@@ -48,53 +61,62 @@ public class Fidelity<S> implements Arg, Serializable {
 		this.name = name;
 	}
 	
-	public Fidelity(S[] selects) {
+	public Fidelity(T[] selects) {
 		name = "fidelity" + count++;
-		for (S s : selects)
+		for (T s : selects)
 			this.selects.add(s);
 	}
 	
-	public Fidelity(String name, S[] selects) {
+	public Fidelity(String name, T[] selects) {
 		this.name = name;
-		for (S s : selects)
+		for (T s : selects)
 			this.selects.add(s);
 	}
-	
-	public Fidelity(Fidelity<S> fidelity) {
-		for (S s : fidelity.selects)
+
+	public Fidelity(Fidelity<T> fidelity) {
+		for (T s : fidelity.selects)
 			selects.add(s);
-		name = "fidelity" + count++;
+		this.path = fidelity.path;
+		this.type = fidelity.type;
+		if (fidelity.name != null)
+			this.name = fidelity.name;
+		else
+			this.name = "fidelity" + count++;
 	}
 
-	public Fidelity(Fidelity<S> fidelity, List<String> selectors) {
-		for (String selector : selectors) {
-			for (S s : fidelity.selects) {
-				if (s instanceof Signature && ((Signature)s).getName().equals(selector))
-					selects.add(s);
-			}
-		}
+	public Fidelity(String name, Fidelity<T> fidelity) {
+		for (T s : fidelity.selects)
+			selects.add(s);
+		this.path = fidelity.path;
+		this.type = fidelity.type;
+		this.name = name;
 	}
 
-	public Fidelity(String name, Fidelity<S> fidelity) {
-		for (S s : fidelity.selects)
+	public Fidelity(String name, List<T> selectors) {
+		for (T s : selectors)
 			selects.add(s);
 		this.name = name;
 	}
 
-	public Fidelity(String name, List<S> selectors) {
-		for (S s : selectors)
-			selects.add(s);
-		this.name = name;
-	}
-
-	public Fidelity(String name, S selector) {
+	public Fidelity(String name, T selector) {
 		selects.add(selector);
 		this.name = name;
 	}
 
+	public T getSelect() {
+		return selects.get(0);
+	}
 
-	public List<S> getSelects() {
+	public List<T> getSelects() {
 		return selects;
+	}
+
+	public String getPath() {
+		return path;
+	}
+
+	public void setPath(String fidelityPath) {
+		this.path = fidelityPath;
 	}
 
 	public String getName() {
@@ -107,7 +129,10 @@ public class Fidelity<S> implements Arg, Serializable {
 	
 	@Override
 	public String toString() {
-		return "Fi: " + name + " " + selects;
+		return "Fi: " + name + (path != null ? "@" + path + " " : " ") + selects;
 	}
-	
+
+	public int size() {
+		return selects.size();
+	}
 }

@@ -77,7 +77,7 @@ import java.util.*;
  * @author Mike Sobolewski
  */
 @SuppressWarnings("rawtypes")
-public interface Context<T> extends Model, SelectProjection, Mappable<T>, Serializable,
+public interface Context<T> extends Model, Mappable<T>, Serializable,
 		Contexter<T>, Paradigmatic, Arg {
 
 	/** parameter (par) */
@@ -445,7 +445,7 @@ public interface Context<T> extends Model, SelectProjection, Mappable<T>, Serial
 	public Context mark(String path, String tuple) throws ContextException;
 
 	/**
-	 * Returns the enumeration of all context paths matching the given
+	 * Returns the List of all context paths matching the given
 	 * association.
 	 *
 	 * @param association

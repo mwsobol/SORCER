@@ -109,37 +109,37 @@ public class SrvModel extends ParModel<Object> implements Model {
 
     public void selectedServiceFidelity(String name) {
         Fidelity<Signature> fidelity = serviceFidelities.get(name);
-        namedServiceFidelity = name;
+        serviceFidelitySelector = name;
         this.serviceFidelity = fidelity;
     }
 
     public void addServiceFidelity(Fidelity fidelity) {
         putServiceFidelity(fidelity.getName(), fidelity);
-        namedServiceFidelity = fidelity.getName();
+        serviceFidelitySelector = fidelity.getName();
         this.serviceFidelity = fidelity;
     }
 
     public void setServiceFidelity(Fidelity fidelity) {
         this.serviceFidelity = fidelity;
         putServiceFidelity(fidelity.getName(), fidelity);
-        namedServiceFidelity = fidelity.getName();
+        serviceFidelitySelector = fidelity.getName();
     }
 
     public void setServiceFidelity(String name, Fidelity fidelity) {
         this.serviceFidelity = fidelity;
         putServiceFidelity(name, fidelity);
-        namedServiceFidelity = name;
+        serviceFidelitySelector = name;
     }
 
     public void putServiceFidelity(Fidelity fidelity) {
         if (serviceFidelities == null)
-            serviceFidelities = new HashMap<String, Fidelity<Signature>>();
+            serviceFidelities = new HashMap<String, Fidelity>();
         serviceFidelities.put(fidelity.getName(), fidelity);
     }
 
     public void putServiceFidelity(String name, Fidelity fidelity) {
         if (serviceFidelities == null)
-            serviceFidelities = new HashMap<String, Fidelity<Signature>>();
+            serviceFidelities = new HashMap<String, Fidelity>();
         serviceFidelities.put(name, fidelity);
     }
 
@@ -159,7 +159,7 @@ public class SrvModel extends ParModel<Object> implements Model {
             if (sf == null)
                 throw new ExertionException("no such service fidelity: " + selector + " at: " + this);
             serviceFidelity = sf;
-            namedServiceFidelity = selector;
+            serviceFidelitySelector = selector;
         }
     }
 

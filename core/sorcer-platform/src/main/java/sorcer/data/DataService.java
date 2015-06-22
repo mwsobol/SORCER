@@ -20,6 +20,7 @@ import org.rioproject.net.HostUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.tools.webster.Webster;
+import sorcer.util.FileURLHandler;
 import sorcer.util.GenericUtil;
 
 import java.io.File;
@@ -36,7 +37,7 @@ import java.util.concurrent.atomic.AtomicReference;
  *
  * @author Dennis Reedy
  */
-public class DataService {
+public class DataService implements FileURLHandler {
     private int port;
     private final String[] roots;
     private final AtomicReference<Webster> websterRef = new AtomicReference<>();
@@ -317,4 +318,12 @@ public class DataService {
         return String.format("http://%s:%d", address, port);
     }
 
+    /**
+     * Get the value of the DATA_URL system property
+     *
+     * @return The value of the DATA_URL system property
+     */
+    public String getDir() {
+        return DataService.getDataDir();
+    }
 }

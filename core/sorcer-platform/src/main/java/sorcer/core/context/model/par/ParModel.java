@@ -21,7 +21,6 @@ import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.ent.EntModel;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.invoker.ServiceInvoker;
-import sorcer.service.Scopable;
 import sorcer.service.*;
 import sorcer.service.modeling.Variability;
 import sorcer.util.Response;
@@ -172,16 +171,12 @@ public class ParModel<T> extends EntModel<T> implements Invocation<T>, Mappable<
 		}
 	}
 
-	public Par<Object> getPar(String name) throws ContextException {
+	public Par getPar(String name) throws ContextException {
 		Object obj = get(name);
 		if (obj instanceof Par)
-			return (Par<Object>) obj;
+			return (Par) obj;
 		else
-			try {
-				return new Par<Object>(name, asis(name), this);
-			} catch (RemoteException e) {
-				throw new ContextException(e);
-			}
+			return new Par(name, asis(name), this);
 	}
 	
 	public Variability bindVar(Variability var) throws EvaluationException,
@@ -228,12 +223,14 @@ public class ParModel<T> extends EntModel<T> implements Invocation<T>, Mappable<
 			RemoteException {
 		Par p = null;
 		for (Identifiable obj : objects) {
+			String pn = obj.getName();
 			if (obj instanceof Par) {
 				p = (Par) obj;
+			} else if (obj instanceof Variability) {
+				putValue(pn, obj);
 			} else if (obj instanceof Entry) {
-				putValue((String) ((Entry) obj).key(), obj);
+				putValue(pn, ((Entry)obj).asis());
 			} else {
-				String pn = obj.getName();
 				putValue(pn, obj);
 			}
 			
@@ -352,11 +349,7 @@ public class ParModel<T> extends EntModel<T> implements Invocation<T>, Mappable<
 	private Par putVar(String path, Variability value) throws ContextException {
 		putValue(path, value);
 		markVar(this, path, value);
-		try {
-			return new Par(path, value, this);
-		} catch (RemoteException e) {
-			throw new ContextException(e);
-		}
+		return new Par(path, value, this);
 	}
 	
 	/**
@@ -409,7 +402,7 @@ public class ParModel<T> extends EntModel<T> implements Invocation<T>, Mappable<
 		Iterator<Map.Entry<String, Object>> i = cxt.entryIterator();
 		while (i.hasNext()) {
 			Map.Entry<String, Object> e = i.next();
-			if (!containsKey(e.getKey()) && e.getKey().equals("script")) {
+			if (!containsPath(e.getKey()) && e.getKey().equals("script")) {
 				put(e.getKey(), context.asis(e.getKey()));
 			}
 		}

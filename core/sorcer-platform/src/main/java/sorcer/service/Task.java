@@ -28,6 +28,7 @@ import sorcer.core.signature.NetSignature;
 import sorcer.core.signature.ObjectSignature;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -131,7 +132,7 @@ public class Task extends ServiceExertion {
 				if (ss != null) {
 					if (ss instanceof NetSignature) {
 						try {
-							delegate = new NetTask(name, (NetSignature) ss);
+							delegate = new NetTask(name, ss);
 						} catch (SignatureException e) {
 							throw new ExertionException(e);
 						}
@@ -142,7 +143,7 @@ public class Task extends ServiceExertion {
 					} 
 					delegate.setFidelities(getFidelities());
 					delegate.setFidelity(getFidelity());
-					delegate.setSelectedFidelitySelector(namedServiceFidelity);
+					delegate.setSelectedFidelitySelector(serviceFidelitySelector);
 					delegate.setContext(dataContext);
 					delegate.setControlContext(controlContext);
 				}
@@ -369,6 +370,18 @@ public class Task extends ServiceExertion {
 		} else {
 			return dataContext.getValue(path, args);
 		}
+	}
+
+	public List<Mogram> getMograms(List<Mogram> exs) {
+		exs.add(this);
+		return exs;
+	}
+
+	@Override
+	public List<Mogram> getMograms() {
+		List<Mogram> ml = new ArrayList<Mogram>();
+		ml.add(this);
+		return ml;
 	}
 
 	public Mogram clearScope() throws MogramException {

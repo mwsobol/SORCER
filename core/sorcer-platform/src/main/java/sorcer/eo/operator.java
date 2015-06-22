@@ -23,7 +23,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.co.operator.DataEntry;
 import sorcer.co.tuple.*;
-import sorcer.core.SelectFidelity;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.*;
 import sorcer.core.context.model.PoolStrategy;
@@ -220,28 +219,28 @@ public class operator {
 			throw new ContextException("Service not an exertion: " + service);
 	}
 
-	public static FidelityContext fiContext(Fidelity... fidelityInfos)
-			throws ContextException {
-		return fiContext(null, fidelityInfos);
-	}
-
-	public static FidelityContext fiContext(String name, Fidelity... fidelityInfos)
-			throws ContextException {
-		FidelityContext fiCxt = new FidelityContext(name);
-		for (Fidelity e : fidelityInfos) {
-			if (e instanceof Fidelity) {
-				try {
-					fiCxt.put(e.getName(), e);
-				} catch (Exception ex) {
-					if (ex instanceof ContextException)
-						throw (ContextException) ex;
-					else
-						throw new ContextException(ex);
-				}
-			}
-		}
-		return fiCxt;
-	}
+//	public static FidelityContext fiContext(Fidelity... fidelityInfos)
+//			throws ContextException {
+//		return fiContext(null, fidelityInfos);
+//	}
+//
+//	public static FidelityContext sFiContext(String name, Fidelity... fidelities)
+//			throws ContextException {
+//		FidelityContext fiCxt = new FidelityContext(name);
+//		for (Fidelity e : fidelities) {
+//			if (e instanceof Fidelity) {
+//				try {
+//					fiCxt.put(e.getName(), e);
+//				} catch (Exception ex) {
+//					if (ex instanceof ContextException)
+//						throw (ContextException) ex;
+//					else
+//						throw new ContextException(ex);
+//				}
+//			}
+//		}
+//		return fiCxt;
+//	}
 
 	public static Context subcontext(Context context, List<String> paths) throws ContextException {
 		return context.getSubcontext((String[]) paths.toArray());
@@ -262,6 +261,7 @@ public class operator {
 			throws ContextException {
 		Context cxt = null;
 		List<MapContext> connList = new ArrayList<MapContext>();
+
 		if (entries[0] instanceof Exertion) {
 			Exertion xrt = (Exertion) entries[0];
 			if (entries.length >= 2 && entries[1] instanceof String)
@@ -288,6 +288,7 @@ public class operator {
 		List<Par> parEntryList = new ArrayList<Par>();
 		List<Context.Type> types = new ArrayList<Context.Type>();
 		List<EntryList> entryLists = new ArrayList<EntryList>();
+		List<DependencyEntry> depList = new ArrayList<DependencyEntry>();
 		Complement subject = null;
 		ReturnPath returnPath = null;
 		ExecPath execPath = null;
@@ -324,6 +325,8 @@ public class operator {
 				entryLists.add((EntryList) o);
 			}  else if (o instanceof MapContext) {
 				connList.add((MapContext) o);
+			} else if (o instanceof DependencyEntry) {
+				depList.add((DependencyEntry) o);
 			}
 		}
 
@@ -369,7 +372,7 @@ public class operator {
 			if (entryList.size() > 0)
 				populteContext(cxt, entryList);
 		}
-		if (parEntryList != null) {
+		if (parEntryList.size() > 0) {
 			for (Par p : parEntryList)
 				cxt.putValue(p.getName(), p);
 		}
@@ -405,13 +408,23 @@ public class operator {
 		if (entryLists.size() > 0) {
 			((ServiceContext) cxt).setEntryLists(entryLists);
 		}
-		if (connList != null) {
+		if (connList.size() > 0) {
 			for (MapContext conn : connList) {
 				if (conn.direction == MapContext.Direction.IN) {
 					((ServiceContext) cxt).getRuntime().setInConnector(conn);
 				} else {
 					((ServiceContext) cxt).getRuntime().setOutConnector(conn);
 				}
+			}
+		}
+		if (depList.size() > 0) {
+			Map<String, List<String>> dm = ((ServiceContext)cxt).getRuntime().getDependentPaths();
+			String path = null;
+			List<String> dependentPaths = null;
+			for (DependencyEntry e : depList) {
+				path = e.getName();
+				dependentPaths =  e.value();
+				dm.put(path, dependentPaths);
 			}
 		}
 		return cxt;
@@ -614,7 +627,7 @@ public class operator {
 			throws RemoteException, ContextException {
 		for (Identifiable i : objects) {
 			// just replace the value
-			if (((ServiceContext)context).containsKey(i.getName())) {
+			if (((ServiceContext)context).containsPath(i.getName())) {
 				context.putValue(i.getName(), i);
 				continue;
 			}
@@ -990,34 +1003,72 @@ public class operator {
 		return new EvaluationTask(signature, context);
 	}
 
-	public static SelectFidelity fiFi(String name) {
-		return new SelectFidelity(name);
-	}
-
-	public static SelectFidelity fi(String path, String name) {
-		return new SelectFidelity(name, path);
+	public static Fidelity fiFi(String name) {
+		return new Fidelity(name);
 	}
 
 
-	public static SelectFidelity fi(String path, String name, String... selectors) {
-		return new SelectFidelity(name, path, selectors);
+//	public static Tuple2<String, String> cFi(String componentPath, String fidelityName) {
+//		return new Tuple2<String, String> (componentPath, fidelityName);
+//	}
+
+	public static Fidelity<String> cFi(String componentPath, String fidelityName) {
+		Fidelity<String> fi = new Fidelity(componentPath, fidelityName);
+		fi.setPath(componentPath);
+		fi.type = Fidelity.Type.COMPONENT;
+		return fi;
 	}
 
+	public static Fidelity<String> fi(String name, String... selectors) {
+		Fidelity<String> fi = new Fidelity(name, selectors);
+		fi.type = Fidelity.Type.NAME;
+		return fi;
+	}
 
-	public static Fidelity<Signature> sFi(Exertion exertion) {
+	public static Map<String, Fidelity> sFis(Mogram exertion) {
+		return ((ServiceExertion)exertion).getServiceFidelities();
+	}
+
+	public static Fidelity<Signature> sFi(Mogram exertion) {
 		return exertion.getFidelity();
 	}
 
-	public static Map<String, Fidelity<Signature>> srvFis(Exertion exertion) {
+	public static String selFi(Mogram exertion) {
+		return ((ServiceExertion)exertion).getSelectedFidelitySelector();
+	}
+
+	public static Map<String, Fidelity> srvFis(Exertion exertion) {
 		return exertion.getFidelities();
 	}
 
 	public static Fidelity<Signature> sFi(Signature... signatures) {
-		return new Fidelity(signatures);
+		Fidelity<Signature> fi = new Fidelity(signatures);
+		fi.type = Fidelity.Type.EXERT;
+		return fi;
+	}
+
+	public static Fidelity<?> fi(String name) {
+		Fidelity<?> fi = new Fidelity(name);
+		fi.type = Fidelity.Type.EMPTY;
+		return fi;
+	}
+
+	public static Fidelity<Fidelity> sFi(Fidelity... fidelities) {
+		Fidelity<Fidelity> fi = new Fidelity<Fidelity>(fidelities);
+		fi.type = Fidelity.Type.MULTI;
+		return fi;
+	}
+
+	public static Fidelity<Fidelity> sFi(String name, Fidelity... fidelities) {
+		Fidelity<Fidelity> fi = new Fidelity<Fidelity>(name, fidelities);
+		fi.type = Fidelity.Type.COMPOSITE;
+		return fi;
 	}
 
 	public static Fidelity<Signature> sFi(String name, Signature... signatures) {
-		return new Fidelity<Signature>(name, signatures);
+		Fidelity<Signature> fi = new Fidelity<Signature>(name, signatures);
+		fi.type = Fidelity.Type.EXERT;
+		return fi;
 	}
 
 	public static ObjectSignature sig(String operation, Object object)
@@ -1279,7 +1330,7 @@ public class operator {
 		List<Exertion> exertions = new ArrayList<Exertion>();
 		List<Pipe> pipes = new ArrayList<Pipe>();
 		List<Fidelity> fidelities = null;
-		List<FidelityContext> fiContexts = null;
+		List<Fidelity> fiList = null;
 		List<MapContext> connList = new ArrayList<MapContext>();
 
 		for (int i = 0; i < elems.length; i++) {
@@ -1304,9 +1355,9 @@ public class operator {
 					fidelities = new ArrayList<Fidelity>();
 				fidelities.add((Fidelity) elems[i]);
 			} else if (elems[i] instanceof FidelityContext) {
-				if (fiContexts == null)
-					fiContexts = new ArrayList<FidelityContext>();
-				fiContexts.add((FidelityContext) elems[i]);
+				if (fiList == null)
+					fiList = new ArrayList<Fidelity>();
+				fiList.add((Fidelity) elems[i]);
 			}
 
 		}
@@ -1357,11 +1408,9 @@ public class operator {
 				job.getDataContext().setExertion(job);
 			}
 		}
-		if (fiContexts != null) {
-			Map<String, FidelityContext> fiMap = new HashMap<String, FidelityContext>();
-			for (FidelityContext fiCxt : fiContexts) {
-				fiMap.put(fiCxt.getName(), fiCxt);
-				job.setFidelityContexts(fiMap);
+		if (fiList != null) {
+			for (Fidelity fi : fiList) {
+				job.addFidelity(fi);
 			}
 		}
 		if (connList != null) {
@@ -1413,7 +1462,7 @@ public class operator {
 
 	public static Object get(Exertion exertion) throws ContextException,
 			RemoteException {
-        return ((ServiceContext) exertion.getContext()).getReturnValue();
+        return exertion.getContext().getReturnValue();
     }
 
 	public static <T extends Evaluation> Object asis(T evaluation) throws EvaluationException {
@@ -1672,8 +1721,21 @@ public class operator {
 		return xrt.getComponentMogram(componentExertionName);
 	}
 
+	public static Mogram tracable(Mogram xrt) {
+		List<Mogram> mograms = ((ServiceMogram) xrt).getAllMograms();
+		for (Mogram m : mograms) {
+			((ControlContext) ((Exertion) m).getControlContext()).setTracable(true);
+		}
+		return xrt;
+	}
+
 	public static List<String> trace(Mogram xrt) {
-		return ((Exertion)xrt).getControlContext().getTrace();
+		List<Mogram> mograms = ((ServiceMogram)xrt).getAllMograms();
+		List<String> trace = new ArrayList<String>();
+		for (Mogram m : mograms) {
+			trace.addAll(((Exertion) m).getControlContext().getTrace());
+		}
+		return trace;
 	}
 
 	public static void print(Object obj) {
@@ -2178,7 +2240,11 @@ public class operator {
 			this.in = in;
 			this.inPath = inPath;
 			if ((in instanceof Exertion) && (out instanceof Exertion)) {
-				parEntry = new Par(outPath, inPath, (Exertion)in);
+				try {
+					parEntry = new Par(outPath, inPath, in);
+				} catch (ContextException e) {
+					e.printStackTrace();
+				}
 				((ServiceExertion) out).addPersister(parEntry);
 			}
 		}
@@ -2192,7 +2258,11 @@ public class operator {
 			this.inComponentPath = inEndPoint.inComponentPath;
 
 			if ((in instanceof Exertion) && (out instanceof Exertion)) {
-				parEntry = new Par(outPath, inPath, (Exertion)in);
+				try {
+					parEntry = new Par(outPath, inPath, in);
+				} catch (ContextException e) {
+					e.printStackTrace();
+				}
 				((ServiceExertion) out).addPersister(parEntry);
 			}
 		}

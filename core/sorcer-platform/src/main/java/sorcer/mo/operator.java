@@ -23,8 +23,8 @@ import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.ent.EntModel;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.par.ParModel;
-import sorcer.core.plexus.MultiFidelityService;
 import sorcer.core.context.model.srv.SrvModel;
+import sorcer.core.plexus.MultiFidelityService;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
 
@@ -105,6 +105,11 @@ public class operator {
 
     public static Object resultAt(Model model, String path) throws ContextException {
         return ((ServiceContext)((ServiceContext)model).getRuntime().getOutcome()).get(path);
+    }
+
+    public static  ServiceContext substitute(ServiceContext model, Entry... entries) throws ContextException {
+        model.substitute(entries);
+        return model;
     }
 
     public static Context inputs(Model model) throws ContextException {

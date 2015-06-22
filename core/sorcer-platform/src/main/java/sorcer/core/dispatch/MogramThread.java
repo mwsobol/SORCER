@@ -56,8 +56,9 @@ public class MogramThread implements Runnable {
             else
                 dispatcher = dispatcherFactory.createDispatcher((Task)job, provider);
 			try {
-                ((Exertion)job).getControlContext().appendTrace(provider.getProviderName() +
-						" dispatcher: " + dispatcher.getClass().getName());
+				((Exertion)job).getControlContext().appendTrace((
+						provider.getProviderName() != null ? provider.getProviderName() + " " : "") +
+						"run: " + job.getName() + " dispatcher: " + dispatcher.getClass().getName());
 			} catch (RemoteException e) {
                 logger.error("exception in dispatcher: " + e);
 				// ignore it, locall call

@@ -447,8 +447,7 @@ public class SpaceTaker implements Runnable {
             ServiceExertion out;
             try {
 				ee.exertion.getControlContext().appendTrace(
-						"taken by: " + data.provider.getProviderName() + ":"
-								+ data.provider.getProviderID());
+						"spacer: " + data.provider.getProviderName());
 				se = (ServiceExertion) ee.exertion;
                 MonitoringSession monSession = MonitorUtil.getMonitoringSession(se);
 

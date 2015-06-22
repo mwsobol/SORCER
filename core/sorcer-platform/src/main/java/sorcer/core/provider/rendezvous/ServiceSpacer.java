@@ -86,7 +86,8 @@ public class ServiceSpacer extends ServiceJobber implements Spacer, Executor {
             try {
                 SpaceTaskDispatcher dispatcher = getDispatcherFactory(task).createDispatcher(task, provider);
                 try {
-                    task.getControlContext().appendTrace(provider.getProviderName() + " dispatcher: "
+                    task.getControlContext().appendTrace("spacer: "
+                            +(provider != null ? provider.getProviderName() + " " : "")
                             + dispatcher.getClass().getName());
                 } catch (RemoteException e) {
                     //ignore it, local call

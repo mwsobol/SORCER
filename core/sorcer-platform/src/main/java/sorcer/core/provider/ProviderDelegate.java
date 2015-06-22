@@ -195,9 +195,6 @@ public class ProviderDelegate {
 
 	private List<ExecutorService> spaceHandlingPools;
 
-	/** The SORCER persistence server. */
-	public static Mandator persister;
-
 	/** lease manager also used by provider workers. */
 	protected static LeaseRenewalManager leaseManager = new LeaseRenewalManager();
 
@@ -777,7 +774,7 @@ public class ProviderDelegate {
 		// and make the last signature as master SRV type only.
 		task.correctBatchSignatures();
 		task.getControlContext().appendTrace(
-				provider.getProviderName() + " execute: "
+				provider.getProviderName() + " to execute: "
 						+ (task.getProcessSignature()!=null ? task.getProcessSignature().getSelector() : "null") + ":"
 						+ (task.getProcessSignature()!=null ? task.getProcessSignature().getServiceType() : "null") + ":"
 						+ getHostName());
@@ -791,9 +788,6 @@ public class ProviderDelegate {
 				e.printStackTrace();
 			}
 		}
-
-		String providerId = task.getProcessSignature().getProviderName();
-
 		/*
 		 * String actions = task.method.action(); GuardedObject go = new
 		 * GuardedObject(task.method, new ServiceMethodPermission(task.userID,
@@ -803,7 +797,7 @@ public class ProviderDelegate {
 		 * actions); }
 		 */
 		if (isValidTask(task)) {
-            logger.info("Task " + task.getName() + " is valid");
+            logger.info("task " + task.getName() + " is valid");
 			try {
 				task.updateContext();
 				task.startExecTime();
@@ -864,7 +858,7 @@ public class ProviderDelegate {
 					task.stopExecTime();
 					ExertionException ex = new ExertionException(
 							"Unacceptable task received, requested provider: "
-									+ providerId + " Name:" + task.getName());
+									+ getProviderName() + " task: " + task.getName());
 					task.reportException(ex);
 					task.setStatus(Exec.FAILED);
 					return (Task) forwardTask(task, provider);
@@ -1044,8 +1038,7 @@ public class ProviderDelegate {
 				result.setReturnValue(obj);
 
 			if (obj instanceof Exertion) {
-				task.getControlContext().getExceptions()
-				.addAll(((Exertion) obj).getExceptions());
+				task.getControlContext().getExceptions().addAll(((Exertion) obj).getExceptions());
 				task.getTrace().addAll(((Exertion) obj).getTrace());
 			}
 		} else {

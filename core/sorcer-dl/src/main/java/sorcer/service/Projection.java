@@ -17,14 +17,12 @@
 
 package sorcer.service;
 
-import sorcer.core.SelectFidelity;
-
 /**
- * Created by MIke Sobolewski on 5/12/15.
+ * Created by Mike Sobolewski on 5/12/15.
  */
-public interface SelectProjection {
+public interface Projection<T> {
 
-    public SelectFidelity getSelectFidelity();
+    public Fidelity<T> getFidelity();
 
-    public void setSelectFidelity(SelectFidelity fidelity);
+    public void setFidelity(Fidelity<T> fidelity);
 }

@@ -19,6 +19,8 @@ import sorcer.service.Strategy.Access;
 import sorcer.service.Strategy.Monitor;
 import sorcer.service.Strategy.Wait;
 
+import java.util.Collection;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
@@ -97,13 +99,13 @@ public class NetTaskExertions {
 						result("result/y")));
 
 		logger.info("sFi: " + sFi(task));
-		logger.info("sFis: " + srvFis(task));
+		logger.info("sFis: " + size(srvFis(task)));
 
-//		task = exert(task, sFi("object"));
+//		task = exert(task, fi("object"));
 //		logger.info("exerted: " + task);
 //		assertTrue((Double)get(task) == 100.0);
 
-		task = exert(task, sFi("net"));
+		task = exert(task, fi("net"));
 		logger.info("exerted: " + task);
 		assertTrue("Wrong value for 100.0", (Double) get(task) == 100.0);
 	}
@@ -169,30 +171,30 @@ public class NetTaskExertions {
 		t4 = exert(t4);
 		logger.info("task t4 context: " + context(t4));
 
-		t4 = exert(t4, sFi("net"));
+		t4 = exert(t4, fi("net"));
 		logger.info("task t4 net context: " + context(t4));
 
     }
 
 	@Test
-	public void netLocalFiTask() throws Exception {
+	public void arithmeticMultiFiNetTaskTest() throws Exception {
+		ServiceExertion.debug = true;
+
 		Task task = task("add",
 				sFi("net", sig("add", Adder.class)),
 				sFi("object", sig("add", AdderImpl.class)),
 				context(inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
 						result("result/y")));
-		
-		logger.info("sFi: " + sFi(task));
-		logger.info("sFis: " + srvFis(task));
 
-//		task = exert(task, sFi("object"));
-//		logger.info("exerted: " + task);
-//		assertTrue("Wrong value for 100.0", (Double)get(task) == 100.0);
-		
-		task = exert(task, sFi("net"));
-		logger.info("exerted: " + task);
+		logger.info("sFi: " + sFi(task));
+		assertTrue(sFis(task).size() == 2);
+		logger.info("selFis: " + selFi(task));
+		assertTrue(selFi(task).equals("net"));
+
+		task = exert(task, fi("net"));
+		logger.info("exerted: " + context(task));
+		assertTrue(selFi(task).equals("net"));
 		assertTrue("Wrong value for 100.0", (Double)get(task) == 100.0);
-	
 	}
 
 }

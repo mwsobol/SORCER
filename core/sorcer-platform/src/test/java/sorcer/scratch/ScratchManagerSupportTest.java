@@ -1,13 +1,14 @@
 package sorcer.scratch;
 
 import org.junit.Assert;
+import org.junit.Test;
 import sorcer.data.DataService;
 
 import java.io.File;
 
 public class ScratchManagerSupportTest {
 
-    //@Test
+    @Test
     public void testGetScratchDir() throws Exception {
         ScratchManager scratchManager = new ScratchManagerSupport();
         File dataDir = new File(DataService.getDataDir());
@@ -28,6 +29,16 @@ public class ScratchManagerSupportTest {
             }
         }
         Assert.assertTrue("Expected 10, got "+count, count==10);
+    }
+
+    @Test
+    public void testRoot() {
+        File root = new File(DataService.getDataDir(), "green-eyed/potatoes");
+        if(root.exists())
+            deleteDirectory(root);
+        new ScratchManagerSupport(root);
+        Assert.assertTrue(root.exists());
+        Assert.assertTrue(root.getName().equals("potatoes"));
     }
 
      boolean deleteDirectory(File path) {

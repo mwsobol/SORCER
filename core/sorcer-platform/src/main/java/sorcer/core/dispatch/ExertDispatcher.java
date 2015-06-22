@@ -158,8 +158,9 @@ abstract public class ExertDispatcher implements Dispatcher {
         // job are
         // to be updated before dropping.
         try {
-            exertion.getControlContext().appendTrace(provider.getProviderName()
-                    + " dispatcher: " + getClass().getName());
+            exertion.getControlContext().appendTrace((provider.getProviderName() != null
+                            ? provider.getProviderName() + " " : "")
+                    + "exertion: " + exertion.getName() + " dispatched: " + getClass().getName());
         } catch (RemoteException e) {
             logger.warn("Exception on local call", e);
         }

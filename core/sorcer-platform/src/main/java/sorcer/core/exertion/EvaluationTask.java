@@ -140,7 +140,7 @@ public class EvaluationTask extends Task {
 			e.printStackTrace();
 			dataContext.reportException(e);
 		}
-		dataContext.appendTrace("" + getEvaluation());
+		dataContext.appendTrace("task" + getName() + " by: " + getEvaluation());
 		return this;
 	}
 

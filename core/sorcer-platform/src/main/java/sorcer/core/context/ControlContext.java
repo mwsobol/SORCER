@@ -152,6 +152,8 @@ public class ControlContext extends ServiceContext<Object> implements StrategyCo
 
 	public final static String TRACE_LIST = "exertion/exec/trace";
 
+	public final static String EXERTION_TRACABLE = "exertion/tracable";
+
 	private List<ThrowableTrace> exceptions = new ArrayList<ThrowableTrace>();
 
 	private List<Signature> signatures = new ArrayList<Signature>();
@@ -190,6 +192,7 @@ public class ControlContext extends ServiceContext<Object> implements StrategyCo
 		setWaitable(true);
 		put(EXCEPTIONS, exceptions);
 		put(TRACE_LIST, traceList);
+		put(EXERTION_TRACABLE, false);
 	}
 
 	public ControlContext(Exertion exertion) {
@@ -240,6 +243,17 @@ public class ControlContext extends ServiceContext<Object> implements StrategyCo
 			put(EXERTION_WAITABLE, true);
 		else if (Wait.NO.equals(value) || Wait.FALSE.equals(value))
 			put(EXERTION_WAITABLE, false);
+	}
+
+	public void setTracable(boolean isTracable) {
+		if (isTracable)
+			put(EXERTION_TRACABLE, true);
+		else
+			put(EXERTION_TRACABLE, false);
+	}
+
+	public Boolean isTracable() throws ContextException {
+		return (Boolean)getValue(EXERTION_TRACABLE);
 	}
 
 	public void setNotifierEnabled(boolean state) {
@@ -525,7 +539,7 @@ public class ControlContext extends ServiceContext<Object> implements StrategyCo
 
 	public Context addComponentAssociation(String path, String attributeName,
 			String attributeValue) throws ContextException {
-		if (!containsKey(path))
+		if (!containsPath(path))
 			put(path, SorcerConstants.NULL);
 		return super.addComponentAssociation(path, attributeName,
 				attributeValue);
@@ -574,8 +588,12 @@ public class ControlContext extends ServiceContext<Object> implements StrategyCo
 	}
 
 	public void appendTrace(String info) {
-		if (ServiceExertion.debug)
-			traceList.add(info);
+		try {
+			if (isTracable())
+                traceList.add(info);
+		} catch (ContextException e) {
+			// ignore it
+		}
 	}
 
 	public void addException(ThrowableTrace et) {

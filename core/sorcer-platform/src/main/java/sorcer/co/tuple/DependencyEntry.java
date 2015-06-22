@@ -1,6 +1,6 @@
 /*
- * Copyright 2013 the original author or authors.
- * Copyright 2013 SorcerSoft.org.
+ * Copyright 2009 the original author or authors.
+ * Copyright 2009 SorcerSoft.org.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,15 +15,20 @@
  * limitations under the License.
  */
 
-package sorcer.service;
+package sorcer.co.tuple;
+
+import sorcer.core.context.model.ent.Entry;
+
+import java.util.List;
 
 /**
- * Created by Mike Sobolewski on 5/12/15.
+ * Created by Mike Sobolewski on 6/21/15.
  */
-public interface ServiceProjection<Signature> {
+public class DependencyEntry extends Entry<List<String>> {
+    private static final long serialVersionUID = 1L;
 
-    public Fidelity<Signature> getServiceFidelity();
-
-    public void setServiceFidelity(Fidelity<Signature> fidelity);
-
+    @SuppressWarnings("unchecked")
+    public DependencyEntry(String path, List<String> paths) {
+        super(path, paths);
+    }
 }

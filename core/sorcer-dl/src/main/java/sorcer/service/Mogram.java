@@ -33,7 +33,7 @@ import java.util.Map;
  *
  * @author Mike Sobolewski
  */
-public interface Mogram extends Service, ServiceProjection, Scopable, Substitutable, Identifiable {
+public interface Mogram extends Service, Projection<Signature>, Scopable, Substitutable, Identifiable {
 
     /**
      * Exerts this mogram by the assigned service provider if it is set. If a service
@@ -94,6 +94,11 @@ public interface Mogram extends Service, ServiceProjection, Scopable, Substituta
     public List<String> getTrace();
 
     /**
+     * Appends a trace info to a trace list of this mogram.
+     */
+    public void appendTrace(String info);
+
+    /**
      * Returns the list of all traces of thrown exceptions with exceptions of
      * component mograms.
      *
@@ -115,7 +120,7 @@ public interface Mogram extends Service, ServiceProjection, Scopable, Substituta
     /**
      * Returns a map of all available service fidelities of this exertion.
      */
-    public Map<String, Fidelity<Signature>> getFidelities();
+    public Map<String, Fidelity> getFidelities();
 
     /**
      * Returns <code>true</code> if this exertion should be monitored for its
@@ -267,6 +272,8 @@ public interface Mogram extends Service, ServiceProjection, Scopable, Substituta
      * @throws ContextException
      * @throws RemoteException
      */
-    public Signature getBuilder(Arg... args) throws ContextException, RemoteException;
+    public Signature getBuilder(Arg... args) throws MogramException;
+
+    public void setBuilder(Signature builder) throws MogramException;
 
 }

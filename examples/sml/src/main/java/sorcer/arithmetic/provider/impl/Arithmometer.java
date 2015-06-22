@@ -14,6 +14,8 @@ import sorcer.core.context.PositionalContext;
 import sorcer.core.context.ServiceContext;
 import sorcer.service.Context;
 import sorcer.service.ContextException;
+import sorcer.service.Fidelity;
+import sorcer.service.Signature;
 import sorcer.service.Signature.ReturnPath;
 
 import java.io.Serializable;
@@ -196,13 +198,17 @@ public class Arithmometer implements SorcerConstants, Serializable {
 				cxt.ov(oi, result);
 				cxt.ovd(oi, outputMessage);
 			}
-
+			Signature sig = context.getMogram().getProcessSignature();
+			if (sig != null)
+				cxt.putValue("task/signature", sig);
+			Fidelity fi = context.getMogram().getFidelity();
+			if (fi != null)
+				cxt.putValue("task/fidelity", fi);
 		} catch (Exception ex) {
-			// ContextException, UnknownHostException
 			context.reportException(ex);
 			throw new ContextException(selector + " calculate exception", ex);
 		}
-		return (Context) context;
+		return context;
 	}
 
 	/**
@@ -275,14 +281,14 @@ public class Arithmometer implements SorcerConstants, Serializable {
 			logger.info(selector + " result: \n" + result);
 
 			String outputMessage = "calculated by " + getHostname();
-			if (((ServiceContext)context).getReturnPath() != null) {
-				String outpath = ((ServiceContext)context).getReturnPath().path;
+			if (context.getReturnPath() != null) {
+				String outpath = context.getReturnPath().path;
 				if (outpath.indexOf("${name}") >= 0) {
 					String out = outpath.replace("${name}", 
-							((ServiceContext)context).getMogram().getName());
-					((ServiceContext)context).getReturnPath().path = out;
+							context.getMogram().getName());
+					context.getReturnPath().path = out;
 				}
-				((ServiceContext)context).setReturnValue(result);
+				context.setReturnValue(result);
 			}
 			else if (outpaths.size() == 1) {
 				// put the result in the existing output path
@@ -299,8 +305,13 @@ public class Arithmometer implements SorcerConstants, Serializable {
 				cxt.putValue(RESULT_PATH, result);
 				cxt.putValue(path(RESULT_PATH, ArrayContext.DESCRIPTION), outputMessage);
 			}
+			Signature sig = context.getMogram().getProcessSignature();
+			if (sig != null)
+				cxt.putValue("task/signature", sig);
+			Fidelity fi = context.getMogram().getFidelity();
+			if (fi != null)
+				cxt.putValue("task/fidelity", fi);
 		} catch (Exception ex) {
-			// ContextException, UnknownHostException
 			ex.printStackTrace();
 			context.reportException(ex);
 			throw new ContextException(selector + " calculate exception", ex);
@@ -317,14 +328,14 @@ public class Arithmometer implements SorcerConstants, Serializable {
 		String outputMessage;
 		try {
 			outputMessage = "calculated by " + getHostname();
-			if (((ServiceContext) context).getReturnPath() != null) {
+			if (context.getReturnPath() != null) {
 				String outpath = ((ServiceContext) context).getReturnPath().path;
 				if (outpath.indexOf("${name}") >= 0) {
 					String out = outpath.replace("${name}",
-							((ServiceContext) context).getMogram().getName());
-					((ServiceContext) context).getReturnPath().path = out;
+							context.getMogram().getName());
+					context.getReturnPath().path = out;
 				}
-				((ServiceContext) context).setReturnValue(result);
+				context.setReturnValue(result);
 			} else if (outpaths.size() == 1) {
 				// put the result in the existing output path
 				String outpath = outpaths.get(0);

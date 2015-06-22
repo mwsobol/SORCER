@@ -78,7 +78,7 @@ public class ObjectJob extends Job {
 			evaluator.setParameterTypes(new Class[] { Mogram.class });
 			evaluator.setParameters(new Object[] { this });
 			result = (Job)evaluator.evaluate();
-			getControlContext().appendTrace("" + evaluator);
+			getControlContext().appendTrace("job by: " + evaluator.getClass().getName());
 		} catch (Exception e) {
 			e.printStackTrace();
 			if (controlContext != null)

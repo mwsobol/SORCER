@@ -228,6 +228,10 @@ public class operator {
 		return new Entry<T>(path, value);
 	}
 
+	public static DependencyEntry dep(String path, List<String> paths) {
+		return new DependencyEntry(path, paths);
+	}
+
 	public static <T> Entry<T> rvEnt(String path, T value) {
 		Entry<T> e = new Entry<T>(path, value);
 		return e.setReactive(true);
@@ -480,6 +484,10 @@ public class operator {
 
 	public static int size(Context context) {
 		return context.size();
+	}
+
+	public static int size(Map map) {
+		return map.size();
 	}
 
 	public static int size(DatabaseStorer.Store type) throws ExertionException,
