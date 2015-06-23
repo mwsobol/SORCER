@@ -63,9 +63,8 @@ public class ScratchManagerSupport implements ScratchManager, Serializable {
         }
     }
 
-    public ScratchManagerSupport setProperties(Properties properties) {
+    public void setProperties(Properties properties) {
         this.properties = properties;
-        return this;
     }
 
     @Override public File getScratchDir() {

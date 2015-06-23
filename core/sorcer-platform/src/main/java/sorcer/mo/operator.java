@@ -209,6 +209,7 @@ public class operator {
         List<Signature> sigs = new ArrayList<Signature>();
         Fidelity<String> responsePaths = null;
         SrvModel model = null;
+
         for (Object item : items) {
             if (item instanceof Signature) {
                 sigs.add((Signature)item);

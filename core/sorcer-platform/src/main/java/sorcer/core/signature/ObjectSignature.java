@@ -22,7 +22,6 @@ import sorcer.service.Context;
 import sorcer.service.ContextException;
 import sorcer.service.SignatureException;
 import sorcer.service.modeling.Modeling;
-import sorcer.util.ObjectCloner;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -303,24 +302,14 @@ public class ObjectSignature extends ServiceSignature {
 
 	public Object build(Context<?> inContext) throws SignatureException {
 		Object obj = null;
-		Method m = null;
-		try {
-			if (argTypes != null) {
-				m = providerType.getMethod(selector, argTypes);
-			} else {
-				m = providerType.getMethod(selector);
-			}
-			if (args != null) {
-				// clone the arguments for a new parametric model
-				Object[] clonedArgs = (Object[]) ObjectCloner.clone(args);
-				obj = m.invoke(null, clonedArgs);
-			} else {
-				obj = m.invoke(null);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new SignatureException(e);
+		if (selector == null && initSelector == null
+				|| selector != null && selector.equals("new")
+				|| initSelector != null && initSelector.equals("new")) {
+			obj = newInstance();
+		} else {
+			obj = initInstance();
 		}
+
 		if (obj instanceof Modeling) {
 			try {
 				((Modeling)obj).isolateModel(inContext);
