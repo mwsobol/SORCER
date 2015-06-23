@@ -116,7 +116,7 @@ public class Signatures {
 	}
 
     @Test
-    public void StaticMethodWithArgs2()  {
+    public void StaticMethodWithNoArgs()  {
         Exception thrown = null;
         try {
             Signature sig = sig(Math.class, "random");
@@ -128,7 +128,7 @@ public class Signatures {
     }
 
     @Test
-    public void StaticMethodWithArgs3()  {
+    public void StaticMethodWithNoArgs2()  {
         Exception thrown = null;
         try {
             Signature sig = sig("random", Math.class);
