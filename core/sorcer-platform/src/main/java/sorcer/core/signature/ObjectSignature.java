@@ -302,9 +302,9 @@ public class ObjectSignature extends ServiceSignature {
 
 	public Object build(Context<?> inContext) throws SignatureException {
 		Object obj = null;
-		if (selector == null && initSelector == null
-				|| selector != null && selector.equals("new")
-				|| initSelector != null && initSelector.equals("new")) {
+		if ((selector == null && initSelector == null)
+				|| (selector != null && selector.equals("new"))
+				|| (initSelector != null && initSelector.equals("new"))) {
 			obj = newInstance();
 		} else {
 			obj = initInstance();

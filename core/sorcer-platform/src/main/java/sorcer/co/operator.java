@@ -801,7 +801,7 @@ public class operator {
 			throws SignatureException {
 		if ((signature.getSelector() == null
 				&& ((ObjectSignature) signature).getInitSelector() == null)
-				|| signature.getSelector() != null && signature.getSelector().equals("new")
+				|| (signature.getSelector() != null && signature.getSelector().equals("new"))
 				|| (((ObjectSignature) signature).getInitSelector() != null
 				&& ((ObjectSignature) signature).getInitSelector().equals("new")))
 			return ((ObjectSignature) signature).newInstance();

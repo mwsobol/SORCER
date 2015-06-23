@@ -8,9 +8,11 @@ import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.Adder;
 import sorcer.arithmetic.provider.impl.AdderImpl;
+import sorcer.core.signature.ObjectSignature;
 import sorcer.service.Context;
 import sorcer.service.Service;
 import sorcer.service.Signature;
+import sorcer.service.SignatureException;
 
 import java.lang.reflect.Proxy;
 import java.util.Calendar;
@@ -105,6 +107,14 @@ public class Signatures {
 
 	}
 
+	@Test
+	public void StaticMethodWithArgs() throws SignatureException {
+		Signature sig = sig(Math.class, "max",
+				new Class[]{double.class, double.class},
+				new Object[]{200.11, 3000.0});
+		logger.info("max: " + instance(sig));
+		assertTrue(instance(sig).equals(3000.0));
+	}
 
 	@Test
 	public void referencingFactoryClass() throws Exception {
