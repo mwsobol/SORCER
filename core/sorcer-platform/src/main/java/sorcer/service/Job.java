@@ -122,7 +122,7 @@ public class Job extends CompoundExertion {
 		// Needs to be RemoteJobber for Cataloger to find it
 		// s.setServiceType(Jobber.class.getName());
 		s.setProviderName(null);
-		s.setType(Signature.Type.SRV);
+		s.setType(Signature.Type.PRO);
 		serviceFidelity.selects.add(s); // Add the signature
 	}
 

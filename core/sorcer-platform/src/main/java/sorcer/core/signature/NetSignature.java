@@ -113,7 +113,7 @@ public class
 		else
 			this.providerName = providerName;
 		if (methodType == null) 
-			execType = Type.SRV;
+			execType = Type.PRO;
 		else
 			execType = methodType;
 		

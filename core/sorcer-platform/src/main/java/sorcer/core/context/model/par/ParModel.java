@@ -112,7 +112,7 @@ public class ParModel<T> extends EntModel<T> implements Invocation<T>, Mappable<
 
 			if ((val instanceof Par) && (((Par) val).asis() instanceof Variability)) {
 				bindVar((Variability) ((Par) val).asis());
-			} else if (val instanceof Scopable) {
+			} else if (val instanceof Scopable && ((Scopable)val).getScope() != null) {
 				((Scopable)val).getScope().setScope(this);
 			} else if (val instanceof Entry && (((Entry)val).asis() instanceof Scopable)) {
 				((Scopable) ((Entry)val).asis()).setScope(this);
