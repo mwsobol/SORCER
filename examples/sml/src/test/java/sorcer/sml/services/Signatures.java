@@ -8,7 +8,6 @@ import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.Adder;
 import sorcer.arithmetic.provider.impl.AdderImpl;
-import sorcer.core.signature.ObjectSignature;
 import sorcer.service.Context;
 import sorcer.service.Service;
 import sorcer.service.Signature;
@@ -115,6 +114,30 @@ public class Signatures {
 		logger.info("max: " + instance(sig));
 		assertTrue(instance(sig).equals(3000.0));
 	}
+
+    @Test
+    public void StaticMethodWithArgs2()  {
+        Exception thrown = null;
+        try {
+            Signature sig = sig(Math.class, "random");
+            logger.info("random: " + instance(sig));
+        } catch(Exception e) {
+            thrown = e;
+        }
+        assertNull(thrown);
+    }
+
+    @Test
+    public void StaticMethodWithArgs3()  {
+        Exception thrown = null;
+        try {
+            Signature sig = sig("random", Math.class);
+            logger.info("random: " + instance(sig));
+        } catch(Exception e) {
+            thrown = e;
+        }
+        assertNull(thrown);
+    }
 
 	@Test
 	public void referencingFactoryClass() throws Exception {
