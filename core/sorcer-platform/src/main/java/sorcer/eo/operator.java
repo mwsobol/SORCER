@@ -786,29 +786,26 @@ public class operator {
 		return null;
 	}
 
-	public static Signature sig(Class serviceType,
-								 String initSelector) throws SignatureException {
-		Method selectorMethod = null;
-		try {
-			selectorMethod = serviceType.getDeclaredMethod(initSelector, Context.class);
-			if (!Modifier.isStatic(selectorMethod.getModifiers()))
-				return sig(initSelector, serviceType);
-		} catch (NoSuchMethodException e) {
-			e.printStackTrace();
-			// skip
-		}
-		return sig(initSelector, serviceType, initSelector);
-	}
+    public static Signature sig(Class serviceType, String initSelector) throws SignatureException {
+        try {
+            Method selectorMethod = serviceType.getDeclaredMethod(initSelector, Context.class);
+            if (!Modifier.isStatic(selectorMethod.getModifiers()))
+                return sig(initSelector, serviceType);
+        } catch (NoSuchMethodException e) {
+            // skip
+        }
+        return sig(initSelector, serviceType, initSelector);
+    }
 
-	public static Signature sig(String operation, Class serviceType,
-								String initSelector) throws SignatureException {
-		try {
-			return new ObjectSignature(operation, serviceType, initSelector,
-					(Class<?>[])null, (Object[])null);
-		} catch (Exception e) {
-			throw new SignatureException(e);
-		}
-	}
+    public static Signature sig(String operation, Class serviceType,
+                                String initSelector) throws SignatureException {
+        try {
+            return new ObjectSignature(operation, serviceType, initSelector,
+                                       (Class<?>[])null, (Object[])null);
+        } catch (Exception e) {
+            throw new SignatureException(e);
+        }
+    }
 
 	public static Signature sig(Class serviceType,  Arg... args) throws SignatureException {
 		if (args == null || args.length == 0)
@@ -817,8 +814,7 @@ public class operator {
 			return sig("?", serviceType, args);
 	}
 
-	public static Signature sig(String operation, Class serviceType,  Arg... args)
-			throws SignatureException {
+	public static Signature sig(String operation, Class serviceType,  Arg... args) throws SignatureException {
 		String providerName = null;
 		Provision p = null;
 		List<MapContext> connList = new ArrayList<MapContext>();
