@@ -37,18 +37,29 @@ if (args.length == 0 || options.h) {
 }
 
 String scriptDir = new File(getClass().protectionDomain.codeSource.location.path).parent
-File engHome =  new File(scriptDir, "../../")
-System.setProperty("java.security.policy", new File(engHome, "configs/policy.all").absolutePath)
+File projectRoot =  new File(scriptDir, "../../")
+System.setProperty("java.security.policy", new File(projectRoot, "policy/policy.all").absolutePath)
 if(System.securityManager==null)
     System.securityManager = new SecurityManager()
 
+File distDir = new File(projectRoot, "distribution/build")
+File sorcerDist = null
+for(File dir : distDir.listFiles()) {
+    if(dir.name.startsWith("sorcer-")) {
+        sorcerDist = dir
+        break
+    }
+}
+if(sorcerDist==null) {
+    println "You must build the SORCER distribution first"
+    System.exit(-1)
+}
 def props = new Properties()
-new File(scriptDir, "../../gradle.properties").withReader { reader ->
+new File(sorcerDist, "configs/versions.properties").withReader { reader ->
     props.load(reader)
 }
 
-File sorcerModelingDist = new File(engHome, "../distributions/sorcer-modeling-${props['sorcer.modeling.version']}")
-File rioHome = new File(sorcerModelingDist, "rio-${props['rio.version']}")
+File rioHome = new File(sorcerDist, "rio-${props['rio.version']}")
 
 def jars = []
 rioHome.eachFileRecurse (FileType.FILES) { file ->
@@ -65,6 +76,10 @@ rioHome.eachFileRecurse (FileType.FILES) { file ->
         if(!file.parentFile.path.endsWith("logback"))
             jars << file.toURI().toURL()
     }
+}
+sorcerDist.eachFileRecurse (FileType.FILES) { file ->
+    if(file.name.startsWith("sorcer-dl"))
+        jars << file.toURI().toURL()
 }
 
 /* The following is somewhat of a hack to get Rio's RMICLassLoader into the
@@ -83,7 +98,7 @@ try {
 }
 
 ["java.rmi.server.useCodebaseOnly" : "false",
- "logback.configurationFile" : "${engHome.path}/configs/mstc-test-logback.xml",
+ "logback.configurationFile" : "${projectRoot.path}/configs/sorcer-logging.groovy",
  //"java.rmi.server.RMIClassLoaderSpi" : "org.rioproject.rmi.ResolvingLoader",
  //"org.rioproject.resolver.jar" : new File(rioHome, "lib/resolver/resolver-aether-${props['rio.version']}.jar").path,
  "rio.home" : rioHome.absolutePath].each { key, value ->
