@@ -17,12 +17,13 @@
 
 package sorcer.core.signature;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sorcer.core.invoker.MethodInvoker;
 import sorcer.service.Context;
 import sorcer.service.ContextException;
 import sorcer.service.SignatureException;
 import sorcer.service.modeling.Modeling;
-import sorcer.util.ObjectCloner;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -42,6 +43,8 @@ public class ObjectSignature extends ServiceSignature {
 	private String initSelector;
 	
 	private Class<?>[] argTypes;
+
+    private static Logger logger = LoggerFactory.getLogger(ObjectSignature.class);
 
 	public ObjectSignature() {
 		this.providerType = Object.class;
@@ -156,8 +159,7 @@ public class ObjectSignature extends ServiceSignature {
 	public MethodInvoker<?> createEvaluator() throws InstantiationException,
 	IllegalAccessException {
 		if (target == null && serviceType != null) {
-			evaluator = new MethodInvoker(serviceType.newInstance(),
-					selector);
+			evaluator = new MethodInvoker(serviceType.newInstance(), selector);
 		} else
 			evaluator = new MethodInvoker(target, selector);
 		this.evaluator.setParameters(args);
@@ -205,7 +207,7 @@ public class ObjectSignature extends ServiceSignature {
 				obj = constructor.newInstance(args);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+            logger.error("newInstance failed", e);
 			throw new SignatureException(e);
 		}
 		logger.debug(">>>>>>>>>>> instantiated: \n" + obj + "\n by signature: "
@@ -234,8 +236,19 @@ public class ObjectSignature extends ServiceSignature {
 	 */
 	public Object initInstance() throws SignatureException {
 		Object obj = null;
-		Method m = null;
+		Method m;
+
 		try {
+            if(selector!=null) {
+                try {
+                    Method selectorMethod = providerType.getDeclaredMethod(selector, argTypes);
+                    if(Modifier.isStatic(selectorMethod.getModifiers())) {
+                        return  selectorMethod.invoke(null, args);
+                    }
+                } catch (NoSuchMethodException e) {
+                    //skip;
+                }
+            }
 			if (initSelector == null || initSelector.equals("new")) {
 				obj = providerType.newInstance();
 				return obj;
@@ -252,13 +265,14 @@ public class ObjectSignature extends ServiceSignature {
 			if (args != null) {
 				obj = m.invoke(obj, args);
 			}
-			else if (argTypes != null && argTypes.length == 1 && args == null) {
+			else if (argTypes != null && argTypes.length == 1) {
 				obj = m.invoke(obj, new Object[] { null });
 			}
 			else {
 				obj = m.invoke(obj);
 			}
 		} catch (Exception e) {
+            logger.error("initInstance failed", e);
 			try {
 				// check if that is SORCER service bean signature
 				m = providerType.getMethod(selector, Context.class);
@@ -267,7 +281,7 @@ public class ObjectSignature extends ServiceSignature {
 				else
 					throw new SignatureException(e);
 			} catch (Exception e1) {
-				e.printStackTrace();
+                logger.error("initInstance failed #2", e);
 				throw new SignatureException(e);
 			} 
 		}
@@ -298,36 +312,26 @@ public class ObjectSignature extends ServiceSignature {
 	}
 
 	public Object build() throws SignatureException {
-		return build(null);
+        return build(null);
 	}
 
 	public Object build(Context<?> inContext) throws SignatureException {
-		Object obj = null;
-		Method m = null;
-		try {
-			if (argTypes != null) {
-				m = providerType.getMethod(selector, argTypes);
-			} else {
-				m = providerType.getMethod(selector);
-			}
-			if (args != null) {
-				// clone the arguments for a new parametric model
-				Object[] clonedArgs = (Object[]) ObjectCloner.clone(args);
-				obj = m.invoke(null, clonedArgs);
-			} else {
-				obj = m.invoke(null);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new SignatureException(e);
+		Object obj;
+		if ((selector == null && initSelector == null)
+				|| (selector != null && selector.equals("new"))
+				|| (initSelector != null && initSelector.equals("new"))) {
+			obj = newInstance();
+		} else {
+			obj = initInstance();
 		}
+
 		if (obj instanceof Modeling) {
 			try {
 				((Modeling)obj).isolateModel(inContext);
 				((Modeling)obj).setContext(inContext);
 				((Modeling)obj).initializeBuilder();
 			} catch (ContextException e) {
-				e.printStackTrace();
+				logger.error("Isolation failed", e);
 				throw new SignatureException(e);
 			}
 		}

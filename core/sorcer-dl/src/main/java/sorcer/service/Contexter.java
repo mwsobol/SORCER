@@ -36,8 +36,8 @@ public interface Contexter<T> extends Remote {
 
 	/**
 	 * Appends an argument context to this context for a given path.
-	 * @param a context to be appended
-	 * @param an offset path of the argument context
+	 * @param context a context to be appended
+	 * @param path an offset path of the argument context
 	 * @return an appended context
 	 * @throws ContextException
 	 * @throws RemoteException
@@ -47,7 +47,7 @@ public interface Contexter<T> extends Remote {
 	
 	/**
 	 * Returns a subcontext at a given path.
-	 * @param a path in this context
+	 * @param path a path in this context
 	 * @return a subcontext of this context at <code>path</code>
 	 * @throws ContextException
 	 * @throws RemoteException

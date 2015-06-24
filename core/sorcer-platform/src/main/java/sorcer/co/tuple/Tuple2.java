@@ -30,12 +30,12 @@ public class Tuple2<T1, T2> implements Arg, Serializable, Identifiable, Evaluati
 	private  static final long serialVersionUID = -6519678282532888568L;
 	public T1 _1 = null;
 	public T2 _2 = null;
-	private Uuid entryUuid;
+	protected Uuid id = UuidFactory.generate();
 	// its arguments is persisted
 	protected boolean isPersistent = false;
 
 	public Tuple2() {
-		entryUuid = UuidFactory.generate();
+		id = UuidFactory.generate();
 	}
 	
 	public Tuple2(T1 x1, T2 x2) {
@@ -87,12 +87,12 @@ public class Tuple2<T1, T2> implements Arg, Serializable, Identifiable, Evaluati
 	 * @see sorcer.service.Identifiable#getId()
 	 */
 	@Override
-	public Object getId() {
-		return entryUuid;
+	public Uuid getId() {
+		return id;
 	}
 
 	public void setId(Uuid id) {
-		entryUuid = id;
+		this.id = id;
 	}
 
 	/* (non-Javadoc)

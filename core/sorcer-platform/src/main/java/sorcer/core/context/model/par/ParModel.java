@@ -21,7 +21,6 @@ import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.ent.EntModel;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.invoker.ServiceInvoker;
-import sorcer.service.Scopable;
 import sorcer.service.*;
 import sorcer.service.modeling.Variability;
 import sorcer.util.Response;
@@ -63,6 +62,12 @@ public class ParModel<T> extends EntModel<T> implements Invocation<T>, Mappable<
 
     private static final long serialVersionUID = -6932730998474298653L;
 
+	public static ParModel instance(Signature builder) throws SignatureException {
+		ParModel model = (ParModel) sorcer.co.operator.instance(builder);
+		model.setBuilder(builder);
+		return model;
+	}
+
     public ParModel() {
         super();
         name = PAR_MODEL;
@@ -73,6 +78,11 @@ public class ParModel<T> extends EntModel<T> implements Invocation<T>, Mappable<
     public ParModel(String name) {
         super(name);
     }
+
+	public ParModel(String name, Signature builder) {
+		this(name);
+		this.builder = builder;
+	}
 
     public ParModel(Context context) throws RemoteException, ContextException {
         super(context);
@@ -102,15 +112,17 @@ public class ParModel<T> extends EntModel<T> implements Invocation<T>, Mappable<
 
 			if ((val instanceof Par) && (((Par) val).asis() instanceof Variability)) {
 				bindVar((Variability) ((Par) val).asis());
-			} else if (val instanceof Scopable) {
+			} else if (val instanceof Scopable && ((Scopable)val).getScope() != null) {
 				((Scopable)val).getScope().setScope(this);
+			} else if (val instanceof Entry && (((Entry)val).asis() instanceof Scopable)) {
+				((Scopable) ((Entry)val).asis()).setScope(this);
 			}
 
 			if (val != null && val instanceof Evaluation) {
 				return (T) ((Evaluation) val).getValue(entries);
-			} else if (path == null && val == null && responsePaths != null) {
-				if (responsePaths.size() == 1)
-					return (T) getValue(responsePaths.get(0), entries);
+			} else if (path == null && val == null && runtime.getResponsePaths() != null) {
+				if (runtime.getResponsePaths().size() == 1)
+					return (T) getValue(runtime.getResponsePaths().get(0), entries);
 				else
 					return (T) getResponse();
 			} else {
@@ -159,16 +171,12 @@ public class ParModel<T> extends EntModel<T> implements Invocation<T>, Mappable<
 		}
 	}
 
-	public Par<Object> getPar(String name) throws ContextException {
+	public Par getPar(String name) throws ContextException {
 		Object obj = get(name);
 		if (obj instanceof Par)
-			return (Par<Object>) obj;
+			return (Par) obj;
 		else
-			try {
-				return new Par<Object>(name, asis(name), this);
-			} catch (RemoteException e) {
-				throw new ContextException(e);
-			}
+			return new Par(name, asis(name), this);
 	}
 	
 	public Variability bindVar(Variability var) throws EvaluationException,
@@ -215,14 +223,15 @@ public class ParModel<T> extends EntModel<T> implements Invocation<T>, Mappable<
 			RemoteException {
 		Par p = null;
 		for (Identifiable obj : objects) {
+			String pn = obj.getName();
 			if (obj instanceof Par) {
 				p = (Par) obj;
+			} else if (obj instanceof Variability) {
+				putValue(pn, obj);
 			} else if (obj instanceof Entry) {
-				putValue((String) ((Entry) obj).key(),
-						((Entry) obj).value());
+				putValue(pn, ((Entry)obj).asis());
 			} else {
-				String pn = obj.getName();
-				p = new Par(pn, obj, this);
+				putValue(pn, obj);
 			}
 			
 			if (p != null)
@@ -340,11 +349,7 @@ public class ParModel<T> extends EntModel<T> implements Invocation<T>, Mappable<
 	private Par putVar(String path, Variability value) throws ContextException {
 		putValue(path, value);
 		markVar(this, path, value);
-		try {
-			return new Par(path, value, this);
-		} catch (RemoteException e) {
-			throw new ContextException(e);
-		}
+		return new Par(path, value, this);
 	}
 	
 	/**
@@ -397,7 +402,7 @@ public class ParModel<T> extends EntModel<T> implements Invocation<T>, Mappable<
 		Iterator<Map.Entry<String, Object>> i = cxt.entryIterator();
 		while (i.hasNext()) {
 			Map.Entry<String, Object> e = i.next();
-			if (!containsKey(e.getKey()) && e.getKey().equals("script")) {
+			if (!containsPath(e.getKey()) && e.getKey().equals("script")) {
 				put(e.getKey(), context.asis(e.getKey()));
 			}
 		}

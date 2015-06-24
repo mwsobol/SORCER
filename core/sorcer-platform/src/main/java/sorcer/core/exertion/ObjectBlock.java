@@ -66,7 +66,7 @@ public class ObjectBlock extends Block {
 			evaluator.setParameterTypes(new Class[] { Mogram.class });
 			evaluator.setParameters(new Object[] { this });
 			result = (Block)evaluator.evaluate();
-			getControlContext().appendTrace("" + evaluator);
+			getControlContext().appendTrace("block by: " + evaluator.getClass().getName());
 		} catch (Exception e) {
 			e.printStackTrace();
 			if (controlContext != null)

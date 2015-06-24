@@ -2,19 +2,21 @@ package sorcer.sml.contexts;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.core.context.Copier;
-import sorcer.core.invoker.ServiceInvoker;
+import sorcer.core.context.model.ent.Entry;
 import sorcer.service.Context;
+import sorcer.service.Invocation;
 import sorcer.service.modeling.Model;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import static org.junit.Assert.assertTrue;
+import static sorcer.co.operator.asis;
 import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
+import static sorcer.eo.operator.asis;
 import static sorcer.eo.operator.put;
 import static sorcer.eo.operator.value;
 import static sorcer.mo.operator.*;
@@ -31,7 +33,7 @@ public class EntModels {
 	@Test
 	public void entryModel() throws Exception {
 
-		// create a new entModel as a regular context 
+		// use entModel to create an EntModel the same way as a regular context
 		// or convert any context to entModel(<context>)
 		Model cxt = entModel(ent("arg/x1", 1.0), ent("arg/x2", 2.0),
 				ent("arg/x3", 3.0), ent("arg/x4", 4.0), ent("arg/x5", 5.0));
@@ -39,13 +41,17 @@ public class EntModels {
 		add(cxt, ent("arg/x6", 6.0));
 		assertTrue(value(cxt, "arg/x6").equals(6.0));
 
-		// ent is of the Evaluation tpe
+		// ent is of the Evaluation type
+		// entries in models are evaluated
 		put(cxt, ent("arg/x6", ent("overwrite", 20.0)));
 		assertTrue(value(cxt, "arg/x6").equals(20.0));
 
 		// invoker is of the Invocation type
 		add(cxt, ent("arg/x7", invoker("x1 + x3", ents("x1", "x3"))));
+
 		assertTrue(value(cxt, "arg/x7").equals(4.0));
+		assertTrue(asis((Context)cxt, "arg/x7") instanceof Entry);
+		assertTrue(asis((Entry)asis((Context)cxt, "arg/x7")) instanceof Invocation);
 
 	}
 
@@ -58,8 +64,9 @@ public class EntModels {
 
 		add(cxt, ent("invoke", invoker("x1 + x3", ents("x1", "x3"))));
 
+		// declare response paths
+		responseUp(cxt, "invoke");
 		// evaluate the model
-        addResponse(cxt, "invoke");
 		value(cxt);
 		assertTrue(value(cxt).equals(4.0));
 
@@ -87,7 +94,7 @@ public class EntModels {
 		// cxt2 depends on values y1 and y2 calculated in cxt1
 		Context<Double> cxt2 = entModel(ent("arg/y3", 8.0), ent("arg/y4", 9.0), ent("arg/y5", 10.0));
 		add(cxt2, ent("invoke", invoker("y1 + y2 + y4 + y5", ents("y1", "y2", "y4", "y5"))));
-        addResponse(cxt2, "invoke");
+      	responseUp(cxt2, "invoke");
 
 		// created dependency of cxt2 on cxt1 via a context copier
 		Copier cp = copier(cxt1, ents("arg/x1", "arg/x2"), cxt2, ents("y1", "y2"));
@@ -101,7 +108,7 @@ public class EntModels {
 
 
 	@Test
-	public void evaluateMultiResponseModel() throws Exception {
+	public void evaluateMultiEntryResponseModel() throws Exception {
 		Context cxt = entModel(ent("arg/x1", 1.0), ent("arg/x2", 2.0),
 				ent("arg/x3", 3.0), ent("arg/x4", 4.0), ent("arg/x5", 5.0));
 
@@ -109,11 +116,11 @@ public class EntModels {
 
 		add(cxt, ent("multiply", invoker("x4 * x5", ents("x4", "x5"))));
 
-		// two responses declared
-        addResponse(cxt, "add", "multiply");
+		// two respnse paths declared for the result
+		responseUp(cxt, "add", "multiply");
 
 		// evaluate the model
-		Context result = (Context) value(cxt);
+		Context result = response(cxt);
 
 		logger.info("result: " + result);
 		assertTrue(result.equals(context(ent("add", 4.0), ent("multiply", 20.0))));
@@ -123,21 +130,20 @@ public class EntModels {
     @Test
     public void exertEntModel() throws Exception {
 
-        Context cxt = entModel(ent("arg/x1", 1.0), ent("arg/x2", 2.0),
+		Context cxt = entModel(ent("arg/x1", 1.0), ent("arg/x2", 2.0),
 				ent("arg/x3", 3.0), ent("arg/x4", 4.0), ent("arg/x5", 5.0));
 
-        add(cxt, ent("add", invoker("x1 + x3", ents("x1", "x3"))));
+		add(cxt, ent("add", invoker("x1 + x3", ents("x1", "x3"))));
 
-        add(cxt, ent("multiply", invoker("x4 * x5", ents("x4", "x5"))));
+		add(cxt, ent("multiply", invoker("x4 * x5", ents("x4", "x5"))));
 
-        // two responses declared
-        addResponse(cxt, "add", "multiply");
+		// two response paths declared
+		responseUp(cxt, "add", "multiply");
 
         // exert the model
-        Context result = exert(cxt);
+		Model model = exert(cxt);
+		Context result = response(model);
 
-        logger.info("result: " + responses(result));
-//		assertTrue(result.equals(context(ent("add", 4.0), ent("multiply", 20.0))));
-    }
-
+		assertTrue(result.equals(context(ent("add", 4.0), ent("multiply", 20.0))));
+	}
 }

@@ -17,12 +17,13 @@
 
 package sorcer.core.context;
 
-import sorcer.service.*;
+import sorcer.service.Context;
+import sorcer.service.ContextException;
+import sorcer.service.Positioning;
+import sorcer.service.Signature;
 
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author Mike Sobolewski
@@ -32,7 +33,7 @@ public class PositionalContext<T> extends ServiceContext<T> implements
 		Positioning {
 
 	private static final long serialVersionUID = -8607789835474515562L;
-	private int tally = 0;
+	protected int tally = 0;
 	
 	public PositionalContext() {
 		super();
@@ -40,6 +41,10 @@ public class PositionalContext<T> extends ServiceContext<T> implements
 	
 	public PositionalContext(String name) {
 		super(name);
+	}
+
+	public PositionalContext(String name, Signature builder) {
+		super(name, builder);
 	}
 
     public PositionalContext(Context context) throws ContextException {
@@ -64,16 +69,7 @@ public class PositionalContext<T> extends ServiceContext<T> implements
         return subcntxt;
     }
 
-    public Context appendInout(Context context) throws ContextException {
-        Iterator it = ((ServiceContext)context).entryIterator();
-        while (it.hasNext()) {
-            Map.Entry<String, Object> pairs = (Map.Entry) it.next();
-            putInoutValueAt(pairs.getKey(), pairs.getValue(), tally + 1);
-        }
-        return this;
-    }
-
-    public PositionalContext getEvaluatedSubcontext(String... paths) throws ContextException {
+    public ServiceContext getEvaluatedInSubcontext(String... paths) throws ContextException {
         PositionalContext subcntxt = getSubcontext();
         List<String>  ips = getInPaths();
         for (String p : paths) {
@@ -84,9 +80,10 @@ public class PositionalContext<T> extends ServiceContext<T> implements
                 }
             }
         }
+		subcntxt.getData().putAll(getInEntContext().getData());
         return subcntxt;
     }
-    
+
 	/* (non-Javadoc)
 	 * @see sorcer.core.context.Positioning#getInValueAt(sorcer.service.Context, int)
 	 */

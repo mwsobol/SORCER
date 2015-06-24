@@ -22,7 +22,6 @@ import net.jini.core.transaction.TransactionException;
 import net.jini.id.Uuid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sorcer.core.SelectFidelity;
 import sorcer.core.context.*;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.par.Par;
@@ -35,7 +34,6 @@ import sorcer.core.signature.NetSignature;
 import sorcer.core.signature.ServiceSignature;
 import sorcer.security.util.SorcerPrincipal;
 import sorcer.service.Signature.ReturnPath;
-import sorcer.service.Signature.Type;
 import sorcer.service.Strategy.Access;
 import sorcer.service.Strategy.Flow;
 
@@ -80,6 +78,10 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
 
     public ServiceExertion(String name) {
         super(name);
+    }
+
+    public Exertion newInstance() throws SignatureException {
+        return (Exertion) sorcer.co.operator.instance(builder);
     }
 
     protected void init() {
@@ -279,136 +281,12 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
             p.setId(id);
     }
 
-    public void removeSignature(int index) {
-        serviceFidelity.selects.remove(index);
-    }
-
     public void setAccess(Access access) {
         controlContext.setAccessType(access);
     }
 
     public void setFlow(Flow type) {
         controlContext.setFlowType(type);
-    }
-
-    public void addSignatures(Fidelity<Signature> fidelity) {
-        if (this.serviceFidelity != null)
-            this.serviceFidelity.selects.addAll(fidelity.selects);
-        else {
-            this.serviceFidelity = new Fidelity();
-            this.serviceFidelity.selects.addAll(fidelity.selects);
-        }
-    }
-
-    public boolean isBatch() {
-        return serviceFidelity.selects.size()>1;
-    }
-
-    public void setFidelity(Fidelity fidelity) {
-        this.serviceFidelity = fidelity;
-    }
-
-    public void putFidelity(Fidelity fidelity) {
-        if (serviceFidelities == null)
-            serviceFidelities = new HashMap<String, Fidelity<Signature>>();
-        serviceFidelities.put(fidelity.getName(), fidelity);
-    }
-
-    public void addFidelity(Fidelity<Signature> fidelity) {
-        putFidelity(fidelity.getName(), fidelity);
-        namedServiceFidelity = name;
-        this.serviceFidelity = fidelity;
-    }
-
-    public void setFidelity(String name, Fidelity<Signature> fidelity) {
-        this.serviceFidelity = new Fidelity(name, fidelity);
-        putFidelity(name, serviceFidelity);
-        namedServiceFidelity = name;
-    }
-
-    public void putFidelity(String name, Fidelity<Signature> fidelity) {
-        if (serviceFidelities == null)
-            serviceFidelities = new HashMap<String, Fidelity<Signature>>();
-        serviceFidelities.put(name, new Fidelity(fidelity));
-    }
-
-    public void addFidelity(String name, Fidelity fidelity) {
-        Fidelity nf = new Fidelity(name, fidelity);
-        putFidelity(name, nf);
-        namedServiceFidelity = name;
-        fidelity = nf;
-    }
-
-    public void selectFidelity(Arg... entries) throws ExertionException {
-        if (entries != null && entries.length > 0) {
-            for (Arg a : entries)
-                if (a instanceof SelectFidelity) {
-                    selectComponentFidelity((SelectFidelity) a);
-                } else if (a instanceof SelectFidelity) {
-                    selectFidelity(((SelectFidelity) a).getName());
-                } else if (a instanceof FidelityContext) {
-                    if (((FidelityContext) a).size() == 0
-                            && ((FidelityContext) a).getName() != null)
-                        applyFidelityContext(fidelityContexts
-                                .get(((FidelityContext) a).getName()));
-                    else
-                        applyFidelityContext((FidelityContext) a);
-                }
-        }
-    }
-
-    public void selectFidelity(String selector) throws ExertionException {
-        if (selector != null && serviceFidelities != null
-                && serviceFidelities.containsKey(selector)) {
-            Fidelity sf = serviceFidelities.get(selector);
-
-            if (sf == null)
-                throw new ExertionException("no such service fidelity: " + selector + " at: " + this);
-            serviceFidelity = sf;
-            namedServiceFidelity = selector;
-        }
-    }
-
-    public void selectComponentFidelity(SelectFidelity componetFiInfo) throws ExertionException {
-        Exertion ext = (Exertion) getComponentMogram(componetFiInfo.getPath());
-        String fn = componetFiInfo.getName();
-        if (ext != null && ext.getFidelity() != null
-                && serviceFidelities.containsKey(componetFiInfo.getName())) {
-            Fidelity<Signature> sf = null;
-            if (componetFiInfo.selects != null && componetFiInfo.selects.size() > 0)
-                sf = new Fidelity(ext.getFidelities().get(componetFiInfo.getName()), componetFiInfo.selects);
-            else
-                sf = ext.getFidelities().get(componetFiInfo.getName());
-
-            if (sf == null)
-                throw new ExertionException("no such service fidelity: " + fn + " at: " + ext);
-            ((ServiceExertion)ext).setFidelity(sf);
-            ((ServiceExertion)ext).setSelectedFidelitySelector(fn);
-        }
-    }
-
-    public void applyFidelityContext(FidelityContext fiContext) throws ExertionException {
-        throw new ExertionException("is not implemented by this CompoundExertion");
-    }
-
-    public void selectFidelity() throws ExertionException {
-        if (namedServiceFidelity != null && serviceFidelities != null
-                && serviceFidelities.containsKey(namedServiceFidelity)) {
-            Fidelity sf = serviceFidelities.get(namedServiceFidelity);
-            if (sf == null)
-                throw new ExertionException("no such service fidelity: "
-                        + namedServiceFidelity);
-            serviceFidelity = sf;
-        }
-    }
-
-    public void setProcessSignature(Signature signature) {
-        for (Signature sig : this.serviceFidelity.selects) {
-            if (sig.getType() != Type.SRV) {
-                this.serviceFidelity.selects.remove(sig);
-            }
-        }
-        this.serviceFidelity.selects.add(signature);
     }
 
     public void setService(Service provider) {
@@ -525,23 +403,6 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
             return false;
     }
 
-    public List<Mogram> getMograms(List<Mogram> exs) {
-        exs.add(this);
-        return exs;
-    }
-
-    /*
-	 * (non-Javadoc)
-	 *
-	 * @see sorcer.service.Exertion#getMograms()
-	 */
-    @Override
-    public List<Mogram> getMograms() {
-        ArrayList<Mogram> list = new ArrayList<Mogram>(1);
-        list.add(this);
-        return list;
-    }
-
     public List<Mogram> getAllMograms() {
         List<Mogram> exs = new ArrayList<Mogram>();
         getMograms(exs);
@@ -580,17 +441,17 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
 
     public Context getContext(String componentExertionName)
             throws ContextException {
-        Exertion component = getMogram(componentExertionName);
+        Exertion component = (Exertion)getMogram(componentExertionName);
         if (component != null)
-            return getMogram(componentExertionName).getContext();
+            return ((Exertion)getMogram(componentExertionName)).getContext();
         else
             return null;
     }
 
     public Context getControlContext(String componentExertionName) {
-        Exertion component = getMogram(componentExertionName);
+        Exertion component = (Exertion)getMogram(componentExertionName);
         if (component != null)
-            return getMogram(componentExertionName).getControlContext();
+            return ((Exertion)getMogram(componentExertionName)).getControlContext();
         else
             return null;
     }
@@ -872,20 +733,6 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
         }
     }
 
-    public Exertion getMogram(String componentExertionName) {
-        if (name.equals(componentExertionName)) {
-            return this;
-        } else {
-            List<Mogram> exertions = getAllMograms();
-            for (Mogram e : exertions) {
-                if (e.getName().equals(componentExertionName)) {
-                    return (Exertion)e;
-                }
-            }
-            return null;
-        }
-    }
-
     public String state() {
         return controlContext.getRendezvousName();
     }
@@ -906,7 +753,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
                 sig.setServiceType(Spacer.class);
                 ((NetSignature) sig).setSelector("service");
                 sig.setProviderName(ANY);
-                sig.setType(Signature.Type.SRV);
+                sig.setType(Signature.Type.PROC);
                 getControlContext().setAccessType(access);
             } else if (Access.PUSH == access
                     && !getProcessSignature().getServiceType()
@@ -915,7 +762,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
                     sig.setServiceType(Jobber.class);
                     ((NetSignature) sig).setSelector("service");
                     sig.setProviderName(ANY);
-                    sig.setType(Signature.Type.SRV);
+                    sig.setType(Signature.Type.PROC);
                     getControlContext().setAccessType(access);
                 }
             }
@@ -1103,12 +950,9 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
         return getDataContext().getCurrentContext();
     }
 
-    /* (non-Javadoc)
-     * @see sorcer.service.Exertion#getComponentMogram(java.lang.String)
-     */
     @Override
-    public Mogram getComponentMogram(String path) {
-        return this;
+    public void appendTrace(String info) {
+        getControlContext().appendTrace(info);
     }
 
     public String describe() {

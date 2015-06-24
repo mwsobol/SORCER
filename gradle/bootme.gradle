@@ -53,8 +53,8 @@ class BootMe extends DefaultTask {
         }
         args << "-Dproject.id=${project.name}"
         args << '-Djava.protocol.handler.pkgs="net.jini.url|sorcer.util.url|org.rioproject.url"'
-        // use distribution or project specific java.util.logging.config.file
 
+        // use distribution or project specific java.util.logging.config.file
         if (System.getProperty("java.util.logging.config.file") != null)
             args << "-Djava.util.logging.config.file=${System.getProperty("java.util.logging.config.file")}"
         else
@@ -67,6 +67,7 @@ class BootMe extends DefaultTask {
 
         if(!spawn)
             args << "-DforceConsoleLogging=true"
+
         String logName = project.path.substring(1).replaceAll(":", ".")
         args << "-Drio.log.dir=${project.sorcerDistHome}/logs"
         args << "-Dorg.rioproject.service=${logName}"

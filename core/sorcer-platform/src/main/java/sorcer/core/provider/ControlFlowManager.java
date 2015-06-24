@@ -509,7 +509,7 @@ public class ControlFlowManager {
         // execute service task
 		Fidelity<Signature> ts = new Fidelity<Signature>();
         Signature tsig = task.getProcessSignature();
-        ((ServiceContext)task.getContext()).setCurrentSelector(tsig.getSelector());
+        ((ServiceContext)task.getContext()).getRuntime().setCurrentSelector(tsig.getSelector());
         ((ServiceContext)task.getContext()).setCurrentPrefix(tsig.getPrefix());
 
         ts.getSelects().add(tsig);
@@ -569,7 +569,7 @@ public class ControlFlowManager {
             try {
                 t = task(task.getName() + "-" + i, signatures.get(i), shared);
                 signatures.get(i).setType(Signature.SRV);
-                ((ServiceContext)shared).setCurrentSelector(signatures.get(i).getSelector());
+                ((ServiceContext)shared).getRuntime().setCurrentSelector(signatures.get(i).getSelector());
                 ((ServiceContext)shared).setCurrentPrefix(signatures.get(i).getPrefix());
 
                 Fidelity<Signature> tmp = new Fidelity<Signature>();

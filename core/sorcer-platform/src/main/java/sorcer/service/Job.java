@@ -22,7 +22,6 @@ import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sorcer.core.SelectFidelity;
 import sorcer.core.context.ControlContext;
 import sorcer.core.context.FidelityContext;
 import sorcer.core.context.ServiceContext;
@@ -123,7 +122,7 @@ public class Job extends CompoundExertion {
 		// Needs to be RemoteJobber for Cataloger to find it
 		// s.setServiceType(Jobber.class.getName());
 		s.setProviderName(null);
-		s.setType(Signature.Type.SRV);
+		s.setType(Signature.Type.PROC);
 		serviceFidelity.selects.add(s); // Add the signature
 	}
 
@@ -225,10 +224,9 @@ public class Job extends CompoundExertion {
 
 					delegate.setFidelities(getFidelities());
 					delegate.setFidelity(getFidelity());
-					delegate.setSelectedFidelitySelector(namedServiceFidelity);
+					delegate.setSelectedFidelitySelector(serviceFidelitySelector);
 					delegate.setContext(dataContext);
 					delegate.setControlContext(controlContext);
-					delegate.setFidelityContexts(fidelityContexts);
 				}
 			}
 			if (delegate instanceof NetJob) {
@@ -594,8 +592,8 @@ public class Job extends CompoundExertion {
 		Collection<Fidelity> fidelities = fiContext.values();
 		ServiceExertion se = null;
 		for (Fidelity fi : fidelities) {
-			if (fi instanceof SelectFidelity) {
-				se = (ServiceExertion) getComponentMogram(((SelectFidelity) fi).getPath());
+			if (fi instanceof Fidelity) {
+				se = (ServiceExertion) getComponentMogram(fi.getPath());
 				se.selectFidelity(fi.getName());
 			}
 		}

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Sorcersoft.com S.A.
+ * Copyright 2014, 2015 Sorcersoft.com S.A.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ abstract public class AbstractRemoteFile implements RemoteFile {
 
     abstract protected File doGetFile() throws IOException;
 
-    abstract protected File getLocalPath();
+    abstract protected File getLocalPath() throws IOException;
 
     protected static String checksum(File localFile) throws IOException {
         return Files.hash(localFile, hf).toString();

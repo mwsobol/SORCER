@@ -89,7 +89,7 @@ public class ObjectTask extends Task {
 	public Task doTask(Transaction txn) throws ExertionException, SignatureException, RemoteException, MogramException {
 		MethodInvoker evaluator = null;
 		ObjectSignature os = (ObjectSignature) getProcessSignature();
-		dataContext.setCurrentSelector(os.getSelector());
+		dataContext.getRuntime().setCurrentSelector(os.getSelector());
 		dataContext.setCurrentPrefix(os.getPrefix());
 		try {
 			if (getProcessSignature().getReturnPath() != null && getProcessSignature().getReturnPath().inPaths != null)
@@ -166,9 +166,9 @@ public class ObjectTask extends Task {
 		}
 		setStatus(DONE);
 		if (evaluator != null)
-			dataContext.appendTrace(evaluator.toString());
+			dataContext.appendTrace("task: " + getName() + " by: " + evaluator.getClass().getName());
 		else
-			dataContext.appendTrace(os.toString());
+			dataContext.appendTrace("task: "  + getName() + " for: "  + os.toString());
 
 		return this;
 	}

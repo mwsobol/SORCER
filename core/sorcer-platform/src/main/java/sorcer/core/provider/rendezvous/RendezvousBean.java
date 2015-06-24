@@ -155,19 +155,26 @@ abstract public class RendezvousBean implements Service, Executor {
 	 */
 	@Override
 	public Mogram service(Mogram mogram, Transaction transaction) throws RemoteException, ExertionException {
+		Mogram out = null;
 		try {
             logger.info("Got exertion to process: " + mogram.toString());
 			setServiceID(mogram);
+			mogram.appendTrace("mogram: " + mogram.getName() + " rendezvous: " +
+					(provider.getProviderName() != null ? provider.getProviderName() + " " : "")
+					+ this.getClass().getName());
             if (mogram instanceof ObjectJob || mogram instanceof ObjectBlock)
-                return execute(mogram, transaction);
+                out = execute(mogram, transaction);
             else
-                return getControlFlownManager((Exertion)mogram).process();
-            //exrt.getDataContext().setExertion(null); ???
+                out = getControlFlownManager((Exertion)mogram).process();
+
+			if (mogram instanceof Exertion)
+				((Exertion)mogram).getDataContext().setExertion(null);
         }
 		catch (Exception e) {
 			e.printStackTrace();
 			throw new ExertionException();
 		}
+		return out;
 	}
 
     protected ControlFlowManager getControlFlownManager(Mogram exertion) throws ExertionException {

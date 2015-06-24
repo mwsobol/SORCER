@@ -36,7 +36,7 @@ import java.util.jar.JarInputStream;
 import java.util.jar.JarOutputStream;
 
 /**
- * SORCER generic utility class. It implements the interface
+ * SORCER generic utility class.
  */
 public class GenericUtil {
     public static final String LOCAL_JARS = "LOCAL";
@@ -335,58 +335,6 @@ public class GenericUtil {
 	public static void logStackTrace(Logger logger, String msg) {
 		logger.warn(msg, new Throwable());	
 	}
-	
-//	public File downloadNonStatic(Var<URL> var, File destinationFile)
-//			throws IOException, EvaluationException {
-//
-//		Object sourceValue = var.getValue();
-//		URL sourceUrl = null;
-//		if (sourceValue instanceof String) {
-//			sourceUrl = new URL((String) sourceValue);
-//		} else {
-//			sourceUrl = (URL) sourceValue;
-//		}
-//
-//		writeUrlToFile(sourceUrl, destinationFile);
-//
-//		return destinationFile;
-//
-//		// Vector<String> contents = getFileContents(var.getValue());
-//		// setFileContents(destinationFile, contents);
-//		// return destinationFile;
-//	}
-//
-//	public File downloadNonStatic(Var<URL> source, Var<File> destination)
-//			throws IOException, EvaluationException {
-//		// Vector<String> contents = getFileContents(source.getValue());
-//		// Object destinationValue = destination.getValue();
-//		// if (destinationValue instanceof String) {
-//		// destinationValue = new File((String)destinationValue);
-//		// }
-//		// setFileContents((File)destinationValue, contents);
-//		// return (File)destinationValue;
-//
-//		Object sourceValue = source.getValue();
-//		URL sourceUrl = null;
-//		if (sourceValue instanceof String) {
-//			sourceUrl = new URL((String) sourceValue);
-//		} else {
-//			sourceUrl = (URL) sourceValue;
-//		}
-//
-//		Object destValue = destination.getValue();
-//		File destFile = null;
-//		if (destValue instanceof String) {
-//			destFile = new File((String) destValue);
-//		} else {
-//			destFile = (File) destValue;
-//		}
-//
-//		writeUrlToFile(sourceUrl, destFile);
-//
-//		return destFile;
-//
-//	}
 
 	/**
 	 * This method given a URL sourceURL and file path destinationFile writes
@@ -396,7 +344,6 @@ public class GenericUtil {
 	 *            Source URL
 	 * @param destinationFile
 	 *            Destination file
-	 * @see writeUrlToFile
 	 * @throws IOException
 	 */
 	public static void download(URL sourceUrl, File destinationFile)
@@ -411,7 +358,6 @@ public class GenericUtil {
 	 *            Path to a file where contents are to be appended
 	 * @param afc
 	 *            Contents to append to file dataFile
-	 * @see appendVectorToFile
 	 * @throws IOException
 	 */
 	public static void appendFileContents(File dataFile, Vector<?> afc)
@@ -461,7 +407,6 @@ public class GenericUtil {
 	 * @param sourceFile Source file 
 	 * @param destinationFile Destination file 
 	 * @throws IOException
-	 * @see redirectInputStream2File
 	 */
 	public static void copyFile(File sourceFile, File destinationFile) throws IOException {
 		// If the destination file's parent directory does not exit, create it
@@ -2404,7 +2349,6 @@ public class GenericUtil {
 	 * written by S. A. Burton but modified by E. D. Thompson
 	 * 
 	 * @author S. A. Burton, E. D. Thompson
-	 * @see GenericUtil.setFileContents
 	 */
 	public static void setFileContents(File file, String[] sA)
 			throws IOException {
@@ -2418,7 +2362,6 @@ public class GenericUtil {
 		}
 		// Writing file contents to file
 		setFileContents(file, fileContents);
-		return;
 	}
 
 	public static void setFileContents(File file, String string)
@@ -2434,7 +2377,6 @@ public class GenericUtil {
 	 * @author S. A. Burton
 	 * @since JDK 1.6
 	 *
-	 * @see GenericUtil.writeStringVectorToFile
 	 */
 	public static void setFileContents(File file, Vector<?> fileContents)
 			throws IOException {
@@ -4212,8 +4154,7 @@ public class GenericUtil {
 	/**
 	 * Deep copies a Double[][] to an ArrayList<List<?>>
 	 * 
-	 * @param Double
-	 *            [][] data
+	 * @param data
 	 * @return ArrayList<List<?>> copy of data
 	 * @author Travis Sims
 	 */

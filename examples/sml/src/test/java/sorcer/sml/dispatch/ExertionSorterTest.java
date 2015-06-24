@@ -182,10 +182,10 @@ public class ExertionSorterTest {
         ExertionSorter es = new ExertionSorter(job);
         System.out.println("After sorting");
         printAllExertions(es.getSortedJob());
-        final Exertion f3 = job.getMogram("Task_f3");
-        final Exertion j2 = job.getMogram("Job_f2");
-        final Exertion j8 = job.getMogram("Job_f8");
-        final Exertion j20 = job.getMogram("Job_f20");
+        final Exertion f3 = (Exertion)job.getMogram("Task_f3");
+        final Exertion j2 = (Exertion)job.getMogram("Job_f2");
+        final Exertion j8 = (Exertion)job.getMogram("Job_f8");
+        final Exertion j20 = (Exertion)job.getMogram("Job_f20");
         List<Exertion> expList = new ArrayList<Exertion>();
         expList.add(j2);
         expList.add(f3);

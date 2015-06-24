@@ -76,7 +76,7 @@ public class ServiceExertionTest {
 		// exert and then get the value from job's context
 		eJob = exert(eJob);
 		
-		logger.info("eJob jobContext: " + serviceContext(eJob));
+		logger.info("eJob jobContext: " + upcontext(eJob));
 		//logger.info("eJob value @  j2/t5/arg/x1 = " + get(eJob, "j2/t5/arg/x1"));
 		assertTrue("Wrong eJob value for 20.0", get(eJob, "/j1/j2/t5/arg/x1").equals(20.0));
 			
@@ -92,7 +92,7 @@ public class ServiceExertionTest {
 		//logger.info("eJob value @  j2/t4/arg/x2 = " + exert(eJob, "j2/t4/arg/x2"));
 		assertTrue("Wrong eJob value for 50.0", get(eJob, "/j1/j2/t4/arg/x2").equals(50.0));
 			
-		logger.info("job context: " + serviceContext(eJob));
+		logger.info("job context: " + upcontext(eJob));
 		logger.info("value at j1/t3/result/y: " + get(eJob, "j1/t3/result/y"));
 		logger.info("value at t3, result/y: " + get(eJob, "t3", "result/y"));
 

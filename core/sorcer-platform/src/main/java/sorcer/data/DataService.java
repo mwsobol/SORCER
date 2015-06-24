@@ -20,6 +20,7 @@ import org.rioproject.net.HostUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.tools.webster.Webster;
+import sorcer.util.FileURLHandler;
 import sorcer.util.GenericUtil;
 
 import java.io.File;
@@ -36,14 +37,14 @@ import java.util.concurrent.atomic.AtomicReference;
  *
  * @author Dennis Reedy
  */
-public class DataService {
+public class DataService implements FileURLHandler {
     private int port;
     private final String[] roots;
     private final AtomicReference<Webster> websterRef = new AtomicReference<>();
     private String address;
     private static final Logger logger = LoggerFactory.getLogger(DataService.class.getName());
-    public static final String DATA_DIR  ="sorcer.data.dir";
-    public static final String DATA_URL  ="sorcer.data.url";
+    public static final String DATA_DIR = "sorcer.data.dir";
+    public static final String DATA_URL = "sorcer.data.url";
 
     /**
      * Get the DataService that is bound to the platform code server.
@@ -91,7 +92,7 @@ public class DataService {
         this.port = port;
         if(roots==null || roots.length==0)
             throw new IllegalArgumentException("You must provide roots");
-        List<String> adjusted = new ArrayList<String>();
+        List<String> adjusted = new ArrayList<>();
         for(String root : roots) {
             File f = new File(root);
             if(!f.exists())
@@ -317,4 +318,12 @@ public class DataService {
         return String.format("http://%s:%d", address, port);
     }
 
+    /**
+     * Get the value of the DATA_URL system property
+     *
+     * @return The value of the DATA_URL system property
+     */
+    public String getDir() {
+        return DataService.getDataDir();
+    }
 }

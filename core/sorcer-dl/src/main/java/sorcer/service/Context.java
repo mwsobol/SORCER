@@ -445,7 +445,7 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 	public Context mark(String path, String tuple) throws ContextException;
 
 	/**
-	 * Returns the enumeration of all context paths matching the given
+	 * Returns the List of all context paths matching the given
 	 * association.
 	 *
 	 * @param association

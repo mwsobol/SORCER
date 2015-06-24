@@ -17,7 +17,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 import static org.junit.Assert.*;
-import static sorcer.co.operator.inEnt;
+import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
 
 
@@ -144,6 +144,24 @@ public class SignatureTest {
 
 	}
 
+	@Test
+	public void reveresedLocalService() throws Exception  {
+
+		Signature lps = sig(AdderImpl.class, "add");
+		Object prv = provider(lps);
+		assertTrue(prv instanceof AdderImpl);
+		assertFalse(prv instanceof Proxy);
+
+		// request the local service
+		Service as = service("as", lps,
+				context("add",
+						inEnt("arg/x1", 20.0),
+						inEnt("arg/x2", 80.0),
+						result("result/y")));
+
+		assertEquals(100.0, exec(as));
+
+	}
 
 	@Test
 	public void referencingRemoteProvider() throws Exception  {
@@ -165,6 +183,25 @@ public class SignatureTest {
 
 	}
 
+	@Test
+	public void reversedReferencingRemoteProvider() throws Exception  {
+
+		Signature rps = sig(Adder.class, "add");
+		Object prv = provider(rps);
+		logger.info("provider of rps: " + prv);
+		assertTrue(prv instanceof Adder);
+		assertTrue(prv instanceof Proxy);
+
+		// request the local service
+		Service as = service("as", rps,
+				context("add",
+						inEnt("arg/x1", 20.0),
+						inEnt("arg/x2", 80.0),
+						result("result/y")));
+
+		assertEquals(100.0, exec(as));
+
+	}
 
 	@Test
 	public void referencingNamedRemoteProvider() throws Exception  {

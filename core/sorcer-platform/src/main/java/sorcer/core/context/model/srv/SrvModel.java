@@ -38,15 +38,21 @@ import static sorcer.eo.operator.*;
 /**
  * A ServiceModel is a schematic description or representation of something, especially a system, 
  * phenomenon, or service, that accounts for its properties and is used to study its characteristics.
- * Properties of a service model are represented by path of ServiceContext with values that depend
+ * Properties of a service model are represented by path of Context with values that depend
  * on other properties and can be evaluated as specified by ths model. Evaluations of the service 
- * model is the result of exerting a dynamic federation of services as specified by entries 
- * (variables) of the model. A rendezvous service provider orchestrating a choreography of the model
- * is a local or remote Modeler specified by a service signature of the model.
+ * model entries of the Srv type results in exerting a dynamic federation of services as specified by
+ * these entries. A rendezvous service provider orchestrating a choreography of the model
+ * is a local or remote one specified by a service signature of the model.
  *   
  * Created by Mike Sobolewski on 1/29/15.
  */
 public class SrvModel extends ParModel<Object> implements Model {
+
+    public static SrvModel instance(Signature builder) throws SignatureException {
+        SrvModel model = (SrvModel) sorcer.co.operator.instance(builder);
+        model.setBuilder(builder);
+        return model;
+    }
 
     public SrvModel() {
         super();
@@ -95,7 +101,7 @@ public class SrvModel extends ParModel<Object> implements Model {
 
     public boolean isBatch() {
         for (Signature s : serviceFidelity.getSelects()) {
-            if (s.getType() != Signature.Type.SRV)
+            if (s.getType() != Signature.Type.PROC)
                 return false;
         }
         return true;
@@ -103,43 +109,43 @@ public class SrvModel extends ParModel<Object> implements Model {
 
     public void selectedServiceFidelity(String name) {
         Fidelity<Signature> fidelity = serviceFidelities.get(name);
-        namedServiceFidelity = name;
+        serviceFidelitySelector = name;
         this.serviceFidelity = fidelity;
     }
 
     public void addServiceFidelity(Fidelity fidelity) {
         putServiceFidelity(fidelity.getName(), fidelity);
-        namedServiceFidelity = fidelity.getName();
+        serviceFidelitySelector = fidelity.getName();
         this.serviceFidelity = fidelity;
     }
 
     public void setServiceFidelity(Fidelity fidelity) {
         this.serviceFidelity = fidelity;
         putServiceFidelity(fidelity.getName(), fidelity);
-        namedServiceFidelity = fidelity.getName();
+        serviceFidelitySelector = fidelity.getName();
     }
 
     public void setServiceFidelity(String name, Fidelity fidelity) {
         this.serviceFidelity = fidelity;
         putServiceFidelity(name, fidelity);
-        namedServiceFidelity = name;
+        serviceFidelitySelector = name;
     }
 
     public void putServiceFidelity(Fidelity fidelity) {
         if (serviceFidelities == null)
-            serviceFidelities = new HashMap<String, Fidelity<Signature>>();
+            serviceFidelities = new HashMap<String, Fidelity>();
         serviceFidelities.put(fidelity.getName(), fidelity);
     }
 
     public void putServiceFidelity(String name, Fidelity fidelity) {
         if (serviceFidelities == null)
-            serviceFidelities = new HashMap<String, Fidelity<Signature>>();
+            serviceFidelities = new HashMap<String, Fidelity>();
         serviceFidelities.put(name, fidelity);
     }
 
     public Signature getProcessSignature() {
         for (Signature s : serviceFidelity.getSelects()) {
-            if (s.getType() == Signature.Type.SRV)
+            if (s.getType() == Signature.Type.PROC)
                 return s;
         }
         return null;
@@ -153,7 +159,7 @@ public class SrvModel extends ParModel<Object> implements Model {
             if (sf == null)
                 throw new ExertionException("no such service fidelity: " + selector + " at: " + this);
             serviceFidelity = sf;
-            namedServiceFidelity = selector;
+            serviceFidelitySelector = selector;
         }
     }
 
@@ -176,8 +182,16 @@ public class SrvModel extends ParModel<Object> implements Model {
                 if (((Srv) val).asis() instanceof SignatureEntry) {
                     ServiceSignature sig = (ServiceSignature) ((SignatureEntry) ((Srv) val).asis()).value();
                     Context out = execSignature(sig);
-                    if (sig.getReturnPath() != null && sig.getReturnPath().path != null) {
-                        return getValue(sig.getReturnPath().path);
+                    if (sig.getReturnPath() != null) {
+                        Object obj = out.getValue(sig.getReturnPath().path);
+                        if (obj == null)
+                            obj = out.getValue(path);
+                        if (obj != null)
+                            return obj;
+                        else {
+                            logger.warn("no value for return path: {} in: {}", sig.getReturnPath().path, out);
+                            return out;
+                        }
                     } else {
                         return out;
                     }
@@ -195,7 +209,7 @@ public class SrvModel extends ParModel<Object> implements Model {
         return val;
     }
 
-    private Context execSignature(Signature sig) throws Exception {
+    public Context execSignature(Signature sig) throws Exception {
         String[] ips = sig.getReturnPath().inPaths;
         String[] ops = sig.getReturnPath().outPaths;
         execDependencies(sig);
@@ -214,7 +228,7 @@ public class SrvModel extends ParModel<Object> implements Model {
         return outcxt;
     }
 
-    private void execDependencies(Signature sig, Arg... args) throws ContextException {
+    protected void execDependencies(Signature sig, Arg... args) throws ContextException {
         Map<String, List<String>> dpm = runtime.getDependentPaths();
         List<String> dpl = dpm.get(sig.getName());
         if (dpl != null && dpl.size() > 0) {

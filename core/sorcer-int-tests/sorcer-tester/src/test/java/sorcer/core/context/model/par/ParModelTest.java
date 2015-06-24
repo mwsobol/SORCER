@@ -29,7 +29,7 @@ import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.get;
 import static sorcer.eo.operator.pipe;
 import static sorcer.eo.operator.value;
-import static sorcer.mo.operator.addResponse;
+import static sorcer.mo.operator.responseUp;
 import static sorcer.po.operator.add;
 import static sorcer.po.operator.asis;
 import static sorcer.po.operator.*;
@@ -59,7 +59,7 @@ public class ParModelTest {
 		set(pm, "x", 20.0);
 //		assertEquals(value(pm, "add"), 40.0);
 	}
-	
+
 	@Test
 	public void contextInvoker() throws RemoteException, ContextException {
 		ParModel pm = new ParModel("par-model");
@@ -69,17 +69,16 @@ public class ParModelTest {
 
 		assertEquals(pm.getValue("x"), 10.0);
 		assertEquals(pm.getValue("y"), 20.0);
-//		logger.info("add value: " + pm.getValue("add"));
 		assertEquals(pm.getValue("add"), 30.0);
 
-		pm.addResponsePath("add");
+		responseUp(pm, "add");
 //		logger.info("pm context value: " + pm.getValue());
 		assertEquals(pm.getValue(), 30.0);
-		
+
 		pm.putValue("x", 100.0);
 		pm.putValue("y", 200.0);
 //		logger.info("add value: " + pm.getValue("add"));
-		assertEquals(pm.getValue("add"), 300.0);		
+		assertEquals(pm.getValue("add"), 300.0);
 
 		assertEquals(pm.invoke(context(inEnt("x", 200.0), inEnt("y", 300.0))), 500.0);
 	}
@@ -105,7 +104,7 @@ public class ParModelTest {
 		assertEquals(add.getValue(), 30.0);
 		assertEquals(pm.getValue("add"), 30.0);
 
-		pm.addResponsePath("add");
+		responseUp(pm, "add");
 		logger.info("pm context value: " + pm.invoke(null));
 		assertEquals(pm.invoke(null), 30.0);
 
@@ -123,7 +122,7 @@ public class ParModelTest {
 		ParModel pm = parModel(par("x", 10.0), par("y", 20.0),
 				par("add", invoker("x + y", pars("x", "y"))));
 
-        addResponse(pm, "add");
+		responseUp(pm, "add");
 
 		assertEquals(value(pm, "x"), 10.0);
 		assertEquals(value(pm, "y"), 20.0);
@@ -138,7 +137,7 @@ public class ParModelTest {
 		ParModel pm = parModel(par("x", 10.0), par("y", 20.0),
 				par("add", invoker("x + y", pars("x", "y"))));
 
-        addResponse(pm, "add");
+		responseUp(pm, "add");
 
 		Par x = par(pm, "x");
 		logger.info("par x: " + x);
@@ -179,12 +178,12 @@ public class ParModelTest {
 		Context cxt = context(ent("url", "myUrl"), ent("design/in", 25.0));
 
 		// mapping parameters to cxt, m1 and m2 are par aliases 
-		Par p1 = par("p1", "design/in", cxt);
+		Par p1 = map(par("p1", "design/in"), cxt);
 		assertEquals(value(p1), 25.0);
 		set(p1, 30.0);
 		assertEquals(value(p1), 30.0);
 		
-		Par p2 = par("p2", "url", cxt);
+		Par p2 = map(par("p2", "url"), cxt);
 		assertEquals(value(p2), "myUrl");
 		set(p2, "newUrl");
 		assertEquals(value(p2), "newUrl");
@@ -279,7 +278,7 @@ public class ParModelTest {
 		Context cxt = context(ent("url", "myUrl"), ent("design/in", 25.0));
 
 		// persistent par
-		Par dbIn = persistent(par("dbIn", "design/in", cxt));
+		Par dbIn = persistent(map(par("dbIn", "design/in"), cxt));
 		assertEquals(value(dbIn), 25.0);  	// is persisted
 		logger.info("value dbIn asis design/in 1: " + dbIn.getMappable().asis("design/in"));
 
@@ -296,7 +295,7 @@ public class ParModelTest {
 		assertEquals(value(dbIn), 30.0);
 		
 		// not persistent par
-		Par up = par("up", "url", cxt);
+		Par up = map(par("up", "url"), cxt);
 		assertEquals(value(up), "myUrl");
 		
 		set(up, "newUrl");
@@ -307,8 +306,8 @@ public class ParModelTest {
 	public void aliasedParsTest() throws ContextException, RemoteException {
 		Context cxt = context(ent("design/in1", 25.0), ent("design/in2", 35.0));
 		
-		Par x1 = par("x1", "design/in1", cxt);
-		Par x2 = par("x2", "design/in2", cxt);
+		Par x1 = par(cxt, "x1", "design/in1");
+		Par x2 = map(par("x2", "design/in2"), cxt);
 	
 		assertEquals(value(x1), 25.0);
 		set(x1, 45.0);
@@ -349,9 +348,9 @@ public class ParModelTest {
 		
 		
 		// context and job parameters
-		Par x1p = par("x1p", "arg/x1", c4);
-		Par x2p = par("x2p", "arg/x2", c4);
-		Par j1p = par("j1p", "j1/t3/result/y", j1);
+		Par x1p = map(par("x1p", "arg/x1"), c4);
+		Par x2p = map(par("x2p", "arg/x2"), c4);
+		Par j1p = map(par("j1p", "j1/t3/result/y"), j1);
 		
 		// setting context parameters in a job
 		set(x1p, 10.0);
@@ -360,7 +359,7 @@ public class ParModelTest {
 		// update par references
 		j1 = exert(j1);
 		c4 = taskContext("j1/t4", j1);
-		logger.info("j1 value: " + serviceContext(j1));
+		logger.info("j1 value: " + upcontext(j1));
 		logger.info("j1p value: " + value(j1p));
 		
 		// get job parameter value
@@ -402,8 +401,8 @@ public class ParModelTest {
 				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
 		
 		
-		Par c4x1p = par("c4x1p", "arg/x1", c4);
-		Par c4x2p = par("c4x2p", "arg/x2", c4);
+		Par c4x1p = map(par("c4x1p", "arg/x1"), c4);
+		Par c4x2p = map(par("c4x2p", "arg/x2"), c4);
 		// job j1 parameter j1/t3/result/y is used in the context of task t6
 		Par j1p = par("j1p", "j1/t3/result/y", j1);
 		Par t4x1p = par("t4x1p", "j1/j2/t4/arg/x1", j1);
@@ -419,7 +418,7 @@ public class ParModelTest {
 		// get job parameter value
 		assertEquals(value(j1p), 400.0);
 		
-		logger.info("j1 job context: " + serviceContext(j1));
+		logger.info("j1 job context: " + upcontext(j1));
 		
 		
 		Task t6 = task("t6", sig("add", AdderImpl.class),

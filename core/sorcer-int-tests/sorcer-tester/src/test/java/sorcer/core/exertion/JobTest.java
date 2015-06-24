@@ -31,7 +31,7 @@ public class JobTest {
 	private final static Logger logger = LoggerFactory.getLogger(TaskTest.class);
 
 	@Test
-	public void batchTask1aTest() throws Exception {
+	public void provisionJobTest() throws Exception {
 		Task f4 = task(
 				"f4",
 				sig("multiply",

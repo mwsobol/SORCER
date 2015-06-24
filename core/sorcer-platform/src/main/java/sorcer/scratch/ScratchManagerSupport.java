@@ -27,6 +27,7 @@ import java.io.Serializable;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Properties;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -41,37 +42,54 @@ public class ScratchManagerSupport implements ScratchManager, Serializable {
     static final long serialVersionUID = 1l;
     private static final Logger logger = LoggerFactory.getLogger(ScratchManagerSupport.class);
     private final AtomicReference<DataService> dataServiceRef = new AtomicReference<>();
+    private Properties properties;
+    private final File root;
     static final String DEFAULT_SCRATCH_DIR = "default-scratch";
+
+    public ScratchManagerSupport() {
+        this(DataService.getDataDir());
+    }
+
+    public ScratchManagerSupport(String root) {
+        this(new File(root));
+    }
+
+    public ScratchManagerSupport(File root) {
+        this.root = root;
+        if(!root.exists()) {
+            if(this.root.mkdirs()) {
+                logger.info("Created {}", root.getPath());
+            }
+        }
+    }
+
+    public void setProperties(Properties properties) {
+        this.properties = properties;
+    }
 
     @Override public File getScratchDir() {
         return getScratchDir("");
     }
 
     @Override public File getScratchDir(String suffix) {
-        if(suffix==null)
-            throw new IllegalArgumentException("suffix must not be null");
-        String dataDir = DataService.getDataDir();
-        String scratchDirName = SorcerEnv.getProperty(SCRATCH_DIR);
-        if(scratchDirName==null)
-            scratchDirName = SorcerEnv.getProperty(P_SCRATCH_DIR)==null?
-                             SorcerEnv.getProperty(R_SCRATCH_DIR):SorcerEnv.getProperty(P_SCRATCH_DIR);
-        if(scratchDirName==null) {
-            //scratchDirName = String.format("%s-%s", DEFAULT_SCRATCH_DIR, getNext(dataDir));
-            scratchDirName = DEFAULT_SCRATCH_DIR;
-            logger.error("scratch directory name cannot be derived from any of the " +
-                         "following properties: {}, {}, {}, will default to {}",
-                         SCRATCH_DIR, P_SCRATCH_DIR, R_SCRATCH_DIR, scratchDirName);
+        if(suffix==null || suffix.length()==0) {
+            String scratchDirName = getProperty(SCRATCH_DIR);
+            if(scratchDirName==null)
+                scratchDirName = getProperty(P_SCRATCH_DIR)==null?
+                                 getProperty(R_SCRATCH_DIR):SorcerEnv.getProperty(P_SCRATCH_DIR);
+            if(scratchDirName==null) {
+                //scratchDirName = String.format("%s-%s", DEFAULT_SCRATCH_DIR, getNext(dataDir));
+                scratchDirName = DEFAULT_SCRATCH_DIR;
+                logger.warn("scratch directory name cannot be derived from any of the " +
+                            "following properties: {}, {}, {}, will default to {}",
+                            SCRATCH_DIR, P_SCRATCH_DIR, R_SCRATCH_DIR, scratchDirName);
+            }
+            suffix = scratchDirName;
         }
-        logger.info("scratch_dir = " + scratchDirName);
-        String dirName = String.format("%s/%s/%s", dataDir, scratchDirName, getUniqueId());
-        File tempDir = new File(dirName);
-        File scratchDir;
-        if (suffix.length() == 0) {
-            scratchDir = tempDir;
-        } else {
-            scratchDir = new File(tempDir.getParentFile(),
-                                  String.format("%s%s", suffix, tempDir.getName()));
-        }
+
+        logger.info("scratch dir suffix = {}", suffix);
+        String dirName = String.format("%s-%s", suffix, getUniqueId());
+        File scratchDir = new File(root, dirName);
         if(scratchDir.mkdirs() && logger.isInfoEnabled()) {
             logger.info("Created "+scratchDir.getPath());
         }
@@ -86,11 +104,6 @@ public class ScratchManagerSupport implements ScratchManager, Serializable {
         File scratchDir = getScratchDir(suffix);
 
         if (context.containsPath(SCRATCH_DIR_KEY) || context.containsPath(SCRATCH_URL_KEY)) {
-            // throw new ContextException(
-            // "***error: context already contains scratch dir or scratch url key; "
-            // + "do not use this method twice on the same context argument "
-            // + "(use getScratchDir() and add scratch dir key and value "
-            // + "yourself)");
             logger.warn("*** Warning: context already contains scratch dir or scratch url key; "
                         + "beware of using this method twice on the same context argument "
                         + "(using getScratchDir() and add scratch dir key and value "
@@ -118,7 +131,7 @@ public class ScratchManagerSupport implements ScratchManager, Serializable {
     }
 
     String getUniqueId() {
-        SimpleDateFormat sdf = new SimpleDateFormat("dd-HHmmss");
+        SimpleDateFormat sdf = new SimpleDateFormat("MM-dd:HH.mm.SSS");
         Calendar c = Calendar.getInstance();
         long time = c.getTime().getTime();
 
@@ -142,6 +155,10 @@ public class ScratchManagerSupport implements ScratchManager, Serializable {
         }
         int next = last+1;
         return Integer.toString(next);
+    }
+
+    private String getProperty(String key) {
+        return properties == null? SorcerEnv.getProperty(key):properties.getProperty(key);
     }
 
 }

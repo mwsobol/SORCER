@@ -31,11 +31,8 @@ toPush*.txt
 junit*.properties
 .metadata/
 /.gradle/
-/.git/
 /.settings/
-/settings.gradle
 /.idea/
-/SORCER.iml
 
 ### Generated config files
 bin/webster/websterConfig.groovy

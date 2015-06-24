@@ -327,15 +327,16 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
             throws ExertionException, SignatureException {
         ((ServiceExertion) result).stopExecTime();
         try {
-            result.getControlContext().appendTrace(provider.getProviderName()
-                    + " dispatcher: " + getClass().getName());
-
             ((NetJob) xrt).setMogramAt(result, ex.getIndex());
             ServiceExertion ser = (ServiceExertion) result;
             if (ser.getStatus() > FAILED && ser.getStatus() != SUSPENDED) {
                 ser.setStatus(DONE);
                 collectOutputs(result);
             }
+            result.getControlContext().appendTrace((provider.getProviderName() != null
+                    ? provider.getProviderName() + " " : "")
+                    + "done: " + ex.getName() + " dispatcher: " + getClass().getName());
+
         } catch (Exception e) {
             throw new ExertionException(e);
         }

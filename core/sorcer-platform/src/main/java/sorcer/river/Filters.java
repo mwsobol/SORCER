@@ -1,8 +1,5 @@
-package sorcer.river;
 /**
- *
- * Copyright 2013 Rafał Krupiński.
- * Copyright 2013 Sorcersoft.com S.A.
+ * Copyright 2013, 2015 Sorcersoft.com S.A.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +14,7 @@ package sorcer.river;
  * limitations under the License.
  */
 
+package sorcer.river;
 
 import net.jini.core.lookup.ServiceID;
 import net.jini.core.lookup.ServiceItem;
@@ -24,6 +22,7 @@ import net.jini.lookup.ServiceItemFilter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Basic set of simple {@link ServiceItemFilter}s
@@ -53,6 +52,7 @@ public class Filters {
 
     /**
      * Find and return all matching service items
+     *
      * @param items  {@link ServiceItem}s to look in
      * @param filter {@link ServiceItemFilter} to match
      * @return array of items matching the filter
@@ -89,6 +89,29 @@ public class Filters {
 
     public static ServiceItemFilter serviceId(ServiceID serviceID) {
         return new ServiceIDFilter(serviceID);
+    }
+
+    public static ServiceItemFilter serviceId(String serviceID) {
+        UUID uuid = UUID.fromString(serviceID);
+        return new ServiceIDFilter(new ServiceID(uuid.getMostSignificantBits(), uuid.getLeastSignificantBits()));
+    }
+
+    public static ServiceItemFilter type(Class<?> type) {
+        return new ServiceClassFilter(type);
+    }
+
+    static class ServiceClassFilter implements ServiceItemFilter {
+        final private Class type;
+
+        ServiceClassFilter(Class type) {
+            assert type != null;
+            this.type = type;
+        }
+
+        @Override
+        public boolean check(ServiceItem serviceItem) {
+            return serviceItem.service != null && type.isInstance(serviceItem.service);
+        }
     }
 }
 

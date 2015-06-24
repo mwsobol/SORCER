@@ -185,7 +185,7 @@ public class Invokers {
 		assertEquals(j1.getReturnPath().path, "j1/t3/result/y");
 
 		ParModel pm = parModel("par-model");
-		add(pm, par("x1p", "arg/x1", c4), par("x2p", "arg/x2", c4), j1);
+		add(pm, map(par("x1p", "arg/x1"), c4), map(par("x2p", "arg/x2"), c4), j1);
 		// setting context parameters in a job
 		set(pm, "x1p", 10.0);
 		set(pm, "x2p", 50.0);
@@ -246,7 +246,7 @@ public class Invokers {
 				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
 
 		ParModel pm = parModel("par-model");
-		add(pm, par("x1p", "arg/x1", c4), par("x2p", "arg/x2", c4), j1);
+		add(pm, map(par("x1p", "arg/x1"), c4), map(par("x2p", "arg/x2"), c4), j1);
 		// setting context parameters in a job
 		set(pm, "x1p", 10.0);
 		set(pm, "x2p", 50.0);

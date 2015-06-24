@@ -16,8 +16,7 @@ import sorcer.core.context.ArrayContext;
 import sorcer.core.context.Contexts;
 import sorcer.core.context.PositionalContext;
 import sorcer.core.context.ServiceContext;
-import sorcer.service.Context;
-import sorcer.service.ContextException;
+import sorcer.service.*;
 import sorcer.service.Signature.ReturnPath;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -98,7 +97,7 @@ public class Arithmometer implements SorcerConstants, Serializable {
 	 *            input context for this operation
 	 * @return an output service context
 	 * @throws ContextException 
-	 * @throws RemoteExceptionO
+	 * @throws RemoteException
 	 */
 	public Context divide(Context context) throws RemoteException, ContextException {
 		if (context instanceof ArrayContext) {
@@ -120,7 +119,7 @@ public class Arithmometer implements SorcerConstants, Serializable {
 	 * Calculates the result of arithmetic operation specified by a selector
 	 * (add, subtract, multiply, or divide) from the instance of ArrayContext.
 	 * 
-	 * @param input
+	 * @param context
 	 *            service context
 	 * @param selector
 	 *            a name of arithmetic operation
@@ -184,20 +183,25 @@ public class Arithmometer implements SorcerConstants, Serializable {
 				cxt.ov(oi, result);
 				cxt.ovd(oi, outputMessage);
 			}
-
+			Signature sig = context.getMogram().getProcessSignature();
+			if (sig != null)
+				cxt.putValue("task/signature", sig);
+			Fidelity fi = context.getMogram().getFidelity();
+			if (fi != null)
+				cxt.putValue("task/fidelity", fi);
+			cxt.putValue(path(outpaths.get(0), ArrayContext.DESCRIPTION), outputMessage);
 		} catch (Exception ex) {
-			// ContextException, UnknownHostException
 			context.reportException(ex);
 			throw new ContextException(selector + " calculate exception", ex);
 		}
-		return (Context) context;
+		return context;
 	}
 
 	/**
 	 * Calculates the result of arithmetic operation specified by a selector
 	 * (add, subtract, multiply, or divide) from the instance of ServiceContext.
 	 * 
-	 * @param input
+	 * @param context
 	 *            service context
 	 * @param selector
 	 *            a name of arithmetic operation
@@ -260,8 +264,8 @@ public class Arithmometer implements SorcerConstants, Serializable {
 			logger.info(selector + " result: \n" + result);
 
 			String outputMessage = "calculated by " + getHostname();
-			if (((ServiceContext)context).getReturnPath() != null) {
-				((ServiceContext)context).setReturnValue(result);
+			if (context.getReturnPath() != null) {
+				context.setReturnValue(result);
 			}
 			else if (outpaths.size() == 1) {
 				// put the result in the existing output path
@@ -271,13 +275,19 @@ public class Arithmometer implements SorcerConstants, Serializable {
 				cxt.putValue(RESULT_PATH, result);
 				cxt.putValue(path(RESULT_PATH, ArrayContext.DESCRIPTION), outputMessage);
 			}
+			Signature sig = context.getMogram().getProcessSignature();
+			if (sig != null)
+				cxt.putValue("task/signature", sig);
+			Fidelity fi = context.getMogram().getFidelity();
+			if (fi != null)
+				cxt.putValue("task/fidelity", fi);
 		} catch (Exception ex) {
 			// ContextException, UnknownHostException
 			ex.printStackTrace();
 			context.reportException(ex);
 			throw new ContextException(selector + " calculate exception", ex);
 		}
-		return (Context) context;
+		return context;
 	}
 	
 	/**

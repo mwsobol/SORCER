@@ -22,8 +22,9 @@ import sorcer.core.context.MapContext;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.ent.EntModel;
 import sorcer.core.context.model.ent.Entry;
-import sorcer.core.context.model.srv.MultiFidelitySrvModel;
+import sorcer.core.context.model.par.ParModel;
 import sorcer.core.context.model.srv.SrvModel;
+import sorcer.core.plexus.MultiFidelityService;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
 
@@ -37,6 +38,23 @@ import java.util.List;
  */
 public class operator {
 
+    public static EntModel entModel(String name, Signature builder) throws SignatureException {
+        EntModel model = (EntModel) sorcer.co.operator.instance(builder);
+        model.setBuilder(builder);
+        return model;
+    }
+
+    public static ParModel parModel(String name, Signature builder) throws SignatureException {
+        ParModel model = (ParModel) sorcer.co.operator.instance(builder);
+        model.setBuilder(builder);
+        return model;
+    }
+
+    public static SrvModel srvModel(String name, Signature builder) throws SignatureException {
+        SrvModel model = (SrvModel) sorcer.co.operator.instance(builder);
+        model.setBuilder(builder);
+        return model;
+    }
 
     public static Context entModel(Object... entries)
             throws ContextException {
@@ -69,22 +87,45 @@ public class operator {
         return model;
     }
 
-    public static Model addResponse(Model model, String... responsePaths) throws ContextException {
+    public static Model responseUp(Model model, String... responsePaths) throws ContextException {
         for (String path : responsePaths)
-            ((ServiceContext)model).addResponsePath(path);
+            ((ServiceContext)model).getRuntime().getResponsePaths().add(path);
         return model;
     }
 
-    public static Context responses(Model model) throws ContextException {
+    public static Model responseDown(Model model, String... responsePaths) throws ContextException {
+        for (String path : responsePaths)
+            ((ServiceContext)model).getRuntime().getResponsePaths().remove(path);
+        return model;
+    }
+
+    public static Context result(Model model) throws ContextException {
+        return ((ServiceContext)model).getRuntime().getOutcome();
+    }
+
+    public static Object resultAt(Model model, String path) throws ContextException {
+        return ((ServiceContext)((ServiceContext)model).getRuntime().getOutcome()).get(path);
+    }
+
+    public static  ServiceContext substitute(ServiceContext model, Entry... entries) throws ContextException {
+        model.substitute(entries);
+        return model;
+    }
+
+    public static Context inputs(Model model) throws ContextException {
         try {
-            return (Context) model.getResponse();
+            return model.getInputs();
         } catch (RemoteException e) {
             throw new ContextException(e);
         }
     }
 
-    public static Object result(Model model, String path) throws ContextException {
-        return ((ServiceContext)((ServiceContext)model).getRuntime().getResult()).get(path);
+    public static Context outputs(Model model) throws ContextException {
+        try {
+            return model.getOutputs();
+        } catch (RemoteException e) {
+            throw new ContextException(e);
+        }
     }
 
     public static Object response(Model model, String path) throws ContextException {
@@ -137,7 +178,7 @@ public class operator {
         return map;
     }
 
-    public static Fidelity<String> responses(String... paths) {
+    public static Fidelity<String> response(String... paths) {
         return  new Fidelity<String>(paths);
     }
 
@@ -158,7 +199,7 @@ public class operator {
                 fidelities.add((Fidelity)item);
         }
     }
-        MultiFidelitySrvModel model = new MultiFidelitySrvModel();
+        MultiFidelityService model = new MultiFidelityService();
         model.addSelectionFidelities(fidelities);
         return srvModel(items);
     }
@@ -167,14 +208,15 @@ public class operator {
         sorcer.eo.operator.Complement complement = null;
         List<Signature> sigs = new ArrayList<Signature>();
         Fidelity<String> responsePaths = null;
-        Model model = null;
+        SrvModel model = null;
+
         for (Object item : items) {
             if (item instanceof Signature) {
                 sigs.add((Signature)item);
             } else if (item instanceof sorcer.eo.operator.Complement) {
                 complement = (sorcer.eo.operator.Complement)item;
             } else if (item instanceof Model) {
-                model = ((Model)item);
+                model = ((SrvModel)item);
             } else if (item instanceof Fidelity) {
                 responsePaths = ((Fidelity)item);
             }
@@ -182,23 +224,22 @@ public class operator {
         if (model == null)
             model = new SrvModel();
 
-        if (sigs != null && sigs.size() > 0) {
-            Fidelity fidelity = new Fidelity();
-            for (Signature sig : sigs)
-                fidelity.getSelects().add(sig);
-            ((SrvModel)model).addServiceFidelity(fidelity);
-            ((SrvModel)model).selectedServiceFidelity(fidelity.getName());
-        }
+//        if (sigs != null && sigs.size() > 0) {
+//            Fidelity fidelity = new Fidelity();
+//            for (Signature sig : sigs)
+//                fidelity.getSelects().add(sig);
+//            model.addServiceFidelity(fidelity);
+//            model.selectedServiceFidelity(fidelity.getName());
+//        }
 //        else {
-//            ((SrvModel)model).setSubject("execute", ServiceModeler.class);
+//            model.setSubject("execute", ServiceModeler.class);
 //        }
 
         if (responsePaths != null) {
-            ((ServiceContext)model).setResponsePaths(((Fidelity)responsePaths).getSelects());
-
+            model.getRuntime().setResponsePaths(((Fidelity) responsePaths).getSelects());
         }
         if (complement != null) {
-            ((SrvModel)model).setSubject(complement.path(), complement.value());
+            model.setSubject(complement.path(), complement.value());
         }
 
         Object[] dest = new Object[items.length+1];

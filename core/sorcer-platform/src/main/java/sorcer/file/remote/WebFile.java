@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Sorcersoft.com S.A.
+ * Copyright 2014, 2015 Sorcersoft.com S.A.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,13 @@
 
 package sorcer.file.remote;
 
-import com.google.common.io.Closer;
 import com.google.common.io.Resources;
 import sorcer.file.ScratchDirManager;
-import sorcer.util.IOUtils;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.Serializable;
 import java.net.URL;
 
 /**
@@ -31,39 +32,25 @@ import java.net.URL;
  */
 public class WebFile extends AbstractRemoteFile implements Serializable {
     private static final long serialVersionUID = -3333474650265576280L;
-    private final File dataDir;
     private URL remoteUrl;
 
-    public WebFile(File dataDir, File localFile) throws IOException {
+    public WebFile(File localFile, URL remoteUrl) throws IOException {
         super(localFile);
-        this.dataDir = dataDir;
-        setLocalFile(localFile);
+        this.remoteUrl = remoteUrl;
     }
 
     @Override
     protected File doGetFile() throws IOException {
         File localFile = getLocalPath();
-        Closer closer = Closer.create();
-        try {
-            FileOutputStream local = closer.register(new FileOutputStream(localFile));
+        try (FileOutputStream local = new FileOutputStream(localFile)) {
             Resources.copy(remoteUrl, local);
-        } finally {
-            closer.close();
         }
         return localFile;
     }
 
     @Override
-    protected File getLocalPath() {
+    protected File getLocalPath() throws IOException {
         File parent = new ScratchDirManager().getNewScratchDir("remote-file");
         return new File(parent, checksum);
-    }
-
-    protected void setLocalFile(File localFile) throws IOException {
-        if (!IOUtils.isChild(dataDir, localFile)) {
-            File my = new File(dataDir, localFile.getName());
-            IOUtils.copyLarge(new FileInputStream(localFile), new FileOutputStream(my));
-            //remoteUrl = Sorcer.getDataURL(my);
-        }
     }
 }

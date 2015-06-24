@@ -2,6 +2,8 @@ package sorcer.sml.blocks;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.Adder;
@@ -11,10 +13,8 @@ import sorcer.arithmetic.provider.Subtractor;
 import sorcer.core.SorcerConstants;
 import sorcer.core.provider.Concatenator;
 import sorcer.service.Block;
+import sorcer.service.Signature;
 import sorcer.service.Task;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertEquals;
 import static sorcer.co.operator.ent;
@@ -35,7 +35,81 @@ public class NetBlockExertions implements SorcerConstants {
 	private final static Logger logger = LoggerFactory.getLogger(NetBlockExertions.class);
 
 	@Test
+	public void blockTest() throws Exception {
+
+		Task t3 = task("t3", sig("subtract", Subtractor.class),
+				context("subtract", inEnt("arg/t4"), inEnt("arg/t5"),
+						result("block/result", Signature.Direction.OUT)));
+
+		Task t4 = task("t4", sig("multiply", Multiplier.class),
+				context("multiply", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
+						result("arg/t4", Signature.Direction.IN)));
+
+		Task t5 = task("t5", sig("add", Adder.class),
+				context("add", inEnt("arg/x3", 20.0), inEnt("arg/x4", 80.0),
+						result("arg/t5", Signature.Direction.IN)));
+
+		Block block = block("block", t4, t5, t3);
+
+		Block result = exert(block);
+		assertEquals(value(context(result), "block/result"), 400.00);
+
+	}
+
+
+	@Test
+	public void contextBlockTest() throws Exception {
+
+		Task t3 = task("t3", sig("subtract", Subtractor.class),
+				context("subtract", inEnt("arg/t4"), inEnt("arg/t5"),
+						result("block/result", Signature.Direction.OUT)));
+
+		Task t4 = task("t4", sig("multiply", Multiplier.class),
+				context("multiply", inEnt("arg/x1"), inEnt("arg/x2"),
+						result("arg/t4", Signature.Direction.IN)));
+
+		Task t5 = task("t5", sig("add", Adder.class),
+				context("add", inEnt("arg/x3"), inEnt("arg/x4"),
+						result("arg/t5", Signature.Direction.IN)));
+
+		Block block = block("block", t4, t5, t3, context(
+				inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
+				inEnt("arg/x3", 20.0), inEnt("arg/x4", 80.0)));
+
+		Block result = exert(block);
+		assertEquals(value(context(result), "block/result"), 400.00);
+
+	}
+
+	@Test
+	public void shadowingContextBlockTest() throws Exception {
+
+		// in t4: inEnt("arg/x1", 20.0), inEnt("arg/x2", 10.0)
+		Task t3 = task("t3", sig("subtract", Subtractor.class),
+				context("subtract", inEnt("arg/t4"), inEnt("arg/t5"),
+						result("block/result", Signature.Direction.OUT)));
+
+		Task t4 = task("t4", sig("multiply", Multiplier.class),
+				context("multiply",  inEnt("arg/x1", 20.0), inEnt("arg/x2", 10.0),
+						result("arg/t4", Signature.Direction.IN)));
+
+		Task t5 = task("t5", sig("add", Adder.class),
+				context("add", inEnt("arg/x3"), inEnt("arg/x4"),
+						result("arg/t5", Signature.Direction.IN)));
+
+		Block block = block("block", t4, t5, t3, context(
+				inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
+				inEnt("arg/x3", 20.0), inEnt("arg/x4", 80.0)));
+
+		Block result = exert(block);
+		assertEquals(value(context(result), "block/result"), 400.00);
+
+	}
+
+
+	@Test
 	public void contextAltTest() throws Exception {
+
 		Task t4 = task(sig("multiply", Multiplier.class),
 				context(inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
 						result("block/result")));
@@ -60,10 +134,13 @@ public class NetBlockExertions implements SorcerConstants {
 		logger.info("block context: " + context(block));
 //		logger.info("result: " + value(context(block), "block/result"));
 		assertEquals(value(context(block), "block/result"), 500.0);
+
 	}
-	
+
+
 	@Test
 	public void taskAltBlockTest() throws Exception {
+
 		Task t3 = task("t3",  sig("subtract", Subtractor.class), 
 				context("subtract", inEnt("arg/t4"), inEnt("arg/t5"),
 						result("block/result")));
@@ -94,10 +171,13 @@ public class NetBlockExertions implements SorcerConstants {
 //		logger.info("block context 2: " + context(block));
 //		logger.info("result: " + value(context(block), "block/result"));
 		assertEquals(value(context(block), "block/result"), 750.00);
+
 	}
-	
+
+
 	@Test
 	public void optBlockTest() throws Exception {
+
 		Task t4 = task("t4", sig("multiply", Multiplier.class), 
 				context("multiply", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
 						result("out")));
@@ -119,10 +199,13 @@ public class NetBlockExertions implements SorcerConstants {
 		logger.info("block context 2: " + context(block));
 //		logger.info("result: " + value(context(block), "out"));
 		assertEquals(value(context(block), "out"), 100.0);
+
 	}
-	
+
+
 	@Test
 	public void parBlockTest() throws Exception {
+
 		Task t4 = task("t4", sig("multiply", Multiplier.class), 
 				context("multiply", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
 						result("block/result")));
@@ -146,10 +229,13 @@ public class NetBlockExertions implements SorcerConstants {
 //		logger.info("block context: " + context(block));
 ////		logger.info("result: " + value(context(block), "block/result"));
 //		assertEquals(value(context(block), "block/result"), 500.00);
+
 	}
-	
+
+
 	@Test
 	public void loopBlockTest() throws Exception {
+
 		Block block = block("block", sig(Concatenator.class),
 				context(ent("x1", 10.0), ent("x2", 20.0), ent("z", 100.0)),
 				loop(condition("{ x1, x2, z -> x1 + x2 < z }", "x1", "x2", "z"), 
@@ -159,5 +245,7 @@ public class NetBlockExertions implements SorcerConstants {
 		logger.info("block context: " + context(block));
 //		logger.info("result: " + value(context(block), "x1"));
 		assertEquals(value(context(block), "x1"), 82.00);
+
 	}
+
 }

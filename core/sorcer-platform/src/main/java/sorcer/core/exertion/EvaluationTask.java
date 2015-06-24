@@ -89,7 +89,7 @@ public class EvaluationTask extends Task {
 	@Override
 	public Task doTask(Transaction txn) throws ExertionException,
 			SignatureException {
-		dataContext.setCurrentSelector(getProcessSignature().getSelector());
+		dataContext.getRuntime().setCurrentSelector(getProcessSignature().getSelector());
 		dataContext.setCurrentPrefix(((ServiceSignature) getProcessSignature()).getPrefix());
 
 		if (serviceFidelity.getSelects().size() > 1) {
@@ -140,7 +140,7 @@ public class EvaluationTask extends Task {
 			e.printStackTrace();
 			dataContext.reportException(e);
 		}
-		dataContext.appendTrace("" + getEvaluation());
+		dataContext.appendTrace("task" + getName() + " by: " + getEvaluation());
 		return this;
 	}
 

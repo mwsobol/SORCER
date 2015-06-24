@@ -24,7 +24,7 @@ IF EXIST "%HOMEDRIVE%%HOMEPATH%\.nsh\configs\nsh-start.config" SET NSH_CONF=%HOM
 
 set STARTER_MAIN_CLASS=sorcer.tools.shell.NetworkShell
 set SHELL_CLASS=sorcer.tools.shell.NetworkShell
-echo "SORC_HOME: " %SORCER_HOME%
+rem echo "SORC_HOME: " %SORCER_HOME%
 CALL java %JAVA_OPTS% -classpath "%SHELL_CLASSPATH%" -Djava.security.policy="%SORCER_HOME%\bin\shell\policy\shell.policy" -Dsorcer.tools.shell.logDir="%SORCER_HOME%\logs" -Dprogram.name=NSH -Dnsh.starter.config="%NSH_CONF%" -Djava.util.logging.config.file="%SORCER_HOME%\bin\shell\configs\sorcer.logging" %STARTER_MAIN_CLASS% %*
 rem --classpath "%CP%"
 popd

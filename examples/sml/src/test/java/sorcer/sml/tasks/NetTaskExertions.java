@@ -9,13 +9,17 @@ import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.Adder;
 import sorcer.arithmetic.provider.Averager;
 import sorcer.arithmetic.provider.Multiplier;
+import sorcer.arithmetic.provider.Subtractor;
 import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
+import sorcer.arithmetic.provider.impl.SubtractorImpl;
 import sorcer.core.provider.Shell;
 import sorcer.service.*;
 import sorcer.service.Strategy.Access;
 import sorcer.service.Strategy.Monitor;
 import sorcer.service.Strategy.Wait;
+
+import java.util.Collection;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -95,13 +99,13 @@ public class NetTaskExertions {
 						result("result/y")));
 
 		logger.info("sFi: " + sFi(task));
-		logger.info("sFis: " + srvFis(task));
+		logger.info("sFis: " + size(srvFis(task)));
 
-//		task = exert(task, sFi("object"));
+//		task = exert(task, fi("object"));
 //		logger.info("exerted: " + task);
 //		assertTrue((Double)get(task) == 100.0);
 
-		task = exert(task, sFi("net"));
+		task = exert(task, fi("net"));
 		logger.info("exerted: " + task);
 		assertTrue("Wrong value for 100.0", (Double) get(task) == 100.0);
 	}
@@ -139,42 +143,58 @@ public class NetTaskExertions {
 
 	}
 
+	@Test
+	public void batchTask() throws Exception {
+		// batch for the composition f1(f2(f3((x1, x2), f4(x1, x2)), f5(x1, x2))
+		// shared context with named paths
+		Task batch3 = batch("batch3",
+				type(sig("multiply", Multiplier.class, result("subtract/x1", Signature.Direction.IN)), Signature.PRE),
+				type(sig("add", Adder.class, result("subtract/x2", Signature.Direction.IN)), Signature.PRE),
+				sig("subtract", Subtractor.class, result("result/y", inPaths("subtract/x1", "subtract/x2"))),
+				context(inEnt("multiply/x1", 10.0), inEnt("multiply/x2", 50.0),
+						inEnt("add/x1", 20.0), inEnt("add/x2", 80.0)));
+
+		batch3 = exert(batch3);
+		//logger.info("task result/y: " + get(batch3, "result/y"));
+		assertEquals(get(batch3, "result/y"), 400.0);
+	}
 
 	@Test
 	public void localFiBatchTask() throws Exception {
 
+        //TODO
 		Task t4 = task("t4", sFi("object", sig("multiply", MultiplierImpl.class), sig("add", AdderImpl.class)),
 				sFi("net", sig("multiply", Multiplier.class), sig("add", Adder.class)),
 				context("shared", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
 						outEnt("result/y")));
 
 		t4 = exert(t4);
-		logger.info("task cont4text: " + context(t4));
+		logger.info("task t4 context: " + context(t4));
 
-		t4 = exert(t4, sFi("net"));
-		logger.info("task cont4text: " + context(t4));
+		t4 = exert(t4, fi("net"));
+		logger.info("task t4 net context: " + context(t4));
 
-	}
+    }
 
 	@Test
-	public void netLocalFiTask() throws Exception {
+	public void arithmeticMultiFiNetTaskTest() throws Exception {
+		ServiceExertion.debug = true;
+
 		Task task = task("add",
 				sFi("net", sig("add", Adder.class)),
 				sFi("object", sig("add", AdderImpl.class)),
 				context(inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
 						result("result/y")));
-		
-		logger.info("sFi: " + sFi(task));
-		logger.info("sFis: " + srvFis(task));
 
-//		task = exert(task, sFi("object"));
-//		logger.info("exerted: " + task);
-//		assertTrue("Wrong value for 100.0", (Double)get(task) == 100.0);
-		
-		task = exert(task, sFi("net"));
-		logger.info("exerted: " + task);
+		logger.info("sFi: " + sFi(task));
+		assertTrue(sFis(task).size() == 2);
+		logger.info("selFis: " + selFi(task));
+		assertTrue(selFi(task).equals("net"));
+
+		task = exert(task, fi("net"));
+		logger.info("exerted: " + context(task));
+		assertTrue(selFi(task).equals("net"));
 		assertTrue("Wrong value for 100.0", (Double)get(task) == 100.0);
-	
 	}
 
 }

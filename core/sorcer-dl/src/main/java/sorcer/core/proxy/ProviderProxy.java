@@ -191,6 +191,7 @@ public class ProviderProxy implements Serializable {
                 // this block is for debugging, can be deleted
                 // do not report broken network connection on destruction or getAdmin after the service is
 				// undeployed by Rio
+				e.printStackTrace();
                 if (!selector.equals("getAdmin")) logger.warn("proxy method: {} for args: {}", m, Arrays.toString(args), e);
                 if (!(selector.equals("destroyNode") || selector.equals("destroy"))) {
                     throw e;

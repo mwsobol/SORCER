@@ -180,10 +180,16 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 //		}
 		Exec.State state = exertion.getControlContext().getExecState();
 		if (state == State.INITIAL) {
+			if(exertion instanceof Exertion) {
+				exertion.getExceptions().clear();
+				exertion.getTrace().clear();
+			}
 			for (Mogram e : exertion.getAllMograms()) {
 				if (e instanceof Exertion) {
 					if (((ControlContext) ((Exertion)e).getControlContext()).getExecState() == State.INITIAL) {
 						e.setStatus(Exec.INITIAL);
+						e.getExceptions().clear();
+						e.getTrace().clear();
 					}
 				}
 				if (e instanceof Block) {
@@ -213,7 +219,6 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 			mogram.clearScope();
 		}
 	}
-
 
 	private void realizeDependencies(Arg... entries) throws RemoteException,
 			ExertionException {
@@ -364,8 +369,9 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 					"Cannot find provider for: " + signature));
 			return exertion;
 		}
+		exertion.trimAllNotSerializableSignatures();
 		exertion.getControlContext().appendTrace(
-				"bootstrapping: " + ((Provider) provider).getProviderName()
+				"shell: " + ((Provider) provider).getProviderName()
 				+ ":" + ((Provider) provider).getProviderID());
 		((NetSignature) signature).setProvider(provider);
 		logger.info("Provider found for: " + signature + "\n\t" + provider);
@@ -373,13 +379,13 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 			return serviceMutualExclusion((Provider) provider, exertion,
 					transaction);
 		} else {
-			// test exertion for serialization
-			//			 try {
-			//				 logger.info("ExertProcessor.exert0(): going to serialize exertion for testing!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-			//				 ObjectLogger.persistMarshalled("exertionfile", exertion);
-			//			 } catch (Exception e) {
-			//				 e.printStackTrace();
-			//			 }
+//			 test exertion for serialization
+//						 try {
+//							 logger.info("ExertProcessor.exert0(): going to serialize exertion for testing!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+//							 ObjectLogger.persistMarshalled("exertionfile", exertion);
+//						 } catch (Exception e) {
+//							 e.printStackTrace();
+//						 }
 			Exertion result = provider.service(exertion, transaction);
 			if (result != null && result.getExceptions().size() > 0) {
 				for (ThrowableTrace et : result.getExceptions()) {
@@ -387,9 +393,9 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
                     logger.error("Got exception running: "  + exertion.getName() + " " + t.getMessage());
                     logger.debug("Exception details: " + t.getMessage());
                     if (t instanceof Error)
-                        ((ServiceExertion) result).setStatus(Exec.ERROR);
+                        result.setStatus(Exec.ERROR);
 				}
-				((ServiceExertion)result).setStatus(Exec.FAILED); 
+				result.setStatus(Exec.FAILED);
 			} else if (result == null) {
 				exertion.reportException(new ExertionException("ExertionDispatcher failed calling: " 
 						+ exertion.getProcessSignature()));
@@ -460,7 +466,7 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 				sig.setServiceType(Spacer.class);
 				((NetSignature) sig).setSelector("service");
 				sig.setProviderName(SorcerConstants.ANY);
-				sig.setType(Signature.Type.SRV);
+				sig.setType(Signature.Type.PROC);
 				exertion.getControlContext().setAccessType(access);
 			} else if (Access.PUSH == access
 					&& !sig.getServiceType()
@@ -469,7 +475,7 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 					sig.setServiceType(Jobber.class);
 					((NetSignature) sig).setSelector("service");
 					sig.setProviderName(SorcerConstants.ANY);
-					sig.setType(Signature.Type.SRV);
+					sig.setType(Signature.Type.PROC);
 					exertion.getControlContext().setAccessType(access);
 				}
 			}

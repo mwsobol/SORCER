@@ -19,6 +19,8 @@ package sorcer.core.signature;
 
 import net.jini.core.entry.Entry;
 import net.jini.lookup.entry.Name;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sorcer.core.provider.Provider;
 import sorcer.core.provider.ServiceProvider;
 import sorcer.core.provider.Version;
@@ -30,7 +32,8 @@ import java.rmi.RemoteException;
 import java.util.Arrays;
 import java.util.List;
 
-public class NetSignature extends ObjectSignature {
+public class
+    NetSignature extends ObjectSignature {
 
 	private static final long serialVersionUID = 1L;
 
@@ -55,6 +58,7 @@ public class NetSignature extends ObjectSignature {
 	protected List<Entry> attributes;
 
     protected String version;
+    private static Logger logger = LoggerFactory.getLogger(ObjectSignature.class);
 
 	public NetSignature() {
 		providerName = ANY;
@@ -109,7 +113,7 @@ public class NetSignature extends ObjectSignature {
 		else
 			this.providerName = providerName;
 		if (methodType == null) 
-			execType = Type.SRV;
+			execType = Type.PROC;
 		else
 			execType = methodType;
 		

@@ -47,7 +47,6 @@ import sorcer.container.jeri.ExporterFactories;
 import sorcer.core.SorcerConstants;
 import sorcer.core.SorcerNotifierProtocol;
 import sorcer.core.context.Contexts;
-import sorcer.core.context.ControlContext;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.par.ParModel;
 import sorcer.core.exertion.ExertionEnvelop;
@@ -195,9 +194,6 @@ public class ProviderDelegate {
 	private int maximumPoolSize = 20;
 
 	private List<ExecutorService> spaceHandlingPools;
-
-	/** The SORCER persistence server. */
-	public static Mandator persister;
 
 	/** lease manager also used by provider workers. */
 	protected static LeaseRenewalManager leaseManager = new LeaseRenewalManager();
@@ -774,11 +770,11 @@ public class ProviderDelegate {
 	public Task doTask(Task task, Transaction transaction)
 			throws MogramException, SignatureException, RemoteException,
 			ContextException {
-		// prepare a default net batch task (has all sigs of SRV type) 
-		// and make the last signature as master SRV type only.
+		// prepare a default net batch task (has all sigs of PROC type)
+		// and make the last signature as master PROC type only.
 		task.correctBatchSignatures();
 		task.getControlContext().appendTrace(
-				provider.getProviderName() + " execute: "
+				provider.getProviderName() + " to execute: "
 						+ (task.getProcessSignature()!=null ? task.getProcessSignature().getSelector() : "null") + ":"
 						+ (task.getProcessSignature()!=null ? task.getProcessSignature().getServiceType() : "null") + ":"
 						+ getHostName());
@@ -792,9 +788,6 @@ public class ProviderDelegate {
 				e.printStackTrace();
 			}
 		}
-
-		String providerId = task.getProcessSignature().getProviderName();
-
 		/*
 		 * String actions = task.method.action(); GuardedObject go = new
 		 * GuardedObject(task.method, new ServiceMethodPermission(task.userID,
@@ -804,7 +797,7 @@ public class ProviderDelegate {
 		 * actions); }
 		 */
 		if (isValidTask(task)) {
-            logger.info("Task " + task.getName() + " is valid");
+            logger.info("task " + task.getName() + " is valid");
 			try {
 				task.updateContext();
 				task.startExecTime();
@@ -865,7 +858,7 @@ public class ProviderDelegate {
 					task.stopExecTime();
 					ExertionException ex = new ExertionException(
 							"Unacceptable task received, requested provider: "
-									+ providerId + " Name:" + task.getName());
+									+ getProviderName() + " task: " + task.getName());
 					task.reportException(ex);
 					task.setStatus(Exec.FAILED);
 					return (Task) forwardTask(task, provider);
@@ -995,7 +988,7 @@ public class ProviderDelegate {
 				logger.info("Executing service bean method: " + m + " by: "
 						+ config.getProviderName() + " isContextual: " + isContextual);
 				task.getContext().setExertion(task);
-				((ServiceContext) task.getContext()).setCurrentSelector(selector);
+				((ServiceContext) task.getContext()).getRuntime().setCurrentSelector(selector);
 				String pf = task.getProcessSignature().getPrefix();
 				if (pf != null)
 					((ServiceContext) task.getContext()).setCurrentPrefix(pf);
@@ -1045,17 +1038,14 @@ public class ProviderDelegate {
 				result.setReturnValue(obj);
 
 			if (obj instanceof Exertion) {
-				task.getControlContext().getExceptions()
-				.addAll(((Exertion) obj).getExceptions());
+				task.getControlContext().getExceptions().addAll(((Exertion) obj).getExceptions());
 				task.getTrace().addAll(((Exertion) obj).getTrace());
 			}
 		} else {
-			//			logger.info("ZZZZZZZZZZZZZZZZZZZZZ getProviderName(): " + getProviderName());
-			//			logger.info("ZZZZZZZZZZZZZZZZZZZZZ invoking: " + m);
-			//			logger.info("ZZZZZZZZZZZZZZZZZZZZZ imp: " + impl);
-			//			logger.info("ZZZZZZZZZZZZZZZZZZZZZ args: " + Arrays.toString(args));
+			logger.debug("getProviderName: {} invoking: {}" + getProviderName(), m);
+			logger.debug("imp: {} args: {}" + impl, Arrays.toString(args));
 			result = (Context) m.invoke(impl, args);
-			//			logger.info("ZZZZZZZZZZZZZZZZZZZZZ result: " + result);
+			logger.debug("result: {}", result);
 		}
 		return result;
 	}
@@ -1235,7 +1225,7 @@ public class ProviderDelegate {
 				if (sig.getReturnPath() != null)
 					cxt.setReturnPath(sig.getReturnPath());
 
-				cxt.setCurrentSelector(sig.getSelector());
+				cxt.getRuntime().setCurrentSelector(sig.getSelector());
 				cxt.setCurrentPrefix(sig.getPrefix());
 
 				cxt.setExertion(task);
@@ -1251,8 +1241,11 @@ public class ProviderDelegate {
 						+ provider.getProviderName());
 				task.setContext(cxt);
 				task.setStatus(Exec.DONE);
-				if (cxt.getReturnPath() != null)
+				if (cxt.getReturnPath() != null) {
 					cxt.setReturnValue(cxt.getValue(cxt.getReturnPath().path));
+				} else if (task.getDataContext().getScope() != null) {
+					task.getDataContext().getScope().append(cxt);
+				}
 				// clear the exertion and the context
 				cxt.setExertion(null);
 				task.setService(null);
@@ -1276,7 +1269,7 @@ public class ProviderDelegate {
 					.invoke(provider, new Object[] { ex });
 			return result;
 		} catch (Exception e) {
-			((ControlContext)ex.getControlContext()).addException(e);
+			ex.getControlContext().addException(e);
 			throw new ExertionException(e);
 		}
 	}
@@ -1290,7 +1283,7 @@ public class ProviderDelegate {
 			boolean isContextual = true;
 			if (cxt.getParameterTypes() != null & cxt.getArgs() != null) {
 				argTypes = cxt.getParameterTypes();
-				args = (Object[]) cxt.getArgs();
+				args = cxt.getArgs();
 				isContextual = false;
 			}
 			Method execMethod = provider.getClass().getMethod(selector,
@@ -1299,7 +1292,7 @@ public class ProviderDelegate {
 			if (isContextual) {
 				result = (ServiceContext) execMethod.invoke(provider, args);
 				// Setting Return Values
-				if (((ServiceContext)result).getReturnPath() != null) {
+				if (result.getReturnPath() != null) {
 					Object resultValue = result.getValue(((ServiceContext)result).getReturnPath().path);
 					result.setReturnValue(resultValue);
 				} 

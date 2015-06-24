@@ -158,6 +158,10 @@ public class SorcerEnv extends SOS {
 		return null;
 	}
 
+    public static URL getDataURL(File file) throws IOException {
+        return DataService.getPlatformDataService().getDataURL(file);
+    }
+
     public static String getModelingDir() {
         String modelDir = props.getProperty(S_SORCER_MODELING);
         if (modelDir == null) {
@@ -800,7 +804,7 @@ public class SorcerEnv extends SOS {
 	 * @return and array of strings as locator URLs
 	 */
 	public static String[] getLookupLocators() {
-		String locs = props.getProperty(P_LOCATORS);
+		String locs = props.getProperty(P_LOCATORS, System.getProperty(P_LOCATORS));
 		return (locs != null && locs.length() != 0) ? toArray(locs)
 				: new String[] {};
 	}
@@ -1551,8 +1555,7 @@ public class SorcerEnv extends SOS {
 
 	public static String getActualName(String name) {
 		if (nameSuffixed()) {
-			String suffix = props.getProperty(S_NAME_SUFFIX,
-					getDefaultNameSuffix(3));
+			String suffix = props.getProperty(S_NAME_SUFFIX, getDefaultNameSuffix(3));
 			if (name.indexOf(suffix) > 0)
 				return name;
 			else
@@ -1560,5 +1563,4 @@ public class SorcerEnv extends SOS {
 		}
 		return name;
 	}
-
 }
