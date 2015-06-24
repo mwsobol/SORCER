@@ -56,6 +56,8 @@ import sorcer.util.Sorcer;
 import sorcer.util.url.sos.SdbUtil;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.net.InetAddress;
 import java.net.URL;
 import java.rmi.RemoteException;
@@ -785,7 +787,16 @@ public class operator {
 	}
 
 	public static Signature sig(Class serviceType,
-								String initSelector) throws SignatureException {
+								 String initSelector) throws SignatureException {
+		Method selectorMethod = null;
+		try {
+			selectorMethod = serviceType.getDeclaredMethod(initSelector, Context.class);
+			if (!Modifier.isStatic(selectorMethod.getModifiers()))
+				return sig(initSelector, serviceType);
+		} catch (NoSuchMethodException e) {
+			e.printStackTrace();
+			// skip
+		}
 		return sig(initSelector, serviceType, initSelector);
 	}
 
@@ -850,7 +861,6 @@ public class operator {
 				} else if (o instanceof Operating) {
 					((ServiceSignature)sig).setActive((Operating) o);
 				} else if (o instanceof Provision) {
-					p = (Provision)o;
 					((ServiceSignature)sig).setProvisionable((Provision) o);
 				} else if (o instanceof ServiceShell) {
 					((ServiceSignature)sig).setShellRemote((ServiceShell) o);
@@ -983,8 +993,8 @@ public class operator {
 		return signature;
 	}
 
-	public static Signature srv(Signature signature) {
-		signature.setType(Type.SRV);
+	public static Signature pro(Signature signature) {
+		signature.setType(Type.PROC);
 		return signature;
 	}
 

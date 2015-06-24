@@ -101,7 +101,7 @@ public class SrvModel extends ParModel<Object> implements Model {
 
     public boolean isBatch() {
         for (Signature s : serviceFidelity.getSelects()) {
-            if (s.getType() != Signature.Type.SRV)
+            if (s.getType() != Signature.Type.PROC)
                 return false;
         }
         return true;
@@ -145,7 +145,7 @@ public class SrvModel extends ParModel<Object> implements Model {
 
     public Signature getProcessSignature() {
         for (Signature s : serviceFidelity.getSelects()) {
-            if (s.getType() == Signature.Type.SRV)
+            if (s.getType() == Signature.Type.PROC)
                 return s;
         }
         return null;

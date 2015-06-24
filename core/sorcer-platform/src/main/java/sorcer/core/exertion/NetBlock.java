@@ -39,7 +39,7 @@ public class NetBlock extends Block implements Evaluation<Object>, Invocation<Ob
 	}
 
 	public NetBlock(String name) throws SignatureException {
-		super(name, new NetSignature("service", Concatenator.class, Type.SRV));
+		super(name, new NetSignature("service", Concatenator.class, Type.PROC));
 	}
 	
 	public NetBlock(String name, Context context)

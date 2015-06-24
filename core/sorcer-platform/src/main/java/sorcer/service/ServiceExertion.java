@@ -753,7 +753,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
                 sig.setServiceType(Spacer.class);
                 ((NetSignature) sig).setSelector("service");
                 sig.setProviderName(ANY);
-                sig.setType(Signature.Type.SRV);
+                sig.setType(Signature.Type.PROC);
                 getControlContext().setAccessType(access);
             } else if (Access.PUSH == access
                     && !getProcessSignature().getServiceType()
@@ -762,7 +762,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
                     sig.setServiceType(Jobber.class);
                     ((NetSignature) sig).setSelector("service");
                     sig.setProviderName(ANY);
-                    sig.setType(Signature.Type.SRV);
+                    sig.setType(Signature.Type.PROC);
                     getControlContext().setAccessType(access);
                 }
             }

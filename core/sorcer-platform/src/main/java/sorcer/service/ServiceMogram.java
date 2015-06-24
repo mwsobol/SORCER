@@ -13,7 +13,6 @@ import sorcer.security.util.SorcerPrincipal;
 
 import javax.security.auth.Subject;
 import java.io.Serializable;
-import java.rmi.RemoteException;
 import java.security.Principal;
 import java.util.*;
 
@@ -395,7 +394,7 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
         }
 
         for (Signature s1 : serviceFidelity.getSelects()) {
-            if (s1.getType() == Signature.Type.SRV) {
+            if (s1.getType() == Signature.Type.PROC) {
                 sig = s1;
                 break;
             }
@@ -842,7 +841,7 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
 
     public void setProcessSignature(Signature signature) {
         for (Signature sig : this.serviceFidelity.selects) {
-            if (sig.getType() != Signature.Type.SRV) {
+            if (sig.getType() != Signature.Type.PROC) {
                 this.serviceFidelity.selects.remove(sig);
             }
         }

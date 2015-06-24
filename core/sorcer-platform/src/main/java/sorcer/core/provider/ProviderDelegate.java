@@ -770,8 +770,8 @@ public class ProviderDelegate {
 	public Task doTask(Task task, Transaction transaction)
 			throws MogramException, SignatureException, RemoteException,
 			ContextException {
-		// prepare a default net batch task (has all sigs of SRV type) 
-		// and make the last signature as master SRV type only.
+		// prepare a default net batch task (has all sigs of PROC type)
+		// and make the last signature as master PROC type only.
 		task.correctBatchSignatures();
 		task.getControlContext().appendTrace(
 				provider.getProviderName() + " to execute: "

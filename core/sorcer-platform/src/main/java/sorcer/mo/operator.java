@@ -224,13 +224,13 @@ public class operator {
         if (model == null)
             model = new SrvModel();
 
-        if (sigs != null && sigs.size() > 0) {
-            Fidelity fidelity = new Fidelity();
-            for (Signature sig : sigs)
-                fidelity.getSelects().add(sig);
-            model.addServiceFidelity(fidelity);
-            model.selectedServiceFidelity(fidelity.getName());
-        }
+//        if (sigs != null && sigs.size() > 0) {
+//            Fidelity fidelity = new Fidelity();
+//            for (Signature sig : sigs)
+//                fidelity.getSelects().add(sig);
+//            model.addServiceFidelity(fidelity);
+//            model.selectedServiceFidelity(fidelity.getName());
+//        }
 //        else {
 //            model.setSubject("execute", ServiceModeler.class);
 //        }
