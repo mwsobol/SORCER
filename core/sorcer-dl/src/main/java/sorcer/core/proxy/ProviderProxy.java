@@ -231,6 +231,7 @@ public class ProviderProxy implements Serializable {
 	}
 
 	private static class ConstrainableInvocationHandler extends ReferentUuidInvocationHandler {
+		private static final long serialVersionUID = -1L;
 
 		public ConstrainableInvocationHandler(Object server, Uuid proxyID, Object adminProxy) {
 			super(server, proxyID, adminProxy);
