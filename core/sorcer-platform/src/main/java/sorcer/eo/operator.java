@@ -994,7 +994,7 @@ public class operator {
 	}
 
 	public static Signature pro(Signature signature) {
-		signature.setType(Type.PRO);
+		signature.setType(Type.PROC);
 		return signature;
 	}
 

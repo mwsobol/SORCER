@@ -82,7 +82,7 @@ public class ServiceSignature implements Signature, Service, SorcerConstants {
 	protected Exertion exertion;
 
 	/** preprocess, process, postprocess, append context */
-	protected Type execType = Type.PRO;
+	protected Type execType = Type.PROC;
 
 	/** indicates whether this method is being processed by the exert method */
 	protected boolean isActive = true;
@@ -381,7 +381,7 @@ public class ServiceSignature implements Signature, Service, SorcerConstants {
 	}
 
 	public boolean isProcessType() {
-		return execType == Type.PRO;
+		return execType == Type.PROC;
 	}
 
 	public boolean isPreprocessType() {

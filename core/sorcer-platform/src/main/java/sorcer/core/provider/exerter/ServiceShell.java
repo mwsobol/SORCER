@@ -466,7 +466,7 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 				sig.setServiceType(Spacer.class);
 				((NetSignature) sig).setSelector("service");
 				sig.setProviderName(SorcerConstants.ANY);
-				sig.setType(Signature.Type.PRO);
+				sig.setType(Signature.Type.PROC);
 				exertion.getControlContext().setAccessType(access);
 			} else if (Access.PUSH == access
 					&& !sig.getServiceType()
@@ -475,7 +475,7 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 					sig.setServiceType(Jobber.class);
 					((NetSignature) sig).setSelector("service");
 					sig.setProviderName(SorcerConstants.ANY);
-					sig.setType(Signature.Type.PRO);
+					sig.setType(Signature.Type.PROC);
 					exertion.getControlContext().setAccessType(access);
 				}
 			}

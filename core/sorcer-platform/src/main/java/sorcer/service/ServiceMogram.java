@@ -394,7 +394,7 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
         }
 
         for (Signature s1 : serviceFidelity.getSelects()) {
-            if (s1.getType() == Signature.Type.PRO) {
+            if (s1.getType() == Signature.Type.PROC) {
                 sig = s1;
                 break;
             }
@@ -841,7 +841,7 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
 
     public void setProcessSignature(Signature signature) {
         for (Signature sig : this.serviceFidelity.selects) {
-            if (sig.getType() != Signature.Type.PRO) {
+            if (sig.getType() != Signature.Type.PROC) {
                 this.serviceFidelity.selects.remove(sig);
             }
         }

@@ -47,7 +47,7 @@ public interface Strategy extends Arg {
 	 * When the access type of a control context is set to <code>PULL</code>
 	 * then the associated exertion is passed onto a {@link Spacer}, otherwise
 	 * (access type is PUSH) the exertion is passed directly on to the provider
-	 * specified by the <code>PRO</code>signature.
+	 * specified by the <code>PROC</code>signature.
 	 */
 	public enum Access implements Arg {
 		PUSH, PULL, SWIF, CATALOG, DIRECT;
