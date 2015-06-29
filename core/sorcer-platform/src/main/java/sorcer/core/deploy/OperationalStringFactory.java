@@ -21,14 +21,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.rioproject.impl.opstring.OpString;
 import org.rioproject.opstring.ClassBundle;
 import org.rioproject.opstring.OperationalString;
 import org.rioproject.opstring.ServiceElement;
 import org.rioproject.opstring.UndeployOption;
-
 import sorcer.core.signature.ServiceSignature;
 import sorcer.service.Exertion;
 import sorcer.service.ServiceExertion;
@@ -40,7 +40,7 @@ import sorcer.service.Signature;
  * @author Dennis Reedy
  */
 public final class OperationalStringFactory {
-    static final Logger logger = Logger.getLogger(OperationalStringFactory.class.getName());
+    static final Logger logger = LoggerFactory.getLogger(OperationalStringFactory.class.getName());
     private OperationalStringFactory() throws Exception {
     }
 
@@ -99,11 +99,10 @@ public final class OperationalStringFactory {
             }
         }
         if(services.isEmpty()) {
-            logger.warning(String.format("No services configured for exertion %s", exertion.getName()));
+            logger.warn(String.format("No services configured for exertion %s", exertion.getName()));
             return null;
         }
-        OpString opString = new OpString(exertion.getDeploymentId(),
-                                         null);
+        OpString opString = new OpString(exertion.getDeploymentId(), null);
         for(ServiceElement service : services) {
             service.setOperationalStringName(opString.getName());
             opString.addService(service);
@@ -157,12 +156,5 @@ public final class OperationalStringFactory {
         }
         return ServiceDeployment.createDeploymentID(nameBuilder.toString());
     }
-
-//    private static OperationalString getIGridDeployment() throws Exception {
-//        File iGridDeployment = new File(Sorcer.getSorcerHomeDir(), "configs/opstrings/iGridBoot.groovy");
-//        OpStringLoader opStringLoader = new OpStringLoader(OperationalStringFactory.class.getClassLoader());
-//        OperationalString[] loaded = opStringLoader.parseOperationalString(iGridDeployment);
-//        return loaded[0];
-//    }
 
 }

@@ -73,7 +73,9 @@ To include this file in your custom *-run-buld.xml have the import line:
 	<path id="provider.starter.path">
 		<pathelement location="${rio.lib}/groovy-all-${groovy.version}.jar" />
 		<pathelement location="${rio.lib}/logging/slf4j-api-${slf4j.version}.jar" />
-		<pathelement location="${rio.lib}/logging/slf4j-jdk14-${slf4j.version}.jar" />
+		<pathelement location="${rio.lib}/logging/logback-core-${logback.version}.jar" />
+        <pathelement location="${rio.lib}/logging/logback-classic-${logback.version}.jar" />
+        <pathelement location="${rio.lib}/logging/jul-to-slf4j-${slf4j.version}.jar" />
 		<pathelement location="${rio.lib}/rio-platform-${rio.version}.jar" />
 		<pathelement location="${rio-dl.lib}/rio-api-${rio.version}.jar" />
 		<pathelement location="${jini.lib}/start-${river.version}.jar" />
@@ -85,17 +87,22 @@ To include this file in your custom *-run-buld.xml have the import line:
 	<propertyset id="provider.system.properties">
 		<propertyref prefix="java.protocol.handler.pkgs" />
 		<propertyref prefix="java.util.logging.config.file" />
+		<propertyref prefix="logback.configurationFile" />
 		<propertyref prefix="java.rmi.server.useCodebaseOnly" />
 		<propertyref name="sorcer.home" />
 		<propertyref name="sorcer.version" />
 		<propertyref name="rio.version" />
 		<propertyref name="river.version" />
+        <propertyref name="plexus.version" />
+        <propertyref name="slf4j.version" />
+		<propertyref name="logback.version" />
 		<propertyref name="org.rioproject.resolver.jar" />
 	</propertyset>
 
 	<!-- define boot classpath -->
 	<path id="boot.classpath">
 		<pathelement location="${sorcer.lib}/sorcer-boot-${sorcer.version}.jar" />
+		<pathelement location="${sorcer.lib}/sorcer-resolving-loader-${sorcer.version}.jar" />
 		<pathelement location="${jini.lib}/start-${river.version}.jar" />
 		<pathelement location="${common.lib}/groovy/groovy-all-${groovy.version}.jar" />
 		<pathelement location="${rio.lib}/rio-platform-${rio.version}.jar" />

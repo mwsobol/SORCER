@@ -17,27 +17,16 @@
 
 package sorcer.service;
 
-import java.rmi.RemoteException;
-import java.security.Principal;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-import java.util.logging.Logger;
-
-import javax.security.auth.Subject;
-
 import net.jini.core.lookup.ServiceID;
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
-import net.jini.id.Uuid;
-import sorcer.co.tuple.Entry;
-import sorcer.core.ComponentSelectionFidelity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sorcer.core.context.ControlContext;
 import sorcer.core.context.FidelityContext;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.ThrowableTrace;
+import sorcer.core.context.model.ent.Entry;
 import sorcer.core.exertion.NetJob;
 import sorcer.core.exertion.ObjectJob;
 import sorcer.core.provider.Jobber;
@@ -49,6 +38,11 @@ import sorcer.security.util.SorcerPrincipal;
 import sorcer.service.Signature.ReturnPath;
 import sorcer.service.Strategy.Access;
 import sorcer.util.SorcerUtil;
+
+import javax.security.auth.Subject;
+import java.rmi.RemoteException;
+import java.security.Principal;
+import java.util.*;
 
 /**
  * A job is a composite service-oriented message comprised of {@link sorcer.service.Exertion}
@@ -63,17 +57,12 @@ import sorcer.util.SorcerUtil;
  * @author Mike Sobolewski
  */
 @SuppressWarnings("rawtypes")
-public class Job extends ServiceExertion implements CompoundExertion {
+public class Job extends CompoundExertion {
 
 	private static final long serialVersionUID = -6161435179772214884L;
 
 	/* our logger */
-	protected final static Logger logger = Logger.getLogger(Job.class.getName());
-	
-	/**
-	 * Component exertions of this job (the Composite Design pattern)
-	 */
-	protected List<Exertion> exertions = new ArrayList<Exertion>();
+	protected final static Logger logger = LoggerFactory.getLogger(Job.class.getName());
 
 	protected Job delegate;
 	
@@ -84,10 +73,8 @@ public class Job extends ServiceExertion implements CompoundExertion {
 	 * @throws sorcer.service.SignatureException
 	 */
 	public Job() {
-		super();
-		exertions = new ArrayList<Exertion>();
+		this("job-" + count++);
 		// exertions = Collections.synchronizedList(new ArrayList<Exertion>());
-		init();
 	}
 
 	/**
@@ -104,12 +91,13 @@ public class Job extends ServiceExertion implements CompoundExertion {
 	/**
 	 * Constructs a job and sets all default values to it.
 	 * 
-	 * @param exertion
+	 * @param mogram
 	 *            The first Exertion of the job.
 	 * @throws ContextException 
 	 */
-	public Job(Exertion exertion) throws ExertionException {
-		addExertion(exertion);
+	public Job(Mogram mogram) throws ExertionException {
+		this("job-" + count++);
+		addMogram(mogram);
 	}
 
 	public Job(String name, String description) {
@@ -117,9 +105,9 @@ public class Job extends ServiceExertion implements CompoundExertion {
 		this.description = description;
 	}
 
-	public Job(String name, String description, ServiceFidelity fidelity) {
+	public Job(String name, String description, Fidelity fidelity) {
 		this(name, description);
-		this.fidelity = fidelity;
+		this.serviceFidelity = fidelity;
 	}
 
 	/**
@@ -128,20 +116,21 @@ public class Job extends ServiceExertion implements CompoundExertion {
 	 * "service" and providerName "*"
 	 * @throws sorcer.service.SignatureException
 	 */
-	private void init() {
+	protected void init() {
+		super.init();
 		NetSignature s = new NetSignature("service", Jobber.class);
 		// Needs to be RemoteJobber for Cataloger to find it
 		// s.setServiceType(Jobber.class.getName());
 		s.setProviderName(null);
-		s.setType(Signature.Type.SRV);
-		fidelity.add(s); // Add the signature
+		s.setType(Signature.Type.PROC);
+		serviceFidelity.selects.add(s); // Add the signature
 	}
 
-	public ServiceFidelity getFidelity() {
+	public Fidelity getFidelity() {
 //		if (fidelity != null)
 //			for (int i = 0; i < fidelity.size(); i++)
 //				signatures.get(i).setProviderName(controlContext.getRendezvousName());
-		return fidelity;
+		return serviceFidelity;
 	}
 
 	@Override
@@ -156,22 +145,6 @@ public class Job extends ServiceExertion implements CompoundExertion {
 	public boolean isCompound() {
 		return true;
 	}
-	
-	public boolean hasChild(String childName) {
-		for (Exertion ext : exertions) {
-			if (ext.getName().equals(childName))
-				return true;
-		}
-		return false;
-	}
-
-	public Exertion getChild(String childName) {
-		for (Exertion ext : exertions) {
-			if (ext.getName().equals(childName))
-				return ext;
-		}
-		return null;
-	}
 
 	public long getLsbID() {
 		return (lsbId == null) ? -1 : lsbId.longValue();
@@ -183,42 +156,11 @@ public class Job extends ServiceExertion implements CompoundExertion {
 	 * @return the number of exertions in this Job.
 	 */
 	public int size() {
-		return exertions.size();
+		return mograms.size();
 	}
 
 	public int indexOf(Exertion ex) {
-		return exertions.indexOf(ex);
-	}
-
-	/**
-	 * Replaces the exertion at the specified position in this list with the
-     * specified element.
-	 */
-	public void setExertionAt(Exertion ex, int i) {
-		exertions.set(i, ex);
-	}
-
-	public Exertion getMasterExertion() {
-		Uuid uuid = null;
-		try {
-			uuid = (Uuid) controlContext.getValue(ControlContext.MASTER_EXERTION);
-		} catch (ContextException ex) {
-			ex.printStackTrace();
-		}
-		if (uuid == null
-				&& controlContext.getFlowType().equals(ControlContext.SEQUENTIAL)) {
-			return (size() > 0) ? get(size() - 1) : null;
-		} else {
-			Exertion master = null;
-			for (int i = 0; i < size(); i++) {
-				if (((ServiceExertion) get(i)).getId().equals(
-						uuid)) {
-					master = get(i);
-					break;
-				}
-			}
-			return master;
-		}
+		return mograms.indexOf(ex);
 	}
 
 	public void setRendezvousName(String jobberName) {
@@ -226,12 +168,12 @@ public class Job extends ServiceExertion implements CompoundExertion {
 	}
 
 	/* (non-Javadoc)
-	 * @see sorcer.service.Exertion#addExertion(sorcer.service.Exertion)
+	 * @see sorcer.service.Exertion#addMogram(sorcer.service.Exertion)
 	 */
 	@Override
-	public Exertion addExertion(Exertion ex) throws ExertionException {
-		exertions.add(ex);
-		((ServiceExertion) ex).setIndex(exertions.indexOf(ex));
+	public Mogram addMogram(Mogram ex) throws ExertionException {
+		mograms.add(ex);
+		((ServiceExertion) ex).setIndex(mograms.indexOf(ex));
 		try {
 			controlContext.registerExertion(ex);
 		} catch (ContextException e) {
@@ -241,53 +183,31 @@ public class Job extends ServiceExertion implements CompoundExertion {
 		return this;
 	}
 
-	public void addExertions(List<Exertion> exertions) {
-		if (this.exertions != null)
-			this.exertions.addAll(exertions);
+	public void addExertions(List<Exertion> Mogram) {
+		if (this.mograms != null)
+			this.mograms.addAll(mograms);
 		else {
-			this.exertions = new ArrayList<Exertion>();
-			this.exertions.addAll(exertions);
+			this.mograms = new ArrayList<Mogram>();
+			this.mograms.addAll(mograms);
 		}
 	}
 
-	public void setExertions(List<Exertion> exertions) {
-		this.exertions = exertions;
-
+	public List<Mogram> getMograms(List<Mogram> exs) {
+		for (Mogram e : mograms)
+			((ServiceExertion) e).getMograms(exs);
+		exs.add(this);
+		return exs;
 	}
 
-	public Job addExertion(Exertion exertion, int priority) throws ExertionException {
-		addExertion(exertion);
-		controlContext.setPriority(exertion, priority);
-		return this;
-	}
-
-	public Exertion removeExertion(Exertion exertion) throws ContextException {
-		// int index = ((ExertionImpl)exertion).getIndex();
-		exertions.remove(exertion);
-		controlContext.deregisterExertion(this, exertion);
-		return exertion;
-	}
-
-	public void remove(int index) throws ContextException {
-		removeExertion(get(index));
-	}
-
-	/**
-	 * Returns the exertion at the specified index.
-	 */
-	public Exertion get(int index) {
-		return (Exertion) exertions.get(index);
-	}
-
-	public Job doJob(Transaction txn) throws ExertionException,
+	public Job doJob(Transaction txn) throws MogramException,
 			SignatureException, RemoteException, TransactionException {
 		if (delegate == null) {
-			if (fidelity != null) {
+			if (serviceFidelity != null) {
 				Signature ss = null;
-				if (fidelity.size() == 1) {
-					ss = fidelity.get(0);
-				} else if (fidelity.size() > 1) {
-					for (Signature s : fidelity) {
+				if (serviceFidelity.selects.size() == 1) {
+					ss = serviceFidelity.selects.get(0);
+				} else if (serviceFidelity.selects.size() > 1) {
+					for (Signature s : serviceFidelity.selects) {
 						if (s.getType() == Signature.SRV) {
 							ss = s;
 							break;
@@ -304,10 +224,9 @@ public class Job extends ServiceExertion implements CompoundExertion {
 
 					delegate.setFidelities(getFidelities());
 					delegate.setFidelity(getFidelity());
-					delegate.setSelectedFidelitySelector(selectedFidelitySelector);
+					delegate.setSelectedFidelitySelector(serviceFidelitySelector);
 					delegate.setContext(dataContext);
 					delegate.setControlContext(controlContext);
-					delegate.setFidelityContexts(fidelityContexts);
 				}
 			}
 			if (delegate instanceof NetJob) {
@@ -315,13 +234,13 @@ public class Job extends ServiceExertion implements CompoundExertion {
 				if (controlContext.getAccessType().equals(Access.PULL)) {
 					Signature procSig = delegate.getProcessSignature();
 					procSig.setServiceType(Spacer.class);
-					delegate.getFidelity().clear();
+					delegate.serviceFidelity.selects.clear();
 					delegate.addSignature(procSig);
 				}
 			}
-			if (exertions.size() > 0) {
-				for (Exertion ex : exertions) {
-					delegate.addExertion(ex);
+			if (mograms.size() > 0) {
+				for (Mogram ex : mograms) {
+					delegate.addMogram(ex);
 				}
 			}
 		}
@@ -392,7 +311,7 @@ public class Job extends ServiceExertion implements CompoundExertion {
 	 */
 	public String jobContextToString() throws ExertionException {
 		StringBuffer sb = new StringBuffer();
-		for (int i = 0; i < exertions.size(); i++) {
+		for (int i = 0; i < mograms.size(); i++) {
 			if (((ServiceExertion) get(i)).isJob())
 				sb.append(((Job) get(i)).jobContextToString());
 			else
@@ -408,8 +327,8 @@ public class Job extends ServiceExertion implements CompoundExertion {
 	public void setOwnerId(String id) {
 		ownerId = id;
 		if (controlContext != null)
-			controlContext.setOwnerID(id);
-		for (int i = 0; i < exertions.size(); i++)
+			controlContext.setOwnerId(id);
+		for (int i = 0; i < mograms.size(); i++)
 			(((ServiceExertion) get(i))).setOwnerId(id);
 	}
 
@@ -431,27 +350,11 @@ public class Job extends ServiceExertion implements CompoundExertion {
 		return desc.toString();
 	}
 
-	/**
-	 * Returns all component <code>Exertion</code>s of this composite exertion.
-	 * 
-	 * @return all component exertions
-	 */
-	public List<Exertion> getExertions() {
-		return exertions;
-	}
-
-	public List<Exertion> getExertions(List<Exertion> exs) {
-		for (Exertion e : exertions)
-			((ServiceExertion) e).getExertions(exs);
-		exs.add(this);
-		return exs;
-	}
-	
 	@Override
 	public List<ThrowableTrace> getExceptions() {
 		List<ThrowableTrace> exceptions = new ArrayList<ThrowableTrace>();
-		for (Exertion ext : exertions) {
-			exceptions.addAll(ext.getExceptions());
+		for (Mogram ext : mograms) {
+			exceptions.addAll(((Exertion)ext).getExceptions());
 		}
 		return exceptions;
 	}
@@ -466,7 +369,7 @@ public class Job extends ServiceExertion implements CompoundExertion {
 	 */
 	public boolean isTree(Set visited) {
 		visited.add(this);
-		Iterator i = exertions.iterator();
+		Iterator i = mograms.iterator();
 		while (i.hasNext()) {
 			ServiceExertion e = (ServiceExertion) i.next();
 			if (visited.contains(e) || !e.isTree(visited)) {
@@ -476,10 +379,31 @@ public class Job extends ServiceExertion implements CompoundExertion {
 		return true;
 	}
 
-	public Exertion getExertion(int index) {
-		return exertions.get(index);
+	public Mogram getExertion(int index) {
+		return mograms.get(index);
 	}
-	
+
+	public Context finalizeOutDataContext() throws ContextException {
+		if (dataContext.getRuntime().getOutConnector() != null) {
+			updateContextWith(dataContext.getRuntime().getOutConnector());
+		}
+		return dataContext;
+	}
+
+	// TODO in/out/inout marking as defined in the connector
+	public Context updateContextWith(Context connector) throws ContextException {
+		if (connector != null) {
+			Context jobContext =  getJobContext();
+			Iterator it = ((ServiceContext)connector).entryIterator();
+			while (it.hasNext()) {
+				Map.Entry e = (Map.Entry) it.next();
+				dataContext.putInValue((String) e.getKey(), jobContext.getValue((String) e.getValue()));
+				dataContext.removePath((String) e.getValue());
+			}
+		}
+		return dataContext;
+	}
+
 	public Context getContext() {
 		 return getJobContext();
 	}
@@ -500,9 +424,9 @@ public class Job extends ServiceExertion implements CompoundExertion {
 
 	@Override
 	public Context linkContext(Context context, String path) {
-		Exertion ext;
+		Mogram ext;
 		for (int i = 0; i < size(); i++) {
-			ext = exertions.get(i);
+			ext = mograms.get(i);
 			try {
 				((ServiceExertion) ext).linkContext(context, path + CPS + ext.getName());
 			} catch (ContextException e) {
@@ -514,9 +438,9 @@ public class Job extends ServiceExertion implements CompoundExertion {
 	
 	@Override
 	public Context linkControlContext(Context context, String path) {
-		Exertion ext;
+		Mogram ext;
 		for (int i = 0; i < size(); i++) {
-			ext = exertions.get(i);
+			ext = mograms.get(i);
 			try {
 				((ServiceExertion) ext).linkControlContext(context, path + CPS
 						+ ext.getName());
@@ -537,7 +461,7 @@ public class Job extends ServiceExertion implements CompoundExertion {
 			attributes = attributes1;
 		}
 		String last = attributes[0];
-		Exertion exti = this;
+		Mogram exti = this;
 		for (String attribute : attributes) {
 			if (((ServiceExertion) exti).hasChild(attribute)) {
 				exti = ((Job) exti).getChild(attribute);
@@ -552,7 +476,7 @@ public class Job extends ServiceExertion implements CompoundExertion {
 		int index = path.indexOf(last);
 		String contextPath = path.substring(index + last.length() + 1);
 
-		return exti.getContext().getValue(contextPath);
+		return ((Exertion)exti).getContext().getValue(contextPath);
 	}
 	
 	/* (non-Javadoc)
@@ -561,7 +485,7 @@ public class Job extends ServiceExertion implements CompoundExertion {
 	@Override
 	public Object getValue(String path, Arg... args) throws ContextException {
 		if (path.startsWith("super")) {
-			return parent.getContext().getValue(path.substring(6), args);
+			return ((Exertion)parent).getContext().getValue(path.substring(6), args);
 		} else {
 			if (path.indexOf(name) >= 0)
 				return getJobValue(path);
@@ -591,7 +515,7 @@ public class Job extends ServiceExertion implements CompoundExertion {
 		Exertion exti = this;
 		for (String attribute : attributes) {
 			if (((ServiceExertion) exti).hasChild(attribute)) {
-				exti = ((Job) exti).getChild(attribute);
+				exti = (Exertion)((Job) exti).getChild(attribute);
 				if (exti instanceof Task) {
 					last = attribute;
 					break;
@@ -632,16 +556,16 @@ public class Job extends ServiceExertion implements CompoundExertion {
 	}
 	
 	public Context getComponentContext(String path) throws ContextException {
-		Exertion xrt = getComponentExertion(path);
+		Exertion xrt = (Exertion)getComponentMogram(path);
 		return xrt.getContext();
 	}
 	
 	public Context getComponentControlContext(String path) {
-		Exertion xrt = getComponentExertion(path);
+		Exertion xrt = (Exertion)getComponentMogram(path);
 		return xrt.getControlContext();
 	}
 	
-	public Exertion getComponentExertion(String path) {
+	public Mogram getComponentMogram(String path) {
 		String[] attributes = SorcerUtil.pathToArray(path);
 		// remove the leading attribute of the current exertion
 		if (attributes[0].equals(getName())) {
@@ -653,7 +577,7 @@ public class Job extends ServiceExertion implements CompoundExertion {
 		Exertion exti = this;
 		for (String attribute : attributes) {
 			if (((ServiceExertion) exti).hasChild(attribute)) {
-				exti = ((CompoundExertion) exti).getChild(attribute);
+				exti = (Exertion)((CompoundExertion) exti).getChild(attribute);
 				if (exti instanceof Task) {
 					break;
 				}
@@ -665,23 +589,16 @@ public class Job extends ServiceExertion implements CompoundExertion {
 	}
 	
 	public void applyFidelityContext(FidelityContext fiContext) throws ExertionException {
-		Collection<SelectionFidelity> fidelities = fiContext.values();
+		Collection<Fidelity> fidelities = fiContext.values();
 		ServiceExertion se = null;
-		for (SelectionFidelity fi : fidelities) {
-			if (fi instanceof ComponentSelectionFidelity) {
-				se = (ServiceExertion) getComponentExertion(((ComponentSelectionFidelity)fi).getPath());
+		for (Fidelity fi : fidelities) {
+			if (fi instanceof Fidelity) {
+				se = (ServiceExertion) getComponentMogram(fi.getPath());
 				se.selectFidelity(fi.getName());
 			}
 		}
 	}
-	
-	public void reset(int state) {
-		for(Exertion e : exertions)
-			((ServiceExertion)e).reset(state);
-		
-		this.setStatus(state);
-	}
-	
+
 	@Override
 	public ServiceExertion substitute(Arg... entries)
 			throws SetterException {

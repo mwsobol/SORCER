@@ -32,6 +32,7 @@ public class AdderProvider extends ServiceTasker implements RemoteAdder {
 			e.printStackTrace();
 		}
 		out.checkpoint();
+
 //		Logger remoteLogger =  provider.getRemoteLogger();
 //		remoteLogger.info("remote logging; add result: " + out);
 		

@@ -16,7 +16,8 @@
  */
 package sorcer.co.tuple;
 
-import sorcer.service.SelectionFidelity;
+
+import sorcer.service.Fidelity;
 
 public class Tuple3<T1, T2, T3> extends Tuple2<T1, T2> {
 	private static final long serialVersionUID = 8462677030360698197L;
@@ -31,8 +32,8 @@ public class Tuple3<T1, T2, T3> extends Tuple2<T1, T2> {
 		_3 = x3;
 	}
 	
-	public SelectionFidelity fidelity() {
-		return (SelectionFidelity)_3;
+	public Fidelity fidelity() {
+		return (Fidelity)_3;
 	}
 	
 	@Override

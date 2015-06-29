@@ -24,7 +24,8 @@ import sorcer.core.provider.Concatenator;
 import sorcer.service.*;
 
 import java.rmi.RemoteException;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * ServiceJobber - The SORCER rendezvous service provider that manages
@@ -34,7 +35,7 @@ import java.util.logging.Logger;
  * @author Mike Sobolewski
  */
 public class ServiceConcatenator extends RendezvousBean implements Concatenator {
-	private Logger logger = Logger.getLogger(ServiceConcatenator.class.getName());
+	private Logger logger = LoggerFactory.getLogger(ServiceConcatenator.class.getName());
 
 	public ServiceConcatenator() throws RemoteException {
 		// do nothing
@@ -42,7 +43,7 @@ public class ServiceConcatenator extends RendezvousBean implements Concatenator 
 
 	public Mogram execute(Mogram mogram, Transaction txn)
 			throws TransactionException, ExertionException, RemoteException {
-		//logger.info("*********************************************ServiceConcatenator.execute, block = " + mogram);
+		logger.info("********************************************* ServiceConcatenator.execute, block = " + mogram);
 		Exertion exertion = (Exertion) mogram;
 		setServiceID(exertion);
 		Block result = null;
@@ -58,12 +59,12 @@ public class ServiceConcatenator extends RendezvousBean implements Concatenator 
 				blockThread.join();
 				result = blockThread.getResult();
 				Condition.cleanupScripts(result);
-				logger.finest("<==== Result: " + result);
+				logger.trace("<==== Result: " + result);
 			}
 		} catch (Throwable e) {
 			throw new ExertionException(e);
 		}
-		//logger.info("*********************************************ServiceConcatenator.execute(), block = " + result);
+		logger.info("********************************************* ServiceConcatenator.execute(), block = " + result);
 		return result;
 	}
 

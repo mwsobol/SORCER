@@ -4,7 +4,8 @@ package sorcer.core.context;
 import org.junit.Test;
 import sorcer.service.Context;
 
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertEquals;
 import static sorcer.co.operator.inEnt;
@@ -15,8 +16,7 @@ import static sorcer.eo.operator.context;
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class ContextTest {
-	private final static Logger logger = Logger
-			.getLogger(ContextTest.class.getName());
+	private final static Logger logger = LoggerFactory.getLogger(ContextTest.class);
 	
 	@Test
 	public void linkedContext() throws Exception {

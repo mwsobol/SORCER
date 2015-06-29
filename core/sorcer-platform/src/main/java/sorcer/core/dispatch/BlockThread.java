@@ -18,6 +18,7 @@
 package sorcer.core.dispatch;
 
 import net.jini.config.ConfigurationException;
+import sorcer.core.DispatchResult;
 import sorcer.core.Dispatcher;
 import sorcer.core.provider.Provider;
 import sorcer.core.provider.ServiceProvider;
@@ -26,11 +27,13 @@ import sorcer.service.ContextException;
 import sorcer.service.Exec;
 
 import java.rmi.RemoteException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static sorcer.util.StringUtils.tName;
 
 public class BlockThread extends Thread {
-	private final static Logger logger = Logger.getLogger(BlockThread.class
+	private final static Logger logger = LoggerFactory.getLogger(BlockThread.class
 			.getName());
 
 	private static final int SLEEP_TIME = 250;
@@ -47,7 +50,7 @@ public class BlockThread extends Thread {
 	}
 
 	public void run() {
-		logger.finer("*** Exertion dispatcher started with control context ***\n"
+		logger.debug("*** Exertion dispatcher started with control context ***\n"
 				+ block.getControlContext());
 		Dispatcher dispatcher = null;
 		try {
@@ -60,41 +63,38 @@ public class BlockThread extends Thread {
 									String.class,
 									null);
 				} catch (ConfigurationException e1) {
-					logger.log(Level.WARNING, "Unable to read property from configuration", e1);
+					logger.warn("Unable to read property from configuration", e1);
 				}
 			}
 			if (exertionDeploymentConfig != null)
-				dispatcher = ExertDispatcherFactory.getFactory().createDispatcher(block, provider, exertionDeploymentConfig);
+				dispatcher = ExertionDispatcherFactory.getFactory().createDispatcher(block, provider, exertionDeploymentConfig);
 			else
-				dispatcher = ExertDispatcherFactory.getFactory().createDispatcher(block, provider);
+				dispatcher = ExertionDispatcherFactory.getFactory().createDispatcher(block, provider);
 
-			try {
-				block.getControlContext().appendTrace(provider.getProviderName() +
-						" dispatcher: " + dispatcher.getClass().getName());
-			} catch (RemoteException e) {
-				// ignore it, locall call
-			}
-			int COUNT = 1000;
+            dispatcher.exec();
+            DispatchResult result = dispatcher.getResult();
+
+			/*int COUNT = 1000;
 			int count = COUNT;
 			while (dispatcher.getState() != Exec.DONE
 					&& dispatcher.getState() != Exec.FAILED
 					&& dispatcher.getState() != Exec.SUSPENDED) {
 				count--;
 				if (count < 0) {
-					logger.finer("*** Concatenator's Exertion Dispatcher waiting in state: "
+					logger.debug("*** Concatenator's Exertion Dispatcher waiting in state: "
 							+ dispatcher.getState());
 					count = COUNT;
 				}
 				Thread.sleep(SLEEP_TIME);
-			}
-			logger.finer("*** Dispatcher exit state = " + dispatcher.getClass().getName()  + " state: " + dispatcher.getState()
+			} */
+
+			logger.debug("*** Dispatcher exit state = " + dispatcher.getClass().getName()  + " state: " + result.state
 					+ " for block***\n" + block.getControlContext());
-		} catch (DispatcherException de) {
+            this.result = (Block) result.exertion;
+        } catch (DispatcherException de) {
 			de.printStackTrace();
-		} catch (InterruptedException ie) {
-			ie.printStackTrace();
 		}
-		result = (Block) dispatcher.getExertion();
+		//result = (Block) dispatcher.getMogram();
 	}
 
 	public Block getBlock() {

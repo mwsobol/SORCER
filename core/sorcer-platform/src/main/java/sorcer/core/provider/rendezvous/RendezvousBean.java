@@ -16,33 +16,26 @@
  */
 package sorcer.core.provider.rendezvous;
 
-import com.sun.jini.thread.TaskManager;
 import net.jini.core.lookup.ServiceID;
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
 import net.jini.id.UuidFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.Contexts;
 import sorcer.core.context.ControlContext;
 import sorcer.core.exertion.NetJob;
 import sorcer.core.exertion.ObjectBlock;
 import sorcer.core.exertion.ObjectJob;
-import sorcer.core.provider.ControlFlowManager;
-import sorcer.core.provider.Provider;
-import sorcer.core.provider.ProviderDelegate;
-import sorcer.core.provider.ServiceProvider;
+import sorcer.core.provider.*;
 import sorcer.service.*;
 import sorcer.util.Sorcer;
 import sorcer.util.SorcerUtil;
 
 import javax.security.auth.Subject;
-import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.Vector;
-import java.util.logging.FileHandler;
-import java.util.logging.Handler;
-import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
 
 /**
  * ServiceBean - The SORCER superclass of service components of ServiceProvider.
@@ -50,13 +43,13 @@ import java.util.logging.SimpleFormatter;
  * @author Mike Sobolewski
  */
 abstract public class RendezvousBean implements Service, Executor {
-	private Logger logger = Logger.getLogger(RendezvousBean.class.getName());
+	private Logger logger = LoggerFactory.getLogger(RendezvousBean.class.getName());
 
 	protected ServiceProvider provider;
 
 	protected ProviderDelegate delegate;
 	
-	protected TaskManager threadManager;
+	//protected TaskManager threadManager;
 	
 	public RendezvousBean() throws RemoteException {
 		// do nothing
@@ -65,40 +58,12 @@ abstract public class RendezvousBean implements Service, Executor {
 	public void init(Provider provider) {
 		this.provider = (ServiceProvider)provider;
 		this.delegate = ((ServiceProvider)provider).getDelegate();
-		this.threadManager = ((ServiceProvider)provider).getThreadManager();
-		try {
-			logger = provider.getLogger();
-		} catch (RemoteException e) {
-			// ignore it, local call
-		}
+		//this.threadManager = ((ServiceProvider)provider).getThreadManager();
+
 	}
 
     public String getProviderName()  {
         return provider.getProviderName();
-	}
-	
-	public TaskManager getThreadManager() {
-		return provider.getThreadManager();
-	}
-		
-	private void initLogger() {
-		Handler h = null;
-		try {
-			logger = Logger.getLogger("local." + provider.getClass().getName() + "."
-					+ provider.getProviderName());
-			h = new FileHandler(System.getProperty(SorcerConstants.SORCER_HOME)
-					+ "/logs/remote/local-Jobber-" + provider.getDelegate().getHostName() + "-" + provider.getProviderName()
-					+ "%g.log", 20000, 8, true);
-			if (h != null) {
-				h.setFormatter(new SimpleFormatter());
-				logger.addHandler(h);
-			}
-			logger.setUseParentHandlers(false);
-		} catch (SecurityException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 	}
 	
 	/** {@inheritDoc} */
@@ -167,7 +132,7 @@ abstract public class RendezvousBean implements Service, Executor {
         }
         ServiceID id = provider.getProviderID();
         if (id != null) {
-            logger.finest(id.getLeastSignificantBits() + ":"
+            logger.trace(id.getLeastSignificantBits() + ":"
                           + id.getMostSignificantBits());
             ((ServiceExertion) ex).setLsbId(id.getLeastSignificantBits());
             ((ServiceExertion) ex).setMsbId(id.getMostSignificantBits());
@@ -190,21 +155,43 @@ abstract public class RendezvousBean implements Service, Executor {
 	 */
 	@Override
 	public Mogram service(Mogram mogram, Transaction transaction) throws RemoteException, ExertionException {
+		Mogram out = null;
 		try {
-			Exertion exertion = (Exertion) mogram;
-			setServiceID((Exertion)exertion);
-			if (exertion instanceof ObjectJob || exertion instanceof ObjectBlock)
-                return execute((Exertion)exertion, transaction);
-            else {
-            	ControlFlowManager cm = new ControlFlowManager((Exertion)exertion, delegate);
-            	return cm.process(threadManager); 
-            }
-		} 
+            logger.info("Got exertion to process: " + mogram.toString());
+			setServiceID(mogram);
+			mogram.appendTrace("mogram: " + mogram.getName() + " rendezvous: " +
+					(provider.getProviderName() != null ? provider.getProviderName() + " " : "")
+					+ this.getClass().getName());
+            if (mogram instanceof ObjectJob || mogram instanceof ObjectBlock)
+                out = execute(mogram, transaction);
+            else
+                out = getControlFlownManager((Exertion)mogram).process();
+
+			if (mogram instanceof Exertion)
+				((Exertion)mogram).getDataContext().setExertion(null);
+        }
 		catch (Exception e) {
 			e.printStackTrace();
 			throw new ExertionException();
 		}
+		return out;
 	}
+
+    protected ControlFlowManager getControlFlownManager(Mogram exertion) throws ExertionException {
+        try {
+            if (exertion instanceof Exertion) {
+                if (((Exertion)exertion).isMonitorable())
+                    return new MonitoringControlFlowManager((Exertion)exertion, delegate, this);
+                else
+                    return new ControlFlowManager((Exertion)exertion, delegate, this);
+            }
+            else
+                return null;
+        } catch (Exception e) {
+            ((Task) exertion).reportException(e);
+            throw new ExertionException(e);
+        }
+    }
 
 	public Mogram service(Mogram mogram) throws RemoteException, ExertionException, TransactionException {
 		return service(mogram, null);

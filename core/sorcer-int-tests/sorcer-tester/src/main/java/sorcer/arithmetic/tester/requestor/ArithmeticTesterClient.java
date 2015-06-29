@@ -9,14 +9,13 @@ import sorcer.core.provider.Exerter;
 import sorcer.service.*;
 import sorcer.service.Strategy.*;
 import sorcer.util.Log;
-import sorcer.util.ProviderAccessor;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
 
 import static sorcer.co.operator.inEnt;
 import static sorcer.co.operator.outEnt;
@@ -104,7 +103,7 @@ public class ArithmeticTesterClient implements SorcerConstants {
 
 		Job out = exert(f1);
 		if (out != null) {
-			logger.info("job f1 context: " + serviceContext(out));
+			logger.info("job f1 context: " + upcontext(out));
 			logger.info("job f1/f5/result/y: " + get(out, "f1/f5/result/y"));
 		} else {
 			logger.info("job execution failed");
@@ -136,7 +135,7 @@ public class ArithmeticTesterClient implements SorcerConstants {
 
 		Exertion out = exert(f1);
 		if (out != null) {
-			logger.info("job f1 context: " + serviceContext(out));
+			logger.info("job f1 context: " + upcontext(out));
 			logger.info("job f1/f3/result/y3: " + get(out, "f1/f3/result/y3"));
 		} else {
 			logger.info("job execution failed");
@@ -181,7 +180,7 @@ public class ArithmeticTesterClient implements SorcerConstants {
 		
 		Exertion out = exert(f1);
 		if (out != null) {
-			logger.info("job f1 context: " + serviceContext(out));
+			logger.info("job f1 context: " + upcontext(out));
 			logger.info("job f1/f3/result/y3: " + get(out, "f1/f3/result/y3"));
 		} else {
 			logger.info("job execution failed");
@@ -213,7 +212,7 @@ public class ArithmeticTesterClient implements SorcerConstants {
 		   pipe(outPoint(f5, path(result, y)), inPoint(f3, path(arg, x2))));
 
 		Exertion out = exert(f1);
-		logger.info("job f1 context: " + serviceContext(out));
+		logger.info("job f1 context: " + upcontext(out));
 		logger.info("job f1 f1/f3/result/y: " + get(out, path("f1", "f3", result, y)));
 		
 		return out;
@@ -243,7 +242,7 @@ public class ArithmeticTesterClient implements SorcerConstants {
 
 		Exertion out = exert(f1);
 
-		logger.info("job f1 context: " + serviceContext(out));
+		logger.info("job f1 context: " + upcontext(out));
 		logger.info("job f1 f3/result/y3: " + get(out, path("f1/f3/result/y3")));
 
 		return out;
@@ -278,7 +277,7 @@ public class ArithmeticTesterClient implements SorcerConstants {
 		
 		logger.info("out name: " + name(out));
 		logger.info("job f1 context: " + context(out));
-		logger.info("job f1 job context: " + serviceContext(out));
+		logger.info("job f1 job context: " + upcontext(out));
 		logger.info("job f1 f3/result/y3: " + get(out, path("f1/f3/result/y3")));
 		logger.info("task f4 trace: " + trace(exertion(out, "f1/f2/f4")));
 		logger.info("task f5 trace: " + trace(exertion(out, "f1/f2/f5")));
@@ -316,7 +315,7 @@ private Exertion f1SEQpull() throws Exception {
 		
 		logger.info("out name: " + name(out));
 		logger.info("job f1 context: " + context(out));
-		logger.info("job f1 job context: " + serviceContext(out));
+		logger.info("job f1 job context: " + upcontext(out));
 		logger.info("job f1 f3/result/y3: " + get(out, path("f1/f3/result/y3")));
 		logger.info("task f4 trace: " + trace(exertion(out, "f1/f2/f4")));
 		logger.info("task f5 trace: " + trace(exertion(out, "f1/f2/f5")));
@@ -355,7 +354,7 @@ private Exertion f1SEQpull() throws Exception {
 		
 		Exertion out = null;
 		long start = System.currentTimeMillis();
-		Exerter exerter = ProviderAccessor.getExerter();
+		Exerter exerter = Accessor.getService(Exerter.class);
 		logger.info("got exerter: " + exerter);
 
 		out = exerter.exert(f5);

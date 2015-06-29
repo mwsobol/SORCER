@@ -134,6 +134,14 @@ public interface Signature extends Serializable, Comparable, Dependency, Identif
 	public Type getType();
 
 	/**
+	 * Returns a inConnector specifying output paths for existing
+	 * paths in returned context for this signature.
+	 *
+	 * @return a context mapping output paths to existing path
+	 */
+	public Context getInConnector();
+
+	/**
 	 * Assigns a signature <code>type</code> for this service signature.
 	 * 
 	 * @param type
@@ -271,17 +279,17 @@ public interface Signature extends Serializable, Comparable, Dependency, Identif
 	/**
 	 * There are four types of {@link Signature} operations that can be
 	 * associated with signatures: <code>PRE</code> (preprocess),
-	 * <code>SRV</code> (process/service) , <code>POST</code> (postprocess), and
+	 * <code>PROC</code> (process/service) , <code>POST</code> (postprocess), and
 	 * <code>APD_DATA</code> (append data) and code>APD_CONTROL</code> (append
-	 * control strategy). Only one <code>SRV</code> signature can be associated
-	 * with any exertion. The <code>SRV</code> signature defines an executing
+	 * control strategy). Only one <code>PROC</code> signature can be associated
+	 * with any exertion. The <code>PROC</code> signature defines an executing
 	 * provider dynamically bounded at runtime. The <code>APD_DATA</code>
 	 * signatures are invoked invoked first to get specified contexts from
 	 * {@link sorcer.service.Contexter}s that are appended to the task's current
 	 * context.
 	 */
 	public enum Type implements Arg {
-		SRV, PRE, POST, APD_DATA, APD_CONTROL;
+		PROC, PRE, POST, SRV, APD_DATA, APD_CONTROL, BUILDER;
 
 		/* (non-Javadoc)
 		 * @see sorcer.service.Arg#getName()
@@ -367,7 +375,7 @@ public interface Signature extends Serializable, Comparable, Dependency, Identif
         }
     }
     
-	static final Type SRV = Type.SRV;
+	static final Type SRV = Type.PROC;
 	static final Type PRE = Type.PRE;
 	static final Type POST = Type.POST;
 	static final Type APD = Type.APD_DATA;

@@ -12,7 +12,8 @@ import sorcer.service.ContextException;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.Scanner;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static java.lang.System.out;
 import static sorcer.co.operator.ent;
@@ -21,7 +22,7 @@ import static sorcer.eo.operator.*;
 @SuppressWarnings("rawtypes")
 public class Volume implements Sphere, Cylinder, Serializable {
 	private static final long serialVersionUID = 1L;
-	private final static Logger logger = Logger.getLogger(Volume.class
+	private final static Logger logger = LoggerFactory.getLogger(Volume.class
 			.getName());
 	private static double radius = 0.0, height = 0.0;
 	 

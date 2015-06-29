@@ -2,9 +2,10 @@ package sorcer.worker.tests;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sorcer.service.Context;
 import sorcer.service.ContextException;
-import sorcer.util.Log;
 import sorcer.worker.provider.InvalidWork;
 import sorcer.worker.provider.Work;
 import sorcer.worker.provider.impl.WorkerProvider;
@@ -12,7 +13,6 @@ import sorcer.worker.provider.impl.WorkerProvider;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.rmi.RemoteException;
-import java.util.logging.Logger;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -25,7 +25,7 @@ import static sorcer.eo.operator.*;
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class WorkerProviderImplTest {
-	private static Logger logger = Log.getTestLog();
+	private final static Logger logger = LoggerFactory.getLogger(WorkerProviderImplTest.class);
 	
 	String hostname;
 	Context context;

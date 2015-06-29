@@ -13,7 +13,8 @@ import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Timestamp;
 import java.util.Vector;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyAgreement;
@@ -32,8 +33,10 @@ import sorcer.core.loki.exertion.KPEntry;
 import sorcer.core.loki.group.GroupManagement;
 import sorcer.core.loki.key.KeyGenerationManagement;
 import sorcer.core.loki.key.KeyGenerator;
+import sorcer.service.Accessor;
 import sorcer.service.ContextException;
 import sorcer.service.Exertion;
+import sorcer.service.space.SpaceAccessor;
 import sorcer.util.ProviderAccessor;
 
 /**
@@ -68,7 +71,7 @@ public class LokiMemberUtil
 	/** debug db switch */
 	private boolean debugdb = true;
 	/** Logger object */
-	protected static Logger logger = Logger.getLogger(LokiMemberUtil.class.getName());
+	protected static Logger logger = LoggerFactory.getLogger(LokiMemberUtil.class.getName());
 	//------------------------------------------------------------------------------------------------------------
 	
 	/**
@@ -115,10 +118,10 @@ public class LokiMemberUtil
 	{
 		try
 		{
-			JavaSpace space = ProviderAccessor.getSpace();
+			JavaSpace space = SpaceAccessor.getSpace();
 			if(space == null)			{ throw new Exception("NO SPACE FOUND!!!"); }
 			
-			GroupManagement groupMan = (GroupManagement)ProviderAccessor.getProvider(null,GroupManagement.class);
+			GroupManagement groupMan = Accessor.getService(GroupManagement.class);
 			if(groupMan == null)		{ throw new Exception("NO GROUP MANAGER FOUND!!!"); }
 			
 			ExertionEnvelop cckeeTemp = ExertionEnvelop.getTemplate();
@@ -156,10 +159,10 @@ public class LokiMemberUtil
 	{
 		try
 		{
-			JavaSpace space = ProviderAccessor.getSpace();
+			JavaSpace space = SpaceAccessor.getSpace();
 			if(space == null)			{ throw new Exception("NO SPACE FOUND!!!"); }
 			
-			GroupManagement groupMan = (GroupManagement)ProviderAccessor.getProvider(null,GroupManagement.class);
+			GroupManagement groupMan = Accessor.getService(null, GroupManagement.class);
 			if(groupMan == null)		{ throw new Exception("NO GROUP MANAGER FOUND!!!"); }
 			
 			ExertionEnvelop kpeeTemp = ExertionEnvelop.getTemplate();
@@ -201,11 +204,11 @@ public class LokiMemberUtil
 	{
 		try
 		{
-			JavaSpace space = ProviderAccessor.getSpace();
-			if(space == null)			{ throw new Exception("NO SPACE FOUND!!!"); }
-			
-			GroupManagement groupMan = (GroupManagement)ProviderAccessor.getProvider(null,GroupManagement.class);
-			if(groupMan == null)		{ throw new Exception("NO GROUP MANAGER FOUND!!!"); }
+            JavaSpace space = SpaceAccessor.getSpace();
+            if(space == null)			{ throw new Exception("NO SPACE FOUND!!!"); }
+
+            GroupManagement groupMan = Accessor.getService(null, GroupManagement.class);
+            if(groupMan == null)		{ throw new Exception("NO GROUP MANAGER FOUND!!!"); }
 			
 			ExertionEnvelop cckeeTemp = ExertionEnvelop.getTemplate();
 	        cckeeTemp.isEncrypted = false;
@@ -242,11 +245,11 @@ public class LokiMemberUtil
 	{
 		try
 		{
-			JavaSpace space = ProviderAccessor.getSpace();
-			if(space == null)			{ throw new Exception("NO SPACE FOUND!!!"); }
-			
-			GroupManagement groupMan = (GroupManagement)ProviderAccessor.getProvider(null,GroupManagement.class);
-			if(groupMan == null)		{ throw new Exception("NO GROUP MANAGER FOUND!!!"); }
+            JavaSpace space = SpaceAccessor.getSpace();
+            if(space == null)			{ throw new Exception("NO SPACE FOUND!!!"); }
+
+            GroupManagement groupMan = Accessor.getService(null, GroupManagement.class);
+            if(groupMan == null)		{ throw new Exception("NO GROUP MANAGER FOUND!!!"); }
 			
 			ExertionEnvelop kpeeTemp = ExertionEnvelop.getTemplate();
 		    kpeeTemp.isEncrypted = false;
@@ -287,11 +290,11 @@ public class LokiMemberUtil
 	{
 		try
 		{
-			JavaSpace space = ProviderAccessor.getSpace();
-			if(space == null)			{ throw new Exception("NO SPACE FOUND!!!"); }
-			
-			GroupManagement groupMan = (GroupManagement)ProviderAccessor.getProvider(null,GroupManagement.class);
-			if(groupMan == null)		{ throw new Exception("NO GROUP MANAGER FOUND!!!"); }
+            JavaSpace space = SpaceAccessor.getSpace();
+            if(space == null)			{ throw new Exception("NO SPACE FOUND!!!"); }
+
+            GroupManagement groupMan = Accessor.getService(null, GroupManagement.class);
+            if(groupMan == null)		{ throw new Exception("NO GROUP MANAGER FOUND!!!"); }
 			
 			Vector<Uuid> ids = new Vector<Uuid>();
 			Vector<KeyPair> r_pairs = new Vector<KeyPair>();
@@ -330,11 +333,11 @@ public class LokiMemberUtil
 	{
 		try
 		{
-			JavaSpace space = ProviderAccessor.getSpace();
-			if(space == null)			{ throw new Exception("NO SPACE FOUND!!!"); }
-			
-			GroupManagement groupMan = (GroupManagement)ProviderAccessor.getProvider(null,GroupManagement.class);
-			if(groupMan == null)		{ throw new Exception("NO GROUP MANAGER FOUND!!!"); }
+            JavaSpace space = SpaceAccessor.getSpace();
+            if(space == null)			{ throw new Exception("NO SPACE FOUND!!!"); }
+
+            GroupManagement groupMan = Accessor.getService(null, GroupManagement.class);
+            if(groupMan == null)		{ throw new Exception("NO GROUP MANAGER FOUND!!!"); }
 			
 			/*----------------------------*/
 			if(debugdb)
@@ -417,11 +420,11 @@ public class LokiMemberUtil
 	{
 		try
 		{
-			JavaSpace space = ProviderAccessor.getSpace();
-			if(space == null)			{ throw new Exception("NO SPACE FOUND!!!"); }
-			
-			GroupManagement groupMan = (GroupManagement)ProviderAccessor.getProvider(null,GroupManagement.class);
-			if(groupMan == null)		{ throw new Exception("NO GROUP MANAGER FOUND!!!"); }
+            JavaSpace space = SpaceAccessor.getSpace();
+            if(space == null)			{ throw new Exception("NO SPACE FOUND!!!"); }
+
+            GroupManagement groupMan = Accessor.getService(null, GroupManagement.class);
+            if(groupMan == null)		{ throw new Exception("NO GROUP MANAGER FOUND!!!"); }
 			
 	        /*----------------------------*/
 	        if(debugdb)
@@ -496,11 +499,11 @@ public class LokiMemberUtil
 	{
 		try
 		{
-			JavaSpace space = ProviderAccessor.getSpace();
-			if(space == null)			{ throw new Exception("NO SPACE FOUND!!!"); }
-			
-			GroupManagement groupMan = (GroupManagement)ProviderAccessor.getProvider(null,GroupManagement.class);
-			if(groupMan == null)		{ throw new Exception("NO GROUP MANAGER FOUND!!!"); }
+            JavaSpace space = SpaceAccessor.getSpace();
+            if(space == null)			{ throw new Exception("NO SPACE FOUND!!!"); }
+
+            GroupManagement groupMan = Accessor.getService(null, GroupManagement.class);
+            if(groupMan == null)		{ throw new Exception("NO GROUP MANAGER FOUND!!!"); }
 			
 			template.isEncrypted = true;
 			
@@ -569,11 +572,11 @@ public class LokiMemberUtil
 	{
 		try
 		{
-			JavaSpace space = ProviderAccessor.getSpace();
-			if(space == null)			{ throw new Exception("NO SPACE FOUND!!!"); }
-			
-			GroupManagement groupMan = (GroupManagement)ProviderAccessor.getProvider(null,GroupManagement.class);
-			if(groupMan == null)		{ throw new Exception("NO GROUP MANAGER FOUND!!!"); }
+            JavaSpace space = SpaceAccessor.getSpace();
+            if(space == null)			{ throw new Exception("NO SPACE FOUND!!!"); }
+
+            GroupManagement groupMan = Accessor.getService(null, GroupManagement.class);
+            if(groupMan == null)		{ throw new Exception("NO GROUP MANAGER FOUND!!!"); }
 			
 			template.isEncrypted = true;
 			
@@ -642,13 +645,11 @@ public class LokiMemberUtil
 	{
 		try
 		{
-			JavaSpace space = ProviderAccessor.getSpace();
-			if(space == null)			
-				{ throw new Exception("NO SPACE FOUND!!!"); }
-			
-			GroupManagement groupMan = (GroupManagement)ProviderAccessor.getProvider(null,GroupManagement.class);
-			if(groupMan == null)		
-				{ throw new Exception("NO GROUP MANAGER FOUND!!!"); }
+            JavaSpace space = SpaceAccessor.getSpace();
+            if(space == null)			{ throw new Exception("NO SPACE FOUND!!!"); }
+
+            GroupManagement groupMan = Accessor.getService(null, GroupManagement.class);
+            if(groupMan == null)		{ throw new Exception("NO GROUP MANAGER FOUND!!!"); }
 			
 			if(debug)
 			{ logger.info("START ENCRYPTING"); }

@@ -37,7 +37,7 @@ public class ObjectBlock extends Block {
 	private static final long serialVersionUID = -3917210130874207557L;
 	
 	public ObjectBlock() throws SignatureException {
-		super(null, new ObjectSignature("execute", ServiceConcatenator.class));
+		this("object block-" + count++);
 	}
 	
 	public ObjectBlock(String name) throws SignatureException {
@@ -66,7 +66,7 @@ public class ObjectBlock extends Block {
 			evaluator.setParameterTypes(new Class[] { Mogram.class });
 			evaluator.setParameters(new Object[] { this });
 			result = (Block)evaluator.evaluate();
-			getControlContext().appendTrace("" + evaluator);
+			getControlContext().appendTrace("block by: " + evaluator.getClass().getName());
 		} catch (Exception e) {
 			e.printStackTrace();
 			if (controlContext != null)

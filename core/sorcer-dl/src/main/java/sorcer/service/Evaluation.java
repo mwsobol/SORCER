@@ -25,7 +25,7 @@ import java.rmi.RemoteException;
  * 
  * @author Mike Sobolewski
  */
-public interface  Evaluation <T> {
+public interface  Evaluation <T> extends Substitutable {
 
 	/**
 	 * Returns the value of the existing value of this evaluation that might be invalid.
@@ -45,15 +45,5 @@ public interface  Evaluation <T> {
 	 * @throws RemoteException
 	 */
 	public T getValue(Arg... entries) throws EvaluationException, RemoteException;
-
-	
-	/**
-	 * Realizes the substitution for this evaluation with respect to the provided parameters.
-	 *
-	 * @param entries substitution parameters
-	 * @throws EvaluationException
-	 * @throws RemoteException
-	 */
-	public Evaluation<T> substitute(Arg... entries) throws SetterException, RemoteException;
 	
 }

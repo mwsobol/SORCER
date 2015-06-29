@@ -138,19 +138,19 @@ public final class SignedServiceTask extends NetTask implements
 	 * @param publickey
 	 *            of the key pair whose private key was used to encrypt the
 	 *            object
-	 * @param signatureBytes
+	 * @param signature
 	 *            of the encrypted object
 	 * @exception IOException
 	 *                if the object could not be accessed
 	 * @exception ClassNotFoundException
 	 *                if the class for object could not be found
-	 * @exception SignatureExceptiono
+	 * @exception SignatureException
 	 *                if the signature is not of right format
 	 * @exception InvalidKeyException
 	 *                if the key supplied is not of right format
 	 */
 	public boolean verify(PublicKey publickey,
-			java.security.Signature signature1) throws InvalidKeyException,
+			java.security.Signature signature) throws InvalidKeyException,
 			SignatureException, IOException, ClassNotFoundException {
 		ByteArrayOutputStream bytearrayoutputstream = new ByteArrayOutputStream();
 		ObjectOutputStream objectoutputstream = new ObjectOutputStream(
@@ -159,9 +159,9 @@ public final class SignedServiceTask extends NetTask implements
 		objectoutputstream.flush();
 		objectoutputstream.close();
 		byte[] content = bytearrayoutputstream.toByteArray();
-		signature1.initVerify(publickey);
-		signature1.update(content);
-		return signature1.verify(signatureBytes);
+		signature.initVerify(publickey);
+		signature.update(content);
+		return signature.verify(signatureBytes);
 	}
 
 }

@@ -25,7 +25,8 @@ import sorcer.service.Strategy.Wait;
 import sorcer.util.ProviderAccessor;
 import sorcer.util.ProviderLookup;
 
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertEquals;
 import static sorcer.co.operator.*;
@@ -41,9 +42,8 @@ import static sorcer.eo.operator.value;
 @ProjectContext("core/sorcer-int-tests/sorcer-tester")
 public class ArithmeticNoNetTest implements SorcerConstants {
 
-	private final static Logger logger = Logger
-			.getLogger(ArithmeticNoNetTest.class.getName());
-	
+	private static final Logger logger = LoggerFactory.getLogger(ArithmeticNoNetTest.class);
+
 	@Test
 	public void testTaskConcatenation() throws Exception {
 		Task task1 = getAddTask();
@@ -51,9 +51,9 @@ public class ArithmeticNoNetTest implements SorcerConstants {
 		Task task3 = getSubtractTask();
 
 		Exertion job = new ObjectJob("3tasks");
-		job.addExertion(task1);
-		job.addExertion(task2);
-		job.addExertion(task3);
+		job.addMogram(task1);
+		job.addMogram(task2);
+		job.addMogram(task3);
 		
 		// make the result of second task as the first argument of task
 		// three
@@ -76,12 +76,12 @@ public class ArithmeticNoNetTest implements SorcerConstants {
 		Task task3 = getSubtractTask();
 
 		Job internal = new ObjectJob("2tasks");
-		internal.addExertion(task2);
-		internal.addExertion(task1);
+		internal.addMogram(task2);
+		internal.addMogram(task1);
 		
 		Exertion job = new ObjectJob("1job1task");
-		job.addExertion(internal);
-		job.addExertion(task3);
+		job.addMogram(internal);
+		job.addMogram(task3);
 		
 		// make the result of second task as the first argument of task
 		// three
@@ -104,14 +104,14 @@ public class ArithmeticNoNetTest implements SorcerConstants {
 		Task task3 = getSubtractTask();
 		
 		Job internal = new ObjectJob("2tasks");
-		internal.addExertion(task2);
-		internal.addExertion(task1);
+		internal.addMogram(task2);
+		internal.addMogram(task1);
 		internal.getControlContext().setFlowType(Flow.PAR);
 		internal.getControlContext().setAccessType(Access.PUSH);
 
 		Exertion job = new ObjectJob("1job1task");
-		job.addExertion(internal);
-		job.addExertion(task3);
+		job.addMogram(internal);
+		job.addMogram(task3);
 		internal.getControlContext().setFlowType(Flow.SEQ);
 		internal.getControlContext().setAccessType(Access.PUSH);
 		
@@ -193,13 +193,13 @@ public class ArithmeticNoNetTest implements SorcerConstants {
 	@Test
 	public void exertSrvTest() throws Exception {
 		Job srv = createSrv();
-		logger.info("srv job context: " + serviceContext(srv));
+		logger.info("srv job context: " + upcontext(srv));
 		logger.info("srv j1/t3 context: " + context(srv, "j1/t3"));
 		logger.info("srv j1/j2/t4 context: " + context(srv, "j1/j2/t4"));
 		logger.info("srv j1/j2/t5 context: " + context(srv, "j1/j2/t5"));
 
 		srv = exert(srv);
-		logger.info("srv job context: " + serviceContext(srv));
+		logger.info("srv job context: " + upcontext(srv));
 
 		// logger.info("srv value @  t3/arg/x2 = " + get(srv, "j1/t3/arg/x2"));
 		assertEquals(get(srv, "j1/t3/arg/x2"), 100.0);
@@ -332,7 +332,7 @@ public class ArithmeticNoNetTest implements SorcerConstants {
 		job = exert(job);
 		// logger.info("job j1: " + job);
 		// logger.info("job j1 job context: " + context(job));
-		logger.info("job j1 job context: " + serviceContext(job));
+		logger.info("job j1 job context: " + upcontext(job));
 		// logger.info("job j1 value @ j1/t3/result/y = " + get(job,
 		// "j1/t3/result/y"));
 		assertEquals(get(job, "j1/t3/result/y"), 400.00);
@@ -345,7 +345,7 @@ public class ArithmeticNoNetTest implements SorcerConstants {
 		job = exert(job);
 		// logger.info("job j1: " + job);
 		// logger.info("job j1 job context: " + context(job));
-		logger.info("job j1 job context: " + serviceContext(job));
+		logger.info("job j1 job context: " + upcontext(job));
 		// logger.info("job j1 value @ j1/t3/result/y = " + get(job,
 		// "j1/t3/result/y"));
 		assertEquals(get(job, "j1/t3/result/y"), 400.00);

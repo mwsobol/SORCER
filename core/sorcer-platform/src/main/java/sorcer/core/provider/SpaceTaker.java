@@ -16,40 +16,33 @@
  */
 package sorcer.core.provider;
 
-// Imported classes
-import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.logging.Logger;
-
 import net.jini.config.Configuration;
 import net.jini.core.entry.Entry;
 import net.jini.core.lease.Lease;
-import net.jini.core.lease.LeaseDeniedException;
 import net.jini.core.lease.UnknownLeaseException;
-import net.jini.core.transaction.CannotAbortException;
-import net.jini.core.transaction.CannotCommitException;
 import net.jini.core.transaction.Transaction;
-import net.jini.core.transaction.TransactionFactory;
-import net.jini.core.transaction.UnknownTransactionException;
-import net.jini.core.transaction.server.TransactionManager;
 import net.jini.lease.LeaseListener;
-import net.jini.lease.LeaseRenewalEvent;
 import net.jini.lease.LeaseRenewalManager;
 import net.jini.space.JavaSpace;
 import net.jini.space.JavaSpace05;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import sorcer.core.SorcerConstants;
 import sorcer.core.exertion.ExertionEnvelop;
 import sorcer.core.loki.exertion.KPEntry;
 import sorcer.core.loki.member.LokiMemberUtil;
-import sorcer.service.Exec;
-import sorcer.service.Exertion;
-import sorcer.service.ExertionError;
-import sorcer.service.ServiceExertion;
-import sorcer.service.Task;
-import sorcer.util.GenericUtil;
-import sorcer.util.ProviderAccessor;
+import sorcer.core.monitor.MonitorUtil;
+import sorcer.core.monitor.MonitoringSession;
+import sorcer.river.TX;
+import sorcer.service.*;
+import sorcer.service.space.SpaceAccessor;
+
+import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * This is a class creates a JavaSpace taker that extends the {@link Thread}
@@ -60,19 +53,16 @@ import sorcer.util.ProviderAccessor;
  * @see LeaseListener
  * @see SorcerConstants
  */
-public class SpaceTaker extends Thread implements LeaseListener,
-		SorcerConstants {
-	static protected final String LOKI_ONLY = "CreatorsPublicKey";
-
-	static Logger logger = Logger.getLogger(SpaceTaker.class.getName());
+public class SpaceTaker implements Runnable {
+	static Logger logger = LoggerFactory.getLogger(SpaceTaker.class);
 
 	protected boolean isTransactional;
 
-	protected static long TRANSACTION_LEASE_TIME = 1000 * 60 * 1; // 1 minute
+	protected static long TRANSACTION_LEASE_TIME = TimeUnit.MINUTES.toMillis(1); // 1 minute
 
 	protected long transactionLeaseTimeout = TRANSACTION_LEASE_TIME;
 
-	public final static long SPACE_TIMEOUT = 1000 * 30; // 1/2 minute
+	public final static long SPACE_TIMEOUT = TimeUnit.SECONDS.toMillis(8); // 8 seconds
 
 	protected long spaceTimeout = SPACE_TIMEOUT;
 
@@ -82,10 +72,11 @@ public class SpaceTaker extends Thread implements LeaseListener,
 
 	protected ExecutorService pool;
 
-	protected static LeaseRenewalManager leaseManager;
+    private LeaseRenewalManager lrm;
 
 	// controls the loop of this space worker
 	protected volatile boolean keepGoing = true;
+    protected boolean remoteLogging;
 
 	public static void doLog(String msg, String threadId, Transaction.Created txn) {
 		String newMsg = "\nspace taker log; thread id = " + threadId + "\n"
@@ -112,7 +103,7 @@ public class SpaceTaker extends Thread implements LeaseListener,
 		public boolean noQueue;
 
 		public SpaceTakerData() {
-		};
+		}
 
 		public SpaceTakerData(ExertionEnvelop entry, LokiMemberUtil member,
 				Provider provider, String spaceName, String spaceGroup,
@@ -135,7 +126,7 @@ public class SpaceTaker extends Thread implements LeaseListener,
 	 * Default constructor. Set the worker thread as a Daemon thread
 	 */
 	public SpaceTaker() {
-		setDaemon(true);
+        lrm = new LeaseRenewalManager();
 	}
 
 	/**
@@ -147,12 +138,14 @@ public class SpaceTaker extends Thread implements LeaseListener,
 	 *            SpaceDispatcher data
 	 * @param pool
 	 *            Executor service provides methods to manage termination and
-	 *            tracking progress of one or more asynchronous tasks
+     * @param remoteLogging
+     *              Enable logging to a RemoteLoggerManager
 	 */
-	public SpaceTaker(SpaceTakerData data, ExecutorService pool) {
+	public SpaceTaker(SpaceTakerData data, ExecutorService pool, boolean remoteLogging) {
 		this();
 		this.data = data;
 		this.pool = pool;
+        this.remoteLogging = remoteLogging;
 		this.transactionLeaseTimeout = getTransactionLeaseTime();
 		this.spaceTimeout = getTimeOut();
 		this.isTransactional = data.workerTransactional;
@@ -198,7 +191,7 @@ public class SpaceTaker extends Thread implements LeaseListener,
 			numCallsTaker++;
 			numThreadsTaker++;
 			prefix = "adding taker thread";
-			threadIdString = new Integer(numCallsTaker).toString();
+			threadIdString = Integer.toString(numCallsTaker);
 			//threadIdString = this.toString();
 			threadIdsTaker.add(threadIdString);
 		} else {
@@ -215,17 +208,7 @@ public class SpaceTaker extends Thread implements LeaseListener,
 		
 		return threadIdString;
 	}
-	
-	protected static void abortTransaction(Transaction.Created txn) throws UnknownLeaseException, UnknownTransactionException, CannotAbortException, RemoteException {
-		leaseManager.remove(txn.lease);
-		txn.transaction.abort();
-	}
 
-	protected static void commitTransaction(Transaction.Created txn) throws UnknownLeaseException, UnknownTransactionException, CannotCommitException, RemoteException  {
-		leaseManager.remove(txn.lease);
-		txn.transaction.commit();
-	}
-	
 	// fields for worker thread metrics
 	//
 	private int numThreadsWorker = 0;
@@ -238,7 +221,7 @@ public class SpaceTaker extends Thread implements LeaseListener,
 			numCallsWorker++;
 			numThreadsWorker++;
 			prefix = "adding worker thread";
-			threadIdString = new Integer(numCallsWorker).toString();
+			threadIdString = Integer.toString(numCallsWorker);
 			//threadIdString = this.toString();
 			threadIdsWorker.add(threadIdString);
 		} else {
@@ -255,29 +238,17 @@ public class SpaceTaker extends Thread implements LeaseListener,
 		return threadIdString;
 	}
 	
-	
-	public void stopTakerThread() {
-		keepGoing = false;
-	}
-	
 	public void run() {
-
-		//String threadId = doThreadMonitorTaker(null);
-		String threadId = "junk2";
-//		doLog("\trun()\n\tisTransactional: " + isTransactional
-//				+ "\n\ttransactionLeaseTimeout: " + transactionLeaseTimeout
-//				+ "\n\tspaceTimeout: " + spaceTimeout + "\n\tdata.noQueue = "
-//				+ data.noQueue, threadId, null);
+		String threadId = doThreadMonitorTaker(null);
 
 		Transaction.Created txnCreated = null;
 
 		while (keepGoing) {
-			logger.info("space taker in run()...keepGoing = " + keepGoing);
-			ExertionEnvelop ee = null;
+			ExertionEnvelop ee;
+            Object envelopNoCast = null;
 			try {
-				space = ProviderAccessor.getSpace(data.spaceName,
-						data.spaceGroup);
-
+				space = SpaceAccessor.getSpace(data.spaceName,
+                        data.spaceGroup);
 				if (space == null) {
 //					doLog("\t***warning: space taker did not get SPACE.",
 //							threadId, null);
@@ -288,26 +259,26 @@ public class SpaceTaker extends Thread implements LeaseListener,
 				if (data.noQueue) {
 					if (((ThreadPoolExecutor) pool).getActiveCount() != ((ThreadPoolExecutor) pool)
 							.getCorePoolSize()) {
+                        Transaction tx = null;
 						if (isTransactional) {
-							txnCreated = createTransaction(threadId);
+							txnCreated = TX.createTransaction(transactionLeaseTimeout);
 							if (txnCreated == null) {
-//								doLog("\t***warning: space taker did not get TRANSACTION.",
-//										threadId, null);
+                                logger.warn("SpaceTaker did not get TRANSACTION thread: {}", threadId);
 								Thread.sleep(spaceTimeout / 6);
 								continue;
 							}
-							ee = (ExertionEnvelop) space.take(data.entry,
-									txnCreated.transaction, spaceTimeout);
-						} else {
-							ee = (ExertionEnvelop) space.take(data.entry, null,
-									spaceTimeout);
+                            tx = txnCreated.transaction;
 						}
+                        envelopNoCast = space.take(data.entry, tx, spaceTimeout);
+                        ee = (ExertionEnvelop) envelopNoCast;
 					} else {
+                        /* Sleep for whats basically a clock tick to avoid thrashing */
+                        Thread.sleep(50);
 						continue;
 					}
 				} else {
 					if (isTransactional) {
-						txnCreated = createTransaction(threadId);
+						txnCreated = TX.createTransaction(transactionLeaseTimeout);
 						if (txnCreated == null) {
 							doLog("\t***warning: space taker did not get TRANSACTION.",
 									threadId, null);
@@ -321,70 +292,35 @@ public class SpaceTaker extends Thread implements LeaseListener,
 								spaceTimeout);
 					}
 				}
-				
+
 				// after 'take' timeout abort transaction and sleep for a while
 				// before 'taking' the next exertion
 				if (ee == null) {
 					if (txnCreated != null) {
-
-						//doLog("\taborting txn...", threadId, txnCreated);
-						abortTransaction(txnCreated);
-						//doLog("\tDONE aborting txn.", threadId, txnCreated);
-						
-						Thread.sleep(spaceTimeout / 2);
+						TX.abortTransaction(txnCreated);
+						try {
+                            Thread.sleep(spaceTimeout / 2);
+                        } catch (InterruptedException ie) {
+                            keepGoing = false;
+                            break;
+                        }
 					}
-					
+
 					txnCreated = null;
 					continue;
 				}
-
-				if (isTransactional) {
-					//doLog("\tgoing to create space worker w/txn...", threadId, null);
-					pool.execute(new SpaceWorker(ee, txnCreated));
-				} else {
-					//doLog("\tgoing to create space worker NO TXN...", threadId, null);
-					pool.execute(new SpaceWorker(ee, null));
-				}
+                pool.execute(new SpaceWorker(ee, txnCreated, data.provider, remoteLogging));
 			} catch (Exception ex) {
-				//logger.info("END LOOP SPACE TAKER EXCEPTION");
-				//ex.printStackTrace();
-				continue;
+                logger.warn("Problem with SpaceTaker", ex);
 			}
 		}
 		
 		// remove thread monitor
-		//doThreadMonitorTaker(threadId);
-		logger.info("space taker exiting run()...keepGoing = " + keepGoing);
+		doThreadMonitorTaker(threadId);
 	}
 
 	synchronized public Transaction.Created createTransaction() {
-		return createTransaction(null);
-	}
-	
-	synchronized public Transaction.Created createTransaction(String threadId) {
-		if (leaseManager == null) {
-			leaseManager = new LeaseRenewalManager();
-		}
-		try {
-			TransactionManager tManager = ProviderAccessor
-					.getTransactionManager();
-			if (tManager == null) {
-				return null;
-			}
-			Transaction.Created created = TransactionFactory.create(tManager,
-					transactionLeaseTimeout);
-
-//			doLog("\tcreated transaction", threadId, created);
-
-			leaseManager.renewFor(created.lease, Lease.FOREVER, transactionLeaseTimeout, this);
-
-			return created;
-		} catch (RemoteException e) {
-			e.printStackTrace();
-		} catch (LeaseDeniedException e) {
-			e.printStackTrace();
-		}
-		return null;
+		return TX.createTransaction(transactionLeaseTimeout);
 	}
 
 	protected boolean isAbandoned(Exertion exertion) {
@@ -398,7 +334,7 @@ public class SpaceTaker extends Thread implements LeaseListener,
 					return true;
 				}
 			} catch (Exception e) {
-				logger.throwing(this.getClass().getName(), "isAbandoned", e);
+				logger.debug("isAbandoned", e);
 				// continue on
 			}
 		}
@@ -414,47 +350,49 @@ public class SpaceTaker extends Thread implements LeaseListener,
 			data.myMemberUtil.readCCK(data.entry.serviceType);
 			ee = data.myMemberUtil.takeEnEE(data.entry, txn);
 		} catch (Exception e) {
-			logger.throwing(SpaceTaker.class.getName(), "run", e);
+			logger.debug("run", e);
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * net.jini.lease.LeaseListener#notify(net.jini.lease.LeaseRenewalEvent)
-	 */
-	@Override
-	public void notify(LeaseRenewalEvent e) {
-		// Do nothing. It happens when a space providers is destroyed
-//		logger.severe("########### space transaction lost its lease: "
-//				+ e.getLease());
-	}
+    public void destroy() {
+        keepGoing = false;
+    }
 
-	class SpaceWorker implements Runnable {
-		private ExertionEnvelop ee;
+
+    class SpaceWorker implements Runnable {
+        private ExertionEnvelop ee;
+        private Provider provider;
 		private Transaction.Created txnCreated;
-		
+		private boolean remoteLogging;
+
 
 		SpaceWorker(ExertionEnvelop envelope,
-				Transaction.Created workerTxnCreated)
+                    Transaction.Created workerTxnCreated, Provider provider, boolean remoteLogging)
 				throws UnknownLeaseException {
+            this.provider = provider;
 			ee = envelope;
+            this.remoteLogging = remoteLogging;
 			if (workerTxnCreated != null) {
 				txnCreated = workerTxnCreated;
-				// leaseManager.setExpiration(txnCreated.lease,
-				// System.currentTimeMillis() + transactionLeaseTimeout);
-				Exception e = new RuntimeException("");
-				
 			}
 		}
-		
+
 		public void run() {
-			//String threadId = doThreadMonitorWorker(null);
-			String threadId = "junk";
-			
-			//if (txnCreated != null)
-//			doLog("\tcalling doEnvelope()...", threadId, txnCreated);
+            if(remoteLogging)
+                MDC.put(SorcerConstants.MDC_SORCER_REMOTE_CALL, SorcerConstants.MDC_SORCER_REMOTE_CALL);
+            if (ee.exertion!=null && ee.exertion.getId()!=null)
+                MDC.put(SorcerConstants.MDC_EXERTION_ID, ee.exertion.getId().toString());
+            try {
+                String prvId = null;
+                if (data.provider!=null)
+                    prvId = data.provider.getProviderID().toString();
+                MDC.put(SorcerConstants.MDC_PROVIDER_ID, prvId);
+            } catch (RemoteException re) {
+                logger.warn("Problem getting provider ID in SpaceTaker");
+            }
+            //
+			String threadId = doThreadMonitorWorker(null);
+
 			Entry result = doEnvelope(ee, (txnCreated == null) ? null
 					: txnCreated.transaction, threadId, txnCreated);
 //			doLog("\tDONE calling doEnvelope(); result = " + result, threadId, txnCreated);
@@ -464,14 +402,13 @@ public class SpaceTaker extends Thread implements LeaseListener,
 				try {
 					space.write(result, null, Lease.FOREVER);
 				} catch (Exception e) {
-//					doLog("\t***error: calling space.write().", threadId,
-//							txnCreated);
-					e.printStackTrace();
-					try {
-						if (txnCreated != null)
-							abortTransaction(txnCreated);
-					} catch (Exception ew) {
-						ew.printStackTrace();
+                    logger.warn("Error while writing the result", e);
+                    try {
+						TX.abortTransaction(txnCreated);
+					} catch (Exception e1) {
+                        logger.warn("Error while aborting transaction", e1);
+						doThreadMonitorWorker(threadId);
+						return;
 					}
 					doThreadMonitorWorker(threadId);
 					return;
@@ -479,9 +416,11 @@ public class SpaceTaker extends Thread implements LeaseListener,
 //				doLog("\tDONE calling space.write().", threadId, txnCreated);
 				if (txnCreated != null) {
 					try {
-						commitTransaction(txnCreated);
-					} catch (Exception ec) {
-						ec.printStackTrace();
+						TX.commitTransaction(txnCreated);
+					} catch (Exception e) {
+                        logger.warn("Error while committing transaction", e);
+						doThreadMonitorWorker(threadId);
+						return;
 					}
 				}
 			} else {			
@@ -489,39 +428,34 @@ public class SpaceTaker extends Thread implements LeaseListener,
 						txnCreated);
 				if (txnCreated != null) {
 					try {
-						abortTransaction(txnCreated);
-					} catch (Exception ea) {
-						ea.printStackTrace();
+						TX.abortTransaction(txnCreated);
+					} catch (Exception e) {
+                        logger.warn("Error while aborting transaction", e);
+						doThreadMonitorWorker(threadId);
+						return;
 					}
 				}
 			}
 			doThreadMonitorWorker(threadId);
+            MDC.remove(SorcerConstants.MDC_SORCER_REMOTE_CALL);
+            MDC.remove(SorcerConstants.MDC_EXERTION_ID);
+            MDC.remove(SorcerConstants.MDC_PROVIDER_ID);
 		}
 
-		public void doLog(String msg, String threadId, Transaction.Created txn) {
-			String newMsg = "\n\tspace worker log; thread id = " + threadId + "\n"
-					+ msg;
-
-			if (txn != null) {
-				long expTime = txn.lease.getExpiration();
-				long expDuration = expTime - System.currentTimeMillis();
-				newMsg = newMsg + "\n\t\ttxn = " + txn;
-				newMsg = newMsg + "\n\t\tlease = " + txn.lease;
-				newMsg = newMsg + "\n\t\texpires in [s] = " + expDuration / 1000;
-			}
-			logger.info(newMsg);
-
-		}
-		
-		public Entry doEnvelope(ExertionEnvelop ee, Transaction transaction,
-				String threadId, Transaction.Created txn) {
-			ServiceExertion se = null, out = null;
-			try {
-				// logger.info("\n----SpaceWorker>>execute invoked");
+		public Entry doEnvelope(ExertionEnvelop ee, Transaction transaction, String threadId, Transaction.Created txn) {
+			ServiceExertion se;
+            ServiceExertion out;
+            try {
 				ee.exertion.getControlContext().appendTrace(
-						"taken by: " + data.provider.getProviderName() + ":"
-								+ data.provider.getProviderID());
+						"spacer: " + data.provider.getProviderName());
 				se = (ServiceExertion) ee.exertion;
+                MonitoringSession monSession = MonitorUtil.getMonitoringSession(se);
+
+                if (se.isMonitorable() && se.isTask() && monSession!=null) {
+                    monSession.init((Monitorable)provider.getProxy());
+                    lrm.renewUntil(monSession.getLease(), Lease.ANY, null);
+                }
+
 
 				if (se instanceof Task) {
 					// task for the worker's provider
@@ -544,9 +478,12 @@ public class SpaceTaker extends Thread implements LeaseListener,
 							"Not able to execute exertion envelope for exertionID: "
 									+ ee.exertionID));
 				}
-			} catch (Throwable th) {
-				logger.throwing(this.getClass().getName(), "doEnvelope", th);
-				th.printStackTrace();
+                if (se.isMonitorable() && se.isTask() && monSession!=null) {
+                    monSession.changed(se.getContext(), se.getControlContext(), se.getStatus());
+                    lrm.remove(monSession.getLease());
+                }
+            } catch (Throwable th) {
+				logger.debug("doEnvelope", th);
 				if (th instanceof Exception) {
 					ee.state = Exec.FAILED;
 					((ServiceExertion) ee.exertion).setStatus(Exec.FAILED);

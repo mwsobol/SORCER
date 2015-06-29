@@ -10,7 +10,8 @@ import sorcer.service.Accessor;
 import sorcer.service.Service;
 import sorcer.util.*;
 
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertNotNull;
 
@@ -22,13 +23,12 @@ import static org.junit.Assert.assertNotNull;
 @ProjectContext("core/sorcer-int-tests/sorcer-tester")
 public class ProviderAccessorTest implements SorcerConstants {
 
-	private final static Logger logger = Logger
-			.getLogger(ProviderAccessorTest.class.getName());
+	private static final Logger logger = LoggerFactory.getLogger(ProviderAccessorTest.class);
 
 	@Test
 	public void providerAcessorTest() throws Exception {
 		long startTime = System.currentTimeMillis();
-		Service provider = Accessor.getService(new NetSignature(Jobber.class));
+		Object provider = Accessor.getService(new NetSignature(Jobber.class));
 //		logger.info("Accessor provider: " + provider);
 		logger.info(Stopwatch.getTimeString(System.currentTimeMillis() - startTime));
 		assertNotNull(provider);
@@ -53,7 +53,7 @@ public class ProviderAccessorTest implements SorcerConstants {
 	@Test
 	public void accessingConcatenatorTest() throws Exception {
 		long startTime = System.currentTimeMillis();
-		Service provider = Accessor.getService(new NetSignature(Concatenator.class));
+		Object provider = Accessor.getService(new NetSignature(Concatenator.class));
 //		logger.info("Accessor provider: " + provider);
 		logger.info(Stopwatch.getTimeString(System.currentTimeMillis() - startTime));
 		assertNotNull(provider);

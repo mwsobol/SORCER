@@ -27,39 +27,82 @@ import java.rmi.RemoteException;
  * @author Mike Sobolewski
  */
 public interface Model extends Mogram, Dependency {
-    
-    public Context getInputs()  throws ContextException, RemoteException;
-    
-    public Context getOutputs()  throws ContextException, RemoteException;
 
     /**
-     *  Returns a context od all specified responses of this model. 
+     * Returns the context of all response outputs of this model with a provided configuration.
      *
-     * @param entries  optional configuration arguments
+     * @param args optional configuration arguments
      * @return
      * @throws ContextException
      * @throws RemoteException
      */
-    public Context getResponses(Arg... entries)  throws ContextException, RemoteException;
+    public Object getResponse(Arg... args) throws ContextException, RemoteException;
+
 
     /**
-     * Returns a response for a given <code>path</code>
-     *  
-     * @param path a path of the response in the model
-     * @param entries  optional configuration arguments
+     * Returns a model current response context.
+     *
+     * @return a current response context
+     * @throws ContextException
+     * @throws RemoteException
+     */
+    public Object getResult() throws ContextException, RemoteException;
+
+
+    /**
+     * Returns a requested evaluation context with a provided input context.
+     *
+     * @param inputContext a context for this evaluation
+     * @return the result context of this evaluation
+     * @throws ContextException
+     * @throws RemoteException
+     */
+    public Context evaluate(Context inputContext) throws ContextException, RemoteException;
+
+    /**
+     * Returns the input context of this model.
+     *
+     * @return the input context
+     * @throws ContextException
+     * @throws RemoteException
+     */
+    public Context getInputs() throws ContextException, RemoteException;
+
+    /**
+     * Returns the output context of this model.
+     *
+     * @return the output context
+     * @throws ContextException
+     * @throws RemoteException
+     */
+    public Context getOutputs() throws ContextException, RemoteException;
+
+    /**
+     * Returns a input connector as a map of input paths of tis model mapped to output paths of the sender.
+     * An input connector specifies a map of an input context of this model.
+     *
+     * @param args optional configuration arguments
      * @return
      * @throws ContextException
      * @throws RemoteException
      */
-    public Object getResponse(String path, Arg... entries)  throws ContextException, RemoteException;
+    public Context getInConnector(Arg... args) throws ContextException, RemoteException;
 
     /**
-     * Returns a default response of this model
+     * Returns a output connector as a map of output paths of tis model mapped to input paths of the receiver.
+     * An output connector specifies a map of an output context of this model.
      *
-     * @return  a default response
+     * @param args optional configuration arguments
+     * @return
      * @throws ContextException
      * @throws RemoteException
      */
-    public Object getResponse(Arg... entries) throws ContextException, RemoteException;
+    public Context getOutConnector(Arg... args) throws ContextException, RemoteException;
 
+    /**
+     * Sets a buider of this model to be used for replication when needed.
+     *
+     * @param signature
+     */
+    public void setBuilder(Signature signature);
 }

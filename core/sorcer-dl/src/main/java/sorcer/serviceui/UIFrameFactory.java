@@ -7,7 +7,8 @@ import java.net.URLClassLoader;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.Arrays;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.JComponent;
 import javax.swing.JEditorPane;
@@ -25,7 +26,7 @@ public class UIFrameFactory implements JFrameFactory, Serializable {
 	
 	static final long serialVersionUID = 5806535989492809459L;
 
-	private final static Logger logger = Logger.getLogger(UIFrameFactory.class.getName());
+	private final static Logger logger = LoggerFactory.getLogger(UIFrameFactory.class.getName());
 	
 	private String className;
 	private URL[] exportURL;

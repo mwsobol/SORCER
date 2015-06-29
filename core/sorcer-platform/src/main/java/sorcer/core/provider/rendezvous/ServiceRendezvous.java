@@ -28,7 +28,8 @@ import sorcer.service.*;
 import sorcer.service.Strategy.Access;
 
 import java.rmi.RemoteException;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * ServiceJobber - The SORCER rendezvous service provider that provides
@@ -37,7 +38,7 @@ import java.util.logging.Logger;
  * @author Mike Sobolewski
  */
 public class ServiceRendezvous extends RendezvousBean implements Rendezvous, Spacer, Jobber, Concatenator {
-	private Logger logger = Logger.getLogger(ServiceRendezvous.class.getName());
+	private Logger logger = LoggerFactory.getLogger(ServiceRendezvous.class.getName());
 
 	private boolean isConfigured = false;
 	
@@ -83,8 +84,8 @@ public class ServiceRendezvous extends RendezvousBean implements Rendezvous, Spa
 		delegate.getServiceComponents().put(Jobber.class, new ServiceJobber());
 		delegate.getServiceComponents().put(Concatenator.class, new ServiceConcatenator());
 		delegate.getServiceComponents().put(Spacer.class, new ServiceSpacer());
-		if (!delegate.spaceEnabled())
-				provider.initSpaceSupport();
+		//if (!delegate.spaceEnabled())
+				//provider.initSpaceSupport();
 		isConfigured = true;
 	}
 }

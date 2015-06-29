@@ -33,6 +33,7 @@ public class AdderDBProvider extends DatabaseProvider implements RemoteAdder {
 			e.printStackTrace();
 		}
 		out.checkpoint();
+
 //		Logger remoteLogger =  provider.getRemoteLogger();
 //		remoteLogger.info("remote logging; add result: " + out);
 		

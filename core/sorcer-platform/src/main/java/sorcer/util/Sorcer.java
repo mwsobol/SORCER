@@ -17,17 +17,19 @@
 
 package sorcer.util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import sorcer.core.SorcerConstants;
+import sorcer.core.provider.DatabaseStorer;
+import sorcer.core.provider.DataspaceStorer;
+import sorcer.core.provider.Provider;
+import sorcer.service.Context;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.logging.Logger;
-
-import sorcer.core.provider.DatabaseStorer;
-import sorcer.core.provider.DataspaceStorer;
-import sorcer.core.provider.Provider;
-import sorcer.service.Context;
 
 /**
  * The Sorcer utility class provides the global environment configuration for
@@ -78,9 +80,8 @@ import sorcer.service.Context;
  * nodes in service contexts {@code Contexts.getMarkedPaths}.
  */
 @SuppressWarnings("rawtypes")
-public class Sorcer extends SorcerEnv {
-	final static Logger logger = Logger.getLogger(Sorcer.class.getName());
-
+public class Sorcer extends SorcerEnv implements SorcerConstants {
+	final static Logger logger = LoggerFactory.getLogger(Sorcer.class.getName());
 	protected Sorcer() {
 		super();
 	}
@@ -109,12 +110,9 @@ public class Sorcer extends SorcerEnv {
 				if (stream != null)
 					props.load(stream);
 				else
-					logger.severe("could not load data node types from: "
-							+ filename);
+					logger.error("could not load data node types from: "+ filename);
 			} catch (Throwable t2) {
-				logger.severe("could not load data node types: \n"
-						+ t2.getMessage());
-				logger.throwing(Sorcer.class.getName(), "loadDataNodeTypes", t2);
+				logger.error("could not load data node types: \n"+ t2.getMessage());
 			}
 
 		}
@@ -178,4 +176,5 @@ public class Sorcer extends SorcerEnv {
 				// t.printStackTrace();
 			}
 	}
+
 }

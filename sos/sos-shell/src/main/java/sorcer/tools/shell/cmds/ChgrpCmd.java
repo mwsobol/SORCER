@@ -26,7 +26,7 @@ import net.jini.core.lookup.ServiceRegistrar;
 import net.jini.discovery.DiscoveryGroupManagement;
 import sorcer.tools.shell.NetworkShell;
 import sorcer.tools.shell.ShellCmd;
-import sorcer.util.WhitespaceTokenizer;
+import sorcer.tools.shell.WhitespaceTokenizer;
 
 public class ChgrpCmd extends ShellCmd {
 

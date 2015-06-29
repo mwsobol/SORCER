@@ -17,9 +17,9 @@ public class AdderRequestor extends ServiceRequestor {
 
 
         if (args[1].equals("netlet")) {
-            return (Exertion) evaluate(new File("src/main/netlets/adder-netlet.groovy"));
+            return (Exertion) evaluate(new File("src/main/netlets/adder.ntl"));
         } else if (args[1].equals("dynamic")) {
-            return (Exertion) evaluate(new File("src/main/netlets/dynamic-adder-netlet.groovy"));
+            return (Exertion) evaluate(new File("src/main/netlets/adder-sbp.ntl"));
         }
         Class serviceType =  Adder.class;
 

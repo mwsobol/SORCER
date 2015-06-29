@@ -73,7 +73,7 @@ public class ServiceTasker extends ServiceProvider {
 			throws ExertionException  {
 		try {
 			return (Task) new ControlFlowManager((Exertion) task, delegate)
-					.process(threadManager);
+					.process();
 		} catch (Exception e) {
 			throw new ExertionException(e);
 		} 

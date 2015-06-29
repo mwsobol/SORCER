@@ -19,7 +19,7 @@ package sorcer.core.invoker;
 import java.rmi.RemoteException;
 
 import net.jini.core.transaction.Transaction;
-import sorcer.co.tuple.Entry;
+import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.par.Par;
 import sorcer.service.Arg;
@@ -49,19 +49,19 @@ public class ExertInvoker extends ServiceInvoker implements ExertionInvoking {
 		defaultName = "xrtInvoker-";
 	}
 	
-	public ExertInvoker(String name, Exertion exertion, String path, Par... pars) {
+	public ExertInvoker(String name, Exertion exertion, String path, Par... parEntries) {
 		super(name);
 		this.path = path;
 		this.exertion = exertion;
-		this.pars = new ArgSet(pars);
+		this.pars = new ArgSet(parEntries);
 	}
 
-	public ExertInvoker(Exertion exertion, String path, Par... pars) {
-		this(null, exertion, path, pars);
+	public ExertInvoker(Exertion exertion, String path, Par... parEntries) {
+		this(null, exertion, path, parEntries);
 	}
 	
-	public ExertInvoker(Exertion exertion, Par... pars) {
-		this(null, exertion, null, pars);
+	public ExertInvoker(Exertion exertion, Par... parEntries) {
+		this(null, exertion, null, parEntries);
 	}
 
 	/* (non-Javadoc)

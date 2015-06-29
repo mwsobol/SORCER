@@ -1,6 +1,8 @@
 package sorcer.worker.provider.impl;
 
 import com.sun.jini.start.LifeCycle;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.provider.ServiceTasker;
 import sorcer.service.Context;
@@ -18,7 +20,7 @@ import java.rmi.RemoteException;
  */
 @SuppressWarnings("rawtypes")
 public class WorkerProvider extends ServiceTasker implements Worker {
-	
+	private static final Logger logger = LoggerFactory.getLogger(WorkerProvider.class);
 	private String hostName;
 	
 	public WorkerProvider() throws Exception {

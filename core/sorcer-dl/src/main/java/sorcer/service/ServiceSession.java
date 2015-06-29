@@ -18,6 +18,7 @@
 package sorcer.service;
 
 import java.util.Enumeration;
+import java.util.Iterator;
 
 /**
  * Created by Mike Sobolewski
@@ -85,7 +86,7 @@ public interface ServiceSession {
          * @exception ContextException
          *                if this method is called on an invalidated session
          */
-        public Enumeration<String> getAttributeNames() throws ContextException;
+        public Iterator<String> getAttributeNames() throws ContextException;
 
         /**
          * Binds an object to this session, using the name specified. If an object

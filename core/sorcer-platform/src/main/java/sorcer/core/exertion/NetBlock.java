@@ -35,11 +35,11 @@ public class NetBlock extends Block implements Evaluation<Object>, Invocation<Ob
 	private static final long serialVersionUID = 3420416993635766567L;
 	
 	public NetBlock() throws SignatureException  {
-		super(null, new NetSignature("service", Concatenator.class, Type.SRV));
+		this("net block-" + count++);
 	}
 
 	public NetBlock(String name) throws SignatureException {
-		super(name, new NetSignature("service", Concatenator.class, Type.SRV));
+		super(name, new NetSignature("service", Concatenator.class, Type.PROC));
 	}
 	
 	public NetBlock(String name, Context context)
@@ -50,7 +50,7 @@ public class NetBlock extends Block implements Evaluation<Object>, Invocation<Ob
 	}
 	
 	public NetBlock(SorcerPrincipal principal) throws ExertionException {
-		this("undefined" + count++, principal);
+		this("net block-" + count++, principal);
 	}
 
 	public NetBlock(String name, SorcerPrincipal principal)
@@ -71,7 +71,7 @@ public class NetBlock extends Block implements Evaluation<Object>, Invocation<Ob
 		return temp;
 	}
 
-	public Block doBlock(Transaction txn) throws ExertionException,
+	public Block doBlock(Transaction txn) throws  MogramException,
 			SignatureException, RemoteException, TransactionException {
 		ServiceShell se = new ServiceShell(this);
 		return (Block)se.exert(txn, null);

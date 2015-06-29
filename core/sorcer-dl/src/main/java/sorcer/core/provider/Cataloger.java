@@ -17,6 +17,7 @@
 
 package sorcer.core.provider;
 
+import java.net.URL;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.Map;
@@ -85,20 +86,6 @@ public interface Cataloger extends Service, Remote {
 	 */
 	public Provider lookup(ServiceID sid) throws RemoteException;
 
-	/**
-	 * Returns the service Provider from an item matching the template, or null
-	 * if there is no match. If multiple items match the template, it is
-	 * arbitrary as to which service object is returned. If the returned object
-	 * cannot be deserialized, an UnmarshalException is thrown with the standard
-	 * RMI semantics.
-	 * 
-	 * @param tmpl
-	 *            - template to match
-	 * @return an object that represents a service that matches the specified
-	 *         template
-	 * @throws RemoteException
-	 */
-	public Object lookup(ServiceTemplate tmpl) throws RemoteException;
 
 	/**
 	 * Returns at most maxMatches items matching the template, plus the total
@@ -131,6 +118,16 @@ public interface Cataloger extends Service, Remote {
 	 * @throws RemoteException
 	 */
 	public Map<String, String> getProviderMethods() throws RemoteException;
+
+	/**
+	 * Returns a map with a key as service name (only those services that implement sorcer.service.Service interface)
+	 * and a list of Codebase URLs for that service
+	 *
+	 * @return a hash map of all SORCER provider names with corresponding
+	 *         codebase URLs.
+	 * @throws RemoteException
+	 */
+	public Map<String, URL[]>  getProviderCodebaseURLs() throws RemoteException;
 
 	/**
 	 * Returns a String array of the providers currently on the network.

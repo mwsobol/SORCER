@@ -17,7 +17,8 @@
 
 package sorcer.core.context;
 
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created by Mike Sobolewski.
@@ -26,7 +27,7 @@ public class ScopeContext extends ServiceContext {
 
     private static final long serialVersionUID = 1L;
 
-    private static Logger logger = Logger.getLogger(ScopeContext.class.getName());
+    private static Logger logger = LoggerFactory.getLogger(ScopeContext.class.getName());
 
     public ScopeContext() {
         super();

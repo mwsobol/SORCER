@@ -61,50 +61,52 @@ public class ServiceDestroyer {
                 killJVMs.add(arg.substring(4));
             }
         }
-        JiniClient client = new JiniClient();
-        client.addRegistrarGroups(Sorcer.getLookupGroups());
-        Listener listener = new Listener();
-        client.getDiscoveryManager().addDiscoveryListener(listener);
-        if (killMonitor) {
-            int waited = 0;
-            while(listener.getProvisionMonitors().length==0 && waited < 6) {
-                Thread.sleep(500);
-                waited++;
-            }
-            for(ProvisionMonitor monitor : listener.getProvisionMonitors()) {
-                try {
-                    Object admin = monitor.getAdmin();
-                    List<String> toUndeploy = new ArrayList<String>();
-                    for(OperationalStringManager manager : ((DeployAdmin) admin).getOperationalStringManagers()) {
-                        toUndeploy.add(manager.getOperationalString().getName());
+        if(killCybernode || killMonitor) {
+            JiniClient client = new JiniClient();
+            client.addRegistrarGroups(Sorcer.getLookupGroups());
+            Listener listener = new Listener();
+            client.getDiscoveryManager().addDiscoveryListener(listener);
+            if (killMonitor) {
+                int waited = 0;
+                while (listener.getProvisionMonitors().length == 0 && waited < 6) {
+                    Thread.sleep(500);
+                    waited++;
+                }
+                for (ProvisionMonitor monitor : listener.getProvisionMonitors()) {
+                    try {
+                        Object admin = monitor.getAdmin();
+                        List<String> toUndeploy = new ArrayList<String>();
+                        for (OperationalStringManager manager : ((DeployAdmin) admin).getOperationalStringManagers()) {
+                            toUndeploy.add(manager.getOperationalString().getName());
+                        }
+                        for (String undeploy : toUndeploy) {
+                            ((DeployAdmin) admin).undeploy(undeploy);
+                            System.out.println("Undeployed \"" + undeploy + "\"");
+                        }
+                        ((DestroyAdmin) admin).destroy();
+                        System.out.println("ProvisionMonitor terminated");
+                    } catch (RemoteException e) {
+                        System.err.println("Could not terminate ProvisionMonitor");
+                        e.printStackTrace();
                     }
-                    for(String undeploy : toUndeploy) {
-                        ((DeployAdmin)admin).undeploy(undeploy);
-                        System.out.println("Undeployed \""+undeploy+"\"");
-                    }
-                    ((DestroyAdmin)admin).destroy();
-                    System.out.println("ProvisionMonitor terminated");
-                } catch (RemoteException e) {
-                    System.err.println("Could not terminate ProvisionMonitor");
-                    e.printStackTrace();
                 }
             }
-        }
 
-        if (killCybernode) {
-            int waited = 0;
-            while(listener.getProvisionMonitors().length==0 && waited < 6) {
-                Thread.sleep(500);
-                waited++;
-            }
-            for(Cybernode cybernode : listener.getCybernodes()) {
-                try {
-                    Object admin = cybernode.getAdmin();
-                    ((DestroyAdmin)admin).destroy();
-                    System.out.println("Cybernode terminated");
-                } catch (RemoteException e) {
-                    System.err.println("Could not terminate Cybernode");
-                    e.printStackTrace();
+            if (killCybernode) {
+                int waited = 0;
+                while (listener.getProvisionMonitors().length == 0 && waited < 6) {
+                    Thread.sleep(500);
+                    waited++;
+                }
+                for (Cybernode cybernode : listener.getCybernodes()) {
+                    try {
+                        Object admin = cybernode.getAdmin();
+                        ((DestroyAdmin) admin).destroy();
+                        System.out.println("Cybernode terminated");
+                    } catch (RemoteException e) {
+                        System.err.println("Could not terminate Cybernode");
+                        e.printStackTrace();
+                    }
                 }
             }
         }

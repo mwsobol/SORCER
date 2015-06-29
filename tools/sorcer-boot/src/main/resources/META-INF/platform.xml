@@ -8,6 +8,8 @@
 		<classpath>
 			${sorcer.home}/lib/sorcer/lib/sorcer-platform-${sorcer.version}.jar
 			${sorcer.home}/lib/sorcer/lib/sorcer-lib-${sorcer.version}.jar
+            ${sorcer.home}/lib/common/javax.inject-1.jar
+            ${sorcer.home}/lib/common/plexus-utils-${plexus.version}.jar
 		</classpath>
 	</capability>
 

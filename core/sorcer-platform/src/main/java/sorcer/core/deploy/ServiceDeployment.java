@@ -28,11 +28,9 @@ import java.io.File;
 import java.io.Serializable;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.logging.Logger;
+import java.util.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Attributes related to signature based deployment.
@@ -73,7 +71,8 @@ public class ServiceDeployment implements Serializable, Deployment {
 
     private Boolean fork;
     private String jvmArgs;
-    private static final Logger logger = Logger.getLogger(ServiceDeployment.class.getName());
+    private final List<String> deployedNames = new ArrayList<String>();
+    private static final Logger logger = LoggerFactory.getLogger(ServiceDeployment.class.getName());
 
     public ServiceDeployment() {
     }
@@ -102,7 +101,7 @@ public class ServiceDeployment implements Serializable, Deployment {
                                        temp.getVersion(),
                                        type,
                                        classifier).getGAV();
-        } else if(!config.startsWith("/")) {
+        } else if(!config.startsWith("/") && !config.matches("^([A-Za-z]):.*$")) {
             this.config = System.getenv("SORCER_HOME") + File.separatorChar + config;
         } else {
             this.config = config;
@@ -320,6 +319,14 @@ public class ServiceDeployment implements Serializable, Deployment {
 			this.isProvisionable = true;
 		}
 	}
+
+    public void setDeployedNames(final Collection<String> deployedNames) {
+        this.deployedNames.addAll(deployedNames);
+    }
+
+    public Collection<String> getDeployedNames() {
+        return deployedNames;
+    }
 
     @Override
     public String toString() {

@@ -1,38 +1,28 @@
 package sorcer.collection.operator;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static sorcer.co.operator.array;
-import static sorcer.co.operator.bag;
-import static sorcer.co.operator.dictionary;
-import static sorcer.co.operator.ent;
-import static sorcer.co.operator.key;
-import static sorcer.co.operator.list;
-import static sorcer.co.operator.listContext;
-import static sorcer.co.operator.map;
-import static sorcer.co.operator.table;
-import static sorcer.eo.operator.value;
+import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import sorcer.core.context.ListContext;
+import sorcer.service.ContextException;
+import sorcer.service.EvaluationException;
+import sorcer.util.Table;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Logger;
 
-import org.junit.Test;
-
-import sorcer.core.context.ListContext;
-import sorcer.service.ContextException;
-import sorcer.service.EvaluationException;
-import sorcer.util.Table;
+import static org.junit.Assert.*;
+import static sorcer.co.operator.*;
+import static sorcer.eo.operator.value;
 
 /**
  * @author Mike Sobolewski
  */
 @SuppressWarnings({ "unchecked" })
 public class CollectionOperatorsTest {
-	private final static Logger logger = Logger.getLogger(CollectionOperatorsTest.class.getName());
+	private final static Logger logger = LoggerFactory.getLogger(CollectionOperatorsTest.class);
 	
 	@Test
 	public void arrayOperatorTest() throws EvaluationException {

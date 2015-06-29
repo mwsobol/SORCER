@@ -22,15 +22,24 @@ ext {
 	sorcerVersion = version
 
 	groovyVersion = "2.3.8"
-	rioVersion = "5.1.3"
+	rioVersion = "5.1.5"
 	riverVersion = "2.2.2"
-	slf4jVersion = "1.7.7"
+	slf4jVersion = "1.7.12"
 	blitzVersion = "2.1.7"
 	lockmgrVersion = "2.1.7"
 	jeVersion = "5.0.104"
-	junitVersion = "4.8.2"
+	junitVersion = "4.12"
 	junitAddonsVersion = "1.4"
 	antVersion = "1.8.2"
+    plexusVersion = "3.0.15"
+    jansiVersion = "1.11"
+    commonsIoVersion = "2.4"
+    guavaVersion = "16.0.1"
+    logbackVersion = "1.1.3"
+    jffpVersion = "1.2"
+    jfreechartVersion = "1.0.14"
+    jepVersion = "2.4.1a"
+    jcommonVersion = "1.0.17"
 
     sorcerDistHome = "${rootProject.projectDir.path}/distribution/build/sorcer-$version"
     rioHome = "$sorcerDistHome/rio-${rioVersion}"
@@ -61,16 +70,21 @@ ext {
 
     startClassPath = files("${rioHome}/lib/groovy-all-${groovyVersion}.jar",
                              "${rioHome}/lib/logging/slf4j-api-${slf4jVersion}.jar",
-                             "${rioHome}/lib/logging/slf4j-jdk14-${slf4jVersion}.jar",
+                             "${rioHome}/lib/logging/jul-to-slf4j-${slf4jVersion}.jar",
+                             "${rioHome}/lib/logging/logback-core-${logbackVersion}.jar",
+                             "${rioHome}/lib/logging/logback-classic-${logbackVersion}.jar",
                              "${rioHome}/lib/logging/rio-logging-support-${rioVersion}.jar",
+                             "${sorcerDistHome}/lib/sorcer/lib/sorcer-resolving-loader-${sorcerVersion}.jar",
                              "${rioHome}/lib/rio-platform-${rioVersion}.jar",
                              "${rioHome}/lib/start-${riverVersion}.jar",
-                             "${rioHome}/lib/jsk-platform-${riverVersion}.jar")
+                             "${rioHome}/lib/jsk-platform-${riverVersion}.jar"
+                             )
 
     bootClassPath = files(startClassPath, "${sorcerDistHome}/lib/sorcer/lib/sorcer-boot-${version}.jar")
 
     libs = [
             junit : ["junit:junit:${junitVersion}", "junit-addons:junit-addons:${junitAddonsVersion}"],
-            slf4j : ["org.slf4j:slf4j-api:${slf4jVersion}", "org.slf4j:slf4j-jdk14:${slf4jVersion}"]
+            slf4j : ["org.slf4j:slf4j-api:${slf4jVersion}"],
+            logback : ["ch.qos.logback:logback-classic:${logbackVersion}"]
     ]
 }

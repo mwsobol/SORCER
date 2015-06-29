@@ -4,6 +4,8 @@ package sorcer.core.exertion;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.tester.provider.impl.AdderImpl;
@@ -14,7 +16,6 @@ import sorcer.service.*;
 import sorcer.util.Sorcer;
 
 import java.rmi.RemoteException;
-import java.util.logging.Logger;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -30,8 +31,7 @@ import static sorcer.eo.operator.path;
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("core/sorcer-int-tests/sorcer-tester")
 public class ServiceExertionTest {
-	private final static Logger logger = Logger
-			.getLogger(ServiceExertionTest.class.getName());
+	private final static Logger logger = LoggerFactory.getLogger(ServiceExertionTest.class);
 
 	private Exertion eTask, eJob;
 	// to avoid spelling errors in test cases define instance variables
@@ -76,7 +76,7 @@ public class ServiceExertionTest {
 		// exert and then get the value from job's context
 		eJob = exert(eJob);
 		
-		logger.info("eJob jobContext: " + serviceContext(eJob));
+		logger.info("eJob jobContext: " + upcontext(eJob));
 		//logger.info("eJob value @  j2/t5/arg/x1 = " + get(eJob, "j2/t5/arg/x1"));
 		assertTrue("Wrong eJob value for 20.0", get(eJob, "/j1/j2/t5/arg/x1").equals(20.0));
 			
@@ -92,7 +92,7 @@ public class ServiceExertionTest {
 		//logger.info("eJob value @  j2/t4/arg/x2 = " + exert(eJob, "j2/t4/arg/x2"));
 		assertTrue("Wrong eJob value for 50.0", get(eJob, "/j1/j2/t4/arg/x2").equals(50.0));
 			
-		logger.info("job context: " + serviceContext(eJob));
+		logger.info("job context: " + upcontext(eJob));
 		logger.info("value at j1/t3/result/y: " + get(eJob, "j1/t3/result/y"));
 		logger.info("value at t3, result/y: " + get(eJob, "t3", "result/y"));
 
@@ -107,7 +107,7 @@ public class ServiceExertionTest {
 			RemoteException, ExertionException {
 		//logger.info("eJob exertions: " + names(exertions(eJob)));
 		assertTrue(names(exertions(eJob)).equals(list("t4", "t5", "j2", "t3", "j1")));
-		
+
 		//logger.info("t4 exertion: " + exertion(eJob, "t4"));
 		assertTrue(name(exertion(eJob, "j1/j2/t4")).equals("t4"));
 		

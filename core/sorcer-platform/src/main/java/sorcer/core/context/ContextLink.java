@@ -60,11 +60,10 @@ public class ContextLink implements SorcerConstants, Link {
 	 * have already been persisted in database.
 	 */
 	public ContextLink(Uuid id, float version, String offset,
-			SorcerPrincipal principal) throws ContextException {
+					   SorcerPrincipal principal) throws ContextException {
 		contextId = id;
 		this.version = version;
-		if (principal != null)
-			linkedContext = getContext(principal);
+		linkedContext = getContext();
 		if (linkedContext == null) {
 		} else if (offset == null) {
 			this.name = linkedContext.getName();
@@ -168,7 +167,6 @@ public class ContextLink implements SorcerConstants, Link {
 		} else if (result[0] != linkedContext) {
 			this.offset = (String) result[1];
 			this.linkedContext = (Context) result[0];
-			this.version = linkedContext.getVersion();
 			this.contextId = linkedContext.getId();
 			this.fetched = true;
 			// status = BROKEN_LINK;
@@ -191,7 +189,6 @@ public class ContextLink implements SorcerConstants, Link {
 		if (cntxt != linkedContext) {
 			this.offset = (String) offset;
 			this.linkedContext = (Context) cntxt;
-			this.version = linkedContext.getVersion();
 			this.contextId = linkedContext.getId();
 			this.fetched = true;
 			return true;
@@ -204,23 +201,6 @@ public class ContextLink implements SorcerConstants, Link {
 	 * fetched yet.
 	 */
 	public Context getContext() throws ContextException {
-		if (linkPrincipal != null)
-			return getContext(linkPrincipal);
-		else
-			return linkedContext;
-	}
-	
-	/**
-	 * Return the context. The {@link SorcerPrincipal} is given for authorization.
-	 */
-	public Context getContext(Principal principal)
-			throws ContextException {
-		if (!fetched) {
-			if (principal != null)
-				linkedContext = cntxtAccessor.getContext(contextId, version,
-						principal);
-			fetched = true;
-		}
 		return linkedContext;
 	}
 

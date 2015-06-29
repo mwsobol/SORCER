@@ -21,6 +21,7 @@ dependencies {
     testCompile project(':sos-exertmonitor')
     testCompile project(':sorcer-test')
     testRuntime libs.slf4j
+    testRuntime libs.logback
 }
 
 task arithmeticPrvDlJar(type: Jar) {
@@ -44,9 +45,22 @@ task arithmeticReqJar(type: Jar) {
     include('sorcer/arithmetic/tester/requestor/**')
 }
 
+def deployConfig = file("build/configs/addr-prv-deploy.config")
+processResources.dependsOn 'createDeployConfig'
+
+task createDeployConfig(type: Copy) {
+    from 'configs'
+    into "${project.buildDir.path}/configs"
+    include 'adder-prv.config'
+    doLast {
+        file("${project.buildDir.path}/configs/adder-prv.config").renameTo(deployConfig)
+    }
+}
+
 artifacts {
     archives arithmeticPrvDlJar
     archives arithmeticReqJar
+    archives file: deployConfig, classifier: "deploy"
 }
 
 install.dependsOn(['arithmeticPrvDlJar', 'arithmeticReqJar'])
@@ -59,7 +73,7 @@ def repoPath() {
 bootme {
     starterConfig = file("${projectDir.path}/configs/StartAll.groovy")
     systemProperties = ["relative.repo.path" : repoPath()]
-//    spawn = false
+    //spawn = false
 }
 
 test {
@@ -69,6 +83,7 @@ test {
     testLogging {
         events "passed", "skipped", "failed"/*, "standardOut"*, "standardError"*/
     }
+//    dependsOn([install])
     dependsOn([install, bootme])
     finalizedBy(stopme)
 }

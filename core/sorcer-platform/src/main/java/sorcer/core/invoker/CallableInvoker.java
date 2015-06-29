@@ -54,16 +54,16 @@ public class CallableInvoker<T> extends ServiceInvoker<T> {
 		super(context);
 	}
 	
-	public CallableInvoker(ParModel context, Callable callable, Par... pars) {
+	public CallableInvoker(ParModel context, Callable callable, Par... parEntries) {
 		super(context);
 		this.callable = callable;
-		this.pars = new ArgSet(pars);
+		this.pars = new ArgSet(parEntries);
 	}
 
-	public CallableInvoker(String name, Callable callable, Par... pars) {
+	public CallableInvoker(String name, Callable callable, Par... parEntries) {
 		super(name);
 		this.callable = callable;
-		this.pars = new ArgSet(pars);
+		this.pars = new ArgSet(parEntries);
 	}
 	
 	@Override

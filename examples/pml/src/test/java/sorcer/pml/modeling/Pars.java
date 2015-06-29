@@ -2,6 +2,8 @@ package sorcer.pml.modeling;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.core.context.model.par.Par;
@@ -9,13 +11,18 @@ import sorcer.core.context.model.par.ParModel;
 import sorcer.service.Context;
 
 import java.net.URL;
-import java.util.logging.Logger;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
+import static sorcer.co.operator.persistent;
+import static sorcer.eo.operator.add;
 import static sorcer.eo.operator.*;
+import static sorcer.eo.operator.value;
+import static sorcer.po.operator.add;
+import static sorcer.po.operator.asis;
 import static sorcer.po.operator.*;
+import static sorcer.po.operator.set;
 
 /**
  * @author Mike Sobolewski
@@ -24,7 +31,7 @@ import static sorcer.po.operator.*;
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/pml")
 public class Pars {
-	private final static Logger logger = Logger.getLogger(Pars.class.getName());
+	private final static Logger logger = LoggerFactory.getLogger(Pars.class.getName());
 
 	@Test
 	public void parScope() throws Exception {
@@ -32,7 +39,7 @@ public class Pars {
 		Context<Double> cxt = context(ent("x", 20.0), ent("y", 30.0));
 
 		// par with its context scope
-		Par<?>add = par(cxt, "add", invoker("x + y", pars("x", "y")));
+		Par<?> add = par("add", invoker("x + y", pars("x", "y")), cxt);
 		logger.info("par value: " + value(add));
 		assertTrue(value(add).equals(50.0));
 
@@ -43,7 +50,7 @@ public class Pars {
 	public void contextScope() throws Exception {
 
 		Context<Double> cxt = context(ent("x", 20.0), ent("y", 30.0));
-		Par<?>add = par(cxt, "add", invoker("x + y", pars("x", "y")));
+		Par<?> add = par("add", invoker("x + y", pars("x", "y")), cxt);
 
 		// adding a par to the context updates par's scope
 		add(cxt, add);
@@ -113,7 +120,7 @@ public class Pars {
 		
 		Par<Double> dbp = dbPar("shared/value", 25.0);
 		
-		Par multi = par("multi", 
+		Par multi = par("multi",
 				parFi(ent("init/value"), 
 				dbp,
 				ent("invoke", invoker("x + y", pars("x", "y")))));
@@ -139,14 +146,14 @@ public class Pars {
 		// add an active ent, no scope
 		add(pm, invoker("add1", "x + y", pars("x", "y")));
 		// add a par with own scope
-		add(pm, par(context(ent("x", 30), ent("y", 40.0)),
-				invoker("add2", "x + y", pars("x", "y"))));
+		add(pm, par(invoker("add2", "x + y", pars("x", "y")), context(ent("x", 30), ent("y", 40.0))
+		));
 		
 		assertEquals(value(pm, "add1"), 30.0);
 		// change the scope of add1
 		set(pm, "x", 20.0);
 		assertEquals(value(pm, "add1"), 40.0);
-		
+
 		assertEquals(value(pm, "add2"), 70.0);
 		// x is changed but add2 value is the same, has its own scope
 		set(pm, "x", 20.0);

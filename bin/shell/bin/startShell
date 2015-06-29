@@ -32,9 +32,17 @@ lateInit ( ) {
     return
 }
 
-setVersionVar ( ) {
+#getVersion ( ) {
+#  PARAM=$1
+#  RESULT=`sed '/^\#/d' $SORCER_HOME/configs/versions.properties | grep $PARAM  | tail -n 1 | cut -d "=" -f2- | sed 's/^[[:space:]]*//;s/[[:space:]]*$//'`
+#  echo $RESULT
+#}
+
+
+getVersion ( ) {
 	PROP=$1
-	export VERSION=`awk -v prop=$PROP 'BEGIN{FS="="} {gsub(" ","",$0);if ($1 == prop) {print $2; exit}}' $SORCER_HOME/configs/versions.properties`
+	VERSION=`awk -v prop=$PROP 'BEGIN{FS="="} {gsub(" ","",$0);if ($1 == prop) {print $2; exit}}' $SORCER_HOME/configs/versions.properties`
+	echo $VERSION
 }
 
 NSH_STARTUP="$HOME/.nsh/startup"
@@ -65,25 +73,33 @@ if [ "$1" = "-cp" -o "$1" = "-classpath" -o "$1" = "--classpath" ] ; then
     shift 2
 fi
 
-# Attempt to set JAVA_HOME if it's not already set.
-if [ -z "$JAVA_HOME" ] ; then
-    if $darwin ; then 
-        [ -z "$JAVA_HOME" -a -d "/Library/Java/Home" ] && export JAVA_HOME="/Library/Java/Home"
-        [ -z "$JAVA_HOME" -a -d "/System/Library/Frameworks/JavaVM.framework/Home" ] && export JAVA_HOME="/System/Library/Frameworks/JavaVM.framework/Home"
-    else
-        javaExecutable="`which javac`"
-        [ -z "$javaExecutable" -o "`expr \"$javaExecutable\" : '\([^ ]*\)'`" = "no" ] && die "JAVA_HOME not set and cannot find javac to deduce location, please set JAVA_HOME."
-        # readlink(1) is not available as standard on Solaris 10.
-        readLink=`which readlink`
-        [ `expr "$readLink" : '\([^ ]*\)'` = "no" ] && die "JAVA_HOME not set and readlink not available, please set JAVA_HOME."
-        javaExecutable="`readlink -f \"$javaExecutable\"`"
-        javaHome="`dirname \"$javaExecutable\"`"
-        javaHome=`expr "$javaHome" : '\(.*\)/bin'`
-        JAVA_HOME="$javaHome"
-        export JAVA_HOME
+# Create DataService Root Dir if it doesn't exist
+DATASERVICE_ROOT_DIR=/tmp/sorcer-$USER/data
 
-    fi
+if [ ! -e "$DATASERVICE_ROOT_DIR" ]; then
+    echo "Creating DATASERVICE ROOT Directory: $DATASERVICE_ROOT_DIR"
+    mkdir -p $DATASERVICE_ROOT_DIR
 fi
+
+# Attempt to set JAVA_HOME if it's not already set.
+#if [ -z "$JAVA_HOME" ] ; then
+#    if $darwin ; then
+#        [ -z "$JAVA_HOME" -a -d "/Library/Java/Home" ] && export JAVA_HOME="/Library/Java/Home"
+#        [ -z "$JAVA_HOME" -a -d "/System/Library/Frameworks/JavaVM.framework/Home" ] && export JAVA_HOME="/System/Library/Frameworks/JavaVM.framework/Home"
+#    else
+#        javaExecutable="`which javac`"
+#        [ -z "$javaExecutable" -o "`expr \"$javaExecutable\" : '\([^ ]*\)'`" = "no" ] && die "JAVA_HOME not set and cannot find javac to deduce location, please set JAVA_HOME."
+#        # readlink(1) is not available as standard on Solaris 10.
+#        readLink=`which readlink`
+#        [ `expr "$readLink" : '\([^ ]*\)'` = "no" ] && die "JAVA_HOME not set and readlink not available, please set JAVA_HOME."
+#        javaExecutable="`readlink -f \"$javaExecutable\"`"
+#        javaHome="`dirname \"$javaExecutable\"`"
+#        javaHome=`expr "$javaHome" : '\(.*\)/bin'`
+#        JAVA_HOME="$javaHome"
+#        export JAVA_HOME
+#
+#    fi
+#fi
 
 # For Cygwin, ensure paths are in UNIX format before anything is touched.
 if $cygwin ; then
@@ -118,26 +134,24 @@ if [ -z "$SORCER_HOME" -o ! -d "$SORCER_HOME" ] ; then
         fi
     done
     SAVED="`pwd`"
-    cd "`dirname \"$PRG\"`/../../.."
+    cd "`dirname \"$PRG\"`/../"
     SORCER_HOME="`pwd -P`"
     cd "$SAVED"
+    #echo SORCER_HOME=$SORCER_HOME
 fi
 
-setVersionVar "rio.version"
-rio_version=$VERSION
+jansi_version=$(getVersion jansi.version)
+slf4j_version=$(getVersion slf4j.version)
+logback_version=$(getVersion logback.version)
+plexus_version=$(getVersion plexus.version)
+groovy_version=$(getVersion groovy.version)
+river_version=$(getVersion river.version)
+sorcer_version=$(getVersion sorcer.version)
+rio_version=$(getVersion rio.version)
+commonsio_version=$(getVersion commonsio.version)
+modeling_version=$(getVersion modeling.version)
+
 RIO_HOME=$SORCER_HOME/rio-$rio_version
-
-setVersionVar "slf4j.version"
-slf4j_version=$VERSION
-
-setVersionVar "groovy.version"
-groovy_version=$VERSION
-
-setVersionVar "river.version"
-river_version=$VERSION
-
-setVersionVar "sorcer.version"
-sorcer_version=$VERSION
 
 # Use SORCER default if still not found
 if [ -z "$NSH_CONF" ] ; then
@@ -150,9 +164,30 @@ if [ -e $startConfigFile ] ; then
     NSH_CONF="$HOME/.nsh/configs/nsh-start.config"
 fi
 
-RIO_CLASSPATH="$RIO_HOME/lib/rio-platform-$rio_version.jar:$RIO_HOME/lib/rio-lib-$rio_version.jar:$RIO_HOME/lib/rio-start-$rio_version.jar:$RIO_HOME/lib-dl/monitor-api-$rio_version.jar:$RIO_HOME/lib/logging/slf4j-jdk14-$slf4j_version.jar"
+RIO_CLASSPATH="$RIO_HOME/lib/rio-platform-$rio_version.jar:\
+$RIO_HOME/lib/rio-lib-$rio_version.jar:\
+$RIO_HOME/lib/rio-start-$rio_version.jar:\
+$RIO_HOME/lib-dl/rio-api-$rio_version.jar:\
+$RIO_HOME/lib-dl/monitor-api-$rio_version.jar:\
+$RIO_HOME/lib/logging/slf4j-api-$slf4j_version.jar:\
+$RIO_HOME/lib/logging/logback-core-$logback_version.jar:\
+$RIO_HOME/lib/logging/logback-classic-$logback_version.jar:\
+$RIO_HOME/lib/logging/jul-to-slf4j-$slf4j_version.jar"
+
 # the classpath to start nsh then application specific classpath is defined in nsh-start.config
-STARTER_CLASSPATH="$SORCER_HOME/lib/common/groovy/groovy-all-$groovy_version.jar:$SORCER_HOME/lib/river/jsk-platform-$river_version.jar:$SORCER_HOME/lib/river/jsk-lib-$river_version.jar:$RIO_CLASSPATH:$SORCER_HOME/lib/sorcer/lib/sos-shell-$sorcer_version.jar:$SORCER_HOME/lib/sorcer/lib-ext/webster-$sorcer_version.jar:$SORCER_HOME/lib/sorcer/lib/sorcer-platform-$sorcer_version.jar"
+STARTER_CLASSPATH="$SORCER_HOME/lib/common/groovy/groovy-all-$groovy_version.jar:\
+$SORCER_HOME/lib/common/plexus-utils-$plexus_version.jar:\
+$SORCER_HOME/lib/common/jansi-$jansi_version.jar:\
+$SORCER_HOME/lib/common/commons-io-$commonsio_version.jar:\
+$SORCER_HOME/lib/river/jsk-platform-$river_version.jar:\
+$SORCER_HOME/lib/river/jsk-lib-$river_version.jar:\
+$SORCER_HOME/lib/river/serviceui-$river_version.jar:\
+$SORCER_HOME/lib/sorcer/lib/sos-netlet-$sorcer_version.jar:\
+$SORCER_HOME/lib/sorcer/lib/sos-shell-$sorcer_version.jar:\
+$SORCER_HOME/lib/sorcer/lib-ext/webster-$sorcer_version.jar:\
+$SORCER_HOME/lib/sorcer/lib/sorcer-platform-$sorcer_version.jar:\
+$SORCER_HOME/lib/sorcer/lib/sorcer-resolving-loader-$sorcer_version.jar:\
+$RIO_CLASSPATH"
 
 # Create the final classpath. Setting a classpath using the -cp or -classpath option means not to use the
 # global classpath. Network shell behaves then the same as the java interpreter
@@ -178,9 +213,9 @@ if [ -z "$JAVACMD" ] ; then
         JAVACMD="java"
     fi
 fi
-if [ ! -x "$JAVACMD" ] ; then
-    die "JAVA_HOME is not defined correctly, can not execute: $JAVACMD"
-fi
+#if [ ! -x "$JAVACMD" ] ; then
+#    die "JAVA_HOME is not defined correctly, can not execute: $JAVACMD"
+#fi
 if [ -z "$JAVA_HOME" ] ; then
     warn "JAVA_HOME environment variable is not set"
 fi
@@ -221,6 +256,11 @@ TOOLS_JAR="$JAVA_HOME/lib/tools.jar"
 # For Darwin, add NSH_APP_NAME to the JAVA_OPTS as -Xdock:name
 if $darwin; then
     JAVA_OPTS="$JAVA_OPTS -Xdock:name=NSH_APP_NAME -Xdock:icon=$SORCER_HOME/bin/shell/configs/sorcer-dock-rgb.png"
+fi
+
+# Turn on debugging if DEBUG is set in env
+if [ -n "$DEBUG" ]; then
+    JAVA_OPTS="$JAVA_OPTS -Xdebug -Xrunjdwp:transport=dt_socket,server=y,address=8000"
 fi
 
 # For Cygwin, switch paths to Windows format before running java
@@ -271,32 +311,41 @@ if $cygwin ; then
 fi
 
 startShell ( ) {	
-    CLASS=$1
+    STARTER_MAIN_CLASS=$1
     shift
+    # Use rlwrap if installed to enable history in nsh
+    if [ -n "$(which rlwrap 2>&1 | egrep -v 'no ')" ]; then
+        # Check to see if we have stdin
+        if [ -t 0 ]; then
+            RLWRAP="rlwrap "
+        else
+             RLWRAP=""
+        fi
+    else
+        RLWRAP=""
+    fi
     # Start the Profiler or the JVM
     if $useprofiler ; then
         runProfiler
     else
-#       echo "==> STARTER_CLASSPATH: $STARTER_CLASSPATH"
-        exec "$JAVACMD" $JAVA_OPTS \
+        #echo "==> STARTER_CLASSPATH: $STARTER_CLASSPATH"
+        exec $RLWRAP"$JAVACMD" $JAVA_OPTS \
             -classpath "$STARTER_CLASSPATH" \
             -Djava.security.policy="$SORCER_HOME"/bin/shell/policy/shell.policy \
+            -Dsorcer.tools.shell.logDir="$SORCER_HOME"/logs \
             -Dscript.name="$SCRIPT_PATH" \
             -Dprogram.name="$PROGNAME" \
             -Desh.starter.conf="$NSH_CONF" \
+            -Dsorcer.version="$sorcer_version" \
+            -Dmodeling.version="$modeling_version" \
             -Dsorcer.home="$SORCER_HOME" \
-            -Djava.protocol.handler.pkgs="net.jini.url|sorcer.util.bdb.sos|org.rioproject.url" \
-            -Djava.rmi.server.RMIClassLoaderSpi=org.rioproject.rmi.ResolvingLoader \
+            -Drio.home="$RIO_HOME" \
+            -Djava.protocol.handler.pkgs="net.jini.url|sorcer.util.url|org.rioproject.url" \
             -Dtools.jar="$TOOLS_JAR" \
-            -Djava.util.logging.config.file="$SORCER_HOME"/bin/shell/configs/sorcer.logging \
+            -Dlogback.configurationFile="$SORCER_HOME"/bin/shell/configs/shell-logging.groovy \
             $STARTER_MAIN_CLASS \
-            --main $CLASS \
-            --config "$NSH_CONF" \
-            --classpath "$CP" \
             "$@"
     fi
 }
-
-STARTER_MAIN_CLASS=sorcer.tools.shell.ShellStarter
 
 lateInit

@@ -25,10 +25,7 @@ import java.util.Set;
 
 import sorcer.co.tuple.Tuple2;
 import sorcer.service.Arg;
-import sorcer.service.ArgList;
 import sorcer.service.EvaluationException;
-import sorcer.service.Identity;
-import sorcer.service.SetterException;
 
 /**
  * @author Mike Sobolewski
@@ -46,8 +43,8 @@ public class ParList extends ArrayList<Par> {
 		super(size);
 	}
 
-	public ParList(Set<Par> parSet) {
-		addAll(parSet);
+	public ParList(Set<Par> parEntrySet) {
+		addAll(parEntrySet);
 	}
 
 	public ParList(ParList... parLists) {
@@ -57,16 +54,16 @@ public class ParList extends ArrayList<Par> {
 		}
 	}
 
-	public ParList(Par<?>[] parArray) {
+	public ParList(Par<?>[] parEntryArray) {
 		super();
-		for (Par<?> p : parArray) {
+		for (Par<?> p : parEntryArray) {
 			add(p);
 		}
 	}
 
-	public <T> ParList(List<Par<T>> parList) {
+	public <T> ParList(List<Par<T>> parEntryList) {
 		super();
-		for (Par<T> p : parList) {
+		for (Par<T> p : parEntryList) {
 			add(p);
 		}
 	}
@@ -82,19 +79,19 @@ public class ParList extends ArrayList<Par> {
 
 	public void setParValue(String parName, Object value)
 			throws EvaluationException {
-		Par par = null;
+		Par parEntry = null;
 		for (Par p : this) {
 			if (p.getName().equals(parName)) {
-				par = p;
+				parEntry = p;
 				try {
-					par.setValue(value);
+					parEntry.setValue(value);
 				} catch (Exception e) {
 					throw new EvaluationException(e);
 				} 
 				break;
 			}
 		}
-		if (par == null)
+		if (parEntry == null)
 			throw new ParException("No such Par in the list: " + parName);
 	}
 

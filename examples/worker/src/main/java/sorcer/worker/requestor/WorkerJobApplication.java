@@ -1,5 +1,7 @@
 package sorcer.worker.requestor;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.exertion.NetJob;
 import sorcer.core.exertion.NetTask;
@@ -8,13 +10,10 @@ import sorcer.service.Context;
 import sorcer.service.Exertion;
 import sorcer.service.Job;
 import sorcer.service.Task;
-import sorcer.util.Log;
 import sorcer.util.Sorcer;
 import sorcer.worker.provider.Worker;
 
 import java.net.InetAddress;
-import java.rmi.RMISecurityManager;
-import java.util.logging.Logger;
 
 /**
  * @author Mike Sobolewski
@@ -23,10 +22,10 @@ import java.util.logging.Logger;
 @SuppressWarnings("rawtypes")
 public class WorkerJobApplication {
 
-	private static Logger logger = Log.getTestLog();
+	private final static Logger logger = LoggerFactory.getLogger(WorkerJobApplication.class);
 
 	public static void main(String[] args) throws Exception {
-		System.setSecurityManager(new RMISecurityManager());
+		System.setSecurityManager(new SecurityManager());
 		// initialize system properties
 		Sorcer.getEnvProperties();
 		
@@ -83,9 +82,9 @@ public class WorkerJobApplication {
 		Task task2 = new NetTask("work2", signature2, context2);
 		Task task3 = new NetTask("work3", signature3, context3);
 		Job job = new NetJob();
-		job.addExertion(task1);
-		job.addExertion(task2);
-		job.addExertion(task3);
+		job.addMogram(task1);
+		job.addMogram(task2);
+		job.addMogram(task3);
 		return job;
 	}
 }

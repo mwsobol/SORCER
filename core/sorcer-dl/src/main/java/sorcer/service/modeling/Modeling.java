@@ -17,20 +17,20 @@
 
 package sorcer.service.modeling;
 
-import java.rmi.MarshalledObject;
-import java.rmi.RemoteException;
-
-import sorcer.service.Context;
-import sorcer.service.ContextException;
-import sorcer.service.EvaluationException;
 import net.jini.core.event.EventRegistration;
 import net.jini.core.event.RemoteEventListener;
 import net.jini.core.event.UnknownEventException;
+import sorcer.service.Context;
+import sorcer.service.ContextException;
+import sorcer.service.EvaluationException;
+
+import java.rmi.MarshalledObject;
+import java.rmi.RemoteException;
 
 @SuppressWarnings("rawtypes") 
-public interface Modeling {
+public interface Modeling extends Model {
 	
-	public String getName() throws RemoteException;
+//	public String getName() throws RemoteException;
 	
 	public EventRegistration register(long eventID, MarshalledObject<?> handback,
 			RemoteEventListener toInform, long leaseLenght)
@@ -64,8 +64,6 @@ public interface Modeling {
 
 	public Context updateEvaluation(Context modelContext)
 			throws EvaluationException, RemoteException;
-		
-	public Object getResult() throws EvaluationException, RemoteException;
 
 	public boolean writeResult() throws EvaluationException, RemoteException;
 	

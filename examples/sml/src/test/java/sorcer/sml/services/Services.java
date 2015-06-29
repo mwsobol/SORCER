@@ -13,7 +13,8 @@ import sorcer.service.Service;
 import sorcer.service.Strategy.Access;
 import sorcer.service.Strategy.Flow;
 
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -28,7 +29,7 @@ import static sorcer.eo.operator.value;
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/sml")
 public class Services {
-	private final static Logger logger = Logger.getLogger(Services.class.getName());
+	private final static Logger logger = LoggerFactory.getLogger(Services.class);
 	
 	@Test
 	public void exertTask() throws Exception  {
@@ -89,13 +90,13 @@ public class Services {
 					pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
 					pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
 		
-		logger.info("srv job context: " + serviceContext(job));
+		logger.info("srv job context: " + upcontext(job));
 		logger.info("srv j1/t3 context: " + context(job, "j1/t3"));
 		logger.info("srv j1/j2/t4 context: " + context(job, "j1/j2/t4"));
 		logger.info("srv j1/j2/t5 context: " + context(job, "j1/j2/t5"));
 
 		Service exertion = exert(job);
-		logger.info("srv job context: " + serviceContext(exertion));
+		logger.info("srv job context: " + upcontext(exertion));
 		logger.info("exertion value @ j1/t3/arg/x2 = " + get(exertion, "j1/t3/arg/x2"));
 		assertEquals(100.0, get(exertion, "j1/t3/arg/x2"));
 		
@@ -114,9 +115,10 @@ public class Services {
 		Service t5 = srv("t5", sig("add", AdderImpl.class),
 				cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0), result("result/y")));
 
+        //TODO: CHECK Access.PULL doesn't work with ServiceJobber!!!
 		Service job = //j1(j2(t4(x1, x2), t5(x1, x2)), t3(x1, x2))
 				srv("j1", sig(ServiceJobber.class), result("job/result", outPaths("j1/t3/result/y")),
-					srv("j2", sig(ServiceJobber.class), t4, t5, strategy(Flow.PAR, Access.PULL)),
+					srv("j2", sig(ServiceJobber.class), t4, t5, strategy(Flow.PAR, Access.PUSH)),
 					t3,
 					pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
 					pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));

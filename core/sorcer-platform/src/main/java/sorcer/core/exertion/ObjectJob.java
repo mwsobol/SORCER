@@ -35,9 +35,14 @@ import java.rmi.RemoteException;
 public class ObjectJob extends Job {
 
 	static final long serialVersionUID = 1793342047789581449L;
-	
+
+	public ObjectJob() throws SignatureException {
+		this("object job-" + count++);
+	}
+
 	public ObjectJob(String name) throws SignatureException {
 		super(name);
+		serviceFidelity.getSelects().clear();
 		addSignature(new ObjectSignature("execute", ServiceJobber.class));
 	}
 
@@ -73,7 +78,7 @@ public class ObjectJob extends Job {
 			evaluator.setParameterTypes(new Class[] { Mogram.class });
 			evaluator.setParameters(new Object[] { this });
 			result = (Job)evaluator.evaluate();
-			getControlContext().appendTrace("" + evaluator);
+			getControlContext().appendTrace("job by: " + evaluator.getClass().getName());
 		} catch (Exception e) {
 			e.printStackTrace();
 			if (controlContext != null)

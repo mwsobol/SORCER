@@ -16,21 +16,23 @@
 package sorcer.core.deploy;
 
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
+import org.sorcer.test.TestsRequiringRio;
 import sorcer.core.SorcerConstants;
 import sorcer.service.ContextException;
 import sorcer.service.Exertion;
 import sorcer.service.ExertionException;
 import sorcer.service.Job;
 
-import java.util.logging.Logger;
+import java.util.Collection;
 
 import static org.junit.Assert.*;
-import static sorcer.eo.operator.exert;
-import static sorcer.eo.operator.get;
-import static sorcer.eo.operator.serviceContext;
+import static sorcer.eo.operator.*;
 
 /**
  * @author Dennis Reedy
@@ -38,8 +40,9 @@ import static sorcer.eo.operator.serviceContext;
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("core/sorcer-int-tests/deploy-tests")
 public class DeployExertionTest extends DeploySetup implements SorcerConstants {
-    private final static Logger logger = Logger.getLogger(DeployExertionTest.class.getName());
+    private final static Logger logger = LoggerFactory.getLogger(DeployExertionTest.class.getName());
 
+    @Category(TestsRequiringRio.class)
     @Test
     public void deployAndExec() throws Exception {
         Job f1 = JobUtil.createJob();
@@ -55,8 +58,13 @@ public class DeployExertionTest extends DeploySetup implements SorcerConstants {
         Exertion out = exert(job);
         System.out.println("Waited "+(System.currentTimeMillis()-t0)+" millis for exerting: " + out.getName());
         assertNotNull(out);
-        System.out.println("===> out: "+serviceContext(out));
+        System.out.println("===> out: "+ upcontext(out));
         assertEquals(get(out, "f1/f3/result/y3"), 400.0);
+
+        ServiceDeployment deployment = (ServiceDeployment)out.getProcessSignature().getDeployment();
+        assertNotNull(deployment);
+        Collection<String> deploymentNames = deployment.getDeployedNames();
+        assertTrue(deploymentNames.size()>0);
     }
 
 }

@@ -27,9 +27,12 @@ class BootMe extends DefaultTask {
     def systemProperties = [:]
     @Input @org.gradle.api.tasks.Optional
     boolean spawn = true
+    @Input @org.gradle.api.tasks.Optional
+    boolean debug
 
     @TaskAction
     def bootMe() {
+        //println "Classpath: ${project.bootClassPath.getAsPath()}"
         StringBuilder java = new StringBuilder()
         if (System.getProperty("os.name").startsWith("Windows"))
             java.append("java")
@@ -44,18 +47,37 @@ class BootMe extends DefaultTask {
         args << java.toString()
         args << "-cp"
         args << project.bootClassPath.getAsPath()
+        if (debug) {
+            args << "-Xdebug"
+            args << "-Xrunjdwp:transport=dt_socket,server=y,address=8765"
+        }
         args << "-Dproject.id=${project.name}"
         args << '-Djava.protocol.handler.pkgs="net.jini.url|sorcer.util.url|org.rioproject.url"'
+
         // use distribution or project specific java.util.logging.config.file
         if (System.getProperty("java.util.logging.config.file") != null)
             args << "-Djava.util.logging.config.file=${System.getProperty("java.util.logging.config.file")}"
         else
             args << "-Djava.util.logging.config.file=${project.sorcerDistHome}/configs/sorcer.logging"
+
+        if (System.getProperty("logback.configurationFile") != null)
+            args << "-Dlogback.configurationFile=${System.getProperty("logback.configurationFile")}"
+        else
+            args << "-Dlogback.configurationFile=${project.sorcerDistHome}/configs/sorcer-logging.groovy"
+
+        if(!spawn)
+            args << "-DforceConsoleLogging=true"
+
+        String logName = project.path.substring(1).replaceAll(":", ".")
+        args << "-Drio.log.dir=${project.sorcerDistHome}/logs"
+        args << "-Dorg.rioproject.service=${logName}"
         args << "-Djava.security.policy=${project.sorcerDistHome}/policy/policy.all"
         args << "-Djava.rmi.server.useCodebaseOnly=false"
+        args << "-Dplexus.version=${project.plexusVersion}"
         args << "-Driver.version=${project.riverVersion}"
         args << "-Dsorcer.version=${project.sorcerVersion}"
         args << "-Dsorcer.home=${project.sorcerDistHome}"
+        args << "-Drio.home=${project.rioHome}"
         args << "-Dsorcer.env.file=${project.sorcerDistHome}/configs/sorcer.env"
         args << "-Dproject.build.dir=${project.buildDir.path}"
         systemProperties.each { k, v ->

@@ -18,6 +18,8 @@
 
 package sorcer.core;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * SORCER interface provides predefined constants, commands and parameter names
  * for the SORCER metacomputing environment. Use them to allow for
@@ -29,7 +31,7 @@ public interface SorcerConstants {
 	// P_ATTRIBUTE is a provider property defined in a properties file
 	// J_ATTRIBURE is variable name in Jini configuration file
 	/* service provider genetic properties */
-    public static final String SORCER_VERSION = "4.2.8";
+    public static final String SORCER_VERSION = "5.2.0";
     
     public static final String SORCER_MODELING_VERSION = "1.1.8";
 
@@ -202,7 +204,7 @@ public interface SorcerConstants {
 
 	public static final String J_GROUPS = "providerGroups";
 
-	public static final String P_CATALOOGER_NAME = "provider.catalog.name";
+	public static final String P_CATALOGER_NAME = "provider.catalog.name";
 	
 	public static final String J_CATALOG_NAME = "catalogName";
 	
@@ -743,4 +745,20 @@ public interface SorcerConstants {
 			INCOMPLETE = "Incomplete";
 	public static final String EXPORT_CONTROL = "Export Control",
 			ACCESS_CLASS = "Access Class";
+
+
+    String NAME_DEFAULT="___SORCER_NAME_DEFAULT___";
+    String MDC_SORCER_REMOTE_CALL = "SORCER-REMOTE-CALL";
+    String MDC_EXERTION_ID = "xrtId";
+    String MDC_PROVIDER_ID = "prvId";
+    String MDC_PROVIDER_NAME = "prvName";
+    String START_PACKAGE = "com.sun.jini.start";
+    String DEPLOYMENT_PACKAGE = "sorcer.core.exertion.deployment";
+    String REMOTE_LOGGER_INTERFACE = "RemoteLogger";
+    String S_SHARED_DIRS_FILE = "sorcer.sharedDirs.file";
+	String S_SHARED_DIRS = "sorcer.sharedDirs";
+	public static final String P_SCRATCH_TTL = "scratch.ttl";
+	// 30 days as seconds
+	public static final long SCRATCH_TTL_DEFAULT = TimeUnit.DAYS.toSeconds(30);
+
 }

@@ -1,7 +1,8 @@
 /*
  * Copyright 2010 the original author or authors.
  * Copyright 2010 SorcerSoft.org.
- *  
+ * Copyright 2013 Sorcersoft.com S.A.
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,69 +21,65 @@ package sorcer.core.dispatch;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.*;
 
-import sorcer.core.exertion.Jobs;
+import sorcer.core.exertion.Mograms;
 import sorcer.core.provider.Provider;
-import sorcer.service.Context;
-import sorcer.service.ContextException;
-import sorcer.service.Exertion;
-import sorcer.service.ExertionException;
-import sorcer.service.Job;
-import sorcer.service.ServiceExertion;
-import sorcer.service.SignatureException;
+import sorcer.service.*;
+
+import static sorcer.service.Exec.*;
 
 public class CatalogParallelDispatcher extends CatalogExertDispatcher {
-	List<ExertionThread> workers;
+    protected ExecutorService executor = Executors.newCachedThreadPool();
 
-	public CatalogParallelDispatcher(Job job, 
+    public CatalogParallelDispatcher(Job job,
             Set<Context> sharedContexts,
             boolean isSpawned, 
             Provider provider,
-            ProvisionManager provisionManager) throws Throwable {
+            ProvisionManager provisionManager) {
 		super(job, sharedContexts, isSpawned, provider, provisionManager);
 	}
 
-	public void dispatchExertions() throws ExertionException,
+    @Override
+    public void exec() {
+        executor.submit(new Runnable() {
+            @Override
+            public void run() {
+                CatalogParallelDispatcher.super.exec();
+            }
+        });
+    }
+
+    public void doExec() throws ExertionException,
 			SignatureException {
-        checkAndDispatchExertions();
-		workers = new ArrayList<ExertionThread>();
-		try {
-			inputXrts = Jobs.getInputExertions(((Job)xrt));
-			reconcileInputExertions(xrt);
-		} catch (ContextException e) {
-			throw new ExertionException(e);
-		}
-		for (int i = 0; i < inputXrts.size(); i++) {
-			ServiceExertion exertion = (ServiceExertion) inputXrts.get(i);
-			workers.add(runExertion(exertion));
-		}
-		collectResults();
-		dThread.stop = true;
-	}
-
-	public void collectResults() throws ExertionException, SignatureException {
-		boolean isFailed = false;
-		boolean isSuspended = false;
-		Exertion result = null;
-		while (workers.size() > 0) {
-			for (int i = 0; i < workers.size(); i++) {
-				result = workers.get(i).getResult();
-				if (result != null) {
-					ServiceExertion se = (ServiceExertion) result;
-					se.stopExecTime();
-					if (se.getStatus() == FAILED)
-						isFailed = true;
-					else if (se.getStatus() == SUSPENDED)
-						isSuspended = true;
-					workers.remove(i);
-				}
-			}
+        List<Future<Exertion>> results = new ArrayList<Future<Exertion>>(inputXrts.size());
+        for (Mogram mogram : inputXrts) {
+            if (mogram instanceof Exertion)
+                results.add(executor.submit(new ExecExertion((Exertion)mogram)));
 		}
 
+        boolean isFailed = false;
+        boolean isSuspended = false;
+        for (Future<Exertion> result : results) {
+            try {
+                ServiceExertion se = (ServiceExertion) result.get();
+                se.stopExecTime();
+                if (se.getStatus() == FAILED)
+                    isFailed = true;
+                else if (se.getStatus() == SUSPENDED)
+                    isSuspended = true;
+            } catch (InterruptedException e) {
+                logger.warn("Interrupted {}", result, e);
+                isFailed = true;
+            } catch (ExecutionException e) {
+                logger.warn("Error while executing {}", result, e.getCause());
+                isFailed = true;
+            }
+        }
 		if (isFailed) {
 			xrt.setStatus(FAILED);
 			state = FAILED;
-			ExertionException fe = new ExertionException(this.getClass().getName() 
+			ExertionException fe = new ExertionException(this.getClass().getName()
 					+ " failed job", xrt);
 			xrt.reportException(fe);
 			dispatchers.remove(xrt.getId());
@@ -91,19 +88,19 @@ public class CatalogParallelDispatcher extends CatalogExertDispatcher {
 		else if (isSuspended) {
 			xrt.setStatus(SUSPENDED);
 			state = SUSPENDED;
-			ExertionException fe = new ExertionException(this.getClass().getName() 
+			ExertionException fe = new ExertionException(this.getClass().getName()
 					+ " suspended job", xrt);
 			xrt.reportException(fe);
 			dispatchers.remove(xrt.getId());
 			throw fe;
 		}
-		
+
 		if (masterXrt != null) {
-			if (isInterupted(masterXrt)) {
+		/*	if (isInterupted(masterXrt)) {
 				masterXrt.stopExecTime();
 				dispatchers.remove(xrt.getId());
 				return;
-			}
+			}*/
 			// finally execute Master Exertion
 			masterXrt = (ServiceExertion) execExertion(masterXrt);
 			masterXrt.stopExecTime();
@@ -111,9 +108,28 @@ public class CatalogParallelDispatcher extends CatalogExertDispatcher {
 				xrt.setStatus(FAILED);
 			else
 				xrt.setStatus(DONE);
+
 		}
 		xrt.setStatus(DONE);
 		dispatchers.remove(xrt.getId());
 		state = DONE;
+	}
+
+    @Override
+    protected List<Mogram> getInputExertions() throws ContextException {
+        return Mograms.getInputExertions(((Job) xrt));
+    }
+
+    protected class ExecExertion implements Callable<Exertion> {
+        private final Exertion exertion;
+
+        public ExecExertion(Exertion exertion) {
+            this.exertion = exertion;
+        }
+
+        @Override
+        public Exertion call() throws Exception {
+            return execExertion(exertion);
+        }
 	}
 }

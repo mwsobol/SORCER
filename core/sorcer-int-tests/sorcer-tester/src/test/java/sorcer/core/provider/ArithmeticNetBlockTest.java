@@ -15,7 +15,8 @@ import sorcer.util.ProviderAccessor;
 import sorcer.util.ProviderLocator;
 import sorcer.util.ProviderLookup;
 
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertEquals;
 import static sorcer.co.operator.ent;
@@ -30,9 +31,8 @@ import static sorcer.eo.operator.*;
 @ProjectContext("core/sorcer-int-tests/sorcer-tester")
 public class ArithmeticNetBlockTest implements SorcerConstants {
 
-	private final static Logger logger = Logger
-			.getLogger(ArithmeticNetBlockTest.class.getName());
-	
+	private static final Logger logger = LoggerFactory.getLogger(ArithmeticNetBlockTest.class);
+
 	@Test
 	public void getProxy() throws Exception {
 		Object proxy = ProviderLookup.getProvider(sig("multiply", Multiplier.class));
@@ -55,7 +55,8 @@ public class ArithmeticNetBlockTest implements SorcerConstants {
 				context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
 						result("block/result")));
 		
-		Block block = block("block", context(ent("y1", 100), ent("y2", 200)),
+		Block block = block("block", sig(Concatenator.class),
+				context(ent("y1", 100), ent("y2", 200)),
 				alt(opt(condition("{ y1, y2 -> y1 > y2 }", "y1", "y2"), t4), 
 					opt(condition("{ y1, y2 -> y1 <= y2 }", "y1", "y2"), t5)));
 		
@@ -84,11 +85,12 @@ public class ArithmeticNetBlockTest implements SorcerConstants {
 				context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
 						result("arg/t5")));
 		
-		Task t6 = task("t6", sig("average", Averager.class), 
+		Task t6 = task("t6", sig("average", Averager.class),
 				context("average", inEnt("arg/t4"), inEnt("arg/t5"),
 						result("block/result")));
 		
-		Block block = block("block", t4, t5, alt(
+		Block block = block("block", sig(Concatenator.class),
+				t4, t5, alt(
 				opt(condition("{ t4, t5 -> t4 > t5 }", "t4", "t5"), t3), 
 				opt(condition("{ t4, t5 -> t4 <= t5 }", "t4", "t5"), t6)));
 
@@ -113,7 +115,8 @@ public class ArithmeticNetBlockTest implements SorcerConstants {
 				context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
 						result("out")));
 		
-		Block block = block("block", t4,
+		Block block = block("block", sig(Concatenator.class),
+				t4,
 				opt(condition("{ out -> out > 600 }", "out"), t5));
 		
 		block = exert(block);

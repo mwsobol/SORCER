@@ -16,10 +16,13 @@
 
 import org.rioproject.config.PlatformCapabilityConfig
 
+import java.util.logging.Logger
+
 /**
  * Declares Sorcer capability in the platform
  */
 class SorcerPlatformConfig {
+    static Logger logger = Logger.getLogger("SorcerPlatformConfig")
 
     def getPlatformCapabilityConfigs() {
         def configs = []
@@ -32,6 +35,8 @@ class SorcerPlatformConfig {
         File sorcerHomeDir = new File(sorcerHome)
         if(sorcerHomeDir.exists()) {
             def jars = ["JE-"             : "lib/common | Sleepy Cat",
+                        "javax.inject-"   : "lib/common | Javax Inject",
+                        "plexus-utils-"   : "lib/common | Plexus Utils",
                         "Sorcer-Platform" : "lib/sorcer/lib | Sorcer Platform"]
             jars.each { jar, data ->
                 String[] parts = data.split("\\|")
@@ -45,12 +50,12 @@ class SorcerPlatformConfig {
                                                             "",
                                                             jarFile.path)
                 } else {
-                    System.err.println("The ${dir}/${jar} does not exist, cannot add to platform")
+                    logger.severe("The ${dir}/${jar} does not exist, cannot add to platform")
                 }
             }
 
         } else {
-            System.err.println("The ${sorcerHomeDir.path} does not exist, cannot add Sorcer jars to platform")
+            logger.severe("The ${sorcerHomeDir.path} does not exist, cannot add Sorcer jars to platform")
         }
         return configs
     }

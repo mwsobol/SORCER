@@ -43,7 +43,7 @@ import sorcer.service.MonitorException;
 import sorcer.service.ServiceExertion;
 import sorcer.tools.shell.NetworkShell;
 import sorcer.tools.shell.ShellCmd;
-import sorcer.util.WhitespaceTokenizer;
+import sorcer.tools.shell.WhitespaceTokenizer;
 
 /**
  * @author Mike Sobolewski

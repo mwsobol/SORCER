@@ -20,13 +20,13 @@ import java.util.concurrent.ExecutorService;
 
 import net.jini.core.transaction.Transaction;
 import sorcer.core.exertion.ExertionEnvelop;
+import sorcer.service.space.SpaceAccessor;
 import sorcer.util.ProviderAccessor;
 
 public class SpaceIsReadyTaker extends SpaceTaker {
 	
 
 	public SpaceIsReadyTaker() {
-		setDaemon(true);
 	}
 
 	public SpaceIsReadyTaker(SpaceTakerData data, ExecutorService pool) {
@@ -38,11 +38,11 @@ public class SpaceIsReadyTaker extends SpaceTaker {
 	}
 
 	public void run() {
-		logger.finer("................... run ... ifReady transactional = "
-				+ isTransactional + ", lease = " + transactionLeaseTimeout + ", timeOut: " + spaceTimeout);
+		logger.debug("................... run ... ifReady transactional = "
+                + isTransactional + ", lease = " + transactionLeaseTimeout + ", timeOut: " + spaceTimeout);
 		while (keepGoing) {
 			try {
-				space = ProviderAccessor.getSpace(data.spaceName, data.spaceGroup);
+				space = SpaceAccessor.getSpace(data.spaceName, data.spaceGroup);
 				if (space == null) {
 					Thread.sleep(spaceTimeout / 6);
 					continue;
@@ -59,7 +59,7 @@ public class SpaceIsReadyTaker extends SpaceTaker {
 					isReady = ((ServiceProvider) data.provider)
 							.isReady(data.entry.exertion);
 					if (!isReady) {
-						logger.finer("########### Provider is NOT ready ...");
+						logger.debug("########### Provider is NOT ready ...");
 						Thread.sleep(SPACE_TIMEOUT / 2);
 						continue;
 					}
@@ -68,13 +68,13 @@ public class SpaceIsReadyTaker extends SpaceTaker {
 				}
 
 				Transaction.Created txnCreated = null;
-				// logger.log(Level.INFO, "worker space template envelop = "
+				// logger.info("worker space template envelop = "
 				// + data.entry.describe() + "\n service provider = "
 				// + provider);
 				if (isTransactional) {
 					txnCreated = createTransaction();
 					if (txnCreated == null)
-						logger.severe("########### SpaceIsReady Worker DID NOT get transaction ...");
+						logger.error("########### SpaceIsReady Worker DID NOT get transaction ...");
 				}
 
 				ee = (ExertionEnvelop) space
@@ -104,7 +104,7 @@ public class SpaceIsReadyTaker extends SpaceTaker {
 					initDataMember(ee, txnCreated.transaction);
 				}
 				
-				pool.execute(new SpaceWorker(ee, txnCreated));
+				pool.execute(new SpaceWorker(ee, txnCreated, data.provider, remoteLogging));
 			} catch (Exception ex) {
 				continue;
 			}

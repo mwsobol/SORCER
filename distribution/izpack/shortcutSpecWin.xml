@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<izpack:shortcuts version="5.0"
+                  xmlns:izpack="http://izpack.org/schema/shortcuts"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://izpack.org/schema/shortcuts http://izpack.org/schema/5.0/izpack-shortcuts-5.0.xsd">
+    <skipIfNotSupported/>
+    <programGroup defaultName="SORCER" location="applications"/>
+    <shortcut applications="yes"
+              description="Start SORCER platform" desktop="yes"
+              iconFile="$INSTALL_PATH/bin/icons/sorcer-logo.ico" iconIndex="0"
+              name="Start SORCER" programGroup="yes"
+              startMenu="no" startup="no"
+              target="ant"
+              commandLine="-f &quot;$INSTALL_PATH/bin/rio/boot-sorcer-rio.xml&quot;"
+              workingDirectory="$INSTALL_PATH"/>
+    <shortcut applications="yes"
+              description="Stop SORCER platform" desktop="yes"
+              iconFile="$INSTALL_PATH/bin/icons/sorcer-logo.ico" iconIndex="0"
+              name="Stop SORCER" programGroup="yes"
+              startMenu="no" startup="no"
+              target="ant"
+              commandLine="-f &quot;$INSTALL_PATH/bin/rio/destroy-sorcer-rio.xml&quot;"
+              workingDirectory="$INSTALL_PATH"/>
+    <shortcut applications="yes" desktop="yes"
+              iconFile="$INSTALL_PATH/bin/icons/browser.ico"
+              initialState="noShow"
+              iconIndex="0" name="Sorcer Browser"
+              programGroup="yes" startMenu="no" startup="no"
+              target="ant"
+              commandLine="-f &quot;$INSTALL_PATH/bin/browser/bin/sorcer-browser.xml&quot;"
+              workingDirectory="$INSTALL_PATH"
+              terminal="false"/>
+    <shortcut applications="yes"
+              description="Sorcer Network Shell" desktop="yes"
+              encoding="UTF-8" name="Network Shell"
+              programGroup="yes" startMenu="no" startup="no"
+              target="$INSTALL_PATH/bin/nsh.bat" terminal="true"
+              workingDirectory="$INSTALL_PATH"
+              iconFile="$INSTALL_PATH/bin/icons/nsh.ico"/>
+    <shortcut
+		name="Uninstall Sorcer"
+		target="$INSTALL_PATH\Uninstaller\uninstaller.jar"
+		commandline=""
+		description="Uninstalls Sorcer Platform"
+		programGroup="yes"
+		desktop="no"
+		applications="no"
+		startMenu="no"
+		startup="no"
+		iconFile="%SystemRoot%\system32\SHELL32.dll"
+		iconIndex="31"/>
+
+</izpack:shortcuts>
+

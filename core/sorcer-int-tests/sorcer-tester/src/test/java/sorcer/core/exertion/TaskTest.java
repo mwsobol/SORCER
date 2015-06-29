@@ -3,9 +3,12 @@ package sorcer.core.exertion;
 //import com.gargoylesoftware,base,testing,TestUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.tester.provider.Adder;
+import sorcer.arithmetic.tester.provider.Multiply;
 import sorcer.arithmetic.tester.provider.impl.AdderImpl;
 import sorcer.service.*;
 import sorcer.service.Strategy.Access;
@@ -13,7 +16,6 @@ import sorcer.service.Strategy.Provision;
 import sorcer.service.Strategy.Wait;
 
 import java.rmi.RemoteException;
-import java.util.logging.Logger;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -28,8 +30,7 @@ import static sorcer.eo.operator.value;
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("core/sorcer-int-tests/sorcer-tester")
 public class TaskTest {
-	private final static Logger logger = Logger.getLogger(TaskTest.class
-			.getName());
+	private final static Logger logger = LoggerFactory.getLogger(TaskTest.class);
 
 	@Test
 	public void freeArithmeticTaskTest() throws ExertionException, SignatureException, ContextException {
@@ -105,58 +106,60 @@ public class TaskTest {
 //		assertTrue("Wrong value for 12.0", get(task).equals(12.0));
 	}
 	
+
 	@Test
-	public void arithmeticFiTaskTest() throws ExertionException, SignatureException, ContextException, RemoteException {
-		//to test tracing of execution enable ServiceExertion.debug 
+	public void argTaskTest() throws Exception {
+		Task t4 = task("t4", sig("multiply", new Multiply()),
+				context(
+						parameterTypes( double[].class),
+						args(new double[]{10.0, 50.0}),
+						result("result/y")));
+
+		//logger.info("t4: " + value(t4));
+		assertEquals("Wrong value for 500.0", value(t4), 500.0);
+	}
+
+	@Test
+	public void arithmeticMultiFiObjectTaskTest() throws Exception {
 		ServiceExertion.debug = true;
-		
+
 		Task task = task("add",
-				srvFi("net", sig("add", Adder.class)),
-				srvFi("object", sig("add", AdderImpl.class)),
+				sFi("net", sig("add", Adder.class)),
+				sFi("object", sig("add", AdderImpl.class)),
 				context(inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
 						result("result/y")));
-		
-//		logger.info("sFi: " + sFi(task));
-//		logger.info("sFis: " + sFis(task));
 
-		task = exert(task, srvFi("object"));
-		logger.info("exerted: " + task);
-		assertTrue("Wrong value for 100.0", (Double)get(task) == 100.0);
-		
-//		task = exert(task, fi("net"));
-//		logger.info("exerted: " + task);
-//		assertTrue("Wrong value for 100.0", (Double)get(task) == 100.0);
+		logger.info("sFi: " + sFi(task));
+		assertTrue(sFis(task).size() == 2);
+		logger.info("selFis: " + selFi(task));
+		assertTrue(selFi(task).equals("net"));
+
+		task = exert(task, fi("object"));
+		logger.info("exerted: " + context(task));
+		assertTrue(selFi(task).equals("object"));
+		assertTrue(get(task).equals(100.0));
 	}
-	
-//	@Test
-//	public void exertObjectTaskTest() throws Exception {
-//		ServiceExertion.debug = true;
-//		ObjectTask objTask = new ObjectTask("t4", new ObjectSignature("multiply", Multiply.class, double[].class));
-//		ServiceContext cxt = new ServiceContext();
-//		Object arg = new double[] { 10.0, 50.0 };
-//		//cxt.setReturnPath("result/y").setArgs(new double[] {10.0, 50.0});
-//		cxt.setReturnPath("result/y").setArgs(arg);
-//		objTask.setContext(cxt);
-//		
-//		//logger.info("objTask value: " + value(objTask));
-//		assertEquals("Wrong value for 500.0", value(objTask), 500.0);
-//		
-//		ObjectTask objTask2 = (ObjectTask)task("t4", sig("multiply", new Multiply(), double[].class), 
-//				context(args(new double[] {10.0, 50.0}), result("result/y")));
-//		//logger.info("objTask2 value: " + value(objTask2));
-//		assertEquals("Wrong value for 500.0", value(objTask2), 500.0);
-//	}
-	
 
-//	@Test
-//	public void t4_TaskTest() throws Exception {
-//		Task t4 = task("t4", sig("multiply", new Multiply(), double[].class),
-//				context(args(new double[] { 10.0, 50.0 }), result("result/y")));
-//
-//		//logger.info("t4: " + value(t4));
-//		assertEquals("Wrong value for 500.0", value(t4), 500.0);
-//	}
+	@Test
+	public void arithmeticMultiFiNetTaskTest() throws Exception {
+		ServiceExertion.debug = true;
 
+		Task task = task("add",
+				sFi("net", sig("add", Adder.class)),
+				sFi("object", sig("add", AdderImpl.class)),
+				context(inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
+						result("result/y")));
+
+		logger.info("sFi: " + sFi(task));
+		assertTrue(sFis(task).size() == 2);
+		logger.info("selFis: " + selFi(task));
+		assertTrue(selFi(task).equals("net"));
+
+		task = exert(task, fi("net"));
+		logger.info("exerted: " + context(task));
+		assertTrue(selFi(task).equals("net"));
+		assertTrue("Wrong value for 100.0", (Double)get(task) == 100.0);
+	}
 	
 	@Test
 	public void deployTest() throws Exception {

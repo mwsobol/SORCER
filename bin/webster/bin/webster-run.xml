@@ -33,9 +33,18 @@
     </target>
 
 	<!-- start webster -->
-	<target name="webster" depends="logDir">
-		<java jar="${sorcer-ext.lib}/webster-${sorcer.version}.jar" maxmemory="450M" fork="yes">
-			<sysproperty key="java.util.logging.config.file" value="${sorcer.home}/configs/sorcer.logging" />
+    <target name="webster" depends="logDir">
+        <java classname="sorcer.tools.webster.Webster" fork="yes">
+            <classpath>
+                <pathelement location="${rio.home}/lib/logging/slf4j-api-${slf4j.version}.jar" />
+                <pathelement location="${rio.home}/lib/logging/logback-core-${logback.version}.jar" />
+                <pathelement location="${rio.home}/lib/logging/logback-classic-${logback.version}.jar" />
+                <pathelement location="${sorcer.lib}/sorcer-platform-${sorcer.version}.jar" />
+                <pathelement location="${sorcer-ext.lib}/webster-${sorcer.version}.jar" />
+            </classpath>
+            <!--<java jar="${sorcer-ext.lib}/webster-${sorcer.version}.jar" maxmemory="450M" fork="yes">-->
+            <sysproperty key="java.util.logging.config.file" value="${sorcer.home}/configs/sorcer.logging" />
+            <sysproperty key="logback.configurationFile" value="${sorcer.home}/configs/sorcer-logging.groovy"/>
 			<sysproperty key="java.protocol.handler.pkgs" value="net.jini.url" />
 			<sysproperty key="java.rmi.server.useCodebaseOnly" value="false" />
 			<sysproperty key="java.security.policy" value="${sorcer.policy}/policy.all" />
@@ -49,8 +58,17 @@
 
     <!-- start webster -->
     <target name="webster-spawn" depends="logDir">
-        <java jar="${sorcer-ext.lib}/webster-${sorcer.version}.jar" maxmemory="450M" fork="yes" spawn="yes">
+        <java classname="sorcer.tools.webster.Webster" maxmemory="450M" fork="yes" spawn="yes">
+            <classpath>
+                <pathelement location="${rio.home}/lib/logging/slf4j-api-${slf4j.version}.jar" />
+                <pathelement location="${rio.home}/lib/logging/logback-core-${logback.version}.jar" />
+                <pathelement location="${rio.home}/lib/logging/logback-classic-${logback.version}.jar" />
+                <pathelement location="${sorcer.lib}/sorcer-platform-${sorcer.version}.jar" />
+                <pathelement location="${sorcer-ext.lib}/webster-${sorcer.version}.jar" />
+            </classpath>
+
             <sysproperty key="java.util.logging.config.file" value="${sorcer.home}/configs/sorcer.logging" />
+            <sysproperty key="logback.configurationFile" value="${sorcer.home}/configs/sorcer-logging.groovy"/>
             <sysproperty key="java.protocol.handler.pkgs" value="net.jini.url" />
             <sysproperty key="java.rmi.server.useCodebaseOnly" value="false" />
             <sysproperty key="java.security.policy" value="${sorcer.policy}/policy.all" />

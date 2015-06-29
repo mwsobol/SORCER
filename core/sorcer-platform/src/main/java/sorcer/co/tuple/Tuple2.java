@@ -19,11 +19,10 @@ package sorcer.co.tuple;
 
 import net.jini.id.Uuid;
 import net.jini.id.UuidFactory;
+import sorcer.core.context.model.ent.Entry;
 import sorcer.service.*;
-import sorcer.util.url.sos.SdbUtil;
 
 import java.io.Serializable;
-import java.net.URL;
 import java.rmi.RemoteException;
 
 @SuppressWarnings("unchecked")
@@ -31,12 +30,12 @@ public class Tuple2<T1, T2> implements Arg, Serializable, Identifiable, Evaluati
 	private  static final long serialVersionUID = -6519678282532888568L;
 	public T1 _1 = null;
 	public T2 _2 = null;
-	private Uuid entryUuid;
+	protected Uuid id = UuidFactory.generate();
 	// its arguments is persisted
 	protected boolean isPersistent = false;
 
 	public Tuple2() {
-		entryUuid = UuidFactory.generate();
+		id = UuidFactory.generate();
 	}
 	
 	public Tuple2(T1 x1, T2 x2) {
@@ -88,12 +87,12 @@ public class Tuple2<T1, T2> implements Arg, Serializable, Identifiable, Evaluati
 	 * @see sorcer.service.Identifiable#getId()
 	 */
 	@Override
-	public Object getId() {
-		return entryUuid;
+	public Uuid getId() {
+		return id;
 	}
 
 	public void setId(Uuid id) {
-		entryUuid = id;
+		this.id = id;
 	}
 
 	/* (non-Javadoc)
@@ -112,7 +111,7 @@ public class Tuple2<T1, T2> implements Arg, Serializable, Identifiable, Evaluati
 			RemoteException {
 		try {
 			substitute(entries);
-		} catch (SetterException e) {
+		} catch (Exception e) {
 			throw new EvaluationException(e);
 		}
 		return this._2;
@@ -130,11 +129,10 @@ public class Tuple2<T1, T2> implements Arg, Serializable, Identifiable, Evaluati
 	 * @see sorcer.service.Evaluation#substitute(sorcer.service.Arg[])
 	 */
 	@Override
-	public Evaluation<T2> substitute(Arg... entries) throws SetterException,
-			RemoteException {
+	public Tuple2 substitute(Arg... entries) throws SetterException {
 		if (entries != null) {
 			for (Arg a : entries) {
-				if (a.getName().equals(getName()) && a instanceof Entry) {
+				if (a.getName().equals(getName()) && a instanceof Tuple2) {
 					_2 = ((Entry<T2>) a).value();
 				}
 			}

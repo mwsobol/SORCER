@@ -5,6 +5,8 @@ import net.jini.core.transaction.TransactionException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.tester.provider.impl.AdderImpl;
@@ -23,7 +25,6 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.rmi.RemoteException;
 import java.util.Properties;
-import java.util.logging.Logger;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -48,8 +49,7 @@ import static sorcer.po.operator.set;
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("core/sorcer-int-tests/sorcer-tester")
 public class InvokerTest {
-	private final static Logger logger = Logger.getLogger(InvokerTest.class
-			.getName());
+	private final static Logger logger = LoggerFactory.getLogger(InvokerTest.class);
 
 	private ParModel pm; 
 	private Par<Double> x;
@@ -176,7 +176,7 @@ public class InvokerTest {
 		assertEquals(j1.getReturnPath().path, "j1/t3/result/y");
 
 		ParModel pm = parModel("par-model");
-		add(pm, par("x1p", "arg/x1", c4), par("x2p", "arg/x2", c4), j1);
+		add(pm, map(par("x1p", "arg/x1"), c4), map(par("x2p", "arg/x2"), c4), j1);
 		// setting context parameters in a job
 		set(pm, "x1p", 10.0);
 		set(pm, "x2p", 50.0);
@@ -236,7 +236,7 @@ public class InvokerTest {
 				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
 
 		ParModel pm = parModel("par-model");
-		add(pm, par("x1p", "arg/x1", c4), par("x2p", "arg/x2", c4), j1);
+		add(pm, map(par("x1p", "arg/x1"), c4), map(par("x2p", "arg/x2"), c4), j1);
 		// setting context parameters in a job
 		set(pm, "x1p", 10.0);
 		set(pm, "x2p", 50.0);
@@ -251,10 +251,15 @@ public class InvokerTest {
 			ContextException, IOException {
 		String riverVersion = System.getProperty("river.version");
 		String sorcerVersion = System.getProperty("sorcer.version");
+		String slf4jVersion = System.getProperty("slf4j.version");
+		String logbackVersion = System.getProperty("logback.version");
 		String buildDir = System.getProperty("project.build.dir");
 
 		String cp = buildDir + "/libs/sorcer-tester-" + sorcerVersion + ".jar" + File.pathSeparator
 				+ Sorcer.getHome() + "/lib/sorcer/lib/sorcer-platform-" + sorcerVersion + ".jar"  + File.pathSeparator
+				+ Sorcer.getHome() + "/lib/logging/slf4j-api-" + slf4jVersion + ".jar"  + File.pathSeparator
+				+ Sorcer.getHome() + "/lib/logging/logback-core-" + logbackVersion + ".jar"  + File.pathSeparator
+				+ Sorcer.getHome() + "/lib/logging/logback-classic-" + logbackVersion + ".jar"  + File.pathSeparator
 				+ Sorcer.getHome() + "/lib/river/jsk-platform-" + riverVersion + ".jar"  + File.pathSeparator
 				+ Sorcer.getHome() + "/lib/river/jsk-lib-" + riverVersion + ".jar ";
 

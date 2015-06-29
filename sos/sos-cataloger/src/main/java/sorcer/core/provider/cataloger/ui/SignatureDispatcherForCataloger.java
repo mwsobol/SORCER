@@ -19,20 +19,22 @@ package sorcer.core.provider.cataloger.ui;
 
 //Main Dispatcher/Listener for all UI components
 
-import java.awt.event.ActionEvent;
-import java.rmi.RemoteException;
-import java.util.logging.Logger;
-
-import javax.swing.JList;
-import javax.swing.JTextField;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.provider.Cataloger;
 import sorcer.core.provider.Provider;
 import sorcer.service.Context;
 import sorcer.service.ContextManagement;
+
+import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import java.awt.event.ActionEvent;
+import java.net.URL;
+import java.rmi.RemoteException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Implementation of the SignatureDispatcherInterface to provide support for
@@ -45,8 +47,7 @@ import sorcer.service.ContextManagement;
  */
 public class SignatureDispatcherForCataloger implements SignatureDispatchment {
 
-	protected static final Logger logger = Logger
-			.getLogger(SignatureDispatcherForCataloger.class.getName());
+	protected static final Logger logger = LoggerFactory.getLogger(SignatureDispatcherForCataloger.class.getName());
 	/**
 	 * The Cataloger service object. Passed in by constructor from CatalogerUI
 	 * class
@@ -141,13 +142,14 @@ public class SignatureDispatcherForCataloger implements SignatureDispatchment {
 			methodListener = new ListSelectionListener() {
 				public void valueChanged(ListSelectionEvent e) {
 					JList list = (JList) e.getSource();
+					String selMethod = (String) list.getSelectedValue();
+					model.setSelectedMethod(selMethod);
 					if (!e.getValueIsAdjusting()) // make it only run on the
 					// final event
 					{
-						String selProv = (String) list.getSelectedValue();
-						model.setContext(selProv,
+						model.setContext(selMethod,
 								SignatureDispatcherForCataloger.this
-										.getContext(selProv));
+										.getContext(selMethod));
 					}
 				}
 			};
@@ -189,6 +191,7 @@ public class SignatureDispatcherForCataloger implements SignatureDispatchment {
 	 */
 	public void actionPerformed(ActionEvent e) {
 		String comm = e.getActionCommand();
+
 		if (comm == SignatureView.PROVIDER_SEARCH) {
 			String searchedProvider = ((JTextField) (e.getSource())).getText();
 			model.setProviders(processSearch(searchedProvider, model
@@ -213,6 +216,7 @@ public class SignatureDispatcherForCataloger implements SignatureDispatchment {
 	 */
 	public void fillModel() {
 		model.setProviders(getProviders());
+		model.setCodebaseURLs(getCodebaseURLs());
 	}
 
 	/**
@@ -255,6 +259,23 @@ public class SignatureDispatcherForCataloger implements SignatureDispatchment {
 		 * return provList;
 		 */
 	}
+
+	/**
+	 * Gets the list of codebase URLs for providers
+	 *
+	 * @return Map of provider name to codebase URLs
+	 */
+	public Map<String, URL[]> getCodebaseURLs() {
+		int i = 0;
+		Map<String, URL[]> codebaseUrls = new HashMap<String, URL[]>();
+		try {
+			codebaseUrls = catalog.getProviderCodebaseURLs();
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		return codebaseUrls;
+	}
+
 
 	/**
 	 * Gets the list of interfaces for the given provider
@@ -366,17 +387,16 @@ public class SignatureDispatcherForCataloger implements SignatureDispatchment {
 		 * e.printStackTrace();} System.out.println("context"+cxt); return cxt;
 		 */
 		Context cxt = new ServiceContext(model.getSelectedProvider());
-		// if(theproxy!=null)
-		{
-			try {
-				cxt = ((ContextManagement)catalog).getContext(model.getSelectedProvider(), model
-						.getSelectedInterfaceName(), methodName);
-
-			} catch (RemoteException e) {
-
-				e.printStackTrace();
-			}
-		}
+//		{
+//			try {
+//				cxt = ((ContextManagement)catalog).getContext(model.getSelectedProvider(), model
+//						.getSelectedInterfaceName(), methodName);
+//
+//			} catch (RemoteException e) {
+//
+//				e.printStackTrace();
+//			}
+//		}
 		return cxt;
 	}
 

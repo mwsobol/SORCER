@@ -18,7 +18,8 @@
 package sorcer.service;
 
 import net.jini.core.transaction.Transaction;
-import net.jini.core.transaction.TransactionException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.exertion.NetTask;
 import sorcer.core.exertion.ObjectTask;
@@ -30,7 +31,6 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Logger;
 
 /**
  * A <code>Task</code> is an elementary service-oriented message
@@ -53,7 +53,7 @@ public class Task extends ServiceExertion {
 	private static final long serialVersionUID = 5179772214884L;
 
 	/** our logger */
-	protected final static Logger logger = Logger.getLogger(Task.class
+	protected final static Logger logger = LoggerFactory.getLogger(Task.class
 			.getName());
 
 	public final static String argsPath = "method/args";
@@ -82,13 +82,15 @@ public class Task extends ServiceExertion {
 	
 	public Task(Signature signature, Context context) {
 		addSignature(signature);
-		dataContext = (ServiceContext)context;
+		if (context != null)
+			dataContext = (ServiceContext)context;
 	}
 	
 	public Task(String name, Signature signature, Context context) {
 		this(name);
 		addSignature(signature);
-		dataContext = (ServiceContext)context;
+		if (context != null)
+			dataContext = (ServiceContext)context;
 	}
 	
 	public Task(String name, String description) {
@@ -102,25 +104,25 @@ public class Task extends ServiceExertion {
 
 	public Task(String name, String description, List<Signature> signatures) {
 		this(name, description);
-		if (this.fidelity != null) {
-			this.fidelity.addAll(signatures);
+		if (this.serviceFidelity != null) {
+			this.serviceFidelity.selects.addAll(signatures);
 		}
 	}
 
-	public Task doTask() throws ExertionException, SignatureException,
+	public Task doTask() throws MogramException, SignatureException,
 			RemoteException {
 		return doTask(null);
 	}
 	
 	public Task doTask(Transaction txn) throws ExertionException,
-			SignatureException, RemoteException {
+			SignatureException, RemoteException, MogramException {
 		if (delegate == null) {
-			if (fidelity != null) {
+			if (serviceFidelity != null) {
 				Signature ss = null;
-				if (fidelity.size() == 1) {
-					ss = fidelity.get(0);
-				} else if (fidelity.size() > 1) {
-					for (Signature s : fidelity) {
+				if (serviceFidelity.selects.size() == 1) {
+					ss = serviceFidelity.selects.get(0);
+				} else if (serviceFidelity.selects.size() > 1) {
+					for (Signature s : serviceFidelity.selects) {
 						if (s.getType() == Signature.SRV) {
 							ss = s;
 							break;
@@ -130,7 +132,7 @@ public class Task extends ServiceExertion {
 				if (ss != null) {
 					if (ss instanceof NetSignature) {
 						try {
-							delegate = new NetTask(name, (NetSignature) ss);
+							delegate = new NetTask(name, ss);
 						} catch (SignatureException e) {
 							throw new ExertionException(e);
 						}
@@ -141,7 +143,7 @@ public class Task extends ServiceExertion {
 					} 
 					delegate.setFidelities(getFidelities());
 					delegate.setFidelity(getFidelity());
-					delegate.setSelectedFidelitySelector(selectedFidelitySelector);
+					delegate.setSelectedFidelitySelector(serviceFidelitySelector);
 					delegate.setContext(dataContext);
 					delegate.setControlContext(controlContext);
 				}
@@ -159,14 +161,10 @@ public class Task extends ServiceExertion {
 			throws EvaluationException, ContextException {
 		// implement is subclasses
 	}
-	
+
 	public void undoTask() throws ExertionException, SignatureException,
 			RemoteException {
 		throw new ExertionException("Not implemneted by this Task: " + this);
-	}
-
-	public void setIndex(int i) {
-		index = new Integer(i);
 	}
 
 	@Override
@@ -176,7 +174,7 @@ public class Task extends ServiceExertion {
 	
 	@Override
 	public boolean isCmd()  {
-		return (fidelity.size() == 1);
+		return (serviceFidelity.selects.size() == 1);
 	}
 	
 	public boolean hasChild(String childName) {
@@ -191,12 +189,12 @@ public class Task extends ServiceExertion {
 	public void setOwnerId(String oid) {
 		// Util.debug("Owner ID: " +oid);
 		this.ownerId = oid;
-		if (fidelity != null)
-			for (int i = 0; i < fidelity.size(); i++)
-				((NetSignature) fidelity.get(i)).setOwnerId(oid);
+		if (serviceFidelity.selects != null)
+			for (int i = 0; i < serviceFidelity.selects.size(); i++)
+				((NetSignature) serviceFidelity.selects.get(i)).setOwnerId(oid);
 		// Util.debug("Context : "+ context);
 		if (dataContext != null)
-			dataContext.setOwnerID(oid);
+			dataContext.setOwnerId(oid);
 	}
 
 	public ServiceContext doIt() throws ExertionException {
@@ -234,10 +232,10 @@ public class Task extends ServiceExertion {
 		sb.append(", selector: ").append(getSelector());
 		sb.append(", parent ID: ").append(parentId);
 
-		if (fidelity.size() == 1) {
+		if (serviceFidelity.selects.size() == 1) {
 			sb.append(getProcessSignature().getProviderName());
 		} else {
-			for (Signature s : fidelity) {
+			for (Signature s : serviceFidelity.selects) {
 				sb.append("\n  ").append(s);
 			}
 		}
@@ -245,7 +243,10 @@ public class Task extends ServiceExertion {
 		if (time != null && time.length() > 0)
 			sb.append("\n\texec time=").append(time);
 		sb.append(controlContext).append("\n");
-		sb.append(dataContext);
+//		sb.append(dataContext);
+		sb.append(dataContext.getName() + ": ");
+		sb.append(dataContext.getSubjectPath() + " = ");
+		sb.append(dataContext.getSubjectValue());
 		sb.append("\n=== DONE PRINTING TASK ===\n");
 
 		return sb.toString();
@@ -293,7 +294,7 @@ public class Task extends ServiceExertion {
 	@Override
 	public Context linkContext(Context context, String path) {
 		try {
-			((ServiceContext) context).putLink(path, getContext());
+			((ServiceContext) context).putLink(path, getDataContext());
 		} catch (ContextException e) {
 			e.printStackTrace();
 		}
@@ -313,27 +314,10 @@ public class Task extends ServiceExertion {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see sorcer.service.Exertion#getExertions()
+	 * @see sorcer.service.Exertion#addMogram(sorcer.service.Exertion)
 	 */
 	@Override
-	public List<Exertion> getExertions() {
-		ArrayList<Exertion> list = new ArrayList<Exertion>(1);
-		list.add(this);
-		return list;
-	}
-
-	public List<Exertion> getExertions(List<Exertion> exs) {
-		exs.add(this);
-		return exs;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see sorcer.service.Exertion#addExertion(sorcer.service.Exertion)
-	 */
-	@Override
-	public Exertion addExertion(Exertion component) {
+	public Mogram addMogram(Mogram component) {
 		throw new RuntimeException("Tasks do not contain component exertions!");
 	}
 
@@ -371,7 +355,7 @@ public class Task extends ServiceExertion {
 	}
 
 	protected Task doBatchTask(Transaction txn) throws RemoteException,
-			ExertionException, SignatureException, ContextException {
+			MogramException, SignatureException, ContextException {
 		ControlFlowManager ep = new ControlFlowManager();
 		return ep.doBatchTask(this);
 	}
@@ -382,10 +366,45 @@ public class Task extends ServiceExertion {
 	@Override
 	public Object getValue(String path, Arg... args) throws ContextException {
 		if (path.startsWith("super")) {
-			return parent.getContext().getValue(path.substring(6));
+			return ((Exertion)parent).getContext().getValue(path.substring(6));
 		} else {
 			return dataContext.getValue(path, args);
 		}
 	}
 
+	public List<Mogram> getMograms(List<Mogram> exs) {
+		exs.add(this);
+		return exs;
+	}
+
+	@Override
+	public List<Mogram> getMograms() {
+		List<Mogram> ml = new ArrayList<Mogram>();
+		ml.add(this);
+		return ml;
+	}
+
+	public Mogram clearScope() throws MogramException {
+		if (!isContinous()) getDataContext().clearScope();
+		return this;
+	}
+
+	public void correctBatchSignatures() {
+		List<Signature> alls = this.getFidelity().getSelects();
+		Signature lastSig = alls.get(alls.size()-1);
+		if (alls.size() > 1 &&  this.isBatch() && !(lastSig instanceof NetSignature)) {
+			boolean allSrvType = true;
+			for (Signature sig : alls) {
+				if (!sig.getType().equals(Signature.SRV)) {
+					allSrvType = false;
+					break;
+				}
+			}
+			if (allSrvType) {
+				for (int i = 0; i < alls.size() - 1; i++) {
+					alls.get(i).setType(Signature.PRE);
+				}
+			}
+		}
+	}
 }

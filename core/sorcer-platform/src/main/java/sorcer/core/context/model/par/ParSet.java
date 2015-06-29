@@ -26,8 +26,6 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import sorcer.service.EvaluationException;
-import sorcer.service.Identity;
-import sorcer.service.SetterException;
 
 /**
  * @author Mike Sobolewski
@@ -45,8 +43,8 @@ public class ParSet extends TreeSet<Par> {
 		addAll(parList);
 	}
 	
-	public ParSet(Set<Par> parSet) {
-		addAll(parSet);
+	public ParSet(Set<Par> parEntrySet) {
+		addAll(parEntrySet);
 	}
 
 	
@@ -56,8 +54,8 @@ public class ParSet extends TreeSet<Par> {
 		}
 	}
 	
-	public ParSet(Par<?>...  pars) {
-		for (Par<?> v : pars) {
+	public ParSet(Par<?>... parEntries) {
+		for (Par<?> v : parEntries) {
 			add(v);
 		}
 	}
@@ -72,19 +70,19 @@ public class ParSet extends TreeSet<Par> {
 	
 	public void setValue(String parName, Object value)
 			throws EvaluationException {
-		Par par = null;
+		Par parEntry = null;
 		for (Par<?> p : this) {
 			if (p.getName().equals(parName)) {
-				par = p;
+				parEntry = p;
 				try {
-					par.setValue(value);
+					parEntry.setValue(value);
 				} catch (Exception e) {
 					throw new EvaluationException(e);
 				}
 				break;
 			}
 		}
-		if (par == null)
+		if (parEntry == null)
 			throw new ParException("No such Par in the list: " + parName);
 	}
 	

@@ -18,22 +18,13 @@
 package sorcer.core.invoker;
 
 import groovy.lang.GroovyShell;
+import sorcer.core.context.model.par.Par;
+import sorcer.service.*;
 
 import java.io.File;
 import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.Iterator;
-
-import sorcer.co.tuple.Entry;
-import sorcer.core.context.model.par.Par;
-import sorcer.service.Arg;
-import sorcer.service.ArgSet;
-import sorcer.service.Context;
-import sorcer.service.ContextException;
-import sorcer.service.Evaluation;
-import sorcer.service.EvaluationException;
-import sorcer.service.InvocationException;
-import sorcer.service.Setter;
 
 /**
  * @author Mike Sobolewski
@@ -57,12 +48,11 @@ public class GroovyInvoker<T> extends ServiceInvoker<T> {
 	private File scriptFile = null;
 
 	public GroovyInvoker() {
-		super();
-		this.name = defaultName + count++;
+		super(defaultName + count++);
 	}
 
 	public GroovyInvoker(String expression) {
-		this.name = defaultName + count++;
+		this();
 		this.expression = expression;
 	}
 	
@@ -71,9 +61,8 @@ public class GroovyInvoker<T> extends ServiceInvoker<T> {
 	}
 
 	public GroovyInvoker(String name, String expression, ArgSet parameters) {
-		if (name == null)
-			this.name = defaultName + count++;
-		else
+		this();
+		if (name != null && name.length() > 0)
 			this.name = name;
 		this.expression = expression;
 		this.pars = parameters;
@@ -84,16 +73,12 @@ public class GroovyInvoker<T> extends ServiceInvoker<T> {
 	}
 	
 	public GroovyInvoker(String name, String expression, Arg... parameters) {
-		if (name == null)
-			this.name = defaultName + count++;
-		else
-			this.name = name;
-		this.expression = expression;
-		this.pars =  ArgSet.asSet(parameters);
+		this(name, expression, ArgSet.asSet(parameters));
 	}
 
 	public GroovyInvoker(File scriptFile, Par... parameters)
 			throws EvaluationException {
+		this();
 		this.scriptFile = scriptFile;
 		this.pars = new ArgSet(parameters);
 	}
@@ -131,7 +116,7 @@ public class GroovyInvoker<T> extends ServiceInvoker<T> {
 				}
 			}
 		} catch (RuntimeException e) {
-			logger.severe("Error Occurred in Groovy Shell: " + e.getMessage());
+			logger.error("Error Occurred in Groovy Shell: " + e.getMessage());
 		}
 		return (T) result;
 	}
@@ -148,9 +133,8 @@ public class GroovyInvoker<T> extends ServiceInvoker<T> {
 					}
 					if (obj != null && obj != Context.none) {
 						((Setter)p).setValue(obj);
-					} 
-					else {
-						invokeContext.putValue(p.getName(), ((Evaluation)p).asis());
+					} else if (((Evaluation)p).asis() != null) {
+						invokeContext.putValue(p.getName(), ((Evaluation) p).asis());
 					}
 				}
 			}
@@ -161,7 +145,7 @@ public class GroovyInvoker<T> extends ServiceInvoker<T> {
 		while (i.hasNext()) {
 			Arg entry = i.next();
 			val = ((Evaluation)entry).getValue();
-			key = (String) entry.getName();
+			key = entry.getName();
 			if (val instanceof Evaluation) {
 				val = ((Evaluation) val).getValue();
 			}

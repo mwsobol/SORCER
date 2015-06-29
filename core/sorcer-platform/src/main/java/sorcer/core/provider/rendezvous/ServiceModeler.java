@@ -19,12 +19,16 @@ package sorcer.core.provider.rendezvous;
 
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import sorcer.core.context.model.srv.SrvModel;
 import sorcer.core.provider.Modeler;
-import sorcer.service.*;
+import sorcer.service.ExertionException;
+import sorcer.service.Mogram;
+import sorcer.service.Task;
 import sorcer.service.modeling.Model;
 
 import java.rmi.RemoteException;
-import java.util.logging.Logger;
 
 import static sorcer.eo.operator.sig;
 import static sorcer.eo.operator.task;
@@ -37,7 +41,7 @@ import static sorcer.eo.operator.task;
  * @author Mike Sobolewski
  */
 public class ServiceModeler extends RendezvousBean implements Modeler {
-    private Logger logger = Logger.getLogger(ServiceModeler.class.getName());
+    private Logger logger = LoggerFactory.getLogger(ServiceModeler.class.getName());
 
     public ServiceModeler() throws RemoteException {
         // do nothing
@@ -47,19 +51,18 @@ public class ServiceModeler extends RendezvousBean implements Modeler {
             throws TransactionException, ExertionException, RemoteException {
         //logger.info("*********************************************ServiceModeler.execute, model = " + mogram);
         setServiceID(mogram);
-        ServiceModel model = (ServiceModel) mogram;
+        SrvModel model = (SrvModel) mogram;
         Model result = null;
         try {
-            if (model.getFidelity().size() == 0 && model.getSubjectValue() instanceof Class) {
+            if (model.getSubjectValue() instanceof Class) {
                 Task task = task(model.getName(), sig(model.getSubjectPath(), model.getSubjectValue()), model);
                 Task out = task.exert();
-                logger.finest("<==== Result: " + out);
+                logger.trace("<==== Result: " + out);
                 result = out.getDataContext();
             } else {
                 Task task = task(model.getName(), model);
-                task.setFidelity(model.getFidelity());
-                Task out = task.exert();                
-                logger.finest("<==== Result: " + out);
+                Task out = task.exert();
+                logger.trace("<==== Result: " + out);
                 result = out.getDataContext();
             }
         } catch (Throwable e) {

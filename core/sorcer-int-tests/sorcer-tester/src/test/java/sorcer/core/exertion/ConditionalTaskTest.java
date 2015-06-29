@@ -1,42 +1,28 @@
 package sorcer.core.exertion;
 
-import static org.junit.Assert.assertEquals;
-import static sorcer.co.operator.inEnt;
-import static sorcer.eo.operator.alt;
-import static sorcer.eo.operator.condition;
-import static sorcer.eo.operator.context;
-import static sorcer.eo.operator.cxt;
-import static sorcer.eo.operator.exert;
-import static sorcer.eo.operator.get;
-import static sorcer.eo.operator.opt;
-import static sorcer.eo.operator.result;
-import static sorcer.eo.operator.sig;
-import static sorcer.eo.operator.task;
-import static sorcer.eo.operator.value;
-import static sorcer.eo.operator.*;
-import static sorcer.po.operator.*;
-import static sorcer.po.operator.parModel;
-import static sorcer.po.operator.put;
-
-import java.rmi.RemoteException;
-import java.util.logging.Logger;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
-
 import sorcer.arithmetic.tester.provider.impl.AdderImpl;
 import sorcer.arithmetic.tester.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.tester.provider.impl.SubtractorImpl;
 import sorcer.core.context.model.par.ParModel;
-import sorcer.service.Condition;
-import sorcer.service.ContextException;
-import sorcer.service.ExertionException;
-import sorcer.service.ServiceExertion;
-import sorcer.service.SignatureException;
-import sorcer.service.Task;
-import sorcer.util.Sorcer;
+import sorcer.service.*;
+
+import java.rmi.RemoteException;
+
+import static org.junit.Assert.assertEquals;
+import static sorcer.co.operator.inEnt;
+import static sorcer.eo.operator.alt;
+import static sorcer.eo.operator.*;
+import static sorcer.eo.operator.get;
+import static sorcer.eo.operator.opt;
+import static sorcer.po.operator.add;
+import static sorcer.po.operator.*;
+import static sorcer.po.operator.put;
 
 /**
  * @author Mike Sobolewski
@@ -45,8 +31,7 @@ import sorcer.util.Sorcer;
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("core/sorcer-int-tests/sorcer-tester")
 public class ConditionalTaskTest {
-	private final static Logger logger = Logger
-			.getLogger(ConditionalTaskTest.class.getName());
+	private final static Logger logger = LoggerFactory.getLogger(ConditionalTaskTest.class);
 
 	@Test
 	public void arithmeticTaskTest() throws ExertionException,

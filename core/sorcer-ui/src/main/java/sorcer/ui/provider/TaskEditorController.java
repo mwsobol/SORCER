@@ -17,18 +17,13 @@
 
 package sorcer.ui.provider;
 
-import java.awt.BorderLayout;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.logging.Logger;
-
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
 
 /**
  * Controller for Task Editor. This class controls all user events. Using action
@@ -37,8 +32,7 @@ import javax.swing.JTextField;
  */
 public class TaskEditorController implements ActionListener {
 
-	private final static Logger logger = Logger
-			.getLogger("engineering.optimization.provider.ui");
+	private final static Logger logger = LoggerFactory.getLogger("open.optimization.provider.ui");
 
 	private SignatureModel model;
 	private DataNodeEditor dataView;

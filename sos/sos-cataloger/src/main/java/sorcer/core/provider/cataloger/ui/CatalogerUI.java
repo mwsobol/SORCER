@@ -17,7 +17,8 @@
 
 package sorcer.core.provider.cataloger.ui;
 
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -31,7 +32,7 @@ import sorcer.core.provider.Cataloger;
 public class CatalogerUI extends JFrame {
 
 	/** Logger for logging information about this instance */
-	protected static final Logger logger = Logger.getLogger(CatalogerUI.class
+	protected static final Logger logger = LoggerFactory.getLogger(CatalogerUI.class
 			.getName());
 
 	private static final long serialVersionUID = -3403132166362362358L;
