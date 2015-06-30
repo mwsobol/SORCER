@@ -131,7 +131,7 @@ public class ScratchManagerSupport implements ScratchManager, Serializable {
     }
 
     String getUniqueId() {
-        SimpleDateFormat sdf = new SimpleDateFormat("MM-dd:HH.mm.SSS");
+        SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-HH-mm-SSS");
         Calendar c = Calendar.getInstance();
         long time = c.getTime().getTime();
 
