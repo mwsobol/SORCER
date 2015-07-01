@@ -1904,6 +1904,7 @@ public class ProviderDelegate {
 		 */
 		public void init(boolean exitOnEmptyName, String propsFilename) {
 			// load configuration from a provider properties file
+			logger.info("propsFilename = " + propsFilename);
 			if (propsFilename != null && propsFilename.length() > 0)
 				loadConfiguration(propsFilename);
 			// load configuration as defined in provider Jini configuration file
@@ -2079,12 +2080,14 @@ public class ProviderDelegate {
 		 * @see #getProperty
 		 */
 		public void loadConfiguration(String filename) {
+			filename = filename.replace("\\", "/");
+			
 			try {
 				// check the class resource
 				InputStream is = null;
 				Path filePath = Paths.get("configs").resolve(filename);
 				if (!filePath.isAbsolute()) {
-					String name = filePath.toString();
+					String name = filePath.toString().replace("\\", "/");
 					logger.info("Try to load configuration: [{}] {}", System.getProperty(JavaSystemProperties.USER_DIR), name);
 					ClassLoader resourceLoader = Thread.currentThread().getContextClassLoader();
 					URL resourceURL = resourceLoader.getResource(name);
