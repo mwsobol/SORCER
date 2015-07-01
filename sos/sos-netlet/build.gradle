@@ -18,3 +18,9 @@ dependencies {
     testRuntime libs.logback
 
 }
+
+/*
+ * Make sure that the artifact from the examples/sml project is installed in the
+ * local repository first
+ */
+test.dependsOn(":examples:sml:install")
