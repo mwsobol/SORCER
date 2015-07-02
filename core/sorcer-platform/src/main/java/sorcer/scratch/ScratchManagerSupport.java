@@ -131,8 +131,12 @@ public class ScratchManagerSupport implements ScratchManager, Serializable {
     }
 
     String getUniqueId() {
-        // avoid '.' and ':' in directory names
-        SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-HH-mm");
+        SimpleDateFormat sdf;
+        // Avoid '.' and ':' in directory names if running on Windows
+        if(System.getProperty("os.name").startsWith("Windows"))
+            sdf  = new SimpleDateFormat("MM-dd-HH-mm");
+        else
+            sdf = new SimpleDateFormat("MM-dd-HH-mm-SSS");
         Calendar c = Calendar.getInstance();
         long time = c.getTime().getTime();
 
