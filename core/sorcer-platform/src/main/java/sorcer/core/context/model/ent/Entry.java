@@ -17,7 +17,10 @@
 
 package sorcer.core.context.model.ent;
 
+import net.jini.core.transaction.Transaction;
+import net.jini.core.transaction.TransactionException;
 import sorcer.co.tuple.Tuple2;
+import sorcer.core.context.ServiceContext;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.service.*;
 import sorcer.util.bdb.objects.UuidObject;
@@ -33,7 +36,7 @@ import java.util.List;
  * @author Mike Sobolewski
  */
 @SuppressWarnings("unchecked")
-public class Entry<T> extends Tuple2<String, T> implements Dependency, Comparable<T>, Setter, Evaluation<T>, Reactive<T>, Arg {
+public class Entry<T> extends Tuple2<String, T> implements Service, Dependency, Comparable<T>, Setter, Evaluation<T>, Reactive<T>, Arg {
 	private static final long serialVersionUID = 5168783170981015779L;
 
 	public int index;
@@ -218,4 +221,15 @@ public class Entry<T> extends Tuple2<String, T> implements Dependency, Comparabl
 		return this;
 	}
 
+	@Override
+	public <T extends Mogram> T service(T mogram, Transaction txn) throws TransactionException, MogramException, RemoteException {
+		return service(mogram, null);
+	}
+
+	@Override
+	public <T extends Mogram> T service(T mogram) throws TransactionException, MogramException, RemoteException {
+		Context cxt = new ServiceContext();
+		cxt.putValue(_1, getValue());
+		return (T) cxt;
+	}
 }
