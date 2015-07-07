@@ -37,7 +37,7 @@ import java.util.*;
 
 import static sorcer.eo.operator.provider;
 
-public class ServiceSignature implements Signature, Service, SorcerConstants {
+public class ServiceSignature implements Signature, SorcerConstants {
 
 	static final long serialVersionUID = -8527094638557595398L;
 
@@ -580,9 +580,10 @@ public class ServiceSignature implements Signature, Service, SorcerConstants {
 	}
 
 	@Override
-	public Mogram service(Mogram exertion) throws TransactionException,
+	 public Mogram service(Mogram exertion) throws TransactionException,
 			MogramException, RemoteException {
-		return service(exertion, null);
+		Provider prv = (Provider)Accessor.getService(this);
+		return prv.service(exertion, null);
 	}
 
 	public Context getInConnector() {

@@ -1,5 +1,7 @@
 package sorcer.core.context.model.srv;
 
+import net.jini.core.transaction.Transaction;
+import net.jini.core.transaction.TransactionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.context.ApplicationDescription;
@@ -108,6 +110,16 @@ public class Srv extends Entry<Object> implements Variability<Object>, Arg, Eval
     @Override
     public Object getPerturbedValue(String varName) throws EvaluationException, RemoteException {
         return null;
+    }
+
+    @Override
+    public <T extends Mogram> T service(T mogram, Transaction txn) throws TransactionException, MogramException, RemoteException {
+        return (T) ((Signature)_2).service(mogram, txn);
+    }
+
+    @Override
+    public <T extends Mogram> T service(T mogram) throws TransactionException, MogramException, RemoteException {
+        return (T) ((Signature)_2).service(mogram, null);
     }
 
     @Override
