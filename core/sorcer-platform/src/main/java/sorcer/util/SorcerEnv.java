@@ -517,21 +517,25 @@ public class SorcerEnv extends SOS {
 		String rootDir = DataService.getDataDir();
         String dataDir = dataDir = properties.getProperty(P_DATA_DIR);
 
-		logger.debug("\n1. rootDir = " + rootDir + "\ndataDir = " + dataDir);
+        if(logger.isTraceEnabled())
+            logger.trace("\n1. rootDir = {}\ndataDir = {}" + rootDir, dataDir);
 
 		if (dataDir != null) {
 			System.setProperty(DOC_ROOT_DIR, rootDir + File.separator + dataDir);
-			logger.debug("1. DOC_ROOT_DIR = " +System.getProperty(DOC_ROOT_DIR));
+            if(logger.isTraceEnabled())
+                logger.trace("1. DOC_ROOT_DIR = {}", System.getProperty(DOC_ROOT_DIR));
 		} else {
 			//rootDir = properties.getProperty(R_DATA_ROOT_DIR);
 			dataDir = properties.getProperty(R_DATA_DIR);
 			if (rootDir != null && dataDir != null) {
 				System.setProperty(DOC_ROOT_DIR, rootDir + File.separator+ dataDir);
-			}
-			 logger.debug("\n2 .rootDir = " + rootDir + "\ndataDir = " +dataDir);
-			 logger.debug("2. DOC_ROOT_DIR = " + System.getProperty(DOC_ROOT_DIR));
-		}
-		dataDir = properties.getProperty(P_SCRATCH_DIR);
+            }
+            if(logger.isTraceEnabled()) {
+                logger.trace("\n2 .rootDir = {}\ndataDir = {}", rootDir, dataDir);
+                logger.trace("2. DOC_ROOT_DIR = {}", System.getProperty(DOC_ROOT_DIR));
+            }
+        }
+        dataDir = properties.getProperty(P_SCRATCH_DIR);
 		// logger.debug("\n3. dataDir = " + dataDir);
 		if (dataDir != null) {
 			System.setProperty(SCRATCH_DIR, dataDir);
