@@ -45,6 +45,8 @@ jar {
         include "sorcer/**"
         include "org/rioproject/admin/ServiceActivityProvider.class"
 		include "org/rioproject/entry/ComputeResourceInfo.class"
+        include "org/rioproject/impl/jmx/JMXConnectionUtil.class"
+        include "org/rioproject/impl/jmx/MBeanServerFactory.class"
     }
     manifest {
         attributes("Implementation-Title": "SORCER Platform",

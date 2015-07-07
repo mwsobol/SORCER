@@ -65,8 +65,7 @@ public class SpaceAccessor {
         JavaSpace05 javaSpace = cache;
         if (javaSpace != null) {
             try {
-                javaSpace.readIfExists(new Name("_SORCER_"), null,
-                        JavaSpace.NO_WAIT);
+                javaSpace.readIfExists(new Name("_SORCER_"), null, JavaSpace.NO_WAIT);
                 return javaSpace;
             } catch (Exception e) {
                 //log.error("error", e.getMessage());
@@ -83,11 +82,11 @@ public class SpaceAccessor {
             sg = Sorcer.getSpaceGroup();
         }
         javaSpace = (JavaSpace05) Accessor.getService(null,
-                new Class[]{JavaSpace05.class}, attrs,
-                new String[]{sg});
+                                                      new Class[]{JavaSpace05.class},
+                                                      attrs,
+                                                      new String[]{sg});
         try {
-            javaSpace.readIfExists(new Name("_SORCER_"), null,
-                    JavaSpace.NO_WAIT);
+            javaSpace.readIfExists(new Name("_SORCER_"), null, JavaSpace.NO_WAIT);
             cache = javaSpace;
             log.info("JavaSpace is back!");
             return javaSpace;

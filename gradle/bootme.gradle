@@ -1,3 +1,11 @@
+import javax.management.MBeanServerConnection
+import javax.management.remote.JMXConnector
+import javax.management.remote.JMXConnectorFactory
+import javax.management.remote.JMXServiceURL
+import java.rmi.RemoteException
+import java.rmi.registry.LocateRegistry
+import java.rmi.registry.Registry
+
 /*
  * Copyright to the original author or authors.
  *
@@ -118,22 +126,71 @@ class StopMePlugin implements Plugin<Project> {
         project.task('stopme') {
             description = 'Stops a provider booted from this project.)'
             doLast {
-                def pids = []
-                "jps -v".execute().text.eachLine { line ->
-                    if (line.contains("project.id=${project.name}")) {
-                        pids << line.split()[0]
+                destroy(project.name)
+                kill(project.name)
+            }
+        }
+    }
+
+    void destroy(String projectId) {
+        def rmiRegistries = [:]
+        int port = 1099
+        for(int i=0; i < 50; i++) {
+            try {
+                Registry registry = LocateRegistry.getRegistry(port)
+                /* We call list() to make sure that there is a registry running on the port */
+                registry.list()
+                rmiRegistries.put(port, registry)
+            } catch (RemoteException e) {
+                //;
+            }
+            port++
+        }
+        if(!rmiRegistries.isEmpty()) {
+            //println "Have found ${rmiRegistries.size()} Registries"
+            rmiRegistries.each { p, registry ->
+                try {
+                    String[] registered = registry.list()
+                    for (String name : registered) {
+                        if(name=="jmxrmi") {
+                            JMXServiceURL url = new JMXServiceURL("service:jmx:rmi:///jndi/rmi://localhost:${p}/jmxrmi")
+                            JMXConnector jmxc = JMXConnectorFactory.connect(url, null);
+                            MBeanServerConnection serverConnection = jmxc.getMBeanServerConnection()
+                            serverConnection.queryNames(null, null).each { mBean ->
+                                if(mBean.domain=="sorcer.core.provider") {
+                                    String id = mBean.getKeyProperty("projectId")
+                                    if(id!=null && id==projectId) {
+                                        serverConnection.invoke(mBean, "destroy", null, null)
+                                    }
+                                }
+                            }
+                        }
                     }
-                }
-                String command
-                if (System.getProperty("os.name").startsWith("Windows")) {
-                    command = "taskkill /f /pid "
-                } else {
-                    command = "kill "
-                }
-                pids.each { pid ->
-                    "$command $pid".execute().waitFor()
+                } catch (Exception e) {
+                    println("Exception getting service from registry, Exception : ${e.getMessage()}")
                 }
             }
+        } else {
+            println("Could not locate any Registry instances using ports 1099..$port")
+        }
+
+    }
+
+    void kill(String projectId) {
+        def pids = []
+        "jps -v".execute().text.eachLine { line ->
+            if(line.contains("project.id=${projectId}")) {
+                pids << line.split()[0]
+            }
+        }
+        String command
+        if(System.getProperty("os.name").startsWith("Windows")) {
+            command = "taskkill /f /pid "
+        } else {
+            command = "kill "
+        }
+        pids.each { pid ->
+            "$command $pid".execute().waitFor()
         }
     }
 

@@ -46,12 +46,12 @@ import org.slf4j.LoggerFactory;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.ControlContext;
 import sorcer.core.context.ServiceContext;
-import sorcer.scratch.ScratchManager;
-import sorcer.scratch.ScratchManagerSupport;
 import sorcer.core.proxy.Outer;
 import sorcer.core.proxy.Partner;
 import sorcer.core.proxy.Partnership;
 import sorcer.core.signature.ServiceSignature;
+import sorcer.scratch.ScratchManager;
+import sorcer.scratch.ScratchManagerSupport;
 import sorcer.service.*;
 import sorcer.service.Signature;
 import sorcer.service.SignatureException;
@@ -199,6 +199,9 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 
 	protected ScheduledExecutorService scheduler;
 
+    /** MBean for JMX access*/
+    private ProviderAdmin providerAdmin;
+
 	public ServiceProvider() {
 		providers.add(this);
 		delegate = new ProviderDelegate();
@@ -210,54 +213,56 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		ShutdownHook shutdownHook =  new ShutdownHook(this);
 		shutdownHook.setDaemon(true);
 		Runtime.getRuntime().addShutdownHook(shutdownHook);
-	}
+    }
 
-	/**
-	 * Required constructor for Jini 2 NonActivatableServiceDescriptors
-	 *
-	 * @param args
-	 * @param lifeCycle
-	 * @throws Exception
-	 */
-	public ServiceProvider(String[] args, LifeCycle lifeCycle) throws Exception {
-		this();
-		// count initialized shared providers
-		tally = tally + 1;
-		size = tally;
-		// load Sorcer environment properties via static initializer
-		Sorcer.getProperties();
-		serviceClassLoader = Thread.currentThread().getContextClassLoader();
-		final Configuration config = ConfigurationProvider.getInstance(args, serviceClassLoader);
-		delegate.setJiniConfig(config);
-		// inspect class loader tree
-		if(logger.isTraceEnabled())
-			com.sun.jini.start.ClassLoaderUtil.displayContextClassLoaderTree();
-		// System.out.println("service provider class loader: " +
-		// serviceClassLoader);
-		String providerProperties = null;
-		try {
-			providerProperties = (String) Config.getNonNullEntry(config,
-					COMPONENT, "properties", String.class, "");
-		} catch (ConfigurationException e) {
-			// e.printStackTrace();
-			logger.warn("init", e);
-		}
-		// configure the provider's delegate
-		delegate.getProviderConfig().init(true, providerProperties);
+    /**
+     * Required constructor for Jini 2 NonActivatableServiceDescriptors
+     *
+     * @param args
+     * @param lifeCycle
+     * @throws Exception
+     */
+    public ServiceProvider(String[] args, LifeCycle lifeCycle) throws Exception {
+        this();
+        // count initialized shared providers
+        tally = tally + 1;
+        size = tally;
+        // load Sorcer environment properties via static initializer
+        Sorcer.getProperties();
+        serviceClassLoader = Thread.currentThread().getContextClassLoader();
+        final Configuration config = ConfigurationProvider.getInstance(args, serviceClassLoader);
+        delegate.setJiniConfig(config);
+        // inspect class loader tree
+        if(logger.isTraceEnabled())
+            com.sun.jini.start.ClassLoaderUtil.displayContextClassLoaderTree();
+        // System.out.println("service provider class loader: " +
+        // serviceClassLoader);
+        String providerProperties = null;
+        try {
+            providerProperties = (String) Config.getNonNullEntry(config,
+                                                                 COMPONENT, "properties", String.class, "");
+        } catch (ConfigurationException e) {
+            // e.printStackTrace();
+            logger.warn("init", e);
+        }
+        // configure the provider's delegate
+        delegate.getProviderConfig().init(true, providerProperties);
         ((ScratchManagerSupport)scratchManager).setProperties(getProviderProperties());
-		delegate.configure(config);
-		// decide if thread management is needed for ExertionDispatcher
-		setupThreadManager();
-		init(args, lifeCycle);
+        delegate.configure(config);
+        providerAdmin = new ProviderAdmin(this);
+        providerAdmin.register();
+        // decide if thread management is needed for ExertionDispatcher
+        setupThreadManager();
+        init(args, lifeCycle);
 
-		logger.info("<init> (String[], LifeCycle); name = " + this.getName());
-	}
+        logger.info("<init> (String[], LifeCycle); name = " + this.getName());
+    }
 
-	// this is only used to instantiate provider impl objects and use their
-	// methods
-	public ServiceProvider(String providerPropertiesFile) {
-		this();
-		delegate.getProviderConfig().loadConfiguration(providerPropertiesFile);
+    // this is only used to instantiate provider impl objects and use their
+    // methods
+    public ServiceProvider(String providerPropertiesFile) {
+        this();
+        delegate.getProviderConfig().loadConfiguration(providerPropertiesFile);
         ((ScratchManagerSupport)scratchManager).setProperties(getProviderProperties());
 	}
 
@@ -529,8 +534,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		// }
 		ldmgr.setLocators(locators);
 		if (logger.isDebugEnabled()) {
-			logger.debug("Set lookup locators: {0}",
-					SorcerUtil.arrayToString(locators));
+			logger.debug("Set lookup locators: {}", SorcerUtil.arrayToString(locators));
 		}
 	}
 
@@ -554,7 +558,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	}
 
 	/**
-	 * This method spawns a separate thread to destroy this provider after 2
+	 * This method spawns a separate thread to destroy this provider after 1
 	 * sec, should make a reasonable attempt to let this remote call return
 	 * successfully.
 	 */
@@ -563,7 +567,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 			try {
 				// allow for remaining cleanup
 				logger.info("going to call System.exit() real soon...");
-				Thread.sleep(2000);
+				Thread.sleep(1000);
 			} catch (InterruptedException e) {
 			} finally {
 				logger.info("going to call System.exit() NOW...");
@@ -1691,7 +1695,9 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 			//if (threadManager != null)
 			//	threadManager.terminate();
 
-			unexport(true);
+            unexport(true);
+            if(providerAdmin!=null)
+                providerAdmin.unregister();
 			logger.debug("calling destroy on the delegate...");
 			delegate.destroy();
 			logger.debug("DONE calling destroy on the delegate.");
@@ -1704,7 +1710,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		}
 	}
 
-	private void checkAndMaybeKillJVM() {
+	void checkAndMaybeKillJVM() {
 		if (tally <= 0) {
 			new Thread(new Destroyer()).start();
 		}
