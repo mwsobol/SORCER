@@ -164,6 +164,7 @@ class StopMePlugin implements Plugin<Project> {
                                     }
                                 }
                             }
+                            jmxc.close()
                         }
                     }
                 } catch (Exception e) {
