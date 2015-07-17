@@ -56,13 +56,13 @@ public class ObjectSignature extends ServiceSignature {
 		this(selector, object, null, argTypes, args);
 	}
 
-	public ObjectSignature(Object object, String initSelector, Class<?>[] argTypes,
-						   Object... args) throws InstantiationException,
-			IllegalAccessException {
-		this(null, object, initSelector, argTypes, args);
-	}
+    public ObjectSignature(Object object, String initSelector, Class<?>[] argTypes,
+                           Object... args) throws InstantiationException,
+                                                  IllegalAccessException {
+        this(null, object, initSelector, argTypes, args);
+    }
 
-	public ObjectSignature(String selector, Object object, String initSelector, Class<?>[] argTypes,
+    public ObjectSignature(String selector, Object object, String initSelector, Class<?>[] argTypes,
 			Object... args) throws InstantiationException,
 			IllegalAccessException {
 		this();
