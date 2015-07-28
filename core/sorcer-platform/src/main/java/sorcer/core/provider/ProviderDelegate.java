@@ -2476,9 +2476,7 @@ public class ProviderDelegate {
 			providerProxy = ProviderProxy.wrapServiceProxy(smartProxy,
 					getProviderUuid(), adminProxy);
 		} catch (ProviderException e) {
-			e.printStackTrace();
-			logger.warn("No proxy created by: " + provider + " cause: "
-					+ e.getMessage());
+			logger.warn("No proxy created by: {}", provider, e);
 		}
 		return providerProxy;
 	}
@@ -2639,7 +2637,7 @@ public class ProviderDelegate {
 				}
 			}
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			logger.warn("Error getting exporters", ex);
 			// ignore missing exporters and use default configurations for exporters
 		}
 	}
