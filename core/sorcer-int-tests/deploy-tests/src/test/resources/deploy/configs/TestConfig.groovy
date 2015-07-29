@@ -20,7 +20,7 @@ import org.rioproject.config.Component
 /**
  * Configuration for the deployment
  */
-@Component('sorcer.core.mogram.deployment')
+@Component('sorcer.core.exertion.deployment')
 class TestConfig {
     String[] interfaces = ["some.example.interface.Test"]
     String[] codebaseJars = ["sorcer-tester-${System.getProperty("sorcer.version")}-dl.jar"]

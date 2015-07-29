@@ -16,7 +16,7 @@
 
 import org.rioproject.config.Component
 
-@Component('sorcer.core.mogram.deployment')
+@Component('sorcer.core.exertion.deployment')
 class TestIP {
     String[] interfaces = ["some.example.interface.Test"]
     String[] codebaseJars = ["ju-arithmetic-dl.jar"]

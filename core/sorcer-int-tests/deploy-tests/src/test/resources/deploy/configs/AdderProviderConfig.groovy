@@ -69,7 +69,7 @@ class AdderProviderConfig {
 /**
  * Configuration for the deployment
  */
-@Component('sorcer.core.mogram.deployment')
+@Component('sorcer.core.exertion.deployment')
 class AdderDeploymentConfig {
     String sorcerVersion = System.getProperty("sorcer.version")
     String[] interfaces = ["sorcer.arithmetic.tester.provider.Adder"]
