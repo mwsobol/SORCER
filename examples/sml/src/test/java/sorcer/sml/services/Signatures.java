@@ -9,9 +9,13 @@ import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.Adder;
 import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.core.provider.Provider;
+import sorcer.core.provider.Shell;
+import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.service.*;
+import sorcer.service.Strategy.*;
 
 import java.lang.reflect.Proxy;
+import java.util.Calendar;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -282,6 +286,32 @@ public class Signatures {
 	}
 
 	@Test
+	public void remoteShellService() throws Exception {
+		// The SORCER Service Shell as a service provider
+		Task f5 = task(
+				"f5",
+				sig("add", Adder.class),
+				context("add", inEnt("arg/x1", 20.0),
+						inEnt("arg/x2", 80.0), result("result/y")));
+
+		Context  out = service(sig(Shell.class), f5);
+		assertEquals(get(out), 100.00);
+	}
+
+	@Test
+	public void remoteShellService2() throws Exception {
+		// The SORCER Service Shell as a service provider
+		Task f5 = task(
+				"f5",
+				sig("add", Adder.class),
+				context("add", inEnt("arg/x1", 20.0),
+						inEnt("arg/x2", 80.0), result("result/y")));
+
+		Context  out = service(sig("add", Adder.class, ServiceShell.REMOTE), f5);
+		assertEquals(get(out), 100.00);
+	}
+
+		@Test
 	public void localSigConnector() throws Exception {
 
 		Context cxt = context(

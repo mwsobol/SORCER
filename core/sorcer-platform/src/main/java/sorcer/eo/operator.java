@@ -1910,6 +1910,10 @@ public class operator {
 			}
 			((Mogram)service).setScope(cxt);
 			return (T) exert((Mogram)service);
+		} else if (service instanceof NetSignature
+				&& ((Signature)service).getServiceType() == sorcer.core.provider.Shell.class) {
+			Provider prv= (Provider) Accessor.getService((Signature)service);
+			return (T) ((Exertion) prv.service(mogram, txn)).getContext();
 		} else {
 			return (T) service.service(mogram, txn);
 		}

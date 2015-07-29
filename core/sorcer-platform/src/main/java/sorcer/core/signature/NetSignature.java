@@ -27,6 +27,7 @@ import sorcer.core.exertion.NetTask;
 import sorcer.core.exertion.ObjectTask;
 import sorcer.core.provider.Provider;
 import sorcer.core.provider.ServiceProvider;
+import sorcer.core.provider.Shell;
 import sorcer.core.provider.Version;
 import sorcer.eo.operator;
 import sorcer.service.*;
@@ -36,6 +37,8 @@ import java.lang.reflect.Method;
 import java.rmi.RemoteException;
 import java.util.Arrays;
 import java.util.List;
+
+import static sorcer.eo.operator.sig;
 
 public class
     NetSignature extends ObjectSignature {
@@ -395,6 +398,10 @@ public class
 	public Mogram service(Mogram mogram, Transaction txn) throws TransactionException,
 			MogramException, RemoteException {
 		try {
+			if (this.isShellRemote()) {
+				Provider prv= (Provider) Accessor.getService(sig(Shell.class));
+				return ((Exertion) prv.service(mogram, txn)).getContext();
+			}
 			Provider prv = (Provider) operator.provider(this);
 			Context cxt = null;
 			NetTask task = null;
