@@ -289,8 +289,8 @@ public class CollectionOperators {
 		// store pars, not their arguments) in the data store
 		URL p1Url = store(par("design/in", 30.0));
 		URL p2Url = store(par("url/sorcer", "http://sorcersoft.org"));
-		
-		assertEquals(value((Par)content(p1Url)), 30.0);
+
+		assertTrue(value((Par) content(p1Url)).equals(30.0));
 		assertEquals(value((Par)content(p2Url)), "http://sorcersoft.org");
 
 	}
@@ -367,7 +367,7 @@ public class CollectionOperators {
 		put(cxt, rvEnt("arg/x6", ent("overwrite", 20.0)));
 		assertTrue(value(cxt, "arg/x6").equals(20.0));
 		urvEnt(cxt, "arg/x6");
-		assertTrue(value((Evaluation)value(cxt, "arg/x6")).equals(20.0));
+		assertTrue(eval((Evaluation) value(cxt, "arg/x6")).equals(20.0));
 		rrvEnt(cxt, "arg/x6");
 		assertTrue(value(cxt, "arg/x6").equals(20.0));
 
@@ -407,7 +407,7 @@ public class CollectionOperators {
 //		assertTrue(value(cxt, "arg/x8").equals(100.0));
 
 		// model with local service entry, no arguments
-		add(cxt, ent("arg/x9", service(sig("multiply", MultiplierImpl.class),
+		add(cxt, ent("arg/x9", task(sig("multiply", MultiplierImpl.class),
 			cxt("add", inEnt("arg/x1"), inEnt("arg/x2"), result("result/y")))));
 
 		assertTrue(value(cxt, "arg/x9").equals(2.0));
@@ -447,7 +447,7 @@ public class CollectionOperators {
 
 		Service t5 = srv("t5", sig("add", AdderImpl.class), c5);
 
-		Service j1 = srv("j1", sig("service", ServiceJobber.class),
+		Mogram j1 = srv("j1", sig("service", ServiceJobber.class),
 				srv("j2", t4, t5, sig("service", ServiceJobber.class)),
 				t3,
 				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
@@ -473,16 +473,16 @@ public class CollectionOperators {
 		// get service j2 direct result value
 		assertEquals(get(j2, "j1/t3/result/y"), 400.0);
 		// get service par j1p value
-		assertEquals(value(j1p), 400.0);
+		assertTrue(value(j1p).equals(400.0));
 
 		// set job parameter value
 		set(j1p, 1000.0);
-		assertEquals(value(j1p), 1000.0);
+		assertTrue(value(j1p).equals(1000.0));
 
 		// execute original service and get its par value
 		exert(j1);
 		// j1p is the alias to context value of j1 at j1/t3/result/y
-		assertEquals(value(pc, "j1p"), 400.0);
+		assertTrue(value(pc, "j1p").equals(400.0));
 
 	}
 

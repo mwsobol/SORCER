@@ -21,8 +21,10 @@ import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
 import sorcer.co.tuple.Tuple2;
 import sorcer.core.context.ServiceContext;
+import sorcer.core.exertion.ObjectTask;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.service.*;
+import sorcer.service.modeling.Model;
 import sorcer.util.bdb.objects.UuidObject;
 import sorcer.util.url.sos.SdbUtil;
 
@@ -30,6 +32,8 @@ import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
+
+import static sorcer.eo.operator.add;
 
 
 /**
@@ -222,14 +226,30 @@ public class Entry<T> extends Tuple2<String, T> implements Service, Dependency, 
 	}
 
 	@Override
-	public <T extends Mogram> T service(T mogram, Transaction txn) throws TransactionException, MogramException, RemoteException {
-		return service(mogram, null);
+	public Mogram service(Mogram mogram, Transaction txn) throws TransactionException,
+			MogramException, RemoteException {
+		Context cxt = null;
+		Context out = new ServiceContext();
+		if (mogram instanceof EntModel) {
+			if (_2 != null && _2 != Context.none)
+				add((Context)mogram, this);
+			((ServiceContext)mogram).getRuntime().getResponsePaths().add(_1);
+			out = (Context) ((Model)mogram).getResponse();
+		} else if (mogram instanceof ServiceContext && (_2 == null || _2 == Context.none)) {
+				out.putValue(_1, ((Context)mogram).getValue(_1));
+		} else if (mogram instanceof Exertion) {
+			if (_2 != null && _2 != Context.none)
+				((Exertion) mogram).getContext().putValue(_1, _2);
+			cxt = ((Exertion) mogram.exert(txn)).getContext();
+			out.putValue(_1, cxt.getValue(_1));
+		}
+		return out;
+
 	}
 
 	@Override
-	public <T extends Mogram> T service(T mogram) throws TransactionException, MogramException, RemoteException {
-		Context cxt = new ServiceContext();
-		cxt.putValue(_1, getValue());
-		return (T) cxt;
+	public Mogram service(Mogram mogram) throws TransactionException,
+			MogramException, RemoteException {
+		return service(mogram, null);
 	}
 }

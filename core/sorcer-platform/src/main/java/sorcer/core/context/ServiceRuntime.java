@@ -48,6 +48,8 @@ public class ServiceRuntime implements Projection<String>, Serializable {
     // evaluated model response entries
     protected Context outcome;
 
+    protected Exec.State execState = Exec.State.INITIAL;
+
     // reponse paths of the runtime model
     protected List<String> responsePaths = new ArrayList<String>();
 
@@ -192,6 +194,10 @@ public class ServiceRuntime implements Projection<String>, Serializable {
 
     public void setDataService(FileURLHandler dataService) {
         this.dataService = dataService;
+    }
+
+    public Exec.State getExecState() {
+        return execState;
     }
 
 }

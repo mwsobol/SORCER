@@ -17,17 +17,23 @@
 
 package sorcer.core.signature;
 
+import net.jini.core.transaction.Transaction;
+import net.jini.core.transaction.TransactionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sorcer.core.exertion.ObjectTask;
 import sorcer.core.invoker.MethodInvoker;
-import sorcer.service.Context;
-import sorcer.service.ContextException;
-import sorcer.service.SignatureException;
+import sorcer.core.provider.Provider;
+import sorcer.eo.operator;
+import sorcer.service.*;
 import sorcer.service.modeling.Modeling;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.rmi.RemoteException;
+
+import static sorcer.eo.operator.exert;
 
 public class ObjectSignature extends ServiceSignature {
 
@@ -336,6 +342,30 @@ public class ObjectSignature extends ServiceSignature {
 			}
 		}
 		return obj;
+	}
+
+	@Override
+	public Mogram service(Mogram mogram) throws TransactionException,
+			MogramException, RemoteException {
+		return service(mogram, null);
+	}
+
+	@Override
+	public Mogram service(Mogram mogram, Transaction txn) throws TransactionException,
+			MogramException, RemoteException {
+		Context cxt = null;
+		ObjectTask task = null;
+		if (mogram instanceof Context)
+		 	cxt = (Context)mogram;
+		else
+			cxt = mogram.exert(txn);
+
+		try {
+			task = new ObjectTask(this, cxt);
+		} catch (SignatureException e) {
+			throw new MogramException(e);
+		}
+		return ((Task)task.exert(txn)).getContext();
 	}
 
 	public String toString() {

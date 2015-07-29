@@ -28,7 +28,7 @@ public class LocalTasks {
 	@Test
 	public void exertTask() throws Exception  {
 
-		Service t5 = service("t5", sig("add", AdderImpl.class),
+		Mogram t5 = mogram("t5", sig("add", AdderImpl.class),
 				cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0)));
 
 		Service out = exert(t5);
@@ -55,7 +55,7 @@ public class LocalTasks {
 				cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0), result("result/y")));
 
 		// get the result value
-		assertEquals(100.0, value(t5));
+		assertTrue(value(t5).equals(100.0));
 
 		// get the subcontext output from the exertion
 		assertTrue(context(ent("arg/x1", 20.0), ent("result/z", 100.0)).equals(
