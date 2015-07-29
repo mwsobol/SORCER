@@ -255,6 +255,8 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
         return runtimeId;
     }
 
+    abstract public Exec.State getExecState();
+
     public void setRuntimeId(String id) {
         runtimeId = id;
     }

@@ -9,6 +9,7 @@ import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.provider.impl.SubtractorImpl;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.service.Context;
+import sorcer.service.Mogram;
 import sorcer.service.Service;
 import sorcer.service.Strategy.Access;
 import sorcer.service.Strategy.Flow;
@@ -34,7 +35,7 @@ public class Services {
 	@Test
 	public void exertTask() throws Exception  {
 
-		Service t5 = service("t5", sig("add", AdderImpl.class),
+		Mogram t5 = mogram("t5", sig("add", AdderImpl.class),
 				cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
 						outEnt("result/y")));
 
@@ -53,35 +54,35 @@ public class Services {
 	@Test
 	public void evaluateTask() throws Exception  {
 
-		Service t5 = service("t5", sig("add", AdderImpl.class),
+		Service t5 = mogram("t5", sig("add", AdderImpl.class),
 				cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
 						result("result/y")));
 
 		// get a single context argument
-		assertEquals(100.0, exec(t5));
+		assertTrue(value(t5).equals(100.0));
 
 		// get the subcontext output from the exertion
 		assertTrue(context(ent("arg/x1", 20.0), ent("result/z", 100.0)).equals(
-				exec(t5, result("result/z", outPaths("arg/x1", "result/z")))));
+				value(t5, result("result/z", outPaths("arg/x1", "result/z")))));
 	}
 
 	
 	@Test
 	public void exertJob() throws Exception {
 
-		Service t3 = srv("t3", sig("subtract", SubtractorImpl.class),
+		Mogram t3 = srv("t3", sig("subtract", SubtractorImpl.class),
 				cxt("subtract", inEnt("arg/x1"), inEnt("arg/x2"), outEnt("result/y")));
 
-		Service t4 = srv("t4", sig("multiply", MultiplierImpl.class),
+		Mogram t4 = srv("t4", sig("multiply", MultiplierImpl.class),
 				// cxt("multiply", in("super/arg/x1"), in("arg/x2", 50.0),
 				cxt("multiply", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
 						outEnt("result/y")));
 
-		Service t5 = srv("t5", sig("add", AdderImpl.class),
+		Mogram t5 = srv("t5", sig("add", AdderImpl.class),
 				cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
 						outEnt("result/y")));
 
-		Service job = //j1(j2(t4(x1, x2), t5(x1, x2)), t3(x1, x2))
+		Mogram job = //j1(j2(t4(x1, x2), t5(x1, x2)), t3(x1, x2))
 				srv("j1", sig(ServiceJobber.class),
 					cxt(inEnt("arg/x1", 10.0),
 					result("job/result", outPaths("j1/t3/result/y"))),
@@ -116,7 +117,7 @@ public class Services {
 				cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0), result("result/y")));
 
         //TODO: CHECK Access.PULL doesn't work with ServiceJobber!!!
-		Service job = //j1(j2(t4(x1, x2), t5(x1, x2)), t3(x1, x2))
+		Service job = //j1(j2(t4(x1, x2), t5(x1, x2)),62 t3(x1, x2))
 				srv("j1", sig(ServiceJobber.class), result("job/result", outPaths("j1/t3/result/y")),
 					srv("j2", sig(ServiceJobber.class), t4, t5, strategy(Flow.PAR, Access.PUSH)),
 					t3,
@@ -124,13 +125,13 @@ public class Services {
 					pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
 
 		// get the result value
-		assertEquals(400.0, exec(job));
+		assertTrue(value(job).equals(400.0));
 
 		// get the subcontext output from the exertion
 		assertTrue(context(ent("j1/j2/t4/result/y", 500.0),
 				ent("j1/j2/t5/result/y", 100.0),
 				ent("j1/t3/result/y", 400.0)).equals(
-					exec(job, result("result/z",
+					value(job, result("result/z",
 						outPaths("j1/j2/t4/result/y", "j1/j2/t5/result/y", "j1/t3/result/y")))));
 
 		

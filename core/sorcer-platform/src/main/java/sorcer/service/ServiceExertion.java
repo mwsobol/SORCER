@@ -955,6 +955,11 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
         getControlContext().appendTrace(info);
     }
 
+    @Override
+    public Exec.State getExecState() {
+        return controlContext.getExecState();
+    }
+
     public String describe() {
         if (!debug)
             return info();

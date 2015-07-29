@@ -19,6 +19,7 @@ package sorcer.eo;
 import net.jini.core.lookup.ServiceItem;
 import net.jini.core.lookup.ServiceTemplate;
 import net.jini.core.transaction.Transaction;
+import net.jini.core.transaction.TransactionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.co.operator.DataEntry;
@@ -63,6 +64,8 @@ import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.*;
 
+import static sorcer.mo.operator.parModel;
+
 
 /**
  * Operators defined for the Service Modeling Language (SML).
@@ -98,7 +101,7 @@ public class operator {
                                  Arg... entries) throws ContextException {
         Object obj = value(evaluation, path, entries);
         if (obj instanceof Evaluation) {
-            obj = value((Evaluation) obj, entries);
+            obj = eval((Evaluation) obj, entries);
         }
         return obj;
     }
@@ -108,7 +111,7 @@ public class operator {
         Object obj = null;
         if (object instanceof Evaluation || object instanceof Context) {
             obj = value((Evaluation) object, path, entries);
-            obj = value((Evaluation) obj, entries);
+            obj = eval((Evaluation) obj, entries);
         } else if  (object instanceof Context) {
             obj = value((Context) object, path, entries);
             obj = value((Context) obj, entries);
@@ -122,7 +125,7 @@ public class operator {
 			throws EvaluationException {
 		Object obj = null;
 		if (object instanceof Evaluation) {
-			obj = value((Evaluation) object, entries);
+			obj = eval((Evaluation) object, entries);
 		} else if (object instanceof Context) {
             try {
                 obj = value((Context) object, entries);
@@ -154,29 +157,6 @@ public class operator {
 			throws SignatureException {
 		return new Complement<T>(path, value);
 	}
-
-//	public static Context add(Context context, Tuple2<String, ?>... entries)
-//			throws ContextException {
-//		for (int i = 0; i < entries.length; i++) {
-//			if (context instanceof PositionalContext) {
-//				((PositionalContext)context).putValueAt(((Tuple2<String, ?>) entries[i])._1,
-//						((Tuple2<String, ?>) entries[i])._2, ((PositionalContext)context).getTally()+1);
-//			} else {
-//				context.putValue(((Tuple2<String, ?>) entries[i])._1,
-//					((Tuple2<String, ?>) entries[i])._2);
-//			}
-//		}
-//		return context;
-//	}
-
-//	public static Context put(Context context, Tuple2... entries)
-//			throws ContextException {
-//		for (int i = 0; i < entries.length; i++) {
-//			context.putValue(((Tuple2<String, ?>) entries[i])._1,
-//					((Tuple2<String, ?>) entries[i]));
-//		}
-//		return context;
-//	}
 
 	public static void add(Exertion exertion, Identifiable... entries)
 			throws ContextException, RemoteException {
@@ -1013,11 +993,6 @@ public class operator {
 		return new Fidelity(name);
 	}
 
-
-//	public static Tuple2<String, String> cFi(String componentPath, String fidelityName) {
-//		return new Tuple2<String, String> (componentPath, fidelityName);
-//	}
-
 	public static Fidelity<String> cFi(String componentPath, String fidelityName) {
 		Fidelity<String> fi = new Fidelity(componentPath, fidelityName);
 		fi.setPath(componentPath);
@@ -1280,15 +1255,25 @@ public class operator {
 		return (E) exertion(name, elems);
 	}
 
-	public static <E extends Exertion> E service(Object... items) 
-			throws ExertionException, ContextException, SignatureException {
+	public static Mogram mogram(Object... items)
+			throws MogramException, SignatureException {
 		String name = "unknown" + count++;
 		for (Object i : items) {
 			if (i instanceof String) {
-				name = (String)i;
+				name = (String) i;
 			}
 		}
-		return (E) exertion(name, items);
+		boolean isModel = false;
+		for (Object item : items) {
+			if (item instanceof Entry) {
+				isModel = true;
+				break;
+			}
+		}
+		if (isModel)
+			return sorcer.po.operator.parModel(name, (Identifiable[]) items);
+		else
+			return exertion(name, items);
 	}
 
 	public static <E extends Exertion> E xrt(String name, Object... elems) 
@@ -1526,7 +1511,7 @@ public class operator {
 	public static Object content(URL url) throws EvaluationException {
 		if (url instanceof URL) {
 			try {
-				return ((URL) url).getContent();
+				return url.getContent();
 			} catch (Exception e) {
 				throw new EvaluationException(e);
 			}
@@ -1535,20 +1520,15 @@ public class operator {
 		}
 	}
 
-	public static <T extends Service> Object exec(T service, Arg... entries)
-			throws EvaluationException {
-		return value((Evaluation)service, entries);
-	}
-
-    public static Object reply(Service service, Arg... entries) throws ServiceException {
+    public static <T> T value(Service service, Arg... entries) throws EvaluationException {
         try {
             if (service instanceof Model) {
-                return value((Context) service, entries);
+                return (T)value((Context<T>) service, entries);
             } else {
-                return value((Evaluation) service, entries);
-            }
+				return (T)eval((Evaluation<T>) service, entries);
+			}
         } catch (Exception e) {
-            throw new ServiceException(e);
+            throw new EvaluationException(e);
         }
     }
 
@@ -1566,19 +1546,15 @@ public class operator {
             throw new ContextException(e);
         }
     }
-    
-	public static <T> T value(Evaluation<T> evaluation, Arg... entries)
+
+	public static <T> T eval(Evaluation<T> evaluation, Arg... entries)
 			throws EvaluationException {
 		try {
 			synchronized (evaluation) {
 				if (evaluation instanceof Exertion) {
 					return (T) getValue((Exertion) evaluation, entries);
-				} else if (evaluation instanceof Par){
-					return ((Par<T>)evaluation).getValue(entries);
-				} else if (evaluation instanceof Entry){
-					return ((Entry<T>)evaluation).getValue(entries);
 				} else {
-					return (T) ((Evaluation)evaluation).getValue(entries);
+					return evaluation.getValue(entries);
 				}
 			}
 		} catch (Exception e) {
@@ -1748,17 +1724,6 @@ public class operator {
 		System.out.println(obj.toString());
 	}
 
-	public static Object exec(Context context, Arg... args)
-			throws ExertionException, ContextException {
-		((ServiceContext)context).substitute(args);
-		ReturnPath returnPath = context.getReturnPath();
-		if (returnPath != null) {
-			return context.getValue(returnPath.path, args);
-		} else
-			throw new ExertionException("No return path in the context: "
-					+ context.getName());
-	}
-
 	private static Exertion initialize(Exertion xrt, Arg... args) throws ContextException {
 		ReturnPath rPath = null;
 		for (Arg a : args) {
@@ -1907,36 +1872,37 @@ public class operator {
 		return exertion.getExceptions();
 	}
 
-	public static <T extends Service> T exert(T input, Arg... args)
+	public static <T extends Mogram> T exert(T mogram, Arg... args)
 			throws ExertionException {
 		try {
-            if (input instanceof Exertion)
-			    return  (T)((Exertion)input).exert(null, args);
-            else if (input instanceof Model)
-                return  (T)((Model)input).exert(null, args);
+			return  (T)mogram.exert(null, args);
 		} catch (Exception e) {
 			throw new ExertionException(e);
 		}
-        return null;
 	}
 
-	public static <T extends Exertion> T exert(Signature signature, Exertion input)
+	public static <T extends Mogram> T exert(Signature signature, Mogram mogram)
 			throws ExertionException {
 		try {
 			Provider prv = (Provider)Accessor.getService(signature);
-			return (T) prv.service(input, null);
+			return (T) prv.service(mogram, null);
 		} catch (Exception e) {
 			throw new ExertionException(e);
 		}
 	}
 
-	public static <T extends Exertion> T service(Exerter exerter, Exertion input,
-											   Arg... entries) throws ExertionException {
-		  return(exert(exerter, input, entries));
+	public static <T extends Mogram> T service(Service service, Mogram mogram, Transaction txn)
+			throws MogramException, TransactionException, RemoteException {
+		return (T) service.service(mogram, txn);
 	}
 
-	public static <T extends Exertion> T exert(Exerter exerter, Exertion input,
-											   Arg... entries) throws ExertionException {
+	public static <T extends Mogram> T service(Service service, Mogram mogram)
+			throws MogramException, TransactionException, RemoteException {
+		  return (T) service.service(mogram, null);
+	}
+
+	public static <T extends Mogram> T exert(Exerter exerter, Mogram input, Arg... entries)
+			throws MogramException {
 		try {
 			return (T) exerter.exert(input, null, entries);
 		} catch (Exception e) {
@@ -1944,20 +1910,23 @@ public class operator {
 		}
 	}
 
-	public static <T extends Exertion> T exert(T input,
+	public static <T extends Mogram> T exert(T mogram,
 											   Transaction transaction,
 											   Arg... entries) throws ExertionException {
 		try {
-			Exertion result = null;
+			Mogram result = null;
+			ServiceExertion exertion = null;
+			if (mogram instanceof ServiceExertion)
+				exertion = (ServiceExertion) mogram;
 			try {
-				if ((input.getProcessSignature() != null
-						&& ((ServiceSignature)input.getProcessSignature()).isShellRemote())
-						|| (input.getControlContext() != null 
-							&& ((ControlContext)input.getControlContext()).isShellRemote())) {
+				if ((mogram.getProcessSignature() != null
+						&& ((ServiceSignature)mogram.getProcessSignature()).isShellRemote())
+						|| (exertion.getControlContext() != null
+							&& ((ControlContext)exertion.getControlContext()).isShellRemote())) {
 					Exerter prv = (Exerter)Accessor.getService(sig(Shell.class));
-					result = prv.exert(input, transaction, entries);
+					result = prv.exert(mogram, transaction, entries);
 				} else {
-					sorcer.core.provider.exerter.ServiceShell se = new sorcer.core.provider.exerter.ServiceShell(input);
+					sorcer.core.provider.exerter.ServiceShell se = new sorcer.core.provider.exerter.ServiceShell(mogram);
 					result = se.exert(transaction, null, entries);
 				}
 			} catch (Exception e) {
@@ -1994,6 +1963,10 @@ public class operator {
     public static ReturnPath result(String path, In inPaths) {
         return new ReturnPath(path, inPaths);
     }
+
+	public static ReturnPath result(In inPaths) {
+		return new ReturnPath("self", inPaths);
+	}
 
     public static ReturnPath result(String path, In inPaths, From outPaths) {
         return new ReturnPath(path, inPaths, outPaths);
@@ -2102,11 +2075,19 @@ public class operator {
 	}
 
 	public static Flow flow(Entry entry) throws EvaluationException {
-		return ((Strategy)value(entry)).getFlowType();
+		try {
+			return ((Strategy)entry.getValue()).getFlowType();
+		} catch (RemoteException e) {
+			throw new EvaluationException(e);
+		}
 	}
 
 	public static Access access(Entry entry) throws EvaluationException {
-		return ((Strategy)value(entry)).getAccessType();
+		try {
+			return ((Strategy)entry.getValue()).getAccessType();
+		} catch (RemoteException e) {
+			throw new EvaluationException(e);
+		}
 	}
 
 	public static Flow flow(Strategy strategy) {

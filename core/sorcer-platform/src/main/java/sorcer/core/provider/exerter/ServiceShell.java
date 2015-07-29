@@ -58,19 +58,19 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 	protected final static Logger logger = LoggerFactory.getLogger(ServiceShell.class
 			.getName());
 
-	private ServiceExertion exertion;
+	private ServiceMogram mogram;
 	private Transaction transaction;
 	private static MutualExclusion locker;
 
 	public ServiceShell() {
 	}
 
-	public ServiceShell(Exertion xrt) {
-		exertion = (ServiceExertion) xrt;
+	public ServiceShell(Mogram mogram) {
+		this.mogram = (ServiceMogram) mogram;
 	}
 
-	public ServiceShell(Exertion xrt, Transaction txn) {
-		exertion = (ServiceExertion) xrt;
+	public ServiceShell(Mogram mogram, Transaction txn) {
+		this.mogram = (ServiceExertion) mogram;
 		transaction = txn;
 
 	}
@@ -91,29 +91,29 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 	 * @see sorcer.service.Exerter#exert(sorcer.service.Exertion, sorcer.service.Parameter[])
 	 */
 	@Override
-	public Exertion exert(Exertion xrt, Arg... entries)
+	public Mogram exert(Mogram mogram, Arg... entries)
 			throws TransactionException, MogramException, RemoteException {
 		try {
-			xrt.substitute(entries);
+			mogram.substitute(entries);
 		} catch (Exception e) {
 			throw new ExertionException(e);
 		}
-		return exert(xrt, (Transaction) null, (String) null);
+		return exert(mogram, (Transaction) null, (String) null);
 	}
 	
 	/* (non-Javadoc)
 	 * @see sorcer.service.Exerter#exert(sorcer.service.Exertion, net.jini.core.transaction.Transaction, sorcer.service.Parameter[])
 	 */
 	@Override
-	public Exertion exert(Exertion xrt, Transaction txn, Arg... entries)
+	public Mogram exert(Mogram mogram, Transaction txn, Arg... entries)
 			throws TransactionException, MogramException, RemoteException {
 		try {
-			xrt.substitute(entries);
+			mogram.substitute(entries);
 		} catch (Exception e) {
 			throw new ExertionException(e);
 		}
 		transaction = txn;
-		return exert(xrt, txn, (String) null);
+		return exert(mogram, txn, (String) null);
 	}
 
 	public  <T extends Mogram> T exert(String providerName) throws TransactionException,
@@ -122,45 +122,47 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 	}
 
 	@Override
-	public Exertion service(Mogram exertion, Transaction txn) throws TransactionException, MogramException, RemoteException {
+	public Mogram service(Mogram exertion, Transaction txn) throws TransactionException, MogramException, RemoteException {
 		return exert((Exertion)exertion, txn);
 	}
 
 	@Override
-	public Exertion service(Mogram exertion) throws TransactionException, MogramException, RemoteException {
+	public Mogram service(Mogram exertion) throws TransactionException, MogramException, RemoteException {
 		return exert((Exertion)exertion);
 	}
 
 	public  <T extends Mogram> T exert(T xrt, Transaction txn, String providerName)
 			throws TransactionException, MogramException, RemoteException {
-		this.exertion = (ServiceExertion) xrt;
+		this.mogram = (ServiceExertion) xrt;
 		transaction = txn;
 		return exert(txn, providerName);
 	}
-	
-	
+
+
 	public <T extends Mogram> T  exert(Transaction txn, String providerName, Arg... entries)
 			throws TransactionException, MogramException, RemoteException {
 		try {
-			exertion.selectFidelity(entries);
-			Exertion xrt = postProcessExertion(exert0(txn, providerName,
-					entries));
-			if (exertion.isProxy()) {
-				exertion.setContext(xrt.getDataContext());
-				exertion.setControlContext((ControlContext)xrt.getControlContext());
-				if (exertion.isCompound()) {
-					((CompoundExertion) exertion)
-							.setMograms(((CompoundExertion) xrt)
-									.getMograms());
+			if (mogram instanceof Exertion) {
+				ServiceExertion exertion = (ServiceExertion)mogram;
+				mogram.selectFidelity(entries);
+				Exertion xrt = postProcessExertion((Exertion) exert0(txn, providerName,
+						entries));
+				if (exertion.isProxy()) {
+					exertion.setContext(xrt.getDataContext());
+					exertion.setControlContext((ControlContext)xrt.getControlContext());
+					if (exertion.isCompound()) {
+						((CompoundExertion) mogram)
+								.setMograms(xrt.getMograms());
+					}
+					return (T) mogram;
+				} else {
+					return (T) xrt;
 				}
-
-				return (T) exertion;
-			} else {
-				return (T) xrt;
 			}
 		} catch (ContextException e) {
 			throw new ExertionException(e);
 		}
+		return null;
 	}
 	
 	private void initExecState(Arg... entries) throws MogramException, RemoteException {
@@ -172,19 +174,19 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 				}
 			}
 		}
-//		if (exertion instanceof Block) {
-//			resetScope(exertion, argCxt, entries);
+//		if (mogram instanceof Block) {
+//			resetScope(mogram, argCxt, entries);
 //		}
-//		else if (exertion.getScope() != null) {
-//			exertion.getDataContext().append((Context)exertion.getScope());
+//		else if (mogram.getScope() != null) {
+//			mogram.getDataContext().append((Context)mogram.getScope());
 //		}
-		Exec.State state = exertion.getControlContext().getExecState();
+		Exec.State state = mogram.getExecState();
 		if (state == State.INITIAL) {
-			if(exertion instanceof Exertion) {
-				exertion.getExceptions().clear();
-				exertion.getTrace().clear();
+			if(mogram instanceof Exertion) {
+				mogram.getExceptions().clear();
+				mogram.getTrace().clear();
 			}
-			for (Mogram e : exertion.getAllMograms()) {
+			for (Mogram e : mogram.getAllMograms()) {
 				if (e instanceof Exertion) {
 					if (((ControlContext) ((Exertion)e).getControlContext()).getExecState() == State.INITIAL) {
 						e.setStatus(Exec.INITIAL);
@@ -221,35 +223,40 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 	}
 
 	private void realizeDependencies(Arg... entries) throws RemoteException,
-			ExertionException {
-		List<Evaluation> dependers = exertion.getDependers();
-		if (dependers != null && dependers.size() > 0) {
-			for (Evaluation<Object> depender : dependers) {
-				try {
-					((Invocation)depender).invoke(exertion.getScope(), entries);
-				} catch (InvocationException e) {
-					throw new ExertionException(e);
+			MogramException {
+		if (mogram instanceof Exertion) {
+			Exertion exertion = (ServiceExertion)mogram;
+			List<Evaluation> dependers = exertion.getDependers();
+			if (dependers != null && dependers.size() > 0) {
+				for (Evaluation<Object> depender : dependers) {
+					try {
+						((Invocation) depender).invoke(mogram.getScope(), entries);
+					} catch (InvocationException e) {
+						throw new ExertionException(e);
+					}
 				}
 			}
 		}
 	}
-	
-	public Exertion exert0(Transaction txn, String providerName, Arg... entries)
+
+	public Mogram exert0(Transaction txn, String providerName, Arg... entries)
 			throws TransactionException, MogramException, RemoteException {
+		ServiceExertion exertion = null;
+		if (mogram instanceof Exertion)
+			exertion = (ServiceExertion) mogram;
 		try {
 			if (entries != null && entries.length > 0) {
-				exertion.substitute(entries);
+				mogram.substitute(entries);
 			}
-			// check if the exertion has to be initialized (to original state)
+			// check if the mogram has to be initialized (to original state)
 			// or used as is after resuming from suspension or failure
-			if (exertion.isInitializable()) {
+			if (mogram.isInitializable()) {
 				initExecState(entries);
 			}
 			realizeDependencies(entries);
-			if (exertion.isTask() && exertion.isProvisionable()) {
+			if (mogram instanceof Exertion && exertion.isTask() && exertion.isProvisionable()) {
 				try {
-					List<ServiceDeployment> deploymnets = ((ServiceExertion) exertion)
-							.getDeploymnets();
+					List<ServiceDeployment> deploymnets = exertion.getDeploymnets();
 					if (deploymnets.size() > 0) {
 						ProvisionManager provisionManager = new ProvisionManager(exertion);
 						provisionManager.deployServices();
@@ -257,12 +264,12 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 				} catch (DispatcherException e) {
 					throw new ExertionException(
 							"Unable to deploy services for: "
-									+ exertion.getName(), e);
+									+ mogram.getName(), e);
 				}
 			}
 
 			//TODO disabled due to problem with monitoring. Needs to be fixed to run with monitoring
-			/*if (exertion instanceof Job && ((Job) exertion).size() == 1) {
+			/*if (mogram instanceof Job && ((Job) mogram).size() == 1) {
 				return processAsTask();
 			} */
 			transaction = txn;
@@ -273,49 +280,49 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 			ex.printStackTrace();
 			throw new ExertionException(ex);
 		}
-		Signature signature = exertion.getProcessSignature();
+		Signature signature = mogram.getProcessSignature();
 		Service provider = null;
 		try {
-			// If the exertion is a job rearrange the inner exertions to make sure the
+			// If the mogram is a job rearrange the inner exertions to make sure the
 			// dependencies are not broken
 			if (exertion.isJob()) {
 				ExertionSorter es = new ExertionSorter(exertion);
-				exertion = (ServiceExertion)es.getSortedJob();
+				mogram = (ServiceExertion) es.getSortedJob();
 			}
 //			 execute modeling tasks
-			if (exertion instanceof ModelingTask && exertion.getFidelity().getSelects().size() == 1) {
-				return ((Task) exertion).doTask(txn);
+			if (mogram instanceof ModelingTask && mogram.getFidelity().getSelects().size() == 1) {
+				return ((Task) mogram).doTask(txn);
 			}
 
 			// execute object tasks and jobs
 			if (!(signature instanceof NetSignature)) {
-				if (exertion instanceof Task) {
-					if (exertion.getFidelity().getSelects().size() == 1) {
-						return ((Task) exertion).doTask(txn);
+				if (mogram instanceof Task) {
+					if (mogram.getFidelity().getSelects().size() == 1) {
+						return ((Task) mogram).doTask(txn);
 					} else {
 						try {
-							return new ControlFlowManager().doTask((Task)exertion);
+							return new ControlFlowManager().doTask((Task) mogram);
 						} catch (ContextException e) {
 							e.printStackTrace();
 							throw new ExertionException(e);
 						}
 					}
-				} else if (exertion instanceof Job) {
-					return ((Job) exertion).doJob(txn);
-				} else if (exertion instanceof Block) {
-					return ((Block) exertion).doBlock(txn);
+				} else if (mogram instanceof Job) {
+					return ((Job) mogram).doJob(txn);
+				} else if (mogram instanceof Block) {
+					return ((Block) mogram).doBlock(txn);
 				}
 			}
 			// check for missing signature of inconsistent PULL/PUSH cases
 			logger.info("signature (before) = " + signature);
 			signature = correctProcessSignature();
 			logger.info("signature (after) = " + signature);
-			
+
 			if (!((ServiceSignature) signature).isSelectable()) {
 				exertion.reportException(new ExertionException(
 						"No such operation in the requested signature: "
 								+ signature));
-				logger.warn("Not selectable exertion operation: " + signature);
+				logger.warn("Not selectable mogram operation: " + signature);
 				return exertion;
 			}
 
@@ -324,7 +331,7 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 			}
 			if (logger.isDebugEnabled())
 				logger.debug("* ExertProcessor's servicer accessor: "
-					+ Accessor.getAccessorType());
+						+ Accessor.getAccessorType());
 			provider = ((NetSignature) signature).getService();
 		} catch (SignatureException e) {
 			e.printStackTrace();
@@ -337,82 +344,85 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 			new ExertionException(e);
 		}
 		if (provider == null) {
-            // handle signatures for PULL tasks
-            if (!exertion.isJob()
-                    && exertion.getControlContext().getAccessType() == Access.PULL) {
-                signature = new NetSignature("service", Spacer.class, Sorcer.getActualSpacerName());
-                provider = (Service) Accessor.getService(signature);
-            } else {
-                provider = (Service) Accessor.getService(signature);
-                if (provider == null && exertion.isProvisionable() && signature instanceof NetSignature) {
-                    try {
-                        logger.debug("Provisioning: " + signature);
-                        provider = ServiceDirectoryProvisioner.getProvisioner().provision(signature);
-                    } catch (ProvisioningException pe) {
-                        logger.warn("Provider not available and not provisioned: " + pe.getMessage());
-                        exertion.setStatus(Exec.FAILED);
-                        exertion.reportException(new RuntimeException(
-                                "Cannot find provider and provisioning returned error: " + pe.getMessage()));
-                        return exertion;
-                    }
-                }
-            }
-        }
+			// handle signatures for PULL tasks
+			if (!exertion.isJob()
+					&& exertion.getControlContext().getAccessType() == Access.PULL) {
+				signature = new NetSignature("service", Spacer.class, Sorcer.getActualSpacerName());
+				provider = (Service) Accessor.getService(signature);
+			} else {
+				provider = (Service) Accessor.getService(signature);
+				if (provider == null && exertion.isProvisionable() && signature instanceof NetSignature) {
+					try {
+						logger.debug("Provisioning: " + signature);
+						provider = ServiceDirectoryProvisioner.getProvisioner().provision(signature);
+					} catch (ProvisioningException pe) {
+						logger.warn("Provider not available and not provisioned: " + pe.getMessage());
+						mogram.setStatus(Exec.FAILED);
+						exertion.reportException(new RuntimeException(
+								"Cannot find provider and provisioning returned error: " + pe.getMessage()));
+						return exertion;
+					}
+				}
+			}
+		}
 
-		// Provider tasker = ProviderLookup.getProvider(exertion.getProcessSignature());		 
+		// Provider tasker = ProviderLookup.getProvider(mogram.getProcessSignature());
 		// provider = ProviderAccessor.getProvider(null, signature
 		// .getServiceInfo());
 		if (provider == null) {
 			logger.warn("* Provider not available for: " + signature);
-			exertion.setStatus(Exec.FAILED);
+			mogram.setStatus(Exec.FAILED);
 			exertion.reportException(new RuntimeException(
 					"Cannot find provider for: " + signature));
-			return exertion;
+			return mogram;
 		}
-		exertion.trimAllNotSerializableSignatures();
+		mogram.trimAllNotSerializableSignatures();
 		exertion.getControlContext().appendTrace(
 				"shell: " + ((Provider) provider).getProviderName()
-				+ ":" + ((Provider) provider).getProviderID());
+						+ ":" + ((Provider) provider).getProviderID());
 		((NetSignature) signature).setProvider(provider);
 		logger.info("Provider found for: " + signature + "\n\t" + provider);
 		if (((Provider) provider).mutualExclusion()) {
 			return serviceMutualExclusion((Provider) provider, exertion,
 					transaction);
 		} else {
-//			 test exertion for serialization
+//			 test mogram for serialization
 //						 try {
-//							 logger.info("ExertProcessor.exert0(): going to serialize exertion for testing!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-//							 ObjectLogger.persistMarshalled("exertionfile", exertion);
+//							 logger.info("ExertProcessor.exert0(): going to serialize mogram for testing!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+//							 ObjectLogger.persistMarshalled("exertionfile", mogram);
 //						 } catch (Exception e) {
 //							 e.printStackTrace();
 //						 }
-			Exertion result = provider.service(exertion, transaction);
+			Mogram result = provider.service(mogram, transaction);
 			if (result != null && result.getExceptions().size() > 0) {
 				for (ThrowableTrace et : result.getExceptions()) {
-                    Throwable t = et.getThrowable();
-                    logger.error("Got exception running: "  + exertion.getName() + " " + t.getMessage());
-                    logger.debug("Exception details: " + t.getMessage());
-                    if (t instanceof Error)
-                        result.setStatus(Exec.ERROR);
+					Throwable t = et.getThrowable();
+					logger.error("Got exception running: " + mogram.getName() + " " + t.getMessage());
+					logger.debug("Exception details: " + t.getMessage());
+					if (t instanceof Error)
+						result.setStatus(Exec.ERROR);
 				}
 				result.setStatus(Exec.FAILED);
 			} else if (result == null) {
-				exertion.reportException(new ExertionException("ExertionDispatcher failed calling: " 
-						+ exertion.getProcessSignature()));
-				exertion.setStatus(Exec.FAILED);
+				exertion.reportException(new ExertionException("ExertionDispatcher failed calling: "
+						+ mogram.getProcessSignature()));
+				mogram.setStatus(Exec.FAILED);
 				result = exertion;
 			}
 			return result;
 		}
 	}
 	
-	private Exertion processAsTask() throws RemoteException,
+	private Mogram processAsTask() throws RemoteException,
 			TransactionException, MogramException {
+		ServiceExertion exertion = null;
+		if (mogram instanceof ServiceExertion)
+				exertion = (ServiceExertion)mogram;
 		Task task = (Task) exertion.getMograms().get(0);
-		task = (Task) task.exert();
+		task = task.exert();
 		exertion.getMograms().set(0, task);
-		exertion.setStatus(task.getStatus());
-		return exertion;
+		mogram.setStatus(task.getStatus());
+		return mogram;
 	}
 
 	private Exertion serviceMutualExclusion(Provider provider,
@@ -455,13 +465,16 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 	 * @return the corrected signature
 	 */
 	public Signature correctProcessSignature() {
+		ServiceExertion exertion = null;
+		if (mogram instanceof ServiceExertion)
+			exertion = (ServiceExertion)mogram;
 		if (!exertion.isJob())
-			return exertion.getProcessSignature();
-		Signature sig = exertion.getProcessSignature();
+			return mogram.getProcessSignature();
+		Signature sig = mogram.getProcessSignature();
 		if (sig != null) {
 			Access access = exertion.getControlContext().getAccessType();
 			if (Access.PULL == access
-					&& !exertion.getProcessSignature().getServiceType()
+					&& !mogram.getProcessSignature().getServiceType()
 							.isAssignableFrom(Spacer.class)) {
 				sig.setServiceType(Spacer.class);
 				((NetSignature) sig).setSelector("service");
@@ -526,10 +539,10 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 
 	@Override
 	public String toString() {
-		if (exertion == null)
+		if (mogram == null)
 			return "Exerter";
 		else
-			return "Exerter for: " + exertion.getName();
+			return "Exerter for: " + mogram.getName();
 	}
 
 	/*
@@ -539,7 +552,7 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 	 */
 	@Override
 	public Object call() throws Exception {
-		return exertion.exert(transaction);
+		return mogram.exert(transaction);
 	}
 
 }

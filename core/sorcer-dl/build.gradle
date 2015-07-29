@@ -1,19 +1,21 @@
 
 version = sorcerVersion
 
-jar {
-	manifest {
-		attributes("Implementation-Title": "SORCER Exported Classes", "Implementation-Version": version)
-	}
-	//from sourceSets.main.output.classesDir include "**"
-	//from sourceSets.main.resources include "sorcer-ico.png"
-}
-	
 dependencies {
-	compile "net.jini:jsk-platform:${riverVersion}",
-			"org.rioproject:rio-api:${rioVersion}",
+    compile "net.jini:jsk-platform:${riverVersion}",
+            "org.rioproject:rio-api:${rioVersion}",
             "org.slf4j:slf4j-api:${slf4jVersion}"
 
+}
+
+jar {
+    from(configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }) {
+        include "org/rioproject/entry/ComputeResourceInfo.class"
+        include "org/rioproject/entry/OperationalStringEntry.class"
+    }
+    manifest {
+        attributes("Implementation-Title": "SORCER Exported Classes", "Implementation-Version": version)
+    }
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {

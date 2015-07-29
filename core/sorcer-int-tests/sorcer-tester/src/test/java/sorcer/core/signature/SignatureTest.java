@@ -54,8 +54,8 @@ public class SignatureTest {
 		logger.info("provider of s: " + prv);
 		assertTrue(prv instanceof Date);
 
-		logger.info("getTime: " + reply(service("gt", s)));
-		assertTrue(reply(service("gt", s)) instanceof Long);
+		logger.info("getTime: " + value(mogram("gt", s)));
+		assertTrue(value(mogram("gt", s)) instanceof Long);
 
 	}
 
@@ -71,10 +71,10 @@ public class SignatureTest {
 		logger.info("selector of s: " + selector(s));
 		logger.info("service type of s: " + type(s));
 		assertTrue(prv instanceof Date);
-		service("time", s);
+		mogram("time", s);
 
-		logger.info("time: " + reply(service("time", s)));
-		assertTrue(reply(service("time", s)) instanceof Long);
+		logger.info("time: " + value(mogram("time", s)));
+		assertTrue(value(mogram("time", s)) instanceof Long);
 
 	}
 
@@ -87,8 +87,8 @@ public class SignatureTest {
 		logger.info("provider of s: " + prv);
 		assertTrue(prv == Math.class);
 
-		logger.info("random: " + reply(service("random", ms)));
-		assertTrue(reply(service("random", ms)) instanceof Double);
+		logger.info("random: " + value(mogram("random", ms)));
+		assertTrue(value(mogram("random", ms)) instanceof Double);
 
 		ms = sig(Math.class, "max");
 		Context cxt = context(
@@ -96,9 +96,9 @@ public class SignatureTest {
 				args(new Object[] { 200.11, 3000.0 }));
 
 		// request the service
-		logger.info("max: " + reply(service("max", ms, cxt)));
-		assertTrue(reply(service("max", ms, cxt)) instanceof Double);
-		assertTrue(reply(service("max", ms, cxt)).equals(3000.0));
+		logger.info("max: " + value(mogram("max", ms, cxt)));
+		assertTrue(value(mogram("max", ms, cxt)) instanceof Double);
+		assertTrue(value(mogram("max", ms, cxt)).equals(3000.0));
 
 	}
 
@@ -118,9 +118,9 @@ public class SignatureTest {
 		assertTrue(prv instanceof Calendar);
 
 		// request the service
-		logger.info("time: " + reply(service("month", ps, cxt)));
-		assertTrue(reply(service("month", ps, cxt)) instanceof Integer);
-		assertTrue(reply(service("month", ps, cxt)).equals(((Calendar)prv).get(Calendar.MONTH)));
+		logger.info("time: " + value(mogram("month", ps, cxt)));
+		assertTrue(value(mogram("month", ps, cxt)) instanceof Integer);
+		assertTrue(value(mogram("month", ps, cxt)).equals(((Calendar)prv).get(Calendar.MONTH)));
 
 	}
 
@@ -134,13 +134,13 @@ public class SignatureTest {
 		assertFalse(prv instanceof Proxy);
 
 		// request the local service
-		Service as = service("as", lps,
+		Service as = mogram("as", lps,
 				context("add",
 						inEnt("arg/x1", 20.0),
 						inEnt("arg/x2", 80.0),
 						result("result/y")));
 
-		assertEquals(100.0, exec(as));
+		assertTrue(value(as).equals(100.0));
 
 	}
 
@@ -153,13 +153,13 @@ public class SignatureTest {
 		assertFalse(prv instanceof Proxy);
 
 		// request the local service
-		Service as = service("as", lps,
+		Service as = mogram("as", lps,
 				context("add",
 						inEnt("arg/x1", 20.0),
 						inEnt("arg/x2", 80.0),
 						result("result/y")));
 
-		assertEquals(100.0, exec(as));
+		assertTrue(value(as).equals(100.0));
 
 	}
 
@@ -173,13 +173,13 @@ public class SignatureTest {
 		assertTrue(prv instanceof Proxy);
 
 		// request the local service
-		Service as = service("as", rps,
+		Service as = mogram("as", rps,
 				context("add",
 						inEnt("arg/x1", 20.0),
 						inEnt("arg/x2", 80.0),
 						result("result/y")));
 
-		assertEquals(100.0, exec(as));
+		assertTrue(value(as).equals(100.0));
 
 	}
 
@@ -193,13 +193,13 @@ public class SignatureTest {
 		assertTrue(prv instanceof Proxy);
 
 		// request the local service
-		Service as = service("as", rps,
+		Service as = mogram("as", rps,
 				context("add",
 						inEnt("arg/x1", 20.0),
 						inEnt("arg/x2", 80.0),
 						result("result/y")));
 
-		assertEquals(100.0, exec(as));
+		assertTrue(value(as).equals(100.0));
 
 	}
 
@@ -213,13 +213,13 @@ public class SignatureTest {
 		assertTrue(prv instanceof Proxy);
 
 		// request the local service
-		Service as = service("as", ps,
+		Service as = mogram("as", ps,
 				context("add",
 						inEnt("arg/x1", 20.0),
 						inEnt("arg/x2", 80.0),
 						result("result/y")));
 
-		assertEquals(100.0, exec(as));
+		assertTrue(value(as).equals(100.0));
 	}
 
 }

@@ -15,6 +15,7 @@ import sorcer.service.*;
 import java.rmi.RemoteException;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.inEnt;
 import static sorcer.eo.operator.alt;
 import static sorcer.eo.operator.*;
@@ -100,25 +101,25 @@ public class ConditionalTaskTest {
 		add(pm, opt1, opt2, opt3, alt);
 
 //		logger.info("opt1 value: " + value(opt1));
-		assertEquals(value(opt1), 150.0);
+		assertTrue(value(opt1).equals(150.0));
 //		logger.info("opt2 value: " + value(opt2));
-		assertEquals(value(opt2), 500.0);
+		assertTrue(value(opt2).equals(500.0));
 //		logger.info("opt3 value: " + value(opt3));
-		assertEquals(value(opt3), 100.0);
+		assertTrue(value(opt3).equals(100.0));
 //		logger.info("alt value: " + value(alt));
-		assertEquals(value(alt), 150.0);
+		assertTrue(value(alt).equals(150.0));
 
 		pm.putValue("x1", 10.0);
 		pm.putValue("y1", 20.0);
 //		logger.info("opt value: " + value(alt));
 		logger.info("pm context 1: " + pm);
-		assertEquals(value(alt), 500.0);
+		assertTrue(value(alt).equals(500.0));
 		
 		pm.putValue("x2", 40.0);
 		pm.putValue("y2", 50.0);
 		logger.info("pm context 2: " + pm);
 //		logger.info("opt valueX: " + value(alt));
-		assertEquals(value(alt), 100.0);
+		assertTrue(value(alt).equals(100.0));
 	}
 
 	@Test

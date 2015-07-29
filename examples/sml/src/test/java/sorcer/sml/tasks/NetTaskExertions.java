@@ -67,7 +67,7 @@ public class NetTaskExertions {
 				cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0), result("result/y")));
 
 		// get the result value
-		assertEquals(100.0, value(t5));
+		assertTrue(value(t5).equals(100.0));
 
 		// get the subcontext output from the exertion
 		assertTrue(context(ent("arg/x1", 20.0), ent("result/z", 100.0)).equals(

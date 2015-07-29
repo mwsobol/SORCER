@@ -27,7 +27,7 @@ import java.util.List;
 public interface Dependency {
 
     /**
-     * Creates a dependenvy bewteen two eavaluation in a given Context.
+     * Adds depeners for this dependency.
      *
      * @param dependers
      */
@@ -35,7 +35,7 @@ public interface Dependency {
 
 
     /**
-     * Return a list of all depndent Evaluations
+     * Return a list of all dependent Evaluations
      * @return
      */
     public List<Evaluation> getDependers();

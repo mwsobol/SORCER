@@ -215,13 +215,13 @@ public class Invokers {
 		y = par("y", invoker("x1 + x2", x1, x2));
 		
 		logger.info("y: " + value(y));
-		assertEquals(value(y), 3.0);
+		assertTrue(value(y).equals(3.0));
 
 		Object val = invoke(y, ent("x1", 10.0), ent ("x2", 20.0));
 		logger.info("y: " + val);
 
 		logger.info("y: " + value(y));
-		assertEquals(value(y), 30.0);
+		assertTrue(value(y).equals(30.0));
 	}
 
 	@Test
@@ -402,21 +402,21 @@ public class Invokers {
 		AltInvoker alt = new AltInvoker("alt", opt1, opt2, opt3, opt4);
 		add(pm, opt1, opt2, opt3, opt4, alt);
 
-		logger.info("opt1 value: " + value(opt1));
-		assertEquals(value(opt1), 60.0);
-		logger.info("opt2 value: " + value(opt2));
-		assertEquals(value(opt2), 70.0);
-		logger.info("opt3 value: " + value(opt3));
-		assertEquals(value(opt3), 80.0);
-		logger.info("opt4 value: " + value(opt4));
-		assertEquals(value(opt4), 90.0);
-		logger.info("alt value: " + value(alt));
-		assertEquals(value(alt), 60.0);
+		logger.info("opt1 value: " + eval(opt1));
+		assertEquals(eval(opt1), 60.0);
+		logger.info("opt2 value: " + eval(opt2));
+		assertEquals(eval(opt2), 70.0);
+		logger.info("opt3 value: " + eval(opt3));
+		assertEquals(eval(opt3), 80.0);
+		logger.info("opt4 value: " + eval(opt4));
+		assertEquals(eval(opt4), 90.0);
+		logger.info("alt value: " + eval(alt));
+		assertEquals(eval(alt), 60.0);
 
 		pm.putValue("x", 300.0);
 		pm.putValue("y", 200.0);
-		logger.info("opt value: " + value(alt));
-		assertEquals(value(alt), 510.0);
+		logger.info("opt value: " + eval(alt));
+		assertEquals(eval(alt), 510.0);
 
 		pm.putValue("x", 10.0);
 		pm.putValue("y", 20.0);
@@ -425,12 +425,12 @@ public class Invokers {
 		pm.putValue("x3", 50.0);
 		pm.putValue("y3", 60.0);
 		logger.info("opt value: " + alt.invoke());
-		assertEquals(value(alt), 70.0);
+		assertEquals(eval(alt), 70.0);
 
 		pm.putValue("x2", 50.0);
 		pm.putValue("y2", 40.0);
 		logger.info("opt value: " + alt.invoke());
-		assertEquals(value(alt), 50.0);
+		assertEquals(eval(alt), 50.0);
 	}
 
 	@Test
@@ -461,17 +461,17 @@ public class Invokers {
 		assertEquals(value(pm, "opt3"), null);
 		logger.info("opt4 value: " + value(pm, "opt4"));
         assertTrue(value(pm, "opt4").equals(70.0));
-		logger.info("alt value: " + value(alt));
-		assertEquals(value(alt), 50.0);
+		logger.info("alt value: " + eval(alt));
+		assertEquals(eval(alt), 50.0);
 
 		put(pm, ent("x", 300.0), ent("y", 200.0));
-		logger.info("alt value: " + value(alt));
-		assertEquals(value(alt), 510.0);
+		logger.info("alt value: " + eval(alt));
+		assertEquals(eval(alt), 510.0);
 
 		put(pm, ent("x", 10.0), ent("y", 20.0), ent("x2", 40.0),
 				ent("y2", 50.0), ent("x3", 50.0), ent("y3", 60.0));
-		logger.info("alt value: " + value(alt));
-		assertEquals(value(alt), 70.0);
+		logger.info("alt value: " + eval(alt));
+		assertEquals(eval(alt), 70.0);
 	}
 
 	@Ignore
