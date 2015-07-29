@@ -80,7 +80,7 @@ public class operator {
 	protected static final Logger logger = LoggerFactory.getLogger(operator.class.getName());
 
 	public static void requestTime(Exertion exertion) {
-		((ServiceExertion)exertion).setExecTimeRequested(true);
+		((ServiceExertion) exertion).setExecTimeRequested(true);
 	}
 
 	public static String path(List<String> attributes) {
@@ -97,27 +97,27 @@ public class operator {
 		return attributes.get(0);
 	}
 
-    public static Object revalue(Context evaluation, String path,
-                                 Arg... entries) throws ContextException {
-        Object obj = value(evaluation, path, entries);
-        if (obj instanceof Evaluation) {
-            obj = eval((Evaluation) obj, entries);
-        }
-        return obj;
-    }
-    
+	public static Object revalue(Context evaluation, String path,
+								 Arg... entries) throws ContextException {
+		Object obj = value(evaluation, path, entries);
+		if (obj instanceof Evaluation) {
+			obj = eval((Evaluation) obj, entries);
+		}
+		return obj;
+	}
+
 	public static Object revalue(Object object, String path,
 								 Arg... entries) throws ContextException {
-        Object obj = null;
-        if (object instanceof Evaluation || object instanceof Context) {
-            obj = value((Evaluation) object, path, entries);
-            obj = eval((Evaluation) obj, entries);
-        } else if  (object instanceof Context) {
-            obj = value((Context) object, path, entries);
-            obj = value((Context) obj, entries);
-        }  else {
-            obj = object;
-        }
+		Object obj = null;
+		if (object instanceof Evaluation || object instanceof Context) {
+			obj = value((Evaluation) object, path, entries);
+			obj = eval((Evaluation) obj, entries);
+		} else if (object instanceof Context) {
+			obj = value((Context) object, path, entries);
+			obj = value((Context) obj, entries);
+		} else {
+			obj = object;
+		}
 		return obj;
 	}
 
@@ -127,12 +127,12 @@ public class operator {
 		if (object instanceof Evaluation) {
 			obj = eval((Evaluation) object, entries);
 		} else if (object instanceof Context) {
-            try {
-                obj = value((Context) object, entries);
-            } catch (ContextException e) {
-                throw new EvaluationException(e);
-            }
-        }
+			try {
+				obj = value((Context) object, entries);
+			} catch (ContextException e) {
+				throw new EvaluationException(e);
+			}
+		}
 		if (obj == null) {
 			obj = object;
 		}
@@ -175,12 +175,12 @@ public class operator {
 
 	public static ControlContext control(Exertion exertion)
 			throws ContextException {
-		return ((ServiceExertion)exertion).getControlContext();
+		return ((ServiceExertion) exertion).getControlContext();
 	}
 
 	public static ControlContext control(Exertion exertion, String childName)
 			throws ContextException {
-		return (ControlContext)((Exertion)exertion.getMogram(childName)).getControlContext();
+		return (ControlContext) ((Exertion) exertion.getMogram(childName)).getControlContext();
 	}
 
 	public static Context cxt(Object... entries) throws ContextException {
@@ -191,7 +191,7 @@ public class operator {
 		if (exertion instanceof CompoundExertion)
 			return ((ServiceExertion) exertion).getContext();
 		else
-			return ((ServiceExertion)exertion).getDataContext();
+			return ((ServiceExertion) exertion).getDataContext();
 	}
 
 	public static Context taskContext(String path, Service service) throws ContextException {
@@ -236,7 +236,7 @@ public class operator {
 		Object[] args = new Object[entries.length + 1];
 		System.arraycopy(entries, 0, args, 1, entries.length);
 		args[0] = Context.Type.SCOPE;
-		return  context(args);
+		return context(args);
 	}
 
 	public static Context context(Object... entries)
@@ -247,21 +247,21 @@ public class operator {
 		if (entries[0] instanceof Exertion) {
 			Exertion xrt = (Exertion) entries[0];
 			if (entries.length >= 2 && entries[1] instanceof String)
-				xrt = (Exertion)((CompoundExertion) xrt).getComponentMogram((String) entries[1]);
+				xrt = (Exertion) ((CompoundExertion) xrt).getComponentMogram((String) entries[1]);
 			return xrt.getDataContext();
 		} else if (entries[0] instanceof Link) {
-			return ((Link)entries[0] ).getContext();
+			return ((Link) entries[0]).getContext();
 		} else if (entries.length == 1 && entries[0] instanceof String) {
 			return new PositionalContext((String) entries[0]);
 		} else if (entries.length == 2 && entries[0] instanceof String
 				&& entries[1] instanceof Exertion) {
-			return ((Exertion)((CompoundExertion) entries[1]).getComponentMogram(
+			return ((Exertion) ((CompoundExertion) entries[1]).getComponentMogram(
 					(String) entries[0])).getContext();
 		} else if (entries[0] instanceof Context && entries[1] instanceof List) {
-			return ((ServiceContext)entries[0]).getSubcontext((List)entries[1]);
+			return ((ServiceContext) entries[0]).getSubcontext((List) entries[1]);
 		} else if (entries[0] instanceof Model) {
-            cxt = (PositionalContext)entries[0];
-        } else {
+			cxt = (PositionalContext) entries[0];
+		} else {
 			cxt = getPersistedContext(entries);
 			if (cxt != null) return cxt;
 		}
@@ -278,6 +278,7 @@ public class operator {
 		ParameterTypes parameterTypes = null;
 		PathResponse response = null;
 		PoolStrategy modelStrategy = null;
+		Signature sig = null;
 		for (Object o : entries) {
 			if (o instanceof Complement) {
 				subject = (Complement) o;
@@ -305,47 +306,49 @@ public class operator {
 				parEntryList.add((Par) o);
 			} else if (o instanceof EntryList) {
 				entryLists.add((EntryList) o);
-			}  else if (o instanceof MapContext) {
+			} else if (o instanceof MapContext) {
 				connList.add((MapContext) o);
 			} else if (o instanceof DependencyEntry) {
 				depList.add((DependencyEntry) o);
+			} else if (o instanceof Signature) {
+				sig = (Signature) o;
 			}
 		}
 
-        if (cxt == null) {
-            if (types.contains(Context.Type.ARRAY)) {
-                if (subject != null)
-                    cxt = new ArrayContext(name, subject.path(), subject.value());
-                else
-                    cxt = new ArrayContext(name);
-            } else if (types.contains(Context.Type.LIST)) {
-                if (subject != null)
-                    cxt = new ListContext(name, subject.path(), subject.value());
-                else
-                    cxt = new ListContext(name);
-            } else if (types.contains(Context.Type.SCOPE)) {
-                cxt = new ScopeContext(name);
-            } else if (types.contains(Context.Type.SHARED)
-                    && types.contains(Context.Type.INDEXED)) {
-                cxt = new SharedIndexedContext(name);
-            } else if (types.contains(Context.Type.SHARED)) {
-                cxt = new SharedAssociativeContext(name);
-            } else if (types.contains(Context.Type.ASSOCIATIVE)) {
-                if (subject != null)
-                    cxt = new ServiceContext(name, subject.path(), subject.value());
-                else
-                    cxt = new ServiceContext(name);
-            } else {
-                if (subject != null) {
-                    cxt = new PositionalContext(name, subject.path(),
-                            subject.value());
-                } else {
-                    cxt = new PositionalContext(name);
-                }
-            }
-        }
-            
-        
+		if (cxt == null) {
+			if (types.contains(Context.Type.ARRAY)) {
+				if (subject != null)
+					cxt = new ArrayContext(name, subject.path(), subject.value());
+				else
+					cxt = new ArrayContext(name);
+			} else if (types.contains(Context.Type.LIST)) {
+				if (subject != null)
+					cxt = new ListContext(name, subject.path(), subject.value());
+				else
+					cxt = new ListContext(name);
+			} else if (types.contains(Context.Type.SCOPE)) {
+				cxt = new ScopeContext(name);
+			} else if (types.contains(Context.Type.SHARED)
+					&& types.contains(Context.Type.INDEXED)) {
+				cxt = new SharedIndexedContext(name);
+			} else if (types.contains(Context.Type.SHARED)) {
+				cxt = new SharedAssociativeContext(name);
+			} else if (types.contains(Context.Type.ASSOCIATIVE)) {
+				if (subject != null)
+					cxt = new ServiceContext(name, subject.path(), subject.value());
+				else
+					cxt = new ServiceContext(name);
+			} else {
+				if (subject != null) {
+					cxt = new PositionalContext(name, subject.path(),
+							subject.value());
+				} else {
+					cxt = new PositionalContext(name);
+				}
+			}
+		}
+
+
 		if (cxt instanceof PositionalContext) {
 			PositionalContext pcxt = (PositionalContext) cxt;
 			if (entryList.size() > 0)
@@ -400,15 +403,17 @@ public class operator {
 			}
 		}
 		if (depList.size() > 0) {
-			Map<String, List<String>> dm = ((ServiceContext)cxt).getRuntime().getDependentPaths();
+			Map<String, List<String>> dm = ((ServiceContext) cxt).getRuntime().getDependentPaths();
 			String path = null;
 			List<String> dependentPaths = null;
 			for (DependencyEntry e : depList) {
 				path = e.getName();
-				dependentPaths =  e.value();
+				dependentPaths = e.value();
 				dm.put(path, dependentPaths);
 			}
 		}
+		if (sig != null)
+			cxt.setSubject("signature", sig);
 		return cxt;
 	}
 
@@ -416,10 +421,10 @@ public class operator {
 		ServiceContext cxt = null;
 		try {
 			if (entries.length == 1 && SdbUtil.isSosURL(entries[0]))
-				cxt = (ServiceContext)((URL)entries[0]).getContent();
+				cxt = (ServiceContext) ((URL) entries[0]).getContent();
 			else if (entries.length == 2 && entries[0] instanceof String && SdbUtil.isSosURL(entries[1])) {
-				cxt = (ServiceContext)((URL)entries[1]).getContent();
-				cxt.setName((String)entries[0]);
+				cxt = (ServiceContext) ((URL) entries[1]).getContent();
+				cxt.setName((String) entries[0]);
 			}
 		} catch (IOException e) {
 			throw new ContextException(e);
@@ -442,7 +447,7 @@ public class operator {
 			} else if (t instanceof InputEntry) {
 				Object par = t.value();
 				if (par instanceof Scopable) {
-					((Scopable)par).setScope(pcxt);
+					((Scopable) par).setScope(pcxt);
 				}
 				if (t.isPersistent()) {
 					setPar(pcxt, t, i);
@@ -514,36 +519,36 @@ public class operator {
 	public static Context add(Model model, Identifiable... objects)
 			throws RemoteException, ContextException {
 		boolean isReactive = false;
-        Context context = (Context) model;
+		Context context = (Context) model;
 		for (Identifiable i : objects) {
-			if (i instanceof Reactive && ((Reactive)i).isReactive()) {
+			if (i instanceof Reactive && ((Reactive) i).isReactive()) {
 				isReactive = true;
 			}
 			if (context instanceof PositionalContext) {
-				PositionalContext pc = (PositionalContext)context;
+				PositionalContext pc = (PositionalContext) context;
 				if (i instanceof InputEntry) {
 					if (isReactive) {
-						pc.putInValueAt(i.getName(), i, pc.getTally()+1);
+						pc.putInValueAt(i.getName(), i, pc.getTally() + 1);
 					} else {
-						pc.putInValueAt(i.getName(), ((Entry) i).value(), pc.getTally()+1);
+						pc.putInValueAt(i.getName(), ((Entry) i).value(), pc.getTally() + 1);
 					}
 				} else if (i instanceof OutputEntry) {
 					if (isReactive) {
-						pc.putOutValueAt(i.getName(), i, pc.getTally()+1);
+						pc.putOutValueAt(i.getName(), i, pc.getTally() + 1);
 					} else {
-						pc.putOutValueAt(i.getName(), ((Entry) i).value(), pc.getTally()+1);
+						pc.putOutValueAt(i.getName(), ((Entry) i).value(), pc.getTally() + 1);
 					}
 				} else if (i instanceof InoutEntry) {
 					if (isReactive) {
-						pc.putInoutValueAt(i.getName(), i, pc.getTally()+1);
+						pc.putInoutValueAt(i.getName(), i, pc.getTally() + 1);
 					} else {
-						pc.putInoutValueAt(i.getName(), ((Entry) i).value(), pc.getTally()+1);
+						pc.putInoutValueAt(i.getName(), ((Entry) i).value(), pc.getTally() + 1);
 					}
 				} else {
 					if (model instanceof EntModel || isReactive) {
-						pc.putValueAt(i.getName(), i, pc.getTally()+1);
+						pc.putValueAt(i.getName(), i, pc.getTally() + 1);
 					} else {
-						pc.putValueAt(i.getName(), ((Entry) i).value(), pc.getTally()+1);
+						pc.putValueAt(i.getName(), ((Entry) i).value(), pc.getTally() + 1);
 					}
 				}
 			} else if (context instanceof ServiceContext) {
@@ -576,10 +581,10 @@ public class operator {
 				context.putValue(i.getName(), i);
 			}
 			if (i instanceof Entry) {
-				Entry e = (Entry)i;
+				Entry e = (Entry) i;
 				if (e.isAnnotated()) context.mark(e.path(), e.annotation());
 				if (e.asis() instanceof Scopable) {
-					((Scopable)e.asis()).setScope(context);
+					((Scopable) e.asis()).setScope(context);
 				}
 			}
 		}
@@ -591,7 +596,7 @@ public class operator {
 		Object val = context.asis(path);
 		if (SdbUtil.isSosURL(val)) {
 			try {
-				SdbUtil.update((URL)val, value);
+				SdbUtil.update((URL) val, value);
 			} catch (Exception e) {
 				throw new ContextException(e);
 			}
@@ -609,21 +614,21 @@ public class operator {
 			throws RemoteException, ContextException {
 		for (Identifiable i : objects) {
 			// just replace the value
-			if (((ServiceContext)context).containsPath(i.getName())) {
+			if (((ServiceContext) context).containsPath(i.getName())) {
 				context.putValue(i.getName(), i);
 				continue;
 			}
 
 			if (context instanceof PositionalContext) {
-				PositionalContext pc = (PositionalContext)context;
+				PositionalContext pc = (PositionalContext) context;
 				if (i instanceof InputEntry) {
 					pc.putInValueAt(i.getName(), i, pc.getTally() + 1);
 				} else if (i instanceof OutputEntry) {
-					pc.putOutValueAt(i.getName(), i, pc.getTally()+1);
+					pc.putOutValueAt(i.getName(), i, pc.getTally() + 1);
 				} else if (i instanceof InoutEntry) {
-					pc.putInoutValueAt(i.getName(), i, pc.getTally()+1);
+					pc.putInoutValueAt(i.getName(), i, pc.getTally() + 1);
 				} else {
-					pc.putValueAt(i.getName(), i, pc.getTally()+1);
+					pc.putValueAt(i.getName(), i, pc.getTally() + 1);
 				}
 			} else if (context instanceof ServiceContext) {
 				if (i instanceof InputEntry) {
@@ -639,10 +644,10 @@ public class operator {
 				context.putValue(i.getName(), i);
 			}
 			if (i instanceof Entry) {
-				Entry e = (Entry)i;
+				Entry e = (Entry) i;
 				if (e.isAnnotated()) context.mark(e.path(), e.annotation());
 				if (e.asis() instanceof Scopable) {
-					((Scopable)e.asis()).setScope(context);
+					((Scopable) e.asis()).setScope(context);
 				}
 			}
 		}
@@ -711,8 +716,7 @@ public class operator {
 	 * Makes this Paradigm a model, so its return values of Evaluation type are
 	 * evaluated. Given entries update the model to be evaluated,
 	 *
-	 * @param paradigm
-	 *            to be marked as a model
+	 * @param paradigm to be marked as a model
 	 * @return a Paradigm being a model
 	 * @throws EvaluationException
 	 * @throws RemoteException
@@ -738,7 +742,7 @@ public class operator {
 	public static Object bind(Object model, Arg... entries)
 			throws ContextException {
 		if (model instanceof Substitutable) {
-			Binder binder = new Binder((Mogram)model);
+			Binder binder = new Binder((Mogram) model);
 			binder.bind(entries);
 		}
 		return model;
@@ -766,35 +770,35 @@ public class operator {
 		return null;
 	}
 
-    public static Signature sig(Class serviceType, String initSelector) throws SignatureException {
-        try {
-            Method selectorMethod = serviceType.getDeclaredMethod(initSelector, Context.class);
-            if (!Modifier.isStatic(selectorMethod.getModifiers()))
-                return sig(initSelector, serviceType);
-        } catch (NoSuchMethodException e) {
-            // skip
-        }
-        return sig(initSelector, serviceType, initSelector);
-    }
+	public static Signature sig(Class serviceType, String initSelector) throws SignatureException {
+		try {
+			Method selectorMethod = serviceType.getDeclaredMethod(initSelector, Context.class);
+			if (!Modifier.isStatic(selectorMethod.getModifiers()))
+				return sig(initSelector, serviceType);
+		} catch (NoSuchMethodException e) {
+			// skip
+		}
+		return sig(initSelector, serviceType, initSelector);
+	}
 
-    public static Signature sig(String operation, Class serviceType,
-                                String initSelector) throws SignatureException {
-        try {
-            return new ObjectSignature(operation, serviceType, initSelector,
-                                       (Class<?>[])null, (Object[])null);
-        } catch (Exception e) {
-            throw new SignatureException(e);
-        }
-    }
+	public static Signature sig(String operation, Class serviceType,
+								String initSelector) throws SignatureException {
+		try {
+			return new ObjectSignature(operation, serviceType, initSelector,
+					(Class<?>[]) null, (Object[]) null);
+		} catch (Exception e) {
+			throw new SignatureException(e);
+		}
+	}
 
-	public static Signature sig(Class serviceType,  Arg... args) throws SignatureException {
+	public static Signature sig(Class serviceType, Arg... args) throws SignatureException {
 		if (args == null || args.length == 0)
 			return defaultSig(serviceType);
 		else
 			return sig("?", serviceType, args);
 	}
 
-	public static Signature sig(String operation, Class serviceType,  Arg... args) throws SignatureException {
+	public static Signature sig(String operation, Class serviceType, Arg... args) throws SignatureException {
 		String providerName = null;
 		Provision p = null;
 		List<MapContext> connList = new ArrayList<MapContext>();
@@ -803,9 +807,9 @@ public class operator {
 				if (o instanceof ProviderName) {
 					providerName = Sorcer.getActualName(((ProviderName) o).getName());
 				} else if (o instanceof Provision) {
-					  p = (Provision) o;
+					p = (Provision) o;
 				} else if (o instanceof MapContext) {
-					connList.add(((MapContext)o));
+					connList.add(((MapContext) o));
 				}
 			}
 		}
@@ -816,7 +820,7 @@ public class operator {
 			sig = new ObjectSignature(operation, serviceType);
 			sig.setProviderName(providerName);
 		}
-        ((ServiceSignature)sig).setName(operation);
+		((ServiceSignature) sig).setName(operation);
 
 		if (connList != null) {
 			for (MapContext conn : connList) {
@@ -828,29 +832,29 @@ public class operator {
 		}
 
 		if (p != null)
-			((ServiceSignature)sig).setProvisionable(p);
-		
+			((ServiceSignature) sig).setProvisionable(p);
+
 		if (args.length > 0) {
 			for (Object o : args) {
 				if (o instanceof Type) {
 					sig.setType((Type) o);
 				} else if (o instanceof Operating) {
-					((ServiceSignature)sig).setActive((Operating) o);
+					((ServiceSignature) sig).setActive((Operating) o);
 				} else if (o instanceof Provision) {
-					((ServiceSignature)sig).setProvisionable((Provision) o);
+					((ServiceSignature) sig).setProvisionable((Provision) o);
 				} else if (o instanceof ServiceShell) {
-					((ServiceSignature)sig).setShellRemote((ServiceShell) o);
+					((ServiceSignature) sig).setShellRemote((ServiceShell) o);
 				} else if (o instanceof ReturnPath) {
 					sig.setReturnPath((ReturnPath) o);
 				} else if (o instanceof ServiceDeployment) {
-					((ServiceSignature)sig).setProvisionable(true);
-					((ServiceSignature)sig).setDeployment((ServiceDeployment)o);
+					((ServiceSignature) sig).setProvisionable(true);
+					((ServiceSignature) sig).setDeployment((ServiceDeployment) o);
 				} else if (o instanceof Version && sig instanceof NetSignature) {
-					((NetSignature)sig).setVersion(((Version)o).getName());
+					((NetSignature) sig).setVersion(((Version) o).getName());
 				}
 			}
 		}
-		
+
 		return sig;
 	}
 
@@ -859,7 +863,7 @@ public class operator {
 	}
 
 	public static String actualName(String name) {
-		return 	Sorcer.getActualName(name);
+		return Sorcer.getActualName(name);
 	}
 
 	public static Signature sig(String selector) throws SignatureException {
@@ -890,17 +894,17 @@ public class operator {
 				serviceType == Concatenator.class ||
 				serviceType == Rendezvous.class) {
 			return sig("service", serviceType);
-		} else if (Modeling.class.isAssignableFrom(serviceType) ) {
+		} else if (Modeling.class.isAssignableFrom(serviceType)) {
 			return sig("evaluate", serviceType);
 		}
-			return sig(serviceType, (ReturnPath) null);
+		return sig(serviceType, (ReturnPath) null);
 	}
 
 	public static Signature sig(Class<?> serviceType, ReturnPath returnPath, ServiceDeployment deployment)
 			throws SignatureException {
 		Signature signature = sig(serviceType, returnPath);
-		((ServiceSignature)signature).setDeployment(deployment);
-		((ServiceSignature)signature).setProvisionable(true);
+		((ServiceSignature) signature).setDeployment(deployment);
+		((ServiceSignature) signature).setProvisionable(true);
 		return signature;
 	}
 
@@ -923,7 +927,7 @@ public class operator {
 										  ReturnPath returnPath) throws SignatureException {
 		EvaluationSignature sig = null;
 		if (evaluator instanceof Scopable) {
-			sig = new EvaluationSignature(new Par((Identifiable)evaluator));
+			sig = new EvaluationSignature(new Par((Identifiable) evaluator));
 		} else {
 			sig = new EvaluationSignature(evaluator);
 		}
@@ -936,7 +940,7 @@ public class operator {
 	}
 
 	public static Signature sig(Exertion exertion, String componentExertionName) {
-		Exertion component = (Exertion)exertion.getMogram(componentExertionName);
+		Exertion component = (Exertion) exertion.getMogram(componentExertionName);
 		return component.getProcessSignature();
 	}
 
@@ -1007,7 +1011,7 @@ public class operator {
 	}
 
 	public static Map<String, Fidelity> sFis(Mogram exertion) {
-		return ((ServiceExertion)exertion).getServiceFidelities();
+		return ((ServiceExertion) exertion).getServiceFidelities();
 	}
 
 	public static Fidelity<Signature> sFi(Mogram exertion) {
@@ -1015,7 +1019,7 @@ public class operator {
 	}
 
 	public static String selFi(Mogram exertion) {
-		return ((ServiceExertion)exertion).getSelectedFidelitySelector();
+		return ((ServiceExertion) exertion).getSelectedFidelitySelector();
 	}
 
 	public static Map<String, Fidelity> srvFis(Exertion exertion) {
@@ -1060,7 +1064,7 @@ public class operator {
 	public static ObjectSignature sig(String operation, Object object,
 									  Class[] types, Object... args) throws SignatureException {
 		if (args == null || args.length == 0)
-			return sig(operation, object, (String)null, types);
+			return sig(operation, object, (String) null, types);
 		else
 			return sig(operation, object, null, types, args);
 	}
@@ -1141,7 +1145,7 @@ public class operator {
 		} else {
 			task = new Task(signature, context);
 		}
-		if (((ServiceSignature)signature).isProvisionable())
+		if (((ServiceSignature) signature).isProvisionable())
 			task.setProvisionable(true);
 		return task;
 	}
@@ -1244,13 +1248,13 @@ public class operator {
 		if (cc != null) {
 			task.updateStrategy(cc);
 		}
-		if (ss != null && ((ServiceSignature)ss).isProvisionable()) {
+		if (ss != null && ((ServiceSignature) ss).isProvisionable()) {
 			task.setProvisionable(true);
 		}
 		return task;
 	}
 
-	public static <E extends Exertion> E srv(String name, Object... elems) 
+	public static <E extends Exertion> E srv(String name, Object... elems)
 			throws ExertionException, ContextException, SignatureException {
 		return (E) exertion(name, elems);
 	}
@@ -1276,7 +1280,7 @@ public class operator {
 			return exertion(name, items);
 	}
 
-	public static <E extends Exertion> E xrt(String name, Object... elems) 
+	public static <E extends Exertion> E xrt(String name, Object... elems)
 			throws ExertionException, ContextException, SignatureException {
 		return (E) exertion(name, elems);
 	}
@@ -1286,18 +1290,18 @@ public class operator {
 		List<Mogram> exertions = new ArrayList<Mogram>();
 		Signature sig = null;
 		Context cxt = null;
-		boolean isBlock =false;
+		boolean isBlock = false;
 		for (int i = 0; i < items.length; i++) {
-			if (items[i] instanceof Exertion || items[i] instanceof EntModel ) {
+			if (items[i] instanceof Exertion || items[i] instanceof EntModel) {
 				exertions.add((Mogram) items[i]);
 				if (items[i] instanceof ConditionalExertion)
 					isBlock = true;
-				} else if (items[i] instanceof Signature) {
-					sig = (Signature) items[i];
-				} else if (items[i] instanceof String) {
-					name = (String) items[i];
-				}
+			} else if (items[i] instanceof Signature) {
+				sig = (Signature) items[i];
+			} else if (items[i] instanceof String) {
+				name = (String) items[i];
 			}
+		}
 		if (isBlock || exertions.size() > 0 && sig != null
 				&& (sig.getServiceType() == Concatenator.class
 				|| sig.getServiceType() == ServiceConcatenator.class)) {
@@ -1307,7 +1311,7 @@ public class operator {
 			j.setName(name);
 			return (E) j;
 		} else {
-			return (E)task(name, items);
+			return (E) task(name, items);
 		}
 	}
 
@@ -1332,7 +1336,7 @@ public class operator {
 			} else if (elems[i] instanceof ControlContext) {
 				control = (ControlContext) elems[i];
 			} else if (elems[i] instanceof MapContext) {
-				connList.add(((MapContext)elems[i]));
+				connList.add(((MapContext) elems[i]));
 			} else if (elems[i] instanceof Context) {
 				data = (Context<?>) elems[i];
 			} else if (elems[i] instanceof Pipe) {
@@ -1386,8 +1390,8 @@ public class operator {
 			((ServiceContext) job.getDataContext()).setReturnPath(rp);
 		}
 
-        if (control != null)
-            job.setControlContext(control);
+		if (control != null)
+			job.setControlContext(control);
 
 		if (job instanceof NetJob && control != null) {
 			job.setControlContext(control);
@@ -1407,9 +1411,9 @@ public class operator {
 		if (connList != null) {
 			for (MapContext conn : connList) {
 				if (conn.direction == MapContext.Direction.IN)
-					((ServiceContext)job.getDataContext()).getRuntime().setInConnector(conn);
+					((ServiceContext) job.getDataContext()).getRuntime().setInConnector(conn);
 				else
-					((ServiceContext)job.getDataContext()).getRuntime().setOutConnector(conn);
+					((ServiceContext) job.getDataContext()).getRuntime().setOutConnector(conn);
 			}
 		}
 
@@ -1426,8 +1430,8 @@ public class operator {
 //						+ " path: " + p.outPath);
 				// find component exertions for thir paths
 				if (!p.isExertional()) {
-					p.out = (Exertion)job.getComponentMogram(p.outComponentPath);
-					p.in = (Exertion)job.getComponentMogram(p.inComponentPath);
+					p.out = (Exertion) job.getComponentMogram(p.outComponentPath);
+					p.in = (Exertion) job.getComponentMogram(p.inComponentPath);
 				}
 				((Exertion) p.out).getDataContext().connect(p.outPath,
 						p.inPath, ((Exertion) p.in).getContext());
@@ -1453,8 +1457,8 @@ public class operator {
 
 	public static Object get(Exertion exertion) throws ContextException,
 			RemoteException {
-        return exertion.getContext().getReturnValue();
-    }
+		return exertion.getContext().getReturnValue();
+	}
 
 	public static <T extends Evaluation> Object asis(T evaluation) throws EvaluationException {
 		if (evaluation instanceof Evaluation) {
@@ -1520,32 +1524,32 @@ public class operator {
 		}
 	}
 
-    public static <T> T value(Service service, Arg... entries) throws EvaluationException {
-        try {
-            if (service instanceof Model) {
-                return (T)value((Context<T>) service, entries);
-            } else {
-				return (T)eval((Evaluation<T>) service, entries);
+	public static <T> T value(Service service, Arg... entries) throws EvaluationException {
+		try {
+			if (service instanceof Model) {
+				return (T) value((Context<T>) service, entries);
+			} else {
+				return (T) eval((Evaluation<T>) service, entries);
 			}
-        } catch (Exception e) {
-            throw new EvaluationException(e);
-        }
-    }
+		} catch (Exception e) {
+			throw new EvaluationException(e);
+		}
+	}
 
-    public static <T> T value(Context<T> model, Arg... entries)
-            throws ContextException {
-        try {
-            synchronized (model) {
-                if (model instanceof ParModel) {
-                    return ((ParModel<T>) model).getValue(entries);
-                } else {
-                    return (T) ((ServiceContext)model).getValue(entries);
-                }
-            }
-        } catch (Exception e) {
-            throw new ContextException(e);
-        }
-    }
+	public static <T> T value(Context<T> model, Arg... entries)
+			throws ContextException {
+		try {
+			synchronized (model) {
+				if (model instanceof ParModel) {
+					return ((ParModel<T>) model).getValue(entries);
+				} else {
+					return (T) ((ServiceContext) model).getValue(entries);
+				}
+			}
+		} catch (Exception e) {
+			throw new ContextException(e);
+		}
+	}
 
 	public static <T> T eval(Evaluation<T> evaluation, Arg... entries)
 			throws EvaluationException {
@@ -1563,37 +1567,37 @@ public class operator {
 	}
 
 	public static Object value(Model model, String evalSelector,
-							  Arg... entries) throws ContextException {
+							   Arg... entries) throws ContextException {
 		return value((Context<Object>) model, evalSelector, entries);
 	}
 
-    public static <T> T value(Context<T> model, String evalSelector,
-                              Arg... entries) throws ContextException {
-        if (model instanceof ParModel) {
-                return (T) ((ParModel) model).getValue(evalSelector,
-                        entries);
-        }  else if (model instanceof Context) {
-            try {
-                Object val = ((Context) model).getValue(evalSelector,
-                        entries);
-                if (SdbUtil.isSosURL(val)) {
-                    return (T) ((URL) val).getContent();
-                } else {
-                    return (T)val;
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-                throw new ContextException(e);
-            }
-        }
-        return null;
-    }
-    
+	public static <T> T value(Context<T> model, String evalSelector,
+							  Arg... entries) throws ContextException {
+		if (model instanceof ParModel) {
+			return (T) ((ParModel) model).getValue(evalSelector,
+					entries);
+		} else if (model instanceof Context) {
+			try {
+				Object val = ((Context) model).getValue(evalSelector,
+						entries);
+				if (SdbUtil.isSosURL(val)) {
+					return (T) ((URL) val).getContent();
+				} else {
+					return (T) val;
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				throw new ContextException(e);
+			}
+		}
+		return null;
+	}
+
 	public static <T> T value(Evaluation<T> evaluation, String evalSelector,
 							  Arg... entries) throws EvaluationException {
 		if (evaluation instanceof Exertion) {
 			try {
-				((ServiceContext)((Exertion) evaluation).getContext())
+				((ServiceContext) ((Exertion) evaluation).getContext())
 						.setReturnPath(new ReturnPath(evalSelector));
 				return (T) getValue((Exertion) evaluation, entries);
 			} catch (Exception e) {
@@ -1643,19 +1647,19 @@ public class operator {
 	}
 
 	public static <T> List<T> inValues(Context<T> context) throws ContextException {
-		return ((ServiceContext)context).getInValues();
+		return ((ServiceContext) context).getInValues();
 	}
 
 	public static <T> List<T> inPaths(Context<T> context) throws ContextException {
-		return ((ServiceContext)context).getInPaths();
+		return ((ServiceContext) context).getInPaths();
 	}
 
 	public static <T> List<T> outValues(Context<T> context) throws ContextException {
-		return ((ServiceContext)context).getOutValues();
+		return ((ServiceContext) context).getOutValues();
 	}
 
 	public static <T> List<T> outPaths(Context<T> context) throws ContextException {
-		return ((ServiceContext)context).getOutPaths();
+		return ((ServiceContext) context).getOutPaths();
 	}
 
 	public static <T> T getAt(Context<T> context, int i) throws ContextException {
@@ -1679,7 +1683,7 @@ public class operator {
 		Object obj = ((ServiceContext) service).asis(path);
 		if (obj != null) {
 			while (obj instanceof Mappable ||
-					(obj instanceof Reactive && ((Reactive)obj).isReactive())) {
+					(obj instanceof Reactive && ((Reactive) obj).isReactive())) {
 				try {
 					obj = ((Evaluation) obj).asis();
 				} catch (RemoteException e) {
@@ -1694,7 +1698,7 @@ public class operator {
 
 	public static List<Mogram> exertions(Mogram mogram) {
 		if (mogram instanceof Exertion)
-			return ((Exertion)mogram).getAllMograms();
+			return ((Exertion) mogram).getAllMograms();
 		else
 			return null;
 	}
@@ -1712,7 +1716,7 @@ public class operator {
 	}
 
 	public static List<String> trace(Mogram xrt) {
-		List<Mogram> mograms = ((ServiceMogram)xrt).getAllMograms();
+		List<Mogram> mograms = ((ServiceMogram) xrt).getAllMograms();
 		List<String> trace = new ArrayList<String>();
 		for (Mogram m : mograms) {
 			trace.addAll(((Exertion) m).getControlContext().getTrace());
@@ -1733,7 +1737,7 @@ public class operator {
 			}
 		}
 		if (rPath != null)
-			((ServiceContext)xrt.getDataContext()).setReturnPath(rPath);
+			((ServiceContext) xrt.getDataContext()).setReturnPath(rPath);
 		return xrt;
 	}
 
@@ -1759,7 +1763,7 @@ public class operator {
 
 	private static Object finalize(Exertion xrt, Arg... args) throws ContextException, RemoteException {
 		Context dcxt = xrt.getDataContext();
-		ReturnPath rPath =	dcxt.getReturnPath();
+		ReturnPath rPath = dcxt.getReturnPath();
 		// check if it was already finalized
 		if (((ServiceContext) dcxt).isFinalized()) {
 			return dcxt.getValue(rPath.path);
@@ -1790,7 +1794,7 @@ public class operator {
 						dcxt.setReturnValue(out);
 						result = out;
 					}
-						return result;
+					return result;
 				} else {
 					return xrt.getContext().getValue(rPath.path);
 				}
@@ -1822,7 +1826,7 @@ public class operator {
 				return xrt.getContext();
 			}
 		} else if (obj instanceof Context && rPath != null && rPath.path != null) {
-			return (((Context)obj).getValue(rPath.path));
+			return (((Context) obj).getValue(rPath.path));
 		}
 		return obj;
 	}
@@ -1875,7 +1879,7 @@ public class operator {
 	public static <T extends Mogram> T exert(T mogram, Arg... args)
 			throws ExertionException {
 		try {
-			return  (T)mogram.exert(null, args);
+			return (T) mogram.exert(null, args);
 		} catch (Exception e) {
 			throw new ExertionException(e);
 		}
@@ -1884,7 +1888,7 @@ public class operator {
 	public static <T extends Mogram> T exert(Signature signature, Mogram mogram)
 			throws ExertionException {
 		try {
-			Provider prv = (Provider)Accessor.getService(signature);
+			Provider prv = (Provider) Accessor.getService(signature);
 			return (T) prv.service(mogram, null);
 		} catch (Exception e) {
 			throw new ExertionException(e);
@@ -1893,12 +1897,31 @@ public class operator {
 
 	public static <T extends Mogram> T service(Service service, Mogram mogram, Transaction txn)
 			throws MogramException, TransactionException, RemoteException {
-		return (T) service.service(mogram, txn);
+		if (service instanceof Provider) {
+			Task out = (Task) service.service(mogram, txn);
+			return (T)out.getContext();
+		} else if (service instanceof Mogram) {
+			Context cxt;
+			if (mogram instanceof Exertion) {
+				cxt = ((Exertion) exert(mogram)).getContext();
+			} else {
+//				cxt = (Context) ((Model) mogram).getResult();
+				cxt = (Context) mogram;
+			}
+			((Mogram)service).setScope(cxt);
+			return (T) exert((Mogram)service);
+		} else {
+			return (T) service.service(mogram, txn);
+		}
+	}
+
+	public static <T extends Mogram> T service(Mogram mogram) throws ExertionException {
+		return (T) exert(mogram);
 	}
 
 	public static <T extends Mogram> T service(Service service, Mogram mogram)
 			throws MogramException, TransactionException, RemoteException {
-		  return (T) service.service(mogram, null);
+		return service(service, mogram, null);
 	}
 
 	public static <T extends Mogram> T exert(Exerter exerter, Mogram input, Arg... entries)
@@ -1911,8 +1934,8 @@ public class operator {
 	}
 
 	public static <T extends Mogram> T exert(T mogram,
-											   Transaction transaction,
-											   Arg... entries) throws ExertionException {
+											 Transaction transaction,
+											 Arg... entries) throws ExertionException {
 		try {
 			Mogram result = null;
 			ServiceExertion exertion = null;
@@ -1920,10 +1943,10 @@ public class operator {
 				exertion = (ServiceExertion) mogram;
 			try {
 				if ((mogram.getProcessSignature() != null
-						&& ((ServiceSignature)mogram.getProcessSignature()).isShellRemote())
+						&& ((ServiceSignature) mogram.getProcessSignature()).isShellRemote())
 						|| (exertion.getControlContext() != null
-							&& ((ControlContext)exertion.getControlContext()).isShellRemote())) {
-					Exerter prv = (Exerter)Accessor.getService(sig(Shell.class));
+						&& ((ControlContext) exertion.getControlContext()).isShellRemote())) {
+					Exerter prv = (Exerter) Accessor.getService(sig(Shell.class));
 					result = prv.exert(mogram, transaction, entries);
 				} else {
 					sorcer.core.provider.exerter.ServiceShell se = new sorcer.core.provider.exerter.ServiceShell(mogram);
@@ -1960,18 +1983,18 @@ public class operator {
 		return new ReturnPath(path, outPaths);
 	}
 
-    public static ReturnPath result(String path, In inPaths) {
-        return new ReturnPath(path, inPaths);
-    }
+	public static ReturnPath result(String path, In inPaths) {
+		return new ReturnPath(path, inPaths);
+	}
 
 	public static ReturnPath result(In inPaths) {
 		return new ReturnPath("self", inPaths);
 	}
 
-    public static ReturnPath result(String path, In inPaths, From outPaths) {
-        return new ReturnPath(path, inPaths, outPaths);
-    }
-    
+	public static ReturnPath result(String path, In inPaths, From outPaths) {
+		return new ReturnPath(path, inPaths, outPaths);
+	}
+
 	public static ReturnPath result(String path, Direction direction) {
 		return new ReturnPath(path, direction);
 	}
@@ -2037,7 +2060,7 @@ public class operator {
 	}
 
 	public static Link getLink(Context context, String path) throws ContextException {
-		return (ContextLink)context.getLink(path);
+		return (ContextLink) context.getLink(path);
 	}
 
 	public static <T> ControlContext strategy(T... entries) {
@@ -2076,7 +2099,7 @@ public class operator {
 
 	public static Flow flow(Entry entry) throws EvaluationException {
 		try {
-			return ((Strategy)entry.getValue()).getFlowType();
+			return ((Strategy) entry.getValue()).getFlowType();
 		} catch (RemoteException e) {
 			throw new EvaluationException(e);
 		}
@@ -2084,7 +2107,7 @@ public class operator {
 
 	public static Access access(Entry entry) throws EvaluationException {
 		try {
-			return ((Strategy)entry.getValue()).getAccessType();
+			return ((Strategy) entry.getValue()).getAccessType();
 		} catch (RemoteException e) {
 			throw new EvaluationException(e);
 		}
@@ -2098,11 +2121,11 @@ public class operator {
 		return strategy.getAccessType();
 	}
 
-	public static EntryList inputs(Entry...  entries) {
+	public static EntryList inputs(Entry... entries) {
 		return initialDesign(entries);
 	}
 
-	public static EntryList initialDesign(Entry...  entries) {
+	public static EntryList initialDesign(Entry... entries) {
 		EntryList el = new EntryList(entries);
 		el.setType(EntryList.Type.INITIAL_DESIGN);
 		return el;
@@ -2301,7 +2324,7 @@ public class operator {
 	}
 
 	public static OutEndPoint outPoint(Service outExertion, String outPath) {
-		return new OutEndPoint((Exertion)outExertion, outPath);
+		return new OutEndPoint((Exertion) outExertion, outPath);
 	}
 
 	public static InEndPoint inPoint(String inComponent, String inPath) {
@@ -2309,7 +2332,7 @@ public class operator {
 	}
 
 	public static InEndPoint inPoint(Service inExertion, String inPath) {
-		return new InEndPoint((Exertion)inExertion, inPath);
+		return new InEndPoint((Exertion) inExertion, inPath);
 	}
 
 	public static Pipe pipe(OutEndPoint outEndPoint, InEndPoint inEndPoint) {
@@ -2330,7 +2353,7 @@ public class operator {
 	public static List<Service> providers(Signature signature)
 			throws SignatureException {
 		ServiceTemplate st = new ServiceTemplate(null,
-				new Class[] { signature.getServiceType() }, null);
+				new Class[]{signature.getServiceType()}, null);
 		ServiceItem[] sis = Accessor.getServiceItems(st, null,
 				Sorcer.getLookupGroups());
 		if (sis == null)
@@ -2347,6 +2370,14 @@ public class operator {
 		if (obj == null)
 			return null;
 		return Arrays.asList(obj.getClass().getInterfaces());
+	}
+
+	public static Provider prv(Signature signature) throws SignatureException {
+		Object obj = provider(signature);
+		if (obj instanceof Provider)
+			return (Provider)obj;
+		else
+			throw new SignatureException("provider not of Provider.class type");
 	}
 
 	public static Object provider(Signature signature)

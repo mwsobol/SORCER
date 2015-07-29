@@ -8,6 +8,7 @@ import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.Adder;
 import sorcer.arithmetic.provider.impl.AdderImpl;
+import sorcer.core.provider.Provider;
 import sorcer.service.*;
 
 import java.lang.reflect.Proxy;
@@ -18,6 +19,7 @@ import static org.junit.Assert.*;
 import static sorcer.co.operator.inEnt;
 import static sorcer.co.operator.instance;
 import static sorcer.eo.operator.*;
+import static sorcer.eo.operator.provider;
 import static sorcer.mo.operator.inConn;
 import static sorcer.mo.operator.outConn;
 
@@ -94,7 +96,7 @@ public class Signatures {
 		ms = sig(Math.class, "max");
 		Context cxt = context(
 				parameterTypes(new Class[]{double.class, double.class}),
-				args(new Object[]{200.11, 3000.0}));
+				args(new Object[]{ 200.11, 3000.0 }));
 
 		// request the service
 		logger.info("max: " + value(mogram("max", ms, cxt)));
@@ -103,17 +105,19 @@ public class Signatures {
 
 	}
 
+
 	@Test
-	public void StaticMethodWithArgs() throws SignatureException {
+	public void staticMethodWithArgs() throws SignatureException {
 		Signature sig = sig(Math.class, "max",
 				new Class[]{double.class, double.class},
-				new Object[]{200.11, 3000.0});
+				new Object[]{ 200.11, 3000.0 });
 		logger.info("max: " + instance(sig));
 		assertTrue(instance(sig).equals(3000.0));
 	}
 
+
     @Test
-    public void StaticMethodWithNoArgs()  {
+    public void staticMethodWithNoArgs()  {
         Exception thrown = null;
         try {
             Signature sig = sig(Math.class, "random");
@@ -124,8 +128,9 @@ public class Signatures {
         assertNull(thrown);
     }
 
+
     @Test
-    public void StaticMethodWithNoArgs2()  {
+    public void staticMethodWithNoArgs2()  {
         Exception thrown = null;
         try {
             Signature sig = sig("random", Math.class);
@@ -135,6 +140,7 @@ public class Signatures {
         }
         assertNull(thrown);
     }
+
 
 	@Test
 	public void referencingFactoryClass() throws Exception {
@@ -157,26 +163,35 @@ public class Signatures {
 
 	}
 
+	@Test
+	public void providerService() throws Exception {
+
+		// request the remote service
+		Context cxt = context("add",
+				sig("add", Adder.class),
+				inEnt("arg/x1", 20.0),
+				inEnt("arg/x2", 80.0),
+				result("result/y"));
+
+		Context out = service(prv(sig(Adder.class)),cxt);
+		assertTrue(value(out, "result/y").equals(100.0));
+
+	}
 
 	@Test
-	public void localService() throws Exception {
+	public void mogramService() throws Exception {
 
-		Signature lps = sig("add", AdderImpl.class);
-		Object prv = provider(lps);
-		assertTrue(prv instanceof AdderImpl);
-		assertFalse(prv instanceof Proxy);
-
-		// request the local service
-		Service as = mogram("as", lps,
+		// request the remote service
+		Mogram as = exertion("as", sig("add", Adder.class),
 				context("add",
 						inEnt("arg/x1", 20.0),
 						inEnt("arg/x2", 80.0),
 						result("result/y")));
 
-		assertTrue(value(as).equals(100.0));
+		Exertion out = service(as);
+		assertTrue(value(context(out)).equals(100.0));
 
 	}
-
 
 	@Test
 	public void referencingRemoteProvider() throws Exception {
@@ -198,6 +213,24 @@ public class Signatures {
 
 	}
 
+	@Test
+	public void localService() throws Exception {
+
+		Signature lps = sig("add", AdderImpl.class);
+		Object prv = provider(lps);
+		assertTrue(prv instanceof AdderImpl);
+		assertFalse(prv instanceof Proxy);
+
+		// request the local service
+		Service as = mogram("as", lps,
+				context("add",
+						inEnt("arg/x1", 20.0),
+						inEnt("arg/x2", 80.0),
+						result("result/y")));
+
+		assertTrue(value(as).equals(100.0));
+
+	}
 
 	@Test
 	public void referencingNamedRemoteProvider() throws Exception {
