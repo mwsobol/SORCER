@@ -367,7 +367,7 @@ public class CollectionOperators {
 		put(cxt, rvEnt("arg/x6", ent("overwrite", 20.0)));
 		assertTrue(value(cxt, "arg/x6").equals(20.0));
 		urvEnt(cxt, "arg/x6");
-		assertTrue(eval((Evaluation) value(cxt, "arg/x6")).equals(20.0));
+		assertTrue(value((Evaluation) value(cxt, "arg/x6")).equals(20.0));
 		rrvEnt(cxt, "arg/x6");
 		assertTrue(value(cxt, "arg/x6").equals(20.0));
 

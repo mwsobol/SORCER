@@ -46,6 +46,7 @@ import org.slf4j.LoggerFactory;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.ControlContext;
 import sorcer.core.context.ServiceContext;
+import sorcer.core.exertion.NetTask;
 import sorcer.core.proxy.Outer;
 import sorcer.core.proxy.Partner;
 import sorcer.core.proxy.Partnership;
@@ -1399,6 +1400,22 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
         }
 	}
 
+	public Exertion serviceContextOnly(Context mogram) throws ExertionException, RemoteException {
+		Task task = null;
+		try {
+			Object subject = mogram.getSubjectValue();
+			if (subject instanceof Signature) {
+				task = new NetTask((Signature)mogram.getSubjectValue(), mogram);
+				task = delegate.doTask(task, null);
+			} else {
+				throw new ExertionException("no signature in the service context");
+			}
+		} catch (Exception e) {
+			throw new ExertionException(e);
+		}
+		return task;
+	}
+
     @Override
 	public Exertion service(Mogram exertion) throws RemoteException,
 			ExertionException {
@@ -1408,21 +1425,23 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
     @Override
     public Exertion service(Mogram mogram, Transaction txn) throws TransactionException,
             ExertionException, RemoteException {
-        if (mogram instanceof Task) {
-            ServiceContext cxt;
-            try {
-                cxt = (ServiceContext) ((Task)mogram).getDataContext();
+		if (mogram instanceof Task) {
+			ServiceContext cxt;
+			try {
+				cxt = (ServiceContext) ((Task)mogram).getDataContext();
 				cxt.updateContextWith(mogram.getProcessSignature().getInConnector());
-                Uuid id = cxt.getId();
-                ProviderSession ps = sessions.get(id);
-                if (ps == null) {
-                    ps = new ProviderSession(id);
-                    sessions.put(id, ps);
-                }
-            } catch (ContextException e) {
-                e.printStackTrace();
-            }
-        }
+				Uuid id = cxt.getId();
+				ProviderSession ps = sessions.get(id);
+				if (ps == null) {
+					ps = new ProviderSession(id);
+					sessions.put(id, ps);
+				}
+			} catch (ContextException e) {
+				e.printStackTrace();
+			}
+		} else if (mogram instanceof Context) {
+			return serviceContextOnly((Context)mogram);
+		}
 
         // TODO transaction handling to be implemented when needed
         // TO DO HANDLING SUSSPENDED exertions

@@ -360,7 +360,7 @@ public class ParModels {
 		Par dbIn = persistent(map(par("dbIn", "design/in"), cxt));
 		assertTrue(value(dbIn).equals(25.0));  	// is persisted
 		assertTrue(dbIn.asis().equals("design/in"));
-		assertTrue(eval((Evaluation) asis(cxt, "design/in")).equals(25.0));
+		assertTrue(value((Evaluation) asis(cxt, "design/in")).equals(25.0));
 		assertTrue(value(cxt, "design/in").equals(25.0));
 
 		set(dbIn, 30.0); 	// is persisted

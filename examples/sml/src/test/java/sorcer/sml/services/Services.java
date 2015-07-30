@@ -46,7 +46,7 @@ public class Services {
 		logger.info("context @ arg/x2: " + value(cxt, "arg/x2"));
 		logger.info("context @ result/y: " + value(cxt, "result/y"));
 		
-		assertEquals(100.0, value(cxt, "result/y"));
+		assertEquals(100.0, get(cxt, "result/y"));
 
 	}
 
@@ -54,16 +54,16 @@ public class Services {
 	@Test
 	public void evaluateTask() throws Exception  {
 
-		Service t5 = mogram("t5", sig("add", AdderImpl.class),
+		Service t5 = srv("t5", sig("add", AdderImpl.class),
 				cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
 						result("result/y")));
 
 		// get a single context argument
-		assertTrue(value(t5).equals(100.0));
+		assertTrue(exec(t5).equals(100.0));
 
 		// get the subcontext output from the exertion
 		assertTrue(context(ent("arg/x1", 20.0), ent("result/z", 100.0)).equals(
-				value(t5, result("result/z", outPaths("arg/x1", "result/z")))));
+				exec(t5, result("result/z", outPaths("arg/x1", "result/z")))));
 	}
 
 	
@@ -125,13 +125,13 @@ public class Services {
 					pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
 
 		// get the result value
-		assertTrue(value(job).equals(400.0));
+		assertTrue(exec(job).equals(400.0));
 
 		// get the subcontext output from the exertion
 		assertTrue(context(ent("j1/j2/t4/result/y", 500.0),
 				ent("j1/j2/t5/result/y", 100.0),
 				ent("j1/t3/result/y", 400.0)).equals(
-					value(job, result("result/z",
+					exec(job, result("result/z",
 						outPaths("j1/j2/t4/result/y", "j1/j2/t5/result/y", "j1/t3/result/y")))));
 
 		

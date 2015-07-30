@@ -279,7 +279,7 @@ public class ParModelTest {
 
 		// persistent par
 		Par dbIn = persistent(map(par("dbIn", "design/in"), cxt));
-		assertEquals(eval(dbIn), 25.0);  	// is persisted
+		assertEquals(value(dbIn), 25.0);  	// is persisted
 		logger.info("value dbIn asis design/in 1: " + dbIn.getMappable().asis("design/in"));
 
 		assertTrue(asis(cxt,"design/in") instanceof Par);

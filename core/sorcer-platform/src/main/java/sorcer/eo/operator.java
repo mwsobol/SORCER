@@ -64,8 +64,6 @@ import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.*;
 
-import static sorcer.mo.operator.parModel;
-
 
 /**
  * Operators defined for the Service Modeling Language (SML).
@@ -101,7 +99,7 @@ public class operator {
                                  Arg... entries) throws ContextException {
         Object obj = value(evaluation, path, entries);
         if (obj instanceof Evaluation) {
-            obj = eval((Evaluation) obj, entries);
+            obj = value((Evaluation) obj, entries);
         }
         return obj;
     }
@@ -111,7 +109,7 @@ public class operator {
         Object obj = null;
         if (object instanceof Evaluation || object instanceof Context) {
             obj = value((Evaluation) object, path, entries);
-            obj = eval((Evaluation) obj, entries);
+            obj = value((Evaluation) obj, entries);
         } else if  (object instanceof Context) {
             obj = value((Context) object, path, entries);
             obj = value((Context) obj, entries);
@@ -125,7 +123,7 @@ public class operator {
 			throws EvaluationException {
 		Object obj = null;
 		if (object instanceof Evaluation) {
-			obj = eval((Evaluation) object, entries);
+			obj = value((Evaluation) object, entries);
 		} else if (object instanceof Context) {
             try {
                 obj = value((Context) object, entries);
@@ -247,21 +245,21 @@ public class operator {
 		if (entries[0] instanceof Exertion) {
 			Exertion xrt = (Exertion) entries[0];
 			if (entries.length >= 2 && entries[1] instanceof String)
-				xrt = (Exertion)((CompoundExertion) xrt).getComponentMogram((String) entries[1]);
+				xrt = (Exertion) ((CompoundExertion) xrt).getComponentMogram((String) entries[1]);
 			return xrt.getDataContext();
 		} else if (entries[0] instanceof Link) {
-			return ((Link)entries[0] ).getContext();
+			return ((Link) entries[0]).getContext();
 		} else if (entries.length == 1 && entries[0] instanceof String) {
 			return new PositionalContext((String) entries[0]);
 		} else if (entries.length == 2 && entries[0] instanceof String
 				&& entries[1] instanceof Exertion) {
-			return ((Exertion)((CompoundExertion) entries[1]).getComponentMogram(
+			return ((Exertion) ((CompoundExertion) entries[1]).getComponentMogram(
 					(String) entries[0])).getContext();
 		} else if (entries[0] instanceof Context && entries[1] instanceof List) {
-			return ((ServiceContext)entries[0]).getSubcontext((List)entries[1]);
+			return ((ServiceContext) entries[0]).getSubcontext((List) entries[1]);
 		} else if (entries[0] instanceof Model) {
-            cxt = (PositionalContext)entries[0];
-        } else {
+			cxt = (PositionalContext) entries[0];
+		} else {
 			cxt = getPersistedContext(entries);
 			if (cxt != null) return cxt;
 		}
@@ -278,6 +276,7 @@ public class operator {
 		ParameterTypes parameterTypes = null;
 		PathResponse response = null;
 		PoolStrategy modelStrategy = null;
+		Signature sig = null;
 		for (Object o : entries) {
 			if (o instanceof Complement) {
 				subject = (Complement) o;
@@ -305,47 +304,49 @@ public class operator {
 				parEntryList.add((Par) o);
 			} else if (o instanceof EntryList) {
 				entryLists.add((EntryList) o);
-			}  else if (o instanceof MapContext) {
+			} else if (o instanceof MapContext) {
 				connList.add((MapContext) o);
 			} else if (o instanceof DependencyEntry) {
 				depList.add((DependencyEntry) o);
+			} else if (o instanceof Signature) {
+				sig = (Signature) o;
 			}
 		}
 
-        if (cxt == null) {
-            if (types.contains(Context.Type.ARRAY)) {
-                if (subject != null)
-                    cxt = new ArrayContext(name, subject.path(), subject.value());
-                else
-                    cxt = new ArrayContext(name);
-            } else if (types.contains(Context.Type.LIST)) {
-                if (subject != null)
-                    cxt = new ListContext(name, subject.path(), subject.value());
-                else
-                    cxt = new ListContext(name);
-            } else if (types.contains(Context.Type.SCOPE)) {
-                cxt = new ScopeContext(name);
-            } else if (types.contains(Context.Type.SHARED)
-                    && types.contains(Context.Type.INDEXED)) {
-                cxt = new SharedIndexedContext(name);
-            } else if (types.contains(Context.Type.SHARED)) {
-                cxt = new SharedAssociativeContext(name);
-            } else if (types.contains(Context.Type.ASSOCIATIVE)) {
-                if (subject != null)
-                    cxt = new ServiceContext(name, subject.path(), subject.value());
-                else
-                    cxt = new ServiceContext(name);
-            } else {
-                if (subject != null) {
-                    cxt = new PositionalContext(name, subject.path(),
-                            subject.value());
-                } else {
-                    cxt = new PositionalContext(name);
-                }
-            }
-        }
-            
-        
+		if (cxt == null) {
+			if (types.contains(Context.Type.ARRAY)) {
+				if (subject != null)
+					cxt = new ArrayContext(name, subject.path(), subject.value());
+				else
+					cxt = new ArrayContext(name);
+			} else if (types.contains(Context.Type.LIST)) {
+				if (subject != null)
+					cxt = new ListContext(name, subject.path(), subject.value());
+				else
+					cxt = new ListContext(name);
+			} else if (types.contains(Context.Type.SCOPE)) {
+				cxt = new ScopeContext(name);
+			} else if (types.contains(Context.Type.SHARED)
+					&& types.contains(Context.Type.INDEXED)) {
+				cxt = new SharedIndexedContext(name);
+			} else if (types.contains(Context.Type.SHARED)) {
+				cxt = new SharedAssociativeContext(name);
+			} else if (types.contains(Context.Type.ASSOCIATIVE)) {
+				if (subject != null)
+					cxt = new ServiceContext(name, subject.path(), subject.value());
+				else
+					cxt = new ServiceContext(name);
+			} else {
+				if (subject != null) {
+					cxt = new PositionalContext(name, subject.path(),
+							subject.value());
+				} else {
+					cxt = new PositionalContext(name);
+				}
+			}
+		}
+
+
 		if (cxt instanceof PositionalContext) {
 			PositionalContext pcxt = (PositionalContext) cxt;
 			if (entryList.size() > 0)
@@ -400,15 +401,17 @@ public class operator {
 			}
 		}
 		if (depList.size() > 0) {
-			Map<String, List<String>> dm = ((ServiceContext)cxt).getRuntime().getDependentPaths();
+			Map<String, List<String>> dm = ((ServiceContext) cxt).getRuntime().getDependentPaths();
 			String path = null;
 			List<String> dependentPaths = null;
 			for (DependencyEntry e : depList) {
 				path = e.getName();
-				dependentPaths =  e.value();
+				dependentPaths = e.value();
 				dm.put(path, dependentPaths);
 			}
 		}
+		if (sig != null)
+			cxt.setSubject("signature", sig);
 		return cxt;
 	}
 
@@ -1520,12 +1523,14 @@ public class operator {
 		}
 	}
 
-    public static <T> T value(Service service, Arg... entries) throws EvaluationException {
+    public static <T> T exec(Service service, Arg... entries) throws EvaluationException {
         try {
             if (service instanceof Model) {
-                return (T)value((Context<T>) service, entries);
-            } else {
-				return (T)eval((Evaluation<T>) service, entries);
+                return (T) ((ServiceContext<T>)service).getValue(entries);
+            } else if (service instanceof Exertion) {
+				return (T) getValue((Exertion) service, entries);
+			} else {
+				return ((Evaluation<T>)service).getValue(entries);
 			}
         } catch (Exception e) {
             throw new EvaluationException(e);
@@ -1536,18 +1541,14 @@ public class operator {
             throws ContextException {
         try {
             synchronized (model) {
-                if (model instanceof ParModel) {
-                    return ((ParModel<T>) model).getValue(entries);
-                } else {
-                    return (T) ((ServiceContext)model).getValue(entries);
-                }
+				return (T) ((ServiceContext)model).getValue(entries);
             }
         } catch (Exception e) {
             throw new ContextException(e);
         }
     }
 
-	public static <T> T eval(Evaluation<T> evaluation, Arg... entries)
+	public static <T> T value(Evaluation<T> evaluation, Arg... entries)
 			throws EvaluationException {
 		try {
 			synchronized (evaluation) {
@@ -1893,12 +1894,31 @@ public class operator {
 
 	public static <T extends Mogram> T service(Service service, Mogram mogram, Transaction txn)
 			throws MogramException, TransactionException, RemoteException {
-		return (T) service.service(mogram, txn);
+		if (service instanceof Provider) {
+			Task out = (Task) service.service(mogram, txn);
+			return (T)out.getContext();
+		} else if (service instanceof Mogram) {
+			Context cxt;
+			if (mogram instanceof Exertion) {
+				cxt = ((Exertion) exert(mogram)).getContext();
+			} else {
+//				cxt = (Context) ((Model) mogram).getResult();
+				cxt = (Context) mogram;
+			}
+			((Mogram)service).setScope(cxt);
+			return (T) exert((Mogram)service);
+		} else if (service instanceof NetSignature
+				&& ((Signature)service).getServiceType() == sorcer.core.provider.Shell.class) {
+			Provider prv= (Provider) Accessor.getService((Signature)service);
+			return (T) ((Exertion) prv.service(mogram, txn)).getContext();
+		} else {
+			return (T) service.service(mogram, txn);
+		}
 	}
 
 	public static <T extends Mogram> T service(Service service, Mogram mogram)
 			throws MogramException, TransactionException, RemoteException {
-		  return (T) service.service(mogram, null);
+		return service(service, mogram, null);
 	}
 
 	public static <T extends Mogram> T exert(Exerter exerter, Mogram input, Arg... entries)
@@ -2347,6 +2367,14 @@ public class operator {
 		if (obj == null)
 			return null;
 		return Arrays.asList(obj.getClass().getInterfaces());
+	}
+
+	public static Provider prv(Signature signature) throws SignatureException {
+		Object obj = provider(signature);
+		if (obj instanceof Provider)
+			return (Provider)obj;
+		else
+			throw new SignatureException("provider not of Provider.class type");
 	}
 
 	public static Object provider(Signature signature)

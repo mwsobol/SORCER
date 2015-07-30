@@ -54,8 +54,8 @@ public class SignatureTest {
 		logger.info("provider of s: " + prv);
 		assertTrue(prv instanceof Date);
 
-		logger.info("getTime: " + value(mogram("gt", s)));
-		assertTrue(value(mogram("gt", s)) instanceof Long);
+		logger.info("getTime: " + exec(mogram("gt", s)));
+		assertTrue(exec(mogram("gt", s)) instanceof Long);
 
 	}
 
@@ -73,8 +73,8 @@ public class SignatureTest {
 		assertTrue(prv instanceof Date);
 		mogram("time", s);
 
-		logger.info("time: " + value(mogram("time", s)));
-		assertTrue(value(mogram("time", s)) instanceof Long);
+		logger.info("time: " + exec(mogram("time", s)));
+		assertTrue(exec(mogram("time", s)) instanceof Long);
 
 	}
 
@@ -87,8 +87,8 @@ public class SignatureTest {
 		logger.info("provider of s: " + prv);
 		assertTrue(prv == Math.class);
 
-		logger.info("random: " + value(mogram("random", ms)));
-		assertTrue(value(mogram("random", ms)) instanceof Double);
+		logger.info("random: " + exec(mogram("random", ms)));
+		assertTrue(exec(mogram("random", ms)) instanceof Double);
 
 		ms = sig(Math.class, "max");
 		Context cxt = context(
@@ -96,9 +96,9 @@ public class SignatureTest {
 				args(new Object[] { 200.11, 3000.0 }));
 
 		// request the service
-		logger.info("max: " + value(mogram("max", ms, cxt)));
-		assertTrue(value(mogram("max", ms, cxt)) instanceof Double);
-		assertTrue(value(mogram("max", ms, cxt)).equals(3000.0));
+		logger.info("max: " + exec(mogram("max", ms, cxt)));
+		assertTrue(exec(mogram("max", ms, cxt)) instanceof Double);
+		assertTrue(exec(mogram("max", ms, cxt)).equals(3000.0));
 
 	}
 
@@ -118,9 +118,9 @@ public class SignatureTest {
 		assertTrue(prv instanceof Calendar);
 
 		// request the service
-		logger.info("time: " + value(mogram("month", ps, cxt)));
-		assertTrue(value(mogram("month", ps, cxt)) instanceof Integer);
-		assertTrue(value(mogram("month", ps, cxt)).equals(((Calendar)prv).get(Calendar.MONTH)));
+		logger.info("time: " + exec(mogram("month", ps, cxt)));
+		assertTrue(exec(mogram("month", ps, cxt)) instanceof Integer);
+		assertTrue(exec(mogram("month", ps, cxt)).equals(((Calendar)prv).get(Calendar.MONTH)));
 
 	}
 
@@ -140,7 +140,7 @@ public class SignatureTest {
 						inEnt("arg/x2", 80.0),
 						result("result/y")));
 
-		assertTrue(value(as).equals(100.0));
+		assertTrue(exec(as).equals(100.0));
 
 	}
 
@@ -159,7 +159,7 @@ public class SignatureTest {
 						inEnt("arg/x2", 80.0),
 						result("result/y")));
 
-		assertTrue(value(as).equals(100.0));
+		assertTrue(exec(as).equals(100.0));
 
 	}
 
@@ -179,7 +179,7 @@ public class SignatureTest {
 						inEnt("arg/x2", 80.0),
 						result("result/y")));
 
-		assertTrue(value(as).equals(100.0));
+		assertTrue(exec(as).equals(100.0));
 
 	}
 
@@ -199,7 +199,7 @@ public class SignatureTest {
 						inEnt("arg/x2", 80.0),
 						result("result/y")));
 
-		assertTrue(value(as).equals(100.0));
+		assertTrue(exec(as).equals(100.0));
 
 	}
 
@@ -219,7 +219,7 @@ public class SignatureTest {
 						inEnt("arg/x2", 80.0),
 						result("result/y")));
 
-		assertTrue(value(as).equals(100.0));
+		assertTrue(exec(as).equals(100.0));
 	}
 
 }
