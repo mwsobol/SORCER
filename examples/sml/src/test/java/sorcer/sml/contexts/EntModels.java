@@ -6,12 +6,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
+import sorcer.arithmetic.provider.Adder;
+import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.core.context.Copier;
+import sorcer.core.context.model.ent.EntModel;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.service.Context;
 import sorcer.service.Invocation;
+import sorcer.service.Signature;
 import sorcer.service.modeling.Model;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.asis;
 import static sorcer.co.operator.*;
@@ -124,6 +129,7 @@ public class EntModels {
 
 		logger.info("result: " + result);
 		assertTrue(result.equals(context(ent("add", 4.0), ent("multiply", 20.0))));
+
 	}
 
 
@@ -146,4 +152,61 @@ public class EntModels {
 
 		assertTrue(result.equals(context(ent("add", 4.0), ent("multiply", 20.0))));
 	}
+
+
+	@Test
+	public void contextEntryService() throws Exception {
+
+		Context cxt = context(
+				inEnt("x1", 20.0),
+				inEnt("x2", 80.0));
+
+		Entry e = ent("x2");
+		Context result = service(e, cxt);
+		assertEquals(80.0, value(result, "x2"));
+
+	}
+
+
+	@Test
+	public void invokerEntryService() throws Exception {
+
+		Model em = entModel(
+				inEnt("x1", 20.0),
+				inEnt("x2", 80.0),
+				result("result/y"));
+
+		Entry ie = ent("multiply", invoker("x1 * x2", ents("x1", "x2")));
+		Context result = service(ie, em);
+		assertEquals(1600.0, value(result, "multiply"));
+	}
+
+
+	@Test
+	public void srvEntrylService() throws Exception {
+
+		Model sm = srvModel(
+				inEnt("y1", 20.0),
+				inEnt("y2", 80.0));
+
+		Entry se = srv(sig("add", Adder.class, result(inPaths("y1", "y2"))));
+		Context result = service(se, sm);
+		assertEquals(100.0, value(result, "add"));
+
+	}
+
+
+	@Test
+	public void srvEntryRemoteService() throws Exception {
+
+		Model sm = srvModel(
+				inEnt("y1", 20.0),
+				inEnt("y2", 80.0));
+
+		Entry se = srv(sig("add", Adder.class, result(inPaths("y1", "y2"))));
+		Context result = service(se, sm);
+		assertEquals(100.0, value(result, "add"));
+
+	}
+
 }

@@ -2804,6 +2804,11 @@ public class ServiceContext<T> extends ServiceMogram implements
 		return name;
 	}
 
+	@Override
+	public State getExecState() {
+		return runtime.getExecState();
+	}
+
 	/* (non-Javadoc)
 	 * @see sorcer.service.Context#link(sorcer.service.Context, java.lang.String, java.lang.String)
 	 */

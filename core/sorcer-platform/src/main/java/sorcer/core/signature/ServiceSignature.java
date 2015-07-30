@@ -573,17 +573,15 @@ public class ServiceSignature implements Signature, SorcerConstants {
 	}
 
 	@Override
-	public Mogram service(Mogram exertion, Transaction txn) throws TransactionException,
+	public Mogram service(Mogram mogram, Transaction txn) throws TransactionException,
 		MogramException, RemoteException {
-		Provider prv = (Provider)Accessor.getService(this);
-		return prv.service(exertion, txn);
+		throw new MogramException("should be implemented in subclasses");
 	}
 
 	@Override
-	 public Mogram service(Mogram exertion) throws TransactionException,
+	 public Mogram service(Mogram mogram) throws TransactionException,
 			MogramException, RemoteException {
-		Provider prv = (Provider)Accessor.getService(this);
-		return prv.service(exertion, null);
+		throw new MogramException("should be implemented in subclasses");
 	}
 
 	public Context getInConnector() {

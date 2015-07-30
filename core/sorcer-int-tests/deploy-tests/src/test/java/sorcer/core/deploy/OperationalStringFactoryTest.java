@@ -15,7 +15,7 @@
  */
 package sorcer.core.deploy;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.rioproject.config.Configuration;
@@ -24,6 +24,8 @@ import org.rioproject.opstring.OperationalString;
 import org.rioproject.opstring.ServiceElement;
 import org.rioproject.opstring.UndeployOption;
 import org.rioproject.system.capability.connectivity.TCPConnectivity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.service.*;
@@ -31,8 +33,6 @@ import sorcer.service.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static junit.framework.Assert.assertNotNull;
 import static org.junit.Assert.assertEquals;

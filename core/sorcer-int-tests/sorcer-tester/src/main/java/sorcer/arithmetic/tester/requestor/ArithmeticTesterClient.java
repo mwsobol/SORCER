@@ -39,7 +39,7 @@ public class ArithmeticTesterClient implements SorcerConstants {
 	public static void main(String[] args) throws Exception {
 		System.setSecurityManager(new SecurityManager());
 		logger.info("running: " + args[0]);
-		Exertion result = null;
+		Mogram result = null;
 		ArithmeticTesterClient tester = new ArithmeticTesterClient();
 		if (args[0].equals("f5"))
 			result = tester.f5();
@@ -344,15 +344,15 @@ private Exertion f1SEQpull() throws Exception {
 		return out;
 	}
 
-	private Exertion f5exerter() throws Exception {
-		Task f5 = task(
+	private Mogram f5exerter() throws Exception {
+		Mogram f5 = task(
 				"f5",
 				sig("add", Adder.class),
 				context("add", inEnt("arg/x1", 20.0),
 						inEnt("arg/x2", 80.0), outEnt("result/y", null)),
 				strategy(Monitor.NO, Wait.YES));
 		
-		Exertion out = null;
+		Mogram out = null;
 		long start = System.currentTimeMillis();
 		Exerter exerter = Accessor.getService(Exerter.class);
 		logger.info("got exerter: " + exerter);

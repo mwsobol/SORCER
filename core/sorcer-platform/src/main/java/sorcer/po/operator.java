@@ -142,17 +142,25 @@ public class operator {
 	}
 	
 	public static ParModel parModel(String name, Identifiable... objects)
-			throws RemoteException, ContextException {
+			throws ContextException {
 		ParModel pm = new ParModel(name);
-		pm.add(objects);
+		try {
+			pm.add(objects);
+		} catch (RemoteException e) {
+			throw new ContextException(e);
+		}
 		return pm;
 	}
 	
 	public static <T> T get(ParModel<T> pm, String parname, Arg... parametrs)
-			throws ContextException, RemoteException {
+			throws ContextException {
 		Object obj = pm.asis(parname);
 		if (obj instanceof Par)
-			obj = ((Par)obj).getValue(parametrs);
+			try {
+				obj = ((Par)obj).getValue(parametrs);
+			} catch (RemoteException e) {
+				throw new ContextException(e);
+			}
 		return (T)obj;
 	}
 		

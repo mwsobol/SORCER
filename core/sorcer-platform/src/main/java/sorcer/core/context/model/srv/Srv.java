@@ -112,15 +112,15 @@ public class Srv extends Entry<Object> implements Variability<Object>, Arg, Eval
         return null;
     }
 
-    @Override
-    public <T extends Mogram> T service(T mogram, Transaction txn) throws TransactionException, MogramException, RemoteException {
-        return (T) ((Signature)_2).service(mogram, txn);
-    }
-
-    @Override
-    public <T extends Mogram> T service(T mogram) throws TransactionException, MogramException, RemoteException {
-        return (T) ((Signature)_2).service(mogram, null);
-    }
+//    @Override
+//    public Mogram service(Mogram mogram, Transaction txn) throws TransactionException, MogramException, RemoteException {
+//        return ((Signature)_2).service(mogram, txn);
+//    }
+//
+//    @Override
+//    public Mogram service(Mogram mogram) throws TransactionException, MogramException, RemoteException {
+//        return service(mogram, null);
+//    }
 
     @Override
     public String getName() {

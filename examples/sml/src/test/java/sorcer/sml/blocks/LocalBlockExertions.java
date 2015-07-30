@@ -13,6 +13,7 @@ import sorcer.arithmetic.provider.impl.SubtractorImpl;
 import sorcer.core.SorcerConstants;
 import sorcer.core.provider.rendezvous.ServiceConcatenator;
 import sorcer.service.Block;
+import sorcer.service.Mogram;
 import sorcer.service.Service;
 import sorcer.service.Signature.Direction;
 import sorcer.service.Task;
@@ -121,7 +122,7 @@ public class  LocalBlockExertions implements SorcerConstants {
 				context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
 						result("block/result")));
 
-		Service sb = service("block",
+		Mogram sb = mogram("block",
 				context(ent("y1", 100), ent("y2", 200)),
 				alt(opt(condition("{ y1, y2 -> y1 > y2 }", "y1", "y2"), t4),
 						opt(condition("{ y1, y2 -> y1 <= y2 }", "y1", "y2"), t5)));
