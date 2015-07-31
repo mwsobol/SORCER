@@ -2975,9 +2975,9 @@ public class ServiceContext<T> extends ServiceMogram implements
         try {
             if (subjectValue instanceof Class) {
                 signature = sig(subjectPath, subjectValue);
-                return (T) operator.exertion(name, signature, this).exert(txn, entries);
+                return (T) ((Exertion)operator.exertion(name, signature, this).exert(txn, entries)).getContext();
             } else {
-                // evaluates model otputs - responses
+                // evaluates model outputs - responses
 				getResponse(entries);
 				return (T) this;
             }

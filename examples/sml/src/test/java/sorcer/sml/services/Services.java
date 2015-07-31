@@ -34,7 +34,7 @@ public class Services {
 	@Test
 	public void exertTask() throws Exception  {
 
-		Service t5 = service("t5", sig("add", AdderImpl.class),
+		Service t5 = task("t5", sig("add", AdderImpl.class),
 				cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
 						outEnt("result/y")));
 
@@ -53,7 +53,7 @@ public class Services {
 	@Test
 	public void evaluateTask() throws Exception  {
 
-		Service t5 = service("t5", sig("add", AdderImpl.class),
+		Service t5 = task("t5", sig("add", AdderImpl.class),
 				cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
 						result("result/y")));
 
@@ -69,23 +69,23 @@ public class Services {
 	@Test
 	public void exertJob() throws Exception {
 
-		Service t3 = srv("t3", sig("subtract", SubtractorImpl.class),
+		Service t3 = task("t3", sig("subtract", SubtractorImpl.class),
 				cxt("subtract", inEnt("arg/x1"), inEnt("arg/x2"), outEnt("result/y")));
 
-		Service t4 = srv("t4", sig("multiply", MultiplierImpl.class),
+		Service t4 = task("t4", sig("multiply", MultiplierImpl.class),
 				// cxt("multiply", in("super/arg/x1"), in("arg/x2", 50.0),
 				cxt("multiply", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
 						outEnt("result/y")));
 
-		Service t5 = srv("t5", sig("add", AdderImpl.class),
+		Service t5 = task("t5", sig("add", AdderImpl.class),
 				cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
 						outEnt("result/y")));
 
 		Service job = //j1(j2(t4(x1, x2), t5(x1, x2)), t3(x1, x2))
-				srv("j1", sig(ServiceJobber.class),
+				job("j1", sig(ServiceJobber.class),
 					cxt(inEnt("arg/x1", 10.0),
 					result("job/result", outPaths("j1/t3/result/y"))),
-					srv("j2", sig(ServiceJobber.class), t4, t5),
+					job("j2", sig(ServiceJobber.class), t4, t5),
 					t3,
 					pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
 					pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
@@ -106,19 +106,19 @@ public class Services {
 	@Test
 	public void evaluateJob() throws Exception {
 
-		Service t3 = srv("t3", sig("subtract", SubtractorImpl.class),
+		Service t3 = task("t3", sig("subtract", SubtractorImpl.class),
 				cxt("subtract", inEnt("arg/x1"), inEnt("arg/x2"), result("result/y")));
 
-		Service t4 = srv("t4", sig("multiply", MultiplierImpl.class),
+		Service t4 = task("t4", sig("multiply", MultiplierImpl.class),
 				cxt("multiply", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0), result("result/y")));
 
-		Service t5 = srv("t5", sig("add", AdderImpl.class),
+		Service t5 = task("t5", sig("add", AdderImpl.class),
 				cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0), result("result/y")));
 
         //TODO: CHECK Access.PULL doesn't work with ServiceJobber!!!
 		Service job = //j1(j2(t4(x1, x2), t5(x1, x2)), t3(x1, x2))
-				srv("j1", sig(ServiceJobber.class), result("job/result", outPaths("j1/t3/result/y")),
-					srv("j2", sig(ServiceJobber.class), t4, t5, strategy(Flow.PAR, Access.PUSH)),
+				job("j1", sig(ServiceJobber.class), result("job/result", outPaths("j1/t3/result/y")),
+					job("j2", sig(ServiceJobber.class), t4, t5, strategy(Flow.PAR, Access.PUSH)),
 					t3,
 					pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
 					pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));

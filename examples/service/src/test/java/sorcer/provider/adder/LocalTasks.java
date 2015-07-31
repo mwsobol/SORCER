@@ -28,7 +28,7 @@ public class LocalTasks {
 	@Test
 	public void exertTask() throws Exception  {
 
-		Service t5 = service("t5", sig("add", AdderImpl.class),
+		Service t5 = task("t5", sig("add", AdderImpl.class),
 				cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0)));
 
 		Service out = exert(t5);

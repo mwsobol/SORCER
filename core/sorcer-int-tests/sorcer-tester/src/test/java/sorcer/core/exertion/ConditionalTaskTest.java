@@ -34,8 +34,7 @@ public class ConditionalTaskTest {
 	private final static Logger logger = LoggerFactory.getLogger(ConditionalTaskTest.class);
 
 	@Test
-	public void arithmeticTaskTest() throws ExertionException,
-			SignatureException, ContextException, RemoteException {
+	public void arithmeticTaskTest() throws Exception {
 		// to test tracing of execution enable ServiceExertion.debug
 		ParModel pm = new ParModel("par-model");
 

@@ -193,7 +193,7 @@ public class NetJobExertions implements SorcerConstants {
 				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
 				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
 
-		Context context = upcontext(exert(sig(Shell.class), job));
+		Context context = upcontext(exec(sig(Shell.class), job));
 		logger.info("job context: " + context);
 		assertEquals(get(context, "j1/t3/result/y"), 400.0);
 

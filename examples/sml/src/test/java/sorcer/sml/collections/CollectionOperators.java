@@ -40,7 +40,6 @@ import static sorcer.eo.operator.asis;
 import static sorcer.eo.operator.get;
 import static sorcer.eo.operator.pipe;
 import static sorcer.eo.operator.put;
-import static sorcer.eo.operator.srv;
 import static sorcer.eo.operator.value;
 import static sorcer.mo.operator.entModel;
 import static sorcer.po.operator.add;
@@ -211,7 +210,7 @@ public class CollectionOperators {
 		assertTrue(access(se1).equals(access(st1)));
 
 		// store an object
-		URL se2Url = store(value(se1));
+		store(value(se1));
 		Strategy st2 = (Strategy)content(se1Url);
 		assertTrue(flow(se1).equals(flow(st2)));
 		assertTrue(access(se1).equals(access(st2)));
@@ -407,7 +406,7 @@ public class CollectionOperators {
 //		assertTrue(value(cxt, "arg/x8").equals(100.0));
 
 		// model with local service entry, no arguments
-		add(cxt, ent("arg/x9", service(sig("multiply", MultiplierImpl.class),
+		add(cxt, ent("arg/x9", task(sig("multiply", MultiplierImpl.class),
 			cxt("add", inEnt("arg/x1"), inEnt("arg/x2"), result("result/y")))));
 
 		assertTrue(value(cxt, "arg/x9").equals(2.0));
@@ -430,8 +429,7 @@ public class CollectionOperators {
 	}
 
 	@Test
-	public void serviceMogramming() throws RemoteException,
-			ContextException, ExertionException, SignatureException {
+	public void serviceMogramming() throws Exception {
 
 		Service c4 = context("multiply", inEnt("arg/x1"), inEnt("arg/x2"),
 				outEnt("result/y"));
@@ -439,16 +437,16 @@ public class CollectionOperators {
 		Service c5 = context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
 				outEnt("result/y"));
 
-		Service t3 = srv("t3", sig("subtract", SubtractorImpl.class),
+		Service t3 = task("t3", sig("subtract", SubtractorImpl.class),
 				context("subtract", inEnt("arg/x1", null), inEnt("arg/x2"),
 						outEnt("result/y")));
 
-		Service t4 = srv("t4", sig("multiply", MultiplierImpl.class), c4);
+		Service t4 = task("t4", sig("multiply", MultiplierImpl.class), c4);
 
-		Service t5 = srv("t5", sig("add", AdderImpl.class), c5);
+		Service t5 = task("t5", sig("add", AdderImpl.class), c5);
 
-		Service j1 = srv("j1", sig("service", ServiceJobber.class),
-				srv("j2", t4, t5, sig("service", ServiceJobber.class)),
+		Service j1 = job("j1", sig("service", ServiceJobber.class),
+				job("j2", t4, t5, sig("service", ServiceJobber.class)),
 				t3,
 				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
 				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));

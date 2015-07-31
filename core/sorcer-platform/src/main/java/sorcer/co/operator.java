@@ -453,7 +453,7 @@ public class operator {
 		return url.getContent();
 	}
 
-	public static URL update(Object object) throws ExertionException,
+	public static URL update(Object object) throws MogramException,
 			SignatureException, ContextException {
 		return SdbUtil.update(object);
 	}
@@ -482,8 +482,8 @@ public class operator {
 		return collection.size();
 	}
 
-	public static int size(Context context) {
-		return context.size();
+	public static int size(Model context) {
+		return ((ServiceContext)context).size();
 	}
 
 	public static int size(Map map) {

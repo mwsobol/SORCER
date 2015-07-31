@@ -61,7 +61,7 @@ public class ParModelTest {
 	}
 
 	@Test
-	public void contextInvoker() throws RemoteException, ContextException {
+	public void contextInvoker() throws Exception {
 		ParModel pm = new ParModel("par-model");
 		add(pm, ent("x", 10.0));
 		add(pm, ent("y", 20.0));
@@ -323,8 +323,7 @@ public class ParModelTest {
 	}
 	
 	@Test
-	public void exertionParsTest() throws RemoteException,
-			ContextException, ExertionException, SignatureException {
+	public void exertionParsTest() throws Exception {
 
 		Context c4 = context("multiply", inEnt("arg/x1"), inEnt("arg/x2"),
 				outEnt("result/y"));
@@ -377,8 +376,7 @@ public class ParModelTest {
 	}
 	
 	@Test
-	public void associatingContextsTest() throws RemoteException,
-			ContextException, ExertionException, SignatureException {
+	public void associatingContextsTest() throws Exception {
 		
 		Context c4 = context("multiply", inEnt("arg/x1"), inEnt("arg/x2"),
 				outEnt("result/y"));

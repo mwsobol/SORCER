@@ -61,7 +61,7 @@ public class DeployExertionTest2 extends DeploySetup implements SorcerConstants 
         verifyExertion(f1);
     }
 
-    private void verifyExertion(Job job) throws ExertionException, ContextException {
+    private void verifyExertion(Job job) throws Exception {
     	long t0 = System.currentTimeMillis();
         Exertion out = exert(job);
         System.out.println("Waited "+(System.currentTimeMillis()-t0)+" millis for exerting: " + out.getName());

@@ -141,10 +141,13 @@ public class operator {
 		return fi;
 	}
 	
-	public static ParModel parModel(String name, Identifiable... objects)
+	public static ParModel parModel(String name, Object... objects)
 			throws RemoteException, ContextException {
 		ParModel pm = new ParModel(name);
-		pm.add(objects);
+		for (Object o : objects) {
+			if (o instanceof Identifiable)
+				pm.add((Identifiable)o);
+		}
 		return pm;
 	}
 	

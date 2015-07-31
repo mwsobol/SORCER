@@ -51,7 +51,7 @@ public class TaskTest {
 	}
 	
 	@Test
-	public void arithmeticTaskTest() throws ExertionException, SignatureException, ContextException, RemoteException {
+	public void arithmeticTaskTest() throws Exception {
 		//to test tracing of execution enable ServiceExertion.debug 
 		ServiceExertion.debug = true;
 		
@@ -105,9 +105,27 @@ public class TaskTest {
 //		logger.info("get value: " + get(task));
 //		assertTrue("Wrong value for 12.0", get(task).equals(12.0));
 	}
-	
 
 	@Test
+	public void arithmeticCustomContextTest() throws Exception {
+		//to test tracing of execution enable ServiceExertion.debug
+		ServiceExertion.debug = true;
+
+		Task task = task("add",
+				sig("add", AdderImpl.class),
+				context(CustomContext.class, inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
+						result("result/y")));
+
+		// EXERTING
+		task = exert(task);
+		logger.info("exerted: " + task);
+		assertTrue("Wrong value for 100.0", (Double) get(task) == 100.0);
+		print(exceptions(task));
+		assertTrue(exceptions(task).size() == 0);
+		print(trace(task));
+	}
+
+		@Test
 	public void argTaskTest() throws Exception {
 		Task t4 = task("t4", sig("multiply", new Multiply()),
 				context(

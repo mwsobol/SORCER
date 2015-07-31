@@ -24,9 +24,7 @@ import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import org.sorcer.test.TestsRequiringRio;
 import sorcer.core.SorcerConstants;
-import sorcer.service.ContextException;
 import sorcer.service.Exertion;
-import sorcer.service.ExertionException;
 import sorcer.service.Job;
 
 import java.util.Collection;
@@ -52,8 +50,8 @@ public class DeployExertionTest extends DeploySetup implements SorcerConstants {
         verifyExertion(f1);
     }
 
-    private void verifyExertion(Job job) throws ExertionException, ContextException {
-        System.out.println("Verifying "+job.getName());
+    private void verifyExertion(Job job) throws Exception {
+        System.out.println("Verifying "+job.getName()  );
     	long t0 = System.currentTimeMillis();
         Exertion out = exert(job);
         System.out.println("Waited "+(System.currentTimeMillis()-t0)+" millis for exerting: " + out.getName());

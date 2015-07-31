@@ -32,7 +32,7 @@ import static sorcer.mo.operator.outConn;
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/sml")
 public class Signatures {
-	private final static Logger logger = LoggerFactory.getLogger(Signatures.class.getName());
+	private final static Logger logger = LoggerFactory.getLogger(Signatures.class);
 
 	@Test
 	public void newInstance() throws Exception {
@@ -58,8 +58,8 @@ public class Signatures {
 		logger.info("provider of s: " + prv);
 		assertTrue(prv instanceof Date);
 
-		logger.info("getTime: " + reply(service("gt", s)));
-		assertTrue(reply(service("gt", s)) instanceof Long);
+		logger.info("getTime: " + exec(xrt("gt", s)));
+		assertTrue(exec(xrt("gt", s)) instanceof Long);
 
 	}
 
@@ -75,10 +75,8 @@ public class Signatures {
 		logger.info("selector of s: " + selector(s));
 		logger.info("service type of s: " + type(s));
 		assertTrue(prv instanceof Date);
-		service("time", s);
-
-		logger.info("time: " + reply(service("time", s)));
-		assertTrue(reply(service("time", s)) instanceof Long);
+		logger.info("time: " + exec(xrt("time", s)));
+		assertTrue(exec(xrt("time", s)) instanceof Long);
 
 	}
 
@@ -91,8 +89,8 @@ public class Signatures {
 		logger.info("provider of s: " + prv);
 		assertTrue(prv == Math.class);
 
-		logger.info("random: " + reply(service("random", ms)));
-		assertTrue(reply(service("random", ms)) instanceof Double);
+		logger.info("random: " + exec(xrt("random", ms)));
+		assertTrue(exec(xrt("random", ms)) instanceof Double);
 
 		ms = sig(Math.class, "max");
 		Context cxt = context(
@@ -100,9 +98,9 @@ public class Signatures {
 				args(new Object[]{200.11, 3000.0}));
 
 		// request the service
-		logger.info("max: " + reply(service("max", ms, cxt)));
-		assertTrue(reply(service("max", ms, cxt)) instanceof Double);
-		assertTrue(reply(service("max", ms, cxt)).equals(3000.0));
+		logger.info("max: " + exec(task("max", ms, cxt)));
+		assertTrue(exec(task("max", ms, cxt)) instanceof Double);
+		assertTrue(exec(task("max", ms, cxt)).equals(3000.0));
 
 	}
 
@@ -154,9 +152,9 @@ public class Signatures {
 		assertTrue(prv instanceof Calendar);
 
 		// request the service
-		logger.info("time: " + reply(service("month", ps, cxt)));
-		assertTrue(reply(service("month", ps, cxt)) instanceof Integer);
-		assertTrue(reply(service("month", ps, cxt)).equals(((Calendar) prv).get(Calendar.MONTH)));
+		logger.info("time: " + exec(task("month", ps, cxt)));
+		assertTrue(exec(task("month", ps, cxt)) instanceof Integer);
+		assertTrue(exec(task("month", ps, cxt)).equals(((Calendar) prv).get(Calendar.MONTH)));
 
 	}
 
@@ -170,7 +168,7 @@ public class Signatures {
 		assertFalse(prv instanceof Proxy);
 
 		// request the local service
-		Service as = service("as", lps,
+		Service as = task("as", lps,
 				context("add",
 						inEnt("arg/x1", 20.0),
 						inEnt("arg/x2", 80.0),
@@ -191,7 +189,7 @@ public class Signatures {
 		assertTrue(prv instanceof Proxy);
 
 		// request the remote service
-		Service as = service("as", rps,
+		Service as = task("as", rps,
 				context("add",
 						inEnt("arg/x1", 20.0),
 						inEnt("arg/x2", 80.0),
@@ -212,7 +210,7 @@ public class Signatures {
 		assertTrue(prv instanceof Proxy);
 
 		// request the remote service
-		Service as = service("as", ps,
+		Service as = task("as", ps,
 				context("add",
 						inEnt("arg/x1", 20.0),
 						inEnt("arg/x2", 80.0),
@@ -236,7 +234,7 @@ public class Signatures {
 		Signature ps = sig("add", AdderImpl.class, prvName("Adder"), outConnector);
 
 		// request the remote service
-		Service as = service("as", ps, cxt);
+		Service as = task("as", ps, cxt);
 
 		logger.info("input context: " + context(as));
 
@@ -264,7 +262,7 @@ public class Signatures {
 		Signature ps = sig("add", Adder.class, prvName("Adder"), inc);
 
 		// request the remote service
-		Service as = service("as", ps, cxt);
+		Service as = task("as", ps, cxt);
 
 		logger.info("input context: " + context(as));
 
