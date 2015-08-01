@@ -655,6 +655,34 @@ public class operator {
 		return map;
 	}
 
+	public static Object asis(Entry entry)
+			throws ContextException {
+		if (entry instanceof Par)
+			return ((Par)entry).value();
+		else
+			return entry._2;
+	}
+
+	public static <T> T get(Context<T> context, String path)
+			throws ContextException {
+		return  context.asis(path);
+	}
+
+	public static <T> T get(Model model, String path)
+			throws ContextException {
+		return  ((ServiceContext<T>)model).asis(path);
+	}
+
+	public static <T> T asis(Context<T> context, String path)
+			throws ContextException {
+		return  context.asis(path);
+	}
+
+	public static <T> T asis(Model model, String path)
+			throws ContextException {
+		return  ((ServiceContext<T>)model).asis(path);
+	}
+
     public static <T> T asis(Mappable<T> mappable, String path)
             throws ContextException {
         return  mappable.asis(path);

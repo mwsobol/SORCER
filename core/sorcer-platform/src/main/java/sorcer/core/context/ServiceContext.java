@@ -2562,7 +2562,11 @@ public class ServiceContext<T> extends ServiceMogram implements
 				val = get(path);
 			}
 		}
-		return val;
+		// potentially context link
+		if (val == null)
+			return getValue(path);
+		else
+			return val;
 	}
 
 	public T get(String path) {
@@ -2640,8 +2644,11 @@ public class ServiceContext<T> extends ServiceMogram implements
 					obj = ((Evaluation<T>)obj).getValue(entries);
 				}
 			}
-			if (obj instanceof Reactive && ((Reactive)obj).isReactive())
-				obj = (T) ((Evaluation)obj).getValue(entries);
+			if (obj instanceof Reactive && ((Reactive)obj).isReactive()) {
+				if (obj instanceof Entry && ((Entry)obj).value() instanceof Scopable)
+					((Scopable)((Entry)obj).value()).setScope(this);
+				obj = (T) ((Evaluation) obj).getValue(entries);
+			}
 			if (obj == Context.none && scope != null)
 				obj = (T ) scope.getValue(path, entries);
 

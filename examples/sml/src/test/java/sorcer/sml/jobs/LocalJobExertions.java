@@ -60,7 +60,7 @@ public class LocalJobExertions implements SorcerConstants {
 
 		Context context = upcontext(exert(job));
 		logger.info("job context: " + context);
-		assertEquals(get(context, "j1/t3/result/y"), 400.0);
+		assertTrue(get(context, "j1/t3/result/y").equals(400.0));
 
 	}
 
@@ -94,7 +94,7 @@ public class LocalJobExertions implements SorcerConstants {
 
 		Context context = upcontext(exert(job));
 		logger.info("job context: " + context);
-		assertEquals(get(context, "j1/t3/result/y"), 400.0);
+		assertTrue(get(context, "j1/t3/result/y").equals(400.0));
 
 	}
 
@@ -107,8 +107,8 @@ public class LocalJobExertions implements SorcerConstants {
 
 		Context result = context(exert(cxtt));
 //		logger.info("contexter context: " + result);
-		assertEquals(get(result, "arg/x1"), 20.0);
-		assertEquals(get(result, "arg/x2"), 80.0);
+		assertTrue(get(result, "arg/x1").equals(20.0));
+		assertTrue(get(result, "arg/x2").equals(80.0));
 
 	}
 	
@@ -122,7 +122,7 @@ public class LocalJobExertions implements SorcerConstants {
 		
 		Context result = context(exert(t5));
 //		logger.info("task context: " + result);
-		assertEquals(get(result, "result/y"), 100.0);
+		assertTrue(get(result, "result/y").equals(100.0));
 
 	}
 	
@@ -156,10 +156,9 @@ public class LocalJobExertions implements SorcerConstants {
 
 		Context context = upcontext(exert(job));
 		logger.info("job context: " + context);
-		get(context, "j1/t3/result/y");
-		assertEquals(get(context, "j1/t3/arg/x1"), 500.0);
-		assertEquals(get(context, "j1/t3/arg/x2"), 100.0);
-		assertEquals(get(context, "j1/t3/result/y"), 400.0);
+		assertTrue(get(context, "j1/t3/arg/x1").equals(500.0));
+		assertTrue(get(context, "j1/t3/arg/x2").equals(100.0));
+		assertTrue(get(context, "j1/t3/result/y").equals(400.0));
 
 	}
 

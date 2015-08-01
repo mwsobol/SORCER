@@ -22,8 +22,7 @@ import static sorcer.co.operator.*;
 import static sorcer.co.operator.ent;
 import static sorcer.co.operator.outPaths;
 import static sorcer.eo.operator.*;
-import static sorcer.mo.operator.response;
-import static sorcer.mo.operator.responseUp;
+import static sorcer.mo.operator.*;
 import static sorcer.po.operator.invoker;
 
 
@@ -45,12 +44,39 @@ public class Services {
         // declare response paths
         responseUp(context, "result/y");
 
-        assertEquals(20.0, get(context, "x1"));
-        assertEquals(80.0, get(context, "x2"));
+        assertTrue(get(context, "x1").equals(20.0));
+        assertTrue(get(context, "x2").equals(80.0));
 
         Model out = response(context);
         assertEquals(1, size(out));
-        assertEquals(100.0, get(out, "result/y"));
+        assertTrue(get(out, "result/y").equals(100.0));
+
+    }
+
+    @Test
+    public void modelInsOutsRsp() throws Exception  {
+
+        Model context = model(inEnt("x1", 20.0), inEnt("x2", 80.0),
+                outEnt("result/y", invoker("x1 + x2", ents("x1", "x2"))));
+
+        Model inputs = inputs(context);
+        logger.info("inputs : " + inputs(context));
+        assertEquals(2, size(inputs));
+        Model outputs = outputs(context);
+        assertEquals(1, size(outputs));
+        logger.info("outputs : " + outputs(context));
+
+        // declare response paths
+        responseUp(context, "result/y");
+        Model out = response(context);
+        assertEquals(1, size(out));
+        assertTrue(get(out, "result/y").equals(100.0));
+
+        // more response paths
+        responseUp(context, "x1");
+        out = response(context);
+        assertEquals(2, size(out));
+        assertTrue(get(out, "x1").equals(20.0));
 
     }
 

@@ -43,7 +43,6 @@ import static sorcer.eo.operator.put;
 import static sorcer.eo.operator.value;
 import static sorcer.mo.operator.entModel;
 import static sorcer.po.operator.add;
-import static sorcer.po.operator.asis;
 import static sorcer.po.operator.*;
 import static sorcer.po.operator.set;
 
@@ -273,15 +272,15 @@ public class CollectionOperators {
 	public void dbParOperator() throws Exception {
 
 		// persist values (arguments) of pars
-		Par<Double> dbp1 = persistent(par("design/in", 25.0));
-		Par<String> dbp2 = dbPar("url/sobol", "http://sorcersoft.org/sobol");
+		Par dbp1 = persistent(par("design/in", 25.0));
+		Par dbp2 = dbPar("url/sobol", "http://sorcersoft.org/sobol");
 
 		assertFalse(asis(dbp1) instanceof URL);
 		assertTrue(asis(dbp2) instanceof URL);
-		
+
 		assertTrue(value(dbp1).equals(25.0));
 		assertEquals(value(dbp2), "http://sorcersoft.org/sobol");
-		
+
 		assertTrue(asis(dbp1) instanceof URL);
 		assertTrue(asis(dbp2) instanceof URL);
 

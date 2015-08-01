@@ -112,12 +112,20 @@ public class operator {
         return model;
     }
 
+    public static Context ins(Model model) throws ContextException {
+        return inputs(model);
+    }
+
     public static Context inputs(Model model) throws ContextException {
         try {
             return model.getInputs();
         } catch (RemoteException e) {
             throw new ContextException(e);
         }
+    }
+
+    public static Context outs(Model model) throws ContextException {
+        return outputs(model);
     }
 
     public static Context outputs(Model model) throws ContextException {
@@ -128,12 +136,20 @@ public class operator {
         }
     }
 
+    public static Object resp(Model model, String path) throws ContextException {
+        return response(model, path);
+    }
+
     public static Object response(Model model, String path) throws ContextException {
         try {
             return ((ServiceContext)model).getResponseAt(path);
         } catch (RemoteException e) {
             throw new ContextException(e);
         }
+    }
+
+    public static Context resp(Model model) throws ContextException {
+        return response(model);
     }
 
     public static Context response(Model model) throws ContextException {

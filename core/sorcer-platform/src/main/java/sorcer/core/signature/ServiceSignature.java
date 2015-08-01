@@ -36,6 +36,7 @@ import java.rmi.RemoteException;
 import java.util.*;
 
 import static sorcer.eo.operator.provider;
+import static sorcer.eo.operator.task;
 
 public class ServiceSignature implements Signature, SorcerConstants {
 
@@ -573,17 +574,26 @@ public class ServiceSignature implements Signature, SorcerConstants {
 	}
 
 	@Override
-	public Mogram service(Mogram exertion, Transaction txn) throws TransactionException,
+	public Mogram service(Mogram mogram, Transaction txn) throws TransactionException,
 		MogramException, RemoteException {
 		Provider prv = (Provider)Accessor.getService(this);
-		return prv.service(exertion, txn);
+		if (mogram instanceof Context) {
+			Task out = null;
+			try {
+				out = task(this, (Context)mogram);
+			} catch (SignatureException e) {
+				throw new MogramException(e);
+			}
+			return prv.service(out, txn).getContext();
+		} else {
+			return prv.service(mogram, txn);
+		}
 	}
 
 	@Override
-	 public Mogram service(Mogram exertion) throws TransactionException,
+	 public Mogram service(Mogram mogram) throws TransactionException,
 			MogramException, RemoteException {
-		Provider prv = (Provider)Accessor.getService(this);
-		return prv.service(exertion, null);
+		return service(mogram, null);
 	}
 
 	public Context getInConnector() {

@@ -137,7 +137,7 @@ public class NetTaskExertions {
 						inEnt("arg/x2", 80.0), result("result/y")),
 				strategy(Monitor.NO, Wait.YES));
 
-		Exertion out = exec(sig(Shell.class), f5);
+		Context out = exec(sig(Shell.class), f5);
 		assertEquals(get(out, "result/y"), 100.00);
 
 	}

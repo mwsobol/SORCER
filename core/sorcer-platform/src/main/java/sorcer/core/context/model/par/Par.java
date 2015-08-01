@@ -185,7 +185,6 @@ public class Par<T> extends Entry<T> implements Variability<T>, Arg, Mappable<T>
 	/* (non-Javadoc)
          * @see sorcer.service.Evaluation#getAsis()
          */
-	@Override
 	public T asis() throws EvaluationException, RemoteException {
 		return value;
 	}
@@ -648,21 +647,6 @@ public class Par<T> extends Entry<T> implements Variability<T>, Arg, Mappable<T>
 			value = (T) fidelities.get(name);
 		else
 			throw new ParException("no such service fidelity: " + name + " at: " + this);
-	}
-
-	@Override
-	public <T extends Mogram> T service(T mogram, Transaction txn) throws TransactionException, MogramException, RemoteException {
-		Context cxt = null;
-		if (mogram instanceof Model)
-			cxt = (Context)((Model)mogram.exert()).getResult();
-		else if (mogram instanceof Exertion)
-			cxt = ((Exertion)mogram.exert()).getContext();
-		return (T) getValue(cxt);
-	}
-
-	@Override
-	public <T extends Mogram> T service(T mogram) throws TransactionException, MogramException, RemoteException {
-		return (T) service(mogram, null);
 	}
 
 	public void setFidelities(Map<String, Object> fidelities) {

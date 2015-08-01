@@ -4,6 +4,7 @@ import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sorcer.co.tuple.SignatureEntry;
 import sorcer.core.context.ApplicationDescription;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.service.*;
@@ -103,6 +104,16 @@ public class Srv extends Entry<Object> implements Variability<Object>, Arg, Eval
     }
 
     @Override
+    public Mogram service(Mogram mogram, Transaction txn) throws TransactionException, MogramException, RemoteException {
+        return ((SignatureEntry)_2)._2.service(mogram, txn);
+    }
+
+    @Override
+    public Mogram service(Mogram mogram) throws TransactionException, MogramException, RemoteException {
+        return service(mogram, null);
+    }
+
+    @Override
     public void valueChanged() throws EvaluationException {
 
     }
@@ -110,16 +121,6 @@ public class Srv extends Entry<Object> implements Variability<Object>, Arg, Eval
     @Override
     public Object getPerturbedValue(String varName) throws EvaluationException, RemoteException {
         return null;
-    }
-
-    @Override
-    public <T extends Mogram> T service(T mogram, Transaction txn) throws TransactionException, MogramException, RemoteException {
-        return (T) ((Signature)_2).service(mogram, txn);
-    }
-
-    @Override
-    public <T extends Mogram> T service(T mogram) throws TransactionException, MogramException, RemoteException {
-        return (T) ((Signature)_2).service(mogram, null);
     }
 
     @Override

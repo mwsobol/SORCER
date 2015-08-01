@@ -6,19 +6,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
+import sorcer.arithmetic.provider.Adder;
+import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.core.context.Copier;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.service.Context;
 import sorcer.service.Invocation;
 import sorcer.service.modeling.Model;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.asis;
 import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
-import static sorcer.eo.operator.asis;
-import static sorcer.eo.operator.put;
-import static sorcer.eo.operator.value;
 import static sorcer.mo.operator.*;
 import static sorcer.po.operator.invoker;
 /**
@@ -50,8 +50,8 @@ public class EntModels {
 		add(cxt, ent("arg/x7", invoker("x1 + x3", ents("x1", "x3"))));
 
 		assertTrue(value(cxt, "arg/x7").equals(4.0));
-		assertTrue(asis((Context)cxt, "arg/x7") instanceof Entry);
-		assertTrue(asis((Entry)asis((Context)cxt, "arg/x7")) instanceof Invocation);
+		assertTrue(asis(cxt, "arg/x7") instanceof Entry);
+		assertTrue(asis(asis(cxt, "arg/x7")) instanceof Invocation);
 
 	}
 
@@ -146,4 +146,60 @@ public class EntModels {
 
 		assertTrue(result.equals(context(ent("add", 4.0), ent("multiply", 20.0))));
 	}
+
+	@Test
+	public void contextEntryService() throws Exception {
+
+		Context cxt = context(
+				inEnt("x1", 20.0),
+				inEnt("x2", 80.0));
+
+		Entry e = ent("x2");
+		Context result = exec(e, cxt);
+		assertEquals(80.0, value(result, "x2"));
+
+	}
+
+
+	@Test
+	public void invokerEntryService() throws Exception {
+
+		Model em = model(
+				inEnt("x1", 20.0),
+				inEnt("x2", 80.0),
+				result("result/y"));
+
+		Entry ie = ent("multiply", invoker("x1 * x2", ents("x1", "x2")));
+		Context result = exec(ie, em);
+		assertEquals(1600.0, value(result, "multiply"));
+	}
+
+
+	@Test
+	public void srvEntryLocalService() throws Exception {
+
+		Model sm = model(
+				inEnt("y1", 20.0),
+				inEnt("y2", 80.0));
+
+		Entry se = srv(sig("add", AdderImpl.class, result("add", inPaths("y1", "y2"))));
+		Context result = exec(se, sm);
+		assertEquals(100.0, value(result, "add"));
+
+	}
+
+
+	@Test
+	public void srvEntryRemoteService() throws Exception {
+
+		Model sm = model(
+				inEnt("y1", 20.0),
+				inEnt("y2", 80.0));
+
+		Entry se = srv(sig("add", Adder.class, result("add", inPaths("y1", "y2"))));
+		Context result = exec(se, sm);
+		assertEquals(100.0, value(result, "add"));
+
+	}
+
 }

@@ -175,11 +175,6 @@ public class operator {
 			throw new NoneException("No such invoker at: " + path + " in: " + mappable.getName());
 	}
 	
-	public static Object asis(Par parEntry) throws EvaluationException,
-			RemoteException {
-		return parEntry.asis();
-	}
-	
 	public static void clearPars(Object invoker) throws EvaluationException {
 		if (invoker instanceof ServiceInvoker)
 			((ServiceInvoker)invoker).clearPars();

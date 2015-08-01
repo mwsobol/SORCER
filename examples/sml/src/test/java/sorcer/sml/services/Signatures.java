@@ -8,10 +8,8 @@ import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.Adder;
 import sorcer.arithmetic.provider.impl.AdderImpl;
-import sorcer.service.Context;
-import sorcer.service.Service;
-import sorcer.service.Signature;
-import sorcer.service.SignatureException;
+import sorcer.core.provider.Shell;
+import sorcer.service.*;
 
 import java.lang.reflect.Proxy;
 import java.util.Calendar;
@@ -162,13 +160,8 @@ public class Signatures {
 	@Test
 	public void localService() throws Exception {
 
-		Signature lps = sig("add", AdderImpl.class);
-		Object prv = provider(lps);
-		assertTrue(prv instanceof AdderImpl);
-		assertFalse(prv instanceof Proxy);
-
 		// request the local service
-		Service as = task("as", lps,
+		Service as = task("as", sig("add", AdderImpl.class),
 				context("add",
 						inEnt("arg/x1", 20.0),
 						inEnt("arg/x2", 80.0),
@@ -182,14 +175,8 @@ public class Signatures {
 	@Test
 	public void referencingRemoteProvider() throws Exception {
 
-		Signature rps = sig("add", Adder.class);
-		Object prv = provider(rps);
-		logger.info("provider of rps: " + prv);
-		assertTrue(prv instanceof Adder);
-		assertTrue(prv instanceof Proxy);
-
 		// request the remote service
-		Service as = task("as", rps,
+		Service as = task("as", sig("add", Adder.class),
 				context("add",
 						inEnt("arg/x1", 20.0),
 						inEnt("arg/x2", 80.0),
@@ -219,6 +206,65 @@ public class Signatures {
 		assertEquals(100.0, exec(as));
 	}
 
+
+	@Test
+	public void signatureLocalService() throws Exception {
+
+		Context cxt = context(
+				inEnt("y1", 20.0),
+				inEnt("y2", 80.0),
+				result("result/y"));
+
+		Context result = exec(sig("add", AdderImpl.class), cxt);
+		assertEquals(20.0, value(result, "y1"));
+		assertEquals(80.0, value(result, "y2"));
+		assertEquals(100.0, value(result, "result/y"));
+	}
+
+
+	@Test
+	public void signatureRemoteService() throws Exception {
+
+		Context cxt = context(
+				inEnt("y1", 20.0),
+				inEnt("y2", 80.0),
+				result("result/y"));
+
+		Context result = exec(sig("add", Adder.class), cxt);
+		assertEquals(20.0, value(result, "y1"));
+		assertEquals(80.0, value(result, "y2"));
+		assertEquals(100.0, value(result, "result/y"));
+	}
+
+
+	@Test
+	public void remoteShellService() throws Exception {
+		// The SORCER Service Shell as a service provider
+		Task f5 = task(
+				"f5",
+				sig("add", Adder.class),
+				context("add", inEnt("arg/x1", 20.0),
+						inEnt("arg/x2", 80.0), result("result/y")));
+
+		Context  out = exec(sig(Shell.class), f5);
+		assertEquals(get(out), 100.00);
+	}
+
+
+	@Test
+	public void remoteShellService2() throws Exception {
+		// The SORCER Service Shell as a service provider
+		Task f5 = task(
+				"f5",
+				sig("add", Adder.class),
+				context("add", inEnt("arg/x1", 20.0),
+						inEnt("arg/x2", 80.0), result("result/y")));
+
+		Context  out = exec(sig("add", Adder.class, Strategy.ServiceShell.REMOTE), f5);
+		assertEquals(get(out), 100.00);
+	}
+
+
 	@Test
 	public void localSigConnector() throws Exception {
 
@@ -246,6 +292,7 @@ public class Signatures {
 		assertEquals(80.0, value(context(task), "arg/x2"));
 		assertEquals(100.0, value(context(task), "result/y"));
 	}
+
 
 	@Test
 	public void rmoteSigConnector() throws Exception {

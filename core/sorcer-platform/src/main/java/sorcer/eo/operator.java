@@ -211,6 +211,18 @@ public class operator {
 		return context(entries);
 	}
 
+	public static Context cxt(Service exertion) throws ContextException {
+		return upcontext(exertion);
+	}
+
+	public static Context ccxt(Service exertion) throws ContextException {
+		return ((ServiceExertion) exertion).getDataContext();
+	}
+
+	public static Context upcxt(Service exertion) throws ContextException {
+		return upcontext(exertion);
+	}
+
 	public static Context upcontext(Service exertion) throws ContextException {
 		if (exertion instanceof CompoundExertion)
 			return ((ServiceExertion) exertion).getContext();
@@ -1646,6 +1658,98 @@ public class operator {
 		}
 	}
 
+	public static <T extends Mogram> T exec(Service service, Mogram mogram, Transaction txn)
+			throws TransactionException, MogramException, RemoteException {
+		if (service instanceof Signature) {
+			Provider prv = (Provider) Accessor.getService((Signature)service);
+			return (T) prv.service(mogram, txn);
+		} else if (service instanceof Provider) {
+			Task out = (Task) service.service(mogram, txn);
+			return (T)out.getContext();
+		}
+		else if (service instanceof Mogram) {
+			Context cxt;
+			if (mogram instanceof Exertion) {
+				cxt = ((Exertion) exert(mogram)).getContext();
+			} else {
+//				cxt = (Context) ((Model) mogram).getResult();
+				cxt = (Context) mogram;
+			}
+			((Mogram)service).setScope(cxt);
+			return (T) exert((Mogram)service);
+		}
+		else if (service instanceof NetSignature
+				&& ((Signature)service).getServiceType() == sorcer.core.provider.Shell.class) {
+			Provider prv= (Provider) Accessor.getService((Signature)service);
+			return (T) ((Exertion) prv.service(mogram, txn)).getContext();
+		} else {
+			return (T) service.service(mogram, txn);
+		}
+	}
+
+	public static <T extends Mogram> T exec(Service service, Mogram mogram)
+			throws TransactionException, MogramException, RemoteException {
+		return exec(service, mogram, null);
+	}
+
+//	public static <T extends Mogram> T exec(Exertion service, Mogram mogram)
+//			throws MogramException {
+//		return exec(service, mogram, null);
+//	}
+//
+//	public static <T extends Mogram> T exec(Exertion service, Mogram mogram, Transaction txn)
+//			throws MogramException {
+//
+//		Context cxt;
+//		if (mogram instanceof Exertion) {
+//			cxt = ((Exertion) exert(service)).getContext();
+//		} else {
+////				cxt = (Context) ((Model) mogram).getResult();
+//			cxt = (Context) service;
+//		}
+//		((Mogram) service).setScope(cxt);
+//		return (T) exert((Mogram) service);
+//	}
+
+	public static <T extends Mogram> T exec(Signature signature, Mogram mogram)
+			throws ExertionException {
+		return exec(signature, mogram, null);
+	}
+
+	public static <T extends Mogram> T exec(Signature signature, Mogram mogram, Transaction txn)
+			throws ExertionException {
+		try {
+			Context cxt = null;
+			if (mogram instanceof EntModel) {
+				cxt = (Context) ((Model) mogram).getResponse();
+			} else if (mogram instanceof ServiceContext) {
+				cxt = (Context) mogram;
+			}
+			if (cxt != null && signature instanceof ObjectSignature) {
+				ObjectTask ot = new ObjectTask(signature, cxt);
+				return (T) exert(ot).getContext();
+			} else if (signature instanceof NetSignature
+					&& ((Signature) signature).getServiceType() == sorcer.core.provider.Shell.class) {
+				Provider prv = (Provider) Accessor.getService(signature);
+				return (T) ((Exertion) prv.service(mogram, txn)).getContext();
+			} else if ((((ServiceSignature) signature).isShellRemote())
+					|| ((mogram instanceof Exertion) && ((Exertion) mogram).getControlContext() != null
+					&& ((ControlContext) ((Exertion) mogram).getControlContext()).isShellRemote())) {
+				Exerter prv = (Exerter) Accessor.getService(sig(Shell.class));
+				return (T) prv.exert((Exertion) mogram, txn).getContext();
+			} else {
+				return (T) signature.service(mogram, txn);
+			}
+		} catch (Exception e) {
+			throw new ExertionException(e);
+		}
+	}
+
+//	public static <T extends Exertion> T service(Exerter exerter, Exertion input,
+//											   Arg... entries) throws ExertionException {
+//		  return(exert(exerter, input, entries));
+//	}
+
 	public static <T extends Service> Object exec(T service, Arg... entries)
 			throws MogramException, TransactionException, RemoteException {
 		if (service instanceof Exertion) {
@@ -1665,6 +1769,11 @@ public class operator {
 		return null;
 	}
 
+	public static <T> T eval(Context<T> model, Arg... entries)
+			throws ContextException {
+		return value(model, entries);
+	}
+
     public static <T> T value(Context<T> model, Arg... entries)
             throws ContextException {
         try {
@@ -1679,7 +1788,12 @@ public class operator {
             throw new ContextException(e);
         }
     }
-    
+
+	public static <T> T eval(Evaluation<T> evaluation, Arg... entries)
+			throws EvaluationException {
+		return value(evaluation, entries);
+	}
+
 	public static <T> T value(Evaluation<T> evaluation, Arg... entries)
 			throws EvaluationException {
 		try {
@@ -1699,6 +1813,11 @@ public class operator {
 		}
 	}
 
+	public static Object eval(Model model, String evalSelector,
+							   Arg... entries) throws ContextException {
+		return value((Context<Object>) model, evalSelector, entries);
+	}
+
 	public static Object value(Model model, String evalSelector,
 							  Arg... entries) throws ContextException {
 		return value((Context<Object>) model, evalSelector, entries);
@@ -1707,6 +1826,11 @@ public class operator {
 	public static <T extends Context> T exec(Service model, String evalSelector,
 							  Arg... entries) throws ContextException {
 		return value((Context<T>) model,  evalSelector, entries);
+	}
+
+	public static <T> T eval(Context<T> model, String evalSelector,
+							  Arg... entries) throws ContextException {
+		return value(model, evalSelector, entries);
 	}
 
     public static <T> T value(Context<T> model, String evalSelector,
@@ -1730,6 +1854,11 @@ public class operator {
         }
         return null;
     }
+
+	public static <T> T eval(Evaluation<T> evaluation, String evalSelector,
+							  Arg... entries) throws EvaluationException {
+		return value(evaluation, evalSelector, entries);
+	}
     
 	public static <T> T value(Evaluation<T> evaluation, String evalSelector,
 							  Arg... entries) throws EvaluationException {
@@ -1865,17 +1994,6 @@ public class operator {
 	public static void print(Object obj) {
 		System.out.println(obj.toString());
 	}
-
-//	public static Object exec(Context context, Arg... args)
-//			throws ExertionException, ContextException {
-//		((ServiceContext)context).substitute(args);
-//		ReturnPath returnPath = context.getReturnPath();
-//		if (returnPath != null) {
-//			return context.getValue(returnPath.path, args);
-//		} else
-//			throw new ExertionException("No return path in the context: "
-//					+ context.getName());
-//	}
 
 	private static Exertion initialize(Exertion xrt, Arg... args) throws ContextException {
 		ReturnPath rPath = null;
@@ -2038,26 +2156,6 @@ public class operator {
 		throw new ExertionException("Unknown type of mogram");
 	}
 
-	public static <T extends Exertion> T exec(Signature signature, Mogram mogram)
-			throws ExertionException {
-		return exec(signature, mogram, null);
-	}
-
-	public static <T extends Exertion> T exec(Signature signature, Mogram mogram, Transaction txn)
-			throws ExertionException {
-		try {
-			Provider prv = (Provider)Accessor.getService(signature);
-			return (T) prv.service(mogram, txn);
-		} catch (Exception e) {
-			throw new ExertionException(e);
-		}
-	}
-
-//	public static <T extends Exertion> T service(Exerter exerter, Exertion input,
-//											   Arg... entries) throws ExertionException {
-//		  return(exert(exerter, input, entries));
-//	}
-
 	public static <T extends Exertion> T exec(Exerter exerter, Exertion input,
 											   Arg... entries) throws ExertionException {
 		try {
@@ -2117,6 +2215,10 @@ public class operator {
     public static ReturnPath result(String path, In inPaths) {
         return new ReturnPath(path, inPaths);
     }
+
+	public static ReturnPath result(In inPaths) {
+		return new ReturnPath("self", inPaths);
+	}
 
     public static ReturnPath result(String path, In inPaths, From outPaths) {
         return new ReturnPath(path, inPaths, outPaths);
