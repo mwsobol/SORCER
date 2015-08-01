@@ -17,14 +17,11 @@
 
 package sorcer.core.provider;
 
-import java.rmi.RemoteException;
-
-import sorcer.service.Arg;
-import sorcer.service.Exertion;
-import sorcer.service.ExertionException;
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
-import sorcer.service.MogramException;
+import sorcer.service.*;
+
+import java.rmi.RemoteException;
 
 /**
  * A functionality required for running exertions with given parameters.
@@ -33,10 +30,10 @@ import sorcer.service.MogramException;
  */
 public interface Exerter {
 	
-	public Exertion exert(Exertion xrt, Arg... entries) throws TransactionException,
+	public <T extends Mogram> T exert(T mogram, Arg... entries) throws TransactionException,
 			ExertionException, RemoteException, MogramException;
 
-	public Exertion exert(Exertion xrt, Transaction txn, Arg... entries)
+	public <T extends Mogram> T exert(T mogram, Transaction txn, Arg... entries)
 			throws TransactionException, MogramException, RemoteException;
 
 }

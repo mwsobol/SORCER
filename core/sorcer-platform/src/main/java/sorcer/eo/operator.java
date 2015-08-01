@@ -159,29 +159,6 @@ public class operator {
 		return new Complement<T>(path, value);
 	}
 
-//	public static Context add(Context context, Tuple2<String, ?>... entries)
-//			throws ContextException {
-//		for (int i = 0; i < entries.length; i++) {
-//			if (context instanceof PositionalContext) {
-//				((PositionalContext)context).putValueAt(((Tuple2<String, ?>) entries[i])._1,
-//						((Tuple2<String, ?>) entries[i])._2, ((PositionalContext)context).getTally()+1);
-//			} else {
-//				context.putValue(((Tuple2<String, ?>) entries[i])._1,
-//					((Tuple2<String, ?>) entries[i])._2);
-//			}
-//		}
-//		return context;
-//	}
-
-//	public static Context put(Context context, Tuple2... entries)
-//			throws ContextException {
-//		for (int i = 0; i < entries.length; i++) {
-//			context.putValue(((Tuple2<String, ?>) entries[i])._1,
-//					((Tuple2<String, ?>) entries[i]));
-//		}
-//		return context;
-//	}
-
 	public static void add(Exertion exertion, Identifiable... entries)
 			throws ContextException, RemoteException {
 		add(exertion.getContext(), entries);
@@ -1308,22 +1285,6 @@ public class operator {
 		return task;
 	}
 
-//	public static <E extends Exertion> E srv(String name, Object... elems)
-//			throws ExertionException, ContextException, SignatureException {
-//		return (E) exertion(name, elems);
-//	}
-
-//	public static <E extends Exertion> E service(Object... items)
-//			throws ExertionException, ContextException, SignatureException {
-//		String name = "unknown" + count++;
-//		for (Object i : items) {
-//			if (i instanceof String) {
-//				name = (String)i;
-//			}
-//		}
-//		return (E) exertion(name, items);
-//	}
-
 	public static <M extends Mogram> M mog(Object... items) throws MogramException {
 		return mogram(items);
 	}
@@ -1660,56 +1621,13 @@ public class operator {
 
 	public static <T extends Mogram> T exec(Service service, Mogram mogram, Transaction txn)
 			throws TransactionException, MogramException, RemoteException {
-		if (service instanceof Signature) {
-			Provider prv = (Provider) Accessor.getService((Signature)service);
-			return (T) prv.service(mogram, txn);
-		} else if (service instanceof Provider) {
-			Task out = (Task) service.service(mogram, txn);
-			return (T)out.getContext();
-		}
-		else if (service instanceof Mogram) {
-			Context cxt;
-			if (mogram instanceof Exertion) {
-				cxt = ((Exertion) exert(mogram)).getContext();
-			} else {
-//				cxt = (Context) ((Model) mogram).getResult();
-				cxt = (Context) mogram;
-			}
-			((Mogram)service).setScope(cxt);
-			return (T) exert((Mogram)service);
-		}
-		else if (service instanceof NetSignature
-				&& ((Signature)service).getServiceType() == sorcer.core.provider.Shell.class) {
-			Provider prv= (Provider) Accessor.getService((Signature)service);
-			return (T) ((Exertion) prv.service(mogram, txn)).getContext();
-		} else {
-			return (T) service.service(mogram, txn);
-		}
+		return new sorcer.core.provider.exerter.ServiceShell().exec(service, mogram, txn);
 	}
 
 	public static <T extends Mogram> T exec(Service service, Mogram mogram)
 			throws TransactionException, MogramException, RemoteException {
-		return exec(service, mogram, null);
+		return new sorcer.core.provider.exerter.ServiceShell().exec(service, mogram, null);
 	}
-
-//	public static <T extends Mogram> T exec(Exertion service, Mogram mogram)
-//			throws MogramException {
-//		return exec(service, mogram, null);
-//	}
-//
-//	public static <T extends Mogram> T exec(Exertion service, Mogram mogram, Transaction txn)
-//			throws MogramException {
-//
-//		Context cxt;
-//		if (mogram instanceof Exertion) {
-//			cxt = ((Exertion) exert(service)).getContext();
-//		} else {
-////				cxt = (Context) ((Model) mogram).getResult();
-//			cxt = (Context) service;
-//		}
-//		((Mogram) service).setScope(cxt);
-//		return (T) exert((Mogram) service);
-//	}
 
 	public static <T extends Mogram> T exec(Signature signature, Mogram mogram)
 			throws ExertionException {
@@ -1718,55 +1636,12 @@ public class operator {
 
 	public static <T extends Mogram> T exec(Signature signature, Mogram mogram, Transaction txn)
 			throws ExertionException {
-		try {
-			Context cxt = null;
-			if (mogram instanceof EntModel) {
-				cxt = (Context) ((Model) mogram).getResponse();
-			} else if (mogram instanceof ServiceContext) {
-				cxt = (Context) mogram;
-			}
-			if (cxt != null && signature instanceof ObjectSignature) {
-				ObjectTask ot = new ObjectTask(signature, cxt);
-				return (T) exert(ot).getContext();
-			} else if (signature instanceof NetSignature
-					&& ((Signature) signature).getServiceType() == sorcer.core.provider.Shell.class) {
-				Provider prv = (Provider) Accessor.getService(signature);
-				return (T) ((Exertion) prv.service(mogram, txn)).getContext();
-			} else if ((((ServiceSignature) signature).isShellRemote())
-					|| ((mogram instanceof Exertion) && ((Exertion) mogram).getControlContext() != null
-					&& ((ControlContext) ((Exertion) mogram).getControlContext()).isShellRemote())) {
-				Exerter prv = (Exerter) Accessor.getService(sig(Shell.class));
-				return (T) prv.exert((Exertion) mogram, txn).getContext();
-			} else {
-				return (T) signature.service(mogram, txn);
-			}
-		} catch (Exception e) {
-			throw new ExertionException(e);
-		}
+		return new sorcer.core.provider.exerter.ServiceShell().exec(signature, mogram, txn);
 	}
-
-//	public static <T extends Exertion> T service(Exerter exerter, Exertion input,
-//											   Arg... entries) throws ExertionException {
-//		  return(exert(exerter, input, entries));
-//	}
 
 	public static <T extends Service> Object exec(T service, Arg... entries)
 			throws MogramException, TransactionException, RemoteException {
-		if (service instanceof Exertion) {
-			return value((Evaluation) service, entries);
-		} else if (service instanceof EntModel) {
-			((Model)service).getResponse(entries);
-		} else {
-			ServiceContext cxt = (ServiceContext)service;
-			cxt.substitute(entries);
-			ReturnPath returnPath = cxt.getReturnPath();
-			if (returnPath != null) {
-				return cxt.getValue(returnPath.path, entries);
-			} else
-				throw new ExertionException("No return path in the context: "
-						+ cxt.getName());
-		}
-		return null;
+		return new sorcer.core.provider.exerter.ServiceShell().exec(service, entries);
 	}
 
 	public static <T> T eval(Context<T> model, Arg... entries)
@@ -2165,21 +2040,24 @@ public class operator {
 		}
 	}
 
-	public static <T extends Exertion> T exert(T input,
+	public static <T extends Mogram> T exert(T input,
 											   Transaction transaction,
 											   Arg... entries) throws ExertionException {
 		try {
 			Exertion result = null;
 			try {
-				if ((input.getProcessSignature() != null
-						&& ((ServiceSignature)input.getProcessSignature()).isShellRemote())
-						|| (input.getControlContext() != null 
-							&& ((ControlContext)input.getControlContext()).isShellRemote())) {
-					Exerter prv = (Exerter)Accessor.getService(sig(Shell.class));
-					result = prv.exert(input, transaction, entries);
-				} else {
-					sorcer.core.provider.exerter.ServiceShell se = new sorcer.core.provider.exerter.ServiceShell(input);
-					result = se.exert(transaction, null, entries);
+				if (input instanceof Exertion) {
+					Exertion exertion = ((Exertion)input);
+					if ((input.getProcessSignature() != null
+							&& ((ServiceSignature) input.getProcessSignature()).isShellRemote())
+							|| (exertion.getControlContext() != null
+							&& ((ControlContext) exertion.getControlContext()).isShellRemote())) {
+						Exerter prv = (Exerter) Accessor.getService(sig(Shell.class));
+						result = (Exertion)prv.exert(input, transaction, entries);
+					} else {
+						sorcer.core.provider.exerter.ServiceShell se = new sorcer.core.provider.exerter.ServiceShell(input);
+						result = se.exert(transaction, null, entries);
+					}
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
