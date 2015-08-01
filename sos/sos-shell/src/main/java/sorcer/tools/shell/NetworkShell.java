@@ -37,6 +37,7 @@ import org.fusesource.jansi.AnsiConsole;
 import org.rioproject.impl.config.DynamicConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sorcer.core.provider.exerter.ServiceShell;
 import sorcer.jini.lookup.entry.SorcerServiceInfo;
 import sorcer.netlet.util.LoaderConfiguration;
 import sorcer.netlet.util.ScriptExertException;
@@ -126,6 +127,8 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 	public static Logger logger = LoggerFactory.getLogger(COMPONENT);
 
 	protected static NetworkShell instance;
+
+	protected static ServiceShell serviceShell;
 
 	protected static String[] groups;
 
@@ -1738,6 +1741,14 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 		aliases.put("less", "exec");
         aliases.put("sb", "boot");
         aliases.put("sorcer-boot", "boot");
+	}
+
+	public ServiceShell getServiceShell() {
+		return serviceShell;
+	}
+
+	public void setServiceShell(ServiceShell serviceShell) {
+		this.serviceShell = serviceShell;
 	}
 
     public void addAlias(String alias, String command) {

@@ -18,20 +18,9 @@
 
 package sorcer.tools.shell.cmds;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.List;
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import org.apache.commons.io.FileUtils;
-//import sorcer.core.RemoteLogger;
 import sorcer.core.context.Contexts;
 import sorcer.core.context.ThrowableTrace;
 import sorcer.core.context.node.ContextNode;
@@ -41,6 +30,12 @@ import sorcer.tools.shell.INetworkShell;
 import sorcer.tools.shell.NetworkShell;
 import sorcer.tools.shell.ShellCmd;
 import sorcer.tools.shell.WhitespaceTokenizer;
+
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
+
+//import sorcer.core.RemoteLogger;
 
 public class ExertCmd extends ShellCmd {
 
@@ -82,6 +77,7 @@ public class ExertCmd extends ShellCmd {
         out = NetworkShell.getShellOutputStream();
         shell = NetworkShell.getInstance();
         scriptExerter = new ScriptExerter(out, null, NetworkShell.getWebsterUrl(), shell.isDebug());
+		shell.setServiceShell(scriptExerter.getServiceShell());
         scriptExerter.setConfig(config);
         input = shell.getCmd();
 		if (out == null)

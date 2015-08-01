@@ -26,7 +26,7 @@ import org.codehaus.groovy.control.customizers.ImportCustomizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.provider.exerter.ServiceShell;
-import sorcer.service.Exertion;
+import sorcer.service.Mogram;
 import sorcer.service.MogramException;
 import sorcer.service.modeling.Model;
 
@@ -40,6 +40,7 @@ public class ScriptThread extends Thread {
 		private Object target = null;
 		final private GroovyShell gShell;
         private NetletClassLoader classLoader;
+        private ServiceShell serviceShell;
 
         private final static Logger logger = LoggerFactory.getLogger(ScriptThread.class
                 .getName());
@@ -73,8 +74,8 @@ public class ScriptThread extends Thread {
     public void run() {
         if (target==null) parseScript();
         try {
-            if (target instanceof Exertion) {
-                ServiceShell esh = new ServiceShell((Exertion) target);
+            if (target instanceof Mogram) {
+                serviceShell = new ServiceShell((Mogram) target);
 /*
                     if (((Exertion) target).isProvisionable() && config!=null) {
                         String configFile;
@@ -92,7 +93,7 @@ public class ScriptThread extends Thread {
                         }
                     } else
 */
-                result = esh.exert();
+                result = serviceShell.exert();
             } else if (target instanceof Model) {
                 result = ((Model)target).exert();
 
@@ -105,13 +106,21 @@ public class ScriptThread extends Thread {
         }
     }
 
-		public Object getResult() {
-			return result;
-		}
+    public Object getResult() {
+        return result;
+    }
 
-		public Object getTarget() {
-			return target;
-		}
+    public Object getTarget() {
+        return target;
+    }
+
+    public ServiceShell getServiceShell() {
+        return serviceShell;
+    }
+
+    public void setServiceShell(ServiceShell serviceShell) {
+        this.serviceShell = serviceShell;
+    }
 
     private static String[] imports = {
             "sorcer.netlet.annotation",
@@ -126,7 +135,8 @@ public class ScriptThread extends Thread {
             "sorcer.service.Strategy",
             "sorcer.eo.operator",
             "sorcer.co.operator",
-            "sorcer.po.operator"
+            "sorcer.po.operator",
+            "sorcer.mo.operator"
     };
 
     private ImportCustomizer getImports() {
