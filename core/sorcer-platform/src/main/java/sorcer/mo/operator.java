@@ -74,14 +74,14 @@ public class operator {
     }
 
     public static Model inConn(Model model, Context inConnector) {
-        ((ServiceContext)model).getRuntime().setInConnector(inConnector);
+        ((ServiceContext)model).getModelStrategy().setInConnector(inConnector);
         if (inConnector instanceof MapContext)
             ((MapContext)inConnector).direction =  MapContext.Direction.IN;
         return model;
     }
 
     public static Model outConn(Model model, Context outConnector) {
-        ((ServiceContext) model).getRuntime().setOutConnector(outConnector);
+        ((ServiceContext) model).getModelStrategy().setOutConnector(outConnector);
         if (outConnector instanceof MapContext)
             ((MapContext)outConnector).direction = MapContext.Direction.OUT;
         return model;
@@ -89,22 +89,22 @@ public class operator {
 
     public static Model responseUp(Model model, String... responsePaths) throws ContextException {
         for (String path : responsePaths)
-            ((ServiceContext)model).getRuntime().getResponsePaths().add(path);
+            ((ServiceContext)model).getModelStrategy().getResponsePaths().add(path);
         return model;
     }
 
     public static Model responseDown(Model model, String... responsePaths) throws ContextException {
         for (String path : responsePaths)
-            ((ServiceContext)model).getRuntime().getResponsePaths().remove(path);
+            ((ServiceContext)model).getModelStrategy().getResponsePaths().remove(path);
         return model;
     }
 
     public static Context result(Model model) throws ContextException {
-        return ((ServiceContext)model).getRuntime().getOutcome();
+        return ((ServiceContext)model).getModelStrategy().getOutcome();
     }
 
     public static Object resultAt(Model model, String path) throws ContextException {
-        return ((ServiceContext)((ServiceContext)model).getRuntime().getOutcome()).get(path);
+        return ((ServiceContext)((ServiceContext)model).getModelStrategy().getOutcome()).get(path);
     }
 
     public static  ServiceContext substitute(ServiceContext model, Entry... entries) throws ContextException {
@@ -252,7 +252,7 @@ public class operator {
 //        }
 
         if (responsePaths != null) {
-            model.getRuntime().setResponsePaths(((Fidelity) responsePaths).getSelects());
+            model.getModelStrategy().setResponsePaths(((Fidelity) responsePaths).getSelects());
         }
         if (complement != null) {
             model.setSubject(complement.path(), complement.value());

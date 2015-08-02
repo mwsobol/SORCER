@@ -116,4 +116,12 @@ public interface Model extends Mogram, Dependency {
      * @throws ModelException
      */
     public Object get(String path) throws ModelException;
+
+    /**
+     * Returns a model controller for this model.
+     *
+     * @return this model control strategy
+     * @throws ModelException
+     */
+    public MogramStrategy getModelStrategy() throws ModelException;
 }

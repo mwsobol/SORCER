@@ -26,6 +26,7 @@ import sorcer.core.context.ThrowableTrace;
 import sorcer.core.context.node.ContextNode;
 import sorcer.netlet.ScriptExerter;
 import sorcer.service.*;
+import sorcer.service.modeling.Model;
 import sorcer.tools.shell.INetworkShell;
 import sorcer.tools.shell.NetworkShell;
 import sorcer.tools.shell.ShellCmd;
@@ -47,7 +48,8 @@ public class ExertCmd extends ShellCmd {
 		COMMAND_USAGE = "exert [-cc] [[-s | --s | --m] <output filename>] <input filename>";
 
 		COMMAND_HELP = "Manage and execute the federation of services specified by the <input filename>;" 
-				+ "\n  -cc   print the executed exertion with control context"
+				+ "\n  -cntrl   print the executed exertion with control context"
+				+ "\n  -resp   print the response of exerted context model"
 				+ "\n  -s   save the command output in a file"
 				+ "\n  --s   serialize the command output in a file"
 				+ "\n  --m   marshal the the command output in a file";
@@ -83,17 +85,18 @@ public class ExertCmd extends ShellCmd {
 		if (out == null)
 			throw new NullPointerException("Must have an output PrintStream");
 
-		File d = NetworkShell.getInstance().getCurrentDir();
+		File cdir = NetworkShell.getInstance().getCurrentDir();
 		String scriptFilename = null;
-		boolean outPersisted = false;
-		boolean outputControlContext = false;
-		boolean marshalled = false;
+		boolean ifOutPersisted = false;
+		boolean ifMogramControl = false;
+		boolean ifResponse  = false;
+		boolean ifMarshalled = false;
 		boolean commandLine = NetworkShell.isInteractive();
 
         List<String> argsList = WhitespaceTokenizer.tokenize(input);
 
-//        Pattern p = Pattern.compile("(\"[^\"]*\"|[^\"^\\s]+)(\\s+|$)", Pattern.MULTILINE);
- //       Matcher m = p.matcher(input);
+//       Pattern p = Pattern.compile("(\"[^\"]*\"|[^\"^\\s]+)(\\s+|$)", Pattern.MULTILINE);
+//       Matcher m = p.matcher(input);
         if (argsList.isEmpty()) {
             out.println(COMMAND_USAGE);
             return;
@@ -105,12 +108,14 @@ public class ExertCmd extends ShellCmd {
                 if (nextToken.startsWith("\"") || nextToken.startsWith("'"))
                     nextToken = nextToken.substring(1, nextToken.length() - 1);
                 if (nextToken.equals("-s")) {
-                    outPersisted = true;
-                    outputFile = new File("" + d + File.separator + argsList.get(i + 1));
-                } else if (nextToken.equals("-controlContext"))
-                    outputControlContext = true;
-                else if (nextToken.equals("-m"))
-                    marshalled = true;
+                    ifOutPersisted = true;
+                    outputFile = new File("" + cdir + File.separator + argsList.get(i + 1));
+                } else if (nextToken.equals("-cntrl"))
+                    ifMogramControl = true;
+				else if (nextToken.equals("-resp"))
+					ifResponse = true;
+				else if (nextToken.equals("-m"))
+                    ifMarshalled = true;
                     // evaluate text
                 else if (nextToken.equals("-t")) {
                     if (script == null || script.length() == 0) {
@@ -134,7 +139,7 @@ public class ExertCmd extends ShellCmd {
 			if ((new File(scriptFilename)).isAbsolute()) {
 				scriptFile = NetworkShell.huntForTheScriptFile(scriptFilename);
 			} else {
-				scriptFile = NetworkShell.huntForTheScriptFile("" + d
+				scriptFile = NetworkShell.huntForTheScriptFile("" + cdir
 						+ File.separator + scriptFilename);
 			}
 			try {
@@ -150,7 +155,7 @@ public class ExertCmd extends ShellCmd {
 /*        LoggerRemoteEventClient lrec = null;
 
         // Starting RemoteLoggerListener
-        if (shell.isRemoteLogging() & target instanceof Exertion) {
+        if (shell.isRemoteLogging() && target instanceof Exertion) {
             List<Map<String, String>> filterMapList = new ArrayList<Map<String, String>>();
             for (String exId : getAllExertionIdFromExertion((Exertion)target)) {
                 Map<String, String> map = new HashMap<String, String>();
@@ -170,20 +175,20 @@ public class ExertCmd extends ShellCmd {
 
 		if (NetworkShell.getInstance().isDebug()) out.println("Starting execute!");
         Object result = scriptExerter.execute();
-		out.println(">>>>>>>>>>> result: " + result);
+//		out.println(">>>>>>>>>>> result: " + result);
 		if (result != null) {
-			if (!(result instanceof Exertion)) {
+			if (!(result instanceof Mogram)) {
 				out.println("\n---> EVALUATION RESULT --->");
 				out.println(result);
 				return;
 			}
-			Exertion xrt = (Exertion) result;
-			if (!xrt.getAllExceptions().isEmpty()) {
+			Mogram mog = (Mogram) result;
+			if (!mog.getAllExceptions().isEmpty()) {
 				if (commandLine) {
 					out.println("Exceptions: ");
-					out.println(xrt.getAllExceptions());
+					out.println(mog.getAllExceptions());
 				} else {
-					List<ThrowableTrace> ets = xrt.getAllExceptions();
+					List<ThrowableTrace> ets = mog.getAllExceptions();
                     out.println("Exceptions: ");
 					for (ThrowableTrace t : ets) {
                         out.println(t.message);
@@ -192,18 +197,30 @@ public class ExertCmd extends ShellCmd {
 				}
 			}
 			
-			out.println("\n---> OUTPUT EXERTION --->");
-			out.println(((ServiceExertion) xrt).describe());
-			out.println("\n---> OUTPUT DATA CONTEXT --->");
-			if (xrt.isJob()) {
-				out.println(((Job)xrt).getJobContext());
-            } else {
-				out.println(xrt.getDataContext());
-            }
-            saveFilesFromContext(xrt, out);
-			if (outputControlContext) {
-				out.println("\n---> OUTPUT CONTROL CONTEXT --->");
-				out.println(xrt.getControlContext());
+			out.println("\n---> OUTPUT MOGRAM --->");
+			out.println(((ServiceExertion) mog).describe());
+			if (mog instanceof Exertion) {
+				Exertion xrt = (Exertion)out;
+				out.println("\n---> OUTPUT DATA CONTEXT --->");
+				if (xrt.isCompound()) {
+					out.println(((Job) mog).getJobContext());
+				} else {
+					out.println(xrt.getDataContext());
+				}
+				saveFilesFromContext(xrt, out);
+				if (ifMogramControl) {
+					out.println("\n---> OUTPUT CONTROL CONTEXT --->");
+					out.println(xrt.getControlContext());
+				}
+			} else {
+				if (ifResponse) {
+					out.println("\n---> MODEL RESPONSE --->");
+					out.println(((Model)out).getResult());
+				}
+				if (ifMogramControl) {
+					out.println("\n---> OUTPUT CONTROL CONTEXT --->");
+					out.println(((Model) out).getModelStrategy());
+				}
 			}
 		} else {
 			if (target != null) {

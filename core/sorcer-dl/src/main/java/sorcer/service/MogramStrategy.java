@@ -14,34 +14,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package sorcer.service;
 
-package sorcer.service.modeling;
-
-import sorcer.service.ContextException;
+import java.util.List;
 
 /**
- * Created by sobolemw on 7/30/15.
+ * Created by Mike Sobolewski on 8/2/15.
  */
-public class ModelException extends ContextException {
+public interface MogramStrategy {
 
+    public boolean isMonitorable();
 
+    public void setMonitorable(boolean state);
 
-    private static final long serialVersionUID = -1L;
+    public boolean isProvisionable();
 
+    public void setProvisionable(boolean state);
 
-    public ModelException() {
-    }
+    public boolean isTracable();
 
-    public ModelException(Exception exception) {
-        super(exception);
-    }
+    public void setTracable(boolean state);
 
-    public ModelException(String msg, Exception e) {
-        super(msg, e);
-    }
+    public void appendTrace(String info);
 
-    public ModelException(String msg) {
-        super(msg);
-    }
+    public List<String> getTrace();
 
+    public void addException(Throwable t);
+
+    public void addException(String message, Throwable t);
+
+    public void setOpti(Strategy.Opti optiType);
+
+    public Strategy.Opti getOpti();
 }

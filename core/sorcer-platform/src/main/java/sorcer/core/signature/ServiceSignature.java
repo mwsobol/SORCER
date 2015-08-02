@@ -29,9 +29,11 @@ import sorcer.service.Strategy.Provision;
 import sorcer.service.modeling.Variability;
 import sorcer.util.Log;
 
+import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.*;
 
@@ -77,6 +79,10 @@ public class ServiceSignature implements Signature, SorcerConstants {
 
 	// implementation of the serviceInfo
 	protected Class<?> providerType;
+
+	protected File providerFile;
+
+	protected URL providerURL;
 
 	protected String group = "";
 
@@ -136,6 +142,24 @@ public class ServiceSignature implements Signature, SorcerConstants {
 	public ServiceSignature(String name, String selector) {
 		this.name = name;
 		this.selector = selector;
+	}
+
+	public ServiceSignature(File source) {
+		this.providerFile = source;
+	}
+
+	public ServiceSignature(String name, File source) {
+		this.name = name;
+		this.providerFile = source;
+	}
+
+	public ServiceSignature(URL source) {
+		this.providerURL = source;
+	}
+
+	public ServiceSignature(String name, URL source) {
+		this.name = name;
+		this.providerURL = source;
 	}
 
 	public void setExertion(Exertion exertion) throws ExertionException {
@@ -624,5 +648,21 @@ public class ServiceSignature implements Signature, SorcerConstants {
     public List<Evaluation> getDependers() {
         return dependers;
     }
+
+	public File getProviderFile() {
+		return providerFile;
+	}
+
+	public void setProviderFile(File providerFile) {
+		this.providerFile = providerFile;
+	}
+
+	public URL getProviderURL() {
+		return providerURL;
+	}
+
+	public void setProviderURL(URL providerURL) {
+		this.providerURL = providerURL;
+	}
 
 }

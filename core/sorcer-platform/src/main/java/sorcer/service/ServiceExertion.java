@@ -497,8 +497,8 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
             throws ContextException;
 
     public Context finalizeOutDataContext() throws ContextException {
-        if (dataContext.getRuntime().getOutConnector() != null) {
-            dataContext.updateContextWith(dataContext.getRuntime().getOutConnector());
+        if (dataContext.getModelStrategy().getOutConnector() != null) {
+            dataContext.updateContextWith(dataContext.getModelStrategy().getOutConnector());
         }
         return dataContext;
     }

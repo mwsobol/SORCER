@@ -250,7 +250,7 @@ public class MethodInvoker<T> extends ServiceInvoker<T> implements MethodInvokin
 				}
 			}
 			if (context != null)
-				((ServiceContext)context).getRuntime().setCurrentSelector(selector);
+				((ServiceContext)context).getModelStrategy().setCurrentSelector(selector);
 			val = m.invoke(target, parameters);
 		} catch (Exception e) {
 			StringBuilder message = new StringBuilder();

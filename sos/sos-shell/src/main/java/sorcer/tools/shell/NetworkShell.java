@@ -1597,7 +1597,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 
 
     static public File huntForTheScriptFile(String input) throws IOException {
-        String[] standardExtensions = { ".ntl", ".xrt", ".exertlet", ".netlet", ".net",
+        String[] standardExtensions = { ".ntl", ".xrt", ".exertion", ".mod", ".model", ".netlet", ".net",
                 ".groovy", ".gvy", ".gy", ".gsh" };
         return huntForTheScriptFile(input, standardExtensions);
     }

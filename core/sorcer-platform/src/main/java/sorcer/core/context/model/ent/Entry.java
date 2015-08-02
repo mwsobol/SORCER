@@ -232,7 +232,7 @@ public class Entry<T> extends Tuple2<String, T> implements Service, Dependency, 
 		if (mogram instanceof EntModel) {
 			if (_2 != null && _2 != Context.none)
 				add((Context)mogram, this);
-			((ServiceContext)mogram).getRuntime().getResponsePaths().add(_1);
+			((ServiceContext)mogram).getModelStrategy().getResponsePaths().add(_1);
 			out = (Context) ((Model)mogram).getResponse();
 		} else if (mogram instanceof ServiceContext) {
 			if (_2 == null || _2 == Context.none) {

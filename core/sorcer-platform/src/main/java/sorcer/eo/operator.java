@@ -49,7 +49,7 @@ import sorcer.service.*;
 import sorcer.service.Signature.*;
 import sorcer.service.Strategy.*;
 import sorcer.service.modeling.Model;
-import sorcer.service.modeling.ModelException;
+import sorcer.service.ModelException;
 import sorcer.service.modeling.Modeling;
 import sorcer.service.modeling.Variability;
 import sorcer.util.Loop;
@@ -57,6 +57,7 @@ import sorcer.util.ObjectCloner;
 import sorcer.util.Sorcer;
 import sorcer.util.url.sos.SdbUtil;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -65,8 +66,9 @@ import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.*;
 
-import static sorcer.mo.operator.*;
-import static sorcer.po.operator.*;
+import static sorcer.mo.operator.entModel;
+import static sorcer.mo.operator.srvModel;
+import static sorcer.po.operator.parModel;
 
 /**
  * Operators defined for the Service Modeling Language (SML).
@@ -412,9 +414,9 @@ public class operator {
 		}
 		if (response != null) {
 			if (response.path() != null) {
-				((ServiceContext) cxt).getRuntime().getResponsePaths().add(response.path());
+				((ServiceContext) cxt).getModelStrategy().getResponsePaths().add(response.path());
 			}
-			((ServiceContext) cxt).getRuntime().setResult(response.path(), response.target);
+			((ServiceContext) cxt).getModelStrategy().setResult(response.path(), response.target);
 		}
 		if (entryLists.size() > 0) {
 			((ServiceContext) cxt).setEntryLists(entryLists);
@@ -422,14 +424,14 @@ public class operator {
 		if (connList.size() > 0) {
 			for (MapContext conn : connList) {
 				if (conn.direction == MapContext.Direction.IN) {
-					((ServiceContext) cxt).getRuntime().setInConnector(conn);
+					((ServiceContext) cxt).getModelStrategy().setInConnector(conn);
 				} else {
-					((ServiceContext) cxt).getRuntime().setOutConnector(conn);
+					((ServiceContext) cxt).getModelStrategy().setOutConnector(conn);
 				}
 			}
 		}
 		if (depList.size() > 0) {
-			Map<String, List<String>> dm = ((ServiceContext) cxt).getRuntime().getDependentPaths();
+			Map<String, List<String>> dm = ((ServiceContext) cxt).getModelStrategy().getDependentPaths();
 			String path = null;
 			List<String> dependentPaths = null;
 			for (DependencyEntry e : depList) {
@@ -970,6 +972,13 @@ public class operator {
 		return component.getProcessSignature();
 	}
 
+	public static Signature sig(File source) {
+		return new ServiceSignature(source);
+	}
+
+	public static Signature sig(URL source) {
+		return new ServiceSignature(source);
+	}
 
 	public static EvaluationTask task(EvaluationSignature signature)
 			throws ExertionException {
@@ -1506,9 +1515,9 @@ public class operator {
 		if (connList != null) {
 			for (MapContext conn : connList) {
 				if (conn.direction == MapContext.Direction.IN)
-					((ServiceContext)job.getDataContext()).getRuntime().setInConnector(conn);
+					((ServiceContext)job.getDataContext()).getModelStrategy().setInConnector(conn);
 				else
-					((ServiceContext)job.getDataContext()).getRuntime().setOutConnector(conn);
+					((ServiceContext)job.getDataContext()).getModelStrategy().setOutConnector(conn);
 			}
 		}
 

@@ -1,5 +1,6 @@
 /*
- * Copyright 2014 Sorcersoft.com S.A.
+ * Copyright 2009 the original author or authors.
+ * Copyright 2009 SorcerSoft.org.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +15,33 @@
  * limitations under the License.
  */
 
-package sorcer.core.context;
+package sorcer.service;
 
-import sorcer.service.Context;
-import sorcer.service.MogramStrategy;
-import sorcer.service.Strategy;
+import sorcer.service.ContextException;
 
 /**
- * @author Rafał Krupiński
+ * Created by sobolemw on 7/30/15.
  */
-public interface StrategyContext extends MogramStrategy, Context<Object>, Strategy {
+public class ModelException extends ContextException {
+
+
+
+    private static final long serialVersionUID = -1L;
+
+
+    public ModelException() {
+    }
+
+    public ModelException(Exception exception) {
+        super(exception);
+    }
+
+    public ModelException(String msg, Exception e) {
+        super(msg, e);
+    }
+
+    public ModelException(String msg) {
+        super(msg);
+    }
 
 }

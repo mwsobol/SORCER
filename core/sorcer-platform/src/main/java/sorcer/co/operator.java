@@ -708,7 +708,7 @@ public class operator {
 	}
 
 	public static Model dependsOn(Model model, Entry... entries) {
-        Map<String, List<String>> dm = ((ServiceContext)model).getRuntime().getDependentPaths();
+        Map<String, List<String>> dm = ((ServiceContext)model).getModelStrategy().getDependentPaths();
         String path = null;
         Object dependentPaths = null;
         for (Entry e : entries) {
@@ -723,7 +723,7 @@ public class operator {
     }
 
     public static Map<String, List<String>> dependentPaths(Model model) {
-         return ((ServiceContext)model).getRuntime().getDependentPaths();
+         return ((ServiceContext)model).getModelStrategy().getDependentPaths();
     }
     
     public static Dependency dependsOn(Dependency dependee,  Evaluation... dependers) throws ContextException {

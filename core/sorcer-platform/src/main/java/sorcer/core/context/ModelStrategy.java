@@ -3,6 +3,7 @@ package sorcer.core.context;
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
 import sorcer.service.*;
+import sorcer.service.MogramStrategy;
 import sorcer.util.FileURLHandler;
 
 import java.io.Serializable;
@@ -15,13 +16,17 @@ import java.util.Map;
 /**
  * Created by Mike Sobolewski
  */
-public class ServiceRuntime implements Projection<String>, Serializable {
+public class ModelStrategy implements MogramStrategy, Projection<String>, Serializable {
 
     protected List<ThrowableTrace> exceptions;
 
     private List<String> traceList;
 
+    private boolean isTraceable = false;
+
     private boolean isMonitorable = false;
+
+    private boolean isProvisionable = false;
 
     private Mogram target;
 
@@ -51,7 +56,7 @@ public class ServiceRuntime implements Projection<String>, Serializable {
     // reponse paths of the runtime model
     protected List<String> responsePaths = new ArrayList<String>();
 
-    public ServiceRuntime(Mogram service) {
+    public ModelStrategy(Mogram service) {
         target = service;
     }
 
@@ -61,6 +66,51 @@ public class ServiceRuntime implements Projection<String>, Serializable {
 
     public boolean isMonitorable() {
         return isMonitorable;
+    }
+
+    @Override
+    public void setMonitorable(boolean state) {
+        isMonitorable = state;
+    }
+
+    @Override
+    public boolean isProvisionable() {
+        return isProvisionable;
+    }
+
+    @Override
+    public void setProvisionable(boolean state) {
+        isProvisionable = state;
+    }
+
+    @Override
+    public boolean isTracable() {
+        return isTraceable;
+    }
+
+    @Override
+    public void setTracable(boolean state) {
+        isTraceable = state;
+    }
+
+    @Override
+    public void setOpti(Strategy.Opti optiType) {
+
+    }
+
+    @Override
+    public Strategy.Opti getOpti() {
+        return null;
+    }
+
+    @Override
+    public void addException(Throwable t) {
+        exceptions.add(new ThrowableTrace(t));
+    }
+
+    @Override
+    public void addException(String message, Throwable t) {
+        exceptions.add(new ThrowableTrace(message, t));
     }
 
     public void setIsMonitorable(boolean isMonitorable) {

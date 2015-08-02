@@ -31,6 +31,7 @@ import sorcer.core.context.model.ent.EntryList;
 import sorcer.core.context.model.par.Par;
 import sorcer.core.context.model.par.ParList;
 import sorcer.core.context.model.par.ParModel;
+import sorcer.core.context.model.srv.Srv;
 import sorcer.core.context.node.ContextNode;
 import sorcer.core.context.node.ContextNodeException;
 import sorcer.core.invoker.ServiceInvoker;
@@ -105,7 +106,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 
 	protected boolean isFinalized = false;
 
-	protected ServiceRuntime runtime = new ServiceRuntime(this);
+	protected ModelStrategy modelStrategy = new ModelStrategy(this);
 	/**
 	 * For persistence layers to differentiate with saved context already
 	 * associated to task or not.
@@ -281,22 +282,22 @@ public class ServiceContext<T> extends ServiceMogram implements
 
 	@Override
 	public List<ThrowableTrace> getExceptions() {
-		return runtime.getExceptions();
+		return modelStrategy.getExceptions();
 	}
 
     @Override
     public List<String> getTrace() {
-        return runtime.getTraceList();
+        return modelStrategy.getTraceList();
     }
 
     @Override
 	public List<ThrowableTrace> getAllExceptions() {
-		return runtime.getAllExceptions();
+		return modelStrategy.getAllExceptions();
 	}
 
 	@Override
 	public boolean isMonitorable() {
-		return runtime.isMonitorable();
+		return modelStrategy.isMonitorable();
 	}
 
 	public Context getInitContext() {
@@ -1762,8 +1763,11 @@ public class ServiceContext<T> extends ServiceMogram implements
 			try {
 				if (val instanceof Par)
 					val = "par: " + ((Par)val).getName();
+				else if (val instanceof Srv)
+					val = "srv: " + ((Par)val).getName();
 				else
-					val = getValue(path);
+//					val = getValue(path);
+					val = asis(path);
 			} catch (Exception ex) {
 				sb.append("\nUnable to retrieve value: " + ex.getMessage());
 				ex.printStackTrace();
@@ -2415,14 +2419,14 @@ public class ServiceContext<T> extends ServiceMogram implements
         if (exertion != null)
             exertion.getControlContext().addException(t);
         else
-			runtime.exceptions.add(new ThrowableTrace(t));
+			modelStrategy.exceptions.add(new ThrowableTrace(t));
 	}
 
 	public void reportException(String message, Throwable t) {
 		if (exertion != null)
 			exertion.getControlContext().addException(message, t);
 		else
-			runtime.exceptions.add(new ThrowableTrace(message, t));
+			modelStrategy.exceptions.add(new ThrowableTrace(message, t));
 	}
 
 	public void reportException(String message, Throwable t, ProviderInfo info) {
@@ -2598,8 +2602,8 @@ public class ServiceContext<T> extends ServiceMogram implements
 			throws ContextException {
 		// first managed dependencies
 		String currentPath = path;
-		if (runtime.dependers != null && runtime.dependers.size() > 0) {
-			for (Evaluation eval : runtime.dependers)  {
+		if (modelStrategy.dependers != null && modelStrategy.dependers.size() > 0) {
+			for (Evaluation eval : modelStrategy.dependers)  {
 				try {
 					eval.getValue(entries);
 				} catch (RemoteException e) {
@@ -2611,9 +2615,9 @@ public class ServiceContext<T> extends ServiceMogram implements
 		try {
 			substitute(entries);
 			if (currentPath == null) {
-				if (runtime.responsePaths != null && runtime.responsePaths.size()>0) {
-					if (runtime.responsePaths.size() == 1)
-						currentPath = runtime.responsePaths.get(0);
+				if (modelStrategy.responsePaths != null && modelStrategy.responsePaths.size()>0) {
+					if (modelStrategy.responsePaths.size() == 1)
+						currentPath = modelStrategy.responsePaths.get(0);
 					else
 						return (T) getResponse();
 				}
@@ -2666,20 +2670,20 @@ public class ServiceContext<T> extends ServiceMogram implements
 
 	@Override
 	public Context getInConnector(Arg... args) throws ContextException, RemoteException {
-		return runtime.getInConnector();
+		return modelStrategy.getInConnector();
 	}
 
 	@Override
 	public Context getOutConnector(Arg... args) throws ContextException, RemoteException {
-		return runtime.getOutConnector();
+		return modelStrategy.getOutConnector();
 	}
 
 	@Override
     public Context getResponse(Arg... args) throws ContextException, RemoteException {
-        if (runtime.outConnector != null) {
+        if (modelStrategy.outConnector != null) {
             ServiceContext mc = null;
             try {
-                mc = (ServiceContext) ObjectCloner.clone(runtime.outConnector);
+                mc = (ServiceContext) ObjectCloner.clone(modelStrategy.outConnector);
             } catch (Exception e) {
                 throw new ContextException(e);
             }
@@ -2688,27 +2692,27 @@ public class ServiceContext<T> extends ServiceMogram implements
                 Map.Entry pairs = (Map.Entry) it.next();
                 mc.putInValue((String) pairs.getKey(), getValue((String) pairs.getValue()));
             }
-			if (runtime.responsePaths != null && runtime.responsePaths.size() > 0) {
-				getMergedSubcontext(mc, runtime.responsePaths, args);
-				runtime.outcome = mc;
-				runtime.outcome.setModeling(true);
-				return runtime.outcome;
+			if (modelStrategy.responsePaths != null && modelStrategy.responsePaths.size() > 0) {
+				getMergedSubcontext(mc, modelStrategy.responsePaths, args);
+				modelStrategy.outcome = mc;
+				modelStrategy.outcome.setModeling(true);
+				return modelStrategy.outcome;
 			}
         } else {
-			if (runtime.responsePaths != null && runtime.responsePaths.size() > 0) {
-				runtime.outcome = getMergedSubcontext(null, runtime.responsePaths, args);
+			if (modelStrategy.responsePaths != null && modelStrategy.responsePaths.size() > 0) {
+				modelStrategy.outcome = getMergedSubcontext(null, modelStrategy.responsePaths, args);
 			} else {
-				runtime.outcome = substitute(args);
+				modelStrategy.outcome = substitute(args);
 			}
-			runtime.outcome.setModeling(true);
-			return runtime.outcome;
+			modelStrategy.outcome.setModeling(true);
+			return modelStrategy.outcome;
         }
 		return this;
     }
 
 	@Override
 	public Object getResult() throws ContextException, RemoteException {
-		return runtime.getOutcome();
+		return modelStrategy.getOutcome();
 	}
 
 	@Override
@@ -3097,18 +3101,18 @@ public class ServiceContext<T> extends ServiceMogram implements
 		data.putAll((Map<? extends String, ? extends T>) ((ServiceContext) context).data);
 	}
 
-	public ServiceRuntime getRuntime() {
-		return runtime;
+	public ModelStrategy getModelStrategy() {
+		return modelStrategy;
 	}
 
 	@Override
 	public void addDependers(Evaluation... dependers) {
-		runtime.addDependers(dependers);
+		modelStrategy.addDependers(dependers);
 	}
 
 	@Override
 	public List<Evaluation> getDependers() {
-		return runtime.getDependers();
+		return modelStrategy.getDependers();
 	}
 
 }
