@@ -1325,7 +1325,7 @@ public class operator {
 		if ((hasEntry || hasSignature && hasEntry) && !hasExertion) {
 			Model mo = null;
 			if (srvType)
-				mo = srvModel(name, items);
+				mo = srvModel(items);
 			else if (parType)
 				try {
 					return (M) parModel(name, items);
