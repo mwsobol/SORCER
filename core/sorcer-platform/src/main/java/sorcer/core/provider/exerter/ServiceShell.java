@@ -172,11 +172,7 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 				}
 			} else {
 //				return (T) ((Model)mogram).getResponse();
-				Mogram mog = (T) mogram.exert(txn, entries);
-				logger.info("ZZZZZZZZZZZZZZ mog: " + mog);
-				logger.info("ZZZZZZZZZZZZZZ mog resylt: " + ((Model)mog).getResult());
-
-				return (T)mog;
+				return (T) mogram.exert(txn, entries);
 			}
 		} catch (ContextException e) {
 			throw new ExertionException(e);

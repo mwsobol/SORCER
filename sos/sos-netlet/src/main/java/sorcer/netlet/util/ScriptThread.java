@@ -20,6 +20,7 @@ package sorcer.netlet.util;
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import net.jini.core.transaction.TransactionException;
+import org.codehaus.groovy.control.CompilationFailedException;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.codehaus.groovy.control.customizers.ASTTransformationCustomizer;
 import org.codehaus.groovy.control.customizers.ImportCustomizer;
@@ -34,45 +35,47 @@ import java.rmi.RemoteException;
 import static sorcer.util.StringUtils.tName;
 
 public class ScriptThread extends Thread {
-		private String script;
-		private Object result;
-		private Object target = null;
-		final private GroovyShell gShell;
-        private NetletClassLoader classLoader;
-        private ServiceShell serviceShell;
+    private String script;
+    private Object result;
+    private Object target = null;
+    final private GroovyShell gShell;
+    private NetletClassLoader classLoader;
+    private ServiceShell serviceShell;
 
-        private final static Logger logger = LoggerFactory.getLogger(ScriptThread.class
-                .getName());
+    private final static Logger logger = LoggerFactory.getLogger(ScriptThread.class
+            .getName());
 
-        public ScriptThread(String script, NetletClassLoader classLoader) {
-            super(tName("Script"));
-            this.classLoader = classLoader;
+    public ScriptThread(String script, NetletClassLoader classLoader) {
+        super(tName("Script"));
+        this.classLoader = classLoader;
 
-            CompilerConfiguration compilerConfig = new CompilerConfiguration();
-            compilerConfig.setPluginFactory(new ShebangPreprocessorFactory());
-            compilerConfig.addCompilationCustomizers(getImports());
-            compilerConfig.addCompilationCustomizers(new ASTTransformationCustomizer(new GroovyCodebaseSupport(classLoader)));
+        CompilerConfiguration compilerConfig = new CompilerConfiguration();
+        compilerConfig.setPluginFactory(new ShebangPreprocessorFactory());
+        compilerConfig.addCompilationCustomizers(getImports());
+        compilerConfig.addCompilationCustomizers(new ASTTransformationCustomizer(new GroovyCodebaseSupport(classLoader)));
 
-            gShell = new GroovyShell(classLoader, new Binding(), compilerConfig);
-            this.script = script;
-            this.parseScript();
-        }
+        gShell = new GroovyShell(classLoader, new Binding(), compilerConfig);
+        this.script = script;
+        this.parseScript();
+    }
 
     public void parseScript() {
-            ClassLoader currentCL = Thread.currentThread().getContextClassLoader();
-            try {
-                Thread.currentThread().setContextClassLoader(classLoader);
-                synchronized (gShell) {
-                    target = gShell.evaluate(script);
-                }
-            } finally {
-                Thread.currentThread().setContextClassLoader(currentCL);
+        ClassLoader currentCL = Thread.currentThread().getContextClassLoader();
+        try {
+            Thread.currentThread().setContextClassLoader(classLoader);
+            synchronized (gShell) {
+                target = gShell.evaluate(script);
             }
+        } finally {
+            Thread.currentThread().setContextClassLoader(currentCL);
         }
+    }
 
     public void run() {
-        if (target==null) parseScript();
         try {
+            if (target == null)
+                parseScript();
+
             if (target instanceof Mogram) {
                 serviceShell = new ServiceShell((Mogram) target);
 /*
@@ -99,6 +102,8 @@ public class ScriptThread extends Thread {
         } catch (RemoteException e) {
             e.printStackTrace();
         } catch (MogramException e) {
+            e.printStackTrace();
+        }  catch(CompilationFailedException e) {
             e.printStackTrace();
         }
     }

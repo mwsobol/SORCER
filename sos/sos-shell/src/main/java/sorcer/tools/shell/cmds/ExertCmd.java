@@ -170,7 +170,7 @@ public class ExertCmd extends ShellCmd {
 
 		if (NetworkShell.getInstance().isDebug()) out.println("Starting execute!");
         Object result = scriptExerter.execute();
-        // System.out.println(">>>>>>>>>>> result: " + result);
+		out.println(">>>>>>>>>>> result: " + result);
 		if (result != null) {
 			if (!(result instanceof Exertion)) {
 				out.println("\n---> EVALUATION RESULT --->");

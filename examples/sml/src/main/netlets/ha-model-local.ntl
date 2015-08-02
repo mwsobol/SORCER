@@ -8,8 +8,8 @@ import sorcer.arithmetic.provider.impl.SubtractorImpl
 
 
 Model m = model(
-        inEnt("multiply/x1", 10.0), inEnt("multiply/x2", 50.0),
-        inEnt("add/x1", 20.0), inEnt("add/x2", 80.0),
+        inEnt("multiply/x1", 10.0d), inEnt("multiply/x2", 50.0d),
+        inEnt("add/x1", 20.0d), inEnt("add/x2", 80.0d),
         srv(sig("multiply", MultiplierImpl.class, result("multiply/out",
                 inPaths("multiply/x1", "multiply/x2")))),
         srv(sig("add", AdderImpl.class, result("add/out",

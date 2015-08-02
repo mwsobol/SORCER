@@ -707,7 +707,7 @@ public class operator {
 			parModel.getData().remove(path);
 	}
 
-	public static void dependsOn(Model model, Entry... entries) {
+	public static Model dependsOn(Model model, Entry... entries) {
         Map<String, List<String>> dm = ((ServiceContext)model).getRuntime().getDependentPaths();
         String path = null;
         Object dependentPaths = null;
@@ -719,6 +719,7 @@ public class operator {
                 dm.put(path, (List<String>)dependentPaths);
             }
         }
+		return model;
     }
 
     public static Map<String, List<String>> dependentPaths(Model model) {
