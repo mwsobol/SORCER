@@ -164,17 +164,19 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 					exertion.setContext(xrt.getDataContext());
 					exertion.setControlContext((ControlContext) xrt.getControlContext());
 					if (exertion.isCompound()) {
-						((CompoundExertion) exertion)
-								.setMograms(((CompoundExertion) xrt)
-										.getMograms());
+						((CompoundExertion) exertion).setMograms(xrt.getMograms());
 					}
-
 					return (T) mogram;
 				} else {
 					return (T) xrt;
 				}
 			} else {
-				return (T) ((Model)mogram).getResponse();
+//				return (T) ((Model)mogram).getResponse();
+				Mogram mog = (T) mogram.exert(txn, entries);
+				logger.info("ZZZZZZZZZZZZZZ mog: " + mog);
+				logger.info("ZZZZZZZZZZZZZZ mog resylt: " + ((Model)mog).getResult());
+
+				return (T)mog;
 			}
 		} catch (ContextException e) {
 			throw new ExertionException(e);

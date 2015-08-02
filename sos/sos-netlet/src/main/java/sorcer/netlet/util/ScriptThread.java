@@ -28,7 +28,6 @@ import org.slf4j.LoggerFactory;
 import sorcer.core.provider.exerter.ServiceShell;
 import sorcer.service.Mogram;
 import sorcer.service.MogramException;
-import sorcer.service.modeling.Model;
 
 import java.rmi.RemoteException;
 
@@ -94,10 +93,8 @@ public class ScriptThread extends Thread {
                     } else
 */
                 result = serviceShell.exert();
-            } else if (target instanceof Model) {
-                result = ((Model)target).exert();
-
-            }   } catch (TransactionException e) {
+            }
+        }catch (TransactionException e) {
             e.printStackTrace();
         } catch (RemoteException e) {
             e.printStackTrace();
