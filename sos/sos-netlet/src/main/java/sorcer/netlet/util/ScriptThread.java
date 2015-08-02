@@ -126,6 +126,7 @@ public class ScriptThread extends Thread {
             "sorcer.netlet.annotation",
             "sorcer.service",
             "sorcer.core.exertion",
+            "sorcer.service.modeling",
             "sorcer.service",
             "sorcer.core.context.model",
             "java.io"

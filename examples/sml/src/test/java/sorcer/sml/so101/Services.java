@@ -100,6 +100,29 @@ public class Services {
     }
 
     @Test
+    public void exertSrvModel() throws Exception  {
+
+        Model m = srvModel(
+                inEnt("multiply/x1", 10.0), inEnt("multiply/x2", 50.0),
+                inEnt("add/x1", 20.0), inEnt("add/x2", 80.0),
+                srv(sig("multiply", MultiplierImpl.class, result("multiply/out",
+                        inPaths("multiply/x1", "multiply/x2")))),
+                srv(sig("add", AdderImpl.class, result("add/out",
+                        inPaths("add/x1", "add/x2")))),
+                srv(sig("subtract", SubtractorImpl.class, result("model/response",
+                        inPaths("multiply/out", "add/out")))),
+                srv("y1", "multiply/x1"),
+                response("subtract"));
+
+        dependsOn(m, ent("subtract", paths("multiply", "add")));
+        logger.info("response: " + response(m));
+        Context out = response(m);
+
+        assertTrue(get(out, "subtract").equals(400.0));
+
+    }
+
+    @Test
     public void exertMogramn() throws Exception  {
 
         Mogram mogram = mogram(sig("add", AdderImpl.class),
