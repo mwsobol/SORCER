@@ -1,9 +1,11 @@
+#!/usr/bin/env nsh
+
 @Codebase(group='org.sorcer', module='arithmetic', version='${sorcer.version}', classifier='dl')
 @Load(group='org.sorcer', module='arithmetic', version='${sorcer.version}', classifier='prv')
-
 import sorcer.arithmetic.provider.impl.AdderImpl
 import sorcer.arithmetic.provider.impl.MultiplierImpl
 import sorcer.arithmetic.provider.impl.SubtractorImpl
+
 
 Model m = model(
         inEnt("multiply/x1", 10.0), inEnt("multiply/x2", 50.0),
