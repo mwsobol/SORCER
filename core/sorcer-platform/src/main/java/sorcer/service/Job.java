@@ -404,14 +404,14 @@ public class Job extends CompoundExertion {
 		return dataContext;
 	}
 
-	public Context getContext() {
+	public Context getContext() throws ContextException {
 		 return getJobContext();
 	}
 	
-	public Context getJobContext() {
+	public Context getJobContext() throws ContextException {
 		ServiceContext cxt = new ServiceContext(name);
 		cxt.setSubject("job/data/context", name);
-		
+		cxt.append(dataContext);
 		return linkContext(cxt, getName());
 	}
 

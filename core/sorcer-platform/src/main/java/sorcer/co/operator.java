@@ -95,6 +95,22 @@ public class operator {
 		return new Tuple6<T1,T2,T3,T4,T5,T6>( x1, x2, x3, x4, x5, x6 );
 	}
 
+	public static <T> List<T> inValues(Context<T> context) throws ContextException {
+		return ((ServiceContext)context).getInValues();
+	}
+
+	public static <T> List<T> inPaths(Context<T> context) throws ContextException {
+		return ((ServiceContext)context).getInPaths();
+	}
+
+	public static <T> List<T> outValues(Context<T> context) throws ContextException {
+		return ((ServiceContext)context).getOutValues();
+	}
+
+	public static <T> List<T> outPaths(Context<T> context) throws ContextException {
+		return ((ServiceContext)context).getOutPaths();
+	}
+
 	public static Signature.From outPaths(String... elems) {
 		return new Signature.From(elems);
 	}

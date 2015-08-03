@@ -20,17 +20,6 @@
 import sorcer.arithmetic.provider.Adder
 import sorcer.arithmetic.provider.Multiplier
 import sorcer.arithmetic.provider.Subtractor
-import sorcer.core.provider.Jobber
-import static sorcer.co.operator.inEnt
-import static sorcer.co.operator.outPaths
-import static sorcer.eo.operator.cxt
-import static sorcer.eo.operator.inPoint
-import static sorcer.eo.operator.job
-import static sorcer.eo.operator.outPoint
-import static sorcer.eo.operator.pipe
-import static sorcer.eo.operator.result
-import static sorcer.eo.operator.sig
-import static sorcer.eo.operator.task
 
 Task f4 = task("f4",
         sig("multiply", Multiplier.class),

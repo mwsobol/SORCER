@@ -1779,21 +1779,21 @@ public class operator {
 		return valuesAt(context, tuple).get(0);
 	}
 
-	public static <T> List<T> inValues(Context<T> context) throws ContextException {
-		return ((ServiceContext)context).getInValues();
-	}
-
-	public static <T> List<T> inPaths(Context<T> context) throws ContextException {
-		return ((ServiceContext)context).getInPaths();
-	}
-
-	public static <T> List<T> outValues(Context<T> context) throws ContextException {
-		return ((ServiceContext)context).getOutValues();
-	}
-
-	public static <T> List<T> outPaths(Context<T> context) throws ContextException {
-		return ((ServiceContext)context).getOutPaths();
-	}
+//	public static <T> List<T> inValues(Context<T> context) throws ContextException {
+//		return ((ServiceContext)context).getInValues();
+//	}
+//
+//	public static <T> List<T> inPaths(Context<T> context) throws ContextException {
+//		return ((ServiceContext)context).getInPaths();
+//	}
+//
+//	public static <T> List<T> outValues(Context<T> context) throws ContextException {
+//		return ((ServiceContext)context).getOutValues();
+//	}
+//
+//	public static <T> List<T> outPaths(Context<T> context) throws ContextException {
+//		return ((ServiceContext)context).getOutPaths();
+//	}
 
 	public static <T> T getAt(Context<T> context, int i) throws ContextException {
 		if (!(context instanceof Positioning))
