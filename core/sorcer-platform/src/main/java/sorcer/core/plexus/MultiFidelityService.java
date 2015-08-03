@@ -102,6 +102,11 @@ public class MultiFidelityService extends ServiceMogram {
         return null;
     }
 
+    @Override
+    public String describe() {
+        return toString();
+    }
+
     /**
      * Returns the current values of atributes (fidelites) of a given projection.
      *

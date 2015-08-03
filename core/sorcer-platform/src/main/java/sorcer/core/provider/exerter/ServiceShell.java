@@ -199,8 +199,8 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 					return (T) xrt;
 				}
 			} else {
-//				return (T) ((Model)mogram).getResponse();
-				return (T) mogram.exert(txn, entries);
+				((Model)mogram).getResponse();
+				return (T) mogram;
 			}
 		} catch (ContextException e) {
 			throw new ExertionException(e);
@@ -474,7 +474,7 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 		Transaction txn = null;
 
 		LockResult lr = locker.getLock(""
-				+ exertion.getProcessSignature().getServiceType(),
+						+ exertion.getProcessSignature().getServiceType(),
 				new ProviderID(mutexId), txn,
 				((ServiceExertion) exertion).getId());
 		if (lr.didSucceed()) {
@@ -599,26 +599,31 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 
 	public Object evaluate(Arg... args)
 			throws ExertionException, RemoteException, ContextException {
-		  return evaluate((Exertion)mogram, args);
+		  return evaluate(mogram, args);
 	}
 
-	public Object evaluate(Exertion exertion, Arg... args)
+	public Object evaluate(Mogram mogram, Arg... args)
 			throws ExertionException, ContextException, RemoteException {
-		Exertion out;
-		initialize(exertion, args);
-		try {
-			if (exertion.getClass() == Task.class) {
-				if (((Task) exertion).getDelegate() != null)
-					out = exert(((Task) exertion).getDelegate(), null, args);
-				else
-					out = exertOpenTask(exertion, args);
-			} else {
-				out = exert(exertion, null, args);
+		if (mogram instanceof Exertion) {
+			Exertion exertion = (Exertion)mogram;
+			Exertion out;
+			initialize(exertion, args);
+			try {
+				if (exertion.getClass() == Task.class) {
+					if (((Task) exertion).getDelegate() != null)
+						out = exert(((Task) exertion).getDelegate(), null, args);
+					else
+						out = exertOpenTask(exertion, args);
+				} else {
+					out = exert(exertion, null, args);
+				}
+				return finalize(out, args);
+			} catch (Exception e) {
+				e.printStackTrace();
+				throw new ExertionException(e);
 			}
-			return finalize(out, args);
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new ExertionException(e);
+		} else {
+			return ((Model)mogram).getResponse();
 		}
 	}
 

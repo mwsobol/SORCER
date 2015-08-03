@@ -27,7 +27,6 @@ import org.codehaus.groovy.control.customizers.ImportCustomizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.provider.exerter.ServiceShell;
-import sorcer.service.Exertion;
 import sorcer.service.Mogram;
 import sorcer.service.MogramException;
 
@@ -102,10 +101,11 @@ public class ScriptThread extends Thread {
                         }
                     } else
 */
-                if (isExerted)
+                if (isExerted)  {
                     result = serviceShell.exert();
-                else
-                    result = serviceShell.evaluate((Exertion)target);
+                } else {
+                    result = serviceShell.evaluate();
+                }
 
             }
         }catch (TransactionException e) {

@@ -79,4 +79,17 @@ public class EntModel<T> extends PositionalContext<T> implements Invocation<T>, 
         }
     }
 
+//    @Override
+//    public String toString() {
+//        StringBuilder sb = new StringBuilder("Model Response\n");
+//        try {
+//            if (getResult() != null)
+//                sb.append(getResult().toString());
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        sb.append("\nEvaluated Model\n");
+//        sb.append(super.toString());
+//        return sb.toString();
+//    }
 }

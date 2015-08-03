@@ -31,7 +31,6 @@ import sorcer.core.context.model.ent.EntryList;
 import sorcer.core.context.model.par.Par;
 import sorcer.core.context.model.par.ParList;
 import sorcer.core.context.model.par.ParModel;
-import sorcer.core.context.model.srv.Srv;
 import sorcer.core.context.node.ContextNode;
 import sorcer.core.context.node.ContextNodeException;
 import sorcer.core.invoker.ServiceInvoker;
@@ -1763,8 +1762,6 @@ public class ServiceContext<T> extends ServiceMogram implements
 			try {
 				if (val instanceof Par)
 					val = "par: " + ((Par)val).getName();
-				else if (val instanceof Srv)
-					val = "srv: " + ((Par)val).getName();
 				else
 //					val = getValue(path);
 					val = asis(path);
@@ -2512,6 +2509,11 @@ public class ServiceContext<T> extends ServiceMogram implements
 		return this;
 	}
 
+	@Override
+	public String describe() {
+		return toString();
+	}
+
 	/*
 	 * (non-Javadoc)
 	 *
@@ -2679,40 +2681,42 @@ public class ServiceContext<T> extends ServiceMogram implements
 	}
 
 	@Override
-    public Context getResponse(Arg... args) throws ContextException, RemoteException {
-        if (modelStrategy.outConnector != null) {
-            ServiceContext mc = null;
-            try {
-                mc = (ServiceContext) ObjectCloner.clone(modelStrategy.outConnector);
-            } catch (Exception e) {
-                throw new ContextException(e);
-            }
-            Iterator it = mc.entryIterator();
-            while (it.hasNext()) {
-                Map.Entry pairs = (Map.Entry) it.next();
-                mc.putInValue((String) pairs.getKey(), getValue((String) pairs.getValue()));
-            }
+	public Context getResponse(Arg... args) throws ContextException, RemoteException {
+		Context result = null;
+		if (modelStrategy.outConnector != null) {
+			ServiceContext mc = null;
+			try {
+				mc = (ServiceContext) ObjectCloner.clone(modelStrategy.outConnector);
+			} catch (Exception e) {
+				throw new ContextException(e);
+			}
+			Iterator it = mc.entryIterator();
+			while (it.hasNext()) {
+				Map.Entry pairs = (Map.Entry) it.next();
+				mc.putInValue((String) pairs.getKey(), getValue((String) pairs.getValue()));
+			}
 			if (modelStrategy.responsePaths != null && modelStrategy.responsePaths.size() > 0) {
 				getMergedSubcontext(mc, modelStrategy.responsePaths, args);
 				modelStrategy.outcome = mc;
 				modelStrategy.outcome.setModeling(true);
-				return modelStrategy.outcome;
+				result = modelStrategy.outcome;
 			}
-        } else {
+		} else {
 			if (modelStrategy.responsePaths != null && modelStrategy.responsePaths.size() > 0) {
 				modelStrategy.outcome = getMergedSubcontext(null, modelStrategy.responsePaths, args);
 			} else {
 				modelStrategy.outcome = substitute(args);
 			}
+			result = modelStrategy.outcome;
 			modelStrategy.outcome.setModeling(true);
-			return modelStrategy.outcome;
-        }
-		return this;
-    }
+		}
+		result.setName("Response of model: " + name);
+		return result;
+	}
 
 	@Override
 	public Object getResult() throws ContextException, RemoteException {
-		return modelStrategy.getOutcome();
+		return modelStrategy.outcome;
 	}
 
 	@Override

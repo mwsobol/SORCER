@@ -210,6 +210,10 @@ public class ModelStrategy implements MogramStrategy, Projection<String>, Serial
         return target.exert(entries);
     }
 
+    public void setOutcome(Context outcome) {
+        this.outcome = outcome;
+    }
+
     public Mogram getTarget() {
         return target;
     }
