@@ -118,7 +118,9 @@ public class operator {
     public static Signature.In inPaths(String... elems) {
         return new Signature.In(elems);
     }
-
+	public static Path file(String filename) {
+		return new Path (filename);
+	}
 	public static Class[] types(Class... classes) {
 		return classes;
 	}

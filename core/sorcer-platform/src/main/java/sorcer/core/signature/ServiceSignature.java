@@ -21,6 +21,7 @@ import net.jini.core.lookup.ServiceID;
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
 import org.slf4j.Logger;
+import sorcer.co.tuple.Path;
 import sorcer.core.SorcerConstants;
 import sorcer.core.deploy.ServiceDeployment;
 import sorcer.core.provider.Provider;
@@ -80,9 +81,7 @@ public class ServiceSignature implements Signature, SorcerConstants {
 	// implementation of the serviceInfo
 	protected Class<?> providerType;
 
-	protected File providerFile;
-
-	protected URL providerURL;
+	protected Path serviceSource;
 
 	protected String group = "";
 
@@ -144,22 +143,13 @@ public class ServiceSignature implements Signature, SorcerConstants {
 		this.selector = selector;
 	}
 
-	public ServiceSignature(File source) {
-		this.providerFile = source;
-	}
-
-	public ServiceSignature(String name, File source) {
+	public ServiceSignature(String name, Path source) {
 		this.name = name;
-		this.providerFile = source;
+		this.serviceSource = source;
 	}
 
-	public ServiceSignature(URL source) {
-		this.providerURL = source;
-	}
-
-	public ServiceSignature(String name, URL source) {
-		this.name = name;
-		this.providerURL = source;
+	public ServiceSignature(Path source) {
+		this.serviceSource = source;
 	}
 
 	public void setExertion(Exertion exertion) throws ExertionException {
@@ -650,20 +640,13 @@ public class ServiceSignature implements Signature, SorcerConstants {
         return dependers;
     }
 
-	public File getProviderFile() {
-		return providerFile;
+	public Path getServiceSource() {
+		return serviceSource;
 	}
 
-	public void setProviderFile(File providerFile) {
-		this.providerFile = providerFile;
+	public void setServiceSource(Path serviceSource) {
+		this.serviceSource = serviceSource;
 	}
 
-	public URL getProviderURL() {
-		return providerURL;
-	}
-
-	public void setProviderURL(URL providerURL) {
-		this.providerURL = providerURL;
-	}
 
 }

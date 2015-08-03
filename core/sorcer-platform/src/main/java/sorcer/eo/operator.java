@@ -954,11 +954,7 @@ public class operator {
 		return component.getProcessSignature();
 	}
 
-	public static Signature sig(File source) {
-		return new ServiceSignature(source);
-	}
-
-	public static Signature sig(URL source) {
+	public static Signature sig(Path source) {
 		return new ServiceSignature(source);
 	}
 
@@ -1337,6 +1333,16 @@ public class operator {
 
 	public static <M extends Service> M mogram(Object... items) throws MogramException {
 		String name = "unknown" + count++;
+		if (items.length == 1 && items[0] instanceof Signature) {
+			Object source = ((ServiceSignature)items[0]).getServiceSource();
+			if(source != null) {
+				try {
+//					ScriptExerter se = new ScriptExerter(new File(""+source));
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
 		boolean hasEntry = false;
 		boolean hasExertion = false;
 		boolean hasContext = false;

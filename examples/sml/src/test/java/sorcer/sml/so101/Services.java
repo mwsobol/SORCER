@@ -36,13 +36,9 @@ public class Services {
     @Test
     public void tmp() throws Exception  {
 
-        Model m = model(
-
-                srv(sig("multiply", MultiplierImpl.class, result("multiply/out",
-                        inPaths("multiply/x1", "multiply/x2")))),
-                response("multiply"));
-
-        logger.info("response: " + m.toString());
+        Signature sig = sig(file("/Volumes/SSSD/git/SORCER/examples/sml/src/main/netlets/ha-job-local.ntl"));
+        Mogram s = mogram(sig);
+        logger.info("service: " + s);
 
     }
 
