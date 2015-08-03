@@ -35,10 +35,9 @@ public class Services {
 
     @Test
     public void tmp() throws Exception  {
-
         Signature sig = sig(file("/Volumes/SSSD/git/SORCER/examples/sml/src/main/netlets/ha-job-local.ntl"));
-        Mogram s = mogram(sig);
-        logger.info("service: " + s);
+//        Mogram s = mogram(sig);
+//        logger.info("service: " + s);
 
     }
 
