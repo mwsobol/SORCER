@@ -211,7 +211,7 @@ public class ExertCmd extends ShellCmd {
 					Exertion xrt = (Exertion)mog;
 					out.println("\n---> OUTPUT DATA CONTEXT --->");
 					if (xrt.isCompound()) {
-						out.println(((Job) mog).getJobContext());
+						out.println(xrt.getContext());
 					} else {
 						out.println(xrt.getDataContext());
 					}

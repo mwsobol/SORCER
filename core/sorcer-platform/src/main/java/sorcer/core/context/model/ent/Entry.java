@@ -211,7 +211,7 @@ public class Entry<T> extends Tuple2<String, T> implements Service, Dependency, 
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
-		return "[" + _1 + ":" + en + ":" + index + "]";
+		return "[" + _1 + ":" + en + "]";
 	}
 
 	@Override

@@ -131,16 +131,14 @@ public class ScriptThread extends Thread {
         return serviceShell;
     }
 
-    public void setServiceShell(ServiceShell serviceShell) {
-        this.serviceShell = serviceShell;
-    }
-
     private static String[] imports = {
             "sorcer.netlet.annotation",
             "sorcer.service",
             "sorcer.core.exertion",
             "sorcer.service.modeling",
             "sorcer.service",
+            "sorcer.core.provider",
+            "sorcer.core.provider.rendezvous",
             "sorcer.core.context.model",
             "java.io"
     };

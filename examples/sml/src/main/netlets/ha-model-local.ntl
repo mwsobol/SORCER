@@ -7,7 +7,7 @@ import sorcer.arithmetic.provider.impl.MultiplierImpl
 import sorcer.arithmetic.provider.impl.SubtractorImpl
 
 
-Model m = model(
+Model m = model("Hello Arithmetic Srv Model",
         inEnt("multiply/x1", 10.0d), inEnt("multiply/x2", 50.0d),
         inEnt("add/x1", 20.0d), inEnt("add/x2", 80.0d),
         srv(sig("multiply", MultiplierImpl.class, result("multiply/out",

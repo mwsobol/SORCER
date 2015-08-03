@@ -423,8 +423,9 @@ public class ServiceSignature implements Signature, SorcerConstants {
 
 	public String toString() {
 		return this.getClass() + ":" + providerName + ";" + execType + ";"
-				+ isActive + ";" + serviceType + ";"
-				+ (prefix != null ? "#" + selector : "") + ";" + returnPath;
+				+ ";" + serviceType + ";"
+				+ (prefix != null ? "#" + selector : "")
+				+ ";" + returnPath;
 	}
 
 	public ServiceID getServiceID() {

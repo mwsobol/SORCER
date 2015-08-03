@@ -397,9 +397,9 @@ public class
 	}
 
 	public String toString() {
-		return this.getClass() + ":" + providerName + ";" + execType + ";" + isActive + ";"
+		return this.getClass() + ":" + providerName + ";" + execType + ";"
 				+ serviceType + ";" + selector 
 					+ (prefix !=null ? "#" + prefix : "") 
-					+ (returnPath != null ? ";"  + returnPath : "");
+					+ (returnPath != null ? ";"  + "result " + returnPath : "");
 	}
 }

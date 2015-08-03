@@ -6,6 +6,17 @@ import sorcer.arithmetic.provider.impl.AdderImpl
 import sorcer.arithmetic.provider.impl.MultiplierImpl
 import sorcer.arithmetic.provider.impl.SubtractorImpl
 import sorcer.core.provider.rendezvous.ServiceJobber
+import sorcer.service.Task
+import static sorcer.co.operator.inEnt
+import static sorcer.co.operator.outPaths
+import static sorcer.eo.operator.cxt
+import static sorcer.eo.operator.inPoint
+import static sorcer.eo.operator.job
+import static sorcer.eo.operator.outPoint
+import static sorcer.eo.operator.pipe
+import static sorcer.eo.operator.result
+import static sorcer.eo.operator.sig
+import static sorcer.eo.operator.task
 
 Task f4 = task("f4",
         sig("multiply", MultiplierImpl.class),
@@ -19,7 +30,9 @@ Task f3 = task("f3",
         sig("subtract", SubtractorImpl.class),
         context("subtract", inEnt("arg/x5"), inEnt("arg/x6"), result("result/y3")));
 
-job("f1", sig("service", ServiceJobber.class),
-        job("f2", f4, f5), f3,
+job("f1", sig("execute", ServiceJobber.class),
+        cxt(inEnt("arg/x1", 20.0d),
+                result("job/result", outPaths("f1/f3/result/y3"))),
+        job("f2", sig("execute", ServiceJobber.class), f4, f5), f3,
         pipe(outPoint(f4, "result/y1"), inPoint(f3, "arg/x5")),
         pipe(outPoint(f5, "result/y2"), inPoint(f3, "arg/x6")));

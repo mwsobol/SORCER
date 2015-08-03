@@ -365,9 +365,9 @@ public class ObjectSignature extends ServiceSignature {
 	}
 
 	public String toString() {
-		String provider = providerType == null ? ""+evaluator : ""+providerType;
-
-		return this.getClass() + ";" + providerName + ";" + execType + ";" + isActive + ";"
-		+ provider + ";" + selector;
+		return this.getClass() + ";" + execType + ";"
+		+ (providerType == null ? "" : providerType + ";") + selector
+				+ (prefix !=null ? "#" + prefix : "")
+				+ (returnPath != null ? ";"  + "result " + returnPath : "");
 	}
 }

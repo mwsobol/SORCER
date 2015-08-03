@@ -6,14 +6,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
+import sorcer.arithmetic.provider.Multiplier;
 import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.provider.impl.SubtractorImpl;
 import sorcer.core.provider.rendezvous.ServiceJobber;
-import sorcer.service.Context;
-import sorcer.service.Mogram;
-import sorcer.service.Service;
-import sorcer.service.Strategy;
+import sorcer.service.*;
 import sorcer.service.modeling.Model;
 
 import static org.junit.Assert.assertEquals;
@@ -34,6 +32,19 @@ import static sorcer.po.operator.invoker;
 @ProjectContext("examples/sml")
 public class Services {
     private final static Logger logger = LoggerFactory.getLogger(Services.class);
+
+    @Test
+    public void tmp() throws Exception  {
+
+        Model m = model(
+
+                srv(sig("multiply", MultiplierImpl.class, result("multiply/out",
+                        inPaths("multiply/x1", "multiply/x2")))),
+                response("multiply"));
+
+        logger.info("response: " + m.toString());
+
+    }
 
     @Test
     public void evaluateModel() throws Exception  {
