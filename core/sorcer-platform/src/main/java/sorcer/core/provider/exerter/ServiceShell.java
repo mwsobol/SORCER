@@ -50,11 +50,15 @@ import sorcer.service.txmgr.TransactionManagerAccessor;
 import sorcer.util.ProviderLookup;
 import sorcer.util.Sorcer;
 
+import java.io.File;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Callable;
 
 import static sorcer.eo.operator.sig;
+import static sorcer.eo.operator.task;
 import static sorcer.eo.operator.value;
 
 /**
@@ -67,6 +71,7 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 
 	private Service service;
 	private Mogram mogram;
+	private File mogramSource;
 	private Transaction transaction;
 	private static MutualExclusion locker;
 
@@ -89,7 +94,7 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 	public void init(Provider provider) {
 		this.provider = provider;
 	}
-	
+
 	public <T extends Mogram> T  exert(Arg... entries) throws TransactionException,
 			MogramException, RemoteException {
 		return exert((Transaction) null, (String) null, entries);
@@ -113,15 +118,38 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 	 * @see sorcer.service.Exerter#exert(sorcer.service.Exertion, net.jini.core.transaction.Transaction, sorcer.service.Parameter[])
 	 */
 	@Override
-	public Mogram exert(Mogram xrt, Transaction txn, Arg... entries)
-			throws TransactionException, MogramException, RemoteException {
+	public  <T extends Mogram> T exert(T input, Transaction transaction, Arg... entries) throws ExertionException {
 		try {
-			xrt.substitute(entries);
+			Exertion result = null;
+			try {
+				if (input instanceof Exertion) {
+					Exertion exertion = ((Exertion)input);
+					if ((input.getProcessSignature() != null
+							&& ((ServiceSignature) input.getProcessSignature()).isShellRemote())
+							|| (exertion.getControlContext() != null
+							&& ((ControlContext) exertion.getControlContext()).isShellRemote())) {
+						Exerter prv = (Exerter) Accessor.getService(sig(Shell.class));
+						result = (Exertion)prv.exert(input, transaction, entries);
+					} else {
+//						sorcer.core.provider.exerter.ServiceShell se = new sorcer.core.provider.exerter.ServiceShell(input);
+						try {
+							input.substitute(entries);
+						} catch (Exception e) {
+							throw new ExertionException(e);
+						}
+						mogram = input;
+						result = exert(transaction, null);
+					}
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				if (result != null)
+					((ServiceExertion) result).reportException(e);
+			}
+			return (T) result;
 		} catch (Exception e) {
 			throw new ExertionException(e);
 		}
-		transaction = txn;
-		return exert(xrt, txn, (String) null);
 	}
 
 	public  <T extends Mogram> T exert(String providerName) throws TransactionException,
@@ -543,6 +571,14 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 		this.transaction = transaction;
 	}
 
+	public File getMogramSource() {
+		return mogramSource;
+	}
+
+	public void setMogramSource(File mogramSource) {
+		this.mogramSource = mogramSource;
+	}
+
 	@Override
 	public String toString() {
 		if (mogram == null)
@@ -559,6 +595,146 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 	@Override
 	public Object call() throws Exception {
 		return mogram.exert(transaction);
+	}
+
+	public Object evaluate(Arg... args)
+			throws ExertionException, RemoteException, ContextException {
+		  return evaluate((Exertion)mogram, args);
+	}
+
+	public Object evaluate(Exertion exertion, Arg... args)
+			throws ExertionException, ContextException, RemoteException {
+		Exertion out;
+		initialize(exertion, args);
+		try {
+			if (exertion.getClass() == Task.class) {
+				if (((Task) exertion).getDelegate() != null)
+					out = exert(((Task) exertion).getDelegate(), null, args);
+				else
+					out = exertOpenTask(exertion, args);
+			} else {
+				out = exert(exertion, null, args);
+			}
+			return finalize(out, args);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new ExertionException(e);
+		}
+	}
+
+	private static Exertion initialize(Exertion xrt, Arg... args) throws ContextException {
+		Signature.ReturnPath rPath = null;
+		for (Arg a : args) {
+			if (a instanceof Signature.ReturnPath) {
+				rPath = (Signature.ReturnPath) a;
+				break;
+			}
+		}
+		if (rPath != null)
+			((ServiceContext)xrt.getDataContext()).setReturnPath(rPath);
+		return xrt;
+	}
+
+	private static Object finalize(Exertion xrt, Arg... args) throws ContextException, RemoteException {
+		Context dcxt = xrt.getDataContext();
+		Signature.ReturnPath rPath =	dcxt.getReturnPath();
+		// check if it was already finalized
+		if (((ServiceContext) dcxt).isFinalized()) {
+			return dcxt.getValue(rPath.path);
+		}
+		// get the compound service context
+		Context acxt = xrt.getContext();
+
+		if (rPath != null && xrt.isCompound()) {
+			// if Path.outPaths.length > 1 return subcontext
+			if (rPath.outPaths != null && rPath.outPaths.length == 1) {
+				Object val = acxt.getValue(rPath.outPaths[0]);
+				dcxt.putValue(rPath.path, val);
+				return val;
+			} else {
+				Signature.ReturnPath rp = ((ServiceContext) dcxt).getReturnPath();
+				if (rp != null && rPath.path != null) {
+					Object result = acxt.getValue(rp.path);
+					if (result instanceof Context)
+						return ((Context) acxt.getValue(rp.path))
+								.getValue(rPath.path);
+					else if (result == null) {
+						Context out = new ServiceContext();
+						logger.debug("\nselected paths: " + Arrays.toString(rPath.outPaths)
+								+ "\nfrom context: " + acxt);
+						for (String p : rPath.outPaths) {
+							out.putValue(p, acxt.getValue(p));
+						}
+						dcxt.setReturnValue(out);
+						result = out;
+					}
+					return result;
+				} else {
+					return xrt.getContext().getValue(rPath.path);
+				}
+			}
+		} else if (rPath != null) {
+			if (rPath.outPaths != null) {
+				if (rPath.outPaths.length == 1) {
+					Object val = acxt.getValue(rPath.outPaths[0]);
+					acxt.putValue(rPath.path, val);
+					return val;
+				} else if (rPath.outPaths.length > 1) {
+					Object result = acxt.getValue(rPath.path);
+					if (result instanceof Context)
+						return result;
+					else {
+						Context cxtOut = ((ServiceContext) acxt).getSubcontext(rPath.outPaths);
+						cxtOut.putValue(rPath.path, result);
+						return cxtOut;
+					}
+				}
+			}
+		}
+
+		Object obj = xrt.getReturnValue(args);
+		if (obj == null) {
+			if (rPath != null) {
+				return xrt.getReturnValue(args);
+			} else {
+				return xrt.getContext();
+			}
+		} else if (obj instanceof Context && rPath != null && rPath.path != null) {
+			return (((Context)obj).getValue(rPath.path));
+		}
+		return obj;
+	}
+
+	public static Exertion exertOpenTask(Exertion exertion, Arg... args)
+			throws ExertionException {
+		Exertion closedTask = null;
+		List<Arg> params = Arrays.asList(args);
+		List<Object> items = new ArrayList<Object>();
+		for (Arg param : params) {
+			if (param instanceof ControlContext
+					&& ((ControlContext) param).getSignatures().size() > 0) {
+				List<Signature> sigs = ((ControlContext) param).getSignatures();
+				ControlContext cc = (ControlContext) param;
+				cc.setSignatures(null);
+				Context tc;
+				try {
+					tc = exertion.getContext();
+				} catch (ContextException e) {
+					throw new ExertionException(e);
+				}
+				items.add(tc);
+				items.add(cc);
+				items.addAll(sigs);
+				closedTask = task(exertion.getName(), items.toArray());
+			}
+		}
+		try {
+			closedTask = closedTask.exert(args);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new ExertionException(e);
+		}
+		return closedTask;
 	}
 
 	public <T extends Mogram> T exec(Service srv, Mogram mog, Transaction txn)

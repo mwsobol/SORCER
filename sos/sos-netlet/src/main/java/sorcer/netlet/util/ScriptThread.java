@@ -27,6 +27,7 @@ import org.codehaus.groovy.control.customizers.ImportCustomizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.provider.exerter.ServiceShell;
+import sorcer.service.Exertion;
 import sorcer.service.Mogram;
 import sorcer.service.MogramException;
 
@@ -38,6 +39,7 @@ public class ScriptThread extends Thread {
     private String script;
     private Object result;
     private Object target = null;
+    private boolean isExerted = true;
     final private GroovyShell gShell;
     private NetletClassLoader classLoader;
     private ServiceShell serviceShell;
@@ -46,8 +48,13 @@ public class ScriptThread extends Thread {
             .getName());
 
     public ScriptThread(String script, NetletClassLoader classLoader) {
+        this(script, classLoader, true);
+    }
+
+    public ScriptThread(String script, NetletClassLoader classLoader, boolean isExerted) {
         super(tName("Script"));
         this.classLoader = classLoader;
+        this.isExerted = isExerted;
 
         CompilerConfiguration compilerConfig = new CompilerConfiguration();
         compilerConfig.setPluginFactory(new ShebangPreprocessorFactory());
@@ -95,7 +102,11 @@ public class ScriptThread extends Thread {
                         }
                     } else
 */
-                result = serviceShell.exert();
+                if (isExerted)
+                    result = serviceShell.exert();
+                else
+                    result = serviceShell.evaluate((Exertion)target);
+
             }
         }catch (TransactionException e) {
             e.printStackTrace();

@@ -45,11 +45,13 @@ public class ExertCmd extends ShellCmd {
 
 		NOT_LOADED_MSG = "***command not loaded due to conflict";
 
-		COMMAND_USAGE = "exert [-cc] [[-s | --s | --m] <output filename>] <input filename>";
+		COMMAND_USAGE = "exert [-e] [-stgy] [[-s | --s | --m] <output filename>] <input filename>";
 
-		COMMAND_HELP = "Manage and execute the federation of services specified by the <input filename>;" 
-				+ "\n  -cntrl   print the executed exertion with control context"
+		COMMAND_HELP = "Manage and execute the federation of services specified by the <input filename>;"
+				+ "\n  -eval   evaluatuation result"
+				+ "\n  -stgy   print the executed exertion with control context"
 				+ "\n  -resp   print the response of exerted context model"
+				+ "\n  -db   save the command output in a DB"
 				+ "\n  -s   save the command output in a file"
 				+ "\n  --s   serialize the command output in a file"
 				+ "\n  --m   marshal the the command output in a file";
@@ -87,6 +89,7 @@ public class ExertCmd extends ShellCmd {
 
 		File cdir = NetworkShell.getInstance().getCurrentDir();
 		String scriptFilename = null;
+		boolean ifEvaluation = false;
 		boolean ifOutPersisted = false;
 		boolean ifMogramControl = false;
 		boolean ifResponse  = false;
@@ -110,8 +113,12 @@ public class ExertCmd extends ShellCmd {
                 if (nextToken.equals("-s")) {
                     ifOutPersisted = true;
                     outputFile = new File("" + cdir + File.separator + argsList.get(i + 1));
-                } else if (nextToken.equals("-cntrl"))
-                    ifMogramControl = true;
+                } else if (nextToken.equals("-eval")) {
+					ifEvaluation = true;
+					scriptExerter.setIsExerted(false);
+				}
+				else if (nextToken.equals("-stgy"))
+					ifMogramControl = true;
 				else if (nextToken.equals("-resp"))
 					ifResponse = true;
 				else if (nextToken.equals("-m"))
@@ -142,6 +149,7 @@ public class ExertCmd extends ShellCmd {
 				scriptFile = NetworkShell.huntForTheScriptFile("" + cdir
 						+ File.separator + scriptFilename);
 			}
+			scriptExerter.getServiceShell().setMogramSource(scriptFile);
 			try {
                 scriptExerter.readFile(scriptFile);
 			} catch (IOException e) {
@@ -209,7 +217,7 @@ public class ExertCmd extends ShellCmd {
 				}
 				saveFilesFromContext(xrt, out);
 				if (ifMogramControl) {
-					out.println("\n---> OUTPUT CONTROL CONTEXT --->");
+					out.println("\n---> OUTPUT STRATEGY  --->");
 					out.println(xrt.getControlContext());
 				}
 			} else {
@@ -218,7 +226,7 @@ public class ExertCmd extends ShellCmd {
 					out.println(((Model)out).getResult());
 				}
 				if (ifMogramControl) {
-					out.println("\n---> OUTPUT CONTROL CONTEXT --->");
+					out.println("\n---> OUTPUT STRATEGY --->");
 					out.println(((Model) out).getModelStrategy());
 				}
 			}

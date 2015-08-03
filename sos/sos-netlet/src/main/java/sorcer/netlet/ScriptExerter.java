@@ -11,7 +11,6 @@ import sorcer.core.provider.exerter.ServiceShell;
 import sorcer.netlet.util.NetletClassLoader;
 import sorcer.netlet.util.ScriptExertException;
 import sorcer.netlet.util.ScriptThread;
-import sorcer.service.Mogram;
 
 import java.io.File;
 import java.io.FileReader;
@@ -55,6 +54,8 @@ public class ScriptExerter {
     private String websterStrUrl;
 
     private Configuration config;
+
+    private boolean isExerted = true;
 
     private boolean debug = false;
 
@@ -112,7 +113,7 @@ public class ScriptExerter {
 
         try {
             if (out!=null && debug) out.println("creating scriptThread..."+ (System.currentTimeMillis()-startTime)+"ms");
-            scriptThread = new ScriptThread(script, classLoader);
+            scriptThread = new ScriptThread(script, classLoader, isExerted);
             if (out!=null && debug) out.println("get target..." + (System.currentTimeMillis()-startTime)+"ms");
             this.target = scriptThread.getTarget();
             this.serviceShell = scriptThread.getServiceShell();
@@ -149,6 +150,10 @@ public class ScriptExerter {
 
     public void readScriptWithHeaders(String script) {
         this.script = script;
+    }
+
+    public void setIsExerted(boolean isExerted) {
+        this.isExerted = isExerted;
     }
 
     public Object getTarget() {
