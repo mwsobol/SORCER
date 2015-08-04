@@ -851,8 +851,8 @@ public class operator {
 	public static Object instance(Signature signature)
 			throws SignatureException {
 		if (signature instanceof NetletSignature) {
-			String source = ((NetletSignature)signature).getServiceSource();
-			if(source != null) {
+			String source = ((NetletSignature) signature).getServiceSource();
+			if (source != null) {
 				try {
 					ScriptExerter se = new ScriptExerter(System.out, null, Sorcer.getWebsterUrl(), true);
 					se.readFile(new File(source));
@@ -860,6 +860,8 @@ public class operator {
 				} catch (Throwable e) {
 					throw new SignatureException(e);
 				}
+			} else {
+				throw new SignatureException("missing netlet filename");
 			}
 		} else if ((signature.getSelector() == null
 				&& ((ObjectSignature) signature).getInitSelector() == null)
