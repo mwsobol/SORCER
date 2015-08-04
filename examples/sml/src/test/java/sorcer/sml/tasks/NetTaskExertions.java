@@ -26,7 +26,6 @@ import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
 import static sorcer.co.operator.outPaths;
 import static sorcer.eo.operator.*;
-import static sorcer.eo.operator.srv;
 import static sorcer.eo.operator.value;
 
 /**
@@ -41,7 +40,7 @@ public class NetTaskExertions {
 	@Test
 	public void exertTask() throws Exception  {
 
-		Task t5 = srv("t5", sig("add", Adder.class),
+		Task t5 = task("t5", sig("add", Adder.class),
 				cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0), result("result/y")));
 
 		Exertion out = exert(t5);
@@ -63,7 +62,7 @@ public class NetTaskExertions {
 	@Test
 	public void evaluateTask() throws SignatureException, ExertionException, ContextException  {
 
-		Task t5 = srv("t5", sig("add", Adder.class),
+		Task t5 = task("t5", sig("add", Adder.class),
 				cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0), result("result/y")));
 
 		// get the result value
@@ -138,7 +137,7 @@ public class NetTaskExertions {
 						inEnt("arg/x2", 80.0), result("result/y")),
 				strategy(Monitor.NO, Wait.YES));
 
-		Exertion out = exert(sig(Shell.class), f5);
+		Context out = exec(sig(Shell.class), f5);
 		assertEquals(get(out, "result/y"), 100.00);
 
 	}

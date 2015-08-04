@@ -16,14 +16,11 @@
  */
 
 @Codebase(group='org.sorcer', module='arithmetic', version='${sorcer.version}', classifier='dl')
-import sorcer.arithmetic.provider.Adder
-import sorcer.service.Strategy.Monitor
+@Load(group='org.sorcer', module='arithmetic', version='${sorcer.version}', classifier='prv')
+import sorcer.arithmetic.provider.impl.AdderImpl
 
-import static sorcer.co.operator.inEnt
-import static sorcer.eo.operator.*
+Double v1 = 100.0;
+Double v2 = 200.0;
 
-task("t5",
-        sig("add", Adder.class),
-        context("add", inEnt("arg, x1", 20.0d),
-                inEnt("arg, x2", 80.0d), result("result/y")), strategy(Monitor.YES));
-
+task("hello adder", sig("add", AdderImpl.class),
+        context("adder", inEnt("arg/x1", v1), inEnt("arg/x2", v2), result("out/y")));

@@ -384,8 +384,8 @@ public class Job extends CompoundExertion {
 	}
 
 	public Context finalizeOutDataContext() throws ContextException {
-		if (dataContext.getRuntime().getOutConnector() != null) {
-			updateContextWith(dataContext.getRuntime().getOutConnector());
+		if (dataContext.getModelStrategy().getOutConnector() != null) {
+			updateContextWith(dataContext.getModelStrategy().getOutConnector());
 		}
 		return dataContext;
 	}
@@ -404,14 +404,14 @@ public class Job extends CompoundExertion {
 		return dataContext;
 	}
 
-	public Context getContext() {
+	public Context getContext() throws ContextException {
 		 return getJobContext();
 	}
 	
-	public Context getJobContext() {
+	public Context getJobContext() throws ContextException {
 		ServiceContext cxt = new ServiceContext(name);
 		cxt.setSubject("job/data/context", name);
-		
+		cxt.append(dataContext);
 		return linkContext(cxt, getName());
 	}
 

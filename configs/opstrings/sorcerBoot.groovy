@@ -57,7 +57,7 @@ def getCommonDLs() {
             "jsk-dl-${Sorcer.riverVersion}.jar",
             "rio-api-${RioVersion.VERSION}.jar",
             "serviceui-${Sorcer.riverVersion}.jar",
-            "sos-netlet-${Sorcer.sorcerVersion}.jar",
+            "sos-sorcer.netlet-${Sorcer.sorcerVersion}.jar",
             "commons-io-${Sorcer.commonsIoVersion}.jar"]
 }
 

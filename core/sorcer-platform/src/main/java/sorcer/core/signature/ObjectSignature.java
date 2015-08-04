@@ -23,8 +23,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.exertion.ObjectTask;
 import sorcer.core.invoker.MethodInvoker;
-import sorcer.core.provider.Provider;
-import sorcer.eo.operator;
 import sorcer.service.*;
 import sorcer.service.modeling.Modeling;
 
@@ -32,8 +30,6 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.rmi.RemoteException;
-
-import static sorcer.eo.operator.exert;
 
 public class ObjectSignature extends ServiceSignature {
 
@@ -44,32 +40,32 @@ public class ObjectSignature extends ServiceSignature {
 	private Object target;
 
 	// list of initialization arguments for the constructor
-	private Object[] args;	
-	
+	private Object[] args;
+
 	private String initSelector;
-	
+
 	private Class<?>[] argTypes;
 
-    private static Logger logger = LoggerFactory.getLogger(ObjectSignature.class);
+	private static Logger logger = LoggerFactory.getLogger(ObjectSignature.class);
 
 	public ObjectSignature() {
 		this.providerType = Object.class;
 	}
 
 	public ObjectSignature(String selector, Object object, Class<?>[] argTypes,
-			Object... args) throws InstantiationException,
+						   Object... args) throws InstantiationException,
 			IllegalAccessException {
 		this(selector, object, null, argTypes, args);
 	}
 
-    public ObjectSignature(Object object, String initSelector, Class<?>[] argTypes,
-                           Object... args) throws InstantiationException,
-                                                  IllegalAccessException {
-        this(null, object, initSelector, argTypes, args);
-    }
+	public ObjectSignature(Object object, String initSelector, Class<?>[] argTypes,
+						   Object... args) throws InstantiationException,
+			IllegalAccessException {
+		this(null, object, initSelector, argTypes, args);
+	}
 
-    public ObjectSignature(String selector, Object object, String initSelector, Class<?>[] argTypes,
-			Object... args) throws InstantiationException,
+	public ObjectSignature(String selector, Object object, String initSelector, Class<?>[] argTypes,
+						   Object... args) throws InstantiationException,
 			IllegalAccessException {
 		this();
 		if (object instanceof Class) {
@@ -82,14 +78,14 @@ public class ObjectSignature extends ServiceSignature {
 
 		setSelector(selector);
 		setInitSelector(initSelector);
-		
+
 		this.argTypes = argTypes;
-		if (args != null && args.length > 0) 
+		if (args != null && args.length > 0)
 			this.args = args;
 	}
 
 	public ObjectSignature(String selector, Class<?> providerClass,
-			Class<?>... argClasses) {
+						   Class<?>... argClasses) {
 		this.serviceType = providerClass;
 		this.providerType = providerClass;
 		if (argClasses != null && argClasses.length > 0)
@@ -105,7 +101,7 @@ public class ObjectSignature extends ServiceSignature {
 	 * <p>
 	 * Returns the object being a provider of this signature.
 	 * </p>
-	 * 
+	 *
 	 * @return the object provider
 	 */
 	public Object getTarget() {
@@ -116,7 +112,7 @@ public class ObjectSignature extends ServiceSignature {
 	 * <p>
 	 * Assigns the object being a provider of this signature.
 	 * </p>
-	 * 
+	 *
 	 * @param target
 	 *            the  object provider to set
 	 */
@@ -128,7 +124,7 @@ public class ObjectSignature extends ServiceSignature {
 	 * <p>
 	 * Returns a provider class for this signature.
 	 * </p>
-	 * 
+	 *
 	 * @return the providerClass
 	 */
 	public Class<?> getProviderType() {
@@ -145,25 +141,25 @@ public class ObjectSignature extends ServiceSignature {
 	}
 
 	/**
-	    <p> Returns the evaluator for this signature. </p>
+	 <p> Returns the evaluator for this signature. </p>
 
-	    @return the evaluation
+	 @return the evaluation
 	 */
 	public MethodInvoker getEvaluator() {
 		return evaluator;
 	}
 
-	/**   
-	    <p> Sets the evaluator for this signature. </p>
+	/**
+	 <p> Sets the evaluator for this signature. </p>
 
-	    @param evaluator the evaluation to set
+	 @param evaluator the evaluation to set
 	 */
 	public void setEvaluator(MethodInvoker evaluator) {
 		this.evaluator = evaluator;
 	}
 
 	public MethodInvoker<?> createEvaluator() throws InstantiationException,
-	IllegalAccessException {
+			IllegalAccessException {
 		if (target == null && serviceType != null) {
 			evaluator = new MethodInvoker(serviceType.newInstance(), selector);
 		} else
@@ -191,7 +187,7 @@ public class ObjectSignature extends ServiceSignature {
 	/**
 	 * Returns a new instance using a constructor as specified by this
 	 * signature.
-	 * 
+	 *
 	 * @return a new instance
 	 * @throws SignatureException
 	 */
@@ -213,7 +209,7 @@ public class ObjectSignature extends ServiceSignature {
 				obj = constructor.newInstance(args);
 			}
 		} catch (Exception e) {
-            logger.error("newInstance failed", e);
+			logger.error("newInstance failed", e);
 			throw new SignatureException(e);
 		}
 		logger.debug(">>>>>>>>>>> instantiated: \n" + obj + "\n by signature: "
@@ -236,7 +232,7 @@ public class ObjectSignature extends ServiceSignature {
 	/**
 	 * Returns a new instance using initialization by the instance or class method as
 	 * specified by this signature.
-	 * 
+	 *
 	 * @return a new instance
 	 * @throws SignatureException
 	 */
@@ -245,21 +241,21 @@ public class ObjectSignature extends ServiceSignature {
 		Method m;
 
 		try {
-            if(selector!=null) {
-                try {
-                    Method selectorMethod = providerType.getDeclaredMethod(selector, argTypes);
-                    if(Modifier.isStatic(selectorMethod.getModifiers())) {
-                        return  selectorMethod.invoke(null, args);
-                    }
-                } catch (NoSuchMethodException e) {
-                    //skip;
-                }
-            }
+			if(selector!=null) {
+				try {
+					Method selectorMethod = providerType.getDeclaredMethod(selector, argTypes);
+					if(Modifier.isStatic(selectorMethod.getModifiers())) {
+						return  selectorMethod.invoke(null, args);
+					}
+				} catch (NoSuchMethodException e) {
+					//skip;
+				}
+			}
 			if (initSelector == null || initSelector.equals("new")) {
 				obj = providerType.newInstance();
 				return obj;
 			}
-			
+
 			if (argTypes != null)
 				m = providerType.getMethod(initSelector, argTypes);
 			else  {
@@ -278,7 +274,7 @@ public class ObjectSignature extends ServiceSignature {
 				obj = m.invoke(obj);
 			}
 		} catch (Exception e) {
-            logger.error("initInstance failed", e);
+			logger.error("initInstance failed", e);
 			try {
 				// check if that is SORCER service bean signature
 				m = providerType.getMethod(selector, Context.class);
@@ -287,9 +283,9 @@ public class ObjectSignature extends ServiceSignature {
 				else
 					throw new SignatureException(e);
 			} catch (Exception e1) {
-                logger.error("initInstance failed #2", e);
+				logger.error("initInstance failed #2", e);
 				throw new SignatureException(e);
-			} 
+			}
 		}
 		// logger.debug(">>>>>>>>>>> instantiated: \n" + obj +
 		// "\n by signature: " + this);
@@ -318,7 +314,7 @@ public class ObjectSignature extends ServiceSignature {
 	}
 
 	public Object build() throws SignatureException {
-        return build(null);
+		return build(null);
 	}
 
 	public Object build(Context<?> inContext) throws SignatureException {
@@ -356,7 +352,7 @@ public class ObjectSignature extends ServiceSignature {
 		Context cxt = null;
 		ObjectTask task = null;
 		if (mogram instanceof Context)
-		 	cxt = (Context)mogram;
+			cxt = (Context)mogram;
 		else
 			cxt = mogram.exert(txn);
 
@@ -369,9 +365,9 @@ public class ObjectSignature extends ServiceSignature {
 	}
 
 	public String toString() {
-		String provider = providerType == null ? ""+evaluator : ""+providerType;
-
-		return this.getClass() + ";" + providerName + ";" + execType + ";" + isActive + ";"
-		+ provider + ";" + selector;
+		return this.getClass() + ";" + execType + ";"
+				+ (providerType == null ? "" : providerType + ";") + selector
+				+ (prefix !=null ? "#" + prefix : "")
+				+ (returnPath != null ? ";"  + "result " + returnPath : "");
 	}
 }

@@ -7,6 +7,7 @@ import org.codehaus.groovy.control.CompilationFailedException;
 import org.rioproject.RioVersion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sorcer.core.provider.exerter.ServiceShell;
 import sorcer.netlet.util.NetletClassLoader;
 import sorcer.netlet.util.ScriptExertException;
 import sorcer.netlet.util.ScriptThread;
@@ -48,9 +49,13 @@ public class ScriptExerter {
 
     private ScriptThread scriptThread;
 
+    private ServiceShell serviceShell;
+
     private String websterStrUrl;
 
     private Configuration config;
+
+    private boolean isExerted = true;
 
     private boolean debug = false;
 
@@ -108,9 +113,10 @@ public class ScriptExerter {
 
         try {
             if (out!=null && debug) out.println("creating scriptThread..."+ (System.currentTimeMillis()-startTime)+"ms");
-            scriptThread = new ScriptThread(script, classLoader);
+            scriptThread = new ScriptThread(script, classLoader, isExerted);
             if (out!=null && debug) out.println("get target..." + (System.currentTimeMillis()-startTime)+"ms");
             this.target = scriptThread.getTarget();
+            this.serviceShell = scriptThread.getServiceShell();
             return target;
         }
         // Parse Groovy errors and replace line numbers to adjust according to show the actual line number with an error
@@ -146,12 +152,20 @@ public class ScriptExerter {
         this.script = script;
     }
 
+    public void setIsExerted(boolean isExerted) {
+        this.isExerted = isExerted;
+    }
+
     public Object getTarget() {
         return target;
     }
 
     public Object getResult() {
         return result;
+    }
+
+    public ServiceShell getServiceShell() {
+        return serviceShell;
     }
 
     public void setConfig(Configuration config) {

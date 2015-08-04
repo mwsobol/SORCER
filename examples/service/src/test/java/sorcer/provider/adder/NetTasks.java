@@ -31,7 +31,7 @@ public class NetTasks {
 	@Test
 	public void exertTask() throws Exception  {
 
-		Task t5 = srv("t5", sig("add", Adder.class),
+		Task t5 = task("t5", sig("add", Adder.class),
 				cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0), result("result/y")));
 
 		Exertion out = exert(t5);
@@ -52,7 +52,7 @@ public class NetTasks {
     @Test
     public void valueTask() throws SignatureException, ExertionException, ContextException  {
 
-        Task t5 = srv("t5", sig("add", Adder.class),
+        Task t5 = task("t5", sig("add", Adder.class),
                 cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0), result("result/y")));
 
         // get the result value
@@ -67,7 +67,7 @@ public class NetTasks {
     @Test
     public void sessionTask() throws SignatureException, ExertionException, ContextException  {
 
-        Task sum = srv("t6", sig("sum", Adder.class),
+        Task sum = task("t6", sig("sum", Adder.class),
                 cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0), result("result/y")));
 
 		assertTrue(value(sum).equals(100.0));

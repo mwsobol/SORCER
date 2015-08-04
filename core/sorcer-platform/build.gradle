@@ -32,6 +32,7 @@ dependencies {
     compile project(':sorcer-dl')
     compile files("${System.properties['java.home']}/../lib/tools.jar")
     compile project(':webster')
+    compile project(':sorcer-resolving-loader')
     /* Depend on Rio webster for running a test so we do not create a circular dependency on Sorcer Webster */
     //compile "org.rioproject:webster:${rioVersion}"
     testCompile project(':sorcer-test')

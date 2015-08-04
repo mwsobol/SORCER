@@ -497,8 +497,8 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
             throws ContextException;
 
     public Context finalizeOutDataContext() throws ContextException {
-        if (dataContext.getRuntime().getOutConnector() != null) {
-            dataContext.updateContextWith(dataContext.getRuntime().getOutConnector());
+        if (dataContext.getModelStrategy().getOutConnector() != null) {
+            dataContext.updateContextWith(dataContext.getModelStrategy().getOutConnector());
         }
         return dataContext;
     }
@@ -955,11 +955,6 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
         getControlContext().appendTrace(info);
     }
 
-    @Override
-    public Exec.State getExecState() {
-        return controlContext.getExecState();
-    }
-
     public String describe() {
         if (!debug)
             return info();
@@ -974,7 +969,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
                 .append("\tExertion Name:        " + name + "\n")
                 .append("\tExertion Status:      " + status + "\n")
                 .append("\tExertion ID:          " + mogramId + "\n")
-             	.append("\tCreation Date:        " + sdf.format(creationDate) + "\n")
+                .append("\tCreation Date:        " + sdf.format(creationDate) + "\n")
                 .append("\tRuntime ID:           " + runtimeId + "\n")
                 .append("\tParent ID:            " + parentId + "\n")
                 .append("\tOwner ID:             " + ownerId + "\n")

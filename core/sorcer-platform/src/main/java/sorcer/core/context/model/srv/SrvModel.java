@@ -229,7 +229,7 @@ public class SrvModel extends ParModel<Object> implements Model {
     }
 
     protected void execDependencies(Signature sig, Arg... args) throws ContextException {
-        Map<String, List<String>> dpm = runtime.getDependentPaths();
+        Map<String, List<String>> dpm = modelStrategy.getDependentPaths();
         List<String> dpl = dpm.get(sig.getName());
         if (dpl != null && dpl.size() > 0) {
             for (String p : dpl) {

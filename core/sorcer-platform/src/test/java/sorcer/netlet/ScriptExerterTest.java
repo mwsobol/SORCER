@@ -4,7 +4,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import sorcer.service.Job;
 
-import java.io.*;
+import java.io.File;
 
 /**
  * SORCER class

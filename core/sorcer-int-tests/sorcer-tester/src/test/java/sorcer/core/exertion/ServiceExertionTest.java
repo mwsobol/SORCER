@@ -52,7 +52,7 @@ public class ServiceExertionTest {
 	}
 	
 	@Test
-	public void exertTaskTest() throws ExertionException, ContextException {
+	public void exertTaskTest() throws Exception {
 		eTask = exert(eTask);
 
 		// exert and them get the value from task's context
@@ -67,7 +67,7 @@ public class ServiceExertionTest {
 	}
 	
 	@Test
-	public void exertJobTest() throws ExertionException, ContextException {
+	public void exertJobTest() throws Exception {
 		// just get value from job's context
 		//logger.info("eJob value @  t3/arg/x2 = " + get(eJob, "j1/t3/arg/x2"));
 		assertTrue("Wrong eJob value for " + Context.none, 

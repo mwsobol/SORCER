@@ -17,7 +17,7 @@ A task is an elementary service defined by a signature with its data and control
 An exertion is a compound service defining collaborating providers-federation-to be exerted 
 by the SORCER Operating System (SOS). It is a structured composition of tasks and exertions.
 	
-An exertion expressed in the Service Modeling Language (SML) is called a service script or netlet.
+An exertion expressed in the Service Modeling Language (SML) is called a service script or sorcer.netlet.
 
 
 Service Provider exerts acquired abilities to execute a task

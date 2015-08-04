@@ -40,11 +40,9 @@ import static sorcer.eo.operator.asis;
 import static sorcer.eo.operator.get;
 import static sorcer.eo.operator.pipe;
 import static sorcer.eo.operator.put;
-import static sorcer.eo.operator.srv;
 import static sorcer.eo.operator.value;
 import static sorcer.mo.operator.entModel;
 import static sorcer.po.operator.add;
-import static sorcer.po.operator.asis;
 import static sorcer.po.operator.*;
 import static sorcer.po.operator.set;
 
@@ -60,7 +58,7 @@ public class CollectionOperators {
 
 
 	@Test
-		public void tuplesOfTypedObjects() throws Exception {
+	public void tuplesOfTypedObjects() throws Exception {
 
 
 		Tuple1 t1 = tuple("Mike");
@@ -105,38 +103,38 @@ public class CollectionOperators {
 
 	@Test
 	public void genericArrayOperator() throws Exception {
-		
+
 		Double[] da = array(1.1, 2.1, 3.1);
 		assertArrayEquals(da, new Double[] { 1.1, 2.1, 3.1 } );
-		
-		Object[] oa = array(array(1.1, 2.1, 3.1),  4.1,  array(11.1, 12.1, 13.1));		
+
+		Object[] oa = array(array(1.1, 2.1, 3.1),  4.1,  array(11.1, 12.1, 13.1));
 		assertArrayEquals((Double[])oa[0], array(1.1, 2.1, 3.1));
 		assertEquals(oa[1], 4.1);
 		assertArrayEquals((Double[])oa[2], array(11.1, 12.1, 13.1));
-		
+
 	}
 
 	@Test
 	public void genericListOperator() throws Exception {
-		
+
 		// the list operator creates an instance of ArrayList
 		List<Object> l = list(list(1.1, 2.1, 3.1),  4.1,  list(11.1, 12.1, 13.1));
-		
+
 		List<Double> l0 = (List<Double>)l.get(0);
 		assertEquals(l0, list(array(1.1, 2.1, 3.1)));
-			
+
 		assertEquals(l.get(0), list(1.1, 2.1, 3.1));
 		assertEquals(l.get(1), 4.1);
 		assertEquals(l.get(2), list(11.1, 12.1, 13.1));
-		
+
 		assertTrue(Arrays.equals(array(list(1.1, 2.1, 3.1)), array(1.1, 2.1, 3.1)));
-		
+
 	}
-	
-	
+
+
 	@Test
 	public void genericSetOperator() throws Exception {
-		
+
 		// the set operator creates instances of java.util.Set
 		Set<Serializable> s = set("name", "Mike", "name", "Ray", tuple("height", 174));
 		assertEquals(s.size(), 4);
@@ -144,37 +142,37 @@ public class CollectionOperators {
 		assertEquals((int)tuple("height", 174)._2, 174);
 
 		assertTrue(s.contains(tuple("height", 174)));
-		
+
 	}
-	
-	
+
+
 	@Test
 	public void tableOperator() throws Exception {
-		
+
 		Table t = table(
 				row(1.1, 1.2, 1.3, 1.4, 1.5),
 				row(2.1, 2.2, 2.3, 2.4, 2.5),
 				row(3.1, 3.2, 3.3, 3.4, 3.5));
-		
+
 		columnNames(t, list("x1", "x2", "x3", "x4", "x5"));
 		rowNames(t, list("f1", "f2", "f3"));
 		//logger.info("table: " + table);
 		assertEquals(rowSize(t), 3);
 		assertEquals(columnSize(t), 5);
-		
+
 		assertEquals(rowNames(t), list("f1", "f2", "f3"));
 		assertEquals(columnNames(t), list("x1", "x2", "x3", "x4", "x5"));
-		assertEquals(rowMap(t, "f2"), map(ent("x1", 2.1), ent("x2", 2.2), 
+		assertEquals(rowMap(t, "f2"), map(ent("x1", 2.1), ent("x2", 2.2),
 				ent("x3", 2.3), ent("x4", 2.4), ent("x5",2.5)));
 		assertEquals(value(t, "f2", "x2"), 2.2);
 		assertEquals(value(t, 1, 1), 2.2);
-		
+
 	}
 
 
 	@Test
 	public void entryOperator() throws Exception {
-		
+
 		Entry<Double> e = ent("arg/x1", 10.0);
 		assertEquals("arg/x1", key(e));
 		// a path is a String - usually a sequence of attributes
@@ -211,17 +209,17 @@ public class CollectionOperators {
 		assertTrue(access(se1).equals(access(st1)));
 
 		// store an object
-		URL se2Url = store(value(se1));
+		store(value(se1));
 		Strategy st2 = (Strategy)content(se1Url);
 		assertTrue(flow(se1).equals(flow(st2)));
 		assertTrue(access(se1).equals(access(st2)));
-		
+
 	}
-	
-	
+
+
 	@Test
 	public void dbEntryOperator() throws Exception {
-		
+
 		// create a persistent entry
 		Entry<Double> de = dbEnt("x3", 110.0);
 		assertFalse(asis(de) instanceof URL);
@@ -233,30 +231,30 @@ public class CollectionOperators {
 		assertTrue(value(e).equals(10.0));
 		assertTrue(asis(e).equals(10.0));
 		assertFalse(asis(e) instanceof URL);
-				
+
 		// make a persistent entry
 		// 'storeArg' operator makes the entry value persisted
 		URL valUrl = storeArg(e);
 		assertTrue(value(e).equals(10.0));
 		assertTrue(asis(e) instanceof URL);
-		
+
 		// create a persistent entry with URL
 		Entry<?> urle = dbEnt("x2", valUrl);
 		assertTrue(value(urle).equals(10.0));
 		assertTrue(asis(urle) instanceof URL);
-		
+
 		// assign a given URL
 		Entry<Object> dbe = dbEnt("y1");
 		put(dbe, valUrl);
 		assertTrue(value(dbe).equals(10.0));
 		assertTrue(asis(dbe) instanceof URL);
-		
+
 	}
-	
-	
+
+
 	@Test
 	public void parOperator() throws Exception {
-		
+
 		Par add = par("add", invoker("x + y", pars("x", "y")));
 		Context<Double> cxt = context(ent("x", 10.0), ent("y", 20.0));
 		logger.info("par value: " + value(add, cxt));
@@ -268,21 +266,21 @@ public class CollectionOperators {
 		assertTrue(value(add).equals(50.0));
 
 	}
-	
-	
+
+
 	@Test
 	public void dbParOperator() throws Exception {
 
 		// persist values (arguments) of pars
-		Par<Double> dbp1 = persistent(par("design/in", 25.0));
-		Par<String> dbp2 = dbPar("url/sobol", "http://sorcersoft.org/sobol");
+		Par dbp1 = persistent(par("design/in", 25.0));
+		Par dbp2 = dbPar("url/sobol", "http://sorcersoft.org/sobol");
 
 		assertFalse(asis(dbp1) instanceof URL);
 		assertTrue(asis(dbp2) instanceof URL);
-		
+
 		assertTrue(value(dbp1).equals(25.0));
 		assertEquals(value(dbp2), "http://sorcersoft.org/sobol");
-		
+
 		assertTrue(asis(dbp1) instanceof URL);
 		assertTrue(asis(dbp2) instanceof URL);
 
@@ -290,19 +288,19 @@ public class CollectionOperators {
 		URL p1Url = store(par("design/in", 30.0));
 		URL p2Url = store(par("url/sorcer", "http://sorcersoft.org"));
 
-		assertTrue(value((Par) content(p1Url)).equals(30.0));
+		assertEquals(value((Par) content(p1Url)), 30.0);
 		assertEquals(value((Par)content(p2Url)), "http://sorcersoft.org");
 
 	}
-	
-	
+
+
 	@Test
 	public void mapOperator() throws Exception {
-		
+
 		Map<Object, Object> map1 = dictionary(ent("name", "Mike"), ent("height", 174.0));
-				
+
 		Map<String, Double> map2 = map(ent("length", 248.0), ent("screen/width", 27.0), ent("screen/height", 12.0));
-		
+
 		// keys and values of entries
 		assertEquals(key(ent("name", "Mike")), "name");
 		assertEquals(value(ent("name", "Mike")), "Mike");
@@ -326,13 +324,13 @@ public class CollectionOperators {
 		// check map values
 		assertTrue(map1.values().contains("Mike"));
 		assertTrue(map1.values().contains(174.0));
-		
+
 	}
-	
-	
+
+
 	@Test
 	public void contextOperator() throws Exception {
-		
+
 		Context cxt = context(
 				ent("arg/x1", 1.1),
 				ent("arg/x2", 1.2),
@@ -367,7 +365,7 @@ public class CollectionOperators {
 		put(cxt, rvEnt("arg/x6", ent("overwrite", 20.0)));
 		assertTrue(value(cxt, "arg/x6").equals(20.0));
 		urvEnt(cxt, "arg/x6");
-		assertTrue(value((Evaluation) value(cxt, "arg/x6")).equals(20.0));
+		assertTrue(value((Evaluation)value(cxt, "arg/x6")).equals(20.0));
 		rrvEnt(cxt, "arg/x6");
 		assertTrue(value(cxt, "arg/x6").equals(20.0));
 
@@ -381,14 +379,14 @@ public class CollectionOperators {
 		assertEquals(2.4, (Double) value(cxt, "arg/x7"), 0.0000001);
 
 	}
-	
+
 
 	@Test
 	public void entryModel() throws Exception {
-		
+
 		Context cxt = entModel(ent("arg/x1", 1.0), ent("arg/x2", 2.0),
-				 ent("arg/x3", 3.0), ent("arg/x4", 4.0), ent("arg/x5", 5.0));
-		
+				ent("arg/x3", 3.0), ent("arg/x4", 4.0), ent("arg/x5", 5.0));
+
 //		add(cxt, ent("arg/x6", 6.0));
 //		assertTrue(value(cxt, "arg/x6").equals(6.0));
 //
@@ -408,15 +406,15 @@ public class CollectionOperators {
 
 		// model with local service entry, no arguments
 		add(cxt, ent("arg/x9", task(sig("multiply", MultiplierImpl.class),
-			cxt("add", inEnt("arg/x1"), inEnt("arg/x2"), result("result/y")))));
+				cxt("add", inEnt("arg/x1"), inEnt("arg/x2"), result("result/y")))));
 
 		assertTrue(value(cxt, "arg/x9").equals(2.0));
 	}
-	
-	
+
+
 	@Test
 	public void parModeling() throws Exception {
-		
+
 		ParModel pm = parModel("par-model", ent("John/weight", 180.0));
 		add(pm, par("x", 10.0), ent("y", 20.0));
 		add(pm, invoker("add", "x + y", pars("x", "y")));
@@ -426,12 +424,11 @@ public class CollectionOperators {
 		assertEquals(value(pm, "add"), 30.0);
 		set(pm, "x", 20.0);
 		assertEquals(value(pm, "add"), 40.0);
-		
+
 	}
 
 	@Test
-	public void serviceMogramming() throws RemoteException,
-			ContextException, ExertionException, SignatureException {
+	public void serviceMogramming() throws Exception {
 
 		Service c4 = context("multiply", inEnt("arg/x1"), inEnt("arg/x2"),
 				outEnt("result/y"));
@@ -439,16 +436,16 @@ public class CollectionOperators {
 		Service c5 = context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
 				outEnt("result/y"));
 
-		Service t3 = srv("t3", sig("subtract", SubtractorImpl.class),
+		Service t3 = task("t3", sig("subtract", SubtractorImpl.class),
 				context("subtract", inEnt("arg/x1", null), inEnt("arg/x2"),
 						outEnt("result/y")));
 
-		Service t4 = srv("t4", sig("multiply", MultiplierImpl.class), c4);
+		Service t4 = task("t4", sig("multiply", MultiplierImpl.class), c4);
 
-		Service t5 = srv("t5", sig("add", AdderImpl.class), c5);
+		Service t5 = task("t5", sig("add", AdderImpl.class), c5);
 
-		Mogram j1 = srv("j1", sig("service", ServiceJobber.class),
-				srv("j2", t4, t5, sig("service", ServiceJobber.class)),
+		Service j1 = job("j1", sig("service", ServiceJobber.class),
+				job("j2", t4, t5, sig("service", ServiceJobber.class)),
 				t3,
 				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
 				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
@@ -473,16 +470,16 @@ public class CollectionOperators {
 		// get service j2 direct result value
 		assertEquals(get(j2, "j1/t3/result/y"), 400.0);
 		// get service par j1p value
-		assertTrue(value(j1p).equals(400.0));
+		assertEquals(value(j1p), 400.0);
 
 		// set job parameter value
 		set(j1p, 1000.0);
-		assertTrue(value(j1p).equals(1000.0));
+		assertEquals(value(j1p), 1000.0);
 
 		// execute original service and get its par value
 		exert(j1);
 		// j1p is the alias to context value of j1 at j1/t3/result/y
-		assertTrue(value(pc, "j1p").equals(400.0));
+		assertEquals(value(pc, "j1p"), 400.0);
 
 	}
 

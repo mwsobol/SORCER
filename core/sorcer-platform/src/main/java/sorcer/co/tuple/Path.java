@@ -26,4 +26,8 @@ public class Path<T2> extends Tuple2<String, T2> {
 	public Path(String path) {
 		this._1 = path;
 	}
+
+	public String path() {
+		return  this._1;
+	}
 }

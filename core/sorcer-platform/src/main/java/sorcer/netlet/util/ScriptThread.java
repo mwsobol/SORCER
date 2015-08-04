@@ -20,61 +20,70 @@ package sorcer.netlet.util;
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import net.jini.core.transaction.TransactionException;
+import org.codehaus.groovy.control.CompilationFailedException;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.codehaus.groovy.control.customizers.ASTTransformationCustomizer;
 import org.codehaus.groovy.control.customizers.ImportCustomizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.provider.exerter.ServiceShell;
-import sorcer.service.Exertion;
+import sorcer.service.Mogram;
 import sorcer.service.MogramException;
-import sorcer.service.modeling.Model;
 
 import java.rmi.RemoteException;
 
 import static sorcer.util.StringUtils.tName;
 
 public class ScriptThread extends Thread {
-		private String script;
-		private Object result;
-		private Object target = null;
-		final private GroovyShell gShell;
-        private NetletClassLoader classLoader;
+    private String script;
+    private Object result;
+    private Object target = null;
+    private boolean isExerted = true;
+    final private GroovyShell gShell;
+    private NetletClassLoader classLoader;
+    private ServiceShell serviceShell;
 
-        private final static Logger logger = LoggerFactory.getLogger(ScriptThread.class
-                .getName());
+    private final static Logger logger = LoggerFactory.getLogger(ScriptThread.class
+            .getName());
 
-        public ScriptThread(String script, NetletClassLoader classLoader) {
-            super(tName("Script"));
-            this.classLoader = classLoader;
+    public ScriptThread(String script, NetletClassLoader classLoader) {
+        this(script, classLoader, true);
+    }
 
-            CompilerConfiguration compilerConfig = new CompilerConfiguration();
-            compilerConfig.setPluginFactory(new ShebangPreprocessorFactory());
-            compilerConfig.addCompilationCustomizers(getImports());
-            compilerConfig.addCompilationCustomizers(new ASTTransformationCustomizer(new GroovyCodebaseSupport(classLoader)));
+    public ScriptThread(String script, NetletClassLoader classLoader, boolean isExerted) {
+        super(tName("Script"));
+        this.classLoader = classLoader;
+        this.isExerted = isExerted;
 
-            gShell = new GroovyShell(classLoader, new Binding(), compilerConfig);
-            this.script = script;
-            this.parseScript();
-        }
+        CompilerConfiguration compilerConfig = new CompilerConfiguration();
+        compilerConfig.setPluginFactory(new ShebangPreprocessorFactory());
+        compilerConfig.addCompilationCustomizers(getImports());
+        compilerConfig.addCompilationCustomizers(new ASTTransformationCustomizer(new GroovyCodebaseSupport(classLoader)));
+
+        gShell = new GroovyShell(classLoader, new Binding(), compilerConfig);
+        this.script = script;
+        this.parseScript();
+    }
 
     public void parseScript() {
-            ClassLoader currentCL = Thread.currentThread().getContextClassLoader();
-            try {
-                Thread.currentThread().setContextClassLoader(classLoader);
-                synchronized (gShell) {
-                    target = gShell.evaluate(script);
-                }
-            } finally {
-                Thread.currentThread().setContextClassLoader(currentCL);
+        ClassLoader currentCL = Thread.currentThread().getContextClassLoader();
+        try {
+            Thread.currentThread().setContextClassLoader(classLoader);
+            synchronized (gShell) {
+                target = gShell.evaluate(script);
             }
+        } finally {
+            Thread.currentThread().setContextClassLoader(currentCL);
         }
+    }
 
     public void run() {
-        if (target==null) parseScript();
         try {
-            if (target instanceof Exertion) {
-                ServiceShell esh = new ServiceShell((Exertion) target);
+            if (target == null)
+                parseScript();
+
+            if (target instanceof Mogram) {
+                serviceShell = new ServiceShell((Mogram) target);
 /*
                     if (((Exertion) target).isProvisionable() && config!=null) {
                         String configFile;
@@ -92,32 +101,44 @@ public class ScriptThread extends Thread {
                         }
                     } else
 */
-                result = esh.exert();
-            } else if (target instanceof Model) {
-                result = ((Model)target).exert();
+                if (isExerted)  {
+                    result = serviceShell.exert();
+                } else {
+                    result = serviceShell.evaluate();
+                }
 
-            }   } catch (TransactionException e) {
+            }
+        }catch (TransactionException e) {
             e.printStackTrace();
         } catch (RemoteException e) {
             e.printStackTrace();
         } catch (MogramException e) {
             e.printStackTrace();
+        }  catch(CompilationFailedException e) {
+            e.printStackTrace();
         }
     }
 
-		public Object getResult() {
-			return result;
-		}
+    public Object getResult() {
+        return result;
+    }
 
-		public Object getTarget() {
-			return target;
-		}
+    public Object getTarget() {
+        return target;
+    }
+
+    public ServiceShell getServiceShell() {
+        return serviceShell;
+    }
 
     private static String[] imports = {
             "sorcer.netlet.annotation",
             "sorcer.service",
             "sorcer.core.exertion",
+            "sorcer.service.modeling",
             "sorcer.service",
+            "sorcer.core.provider",
+            "sorcer.core.provider.rendezvous",
             "sorcer.core.context.model",
             "java.io"
     };
@@ -126,7 +147,8 @@ public class ScriptThread extends Thread {
             "sorcer.service.Strategy",
             "sorcer.eo.operator",
             "sorcer.co.operator",
-            "sorcer.po.operator"
+            "sorcer.po.operator",
+            "sorcer.mo.operator"
     };
 
     private ImportCustomizer getImports() {

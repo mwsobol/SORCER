@@ -252,8 +252,13 @@ public class ControlContext extends ServiceContext<Object> implements StrategyCo
 			put(EXERTION_TRACABLE, false);
 	}
 
-	public Boolean isTracable() throws ContextException {
-		return (Boolean)getValue(EXERTION_TRACABLE);
+	public boolean isTracable() {
+		try {
+			return (Boolean) getValue(EXERTION_TRACABLE);
+		} catch (ContextException e) {
+			// ignrore it
+		}
+		return false;
 	}
 
 	public void setNotifierEnabled(boolean state) {
@@ -588,12 +593,8 @@ public class ControlContext extends ServiceContext<Object> implements StrategyCo
 	}
 
 	public void appendTrace(String info) {
-		try {
-			if (isTracable())
-                traceList.add(info);
-		} catch (ContextException e) {
-			// ignore it
-		}
+		if (isTracable())
+			traceList.add(info);
 	}
 
 	public void addException(ThrowableTrace et) {

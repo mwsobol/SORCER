@@ -26,8 +26,6 @@ project(":sorcer-test").projectDir = file("tools/sorcer-test")
 
 include 'sorcer-ui'
 project(":sorcer-ui").projectDir = file("core/sorcer-ui")
-include 'sos-netlet'
-project(":sos-netlet").projectDir = file("sos/sos-netlet")
 include 'sos-shell'
 project(":sos-shell").projectDir = file("sos/sos-shell")
 include 'sos-cataloger'
