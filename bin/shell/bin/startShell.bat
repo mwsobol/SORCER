@@ -73,7 +73,6 @@ set RIO_CLASSPATH=%RIO_CLASSPATH%;%RIO_HOME%\lib\logging\jul-to-slf4j-%slf4j.ver
 set SORCER_PATH=
 set SORCER_PATH=%SORCER_PATH%;%LIB_DIR%\sorcer\lib\sorcer-resolving-loader-%sorcer.version%.jar
 set SORCER_PATH=%SORCER_PATH%;%LIB_DIR%\sorcer\lib\sorcer-platform-%sorcer.version%.jar
-set SORCER_PATH=%SORCER_PATH%;%LIB_DIR%\sorcer\lib\sos-netlet-%sorcer.version%.jar
 set SORCER_PATH=%SORCER_PATH%;%LIB_DIR%\sorcer\lib\sos-shell-%sorcer.version%.jar
 set SORCER_PATH=%SORCER_PATH%;%LIB_DIR%\sorcer\lib-ext\webster-%sorcer.version%.jar
 

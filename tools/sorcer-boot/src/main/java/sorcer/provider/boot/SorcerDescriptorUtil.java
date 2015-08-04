@@ -278,7 +278,7 @@ public class SorcerDescriptorUtil {
                              "jsk-dl-"+riverVersion+".jar",
                              "serviceui-"+riverVersion+".jar",
                              "sorcer-ui-"+sorcerVersion+".jar",
-							 "sos-netlet-"+sorcerVersion+".jar",
+							 "sos-sorcer.netlet-"+sorcerVersion+".jar",
 				 			 "commons-io-"+commonsIoVersion+".jar",
                              getRioDlJar()};
     }

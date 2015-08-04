@@ -77,13 +77,13 @@ import static sorcer.util.StringUtils.tName;
 public class NetworkShell implements DiscoveryListener, INetworkShell {
 
     public static final String NSH_HELP="SORCER Network Shell - command line options:\n" +
-             "\t<file[.ext]> \t\t- exert the netlet script provided in the specified file\n" +
+             "\t<file[.ext]> \t\t- exert the sorcer.netlet script provided in the specified file\n" +
              "\t-b <file[.ext]> \t- run batch file - start non-interactive shell\n" +
              "\t\t\t\tand execute commands specified in file\n" +
              "\t-c <command [args]> \t- start non-interactive shell and run <command> with arguments\n" +
              "\t\t\t\tto see the full list of available commands run 'nsh -c help'\n" +
              "\t-e <file[.ext]> \t- evaluate groovy script contained in specified file\n" +
-             "\t-f <file[.ext]> \t- exert the netlet script provided in the specified file\n"+
+             "\t-f <file[.ext]> \t- exert the sorcer.netlet script provided in the specified file\n"+
              "\t-help \t\t\t- show this help\n" +
              "\t-version \t\t- show NSH version info";
 
@@ -1597,7 +1597,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 
 
     static public File huntForTheScriptFile(String input) throws IOException {
-        String[] standardExtensions = { ".ntl", ".xrt", ".exertion", ".mod", ".model", ".netlet", ".net",
+        String[] standardExtensions = { ".ntl", ".xrt", ".exertion", ".mod", ".model", ".sorcer.netlet", ".net",
                 ".groovy", ".gvy", ".gy", ".gsh" };
         return huntForTheScriptFile(input, standardExtensions);
     }
@@ -1607,7 +1607,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 	 * Hunt for the script file, doesn't bother if it is named precisely.
 	 * 
 	 * Tries in this order: - actual supplied name - name.ex - name.exertlet -
-	 * name.netlet - name.net - name.groovy - name.gvy - name.gy - name.gsh
+	 * name.sorcer.netlet - name.net - name.groovy - name.gvy - name.gy - name.gsh
 	 * 
 	 * @throws IOException
 	 */

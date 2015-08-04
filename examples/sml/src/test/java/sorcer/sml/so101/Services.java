@@ -6,7 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
-import sorcer.arithmetic.provider.Multiplier;
 import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.provider.impl.SubtractorImpl;
@@ -17,9 +16,12 @@ import sorcer.service.modeling.Model;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
-import static sorcer.co.operator.ent;
-import static sorcer.co.operator.outPaths;
+import static sorcer.co.operator.get;
 import static sorcer.eo.operator.*;
+import static sorcer.eo.operator.get;
+import static sorcer.eo.operator.result;
+import static sorcer.eo.operator.value;
+import static sorcer.mo.operator.inputs;
 import static sorcer.mo.operator.*;
 import static sorcer.po.operator.invoker;
 
@@ -32,14 +34,6 @@ import static sorcer.po.operator.invoker;
 @ProjectContext("examples/sml")
 public class Services {
     private final static Logger logger = LoggerFactory.getLogger(Services.class);
-
-    @Test
-    public void tmp() throws Exception  {
-        Signature sig = sig(file("/Volumes/SSSD/git/SORCER/examples/sml/src/main/netlets/ha-job-local.ntl"));
-//        Mogram s = mogram(sig);
-//        logger.info("service: " + s);
-
-    }
 
     @Test
     public void evaluateModel() throws Exception  {

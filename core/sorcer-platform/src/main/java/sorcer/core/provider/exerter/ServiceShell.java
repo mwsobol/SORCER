@@ -37,10 +37,12 @@ import sorcer.core.dispatch.*;
 import sorcer.core.exertion.ObjectTask;
 import sorcer.core.provider.*;
 import sorcer.core.signature.NetSignature;
+import sorcer.core.signature.NetletSignature;
 import sorcer.core.signature.ObjectSignature;
 import sorcer.core.signature.ServiceSignature;
 import sorcer.ext.ProvisioningException;
 import sorcer.jini.lookup.ProviderID;
+import sorcer.netlet.ScriptExerter;
 import sorcer.service.*;
 import sorcer.service.Exec.State;
 import sorcer.service.Strategy.Access;
@@ -57,9 +59,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-import static sorcer.eo.operator.sig;
-import static sorcer.eo.operator.task;
-import static sorcer.eo.operator.value;
+import static sorcer.eo.operator.*;
 
 /**
  * @author Mike Sobolewski
@@ -781,6 +781,15 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 	public  <T extends Service> Object exec(T srv, Arg... entries)
 			throws MogramException, TransactionException, RemoteException {
 		this.service = srv;
+		if (srv instanceof NetletSignature) {
+			try {
+				ScriptExerter se = new ScriptExerter(System.out, null, Sorcer.getWebsterUrl(), true);
+				se.readFile(new File(((NetletSignature)srv).getServiceSource()));
+				return evaluate((Mogram)se.parse());
+			} catch (Throwable throwable) {
+				throw new MogramException(throwable);
+			}
+		}
 		if (service instanceof Exertion) {
 			return value((Evaluation) service, entries);
 		} else if (service instanceof EntModel) {

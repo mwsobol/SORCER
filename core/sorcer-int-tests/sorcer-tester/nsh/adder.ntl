@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-// Adder netlet for testing the requestor of the examples/server project
+// Adder sorcer.netlet for testing the requestor of the examples/server project
 
 @Codebase('org.sorcer:sorcer-tester:jar:dl:5.2.0')
 

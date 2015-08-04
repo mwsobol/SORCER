@@ -479,7 +479,7 @@ public class EditorView extends JPanel implements HyperlinkListener {
 
 	private void showResults(Object mogram)  throws ContextException {
 		if (mogram == null) {
-			openOutPanel("Failed to process the netlet!");
+			openOutPanel("Failed to process the sorcer.netlet!");
 			return;
 		}
 		if (mogram instanceof Exertion) {

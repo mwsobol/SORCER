@@ -41,15 +41,12 @@ import sorcer.core.provider.rendezvous.ServiceConcatenator;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.core.provider.rendezvous.ServiceRendezvous;
 import sorcer.core.provider.rendezvous.ServiceSpacer;
-import sorcer.core.signature.EvaluationSignature;
-import sorcer.core.signature.NetSignature;
-import sorcer.core.signature.ObjectSignature;
-import sorcer.core.signature.ServiceSignature;
+import sorcer.core.signature.*;
+import sorcer.netlet.ScriptExerter;
 import sorcer.service.*;
 import sorcer.service.Signature.*;
 import sorcer.service.Strategy.*;
 import sorcer.service.modeling.Model;
-import sorcer.service.ModelException;
 import sorcer.service.modeling.Modeling;
 import sorcer.service.modeling.Variability;
 import sorcer.util.Loop;
@@ -955,7 +952,7 @@ public class operator {
 	}
 
 	public static Signature sig(Path source) {
-		return new ServiceSignature(source);
+		return new NetletSignature(source);
 	}
 
 	public static EvaluationTask task(EvaluationSignature signature)
@@ -1333,13 +1330,15 @@ public class operator {
 
 	public static <M extends Service> M mogram(Object... items) throws MogramException {
 		String name = "unknown" + count++;
-		if (items.length == 1 && items[0] instanceof Signature) {
-			Object source = ((ServiceSignature)items[0]).getServiceSource();
+		if (items.length == 1 && items[0] instanceof NetletSignature) {
+			String source = ((NetletSignature)items[0]).getServiceSource();
 			if(source != null) {
 				try {
-//					ScriptExerter se = new ScriptExerter(new File(""+source));
-				} catch (Exception e) {
-					e.printStackTrace();
+					ScriptExerter se = new ScriptExerter(System.out, null, Sorcer.getWebsterUrl(), true);
+					se.readFile(new File(source));
+					return (M)se.parse();
+				} catch (Throwable e) {
+					throw new MogramException(e);
 				}
 			}
 		}
@@ -1697,7 +1696,7 @@ public class operator {
 
 	public static <T extends Context> T exec(Service model, String evalSelector,
 							  Arg... entries) throws ContextException {
-		return value((Context<T>) model,  evalSelector, entries);
+		return value((Context<T>) model, evalSelector, entries);
 	}
 
 	public static <T> T eval(Context<T> model, String evalSelector,

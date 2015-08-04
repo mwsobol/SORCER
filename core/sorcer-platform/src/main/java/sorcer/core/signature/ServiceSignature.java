@@ -21,7 +21,6 @@ import net.jini.core.lookup.ServiceID;
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
 import org.slf4j.Logger;
-import sorcer.co.tuple.Path;
 import sorcer.core.SorcerConstants;
 import sorcer.core.deploy.ServiceDeployment;
 import sorcer.core.provider.Provider;
@@ -30,11 +29,9 @@ import sorcer.service.Strategy.Provision;
 import sorcer.service.modeling.Variability;
 import sorcer.util.Log;
 
-import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.*;
 
@@ -80,8 +77,6 @@ public class ServiceSignature implements Signature, SorcerConstants {
 
 	// implementation of the serviceInfo
 	protected Class<?> providerType;
-
-	protected Path serviceSource;
 
 	protected String group = "";
 
@@ -141,15 +136,6 @@ public class ServiceSignature implements Signature, SorcerConstants {
 	public ServiceSignature(String name, String selector) {
 		this.name = name;
 		this.selector = selector;
-	}
-
-	public ServiceSignature(String name, Path source) {
-		this.name = name;
-		this.serviceSource = source;
-	}
-
-	public ServiceSignature(Path source) {
-		this.serviceSource = source;
 	}
 
 	public void setExertion(Exertion exertion) throws ExertionException {
@@ -639,14 +625,5 @@ public class ServiceSignature implements Signature, SorcerConstants {
     public List<Evaluation> getDependers() {
         return dependers;
     }
-
-	public Path getServiceSource() {
-		return serviceSource;
-	}
-
-	public void setServiceSource(Path serviceSource) {
-		this.serviceSource = serviceSource;
-	}
-
 
 }

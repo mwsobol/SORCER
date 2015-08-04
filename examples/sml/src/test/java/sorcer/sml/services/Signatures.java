@@ -16,6 +16,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 import static org.junit.Assert.*;
+import static sorcer.co.operator.file;
 import static sorcer.co.operator.inEnt;
 import static sorcer.co.operator.instance;
 import static sorcer.eo.operator.*;
@@ -236,6 +237,19 @@ public class Signatures {
 		assertEquals(100.0, value(result, "result/y"));
 	}
 
+
+	@Test
+	public void evaluateNetletSignature() throws Exception {
+		String netlet = "/Volumes/SSSD/git/SORCER/examples/sml/src/main/netlets/ha-job-local.ntl";
+		assertEquals(evaluate(mogram(sig(file(netlet)))), 400.00);
+	}
+
+
+	@Test
+	public void execNetletSignature() throws Exception {
+		String netlet = "/Volumes/SSSD/git/SORCER/examples/sml/src/main/netlets/ha-job-local.ntl";
+		assertEquals(exec(sig(file(netlet))), 400.00);
+	}
 
 	@Test
 	public void remoteShellService() throws Exception {
