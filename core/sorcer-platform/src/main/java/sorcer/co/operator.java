@@ -24,7 +24,9 @@ import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.par.Par;
 import sorcer.core.context.model.srv.Srv;
 import sorcer.core.provider.DatabaseStorer;
+import sorcer.core.signature.NetletSignature;
 import sorcer.core.signature.ObjectSignature;
+import sorcer.netlet.ScriptExerter;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
 import sorcer.service.modeling.Variability;
@@ -35,6 +37,7 @@ import sorcer.util.Table;
 import sorcer.util.bdb.objects.UuidObject;
 import sorcer.util.url.sos.SdbUtil;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.net.MalformedURLException;
@@ -118,6 +121,7 @@ public class operator {
     public static Signature.In inPaths(String... elems) {
         return new Signature.In(elems);
     }
+
 	public static Path file(String filename) {
 		return new Path (filename);
 	}
@@ -846,7 +850,18 @@ public class operator {
 	 */
 	public static Object instance(Signature signature)
 			throws SignatureException {
-		if ((signature.getSelector() == null
+		if (signature instanceof NetletSignature) {
+			String source = ((NetletSignature)signature).getServiceSource();
+			if(source != null) {
+				try {
+					ScriptExerter se = new ScriptExerter(System.out, null, Sorcer.getWebsterUrl(), true);
+					se.readFile(new File(source));
+					return se.parse();
+				} catch (Throwable e) {
+					throw new SignatureException(e);
+				}
+			}
+		} else if ((signature.getSelector() == null
 				&& ((ObjectSignature) signature).getInitSelector() == null)
 				|| (signature.getSelector() != null && signature.getSelector().equals("new"))
 				|| (((ObjectSignature) signature).getInitSelector() != null

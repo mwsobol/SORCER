@@ -2320,6 +2320,18 @@ public class operator {
 			throws SignatureException {
 		if (signature instanceof ObjectSignature && ((ObjectSignature)signature).getTarget() != null)
 			return  ((ObjectSignature)signature).getTarget();
+		else if (signature instanceof NetletSignature) {
+			String source = ((NetletSignature)signature).getServiceSource();
+			if(source != null) {
+				try {
+					ScriptExerter se = new ScriptExerter(System.out, null, Sorcer.getWebsterUrl(), true);
+					se.readFile(new File(source));
+					return se.parse();
+				} catch (Throwable e) {
+					throw new SignatureException(e);
+				}
+			}
+		}
 		Object target = null;
 		Object provider = null;
 		Class<?> providerType = null;

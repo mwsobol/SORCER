@@ -462,7 +462,7 @@ public class operator {
 	public static ExecPath invoker(String name, ServiceInvoker invoker) {
 		return new ExecPath(name, invoker);
 	}
-	
+
 	public static InputEntry input(Par parEntry) {
 		return new InputEntry(parEntry.getName(), parEntry, 0);
 	}
