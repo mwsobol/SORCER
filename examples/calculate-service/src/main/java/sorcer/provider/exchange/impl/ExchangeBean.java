@@ -8,12 +8,13 @@ import sorcer.provider.exchange.Exchange;
 import sorcer.service.Context;
 import sorcer.service.ContextException;
 
+import java.io.Serializable;
 import java.rmi.RemoteException;
 
 /**
  * Created by sobolemw on 8/5/15.
  */
-public class ExchangeBean implements Exchange {
+public class ExchangeBean implements Exchange, Serializable {
 
     private static Logger logger = LoggerFactory.getLogger(ExchangeBean.class.getName());
 

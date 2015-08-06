@@ -182,8 +182,10 @@ logger("sorcer.core.context.model.explore.ExploreDispatcher", TRACE)
 logger("sorcer.core.context.model.explore.ModelManager", TRACE)
 logger("sorcer.core.context.model.opti", TRACE)
 logger("sorcer.modeling.vfe.persist.TaskContextSetter", OFF)
-logger("sorcer.core.context.model.var.ResponseModel", TRACE)
+logger("sorcer.modeling.vfe.persist.TaskContextSetter", OFF)
 */
+logger("sorcer.modeling.core.context.model.var.ResponseModel", WARN)
+logger("sorcer.modeling.core.context.model.var.ParametricModel", WARN)
 
 /* ==================================================================
  *  SORCER Other specialized loggers

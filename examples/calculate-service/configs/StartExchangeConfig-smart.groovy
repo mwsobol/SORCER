@@ -36,8 +36,8 @@ class StartAll {
         String configPath = "${projectBuildDir}/../configs"
 
         def descriptors = []
-        ["exchange"]
-            def configArg = ["${configPath}/exchange-prv.config"]
+        ["smart-exchange"]
+            def configArg = ["${configPath}/smart-exchange-prv.config"]
             def codebase = "${relativeRepoPath}/exchange-${sorcerVersion}-dl.jar sorcer-dl-${sorcerVersion}.jar sorcer-ui-${sorcerVersion}.jar jsk-dl-${riverVersion}.jar"
 
             descriptors << new SorcerServiceDescriptor(codebase,

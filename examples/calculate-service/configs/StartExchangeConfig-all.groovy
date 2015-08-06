@@ -36,8 +36,8 @@ class StartAll {
         String configPath = "${projectBuildDir}/../configs"
 
         def descriptors = []
-        ["exchange"]
-            def configArg = ["${configPath}/exchange-prv.config"]
+        ["exchange", "smart-exchange"].each { provider ->
+            def configArg = ["${configPath}/${provider}-prv.config"]
             def codebase = "${relativeRepoPath}/exchange-${sorcerVersion}-dl.jar sorcer-dl-${sorcerVersion}.jar sorcer-ui-${sorcerVersion}.jar jsk-dl-${riverVersion}.jar"
 
             descriptors << new SorcerServiceDescriptor(codebase,
@@ -45,7 +45,7 @@ class StartAll {
                     "${buildLibPath}/exchange-${sorcerVersion}-prv.jar",
                     "sorcer.core.provider.ServiceTasker",
                     configArg as String[])
-
+        }
         return descriptors as ServiceDescriptor[]
     }
 }
