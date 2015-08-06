@@ -371,6 +371,7 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 				logger.debug("* ExertProcessor's servicer accessor: "
 						+ Accessor.getAccessorType());
 			provider = ((NetSignature) signature).getService();
+			((NetSignature)signature).setProvider(provider);
 		} catch (SignatureException e) {
 			e.printStackTrace();
 			new ExertionException(e);
@@ -402,6 +403,9 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 					}
 				}
 			}
+			// cache the provider for the signature
+			if (provider != null)
+				((NetSignature)signature).setProvider(provider);
 		}
 
 		// Provider tasker = ProviderLookup.getProvider(exertion.getProcessSignature());		 
@@ -418,7 +422,6 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 		exertion.getControlContext().appendTrace(
 				"shell: " + ((Provider) provider).getProviderName()
 						+ ":" + ((Provider) provider).getProviderID());
-		((NetSignature) signature).setProvider(provider);
 		logger.info("Provider found for: " + signature + "\n\t" + provider);
 		if (((Provider) provider).mutualExclusion()) {
 			return serviceMutualExclusion((Provider) provider, exertion,

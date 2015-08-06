@@ -77,6 +77,10 @@ subprojects {
         apply plugin: "maven-publish"
 
         if (project.name != "distribution") {
+
+            /* Always run tests */
+//            test.outputs.upToDateWhen { false }
+
             apply plugin: "java"
             idea {
                 module {
