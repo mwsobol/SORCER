@@ -6,17 +6,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
+import sorcer.core.provider.Provider;
 import sorcer.provider.exchange.impl.ExchangeBean;
 import sorcer.service.Task;
 
 import java.util.Arrays;
 
+import static org.junit.Assert.assertNotNull;
 import static sorcer.co.operator.ent;
 import static sorcer.eo.operator.*;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
 @RunWith(SorcerTestRunner.class)
-@ProjectContext("examples/smart-service")
+@ProjectContext("examples/calculate-service")
 public class ExchangeTasks {
 	private final static Logger logger = LoggerFactory.getLogger(ExchangeTasks.class);
 	static final int LENGTH = 1001;
@@ -49,6 +51,15 @@ public class ExchangeTasks {
 		}
 		long end = System.currentTimeMillis();
 		logger.info("Execution time: " + (end-start) + " ms");
+	}
+
+	@Test
+	public void getProxy() throws Exception {
+		long start = System.currentTimeMillis();
+		Provider ex = (Provider)provider(sig("exchange", Exchange.class));
+		long end = System.currentTimeMillis();
+		assertNotNull(ex);
+		logger.info("Execution time: " + (end - start) + " ms");
 	}
 
 	@Test

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package examples.smart
+package examples.calculate
 
 import com.sun.jini.start.ServiceDescriptor
 import org.rioproject.config.Component
