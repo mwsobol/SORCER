@@ -1,7 +1,7 @@
 /*
 s * Copyright 2009 the original author or authors.
  * Copyright 2009 SorcerSoft.org.
- *  
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -164,7 +164,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		}
 	}
 
-    private ScratchManager scratchManager = new ScratchManagerSupport();
+	private ScratchManager scratchManager = new ScratchManagerSupport();
 	protected ProviderDelegate delegate;
 
 	static final String DEFAULT_PROVIDER_PROPERTY = "provider.properties";
@@ -200,8 +200,8 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 
 	protected ScheduledExecutorService scheduler;
 
-    /** MBean for JMX access*/
-    private ProviderAdmin providerAdmin;
+	/** MBean for JMX access*/
+	private ProviderAdmin providerAdmin;
 
 	public ServiceProvider() {
 		providers.add(this);
@@ -214,71 +214,71 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		ShutdownHook shutdownHook =  new ShutdownHook(this);
 		shutdownHook.setDaemon(true);
 		Runtime.getRuntime().addShutdownHook(shutdownHook);
-    }
-
-    /**
-     * Required constructor for Jini 2 NonActivatableServiceDescriptors
-     *
-     * @param args
-     * @param lifeCycle
-     * @throws Exception
-     */
-    public ServiceProvider(String[] args, LifeCycle lifeCycle) throws Exception {
-        this();
-        // count initialized shared providers
-        tally = tally + 1;
-        size = tally;
-        // load Sorcer environment properties via static initializer
-        Sorcer.getProperties();
-        serviceClassLoader = Thread.currentThread().getContextClassLoader();
-        final Configuration config = ConfigurationProvider.getInstance(args, serviceClassLoader);
-        delegate.setJiniConfig(config);
-        // inspect class loader tree
-        if(logger.isTraceEnabled())
-            com.sun.jini.start.ClassLoaderUtil.displayContextClassLoaderTree();
-        // System.out.println("service provider class loader: " +
-        // serviceClassLoader);
-        String providerProperties = null;
-        try {
-            providerProperties = (String) Config.getNonNullEntry(config,
-                                                                 COMPONENT, "properties", String.class, "");
-        } catch (ConfigurationException e) {
-            // e.printStackTrace();
-            logger.warn("init", e);
-        }
-        // configure the provider's delegate
-        delegate.getProviderConfig().init(true, providerProperties);
-        ((ScratchManagerSupport)scratchManager).setProperties(getProviderProperties());
-        delegate.configure(config);
-        providerAdmin = new ProviderAdmin(this);
-        providerAdmin.register();
-        // decide if thread management is needed for ExertionDispatcher
-        setupThreadManager();
-        init(args, lifeCycle);
-
-        logger.info("<init> (String[], LifeCycle); name = " + this.getName());
-    }
-
-    // this is only used to instantiate provider impl objects and use their
-    // methods
-    public ServiceProvider(String providerPropertiesFile) {
-        this();
-        delegate.getProviderConfig().loadConfiguration(providerPropertiesFile);
-        ((ScratchManagerSupport)scratchManager).setProperties(getProviderProperties());
 	}
 
-    protected void setScratchManager(final ScratchManager scratchManager) {
-        if(scratchManager!=null) {
-            this.scratchManager = scratchManager;
-            logger.info("Set ScratchManager with {}", this.scratchManager.getClass().getName());
-        } else {
-            logger.warn("Attempt to set null ScratchManager avoided");
-        }
-    }
+	/**
+	 * Required constructor for Jini 2 NonActivatableServiceDescriptors
+	 *
+	 * @param args
+	 * @param lifeCycle
+	 * @throws Exception
+	 */
+	public ServiceProvider(String[] args, LifeCycle lifeCycle) throws Exception {
+		this();
+		// count initialized shared providers
+		tally = tally + 1;
+		size = tally;
+		// load Sorcer environment properties via static initializer
+		Sorcer.getProperties();
+		serviceClassLoader = Thread.currentThread().getContextClassLoader();
+		final Configuration config = ConfigurationProvider.getInstance(args, serviceClassLoader);
+		delegate.setJiniConfig(config);
+		// inspect class loader tree
+		if(logger.isTraceEnabled())
+			com.sun.jini.start.ClassLoaderUtil.displayContextClassLoaderTree();
+		// System.out.println("service provider class loader: " +
+		// serviceClassLoader);
+		String providerProperties = null;
+		try {
+			providerProperties = (String) Config.getNonNullEntry(config,
+					COMPONENT, "properties", String.class, "");
+		} catch (ConfigurationException e) {
+			// e.printStackTrace();
+			logger.warn("init", e);
+		}
+		// configure the provider's delegate
+		delegate.getProviderConfig().init(true, providerProperties);
+		((ScratchManagerSupport)scratchManager).setProperties(getProviderProperties());
+		delegate.configure(config);
+		providerAdmin = new ProviderAdmin(this);
+		providerAdmin.register();
+		// decide if thread management is needed for ExertionDispatcher
+		setupThreadManager();
+		init(args, lifeCycle);
 
-    public ScratchManager getScratchManager() {
-        return scratchManager;
-    }
+		logger.info("<init> (String[], LifeCycle); name = " + this.getName());
+	}
+
+	// this is only used to instantiate provider impl objects and use their
+	// methods
+	public ServiceProvider(String providerPropertiesFile) {
+		this();
+		delegate.getProviderConfig().loadConfiguration(providerPropertiesFile);
+		((ScratchManagerSupport)scratchManager).setProperties(getProviderProperties());
+	}
+
+	protected void setScratchManager(final ScratchManager scratchManager) {
+		if(scratchManager!=null) {
+			this.scratchManager = scratchManager;
+			logger.info("Set ScratchManager with {}", this.scratchManager.getClass().getName());
+		} else {
+			logger.warn("Attempt to set null ScratchManager avoided");
+		}
+	}
+
+	public ScratchManager getScratchManager() {
+		return scratchManager;
+	}
 
 	// Implement ServerProxyTrust
 	/**
@@ -329,7 +329,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see sorcer.core.provider.OuterProxy#setAdmin(java.lang.Object)
 	 */
 	public void setAdmin(Object proxy) {
@@ -553,8 +553,8 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	 */
 	public boolean unregister(Object impl) {
 		logger.info("Unregistering service");
-        if (this == impl)
-            this.destroy();
+		if (this == impl)
+			this.destroy();
 		return true;
 	}
 
@@ -585,15 +585,15 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	 * @return true if unexport succeeds
 	 */
 	boolean unexport(boolean force)  {
-        boolean unexported;
-        try {
-            unexported = delegate.unexport(force);
-        } catch (NoSuchObjectException e) {
-            unexported= false;
-            logger.warn("Could not unexport", e);
-        }
-        return unexported;
-    }
+		boolean unexported;
+		try {
+			unexported = delegate.unexport(force);
+		} catch (NoSuchObjectException e) {
+			unexported= false;
+			logger.warn("Could not unexport", e);
+		}
+		return unexported;
+	}
 
 	/**
 	 * Returns a proxy object for this object. This value should not be null.
@@ -621,7 +621,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see sorcer.core.provider.OuterProxy#getInnerProxy()
 	 */
 	public Remote getInner() {
@@ -630,7 +630,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see sorcer.core.provider.OuterProxy#setInnerProxy(java.rmi.Remote)
 	 */
 	public void setInner(Object innerProxy) throws ProviderException {
@@ -709,13 +709,13 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 					+ getProviderName(), this);
 
 			// allow for enough time to export the provider's proxy and stay alive
-            scheduler.schedule(new Callable<Void>() {
-                @Override
-                public Void call() throws RemoteException, ConfigurationException {
-                    delegate.initSpaceSupport();
-                    return null;
-                }
-            }, 0, TimeUnit.MILLISECONDS);
+			scheduler.schedule(new Callable<Void>() {
+				@Override
+				public Void call() throws RemoteException, ConfigurationException {
+					delegate.initSpaceSupport();
+					return null;
+				}
+			}, 0, TimeUnit.MILLISECONDS);
 		} catch (Throwable e) {
 			initFailed(e);
 		}
@@ -736,7 +736,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		}
 		if (logger.isErrorEnabled()) {
 			if (message != null) {
-                logger.error("initFailed, Unable to start provider service: "+message, throwable);
+				logger.error("initFailed, Unable to start provider service: "+message, throwable);
 			} else {
 				logger.error("Unable to start provider service", throwable);
 			}
@@ -969,7 +969,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 							"sorcer.ui.exertlet.NetletUI", "Netlet Editor",
 							helpUrl));
 		} catch (Exception ex) {
-            logger.debug("getServiceUI", ex);
+			logger.debug("getServiceUI", ex);
 		}
 
 		return new UIDescriptor[] { getProviderUIDescriptor(), uiDesc1/*, uiDesc2 */};
@@ -1206,7 +1206,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see sorcer.core.Provider#mutualExclusion()
 	 */
 	@Override
@@ -1378,26 +1378,26 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	 */
 	public Exertion doExertion(final Exertion exertion, Transaction txn)
 			throws ExertionException {
-        logger.debug("service: " + exertion.getName());
+		logger.debug("service: " + exertion.getName());
 		// create an instance of the ControlFlowManager and call on the
 		// process method, returns an Exertion
-        return (Exertion)getControlFlownManager(exertion).process();
+		return (Exertion)getControlFlownManager(exertion).process();
 	}
 
-    protected ControlFlowManager getControlFlownManager(Exertion exertion) throws ExertionException {
-        List<Class> publishedIfaces = Arrays.asList(this.delegate.getPublishedServiceTypes());
-        if (!(exertion instanceof Task) && (!publishedIfaces.contains(Spacer.class))
-                && (!publishedIfaces.contains(Jobber.class)) && (!publishedIfaces.contains(Concatenator.class)))
-            throw new ExertionException(new IllegalArgumentException("Unknown exertion type " + exertion));
-        try {
-            if (exertion.isMonitorable())
-                return new MonitoringControlFlowManager(exertion, delegate);
-            else
-                return new ControlFlowManager(exertion, delegate);
-        } catch (Exception e) {
-            ((Task) exertion).reportException(e);
-            throw new ExertionException(e);
-        }
+	protected ControlFlowManager getControlFlownManager(Exertion exertion) throws ExertionException {
+		List<Class> publishedIfaces = Arrays.asList(this.delegate.getPublishedServiceTypes());
+		if (!(exertion instanceof Task) && (!publishedIfaces.contains(Spacer.class))
+				&& (!publishedIfaces.contains(Jobber.class)) && (!publishedIfaces.contains(Concatenator.class)))
+			throw new ExertionException(new IllegalArgumentException("Unknown exertion type " + exertion));
+		try {
+			if (exertion.isMonitorable())
+				return new MonitoringControlFlowManager(exertion, delegate);
+			else
+				return new ControlFlowManager(exertion, delegate);
+		} catch (Exception e) {
+			((Task) exertion).reportException(e);
+			throw new ExertionException(e);
+		}
 	}
 
 	public Exertion serviceContextOnly(Context mogram) throws ExertionException, RemoteException {
@@ -1416,15 +1416,15 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		return task;
 	}
 
-    @Override
+	@Override
 	public Exertion service(Mogram exertion) throws RemoteException,
 			ExertionException {
 		return doExertion((Exertion)exertion, null);
 	}
 
-    @Override
-    public Exertion service(Mogram mogram, Transaction txn) throws TransactionException,
-            ExertionException, RemoteException {
+	@Override
+	public Exertion service(Mogram mogram, Transaction txn) throws TransactionException,
+			ExertionException, RemoteException {
 		if (mogram instanceof Task) {
 			ServiceContext cxt;
 			try {
@@ -1443,44 +1443,44 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 			return serviceContextOnly((Context)mogram);
 		}
 
-        // TODO transaction handling to be implemented when needed
-        // TO DO HANDLING SUSSPENDED exertions
-        // if (((ServiceExertion) exertion).monitorSession != null) {
-        // new Thread(new ServiceThread(exertion, this)).start();
-        // return exertion;
-        // }
-        Exertion exertion = (Exertion)mogram;
-        // when service Locker is used
-        if (delegate.mutualExlusion()) {
-            Object mutexId = ((ControlContext)exertion.getControlContext()).getMutexId();
-            if (mutexId == null) {
-                exertion.getControlContext().appendTrace(
-                        "mutex required by: " + getProviderName() + ":"
-                                + getProviderID());
-                return exertion;
-            } else if (!(mutexId.equals(delegate.getServiceID()))) {
-                exertion.getControlContext().appendTrace(
-                        "invalid mutex for: " + getProviderName() + ":"
-                                + getProviderID());
-                return exertion;
-            }
-        }
-        // allow provider to leave a trace
-        // exertion.getControlContext().appendTrace(
-        // delegate.mutualExlusion() ? "mutex in: "
-        // + getProviderName() + ":" + getProviderID()
-        // : "in: " + getProviderName() + ":"
-        // + getProviderID());
-        Exertion out = exertion;
-        try {
-            out = doExertion(exertion, txn);
-        } catch (Exception e) {
-            e.printStackTrace();
-            ((ServiceExertion) out).reportException(new ExertionException(
-                    getProviderName() + " failed", e));
-        }
-        return out;
-    }
+		// TODO transaction handling to be implemented when needed
+		// TO DO HANDLING SUSSPENDED exertions
+		// if (((ServiceExertion) exertion).monitorSession != null) {
+		// new Thread(new ServiceThread(exertion, this)).start();
+		// return exertion;
+		// }
+		Exertion exertion = (Exertion)mogram;
+		// when service Locker is used
+		if (delegate.mutualExlusion()) {
+			Object mutexId = ((ControlContext)exertion.getControlContext()).getMutexId();
+			if (mutexId == null) {
+				exertion.getControlContext().appendTrace(
+						"mutex required by: " + getProviderName() + ":"
+								+ getProviderID());
+				return exertion;
+			} else if (!(mutexId.equals(delegate.getServiceID()))) {
+				exertion.getControlContext().appendTrace(
+						"invalid mutex for: " + getProviderName() + ":"
+								+ getProviderID());
+				return exertion;
+			}
+		}
+		// allow provider to leave a trace
+		// exertion.getControlContext().appendTrace(
+		// delegate.mutualExlusion() ? "mutex in: "
+		// + getProviderName() + ":" + getProviderID()
+		// : "in: " + getProviderName() + ":"
+		// + getProviderID());
+		Exertion out = exertion;
+		try {
+			out = doExertion(exertion, txn);
+		} catch (Exception e) {
+			e.printStackTrace();
+			((ServiceExertion) out).reportException(new ExertionException(
+					getProviderName() + " failed", e));
+		}
+		return out;
+	}
 
 	// TODO in/out/inout marking as defined in the inConnector
 	private void updateContext(Task task) throws ContextException {
@@ -1496,18 +1496,18 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		}
 	}
 
-    public ServiceSession getSession(Context context) throws ContextException {
-        return sessions.get(context.getId());
-    }
+	public ServiceSession getSession(Context context) throws ContextException {
+		return sessions.get(context.getId());
+	}
 
-    public void deletedSession(Context context) {
-        sessions.remove(context.getId());
-    }
+	public void deletedSession(Context context) {
+		sessions.remove(context.getId());
+	}
 
 	public Entry[] getAttributes() {
 		return delegate.getAttributes();
 	}
-	
+
 	public List<Object> getProperties() {
 		return delegate.getProperties();
 	}
@@ -1570,12 +1570,12 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		return scratchManager.getScratchDir(context, suffix);
 	}
 
-    public File getScratchDir(Context context) {
-        return getScratchDir(context, "");
-    }
+	public File getScratchDir(Context context) {
+		return getScratchDir(context, "");
+	}
 
-    public URL getScratchURL(File scratchFile) {
-        return scratchManager.getScratchURL(scratchFile);
+	public URL getScratchURL(File scratchFile) {
+		return scratchManager.getScratchURL(scratchFile);
 	}
 
 	public String getProperty(String key) {
@@ -1714,9 +1714,9 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 			//if (threadManager != null)
 			//	threadManager.terminate();
 
-            unexport(true);
-            if(providerAdmin!=null)
-                providerAdmin.unregister();
+			unexport(true);
+			if(providerAdmin!=null)
+				providerAdmin.unregister();
 			logger.debug("calling destroy on the delegate...");
 			delegate.destroy();
 			logger.debug("DONE calling destroy on the delegate.");
@@ -1826,16 +1826,16 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 			// do nothing, default value is used
 			// e.printStackTrace();
 		}
-        ConfigurableThreadFactory tf = new ConfigurableThreadFactory();
-        tf.setDaemon(true);
-        tf.setNameFormat(tName(getName()) + "-init-%2$s");
-        tf.setThreadGroup(ProviderDelegate.threadGroup);
-        scheduler = Executors.newScheduledThreadPool(1, tf);
+		ConfigurableThreadFactory tf = new ConfigurableThreadFactory();
+		tf.setDaemon(true);
+		tf.setNameFormat(tName(getName()) + "-init-%2$s");
+		tf.setThreadGroup(ProviderDelegate.threadGroup);
+		scheduler = Executors.newScheduledThreadPool(1, tf);
 		logger.info("threadManagement: " + threadManagement);
 		if (!threadManagement) {
 			return;
 		}
-        logger.debug("Initialized scheduler: " + scheduler.toString());
+		logger.debug("Initialized scheduler: " + scheduler.toString());
 		try {
 			maxThreads = (Integer) config.getEntry(ServiceProvider.COMPONENT,
 					MAX_THREADS, int.class);
@@ -1907,7 +1907,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see sorcer.core.Provider#getJavaSystemProperties()
 	 */
 	@Override
@@ -1922,18 +1922,18 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 				delegate.initSpaceSupport();
 				while (running.get()) {
 					Thread.sleep(ProviderDelegate.KEEP_ALIVE_TIME);
-                    
-                    // remove inactive sessions
-                    Iterator<Map.Entry<Uuid, ProviderSession>> si = sessions.entrySet().iterator();
-                    while (si.hasNext())  {
-                        Map.Entry<Uuid, ProviderSession> se = si.next();
-                        ProviderSession ss = se.getValue();
-                        long now = System.currentTimeMillis();
-                        if (now - ss.getLastAccessedTime() > ss.getMaxInactiveInterval() * 1000) {
-                            si.remove();
-                        }
-                    }
-                }
+
+					// remove inactive sessions
+					Iterator<Map.Entry<Uuid, ProviderSession>> si = sessions.entrySet().iterator();
+					while (si.hasNext())  {
+						Map.Entry<Uuid, ProviderSession> se = si.next();
+						ProviderSession ss = se.getValue();
+						long now = System.currentTimeMillis();
+						if (now - ss.getLastAccessedTime() > ss.getMaxInactiveInterval() * 1000) {
+							si.remove();
+						}
+					}
+				}
 			} catch (Exception doNothing) {
 			}
 		}
@@ -1946,7 +1946,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see sorcer.core.Provider#isContextValid(sorcer.service.Context,
 	 * sorcer.service.Signature)
 	 */
