@@ -602,7 +602,7 @@ public class ProviderDelegate {
                 logger.error("No exporter for provider: {}", getProviderName());
                 return;
             }
-            outerProxy = outerExporter.export(provider);
+			outerProxy = outerExporter.export(provider);
             logger.debug("outerProxy: {}", outerProxy);
         } catch (Exception ee) {
             logger.warn("{} deployment failed", ProviderDelegate.class.getName(), ee);

@@ -136,6 +136,7 @@ public class ProviderProxy implements Serializable {
 				list.add(ReferentUuid.class);
 				list.add(DestroyAdmin.class);
 				list.add(JoinAdmin.class);
+				list.add(ServiceActivityProvider.class);
 				list.add(RemoteMethodControl.class);
 			} else {
 				// provider interfaces
@@ -150,10 +151,6 @@ public class ProviderProxy implements Serializable {
 				// for smart proxies add Administrable
 				if (!proxy.getClass().isInterface())
 					list.add(Administrable.class);
-
-                if (proxy.getClass().isInterface() && !list.contains(ServiceActivityProvider.class))
-                    list.add(ServiceActivityProvider.class);
-
 				if (list.contains(Provider.class)) {
 					list.remove(AdministratableProvider.class);
 				}
