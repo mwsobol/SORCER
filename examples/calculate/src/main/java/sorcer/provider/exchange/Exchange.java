@@ -1,8 +1,9 @@
 package sorcer.provider.exchange;
 
-import java.rmi.RemoteException;
 import sorcer.service.Context;
 import sorcer.service.ContextException;
+
+import java.rmi.RemoteException;
 
 /**
  * Created by sobolemw on 8/5/15.

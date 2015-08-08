@@ -6,19 +6,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
-import sorcer.core.provider.Provider;
 import sorcer.provider.exchange.impl.ExchangeBean;
 import sorcer.service.Task;
+import sorcer.util.ProviderLocator;
 
 import java.util.Arrays;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static sorcer.co.operator.ent;
 import static sorcer.eo.operator.*;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
 @RunWith(SorcerTestRunner.class)
-@ProjectContext("examples/calculate-service")
+@ProjectContext("examples/calculate")
 public class ExchangeTasks {
 	private final static Logger logger = LoggerFactory.getLogger(ExchangeTasks.class);
 	static final int LENGTH = 1001;
@@ -32,9 +33,10 @@ public class ExchangeTasks {
 						result("output")));
 
 		int[] out = (int[]) value(ex);
-//		logger.info("out: " + Arrays.toString(out));
+		logger.info("out: " + Arrays.toString(out));
 		long end = System.currentTimeMillis();
 		logger.info("Execution time: " + (end - start) + " ms");
+		assertEquals(out.length, 1001);
 	}
 
 	@Test
@@ -44,22 +46,24 @@ public class ExchangeTasks {
 				cxt(ent("input", intArray()),
 						result("output")));
 
+		int[] out = null;
 		for (int n = 0; n < ITERATIONS; n++) {
-			int[] out = (int[]) value(ex);
+			out = (int[]) value(ex);
 //			logger.info("out: " + Arrays.toString(out));
-			Arrays.sort(out);
 		}
 		long end = System.currentTimeMillis();
 		logger.info("Execution time: " + (end-start) + " ms");
+		assertEquals(out.length, 1001);
 	}
 
 	@Test
 	public void getProxy() throws Exception {
 		long start = System.currentTimeMillis();
-		Provider ex = (Provider)provider(sig("exchange", Exchange.class));
+		Object ex = ProviderLocator.getService(Exchange.class);
+//		Object ex = provider(sig("exchange", Exchange.class));
 		long end = System.currentTimeMillis();
-		assertNotNull(ex);
 		logger.info("Execution time: " + (end - start) + " ms");
+		assertNotNull(ex);
 	}
 
 	@Test
@@ -70,9 +74,10 @@ public class ExchangeTasks {
 						result("output")));
 
 		int[] out = (int[]) value(ex);
-//		logger.info("out: " + Arrays.toString(out));
+		logger.info("out: " + Arrays.toString(out));
 		long end = System.currentTimeMillis();
 		logger.info("Execution time: " + (end - start) + " ms");
+		assertEquals(out.length, 1001);
 	}
 
 	@Test
@@ -86,6 +91,7 @@ public class ExchangeTasks {
 //		logger.info("out: " + Arrays.toString(out));
 		long end = System.currentTimeMillis();
 		logger.info("Execution time: " + (end - start) + " ms");
+		assertEquals(out.length, 1001);
 	}
 
 	@Test
@@ -99,6 +105,7 @@ public class ExchangeTasks {
 //		logger.info("out: " + Arrays.toString(out));
 		long end = System.currentTimeMillis();
 		logger.info("Execution time: " + (end - start) + " ms");
+		assertEquals(out.length, 1001);
 	}
 
 
@@ -109,13 +116,14 @@ public class ExchangeTasks {
 				cxt(ent("input", intArray()),
 						result("output")));
 
+		int[] out = null;
 		for (int n = 0; n < ITERATIONS; n++) {
-			int[] out = (int[]) value(ex);
+			out = (int[]) value(ex);
 //			logger.info("out: " + Arrays.toString(out));
-			Arrays.sort(out);
 		}
 		long end = System.currentTimeMillis();
 		logger.info("Execution time: " + (end-start) + " ms");
+		assertEquals(out.length, 1001);
 	}
 
 	@Test
@@ -127,13 +135,14 @@ public class ExchangeTasks {
 						args(intArray()),
 						result("output")));
 
+		int[] out = null;
 		for (int n = 0; n < ITERATIONS; n++) {
-			int[] out = (int[]) value(ex);
+			out = (int[]) value(ex);
 //			logger.info("out: " + Arrays.toString(out));
-			Arrays.sort(out);
 		}
 		long end = System.currentTimeMillis();
 		logger.info("Execution time: " + (end-start) + " ms");
+		assertEquals(out.length, 1001);
 	}
 
 	@Test
@@ -145,13 +154,14 @@ public class ExchangeTasks {
 						args(intArray()),
 						result("output")));
 
+		int[] out = null;
 		for (int n = 0; n < ITERATIONS; n++) {
-			int[] out = (int[]) value(ex);
+			out = (int[]) value(ex);
 //			logger.info("out: " + Arrays.toString(out));
-			Arrays.sort(out);
 		}
 		long end = System.currentTimeMillis();
 		logger.info("Execution time: " + (end-start) + " ms");
+		assertEquals(out.length, 1001);
 	}
 
 	private int[] intArray() {

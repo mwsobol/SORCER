@@ -84,12 +84,9 @@ public class ObjectSignature extends ServiceSignature {
 			this.args = args;
 	}
 
-	public ObjectSignature(String selector, Class<?> providerClass,
-						   Class<?>... argClasses) {
+	public ObjectSignature(String selector, Class<?> providerClass) {
 		this.serviceType = providerClass;
 		this.providerType = providerClass;
-		if (argClasses != null && argClasses.length > 0)
-			this.argTypes = argClasses;
 		setSelector(selector);
 	}
 

@@ -147,7 +147,11 @@ public class ProviderProxy implements Serializable {
                 if (!list.contains(ReferentUuid.class))
 					list.add(ReferentUuid.class);
 
-                if (!list.contains(ServiceActivityProvider.class))
+				// for smart proxies add Administrable
+				if (!proxy.getClass().isInterface())
+					list.add(Administrable.class);
+
+                if (proxy.getClass().isInterface() && !list.contains(ServiceActivityProvider.class))
                     list.add(ServiceActivityProvider.class);
 
 				if (list.contains(Provider.class)) {
@@ -170,10 +174,12 @@ public class ProviderProxy implements Serializable {
             } else if ("equals".equals(selector)) {
                 return !(args.length != 1 || !(args[0] instanceof ReferentUuid)) && proxyID.equals(((ReferentUuid) args[0]).getReferentUuid());
             } else if ("toString".equals(selector)) {
-                return "refID=" + proxyID + " : proxy=" + proxy;
-            } 
+				return "refID=" + proxyID + " : proxy=" + proxy;
+			} else if ("getAdmin".equals(selector)) {
+				return adminProxy;
+			}
 
-            Object obj = null;
+			Object obj = null;
             try {
             	return doInvoke(server, selector, m, args);
             } catch (InvocationTargetException ie) {
