@@ -37,7 +37,7 @@ import java.util.Map;
 
 /**
  * A Condition specifies a conditional value in a given service context for its free variables
- * in the form of path/value pairs with paths being guards's parameters.
+ * in the form of path/value pairs with paths being guard parameters of a closure expression.
  * 
  * @see LoopExertion
  * @see OptExertion
@@ -254,14 +254,14 @@ import java.util.Map;
 			List<Conditional> cs = ((ConditionalExertion) exertion)
 					.getConditions();
 			for (Conditional c : cs) {
-				((Condition)c).setClosure(null);
+				((Condition) c).setClosure(null);
 			}
 			List<Exertion> tl = ((ConditionalExertion) exertion).getTargets();
 			for (Exertion vt : tl) {
-				if (vt!=null)
+				if (vt != null)
 					clenupContextScripts(vt.getContext());
-            }
-        }
+			}
+		}
 	}
 
 }

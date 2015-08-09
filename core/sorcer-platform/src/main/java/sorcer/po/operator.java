@@ -21,7 +21,6 @@ import org.slf4j.LoggerFactory;
 import sorcer.co.tuple.ExecPath;
 import sorcer.co.tuple.InputEntry;
 import sorcer.co.tuple.Tuple2;
-import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.EntryList;
 import sorcer.core.context.model.par.Agent;
@@ -161,7 +160,7 @@ public class operator {
 
 	public static Invocation invoker(Mappable mappable, String path)
 			throws ContextException {
-		Object obj = ((ServiceContext) mappable).asis(path);
+		Object obj = mappable.asis(path);
 		while (obj instanceof Mappable || obj instanceof Par) {
 			try {
 				obj = ((Evaluation) obj).asis();
@@ -171,6 +170,8 @@ public class operator {
 		}
 		if (obj instanceof Invocation)
 			return (Invocation) obj;
+		else if (obj != null)
+			return new Entry(path,obj);
 		else
 			throw new NoneException("No such invoker at: " + path + " in: " + mappable.getName());
 	}
@@ -362,6 +363,14 @@ public class operator {
 		return new ExertInvoker(exertion);
 	}
 
+	public static InvokeIncrementor inc(Invocation invoker, int increment) {
+		return new InvokeIncrementor(invoker, increment);
+	}
+
+	public static InvokeIncrementor inc(Invocation invoker) {
+		return new InvokeIncrementor(invoker, 1);
+	}
+
 	public static InvokeIncrementor inc(String name, Invocation invoker) {
 		return new InvokeIncrementor(name, invoker, 1);
 	}
@@ -374,7 +383,7 @@ public class operator {
 		return new InvokeDoubleIncrementor(name, invoker, increment);
 	}
 
-	public static Incrementor reset(Incrementor incrementor) {
+	public static sorcer.service.Incrementor reset(sorcer.service.Incrementor incrementor) {
 		incrementor.reset();
 		return incrementor;
 	}

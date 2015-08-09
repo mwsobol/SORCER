@@ -1675,6 +1675,8 @@ public class operator {
 					return ((Par<T>)evaluation).getValue(entries);
 				} else if (evaluation instanceof Entry){
 					return ((Entry<T>)evaluation).getValue(entries);
+				} else if (evaluation instanceof Incrementor){
+					return ((Incrementor<T>)evaluation).next();
 				} else {
 					return (T) ((Evaluation)evaluation).getValue(entries);
 				}
@@ -2417,6 +2419,15 @@ public class operator {
 		return new LoopExertion(null, condition, target);
 	}
 
+	public static LoopExertion loop(int from, int to, Condition condition,
+									Exertion target) {
+		return new LoopExertion(null, from, to, condition, target);
+	}
+
+	public static LoopExertion loop(int from, int to, Exertion target) {
+		return new LoopExertion(null, from, to, null, target);
+	}
+
 	public static LoopExertion loop(String name, Condition condition,
 									Exertion target) {
 		return new LoopExertion(name, condition, target);
@@ -2535,7 +2546,8 @@ public class operator {
 				} else if (e instanceof OptExertion) {
 					((OptExertion)e).getCondition().setConditionalContext(pm);
 				} else if (e instanceof LoopExertion) {
-					((LoopExertion)e).getCondition().setConditionalContext(pm);
+					if (((LoopExertion)e).getCondition() != null)
+						((LoopExertion)e).getCondition().setConditionalContext(pm);
 					Exertion target = ((LoopExertion)e).getTarget();
 					if (target instanceof EvaluationTask && ((EvaluationTask)target).getEvaluation() instanceof Par) {
 						Par p = (Par)((EvaluationTask)target).getEvaluation();

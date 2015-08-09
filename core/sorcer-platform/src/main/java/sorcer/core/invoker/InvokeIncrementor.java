@@ -17,13 +17,13 @@
  */
 package sorcer.core.invoker;
 
-import java.rmi.RemoteException;
-import java.util.NoSuchElementException;
-
 import sorcer.service.Arg;
 import sorcer.service.EvaluationException;
 import sorcer.service.Incrementor;
 import sorcer.service.Invocation;
+
+import java.rmi.RemoteException;
+import java.util.NoSuchElementException;
 
 /**
  * The incremental invoke with an int increment.
@@ -35,10 +35,14 @@ public class InvokeIncrementor extends ServiceInvoker<Integer> implements Increm
 
     private static final long serialVersionUID = 6556962121786495504L;
 
-	protected int increment;
+	protected int increment = 1;
 
 	protected Invocation<Integer> target;
-	
+
+	public InvokeIncrementor(Invocation invoker, int increment) {
+		this.target = invoker;
+		this.increment = increment;
+	}
 	public InvokeIncrementor(String name, Invocation invoker) {
 		super(name);
 		this.target = invoker;
