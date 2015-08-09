@@ -81,6 +81,7 @@ class BootMe extends DefaultTask {
         args << "-Djava.security.policy=${project.sorcerDistHome}/policy/policy.all"
         args << "-Djava.rmi.server.useCodebaseOnly=false"
         args << "-Dplexus.version=${project.plexusVersion}"
+        args << "-Dguava.version=${project.guavaVersion}"
         args << "-Driver.version=${project.riverVersion}"
         args << "-Dsorcer.version=${project.sorcerVersion}"
         args << "-Dsorcer.home=${project.sorcerDistHome}"
