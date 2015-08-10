@@ -54,6 +54,7 @@ include 'examples:pml'
 include 'examples:worker'
 include 'examples:service'
 include 'examples:calculate'
+include 'examples:coffeemaker'
 
 include 'distribution'
 
