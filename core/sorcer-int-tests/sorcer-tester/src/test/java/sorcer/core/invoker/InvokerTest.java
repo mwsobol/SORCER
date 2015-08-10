@@ -471,58 +471,43 @@ public class InvokerTest {
 	}
 
 	@Test
-	public void invokerLoop() throws Exception {
+	public void invokerLoopTest() throws Exception {
 
 		ParModel pm = parModel("par-model");
 		add(pm, ent("x", 1));
 		add(pm, par("y", invoker("x + 1", pars("x"))));
-		add(pm, inc(invoker(pm, "y")));
-		ServiceInvoker z2 = inc(invoker(pm, "y"), 2);
+		add(pm, ent("z", inc(invoker(pm, "y"), 2)));
+		Invocation z2 = invoker(pm, "z");
 
+		ServiceInvoker iloop = loop("iloop", condition(pm, "{ z -> z < 50 }", "z"), z2);
+		add(pm, iloop);
+		assertEquals(value(pm, "iloop"), 48);
 
-		ServiceInvoker vloop = loop("vloop", condition(pm, "{ z -> z < 50 }", "z"), z2);
-		add(pm, vloop);
-		assertEquals(value(pm, "vloop"), 94);
 	}
 
 	@Test
-	public void incrementorBy1Test() throws RemoteException, ContextException {
+	public void incrementorBy1Test() throws Exception {
 		ParModel pm = parModel("par-model");
 		add(pm, ent("x", 1));
 		add(pm, par("y", invoker("x + 1", pars("x"))));
-		add(pm, inc(invoker(pm, "y")));
+		add(pm, ent("z", inc(invoker(pm, "y"))));
 
 		for (int i = 0; i < 10; i++) {
-			logger.info("" + value(pm, "y++"));
+			logger.info("" + value(pm, "z"));
 		}
-		assertEquals(value(pm, "y++"), 13);
+		assertTrue(value(pm, "z").equals(13));
 	}
 
 	@Test
-	public void incrementorBy2Test() throws RemoteException, ContextException {
+	public void incrementorBy2Test() throws Exception {
 		ParModel pm = parModel("par-model");
 		add(pm, ent("x", 1));
 		add(pm, par("y", invoker("x + 1", pars("x"))));
-		add(pm, inc(invoker(pm, "y"), 2));
+		add(pm, ent("z", inc(invoker(pm, "y"), 2)));
 
 		for (int i = 0; i < 10; i++) {
-			logger.info("" + value(pm, "y++2"));
+			logger.info("" + value(pm, "z"));
 		}
-		assertEquals(value(pm, "y++2"), 24);
-	}
-
-	@Test
-	public void incrementorDoubleTest() throws RemoteException,
-			ContextException {
-		ParModel pm = parModel("par-model");
-		add(pm, ent("x", 1.0));
-		add(pm, par("y", invoker("x + 1.2", pars("x"))));
-		add(pm, inc(invoker(pm, "y"), 2.1));
-
-		for (int i = 0; i < 10; i++) {
-			logger.info("" + next(pm, "y++2.1"));
-		}
-		// logger.info("" + value(pm,"y++2.1"));
-		assertEquals(value(pm, "y++2.1"), 25.300000000000004);
+		assertEquals(value(pm, "z"), 24);
 	}
 }
