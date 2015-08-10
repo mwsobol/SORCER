@@ -127,6 +127,23 @@ public class ExchangeTasks {
 	}
 
 	@Test
+	public void evaluateRemoteContextSmartProxyTask() throws Exception  {
+		long start = System.currentTimeMillis();
+		Task ex = task(sig("exchange", Exchange.class, prvName("Smart Exchange")),
+				cxt(ent("input", intArray()),
+						result("output")));
+
+		int[] out = null;
+		for (int n = 0; n < ITERATIONS; n++) {
+			out = (int[]) value(ex);
+//			logger.info("out: " + Arrays.toString(out));
+		}
+		long end = System.currentTimeMillis();
+		logger.info("Execution time: " + (end-start) + " ms");
+		assertEquals(out.length, 1001);
+	}
+
+	@Test
 	public void evaluateLocalArgTask() throws Exception  {
 		long start = System.currentTimeMillis();
 		Task ex = task(sig("exchange", ExchangeBean.class),
