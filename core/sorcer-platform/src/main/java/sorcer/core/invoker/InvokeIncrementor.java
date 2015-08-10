@@ -17,10 +17,7 @@
  */
 package sorcer.core.invoker;
 
-import sorcer.service.Arg;
-import sorcer.service.EvaluationException;
-import sorcer.service.Incrementor;
-import sorcer.service.Invocation;
+import sorcer.service.*;
 
 import java.rmi.RemoteException;
 import java.util.NoSuchElementException;
@@ -31,15 +28,26 @@ import java.util.NoSuchElementException;
  * @author Mike Sobolewski
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })
-public class InvokeIncrementor extends ServiceInvoker<Integer> implements Incrementor<Integer> {
+public abstract class InvokeIncrementor<T> extends ServiceInvoker<T> implements Incrementor<T> {
 
     private static final long serialVersionUID = 6556962121786495504L;
 
-	protected int increment = 1;
+	protected T increment;
 
-	protected Invocation<Integer> target;
+	protected String path;
 
-	public InvokeIncrementor(Invocation invoker, int increment) {
+	protected Invocation<T> target;
+
+	public InvokeIncrementor(String path) {
+		this.path = path;
+	}
+
+	public InvokeIncrementor(String path, T increment) {
+		this.path = path;
+		this.increment = increment;
+	}
+
+	public InvokeIncrementor(Invocation invoker, T increment) {
 		this.target = invoker;
 		this.increment = increment;
 	}
@@ -48,33 +56,49 @@ public class InvokeIncrementor extends ServiceInvoker<Integer> implements Increm
 		this.target = invoker;
 	}
 
-	public InvokeIncrementor(String name, Invocation invoker, int increment) {
+	public InvokeIncrementor(String name, Invocation invoker, T increment) {
 		super(name);
 		this.target = invoker;
 		this.increment = increment;
 	}
 
 	@Override
-	public Integer getValue(Arg... entries) throws EvaluationException {
+	public T getValue(Arg... entries) throws EvaluationException {
 		try {
-			if (value == null)
+			if (value == null && target != null)
 				value = target.invoke(null, entries);
-			value = value + increment;
-
+			else if (path != null && target == null && invokeContext != null) {
+				try {
+					value = (T) invokeContext.getValue(path);
+				} catch (Exception e) {
+					throw new EvaluationException(e);
+				}
+			}
+			value = getIncrement(value, increment);
 		} catch (RemoteException e) {
 			throw new EvaluationException(e);
 		}
 		return value;
 	}
 
-	public int getIncrement() {
-		return increment;
-	}
+	protected abstract T getIncrement(T value, T increment);
 
 	public Invocation getTarget() {
 		return target;
 	}
-	
+
+	public void setTarget(Invocation<T> target) {
+		this.target = target;
+	}
+
+	public String getPath() {
+		return path;
+	}
+
+	public void setPath(String path) {
+		this.path = path;
+	}
+
 	public Incrementor reset() {
 		value = null;
 		return this;
@@ -84,7 +108,7 @@ public class InvokeIncrementor extends ServiceInvoker<Integer> implements Increm
 	 * @see sorcer.service.Incrementor#next()
 	 */
 	@Override
-	public Integer next()  {
+	public T next()  {
 		try {
 			return getValue();
 		} catch (EvaluationException e) {

@@ -559,8 +559,8 @@ public class ParModels {
 		ParModel pm = parModel("par-model");
 		add(pm, ent("x", 1));
 		add(pm, par("y", invoker("x + 1", pars("x"))));
-		add(pm, inc("z", invoker(pm, "y")));
-		ServiceInvoker z2 = inc("z2", invoker(pm, "y"), 2);
+		add(pm, inc(invoker(pm, "y")));
+		ServiceInvoker z2 = inc(invoker(pm, "y"), 2);
 
 
 		ServiceInvoker vloop = loop("vloop", condition(pm, "{ z -> z < 50 }", "z"), z2);

@@ -23,18 +23,21 @@ import static sorcer.po.operator.*;
 @SuppressWarnings("unchecked")
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/sml")
-public class SpaceBlockExertions implements SorcerConstants {
-	private final static Logger logger = LoggerFactory.getLogger(SpaceBlockExertions.class);
+public class IncrementBlockExertions implements SorcerConstants {
+	private final static Logger logger = LoggerFactory.getLogger(IncrementBlockExertions.class);
 
 	@Test
-	public void entryIncrementors() throws Exception {
+	public void entryIncrementor() throws Exception {
 		Context cxt = model("add", inEnt("arg/x1", 20),
 						inEnt("arg/x2", 80.0), result("result++"));
 
-		Incrementor z2 = inc("z2", invoker(cxt, "arg/x1"), 2);
+		Incrementor z2 = inc(invoker(cxt, "arg/x1"), 2);
 		assertEquals(next(z2), 22);
 		assertEquals(next(z2), 24);
+	}
 
+	@Test
+	public void taskIncrementor() throws Exception {
 		Task spaceTask = task(
 				"space task",
 				sig("add", AdderImpl.class),
@@ -48,21 +51,32 @@ public class SpaceBlockExertions implements SorcerConstants {
 	}
 
 	@Test
-	public void arithmeticSpaceTaskTest() throws Exception {
-		Task spaceTask = task(
+	public void taskIncrement() throws Exception {
+		Task t = task(
 				"space task",
 				sig("add", AdderImpl.class),
-				context("add", inEnt("arg/x1", 20.0),
+				model("add", inEnt("arg/x1", inc("arg/x2", 2.0)),
 						inEnt("arg/x2", 80.0), result("task/result")),
 				strategy(Strategy.Access.PULL, Strategy.Wait.YES));
 
-		Block spaceBlock = block(sig(ServiceConcatenator.class),
-				loop(0, 10, block(context(inc("z2", invoker(context(spaceTask), "arg/x1"), 2)),
-						spaceTask)));
-
-		spaceBlock = exert(spaceBlock);
-		logger.info("block context" + context(spaceBlock));
-//		assertEquals(get(context(spaceBlock), "result/average"), 100.00);
+//		logger.info("result: " + value(t));
+		assertEquals(value(t), 162.00);
 	}
-		
+
+//	@Test
+//	public void taskIncrementLoop() throws Exception {
+//		Task spaceTask = task(
+//				"space task",
+//				sig("add", AdderImpl.class),
+//				model("add", inEnt("arg/x1", inc("arg/x2", 2.0)),
+//						inEnt("arg/x2", 80.0), result("task/result")),
+//				strategy(Strategy.Access.PULL, Strategy.Wait.YES));
+//
+//		Block spaceBlock = block(sig(ServiceConcatenator.class),
+//				loop(0, 10, spaceTask));
+//
+//		spaceBlock = exert(spaceBlock);
+//		logger.info("block context" + context(spaceBlock));
+////		assertEquals(get(context(spaceBlock), "result/average"), 100.00);
+//	}
 }

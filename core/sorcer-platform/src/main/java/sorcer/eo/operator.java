@@ -35,6 +35,7 @@ import sorcer.core.context.model.par.ParModel;
 import sorcer.core.context.model.srv.Srv;
 import sorcer.core.deploy.ServiceDeployment;
 import sorcer.core.exertion.*;
+import sorcer.core.invoker.InvokeIncrementor;
 import sorcer.core.provider.*;
 import sorcer.core.provider.exerter.Binder;
 import sorcer.core.provider.rendezvous.ServiceConcatenator;
@@ -507,6 +508,16 @@ public class operator {
 									  List<Tuple2<String, ?>> entryList) throws ContextException {
 		for (int i = 0; i < entryList.size(); i++) {
 			if (entryList.get(i) instanceof InputEntry) {
+				Object val = null;
+				try {
+					val = entryList.get(i).asis();
+				} catch (RemoteException e) {
+					throw new ContextException(e);
+				}
+				if (val instanceof Incrementor &&
+						((InvokeIncrementor)val).getTarget() == null) {
+					((InvokeIncrementor)val).setScope(cxt);
+				}
 				if (((InputEntry) entryList.get(i)).isPersistent()) {
 					setPar(cxt, (InputEntry) entryList.get(i));
 				} else {
@@ -1676,7 +1687,7 @@ public class operator {
 				} else if (evaluation instanceof Entry){
 					return ((Entry<T>)evaluation).getValue(entries);
 				} else if (evaluation instanceof Incrementor){
-					return ((Incrementor<T>)evaluation).next();
+					return ((Incrementor<T>) evaluation).next();
 				} else {
 					return (T) ((Evaluation)evaluation).getValue(entries);
 				}

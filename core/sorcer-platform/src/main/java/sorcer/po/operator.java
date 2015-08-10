@@ -363,24 +363,36 @@ public class operator {
 		return new ExertInvoker(exertion);
 	}
 
+	public static InvokeIncrementor inc(String path) {
+		return new IntegerIncrementor(path, 1);
+	}
+
+	public static InvokeIncrementor inc(String path, int increment) {
+		return new IntegerIncrementor(path, increment);
+	}
+
 	public static InvokeIncrementor inc(Invocation invoker, int increment) {
-		return new InvokeIncrementor(invoker, increment);
+		return new IntegerIncrementor(invoker, increment);
 	}
 
-	public static InvokeIncrementor inc(Invocation invoker) {
-		return new InvokeIncrementor(invoker, 1);
+	public static InvokeIncrementor inc(Invocation<Integer> invoker) {
+		return new IntegerIncrementor(invoker, 1);
 	}
 
-	public static InvokeIncrementor inc(String name, Invocation invoker) {
-		return new InvokeIncrementor(name, invoker, 1);
+	public static InvokeIncrementor dinc(String path) {
+		return new DoubleIncrementor(path, 1.0);
 	}
 
-	public static InvokeIncrementor inc(String name, Invocation invoker, int increment) {
-		return new InvokeIncrementor(name, invoker, increment);
+	public static InvokeIncrementor inc(String path, double increment) {
+		return new DoubleIncrementor(path, increment);
 	}
 
-	public static InvokeDoubleIncrementor inc(String name, Invocation invoker, double increment) {
-		return new InvokeDoubleIncrementor(name, invoker, increment);
+	public static InvokeIncrementor inc(Invocation invoker, double increment) {
+		return new DoubleIncrementor(invoker, increment);
+	}
+
+	public static InvokeIncrementor dinc(Invocation<Double> invoker) {
+		return new DoubleIncrementor(invoker, 1.0);
 	}
 
 	public static sorcer.service.Incrementor reset(sorcer.service.Incrementor incrementor) {
@@ -446,7 +458,7 @@ public class operator {
 		return new AltInvoker(name, invokers);
 	}
 
-	public static LoopInvoker loop(String name, Condition condition, ServiceInvoker target) {
+	public static LoopInvoker loop(String name, Condition condition, Invocation target) {
 		return new LoopInvoker(name, condition, target);
 	}
 

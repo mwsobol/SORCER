@@ -476,8 +476,8 @@ public class InvokerTest {
 		ParModel pm = parModel("par-model");
 		add(pm, ent("x", 1));
 		add(pm, par("y", invoker("x + 1", pars("x"))));
-		add(pm, inc("z", invoker(pm, "y")));
-		ServiceInvoker z2 = inc("z2", invoker(pm, "y"), 2);
+		add(pm, inc(invoker(pm, "y")));
+		ServiceInvoker z2 = inc(invoker(pm, "y"), 2);
 
 
 		ServiceInvoker vloop = loop("vloop", condition(pm, "{ z -> z < 50 }", "z"), z2);
@@ -490,7 +490,7 @@ public class InvokerTest {
 		ParModel pm = parModel("par-model");
 		add(pm, ent("x", 1));
 		add(pm, par("y", invoker("x + 1", pars("x"))));
-		add(pm, inc("y++", invoker(pm, "y")));
+		add(pm, inc(invoker(pm, "y")));
 
 		for (int i = 0; i < 10; i++) {
 			logger.info("" + value(pm, "y++"));
@@ -503,7 +503,7 @@ public class InvokerTest {
 		ParModel pm = parModel("par-model");
 		add(pm, ent("x", 1));
 		add(pm, par("y", invoker("x + 1", pars("x"))));
-		add(pm, inc("y++2", invoker(pm, "y"), 2));
+		add(pm, inc(invoker(pm, "y"), 2));
 
 		for (int i = 0; i < 10; i++) {
 			logger.info("" + value(pm, "y++2"));
@@ -517,7 +517,7 @@ public class InvokerTest {
 		ParModel pm = parModel("par-model");
 		add(pm, ent("x", 1.0));
 		add(pm, par("y", invoker("x + 1.2", pars("x"))));
-		add(pm, inc("y++2.1", invoker(pm, "y"), 2.1));
+		add(pm, inc(invoker(pm, "y"), 2.1));
 
 		for (int i = 0; i < 10; i++) {
 			logger.info("" + next(pm, "y++2.1"));
