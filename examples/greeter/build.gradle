@@ -14,106 +14,14 @@
  * limitations under the License.
  */
 
-version = sorcerVersion
-
-jar {
-    manifest {
-        attributes("Implementation-Title": "Service Provider", "Implementation-Version": version)
-    }
-    baseName = "exchange"
-    classifier = "prv"
-    dependsOn classes
-    from sourceSets.main.output
-    exclude('sorcer/requestor/**')
-}
-
-task servicePrvDlJar(type: Jar) {
-    manifest {
-        attributes("Implementation-Title": "Service Provider Exported Classes", "Implementation-Version": version)
-    }
-    baseName = "exchange"
-    classifier = "dl"
-    dependsOn classes
-    from sourceSets.main.output
-    include('sorcer/provider/exchange/*')
-    from sourceSets.main.resources
-    include('sorcer.jpg')
-}
-
-task serviceReqJar(type: Jar) {
-    manifest {
-        attributes("Implementation-Title": "Service Requestor", "Implementation-Version": version)
-    }
-    baseName = "exchange"
-    classifier = "req"
-    dependsOn classes
-    from sourceSets.main.output
-    include('sorcer/requestor/**')
-}
-
-artifacts {
-    archives servicePrvDlJar
-    archives serviceReqJar
-}
-
-install.dependsOn(['servicePrvDlJar', 'serviceReqJar'])
-build.dependsOn(install)
+version = '1.0'
 
 dependencies {
-    compile project(':sorcer-platform')
-    compile project(':sorcer-lib')
-    compile project(':sos-db-prv')
     testCompile project(':sorcer-test')
     testRuntime libs.slf4j
     testRuntime libs.logback
 }
 
-def deployConfig = file("configs/exchange-prv.config")
-artifacts {
-    archives deployConfig
-}
-
-def repoPath() {
-    return "org/sorcer/exchange/${version}"
-}
-
-bootme {
-    description = 'Starts up a service provider'
-//    if (!file("logs").exists()) file("logs").mkdir()
-    starterConfig = file("${projectDir.path}/configs/StartExchangeConfig.groovy")
-    systemProperties = ["relative.repo.path" : repoPath()]
-//    spawn = false
-//    debug = true
-}
-
-//task runRequestor(type:JavaExec, dependsOn:[jar, "bootme"]) {
-task runRequestor(type:JavaExec, dependsOn:[install]) {
-    description = 'Runs a service requestor executing a local or remote service.'
-    main = "sorcer.core.requestor.ServiceRequestor"
-    classpath = sourceSets.main.runtimeClasspath
-    systemProperty "java.util.logging.config.file", "${projectDir.path}/configs/sorcer-req.logging"
-    systemProperty "requestor.properties", "configs/adder-req.properties"
-    systemProperty "java.rmi.server.codebase",
-            "${websterUrl}/${repoPath()}/exchange-${version}-dl.jar ${websterUrl}/sorcer-dl-${version}.jar ${websterUrl}/jsk-dl-${riverVersion}.jar"
-//    args = ["sorcer.requestor.adder.AdderRequestor", "sorcer.netlet"]
-//  Requires service provisioning support - bootSorcerRio
-    args = ["sorcer.requestor.exchange.ExchangeRequestor", "dynamic"]
-	finalizedBy (":stopme")
-}
-
-test {
-    description = 'Tests local and remote services with JUnit test case.'
-    systemProperty "java.rmi.server.codebase",
-            "${websterUrl}/${repoPath()}/exchange-${version}-dl.jar ${websterUrl}/sorcer-dl-${version}.jar ${websterUrl}/jsk-dl-${riverVersion}.jar"
-
-//    testLogging {
-//        events "passed", "skipped", "failed"/*, "standardOut", "standardError"*/
-//    }
-//    dependsOn([install])
-    dependsOn([install, bootme])
-    finalizedBy(stopme)
-}
-test.enabled = false
 
 
 

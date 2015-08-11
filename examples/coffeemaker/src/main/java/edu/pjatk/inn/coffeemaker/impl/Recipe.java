@@ -1,5 +1,8 @@
 package edu.pjatk.inn.coffeemaker.impl;
 
+import sorcer.service.Context;
+import sorcer.service.ContextException;
+
 /**
  * @author   Sarah & Mike
  */
@@ -113,4 +116,16 @@ public class Recipe {
     public String toString() {
     	return name;
     }
+
+	static public Recipe recipe(Context context) throws ContextException {
+		Recipe r = new Recipe();
+		r.name = (String)context.getValue("name");
+		r.price = (int)context.getValue("price");
+		r.amtCoffee = (int)context.getValue("amtCoffee");
+		r.amtMilk = (int)context.getValue("amtMilk");
+		r.amtSugar = (int)context.getValue("amtSugar");
+		r.amtChocolate = (int)context.getValue("amtChocolate");
+		return r;
+	}
+
 }

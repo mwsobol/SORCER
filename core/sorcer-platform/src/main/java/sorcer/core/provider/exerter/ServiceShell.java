@@ -17,6 +17,8 @@
 
 package sorcer.core.provider.exerter;
 
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import net.jini.core.lookup.ServiceID;
 import net.jini.core.transaction.Transaction;
@@ -63,6 +65,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 import static sorcer.eo.operator.*;
 
@@ -101,18 +104,18 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 		this.provider = provider;
 	}
 
-//	private static void setupProxyCache() {
-//		LoadingCache<Signature, Object> proxies =  CacheBuilder.newBuilder()
-//				.maximumSize(20)
-//				.expireAfterWrite(30, TimeUnit.MINUTES)
-//				.removalListener(null)
-//				.build(
-//						new CacheLoader<Signature, Object>() {
-//							public Object load(Signature signature) {
-//								return Accessor.getService(signature);
-//							}
-//						});
-//	}
+	private static void setupProxyCache() {
+		LoadingCache<Signature, Object> proxies =  CacheBuilder.newBuilder()
+				.maximumSize(20)
+				.expireAfterWrite(30, TimeUnit.MINUTES)
+				.removalListener(null)
+				.build(
+						new CacheLoader<Signature, Object>() {
+							public Object load(Signature signature) {
+								return Accessor.getService(signature);
+							}
+						});
+	}
 
 	public <T extends Mogram> T  exert(Arg... entries) throws TransactionException,
 			MogramException, RemoteException {

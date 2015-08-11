@@ -55,6 +55,7 @@ include 'examples:worker'
 include 'examples:service'
 include 'examples:calculate'
 include 'examples:coffeemaker'
+include 'examples:greeter'
 
 include 'distribution'
 
