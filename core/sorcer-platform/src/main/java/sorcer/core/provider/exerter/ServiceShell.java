@@ -82,6 +82,8 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 	private File mogramSource;
 	private Transaction transaction;
 	private static MutualExclusion locker;
+	// a refrence to a provider running this mogram
+	private Service provider;
 	private static LoadingCache<Signature, Object> proxies;
 
 	public ServiceShell() {
@@ -94,11 +96,7 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 	public ServiceShell(Mogram mogram, Transaction txn) {
 		this.mogram = mogram;
 		transaction = txn;
-
 	}
-
-	// a refrence to a provider running this mogram
-	private Service provider;
 
 	public void init(Provider provider) {
 		this.provider = provider;
