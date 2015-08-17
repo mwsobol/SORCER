@@ -17,7 +17,6 @@
 package sorcer.core.provider.logger;
 
 import java.io.Serializable;
-import java.util.logging.Level;
 import java.util.logging.LogManager;
 
 /**
