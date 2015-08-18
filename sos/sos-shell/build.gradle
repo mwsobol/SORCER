@@ -27,5 +27,4 @@ dependencies {
     compile 'commons-io:commons-io:' + commonsIoVersion
     compile	project(':webster')
     compile project(':sorcer-platform')
-    compile project(':sos-netlet')
 }

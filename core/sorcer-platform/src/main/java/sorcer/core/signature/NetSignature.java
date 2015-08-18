@@ -24,7 +24,6 @@ import net.jini.lookup.entry.Name;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.exertion.NetTask;
-import sorcer.core.exertion.ObjectTask;
 import sorcer.core.provider.Provider;
 import sorcer.core.provider.ServiceProvider;
 import sorcer.core.provider.Shell;
@@ -434,9 +433,9 @@ public class
 	}
 
 	public String toString() {
-		return this.getClass() + ":" + providerName + ";" + execType + ";" + isActive + ";"
+		return this.getClass() + ":" + providerName + ";" + execType + ";"
 				+ serviceType + ";" + selector 
 					+ (prefix !=null ? "#" + prefix : "") 
-					+ (returnPath != null ? ";"  + returnPath : "");
+					+ (returnPath != null ? ";"  + "result " + returnPath : "");
 	}
 }

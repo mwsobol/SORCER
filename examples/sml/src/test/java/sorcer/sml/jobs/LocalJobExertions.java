@@ -60,7 +60,7 @@ public class LocalJobExertions implements SorcerConstants {
 
 		Context context = upcontext(exert(job));
 		logger.info("job context: " + context);
-		assertEquals(get(context, "j1/t3/result/y"), 400.0);
+		assertTrue(get(context, "j1/t3/result/y").equals(400.0));
 
 	}
 
@@ -94,7 +94,7 @@ public class LocalJobExertions implements SorcerConstants {
 
 		Context context = upcontext(exert(job));
 		logger.info("job context: " + context);
-		assertEquals(get(context, "j1/t3/result/y"), 400.0);
+		assertTrue(get(context, "j1/t3/result/y").equals(400.0));
 
 	}
 
@@ -107,8 +107,8 @@ public class LocalJobExertions implements SorcerConstants {
 
 		Context result = context(exert(cxtt));
 //		logger.info("contexter context: " + result);
-		assertEquals(get(result, "arg/x1"), 20.0);
-		assertEquals(get(result, "arg/x2"), 80.0);
+		assertTrue(get(result, "arg/x1").equals(20.0));
+		assertTrue(get(result, "arg/x2").equals(80.0));
 
 	}
 	
@@ -122,44 +122,77 @@ public class LocalJobExertions implements SorcerConstants {
 		
 		Context result = context(exert(t5));
 //		logger.info("task context: " + result);
-		assertEquals(get(result, "result/y"), 100.0);
+		assertTrue(get(result, "result/y").equals(100.0));
 
 	}
 	
 	@Test
-	public void serviceJob() throws Exception {
+	public void exertJob() throws Exception {
 
-		Task t3 = srv("t3", sig("subtract", SubtractorImpl.class),
+		Task t3 = task("t3", sig("subtract", SubtractorImpl.class),
 				cxt("subtract", inEnt("arg/x1"), inEnt("arg/x2"), outEnt("result/y")));
 
-		Task t4 = srv("t4",
+		Task t4 = task("t4",
 				sig("multiply", MultiplierImpl.class),
 				// cxt("multiply", in("super/arg/x1"), in("arg/x2", 50.0),
 				cxt("multiply", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
 						outEnt("result/y")));
 
-		Task t5 = srv(
+		Task t5 = task(
 				"t5",
 				sig("add", AdderImpl.class),
 				cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
 						outEnt("result/y")));
 
 		// Service Composition j1(j2(t4(x1, x2), t5(x1, x2)), t3(x1, x2))
-		Job job = srv(
+		Job job = job(
 				"j1",
 				sig("execute", ServiceJobber.class),
 				cxt(inEnt("arg/x1", 10.0),
 						result("job/result", outPaths("j1/t3/result/y"))),
-				srv("j2", sig("execute", ServiceJobber.class), t4, t5), t3,
+				job("j2", sig("execute", ServiceJobber.class), t4, t5), t3,
 				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
 				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
 
 		Context context = upcontext(exert(job));
 		logger.info("job context: " + context);
-		get(context, "j1/t3/result/y");
-		assertEquals(get(context, "j1/t3/arg/x1"), 500.0);
-		assertEquals(get(context, "j1/t3/arg/x2"), 100.0);
-		assertEquals(get(context, "j1/t3/result/y"), 400.0);
+		assertTrue(get(context, "j1/t3/arg/x1").equals(500.0));
+		assertTrue(get(context, "j1/t3/arg/x2").equals(100.0));
+		assertTrue(get(context, "j1/t3/result/y").equals(400.0));
+
+	}
+
+	@Test
+	public void evaluateJob() throws Exception {
+
+		Task t3 = task("t3", sig("subtract", SubtractorImpl.class),
+				cxt("subtract", inEnt("arg/x1"), inEnt("arg/x2"), outEnt("result/y")));
+
+		Task t4 = task("t4",
+				sig("multiply", MultiplierImpl.class),
+				// cxt("multiply", in("super/arg/x1"), in("arg/x2", 50.0),
+				cxt("multiply", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
+						outEnt("result/y")));
+
+		Task t5 = task(
+				"t5",
+				sig("add", AdderImpl.class),
+				cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
+						outEnt("result/y")));
+
+		// Service Composition j1(j2(t4(x1, x2), t5(x1, x2)), t3(x1, x2))
+		Job job = job(
+				"j1",
+				sig("execute", ServiceJobber.class),
+				cxt(inEnt("arg/x1", 10.0),
+						result("job/result", outPaths("j1/t3/result/y"))),
+				job("j2", sig("execute", ServiceJobber.class), t4, t5), t3,
+				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
+				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
+
+		Object result = evaluate(job);
+		logger.info("job result: " + result);
+		assertTrue(result.equals(400.0));
 
 	}
 

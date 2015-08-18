@@ -792,7 +792,7 @@ public class Webster implements Runnable {
     }
 
     protected String[] expandRoots() {
-        List<String> expandedRoots = new LinkedList<>();
+        List<String> expandedRoots = new LinkedList<String>();
         if (hasWildcard()) {
             String[] rawRoots = websterRoot;
             for (String root : rawRoots) {

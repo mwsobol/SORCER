@@ -1,22 +1,20 @@
 package sorcer.provider.adder;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.service.*;
 import sorcer.service.Strategy.Access;
 import sorcer.service.Strategy.Wait;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
-import static sorcer.co.operator.outPaths;
 import static sorcer.eo.operator.*;
+import static sorcer.eo.operator.get;
 import static sorcer.eo.operator.value;
 
 /**
@@ -31,7 +29,7 @@ public class NetTasks {
 	@Test
 	public void exertTask() throws Exception  {
 
-		Task t5 = srv("t5", sig("add", Adder.class),
+		Task t5 = task("t5", sig("add", Adder.class),
 				cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0), result("result/y")));
 
 		Exertion out = exert(t5);
@@ -52,7 +50,7 @@ public class NetTasks {
     @Test
     public void valueTask() throws SignatureException, ExertionException, ContextException  {
 
-        Task t5 = srv("t5", sig("add", Adder.class),
+        Task t5 = task("t5", sig("add", Adder.class),
                 cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0), result("result/y")));
 
         // get the result value
@@ -67,7 +65,7 @@ public class NetTasks {
     @Test
     public void sessionTask() throws SignatureException, ExertionException, ContextException  {
 
-        Task sum = srv("t6", sig("sum", Adder.class),
+        Task sum = task("t6", sig("sum", Adder.class),
                 cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0), result("result/y")));
 
 		assertTrue(value(sum).equals(100.0));
@@ -91,22 +89,6 @@ public class NetTasks {
 		assertEquals(get(t5, "result/y"), 100.0);
 	}
 
-   
-    @Ignore
-	@Test
-	public void provisionedTask() throws Exception {
-        // requires SORCER provisioning support
-        Task t5 = task("provisioned adder", sig("add",
-						Adder.class,
-						deploy(configuration("org.sorcer:adder:config:5.0"))),
-				strategy(Strategy.Provision.YES),
-				context(inEnt("arg/x1", 10.0), inEnt("arg/x2", 80.0), result("result/y")));
-
-        t5 = exert(t5);
-        logger.info("t5 context: " + context(t5));
-        logger.info("t5 value: " + get(t5, "result/y"));
-        assertEquals(get(t5, "result/y"), 100.0);
-	}
 }
 	
 	

@@ -39,16 +39,16 @@ public class SignatureException extends Exception {
 		this.signature = signature;
 	}
 	
-	public SignatureException(Exception exception) {
+	public SignatureException(Throwable exception) {
 		super(exception);
 	}
 
-	public SignatureException(String msg, Exception e) {
+	public SignatureException(String msg, Throwable e) {
 		super(msg, e);
 		
 	}
 	
-	public SignatureException(String msg, Signature signature, Exception e) {
+	public SignatureException(String msg, Signature signature, Throwable e) {
 		super(msg, e);
 		this.signature = signature;
 	}

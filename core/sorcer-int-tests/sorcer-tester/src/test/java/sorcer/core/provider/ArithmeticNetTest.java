@@ -130,7 +130,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 	}
 	
 	@Test
-	public void arithmeticNetMultiFiTaskTest() throws ExertionException, SignatureException, ContextException, RemoteException {
+	public void arithmeticNetMultiFiTaskTest() throws Exception {
 		Task task = task("add",
 				sFi("net", sig("add", Adder.class)),
 				sFi("object", sig("add", AdderImpl.class)),

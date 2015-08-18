@@ -14,6 +14,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
+import static sorcer.eo.operator.result;
 import static sorcer.eo.operator.value;
 
 /**
@@ -24,11 +25,11 @@ import static sorcer.eo.operator.value;
 @ProjectContext("examples/service")
 public class LocalTasks {
 	private final static Logger logger = LoggerFactory.getLogger(LocalTasks.class);
-	
+
 	@Test
 	public void exertTask() throws Exception  {
 
-		Mogram t5 = mogram("t5", sig("add", AdderImpl.class),
+		Service t5 = task("t5", sig("add", AdderImpl.class),
 				cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0)));
 
 		Service out = exert(t5);
@@ -55,7 +56,7 @@ public class LocalTasks {
 				cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0), result("result/y")));
 
 		// get the result value
-		assertTrue(value(t5).equals(100.0));
+		assertEquals(100.0, value(t5));
 
 		// get the subcontext output from the exertion
 		assertTrue(context(ent("arg/x1", 20.0), ent("result/z", 100.0)).equals(

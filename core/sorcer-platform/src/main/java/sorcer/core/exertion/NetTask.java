@@ -115,9 +115,13 @@ public class NetTask extends ObjectTask implements Evaluation<Object>, Invocatio
 
 	public Task doTask(Transaction txn) throws MogramException,
 			SignatureException, RemoteException {
-		ServiceShell se = new ServiceShell(this);
 		try {
-			return (Task) se.exert();
+			if (delegate != null)
+				return delegate.doTask(txn);
+			else {
+				ServiceShell se = new ServiceShell(this);
+				return (Task) se.exert();
+			}
 		} catch (TransactionException e) {
 			throw new ExertionException(e);
 		}

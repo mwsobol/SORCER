@@ -28,7 +28,7 @@ public class LocalTaskExertions {
 	@Test
 	public void exertTask() throws Exception  {
 
-		Task t5 = srv("t5", sig("add", AdderImpl.class),
+		Task t5 = task("t5", sig("add", AdderImpl.class),
 				cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0)));
 
 		Exertion out = exert(t5);

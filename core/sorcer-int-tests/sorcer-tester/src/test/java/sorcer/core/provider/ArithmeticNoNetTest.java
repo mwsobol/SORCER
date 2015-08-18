@@ -1,14 +1,11 @@
 package sorcer.core.provider;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
-import sorcer.arithmetic.tester.provider.Adder;
-import sorcer.arithmetic.tester.provider.Arithmetic;
-import sorcer.arithmetic.tester.provider.Multiplier;
-import sorcer.arithmetic.tester.provider.Subtractor;
 import sorcer.arithmetic.tester.provider.impl.AdderImpl;
 import sorcer.arithmetic.tester.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.tester.provider.impl.SubtractorImpl;
@@ -21,19 +18,12 @@ import sorcer.core.signature.ObjectSignature;
 import sorcer.service.*;
 import sorcer.service.Strategy.Access;
 import sorcer.service.Strategy.Flow;
-import sorcer.service.Strategy.Wait;
-import sorcer.util.ProviderAccessor;
-import sorcer.util.ProviderLookup;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static sorcer.co.operator.get;
 import static sorcer.co.operator.*;
-import static sorcer.co.operator.input;
 import static sorcer.eo.operator.*;
-import static sorcer.eo.operator.value;
+import static sorcer.eo.operator.get;
 
 /**
  * @author Mike Sobolewski
@@ -93,9 +83,9 @@ public class ArithmeticNoNetTest implements SorcerConstants {
 		
 		job = job.exert();
 
-		logger.info("job context: " + ((Job)job).getJobContext());
+		logger.info("job context: " + ((Job) job).getJobContext());
 		// result at the provider's default path"
-		assertEquals(((Job)job).getJobValue("1job1task/subtract/result/value"), 400.0);
+		assertEquals(((Job) job).getJobValue("1job1task/subtract/result/value"), 400.0);
 	}
 	
 	@Test
@@ -184,7 +174,7 @@ public class ArithmeticNoNetTest implements SorcerConstants {
 		Task t5 = task("t5", sig("add", AdderImpl.class), 
 					type(sig("getContext", ArithmeticNetTest.createContext()), Signature.APD),
 					context("add", inEnt("arg/x1"), inEnt("arg/x2"),
-						result("result/y")));
+							result("result/y")));
 		
 		Context result = context(exert(t5));
 //		logger.info("task context: " + result);
@@ -208,16 +198,16 @@ public class ArithmeticNoNetTest implements SorcerConstants {
 
 	// two level job composition
 	private Job createSrv() throws Exception {
-		Task t3 = srv("t3", sig("subtract", SubtractorImpl.class),
+		Task t3 = task("t3", sig("subtract", SubtractorImpl.class),
 				cxt("subtract", inEnt("arg/x1"), inEnt("arg/x2"), outEnt("result/y")));
 
-		Task t4 = srv("t4",
+		Task t4 = task("t4",
 				sig("multiply", MultiplierImpl.class),
 				// cxt("multiply", in("super/arg/x1"), in("arg/x2", 50.0),
 				cxt("multiply", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
 						outEnt("result/y")));
 
-		Task t5 = srv(
+		Task t5 = task(
 				"t5",
 				sig("add", AdderImpl.class),
 				cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
@@ -226,158 +216,12 @@ public class ArithmeticNoNetTest implements SorcerConstants {
 		// Service Composition j1(j2(t4(x1, x2), t5(x1, x2)), t3(x1, x2))
 		// Job j1= job("j1", job("j2", t4, t5, strategy(Flow.PARALLEL,
 		// Access.PULL)), t3,
-		Job job = srv(
+		Job job = job(
 				"j1",
 				sig("execute", ServiceJobber.class),
 				cxt(inEnt("arg/x1", 10.0),
 						result("job/result", outPaths("j1/t3/result/y"))),
-				srv("j2", sig("execute", ServiceJobber.class), t4, t5), t3,
-				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
-				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
-
-		return job;
-	}
-
-	@Ignore
-	@Test
-	public void arithmeticPushTaskTest() throws Exception {
-
-		Task t5 = task(
-				"t5",
-				sig("add", Adder.class),
-				context("add", inEnt("arg, x1", 20.0), inEnt("arg, x2", 80.0),
-						result("result, y")));
-
-		t5 = exert(t5);
-		logger.info("t5 context: " + context(t5));
-		logger.info("t5 value: " + get(t5));
-		assertTrue(value(t5).equals(100.0));
-	}
-
-	@Ignore
-	@Test
-	public void arithmeticMultiServiceTest() throws Exception {
-
-		Task t5 = task(
-				"t5",
-				sig("add", Arithmetic.class),
-				context("add", inEnt("arg, x1", 20.0), inEnt("arg, x2", 80.0),
-						result("result, y")));
-
-		t5 = exert(t5);
-		// logger.info("t5 context: " + context(t5));
-		logger.info("t5 value: " + get(t5));
-		assertTrue(get(t5).equals(100.0));
-	}
-
-	@Ignore
-	@Test
-	public void accessArithmeticProviderTest() throws Exception {
-		Provider provider = ProviderAccessor
-				.getProvider(sig("add", Adder.class));
-		logger.info("provider: " + provider.getProviderName());
-
-		provider = ProviderAccessor.getProvider(sig("add", Arithmetic.class));
-		logger.info("provider: " +  provider.getProviderName());
-	}
-
-	@Ignore
-	@Test
-	public void lookupArithmeticProviderTest() throws Exception {
-		Provider provider = ProviderLookup
-				.getProvider(sig("add", Adder.class));
-		logger.info("provider: " + provider.getProviderName());
-
-		provider = ProviderLookup.getProvider(sig("add", Arithmetic.class));
-		logger.info("provider: " +  provider.getProviderName());
-	}
-	
-	@Ignore
-	@Test
-	public void arithmeticSpaceTaskTest() throws Exception {
-		Task t5 = task(
-				"t5",
-				sig("add", Adder.class),
-				context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
-						outEnt("result/y", null)), strategy(Access.PULL, Wait.YES));
-
-		logger.info("t5 init context: " + context(t5));
-
-		t5 = exert(t5);
-		logger.info("t5 context: " + context(t5));
-		logger.info("t5 value: " + get(t5, "result/y"));
-		assertEquals("Wrong value for 100.0", get(t5, "result/y"), 100.0);
-	}
-
-	@Ignore
-	@Test
-	public void arithmeticSpaceMultiserviceTaskTest() throws Exception {
-		Task t5 = task(
-				"t5",
-				sig("add", Arithmetic.class),
-				context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
-						outEnt("result/y", null)), strategy(Access.PULL, Wait.YES));
-
-		logger.info("t5 init context: " + context(t5));
-
-		t5 = exert(t5);
-		logger.info("t5 context: " + context(t5));
-		logger.info("t5 value: " + get(t5, "result/y"));
-		assertEquals("Wrong value for 100.0", get(t5, "result/y"), 100.0);
-	}
-
-	@Ignore
-	@Test
-	public void exertJobPullParTest() throws Exception {
-		Job job = createJob(Flow.PAR);
-		job = exert(job);
-		// logger.info("job j1: " + job);
-		// logger.info("job j1 job context: " + context(job));
-		logger.info("job j1 job context: " + upcontext(job));
-		// logger.info("job j1 value @ j1/t3/result/y = " + get(job,
-		// "j1/t3/result/y"));
-		assertEquals(get(job, "j1/t3/result/y"), 400.00);
-	}
-
-	@Ignore
-	@Test
-	public void exertJobPullSeqTest() throws Exception {
-		Job job = createJob(Flow.SEQ);
-		job = exert(job);
-		// logger.info("job j1: " + job);
-		// logger.info("job j1 job context: " + context(job));
-		logger.info("job j1 job context: " + upcontext(job));
-		// logger.info("job j1 value @ j1/t3/result/y = " + get(job,
-		// "j1/t3/result/y"));
-		assertEquals(get(job, "j1/t3/result/y"), 400.00);
-	}
-
-	// two level job composition with PULL and PAR execution
-	private Job createJob(Flow flow) throws Exception {
-		Task t3 = task(
-				"t3",
-				sig("subtract", Subtractor.class),
-				context("subtract", inEnt("arg/x1", null), inEnt("arg/x2", null),
-						outEnt("result/y", null)));
-
-		Task t4 = task(
-				"t4",
-				sig("multiply", Multiplier.class),
-				context("multiply", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
-						outEnt("result/y", null)));
-
-		Task t5 = task(
-				"t5",
-				sig("add", Adder.class),
-				context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
-						outEnt("result/y", null)));
-
-		// Service Composition j1(j2(t4(x1, x2), t5(x1, x2)), t3(x1, x2))
-		// Job job = job("j1",
-		Job job = job(
-				"j1", // sig("service", RemoteJobber.class),
-				// job("j2", t4, t5),
-				job("j2", t4, t5, strategy(flow, Access.PULL)), t3,
+				job("j2", sig("execute", ServiceJobber.class), t4, t5), t3,
 				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
 				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
 

@@ -75,6 +75,7 @@ ext {
                              "${rioHome}/lib/logging/logback-classic-${logbackVersion}.jar",
                              "${rioHome}/lib/logging/rio-logging-support-${rioVersion}.jar",
                              "${sorcerDistHome}/lib/sorcer/lib/sorcer-resolving-loader-${sorcerVersion}.jar",
+                             "${sorcerDistHome}/lib/common/guava-${guavaVersion}.jar",
                              "${rioHome}/lib/rio-platform-${rioVersion}.jar",
                              "${rioHome}/lib/start-${riverVersion}.jar",
                              "${rioHome}/lib/jsk-platform-${riverVersion}.jar"

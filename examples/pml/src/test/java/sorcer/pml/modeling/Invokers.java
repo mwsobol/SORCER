@@ -1,9 +1,7 @@
 package sorcer.pml.modeling;
 
 import junit.framework.Assert;
-import net.jini.core.transaction.TransactionException;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -28,22 +26,19 @@ import sorcer.util.exec.ExecUtils.CmdResult;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
-import java.rmi.RemoteException;
 import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static sorcer.co.operator.asis;
 import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.pipe;
 import static sorcer.eo.operator.value;
 import static sorcer.po.operator.add;
 import static sorcer.po.operator.alt;
-import static sorcer.po.operator.asis;
 import static sorcer.po.operator.*;
 import static sorcer.po.operator.get;
-import static sorcer.po.operator.loop;
+import static sorcer.po.operator.map;
 import static sorcer.po.operator.opt;
 import static sorcer.po.operator.put;
 import static sorcer.po.operator.set;
@@ -83,7 +78,7 @@ public class Invokers {
 	};
 
 	@Before
-	public void initParModel() throws EvaluationException, RemoteException {
+	public void initParModel() throws Exception {
 		pm = new ParModel();
 		x = par("x", 10.0);
 		y = par("y", 20.0);
@@ -91,7 +86,7 @@ public class Invokers {
 	}
 
 	@Test
-	public void methodInvokerTest() throws RemoteException, ContextException {
+	public void methodInvokerTest() throws Exception {
 		set(x, 10.0);
 		set(y, 20.0);
 		add(pm, x, y, z);
@@ -108,7 +103,7 @@ public class Invokers {
 	}
 
 	@Test
-	public void groovyInvokerTest() throws RemoteException, ContextException,
+	public void groovyInvokerTest() throws Exception,
 			SignatureException, ExertionException {
 		ParModel pm = parModel("par-model");
 		add(pm, par("x", 10.0), par("y", 20.0));
@@ -120,9 +115,7 @@ public class Invokers {
 	}
 
 	@Test
-	public void invokeTaskTest() throws RemoteException, ContextException,
-			SignatureException, ExertionException {
-
+	public void invokeTaskTest() throws Exception {
 		Task t4 = task(
 				"t4",
 				sig("multiply", MultiplierImpl.class),
@@ -134,8 +127,7 @@ public class Invokers {
 	}
 
 	@Test
-	public void invokeJobTest() throws RemoteException, ContextException,
-			SignatureException, ExertionException, TransactionException {
+	public void invokeJobTest() throws Exception {
 		Context c4 = context("multiply", inEnt("arg/x1", 50.0),
 				inEnt("arg/x2", 10.0), result("result/y"));
 		Context c5 = context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
@@ -160,8 +152,7 @@ public class Invokers {
 	}
 
 	@Test
-	public void invokeParJobTest() throws RemoteException, ContextException,
-			SignatureException, ExertionException {
+	public void invokeParJobTest() throws Exception {
 		Context c4 = context("multiply", inEnt("arg/x1"), inEnt("arg/x2"),
 				result("result/y"));
 		Context c5 = context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
@@ -196,8 +187,7 @@ public class Invokers {
 	}
 
 	@Test
-	public void invokerParTest() throws RemoteException, ContextException,
-			SignatureException, ExertionException {
+	public void invokerParTest() throws Exception {
 
 		Par<Double> x1 = par("x1", 1.0);
 
@@ -206,7 +196,7 @@ public class Invokers {
 	}
 
 	@Test
-	public void substituteArgsTest() throws RemoteException, ContextException,
+	public void substituteArgsTest() throws Exception,
 			SignatureException, ExertionException {
 		Par x1, x2, y;
 
@@ -225,7 +215,7 @@ public class Invokers {
 	}
 
 	@Test
-	public void exertionInvokerTest() throws RemoteException, ContextException,
+	public void exertionInvokerTest() throws Exception,
 			SignatureException, ExertionException {
 		Context c4 = context("multiply", inEnt("arg/x1"), inEnt("arg/x2"),
 				result("result/y"));
@@ -257,7 +247,7 @@ public class Invokers {
 	}
 
 	@Test
-	public void cmdInvokerTest() throws SignatureException, ExertionException,
+	public void cmdInvokerTest() throws Exception,
 	ContextException, IOException {
 		String riverVersion = System.getProperty("river.version");
 		String sorcerVersion = System.getProperty("sorcer.version");
@@ -296,7 +286,7 @@ public class Invokers {
 	}
 
 	@Test
-	public void conditionalInvoker() throws RemoteException, ContextException {
+	public void conditionalInvoker() throws Exception {
 		final ParModel pm = new ParModel("par-model");
 		pm.putValue("x", 10.0);
 		pm.putValue("y", 20.0);
@@ -332,7 +322,7 @@ public class Invokers {
 	}
 
 	@Test
-	public void optInvokerTest() throws RemoteException, ContextException {
+	public void optInvokerTest() throws Exception {
 		ParModel pm = new ParModel("par-model");
 
 		OptInvoker opt = new OptInvoker("opt", new Condition(pm,
@@ -356,7 +346,7 @@ public class Invokers {
 	}
 
 	@Test
-	public void polOptInvokerTest() throws RemoteException, ContextException {
+	public void polOptInvokerTest() throws Exception {
 		ParModel pm = parModel("par-model");
 		add(pm,
 				par("x", 10.0),
@@ -374,7 +364,7 @@ public class Invokers {
 	}
 
 	@Test
-	public void altInvokerTest() throws RemoteException, ContextException {
+	public void altInvokerTest() throws Exception {
 		ParModel pm = new ParModel("par-model");
 		pm.putValue("x", 30.0);
 		pm.putValue("y", 20.0);
@@ -402,21 +392,21 @@ public class Invokers {
 		AltInvoker alt = new AltInvoker("alt", opt1, opt2, opt3, opt4);
 		add(pm, opt1, opt2, opt3, opt4, alt);
 
-		logger.info("opt1 value: " + eval(opt1));
-		assertEquals(eval(opt1), 60.0);
-		logger.info("opt2 value: " + eval(opt2));
-		assertEquals(eval(opt2), 70.0);
-		logger.info("opt3 value: " + eval(opt3));
-		assertEquals(eval(opt3), 80.0);
-		logger.info("opt4 value: " + eval(opt4));
-		assertEquals(eval(opt4), 90.0);
-		logger.info("alt value: " + eval(alt));
-		assertEquals(eval(alt), 60.0);
+		logger.info("opt1 value: " + value(opt1));
+		assertEquals(value(opt1), 60.0);
+		logger.info("opt2 value: " + value(opt2));
+		assertEquals(value(opt2), 70.0);
+		logger.info("opt3 value: " + value(opt3));
+		assertEquals(value(opt3), 80.0);
+		logger.info("opt4 value: " + value(opt4));
+		assertEquals(value(opt4), 90.0);
+		logger.info("alt value: " + value(alt));
+		assertEquals(value(alt), 60.0);
 
 		pm.putValue("x", 300.0);
 		pm.putValue("y", 200.0);
-		logger.info("opt value: " + eval(alt));
-		assertEquals(eval(alt), 510.0);
+		logger.info("opt value: " + value(alt));
+		assertEquals(value(alt), 510.0);
 
 		pm.putValue("x", 10.0);
 		pm.putValue("y", 20.0);
@@ -425,16 +415,16 @@ public class Invokers {
 		pm.putValue("x3", 50.0);
 		pm.putValue("y3", 60.0);
 		logger.info("opt value: " + alt.invoke());
-		assertEquals(eval(alt), 70.0);
+		assertEquals(value(alt), 70.0);
 
 		pm.putValue("x2", 50.0);
 		pm.putValue("y2", 40.0);
 		logger.info("opt value: " + alt.invoke());
-		assertEquals(eval(alt), 50.0);
+		assertEquals(value(alt), 50.0);
 	}
 
 	@Test
-	public void polAltInvokerTest() throws RemoteException, ContextException {
+	public void polAltInvokerTest() throws Exception {
 		ParModel pm = parModel("par-model");
 		// add(pm, entry("x", 10.0), entry("y", 20.0), par("x2", 50.0),
 		// par("y2", 40.0), par("x3", 50.0), par("y3", 60.0));
@@ -461,90 +451,69 @@ public class Invokers {
 		assertEquals(value(pm, "opt3"), null);
 		logger.info("opt4 value: " + value(pm, "opt4"));
         assertTrue(value(pm, "opt4").equals(70.0));
-		logger.info("alt value: " + eval(alt));
-		assertEquals(eval(alt), 50.0);
+		logger.info("alt value: " + value(alt));
+		assertEquals(value(alt), 50.0);
 
 		put(pm, ent("x", 300.0), ent("y", 200.0));
-		logger.info("alt value: " + eval(alt));
-		assertEquals(eval(alt), 510.0);
+		logger.info("alt value: " + value(alt));
+		assertEquals(value(alt), 510.0);
 
 		put(pm, ent("x", 10.0), ent("y", 20.0), ent("x2", 40.0),
 				ent("y2", 50.0), ent("x3", 50.0), ent("y3", 60.0));
-		logger.info("alt value: " + eval(alt));
-		assertEquals(eval(alt), 70.0);
-	}
-
-	@Ignore
-	@Test
-	public void loopInvokerTest() throws RemoteException, ContextException {
-		final ParModel pm = parModel("par-model");
-		add(pm, ent("x", 1));
-		add(pm, par("y", invoker("x + 1", pars("x"))));
-
-		// update x and y for the loop condition (z) depends on
-		Runnable update = new Runnable() {
-			public void run() {
-				try {
-					while ((Integer) value(pm, "x") < 25) {
-						set(pm, "x", (Integer) value(pm, "x") + 1);
-//						 System.out.println("running ... " + value(pm, "x"));
-						Thread.sleep(100);
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		};
-
-		add(pm, runnableInvoker("update", update));
-		invoke(pm, "update");
-
-		add(pm,
-				loop("loop", condition(pm, "{ x -> x < 20 }", "x"),
-						(ServiceInvoker) asis((Par) asis(pm, "y"))));
-
-		// logger.info("loop value: " + value(pm, "loop"));
-		assertTrue((Integer) value(pm, "loop") == 20);
+		logger.info("alt value: " + value(alt));
+		assertEquals(value(alt), 70.0);
 	}
 
 	@Test
-	public void incrementorBy1Test() throws RemoteException, ContextException {
+	public void invokerLoopTest() throws Exception {
 		ParModel pm = parModel("par-model");
 		add(pm, ent("x", 1));
 		add(pm, par("y", invoker("x + 1", pars("x"))));
-		add(pm, inc("y++", invoker(pm, "y")));
+		add(pm, ent("z", inc(invoker(pm, "y"), 2)));
+		Invocation z2 = invoker(pm, "z");
 
-		for (int i = 0; i < 10; i++) {
-			logger.info("" + value(pm, "y++"));
-		}
-        assertTrue(value(pm, "y++").equals(13));
+		ServiceInvoker iloop = loop("iloop", condition(pm, "{ z -> z < 50 }", "z"), z2);
+		add(pm, iloop);
+		assertEquals(value(pm, "iloop"), 48);
 	}
 
 	@Test
-	public void incrementorBy2Test() throws RemoteException, ContextException {
+	public void incrementorBy1Test() throws Exception {
 		ParModel pm = parModel("par-model");
 		add(pm, ent("x", 1));
 		add(pm, par("y", invoker("x + 1", pars("x"))));
-		add(pm, inc("y++2", invoker(pm, "y"), 2));
+		add(pm, ent("z", inc(invoker(pm, "y"))));
 
 		for (int i = 0; i < 10; i++) {
-			logger.info("" + value(pm, "y++2"));
+			logger.info("" + value(pm, "z"));
 		}
-		assertEquals(value(pm, "y++2"), 24);
+        assertTrue(value(pm, "z").equals(13));
 	}
 
 	@Test
-	public void incrementorDoubleTest() throws RemoteException,
-			ContextException {
+	public void incrementorBy2Test() throws Exception {
+		ParModel pm = parModel("par-model");
+		add(pm, ent("x", 1));
+		add(pm, par("y", invoker("x + 1", pars("x"))));
+		add(pm, ent("z", inc(invoker(pm, "y"), 2)));
+
+		for (int i = 0; i < 10; i++) {
+			logger.info("" + value(pm, "z"));
+		}
+		assertEquals(value(pm, "z"), 24);
+	}
+
+	@Test
+	public void incrementorDoubleTest() throws Exception {
 		ParModel pm = parModel("par-model");
 		add(pm, ent("x", 1.0));
 		add(pm, par("y", invoker("x + 1.2", pars("x"))));
-		add(pm, inc("y++2.1", invoker(pm, "y"), 2.1));
+		add(pm, ent("z", inc(invoker(pm, "y"), 2.1)));
 
 		for (int i = 0; i < 10; i++) {
-			logger.info("" + next(pm, "y++2.1"));
+			logger.info("" + next(pm, "z"));
 		}
 		// logger.info("" + value(pm,"y++2.1"));
-		assertEquals(value(pm, "y++2.1"), 25.300000000000004);
+		assertEquals(value(pm, "z"), 25.300000000000004);
 	}
 }

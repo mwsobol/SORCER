@@ -246,8 +246,7 @@ public interface Signature extends Service, Comparable, Dependency, Identifiable
 			String params = "";
 			if (outPaths != null)
 				params = " outPaths: " + Arrays.toString(outPaths);
-			return path + (direction != null ? " direction: " + direction : "")
-					+ params;
+			return path + params;
 		}
 
 		@Override

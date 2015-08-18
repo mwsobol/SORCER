@@ -398,21 +398,21 @@ public class InvokerTest {
 		AltInvoker alt = new AltInvoker("alt", opt1, opt2, opt3, opt4);
 		add(pm, opt1, opt2, opt3, opt4, alt);
 
-		logger.info("opt1 value: " + eval(opt1));
-		assertEquals(eval(opt1), 60.0);
-		logger.info("opt2 value: " + eval(opt2));
-		assertEquals(eval(opt2), 70.0);
-		logger.info("opt3 value: " + eval(opt3));
-		assertEquals(eval(opt3), 80.0);
-		logger.info("opt4 value: " + eval(opt4));
-		assertEquals(eval(opt4), 90.0);
-		logger.info("alt value: " + eval(alt));
-		assertEquals(eval(alt), 60.0);
+		logger.info("opt1 value: " + value(opt1));
+		assertEquals(value(opt1), 60.0);
+		logger.info("opt2 value: " + value(opt2));
+		assertEquals(value(opt2), 70.0);
+		logger.info("opt3 value: " + value(opt3));
+		assertEquals(value(opt3), 80.0);
+		logger.info("opt4 value: " + value(opt4));
+		assertEquals(value(opt4), 90.0);
+		logger.info("alt value: " + value(alt));
+		assertEquals(value(alt), 60.0);
 
 		pm.putValue("x", 300.0);
 		pm.putValue("y", 200.0);
-		logger.info("opt value: " + eval(alt));
-		assertEquals(eval(alt), 510.0);
+		logger.info("opt value: " + value(alt));
+		assertEquals(value(alt), 510.0);
 
 		pm.putValue("x", 10.0);
 		pm.putValue("y", 20.0);
@@ -421,12 +421,12 @@ public class InvokerTest {
 		pm.putValue("x3", 50.0);
 		pm.putValue("y3", 60.0);
 		logger.info("opt value: " + alt.invoke());
-		assertEquals(eval(alt), 70.0);
+		assertEquals(value(alt), 70.0);
 
 		pm.putValue("x2", 50.0);
 		pm.putValue("y2", 40.0);
 		logger.info("opt value: " + alt.invoke());
-		assertEquals(eval(alt), 50.0);
+		assertEquals(value(alt), 50.0);
 	}
 
 	@Test
@@ -457,90 +457,57 @@ public class InvokerTest {
 		assertEquals(value(pm, "opt3"), null);
 		logger.info("opt4 value: " + value(pm, "opt4"));
 		assertEquals(value(pm, "opt4"), 70.0);
-		logger.info("alt value: " + eval(alt));
-		assertEquals(eval(alt), 50.0);
+		logger.info("alt value: " + value(alt));
+		assertEquals(value(alt), 50.0);
 
 		put(pm, ent("x", 300.0), ent("y", 200.0));
-		logger.info("alt value: " + eval(alt));
-		assertEquals(eval(alt), 510.0);
+		logger.info("alt value: " + value(alt));
+		assertEquals(value(alt), 510.0);
 
 		put(pm, ent("x", 10.0), ent("y", 20.0), ent("x2", 40.0),
 				ent("y2", 50.0), ent("x3", 50.0), ent("y3", 60.0));
-		logger.info("alt value: " + eval(alt));
-		assertEquals(eval(alt), 70.0);
+		logger.info("alt value: " + value(alt));
+		assertEquals(value(alt), 70.0);
 	}
 
-	// TODO design a better test to avoid race conditions
-//	@Test
-//	public void loopInvokerTest() throws RemoteException, ContextException {
-//		final ParModel pm = parModel("par-model");
-//		add(pm, ent("x", 1));
-//		add(pm, par("y", invoker("x + 1", pars("x"))));
-//
-//		// update x and y for the loop condition (z) depends on
-//		Runnable update = new Runnable() {
-//			public void run() {
-//				try {
-//					while ((Integer) value(pm, "x") < 25) {
-//						set(pm, "x", (Integer) value(pm, "x") + 1);
-//						// System.out.println("running ... " + value(pm, "x"));
-//						Thread.sleep(100);
-//					}
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//				}
-//			}
-//		};
-//
-//		add(pm, runnableInvoker("update", update));
-//		invoke(pm, "update");
-//
-//		add(pm,
-//				loop("loop", condition(pm, "{ x -> x < 20 }", "x"),
-//						(ServiceInvoker) asis((Par) asis(pm, "y"))));
-//
-//		// logger.info("loop value: " + value(pm, "loop"));
-//		assertTrue((Integer) value(pm, "loop") == 20);
-//	}
-
 	@Test
-	public void incrementorBy1Test() throws RemoteException, ContextException {
+	public void invokerLoopTest() throws Exception {
+
 		ParModel pm = parModel("par-model");
 		add(pm, ent("x", 1));
 		add(pm, par("y", invoker("x + 1", pars("x"))));
-		add(pm, inc("y++", invoker(pm, "y")));
+		add(pm, ent("z", inc(invoker(pm, "y"), 2)));
+		Invocation z2 = invoker(pm, "z");
 
-		for (int i = 0; i < 10; i++) {
-			logger.info("" + value(pm, "y++"));
-		}
-		assertEquals(value(pm, "y++"), 13);
+		ServiceInvoker iloop = loop("iloop", condition(pm, "{ z -> z < 50 }", "z"), z2);
+		add(pm, iloop);
+		assertEquals(value(pm, "iloop"), 48);
+
 	}
 
 	@Test
-	public void incrementorBy2Test() throws RemoteException, ContextException {
+	public void incrementorBy1Test() throws Exception {
 		ParModel pm = parModel("par-model");
 		add(pm, ent("x", 1));
 		add(pm, par("y", invoker("x + 1", pars("x"))));
-		add(pm, inc("y++2", invoker(pm, "y"), 2));
+		add(pm, ent("z", inc(invoker(pm, "y"))));
 
 		for (int i = 0; i < 10; i++) {
-			logger.info("" + value(pm, "y++2"));
+			logger.info("" + value(pm, "z"));
 		}
-		assertEquals(value(pm, "y++2"), 24);
+		assertTrue(value(pm, "z").equals(13));
 	}
 
 	@Test
-	public void incrementorDoubleTest() throws RemoteException,
-			ContextException {
+	public void incrementorBy2Test() throws Exception {
 		ParModel pm = parModel("par-model");
-		add(pm, ent("x", 1.0));
-		add(pm, par("y", invoker("x + 1.2", pars("x"))));
-		add(pm, inc("y++2.1", invoker(pm, "y"), 2.1));
+		add(pm, ent("x", 1));
+		add(pm, par("y", invoker("x + 1", pars("x"))));
+		add(pm, ent("z", inc(invoker(pm, "y"), 2)));
 
 		for (int i = 0; i < 10; i++) {
-			logger.info("" + next(pm, "y++2.1"));
+			logger.info("" + value(pm, "z"));
 		}
-		// logger.info("" + value(pm,"y++2.1"));
-		assertEquals(value(pm, "y++2.1"), 25.300000000000004);
+		assertEquals(value(pm, "z"), 24);
 	}
 }

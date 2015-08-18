@@ -19,8 +19,6 @@ import static sorcer.co.operator.*;
 import static sorcer.co.operator.path;
 import static sorcer.mo.operator.*;
 import static sorcer.eo.operator.*;
-import static sorcer.eo.operator.inPaths;
-import static sorcer.eo.operator.outPaths;
 import static sorcer.eo.operator.put;
 import static sorcer.eo.operator.value;
 /**
@@ -46,7 +44,8 @@ public class DataModels {
 
         // aliasing with an reactive value entry - rvEnt
         put(cxt, rvEnt("arg/x1", value(cxt, "arg/x5")));
-        assertTrue(get(cxt, "arg/x1").equals(1.5));
+        assertNotEquals(get(cxt, "arg/x1"), 1.5);
+        assertTrue(value(cxt, "arg/x1").equals(1.5));
 
         Context<Double> subcxt = context(cxt, list("arg/x4", "arg/x5"));
         logger.info("subcontext: " + subcxt);

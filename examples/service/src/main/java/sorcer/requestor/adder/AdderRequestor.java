@@ -16,7 +16,7 @@ public class AdderRequestor extends ServiceRequestor {
             throws ExertionException, ContextException, SignatureException, IOException {
 
 
-        if (args[1].equals("netlet")) {
+        if (args[1].equals("sorcer/netlet")) {
             return (Exertion) evaluate(new File("src/main/netlets/adder.ntl"));
         } else if (args[1].equals("dynamic")) {
             return (Exertion) evaluate(new File("src/main/netlets/adder-sbp.ntl"));

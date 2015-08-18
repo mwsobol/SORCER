@@ -180,7 +180,7 @@ public abstract class Block extends CompoundExertion {
 		return exs;
 	}
 	
-	public URL persistContext() throws ExertionException, SignatureException, ContextException {
+	public URL persistContext() throws MogramException, SignatureException, ContextException {
 		if (contextURL == null) {
 			contextURL = SdbUtil.store(dataContext);
 			dataContext = null;

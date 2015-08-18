@@ -31,7 +31,6 @@ import static sorcer.eo.operator.pipe;
 import static sorcer.eo.operator.value;
 import static sorcer.mo.operator.responseUp;
 import static sorcer.po.operator.add;
-import static sorcer.po.operator.asis;
 import static sorcer.po.operator.*;
 import static sorcer.po.operator.put;
 import static sorcer.po.operator.set;
@@ -61,7 +60,7 @@ public class ParModelTest {
 	}
 
 	@Test
-	public void contextInvoker() throws RemoteException, ContextException {
+	public void contextInvoker() throws Exception {
 		ParModel pm = new ParModel("par-model");
 		add(pm, ent("x", 10.0));
 		add(pm, ent("y", 20.0));
@@ -279,7 +278,7 @@ public class ParModelTest {
 
 		// persistent par
 		Par dbIn = persistent(map(par("dbIn", "design/in"), cxt));
-		assertEquals(eval(dbIn), 25.0);  	// is persisted
+		assertEquals(value(dbIn), 25.0);  	// is persisted
 		logger.info("value dbIn asis design/in 1: " + dbIn.getMappable().asis("design/in"));
 
 		assertTrue(asis(cxt,"design/in") instanceof Par);
@@ -323,8 +322,7 @@ public class ParModelTest {
 	}
 	
 	@Test
-	public void exertionParsTest() throws RemoteException,
-			ContextException, ExertionException, SignatureException {
+	public void exertionParsTest() throws Exception {
 
 		Context c4 = context("multiply", inEnt("arg/x1"), inEnt("arg/x2"),
 				outEnt("result/y"));
@@ -377,8 +375,7 @@ public class ParModelTest {
 	}
 	
 	@Test
-	public void associatingContextsTest() throws RemoteException,
-			ContextException, ExertionException, SignatureException {
+	public void associatingContextsTest() throws Exception {
 		
 		Context c4 = context("multiply", inEnt("arg/x1"), inEnt("arg/x2"),
 				outEnt("result/y"));

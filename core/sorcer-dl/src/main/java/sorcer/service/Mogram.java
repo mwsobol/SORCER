@@ -276,4 +276,5 @@ public interface Mogram extends Service, Projection<Signature>, Scopable, Substi
 
     public void setBuilder(Signature builder) throws MogramException;
 
+    public String describe();
 }

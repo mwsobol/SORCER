@@ -9,11 +9,9 @@ import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.Adder;
 import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.core.context.Copier;
-import sorcer.core.context.model.ent.EntModel;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.service.Context;
 import sorcer.service.Invocation;
-import sorcer.service.Signature;
 import sorcer.service.modeling.Model;
 
 import static org.junit.Assert.assertEquals;
@@ -21,9 +19,6 @@ import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.asis;
 import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
-import static sorcer.eo.operator.asis;
-import static sorcer.eo.operator.put;
-import static sorcer.eo.operator.value;
 import static sorcer.mo.operator.*;
 import static sorcer.po.operator.invoker;
 /**
@@ -55,8 +50,8 @@ public class EntModels {
 		add(cxt, ent("arg/x7", invoker("x1 + x3", ents("x1", "x3"))));
 
 		assertTrue(value(cxt, "arg/x7").equals(4.0));
-		assertTrue(asis((Context)cxt, "arg/x7") instanceof Entry);
-		assertTrue(asis((Entry)asis((Context)cxt, "arg/x7")) instanceof Invocation);
+		assertTrue(asis(cxt, "arg/x7") instanceof Entry);
+		assertTrue(asis(asis(cxt, "arg/x7")) instanceof Invocation);
 
 	}
 
@@ -99,14 +94,14 @@ public class EntModels {
 		// cxt2 depends on values y1 and y2 calculated in cxt1
 		Context<Double> cxt2 = entModel(ent("arg/y3", 8.0), ent("arg/y4", 9.0), ent("arg/y5", 10.0));
 		add(cxt2, ent("invoke", invoker("y1 + y2 + y4 + y5", ents("y1", "y2", "y4", "y5"))));
-      	responseUp(cxt2, "invoke");
+		responseUp(cxt2, "invoke");
 
 		// created dependency of cxt2 on cxt1 via a context copier
 		Copier cp = copier(cxt1, ents("arg/x1", "arg/x2"), cxt2, ents("y1", "y2"));
 		dependsOn(cxt2, cp);
 
 //		Double result =
-				value(cxt2);
+		value(cxt2);
 		assertTrue(value(cxt2).equals(22.0));
 
 	}
@@ -129,12 +124,11 @@ public class EntModels {
 
 		logger.info("result: " + result);
 		assertTrue(result.equals(context(ent("add", 4.0), ent("multiply", 20.0))));
-
 	}
 
 
-    @Test
-    public void exertEntModel() throws Exception {
+	@Test
+	public void exertEntModel() throws Exception {
 
 		Context cxt = entModel(ent("arg/x1", 1.0), ent("arg/x2", 2.0),
 				ent("arg/x3", 3.0), ent("arg/x4", 4.0), ent("arg/x5", 5.0));
@@ -146,13 +140,12 @@ public class EntModels {
 		// two response paths declared
 		responseUp(cxt, "add", "multiply");
 
-        // exert the model
+		// exert the model
 		Model model = exert(cxt);
 		Context result = response(model);
 
 		assertTrue(result.equals(context(ent("add", 4.0), ent("multiply", 20.0))));
 	}
-
 
 	@Test
 	public void contextEntryService() throws Exception {
@@ -162,7 +155,7 @@ public class EntModels {
 				inEnt("x2", 80.0));
 
 		Entry e = ent("x2");
-		Context result = service(e, cxt);
+		Context result = exec(e, cxt);
 		assertEquals(80.0, value(result, "x2"));
 
 	}
@@ -171,26 +164,26 @@ public class EntModels {
 	@Test
 	public void invokerEntryService() throws Exception {
 
-		Model em = entModel(
+		Model em = model(
 				inEnt("x1", 20.0),
 				inEnt("x2", 80.0),
 				result("result/y"));
 
 		Entry ie = ent("multiply", invoker("x1 * x2", ents("x1", "x2")));
-		Context result = service(ie, em);
+		Context result = exec(ie, em);
 		assertEquals(1600.0, value(result, "multiply"));
 	}
 
 
 	@Test
-	public void srvEntrylService() throws Exception {
+	public void srvEntryLocalService() throws Exception {
 
-		Model sm = srvModel(
+		Model sm = model(
 				inEnt("y1", 20.0),
 				inEnt("y2", 80.0));
 
-		Entry se = srv(sig("add", Adder.class, result(inPaths("y1", "y2"))));
-		Context result = service(se, sm);
+		Entry se = srv(sig("add", AdderImpl.class, result("add", inPaths("y1", "y2"))));
+		Context result = exec(se, sm);
 		assertEquals(100.0, value(result, "add"));
 
 	}
@@ -199,12 +192,12 @@ public class EntModels {
 	@Test
 	public void srvEntryRemoteService() throws Exception {
 
-		Model sm = srvModel(
+		Model sm = model(
 				inEnt("y1", 20.0),
 				inEnt("y2", 80.0));
 
-		Entry se = srv(sig("add", Adder.class, result(inPaths("y1", "y2"))));
-		Context result = service(se, sm);
+		Entry se = srv(sig("add", Adder.class, result("add", inPaths("y1", "y2"))));
+		Context result = exec(se, sm);
 		assertEquals(100.0, value(result, "add"));
 
 	}

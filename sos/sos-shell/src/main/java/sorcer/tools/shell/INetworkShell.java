@@ -19,6 +19,7 @@ package sorcer.tools.shell;
 
 
 import net.jini.core.lookup.ServiceRegistrar;
+import sorcer.core.provider.exerter.ServiceShell;
 
 import java.io.File;
 import java.io.PrintStream;
@@ -40,6 +41,8 @@ public interface INetworkShell {
     String getNshWebsterUrl();
 
     void setCurrentDir(File file);
+
+    void setServiceShell(ServiceShell shell);
 
     ServiceRegistrar getSelectedRegistrar();
 
