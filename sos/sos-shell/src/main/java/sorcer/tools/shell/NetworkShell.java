@@ -96,7 +96,9 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 
 	static private boolean debug = false;
 
-    public static final String[] CONFIG_FILES = { CONFIG_PATH };
+	static private boolean isRemoteLogging = true;
+
+	public static final String[] CONFIG_FILES = { CONFIG_PATH };
     //CONFIG_EXT_PATH,
 
 
@@ -382,6 +384,10 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
     public boolean isDebug() {
         return debug;
     }
+
+	public boolean isRemoteLogging() {
+		return isRemoteLogging;
+	}
 
 	public static SorcerPrincipal getPrincipal() {
 		return principal;
@@ -1368,6 +1374,8 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 		} catch (NoSuchEntryException e) {
 			// leave null
 		}
+		isRemoteLogging = (Boolean) sysConfig.getEntry(CONFIG_COMPONENT,
+				"remoteLogging", boolean.class, Boolean.TRUE);
 		String[] result = null;
 		if (loginContext != null) {
 			loginContext.login();

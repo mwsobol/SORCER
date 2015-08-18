@@ -294,7 +294,7 @@ public class SorcerILFactory extends BasicILFactory {
 		}
 	}
 
-    private boolean remoteLogging = false;
+    private boolean remoteLogging = true;
 
     public void setRemoteLogging(boolean remoteLogging){
         this.remoteLogging = remoteLogging;

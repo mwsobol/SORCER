@@ -24,6 +24,9 @@ import org.slf4j.LoggerFactory;
 import sorcer.core.context.Contexts;
 import sorcer.core.context.ThrowableTrace;
 import sorcer.core.context.node.ContextNode;
+import sorcer.core.provider.RemoteLogger;
+import sorcer.core.provider.logger.LoggerRemoteEventClient;
+import sorcer.core.provider.logger.LoggerRemoteException;
 import sorcer.netlet.ScriptExerter;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
@@ -31,10 +34,13 @@ import sorcer.tools.shell.INetworkShell;
 import sorcer.tools.shell.NetworkShell;
 import sorcer.tools.shell.ShellCmd;
 import sorcer.tools.shell.WhitespaceTokenizer;
+import sorcer.util.ConsoleLoggerListener;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 //import sorcer.core.RemoteLogger;
 
@@ -155,7 +161,7 @@ public class ExertCmd extends ShellCmd {
 			return;
 		}
 		Object target = scriptExerter.parse();
-/*        LoggerRemoteEventClient lrec = null;
+        LoggerRemoteEventClient lrec = null;
 
         // Starting RemoteLoggerListener
         if (shell.isRemoteLogging() && target instanceof Exertion) {
@@ -174,7 +180,7 @@ public class ExertCmd extends ShellCmd {
                     lrec = null;
                 }
             }
-        }*/
+        }
 
 		if (NetworkShell.getInstance().isDebug()) out.println("Starting execute!");
 		Object result = scriptExerter.execute();

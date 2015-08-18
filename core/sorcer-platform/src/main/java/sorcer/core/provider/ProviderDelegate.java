@@ -136,7 +136,7 @@ public class ProviderDelegate {
 	/** Context logger used in custom provider methods */
 	private Logger contextLogger;
 
-    private boolean remoteLogging = false;
+    private boolean remoteLogging = true;
 
 	/** Provider deployment configuration. */
 	protected DeploymentConfiguration config = new DeploymentConfiguration();
