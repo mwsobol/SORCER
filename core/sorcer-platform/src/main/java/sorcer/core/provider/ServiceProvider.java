@@ -203,8 +203,6 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 
     /** MBean for JMX access*/
     private ProviderAdmin providerAdmin;
-	/** Initialize remote logging functionality */
-	private RemoteLoggerInstaller remoteLoggerInstaller;
 
 	public ServiceProvider() {
 		providers.add(this);
@@ -257,8 +255,6 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
         providerAdmin.register();
         // decide if thread management is needed for ExertionDispatcher
         setupThreadManager();
-		// Initialize remote logging
-		remoteLoggerInstaller = new RemoteLoggerInstaller();
         init(args, lifeCycle);
 
         logger.info("<init> (String[], LifeCycle); name = " + this.getName());
@@ -1709,7 +1705,6 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		try {
 			logger.debug("Destroying service " + getProviderName());
 			// Close remote logging
-			if (remoteLoggerInstaller!=null) remoteLoggerInstaller.destroy();
 			if (ldmgr != null)
 				ldmgr.terminate();
 			if (joinManager != null)

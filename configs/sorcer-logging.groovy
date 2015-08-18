@@ -158,6 +158,8 @@ logger("sorcer.core.dispatch.ExertionSorter", INFO)
 logger("sorcer.rio.rmi", INFO)
 logger("sorcer.service.Accessor", INFO)
 logger("sorcer.core.provider.exerter", INFO)
+logger("sorcer.platform.logger", INFO)
+logger("sorcer.core.provider.logger", INFO)
 
 
 

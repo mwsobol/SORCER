@@ -33,12 +33,6 @@ class AdderProviderConfig {
     boolean spaceEnabled = true
     // remote logging
     boolean remoteLogging=true
-    String remoteLoggerManagerName="Logger"
-    Level remoteLoggerLevel=Level.FINE;
-    String remoteLoggerName="remote.sorcer.provider.adder.Adder"
-    // local private logging available via by RemoteLogger
-    boolean remoteContextLogging = true
-    boolean remoteProviderLogging = true
     // persist and reuse service ID
     boolean providerIdPersistent = false
     String iconName="sorcer.jpg";

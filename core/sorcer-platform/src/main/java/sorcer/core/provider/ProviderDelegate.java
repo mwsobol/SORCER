@@ -63,6 +63,7 @@ import sorcer.core.signature.NetSignature;
 import sorcer.jini.jeri.SorcerILFactory;
 import sorcer.jini.lookup.entry.SorcerServiceInfo;
 import sorcer.jini.lookup.entry.VersionInfo;
+import sorcer.platform.logger.RemoteLoggerInstaller;
 import sorcer.security.sign.SignedServiceTask;
 import sorcer.security.sign.SignedTaskInterface;
 import sorcer.security.sign.TaskAuditor;
@@ -136,7 +137,7 @@ public class ProviderDelegate {
 	/** Context logger used in custom provider methods */
 	private Logger contextLogger;
 
-    private boolean remoteLogging = true;
+    private boolean remoteLogging = false;
 
 	/** Provider deployment configuration. */
 	protected DeploymentConfiguration config = new DeploymentConfiguration();
@@ -296,6 +297,8 @@ public class ProviderDelegate {
     protected AbstractExporterFactory exporterFactory;
     private boolean shuttingDown = false;
 
+	private RemoteLoggerInstaller remoteLoggerInstaller;
+
 	/*
 	 * A nested class to hold the state information of the executing thread for
 	 * a served exertion.
@@ -356,6 +359,8 @@ public class ProviderDelegate {
 			throws ConfigurationException {
 		this.provider = provider;
 		String providerProperties = configFilename;
+		// Initialize remote logging
+		remoteLoggerInstaller = RemoteLoggerInstaller.getInstance();
 		// This allows us to specify different properties for different hosts
 		// using a shared mounted file system
 		if (providerProperties != null
@@ -578,6 +583,15 @@ public class ProviderDelegate {
             logger.warn("Problem getting {}.{}", ServiceProvider.COMPONENT, SERVER, e);
             partnerName = null;
         }
+		try {
+			remoteLogging = (Boolean) jconfig.getEntry(
+					ServiceProvider.COMPONENT, REMOTE_LOGGING, boolean.class,
+					false);
+			logger.info("remoteLogging=" + remoteLogging);
+		} catch (Exception e) {
+			logger.warn("Problem getting {}.{}", ServiceProvider.COMPONENT, SERVER, e);
+			remoteLogging = false;
+		}
         if (partner != null) {
             getPartner(partnerName, partnerType);
             exports.put(partner, partnerExporter);
@@ -1606,6 +1620,12 @@ public class ProviderDelegate {
 
 	public void destroy() {
         shuttingDown = true;
+		if (remoteLoggerInstaller!=null) {
+			try {
+				remoteLoggerInstaller.destroy();
+			} catch (RemoteException re) {
+			}
+		}
 		if (spaceEnabled && spaceHandlingPools != null) {
             for (SpaceTaker st : spaceTakers) {
                 st.destroy();

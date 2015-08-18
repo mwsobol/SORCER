@@ -45,6 +45,8 @@ import java.util.concurrent.*;
 public class RemoteLoggerInstaller implements DestroyAdmin {
     private static final Logger log = LoggerFactory.getLogger(RemoteLoggerInstaller.class);
 
+    private static RemoteLoggerInstaller instance = null;
+
     @ConfigEntry(required = false)
     public long rate = 200;
 
@@ -62,7 +64,12 @@ public class RemoteLoggerInstaller implements DestroyAdmin {
         }
     }
 
-    public RemoteLoggerInstaller() {
+    public static RemoteLoggerInstaller getInstance() {
+        if (instance==null) instance = new RemoteLoggerInstaller();
+        return instance;
+    }
+
+    private RemoteLoggerInstaller() {
         init();
         localInit();
     }

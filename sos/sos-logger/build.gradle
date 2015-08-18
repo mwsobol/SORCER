@@ -26,6 +26,7 @@ jar {
 
 dependencies {
     compile project(':sorcer-platform'), project(':sorcer-ui')
+    compile "commons-io:commons-io:${commonsIoVersion}"
 }
 
 task uiJar(type: Jar) {

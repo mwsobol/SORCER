@@ -25,6 +25,9 @@ import ch.qos.logback.core.FileAppender;
 import net.jini.core.event.EventRegistration;
 import net.jini.core.event.RemoteEventListener;
 import net.jini.core.lease.LeaseDeniedException;
+import net.jini.lookup.entry.UIDescriptor;
+import net.jini.lookup.ui.MainUI;
+import net.jini.lookup.ui.factory.JFrameFactory;
 import org.apache.commons.io.FileUtils;
 import org.rioproject.event.EventDescriptor;
 import org.rioproject.event.EventHandler;
@@ -34,15 +37,25 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.helpers.MessageFormatter;
 import sorcer.core.provider.RemoteLogger;
 import sorcer.core.provider.Provider;
+import sorcer.core.provider.logger.ui.LoggerFrameUI;
+import sorcer.serviceui.UIDescriptorFactory;
+import sorcer.serviceui.UIFrameFactory;
+import sorcer.util.SOS;
 import sorcer.util.SenderEventHandler;
 import sorcer.util.Sorcer;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
+import java.net.URL;
 import java.rmi.MarshalledObject;
 import java.rmi.RemoteException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 public class RemoteLoggerManager implements RemoteLogger {
     private static final org.slf4j.Logger log = LoggerFactory.getLogger(RemoteLoggerManager.class);
@@ -78,6 +91,8 @@ public class RemoteLoggerManager implements RemoteLogger {
         List<String> list = new LinkedList<String>();
 
         String[] loggerNames;
+        if (!logDir.exists() || logDir.list()==null || logDir.list().length==0)
+            return new String[0];
         loggerNames = logDir.list();
         for (String loggerName : loggerNames)
             if (loggerName.endsWith(".log"))
@@ -94,7 +109,7 @@ public class RemoteLoggerManager implements RemoteLogger {
         String loggerName;
         Logger logger;
         synchronized (this) {
-            //log.info("Publishing remote log: " + loggingEvent.getMessage().substring(0,Math.min(loggingEvent.getMessage().length(),50)));
+            log.info("Publishing remote log: " + loggingEvent.getMessage().substring(0,Math.min(loggingEvent.getMessage().length(),50)));
             Map<String, String> mdc = loggingEvent.getMDCPropertyMap();
             String exertionId = null;
             if (!remoteLogListeners.isEmpty()) {
@@ -107,7 +122,7 @@ public class RemoteLoggerManager implements RemoteLogger {
                         try {
                             LoggerRemoteEvent rse = new LoggerRemoteEvent(provider.getProxy(), loggingEvent);
                             entry.getValue().fire(rse);
-                            //System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!! Sending log to remote listener exID: " + exertionId + ": " + loggingEvent.getMessage().substring(0, Math.min(loggingEvent.getMessage().length(), 50)));
+                            System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!! Sending log to remote listener exID: " + exertionId + ": " + loggingEvent.getMessage().substring(0, Math.min(loggingEvent.getMessage().length(), 50)));
                         } catch (NoEventConsumerException e) {
                             log.error("Problem sending remote log event, no event consumer available");
                         } catch (RemoteException e) {
@@ -213,5 +228,74 @@ public class RemoteLoggerManager implements RemoteLogger {
         } catch (Exception e1) {
             log.error("Problem unregistering Log listener: " + e1.getMessage());
         }
+    }
+
+
+    /**
+     * Returns a service UI descriptor for LoggerManagerUI. The service
+     * UI allows for viewing remote logs of selected providers.
+     */
+	/*
+	 * (non-Java doc)
+	 *
+	 * @see sorcer.core.provider.ServiceProvider#getMainUIDescriptor()
+	 */
+    public static UIDescriptor getMainUIDescriptor() {
+        UIDescriptor uiDesc = null;
+        try {
+            URL uiUrl = new URL(Sorcer.getWebsterUrl() + "/sos-logger-"+ SOS.getSorcerVersion()+"-ui.jar");
+            URL helpUrl = new URL(Sorcer.getWebsterUrl() + "/logger.html");
+
+            uiDesc = UIDescriptorFactory.getUIDescriptor(MainUI.ROLE,
+                    (JFrameFactory) new UIFrameFactory(new URL[]{uiUrl},
+                            LoggerFrameUI.class
+                                    .getName(),
+                            "Log Viewer",
+                            helpUrl));
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return uiDesc;
+    }
+
+    public String getLogComments(String filename) {
+        Pattern p = null;
+        try {
+            // The following pattern lets this extract multiline comments that
+            // appear on a single line (e.g., /* same line */) and single-line
+            // comments (e.g., // some line). Furthermore, the comment may
+            // appear anywhere on the line.
+            p = Pattern.compile(".*/\\*.*\\*/|.*//.*$");
+        } catch (PatternSyntaxException e) {
+            System.err.println("Regex syntax error: " + e.getMessage());
+            System.err.println("Error description: " + e.getDescription());
+            System.err.println("Error index: " + e.getIndex());
+            System.err.println("Erroneous pattern: " + e.getPattern());
+        }
+        BufferedReader br = null;
+        StringBuffer bw = new StringBuffer();
+        try {
+            FileReader fr = new FileReader(filename);
+            br = new BufferedReader(fr);
+            Matcher m = p.matcher("");
+            String line;
+            while ((line = br.readLine()) != null) {
+                m.reset(line);
+                if (m.matches()) /* entire line must match */
+                {
+                    bw.append(line + "\n");
+                }
+            }
+        } catch (IOException e) {
+            System.err.println(e.getMessage());
+        } finally // Close file.
+        {
+            try {
+                if (br != null)
+                    br.close();
+            } catch (IOException e) {
+            }
+        }
+        return bw.toString();
     }
 }
