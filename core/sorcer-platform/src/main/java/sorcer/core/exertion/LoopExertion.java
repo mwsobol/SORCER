@@ -17,13 +17,13 @@
  */
 package sorcer.core.exertion;
 
-import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.List;
-
 import net.jini.core.transaction.Transaction;
 import sorcer.core.context.ThrowableTrace;
 import sorcer.service.*;
+
+import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.List;
 //import sorcer.service.Condition;
 
 
@@ -85,7 +85,7 @@ public class LoopExertion extends ConditionalExertion {
 
 	/**
 	 * The var loop operation is as follows: loop min times, then while
-	 * condition is true, loop (max - min) times.
+	 * condition is true, loop (max - min) times. (UML semantics of the loop operator)
 	 * 
 	 * @param name
 	 * @param min
@@ -151,7 +151,8 @@ public class LoopExertion extends ConditionalExertion {
 	@Override
 	public List<Conditional> getConditions() {
 		List<Conditional> cs = new ArrayList<Conditional>();
-		cs.add(condition);
+		if (condition != null)
+			cs.add(condition);
 		return cs;
 	}
 

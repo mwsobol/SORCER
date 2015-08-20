@@ -240,16 +240,16 @@ public class ProviderDelegate {
 
 	/**
 	 * An outer service proxy, by default the proxy of this provider, is used
-	 * from by service requestors if provider's smart proxy is absent. At least
+	 * by service requestors if provider's smart proxy is absent. At least
 	 * two generic Remote interface: {@link Service} and {@link Provider} are
 	 * implemented by outer proxies of all SORCER service providers. Each SORCER
 	 * provider uses outer proxy to actually call directly its provider and make
 	 * redirected calls using its inner proxy (redirected remote invocations).
 	 * Any method of not Remote interface implemented by a SORCER service
 	 * provider can be invoked via the Service remote interface,
-	 * {@code Service.service(Exertion)} - recommended approach. That
-	 * provider's direct invocation method is embedded into a service method of
-	 * the provided exertion.
+	 * {@code Service.service(Mogram)} - the recommended access proxy approach.
+	 * The provider's direct invocation methods are embedded into service signatures
+	 * of serviced mograms.
 	 */
 	private Remote outerProxy = null;
 
@@ -278,11 +278,6 @@ public class ProviderDelegate {
 	 * implementing service-object.
 	 */
 	private Map<Class, Object> serviceComponents;
-
-	/**
-	 * List of Exertions for which SLA Offer was given
-	 */
-	private List exertionsGivenSlaList = Collections.synchronizedList(new ArrayList());
 
 	/**
 	 * Indicates a single threaded execution for service beans or providers
@@ -616,7 +611,7 @@ public class ProviderDelegate {
                 logger.error("No exporter for provider: {}", getProviderName());
                 return;
             }
-            outerProxy = outerExporter.export(provider);
+			outerProxy = outerExporter.export(provider);
             logger.debug("outerProxy: {}", outerProxy);
         } catch (Exception ee) {
             logger.warn("{} deployment failed", ProviderDelegate.class.getName(), ee);

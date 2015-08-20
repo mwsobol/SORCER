@@ -84,6 +84,9 @@ subprojects {
                     downloadJavadoc = false
                 }
             }
+            /* Always run tests */
+            test.outputs.upToDateWhen { false }
+
             compileJava.options.encoding = 'UTF-8'
             apply from: file("${rootProject.projectDir.path}/gradle/bootme.gradle")
 

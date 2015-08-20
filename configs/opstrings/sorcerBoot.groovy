@@ -57,7 +57,7 @@ def getCommonDLs() {
             "jsk-dl-${Sorcer.riverVersion}.jar",
             "rio-api-${RioVersion.VERSION}.jar",
             "serviceui-${Sorcer.riverVersion}.jar",
-            //"sos-sorcer.netlet-${Sorcer.sorcerVersion}.jar",
+            "sorcer-ui-${Sorcer.sorcerVersion}.jar",
             "commons-io-${Sorcer.commonsIoVersion}.jar"]
 }
 
@@ -69,7 +69,7 @@ deployment(name: "Sorcer OS") {
 
     groups SorcerEnv.getLookupGroups()
 
-    codebase SorcerEnv.getWebsterUrl()
+    //codebase SorcerEnv.getWebsterUrl()
 
     service(name: SorcerEnv.getActualName('Transaction Manager')) {
         interfaces {
