@@ -88,9 +88,6 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
              "\t-version \t\t- show NSH version info";
 
 
-
-
-
     //public static final String CONFIG_EXT_PATH = Sorcer.get + "/configs/shell/configs/nsh-start-ext.config";
     public static final String CONFIG_PATH = SorcerEnv.getHome() + "/bin/shell/configs/nsh-start.config";
 
@@ -99,14 +96,10 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 	static private boolean isRemoteLogging = true;
 
 	public static final String[] CONFIG_FILES = { CONFIG_PATH };
-    //CONFIG_EXT_PATH,
-
 
     public static int selectedRegistrar = 0;
 
     private static List<ServiceRegistrar> registrars = new CopyOnWriteArrayList<ServiceRegistrar>();
-
-//    static private boolean isRemoteLogging = true;
 
 	static private String shellName = "nsh";
 

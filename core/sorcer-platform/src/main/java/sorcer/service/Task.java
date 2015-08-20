@@ -221,8 +221,9 @@ public class Task extends ServiceExertion {
 		sb.append(", priority: ");
 		sb.append(priority);
 		// .append( ", Index=" + getIndex())
-		sb.append(", AccessClass=");
-		sb.append(getAccessClass()).append(
+		// sb.append(", AccessClass=");
+		// sb.append(getAccessClass());
+		sb.append(
 				// ", isExportControlled=" + isExportControlled()).append(
 				", providerName: ");
 		if (getProcessSignature() != null)
@@ -242,6 +243,7 @@ public class Task extends ServiceExertion {
 		String time = getControlContext().getExecTime();
 		if (time != null && time.length() > 0)
 			sb.append("\n\texec time=").append(time);
+		sb.append("\n");
 		sb.append(controlContext).append("\n");
 //		sb.append(dataContext);
 		sb.append(dataContext.getName() + ": ");
