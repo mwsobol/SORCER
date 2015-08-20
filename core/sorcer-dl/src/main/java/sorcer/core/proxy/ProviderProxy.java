@@ -136,7 +136,7 @@ public class ProviderProxy implements Serializable {
 				list.add(ReferentUuid.class);
 				list.add(DestroyAdmin.class);
 				list.add(JoinAdmin.class);
-				list.add(ServiceActivityProvider.class);
+//				list.add(ServiceActivityProvider.class);
 				list.add(RemoteMethodControl.class);
 			} else {
 				// provider interfaces
@@ -151,6 +151,9 @@ public class ProviderProxy implements Serializable {
 				// for smart proxies add Administrable
 				if (!proxy.getClass().isInterface())
 					list.add(Administrable.class);
+				// used by Rio provisioning
+				if (!list.contains(ServiceActivityProvider.class))
+					list.add(ServiceActivityProvider.class);
 				if (list.contains(Provider.class)) {
 					list.remove(AdministratableProvider.class);
 				}
@@ -175,6 +178,9 @@ public class ProviderProxy implements Serializable {
 			} else if ("getAdmin".equals(selector)) {
 				return adminProxy;
 			}
+//			else if ("isActive".equals(selector)) {
+//				return ((ServiceActivityProvider)adminProxy).isActive();
+//			}
 
 			Object obj = null;
             try {

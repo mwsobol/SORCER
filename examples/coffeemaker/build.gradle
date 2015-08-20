@@ -14,6 +14,10 @@
  * limitations under the License.
  */
 
+/**
+ * Created by Moke Sobolewski on 8/5/15.
+ */
+
 version = sorcerVersion
 
 jar {
@@ -87,11 +91,25 @@ bootme {
 //    debug = true
 }
 
-task run(type:JavaExec, dependsOn:[install]) {
-    description = 'Runs a service requestor executing a local or remote service.'
+def script = "${project.buildDir}/bin/${project.name}.sh"
+
+task ss {
+    doFirst {
+        File scriptDir = new File(project.buildDir, "bin")
+        scriptDir.mkdirs()
+        File scriptFile = new File(script)
+        scriptFile.text = "java -cp ${project.buildDir}/classes/main:${sourceSets.main.runtimeClasspath.getAsPath()} edu.pjatk.inn.requestor.CoffeemakerRequestor"
+        Process chmod = "chmod +x ${scriptFile.path}".execute()
+        chmod.waitFor()
+    }
+}
+
+// run with "gradle run -q"
+task runCoffeemaker(type:JavaExec, dependsOn:[install]) {
+    description = 'Runs a Coffeemaker main.'
     main = "edu.pjatk.inn.requestor.CoffeemakerRequestor"
     classpath = sourceSets.main.runtimeClasspath
-//    spawn = false
+    standardInput = System.in
 }
 
 test {

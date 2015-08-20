@@ -62,6 +62,8 @@ import sorcer.serviceui.UIFrameFactory;
 import sorcer.util.*;
 import sorcer.util.url.sos.SdbURLStreamHandlerFactory;
 
+import org.rioproject.admin.ServiceActivityProvider;
+
 import javax.security.auth.Subject;
 import javax.security.auth.login.LoginContext;
 import java.io.*;
@@ -146,8 +148,8 @@ import static sorcer.util.StringUtils.tName;
  * @author Mike Sobolewski
  */
 public class ServiceProvider implements Identifiable, Provider, ServiceIDListener,
-		ReferentUuid, ProxyAccessor, ServerProxyTrust,
-		RemoteMethodControl, LifeCycle, Partner, Partnership, SorcerConstants, AdministratableProvider, ScratchManager {
+		ReferentUuid, ProxyAccessor, ServerProxyTrust, RemoteMethodControl, ServiceActivityProvider,
+		LifeCycle, Partner, Partnership, SorcerConstants, AdministratableProvider, ScratchManager {
 	// RemoteMethodControl is needed to enable Proxy Constraints
 
 	/** Logger and configuration component name for service provider. */
@@ -556,6 +558,11 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		if (this == impl)
 			this.destroy();
 		return true;
+	}
+
+	@Override
+	public boolean isActive() throws IOException {
+		return isBusy();
 	}
 
 	/**
