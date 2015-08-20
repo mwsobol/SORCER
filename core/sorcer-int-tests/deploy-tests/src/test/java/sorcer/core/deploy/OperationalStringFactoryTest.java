@@ -20,9 +20,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.rioproject.config.Configuration;
 import org.rioproject.deploy.SystemComponent;
-import org.rioproject.opstring.OperationalString;
-import org.rioproject.opstring.ServiceElement;
-import org.rioproject.opstring.UndeployOption;
+import org.rioproject.opstring.*;
 import org.rioproject.system.capability.connectivity.TCPConnectivity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +28,9 @@ import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.service.*;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -47,6 +47,29 @@ import static sorcer.eo.operator.*;
 @ProjectContext("core/sorcer-int-tests/deploy-tests")
 public class OperationalStringFactoryTest {
 	private final static Logger logger = LoggerFactory.getLogger(OperationalStringFactoryTest.class.getName());
+
+    @Test
+    public void testCreateDeploymentID() throws NoSuchAlgorithmException, InterruptedException {
+        ServiceElement serviceElement = new ServiceElement();
+        ServiceElement serviceElement1 = new ServiceElement();
+        serviceElement.setExportBundles(new ClassBundle("on.a.planet.far.far.Away"),
+                                        new ClassBundle("use.the.force.Luke"),
+                                        new ClassBundle("the.force.is.strong.with.this.One"));
+
+        serviceElement1.setExportBundles(new ClassBundle("the.force.is.strong.with.this.One"),
+                                         new ClassBundle("use.the.force.Luke"),
+                                         new ClassBundle("on.a.planet.far.far.Away"));
+
+        ServiceBeanConfig serviceConfig = new ServiceBeanConfig(new HashMap<String, Object>(), new String[0]);
+        serviceConfig.setName("Luke");
+        serviceElement.setServiceBeanConfig(serviceConfig);
+        serviceElement1.setServiceBeanConfig(serviceConfig);
+
+        String id = OperationalStringFactory.createDeploymentID(serviceElement);
+        String id1 = OperationalStringFactory.createDeploymentID(serviceElement1);
+        Assert.assertTrue(id.equals(id1));
+    }
+
 
     @Test
     public void testOperationalStringCreation() throws Exception {

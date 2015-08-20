@@ -16,13 +16,13 @@
 
 import org.rioproject.config.PlatformCapabilityConfig
 
-import java.util.logging.Logger
+import groovy.util.logging.Slf4j
 
 /**
  * Declares Sorcer capability in the platform
  */
+@Slf4j
 class SorcerPlatformConfig {
-    static Logger logger = Logger.getLogger("SorcerPlatformConfig")
 
     def getPlatformCapabilityConfigs() {
         def configs = []
@@ -50,12 +50,12 @@ class SorcerPlatformConfig {
                                                             "",
                                                             jarFile.path)
                 } else {
-                    logger.severe("The ${dir}/${jar} does not exist, cannot add to platform")
+                    logger.error("The ${dir}/${jar} does not exist, cannot add to platform")
                 }
             }
 
         } else {
-            logger.severe("The ${sorcerHomeDir.path} does not exist, cannot add Sorcer jars to platform")
+            logger.error("The ${sorcerHomeDir.path} does not exist, cannot add Sorcer jars to platform")
         }
         return configs
     }
