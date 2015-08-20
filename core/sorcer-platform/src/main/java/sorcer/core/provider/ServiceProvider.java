@@ -1747,6 +1747,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		//if (threadManager != null)
 		//	isBusy = isBusy || threadManager.getPending().size() > 0;
 		isBusy = isBusy || delegate.exertionStateTable.size() > 0;
+		logger.info("Is busy? {}", isBusy);
 		return isBusy;
 	}
 
