@@ -39,7 +39,7 @@ webster {
              "${m2Repo}"/*,
              "${sorcerHome}/data"*/]
 
-    spawn = false
+    spawn = true
 }
 
 

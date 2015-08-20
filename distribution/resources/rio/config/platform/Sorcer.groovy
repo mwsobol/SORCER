@@ -36,6 +36,7 @@ class SorcerPlatformConfig {
         if(sorcerHomeDir.exists()) {
             def jars = ["JE-"             : "lib/common | Sleepy Cat",
                         "javax.inject-"   : "lib/common | Javax Inject",
+                        "guava-"          : "lib/common | Guava",
                         "plexus-utils-"   : "lib/common | Plexus Utils",
                         "Sorcer-Platform" : "lib/sorcer/lib | Sorcer Platform"]
             jars.each { jar, data ->
