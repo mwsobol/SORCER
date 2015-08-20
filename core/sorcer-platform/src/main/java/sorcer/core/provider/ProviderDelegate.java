@@ -279,11 +279,6 @@ public class ProviderDelegate {
 	private Map<Class, Object> serviceComponents;
 
 	/**
-	 * List of Exertions for which SLA Offer was given
-	 */
-	private List exertionsGivenSlaList = Collections.synchronizedList(new ArrayList());
-
-	/**
 	 * Indicates a single threaded execution for service beans or providers
 	 * implementing the SingleThreadModel interface.
 	 */
