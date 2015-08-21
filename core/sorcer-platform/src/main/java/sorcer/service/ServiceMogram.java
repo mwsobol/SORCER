@@ -194,6 +194,14 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
         return exs;
     }
 
+    public List<String> getAllMogramIds() {
+        List<String> mogIdsList = new ArrayList<String>();
+        for (Mogram mo : getAllMograms()) {
+            mogIdsList.add(mo.getId().toString());
+        }
+        return mogIdsList;
+    }
+
     public void trimAllNotSerializableSignatures() {
         trimNotSerializableSignatures();
         for (Mogram m : getAllMograms()) {

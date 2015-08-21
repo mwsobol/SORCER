@@ -42,8 +42,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-//import sorcer.core.RemoteLogger;
-
 public class ExertCmd extends ShellCmd {
 
 	{
@@ -161,14 +159,14 @@ public class ExertCmd extends ShellCmd {
 			return;
 		}
 		Object target = scriptExerter.parse();
-        LoggerRemoteEventClient lrec = null;
 
         // Starting RemoteLoggerListener
-        if (shell.isRemoteLogging() && target instanceof Exertion) {
+		LoggerRemoteEventClient lrec = null;
+		if (shell.isRemoteLogging() && target instanceof Mogram) {
             List<Map<String, String>> filterMapList = new ArrayList<Map<String, String>>();
-            for (String exId : getAllExertionIdFromExertion((Exertion)target)) {
+            for (String exId : ((ServiceMogram)target).getAllMogramIds()) {
                 Map<String, String> map = new HashMap<String, String>();
-                map.put(RemoteLogger.KEY_EXERTION_ID, exId);
+                map.put(RemoteLogger.KEY_MOGRAM_ID, exId);
                 filterMapList.add(map);
             }
             if (!filterMapList.isEmpty()) {
@@ -309,16 +307,6 @@ public class ExertCmd extends ShellCmd {
 		}
 		return sb;
 	}
-
-    public static List<String> getAllExertionIdFromExertion(Exertion xrt) {
-        List<String> xrtIdsList = new ArrayList<String>();
-        for (Mogram exertion : xrt.getAllMograms()) {
-            xrtIdsList.add(exertion.getId().toString());
-        }
-        return xrtIdsList;
-    }
-
-
 
     private void saveFilesFromContext(Exertion xrt, PrintStream out) {
         try {

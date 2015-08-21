@@ -113,9 +113,9 @@ public class RemoteLoggerManager implements RemoteLogger {
             Map<String, String> mdc = loggingEvent.getMDCPropertyMap();
             String exertionId = null;
             if (!remoteLogListeners.isEmpty()) {
-                exertionId = mdc.get(KEY_EXERTION_ID);
+                exertionId = mdc.get(KEY_MOGRAM_ID);
                 Map<String, String> keyMap = new HashMap<String, String>();
-                keyMap.put(KEY_EXERTION_ID, exertionId);
+                keyMap.put(KEY_MOGRAM_ID, exertionId);
 
                 for (Map.Entry<Map<String, String>, EventHandler> entry : remoteLogListeners.entrySet()) {
                     if (mdc.entrySet().containsAll(entry.getKey().entrySet())) {

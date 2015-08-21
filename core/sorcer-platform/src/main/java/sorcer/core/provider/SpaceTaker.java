@@ -381,7 +381,7 @@ public class SpaceTaker implements Runnable {
             if(remoteLogging)
                 MDC.put(SorcerConstants.MDC_SORCER_REMOTE_CALL, SorcerConstants.MDC_SORCER_REMOTE_CALL);
             if (ee.exertion!=null && ee.exertion.getId()!=null)
-                MDC.put(SorcerConstants.MDC_EXERTION_ID, ee.exertion.getId().toString());
+                MDC.put(SorcerConstants.MDC_MOGRAM_ID, ee.exertion.getId().toString());
             try {
                 String prvId = null;
                 if (data.provider!=null)
@@ -438,7 +438,7 @@ public class SpaceTaker implements Runnable {
 			}
 			doThreadMonitorWorker(threadId);
             MDC.remove(SorcerConstants.MDC_SORCER_REMOTE_CALL);
-            MDC.remove(SorcerConstants.MDC_EXERTION_ID);
+            MDC.remove(SorcerConstants.MDC_MOGRAM_ID);
             MDC.remove(SorcerConstants.MDC_PROVIDER_ID);
 		}
 

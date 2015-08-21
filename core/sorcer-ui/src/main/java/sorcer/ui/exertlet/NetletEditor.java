@@ -19,7 +19,12 @@ package sorcer.ui.exertlet;
 
 import net.jini.core.lookup.ServiceItem;
 import sorcer.core.provider.Provider;
+import sorcer.core.provider.RemoteLogger;
+import sorcer.core.provider.logger.LoggerRemoteEventClient;
+import sorcer.core.provider.logger.LoggerRemoteException;
 import sorcer.core.proxy.Outer;
+import sorcer.service.Mogram;
+import sorcer.service.ServiceMogram;
 import sorcer.ui.util.WindowUtilities;
 import sorcer.util.Log;
 
@@ -27,6 +32,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.net.URL;
 import java.rmi.RemoteException;
+import java.util.*;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,8 +50,8 @@ public class NetletEditor extends JPanel {
 	private EditorView browser;
 	private JTabbedPane tabbedPane;
 	private ServiceItem item;
-	private Provider provider;  
-	
+	private Provider provider;
+
     public NetletEditor(Object obj) {
         super();
 		getAccessibleContext().setAccessibleName("Netlet Editor");
@@ -76,6 +83,8 @@ public class NetletEditor extends JPanel {
 				createHelpPanel(helpURL), "Help");
 		tabbedPane.addTab("Browser", null,
 				createBrowserPanel(null), "Browser");
+		tabbedPane.addTab("Editor", null,
+				createEditorPanel(null), "Editor");
 		add(tabbedPane, BorderLayout.CENTER);
     }
 
@@ -105,6 +114,14 @@ public class NetletEditor extends JPanel {
 		inViewer.setDelegate(browser);
 		inViewer.setTabbedPane(tabbedPane);
 		return browser;
+	}
+
+	private JPanel createEditorPanel(String text) {
+		EditorView editor = new EditorView(text, false, true, true, true, false, null);
+		tabbedPane.addTab("Editor", null, editor, "Editor");
+		tabbedPane.setSelectedComponent(editor);
+		editor.setTabbedPane(tabbedPane);
+		return editor;
 	}
 
     /**

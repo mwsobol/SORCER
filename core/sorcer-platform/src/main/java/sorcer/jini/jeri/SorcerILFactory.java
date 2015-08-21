@@ -237,14 +237,14 @@ public class SorcerILFactory extends BasicILFactory {
             if (args.length > 0 && args[0] instanceof Exertion) {
                 Exertion xrt = ((Exertion) args[0]);
                 if (xrt != null && xrt.getId() != null)
-                    MDC.put(MDC_EXERTION_ID, xrt.getId().toString());
+                    MDC.put(MDC_MOGRAM_ID, xrt.getId().toString());
             }
         }
 
         private void cleanLogging() {
 			MDC.remove(MDC_PROVIDER_NAME);
             MDC.remove(MDC_SORCER_REMOTE_CALL);
-            MDC.remove(MDC_EXERTION_ID);
+            MDC.remove(MDC_MOGRAM_ID);
             MDC.remove(MDC_PROVIDER_ID);
         }
 
