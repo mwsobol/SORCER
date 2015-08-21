@@ -278,7 +278,6 @@ public class SorcerDescriptorUtil {
                              "jsk-dl-"+riverVersion+".jar",
                              "serviceui-"+riverVersion+".jar",
                              "sorcer-ui-"+sorcerVersion+".jar",
-							 //"sos-sorcer.netlet-"+sorcerVersion+".jar",
 				 			 "commons-io-"+commonsIoVersion+".jar",
                              getRioDlJar()};
     }
@@ -1088,22 +1087,20 @@ public class SorcerDescriptorUtil {
 			throw new RuntimeException("'sorcer.home' property not declared");
 
 		File rioLibDl = new File(sorcerHome+fs+"rio-"+rioVersion+fs+"lib-dl");
+		File rioLib = new File(sorcerHome+fs+"rio-"+rioVersion+fs+"lib");
 		String rioApiJar = find(rioLibDl, "rio-api").getAbsolutePath();
-
 		// service provider classpath
 		String loggerClasspath = ConfigUtil.concat(new Object[] {
 				sorcerLib,fs,"sorcer",fs,"lib",fs,"sos-logger-" + sorcerVersion + ".jar",
-				ps,sorcerLib,fs,"sorcer",fs,"lib",fs,"sorcer-lib-" + sorcerVersion + ".jar"
+				ps,sorcerLib,fs,"sorcer",fs,"lib",fs,"sorcer-lib-" + sorcerVersion + ".jar",
+				ps,rioLib,fs,"rio-lib-" + rioVersion + ".jar"
 				,ps,rioApiJar
-				//,ps,sorcerLib,fs,"sorcer",fs,"lib-dl",fs,"logger-ui.jar"
 		});
 		// service provider codebase
         String loggerCodebase = Booter.getCodebase(getDefaultSorcerExports(),
                                                    hostAddress,
                                                    Integer.toString(port));
 		// Logger is a partner to ServiceTasker
-		//String implClass = "sorcer.core.provider.logger.ServiceLogger";
-		//String implClass = "sorcer.core.provider.logger.ServiceLogger";
 		String implClass = "sorcer.core.provider.ServiceProvider";
 
 		return (new SorcerServiceDescriptor(loggerCodebase, policy,

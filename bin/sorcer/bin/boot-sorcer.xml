@@ -53,7 +53,7 @@
 			<sysproperty key="guava.version" value="${guava.version}" />
 			<sysproperty key="rio.version" value="${rio.version}" />
 			<sysproperty key="plexus.version" value="${plexus.version}" />
-            <sysproperty key="plexus.version" value="${plexus.version}" />
+            <sysproperty key="commonsio.version" value="${commonsio.version}" />
 			<sysproperty key="rio.home" value="${sorcer.home}/rio-${rio.version}" />
             <sysproperty key="rio.log.dir" value="${sorcer.home}/logs"/>
             <sysproperty key="org.rioproject.service" value="sorcer"/>

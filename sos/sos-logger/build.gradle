@@ -22,6 +22,7 @@ jar {
                    "Implementation-Version": version)
     }
     include 'sorcer/core/provider/logger/**'
+    include 'sorcer/util/**'
 }
 
 dependencies {
