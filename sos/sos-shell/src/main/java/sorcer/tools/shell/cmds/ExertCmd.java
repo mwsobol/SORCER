@@ -159,7 +159,7 @@ public class ExertCmd extends ShellCmd {
 		}
 		Object target = scriptExerter.parse();
 
-        // Starting RemoteLoggerListener
+        // Create RemoteLoggerListener
 		RemoteLoggerListener listener = null;
 		if (shell.isRemoteLogging() && target instanceof Mogram) {
             List<Map<String, String>> filterMapList = new ArrayList<Map<String, String>>();
@@ -179,7 +179,7 @@ public class ExertCmd extends ShellCmd {
             }
         }
 
-		if (NetworkShell.getInstance().isDebug()) out.println("Starting execute!");
+//		if (NetworkShell.getInstance().isDebug()) out.println("Starting execute netlet!");
 		Object result = scriptExerter.execute();
 //		out.println(">>>>>>>>>>> result: " + result);
 		if (result != null) {
@@ -213,11 +213,7 @@ public class ExertCmd extends ShellCmd {
 				if (mog instanceof Exertion) {
 					Exertion xrt = (Exertion)mog;
 					out.println("\n---> OUTPUT DATA CONTEXT --->");
-					if (xrt.isCompound()) {
-						out.println(xrt.getContext());
-					} else {
-						out.println(xrt.getDataContext());
-					}
+					out.println(xrt.getContext());
 					saveFilesFromContext(xrt, out);
 					if (ifMogramControl) {
 						out.println("\n---> OUTPUT STRATEGY  --->");

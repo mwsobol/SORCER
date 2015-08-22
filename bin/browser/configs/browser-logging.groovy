@@ -33,9 +33,9 @@ appenders << "CONSOLE"
 
 /* Set up loggers */
 logger("sorcer", INFO)
-logger("sorcer.ssb", INFO)
-logger("sorcer.ui", INFO)
-logger("sorcer.core.provider.logger", ALL);
+logger("sorcer.ssb", WARN)
+logger("sorcer.ui", WARN)
+logger("sorcer.core.provider.logger", WARN);
 
 root(INFO, appenders)
 
