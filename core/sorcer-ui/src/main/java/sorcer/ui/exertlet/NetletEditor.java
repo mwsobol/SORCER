@@ -18,13 +18,9 @@
 package sorcer.ui.exertlet;
 
 import net.jini.core.lookup.ServiceItem;
+import org.slf4j.Logger;
 import sorcer.core.provider.Provider;
-import sorcer.core.provider.RemoteLogger;
-import sorcer.core.provider.logger.LoggerRemoteEventClient;
-import sorcer.core.provider.logger.LoggerRemoteException;
 import sorcer.core.proxy.Outer;
-import sorcer.service.Mogram;
-import sorcer.service.ServiceMogram;
 import sorcer.ui.util.WindowUtilities;
 import sorcer.util.Log;
 
@@ -32,10 +28,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.net.URL;
 import java.rmi.RemoteException;
-import java.util.*;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class NetletEditor extends JPanel { 
 	
@@ -85,8 +77,9 @@ public class NetletEditor extends JPanel {
 				createBrowserPanel(null), "Browser");
 		tabbedPane.addTab("Editor", null,
 				createEditorPanel(null), "Editor");
+		tabbedPane.setSelectedIndex(2);
 		add(tabbedPane, BorderLayout.CENTER);
-    }
+	}
 
     private JPanel createHelpPanel(URL url) {
 		inViewer = new EditorView("" + url, false);

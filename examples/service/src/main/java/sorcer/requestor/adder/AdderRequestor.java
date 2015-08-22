@@ -1,6 +1,6 @@
 package sorcer.requestor.adder;
 
-import sorcer.core.requestor.ServiceRequestor;
+import sorcer.core.requestor.ExertRequestor;
 import sorcer.provider.adder.Adder;
 import sorcer.service.*;
 
@@ -10,7 +10,7 @@ import java.io.IOException;
 import static sorcer.co.operator.inEnt;
 import static sorcer.eo.operator.*;
 
-public class AdderRequestor extends ServiceRequestor {
+public class AdderRequestor extends ExertRequestor {
 
     public Mogram getMogram(String... args)
             throws ExertionException, ContextException, SignatureException, IOException {
@@ -30,11 +30,5 @@ public class AdderRequestor extends ServiceRequestor {
         return task("hello adder", sig("add", serviceType),
                 context("adder", inEnt("arg/x1", v1), inEnt("arg/x2", v2),
                         result("out/y")));
-    }
-
-    @Override
-    public void postprocess(String... args) throws ExertionException, ContextException {
-        super.postprocess();
-        logger.info("<<<<<<<<<< add task: \n" + mogram);
     }
 }

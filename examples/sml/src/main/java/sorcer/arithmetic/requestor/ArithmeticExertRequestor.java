@@ -1,27 +1,26 @@
-package sorcer.arithmetic.tester.requestor;
+package sorcer.arithmetic.requestor;
 
-
-import sorcer.arithmetic.tester.provider.Adder;
-import sorcer.arithmetic.tester.provider.Averager;
-import sorcer.arithmetic.tester.provider.Multiplier;
-import sorcer.arithmetic.tester.provider.Subtractor;
-import sorcer.arithmetic.tester.provider.impl.AdderImpl;
-import sorcer.arithmetic.tester.provider.impl.AveragerImpl;
-import sorcer.arithmetic.tester.provider.impl.MultiplierImpl;
-import sorcer.arithmetic.tester.provider.impl.SubtractorImpl;
+import sorcer.arithmetic.provider.Adder;
+import sorcer.arithmetic.provider.Averager;
+import sorcer.arithmetic.provider.Multiplier;
+import sorcer.arithmetic.provider.Subtractor;
+import sorcer.arithmetic.provider.impl.AdderImpl;
+import sorcer.arithmetic.provider.impl.AveragerImpl;
+import sorcer.arithmetic.provider.impl.MultiplierImpl;
+import sorcer.arithmetic.provider.impl.SubtractorImpl;
 import sorcer.core.provider.Jobber;
 import sorcer.core.provider.rendezvous.ServiceJobber;
-import sorcer.core.requestor.ServiceRequestor;
+import sorcer.core.requestor.ExertRequestor;
 import sorcer.service.*;
 
 import static sorcer.co.operator.inEnt;
 import static sorcer.co.operator.outEnt;
 import static sorcer.eo.operator.*;
 
-public class ArithmeticServiceRequestor extends ServiceRequestor {
+public class ArithmeticExertRequestor extends ExertRequestor {
 
 	/* (non-Javadoc)
-	 * @see sorcer.core.requestor.ExertionRunner#getMogram(java.lang.String[])
+	 * @see sorcer.core.requestor.ServiceRequestor#getMogram(java.lang.String[])
 	 */
 	@Override
 	public Mogram getMogram(String... args) throws ExertionException, ContextException, SignatureException {

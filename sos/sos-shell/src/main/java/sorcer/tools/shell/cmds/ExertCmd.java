@@ -25,8 +25,8 @@ import sorcer.core.context.Contexts;
 import sorcer.core.context.ThrowableTrace;
 import sorcer.core.context.node.ContextNode;
 import sorcer.core.provider.RemoteLogger;
-import sorcer.core.provider.logger.LoggerRemoteEventClient;
 import sorcer.core.provider.logger.LoggerRemoteException;
+import sorcer.core.provider.logger.RemoteLoggerListener;
 import sorcer.netlet.ScriptExerter;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
@@ -34,7 +34,6 @@ import sorcer.tools.shell.INetworkShell;
 import sorcer.tools.shell.NetworkShell;
 import sorcer.tools.shell.ShellCmd;
 import sorcer.tools.shell.WhitespaceTokenizer;
-import sorcer.util.ConsoleLoggerListener;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -161,7 +160,7 @@ public class ExertCmd extends ShellCmd {
 		Object target = scriptExerter.parse();
 
         // Starting RemoteLoggerListener
-		LoggerRemoteEventClient lrec = null;
+		RemoteLoggerListener listener = null;
 		if (shell.isRemoteLogging() && target instanceof Mogram) {
             List<Map<String, String>> filterMapList = new ArrayList<Map<String, String>>();
             for (String exId : ((ServiceMogram)target).getAllMogramIds()) {
@@ -171,11 +170,11 @@ public class ExertCmd extends ShellCmd {
             }
             if (!filterMapList.isEmpty()) {
                 try {
-                    lrec = new LoggerRemoteEventClient();
-                    lrec.register(filterMapList, new ConsoleLoggerListener(out));
+                    listener = new RemoteLoggerListener(out);
+                    listener.register(filterMapList);
                 } catch (LoggerRemoteException lre) {
                     out.append("Remote logging disabled: " + lre.getMessage());
-                    lrec = null;
+                    listener = null;
                 }
             }
         }
@@ -246,7 +245,7 @@ public class ExertCmd extends ShellCmd {
 			}
 			// System.out.println(">>> executing script: \n" + sb.toString());
 		}
-		if (lrec != null) lrec.destroy();
+//		if (listener != null) listener.destroy();
 	}
 
 
