@@ -9,7 +9,6 @@ import sorcer.core.provider.RemoteLogger;
 import sorcer.core.provider.logger.LoggerRemoteEvent;
 
 import javax.swing.*;
-import java.io.PrintStream;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.text.SimpleDateFormat;

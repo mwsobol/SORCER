@@ -108,10 +108,11 @@ task runRequestor(type:JavaExec, dependsOn:[install]) {
     systemProperty "requestor.properties", "configs/adder-req.properties"
     systemProperty "java.rmi.server.codebase",
             "${websterUrl}/${repoPath()}/adder-${version}-dl.jar ${websterUrl}/sorcer-dl-${version}.jar ${websterUrl}/jsk-dl-${riverVersion}.jar"
-//    args = ["sorcer.requestor.adder.AdderRequestor", "sorcer.netlet"]
+//    args = ["sorcer.requestor.adder.AdderRequestor", "netlet"]
 //  Requires service provisioning support - bootSorcerRio
-    args = ["sorcer.requestor.adder.AdderRequestor", "dynamic"]
-	finalizedBy (":stopme")
+//    args = ["sorcer.requestor.adder.AdderRequestor", "dynamic"]
+    args = ["sorcer.requestor.adder.AdderRequestor"]
+    finalizedBy (stopme)
 }
 
 test {

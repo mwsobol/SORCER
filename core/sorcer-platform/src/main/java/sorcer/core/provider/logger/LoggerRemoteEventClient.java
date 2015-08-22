@@ -26,7 +26,6 @@ import java.util.Map;
  */
 public class LoggerRemoteEventClient {
 
-
         private static final int MIN_LEASE = 30000;
         private RemoteEventListener proxy = null;
         private Exporter exporter = null;

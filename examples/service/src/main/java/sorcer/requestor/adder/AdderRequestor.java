@@ -12,14 +12,15 @@ import static sorcer.eo.operator.*;
 
 public class AdderRequestor extends ServiceRequestor {
 
-    public Exertion getExertion(String... args)
+    public Mogram getMogram(String... args)
             throws ExertionException, ContextException, SignatureException, IOException {
 
-
-        if (args[1].equals("sorcer/netlet")) {
-            return (Exertion) evaluate(new File("src/main/netlets/adder.ntl"));
-        } else if (args[1].equals("dynamic")) {
-            return (Exertion) evaluate(new File("src/main/netlets/adder-sbp.ntl"));
+        if (args != null && args.length == 2) {
+            if (args[1].equals("netlet")) {
+                return (Exertion) evaluate(new File("src/main/netlets/adder.ntl"));
+            } else if (args[1].equals("dynamic")) {
+                return (Exertion) evaluate(new File("src/main/netlets/adder-sbp.ntl"));
+            }
         }
         Class serviceType =  Adder.class;
 
@@ -34,6 +35,6 @@ public class AdderRequestor extends ServiceRequestor {
     @Override
     public void postprocess(String... args) throws ExertionException, ContextException {
         super.postprocess();
-        logger.info("<<<<<<<<<< add task: \n" + exertion);
+        logger.info("<<<<<<<<<< add task: \n" + mogram);
     }
 }

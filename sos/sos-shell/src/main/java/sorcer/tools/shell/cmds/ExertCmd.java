@@ -246,8 +246,7 @@ public class ExertCmd extends ShellCmd {
 			}
 			// System.out.println(">>> executing script: \n" + sb.toString());
 		}
-
-		//    if (lrec != null) lrec.destroy();
+		if (lrec != null) lrec.destroy();
 	}
 
 

@@ -18,16 +18,13 @@
 package sorcer.core.requestor;
 
 import net.jini.core.transaction.Transaction;
-import sorcer.service.ContextException;
-import sorcer.service.Exertion;
-import sorcer.service.ExertionException;
-import sorcer.service.SignatureException;
+import sorcer.service.*;
 
 import java.io.IOException;
 
 public interface Requestor {
 
-	public Exertion getExertion(String... args) throws ExertionException,
+	public Mogram getMogram(String... args) throws ExertionException,
 			ContextException, SignatureException, IOException;
 
 	public Transaction getTransaction();

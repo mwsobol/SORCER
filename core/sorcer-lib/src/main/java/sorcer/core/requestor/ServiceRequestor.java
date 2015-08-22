@@ -17,33 +17,43 @@
 
 package sorcer.core.requestor;
 
+import ch.qos.logback.classic.spi.ILoggingEvent;
 import groovy.lang.GroovyShell;
+import net.jini.core.event.RemoteEvent;
+import net.jini.core.event.RemoteEventListener;
+import net.jini.core.event.UnknownEventException;
 import net.jini.core.transaction.Transaction;
 import org.codehaus.groovy.control.CompilationFailedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.SorcerConstants;
-import sorcer.core.context.ControlContext;
+import sorcer.core.provider.RemoteLogger;
+import sorcer.core.provider.logger.LoggerRemoteEvent;
+import sorcer.core.provider.logger.LoggerRemoteEventClient;
+import sorcer.core.provider.logger.LoggerRemoteException;
 import sorcer.service.*;
+import sorcer.service.modeling.Model;
 import sorcer.tools.webster.InternalWebster;
 import sorcer.tools.webster.Webster;
 import sorcer.util.Sorcer;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
-import java.util.StringTokenizer;
+import java.io.*;
+import java.rmi.RemoteException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
+/**
+ * @author Mike Sobolewski
+ */
 abstract public class ServiceRequestor implements Requestor, SorcerConstants {
 	/** Logger for logging information about this instance */
 	protected static final Logger logger = LoggerFactory.getLogger(ServiceRequestor.class.getName());
 
 	protected Properties props;
-	protected Exertion exertion;
+	protected Mogram mogram;
 	protected String jobberName;
 	protected GroovyShell shell;
+	protected LoggerRemoteEventClient lreClient;
 	protected static ServiceRequestor requestor = null;
 	final static String REQUESTOR_PROPERTIES_FILENAME = "requestor.properties";
 	
@@ -99,13 +109,14 @@ abstract public class ServiceRequestor implements Requestor, SorcerConstants {
 				e.printStackTrace();
 			}
 		}
+
 	}
 
-	public void setExertion(Exertion exertion) {
-		this.exertion = exertion;
+	public void setMogram(Mogram mogram) {
+		this.mogram = mogram;
 	}
 
-	abstract public Exertion getExertion(String... args)
+	abstract public Mogram getMogram(String... args)
 			throws ExertionException, ContextException, SignatureException, IOException;
 
 	public String getJobberName() {
@@ -113,17 +124,38 @@ abstract public class ServiceRequestor implements Requestor, SorcerConstants {
 	}
 
 	public void preprocess(String... args) throws ExertionException, ContextException {
-		Exertion in = null;
+		Mogram in = null;
 		try {
-			in = requestor.getExertion(args);
+			in = requestor.getMogram(args);
 			if (logger.isDebugEnabled())
 				logger.debug("ServiceRequestor java.rmi.server.codebase: "
 						+ System.getProperty("java.rmi.server.codebase"));
 
-			if (in != null)
-				requestor.setExertion(in);
-			if (exertion != null)
-				logger.info(">>>>>>>>>> Input context: \n" + exertion.getContext());
+			if (in != null) {
+				requestor.setMogram(in);
+				if (mogram != null && mogram instanceof Exertion)
+					logger.info(">>>>>>>>>> Input context: \n" + ((Exertion) mogram).getContext());
+				else {
+					logger.info(">>>>>>>>>> Inputs: \n" + ((Model) mogram).getInputs());
+				}
+
+				// Starting RemoteLoggerListener
+				java.util.List<Map<String, String>> filterMapList = new ArrayList<Map<String, String>>();
+				for (String exId : ((ServiceMogram) requestor.mogram).getAllMogramIds()) {
+					Map<String, String> map = new HashMap<String, String>();
+					map.put(RemoteLogger.KEY_MOGRAM_ID, exId);
+					filterMapList.add(map);
+				}
+				if (!filterMapList.isEmpty()) {
+					try {
+						lreClient = new LoggerRemoteEventClient();
+						lreClient.register(filterMapList, new RequestorLoggerListener(System.out));
+					} catch (LoggerRemoteException lre) {
+						logger.warn("Remote logging disabled: " + lre.getMessage());
+						lreClient = null;
+					}
+				}
+			}
 		} catch (Exception e) {
 			logger.error("main", e);
 			System.exit(1);
@@ -132,7 +164,7 @@ abstract public class ServiceRequestor implements Requestor, SorcerConstants {
 
 	public void process(String... args) throws ExertionException, ContextException {
 		try {
-			exertion = ((ServiceExertion) exertion).exert(
+			mogram = ((ServiceExertion) mogram).exert(
 					requestor.getTransaction(), requestor.getJobberName());
 		} catch (Exception e) {
 			throw new ExertionException(e);
@@ -141,12 +173,18 @@ abstract public class ServiceRequestor implements Requestor, SorcerConstants {
 	
 	public void postprocess(String... args) throws ExertionException, ContextException {
 		try {
-			if (exertion != null) {
-				logger.info("<<<<<<<<<< Exceptions: \n" + exertion.getExceptions());
-				logger.info("<<<<<<<<<< Traces: \n" + ((ControlContext)exertion.getControlContext()).getTrace());
-				logger.info("<<<<<<<<<< Ouput context: \n" + exertion.getContext());
+			if (lreClient != null) lreClient.destroy();
+			if (mogram != null) {
+				logger.info("<<<<<<<<<< Exceptions: \n" + mogram.getExceptions());
+
+					logger.info("<<<<<<<<<< Traces: \n" + mogram.getTrace());
+				if (mogram instanceof Exertion) {
+					logger.info("<<<<<<<<<< Ouput context: \n" + ((Exertion)mogram).getContext());
+				} else {
+					logger.info("<<<<<<<<<< Response: \n" + ((Model)mogram).getResponse());
+				}
 			}
-		} catch (ContextException e) {
+		} catch (Exception e) {
 			throw new ExertionException(e);
 		}
 	}
@@ -260,4 +298,30 @@ abstract public class ServiceRequestor implements Requestor, SorcerConstants {
         System.setSecurityManager(new SecurityManager());
     }
 
+	private static class RequestorLoggerListener implements RemoteEventListener {
+		PrintStream out;
+
+		public RequestorLoggerListener(PrintStream out) {
+			this.out = out;
+		}
+
+		@Override
+		public void notify(RemoteEvent event) throws UnknownEventException, RemoteException {
+			LoggerRemoteEvent logEvent = (LoggerRemoteEvent)event;
+			ILoggingEvent le = logEvent.getLoggingEvent();
+			// Print everything to the out stream as if it was a local log
+			String mogId = le.getMDCPropertyMap().get(RemoteLogger.KEY_MOGRAM_ID);
+			String prvId = le.getMDCPropertyMap().get(RemoteLogger.KEY_PROVIDER_ID);
+			SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+			out.print(le.getLevel() + "  " + sdf.format(le.getTimeStamp())
+					+ " [" + (mogId != null ? mogId.substring(0, 8) : "NO MOGRAM ID")
+					+ "@" + (prvId != null ? prvId.substring(0, 8) : "NO PRV ID") + "] ");
+			out.print(" " + le.getLoggerName() + " -");
+			out.println(" " + le.getFormattedMessage());
+			if (le.getCallerData() != null)
+				for (StackTraceElement ste : le.getCallerData()) {
+					out.print(ste.toString());
+				}
+		}
+	}
 }

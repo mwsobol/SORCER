@@ -23,7 +23,7 @@ public class ArithmeticServiceRequestor extends ServiceRequestor {
 	 * @see sorcer.core.requestor.ServiceRequestor#getMogram(java.lang.String[])
 	 */
 	@Override
-	public Exertion getExertion(String... args) throws ExertionException, ContextException, SignatureException {
+	public Mogram getMogram(String... args) throws ExertionException, ContextException, SignatureException {
 
 		Task t3 = task("t3", sFi("object/subtract", sig("subtract", SubtractorImpl.class)),
 				sFi("object/average", sig("average", AveragerImpl.class)),
@@ -58,6 +58,6 @@ public class ArithmeticServiceRequestor extends ServiceRequestor {
 	@Override
 	public void postprocess(String... args) throws ExertionException, ContextException {
 		super.postprocess();
-		logger.info("<<<<<<<<<< f5 context: \n" + upcontext(exertion));
+		logger.info("<<<<<<<<<< f5 context: \n" + upcontext(mogram));
 	}
 }

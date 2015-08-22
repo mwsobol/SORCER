@@ -375,6 +375,7 @@ public class EditorView extends JPanel implements HyperlinkListener {
 						} else if (result != null) {
 							openOutPanel(result.toString());
                         }
+						if (lrec != null) lrec.destroy();
                     } catch (IOException io) {
                         logger.error("Caught exception while executing script: " + io.getMessage());
                         openOutPanel(StringUtils.stackTraceToString(io));
