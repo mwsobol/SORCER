@@ -6,4 +6,5 @@
 import static sorcer.co.operator.file
 
 String netlet = "/Volumes/SSSD/git/SORCER/examples/sml/src/main/netlets/ha-job-local.ntl";
+
 provider(sig(file(netlet)))
