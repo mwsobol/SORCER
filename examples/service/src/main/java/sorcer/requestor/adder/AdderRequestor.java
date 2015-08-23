@@ -28,7 +28,7 @@ public class AdderRequestor extends ExertRequestor {
                 return createExertion();
             }
         }
-        throw new MogramException("wrong arguments: ExertRequestor type, mogram type");
+        throw new MogramException("wrong arguments for: ExertRequestor type, mogram type");
     }
 
 
