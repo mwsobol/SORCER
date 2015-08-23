@@ -31,7 +31,6 @@ public class AdderRequestor extends ExertRequestor {
         throw new MogramException("wrong arguments for: ExertRequestor type, mogram type");
     }
 
-
     private Exertion createExertion() throws ContextException, SignatureException, ExertionException {
         Double v1 = new Double(getProperty("arg/x1"));
         Double v2 = new Double(getProperty("arg/x2"));
