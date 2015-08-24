@@ -185,7 +185,10 @@ public class RemoteLoggerManager implements RemoteLogger {
     }
 
     public void deleteLog(String loggerName) throws RemoteException {
-        // TODO implement
+        File df = new File(logDir, loggerName);
+        if (df.exists()) {
+            df.delete();
+        }
     }
 
     public EventRegistration registerLogListener(RemoteEventListener listener, MarshalledObject handback, long duration, List<Map<String,String>> filterMap) throws LeaseDeniedException, RemoteException {
@@ -207,7 +210,6 @@ public class RemoteLoggerManager implements RemoteLogger {
         return null;
     }
 
-    //@Override
     public void unregisterLogListener(EventRegistration evReg) throws RemoteException {
         log.debug("Unregistering listener for remote logs: " + evReg.getID());
         try {
@@ -229,7 +231,6 @@ public class RemoteLoggerManager implements RemoteLogger {
             log.error("Problem unregistering Log listener: " + e1.getMessage());
         }
     }
-
 
     /**
      * Returns a service UI descriptor for LoggerManagerUI. The service
