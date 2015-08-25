@@ -1,8 +1,12 @@
 package sorcer.sml.contexts;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.sorcer.test.ProjectContext;
+import org.sorcer.test.SorcerTestRunner;
+import sorcer.arithmetic.provider.Adder;
 import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.arithmetic.provider.impl.AveragerImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
@@ -24,9 +28,42 @@ import static sorcer.po.operator.invoker;
 /**
  * Created by Mike Sobolewski on 4/15/15.
  */
+@SuppressWarnings({ "unchecked", "rawtypes" })
+@RunWith(SorcerTestRunner.class)
+@ProjectContext("examples/sml")
 public class SrvModels {
 
     private final static Logger logger = LoggerFactory.getLogger(SrvModels.class);
+
+    @Test
+    public void evalauteLocalAddereModel() throws Exception {
+
+        // three entry model
+        Model mod = srvModel(inEnt("arg/x1", 10.00), inEnt("arg/x2", 90.00),
+                srv(sig("add", AdderImpl.class, result("result/y", inPaths("arg/x1", "arg/x2")))),
+                response("add", "arg/x1", "arg/x2"));
+
+        Context out = response(mod);
+        assertTrue(get(out, "add").equals(100.0));
+
+        assertTrue(get(mod, "result/y").equals(100.0));
+
+    }
+
+    @Test
+    public void evalauteRemoteAddereModel() throws Exception {
+
+        // three entry model
+        Model mod = srvModel(inEnt("arg/x1", 10.00), inEnt("arg/x2", 90.00),
+                srv(sig("add", Adder.class, result("result/y", inPaths("arg/x1", "arg/x2")))),
+                response("add", "arg/x1", "arg/x2"));
+
+        Context out = response(mod);
+        assertTrue(get(out, "add").equals(100.0));
+
+        assertTrue(get(mod, "result/y").equals(100.0));
+
+    }
 
     @Test
     public void exertServiceModel() throws Exception {

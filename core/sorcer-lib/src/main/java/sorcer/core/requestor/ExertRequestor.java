@@ -38,6 +38,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 
+import static sorcer.eo.operator.prvName;
+
 /**
  * @author Mike Sobolewski
  */
@@ -160,8 +162,12 @@ abstract public class ExertRequestor implements Requestor, SorcerConstants {
 
 	public void process(String... args) throws ExertionException, ContextException {
 		try {
-			mogram = ((ServiceExertion) mogram).exert(
-					requestor.getTransaction(), requestor.getJobberName());
+			if (jobberName != null) {
+				mogram = mogram.exert(requestor.getTransaction(), prvName(requestor.getJobberName()));
+			} else {
+				mogram = mogram.exert(requestor.getTransaction());
+			}
+
 		} catch (Exception e) {
 			throw new ExertionException(e);
 		} 
@@ -170,9 +176,9 @@ abstract public class ExertRequestor implements Requestor, SorcerConstants {
 	public void postprocess(String... args) throws ExertionException, ContextException {
 		try {
 			if (mogram != null) {
-				if (mogram.getExceptions().size() > 0)
+				if (mogram.getExceptions() != null && mogram.getExceptions().size() > 0)
 					logger.info("<<<<<<<<<< Exceptions: \n" + mogram.getExceptions());
-				if (mogram.getTrace().size() > 0)
+				if (mogram.getTrace() != null && mogram.getTrace().size() > 0)
 					logger.info("<<<<<<<<<< Traces: \n" + mogram.getTrace());
 
 				if (mogram instanceof Exertion) {

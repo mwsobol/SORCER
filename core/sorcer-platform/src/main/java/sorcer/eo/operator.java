@@ -314,8 +314,6 @@ public class operator {
 				types.add((Context.Type) o);
 			} else if (o instanceof String) {
 				name = (String) o;
-			} else if (o instanceof PoolStrategy) {
-				modelStrategy = (PoolStrategy) o;
 			} else if (o instanceof Par) {
 				parEntryList.add((Par) o);
 			} else if (o instanceof EntryList) {
@@ -1040,11 +1038,11 @@ public class operator {
 		return ((ServiceExertion) exertion).getServiceFidelities();
 	}
 
-	public static Fidelity<Signature> sFi(Mogram exertion) {
-		return exertion.getFidelity();
+	public static Fidelity<Signature> sFi(Mogram mogram) {
+		return mogram.getFidelity();
 	}
 
-	public static String selFi(Mogram exertion) {
+	public static String fiName(Mogram exertion) {
 		return ((ServiceExertion) exertion).getSelectedFidelitySelector();
 	}
 

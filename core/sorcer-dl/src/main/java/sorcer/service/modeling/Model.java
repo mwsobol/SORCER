@@ -69,6 +69,15 @@ public interface Model extends Mogram, Dependency {
     public Context getInputs() throws ContextException, RemoteException;
 
     /**
+     * Returns the input context of this model with all inputs (in and inout directions).
+     *
+     * @return the input context
+     * @throws ContextException
+     * @throws RemoteException
+     */
+    public Context getAllInputs() throws ContextException, RemoteException;
+
+    /**
      * Returns the output context of this model.
      *
      * @return the output context

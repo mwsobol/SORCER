@@ -6,9 +6,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
+import sorcer.co.operator;
 import sorcer.service.*;
 import sorcer.service.Strategy.Access;
 import sorcer.service.Strategy.Wait;
+import sorcer.service.modeling.Model;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -16,6 +18,8 @@ import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.get;
 import static sorcer.eo.operator.value;
+import static sorcer.mo.operator.response;
+import static sorcer.mo.operator.srvModel;
 
 /**
  * @author Mike Sobolewski
@@ -23,8 +27,8 @@ import static sorcer.eo.operator.value;
 @SuppressWarnings({ "unchecked", "rawtypes" })
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/service")
-public class NetTasks {
-	private final static Logger logger = LoggerFactory.getLogger(NetTasks.class.getName());
+public class NetMograms {
+	private final static Logger logger = LoggerFactory.getLogger(NetMograms.class.getName());
 	
 	@Test
 	public void exertTask() throws Exception  {
@@ -89,6 +93,20 @@ public class NetTasks {
 		assertEquals(get(t5, "result/y"), 100.0);
 	}
 
+	@Test
+	public void evalauteRemoteModel() throws Exception {
+
+		// three entry model
+		Model mod = model(inEnt("arg/x1", 10.00), inEnt("arg/x2", 90.00),
+				srv(sig("add", Adder.class, result("result/y", inPaths("arg/x1", "arg/x2")))),
+				response("add", "arg/x1", "arg/x2"));
+
+		Context out = response(mod);
+		assertTrue(operator.get(out, "add").equals(100.0));
+
+		assertTrue(operator.get(mod, "result/y").equals(100.0));
+
+	}
 }
 	
 	

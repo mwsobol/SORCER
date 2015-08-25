@@ -45,8 +45,8 @@ public class AdderRequestor extends ExertRequestor {
         Double v2 = new Double(getProperty("arg/x2"));
 
         // model three entries
-        return model(inEnt("arg/x1", v1), inEnt("arg/x1", v2),
+        return model(inEnt("arg/x1", v1), inEnt("arg/x2", v2),
                 srv(sig("add", Adder.class, result("result/y", inPaths("arg/x1", "arg/x2")))),
-                response("result/y", "arg/x1", "arg/x2"));
+                response("add", "arg/x1", "arg/x2"));
     }
 }

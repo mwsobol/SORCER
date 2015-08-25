@@ -112,7 +112,7 @@ task runRequestor(type:JavaExec, dependsOn:[install]) {
     dependsOn([install, bootme])
     //  Dynamic option requires service provisioning support - bootSorcerRio
 //  args = ["sorcer.requestor.adder.AdderRequestor", "dynamic"]
-    args = ["sorcer.requestor.adder.AdderRequestor"]
+    args = ["sorcer.requestor.adder.AdderRequestor", "model"]
     finalizedBy (stopme)
 }
 
