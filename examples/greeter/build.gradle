@@ -22,6 +22,13 @@ dependencies {
     testRuntime libs.logback
 }
 
+test {
+    description = 'Evaluates JUnit test case.'
+    testLogging {
+        events "passed", "skipped", "failed"/*, "standardOut", "standardError"*/
+    }
+    dependsOn([install])
+}
 
 
 

@@ -1,4 +1,4 @@
-package java.edu.pjatk.inn.coffeemaker.test;
+package edu.pjatk.inn.coffeemaker;
 
 import static edu.pjatk.inn.coffeemaker.impl.Recipe.recipe;
 import static org.junit.Assert.assertTrue;
@@ -7,8 +7,6 @@ import static sorcer.eo.operator.*;
 import static sorcer.mo.operator.*;
 import static sorcer.po.operator.invoker;
 
-import edu.pjatk.inn.coffeemaker.CoffeeService;
-import edu.pjatk.inn.coffeemaker.Delivery;
 import edu.pjatk.inn.coffeemaker.impl.CoffeeMaker;
 import edu.pjatk.inn.coffeemaker.impl.Inventory;
 import edu.pjatk.inn.coffeemaker.impl.Recipe;
@@ -73,8 +71,9 @@ public class CoffeeMakerTest {
 	// Service orientation
 	@Test
 	public void getRecepies() throws Exception {
-
-		Exertion cmt = task(sig("recipes", CoffeeService.class));
+//		Exertion cmt = task(sig("recipes", CoffeeService.class));
+		Exertion cmt = task(sig("recipes", CoffeeMaker.class));
+		cmt = exert(cmt);
 		logger.info("recipes: " + context(cmt));
 	}
 
