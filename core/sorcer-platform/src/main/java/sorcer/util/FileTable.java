@@ -17,7 +17,6 @@ package sorcer.util;
 
 import java.io.*;
 import java.util.*;
-import net.jini.id.Uuid;
 import java.rmi.*;
 import java.util.concurrent.ConcurrentHashMap;
 
