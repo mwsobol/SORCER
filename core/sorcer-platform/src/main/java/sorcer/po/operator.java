@@ -86,11 +86,6 @@ public class operator {
 		return p;
 	}
 
-//	public static Par par(String name, String path, Service argument) throws ContextException {
-//		Par p = new Par(name, path, argument);
-//		return p;
-//	}
-
 	public static Par dPar(Identifiable identifiable, Context context) throws EvaluationException, RemoteException {
 		Par p = new Par(identifiable.getName(), identifiable);
 		p.setPersistent(true);
