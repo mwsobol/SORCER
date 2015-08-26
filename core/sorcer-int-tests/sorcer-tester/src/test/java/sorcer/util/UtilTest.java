@@ -112,16 +112,18 @@ public class UtilTest {
 		assertEquals(table.get(key1), "String11111");
 		assertEquals(table.get(key2), "String22222");
 
+//		table.cleanup();
+		table.close();
+
 		File obf = new File("test.obf");
 		obf.delete();
 		File iobf = new File("test-index.obf");
 		iobf.delete();
-//		table.cleanup();
-		table.close();
+
 	}
 
 	@Test
-	public void numberedfileTable() throws Exception {
+	public void numberedFileTable() throws Exception {
 		FileTable table = new FileTable("test");
 		table.addRow(1, "String11111");
 		table.addRow(2, "String22222");
@@ -136,11 +138,12 @@ public class UtilTest {
 		assertEquals(table.getRow(1), "String11111");
 		assertEquals(table.getRow(2), "String22222");
 
+//		table.cleanup();
+		table.close();
+
 		File obf = new File("test.obf");
 		obf.delete();
 		File iobf = new File("test-index.obf");
 		iobf.delete();
-//		table.cleanup();
-		table.close();
 	}
 }
