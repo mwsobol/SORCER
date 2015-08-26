@@ -1,11 +1,16 @@
 package edu.pjatk.inn.coffeemaker.impl;
 
 import edu.pjatk.inn.coffeemaker.CoffeeMaking;
+import edu.pjatk.inn.coffeemaker.CoffeeService;
+import sorcer.service.Context;
+import sorcer.service.ContextException;
+
+import java.rmi.RemoteException;
 
 /**
  * @author   Sarah & Mike
  */
-public class CoffeeMaker implements CoffeeMaking {
+public class CoffeeMaker implements CoffeeMaking, CoffeeService {
 	/**
 	 * Array of recipes in coffee maker
 	 */
@@ -194,5 +199,24 @@ public class CoffeeMaker implements CoffeeMaking {
 
 	public boolean[] getRecipeFull() {
 		return recipeFull;
+	}
+
+	@Override
+	public Context recipes(Context context) throws RemoteException, ContextException {
+		context.putValue("recipes", getRecipes());
+		return context;
+	}
+
+	@Override
+	public Context makeCoffee(Context context) throws RemoteException, ContextException {
+		String recipeName = (String)context.getValue("coffee/recipe");
+		Recipe r = getRecipeForName(recipeName);
+		int amount = (Integer)context.getValue("paid/amount");
+
+		context.putValue("", makeCoffee(r, r.getPrice()));
+		context.putValue("price", r.getPrice());
+		context.putValue("tip", amount - r.getPrice());
+
+		return context;
 	}
 }
