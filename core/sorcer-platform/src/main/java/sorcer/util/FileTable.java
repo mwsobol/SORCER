@@ -31,7 +31,7 @@ public class FileTable<K,V> implements Runnable {
 
 	private ConcurrentHashMap<K, Long> table;
 
-	private static int WAITING_TIME = 15 * 60 * 1000; //15 min
+	private static int WAITING_TIME = 30 * 60 * 1000; //30 min
 
 	boolean running = true;
 
@@ -60,14 +60,14 @@ public class FileTable<K,V> implements Runnable {
 	public synchronized final void put(K key, V o) throws IOException {
 		if (! (o instanceof Serializable))
 			throw new IOException("Not serializable value");
-		Long oldPos = (Long)table.get(key);
+		Long oldPos = table.get(key);
 		long newPos;
 		if (oldPos == null)
 			newPos = ofl.writeObject((Serializable)o);
 		else
 			newPos = ofl.writeObject((Serializable)o, oldPos.longValue());
 
-		table.put(key, new Long(newPos));
+		table.put(key, newPos);
 		ifl.rewriteObject(0, table);
 	}
 
@@ -197,7 +197,7 @@ public class FileTable<K,V> implements Runnable {
 			dataFile.seek(lPos);
 			int datalen = dataFile.readInt();
 			if (datalen > dataFile.length())
-				throw new IOException("Data file is corrupted. Data length: "
+				throw new IOException("Data file is corrupted, length: "
 						+ datalen);
 			byte [] data = new byte[datalen];
 			dataFile.readFully(data);
@@ -213,7 +213,7 @@ public class FileTable<K,V> implements Runnable {
 				return o.get();
 			} catch (ClassNotFoundException cnfe) {
 				cnfe.printStackTrace();
-				throw new IOException("Class Not found Exception msg:" + cnfe.getMessage());
+				throw new IOException("Class Not found:" + cnfe.getMessage());
 			}
 		}
 
