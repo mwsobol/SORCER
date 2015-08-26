@@ -3,10 +3,12 @@ package edu.pjatk.inn.coffeemaker.impl;
 import sorcer.service.Context;
 import sorcer.service.ContextException;
 
+import java.io.Serializable;
+
 /**
  * @author   Sarah & Mike
  */
-public class Recipe {
+public class Recipe implements Serializable {
     private String name;
     private int price;
     private int amtCoffee;

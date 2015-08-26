@@ -41,15 +41,15 @@ public class CoffeeMakerTest {
 		i = cm.checkInventory();
 
 		r1 = new Recipe();
-		r1.setName("Coffee");
+		r1.setName("Black");
 		r1.setPrice(50);
 		r1.setAmtCoffee(6);
 		r1.setAmtMilk(1);
 		r1.setAmtSugar(1);
 		r1.setAmtChocolate(0);
 
-		rc = context(ent("name", "Coffee"), ent("price", 50),
-				ent("amtCoffee", 6), ent("amtMilk", 1),
+		rc = context(ent("name", "Black"), ent("price", 50),
+				ent("amtCoffee", 6), ent("amtMilk", 0),
 				ent("amtSugar", 1), ent("amtChocolate", 0));
 	}
 
@@ -70,9 +70,42 @@ public class CoffeeMakerTest {
 
 	// Service orientation
 	@Test
+	public void addRecepie() throws Exception {
+		Exertion cmt = task(sig("addRecipe", CoffeeService.class), rc);
+		cmt = exert(cmt);
+		logger.info("isAdded: " + context(cmt, "recipe/added"));
+	}
+
+	@Test
+	public void addCrema() throws Exception {
+		Context rc  = context(ent("name", "Crema"), ent("price", 60),
+				ent("amtCoffee", 6), ent("amtMilk", 3),
+				ent("amtSugar", 1), ent("amtChocolate", 0));
+
+		Exertion cmt = task(sig("addRecipe", CoffeeService.class), rc);
+		cmt = exert(cmt);
+		logger.info("isAdded: " + context(cmt, "recipe/added"));
+	}
+
+	@Test
+	public void addRecipes() throws Exception {
+		Context choco  = context(ent("name", "Choco"), ent("price", 100),
+				ent("amtCoffee", 8), ent("amtMilk", 3),
+				ent("amtSugar", 1), ent("amtChocolate", 2));
+
+		Context strong  = context(ent("name", "Crema Strong"), ent("price", 80),
+				ent("amtCoffee", 8), ent("amtMilk", 3),
+				ent("amtSugar", 1), ent("amtChocolate", 0));
+
+		Exertion cmt = job(task(sig("addRecipe", CoffeeService.class), choco),
+			task(sig("addRecipe", CoffeeService.class), strong));
+		cmt = exert(cmt);
+		logger.info("isAdded: " + upcontext(cmt));
+	}
+
+	@Test
 	public void getRecepies() throws Exception {
-//		Exertion cmt = task(sig("recipes", CoffeeService.class));
-		Exertion cmt = task(sig("recipes", CoffeeMaker.class));
+		Exertion cmt = task(sig("recipes", CoffeeService.class));
 		cmt = exert(cmt);
 		logger.info("recipes: " + context(cmt));
 	}
@@ -80,9 +113,10 @@ public class CoffeeMakerTest {
 	@Test
 	public void deliverCoffee() throws Exception {
 
-		Model mod = model(inEnt("recipe", "myCoffee)"),
+		Model mod = model(inEnt("recipe", "Choco)"),
 				inEnt("location", "PJATK"),
 				inEnt("room", "101"),
+				inEnt("tip", true),
 
 				srv(sig("makeCoffee", CoffeeService.class,
 						result("coffee$", inPaths("recipe")))),

@@ -2,15 +2,21 @@ package edu.pjatk.inn.coffeemaker.impl;
 
 import edu.pjatk.inn.coffeemaker.CoffeeMaking;
 import edu.pjatk.inn.coffeemaker.CoffeeService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sorcer.service.Context;
 import sorcer.service.ContextException;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author   Sarah & Mike
  */
 public class CoffeeMaker implements CoffeeMaking, CoffeeService {
+	private final static Logger logger = LoggerFactory.getLogger(CoffeeMaker.class);
+
 	/**
 	 * Array of recipes in coffee maker
 	 */
@@ -201,9 +207,24 @@ public class CoffeeMaker implements CoffeeMaking, CoffeeService {
 		return recipeFull;
 	}
 
+
+	// Implementation of CoffeeService
+	@Override
+	public Context addRecipe(Context context) throws RemoteException, ContextException {
+		Recipe r = Recipe.recipe(context);
+		boolean isAdded = addRecipe(r);
+		context.putValue("recipe/added", isAdded);
+		return context;
+	}
+
 	@Override
 	public Context recipes(Context context) throws RemoteException, ContextException {
-		context.putValue("recipes", getRecipes());
+		List<Recipe> rl = new ArrayList<Recipe>();
+		for (Recipe r : recipeArray) {
+			if (r.getName() != "") rl.add(r);
+		}
+
+		context.putValue("recipes", rl);
 		return context;
 	}
 

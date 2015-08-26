@@ -50,8 +50,7 @@ import static sorcer.po.operator.set;
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/pml")
 public class Invokers {
-	private final static Logger logger = LoggerFactory.getLogger(Invokers.class
-			.getName());
+	private final static Logger logger = LoggerFactory.getLogger(Invokers.class);
 
 	private ParModel pm; 
 	private Par<Double> x;

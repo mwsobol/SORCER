@@ -10,6 +10,8 @@ import java.rmi.RemoteException;
  */
 public interface CoffeeService {
 
+    public Context addRecipe(Context context) throws RemoteException, ContextException;
+
     public Context recipes(Context context) throws RemoteException, ContextException;
 
     public Context makeCoffee(Context context) throws RemoteException, ContextException;
