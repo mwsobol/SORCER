@@ -4,7 +4,6 @@ import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sorcer.co.tuple.OutputEntry;
 import sorcer.co.tuple.SignatureEntry;
 import sorcer.core.context.ApplicationDescription;
 import sorcer.core.context.model.ent.Entry;
@@ -128,7 +127,7 @@ public class Srv extends Entry<Object> implements Variability<Object>, Arg, Eval
 
     @Override
     public Object getValue(Arg... entries) throws EvaluationException, RemoteException {
-        if (srvValue != null && ! isChanged) {
+        if (srvValue != null && isValid) {
             return srvValue;
         } else {
             return super.getValue(entries);

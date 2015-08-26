@@ -1,6 +1,7 @@
 package sorcer.core.context.model.par;
 
 import groovy.lang.Closure;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -32,6 +33,7 @@ import static sorcer.eo.operator.value;
 import static sorcer.mo.operator.responseUp;
 import static sorcer.po.operator.add;
 import static sorcer.po.operator.*;
+import static sorcer.po.operator.map;
 import static sorcer.po.operator.put;
 import static sorcer.po.operator.set;
 
@@ -271,7 +273,8 @@ public class ParModelTest {
 		assertEquals(content(url1), 30.0);
 		assertEquals(content(url2), "myUrl2");
 	}
-	
+
+	@Ignore
 	@Test
 	public void persistableMappableParsTest() throws SignatureException, ExertionException, ContextException, IOException {
 		Context cxt = context(ent("url", "myUrl"), ent("design/in", 25.0));

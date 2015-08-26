@@ -81,7 +81,7 @@ public class operator {
 			p = new Par(path, argument);
 			p.setScope(object);
 		} else if (object instanceof Service) {
-			p = new Par(path, argument, (Service)object);
+			p = new Par(path, argument, object);
 		}
 		return p;
 	}

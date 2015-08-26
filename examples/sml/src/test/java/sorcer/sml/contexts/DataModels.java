@@ -266,6 +266,7 @@ public class DataModels {
         assertTrue(value(mc, "arg1/value").equals(90.0));
 
         put(mc, "arg1/value", 200.0);
+
         assertTrue(value(ac, "arg1/value").equals(200.0));
         assertTrue(value(mc, "arg1/value").equals(200.0));
 

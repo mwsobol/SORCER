@@ -24,7 +24,6 @@ import sorcer.util.Sorcer;
 import sorcer.util.exec.ExecUtils.CmdResult;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.StringReader;
 import java.util.Properties;
 
@@ -38,6 +37,7 @@ import static sorcer.po.operator.add;
 import static sorcer.po.operator.alt;
 import static sorcer.po.operator.*;
 import static sorcer.po.operator.get;
+import static sorcer.po.operator.loop;
 import static sorcer.po.operator.map;
 import static sorcer.po.operator.opt;
 import static sorcer.po.operator.put;
@@ -196,8 +196,7 @@ public class Invokers {
 	}
 
 	@Test
-	public void substituteArgsTest() throws Exception,
-			SignatureException, ExertionException {
+	public void substituteArgsTest() throws Exception {
 		Par x1, x2, y;
 
 		x1 = par("x1", 1.0);
@@ -215,8 +214,7 @@ public class Invokers {
 	}
 
 	@Test
-	public void exertionInvokerTest() throws Exception,
-			SignatureException, ExertionException {
+	public void exertionInvokerTest() throws Exception {
 		Context c4 = context("multiply", inEnt("arg/x1"), inEnt("arg/x2"),
 				result("result/y"));
 		Context c5 = context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
@@ -235,20 +233,21 @@ public class Invokers {
 				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
 				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
 
+		// mapping via the context
 		ParModel pm = parModel("par-model");
 		add(pm, map(par("x1p", "arg/x1"), c4), map(par("x2p", "arg/x2"), c4), j1);
+
 		// setting context parameters in a job
 		set(pm, "x1p", 10.0);
 		set(pm, "x2p", 50.0);
 
-		add(pm, exertInvoker("invoke j1", j1, "j1/t3/result/y"));
+		add(pm, exertInvoker(j1, "j1/t3/result/y"));
 		// logger.info("call value:" + invoke(pm, "invoke j1"));
-		assertEquals(invoke(pm, "invoke j1"), 400.0);
+		assertEquals(invoke(pm, "j1"), 400.0);
 	}
 
 	@Test
-	public void cmdInvokerTest() throws Exception,
-	ContextException, IOException {
+	public void cmdInvokerTest() throws Exception {
 		String riverVersion = System.getProperty("river.version");
 		String sorcerVersion = System.getProperty("sorcer.version");
 		String slf4jVersion = System.getProperty("slf4j.version");

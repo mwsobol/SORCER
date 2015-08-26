@@ -627,15 +627,18 @@ public class operator {
 
 	public static Context put(Context context, String path, Object value)
 			throws ContextException {
-		Object val = context.asis(path);
-		if (SdbUtil.isSosURL(val)) {
-			try {
+		try {
+			Object val = context.asis(path);
+			if (val instanceof Par && ((Par)val).isPersistent())
+				val = ((Par)val).asis();
+			if (SdbUtil.isSosURL(val)) {
 				SdbUtil.update((URL) val, value);
-			} catch (Exception e) {
-				throw new ContextException(e);
+			} else {
+				context.putValue(path, value);
 			}
+		} catch (Exception e) {
+			throw new ContextException(e);
 		}
-		context.putValue(path, value);
 		return context;
 	}
 
