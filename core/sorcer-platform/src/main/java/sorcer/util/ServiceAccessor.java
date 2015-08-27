@@ -17,10 +17,6 @@
 
 package sorcer.util;
 
-import java.io.IOException;
-import java.rmi.RemoteException;
-import java.util.*;
-
 import net.jini.core.discovery.LookupLocator;
 import net.jini.core.entry.Entry;
 import net.jini.core.lookup.ServiceID;
@@ -39,6 +35,10 @@ import sorcer.core.SorcerConstants;
 import sorcer.service.DynamicAccessor;
 import sorcer.service.Signature;
 import sorcer.service.SignatureException;
+
+import java.io.IOException;
+import java.rmi.RemoteException;
+import java.util.*;
 
 /**
  * A service discovery and management utility allowing to access services by
@@ -71,10 +71,10 @@ public class ServiceAccessor implements DynamicAccessor {
 
 	static long WAIT_FOR = Sorcer.getLookupWaitTime();
 	
-	// wait for cataloger 2 sec  = LUS_REAPEAT x 200
+	// wait for cataloger 2 sec  = LUS_REPEAT x 200
 	// since then falls back on LUSs managed by ServiceAccessor
-	// wait for service accessor 5 sec  = LUS_REAPEAT x 500
-	final static int LUS_REAPEAT = 10; 
+	// wait for service accessor 5 sec  = LUS_REPEAT x 500
+	final static int LUS_REPEAT = 10;
 
 	private static DiscoveryManagement ldManager = null;
 
@@ -398,7 +398,7 @@ public class ServiceAccessor implements DynamicAccessor {
 		if (serviceName != null && serviceName.equals(SorcerConstants.ANY))
 			serviceName = null;
 		int tryNo = 0;
-		while (tryNo < LUS_REAPEAT) {
+		while (tryNo < LUS_REPEAT) {
 			logger.info("trying to get service: " + serviceType + ":" + serviceName + "; attempt: "
 					+ tryNo + "...");
 			try {
@@ -545,7 +545,7 @@ public class ServiceAccessor implements DynamicAccessor {
 
 	@Override
 	public ServiceItem[] getServiceItems(ServiceTemplate template, int minMatches, int maxMatches, ServiceItemFilter filter, String[] groups) {
-		return getServiceItems(template, minMatches, maxMatches, filter, groups, LUS_REAPEAT);
+		return getServiceItems(template, minMatches, maxMatches, filter, groups, LUS_REPEAT);
 	}
 
     public ServiceItem[] getServiceItems(ServiceTemplate template, int minMatches, int maxMatches, ServiceItemFilter filter, String[] groups, int lusRepeat) {
@@ -556,16 +556,11 @@ public class ServiceAccessor implements DynamicAccessor {
                 throw new IllegalArgumentException("User requested River group other than default, this is currently unsupported");
             }
         }
+        logger.info("Lookup {}, lusRepeat: {}, timeout: {}", formatServiceTemplate(template), lusRepeat, WAIT_FOR);
         for (int tryNo = 0; tryNo < lusRepeat; tryNo++) {
             ServiceItem[] result = doGetServiceItems(template, minMatches, maxMatches, filter);
             if (result != null && result.length > 0)
                 return result;
-
-            try {
-                Thread.sleep(ServiceAccessor.WAIT_FOR);
-            } catch (InterruptedException ignored) {
-                //IGNORE
-            }
         }
         return new ServiceItem[0];
     }
@@ -580,6 +575,40 @@ public class ServiceAccessor implements DynamicAccessor {
             logger.error("Error while getting service", e);
             return null;
         }
+    }
+
+    static String formatServiceTemplate(ServiceTemplate template) {
+        return String.format("[%s] [%s]",  getNames(template.attributeSetTemplates), getTypes(template.serviceTypes));
+    }
+
+    static String getNames(Entry[] entries) {
+        StringBuilder sb = new StringBuilder();
+        if(entries!=null) {
+            for (Entry e : entries) {
+                if (e instanceof Name) {
+                    if (sb.length() > 0)
+                        sb.append(", ");
+                    sb.append(((Name) e).name);
+                }
+            }
+        } else {
+            sb.append("<null>");
+        }
+        return sb.toString();
+    }
+
+    static String getTypes(Class<?>[] classes) {
+        StringBuilder sb = new StringBuilder();
+        if(classes!=null) {
+            for (Class<?> c : classes) {
+                if (sb.length() > 0)
+                    sb.append(", ");
+                sb.append(c.getName());
+            }
+        } else {
+            sb.append("<null>");
+        }
+        return sb.toString();
     }
 
 }

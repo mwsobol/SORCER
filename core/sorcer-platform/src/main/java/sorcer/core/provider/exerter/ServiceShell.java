@@ -39,14 +39,12 @@ import sorcer.core.deploy.ServiceDeployment;
 import sorcer.core.dispatch.DispatcherException;
 import sorcer.core.dispatch.ExertionSorter;
 import sorcer.core.dispatch.ProvisionManager;
-import sorcer.core.dispatch.ServiceDirectoryProvisioner;
 import sorcer.core.exertion.ObjectTask;
 import sorcer.core.provider.*;
 import sorcer.core.signature.NetSignature;
 import sorcer.core.signature.NetletSignature;
 import sorcer.core.signature.ObjectSignature;
 import sorcer.core.signature.ServiceSignature;
-import sorcer.ext.ProvisioningException;
 import sorcer.jini.lookup.ProviderID;
 import sorcer.netlet.ScriptExerter;
 import sorcer.service.*;
@@ -416,15 +414,17 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 		}
 		// find the provider and check if the provider is a smart proxy
 		Object prv = provider;
-		if (prv == null) {
-//			prv = proxies.get(signature);
-//			if (prv == null) {
-				prv = Accessor.getService(signature);
-//				if (prv != null)
-//					proxies.put(signature, prv);
-//			}
-			// check for a space task
-			if (prv == null && exertion.isProvisionable() && signature instanceof NetSignature) {
+        if (prv == null) {
+            long t0 = System.currentTimeMillis();
+            prv = Accessor.getService(signature);
+            logger.info("Return from Accessor.getService(), round trip: {} millis", (System.currentTimeMillis()-t0));
+            // check for a space task
+
+            /* =============================================================================== *
+             * The following code commented by DR, this provisioning approach is not supported *
+             * =============================================================================== */
+
+ 			/*if (prv == null && exertion.isProvisionable() && signature instanceof NetSignature) {
 				try {
 					logger.debug("Provisioning: " + signature);
 					prv = ServiceDirectoryProvisioner.getProvisioner().provision(signature);
@@ -435,7 +435,7 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 							"Cannot find provider and provisioning returned error: " + pe.getMessage()));
 					return exertion;
 				}
-			}
+			}*/
 			if (prv != null) {
 				if (prv instanceof Service) {
 					// cache the provider for the signature
