@@ -354,10 +354,6 @@ public class ServiceAccessor implements DynamicAccessor {
 			return null;
 	}
 
-    public ServiceDiscoveryManager getServiceDiscoveryManager() {
-        return sdManager;
-    }
-
 	/**
 	 * Returns a service matching serviceName and serviceInfo using Jini lookup
 	 * service.
@@ -373,6 +369,7 @@ public class ServiceAccessor implements DynamicAccessor {
 		int tryNo = 0;
 		while (tryNo < LUS_REPEAT) {
 			logger.info("trying to get service: {}: {}; attempt: {}...",serviceType, serviceName, tryNo);
+
 			try {
 				tryNo++;
 				proxy = getService(serviceType, new Entry[] { new Name(serviceName) }, null);
