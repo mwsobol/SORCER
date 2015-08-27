@@ -969,7 +969,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
                 .append("\tExertion Name:        " + name + "\n")
                 .append("\tExertion Status:      " + status + "\n")
                 .append("\tExertion ID:          " + mogramId + "\n")
-             	.append("\tCreation Date:        " + sdf.format(creationDate) + "\n")
+                .append("\tCreation Date:        " + sdf.format(creationDate) + "\n")
                 .append("\tRuntime ID:           " + runtimeId + "\n")
                 .append("\tParent ID:            " + parentId + "\n")
                 .append("\tOwner ID:             " + ownerId + "\n")

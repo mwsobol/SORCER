@@ -94,14 +94,14 @@ public class EntModels {
 		// cxt2 depends on values y1 and y2 calculated in cxt1
 		Context<Double> cxt2 = entModel(ent("arg/y3", 8.0), ent("arg/y4", 9.0), ent("arg/y5", 10.0));
 		add(cxt2, ent("invoke", invoker("y1 + y2 + y4 + y5", ents("y1", "y2", "y4", "y5"))));
-      	responseUp(cxt2, "invoke");
+		responseUp(cxt2, "invoke");
 
 		// created dependency of cxt2 on cxt1 via a context copier
 		Copier cp = copier(cxt1, ents("arg/x1", "arg/x2"), cxt2, ents("y1", "y2"));
 		dependsOn(cxt2, cp);
 
 //		Double result =
-				value(cxt2);
+		value(cxt2);
 		assertTrue(value(cxt2).equals(22.0));
 
 	}
@@ -127,8 +127,8 @@ public class EntModels {
 	}
 
 
-    @Test
-    public void exertEntModel() throws Exception {
+	@Test
+	public void exertEntModel() throws Exception {
 
 		Context cxt = entModel(ent("arg/x1", 1.0), ent("arg/x2", 2.0),
 				ent("arg/x3", 3.0), ent("arg/x4", 4.0), ent("arg/x5", 5.0));
@@ -140,7 +140,7 @@ public class EntModels {
 		// two response paths declared
 		responseUp(cxt, "add", "multiply");
 
-        // exert the model
+		// exert the model
 		Model model = exert(cxt);
 		Context result = response(model);
 

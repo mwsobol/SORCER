@@ -112,29 +112,29 @@ public class Signatures {
 		assertTrue(instance(sig).equals(3000.0));
 	}
 
-    @Test
-    public void StaticMethodWithNoArgs()  {
-        Exception thrown = null;
-        try {
-            Signature sig = sig(Math.class, "random");
-            logger.info("random: " + instance(sig));
-        } catch(Exception e) {
-            thrown = e;
-        }
-        assertNull(thrown);
-    }
+	@Test
+	public void StaticMethodWithNoArgs()  {
+		Exception thrown = null;
+		try {
+			Signature sig = sig(Math.class, "random");
+			logger.info("random: " + instance(sig));
+		} catch(Exception e) {
+			thrown = e;
+		}
+		assertNull(thrown);
+	}
 
-    @Test
-    public void StaticMethodWithNoArgs2()  {
-        Exception thrown = null;
-        try {
-            Signature sig = sig("random", Math.class);
-            logger.info("random: " + instance(sig));
-        } catch(Exception e) {
-            thrown = e;
-        }
-        assertNull(thrown);
-    }
+	@Test
+	public void StaticMethodWithNoArgs2()  {
+		Exception thrown = null;
+		try {
+			Signature sig = sig("random", Math.class);
+			logger.info("random: " + instance(sig));
+		} catch(Exception e) {
+			thrown = e;
+		}
+		assertNull(thrown);
+	}
 
 	@Test
 	public void referencingFactoryClass() throws Exception {

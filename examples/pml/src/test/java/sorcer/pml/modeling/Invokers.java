@@ -214,13 +214,13 @@ public class Invokers {
 		y = par("y", invoker("x1 + x2", x1, x2));
 		
 		logger.info("y: " + value(y));
-		assertEquals(value(y), 3.0);
+		assertTrue(value(y).equals(3.0));
 
 		Object val = invoke(y, ent("x1", 10.0), ent ("x2", 20.0));
 		logger.info("y: " + val);
 
 		logger.info("y: " + value(y));
-		assertEquals(value(y), 30.0);
+		assertTrue(value(y).equals(30.0));
 	}
 
 	@Test

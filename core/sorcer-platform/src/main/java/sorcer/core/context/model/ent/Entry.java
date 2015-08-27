@@ -43,14 +43,14 @@ public class Entry<T> extends Tuple2<String, T> implements Service, Dependency, 
 	private static final long serialVersionUID = 5168783170981015779L;
 
 	public int index;
-	
+
 	protected String annotation;
 
 	// its arguments are always evaluated if active (either Evaluataion or Invocation type)
 	protected boolean isReactive = false;
 
-    // dependency management for this Entry
-    protected List<Evaluation> dependers = new ArrayList<Evaluation>();
+	// dependency management for this Entry
+	protected List<Evaluation> dependers = new ArrayList<Evaluation>();
 
 	public Entry() {
 	}
@@ -60,7 +60,7 @@ public class Entry<T> extends Tuple2<String, T> implements Service, Dependency, 
 			throw new IllegalArgumentException("path must not be null");
 		_1 = path;
 	}
-	
+
 	public Entry(final String path, final T value) {
 		if(path==null)
 			throw new IllegalArgumentException("path must not be null");
@@ -74,7 +74,7 @@ public class Entry<T> extends Tuple2<String, T> implements Service, Dependency, 
 		}
 		this._2 = v;
 	}
-	
+
 	public Entry(final String path, final T value, final int index) {
 		this(path, value);
 		this.index = index;
@@ -145,16 +145,16 @@ public class Entry<T> extends Tuple2<String, T> implements Service, Dependency, 
 	public String annotation() {
 		return annotation;
 	}
-	
+
 	public void annotation(String annotation) {
 		this.annotation = annotation;
 	}
-	
+
 	public boolean isAnnotated() {
 		return annotation != null;
 	}
-	
-	
+
+
 	/* (non-Javadoc)
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
@@ -167,13 +167,13 @@ public class Entry<T> extends Tuple2<String, T> implements Service, Dependency, 
 		else
 			return -1;
 	}
-	
+
 	@Override
 	public int hashCode() {
 		int hash = _1.length() + 1;
 		return hash = hash * 31 + _1.hashCode();
 	}
-	
+
 	@Override
 	public boolean equals(Object object) {
 		if ((object instanceof Entry<?>
@@ -184,18 +184,18 @@ public class Entry<T> extends Tuple2<String, T> implements Service, Dependency, 
 			return false;
 	}
 
-    @Override
-    public void addDependers(Evaluation... dependers) {
-        if (this.dependers == null)
-            this.dependers = new ArrayList<Evaluation>();
-        for (Evaluation depender : dependers)
-            this.dependers.add(depender);
-    }
+	@Override
+	public void addDependers(Evaluation... dependers) {
+		if (this.dependers == null)
+			this.dependers = new ArrayList<Evaluation>();
+		for (Evaluation depender : dependers)
+			this.dependers.add(depender);
+	}
 
-    @Override
-    public List<Evaluation> getDependers() {
-        return dependers;
-    }
+	@Override
+	public List<Evaluation> getDependers() {
+		return dependers;
+	}
 
 	@Override
 	public String toString() {

@@ -208,7 +208,7 @@ public class InvokerTest {
 
 		invoke(y, ent("x1", 10.0), ent("x2", 20.0));
 //		logger.info("y: " + value(y));
-		assertEquals(value(y), 30.0);
+		assertTrue(value(y).equals(30.0));
 		
 //		logger.info("y scope: " + scope(y));
 		assertEquals(scope(y), null);

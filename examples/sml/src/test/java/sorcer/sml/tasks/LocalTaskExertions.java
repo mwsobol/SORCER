@@ -95,7 +95,7 @@ public class LocalTaskExertions {
                         inEnt("op2/x1", 20.0), inEnt("op2/x2", 80.0)));
 
         batch3 = exert(batch3);
-        assertEquals(get(batch3, "result/y"), 400.0);
+		assertTrue(get(batch3, "result/y").equals(400.0));
 
     }
 
@@ -131,7 +131,7 @@ public class LocalTaskExertions {
 						result("result/y")));
 
 		//logger.info("t4: " + value(t4));
-		assertEquals("Wrong value for 500.0", value(t4), 500.0);
+		assertTrue(value(t4).equals(500.0));
 	}
 }
 	

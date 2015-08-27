@@ -126,7 +126,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 		t5 = exert(t5);
 		//logger.info("t5 context: " + context(t5));
 		//logger.info("t5 value: " + get(t5));
-		assertEquals("Wrong value for 100.0", value(t5), 100.0);
+		assertTrue(value(t5).equals(100.0));
 	}
 	
 	@Test
@@ -271,7 +271,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 		t5 = exert(t5);
 		logger.info("t5 context: " + context(t5));
 		logger.info("t5 value: " + get(t5));
-		assertEquals("Wrong value for 50.0", value(t5), 50.0);
+		assertTrue(value(t5).equals(50.0));
 	}
 	
 	@Test
@@ -287,7 +287,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 		t5 = exert(t5);
 		logger.info("t5 context: " + context(t5));
 		logger.info("t5 value: " + get(t5, "result/y"));
-		assertEquals("Wrong value for 100.0", get(t5, "result/y"), 100.0);
+		assertTrue(get(t5, "result/y").equals(100.0));
 	}
 
 	@Test
@@ -342,14 +342,14 @@ public class ArithmeticNetTest implements SorcerConstants {
 	@Test
 	public void exerterTest() throws Exception {
         System.out.println("========== exerterTest ==========");
-	Task f5 = task(
+	Mogram f5 = task(
 			"f5",
 			sig("add", Adder.class),
 			context("add", inEnt("arg/x1", 20.0),
 					inEnt("arg/x2", 80.0), outEnt("result/y", null)),
 			strategy(Monitor.NO, Wait.YES));
 	
-	Exertion out = null;
+	Mogram out = null;
 //	long start = System.currentTimeMillis();
 	Exerter exerter = Accessor.getService(Exerter.class);
 //	logger.info("got exerter: " + exerter);

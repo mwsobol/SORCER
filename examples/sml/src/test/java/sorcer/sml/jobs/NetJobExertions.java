@@ -392,7 +392,7 @@ public class NetJobExertions implements SorcerConstants {
 		vm = put(vm, ent("x1", 10.0), ent("x2", 50.0),
 				ent("x4", 80.0));
 				 
-		assertEquals(value(par(vm, "j1")), 400.0);
+		assertTrue(value(par(vm, "j1")).equals(400.0));
 	}
 
 	private Job getMultiFiJob() throws Exception {

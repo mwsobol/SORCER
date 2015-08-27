@@ -500,6 +500,10 @@ public class GenericUtil {
 	// deletes all files and sub-directories in the given dir arg
 	//
 	public static void deleteFilesAndSubDirs(File dir) {
+        if (dir.isFile()) {
+            dir.delete();
+            return;
+        }
 		if (!dir.canRead())
 			return;
 		for (File file : dir.listFiles()) {

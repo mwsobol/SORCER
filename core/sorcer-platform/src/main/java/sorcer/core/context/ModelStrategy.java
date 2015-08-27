@@ -53,6 +53,8 @@ public class ModelStrategy implements MogramStrategy, Projection<String>, Serial
     // evaluated model response entries
     protected Context outcome;
 
+    protected Exec.State execState = Exec.State.INITIAL;
+
     // reponse paths of the runtime model
     protected List<String> responsePaths = new ArrayList<String>();
 
@@ -246,6 +248,10 @@ public class ModelStrategy implements MogramStrategy, Projection<String>, Serial
 
     public void setDataService(FileURLHandler dataService) {
         this.dataService = dataService;
+    }
+
+    public Exec.State getExecState() {
+        return execState;
     }
 
 }

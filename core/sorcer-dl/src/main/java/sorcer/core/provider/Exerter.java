@@ -25,11 +25,11 @@ import java.rmi.RemoteException;
 
 /**
  * A functionality required for running exertions with given parameters.
- * 
+ *
  * @author Mike Sobolewski
  */
 public interface Exerter {
-	
+
 	public <T extends Mogram> T exert(T mogram, Arg... entries) throws TransactionException,
 			ExertionException, RemoteException, MogramException;
 

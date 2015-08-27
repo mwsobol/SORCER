@@ -1371,7 +1371,7 @@ public class operator {
 		}
 	}
 
-	public static <E extends Exertion> E xrt(String name, Object... elems) 
+	public static <E extends Exertion> E xrt(String name, Object... elems)
 			throws ExertionException, ContextException, SignatureException {
 		return (E) exertion(name, elems);
 	}
@@ -1387,12 +1387,12 @@ public class operator {
 				exertions.add((Mogram) items[i]);
 				if (items[i] instanceof ConditionalExertion)
 					isBlock = true;
-				} else if (items[i] instanceof Signature) {
-					sig = (Signature) items[i];
-				} else if (items[i] instanceof String) {
-					name = (String) items[i];
-				}
+			} else if (items[i] instanceof Signature) {
+				sig = (Signature) items[i];
+			} else if (items[i] instanceof String) {
+				name = (String) items[i];
 			}
+		}
 		if (isBlock || exertions.size() > 0 && sig != null
 				&& (sig.getServiceType() == Concatenator.class
 				|| sig.getServiceType() == ServiceConcatenator.class)) {
@@ -1481,8 +1481,8 @@ public class operator {
 			((ServiceContext) job.getDataContext()).setReturnPath(rp);
 		}
 
-        if (control != null)
-            job.setControlContext(control);
+		if (control != null)
+			job.setControlContext(control);
 
 		if (job instanceof NetJob && control != null) {
 			job.setControlContext(control);
@@ -1548,8 +1548,8 @@ public class operator {
 
 	public static Object get(Exertion exertion) throws ContextException,
 			RemoteException {
-        return exertion.getContext().getReturnValue();
-    }
+		return exertion.getContext().getReturnValue();
+	}
 
 	public static <T extends Evaluation> Object asis(T evaluation) throws EvaluationException {
 		if (evaluation instanceof Evaluation) {
@@ -1645,20 +1645,20 @@ public class operator {
 		return value(model, entries);
 	}
 
-    public static <T> T value(Context<T> model, Arg... entries)
-            throws ContextException {
-        try {
-            synchronized (model) {
-                if (model instanceof ParModel) {
-                    return ((ParModel<T>) model).getValue(entries);
-                } else {
-                    return (T) ((ServiceContext)model).getValue(entries);
-                }
-            }
-        } catch (Exception e) {
-            throw new ContextException(e);
-        }
-    }
+	public static <T> T value(Context<T> model, Arg... entries)
+			throws ContextException {
+		try {
+			synchronized (model) {
+				if (model instanceof ParModel) {
+					return ((ParModel<T>) model).getValue(entries);
+				} else {
+					return (T) ((ServiceContext)model).getValue(entries);
+				}
+			}
+		} catch (Exception e) {
+			throw new ContextException(e);
+		}
+	}
 
 	public static <T> T eval(Evaluation<T> evaluation, Arg... entries)
 			throws EvaluationException {
@@ -1685,52 +1685,52 @@ public class operator {
 	}
 
 	public static Object eval(Model model, String evalSelector,
-							   Arg... entries) throws ContextException {
+							  Arg... entries) throws ContextException {
 		return value((Context<Object>) model, evalSelector, entries);
 	}
 
 	public static Object value(Model model, String evalSelector,
-							  Arg... entries) throws ContextException {
+							   Arg... entries) throws ContextException {
 		return value((Context<Object>) model, evalSelector, entries);
 	}
 
 	public static <T extends Context> T exec(Service model, String evalSelector,
-							  Arg... entries) throws ContextException {
+											 Arg... entries) throws ContextException {
 		return value((Context<T>) model, evalSelector, entries);
 	}
 
 	public static <T> T eval(Context<T> model, String evalSelector,
-							  Arg... entries) throws ContextException {
+							 Arg... entries) throws ContextException {
 		return value(model, evalSelector, entries);
 	}
 
-    public static <T> T value(Context<T> model, String evalSelector,
-                              Arg... entries) throws ContextException {
-        if (model instanceof ParModel) {
-                return (T) ((ParModel) model).getValue(evalSelector,
-                        entries);
-        }  else if (model instanceof Context) {
-            try {
-                Object val = ((Context) model).getValue(evalSelector,
-                        entries);
-                if (SdbUtil.isSosURL(val)) {
-                    return (T) ((URL) val).getContent();
-                } else {
-                    return (T)val;
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-                throw new ContextException(e);
-            }
-        }
-        return null;
-    }
+	public static <T> T value(Context<T> model, String evalSelector,
+							  Arg... entries) throws ContextException {
+		if (model instanceof ParModel) {
+			return (T) ((ParModel) model).getValue(evalSelector,
+					entries);
+		}  else if (model instanceof Context) {
+			try {
+				Object val = ((Context) model).getValue(evalSelector,
+						entries);
+				if (SdbUtil.isSosURL(val)) {
+					return (T) ((URL) val).getContent();
+				} else {
+					return (T)val;
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				throw new ContextException(e);
+			}
+		}
+		return null;
+	}
 
 	public static <T> T eval(Evaluation<T> evaluation, String evalSelector,
-							  Arg... entries) throws EvaluationException {
+							 Arg... entries) throws EvaluationException {
 		return value(evaluation, evalSelector, entries);
 	}
-    
+
 	public static <T> T value(Evaluation<T> evaluation, String evalSelector,
 							  Arg... entries) throws EvaluationException {
 		if (evaluation instanceof Exertion) {
@@ -1901,7 +1901,7 @@ public class operator {
 	}
 
 	public static <T extends Exertion> T exec(Exerter exerter, Exertion input,
-											   Arg... entries) throws ExertionException {
+											  Arg... entries) throws ExertionException {
 		try {
 			return (T) exerter.exert(input, null, entries);
 		} catch (Exception e) {
@@ -1935,18 +1935,18 @@ public class operator {
 		return new ReturnPath(path, outPaths);
 	}
 
-    public static ReturnPath result(String path, In inPaths) {
-        return new ReturnPath(path, inPaths);
-    }
+	public static ReturnPath result(String path, In inPaths) {
+		return new ReturnPath(path, inPaths);
+	}
 
 	public static ReturnPath result(In inPaths) {
 		return new ReturnPath("self", inPaths);
 	}
 
-    public static ReturnPath result(String path, In inPaths, From outPaths) {
-        return new ReturnPath(path, inPaths, outPaths);
-    }
-    
+	public static ReturnPath result(String path, In inPaths, From outPaths) {
+		return new ReturnPath(path, inPaths, outPaths);
+	}
+
 	public static ReturnPath result(String path, Direction direction) {
 		return new ReturnPath(path, direction);
 	}
@@ -2355,7 +2355,7 @@ public class operator {
 					provider = providerType.newInstance();
 				} else {
 					if (signature.getSelector() == null &&
-								(((ObjectSignature)signature).getInitSelector())== null) {
+							(((ObjectSignature)signature).getInitSelector())== null) {
 						provider = ((ObjectSignature) signature).getProviderType().newInstance();
 					} else if (signature.getSelector().equals(((ObjectSignature)signature).getInitSelector())) {
 						// utility class returns a utility (class) method
@@ -2444,10 +2444,10 @@ public class operator {
 		return signature;
 	}
 
-    public static Signature model(Signature signature) {
-        ((ServiceSignature)signature).addRank(new Kind[]{Kind.MODEL, Kind.TASKER});
-        return signature;
-    }
+	public static Signature model(Signature signature) {
+		((ServiceSignature)signature).addRank(new Kind[]{Kind.MODEL, Kind.TASKER});
+		return signature;
+	}
 
 	public static Signature modelManager(Signature signature) {
 		((ServiceSignature)signature).addRank(Kind.MODEL, Kind.MODEL_MANAGER);
@@ -2480,7 +2480,7 @@ public class operator {
 				name = (String)items[i];
 			}
 		}
-			
+
 		Block block;
 		try {
 			if (sig != null) {
@@ -2491,7 +2491,7 @@ public class operator {
 			} else {
 				// default signature
 //				block = new NetBlock(name);
-                block = new ObjectBlock(name);
+				block = new ObjectBlock(name);
 			}
 
 			if (context != null) {

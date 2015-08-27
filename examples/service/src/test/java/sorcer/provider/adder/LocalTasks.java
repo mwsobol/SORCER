@@ -14,6 +14,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
+import static sorcer.eo.operator.result;
 import static sorcer.eo.operator.value;
 
 /**
@@ -24,7 +25,7 @@ import static sorcer.eo.operator.value;
 @ProjectContext("examples/service")
 public class LocalTasks {
 	private final static Logger logger = LoggerFactory.getLogger(LocalTasks.class);
-	
+
 	@Test
 	public void exertTask() throws Exception  {
 

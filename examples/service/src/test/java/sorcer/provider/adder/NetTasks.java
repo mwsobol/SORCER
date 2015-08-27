@@ -56,7 +56,7 @@ public class NetTasks {
                 cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0), result("result/y")));
 
         // get the result value
-        assertEquals(100.0, value(t5));
+        assertTrue(value(t5).equals(100.0));
 
         // get the subcontext output from the exertion
         assertTrue(context(ent("arg/x1", 20.0), ent("result/z", 100.0)).equals(
@@ -70,9 +70,9 @@ public class NetTasks {
         Task sum = task("t6", sig("sum", Adder.class),
                 cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0), result("result/y")));
 
-        assertEquals(100.0, value(sum));
-        assertEquals(200.0, value(sum));
-        assertEquals(300.0, value(sum));
+		assertTrue(value(sum).equals(100.0));
+		assertTrue(value(sum).equals(200.0));
+		assertTrue(value(sum).equals(300.0));
     }
 
     @Test

@@ -29,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
 import static sorcer.co.operator.input;
 import static sorcer.eo.operator.*;
@@ -250,7 +251,7 @@ public class ArithmeticNoNetTest implements SorcerConstants {
 		t5 = exert(t5);
 		logger.info("t5 context: " + context(t5));
 		logger.info("t5 value: " + get(t5));
-		assertEquals("Wrong value for 100.0", value(t5), 100.0);
+		assertTrue(value(t5).equals(100.0));
 	}
 
 	@Ignore
@@ -266,7 +267,7 @@ public class ArithmeticNoNetTest implements SorcerConstants {
 		t5 = exert(t5);
 		// logger.info("t5 context: " + context(t5));
 		logger.info("t5 value: " + get(t5));
-		assertEquals("Wrong value for 100.0", get(t5), 100.0);
+		assertTrue(get(t5).equals(100.0));
 	}
 
 	@Ignore

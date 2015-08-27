@@ -134,7 +134,7 @@ public class TaskTest {
 						result("result/y")));
 
 		//logger.info("t4: " + value(t4));
-		assertEquals("Wrong value for 500.0", value(t4), 500.0);
+		assertTrue(value(t4).equals(500.0));
 	}
 
 	@Test
