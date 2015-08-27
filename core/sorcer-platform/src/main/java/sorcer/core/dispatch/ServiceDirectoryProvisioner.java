@@ -69,7 +69,7 @@ public class ServiceDirectoryProvisioner implements Provisioner {
             try {
                 undeployIdleTime = Integer.parseInt(propIdleTime);
             } catch (NumberFormatException ne) {
-                logger.warn("Could not parse property: provisioing.idle.time: " + propIdleTime + " using default idle time of 60 seconds");
+                logger.warn("Could not parse property: provisioning.idle.time: " + propIdleTime + " using default idle time of 60 seconds");
             }
         }
     }
