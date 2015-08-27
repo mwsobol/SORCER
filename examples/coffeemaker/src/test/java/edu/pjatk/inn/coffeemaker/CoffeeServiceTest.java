@@ -104,9 +104,9 @@ public class CoffeeServiceTest {
 
 	@Test
 	public void getRecepies() throws Exception {
-		Exertion cmt = task(sig("recipes", CoffeeService.class));
+		Exertion cmt = task(sig("getRecipes", CoffeeService.class));
 		cmt = exert(cmt);
-		logger.info("recipes: " + context(cmt));
+		logger.info("getRecipes: " + context(cmt));
 	}
 
 	@Test

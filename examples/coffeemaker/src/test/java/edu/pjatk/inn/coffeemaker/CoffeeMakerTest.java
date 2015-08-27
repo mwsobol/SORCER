@@ -99,11 +99,11 @@ public class CoffeeMakerTest {
 		americano.setAmtChocolate(0);
 
 		Exertion cmt = job(
-				task(sig("addRecipe", CoffeeService.class),
+				task(sig("addRecipe", CoffeeMaking.class),
 					context(parameterTypes(Recipe.class), args(mocha))),
-				task(sig("addRecipe", CoffeeService.class),
+				task(sig("addRecipe", CoffeeMaking.class),
 						context(parameterTypes(Recipe.class), args(macchiato))),
-				task(sig("addRecipe", CoffeeService.class),
+				task(sig("addRecipe", CoffeeMaking.class),
 						context(parameterTypes(Recipe.class), args(americano))));
 
 		cmt = exert(cmt);
@@ -114,7 +114,7 @@ public class CoffeeMakerTest {
 	public void getRecepies() throws Exception {
 		Exertion cmt = task(sig("getRecipes", CoffeeMaking.class));
 		cmt = exert(cmt);
-		logger.info("recipes: " + context(cmt));
+		logger.info("getRecipes: " + context(cmt));
 	}
 
 	@Test

@@ -18,10 +18,10 @@ public class CoffeeMaker implements CoffeeMaking, CoffeeService {
 	private final static Logger logger = LoggerFactory.getLogger(CoffeeMaker.class);
 
 	/**
-	 * Array of recipes in coffee maker
+	 * Array of getRecipes in coffee maker
 	 */
 	private Recipe [] recipeArray;
-	/** Number of recipes in coffee maker */
+	/** Number of getRecipes in coffee maker */
 	private final int NUM_RECIPES = 4;
 	/** Array describing if the array is full */
 	private boolean [] recipeFull;
@@ -179,7 +179,7 @@ public class CoffeeMaker implements CoffeeMaking, CoffeeService {
     }
 
     /**
-     * Returns an array of all the recipes
+     * Returns an array of all the getRecipes
      * @return Recipe[]
      */
     public Recipe[] getRecipes() {
@@ -218,13 +218,13 @@ public class CoffeeMaker implements CoffeeMaking, CoffeeService {
 	}
 
 	@Override
-	public Context recipes(Context context) throws RemoteException, ContextException {
+	public Context getRecipes(Context context) throws RemoteException, ContextException {
 		List<Recipe> rl = new ArrayList<Recipe>();
 		for (Recipe r : recipeArray) {
 			if (r.getName() != "") rl.add(r);
 		}
 
-		context.putValue("recipes", rl);
+		context.putValue("getRecipes", rl);
 		return context;
 	}
 

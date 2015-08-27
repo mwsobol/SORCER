@@ -60,7 +60,7 @@ public interface CoffeeMaking {
     public int makeCoffee(Recipe r, int amtPaid) throws RemoteException;
 
     /**
-     * Returns an array of all the recipes
+     * Returns an array of all the getRecipes
      * @return Recipe[]
      */
     public Recipe[] getRecipes() throws RemoteException;
