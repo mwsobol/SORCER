@@ -23,9 +23,11 @@ import net.jini.core.lookup.ServiceItem;
 import net.jini.core.lookup.ServiceMatches;
 import net.jini.core.lookup.ServiceTemplate;
 import net.jini.lookup.ServiceItemFilter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import sorcer.core.SorcerConstants;
 import sorcer.core.provider.Cataloger;
 import sorcer.core.provider.Provider;
-import sorcer.core.SorcerConstants;
 import sorcer.core.signature.NetSignature;
 import sorcer.river.Filters;
 import sorcer.service.Accessor;
@@ -34,8 +36,6 @@ import sorcer.service.Signature;
 
 import java.rmi.RemoteException;
 import java.util.Arrays;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A utility class that provides access to SORCER services and some
@@ -138,8 +138,10 @@ public class ProviderAccessor extends ServiceAccessor implements
 			//servicer = (Service)ProviderLookup.getService(providerName, serviceType);
 			cataloger = getLocalCataloger();
 			if (cataloger != null) {
+                long t0 = System.currentTimeMillis();
+                logger.info("Use Cataloger to discover {} {}", providerName, serviceType.getName());
 				int tryNo = 0;
-				while (tryNo < ServiceAccessor.LUS_REAPEAT) {
+				while (tryNo < ServiceAccessor.LUS_REPEAT) {
 					servicer = cataloger.lookup(providerName, serviceType);
 					//servicer = (Service)cataloger.lookupItem(providerName, serviceType).service;
 					if (servicer != null)
@@ -148,14 +150,20 @@ public class ProviderAccessor extends ServiceAccessor implements
 					Thread.sleep(ServiceAccessor.WAIT_FOR);
 					tryNo++;
 				}
+                logger.info("Waited {} millis to discover {} {}", (System.currentTimeMillis()-t0), providerName, serviceType.getName());
 			}
-			// fall back on Jini LUS
-			if (servicer == null) {
-				servicer = (Provider) super.getService(providerName, serviceType);
-			}
+            // fall back on Jini LUS
+            if (servicer == null) {
+                if(cataloger!=null)
+                    logger.info("Could not find {} {} in Cataloger, discover using Lookup service",
+                                providerName, serviceType.getName());
+                else
+                    logger.info("No Cataloger, discover {} {} using Lookup service",
+                                providerName, serviceType==null?"<null>" : serviceType.getName());
+                servicer = (Provider) super.getService(providerName, serviceType);
+            }
 		} catch (Throwable ex) {
-			logger.error(ProviderAccessor.class.getName(), "getService", ex);
-			ex.printStackTrace();
+			logger.error("getService {} {}", providerName, serviceType==null?"<null>": serviceType.getName(), ex);
 		}
 		return (T) servicer;
 	}
@@ -241,7 +249,7 @@ public class ProviderAccessor extends ServiceAccessor implements
                     return null;
             }
 		} catch (Exception e) {
-			logger.error(ProviderAccessor.class.getName(), "getService", e);
+			logger.error("Problem getting Cataloger", e);
 			return null;
 		}
 	}
@@ -262,7 +270,7 @@ public class ProviderAccessor extends ServiceAccessor implements
 	 */
 	protected Provider lookup(String providerName, Class<Provider> primaryInterface) {
 		try {
-			// check if the cataloger is alive then return a reqested service
+			// check if the cataloger is alive then return a requested service
 			// provider
 			if (Accessor.isAlive((Provider) cataloger))
 				return cataloger.lookup(providerName, primaryInterface);
@@ -270,7 +278,7 @@ public class ProviderAccessor extends ServiceAccessor implements
 				// try to get a new cataloger and lookup again
 				cataloger = getService(providerNameUtil.getName(Cataloger.class), Cataloger.class);
 				if (cataloger != null) {
-					logger.info("Got service provider from Cataloger");
+					logger.debug("Got service provider from Cataloger");
 					return cataloger.lookup(providerName, primaryInterface);
 				} else {
 					// just get a provider without a Cataloger, use directly
@@ -299,9 +307,13 @@ public class ProviderAccessor extends ServiceAccessor implements
             if (cataloger != null) {
 			    try {
                     ServiceMatches matches = cataloger.lookup(template, maxMatches);
+                    logger.debug("Cataloger returned {} matches for {}", matches.totalMatches, formatServiceTemplate(template));
 			        ServiceItem[] matching = Filters.matching(matches.items, filter);
-                    if (matching.length > 0) return matching;
-					else return super.getServiceItems(template, minMatches, maxMatches, filter, groups, 3);
+                    if (matching.length > 0) {
+                        return matching;
+                    } else {
+                        return super.getServiceItems(template, minMatches, maxMatches, filter, groups);
+                    }
                 } catch (RemoteException e) {
                     logger.error( "Problem with Cataloger, falling back", e);
                 }
