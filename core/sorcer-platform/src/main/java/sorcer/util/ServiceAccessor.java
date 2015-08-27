@@ -17,10 +17,6 @@
 
 package sorcer.util;
 
-import java.io.IOException;
-import java.rmi.RemoteException;
-import java.util.*;
-
 import net.jini.core.discovery.LookupLocator;
 import net.jini.core.entry.Entry;
 import net.jini.core.lookup.ServiceID;
@@ -39,6 +35,10 @@ import sorcer.core.SorcerConstants;
 import sorcer.service.DynamicAccessor;
 import sorcer.service.Signature;
 import sorcer.service.SignatureException;
+
+import java.io.IOException;
+import java.rmi.RemoteException;
+import java.util.*;
 
 /**
  * A service discovery and management utility allowing to access services by
@@ -94,6 +94,10 @@ public class ServiceAccessor implements DynamicAccessor {
 
     public ServiceAccessor() {
         openDiscoveryManagement(SorcerEnv.getLookupGroups());
+    }
+
+    public ServiceDiscoveryManager getServiceDiscoveryManager() {
+        return sdManager;
     }
 
 	/**

@@ -146,8 +146,7 @@ abstract public class ExertRequestor implements Requestor, SorcerConstants {
 				}
 				if (!filterMapList.isEmpty()) {
 					try {
-						listener = new RemoteLoggerListener(System.out);
-						listener.register(filterMapList);
+						listener = new RemoteLoggerListener(filterMapList, System.out);
 					} catch (LoggerRemoteException lre) {
 						logger.warn("Remote logging disabled: " + lre.getMessage());
 						listener = null;

@@ -170,8 +170,8 @@ public class ExertCmd extends ShellCmd {
             }
             if (!filterMapList.isEmpty()) {
                 try {
-                    listener = new RemoteLoggerListener(out);
-                    listener.register(filterMapList);
+                    listener = new RemoteLoggerListener(filterMapList);
+                    //listener.register(filterMapList);
                 } catch (LoggerRemoteException lre) {
                     out.append("Remote logging disabled: " + lre.getMessage());
                     listener = null;

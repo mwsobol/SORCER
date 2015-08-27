@@ -316,28 +316,25 @@ public class EditorView extends JPanel implements HyperlinkListener {
 
 	}
 
-	private void createRemoteLoggerListener(Mogram target) {
-		if (target instanceof Mogram) {
-			java.util.List<Map<String, String>> filterMapList = new ArrayList<Map<String, String>>();
-			for (String exId : ((ServiceMogram) target).getAllMogramIds()) {
-				Map<String, String> map = new HashMap<String, String>();
-				map.put(RemoteLogger.KEY_MOGRAM_ID, exId);
-				filterMapList.add(map);
-			}
-			if (!filterMapList.isEmpty()) {
-				try {
-					listener = new RemoteLoggerListener(new PrintStream(
-							new TextAreaPrintStream(feedbackPane)));
-					listener.register(filterMapList);
-				} catch (LoggerRemoteException lre) {
-					logger.warn("Remote logging disabled: " + lre.getMessage());
-					listener = null;
-				}
-			}
-		}
-	}
+    private void createRemoteLoggerListener(Mogram target) {
+        java.util.List<Map<String, String>> filterMapList = new ArrayList<Map<String, String>>();
+        for (String exId : ((ServiceMogram) target).getAllMogramIds()) {
+            Map<String, String> map = new HashMap<String, String>();
+            map.put(RemoteLogger.KEY_MOGRAM_ID, exId);
+            filterMapList.add(map);
+        }
+        if (!filterMapList.isEmpty()) {
+            try {
+                listener = new RemoteLoggerListener(filterMapList,
+                                                    new PrintStream(new TextAreaPrintStream(feedbackPane)));
+            } catch (LoggerRemoteException lre) {
+                logger.warn("Remote logging disabled: " + lre.getMessage());
+                listener = null;
+            }
+        }
+    }
 
-	class EditActionListener implements ActionListener {
+    class EditActionListener implements ActionListener {
 		public void actionPerformed(ActionEvent event) {
 			String url;
 			if (event.getSource() == urlField) {
@@ -399,11 +396,9 @@ public class EditorView extends JPanel implements HyperlinkListener {
 			} else if (EXIT_LABEL.equals(command)) {
 				// tabbedPane.remove(tabbedPane.getTabCount()-1);
 				tabbedPane.remove(EditorView.this);
-				if (listener != null) try {
+				if (listener != null)
 					listener.destroy();
-				} catch (LoggerRemoteException e) {
-					logger.warn("Error while destoying RemoteLogger listener", e);
-				}
+
 				return;
 			} else if (GET_CONTEXT_LABEL.equals(command)) {
 				try {

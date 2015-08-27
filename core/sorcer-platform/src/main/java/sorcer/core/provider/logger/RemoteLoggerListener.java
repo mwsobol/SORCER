@@ -6,21 +6,30 @@ import net.jini.core.event.RemoteEvent;
 import net.jini.core.event.RemoteEventListener;
 import net.jini.core.event.UnknownEventException;
 import net.jini.core.lease.Lease;
+import net.jini.core.lease.LeaseDeniedException;
+import net.jini.core.lease.UnknownLeaseException;
 import net.jini.core.lookup.ServiceItem;
+import net.jini.core.lookup.ServiceTemplate;
 import net.jini.export.Exporter;
 import net.jini.jeri.BasicILFactory;
 import net.jini.jeri.BasicJeriExporter;
 import net.jini.jeri.tcp.TcpServerEndpoint;
 import net.jini.lease.LeaseRenewalManager;
+import net.jini.lookup.LookupCache;
+import net.jini.lookup.ServiceDiscoveryEvent;
+import org.rioproject.impl.client.ServiceDiscoveryAdapter;
 import org.slf4j.LoggerFactory;
 import sorcer.core.provider.RemoteLogger;
 import sorcer.service.Accessor;
+import sorcer.util.ServiceAccessor;
 import sorcer.util.Sorcer;
 
 import java.io.PrintStream;
+import java.net.UnknownHostException;
 import java.rmi.RemoteException;
+import java.rmi.server.ExportException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -35,66 +44,84 @@ public class RemoteLoggerListener implements RemoteEventListener {
     private static final int MIN_LEASE = 30000;
     private RemoteEventListener proxy = null;
     private Exporter exporter = null;
-    private EventRegistration eventRegistration = null;
-    private List<Map<String,String>> filterMapList;
-    private List<RemoteLogger> loggers = new ArrayList<RemoteLogger>();
-    private PrintStream out;
-    public RemoteLoggerListener(PrintStream out) {
+    private final Map<RemoteLogger, EventRegistration> eventRegistrations = new HashMap<>();
+    private final List<Map<String,String>> filterMapList;
+    private final PrintStream out;
+    private LookupCache lookupCache;
+
+    public RemoteLoggerListener(List<Map<String, String>> filterMapList) throws LoggerRemoteException {
+        this(filterMapList, System.err);
+    }
+
+    public RemoteLoggerListener(List<Map<String, String>> filterMapList, PrintStream out) throws LoggerRemoteException {
         this.out = out;
-    }
-
-    /*
-	* The arguments should be passed as proxies such that they
-	* can be used directly by listener.
-	*/
-    public void register(List<Map<String, String>> filterMapList) throws LoggerRemoteException {
-        ServiceItem[] sItems = Accessor.getServiceItems(RemoteLogger.class, null);
-        List<RemoteLogger> lrs = new ArrayList<RemoteLogger>();
-        for (ServiceItem sItem : sItems) {
-            lrs.add((RemoteLogger) sItem.service);
-        }
-        register(lrs, filterMapList);
-    }
-
-
-    public void register(List<RemoteLogger> loggers, List<Map<String, String>> filterMapList) throws LoggerRemoteException {
+        this.filterMapList = filterMapList;
+        ServiceAccessor serviceAccessor = (ServiceAccessor) Accessor.nonCachingAccessor;
+        ServiceTemplate serviceTemplate = new ServiceTemplate(null, new Class[] { RemoteLogger.class }, null);
         try {
-            if (loggers.isEmpty()) throw new LoggerRemoteException("No remoteLoggers found");
-            this.loggers = loggers;
-            this.filterMapList = filterMapList;
-            //Make a proxy of myself to pass to the server/filter
-            exporter = new BasicJeriExporter(TcpServerEndpoint.getInstance(Sorcer.getHostAddress(), 0),
-                    new BasicILFactory());
+            export();
+            lookupCache = serviceAccessor.getServiceDiscoveryManager().createLookupCache(serviceTemplate, null, new RemoteLoggerDiscoveryListener());
+        } catch (UnknownHostException | RemoteException e) {
+            throw new LoggerRemoteException("Exception while initializing Listener ", e);
+        }
+    }
+
+    class RemoteLoggerDiscoveryListener extends ServiceDiscoveryAdapter {
+
+        @Override public void serviceAdded(ServiceDiscoveryEvent sdEvent) {
+            ServiceItem item = sdEvent.getPostEventServiceItem();
+            logger.info("Discovered {}", item);
+            register((RemoteLogger) item.service);
+        }
+
+        @Override public void serviceRemoved(ServiceDiscoveryEvent sdEvent) {
+            ServiceItem item = sdEvent.getPreEventServiceItem();
+            if(eventRegistrations.remove((RemoteLogger)item.service)!=null)
+                logger.debug("Removed {}", item.service);
+        }
+    }
+
+
+    private void export() throws ExportException, UnknownHostException {
+        if(exporter==null)
+            exporter = new BasicJeriExporter(TcpServerEndpoint.getInstance(Sorcer.getHostAddress(), 0), new BasicILFactory());
+        if(proxy==null)
             proxy = (RemoteEventListener)exporter.export(this);
-            //register as listener with server and passing the
-            //event registration to the filter while registering there.
-            for (RemoteLogger remoteLogger : loggers) {
-                logger.debug("Registering with remote logger: " + remoteLogger);
-                eventRegistration = remoteLogger.registerLogListener(proxy, null, Lease.FOREVER, filterMapList);
-                logger.debug("Got registration " + eventRegistration.getID() + " " + eventRegistration.getSource() + " " + eventRegistration.toString());
+    }
+
+    void register(RemoteLogger... loggers)  {
+        if (loggers.length==0) {
+            logger.warn("No remoteLoggers found");
+            return;
+        }
+
+        for (RemoteLogger remoteLogger : loggers) {
+            try {
+                logger.debug("Registering with remote logger: {}", remoteLogger);
+                EventRegistration eventRegistration = remoteLogger.registerLogListener(proxy, null, Lease.FOREVER, filterMapList);
+                logger.debug("Got registration {} {} {}",
+                             eventRegistration.getID(), eventRegistration.getSource(), eventRegistration.toString());
                 Lease providersEventLease = eventRegistration.getLease();
                 LeaseRenewalManager lrm = new LeaseRenewalManager();
                 providersEventLease.renew(Lease.ANY);
                 lrm.renewUntil(providersEventLease, Lease.FOREVER, MIN_LEASE, null);
+                eventRegistrations.put(remoteLogger, eventRegistration);
+            } catch(LeaseDeniedException | UnknownLeaseException | RemoteException e) {
+                logger.warn("Unable to register to remoteLogger {}", remoteLogger, e);
             }
-        } catch (Exception e){
-            throw new LoggerRemoteException("Exception while initializing Listener " ,e);
         }
     }
 
-    public void destroy() throws LoggerRemoteException {
-        try {
-            if (eventRegistration != null) {
-                for (RemoteLogger remoteLogger : loggers) {
-                    remoteLogger.unregisterLogListener(eventRegistration);
-                }
-            } else {
-                throw new LoggerRemoteException("EventRegistration is NULL - maybe never registered to Remote Logger");
+    public void destroy() {
+        for (Map.Entry<RemoteLogger, EventRegistration> entry : eventRegistrations.entrySet()) {
+            try {
+                entry.getKey().unregisterLogListener(entry.getValue());
+            } catch (RemoteException e) {
+                logger.warn("Error unregistering from {}", entry.getKey(), e);
             }
-            if (exporter != null) exporter.unexport(true);
-        } catch (RemoteException re) {
-            throw new LoggerRemoteException("Problem destroying RemoteLoggerListener: " ,re);
         }
+        if (exporter != null)
+            exporter.unexport(true);
     }
 
     @Override
