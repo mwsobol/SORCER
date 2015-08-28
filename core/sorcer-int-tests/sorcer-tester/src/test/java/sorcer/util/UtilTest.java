@@ -91,7 +91,6 @@ public class UtilTest {
 		assertNotNull(si);
 	}
 
-
 	@Test
 	 public void fileTable() throws Exception {
 		Uuid key1 = net.jini.id.UuidFactory.generate();
