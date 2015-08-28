@@ -296,11 +296,11 @@ public class operator {
 		for (Object o : entries) {
 			if (o instanceof Complement) {
 				subject = (Complement) o;
-			} else if (o instanceof Args
-					&& ((Args) o).args.getClass().isArray()) {
+			} else if (o instanceof Args) {
+//					&& ((Args) o).args.getClass().isArray()) {
 				cxtArgs = (Args) o;
-			} else if (o instanceof ParameterTypes
-					&& ((ParameterTypes) o).parameterTypes.getClass().isArray()) {
+			} else if (o instanceof ParameterTypes)  {
+//					&& ((ParameterTypes) o).parameterTypes.getClass().isArray()) {
 				parameterTypes = (ParameterTypes) o;
 			} else if (o instanceof PathResponse) {
 				response = (PathResponse) o;
@@ -1420,7 +1420,7 @@ public class operator {
 
 	public static Job job(Object... elems) throws ExertionException,
 			ContextException, SignatureException {
-		String name = getUnknown();
+		String name = "job-" + count++;
 		Signature signature = null;
 		ControlContext control = null;
 		Context<?> data = null;

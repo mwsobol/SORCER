@@ -246,7 +246,7 @@ public class Table implements ModelTable {
 	 * <p>
 	 * 
 	 * @return the List of list containing the tables data values
-	 * 
+	 *
 	 * @see #newDataAvailable
 	 * @see #newRowsAdded
 	 * @see #setDataList
@@ -490,7 +490,7 @@ public class Table implements ModelTable {
 	 * the number of <code>newIdentifier</code>s is less than the current number
 	 * of columns, all the extra columns at the end of a row are discarded.
 	 * <p>
-	 * 
+	 *
 	 * @param columnIdentifiers
 	 *            list of column identifiers. If <code>null</code>, set the
 	 *            model to zero columns
@@ -511,7 +511,7 @@ public class Table implements ModelTable {
 	 * the number of <code>newIdentifier</code>s is less than the current number
 	 * of columns, all the extra columns at the end of a row are discarded.
 	 * <p>
-	 * 
+	 *
 	 * @param newIdentifiers
 	 *            array of column identifiers. If <code>null</code>, set the
 	 *            model to zero columns
@@ -527,7 +527,7 @@ public class Table implements ModelTable {
 	 * <code>null</code> cell values. If the new size is less than the current
 	 * size, all columns at index <code>columnCount</code> and greater are
 	 * discarded.
-	 * 
+	 *
 	 * @param columnCount
 	 *            the new number of columns in the model
 	 */
@@ -649,7 +649,7 @@ public class Table implements ModelTable {
 	 * starting with the first element going to row 0, etc. This method will
 	 * send a <code>tableChanged</code> notification message to all the
 	 * listeners.
-	 * 
+	 *
 	 * @see #addColumn(Object, List)
 	 */
 	public void addColumn(String columnName, Object[] columnData) {

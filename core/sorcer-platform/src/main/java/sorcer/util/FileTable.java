@@ -15,12 +15,20 @@
  */
 package sorcer.util;
 
+import sorcer.core.provider.Provider;
+import sorcer.service.Identifiable;
+import sorcer.service.Identity;
+import sorcer.service.Signature;
+
 import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.*;
 import java.rmi.*;
+import java.util.Collections;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class FileTable<K,V> implements Runnable {
+public class FileTable<K,V> extends Identity implements Runnable, ModelTable {
 
 	// Object File
 	ObjectFile ofl;
@@ -35,8 +43,23 @@ public class FileTable<K,V> implements Runnable {
 
 	boolean running = true;
 
-	public FileTable(String fileName) throws IOException {
+	protected String inputFileName;
+	protected URL inputTableURL;
+	protected String inputTableDelimiter;
+	protected String outputFileName;
+	protected URL outputTableURL;
+	protected String outputTableDelimiter;
+	protected Signature outputStorageSignature;
+	protected transient Provider provider;
+	protected boolean includeHeaderInWrite;
+	protected List<String> columnIdentifiers;
+	protected List<Object> rowIdentifiers;
+	protected boolean lazy;
+	protected Table.Cell cellType;
+	protected static int count = 0;
 
+	public FileTable(String fileName) throws IOException {
+		name = fileName;
 		this.fileName = fileName;
 
 		ofl = new ObjectFile(fileName +".obf");
@@ -242,5 +265,256 @@ public class FileTable<K,V> implements Runnable {
 		}
 	}
 
+	/**
+	 * <p>
+	 * Returns the output file for this table.
+	 * </p>
+	 *
+	 * @return the inputFile
+	 */
+	public String getInputFile() {
+		return inputFileName;
+	}
+
+	/**
+	 * <p>
+	 * Sets the output file for this table.
+	 * </p>
+	 *
+	 * @param inputFile
+	 *            the inputFile to set
+	 */
+	public void setInputFile(String inputFile) {
+		this.inputFileName = inputFile;
+	}
+
+	/**
+	 * <p>
+	 * Returns the output file for this table.
+	 * </p>
+	 *
+	 * @return the outputFile
+	 */
+	public String getOutputFile() {
+		return outputFileName;
+	}
+
+	/**
+	 * <p>
+	 * Sets the output file for this table.
+	 * </p>
+	 *
+	 * @param outputFile
+	 *            the outputFile to set
+	 */
+	public void setOutputFile(String outputFile) {
+		this.outputFileName = outputFile;
+	}
+
+	/**
+	 * <p>
+	 * Sets the output URL for this table.
+	 * </p>
+	 *
+	 * @return the outputURL
+	 */
+	public URL getOutputURL() {
+		return outputTableURL;
+	}
+
+	/**
+	 * <p>
+	 * Sets the output URL for this table.
+	 * </p>
+	 *
+	 * @param outputURL
+	 *            the outputURL to set
+	 */
+	public void setOutputURL(URL outputURL) {
+		this.outputTableURL = outputURL;
+	}
+
+	/**
+	 * <p>
+	 * Sets the input URL for this table.
+	 * </p>
+	 *
+	 * @return the inputURL
+	 */
+	public URL getInputURL() {
+		return inputTableURL;
+	}
+
+	/**
+	 * <p>
+	 * Sets the input URL for this table.
+	 * </p>
+	 *
+	 * @param inputURL
+	 *            the inputURL to set
+	 */
+	public void setInputURL(URL inputURL) {
+		this.inputTableURL = inputURL;
+	}
+
+	public void setOutput(String location) throws MalformedURLException {
+		if (location != null) {
+			if (location.startsWith("http://") || location.startsWith("sos://"))
+				outputTableURL = new URL(location);
+			else
+				outputFileName = location;
+		}
+	}
+
+	public void setInput(String location) throws MalformedURLException {
+		setInput(location, null);
+	}
+
+	public void setInput(String location, String inDelimiter) throws MalformedURLException {
+		if (location != null) {
+			if (location.startsWith("http://") || location.startsWith("sos://"))
+				inputTableURL = new URL(location);
+			else
+				inputFileName = location;
+		}
+		if (inDelimiter != null)
+			this.inputTableDelimiter = inDelimiter;
+	}
+
+	/**
+	 * <p>
+	 * Returns the input delimiter for this table.
+	 * </p>
+	 *
+	 * @return the inDelimiter
+	 */
+	public String getInDelimiter() {
+		return inputTableDelimiter;
+	}
+
+	/**
+	 * <p>
+	 * Sets the input delimiter for this table.
+	 * </p>
+	 *
+	 * @param inDelimiter
+	 *            the inDelimiter to set
+	 */
+	public void setInDelimiter(String inDelimiter) {
+		this.inputTableDelimiter = inDelimiter;
+	}
+
+	/**
+	 * <p>
+	 * Returns the output delimiter for this table.
+	 * </p>
+	 *
+	 * @return the outDelimiter
+	 */
+	public String getOutDelimiter() {
+		return outputTableDelimiter;
+	}
+
+	/**
+	 * <p>
+	 * Sets the output delimiter for this table.
+	 * </p>
+	 *
+	 * @param outDelimiter
+	 *            the outDelimiter to set
+	 */
+	public void setOutDelimiter(String outDelimiter) {
+		this.outputTableDelimiter = outDelimiter;
+	}
+
+	public List<String> getColumnIdentifiers(){
+		return columnIdentifiers;
+	}
+
+	public void setRowIdentifier(String rowIdentifier, int index) {
+		if (index >= rowIdentifiers.size()) rowIdentifiers.add(rowIdentifier);
+		else rowIdentifiers.add(index, rowIdentifier);
+	}
+
+	public List<Object> getRowIdentifiers(){
+		return rowIdentifiers;
+	}
+
+	/**
+	 * Replaces the column identifiers in the model. If the number of
+	 * <code>newIdentifier</code>s is greater than the current number of
+	 * columns, new columns are added to the end of each row in the model. If
+	 * the number of <code>newIdentifier</code>s is less than the current number
+	 * of columns, all the extra columns at the end of a row are discarded.
+	 * <p>
+	 *
+	 * @param columnIdentifiers
+	 *            list of column identifiers. If <code>null</code>, set the
+	 *            model to zero columns
+	 */
+	public void setColumnIdentifiers(List columnIdentifiers) {
+		this.columnIdentifiers = nonNullList(columnIdentifiers);
+	}
+
+	protected static List nonNullList(List l) {
+		return (l != null) ? l : newList();
+	}
+
+	private static List<?> newList() {
+		List<?> l = new ArrayList<Object>();
+		return Collections.synchronizedList(l);
+	}
+
+	public void setRowIdentifiers(List rowIdentifiers) {
+		this.rowIdentifiers = rowIdentifiers;
+	}
+
+	/**
+	 * Replaces the column identifiers in the model. If the number of
+	 * <code>newIdentifier</code>s is greater than the current number of
+	 * columns, new columns are added to the end of each row in the model. If
+	 * the number of <code>newIdentifier</code>s is less than the current number
+	 * of columns, all the extra columns at the end of a row are discarded.
+	 * <p>
+	 *
+	 * @param newIdentifiers
+	 *            array of column identifiers. If <code>null</code>, set the
+	 *            model to zero columns
+	 */
+	public void setColumnIdentifiers(Object[] newIdentifiers) {
+		setColumnIdentifiers(convertToList(newIdentifiers));
+	}
+
+
+	/**
+	 * Returns a list that contains the same objects as the array.
+	 *
+	 * @param anArray
+	 *            the array to be converted
+	 * @return the new list; if <code>anArray</code> is <code>null</code>,
+	 *         returns <code>null</code>
+	 */
+	protected static List convertToList(Object[] anArray) {
+		if (anArray == null) {
+			return null;
+		}
+		List l = new ArrayList(anArray.length);
+		for (int i = 0; i < anArray.length; i++) {
+			l.add(anArray[i]);
+		}
+		return l;
+	}
+
+	/**
+	 * Returns the number of rows in this data table.
+	 *
+	 * @return the number of rows in the model
+	 */
+	public int getRowCount() {
+		if (table == null)
+			return 0;
+		else
+			return table.size();
+	}
 }
 

@@ -3,8 +3,9 @@ package edu.pjatk.inn.coffeemaker;
 import edu.pjatk.inn.coffeemaker.impl.CoffeeMaker;
 import edu.pjatk.inn.coffeemaker.impl.Inventory;
 import edu.pjatk.inn.coffeemaker.impl.Recipe;
+import org.junit.After;
 import org.junit.Before;
-import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -20,6 +21,7 @@ import static edu.pjatk.inn.coffeemaker.impl.Recipe.recipe;
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
+import static sorcer.eo.operator.args;
 import static sorcer.mo.operator.response;
 import static sorcer.po.operator.invoker;
 
@@ -33,40 +35,64 @@ public class CoffeeServiceTest {
 
 	private CoffeeMaker cm;
 	private Inventory i;
-	private Recipe r1;
-	private Context rc;
+	private Context espresso, mocha, macchiato, americano;
+	private Recipe re;
 
 	@Before
 	public void setUp() throws ContextException {
 		cm = new CoffeeMaker();
 		i = cm.checkInventory();
 
-		r1 = new Recipe();
-		r1.setName("espresso");
-		r1.setPrice(50);
-		r1.setAmtCoffee(6);
-		r1.setAmtMilk(1);
-		r1.setAmtSugar(1);
-		r1.setAmtChocolate(0);
+		re = new Recipe();
+		re.setName("espresso");
+		re.setPrice(50);
+		re.setAmtCoffee(6);
+		re.setAmtMilk(1);
+		re.setAmtSugar(1);
+		re.setAmtChocolate(0);
 
-		rc = context(ent("name", "espresso"), ent("price", 50),
+		espresso = context(ent("name", "espresso"), ent("price", 50),
 				ent("amtCoffee", 6), ent("amtMilk", 0),
 				ent("amtSugar", 1), ent("amtChocolate", 0));
+
+		mocha  = context(ent("name", "mocha"), ent("price", 100),
+				ent("amtCoffee", 8), ent("amtMilk", 1),
+				ent("amtSugar", 1), ent("amtChocolate", 2));
+
+		macchiato  = context(ent("name", "macchiato"), ent("price", 40),
+				ent("amtCoffee", 7), ent("amtMilk", 1),
+				ent("amtSugar", 2), ent("amtChocolate", 0));
+
+		americano  = context(ent("name", "americano"), ent("price", 40),
+				ent("amtCoffee", 4), ent("amtMilk", 0),
+				ent("amtSugar", 1), ent("amtChocolate", 0));
+
+	}
+
+
+	@After
+	public void cleanUp() throws Exception {
+		Exertion cmt =
+				task(sig("deleteRecipes", CoffeeMaking.class),
+						context(parameterTypes(), args()));
+
+		cmt = exert(cmt);
+		logger.info("deleted recipes context: " + context(cmt));
 	}
 
 	@Test
 	public void testAddRecipe() {
-		assertTrue(cm.addRecipe(r1));
+		assertTrue(cm.addRecipe(re));
 	}
 
 	@Test
 	public void testContextCofee() throws ContextException {
-		assertTrue(recipe(rc).getAmtCoffee() == 6);
+		assertTrue(recipe(espresso).getAmtCoffee() == 6);
 	}
 
 	@Test
 	public void testContextMilk() throws ContextException {
-		assertTrue(recipe(rc).getAmtMilk() == 1);
+		assertTrue(recipe(espresso).getAmtMilk() == 0);
 	}
 
 	@Test
@@ -82,18 +108,6 @@ public class CoffeeServiceTest {
 
 	@Test
 	public void addRecipes() throws Exception {
-		Context mocha  = context(ent("name", "mocha"), ent("price", 100),
-				ent("amtCoffee", 8), ent("amtMilk", 1),
-				ent("amtSugar", 1), ent("amtChocolate", 2));
-
-		Context macchiato  = context(ent("name", "macchiato"), ent("price", 40),
-				ent("amtCoffee", 7), ent("amtMilk", 1),
-				ent("amtSugar", 2), ent("amtChocolate", 0));
-
-		Context americano  = context(ent("name", "americano"), ent("price", 40),
-				ent("amtCoffee", 4), ent("amtMilk", 0),
-				ent("amtSugar", 1), ent("amtChocolate", 0));
-
 		Exertion cmt = job(task(sig("addRecipe", CoffeeService.class), mocha),
 				task(sig("addRecipe", CoffeeService.class), macchiato),
 				task(sig("addRecipe", CoffeeService.class), americano));
@@ -109,6 +123,7 @@ public class CoffeeServiceTest {
 		logger.info("getRecipes: " + context(cmt));
 	}
 
+	@Ignore
 	@Test
 	public void deliverCoffee() throws Exception {
 

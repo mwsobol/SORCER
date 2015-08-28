@@ -96,7 +96,22 @@ public class CoffeeMaker implements CoffeeMaking, CoffeeService {
         }
         return canDeleteRecipe;
     }
-    
+
+	/**
+	 * Returns true if the recipe were deleted from the
+	 * coffee maker
+	 * @return boolean
+	 */
+	public boolean deleteRecipes() {
+		boolean canDeleteRecipes = false;
+		for (int i = 0; i < NUM_RECIPES; i++) {
+			recipeArray[i] = new Recipe();
+			recipeFull[i] = false;
+			canDeleteRecipes = true;
+		}
+		return canDeleteRecipes;
+	}
+
     /**
      * Returns true if the recipe is successfully edited
      * @param oldRecipe
