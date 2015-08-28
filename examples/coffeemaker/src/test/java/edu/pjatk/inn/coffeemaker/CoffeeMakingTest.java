@@ -11,12 +11,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
-import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.service.Context;
 import sorcer.service.ContextException;
 import sorcer.service.Exertion;
-
-import java.util.Arrays;
+import sorcer.service.Task;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -27,18 +25,13 @@ import static sorcer.eo.operator.*;
  */
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/coffeemaker")
-public class CoffeeMakerTest {
-	private final static Logger logger = LoggerFactory.getLogger(CoffeeMakerTest.class);
+public class CoffeeMakingTest {
+	private final static Logger logger = LoggerFactory.getLogger(CoffeeMakingTest.class);
 
-	private CoffeeMaker cm;
-	private Inventory i;
 	private Recipe espresso, mocha, macchiato, americano;
 
 	@Before
 	public void setUp() throws ContextException {
-		cm = new CoffeeMaker();
-		i = cm.checkInventory();
-
 		espresso = new Recipe();
 		espresso.setName("espresso");
 		espresso.setPrice(50);
@@ -72,9 +65,14 @@ public class CoffeeMakerTest {
 		americano.setAmtChocolate(0);
 	}
 
-	@Test
-	public void testAddRecipe() {
-		assertTrue(cm.addRecipe(espresso));
+	@After
+	public void cleanUp() throws Exception {
+		Exertion cmt =
+				task(sig("deleteRecipes", CoffeeMaking.class),
+						context(parameterTypes(), args()));
+
+		cmt = exert(cmt);
+		logger.info("deleted recipes context: " + context(cmt));
 	}
 
 	@Test
@@ -89,34 +87,21 @@ public class CoffeeMakerTest {
 
 	@Test
 	public void addRecepie() throws Exception {
-		cm.addRecipe(mocha);
-		assertEquals(cm.getRecipeForName("mocha").getName(), "mocha");
-	}
+		Task cmt = task(sig("addRecipe", CoffeeMaking.class),
+				context(parameterTypes(Recipe.class), args(espresso),
+						result("recipe/added")));
 
-	@Test
-	public void addContextRecepie() throws Exception {
-		cm.addRecipe(Recipe.getContext(mocha));
-		assertEquals(cm.getRecipeForName("mocha").getName(), "mocha");
-	}
-
-	@Test
-	public void addServiceRecepie() throws Exception {
-		Exertion cmt = task(sig("addRecipe", cm),
-						context(parameterTypes(Recipe.class), args(espresso),
-							result("recipe/added")));
-
-		logger.info("isAdded: " + value(cmt));
-		assertEquals(cm.getRecipeForName("espresso").getName(), "espresso");
+		assertEquals(value(cmt), true);
 	}
 
 	@Test
 	public void addRecipes() throws Exception {
-		Exertion cmj = job("recipes", sig("execute", ServiceJobber.class),
-				task("mocha", sig("addRecipe", cm),
+		Exertion cmj = job("recipes",
+				task("mocha", sig("addRecipe", CoffeeMaking.class),
 					context(parameterTypes(Recipe.class), args(mocha))),
-				task("macchiato", sig("addRecipe", cm),
+				task("macchiato", sig("addRecipe", CoffeeMaking.class),
 						context(parameterTypes(Recipe.class), args(macchiato))),
-				task("americano", sig("addRecipe", cm),
+				task("americano", sig("addRecipe", CoffeeMaking.class),
 						context(parameterTypes(Recipe.class), args(americano))));
 
 		cmj = exert(cmj);
@@ -125,22 +110,23 @@ public class CoffeeMakerTest {
 		assertEquals(value(out, "recipes/mocha/context/result"), true);
 		assertEquals(value(out, "recipes/macchiato/context/result"), true);
 		assertEquals(value(out, "recipes/americano/context/result"), true);
+	}
 
-		Exertion cmt = task(sig("getRecipes", cm),
+	@Test
+	public void getRecepies() throws Exception {
+		Exertion cmt = task(sig("getRecipes", CoffeeMaking.class),
 				context(parameterTypes(), args()));
 		cmt = exert(cmt);
-//		logger.info("getRecipes: " + context(cmt));
-		assertEquals(cm.getRecipeForName("mocha").getName(), "mocha");
-		assertEquals(cm.getRecipeForName("macchiato").getName(), "macchiato");
-		assertEquals(cm.getRecipeForName("americano").getName(), "americano");
+		logger.info("getRecipes: " + context(cmt));
 	}
 
 	@Test
 	public void makeCoffee() throws Exception {
-		Exertion cmj = job("coffee", sig("execute", ServiceJobber.class),
-				task("recipe", sig("addRecipe", cm),
+
+		Exertion cmj = job("coffee",
+				task("recipe", sig("addRecipe", CoffeeMaking.class),
 						context(parameterTypes(Recipe.class), args(espresso))),
-				task("pay", sig("makeCoffee",cm),
+				task("pay", sig("makeCoffee", CoffeeMaking.class),
 						context(parameterTypes(Recipe.class, int.class), args(espresso, 200))));
 		cmj = exert(cmj);
 		logger.info("job context: " + upcontext(cmj));

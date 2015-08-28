@@ -1,7 +1,5 @@
 package edu.pjatk.inn.coffeemaker;
 
-import edu.pjatk.inn.coffeemaker.impl.CoffeeMaker;
-import edu.pjatk.inn.coffeemaker.impl.Inventory;
 import edu.pjatk.inn.coffeemaker.impl.Recipe;
 import org.junit.After;
 import org.junit.Before;
@@ -17,7 +15,7 @@ import sorcer.service.ContextException;
 import sorcer.service.Exertion;
 import sorcer.service.modeling.Model;
 
-import static edu.pjatk.inn.coffeemaker.impl.Recipe.recipe;
+import static edu.pjatk.inn.coffeemaker.impl.Recipe.getRecipe;
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
@@ -33,23 +31,18 @@ import static sorcer.po.operator.invoker;
 public class CoffeeServiceTest {
 	private final static Logger logger = LoggerFactory.getLogger(CoffeeServiceTest.class);
 
-	private CoffeeMaker cm;
-	private Inventory i;
 	private Context espresso, mocha, macchiato, americano;
-	private Recipe re;
+	private Recipe recipe;
 
 	@Before
 	public void setUp() throws ContextException {
-		cm = new CoffeeMaker();
-		i = cm.checkInventory();
-
-		re = new Recipe();
-		re.setName("espresso");
-		re.setPrice(50);
-		re.setAmtCoffee(6);
-		re.setAmtMilk(1);
-		re.setAmtSugar(1);
-		re.setAmtChocolate(0);
+		recipe = new Recipe();
+		recipe.setName("espresso");
+		recipe.setPrice(50);
+		recipe.setAmtCoffee(6);
+		recipe.setAmtMilk(1);
+		recipe.setAmtSugar(1);
+		recipe.setAmtChocolate(0);
 
 		espresso = context(ent("name", "espresso"), ent("price", 50),
 				ent("amtCoffee", 6), ent("amtMilk", 0),
@@ -81,18 +74,13 @@ public class CoffeeServiceTest {
 	}
 
 	@Test
-	public void testAddRecipe() {
-		assertTrue(cm.addRecipe(re));
-	}
-
-	@Test
 	public void testContextCofee() throws ContextException {
-		assertTrue(recipe(espresso).getAmtCoffee() == 6);
+		assertTrue(getRecipe(espresso).getAmtCoffee() == 6);
 	}
 
 	@Test
 	public void testContextMilk() throws ContextException {
-		assertTrue(recipe(espresso).getAmtMilk() == 0);
+		assertTrue(getRecipe(espresso).getAmtMilk() == 0);
 	}
 
 	@Test

@@ -226,7 +226,7 @@ public class CoffeeMaker implements CoffeeMaking, CoffeeService {
 	// Implementation of CoffeeService
 	@Override
 	public Context addRecipe(Context context) throws RemoteException, ContextException {
-		Recipe r = Recipe.recipe(context);
+		Recipe r = Recipe.getRecipe(context);
 		boolean isAdded = addRecipe(r);
 		context.putValue("recipe/added", isAdded);
 		return context;
