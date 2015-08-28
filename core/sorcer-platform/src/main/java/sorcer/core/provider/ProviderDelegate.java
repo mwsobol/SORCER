@@ -1620,7 +1620,8 @@ public class ProviderDelegate {
         }
 		if (spaceEnabled && spaceHandlingPools != null) {
             for (SpaceTaker st : spaceTakers) {
-                st.destroy();
+                if(st!=null)
+                    st.destroy();
             }
 			for (ExecutorService es : spaceHandlingPools)
 				shutdownAndAwaitTermination(es);
