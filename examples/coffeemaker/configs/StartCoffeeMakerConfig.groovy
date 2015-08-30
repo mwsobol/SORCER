@@ -37,14 +37,14 @@ class StartAll {
 
         def descriptors = []
         ["coffeemaker", "delivery"].each { provider ->
-        def configArg = ["${configPath}/${provider}-prv.config"]
-        def codebase = "${relativeRepoPath}/coffeemaker-${sorcerVersion}-dl.jar sorcer-dl-${sorcerVersion}.jar sorcer-ui-${sorcerVersion}.jar jsk-dl-${riverVersion}.jar"
+            def configArg = ["${configPath}/${provider}-prv.config"]
+            def codebase = "${relativeRepoPath}/coffeemaker-${sorcerVersion}-dl.jar sorcer-dl-${sorcerVersion}.jar sorcer-ui-${sorcerVersion}.jar jsk-dl-${riverVersion}.jar"
 
-        descriptors << new SorcerServiceDescriptor(codebase,
-                policy,
-                "${buildLibPath}/coffeemaker-${sorcerVersion}-prv.jar",
-                "sorcer.core.provider.ServiceTasker",
-                configArg as String[])
+            descriptors << new SorcerServiceDescriptor(codebase,
+                    policy,
+                    "${buildLibPath}/coffeemaker-${sorcerVersion}-prv.jar",
+                    "sorcer.core.provider.ServiceTasker",
+                    configArg as String[])
         }
         return descriptors as ServiceDescriptor[]
     }

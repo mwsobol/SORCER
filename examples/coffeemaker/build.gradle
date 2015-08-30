@@ -87,7 +87,7 @@ bootme {
     description = 'Starts up a service provider'
     starterConfig = file("${projectDir.path}/configs/StartCoffeemakerConfig.groovy")
     systemProperties = ["relative.repo.path" : repoPath()]
-    spawn = false
+//    spawn = false
 //    debug = true
 }
 
