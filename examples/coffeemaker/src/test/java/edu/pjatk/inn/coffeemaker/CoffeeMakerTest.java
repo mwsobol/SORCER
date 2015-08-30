@@ -10,8 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
-import sorcer.core.provider.rendezvous.ServiceJobber;
-import sorcer.service.Context;
 import sorcer.service.ContextException;
 import sorcer.service.Exertion;
 
@@ -27,14 +25,14 @@ import static sorcer.eo.operator.*;
 public class CoffeeMakerTest {
 	private final static Logger logger = LoggerFactory.getLogger(CoffeeMakerTest.class);
 
-	private CoffeeMaker cm;
-	private Inventory i;
+	private CoffeeMaker coffeeMaker;
+	private Inventory inventory;
 	private Recipe espresso, mocha, macchiato, americano;
 
 	@Before
 	public void setUp() throws ContextException {
-		cm = new CoffeeMaker();
-		i = cm.checkInventory();
+		coffeeMaker = new CoffeeMaker();
+		inventory = coffeeMaker.checkInventory();
 
 		espresso = new Recipe();
 		espresso.setName("espresso");
@@ -71,7 +69,7 @@ public class CoffeeMakerTest {
 
 	@Test
 	public void testAddRecipe() {
-		assertTrue(cm.addRecipe(espresso));
+		assertTrue(coffeeMaker.addRecipe(espresso));
 	}
 
 	@Test
@@ -86,59 +84,41 @@ public class CoffeeMakerTest {
 
 	@Test
 	public void addRecepie() throws Exception {
-		cm.addRecipe(mocha);
-		assertEquals(cm.getRecipeForName("mocha").getName(), "mocha");
+		coffeeMaker.addRecipe(mocha);
+		assertEquals(coffeeMaker.getRecipeForName("mocha").getName(), "mocha");
 	}
 
 	@Test
 	public void addContextRecepie() throws Exception {
-		cm.addRecipe(Recipe.getContext(mocha));
-		assertEquals(cm.getRecipeForName("mocha").getName(), "mocha");
+		coffeeMaker.addRecipe(Recipe.getContext(mocha));
+		assertEquals(coffeeMaker.getRecipeForName("mocha").getName(), "mocha");
 	}
 
 	@Test
 	public void addServiceRecepie() throws Exception {
-		Exertion cmt = task(sig("addRecipe", cm),
+		Exertion cmt = task(sig("addRecipe", coffeeMaker),
 						context(parameterTypes(Recipe.class), args(espresso),
 							result("recipe/added")));
 
 		logger.info("isAdded: " + value(cmt));
-		assertEquals(cm.getRecipeForName("espresso").getName(), "espresso");
+		assertEquals(coffeeMaker.getRecipeForName("espresso").getName(), "espresso");
 	}
 
 	@Test
 	public void addRecipes() throws Exception {
-		Exertion cmj = job("recipes", sig("execute", ServiceJobber.class),
-				task("mocha", sig("addRecipe", cm),
-					context(parameterTypes(Recipe.class), args(mocha))),
-				task("macchiato", sig("addRecipe", cm),
-						context(parameterTypes(Recipe.class), args(macchiato))),
-				task("americano", sig("addRecipe", cm),
-						context(parameterTypes(Recipe.class), args(americano))));
+		coffeeMaker.addRecipe(mocha);
+		coffeeMaker.addRecipe(macchiato);
+		coffeeMaker.addRecipe(americano);
 
-		cmj = exert(cmj);
-		Context out = upcontext(cmj);
-		logger.info("job context: " + out);
-		assertEquals(value(out, "recipes/mocha/context/result"), true);
-		assertEquals(value(out, "recipes/macchiato/context/result"), true);
-		assertEquals(value(out, "recipes/americano/context/result"), true);
-
-		assertEquals(cm.getRecipeForName("mocha").getName(), "mocha");
-		assertEquals(cm.getRecipeForName("macchiato").getName(), "macchiato");
-		assertEquals(cm.getRecipeForName("americano").getName(), "americano");
+		assertEquals(coffeeMaker.getRecipeForName("mocha").getName(), "mocha");
+		assertEquals(coffeeMaker.getRecipeForName("macchiato").getName(), "macchiato");
+		assertEquals(coffeeMaker.getRecipeForName("americano").getName(), "americano");
 	}
 
 	@Test
 	public void makeCoffee() throws Exception {
-		Exertion cmj = job("coffee", sig("execute", ServiceJobber.class),
-				task("recipe", sig("addRecipe", cm),
-						context(parameterTypes(Recipe.class), args(espresso))),
-				task("pay", sig("makeCoffee",cm),
-						context(parameterTypes(Recipe.class, int.class), args(espresso, 200))));
-		cmj = exert(cmj);
-		logger.info("job context: " + upcontext(cmj));
-		logger.info("change: " + value(upcontext(cmj), "coffee/pay/context/result"));
-		assertEquals(value(upcontext(cmj), "coffee/pay/context/result"), 150);
+		coffeeMaker.addRecipe(espresso);
+		assertEquals(coffeeMaker.makeCoffee(espresso, 200), 150);
 	}
 
 }
