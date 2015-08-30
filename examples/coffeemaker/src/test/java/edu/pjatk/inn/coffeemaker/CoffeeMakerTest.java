@@ -129,10 +129,6 @@ public class CoffeeMakerTest {
 		assertEquals(value(out, "recipes/macchiato/context/result"), true);
 		assertEquals(value(out, "recipes/americano/context/result"), true);
 
-		Exertion cmt = task(sig("getRecipes", cm),
-				context(parameterTypes(), args()));
-		cmt = exert(cmt);
-//		logger.info("getRecipes: " + context(cmt));
 		assertEquals(cm.getRecipeForName("mocha").getName(), "mocha");
 		assertEquals(cm.getRecipeForName("macchiato").getName(), "macchiato");
 		assertEquals(cm.getRecipeForName("americano").getName(), "americano");
