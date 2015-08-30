@@ -3,24 +3,27 @@ package edu.pjatk.inn.coffeemaker;
 import edu.pjatk.inn.coffeemaker.impl.Recipe;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
+import sorcer.eo.operator;
 import sorcer.service.Context;
 import sorcer.service.ContextException;
 import sorcer.service.Exertion;
 import sorcer.service.modeling.Model;
 
 import static edu.pjatk.inn.coffeemaker.impl.Recipe.getRecipe;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
-import static sorcer.eo.operator.args;
-import static sorcer.mo.operator.response;
+import static sorcer.eo.operator.result;
+import static sorcer.eo.operator.value;
+import static sorcer.mo.operator.*;
+import static sorcer.mo.operator.result;
 import static sorcer.po.operator.invoker;
 
 /**
@@ -62,12 +65,11 @@ public class CoffeeServiceTest {
 
 	}
 
-
 	@After
 	public void cleanUp() throws Exception {
 		Exertion cmt =
 				task(sig("deleteRecipes", CoffeeMaking.class),
-						context(parameterTypes(), args()));
+						context(parameterTypes(), operator.args()));
 
 		cmt = exert(cmt);
 		logger.info("deleted recipes context: " + context(cmt));
@@ -85,23 +87,24 @@ public class CoffeeServiceTest {
 
 	@Test
 	public void addRecepie() throws Exception {
-		Context espresso = context(ent("name", "espresso"), ent("price", 50),
-				ent("amtCoffee", 6), ent("amtMilk", 0),
-				ent("amtSugar", 1), ent("amtChocolate", 0));
-
 		Exertion cmt = task(sig("addRecipe", CoffeeService.class), espresso);
-		cmt = exert(cmt);
-		logger.info("isAdded: " + context(cmt, "recipe/added"));
+		Context out = context(exert(cmt));
+		logger.info("job context: " + out);
+		assertEquals(value(out, "recipe/added"), true);
 	}
 
 	@Test
 	public void addRecipes() throws Exception {
-		Exertion cmt = job(task(sig("addRecipe", CoffeeService.class), mocha),
-				task(sig("addRecipe", CoffeeService.class), macchiato),
-				task(sig("addRecipe", CoffeeService.class), americano));
+		Exertion cmj = job("recipes",
+				task("mocha", sig("addRecipe", CoffeeService.class), mocha),
+				task("macchiato", sig("addRecipe", CoffeeService.class), macchiato),
+				task("americano", sig("addRecipe", CoffeeService.class), americano));
 
-		cmt = exert(cmt);
-		logger.info("isAdded: " + upcontext(cmt));
+		Context out = upcontext(exert(cmj));
+		logger.info("job context: " + out);
+		assertEquals(value(out, "recipes/americano/recipe/added"), true);
+		assertEquals(value(out, "recipes/americano/recipe/added"), true);
+		assertEquals(value(out, "recipes/americano/recipe/added"), true);
 	}
 
 	@Test
@@ -111,23 +114,43 @@ public class CoffeeServiceTest {
 		logger.info("getRecipes: " + context(cmt));
 	}
 
-	@Ignore
+	@Test
+	public void getDelivery() throws Exception {
+		Exertion cmt = task(sig("deliver", Delivery.class));
+		cmt = exert(cmt);
+		logger.info("getRecipes: " + context(cmt));
+		assertEquals(value(context(cmt), "delivery/cost"), 60);
+	}
+
 	@Test
 	public void deliverCoffee() throws Exception {
+		// make sure that the CoffeMaker knows the recipe
+		Exertion cmt = task(sig("addRecipe", CoffeeService.class), espresso);
+		exert(cmt);
 
-		Model mod = model(inEnt("recipe", "mocha)"),
+		// order espresso with delivery
+		Model mod = model(
+				inEnt("recipe/name", "espresso"),
+				inEnt("paid$", 120),
 				inEnt("location", "PJATK"),
 				inEnt("room", "101"),
-				inEnt("tip", true),
 
 				srv(sig("makeCoffee", CoffeeService.class,
-						result("coffee$", inPaths("recipe")))),
+						result("coffee$", inPaths("recipe/name")))),
 				srv(sig("deliver", Delivery.class,
-						result("delivery$", inPaths("location", "room")))),
-				ent("cost", invoker("coffee$ + delivery$", ents("cofee$", "delivery$"))),
-				response("cost"));
+						result("delivery$", inPaths("location", "room")))));
+//				ent("change$", invoker("paid$ - (coffee$ + delivery$)", ents("paid$", "coffee$", "delivery$"))));
 
-		logger.info("paid: " + response(mod));
+		add(mod, ent("change$", invoker("paid$ - (coffee$ + delivery$)", ents("paid$", "coffee$", "delivery$"))));
+		dependsOn(mod, ent("change$", "makeCoffee"), ent("change$", "deliver"));
+		responseUp(mod, "makeCoffee", "deliver", "change$", "paid$");
+		Context out = response(mod);
+		logger.info("out: " + out);
+		logger.info("result: " + result(mod));
+		assertEquals(value(result(mod), "paid$"), 120);
+		assertEquals(value(result(mod), "makeCoffee"), 50);
+		assertEquals(value(result(mod), "deliver"), 60);
+		assertEquals(value(result(mod), "change$"), 10);
 	}
 
 }

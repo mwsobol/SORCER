@@ -17,34 +17,25 @@
 
 package sorcer.util;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.io.Serializable;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Formatter;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import net.jini.id.Uuid;
 import net.jini.id.UuidFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sorcer.core.provider.DatabaseStorer;
 import sorcer.core.provider.Provider;
 import sorcer.core.provider.StorageManagement;
-import sorcer.service.*;
-import sorcer.core.provider.DatabaseStorer.Store;
+import sorcer.service.Accessor;
+import sorcer.service.Context;
+import sorcer.service.EvaluationException;
+import sorcer.service.Signature;
 import sorcer.util.url.sos.SdbUtil;
+
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.*;
+import java.util.Collections;
 
 /**
  * This is a Java class that is an implementation of table of objects that uses a 
@@ -247,8 +238,6 @@ public class Table implements ModelTable {
 	 * 
 	 * @return the List of list containing the tables data values
 	 *
-	 * @see #newDataAvailable
-	 * @see #newRowsAdded
 	 * @see #setDataList
 	 */
 	public List getDataList() {
@@ -494,7 +483,6 @@ public class Table implements ModelTable {
 	 * @param columnIdentifiers
 	 *            list of column identifiers. If <code>null</code>, set the
 	 *            model to zero columns
-	 * @see #setNumRows
 	 */
 	public void setColumnIdentifiers(List columnIdentifiers) {
 		this.columnIdentifiers = nonNullList(columnIdentifiers);
@@ -515,7 +503,6 @@ public class Table implements ModelTable {
 	 * @param newIdentifiers
 	 *            array of column identifiers. If <code>null</code>, set the
 	 *            model to zero columns
-	 * @see #setNumRows
 	 */
 	public void setColumnIdentifiers(Object[] newIdentifiers) {
 		setColumnIdentifiers(convertToList(newIdentifiers));
@@ -650,7 +637,7 @@ public class Table implements ModelTable {
 	 * send a <code>tableChanged</code> notification message to all the
 	 * listeners.
 	 *
-	 * @see #addColumn(Object, List)
+	 * @see #addColumn(String, List)
 	 */
 	public void addColumn(String columnName, Object[] columnData) {
 		addColumn(columnName, convertToList(columnData));
@@ -1098,7 +1085,9 @@ public class Table implements ModelTable {
 		if (cns != null && cns.size() > 0)
 			sb.append(cns);
 		if (dataList != null && dataList.size() > 0) {
-			for (int i = 0; i < dataList.size(); i++) {
+			sb.append("\nfirst 100 rows: " + dataList.size());
+//			for (int i = 0; i < dataList.size(); i++) {
+			for (int i = 0; i < 100; i++) {
 				if (rowIdentifiers != null) {
 					sb.append("\n").append(rowIdentifiers.get(i)).append("\t");
 					sb.append(dataList.get(i));
@@ -1107,11 +1096,11 @@ public class Table implements ModelTable {
 				}
 			}
 		}
+		sb.append("\n...\ntotal row count: " + dataList.size());
 		sb.append("\n");
 		describe(sb);
 		return sb.toString();
 	}
-
 
 	/**
 	 * Describe the table contents and table input and output sources.

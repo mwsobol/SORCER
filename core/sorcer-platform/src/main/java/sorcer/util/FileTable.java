@@ -16,15 +16,14 @@
 package sorcer.util;
 
 import sorcer.core.provider.Provider;
-import sorcer.service.Identifiable;
 import sorcer.service.Identity;
 import sorcer.service.Signature;
 
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.rmi.MarshalledObject;
 import java.util.*;
-import java.rmi.*;
 import java.util.Collections;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -515,6 +514,16 @@ public class FileTable<K,V> extends Identity implements Runnable, ModelTable {
 			return 0;
 		else
 			return table.size();
+	}
+
+	@Override
+	public String toString() {
+		try {
+			return getClass() + ":" + new File(fileName).getCanonicalPath();
+		} catch (IOException e) {
+			e.printStackTrace();
+			return getClass() + ":" + fileName;
+		}
 	}
 }
 
