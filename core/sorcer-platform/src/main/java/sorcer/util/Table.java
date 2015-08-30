@@ -1086,8 +1086,12 @@ public class Table implements ModelTable {
 			sb.append(cns);
 		if (dataList != null && dataList.size() > 0) {
 			sb.append("\nfirst 100 rows: " + dataList.size());
-//			for (int i = 0; i < dataList.size(); i++) {
-			for (int i = 0; i < 100; i++) {
+			// print up to 100 rows only
+			int rc = 100;
+			if (dataList.size() < 100) {
+				rc = dataList.size();
+			}
+			for (int i = 0; i < rc; i++) {
 				if (rowIdentifiers != null) {
 					sb.append("\n").append(rowIdentifiers.get(i)).append("\t");
 					sb.append(dataList.get(i));
