@@ -16,8 +16,6 @@ import sorcer.service.Context;
 import sorcer.service.ContextException;
 import sorcer.service.Exertion;
 
-import java.util.Arrays;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static sorcer.eo.operator.*;
@@ -70,6 +68,11 @@ public class CoffeeMakerTest {
 		americano.setAmtMilk(1);
 		americano.setAmtSugar(2);
 		americano.setAmtChocolate(0);
+	}
+
+	@After
+	public void cleanUp() throws Exception {
+		cm.deleteRecipes();
 	}
 
 	@Test
