@@ -3,7 +3,6 @@ package edu.pjatk.inn.coffeemaker;
 import edu.pjatk.inn.coffeemaker.impl.CoffeeMaker;
 import edu.pjatk.inn.coffeemaker.impl.Inventory;
 import edu.pjatk.inn.coffeemaker.impl.Recipe;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -68,11 +67,6 @@ public class CoffeeMakerTest {
 		americano.setAmtMilk(1);
 		americano.setAmtSugar(2);
 		americano.setAmtChocolate(0);
-	}
-
-	@After
-	public void cleanUp() throws Exception {
-		cm.deleteRecipes();
 	}
 
 	@Test
