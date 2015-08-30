@@ -40,7 +40,9 @@ public class FileTable<K,V> extends Identity implements Runnable, ModelTable {
 
 	private static int WAITING_TIME = 30 * 60 * 1000; //30 min
 
-	boolean running = true;
+	volatile boolean running = true;
+
+	protected K lastKey;
 
 	protected String inputFileName;
 	protected URL inputTableURL;
@@ -502,6 +504,25 @@ public class FileTable<K,V> extends Identity implements Runnable, ModelTable {
 			l.add(anArray[i]);
 		}
 		return l;
+	}
+
+	/**
+	 * Returns the key of last recorded entry in this data table.
+	 *
+	 * @return the last Entry
+	 */
+	public K getLastKey() {
+		return lastKey;
+	}
+
+
+	/**
+	 * Returns the last recorded value in this data table.
+	 *
+	 * @return the last table entry
+	 */
+	public V getLastValue() throws IOException {
+		return get(lastKey);
 	}
 
 	/**
