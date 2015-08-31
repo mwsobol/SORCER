@@ -33,7 +33,6 @@ import sorcer.util.Sorcer;
 
 import java.io.File;
 import java.net.UnknownHostException;
-import java.rmi.RemoteException;
 import java.util.concurrent.*;
 
 /**
@@ -106,7 +105,7 @@ public class RemoteLoggerInstaller implements DestroyAdmin {
     }
 
     @Override
-    public void destroy() throws RemoteException {
+    public void destroy() {
         if (scheduledFuture != null)
             scheduledFuture.cancel(false);
         else
@@ -120,13 +119,11 @@ public class RemoteLoggerInstaller implements DestroyAdmin {
             JoranConfigurator configurator = new JoranConfigurator();
             configurator.setContext(context);
             // Don't Call context.reset() to keep the previous configuration
-
-            configurator.doConfigure(new File(Sorcer.getHomeDir(),"configs/apps-logback.xml"));
+            configurator.doConfigure(new File(Sorcer.getHomeDir(),"configs/sorcer-logging.groovy"));
         } catch (JoranException je) {
             // StatusPrinter will handle this
         }
         StatusPrinter.printInCaseOfErrorsOrWarnings(context);
-
         log.info("Extra logback configuration applied");
 
     }

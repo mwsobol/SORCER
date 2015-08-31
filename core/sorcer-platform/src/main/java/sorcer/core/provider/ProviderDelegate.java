@@ -1615,12 +1615,9 @@ public class ProviderDelegate {
 
 	public void destroy() {
         shuttingDown = true;
-		if (remoteLoggerInstaller!=null) {
-			try {
-				remoteLoggerInstaller.destroy();
-			} catch (RemoteException re) {
-			}
-		}
+        if (remoteLoggerInstaller!=null) {
+            remoteLoggerInstaller.destroy();
+        }
 		if (spaceEnabled && spaceHandlingPools != null) {
             for (SpaceTaker st : spaceTakers) {
                 st.destroy();
