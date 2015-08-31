@@ -15,6 +15,8 @@
  */
 package sorcer.util;
 
+import sorcer.co.tuple.Tuple2;
+import sorcer.core.context.model.ent.Entry;
 import sorcer.core.provider.Provider;
 import sorcer.service.Identity;
 import sorcer.service.Signature;
@@ -91,6 +93,7 @@ public class FileTable<K,V> extends Identity implements Runnable, ModelTable {
 		else
 			newPos = ofl.writeObject((Serializable)o, oldPos.longValue());
 
+		lastKey = key;
 		table.put(key, newPos);
 		ifl.rewriteObject(0, table);
 	}
@@ -103,7 +106,7 @@ public class FileTable<K,V> extends Identity implements Runnable, ModelTable {
 		return get(key);
 	}
 
-	public synchronized final V get(K key) throws IOException {
+	public final V get(K key) throws IOException {
 		Long pos = table.get(key);
 		if (pos == null) return null;
 		else return (V)ofl.readObject(pos.longValue());
@@ -523,6 +526,13 @@ public class FileTable<K,V> extends Identity implements Runnable, ModelTable {
 	 */
 	public V getLastValue() throws IOException {
 		return get(lastKey);
+	}
+
+	public Tuple2<K, V> getLastEntry() throws IOException {
+		if (lastKey != null)
+			return new Tuple2(lastKey, get(lastKey));
+		else
+			return null;
 	}
 
 	/**
