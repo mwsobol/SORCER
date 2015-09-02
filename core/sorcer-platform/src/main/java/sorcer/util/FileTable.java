@@ -16,7 +16,6 @@
 package sorcer.util;
 
 import sorcer.co.tuple.Tuple2;
-import sorcer.core.context.model.ent.Entry;
 import sorcer.core.provider.Provider;
 import sorcer.service.Identity;
 import sorcer.service.Signature;
@@ -533,6 +532,10 @@ public class FileTable<K,V> extends Identity implements Runnable, ModelTable {
 			return new Tuple2(lastKey, get(lastKey));
 		else
 			return null;
+	}
+
+	public boolean isRunning() {
+		return running;
 	}
 
 	/**
