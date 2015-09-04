@@ -1,12 +1,5 @@
 package edu.pjatk.inn.coffeemaker;
 
-import static edu.pjatk.inn.coffeemaker.impl.Recipe.recipe;
-import static org.junit.Assert.assertTrue;
-import static sorcer.co.operator.*;
-import static sorcer.eo.operator.*;
-import static sorcer.mo.operator.*;
-import static sorcer.po.operator.invoker;
-
 import edu.pjatk.inn.coffeemaker.impl.CoffeeMaker;
 import edu.pjatk.inn.coffeemaker.impl.Inventory;
 import edu.pjatk.inn.coffeemaker.impl.Recipe;
@@ -17,10 +10,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
-import sorcer.service.Context;
 import sorcer.service.ContextException;
 import sorcer.service.Exertion;
-import sorcer.service.modeling.Model;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static sorcer.eo.operator.*;
 
 /**
  * @author Mike Sobolewski
@@ -30,102 +25,100 @@ import sorcer.service.modeling.Model;
 public class CoffeeMakerTest {
 	private final static Logger logger = LoggerFactory.getLogger(CoffeeMakerTest.class);
 
-	private CoffeeMaker cm;
-	private Inventory i;
-	private Recipe r1;
-	private Context rc;
+	private CoffeeMaker coffeeMaker;
+	private Inventory inventory;
+	private Recipe espresso, mocha, macchiato, americano;
 
 	@Before
 	public void setUp() throws ContextException {
-		cm = new CoffeeMaker();
-		i = cm.checkInventory();
+		coffeeMaker = new CoffeeMaker();
+		inventory = coffeeMaker.checkInventory();
 
-		r1 = new Recipe();
-		r1.setName("Black");
-		r1.setPrice(50);
-		r1.setAmtCoffee(6);
-		r1.setAmtMilk(1);
-		r1.setAmtSugar(1);
-		r1.setAmtChocolate(0);
+		espresso = new Recipe();
+		espresso.setName("espresso");
+		espresso.setPrice(50);
+		espresso.setAmtCoffee(6);
+		espresso.setAmtMilk(1);
+		espresso.setAmtSugar(1);
+		espresso.setAmtChocolate(0);
 
-		rc = context(ent("name", "Black"), ent("price", 50),
-				ent("amtCoffee", 6), ent("amtMilk", 0),
-				ent("amtSugar", 1), ent("amtChocolate", 0));
+		mocha = new Recipe();
+		mocha.setName("mocha");
+		mocha.setPrice(100);
+		mocha.setAmtCoffee(8);
+		mocha.setAmtMilk(1);
+		mocha.setAmtSugar(1);
+		mocha.setAmtChocolate(2);
+
+		macchiato = new Recipe();
+		macchiato.setName("macchiato");
+		macchiato.setPrice(40);
+		macchiato.setAmtCoffee(7);
+		macchiato.setAmtMilk(1);
+		macchiato.setAmtSugar(2);
+		macchiato.setAmtChocolate(0);
+
+		americano = new Recipe();
+		americano.setName("americano");
+		americano.setPrice(40);
+		americano.setAmtCoffee(7);
+		americano.setAmtMilk(1);
+		americano.setAmtSugar(2);
+		americano.setAmtChocolate(0);
 	}
 
 	@Test
 	public void testAddRecipe() {
-		assertTrue(cm.addRecipe(r1));
+		assertTrue(coffeeMaker.addRecipe(espresso));
 	}
 
 	@Test
 	public void testContextCofee() throws ContextException {
-		assertTrue(recipe(rc).getAmtCoffee() == 6);
+		assertTrue(espresso.getAmtCoffee() == 6);
 	}
 
 	@Test
 	public void testContextMilk() throws ContextException {
-		assertTrue(recipe(rc).getAmtMilk() == 1);
+		assertTrue(espresso.getAmtMilk() == 1);
 	}
 
-	// Service orientation
 	@Test
 	public void addRecepie() throws Exception {
-		Exertion cmt = task(sig("addRecipe", CoffeeService.class), rc);
-		cmt = exert(cmt);
-		logger.info("isAdded: " + context(cmt, "recipe/added"));
+		coffeeMaker.addRecipe(mocha);
+		assertEquals(coffeeMaker.getRecipeForName("mocha").getName(), "mocha");
 	}
 
 	@Test
-	public void addCrema() throws Exception {
-		Context rc  = context(ent("name", "Crema"), ent("price", 60),
-				ent("amtCoffee", 6), ent("amtMilk", 3),
-				ent("amtSugar", 1), ent("amtChocolate", 0));
+	public void addContextRecepie() throws Exception {
+		coffeeMaker.addRecipe(Recipe.getContext(mocha));
+		assertEquals(coffeeMaker.getRecipeForName("mocha").getName(), "mocha");
+	}
 
-		Exertion cmt = task(sig("addRecipe", CoffeeService.class), rc);
-		cmt = exert(cmt);
-		logger.info("isAdded: " + context(cmt, "recipe/added"));
+	@Test
+	public void addServiceRecepie() throws Exception {
+		Exertion cmt = task(sig("addRecipe", coffeeMaker),
+						context(parameterTypes(Recipe.class), args(espresso),
+							result("recipe/added")));
+
+		logger.info("isAdded: " + value(cmt));
+		assertEquals(coffeeMaker.getRecipeForName("espresso").getName(), "espresso");
 	}
 
 	@Test
 	public void addRecipes() throws Exception {
-		Context choco  = context(ent("name", "Choco"), ent("price", 100),
-				ent("amtCoffee", 8), ent("amtMilk", 3),
-				ent("amtSugar", 1), ent("amtChocolate", 2));
+		coffeeMaker.addRecipe(mocha);
+		coffeeMaker.addRecipe(macchiato);
+		coffeeMaker.addRecipe(americano);
 
-		Context strong  = context(ent("name", "Crema Strong"), ent("price", 80),
-				ent("amtCoffee", 8), ent("amtMilk", 3),
-				ent("amtSugar", 1), ent("amtChocolate", 0));
-
-		Exertion cmt = job(task(sig("addRecipe", CoffeeService.class), choco),
-			task(sig("addRecipe", CoffeeService.class), strong));
-		cmt = exert(cmt);
-		logger.info("isAdded: " + upcontext(cmt));
+		assertEquals(coffeeMaker.getRecipeForName("mocha").getName(), "mocha");
+		assertEquals(coffeeMaker.getRecipeForName("macchiato").getName(), "macchiato");
+		assertEquals(coffeeMaker.getRecipeForName("americano").getName(), "americano");
 	}
 
 	@Test
-	public void getRecepies() throws Exception {
-		Exertion cmt = task(sig("recipes", CoffeeService.class));
-		cmt = exert(cmt);
-		logger.info("recipes: " + context(cmt));
-	}
-
-	@Test
-	public void deliverCoffee() throws Exception {
-
-		Model mod = model(inEnt("recipe", "Choco)"),
-				inEnt("location", "PJATK"),
-				inEnt("room", "101"),
-				inEnt("tip", true),
-
-				srv(sig("makeCoffee", CoffeeService.class,
-						result("coffee$", inPaths("recipe")))),
-				srv(sig("deliver", Delivery.class,
-						result("delivery$", inPaths("location", "room")))),
-				ent("cost", invoker("coffee$ + delivery$", ents("cofee$", "delivery$"))),
-				response("cost"));
-
-		logger.info("paid: " + response(mod));
+	public void makeCoffee() throws Exception {
+		coffeeMaker.addRecipe(espresso);
+		assertEquals(coffeeMaker.makeCoffee(espresso, 200), 150);
 	}
 
 }

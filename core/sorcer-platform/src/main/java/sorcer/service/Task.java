@@ -64,7 +64,7 @@ public class Task extends ServiceExertion {
 	protected Task delegate;
 	
 	public Task() {
-		super();
+		super("task-" + count++);
 	}
 
 	public Task(String name) {

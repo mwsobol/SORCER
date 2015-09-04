@@ -25,7 +25,14 @@ public interface CoffeeMaking {
 	 * @return boolean
 	 */
     public boolean deleteRecipe(Recipe r) throws RemoteException;
-    
+
+    /**
+     * Returns true if the recipe were deleted from the
+     * coffee maker
+     * @return boolean
+     */
+    public boolean deleteRecipes();
+
     /**
      * Returns true if the recipe is successfully edited
      * @param oldRecipe
@@ -60,7 +67,7 @@ public interface CoffeeMaking {
     public int makeCoffee(Recipe r, int amtPaid) throws RemoteException;
 
     /**
-     * Returns an array of all the recipes
+     * Returns an array of all the getRecipes
      * @return Recipe[]
      */
     public Recipe[] getRecipes() throws RemoteException;

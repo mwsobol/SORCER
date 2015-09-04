@@ -123,7 +123,7 @@ public class CoffeemakerRequestor {
 		    else System.out.println(name + "could not be deleted.\n");
         }
         else {
-        	System.out.println("There are no recipes to delete\n");
+        	System.out.println("There are no getRecipes to delete\n");
         }
         mainMenu();
     }
@@ -206,7 +206,7 @@ public class CoffeemakerRequestor {
 		    else System.out.println(oldRecipe.getName() + "could not be edited.\n");
         }
         else {
-        	System.out.println("There are no recipes to edit.\n");
+        	System.out.println("There are no getRecipes to edit.\n");
         }
         mainMenu();
     }

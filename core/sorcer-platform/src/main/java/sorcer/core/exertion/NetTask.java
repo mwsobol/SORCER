@@ -71,7 +71,7 @@ public class NetTask extends ObjectTask implements Evaluation<Object>, Invocatio
 	}
 	public NetTask(Signature signature, Context context)
 			throws SignatureException {
-		this(null, null, signature, context);
+		this("task-" + count++, null, signature, context);
 	}
 	
 	public NetTask(String name, String description, Signature signature,

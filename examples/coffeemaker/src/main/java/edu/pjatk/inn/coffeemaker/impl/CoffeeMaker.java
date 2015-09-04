@@ -18,10 +18,10 @@ public class CoffeeMaker implements CoffeeMaking, CoffeeService {
 	private final static Logger logger = LoggerFactory.getLogger(CoffeeMaker.class);
 
 	/**
-	 * Array of recipes in coffee maker
+	 * Array of getRecipes in coffee maker
 	 */
 	private Recipe [] recipeArray;
-	/** Number of recipes in coffee maker */
+	/** Number of getRecipes in coffee maker */
 	private final int NUM_RECIPES = 4;
 	/** Array describing if the array is full */
 	private boolean [] recipeFull;
@@ -96,7 +96,22 @@ public class CoffeeMaker implements CoffeeMaking, CoffeeService {
         }
         return canDeleteRecipe;
     }
-    
+
+	/**
+	 * Returns true if the recipe were deleted from the
+	 * coffee maker
+	 * @return boolean
+	 */
+	public boolean deleteRecipes() {
+		boolean canDeleteRecipes = false;
+		for (int i = 0; i < NUM_RECIPES; i++) {
+			recipeArray[i] = new Recipe();
+			recipeFull[i] = false;
+			canDeleteRecipes = true;
+		}
+		return canDeleteRecipes;
+	}
+
     /**
      * Returns true if the recipe is successfully edited
      * @param oldRecipe
@@ -179,7 +194,7 @@ public class CoffeeMaker implements CoffeeMaking, CoffeeService {
     }
 
     /**
-     * Returns an array of all the recipes
+     * Returns an array of all the getRecipes
      * @return Recipe[]
      */
     public Recipe[] getRecipes() {
@@ -211,32 +226,33 @@ public class CoffeeMaker implements CoffeeMaking, CoffeeService {
 	// Implementation of CoffeeService
 	@Override
 	public Context addRecipe(Context context) throws RemoteException, ContextException {
-		Recipe r = Recipe.recipe(context);
+		Recipe r = Recipe.getRecipe(context);
 		boolean isAdded = addRecipe(r);
 		context.putValue("recipe/added", isAdded);
 		return context;
 	}
 
 	@Override
-	public Context recipes(Context context) throws RemoteException, ContextException {
+	public Context getRecipes(Context context) throws RemoteException, ContextException {
 		List<Recipe> rl = new ArrayList<Recipe>();
 		for (Recipe r : recipeArray) {
 			if (r.getName() != "") rl.add(r);
 		}
 
-		context.putValue("recipes", rl);
+		context.putValue("getRecipes", rl);
 		return context;
 	}
 
 	@Override
 	public Context makeCoffee(Context context) throws RemoteException, ContextException {
-		String recipeName = (String)context.getValue("coffee/recipe");
+		String recipeName = (String)context.getValue("recipe/name");
 		Recipe r = getRecipeForName(recipeName);
-		int amount = (Integer)context.getValue("paid/amount");
-
 		context.putValue("", makeCoffee(r, r.getPrice()));
 		context.putValue("price", r.getPrice());
-		context.putValue("tip", amount - r.getPrice());
+
+		if (context.getReturnPath() != null) {
+			context.setReturnValue(r.getPrice());
+		}
 
 		return context;
 	}
