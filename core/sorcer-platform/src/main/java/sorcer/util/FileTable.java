@@ -15,6 +15,8 @@
  */
 package sorcer.util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sorcer.co.tuple.Tuple2;
 import sorcer.core.provider.Provider;
 import sorcer.service.Identity;
@@ -29,6 +31,8 @@ import java.util.Collections;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class FileTable<K,V> extends Identity implements Runnable, ModelTable {
+
+	private final static Logger logger = LoggerFactory.getLogger(FileTable.class);
 
 	// Object File
 	ObjectFile ofl;
@@ -46,18 +50,29 @@ public class FileTable<K,V> extends Identity implements Runnable, ModelTable {
 	protected K lastKey;
 
 	protected String inputFileName;
+
 	protected URL inputTableURL;
+
 	protected String inputTableDelimiter;
+
 	protected String outputFileName;
+
 	protected URL outputTableURL;
+
 	protected String outputTableDelimiter;
+
 	protected Signature outputStorageSignature;
-	protected transient Provider provider;
+
 	protected boolean includeHeaderInWrite;
+
 	protected List<String> columnIdentifiers;
+
 	protected List<Object> rowIdentifiers;
+
 	protected boolean lazy;
+
 	protected Table.Cell cellType;
+
 	protected static int count = 0;
 
 	public FileTable(String fileName) throws IOException {
@@ -82,15 +97,15 @@ public class FileTable<K,V> extends Identity implements Runnable, ModelTable {
 		ifl.close();
 	}
 
-	public synchronized final void put(K key, V o) throws IOException {
-		if (! (o instanceof Serializable))
+	public synchronized final void put(K key, V value) throws IOException {
+		if (! (value instanceof Serializable))
 			throw new IOException("Not serializable value");
 		Long oldPos = table.get(key);
 		long newPos;
 		if (oldPos == null)
-			newPos = ofl.writeObject((Serializable)o);
+			newPos = ofl.writeObject((Serializable)value);
 		else
-			newPos = ofl.writeObject((Serializable)o, oldPos.longValue());
+			newPos = ofl.writeObject((Serializable)value, oldPos.longValue());
 
 		lastKey = key;
 		table.put(key, newPos);
@@ -548,6 +563,10 @@ public class FileTable<K,V> extends Identity implements Runnable, ModelTable {
 			return 0;
 		else
 			return table.size();
+	}
+
+	public ConcurrentHashMap<K, Long> getTable() {
+		return table;
 	}
 
 	@Override
