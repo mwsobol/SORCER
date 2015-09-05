@@ -96,10 +96,6 @@ public class ServiceAccessor implements DynamicAccessor {
         openDiscoveryManagement(SorcerEnv.getLookupGroups());
     }
 
-    public ServiceDiscoveryManager getServiceDiscoveryManager() {
-        return sdManager;
-    }
-
 	/**
 	 * Returns a service item containing a service matching providerName and
 	 * serviceInfo using Jini lookup service.
