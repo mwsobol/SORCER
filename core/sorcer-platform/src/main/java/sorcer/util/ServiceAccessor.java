@@ -71,10 +71,10 @@ public class ServiceAccessor implements DynamicAccessor {
 
 	static long WAIT_FOR = Sorcer.getLookupWaitTime();
 	
-	// wait for cataloger 2 sec  = LUS_REAPEAT x 200
+	// wait for cataloger 2 sec  = LUS_REPEAT x 200
 	// since then falls back on LUSs managed by ServiceAccessor
-	// wait for service accessor 5 sec  = LUS_REAPEAT x 500
-	final static int LUS_REAPEAT = 10; 
+	// wait for service accessor 5 sec  = LUS_REPEAT x 500
+	final static int LUS_REPEAT = 10;
 
 	private static DiscoveryManagement ldManager = null;
 
@@ -104,25 +104,19 @@ public class ServiceAccessor implements DynamicAccessor {
 	 * Returns a service item containing a service matching providerName and
 	 * serviceInfo using Jini lookup service.
 	 * 
-	 * @param providerName
-	 * @param serviceType
-	 * @return a SORCER provider
+	 * @param providerName name
+	 * @param serviceType type
+	 * @return A ServiceItem
 	 */
-	public final static ServiceItem getServiceItem(String providerName,
-			Class serviceType) {
+	public static ServiceItem getServiceItem(String providerName, Class serviceType) {
 		ServiceItem si = null;
 		try {
 			Class[] serviceTypes = new Class[] { serviceType };
 			Entry[] attrSets = new Entry[] { new Name(providerName) };
-			ServiceTemplate st = new ServiceTemplate(null, serviceTypes,
-					attrSets);
+			ServiceTemplate st = new ServiceTemplate(null, serviceTypes, attrSets);
 			si = sdManager.lookup(st, null, WAIT_FOR);
-		} catch (IOException ioe) {
-			logger.error(ServiceAccessor.class.getName(), "getServiceItem",
-                    ioe);
-		} catch (InterruptedException ie) {
-			logger.error(ServiceAccessor.class.getName(), "getServiceItem",
-                    ie);
+		} catch (IOException | InterruptedException e) {
+			logger.error("getServiceItem", e);
 		}
 		return si;
 	}
@@ -131,22 +125,17 @@ public class ServiceAccessor implements DynamicAccessor {
 	 * Returns a service item containing a service matching only the
 	 * serviceInfo. It uses Jini lookup service.
 	 * 
-	 * @param serviceType
-	 * @return a SORCER provider
+	 * @param serviceType type
+	 * @return a ServiceItem
 	 */
 	protected ServiceItem getServiceItem(Class serviceType) throws SignatureException {
 		ServiceItem si = null;
 		try {
 			Class[] serviceTypes = new Class[] { serviceType };
-			ServiceTemplate st = new ServiceTemplate(null, serviceTypes,
-					null);
+			ServiceTemplate st = new ServiceTemplate(null, serviceTypes, null);
 			si = sdManager.lookup(st, null, WAIT_FOR);
-		} catch (IOException ioe) {
-			logger.error(ServiceAccessor.class.getName(), "getServiceItem",
-                    ioe);
-		} catch (InterruptedException ie) {
-			logger.error(ServiceAccessor.class.getName(), "getServiceItem",
-                    ie);
+		} catch (IOException | InterruptedException e) {
+			logger.error("getServiceItem", e);
 		}
 		return si;
 	}
@@ -172,18 +161,13 @@ public class ServiceAccessor implements DynamicAccessor {
 	 * @return a ServiceItem that matches the template and filter or null if
 	 *         none is found.
 	 */
-	public ServiceItem getServiceItem(ServiceTemplate template,
-			ServiceItemFilter filter, String[] groups) {
+    public ServiceItem getServiceItem(ServiceTemplate template, ServiceItemFilter filter, String[] groups) {
 		ServiceItem si = null;
 		try {
 		    openDiscoveryManagement(groups);
 			si = sdManager.lookup(template, filter, WAIT_FOR);
-		} catch (IOException ioe) {
-			logger.error(ServiceAccessor.class.getName(), "getServiceItem",
-                    ioe);
-		} catch (InterruptedException ie) {
-			logger.error(ServiceAccessor.class.getName(), "getServiceItem",
-                    ie);
+		} catch (IOException | InterruptedException ie) {
+			logger.error("getServiceItem", ie);
 		}
 		return si;
 	}
@@ -204,7 +188,7 @@ public class ServiceAccessor implements DynamicAccessor {
 	 *            the filter to apply.
 	 * @return a ServiceItem matching the filter.
 	 */
-	public ServiceItem getServiceItem(ServiceItemFilter filter) {
+	/*public ServiceItem getServiceItem(ServiceItemFilter filter) {
 		ServiceItem si = null;
 		try {
             openDiscoveryManagement(SorcerEnv.getLookupGroups());
@@ -228,7 +212,7 @@ public class ServiceAccessor implements DynamicAccessor {
 		}
 		closeDiscoveryManagement();
 		return si;
-	}
+	}*/
 
 	/**
 	 * Returns all service items that match a service template and pass a filter
@@ -248,23 +232,17 @@ public class ServiceAccessor implements DynamicAccessor {
 	 *            lookup groups to search in.
 	 * @return a ServiceItem[] that matches the template and filter.
 	 */
-	public ServiceItem[] getServiceItems(ServiceTemplate template,
-			ServiceItemFilter filter, String[] groups) {
+	/*public ServiceItem[] getServiceItems(ServiceTemplate template, ServiceItemFilter filter, String[] groups) {
 		ServiceItem sis[] = null;
 		try {
 			openDiscoveryManagement(groups);
-			sis = sdManager.lookup(template, MIN_MATCHES, MAX_MATCHES, filter,
-					WAIT_FOR);
-		} catch (IOException ioe) {
-			logger.error(ServiceAccessor.class.getName(), "getServiceItems",
-                    ioe);
-		} catch (InterruptedException ie) {
-			logger.error(ServiceAccessor.class.getName(), "getServiceItems",
-                    ie);
+			sis = sdManager.lookup(template, MIN_MATCHES, MAX_MATCHES, filter, WAIT_FOR);
+		} catch (IOException  | InterruptedException e) {
+			logger.error("getServiceItems", e);
 		}
 		closeDiscoveryManagement();
 		return sis;
-	}
+	}*/
 
 	/**
 	 * Returns a collection service items using a lookup cache. The service
@@ -300,15 +278,11 @@ public class ServiceAccessor implements DynamicAccessor {
 		if (sdManager == null) {
 			LookupLocator[] locators = getLookupLocators();
 			try {
-				logger.debug("[openDiscoveryManagement]\n"
-                        + "\tSORCER Group(s): "
-                        + SorcerUtil.arrayToString(groups) + "\n"
-                        + "\tLocators:        "
-                        + SorcerUtil.arrayToString(locators));
+				logger.debug("[openDiscoveryManagement] SORCER Group(s): {}, Locators: {}",
+                             SorcerUtil.arrayToString(groups), SorcerUtil.arrayToString(locators));
 
 				ldManager = new LookupDiscoveryManager(groups, locators, null);
-				sdManager = new ServiceDiscoveryManager(ldManager,
-						new LeaseRenewalManager());
+				sdManager = new ServiceDiscoveryManager(ldManager, new LeaseRenewalManager());
 			} catch (Throwable t) {
 				logger.error(ServiceAccessor.class.getName(),
                         "openDiscoveryManagement", t);
@@ -334,7 +308,6 @@ public class ServiceAccessor implements DynamicAccessor {
 		closeLookupCache();
 		ldManager = null;
 		sdManager = null;
-		return;
 	}
 
 	/**
@@ -343,8 +316,7 @@ public class ServiceAccessor implements DynamicAccessor {
 	private void openCache() {
 		if (cacheEnabled && lookupCache == null) {
 			try {
-				lookupCache = sdManager.createLookupCache(null,
-						null, null);
+				lookupCache = sdManager.createLookupCache(null, null, null);
 			} catch (RemoteException e) {
 				closeLookupCache();
 			}
@@ -359,7 +331,6 @@ public class ServiceAccessor implements DynamicAccessor {
 			lookupCache.terminate();
 			lookupCache = null;
 		}
-		return;
 	}
 
 	/**
@@ -373,14 +344,9 @@ public class ServiceAccessor implements DynamicAccessor {
     @SuppressWarnings("unchecked")
 	public <T>T getService(Class<T> serviceType, Entry[] attributes, ServiceItemFilter filter) {
 		if (serviceType == null) {
-			throw new RuntimeException("Missing service type for a ServiceTemplate");
+			throw new IllegalArgumentException("Missing service type for a ServiceTemplate");
 		}
-//		logger.info("serviceInfo: " + serviceInfo + "\nattributes: "
-//				+ SorcerUtil.arrayToString(atributes) + "\nfilter: " + filter
-//				+ "\ncodebase: " + codebase);
-
-		ServiceTemplate tmpl = new ServiceTemplate(null, new Class[] { serviceType }, attributes);
-
+        ServiceTemplate tmpl = new ServiceTemplate(null, new Class[] { serviceType }, attributes);
 		ServiceItem si = getServiceItem(tmpl, filter);
 		if (si != null)
 			return (T)si.service;
@@ -388,13 +354,16 @@ public class ServiceAccessor implements DynamicAccessor {
 			return null;
 	}
 
+    public ServiceDiscoveryManager getServiceDiscoveryManager() {
+        return sdManager;
+    }
 
 	/**
 	 * Returns a service matching serviceName and serviceInfo using Jini lookup
 	 * service.
 	 * 
-	 * @param serviceName
-	 * @param serviceType
+	 * @param serviceName name
+	 * @param serviceType type
 	 * @return a service provider
 	 */
 	public <T> T getService(String serviceName, Class<T> serviceType) {
@@ -402,13 +371,11 @@ public class ServiceAccessor implements DynamicAccessor {
 		if (serviceName != null && serviceName.equals(SorcerConstants.ANY))
 			serviceName = null;
 		int tryNo = 0;
-		while (tryNo < LUS_REAPEAT) {
-			logger.info("trying to get service: " + serviceType + ":" + serviceName + "; attempt: "
-					+ tryNo + "...");
+		while (tryNo < LUS_REPEAT) {
+			logger.info("trying to get service: {}: {}; attempt: {}...",serviceType, serviceName, tryNo);
 			try {
 				tryNo++;
-				proxy = getService(serviceType, new Entry[] { new Name(
-						serviceName) }, null);
+				proxy = getService(serviceType, new Entry[] { new Name(serviceName) }, null);
 				if (proxy != null)
 					break;
 
@@ -417,8 +384,7 @@ public class ServiceAccessor implements DynamicAccessor {
 				logger.error("" + ServiceAccessor.class, "getService", e);
 			}
 		}
-		logger.info("got LUS service [type=" + serviceType + " name=" + serviceName + "]: " + proxy);
-
+		logger.info("got LUS service [type={} name={}]: {}", serviceType.getName(), serviceName, proxy);
 		return proxy;
 	}
 
@@ -430,7 +396,6 @@ public class ServiceAccessor implements DynamicAccessor {
         return getService(serviceName, serviceType);
     }
 
-
     /**
 	 * Returns a service matching a given template filter, and Jini lookup
 	 * service.
@@ -440,8 +405,7 @@ public class ServiceAccessor implements DynamicAccessor {
 	 * @param groups   River groups list
 	 * @return a service provider
 	 */
-	public Object getService(ServiceTemplate template,
-			ServiceItemFilter filter, String[] groups) {
+	public Object getService(ServiceTemplate template, ServiceItemFilter filter, String[] groups) {
         ServiceItem si;
         if (groups == null) {
             return getServiceItem(template, filter);
@@ -517,8 +481,7 @@ public class ServiceAccessor implements DynamicAccessor {
      */
     public Object getService(ServiceID serviceID, Class[] serviceTypes,
                              Entry[] attrSets, String[] groups) {
-        ServiceTemplate st = new ServiceTemplate(serviceID, serviceTypes,
-                attrSets);
+        ServiceTemplate st = new ServiceTemplate(serviceID, serviceTypes, attrSets);
         return getService(st, null, groups);
     }
 
@@ -549,7 +512,7 @@ public class ServiceAccessor implements DynamicAccessor {
 
 	@Override
 	public ServiceItem[] getServiceItems(ServiceTemplate template, int minMatches, int maxMatches, ServiceItemFilter filter, String[] groups) {
-		return getServiceItems(template, minMatches, maxMatches, filter, groups, LUS_REAPEAT);
+		return getServiceItems(template, minMatches, maxMatches, filter, groups, LUS_REPEAT);
 	}
 
     public ServiceItem[] getServiceItems(ServiceTemplate template, int minMatches, int maxMatches, ServiceItemFilter filter, String[] groups, int lusRepeat) {
@@ -560,16 +523,11 @@ public class ServiceAccessor implements DynamicAccessor {
                 throw new IllegalArgumentException("User requested River group other than default, this is currently unsupported");
             }
         }
+        logger.info("Lookup {}, lusRepeat: {}, timeout: {}", formatServiceTemplate(template), lusRepeat, WAIT_FOR);
         for (int tryNo = 0; tryNo < lusRepeat; tryNo++) {
             ServiceItem[] result = doGetServiceItems(template, minMatches, maxMatches, filter);
             if (result != null && result.length > 0)
                 return result;
-
-            try {
-                Thread.sleep(ServiceAccessor.WAIT_FOR);
-            } catch (InterruptedException ignored) {
-                //IGNORE
-            }
         }
         return new ServiceItem[0];
     }
@@ -584,6 +542,40 @@ public class ServiceAccessor implements DynamicAccessor {
             logger.error("Error while getting service", e);
             return null;
         }
+    }
+
+    static String formatServiceTemplate(ServiceTemplate template) {
+        return String.format("[%s] [%s]",  getNames(template.attributeSetTemplates), getTypes(template.serviceTypes));
+    }
+
+    static String getNames(Entry[] entries) {
+        StringBuilder sb = new StringBuilder();
+        if(entries!=null) {
+            for (Entry e : entries) {
+                if (e instanceof Name) {
+                    if (sb.length() > 0)
+                        sb.append(", ");
+                    sb.append(((Name) e).name);
+                }
+            }
+        } else {
+            sb.append("<null>");
+        }
+        return sb.toString();
+    }
+
+    static String getTypes(Class<?>[] classes) {
+        StringBuilder sb = new StringBuilder();
+        if(classes!=null) {
+            for (Class<?> c : classes) {
+                if (sb.length() > 0)
+                    sb.append(", ");
+                sb.append(c.getName());
+            }
+        } else {
+            sb.append("<null>");
+        }
+        return sb.toString();
     }
 
 }

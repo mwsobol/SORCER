@@ -18,26 +18,22 @@
 
 package sorcer.service;
 
-import java.util.ArrayList;
-import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import net.jini.core.entry.Entry;
 import net.jini.core.lookup.ServiceID;
 import net.jini.core.lookup.ServiceItem;
 import net.jini.core.lookup.ServiceTemplate;
 import net.jini.lookup.ServiceItemFilter;
 import net.jini.lookup.entry.Name;
-import sorcer.core.provider.Provider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sorcer.core.SorcerConstants;
+import sorcer.core.provider.Provider;
 import sorcer.jini.lookup.entry.SorcerServiceInfo;
 import sorcer.river.Filters;
-import sorcer.util.ProviderNameUtil;
-import sorcer.util.ServiceAccessor;
-import sorcer.util.Sorcer;
-import sorcer.util.SorcerProviderNameUtil;
-import sorcer.util.StringUtils;
+import sorcer.util.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static sorcer.core.SorcerConstants.ANY;
 
@@ -115,11 +111,8 @@ public class Accessor {
             types = serviceTypes;
         }
 
-        logger.debug("getServiceTemplate >> \n serviceID: " + serviceID
-                + "\nproviderName: " + providerName + "\nserviceTypes: "
-                + StringUtils.arrayToString(serviceTypes)
-                + "\npublishedServiceTypes: "
-                + StringUtils.arrayToString(publishedServiceTypes));
+        logger.debug("getServiceTemplate >> \n serviceID: {}\nproviderName: {}\nserviceTypes: {}\npublishedServiceTypes: {}",
+                     serviceID, providerName, StringUtils.arrayToString(serviceTypes), StringUtils.arrayToString(publishedServiceTypes));
 
         return new ServiceTemplate(serviceID, types, attributes.toArray(new Entry[attributes.size()]));
     }
