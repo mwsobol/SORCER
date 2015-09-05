@@ -369,7 +369,6 @@ public class ServiceAccessor implements DynamicAccessor {
 		int tryNo = 0;
 		while (tryNo < LUS_REPEAT) {
 			logger.info("trying to get service: {}: {}; attempt: {}...",serviceType, serviceName, tryNo);
-
 			try {
 				tryNo++;
 				proxy = getService(serviceType, new Entry[] { new Name(serviceName) }, null);
