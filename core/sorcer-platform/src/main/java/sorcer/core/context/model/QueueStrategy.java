@@ -27,7 +27,7 @@ import java.util.List;
 /**
  * @author Mike Sobolewski
  */
-public class PoolStrategy implements Serializable {
+public class QueueStrategy implements Serializable {
 	static final long serialVersionUID = -2199530268313502745L;
 
 	private Signature builder;
@@ -41,7 +41,7 @@ public class PoolStrategy implements Serializable {
 	private int producerCapacity = 10;
 
 	// streaming blocking queue producerCapacity
-	private int streamingCapacity = -1;
+	private int streamingCapacity = 100;
 
 	// negative number - no wait time
 	private int consumerWaitTime = -1;

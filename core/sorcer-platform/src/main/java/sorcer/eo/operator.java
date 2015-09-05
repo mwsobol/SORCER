@@ -26,7 +26,7 @@ import sorcer.co.operator.DataEntry;
 import sorcer.co.tuple.*;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.*;
-import sorcer.core.context.model.PoolStrategy;
+import sorcer.core.context.model.QueueStrategy;
 import sorcer.core.context.model.ent.EntModel;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.EntryList;
@@ -290,7 +290,7 @@ public class operator {
 		Args cxtArgs = null;
 		ParameterTypes parameterTypes = null;
 		PathResponse response = null;
-		PoolStrategy modelStrategy = null;
+		QueueStrategy modelStrategy = null;
 		Signature sig = null;
 		Class customContextClass = null;
 		for (Object o : entries) {
