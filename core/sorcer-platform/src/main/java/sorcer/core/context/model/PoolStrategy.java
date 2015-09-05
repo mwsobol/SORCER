@@ -17,23 +17,38 @@
 
 package sorcer.core.context.model;
 
+import sorcer.service.Signature;
+import sorcer.service.Strategy.Flow;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-
-import sorcer.service.Signature;
-import sorcer.service.Strategy.Flow;
 
 /**
  * @author Mike Sobolewski
  */
 public class PoolStrategy implements Serializable {
 	static final long serialVersionUID = -2199530268313502745L;
-	sorcer.service.Signature builder;
-	List<Pool> pools = new ArrayList<Pool>(2);
-	Flow flow;
-	int capacity = 10;
-	int load;
+
+	private Signature builder;
+
+	// multiple thread pools
+	private List<Pool> pools = new ArrayList<Pool>();
+
+	private Flow flow = Flow.SEQ;
+
+	// producer blocking queue producerCapacity
+	private int producerCapacity = 10;
+
+	// streaming blocking queue producerCapacity
+	private int streamingCapacity = -1;
+
+	// negative number - no wait time
+	private int consumerWaitTime = -1;
+
+	// the ratio of task queue size of the ThreadPoolExecutor
+	// to the maximum size of thread pool; if negative the unbounded task queue
+	private float consumerQueueFactor = -1;
 
 	public Signature getBuilder() {
 		return builder;
@@ -43,20 +58,37 @@ public class PoolStrategy implements Serializable {
 		builder = signature;
 	}
 
-	public int getCapacity() {
-		return capacity;
+	public int getProducerCapacity() {
+		return producerCapacity;
 	}
 
-	public void setCapacity(int capacity) {
-		this.capacity = capacity;
+	public void setProducerCapacity(int producerCapacity) {
+		this.producerCapacity = producerCapacity;
 	}
 
-	public int getLoad() {
-		return load;
+
+	public int getStreamingCapacity() {
+		return streamingCapacity;
 	}
 
-	public void setLoad(int load) {
-		this.load = load;
+	public void setStreamingCapacity(int streamingCapacity) {
+		this.streamingCapacity = streamingCapacity;
+	}
+
+	public int getConsumerWaitTime() {
+		return consumerWaitTime;
+	}
+
+	public void setConsumerWaitTime(int consumerWaitTime) {
+		this.consumerWaitTime = consumerWaitTime;
+	}
+
+	public float getConsumerQueueFactor() {
+		return consumerQueueFactor;
+	}
+
+	public void setConsumerQueueFactor(float consumerQueueFactor) {
+		this.consumerQueueFactor = consumerQueueFactor;
 	}
 
 	public Flow getFlow() {
@@ -76,7 +108,9 @@ public class PoolStrategy implements Serializable {
 	}
 
 	public String toString() {
-		return "Strategy: [flow=" + flow + ", capacity=" + capacity + ", load="
-				+ load + ", builder=" + builder + "]";
+		return "[flow=" + flow + ", producerCapacity=" + producerCapacity + ", streamingCapacity="
+				+ streamingCapacity + ", consumerQueueFactor="
+				+ consumerQueueFactor + ", consumerWaitTime="
+				+ consumerWaitTime + ", builder=" + builder + "]";
 	}
 }

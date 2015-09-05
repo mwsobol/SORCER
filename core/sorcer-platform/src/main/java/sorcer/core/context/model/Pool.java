@@ -17,51 +17,83 @@
 
 package sorcer.core.context.model;
 
-import java.io.Serializable;
-
 import sorcer.service.modeling.Modeling.ParType;
 
-	public class Pool implements Serializable {
-		static final long serialVersionUID = -2702606663815246214L;
-		public int maxThreads;
-		/**
-		 * loadFactor threshold for creating new threads. A new thread is
-		 * created if the total number of runnable tasks (both active and
-		 * pending) exceeds the number of threads times the loadFactor, and the
-		 * maximum number of threads has not been reached.
-		 */
-		public float loadFactor;
-		ParType type;
+import java.io.Serializable;
+import java.util.concurrent.TimeUnit;
 
-		public Pool() {
-			type = ParType.THREAD;
-		}
+/**
+ * @author Mike Sobolewski
+ */
+public class Pool implements Serializable {
+	static final long serialVersionUID = -2702606663815246214L;
 
-		public Pool(ParType type) {
-			this.type = type;
-			maxThreads = 10;
-			loadFactor = 3.0f;
-		}
+	public int maxThreads = 10;
 
-		public Pool(ParType type, int size) {
-			this(type, size, 0);
-		}
+	public int coreThreads = 10;
 
-		public Pool(ParType type, int size, float batchSize) {
-			this.type = type;
-			this.maxThreads = size;
-			this.loadFactor = batchSize;
-		}
+	public long keepAliveTime = 0L;
 
-		public int getSize() {
-			return maxThreads;
-		}
+	public TimeUnit timeUnit = TimeUnit.MILLISECONDS;
 
-		public ParType getType() {
-			return type;
-		}
+	/**
+	 * loadFactor threshold for creating new threads. A new thread is
+	 * created if the total number of runnable tasks (both active and
+	 * pending) exceeds the number of threads times the loadFactor, and the
+	 * maximum number of threads has not been reached.
+	 */
+	public float loadFactor = 3.0f;
 
-		public float getBatchSize() {
-			return loadFactor;
-		}
+	public ParType type = ParType.THREAD;
+
+	public Pool() {
+		type = ParType.THREAD;
 	}
+
+	public Pool(ParType type) {
+		this.type = type;
+		maxThreads = 10;
+		coreThreads = 10;
+		loadFactor = 3.0f;
+	}
+
+	public Pool(ParType type, int size) {
+		this(type, size, 0);
+	}
+
+	public Pool(ParType type, int size, float batchSize) {
+		this.type = type;
+		this.maxThreads = size;
+		this.coreThreads = size;
+		this.loadFactor = batchSize;
+	}
+
+	public int getSize() {
+		return maxThreads;
+	}
+
+	public ParType getType() {
+		return type;
+	}
+
+	public float getLoadFactor() {
+		return loadFactor;
+	}
+
+	public long getKeepAliveTime() {
+		return keepAliveTime;
+	}
+
+	public void setKeepAliveTime(long keepAliveTime) {
+		this.keepAliveTime = keepAliveTime;
+	}
+
+	public TimeUnit getTimeUnit() {
+		return timeUnit;
+	}
+
+	public void setTimeUnit(TimeUnit timeUnit) {
+		this.timeUnit = timeUnit;
+	}
+
+}
