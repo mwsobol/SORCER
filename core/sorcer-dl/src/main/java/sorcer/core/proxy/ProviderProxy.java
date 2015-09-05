@@ -177,9 +177,7 @@ public class ProviderProxy implements Serializable {
 				return "refID=" + proxyID + " : proxy=" + proxy;
 			} else if ("getAdmin".equals(selector)) {
 				return adminProxy;
-			} //else if ("isActive".equals(selector)) {
-//				return ((ServiceActivityProvider)server).isActive();
-//			}
+			}
 
 			Object obj = null;
             try {

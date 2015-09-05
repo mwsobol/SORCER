@@ -116,6 +116,14 @@ public class operator {
         return inputs(model);
     }
 
+    public static Context allInputs(Model model) throws ContextException {
+        try {
+            return model.getAllInputs();
+        } catch (RemoteException e) {
+            throw new ContextException(e);
+        }
+    }
+
     public static Context inputs(Model model) throws ContextException {
         try {
             return model.getInputs();

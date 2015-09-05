@@ -41,6 +41,7 @@ import net.jini.lookup.ui.factory.JFrameFactory;
 import net.jini.security.TrustVerifier;
 import net.jini.security.proxytrust.ServerProxyTrust;
 import net.jini.security.proxytrust.TrustEquivalence;
+import org.rioproject.admin.ServiceActivityProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.SorcerConstants;
@@ -61,8 +62,6 @@ import sorcer.serviceui.UIDescriptorFactory;
 import sorcer.serviceui.UIFrameFactory;
 import sorcer.util.*;
 import sorcer.util.url.sos.SdbURLStreamHandlerFactory;
-
-import org.rioproject.admin.ServiceActivityProvider;
 
 import javax.security.auth.Subject;
 import javax.security.auth.login.LoginContext;
@@ -216,71 +215,71 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		ShutdownHook shutdownHook =  new ShutdownHook(this);
 		shutdownHook.setDaemon(true);
 		Runtime.getRuntime().addShutdownHook(shutdownHook);
-	}
+    }
 
-	/**
-	 * Required constructor for Jini 2 NonActivatableServiceDescriptors
-	 *
-	 * @param args
-	 * @param lifeCycle
-	 * @throws Exception
-	 */
-	public ServiceProvider(String[] args, LifeCycle lifeCycle) throws Exception {
-		this();
-		// count initialized shared providers
-		tally = tally + 1;
-		size = tally;
-		// load Sorcer environment properties via static initializer
-		Sorcer.getProperties();
-		serviceClassLoader = Thread.currentThread().getContextClassLoader();
-		final Configuration config = ConfigurationProvider.getInstance(args, serviceClassLoader);
-		delegate.setJiniConfig(config);
-		// inspect class loader tree
-		if(logger.isTraceEnabled())
-			com.sun.jini.start.ClassLoaderUtil.displayContextClassLoaderTree();
-		// System.out.println("service provider class loader: " +
-		// serviceClassLoader);
-		String providerProperties = null;
-		try {
-			providerProperties = (String) Config.getNonNullEntry(config,
-					COMPONENT, "properties", String.class, "");
-		} catch (ConfigurationException e) {
-			// e.printStackTrace();
-			logger.warn("init", e);
-		}
+    /**
+     * Required constructor for Jini 2 NonActivatableServiceDescriptors
+     *
+     * @param args
+     * @param lifeCycle
+     * @throws Exception
+     */
+    public ServiceProvider(String[] args, LifeCycle lifeCycle) throws Exception {
+        this();
+        // count initialized shared providers
+        tally = tally + 1;
+        size = tally;
+        // load Sorcer environment properties via static initializer
+        Sorcer.getProperties();
+        serviceClassLoader = Thread.currentThread().getContextClassLoader();
+        final Configuration config = ConfigurationProvider.getInstance(args, serviceClassLoader);
+        delegate.setJiniConfig(config);
+        // inspect class loader tree
+        if(logger.isTraceEnabled())
+            com.sun.jini.start.ClassLoaderUtil.displayContextClassLoaderTree();
+        // System.out.println("service provider class loader: " +
+        // serviceClassLoader);
+        String providerProperties = null;
+        try {
+            providerProperties = (String) Config.getNonNullEntry(config,
+                                                                 COMPONENT, "properties", String.class, "");
+        } catch (ConfigurationException e) {
+            // e.printStackTrace();
+            logger.warn("init", e);
+        }
 		// configure the provider's delegate
-		delegate.getProviderConfig().init(true, providerProperties);
-		((ScratchManagerSupport)scratchManager).setProperties(getProviderProperties());
-		delegate.configure(config);
-		providerAdmin = new ProviderAdmin(this);
-		providerAdmin.register();
-		// decide if thread management is needed for ExertionDispatcher
-		setupThreadManager();
-		init(args, lifeCycle);
+        delegate.getProviderConfig().init(true, providerProperties);
+        ((ScratchManagerSupport)scratchManager).setProperties(getProviderProperties());
+        delegate.configure(config);
+        providerAdmin = new ProviderAdmin(this);
+        providerAdmin.register();
+        // decide if thread management is needed for ExertionDispatcher
+        setupThreadManager();
+        init(args, lifeCycle);
 
-		logger.info("<init> (String[], LifeCycle); name = " + this.getName());
+        logger.info("<init> (String[], LifeCycle); name = " + this.getName());
+    }
+
+    // this is only used to instantiate provider impl objects and use their
+    // methods
+    public ServiceProvider(String providerPropertiesFile) {
+        this();
+        delegate.getProviderConfig().loadConfiguration(providerPropertiesFile);
+        ((ScratchManagerSupport)scratchManager).setProperties(getProviderProperties());
 	}
 
-	// this is only used to instantiate provider impl objects and use their
-	// methods
-	public ServiceProvider(String providerPropertiesFile) {
-		this();
-		delegate.getProviderConfig().loadConfiguration(providerPropertiesFile);
-		((ScratchManagerSupport)scratchManager).setProperties(getProviderProperties());
-	}
+    protected void setScratchManager(final ScratchManager scratchManager) {
+        if(scratchManager!=null) {
+            this.scratchManager = scratchManager;
+            logger.info("Set ScratchManager with {}", this.scratchManager.getClass().getName());
+        } else {
+            logger.warn("Attempt to set null ScratchManager avoided");
+        }
+    }
 
-	protected void setScratchManager(final ScratchManager scratchManager) {
-		if(scratchManager!=null) {
-			this.scratchManager = scratchManager;
-			logger.info("Set ScratchManager with {}", this.scratchManager.getClass().getName());
-		} else {
-			logger.warn("Attempt to set null ScratchManager avoided");
-		}
-	}
-
-	public ScratchManager getScratchManager() {
-		return scratchManager;
-	}
+    public ScratchManager getScratchManager() {
+        return scratchManager;
+    }
 
 	// Implement ServerProxyTrust
 	/**
@@ -1710,6 +1709,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 
 		try {
 			logger.debug("Destroying service " + getProviderName());
+			// Close remote logging
 			if (ldmgr != null)
 				ldmgr.terminate();
 			if (joinManager != null)

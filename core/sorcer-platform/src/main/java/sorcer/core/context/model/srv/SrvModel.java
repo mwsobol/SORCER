@@ -180,15 +180,19 @@ public class SrvModel extends ParModel<Object> implements Model {
 
             if (val instanceof Srv) {
                 if (((Srv) val).asis() instanceof SignatureEntry) {
+                    // return the calculated value
+                    if (((Srv) val).getSrvValue() != null)
+                        return ((Srv) val).getSrvValue();
                     ServiceSignature sig = (ServiceSignature) ((SignatureEntry) ((Srv) val).asis()).value();
                     Context out = execSignature(sig);
                     if (sig.getReturnPath() != null) {
                         Object obj = out.getValue(sig.getReturnPath().path);
                         if (obj == null)
                             obj = out.getValue(path);
-                        if (obj != null)
+                        if (obj != null) {
+                            ((Srv)val).setSrvValue(obj);
                             return obj;
-                        else {
+                        } else {
                             logger.warn("no value for return path: {} in: {}", sig.getReturnPath().path, out);
                             return out;
                         }
@@ -277,7 +281,8 @@ public class SrvModel extends ParModel<Object> implements Model {
                 return xrt.getDataContext();
             } else {
                 // evaluate model responses
-                getValue(entries);
+                getResponse(entries);
+//                getValue(entries);
                 return this;
             }
         } catch (Exception e) {

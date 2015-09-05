@@ -1,5 +1,6 @@
 package sorcer.provider.adder;
 
+import net.jini.core.transaction.Transaction;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.sorcer.test.ProjectContext;
@@ -9,6 +10,7 @@ import sorcer.service.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sorcer.service.modeling.Model;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -16,6 +18,8 @@ import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.result;
 import static sorcer.eo.operator.value;
+import static sorcer.mo.operator.response;
+import static sorcer.mo.operator.srvModel;
 
 /**
  * @author Mike Sobolewski
@@ -23,11 +27,11 @@ import static sorcer.eo.operator.value;
 @SuppressWarnings({ "unchecked", "rawtypes" })
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/service")
-public class LocalTasks {
-	private final static Logger logger = LoggerFactory.getLogger(LocalTasks.class);
+public class LocalMograms {
+	private final static Logger logger = LoggerFactory.getLogger(LocalMograms.class);
 
 	@Test
-	public void exertTask() throws Exception  {
+	public void exertTask() throws Exception {
 
 		Service t5 = task("t5", sig("add", AdderImpl.class),
 				cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0)));
@@ -50,7 +54,7 @@ public class LocalTasks {
 
 
 	@Test
-	public void evaluateTask() throws SignatureException, ExertionException, ContextException  {
+	public void evaluateTask() throws SignatureException, ExertionException, ContextException {
 
 		Task t5 = task("t5", sig("add", AdderImpl.class),
 				cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0), result("result/y")));
@@ -61,6 +65,21 @@ public class LocalTasks {
 		// get the subcontext output from the exertion
 		assertTrue(context(ent("arg/x1", 20.0), ent("result/z", 100.0)).equals(
 				value(t5, result("result/z", outPaths("arg/x1", "result/z")))));
+
+	}
+
+	@Test
+	public void evalauteLocalModel() throws Exception {
+
+		// three entry model
+		Model mod = model(inEnt("arg/x1", 10.00), inEnt("arg/x2", 90.00),
+				srv(sig("add", AdderImpl.class, result("result/y", inPaths("arg/x1", "arg/x2")))),
+				response("add", "arg/x1", "arg/x2"));
+
+		Context out = response(mod);
+		assertTrue(get(out, "add").equals(100.0));
+
+		assertTrue(get(mod, "result/y").equals(100.0));
 
 	}
 

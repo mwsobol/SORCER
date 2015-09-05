@@ -4,10 +4,8 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.io.RandomAccessFile;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Observable;
-import java.util.Observer;
+import java.util.*;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -239,12 +237,21 @@ public class LoggerUI extends JPanel implements Observer {
 				try {
 					remoteLogger.deleteLog(fileName);
 					loggerNames = remoteLogger.getLogNames();
+					list.setListData(loggerNames);
+					clearLoggerText();
 				} catch (RemoteException e) {
 					e.printStackTrace();
 				}
-				list.setListData(loggerNames);
 			}
 		}
+	}
+
+	private void clearLoggerText() {
+		logText.setText("");
+		if (filterComponent != null) {
+			filterComponent.resetLevel();
+		}
+		list.clearSelection();
 	}
 
 	/**
@@ -254,11 +261,7 @@ public class LoggerUI extends JPanel implements Observer {
 		private static final long serialVersionUID = 1L;
 
 		public void actionPerformed(ActionEvent ae) {
-			logText.setText("");
-			if (filterComponent != null) {
-				filterComponent.resetLevel();
-			}
-			list.clearSelection();
+			clearLoggerText();
 		}
 	}
 

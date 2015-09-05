@@ -4,7 +4,8 @@ version = sorcerVersion
 dependencies {
     compile "net.jini:jsk-platform:${riverVersion}",
             "org.rioproject:rio-api:${rioVersion}",
-            "org.slf4j:slf4j-api:${slf4jVersion}"
+            "org.slf4j:slf4j-api:${slf4jVersion}",
+            "ch.qos.logback:logback-classic:${logbackVersion}"
 
 }
 

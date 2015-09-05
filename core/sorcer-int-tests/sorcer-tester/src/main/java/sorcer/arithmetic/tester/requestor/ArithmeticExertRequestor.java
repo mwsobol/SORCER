@@ -1,29 +1,30 @@
-package sorcer.arithmetic.requestor;
+package sorcer.arithmetic.tester.requestor;
 
-import sorcer.arithmetic.provider.Adder;
-import sorcer.arithmetic.provider.Averager;
-import sorcer.arithmetic.provider.Multiplier;
-import sorcer.arithmetic.provider.Subtractor;
-import sorcer.arithmetic.provider.impl.AdderImpl;
-import sorcer.arithmetic.provider.impl.AveragerImpl;
-import sorcer.arithmetic.provider.impl.MultiplierImpl;
-import sorcer.arithmetic.provider.impl.SubtractorImpl;
+
+import sorcer.arithmetic.tester.provider.Adder;
+import sorcer.arithmetic.tester.provider.Averager;
+import sorcer.arithmetic.tester.provider.Multiplier;
+import sorcer.arithmetic.tester.provider.Subtractor;
+import sorcer.arithmetic.tester.provider.impl.AdderImpl;
+import sorcer.arithmetic.tester.provider.impl.AveragerImpl;
+import sorcer.arithmetic.tester.provider.impl.MultiplierImpl;
+import sorcer.arithmetic.tester.provider.impl.SubtractorImpl;
 import sorcer.core.provider.Jobber;
 import sorcer.core.provider.rendezvous.ServiceJobber;
-import sorcer.core.requestor.ServiceRequestor;
+import sorcer.core.requestor.ExertRequestor;
 import sorcer.service.*;
 
 import static sorcer.co.operator.inEnt;
 import static sorcer.co.operator.outEnt;
 import static sorcer.eo.operator.*;
 
-public class ArithmeticServiceRequestor extends ServiceRequestor {
+public class ArithmeticExertRequestor extends ExertRequestor {
 
 	/* (non-Javadoc)
-	 * @see sorcer.core.requestor.ServiceRequestor#getMogram(java.lang.String[])
+	 * @see sorcer.core.requestor.ExertionRunner#getMogram(java.lang.String[])
 	 */
 	@Override
-	public Exertion getExertion(String... args) throws ExertionException, ContextException, SignatureException {
+	public Mogram getMogram(String... args) throws ExertionException, ContextException, SignatureException {
 
 		Task t3 = task("t3", sFi("object/subtract", sig("subtract", SubtractorImpl.class)),
 				sFi("object/average", sig("average", AveragerImpl.class)),
@@ -58,6 +59,6 @@ public class ArithmeticServiceRequestor extends ServiceRequestor {
 	@Override
 	public void postprocess(String... args) throws ExertionException, ContextException {
 		super.postprocess();
-		logger.info("<<<<<<<<<< f5 context: \n" + upcontext(exertion));
+		logger.info("<<<<<<<<<< f5 context: \n" + upcontext(mogram));
 	}
 }

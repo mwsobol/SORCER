@@ -2741,6 +2741,16 @@ public class ServiceContext<T> extends ServiceMogram implements
 	}
 
 	@Override
+	public Context getAllInputs() throws ContextException, RemoteException {
+		List<String> paths = Contexts.getAllInPaths(this);
+		Context<T> inputs = new ServiceContext();
+		for (String path : paths)
+			inputs.putValue(path, getValue(path));
+
+		return inputs;
+	}
+
+	@Override
 	public Context getOutputs() throws ContextException, RemoteException {
 		List<String> paths = Contexts.getOutPaths(this);
 		Context<T> inputs = new ServiceContext();
@@ -3012,7 +3022,7 @@ public class ServiceContext<T> extends ServiceMogram implements
      */
 	@Override
 	public <T extends Mogram> T service(T mogram, Transaction txn) throws TransactionException,
-			ExertionException, RemoteException {
+			MogramException, RemoteException {
 		try {
 			((ServiceExertion)exertion).getContext().appendContext(this);
 		} catch (Exception e) {
@@ -3026,7 +3036,7 @@ public class ServiceContext<T> extends ServiceMogram implements
      */
 	@Override
 	public <T extends Mogram> T service(T mogram) throws TransactionException,
-			ExertionException, RemoteException {
+			MogramException, RemoteException {
 		return (T) service(exertion, null);
 	}
 

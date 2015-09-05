@@ -211,6 +211,7 @@ task createDistribution(dependsOn: [":sorcer-boot:install",
         copy {
             from("${project.rootProject.projectDir}") {
                 include "LICENSE.txt"
+                include "configs/apps-logback.xml"
                 include "configs/all-prv.config"
                 include "configs/all-sorcer.env"
                 include "configs/versions.properties"

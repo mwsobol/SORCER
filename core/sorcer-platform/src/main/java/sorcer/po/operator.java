@@ -81,15 +81,10 @@ public class operator {
 			p = new Par(path, argument);
 			p.setScope(object);
 		} else if (object instanceof Service) {
-			p = new Par(path, argument, (Service)object);
+			p = new Par(path, argument, object);
 		}
 		return p;
 	}
-
-//	public static Par par(String name, String path, Service argument) throws ContextException {
-//		Par p = new Par(name, path, argument);
-//		return p;
-//	}
 
 	public static Par dPar(Identifiable identifiable, Context context) throws EvaluationException, RemoteException {
 		Par p = new Par(identifiable.getName(), identifiable);

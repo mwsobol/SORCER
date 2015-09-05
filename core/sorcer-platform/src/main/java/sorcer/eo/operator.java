@@ -26,7 +26,7 @@ import sorcer.co.operator.DataEntry;
 import sorcer.co.tuple.*;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.*;
-import sorcer.core.context.model.PoolStrategy;
+import sorcer.core.context.model.QueueStrategy;
 import sorcer.core.context.model.ent.EntModel;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.EntryList;
@@ -290,17 +290,17 @@ public class operator {
 		Args cxtArgs = null;
 		ParameterTypes parameterTypes = null;
 		PathResponse response = null;
-		PoolStrategy modelStrategy = null;
+		QueueStrategy modelStrategy = null;
 		Signature sig = null;
 		Class customContextClass = null;
 		for (Object o : entries) {
 			if (o instanceof Complement) {
 				subject = (Complement) o;
-			} else if (o instanceof Args
-					&& ((Args) o).args.getClass().isArray()) {
+			} else if (o instanceof Args) {
+//					&& ((Args) o).args.getClass().isArray()) {
 				cxtArgs = (Args) o;
-			} else if (o instanceof ParameterTypes
-					&& ((ParameterTypes) o).parameterTypes.getClass().isArray()) {
+			} else if (o instanceof ParameterTypes)  {
+//					&& ((ParameterTypes) o).parameterTypes.getClass().isArray()) {
 				parameterTypes = (ParameterTypes) o;
 			} else if (o instanceof PathResponse) {
 				response = (PathResponse) o;
@@ -314,8 +314,6 @@ public class operator {
 				types.add((Context.Type) o);
 			} else if (o instanceof String) {
 				name = (String) o;
-			} else if (o instanceof PoolStrategy) {
-				modelStrategy = (PoolStrategy) o;
 			} else if (o instanceof Par) {
 				parEntryList.add((Par) o);
 			} else if (o instanceof EntryList) {
@@ -629,15 +627,18 @@ public class operator {
 
 	public static Context put(Context context, String path, Object value)
 			throws ContextException {
-		Object val = context.asis(path);
-		if (SdbUtil.isSosURL(val)) {
-			try {
+		try {
+			Object val = context.asis(path);
+			if (val instanceof Par && ((Par)val).isPersistent())
+				val = ((Par)val).asis();
+			if (SdbUtil.isSosURL(val)) {
 				SdbUtil.update((URL) val, value);
-			} catch (Exception e) {
-				throw new ContextException(e);
+			} else {
+				context.putValue(path, value);
 			}
+		} catch (Exception e) {
+			throw new ContextException(e);
 		}
-		context.putValue(path, value);
 		return context;
 	}
 
@@ -1040,11 +1041,11 @@ public class operator {
 		return ((ServiceExertion) exertion).getServiceFidelities();
 	}
 
-	public static Fidelity<Signature> sFi(Mogram exertion) {
-		return exertion.getFidelity();
+	public static Fidelity<Signature> sFi(Mogram mogram) {
+		return mogram.getFidelity();
 	}
 
-	public static String selFi(Mogram exertion) {
+	public static String fiName(Mogram exertion) {
 		return ((ServiceExertion) exertion).getSelectedFidelitySelector();
 	}
 
@@ -1419,7 +1420,7 @@ public class operator {
 
 	public static Job job(Object... elems) throws ExertionException,
 			ContextException, SignatureException {
-		String name = getUnknown();
+		String name = "job-" + count++;
 		Signature signature = null;
 		ControlContext control = null;
 		Context<?> data = null;

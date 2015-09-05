@@ -24,6 +24,9 @@ import org.slf4j.LoggerFactory;
 import sorcer.core.context.Contexts;
 import sorcer.core.context.ThrowableTrace;
 import sorcer.core.context.node.ContextNode;
+import sorcer.core.provider.RemoteLogger;
+import sorcer.core.provider.logger.LoggerRemoteException;
+import sorcer.core.provider.logger.RemoteLoggerListener;
 import sorcer.netlet.ScriptExerter;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
@@ -34,9 +37,9 @@ import sorcer.tools.shell.WhitespaceTokenizer;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-
-//import sorcer.core.RemoteLogger;
+import java.util.Map;
 
 public class ExertCmd extends ShellCmd {
 
@@ -155,28 +158,28 @@ public class ExertCmd extends ShellCmd {
 			return;
 		}
 		Object target = scriptExerter.parse();
-/*        LoggerRemoteEventClient lrec = null;
 
-        // Starting RemoteLoggerListener
-        if (shell.isRemoteLogging() && target instanceof Exertion) {
+        // Create RemoteLoggerListener
+		RemoteLoggerListener listener = null;
+		if (shell.isRemoteLogging() && target instanceof Mogram) {
             List<Map<String, String>> filterMapList = new ArrayList<Map<String, String>>();
-            for (String exId : getAllExertionIdFromExertion((Exertion)target)) {
+            for (String exId : ((ServiceMogram)target).getAllMogramIds()) {
                 Map<String, String> map = new HashMap<String, String>();
-                map.put(RemoteLogger.KEY_EXERTION_ID, exId);
+                map.put(RemoteLogger.KEY_MOGRAM_ID, exId);
                 filterMapList.add(map);
             }
             if (!filterMapList.isEmpty()) {
                 try {
-                    lrec = new LoggerRemoteEventClient();
-                    lrec.register(filterMapList, new ConsoleLoggerListener(out));
+                    listener = new RemoteLoggerListener(filterMapList);
+                    //listener.register(filterMapList);
                 } catch (LoggerRemoteException lre) {
                     out.append("Remote logging disabled: " + lre.getMessage());
-                    lrec = null;
+                    listener = null;
                 }
             }
-        }*/
+        }
 
-		if (NetworkShell.getInstance().isDebug()) out.println("Starting execute!");
+//		if (NetworkShell.getInstance().isDebug()) out.println("Starting execute netlet!");
 		Object result = scriptExerter.execute();
 //		out.println(">>>>>>>>>>> result: " + result);
 		if (result != null) {
@@ -210,11 +213,7 @@ public class ExertCmd extends ShellCmd {
 				if (mog instanceof Exertion) {
 					Exertion xrt = (Exertion)mog;
 					out.println("\n---> OUTPUT DATA CONTEXT --->");
-					if (xrt.isCompound()) {
-						out.println(xrt.getContext());
-					} else {
-						out.println(xrt.getDataContext());
-					}
+					out.println(xrt.getContext());
 					saveFilesFromContext(xrt, out);
 					if (ifMogramControl) {
 						out.println("\n---> OUTPUT STRATEGY  --->");
@@ -242,8 +241,7 @@ public class ExertCmd extends ShellCmd {
 			}
 			// System.out.println(">>> executing script: \n" + sb.toString());
 		}
-
-		//    if (lrec != null) lrec.destroy();
+//		if (listener != null) listener.destroy();
 	}
 
 
@@ -303,16 +301,6 @@ public class ExertCmd extends ShellCmd {
 		}
 		return sb;
 	}
-
-    public static List<String> getAllExertionIdFromExertion(Exertion xrt) {
-        List<String> xrtIdsList = new ArrayList<String>();
-        for (Mogram exertion : xrt.getAllMograms()) {
-            xrtIdsList.add(exertion.getId().toString());
-        }
-        return xrtIdsList;
-    }
-
-
 
     private void saveFilesFromContext(Exertion xrt, PrintStream out) {
         try {

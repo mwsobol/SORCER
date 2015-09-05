@@ -169,5 +169,20 @@ deployment(name: "Sorcer OS") {
             configuration new File("${Sorcer.sorcerHome}/bin/sorcer/dbp/configs/dbp-prv.config").text
             maintain 1
         }
+
+        service(name: SorcerEnv.getActualName("Logger")) {
+            interfaces {
+                classes 'sorcer.core.provider.RemoteLogger'
+                resources appendJars(["sorcer-ui-${Sorcer.sorcerVersion}.jar", "sos-logger-${Sorcer.sorcerVersion}.jar"])
+            }
+            implementation(class: 'sorcer.core.provider.ServiceProvider') {
+                resources "sorcer-lib-${Sorcer.sorcerVersion}.jar",
+                        "sos-logger-${Sorcer.sorcerVersion}.jar",
+                        "commons-io-${Sorcer.commonsIoVersion}.jar"
+                        "rio-api-${RioVersion.VERSION}.jar"
+            }
+            configuration new File("${Sorcer.sorcerHome}/bin/sorcer/logger/configs/logger-prv.config").text
+            maintain 1
+        }
     }
 }

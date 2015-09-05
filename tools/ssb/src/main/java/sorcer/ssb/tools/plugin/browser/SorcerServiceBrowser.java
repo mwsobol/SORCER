@@ -56,7 +56,7 @@ public class SorcerServiceBrowser {
 
 	public static boolean isPlugin;
 
-	public static String ABOUT;
+	public static String ABOUT = BASE_TITLE;
 
 	public static boolean EXPIRED;
 	

@@ -3,6 +3,7 @@ package sorcer.util;
 import net.jini.core.entry.Entry;
 import net.jini.core.lookup.ServiceItem;
 import net.jini.core.lookup.ServiceTemplate;
+import net.jini.id.Uuid;
 import net.jini.lookup.entry.Name;
 import net.jini.space.JavaSpace05;
 import org.junit.Test;
@@ -13,6 +14,7 @@ import sorcer.service.space.SpaceAccessor;
 
 import java.io.File;
 import java.net.URL;
+import java.util.Enumeration;
 import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
@@ -88,5 +90,59 @@ public class UtilTest {
 				+ tmpl + " groups=" + Sorcer.getSpaceGroup());
 		assertNotNull(si);
 	}
-		
+
+	@Test
+	 public void fileTable() throws Exception {
+		Uuid key1 = net.jini.id.UuidFactory.generate();
+		logger.info("key1: " + key1);
+		Uuid key2 = net.jini.id.UuidFactory.generate();
+		logger.info("key2: " + key2);
+		FileTable table = new FileTable("test");
+		table.put(key1, "String11111");
+		table.put(key2, "String22222");
+		Uuid key;
+		Enumeration e = table.keys();
+		while (e.hasMoreElements()) {
+			key = (Uuid)e.nextElement();
+			table.put(key2,"String22222");
+			logger.info(key + ":" + table.get(key));
+		}
+
+		assertEquals(table.get(key1), "String11111");
+		assertEquals(table.get(key2), "String22222");
+
+//		table.cleanup();
+		table.close();
+
+		File obf = new File("test.obf");
+		obf.delete();
+		File iobf = new File("test-index.obf");
+		iobf.delete();
+
+	}
+
+	@Test
+	public void numberedFileTable() throws Exception {
+		FileTable table = new FileTable("test");
+		table.addRow(1, "String11111");
+		table.addRow(2, "String22222");
+		int key;
+		Enumeration<Integer> e = table.keys();
+		while (e.hasMoreElements()) {
+			key = e.nextElement();
+			table.addRow(2, "String22222");
+			logger.info(key + ":" + table.get(key));
+		}
+
+		assertEquals(table.getRow(1), "String11111");
+		assertEquals(table.getRow(2), "String22222");
+
+//		table.cleanup();
+		table.close();
+
+		File obf = new File("test.obf");
+		obf.delete();
+		File iobf = new File("test-index.obf");
+		iobf.delete();
+	}
 }

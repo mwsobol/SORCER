@@ -1,12 +1,15 @@
 package edu.pjatk.inn.coffeemaker.impl;
 
+import sorcer.core.context.ServiceContext;
 import sorcer.service.Context;
 import sorcer.service.ContextException;
+
+import java.io.Serializable;
 
 /**
  * @author   Sarah & Mike
  */
-public class Recipe {
+public class Recipe implements Serializable {
     private String name;
     private int price;
     private int amtCoffee;
@@ -117,7 +120,7 @@ public class Recipe {
     	return name;
     }
 
-	static public Recipe recipe(Context context) throws ContextException {
+	static public Recipe getRecipe(Context context) throws ContextException {
 		Recipe r = new Recipe();
 		r.name = (String)context.getValue("name");
 		r.price = (int)context.getValue("price");
@@ -127,5 +130,17 @@ public class Recipe {
 		r.amtChocolate = (int)context.getValue("amtChocolate");
 		return r;
 	}
+
+	static public Context getContext(Recipe recipe) throws ContextException {
+		Context cxt = new ServiceContext();
+		cxt.putValue("name", recipe.getName());
+		cxt.putValue("price", recipe.getPrice());
+		cxt.putValue("amtCoffee", recipe.getAmtCoffee());
+		cxt.putValue("amtMilk", recipe.getAmtMilk());
+		cxt.putValue("amtSugar", recipe.getAmtSugar());
+		cxt.putValue("amtChocolate", recipe.getAmtChocolate());
+		return cxt;
+	}
+
 
 }

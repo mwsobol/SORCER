@@ -25,6 +25,8 @@ public class Srv extends Entry<Object> implements Variability<Object>, Arg, Eval
 
     protected final String name;
 
+    protected Object srvValue;
+
     Type type = Type.PAR;;
 
     protected String selectedFidelity;
@@ -121,6 +123,23 @@ public class Srv extends Entry<Object> implements Variability<Object>, Arg, Eval
     @Override
     public Object getPerturbedValue(String varName) throws EvaluationException, RemoteException {
         return null;
+    }
+
+    @Override
+    public Object getValue(Arg... entries) throws EvaluationException, RemoteException {
+        if (srvValue != null && isValid) {
+            return srvValue;
+        } else {
+            return super.getValue(entries);
+        }
+    }
+
+    public Object getSrvValue() {
+        return srvValue;
+    }
+
+    public void setSrvValue(Object srvValue) {
+        this.srvValue = srvValue;
     }
 
     @Override

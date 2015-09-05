@@ -49,6 +49,9 @@ public class Entry<T> extends Tuple2<String, T> implements Service, Dependency, 
 	// its arguments are always evaluated if active (either Evaluataion or Invocation type)
 	protected boolean isReactive = false;
 
+	// when context of this entry is changed then isValid == false
+	protected boolean isValid = true;
+
 	// dependency management for this Entry
 	protected List<Evaluation> dependers = new ArrayList<Evaluation>();
 
@@ -184,6 +187,14 @@ public class Entry<T> extends Tuple2<String, T> implements Service, Dependency, 
 			return false;
 	}
 
+	public boolean isValid() {
+		return isValid;
+	}
+
+	public void isValid(boolean state) {
+		isValid = state;
+	}
+
 	@Override
 	public void addDependers(Evaluation... dependers) {
 		if (this.dependers == null)
@@ -212,6 +223,11 @@ public class Entry<T> extends Tuple2<String, T> implements Service, Dependency, 
 			e.printStackTrace();
 		}
 		return "[" + _1 + ":" + en + "]";
+	}
+
+	public Entry(String path, T value, boolean isPersistant, int index) {
+		this(path, value, index);
+		this.isPersistent = isPersistant;
 	}
 
 	@Override

@@ -117,12 +117,12 @@ test {
     systemProperty "java.rmi.server.codebase",
             "${websterUrl}/${repoPath()}/coffeemaker-${version}-dl.jar ${websterUrl}/sorcer-dl-${version}.jar ${websterUrl}/jsk-dl-${riverVersion}.jar"
 
-//    testLogging {
-//        events "passed", "skipped", "failed"/*, "standardOut", "standardError"*/
-//    }
-    dependsOn([install])
-//    dependsOn([install, bootme])
-//    finalizedBy(stopme)
+    testLogging {
+        events "passed", "skipped", "failed"/*, "standardOut", "standardError"*/
+    }
+//    dependsOn([install])
+    dependsOn([install, bootme])
+    finalizedBy(stopme)
 }
 test.enabled = false
 

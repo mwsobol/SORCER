@@ -156,11 +156,11 @@ logger("sorcer.core.provider.exertmonitor", TRACE)
 logger("sorcer.core.monitor", TRACE)
 logger("sorcer.core.dispatch", INFO)
 logger("sorcer.core.dispatch.ExertionSorter", WARN)
-logger("sorcer.rio.rmi", INFO)
+logger("sorcer.rio.rmi", WARN)
 logger("sorcer.service.Accessor", WARN)
 logger("sorcer.core.provider.exerter", WARN)
-
-
+logger("sorcer.platform.logger", WARN)
+logger("sorcer.core.provider.logger", WARN)
 
 /* ==================================================================
  *  SORCER Variable oriented loggers

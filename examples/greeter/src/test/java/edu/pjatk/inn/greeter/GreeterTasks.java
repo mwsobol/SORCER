@@ -1,6 +1,5 @@
-package edu.pjatk.inn.greeter.test;
+package edu.pjatk.inn.greeter;
 
-import edu.pjatk.inn.greeter.Greeter;
 import edu.pjatk.inn.greeter.one.FormalGreeter;
 import edu.pjatk.inn.greeter.two.CasualGreeter;
 import org.junit.Before;

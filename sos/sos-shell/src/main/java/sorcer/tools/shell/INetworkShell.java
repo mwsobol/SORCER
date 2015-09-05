@@ -50,5 +50,5 @@ public interface INetworkShell {
 
     boolean isDebug();
 
-//    boolean isRemoteLogging();
+    boolean isRemoteLogging();
 }

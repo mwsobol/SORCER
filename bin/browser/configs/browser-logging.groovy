@@ -35,6 +35,7 @@ appenders << "CONSOLE"
 logger("sorcer", INFO)
 logger("sorcer.ssb", WARN)
 logger("sorcer.ui", WARN)
+logger("sorcer.core.provider.logger", WARN);
 
 root(INFO, appenders)
 

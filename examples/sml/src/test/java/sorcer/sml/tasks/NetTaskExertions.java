@@ -1,5 +1,6 @@
 package sorcer.sml.tasks;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -12,14 +13,11 @@ import sorcer.arithmetic.provider.Multiplier;
 import sorcer.arithmetic.provider.Subtractor;
 import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
-import sorcer.arithmetic.provider.impl.SubtractorImpl;
 import sorcer.core.provider.Shell;
 import sorcer.service.*;
 import sorcer.service.Strategy.Access;
 import sorcer.service.Strategy.Monitor;
 import sorcer.service.Strategy.Wait;
-
-import java.util.Collection;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -158,16 +156,16 @@ public class NetTaskExertions {
 		assertEquals(get(batch3, "result/y"), 400.0);
 	}
 
+	@Ignore
 	@Test
-	public void localFiBatchTask() throws Exception {
+	public void batchFiTask() throws Exception {
 
-        //TODO
 		Task t4 = task("t4", sFi("object", sig("multiply", MultiplierImpl.class), sig("add", AdderImpl.class)),
 				sFi("net", sig("multiply", Multiplier.class), sig("add", Adder.class)),
 				context("shared", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
 						outEnt("result/y")));
 
-		t4 = exert(t4);
+		t4 = exert(t4, fi("object"));
 		logger.info("task t4 context: " + context(t4));
 
 		t4 = exert(t4, fi("net"));
@@ -177,7 +175,6 @@ public class NetTaskExertions {
 
 	@Test
 	public void arithmeticMultiFiNetTaskTest() throws Exception {
-		ServiceExertion.debug = true;
 
 		Task task = task("add",
 				sFi("net", sig("add", Adder.class)),
@@ -187,13 +184,13 @@ public class NetTaskExertions {
 
 		logger.info("sFi: " + sFi(task));
 		assertTrue(sFis(task).size() == 2);
-		logger.info("selFis: " + selFi(task));
-		assertTrue(selFi(task).equals("net"));
+		logger.info("fiName: " + fiName(task));
+		assertTrue(fiName(task).equals("net"));
 
 		task = exert(task, fi("net"));
 		logger.info("exerted: " + context(task));
-		assertTrue(selFi(task).equals("net"));
-		assertTrue("Wrong value for 100.0", (Double)get(task) == 100.0);
+		assertTrue(fiName(task).equals("net"));
+		assertTrue(get(task).equals(100.0));
 	}
 
 }

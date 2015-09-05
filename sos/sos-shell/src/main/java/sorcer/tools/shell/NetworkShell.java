@@ -88,23 +88,18 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
              "\t-version \t\t- show NSH version info";
 
 
-
-
-
     //public static final String CONFIG_EXT_PATH = Sorcer.get + "/configs/shell/configs/nsh-start-ext.config";
     public static final String CONFIG_PATH = SorcerEnv.getHome() + "/bin/shell/configs/nsh-start.config";
 
 	static private boolean debug = false;
 
-    public static final String[] CONFIG_FILES = { CONFIG_PATH };
-    //CONFIG_EXT_PATH,
+	static private boolean isRemoteLogging = true;
 
+	public static final String[] CONFIG_FILES = { CONFIG_PATH };
 
     public static int selectedRegistrar = 0;
 
     private static List<ServiceRegistrar> registrars = new CopyOnWriteArrayList<ServiceRegistrar>();
-
-//    static private boolean isRemoteLogging = true;
 
 	static private String shellName = "nsh";
 
@@ -382,6 +377,10 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
     public boolean isDebug() {
         return debug;
     }
+
+	public boolean isRemoteLogging() {
+		return isRemoteLogging;
+	}
 
 	public static SorcerPrincipal getPrincipal() {
 		return principal;
@@ -1368,6 +1367,8 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 		} catch (NoSuchEntryException e) {
 			// leave null
 		}
+		isRemoteLogging = (Boolean) sysConfig.getEntry(CONFIG_COMPONENT,
+				"remoteLogging", boolean.class, Boolean.TRUE);
 		String[] result = null;
 		if (loginContext != null) {
 			loginContext.login();

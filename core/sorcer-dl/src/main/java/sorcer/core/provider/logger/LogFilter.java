@@ -1,7 +1,8 @@
-/*
- * Copyright 2009 the original author or authors.
- * Copyright 2009 SorcerSoft.org.
- *  
+/**
+ *
+ * Copyright 2013 the original author or authors.
+ * Copyright 2013 Sorcersoft.com S.A.
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -19,15 +20,14 @@ package sorcer.core.provider.logger;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class LogFilter {
 	private List<String> lineList;
 	private List<String> input;
-	public final static Level[] levels = { Level.FINEST, Level.FINER,
-			Level.FINE, Level.CONFIG, Level.INFO, Level.WARNING, Level.SEVERE };
+	public final static Level[] levels = {Level.ALL , Level.TRACE, Level.DEBUG,
+			Level.INFO, Level.WARN, Level.ERROR, Level.OFF};
 
 	public LogFilter(File file) {
 		lineList = new ArrayList<String>();
@@ -55,10 +55,9 @@ public class LogFilter {
 		if (text != null && text.length() > 0) {
 			tp = Pattern.compile(text);
 		}
-		Level il = Level.parse(level);
 		for (Level l : levels) {
-			if (l.intValue() >= il.intValue()) {
-				p = Pattern.compile("" + l + ":");
+			if (l.isGreaterOrEqual(Level.valueOf(level))) {
+				p = Pattern.compile("" + l.toString() + "");
 				patterns.add(p);
 			}
 		}
@@ -91,7 +90,7 @@ public class LogFilter {
 
 	private List<String> getLines(int index) {
 		List<String> lines = new ArrayList<String>();
-		lines.add(input.get(index - 1));
+		if (index>0) lines.add(input.get(index - 1));
 		lines.add(input.get(index));
 		int end = getEndRecord(index);
 		for (int k = index + 1; k < end - 1; k++) {
@@ -105,7 +104,7 @@ public class LogFilter {
 		for (int j = recordStartIndex + 1; j < input.size(); j++) {
 			line = input.get(j);
 			for (Level l : levels) {
-				if (line.indexOf("" + l + ":") == 0)
+				if (line.indexOf("" + l.toString() + "") == 0)
 					return j;
 			}
 		}
