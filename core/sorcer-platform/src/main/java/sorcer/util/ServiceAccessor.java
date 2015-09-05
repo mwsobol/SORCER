@@ -96,6 +96,10 @@ public class ServiceAccessor implements DynamicAccessor {
         openDiscoveryManagement(SorcerEnv.getLookupGroups());
     }
 
+	public ServiceDiscoveryManager getServiceDiscoveryManager() {
+		return sdManager;
+	}
+
 	/**
 	 * Returns a service item containing a service matching providerName and
 	 * serviceInfo using Jini lookup service.
@@ -281,7 +285,7 @@ public class ServiceAccessor implements DynamicAccessor {
 				sdManager = new ServiceDiscoveryManager(ldManager, new LeaseRenewalManager());
 			} catch (Throwable t) {
 				logger.error(ServiceAccessor.class.getName(),
-                        "openDiscoveryManagement", t);
+						"openDiscoveryManagement", t);
 			}
 		}
 		// Opening a lookup cache
@@ -452,8 +456,8 @@ public class ServiceAccessor implements DynamicAccessor {
      * @param serviceID
      *            a service provider ID
      * @return a SORCER provider service
-     */
-    public Object getService(ServiceID serviceID) {
+	 */
+	public Object getService(ServiceID serviceID) {
         return getService(serviceID, null, null, SorcerEnv.getLookupGroups());
     }
 
@@ -536,8 +540,8 @@ public class ServiceAccessor implements DynamicAccessor {
         }
     }
 
-    static String formatServiceTemplate(ServiceTemplate template) {
-        return String.format("[%s] [%s]",  getNames(template.attributeSetTemplates), getTypes(template.serviceTypes));
+	static String formatServiceTemplate(ServiceTemplate template) {
+		return String.format("[%s] [%s]",  getNames(template.attributeSetTemplates), getTypes(template.serviceTypes));
     }
 
     static String getNames(Entry[] entries) {
