@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-project.version = '5.3.5'
+project.version = '5.3.6'
 
 apply plugin: 'idea'
 idea {
@@ -84,6 +84,9 @@ subprojects {
                     downloadJavadoc = false
                 }
             }
+            /* Always run tests */
+            test.outputs.upToDateWhen { false }
+
             compileJava.options.encoding = 'UTF-8'
             apply from: file("${rootProject.projectDir.path}/gradle/bootme.gradle")
 

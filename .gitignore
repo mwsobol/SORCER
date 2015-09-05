@@ -33,6 +33,7 @@ junit*.properties
 /.gradle/
 /.settings/
 /.idea/
+/.nb-gradle/
 
 ### Generated config files
 bin/webster/websterConfig.groovy

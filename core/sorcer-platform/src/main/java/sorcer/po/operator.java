@@ -21,7 +21,6 @@ import org.slf4j.LoggerFactory;
 import sorcer.co.tuple.ExecPath;
 import sorcer.co.tuple.InputEntry;
 import sorcer.co.tuple.Tuple2;
-import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.EntryList;
 import sorcer.core.context.model.par.Agent;
@@ -82,15 +81,10 @@ public class operator {
 			p = new Par(path, argument);
 			p.setScope(object);
 		} else if (object instanceof Service) {
-			p = new Par(path, argument, (Service)object);
+			p = new Par(path, argument, object);
 		}
 		return p;
 	}
-
-//	public static Par par(String name, String path, Service argument) throws ContextException {
-//		Par p = new Par(name, path, argument);
-//		return p;
-//	}
 
 	public static Par dPar(Identifiable identifiable, Context context) throws EvaluationException, RemoteException {
 		Par p = new Par(identifiable.getName(), identifiable);
@@ -161,7 +155,7 @@ public class operator {
 
 	public static Invocation invoker(Mappable mappable, String path)
 			throws ContextException {
-		Object obj = ((ServiceContext) mappable).asis(path);
+		Object obj = mappable.asis(path);
 		while (obj instanceof Mappable || obj instanceof Par) {
 			try {
 				obj = ((Evaluation) obj).asis();
@@ -171,6 +165,8 @@ public class operator {
 		}
 		if (obj instanceof Invocation)
 			return (Invocation) obj;
+		else if (obj != null)
+			return new Entry(path,obj);
 		else
 			throw new NoneException("No such invoker at: " + path + " in: " + mappable.getName());
 	}
@@ -362,19 +358,39 @@ public class operator {
 		return new ExertInvoker(exertion);
 	}
 
-	public static InvokeIncrementor inc(String name, Invocation invoker) {
-		return new InvokeIncrementor(name, invoker, 1);
+	public static InvokeIncrementor inc(String path) {
+		return new IntegerIncrementor(path, 1);
 	}
 
-	public static InvokeIncrementor inc(String name, Invocation invoker, int increment) {
-		return new InvokeIncrementor(name, invoker, increment);
+	public static InvokeIncrementor inc(String path, int increment) {
+		return new IntegerIncrementor(path, increment);
 	}
 
-	public static InvokeDoubleIncrementor inc(String name, Invocation invoker, double increment) {
-		return new InvokeDoubleIncrementor(name, invoker, increment);
+	public static InvokeIncrementor inc(Invocation invoker, int increment) {
+		return new IntegerIncrementor(invoker, increment);
 	}
 
-	public static Incrementor reset(Incrementor incrementor) {
+	public static InvokeIncrementor inc(Invocation<Integer> invoker) {
+		return new IntegerIncrementor(invoker, 1);
+	}
+
+	public static InvokeIncrementor dinc(String path) {
+		return new DoubleIncrementor(path, 1.0);
+	}
+
+	public static InvokeIncrementor inc(String path, double increment) {
+		return new DoubleIncrementor(path, increment);
+	}
+
+	public static InvokeIncrementor inc(Invocation invoker, double increment) {
+		return new DoubleIncrementor(invoker, increment);
+	}
+
+	public static InvokeIncrementor dinc(Invocation<Double> invoker) {
+		return new DoubleIncrementor(invoker, 1.0);
+	}
+
+	public static sorcer.service.Incrementor reset(sorcer.service.Incrementor incrementor) {
 		incrementor.reset();
 		return incrementor;
 	}
@@ -437,7 +453,7 @@ public class operator {
 		return new AltInvoker(name, invokers);
 	}
 
-	public static LoopInvoker loop(String name, Condition condition, ServiceInvoker target) {
+	public static LoopInvoker loop(String name, Condition condition, Invocation target) {
 		return new LoopInvoker(name, condition, target);
 	}
 

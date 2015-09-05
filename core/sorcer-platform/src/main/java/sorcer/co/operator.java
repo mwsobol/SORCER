@@ -423,6 +423,10 @@ public class operator {
 						((Setter) entry).setPersistent(true);
 						dburl = SdbUtil.store(obj);
 						((Setter)entry).setValue(dburl);
+						if (object instanceof Par) {
+							// its value is now persisted
+							((Par)object)._2 = null;
+						}
 						return dburl;
 					}
 				}
@@ -679,8 +683,12 @@ public class operator {
 
 	public static Object asis(Entry entry)
 			throws ContextException {
-		if (entry instanceof Par)
-			return ((Par)entry).value();
+		if (entry instanceof Par) {
+			if (entry._2 != null && entry.isValid())
+				return entry._2;
+			else
+				return entry.value();
+		}
 		else
 			return entry._2;
 	}

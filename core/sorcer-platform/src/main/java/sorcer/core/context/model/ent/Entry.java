@@ -39,7 +39,7 @@ import static sorcer.eo.operator.add;
  * @author Mike Sobolewski
  */
 @SuppressWarnings("unchecked")
-public class Entry<T> extends Tuple2<String, T> implements Service, Dependency, Comparable<T>, Setter, Evaluation<T>, Reactive<T>, Arg {
+public class Entry<T> extends Tuple2<String, T> implements Service, Dependency, Comparable<T>, Setter, Evaluation<T>, Invocation<T>, Reactive<T>, Arg {
 	private static final long serialVersionUID = 5168783170981015779L;
 
 	public int index;
@@ -48,6 +48,9 @@ public class Entry<T> extends Tuple2<String, T> implements Service, Dependency, 
 
 	// its arguments are always evaluated if active (either Evaluataion or Invocation type)
 	protected boolean isReactive = false;
+
+	// when context of this entry is changed then isValid == false
+	protected boolean isValid = true;
 
 	// dependency management for this Entry
 	protected List<Evaluation> dependers = new ArrayList<Evaluation>();
@@ -184,6 +187,14 @@ public class Entry<T> extends Tuple2<String, T> implements Service, Dependency, 
 			return false;
 	}
 
+	public boolean isValid() {
+		return isValid;
+	}
+
+	public void isValid(boolean state) {
+		isValid = state;
+	}
+
 	@Override
 	public void addDependers(Evaluation... dependers) {
 		if (this.dependers == null)
@@ -212,6 +223,11 @@ public class Entry<T> extends Tuple2<String, T> implements Service, Dependency, 
 			e.printStackTrace();
 		}
 		return "[" + _1 + ":" + en + "]";
+	}
+
+	public Entry(String path, T value, boolean isPersistant, int index) {
+		this(path, value, index);
+		this.isPersistent = isPersistant;
 	}
 
 	@Override
@@ -259,5 +275,10 @@ public class Entry<T> extends Tuple2<String, T> implements Service, Dependency, 
 	public Mogram service(Mogram mogram) throws TransactionException,
 			MogramException, RemoteException {
 		return service(mogram, null);
+	}
+
+	@Override
+	public T invoke(Context<T> context, Arg... entries) throws InvocationException, RemoteException {
+		return _2;
 	}
 }

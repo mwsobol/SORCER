@@ -15,8 +15,6 @@ import sorcer.service.Strategy.Access;
 import sorcer.service.Strategy.Provision;
 import sorcer.service.Strategy.Wait;
 
-import java.rmi.RemoteException;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
@@ -149,12 +147,12 @@ public class TaskTest {
 
 		logger.info("sFi: " + sFi(task));
 		assertTrue(sFis(task).size() == 2);
-		logger.info("selFis: " + selFi(task));
-		assertTrue(selFi(task).equals("net"));
+		logger.info("selFis: " + fiName(task));
+		assertTrue(fiName(task).equals("net"));
 
 		task = exert(task, fi("object"));
 		logger.info("exerted: " + context(task));
-		assertTrue(selFi(task).equals("object"));
+		assertTrue(fiName(task).equals("object"));
 		assertTrue(get(task).equals(100.0));
 	}
 
@@ -170,12 +168,12 @@ public class TaskTest {
 
 		logger.info("sFi: " + sFi(task));
 		assertTrue(sFis(task).size() == 2);
-		logger.info("selFis: " + selFi(task));
-		assertTrue(selFi(task).equals("net"));
+		logger.info("selFis: " + fiName(task));
+		assertTrue(fiName(task).equals("net"));
 
 		task = exert(task, fi("net"));
 		logger.info("exerted: " + context(task));
-		assertTrue(selFi(task).equals("net"));
+		assertTrue(fiName(task).equals("net"));
 		assertTrue("Wrong value for 100.0", (Double)get(task) == 100.0);
 	}
 	

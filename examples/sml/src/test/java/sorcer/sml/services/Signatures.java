@@ -240,14 +240,14 @@ public class Signatures {
 
 	@Test
 	public void evaluateNetletSignature() throws Exception {
-		String netlet = "/Volumes/SSSD/git/SORCER/examples/sml/src/main/netlets/ha-job-local.ntl";
+		String netlet = "src/main/netlets/ha-job-local.ntl";
 		assertEquals(evaluate(mogram(sig(file(netlet)))), 400.00);
 	}
 
 
 	@Test
 	public void execNetletSignature() throws Exception {
-		String netlet = "/Volumes/SSSD/git/SORCER/examples/sml/src/main/netlets/ha-job-local.ntl";
+		String netlet = "src/main/netlets/ha-job-local.ntl";
 		assertEquals(exec(sig(file(netlet))), 400.00);
 	}
 

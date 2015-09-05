@@ -1,5 +1,6 @@
 package sorcer.core.provider;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -244,8 +245,9 @@ public class ArithmeticNetTest implements SorcerConstants {
 		assertTrue(get(job, "j1/t3/result/y").equals(400.0));
 	}
 
+	@Ignore
 	@Test
-	public void arithmeticMultiFiBatchTaskTest() throws Exception {
+	public void batchFiTask() throws Exception {
 		
 		Task t4 = task("t4",
 				sFi("object", sig("multiply", MultiplierImpl.class), sig("add", AdderImpl.class)),
@@ -253,7 +255,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 				context("shared", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
 						outEnt("result/y")));
 
-		t4 = exert(t4);
+		t4 = exert(t4, fi("object"));
 		logger.info("task context: " + context(t4));
 		
 		t4 = exert(t4, fi("net"));

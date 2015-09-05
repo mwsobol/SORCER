@@ -1,7 +1,7 @@
 /*
  * Copyright 2009 the original author or authors.
  * Copyright 2009 SorcerSoft.org.
- *  
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -26,7 +26,7 @@ import sorcer.co.operator.DataEntry;
 import sorcer.co.tuple.*;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.*;
-import sorcer.core.context.model.PoolStrategy;
+import sorcer.core.context.model.QueueStrategy;
 import sorcer.core.context.model.ent.EntModel;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.EntryList;
@@ -35,6 +35,7 @@ import sorcer.core.context.model.par.ParModel;
 import sorcer.core.context.model.srv.Srv;
 import sorcer.core.deploy.ServiceDeployment;
 import sorcer.core.exertion.*;
+import sorcer.core.invoker.InvokeIncrementor;
 import sorcer.core.provider.*;
 import sorcer.core.provider.exerter.Binder;
 import sorcer.core.provider.rendezvous.ServiceConcatenator;
@@ -289,17 +290,17 @@ public class operator {
 		Args cxtArgs = null;
 		ParameterTypes parameterTypes = null;
 		PathResponse response = null;
-		PoolStrategy modelStrategy = null;
+		QueueStrategy modelStrategy = null;
 		Signature sig = null;
 		Class customContextClass = null;
 		for (Object o : entries) {
 			if (o instanceof Complement) {
 				subject = (Complement) o;
-			} else if (o instanceof Args
-					&& ((Args) o).args.getClass().isArray()) {
+			} else if (o instanceof Args) {
+//					&& ((Args) o).args.getClass().isArray()) {
 				cxtArgs = (Args) o;
-			} else if (o instanceof ParameterTypes
-					&& ((ParameterTypes) o).parameterTypes.getClass().isArray()) {
+			} else if (o instanceof ParameterTypes)  {
+//					&& ((ParameterTypes) o).parameterTypes.getClass().isArray()) {
 				parameterTypes = (ParameterTypes) o;
 			} else if (o instanceof PathResponse) {
 				response = (PathResponse) o;
@@ -313,8 +314,6 @@ public class operator {
 				types.add((Context.Type) o);
 			} else if (o instanceof String) {
 				name = (String) o;
-			} else if (o instanceof PoolStrategy) {
-				modelStrategy = (PoolStrategy) o;
 			} else if (o instanceof Par) {
 				parEntryList.add((Par) o);
 			} else if (o instanceof EntryList) {
@@ -507,6 +506,16 @@ public class operator {
 									  List<Tuple2<String, ?>> entryList) throws ContextException {
 		for (int i = 0; i < entryList.size(); i++) {
 			if (entryList.get(i) instanceof InputEntry) {
+				Object val = null;
+				try {
+					val = entryList.get(i).asis();
+				} catch (RemoteException e) {
+					throw new ContextException(e);
+				}
+				if (val instanceof Incrementor &&
+						((InvokeIncrementor)val).getTarget() == null) {
+					((InvokeIncrementor)val).setScope(cxt);
+				}
 				if (((InputEntry) entryList.get(i)).isPersistent()) {
 					setPar(cxt, (InputEntry) entryList.get(i));
 				} else {
@@ -618,15 +627,18 @@ public class operator {
 
 	public static Context put(Context context, String path, Object value)
 			throws ContextException {
-		Object val = context.asis(path);
-		if (SdbUtil.isSosURL(val)) {
-			try {
+		try {
+			Object val = context.asis(path);
+			if (val instanceof Par && ((Par)val).isPersistent())
+				val = ((Par)val).asis();
+			if (SdbUtil.isSosURL(val)) {
 				SdbUtil.update((URL) val, value);
-			} catch (Exception e) {
-				throw new ContextException(e);
+			} else {
+				context.putValue(path, value);
 			}
+		} catch (Exception e) {
+			throw new ContextException(e);
 		}
-		context.putValue(path, value);
 		return context;
 	}
 
@@ -1029,11 +1041,11 @@ public class operator {
 		return ((ServiceExertion) exertion).getServiceFidelities();
 	}
 
-	public static Fidelity<Signature> sFi(Mogram exertion) {
-		return exertion.getFidelity();
+	public static Fidelity<Signature> sFi(Mogram mogram) {
+		return mogram.getFidelity();
 	}
 
-	public static String selFi(Mogram exertion) {
+	public static String fiName(Mogram exertion) {
 		return ((ServiceExertion) exertion).getSelectedFidelitySelector();
 	}
 
@@ -1408,7 +1420,7 @@ public class operator {
 
 	public static Job job(Object... elems) throws ExertionException,
 			ContextException, SignatureException {
-		String name = getUnknown();
+		String name = "job-" + count++;
 		Signature signature = null;
 		ControlContext control = null;
 		Context<?> data = null;
@@ -1675,6 +1687,8 @@ public class operator {
 					return ((Par<T>)evaluation).getValue(entries);
 				} else if (evaluation instanceof Entry){
 					return ((Entry<T>)evaluation).getValue(entries);
+				} else if (evaluation instanceof Incrementor){
+					return ((Incrementor<T>) evaluation).next();
 				} else {
 					return (T) ((Evaluation)evaluation).getValue(entries);
 				}
@@ -2417,6 +2431,15 @@ public class operator {
 		return new LoopExertion(null, condition, target);
 	}
 
+	public static LoopExertion loop(int from, int to, Condition condition,
+									Exertion target) {
+		return new LoopExertion(null, from, to, condition, target);
+	}
+
+	public static LoopExertion loop(int from, int to, Exertion target) {
+		return new LoopExertion(null, from, to, null, target);
+	}
+
 	public static LoopExertion loop(String name, Condition condition,
 									Exertion target) {
 		return new LoopExertion(name, condition, target);
@@ -2535,7 +2558,8 @@ public class operator {
 				} else if (e instanceof OptExertion) {
 					((OptExertion)e).getCondition().setConditionalContext(pm);
 				} else if (e instanceof LoopExertion) {
-					((LoopExertion)e).getCondition().setConditionalContext(pm);
+					if (((LoopExertion)e).getCondition() != null)
+						((LoopExertion)e).getCondition().setConditionalContext(pm);
 					Exertion target = ((LoopExertion)e).getTarget();
 					if (target instanceof EvaluationTask && ((EvaluationTask)target).getEvaluation() instanceof Par) {
 						Par p = (Par)((EvaluationTask)target).getEvaluation();

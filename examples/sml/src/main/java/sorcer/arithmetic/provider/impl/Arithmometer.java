@@ -316,7 +316,7 @@ public class Arithmometer implements SorcerConstants, Serializable {
 			context.reportException(ex);
 			throw new ContextException(selector + " calculate exception", ex);
 		}
-		return (Context) context;
+		return context;
 	}
 	
 	private Context calculateExpression(Context context)

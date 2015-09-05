@@ -132,8 +132,8 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
 				((OptExertion)exertion).getCondition().setConditionalContext(pc);
             }
             pc.append(xrt.getContext());
-		} else if (exertion instanceof LoopExertion) {
-			((LoopExertion)exertion).getCondition().setStatus(null);
+		} else if (exertion instanceof LoopExertion && ((LoopExertion)exertion).getCondition() != null) {
+            ((LoopExertion)exertion).getCondition().setStatus(null);
 			Context pc = ((LoopExertion)exertion).getCondition().getConditionalContext();			
 			if (pc == null) {
 				pc = new ParModel(exertion.getName());

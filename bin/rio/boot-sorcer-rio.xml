@@ -5,7 +5,7 @@
 	<target name="sorcer.boot" depends="clean-files, set.fork.sorcer, rio"/>
     <target name="sorcer.boot.nofork" depends="clean-files, set.donot.fork.sorcer, rio"/>
 
-    <target name="rio" depends="webster, cybernode, monitor"/>
+    <target name="rio" depends="cybernode, monitor"/>
 
     <target name="set.fork.sorcer">
         <property name="fork.mode" value="yes"/>
@@ -13,12 +13,6 @@
 
     <target name="set.donot.fork.sorcer">
         <property name="fork.mode" value="no"/>
-    </target>
-
-    <target name="webster" description="Starts a Webster">
-        <ant antfile="${sorcer.home}/bin/webster/bin/webster-run.xml" target="webster-spawn">
-            <property name="sorcer.home" value="${sorcer.home}"/>
-        </ant>
     </target>
 
     <target name="verify" description="Checks the local repository for artifacts. If not present will install them.">

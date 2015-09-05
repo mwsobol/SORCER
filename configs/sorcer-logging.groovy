@@ -147,6 +147,7 @@ logger("sorcer.util.ProviderAccessor", WARN)
 logger("sorcer.core.provider.cataloger.ServiceCataloger", WARN)
 //logger("sorcer.provider.boot", TRACE)
 logger("sorcer.core.provider.ServiceProvider", WARN)
+logger("sorcer.core.provider.ControlFlowManager", WARN)
 logger("sorcer.core.provider.ProviderDelegate", WARN)
 logger("sorcer.tools.shell.NetworkShell", WARN)
 logger("sorcer.core.provider.exertmonitor.ExertMonitor", WARN)
@@ -154,12 +155,12 @@ logger("sorcer.core.provider.SpaceTaker", WARN)
 logger("sorcer.core.provider.exertmonitor", TRACE)
 logger("sorcer.core.monitor", TRACE)
 logger("sorcer.core.dispatch", INFO)
-logger("sorcer.core.dispatch.ExertionSorter", INFO)
-logger("sorcer.rio.rmi", INFO)
-logger("sorcer.service.Accessor", INFO)
-logger("sorcer.core.provider.exerter", INFO)
-
-
+logger("sorcer.core.dispatch.ExertionSorter", WARN)
+logger("sorcer.rio.rmi", WARN)
+logger("sorcer.service.Accessor", WARN)
+logger("sorcer.core.provider.exerter", WARN)
+logger("sorcer.platform.logger", WARN)
+logger("sorcer.core.provider.logger", WARN)
 
 /* ==================================================================
  *  SORCER Variable oriented loggers
@@ -181,8 +182,10 @@ logger("sorcer.core.context.model.explore.ExploreDispatcher", TRACE)
 logger("sorcer.core.context.model.explore.ModelManager", TRACE)
 logger("sorcer.core.context.model.opti", TRACE)
 logger("sorcer.modeling.vfe.persist.TaskContextSetter", OFF)
-logger("sorcer.core.context.model.var.ResponseModel", TRACE)
+logger("sorcer.modeling.vfe.persist.TaskContextSetter", OFF)
 */
+logger("sorcer.modeling.core.context.model.var.ResponseModel", WARN)
+logger("sorcer.modeling.core.context.model.var.ParametricModel", WARN)
 
 /* ==================================================================
  *  SORCER Other specialized loggers

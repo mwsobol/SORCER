@@ -1,0 +1,134 @@
+/*
+ * Copyright to the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/**
+ * Created by Moke Sobolewski on 8/5/15.
+ */
+
+version = sorcerVersion
+
+jar {
+    manifest {
+        attributes("Implementation-Title": "Service Provider", "Implementation-Version": version)
+    }
+    baseName = "coffeemaker"
+    classifier = "prv"
+    dependsOn classes
+    from sourceSets.main.output
+    exclude('edu/pjatk/inn/coffeemaker/requestor/**')
+}
+
+task servicePrvDlJar(type: Jar) {
+    manifest {
+        attributes("Implementation-Title": "Service Provider Exported Classes", "Implementation-Version": version)
+    }
+    baseName = "coffeemaker"
+    classifier = "dl"
+    dependsOn classes
+    from sourceSets.main.output
+    include('edu/pjatk/inn/coffeemaker/*')
+    include('edu/pjatk/inn/coffeemaker/impl/Recipe.class')
+    include('edu/pjatk/inn/coffeemaker/impl/Inventory.class')
+    from sourceSets.main.resources
+    include('sorcer.jpg')
+}
+
+task serviceReqJar(type: Jar) {
+    manifest {
+        attributes("Implementation-Title": "Service Requestor", "Implementation-Version": version)
+    }
+    baseName = "coffeemaker"
+    classifier = "req"
+    dependsOn classes
+    from sourceSets.main.output
+    include('edu/pjatk/inn/coffeemaker/requestor/**')
+}
+
+artifacts {
+    archives servicePrvDlJar
+    archives serviceReqJar
+}
+
+install.dependsOn(['servicePrvDlJar', 'serviceReqJar'])
+build.dependsOn(install)
+
+dependencies {
+    compile project(':sorcer-platform')
+    compile project(':sorcer-lib')
+    compile project(':sos-db-prv')
+    testCompile project(':sorcer-test')
+    testRuntime libs.slf4j
+    testRuntime libs.logback
+}
+
+def deployConfig = file("configs/coffeemaker-prv.config")
+artifacts {
+    archives deployConfig
+}
+
+def repoPath() {
+    return "org/sorcer/coffeemaker/${version}"
+}
+
+bootme {
+    description = 'Starts up a service provider'
+    starterConfig = file("${projectDir.path}/configs/StartCoffeemakerConfig.groovy")
+    systemProperties = ["relative.repo.path" : repoPath()]
+//    spawn = false
+//    debug = true
+}
+
+def script = "${project.buildDir}/bin/${project.name}.sh"
+
+task ss {
+    doFirst {
+        File scriptDir = new File(project.buildDir, "bin")
+        scriptDir.mkdirs()
+        File scriptFile = new File(script)
+        scriptFile.text = "java -cp ${project.buildDir}/classes/main:${sourceSets.main.runtimeClasspath.getAsPath()} edu.pjatk.inn.requestor.CoffeemakerRequestor"
+        Process chmod = "chmod +x ${scriptFile.path}".execute()
+        chmod.waitFor()
+    }
+}
+
+// run with "gradle run -q"
+task runCoffeemaker(type:JavaExec, dependsOn:[install]) {
+    description = 'Runs a Coffeemaker main.'
+    main = "edu.pjatk.inn.requestor.CoffeemakerRequestor"
+    classpath = sourceSets.main.runtimeClasspath
+    standardInput = System.in
+}
+
+test {
+    description = 'Tests local and remote services with JUnit test case.'
+    systemProperty "java.rmi.server.codebase",
+            "${websterUrl}/${repoPath()}/coffeemaker-${version}-dl.jar ${websterUrl}/sorcer-dl-${version}.jar ${websterUrl}/jsk-dl-${riverVersion}.jar"
+
+    testLogging {
+        events "passed", "skipped", "failed"/*, "standardOut", "standardError"*/
+    }
+//    dependsOn([install])
+    dependsOn([install, bootme])
+    finalizedBy(stopme)
+}
+test.enabled = false
+
+
+
+
+
+
+

@@ -41,7 +41,6 @@ public class Pars {
 		Par<?> add = par("add", invoker("x + y", pars("x", "y")), cxt);
 		logger.info("par value: " + value(add));
 		assertTrue(value(add).equals(50.0));
-
 	}
 
 
@@ -94,7 +93,7 @@ public class Pars {
 			
 		URL dbp1Url = storeArg(dbp1);
 		URL dbp2Url = storeArg(dbp2);
-		
+
 		assertTrue(content(dbp1Url).equals(25.0));
 		assertEquals(content(dbp2Url), "http://sorcersoft.org/sobol");
 		

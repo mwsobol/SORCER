@@ -63,6 +63,7 @@ import sorcer.core.signature.NetSignature;
 import sorcer.jini.jeri.SorcerILFactory;
 import sorcer.jini.lookup.entry.SorcerServiceInfo;
 import sorcer.jini.lookup.entry.VersionInfo;
+import sorcer.platform.logger.RemoteLoggerInstaller;
 import sorcer.security.sign.SignedServiceTask;
 import sorcer.security.sign.SignedTaskInterface;
 import sorcer.security.sign.TaskAuditor;
@@ -239,16 +240,16 @@ public class ProviderDelegate {
 
 	/**
 	 * An outer service proxy, by default the proxy of this provider, is used
-	 * from by service requestors if provider's smart proxy is absent. At least
+	 * by service requestors if provider's smart proxy is absent. At least
 	 * two generic Remote interface: {@link Service} and {@link Provider} are
 	 * implemented by outer proxies of all SORCER service providers. Each SORCER
 	 * provider uses outer proxy to actually call directly its provider and make
 	 * redirected calls using its inner proxy (redirected remote invocations).
 	 * Any method of not Remote interface implemented by a SORCER service
 	 * provider can be invoked via the Service remote interface,
-	 * {@code Service.service(Exertion)} - recommended approach. That
-	 * provider's direct invocation method is embedded into a service method of
-	 * the provided exertion.
+	 * {@code Service.service(Mogram)} - the recommended access proxy approach.
+	 * The provider's direct invocation methods are embedded into service signatures
+	 * of serviced mograms.
 	 */
 	private Remote outerProxy = null;
 
@@ -279,11 +280,6 @@ public class ProviderDelegate {
 	private Map<Class, Object> serviceComponents;
 
 	/**
-	 * List of Exertions for which SLA Offer was given
-	 */
-	private List exertionsGivenSlaList = Collections.synchronizedList(new ArrayList());
-
-	/**
 	 * Indicates a single threaded execution for service beans or providers
 	 * implementing the SingleThreadModel interface.
 	 */
@@ -295,6 +291,8 @@ public class ProviderDelegate {
 
     protected AbstractExporterFactory exporterFactory;
     private boolean shuttingDown = false;
+
+	private RemoteLoggerInstaller remoteLoggerInstaller;
 
 	/*
 	 * A nested class to hold the state information of the executing thread for
@@ -356,6 +354,8 @@ public class ProviderDelegate {
 			throws ConfigurationException {
 		this.provider = provider;
 		String providerProperties = configFilename;
+		// Initialize remote logging
+		remoteLoggerInstaller = RemoteLoggerInstaller.getInstance();
 		// This allows us to specify different properties for different hosts
 		// using a shared mounted file system
 		if (providerProperties != null
@@ -578,6 +578,15 @@ public class ProviderDelegate {
             logger.warn("Problem getting {}.{}", ServiceProvider.COMPONENT, SERVER, e);
             partnerName = null;
         }
+		try {
+			remoteLogging = (Boolean) jconfig.getEntry(
+					ServiceProvider.COMPONENT, REMOTE_LOGGING, boolean.class,
+					false);
+			logger.info("remoteLogging=" + remoteLogging);
+		} catch (Exception e) {
+			logger.warn("Problem getting {}.{}", ServiceProvider.COMPONENT, SERVER, e);
+			remoteLogging = false;
+		}
         if (partner != null) {
             getPartner(partnerName, partnerType);
             exports.put(partner, partnerExporter);
@@ -602,7 +611,7 @@ public class ProviderDelegate {
                 logger.error("No exporter for provider: {}", getProviderName());
                 return;
             }
-            outerProxy = outerExporter.export(provider);
+			outerProxy = outerExporter.export(provider);
             logger.debug("outerProxy: {}", outerProxy);
         } catch (Exception ee) {
             logger.warn("{} deployment failed", ProviderDelegate.class.getName(), ee);
@@ -1606,6 +1615,9 @@ public class ProviderDelegate {
 
 	public void destroy() {
         shuttingDown = true;
+        if (remoteLoggerInstaller!=null) {
+            remoteLoggerInstaller.destroy();
+        }
 		if (spaceEnabled && spaceHandlingPools != null) {
             for (SpaceTaker st : spaceTakers) {
                 st.destroy();
