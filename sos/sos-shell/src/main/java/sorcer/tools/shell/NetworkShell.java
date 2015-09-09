@@ -42,6 +42,7 @@ import sorcer.jini.lookup.entry.SorcerServiceInfo;
 import sorcer.netlet.util.LoaderConfiguration;
 import sorcer.netlet.util.ScriptExertException;
 import sorcer.security.util.SorcerPrincipal;
+import sorcer.service.Accessor;
 import sorcer.service.EvaluationException;
 import sorcer.service.ExertionInfo;
 import sorcer.tools.shell.cmds.*;
@@ -242,9 +243,9 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 		}
 
 		try {
-
-
-			// default shellOutput
+            /* TODO: Need to provide a configuration*/
+            Accessor.create();
+            // default shellOutput
 			shellOutput = System.out;
 			if (interactive) {
                 shellOutput.println(WELCOME_HEADER_1);

@@ -63,7 +63,7 @@ artifacts {
     archives file: deployConfig, classifier: "deploy"
 }
 
-install.dependsOn(['arithmeticPrvDlJar', 'arithmeticReqJar'])
+install.dependsOn(['arithmeticPrvDlJar', 'arithmeticReqJar', ':sorcer-platform:install', ':sorcer-resolving-loader:install', ':sorcer-dl:install'])
 build.dependsOn(install)
 
 def repoPath() {
