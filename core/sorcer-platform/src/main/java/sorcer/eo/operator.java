@@ -1878,14 +1878,21 @@ public class operator {
 
 	public static void print(Object obj) {
 		System.out.println(obj.toString());
-	}
+	}å
 
 	public static Object evaluate(Mogram mogram, Arg... args)
 			throws ContextException, RemoteException, ExertionException {
-		if (mogram instanceof Exertion)
-			return new sorcer.core.provider.exerter.ServiceShell().evaluate((Exertion)mogram, args);
-		else
-			return ((Evaluation)mogram).getValue(args);
+		synchronized (mogram) {
+			if (mogram instanceof Exertion)
+				return new sorcer.core.provider.exerter.ServiceShell().evaluate(mogram, args);
+			else if (mogram instanceof Modeling) {
+				mogram.substitute(args);
+				((Modeling) mogram).evaluate();
+				return ((Modeling) mogram).getResult();
+			} else {
+				return ((Evaluation) mogram).getValue(args);
+			}
+		}
 	}
 
 	public static Object get(Exertion xrt, String path)
