@@ -1878,7 +1878,7 @@ public class operator {
 
 	public static void print(Object obj) {
 		System.out.println(obj.toString());
-	}å
+	}
 
 	public static Object evaluate(Mogram mogram, Arg... args)
 			throws ContextException, RemoteException, ExertionException {
