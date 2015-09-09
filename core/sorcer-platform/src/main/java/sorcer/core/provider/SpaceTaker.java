@@ -245,10 +245,9 @@ public class SpaceTaker implements Runnable {
 
 		while (keepGoing) {
 			ExertionEnvelop ee;
-            Object envelopNoCast = null;
+            Object envelopNoCast;
 			try {
-				space = SpaceAccessor.getSpace(data.spaceName,
-                        data.spaceGroup);
+				space = SpaceAccessor.getSpace(data.spaceName);
 				if (space == null) {
 //					doLog("\t***warning: space taker did not get SPACE.",
 //							threadId, null);

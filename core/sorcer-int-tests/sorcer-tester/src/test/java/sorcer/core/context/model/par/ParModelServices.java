@@ -25,8 +25,8 @@ import static sorcer.po.operator.invoke;
 @ProjectContext("core/sorcer-int-tests/sorcer-tester")
 public class ParModelServices {
 	private final static Logger logger = LoggerFactory.getLogger(ParModelServices.class);
-
 	public static String sorcerVersion = System.getProperty("sorcer.version");
+
 
 	@Test
 	public void parModelerTest() throws RemoteException, ContextException,

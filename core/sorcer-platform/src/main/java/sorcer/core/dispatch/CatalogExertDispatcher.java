@@ -31,10 +31,8 @@ import sorcer.core.provider.ServiceProvider;
 import sorcer.core.signature.NetSignature;
 import sorcer.ext.ProvisioningException;
 import sorcer.service.*;
-import sorcer.util.SorcerEnv;
 
 import java.rmi.RemoteException;
-import java.util.Arrays;
 import java.util.Set;
 
 import static sorcer.service.Exec.*;
@@ -141,7 +139,7 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
             NetSignature sig = (NetSignature) task.getProcessSignature();
             // Catalog lookup or use Lookup Service for the particular
             // service
-            Service service = (Service) Accessor.getService(sig);
+            Service service = (Service) Accessor.get().getService(sig);
             if (service == null && task.isProvisionable()) {
                 MonitoringSession monSession = MonitorUtil.getMonitoringSession(task);
                 if (task.isMonitorable() && monSession!=null) {
@@ -213,7 +211,7 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
                         }
                         else {
                             logger.info("Problem exerting task, retrying " + tried + " time: " + xrt.getName() + " " + re.getMessage());
-                            service = (Service) Accessor.getService(sig);
+                            service = (Service) Accessor.get().getService(sig);
                             try {
                                 logger.info("+++++++++++++++Got service: " + ((Provider)service).getProviderID());
                             } catch (Exception e) {
@@ -275,10 +273,8 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
 			MogramException, RemoteException {
 
 		try {
-			ServiceTemplate st = Accessor.getServiceTemplate(null,
-					null, new Class[] { Concatenator.class }, null);
-			ServiceItem[] concatenators = Accessor.getServiceItems(st, null,
-					SorcerEnv.getLookupGroups());
+			ServiceTemplate st = new ServiceTemplate(null, new Class[]{Concatenator.class}, null);
+			ServiceItem[] concatenators = Accessor.get().getServiceItems(st, null);
 			/*
 			 * check if there is any available concatenator in the network and
 			 * delegate the inner block to the available Concatenator. In the future, a
@@ -287,12 +283,9 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
 			 */
 			for (int i = 0; i < concatenators.length; i++) {
 				if (concatenators[i] != null) {
-					if (!provider.getProviderID().equals(
-							concatenators[i].serviceID)) {
-						logger.trace("Concatenator: " + i + " ServiceID: "
-								+ concatenators[i].serviceID);
+					if (!provider.getProviderID().equals(concatenators[i].serviceID)) {
+						logger.trace("Concatenator: [{}] ServiceID: {}", i, concatenators[i].serviceID);
 						Provider rconcatenator = (Provider) concatenators[i].service;
-
 						return rconcatenator.service(block, null);
 					}
 				}

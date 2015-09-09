@@ -190,7 +190,7 @@ public class
             // provider is dead; get new one
             //e.printStackTrace();
             provider = null;
-            provider = (Provider)Accessor.getService(this);
+            provider = (Provider)Accessor.get().getService(this);
         }
 
         return provider;
@@ -398,7 +398,7 @@ public class
 			MogramException, RemoteException {
 		try {
 			if (this.isShellRemote()) {
-				Provider prv= (Provider) Accessor.getService(sig(Shell.class));
+				Provider prv= (Provider) Accessor.get().getService(sig(Shell.class));
 				return ((Exertion) prv.service(mogram, txn)).getContext();
 			}
 			Provider prv = (Provider) operator.provider(this);

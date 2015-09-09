@@ -56,7 +56,7 @@ public class RemoteLoggerListener implements RemoteEventListener {
     public RemoteLoggerListener(List<Map<String, String>> filterMapList, PrintStream out) throws LoggerRemoteException {
         this.out = out;
         this.filterMapList = filterMapList;
-        ServiceAccessor serviceAccessor = (ServiceAccessor) Accessor.nonCachingAccessor;
+        ServiceAccessor serviceAccessor = (ServiceAccessor) Accessor.get();
         ServiceTemplate serviceTemplate = new ServiceTemplate(null, new Class[] { RemoteLogger.class }, null);
         try {
             export();

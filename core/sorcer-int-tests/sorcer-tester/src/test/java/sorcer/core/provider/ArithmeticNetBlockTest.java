@@ -2,6 +2,8 @@ package sorcer.core.provider;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.tester.provider.Adder;
@@ -12,11 +14,7 @@ import sorcer.core.SorcerConstants;
 import sorcer.service.Block;
 import sorcer.service.Task;
 import sorcer.util.ProviderAccessor;
-import sorcer.util.ProviderLocator;
 import sorcer.util.ProviderLookup;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertEquals;
 import static sorcer.co.operator.ent;
@@ -30,20 +28,16 @@ import static sorcer.eo.operator.*;
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("core/sorcer-int-tests/sorcer-tester")
 public class ArithmeticNetBlockTest implements SorcerConstants {
-
 	private static final Logger logger = LoggerFactory.getLogger(ArithmeticNetBlockTest.class);
 
 	@Test
-	public void getProxy() throws Exception {
-		Object proxy = ProviderLookup.getProvider(sig("multiply", Multiplier.class));
-		logger.info("Multiplier proxy: " + proxy);
+    public void getProxy() throws Exception {
+        Object proxy = new ProviderLookup().getProvider(sig("multiply", Multiplier.class));
+        logger.info("Multiplier proxy: " + proxy);
 		
-		proxy = ProviderLocator.getProvider(sig("multiply", Multiplier.class));
-		logger.info("Multiplier proxy: " + proxy);
-		
-		 proxy = ProviderAccessor.getProvider(sig("multiply", Multiplier.class));
-		logger.info("Multiplier proxy: " + proxy);
-	}
+        proxy = new  ProviderAccessor().getProvider(sig("multiply", Multiplier.class));
+        logger.info("Multiplier proxy: " + proxy);
+    }
 				
 	@Test
 	public void contextAltTest() throws Exception {

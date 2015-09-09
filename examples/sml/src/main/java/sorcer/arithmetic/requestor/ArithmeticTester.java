@@ -1,5 +1,6 @@
 package sorcer.arithmetic.requestor;
 
+import org.slf4j.Logger;
 import sorcer.arithmetic.provider.Adder;
 import sorcer.arithmetic.provider.Multiplier;
 import sorcer.arithmetic.provider.RemoteAdder;
@@ -15,7 +16,6 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import org.slf4j.Logger;
 
 import static sorcer.co.operator.inEnt;
 import static sorcer.co.operator.outEnt;
@@ -356,7 +356,7 @@ private Exertion f1SEQpull() throws Exception {
 		
 		Mogram out = null;
 		long start = System.currentTimeMillis();
-		Exerter exerter = Accessor.getService(Exerter.class);
+		Exerter exerter = Accessor.get().getService(null, Exerter.class);
 		logger.info("got exerter: " + exerter);
 
 		out = exerter.exert(f5);

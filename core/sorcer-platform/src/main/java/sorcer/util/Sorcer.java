@@ -23,6 +23,7 @@ import sorcer.core.SorcerConstants;
 import sorcer.core.provider.DatabaseStorer;
 import sorcer.core.provider.DataspaceStorer;
 import sorcer.core.provider.Provider;
+import sorcer.service.Accessor;
 import sorcer.service.Context;
 
 import java.io.File;
@@ -154,8 +155,7 @@ public class Sorcer extends SorcerEnv implements SorcerConstants {
 	}
 
 	public static void destroy(String providerName, Class serviceType) {
-		Provider prv = (Provider) ProviderLookup.getService(providerName,
-				serviceType);
+		Provider prv = (Provider) Accessor.get().getService(providerName, serviceType);
 		if (prv != null)
 			try {
 				prv.destroy();
@@ -166,8 +166,7 @@ public class Sorcer extends SorcerEnv implements SorcerConstants {
 	}
 
 	public static void destroyNode(String providerName, Class serviceType) {
-		Provider prv = (Provider) ProviderLookup.getService(providerName,
-				serviceType);
+		Provider prv = (Provider) Accessor.get().getService(providerName, serviceType);
 		if (prv != null)
 			try {
 				prv.destroyNode();

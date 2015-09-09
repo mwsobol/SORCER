@@ -1,5 +1,6 @@
 package sorcer.core.provider;
 
+import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,17 +25,18 @@ import sorcer.core.signature.NetSignature;
 import sorcer.core.signature.ServiceSignature;
 import sorcer.service.*;
 import sorcer.service.Strategy.*;
-import sorcer.util.ProviderAccessor;
+import sorcer.service.cataloger.CatalogerAccessor;
 import sorcer.util.Sorcer;
 import sorcer.util.Stopwatch;
 
-import java.rmi.RemoteException;
 import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.*;
+import static sorcer.co.operator.get;
 import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
+import static sorcer.eo.operator.get;
 import static sorcer.eo.operator.value;
 
 /**
@@ -47,9 +49,14 @@ public class ArithmeticNetTest implements SorcerConstants {
 
 	private static final Logger logger = LoggerFactory.getLogger(ArithmeticNetTest.class);
 
+    @BeforeClass
+    public static void setup() {
+        Accessor.create();
+    }
+
 	@Test
 	public void getProviderTest() throws Exception {
-		Cataloger catalog = ProviderAccessor.getCataloger();
+		Cataloger catalog = CatalogerAccessor.getCataloger();
 		Object proxy = catalog.lookup(Adder.class);
 		if (proxy != null)
 			System.out.println("Adder: " + Arrays.toString(proxy.getClass().getInterfaces()));
@@ -63,7 +70,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 	@Test
 	public void providerAcessorTest() throws Exception {
 		long startTime = System.currentTimeMillis();
-		Object provider = Accessor.getService(new NetSignature(Averager.class));
+		Object provider = Accessor.get().getService(new NetSignature(Averager.class));
 		logger.info("INTERFACES: " + Arrays.toString(provider.getClass().getInterfaces()));
 		assertTrue(Arrays.asList(provider.getClass().getInterfaces()).contains(Averager.class));
 //		logger.info("Accessor provider: " + provider);
@@ -73,7 +80,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 	
 	@Test
 	public void getCatalogTest() throws Exception {
-		Cataloger catalog = ProviderAccessor.getCataloger();
+		Cataloger catalog = CatalogerAccessor.getCataloger();
 		System.out.println("Cataloger: " + catalog);
 		String[] pnames = catalog.getProviderList();
 		logger.info("cataloger pnames: " + Arrays.toString(pnames));
@@ -353,7 +360,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 	
 	Mogram out = null;
 //	long start = System.currentTimeMillis();
-	Exerter exerter = Accessor.getService(Exerter.class);
+	Exerter exerter = Accessor.get().getService(null, Exerter.class);
 //	logger.info("got exerter: " + exerter);
 
 	out = exerter.exert(f5);

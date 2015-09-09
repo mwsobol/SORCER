@@ -18,20 +18,14 @@ package sorcer.core.dispatch;
 
 import net.jini.core.lease.Lease;
 import net.jini.space.JavaSpace05;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sorcer.core.exertion.ExertionEnvelop;
 import sorcer.core.provider.Spacer;
 import sorcer.core.signature.NetSignature;
-import sorcer.ext.Provisioner;
 import sorcer.ext.ProvisioningException;
 import sorcer.service.*;
 import sorcer.service.space.SpaceAccessor;
-
-import java.rmi.RemoteException;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.Set;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static sorcer.util.StringUtils.tName;
 
@@ -78,7 +72,7 @@ public class ProviderProvisionManager {
         }
 
         public void run() {
-            Service service = (Service) Accessor.getService(srvToProvision.getSignature());
+            Service service = (Service) Accessor.get().getService(srvToProvision.getSignature());
             while (service==null && srvToProvision.getProvisionAttempts() < MAX_ATTEMPTS) {
                 srvToProvision.incrementProvisionAttempts();
                 try {

@@ -18,13 +18,6 @@
 
 package sorcer.util;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import net.jini.core.discovery.LookupLocator;
 import net.jini.core.entry.Entry;
 import net.jini.core.lookup.ServiceItem;
@@ -41,10 +34,16 @@ import org.slf4j.LoggerFactory;
 import sorcer.core.SorcerConstants;
 import sorcer.core.provider.Provider;
 import sorcer.core.signature.NetSignature;
-import sorcer.service.DynamicAccessor;
 import sorcer.service.Service;
 import sorcer.service.Signature;
 import sorcer.service.SignatureException;
+
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * ProviderLoactor is a simple wrapper class over Jini's LookupDiscover. It
@@ -52,7 +51,7 @@ import sorcer.service.SignatureException;
  * multicast discovery
  */
 
-public class ProviderLocator implements DynamicAccessor {
+public class ProviderLocator {
 
 	static final long WAIT_FOR = SorcerEnv.getLookupWaitTime();
 
@@ -211,7 +210,6 @@ public class ProviderLocator implements DynamicAccessor {
 
 	}
 
-    @Override
     public ServiceItem[] getServiceItems(ServiceTemplate template, int minMatches, int maxMatches, ServiceItemFilter filter, String[] groups) {
         String[] locators = SorcerEnv.getLookupLocators();
         List<ServiceItem> result = new ArrayList<ServiceItem>();
@@ -225,7 +223,7 @@ public class ProviderLocator implements DynamicAccessor {
             } catch (MalformedURLException e) {
                 log.warn("Malformed URL", e);
             } catch (ClassNotFoundException e) {
-                log.warn("Malformed URL", e);
+                log.warn("ClassNotFoundException URL", e);
             } catch (RemoteException e) {
                 log.debug("Remote exception", e);
             } catch (IOException e) {
