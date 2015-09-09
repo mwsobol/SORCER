@@ -1,8 +1,8 @@
-package sorcer.service.cataloger;
 /**
  *
  * Copyright 2013 Rafał Krupiński.
  * Copyright 2013 Sorcersoft.com S.A.
+ * Copyright 2015 Dennis Reedy.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@ package sorcer.service.cataloger;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+package sorcer.service.cataloger;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,15 +24,20 @@ import sorcer.core.provider.Cataloger;
 import sorcer.core.provider.Provider;
 import sorcer.service.Accessor;
 import sorcer.util.AccessorException;
-import sorcer.util.ServiceAccessor;
+import sorcer.util.ProviderNameUtil;
+import sorcer.util.SorcerProviderNameUtil;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Rafał Krupiński
  */
-public class CatalogerAccessor extends ServiceAccessor {
+public class CatalogerAccessor  {
     private static final Logger log = LoggerFactory.getLogger(CatalogerAccessor.class);
-
     protected static CatalogerAccessor instance = new CatalogerAccessor();
+    private final Map<String, Cataloger> cache = new HashMap<>();
+    private ProviderNameUtil providerNameUtil = new SorcerProviderNameUtil();
 
     /**
      * Returns any SORCER Cataloger service provider.
@@ -60,17 +65,14 @@ public class CatalogerAccessor extends ServiceAccessor {
     }
 
     public Cataloger doGetCataloger(String name) {
-        String CatalogerName = (name == null) ? providerNameUtil.getName(Cataloger.class)
-                : name;
-        Cataloger cataloger = (Cataloger) cache.get(Cataloger.class.getName());
-
+        String CatalogerName = (name == null) ? providerNameUtil.getName(Cataloger.class) : name;
+        Cataloger cataloger = cache.get(Cataloger.class.getName());
         try {
             if (Accessor.isAlive((Provider) cataloger)) {
-                log.info(">>>returned cached cataloger ("
-                        + ((Provider) cataloger).getProviderID() + ") by "
-                        + Accessor.getAccessorType());
+                log.info(">>>returned cached cataloger ({}) by {}",
+                         ((Provider) cataloger).getProviderID(), Accessor.get().getClass().getName());
             } else {
-                cataloger = Accessor.getService(CatalogerName, Cataloger.class);
+                cataloger = Accessor.get().getService(CatalogerName, Cataloger.class);
                 if (cataloger!=null)
                     cache.put(Cataloger.class.getName(), cataloger);
             }

@@ -18,7 +18,7 @@ import java.util.Enumeration;
 import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author Mike Sobolewski
@@ -27,8 +27,7 @@ import static org.junit.Assert.assertNotNull;
 public class UtilTest {
 
 	private final static Logger logger = LoggerFactory.getLogger(UtilTest.class);
-	
-	
+
 	@Test
 	public void getDataServerUrl() throws Exception {
 		logger.info("*** DataServerUrl: " + Sorcer.getDataServerUrl());
@@ -85,10 +84,10 @@ public class UtilTest {
 		ServiceTemplate tmpl = new ServiceTemplate(null,
 				new Class[] { JavaSpace05.class },
 				new Entry[] { new Name(Sorcer.getActualSpaceName())});
-		ServiceItem si = Accessor.getServiceItem(tmpl, null, new String[]{Sorcer.getSpaceGroup()});
-		logger.info("got service: serviceID=" + si.serviceID + " template="
+		ServiceItem[] si = Accessor.get().getServiceItems(tmpl, null);
+        assertTrue(si.length>0);
+		logger.info("got service: serviceID=" + si[0].serviceID + " template="
 				+ tmpl + " groups=" + Sorcer.getSpaceGroup());
-		assertNotNull(si);
 	}
 
 	@Test

@@ -91,7 +91,7 @@ public class RemoteLoggerClient implements Runnable {
      * @param vos the logging events to publish
      */
     private void publishNoRetry(List<LoggingEventVO> vos) {
-        Object o = Accessor.getService(RemoteLogger.class);
+        Object o = Accessor.get().getService(null, RemoteLogger.class);
         remoteLogger = (RemoteLogger)o;
         if (remoteLogger != null)
             try {

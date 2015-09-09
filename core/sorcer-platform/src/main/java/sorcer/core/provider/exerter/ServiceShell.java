@@ -53,7 +53,6 @@ import sorcer.service.Strategy.Access;
 import sorcer.service.modeling.Model;
 import sorcer.service.modeling.ModelingTask;
 import sorcer.service.txmgr.TransactionManagerAccessor;
-import sorcer.util.ProviderLookup;
 import sorcer.util.Sorcer;
 
 import java.io.File;
@@ -72,9 +71,7 @@ import static sorcer.eo.operator.*;
  */
 @SuppressWarnings("rawtypes")
 public class ServiceShell implements Shell, Service, Exerter, Callable {
-	protected final static Logger logger = LoggerFactory.getLogger(ServiceShell.class
-			.getName());
-
+	protected final static Logger logger = LoggerFactory.getLogger(ServiceShell.class);
 	private Service service;
 	private Mogram mogram;
 	private File mogramSource;
@@ -105,10 +102,9 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 				.maximumSize(20)
 				.expireAfterWrite(30, TimeUnit.MINUTES)
 				.removalListener(null)
-				.build(
-						new CacheLoader<Signature, Object>() {
+				.build(new CacheLoader<Signature, Object>() {
 							public Object load(Signature signature) {
-								return Accessor.getService(signature);
+								return Accessor.get().getService(signature);
 							}
 						});
 	}
@@ -146,7 +142,7 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 							&& ((ServiceSignature) input.getProcessSignature()).isShellRemote())
 							|| (exertion.getControlContext() != null
 							&& ((ControlContext) exertion.getControlContext()).isShellRemote())) {
-						Exerter prv = (Exerter) Accessor.getService(sig(Shell.class));
+						Exerter prv = (Exerter) Accessor.get().getService(sig(Shell.class));
 						result = (Exertion)prv.exert(input, transaction, entries);
 					} else {
 //						sorcer.core.provider.exerter.ServiceShell se = new sorcer.core.provider.exerter.ServiceShell(input);
@@ -399,8 +395,7 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 				signature.setProviderName(providerName);
 			}
 			if (logger.isDebugEnabled())
-				logger.debug("* ExertProcessor's servicer accessor: "
-						+ Accessor.getAccessorType());
+				logger.debug("* ExertProcessor's servicer accessor: "+ Accessor.get().getClass().getName());
 			provider = ((NetSignature) signature).getService();
 			((NetSignature)signature).setProvider(provider);
 		} catch (Exception e) {
@@ -416,7 +411,7 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 		Object prv = provider;
         if (prv == null) {
             long t0 = System.currentTimeMillis();
-            prv = Accessor.getService(signature);
+            prv = Accessor.get().getService(signature);
             logger.info("Return from Accessor.getService(), round trip: {} millis", (System.currentTimeMillis()-t0));
             // check for a space task
 
@@ -489,8 +484,7 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 			if (result != null && result.getExceptions().size() > 0) {
 				for (ThrowableTrace et : result.getExceptions()) {
 					Throwable t = et.getThrowable();
-					logger.error("Got exception running: " + exertion.getName() + " " + t.getMessage());
-					logger.debug("Exception details: " + t.getMessage());
+					logger.error("Got exception running: {}", exertion.getName(), t);
 					if (t instanceof Error)
 						result.setStatus(Exec.ERROR);
 				}
@@ -525,18 +519,16 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 			TransactionException, MogramException {
 		ServiceID mutexId = provider.getProviderID();
 		if (locker == null) {
-			locker = (MutualExclusion) ProviderLookup
-					.getService(MutualExclusion.class);
+			locker = Accessor.get().getService(null, MutualExclusion.class);
 		}
-		TransactionManager transactionManager = TransactionManagerAccessor
-				.getTransactionManager();
+		TransactionManager transactionManager = TransactionManagerAccessor.getTransactionManager();
 		Transaction txn = null;
 
-		LockResult lr = locker.getLock(""
-						+ exertion.getProcessSignature().getServiceType(),
-				new ProviderID(mutexId), txn,
-				((ServiceExertion) exertion).getId());
-		if (lr.didSucceed()) {
+        LockResult lr = locker.getLock(""+ exertion.getProcessSignature().getServiceType(),
+                                       new ProviderID(mutexId),
+                                       txn,
+                                       exertion.getId());
+        if (lr.didSucceed()) {
 			((ControlContext)exertion.getControlContext()).setMutexId(provider.getProviderID());
 			Exertion xrt = provider.service(exertion, transaction);
 			txn.commit();
@@ -545,8 +537,8 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 			// try continue to get lock, if failed abort the transaction txn
 			txn.abort();
 		}
-		((ControlContext)exertion.getControlContext()).addException(
-				new ExertionException("no lock avaialable for: "
+		exertion.getControlContext().addException(
+				new ExertionException("no lock available for: "
 						+ provider.getProviderName() + ":"
 						+ provider.getProviderID()));
 		return exertion;
@@ -812,7 +804,7 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 		this.service = srv;
 		this.mogram = mog;
 		if (service instanceof Signature) {
-			Provider prv = (Provider) Accessor.getService((Signature)service);
+			Provider prv = (Provider) Accessor.get().getService((Signature) service);
 			return (T) prv.service(mogram, txn);
 		} else if (service instanceof Provider) {
 			Task out = (Task) service.service(mogram, txn);
@@ -831,7 +823,7 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 		}
 		else if (service instanceof NetSignature
 				&& ((Signature)service).getServiceType() == sorcer.core.provider.Shell.class) {
-			Provider prv= (Provider) Accessor.getService((Signature)service);
+			Provider prv= (Provider) Accessor.get().getService((Signature) service);
 			return (T) ((Exertion) prv.service(mogram, txn)).getContext();
 		} else {
 			return (T) service.service(mogram, txn);
@@ -893,12 +885,12 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 				return (T) ((Exertion)exert(ot)).getContext();
 			} else if (signature instanceof NetSignature
 					&& ((Signature) signature).getServiceType() == sorcer.core.provider.Shell.class) {
-				Provider prv = (Provider) Accessor.getService(signature);
+				Provider prv = (Provider) Accessor.get().getService(signature);
 				return (T) ((Exertion) prv.service(mogram, txn)).getContext();
 			} else if ((((ServiceSignature) signature).isShellRemote())
 					|| ((mogram instanceof Exertion) && ((Exertion) mogram).getControlContext() != null
 					&& ((ControlContext) ((Exertion) mogram).getControlContext()).isShellRemote())) {
-				Exerter prv = (Exerter) Accessor.getService(sig(Shell.class));
+				Exerter prv = (Exerter) Accessor.get().getService(sig(Shell.class));
 				return (T) ((Exertion)prv.exert(mogram, txn)).getContext();
 			} else {
 				return (T) signature.service(mogram, txn);

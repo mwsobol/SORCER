@@ -17,11 +17,13 @@
 
 package sorcer.core.requestor;
 
+import net.jini.config.EmptyConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.SorcerConstants;
 import sorcer.scratch.ScratchManager;
 import sorcer.scratch.ScratchManagerSupport;
+import sorcer.service.Accessor;
 import sorcer.service.ConfigurationException;
 import sorcer.tools.webster.InternalWebster;
 import sorcer.util.Sorcer;
@@ -70,12 +72,11 @@ abstract public class SorcerRequestor implements SorcerConstants {
 
 		// Initialize system properties: configs/sorcer.env
 		Sorcer.getEnvProperties();
-		
+        Accessor.create(EmptyConfiguration.INSTANCE);
 		// Determine runner type from argument array 
 		String runnerType = null;
 		if (args.length == 0) {
-			System.err
-					.println("Usage: Java sorcer.core.requestor.ServiceRunner <runnerType>");
+			System.err.println("Usage: Java sorcer.core.requestor.ServiceRunner <runnerType>");
 			System.exit(1);
 		} else {
 			runnerType = args[0];
@@ -83,8 +84,7 @@ abstract public class SorcerRequestor implements SorcerConstants {
 		
 		// Establish a new instance of the class runner
 		try {
-			requestor = (SorcerRequestor) Class.forName(runnerType)
-					.newInstance();
+			requestor = (SorcerRequestor) Class.forName(runnerType).newInstance();
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.info("Not able to create service runner: " + runnerType);

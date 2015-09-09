@@ -19,7 +19,6 @@ import sorcer.util.bdb.objects.UuidKey;
 
 import java.io.File;
 import java.io.IOException;
-import java.rmi.RMISecurityManager;
 import java.util.*;
 
 import static org.junit.Assert.assertEquals;
@@ -38,7 +37,7 @@ public class SessionDatabaseTest implements SorcerConstants {
 	static {
 		System.setProperty("java.security.policy", Sorcer.getHome()
 				+ "/configs/policy.all");
-		System.setSecurityManager(new RMISecurityManager());
+		System.setSecurityManager(new SecurityManager());
 	}
 	
 	private static SessionDatabaseRunner runner;

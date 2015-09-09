@@ -29,6 +29,7 @@ import sorcer.core.provider.rendezvous.RendezvousBean;
 import sorcer.service.*;
 
 import java.rmi.RemoteException;
+import java.util.concurrent.TimeUnit;
 
 import static sorcer.core.monitor.MonitorUtil.getMonitoringSession;
 import static sorcer.service.Exec.FAILED;
@@ -38,9 +39,8 @@ import static sorcer.service.Exec.FAILED;
  */
 public class MonitoringControlFlowManager extends ControlFlowManager {
     final private static Logger log = LoggerFactory.getLogger(MonitoringControlFlowManager.class);
-
-    public static final long LEASE_RENEWAL_PERIOD = 1 * 1000 * 30L;
-    public static final long DEFAULT_TIMEOUT_PERIOD = 1 * 1000 * 90L;
+    public static final long LEASE_RENEWAL_PERIOD = TimeUnit.SECONDS.toMillis(30);
+    public static final long DEFAULT_TIMEOUT_PERIOD = TimeUnit.SECONDS.toMillis(90);
 
     private MonitorSessionManagement sessionMonitor;
 
@@ -48,14 +48,14 @@ public class MonitoringControlFlowManager extends ControlFlowManager {
 
     public MonitoringControlFlowManager(Exertion exertion, ProviderDelegate delegate) throws RemoteException, ConfigurationException {
         super(exertion, delegate);
-        sessionMonitor = Accessor.getService(MonitoringManagement.class);
-        lrm = new LeaseRenewalManager();
+        sessionMonitor = Accessor.get().getService(null, MonitoringManagement.class);
+        lrm = new LeaseRenewalManager(delegate.getProviderConfiguration());
     }
 
     public MonitoringControlFlowManager(Exertion exertion, ProviderDelegate delegate, RendezvousBean rendezvousBean) throws RemoteException, ConfigurationException {
         super(exertion, delegate, rendezvousBean);
-        sessionMonitor = Accessor.getService(MonitoringManagement.class);
-        lrm = new LeaseRenewalManager();
+        sessionMonitor = Accessor.get().getService(null, MonitoringManagement.class);
+        lrm = new LeaseRenewalManager(delegate.getProviderConfiguration());
     }
 
     @Override
@@ -96,11 +96,7 @@ public class MonitoringControlFlowManager extends ControlFlowManager {
                 throw new ExertionException(e);
             }
             return result;
-        } catch (RemoteException e) {
-            String msg = "RemoteException from local call";
-            log.error(msg,e);
-            throw new IllegalStateException(msg, e);
-        } catch (MonitorException e) {
+        } catch (RemoteException | MonitorException e) {
             String msg = "RemoteException from local call";
             log.error(msg,e);
             throw new IllegalStateException(msg, e);

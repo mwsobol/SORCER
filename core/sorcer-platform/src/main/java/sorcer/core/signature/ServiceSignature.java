@@ -577,7 +577,7 @@ public class ServiceSignature implements Signature, SorcerConstants {
 	@Override
 	public Mogram service(Mogram mogram, Transaction txn) throws TransactionException,
 			MogramException, RemoteException {
-		Provider prv = (Provider)Accessor.getService(this);
+		Provider prv = (Provider)Accessor.get().getService(this);
 		if (mogram instanceof Context) {
 			Task out = null;
 			try {

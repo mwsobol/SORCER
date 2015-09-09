@@ -17,17 +17,51 @@
 
 package sorcer.service;
 
+import net.jini.core.lookup.ServiceID;
 import net.jini.core.lookup.ServiceItem;
 import net.jini.core.lookup.ServiceTemplate;
 import net.jini.lookup.ServiceItemFilter;
 
 /**
- * The creational factory interface used by the {@link Accessor}
- * facility.
+ * Accesses services available through the network.
  */
 public interface DynamicAccessor {
 
-    ServiceItem[] getServiceItems(ServiceTemplate template, int minMatches, int maxMatches, ServiceItemFilter filter, String[] groups);
+    /**
+     * Find all matching services using the provided template and filter
+     *
+     * @param template The template to use, containing attributes and type(s)
+     * @param filter Optional filter
+     *
+     * @return An array of matching ServiceItems.
+     */
+    ServiceItem[] getServiceItems(ServiceTemplate template, ServiceItemFilter filter);
 
-    <T> T getProvider(String providerName, Class<T> serviceType);
+    /**
+     * Returns a service matching serviceName and serviceInfo
+     *
+     * @param serviceName name
+     * @param serviceType type
+     *
+     * @return The first discovered service or null
+     */
+    <T> T getService(String serviceName, Class<T> serviceType);
+
+    /**
+     * Returns a service provider registered with serviceID.
+     *
+     * @param serviceID A service provider ID.
+     *
+     * @return The first discovered service provider.
+     */
+    Object getService(ServiceID serviceID);
+
+    /**
+     * Returns a service provider registered with serviceID.
+     *
+     * @param signature A Signature
+     *
+     * @return The first discovered service provider.
+     */
+    Object getService(Signature signature);
 }

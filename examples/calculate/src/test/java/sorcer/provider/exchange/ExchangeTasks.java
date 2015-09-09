@@ -8,7 +8,7 @@ import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.provider.exchange.impl.ExchangeBean;
 import sorcer.service.Task;
-import sorcer.util.ProviderLocator;
+import sorcer.util.ProviderLookup;
 
 import java.util.Arrays;
 
@@ -59,7 +59,7 @@ public class ExchangeTasks {
 	@Test
 	public void getProxy() throws Exception {
 		long start = System.currentTimeMillis();
-		Object ex = ProviderLocator.getService(Exchange.class);
+		Object ex = new ProviderLookup().getService(Exchange.class);
 //		Object ex = provider(sig("exchange", Exchange.class));
 		long end = System.currentTimeMillis();
 		logger.info("Execution time: " + (end - start) + " ms");

@@ -2310,10 +2310,8 @@ public class operator {
 
 	public static List<Service> providers(Signature signature)
 			throws SignatureException {
-		ServiceTemplate st = new ServiceTemplate(null,
-				new Class[] { signature.getServiceType() }, null);
-		ServiceItem[] sis = Accessor.getServiceItems(st, null,
-				Sorcer.getLookupGroups());
+		ServiceTemplate st = new ServiceTemplate(null, new Class[] { signature.getServiceType() }, null);
+		ServiceItem[] sis = Accessor.get().getServiceItems(st, null);
 		if (sis == null)
 			throw new SignatureException("No available providers of type: "
 					+ signature.getServiceType().getName());
@@ -2359,7 +2357,7 @@ public class operator {
 			if (signature.getClass() == NetSignature.class) {
 				provider = ((NetSignature) signature).getService();
 				if (provider == null) {
-					provider = Accessor.getService(signature);
+					provider = Accessor.get().getService(signature);
 					((NetSignature) signature).setProvider((Service)provider);
 				}
 			} else if (signature.getClass() == ObjectSignature.class) {

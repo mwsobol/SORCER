@@ -16,12 +16,11 @@
  */
 package sorcer.core.provider;
 
-import java.util.concurrent.ExecutorService;
-
 import net.jini.core.transaction.Transaction;
 import sorcer.core.exertion.ExertionEnvelop;
 import sorcer.service.space.SpaceAccessor;
-import sorcer.util.ProviderAccessor;
+
+import java.util.concurrent.ExecutorService;
 
 public class SpaceIsReadyTaker extends SpaceTaker {
 	
@@ -42,7 +41,7 @@ public class SpaceIsReadyTaker extends SpaceTaker {
                 + isTransactional + ", lease = " + transactionLeaseTimeout + ", timeOut: " + spaceTimeout);
 		while (keepGoing) {
 			try {
-				space = SpaceAccessor.getSpace(data.spaceName, data.spaceGroup);
+				space = SpaceAccessor.getSpace(data.spaceName);
 				if (space == null) {
 					Thread.sleep(spaceTimeout / 6);
 					continue;
@@ -52,7 +51,7 @@ public class SpaceIsReadyTaker extends SpaceTaker {
 			}
 
 			try {
-				boolean isReady = false;
+				boolean isReady;
 				ExertionEnvelop ee = (ExertionEnvelop) space.read(data.entry,
 						null, SPACE_TIMEOUT);
 				if (ee != null) {

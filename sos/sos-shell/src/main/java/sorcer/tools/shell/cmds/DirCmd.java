@@ -17,6 +17,12 @@
 
 package sorcer.tools.shell.cmds;
 
+import sorcer.core.provider.Cataloger;
+import sorcer.core.provider.Provider;
+import sorcer.service.Accessor;
+import sorcer.tools.shell.NetworkShell;
+import sorcer.tools.shell.ShellCmd;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -24,12 +30,6 @@ import java.io.PrintStream;
 import java.rmi.RemoteException;
 import java.util.Date;
 import java.util.StringTokenizer;
-
-import sorcer.core.provider.Cataloger;
-import sorcer.core.provider.Provider;
-import sorcer.tools.shell.NetworkShell;
-import sorcer.tools.shell.ShellCmd;
-import sorcer.util.ProviderLookup;
 
 /**
  * Handles directory commands
@@ -46,14 +46,12 @@ public class DirCmd extends ShellCmd {
 		COMMAND_HELP = "Handles directory commands: ls, pwd, cd; Cataloger contents or providers: ls --c | --p.";
 	}
 
-	private String input;
-
-	private PrintStream out;
+    private PrintStream out;
 
 	public void execute() throws Throwable {
 		BufferedReader br = NetworkShell.getShellInputStream();
 		out = NetworkShell.getShellOutputStream();
-		input = shell.getCmd();
+        String input = shell.getCmd();
 		if (out == null)
 			throw new NullPointerException("Must have an output PrintStream");
 		if (input.startsWith("ls") || input.startsWith("dir")) {
@@ -160,7 +158,6 @@ public class DirCmd extends ShellCmd {
 				}
 			}
 		}
-		return;
 	}
 
 	boolean changeDir(String dirName, PrintStream out) throws Throwable {
@@ -168,23 +165,23 @@ public class DirCmd extends ShellCmd {
 	}
 
 	private void listCatalog() {
-		Cataloger cataloger = (Cataloger)ProviderLookup.getService(Cataloger.class);
+		Cataloger cataloger = Accessor.get().getService(null, Cataloger.class);
 		if (cataloger != null) {
-			String[] providers = new String[0];
-			try {
-				providers = cataloger.getProviderList();
-			out.println("Providers in the " + ((Provider)cataloger).getProviderName() + ": ");
-			for (String provider : providers) {
-				out.println("  " + provider);
-			}
-			} catch (RemoteException e) {
-				e.printStackTrace();
-			}
-		}
+            String[] providers;
+            try {
+                providers = cataloger.getProviderList();
+                out.println("Providers in the " + ((Provider)cataloger).getProviderName() + ": ");
+                for (String provider : providers) {
+                    out.println("  " + provider);
+                }
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
 	}
 	
 	private void catalogInfo() {
-		Cataloger cataloger = (Cataloger)ProviderLookup.getService(Cataloger.class);
+		Cataloger cataloger = Accessor.get().getService(null, Cataloger.class);
 		if (cataloger != null) {
 			try {
 			out.println(((Provider)cataloger).getProviderName() + " Contents");
@@ -252,31 +249,33 @@ public class DirCmd extends ShellCmd {
 	}
 
 	public String getUsage(String subCmd) {
-		if (subCmd.equals("ls")) {
-			return "ls [-l]";
-		} else if (subCmd.equals("dir")) {
-			return "dir [-l]";
-		} else if (subCmd.equals("pwd")) {
-			return "pwd";
-		} else if (subCmd.equals("cd")) {
-			return "cd <directory name> | ~";
-		} else {
-			return COMMAND_USAGE;
-		}
+        switch (subCmd) {
+            case "ls":
+                return "ls [-l]";
+            case "dir":
+                return "dir [-l]";
+            case "pwd":
+                return "pwd";
+            case "cd":
+                return "cd <directory name> | ~";
+            default:
+                return COMMAND_USAGE;
+        }
 	}
 	
 	public String getLongDescription(String subCmd) {
-		if (subCmd.equals("ls")) {
-			return "Directory listing of the current working directory.";
-		} else if (subCmd.equals("dir")) {
-				return "Synonomous with the ls command.";
-		} else if (subCmd.equals("pwd")) {
-			return "Returns working directory path.";
-		} else if (subCmd.equals("cd")) {
-			return "Changes the current working directory. The \"~\" character can be used, this will change back to the nsh's home directory";
-		} else {
-			return COMMAND_HELP;
-		}
+        switch (subCmd) {
+            case "ls":
+                return "Directory listing of the current working directory.";
+            case "dir":
+                return "Synonymous with the ls command.";
+            case "pwd":
+                return "Returns working directory path.";
+            case "cd":
+                return "Changes the current working directory. The \"~\" character can be used, this will change back to the nsh's home directory";
+            default:
+                return COMMAND_HELP;
+        }
 	}
 	
 }

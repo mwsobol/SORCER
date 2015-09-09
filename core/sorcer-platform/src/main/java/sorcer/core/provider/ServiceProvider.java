@@ -220,8 +220,8 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
     /**
      * Required constructor for Jini 2 NonActivatableServiceDescriptors
      *
-     * @param args
-     * @param lifeCycle
+     * @param args config args
+     * @param lifeCycle lifecycle management
      * @throws Exception
      */
     public ServiceProvider(String[] args, LifeCycle lifeCycle) throws Exception {
@@ -233,6 +233,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
         Sorcer.getProperties();
         serviceClassLoader = Thread.currentThread().getContextClassLoader();
         final Configuration config = ConfigurationProvider.getInstance(args, serviceClassLoader);
+        Accessor.create(config);
         delegate.setJiniConfig(config);
         // inspect class loader tree
         if(logger.isTraceEnabled())

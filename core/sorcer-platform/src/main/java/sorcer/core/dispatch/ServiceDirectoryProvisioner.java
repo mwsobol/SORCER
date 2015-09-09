@@ -81,6 +81,7 @@ public class ServiceDirectoryProvisioner implements Provisioner {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <T> T provision(Signature sig) throws ProvisioningException {
         String typeName = (sig.getServiceType()!=null ? sig.getServiceType().getName() : null);
         String name = (sig.getProviderName()!=null ? sig.getProviderName() : "*");
@@ -97,7 +98,7 @@ public class ServiceDirectoryProvisioner implements Provisioner {
                 } catch (InterruptedException ie) {
                 }
             }
-            T service = (T) Accessor.getService(sig);
+            T service = (T) Accessor.get().getService(sig);
             if (service!=null) return service;
         }
 
@@ -148,7 +149,10 @@ public class ServiceDirectoryProvisioner implements Provisioner {
             while (tries < 8 && service == null) {
                 Thread.sleep(100);
                 Entry[] entries = new Entry[]{ new OperationalStringEntry(opStringName) };
-                service = (T) Accessor.getService(null, new Class[]{type}, entries );
+                ServiceTemplate template = new ServiceTemplate(null, new Class[]{type}, entries);
+                ServiceItem[] items = Accessor.get().getServiceItems(template, null);
+                if(items.length>0)
+                    service = (T) items[0].service;
                 tries++;
             }
             logger.debug(" Found: " + (service != null) + " after times: " + tries);
@@ -161,7 +165,12 @@ public class ServiceDirectoryProvisioner implements Provisioner {
                     logger.warn("trying to redeploy {} {} {}", typeName, version, name);
                     while (tries < 15 && service == null) {
                         Thread.sleep(100);
-                        service = (T) Accessor.getService(null, new Class[]{type}, new Entry[]{new OperationalStringEntry(operationalString.getName())});
+                        ServiceTemplate template = new ServiceTemplate(null,
+                                                                       new Class[]{type},
+                                                                       new Entry[]{new OperationalStringEntry(operationalString.getName())});
+                        ServiceItem[] items = Accessor.get().getServiceItems(template, null);
+                        if(items.length>0)
+                            service = (T)items[0].service;
                         tries++;
                     }
                 } else {
@@ -191,11 +200,14 @@ public class ServiceDirectoryProvisioner implements Provisioner {
 
 
     public void unProvision(ServiceID serviceId) throws ProvisioningException {
-        ServiceItem serviceItem = Accessor.getServiceItem(new ServiceTemplate(serviceId, null, null), null);
-        OperationalStringEntry opStringEntry = AttributesUtil.getFirstByType(serviceItem.attributeSets, OperationalStringEntry.class);
-        if (opStringEntry == null) throw new IllegalArgumentException("Service was not provisioned");
-
-        ServiceItem[] provisionMonitors = Accessor.getServiceItems(ProvisionMonitor.class, null);
+        ServiceItem[] serviceItems = Accessor.get().getServiceItems(new ServiceTemplate(serviceId, null, null), null);
+        OperationalStringEntry opStringEntry = null;
+        if(serviceItems.length>0)
+            opStringEntry = AttributesUtil.getFirstByType(serviceItems[0].attributeSets, OperationalStringEntry.class);
+        if (opStringEntry == null)
+            throw new IllegalArgumentException("Service was not provisioned");
+        ServiceItem[] provisionMonitors = Accessor.get().getServiceItems(new ServiceTemplate(null, new Class[]{ProvisionMonitor.class}, null),
+                                                                         null);
         for (ServiceItem monitor : provisionMonitors) {
             try {
                 ((DeployAdmin) ((ProvisionMonitor) monitor.service).getAdmin()).undeploy(opStringEntry.name);
@@ -228,10 +240,10 @@ public class ServiceDirectoryProvisioner implements Provisioner {
             try {
                 provisionMonitor.ping();
             } catch (RemoteException re) {
-                provisionMonitor = Accessor.getService(ProvisionMonitor.class);
+                provisionMonitor = Accessor.get().getService(null, ProvisionMonitor.class);
             }
         } else {
-            provisionMonitor = Accessor.getService(ProvisionMonitor.class);
+            provisionMonitor = Accessor.get().getService(null, ProvisionMonitor.class);
         }
         if (provisionMonitor == null) throw new ProvisioningException("No Provision Monitor");
         try {
@@ -242,7 +254,7 @@ public class ServiceDirectoryProvisioner implements Provisioner {
     }
 
     private ServiceDirectory getServiceDirectory() {
-        return Accessor.getService(ServiceDirectory.class);
+        return Accessor.get().getService(null, ServiceDirectory.class);
     }
 
     private static UndeployOption getUndeployOption(final int idleTimeout) {

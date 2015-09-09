@@ -350,45 +350,40 @@ public class ProviderDelegate {
 		init(provider, null);
 	}
 
-	public void init(sorcer.core.provider.Provider provider, String configFilename)
-			throws ConfigurationException {
+	public void init(sorcer.core.provider.Provider provider, String configFilename) throws ConfigurationException {
 		this.provider = provider;
 		String providerProperties = configFilename;
 		// Initialize remote logging
 		remoteLoggerInstaller = RemoteLoggerInstaller.getInstance();
 		// This allows us to specify different properties for different hosts
 		// using a shared mounted file system
-		if (providerProperties != null
-				&& providerProperties.contains("HOSTNAME")) {
+		if (providerProperties != null && providerProperties.contains("HOSTNAME")) {
 			try {
-				providerProperties = providerProperties.replace("HOSTNAME",
-						Sorcer.getHostName());
+				providerProperties = providerProperties.replace("HOSTNAME", Sorcer.getHostName());
 			} catch (UnknownHostException e) {
 				e.printStackTrace();
 			}
 		}
 		restore();
-        // Intialize hostName and hostAddress
+        // Initialize hostName and hostAddress
         getHostName();
         getHostAddress();
         // set provider's ID persistance flag if defined in provider's
 		// properties
-		idPersistent = Sorcer.getProperty(P_SERVICE_ID_PERSISTENT, "false")
-				.equals("true");
+		idPersistent = Sorcer.getProperty(P_SERVICE_ID_PERSISTENT, "false").equals("true");
 		// set provider join groups if defined in provider's properties
 		groupsToDiscover = Sorcer.getLookupGroups();
-		logger.info("ServiceProvider:groups to discover="
-				+ SorcerUtil.arrayToString(groupsToDiscover));
+		logger.info("ServiceProvider:groups to discover={}"+ SorcerUtil.arrayToString(groupsToDiscover));
 		// set provider space group if defined in provider's properties
 		spaceGroup = config.getProperty(J_SPACE_GROUP, Sorcer.getSpaceGroup());
 		// set provider space name if defined in provider's properties
-		spaceName = config.getProperty(J_SPACE_NAME,
-				Sorcer.getActualSpaceName());
+		spaceName = config.getProperty(J_SPACE_NAME, Sorcer.getActualSpaceName());
 
 		try {
-			singleThreadModel = (Boolean) config.jiniConfig.getEntry(
-					ServiceProvider.COMPONENT, J_SINGLE_TRHREADED_MODEL,
-					boolean.class, false);
+			singleThreadModel = (Boolean) config.jiniConfig.getEntry(ServiceProvider.COMPONENT,
+                                                                     J_SINGLE_TRHREADED_MODEL,
+                                                                     boolean.class,
+                                                                     false);
 		} catch (ConfigurationException e) {
 			// do nothing, used the default value
 		}
@@ -419,7 +414,7 @@ public class ProviderDelegate {
 		if (!spaceEnabled)
 			return;
 
-		space = SpaceAccessor.getSpace(spaceName, spaceGroup);
+		space = SpaceAccessor.getSpace(spaceName);
 		if (space == null) {
 			int ctr = 0;
 			while (space == null && ctr++ < TRY_NUMBER) {
@@ -433,7 +428,7 @@ public class ProviderDelegate {
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
-				space = SpaceAccessor.getSpace(spaceName, spaceGroup);
+				space = SpaceAccessor.getSpace(spaceName);
 
 			}
 			if (space != null) {
@@ -1103,11 +1098,11 @@ public class ProviderDelegate {
 			}
 		}
 		if (serviceID != null)
-			recipient = (Service) Accessor.getService(serviceID);
+			recipient = (Service) Accessor.get().getService(serviceID);
 		else if (prvType != null && prvName != null) {
-			recipient = (Service) Accessor.getService(prvName, prvType);
+			recipient = (Service) Accessor.get().getService(prvName, prvType);
 		} else if (prvType != null) {
-			recipient = (Service) Accessor.getService(null, prvType);
+			recipient = (Service) Accessor.get().getService(null, prvType);
 		}
 		if (recipient == null) {
 			visited.remove(serviceID);
@@ -1745,7 +1740,7 @@ public class ProviderDelegate {
 
 		try {
 			MsgRef mr;
-			SorcerNotifierProtocol notifier = Accessor.getService(null, SorcerNotifierProtocol.class);
+			SorcerNotifierProtocol notifier = Accessor.get().getService(null, SorcerNotifierProtocol.class);
 
 			mr = new MsgRef(task.getId(), notificationType,
 					config.getProviderName(), message,
@@ -2777,7 +2772,7 @@ public class ProviderDelegate {
 			throws ExportException {
 		// get the partner and its proxy
 		// if it is exportable, export it, otherwise discover one
-		Remote pp = null;
+		Remote pp;
 		if (partner == null) {
 			if (partnerType != null) {
 				// Class clazz = null;
@@ -2815,10 +2810,8 @@ public class ProviderDelegate {
 				// }
 				try {
 					partner = (Remote) partnerType.newInstance();
-				} catch (InstantiationException e) {
-					e.printStackTrace();
-				} catch (IllegalAccessException e) {
-					e.printStackTrace();
+				} catch (InstantiationException | IllegalAccessException e) {
+					logger.error("Could not create partner", e);
 				}
 				// if partner exported use it as the primary proxy
 				if (partner != null) {
@@ -2830,20 +2823,18 @@ public class ProviderDelegate {
 				}
 			} else {
 				// if partner discovered use it as the inner proxy
-				innerProxy = (Remote) Accessor.getService(partnerName,
-                        partnerType);
+				innerProxy = (Remote) Accessor.get().getService(partnerName, partnerType);
 			}
 		} else {
-			// if partner exported use it as the primary proxy
-			if (partner != null) {
-				if (partnerExporter == null)
-					try {
-						partnerExporter = new BasicJeriExporter(
-								TcpServerEndpoint.getInstance(Sorcer.getLocalHost().getHostAddress(), 0),
-								new BasicILFactory());
-					} catch (UnknownHostException e) {
-						throw new ExportException("Could not obtain local address", e);
-					}
+            // if partner exported use it as the primary proxy
+            if (partner != null) {
+                if (partnerExporter == null)
+                    try {
+                        partnerExporter = new BasicJeriExporter(TcpServerEndpoint.getInstance(Sorcer.getLocalHost().getHostAddress(), 0),
+                                                                new BasicILFactory());
+                    } catch (UnknownHostException e) {
+                        throw new ExportException("Could not obtain local address", e);
+                    }
 				pp = partnerExporter.export(partner);
 				if (pp != null) {
 					innerProxy = outerProxy;
@@ -2852,8 +2843,7 @@ public class ProviderDelegate {
 					// use partner as this provider's inner proxy
 					innerProxy = partner;
 			}
-			logger.info(">>>>> got innerProxy: " + innerProxy + "\nfor: "
-					+ partner + "\nusing exporter: " + partnerExporter);
+			logger.info(">>>>> got innerProxy: {}\nfor: {}\nusing exporter: {}", innerProxy, partner, partnerExporter);
 		}
 		return partner;
 	}

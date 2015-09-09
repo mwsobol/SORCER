@@ -1041,25 +1041,21 @@ public class Table implements ModelTable {
 			Context cxt = SdbUtil.getStoreContext(this);
 			if (outputStorageSignature != null) {
 				if (outputStorageSignature.getServiceType() == DatabaseStorer.class) {
-					DatabaseStorer objectStore = ((DatabaseStorer) Accessor
-							.getService(outputStorageSignature));
+					DatabaseStorer objectStore = ((DatabaseStorer) Accessor.get().getService(outputStorageSignature));
 					outputTableURL = (URL)objectStore.contextStore(cxt).getValue("object/url");
 
 				} else {
-					StorageManagement objectStore = ((StorageManagement) Accessor
-							.getService(outputStorageSignature));
-					outputTableURL = (URL)objectStore.contextStore(cxt).getValue("object/url");;
+					StorageManagement objectStore = ((StorageManagement) Accessor.get().getService(outputStorageSignature));
+					outputTableURL = (URL)objectStore.contextStore(cxt).getValue("object/url");
 				}
 			} else if (url.getHost().equals("self")) {
 				outputTableURL = ((DatabaseStorer) provider).storeObject(this);				
 			} else {
 				String serviceType = url.getHost();
 				String providerName = url.getPath();
-				StorageManagement objectStore = ((StorageManagement) ProviderLookup
-						.getService(providerName.substring(1), Class.forName(serviceType)));
-
-				outputTableURL = (URL) objectStore.contextStore(cxt).getValue(
-						"object/url");
+				StorageManagement objectStore = ((StorageManagement) Accessor.get().getService(providerName.substring(1),
+                                                                                               Class.forName(serviceType)));
+				outputTableURL = (URL) objectStore.contextStore(cxt).getValue("object/url");
 			}
 		} catch (Exception e) {
 			//e.printStackTrace();
