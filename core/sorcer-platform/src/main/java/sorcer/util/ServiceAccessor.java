@@ -102,19 +102,11 @@ public class ServiceAccessor implements DynamicAccessor {
 	 * @return A ServiceItem
 	 */
 	public ServiceItem getServiceItem(String providerName, Class serviceType) {
-		ServiceItem si = null;
         String name = overrideName(providerName, serviceType);
         Class[] serviceTypes = new Class[] { serviceType };
         Entry[] attrSets = new Entry[] { new Name(name) };
         ServiceTemplate template = new ServiceTemplate(null, serviceTypes, attrSets);
-		try {
-            logger.info("Lookup {}, timeout: {}", formatServiceTemplate(template), WAIT_FOR);
-			si = sdManager.lookup(template, null, WAIT_FOR);
-            logger.info("Found [{}] instances of {}", si==null?"0":"1", formatServiceTemplate(template), WAIT_FOR);
-		} catch (IOException | InterruptedException e) {
-			logger.error("Failed getting ServiceItem: {}", formatServiceTemplate(template), e);
-		}
-		return si;
+        return getServiceItem(template, null);
 	}
 
 	/**
@@ -139,36 +131,21 @@ public class ServiceAccessor implements DynamicAccessor {
 		ServiceItem si = null;
         logger.info("Lookup {}, timeout: {}, filter: {}", formatServiceTemplate(template), WAIT_FOR, filter);
 		try {
-			si = sdManager.lookup(template, filter, WAIT_FOR);
+            int tryNo = 0;
+            while (tryNo < LUS_REPEAT) {
+                si = sdManager.lookup(template, filter, WAIT_FOR);
+                logger.info("Found [{}] instances of {}", si == null ?
+                                                          "0" :
+                                                          "1", formatServiceTemplate(template), WAIT_FOR);
+                if (si != null)
+                    break;
+                tryNo++;
+            }
 		} catch (IOException | InterruptedException ie) {
 			logger.error("getServiceItem", ie);
 		}
 		return si;
 	}
-
-    /**
-	 * Returns a collection service items using a lookup cache. The service
-	 * items match a service template and pass a filter associated with the
-	 * lookup cache at the cache creation time. Also returned service items pass
-	 * the filter used as the parameter in this method.
-	 * <p>
-	 * Note that template matching is a remote operation - matching is done by
-	 * lookup services while passing a filter is done on the client side.
-	 * Clients should provide a service filter, usually as an object of an inner
-	 * class. A filter narrows the template matching by applying more precise,
-	 * for example boolean selection as required by the client.
-	 *
-	 *
-	 * @param filter
-	 *            the filter to apply.
-	 * @return a ServiceItem[] matching the filter.
-	 */
-	/*public ServiceItem[] getServiceItems(ServiceItemFilter filter) {
-		ServiceItem sis[] = null;
-		if (lookupCache != null)
-			sis = lookupCache.lookup(filter, MAX_MATCHES);
-		return sis;
-	}*/
 
 	/**
 	 * Creates a service lookup and discovery manager with a provided service

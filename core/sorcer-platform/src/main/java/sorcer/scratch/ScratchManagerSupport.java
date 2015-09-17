@@ -97,6 +97,11 @@ public class ScratchManagerSupport implements ScratchManager, Serializable {
     }
 
     public DataService getDataService() {
+        synchronized (dataServiceRef) {
+            if(dataServiceRef.get()==null) {
+                dataServiceRef.set(DataService.getPlatformDataService());
+            }
+        }
         return dataServiceRef.get();
     }
 

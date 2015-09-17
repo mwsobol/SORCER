@@ -379,14 +379,13 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 				}
 			}
 			// check for missing signature of inconsistent PULL/PUSH cases
-			logger.info("signature (before) = " + signature);
+			logger.info("signature (before) = {}", signature);
 			signature = correctProcessSignature();
-			logger.info("signature (after) = " + signature);
+			logger.info("signature (after)  = {}", signature);
 
 			if (!((ServiceSignature) signature).isSelectable()) {
 				exertion.reportException(new ExertionException(
-						"No such operation in the requested signature: "
-								+ signature));
+						"No such operation in the requested signature: "+ signature));
 				logger.warn("Not selectable exertion operation: " + signature);
 				return exertion;
 			}
@@ -395,7 +394,7 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 				signature.setProviderName(providerName);
 			}
 			if (logger.isDebugEnabled())
-				logger.debug("* ExertProcessor's servicer accessor: "+ Accessor.get().getClass().getName());
+				logger.debug("ServiceShell's service accessor: {}", Accessor.get().getClass().getName());
 			provider = ((NetSignature) signature).getService();
 			((NetSignature)signature).setProvider(provider);
 		} catch (Exception e) {
