@@ -1,7 +1,10 @@
 package sorcer.core.context.model.srv;
 
+import net.jini.core.transaction.Transaction;
+import net.jini.core.transaction.TransactionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sorcer.co.tuple.SignatureEntry;
 import sorcer.core.context.ApplicationDescription;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.service.*;
@@ -21,6 +24,8 @@ public class Srv extends Entry<Object> implements Variability<Object>, Arg, Eval
     private static Logger logger = LoggerFactory.getLogger(Srv.class.getName());
 
     protected final String name;
+
+    protected Object srvValue;
 
     Type type = Type.PAR;;
 
@@ -101,6 +106,16 @@ public class Srv extends Entry<Object> implements Variability<Object>, Arg, Eval
     }
 
     @Override
+    public Mogram service(Mogram mogram, Transaction txn) throws TransactionException, MogramException, RemoteException {
+        return ((SignatureEntry)_2)._2.service(mogram, txn);
+    }
+
+    @Override
+    public Mogram service(Mogram mogram) throws TransactionException, MogramException, RemoteException {
+        return service(mogram, null);
+    }
+
+    @Override
     public void valueChanged() throws EvaluationException {
 
     }
@@ -108,6 +123,23 @@ public class Srv extends Entry<Object> implements Variability<Object>, Arg, Eval
     @Override
     public Object getPerturbedValue(String varName) throws EvaluationException, RemoteException {
         return null;
+    }
+
+    @Override
+    public Object getValue(Arg... entries) throws EvaluationException, RemoteException {
+        if (srvValue != null && isValid) {
+            return srvValue;
+        } else {
+            return super.getValue(entries);
+        }
+    }
+
+    public Object getSrvValue() {
+        return srvValue;
+    }
+
+    public void setSrvValue(Object srvValue) {
+        this.srvValue = srvValue;
     }
 
     @Override

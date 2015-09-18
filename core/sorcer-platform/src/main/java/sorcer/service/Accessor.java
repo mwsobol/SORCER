@@ -18,28 +18,16 @@
 
 package sorcer.service;
 
-import java.util.ArrayList;
-import java.util.List;
+import net.jini.config.Configuration;
+import net.jini.config.EmptyConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import net.jini.core.entry.Entry;
-import net.jini.core.lookup.ServiceID;
-import net.jini.core.lookup.ServiceItem;
-import net.jini.core.lookup.ServiceTemplate;
-import net.jini.lookup.ServiceItemFilter;
-import net.jini.lookup.entry.Name;
-import sorcer.core.provider.Provider;
 import sorcer.core.SorcerConstants;
-import sorcer.jini.lookup.entry.SorcerServiceInfo;
-import sorcer.river.Filters;
-import sorcer.util.ProviderNameUtil;
-import sorcer.util.ServiceAccessor;
+import sorcer.core.provider.Provider;
 import sorcer.util.Sorcer;
-import sorcer.util.SorcerProviderNameUtil;
-import sorcer.util.StringUtils;
 
-import static sorcer.core.SorcerConstants.ANY;
+import java.lang.reflect.Constructor;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * A service accessing facility that allows to find dynamically a network
@@ -47,196 +35,74 @@ import static sorcer.core.SorcerConstants.ANY;
  * Method pattern with the {@link DynamicAccessor} interface.
  *
  * @author Mike Sobolewski
+ * @author Dennis Reedy
  */
 public class Accessor {
-
-    protected final static Logger logger = LoggerFactory.getLogger(Accessor.class.getName());
-
-    /**
-     * A factory returning instances of {@link Service}s.
-     */
-    private static DynamicAccessor accessor;
-    private static int minMatches = Sorcer.getLookupMinMatches();
-    private static int maxMatches = Sorcer.getLookupMaxMatches();
-    private static ProviderNameUtil providerNameUtil = new SorcerProviderNameUtil();
-    final public static DynamicAccessor nonCachingAccessor;
-
-    static {
-        initialize(Sorcer.getProperties().getProperty(SorcerConstants.S_SERVICE_ACCESSOR_PROVIDER_NAME));
-        if ("sorcer.util.ServiceAccessor".equals(getAccessorType()))
-            nonCachingAccessor = accessor;
-        else
-            nonCachingAccessor = new ServiceAccessor();
-    }
-
-    public static void initialize(String providerType) {
-        try {
-            logger.debug("SORCER DynamicAccessor provider: " + providerType);
-            Class type = Class.forName(providerType, true, Thread.currentThread().getContextClassLoader());
-            if(!DynamicAccessor.class.isAssignableFrom(type)){
-                throw new IllegalArgumentException("Configured class must implement DynamicAccessor: "+providerType);
-            }
-            accessor = (DynamicAccessor) type.newInstance();
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException("No service accessor available for: " + providerType,e);
-        } catch (InstantiationException e) {
-            throw new RuntimeException("No service accessor available for: " + providerType,e);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException("No service accessor available for: " + providerType,e);
-        }
-    }
-
-    public static String getAccessorType(){
-        return accessor.getClass().getName();
-    }
-
-    public static <T> T getService(Class<T> type){
-        return getService(null, type);
-    }
-
-    public static ServiceTemplate getServiceTemplate(ServiceID serviceID,
-            String providerName, Class[] serviceTypes,
-            String[] publishedServiceTypes) {
-        Class[] types;
-        List<Entry> attributes = new ArrayList<Entry>(2);
-
-        if (providerName != null && !providerName.isEmpty() && !ANY.equals(providerName))
-            attributes.add(new Name(providerName));
-
-        if (publishedServiceTypes != null) {
-            SorcerServiceInfo st = new SorcerServiceInfo();
-            st.publishedServices = publishedServiceTypes;
-            attributes.add(st);
-        }
-
-        if (serviceTypes == null) {
-            types = new Class[] { Provider.class };
-        } else {
-            types = serviceTypes;
-        }
-
-        logger.debug("getServiceTemplate >> \n serviceID: " + serviceID
-                + "\nproviderName: " + providerName + "\nserviceTypes: "
-                + StringUtils.arrayToString(serviceTypes)
-                + "\npublishedServiceTypes: "
-                + StringUtils.arrayToString(publishedServiceTypes));
-
-        return new ServiceTemplate(serviceID, types, attributes.toArray(new Entry[attributes.size()]));
-    }
-
-    private static String overrideName(String providerName, Class serviceType) {
-        if (providerName == null || "*".equals(providerName)) return providerName;
-        if (SorcerConstants.NAME_DEFAULT.equals(providerName))
-            providerName = providerNameUtil.getName(serviceType);
-        return Sorcer.getActualName(providerName);
-    }
-
-    @SuppressWarnings("unchecked")
-    public static <T> T getService(String serviceName, Class<T> serviceType){
-        serviceName = overrideName(serviceName, serviceType);
-        ServiceTemplate serviceTemplate = getServiceTemplate(null, serviceName, new Class[]{serviceType}, null);
-        return (T) getService(serviceTemplate, Filters.any());
-    }
-
-    public static Object getService(ServiceTemplate template, ServiceItemFilter filter, String[] groups) {
-        ServiceItem serviceItem = getServiceItem(template, filter, groups);
-        return serviceItem == null ? null : serviceItem.service;
-    }
-
-    public static Object getService(ServiceTemplate template, ServiceItemFilter filter) {
-        return getService(template, filter, Sorcer.getLookupGroups());
-    }
-
-    public static Object getService(ServiceID serviceID){
-        return getService(serviceID, null, null);
-    }
-
-    public static Object getService(ServiceID serviceID, Class[] serviceTypes, Entry[] attrSets){
-        return getService(serviceID, serviceTypes, attrSets, Sorcer.getLookupGroups());
-    }
-
-    public static Object getService(ServiceID serviceID, Class[] serviceTypes, Entry[] attrSets, String[] groups){
-        ServiceTemplate serviceTemplate = new ServiceTemplate(serviceID, serviceTypes, attrSets);
-        return getService(serviceTemplate, Filters.any(), groups);
-    }
+    private static final AtomicReference<DynamicAccessor> accessor = new AtomicReference<>();
+    final static Logger logger = LoggerFactory.getLogger(Accessor.class.getName());
 
     /**
-     * Returns a service item containing the servicer matching its {@link Signature}
-     * using the particular factory <code>accessor</code> of this service accessor facility.
+     * Create an instance of a {@link DynamicAccessor} if one has not been created.
      *
-     * @param signature
-     *            the signature of requested servicer
-     * @return the requested {@link ServiceItem}
-     */
-    public static ServiceItem getServiceItem(Signature signature){
-        return getServiceItem(signature.getProviderName(), signature.getServiceType());
-    }
-
-    /**
-     * Returns a servicer matching its {@link Signature} using the particular
-     * factory <code>accessor</code> of this service accessor facility.
+     * @param config The Configuration object to use to create the DynamicAccessor. The sorcer.env provider.lookup.accessor
+     *               configuration entry will be used to create the DynamicAccessor.
+     * @return An instance of DynamicAccessor.
      *
-     * @param signature
-     *            the signature of requested servicer
-     * @return the requested {@link Service}
+     * @throws RuntimeException If there are issues using the configuration.
+     * @throws IllegalArgumentException if the configuration arg is null.
      */
-    public static Object getService(Signature signature) {
-        ServiceItem serviceItem = getServiceItem(signature);
-        return serviceItem == null ? null : serviceItem.service;
-    }
-
-    public static ServiceItem getServiceItem(ServiceTemplate template, ServiceItemFilter filter){
-        return getServiceItem(template, filter, Sorcer.getLookupGroups());
-    }
-
-    public static ServiceItem[] getServiceItems(Class type, ServiceItemFilter filter){
-        ServiceTemplate serviceTemplate = getServiceTemplate(null, null, new Class[]{type}, null);
-        return getServiceItems(serviceTemplate, filter);
-    }
-
-    public static ServiceItem getServiceItem(ServiceTemplate template, ServiceItemFilter filter, String[] groups){
-        ServiceItem[] serviceItems = getServiceItems(template, 1, 1, filter, groups);
-        return serviceItems.length > 0 ? serviceItems[0] : null;
-    }
-
-    public static ServiceItem getServiceItem(String providerName, Class serviceType){
-        providerName = overrideName(providerName, serviceType);
-        ServiceTemplate serviceTemplate = getServiceTemplate(null, providerName, new Class[]{serviceType}, null);
-        return getServiceItem(serviceTemplate, Filters.any());
-    }
-
-    public static ServiceItem[] getServiceItems(ServiceTemplate template, ServiceItemFilter filter){
-        return getServiceItems(template, filter, Sorcer.getLookupGroups());
-    }
-
-    public static ServiceItem[] getServiceItems(ServiceTemplate template, ServiceItemFilter filter, String[] groups){
-        return getServiceItems(template, minMatches, maxMatches, filter, groups);
-    }
-
-    public static ServiceItem[] getServiceItems(ServiceTemplate template, int minMatches, int maxMatches, ServiceItemFilter filter, String[] groups){
-        checkNullName(template);
-        if (filter == null) filter = Filters.any();
-        return accessor.getServiceItems(template, minMatches, maxMatches, filter, groups);
-    }
-
-    private static void checkNullName(ServiceTemplate template) {
-        if (template.attributeSetTemplates == null)
-            return;
-        for (Entry attr : template.attributeSetTemplates) {
-            if (attr instanceof Name) {
-                Name name = (Name) attr;
-                if (ANY.equals(name.name)) {
-                    name.name = null;
-                    logger.warn("Requested service with name '*'", new IllegalArgumentException());
+    public static synchronized DynamicAccessor create(Configuration config) {
+        if(accessor.get()==null) {
+            if(config==null)
+                throw new IllegalArgumentException("A Configuration must be provided");
+            if(System.getSecurityManager()==null)
+                System.setSecurityManager(new SecurityManager());
+            String providerType =
+                Sorcer.getProperties().getProperty(SorcerConstants.S_SERVICE_ACCESSOR_PROVIDER_NAME);
+            try {
+                logger.debug("SORCER DynamicAccessor provider: {}", providerType);
+                Class<?> type = Class.forName(providerType, true, Thread.currentThread().getContextClassLoader());
+                if(!DynamicAccessor.class.isAssignableFrom(type)){
+                    throw new IllegalArgumentException("Configured class must implement DynamicAccessor: "+providerType);
                 }
-            } else if (attr instanceof SorcerServiceInfo) {
-                SorcerServiceInfo info = (SorcerServiceInfo) attr;
-                if (ANY.equals(info.providerName)) {
-                    info.providerName = null;
-                    logger.warn("Requested service with name '*'", new IllegalArgumentException());
-                }
+                Constructor constructor = type.getDeclaredConstructor(Configuration.class);
+                accessor.set((DynamicAccessor) constructor.newInstance(config));
+            } catch (Exception e) {
+                throw new RuntimeException("No service accessor available for: " + providerType,e);
             }
         }
+        return accessor.get();
+    }
+
+    /**
+     * Get the created {@link DynamicAccessor} instance.
+     *
+     * @return An instance of DynamicAccessor.
+     *
+     * @throws IllegalStateException if the DynamicAccessor instance has not been created by this utility.
+     */
+    public static synchronized DynamicAccessor get() {
+        if(accessor.get()==null)
+            throw new IllegalStateException("The DynamicAccessor has not yet been created");
+        return accessor.get();
+    }
+
+
+    /**
+     * Create an instance of a {@link DynamicAccessor} if one has not been created.
+     *
+     * @return An instance of DynamicAccessor created with no configuration. This method should be used
+     * with care, as underlying discovery management cannot be configured.
+     */
+    public static synchronized DynamicAccessor create() {
+        if(accessor.get()==null) {
+            try {
+                create(EmptyConfiguration.INSTANCE);
+            } catch (Exception e) {
+                throw new RuntimeException("Unable to create a DynamicAccessor", e);
+            }
+        }
+        return accessor.get();
     }
 
     /**

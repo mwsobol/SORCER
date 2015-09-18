@@ -17,11 +17,12 @@
  */
 package sorcer.core.invoker;
 
-import java.rmi.RemoteException;
-
 import sorcer.service.Arg;
 import sorcer.service.Condition;
 import sorcer.service.EvaluationException;
+import sorcer.service.Invocation;
+
+import java.rmi.RemoteException;
 
 /**
  * The loop Invoker invokes its target while its condition is true. Other types
@@ -76,10 +77,10 @@ public class LoopInvoker<V> extends ServiceInvoker<V> {
 	 * @param condition
 	 * @param var
 	 */
-	public LoopInvoker(String name, Condition condition, ServiceInvoker<V> invoker) {
+	public LoopInvoker(String name, Condition condition, Invocation<V> invoker) {
 		super(name);
 		this.condition = condition;
-		target = invoker;
+		target = (ServiceInvoker)invoker;
 	}
 
 	/**

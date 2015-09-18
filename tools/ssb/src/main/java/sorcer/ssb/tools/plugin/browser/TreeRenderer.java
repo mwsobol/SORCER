@@ -18,13 +18,16 @@
 package sorcer.ssb.tools.plugin.browser;
 
 import net.jini.core.lookup.ServiceRegistrar;
+import net.jini.lookup.entry.ServiceType;
 import sorcer.jini.lookup.entry.SorcerServiceInfo;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import java.awt.*;
+import java.beans.BeanInfo;
 import java.util.HashMap;
+import java.util.Map;
 
 public class TreeRenderer extends DefaultTreeCellRenderer {
 
@@ -51,7 +54,7 @@ public class TreeRenderer extends DefaultTreeCellRenderer {
 
 	// public static ImageIcon _lusGlyphIcon;
 	public static ImageIcon _serviceGlyphIcon;
-	private static HashMap _iconLookup = new HashMap();
+	private static Map<Object, ImageIcon> _iconLookup = new HashMap<>();
 	private static Class[] CORE_SERVICES = {
 			net.jini.core.transaction.server.TransactionManager.class,
 			net.jini.event.EventMailbox.class,
@@ -199,17 +202,32 @@ public class TreeRenderer extends DefaultTreeCellRenderer {
 
 	static ImageIcon getIcon(ServiceNode node) {
 		Object serviceID = node.getServiceItem().serviceID;
-		ImageIcon ii = (ImageIcon) _iconLookup.get(serviceID);
+		ImageIcon ii = _iconLookup.get(serviceID);
 		if (ii == null) {
             for(net.jini.core.entry.Entry entry : node.getServiceItem().attributeSets) {
-                if(entry instanceof SorcerServiceInfo) {
-                    SorcerServiceInfo ssi = (SorcerServiceInfo)entry;
-                    if(ssi.iconName!=null && ssi.iconName.contains("sorcer")) {
-                        return _sorcerServiceIcon;
+                if(entry instanceof ServiceType) {
+                    if(entry instanceof SorcerServiceInfo) {
+                        SorcerServiceInfo ssi = (SorcerServiceInfo) entry;
+                        if (ssi.iconName != null && ssi.iconName.contains("sorcer")) {
+                            return _sorcerServiceIcon;
+                        }
+                    } else {
+                        ClassLoader currentCl = Thread.currentThread().getContextClassLoader();
+                        try {
+                            Thread.currentThread().setContextClassLoader(node.getServiceItem().service.getClass().getClassLoader());
+                            Image image = ((ServiceType) entry).getIcon(BeanInfo.ICON_COLOR_16x16);
+                            if (image != null) {
+                                ii = new ImageIcon(image);
+                                _iconLookup.put(serviceID, ii);
+                                return ii;
+                            }
+                        } finally {
+                            Thread.currentThread().setContextClassLoader(currentCl);
+                        }
                     }
                 }
             }
-			return _serviceIcon;
+            return _serviceIcon;
 		}
 		return ii;
 		/*

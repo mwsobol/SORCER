@@ -41,7 +41,7 @@ import static sorcer.eo.operator.task;
  * exertions ({@link Conditional}, {@link NetJob}, {@link NetTask}).
  * 
  * This class is used by the {@link sorcer.core.provider.exerter.ServiceShell} class for executing
- * {@link Exertions}.
+ * Exertions.
  * 
  * @author Mike Sobolewski
  */
@@ -51,8 +51,7 @@ public class ControlFlowManager {
     /**
      * Logger for this ExerterController logging.
      */
-    protected static final Logger logger = LoggerFactory
-            .getLogger(ControlFlowManager.class.getName());
+    protected static final Logger logger = LoggerFactory.getLogger(ControlFlowManager.class);
 
 	/**
 	 * ExertionDelegate reference needed for handling exertions.
@@ -274,10 +273,10 @@ public class ControlFlowManager {
         if (concatenator == null) {
             String spacerName = block.getRendezvousName();
             if (spacerName != null) {
-                concatenator = Accessor.getService(spacerName, Concatenator.class);
+                concatenator = Accessor.get().getService(spacerName, Concatenator.class);
             } else {
                 try {
-                    concatenator = Accessor.getService(Concatenator.class);
+                    concatenator = Accessor.get().getService(null, Concatenator.class);
                 } catch (Exception x) {
                     throw new ExertionException("Could not find Concatenator", x);
                 }
@@ -509,7 +508,7 @@ public class ControlFlowManager {
         // execute service task
 		Fidelity<Signature> ts = new Fidelity<Signature>();
         Signature tsig = task.getProcessSignature();
-        ((ServiceContext)task.getContext()).getRuntime().setCurrentSelector(tsig.getSelector());
+        ((ServiceContext)task.getContext()).getModelStrategy().setCurrentSelector(tsig.getSelector());
         ((ServiceContext)task.getContext()).setCurrentPrefix(tsig.getPrefix());
 
         ts.getSelects().add(tsig);
@@ -569,7 +568,7 @@ public class ControlFlowManager {
             try {
                 t = task(task.getName() + "-" + i, signatures.get(i), shared);
                 signatures.get(i).setType(Signature.SRV);
-                ((ServiceContext)shared).getRuntime().setCurrentSelector(signatures.get(i).getSelector());
+                ((ServiceContext)shared).getModelStrategy().setCurrentSelector(signatures.get(i).getSelector());
                 ((ServiceContext)shared).setCurrentPrefix(signatures.get(i).getPrefix());
 
                 Fidelity<Signature> tmp = new Fidelity<Signature>();

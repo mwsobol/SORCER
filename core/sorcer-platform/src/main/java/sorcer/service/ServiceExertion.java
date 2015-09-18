@@ -28,6 +28,7 @@ import sorcer.core.context.model.par.Par;
 import sorcer.core.deploy.ServiceDeployment;
 import sorcer.core.invoker.ExertInvoker;
 import sorcer.core.provider.Jobber;
+import sorcer.core.provider.ProviderName;
 import sorcer.core.provider.Spacer;
 import sorcer.core.provider.exerter.ServiceShell;
 import sorcer.core.signature.NetSignature;
@@ -202,18 +203,23 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
      * @see sorcer.service.Exertion#exert(net.jini.core.transaction.Transaction,
      * sorcer.servie.Arg[])
      */
-    public <T extends Mogram> T exert(Transaction txn, Arg... entries)
-            throws TransactionException, ExertionException, RemoteException {
-        ServiceShell se = new ServiceShell(this);
-        Exertion result = null;
+    public Exertion exert(Transaction txn, Arg... entries)
+            throws TransactionException, MogramException, RemoteException {
         try {
-            result = se.exert(txn, null, entries);
-        } catch (Exception e) {
+            substitute(entries);
+        } catch (SetterException e) {
             logger.error("Error in exertion {}", mogramId, e);
-            result = this;
-            reportException(e);
+            throw new MogramException(e);
         }
-        return (T) result;
+        String prvName = null;
+        for(Arg arg : entries) {
+            if (arg instanceof ProviderName) {
+                prvName = arg.getName();
+                break;
+            }
+        }
+        ServiceShell se = new ServiceShell(this);
+        return se.exert(txn, prvName, entries);
     }
 
     /*
@@ -232,18 +238,6 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
 
         ServiceShell se = new ServiceShell(this);
         return se.exert(entries);
-    }
-
-    public Exertion exert(Transaction txn, String providerName, Arg... entries)
-            throws TransactionException, MogramException, RemoteException {
-        try {
-            substitute(entries);
-        } catch (SetterException e) {
-            e.printStackTrace();
-            throw new MogramException(e);
-        }
-        ServiceShell se = new ServiceShell(this);
-        return se.exert(txn, providerName);
     }
 
     private void setSubject(Principal principal) {
@@ -497,8 +491,8 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
             throws ContextException;
 
     public Context finalizeOutDataContext() throws ContextException {
-        if (dataContext.getRuntime().getOutConnector() != null) {
-            dataContext.updateContextWith(dataContext.getRuntime().getOutConnector());
+        if (dataContext.getModelStrategy().getOutConnector() != null) {
+            dataContext.updateContextWith(dataContext.getModelStrategy().getOutConnector());
         }
         return dataContext;
     }
@@ -969,7 +963,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
                 .append("\tExertion Name:        " + name + "\n")
                 .append("\tExertion Status:      " + status + "\n")
                 .append("\tExertion ID:          " + mogramId + "\n")
-             	.append("\tCreation Date:        " + sdf.format(creationDate) + "\n")
+                .append("\tCreation Date:        " + sdf.format(creationDate) + "\n")
                 .append("\tRuntime ID:           " + runtimeId + "\n")
                 .append("\tParent ID:            " + parentId + "\n")
                 .append("\tOwner ID:             " + ownerId + "\n")

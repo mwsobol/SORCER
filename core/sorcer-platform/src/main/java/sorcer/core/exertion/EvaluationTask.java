@@ -18,10 +18,10 @@
 package sorcer.core.exertion;
 
 import net.jini.core.transaction.Transaction;
+import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.par.Par;
 import sorcer.core.context.model.par.ParModel;
 import sorcer.core.signature.EvaluationSignature;
-import sorcer.core.signature.ServiceSignature;
 import sorcer.service.*;
 
 import java.rmi.RemoteException;
@@ -89,8 +89,8 @@ public class EvaluationTask extends Task {
 	@Override
 	public Task doTask(Transaction txn) throws ExertionException,
 			SignatureException {
-		dataContext.getRuntime().setCurrentSelector(getProcessSignature().getSelector());
-		dataContext.setCurrentPrefix(((ServiceSignature) getProcessSignature()).getPrefix());
+		dataContext.getModelStrategy().setCurrentSelector(getProcessSignature().getSelector());
+		dataContext.setCurrentPrefix(getProcessSignature().getPrefix());
 
 		if (serviceFidelity.getSelects().size() > 1) {
 			try {
@@ -103,6 +103,9 @@ public class EvaluationTask extends Task {
 		try {
 			Evaluation evaluator = ((EvaluationSignature) getProcessSignature())
 					.getEvaluator();
+			if (evaluator instanceof Entry)
+				((Entry)evaluator).isValid(false);
+
 			if (evaluator instanceof Evaluator) {
 				ArgSet vs = ((Evaluator) evaluator).getArgs();
 				Object args = dataContext.getArgs();

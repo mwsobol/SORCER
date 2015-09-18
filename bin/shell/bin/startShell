@@ -149,6 +149,7 @@ river_version=$(getVersion river.version)
 sorcer_version=$(getVersion sorcer.version)
 rio_version=$(getVersion rio.version)
 commonsio_version=$(getVersion commonsio.version)
+guava_version=$(getVersion guava.version)
 modeling_version=$(getVersion modeling.version)
 
 RIO_HOME=$SORCER_HOME/rio-$rio_version
@@ -179,10 +180,10 @@ STARTER_CLASSPATH="$SORCER_HOME/lib/common/groovy/groovy-all-$groovy_version.jar
 $SORCER_HOME/lib/common/plexus-utils-$plexus_version.jar:\
 $SORCER_HOME/lib/common/jansi-$jansi_version.jar:\
 $SORCER_HOME/lib/common/commons-io-$commonsio_version.jar:\
+$SORCER_HOME/lib/common/guava-$guava_version.jar:\
 $SORCER_HOME/lib/river/jsk-platform-$river_version.jar:\
 $SORCER_HOME/lib/river/jsk-lib-$river_version.jar:\
 $SORCER_HOME/lib/river/serviceui-$river_version.jar:\
-$SORCER_HOME/lib/sorcer/lib/sos-netlet-$sorcer_version.jar:\
 $SORCER_HOME/lib/sorcer/lib/sos-shell-$sorcer_version.jar:\
 $SORCER_HOME/lib/sorcer/lib-ext/webster-$sorcer_version.jar:\
 $SORCER_HOME/lib/sorcer/lib/sorcer-platform-$sorcer_version.jar:\

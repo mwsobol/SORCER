@@ -43,6 +43,8 @@
         <pathelement location="${rio.lib}/logging/logback-classic-${logback.version}.jar" />
         <pathelement location="${rio.lib}/logging/logback-core-${logback.version}.jar" />
         <pathelement location="${common.lib}/plexus-utils-${plexus.version}.jar" />
+        <pathelement location="${common.lib}/commons-io-${commonsio.version}.jar" />
+        <pathelement location="${common.lib}/guava-${guava.version}.jar" />
         <!--<pathelement location="${env.SORCER_HOME}/classes" />-->
     </path>
 

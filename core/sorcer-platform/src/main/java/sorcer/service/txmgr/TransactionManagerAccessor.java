@@ -1,8 +1,8 @@
-package sorcer.service.txmgr;
+
 /**
- *
  * Copyright 2013 Rafał Krupiński.
  * Copyright 2013 Sorcersoft.com S.A.
+ * Copyright 2015 Dennis Reedy.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,20 +16,23 @@ package sorcer.service.txmgr;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+package sorcer.service.txmgr;
 
 import net.jini.core.transaction.server.TransactionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.service.Accessor;
-import sorcer.util.ServiceAccessor;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Rafał Krupiński
  */
-public class TransactionManagerAccessor extends ServiceAccessor{
+public class TransactionManagerAccessor {
     private static final Logger log = LoggerFactory.getLogger(TransactionManagerAccessor.class);
     protected static TransactionManagerAccessor instance = new TransactionManagerAccessor();
+    private final Map<String, TransactionManager> cache = new HashMap<>();
 
     /**
      * Returns a Jini transaction manager service.
@@ -40,7 +43,7 @@ public class TransactionManagerAccessor extends ServiceAccessor{
         return instance.doGetTransactionManager();
     }
     public  TransactionManager doGetTransactionManager() {
-        TransactionManager transactionMgr= (TransactionManager) cache.get(TransactionManager.class.getName());
+        TransactionManager transactionMgr= cache.get(TransactionManager.class.getName());
         try {
             if (transactionMgr == null)
                 return doGetNewTransactionManger();
@@ -64,7 +67,7 @@ public class TransactionManagerAccessor extends ServiceAccessor{
     }
 
     private TransactionManager doGetNewTransactionManger() {
-        TransactionManager transactionMgr = Accessor.getService(TransactionManager.class);
+        TransactionManager transactionMgr = Accessor.get().getService(null, TransactionManager.class);
         if (transactionMgr!=null)
             cache.put(TransactionManager.class.getName(), transactionMgr);
         return transactionMgr;

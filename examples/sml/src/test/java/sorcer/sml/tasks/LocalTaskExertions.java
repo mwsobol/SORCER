@@ -28,7 +28,7 @@ public class LocalTaskExertions {
 	@Test
 	public void exertTask() throws Exception  {
 
-		Task t5 = srv("t5", sig("add", AdderImpl.class),
+		Task t5 = task("t5", sig("add", AdderImpl.class),
 				cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0)));
 
 		Exertion out = exert(t5);
@@ -95,7 +95,7 @@ public class LocalTaskExertions {
                         inEnt("op2/x1", 20.0), inEnt("op2/x2", 80.0)));
 
         batch3 = exert(batch3);
-        assertEquals(get(batch3, "result/y"), 400.0);
+		assertTrue(get(batch3, "result/y").equals(400.0));
 
     }
 
@@ -112,12 +112,12 @@ public class LocalTaskExertions {
 
 		logger.info("sFi: " + sFi(task));
 		assertTrue(sFis(task).size() == 2);
-		logger.info("selFis: " + selFi(task));
-		assertTrue(selFi(task).equals("net"));
+		logger.info("selFis: " + fiName(task));
+		assertTrue(fiName(task).equals("net"));
 
 		task = exert(task, fi("object"));
 		logger.info("exerted: " + context(task));
-		assertTrue(selFi(task).equals("object"));
+		assertTrue(fiName(task).equals("object"));
 		assertTrue(get(task).equals(100.0));
 	}
 
@@ -131,7 +131,7 @@ public class LocalTaskExertions {
 						result("result/y")));
 
 		//logger.info("t4: " + value(t4));
-		assertEquals("Wrong value for 500.0", value(t4), 500.0);
+		assertTrue(value(t4).equals(500.0));
 	}
 }
 	

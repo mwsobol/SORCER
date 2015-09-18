@@ -1,5 +1,7 @@
 package sorcer.core.provider;
 
+import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -23,17 +25,18 @@ import sorcer.core.signature.NetSignature;
 import sorcer.core.signature.ServiceSignature;
 import sorcer.service.*;
 import sorcer.service.Strategy.*;
-import sorcer.util.ProviderAccessor;
+import sorcer.service.cataloger.CatalogerAccessor;
 import sorcer.util.Sorcer;
 import sorcer.util.Stopwatch;
 
-import java.rmi.RemoteException;
 import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.*;
+import static sorcer.co.operator.get;
 import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
+import static sorcer.eo.operator.get;
 import static sorcer.eo.operator.value;
 
 /**
@@ -46,9 +49,14 @@ public class ArithmeticNetTest implements SorcerConstants {
 
 	private static final Logger logger = LoggerFactory.getLogger(ArithmeticNetTest.class);
 
+    @BeforeClass
+    public static void setup() {
+        Accessor.create();
+    }
+
 	@Test
 	public void getProviderTest() throws Exception {
-		Cataloger catalog = ProviderAccessor.getCataloger();
+		Cataloger catalog = CatalogerAccessor.getCataloger();
 		Object proxy = catalog.lookup(Adder.class);
 		if (proxy != null)
 			System.out.println("Adder: " + Arrays.toString(proxy.getClass().getInterfaces()));
@@ -62,7 +70,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 	@Test
 	public void providerAcessorTest() throws Exception {
 		long startTime = System.currentTimeMillis();
-		Object provider = Accessor.getService(new NetSignature(Averager.class));
+		Object provider = Accessor.get().getService(new NetSignature(Averager.class));
 		logger.info("INTERFACES: " + Arrays.toString(provider.getClass().getInterfaces()));
 		assertTrue(Arrays.asList(provider.getClass().getInterfaces()).contains(Averager.class));
 //		logger.info("Accessor provider: " + provider);
@@ -72,7 +80,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 	
 	@Test
 	public void getCatalogTest() throws Exception {
-		Cataloger catalog = ProviderAccessor.getCataloger();
+		Cataloger catalog = CatalogerAccessor.getCataloger();
 		System.out.println("Cataloger: " + catalog);
 		String[] pnames = catalog.getProviderList();
 		logger.info("cataloger pnames: " + Arrays.toString(pnames));
@@ -126,11 +134,11 @@ public class ArithmeticNetTest implements SorcerConstants {
 		t5 = exert(t5);
 		//logger.info("t5 context: " + context(t5));
 		//logger.info("t5 value: " + get(t5));
-		assertEquals("Wrong value for 100.0", value(t5), 100.0);
+		assertTrue(value(t5).equals(100.0));
 	}
 	
 	@Test
-	public void arithmeticNetMultiFiTaskTest() throws ExertionException, SignatureException, ContextException, RemoteException {
+	public void arithmeticNetMultiFiTaskTest() throws Exception {
 		Task task = task("add",
 				sFi("net", sig("add", Adder.class)),
 				sFi("object", sig("add", AdderImpl.class)),
@@ -244,8 +252,9 @@ public class ArithmeticNetTest implements SorcerConstants {
 		assertTrue(get(job, "j1/t3/result/y").equals(400.0));
 	}
 
+	@Ignore
 	@Test
-	public void arithmeticMultiFiBatchTaskTest() throws Exception {
+	public void batchFiTask() throws Exception {
 		
 		Task t4 = task("t4",
 				sFi("object", sig("multiply", MultiplierImpl.class), sig("add", AdderImpl.class)),
@@ -253,7 +262,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 				context("shared", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
 						outEnt("result/y")));
 
-		t4 = exert(t4);
+		t4 = exert(t4, fi("object"));
 		logger.info("task context: " + context(t4));
 		
 		t4 = exert(t4, fi("net"));
@@ -271,7 +280,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 		t5 = exert(t5);
 		logger.info("t5 context: " + context(t5));
 		logger.info("t5 value: " + get(t5));
-		assertEquals("Wrong value for 50.0", value(t5), 50.0);
+		assertTrue(value(t5).equals(50.0));
 	}
 	
 	@Test
@@ -287,7 +296,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 		t5 = exert(t5);
 		logger.info("t5 context: " + context(t5));
 		logger.info("t5 value: " + get(t5, "result/y"));
-		assertEquals("Wrong value for 100.0", get(t5, "result/y"), 100.0);
+		assertTrue(get(t5, "result/y").equals(100.0));
 	}
 
 	@Test
@@ -342,16 +351,16 @@ public class ArithmeticNetTest implements SorcerConstants {
 	@Test
 	public void exerterTest() throws Exception {
         System.out.println("========== exerterTest ==========");
-	Task f5 = task(
+	Mogram f5 = task(
 			"f5",
 			sig("add", Adder.class),
 			context("add", inEnt("arg/x1", 20.0),
 					inEnt("arg/x2", 80.0), outEnt("result/y", null)),
 			strategy(Monitor.NO, Wait.YES));
 	
-	Exertion out = null;
+	Mogram out = null;
 //	long start = System.currentTimeMillis();
-	Exerter exerter = Accessor.getService(Exerter.class);
+	Exerter exerter = Accessor.get().getService(null, Exerter.class);
 //	logger.info("got exerter: " + exerter);
 
 	out = exerter.exert(f5);

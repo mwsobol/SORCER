@@ -109,7 +109,8 @@ public class OptExertion extends ConditionalExertion {
 	@Override
 	public List<Conditional> getConditions() {
 		List<Conditional> cs = new ArrayList<Conditional>();
-		cs.add(condition);
+		if (condition != null)
+			cs.add(condition);
 		return cs;
 	}
 	

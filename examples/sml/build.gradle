@@ -79,6 +79,7 @@ dependencies {
     compile project(':sorcer-lib')
     compile project(':sos-db-prv')
     testCompile project(':sorcer-test')
+	testRuntime "com.google.guava:guava:${guavaVersion}"
     testRuntime libs.slf4j
 	testRuntime libs.logback
 }
@@ -125,7 +126,7 @@ test {
 			"${websterUrl}/${repoPath()}/arithmetic-${version}-dl.jar ${websterUrl}/sorcer-dl-${version}.jar ${websterUrl}/jsk-dl-${riverVersion}.jar"
 
 	testLogging {
-		events "passed", "skipped", "failed"/*, "standardOut", "standardError"*/
+		events "passed", "skipped", "failed"/*, "standardOut"*/, "standardError"
 	}
 //	dependsOn([install])
 	dependsOn([install, bootme])

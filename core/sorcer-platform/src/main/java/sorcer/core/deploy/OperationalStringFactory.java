@@ -148,12 +148,18 @@ public final class OperationalStringFactory {
         return signatures;
     }
 
-    private static String createDeploymentID(ServiceElement service) throws NoSuchAlgorithmException {
+    static String createDeploymentID(ServiceElement service) throws NoSuchAlgorithmException {
         StringBuilder nameBuilder = new StringBuilder();
         nameBuilder.append(service.getName());
+        List<String> items = new ArrayList<String>();
         for(ClassBundle export : service.getExportBundles()) {
-            nameBuilder.append(export.getClassName());
+            items.add(export.getClassName());
         }
+        java.util.Collections.sort(items);
+        for(String item : items) {
+            nameBuilder.append(item);
+        }
+        logger.debug("Create deployment name from: {}", nameBuilder.toString());
         return ServiceDeployment.createDeploymentID(nameBuilder.toString());
     }
 

@@ -21,6 +21,8 @@ import java.security.Principal;
 
 import net.jini.id.Uuid;
 import net.jini.id.UuidFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sorcer.core.SorcerConstants;
 import sorcer.security.util.SorcerPrincipal;
 import sorcer.service.Context;
@@ -35,6 +37,8 @@ import sorcer.util.SorcerUtil;
  */
 @SuppressWarnings("rawtypes")
 public class ContextLink implements SorcerConstants, Link {
+
+	private Logger logger = LoggerFactory.getLogger(ContextLink.class.getName());
 
 	private static final long serialVersionUID = -7115324059076651991L;
 
@@ -181,8 +185,8 @@ public class ContextLink implements SorcerConstants, Link {
 	}
 
 	public String toString() {
-		String str = "Link:\"" + name + "\":" + offset;
-		return str + "\n" + linkedContext;
+//		String str = "Link:\"" + name + "\":" + offset;
+		return "\n" + linkedContext;
 	}
 
 	public boolean isSameContext(Object cntxt, Object offset) {

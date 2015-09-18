@@ -1,8 +1,8 @@
-package sorcer.service.space;
 /**
  *
  * Copyright 2013 Rafał Krupiński.
  * Copyright 2013 Sorcersoft.com S.A.
+ * Copyright 2015 Dennis Reedy.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,8 @@ package sorcer.service.space;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package sorcer.service.space;
 
-
-import net.jini.core.entry.Entry;
 import net.jini.lookup.entry.Name;
 import net.jini.space.JavaSpace;
 import net.jini.space.JavaSpace05;
@@ -26,7 +25,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.service.Accessor;
 import sorcer.util.ProviderNameUtil;
-import sorcer.util.Sorcer;
 import sorcer.util.SorcerProviderNameUtil;
 
 
@@ -35,9 +33,8 @@ import sorcer.util.SorcerProviderNameUtil;
  */
 public class SpaceAccessor {
     private static final Logger log = LoggerFactory.getLogger(SpaceAccessor.class);
-
-    protected static SpaceAccessor instance = new SpaceAccessor();
-    private JavaSpace05 cache;
+    private static SpaceAccessor instance = new SpaceAccessor();
+    private static JavaSpace05 cache;
     private ProviderNameUtil providerNameUtil = new SorcerProviderNameUtil();
 
     /**
@@ -46,48 +43,26 @@ public class SpaceAccessor {
      * @return JavaSpace proxy
      */
     public static JavaSpace05 getSpace(String spaceName) {
-        return getSpace(spaceName, Sorcer.getSpaceGroup());
+        return doGetSpace(spaceName);
     }
 
-    /**
-     * Returns a JavaSpace service with a given name and group.
-     *
-     * @return JavaSpace proxy
-     */
-    public static JavaSpace05 getSpace(String spaceName, String spaceGroup) {
-        return instance.doGetSpace(spaceName, spaceGroup);
-    }
-
-    public JavaSpace05 doGetSpace(String spaceName, String spaceGroup) {
+    public static JavaSpace05 doGetSpace(String spaceName) {
         // first test if our cached JavaSpace is alive
         // and if it's the case then return it,
         // otherwise get a new JavSpace proxy
         JavaSpace05 javaSpace = cache;
         if (javaSpace != null) {
             try {
-                javaSpace.readIfExists(new Name("_SORCER_"), null,
-                        JavaSpace.NO_WAIT);
+                javaSpace.readIfExists(new Name("_SORCER_"), null, JavaSpace.NO_WAIT);
                 return javaSpace;
             } catch (Exception e) {
                 //log.error("error", e.getMessage());
                 cache = null;
             }
         }
-
-        Entry[] attrs = null;
-        if (spaceName != null) {
-            attrs = new Entry[]{new Name(spaceName)};
-        }
-        String sg = spaceGroup;
-        if (spaceGroup == null) {
-            sg = Sorcer.getSpaceGroup();
-        }
-        javaSpace = (JavaSpace05) Accessor.getService(null,
-                new Class[]{JavaSpace05.class}, attrs,
-                new String[]{sg});
+        javaSpace = Accessor.get().getService(spaceName, JavaSpace05.class);
         try {
-            javaSpace.readIfExists(new Name("_SORCER_"), null,
-                    JavaSpace.NO_WAIT);
+            javaSpace.readIfExists(new Name("_SORCER_"), null, JavaSpace.NO_WAIT);
             cache = javaSpace;
             log.info("JavaSpace is back!");
             return javaSpace;
@@ -108,6 +83,6 @@ public class SpaceAccessor {
     }
 
     public JavaSpace05 doGetSpace() {
-        return doGetSpace(providerNameUtil.getName(JavaSpace05.class), Sorcer.getSpaceGroup());
+        return doGetSpace(providerNameUtil.getName(JavaSpace05.class));
     }
 }

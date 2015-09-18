@@ -19,8 +19,6 @@ import static sorcer.co.operator.*;
 import static sorcer.co.operator.path;
 import static sorcer.mo.operator.*;
 import static sorcer.eo.operator.*;
-import static sorcer.eo.operator.inPaths;
-import static sorcer.eo.operator.outPaths;
 import static sorcer.eo.operator.put;
 import static sorcer.eo.operator.value;
 /**
@@ -46,7 +44,8 @@ public class DataModels {
 
         // aliasing with an reactive value entry - rvEnt
         put(cxt, rvEnt("arg/x1", value(cxt, "arg/x5")));
-        assertTrue(get(cxt, "arg/x1").equals(1.5));
+        assertNotEquals(get(cxt, "arg/x1"), 1.5);
+        assertTrue(value(cxt, "arg/x1").equals(1.5));
 
         Context<Double> subcxt = context(cxt, list("arg/x4", "arg/x5"));
         logger.info("subcontext: " + subcxt);
@@ -123,16 +122,18 @@ public class DataModels {
         assertEquals(select(cxt, 2, 4, 5), list(1.2, 1.4, 1.5));
 
         // get input and output contexts
-        List<String> inputs = list("arg/x2", "arg/x3", "arg/x4", "arg/x5", "par/z");
+        List<String> allInputs = list("arg/x2", "arg/x3", "arg/x4", "arg/x5", "par/z");
+        List<String> inputs = list("arg/x2", "arg/x3", "arg/x4", "arg/x5");
         List<String> outputs = list("out/y1", "out/y2", "par/z");
+        assertTrue(allInputs.equals(paths(allInputs(cxt))));
         assertTrue(inputs.equals(paths(inputs(cxt))));
         assertTrue(outputs.equals(paths(outputs(cxt))));
 
         // return all values of inEntries
-        assertEquals(inValues(cxt), list(1.5, 1.4, 1.3, 1.2, 1.9));
+        assertEquals(inValues(cxt), list(1.5, 1.4, 1.3, 1.2));
 
         // return all paths of inEntries
-        assertEquals(inPaths(cxt), list("arg/x5", "arg/x4", "arg/x3", "arg/x2", "par/z"));
+        assertEquals(inPaths(cxt), list("arg/x5", "arg/x4", "arg/x3", "arg/x2"));
 
         // return all values of outEntries
         assertEquals(outValues(cxt), list(1.8, 1.7, 1.9));
@@ -265,6 +266,7 @@ public class DataModels {
         assertTrue(value(mc, "arg1/value").equals(90.0));
 
         put(mc, "arg1/value", 200.0);
+
         assertTrue(value(ac, "arg1/value").equals(200.0));
         assertTrue(value(mc, "arg1/value").equals(200.0));
 

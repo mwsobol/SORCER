@@ -21,9 +21,13 @@ import net.jini.core.transaction.TransactionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.provider.Provider;
+import sorcer.core.provider.RemoteLogger;
+import sorcer.core.provider.logger.LoggerRemoteException;
+import sorcer.core.provider.logger.RemoteLoggerListener;
 import sorcer.netlet.ScriptExerter;
 import sorcer.service.*;
 import sorcer.ui.util.JIconButton;
+import sorcer.ui.util.TextAreaPrintStream;
 import sorcer.ui.util.WindowUtilities;
 import sorcer.util.IOUtils;
 import sorcer.util.Sorcer;
@@ -38,14 +42,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * HTML file browser and file editor
@@ -74,10 +78,13 @@ public class EditorView extends JPanel implements HyperlinkListener {
 	private static String EXIT_LABEL = "Close";
 	private static String EXERT_LABEL = "Exert...";
 	private static String GET_CONTEXT_LABEL = "Get Context Template...";
-	private JMenuItem openMenuItem, editMenuItem, saveMenuItem, saveAsMenuItem, getContextMenuItem, exertMenuItem, closeMenuItem;
+	private JMenuItem openMenuItem, editMenuItem, saveMenuItem, saveAsMenuItem,
+			getContextMenuItem, exertMenuItem, closeMenuItem;
 	private Provider provider;
 	private EditorViewSignature model;
     private ScriptExerter scriptExerter;
+	private JTextArea feedbackPane;
+	private RemoteLoggerListener listener;
 
 	public EditorView(String url, boolean withLocator) {
 		this(url, withLocator, false);
@@ -93,10 +100,16 @@ public class EditorView extends JPanel implements HyperlinkListener {
 			boolean withEditing, boolean isEditor, boolean isDisposable) {
 		this(input, withLocator, editable, withEditing, isEditor, isDisposable, null);
 	}
-	
-	/** Creates new editor JPanel */
+
 	public EditorView(String input, boolean withLocator, boolean editable,
 			boolean withEditing, boolean isEditor, boolean isDisposable, EditorViewSignature model) {
+		this(input, withLocator, editable, withEditing, isEditor, isDisposable, model, null);
+	}
+
+	/** Creates new editor JPanel */
+	public EditorView(String input, boolean withLocator, boolean editable,
+			boolean withEditing, boolean isEditor, boolean isDisposable,
+					  EditorViewSignature model, JTextArea feedbackArea) {
 		setDebug();
 		this.model = model;
 		WindowUtilities.setNativeLookAndFeel();
@@ -181,6 +194,8 @@ public class EditorView extends JPanel implements HyperlinkListener {
 				bpanel.add(exertButton);
 			}
 			add(bpanel, BorderLayout.SOUTH);
+			feedbackPane = new JTextArea();
+			feedbackPane.setEditable(false);
 		}
 
 		JPopupMenu popup = new JPopupMenu("Netlet Editor");
@@ -236,7 +251,7 @@ public class EditorView extends JPanel implements HyperlinkListener {
 			exertMenuItem.addActionListener(actionListener);
 			popup.add(exertMenuItem);
 		}
-		
+
 		try {
 			if (isURL) {
 				editPane = new JEditorPane(source);
@@ -252,8 +267,21 @@ public class EditorView extends JPanel implements HyperlinkListener {
 			editPane.setEditable(editable);
 			editPane.addHyperlinkListener(this);
 			editPane.addMouseListener(new PopupListener(popup));
-			JScrollPane scrollPane = new JScrollPane(editPane);
-			add(scrollPane, BorderLayout.CENTER);
+			JScrollPane editScroll = new JScrollPane(editPane);
+
+			if (feedbackArea != null) {
+				// reuse feedbackPane from the parent editor view
+				JScrollPane feedbackScroll = new JScrollPane(feedbackArea);
+				add(feedbackScroll, BorderLayout.SOUTH);
+
+				JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
+						editScroll, feedbackScroll);
+				splitPane.setResizeWeight(.9);
+
+				this.add(splitPane, BorderLayout.CENTER);
+			} else {
+				add(editScroll, BorderLayout.CENTER);
+			}
 		} catch (IOException ioe) {
 			warnUser("Can't build HTML pane for " + source + ": " + ioe);
 		}
@@ -287,8 +315,26 @@ public class EditorView extends JPanel implements HyperlinkListener {
 		}
 
 	}
-	
-	class EditActionListener implements ActionListener {
+
+    private void createRemoteLoggerListener(Mogram target) {
+        java.util.List<Map<String, String>> filterMapList = new ArrayList<Map<String, String>>();
+        for (String exId : ((ServiceMogram) target).getAllMogramIds()) {
+            Map<String, String> map = new HashMap<String, String>();
+            map.put(RemoteLogger.KEY_MOGRAM_ID, exId);
+            filterMapList.add(map);
+        }
+        if (!filterMapList.isEmpty()) {
+            try {
+                listener = new RemoteLoggerListener(filterMapList,
+                                                    new PrintStream(new TextAreaPrintStream(feedbackPane)));
+            } catch (LoggerRemoteException lre) {
+                logger.warn("Remote logging disabled: " + lre.getMessage());
+                listener = null;
+            }
+        }
+    }
+
+    class EditActionListener implements ActionListener {
 		public void actionPerformed(ActionEvent event) {
 			String url;
 			if (event.getSource() == urlField) {
@@ -310,19 +356,28 @@ public class EditorView extends JPanel implements HyperlinkListener {
 				return;
 			} else if (EXERT_LABEL.equals(command)) {
 				String script = editPane.getText();
+				// clear the previous feedback
+				feedbackPane.setText("");
 				if (model != null) {
 					runTaskScript(script);
 				} else {
 					try {
 						scriptExerter = new ScriptExerter(script, System.out, this.getClass().getClassLoader(),
 								Sorcer.getWebsterUrl());
-                        scriptExerter.parse();
-                        Object result = scriptExerter.execute();
-						if (result instanceof Exertion) {
-							processExerion((Exertion) result);
+						Object target = scriptExerter.parse();
+						// Create RemoteLoggerListener
+						Object result = null;
+						if (target instanceof Mogram) {
+							createRemoteLoggerListener((Mogram) target);
+							result = scriptExerter.execute();
+						}
+						if (result instanceof Mogram) {
+							processExerion((Mogram) result);
 						} else if (result != null) {
 							openOutPanel(result.toString());
-                        }
+                        } else {
+							openOutPanel(target.toString());
+						}
                     } catch (IOException io) {
                         logger.error("Caught exception while executing script: " + io.getMessage());
                         openOutPanel(StringUtils.stackTraceToString(io));
@@ -341,6 +396,9 @@ public class EditorView extends JPanel implements HyperlinkListener {
 			} else if (EXIT_LABEL.equals(command)) {
 				// tabbedPane.remove(tabbedPane.getTabCount()-1);
 				tabbedPane.remove(EditorView.this);
+				if (listener != null)
+					listener.destroy();
+
 				return;
 			} else if (GET_CONTEXT_LABEL.equals(command)) {
 				try {
@@ -410,13 +468,19 @@ public class EditorView extends JPanel implements HyperlinkListener {
 		sb.append("\nimport ").append(
 				serviceType).append(";\n").append("task(sig(\"")
 				.append(selector).append("\",").append(serviceType).append(
-						".class),\n").append(script).append(");");
+				".class),\n").append(script).append(");");
 
 		logger.info(">>> executing task script: " + sb.toString());
 		try {
 			scriptExerter = new ScriptExerter(sb.toString(), System.out, taskClassLoader, Sorcer.getWebsterUrl());
-			scriptExerter.parse();
-			Object result = scriptExerter.execute();
+			Object target = scriptExerter.parse();
+			// Create RemoteLoggerListener
+			RemoteLoggerListener listener = null;
+			Object result = null;
+			if (target instanceof Mogram) {
+				createRemoteLoggerListener((Mogram) target);
+				result = scriptExerter.execute();
+			}
 			if (result instanceof Exertion)
 				processExerion((Exertion) result);
 			else if (result != null) {
@@ -425,6 +489,7 @@ public class EditorView extends JPanel implements HyperlinkListener {
 				openOutPanel(result.toString());
 				showResults(result);
 			}
+			if (listener != null) listener.destroy();
 		} catch (IOException io) {
 			logger.error("Caught exception while executing script: " + io.getMessage());
 			openOutPanel(StringUtils.stackTraceToString(io));
@@ -434,44 +499,44 @@ public class EditorView extends JPanel implements HyperlinkListener {
 		}
 	}
 
-	private void processExerion(Exertion exertion) throws MogramException{
+	private void processExerion(Mogram mogram) throws MogramException{
 		String codebase = System.getProperty("java.rmi.server.codebase");
 		logger.debug("Using exertlet codebase: " + codebase);
 		
-		if (exertion.getStatus() == Exec.DONE) {
-		showResults(exertion);
+		if (mogram.getStatus() == Exec.DONE) {
+		showResults(mogram);
 		return;
 		}
-		Exertion out = null;
+		Mogram out = null;
 		boolean done = false;
 		try {
 			Class<?>[] interfaces = provider.getClass().getInterfaces();
 			for (int i = 0; i < interfaces.length; i++) {
-				if (interfaces[i] == exertion.getProcessSignature()
+				if (interfaces[i] == mogram.getProcessSignature()
 						.getServiceType()) {
-					out = provider.service(exertion, null);
+					out = provider.service(mogram, null);
 					//logger.debug(">>> done by " + provider);
 					done = true;
 					break;
 				}
 			}
 			if (!done) {
-				logger.debug(">> executing by exert: " + exertion.getName());
+				logger.debug(">> executing by exert: " + mogram.getName());
 				// inspect class loader tree
 				//com.sun.jini.start.ClassLoaderUtil.displayContextClassLoaderTree();
-				out = exertion.exert();
+				out = mogram.exert();
 			}
 		} catch (RemoteException e) {
 			openOutPanel(SorcerUtil.stackTraceToString(e));
-			logger.warn("Error while processing exertion", e);
+			logger.warn("Error while processing mogram", e);
 			return;
 		} catch (TransactionException e) {
 			openOutPanel(SorcerUtil.stackTraceToString(e));
-			logger.warn("Error while processing exertion", e);
+			logger.warn("Error while processing mogram", e);
 			return;
 		} catch (ExertionException e) {
 			openOutPanel(SorcerUtil.stackTraceToString(e));
-			logger.warn("Error while processing exertion", e);
+			logger.warn("Error while processing mogram", e);
 			return;
 		}
 		showResults(out);
@@ -479,7 +544,7 @@ public class EditorView extends JPanel implements HyperlinkListener {
 
 	private void showResults(Object mogram)  throws ContextException {
 		if (mogram == null) {
-			openOutPanel("Failed to process the netlet!");
+			openOutPanel("Failed to process the sorcer.netlet!");
 			return;
 		}
 		if (mogram instanceof Exertion) {
@@ -555,10 +620,11 @@ public class EditorView extends JPanel implements HyperlinkListener {
 	}
 	
 	private void openOutPanel(String text) {
-		editor = new EditorView(text, false, false, false, false, true, model);
+		JTextArea editorFeedbackPane = feedbackPane;
+		editor = new EditorView(text, false, false, false, false, true, model, editorFeedbackPane);
 		editor.provider = provider;
 		editor.setTabbedPane(tabbedPane);
-		tabbedPane.addTab("Output", null, editor, "Exertion");
+		tabbedPane.addTab("Output", null, editor, "Mogram");
 		tabbedPane.setSelectedComponent(editor);
 	}
 

@@ -156,7 +156,7 @@ public class SdbUtil {
 		return cxt;
 	}
 
-	static public URL update(Object value) throws ExertionException,
+	static public URL update(Object value) throws MogramException,
 			SignatureException, ContextException {
 		if (!(value instanceof Identifiable)
 				|| !(((Identifiable) value).getId() instanceof Uuid)) {
@@ -167,12 +167,12 @@ public class SdbUtil {
 	}
 
 	static public URL update(URL storedURL, Object value)
-			throws ExertionException, SignatureException, ContextException {
+			throws MogramException, SignatureException, ContextException {
 		return SdbUtil.update(SdbUtil.getUuid(storedURL), value);
 	}
 
 	static public URL update(Uuid storeUuid, Object value)
-			throws ExertionException, SignatureException, ContextException {
+			throws MogramException, SignatureException, ContextException {
 		Task objectUpdateTask = task(
 				"update",
 				sig("contextUpdate", DatabaseStorer.class,
@@ -249,7 +249,7 @@ public class SdbUtil {
 		return (URL) value(objectStoreTask);
 	}
 
-	public static URL store(Object object) throws ExertionException,
+	public static URL store(Object object) throws MogramException,
 			SignatureException, ContextException {
 		String storageName = Sorcer.getDatabaseStorerName();
 		Task objectStoreTask = task(

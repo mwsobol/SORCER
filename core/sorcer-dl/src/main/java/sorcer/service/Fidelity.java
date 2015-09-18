@@ -129,7 +129,7 @@ public class Fidelity<T> implements Arg, Serializable {
 	
 	@Override
 	public String toString() {
-		return "Fi: " + name + (path != null ? "@" + path + " " : " ") + selects;
+		return name + (path != null ? "@" + path + " " : " ") + selects;
 	}
 
 	public int size() {

@@ -43,7 +43,15 @@ public abstract class Identity implements Serializable, Identifiable {
 	public Identity() {
 		id = UuidFactory.generate();
 	}
-	
+
+	/**
+	 *  Identity - Class constructor
+	 */
+	public Identity(String name) {
+		this();
+		this.name = name;
+	}
+
 	/**
 	 * getId - Returns id
 	 * @return Uuid

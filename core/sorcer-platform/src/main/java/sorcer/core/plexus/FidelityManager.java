@@ -23,7 +23,7 @@ import net.jini.core.event.RemoteEventListener;
 import net.jini.core.event.UnknownEventException;
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
-import sorcer.core.context.ServiceRuntime;
+import sorcer.core.context.ModelStrategy;
 import sorcer.service.Fidelity;
 import sorcer.service.FidelityManagement;
 import sorcer.service.Mogram;
@@ -47,12 +47,12 @@ public class FidelityManager<T> implements FidelityManagement<T>, Serializable {
 
     protected Fidelity<T> selectedFidelity;
 
-    protected ServiceRuntime runtime;
+    protected ModelStrategy runtime;
 
     protected Map<Long, Session> sessions;
 
     public FidelityManager(Mogram mogram) {
-        this.runtime = new ServiceRuntime(mogram);
+        this.runtime = new ModelStrategy(mogram);
     }
 
     public void addFidelity(Fidelity<T>... fidelities) {
@@ -86,11 +86,11 @@ public class FidelityManager<T> implements FidelityManagement<T>, Serializable {
         return (T) runtime.exert();
     }
 
-    public ServiceRuntime getRuntime() {
+    public ModelStrategy getRuntime() {
         return runtime;
     }
 
-    public void setRuntime(ServiceRuntime runtime) {
+    public void setRuntime(ModelStrategy runtime) {
         this.runtime = runtime;
     }
 

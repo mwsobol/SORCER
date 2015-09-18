@@ -87,9 +87,12 @@ public class ObjectTask extends Task {
 
 	@SuppressWarnings("unchecked")
 	public Task doTask(Transaction txn) throws ExertionException, SignatureException, RemoteException, MogramException {
+		if (delegate != null)
+			return delegate.doTask(txn);
+
 		MethodInvoker evaluator = null;
 		ObjectSignature os = (ObjectSignature) getProcessSignature();
-		dataContext.getRuntime().setCurrentSelector(os.getSelector());
+		dataContext.getModelStrategy().setCurrentSelector(os.getSelector());
 		dataContext.setCurrentPrefix(os.getPrefix());
 		try {
 			if (getProcessSignature().getReturnPath() != null && getProcessSignature().getReturnPath().inPaths != null)

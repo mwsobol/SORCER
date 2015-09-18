@@ -98,7 +98,11 @@ public class Par<T> extends Entry<T> implements Variability<T>, Arg, Mappable<T>
 			selectedFidelity = first.getName();
 			value = (T)first;
 		} else {
-			value = argument;
+			if (argument instanceof Evaluation || argument instanceof Invocation)
+				value = argument;
+			else
+				_2 = argument;
+
 		}
 	}
 
@@ -145,9 +149,9 @@ public class Par<T> extends Entry<T> implements Variability<T>, Arg, Mappable<T>
 			}
 			return;
 		}
-		if (mappable != null && this.value instanceof String ) {
+		if (mappable != null && this._2 instanceof String ) {
 			try {
-				Object val = mappable.asis((String)this.value);
+				Object val = mappable.asis((String)_2);
 				if (val instanceof Par) {
 					((Par)val).setValue(value);
 				} else if (isPersistent) {
@@ -164,14 +168,16 @@ public class Par<T> extends Entry<T> implements Variability<T>, Arg, Mappable<T>
 						}
 					}
 				} else {
-					mappable.putValue((String)this.value, value);
+					mappable.putValue((String)_2, value);
 				}
 			} catch (Exception e) {
 				throw new SetterException(e);
 			}
+		} else if (value instanceof Evaluation) {
+			this.value = (T) value;
+		} else {
+			_2 = (T) value;
 		}
-		else
-			this.value = (T)value;
 	}
 
 	@Override
@@ -182,9 +188,12 @@ public class Par<T> extends Entry<T> implements Variability<T>, Arg, Mappable<T>
 	/* (non-Javadoc)
          * @see sorcer.service.Evaluation#getAsis()
          */
-	@Override
 	public T asis() throws EvaluationException, RemoteException {
-		return value;
+		if (value != null) {
+			return value;
+		} else {
+			return _2;
+		}
 	}
 	
 	/* (non-Javadoc)
@@ -192,6 +201,18 @@ public class Par<T> extends Entry<T> implements Variability<T>, Arg, Mappable<T>
 	 */
 	@Override
 	public T getValue(Arg... entries) throws EvaluationException, RemoteException {
+		// check for a constant or cached value
+		if (_2 != null && isValid && entries.length == 00 && !isPersistent) {
+			try {
+				if (_2 instanceof String
+						&& mappable != null && mappable.getValue((String)_2) != null)
+                    return (T) mappable.getValue((String)_2);
+                else
+                    return _2;
+			} catch (ContextException e) {
+				throw new EvaluationException(e);
+			}
+		}
 		T val = null;
 		try {
 			substitute(entries);
@@ -245,9 +266,14 @@ public class Par<T> extends Entry<T> implements Variability<T>, Arg, Mappable<T>
 					}
 				}
 				val = ((Evaluation<T>) val).getValue(entries);
+				_2 = val;
+				isValid = true;
 			}
 
 			if (isPersistent) {
+				if (val == null && _2!= null) {
+					val = _2;
+				}
 				if (SdbUtil.isSosURL(val)) {
 					val = (T) ((URL) val).getContent();
 				} else {
@@ -259,14 +285,18 @@ public class Par<T> extends Entry<T> implements Variability<T>, Arg, Mappable<T>
 						p.setPersistent(true);
 						mappable.putValue((String) this.value, p);
 					} else if (this.value instanceof Identifiable) {
-						p = new Par((String) ((Identifiable) this.value).getName(), url);
+						p = new Par(((Identifiable) this.value).getName(), url);
 						p.setPersistent(true);
 					} else {
 						this.value = (T)url;
+						_2 = null;
 					}
 				}
 			}
 		} catch (Exception e) {
+			// make the cache invalid
+			_2 = null;
+			isValid = false;
 			e.printStackTrace();
 			throw new EvaluationException(e);
 		}

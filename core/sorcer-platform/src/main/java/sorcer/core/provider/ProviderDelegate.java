@@ -63,6 +63,7 @@ import sorcer.core.signature.NetSignature;
 import sorcer.jini.jeri.SorcerILFactory;
 import sorcer.jini.lookup.entry.SorcerServiceInfo;
 import sorcer.jini.lookup.entry.VersionInfo;
+import sorcer.platform.logger.RemoteLoggerInstaller;
 import sorcer.security.sign.SignedServiceTask;
 import sorcer.security.sign.SignedTaskInterface;
 import sorcer.security.sign.TaskAuditor;
@@ -215,8 +216,7 @@ public class ProviderDelegate {
     public int processedExertionsCount=0;
 
 	/** Map of exertion ID's and state of execution */
-	static final Map exertionStateTable = Collections
-			.synchronizedMap(new HashMap(11));
+	static final Map exertionStateTable = Collections.synchronizedMap(new HashMap(11));
 	/**
 	 * A smart proxy instance
 	 */
@@ -240,16 +240,16 @@ public class ProviderDelegate {
 
 	/**
 	 * An outer service proxy, by default the proxy of this provider, is used
-	 * from by service requestors if provider's smart proxy is absent. At least
+	 * by service requestors if provider's smart proxy is absent. At least
 	 * two generic Remote interface: {@link Service} and {@link Provider} are
 	 * implemented by outer proxies of all SORCER service providers. Each SORCER
 	 * provider uses outer proxy to actually call directly its provider and make
 	 * redirected calls using its inner proxy (redirected remote invocations).
 	 * Any method of not Remote interface implemented by a SORCER service
 	 * provider can be invoked via the Service remote interface,
-	 * {@code Service.service(Exertion)} - recommended approach. That
-	 * provider's direct invocation method is embedded into a service method of
-	 * the provided exertion.
+	 * {@code Service.service(Mogram)} - the recommended access proxy approach.
+	 * The provider's direct invocation methods are embedded into service signatures
+	 * of serviced mograms.
 	 */
 	private Remote outerProxy = null;
 
@@ -280,12 +280,6 @@ public class ProviderDelegate {
 	private Map<Class, Object> serviceComponents;
 
 	/**
-	 * List of Exertions for which SLA Offer was given
-	 */
-	private List exertionsGivenSlaList = Collections
-			.synchronizedList(new ArrayList());
-
-	/**
 	 * Indicates a single threaded execution for service beans or providers
 	 * implementing the SingleThreadModel interface.
 	 */
@@ -296,6 +290,9 @@ public class ProviderDelegate {
 	private ContextManagement contextManager;
 
     protected AbstractExporterFactory exporterFactory;
+    private boolean shuttingDown = false;
+
+	private RemoteLoggerInstaller remoteLoggerInstaller;
 
 	/*
 	 * A nested class to hold the state information of the executing thread for
@@ -353,43 +350,40 @@ public class ProviderDelegate {
 		init(provider, null);
 	}
 
-	public void init(sorcer.core.provider.Provider provider, String configFilename)
-			throws ConfigurationException {
+	public void init(sorcer.core.provider.Provider provider, String configFilename) throws ConfigurationException {
 		this.provider = provider;
 		String providerProperties = configFilename;
+		// Initialize remote logging
+		remoteLoggerInstaller = RemoteLoggerInstaller.getInstance();
 		// This allows us to specify different properties for different hosts
 		// using a shared mounted file system
-		if (providerProperties != null
-				&& providerProperties.contains("HOSTNAME")) {
+		if (providerProperties != null && providerProperties.contains("HOSTNAME")) {
 			try {
-				providerProperties = providerProperties.replace("HOSTNAME",
-						Sorcer.getHostName());
+				providerProperties = providerProperties.replace("HOSTNAME", Sorcer.getHostName());
 			} catch (UnknownHostException e) {
 				e.printStackTrace();
 			}
 		}
 		restore();
-        // Intialize hostName and hostAddress
+        // Initialize hostName and hostAddress
         getHostName();
         getHostAddress();
         // set provider's ID persistance flag if defined in provider's
 		// properties
-		idPersistent = Sorcer.getProperty(P_SERVICE_ID_PERSISTENT, "false")
-				.equals("true");
+		idPersistent = Sorcer.getProperty(P_SERVICE_ID_PERSISTENT, "false").equals("true");
 		// set provider join groups if defined in provider's properties
 		groupsToDiscover = Sorcer.getLookupGroups();
-		logger.info("ServiceProvider:groups to discover="
-				+ SorcerUtil.arrayToString(groupsToDiscover));
+		logger.info("ServiceProvider:groups to discover={}"+ SorcerUtil.arrayToString(groupsToDiscover));
 		// set provider space group if defined in provider's properties
 		spaceGroup = config.getProperty(J_SPACE_GROUP, Sorcer.getSpaceGroup());
 		// set provider space name if defined in provider's properties
-		spaceName = config.getProperty(J_SPACE_NAME,
-				Sorcer.getActualSpaceName());
+		spaceName = config.getProperty(J_SPACE_NAME, Sorcer.getActualSpaceName());
 
 		try {
-			singleThreadModel = (Boolean) config.jiniConfig.getEntry(
-					ServiceProvider.COMPONENT, J_SINGLE_TRHREADED_MODEL,
-					boolean.class, false);
+			singleThreadModel = (Boolean) config.jiniConfig.getEntry(ServiceProvider.COMPONENT,
+                                                                     J_SINGLE_TRHREADED_MODEL,
+                                                                     boolean.class,
+                                                                     false);
 		} catch (ConfigurationException e) {
 			// do nothing, used the default value
 		}
@@ -420,228 +414,217 @@ public class ProviderDelegate {
 		if (!spaceEnabled)
 			return;
 
-		space = SpaceAccessor.getSpace(spaceName, spaceGroup);
+		space = SpaceAccessor.getSpace(spaceName);
 		if (space == null) {
 			int ctr = 0;
 			while (space == null && ctr++ < TRY_NUMBER) {
-				logger.warn("could not get space, trying again... try number = "
-						+ ctr);
+                if(shuttingDown) {
+                    logger.warn("Shutting down, abort space discovery");
+                    break;
+                }
+				logger.warn("could not get space, trying again... try number = "+ ctr);
 				try {
 					Thread.sleep(500);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
-				space = SpaceAccessor.getSpace(spaceName, spaceGroup);
+				space = SpaceAccessor.getSpace(spaceName);
+
 			}
 			if (space != null) {
 				logger.info("got space = " + space);
 			} else {
-				logger.warn("***warn: could not get space...moving on.");
+				logger.warn("*** Warn: could not get space...moving on.");
 			}
 		}
-		if (workerTransactional)
-			tManager = TransactionManagerAccessor.getTransactionManager();
+        if(!shuttingDown) {
+            if (workerTransactional)
+                tManager = TransactionManagerAccessor.getTransactionManager();
 
-		try {
-			startSpaceTakers();
-		} catch (Exception e) {
-			logger.error("Provider HALTED: Couldn't start Workers", e);
             try {
-                provider.destroy();
-            } catch (RemoteException e1) {
-                logger.error("Could not desrtroy provider", e1);
+                startSpaceTakers();
+            } catch (Exception e) {
+                logger.error("Provider HALTED: Couldn't start Workers", e);
+                try {
+                    provider.destroy();
+                } catch (RemoteException e1) {
+                    logger.error("Could not destroy provider", e1);
+                }
             }
         }
 	}
 
-	protected void configure(Configuration jconfig) throws ExportException {
-		final Thread currentThread = Thread.currentThread();
-		implClassLoader = currentThread.getContextClassLoader();
-		Class partnerType;
-		String partnerName;
+    protected void configure(Configuration jconfig) throws ExportException {
+        final Thread currentThread = Thread.currentThread();
+        implClassLoader = currentThread.getContextClassLoader();
+        Class partnerType;
+        String partnerName;
 
-		try {
-			monitorable = (Boolean) jconfig.getEntry(ServiceProvider.COMPONENT,
-					PROVIDER_MONITORING, boolean.class, false);
-		} catch (Exception e) {
-			// do nothing, default value is used
-			e.printStackTrace();
-		}
+        try {
+            monitorable = (Boolean) jconfig.getEntry(ServiceProvider.COMPONENT,
+                                                     PROVIDER_MONITORING, boolean.class, false);
+        } catch (Exception e) {
+            logger.warn("Problem getting {}.{}", ServiceProvider.COMPONENT, PROVIDER_MONITORING, e);
+        }
 
-		try {
-			notifying = (Boolean) jconfig.getEntry(ServiceProvider.COMPONENT,
-					PROVIDER_NOTIFYING, boolean.class, false);
-		} catch (Exception e) {
-			// do nothing, default value is used
-			e.printStackTrace();
-		}
+        try {
+            notifying = (Boolean) jconfig.getEntry(ServiceProvider.COMPONENT,
+                                                   PROVIDER_NOTIFYING, boolean.class, false);
+        } catch (Exception e) {
+            logger.warn("Problem getting {}.{}", ServiceProvider.COMPONENT, PROVIDER_NOTIFYING, e);
+        }
 
+        try {
+            mutualExclusion = (Boolean) jconfig.getEntry(ServiceProvider.COMPONENT, MUTUAL_EXCLUSION, boolean.class,
+                                                         false);
+        } catch (Exception e) {
+            logger.warn("Problem getting {}.{}", ServiceProvider.COMPONENT, MUTUAL_EXCLUSION, e);
+        }
+
+        try {
+            matchInterfaceOnly = (Boolean) jconfig.getEntry(ServiceProvider.COMPONENT, INTERFACE_ONLY, boolean.class,
+                                                            false);
+        } catch (Exception e) {
+            logger.warn("Problem getting {}.{}", ServiceProvider.COMPONENT, INTERFACE_ONLY, e);
+        }
+
+        try {
+            spaceEnabled = (Boolean) jconfig.getEntry(ServiceProvider.COMPONENT, SPACE_ENABLED, boolean.class,
+                                                      false);
+        } catch (Exception e) {
+            logger.warn("Problem getting {}.{}", ServiceProvider.COMPONENT, SPACE_ENABLED, e);
+        }
+        try {
+            workerCount = (Integer) jconfig.getEntry(ServiceProvider.COMPONENT,
+                                                     WORKER_COUNT, int.class, 10);
+        } catch (Exception e) {
+            logger.warn("Problem getting {}.{}", ServiceProvider.COMPONENT, WORKER_COUNT, e);
+        }
+
+        try {
+            workerPerInterfaceCount = (int[]) jconfig.getEntry(ServiceProvider.COMPONENT, WORKER_PER_INTERFACE_COUNT,
+                                                               int[].class, new int[0]);
+        } catch (Exception e) {
+            logger.warn("Problem getting {}.{}", ServiceProvider.COMPONENT, WORKER_PER_INTERFACE_COUNT, e);
+        }
+
+        try {
+            queueSize = (Integer) jconfig.getEntry(ServiceProvider.COMPONENT,
+                                                   SPACE_WORKER_QUEUE_SIZE, int.class, 0);
+        } catch (Exception e) {
+            logger.warn("Problem getting {}.{}", ServiceProvider.COMPONENT, SPACE_WORKER_QUEUE_SIZE, e);
+        }
+
+        try {
+            maximumPoolSize = (Integer) jconfig.getEntry(ServiceProvider.COMPONENT, MAX_WORKER_POOL_SIZE, int.class,
+                                                         20);
+        } catch (Exception e) {
+            logger.warn("Problem getting {}.{}", ServiceProvider.COMPONENT, MAX_WORKER_POOL_SIZE, e);
+        }
+
+        try {
+            spaceReadiness = (Boolean) jconfig.getEntry(ServiceProvider.COMPONENT, SPACE_READINESS, boolean.class,
+                                                        false);
+        } catch (Exception e) {
+            logger.warn("Problem getting {}.{}", ServiceProvider.COMPONENT, SPACE_READINESS, e);
+        }
+
+        try {
+            workerTransactional = (Boolean) jconfig.getEntry(ServiceProvider.COMPONENT, WORKER_TRANSACTIONAL,
+                                                             boolean.class, false);
+        } catch (Exception e) {
+            logger.warn("Problem getting {}.{}", ServiceProvider.COMPONENT, WORKER_TRANSACTIONAL, e);
+        }
+
+        try {
+            spaceSecurityEnabled = (Boolean) jconfig.getEntry(ServiceProvider.COMPONENT, SPACE_SECURITY_ENABLED,
+                                                              boolean.class, false);
+        } catch (Exception e) {
+            logger.warn("Problem getting {}.{}", ServiceProvider.COMPONENT, SPACE_SECURITY_ENABLED, e);
+        }
+
+        try {
+            contextManager = (ContextManagement) jconfig.getEntry(ServiceProvider.COMPONENT, CONTEXT_MANAGER,
+                                                                  ContextManagement.class, null);
+        } catch (Exception e) {
+            logger.warn("Problem getting {}.{}", ServiceProvider.COMPONENT, CONTEXT_MANAGER, e);
+        }
+        logger.info("*** assigned context manager: " + contextManager);
+
+        try {
+            partnerType = (Class) jconfig.getEntry(ServiceProvider.COMPONENT,
+                                                   SERVER_TYPE, Class.class, null);
+        } catch (Exception e) {
+            logger.warn("Problem getting {}.{}", ServiceProvider.COMPONENT, SERVER_TYPE, e);
+            partnerType = null;
+        }
+        try {
+            partnerName = (String) jconfig.getEntry(ServiceProvider.COMPONENT,
+                                                    SERVER_NAME, String.class, null);
+        } catch (Exception e) {
+            logger.warn("Problem getting {}.{}", ServiceProvider.COMPONENT, SERVER_NAME, e);
+            partnerName = null;
+        }
+        try {
+            partner = (Remote) jconfig.getEntry(ServiceProvider.COMPONENT,
+                                                SERVER, Remote.class, null);
+            logger.info("partner=" + partner);
+        } catch (Exception e) {
+            logger.warn("Problem getting {}.{}", ServiceProvider.COMPONENT, SERVER, e);
+            partnerName = null;
+        }
 		try {
-			mutualExclusion = (Boolean) jconfig.getEntry(
-					ServiceProvider.COMPONENT, MUTUAL_EXCLUSION, boolean.class,
+			remoteLogging = (Boolean) jconfig.getEntry(
+					ServiceProvider.COMPONENT, REMOTE_LOGGING, boolean.class,
 					false);
+			logger.info("remoteLogging=" + remoteLogging);
 		} catch (Exception e) {
-			// do nothing, default value is used
-			e.printStackTrace();
+			logger.warn("Problem getting {}.{}", ServiceProvider.COMPONENT, SERVER, e);
+			remoteLogging = false;
 		}
-
-		try {
-			matchInterfaceOnly = (Boolean) jconfig.getEntry(
-					ServiceProvider.COMPONENT, INTERFACE_ONLY, boolean.class,
-					false);
-		} catch (Exception e) {
-			// do nothing, default value is used
-			e.printStackTrace();
-		}
-
-		try {
-			spaceEnabled = (Boolean) jconfig.getEntry(
-					ServiceProvider.COMPONENT, SPACE_ENABLED, boolean.class,
-					false);
-		} catch (Exception e) {
-			// do nothing, default value is used
-			e.printStackTrace();
-		}
-		try {
-			workerCount = (Integer) jconfig.getEntry(ServiceProvider.COMPONENT,
-					WORKER_COUNT, int.class, 10);
-		} catch (Exception e) {
-			// do nothing, default value is used
-			e.printStackTrace();
-		}
-
-		try {
-			workerPerInterfaceCount = (int[]) jconfig.getEntry(
-					ServiceProvider.COMPONENT, WORKER_PER_INTERFACE_COUNT,
-					int[].class, new int[0]);
-		} catch (Exception e) {
-			// do nothing, default value is used
-			e.printStackTrace();
-		}
-
-		try {
-			queueSize = (Integer) jconfig.getEntry(ServiceProvider.COMPONENT,
-					SPACE_WORKER_QUEUE_SIZE, int.class, 0);
-		} catch (Exception e) {
-			// do nothing, default value is used
-			e.printStackTrace();
-		}
-
-		try {
-			maximumPoolSize = (Integer) jconfig.getEntry(
-					ServiceProvider.COMPONENT, MAX_WORKER_POOL_SIZE, int.class,
-					20);
-		} catch (Exception e) {
-			// do nothing, default value is used
-			e.printStackTrace();
-		}
-
-		try {
-			spaceReadiness = (Boolean) jconfig.getEntry(
-					ServiceProvider.COMPONENT, SPACE_READINESS, boolean.class,
-					false);
-		} catch (Exception e) {
-			// do nothing, default value is used
-			e.printStackTrace();
-		}
-
-		try {
-			workerTransactional = (Boolean) jconfig.getEntry(
-					ServiceProvider.COMPONENT, WORKER_TRANSACTIONAL,
-					boolean.class, false);
-		} catch (Exception e) {
-			// do nothing, default value is used
-			e.printStackTrace();
-		}
-
-		try {
-			spaceSecurityEnabled = (Boolean) jconfig.getEntry(
-					ServiceProvider.COMPONENT, SPACE_SECURITY_ENABLED,
-					boolean.class, false);
-		} catch (Exception e) {
-			// do nothing, default value is used
-			e.printStackTrace();
-		}
-
-		try {
-			contextManager = (ContextManagement) jconfig.getEntry(
-					ServiceProvider.COMPONENT, CONTEXT_MANAGER,
-					ContextManagement.class, null);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		logger.info("*** assigned context manager: " + contextManager);
-
-		try {
-			partnerType = (Class) jconfig.getEntry(ServiceProvider.COMPONENT,
-					SERVER_TYPE, Class.class, null);
-		} catch (Exception e) {
-			e.printStackTrace();
-			partnerType = null;
-		}
-		try {
-			partnerName = (String) jconfig.getEntry(ServiceProvider.COMPONENT,
-					SERVER_NAME, String.class, null);
-		} catch (Exception e) {
-			e.printStackTrace();
-			partnerName = null;
-		}
-		try {
-			partner = (Remote) jconfig.getEntry(ServiceProvider.COMPONENT,
-					SERVER, Remote.class, null);
-			logger.info("partner=" + partner);
-		} catch (Exception e) {
-			e.printStackTrace();
-			partnerName = null;
-		}
-		if (partner != null) {
-			getPartner(partnerName, partnerType);
-			exports.put(partner, partnerExporter);
-		}
-		Class[] serviceTypes = new Class[0];
-		try {
-			serviceTypes = (Class[]) config.jiniConfig.getEntry(
-					ServiceProvider.COMPONENT, J_INTERFACES, Class[].class);
-		} catch (ConfigurationException e) {
-			// do nothing, used the default value
-			// e.printStackTrace();
-		}
-		if ((serviceTypes != null) && (serviceTypes.length > 0)) {
-			publishedServiceTypes = serviceTypes;
-			logger.info("*** published services: "
-					+ Arrays.toString(publishedServiceTypes));
-		}
-		// get exporters for outer and inner proxy
-		getExporters(jconfig);
-		logger.debug("exporting provider: " + provider);
-		logger.info("outerExporter = " + outerExporter);
-		try {
-			if (outerExporter == null) {
-				logger.error("No exporter for provider:" + getProviderName());
-				return;
-			}
+        if (partner != null) {
+            getPartner(partnerName, partnerType);
+            exports.put(partner, partnerExporter);
+        }
+        Class[] serviceTypes = new Class[0];
+        try {
+            serviceTypes = (Class[]) config.jiniConfig.getEntry(ServiceProvider.COMPONENT, J_INTERFACES, Class[].class);
+        } catch (ConfigurationException e) {
+            // do nothing, used the default value
+            // e.printStackTrace();
+        }
+        if ((serviceTypes != null) && (serviceTypes.length > 0)) {
+            publishedServiceTypes = serviceTypes;
+            logger.info("*** published services: {}", Arrays.toString(publishedServiceTypes));
+        }
+        // get exporters for outer and inner proxy
+        getExporters(jconfig);
+        logger.debug("exporting provider: {}", provider);
+        logger.info("outerExporter = {}", outerExporter);
+        try {
+            if (outerExporter == null) {
+                logger.error("No exporter for provider: {}", getProviderName());
+                return;
+            }
 			outerProxy = outerExporter.export(provider);
-			logger.debug("outerProxy: " + outerProxy);
-		} catch (Exception ee) {
-			logger.warn(ProviderDelegate.class.getName()+" deployment failed", ee);
-		}
-		adminProxy = createAdmin();
-		providerProxy = getProxy();
-		exports.put(outerProxy, outerExporter);
-		logger.debug(">>>>>>>>>>> exported outerProxy: \n" + outerProxy
-				+ ", outerExporter: \n" + outerExporter);
+            logger.debug("outerProxy: {}", outerProxy);
+        } catch (Exception ee) {
+            logger.warn("{} deployment failed", ProviderDelegate.class.getName(), ee);
+        }
+        adminProxy = createAdmin();
+        providerProxy = getProxy();
+        exports.put(outerProxy, outerExporter);
+        logger.debug(">>>>>>>>>>> exported outerProxy: \n{}, outerExporter: \n{}", outerProxy, outerExporter);
 
-		logger.info("PROXIES >>>>> provider: " + providerProxy + "\nsmart: "
-				+ smartProxy + "\nouter: " + outerProxy + "\ninner: "
-				+ innerProxy + "\nadmin: "
-				+ adminProxy);
-	}
+        logger.info("PROXIES >>>>> provider: {}\nsmart: {}\nouter: {}\ninner: {}\nadmin: {}",
+                    providerProxy, smartProxy, outerProxy, innerProxy, adminProxy);
+    }
 
-	private void initThreadGroups() {
-		namedGroup = new ThreadGroup("Provider Group: " + getProviderName());
-		namedGroup.setDaemon(true);
-		namedGroup.setMaxPriority(Thread.NORM_PRIORITY - 1);
-		interfaceGroup = new ThreadGroup("Interface Threads");
+    private void initThreadGroups() {
+        namedGroup = new ThreadGroup("Provider Group: {}" + getProviderName());
+        namedGroup.setDaemon(true);
+        namedGroup.setMaxPriority(Thread.NORM_PRIORITY - 1);
+        interfaceGroup = new ThreadGroup("Interface Threads");
 		interfaceGroup.setDaemon(true);
 		interfaceGroup.setMaxPriority(Thread.NORM_PRIORITY - 1);
 	}
@@ -671,10 +654,8 @@ public class ProviderDelegate {
 			memberInfo = new LokiMemberUtil(ProviderDelegate.class.getName());
 		}
 
-		logger.debug("*** provider worker count: " + workerCount
-				+ ", spaceTransactional: " + workerTransactional);
-		logger.info("publishedServiceTypes.length = "
-				+ publishedServiceTypes.length);
+		logger.debug("*** provider worker count: {}, spaceTransactional: {}", workerCount, workerTransactional);
+		logger.info("publishedServiceTypes.length = {}", publishedServiceTypes.length);
 		logger.info(Arrays.toString(publishedServiceTypes));
 
 		// create a pair of taker threads for each published interface
@@ -695,30 +676,40 @@ public class ProviderDelegate {
         namedWorkerFactory.setNameFormat(tName("SpcTkr-" + getProviderName() + "-%2$d"));
         namedWorkerFactory.setDaemon(true);
 
-		for (int i = 0; i < publishedServiceTypes.length; i++) {
-			// spaceWorkerPool = Executors.newFixedThreadPool(workerCount);
+        for (int i = 0; i < publishedServiceTypes.length; i++) {
+            // spaceWorkerPool = Executors.newFixedThreadPool(workerCount);
             spaceWorkerPool = new ThreadPoolExecutor(workerCount,
-					maximumPoolSize > workerCount ? maximumPoolSize
-							: workerCount, 0L, TimeUnit.MILLISECONDS,
-					new LinkedBlockingQueue<Runnable>(
-							(queueSize == 0 ? workerCount : queueSize)), factory);
-			spaceHandlingPools.add(spaceWorkerPool);
-			// SORCER.ANY is required for a ProviderWorker
-			// to avoid matching to any provider name
-			// that is Java null matching everything
-			envelop = ExertionEnvelop.getTemplate(publishedServiceTypes[i],
-					SorcerConstants.ANY);
-			if (spaceReadiness) {
-				worker = new SpaceIsReadyTaker(new SpaceTaker.SpaceTakerData(
-						envelop, memberInfo, provider, spaceName, spaceGroup,
-						workerTransactional, queueSize == 0), spaceWorkerPool);
+                                                     maximumPoolSize > workerCount ? maximumPoolSize
+                                                                                   : workerCount, 0L, TimeUnit.MILLISECONDS,
+                                                     new LinkedBlockingQueue<Runnable>((queueSize == 0 ? workerCount : queueSize)),
+                                                     factory);
+            spaceHandlingPools.add(spaceWorkerPool);
+            // SORCER.ANY is required for a ProviderWorker
+            // to avoid matching to any provider name
+            // that is Java null matching everything
+            envelop = ExertionEnvelop.getTemplate(publishedServiceTypes[i], SorcerConstants.ANY);
+            if (spaceReadiness) {
+                worker = new SpaceIsReadyTaker(new SpaceTaker.SpaceTakerData(envelop,
+                                                                             memberInfo,
+                                                                             provider,
+                                                                             spaceName,
+                                                                             spaceGroup,
+                                                                             workerTransactional,
+                                                                             queueSize == 0),
+                                               spaceWorkerPool);
                 spaceTakers.add(worker);
-			} else {
-				worker = new SpaceTaker(new SpaceTaker.SpaceTakerData(envelop,
-						memberInfo, provider, spaceName, spaceGroup,
-						workerTransactional, queueSize == 0), spaceWorkerPool, remoteLogging);
+            } else {
+                worker = new SpaceTaker(new SpaceTaker.SpaceTakerData(envelop,
+                                                                      memberInfo,
+                                                                      provider,
+                                                                      spaceName,
+                                                                      spaceGroup,
+                                                                      workerTransactional,
+                                                                      queueSize == 0),
+                                        spaceWorkerPool,
+                                        remoteLogging);
                 spaceTakers.add(worker);
-			}
+            }
             ConfigurableThreadFactory ifaceWorkerFactory = new ConfigurableThreadFactory();
             ifaceWorkerFactory.setThreadGroup(interfaceGroup);
             ifaceWorkerFactory.setDaemon(true);
@@ -726,8 +717,7 @@ public class ProviderDelegate {
 
             Thread sith = ifaceWorkerFactory.newThread(worker);
 			sith.start();			
-			logger.info("*** space worker-" + i + " started for: "
-					+ publishedServiceTypes[i]);
+			logger.info("*** space worker {} started for: {}", i, publishedServiceTypes[i]);
 			// System.out.println("space template: " +
 			// envelop.describe());
 
@@ -767,9 +757,7 @@ public class ProviderDelegate {
 		// namedGroup.list();
 	}
 
-	public Task doTask(Task task, Transaction transaction)
-			throws MogramException, SignatureException, RemoteException,
-			ContextException {
+	public Task doTask(Task task, Transaction transaction) throws MogramException, SignatureException, RemoteException {
 		// prepare a default net batch task (has all sigs of PROC type)
 		// and make the last signature as master PROC type only.
 		task.correctBatchSignatures();
@@ -784,8 +772,7 @@ public class ProviderDelegate {
 				new TaskAuditor().audit((SignedServiceTask) task);
 				task = (Task) ((SignedTaskInterface) task).getObject();
 			} catch (Exception e) {
-				logger.error("Exception while retrieving SIGNED TASK" + e);
-				e.printStackTrace();
+				logger.error("Exception while retrieving SIGNED TASK", e);
 			}
 		}
 		/*
@@ -801,8 +788,7 @@ public class ProviderDelegate {
 			try {
 				task.updateContext();
 				task.startExecTime();
-				exertionStateTable.put(task.getId(), new Integer(
-						Exec.RUNNING));
+				exertionStateTable.put(task.getId(), Exec.RUNNING);
 				if (((ServiceProvider) provider).isValidTask(task)) {
 					// append context from Contexters
 					if (task.getApdProcessSignatures().size() > 0) {
@@ -827,21 +813,17 @@ public class ProviderDelegate {
                     if (tsig.getPrefix() != null)
                         ((ServiceContext)task.getContext()).setPrefix(tsig.getPrefix());
 					if (tsig.getReturnPath() != null)
-							((ServiceContext) task.getContext())
-									.setReturnPath(tsig.getReturnPath());
+							((ServiceContext) task.getContext()).setReturnPath(tsig.getReturnPath());
 
 					if (isBeanable(task)) {
 						task = useServiceComponents(task, transaction);
 					} else {
-						logger.info("going to execTask(); transaction = "
-								+ transaction);
+						logger.info("going to execTask(); transaction = {}", transaction);
 						task = execTask(task);
-						logger.info("DONE going to execTask(); transaction = "
-								+ transaction);
+						logger.info("DONE going to execTask(); transaction = {}", transaction);
 					}
 					// postprocessing
-					logger.info("postprocessing task...transaction = "
-							+ transaction);
+					logger.info("postprocessing task...transaction = {}", transaction);
 					if (task.getPostprocessSignatures().size() > 0) {
 						Context cxt = postprocess(task);
 						cxt.setExertion(task);
@@ -850,22 +832,20 @@ public class ProviderDelegate {
 					}
 					confirmExec(task);
 					task.stopExecTime();
-					logger.info("provider name = " + provider.getDescription()
-							+ "\nreturing task; transaction = " + transaction);
+					logger.info("provider name = {}\nreturning task; transaction = {}", provider.getDescription(), transaction);
 					return task;
 				} else {
 					provider.fireEvent();
 					task.stopExecTime();
-					ExertionException ex = new ExertionException(
-							"Unacceptable task received, requested provider: "
-									+ getProviderName() + " task: " + task.getName());
+                    ExertionException ex = new ExertionException("Unacceptable task received, requested provider: "
+                                                                 + getProviderName() + " task: " + task.getName());
 					task.reportException(ex);
 					task.setStatus(Exec.FAILED);
 					return (Task) forwardTask(task, provider);
 				}
 			} finally {
                 processedExertionsCount++;
-                logger.warn("EXERTIONS PROCESSED: " + processedExertionsCount);
+                logger.warn("EXERTIONS PROCESSED: {}", processedExertionsCount);
                 exertionStateTable.remove(exertionStateTable.remove(task.getId()));
 			}
 		}
@@ -920,7 +900,7 @@ public class ProviderDelegate {
 		if (serviceComponents == null || serviceComponents.size() == 0)
 			return false;
 		Class serviceType = task.getProcessSignature().getServiceType();
-		logger.debug("match serviceType: " + serviceType);
+		logger.debug("match serviceType: {}", serviceType);
         // check declared interfaces
         if(serviceComponents.containsKey(serviceType))
             return true;
@@ -988,7 +968,7 @@ public class ProviderDelegate {
 				logger.info("Executing service bean method: " + m + " by: "
 						+ config.getProviderName() + " isContextual: " + isContextual);
 				task.getContext().setExertion(task);
-				((ServiceContext) task.getContext()).getRuntime().setCurrentSelector(selector);
+				((ServiceContext) task.getContext()).getModelStrategy().setCurrentSelector(selector);
 				String pf = task.getProcessSignature().getPrefix();
 				if (pf != null)
 					((ServiceContext) task.getContext()).setCurrentPrefix(pf);
@@ -1060,8 +1040,7 @@ public class ProviderDelegate {
 		if (selector.equals("exert") && impl instanceof ServiceShell) {
 			Exertion xrt = null;
 			if (args.length == 1) {
-				xrt = (Exertion) m.invoke(impl, new Object[] { args[0],
-						new Arg[] {} });
+				xrt = (Exertion) m.invoke(impl, new Object[] { args[0], new Arg[] {} });
 			} else {
 				xrt = (Exertion) m.invoke(impl, args);
 			}
@@ -1097,21 +1076,19 @@ public class ProviderDelegate {
 		NetSignature fm = (NetSignature) task.getProcessSignature();
 		ServiceID serviceID = fm.getServiceID();
 		Class prvType = fm.getServiceType();
-		logger.info("ProviderDelegate#forwardTask \nprvType: " + prvType
-				+ "\nprvName = " + prvName);
+		logger.info("ProviderDelegate#forwardTask \nprvType: {}\nprvName = {}", prvType, prvName);
 
 		if (visited == null)
 			visited = new HashSet();
 
 		if (visited.contains(serviceID)) {
 			visited.remove(serviceID);
-			throw new ExertionException("Not able to get relevant type: "
-					+ prvType + ", name: " + prvName);
+			throw new ExertionException("Not able to get relevant type: "+ prvType + ", name: " + prvName);
 		}
 		visited.add(serviceID);
 		if (serviceComponents != null) {
 			Task result = useServiceComponents((Task) task, null);
-			logger.info("forwardTask executed by a service bean: " + result);
+			logger.info("forwardTask executed by a service bean: {}", result);
 			if (result != null) {
 				visited.remove(serviceID);
 				return result;
@@ -1121,11 +1098,11 @@ public class ProviderDelegate {
 			}
 		}
 		if (serviceID != null)
-			recipient = (Service) Accessor.getService(serviceID);
+			recipient = (Service) Accessor.get().getService(serviceID);
 		else if (prvType != null && prvName != null) {
-			recipient = (Service) Accessor.getService(prvName, prvType);
+			recipient = (Service) Accessor.get().getService(prvName, prvType);
 		} else if (prvType != null) {
-			recipient = (Service) Accessor.getService(null, prvType);
+			recipient = (Service) Accessor.get().getService(null, prvType);
 		}
 		if (recipient == null) {
 			visited.remove(serviceID);
@@ -1165,8 +1142,7 @@ public class ProviderDelegate {
 		return null;
 	}
 
-	public static Job doJob(Job job) throws MogramException, RemoteException,
-	ContextException {
+	public static Job doJob(Job job) throws MogramException, RemoteException {
 		String jobberName = job.getRendezvousName();
 		Jobber jobber;
 		try {
@@ -1175,7 +1151,7 @@ public class ProviderDelegate {
 			else
 				jobber = JobberAccessor.getJobber();
 		} catch (AccessorException ae) {
-			ae.printStackTrace();
+			logger.warn("Failed", ae);
 			throw new ExertionException(
 					"Provider Delegate Could not find the Jobber");
 		}
@@ -1225,7 +1201,7 @@ public class ProviderDelegate {
 				if (sig.getReturnPath() != null)
 					cxt.setReturnPath(sig.getReturnPath());
 
-				cxt.getRuntime().setCurrentSelector(sig.getSelector());
+				cxt.getModelStrategy().setCurrentSelector(sig.getSelector());
 				cxt.setCurrentPrefix(sig.getPrefix());
 
 				cxt.setExertion(task);
@@ -1632,10 +1608,15 @@ public class ProviderDelegate {
 		return leaseManager;
 	}
 
-	public void destroy() throws RemoteException {
+	public void destroy() {
+        shuttingDown = true;
+        if (remoteLoggerInstaller!=null) {
+            remoteLoggerInstaller.destroy();
+        }
 		if (spaceEnabled && spaceHandlingPools != null) {
             for (SpaceTaker st : spaceTakers) {
-                st.destroy();
+                if(st!=null)
+                    st.destroy();
             }
 			for (ExecutorService es : spaceHandlingPools)
 				shutdownAndAwaitTermination(es);
@@ -1653,17 +1634,17 @@ public class ProviderDelegate {
                     } catch (InterruptedException ie) {
                     }
                     attempts++;
-                    for (int i = 0; i < ifgThreads.length; i++) {
-                        if (ifgThreads[i].isAlive())
-                            spaceTakerThreads.add(ifgThreads[i]);
+                    for (Thread thread : ifgThreads) {
+                        if (thread.isAlive())
+                            spaceTakerThreads.add(thread);
                         else
-                            spaceTakerThreads.remove(ifgThreads[i]);
+                            spaceTakerThreads.remove(thread);
                     }
-                    for (int i = 0; i < ngThreads.length; i++) {
-                        if (ngThreads[i].isAlive())
-                            spaceTakerThreads.add(ngThreads[i]);
+                    for (Thread thread : ngThreads) {
+                        if (thread.isAlive())
+                            spaceTakerThreads.add(thread);
                         else
-                            spaceTakerThreads.remove(ngThreads[i]);
+                            spaceTakerThreads.remove(thread);
                     }
                     if (spaceTakerThreads.isEmpty())
                         break;
@@ -1759,7 +1740,7 @@ public class ProviderDelegate {
 
 		try {
 			MsgRef mr;
-			SorcerNotifierProtocol notifier = Accessor.getService(null, SorcerNotifierProtocol.class);
+			SorcerNotifierProtocol notifier = Accessor.get().getService(null, SorcerNotifierProtocol.class);
 
 			mr = new MsgRef(task.getId(), notificationType,
 					config.getProviderName(), message,
@@ -1904,6 +1885,7 @@ public class ProviderDelegate {
 		 */
 		public void init(boolean exitOnEmptyName, String propsFilename) {
 			// load configuration from a provider properties file
+			logger.info("propsFilename = " + propsFilename);
 			if (propsFilename != null && propsFilename.length() > 0)
 				loadConfiguration(propsFilename);
 			// load configuration as defined in provider Jini configuration file
@@ -1936,7 +1918,8 @@ public class ProviderDelegate {
 						provider.destroy();
 					} catch (Exception e) {
 						logger.warn("Problem trying to destroy the provider due to empty name in the provider config file");
-					}				}
+					}
+                }
 			}
 		}
 
@@ -2079,12 +2062,14 @@ public class ProviderDelegate {
 		 * @see #getProperty
 		 */
 		public void loadConfiguration(String filename) {
+			filename = filename.replace("\\", "/");
+			
 			try {
 				// check the class resource
 				InputStream is = null;
 				Path filePath = Paths.get("configs").resolve(filename);
 				if (!filePath.isAbsolute()) {
-					String name = filePath.toString();
+					String name = filePath.toString().replace("\\", "/");
 					logger.info("Try to load configuration: [{}] {}", System.getProperty(JavaSystemProperties.USER_DIR), name);
 					ClassLoader resourceLoader = Thread.currentThread().getContextClassLoader();
 					URL resourceURL = resourceLoader.getResource(name);
@@ -2446,24 +2431,22 @@ public class ProviderDelegate {
 		if (adminProxy != null)
 			return adminProxy;
 		try {
-			adminProxy = ProviderProxy.wrapAdminProxy(outerProxy,
-					getAdminProviderUuid());
-		} catch (Exception e) {
-			e.printStackTrace();
-			logger.warn("No admin proxy created by: " + provider
-					+ " cause: " + e.getMessage());
-		}
-		return adminProxy;
-	}
+            adminProxy = ProviderProxy.wrapAdminProxy(outerProxy,
+                                                      getAdminProviderUuid());
+        } catch (Exception e) {
+            logger.warn("No admin proxy created by: {}", provider, e);
+        }
+        return adminProxy;
+    }
 
-	public Object getAdminProxy() {
-		try {
-			providerProxy = ProviderProxy.wrapServiceProxy(adminProxy,
-					getProviderUuid(), adminProxy, Administrable.class);
-		} catch (Exception e) {
-			e.printStackTrace();
-			logger.warn("No admin proxy created by: " + provider
-					+ " cause: " + e.getMessage());
+    public Object getAdminProxy() {
+        try {
+            providerProxy = ProviderProxy.wrapServiceProxy(adminProxy,
+                                                           getProviderUuid(),
+                                                           adminProxy,
+                                                           Administrable.class);
+        } catch (Exception e) {
+			logger.warn("No admin proxy created by: {}", provider, e);
 		}
 		return providerProxy;
 	}
@@ -2501,9 +2484,7 @@ public class ProviderDelegate {
 			providerProxy = ProviderProxy.wrapServiceProxy(smartProxy,
 					getProviderUuid(), adminProxy);
 		} catch (ProviderException e) {
-			e.printStackTrace();
-			logger.warn("No proxy created by: " + provider + " cause: "
-					+ e.getMessage());
+			logger.warn("No proxy created by: {}", provider, e);
 		}
 		return providerProxy;
 	}
@@ -2664,7 +2645,7 @@ public class ProviderDelegate {
 				}
 			}
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			logger.warn("Error getting exporters", ex);
 			// ignore missing exporters and use default configurations for exporters
 		}
 	}
@@ -2791,7 +2772,7 @@ public class ProviderDelegate {
 			throws ExportException {
 		// get the partner and its proxy
 		// if it is exportable, export it, otherwise discover one
-		Remote pp = null;
+		Remote pp;
 		if (partner == null) {
 			if (partnerType != null) {
 				// Class clazz = null;
@@ -2829,10 +2810,8 @@ public class ProviderDelegate {
 				// }
 				try {
 					partner = (Remote) partnerType.newInstance();
-				} catch (InstantiationException e) {
-					e.printStackTrace();
-				} catch (IllegalAccessException e) {
-					e.printStackTrace();
+				} catch (InstantiationException | IllegalAccessException e) {
+					logger.error("Could not create partner", e);
 				}
 				// if partner exported use it as the primary proxy
 				if (partner != null) {
@@ -2844,20 +2823,18 @@ public class ProviderDelegate {
 				}
 			} else {
 				// if partner discovered use it as the inner proxy
-				innerProxy = (Remote) Accessor.getService(partnerName,
-                        partnerType);
+				innerProxy = (Remote) Accessor.get().getService(partnerName, partnerType);
 			}
 		} else {
-			// if partner exported use it as the primary proxy
-			if (partner != null) {
-				if (partnerExporter == null)
-					try {
-						partnerExporter = new BasicJeriExporter(
-								TcpServerEndpoint.getInstance(Sorcer.getLocalHost().getHostAddress(), 0),
-								new BasicILFactory());
-					} catch (UnknownHostException e) {
-						throw new ExportException("Could not obtain local address", e);
-					}
+            // if partner exported use it as the primary proxy
+            if (partner != null) {
+                if (partnerExporter == null)
+                    try {
+                        partnerExporter = new BasicJeriExporter(TcpServerEndpoint.getInstance(Sorcer.getLocalHost().getHostAddress(), 0),
+                                                                new BasicILFactory());
+                    } catch (UnknownHostException e) {
+                        throw new ExportException("Could not obtain local address", e);
+                    }
 				pp = partnerExporter.export(partner);
 				if (pp != null) {
 					innerProxy = outerProxy;
@@ -2866,8 +2843,7 @@ public class ProviderDelegate {
 					// use partner as this provider's inner proxy
 					innerProxy = partner;
 			}
-			logger.info(">>>>> got innerProxy: " + innerProxy + "\nfor: "
-					+ partner + "\nusing exporter: " + partnerExporter);
+			logger.info(">>>>> got innerProxy: {}\nfor: {}\nusing exporter: {}", innerProxy, partner, partnerExporter);
 		}
 		return partner;
 	}

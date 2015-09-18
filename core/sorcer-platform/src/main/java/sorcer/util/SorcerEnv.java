@@ -15,10 +15,10 @@
  */
 package sorcer.util;
 
+import net.jini.discovery.DiscoveryGroupManagement;
 import org.rioproject.net.HostUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sorcer.core.SorcerConstants;
 import sorcer.data.DataService;
 import sorcer.service.ConfigurationException;
 
@@ -160,19 +160,6 @@ public class SorcerEnv extends SOS {
 
     public static URL getDataURL(File file) throws IOException {
         return DataService.getPlatformDataService().getDataURL(file);
-    }
-
-    public static String getModelingDir() {
-        String modelDir = props.getProperty(S_SORCER_MODELING);
-        if (modelDir == null) {
-            modelDir = System.getProperty(S_SORCER_MODELING);
-            if (modelDir == null)
-                modelDir = System.getenv(E_SORCER_MODELING);
-            if (modelDir == null)
-                modelDir = getHome();
-            props.setProperty(S_SORCER_MODELING, modelDir);
-        }
-        return modelDir;
     }
 
 	/**
@@ -337,11 +324,8 @@ public class SorcerEnv extends SOS {
 		// update(props, false);
 		reconcileProperties(props, false);
 		logger.info("*** loaded env properties:" + envFile + "\n"+ GenericUtil.getPropertiesString(props));
-
-		logger.debug("* Sorcer provider accessor:"+ getProperty(SorcerConstants.S_SERVICE_ACCESSOR_PROVIDER_NAME));
-
 		updateCodebase();
-		logger.debug("java.rmi.server.codebase: " + System.getProperty("java.rmi.server.codebase"));
+		logger.trace("java.rmi.server.codebase: " + System.getProperty("java.rmi.server.codebase"));
 	}
 
 	/**
@@ -517,21 +501,25 @@ public class SorcerEnv extends SOS {
 		String rootDir = DataService.getDataDir();
         String dataDir = dataDir = properties.getProperty(P_DATA_DIR);
 
-		logger.debug("\n1. rootDir = " + rootDir + "\ndataDir = " + dataDir);
+        if(logger.isTraceEnabled())
+            logger.trace("\n1. rootDir = {}\ndataDir = {}" + rootDir, dataDir);
 
 		if (dataDir != null) {
 			System.setProperty(DOC_ROOT_DIR, rootDir + File.separator + dataDir);
-			logger.debug("1. DOC_ROOT_DIR = " +System.getProperty(DOC_ROOT_DIR));
+            if(logger.isTraceEnabled())
+                logger.trace("1. DOC_ROOT_DIR = {}", System.getProperty(DOC_ROOT_DIR));
 		} else {
 			//rootDir = properties.getProperty(R_DATA_ROOT_DIR);
 			dataDir = properties.getProperty(R_DATA_DIR);
 			if (rootDir != null && dataDir != null) {
 				System.setProperty(DOC_ROOT_DIR, rootDir + File.separator+ dataDir);
-			}
-			 logger.debug("\n2 .rootDir = " + rootDir + "\ndataDir = " +dataDir);
-			 logger.debug("2. DOC_ROOT_DIR = " + System.getProperty(DOC_ROOT_DIR));
-		}
-		dataDir = properties.getProperty(P_SCRATCH_DIR);
+            }
+            if(logger.isTraceEnabled()) {
+                logger.trace("\n2 .rootDir = {}\ndataDir = {}", rootDir, dataDir);
+                logger.trace("2. DOC_ROOT_DIR = {}", System.getProperty(DOC_ROOT_DIR));
+            }
+        }
+        dataDir = properties.getProperty(P_SCRATCH_DIR);
 		// logger.debug("\n3. dataDir = " + dataDir);
 		if (dataDir != null) {
 			System.setProperty(SCRATCH_DIR, dataDir);
@@ -794,8 +782,7 @@ public class SorcerEnv extends SOS {
 	 * @return the current URL for the SORCER application server.
 	 */
 	public static String getPortalUrl() {
-		return props.getProperty("http://" + P_PORTAL_HOST) + ':'
-				+ props.getProperty(P_PORTAL_PORT);
+		return props.getProperty("http://" + P_PORTAL_HOST) + ':'+ props.getProperty(P_PORTAL_PORT);
 	}
 
 	/**
@@ -805,8 +792,7 @@ public class SorcerEnv extends SOS {
 	 */
 	public static String[] getLookupLocators() {
 		String locs = props.getProperty(P_LOCATORS, System.getProperty(P_LOCATORS));
-		return (locs != null && locs.length() != 0) ? toArray(locs)
-				: new String[] {};
+		return (locs != null && locs.length() != 0) ? toArray(locs) : new String[] {};
 	}
 
 	/**
@@ -815,34 +801,32 @@ public class SorcerEnv extends SOS {
 	 * @return an array of group names
 	 */
 	public static String[] getLookupGroups() {
-		String[] ALL_GROUPS = null; // Jini ALL_GROUPS
         String groups = null;
         if(props!=null)
             groups = props.getProperty(P_GROUPS);
         if (groups == null || groups.length() == 0)
-            return ALL_GROUPS;
-        String[] providerGroups = toArray(groups);
-        return providerGroups;
+            return DiscoveryGroupManagement.ALL_GROUPS;
+        return toArray(groups);
 	}
 
-	public static String getLookupGroupsAsString() {
-		String[] sa = getLookupGroups();
-		StringBuilder sb = new StringBuilder();
-		for (String group : sa) {
-			if (sb.length() > 0)
-				sb.append(",");
-			sb.append(group);
-		}
-		return sb.toString();
-	}
+    public static String getLookupGroupsAsString() {
+        String[] sa = getLookupGroups();
+        StringBuilder sb = new StringBuilder();
+        for (String group : sa) {
+            if (sb.length() > 0)
+                sb.append(",");
+            sb.append(group);
+        }
+        return sb.toString();
+    }
 
-	/**
-	 * Gets a system Cataloger name for this environment.
-	 * 
-	 * @return a name of the system Cataloger
-	 */
-	public static String getCatalogerName() {
-		return props.getProperty(P_CATALOGER_NAME, "Cataloger");
+    /**
+     * Gets a system Cataloger name for this environment.
+     *
+     * @return a name of the system Cataloger
+     */
+    public static String getCatalogerName() {
+        return props.getProperty(P_CATALOGER_NAME, "Cataloger");
 	}
 
 	/**

@@ -18,32 +18,31 @@
 
 package sorcer.core.dispatch;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-
 import net.jini.core.entry.Entry;
 import net.jini.core.entry.UnusableEntryException;
 import net.jini.core.lease.Lease;
 import net.jini.entry.UnusableEntriesException;
 import net.jini.id.Uuid;
 import net.jini.space.JavaSpace05;
+import sorcer.core.exertion.ExertionEnvelop;
 import sorcer.core.exertion.Mograms;
+import sorcer.core.exertion.NetJob;
+import sorcer.core.loki.member.LokiMemberUtil;
 import sorcer.core.monitor.MonitorUtil;
 import sorcer.core.monitor.MonitoringSession;
 import sorcer.core.provider.Provider;
-import sorcer.core.exertion.ExertionEnvelop;
-import sorcer.core.exertion.NetJob;
-import sorcer.core.loki.member.LokiMemberUtil;
 import sorcer.core.provider.SpaceTaker;
 import sorcer.service.*;
 import sorcer.service.space.SpaceAccessor;
 
+import java.rmi.RemoteException;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
+
 import static sorcer.service.Exec.*;
 import static sorcer.util.StringUtils.tName;
-
-import java.rmi.RemoteException;
 
 public class SpaceParallelDispatcher extends ExertDispatcher {
 
@@ -271,9 +270,9 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
         ((ServiceExertion) exertion).setStatus(RUNNING);
     }
 
-    private void provisionProviderForExertion(Exertion exertion) {
+/*    private void provisionProviderForExertion(Exertion exertion) {
         ProviderProvisionManager.provision(exertion, this);
-    }
+    }*/
 
     protected void writeEnvelop(Exertion exertion) throws
             ExertionException, SignatureException, RemoteException {
@@ -283,8 +282,8 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
             throw new ExertionException("NO exertion space available!");
         }
 
-        if (exertion.isProvisionable())
-            provisionProviderForExertion(exertion);
+        /*if (exertion.isProvisionable())
+            provisionProviderForExertion(exertion);*/
 
         ((ServiceExertion) exertion).setSubject(subject);
         preExecExertion(exertion);

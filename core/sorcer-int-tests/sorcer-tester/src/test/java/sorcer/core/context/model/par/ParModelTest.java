@@ -1,6 +1,7 @@
 package sorcer.core.context.model.par;
 
 import groovy.lang.Closure;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -31,8 +32,8 @@ import static sorcer.eo.operator.pipe;
 import static sorcer.eo.operator.value;
 import static sorcer.mo.operator.responseUp;
 import static sorcer.po.operator.add;
-import static sorcer.po.operator.asis;
 import static sorcer.po.operator.*;
+import static sorcer.po.operator.map;
 import static sorcer.po.operator.put;
 import static sorcer.po.operator.set;
 
@@ -61,7 +62,7 @@ public class ParModelTest {
 	}
 
 	@Test
-	public void contextInvoker() throws RemoteException, ContextException {
+	public void contextInvoker() throws Exception {
 		ParModel pm = new ParModel("par-model");
 		add(pm, ent("x", 10.0));
 		add(pm, ent("y", 20.0));
@@ -179,9 +180,9 @@ public class ParModelTest {
 
 		// mapping parameters to cxt, m1 and m2 are par aliases 
 		Par p1 = map(par("p1", "design/in"), cxt);
-		assertEquals(value(p1), 25.0);
+		assertTrue(value(p1).equals(25.0));
 		set(p1, 30.0);
-		assertEquals(value(p1), 30.0);
+		assertTrue(value(p1).equals(30.0));
 		
 		Par p2 = map(par("p2", "url"), cxt);
 		assertEquals(value(p2), "myUrl");
@@ -259,9 +260,9 @@ public class ParModelTest {
 		assertFalse(asis(dbp1) instanceof URL);
 		assertTrue(asis(dbp2) instanceof URL);
 		
-		assertEquals(value(dbp1), 25.0);
-		assertEquals(value(dbp2), "myUrl1");
-		
+		assertTrue(value(dbp1).equals(25.0));
+		assertTrue(value(dbp2).equals("myUrl1"));
+
 		assertTrue(asis(dbp1) instanceof URL);
 		assertTrue(asis(dbp2) instanceof URL);
 
@@ -272,7 +273,8 @@ public class ParModelTest {
 		assertEquals(content(url1), 30.0);
 		assertEquals(content(url2), "myUrl2");
 	}
-	
+
+	@Ignore
 	@Test
 	public void persistableMappableParsTest() throws SignatureException, ExertionException, ContextException, IOException {
 		Context cxt = context(ent("url", "myUrl"), ent("design/in", 25.0));
@@ -283,7 +285,7 @@ public class ParModelTest {
 		logger.info("value dbIn asis design/in 1: " + dbIn.getMappable().asis("design/in"));
 
 		assertTrue(asis(cxt,"design/in") instanceof Par);
-		assertEquals(value((Par)asis(cxt, "design/in")), 25.0);
+		assertTrue(value((Par) asis(cxt, "design/in")).equals(25.0));
 		assertEquals(value(cxt, "design/in"), 25.0);
 
 		set(dbIn, 30.0); 	// is persisted
@@ -292,7 +294,7 @@ public class ParModelTest {
 //		logger.info("value dbIn asis design/in 2: " + dbIn.getMappable().asis("design/in"));
 
 		logger.info("value dbIn: " + value(dbIn));
-		assertEquals(value(dbIn), 30.0);
+		assertTrue(value(dbIn).equals(30.0));
 		
 		// not persistent par
 		Par up = map(par("up", "url"), cxt);
@@ -308,23 +310,22 @@ public class ParModelTest {
 		
 		Par x1 = par(cxt, "x1", "design/in1");
 		Par x2 = map(par("x2", "design/in2"), cxt);
-	
-		assertEquals(value(x1), 25.0);
+
+		assertTrue(value(x1).equals(25.0));
 		set(x1, 45.0);
-		assertEquals(value(x1), 45.0);
-		
-		assertEquals(value(x2), 35.0);
+		assertTrue(value(x1).equals(45.0));
+
+		assertTrue(value(x2).equals(35.0));
 		set(x2, 55.0);
-		assertEquals(value(x2), 55.0);
+		assertTrue(value(x2).equals(55.0));
 		
 		ParModel pc = parModel(x1, x2);
-		assertEquals(value(pc, "x1"), 45.0);
-		assertEquals(value(pc, "x2"), 55.0);
+		assertTrue(value(pc, "x1").equals(45.0));
+		assertTrue(value(pc, "x2").equals(55.0));
 	}
 	
 	@Test
-	public void exertionParsTest() throws RemoteException,
-			ContextException, ExertionException, SignatureException {
+	public void exertionParsTest() throws Exception {
 
 		Context c4 = context("multiply", inEnt("arg/x1"), inEnt("arg/x2"),
 				outEnt("result/y"));
@@ -363,22 +364,21 @@ public class ParModelTest {
 		logger.info("j1p value: " + value(j1p));
 		
 		// get job parameter value
-		assertEquals(value(j1p), 400.0);
+		assertTrue(value(j1p).equals(400.0));
 		
 		// set job parameter value
 		set(j1p, 1000.0);
-		assertEquals(value(j1p), 1000.0);
+		assertTrue(value(j1p).equals(1000.0));
 
 		// par model with exertions
 		ParModel pc = parModel(x1p, x2p, j1p);
 		exert(j1);
 		// j1p is the alias to context value of j1 at j1/t3/result/y
-		assertEquals(value(pc, "j1p"), 400.0);
+		assertTrue(value(pc, "j1p").equals(400.0));
 	}
 	
 	@Test
-	public void associatingContextsTest() throws RemoteException,
-			ContextException, ExertionException, SignatureException {
+	public void associatingContextsTest() throws Exception {
 		
 		Context c4 = context("multiply", inEnt("arg/x1"), inEnt("arg/x2"),
 				outEnt("result/y"));
@@ -416,7 +416,7 @@ public class ParModelTest {
 		c4 = taskContext("j1/t4", j1);
 		
 		// get job parameter value
-		assertEquals(value(j1p), 400.0);
+		assertTrue(value(j1p).equals(400.0));
 		
 		logger.info("j1 job context: " + upcontext(j1));
 		
@@ -534,7 +534,7 @@ public class ParModelTest {
 		Entry ent = (Entry) get((Context)value(pm,"getSphereVolume"), "sphere/volume");
 
 //		logger.info("val: " + value(ent));
-		assertEquals(value(ent), 33510.32163829113);
+		assertTrue(value(ent).equals(33510.32163829113));
 
 		// invoke the agent directly
 		invoke(pm,
@@ -545,6 +545,6 @@ public class ParModelTest {
 								+ "/sorcer-tester-"+sorcerVersion+".jar")));
 
 //		logger.info("val: " + value(pm, "sphere/volume"));
-		assertEquals(value(pm, "sphere/volume"), 33510.32163829113);
+		assertTrue(value(pm, "sphere/volume").equals(33510.32163829113));
 	}
 }

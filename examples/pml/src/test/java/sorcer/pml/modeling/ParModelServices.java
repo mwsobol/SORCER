@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.outPaths;
 import static sorcer.eo.operator.*;
 import static sorcer.po.operator.invoke;
@@ -32,7 +33,7 @@ public class ParModelServices {
 
 		ParModel pm = ParModeler.getParModel();
 		logger.info("result: " + invoke(pm, "expr"));
-		assertEquals(invoke(pm, "expr"), 60.0);
+		assertTrue(invoke(pm, "expr").equals(60.0));
 
 	}
 
@@ -43,9 +44,9 @@ public class ParModelServices {
 		Task pmt = task(sig("invoke", pm),
 				context(result("invoke/result", outPaths("expr"))));
 
-		assertEquals(value(pmt), 60.0);
+		assertTrue(value(pmt).equals(60.0));
 
-		assertEquals(get(exert(pmt), "invoke/result"), 60.0);
+		assertTrue(get(exert(pmt), "invoke/result").equals(60.0));
 
 	}
 
@@ -56,9 +57,9 @@ public class ParModelServices {
 		Task pmt = task(sig("invoke", Invocation.class, prvName("ParModel Service")),
 				context(result("invoke/result", outPaths("expr"))));
 
-		assertEquals(value(pmt), 60.0);
+		assertTrue(value(pmt).equals(60.0));
 		
-//		assertEquals(get(exert(pmt), "invoke/result"), 60.0);
+//		assertTrue(get(exert(pmt), "invoke/result").equals(60.0));
 
 	}
 	

@@ -17,27 +17,12 @@
 package sorcer.core.context;
 
 import sorcer.service.Context;
+import sorcer.service.MogramStrategy;
 import sorcer.service.Strategy;
 
 /**
  * @author Rafał Krupiński
  */
-public interface StrategyContext extends Context<Object>, Strategy {
-    boolean isMonitorable();
+public interface StrategyContext extends MogramStrategy, Context<Object>, Strategy {
 
-    void isMonitorable(Strategy.Monitor value);
-
-    void setMonitorable(boolean state);
-
-    boolean isProvisionable();
-
-    void setProvisionable(boolean state);
-
-    void setOpti(Strategy.Opti optiType);
-
-    Strategy.Opti getOpti();
-
-    void addException(Throwable t);
-
-    void addException(String message, Throwable t);
 }

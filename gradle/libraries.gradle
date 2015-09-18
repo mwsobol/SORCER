@@ -22,7 +22,7 @@ ext {
 	sorcerVersion = version
 
 	groovyVersion = "2.3.8"
-	rioVersion = "5.1.5"
+	rioVersion = "5.1.7"
 	riverVersion = "2.2.2"
 	slf4jVersion = "1.7.12"
 	blitzVersion = "2.1.7"
@@ -75,6 +75,7 @@ ext {
                              "${rioHome}/lib/logging/logback-classic-${logbackVersion}.jar",
                              "${rioHome}/lib/logging/rio-logging-support-${rioVersion}.jar",
                              "${sorcerDistHome}/lib/sorcer/lib/sorcer-resolving-loader-${sorcerVersion}.jar",
+                             "${sorcerDistHome}/lib/common/guava-${guavaVersion}.jar",
                              "${rioHome}/lib/rio-platform-${rioVersion}.jar",
                              "${rioHome}/lib/start-${riverVersion}.jar",
                              "${rioHome}/lib/jsk-platform-${riverVersion}.jar"

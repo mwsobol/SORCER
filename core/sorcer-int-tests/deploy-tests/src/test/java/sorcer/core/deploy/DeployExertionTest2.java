@@ -15,26 +15,25 @@
  */
 package sorcer.core.deploy;
 
-import junit.framework.Assert;
-import org.junit.Ignore;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import org.sorcer.test.TestsRequiringRio;
 import sorcer.core.SorcerConstants;
 import sorcer.core.provider.Provider;
-import sorcer.service.*;
+import sorcer.service.Exertion;
+import sorcer.service.Job;
 import sorcer.util.ProviderLookup;
-import sorcer.util.Sorcer;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static sorcer.eo.operator.*;
+import static sorcer.eo.operator.exert;
+import static sorcer.eo.operator.get;
 
 /**
  * @author Dennis Reedy
@@ -50,9 +49,9 @@ public class DeployExertionTest2 extends DeploySetup implements SorcerConstants 
     	long t0 = System.currentTimeMillis();
         Provider provider = null;
         while(provider==null)
-            provider = (Provider)ProviderLookup.getService(Provider.class);
+            provider = (Provider)new ProviderLookup().getService(Provider.class);
 		Assert.assertNotNull(provider);
-        System.out.println("Waited "+(System.currentTimeMillis()-t0)+" millis for [Sorcer OS] provisioning");
+        logger.info("Waited {} millis for [Sorcer OS] provisioning", (System.currentTimeMillis()-t0));
         
         Job f1 = JobUtil.createJob();
         Assert.assertTrue(f1.isProvisionable());
@@ -61,10 +60,10 @@ public class DeployExertionTest2 extends DeploySetup implements SorcerConstants 
         verifyExertion(f1);
     }
 
-    private void verifyExertion(Job job) throws ExertionException, ContextException {
+    private void verifyExertion(Job job) throws Exception {
     	long t0 = System.currentTimeMillis();
         Exertion out = exert(job);
-        System.out.println("Waited "+(System.currentTimeMillis()-t0)+" millis for exerting: " + out.getName());
+        logger.info("Waited {} millis for exerting: {}", (System.currentTimeMillis() - t0), out.getName());
         assertNotNull(out);
         assertEquals(get(out, "f1/f3/result/y3"), 400.0);
     }

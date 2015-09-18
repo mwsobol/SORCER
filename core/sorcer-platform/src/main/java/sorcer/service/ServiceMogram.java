@@ -194,6 +194,14 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
         return exs;
     }
 
+    public List<String> getAllMogramIds() {
+        List<String> mogIdsList = new ArrayList<String>();
+        for (Mogram mo : getAllMograms()) {
+            mogIdsList.add(mo.getId().toString());
+        }
+        return mogIdsList;
+    }
+
     public void trimAllNotSerializableSignatures() {
         trimNotSerializableSignatures();
         for (Mogram m : getAllMograms()) {
@@ -737,9 +745,9 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
                 if (a instanceof Fidelity && ((Fidelity)a).type == Fidelity.Type.EMPTY) {
                     fi = selectFidelity(a.getName());
                 } else if (a instanceof Fidelity && ((Fidelity)a).type == Fidelity.Type.COMPONENT) {
-                   fi = selectComponentFidelity((Fidelity) a);
+                    fi = selectComponentFidelity((Fidelity) a);
                 } else if (a instanceof Fidelity && ((Fidelity)a).type == Fidelity.Type.COMPOSITE) {
-                   fi = selectCompositeFidelity((Fidelity) a);
+                    fi = selectCompositeFidelity((Fidelity) a);
                 }
         }
         return fi;

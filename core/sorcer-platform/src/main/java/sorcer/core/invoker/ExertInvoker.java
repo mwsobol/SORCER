@@ -57,7 +57,7 @@ public class ExertInvoker extends ServiceInvoker implements ExertionInvoking {
 	}
 
 	public ExertInvoker(Exertion exertion, String path, Par... parEntries) {
-		this(null, exertion, path, parEntries);
+		this(exertion.getName(), exertion, path, parEntries);
 	}
 	
 	public ExertInvoker(Exertion exertion, Par... parEntries) {

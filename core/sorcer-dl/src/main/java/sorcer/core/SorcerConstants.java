@@ -31,10 +31,6 @@ public interface SorcerConstants {
 	// P_ATTRIBUTE is a provider property defined in a properties file
 	// J_ATTRIBURE is variable name in Jini configuration file
 	/* service provider genetic properties */
-    public static final String SORCER_VERSION = "5.2.0";
-    
-    public static final String SORCER_MODELING_VERSION = "1.1.8";
-
 	public static final String P_UNDEFINED = "undefined";
 
     public static final String E_SORCER_MODELING = "SORCER_MODELING";
@@ -749,7 +745,7 @@ public interface SorcerConstants {
 
     String NAME_DEFAULT="___SORCER_NAME_DEFAULT___";
     String MDC_SORCER_REMOTE_CALL = "SORCER-REMOTE-CALL";
-    String MDC_EXERTION_ID = "xrtId";
+    String MDC_MOGRAM_ID = "mogId";
     String MDC_PROVIDER_ID = "prvId";
     String MDC_PROVIDER_NAME = "prvName";
     String START_PACKAGE = "com.sun.jini.start";

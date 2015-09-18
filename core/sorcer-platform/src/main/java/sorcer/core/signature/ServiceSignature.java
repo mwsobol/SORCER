@@ -36,8 +36,9 @@ import java.rmi.RemoteException;
 import java.util.*;
 
 import static sorcer.eo.operator.provider;
+import static sorcer.eo.operator.task;
 
-public class ServiceSignature implements Signature, Service, SorcerConstants {
+public class ServiceSignature implements Signature, SorcerConstants {
 
 	static final long serialVersionUID = -8527094638557595398L;
 
@@ -54,12 +55,12 @@ public class ServiceSignature implements Signature, Service, SorcerConstants {
 	protected String ownerID;
 
 	protected ReturnPath<?> returnPath;
-	
+
 	// the indicated usage of this signature
 	protected Set<Kind> rank = new HashSet<Kind>();
 
-    // dependency management for this Signature
-    protected List<Evaluation> dependers = new ArrayList<Evaluation>();
+	// dependency management for this Signature
+	protected List<Evaluation> dependers = new ArrayList<Evaluation>();
 
 	// Must initialize to ANY to have correct JavaSpace workers behavior
 	// to have exertions with providerName/serviceInfo specified going to
@@ -88,7 +89,7 @@ public class ServiceSignature implements Signature, Service, SorcerConstants {
 	protected boolean isActive = true;
 
 	protected boolean isProvisionable = false;
-	
+
 	// shell can be used to execute exertions locally or remotely (as ServiceProvider)
 	protected boolean isShellRemote = false;
 
@@ -151,27 +152,27 @@ public class ServiceSignature implements Signature, Service, SorcerConstants {
 
 	/**
 	 * Returns a provider of <code>Variability</code> type.
-	 * 
+	 *
 	 * @return Variability of this service provider
 	 */
 	public Variability<?> getVariability() {
 		return null;
 	}
-	
+
 	public Signature addRank(Kind... kinds) {
 		rank.addAll(Arrays.asList(kinds));
 		return this;
 	}
-	
+
 	public void addRank(List<Kind> kinds) {
 		for (Kind k : kinds)
 			rank.add(k);
 	}
-	
+
 	public boolean isKindOf(Kind kind) {
 		return rank.contains(kind);
 	}
-	
+
 	public Set<Kind> getRank() {
 		return rank;
 	}
@@ -179,11 +180,11 @@ public class ServiceSignature implements Signature, Service, SorcerConstants {
 	public void removeKind(Kind kind) {
 		rank.remove(kind);
 	}
-	
+
 	public void setServiceType(Class<?> serviceType) {
 		this.serviceType = serviceType;
-	}	
-	
+	}
+
 	public String getSelector() {
 		return selector;
 	}
@@ -278,28 +279,28 @@ public class ServiceSignature implements Signature, Service, SorcerConstants {
 
 	public Signature setType(Type type) {
 		execType = type;
-	 return this;
+		return this;
 	}
 
 	public boolean isActive() {
-        logger.info("Returning "+name+".isActive()="+isActive);
+		logger.info("Returning "+name+".isActive()="+isActive);
 		return isActive;
 	}
 
 	public void setActive(boolean state) {
 		isActive = state;
-        logger.info("Setting "+name+" Active to: "+isActive);
+		logger.info("Setting "+name+" Active to: "+isActive);
 	}
 
 	public void setActive(Operating state) {
 		if (state == Operating.YES || state == Operating.TRUE) {
-            isActive = true;
-        } else {
-            isActive = false;
-        }
-        logger.info("Setting "+name+" Active to: "+isActive);
+			isActive = true;
+		} else {
+			isActive = false;
+		}
+		logger.info("Setting "+name+" Active to: "+isActive);
 	}
-	
+
 	public String[] getContextTemplateIDs() {
 		return contextTemplateIDs;
 	}
@@ -360,9 +361,9 @@ public class ServiceSignature implements Signature, Service, SorcerConstants {
 			return false;
 		}
 		Method[] methods = null;
-		if (serviceType.isInterface()) 
+		if (serviceType.isInterface())
 			methods = serviceType.getMethods();
-		else 
+		else
 			methods = providerType.getMethods();
 
 		for (Method m : methods) {
@@ -392,14 +393,15 @@ public class ServiceSignature implements Signature, Service, SorcerConstants {
 		return execType == Type.POST;
 	}
 
-    public boolean isAppendType() {
-        return execType == Type.APD_DATA;
-    }
+	public boolean isAppendType() {
+		return execType == Type.APD_DATA;
+	}
 
 	public String toString() {
 		return this.getClass() + ":" + providerName + ";" + execType + ";"
-				+ isActive + ";" + serviceType + ";"
-				+ (prefix != null ? "#" + selector : "") + ";" + returnPath;
+				+ ";" + serviceType + ";"
+				+ (prefix != null ? "#" + selector : "")
+				+ ";" + returnPath;
 	}
 
 	public ServiceID getServiceID() {
@@ -463,12 +465,12 @@ public class ServiceSignature implements Signature, Service, SorcerConstants {
 		return null;
 	}
 
-    @Override
-    public Object getId() {
-        return selector;
-    }
+	@Override
+	public Object getId() {
+		return selector;
+	}
 
-    public String getName() {
+	public String getName() {
 		return name;
 	}
 
@@ -507,7 +509,7 @@ public class ServiceSignature implements Signature, Service, SorcerConstants {
 	public void setProvisionable(boolean isProvisionable) {
 		this.isProvisionable = isProvisionable;
 	}
-	
+
 	public void setProvisionable(Provision isProvisionable) {
 		if (isProvisionable == Provision.YES
 				|| isProvisionable == Provision.TRUE) {
@@ -525,7 +527,7 @@ public class ServiceSignature implements Signature, Service, SorcerConstants {
 		this.isShellRemote = isShellRemote;
 	}
 
-	
+
 	public void setShellRemote(Strategy.ServiceShell shellExec) {
 		if (shellExec == Strategy.ServiceShell.REMOTE) {
 			this.isShellRemote = true;
@@ -533,20 +535,20 @@ public class ServiceSignature implements Signature, Service, SorcerConstants {
 			this.isShellRemote = false;
 		}
 	}
-	
-	@Override
-     public void setReturnPath(String path) {
-        returnPath = new ReturnPath<Object>(path);
-    }
 
-        @Override
-     public void setReturnPath(String path, Direction direction) {
-        returnPath = new ReturnPath<Object>(path, direction);
-     }
+	@Override
+	public void setReturnPath(String path) {
+		returnPath = new ReturnPath<Object>(path);
+	}
+
+	@Override
+	public void setReturnPath(String path, Direction direction) {
+		returnPath = new ReturnPath<Object>(path, direction);
+	}
 	public ReturnPath getReturnPath() {
 		return returnPath;
 	}
-	
+
 	public ServiceDeployment getDeployment() {
 		return deployment;
 	}
@@ -566,23 +568,33 @@ public class ServiceSignature implements Signature, Service, SorcerConstants {
 				.compareTo(""+((ServiceSignature) signature).serviceType);
 		if (typeComp == 0) {
 			typeComp = (""+selector)
-				.compareTo(""+((ServiceSignature) signature).selector);
+					.compareTo(""+((ServiceSignature) signature).selector);
 		}
 		return (typeComp != 0 ? typeComp : (""+providerName)
 				.compareTo(""+((ServiceSignature) signature).providerName));
 	}
 
 	@Override
-	public Mogram service(Mogram exertion, Transaction txn) throws TransactionException,
-		MogramException, RemoteException {
-		Provider prv = (Provider)Accessor.getService(this);
-		return prv.service(exertion, txn);
+	public Mogram service(Mogram mogram, Transaction txn) throws TransactionException,
+			MogramException, RemoteException {
+		Provider prv = (Provider)Accessor.get().getService(this);
+		if (mogram instanceof Context) {
+			Task out = null;
+			try {
+				out = task(this, (Context)mogram);
+			} catch (SignatureException e) {
+				throw new MogramException(e);
+			}
+			return prv.service(out, txn).getContext();
+		} else {
+			return prv.service(mogram, txn);
+		}
 	}
 
 	@Override
-	public Mogram service(Mogram exertion) throws TransactionException,
+	public Mogram service(Mogram mogram) throws TransactionException,
 			MogramException, RemoteException {
-		return service(exertion, null);
+		return service(mogram, null);
 	}
 
 	public Context getInConnector() {
@@ -601,17 +613,17 @@ public class ServiceSignature implements Signature, Service, SorcerConstants {
 		this.outConnector = outConnector;
 	}
 
-    @Override
-    public void addDependers(Evaluation... dependers) {
-        if (this.dependers == null)
-            this.dependers = new ArrayList<Evaluation>();
-        for (Evaluation depender : dependers)
-            this.dependers.add(depender);
-    }
+	@Override
+	public void addDependers(Evaluation... dependers) {
+		if (this.dependers == null)
+			this.dependers = new ArrayList<Evaluation>();
+		for (Evaluation depender : dependers)
+			this.dependers.add(depender);
+	}
 
-    @Override
-    public List<Evaluation> getDependers() {
-        return dependers;
-    }
+	@Override
+	public List<Evaluation> getDependers() {
+		return dependers;
+	}
 
 }

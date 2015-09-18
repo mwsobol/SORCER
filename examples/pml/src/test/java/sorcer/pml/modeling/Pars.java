@@ -20,7 +20,6 @@ import static sorcer.eo.operator.add;
 import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.value;
 import static sorcer.po.operator.add;
-import static sorcer.po.operator.asis;
 import static sorcer.po.operator.*;
 import static sorcer.po.operator.set;
 
@@ -42,7 +41,6 @@ public class Pars {
 		Par<?> add = par("add", invoker("x + y", pars("x", "y")), cxt);
 		logger.info("par value: " + value(add));
 		assertTrue(value(add).equals(50.0));
-
 	}
 
 
@@ -90,12 +88,12 @@ public class Pars {
 		Par<Double> dbp1 = persistent(par("design/in", 25.0));
 		Par<String> dbp2 = dbPar("url/sobol", "http://sorcersoft.org/sobol");
 
-		assertEquals(asis(dbp1), 25.0);
-		assertTrue(asis(dbp2) instanceof URL);
+		assertTrue(asis(dbp1).equals(25.0));
+		assertEquals(asis(dbp2).getClass(), URL.class);
 			
 		URL dbp1Url = storeArg(dbp1);
 		URL dbp2Url = storeArg(dbp2);
-		
+
 		assertTrue(content(dbp1Url).equals(25.0));
 		assertEquals(content(dbp2Url), "http://sorcersoft.org/sobol");
 		
@@ -108,9 +106,9 @@ public class Pars {
 	
 		assertTrue(content(storeArg(dbp1)).equals(30.0));
 		assertEquals(content(storeArg(dbp2)), "http://sorcersoft.org");
-		
-		assertTrue(asis(dbp1) instanceof URL);
-		assertTrue(asis(dbp2) instanceof URL);
+
+		assertEquals(asis(dbp1).getClass(), URL.class);
+		assertEquals(asis(dbp2).getClass(), URL.class);
 
 	}
 

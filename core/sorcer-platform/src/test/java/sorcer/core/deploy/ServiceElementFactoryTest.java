@@ -15,7 +15,7 @@
  */
 package sorcer.core.deploy;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import net.jini.config.ConfigurationException;
 import org.junit.Test;
 import org.rioproject.deploy.SystemComponent;
@@ -28,7 +28,6 @@ import sorcer.core.provider.ServiceProvider;
 import sorcer.core.signature.NetSignature;
 
 import java.io.IOException;
-import java.net.InetAddress;
 import java.net.URISyntaxException;
 
 import static sorcer.eo.operator.*;

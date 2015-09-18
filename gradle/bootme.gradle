@@ -1,3 +1,10 @@
+import com.sun.tools.attach.VirtualMachine
+import sun.management.ConnectorAddressLink
+
+import javax.management.MBeanServerConnection
+import javax.management.remote.JMXConnector
+import javax.management.remote.JMXConnectorFactory
+import javax.management.remote.JMXServiceURL
 /*
  * Copyright to the original author or authors.
  *
@@ -74,6 +81,7 @@ class BootMe extends DefaultTask {
         args << "-Djava.security.policy=${project.sorcerDistHome}/policy/policy.all"
         args << "-Djava.rmi.server.useCodebaseOnly=false"
         args << "-Dplexus.version=${project.plexusVersion}"
+        args << "-Dguava.version=${project.guavaVersion}"
         args << "-Driver.version=${project.riverVersion}"
         args << "-Dsorcer.version=${project.sorcerVersion}"
         args << "-Dsorcer.home=${project.sorcerDistHome}"
@@ -118,22 +126,84 @@ class StopMePlugin implements Plugin<Project> {
         project.task('stopme') {
             description = 'Stops a provider booted from this project.)'
             doLast {
-                def pids = []
-                "jps -v".execute().text.eachLine { line ->
-                    if (line.contains("project.id=${project.name}")) {
-                        pids << line.split()[0]
+                def pids = getPids(project.name)
+                destroy(project.name, pids)
+                kill(pids, true)
+            }
+        }
+    }
+
+    static void destroy(projectId, pids)  {
+        pids.each { pid ->
+            String address = ConnectorAddressLink.importFrom(Integer.valueOf(pid))
+            if(address==null)
+                startManagementAgent(pid)
+            address = ConnectorAddressLink.importFrom(Integer.valueOf(pid))
+            if(address!=null) {
+                JMXServiceURL jmxUrl = new JMXServiceURL(address)
+                JMXConnector jmxc = JMXConnectorFactory.connect(jmxUrl, null);
+                MBeanServerConnection serverConnection = jmxc.getMBeanServerConnection()
+                serverConnection.queryNames(null, null).each { mBean ->
+                    if (mBean.domain == "sorcer.core.provider") {
+                        String id = mBean.getKeyProperty("projectId")
+                        if (id != null && id == projectId) {
+                            serverConnection.invoke(mBean, "destroy", null, null)
+                        }
                     }
                 }
-                String command
-                if (System.getProperty("os.name").startsWith("Windows")) {
-                    command = "taskkill /f /pid "
-                } else {
-                    command = "kill "
-                }
-                pids.each { pid ->
-                    "$command $pid".execute().waitFor()
-                }
+                jmxc.close()
+            } else {
+                println "Unable to obtain JMX URL for $pid"
             }
+        }
+    }
+
+    static def getPids(projectId) {
+        def pids = []
+        "jps -v".execute().text.eachLine { line ->
+            if(line.contains("project.id=${projectId}")) {
+                pids << line.split()[0]
+            }
+        }
+        String p = pids.size()==1? "JVM" : "JVMs"
+        println "Found ${pids.size()} $p for ${projectId} to destroy"
+        pids
+    }
+
+    static void kill(pids, force) {
+        String command
+        if(System.getProperty("os.name").startsWith("Windows")) {
+            command = "taskkill /f /pid "
+        } else {
+            String option = force?"-9":""
+            command = "kill ${option} "
+        }
+        pids.each { pid ->
+            "$command $pid".execute().waitFor()
+        }
+    }
+
+    private static void startManagementAgent(String pid) throws IOException {
+        /*
+         * JAR file normally in ${java.home}/jre/lib but may be in ${java.home}/lib
+         * with development/non-images builds
+         */
+        String home = System.getProperty("java.home");
+        String agent = "$home/jre/lib/management-agent.jar"
+        File f = new File(agent)
+        if (!f.exists()) {
+            agent = "$home/lib/management-agent.jar"
+            f = new File(agent)
+            if (!f.exists()) {
+                throw new RuntimeException("management-agent.jar missing")
+            }
+        }
+        agent = f.getCanonicalPath()
+        //println("Loading $agent into target JVM ...")
+        try {
+            VirtualMachine.attach(pid).loadAgent(agent);
+        } catch (Exception x) {
+            throw new IOException(x.getMessage());
         }
     }
 

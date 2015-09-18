@@ -17,9 +17,13 @@
 
 package sorcer.core.context.model.ent;
 
+import net.jini.core.transaction.Transaction;
+import net.jini.core.transaction.TransactionException;
 import sorcer.co.tuple.Tuple2;
+import sorcer.core.context.ServiceContext;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.service.*;
+import sorcer.service.modeling.Model;
 import sorcer.util.bdb.objects.UuidObject;
 import sorcer.util.url.sos.SdbUtil;
 
@@ -28,23 +32,28 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static sorcer.eo.operator.add;
+
 
 /**
  * @author Mike Sobolewski
  */
 @SuppressWarnings("unchecked")
-public class Entry<T> extends Tuple2<String, T> implements Dependency, Comparable<T>, Setter, Evaluation<T>, Reactive<T>, Arg {
+public class Entry<T> extends Tuple2<String, T> implements Service, Dependency, Comparable<T>, Setter, Evaluation<T>, Invocation<T>, Reactive<T>, Arg {
 	private static final long serialVersionUID = 5168783170981015779L;
 
 	public int index;
-	
+
 	protected String annotation;
 
 	// its arguments are always evaluated if active (either Evaluataion or Invocation type)
 	protected boolean isReactive = false;
 
-    // dependency management for this Entry
-    protected List<Evaluation> dependers = new ArrayList<Evaluation>();
+	// when context of this entry is changed then isValid == false
+	protected boolean isValid = true;
+
+	// dependency management for this Entry
+	protected List<Evaluation> dependers = new ArrayList<Evaluation>();
 
 	public Entry() {
 	}
@@ -54,7 +63,7 @@ public class Entry<T> extends Tuple2<String, T> implements Dependency, Comparabl
 			throw new IllegalArgumentException("path must not be null");
 		_1 = path;
 	}
-	
+
 	public Entry(final String path, final T value) {
 		if(path==null)
 			throw new IllegalArgumentException("path must not be null");
@@ -68,7 +77,7 @@ public class Entry<T> extends Tuple2<String, T> implements Dependency, Comparabl
 		}
 		this._2 = v;
 	}
-	
+
 	public Entry(final String path, final T value, final int index) {
 		this(path, value);
 		this.index = index;
@@ -139,16 +148,16 @@ public class Entry<T> extends Tuple2<String, T> implements Dependency, Comparabl
 	public String annotation() {
 		return annotation;
 	}
-	
+
 	public void annotation(String annotation) {
 		this.annotation = annotation;
 	}
-	
+
 	public boolean isAnnotated() {
 		return annotation != null;
 	}
-	
-	
+
+
 	/* (non-Javadoc)
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
@@ -161,13 +170,13 @@ public class Entry<T> extends Tuple2<String, T> implements Dependency, Comparabl
 		else
 			return -1;
 	}
-	
+
 	@Override
 	public int hashCode() {
 		int hash = _1.length() + 1;
 		return hash = hash * 31 + _1.hashCode();
 	}
-	
+
 	@Override
 	public boolean equals(Object object) {
 		if ((object instanceof Entry<?>
@@ -178,18 +187,26 @@ public class Entry<T> extends Tuple2<String, T> implements Dependency, Comparabl
 			return false;
 	}
 
-    @Override
-    public void addDependers(Evaluation... dependers) {
-        if (this.dependers == null)
-            this.dependers = new ArrayList<Evaluation>();
-        for (Evaluation depender : dependers)
-            this.dependers.add(depender);
-    }
+	public boolean isValid() {
+		return isValid;
+	}
 
-    @Override
-    public List<Evaluation> getDependers() {
-        return dependers;
-    }
+	public void isValid(boolean state) {
+		isValid = state;
+	}
+
+	@Override
+	public void addDependers(Evaluation... dependers) {
+		if (this.dependers == null)
+			this.dependers = new ArrayList<Evaluation>();
+		for (Evaluation depender : dependers)
+			this.dependers.add(depender);
+	}
+
+	@Override
+	public List<Evaluation> getDependers() {
+		return dependers;
+	}
 
 	@Override
 	public String toString() {
@@ -205,7 +222,12 @@ public class Entry<T> extends Tuple2<String, T> implements Dependency, Comparabl
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
-		return "[" + _1 + ":" + en + ":" + index + "]";
+		return "[" + _1 + ":" + en + "]";
+	}
+
+	public Entry(String path, T value, boolean isPersistant, int index) {
+		this(path, value, index);
+		this.isPersistent = isPersistant;
 	}
 
 	@Override
@@ -218,4 +240,45 @@ public class Entry<T> extends Tuple2<String, T> implements Dependency, Comparabl
 		return this;
 	}
 
+	@Override
+	public Mogram service(Mogram mogram, Transaction txn) throws TransactionException,
+			MogramException, RemoteException {
+		Context cxt = null;
+		Context out = new ServiceContext();
+		if (mogram instanceof EntModel) {
+			if (_2 != null && _2 != Context.none)
+				add((Context)mogram, this);
+			((ServiceContext)mogram).getModelStrategy().getResponsePaths().add(_1);
+			out = (Context) ((Model)mogram).getResponse();
+		} else if (mogram instanceof ServiceContext) {
+			if (_2 == null || _2 == Context.none) {
+				out.putValue(_1, ((Context)mogram).getValue(_1));
+			} else {
+				if (_2 instanceof Evaluation) {
+					this.setReactive(true);
+					((ServiceContext)mogram).putValue(_1, this);
+				} else {
+					((ServiceContext)mogram).putValue(_1, _2);
+				}
+				out.putValue(_1, ((ServiceContext) mogram).getValue(_1));
+			}
+		} else if (mogram instanceof Exertion) {
+			if (_2 != null && _2 != Context.none)
+				((Exertion) mogram).getContext().putValue(_1, _2);
+			cxt = ((Exertion) mogram.exert(txn)).getContext();
+			out.putValue(_1, cxt.getValue(_1));
+		}
+		return out;
+	}
+
+	@Override
+	public Mogram service(Mogram mogram) throws TransactionException,
+			MogramException, RemoteException {
+		return service(mogram, null);
+	}
+
+	@Override
+	public T invoke(Context<T> context, Arg... entries) throws InvocationException, RemoteException {
+		return _2;
+	}
 }

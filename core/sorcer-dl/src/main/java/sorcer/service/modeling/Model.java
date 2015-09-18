@@ -29,7 +29,7 @@ import java.rmi.RemoteException;
 public interface Model extends Mogram, Dependency {
 
     /**
-     * Returns the context of all response outputs of this model with a provided configuration.
+     * Returns the context of all responses of this model with a provided configuration.
      *
      * @param args optional configuration arguments
      * @return
@@ -69,6 +69,15 @@ public interface Model extends Mogram, Dependency {
     public Context getInputs() throws ContextException, RemoteException;
 
     /**
+     * Returns the input context of this model with all inputs (in and inout directions).
+     *
+     * @return the input context
+     * @throws ContextException
+     * @throws RemoteException
+     */
+    public Context getAllInputs() throws ContextException, RemoteException;
+
+    /**
      * Returns the output context of this model.
      *
      * @return the output context
@@ -105,4 +114,23 @@ public interface Model extends Mogram, Dependency {
      * @param signature
      */
     public void setBuilder(Signature signature);
+
+    /**
+     * Returns a value of the object at the path as is
+     * (no evaluation or invocation on this object).
+     *
+     * @param path
+     *            the variable name
+     * @return this model value at the path
+     * @throws ModelException
+     */
+    public Object get(String path) throws ModelException;
+
+    /**
+     * Returns a model controller for this model.
+     *
+     * @return this model control strategy
+     * @throws ModelException
+     */
+    public MogramStrategy getModelStrategy() throws ModelException;
 }

@@ -22,18 +22,24 @@ public class OutputEntry<T> extends Entry<T> {
 
 	private static final long serialVersionUID = 1L;
 
+	public OutputEntry() {
+		super();
+	}
+
+	public OutputEntry(String path) {
+		super(path);
+	}
+
 	public OutputEntry(String path, T value) {
-		this(path, value, 0);
+		super(path, value, 0);
 	}
 
 	public OutputEntry(String path, T value, int index) {
-		super(path, value);
-		this.index = index;
+		super(path, value, index);
 	}
 
 	public OutputEntry(String path, T value, boolean isPersistant, int index) {
-		this(path, value, index);
-		this.isPersistent = isPersistant;
+		super(path, value, isPersistant, index);
 	}
 
 }

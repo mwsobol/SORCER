@@ -106,8 +106,12 @@ public class ParModel<T> extends EntModel<T> implements Invocation<T>, Mappable<
 				Signature.ReturnPath rp = returnPath(entries);
 				if (rp != null)
 					val = (T) getReturnValue(rp);
-				else
+				else if (modelStrategy.getResponsePaths() != null
+						&& modelStrategy.getResponsePaths().size() == 1) {
+					val = asis(modelStrategy.getResponsePaths().get(0));
+				} else {
 					val = (T) super.getValue(path, entries);
+				}
 			}
 
 			if ((val instanceof Par) && (((Par) val).asis() instanceof Variability)) {
@@ -120,9 +124,9 @@ public class ParModel<T> extends EntModel<T> implements Invocation<T>, Mappable<
 
 			if (val != null && val instanceof Evaluation) {
 				return (T) ((Evaluation) val).getValue(entries);
-			} else if (path == null && val == null && runtime.getResponsePaths() != null) {
-				if (runtime.getResponsePaths().size() == 1)
-					return (T) getValue(runtime.getResponsePaths().get(0), entries);
+			} else if (path == null && val == null && modelStrategy.getResponsePaths() != null) {
+				if (modelStrategy.getResponsePaths().size() == 1)
+					return (T) getValue(modelStrategy.getResponsePaths().get(0), entries);
 				else
 					return (T) getResponse();
 			} else {
@@ -200,28 +204,34 @@ public class ParModel<T> extends EntModel<T> implements Invocation<T>, Mappable<
 	public ParModel append(Arg... objects) throws ContextException,
 			RemoteException {
 		Par p = null;
+		boolean changed = false;
 		for (Arg obj : objects) {
 			if (obj instanceof Par) {
 				p = (Par) obj;
-				addPar(p);
 			} else if (obj instanceof Entry) {
 				putValue((String) ((Entry) obj).key(),
 						((Entry) obj).value());
 			} else if (obj instanceof Identifiable) {
-				String pn = ((Identifiable) obj).getName();
+				String pn = obj.getName();
 				p = new Par(pn, obj, new ParModel(pn).append(this));
 			}
 
-			if (p != null)
+			if (p != null) {
 				appendPar(p);
+				changed = true;
+			}
 		}
-		isChanged = true;
+		if (changed) {
+			isChanged = true;
+			updateEvaluations();
+		}
 		return this;
 	}
 	
 	public ParModel add(Identifiable... objects) throws ContextException,
 			RemoteException {
 		Par p = null;
+		boolean changed = false;
 		for (Identifiable obj : objects) {
 			String pn = obj.getName();
 			if (obj instanceof Par) {
@@ -234,11 +244,27 @@ public class ParModel<T> extends EntModel<T> implements Invocation<T>, Mappable<
 				putValue(pn, obj);
 			}
 			
-			if (p != null)
+			if (p != null) {
 				addPar(p);
+				changed = true;
+			}
 		}
-		isChanged = true;
+		if (changed) {
+			isChanged = true;
+			updateEvaluations();
+		}
 		return this;
+	}
+
+	private void updateEvaluations() {
+		Iterator<Map.Entry<String,T>>  i = entryIterator();
+		while (i.hasNext()) {
+			Map.Entry<String,T> entry = i.next();
+			Object val = entry.getValue();
+			if (val instanceof Entry && ((Entry)val).value() instanceof Evaluation) {
+				((Entry) val).isValid(false);
+			}
+		}
 	}
 
 	/*

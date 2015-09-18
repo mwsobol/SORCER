@@ -15,8 +15,6 @@ import sorcer.service.Strategy.Access;
 import sorcer.service.Strategy.Provision;
 import sorcer.service.Strategy.Wait;
 
-import java.rmi.RemoteException;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
@@ -51,7 +49,7 @@ public class TaskTest {
 	}
 	
 	@Test
-	public void arithmeticTaskTest() throws ExertionException, SignatureException, ContextException, RemoteException {
+	public void arithmeticTaskTest() throws Exception {
 		//to test tracing of execution enable ServiceExertion.debug 
 		ServiceExertion.debug = true;
 		
@@ -105,9 +103,27 @@ public class TaskTest {
 //		logger.info("get value: " + get(task));
 //		assertTrue("Wrong value for 12.0", get(task).equals(12.0));
 	}
-	
 
 	@Test
+	public void arithmeticCustomContextTest() throws Exception {
+		//to test tracing of execution enable ServiceExertion.debug
+		ServiceExertion.debug = true;
+
+		Task task = task("add",
+				sig("add", AdderImpl.class),
+				context(CustomContext.class, inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
+						result("result/y")));
+
+		// EXERTING
+		task = exert(task);
+		logger.info("exerted: " + task);
+		assertTrue("Wrong value for 100.0", (Double) get(task) == 100.0);
+		print(exceptions(task));
+		assertTrue(exceptions(task).size() == 0);
+		print(trace(task));
+	}
+
+		@Test
 	public void argTaskTest() throws Exception {
 		Task t4 = task("t4", sig("multiply", new Multiply()),
 				context(
@@ -116,7 +132,7 @@ public class TaskTest {
 						result("result/y")));
 
 		//logger.info("t4: " + value(t4));
-		assertEquals("Wrong value for 500.0", value(t4), 500.0);
+		assertTrue(value(t4).equals(500.0));
 	}
 
 	@Test
@@ -131,12 +147,12 @@ public class TaskTest {
 
 		logger.info("sFi: " + sFi(task));
 		assertTrue(sFis(task).size() == 2);
-		logger.info("selFis: " + selFi(task));
-		assertTrue(selFi(task).equals("net"));
+		logger.info("selFis: " + fiName(task));
+		assertTrue(fiName(task).equals("net"));
 
 		task = exert(task, fi("object"));
 		logger.info("exerted: " + context(task));
-		assertTrue(selFi(task).equals("object"));
+		assertTrue(fiName(task).equals("object"));
 		assertTrue(get(task).equals(100.0));
 	}
 
@@ -152,12 +168,12 @@ public class TaskTest {
 
 		logger.info("sFi: " + sFi(task));
 		assertTrue(sFis(task).size() == 2);
-		logger.info("selFis: " + selFi(task));
-		assertTrue(selFi(task).equals("net"));
+		logger.info("selFis: " + fiName(task));
+		assertTrue(fiName(task).equals("net"));
 
 		task = exert(task, fi("net"));
 		logger.info("exerted: " + context(task));
-		assertTrue(selFi(task).equals("net"));
+		assertTrue(fiName(task).equals("net"));
 		assertTrue("Wrong value for 100.0", (Double)get(task) == 100.0);
 	}
 	

@@ -37,10 +37,12 @@ import org.fusesource.jansi.AnsiConsole;
 import org.rioproject.impl.config.DynamicConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sorcer.core.provider.exerter.ServiceShell;
 import sorcer.jini.lookup.entry.SorcerServiceInfo;
 import sorcer.netlet.util.LoaderConfiguration;
 import sorcer.netlet.util.ScriptExertException;
 import sorcer.security.util.SorcerPrincipal;
+import sorcer.service.Accessor;
 import sorcer.service.EvaluationException;
 import sorcer.service.ExertionInfo;
 import sorcer.tools.shell.cmds.*;
@@ -76,18 +78,15 @@ import static sorcer.util.StringUtils.tName;
 public class NetworkShell implements DiscoveryListener, INetworkShell {
 
     public static final String NSH_HELP="SORCER Network Shell - command line options:\n" +
-             "\t<file[.ext]> \t\t- exert the netlet script provided in the specified file\n" +
+             "\t<file[.ext]> \t\t- exert the sorcer.netlet script provided in the specified file\n" +
              "\t-b <file[.ext]> \t- run batch file - start non-interactive shell\n" +
              "\t\t\t\tand execute commands specified in file\n" +
              "\t-c <command [args]> \t- start non-interactive shell and run <command> with arguments\n" +
              "\t\t\t\tto see the full list of available commands run 'nsh -c help'\n" +
              "\t-e <file[.ext]> \t- evaluate groovy script contained in specified file\n" +
-             "\t-f <file[.ext]> \t- exert the netlet script provided in the specified file\n"+
+             "\t-f <file[.ext]> \t- exert the sorcer.netlet script provided in the specified file\n"+
              "\t-help \t\t\t- show this help\n" +
              "\t-version \t\t- show NSH version info";
-
-
-
 
 
     //public static final String CONFIG_EXT_PATH = Sorcer.get + "/configs/shell/configs/nsh-start-ext.config";
@@ -95,15 +94,13 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 
 	static private boolean debug = false;
 
-    public static final String[] CONFIG_FILES = { CONFIG_PATH };
-    //CONFIG_EXT_PATH,
+	static private boolean isRemoteLogging = true;
 
+	public static final String[] CONFIG_FILES = { CONFIG_PATH };
 
     public static int selectedRegistrar = 0;
 
     private static List<ServiceRegistrar> registrars = new CopyOnWriteArrayList<ServiceRegistrar>();
-
-//    static private boolean isRemoteLogging = true;
 
 	static private String shellName = "nsh";
 
@@ -126,6 +123,8 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 	public static Logger logger = LoggerFactory.getLogger(COMPONENT);
 
 	protected static NetworkShell instance;
+
+	protected static ServiceShell serviceShell;
 
 	protected static String[] groups;
 
@@ -244,9 +243,9 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 		}
 
 		try {
-
-
-			// default shellOutput
+            /* TODO: Need to provide a configuration*/
+            Accessor.create();
+            // default shellOutput
 			shellOutput = System.out;
 			if (interactive) {
                 shellOutput.println(WELCOME_HEADER_1);
@@ -379,6 +378,10 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
     public boolean isDebug() {
         return debug;
     }
+
+	public boolean isRemoteLogging() {
+		return isRemoteLogging;
+	}
 
 	public static SorcerPrincipal getPrincipal() {
 		return principal;
@@ -1365,6 +1368,8 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 		} catch (NoSuchEntryException e) {
 			// leave null
 		}
+		isRemoteLogging = (Boolean) sysConfig.getEntry(CONFIG_COMPONENT,
+				"remoteLogging", boolean.class, Boolean.TRUE);
 		String[] result = null;
 		if (loginContext != null) {
 			loginContext.login();
@@ -1594,7 +1599,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 
 
     static public File huntForTheScriptFile(String input) throws IOException {
-        String[] standardExtensions = { ".ntl", ".xrt", ".exertlet", ".netlet", ".net",
+        String[] standardExtensions = { ".ntl", ".xrt", ".exertion", ".mod", ".model", ".sorcer.netlet", ".net",
                 ".groovy", ".gvy", ".gy", ".gsh" };
         return huntForTheScriptFile(input, standardExtensions);
     }
@@ -1604,7 +1609,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 	 * Hunt for the script file, doesn't bother if it is named precisely.
 	 * 
 	 * Tries in this order: - actual supplied name - name.ex - name.exertlet -
-	 * name.netlet - name.net - name.groovy - name.gvy - name.gy - name.gsh
+	 * name.sorcer.netlet - name.net - name.groovy - name.gvy - name.gy - name.gsh
 	 * 
 	 * @throws IOException
 	 */
@@ -1738,6 +1743,14 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 		aliases.put("less", "exec");
         aliases.put("sb", "boot");
         aliases.put("sorcer-boot", "boot");
+	}
+
+	public ServiceShell getServiceShell() {
+		return serviceShell;
+	}
+
+	public void setServiceShell(ServiceShell serviceShell) {
+		this.serviceShell = serviceShell;
 	}
 
     public void addAlias(String alias, String command) {

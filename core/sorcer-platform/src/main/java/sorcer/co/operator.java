@@ -24,7 +24,9 @@ import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.par.Par;
 import sorcer.core.context.model.srv.Srv;
 import sorcer.core.provider.DatabaseStorer;
+import sorcer.core.signature.NetletSignature;
 import sorcer.core.signature.ObjectSignature;
+import sorcer.netlet.ScriptExerter;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
 import sorcer.service.modeling.Variability;
@@ -35,6 +37,7 @@ import sorcer.util.Table;
 import sorcer.util.bdb.objects.UuidObject;
 import sorcer.util.url.sos.SdbUtil;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.net.MalformedURLException;
@@ -95,6 +98,22 @@ public class operator {
 		return new Tuple6<T1,T2,T3,T4,T5,T6>( x1, x2, x3, x4, x5, x6 );
 	}
 
+	public static <T> List<T> inValues(Context<T> context) throws ContextException {
+		return ((ServiceContext)context).getInValues();
+	}
+
+	public static <T> List<T> inPaths(Context<T> context) throws ContextException {
+		return ((ServiceContext)context).getInPaths();
+	}
+
+	public static <T> List<T> outValues(Context<T> context) throws ContextException {
+		return ((ServiceContext)context).getOutValues();
+	}
+
+	public static <T> List<T> outPaths(Context<T> context) throws ContextException {
+		return ((ServiceContext)context).getOutPaths();
+	}
+
 	public static Signature.From outPaths(String... elems) {
 		return new Signature.From(elems);
 	}
@@ -103,6 +122,9 @@ public class operator {
         return new Signature.In(elems);
     }
 
+	public static Path file(String filename) {
+		return new Path (filename);
+	}
 	public static Class[] types(Class... classes) {
 		return classes;
 	}
@@ -401,6 +423,10 @@ public class operator {
 						((Setter) entry).setPersistent(true);
 						dburl = SdbUtil.store(obj);
 						((Setter)entry).setValue(dburl);
+						if (object instanceof Par) {
+							// its value is now persisted
+							((Par)object)._2 = null;
+						}
 						return dburl;
 					}
 				}
@@ -453,7 +479,7 @@ public class operator {
 		return url.getContent();
 	}
 
-	public static URL update(Object object) throws ExertionException,
+	public static URL update(Object object) throws MogramException,
 			SignatureException, ContextException {
 		return SdbUtil.update(object);
 	}
@@ -482,8 +508,8 @@ public class operator {
 		return collection.size();
 	}
 
-	public static int size(Context context) {
-		return context.size();
+	public static int size(Model context) {
+		return ((ServiceContext)context).size();
 	}
 
 	public static int size(Map map) {
@@ -655,6 +681,38 @@ public class operator {
 		return map;
 	}
 
+	public static Object asis(Entry entry)
+			throws ContextException {
+		if (entry instanceof Par) {
+			if (entry._2 != null && entry.isValid())
+				return entry._2;
+			else
+				return entry.value();
+		}
+		else
+			return entry._2;
+	}
+
+	public static <T> T get(Context<T> context, String path)
+			throws ContextException {
+		return  context.asis(path);
+	}
+
+	public static <T> T get(Model model, String path)
+			throws ContextException {
+		return  ((ServiceContext<T>)model).asis(path);
+	}
+
+	public static <T> T asis(Context<T> context, String path)
+			throws ContextException {
+		return  context.asis(path);
+	}
+
+	public static <T> T asis(Model model, String path)
+			throws ContextException {
+		return  ((ServiceContext<T>)model).asis(path);
+	}
+
     public static <T> T asis(Mappable<T> mappable, String path)
             throws ContextException {
         return  mappable.asis(path);
@@ -679,8 +737,8 @@ public class operator {
 			parModel.getData().remove(path);
 	}
 
-	public static void dependsOn(Model model, Entry... entries) {
-        Map<String, List<String>> dm = ((ServiceContext)model).getRuntime().getDependentPaths();
+	public static Model dependsOn(Model model, Entry... entries) {
+        Map<String, List<String>> dm = ((ServiceContext)model).getModelStrategy().getDependentPaths();
         String path = null;
         Object dependentPaths = null;
         for (Entry e : entries) {
@@ -691,10 +749,11 @@ public class operator {
                 dm.put(path, (List<String>)dependentPaths);
             }
         }
+		return model;
     }
 
     public static Map<String, List<String>> dependentPaths(Model model) {
-         return ((ServiceContext)model).getRuntime().getDependentPaths();
+         return ((ServiceContext)model).getModelStrategy().getDependentPaths();
     }
     
     public static Dependency dependsOn(Dependency dependee,  Evaluation... dependers) throws ContextException {
@@ -799,7 +858,20 @@ public class operator {
 	 */
 	public static Object instance(Signature signature)
 			throws SignatureException {
-		if ((signature.getSelector() == null
+		if (signature instanceof NetletSignature) {
+			String source = ((NetletSignature) signature).getServiceSource();
+			if (source != null) {
+				try {
+					ScriptExerter se = new ScriptExerter(System.out, null, Sorcer.getWebsterUrl(), true);
+					se.readFile(new File(source));
+					return se.parse();
+				} catch (Throwable e) {
+					throw new SignatureException(e);
+				}
+			} else {
+				throw new SignatureException("missing netlet filename");
+			}
+		} else if ((signature.getSelector() == null
 				&& ((ObjectSignature) signature).getInitSelector() == null)
 				|| (signature.getSelector() != null && signature.getSelector().equals("new"))
 				|| (((ObjectSignature) signature).getInitSelector() != null

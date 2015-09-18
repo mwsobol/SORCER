@@ -1,7 +1,6 @@
 package sorcer.core.provider.logger.ui;
 
 import java.awt.BorderLayout;
-import java.awt.ComponentOrientation;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -36,8 +35,8 @@ public class FilterPane extends Observable {
 	private String selectedLevel;
 	private JComboBox levelComboBox;
 	private JTextField searchField;
-	private final static String[] levels = { "ALL", "FINEST", "FINER", "FINE",
-			"CONFIG", "INFO", "WARNING", "SEVERE" };
+	private final static String[] levels = { "ALL", "TRACE", "DEBUG",
+			"INFO", "WARN", "ERROR", "OFF" };
 
 	public FilterPane() {
 		initialize();

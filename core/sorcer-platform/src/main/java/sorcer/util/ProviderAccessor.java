@@ -17,25 +17,32 @@
  */
 package sorcer.util;
 
+import net.jini.config.Configuration;
+import net.jini.config.EmptyConfiguration;
 import net.jini.core.entry.Entry;
 import net.jini.core.lookup.ServiceID;
 import net.jini.core.lookup.ServiceItem;
 import net.jini.core.lookup.ServiceMatches;
 import net.jini.core.lookup.ServiceTemplate;
 import net.jini.lookup.ServiceItemFilter;
+import net.jini.lookup.entry.Name;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import sorcer.core.SorcerConstants;
 import sorcer.core.provider.Cataloger;
 import sorcer.core.provider.Provider;
-import sorcer.core.SorcerConstants;
 import sorcer.core.signature.NetSignature;
+import sorcer.jini.lookup.entry.SorcerServiceInfo;
 import sorcer.river.Filters;
 import sorcer.service.Accessor;
-import sorcer.service.DynamicAccessor;
 import sorcer.service.Signature;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.Arrays;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.List;
+
+import static sorcer.core.SorcerConstants.ANY;
 
 /**
  * A utility class that provides access to SORCER services and some
@@ -55,9 +62,7 @@ import org.slf4j.LoggerFactory;
  * @see ServiceAccessor
  */
 
-public class ProviderAccessor extends ServiceAccessor implements
-		DynamicAccessor {
-
+public class ProviderAccessor extends ServiceAccessor {
 	static Logger logger = LoggerFactory.getLogger(ProviderAccessor.class.getName());
 
     /**
@@ -68,8 +73,13 @@ public class ProviderAccessor extends ServiceAccessor implements
 
     protected static ProviderNameUtil providerNameUtil = new SorcerProviderNameUtil();
 
-	public ProviderAccessor() {
-		// Nothing to do, uses the singleton design pattern
+    /* Zero-arg constructor for testing purposes, should not be used without a configuration */
+    public ProviderAccessor() {
+        this(EmptyConfiguration.INSTANCE);
+    }
+
+	public ProviderAccessor(Configuration configuration) {
+		super(configuration);
 	}
 
     /**
@@ -80,10 +90,9 @@ public class ProviderAccessor extends ServiceAccessor implements
      *            the signature of service provider
      * @return a SORCER provider service
      */
-    public static Provider getProvider(Signature signature) {
-        return (Provider)Accessor.getService(signature);
+    public Provider getProvider(Signature signature) {
+        return (Provider)getService(signature);
     }
-
 
     /**
      * Returns a SORCER service provider with the specified service type, using
@@ -93,10 +102,9 @@ public class ProviderAccessor extends ServiceAccessor implements
      *            a provider service type (interface)
      * @return a SORCER provider service
      */
-    public final static Provider getProvider(Class serviceType) {
+    public Provider getProvider(Class serviceType) {
         return getProvider(new NetSignature(serviceType));
     }
-
 
     /**
 	 * Returns a SORCER service provider registered with the most significant
@@ -110,7 +118,7 @@ public class ProviderAccessor extends ServiceAccessor implements
 	 */
 	public Object getService(long mostSig, long leastSig) {
 		ServiceID serviceID = new ServiceID(mostSig, leastSig);
-		return getService(serviceID, null, null, SorcerEnv.getLookupGroups());
+		return getService(serviceID, null, null);
 	}
 
 	/**
@@ -124,6 +132,7 @@ public class ProviderAccessor extends ServiceAccessor implements
 	 *            a provider service type (interface)
 	 * @return a SORCER provider service
 	 */
+    @SuppressWarnings("unchecked")
 	public <T> T getProvider(String providerName, Class<T> serviceType) {
 		Provider servicer = null;
 		if (providerName != null) {
@@ -138,8 +147,10 @@ public class ProviderAccessor extends ServiceAccessor implements
 			//servicer = (Service)ProviderLookup.getService(providerName, serviceType);
 			cataloger = getLocalCataloger();
 			if (cataloger != null) {
+                long t0 = System.currentTimeMillis();
+                logger.info("Use Cataloger to discover {} {}", providerName, serviceType.getName());
 				int tryNo = 0;
-				while (tryNo < ServiceAccessor.LUS_REAPEAT) {
+				while (tryNo < ServiceAccessor.LUS_REPEAT) {
 					servicer = cataloger.lookup(providerName, serviceType);
 					//servicer = (Service)cataloger.lookupItem(providerName, serviceType).service;
 					if (servicer != null)
@@ -148,14 +159,20 @@ public class ProviderAccessor extends ServiceAccessor implements
 					Thread.sleep(ServiceAccessor.WAIT_FOR);
 					tryNo++;
 				}
+                logger.info("Waited {} millis to discover {} {}", (System.currentTimeMillis()-t0), providerName, serviceType.getName());
 			}
-			// fall back on Jini LUS
-			if (servicer == null) {
-				servicer = (Provider) super.getService(providerName, serviceType);
-			}
+            // fall back on Jini LUS
+            if (servicer == null) {
+                if(cataloger!=null)
+                    logger.info("Could not find {} {} in Cataloger, discover using Lookup service",
+                                providerName, serviceType.getName());
+                else
+                    logger.info("No Cataloger, discover {} {} using Lookup service",
+                                providerName, serviceType==null?"<null>" : serviceType.getName());
+                servicer = (Provider) super.getService(providerName, serviceType);
+            }
 		} catch (Throwable ex) {
-			logger.error(ProviderAccessor.class.getName(), "getService", ex);
-			ex.printStackTrace();
+			logger.error("getService {} {}", providerName, serviceType==null?"<null>": serviceType.getName(), ex);
 		}
 		return (T) servicer;
 	}
@@ -190,7 +207,7 @@ public class ProviderAccessor extends ServiceAccessor implements
 	 * @return a SORCER provider
 	 */
 	public Provider getProvider(Entry[] attributes) {
-		return (Provider) getService(null, null, attributes, SorcerEnv.getLookupGroups());
+		return (Provider) getService(null, null, attributes);
 	}
 
 	/**
@@ -202,7 +219,7 @@ public class ProviderAccessor extends ServiceAccessor implements
 	 * @return a SORCER provider
 	 */
 	public Provider getProvider(Class[] serviceTypes) {
-		return (Provider) getService(null, serviceTypes, null, SorcerEnv.getLookupGroups());
+		return (Provider) getService(null, serviceTypes, null);
 	}
 
 	/**
@@ -217,10 +234,6 @@ public class ProviderAccessor extends ServiceAccessor implements
         return getCataloger(providerNameUtil.getName(Cataloger.class)) ;
 	}
 
-    public static Cataloger getCataloger() {
-        return new ProviderAccessor().getLocalCataloger();
-    }
-
 	/**
 	 * Returns a SORCER Cataloger service provider using JINI discovery.
 	 *
@@ -233,7 +246,10 @@ public class ProviderAccessor extends ServiceAccessor implements
             if (catIsOk) {
 				return cataloger;
 			} else {
-                ServiceItem[] serviceItems = getServiceItems(Accessor.getServiceTemplate(null, serviceName, new Class[]{Cataloger.class}, null), 1, 1, Filters.any(), SorcerEnv.getLookupGroups());
+                ServiceItem[] serviceItems = getServiceItems(getServiceTemplate(null, serviceName, new Class[]{Cataloger.class}, null),
+                                                             1,
+                                                             1,
+                                                             Filters.any());
                 cataloger = serviceItems.length == 0 ? null : (Cataloger) serviceItems[0].service;
                 if (Accessor.isAlive((Provider)cataloger))
                     return cataloger;
@@ -241,7 +257,7 @@ public class ProviderAccessor extends ServiceAccessor implements
                     return null;
             }
 		} catch (Exception e) {
-			logger.error(ProviderAccessor.class.getName(), "getService", e);
+			logger.error("Problem getting Cataloger", e);
 			return null;
 		}
 	}
@@ -262,7 +278,7 @@ public class ProviderAccessor extends ServiceAccessor implements
 	 */
 	protected Provider lookup(String providerName, Class<Provider> primaryInterface) {
 		try {
-			// check if the cataloger is alive then return a reqested service
+			// check if the cataloger is alive then return a requested service
 			// provider
 			if (Accessor.isAlive((Provider) cataloger))
 				return cataloger.lookup(providerName, primaryInterface);
@@ -270,7 +286,7 @@ public class ProviderAccessor extends ServiceAccessor implements
 				// try to get a new cataloger and lookup again
 				cataloger = getService(providerNameUtil.getName(Cataloger.class), Cataloger.class);
 				if (cataloger != null) {
-					logger.info("Got service provider from Cataloger");
+					logger.debug("Got service provider from Cataloger");
 					return cataloger.lookup(providerName, primaryInterface);
 				} else {
 					// just get a provider without a Cataloger, use directly
@@ -286,7 +302,7 @@ public class ProviderAccessor extends ServiceAccessor implements
 	}
 
     @Override
-    public ServiceItem[] getServiceItems(ServiceTemplate template, int minMatches, int maxMatches, ServiceItemFilter filter, String[] groups) {
+    public ServiceItem[] getServiceItems(ServiceTemplate template, int minMatches, int maxMatches, ServiceItemFilter filter) {
         assert template != null;
 
         // cataloger throws NPE if attributeSetTemplates is null
@@ -299,14 +315,46 @@ public class ProviderAccessor extends ServiceAccessor implements
             if (cataloger != null) {
 			    try {
                     ServiceMatches matches = cataloger.lookup(template, maxMatches);
+                    logger.debug("Cataloger returned {} matches for {}", matches.totalMatches, formatServiceTemplate(template));
 			        ServiceItem[] matching = Filters.matching(matches.items, filter);
-                    if (matching.length > 0) return matching;
-					else return super.getServiceItems(template, minMatches, maxMatches, filter, groups, 3);
+                    if (matching.length > 0) {
+                        return matching;
+                    } else {
+                        return super.getServiceItems(template, minMatches, maxMatches, filter);
+                    }
                 } catch (RemoteException e) {
                     logger.error( "Problem with Cataloger, falling back", e);
                 }
             }
         }
-		return super.getServiceItems(template, minMatches, maxMatches, filter, groups);
+		return super.getServiceItems(template, minMatches, maxMatches, filter);
+    }
+
+    ServiceTemplate getServiceTemplate(ServiceID serviceID,
+                                       String providerName,
+                                       Class[] serviceTypes,
+                                       String[] publishedServiceTypes) {
+        Class[] types;
+        List<Entry> attributes = new ArrayList<>(2);
+
+        if (providerName != null && !providerName.isEmpty() && !ANY.equals(providerName))
+            attributes.add(new Name(providerName));
+
+        if (publishedServiceTypes != null) {
+            SorcerServiceInfo st = new SorcerServiceInfo();
+            st.publishedServices = publishedServiceTypes;
+            attributes.add(st);
+        }
+
+        if (serviceTypes == null) {
+            types = new Class[] { Provider.class };
+        } else {
+            types = serviceTypes;
+        }
+
+        logger.debug("getServiceTemplate >> \n serviceID: {}\nproviderName: {}\nserviceTypes: {}\npublishedServiceTypes: {}",
+                     serviceID, providerName, StringUtils.arrayToString(serviceTypes), StringUtils.arrayToString(publishedServiceTypes));
+
+        return new ServiceTemplate(serviceID, types, attributes.toArray(new Entry[attributes.size()]));
     }
 }

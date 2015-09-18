@@ -8,16 +8,15 @@ import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.Adder;
 import sorcer.arithmetic.provider.impl.AdderImpl;
-import sorcer.service.Context;
-import sorcer.service.Service;
-import sorcer.service.Signature;
-import sorcer.service.SignatureException;
+import sorcer.core.provider.Shell;
+import sorcer.service.*;
 
 import java.lang.reflect.Proxy;
 import java.util.Calendar;
 import java.util.Date;
 
 import static org.junit.Assert.*;
+import static sorcer.co.operator.file;
 import static sorcer.co.operator.inEnt;
 import static sorcer.co.operator.instance;
 import static sorcer.eo.operator.*;
@@ -32,7 +31,7 @@ import static sorcer.mo.operator.outConn;
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/sml")
 public class Signatures {
-	private final static Logger logger = LoggerFactory.getLogger(Signatures.class.getName());
+	private final static Logger logger = LoggerFactory.getLogger(Signatures.class);
 
 	@Test
 	public void newInstance() throws Exception {
@@ -58,8 +57,8 @@ public class Signatures {
 		logger.info("provider of s: " + prv);
 		assertTrue(prv instanceof Date);
 
-		logger.info("getTime: " + reply(service("gt", s)));
-		assertTrue(reply(service("gt", s)) instanceof Long);
+		logger.info("getTime: " + exec(xrt("gt", s)));
+		assertTrue(exec(xrt("gt", s)) instanceof Long);
 
 	}
 
@@ -75,10 +74,8 @@ public class Signatures {
 		logger.info("selector of s: " + selector(s));
 		logger.info("service type of s: " + type(s));
 		assertTrue(prv instanceof Date);
-		service("time", s);
-
-		logger.info("time: " + reply(service("time", s)));
-		assertTrue(reply(service("time", s)) instanceof Long);
+		logger.info("time: " + exec(xrt("time", s)));
+		assertTrue(exec(xrt("time", s)) instanceof Long);
 
 	}
 
@@ -91,8 +88,8 @@ public class Signatures {
 		logger.info("provider of s: " + prv);
 		assertTrue(prv == Math.class);
 
-		logger.info("random: " + reply(service("random", ms)));
-		assertTrue(reply(service("random", ms)) instanceof Double);
+		logger.info("random: " + exec(xrt("random", ms)));
+		assertTrue(exec(xrt("random", ms)) instanceof Double);
 
 		ms = sig(Math.class, "max");
 		Context cxt = context(
@@ -100,9 +97,9 @@ public class Signatures {
 				args(new Object[]{200.11, 3000.0}));
 
 		// request the service
-		logger.info("max: " + reply(service("max", ms, cxt)));
-		assertTrue(reply(service("max", ms, cxt)) instanceof Double);
-		assertTrue(reply(service("max", ms, cxt)).equals(3000.0));
+		logger.info("max: " + exec(task("max", ms, cxt)));
+		assertTrue(exec(task("max", ms, cxt)) instanceof Double);
+		assertTrue(exec(task("max", ms, cxt)).equals(3000.0));
 
 	}
 
@@ -115,29 +112,29 @@ public class Signatures {
 		assertTrue(instance(sig).equals(3000.0));
 	}
 
-    @Test
-    public void StaticMethodWithNoArgs()  {
-        Exception thrown = null;
-        try {
-            Signature sig = sig(Math.class, "random");
-            logger.info("random: " + instance(sig));
-        } catch(Exception e) {
-            thrown = e;
-        }
-        assertNull(thrown);
-    }
+	@Test
+	public void StaticMethodWithNoArgs()  {
+		Exception thrown = null;
+		try {
+			Signature sig = sig(Math.class, "random");
+			logger.info("random: " + instance(sig));
+		} catch(Exception e) {
+			thrown = e;
+		}
+		assertNull(thrown);
+	}
 
-    @Test
-    public void StaticMethodWithNoArgs2()  {
-        Exception thrown = null;
-        try {
-            Signature sig = sig("random", Math.class);
-            logger.info("random: " + instance(sig));
-        } catch(Exception e) {
-            thrown = e;
-        }
-        assertNull(thrown);
-    }
+	@Test
+	public void StaticMethodWithNoArgs2()  {
+		Exception thrown = null;
+		try {
+			Signature sig = sig("random", Math.class);
+			logger.info("random: " + instance(sig));
+		} catch(Exception e) {
+			thrown = e;
+		}
+		assertNull(thrown);
+	}
 
 	@Test
 	public void referencingFactoryClass() throws Exception {
@@ -154,9 +151,9 @@ public class Signatures {
 		assertTrue(prv instanceof Calendar);
 
 		// request the service
-		logger.info("time: " + reply(service("month", ps, cxt)));
-		assertTrue(reply(service("month", ps, cxt)) instanceof Integer);
-		assertTrue(reply(service("month", ps, cxt)).equals(((Calendar) prv).get(Calendar.MONTH)));
+		logger.info("time: " + exec(task("month", ps, cxt)));
+		assertTrue(exec(task("month", ps, cxt)) instanceof Integer);
+		assertTrue(exec(task("month", ps, cxt)).equals(((Calendar) prv).get(Calendar.MONTH)));
 
 	}
 
@@ -164,13 +161,8 @@ public class Signatures {
 	@Test
 	public void localService() throws Exception {
 
-		Signature lps = sig("add", AdderImpl.class);
-		Object prv = provider(lps);
-		assertTrue(prv instanceof AdderImpl);
-		assertFalse(prv instanceof Proxy);
-
 		// request the local service
-		Service as = service("as", lps,
+		Service as = task("as", sig("add", AdderImpl.class),
 				context("add",
 						inEnt("arg/x1", 20.0),
 						inEnt("arg/x2", 80.0),
@@ -184,14 +176,8 @@ public class Signatures {
 	@Test
 	public void referencingRemoteProvider() throws Exception {
 
-		Signature rps = sig("add", Adder.class);
-		Object prv = provider(rps);
-		logger.info("provider of rps: " + prv);
-		assertTrue(prv instanceof Adder);
-		assertTrue(prv instanceof Proxy);
-
 		// request the remote service
-		Service as = service("as", rps,
+		Service as = task("as", sig("add", Adder.class),
 				context("add",
 						inEnt("arg/x1", 20.0),
 						inEnt("arg/x2", 80.0),
@@ -212,7 +198,7 @@ public class Signatures {
 		assertTrue(prv instanceof Proxy);
 
 		// request the remote service
-		Service as = service("as", ps,
+		Service as = task("as", ps,
 				context("add",
 						inEnt("arg/x1", 20.0),
 						inEnt("arg/x2", 80.0),
@@ -220,6 +206,78 @@ public class Signatures {
 
 		assertEquals(100.0, exec(as));
 	}
+
+
+	@Test
+	public void signatureLocalService() throws Exception {
+
+		Context cxt = context(
+				inEnt("y1", 20.0),
+				inEnt("y2", 80.0),
+				result("result/y"));
+
+		Context result = exec(sig("add", AdderImpl.class), cxt);
+		assertEquals(20.0, value(result, "y1"));
+		assertEquals(80.0, value(result, "y2"));
+		assertEquals(100.0, value(result, "result/y"));
+	}
+
+
+	@Test
+	public void signatureRemoteService() throws Exception {
+
+		Context cxt = context(
+				inEnt("y1", 20.0),
+				inEnt("y2", 80.0),
+				result("result/y"));
+
+		Context result = exec(sig("add", Adder.class), cxt);
+		assertEquals(20.0, value(result, "y1"));
+		assertEquals(80.0, value(result, "y2"));
+		assertEquals(100.0, value(result, "result/y"));
+	}
+
+
+	@Test
+	public void evaluateNetletSignature() throws Exception {
+		String netlet = "src/main/netlets/ha-job-local.ntl";
+		assertEquals(evaluate(mogram(sig(file(netlet)))), 400.00);
+	}
+
+
+	@Test
+	public void execNetletSignature() throws Exception {
+		String netlet = "src/main/netlets/ha-job-local.ntl";
+		assertEquals(exec(sig(file(netlet))), 400.00);
+	}
+
+	@Test
+	public void remoteShellService() throws Exception {
+		// The SORCER Service Shell as a service provider
+		Task f5 = task(
+				"f5",
+				sig("add", Adder.class),
+				context("add", inEnt("arg/x1", 20.0),
+						inEnt("arg/x2", 80.0), result("result/y")));
+
+		Context  out = exec(sig(Shell.class), f5);
+		assertEquals(get(out), 100.00);
+	}
+
+
+	@Test
+	public void remoteShellService2() throws Exception {
+		// The SORCER Service Shell as a service provider
+		Task f5 = task(
+				"f5",
+				sig("add", Adder.class),
+				context("add", inEnt("arg/x1", 20.0),
+						inEnt("arg/x2", 80.0), result("result/y")));
+
+		Context  out = exec(sig("add", Adder.class, Strategy.ServiceShell.REMOTE), f5);
+		assertEquals(get(out), 100.00);
+	}
+
 
 	@Test
 	public void localSigConnector() throws Exception {
@@ -236,7 +294,7 @@ public class Signatures {
 		Signature ps = sig("add", AdderImpl.class, prvName("Adder"), outConnector);
 
 		// request the remote service
-		Service as = service("as", ps, cxt);
+		Service as = task("as", ps, cxt);
 
 		logger.info("input context: " + context(as));
 
@@ -248,6 +306,7 @@ public class Signatures {
 		assertEquals(80.0, value(context(task), "arg/x2"));
 		assertEquals(100.0, value(context(task), "result/y"));
 	}
+
 
 	@Test
 	public void rmoteSigConnector() throws Exception {
@@ -264,7 +323,7 @@ public class Signatures {
 		Signature ps = sig("add", Adder.class, prvName("Adder"), inc);
 
 		// request the remote service
-		Service as = service("as", ps, cxt);
+		Service as = task("as", ps, cxt);
 
 		logger.info("input context: " + context(as));
 

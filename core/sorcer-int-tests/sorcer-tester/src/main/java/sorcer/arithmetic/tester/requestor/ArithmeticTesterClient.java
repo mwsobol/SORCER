@@ -1,5 +1,7 @@
 package sorcer.arithmetic.tester.requestor;
 
+import net.jini.config.EmptyConfiguration;
+import org.slf4j.Logger;
 import sorcer.arithmetic.tester.provider.Adder;
 import sorcer.arithmetic.tester.provider.Multiplier;
 import sorcer.arithmetic.tester.provider.RemoteAdder;
@@ -15,7 +17,6 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import org.slf4j.Logger;
 
 import static sorcer.co.operator.inEnt;
 import static sorcer.co.operator.outEnt;
@@ -28,18 +29,19 @@ import static sorcer.eo.operator.*;
  * to the third task that subtracts the result of task two from the result of
  * task one. The {@link sorcer.core.context.PositionalContext} is used for requestor's
  * data in this test.
- * 
+ *
  * @author Mike Sobolewski
  */
 @SuppressWarnings("unchecked")
 public class ArithmeticTesterClient implements SorcerConstants {
 
 	private static Logger logger = Log.getTestLog();
-	
+
 	public static void main(String[] args) throws Exception {
 		System.setSecurityManager(new SecurityManager());
 		logger.info("running: " + args[0]);
-		Exertion result = null;
+        Accessor.create(EmptyConfiguration.INSTANCE);
+		Mogram result = null;
 		ArithmeticTesterClient tester = new ArithmeticTesterClient();
 		if (args[0].equals("f5"))
 			result = tester.f5();
@@ -73,25 +75,25 @@ public class ArithmeticTesterClient implements SorcerConstants {
 			result = tester.f5xP(args[1], args[2]);
 		else if (args[0].equals("f5exerter"))
 			result = tester.f5exerter();
-		
+
 //		logger.info(">>>>>>>>>>>>> exceptions: " + exceptions(result));
 //		logger.info(">>>>>>>>>>>>> result context: " + context(result));
 	}
-	
+
 	// two level composition
 	private Exertion f1a() throws Exception {
 		String arg = "arg", result = "result";
 		String x1 = "x1", x2 = "x2", y = "y";
 
-		Task f3 = task("f3", sig("multiply", Multiplier.class), 
+		Task f3 = task("f3", sig("multiply", Multiplier.class),
 				   context("multiply", inEnt(path(arg, x1), 10.0), inEnt(path(arg, x2), 50.0),
 				      outEnt(path(result, y), null)));
-		
-		Task f4 = task("f4", sig("add", Adder.class), 
+
+		Task f4 = task("f4", sig("add", Adder.class),
 		   context("add", inEnt(path(arg, x1), 20.0), inEnt(path(arg, x2), 80.0),
 		      outEnt(path(result, y), null)));
-		
-		Task f5 = task("f5", sig("subtract", Subtractor.class), 
+
+		Task f5 = task("f5", sig("subtract", Subtractor.class),
 				   context("subtract", inEnt(path(arg, x1), null), inEnt(path(arg, x2), null),
 				      outEnt(path(result, y), null)));
 
@@ -108,13 +110,13 @@ public class ArithmeticTesterClient implements SorcerConstants {
 		} else {
 			logger.info("job execution failed");
 		}
-		
+
 		return out;
 	}
-	
+
 	// two level composition
 	private Exertion f1() throws Exception {
-		
+
 		Task f4 = task("f4", sig("multiply", Multiplier.class),
 				context("multiply", inEnt("arg/x1", 10.0d), inEnt("arg/x2", 50.0d),
 						outEnt("result/y1", null)));
@@ -127,7 +129,7 @@ public class ArithmeticTesterClient implements SorcerConstants {
 				context("subtract", inEnt("arg/x5", null), inEnt("arg/x6", null),
 						outEnt("result/y3", null)));
 
-		//job("f1", job("f2", f4, f5), f3,		
+		//job("f1", job("f2", f4, f5), f3,
 		//job("f1", job("f2", f4, f5, strategy(Flow.PAR, Access.PULL)), f3,
 		Job f1 = job("f1", job("f2", f4, f5), f3, strategy(Provision.NO),
 				pipe(outPoint(f4, "result/y1"), inPoint(f3, "arg/x5")),
@@ -140,10 +142,10 @@ public class ArithmeticTesterClient implements SorcerConstants {
 		} else {
 			logger.info("job execution failed");
 		}
-		
+
 		return out;
 	}
-	
+
 	private Exertion f1provisioned() throws Exception {
 		Task f4 = task(
 				"f4",
@@ -177,7 +179,7 @@ public class ArithmeticTesterClient implements SorcerConstants {
 		Job f1 = job("f1", job("f2", f4, f5), f3, strategy(Provision.NO),
 				pipe(outPoint(f4, "result/y1"), inPoint(f3, "arg/x5")),
 				pipe(outPoint(f5, "result/y2"), inPoint(f3, "arg/x6")));
-		
+
 		Exertion out = exert(f1);
 		if (out != null) {
 			logger.info("job f1 context: " + upcontext(out));
@@ -185,24 +187,24 @@ public class ArithmeticTesterClient implements SorcerConstants {
 		} else {
 			logger.info("job execution failed");
 		}
-		
+
 		return out;
 	}
-	
+
 	// one level composition
 	private Exertion f1b() throws Exception {
 		String arg = "arg", result = "result";
 		String x1 = "x1", x2 = "x2", y = "y";
 
-		Task f3 = task("f3", sig("subtract", Subtractor.class), 
+		Task f3 = task("f3", sig("subtract", Subtractor.class),
 		   context("subtract", inEnt(path(arg, x1), null), inEnt(path(arg, x2), null),
 		      outEnt(path(result, y), null)));
-		
-		Task f4 = task("f4", sig("multiply", Multiplier.class), 
+
+		Task f4 = task("f4", sig("multiply", Multiplier.class),
 				   context("multiply", inEnt(path(arg, x1), 10.0), inEnt(path(arg, x2), 50.0),
 				      outEnt(path(result, y), null)));
-		
-		Task f5 = task("f5", sig("add", Adder.class), 
+
+		Task f5 = task("f5", sig("add", Adder.class),
 		   context("add", inEnt(path(arg, x1), 20.0), inEnt(path(arg, x2), 80.0),
 		      outEnt(path(result, y), null)));
 
@@ -214,22 +216,22 @@ public class ArithmeticTesterClient implements SorcerConstants {
 		Exertion out = exert(f1);
 		logger.info("job f1 context: " + upcontext(out));
 		logger.info("job f1 f1/f3/result/y: " + get(out, path("f1", "f3", result, y)));
-		
+
 		return out;
 	}
-	
+
 	// job composed of job and task with PUSH/SEQ strategy
 	private Exertion f1c() throws Exception {
-		
-		Task f4 = task("f4", sig("multiply", Multiplier.class), 
+
+		Task f4 = task("f4", sig("multiply", Multiplier.class),
 				context("multiply", inEnt(path("arg/x1"), 10.0), inEnt(path("arg/x2"), 50.0),
 						outEnt(path("result/y1"), null)));
 
-		Task f5 = task("f5", sig("add", Adder.class), 
+		Task f5 = task("f5", sig("add", Adder.class),
 				context("add", inEnt(path("arg/x3"), 20.0), inEnt(path("arg/x4"), 80.0),
 						outEnt(path("result/y2"), null)));
 
-		Task f3 = task("f3", sig("subtract", Subtractor.class), 
+		Task f3 = task("f3", sig("subtract", Subtractor.class),
 				context("subtract", inEnt(path("arg/x5"), null), inEnt(path("arg/x6"), null),
 						outEnt(path("result/y3"), null)));
 
@@ -247,19 +249,19 @@ public class ArithmeticTesterClient implements SorcerConstants {
 
 		return out;
 	}
-	
+
 	// composition with mixed flow/access strategy
 	private Exertion f1PARpull() throws Exception {
-		
-		Task f4 = task("f4", sig("multiply", Multiplier.class), 
+
+		Task f4 = task("f4", sig("multiply", Multiplier.class),
 				context("multiply", inEnt(path("arg/x1"), 10.0), inEnt(path("arg/x2"), 50.0),
 						outEnt(path("result/y1"), null)), Access.PULL);
 
-		Task f5 = task("f5", sig("add", Adder.class), 
+		Task f5 = task("f5", sig("add", Adder.class),
 				context("add", inEnt(path("arg/x3"), 20.0), inEnt(path("arg/x4"), 80.0),
 						outEnt(path("result/y2"), null)), Access.PULL);
 
-		Task f3 = task("f3", sig("subtract", Subtractor.class), 
+		Task f3 = task("f3", sig("subtract", Subtractor.class),
 				context("subtract", inEnt(path("arg/x5"), null), inEnt(path("arg/x6"), null),
 						outEnt(path("result/y3"), null)));
 
@@ -274,7 +276,7 @@ public class ArithmeticTesterClient implements SorcerConstants {
 		Exertion out = exert(f1);
 		long end = System.currentTimeMillis();
 		System.out.println("Execution time: " + (end-start) + " ms.");
-		
+
 		logger.info("out name: " + name(out));
 		logger.info("job f1 context: " + context(out));
 		logger.info("job f1 job context: " + upcontext(out));
@@ -286,18 +288,18 @@ public class ArithmeticTesterClient implements SorcerConstants {
 		logger.info("task f1 trace: " +  trace(out));
 		return out;
 	}
-	
+
 private Exertion f1SEQpull() throws Exception {
-		
-		Task f4 = task("f4", sig("multiply", Multiplier.class), 
+
+		Task f4 = task("f4", sig("multiply", Multiplier.class),
 				context("multiply", inEnt(path("arg/x1"), 10.0), inEnt(path("arg/x2"), 50.0),
 						outEnt(path("result/y1"), null)), Access.PULL);
 
-		Task f5 = task("f5", sig("add", Adder.class), 
+		Task f5 = task("f5", sig("add", Adder.class),
 				context("add", inEnt(path("arg/x3"), 20.0), inEnt(path("arg/x4"), 80.0),
 						outEnt(path("result/y2"), null)), Access.PULL);
 
-		Task f3 = task("f3", sig("subtract", Subtractor.class), 
+		Task f3 = task("f3", sig("subtract", Subtractor.class),
 				context("subtract", inEnt(path("arg/x5"), null), inEnt(path("arg/x6"), null),
 						outEnt(path("result/y3"), null)));
 
@@ -307,12 +309,12 @@ private Exertion f1SEQpull() throws Exception {
 		Job f1= job("f1", job("f2", f4, f5, strategy(Access.PULL, Flow.SEQ)), f3,
 				pipe(outPoint(f4, path("result/y1")), inPoint(f3, path("arg/x5"))),
 				pipe(outPoint(f5, path("result/y2")), inPoint(f3, path("arg/x6"))));
-		
+
 		long start = System.currentTimeMillis();
 		Exertion out = exert(f1);
 		long end = System.currentTimeMillis();
 		System.out.println("Execution time: " + (end-start) + " ms.");
-		
+
 		logger.info("out name: " + name(out));
 		logger.info("job f1 context: " + context(out));
 		logger.info("job f1 job context: " + upcontext(out));
@@ -332,7 +334,7 @@ private Exertion f1SEQpull() throws Exception {
 				context("add", inEnt("arg/x1", 20.0),
 						inEnt("arg/x2", 80.0), outEnt("result/y", null)),
 				strategy(Monitor.NO, Wait.YES, Provision.YES));
-		
+
 		Exertion out = null;
 		long start = System.currentTimeMillis();
 		out = exert(f5);
@@ -344,34 +346,34 @@ private Exertion f1SEQpull() throws Exception {
 		return out;
 	}
 
-	private Exertion f5exerter() throws Exception {
-		Task f5 = task(
+	private Mogram f5exerter() throws Exception {
+		Mogram f5 = task(
 				"f5",
 				sig("add", Adder.class),
 				context("add", inEnt("arg/x1", 20.0),
 						inEnt("arg/x2", 80.0), outEnt("result/y", null)),
 				strategy(Monitor.NO, Wait.YES));
-		
-		Exertion out = null;
+
+		Mogram out = null;
 		long start = System.currentTimeMillis();
-		Exerter exerter = Accessor.getService(Exerter.class);
+		Exerter exerter = Accessor.get().getService(null, Exerter.class);
 		logger.info("got exerter: " + exerter);
 
 		out = exerter.exert(f5);
 		long end = System.currentTimeMillis();
-		
+
 		if (out.getExceptions().size() > 0) {
-			System.out.println("Execeptins: " + out.getExceptions());
+			System.out.println("Execeptions: " + out.getExceptions());
 			return out;
 		}
-			
+
 		System.out.println("Execution time by exerter: " + (end-start) + " ms.");
 		logger.info("task f5 context: " + context(out));
 		logger.info("task f5 result/y: " + get(context(out), "result/y"));
 
 		return out;
 	}
-	
+
 	private Exertion f5m() throws Exception {
 		Task f5 = task(
 				"f5",
@@ -379,7 +381,7 @@ private Exertion f1SEQpull() throws Exception {
 				context("add", inEnt("arg/x1", 20.0),
 						inEnt("arg/x2", 80.0), outEnt("result/y", null)),
 				strategy(Monitor.YES, Wait.YES));
-		
+
 		Exertion out = null;
 		long start = System.currentTimeMillis();
 		out = exert(f5);
@@ -391,16 +393,16 @@ private Exertion f1SEQpull() throws Exception {
 		return out;
 	}
 
-	
+
 	private Exertion f5inh() throws Exception {
-		
+
 		Task f5 = task(
 				"f5",
 				sig("add", RemoteAdder.class),
 				context("add", inEnt("arg/x1", 20.0),
 						inEnt("arg/x2", 80.0), outEnt("result/y", null)),
 				strategy(Monitor.YES, Wait.YES));
-		
+
 		Exertion out = null;
 		long start = System.currentTimeMillis();
 		out = exert(f5);
@@ -420,7 +422,7 @@ private Exertion f1SEQpull() throws Exception {
 				context("add", inEnt("arg/x1", 20.0),
 						inEnt("arg/x2", 80.0), outEnt("result/y", null)),
 				strategy(Access.PULL, Wait.YES));
-		
+
 		Exertion out = null;
 		long start = System.currentTimeMillis();
 		out = exert(f5);
@@ -432,7 +434,7 @@ private Exertion f1SEQpull() throws Exception {
 
 		return out;
 	}
-	
+
 	private Exertion f5a() throws Exception {
 
 		Task f5 = task(
@@ -441,9 +443,9 @@ private Exertion f1SEQpull() throws Exception {
 				context("add", inEnt("arg/x1", 20.0),
 						inEnt("arg/x2", 80.0), outEnt("result/y", null)),
 				strategy(Monitor.YES, Wait.NO));
-		
+
 		logger.info("task f5 control context: " + control(f5));
-		
+
 		Exertion out = null;
 		long start = System.currentTimeMillis();
 		out = exert(f5);
@@ -454,17 +456,17 @@ private Exertion f1SEQpull() throws Exception {
 
 		return out;
 	}
-	
+
 	private Exertion f5xS_PULL(String repeat) throws Exception {
 		int to = new Integer(repeat);
-		
-		Task f5 = task("f5", sig("add", Adder.class), 
+
+		Task f5 = task("f5", sig("add", Adder.class),
 		   context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
 		      outEnt("result/y", null),
 		      strategy(Access.PULL, Wait.YES)));
-		
+
 		f5.setAccess(Access.PULL);
-		
+
 		Exertion out = null;
 		long start = System.currentTimeMillis();
 		for (int i = 0; i < to; i++) {
@@ -477,17 +479,17 @@ private Exertion f1SEQpull() throws Exception {
 		System.out.println("Execution time: " + (end-start) + " ms.");
 		return out;
 	}
-	
+
 	private Exertion f5xS_PUSH(String repeat) throws Exception {
 		int to = new Integer(repeat);
-		
-		Task f5 = task("f5", sig("add", Adder.class), 
+
+		Task f5 = task("f5", sig("add", Adder.class),
 		   context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
 		      outEnt("result/y", null),
 		      strategy(Access.PUSH, Wait.YES)));
-		
+
 		f5.setAccess(Access.PUSH);
-		
+
 		Exertion out = null;
 		long start = System.currentTimeMillis();
 		for (int i = 0; i < to; i++) {
@@ -500,10 +502,10 @@ private Exertion f1SEQpull() throws Exception {
 		System.out.println("Execution time: " + (end-start) + " ms.");
 		return out;
 	}
-	
+
 	private Task getTask() throws ExertionException, SignatureException,
 			ContextException {
-		
+
 		Task f5 = task(
 				"f5",
 				sig("add", Adder.class),
@@ -511,7 +513,7 @@ private Exertion f1SEQpull() throws Exception {
 					inEnt("arg/x2", 80.0), outEnt("result/y", null)));
 		return f5;
 	}
-	
+
 	private Exertion f5xP(String poolSizeStr, String size) throws Exception {
 		int poolSize = new Integer(size);
 		int tally = new Integer(size);
@@ -539,5 +541,5 @@ private Exertion f1SEQpull() throws Exception {
 		logger.info("run in parallel: " + tally);
 		return fList.get(tally-1).get();
 	}
-	
+
 }

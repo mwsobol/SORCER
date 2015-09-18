@@ -43,7 +43,7 @@ import java.util.Arrays;
  * @author Mike Sobolewski
  */
 @SuppressWarnings("rawtypes")
-public interface Signature extends Serializable, Comparable, Dependency, Identifiable, Arg {
+public interface Signature extends Service, Comparable, Dependency, Identifiable, Arg, Serializable {
 
 	/**
 	 * Returns an operation name of this signature.
@@ -246,8 +246,7 @@ public interface Signature extends Serializable, Comparable, Dependency, Identif
 			String params = "";
 			if (outPaths != null)
 				params = " outPaths: " + Arrays.toString(outPaths);
-			return path + (direction != null ? " direction: " + direction : "")
-					+ params;
+			return path + params;
 		}
 
 		@Override

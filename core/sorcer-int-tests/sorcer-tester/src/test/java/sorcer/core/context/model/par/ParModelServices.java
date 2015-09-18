@@ -12,6 +12,7 @@ import sorcer.service.*;
 import java.rmi.RemoteException;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.outPaths;
 import static sorcer.eo.operator.*;
 import static sorcer.po.operator.invoke;
@@ -24,8 +25,8 @@ import static sorcer.po.operator.invoke;
 @ProjectContext("core/sorcer-int-tests/sorcer-tester")
 public class ParModelServices {
 	private final static Logger logger = LoggerFactory.getLogger(ParModelServices.class);
-
 	public static String sorcerVersion = System.getProperty("sorcer.version");
+
 
 	@Test
 	public void parModelerTest() throws RemoteException, ContextException,
@@ -43,7 +44,7 @@ public class ParModelServices {
 
 		value(pmt);
 		logger.info("result: " + value(pmt));
-		assertEquals(value(pmt), 60.0);
+		assertTrue(value(pmt).equals(60.0));
 
 		logger.info("result: " + exert(pmt));
 		assertEquals(get(exert(pmt), "invoke/result"), 60.0);
@@ -57,7 +58,7 @@ public class ParModelServices {
 				context(result("invoke/result", outPaths("expr"))));
 
 		logger.info("result: " + value(pmt));
-		assertEquals(value(pmt), 60.0);
+		assertTrue(value(pmt).equals(60.0));
 
 		logger.info("result: " + exert(pmt));
 		assertEquals(get(exert(pmt), "invoke/result"), 60.0);

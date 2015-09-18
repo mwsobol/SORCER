@@ -34,9 +34,9 @@ class StartAll {
         String policy = System.getProperty("java.security.policy")
 
         String relativeRepoPath = System.getProperty("local.repo.path")
-        String projectBuildDir = System.getProperty("project.build.dir")
-        String buildLibPath = "${projectBuildDir}/libs";
-        String configPath = "${projectBuildDir}/../configs"
+        String projectBuildDir = System.getProperty("project.dir")
+        String buildLibPath = "${projectBuildDir}/build/libs";
+        String configPath = "${projectBuildDir}/configs"
 
         Logger logger = LoggerFactory.getLogger("StartAll")
         logger.info("projectBuildDir: {}", projectBuildDir)

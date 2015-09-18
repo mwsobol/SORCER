@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-// Adder netlet for testing the requestor of the examples/server project
+// Adder sorcer.netlet for testing the requestor of the examples/server project
 
 import sorcer.provider.adder.Adder
 

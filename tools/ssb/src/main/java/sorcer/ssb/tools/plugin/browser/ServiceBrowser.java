@@ -50,7 +50,7 @@ public class ServiceBrowser {
 
 	static ServiceBrowserUI browser;
 	
-	public static String BASE_TITLE = "Service Browser v6.0 [SSB-6.03]";
+	public static String BASE_TITLE = "Service Browser v6.0 [SSB-6.04]";
 
 	public static String TITLE = BASE_TITLE;
 
@@ -168,7 +168,7 @@ public class ServiceBrowser {
 			 * 
 			 * } });
 			 */
-			ABOUT += "\n(c)2009-2010 SORCERsoft.org";
+			ABOUT += "\n(c)2009-2015 SORCERsoft.org";
 
 			CodeServer.autoStart(tr.getClass(), ServiceBrowserConfig.getConfiguration());
 

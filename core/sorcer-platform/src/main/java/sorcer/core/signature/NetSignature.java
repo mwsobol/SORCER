@@ -18,12 +18,17 @@
 package sorcer.core.signature;
 
 import net.jini.core.entry.Entry;
+import net.jini.core.transaction.Transaction;
+import net.jini.core.transaction.TransactionException;
 import net.jini.lookup.entry.Name;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sorcer.core.exertion.NetTask;
 import sorcer.core.provider.Provider;
 import sorcer.core.provider.ServiceProvider;
+import sorcer.core.provider.Shell;
 import sorcer.core.provider.Version;
+import sorcer.eo.operator;
 import sorcer.service.*;
 import sorcer.util.MavenUtil;
 
@@ -31,6 +36,8 @@ import java.lang.reflect.Method;
 import java.rmi.RemoteException;
 import java.util.Arrays;
 import java.util.List;
+
+import static sorcer.eo.operator.sig;
 
 public class
     NetSignature extends ObjectSignature {
@@ -183,7 +190,7 @@ public class
             // provider is dead; get new one
             //e.printStackTrace();
             provider = null;
-            provider = (Provider)Accessor.getService(this);
+            provider = (Provider)Accessor.get().getService(this);
         }
 
         return provider;
@@ -380,6 +387,35 @@ public class
 		}
 	}
 
+	@Override
+	public Mogram service(Mogram mogram) throws TransactionException,
+			MogramException, RemoteException {
+		return service(mogram, null);
+	}
+
+	@Override
+	public Mogram service(Mogram mogram, Transaction txn) throws TransactionException,
+			MogramException, RemoteException {
+		try {
+			if (this.isShellRemote()) {
+				Provider prv= (Provider) Accessor.get().getService(sig(Shell.class));
+				return ((Exertion) prv.service(mogram, txn)).getContext();
+			}
+			Provider prv = (Provider) operator.provider(this);
+			Context cxt = null;
+			NetTask task = null;
+			if (mogram instanceof Context)
+				cxt = (Context) mogram;
+			else
+				cxt = mogram.exert(txn);
+
+			task = new NetTask(this, cxt);
+			return ((Task) task.exert(txn)).getContext();
+		} catch (Exception e) {
+			throw new MogramException(e);
+		}
+	}
+
 	public boolean isUnicast() {
 		return isUnicast;
 	}
@@ -397,9 +433,9 @@ public class
 	}
 
 	public String toString() {
-		return this.getClass() + ":" + providerName + ";" + execType + ";" + isActive + ";"
+		return this.getClass() + ":" + providerName + ";" + execType + ";"
 				+ serviceType + ";" + selector 
 					+ (prefix !=null ? "#" + prefix : "") 
-					+ (returnPath != null ? ";"  + returnPath : "");
+					+ (returnPath != null ? ";"  + "result " + returnPath : "");
 	}
 }
