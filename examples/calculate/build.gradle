@@ -77,12 +77,21 @@ def repoPath() {
     return "org/sorcer/exchange/${version}"
 }
 
+//bootme {
+//    description = 'Starts up a service provider'
+////    if (!file("logs").exists()) file("logs").mkdir()
+//    starterConfig = file("${projectDir.path}/configs/StartExchangeConfig.groovy")
+//    systemProperties = ["relative.repo.path" : repoPath()]
+////    spawn = false
+////    debug = true
+//}
+
 bootme {
     description = 'Starts up a service provider'
 //    if (!file("logs").exists()) file("logs").mkdir()
-    starterConfig = file("${projectDir.path}/configs/StartExchangeConfig.groovy")
+    starterConfig = file("${projectDir.path}/configs/StartExchange2Config.groovy")
     systemProperties = ["relative.repo.path" : repoPath()]
-//    spawn = false
+    spawn = false
 //    debug = true
 }
 
@@ -106,14 +115,14 @@ test {
     systemProperty "java.rmi.server.codebase",
             "${websterUrl}/${repoPath()}/exchange-${version}-dl.jar ${websterUrl}/sorcer-dl-${version}.jar ${websterUrl}/jsk-dl-${riverVersion}.jar"
 
-//    testLogging {
-//        events "passed", "skipped", "failed"/*, "standardOut", "standardError"*/
-//    }
-//    dependsOn([install])
-    dependsOn([install, bootme])
-    finalizedBy(stopme)
+    testLogging {
+        events "passed", "skipped", "failed"/*, "standardOut", "standardError"*/
+    }
+    dependsOn([install])
+//    dependsOn([install, bootme])
+//    finalizedBy(stopme)
 }
-test.enabled = false
+//test.enabled = false
 
 
 
