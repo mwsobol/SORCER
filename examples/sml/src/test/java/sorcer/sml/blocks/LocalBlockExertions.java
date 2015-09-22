@@ -37,7 +37,7 @@ public class  LocalBlockExertions implements SorcerConstants {
 	private final static Logger logger = LoggerFactory.getLogger(LocalBlockExertions.class);
 
 	@Test
-	public void blockTest() throws Exception {
+	public void explicitDataBlockTest() throws Exception {
 
 		Task t3 = task("t3", sig("subtract", SubtractorImpl.class),
 				context("subtract", inEnt("arg/t4"), inEnt("arg/t5"),
@@ -60,7 +60,7 @@ public class  LocalBlockExertions implements SorcerConstants {
 
 
 	@Test
-	public void contextBlockTest() throws Exception {
+	public void closingBlockTest() throws Exception {
 
 		Task t3 = task("t3", sig("subtract", SubtractorImpl.class),
 				context("subtract", inEnt("arg/t4"), inEnt("arg/t5"),
@@ -84,9 +84,10 @@ public class  LocalBlockExertions implements SorcerConstants {
 	}
 
 	@Test
-	public void shadowingContextBlockTest() throws Exception {
+	public void overwritingLocalContextBlockTest() throws Exception {
 
 		// in t4: inEnt("arg/x1", 20.0), inEnt("arg/x2", 10.0)
+		// cosed with 10.0 and 50.0 respectively
 		Task t3 = task("t3", sig("subtract", SubtractorImpl.class),
 				context("subtract", inEnt("arg/t4"), inEnt("arg/t5"),
 						result("block/result", Direction.OUT)));

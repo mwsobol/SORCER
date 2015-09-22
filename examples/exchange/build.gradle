@@ -89,7 +89,7 @@ def repoPath() {
 bootme {
     description = 'Starts up a service provider'
 //    if (!file("logs").exists()) file("logs").mkdir()
-    starterConfig = file("${projectDir.path}/configs/StartExchange2Config.groovy")
+    starterConfig = file("${projectDir.path}/configs/StartExchange2Config-all.groovy")
     systemProperties = ["relative.repo.path" : repoPath()]
     spawn = false
 //    debug = true
@@ -122,7 +122,7 @@ test {
 //    dependsOn([install, bootme])
 //    finalizedBy(stopme)
 }
-//test.enabled = false
+test.enabled = false
 
 
 

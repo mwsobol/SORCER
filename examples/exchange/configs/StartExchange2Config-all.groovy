@@ -46,6 +46,17 @@ class StartAll {
                     "sorcer.core.provider.ServiceTasker",
                     configArg as String[])
         }
+
+        def provider = "smart-ipcarray";
+        def configArg = ["${configPath}/${provider}-prv.config"]
+        def codebase = "${relativeRepoPath}/exchange-${sorcerVersion}-prv.jar sorcer-dl-${sorcerVersion}.jar sorcer-ui-${sorcerVersion}.jar jsk-dl-${riverVersion}.jar"
+
+        descriptors << new SorcerServiceDescriptor(codebase,
+                policy,
+                "${buildLibPath}/exchange-${sorcerVersion}-prv.jar",
+                "sorcer.provider.exchange.impl.IpcArrayProviderImpl",
+                configArg as String[])
+
         return descriptors as ServiceDescriptor[]
     }
 }

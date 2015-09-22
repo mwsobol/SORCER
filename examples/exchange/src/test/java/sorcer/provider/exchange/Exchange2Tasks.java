@@ -24,7 +24,7 @@ import static sorcer.eo.operator.*;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
 @RunWith(SorcerTestRunner.class)
-@ProjectContext("examples/calculate")
+@ProjectContext("examples/exchange")
 public class Exchange2Tasks {
 	private final static Logger logger = LoggerFactory.getLogger(Exchange2Tasks.class);
 	static final int LENGTH = 256;
@@ -195,11 +195,55 @@ public class Exchange2Tasks {
 	}
 
 	@Test
-	public void ipcIntegerArrayTest() throws IOException {
+	public void ipcSigleIntegerArrayTest() throws IOException {
 		long start = System.currentTimeMillis();
 		int[] out = ipcIntArray(intArray());
 		long end = System.currentTimeMillis();
 		logger.info("Execution time: " + (end-start) + " ms");
+		logger.info("read array: " + Arrays.toString(out));
+	}
+
+	@Test
+	public void ipc10KIntegerArrayNanoTest() throws IOException {
+		int REPEAT = 10000;
+		long start = System.nanoTime();
+		int[] out = null;
+		for (int i = 0; i < REPEAT; i++) {
+			out = ipcIntArray(intArray());
+		}
+		long end = System.nanoTime();
+		long timing = end-start;
+		logger.info("Execution time: " + timing/1000000 + " ms");
+		logger.info("rt time: " + timing/1000/REPEAT + " us");
+		logger.info("read array: " + Arrays.toString(out));
+	}
+
+	@Test
+	public void ipc1KIntegerArrayNanoTest() throws IOException {
+		int REPEAT = 1000;
+		long start = System.nanoTime();
+		int[] out = null;
+		for (int i = 0; i < REPEAT; i++) {
+			out = ipcIntArray(intArray());
+		}
+		long end = System.nanoTime();
+		long timing = end-start;
+		logger.info("Execution time: " + timing/1000000 + " ms");
+		logger.info("rt time: " + timing/1000/REPEAT + " us");
+		logger.info("read array: " + Arrays.toString(out));
+	}
+
+	@Test
+	public void ipcMultipleIntegerArrayTest() throws IOException {
+		long start = System.currentTimeMillis();
+		int[] out = null;
+		for (int i = 0; i < 1000; i++) {
+			out = ipcIntArray(intArray());
+		}
+		long end = System.currentTimeMillis();
+		long timing = end-start;
+		logger.info("Execution time: " + timing + " ms");
+		logger.info("rt time: " + timing/1000 + " ms");
 		logger.info("read array: " + Arrays.toString(out));
 	}
 

@@ -1718,7 +1718,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 			providers.remove(this);
 			tally = tally - 1;
 
-			logger.debug("destroyed provider: " + getProviderName() + ", providers left: " + tally);
+			logger.debug("destroyed provider: {} providers left: {}" + getProviderName(), tally);
 			//if (threadManager != null)
 			//	threadManager.terminate();
 
@@ -1733,7 +1733,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 			}
 
 		} catch(Exception e) {
-			logger.error("Problem destroying service "+getProviderName(), e);
+			logger.error("Problem destroying service " + getProviderName(), e);
 		}
 	}
 
@@ -1777,14 +1777,15 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	 *
 	 * @see Provider#destroy()
 	 */
-	public void destroyNode() {
+	public void destroyNode() throws RemoteException {
 		logger.info("providers.size() = " + providers.size());
 		for (ServiceProvider provider : providers) {
 			logger.info("calling destroy on provider name = " + provider.getName());
 			provider.destroy();
 		}
-		logger.info("Returning from destroyNode()");
-		//checkAndMaybeKillJVM();
+		// exit JVM after destroying all providers
+		logger.debug("calling destroy provider node");
+		System.exit(0);
 	}
 
 	/** {@inheritDoc} */

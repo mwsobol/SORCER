@@ -37,14 +37,12 @@ public class IncrementBlockExertions implements SorcerConstants {
 	}
 
 	@Test
-	public void taskIncrementor() throws Exception {
-		Task spaceTask = task(
-				"space task",
-				sig("add", AdderImpl.class),
+	public void taskContextIncrementor() throws Exception {
+		Task ti = task(sig("add", AdderImpl.class),
 				model("add", inEnt("arg/x1", 20),
 						inEnt("arg/x2", 80.0), result("task/result")));
 
-		Incrementor i = inc(invoker(context(spaceTask), "arg/x1"), 2);
+		Incrementor i = inc(invoker(context(ti), "arg/x1"), 2);
 		Context cxt2 = model(ent("z2", i));
 		assertEquals(value(cxt2, "z2"), 22);
 		assertEquals(value(cxt2, "z2"), 24);
@@ -52,12 +50,9 @@ public class IncrementBlockExertions implements SorcerConstants {
 
 	@Test
 	public void taskIncrement() throws Exception {
-		Task t = task(
-				"space task",
-				sig("add", AdderImpl.class),
+		Task t = task(sig("add", AdderImpl.class),
 				model("add", inEnt("arg/x1", inc("arg/x2", 2.0)),
-						inEnt("arg/x2", 80.0), result("task/result")),
-				strategy(Strategy.Access.PULL, Strategy.Wait.YES));
+						inEnt("arg/x2", 80.0), result("task/result")));
 
 //		logger.info("result: " + value(t));
 		assertEquals(value(t), 162.00);
@@ -65,18 +60,16 @@ public class IncrementBlockExertions implements SorcerConstants {
 
 //	@Test
 //	public void taskIncrementLoop() throws Exception {
-//		Task spaceTask = task(
-//				"space task",
+//		Task ti = task(
 //				sig("add", AdderImpl.class),
 //				model("add", inEnt("arg/x1", inc("arg/x2", 2.0)),
-//						inEnt("arg/x2", 80.0), result("task/result")),
-//				strategy(Strategy.Access.PULL, Strategy.Wait.YES));
+//						inEnt("arg/x2", 80.0), result("task/result")));
 //
-//		Block spaceBlock = block(sig(ServiceConcatenator.class),
-//				loop(0, 10, spaceTask));
+//		Block lb = block(sig(ServiceConcatenator.class),
+//				loop(0, 10, ti));
 //
-//		spaceBlock = exert(spaceBlock);
-//		logger.info("block context" + context(spaceBlock));
-////		assertEquals(get(context(spaceBlock), "result/average"), 100.00);
+//		lb = exert(lb);
+//		logger.info("block context" + context(lb));
+////		assertEquals(get(context(lb), "task/result"), 100.00);
 //	}
 }

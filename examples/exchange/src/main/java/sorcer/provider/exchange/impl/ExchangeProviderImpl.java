@@ -43,19 +43,32 @@ public class ExchangeProviderImpl implements ExchangeRemote, Serializable {
 
     private ServiceProvider provider;
 
+    private int BB_SIZE = 1024;
+
+    private ServerSocketChannel serverChannel;
+
     public ExchangeProviderImpl() throws RemoteException {
         // empty
     }
 
     public void init(Provider provider) {
         this.provider = (ServiceProvider) provider;
-        Runnable ipc = new Runnable() {
-            @Override
-            public void run() {
-                openChannel();
-            }
-        };
-        new Thread(ipc).start();
+
+        try {
+            serverChannel = ServerSocketChannel.open();
+            serverChannel.socket().bind(new InetSocketAddress("127.0.0.1", 9001));
+
+            Runnable ipc = new Runnable() {
+                @Override
+                public void run() {
+                    listen();
+                }
+            };
+
+            new Thread(ipc).start();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public Context exchangeInts(Context context) throws RemoteException, ContextException {
@@ -76,14 +89,18 @@ public class ExchangeProviderImpl implements ExchangeRemote, Serializable {
             return context;
     }
 
-    private void openChannel() {
-        int BSIZE = 1024;
-        ServerSocketChannel serverChannel = null;
-        try {
-            serverChannel = ServerSocketChannel.open();
-            serverChannel.socket().bind(new InetSocketAddress("127.0.0.1", 9001));
+    private int[] processDataBuffer(IntBuffer buffer) {
+        int resultSize = buffer.capacity();
+        int[] result = new int[resultSize];
+        for (int i = 0; i < resultSize; i++) {
+            result[i] = buffer.get(i) + 1;
+        }
+        return result;
+    }
 
-            ByteBuffer bb = ByteBuffer.allocate(BSIZE);
+    private void listen() {
+        try {
+            ByteBuffer bb = ByteBuffer.allocate(BB_SIZE);
             IntBuffer ib = bb.asIntBuffer();
             SocketChannel client;
             while (true) {
@@ -92,12 +109,8 @@ public class ExchangeProviderImpl implements ExchangeRemote, Serializable {
                     bb.clear();
                     client.read(bb);
 
-                    // processing and write the result
-                   int resultSize = ib.capacity();
-                   int[] result = new int[resultSize];
-                    for (int i = 0; i < resultSize; i++) {
-                        result[i] = ib.get(i) + 1;
-                    }
+                    // processing the read buffer
+                    int[] result  = processDataBuffer(ib);
 
                     ib.clear();
                     ib.put(result);

@@ -19,7 +19,7 @@ import static sorcer.eo.operator.*;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
 @RunWith(SorcerTestRunner.class)
-@ProjectContext("examples/calculate")
+@ProjectContext("examples/exchange")
 public class ExchangeTasks {
 	private final static Logger logger = LoggerFactory.getLogger(ExchangeTasks.class);
 	static final int LENGTH = 1001;
