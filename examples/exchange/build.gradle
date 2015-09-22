@@ -94,7 +94,7 @@ bootme {
     starterConfig = file("${projectDir.path}/configs/StartExchange2Config-all.groovy")
     systemProperties = ["relative.repo.path" : repoPath()]
     spawn = false
-    debug = true
+//    debug = true
 }
 
 //task runRequestor(type:JavaExec, dependsOn:[jar, "bootme"]) {
@@ -124,7 +124,7 @@ test {
 //    dependsOn([install, bootme])
 //    finalizedBy(stopme)
 }
-test.enabled = false
+//test.enabled = false
 
 
 

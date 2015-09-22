@@ -7,8 +7,11 @@ import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.provider.exchange.impl.ExchangeProviderImpl;
+import sorcer.service.ContextException;
 import sorcer.service.Task;
+import sorcer.util.ProviderAccessor;
 import sorcer.util.ProviderLookup;
+import sorcer.util.ServiceAccessor;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -64,7 +67,7 @@ public class Exchange2Tasks {
 	@Test
 	public void getProxy() throws Exception {
 		long start = System.currentTimeMillis();
-		Object ex = new ProviderLookup().getService(Exchange.class);
+		Object ex = new ProviderAccessor().getProvider(Exchange.class);
 //		Object ex = provider(sig("exchange", Exchange.class));
 		long end = System.currentTimeMillis();
 		logger.info("Execution time: " + (end - start) + " ms");
@@ -112,7 +115,6 @@ public class Exchange2Tasks {
 		logger.info("Execution time: " + (end - start) + " ms");
 		assertEquals(out.length, 1001);
 	}
-
 
 	@Test
 	public void evaluateRemoteContextTask() throws Exception  {
@@ -204,21 +206,6 @@ public class Exchange2Tasks {
 	}
 
 	@Test
-	public void ipc10KIntegerArrayNanoTest() throws IOException {
-		int REPEAT = 10000;
-		long start = System.nanoTime();
-		int[] out = null;
-		for (int i = 0; i < REPEAT; i++) {
-			out = ipcIntArray(intArray());
-		}
-		long end = System.nanoTime();
-		long timing = end-start;
-		logger.info("Execution time: " + timing/1000000 + " ms");
-		logger.info("rt time: " + timing/1000/REPEAT + " us");
-		logger.info("read array: " + Arrays.toString(out));
-	}
-
-	@Test
 	public void ipc1KIntegerArrayNanoTest() throws IOException {
 		int REPEAT = 1000;
 		long start = System.nanoTime();
@@ -234,16 +221,31 @@ public class Exchange2Tasks {
 	}
 
 	@Test
-	public void ipcMultipleIntegerArrayTest() throws IOException {
-		long start = System.currentTimeMillis();
+	public void ipc10KIntegerArrayNanoTest() throws IOException {
+		int REPEAT = 10000;
+		long start = System.nanoTime();
 		int[] out = null;
-		for (int i = 0; i < 1000; i++) {
+		for (int i = 0; i < REPEAT; i++) {
 			out = ipcIntArray(intArray());
 		}
-		long end = System.currentTimeMillis();
+		long end = System.nanoTime();
 		long timing = end-start;
-		logger.info("Execution time: " + timing + " ms");
-		logger.info("rt time: " + timing/1000 + " ms");
+		logger.info("Execution time: " + timing/1000000 + " ms");
+		logger.info("rt time: " + timing/1000/REPEAT + " us");
+		logger.info("read array: " + Arrays.toString(out));
+	}
+
+	@Test
+	public void ipcSmartIntegerArrayTest() throws Exception {
+		long start = System.nanoTime();
+		Task ipc = task(sig("ipcIntegerArray", IpcArray.class),
+				context(parameterTypes(int[].class),
+						args(intArray()),
+						result("output")));
+
+		int[] out = (int[]) value(ipc);
+		long end = System.nanoTime();
+		logger.info("Execution time: " + (end-start)/1000000 + " ms");
 		logger.info("read array: " + Arrays.toString(out));
 	}
 
