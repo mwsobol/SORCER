@@ -26,12 +26,23 @@ public class IpcArrayProviderImpl extends ServiceTasker {
     private int port;
 
     public IpcArrayProviderImpl() throws RemoteException {
+
     }
 
     public IpcArrayProviderImpl(String[] args, LifeCycle lifeCycle)
             throws Exception {
         super(args, lifeCycle);
         init();
+    }
+
+    @Override
+    protected void providerSetup() {
+        port = 9010;
+        hostName = delegate.getHostName();
+        IpcArrayBean smartProxy = new IpcArrayBean();
+        smartProxy.setPort(port);
+        smartProxy.setHostName(hostName);
+        delegate.setSmartProxy(smartProxy);
     }
 
     public int getPort() {
@@ -43,13 +54,7 @@ public class IpcArrayProviderImpl extends ServiceTasker {
     }
 
     public void init() throws ConfigurationException {
-        IpcArrayBean smartProxy = new IpcArrayBean();
-        smartProxy.setPort(port);
-        smartProxy.setHostName(hostName);
-        delegate.setSmartProxy(smartProxy);
         try {
-            port = 9010;
-            hostName = delegate.getHostName();
             serverChannel = ServerSocketChannel.open();
             serverChannel.socket().bind(new InetSocketAddress(hostName, port));
 

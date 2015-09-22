@@ -248,6 +248,8 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
             // e.printStackTrace();
             logger.warn("init", e);
         }
+	    // setup injections by subclasses of this class
+		providerSetup();
 		// configure the provider's delegate
         delegate.getProviderConfig().init(true, providerProperties);
         ((ScratchManagerSupport)scratchManager).setProperties(getProviderProperties());
@@ -269,7 +271,15 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
         ((ScratchManagerSupport)scratchManager).setProperties(getProviderProperties());
 	}
 
-    protected void setScratchManager(final ScratchManager scratchManager) {
+	/**
+	 * Subclasses inject problematically configurable entities,
+	 * for example proxies for this provider.
+	 */
+	protected void providerSetup() {
+		// optional programmatic setup by subclassing provider
+	}
+
+	protected void setScratchManager(final ScratchManager scratchManager) {
         if(scratchManager!=null) {
             this.scratchManager = scratchManager;
             logger.info("Set ScratchManager with {}", this.scratchManager.getClass().getName());

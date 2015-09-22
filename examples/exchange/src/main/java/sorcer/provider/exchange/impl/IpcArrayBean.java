@@ -27,6 +27,11 @@ public class IpcArrayBean implements IpcArray, Serializable {
 
     private int port;
 
+    private SocketChannel channel;
+
+    private ByteBuffer bb;
+    private IntBuffer ib;
+
     public int getPort() throws RemoteException {
         return port;
     }
@@ -45,12 +50,13 @@ public class IpcArrayBean implements IpcArray, Serializable {
 
     @Override
     public int[] ipcIntegerArray(int[] in) throws RemoteException, IOException {
-        ByteBuffer bb = ByteBuffer.allocate(BB_SIZE);
-        IntBuffer ib = bb.asIntBuffer();
+        if (channel == null) {
+            bb = ByteBuffer.allocate(BB_SIZE);
+            ib = bb.asIntBuffer();
+            channel = SocketChannel.open();
+            channel.connect(new InetSocketAddress(hostName, port));
+        }
         ib.put(in);
-
-        SocketChannel channel = SocketChannel.open();
-        channel.connect(new InetSocketAddress("127.0.0.1", 9010));
         bb.clear();
         while (bb.hasRemaining()) {
             channel.write(bb);

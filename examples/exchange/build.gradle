@@ -77,6 +77,8 @@ def repoPath() {
     return "org/sorcer/exchange/${version}"
 }
 
+// aternative set of providers
+
 //bootme {
 //    description = 'Starts up a service provider'
 ////    if (!file("logs").exists()) file("logs").mkdir()
@@ -92,7 +94,7 @@ bootme {
     starterConfig = file("${projectDir.path}/configs/StartExchange2Config-all.groovy")
     systemProperties = ["relative.repo.path" : repoPath()]
     spawn = false
-//    debug = true
+    debug = true
 }
 
 //task runRequestor(type:JavaExec, dependsOn:[jar, "bootme"]) {
