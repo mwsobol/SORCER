@@ -809,13 +809,24 @@ public class SorcerEnv extends SOS {
         return toArray(groups);
 	}
 
-	/**
-	 * Gets a system Cataloger name for this environment.
-	 * 
-	 * @return a name of the system Cataloger
-	 */
-	public static String getCatalogerName() {
-		return props.getProperty(P_CATALOGER_NAME, "Cataloger");
+    public static String getLookupGroupsAsString() {
+        String[] sa = getLookupGroups();
+        StringBuilder sb = new StringBuilder();
+        for (String group : sa) {
+            if (sb.length() > 0)
+                sb.append(",");
+            sb.append(group);
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Gets a system Cataloger name for this environment.
+     *
+     * @return a name of the system Cataloger
+     */
+    public static String getCatalogerName() {
+        return props.getProperty(P_CATALOGER_NAME, "Cataloger");
 	}
 
 	/**

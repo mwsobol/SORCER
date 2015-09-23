@@ -1,17 +1,17 @@
 /*
- * Distribution Statement
+ * Copyright to the original author or authors.
  *
- * This computer software has been developed under sponsorship of the United States Air Force Research Lab. Any further
- * distribution or use by anyone or any data contained therein, unless otherwise specifically provided for,
- * is prohibited without the written approval of AFRL/RQVC-MSTC, 2210 8th Street Bldg 146, Room 218, WPAFB, OH  45433
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Disclaimer
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * This material was prepared as an account of work sponsored by an agency of the United States Government. Neither
- * the United States Government nor the United States Air Force, nor any of their employees, makes any warranty,
- * express or implied, or assumes any legal liability or responsibility for the accuracy, completeness, or usefulness
- * of any information, apparatus, product, or process disclosed, or represents that its use would not infringe privately
- * owned rights.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package sorcer.data;
 
@@ -166,6 +166,23 @@ public class DataService implements FileURLHandler {
      * @throws IllegalStateException if the data service is not available.
      */
     public URL getDataURL(final File file) throws IOException {
+        return getDataURL(file, true);
+    }
+
+    /**
+     * Get a {@link URL} for a file.
+     *
+     * @param file The file to obtain a URL for.
+     * @param verify Whether to verify the file can be served up by the DataService and the
+     * DataService is running.
+     *
+     * @return A URL that can be used to access the file.
+     *
+     * @throws IOException if the file does not exist, or the URL cannot be created.
+     * @throws IllegalArgumentException if the file cannot be accessed from one of the roots provided.
+     * @throws IllegalStateException if the data service is not available.
+     */
+    public URL getDataURL(final File file, final boolean verify) throws IOException {
         if(file==null)
             throw new IllegalArgumentException("The file argument cannot be null");
         if(!file.exists())
@@ -184,14 +201,16 @@ public class DataService implements FileURLHandler {
             throw new IllegalArgumentException("The provided path ["+path+"], is not navigable " +
                     "from existing roots "+ Arrays.toString(roots));
         URL url =  new URL(String.format("http://%s:%d%s", address, port, relativePath));
-        IOException notAvailable = verify(url);
-        if(notAvailable!=null) {
-            logger.warn(String.format("Unable to verify %s, try and start DataService on %s:%d",
-                                         url.toExternalForm(), address, port));
-            start();
-            notAvailable = verify(url);
-            if(notAvailable!=null)
-                throw notAvailable;
+        if(verify) {
+            IOException notAvailable = verify(url);
+            if (notAvailable != null) {
+                logger.warn(String.format("Unable to verify %s, try and start DataService on %s:%d",
+                                          url.toExternalForm(), address, port));
+                start();
+                notAvailable = verify(url);
+                if (notAvailable != null)
+                    throw notAvailable;
+            }
         }
         return url;
     }
@@ -266,7 +285,7 @@ public class DataService implements FileURLHandler {
         address = null;
     }
 
-    private IOException verify(URL url) {
+    IOException verify(URL url) {
         try {
             HttpURLConnection connection = (HttpURLConnection)url.openConnection();
             connection.getResponseCode();

@@ -48,10 +48,10 @@ public class Accessor {
      *               configuration entry will be used to create the DynamicAccessor.
      * @return An instance of DynamicAccessor.
      *
-     * @throws net.jini.config.ConfigurationException If there are issues using the configuration.
+     * @throws RuntimeException If there are issues using the configuration.
      * @throws IllegalArgumentException if the configuration arg is null.
      */
-    public static synchronized DynamicAccessor create(Configuration config) throws net.jini.config.ConfigurationException {
+    public static synchronized DynamicAccessor create(Configuration config) {
         if(accessor.get()==null) {
             if(config==null)
                 throw new IllegalArgumentException("A Configuration must be provided");

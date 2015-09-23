@@ -19,7 +19,9 @@ package sorcer.service;
 
 import sorcer.service.modeling.Variability;
 
+import java.io.IOException;
 import java.io.Serializable;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -165,6 +167,13 @@ public interface Signature extends Service, Comparable, Dependency, Identifiable
 	 *            a list of space separated URLS
 	 */
 	public void setCodebase(String urls);
+
+	/**
+	 *  Close and connectivity to the bound service provider.
+	 * @throws RemoteException
+	 * @throws IOException
+	 */
+	public void close() throws RemoteException, IOException;
 
 	/**
 	 * Returns a deployment for provisioning a referenced service provider;

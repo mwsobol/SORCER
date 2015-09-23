@@ -217,6 +217,7 @@ public class ProviderDelegate {
 
 	/** Map of exertion ID's and state of execution */
 	static final Map exertionStateTable = Collections.synchronizedMap(new HashMap(11));
+
 	/**
 	 * A smart proxy instance
 	 */
@@ -627,6 +628,10 @@ public class ProviderDelegate {
         interfaceGroup = new ThreadGroup("Interface Threads");
 		interfaceGroup.setDaemon(true);
 		interfaceGroup.setMaxPriority(Thread.NORM_PRIORITY - 1);
+	}
+
+	public void setSmartProxy(Object smartProxy) {
+		this.smartProxy = smartProxy;
 	}
 
 	public void startSpaceTakers() throws ConfigurationException, RemoteException {
@@ -2442,9 +2447,9 @@ public class ProviderDelegate {
     public Object getAdminProxy() {
         try {
             providerProxy = ProviderProxy.wrapServiceProxy(adminProxy,
-                                                           getProviderUuid(),
-                                                           adminProxy,
-                                                           Administrable.class);
+					getProviderUuid(),
+					adminProxy,
+					Administrable.class);
         } catch (Exception e) {
 			logger.warn("No admin proxy created by: {}", provider, e);
 		}
@@ -2491,7 +2496,7 @@ public class ProviderDelegate {
 
 	/** {@inheritDoc} */
 	public Remote getInner() {
-		return (Remote) innerProxy;
+		return innerProxy;
 	}
 
 	/** {@inheritDoc} */
@@ -2548,9 +2553,12 @@ public class ProviderDelegate {
 			logger.info(">>>>> exporterPort: " + exporterPort);
 
 			try {
-				// initialize smart proxy
-				smartProxy = config.getEntry(ServiceProvider.COMPONENT,
-						SMART_PROXY, Object.class, null);
+				// check if not set by the provider
+				if (smartProxy == null) {
+					// initialize smart proxy
+					smartProxy = config.getEntry(ServiceProvider.COMPONENT,
+							SMART_PROXY, Object.class, null);
+				}
 			} catch (Exception e) {
 				logger.warn(">>>>> NO SMART PROXY specified", e);
 				smartProxy = null;

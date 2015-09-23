@@ -29,6 +29,7 @@ import sorcer.service.Strategy.Provision;
 import sorcer.service.modeling.Variability;
 import sorcer.util.Log;
 
+import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -436,6 +437,11 @@ public class ServiceSignature implements Signature, SorcerConstants {
 
 	public void setCodebase(String codebase) {
 		this.codebase = codebase;
+	}
+
+	@Override
+	public void close() throws RemoteException, IOException {
+		// implemented in subclasses
 	}
 
 	/**

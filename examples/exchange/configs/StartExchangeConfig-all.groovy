@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package examples.calculate
+package examples.exchange
 
 import com.sun.jini.start.ServiceDescriptor
 import org.rioproject.config.Component
@@ -36,15 +36,26 @@ class StartAll {
         String configPath = "${projectBuildDir}/../configs"
 
         def descriptors = []
-        ["exchange"]
-            def configArg = ["${configPath}/exchange-prv.config"]
-            def codebase = "${relativeRepoPath}/exchange-${sorcerVersion}-dl.jar sorcer-dl-${sorcerVersion}.jar sorcer-ui-${sorcerVersion}.jar jsk-dl-${riverVersion}.jar"
+        ["exchange", "smart-exchange"].each { provider ->
+            def configArg = ["${configPath}/${provider}-prv.config"]
+            def codebase = "${relativeRepoPath}/exchange-${sorcerVersion}-prv.jar sorcer-dl-${sorcerVersion}.jar sorcer-ui-${sorcerVersion}.jar jsk-dl-${riverVersion}.jar"
 
             descriptors << new SorcerServiceDescriptor(codebase,
                     policy,
                     "${buildLibPath}/exchange-${sorcerVersion}-prv.jar",
                     "sorcer.core.provider.ServiceTasker",
                     configArg as String[])
+        }
+
+        def provider = "smart-ipcarray";
+        def configArg = ["${configPath}/${provider}-prv.config"]
+        def codebase = "${relativeRepoPath}/exchange-${sorcerVersion}-prv.jar sorcer-dl-${sorcerVersion}.jar sorcer-ui-${sorcerVersion}.jar jsk-dl-${riverVersion}.jar"
+
+        descriptors << new SorcerServiceDescriptor(codebase,
+                policy,
+                "${buildLibPath}/exchange-${sorcerVersion}-prv.jar",
+                "sorcer.provider.exchange.impl.IpcArrayProviderImpl",
+                configArg as String[])
 
         return descriptors as ServiceDescriptor[]
     }

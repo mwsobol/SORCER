@@ -26,9 +26,8 @@ public class ExchangeBean implements Exchange, Serializable {
 
     @Override
     public Context exchange(Context context) throws RemoteException, ContextException {
-        int[] input = (int[])context.getValue("input");
-        int[] output = build(input);
-        context.putValue("output", output);
+        int[] input = (int[])context.getValue("values");
+        context.putValue("values", build(input));
         return context;
     }
 
@@ -38,10 +37,9 @@ public class ExchangeBean implements Exchange, Serializable {
     }
 
     private  int[] build(int[] input) {
-        int[] output = new int[input.length];
         for (int n = 0; n < input.length; n++) {
-            output[n] = 2 * n;
+            input[n] += 1;
         }
-        return output;
+        return input;
     }
 }
