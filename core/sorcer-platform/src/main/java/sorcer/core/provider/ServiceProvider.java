@@ -248,6 +248,8 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
             // e.printStackTrace();
             logger.warn("init", e);
         }
+	    // setup injections by subclasses of this class
+		providerSetup();
 		// configure the provider's delegate
         delegate.getProviderConfig().init(true, providerProperties);
         ((ScratchManagerSupport)scratchManager).setProperties(getProviderProperties());
@@ -269,7 +271,15 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
         ((ScratchManagerSupport)scratchManager).setProperties(getProviderProperties());
 	}
 
-    protected void setScratchManager(final ScratchManager scratchManager) {
+	/**
+	 * Subclasses inject problematically configurable entities,
+	 * for example proxies for this provider.
+	 */
+	protected void providerSetup() {
+		// optional programmatic setup by subclassing provider
+	}
+
+	protected void setScratchManager(final ScratchManager scratchManager) {
         if(scratchManager!=null) {
             this.scratchManager = scratchManager;
             logger.info("Set ScratchManager with {}", this.scratchManager.getClass().getName());
@@ -1718,7 +1728,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 			providers.remove(this);
 			tally = tally - 1;
 
-			logger.debug("destroyed provider: " + getProviderName() + ", providers left: " + tally);
+			logger.debug("destroyed provider: {} providers left: {}" + getProviderName(), tally);
 			//if (threadManager != null)
 			//	threadManager.terminate();
 
@@ -1733,7 +1743,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 			}
 
 		} catch(Exception e) {
-			logger.error("Problem destroying service "+getProviderName(), e);
+			logger.error("Problem destroying service " + getProviderName(), e);
 		}
 	}
 
@@ -1777,14 +1787,15 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	 *
 	 * @see Provider#destroy()
 	 */
-	public void destroyNode() {
+	public void destroyNode() throws RemoteException {
 		logger.info("providers.size() = " + providers.size());
 		for (ServiceProvider provider : providers) {
 			logger.info("calling destroy on provider name = " + provider.getName());
 			provider.destroy();
 		}
-		logger.info("Returning from destroyNode()");
-		//checkAndMaybeKillJVM();
+		// exit JVM after destroying all providers
+		logger.debug("calling destroy provider node");
+		System.exit(0);
 	}
 
 	/** {@inheritDoc} */

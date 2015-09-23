@@ -53,7 +53,7 @@ include 'examples:sml'
 include 'examples:pml'
 include 'examples:worker'
 include 'examples:service'
-include 'examples:calculate'
+include 'examples:exchange'
 include 'examples:coffeemaker'
 include 'examples:greeter'
 

@@ -16,6 +16,13 @@
  */
 package sorcer.provider.boot;
 
+import org.rioproject.net.HostUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import sorcer.core.SorcerConstants;
+import sorcer.util.JavaSystemProperties;
+import sorcer.util.SOS;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -24,18 +31,7 @@ import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.Properties;
-import java.util.StringTokenizer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.rioproject.net.HostUtil;
-import sorcer.core.SorcerConstants;
-import sorcer.util.JavaSystemProperties;
-import sorcer.util.SOS;
+import java.util.*;
 
 /**
  * Provides static convenience methods for use in configuration files. This
@@ -80,7 +76,7 @@ public class Booter implements SorcerConstants {
 	/** This class cannot be instantiated. */
 	private Booter() {
 		throw new AssertionError(
-				"sorcer.provider.boot.BootUtil cannot be instantiated");
+				"sorcer.provider.boot.Boot cannot be instantiated");
 	}
 
 	/**
