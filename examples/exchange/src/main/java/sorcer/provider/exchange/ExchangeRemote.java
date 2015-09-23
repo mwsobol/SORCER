@@ -31,4 +31,9 @@ public interface ExchangeRemote extends Remote {
   public Context exchangeInts(Context context) throws RemoteException, ContextException;
 
   public Context exchangeDoubles(Context context) throws RemoteException, ContextException;
+
+  public int[] exchangeInts(int[] input) throws RemoteException;
+
+  public double[] exchangeDoubles(double[] input) throws RemoteException;
+
 }

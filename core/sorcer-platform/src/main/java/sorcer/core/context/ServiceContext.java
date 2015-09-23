@@ -272,9 +272,9 @@ public class ServiceContext<T> extends ServiceMogram implements
 	}
 
 	public Context clearScope() throws ContextException {
-		Signature.ReturnPath rp = getReturnPath();
-		if (rp != null && rp.path != null)
-			removePath(rp.path);
+//		Signature.ReturnPath rp = getReturnPath();
+//		if (rp != null && rp.path != null)
+//			removePath(rp.path);
 
 		return this;
 	}
