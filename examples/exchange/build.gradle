@@ -82,7 +82,7 @@ bootme {
 //    if (!file("logs").exists()) file("logs").mkdir()
     starterConfig = file("${projectDir.path}/configs/StartExchangeConfig-all.groovy")
     systemProperties = ["relative.repo.path" : repoPath()]
-    spawn = false
+//    spawn = false
 //    debug = true
 }
 
