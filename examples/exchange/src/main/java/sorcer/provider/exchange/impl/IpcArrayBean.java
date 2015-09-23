@@ -50,14 +50,15 @@ public class IpcArrayBean implements IpcArray, Serializable {
 
     @Override
     public int[] ipcIntegerArray(int[] in) throws RemoteException, IOException {
-        if (channel == null) {
+        if (channel == null || !channel.isConnected()) {
             bb = ByteBuffer.allocate(BB_SIZE);
             ib = bb.asIntBuffer();
             channel = SocketChannel.open();
             channel.connect(new InetSocketAddress(hostName, port));
         }
-        ib.put(in);
         bb.clear();
+        ib.clear();
+        ib.put(in);
         while (bb.hasRemaining()) {
             channel.write(bb);
         }
@@ -74,13 +75,17 @@ public class IpcArrayBean implements IpcArray, Serializable {
         for (int i = 0; i < LENGTH; i++) {
             out[i] = ib.get(i);
         }
-        channel.close();
         return out;
     }
 
     @Override
     public int[] ipcDoubleArray(int[] in) throws RemoteException, IOException {
         return new int[0];
+    }
+
+    @Override
+    public void close() throws RemoteException, IOException {
+        channel.close();
     }
 
 }

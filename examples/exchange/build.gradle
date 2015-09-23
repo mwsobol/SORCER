@@ -77,21 +77,10 @@ def repoPath() {
     return "org/sorcer/exchange/${version}"
 }
 
-// aternative set of providers
-
-//bootme {
-//    description = 'Starts up a service provider'
-////    if (!file("logs").exists()) file("logs").mkdir()
-//    starterConfig = file("${projectDir.path}/configs/StartExchangeConfig.groovy")
-//    systemProperties = ["relative.repo.path" : repoPath()]
-////    spawn = false
-////    debug = true
-//}
-
 bootme {
     description = 'Starts up a service provider'
 //    if (!file("logs").exists()) file("logs").mkdir()
-    starterConfig = file("${projectDir.path}/configs/StartExchange2Config-all.groovy")
+    starterConfig = file("${projectDir.path}/configs/StartExchangeConfig-all.groovy")
     systemProperties = ["relative.repo.path" : repoPath()]
     spawn = false
 //    debug = true
@@ -124,7 +113,7 @@ test {
 //    dependsOn([install, bootme])
 //    finalizedBy(stopme)
 }
-//test.enabled = false
+test.enabled = false
 
 
 

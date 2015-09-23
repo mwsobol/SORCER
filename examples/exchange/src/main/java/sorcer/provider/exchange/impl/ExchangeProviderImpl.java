@@ -54,6 +54,7 @@ public class ExchangeProviderImpl implements ExchangeRemote, Serializable {
     public void init(Provider provider) {
         this.provider = (ServiceProvider) provider;
 
+
         try {
             serverChannel = ServerSocketChannel.open();
             serverChannel.socket().bind(new InetSocketAddress("127.0.0.1", 9001));
@@ -71,6 +72,7 @@ public class ExchangeProviderImpl implements ExchangeRemote, Serializable {
         }
     }
 
+    @Override
     public Context exchangeInts(Context context) throws RemoteException, ContextException {
             int[] values = (int[]) context.getValue("values");
             for (int n = 0; n < values.length; n++) {
@@ -80,6 +82,7 @@ public class ExchangeProviderImpl implements ExchangeRemote, Serializable {
             return context;
     }
 
+    @Override
     public Context exchangeDoubles(Context context) throws RemoteException, ContextException {
             double[] values = (double[]) context.getValue("values");
             for (int n = 0; n < values.length; n++) {
@@ -89,13 +92,20 @@ public class ExchangeProviderImpl implements ExchangeRemote, Serializable {
             return context;
     }
 
-    private int[] processDataBuffer(IntBuffer buffer) {
-        int resultSize = buffer.capacity();
-        int[] result = new int[resultSize];
-        for (int i = 0; i < resultSize; i++) {
-            result[i] = buffer.get(i) + 1;
+    @Override
+    public int[] exchangeInts(int[] input) throws RemoteException {
+        for (int n = 0; n < input.length; n++) {
+            input[n] += 1;
         }
-        return result;
+        return input;
+    }
+
+    @Override
+    public double[] exchangeDoubles(double[] input) throws RemoteException {
+        for (int n = 0; n < input.length; n++) {
+            input[n] += 1.0;
+        }
+        return input;
     }
 
     private void listen() {
@@ -133,5 +143,14 @@ public class ExchangeProviderImpl implements ExchangeRemote, Serializable {
                     e.printStackTrace();
                 }
         }
+    }
+
+    private int[] processDataBuffer(IntBuffer buffer) {
+        int resultSize = buffer.capacity();
+        int[] result = new int[resultSize];
+        for (int i = 0; i < resultSize; i++) {
+            result[i] = buffer.get(i) + 1;
+        }
+        return result;
     }
 }
