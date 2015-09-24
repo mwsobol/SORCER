@@ -17,6 +17,7 @@
 
 @Codebase(group='org.sorcer', module='arithmetic', version='${sorcer.version}', classifier='dl')
 
+import sorcer.util.Sorcer;
 import sorcer.arithmetic.provider.Adder
 import sorcer.arithmetic.provider.Multiplier
 import sorcer.arithmetic.provider.Subtractor

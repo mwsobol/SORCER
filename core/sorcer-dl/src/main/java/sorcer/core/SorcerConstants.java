@@ -251,6 +251,10 @@ public interface SorcerConstants {
 
 	public static final String S_JOBBER_NAME = "sorcer.jobber.name";
 
+	public static final String S_MODELER_NAME = "sorcer.modeler.name";
+
+	public static final String S_CONCATENATOR_NAME = "sorcer.concatenator.name";
+
 	public static final String S_EXERTER_NAME = "sorcer.exerter.name";
 
 	public static final String S_SPACER_NAME = "sorcer.spacer.name";

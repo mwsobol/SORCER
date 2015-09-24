@@ -82,13 +82,16 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 	private static LoadingCache<Signature, Object> proxies;
 
 	public ServiceShell() {
+		setupProxyCache();
 	}
 
 	public ServiceShell(Mogram mogram) {
+		this();
 		this.mogram = mogram;
 	}
 
 	public ServiceShell(Mogram mogram, Transaction txn) {
+		this();
 		this.mogram = mogram;
 		transaction = txn;
 	}
@@ -98,15 +101,15 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 	}
 
 	private static void setupProxyCache() {
-		LoadingCache<Signature, Object> proxies =  CacheBuilder.newBuilder()
+		proxies =  CacheBuilder.newBuilder()
 				.maximumSize(20)
 				.expireAfterWrite(30, TimeUnit.MINUTES)
-				.removalListener(null)
+//				.removalListener(null)
 				.build(new CacheLoader<Signature, Object>() {
-							public Object load(Signature signature) {
-								return Accessor.get().getService(signature);
-							}
-						});
+					public Object load(Signature signature) {
+						return Accessor.get().getService(signature);
+					}
+				});
 	}
 
 	public <T extends Mogram> T  exert(Arg... entries) throws TransactionException,
@@ -145,7 +148,6 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 						Exerter prv = (Exerter) Accessor.get().getService(sig(Shell.class));
 						result = (Exertion)prv.exert(input, transaction, entries);
 					} else {
-//						sorcer.core.provider.exerter.ServiceShell se = new sorcer.core.provider.exerter.ServiceShell(input);
 						try {
 							input.substitute(entries);
 						} catch (Exception e) {
@@ -346,7 +348,7 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 	private Exertion dispatchExertion(ServiceExertion exertion, String providerName)
 			throws ExertionException, ExecutionException {
 		Signature signature = exertion.getProcessSignature();
-		Service provider = null;
+		Object provider = null;
 		try {
 			// If the exertion is a job rearrange the inner exertions to make sure the
 			// dependencies are not broken
@@ -395,8 +397,19 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 			}
 			if (logger.isDebugEnabled())
 				logger.debug("ServiceShell's service accessor: {}", Accessor.get().getClass().getName());
-			provider = ((NetSignature) signature).getService();
-			((NetSignature)signature).setProvider(provider);
+			provider = ((NetSignature) signature).getProvider();
+			if (provider == null) {
+				// check proxy cache
+				provider = proxies.get(signature);
+				// lookup proxy
+				if (provider == null) {
+					long t0 = System.currentTimeMillis();
+					provider = Accessor.get().getService(signature);
+					if (logger.isDebugEnabled())
+					 logger.info("Return from Accessor.getService(), round trip: {} millis",
+							 (System.currentTimeMillis() - t0));
+				}
+			}
 		} catch (Exception e) {
 			throw new ExertionException(e);
 		}
@@ -406,51 +419,27 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 			signature = new NetSignature("service", Spacer.class, Sorcer.getActualSpacerName());
 			exertion.setProcessSignature(signature);
 		}
-		// find the provider and check if the provider is a smart proxy
-		Object prv = provider;
-        if (prv == null) {
-            long t0 = System.currentTimeMillis();
-            prv = Accessor.get().getService(signature);
-            logger.info("Return from Accessor.getService(), round trip: {} millis", (System.currentTimeMillis()-t0));
-            // check for a space task
-
-            /* =============================================================================== *
-             * The following code commented by DR, this provisioning approach is not supported *
-             * =============================================================================== */
-
- 			/*if (prv == null && exertion.isProvisionable() && signature instanceof NetSignature) {
+ 		if (provider != null) {
+			if (provider instanceof Service) {
+				// cache the provider for the signature
+				((NetSignature) signature).setProvider((Service) provider);
+				proxies.put(signature, provider);
+			} else if (exertion instanceof Task){
+				// exert smart proxy as an object task delegate
 				try {
-					logger.debug("Provisioning: " + signature);
-					prv = ServiceDirectoryProvisioner.getProvisioner().provision(signature);
-				} catch (ProvisioningException pe) {
-					logger.warn("Provider not available and not provisioned: " + pe.getMessage());
-					exertion.setStatus(Exec.FAILED);
-					exertion.reportException(new RuntimeException(
-							"Cannot find provider and provisioning returned error: " + pe.getMessage()));
-					return exertion;
-				}
-			}*/
-			if (prv != null) {
-				if (prv instanceof Service) {
-					// cache the provider for the signature
-					provider = (Service) prv;
-					((NetSignature) signature).setProvider(provider);
-				} else if (exertion instanceof Task){
-					// exert smart proxy as an object task delegate
-					try {
-						ObjectSignature sig = new ObjectSignature();
-						sig.setSelector(signature.getSelector());
-						sig.setTarget(prv);
-						Context cxt = exertion.getContext();
-						((Task)exertion).setDelegate(new ObjectTask(sig, cxt));
-						return ((Task)exertion).doTask(transaction);
-					} catch (Exception e) {
-						throw new ExertionException(e);
-					}
+					ObjectSignature sig = new ObjectSignature();
+					sig.setSelector(signature.getSelector());
+					sig.setTarget(provider);
+					Context cxt = exertion.getContext();
+					((Task)exertion).setDelegate(new ObjectTask(sig, cxt));
+					return ((Task)exertion).doTask(transaction);
+				} catch (Exception e) {
+					throw new ExertionException(e);
 				}
 			}
 		}
-		this.provider = (Service)prv;
+		this.provider = (Service)provider;
+		// continue exerting
 		return null;
 	}
 
@@ -634,9 +623,9 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 	@Override
 	public String toString() {
 		if (mogram == null)
-			return "Exerter";
+			return "ServiceShell";
 		else
-			return "Exerter for: " + mogram.getName();
+			return "ServiceShell for: " + mogram.getName();
 	}
 
 	/*
