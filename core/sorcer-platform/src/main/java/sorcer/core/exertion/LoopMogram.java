@@ -20,6 +20,7 @@ package sorcer.core.exertion;
 import net.jini.core.transaction.Transaction;
 import sorcer.core.context.ThrowableTrace;
 import sorcer.service.*;
+import sorcer.service.modeling.Model;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -112,14 +113,20 @@ public class LoopMogram extends ConditionalMogram {
 				}
 				return this;
 			} else if (condition != null && max - min == 0) {
+				if (target instanceof Model)
+					((Context)target).append(condition.getConditionalContext());
 				while (condition.isTrue()) {
-					Signature sig = target.getProcessSignature();
-					if (sig != null && sig.getVariability() != null) {
-						((Task)target).getContext().append(condition.getConditionalContext());
-					}
-					target = target.exert(txn);
-					if (sig != null && sig.getVariability() != null) {
-						((Task)target).updateConditionalContext(condition);
+					if (target instanceof Exertion) {
+						Signature sig = target.getProcessSignature();
+						if (sig != null && sig.getVariability() != null) {
+							((Task) target).getContext().append(condition.getConditionalContext());
+						}
+						target = target.exert(txn);
+						if (sig != null && sig.getVariability() != null) {
+							((Task) target).updateConditionalContext(condition);
+						}
+					} else {
+						target = target.exert(txn);
 					}
 				}
 			} else if (condition != null && max - min > 0) {

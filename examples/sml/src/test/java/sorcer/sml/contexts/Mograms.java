@@ -9,6 +9,8 @@ import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.provider.impl.SubtractorImpl;
+import sorcer.core.context.model.par.Par;
+import sorcer.core.invoker.InvokeIncrementor;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.service.Block;
 import sorcer.service.Context;
@@ -17,14 +19,12 @@ import sorcer.service.Strategy.Flow;
 import sorcer.service.Task;
 import sorcer.service.modeling.Model;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
-import static sorcer.eo.operator.result;
-import static sorcer.eo.operator.value;
 import static sorcer.mo.operator.*;
-import static sorcer.po.operator.inc;
-import static sorcer.po.operator.par;
+import static sorcer.po.operator.*;
 
 /**
  * Created by Mike Sobolewski on 4/15/15.
@@ -32,9 +32,9 @@ import static sorcer.po.operator.par;
 @SuppressWarnings({ "unchecked", "rawtypes" })
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/sml")
-public class Morgams {
+public class Mograms {
 
-    private final static Logger logger = LoggerFactory.getLogger(Morgams.class);
+    private final static Logger logger = LoggerFactory.getLogger(Mograms.class);
 
 
     @Test
@@ -95,52 +95,75 @@ public class Morgams {
     }
 
     @Test
+    public void par2() throws Exception {
+
+        InvokeIncrementor i = inc("x1", 200.0);
+         Par p = par("x1", next(i));
+
+        logger.info("value: " + value(p));
+        logger.info("value: " + value(p));
+
+//        logger.info("value: " + next(i));
+//        logger.info("value: " + next(i));
+//        logger.info("value: " + next(i));
+    }
+
+    @Test
     public void exertMstcGateSchema() throws Exception {
 
         Model model = srvModel(
-                inEnt("multiply/x1", 10.0), inEnt("multiply/x2", 50.0),
-                srv(sig("multiply", MultiplierImpl.class, result("multiply/out",
-                        inPaths("multiply/x1", "multiply/x2")))),
-                par("incBy200", inc("multiply/out", 200.0)));
+                inEnt("x", 10.0),
+                outEnt("y", next(inc("x", 20.0))));
 
-        responseUp(model, "multiply", "incBy200");
-        dependsOn(model, ent("incBy200", paths("multiply")));
-
+        responseUp(model, "y");
         Context result = response(model);
-        logger.info("result: " + result);
-        assertTrue(value(result, "incBy200").equals(700.0));
+        logger.info("result1: " + result);
+
+//        Context result = response(model);
+//        logger.info("result1: " + result);
+//        assertTrue(value(result, "incBy200").equals(250.0));
 
 //        Block looping = block(
+//                inEnt("multiply/x1", 10.0), inEnt("multiply/x2", 50.0),
 //                loop(condition("{ incBy200 -> incBy200 < 1000 }", "incBy200"),
 //                        model));
-//
+
+//        Block looping = block(
+//                context(ent("x1", 10.0), ent("x2", 20.0), ent("z", 100.0)),
+//                loop(condition("{ x1, x2, z -> x1 + x2 < z }", "x1", "x2", "z"),
+//                        task(par("x1", invoker("x1 + 3", pars("x1"))))));
+
 //        looping = exert(looping);
 //        logger.info("block context: " + context(looping));
+//        logger.info("result: " + value(context(looping), "x1"));
+//        assertEquals(value(context(looping), "x1"), 82.00);
     }
 
-//    @Test
-//    public void exertMstcGateMogram() throws Exception {
-//
-//        Model airCycleModel = srvModel(
-//                inEnt("offDesignCases"), outEnt("fullEngineDeck"),
-//                srv(sig("mstcGate", Class.class, result("fullEngineDeck", inPaths("offDesignCases")))),
-//
-//                inEnt("offDesignCases"), outEnt("acmFile"),
-//                srv(sig("parsing", Class.class, result("ac2HexOut1", inPaths("fullEngineDeck")))),
-//
-//                srv(sig("execute", Class.class, result("ac2HexOut2",
-//                        inPaths("ac2HexOut1")))));
-//
-//        responseUp(airCycleModel, "execute");
-//        dependsOn(airCycleModel, ent("execute", paths("mstcGate", "offDesignCases")));
-//
-//        Block airCycleMachine = block(
-//                context(ent("offDesignCases", "myURL")),
-//                loop(condition("{ ac2HexOut1, ac2HexOut2 -> ac2HexOut1.equals(ac2HexOut2) }",
-//                                "ac2HexOut1", "ac2HexOut2"),
-//                        airCycleModel));
-//
-//        airCycleMachine = exert(airCycleMachine);
-//        logger.info("block context: " + context(airCycleMachine));
-//    }
+    @Test
+    public void exertMstcGateMogram() throws Exception {
+
+        Model airCycleModel = srvModel("airCycleModel",
+                srv(sig("getAc2HexOut", Class.class, result("ac2HexOut1", inPaths("offDesignCases")))),
+
+                outEnt("fullEngineDeck"),
+                srv(sig("mstcGate", Class.class, result("fullEngineDeck", inPaths("ac2HexOut1")))),
+
+                outEnt("acmFile"),
+                srv(sig("parseEngineDeck", Class.class, result("acmFile", inPaths("fullEngineDeck")))),
+
+                srv(sig("executeAirCycleMachine", Class.class, result("ac2HexOut2",
+                        inPaths("acmFile")))));
+
+        responseUp(airCycleModel, "executeAirCycleMachine");
+        dependsOn(airCycleModel, ent("execute", paths("mstcGate", "offDesignCases")));
+
+        Block airCycleMachineMogram = block(
+                context(ent("offDesignCases", "myURL")),
+                loop(condition("{ ac2HexOut1, ac2HexOut2 -> ac2HexOut1.equals(ac2HexOut2) }",
+                                "ac2HexOut1", "ac2HexOut2"),
+                        airCycleModel));
+
+        airCycleMachineMogram = exert(airCycleMachineMogram);
+        logger.info("block context: " + context(airCycleMachineMogram));
+    }
 }

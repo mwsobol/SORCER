@@ -68,7 +68,8 @@ public abstract class InvokeIncrementor<T> extends ServiceInvoker<T> implements 
 			if (value == null && target != null)
 				value = target.invoke(null, entries);
 			else if (path != null && target == null && invokeContext != null) {
-					value = (T) invokeContext.getValue(path);
+					T val = (T) invokeContext.getValue(path);
+					if (val != null) value = val;
 			}
 			value = getIncrement(value, increment);
 		} catch (RemoteException e) {

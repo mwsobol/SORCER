@@ -170,6 +170,7 @@ public class SrvModel extends ParModel<Object> implements Model {
 
             if (path != null) {
                 val = get(path);
+                execDependencies(path, entries);
             } else {
                 Signature.ReturnPath rp = returnPath(entries);
                 if (rp != null)
@@ -230,6 +231,16 @@ public class SrvModel extends ParModel<Object> implements Model {
         }
         this.appendInout(outcxt);
         return outcxt;
+    }
+
+    protected void execDependencies(String path, Arg... args) throws ContextException {
+        Map<String, List<String>> dpm = modelStrategy.getDependentPaths();
+        List<String> dpl = dpm.get(path);
+        if (dpl != null && dpl.size() > 0) {
+            for (String p : dpl) {
+                getValue(p, args);
+            }
+        }
     }
 
     protected void execDependencies(Signature sig, Arg... args) throws ContextException {

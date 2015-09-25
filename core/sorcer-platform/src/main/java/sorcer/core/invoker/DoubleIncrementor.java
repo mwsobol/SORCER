@@ -42,9 +42,9 @@ public class DoubleIncrementor extends InvokeIncrementor<Double> {
     @Override
     protected Double getIncrement(Double value, Double increment) throws EvaluationException {
         Double val = null;
-        if (value == null)  {
-           val = (Double)invokeContext.getValue(path);
-            return val + increment;
+        if (this.value == null)  {
+            this.value = increment;
+            return this.value;
         }
         return value + increment;
     }
