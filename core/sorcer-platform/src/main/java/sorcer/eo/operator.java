@@ -820,6 +820,30 @@ public class operator {
 			return sig("?", serviceType, args);
 	}
 
+	public static Signature sig(String operation, Object provider, Arg... args) throws SignatureException {
+		ObjectSignature sig = new ObjectSignature();
+		sig.setName(operation);
+		sig.setSelector(operation);
+		sig.setTarget(provider);
+		if (args.length > 0) {
+			for (Object o : args) {
+				if (o instanceof Type) {
+					sig.setType((Type) o);
+				} else if (o instanceof Operating) {
+					sig.setActive((Operating) o);
+				} else if (o instanceof ServiceShell) {
+					sig.setShellRemote((ServiceShell) o);
+				} else if (o instanceof ReturnPath) {
+					sig.setReturnPath((ReturnPath) o);
+				} else if (o instanceof ServiceDeployment) {
+					sig.setProvisionable(true);
+					sig.setDeployment((ServiceDeployment) o);
+				}
+			}
+		}
+		return sig;
+	}
+
 	public static Signature sig(String operation, Class serviceType, Arg... args) throws SignatureException {
 		String providerName = null;
 		Provision p = null;

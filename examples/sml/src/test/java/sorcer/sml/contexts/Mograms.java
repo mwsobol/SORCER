@@ -7,16 +7,16 @@ import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.impl.AdderImpl;
+import sorcer.arithmetic.provider.impl.IncrementerImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.provider.impl.SubtractorImpl;
 import sorcer.core.context.model.par.Par;
+import sorcer.core.context.model.srv.Srv;
+import sorcer.core.context.model.srv.SrvModel;
 import sorcer.core.invoker.InvokeIncrementor;
 import sorcer.core.provider.rendezvous.ServiceJobber;
-import sorcer.service.Block;
-import sorcer.service.Context;
-import sorcer.service.Job;
+import sorcer.service.*;
 import sorcer.service.Strategy.Flow;
-import sorcer.service.Task;
 import sorcer.service.modeling.Model;
 
 import static org.junit.Assert.assertEquals;
@@ -95,51 +95,54 @@ public class Mograms {
     }
 
     @Test
-    public void par2() throws Exception {
+    public void incrementer() throws Exception {
 
-        InvokeIncrementor i = inc("x1", 200.0);
-         Par p = par("x1", next(i));
-
-        logger.info("value: " + value(p));
-        logger.info("value: " + value(p));
-
-//        logger.info("value: " + next(i));
-//        logger.info("value: " + next(i));
-//        logger.info("value: " + next(i));
-    }
-
-    @Test
-    public void exertMstcGateSchema() throws Exception {
+        IncrementerImpl incrementer = new IncrementerImpl(100.0);
 
         Model model = srvModel(
-                inEnt("x", 10.0),
-                outEnt("y", next(inc("x", 20.0))));
+                inEnt("by", 10.0),
+                srv(sig("increment", incrementer, result("out",
+                        inPaths("by")))));
 
-        responseUp(model, "y");
-        Context result = response(model);
-        logger.info("result1: " + result);
+        responseUp(model, "increment", "out");
 
-//        Context result = response(model);
-//        logger.info("result1: " + result);
-//        assertTrue(value(result, "incBy200").equals(250.0));
+        Model exerted = exert(model);
+        logger.info("out context: " + exerted);
+        assertTrue(value(exerted, "out").equals(110.0));
 
-//        Block looping = block(
-//                inEnt("multiply/x1", 10.0), inEnt("multiply/x2", 50.0),
-//                loop(condition("{ incBy200 -> incBy200 < 1000 }", "incBy200"),
-//                        model));
+        ((SrvModel)exerted).clearOutputs();
 
-//        Block looping = block(
-//                context(ent("x1", 10.0), ent("x2", 20.0), ent("z", 100.0)),
-//                loop(condition("{ x1, x2, z -> x1 + x2 < z }", "x1", "x2", "z"),
-//                        task(par("x1", invoker("x1 + 3", pars("x1"))))));
-
-//        looping = exert(looping);
-//        logger.info("block context: " + context(looping));
-//        logger.info("result: " + value(context(looping), "x1"));
-//        assertEquals(value(context(looping), "x1"), 82.00);
+        exerted = exert(model);
+        logger.info("out context: " + exerted);
+        assertTrue(value(exerted, "out").equals(120.0));
     }
 
-    @Test
+//    @Test
+    public void exertMstcGateSchema() throws Exception {
+
+        IncrementerImpl incrementer = new IncrementerImpl(100.0);
+
+        Model model = srvModel(
+                inEnt("by", 10.0),
+                srv(sig("increment", incrementer, result("out",
+                        inPaths("by")))));
+
+
+        responseUp(model, "increment", "out");
+//        Model exerted = exert(model);
+//        logger.info("out context: " + exerted);
+//        assertTrue(value(exerted, "out").equals(110.0));
+
+        Block looping = block(
+                loop(condition("{ out -> out < 1000 }", "out"),
+                        model));
+
+        looping = exert(looping);
+        logger.info("block context: " + context(looping));
+        logger.info("result: " + value(context(looping), "x1"));
+    }
+
+//    @Test
     public void exertMstcGateMogram() throws Exception {
 
         Model airCycleModel = srvModel("airCycleModel",

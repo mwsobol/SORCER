@@ -28,10 +28,7 @@ import sorcer.service.*;
 import sorcer.service.modeling.Model;
 
 import java.rmi.RemoteException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static sorcer.eo.operator.*;
 
@@ -299,6 +296,17 @@ public class SrvModel extends ParModel<Object> implements Model {
         } catch (Exception e) {
             throw new ExertionException(e);
         }
+    }
+
+    public SrvModel clearOutputs() {
+        Iterator<Map.Entry<String, Object>> i = entryIterator();
+        while (i.hasNext()) {
+            Map.Entry e = i.next();
+            if (e.getValue() instanceof Srv) {
+                ((Srv) e.getValue()).srvValue = null;
+            }
+        }
+        return this;
     }
 
 }
