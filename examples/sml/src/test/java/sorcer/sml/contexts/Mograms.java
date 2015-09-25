@@ -153,7 +153,7 @@ public class Mograms {
                         inPaths("acmFile")))));
 
         responseUp(airCycleModel, "executeAirCycleMachine");
-        dependsOn(airCycleModel, ent("execute", paths("mstcGate", "offDesignCases")));
+        dependsOn(airCycleModel, ent("executeAirCycleMachine", paths("getAc2HexOut", "mstcGate", "parseEngineDeck")));
 
         Block airCycleMachineMogram = block(
                 context(ent("offDesignCases", "myURL")),
