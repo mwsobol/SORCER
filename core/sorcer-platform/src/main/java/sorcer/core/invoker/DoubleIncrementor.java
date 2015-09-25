@@ -18,6 +18,7 @@
 
 package sorcer.core.invoker;
 
+import sorcer.service.EvaluationException;
 import sorcer.service.Invocation;
 
 /**
@@ -39,7 +40,12 @@ public class DoubleIncrementor extends InvokeIncrementor<Double> {
     }
 
     @Override
-    protected Double getIncrement(Double value, Double increment) {
+    protected Double getIncrement(Double value, Double increment) throws EvaluationException {
+        Double val = null;
+        if (value == null)  {
+           val = (Double)invokeContext.getValue(path);
+            return val + increment;
+        }
         return value + increment;
     }
 }

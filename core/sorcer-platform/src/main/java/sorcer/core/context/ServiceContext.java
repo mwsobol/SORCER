@@ -459,7 +459,11 @@ public class ServiceContext<T> extends ServiceMogram implements
 			if (entry.getKey().endsWith(name)) {
 				val = entry.getValue();
 				if (val instanceof Evaluation && isRevaluable)
-					val = ((Evaluation<T>) val).getValue();
+					try {
+						val = ((Evaluation<T>) val).getValue();
+					} catch (ContextException e) {
+						throw new EvaluationException(e);
+					}
 			}
 		}
 		return val;
@@ -475,7 +479,11 @@ public class ServiceContext<T> extends ServiceMogram implements
 			if (entry.getKey().startsWith(name)) {
 				val = entry.getValue();
 				if (val instanceof Evaluation && isRevaluable)
-					val = ((Evaluation) val).getValue();
+					try {
+						val = ((Evaluation) val).getValue();
+					} catch (ContextException e) {
+						throw new EvaluationException(e);
+					}
 			}
 		}
 		return val;
@@ -2506,6 +2514,11 @@ public class ServiceContext<T> extends ServiceMogram implements
 			ex.printStackTrace();
 			throw new SetterException(ex);
 		}
+		return this;
+	}
+
+	@Override
+	public Context getDataContext() throws ContextException {
 		return this;
 	}
 

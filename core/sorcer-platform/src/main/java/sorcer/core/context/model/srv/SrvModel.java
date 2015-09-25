@@ -163,7 +163,7 @@ public class SrvModel extends ParModel<Object> implements Model {
         }
     }
 
-    public Object getValue(String path, Arg... entries) throws ContextException {
+    public Object getValue(String path, Arg... entries) throws EvaluationException {
         Object val = null;
         try {
             append(entries);

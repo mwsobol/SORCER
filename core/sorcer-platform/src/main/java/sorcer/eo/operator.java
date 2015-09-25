@@ -308,14 +308,14 @@ public class operator {
 				returnPath = (ReturnPath) o;
 			} else if (o instanceof ExecPath) {
 				execPath = (ExecPath) o;
+			} else if (o instanceof Par) {
+				parEntryList.add((Par) o);
 			} else if (o instanceof Tuple2) {
 				entryList.add((Tuple2) o);
 			} else if (o instanceof Context.Type) {
 				types.add((Context.Type) o);
 			} else if (o instanceof String) {
 				name = (String) o;
-			} else if (o instanceof Par) {
-				parEntryList.add((Par) o);
 			} else if (o instanceof EntryList) {
 				entryLists.add((EntryList) o);
 			} else if (o instanceof MapContext) {
@@ -494,6 +494,9 @@ public class operator {
 				if (t.isPersistent()) {
 					setPar(pcxt, (Entry) entryList.get(i), i);
 				} else {
+					if (t.value() instanceof Scopable) {
+						((Scopable) t.value()).setScope(pcxt);
+					}
 					pcxt.putValueAt(t.path(), t.value(), i + 1);
 				}
 			} else if (t instanceof DataEntry) {
@@ -1397,7 +1400,7 @@ public class operator {
 		for (int i = 0; i < items.length; i++) {
 			if (items[i] instanceof Exertion || items[i] instanceof EntModel ) {
 				exertions.add((Mogram) items[i]);
-				if (items[i] instanceof ConditionalExertion)
+				if (items[i] instanceof ConditionalMogram)
 					isBlock = true;
 			} else if (items[i] instanceof Signature) {
 				sig = (Signature) items[i];
@@ -2407,47 +2410,47 @@ public class operator {
 		return new Condition(condition);
 	}
 
-	public static OptExertion opt(String name, Exertion target) {
-		return new OptExertion(name, target);
+	public static OptMogram opt(String name, Exertion target) {
+		return new OptMogram(name, target);
 	}
 
-	public static OptExertion opt(Condition condition,
+	public static OptMogram opt(Condition condition,
 								  Exertion target) {
-		return new OptExertion(condition, target);
+		return new OptMogram(condition, target);
 	}
 
 
-	public static OptExertion opt(String name, Condition condition,
+	public static OptMogram opt(String name, Condition condition,
 								  Exertion target) {
-		return new OptExertion(name, condition, target);
+		return new OptMogram(name, condition, target);
 	}
 
-	public static AltExertion alt(OptExertion... exertions) {
-		return new AltExertion(exertions);
+	public static AltMogram alt(OptMogram... exertions) {
+		return new AltMogram(exertions);
 	}
 
-	public static AltExertion alt(String name, OptExertion... exertions) {
-		return new AltExertion(name, exertions);
+	public static AltMogram alt(String name, OptMogram... exertions) {
+		return new AltMogram(name, exertions);
 	}
 
 
-	public static LoopExertion loop(Condition condition,
+	public static LoopMogram loop(Condition condition,
+								  Mogram target) {
+		return new LoopMogram(null, condition, target);
+	}
+
+	public static LoopMogram loop(int from, int to, Condition condition,
 									Exertion target) {
-		return new LoopExertion(null, condition, target);
+		return new LoopMogram(null, from, to, condition, target);
 	}
 
-	public static LoopExertion loop(int from, int to, Condition condition,
+	public static LoopMogram loop(int from, int to, Exertion target) {
+		return new LoopMogram(null, from, to, null, target);
+	}
+
+	public static LoopMogram loop(String name, Condition condition,
 									Exertion target) {
-		return new LoopExertion(null, from, to, condition, target);
-	}
-
-	public static LoopExertion loop(int from, int to, Exertion target) {
-		return new LoopExertion(null, from, to, null, target);
-	}
-
-	public static LoopExertion loop(String name, Condition condition,
-									Exertion target) {
-		return new LoopExertion(name, condition, target);
+		return new LoopMogram(name, condition, target);
 	}
 
 	public static Exertion exertion(Mappable mappable, String path)
@@ -2555,22 +2558,22 @@ public class operator {
 				pm.setInitContext(context);
 			}
 			for (Mogram e : mograms) {
-				if (e instanceof AltExertion) {
-					List<OptExertion> opts = ((AltExertion) e).getOptExertions();
-					for (OptExertion oe : opts) {
+				if (e instanceof AltMogram) {
+					List<OptMogram> opts = ((AltMogram) e).getOptExertions();
+					for (OptMogram oe : opts) {
 						oe.getCondition().setConditionalContext(pm);
 					}
-				} else if (e instanceof OptExertion) {
-					((OptExertion)e).getCondition().setConditionalContext(pm);
-				} else if (e instanceof LoopExertion) {
-					if (((LoopExertion)e).getCondition() != null)
-						((LoopExertion)e).getCondition().setConditionalContext(pm);
-					Exertion target = ((LoopExertion)e).getTarget();
+				} else if (e instanceof OptMogram) {
+					((OptMogram)e).getCondition().setConditionalContext(pm);
+				} else if (e instanceof LoopMogram) {
+					if (((LoopMogram)e).getCondition() != null)
+						((LoopMogram)e).getCondition().setConditionalContext(pm);
+					Mogram target = ((LoopMogram)e).getTarget();
 					if (target instanceof EvaluationTask && ((EvaluationTask)target).getEvaluation() instanceof Par) {
 						Par p = (Par)((EvaluationTask)target).getEvaluation();
 						p.setScope(pm);
-						if (((ServiceContext)target.getContext()).getReturnPath() == null)
-							((ServiceContext)target.getContext()).setReturnPath(p.getName());
+						if (target instanceof Exertion && ((Exertion)target).getContext().getReturnPath() == null)
+							((ServiceContext)((Exertion)target).getContext()).setReturnPath(p.getName());
 					}
 //				} else if (e instanceof VarTask) {
 //					pm.append(((VarSignature)e.getProcessSignature()).getVariability());

@@ -20,17 +20,17 @@ package sorcer.service;
 import java.util.List;
 
 
-abstract public class ConditionalExertion extends Task {
+abstract public class ConditionalMogram extends Task {
 
 	protected Condition condition;
 
-	protected Exertion target;
+	protected Mogram target;
 
-	public ConditionalExertion() {
+	public ConditionalMogram() {
 		super();
 	}
 
-	public ConditionalExertion(String name) {
+	public ConditionalMogram(String name) {
 		super(name);
 	}
 
@@ -42,11 +42,11 @@ abstract public class ConditionalExertion extends Task {
 		this.condition = condition;
 	}
 
-	public Exertion getTarget() {
+	public Mogram getTarget() {
 		return target;
 	}
 
-	public void setTarget(Exertion target) {
+	public void setTarget(Mogram target) {
 		this.target = target;
 	}
 
@@ -62,7 +62,7 @@ abstract public class ConditionalExertion extends Task {
 	 * 
 	 * @return exertion targets
 	 */
-	abstract public List<Exertion> getTargets();
+	abstract public List<Mogram> getTargets();
 	
 
 }
