@@ -156,7 +156,7 @@ public class Mograms {
         dependsOn(airCycleModel, ent("executeAirCycleMachine", paths("getAc2HexOut", "mstcGate", "parseEngineDeck")));
 
         Block airCycleMachineMogram = block(
-                context(ent("offDesignCases", "myURL")),
+                context(ent("offDesignCases", "myInputURL")),
                 loop(condition("{ ac2HexOut1, ac2HexOut2 -> ac2HexOut1.equals(ac2HexOut2) }",
                                 "ac2HexOut1", "ac2HexOut2"),
                         airCycleModel));
