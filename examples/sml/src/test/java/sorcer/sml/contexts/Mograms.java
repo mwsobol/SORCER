@@ -145,10 +145,8 @@ public class Mograms {
         Model airCycleModel = srvModel("airCycleModel",
                 srv(sig("getAc2HexOut", Class.class, result("ac2HexOut1", inPaths("offDesignCases")))),
 
-                outEnt("fullEngineDeck"),
                 srv(sig("mstcGate", Class.class, result("fullEngineDeck", inPaths("ac2HexOut1")))),
 
-                outEnt("acmFile"),
                 srv(sig("parseEngineDeck", Class.class, result("acmFile", inPaths("fullEngineDeck")))),
 
                 srv(sig("executeAirCycleMachine", Class.class, result("ac2HexOut2",
