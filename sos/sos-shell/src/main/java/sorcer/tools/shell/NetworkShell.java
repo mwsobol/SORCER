@@ -1325,6 +1325,17 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 	public static String[] initShell(final String[] args) throws Throwable {
 		if (args == null)
 			throw new NullPointerException("  args is null");
+
+		Properties props = new Properties();
+		String fn = Sorcer.getHome() + File.separatorChar +
+				"configs"+File.separatorChar + "versions.properties";
+		props.load((new FileInputStream(new File(fn))));
+		Enumeration e = props.keys();
+		while (e.hasMoreElements()) {
+			String key = (String)e.nextElement();
+			System.setProperty(key, props.getProperty(key));
+		}
+
 		final LinkedList<String> commandArgs = new LinkedList<String>();
 		commandArgs.addAll(Arrays.asList(args));
 		// System.out.println("initShell args: " + Arrays.toString(args));
@@ -1365,7 +1376,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 		try {
 			loginContext = (LoginContext) Config.getNonNullEntry(sysConfig,
 					CONFIG_COMPONENT, "loginContext", LoginContext.class);
-		} catch (NoSuchEntryException e) {
+		} catch (NoSuchEntryException ex) {
 			// leave null
 		}
 		isRemoteLogging = (Boolean) sysConfig.getEntry(CONFIG_COMPONENT,
@@ -1384,8 +1395,8 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 								}
 							}
 						}, null);
-			} catch (PrivilegedActionException e) {
-				throw e.getCause();
+			} catch (PrivilegedActionException ex) {
+				throw ex.getCause();
 			}
 		} else {
 			result = initialize(args, commandArgs);

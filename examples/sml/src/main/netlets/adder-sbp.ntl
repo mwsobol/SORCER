@@ -15,9 +15,10 @@
  * limitations under the License.
  */
 
-@Codebase(group='org.sorcer', module='arithmetic', version='${sorcer.version}', classifier='dl')
+@Codebase(group='org.sorcer', module='arithmetic', version='${sorcer.version}')
 
 import sorcer.arithmetic.provider.Adder
+String version = property("sorcer.version")
 
 Double v1 = 100.0;
 Double v2 = 200.0;
@@ -26,5 +27,5 @@ task("hello adder",
         sig("add", Adder.class,
         /* Dynamic deployment configuration is an artifact, and we declare that the provider
         * will be undeployed if idle for 1 minute */
-                deploy(configuration("arithmetic-5.3.8-deploy.config"), idle(1))),
+                deploy(configuration("org.sorcer:arithmetic:config:${version}"), idle(1))),
         context("adder", inEnt("arg/x1", v1), inEnt("arg/x2", v2), result("out/y")));

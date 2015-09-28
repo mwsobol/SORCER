@@ -16,7 +16,6 @@
  */
 @Codebase(group='org.sorcer', module='arithmetic', version='${sorcer.version}', classifier='dl')
 
-import sorcer.util.Sorcer;
 import sorcer.arithmetic.provider.Adder
 import sorcer.arithmetic.provider.Multiplier
 import sorcer.arithmetic.provider.Subtractor
@@ -25,26 +24,22 @@ import sorcer.core.provider.Jobber
 import sorcer.service.Strategy
 import sorcer.service.Task
 
-String configDir = Sorcer.getHome() + "/../../../examples/sml/configs/"
+String version = property("sorcer.version")
+String configDir = home() + "/../../../examples/sml/configs/"
 
-Task f4 = task("f4",
-        sig("multiply",
-                Multiplier.class,
-                deploy(configuration("org.sorcer:deploy-tests:config:"+System.getProperty("sorcer.version")),
+Task f4 = task("f4", sig("multiply", Multiplier.class,
+                deploy(configuration("org.sorcer:deploy-tests:config:"+version),
                         idle(1))),
 //                        ServiceDeployment.Type.SELF)),
         context("multiply", inEnt("arg/x1", 10.0d),
                 inEnt("arg/x2", 50.0d), result("result/y1")));
 
-Task f5 = task("f5",
-        sig("add",
-                Adder.class,
+Task f5 = task("f5", sig("add", Adder.class,
                 deploy(configuration(configDir+"/AdderProviderConfig.groovy"))),
         context("add", inEnt("arg/x3", 20.0d), inEnt("arg/x4", 80.0d),
                 result("result/y2")));
 
-Task f3 = task("f3",
-        sig("subtract", Subtractor.class,
+Task f3 = task("f3", sig("subtract", Subtractor.class,
                 deploy(maintain(2, perNode(2)),
                         idle(1),
                         configuration(configDir+"/subtractor-prv.config"))),
