@@ -72,7 +72,7 @@ allprojects {
 }
 
 subprojects {
-    if (project.name != "examples" && project.name != "sorcer-int-tests") {
+    if (project.name != "sorcer-int-tests") {
         apply plugin: "maven"
         apply plugin: "maven-publish"
 

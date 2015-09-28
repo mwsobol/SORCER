@@ -65,15 +65,6 @@ task arithmeticPrvUiJar(type: Jar) {
 	include('sorcer/arithmetic/provider/ui/**')
 }
 
-artifacts {
-    archives arithmeticPrvDlJar
-    archives arithmeticPrvUiJar
-	archives arithmeticReqJar
-}
-
-install.dependsOn(['arithmeticPrvDlJar', 'arithmeticPrvUiJar', 'arithmeticReqJar'])
-build.dependsOn(install)
-
 dependencies { 
 	compile project(':sorcer-platform')
     compile project(':sorcer-lib')
@@ -84,6 +75,17 @@ dependencies {
 	testRuntime libs.logback
 }
 
+def deployConfig = file("configs/arithmetic-prv.config")
+artifacts {
+	archives arithmeticPrvDlJar
+	archives arithmeticPrvUiJar
+	archives arithmeticReqJar
+	archives file: deployConfig, classifier: "deploy"
+}
+
+install.dependsOn(['arithmeticPrvDlJar', 'arithmeticPrvUiJar', 'arithmeticReqJar'])
+build.dependsOn(install)
+
 def repoPath() {
     return "org/sorcer/arithmetic/${version}"
 }
@@ -93,11 +95,6 @@ bootme {
     systemProperties = ["relative.repo.path" : repoPath()]
 //  spawn = false
 //	debug = true
-}
-
-def deployConfig = file("configs/arithmetic-prv.config")
-artifacts {
-	archives file: deployConfig, classifier: "deploy"
 }
 
 /*

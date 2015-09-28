@@ -26,5 +26,5 @@ task("hello adder",
         sig("add", Adder.class,
         /* Dynamic deployment configuration is an artifact, and we declare that the provider
         * will be undeployed if idle for 1 minute */
-                deploy(configuration("org.sorcer:arithmetic:config:5.3.8"), idle(1))),
+                deploy(configuration("arithmetic-5.3.8-deploy.config"), idle(1))),
         context("adder", inEnt("arg/x1", v1), inEnt("arg/x2", v2), result("out/y")));
