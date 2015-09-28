@@ -13,10 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package examples.sml.configs
+package deploy.configs
 
 import org.rioproject.config.Component
-
 import java.util.logging.Level
 
 /**
@@ -26,13 +25,19 @@ import java.util.logging.Level
  */
 @Component('sorcer.core.provider.ServiceProvider')
 class AdderProviderConfig {
-    /* service provider genetic properties */
+    /* service provider generic properties */
     String name = "Adder"
     String description = "Adder - bean provider"
     String location = "AFRL/WPAFB"
     boolean spaceEnabled = true
     // remote logging
     boolean remoteLogging=true
+    String remoteLoggerManagerName="Logger"
+    Level remoteLoggerLevel=Level.FINE;
+    String remoteLoggerName="remote.sorcer.core.provider.ArithmeticBeans"
+    // local private logging available via by RemoteLogger
+    boolean remoteContextLogging = true
+    boolean remoteProviderLogging = true
     // persist and reuse service ID
     boolean providerIdPersistent = false
     String iconName="sorcer.jpg";
@@ -47,7 +52,7 @@ class AdderProviderConfig {
      * @return An array of service implementation classes required to load the service
      */
     Class[] getBeanClasses() {
-        return [remote.sorcer.arithmetic.provider.AdderImpl.class]
+        return [sorcer.arithmetic.tester.provider.impl.AdderImpl.class]
     }
 
 
@@ -57,7 +62,7 @@ class AdderProviderConfig {
 
     /* This is declared as a static property so the class below can reference it, and used by the published interfaces
      * method above. Removes duplication. */
-    static String interfaceClass = "sorcer.arithmetic.provider.Adder"
+    static String interfaceClass = "sorcer.arithmetic.tester.provider.Adder"
 
 }
 
@@ -66,7 +71,8 @@ class AdderProviderConfig {
  */
 @Component('sorcer.core.exertion.deployment')
 class AdderDeploymentConfig {
-    String[] interfaces = [AdderProviderConfig.interfaceClass]
-    String[] codebaseJars = ["org/sorcer/arithmetic/${sorcer.version}/arithmetic-${sorcer.version}-dl.jar"]
-    String[] implJars = ["org/sorcer/arithmetic/${sorcer.version}/arithmetic-${sorcer.version}-prv.jar"]
+    String sorcerVersion = System.getProperty("sorcer.version")
+    String[] interfaces = ["sorcer.arithmetic.tester.provider.Adder"]
+    String[] codebaseJars = ["org/sorcer/sorcer-tester/${sorcerVersion}/sorcer-tester-${System.getProperty("sorcer.version")}-dl.jar"]
+    String[] implJars = ["org/sorcer/sorcer-tester/${sorcerVersion}/sorcer-tester-${System.getProperty("sorcer.version")}.jar"]
 }
