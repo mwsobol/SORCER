@@ -28,8 +28,8 @@ String configDir = home() + "/../../../examples/sml/configs/"
 
 Task f4 = task("f4", sig("multiply", Multiplier.class,
                 deploy(configuration(configDir+"/multiplier-prv.config"),
-                        idle(1))),
-//                        ServiceDeployment.Type.SELF)),
+                        idle(1),
+                        ServiceDeployment.Type.SELF)),
         context("multiply", inEnt("arg/x1", 10.0d),
                 inEnt("arg/x2", 50.0d), result("result/y1")));
 

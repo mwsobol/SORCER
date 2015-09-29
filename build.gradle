@@ -14,7 +14,13 @@
  * limitations under the License.
  */
 
-project.version = '5.3.9'
+/* Grab the current branch from git and append to version */
+String ref = new File(rootProject.projectDir, ".git/HEAD").text
+int ndx = ref.lastIndexOf("/")
+String branch = ref.substring(ndx+1).trim()
+String branchRef = branch.equals("master")?"":"-$branch"
+
+version = "5.3.9$branchRef"
 
 apply plugin: 'idea'
 idea {
