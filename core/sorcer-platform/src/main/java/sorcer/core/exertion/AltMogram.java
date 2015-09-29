@@ -35,23 +35,23 @@ import java.util.List;
  * @author Mike Sobolewski
  */
 @SuppressWarnings("unchecked")
-public class AltExertion extends ConditionalExertion {
+public class AltMogram extends ConditionalMogram {
 
 	private static final long serialVersionUID = 4012356285896459828L;
 	
-	protected List<OptExertion> optExertions;
+	protected List<OptMogram> optExertions;
 
-	public AltExertion(OptExertion... optExertions) {
+	public AltMogram(OptMogram... optExertions) {
 		super();
 		this.optExertions = Arrays.asList(optExertions);
 	}
 	
-	public AltExertion(String name, OptExertion... optExertions) {
+	public AltMogram(String name, OptMogram... optExertions) {
 		super(name);
 		this.optExertions = Arrays.asList(optExertions);
 	}
 
-	public AltExertion(String name, List<OptExertion> optExertions) {
+	public AltMogram(String name, List<OptMogram> optExertions) {
 		super(name);
 		this.optExertions = optExertions;
 	}
@@ -59,7 +59,7 @@ public class AltExertion extends ConditionalExertion {
 	@Override
 	public Task doTask(Transaction txn) throws ExertionException,
 			SignatureException, RemoteException {
-		OptExertion opt = null;
+		OptMogram opt = null;
 		try {
 			for (int i = 0; i < optExertions.size(); i++) {
 				opt = optExertions.get(i);
@@ -68,7 +68,7 @@ public class AltExertion extends ConditionalExertion {
 					Context cxt = opt.getCondition().getConditionalContext();
 					if (cxt != null) {
 						Condition.clenupContextScripts(cxt);
-						opt.getTarget().getDataContext().updateEntries(cxt);
+							opt.getTarget().getDataContext().updateEntries(cxt);
 					}
 					Exertion out = opt.getTarget().exert(txn);
 					opt.setTarget(out);
@@ -89,24 +89,24 @@ public class AltExertion extends ConditionalExertion {
 		return this;
 	}
 	
-	public OptExertion getActiveOptExertion() {
-		OptExertion active = null;
-		for (OptExertion oe : optExertions) {
+	public OptMogram getActiveOptExertion() {
+		OptMogram active = null;
+		for (OptMogram oe : optExertions) {
 			if (oe.isActive())
 				return oe;
 		}
 		return active;
 	}
 		
-	public List<OptExertion> getOptExertions() {
+	public List<OptMogram> getOptExertions() {
 		return optExertions;
 	}
 
-	public void setOptExertions(List<OptExertion> optExertions) {
+	public void setOptExertions(List<OptMogram> optExertions) {
 		this.optExertions = optExertions;
 	}
 
-	public OptExertion getOptExertion(int index) {
+	public OptMogram getOptExertion(int index) {
 		return optExertions.get(index);
 	}
 	
@@ -127,7 +127,7 @@ public class AltExertion extends ConditionalExertion {
 	@Override
 	public List<Conditional> getConditions() {
 		List<Conditional> cs = new ArrayList<Conditional>(optExertions.size());
-		for (OptExertion oe : optExertions)
+		for (OptMogram oe : optExertions)
 			cs.add(oe.getCondition());
 		return cs;
 	}
@@ -164,9 +164,9 @@ public class AltExertion extends ConditionalExertion {
 	 * @see sorcer.service.ConditionalExertion#getTargets()
 	 */
 	@Override
-	public List<Exertion> getTargets() {
-		List<Exertion> tl = new ArrayList<Exertion>(optExertions.size());
-		for (OptExertion oe : optExertions)
+	public List<Mogram> getTargets() {
+		List<Mogram> tl = new ArrayList<Mogram>(optExertions.size());
+		for (OptMogram oe : optExertions)
 			tl.add(oe.getTarget());
 		return tl;
 	}

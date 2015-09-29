@@ -24,7 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.context.ControlContext;
 import sorcer.core.context.StrategyContext;
-import sorcer.core.exertion.AltExertion;
+import sorcer.core.exertion.AltMogram;
 import sorcer.core.monitor.MonitorEvent;
 import sorcer.core.monitor.MonitorableSession;
 import sorcer.core.monitor.MonitoringManagement;
@@ -152,8 +152,8 @@ public class MonitorSession extends ArrayList<MonitorSession> implements
 		if (initialExertion.isJob() || initialExertion.isBlock())
 			addSessions((CompoundExertion) initialExertion, (CompoundExertion) runtimeExertion, this);
 
-        if (initialExertion instanceof ConditionalExertion)
-            addSessionsForConditionals((ConditionalExertion)initialExertion, (ConditionalExertion)runtimeExertion, this);
+        if (initialExertion instanceof ConditionalMogram)
+            addSessionsForConditionals((ConditionalMogram)initialExertion, (ConditionalMogram)runtimeExertion, this);
     }
 
 	private void addSessions(CompoundExertion initial, CompoundExertion runtime, MonitorSession parent) {
@@ -165,11 +165,11 @@ public class MonitorSession extends ArrayList<MonitorSession> implements
         }
 	}
 
-    private void addSessionsForConditionals(ConditionalExertion initial, ConditionalExertion runtime, MonitorSession parent) {
+    private void addSessionsForConditionals(ConditionalMogram initial, ConditionalMogram runtime, MonitorSession parent) {
         for (int i = 0; i<initial.getTargets().size(); i++) {
             if (!runtime.getTargets().get(i).isMonitorable())
                 ((ServiceExertion)runtime.getTargets().get(i)).setMonitored(true);
-            add(new MonitorSession(initial.getTargets().get(i), runtime.getTargets().get(i), parent));
+            add(new MonitorSession((Exertion)initial.getTargets().get(i), (Exertion)runtime.getTargets().get(i), parent));
         }
     }
 
@@ -402,7 +402,7 @@ public class MonitorSession extends ArrayList<MonitorSession> implements
 		logger.debug("failed count=" + failedCount + " suspended count="
                 + suspendedCount + " doneCount=" + doneCount);
 
-		if (doneCount == size() || (runtimeExertion instanceof AltExertion && doneCount>0)) {
+		if (doneCount == size() || (runtimeExertion instanceof AltMogram && doneCount>0)) {
             runtimeExertion.setStatus(Exec.DONE);
             runtimeExertion.stopExecTime();
             mLandlord.remove(this);

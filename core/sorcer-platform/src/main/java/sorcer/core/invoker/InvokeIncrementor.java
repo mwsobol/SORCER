@@ -68,11 +68,8 @@ public abstract class InvokeIncrementor<T> extends ServiceInvoker<T> implements 
 			if (value == null && target != null)
 				value = target.invoke(null, entries);
 			else if (path != null && target == null && invokeContext != null) {
-				try {
-					value = (T) invokeContext.getValue(path);
-				} catch (Exception e) {
-					throw new EvaluationException(e);
-				}
+					T val = (T) invokeContext.getValue(path);
+					if (val != null) value = val;
 			}
 			value = getIncrement(value, increment);
 		} catch (RemoteException e) {
@@ -81,7 +78,7 @@ public abstract class InvokeIncrementor<T> extends ServiceInvoker<T> implements 
 		return value;
 	}
 
-	protected abstract T getIncrement(T value, T increment);
+	protected abstract T getIncrement(T value, T increment) throws EvaluationException;
 
 	public Invocation getTarget() {
 		return target;
@@ -111,7 +108,7 @@ public abstract class InvokeIncrementor<T> extends ServiceInvoker<T> implements 
 	public T next()  {
 		try {
 			return getValue();
-		} catch (EvaluationException e) {
+		} catch (Exception e) {
 			throw new NoSuchElementException(e.getMessage());
 		}
 	}

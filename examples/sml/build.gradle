@@ -18,24 +18,17 @@ version = sorcerVersion
 
 jar {
 	manifest {
-		attributes("Implementation-Title": "SORCER Service Modeling Language (SML)",
-                   "Implementation-Version": version)
+		attributes("Implementation-Title": "Service Modeling Language (SML) Arithmetic Service",
+				"Implementation-Version": version)
 	}
-	baseName = "arithmetic"
-	classifier = "prv"
-	dependsOn classes
-	from sourceSets.main.output
-	exclude('sorcer/arithmetic/provider/ui/**')
-	exclude('sorcer/arithmetic/requestor/**')
 }
 
-task arithmeticPrvDlJar(type: Jar) {
+task arithmeticDlJar(type: Jar) {
 	manifest {
-		attributes("Implementation-Title": "SORCER Arithmetic Exported Classes",
+		attributes("Implementation-Title": "SORCER Service Modeling Language (SML) Exported classes",
                    "Implementation-Version": version)
 	}
-	baseName = "arithmetic"
-    classifier = "dl"
+	classifier = "dl"
 	dependsOn classes
 	from sourceSets.main.output
 	include('sorcer/arithmetic/provider/*')
@@ -46,7 +39,6 @@ task arithmeticReqJar(type: Jar) {
 		attributes("Implementation-Title": "SORCER Arithmetic Requestor",
                    "Implementation-Version": version)
 	}
-	baseName = "arithmetic"
 	classifier = "req"
 	dependsOn classes
 	from sourceSets.main.output
@@ -58,21 +50,11 @@ task arithmeticPrvUiJar(type: Jar) {
 		attributes("Implementation-Title": "SORCER Arithmetic Service UI",
                    "Implementation-Version": version)
 	}
-	baseName = "arithmetic"
-    classifier = "ui"
+	classifier = "ui"
 	dependsOn classes
 	from sourceSets.main.output
 	include('sorcer/arithmetic/provider/ui/**')
 }
-
-artifacts {
-    archives arithmeticPrvDlJar
-    archives arithmeticPrvUiJar
-	archives arithmeticReqJar
-}
-
-install.dependsOn(['arithmeticPrvDlJar', 'arithmeticPrvUiJar', 'arithmeticReqJar'])
-build.dependsOn(install)
 
 dependencies { 
 	compile project(':sorcer-platform')
@@ -84,8 +66,21 @@ dependencies {
 	testRuntime libs.logback
 }
 
+def deployConfigArithmetic = file("configs/arithmetic-prv.config")
+//def deployConfigMultipler = file("configs/multiplier-prv.config")
+artifacts {
+	archives arithmeticDlJar
+	archives arithmeticReqJar
+	archives arithmeticPrvUiJar
+	archives file: deployConfigArithmetic, classifier: "deploy"
+//	archives file: deployConfigMultipler, classifier: "deploy-multiplier"
+}
+
+install.dependsOn(['arithmeticDlJar', 'arithmeticPrvUiJar', 'arithmeticReqJar'])
+build.dependsOn(install)
+
 def repoPath() {
-    return "org/sorcer/arithmetic/${version}"
+    return "org/sorcer/sml/${version}"
 }
 
 bootme {
@@ -93,11 +88,6 @@ bootme {
     systemProperties = ["relative.repo.path" : repoPath()]
 //  spawn = false
 //	debug = true
-}
-
-def deployConfig = file("configs/arithmetic-prv.config")
-artifacts {
-	archives file: deployConfig, classifier: "deploy"
 }
 
 /*
@@ -108,6 +98,28 @@ configbuilder {
 	configFile = deployConfig
 	jvmArgs = "-Xms512m -Xmx2g"
 }*/
+task printClasspath() {
+	description = 'Prints the current Java classpath.'
+	doLast {
+		println "${project.name}"
+		configurations.testRuntime.each {
+			println "--> $it"
+		}
+	}
+}
+
+task netlet {
+	doLast {
+		String netlet = System.getProperty("netlet")
+		if(netlet!=null) {
+			Process p = "${project.projectDir}/src/main/netlets/$netlet".execute()
+			p.consumeProcessOutput(System.out, System.err)
+			p.waitFor()
+		} else {
+			println "You must provide a netlet by using -Dnetlet="
+		}
+	}
+}
 
 //task runRequestor(type:JavaExec, dependsOn:[jar, "bootme"]) {
 task runRequestor(type:JavaExec, dependsOn:[jar]) {
@@ -115,15 +127,16 @@ task runRequestor(type:JavaExec, dependsOn:[jar]) {
 	main = "sorcer.core.requestor.SorcerRequestor"
 	classpath = sourceSets.main.runtimeClasspath
 	systemProperty "requestor.properties", "configs/arithmetic-req.properties"
+	systemProperty "project.version", "${version}"
 	systemProperty "java.rmi.server.codebase",
-			"${websterUrl}/${repoPath()}/arithmetic-${version}-dl.jar ${websterUrl}/sorcer-dl-${version}.jar ${websterUrl}/jsk-dl-${riverVersion}.jar"
+			"${websterUrl}/${repoPath()}/sml-${version}.jar ${websterUrl}/sorcer-dl-${version}.jar ${websterUrl}/jsk-dl-${riverVersion}.jar"
 	args = ["sorcer.arithmetic.requestor.ArithmeticTester", "f1"]
 //	finalizedBy (":stopme")
 }
 
 test {
 	systemProperty "java.rmi.server.codebase",
-			"${websterUrl}/${repoPath()}/arithmetic-${version}-dl.jar ${websterUrl}/sorcer-dl-${version}.jar ${websterUrl}/jsk-dl-${riverVersion}.jar"
+			"${websterUrl}/${repoPath()}/sml-${version}.jar ${websterUrl}/sorcer-dl-${version}.jar ${websterUrl}/jsk-dl-${riverVersion}.jar"
 
 	testLogging {
 		events "passed", "skipped", "failed"/*, "standardOut"*/, "standardError"

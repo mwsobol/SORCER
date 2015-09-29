@@ -119,7 +119,7 @@ public class ArgSet extends TreeSet<Arg> {
 		 return names;
 	 }
 	 
-	 public List<Object> getValues() throws EvaluationException, RemoteException {
+	 public List<Object> getValues() throws ContextException, RemoteException {
 		 List<Object> values = new ArrayList<Object>(size());
 		 Iterator<Arg> i = iterator();
 		 while (i.hasNext()) {

@@ -256,6 +256,14 @@ public interface Mogram extends Service, Projection<Signature>, Scopable, Substi
     public String getProjectName();
 
     /**
+     * Returns a data service context (service data) of this mogram.
+     *
+     * @return a service context
+     * @throws ContextException
+     */
+    public Context getDataContext() throws ContextException;
+
+    /**
      * Check if this context is export controlled, accessible to principals from
      * export controlled countries.
      *

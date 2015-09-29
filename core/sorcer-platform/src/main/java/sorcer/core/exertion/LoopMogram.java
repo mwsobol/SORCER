@@ -20,6 +20,7 @@ package sorcer.core.exertion;
 import net.jini.core.transaction.Transaction;
 import sorcer.core.context.ThrowableTrace;
 import sorcer.service.*;
+import sorcer.service.modeling.Model;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -35,7 +36,7 @@ import java.util.List;
  * @author Mike Sobolewski
  * 
  */
-public class LoopExertion extends ConditionalExertion {
+public class LoopMogram extends ConditionalMogram {
 
 	private static final long serialVersionUID = 8538804142085766935L;
 	
@@ -49,7 +50,7 @@ public class LoopExertion extends ConditionalExertion {
 	 * @param name
 	 * @param exertion
 	 */
-	public LoopExertion(String name, Exertion exertion) {
+	public LoopMogram(String name, Exertion exertion) {
 		super(name);
 		condition = new Condition(true);
 		target = exertion;
@@ -63,7 +64,7 @@ public class LoopExertion extends ConditionalExertion {
 	 * @param max
 	 * @param exertion
 	 */
-	public LoopExertion(String name, int min, int max, Exertion exertion) {
+	public LoopMogram(String name, int min, int max, Exertion exertion) {
 		super(name);
 		this.min = min;
 		this.max = max;
@@ -75,12 +76,12 @@ public class LoopExertion extends ConditionalExertion {
 	 * 
 	 * @param name
 	 * @param condition
-	 * @param exertion
+	 * @param mogram
 	 */
-	public LoopExertion(String name, Condition condition, Exertion exertion) {
+	public LoopMogram(String name, Condition condition, Mogram mogram) {
 		super(name);
 		this.condition = condition;
-		target = exertion;
+		target = mogram;
 	}
 
 	/**
@@ -93,8 +94,8 @@ public class LoopExertion extends ConditionalExertion {
 	 * @param condition
 	 * @param invoker
 	 */
-	public LoopExertion(String name, int min, int max, Condition condition,
-			Exertion invoker) {
+	public LoopMogram(String name, int min, int max, Condition condition,
+					  Exertion invoker) {
 		super(name);
 		this.min = min;
 		this.max = max;
@@ -112,14 +113,20 @@ public class LoopExertion extends ConditionalExertion {
 				}
 				return this;
 			} else if (condition != null && max - min == 0) {
+				if (target instanceof Model)
+					((Context)target).append(condition.getConditionalContext());
 				while (condition.isTrue()) {
-					Signature sig = target.getProcessSignature();
-					if (sig != null && sig.getVariability() != null) {
-						((Task)target).getContext().append(condition.getConditionalContext());
-					}
-					target = target.exert(txn);
-					if (sig != null && sig.getVariability() != null) {
-						((Task)target).updateConditionalContext(condition);
+					if (target instanceof Exertion) {
+						Signature sig = target.getProcessSignature();
+						if (sig != null && sig.getVariability() != null) {
+							((Task) target).getContext().append(condition.getConditionalContext());
+						}
+						target = target.exert(txn);
+						if (sig != null && sig.getVariability() != null) {
+							((Task) target).updateConditionalContext(condition);
+						}
+					} else {
+						target = target.exert(txn);
 					}
 				}
 			} else if (condition != null && max - min > 0) {
@@ -173,8 +180,8 @@ public class LoopExertion extends ConditionalExertion {
 	 * @see sorcer.service.ConditionalExertion#getTargets()
 	 */
 	@Override
-	public List<Exertion> getTargets() {
-		List<Exertion> tl = new ArrayList<Exertion>();
+	public List<Mogram> getTargets() {
+		List<Mogram> tl = new ArrayList<Mogram>();
 		tl.add(target);
 		return tl;
 	}

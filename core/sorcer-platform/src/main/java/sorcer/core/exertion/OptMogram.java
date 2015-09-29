@@ -34,28 +34,28 @@ import java.util.List;
  * @author Mike Sobolewski
  */
 @SuppressWarnings("rawtypes")
-public class OptExertion extends ConditionalExertion {
+public class OptMogram extends ConditionalMogram {
 
 	private static final long serialVersionUID = 172930501527871L;
 	
 	protected boolean isActive = false;
 	
-	public OptExertion(String name) {
+	public OptMogram(String name) {
 		super(name);
 	}
 		
-	public OptExertion(String name, Exertion exertion) {
+	public OptMogram(String name, Exertion exertion) {
 		super(name);
 		this.condition = new Condition(true);
 		this.target = exertion;
 	}
-	public OptExertion(Condition condition, Exertion exertion) {
+	public OptMogram(Condition condition, Exertion exertion) {
 		super();
 		this.condition = condition;
 		this.target = exertion;
 	}
 	
-	public OptExertion(String name, Condition condition, Exertion exertion) {
+	public OptMogram(String name, Condition condition, Exertion exertion) {
 		super(name);
 		this.condition = condition;
 		this.target = exertion;
@@ -74,10 +74,13 @@ public class OptExertion extends ConditionalExertion {
 //					target.setScope(dataContext);
 //				}
 				dataContext = (ServiceContext) target.getDataContext();
-				controlContext.append(target.getControlContext());
+				if (target instanceof Exertion) {
+					((Exertion) target).getContext().setExertion(null);
+					controlContext.append(((Exertion)target).getControlContext());
+				}
 				dataContext.putValue(Condition.CONDITION_VALUE, true);
 				dataContext.putValue(Condition.CONDITION_TARGET, target.getName());
-				target.getContext().setExertion(null);
+
 				dataContext.setExertion(null);
 				return this;
 			} else {
@@ -131,8 +134,8 @@ public class OptExertion extends ConditionalExertion {
 	 * @see sorcer.service.ConditionalExertion#getTargets()
 	 */
 	@Override
-	public List<Exertion> getTargets() {
-		List<Exertion> tl = new ArrayList<Exertion>();
+	public List<Mogram> getTargets() {
+		List<Mogram> tl = new ArrayList<Mogram>();
 		tl.add(target);
 		return tl;
 	}

@@ -193,7 +193,6 @@ public class
             provider = null;
             provider = (Provider)Accessor.get().getService(this);
         }
-
         return provider;
     }
 

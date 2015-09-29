@@ -96,7 +96,7 @@ public class ParModel<T> extends EntModel<T> implements Invocation<T>, Mappable<
         add(objects);
     }
 
-	public T getValue(String path, Arg... entries) throws ContextException {
+	public T getValue(String path, Arg... entries) throws EvaluationException {
 		try {
 			append(entries);
 			T val = null;

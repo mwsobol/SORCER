@@ -103,6 +103,11 @@ public class MultiFidelityService extends ServiceMogram {
     }
 
     @Override
+    public Context getDataContext() throws ContextException {
+        return null;
+    }
+
+    @Override
     public String describe() {
         return toString();
     }
