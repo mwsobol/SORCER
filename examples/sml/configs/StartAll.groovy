@@ -44,7 +44,7 @@ class StartAll {
 
             descriptors << new SorcerServiceDescriptor(codebase,
                                                        policy,
-                                                       "${buildLibPath}/arithmetic-${sorcerVersion}.jar",
+                                                       "${buildLibPath}/arithmetic-${sorcerVersion}-prv.jar",
                                                        "sorcer.core.provider.ServiceTasker",
                                                        configArg as String[])
         }
