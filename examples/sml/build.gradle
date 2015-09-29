@@ -70,12 +70,14 @@ dependencies {
 	testRuntime libs.logback
 }
 
-def deployConfig = file("configs/arithmetic-prv.config")
+def deployConfigArithmetic = file("configs/arithmetic-prv.config")
+//def deployConfigMultipler = file("configs/multiplier-prv.config")
 artifacts {
 	archives arithmeticPrvJar
 	archives arithmeticReqJar
 	archives arithmeticPrvUiJar
-	archives file: deployConfig, classifier: "deploy"
+	archives file: deployConfigArithmetic, classifier: "deploy"
+//	archives file: deployConfigMultipler, classifier: "deploy"
 }
 
 install.dependsOn(['arithmeticPrvJar', 'arithmeticPrvUiJar', 'arithmeticReqJar'])
