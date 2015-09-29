@@ -73,6 +73,6 @@ class AdderProviderConfig {
 class AdderDeploymentConfig {
     String sorcerVersion = System.getProperty("sorcer.version")
     String[] interfaces = ["sorcer.arithmetic.provider.Adder"]
-    String[] codebaseJars = ["org/sorcer/sml/${sorcerVersion}/sml-${System.getProperty("sorcer.version")}.jar"]
-    String[] implJars = ["org/sorcer/sml/${sorcerVersion}/sml-${System.getProperty("sorcer.version")}-prv.jar"]
+    String[] codebaseJars = ["org/sorcer/sml/${sorcerVersion}/sml-${System.getProperty("sorcer.version")}-dl.jar"]
+    String[] implJars = ["org/sorcer/sml/${sorcerVersion}/sml-${System.getProperty("sorcer.version")}.jar"]
 }

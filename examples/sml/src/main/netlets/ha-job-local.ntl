@@ -1,6 +1,6 @@
 #!/usr/bin/env nsh
-@Codebase(group='org.sorcer', module='sml', version='${sorcer.version}')
-@Load(group='org.sorcer', module='arithmetic', version='${sorcer.version}', classifier='prv')
+@Codebase(group='org.sorcer', module='sml', version='${sorcer.version}', classifier='dl')
+@Load(group='org.sorcer', module='arithmetic', version='${sorcer.version}')
 
 import sorcer.arithmetic.provider.impl.AdderImpl
 import sorcer.arithmetic.provider.impl.MultiplierImpl

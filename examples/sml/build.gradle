@@ -18,24 +18,20 @@ version = sorcerVersion
 
 jar {
 	manifest {
-		attributes("Implementation-Title": "SORCER Arithmetic Exported Classes",
+		attributes("Implementation-Title": "Service Modeling Language (SML) Arithmetic Service",
 				"Implementation-Version": version)
 	}
+}
+
+task arithmeticDlJar(type: Jar) {
+	manifest {
+		attributes("Implementation-Title": "SORCER Service Modeling Language (SML) Exported classes",
+                   "Implementation-Version": version)
+	}
+	classifier = "dl"
 	dependsOn classes
 	from sourceSets.main.output
 	include('sorcer/arithmetic/provider/*')
-}
-
-task arithmeticPrvJar(type: Jar) {
-	manifest {
-		attributes("Implementation-Title": "SORCER Service Modeling Language (SML)",
-                   "Implementation-Version": version)
-	}
-	classifier = "prv"
-	dependsOn classes
-	from sourceSets.main.output
-	exclude('sorcer/arithmetic/provider/ui/**')
-	exclude('sorcer/arithmetic/requestor/**')
 }
 
 task arithmeticReqJar(type: Jar) {
@@ -73,14 +69,14 @@ dependencies {
 def deployConfigArithmetic = file("configs/arithmetic-prv.config")
 //def deployConfigMultipler = file("configs/multiplier-prv.config")
 artifacts {
-	archives arithmeticPrvJar
+	archives arithmeticDlJar
 	archives arithmeticReqJar
 	archives arithmeticPrvUiJar
 	archives file: deployConfigArithmetic, classifier: "deploy"
-//	archives file: deployConfigMultipler, classifier: "deploy"
+//	archives file: deployConfigMultipler, classifier: "deploy-multiplier"
 }
 
-install.dependsOn(['arithmeticPrvJar', 'arithmeticPrvUiJar', 'arithmeticReqJar'])
+install.dependsOn(['arithmeticDlJar', 'arithmeticPrvUiJar', 'arithmeticReqJar'])
 build.dependsOn(install)
 
 def repoPath() {
@@ -102,6 +98,28 @@ configbuilder {
 	configFile = deployConfig
 	jvmArgs = "-Xms512m -Xmx2g"
 }*/
+task printClasspath() {
+	description = 'Prints the current Java classpath.'
+	doLast {
+		println "${project.name}"
+		configurations.testRuntime.each {
+			println "--> $it"
+		}
+	}
+}
+
+task netlet {
+	doLast {
+		String netlet = System.getProperty("netlet")
+		if(netlet!=null) {
+			Process p = "${project.projectDir}/src/main/netlets/$netlet".execute()
+			p.consumeProcessOutput(System.out, System.err)
+			p.waitFor()
+		} else {
+			println "You must provide a netlet by using -Dnetlet="
+		}
+	}
+}
 
 //task runRequestor(type:JavaExec, dependsOn:[jar, "bootme"]) {
 task runRequestor(type:JavaExec, dependsOn:[jar]) {
@@ -111,7 +129,7 @@ task runRequestor(type:JavaExec, dependsOn:[jar]) {
 	systemProperty "requestor.properties", "configs/arithmetic-req.properties"
 	systemProperty "project.version", "${version}"
 	systemProperty "java.rmi.server.codebase",
-			"${websterUrl}/${repoPath()}/arithmetic-${version}-dl.jar ${websterUrl}/sorcer-dl-${version}.jar ${websterUrl}/jsk-dl-${riverVersion}.jar"
+			"${websterUrl}/${repoPath()}/sml-${version}.jar ${websterUrl}/sorcer-dl-${version}.jar ${websterUrl}/jsk-dl-${riverVersion}.jar"
 	args = ["sorcer.arithmetic.requestor.ArithmeticTester", "f1"]
 //	finalizedBy (":stopme")
 }

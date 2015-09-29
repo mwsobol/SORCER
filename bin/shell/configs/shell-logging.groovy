@@ -33,6 +33,7 @@ appenders << "CONSOLE"
 
 /* Set up loggers */
 logger("sorcer", OFF)
+logger("org.rioproject", OFF)
 
 root(INFO, appenders)
 
