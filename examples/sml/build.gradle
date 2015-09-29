@@ -16,23 +16,21 @@
 
 version = sorcerVersion
 
-task arithmeticPrvDlJar(type: Jar) {
+jar {
 	manifest {
 		attributes("Implementation-Title": "SORCER Arithmetic Exported Classes",
 				"Implementation-Version": version)
 	}
-	baseName = "arithmetic"
 	dependsOn classes
 	from sourceSets.main.output
 	include('sorcer/arithmetic/provider/*')
 }
 
-jar {
+task arithmeticPrvJar(type: Jar) {
 	manifest {
 		attributes("Implementation-Title": "SORCER Service Modeling Language (SML)",
                    "Implementation-Version": version)
 	}
-	baseName = "arithmetic"
 	classifier = "prv"
 	dependsOn classes
 	from sourceSets.main.output
@@ -56,7 +54,7 @@ task arithmeticPrvUiJar(type: Jar) {
 		attributes("Implementation-Title": "SORCER Arithmetic Service UI",
                    "Implementation-Version": version)
 	}
-    classifier = "ui"
+	classifier = "ui"
 	dependsOn classes
 	from sourceSets.main.output
 	include('sorcer/arithmetic/provider/ui/**')
@@ -74,17 +72,17 @@ dependencies {
 
 def deployConfig = file("configs/arithmetic-prv.config")
 artifacts {
-	archives arithmeticPrvDlJar
-	archives arithmeticPrvUiJar
+	archives arithmeticPrvJar
 	archives arithmeticReqJar
+	archives arithmeticPrvUiJar
 	archives file: deployConfig, classifier: "deploy"
 }
 
-install.dependsOn(['arithmeticPrvDlJar', 'arithmeticPrvUiJar', 'arithmeticReqJar'])
+install.dependsOn(['arithmeticPrvJar', 'arithmeticPrvUiJar', 'arithmeticReqJar'])
 build.dependsOn(install)
 
 def repoPath() {
-    return "org/sorcer/arithmetic/${version}"
+    return "org/sorcer/sml/${version}"
 }
 
 bootme {
@@ -118,7 +116,7 @@ task runRequestor(type:JavaExec, dependsOn:[jar]) {
 
 test {
 	systemProperty "java.rmi.server.codebase",
-			"${websterUrl}/${repoPath()}/arithmetic-${version}-dl.jar ${websterUrl}/sorcer-dl-${version}.jar ${websterUrl}/jsk-dl-${riverVersion}.jar"
+			"${websterUrl}/${repoPath()}/sml-${version}.jar ${websterUrl}/sorcer-dl-${version}.jar ${websterUrl}/jsk-dl-${riverVersion}.jar"
 
 	testLogging {
 		events "passed", "skipped", "failed"/*, "standardOut"*/, "standardError"

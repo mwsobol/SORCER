@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-@Codebase(group='org.sorcer', module='arithmetic', version='${sorcer.version}', classifier='dl')
+@Codebase(group='org.sorcer', module='sml', version='${sorcer.version}')
 
 import sorcer.arithmetic.provider.Adder
 import sorcer.arithmetic.provider.Multiplier
@@ -28,7 +28,7 @@ String version = property("sorcer.version")
 String configDir = home() + "/../../../examples/sml/configs/"
 
 Task f4 = task("f4", sig("multiply", Multiplier.class,
-                deploy(configuration("org.sorcer:deploy-tests:config:"+version),
+                deploy(configuration(configDir+"/mutiplier-prv.config"),
                         idle(1),
                         ServiceDeployment.Type.SELF)),
         context("multiply", inEnt("arg/x1", 10.0d),
