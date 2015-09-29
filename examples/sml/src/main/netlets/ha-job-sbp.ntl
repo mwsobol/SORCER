@@ -19,7 +19,6 @@
 import sorcer.arithmetic.provider.Adder
 import sorcer.arithmetic.provider.Multiplier
 import sorcer.arithmetic.provider.Subtractor
-import sorcer.core.deploy.ServiceDeployment
 import sorcer.core.provider.Jobber
 import sorcer.service.Strategy
 import sorcer.service.Task
@@ -28,9 +27,9 @@ String version = property("sorcer.version")
 String configDir = home() + "/../../../examples/sml/configs/"
 
 Task f4 = task("f4", sig("multiply", Multiplier.class,
-                deploy(configuration(configDir+"/mutiplier-prv.config"),
-                        idle(1),
-                        ServiceDeployment.Type.SELF)),
+                deploy(configuration(configDir+"/multiplier-prv.config"),
+                        idle(1))),
+//                        ServiceDeployment.Type.SELF)),
         context("multiply", inEnt("arg/x1", 10.0d),
                 inEnt("arg/x2", 50.0d), result("result/y1")));
 
