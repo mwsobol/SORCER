@@ -19,6 +19,7 @@ package sorcer.core.exertion;
 
 import net.jini.core.transaction.Transaction;
 import sorcer.core.context.ThrowableTrace;
+import sorcer.core.context.model.srv.SrvModel;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
 
@@ -114,7 +115,8 @@ public class LoopMogram extends ConditionalMogram {
 				return this;
 			} else if (condition != null && max - min == 0) {
 				if (target instanceof Model)
-					((Context)target).append(condition.getConditionalContext());
+					condition.setConditionalContext((Context) target);
+//					condition.getConditionalContext().append((Context)target);
 				while (condition.isTrue()) {
 					if (target instanceof Exertion) {
 						Signature sig = target.getProcessSignature();
@@ -126,6 +128,8 @@ public class LoopMogram extends ConditionalMogram {
 							((Task) target).updateConditionalContext(condition);
 						}
 					} else {
+						if (target instanceof SrvModel)
+							((SrvModel)target).clearOutputs();
 						target = target.exert(txn);
 					}
 				}

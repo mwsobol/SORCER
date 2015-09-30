@@ -29,6 +29,7 @@ import sorcer.core.monitor.MonitorUtil;
 import sorcer.core.monitor.MonitoringSession;
 import sorcer.core.provider.Provider;
 import sorcer.service.*;
+import sorcer.service.modeling.Model;
 
 import java.rmi.RemoteException;
 import java.util.List;
@@ -86,6 +87,12 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
         try {
             postUpdate(result);
             Condition.cleanupScripts(result);
+            if (result instanceof ConditionalMogram) {
+                Mogram target = ((ConditionalMogram)result).getTarget();
+                if (target instanceof Model) {
+                    xrt.getContext().append((Context)((Model)target).getResult());
+                }
+            }
             //TODO Not very nice
             /*MonitoringSession monSession = MonitorUtil.getMonitoringSession(result);
             if (result.isBlock() && result.isMonitorable() && monSession!=null) {
@@ -98,7 +105,7 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
                 }
                 monSession.changed(result.getContext(), (isFailed ? Exec.FAILED : Exec.DONE));
             }*/
-        } catch (RemoteException e) {
+        } catch (Exception e) {
             throw new ExertionException(e);
         /*} catch (MonitorException e) {
             throw new ExertionException(e);*/

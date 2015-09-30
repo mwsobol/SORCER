@@ -10,21 +10,24 @@ import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.arithmetic.provider.impl.IncrementerImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.provider.impl.SubtractorImpl;
-import sorcer.core.context.model.par.Par;
-import sorcer.core.context.model.srv.Srv;
 import sorcer.core.context.model.srv.SrvModel;
-import sorcer.core.invoker.InvokeIncrementor;
 import sorcer.core.provider.rendezvous.ServiceJobber;
-import sorcer.service.*;
+import sorcer.mo.operator;
+import sorcer.service.Block;
+import sorcer.service.Context;
+import sorcer.service.Job;
 import sorcer.service.Strategy.Flow;
+import sorcer.service.Task;
 import sorcer.service.modeling.Model;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
+import static sorcer.eo.operator.loop;
+import static sorcer.eo.operator.result;
+import static sorcer.eo.operator.value;
 import static sorcer.mo.operator.*;
-import static sorcer.po.operator.*;
+import static sorcer.mo.operator.result;
 
 /**
  * Created by Mike Sobolewski on 4/15/15.
@@ -117,7 +120,7 @@ public class Mograms {
         assertTrue(value(exerted, "out").equals(120.0));
     }
 
-//    @Test
+    @Test
     public void exertMstcGateSchema() throws Exception {
 
         IncrementerImpl incrementer = new IncrementerImpl(100.0);
@@ -139,7 +142,12 @@ public class Mograms {
 
         looping = exert(looping);
         logger.info("block context: " + context(looping));
-        logger.info("result: " + value(context(looping), "x1"));
+        logger.info("result: " + value(context(looping), "out"));
+        logger.info("model result: " + value(result(model), "out"));
+        // out variable in blosck
+        assertTrue(value(context(looping), "out").equals(1000.0));
+        // out variable in model
+        assertTrue(value(result(model), "out").equals(1000.0));
     }
 
 //    @Test

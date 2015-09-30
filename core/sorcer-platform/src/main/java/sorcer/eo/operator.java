@@ -1945,10 +1945,8 @@ public class operator {
 
 	public static <T extends Service> T exert(T mogram, Arg... args) throws MogramException {
 		try {
-			if (mogram instanceof Exertion) {
-				return ((Exertion) mogram).exert(null, args);
-			} else if (mogram instanceof Model) {
-				return (T) ((Model) mogram).exert(null, args);
+			if (mogram instanceof Mogram) {
+				return ((Mogram)mogram).exert(null, args);
 			}
 		} catch (Exception e) {
 			throw new ExertionException(e);
