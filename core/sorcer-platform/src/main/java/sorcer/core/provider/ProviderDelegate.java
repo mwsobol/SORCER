@@ -2417,7 +2417,7 @@ public class ProviderDelegate {
 			outerProxy = null;
 		}
 
-		if (partnerExporter != null) {
+		if (partnerExporter != null && outerProxy !=null) {
 			exports.remove(innerProxy);
 			success &= partnerExporter.unexport(force);
 			outerProxy = null;
