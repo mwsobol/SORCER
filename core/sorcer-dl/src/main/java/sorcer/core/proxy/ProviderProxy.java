@@ -130,7 +130,7 @@ public class ProviderProxy implements Serializable {
 		}
 
 		public Class[] getInterfaces(Object proxy, Class... additionalInterfaces) {
-			List<Class> list = new ArrayList<Class>();
+			List<Class> list = new ArrayList<>();
 			if (proxy == adminProxy) {
 				// admin interfaces
 				list.add(ReferentUuid.class);
@@ -175,11 +175,8 @@ public class ProviderProxy implements Serializable {
                 return !(args.length != 1 || !(args[0] instanceof ReferentUuid)) && proxyID.equals(((ReferentUuid) args[0]).getReferentUuid());
             } else if ("toString".equals(selector)) {
 				return "refID=" + proxyID + " : proxy=" + proxy;
-			} else if ("getAdmin".equals(selector)) {
-				return adminProxy;
 			}
 
-			Object obj = null;
             try {
             	return doInvoke(server, selector, m, args);
             } catch (InvocationTargetException ie) {
@@ -197,8 +194,9 @@ public class ProviderProxy implements Serializable {
                 // this block is for debugging, can be deleted
                 // do not report broken network connection on destruction or getAdmin after the service is
 				// undeployed by Rio
-				e.printStackTrace();
-                if (!selector.equals("getAdmin")) logger.warn("proxy method: {} for args: {}", m, Arrays.toString(args), e);
+				logger.warn("Caught while invoking {}", selector, e);
+                if (!selector.equals("getAdmin"))
+					logger.warn("proxy method: {} for args: {}", m, Arrays.toString(args), e);
                 if (!(selector.equals("destroyNode") || selector.equals("destroy"))) {
                     throw e;
                 } else
@@ -251,19 +249,17 @@ public class ProviderProxy implements Serializable {
 		}
 
 		public Object doInvoke(Object server, String selector, Method m, Object[] args) throws RemoteException, InvocationTargetException, IllegalAccessException {
-            if ("getConstraints".equals(selector)) {
-                    return ((RemoteMethodControl) proxy).getConstraints();
-                } else if ("setConstraints".equals(selector)) {
-                    return server;
-                } else if ("getProxyTrustIterator".equals(selector)) {
-                    return new SingletonProxyTrustIterator(server);
-                } else if ("isActive".equals(selector)) {
-                    return ((Provider) proxy).isBusy();
-                } else if ("getAdmin".equals(selector)) {
-                    return ((Administrable) proxy).getAdmin();
-                } else {
-                    return super.doInvoke(server, selector, m, args);
-                }
+			if ("getConstraints".equals(selector)) {
+				return ((RemoteMethodControl) proxy).getConstraints();
+			} else if ("setConstraints".equals(selector)) {
+				return server;
+			} else if ("getProxyTrustIterator".equals(selector)) {
+				return new SingletonProxyTrustIterator(server);
+			} else if ("isActive".equals(selector)) {
+				return ((Provider) proxy).isBusy();
+			} else {
+				return super.doInvoke(server, selector, m, args);
+			}
 		}
 
 		private void readObject(ObjectInputStream s) throws IOException, ClassNotFoundException {
