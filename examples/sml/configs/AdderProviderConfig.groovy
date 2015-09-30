@@ -52,7 +52,7 @@ class AdderProviderConfig {
      * @return An array of service implementation classes required to load the service
      */
     Class[] getBeanClasses() {
-        return [sorcer.arithmetic.tester.provider.impl.AdderImpl.class]
+        return [sorcer.arithmetic.provider.impl.AdderImpl.class]
     }
 
 
@@ -62,7 +62,7 @@ class AdderProviderConfig {
 
     /* This is declared as a static property so the class below can reference it, and used by the published interfaces
      * method above. Removes duplication. */
-    static String interfaceClass = "sorcer.arithmetic.tester.provider.Adder"
+    static String interfaceClass = "sorcer.arithmetic.provider.Adder"
 
 }
 
@@ -72,7 +72,7 @@ class AdderProviderConfig {
 @Component('sorcer.core.exertion.deployment')
 class AdderDeploymentConfig {
     String sorcerVersion = System.getProperty("sorcer.version")
-    String[] interfaces = ["sorcer.arithmetic.tester.provider.Adder"]
-    String[] codebaseJars = ["org/sorcer/sorcer-tester/${sorcerVersion}/sorcer-tester-${System.getProperty("sorcer.version")}-dl.jar"]
-    String[] implJars = ["org/sorcer/sorcer-tester/${sorcerVersion}/sorcer-tester-${System.getProperty("sorcer.version")}.jar"]
+    String[] interfaces = ["sorcer.arithmetic.provider.Adder"]
+    String[] codebaseJars = ["org/sorcer/sml/${sorcerVersion}/sml-${System.getProperty("sorcer.version")}-dl.jar"]
+    String[] implJars = ["org/sorcer/sml/${sorcerVersion}/sml-${System.getProperty("sorcer.version")}.jar"]
 }

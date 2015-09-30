@@ -904,6 +904,14 @@ public class operator {
 		return sig;
 	}
 
+	public static String property(String property) {
+		return System.getProperty(property);
+	}
+
+	public static String home() {
+		return Sorcer.getHome();
+	}
+
 	public static ProviderName prvName(String name) {
 		return new ProviderName(name);
 	}

@@ -15,7 +15,7 @@
  */
 
 subprojects {
-    if (project.name != "distribution" && project.name != "sorcer-int-tests") {
+    if (project.name != "examples" && project.name != "distribution" && project.name != "sorcer-int-tests") {
         /*
          * Inject common test system properties for all 'test' tasks
          */
