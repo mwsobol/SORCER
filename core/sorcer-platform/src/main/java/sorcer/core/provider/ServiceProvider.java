@@ -605,9 +605,9 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		boolean unexported;
 		try {
 			unexported = delegate.unexport(force);
-		} catch (NoSuchObjectException e) {
+		} catch (NoSuchObjectException | IllegalStateException e) {
 			unexported= false;
-			logger.warn("Could not unexport", e);
+			logger.warn("Could not unexport ProviderDelegate", e);
 		}
 		return unexported;
 	}
