@@ -20,6 +20,7 @@ package sorcer.core.context.model.srv;
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
 import sorcer.co.tuple.SignatureEntry;
+import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.par.ParModel;
 import sorcer.core.provider.rendezvous.ServiceModeler;
 import sorcer.core.signature.ServiceSignature;
@@ -298,12 +299,14 @@ public class SrvModel extends ParModel<Object> implements Model {
         }
     }
 
-    public SrvModel clearOutputs() {
+    public SrvModel clearOutputs() throws EvaluationException, RemoteException {
         Iterator<Map.Entry<String, Object>> i = entryIterator();
         while (i.hasNext()) {
             Map.Entry e = i.next();
             if (e.getValue() instanceof Srv) {
                 ((Srv) e.getValue()).srvValue = null;
+            } else if (e.getValue() instanceof Entry && ((Entry)e.getValue()).asis() instanceof Evaluation) {
+                ((Entry)e.getValue()).isValid(false);
             }
         }
         return this;

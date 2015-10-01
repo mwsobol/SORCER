@@ -114,9 +114,12 @@ public class LoopMogram extends ConditionalMogram {
 				}
 				return this;
 			} else if (condition != null && max - min == 0) {
-				if (target instanceof Model)
+				if (target instanceof Model) {
+					Context cxt= condition.getConditionalContext();
 					condition.setConditionalContext((Context) target);
-//					condition.getConditionalContext().append((Context)target);
+					if (cxt != null && cxt.size() > 0)
+						((Context)target).append(cxt);
+				}
 				while (condition.isTrue()) {
 					if (target instanceof Exertion) {
 						Signature sig = target.getProcessSignature();

@@ -28,6 +28,8 @@ import static sorcer.eo.operator.result;
 import static sorcer.eo.operator.value;
 import static sorcer.mo.operator.*;
 import static sorcer.mo.operator.result;
+import static sorcer.po.operator.invoker;
+import static sorcer.po.operator.par;
 
 /**
  * Created by Mike Sobolewski on 4/15/15.
@@ -127,16 +129,18 @@ public class Mograms {
 
         Model model = srvModel(
                 inEnt("by", 10.0),
-                srv(sig("increment", incrementer, result("out",
-                        inPaths("by")))));
+                srv(sig("increment", incrementer, result("out", inPaths("by")))),
+                par("multiply", invoker("add * out", ents("add", "out"))));
 
 
-        responseUp(model, "increment", "out");
+        responseUp(model, "increment", "out", "multiply");
 //        Model exerted = exert(model);
 //        logger.info("out context: " + exerted);
 //        assertTrue(value(exerted, "out").equals(110.0));
 
         Block looping = block(
+                task(sig("add", AdderImpl.class),
+                        context(inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0), result("add"))),
                 loop(condition("{ out -> out < 1000 }", "out"),
                         model));
 
@@ -144,10 +148,12 @@ public class Mograms {
         logger.info("block context: " + context(looping));
         logger.info("result: " + value(context(looping), "out"));
         logger.info("model result: " + value(result(model), "out"));
+        logger.info("multiply result: " + value(result(model), "multiply"));
         // out variable in blosck
         assertTrue(value(context(looping), "out").equals(1000.0));
         // out variable in model
         assertTrue(value(result(model), "out").equals(1000.0));
+        assertTrue(value(result(model), "multiply").equals(100000.0));
     }
 
 //    @Test

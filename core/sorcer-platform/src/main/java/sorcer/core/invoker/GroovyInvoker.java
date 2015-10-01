@@ -18,13 +18,16 @@
 package sorcer.core.invoker;
 
 import groovy.lang.GroovyShell;
+import sorcer.co.tuple.Path;
 import sorcer.core.context.model.par.Par;
 import sorcer.service.*;
 
 import java.io.File;
 import java.io.IOException;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * @author Mike Sobolewski
@@ -39,10 +42,14 @@ public class GroovyInvoker<T> extends ServiceInvoker<T> {
 	// counter for unnamed instances
 	protected static int count;
 
-	/** expression to be evaluated */
+	/**
+	 * expression to be evaluated
+	 */
 	protected String expression;
 
-	/** The evaluator */
+	/**
+	 * The evaluator
+	 */
 	transient private GroovyShell shell;
 
 	private File scriptFile = null;
@@ -55,7 +62,7 @@ public class GroovyInvoker<T> extends ServiceInvoker<T> {
 		this();
 		this.expression = expression;
 	}
-	
+
 	public GroovyInvoker(String expression, ArgSet parameters) {
 		this(null, expression, parameters);
 	}
@@ -71,7 +78,7 @@ public class GroovyInvoker<T> extends ServiceInvoker<T> {
 	public GroovyInvoker(String expression, Arg... parameters) {
 		this(null, expression, parameters);
 	}
-	
+
 	public GroovyInvoker(String name, String expression, Arg... parameters) {
 		this(name, expression, ArgSet.asSet(parameters));
 	}
@@ -92,11 +99,11 @@ public class GroovyInvoker<T> extends ServiceInvoker<T> {
 			for (Arg a : entries)
 				try {
 					if (a instanceof Evaluation) {
-						invokeContext.putValue(a.getName(), ((Evaluation)a).getValue());
+						invokeContext.putValue(a.getName(), ((Evaluation) a).getValue());
 					}
 				} catch (Exception e) {
 					throw new InvocationException(e);
-				} 
+				}
 		}
 		try {
 			initBindings();
@@ -115,14 +122,30 @@ public class GroovyInvoker<T> extends ServiceInvoker<T> {
 					result = shell.evaluate(expression);
 				}
 			}
-		} catch (RuntimeException e) {
+//			TODO testing
+//			printedEntries(entries);
+		} catch (Exception e) {
 			logger.error("Error Occurred in Groovy Shell: " + e.getMessage());
 		}
 		return (T) result;
 	}
 
+	private void printedEntries(Arg... entries) throws EvaluationException {
+		if(expression.equals("_print_")) {
+			List<Path> paths = new ArrayList<Path>();
+			for (Arg a : entries) {
+				if (a instanceof Path) {
+					paths.add((Path) a);
+				}
+			}
+			for (Path p : paths)
+				System.out.println("entry: " + p + "="
+						+ invokeContext.getValue(p.getName()));
+		}
+	}
+
 	private void initBindings() throws RemoteException, ContextException {
-		logger.info("invokeContext keys: " + invokeContext.keySet() + "\nfor: " + expression);
+//		logger.info("invokeContext keys: " + invokeContext.keySet() + "\nfor: " + expression);
 		if (invokeContext != null) {
 			if (pars != null && pars.size() > 0) {
 				for (Arg p : pars) {
