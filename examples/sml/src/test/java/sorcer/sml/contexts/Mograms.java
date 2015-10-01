@@ -151,28 +151,37 @@ public class Mograms {
     }
 
 //    @Test
-    public void exertMstcGateMogram() throws Exception {
+//    public void acmOpenloopTest() throws Exception {
+//        Model airCycleModel = srvModel("airCycleModel",
+//                //get file offDesignCases and return the ThirdHxData object
+//
+//                srv(sig("getThirdHxDataFromOffDesignCase", ThirdHxData.class, result("offDesignCases", inPaths("ac2HexOut1")))),
+//
+//                srv(sig("doEvaluatePropulsion", MstcGateProviderImpl.class, result("fullEngineDeck", inPaths("offDesignCases")))),
+//
+//                srv(sig("parseProptoACM", AcmOpenloopProviderImpl.class, result("acmFile", inPaths("fullEngineDeck")))),
+//
+//                srv(sig("executeAirCycleMachine", AcmOpenloopProviderImpl.class, result("acmOutFile",
+//                        inPaths("acmFile")))),
+//
+//                srv(sig("getAcmOutputMakeThirdHxData", ThirdHxData.class, result("ac2HexOut2",
+//                        inPaths("acmOutFile")))));
+//
+//        responseUp(airCycleModel, "getAcmOutputMakeThirdHxData");
+//        dependsOn(airCycleModel, ent("executeAirCycleMachine", paths("getThirdHxDataFromOffDesignCase", "mstcGate", "parseEngineDeck", "executeAirCycleMachine")));
+//
+//        Block airCycleMachineMogram = block(
+//                //this is the initial guess to the iteration from the context coming in
+//                context(inEnt("offDesignCases","OffDesignCases.dat")), //this is the Var that holds the input data for the mstcgate call
+//                task("offDesignCases", sig("getThirdHxDataFromOffDesignCase", ThirdHxData.class, result("ac2HexOut1", inPaths("offDesignCases")))),
+//                //context(ent("offDesignCases", "myInputURL")),
+//                loop(condition("{ ac2HexOut1, ac2HexOut2 -> ac2HexOut1.equals(ac2HexOut2) }",
+//                                "ac2HexOut1", "ac2HexOut2"),
+//                        airCycleModel));
+//
+//        airCycleMachineMogram = exert(airCycleMachineMogram);
+//        logger.info("block context: " + context(airCycleMachineMogram));
+//    }
 
-        Model airCycleModel = srvModel("airCycleModel",
-                srv(sig("getAc2HexOut", Class.class, result("ac2HexOut1", inPaths("offDesignCases")))),
 
-                srv(sig("mstcGate", Class.class, result("fullEngineDeck", inPaths("ac2HexOut1")))),
-
-                srv(sig("parseEngineDeck", Class.class, result("acmFile", inPaths("fullEngineDeck")))),
-
-                srv(sig("executeAirCycleMachine", Class.class, result("ac2HexOut2",
-                        inPaths("acmFile")))));
-
-        responseUp(airCycleModel, "executeAirCycleMachine");
-        dependsOn(airCycleModel, ent("executeAirCycleMachine", paths("getAc2HexOut", "mstcGate", "parseEngineDeck")));
-
-        Block airCycleMachineMogram = block(
-                context(ent("offDesignCases", "myInputURL")),
-                loop(condition("{ ac2HexOut1, ac2HexOut2 -> ac2HexOut1.equals(ac2HexOut2) }",
-                                "ac2HexOut1", "ac2HexOut2"),
-                        airCycleModel));
-
-        airCycleMachineMogram = exert(airCycleMachineMogram);
-        logger.info("block context: " + context(airCycleMachineMogram));
-    }
 }
