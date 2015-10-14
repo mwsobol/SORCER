@@ -163,11 +163,11 @@ public class Mograms {
 //
 //                srv(sig("getThirdHxDataFromOffDesignCase", ThirdHxData.class, result("offDesignCases", inPaths("ac2HexOut1")))),
 //
-//                srv(sig("doEvaluatePropulsion", MstcGateProviderImpl.class, result("fullEngineDeck", inPaths("offDesignCases")))),
+//                srv(sig("doEvaluatePropulsion", MstcGateProvider.class, result("fullEngineDeck", inPaths("offDesignCases")))),
 //
-//                srv(sig("parseProptoACM", AcmOpenloopProviderImpl.class, result("acmFile", inPaths("fullEngineDeck")))),
+//                srv(sig("parseProptoACM", AcmOpenloopProvider.class, result("acmFile", inPaths("fullEngineDeck")))),
 //
-//                srv(sig("executeAirCycleMachine", AcmOpenloopProviderImpl.class, result("acmOutFile",
+//                srv(sig("executeAirCycleMachine", AcmOpenloopProvider.class, result("acmOutFile",
 //                        inPaths("acmFile")))),
 //
 //                srv(sig("getAcmOutputMakeThirdHxData", ThirdHxData.class, result("ac2HexOut2",
@@ -188,6 +188,5 @@ public class Mograms {
 //        airCycleMachineMogram = exert(airCycleMachineMogram);
 //        logger.info("block context: " + context(airCycleMachineMogram));
 //    }
-
 
 }
