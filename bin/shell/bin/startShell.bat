@@ -58,6 +58,9 @@ set SORCER_COMMON=%SORCER_COMMON%;%LIB_DIR%\common\groovy\groovy-all-%groovy.ver
 set SORCER_COMMON=%SORCER_COMMON%;%LIB_DIR%\common\plexus-utils-%plexus.version%.jar
 set SORCER_COMMON=%SORCER_COMMON%;%LIB_DIR%\common\jansi-%jansi.version%.jar
 set SORCER_COMMON=%SORCER_COMMON%;%LIB_DIR%\common\commons-io-%commonsio.version%.jar
+set SORCER_COMMON=%SORCER_COMMON%;%LIB_DIR%\common\guava-%guava.version%.jar
+
+
 
 set RIO_CLASSPATH=
 set RIO_CLASSPATH=%RIO_CLASSPATH%;%RIO_HOME%\lib\rio-platform-%rio.version%.jar
