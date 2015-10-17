@@ -44,6 +44,7 @@ import net.jini.security.proxytrust.TrustEquivalence;
 import org.rioproject.admin.ServiceActivityProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.ControlContext;
 import sorcer.core.context.ServiceContext;
@@ -1398,7 +1399,24 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		logger.debug("service: " + exertion.getName());
 		// create an instance of the ControlFlowManager and call on the
 		// process method, returns an Exertion
-		return (Exertion)getControlFlownManager(exertion).process();
+
+		if(delegate.isRemoteLogging()) {
+			MDC.put(MDC_SORCER_REMOTE_CALL, MDC_SORCER_REMOTE_CALL);
+			MDC.put(MDC_PROVIDER_ID, this.getId().toString());
+			MDC.put(MDC_PROVIDER_NAME, this.getName());
+			if (exertion != null && exertion.getId() != null)
+				MDC.put(MDC_MOGRAM_ID, exertion.getId().toString());
+		}
+
+		Exertion out = (Exertion)getControlFlownManager(exertion).process();
+
+		if(delegate.isRemoteLogging()) {
+			MDC.remove(MDC_PROVIDER_NAME);
+			MDC.remove(MDC_SORCER_REMOTE_CALL);
+			MDC.remove(MDC_MOGRAM_ID);
+			MDC.remove(MDC_PROVIDER_ID);
+		}
+		return  out;
 	}
 
 	protected ControlFlowManager getControlFlownManager(Exertion exertion) throws ExertionException {
@@ -1442,6 +1460,11 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	@Override
 	public Exertion service(Mogram mogram, Transaction txn) throws TransactionException,
 			ExertionException, RemoteException {
+
+
+
+
+
 		if (mogram instanceof Task) {
 			ServiceContext cxt;
 			try {
