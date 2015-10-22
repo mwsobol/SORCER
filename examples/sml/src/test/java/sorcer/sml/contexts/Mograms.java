@@ -20,6 +20,9 @@ import sorcer.service.Strategy.Flow;
 import sorcer.service.Task;
 import sorcer.service.modeling.Model;
 
+import java.io.File;
+import java.net.URL;
+
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
@@ -158,32 +161,34 @@ public class Mograms {
 
 //    @Test
 //    public void acmOpenloopTest() throws Exception {
+//
 //        Model airCycleModel = srvModel("airCycleModel",
 //                //get file offDesignCases and return the ThirdHxData object
 //
-//                srv(sig("getThirdHxDataFromOffDesignCase", ThirdHxData.class, result("offDesignCases", inPaths("ac2HexOut1")))),
+//                srv(sig("getOffDesignCaseFromThirdHx", AcmOpenloopProviderImpl.class,        result("offDesignCases", inPaths("ac2HexOut1","offDesignCasesTemplate")))),
 //
-//                srv(sig("doEvaluatePropulsion", MstcGateProviderImpl.class, result("fullEngineDeck", inPaths("offDesignCases")))),
+//                srv(sig("doEvaluatePropulsion", MstcGateProviderImpl.class,      result("fullEngineDeck", inPaths("offDesignCases")))),
 //
-//                srv(sig("parseProptoACM", AcmOpenloopProviderImpl.class, result("acmFile", inPaths("fullEngineDeck")))),
+//                srv(sig("parseProptoACM", AcmOpenloopProviderImpl.class,         result("acmFile",        inPaths("fullEngineDeck")))),
 //
-//                srv(sig("executeAirCycleMachine", AcmOpenloopProviderImpl.class, result("acmOutFile",
-//                        inPaths("acmFile")))),
+//                srv(sig("executeOpenLoopACM", AcmOpenloopProviderImpl.class,     result("acmOutFile",     inPaths("acmFile")))),
 //
-//                srv(sig("getAcmOutputMakeThirdHxData", ThirdHxData.class, result("ac2HexOut2",
-//                        inPaths("acmOutFile")))));
+//                srv(sig("getAcmOutputMakeThirdHxData", ThirdHxData.class,        result("ac2HexOut2",     inPaths("acmOutFile")))));
 //
 //        responseUp(airCycleModel, "getAcmOutputMakeThirdHxData");
-//        dependsOn(airCycleModel, ent("executeAirCycleMachine", paths("getThirdHxDataFromOffDesignCase", "mstcGate", "parseEngineDeck", "executeAirCycleMachine")));
+//        dependsOn(airCycleModel, ent("getAcmOutputMakeThirdHxData", paths("getOffDesignCaseFromThirdHx", "doEvaluatePropulsion", "parseProptoACM", "executeOpenLoopACM")));
+//
+//        URL templateFileUrl = dataService.getDataURL(dataDir + File.separator + "PropAndAcm" + File.separator + "OffDesignCasesTemplate.dat");
 //
 //        Block airCycleMachineMogram = block(
 //                //this is the initial guess to the iteration from the context coming in
-//                context(inEnt("offDesignCases","OffDesignCases.dat")), //this is the Var that holds the input data for the mstcgate call
-//                task("offDesignCases", sig("getThirdHxDataFromOffDesignCase", ThirdHxData.class, result("ac2HexOut1", inPaths("offDesignCases")))),
+//                context(inEnt("offDesignCasesTemplate",templateFileUrl)),
+//                task("offDesignCases", sig("getThirdHxDataFromOffDesignCase", ThirdHxData.class),
+//                        context(inEnt("offDesignCases", templateFileUrl), result("ac2HexOut1"))),
+//
 //                //context(ent("offDesignCases", "myInputURL")),
 //                loop(condition("{ ac2HexOut1, ac2HexOut2 -> ac2HexOut1.equals(ac2HexOut2) }",
-//                                "ac2HexOut1", "ac2HexOut2"),
-//                        airCycleModel));
+//                        "ac2HexOut1", "ac2HexOut2"), airCycleModel));
 //
 //        airCycleMachineMogram = exert(airCycleMachineMogram);
 //        logger.info("block context: " + context(airCycleMachineMogram));
