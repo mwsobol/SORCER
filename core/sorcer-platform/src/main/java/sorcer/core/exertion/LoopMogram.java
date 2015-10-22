@@ -115,10 +115,14 @@ public class LoopMogram extends ConditionalMogram {
 				return this;
 			} else if (condition != null && max - min == 0) {
 				if (target instanceof Model) {
-					Context cxt= condition.getConditionalContext();
+					Context cxt = condition.getConditionalContext();
 					condition.setConditionalContext((Context) target);
+					Context cxtScope = condition.getConditionalContext().getScope();
+					condition.getConditionalContext().setScope(target.getScope());
 					if (cxt != null && cxt.size() > 0)
 						((Context)target).append(cxt);
+					if (cxtScope != null && cxtScope.size() > 0)
+						((Context)target).getScope().append(cxtScope);
 				}
 				while (condition.isTrue()) {
 					if (target instanceof Exertion) {
