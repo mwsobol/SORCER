@@ -85,7 +85,7 @@ def repoPath() {
 
 bootme {
     description = 'Starts up a service provider'
-    starterConfig = file("${projectDir.path}/configs/StartCoffeemakerConfig.groovy")
+    starterConfig = file("${projectDir.path}/configs/StartCoffeeMakerConfig.groovy")
     systemProperties = ["relative.repo.path" : repoPath()]
 //    spawn = false
 //    debug = true

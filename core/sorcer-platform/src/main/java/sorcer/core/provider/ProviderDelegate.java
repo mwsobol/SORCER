@@ -40,6 +40,7 @@ import net.jini.lookup.entry.Name;
 import net.jini.security.AccessPermission;
 import net.jini.security.TrustVerifier;
 import net.jini.space.JavaSpace05;
+import org.omg.stub.java.rmi._Remote_Stub;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.container.jeri.AbstractExporterFactory;
@@ -2437,7 +2438,7 @@ public class ProviderDelegate {
 			return adminProxy;
 		try {
             adminProxy = ProviderProxy.wrapAdminProxy(outerProxy,
-                                                      getAdminProviderUuid());
+					getAdminProviderUuid());
         } catch (Exception e) {
             logger.warn("No admin proxy created by: {}", provider, e);
         }
@@ -2960,6 +2961,10 @@ public class ProviderDelegate {
 
 	public boolean spaceEnabled() {
 		return spaceEnabled;
+	}
+
+	public boolean isRemoteLogging() {
+		return remoteLogging;
 	}
 
 	public List<ExecutorService> getSpaceHandlingPools() {
