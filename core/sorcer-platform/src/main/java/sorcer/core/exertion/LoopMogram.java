@@ -134,7 +134,6 @@ public class LoopMogram extends ConditionalMogram {
 						if (target instanceof SrvModel)
 							((SrvModel)target).clearOutputs();
 						target = target.exert(txn);
-						target.setScope(getScope());
 					}
 				}
 			} else if (condition != null && max - min > 0) {
