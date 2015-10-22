@@ -18,6 +18,7 @@
 package sorcer.core.exertion;
 
 import net.jini.core.transaction.Transaction;
+import sorcer.core.context.ServiceContext;
 import sorcer.core.context.ThrowableTrace;
 import sorcer.core.context.model.srv.SrvModel;
 import sorcer.service.*;
@@ -119,10 +120,22 @@ public class LoopMogram extends ConditionalMogram {
 					condition.setConditionalContext((Context) target);
 					Context cxtScope = condition.getConditionalContext().getScope();
 					condition.getConditionalContext().setScope(target.getScope());
-					if (cxt != null && cxt.size() > 0)
-						((Context)target).append(cxt);
-					if (cxtScope != null && cxtScope.size() > 0)
-						((Context)target).getScope().append(cxtScope);
+					if (cxt != null && cxt.size() > 0) {
+						((Context) target).append(cxt);
+					}
+					// update the scope of target
+					if (target.getScope() == null
+							&& (cxtScope != null && cxtScope.size() > 0
+									|| scope != null && scope.size() > 0)) {
+						target.setScope(new ServiceContext());
+					} else {
+						if (cxtScope != null && cxtScope.size() > 0) {
+							target.getScope().append(cxtScope);
+						}
+						if (scope != null && scope.size() > 0) {
+							target.getScope().append(scope);
+						}
+					}
 				}
 				while (condition.isTrue()) {
 					if (target instanceof Exertion) {
