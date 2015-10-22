@@ -51,9 +51,9 @@ class AdderProviderConfig {
      *
      * @return An array of service implementation classes required to load the service
      */
-    Class[] getBeanClasses() {
+    /*Class[] getBeanClasses() {
         return [junit.sorcer.core.provider.AdderImpl.class]
-    }
+    }*/
 
 
     Class[] getPublishedInterfaces() {

@@ -57,7 +57,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 	@Test
 	public void getProviderTest() throws Exception {
 		Cataloger catalog = CatalogerAccessor.getCataloger();
-		Object proxy = catalog.lookup(Adder.class);
+		Object proxy = Accessor.get().getService(null, Adder.class);
 		if (proxy != null)
 			System.out.println("Adder: " + Arrays.toString(proxy.getClass().getInterfaces()));
 
