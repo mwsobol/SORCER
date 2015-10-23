@@ -167,8 +167,8 @@ public class SrvModel extends ParModel<Object> implements Model {
             append(entries);
 
             if (path != null) {
-                val = get(path);
                 execDependencies(path, entries);
+                val = get(path);
             } else {
                 Signature.ReturnPath rp = returnPath(entries);
                 if (rp != null)
@@ -242,13 +242,7 @@ public class SrvModel extends ParModel<Object> implements Model {
     }
 
     protected void execDependencies(Signature sig, Arg... args) throws ContextException {
-        Map<String, List<String>> dpm = modelStrategy.getDependentPaths();
-        List<String> dpl = dpm.get(sig.getName());
-        if (dpl != null && dpl.size() > 0) {
-            for (String p : dpl) {
-                getValue(p, args);
-            }
-        }
+        execDependencies(sig.getName(), args);
     }
 
     /**

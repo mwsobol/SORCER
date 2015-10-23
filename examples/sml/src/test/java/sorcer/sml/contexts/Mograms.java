@@ -132,7 +132,7 @@ public class Mograms {
 
         Model model = srvModel(
                 inEnt("by", 10.0),
-                srv(sig("increment", incrementer, result("out", inPaths("by", "urlTemplate")))),
+                srv(sig("increment", incrementer, result("out", inPaths("by")))),
                 par("multiply", invoker("add * out", ents("add", "out"))));
 
 
@@ -142,7 +142,7 @@ public class Mograms {
 //        assertTrue(value(exerted, "out").equals(110.0));
 
         Block looping = block(
-                context(inEnt("urlTemplate", "URL")),
+                context(inEnt("offDesignCasesTemplate", "URL")),
                 task(sig("add", AdderImpl.class),
                         context(inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0), result("add"))),
                 loop(condition("{ out -> out < 1000 }", "out"),
