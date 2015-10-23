@@ -118,23 +118,14 @@ public class LoopMogram extends ConditionalMogram {
 				if (target instanceof Model) {
 					Context cxt = condition.getConditionalContext();
 					condition.setConditionalContext((Context) target);
-					Context cxtScope = condition.getConditionalContext().getScope();
-					condition.getConditionalContext().setScope(target.getScope());
 					if (cxt != null && cxt.size() > 0) {
 						((Context) target).append(cxt);
 					}
 					// update the scope of target
-					if (target.getScope() == null
-							&& (cxtScope != null && cxtScope.size() > 0
-									|| scope != null && scope.size() > 0)) {
-						target.setScope(new ServiceContext());
+					if (target.getScope() == null) {
+						target.setScope(scope);
 					} else {
-						if (cxtScope != null && cxtScope.size() > 0) {
-							target.getScope().append(cxtScope);
-						}
-						if (scope != null && scope.size() > 0) {
-							target.getScope().append(scope);
-						}
+						target.getScope().append(scope);
 					}
 				}
 				while (condition.isTrue()) {
