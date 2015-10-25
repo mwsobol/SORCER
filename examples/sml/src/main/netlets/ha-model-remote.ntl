@@ -2,18 +2,18 @@
 
 @Codebase(group='org.sorcer', module='sml', version='${sorcer.version}', classifier='dl')
 @Load(group='org.sorcer', module='sml', version='${sorcer.version}')
-import sorcer.arithmetic.provider.impl.AdderImpl
-import sorcer.arithmetic.provider.impl.MultiplierImpl
-import sorcer.arithmetic.provider.impl.SubtractorImpl
+import sorcer.arithmetic.provider.Adder
+import sorcer.arithmetic.provider.Multiplier
+import sorcer.arithmetic.provider.Subtractor
 
 Model m = model(
         inEnt("multiply/x1", 10.0d), inEnt("multiply/x2", 50.0d),
         inEnt("add/x1", 20.0d), inEnt("add/x2", 80.0d),
-        ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
+        ent(sig("multiply", Multiplier.class, result("multiply/out",
                 inPaths("multiply/x1", "multiply/x2")))),
-        ent(sig("add", AdderImpl.class, result("add/out",
+        ent(sig("add", Adder.class, result("add/out",
                 inPaths("add/x1", "add/x2")))),
-        ent(sig("out", "subtract", SubtractorImpl.class, result("model/response",
+        ent(sig("out", "subtract", Subtractor.class, result("model/response",
                 inPaths("multiply/out", "add/out")))),
         response("out"));
 

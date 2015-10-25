@@ -23,6 +23,6 @@ Double v2 = 200.0;
 
 // model three entries
 Model mog = model(inEnt("x1", v1), inEnt("x2", v2),
-        srv(sig, "add", Adder.class, result("result/y", inPaths("x1", "x2"))));
+        ent(sig("add", Adder.class, result("result/y", inPaths("x1", "x2")))));
 
 responseUp(mog, "result/y", "x1", "x2");
