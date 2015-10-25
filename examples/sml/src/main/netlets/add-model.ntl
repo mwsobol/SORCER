@@ -20,7 +20,7 @@
 Double v1 = 100.0;
 Double v2 = 200.0;
 
-Model context = model(inEnt("x1", v1), inEnt("x2", v2),
-        outEnt("result/y", invoker("x1 + x2", ents("x1", "x2"))));
+Model context = model(ent("x1", v1), ent("x2", v2),
+        ent("result/y", invoker("x1 + x2", ents("x1", "x2"))));
 
 responseUp(context, "result/y", "x1");
