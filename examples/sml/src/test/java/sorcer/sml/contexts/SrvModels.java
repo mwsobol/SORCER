@@ -85,6 +85,19 @@ public class SrvModels {
     }
 
     @Test
+    public void exertRemoteAddereModel() throws Exception {
+
+        // three entry model
+        Model mod = srvModel(inEnt("arg/x1", 10.00), inEnt("arg/x2", 90.00),
+                srv(sig("add", Adder.class, result("result/y", inPaths("arg/x1", "arg/x2")))),
+                response("add", "arg/x1", "arg/x2"));
+
+        Model model = exert(mod);
+//        logger.info("model: " + exert(mod));
+        assertTrue(get(mod, "result/y").equals(100.0));
+    }
+
+    @Test
     public void evalauteRemoteAddereModel() throws Exception {
 
         // three entry model
