@@ -21,6 +21,9 @@ import sorcer.service.Strategy.Monitor
 
 task("t5",
         sig("add", Adder.class),
-        context("add", inEnt("arg/x1", 20.0d),
-                inEnt("arg/x2", 80.0d), result("result/y")), strategy(Monitor.YES));
+        context("add",
+                inEnt("arg/x1", 20.0d),
+                inEnt("arg/x2", 80.0d),
+                result("result/y")),
+        strategy(Monitor.YES));
 
