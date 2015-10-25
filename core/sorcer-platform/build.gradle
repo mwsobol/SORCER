@@ -46,6 +46,7 @@ jar {
         include "sorcer/**"
         include "org/rioproject/admin/ServiceActivityProvider.class"
 		include "org/rioproject/entry/ComputeResourceInfo.class"
+        include "org/rioproject/entry/OperationalStringEntry.class"
         include "org/rioproject/impl/jmx/JMXConnectionUtil.class"
         include "org/rioproject/impl/jmx/MBeanServerFactory.class"
         include "org/rioproject/event/RemoteServiceEvent.class"
