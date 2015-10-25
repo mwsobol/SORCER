@@ -303,7 +303,7 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 			}
 			// check if the exertion has to be initialized (to original state)
 			// or used as is after resuming from suspension or failure
-			if (((ServiceExertion)exertion).isInitializable()) {
+			if (exertion.isInitializable()) {
 				initExecState(entries);
 			}
 			realizeDependencies(entries);
@@ -359,6 +359,20 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 //			 execute modeling tasks
 			if (exertion instanceof ModelingTask && exertion.getFidelity().getSelects().size() == 1) {
 				return ((Task) exertion).doTask(transaction);
+			}
+
+			// handle delegated tasks with fidelities
+			if (exertion.getClass() == Task.class) {
+				if (exertion.getFidelity().getSelects().size() == 1) {
+					return ((Task) exertion).doTask(transaction);
+				} else {
+					try {
+						return new ControlFlowManager().doTask((Task) exertion);
+					} catch (ContextException e) {
+						e.printStackTrace();
+						throw new ExertionException(e);
+					}
+				}
 			}
 
 			// execute object tasks and jobs

@@ -1,5 +1,6 @@
 package sorcer.sml.contexts;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -21,7 +22,9 @@ import sorcer.service.modeling.Model;
 
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
+import static sorcer.co.operator.get;
 import static sorcer.eo.operator.*;
+import static sorcer.eo.operator.result;
 import static sorcer.eo.operator.value;
 import static sorcer.mo.operator.*;
 import static sorcer.po.operator.invoker;
@@ -39,8 +42,39 @@ public class SrvModels {
     public void evalauteLocalAddereModel() throws Exception {
 
         // three entry model
-        Model mod = srvModel(inEnt("arg/x1", 10.00), inEnt("arg/x2", 90.00),
+        Model mod = model(inEnt("arg/x1", 10.00), inEnt("arg/x2", 90.00),
                 srv(sig("add", AdderImpl.class, result("result/y", inPaths("arg/x1", "arg/x2")))),
+                response("add", "arg/x1", "arg/x2"));
+
+        Context out = response(mod);
+        assertTrue(get(out, "add").equals(100.0));
+
+        assertTrue(get(mod, "result/y").equals(100.0));
+
+    }
+
+    @Ignore
+    @Test
+    public void evalauteMultiFidelityModel() throws Exception {
+
+        // three entry model
+        Model mod = model(inEnt("arg/x1", 10.00), inEnt("arg/x2", 90.00),
+                ent("mFi", sFi(sig("add", AdderImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))),
+                        sig("multiply", MultiplierImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))))),
+                response("mFi", "arg/x1", "arg/x2"));
+
+        Context out = response(mod, fi("add", "mFi"));
+        logger.info("out: " + out);
+//        assertTrue(get(out, "mFi").equals(100.0));
+//        assertTrue(get(mod, "result/y").equals(100.0));
+    }
+
+    @Test
+    public void evalauteLocalAddereModel2() throws Exception {
+
+        // three entry model
+        Model mod = model(inEnt("arg/x1", 10.00), inEnt("arg/x2", 90.00),
+                ent(sig("add", AdderImpl.class, result("result/y", inPaths("arg/x1", "arg/x2")))),
                 response("add", "arg/x1", "arg/x2"));
 
         Context out = response(mod);
@@ -83,7 +117,7 @@ public class SrvModels {
         responseUp(m, "add", "multiply");
         // exert the model
         Model model = exert(m);
-        logger.info("model: " + model);
+//        logger.info("model: " + model);
 
         assertTrue(response(model, "add").equals(4.0));
         System.out.println("responses: " + response(model));
@@ -107,14 +141,37 @@ public class SrvModels {
                         inPaths("add/x1", "add/x2")))),
                 srv(sig("subtract", SubtractorImpl.class, result("model/response",
                         inPaths("multiply/out", "add/out")))),
-                srv("y1", "multiply/x1"),
+                aka("y1", "multiply/x1"),
                 response("subtract"));
 
         dependsOn(m, ent("subtract", paths("multiply", "add")));
-        logger.info("response: " + response(m));
+//        logger.info("response: " + response(m));
         Context out = response(m);
 
         assertTrue(get(out, "subtract").equals(400.0));
+
+    }
+
+    @Test
+    public void serviceResponses2() throws Exception {
+        // get responses from a service model
+
+        Model m = model(
+                inEnt("multiply/x1", 10.0), inEnt("multiply/x2", 50.0),
+                inEnt("add/x1", 20.0), inEnt("add/x2", 80.0),
+                ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
+                        inPaths("multiply/x1", "multiply/x2")))),
+                ent(sig("add", AdderImpl.class, result("add/out",
+                        inPaths("add/x1", "add/x2")))),
+                ent(sig("out", "subtract", SubtractorImpl.class, result("model/response",
+                        inPaths("multiply/out", "add/out")))),
+                response("out"));
+
+        dependsOn(m, ent("out", paths("multiply", "add")));
+//        logger.info("response: " + response(m));
+        Context out = response(m);
+
+        assertTrue(get(out, "out").equals(400.0));
 
     }
 
@@ -126,13 +183,13 @@ public class SrvModels {
         Model m = srvModel(
                 inEnt("multiply/x1", 10.0), inEnt("multiply/x2", 50.0),
                 inEnt("add/x1", 20.0), inEnt("add/x2", 80.0),
-                srv(sig("multiply", MultiplierImpl.class, result("multiply/out",
+                ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
                         inPaths("multiply/x1", "multiply/x2")))),
-                srv(sig("add", AdderImpl.class, result("add/out",
+                ent(sig("add", AdderImpl.class, result("add/out",
                         inPaths("add/x1", "add/x2")))),
-                srv(sig("subtract", SubtractorImpl.class, result("model/response",
+                ent(sig("subtract", SubtractorImpl.class, result("model/response",
                         inPaths("multiply/out", "add/out")))),
-                srv("y1", "multiply/x1"));
+                aka("y1", "multiply/x1"));
 
 
         // get a scalar response
@@ -173,7 +230,7 @@ public class SrvModels {
                         inPaths("add/x1", "add/x2")))),
                 srv(sig("subtract", SubtractorImpl.class, result("subtract/response",
                         inPaths("multiply/out", "add/out")))),
-                srv("y1", "multiply/x1"), srv("y2", "add/x2"), srv("y3", "subtract/response"));
+                aka("y1", "multiply/x1"), aka("y2", "add/x2"), aka("y3", "subtract/response"));
 
 //                dep("subtract", paths("multiply", "add")));
 

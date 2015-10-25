@@ -2,8 +2,12 @@ package sorcer.core.provider;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
+import sorcer.arithmetic.tester.provider.Adder;
+import sorcer.arithmetic.tester.provider.Multiplier;
 import sorcer.arithmetic.tester.provider.impl.AdderImpl;
 import sorcer.arithmetic.tester.provider.impl.AveragerImpl;
 import sorcer.arithmetic.tester.provider.impl.MultiplierImpl;
@@ -13,13 +17,10 @@ import sorcer.core.provider.rendezvous.ServiceConcatenator;
 import sorcer.service.Block;
 import sorcer.service.Task;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import static org.junit.Assert.assertEquals;
-import static sorcer.co.operator.ent;
-import static sorcer.co.operator.inEnt;
+import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
+import static sorcer.eo.operator.value;
 
 /**
  * @author Mike Sobolewski
@@ -115,5 +116,19 @@ public class ArithmeticNoNetBlockTest implements SorcerConstants {
 		logger.info("block context: " + context(block));
 		logger.info("result: " + value(context(block), "out"));
 		assertEquals(value(context(block), "out"), 100.0);
+	}
+
+	@Test
+	public void batchFiTask() throws Exception {
+
+		Task t4 = task("t4",
+				sFi("object", sig("multiply", MultiplierImpl.class), sig("add", AdderImpl.class)),
+				sFi("net", sig("multiply", Multiplier.class), sig("add", Adder.class)),
+				context("shared", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
+						outEnt("result/y")));
+
+		t4 = exert(t4, fi("object"));
+		logger.info("task context: " + context(t4));
+
 	}
 }

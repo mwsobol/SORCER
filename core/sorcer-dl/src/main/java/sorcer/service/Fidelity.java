@@ -39,16 +39,14 @@ public class Fidelity<T> implements Arg, Serializable {
 
 	private static int count = 0;
 
-	public void setSelects(List<T> selects) {
-		this.selects = selects;
-	}
-
 	protected String name;
 
 	protected List<T> selects = new ArrayList<T>();
 
 	// component exertion path
 	protected String path = "";
+
+	protected T selection;
 
 	public Type type = Type.NAME;
 
@@ -103,12 +101,20 @@ public class Fidelity<T> implements Arg, Serializable {
 		this.name = name;
 	}
 
-	public T getSelect() {
-		return selects.get(0);
+	public T getSelection() {
+		return selection;
+	}
+
+	public void setSelection(T selection) {
+		this.selection = selection;
 	}
 
 	public List<T> getSelects() {
 		return selects;
+	}
+
+	public void setSelects(List<T> selects) {
+		this.selects = selects;
 	}
 
 	public String getPath() {

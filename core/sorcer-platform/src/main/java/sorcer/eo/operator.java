@@ -778,6 +778,12 @@ public class operator {
 		return signature.getSelector();
 	}
 
+	public static Signature sig(String name, String operation, Class serviceType)
+			throws SignatureException {
+		ServiceSignature signature = (ServiceSignature) sig(operation, serviceType, new Arg[]{});
+		signature.setName(name);
+		return signature;
+	}
 
 	public static Signature sig(String operation, Class serviceType)
 			throws SignatureException {
@@ -842,6 +848,12 @@ public class operator {
 			}
 		}
 		return sig;
+	}
+
+	public static Signature sig(String name, String operation, Class serviceType, Arg... args) throws SignatureException {
+		ServiceSignature s = (ServiceSignature) sig(operation, serviceType, args);
+		s.setName(name);
+		return s;
 	}
 
 	public static Signature sig(String operation, Class serviceType, Arg... args) throws SignatureException {
@@ -1096,6 +1108,13 @@ public class operator {
 
 	public static Fidelity<?> fi(String name) {
 		Fidelity<?> fi = new Fidelity(name);
+		fi.type = Fidelity.Type.EMPTY;
+		return fi;
+	}
+
+	public static Fidelity<?> fi(String name, String path) {
+		Fidelity<?> fi = new Fidelity(name);
+		fi.setPath(path);
 		fi.type = Fidelity.Type.EMPTY;
 		return fi;
 	}

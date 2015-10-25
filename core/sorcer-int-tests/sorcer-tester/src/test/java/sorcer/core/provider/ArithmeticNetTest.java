@@ -58,9 +58,6 @@ public class ArithmeticNetTest implements SorcerConstants {
 	public void getProviderTest() throws Exception {
 		Cataloger catalog = CatalogerAccessor.getCataloger();
 		Object proxy = catalog.lookup(Adder.class);
-		if (proxy != null)
-			System.out.println("Adder: " + Arrays.toString(proxy.getClass().getInterfaces()));
-
 		String[] pnames = catalog.getProviderList();
 		logger.info("cataloger pnames: " + Arrays.toString(pnames));
 
@@ -81,7 +78,6 @@ public class ArithmeticNetTest implements SorcerConstants {
 	@Test
 	public void getCatalogTest() throws Exception {
 		Cataloger catalog = CatalogerAccessor.getCataloger();
-		System.out.println("Cataloger: " + catalog);
 		String[] pnames = catalog.getProviderList();
 		logger.info("cataloger pnames: " + Arrays.toString(pnames));
 	}
@@ -125,7 +121,6 @@ public class ArithmeticNetTest implements SorcerConstants {
 	
 	@Test
 	public void arithmeticProviderTest() throws Exception {
-        System.out.println("========== arithmeticProviderTest ==========");
 		Task t5 = task(
 				"t5",
 				sig("add", Adder.class),
@@ -196,6 +191,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 		return (Job)tracable(job);
 	}
 
+	@Ignore
 	@Test
 	public void arithmeticMultiFiJobTest() throws Exception {
 
@@ -252,26 +248,28 @@ public class ArithmeticNetTest implements SorcerConstants {
 		assertTrue(get(job, "j1/t3/result/y").equals(400.0));
 	}
 
-	@Ignore
 	@Test
-	public void batchFiTask() throws Exception {
-		
-		Task t4 = task("t4",
-				sFi("object", sig("multiply", MultiplierImpl.class), sig("add", AdderImpl.class)),
-				sFi("net", sig("multiply", Multiplier.class), sig("add", Adder.class)),
-				context("shared", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
-						outEnt("result/y")));
+	public void netObjectFiTask() throws Exception {
 
-		t4 = exert(t4, fi("object"));
-		logger.info("task context: " + context(t4));
-		
-		t4 = exert(t4, fi("net"));
-		logger.info("task context: " + context(t4));
+		Task task = task("add",
+				sFi("net", sig("add", Adder.class)),
+				sFi("object", sig("add", AdderImpl.class)),
+				context(inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
+						result("result/y")));
+
+		logger.info("sFi: " + sFi(task));
+		assertTrue(sFis(task).size() == 2);
+		logger.info("fiName: " + fiName(task));
+		assertTrue(fiName(task).equals("net"));
+
+		task = exert(task, fi("net"));
+		logger.info("exerted: " + context(task));
+		assertTrue(fiName(task).equals("net"));
+		assertTrue(get(task).equals(100.0));
 	}
-	
+
 	@Test
 	public void averagerproxyProviderTest() throws Exception {
-        System.out.println("========== averagerProviderTest ==========");
 		Task t5 = task(
 				"t5",
 				sig("average", Averager.class),
@@ -285,7 +283,6 @@ public class ArithmeticNetTest implements SorcerConstants {
 	
 	@Test
 	public void arithmeticSpaceTaskTest() throws Exception {
-        System.out.println("========== arithmeticSpaceTaskTest ==========");
 		Task t5 = task(
 				"t5",
 				sig("add", Adder.class),
@@ -301,7 +298,6 @@ public class ArithmeticNetTest implements SorcerConstants {
 
 	@Test
 	public void exertJobPushParTest() throws Exception {
-        System.out.println("========== exertJobPushParTest ==========");
 		Job job = createJob(Flow.PAR, Access.PUSH);
 		job = exert(job);
 		//logger.info("job j1: " + job);
@@ -313,7 +309,6 @@ public class ArithmeticNetTest implements SorcerConstants {
 	
 	@Test
 	public void exertJobPushSeqTest() throws Exception {
-        System.out.println("========== exertJobPushSeqTest ==========");
 		Job job = createJob(Flow.SEQ, Access.PUSH);
 		logger.info("job j1: " + job);
 		job = exert(job);
@@ -326,7 +321,6 @@ public class ArithmeticNetTest implements SorcerConstants {
 	
 	@Test
 	public void exertJobPullParTest() throws Exception {
-        System.out.println("========== exertJobPullParTest ==========");
 		Job job = createJob(Flow.PAR, Access.PULL);
 		job = exert(job);
 		//logger.info("job j1: " + job);
@@ -338,7 +332,6 @@ public class ArithmeticNetTest implements SorcerConstants {
 	
 	@Test
 	public void exertJobPullSeqTest() throws Exception {
-        System.out.println("========== exertJobPullSeqTest ==========");
 		Job job = createJob(Flow.SEQ, Access.PULL);
 		job = exert(job);
 		//logger.info("job j1: " + job);
@@ -350,7 +343,6 @@ public class ArithmeticNetTest implements SorcerConstants {
 	
 	@Test
 	public void exerterTest() throws Exception {
-        System.out.println("========== exerterTest ==========");
 	Mogram f5 = task(
 			"f5",
 			sig("add", Adder.class),
@@ -373,7 +365,6 @@ public class ArithmeticNetTest implements SorcerConstants {
 	
 	@Test
 	public void arithmeticEolExertleter() throws Exception {
-        System.out.println("========== arithmeticEolExertleter ==========");
 		// get the current value of the exertlet
 		Task task = task("eval", sig("getValue", Evaluation.class, prvName("Arithmetic Exertleter")));
 		logger.info("j1/t3/result/y: " + value(task, "j1/t3/result/y"));
@@ -412,7 +403,6 @@ public class ArithmeticNetTest implements SorcerConstants {
 	
 	@Test
 	public void arithmeticApiExertleter() throws Exception {
-        System.out.println("========== arithmeticApiExertleter ==========");
 		// get the current value of the exertlet
 		NetSignature signature = new NetSignature("getValue", Evaluation.class, 
 				Sorcer.getActualName("Arithmetic Exertleter"));
@@ -522,7 +512,6 @@ public class ArithmeticNetTest implements SorcerConstants {
 			
 	@Test
 	public void contexterTest() throws Exception {
-        System.out.println("========== contexterTest ==========");
 		Task cxtt = task("addContext", sig("getContext", Contexter.class, prvName("Add Contexter")),
 				context("add", input("arg/x1"), input("arg/x2")));
 		 
@@ -558,8 +547,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 	}
 	
 	public void netContexterTaskTest() throws Exception {
-        System.out.println("========== netContexterTaskTest ==========");
-		Task t5 = task("t5", sig("add", Adder.class), 
+		Task t5 = task("t5", sig("add", Adder.class),
 					sig("getContext", Contexter.class, prvName("Add Contexter"), Signature.APD),
 					context("add", inEnt("arg/x1"), inEnt("arg/x2"),
 						result("result/y")));
@@ -614,7 +602,6 @@ public class ArithmeticNetTest implements SorcerConstants {
 
 	@Test
 	public void testProvisionedJob() throws Exception {
-        System.out.println("========== testProvisionedJob ==========");
 		Job f1 = createProvisionedJob();
 		List<Signature> allSigs = f1.getAllSignatures();
 //		logger.info("all sigs size: " + allSigs.size());
@@ -642,7 +629,6 @@ public class ArithmeticNetTest implements SorcerConstants {
 	
 	@Test
 	public void exertionDeploymentIdTest() throws Exception {
-        System.out.println("========== exertionDeploymentIdTest ==========");
 		Job job = createProvisionedJob();
 		String did =  job.getDeploymentId();
 		logger.info("job deploy id: " + did);

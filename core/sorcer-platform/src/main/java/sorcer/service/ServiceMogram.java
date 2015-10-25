@@ -401,9 +401,12 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
             }
         }
 
-        for (Signature s1 : serviceFidelity.getSelects()) {
-            if (s1.getType() == Signature.Type.PROC) {
-                sig = s1;
+        if (serviceFidelitySelector != null) {
+            serviceFidelity = serviceFidelities.get(serviceFidelitySelector);
+        }
+        for (Signature s : serviceFidelity.getSelects()) {
+            if (s.getType() == Signature.Type.PROC) {
+                sig = s;
                 break;
             }
         }

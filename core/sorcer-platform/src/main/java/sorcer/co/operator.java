@@ -218,6 +218,24 @@ public class operator {
         return new Entry(path, ((Context)model).asis(path));
     }
 
+	public static Srv ent(String name, Fidelity<Signature> fidelity) {
+		return srv(name, fidelity);
+	}
+
+	public static Srv ent(Fidelity<Signature> fidelity) {
+		return srv(fidelity);
+	}
+
+	public static Srv srv(Fidelity<Signature> fidelity) {
+		Srv service = new Srv(fidelity.getName(), fidelity);
+		return service;
+	}
+
+	public static Srv srv(String name, Fidelity<Signature> fidelity) {
+		Srv service = new Srv(name, fidelity);
+		return service;
+	}
+
 	public static Srv srv(String name, Identifiable item) {
 		String srvName = item.getName();
 		if (name != null)
@@ -242,7 +260,11 @@ public class operator {
 		return new Srv(path, model, name, type);
 	}
 
-	public static Srv srv(String name, String path) {
+	public static Srv aka(String name, String path) {
+		return new Srv(path, null, name);
+	}
+
+	public static Srv alias(String name, String path) {
 		return new Srv(path, null, name);
 	}
 
@@ -250,6 +272,9 @@ public class operator {
 		return new Entry<T>(path, value);
 	}
 
+	public static Srv ent(Signature sig) {
+		return srv(sig);
+	}
 	public static DependencyEntry dep(String path, List<String> paths) {
 		return new DependencyEntry(path, paths);
 	}

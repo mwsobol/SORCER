@@ -1,6 +1,5 @@
 package sorcer.sml.tasks;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -22,8 +21,9 @@ import sorcer.service.Strategy.Wait;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
-import static sorcer.co.operator.outPaths;
+import static sorcer.co.operator.get;
 import static sorcer.eo.operator.*;
+import static sorcer.eo.operator.get;
 import static sorcer.eo.operator.value;
 
 /**
@@ -156,25 +156,40 @@ public class NetTaskExertions {
 		assertEquals(get(batch3, "result/y"), 400.0);
 	}
 
-	@Ignore
+	@Test
+	public void netTaskFidelity() throws Exception {
+
+		Task t4 = task("t4",
+				sFi("net1", sig("multiply", Multiplier.class)),
+				sFi("net2", sig("add", Adder.class)),
+				context("shared", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
+						result("result/y")));
+
+		Context out = context(exert(t4, fi("net1")));
+		logger.info("task context: " + context(t4));
+		assertTrue(get(out, "result/y").equals(500.0));
+
+		out = context(exert(t4, fi("net2")));
+		logger.info("task context: " + context(t4));
+		assertTrue(get(out, "result/y").equals(60.0));
+	}
+
 	@Test
 	public void batchFiTask() throws Exception {
 
-		Task t4 = task("t4", sFi("object", sig("multiply", MultiplierImpl.class), sig("add", AdderImpl.class)),
+		Task t4 = task("t4",
+				sFi("object", sig("multiply", MultiplierImpl.class), sig("add", AdderImpl.class)),
 				sFi("net", sig("multiply", Multiplier.class), sig("add", Adder.class)),
 				context("shared", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
 						outEnt("result/y")));
 
-		t4 = exert(t4, fi("object"));
-		logger.info("task t4 context: " + context(t4));
-
-		t4 = exert(t4, fi("net"));
-		logger.info("task t4 net context: " + context(t4));
-
-    }
+		Context out = context(exert(t4, fi("net")));
+		logger.info("task context: " + context(t4));
+		assertTrue(get(out, "result/y").equals(500.0));
+	}
 
 	@Test
-	public void arithmeticMultiFiNetTaskTest() throws Exception {
+	public void netObjectFiTask() throws Exception {
 
 		Task task = task("add",
 				sFi("net", sig("add", Adder.class)),

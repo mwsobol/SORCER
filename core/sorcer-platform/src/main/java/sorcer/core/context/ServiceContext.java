@@ -271,11 +271,15 @@ public class ServiceContext<T> extends ServiceMogram implements
 		return (Model) sorcer.co.operator.instance(builder);
 	}
 
-	public Context clearScope() throws ContextException {
-//		Signature.ReturnPath rp = getReturnPath();
-//		if (rp != null && rp.path != null)
-//			removePath(rp.path);
+	public Context clearReturnPath() throws ContextException {
+		Signature.ReturnPath rp = getReturnPath();
+		if (rp != null && rp.path != null)
+			removePath(rp.path);
+		return this;
+	}
 
+	public Context clearScope() throws ContextException {
+//		clearReturnPath
 		return this;
 	}
 

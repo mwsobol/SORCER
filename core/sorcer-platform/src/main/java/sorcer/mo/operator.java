@@ -160,9 +160,9 @@ public class operator {
         return response(model);
     }
 
-    public static Context response(Model model) throws ContextException {
+    public static Context response(Model model, Arg... args) throws ContextException {
         try {
-            return (Context) model.getResponse();
+            return (Context) model.getResponse(args);
         } catch (RemoteException e) {
             throw new ContextException(e);
         }

@@ -48,9 +48,16 @@ import java.util.Arrays;
 public interface Signature extends Service, Comparable, Dependency, Identifiable, Arg, Serializable {
 
 	/**
+	 * Returns a name of this signature.
+	 *
+	 * @return name of signature
+	 */
+	public String getName();
+
+	/**
 	 * Returns an operation name of this signature.
 	 * 
-	 * @return name of signature
+	 * @return name of operation
 	 */
 	public String getSelector();
 
