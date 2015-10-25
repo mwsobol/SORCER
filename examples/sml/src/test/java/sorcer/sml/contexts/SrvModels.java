@@ -1,6 +1,5 @@
 package sorcer.sml.contexts;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -22,6 +21,7 @@ import sorcer.service.modeling.Model;
 
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
+import static sorcer.co.operator.asis;
 import static sorcer.co.operator.get;
 import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.result;
@@ -53,7 +53,7 @@ public class SrvModels {
 
     }
 
-    @Ignore
+//    @Ignore
     @Test
     public void evalauteMultiFidelityModel() throws Exception {
 
@@ -63,8 +63,10 @@ public class SrvModels {
                         sig("multiply", MultiplierImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))))),
                 response("mFi", "arg/x1", "arg/x2"));
 
+        logger.info("fidelity: " + asis(mod, "mFi"));
+
         Context out = response(mod, fi("add", "mFi"));
-        logger.info("out: " + out);
+//        logger.info("out: " + out);
 //        assertTrue(get(out, "mFi").equals(100.0));
 //        assertTrue(get(mod, "result/y").equals(100.0));
     }
