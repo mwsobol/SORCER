@@ -136,7 +136,7 @@ public class NetTaskExertions {
 				strategy(Monitor.NO, Wait.YES));
 
 		Context out = exec(sig(Shell.class), f5);
-		assertEquals(get(out, "result/y"), 100.00);
+		assertTrue(get(out, "result/y").equals(100.00));
 
 	}
 

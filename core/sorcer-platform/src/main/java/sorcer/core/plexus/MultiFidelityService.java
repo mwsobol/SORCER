@@ -46,16 +46,15 @@ public class MultiFidelityService extends ServiceMogram {
     protected FidelityManager fidelityManager;
 
     // service fidelities for this model
-    protected Map<String, Fidelity<String>> selectionFidelities;
+    protected Map<String, Fidelity<Arg>> selectionFidelities;
 
-    protected Fidelity<String> selectedFidelity;
+    protected Fidelity<Arg> selectedFidelity;
 
     public MultiFidelityService() {
     }
 
     public MultiFidelityService(String name) throws SignatureException {
         super(name);
-        fidelityManager = new FidelityManager(this);
     }
 
     public MultiFidelityService(String name, Signature signature) throws SignatureException {
@@ -64,12 +63,12 @@ public class MultiFidelityService extends ServiceMogram {
 
     @Override
     public <T extends Mogram> T exert(Transaction txn, Arg... entries) throws TransactionException, MogramException, RemoteException {
-        return (T) fidelityManager.runtime.exert(txn, entries);
+        return (T) fidelityManager.mogram.exert(txn, entries);
     }
 
     @Override
     public <T extends Mogram> T exert(Arg... entries) throws TransactionException, MogramException, RemoteException {
-        return (T) fidelityManager.runtime.exert(entries);
+        return (T) fidelityManager.mogram.exert(entries);
     }
 
     @Override
@@ -79,22 +78,22 @@ public class MultiFidelityService extends ServiceMogram {
 
     @Override
     public List<ThrowableTrace> getExceptions() {
-        return fidelityManager.runtime.getExceptions();
+        return fidelityManager.mogram.getExceptions();
     }
 
     @Override
     public List<String> getTrace() {
-        return fidelityManager.runtime.getTraceList();
+        return fidelityManager.mogram.getTrace();
     }
 
     @Override
     public List<ThrowableTrace> getAllExceptions() {
-        return fidelityManager.runtime.getAllExceptions();
+        return fidelityManager.mogram.getAllExceptions();
     }
 
     @Override
     public boolean isMonitorable() {
-        return fidelityManager.runtime.isMonitorable();
+        return fidelityManager.mogram.isMonitorable();
     }
 
     @Override
@@ -119,51 +118,50 @@ public class MultiFidelityService extends ServiceMogram {
      * @throws EvaluationException
      * @throws RemoteException
      */
-    public MultiFidelityService setProjection(String... fidelities) throws EvaluationException, RemoteException {
-        for (String path : fidelities)
-            fidelityManager.runtime.getResponsePaths().add(path);
-        return this;
-    }
+//    public MultiFidelityService setProjection(String... fidelities) throws EvaluationException, RemoteException {
+//        for (String path : fidelities)
+//            fidelityManager.runtime.getResponsePaths().add(path);
+//        return this;
+//    }
+//
+//    public void setSelectionFidelities(String fidelityName) {
+//        Fidelity fi = selectionFidelities.get(fidelityName);
+//        fidelityManager.runtime.setCurrentSelector(fi.getName());
+//    }
+//
+//    public void setSelectionFidelities(Fidelity<String> fidelity) {
+//        selectionFidelities.put(fidelity.getName(), fidelity);
+//        fidelityManager.runtime.setCurrentSelector(fidelity.getName());
+//    }
+//
+//    public Fidelity<String> getSelectionFidelity() {
+//        return selectionFidelities.get(fidelityManager.runtime.getCurrentSelector());
+//    }
 
-    public void setSelectionFidelities(String fidelityName) {
-        Fidelity fi = selectionFidelities.get(fidelityName);
-        fidelityManager.runtime.setCurrentSelector(fi.getName());
-    }
-
-    public void setSelectionFidelities(Fidelity<String> fidelity) {
-        selectionFidelities.put(fidelity.getName(), fidelity);
-        fidelityManager.runtime.setCurrentSelector(fidelity.getName());
-    }
-
-    public Fidelity<String> getSelectionFidelity() {
-
-        return selectionFidelities.get(fidelityManager.runtime.getCurrentSelector());
-    }
-
-    public void addSelectionFidelities(List<Fidelity<String>> fidelities) {
-        for (Fidelity<String> fi : fidelities)
+    public void addSelectionFidelities(List<Fidelity<Arg>> fidelities) {
+        for (Fidelity<Arg> fi : fidelities)
             addSelectionFidelity(fi);
     }
 
-    public void addSelectionFidelities(Fidelity<String>... fidelities) {
-        for (Fidelity<String> fi : fidelities)
+    public void addSelectionFidelities(Fidelity<Arg>... fidelities) {
+        for (Fidelity<Arg> fi : fidelities)
             addSelectionFidelity(fi);
     }
 
-    public void addSelectionFidelity(Fidelity<String> fidelity) {
+    public void addSelectionFidelity(Fidelity<Arg> fidelity) {
         if (selectionFidelities == null)
-            selectionFidelities = new HashMap<String, Fidelity<String>>();
+            selectionFidelities = new HashMap<String, Fidelity<Arg>>();
         selectionFidelities.put(fidelity.getName(), fidelity);
     }
 
-    public void selectSelectionFidelity(String fidelity) throws ExertionException {
-        if (fidelity != null && selectionFidelities != null
-                && selectionFidelities.containsKey(fidelity)) {
-            fidelityManager.runtime.setCurrentSelector(selectionFidelities.get(fidelity).getName());
-            fidelityManager.runtime.getResponsePaths().clear();
-            fidelityManager.runtime.getResponsePaths().add(fidelityManager.runtime.getCurrentSelector());
-        }
-    }
+//    public void selectSelectionFidelity(String fidelity) throws ExertionException {
+//        if (fidelity != null && selectionFidelities != null
+//                && selectionFidelities.containsKey(fidelity)) {
+//            fidelityManager.runtime.setCurrentSelector(selectionFidelities.get(fidelity).getName());
+//            fidelityManager.runtime.getResponsePaths().clear();
+//            fidelityManager.runtime.getResponsePaths().add(fidelityManager.runtime.getCurrentSelector());
+//        }
+//    }
 
     public Mogram put(Mogram mogram) throws ContextException {
         subsystems.putValue(mogram.getName(), mogram);
@@ -178,33 +176,33 @@ public class MultiFidelityService extends ServiceMogram {
         return (Mogram) value;
     }
 
-    public Context getValue(Arg... entries) throws EvaluationException {
-        try {
-            Mogram mogram = subsystems.getValue(fidelityManager.runtime.getResponsePaths().get(0));
-            mogram = mogram.exert(entries);
-            if (mogram instanceof Exertion)
-                return ((Exertion) mogram).getContext();
-            else
-                return fidelityManager.runtime.getOutcome();
-        } catch (Exception e) {
-            throw new EvaluationException(e);
-        }
-    }
+//    public Context getValue(Arg... entries) throws EvaluationException {
+//        try {
+//            Mogram mogram = subsystems.getValue(fidelityManager.runtime.getResponsePaths().get(0));
+//            mogram = mogram.exert(entries);
+//            if (mogram instanceof Exertion)
+//                return ((Exertion) mogram).getContext();
+//            else
+//                return fidelityManager.runtime.getOutcome();
+//        } catch (Exception e) {
+//            throw new EvaluationException(e);
+//        }
+//    }
+//
+//    public Object getResponse(String fidelity, Arg... entries) throws ContextException {
+//        try {
+//            selectSelectionFidelity(fidelity);
+//        } catch (ExertionException e) {
+//            throw new ContextException(e);
+//        }
+//        return getValue(entries);
+//    }
 
-    public Object getResponse(String fidelity, Arg... entries) throws ContextException {
-        try {
-            selectSelectionFidelity(fidelity);
-        } catch (ExertionException e) {
-            throw new ContextException(e);
-        }
-        return getValue(entries);
-    }
-
-    public Fidelity<String> getSelectedSelectionFidelity() {
+    public Fidelity<Arg> getSelectedSelectionFidelity() {
         return selectedFidelity;
     }
 
-    public void setSelectedSelectionFidelity(Fidelity<String> selectedFidelity) {
+    public void setSelectedSelectionFidelity(Fidelity<Arg> selectedFidelity) {
         this.selectedFidelity = selectedFidelity;
     }
 
@@ -236,7 +234,7 @@ public class MultiFidelityService extends ServiceMogram {
 
     @Override
     public void appendTrace(String info) {
-        fidelityManager.getRuntime().appendTrace(info);
+        fidelityManager.mogram.appendTrace(info);
     }
 
 }

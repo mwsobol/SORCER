@@ -53,22 +53,26 @@ public class SrvModels {
 
     }
 
-//    @Ignore
     @Test
     public void evalauteMultiFidelityModel() throws Exception {
 
         // three entry model
-        Model mod = model(inEnt("arg/x1", 10.00), inEnt("arg/x2", 90.00),
+        Model mod = model(inEnt("arg/x1", 10.0), inEnt("arg/x2", 90.0),
                 ent("mFi", sFi(sig("add", AdderImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))),
                         sig("multiply", MultiplierImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))))),
                 response("mFi", "arg/x1", "arg/x2"));
 
         logger.info("fidelity: " + asis(mod, "mFi"));
 
-        Context out = response(mod, fi("add", "mFi"));
+//        Context out = response(mod, fi("add", "mFi"));
 //        logger.info("out: " + out);
 //        assertTrue(get(out, "mFi").equals(100.0));
 //        assertTrue(get(mod, "result/y").equals(100.0));
+
+        Context out = response(mod, fi("multiply", "mFi"));
+        logger.info("out: " + out);
+        assertTrue(get(out, "mFi").equals(900.0));
+        assertTrue(get(mod, "result/y").equals(900.0));
     }
 
     @Test

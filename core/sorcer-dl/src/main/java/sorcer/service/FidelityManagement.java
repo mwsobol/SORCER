@@ -28,7 +28,7 @@ import java.util.Map;
 /**
  * Created by Mike Sobolewski on 6/14/15.
  */
-public interface FidelityManagement<T> extends Service, RemoteEventListener {
+public interface FidelityManagement<T extends Arg> extends Service, RemoteEventListener {
 
     public Map<String, Fidelity<T>> getFidelities() throws RemoteException;
 

@@ -126,7 +126,7 @@ public class operator {
 		return new EntryList(entries);
 	}
 
-	public static Fidelity<String> parFi(String name) {
+	public static Fidelity<Arg> parFi(String name) {
 		return new Fidelity(name);
 	}
 

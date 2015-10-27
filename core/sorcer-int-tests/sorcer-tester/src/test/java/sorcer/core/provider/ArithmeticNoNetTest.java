@@ -184,8 +184,8 @@ public class ArithmeticNoNetTest implements SorcerConstants {
 
 		Context result = context(exert(cxtt));
 //		logger.info("contexter context: " + result);
-		assertEquals(get(result, "arg/x1"), 20.0);
-		assertEquals(get(result, "arg/x2"), 80.0);
+		assertTrue(get(result, "arg/x1").equals(20.0));
+		assertTrue(get(result, "arg/x2").equals(80.0));
 	}
 	
 	@Test
@@ -197,7 +197,7 @@ public class ArithmeticNoNetTest implements SorcerConstants {
 		
 		Context result = context(exert(t5));
 //		logger.info("task context: " + result);
-		assertEquals(get(result, "result/y"), 100.0);
+		assertTrue(get(result, "result/y").equals(100.0));
 	}
 	
 	@Test

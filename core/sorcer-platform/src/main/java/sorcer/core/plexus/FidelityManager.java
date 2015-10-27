@@ -23,11 +23,12 @@ import net.jini.core.event.RemoteEventListener;
 import net.jini.core.event.UnknownEventException;
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
+import net.jini.id.Uuid;
+import net.jini.id.UuidFactory;
 import sorcer.core.context.ModelStrategy;
-import sorcer.service.Fidelity;
-import sorcer.service.FidelityManagement;
-import sorcer.service.Mogram;
-import sorcer.service.MogramException;
+import sorcer.core.invoker.Observable;
+import sorcer.core.invoker.Observer;
+import sorcer.service.*;
 
 import java.io.Serializable;
 import java.rmi.MarshalledObject;
@@ -40,58 +41,57 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Created by Mike Sobolewski on 6/14/15.
  */
-public class FidelityManager<T> implements FidelityManagement<T>, Serializable {
+abstract public class FidelityManager implements FidelityManagement<Fidelity>, Observer, Identifiable, Serializable {
+
+    // sequence number for unnamed instances
+    protected static int count = 0;
+
+    private String name;
+
+    Uuid id = UuidFactory.generate();
 
     // fidelities for this service
-    protected Map<String, Fidelity<T>> fidelities = new ConcurrentHashMap<String, Fidelity<T>>();
+    protected Map<String, Fidelity<Fidelity>> fidelities = new ConcurrentHashMap<String, Fidelity<Fidelity>>();
 
-    protected Fidelity<T> selectedFidelity;
-
-    protected ModelStrategy runtime;
+    protected Mogram mogram;
 
     protected Map<Long, Session> sessions;
 
+    public FidelityManager() {
+        name = "fiManager" +  count++;
+    }
+
     public FidelityManager(Mogram mogram) {
-        this.runtime = new ModelStrategy(mogram);
+        this.mogram = mogram;
+        name = "fiManager" +  count++;
     }
 
-    public void addFidelity(Fidelity<T>... fidelities) {
-        for (Fidelity f : fidelities)
-            this.fidelities.put(f.getName(), f);
+    public void addFidelity(String path, Fidelity<Fidelity> fi) {
+            this.fidelities.put(path, fi);
     }
 
-    public void setSelectedFidelity(String name) {
-        selectedFidelity = fidelities.get(name);
+    public Mogram getMogram() {
+        return mogram;
+    }
+
+    public void setMogram(Mogram mogram) {
+        this.mogram = mogram;
     }
 
     @Override
-    public Map<String, Fidelity<T>> getFidelities() {
+    public Map<String, Fidelity<Fidelity>> getFidelities() {
         return fidelities;
     }
 
     @Override
-    public Fidelity<T> getSelectedFidelity() {
-        return selectedFidelity;
-    }
-
-    @Override
     public <T extends Mogram> T service(T mogram, Transaction txn) throws TransactionException, MogramException, RemoteException {
-        runtime.setTarget(mogram);
-        return (T) runtime.exert(txn);
+        this.mogram = mogram;
+        return (T) mogram.exert(txn);
     }
 
     @Override
     public <T extends Mogram> T service(T mogram) throws TransactionException, MogramException, RemoteException {
-        runtime.setTarget(mogram);
-        return (T) runtime.exert();
-    }
-
-    public ModelStrategy getRuntime() {
-        return runtime;
-    }
-
-    public void setRuntime(ModelStrategy runtime) {
-        this.runtime = runtime;
+        return service(mogram, null);
     }
 
     @Override
@@ -127,6 +127,24 @@ public class FidelityManager<T> implements FidelityManagement<T>, Serializable {
         } else
             throw new UnknownEventException("No registration for eventID: "
                     + eventID);
+    }
+
+    public Map<Long, Session> getSessions() {
+        return sessions;
+    }
+
+    @Override
+    public Uuid getId() {
+        return id;
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     static class Session {

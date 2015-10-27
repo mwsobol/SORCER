@@ -20,6 +20,7 @@ package sorcer.core.context.model.ent;
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
 import sorcer.co.tuple.Tuple2;
+import sorcer.core.Name;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.service.*;
@@ -248,7 +249,7 @@ public class Entry<T> extends Tuple2<String, T> implements Service, Dependency, 
 		if (mogram instanceof EntModel) {
 			if (_2 != null && _2 != Context.none)
 				add((Context)mogram, this);
-			((ServiceContext)mogram).getModelStrategy().getResponsePaths().add(_1);
+			((ServiceContext)mogram).getModelStrategy().getResponsePaths().add(new Name(_1));
 			out = (Context) ((Model)mogram).getResponse();
 		} else if (mogram instanceof ServiceContext) {
 			if (_2 == null || _2 == Context.none) {

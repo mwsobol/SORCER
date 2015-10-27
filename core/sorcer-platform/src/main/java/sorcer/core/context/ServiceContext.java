@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import sorcer.co.tuple.InputEntry;
 import sorcer.co.tuple.OutputEntry;
 import sorcer.co.tuple.Tuple2;
+import sorcer.core.Name;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.EntryList;
@@ -1444,7 +1445,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		return subcntxt;
 	}
 
-	public ServiceContext getMergedSubcontext(ServiceContext intial, List<String> paths, Arg... args)
+	public ServiceContext getMergedSubcontext(ServiceContext intial, List<Name> paths, Arg... args)
 			throws ContextException {
 		ServiceContext subcntxt = null;
 		if (intial != null) {
@@ -1454,9 +1455,10 @@ public class ServiceContext<T> extends ServiceMogram implements
 		}
 		subcntxt.setModeling(true);
 		Object val = null;
-		for (String path : paths) {
+		for (Name arg : paths) {
+			String path = arg.getName();
 			val = getValue(path, args);
-			if (getValue(path) instanceof Context)
+			if (val instanceof Context)
 				subcntxt.append((Context) val);
 			else {
 				List<String> inpaths = getInPaths();
@@ -2636,7 +2638,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 			if (currentPath == null) {
 				if (modelStrategy.responsePaths != null && modelStrategy.responsePaths.size()>0) {
 					if (modelStrategy.responsePaths.size() == 1)
-						currentPath = modelStrategy.responsePaths.get(0);
+						currentPath = modelStrategy.responsePaths.get(0).getName();
 					else
 						return (T) getResponse();
 				}
@@ -2777,7 +2779,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		return inputs;
 	}
 
-	public Context getResponses(String path, String... paths) throws ContextException, RemoteException {
+	public Context getResponses(String path, Name... paths) throws ContextException, RemoteException {
 		Context results = getMergedSubcontext(null, Arrays.asList(paths));
 		putValue(path, results);
 		return results;

@@ -20,7 +20,7 @@ package sorcer.service;
 /**
  * Created by Mike Sobolewski on 5/12/15.
  */
-public interface Projection<T> {
+public interface Projection<T extends Arg> {
 
     public Fidelity<T> getFidelity();
 

@@ -18,12 +18,16 @@
 package sorcer.mo;
 
 import sorcer.co.tuple.Tuple2;
+import sorcer.core.Name;
 import sorcer.core.context.MapContext;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.ent.EntModel;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.par.ParModel;
+import sorcer.core.context.model.srv.Srv;
 import sorcer.core.context.model.srv.SrvModel;
+import sorcer.core.plexus.FidelityManager;
+import sorcer.core.plexus.MetaFidelity;
 import sorcer.core.plexus.MultiFidelityService;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
@@ -89,13 +93,13 @@ public class operator {
 
     public static Model responseUp(Model model, String... responsePaths) throws ContextException {
         for (String path : responsePaths)
-            ((ServiceContext)model).getModelStrategy().getResponsePaths().add(path);
+            ((ServiceContext)model).getModelStrategy().getResponsePaths().add(new Name(path));
         return model;
     }
 
     public static Model responseDown(Model model, String... responsePaths) throws ContextException {
         for (String path : responsePaths)
-            ((ServiceContext)model).getModelStrategy().getResponsePaths().remove(path);
+            ((ServiceContext)model).getModelStrategy().getResponsePaths().remove(new Name(path));
         return model;
     }
 
@@ -202,8 +206,8 @@ public class operator {
         return map;
     }
 
-    public static Fidelity<String> response(String... paths) {
-        return  new Fidelity<String>(paths);
+    public static Fidelity<Arg> response(String... paths) {
+        return  new Fidelity(paths);
     }
 
     public static Paradigmatic modeling(Paradigmatic paradigm) {
@@ -217,7 +221,7 @@ public class operator {
     }
 
     public static Model mfiModel(Object... items) throws ContextException {
-        List<Fidelity<String>> fidelities = new ArrayList<Fidelity<String>>();
+        List<Fidelity<Arg>> fidelities = new ArrayList<Fidelity<Arg>>();
         for (Object item : items) {
             if (item instanceof Fidelity) {
                 fidelities.add((Fidelity)item);
@@ -231,9 +235,10 @@ public class operator {
     public static Model srvModel(Object... items) throws ContextException {
         sorcer.eo.operator.Complement complement = null;
         List<Signature> sigs = new ArrayList<Signature>();
-        Fidelity<String> responsePaths = null;
+        Fidelity<Arg> responsePaths = null;
         SrvModel model = null;
-
+        FidelityManager fiManager = null;
+        List<Srv> metaFiEnts = new ArrayList<Srv>();
         for (Object item : items) {
             if (item instanceof Signature) {
                 sigs.add((Signature)item);
@@ -243,10 +248,29 @@ public class operator {
                 model = ((SrvModel)item);
             } else if (item instanceof Fidelity) {
                 responsePaths = ((Fidelity)item);
+            } else if (item instanceof FidelityManager) {
+                fiManager = ((FidelityManager)item);
+            } else if (item instanceof Srv && ((Entry)item)._2 instanceof MetaFidelity) {
+                metaFiEnts.add((Srv)item);
             }
         }
         if (model == null)
             model = new SrvModel();
+
+        if (fiManager != null) {
+            model.setFiManager(fiManager);
+            fiManager.setMogram(model);
+            MetaFidelity mFi = null;
+            if ((metaFiEnts.size() > 0)) {
+                for (Srv metaFiEnt : metaFiEnts) {
+                    mFi = (MetaFidelity) metaFiEnt._2;
+                    fiManager.addFidelity(metaFiEnt._1, mFi.getMultiFi());
+                    mFi.setPath(metaFiEnt._1);
+                    mFi.setSelection((Signature)mFi.getSelects().get(0));
+                    mFi.addObserver(fiManager);
+                }
+            }
+        }
 
 //        if (sigs != null && sigs.size() > 0) {
 //            Fidelity fidelity = new Fidelity();

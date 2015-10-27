@@ -24,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.co.operator.DataEntry;
 import sorcer.co.tuple.*;
+import sorcer.core.Name;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.*;
 import sorcer.core.context.model.QueueStrategy;
@@ -36,6 +37,7 @@ import sorcer.core.context.model.srv.Srv;
 import sorcer.core.deploy.ServiceDeployment;
 import sorcer.core.exertion.*;
 import sorcer.core.invoker.InvokeIncrementor;
+import sorcer.core.plexus.MetaFidelity;
 import sorcer.core.provider.*;
 import sorcer.core.provider.exerter.Binder;
 import sorcer.core.provider.rendezvous.ServiceConcatenator;
@@ -410,7 +412,7 @@ public class operator {
 		}
 		if (response != null) {
 			if (response.path() != null) {
-				((ServiceContext) cxt).getModelStrategy().getResponsePaths().add(response.path());
+				((ServiceContext) cxt).getModelStrategy().getResponsePaths().add(new Name(response.path()));
 			}
 			((ServiceContext) cxt).getModelStrategy().setResult(response.path(), response.target);
 		}
@@ -1071,15 +1073,21 @@ public class operator {
 //		return new Tuple2<String, String> (componentPath, fidelityName);
 //	}
 
-	public static Fidelity<String> cFi(String componentPath, String fidelityName) {
-		Fidelity<String> fi = new Fidelity(componentPath, fidelityName);
+	public static Fidelity<Arg> cFi(String componentPath, String fidelityName) {
+		Fidelity<Arg> fi = new Fidelity(componentPath, new Name(fidelityName));
 		fi.setPath(componentPath);
 		fi.type = Fidelity.Type.COMPONENT;
 		return fi;
 	}
 
-	public static Fidelity<String> fi(String name, String... selectors) {
-		Fidelity<String> fi = new Fidelity(name, selectors);
+	public static Fidelity<Arg> fi(String name, String... selectors) {
+		Fidelity fi = new Fidelity(name, selectors);
+		fi.type = Fidelity.Type.NAME;
+		return fi;
+	}
+
+	public static Fidelity<Arg> fi(String name, Arg... selectors) {
+		Fidelity fi = new Fidelity(name, selectors);
 		fi.type = Fidelity.Type.NAME;
 		return fi;
 	}
@@ -1098,6 +1106,11 @@ public class operator {
 
 	public static Map<String, Fidelity> srvFis(Exertion exertion) {
 		return exertion.getFidelities();
+	}
+
+	public static MetaFidelity<Signature> mFi(Signature... signatures) {
+		MetaFidelity<Signature> metaFi = new MetaFidelity(new Fidelity(signatures));
+		return metaFi;
 	}
 
 	public static Fidelity<Signature> sFi(Signature... signatures) {

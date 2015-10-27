@@ -108,7 +108,7 @@ public class ParModel<T> extends EntModel<T> implements Invocation<T>, Mappable<
 					val = (T) getReturnValue(rp);
 				else if (modelStrategy.getResponsePaths() != null
 						&& modelStrategy.getResponsePaths().size() == 1) {
-					val = asis(modelStrategy.getResponsePaths().get(0));
+					val = asis(modelStrategy.getResponsePaths().get(0).getName());
 				} else {
 					val = (T) super.getValue(path, entries);
 				}
@@ -126,7 +126,7 @@ public class ParModel<T> extends EntModel<T> implements Invocation<T>, Mappable<
 				return (T) ((Evaluation) val).getValue(entries);
 			} else if (path == null && val == null && modelStrategy.getResponsePaths() != null) {
 				if (modelStrategy.getResponsePaths().size() == 1)
-					return (T) getValue(modelStrategy.getResponsePaths().get(0), entries);
+					return (T) getValue(modelStrategy.getResponsePaths().get(0).getName(), entries);
 				else
 					return (T) getResponse();
 			} else {

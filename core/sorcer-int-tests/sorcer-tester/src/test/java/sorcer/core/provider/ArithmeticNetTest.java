@@ -362,7 +362,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 	
 //	logger.info("task f5 context: " + context(out));
 //	logger.info("task f5 result/y: " + get(context(out), "result/y"));
-	assertEquals(get(out, "result/y"), 100.00);
+	assertTrue(get(out, "result/y").equals(100.00));
 	}
 	
 	@Test
@@ -520,8 +520,8 @@ public class ArithmeticNetTest implements SorcerConstants {
 		Context result = context(exert(cxtt));
 //		logger.info("contexter context 1: " + result);
 		
-		assertEquals(get(result, "arg/x1"), 20.0);
-		assertEquals(get(result, "arg/x2"), 80.0);
+		assertTrue(get(result, "arg/x1").equals(20.0));
+		assertTrue(get(result, "arg/x2").equals(80.0));
 	
 		cxtt = task("appendContext", sig("appendContext", Contexter.class, prvName("Add Contexter")),
 				context("add", inEnt("arg/x1", 200.0), inEnt("arg/x2", 800.0)));
@@ -534,9 +534,9 @@ public class ArithmeticNetTest implements SorcerConstants {
 
 		result = context(exert(cxtt));
 //		logger.info("contexter context 3: " + result);
-		
-		assertEquals(get(result, "arg/x1"), 200.0);
-		assertEquals(get(result, "arg/x2"), 800.0);
+
+		assertTrue(get(result, "arg/x1").equals(200.0));
+		assertTrue(get(result, "arg/x2").equals(800.0));
 		
 		// reset the contexter
 		cxtt = task("appendContext", sig("appendContext", Contexter.class, prvName("Add Contexter")),
@@ -544,8 +544,8 @@ public class ArithmeticNetTest implements SorcerConstants {
 
 		result = context(exert(cxtt));
 //		logger.info("contexter context 4: " + result);
-		assertEquals(get(result, "arg/x1"), 20.0);
-		assertEquals(get(result, "arg/x2"), 80.0);
+		assertTrue(get(result, "arg/x1").equals(20.0));
+		assertTrue(get(result, "arg/x2").equals(80.0));
 	}
 	
 	public void netContexterTaskTest() throws Exception {
@@ -556,9 +556,9 @@ public class ArithmeticNetTest implements SorcerConstants {
 
 		Context result =  context(exert(t5));
 //		logger.info("out context: " + result);
-		assertEquals(get(result, "arg/x1"), 20.0);
-		assertEquals(get(result, "arg/x2"), 80.0);
-		assertEquals(get(result, "result/y"), 100.0);
+		assertTrue(get(result, "arg/x1").equals(20.0));
+		assertTrue(get(result, "arg/x2").equals(80.0));
+		assertTrue(get(result, "result/y").equals(100.0));
 	}
 
 	public Job createProvisionedJob() throws Exception {

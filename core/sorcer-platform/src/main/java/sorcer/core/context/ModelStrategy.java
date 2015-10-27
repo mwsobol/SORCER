@@ -2,6 +2,7 @@ package sorcer.core.context;
 
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
+import sorcer.core.Name;
 import sorcer.service.*;
 import sorcer.service.MogramStrategy;
 import sorcer.util.FileURLHandler;
@@ -16,7 +17,7 @@ import java.util.Map;
 /**
  * Created by Mike Sobolewski
  */
-public class ModelStrategy implements MogramStrategy, Projection<String>, Serializable {
+public class ModelStrategy implements MogramStrategy, Projection<Arg>, Serializable {
 
     protected List<ThrowableTrace> exceptions;
 
@@ -45,10 +46,10 @@ public class ModelStrategy implements MogramStrategy, Projection<String>, Serial
 
     protected Map<String, List<String>> dependentPaths;
 
-    protected Fidelity<String> selectedFidelity;
+    protected Fidelity<Arg> selectedFidelity;
 
     // select fidelities for this service context
-    protected Map<String, Fidelity<String>> selectFidelities;
+    protected Map<String, Fidelity<Arg>> selectFidelities;
 
     // evaluated model response entries
     protected Context outcome;
@@ -56,7 +57,7 @@ public class ModelStrategy implements MogramStrategy, Projection<String>, Serial
     protected Exec.State execState = Exec.State.INITIAL;
 
     // reponse paths of the runtime model
-    protected List<String> responsePaths = new ArrayList<String>();
+    protected List<Name> responsePaths = new ArrayList<Name>();
 
     public ModelStrategy(Mogram service) {
         target = service;
@@ -182,7 +183,7 @@ public class ModelStrategy implements MogramStrategy, Projection<String>, Serial
         return dependers;
     }
 
-    public void setSelectFidelities(Map<String, Fidelity<String>> selectFidelities) {
+    public void setSelectFidelities(Map<String, Fidelity<Arg>> selectFidelities) {
         this.selectFidelities = selectFidelities;
     }
 
@@ -196,11 +197,11 @@ public class ModelStrategy implements MogramStrategy, Projection<String>, Serial
         outcome.putValue(path, value);
     }
 
-    public List<String> getResponsePaths() {
+    public List<Name> getResponsePaths() {
         return responsePaths;
     }
 
-    public void setResponsePaths(List<String> responsePaths) {
+    public void setResponsePaths(List<Name> responsePaths) {
         this.responsePaths = responsePaths;
     }
 
@@ -225,12 +226,12 @@ public class ModelStrategy implements MogramStrategy, Projection<String>, Serial
     }
 
     @Override
-    public Fidelity<String> getFidelity() {
+    public Fidelity<Arg> getFidelity() {
         return selectedFidelity;
     }
 
     @Override
-    public void setFidelity(Fidelity<String> fidelity) {
+    public void setFidelity(Fidelity<Arg> fidelity) {
         selectedFidelity = fidelity;
     }
 

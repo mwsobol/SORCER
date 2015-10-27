@@ -23,6 +23,7 @@ import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.par.Par;
 import sorcer.core.context.model.srv.Srv;
+import sorcer.core.plexus.MetaFidelity;
 import sorcer.core.provider.DatabaseStorer;
 import sorcer.core.signature.NetletSignature;
 import sorcer.core.signature.ObjectSignature;
@@ -218,6 +219,10 @@ public class operator {
         return new Entry(path, ((Context)model).asis(path));
     }
 
+	public static Srv ent(String name, MetaFidelity<Signature> fidelity) {
+		return srv(name, fidelity);
+	}
+
 	public static Srv ent(String name, Fidelity<Signature> fidelity) {
 		return srv(name, fidelity);
 	}
@@ -232,6 +237,11 @@ public class operator {
 	}
 
 	public static Srv srv(String name, Fidelity<Signature> fidelity) {
+		Srv service = new Srv(name, fidelity);
+		return service;
+	}
+
+	public static Srv srv(String name, MetaFidelity<Signature> fidelity) {
 		Srv service = new Srv(name, fidelity);
 		return service;
 	}
@@ -718,15 +728,23 @@ public class operator {
 			return entry._2;
 	}
 
-	public static <T> T get(Context<T> context, String path)
+	public static <T> T get(Mogram mogram, String path)
 			throws ContextException {
-		return  context.asis(path);
+		if (mogram instanceof Model)
+			return ((ServiceContext<T>)mogram).asis(path);
+		else
+			return ((ServiceContext<T>)((Exertion)mogram).getContext()).getValue(path);
 	}
 
-	public static <T> T get(Model model, String path)
-			throws ContextException {
-		return  ((ServiceContext<T>)model).asis(path);
-	}
+//	public static <T> T get(Context<T> context, String path)
+//			throws ContextException {
+//		return  context.asis(path);
+//	}
+//
+//	public static <T> T get(Model model, String path)
+//			throws ContextException {
+//		return  ((ServiceContext<T>)model).asis(path);
+//	}
 
 	public static <T> T asis(Context<T> context, String path)
 			throws ContextException {

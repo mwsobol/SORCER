@@ -182,22 +182,30 @@ public class SrvModel extends ParModel<Object> implements Model {
                     // return the calculated value
                     if (((Srv) val).getSrvValue() != null)
                         return ((Srv) val).getSrvValue();
-                    ServiceSignature sig = (ServiceSignature) ((SignatureEntry) ((Srv) val).asis()).value();
-                    Context out = execSignature(sig);
-                    if (sig.getReturnPath() != null) {
-                        Object obj = out.getValue(sig.getReturnPath().path);
-                        if (obj == null)
-                            obj = out.getValue(path);
-                        if (obj != null) {
-                            ((Srv)val).setSrvValue(obj);
-                            return obj;
-                        } else {
-                            logger.warn("no value for return path: {} in: {}", sig.getReturnPath().path, out);
-                            return out;
-                        }
-                    } else {
-                        return out;
+                    else {
+                        Signature sig = ((SignatureEntry) ((Srv) val).asis()).value();
+                        return evalSignature((Srv)val, sig, path);
                     }
+
+//                    ServiceSignature sig = (ServiceSignature) ((SignatureEntry) ((Srv) val).asis()).value();
+//                    Context out = execSignature(sig);
+//                    if (sig.getReturnPath() != null) {
+//                        Object obj = out.getValue(sig.getReturnPath().path);
+//                        if (obj == null)
+//                            obj = out.getValue(path);
+//                        if (obj != null) {
+//                            ((Srv) val).setSrvValue(obj);
+//                            return obj;
+//                        } else {
+//                            logger.warn("no value for return path: {} in: {}", sig.getReturnPath().path, out);
+//                            return out;
+//                        }
+//                    } else {
+//                        return out;
+//                    }
+                } else if (((Srv) val).asis() instanceof Fidelity) {
+                    Signature sig = getFiSig((Fidelity)((Srv) val).asis(), entries, path);
+                    return evalSignature((Srv)val, sig, path);
                 } else {
                     if (((Srv) val).getValue() == Context.none) {
                         return getValue(((Srv) val).getName());
@@ -210,6 +218,43 @@ public class SrvModel extends ParModel<Object> implements Model {
             throw new EvaluationException(e);
         }
         return val;
+    }
+
+    private Object evalSignature(Srv entry, Signature sig, String path) throws Exception {
+//        ServiceSignature sig = (ServiceSignature) ((SignatureEntry) ((Srv) val).asis()).value();
+        Context out = execSignature(sig);
+        if (sig.getReturnPath() != null) {
+            Object obj = out.getValue(sig.getReturnPath().path);
+            if (obj == null)
+                obj = out.getValue(path);
+            if (obj != null) {
+                entry.setSrvValue(obj);
+                return obj;
+            } else {
+                logger.warn("no value for return path: {} in: {}", sig.getReturnPath().path, out);
+                return out;
+            }
+        } else {
+            return out;
+        }
+    }
+
+    private Signature getFiSig(Fidelity<Signature> fi, Arg[] entries, String path ) {
+        Fidelity<Signature> selected = null;
+        for (Arg arg : entries) {
+            if (arg instanceof Fidelity && ((Fidelity)arg).type == Fidelity.Type.EMPTY) {
+                if (((Fidelity)arg).getPath().equals(path)) {
+                    selected = (Fidelity) arg;
+                    break;
+                }
+            }
+        }
+        List<Signature> fiSigs = fi.getSelects();
+        for (Signature s : fiSigs) {
+            if (s.getName().equals(selected.getName()))
+                return s;
+        }
+        return null;
     }
 
     public Context execSignature(Signature sig) throws Exception {

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package sorcer.co.tuple;
+package sorcer.core;
 
 import sorcer.service.Arg;
 
@@ -25,11 +25,12 @@ import sorcer.service.Arg;
 public class Name implements Arg {
     
     private String name;
-    
+
     public Name(String name) {
-        this.name =name;
+        this.name = name;
     }
-    
+
+    @Override
     public String getName() {
         return name;
     }
