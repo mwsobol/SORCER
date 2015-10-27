@@ -6,14 +6,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
-import sorcer.arithmetic.provider.Adder;
 import sorcer.arithmetic.provider.impl.*;
 import sorcer.core.invoker.Observable;
 import sorcer.core.plexus.FidelityManager;
-import sorcer.core.plexus.MetaFidelity;
-import sorcer.core.provider.rendezvous.ServiceJobber;
+import sorcer.core.plexus.MultiFidelity;
 import sorcer.service.*;
-import sorcer.service.Strategy.Flow;
 import sorcer.service.modeling.Model;
 
 import java.rmi.RemoteException;
@@ -73,31 +70,44 @@ public class MultiFidelities {
 
         FidelityManager manager = new FidelityManager() {
             @Override
+            public void initialize() {
+                Fidelity<Fidelity> fi2 = fi(fi("divide", "mFi2"), fi("add", "mFi3"));
+                Fidelity<Fidelity> fi3 = fi(fi("average", "mFi2"));
+                put(ent("sysFi2", fi2), ent("sysFi3", fi3));
+            }
+
+            @Override
             public void update(Observable observable, Object obj) throws EvaluationException, RemoteException {
-                if (observable instanceof MetaFidelity) {
-                    MetaFidelity mFi = (MetaFidelity)observable;
-                     if (mFi.getPath().equals("mF1") && mFi.getName().equals("add")) {
-                         try {
-                             MetaFidelity fi = get(mogram, "mFi2");
-                             fi.setSelection(fi.getSelect("average"));
-                         } catch (ContextException e) {
-                             throw new EvaluationException(e);
-                         }
-                     }
+                if (observable instanceof MultiFidelity) {
+                    Fidelity<Signature> mFi = ((MultiFidelity) observable).getMultiFidelity();
+                    if (mFi.getPath().equals("mFi1") && mFi.getSelectedName().equals("add")) {
+                        if (((Double) obj) >= 100.0) {
+                            morph("sysFi2", "sysFi3");
+                        } else {
+                            morph("sysFi3");
+                        }
+                    }
                 }
             }
         };
-        // three entry model
-        Model mod = model(inEnt("arg/x1", 90.0), inEnt("arg/x2", 10.0),
-                ent("mFi1", mFi(sig("add", AdderImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))),
-                        sig("multiply", MultiplierImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))))),
-                ent("mFi2", mFi(sig("average", AveragerImpl.class, result("result/z", inPaths("arg/x1", "arg/x2"))),
-                        sig("divide", DividerImpl.class, result("result/z", inPaths("arg/x1", "arg/x2"))))),
-                manager,
-                response("mFi1", "mFi2", "arg/x1", "arg/x2"));
 
-        Context out = response(mod, fi("add", "mFi1"));
+        // three entry multifidelity model
+        Model mod = model(inEnt("arg/x1", 90.0), inEnt("arg/x2", 10.0),
+                ent("mFi1", multiFi(sig("add", AdderImpl.class, result("result/y1", inPaths("arg/x1", "arg/x2"))),
+                        sig("multiply", MultiplierImpl.class, result("result/y1", inPaths("arg/x1", "arg/x2"))))),
+                ent("mFi2", multiFi(sig("average", AveragerImpl.class, result("result/y2", inPaths("arg/x1", "arg/x2"))),
+                        sig("divide", DividerImpl.class, result("result/y2", inPaths("arg/x1", "arg/x2"))),
+                        sig("subtract", SubtractorImpl.class, result("result/y2", inPaths("arg/x1", "arg/x2"))))),
+                ent("mFi3", multiFi(sig("average", AveragerImpl.class, result("result/y3", inPaths("arg/x1", "arg/x2"))),
+                        sig("add", AdderImpl.class, result("result/y3", inPaths("arg/x1", "arg/x2"))))),
+                manager,
+                response("mFi1", "mFi2", "mFi3", "arg/x1", "arg/x2"));
+
+//        Context out = response(mod, fi("divide", "mFi1"));
+        Context out = response(mod);
+
         logger.info("out: " + out);
+//        logger.info("result: " + mod.getResult());
 //        assertTrue(get(out, "mFi").equals(900.0));
 //        assertTrue(get(mod, "result/y").equals(900.0));
     }

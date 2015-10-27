@@ -22,6 +22,7 @@ import net.jini.core.transaction.TransactionException;
 import sorcer.co.tuple.SignatureEntry;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.par.ParModel;
+import sorcer.core.plexus.MultiFidelity;
 import sorcer.core.provider.rendezvous.ServiceModeler;
 import sorcer.core.signature.ServiceSignature;
 import sorcer.eo.operator;
@@ -178,7 +179,8 @@ public class SrvModel extends ParModel<Object> implements Model {
             }
 
             if (val instanceof Srv) {
-                if (((Srv) val).asis() instanceof SignatureEntry) {
+                Object val2 = ((Srv) val).asis();
+                if (val2 instanceof SignatureEntry) {
                     // return the calculated value
                     if (((Srv) val).getSrvValue() != null)
                         return ((Srv) val).getSrvValue();
@@ -186,28 +188,17 @@ public class SrvModel extends ParModel<Object> implements Model {
                         Signature sig = ((SignatureEntry) ((Srv) val).asis()).value();
                         return evalSignature((Srv)val, sig, path);
                     }
-
-//                    ServiceSignature sig = (ServiceSignature) ((SignatureEntry) ((Srv) val).asis()).value();
-//                    Context out = execSignature(sig);
-//                    if (sig.getReturnPath() != null) {
-//                        Object obj = out.getValue(sig.getReturnPath().path);
-//                        if (obj == null)
-//                            obj = out.getValue(path);
-//                        if (obj != null) {
-//                            ((Srv) val).setSrvValue(obj);
-//                            return obj;
-//                        } else {
-//                            logger.warn("no value for return path: {} in: {}", sig.getReturnPath().path, out);
-//                            return out;
-//                        }
-//                    } else {
-//                        return out;
-//                    }
-                } else if (((Srv) val).asis() instanceof Fidelity) {
-                    Signature sig = getFiSig((Fidelity)((Srv) val).asis(), entries, path);
+                } else if (val2 instanceof Fidelity) {
+                    Signature sig = getFiSig((Fidelity)val2, entries, path);
                     return evalSignature((Srv)val, sig, path);
+                } else if (val2 instanceof MultiFidelity) {
+                    Signature sig = getFiSig(((MultiFidelity)val2).getMultiFidelity(), entries, path);
+                    Object out = evalSignature((Srv)val, sig, path);
+                    ((MultiFidelity) val2).setChanged();
+                    ((MultiFidelity) val2).notifyObservers(out);
+                    return out;
                 } else {
-                    if (((Srv) val).getValue() == Context.none) {
+                    if (val2 == Context.none) {
                         return getValue(((Srv) val).getName());
                     }
                 }
@@ -251,7 +242,9 @@ public class SrvModel extends ParModel<Object> implements Model {
         }
         List<Signature> fiSigs = fi.getSelects();
         for (Signature s : fiSigs) {
-            if (s.getName().equals(selected.getName()))
+            if (selected == null && fi.getSelection() != null)
+                return fi.getSelection();
+            else if (s.getName().equals(selected.getName()))
                 return s;
         }
         return null;

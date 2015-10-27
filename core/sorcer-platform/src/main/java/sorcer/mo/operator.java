@@ -27,7 +27,7 @@ import sorcer.core.context.model.par.ParModel;
 import sorcer.core.context.model.srv.Srv;
 import sorcer.core.context.model.srv.SrvModel;
 import sorcer.core.plexus.FidelityManager;
-import sorcer.core.plexus.MetaFidelity;
+import sorcer.core.plexus.MultiFidelity;
 import sorcer.core.plexus.MultiFidelityService;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
@@ -250,7 +250,7 @@ public class operator {
                 responsePaths = ((Fidelity)item);
             } else if (item instanceof FidelityManager) {
                 fiManager = ((FidelityManager)item);
-            } else if (item instanceof Srv && ((Entry)item)._2 instanceof MetaFidelity) {
+            } else if (item instanceof Srv && ((Entry)item)._2 instanceof MultiFidelity) {
                 metaFiEnts.add((Srv)item);
             }
         }
@@ -259,12 +259,13 @@ public class operator {
 
         if (fiManager != null) {
             model.setFiManager(fiManager);
+            fiManager.initialize();
             fiManager.setMogram(model);
-            MetaFidelity mFi = null;
+            MultiFidelity mFi = null;
             if ((metaFiEnts.size() > 0)) {
                 for (Srv metaFiEnt : metaFiEnts) {
-                    mFi = (MetaFidelity) metaFiEnt._2;
-                    fiManager.addFidelity(metaFiEnt._1, mFi.getMultiFi());
+                    mFi = (MultiFidelity) metaFiEnt._2;
+                    fiManager.addFidelity(metaFiEnt._1, mFi.getMultiFidelity());
                     mFi.setPath(metaFiEnt._1);
                     mFi.setSelection((Signature)mFi.getSelects().get(0));
                     mFi.addObserver(fiManager);

@@ -28,11 +28,13 @@ import java.util.Map;
 /**
  * Created by Mike Sobolewski on 6/14/15.
  */
-public interface FidelityManagement<T extends Arg> extends Service, RemoteEventListener {
+public interface FidelityManagement<T extends Arg> extends Service {
+
+    public void initialize();
 
     public Map<String, Fidelity<T>> getFidelities() throws RemoteException;
 
-    public Fidelity<T> getSelectedFidelity() throws RemoteException;
+    public Map<String, Fidelity<Fidelity>> getMetafidelities() throws RemoteException;
 
     public EventRegistration register(long eventID, MarshalledObject<?> handback,
                                       RemoteEventListener toInform, long leaseLenght)

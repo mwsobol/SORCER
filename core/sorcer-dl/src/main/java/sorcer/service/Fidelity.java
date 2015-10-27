@@ -17,6 +17,8 @@
 
 package sorcer.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sorcer.core.Name;
 
 import java.io.Serializable;
@@ -28,8 +30,10 @@ import java.util.List;
  *
  */
 public class Fidelity<T extends Arg> implements Arg, Serializable {
-	
+
 	private static final long serialVersionUID = -875629011139790420L;
+
+	public final static Logger logger = LoggerFactory.getLogger(Fidelity.class);
 
 	public enum Type implements Arg {
 		EMPTY, NAME, SYS, SIG, EXERT, CONTEXT, COMPONENT, COMPOSITE, MULTI, VAR;
@@ -56,7 +60,7 @@ public class Fidelity<T extends Arg> implements Arg, Serializable {
 		super();
 		name = "fidelity" + count++;
 	}
-	
+
 	public Fidelity(String name) {
 		this.name = name;
 	}
@@ -64,6 +68,7 @@ public class Fidelity<T extends Arg> implements Arg, Serializable {
 	public Fidelity(Arg name) {
 		this.name = name.getName();
 	}
+
 	public Fidelity(T[] selects) {
 		name = "fidelity" + count++;
 		for (T s : selects)
@@ -132,7 +137,25 @@ public class Fidelity<T extends Arg> implements Arg, Serializable {
 		return selection;
 	}
 
+	public String getSelectedName() {
+		return selection.getName();
+	}
+
+	public void setFidelitySelection(String fiName) {
+		for (T item : selects) {
+			if (item.getName().equals(fiName)) {
+				this.selection = item;
+			}
+
+		}
+	}
+
 	public void setSelection(T selection) {
+		try {
+			throw new Throwable();
+		} catch (Throwable throwable) {
+			throwable.printStackTrace();
+		}
 		this.selection = selection;
 	}
 

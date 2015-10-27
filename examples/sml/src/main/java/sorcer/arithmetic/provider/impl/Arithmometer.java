@@ -45,8 +45,7 @@ public class Arithmometer implements SorcerConstants, Serializable {
 
 	public static final String RESULT_PATH = "result/value";
 			
-	public final static Logger logger = LoggerFactory.getLogger(Arithmometer.class
-			.getName());
+	public final static Logger logger = LoggerFactory.getLogger(Arithmometer.class);
 
 	/**
 	 * Implements the {@link Adder} interface.

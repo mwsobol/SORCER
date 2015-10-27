@@ -29,8 +29,6 @@ public class Srv extends Entry<Object> implements Variability<Object>, Arg, Eval
 
     Type type = Type.PAR;;
 
-    protected String selectedFidelity;
-
     // srv fidelities
     protected Map<String, Object> fidelities;
 

@@ -37,7 +37,7 @@ import sorcer.core.context.model.srv.Srv;
 import sorcer.core.deploy.ServiceDeployment;
 import sorcer.core.exertion.*;
 import sorcer.core.invoker.InvokeIncrementor;
-import sorcer.core.plexus.MetaFidelity;
+import sorcer.core.plexus.MultiFidelity;
 import sorcer.core.provider.*;
 import sorcer.core.provider.exerter.Binder;
 import sorcer.core.provider.rendezvous.ServiceConcatenator;
@@ -1108,9 +1108,14 @@ public class operator {
 		return exertion.getFidelities();
 	}
 
-	public static MetaFidelity<Signature> mFi(Signature... signatures) {
-		MetaFidelity<Signature> metaFi = new MetaFidelity(new Fidelity(signatures));
-		return metaFi;
+	public static Fidelity<Fidelity> fi(Fidelity... fidelities) {
+		Fidelity<Fidelity> fi = new Fidelity(new Fidelity(fidelities));
+		return fi;
+	}
+
+	public static MultiFidelity<Signature> multiFi(Signature... signatures) {
+		MultiFidelity<Signature> multiFi = new MultiFidelity(new Fidelity(signatures));
+		return multiFi;
 	}
 
 	public static Fidelity<Signature> sFi(Signature... signatures) {

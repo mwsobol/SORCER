@@ -20,7 +20,6 @@ package sorcer.core.plexus;
 import sorcer.core.invoker.Observable;
 import sorcer.service.Arg;
 import sorcer.service.Fidelity;
-import sorcer.service.Identifiable;
 
 import java.io.Serializable;
 import java.util.List;
@@ -28,69 +27,69 @@ import java.util.List;
 /**
  * Created by Mike Sobolewski on 10/26/15.
  */
-public class MetaFidelity<T extends Arg> extends Observable implements Arg, Serializable {
+public class MultiFidelity<T extends Arg> extends Observable implements Arg, Serializable {
 
-    private Fidelity<T> mFi;
+    private Fidelity<T> multiFi;
 
-    public MetaFidelity(Fidelity  fi) {
-        mFi = fi;
+    public MultiFidelity(Fidelity fi) {
+        multiFi = fi;
     }
 
-    public MetaFidelity(FidelityManager manager) {
+    public MultiFidelity(FidelityManager manager) {
         addObserver(manager);
     }
 
-    public Fidelity<T> getMultiFi() {
-        return mFi;
+    public Fidelity<T> getMultiFidelity() {
+        return multiFi;
     }
 
-    public void setMultiFi(Fidelity<T> mFi) {
-        this.mFi = mFi;
+    public void setMultiFidelity(Fidelity<T> fi) {
+        this.multiFi = fi;
     }
 
     public T getSelection() {
-        return mFi.getSelection();
+        return multiFi.getSelection();
     }
 
     public void setSelection(T selection) {
-        mFi.setSelection(selection);
+        multiFi.setSelection(selection);
     }
 
     public T getSelect(String name) {
-        return mFi.getSelect(name);
+        return multiFi.getSelect(name);
     }
 
     public List<T> getSelects() {
-        return mFi.getSelects();
+        return multiFi.getSelects();
     }
 
     public void setSelects(List<T> selects) {
-        mFi.setSelects(selects);;
+        multiFi.setSelects(selects);;
     }
 
     public String getPath() {
-        return mFi.getPath();
+        return multiFi.getPath();
     }
 
     public void setPath(String fidelityPath) {
-        mFi.setPath(fidelityPath);;
+        multiFi.setPath(fidelityPath);;
     }
 
     public String getName() {
-        return mFi.getName();
+        return multiFi.getName();
     }
 
     public void setName(String name) {
-        mFi.setName(name);
+        multiFi.setName(name);
     }
 
     @Override
     public String toString() {
-        return mFi.getName() + (mFi.getPath() != null ?
-                "@" + mFi.getPath() + " " : " ") + mFi.getSelects();
+        return multiFi.getName() + (multiFi.getPath() != null ?
+                "@" + multiFi.getPath() + " " : " ") + multiFi.getSelects();
     }
 
     public int size() {
-        return mFi.getSelects().size();
+        return multiFi.getSelects().size();
     }
 }

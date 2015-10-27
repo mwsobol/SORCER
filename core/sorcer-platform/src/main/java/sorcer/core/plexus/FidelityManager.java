@@ -18,15 +18,13 @@
 package sorcer.core.plexus;
 
 import net.jini.core.event.EventRegistration;
-import net.jini.core.event.RemoteEvent;
 import net.jini.core.event.RemoteEventListener;
 import net.jini.core.event.UnknownEventException;
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
 import net.jini.id.Uuid;
 import net.jini.id.UuidFactory;
-import sorcer.core.context.ModelStrategy;
-import sorcer.core.invoker.Observable;
+import sorcer.core.context.model.ent.Entry;
 import sorcer.core.invoker.Observer;
 import sorcer.service.*;
 
@@ -34,6 +32,8 @@ import java.io.Serializable;
 import java.rmi.MarshalledObject;
 import java.rmi.RemoteException;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -41,7 +41,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Created by Mike Sobolewski on 6/14/15.
  */
-abstract public class FidelityManager implements FidelityManagement<Fidelity>, Observer, Identifiable, Serializable {
+abstract public class FidelityManager implements FidelityManagement<Signature>, Observer, Identifiable, Serializable {
 
     // sequence number for unnamed instances
     protected static int count = 0;
@@ -50,8 +50,11 @@ abstract public class FidelityManager implements FidelityManagement<Fidelity>, O
 
     Uuid id = UuidFactory.generate();
 
-    // fidelities for this service
-    protected Map<String, Fidelity<Fidelity>> fidelities = new ConcurrentHashMap<String, Fidelity<Fidelity>>();
+    // fidelities for signatures
+    protected Map<String, Fidelity<Signature>> fidelities = new ConcurrentHashMap<>();
+
+    // fidelities for fidelites
+    protected Map<String, Fidelity<Fidelity>> metafidelities = new ConcurrentHashMap<>();
 
     protected Mogram mogram;
 
@@ -66,8 +69,29 @@ abstract public class FidelityManager implements FidelityManagement<Fidelity>, O
         name = "fiManager" +  count++;
     }
 
-    public void addFidelity(String path, Fidelity<Fidelity> fi) {
+    public Map<String, Fidelity<Fidelity>> getMetafidelities() {
+        return metafidelities;
+    }
+
+    public void setMetafidelities(Map<String, Fidelity<Fidelity>> metafidelities) {
+        this.metafidelities = metafidelities;
+    }
+
+    @Override
+    public Map<String, Fidelity<Signature>> getFidelities() {
+        return fidelities;
+    }
+
+    public void setFidelities(Map<String, Fidelity<Signature>> fidelities) {
+        this.fidelities = fidelities;
+    }
+
+    public void addFidelity(String path, Fidelity<Signature> fi) {
             this.fidelities.put(path, fi);
+    }
+
+    public void addMetafidelity(String path, Fidelity<Fidelity> fi) {
+        this.metafidelities.put(path, fi);
     }
 
     public Mogram getMogram() {
@@ -79,11 +103,6 @@ abstract public class FidelityManager implements FidelityManagement<Fidelity>, O
     }
 
     @Override
-    public Map<String, Fidelity<Fidelity>> getFidelities() {
-        return fidelities;
-    }
-
-    @Override
     public <T extends Mogram> T service(T mogram, Transaction txn) throws TransactionException, MogramException, RemoteException {
         this.mogram = mogram;
         return (T) mogram.exert(txn);
@@ -92,11 +111,6 @@ abstract public class FidelityManager implements FidelityManagement<Fidelity>, O
     @Override
     public <T extends Mogram> T service(T mogram) throws TransactionException, MogramException, RemoteException {
         return service(mogram, null);
-    }
-
-    @Override
-    public void notify(RemoteEvent remoteEvent) throws UnknownEventException, RemoteException {
-
     }
 
     public EventRegistration register(long eventID, MarshalledObject handback,
@@ -131,6 +145,42 @@ abstract public class FidelityManager implements FidelityManagement<Fidelity>, O
 
     public Map<Long, Session> getSessions() {
         return sessions;
+    }
+
+    public void morph(String... fiNames) {
+        for (String fiName : fiNames) {
+            Fidelity mFi = metafidelities.get(fiName);
+            List<Fidelity> fis = mFi.getSelects();
+            String name = null;
+            String path = null;
+            for (Fidelity fi : fis) {
+                name = fi.getName();
+                path = fi.getPath();
+                Iterator<Map.Entry<String, Fidelity<Signature>>> i = fidelities.entrySet().iterator();
+                while (i.hasNext()) {
+                    Map.Entry<String, Fidelity<Signature>> fiEnt = i.next();
+                    if (fiEnt.getKey().equals(path)) {
+                        fiEnt.getValue().setFidelitySelection(name);
+                    }
+                }
+            }
+        }
+    }
+
+    public void put(String sysFiName, Fidelity<Fidelity> sysFi) {
+        metafidelities.put(sysFiName, sysFi);
+    }
+
+    public void put(Entry<Fidelity<Fidelity>>... entries) {
+        try {
+            for(Entry<Fidelity<Fidelity>> e : entries) {
+                metafidelities.put(e.getName(), e.getValue());
+            }
+        } catch (EvaluationException e) {
+            e.printStackTrace();
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
