@@ -83,7 +83,7 @@ public class Par<T> extends Entry<T> implements Variability<T>, Arg, Mappable<T>
 		value = (T)identifiable;
 	}
 	
-	public Par(String path, T argument) throws EvaluationException {
+	public Par(String path, T argument) {
 		super(path);
 		name = path;
 		

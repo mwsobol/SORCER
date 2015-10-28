@@ -307,16 +307,16 @@ public class DataModels {
         Context out = response(cxt);
 //        logger.info("response1: " + out);
         assertTrue(out.size() == 1);
-        assertEquals(get(out, "x1"), 20.0);
+        assertTrue(get(out, "x1").equals(20.0));
         responseUp(cxt, "x2");
         out = response(cxt);
 //        logger.info("response2: " + out);
         assertTrue(out.size() == 2);
-        assertEquals(get(out, "x1"), 20.0);
-        assertEquals(get(out, "x2"), 40.0);
+        assertTrue(get(out, "x1").equals(20.0));
+        assertTrue(get(out, "x2").equals(40.0));
         responseDown(cxt, "x2");
         out = response(cxt);
-        assertEquals(get(out, "x1"), 20.0);
+        assertTrue(get(out, "x1").equals(20.0));
 //        logger.info("response3: " + out);
         assertTrue(out.size() == 1);
     }

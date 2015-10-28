@@ -274,8 +274,18 @@ public class operator {
 		return new Srv(path, null, name);
 	}
 
+//	public static <T> Entry<T> ent(String path, T value) {
+//		return new Entry<T>(path, value);
+//	}
+
 	public static <T> Entry<T> ent(String path, T value) {
-		return new Entry<T>(path, value);
+		if (value instanceof Evaluation) {
+			return new Entry<T>(path, value);
+		} if (value instanceof Invocation) {
+			return new Par<T>(path, value);
+		} else {
+			return new Entry<T>(path, value);
+		}
 	}
 
 	public static Srv ent(Signature sig) {
@@ -732,10 +742,10 @@ public class operator {
 			return ((ServiceContext<T>)((Exertion)mogram).getContext()).getValue(path);
 	}
 
-	public static <T> T get(Context<T> context, String path)
-			throws ContextException {
-		return  context.asis(path);
-	}
+//	public static <T> T get(Context<T> context, String path)
+//			throws ContextException {
+//		return  context.asis(path);
+//	}
 //
 //	public static <T> T get(Model model, String path)
 //			throws ContextException {

@@ -72,17 +72,15 @@ public class Mograms {
         // out connector from model
         Context modelOutConnector = outConn(inEnt("y1", "add"), inEnt("y2", "multiply"), inEnt("y3", "subtract"));
 
-        Model model = srvModel(
+        Model model = model(
                 inEnt("multiply/x1", 10.0), inEnt("multiply/x2", 50.0),
                 inEnt("add/x1", 20.0), inEnt("add/x2", 80.0),
-                srv(sig("multiply", MultiplierImpl.class, result("multiply/out",
+                ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
                         inPaths("multiply/x1", "multiply/x2")))),
-                srv(sig("add", AdderImpl.class, result("add/out",
+                ent(sig("add", AdderImpl.class, result("add/out",
                         inPaths("add/x1", "add/x2")))),
-                srv(sig("subtract", SubtractorImpl.class, result("subtract/out",
+                ent(sig("subtract", SubtractorImpl.class, result("subtract/out",
                         inPaths("multiply/out", "add/out")))));
-
-//                srv("z1", "multiply/x1"), srv("z2", "add/x2"), srv("z3", "subtract/out"));
 
         responseUp(model, "add", "multiply", "subtract");
         dependsOn(model, ent("subtract", paths("multiply", "add")));
@@ -107,9 +105,9 @@ public class Mograms {
 
         IncrementerImpl incrementer = new IncrementerImpl(100.0);
 
-        Model model = srvModel(
+        Model model = model(
                 inEnt("by", 10.0),
-                srv(sig("increment", incrementer, result("out",
+                ent(sig("increment", incrementer, result("out",
                         inPaths("by")))));
 
         responseUp(model, "increment", "out");
@@ -130,10 +128,10 @@ public class Mograms {
 
         IncrementerImpl incrementer = new IncrementerImpl(100.0);
 
-        Model model = srvModel(
+        Model model = model(
                 inEnt("by", 10.0),
-                srv(sig("increment", incrementer, result("out", inPaths("by")))),
-                par("multiply", invoker("add * out", ents("add", "out"))));
+                ent(sig("increment", incrementer, result("out", inPaths("by")))),
+                ent("multiply", invoker("add * out", ents("add", "out"))));
 
 
         responseUp(model, "increment", "out", "multiply");
@@ -159,40 +157,5 @@ public class Mograms {
         assertTrue(value(result(model), "out").equals(1000.0));
         assertTrue(value(result(model), "multiply").equals(100000.0));
     }
-
-//    @Test
-//    public void acmOpenloopTest() throws Exception {
-//
-//        Model airCycleModel = srvModel("airCycleModel",
-//                //get file offDesignCases and return the ThirdHxData object
-//
-//                srv(sig("getOffDesignCaseFromThirdHx", AcmOpenloopProviderImpl.class,        result("offDesignCases", inPaths("ac2HexOut1","offDesignCasesTemplate")))),
-//
-//                srv(sig("doEvaluatePropulsion", MstcGateProviderImpl.class,      result("fullEngineDeck", inPaths("offDesignCases")))),
-//
-//                srv(sig("parseProptoACM", AcmOpenloopProviderImpl.class,         result("acmFile",        inPaths("fullEngineDeck")))),
-//
-//                srv(sig("executeOpenLoopACM", AcmOpenloopProviderImpl.class,     result("acmOutFile",     inPaths("acmFile")))),
-//
-//                srv(sig("getAcmOutputMakeThirdHxData", ThirdHxData.class,        result("ac2HexOut2",     inPaths("acmOutFile")))));
-//
-//        responseUp(airCycleModel, "getAcmOutputMakeThirdHxData");
-//        dependsOn(airCycleModel, ent("getAcmOutputMakeThirdHxData", paths("getOffDesignCaseFromThirdHx", "doEvaluatePropulsion", "parseProptoACM", "executeOpenLoopACM")));
-//
-//        URL templateFileUrl = dataService.getDataURL(dataDir + File.separator + "PropAndAcm" + File.separator + "OffDesignCasesTemplate.dat");
-//
-//        Block airCycleMachineMogram = block(
-//                //this is the initial guess to the iteration from the context coming in
-//                context(inEnt("offDesignCasesTemplate",templateFileUrl)),
-//                task("offDesignCases", sig("getThirdHxDataFromOffDesignCase", ThirdHxData.class),
-//                        context(inEnt("offDesignCases", templateFileUrl), result("ac2HexOut1"))),
-//
-//                //context(ent("offDesignCases", "myInputURL")),
-//                loop(condition("{ ac2HexOut1, ac2HexOut2 -> ac2HexOut1.equals(ac2HexOut2) }",
-//                        "ac2HexOut1", "ac2HexOut2"), airCycleModel));
-//
-//        airCycleMachineMogram = exert(airCycleMachineMogram);
-//        logger.info("block context: " + context(airCycleMachineMogram));
-//    }
 
 }

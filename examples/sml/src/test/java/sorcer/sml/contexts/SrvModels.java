@@ -43,7 +43,7 @@ public class SrvModels {
 
         // three entry model
         Model mod = model(inEnt("arg/x1", 10.00), inEnt("arg/x2", 90.00),
-                srv(sig("add", AdderImpl.class, result("result/y", inPaths("arg/x1", "arg/x2")))),
+                ent(sig("add", AdderImpl.class, result("result/y", inPaths("arg/x1", "arg/x2")))),
                 response("add", "arg/x1", "arg/x2"));
 
         Context out = response(mod);
@@ -94,8 +94,8 @@ public class SrvModels {
     public void exertRemoteAddereModel() throws Exception {
 
         // three entry model
-        Model mod = srvModel(inEnt("arg/x1", 10.00), inEnt("arg/x2", 90.00),
-                srv(sig("add", Adder.class, result("result/y", inPaths("arg/x1", "arg/x2")))),
+        Model mod = model(inEnt("arg/x1", 10.00), inEnt("arg/x2", 90.00),
+                ent(sig("add", Adder.class, result("result/y", inPaths("arg/x1", "arg/x2")))),
                 response("add", "arg/x1", "arg/x2"));
 
         Model model = exert(mod);
@@ -107,8 +107,8 @@ public class SrvModels {
     public void evalauteRemoteAddereModel() throws Exception {
 
         // three entry model
-        Model mod = srvModel(inEnt("arg/x1", 10.00), inEnt("arg/x2", 90.00),
-                srv(sig("add", Adder.class, result("result/y", inPaths("arg/x1", "arg/x2")))),
+        Model mod = model(inEnt("arg/x1", 10.00), inEnt("arg/x2", 90.00),
+                ent(sig("add", Adder.class, result("result/y", inPaths("arg/x1", "arg/x2")))),
                 response("add", "arg/x1", "arg/x2"));
 
         Context out = response(mod);
@@ -124,7 +124,7 @@ public class SrvModels {
         // get a context from a subject provider
         // exerting a model with the subject provider as its service context
 
-        Model m = srvModel(sig("add", AdderImpl.class),
+        Model m = model(sig("add", AdderImpl.class),
                 inEnt("arg/x1", 1.0), inEnt("arg/x2", 2.0),
                 ent("arg/x3", 3.0), ent("arg/x4", 4.0), ent("arg/x5", 5.0));
 
@@ -151,14 +151,14 @@ public class SrvModels {
 
         // get responses from a service model
 
-        Model m = srvModel(
+        Model m = model(
                 inEnt("multiply/x1", 10.0), inEnt("multiply/x2", 50.0),
                 inEnt("add/x1", 20.0), inEnt("add/x2", 80.0),
-                srv(sig("multiply", MultiplierImpl.class, result("multiply/out",
+                ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
                         inPaths("multiply/x1", "multiply/x2")))),
-                srv(sig("add", AdderImpl.class, result("add/out",
+                ent(sig("add", AdderImpl.class, result("add/out",
                         inPaths("add/x1", "add/x2")))),
-                srv(sig("subtract", SubtractorImpl.class, result("model/response",
+                ent(sig("subtract", SubtractorImpl.class, result("model/response",
                         inPaths("multiply/out", "add/out")))),
                 aka("y1", "multiply/x1"),
                 response("subtract"));
@@ -240,14 +240,14 @@ public class SrvModels {
         // output connector from model to exertion
         Context outConnector = outConn(inEnt("y1", "add"), inEnt("y2", "multiply"), inEnt("y3", "subtract"));
 
-        Model model = srvModel(
+        Model model = model(
                 inEnt("multiply/x1", 10.0), inEnt("multiply/x2", 50.0),
                 inEnt("add/x1", 20.0), inEnt("add/x2", 80.0),
-                srv(sig("multiply", MultiplierImpl.class, result("multiply/out",
+                ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
                         inPaths("multiply/x1", "multiply/x2")))),
-                srv(sig("add", AdderImpl.class, result("add/out",
+                ent(sig("add", AdderImpl.class, result("add/out",
                         inPaths("add/x1", "add/x2")))),
-                srv(sig("subtract", SubtractorImpl.class, result("subtract/response",
+                ent(sig("subtract", SubtractorImpl.class, result("subtract/response",
                         inPaths("multiply/out", "add/out")))),
                 aka("y1", "multiply/x1"), aka("y2", "add/x2"), aka("y3", "subtract/response"));
 
@@ -304,17 +304,17 @@ public class SrvModels {
         // out connector from model
         Context modelOutConnector = outConn(inEnt("y1", "add"), inEnt("y2", "multiply"), inEnt("y3", "subtract"));
 
-        Model model = srvModel(
+        Model model = model(
                 inEnt("multiply/x1", 10.0), inEnt("multiply/x2", 50.0),
                 inEnt("add/x1", 20.0), inEnt("add/x2", 80.0),
-                srv(sig("multiply", MultiplierImpl.class, result("multiply/out",
+                ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
                         inPaths("multiply/x1", "multiply/x2")))),
-                srv(sig("add", AdderImpl.class, result("add/out",
+                ent(sig("add", AdderImpl.class, result("add/out",
                         inPaths("add/x1", "add/x2")))),
-                srv(sig("subtract", SubtractorImpl.class, result("subtract/out",
+                ent(sig("subtract", SubtractorImpl.class, result("subtract/out",
                         inPaths("multiply/out", "add/out")))));
 
-//                srv("z1", "multiply/x1"), srv("z2", "add/x2"), srv("z3", "subtract/out"));
+//                ent("z1", "multiply/x1"), srv("z2", "add/x2"), srv("z3", "subtract/out"));
 
         responseUp(model, "add", "multiply", "subtract");
         dependsOn(model, ent("subtract", paths("multiply", "add")));
