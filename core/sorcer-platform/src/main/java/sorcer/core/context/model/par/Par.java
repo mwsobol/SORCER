@@ -43,8 +43,8 @@ import java.util.*;
  * @author Mike Sobolewski
  */
 @SuppressWarnings({"unchecked", "rawtypes" })
-public class Par<T> extends Entry<T> implements Variability<T>, Arg, Mappable<T>, Evaluation<T>,
-	Invocation<T>, Setter, Scopable, Comparable<T>, Reactive<T>, Serializable {
+public class Par<T> extends Entry<T> implements Variability<T>, Arg, Mappable<T>,
+		Invocation<T>, Setter, Scopable, Comparable<T>, Reactive<T>, Serializable {
 
 	private static final long serialVersionUID = 7495489980319169695L;
 	 

@@ -574,7 +574,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
      */
     public Object getReturnValue(Arg... entries) throws ContextException,
             RemoteException {
-        ReturnPath returnPath = ((ServiceContext)getDataContext()).getReturnPath();
+        ReturnPath returnPath = getDataContext().getReturnPath();
         if (returnPath != null) {
             if (returnPath.path == null || returnPath.path.equals("self"))
                 return getContext();

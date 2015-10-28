@@ -34,4 +34,17 @@ public class Name implements Arg {
     public String getName() {
         return name;
     }
+
+    @Override
+    public boolean equals(Object object) {
+        if (object instanceof Name)
+            return this.name.equals(((Name)object).getName());
+        else
+            return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return name.hashCode();
+    }
 }

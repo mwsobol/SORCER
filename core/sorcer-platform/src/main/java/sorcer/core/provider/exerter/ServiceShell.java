@@ -859,9 +859,10 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 			Signature.ReturnPath returnPath = cxt.getReturnPath();
 			if (returnPath != null) {
 				return cxt.getValue(returnPath.path, entries);
-			} else
+			} else {
 				throw new ExertionException("No return path in the context: "
 						+ cxt.getName());
+			}
 		}
 		return null;
 	}

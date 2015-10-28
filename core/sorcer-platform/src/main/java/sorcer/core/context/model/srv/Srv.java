@@ -18,7 +18,7 @@ import java.util.Map;
 /**
  * Created by Mike Sobolewski on 4/14/15.
  */
-public class Srv extends Entry<Object> implements Variability<Object>, Arg, Evaluation<Object>,
+public class Srv extends Entry<Object> implements Variability<Object>, Arg,
         Comparable<Object>, Reactive<Object>, Serializable {
 
     private static Logger logger = LoggerFactory.getLogger(Srv.class.getName());

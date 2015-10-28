@@ -138,6 +138,10 @@ public class operator {
 		return elems;
 	}
 
+	public static Object[] objects(Object... elems) {
+		return elems;
+	}
+
 	public static <T> T[] array(List<T> list) {
 		T[] na = (T[]) Array.newInstance(list.get(0).getClass(), list.size());
 		return list.toArray(na);
@@ -156,11 +160,7 @@ public class operator {
 	}
 
 	public static <T> List<T> list(T... elems) {
-		List<T> out = new ArrayList<T>(elems.length);
-		for (T each : elems) {
-			out.add(each);
-		}
-		return out;
+		return Arrays.asList(elems);
 	}
 
 	public static List<Object> row(Object... elems) {
@@ -176,11 +176,7 @@ public class operator {
 	}
 
 	public static List<Object> values(Object... elems) {
-		List<Object> list = new ArrayList<Object>();
-		for(Object o: elems) {
-			list.add(o);
-		}
-		return list;
+		return Arrays.asList(elems);
 	}
 
 	public static List<String> header(String... elems) {
@@ -192,11 +188,7 @@ public class operator {
 	}
 
 	public static List<String> names(String... elems) {
-		List<String> out = new ArrayList<String>(elems.length);
-		for (String each : elems) {
-			out.add(each);
-		}
-		return out;
+		return Arrays.asList(elems);
 	}
 
 	public static List<String> names(List<String>... nameLists) {
@@ -251,11 +243,15 @@ public class operator {
 		if (name != null)
 			srvName = name;
 
-		if (item instanceof Signature)
+		if (item instanceof Signature) {
 			return new Srv(srvName,
 					new SignatureEntry(item.getName(), (Signature) item));
-		else
+		} else if (item instanceof Mogram) {
+			return new Srv(srvName,
+					new MogramEntry(item.getName(), (Mogram) item));
+		} else {
 			return new Srv(srvName, item);
+		}
 	}
 
     public static Srv srv(Identifiable item) {
@@ -736,10 +732,10 @@ public class operator {
 			return ((ServiceContext<T>)((Exertion)mogram).getContext()).getValue(path);
 	}
 
-//	public static <T> T get(Context<T> context, String path)
-//			throws ContextException {
-//		return  context.asis(path);
-//	}
+	public static <T> T get(Context<T> context, String path)
+			throws ContextException {
+		return  context.asis(path);
+	}
 //
 //	public static <T> T get(Model model, String path)
 //			throws ContextException {

@@ -10,12 +10,14 @@ import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.provider.impl.SubtractorImpl;
 import sorcer.co.tuple.*;
+import sorcer.core.Name;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.par.Par;
 import sorcer.core.context.model.par.ParModel;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.service.*;
+import sorcer.util.Runner;
 import sorcer.util.Table;
 
 import java.io.Serializable;
@@ -42,6 +44,7 @@ import static sorcer.eo.operator.pipe;
 import static sorcer.eo.operator.put;
 import static sorcer.eo.operator.value;
 import static sorcer.mo.operator.entModel;
+import static sorcer.mo.operator.run;
 import static sorcer.po.operator.add;
 import static sorcer.po.operator.*;
 import static sorcer.po.operator.set;
@@ -107,7 +110,7 @@ public class CollectionOperators {
 		Double[] da = array(1.1, 2.1, 3.1);
 		assertArrayEquals(da, new Double[] { 1.1, 2.1, 3.1 } );
 
-		Object[] oa = array(array(1.1, 2.1, 3.1),  4.1,  array(11.1, 12.1, 13.1));
+		Object[] oa = objects(array(1.1, 2.1, 3.1),  4.1,  array(11.1, 12.1, 13.1));
 		assertArrayEquals((Double[])oa[0], array(1.1, 2.1, 3.1));
 		assertEquals(oa[1], 4.1);
 		assertArrayEquals((Double[])oa[2], array(11.1, 12.1, 13.1));
@@ -483,4 +486,40 @@ public class CollectionOperators {
 
 	}
 
+	@Test
+	public void runClosure() throws Exception {
+
+		Runnable r = () -> {
+			try {
+				System.out.println("context: " + context(ent("x", 10)));
+			} catch (ContextException e) {
+				e.printStackTrace();
+			}
+		};
+
+		r.run();
+
+		new Thread(r).start();
+	}
+
+	@Test
+	public void callClosure() throws Exception {
+		// invoke run using Lambda expression
+		run(args -> System.out.println("Closing with: " + args[0].getName()),
+				new Name("Hello"));
+
+		// invoke run using  Lambda object matched to interface
+		Runner r = args -> {
+			try {
+				print(exert(context(ent("x", 10)), args));
+			} catch (MogramException e) {
+				e.printStackTrace();
+			}
+		};
+
+		r.exec(ent("x", "Hello"));
+
+		run(r, ent("x", "Hello"));
+
+	}
 }

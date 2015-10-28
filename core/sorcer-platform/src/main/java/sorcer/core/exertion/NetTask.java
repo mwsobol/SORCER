@@ -32,7 +32,7 @@ import java.util.Arrays;
  * 
  * @author Mike Sobolewski
  */
-public class NetTask extends ObjectTask implements Evaluation<Object>, Invocation<Object> {
+public class NetTask extends ObjectTask implements Invocation<Object> {
 
 	private static final long serialVersionUID = -6741189881780105534L;
 

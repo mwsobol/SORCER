@@ -29,7 +29,7 @@ import sorcer.service.Signature.Type;
 
 import java.rmi.RemoteException;
 
-public class NetJob extends Job implements Evaluation<Object>, Invocation<Object> {
+public class NetJob extends Job implements Invocation<Object> {
 
 	private static final long serialVersionUID = 7060442151643838169L;
 

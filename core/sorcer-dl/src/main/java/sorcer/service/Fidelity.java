@@ -151,11 +151,6 @@ public class Fidelity<T extends Arg> implements Arg, Serializable {
 	}
 
 	public void setSelection(T selection) {
-		try {
-			throw new Throwable();
-		} catch (Throwable throwable) {
-			throwable.printStackTrace();
-		}
 		this.selection = selection;
 	}
 

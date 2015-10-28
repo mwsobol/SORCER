@@ -17,6 +17,7 @@
 
 package sorcer.mo;
 
+import sorcer.co.tuple.Path;
 import sorcer.co.tuple.Tuple2;
 import sorcer.core.Name;
 import sorcer.core.context.MapContext;
@@ -206,6 +207,10 @@ public class operator {
         return map;
     }
 
+    public static Signature.ReturnPath returnPath(String path) {
+        return  new Signature.ReturnPath<>(path);
+    }
+
     public static Fidelity<Arg> response(String... paths) {
         return  new Fidelity(paths);
     }
@@ -225,8 +230,8 @@ public class operator {
         for (Object item : items) {
             if (item instanceof Fidelity) {
                 fidelities.add((Fidelity)item);
+            }
         }
-    }
         MultiFidelityService model = new MultiFidelityService();
         model.addSelectionFidelities(fidelities);
         return srvModel(items);
@@ -296,4 +301,9 @@ public class operator {
         dest[0] = model;
         return sorcer.eo.operator.context(dest);
     }
+
+    public static void run(sorcer.util.Runner runner, Arg... args) throws SignatureException, MogramException {
+        runner.exec(args);
+    }
+
 }

@@ -70,6 +70,7 @@ import sorcer.security.sign.SignedTaskInterface;
 import sorcer.security.sign.TaskAuditor;
 import sorcer.security.util.SorcerPrincipal;
 import sorcer.service.*;
+import sorcer.service.Evaluation;
 import sorcer.service.jobber.JobberAccessor;
 import sorcer.service.space.SpaceAccessor;
 import sorcer.service.txmgr.TransactionManagerAccessor;
