@@ -279,10 +279,10 @@ public class operator {
 //	}
 
 	public static <T> Entry<T> ent(String path, T value) {
-		if (value instanceof Evaluation) {
-			return new Entry<T>(path, value);
-		} if (value instanceof Invocation) {
+		if (value instanceof Invocation) {
 			return new Par<T>(path, value);
+		} else if (value instanceof Evaluation) {
+			return new Entry<T>(path, value);
 		} else {
 			return new Entry<T>(path, value);
 		}

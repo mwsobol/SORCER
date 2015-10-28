@@ -28,6 +28,8 @@ import static sorcer.eo.operator.result;
 import static sorcer.eo.operator.value;
 import static sorcer.mo.operator.*;
 import static sorcer.po.operator.invoker;
+import static sorcer.po.operator.par;
+
 /**
  * Created by Mike Sobolewski on 4/15/15.
  */
@@ -136,7 +138,7 @@ public class SrvModels {
         responseUp(m, "add", "multiply");
         // exert the model
         Model model = exert(m);
-//        logger.info("model: " + model);
+        logger.info("model: " + model);
 
         assertTrue(response(model, "add").equals(4.0));
         System.out.println("responses: " + response(model));
