@@ -1,6 +1,5 @@
 package sorcer.pml.modeling;
 
-import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -68,11 +67,11 @@ public class Invokers {
 			set(x, value(arg, "x"));
 			set(y, value(context, "y"));
 			// x set from 'arg'
-			Assert.assertEquals((Double) value(x), 200.0);
+			assertTrue(value(x).equals(200.0));
 			// y set from construtor's context 'in'
-			Assert.assertEquals((Double) value(y), 30.0);
-			Assert.assertEquals((Double) value(z), 170.0);
-			return (Double)value(x) + (Double)value(y) + (Double)value(pm, "z");
+			assertTrue(value(y).equals(30.0));
+			assertTrue(value(z).equals(170.0));
+			return value(x) + value(y) + (Double)value(pm, "z");
 		}
 	};
 
@@ -102,8 +101,7 @@ public class Invokers {
 	}
 
 	@Test
-	public void groovyInvokerTest() throws Exception,
-			SignatureException, ExertionException {
+	public void groovyInvokerTest() throws Exception {
 		ParModel pm = parModel("par-model");
 		add(pm, par("x", 10.0), par("y", 20.0));
 		add(pm, invoker("expr", "x + y + 30", pars("x", "y")));
@@ -479,9 +477,8 @@ public class Invokers {
 	public void incrementorBy1Test() throws Exception {
 		ParModel pm = parModel("par-model");
 		add(pm, ent("x", 1));
-		add(pm, par("y", invoker("x + 1", pars("x"))));
+		add(pm, ent("y", invoker("x + 1", pars("x"))));
 		add(pm, ent("z", inc(invoker(pm, "y"))));
-
 		for (int i = 0; i < 10; i++) {
 			logger.info("" + value(pm, "z"));
 		}

@@ -810,9 +810,8 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 			return (T) prv.service(mogram, txn);
 		} else if (service instanceof Provider) {
 			Task out = (Task) service.service(mogram, txn);
-			return (T)out.getContext();
-		}
-		else if (service instanceof Mogram) {
+			return (T) out.getContext();
+		} else if (service instanceof Mogram) {
 			Context cxt;
 			if (mogram instanceof Exertion) {
 				cxt = ((Exertion) exert(mogram)).getContext();
@@ -820,16 +819,19 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 //				cxt = (Context) ((Model) mogram).getResult();
 				cxt = (Context) mogram;
 			}
-			((Mogram)service).setScope(cxt);
-			return (T) exert((Mogram)service);
-		}
-		else if (service instanceof NetSignature
-				&& ((Signature)service).getServiceType() == sorcer.core.provider.Shell.class) {
-			Provider prv= (Provider) Accessor.get().getService((Signature) service);
+			((Mogram) service).setScope(cxt);
+			return (T) exert((Mogram) service);
+		} else if (service instanceof NetSignature
+				&& ((Signature) service).getServiceType() == sorcer.core.provider.Shell.class) {
+			Provider prv = (Provider) Accessor.get().getService((Signature) service);
 			return (T) ((Exertion) prv.service(mogram, txn)).getContext();
-		} else {
-			return (T) service.service(mogram, txn);
+		} else if (service instanceof Par) {
+			((Par)service).setScope(mogram);
+			Object val =((Par)service).getValue();
+			((Context)mogram).putValue(((Par)service).getName(), val);
+			return (T) mogram;
 		}
+		return (T) service.service(mogram, txn);
 	}
 
 	public <T extends Mogram> T exec(Service srv, Mogram mog)

@@ -10,8 +10,8 @@ import sorcer.arithmetic.provider.Adder;
 import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.core.context.Copier;
 import sorcer.core.context.model.ent.Entry;
+import sorcer.core.context.model.par.Par;
 import sorcer.service.Context;
-import sorcer.service.Invocation;
 import sorcer.service.modeling.Model;
 
 import static org.junit.Assert.assertEquals;
@@ -19,8 +19,12 @@ import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.asis;
 import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
+import static sorcer.eo.operator.put;
+import static sorcer.eo.operator.result;
+import static sorcer.eo.operator.value;
 import static sorcer.mo.operator.*;
 import static sorcer.po.operator.invoker;
+
 /**
  * @author Mike Sobolewski
  */
@@ -51,7 +55,8 @@ public class EntModels {
 
 		assertTrue(value(cxt, "arg/x7").equals(4.0));
 		assertTrue(asis(cxt, "arg/x7") instanceof Entry);
-		assertTrue(asis(asis(cxt, "arg/x7")) instanceof Invocation);
+		assertTrue(asis(cxt, "arg/x7") instanceof Par);
+		assertTrue(asis(asis(cxt, "arg/x7")) instanceof Double);
 
 	}
 
@@ -172,6 +177,7 @@ public class EntModels {
 		Entry ie = ent("multiply", invoker("x1 * x2", ents("x1", "x2")));
 		Context result = exec(ie, em);
 		assertEquals(1600.0, value(result, "multiply"));
+
 	}
 
 

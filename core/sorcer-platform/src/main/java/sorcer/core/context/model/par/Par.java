@@ -202,6 +202,8 @@ public class Par<T> extends Entry<T> implements Variability<T>, Arg, Mappable<T>
 	@Override
 	public T getValue(Arg... entries) throws EvaluationException, RemoteException {
 		// check for a constant or cached value
+		if (value instanceof Incrementor)
+			isValid = false;
 		if (_2 != null && isValid && entries.length == 00 && !isPersistent) {
 			try {
 				if (_2 instanceof String

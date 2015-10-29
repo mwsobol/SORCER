@@ -8,8 +8,9 @@ import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.core.SorcerConstants;
-import sorcer.core.provider.rendezvous.ServiceConcatenator;
-import sorcer.service.*;
+import sorcer.service.Context;
+import sorcer.service.Incrementor;
+import sorcer.service.Task;
 
 import static org.junit.Assert.assertEquals;
 import static sorcer.co.operator.ent;
@@ -44,6 +45,11 @@ public class IncrementBlockExertions implements SorcerConstants {
 
 		Incrementor i = inc(invoker(context(ti), "arg/x1"), 2);
 		Context cxt2 = model(ent("z2", i));
+
+
+		logger.info("XXXXXXX1 : " + value(cxt2, "z2"));
+		logger.info("XXXXXXX2 : " + value(cxt2, "z2"));
+		logger.info("XXXXXXX3 : " + value(cxt2, "z2"));
 		assertEquals(value(cxt2, "z2"), 22);
 		assertEquals(value(cxt2, "z2"), 24);
 	}

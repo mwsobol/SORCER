@@ -22,7 +22,6 @@ import sorcer.util.Table;
 
 import java.io.Serializable;
 import java.net.URL;
-import java.rmi.RemoteException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +30,7 @@ import java.util.Set;
 import static org.junit.Assert.*;
 import static sorcer.co.operator.*;
 import static sorcer.co.operator.asis;
+import static sorcer.co.operator.map;
 import static sorcer.co.operator.path;
 import static sorcer.co.operator.persistent;
 import static sorcer.co.operator.put;
@@ -38,15 +38,16 @@ import static sorcer.co.operator.set;
 import static sorcer.co.operator.value;
 import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.add;
-import static sorcer.eo.operator.asis;
 import static sorcer.eo.operator.get;
 import static sorcer.eo.operator.pipe;
+import static sorcer.eo.operator.print;
 import static sorcer.eo.operator.put;
 import static sorcer.eo.operator.value;
 import static sorcer.mo.operator.entModel;
 import static sorcer.mo.operator.run;
 import static sorcer.po.operator.add;
 import static sorcer.po.operator.*;
+import static sorcer.po.operator.map;
 import static sorcer.po.operator.set;
 
 
@@ -376,10 +377,8 @@ public class CollectionOperators {
 		put(cxt, ent("arg/x6", par("overwrite", 40.0)));
 		assertTrue(value(cxt, "arg/x6").equals(40.0));
 
-		// repeatedly reactive evaluations
 		assertTrue(get(cxt, "arg/x7") instanceof ServiceInvoker);
-		rrvEnt(cxt, "arg/x7");
-		assertEquals(2.4, (Double) value(cxt, "arg/x7"), 0.0000001);
+		assertEquals(4.0, value(cxt, "arg/x7"));
 
 	}
 
