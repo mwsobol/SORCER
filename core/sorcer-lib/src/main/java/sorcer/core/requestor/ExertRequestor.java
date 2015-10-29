@@ -64,6 +64,7 @@ abstract public class ExertRequestor implements Requestor, SorcerConstants {
 
 	public static void prepareToRun(String... args) {
 		System.setSecurityManager(new SecurityManager());
+		Accessor.create();
 
 		// Initialize system properties: configs/sorcer.env
 		Sorcer.getEnvProperties();
