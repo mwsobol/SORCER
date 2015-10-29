@@ -2934,7 +2934,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 			p.setScope(this);
 		try {
 			if (p.asis() instanceof ServiceInvoker) {
-				ServiceInvoker si =(ServiceInvoker) p.asis();
+				ServiceInvoker si = (ServiceInvoker) p.asis();
 				if (si.getScope() == null || si.getScope().size() == 0)
 					((ServiceInvoker) p.asis()).setScope(this);
 				else {

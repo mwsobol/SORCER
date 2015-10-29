@@ -325,7 +325,7 @@ public abstract class Block extends CompoundExertion {
 			if (e instanceof Exertion && ((Exertion)e).isConditional()) {
 				if (e instanceof OptMogram) {
 					((OptMogram)e).getCondition().getConditionalContext().append(dataContext);
-				} else if (e instanceof LoopMogram) {
+				} else if (e instanceof LoopMogram && ((LoopMogram) e).getCondition() != null) {
 					((LoopMogram) e).getCondition().getConditionalContext().append(dataContext);
 				} else if (e instanceof AltMogram) {
 					for (OptMogram oe : ((AltMogram) e).getOptExertions()) {

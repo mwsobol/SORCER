@@ -182,7 +182,7 @@ public class ParModels {
 	@Test
 	public void parModelTest() throws Exception {
 		ParModel pm = parModel(par("x", 10.0), par("y", 20.0),
-				par("add", invoker("x + y", pars("x", "y"))));
+				ent("add", invoker("x + y", pars("x", "y"))));
 
 		assertTrue(value(pm, "x").equals(10.0));
 		assertTrue(value(pm, "y").equals(20.0));
@@ -647,7 +647,7 @@ public class ParModels {
 
 		add(pm, methodInvoker("call", new Config()));
 		logger.info("call value:" + invoke(pm, "call"));
-		assertEquals(invoke(pm, "call", context(ent("limit", 100.0))), 340.0);
+		assertEquals(invoke(pm, "call", context(ent("limit", 100.0))), 420.0);
 
 	}
 

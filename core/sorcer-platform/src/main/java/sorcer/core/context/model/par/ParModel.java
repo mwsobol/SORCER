@@ -123,6 +123,9 @@ public class ParModel<T> extends EntModel<T> implements Invocation<T>, Mappable<
 			}
 
 			if (val != null && val instanceof Evaluation) {
+//				if (isChanged && val instanceof Par) {
+//					((Par)val).isValid(false);
+//				}
 				return (T) ((Evaluation) val).getValue(entries);
 			} else if (path == null && val == null && modelStrategy.getResponsePaths() != null) {
 				if (modelStrategy.getResponsePaths().size() == 1)

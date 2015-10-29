@@ -23,6 +23,7 @@ import sorcer.core.context.ApplicationDescription;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.EntryList;
+import sorcer.core.invoker.ServiceInvoker;
 import sorcer.service.*;
 import sorcer.service.modeling.Variability;
 import sorcer.util.url.sos.SdbUtil;
@@ -202,7 +203,8 @@ public class Par<T> extends Entry<T> implements Variability<T>, Arg, Mappable<T>
 	@Override
 	public T getValue(Arg... entries) throws EvaluationException, RemoteException {
 		// check for a constant or cached value
-		if (value instanceof Incrementor)
+		if (value instanceof Incrementor || ((value instanceof ServiceInvoker) &&
+				scope != null && (scope instanceof ParModel) && ((ParModel)scope).isChanged()))
 			isValid = false;
 		if (_2 != null && isValid && entries.length == 00 && !isPersistent) {
 			try {

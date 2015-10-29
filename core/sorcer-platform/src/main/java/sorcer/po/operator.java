@@ -225,7 +225,7 @@ public class operator {
 			throws ContextException {
 		Object parEntry = context.asis(parname);
 		if (parEntry == null)
-			parEntry = context.addPar(parname, value);
+			context.addPar(parname, value);
 		else if (parEntry instanceof Setter) {
 			try {
 				((Setter) parEntry).setValue(value);
@@ -237,9 +237,10 @@ public class operator {
 			if (par.getScope() != null && par.getContextable() == null)
 				par.getScope().putValue(par.getName(), value);
 		}
-		// just assing the value
+		// just ssetting the value
 		else {
 			context.putValue(parname, value);
+			context.setIsChanged(true);
 		}
 
 	}
