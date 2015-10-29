@@ -1,4 +1,4 @@
-package sorcer.sml.contexts;
+package sorcer.sml.mogram;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -6,22 +6,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
-import sorcer.arithmetic.provider.impl.AdderImpl;
-import sorcer.arithmetic.provider.impl.IncrementerImpl;
-import sorcer.arithmetic.provider.impl.MultiplierImpl;
-import sorcer.arithmetic.provider.impl.SubtractorImpl;
+import sorcer.arithmetic.provider.impl.*;
 import sorcer.core.context.model.srv.SrvModel;
 import sorcer.core.provider.rendezvous.ServiceJobber;
-import sorcer.mo.operator;
 import sorcer.service.Block;
 import sorcer.service.Context;
 import sorcer.service.Job;
 import sorcer.service.Strategy.Flow;
 import sorcer.service.Task;
 import sorcer.service.modeling.Model;
-
-import java.io.File;
-import java.net.URL;
 
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
@@ -158,4 +151,72 @@ public class Mograms {
         assertTrue(value(result(model), "multiply").equals(100000.0));
     }
 
+    @Test
+     public void modelWithInnerTask() throws Exception {
+        // get responses from a service model
+
+        Model m = model(
+                inEnt("multiply/x1", 10.0), inEnt("multiply/x2", 50.0),
+                inEnt("add/x1", 20.0), inEnt("add/x2", 80.0),
+                ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
+                        inPaths("multiply/x1", "multiply/x2")))),
+                ent(sig("add", AdderImpl.class, result("add/out",
+                        inPaths("add/x1", "add/x2")))),
+                ent(sig("subtract", SubtractorImpl.class, result("model/response",
+                        inPaths("multiply/out", "add/out")))),
+                ent(sig("out", "average", AveragerImpl.class, result("model/response",
+                        inPaths("task/multiply", "subtract")))),
+                response("task/multiply", "subtract", "out"));
+
+        dependsOn(m, ent("subtract", paths("multiply", "add")));
+
+
+        // usage of in and out connectors associated with model
+        Task innerTask = task(
+                "task/multiply",
+                sig("multiply", MultiplierImpl.class),
+                context("multiply", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
+                        result("multiply/result")));
+
+        add(m, innerTask);
+
+        Context out = response(m);
+        logger.info("response: " + out);
+        assertTrue(get(out, "task/multiply").equals(500.0));
+        assertTrue(get(out, "subtract").equals(400.0));
+        assertTrue(get(out, "out").equals(450.0));
+    }
+
+    @Test
+    public void modelWithInnerModel() throws Exception {
+        // get responses from a service model with inner model
+
+        Model innerModel = model("inner/multiply",
+                ent(sig("inner/multiply/out", "multiply", MultiplierImpl.class,
+                        result("multiply/out", inPaths("arg/x1", "arg/x2")))),
+                response("inner/multiply/out"));
+
+        Model outerModel = model(
+                inEnt("multiply/x1", 10.0), inEnt("multiply/x2", 50.0),
+                inEnt("add/x1", 20.0), inEnt("add/x2", 80.0),
+                ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
+                        inPaths("multiply/x1", "multiply/x2")))),
+                ent(sig("add", AdderImpl.class, result("add/out",
+                        inPaths("add/x1", "add/x2")))),
+                ent(sig("subtract", SubtractorImpl.class, result("subtract/out",
+                        inPaths("multiply/out", "add/out")))),
+                ent(sig("out", "average", AveragerImpl.class, result("model/response",
+                        inPaths("inner/multiply/out", "subtract")))),
+                response("inner/multiply", "subtract", "out"));
+
+        dependsOn(outerModel, ent("subtract", paths("multiply", "add")));
+
+        add(outerModel, innerModel, inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0));
+
+        Context out = response(outerModel);
+        logger.info("response: " + out);
+        assertTrue(get(out, "inner/multiply/out").equals(500.0));
+        assertTrue(get(out, "subtract").equals(400.0));
+        assertTrue(get(out, "out").equals(450.0));
+    }
 }

@@ -1,4 +1,4 @@
-package sorcer.sml.contexts;
+package sorcer.sml.mogram;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -7,15 +7,11 @@ import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.impl.*;
-import sorcer.core.Name;
 import sorcer.core.invoker.Observable;
-import sorcer.core.invoker.Observer;
 import sorcer.core.plexus.FidelityManager;
 import sorcer.core.plexus.MultiFidelity;
-import sorcer.eo.operator;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
-import sorcer.util.Runner;
 
 import java.rmi.RemoteException;
 
@@ -24,7 +20,6 @@ import static sorcer.co.operator.*;
 import static sorcer.co.operator.get;
 import static sorcer.eo.operator.*;
 import static sorcer.mo.operator.response;
-import static sorcer.mo.operator.run;
 
 /**
  * Created by Mike Sobolewski on 10/26/15.

@@ -1458,8 +1458,9 @@ public class ServiceContext<T> extends ServiceMogram implements
 		for (Name arg : paths) {
 			String path = arg.getName();
 			val = getValue(path, args);
-			if (val instanceof Context)
+			if (val instanceof Context) {
 				subcntxt.append((Context) val);
+			}
 			else {
 				List<String> inpaths = getInPaths();
 				List<String> outpaths = getOutPaths();

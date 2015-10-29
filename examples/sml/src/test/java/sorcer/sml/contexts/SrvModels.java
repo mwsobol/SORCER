@@ -150,7 +150,6 @@ public class SrvModels {
 
     @Test
     public void serviceResponses() throws Exception {
-
         // get responses from a service model
 
         Model m = model(
@@ -280,7 +279,7 @@ public class SrvModels {
 
 
     @Test
-    public void exertExertionToModelMogram() throws Exception {
+    public void exertExertionModelMogram() throws Exception {
 
         // usage of in and out connectors associated with model
         Task t4 = task(

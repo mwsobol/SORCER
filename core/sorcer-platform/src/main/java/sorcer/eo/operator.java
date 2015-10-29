@@ -66,6 +66,8 @@ import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.*;
 
+import static sorcer.co.operator.ent;
+import static sorcer.co.operator.srv;
 import static sorcer.mo.operator.entModel;
 import static sorcer.mo.operator.srvModel;
 import static sorcer.po.operator.parModel;
@@ -562,6 +564,10 @@ public class operator {
 		for (Identifiable i : objects) {
 			if (i instanceof Reactive && ((Reactive) i).isReactive()) {
 				isReactive = true;
+			}
+			if (i instanceof Mogram) {
+				((Mogram) i).setScope((Context)model);
+				i = srv(i);
 			}
 			if (context instanceof PositionalContext) {
 				PositionalContext pc = (PositionalContext) context;
@@ -2542,10 +2548,10 @@ public class operator {
 		return signature;
 	}
 
-	public static Signature model(Signature signature) {
-		((ServiceSignature)signature).addRank(new Kind[]{Kind.MODEL, Kind.TASKER});
-		return signature;
-	}
+//	public static Signature model(Signature signature) {
+//		((ServiceSignature)signature).addRank(new Kind[]{Kind.MODEL, Kind.TASKER});
+//		return signature;
+//	}
 
 	public static Signature modelManager(Signature signature) {
 		((ServiceSignature)signature).addRank(Kind.MODEL, Kind.MODEL_MANAGER);

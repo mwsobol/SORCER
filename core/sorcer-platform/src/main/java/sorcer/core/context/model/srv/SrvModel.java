@@ -19,6 +19,7 @@ package sorcer.core.context.model.srv;
 
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
+import sorcer.co.tuple.MogramEntry;
 import sorcer.co.tuple.SignatureEntry;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.par.ParModel;
@@ -186,17 +187,19 @@ public class SrvModel extends ParModel<Object> implements Model {
                         return ((Srv) val).getSrvValue();
                     else {
                         Signature sig = ((SignatureEntry) ((Srv) val).asis()).value();
-                        return evalSignature((Srv)val, sig, path);
+                        return evalSignature(sig, path);
                     }
                 } else if (val2 instanceof Fidelity) {
                     Signature sig = getFiSig((Fidelity)val2, entries, path);
-                    return evalSignature((Srv)val, sig, path);
+                    return evalSignature(sig, path);
                 } else if (val2 instanceof MultiFidelity) {
                     Signature sig = getFiSig(((MultiFidelity)val2).getMultiFidelity(), entries, path);
-                    Object out = evalSignature((Srv)val, sig, path);
+                    Object out = evalSignature(sig, path);
                     ((MultiFidelity) val2).setChanged();
                     ((MultiFidelity) val2).notifyObservers(out);
                     return out;
+                } else if (val2 instanceof MogramEntry) {
+                    return evalMogram((MogramEntry)val2, path, entries);
                 } else {
                     if (val2 == Context.none) {
                         return getValue(((Srv) val).getName());
@@ -211,15 +214,14 @@ public class SrvModel extends ParModel<Object> implements Model {
         return val;
     }
 
-    private Object evalSignature(Srv entry, Signature sig, String path) throws Exception {
-//        ServiceSignature sig = (ServiceSignature) ((SignatureEntry) ((Srv) val).asis()).value();
+    private Object evalSignature(Signature sig, String path) throws Exception {
         Context out = execSignature(sig);
         if (sig.getReturnPath() != null) {
             Object obj = out.getValue(sig.getReturnPath().path);
             if (obj == null)
                 obj = out.getValue(path);
             if (obj != null) {
-                entry.setSrvValue(obj);
+                ((Srv)get(path)).setSrvValue(obj);
                 return obj;
             } else {
                 logger.warn("no value for return path: {} in: {}", sig.getReturnPath().path, out);
@@ -230,7 +232,29 @@ public class SrvModel extends ParModel<Object> implements Model {
         }
     }
 
-    private Signature getFiSig(Fidelity<Signature> fi, Arg[] entries, String path ) {
+    private Object evalMogram(MogramEntry mogramEntry, String path, Arg... entries)
+            throws MogramException, RemoteException, TransactionException {
+        Mogram out = mogramEntry.asis().exert(entries);
+        if (out instanceof Exertion){
+            Context outCxt = ((Exertion) out).getContext();
+            if (outCxt.getReturnPath() != null) {
+                Object obj = outCxt.getReturnValue();
+                ((Srv)get(path)).setSrvValue(obj);
+                return obj;
+            }
+            else {
+                ((Srv) get(path)).setSrvValue(outCxt);
+                return outCxt;
+            }
+        } else if (out instanceof Model) {
+            Context outCxt = (Context) ((Model)out).getResponse(entries);
+            append(outCxt);
+            return outCxt;
+        }
+        return null;
+    }
+
+    private Signature getFiSig(Fidelity<Signature> fi, Arg[] entries, String path) {
         Fidelity<Signature> selected = null;
         for (Arg arg : entries) {
             if (arg instanceof Fidelity && ((Fidelity)arg).type == Fidelity.Type.EMPTY) {
@@ -250,7 +274,7 @@ public class SrvModel extends ParModel<Object> implements Model {
         return null;
     }
 
-    public Context execSignature(Signature sig) throws Exception {
+    private Context execSignature(Signature sig) throws Exception {
         String[] ips = sig.getReturnPath().inPaths;
         String[] ops = sig.getReturnPath().outPaths;
         execDependencies(sig);
@@ -323,7 +347,6 @@ public class SrvModel extends ParModel<Object> implements Model {
             } else {
                 // evaluate model responses
                 getResponse(entries);
-//                getValue(entries);
                 return this;
             }
         } catch (Exception e) {
