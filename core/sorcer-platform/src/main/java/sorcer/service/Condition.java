@@ -215,6 +215,8 @@ import java.util.Map;
 	}
 	
 	static public void cleanupScripts(Exertion exertion) throws ContextException {
+		if (exertion == null)
+			return;
 		clenupContextScripts(exertion.getContext());
 		for (Mogram e : exertion.getMograms()) {
 			if (e instanceof Exertion) {

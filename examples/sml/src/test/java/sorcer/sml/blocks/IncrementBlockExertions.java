@@ -1,5 +1,6 @@
 package sorcer.sml.blocks;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -49,6 +50,7 @@ public class IncrementBlockExertions implements SorcerConstants {
 		assertEquals(value(t), 162.00);
 	}
 
+	@Ignore
 	@Test
 	public void taskIncrementLoop() throws Exception {
 		Task ti = task(
