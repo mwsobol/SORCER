@@ -273,12 +273,6 @@ public class Entry<T> extends Tuple2<String, T> implements Service, Dependency, 
 	}
 
 	@Override
-	public Mogram service(Mogram mogram) throws TransactionException,
-			MogramException, RemoteException {
-		return service(mogram, null);
-	}
-
-	@Override
 	public T invoke(Context<T> context, Arg... entries) throws InvocationException, RemoteException {
 		return _2;
 	}

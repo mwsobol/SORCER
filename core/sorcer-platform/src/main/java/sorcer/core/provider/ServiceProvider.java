@@ -1451,7 +1451,6 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		return task;
 	}
 
-	@Override
 	public Exertion service(Mogram exertion) throws RemoteException,
 			ExertionException {
 		return doExertion((Exertion)exertion, null);
@@ -1460,11 +1459,6 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	@Override
 	public Exertion service(Mogram mogram, Transaction txn) throws TransactionException,
 			ExertionException, RemoteException {
-
-
-
-
-
 		if (mogram instanceof Task) {
 			ServiceContext cxt;
 			try {

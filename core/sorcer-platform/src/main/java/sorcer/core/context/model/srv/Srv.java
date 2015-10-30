@@ -108,7 +108,6 @@ public class Srv extends Entry<Object> implements Variability<Object>, Arg,
         return ((SignatureEntry)_2)._2.service(mogram, txn);
     }
 
-    @Override
     public Mogram service(Mogram mogram) throws TransactionException, MogramException, RemoteException {
         return service(mogram, null);
     }

@@ -70,7 +70,7 @@ import static sorcer.eo.operator.*;
  * @author Mike Sobolewski
  */
 @SuppressWarnings("rawtypes")
-public class ServiceShell implements Shell, Service, Exerter, Callable {
+public class ServiceShell implements Shell, Service, Servicer, Exerter, Callable {
 	protected final static Logger logger = LoggerFactory.getLogger(ServiceShell.class);
 	private Service service;
 	private Mogram mogram;
@@ -117,10 +117,6 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 		return exert((Transaction) null, (String) null, entries);
 	}
 
-	/* (non-Javadoc)
-	 * @see sorcer.service.Exerter#exert(sorcer.service.Exertion, sorcer.service.Parameter[])
-	 */
-	@Override
 	public Mogram exert(Mogram xrt, Arg... entries)
 			throws TransactionException, MogramException, RemoteException {
 		try {
@@ -177,12 +173,11 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 	public <T extends Mogram> T service(T mogram, Transaction txn)
 			throws TransactionException, MogramException, RemoteException {
 		if (service != null)
-			return service.service(mogram);
+			return service.service(mogram, txn);
 		else
 			return (T) exert(mogram, txn);
 	}
 
-	@Override
 	public <T extends Mogram> T service(T mogram)
 			throws TransactionException, MogramException, RemoteException {
 		return  service(mogram, null);
@@ -840,7 +835,7 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 	}
 
 	public  <T extends Service> Object exec(T srv, Arg... entries)
-			throws MogramException, TransactionException, RemoteException {
+			throws MogramException, RemoteException {
 		this.service = srv;
 		if (srv instanceof NetletSignature) {
 			try {

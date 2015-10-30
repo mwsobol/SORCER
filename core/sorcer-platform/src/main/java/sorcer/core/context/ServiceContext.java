@@ -1460,8 +1460,12 @@ public class ServiceContext<T> extends ServiceMogram implements
 			val = getValue(path, args);
 			if (val instanceof Context) {
 				subcntxt.append((Context) val);
-			}
-			else {
+			} else if (val instanceof Entry) {
+				Object v = ((Entry)val).value();
+				subcntxt.putValue(path, v);
+				if (path != ((Entry)val).getName())
+					subcntxt.putValue(((Entry)val).getName(), ((Entry)val).value());
+			} else {
 				List<String> inpaths = getInPaths();
 				List<String> outpaths = getOutPaths();
 				if (inpaths.contains(path))
@@ -3051,10 +3055,6 @@ public class ServiceContext<T> extends ServiceMogram implements
 		return (T) exertion.exert(txn);
 	}
 
-	/* (non-Javadoc)
-     * @see sorcer.service.Service#service(sorcer.service.Exertion)
-     */
-	@Override
 	public <T extends Mogram> T service(T mogram) throws TransactionException,
 			MogramException, RemoteException {
 		return (T) service(exertion, null);

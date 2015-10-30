@@ -28,7 +28,6 @@ import static sorcer.eo.operator.result;
 import static sorcer.eo.operator.value;
 import static sorcer.mo.operator.*;
 import static sorcer.po.operator.invoker;
-import static sorcer.po.operator.par;
 
 /**
  * Created by Mike Sobolewski on 4/15/15.
@@ -215,7 +214,7 @@ public class SrvModels {
         // get a scalar response
         responseUp(m, "subtract");
         dependsOn(m, ent("subtract", paths("multiply", "add")));
-		logger.info("response: " + response(m));
+        logger.info("response: " + response(m));
         Context out = response(m);
 
         assertTrue(get(out, "subtract").equals(400.0));
@@ -231,9 +230,7 @@ public class SrvModels {
         assertTrue(response(out, "y1").equals(10.0));
 
         logger.info("model: " + m);
-
     }
-
 
     @Test
     public void exertModelToTaskMogram() throws Exception {
@@ -276,7 +273,6 @@ public class SrvModels {
         assertTrue(value(result, "y3").equals(400.0));
         assertTrue(value(result, "average/response").equals(333.3333333333333));
     }
-
 
     @Test
     public void exertExertionModelMogram() throws Exception {
@@ -334,4 +330,5 @@ public class SrvModels {
         assertTrue(value(result, "y2").equals(5000.0));
         assertTrue(value(result, "y3").equals(4420.0));
     }
+
 }

@@ -597,7 +597,6 @@ public class ServiceSignature implements Signature, SorcerConstants {
 		}
 	}
 
-	@Override
 	public Mogram service(Mogram mogram) throws TransactionException,
 			MogramException, RemoteException {
 		return service(mogram, null);

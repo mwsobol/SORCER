@@ -14,15 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package sorcer.service;
 
-/**
- * Created by Mike Sobolewski on 10/30/15.
- */
-@FunctionalInterface
-public interface ExertionCallable<T> {
+import net.jini.core.transaction.TransactionException;
 
-    Context<T> call(Exertion context);
+import java.rmi.RemoteException;
+import java.util.concurrent.Callable;
 
+public class ExertCallable implements Callable<Exertion> {
+	private Exertion exertion;
+
+	public ExertCallable(Exertion exertion) {
+		this.exertion = exertion;
+	}
+
+	public Exertion call() throws RemoteException, TransactionException,
+			MogramException {
+		if (exertion != null)
+			return exertion.exert();
+
+		return exertion;
+	}
+
+	public Exertion getExertion() {
+		return exertion;
+	}
 }

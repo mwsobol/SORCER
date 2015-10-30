@@ -288,6 +288,14 @@ public class operator {
 		}
 	}
 
+	public static Srv ent(String path, ContextCallable call) {
+		return new Srv(path, call);
+	}
+
+	public static Srv ent(String path, ExertionCallable call) {
+		return new Srv(path, call);
+	}
+
 	public static Srv ent(Signature sig) {
 		return srv(sig);
 	}

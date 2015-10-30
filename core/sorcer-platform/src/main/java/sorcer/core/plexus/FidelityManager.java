@@ -108,7 +108,6 @@ abstract public class FidelityManager implements FidelityManagement<Signature>, 
         return (T) mogram.exert(txn);
     }
 
-    @Override
     public <T extends Mogram> T service(T mogram) throws TransactionException, MogramException, RemoteException {
         return service(mogram, null);
     }

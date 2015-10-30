@@ -1,0 +1,48 @@
+#!/usr/bin/env nsh
+/*
+ * Copyright to the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@Codebase(group='org.sorcer', module='sml', version='${sorcer.version}', classifier='dl')
+@Load(group='org.sorcer', module='sml', version='${sorcer.version}')
+import sorcer.arithmetic.provider.impl.AdderImpl
+import sorcer.arithmetic.provider.impl.MultiplierImpl
+import sorcer.arithmetic.provider.impl.SubtractorImpl
+
+//ContextCallable entFunction = context -> {
+//        Double out = 1000.0;
+//        try {
+//                out = (Double) value(context, "multiply");
+//                out = out + 1000.0;
+//        } catch (ContextException e) {
+//                e.printStackTrace();
+//        }
+//        return ent("out", out);
+//};
+
+Model mo = model(
+        inEnt("multiply/x1", 10.0), inEnt("multiply/x2", 50.0),
+        inEnt("add/x1", 20.0), inEnt("add/x2", 80.0),
+        ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
+                inPaths("multiply/x1", "multiply/x2")))),
+        ent(sig("add", AdderImpl.class, result("add/out",
+                inPaths("add/x1", "add/x2")))),
+        ent(sig("subtract", SubtractorImpl.class, result("subtract/out",
+                inPaths("multiply/out", "add/out")))),
+        response("subtract", "lambda", "out"));
+
+dependsOn(mo, ent("subtract", paths("multiply", "add")));
+
+add(mo, ent("lambda", entFunction));

@@ -9,15 +9,13 @@ import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.impl.*;
 import sorcer.core.context.model.srv.SrvModel;
 import sorcer.core.provider.rendezvous.ServiceJobber;
-import sorcer.service.Block;
-import sorcer.service.Context;
-import sorcer.service.Job;
+import sorcer.service.*;
 import sorcer.service.Strategy.Flow;
-import sorcer.service.Task;
 import sorcer.service.modeling.Model;
 
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
+import static sorcer.co.operator.get;
 import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.loop;
 import static sorcer.eo.operator.result;
@@ -25,7 +23,6 @@ import static sorcer.eo.operator.value;
 import static sorcer.mo.operator.*;
 import static sorcer.mo.operator.result;
 import static sorcer.po.operator.invoker;
-import static sorcer.po.operator.par;
 
 /**
  * Created by Mike Sobolewski on 4/15/15.
@@ -153,7 +150,13 @@ public class Mograms {
 
     @Test
      public void modelWithInnerTask() throws Exception {
-        // get responses from a service model
+
+        // usage of in and out connectors associated with model
+        Task innerTask = task(
+                "task/multiply",
+                sig("multiply", MultiplierImpl.class),
+                context("multiply", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
+                        result("multiply/result")));
 
         Model m = model(
                 inEnt("multiply/x1", 10.0), inEnt("multiply/x2", 50.0),
@@ -169,14 +172,6 @@ public class Mograms {
                 response("task/multiply", "subtract", "out"));
 
         dependsOn(m, ent("subtract", paths("multiply", "add")));
-
-
-        // usage of in and out connectors associated with model
-        Task innerTask = task(
-                "task/multiply",
-                sig("multiply", MultiplierImpl.class),
-                context("multiply", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
-                        result("multiply/result")));
 
         add(m, innerTask);
 
@@ -218,5 +213,43 @@ public class Mograms {
         assertTrue(get(out, "inner/multiply/out").equals(500.0));
         assertTrue(get(out, "subtract").equals(400.0));
         assertTrue(get(out, "out").equals(450.0));
+    }
+
+    @Test
+    public void lambdaEntry() throws Exception {
+
+        Double delta = 0.5;
+
+        ContextCallable entFunction = context -> {
+            Double out = 1000.0;
+            try {
+                out = (Double) value(context, "multiply");
+                out = out + 1000.0 + delta;
+            } catch (ContextException e) {
+                e.printStackTrace();
+            }
+            return ent("out", out);
+        };
+
+        Model mo = model(
+                inEnt("multiply/x1", 10.0), inEnt("multiply/x2", 50.0),
+                inEnt("add/x1", 20.0), inEnt("add/x2", 80.0),
+                ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
+                        inPaths("multiply/x1", "multiply/x2")))),
+                ent(sig("add", AdderImpl.class, result("add/out",
+                        inPaths("add/x1", "add/x2")))),
+                ent(sig("subtract", SubtractorImpl.class, result("subtract/out",
+                        inPaths("multiply/out", "add/out")))),
+                response("subtract", "lambda", "out"));
+
+        dependsOn(mo, ent("subtract", paths("multiply", "add")));
+
+        add(mo, ent("lambda", entFunction));
+
+        Context out = response(mo);
+        logger.info("response: " + out);
+        assertTrue(get(out, "subtract").equals(400.0));
+        assertTrue(get(out, "out").equals(1500.5));
+        assertTrue(get(out, "lambda").equals(1500.5));
     }
 }

@@ -1,6 +1,6 @@
 /*
- * Copyright 2009 the original author or authors.
- * Copyright 2009 SorcerSoft.org.
+ * Copyright 2010 the original author or authors.
+ * Copyright 2010 SorcerSoft.org.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,12 +17,14 @@
 
 package sorcer.service;
 
+import sorcer.core.context.model.ent.Entry;
+
 /**
  * Created by Mike Sobolewski on 10/30/15.
  */
 @FunctionalInterface
-public interface ExertionCallable<T> {
+public interface ContextCallable<T> {
 
-    Context<T> call(Exertion context);
+    Entry<T> call(Context context);
 
 }
