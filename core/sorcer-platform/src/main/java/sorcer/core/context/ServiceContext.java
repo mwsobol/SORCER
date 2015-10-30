@@ -17,6 +17,7 @@
 
 package sorcer.core.context;
 
+import groovy.lang.Closure;
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
 import net.jini.id.UuidFactory;

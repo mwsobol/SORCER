@@ -16,6 +16,7 @@
  */
 package sorcer.co;
 
+import groovy.lang.Closure;
 import sorcer.co.tuple.*;
 import sorcer.core.context.Copier;
 import sorcer.core.context.ListContext;
@@ -286,6 +287,10 @@ public class operator {
 		} else {
 			return new Entry<T>(path, value);
 		}
+	}
+
+	public static Srv ent(String path, Closure call) {
+		return new Srv(path, call);
 	}
 
 	public static Srv ent(String path, ContextCallable call) {
@@ -730,6 +735,20 @@ public class operator {
 		return map;
 	}
 
+	public static Object rasis(Entry entry)
+			throws ContextException {
+		String path = entry.path();
+		Object o = asis(entry);
+		while (o instanceof Entry && ((Entry)o)._1.equals(path)) {
+			o = asis((Entry)o);;
+		}
+		return o;
+	}
+
+	public static Object get(Entry entry) throws ContextException {
+		return rasis(entry);
+	}
+
 	public static Object asis(Entry entry)
 			throws ContextException {
 		if (entry instanceof Par) {
@@ -745,24 +764,23 @@ public class operator {
 	public static <T> T get(Mogram mogram, String path)
 			throws ContextException {
 		if (mogram instanceof Model)
-			return ((ServiceContext<T>)mogram).asis(path);
+			return rasis((ServiceContext<T>)mogram, path);
 		else
 			return ((ServiceContext<T>)((Exertion)mogram).getContext()).getValue(path);
 	}
 
-//	public static <T> T get(Context<T> context, String path)
-//			throws ContextException {
-//		return  context.asis(path);
-//	}
-//
-//	public static <T> T get(Model model, String path)
-//			throws ContextException {
-//		return  ((ServiceContext<T>)model).asis(path);
-//	}
-
 	public static <T> T asis(Context<T> context, String path)
 			throws ContextException {
 		return  context.asis(path);
+	}
+
+	public static <T> T rasis(Context<T> context, String path)
+			throws ContextException {
+		Object o = context.asis(path);
+		if (o instanceof Entry)
+			return (T)rasis((Entry)o);
+		else
+			return (T)o;
 	}
 
 	public static <T> T asis(Model model, String path)

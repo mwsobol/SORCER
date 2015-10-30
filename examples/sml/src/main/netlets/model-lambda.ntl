@@ -21,20 +21,20 @@ import sorcer.arithmetic.provider.impl.AdderImpl
 import sorcer.arithmetic.provider.impl.MultiplierImpl
 import sorcer.arithmetic.provider.impl.SubtractorImpl
 
-//ContextCallable entFunction = context -> {
-//        Double out = 1000.0;
-//        try {
-//                out = (Double) value(context, "multiply");
-//                out = out + 1000.0;
-//        } catch (ContextException e) {
-//                e.printStackTrace();
-//        }
-//        return ent("out", out);
-//};
+def entFunction = { context ->
+        Double out = 1000.0d;
+        try {
+                out = (Double) value(context, "multiply");
+                out = out + 1000.0d;
+        } catch (ContextException e) {
+                e.printStackTrace();
+        }
+        return ent("out", out);
+};
 
 Model mo = model(
-        inEnt("multiply/x1", 10.0), inEnt("multiply/x2", 50.0),
-        inEnt("add/x1", 20.0), inEnt("add/x2", 80.0),
+        inEnt("multiply/x1", 10.0d), inEnt("multiply/x2", 50.0d),
+        inEnt("add/x1", 20.0d), inEnt("add/x2", 80.0d),
         ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
                 inPaths("multiply/x1", "multiply/x2")))),
         ent(sig("add", AdderImpl.class, result("add/out",

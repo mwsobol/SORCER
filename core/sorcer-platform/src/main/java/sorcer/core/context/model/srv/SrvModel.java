@@ -17,6 +17,7 @@
 
 package sorcer.core.context.model.srv;
 
+import groovy.lang.Closure;
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
 import sorcer.co.tuple.MogramEntry;
@@ -202,6 +203,13 @@ public class SrvModel extends ParModel<Object> implements Model {
                     return evalMogram((MogramEntry)val2, path, entries);
                 } else if (val2 instanceof ContextCallable) {
                     Entry entry = ((ContextCallable)val2).call(this);
+                    ((Srv) get(path)).setSrvValue(entry.value());
+                    putValue(path, entry.value());
+                    if (path != entry.getName())
+                        putValue(entry.getName(), entry.value());
+                    return entry;
+                } else if (val2 instanceof Closure) {
+                    Entry entry = (Entry) ((Closure)val2).call(this);
                     ((Srv) get(path)).setSrvValue(entry.value());
                     putValue(path, entry.value());
                     if (path != entry.getName())

@@ -25,6 +25,6 @@ import sorcer.core.context.model.ent.Entry;
 @FunctionalInterface
 public interface ContextCallable<T> {
 
-    Entry<T> call(Context context);
+    Entry<T> call(Context context) throws MogramException;
 
 }

@@ -1994,7 +1994,7 @@ public class operator {
 		} catch (Exception e) {
 			throw new ExertionException(e);
 		}
-		throw new ExertionException("Unknown type of mogram");
+		throw new ExertionException("Unknown type of mogram: " + mogram.getClass().getName());
 	}
 
 	public static <T extends Exertion> T exec(Exerter exerter, Exertion input,

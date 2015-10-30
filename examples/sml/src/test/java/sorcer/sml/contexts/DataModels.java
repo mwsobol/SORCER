@@ -45,7 +45,6 @@ public class DataModels {
 
         // aliasing with an reactive value entry - rvEnt
         put(cxt, rvEnt("arg/x1", value(cxt, "arg/x5")));
-        assertNotEquals(get(cxt, "arg/x1"), 1.5);
         assertTrue(value(cxt, "arg/x1").equals(1.5));
 
         Context<Double> subcxt = context(cxt, list("arg/x4", "arg/x5"));
