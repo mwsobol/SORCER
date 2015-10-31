@@ -171,6 +171,7 @@ public class  LocalBlockExertions implements SorcerConstants {
 
 	}
 
+
 	@Test
 	public void altBlockTest() throws Exception {
 		Task t3 = task("t3", sig("subtract", SubtractorImpl.class),
