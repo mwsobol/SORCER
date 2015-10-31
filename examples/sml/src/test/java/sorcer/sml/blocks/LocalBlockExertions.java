@@ -204,7 +204,7 @@ public class  LocalBlockExertions implements SorcerConstants {
 //		logger.info("result: " + value(context(result), "block/result"));
 		assertEquals(value(context(result), "block/result"), 400.00);
 
-//		TODO state after execution if we wanat to reuse the block for another execution
+//		TODO the state after execution changes to reuse the block for another execution?
 // 		problem with clearScope() that is commented due to conflict with
 // 		return value path when being as input path
 //		result = exert(block, ent("block/t5/arg/x1", 200.0), ent("block/t5/arg/x2", 800.0));
