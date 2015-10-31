@@ -24,6 +24,7 @@ import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.par.Par;
 import sorcer.core.context.model.srv.Srv;
+import sorcer.core.invoker.ServiceInvoker;
 import sorcer.core.plexus.MultiFidelity;
 import sorcer.core.provider.DatabaseStorer;
 import sorcer.core.signature.NetletSignature;
@@ -299,6 +300,14 @@ public class operator {
 
 	public static Srv ent(String path, ExertionCallable call) {
 		return new Srv(path, call);
+	}
+
+	public static Srv ent(ServiceInvoker invoker) {
+		return new Srv(invoker.getName(), invoker);
+	}
+
+	public static Srv ent(String path, Invocation invoker) {
+		return new Srv(path, invoker);
 	}
 
 	public static Srv ent(Signature sig) {

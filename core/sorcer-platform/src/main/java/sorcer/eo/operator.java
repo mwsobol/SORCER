@@ -465,12 +465,16 @@ public class operator {
 		for (int i = 0; i < entryList.size(); i++) {
 			Tuple2 t = entryList.get(i);
 			if (t instanceof Srv) {
-//				try {
-//					if (t.getValue() == Context.none && !t.getName().equals(t.path()))
-//                        t.setValue(pcxt);
-//				} catch (RemoteException e) {
-//					throw new ContextException(e);
-//				}
+				try {
+					if (t.asis() instanceof Scopable) {
+						if (((Scopable) t.value()).getScope() != null)
+							((Scopable) t.value()).getScope().setScope(pcxt);
+						else
+							((Scopable) t.value()).setScope(pcxt);
+					}
+				} catch (RemoteException e) {
+					throw new ContextException(e);
+				}
 				pcxt.putInoutValueAt(t.path(), t, i + 1);
 			} else if (t instanceof InputEntry) {
 				Object par = t.value();

@@ -111,16 +111,24 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 		invokeContext = new ParModel("model/par");
 	}
 
-	public ServiceInvoker(ContextCallable lambda) {
+	public ServiceInvoker(ContextCallable lambda) throws InvocationException {
 		this(null, lambda, null);
 	}
 
-	public ServiceInvoker(String name, ContextCallable lambda, Context context) {
+	public ServiceInvoker(String name, ContextCallable lambda, Context context) throws InvocationException {
 		this.name = name;
-		invokeContext = new ParModel("model/par");
-		if (context != null)
-			invokeContext.setScope(context);
-
+		if (context == null)
+			invokeContext = new ParModel("model/par");
+		else {
+			if (context instanceof ParModel)
+				invokeContext = (ParModel)context;
+			else
+				try {
+					invokeContext = new ParModel(context);
+				} catch (Exception e) {
+					throw new InvocationException("Failed to create invoker!", e);
+				}
+		}
 		this.lambda = lambda;
 	}
 
@@ -352,18 +360,18 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 	
 	private Object invokeEvaluator(Arg... entries)
 			throws InvocationException {
-		init(pars);
 		try {
+			init(pars);
 			if (lambda != null) {
 				return lambda.call(invokeContext);
 			} else if (evaluator != null) {
 				evaluator.addArgs(pars);
-				return invokeEvaluator(entries);
+				return evaluator.getValue(entries);
 			}
 		} catch (Exception e) {
 			throw new InvocationException(e);
 		}
-		return null;
+		throw new InvocationException("No evaluator available!");
 	}
 	
 	private void init(ArgSet set){

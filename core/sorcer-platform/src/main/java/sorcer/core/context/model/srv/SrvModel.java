@@ -24,6 +24,7 @@ import sorcer.co.tuple.MogramEntry;
 import sorcer.co.tuple.SignatureEntry;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.par.ParModel;
+import sorcer.core.invoker.ServiceInvoker;
 import sorcer.core.plexus.MultiFidelity;
 import sorcer.core.provider.rendezvous.ServiceModeler;
 import sorcer.core.signature.ServiceSignature;
@@ -215,6 +216,10 @@ public class SrvModel extends ParModel<Object> implements Model {
                     if (path != entry.getName())
                         putValue(entry.getName(), entry.value());
                     return entry;
+                } else if (val2 instanceof ServiceInvoker) {
+                    val =  ((ServiceInvoker)val2).invoke(entries);
+                    ((Srv) get(path)).setSrvValue(val);
+                    return val;
                 } else {
                     if (val2 == Context.none) {
                         return getValue(((Srv) val).getName());

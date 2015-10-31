@@ -345,19 +345,23 @@ public class operator {
 		return new ServiceInvoker(evaluator, parEntries);
 	}
 
-	public static ServiceInvoker invoker(ContextCallable condition) {
+	public static ServiceInvoker invoker(ContextCallable condition) throws InvocationException {
 		return new ServiceInvoker(null, condition, null);
 	}
 
-	public static ServiceInvoker invoker(String name, ContextCallable condition) {
+	public static ServiceInvoker invoker(ContextCallable condition, Context scope) throws InvocationException {
+		try {
+			return new ServiceInvoker(null, condition, scope);
+		} catch (Exception e) {
+			throw new InvocationException("Failed to create invoker!", e);
+		}
+	}
+
+	public static ServiceInvoker invoker(String name, ContextCallable condition) throws InvocationException {
 		return new ServiceInvoker(name, condition, null);
 	}
 
-	public static ServiceInvoker invoker(ContextCallable condition, Context scope) {
-		return new ServiceInvoker(null, condition, scope);
-	}
-
-	public static ServiceInvoker invoker(String name, ContextCallable condition, Context scope) {
+	public static ServiceInvoker invoker(String name, ContextCallable condition, Context scope) throws InvocationException {
 		return new ServiceInvoker(name, condition, scope);
 	}
 

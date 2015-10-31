@@ -12,13 +12,13 @@ import sorcer.arithmetic.provider.impl.AveragerImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.provider.impl.SubtractorImpl;
 import sorcer.core.provider.rendezvous.ServiceJobber;
-import sorcer.service.Block;
-import sorcer.service.Context;
-import sorcer.service.Job;
+import sorcer.service.*;
 import sorcer.service.Strategy.Flow;
-import sorcer.service.Task;
 import sorcer.service.modeling.Model;
 
+import java.rmi.RemoteException;
+
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
 import static sorcer.co.operator.asis;
@@ -38,6 +38,37 @@ import static sorcer.po.operator.invoker;
 public class SrvModels {
 
     private final static Logger logger = LoggerFactory.getLogger(SrvModels.class);
+
+    @Test
+    public void lambdaInvoker() throws RemoteException, ContextException,
+            SignatureException, ExertionException {
+
+        Model mo = model(ent("x", 10.0), ent("y", 20.0),
+                ent(invoker("lambda", cxt -> (double) value(cxt, "x")
+                        + (double) value(cxt, "y")
+                        + 30)));
+        logger.info("invoke value: " + value(mo, "lambda"));
+        assertEquals(value(mo, "lambda"), 60.0);
+    }
+
+    @Test
+    public void lambdaInvokerWithScopel() throws RemoteException, ContextException,
+            SignatureException, ExertionException {
+
+
+        Context scope = context(ent("x1", 20.0), ent("y1", 40.0));
+
+        Model mo = model(ent("x", 10.0), ent("y", 20.0),
+                ent(invoker("lambda", (cxt) -> {
+                            return (double) value(cxt, "x")
+                                    + (double) value(cxt, "y")
+                                    + (double) value(cxt, "y1")
+                                    + 30;
+                        },
+                        scope)));
+        logger.info("invoke value: " + value(mo, "lambda"));
+        assertEquals(value(mo, "lambda"), 100.0);
+    }
 
     @Test
     public void evalauteLocalAddereModel() throws Exception {

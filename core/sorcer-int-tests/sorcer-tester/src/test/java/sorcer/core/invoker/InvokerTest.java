@@ -16,6 +16,7 @@ import sorcer.core.context.model.par.Par;
 import sorcer.core.context.model.par.ParModel;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.service.*;
+import sorcer.service.modeling.Model;
 import sorcer.util.Sorcer;
 import sorcer.util.exec.ExecUtils.CmdResult;
 
@@ -90,7 +91,7 @@ public class InvokerTest {
 	public void lambdaInvoker() throws RemoteException, ContextException,
 			SignatureException, ExertionException {
 		Invocation invoker = invoker("lambda",
-				cxt -> (double)value(cxt, "x") + (double)value(cxt, "y") + 30,
+				cxt ->  (double) value(cxt, "x") + (double) value(cxt, "y") + 30,
 				context(ent("x", 10.0), ent("y", 20.0)));
 		logger.info("invoke value: " + invoke(invoker));
 		assertEquals(invoke(invoker), 60.0);
@@ -131,6 +132,37 @@ public class InvokerTest {
 		assertEquals(invoke(pm, "lambda"), 60.0);
 		logger.info("get value: " + value(pm, "lambda"));
 		assertEquals(value(pm, "lambda"), 60.0);
+	}
+
+	@Test
+	public void lambdaInvokerTest2() throws RemoteException, ContextException,
+			SignatureException, ExertionException {
+
+		Model mo = model(ent("x", 10.0), ent("y", 20.0),
+				ent(invoker("lambda", cxt -> (double) value(cxt, "x")
+									+ (double) value(cxt, "y")
+									+ 30)));
+		logger.info("invoke value: " + value(mo, "lambda"));
+		assertEquals(value(mo, "lambda"), 60.0);
+	}
+
+	@Test
+	public void lambdaInvokerTest3() throws RemoteException, ContextException,
+			SignatureException, ExertionException {
+
+
+		Context scope = context(ent("x1", 20.0), ent("y1", 40.0));
+
+		Model mo = model(ent("x", 10.0), ent("y", 20.0),
+			ent(invoker("lambda", (cxt) -> {
+						return (double) value(cxt, "x")
+								+ (double) value(cxt, "y")
+								+ (double) value(cxt, "y1")
+								+ 30;
+					},
+				scope)));
+		logger.info("invoke value: " + value(mo, "lambda"));
+		assertEquals(value(mo, "lambda"), 100.0);
 	}
 
 	@Test
