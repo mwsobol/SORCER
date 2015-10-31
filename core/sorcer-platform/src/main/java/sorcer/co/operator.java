@@ -293,7 +293,7 @@ public class operator {
 		return new Srv(path, call);
 	}
 
-	public static Srv ent(String path, ContextCallable call) {
+	public static Srv ent(String path, ContextEntry call) {
 		return new Srv(path, call);
 	}
 

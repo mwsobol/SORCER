@@ -301,7 +301,7 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
     }
 
     @Override
-    public void setScope(Context scope) throws ContextException {
+    public void setScope(Context scope) {
         this.scope = scope;
     }
 

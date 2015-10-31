@@ -16,12 +16,11 @@
  */
 
 package sorcer.service;
-
 import java.io.Serializable;
 
 /**
  * Created by Mike Sobolewski on 10/30/15.
- * */
+ */
 @FunctionalInterface
  public interface ContextCondition extends Serializable {
 

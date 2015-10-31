@@ -65,7 +65,7 @@ public class InvokerTest {
 		z = par("z", invoker("x - y", x, y));
 
 	}
-	
+
 	// member subclass of Invocable with Context parameter used below with
 	// contextMethodAttachmentWithArgs()
 	// there are constructor's context and invoke metod's context as parameters
@@ -85,6 +85,16 @@ public class InvokerTest {
 			return value(x) + value(y) + (double) value(pm, "z");
 		}
 	};
+
+	@Test
+	public void lambdaInvoker() throws RemoteException, ContextException,
+			SignatureException, ExertionException {
+		Invocation invoker = invoker("lambda",
+				cxt -> (double)value(cxt, "x") + (double)value(cxt, "y") + 30,
+				context(ent("x", 10.0), ent("y", 20.0)));
+		logger.info("invoke value: " + invoke(invoker));
+		assertEquals(invoke(invoker), 60.0);
+	}
 
 	@Test
 	public void methodInvokerTest() throws RemoteException, ContextException {
@@ -112,14 +122,14 @@ public class InvokerTest {
 	}
 
 	@Test
-	public void lambfaInvokerTest() throws RemoteException, ContextException,
+	public void lambdaInvokerTest() throws RemoteException, ContextException,
 			SignatureException, ExertionException {
-		ParModel pm = parModel("par-model");
+		ParModel pm = parModel("model");
 		add(pm, par("x", 10.0), par("y", 20.0));
-		add(pm, invoker("lambda", cxt -> value(cxt, "x") + value(cxt, "y") + 30));
+		add(pm, invoker("lambda", cxt -> (double)value(cxt, "x") + (double)value(cxt, "y") + 30));
 		logger.info("invoke value: " + invoke(pm, "lambda"));
 		assertEquals(invoke(pm, "lambda"), 60.0);
-		logger.info("get value: " + value(pm, "expr"));
+		logger.info("get value: " + value(pm, "lambda"));
 		assertEquals(value(pm, "lambda"), 60.0);
 	}
 

@@ -221,7 +221,7 @@ public class Mograms {
 
         Double delta = 0.5;
 
-        ContextCallable entFunction = context -> {
+        ContextEntry entFunction = context -> {
             Double out = 1000.0;
             try {
                 out = (Double) value(context, "multiply");
@@ -257,7 +257,7 @@ public class Mograms {
     @Test
     public void lambdaEvaluationOfReplacement() throws Exception {
 
-        ContextCallable callTask = context -> {
+        ContextEntry callTask = context -> {
             Context out = null;
             Double value = null;
             try {

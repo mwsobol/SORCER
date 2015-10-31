@@ -90,7 +90,7 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 		
 	protected ParModel invokeContext;
 
-	protected ContextCondition lambda;
+	protected ContextCallable lambda;
 
 	// set of dependent variables for this evaluator
 	protected ArgSet pars = new ArgSet();
@@ -111,16 +111,16 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 		invokeContext = new ParModel("model/par");
 	}
 
-	public ServiceInvoker(ContextCondition lambda) {
+	public ServiceInvoker(ContextCallable lambda) {
 		this(null, lambda, null);
 	}
 
-	public ServiceInvoker(String name, ContextCondition lambda, ParModel context) {
+	public ServiceInvoker(String name, ContextCallable lambda, Context context) {
 		this.name = name;
-		if (context == null)
-			invokeContext = new ParModel("model/par");
-		else
-			invokeContext = context;
+		invokeContext = new ParModel("model/par");
+		if (context != null)
+			invokeContext.setScope(context);
+
 		this.lambda = lambda;
 	}
 
@@ -194,7 +194,7 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 	 */
 	@Override
 	public T getValue(Arg... entries) throws EvaluationException, RemoteException {
-			if (evaluator != null)
+			if (lambda != null || evaluator != null)
 				return (T) invokeEvaluator(entries);
 			else
 				throw new EvaluationException("Evaluation#getValue() not implemented by: " + this.getClass().getName());
@@ -335,7 +335,9 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 			if (valueIsValid)
 				return value;
 			else {
-				if (evaluator != null)
+				if (lambda != null) {
+					   value = (T) lambda.call(invokeContext);
+				} else if (evaluator != null)
 					value = (T) invokeEvaluator(entries);
 				else
 					value = getValue(entries);
@@ -352,11 +354,16 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 			throws InvocationException {
 		init(pars);
 		try {
-			evaluator.addArgs(pars);
-			return evaluator.getValue(entries);
+			if (lambda != null) {
+				return lambda.call(invokeContext);
+			} else if (evaluator != null) {
+				evaluator.addArgs(pars);
+				return invokeEvaluator(entries);
+			}
 		} catch (Exception e) {
 			throw new InvocationException(e);
 		}
+		return null;
 	}
 	
 	private void init(ArgSet set){
@@ -531,11 +538,11 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 		return this;
 	}
 
-	public ContextCondition getLambda() {
+	public ContextCallable getLambda() {
 		return lambda;
 	}
 
-	public void setLambda(ContextCondition lambda) {
+	public void setLambda(ContextCallable lambda) {
 		this.lambda = lambda;
 	}
 

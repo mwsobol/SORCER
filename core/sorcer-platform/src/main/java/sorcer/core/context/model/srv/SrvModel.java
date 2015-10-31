@@ -201,8 +201,8 @@ public class SrvModel extends ParModel<Object> implements Model {
                     return out;
                 } else if (val2 instanceof MogramEntry) {
                     return evalMogram((MogramEntry)val2, path, entries);
-                } else if (val2 instanceof ContextCallable) {
-                    Entry entry = ((ContextCallable)val2).call(this);
+                } else if (val2 instanceof ContextEntry) {
+                    Entry entry = ((ContextEntry)val2).call(this);
                     ((Srv) get(path)).setSrvValue(entry.value());
                     putValue(path, entry.value());
                     if (path != entry.getName())

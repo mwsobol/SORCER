@@ -294,10 +294,15 @@ public class operator {
 				else
 					return invoker.invoke(parModel, parameters);
 			} else if (obj instanceof Invocation) {
+				Object out;
 				if (scope != null)
-					return ((Invocation) obj).invoke(scope, parameters);
+					out = ((Invocation) obj).invoke(scope, parameters);
 				else
-					return ((Invocation) obj).invoke(null, parameters);
+					out = ((Invocation) obj).invoke(null, parameters);
+//				if (parModel.getScope() == null)
+//					parModel.setScope(new ServiceContext());
+//				parModel.getScope().putValue(parname, out);
+				return out;
 			} else if (obj instanceof Agent) {
 				return ((Agent)obj).getValue(parameters);
 			}
@@ -340,8 +345,20 @@ public class operator {
 		return new ServiceInvoker(evaluator, parEntries);
 	}
 
-	public static ServiceInvoker invoker(String name, ContextCondition condition) {
+	public static ServiceInvoker invoker(ContextCallable condition) {
+		return new ServiceInvoker(null, condition, null);
+	}
+
+	public static ServiceInvoker invoker(String name, ContextCallable condition) {
 		return new ServiceInvoker(name, condition, null);
+	}
+
+	public static ServiceInvoker invoker(ContextCallable condition, Context scope) {
+		return new ServiceInvoker(null, condition, scope);
+	}
+
+	public static ServiceInvoker invoker(String name, ContextCallable condition, Context scope) {
+		return new ServiceInvoker(name, condition, scope);
 	}
 
 	public static ServiceInvoker invoker(String name, String expression, Arg... pars) {
