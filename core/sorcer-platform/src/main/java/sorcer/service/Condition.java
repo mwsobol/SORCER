@@ -49,101 +49,119 @@ import java.util.Map;
  public class Condition implements Evaluation<Object>, Conditional, Serializable {
 
 	final static public String _closure_ = "_closure_";
-	
+
 	private static final long serialVersionUID = -7310117070480410642L;
-	 
+
 	protected final static Logger logger = LoggerFactory.getLogger(Condition.class
 			.getName());
 
-	
+
 	public static String CONDITION_VALUE = "condition/value";
 	public static String CONDITION_TARGET = "condition/target";
-	
+
 	protected Context<?> conditionalContext;
 
 	protected String evaluationPath;
-	
+
 	protected String closureExpression;
 
-	private Closure closure;
-	
+	transient protected ContextCondition lambda;
+
+	transient private Closure closure;
+
 	protected String[] pars;
 
 	private Boolean status = null;
-	
+
 	public Condition() {
 		// do nothing
 	}
-	
+
+	public Condition(ContextCondition lambda) {
+		this.lambda = lambda;
+	}
+
+	public Condition(Closure closure) {
+		this.closure = closure;
+	}
+
 	public Condition(Boolean status) {
 		this.status = status;
 	}
-	
+
 	public Condition(Context<?> context) {
 		conditionalContext = context;
 	}
-	
+
 	public Condition(Context<?> context, String parPath) {
 		evaluationPath = parPath;
 		conditionalContext = context;
 	}
-	
+
 	public Condition(String closure, String... parameters) {
 		this.closureExpression = closure;
 		this.pars = parameters;
 	}
-	
+
 	public Condition(Context<?> context, String closure, String... parameters) {
 		this.closureExpression = closure;
 		conditionalContext = context;
 		this.pars = parameters;
 	}
-	
+
+	public Condition(ContextCondition closure, String... parameters) {
+		this.lambda = closure;
+		this.pars = parameters;
+	}
+
+	public Condition(Context<?> context, ContextCondition closure, String... parameters) {
+		this.lambda = closure;
+		conditionalContext = context;
+		this.pars = parameters;
+	}
+
 	/**
 	 * The isTrue method is responsible for evaluating the underlying contextual
 	 * condition.
-	 * 
+	 *
 	 * @return boolean true or false depending on given contexts
-	 * @throws ExertionException
-	 *             if there is any problem within the isTrue method.
+	 * @throws ExertionException if there is any problem within the isTrue method.
 	 * @throws ContextException
 	 */
 	synchronized public boolean isTrue() throws ContextException {
 		// always constant true or false condition		
 		if (status instanceof Boolean)
 			return status;
-	
+
 		Object obj = null;
 		Object[] args = null;
-		if (closure != null) {
-			args = new Object[pars.length];
-			for (int i = 0; i < pars.length; i++) {
-				args[i] = conditionalContext.getValue(pars[i]);
-				if (args[i] instanceof Evaluation)
-					try {
-						args[i] = ((Evaluation)args[i]).getValue();
-					} catch (RemoteException e) {
-						throw new ContextException(e);
-					}
+		if (lambda != null) {
+			try {
+				return evaluateLambda(lambda);
+			} catch (MogramException e) {
+				throw new ContextException(e);
 			}
-			obj = closure.call(args);
+		} else if (closure != null) {
+			// old verion for textual closure
+//				obj = evaluateTextualClosure(closure);
+			return (Boolean)closure.call(conditionalContext);
 		} else if (evaluationPath != null && conditionalContext != null) {
 			obj = conditionalContext.getValue(evaluationPath);
-		} else if (closureExpression !=  null && conditionalContext != null) {
+		} else if (closureExpression != null && conditionalContext != null) {
 			ArgSet ps = new ArgSet();
 			for (String name : pars) {
 				ps.add(new Par(name));
-			}			
+			}
 			ServiceInvoker invoker = new GroovyInvoker(closureExpression, ps.toArray());
 			invoker.setScope(conditionalContext);
 			conditionalContext.putValue(_closure_, invoker);
-			closure = (Closure)conditionalContext.getValue(_closure_);
+			closure = (Closure) conditionalContext.getValue(_closure_);
 			args = new Object[pars.length];
 			for (int i = 0; i < pars.length; i++) {
 				try {
-					args[i] = ((ServiceContext)conditionalContext).getValueEndsWith(pars[i]);
+					args[i] = ((ServiceContext) conditionalContext).getValueEndsWith(pars[i]);
 					if (args[i] instanceof Evaluation)
-						args[i] = ((Evaluation)args[i]).getValue();
+						args[i] = ((Evaluation) args[i]).getValue();
 				} catch (RemoteException e) {
 					throw new ContextException(e);
 				}
@@ -151,11 +169,31 @@ import java.util.Map;
 			obj = closure.call(args);
 		}
 		if (obj instanceof Boolean)
-			return (Boolean)obj;
+			return (Boolean) obj;
 		else if (obj != null)
 			return true;
-		else 
+		else
 			return false;
+	}
+
+	private boolean evaluateLambda(ContextCondition lambda) throws MogramException {
+		return lambda.call(conditionalContext);
+	}
+
+	private Object evaluateTextualClosure(Closure closure) throws ContextException {
+		Object obj = null;
+		Object[] args = null;
+		args = new Object[pars.length];
+		for (int i = 0; i < pars.length; i++) {
+			args[i] = conditionalContext.getValue(pars[i]);
+			if (args[i] instanceof Evaluation)
+				try {
+					args[i] = ((Evaluation) args[i]).getValue();
+				} catch (RemoteException e) {
+					throw new ContextException(e);
+				}
+		}
+		return closure.call(args);
 	}
 
 	/* (non-Javadoc)
@@ -200,6 +238,14 @@ import java.util.Map;
 
 	public void setClosure(Closure closure) {
 		this.closure = closure;
+	}
+
+	public ContextCondition getLambda() {
+		return lambda;
+	}
+
+	public void setLambda(ContextCondition lambda) {
+		this.lambda = lambda;
 	}
 
 	public Context<?> getConditionalContext() {

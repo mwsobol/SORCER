@@ -108,7 +108,7 @@ public class ParModels {
 
 		logger.info("model: " + model);
 
-		value(model, "j1", ent("x1", 10.0), ent("x2", 50.0)).equals(400.0);
+//		value(model, "j1", ent("x1", 10.0), ent("x2", 50.0)).equals(400.0);
 
 		assertTrue(value(model, "j1", ent("x1", 10.0), ent("x2", 50.0)).equals(400.0));
 
@@ -498,7 +498,7 @@ public class ParModels {
 		pm.putValue("y", 20.0);
 
 		Condition flag = new Condition(pm,
-				"{ x, y -> x > y }", "x", "y");
+				cxt -> (double)value(cxt, "x") > (double)value(cxt, "y") );
 
 		assertTrue(pm.getValue("x").equals(10.0));
 		assertTrue(pm.getValue("y").equals(20.0));

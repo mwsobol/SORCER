@@ -1,0 +1,40 @@
+#!/usr/bin/env nsh
+
+/*
+ * Copyright to the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
+@Codebase(group='org.sorcer', module='sml', version='${sorcer.version}', classifier='dl')
+@Load(group='org.sorcer', module='sml', version='${sorcer.version}')
+import sorcer.arithmetic.provider.impl.AdderImpl
+import sorcer.arithmetic.provider.impl.IncrementerImpl
+
+IncrementerImpl incrementer = new IncrementerImpl(100.0d);
+
+Model model = model(
+        inEnt("by", 10.0d), inEnt("out", 0.0d),
+        ent(sig("increment", incrementer, result("out", inPaths("by")))),
+        ent("multiply", invoker("add * out", ents("add", "out"))));
+
+
+responseUp(model, "increment", "out", "multiply");
+
+block(
+        context(inEnt("offDesignCasesTemplate", "URL")),
+        task(sig("add", AdderImpl.class),
+                context(inEnt("arg/x1", 20.0d), inEnt("arg/x2", 80.0d), result("add"))),
+        loop(condition({ context -> return ((Double)get(context, "out")) < 1000.0d }),
+                model));

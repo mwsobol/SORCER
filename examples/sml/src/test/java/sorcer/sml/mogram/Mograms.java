@@ -7,20 +7,18 @@ import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.impl.*;
-import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.srv.SrvModel;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.service.*;
 import sorcer.service.Strategy.Flow;
 import sorcer.service.modeling.Model;
 
-import java.util.zip.DeflaterOutputStream;
-
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
 import static sorcer.co.operator.get;
 import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.loop;
+import static sorcer.eo.operator.put;
 import static sorcer.eo.operator.result;
 import static sorcer.eo.operator.value;
 import static sorcer.mo.operator.*;
@@ -122,7 +120,7 @@ public class Mograms {
         IncrementerImpl incrementer = new IncrementerImpl(100.0);
 
         Model model = model(
-                inEnt("by", 10.0),
+                inEnt("by", 10.0), inEnt("out", 0.0),
                 ent(sig("increment", incrementer, result("out", inPaths("by")))),
                 ent("multiply", invoker("add * out", ents("add", "out"))));
 
@@ -136,7 +134,7 @@ public class Mograms {
                 context(inEnt("offDesignCasesTemplate", "URL")),
                 task(sig("add", AdderImpl.class),
                         context(inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0), result("add"))),
-                loop(condition("{ out -> out < 1000 }", "out"),
+                loop(condition(context -> { return ((Double)get(context, "out")) < 1000.0; }),
                         model));
 
         looping = exert(looping);

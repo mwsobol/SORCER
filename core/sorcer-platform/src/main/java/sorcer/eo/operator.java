@@ -16,6 +16,7 @@
  */
 package sorcer.eo;
 
+import groovy.lang.Closure;
 import net.jini.core.lookup.ServiceItem;
 import net.jini.core.lookup.ServiceTemplate;
 import net.jini.core.transaction.Transaction;
@@ -66,7 +67,6 @@ import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.*;
 
-import static sorcer.co.operator.ent;
 import static sorcer.co.operator.srv;
 import static sorcer.mo.operator.entModel;
 import static sorcer.mo.operator.srvModel;
@@ -2472,6 +2472,14 @@ public class operator {
 	public static Condition condition(ParModel parcontext, String expression,
 									  String... pars) {
 		return new Condition(parcontext, expression, pars);
+	}
+
+	public static Condition condition(Closure condition) {
+		return new Condition(condition);
+	}
+
+	public static Condition condition(ContextCondition condition) {
+		return new Condition(condition);
 	}
 
 	public static Condition condition(String expression,

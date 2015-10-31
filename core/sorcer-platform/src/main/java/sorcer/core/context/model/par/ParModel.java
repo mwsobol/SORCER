@@ -131,7 +131,11 @@ public class ParModel<T> extends EntModel<T> implements Invocation<T>, Mappable<
 					return (T) getResponse();
 			} else {
 				if (val == null && scope != null && scope != this) {
-					return (T) scope.getValue(path);
+					Object o = (T) scope.getValue(path);
+					if (o != Context.none && o != null)
+						return (T) o;
+					else
+						return (T) scope.getSoftValue(path);
 				} else {
 					return (T) val;
 				}

@@ -195,8 +195,8 @@ public class  LocalBlockExertions implements SorcerConstants {
 		Block block = block("block",
 				t4,
 				t5,
-				alt(opt(condition("{ t4, t5 -> t4 > t5 }", "t4", "t5"), t3),
-						opt(condition("{ t4, t5 -> t4 <= t5 }", "t4", "t5"), t6)));
+				alt(opt(condition(cxt -> (double)value(cxt, "t4") > (double)value(cxt, "t5")), t3),
+						opt(condition(cxt -> (double)value(cxt, "t4") <= (double)value(cxt, "t5")), t6)));
 
 //		logger.info("block: " + block);
 //		logger.info("exertions: " + exertions(block));
@@ -234,8 +234,8 @@ public class  LocalBlockExertions implements SorcerConstants {
 		block = block("block",
 				t4,
 				t5,
-				alt(opt(condition("{ t4, t5 -> t4 > t5 }", "t4", "t5"), t3),
-						opt(condition("{ t4, t5 -> t4 <= t5 }", "t4", "t5"), t6)));
+				alt(opt(condition(cxt -> (double)value(cxt, "t4") > (double)value(cxt, "t5")), t3),
+						opt(condition(cxt -> (double)value(cxt, "t4") <= (double)value(cxt, "t5")), t6)));
 		result = exert(block, ent("block/t5/arg/x1", 200.0), ent("block/t5/arg/x2", 800.0));
 		assertEquals(value(context(result), "block/result"), 750.00);
 	}
@@ -253,7 +253,7 @@ public class  LocalBlockExertions implements SorcerConstants {
 
 		Block block = block("block",
 				t4,
-				opt(condition("{ out -> out > 600 }", "out"), t5));
+				opt(condition(cxt -> (double)value(cxt, "out") > 600.0), t5));
 
 		block = exert(block);
 //		logger.info("block context: " + context(block));
@@ -272,7 +272,8 @@ public class  LocalBlockExertions implements SorcerConstants {
 	public void loopBlockTest() throws Exception {
 		Block block = block("block",
 				context(ent("x1", 10.0), ent("x2", 20.0), ent("z", 100.0)),
-				loop(condition("{ x1, x2, z -> x1 + x2 < z }", "x1", "x2", "z"),
+				loop(condition(cxt -> (double)value(cxt, "x1") + (double)value(cxt, "x2")
+								< (double)value(cxt, "z")),
 						task(par("x1", invoker("x1 + 3", pars("x1"))))));
 
 		block = exert(block);
@@ -296,8 +297,8 @@ public class  LocalBlockExertions implements SorcerConstants {
 		Block block = block("block", sig("execute", ServiceConcatenator.class),
 				context(inEnt("x1", 4), inEnt("x2", 5)),
 				task(par("y", invoker("x1 * x2", pars("x1", "x2")))),
-				alt(opt(condition("{ y -> y > 50 }", "y"), t4),
-						opt(condition("{ y -> y <= 50 }", "y"), t5)));
+				alt(opt(condition(cxt -> (int)value(cxt, "y") > 50), t4),
+						opt(condition(cxt -> (int)value(cxt, "y") <= 50 ), t5)));
 
 		logger.info("block: " + block);
 		logger.info("exertions: " + exertions(block));

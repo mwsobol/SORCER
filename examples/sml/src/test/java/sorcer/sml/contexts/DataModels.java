@@ -9,7 +9,6 @@ import org.sorcer.test.SorcerTestRunner;
 import sorcer.core.context.ListContext;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.service.Context;
-import sorcer.service.modeling.Model;
 
 import java.net.URL;
 import java.util.List;
@@ -17,11 +16,15 @@ import java.util.List;
 import static org.junit.Assert.*;
 import static sorcer.co.operator.asis;
 import static sorcer.co.operator.*;
+import static sorcer.co.operator.get;
 import static sorcer.co.operator.path;
-import static sorcer.mo.operator.*;
 import static sorcer.eo.operator.*;
+import static sorcer.eo.operator.get;
 import static sorcer.eo.operator.put;
 import static sorcer.eo.operator.value;
+import static sorcer.mo.operator.*;
+import static sorcer.mo.operator.inputs;
+import static sorcer.mo.operator.returnPath;
 /**
  * @author Mike Sobolewski
  */

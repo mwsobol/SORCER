@@ -17,7 +17,6 @@
 
 package sorcer.core.context;
 
-import groovy.lang.Closure;
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
 import net.jini.id.UuidFactory;
@@ -440,7 +439,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 
 	@Override
 	public T getSoftValue(String path) throws ContextException {
-		T val = getValue(path);
+		T val = get(path);
 		if (val == null) {
 			try {
 				int index = path.lastIndexOf(SorcerConstants.CPS);
