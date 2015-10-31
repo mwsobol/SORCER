@@ -142,9 +142,12 @@ import java.util.Map;
 				throw new ContextException(e);
 			}
 		} else if (closure != null) {
-			// old verion for textual closure
-//				obj = evaluateTextualClosure(closure);
-			return (Boolean)closure.call(conditionalContext);
+			if (closureExpression != null) {
+				// old version for textual closure in a conditon
+				obj = evaluateTextualClosure(closure);
+			} else {
+				return (Boolean) closure.call(conditionalContext);
+			}
 		} else if (evaluationPath != null && conditionalContext != null) {
 			obj = conditionalContext.getValue(evaluationPath);
 		} else if (closureExpression != null && conditionalContext != null) {
@@ -193,7 +196,13 @@ import java.util.Map;
 					throw new ContextException(e);
 				}
 		}
-		return closure.call(args);
+		obj =  closure.call(args);
+		if (obj instanceof Boolean)
+			return (Boolean) obj;
+		else if (obj != null)
+			return true;
+		else
+			return false;
 	}
 
 	/* (non-Javadoc)

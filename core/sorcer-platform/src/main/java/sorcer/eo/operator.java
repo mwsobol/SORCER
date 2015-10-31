@@ -1796,6 +1796,11 @@ public class operator {
 		return value(model, evalSelector, entries);
 	}
 
+	public static <T> T v(Context<T> model, String evalSelector,
+							 Arg... entries) throws ContextException {
+		return value(model, evalSelector, entries);
+	}
+
 	public static <T> T value(Context<T> model, String evalSelector,
 							  Arg... entries) throws ContextException {
 		if (model instanceof ParModel) {

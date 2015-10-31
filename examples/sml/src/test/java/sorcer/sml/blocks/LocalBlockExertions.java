@@ -12,10 +12,8 @@ import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.provider.impl.SubtractorImpl;
 import sorcer.core.SorcerConstants;
 import sorcer.core.provider.rendezvous.ServiceConcatenator;
-import sorcer.service.Block;
-import sorcer.service.Service;
+import sorcer.service.*;
 import sorcer.service.Signature.Direction;
-import sorcer.service.Task;
 
 import static org.junit.Assert.assertEquals;
 import static sorcer.co.operator.ent;
@@ -173,7 +171,6 @@ public class  LocalBlockExertions implements SorcerConstants {
 
 	}
 
-
 	@Test
 	public void altBlockTest() throws Exception {
 		Task t3 = task("t3", sig("subtract", SubtractorImpl.class),
@@ -195,8 +192,8 @@ public class  LocalBlockExertions implements SorcerConstants {
 		Block block = block("block",
 				t4,
 				t5,
-				alt(opt(condition(cxt -> (double)value(cxt, "t4") > (double)value(cxt, "t5")), t3),
-						opt(condition(cxt -> (double)value(cxt, "t4") <= (double)value(cxt, "t5")), t6)));
+				alt(opt(condition(cxt -> (double)v(cxt, "t4") > (double)v(cxt, "t5")), t3),
+						opt(condition(cxt -> (double)v(cxt, "t4") <= (double)v(cxt, "t5")), t6)));
 
 //		logger.info("block: " + block);
 //		logger.info("exertions: " + exertions(block));
@@ -297,7 +294,7 @@ public class  LocalBlockExertions implements SorcerConstants {
 		Block block = block("block", sig("execute", ServiceConcatenator.class),
 				context(inEnt("x1", 4), inEnt("x2", 5)),
 				task(par("y", invoker("x1 * x2", pars("x1", "x2")))),
-				alt(opt(condition(cxt -> (int)value(cxt, "y") > 50), t4),
+				alt(opt(condition(cxt -> (int)v(cxt, "y") > 50), t4),
 						opt(condition(cxt -> (int)value(cxt, "y") <= 50 ), t5)));
 
 		logger.info("block: " + block);
