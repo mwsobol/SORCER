@@ -36,5 +36,5 @@ block(
         context(inEnt("offDesignCasesTemplate", "URL")),
         task(sig("add", AdderImpl.class),
                 context(inEnt("arg/x1", 20.0d), inEnt("arg/x2", 80.0d), result("add"))),
-        loop(condition({ context -> return ((Double)get(context, "out")) < 1000.0d }),
+        loop(condition({ context -> ((double)value(context, "out")) < 1000.0d }),
                 model));

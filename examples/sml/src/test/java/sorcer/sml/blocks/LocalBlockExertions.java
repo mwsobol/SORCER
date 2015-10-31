@@ -24,7 +24,6 @@ import static sorcer.eo.operator.loop;
 import static sorcer.eo.operator.opt;
 import static sorcer.po.operator.*;
 
-
 /**
  * @author Mike Sobolewski
  */
@@ -296,7 +295,7 @@ public class  LocalBlockExertions implements SorcerConstants {
 				context(inEnt("x1", 4), inEnt("x2", 5)),
 				task(par("y", invoker("x1 * x2", pars("x1", "x2")))),
 				alt(opt(condition(cxt -> (int)v(cxt, "y") > 50), t4),
-						opt(condition(cxt -> (int)value(cxt, "y") <= 50 ), t5)));
+						opt(condition(cxt -> (int)value(cxt, "y") <= 50), t5)));
 
 		logger.info("block: " + block);
 		logger.info("exertions: " + exertions(block));

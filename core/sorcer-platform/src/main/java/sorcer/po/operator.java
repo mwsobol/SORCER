@@ -340,6 +340,10 @@ public class operator {
 		return new ServiceInvoker(evaluator, parEntries);
 	}
 
+	public static ServiceInvoker invoker(String name, ContextCondition condition) {
+		return new ServiceInvoker(name, condition, null);
+	}
+
 	public static ServiceInvoker invoker(String name, String expression, Arg... pars) {
 		return new GroovyInvoker(name, expression, pars);
 	}

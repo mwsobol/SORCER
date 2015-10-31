@@ -90,6 +90,8 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 		
 	protected ParModel invokeContext;
 
+	protected ContextCondition lambda;
+
 	// set of dependent variables for this evaluator
 	protected ArgSet pars = new ArgSet();
 
@@ -108,7 +110,20 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 			this.name = name;
 		invokeContext = new ParModel("model/par");
 	}
-	
+
+	public ServiceInvoker(ContextCondition lambda) {
+		this(null, lambda, null);
+	}
+
+	public ServiceInvoker(String name, ContextCondition lambda, ParModel context) {
+		this.name = name;
+		if (context == null)
+			invokeContext = new ParModel("model/par");
+		else
+			invokeContext = context;
+		this.lambda = lambda;
+	}
+
 	public ServiceInvoker(ParModel context) {
 		this(context.getName());
 		invokeContext = context;
@@ -514,6 +529,14 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 	public Reactive<T> setReactive(boolean isReactive) {
 		this.isReactive = isReactive;
 		return this;
+	}
+
+	public ContextCondition getLambda() {
+		return lambda;
+	}
+
+	public void setLambda(ContextCondition lambda) {
+		this.lambda = lambda;
 	}
 
 }

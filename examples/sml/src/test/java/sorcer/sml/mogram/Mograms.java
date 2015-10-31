@@ -134,7 +134,7 @@ public class Mograms {
                 context(inEnt("offDesignCasesTemplate", "URL")),
                 task(sig("add", AdderImpl.class),
                         context(inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0), result("add"))),
-                loop(condition(context -> { return ((Double)get(context, "out")) < 1000.0; }),
+                loop(condition(cxt -> (double)value(cxt, "out") < 1000.0),
                         model));
 
         looping = exert(looping);
