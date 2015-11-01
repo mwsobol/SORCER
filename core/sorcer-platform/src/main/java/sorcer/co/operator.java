@@ -306,8 +306,8 @@ public class operator {
 		return new Srv(invoker.getName(), invoker);
 	}
 
-	public static Srv ent(String path, Invocation invoker) {
-		return new Srv(path, invoker);
+	public static Par ent(String path, Invocation invoker) {
+		return new Par(path, invoker);
 	}
 
 	public static Srv ent(Signature sig) {

@@ -21,6 +21,7 @@ import net.jini.id.Uuid;
 import net.jini.id.UuidFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.par.Par;
 import sorcer.core.context.model.par.ParModel;
@@ -88,7 +89,7 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 	// indication that value has been calculated with recent arguments
 	private boolean valueIsValid = false;
 		
-	protected ParModel invokeContext;
+	protected Context invokeContext;
 
 	protected ContextCallable lambda;
 
@@ -254,7 +255,7 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 	 */
 	public ServiceInvoker addPar(Object par) throws EvaluationException, RemoteException {
 		if (par instanceof Par) {
-			invokeContext.put(((Par) par).getName(), par);
+			((ServiceContext)invokeContext).put(((Par) par).getName(), par);
 			if (((Par) par).asis() instanceof ServiceInvoker) {
 				((ServiceInvoker) ((Par) par).getValue()).addObserver(this);
 				pars.add((Par) par);
@@ -336,7 +337,7 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 					
 				invokeContext.substitute(entries);
 			}
-			if (invokeContext.isContextChanged()) {
+			if (((ServiceContext)invokeContext).isChanged()) {
 				valueIsValid = false;
 				pars.clearArgs();
 			}
@@ -422,15 +423,7 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 	 */
 	@Override
 	public void setScope(Context scope) throws ContextException {
-		if (scope instanceof ParModel) {
-			this.invokeContext = (ParModel) scope;
-		} else if (scope instanceof Context) {
-			try {
-				this.invokeContext = new ParModel(scope);
-			} catch (Exception e) {
-				throw new ContextException();
-			}
-		}
+		invokeContext = scope;
 	}
 	
 	/**
@@ -537,7 +530,7 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 
 	@Override
 	 public boolean isReactive() {
-		return isReactive;
+		return true;
 	}
 
 	@Override

@@ -14,7 +14,6 @@ import sorcer.core.Name;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.par.Par;
 import sorcer.core.context.model.par.ParModel;
-import sorcer.core.invoker.ServiceInvoker;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.service.*;
 import sorcer.util.Runner;
@@ -363,7 +362,7 @@ public class CollectionOperators {
 		assertTrue(get(cxt, "arg/x4").equals(1.4));
 		assertTrue(get(cxt, "arg/x5").equals(1.5));
 		assertTrue(get(cxt, "arg/x6").equals(1.6));
-		assertTrue(get(cxt, "arg/x7") instanceof ServiceInvoker);
+		assertTrue(asis(cxt, "arg/x7") instanceof Par);
 
 		// aliasing entries with reactive value entries - rvEnt
 		put(cxt, rvEnt("arg/x6", ent("overwrite", 20.0)));
@@ -377,7 +376,10 @@ public class CollectionOperators {
 		put(cxt, ent("arg/x6", par("overwrite", 40.0)));
 		assertTrue(value(cxt, "arg/x6").equals(40.0));
 
-		assertTrue(get(cxt, "arg/x7") instanceof ServiceInvoker);
+		logger.info("x1: " + value(cxt, "arg/x1"));
+		logger.info("x3: " + value(cxt, "arg/x3"));
+
+		assertTrue(asis(cxt, "arg/x7") instanceof Par);
 		assertEquals(4.0, value(cxt, "arg/x7"));
 
 	}

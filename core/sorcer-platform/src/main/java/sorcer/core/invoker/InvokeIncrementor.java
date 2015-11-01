@@ -17,9 +17,11 @@
  */
 package sorcer.core.invoker;
 
-import sorcer.service.*;
+import sorcer.service.Arg;
+import sorcer.service.EvaluationException;
+import sorcer.service.Incrementor;
+import sorcer.service.Invocation;
 
-import java.rmi.RemoteException;
 import java.util.NoSuchElementException;
 
 /**
@@ -72,7 +74,7 @@ public abstract class InvokeIncrementor<T> extends ServiceInvoker<T> implements 
 					if (val != null) value = val;
 			}
 			value = getIncrement(value, increment);
-		} catch (RemoteException e) {
+		} catch (Exception e) {
 			throw new EvaluationException(e);
 		}
 		return value;

@@ -360,10 +360,6 @@ public class ParModel<T> extends EntModel<T> implements Invocation<T>, Mappable<
 		return val;
 	}
 
-	public boolean isContextChanged() {
-		return isChanged;
-	}
-
 	public void setContextChanged(boolean contextChanged) {
 		this.isChanged = contextChanged;
 	}

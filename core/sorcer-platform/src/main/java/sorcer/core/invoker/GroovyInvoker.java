@@ -19,6 +19,7 @@ package sorcer.core.invoker;
 
 import groovy.lang.GroovyShell;
 import sorcer.co.tuple.Path;
+import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.par.Par;
 import sorcer.service.*;
 
@@ -139,8 +140,12 @@ public class GroovyInvoker<T> extends ServiceInvoker<T> {
 				}
 			}
 			for (Path p : paths)
-				System.out.println("entry: " + p + "="
-						+ invokeContext.getValue(p.getName()));
+				try {
+					System.out.println("entry: " + p + "="
+                            + invokeContext.getValue(p.getName()));
+				} catch (ContextException e) {
+					throw new EvaluationException(e);
+				}
 		}
 	}
 
@@ -152,7 +157,7 @@ public class GroovyInvoker<T> extends ServiceInvoker<T> {
 					Object obj = invokeContext.getValue(p.getName());
 					if (obj == null || obj == Context.none) {
 						// try extended path
-						obj = invokeContext.getValueEndsWith(p.getName());
+						obj = ((ServiceContext)invokeContext).getValueEndsWith(p.getName());
 					}
 					if (obj != null && obj != Context.none) {
 						((Setter)p).setValue(obj);
