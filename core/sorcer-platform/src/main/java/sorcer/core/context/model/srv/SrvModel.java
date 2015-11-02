@@ -294,7 +294,7 @@ public class SrvModel extends ParModel<Object> implements Model {
         return null;
     }
 
-    private Context execSignature(Signature sig) throws Exception {
+    public Context execSignature(Signature sig) throws Exception {
         String[] ips = sig.getReturnPath().inPaths;
         String[] ops = sig.getReturnPath().outPaths;
         execDependencies(sig);
