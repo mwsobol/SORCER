@@ -89,12 +89,12 @@ public class MultiFidelities {
 
         // three entry multifidelity model
         Model mod = model(inEnt("arg/x1", 90.0), inEnt("arg/x2", 10.0),
-                ent("mFi1", multiFi(sig("add", AdderImpl.class, result("result/y1", inPaths("arg/x1", "arg/x2"))),
+                ent("mFi1", mFi(sig("add", AdderImpl.class, result("result/y1", inPaths("arg/x1", "arg/x2"))),
                         sig("multiply", MultiplierImpl.class, result("result/y1", inPaths("arg/x1", "arg/x2"))))),
-                ent("mFi2", multiFi(sig("average", AveragerImpl.class, result("result/y2", inPaths("arg/x1", "arg/x2"))),
+                ent("mFi2", mFi(sig("average", AveragerImpl.class, result("result/y2", inPaths("arg/x1", "arg/x2"))),
                         sig("divide", DividerImpl.class, result("result/y2", inPaths("arg/x1", "arg/x2"))),
                         sig("subtract", SubtractorImpl.class, result("result/y2", inPaths("arg/x1", "arg/x2"))))),
-                ent("mFi3", multiFi(sig("average", AveragerImpl.class, result("result/y3", inPaths("arg/x1", "arg/x2"))),
+                ent("mFi3", mFi(sig("average", AveragerImpl.class, result("result/y3", inPaths("arg/x1", "arg/x2"))),
                         sig("divide", DividerImpl.class, result("result/y2", inPaths("arg/x1", "arg/x2"))),
                         sig("multiply", MultiplierImpl.class, result("result/y3", inPaths("arg/x1", "arg/x2"))))),
                 manager,
