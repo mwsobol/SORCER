@@ -142,7 +142,7 @@ public class ServiceShell implements Shell, Service, Servicer, Exerter, Callable
 							|| (exertion.getControlContext() != null
 							&& ((ControlContext) exertion.getControlContext()).isShellRemote())) {
 						Exerter prv = (Exerter) Accessor.get().getService(sig(Shell.class));
-						result = (Exertion)prv.exert(input, transaction, entries);
+						result = prv.exert(input, transaction, entries);
 					} else {
 						try {
 							input.substitute(entries);
@@ -409,15 +409,24 @@ public class ServiceShell implements Shell, Service, Servicer, Exerter, Callable
 			provider = ((NetSignature) signature).getProvider();
 			if (provider == null) {
 				// check proxy cache
-				provider = proxies.get(signature);
+                try {
+                    provider = proxies.get(signature);
+                } catch(CacheLoader.InvalidCacheLoadException e) {
+                    String message =
+                        String.format("Provider name: [%s], type: %s not found, make sure it is running and there is " +
+                                      "an available lookup service with correct discovery settings",
+                                      signature.getProviderName(), signature.getServiceType().getName());
+                    logger.error(message);
+                    throw new ExertionException(message);
+                }
 				// lookup proxy
-				if (provider == null) {
+				/*if (provider == null) {
 					long t0 = System.currentTimeMillis();
 					provider = Accessor.get().getService(signature);
 					if (logger.isDebugEnabled())
 					 logger.info("Return from Accessor.getService(), round trip: {} millis",
 							 (System.currentTimeMillis() - t0));
-				}
+				}*/
 			}
 		} catch (Exception e) {
 			throw new ExertionException(e);
@@ -591,7 +600,7 @@ public class ServiceShell implements Shell, Service, Servicer, Exerter, Callable
 						for (Setter p : ps) {
 							if (p != null && (p instanceof Par) && ((Par) p).isMappable()) {
 								String from = ((Par) p).getName();
-								Object obj = null;
+								Object obj;
 								if (mogram instanceof Job)
 									obj = ((Job) mogram).getJobContext().getValue(from);
 								else {
@@ -673,7 +682,7 @@ public class ServiceShell implements Shell, Service, Servicer, Exerter, Callable
 				}
 				return finalize((Exertion) out, args);
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.error("Failed in evaluate", e);
 				throw new ExertionException(e);
 			}
 		} else {
