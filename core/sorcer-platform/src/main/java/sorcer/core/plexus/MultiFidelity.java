@@ -17,9 +17,12 @@
 
 package sorcer.core.plexus;
 
+import net.jini.id.Uuid;
+import net.jini.id.UuidFactory;
 import sorcer.core.invoker.Observable;
 import sorcer.service.Arg;
 import sorcer.service.Fidelity;
+import sorcer.service.Identifiable;
 
 import java.io.Serializable;
 import java.util.List;
@@ -27,9 +30,11 @@ import java.util.List;
 /**
  * Created by Mike Sobolewski on 10/26/15.
  */
-public class MultiFidelity<T extends Arg> extends Observable implements Arg, Serializable {
+public class MultiFidelity<T extends Arg> extends Observable implements Identifiable, Arg, Serializable {
 
     private Fidelity<T> multiFi;
+
+    private Uuid id = UuidFactory.generate();
 
     public MultiFidelity(Fidelity fi) {
         multiFi = fi;
@@ -73,6 +78,11 @@ public class MultiFidelity<T extends Arg> extends Observable implements Arg, Ser
 
     public void setPath(String fidelityPath) {
         multiFi.setPath(fidelityPath);;
+    }
+
+    @Override
+    public Object getId() {
+        return id;
     }
 
     public String getName() {

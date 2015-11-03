@@ -192,11 +192,18 @@ public class SrvModel extends ParModel<Object> implements Model {
                         return evalSignature(sig, path);
                     }
                 } else if (val2 instanceof Fidelity) {
-                    Signature sig = getFiSig((Fidelity)val2, entries, path);
+                    Signature sig = (Signature) getFi((Fidelity) val2, entries, path);
                     return evalSignature(sig, path);
                 } else if (val2 instanceof MultiFidelity) {
-                    Signature sig = getFiSig(((MultiFidelity)val2).getMultiFidelity(), entries, path);
-                    Object out = evalSignature(sig, path);
+                    Object obj = getFi(((MultiFidelity) val2).getMultiFidelity(), entries, path);
+                    Object out = null;
+                    if (obj instanceof Signature)
+                        out = evalSignature((Signature)obj, path);
+                    else if (obj instanceof Entry) {
+                        Arg[] args = Arrays.copyOf(entries, entries.length+1);
+                        args[entries.length] = this;
+                        out = ((Entry) obj).getValue(args);
+                    }
                     ((MultiFidelity) val2).setChanged();
                     ((MultiFidelity) val2).notifyObservers(out);
                     return out;
@@ -234,7 +241,7 @@ public class SrvModel extends ParModel<Object> implements Model {
         return val;
     }
 
-    private Object evalSignature(Signature sig, String path) throws Exception {
+    public Object evalSignature(Signature sig, String path) throws Exception {
         Context out = execSignature(sig);
         if (sig.getReturnPath() != null) {
             Object obj = out.getValue(sig.getReturnPath().path);
@@ -274,7 +281,7 @@ public class SrvModel extends ParModel<Object> implements Model {
         return null;
     }
 
-    private Signature getFiSig(Fidelity<Signature> fi, Arg[] entries, String path) {
+    private <T extends Arg> T getFi(Fidelity<T> fi, Arg[] entries, String path) {
         Fidelity<Signature> selected = null;
         for (Arg arg : entries) {
             if (arg instanceof Fidelity && ((Fidelity)arg).type == Fidelity.Type.EMPTY) {
@@ -284,8 +291,8 @@ public class SrvModel extends ParModel<Object> implements Model {
                 }
             }
         }
-        List<Signature> fiSigs = fi.getSelects();
-        for (Signature s : fiSigs) {
+        List<T> fiSigs = fi.getSelects();
+        for (T s : fiSigs) {
             if (selected == null && fi.getSelection() != null)
                 return fi.getSelection();
             else if (s.getName().equals(selected.getName()))
@@ -294,7 +301,7 @@ public class SrvModel extends ParModel<Object> implements Model {
         return null;
     }
 
-    public Context execSignature(Signature sig) throws Exception {
+    public Context execSignature(Signature sig) throws MogramException {
         String[] ips = sig.getReturnPath().inPaths;
         String[] ops = sig.getReturnPath().outPaths;
         execDependencies(sig);
@@ -305,7 +312,12 @@ public class SrvModel extends ParModel<Object> implements Model {
         if (sig.getReturnPath() != null) {
             incxt.setReturnPath(sig.getReturnPath());
         }
-        Context outcxt = ((Task) task(sig, incxt).exert()).getContext();
+        Context outcxt = null;
+        try {
+            outcxt = ((Task) task(sig, incxt).exert()).getContext();
+        } catch (Exception e) {
+            throw new MogramException(e);
+        }
         if (ops != null && ops.length > 0) {
             outcxt = outcxt.getSubcontext(ops);
         }

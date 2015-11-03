@@ -213,7 +213,7 @@ public class operator {
         return new Entry(path, ((Context)model).asis(path));
     }
 
-	public static Srv ent(String name, MultiFidelity<Signature> fidelity) {
+	public static <T extends Arg> Srv ent(String name, MultiFidelity<T> fidelity) {
 		return srv(name, fidelity);
 	}
 
@@ -230,7 +230,7 @@ public class operator {
 		return service;
 	}
 
-	public static Srv srv(String name, Fidelity<Signature> fidelity) {
+	public static <T extends Arg> Srv srv(String name, Fidelity<T> fidelity) {
 		Srv service = new Srv(name, fidelity);
 		return service;
 	}

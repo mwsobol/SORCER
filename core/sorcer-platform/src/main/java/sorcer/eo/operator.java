@@ -1133,6 +1133,11 @@ public class operator {
 		return fi;
 	}
 
+	public static MultiFidelity<Entry> mFi(Entry... entries) {
+		MultiFidelity<Entry> multiFi = new MultiFidelity(new Fidelity(entries));
+		return multiFi;
+	}
+
 	public static MultiFidelity<Signature> mFi(Signature... signatures) {
 		MultiFidelity<Signature> multiFi = new MultiFidelity(new Fidelity(signatures));
 		return multiFi;
