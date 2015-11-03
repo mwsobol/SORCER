@@ -255,7 +255,7 @@ public class Mograms {
     }
 
     @Test
-    public void lambdaEvaluationOfReplacement() throws Exception {
+    public void modelEntrySubstitution() throws Exception {
 
         ContextEntry callTask = context -> {
             Context out = null;
@@ -289,12 +289,14 @@ public class Mograms {
                         inPaths("add/x1", "add/x2")))),
                 ent(sig("subtract", SubtractorImpl.class, result("subtract/out",
                         inPaths("multiply/out", "add/out")))),
-                response("subtract", "lambda"));
+                response("subtract", "multiply"));
 
         dependsOn(mo, ent("subtract", paths("lambda", "add")));
 
         add(mo, innerTask);
         add(mo, ent("lambda", callTask));
+        responseDown(mo, "multiply");
+        responseUp(mo, "lambda");
 
         Context out = response(mo);
         logger.info("response: " + out);

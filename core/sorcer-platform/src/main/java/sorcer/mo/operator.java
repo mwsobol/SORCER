@@ -272,7 +272,7 @@ public class operator {
                     mFi = (MultiFidelity) metaFiEnt._2;
                     fiManager.addFidelity(metaFiEnt._1, mFi.getMultiFidelity());
                     mFi.setPath(metaFiEnt._1);
-                    mFi.setSelection((Signature)mFi.getSelects().get(0));
+                    mFi.setSelection((Arg) mFi.getSelects().get(0));
                     mFi.addObserver(fiManager);
                 }
             }

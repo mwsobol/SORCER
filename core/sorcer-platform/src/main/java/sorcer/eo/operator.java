@@ -561,6 +561,16 @@ public class operator {
 		}
 	}
 
+	public Context rm(Model model, String path) {
+		return remove(model, path);
+	}
+
+	public Context remove(Model model, String path) {
+		ServiceContext context = (ServiceContext) model;
+		context.getData().remove(path);
+		return context;
+	}
+
 	public static Context add(Model model, Identifiable... objects)
 			throws RemoteException, ContextException {
 		boolean isReactive = false;
@@ -1121,6 +1131,16 @@ public class operator {
 	public static Fidelity<Fidelity> fi(Fidelity... fidelities) {
 		Fidelity<Fidelity> fi = new Fidelity(new Fidelity(fidelities));
 		return fi;
+	}
+
+	public static MultiFidelity<Entry> mFi(Entry... entries) {
+		MultiFidelity<Entry> multiFi = new MultiFidelity(new Fidelity(entries));
+		return multiFi;
+	}
+
+	public static MultiFidelity<Signature> mFi(Signature... signatures) {
+		MultiFidelity<Signature> multiFi = new MultiFidelity(new Fidelity(signatures));
+		return multiFi;
 	}
 
 	public static MultiFidelity<Signature> multiFi(Signature... signatures) {

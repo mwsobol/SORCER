@@ -102,11 +102,11 @@ public class Entry<T> extends Tuple2<String, T> implements Service, Dependency, 
 						val = (T) ((UuidObject) val).getObject();
 				} else {
 					if (val instanceof UuidObject) {
-						url =  (URL) SdbUtil.store(val);
+						url = SdbUtil.store(val);
 					} else {
 						UuidObject uo = new UuidObject(val);
 						uo.setName(_1);
-						url =  (URL)  SdbUtil.store(uo);
+						url = SdbUtil.store(uo);
 					}
 					this._2 = (T)url;
 				}
