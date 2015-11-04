@@ -17,7 +17,6 @@
 
 package sorcer.mo;
 
-import sorcer.co.tuple.Path;
 import sorcer.co.tuple.Tuple2;
 import sorcer.core.Name;
 import sorcer.core.context.MapContext;
@@ -29,7 +28,7 @@ import sorcer.core.context.model.srv.Srv;
 import sorcer.core.context.model.srv.SrvModel;
 import sorcer.core.plexus.FidelityManager;
 import sorcer.core.plexus.MultiFidelity;
-import sorcer.core.plexus.MultiFidelityService;
+import sorcer.core.plexus.MultiFidelityMogram;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
 
@@ -232,7 +231,7 @@ public class operator {
                 fidelities.add((Fidelity)item);
             }
         }
-        MultiFidelityService model = new MultiFidelityService();
+        MultiFidelityMogram model = new MultiFidelityMogram();
         model.addSelectionFidelities(fidelities);
         return srvModel(items);
     }
