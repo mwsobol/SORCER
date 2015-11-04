@@ -493,6 +493,7 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 	@Override
 	public T evaluate(Arg... entries) throws EvaluationException,
 			RemoteException {
+
 		return invoke(entries);
 	}
 
