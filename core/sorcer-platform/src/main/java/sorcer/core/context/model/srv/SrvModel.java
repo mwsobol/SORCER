@@ -245,7 +245,7 @@ public class SrvModel extends ParModel<Object> implements Model {
         return val;
     }
 
-    public Object evalSignature(Signature sig, String path) throws Exception {
+    public Object evalSignature(Signature sig, String path) throws MogramException {
         Context out = execSignature(sig);
         if (sig.getReturnPath() != null) {
             Object obj = out.getValue(sig.getReturnPath().path);
@@ -285,7 +285,7 @@ public class SrvModel extends ParModel<Object> implements Model {
         return null;
     }
 
-    private <T extends Arg> T getFi(Fidelity<T> fi, Arg[] entries, String path) {
+    protected <T extends Arg> T getFi(Fidelity<T> fi, Arg[] entries, String path) {
         Fidelity<Signature> selected = null;
         for (Arg arg : entries) {
             if (arg instanceof Fidelity && ((Fidelity)arg).type == Fidelity.Type.EMPTY) {
@@ -294,13 +294,22 @@ public class SrvModel extends ParModel<Object> implements Model {
                     break;
                 }
             }
+
         }
-        List<T> fiSigs = fi.getSelects();
-        for (T s : fiSigs) {
+        List<T> choices = fi.getSelects();
+        for (T s : choices) {
             if (selected == null && fi.getSelection() != null)
                 return fi.getSelection();
-            else if (s.getName().equals(selected.getName()))
-                return s;
+            else {
+                String selectName = null;
+                if (selected != null) {
+                    selectName = selected.getName();
+                } else {
+                    selectName = choices.get(0).getName();
+                }
+                if (s.getName().equals(selectName))
+                    return s;
+            }
         }
         return null;
     }
