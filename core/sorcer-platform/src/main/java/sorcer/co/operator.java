@@ -33,10 +33,7 @@ import sorcer.netlet.ScriptExerter;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
 import sorcer.service.modeling.Variability;
-import sorcer.util.Loop;
-import sorcer.util.Response;
-import sorcer.util.Sorcer;
-import sorcer.util.Table;
+import sorcer.util.*;
 import sorcer.util.bdb.objects.UuidObject;
 import sorcer.util.url.sos.SdbUtil;
 
@@ -47,6 +44,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.*;
+import java.util.Collections;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class operator {
@@ -162,11 +160,15 @@ public class operator {
 	}
 
 	public static <T> List<T> list(T... elems) {
-		return Arrays.asList(elems);
+        List<T> list = new ArrayList<>();
+        Collections.addAll(list, elems);
+		return list;
 	}
 
 	public static List<Object> row(Object... elems) {
-		return Arrays.asList(elems);
+        List<Object> list = new ArrayList<>();
+        Collections.addAll(list, elems);
+        return list;
 	}
 
 	public static List<Object> values(Response response) {
@@ -178,7 +180,9 @@ public class operator {
 	}
 
 	public static List<Object> values(Object... elems) {
-		return Arrays.asList(elems);
+        List<Object> list = new ArrayList<>();
+        Collections.addAll(list, elems);
+        return list;
 	}
 
 	public static List<String> header(String... elems) {
@@ -190,7 +194,9 @@ public class operator {
 	}
 
 	public static List<String> names(String... elems) {
-		return Arrays.asList(elems);
+        List<String> list = new ArrayList<>();
+        Collections.addAll(list, elems);
+		return list;
 	}
 
 	public static List<String> names(List<String>... nameLists) {
@@ -808,7 +814,9 @@ public class operator {
     }
 
     public static List<String> paths(String... paths) {
-       return Arrays.asList(paths);
+        List<String> list = new ArrayList<>();
+        Collections.addAll(list, paths);
+        return list;
     }
 
 	public static List<String> paths(Context context) throws ContextException {
