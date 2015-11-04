@@ -221,14 +221,10 @@ public class Mograms {
 
         Double delta = 0.5;
 
-        ContextEntry entFunction = context -> {
+        ContextEntry entFunction = cxt -> {
             Double out = 1000.0;
-            try {
-                out = (Double) value(context, "multiply");
-                out = out + 1000.0 + delta;
-            } catch (ContextException e) {
-                e.printStackTrace();
-            }
+            out = (Double) value(cxt, "multiply");
+            out = out + 1000.0 + delta;
             return ent("out", out);
         };
 

@@ -23,6 +23,6 @@ package sorcer.service;
 @FunctionalInterface
 public interface ExertionCallable<T> {
 
-    Context<T> call(Exertion context);
+    Context<T> call(Exertion exertion) throws MogramException;
 
 }

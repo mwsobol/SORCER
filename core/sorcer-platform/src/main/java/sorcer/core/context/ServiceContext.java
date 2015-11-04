@@ -1464,7 +1464,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 				Object v = ((Entry)val).value();
 				subcntxt.putValue(path, v);
 				if (path != ((Entry)val).getName())
-					subcntxt.putValue(((Entry)val).getName(), ((Entry)val).value());
+					subcntxt.putValue(((Entry)val).getName(), v);
 			} else {
 				List<String> inpaths = getInPaths();
 				List<String> outpaths = getOutPaths();
