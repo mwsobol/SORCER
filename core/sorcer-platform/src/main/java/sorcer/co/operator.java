@@ -285,20 +285,28 @@ public class operator {
 			return new Par<T>(path, value);
 		} else if (value instanceof Evaluation) {
 			return new Entry<T>(path, value);
+		} else if (value instanceof ContextCallable) {
+			return (Entry<T>) new Srv(path, value);
+		} else if (value instanceof ContextEntry) {
+			return (Entry<T>) new Srv(path, value);
 		} else {
 			return new Entry<T>(path, value);
 		}
+	}
+
+	public static Srv ent(String path, ContextCallable call) {
+		return new Srv(path, call);
 	}
 
 	public static Srv ent(String path, Closure call) {
 		return new Srv(path, call);
 	}
 
-	public static Srv ent(String path, ContextEntry call) {
+	public static Srv cxtEnt(String path, ContextEntry call) {
 		return new Srv(path, call);
 	}
 
-	public static Srv ent(String path, ExertionCallable call) {
+	public static Srv xrtEnt(String path, ExertionCallable call) {
 		return new Srv(path, call);
 	}
 

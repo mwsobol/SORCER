@@ -306,7 +306,7 @@ public class SrvModels {
     }
 
     @Test
-    public void exertExertionModelMogram() throws Exception {
+    public void exertExertionToModelMogram() throws Exception {
 
         // usage of in and out connectors associated with model
         Task t4 = task(
