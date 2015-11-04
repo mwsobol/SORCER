@@ -88,7 +88,9 @@ public class ScratchManagerSupport implements ScratchManager, Serializable {
         }
 
         logger.info("scratch dir suffix = {}", suffix);
-        String dirName = String.format("%s-%s", suffix, getUniqueId());
+        String uid = getUniqueId();
+        logger.info("scratch uid = {}", uid);
+        String dirName = String.format("%s%s", suffix, uid);
         File scratchDir = new File(root, dirName);
         if(scratchDir.mkdirs() && logger.isInfoEnabled()) {
             logger.info("Created "+scratchDir.getPath());
