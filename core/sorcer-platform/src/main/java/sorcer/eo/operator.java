@@ -242,7 +242,8 @@ public class operator {
 //	}
 
 	public static Context subcontext(Context context, List<String> paths) throws ContextException {
-		return context.getSubcontext((String[]) paths.toArray());
+		String[] pl = new String[paths.size()];
+		return context.getSubcontext((String[]) paths.toArray(pl));
 	}
 
 	public static Context subcontext(Context context, String... paths) throws ContextException {
@@ -2585,27 +2586,27 @@ public class operator {
 					+ mappable.getName());
 	}
 
-	public static Signature dispatcher(Signature signature) {
+	public static Signature dispatcherSig(Signature signature) {
 		((ServiceSignature)signature).addRank(Kind.DISPATCHER);
 		return signature;
 	}
 
-//	public static Signature model(Signature signature) {
-//		((ServiceSignature)signature).addRank(new Kind[]{Kind.MODEL, Kind.TASKER});
-//		return signature;
-//	}
+	public static Signature modelSig(Signature signature) {
+		((ServiceSignature)signature).addRank(new Kind[]{Kind.MODEL, Kind.TASKER});
+		return signature;
+	}
 
-	public static Signature modelManager(Signature signature) {
+	public static Signature modelManagerSig(Signature signature) {
 		((ServiceSignature)signature).addRank(Kind.MODEL, Kind.MODEL_MANAGER);
 		return signature;
 	}
 
-	public static Signature optimizer(Signature signature) {
+	public static Signature optimizerSig(Signature signature) {
 		((ServiceSignature)signature).addRank(Kind.OPTIMIZER, Kind.TASKER);
 		return signature;
 	}
 
-	public static Signature explorer(Signature signature) {
+	public static Signature explorerSig(Signature signature) {
 		((ServiceSignature)signature).addRank(Kind.EXPLORER, Kind.TASKER);
 		return signature;
 	}
