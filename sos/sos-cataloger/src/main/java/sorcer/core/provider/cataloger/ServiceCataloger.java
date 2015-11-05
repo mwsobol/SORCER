@@ -517,28 +517,26 @@ public class ServiceCataloger extends ServiceProvider implements Cataloger {
 		}
 
 		public void addServiceItem(ServiceItem sItem) {
-			InterfaceList keyList = new InterfaceList(sItem.service.getClass()
-					.getInterfaces());
+			InterfaceList keyList = new InterfaceList(sItem.service.getClass().getInterfaces());
 			List<ServiceItem> sItems = interfaceListMap.get(keyList);
 			if (sItems == null)
 				sItems = new ArrayList<ServiceItem>();
 			// add it to the head assuming the tail's busy
 			for (ServiceItem si : sItems) {
 				try {
-					if (!((ReferentUuid) si).getReferentUuid().equals(
-							((ReferentUuid) sItem).getReferentUuid())) {
+					if (!((ReferentUuid) si.service).getReferentUuid().equals(((ReferentUuid) sItem.service).getReferentUuid())) {
 						sItems.add(0, si);
 						interfaceListMap.put(keyList, sItems);
 					}
 				} catch (ClassCastException e) {
-					logger.warn("ReferentUuid not implemented by: " + si);
+					logger.warn("ReferentUuid not implemented by: {}" + si.service.getClass().getName());
 				}
 			}
 			if (sItems.isEmpty()) {
 				sItems.add(0, sItem);
 				interfaceListMap.put(keyList, sItems);
 			}
-			logger.info("adding new service, calling notifiy");
+			logger.info("adding new service, calling notify");
 			observable.tellOfAction("UPDATEDPLEASE");
 		}
 
