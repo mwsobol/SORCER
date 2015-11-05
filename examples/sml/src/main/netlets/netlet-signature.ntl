@@ -19,6 +19,7 @@
 @Load(group='org.sorcer', module='sml', version='${sorcer.version}')
 import static sorcer.co.operator.file
 
-String netlet = "/Volumes/SSSD/git/SORCER/examples/sml/src/main/netlets/ha-job-local.ntl";
+String netletFile = "/Volumes/SSSD/git/SORCER/examples/sml/src/main/netlets/ha-job-local.ntl";
 
+// a provider is a sevice job declared in the netletFile
 provider(sig(file(netlet)))
