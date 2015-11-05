@@ -33,7 +33,7 @@ public class MultiFidelities {
     private final static Logger logger = LoggerFactory.getLogger(MultiFidelities.class);
 
     @Test
-    public void evalauteSignatureFidelityModel1() throws Exception {
+    public void sigMultiFidelityModel1() throws Exception {
 
         // three entry model
         Model mod = model(inEnt("arg/x1", 10.0), inEnt("arg/x2", 90.0),
@@ -48,7 +48,7 @@ public class MultiFidelities {
     }
 
     @Test
-    public void evalauteSignaureFidelityModel2() throws Exception {
+    public void sigMultiFidelityModel2() throws Exception {
 
         // three entry model
         Model mod = model(inEnt("arg/x1", 10.0), inEnt("arg/x2", 90.0),
@@ -63,7 +63,7 @@ public class MultiFidelities {
     }
 
     @Test
-    public void fidelityManagerWithMultiSigFidelities() throws Exception {
+    public void sigMultiFidelityAmorphousModel() throws Exception {
 
         FidelityManager manager = new FidelityManager() {
             @Override
@@ -107,7 +107,7 @@ public class MultiFidelities {
                 manager,
                 response("mFi1", "mFi2", "mFi3", "arg/x1", "arg/x2"));
 
-        // fidelities updated by the model's fidelity manager
+        // fidelities morphed by the model's fidelity manager
         Context out = response(mod);
         logger.info("out: " + out);
         assertTrue(get(out, "mFi1").equals(100.0));
@@ -115,7 +115,7 @@ public class MultiFidelities {
         assertTrue(get(out, "mFi3").equals(900.0));
 
         // first closing the fidelity for mFi1
-        // then fidelities updated by the model's fidelity manager accordingly
+        // then fidelities morphed by the model's fidelity manager accordingly
         out = response(mod , fi("multiply", "mFi1"));
         logger.info("out: " + out);
         assertTrue(get(out, "mFi1").equals(900.0));
@@ -124,14 +124,14 @@ public class MultiFidelities {
     }
 
     @Test
-    public void fidelityManagerWithMultiEntFidelities() throws Exception {
+    public void entMultiFidelityAmorphousModel() throws Exception {
 
         FidelityManager manager = new FidelityManager() {
             @Override
             public void initialize() {
-                Fidelity<Fidelity> fi2 = fi(fi("divide", "mFi2"), fi("multiply", "mFi3"));
-                Fidelity<Fidelity> fi3 = fi(fi("average", "mFi2"), fi("divide", "mFi3"));
-                put(ent("sysFi2", fi2), ent("sysFi3", fi3));
+                // define model metafidelities Fidelity<Fidelity>
+                put("sysFi2", fi(fi("divide", "mFi2"), fi("multiply", "mFi3")));
+                put("sysFi3", fi(fi("average", "mFi2"), fi("divide", "mFi3")));
             }
 
             @Override
@@ -168,7 +168,7 @@ public class MultiFidelities {
                 manager,
                 response("mFi1", "mFi2", "mFi3", "arg/x1", "arg/x2"));
 
-        // fidelities updated by the model's fidelity manager
+        // fidelities morphed by the model's fidelity manager
         Context out = response(mod);
         logger.info("out: " + out);
         assertTrue(get(out, "mFi1").equals(100.0));
@@ -176,7 +176,7 @@ public class MultiFidelities {
         assertTrue(get(out, "mFi3").equals(900.0));
 
         // first closing the fidelity for mFi1
-        // then fidelities updated by the model's fidelity manager accordingly
+        // then fidelities morphed by the model's fidelity manager accordingly
         out = response(mod , fi("multiply", "mFi1"));
         logger.info("out: " + out);
         assertTrue(get(out, "mFi1").equals(900.0));

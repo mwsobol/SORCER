@@ -6,6 +6,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
+import sorcer.arithmetic.provider.Adder;
+import sorcer.arithmetic.provider.Multiplier;
+import sorcer.arithmetic.provider.Subtractor;
 import sorcer.arithmetic.provider.impl.*;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.service.*;
@@ -26,6 +29,94 @@ import static sorcer.mo.operator.response;
 @ProjectContext("examples/sml")
 public class ArithmeticMograms {
 	private final static Logger logger = LoggerFactory.getLogger(ArithmeticMograms.class);
+
+	@Test
+	public void lambdaModel() throws Exception {
+
+		Model mo = model(ent("multiply/x1", 10.0), ent("multiply/x2", 50.0),
+				ent("add/x1", 20.0), ent("add/x2", 80.0),
+				ent("add", model ->
+						(double) value(model, "add/x1") + (double) value(model, "add/x2")),
+				ent("multiply", model ->
+						(double) val(model, "multiply/x1") * (double) val(model, "multiply/x2")),
+				ent("subtract", model ->
+						(double) v(model, "multiply") - (double) v(model, "add")),
+				response("subtract", "multiply", "add"));
+
+		dependsOn(mo, ent("subtract", paths("multiply", "add")));
+
+		Context out = response(mo);
+		logger.info("model response: " + out);
+		assertTrue(get(out, "subtract").equals(400.0));
+		assertTrue(get(out, "multiply").equals(500.0));
+		assertTrue(get(out, "add").equals(100.0));
+	}
+
+	@Test
+	public void sigLocalModel() throws Exception {
+		// get responses from a local service model
+
+		Model m = model(
+				inEnt("multiply/x1", 10.0), inEnt("multiply/x2", 50.0),
+				inEnt("add/x1", 20.0), inEnt("add/x2", 80.0),
+				ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
+						inPaths("multiply/x1", "multiply/x2")))),
+				ent(sig("add", AdderImpl.class, result("add/out",
+						inPaths("add/x1", "add/x2")))),
+				ent(sig("subtract", SubtractorImpl.class, result("model/response",
+						inPaths("multiply/out", "add/out")))),
+				response("subtract"));
+
+		dependsOn(m, ent("subtract", paths("multiply", "add")));
+//        logger.info("response: " + response(m));
+		Context out = response(m);
+
+		assertTrue(get(out, "subtract").equals(400.0));
+	}
+
+	@Test
+	public void sigRemoteModel() throws Exception {
+		// get responses from a remote service model
+
+		Model m = model(
+				inEnt("multiply/x1", 10.0), inEnt("multiply/x2", 50.0),
+				inEnt("add/x1", 20.0), inEnt("add/x2", 80.0),
+				ent(sig("multiply", Multiplier.class, result("multiply/out",
+						inPaths("multiply/x1", "multiply/x2")))),
+				ent(sig("add", Adder.class, result("add/out",
+						inPaths("add/x1", "add/x2")))),
+				ent(sig("subtract", Subtractor.class, result("model/response",
+						inPaths("multiply/out", "add/out")))),
+				response("subtract"));
+
+		dependsOn(m, ent("subtract", paths("multiply", "add")));
+//        logger.info("response: " + response(m));
+		Context out = response(m);
+
+		assertTrue(get(out, "subtract").equals(400.0));
+	}
+
+	@Test
+	public void sigMixedModel() throws Exception {
+		// get responses from a remote service model
+
+		Model m = model(
+				inEnt("multiply/x1", 10.0), inEnt("multiply/x2", 50.0),
+				inEnt("add/x1", 20.0), inEnt("add/x2", 80.0),
+				ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
+						inPaths("multiply/x1", "multiply/x2")))),
+				ent(sig("add", AdderImpl.class, result("add/out",
+						inPaths("add/x1", "add/x2")))),
+				ent(sig("subtract", Subtractor.class, result("model/response",
+						inPaths("multiply/out", "add/out")))),
+				response("subtract"));
+
+		dependsOn(m, ent("subtract", paths("multiply", "add")));
+//        logger.info("response: " + response(m));
+		Context out = response(m);
+
+		assertTrue(get(out, "subtract").equals(400.0));
+	}
 
     @Test
     public void batchTask() throws Exception {
@@ -129,47 +220,6 @@ public class ArithmeticMograms {
 		assertTrue(get(context, "j1/t3/result/y").equals(400.0));
 	}
 
-	@Test
-	public void sigModel() throws Exception {
-		// get responses from a service model
-
-		Model m = model(
-				inEnt("multiply/x1", 10.0), inEnt("multiply/x2", 50.0),
-				inEnt("add/x1", 20.0), inEnt("add/x2", 80.0),
-				ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
-						inPaths("multiply/x1", "multiply/x2")))),
-				ent(sig("add", AdderImpl.class, result("add/out",
-						inPaths("add/x1", "add/x2")))),
-				ent(sig("subtract", SubtractorImpl.class, result("model/response",
-						inPaths("multiply/out", "add/out")))),
-				response("subtract"));
-
-		dependsOn(m, ent("subtract", paths("multiply", "add")));
-//        logger.info("response: " + response(m));
-		Context out = response(m);
-
-		assertTrue(get(out, "subtract").equals(400.0));
-	}
-
-	@Test
-	public void lambdaModel() throws Exception {
-
-		Model mo = model(ent("multiply/x1", 10.0), ent("multiply/x2", 50.0),
-			ent("add/x1", 20.0), ent("add/x2", 80.0),
-				ent("add", cxt ->
-					(double) value(cxt, "add/x1") + (double) value(cxt, "add/x2")),
-				ent("multiply", cxt ->
-					(double) val(cxt, "multiply/x1") * (double) val(cxt, "multiply/x2")),
-				ent("subtract", cxt ->
-					(double) v(cxt, "multiply") - (double) v(cxt, "add")),
-				response("subtract"));
-
-		dependsOn(mo, ent("subtract", paths("multiply", "add")));
-
-		Context out = response(mo);
-		logger.info("model response: " + out);
-		assertTrue(get(out, "subtract").equals(400.0));
-	}
 }
 	
 	
