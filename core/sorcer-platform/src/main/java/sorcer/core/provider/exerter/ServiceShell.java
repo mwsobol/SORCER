@@ -843,10 +843,31 @@ public class ServiceShell implements Shell, Service, Servicer, Exerter, Callable
 		return exec(srv, mog, null);
 	}
 
-	public  <T extends Service> Object exec(T srv, Arg... entries)
+	public  <T extends Service> Object exec(T srv, Arg... args)
 			throws MogramException, RemoteException {
 		this.service = srv;
-		if (srv instanceof NetletSignature) {
+		if (srv instanceof Entry) {
+			((Entry)service).getValue(args);
+		} if (service instanceof Signature) {
+			Context cxt = null;
+			for(Arg arg : args) {
+				if (arg instanceof Context) {
+					cxt = (Context)arg;
+					break;
+				}
+			}
+			Task out = null;
+			if (cxt != null) {
+				try {
+					Task in = task((Signature) service, cxt);
+					out = ((Task) in).exert(args);
+				} catch (Exception e) {
+					throw new MogramException(e);
+				}
+				return context(out);
+			} else
+				throw new MogramException("Missing service context for: " + srv);
+		} else if (srv instanceof NetletSignature) {
 			try {
 				ScriptExerter se = new ScriptExerter(System.out, null, Sorcer.getWebsterUrl(), true);
 				se.readFile(new File(((NetletSignature)srv).getServiceSource()));
@@ -854,17 +875,18 @@ public class ServiceShell implements Shell, Service, Servicer, Exerter, Callable
 			} catch (Throwable throwable) {
 				throw new MogramException(throwable);
 			}
-		}
-		if (service instanceof Exertion) {
-			return value((Evaluation) service, entries);
+		} else if (service instanceof Exertion) {
+			return value((Evaluation) service, args);
 		} else if (service instanceof EntModel) {
-			((Model)service).getResponse(entries);
-		} else {
+			((Model)service).getResponse(args);
+		} else if (service instanceof Context) {
 			ServiceContext cxt = (ServiceContext)service;
-			cxt.substitute(entries);
+			cxt.substitute(args);
 			Signature.ReturnPath returnPath = cxt.getReturnPath();
-			if (returnPath != null) {
-				return cxt.getValue(returnPath.path, entries);
+			if (cxt instanceof EntModel) {
+		          return ((Model)service).getResponse(args);
+			} else if (returnPath != null){
+				return cxt.getValue(returnPath.path, args);
 			} else {
 				throw new ExertionException("No return path in the context: "
 						+ cxt.getName());
