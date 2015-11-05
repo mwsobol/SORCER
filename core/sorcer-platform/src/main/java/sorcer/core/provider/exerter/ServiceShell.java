@@ -846,7 +846,15 @@ public class ServiceShell implements Shell, Service, Servicer, Exerter, Callable
 	public  <T extends Service> Object exec(T srv, Arg... args)
 			throws MogramException, RemoteException {
 		this.service = srv;
-		if (srv instanceof Entry) {
+		if (srv instanceof NetletSignature) {
+			try {
+				ScriptExerter se = new ScriptExerter(System.out, null, Sorcer.getWebsterUrl(), true);
+				se.readFile(new File(((NetletSignature)srv).getServiceSource()));
+				return evaluate((Mogram)se.parse());
+			} catch (Throwable throwable) {
+				throw new MogramException(throwable);
+			}
+		} else if (srv instanceof Entry) {
 			((Entry)service).getValue(args);
 		} if (service instanceof Signature) {
 			Context cxt = null;
@@ -867,14 +875,6 @@ public class ServiceShell implements Shell, Service, Servicer, Exerter, Callable
 				return context(out);
 			} else
 				throw new MogramException("Missing service context for: " + srv);
-		} else if (srv instanceof NetletSignature) {
-			try {
-				ScriptExerter se = new ScriptExerter(System.out, null, Sorcer.getWebsterUrl(), true);
-				se.readFile(new File(((NetletSignature)srv).getServiceSource()));
-				return evaluate((Mogram)se.parse());
-			} catch (Throwable throwable) {
-				throw new MogramException(throwable);
-			}
 		} else if (service instanceof Exertion) {
 			return value((Evaluation) service, args);
 		} else if (service instanceof EntModel) {
