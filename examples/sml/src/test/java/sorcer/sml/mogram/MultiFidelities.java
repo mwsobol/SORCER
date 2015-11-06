@@ -74,11 +74,11 @@ public class MultiFidelities {
             }
 
             @Override
-            public void update(Observable observable, Object obj) throws EvaluationException, RemoteException {
-                if (observable instanceof MultiFidelity) {
-                    Fidelity<Signature> mFi = ((MultiFidelity) observable).getMultiFidelity();
-                    if (mFi.getPath().equals("mFi1") && mFi.getSelectedName().equals("add")) {
-                        if (((Double) obj) <= 200.0) {
+            public void update(Observable mFi, Object value) throws EvaluationException, RemoteException {
+                if (mFi instanceof MultiFidelity) {
+                    Fidelity<Signature> fi = ((MultiFidelity) mFi).getFidelity();
+                    if (fi.getPath().equals("mFi1") && fi.getSelectedName().equals("add")) {
+                        if (((Double) value) <= 200.0) {
                             morph("sysFi2");
                         } else {
                             morph("sysFi3");
@@ -135,11 +135,11 @@ public class MultiFidelities {
             }
 
             @Override
-            public void update(Observable observable, Object obj) throws EvaluationException, RemoteException {
-                if (observable instanceof MultiFidelity) {
-                    Fidelity<Signature> mFi = ((MultiFidelity) observable).getMultiFidelity();
-                    if (mFi.getPath().equals("mFi1") && mFi.getSelectedName().equals("add")) {
-                        if (((Double) obj) <= 200.0) {
+            public void update(Observable mFi, Object value) throws EvaluationException, RemoteException {
+                if (mFi instanceof MultiFidelity) {
+                    Fidelity<Signature> fi = ((MultiFidelity) mFi).getFidelity();
+                    if (fi.getPath().equals("mFi1") && fi.getSelectedName().equals("add")) {
+                        if (((Double) value) <= 200.0) {
                             morph("sysFi2");
                         } else {
                             morph("sysFi3");

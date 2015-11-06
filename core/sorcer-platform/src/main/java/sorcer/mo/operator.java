@@ -269,7 +269,7 @@ public class operator {
             if ((metaFiEnts.size() > 0)) {
                 for (Srv metaFiEnt : metaFiEnts) {
                     mFi = (MultiFidelity) metaFiEnt._2;
-                    fiManager.addFidelity(metaFiEnt._1, mFi.getMultiFidelity());
+                    fiManager.addFidelity(metaFiEnt._1, mFi.getFidelity());
                     mFi.setPath(metaFiEnt._1);
                     mFi.setSelection((Arg) mFi.getSelects().get(0));
                     mFi.addObserver(fiManager);

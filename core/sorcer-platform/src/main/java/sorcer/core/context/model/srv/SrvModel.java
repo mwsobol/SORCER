@@ -195,7 +195,7 @@ public class SrvModel extends ParModel<Object> implements Model {
                     Signature sig = (Signature) getFi((Fidelity) val2, entries, path);
                     return evalSignature(sig, path);
                 } else if (val2 instanceof MultiFidelity) {
-                    Object obj = getFi(((MultiFidelity) val2).getMultiFidelity(), entries, path);
+                    Object obj = getFi(((MultiFidelity) val2).getFidelity(), entries, path);
                     Object out = null;
                     if (obj instanceof Signature)
                         out = evalSignature((Signature)obj, path);

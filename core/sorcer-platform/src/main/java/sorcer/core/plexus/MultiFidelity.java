@@ -32,52 +32,53 @@ import java.util.List;
  */
 public class MultiFidelity<T extends Arg> extends Observable implements Identifiable, Arg, Serializable {
 
-    private Fidelity<T> multiFi;
+    // fidelity of fidelities T  taht is observable
+    private Fidelity<T> fidelity;
 
     private Uuid id = UuidFactory.generate();
 
     public MultiFidelity(Fidelity fi) {
-        multiFi = fi;
+        fidelity = fi;
     }
 
     public MultiFidelity(FidelityManager manager) {
         addObserver(manager);
     }
 
-    public Fidelity<T> getMultiFidelity() {
-        return multiFi;
+    public Fidelity<T> getFidelity() {
+        return fidelity;
     }
 
     public void setMultiFidelity(Fidelity<T> fi) {
-        this.multiFi = fi;
+        this.fidelity = fi;
     }
 
     public T getSelection() {
-        return multiFi.getSelection();
+        return fidelity.getSelection();
     }
 
     public void setSelection(T selection) {
-        multiFi.setSelection(selection);
+        fidelity.setSelection(selection);
     }
 
     public T getSelect(String name) {
-        return multiFi.getSelect(name);
+        return fidelity.getSelect(name);
     }
 
     public List<T> getSelects() {
-        return multiFi.getSelects();
+        return fidelity.getSelects();
     }
 
     public void setSelects(List<T> selects) {
-        multiFi.setSelects(selects);;
+        fidelity.setSelects(selects);;
     }
 
     public String getPath() {
-        return multiFi.getPath();
+        return fidelity.getPath();
     }
 
     public void setPath(String fidelityPath) {
-        multiFi.setPath(fidelityPath);;
+        fidelity.setPath(fidelityPath);;
     }
 
     @Override
@@ -86,20 +87,20 @@ public class MultiFidelity<T extends Arg> extends Observable implements Identifi
     }
 
     public String getName() {
-        return multiFi.getName();
+        return fidelity.getName();
     }
 
     public void setName(String name) {
-        multiFi.setName(name);
+        fidelity.setName(name);
     }
 
     @Override
     public String toString() {
-        return multiFi.getName() + (multiFi.getPath() != null ?
-                "@" + multiFi.getPath() + " " : " ") + multiFi.getSelects();
+        return fidelity.getName() + (fidelity.getPath() != null ?
+                "@" + fidelity.getPath() + " " : " ") + fidelity.getSelects();
     }
 
     public int size() {
-        return multiFi.getSelects().size();
+        return fidelity.getSelects().size();
     }
 }
