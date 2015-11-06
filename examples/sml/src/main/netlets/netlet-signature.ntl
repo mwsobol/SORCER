@@ -21,5 +21,8 @@ import static sorcer.co.operator.file
 
 String netletFile = "/Volumes/SSSD/git/SORCER/examples/sml/src/main/netlets/ha-job-local.ntl";
 
+/* Or ideally declare as an artifact*/
+//String netletFile = "org.sorcer.netlet:ha-job-local:1.0";
+
 // a provider is a sevice job declared in the netletFile
 provider(sig(file(netlet)))
