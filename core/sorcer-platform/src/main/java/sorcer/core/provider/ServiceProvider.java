@@ -241,14 +241,8 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
             com.sun.jini.start.ClassLoaderUtil.displayContextClassLoaderTree();
         // System.out.println("service provider class loader: " +
         // serviceClassLoader);
-        String providerProperties = null;
-        try {
-            providerProperties = (String) Config.getNonNullEntry(config,
-                                                                 COMPONENT, "properties", String.class, "");
-        } catch (ConfigurationException e) {
-            // e.printStackTrace();
-            logger.warn("init", e);
-        }
+		String providerProperties =
+				(String) config.getEntry(COMPONENT, "propertiesFile", String.class, "");
 	    // setup injections by subclasses of this class
 		providerSetup();
 		// configure the provider's delegate
@@ -260,8 +254,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
         // decide if thread management is needed for ExertionDispatcher
         setupThreadManager();
         init(args, lifeCycle);
-
-        logger.info("<init> (String[], LifeCycle); name = " + this.getName());
+        logger.info("<init> (String[], LifeCycle); name = {}", this.getName());
     }
 
     // this is only used to instantiate provider impl objects and use their

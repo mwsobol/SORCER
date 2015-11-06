@@ -57,7 +57,6 @@ def getCommonDLs() {
             "jsk-dl-${Sorcer.riverVersion}.jar",
             "rio-api-${RioVersion.VERSION}.jar",
             "serviceui-${Sorcer.riverVersion}.jar",
-            "sorcer-ui-${Sorcer.sorcerVersion}.jar",
             "commons-io-${Sorcer.commonsIoVersion}.jar"]
 }
 
@@ -141,6 +140,21 @@ deployment(name: "Sorcer OS") {
         maintain 1
     }
 
+    service(name: SorcerEnv.getActualName("Logger")) {
+        interfaces {
+            classes 'sorcer.core.provider.RemoteLogger'
+            resources appendJars(["sos-logger-${Sorcer.sorcerVersion}-ui.jar"])
+        }
+        implementation(class: 'sorcer.core.provider.ServiceProvider') {
+            resources "sorcer-lib-${Sorcer.sorcerVersion}.jar",
+                      "sos-logger-${Sorcer.sorcerVersion}.jar",
+                      "commons-io-${Sorcer.commonsIoVersion}.jar"
+                      "rio-api-${RioVersion.VERSION}.jar"
+        }
+        configuration new File("${Sorcer.sorcerHome}/bin/sorcer/logger/configs/logger-prv.config").text
+        maintain 1
+    }
+
     if(System.getenv('sorcer.start.all')!=null || System.getProperty('sorcer.start.all')!=null) {
 
         service(name: SorcerEnv.getActualName("Exerter")) {
@@ -167,21 +181,6 @@ deployment(name: "Sorcer OS") {
                           "rio-api-${RioVersion.VERSION}.jar"
             }
             configuration new File("${Sorcer.sorcerHome}/bin/sorcer/dbp/configs/dbp-prv.config").text
-            maintain 1
-        }
-
-        service(name: SorcerEnv.getActualName("Logger")) {
-            interfaces {
-                classes 'sorcer.core.provider.RemoteLogger'
-                resources appendJars(["sorcer-ui-${Sorcer.sorcerVersion}.jar", "sos-logger-${Sorcer.sorcerVersion}.jar"])
-            }
-            implementation(class: 'sorcer.core.provider.ServiceProvider') {
-                resources "sorcer-lib-${Sorcer.sorcerVersion}.jar",
-                        "sos-logger-${Sorcer.sorcerVersion}.jar",
-                        "commons-io-${Sorcer.commonsIoVersion}.jar"
-                        "rio-api-${RioVersion.VERSION}.jar"
-            }
-            configuration new File("${Sorcer.sorcerHome}/bin/sorcer/logger/configs/logger-prv.config").text
             maintain 1
         }
     }
