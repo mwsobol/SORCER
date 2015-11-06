@@ -108,10 +108,8 @@ public class ProvisionManager {
                 if(!completionService.take().get()) {
                     deployed = false;
                 }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
+            } catch (InterruptedException | ExecutionException e) {
+                logger.warn("Might be an issue getting results", e);
             }
         }
         return deployed;
