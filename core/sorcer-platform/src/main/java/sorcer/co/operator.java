@@ -304,6 +304,10 @@ public class operator {
 		return new Srv(path, call);
 	}
 
+	public static Srv ent(String path, ContextCallable call, Signature.ReturnPath returnPath) {
+		return new Srv(path, call, returnPath);
+	}
+
 	public static Srv ent(String path, Closure call) {
 		return new Srv(path, call);
 	}

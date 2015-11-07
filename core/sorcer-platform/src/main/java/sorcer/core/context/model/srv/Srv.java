@@ -27,6 +27,8 @@ public class Srv extends Entry<Object> implements Variability<Object>, Arg,
 
     protected Object srvValue;
 
+    protected Signature.ReturnPath returnPath;
+
     Type type = Type.PAR;;
 
     // srv fidelities
@@ -46,6 +48,17 @@ public class Srv extends Entry<Object> implements Variability<Object>, Arg,
     public Srv(String path, Object value) {
         super(path, value);
         this.name = path;
+    }
+
+    public Srv(String path, Object value, Signature.ReturnPath returnPath) {
+        this(path, value);
+        this.returnPath = returnPath;
+    }
+
+    public Srv(String name, String path, Object value, Signature.ReturnPath returnPath) {
+        super(path, value);
+        this.returnPath = returnPath;
+        this.name = name;
     }
 
     public Srv(String name, Object value, String path) {
@@ -153,6 +166,14 @@ public class Srv extends Entry<Object> implements Variability<Object>, Arg,
 
     public void setSrvValue(Object srvValue) {
         this.srvValue = srvValue;
+    }
+
+    public Signature.ReturnPath getReturnPath() {
+        return returnPath;
+    }
+
+    public void setReturnPath(Signature.ReturnPath returnPath) {
+        this.returnPath = returnPath;
     }
 
     @Override

@@ -8,7 +8,8 @@ import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.Adder;
 import sorcer.arithmetic.provider.impl.AdderImpl;
-import sorcer.core.provider.Shell;
+import sorcer.core.provider.RemoteServiceShell;
+import sorcer.core.provider.exerter.ServiceShell;
 import sorcer.service.*;
 
 import java.lang.reflect.Proxy;
@@ -16,10 +17,11 @@ import java.util.Calendar;
 import java.util.Date;
 
 import static org.junit.Assert.*;
-import static sorcer.co.operator.file;
-import static sorcer.co.operator.inEnt;
-import static sorcer.co.operator.instance;
+import static sorcer.co.operator.*;
+import static sorcer.eo.operator.args;
 import static sorcer.eo.operator.*;
+import static sorcer.eo.operator.get;
+import static sorcer.eo.operator.value;
 import static sorcer.mo.operator.inConn;
 import static sorcer.mo.operator.outConn;
 
@@ -252,7 +254,7 @@ public class Signatures {
 	}
 
 	@Test
-	public void remoteShellService() throws Exception {
+	public void localShellService1() throws Exception {
 		// The SORCER Service Shell as a service provider
 		Task f5 = task(
 				"f5",
@@ -260,10 +262,22 @@ public class Signatures {
 				context("add", inEnt("arg/x1", 20.0),
 						inEnt("arg/x2", 80.0), result("result/y")));
 
-		Context  out = exec(sig(Shell.class), f5);
+		Context  out = exec(sig(ServiceShell.class), f5);
 		assertEquals(get(out), 100.00);
 	}
 
+	@Test
+	public void remoteShellService() throws Exception {
+		// The SORCER Remote Service Shell as a service provider
+		Task f5 = task(
+				"f5",
+				sig("add", Adder.class),
+				context("add", inEnt("arg/x1", 20.0),
+						inEnt("arg/x2", 80.0), result("result/y")));
+
+		Context  out = exec(sig(RemoteServiceShell.class), f5);
+		assertEquals(get(out), 100.00);
+	}
 
 	@Test
 	public void remoteShellService2() throws Exception {
@@ -274,7 +288,7 @@ public class Signatures {
 				context("add", inEnt("arg/x1", 20.0),
 						inEnt("arg/x2", 80.0), result("result/y")));
 
-		Context  out = exec(sig("add", Adder.class, Strategy.ServiceShell.REMOTE), f5);
+		Context  out = exec(sig("add", Adder.class, Strategy.Shell.REMOTE), f5);
 		assertEquals(get(out), 100.00);
 	}
 

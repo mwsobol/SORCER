@@ -35,7 +35,6 @@ public class Mograms {
 
     private final static Logger logger = LoggerFactory.getLogger(Mograms.class);
 
-
     @Test
     public void exertExertionToModelMogram() throws Exception {
 

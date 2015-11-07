@@ -12,7 +12,7 @@ import sorcer.arithmetic.provider.Multiplier;
 import sorcer.arithmetic.provider.Subtractor;
 import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
-import sorcer.core.provider.Shell;
+import sorcer.core.provider.RemoteServiceShell;
 import sorcer.service.*;
 import sorcer.service.Strategy.Access;
 import sorcer.service.Strategy.Monitor;
@@ -135,7 +135,7 @@ public class NetTaskExertions {
 						inEnt("arg/x2", 80.0), result("result/y")),
 				strategy(Monitor.NO, Wait.YES));
 
-		Context out = exec(sig(Shell.class), f5);
+		Context out = exec(sig(RemoteServiceShell.class), f5);
 		assertTrue(get(out, "result/y").equals(100.00));
 
 	}

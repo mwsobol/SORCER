@@ -53,6 +53,34 @@ public class ArithmeticMograms {
 	}
 
 	@Test
+	public void lambdaModelWithReturnPath() throws Exception {
+
+		Model mo = model(ent("multiply/x1", 10.0), ent("multiply/x2", 50.0),
+				ent("add/x1", 20.0), ent("add/x2", 80.0),
+				ent("arg/x1", 30.0), ent("arg/x2", 90.0),
+				ent("add", model ->
+						(double) value(model, "add/x1") + (double) value(model, "add/x2"),
+						result("add/out",
+								inPaths("add/x1", "add/x2"))),
+				ent("multiply", model ->
+						(double) val(model, "multiply/x1") * (double) val(model, "multiply/x2"),
+						result("multiply/out",
+								inPaths("multiply/x1", "multiply/x2"))),
+				ent("subtract", model ->
+						(double) v(model, "multiply/out") - (double) v(model, "add/out"),
+						result("model/response")),
+				response("subtract", "multiply/out", "add/out", "model/response"));
+
+		dependsOn(mo, ent("subtract", paths("multiply", "add")));
+
+		Context out = response(mo);
+		logger.info("model response: " + out);
+		assertTrue(get(out, "model/response").equals(400.0));
+		assertTrue(get(out, "multiply/out").equals(500.0));
+		assertTrue(get(out, "add/out").equals(100.0));
+	}
+
+	@Test
 	public void sigLocalModel() throws Exception {
 		// get responses from a local service model
 

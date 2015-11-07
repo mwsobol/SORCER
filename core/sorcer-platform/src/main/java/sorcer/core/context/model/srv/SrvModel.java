@@ -210,8 +210,17 @@ public class SrvModel extends ParModel<Object> implements Model {
                 } else if (val2 instanceof MogramEntry) {
                     return evalMogram((MogramEntry)val2, path, entries);
                 } else if (val2 instanceof ContextCallable) {
-                    Object obj = ((ContextCallable)val2).call(this);
+                    Signature.ReturnPath rp = ((Srv) val).getReturnPath();
+                    Object obj = null;
+                    if (rp != null && rp.inPaths != null) {
+                        Context cxt = getSubcontext(rp.inPaths);
+                        obj = ((ContextCallable)val2).call(cxt);
+                    } else {
+                        obj = ((ContextCallable) val2).call(this);
+                    }
                     ((Srv) get(path)).setSrvValue(obj);
+                    if (rp != null && rp.path != null)
+                        putValue(((Srv) val).getReturnPath().path, obj);
                     return obj;
                 } else if (val2 instanceof ContextEntry) {
                     Entry entry = ((ContextEntry)val2).call(this);

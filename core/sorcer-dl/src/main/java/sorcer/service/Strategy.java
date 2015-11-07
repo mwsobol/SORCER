@@ -100,7 +100,7 @@ public interface Strategy extends Arg {
 	/**
 	 * Indicates whether to use ServiceShell locally or remotely (as ServiceProvider).
 	 */
-	public enum ServiceShell implements Arg {
+	public enum Shell implements Arg {
 		REMOTE, LOCAL;
 
 		/* (non-Javadoc)

@@ -534,8 +534,8 @@ public class ServiceSignature implements Signature, SorcerConstants {
 	}
 
 
-	public void setShellRemote(Strategy.ServiceShell shellExec) {
-		if (shellExec == Strategy.ServiceShell.REMOTE) {
+	public void setShellRemote(Strategy.Shell shellExec) {
+		if (shellExec == Strategy.Shell.REMOTE) {
 			this.isShellRemote = true;
 		} else {
 			this.isShellRemote = false;

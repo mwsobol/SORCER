@@ -16,14 +16,14 @@ import sorcer.arithmetic.provider.impl.SubtractorImpl;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.model.par.ParModel;
 import sorcer.core.provider.Jobber;
+import sorcer.core.provider.RemoteServiceShell;
 import sorcer.core.provider.ServiceTasker;
-import sorcer.core.provider.Shell;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.service.*;
 import sorcer.service.Strategy.Access;
 import sorcer.service.Strategy.Flow;
 import sorcer.service.Strategy.Provision;
-import sorcer.service.Strategy.ServiceShell;
+import sorcer.service.Strategy.Shell;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -188,13 +188,12 @@ public class NetJobExertions implements SorcerConstants {
 						outEnt("result/y", null)));
 
 		// Service Composition j1(j2(t4(x1, x2), t5(x1, x2)), t3(x1, x2))
-		Job job = job(
-				"j1", sig("service", ServiceJobber.class),
+		Job job = job("j1",
 				job("j2", t4, t5), t3,
 				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
 				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
 
-		Context context = exec(sig(Shell.class), job);
+		Context context = exec(sig(RemoteServiceShell.class), job);
 		logger.info("job context: " + context);
 		assertEquals(get(context, "j1/t3/result/y"), 400.0);
 
@@ -223,7 +222,7 @@ public class NetJobExertions implements SorcerConstants {
 
 		// Service Composition j1(j2(t4(x1, x2), t5(x1, x2)), t3(x1, x2))
 		Job job = job(
-				"j1", sig("service", ServiceJobber.class, ServiceShell.REMOTE),
+				"j1", sig("service", ServiceJobber.class, Shell.REMOTE),
 				job("j2", t4, t5), t3,
 				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
 				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));

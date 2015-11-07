@@ -860,8 +860,8 @@ public class operator {
 					sig.setType((Type) o);
 				} else if (o instanceof Operating) {
 					sig.setActive((Operating) o);
-				} else if (o instanceof ServiceShell) {
-					sig.setShellRemote((ServiceShell) o);
+				} else if (o instanceof Strategy.Shell) {
+					sig.setShellRemote((Strategy.Shell) o);
 				} else if (o instanceof ReturnPath) {
 					sig.setReturnPath((ReturnPath) o);
 				} else if (o instanceof ServiceDeployment) {
@@ -923,8 +923,8 @@ public class operator {
 					((ServiceSignature) sig).setActive((Operating) o);
 				} else if (o instanceof Provision) {
 					((ServiceSignature) sig).setProvisionable((Provision) o);
-				} else if (o instanceof ServiceShell) {
-					((ServiceSignature) sig).setShellRemote((ServiceShell) o);
+				} else if (o instanceof Strategy.Shell) {
+					((ServiceSignature) sig).setShellRemote((Strategy.Shell) o);
 				} else if (o instanceof ReturnPath) {
 					sig.setReturnPath((ReturnPath) o);
 				} else if (o instanceof ServiceDeployment) {
@@ -2162,8 +2162,8 @@ public class operator {
 					cc.setProvisionable(true);
 				else
 					cc.setProvisionable(false);
-			} else if (o instanceof ServiceShell) {
-				if (o.equals(ServiceShell.REMOTE))
+			} else if (o instanceof Strategy.Shell) {
+				if (o.equals(Strategy.Shell.REMOTE))
 					cc.setShellRemote(true);
 				else
 					cc.setShellRemote(false);

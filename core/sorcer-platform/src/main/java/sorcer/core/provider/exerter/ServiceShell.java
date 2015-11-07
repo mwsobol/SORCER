@@ -70,7 +70,7 @@ import static sorcer.eo.operator.*;
  * @author Mike Sobolewski
  */
 @SuppressWarnings("rawtypes")
-public class ServiceShell implements Shell, Service, Servicer, Exerter, Callable {
+public class ServiceShell implements RemoteServiceShell, Service, Servicer, Exerter, Callable {
 	protected final static Logger logger = LoggerFactory.getLogger(ServiceShell.class);
 	private Service service;
 	private Mogram mogram;
@@ -141,7 +141,7 @@ public class ServiceShell implements Shell, Service, Servicer, Exerter, Callable
 							&& ((ServiceSignature) input.getProcessSignature()).isShellRemote())
 							|| (exertion.getControlContext() != null
 							&& ((ControlContext) exertion.getControlContext()).isShellRemote())) {
-						Exerter prv = (Exerter) Accessor.get().getService(sig(Shell.class));
+						Exerter prv = (Exerter) Accessor.get().getService(sig(RemoteServiceShell.class));
 						result = prv.exert(input, transaction, entries);
 					} else {
 						try {
@@ -826,7 +826,7 @@ public class ServiceShell implements Shell, Service, Servicer, Exerter, Callable
 			((Mogram) service).setScope(cxt);
 			return (T) exert((Mogram) service);
 		} else if (service instanceof NetSignature
-				&& ((Signature) service).getServiceType() == sorcer.core.provider.Shell.class) {
+				&& ((Signature) service).getServiceType() == RemoteServiceShell.class) {
 			Provider prv = (Provider) Accessor.get().getService((Signature) service);
 			return (T) ((Exertion) prv.service(mogram, txn)).getContext();
 		} else if (service instanceof Par) {
@@ -915,14 +915,16 @@ public class ServiceShell implements Shell, Service, Servicer, Exerter, Callable
 				ObjectTask ot = new ObjectTask(signature, cxt);
 				return (T) ((Exertion)exert(ot)).getContext();
 			} else if (signature instanceof NetSignature
-					&& ((Signature) signature).getServiceType() == sorcer.core.provider.Shell.class) {
+					&& ((Signature) signature).getServiceType() == RemoteServiceShell.class) {
 				Provider prv = (Provider) Accessor.get().getService(signature);
 				return (T) ((Exertion) prv.service(mogram, txn)).getContext();
 			} else if ((((ServiceSignature) signature).isShellRemote())
 					|| ((mogram instanceof Exertion) && ((Exertion) mogram).getControlContext() != null
 					&& ((ControlContext) ((Exertion) mogram).getControlContext()).isShellRemote())) {
-				Exerter prv = (Exerter) Accessor.get().getService(sig(Shell.class));
+				Exerter prv = (Exerter) Accessor.get().getService(sig(RemoteServiceShell.class));
 				return (T) ((Exertion)prv.exert(mogram, txn)).getContext();
+			} else if (signature.getServiceType() == ServiceShell.class) {
+				return (T) ((Exertion)exert(mogram, txn)).getContext();
 			} else {
 				return (T) signature.service(mogram, txn);
 			}

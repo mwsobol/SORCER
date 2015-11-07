@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
 import sorcer.core.exertion.NetTask;
 import sorcer.core.provider.Provider;
 import sorcer.core.provider.ServiceProvider;
-import sorcer.core.provider.Shell;
+import sorcer.core.provider.RemoteServiceShell;
 import sorcer.core.provider.Version;
 import sorcer.eo.operator;
 import sorcer.service.*;
@@ -404,7 +404,7 @@ public class
 			MogramException, RemoteException {
 		try {
 			if (this.isShellRemote()) {
-				Provider prv= (Provider) Accessor.get().getService(sig(Shell.class));
+				Provider prv= (Provider) Accessor.get().getService(sig(RemoteServiceShell.class));
 				return ((Exertion) prv.service(mogram, txn)).getContext();
 			}
 			Provider prv = (Provider) operator.provider(this);
