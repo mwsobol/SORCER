@@ -138,6 +138,7 @@ test {
 	systemProperty "java.rmi.server.codebase",
 			"${websterUrl}/${repoPath()}/sml-${version}.jar ${websterUrl}/sorcer-dl-${version}.jar ${websterUrl}/jsk-dl-${riverVersion}.jar"
 
+	systemProperty "project.dir", "${project.projectDir.path}"
 	testLogging {
 		events "passed", "skipped", "failed"/*, "standardOut"*/, "standardError"
 	}

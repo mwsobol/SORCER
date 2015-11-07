@@ -43,7 +43,7 @@ import static sorcer.eo.operator.get;
 public class DeployExertionTest2 extends DeploySetup implements SorcerConstants {
     private final static Logger logger = LoggerFactory.getLogger(DeployExertionTest.class.getName());
 
-    @Category(TestsRequiringRio.class)
+    //@Category(TestsRequiringRio.class)
     @Test
     public void deployAndExec() throws Exception {
     	long t0 = System.currentTimeMillis();

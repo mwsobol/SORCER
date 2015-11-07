@@ -516,28 +516,70 @@ public class ServiceCataloger extends ServiceProvider implements Cataloger {
 			return sItems;
 		}
 
+		private boolean alreadyHas(ServiceItem item, List<ServiceItem> list) {
+			boolean has = false;
+			for(ServiceItem si : list) {
+				if(si.serviceID.equals(item.serviceID)) {
+					has = true;
+					break;
+				}
+			}
+			return has;
+		}
+
 		public void addServiceItem(ServiceItem sItem) {
 			InterfaceList keyList = new InterfaceList(sItem.service.getClass().getInterfaces());
 			List<ServiceItem> sItems = interfaceListMap.get(keyList);
-			if (sItems == null)
-				sItems = new ArrayList<ServiceItem>();
-			// add it to the head assuming the tail's busy
-			for (ServiceItem si : sItems) {
-				try {
-					if (!((ReferentUuid) si.service).getReferentUuid().equals(((ReferentUuid) sItem.service).getReferentUuid())) {
-						sItems.add(0, si);
-						interfaceListMap.put(keyList, sItems);
+			if(sItems!=null) {
+				List<ServiceItem> workingList = new ArrayList<>();
+				workingList.addAll(sItems);
+				boolean added = false;
+				for (ServiceItem si : sItems) {
+					if(!alreadyHas(si, workingList)) {
+						workingList.add(0, sItem);
+						added = true;
 					}
-				} catch (ClassCastException e) {
-					logger.warn("ReferentUuid not implemented by: {}" + si.service.getClass().getName());
 				}
-			}
-			if (sItems.isEmpty()) {
+				interfaceListMap.put(keyList, workingList);
+				if(added) {
+					StringBuilder sb = new StringBuilder();
+					for (ServiceItem i : workingList) {
+						if (sb.length() > 0)
+							sb.append("\n");
+						sb.append("\t")
+						  .append(getName(i.attributeSets))
+						  .append(" sid: ").append(i.serviceID)
+						  .append(" rid: ").append(((ReferentUuid) i.service).getReferentUuid());
+					}
+					logger.info("ServiceItem list for {} was {} now {}\n{}",
+								getName(sItem.attributeSets),
+								sItems.size(),
+								workingList.size(),
+								sb.toString());
+				} else {
+					logger.info("ServiceItem list unchanged for {}",
+								getName(sItem.attributeSets));
+				}
+			} else {
+				sItems = new ArrayList<>();
 				sItems.add(0, sItem);
 				interfaceListMap.put(keyList, sItems);
+				logger.info("ServiceItem list created for {}",
+							getName(sItem.attributeSets));
 			}
-			logger.info("adding new service, calling notify");
+			logger.debug("Added new service, calling notify");
 			observable.tellOfAction("UPDATEDPLEASE");
+		}
+
+		private String getName(Entry[] entries) {
+			String name = null;
+			for(Entry e : entries) {
+				if(e instanceof Name) {
+					name = ((Name)e).name;
+					break;
+				}
+			}
+			return name;
 		}
 
         private void removeFrom(List<ServiceItem> sis, ServiceItem si) {
@@ -1161,7 +1203,7 @@ public class ServiceCataloger extends ServiceProvider implements Cataloger {
 						+ pre.service.getClass().getName() + ")\n");
 				cinfo.remove(post);
 			} else {
-				logger.info("Service attribute has changed pre=" + pre
+				logger.debug("Service attribute has changed pre=" + pre
 						+ " post=" + post);
 				cinfo.remove(pre);
 				cinfo.addServiceItem(post);
