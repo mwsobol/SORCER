@@ -19,6 +19,7 @@ import sorcer.core.invoker.ServiceInvoker;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.pml.provider.impl.Volume;
 import sorcer.service.*;
+import sorcer.service.modeling.Model;
 import sorcer.util.Sorcer;
 import sorcer.util.exec.ExecUtils.CmdResult;
 
@@ -84,7 +85,18 @@ public class Invokers {
 	}
 
 	@Test
-	public void methodInvokerTest() throws Exception {
+	public void lambdaInvoker() throws Exception {
+
+		Model mo = model(ent("x", 10.0), ent("y", 20.0),
+				ent(invoker("lambda", (Context<Double> cxt) -> value(cxt, "x")
+						+ value(cxt, "y")
+						+ 30)));
+		logger.info("invoke value: " + value(mo, "lambda"));
+		assertEquals(value(mo, "lambda"), 60.0);
+	}
+
+	@Test
+	public void objectMethodInvoker() throws Exception {
 		set(x, 10.0);
 		set(y, 20.0);
 		add(pm, x, y, z);
@@ -101,7 +113,7 @@ public class Invokers {
 	}
 
 	@Test
-	public void groovyInvokerTest() throws Exception {
+	public void groovyInvoker() throws Exception {
 		ParModel pm = parModel("par-model");
 		add(pm, par("x", 10.0), par("y", 20.0));
 		add(pm, invoker("expr", "x + y + 30", pars("x", "y")));
@@ -112,7 +124,7 @@ public class Invokers {
 	}
 
 	@Test
-	public void invokeTaskTest() throws Exception {
+	public void invokeTask() throws Exception {
 		Task t4 = task(
 				"t4",
 				sig("multiply", MultiplierImpl.class),
@@ -124,7 +136,7 @@ public class Invokers {
 	}
 
 	@Test
-	public void invokeJobTest() throws Exception {
+	public void invokeJob() throws Exception {
 		Context c4 = context("multiply", inEnt("arg/x1", 50.0),
 				inEnt("arg/x2", 10.0), result("result/y"));
 		Context c5 = context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
@@ -149,7 +161,7 @@ public class Invokers {
 	}
 
 	@Test
-	public void invokeParJobTest() throws Exception {
+	public void invokeParJob() throws Exception {
 		Context c4 = context("multiply", inEnt("arg/x1"), inEnt("arg/x2"),
 				result("result/y"));
 		Context c5 = context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
@@ -184,7 +196,7 @@ public class Invokers {
 	}
 
 	@Test
-	public void invokerParTest() throws Exception {
+	public void invokerPar() throws Exception {
 
 		Par<Double> x1 = par("x1", 1.0);
 
@@ -193,7 +205,7 @@ public class Invokers {
 	}
 
 	@Test
-	public void substituteArgsTest() throws Exception {
+	public void substituteInvokeArgs() throws Exception {
 		Par x1, x2, y;
 
 		x1 = par("x1", 1.0);
@@ -211,7 +223,7 @@ public class Invokers {
 	}
 
 	@Test
-	public void exertionInvokerTest() throws Exception {
+	public void exertionInvoker() throws Exception {
 		Context c4 = context("multiply", inEnt("arg/x1"), inEnt("arg/x2"),
 				result("result/y"));
 		Context c5 = context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
@@ -244,7 +256,7 @@ public class Invokers {
 	}
 
 	@Test
-	public void cmdInvokerTest() throws Exception {
+	public void systemCmdInvoker() throws Exception {
 		String riverVersion = System.getProperty("river.version");
 		String sorcerVersion = System.getProperty("sorcer.version");
 		String slf4jVersion = System.getProperty("slf4j.version");
@@ -318,7 +330,7 @@ public class Invokers {
 	}
 
 	@Test
-	public void optInvokerTest() throws Exception {
+	public void optInvoker() throws Exception {
 		ParModel pm = new ParModel("par-model");
 
 		OptInvoker opt = new OptInvoker("opt", new Condition(pm,
@@ -342,7 +354,7 @@ public class Invokers {
 	}
 
 	@Test
-	public void polOptInvokerTest() throws Exception {
+	public void polOptInvoker() throws Exception {
 		ParModel pm = parModel("par-model");
 		add(pm,
 				par("x", 10.0),
@@ -360,7 +372,7 @@ public class Invokers {
 	}
 
 	@Test
-	public void altInvokerTest() throws Exception {
+	public void altInvoker() throws Exception {
 		ParModel pm = new ParModel("par-model");
 		pm.putValue("x", 30.0);
 		pm.putValue("y", 20.0);
@@ -420,7 +432,7 @@ public class Invokers {
 	}
 
 	@Test
-	public void polAltInvokerTest() throws Exception {
+	public void polAltInvoker() throws Exception {
 		ParModel pm = parModel("par-model");
 		// add(pm, entry("x", 10.0), entry("y", 20.0), par("x2", 50.0),
 		// par("y2", 40.0), par("x3", 50.0), par("y3", 60.0));
@@ -461,7 +473,7 @@ public class Invokers {
 	}
 
 	@Test
-	public void invokerLoopTest() throws Exception {
+	public void invokerLoop() throws Exception {
 		ParModel pm = parModel("par-model");
 		add(pm, ent("x", 1));
 		add(pm, par("y", invoker("x + 1", pars("x"))));
@@ -474,7 +486,7 @@ public class Invokers {
 	}
 
 	@Test
-	public void incrementorBy1Test() throws Exception {
+	public void incrementorStepBy1() throws Exception {
 		ParModel pm = parModel("par-model");
 		add(pm, ent("x", 1));
 		add(pm, ent("y", invoker("x + 1", pars("x"))));
@@ -486,7 +498,7 @@ public class Invokers {
 	}
 
 	@Test
-	public void incrementorBy2Test() throws Exception {
+	public void incrementorStepBy2() throws Exception {
 		ParModel pm = parModel("par-model");
 		add(pm, ent("x", 1));
 		add(pm, par("y", invoker("x + 1", pars("x"))));
@@ -499,7 +511,7 @@ public class Invokers {
 	}
 
 	@Test
-	public void incrementorDoubleTest() throws Exception {
+	public void incrementorDouble() throws Exception {
 		ParModel pm = parModel("par-model");
 		add(pm, ent("x", 1.0));
 		add(pm, par("y", invoker("x + 1.2", pars("x"))));
