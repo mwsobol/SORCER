@@ -242,6 +242,7 @@ public class operator {
         Fidelity<Arg> responsePaths = null;
         SrvModel model = null;
         FidelityManager fiManager = null;
+        List<Fidelity<Fidelity>> metaFis = new ArrayList<Fidelity<Fidelity>>();
         List<Srv> metaFiEnts = new ArrayList<Srv>();
         for (Object item : items) {
             if (item instanceof Signature) {
@@ -250,12 +251,16 @@ public class operator {
                 complement = (sorcer.eo.operator.Complement)item;
             } else if (item instanceof Model) {
                 model = ((SrvModel)item);
-            } else if (item instanceof Fidelity) {
-                responsePaths = ((Fidelity)item);
             } else if (item instanceof FidelityManager) {
                 fiManager = ((FidelityManager)item);
             } else if (item instanceof Srv && ((Entry)item)._2 instanceof MultiFidelity) {
                 metaFiEnts.add((Srv)item);
+            } else if (item instanceof Fidelity) {
+                if (((Fidelity)item).getSelects().get(0) instanceof Arg)
+                    responsePaths = ((Fidelity)item);
+            } else if (item instanceof Fidelity) {
+                if (((Fidelity)item).getSelects().get(0) instanceof Fidelity)
+                    metaFis.add((Fidelity<Fidelity>) item);
             }
         }
         if (model == null)
@@ -263,7 +268,7 @@ public class operator {
 
         if (fiManager != null) {
             model.setFiManager(fiManager);
-            fiManager.initialize();
+            fiManager.initialize(metaFis);
             fiManager.setMogram(model);
             MultiFidelity mFi = null;
             if ((metaFiEnts.size() > 0)) {
@@ -276,17 +281,6 @@ public class operator {
                 }
             }
         }
-
-//        if (sigs != null && sigs.size() > 0) {
-//            Fidelity fidelity = new Fidelity();
-//            for (Signature sig : sigs)
-//                fidelity.getSelects().add(sig);
-//            model.addServiceFidelity(fidelity);
-//            model.selectedServiceFidelity(fidelity.getName());
-//        }
-//        else {
-//            model.setSubject("execute", ServiceModeler.class);
-//        }
 
         if (responsePaths != null) {
             model.getModelStrategy().setResponsePaths(((Fidelity) responsePaths).getSelects());

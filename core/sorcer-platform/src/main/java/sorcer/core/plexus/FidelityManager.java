@@ -31,11 +31,7 @@ import sorcer.service.*;
 import java.io.Serializable;
 import java.rmi.MarshalledObject;
 import java.rmi.RemoteException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -112,6 +108,16 @@ abstract public class FidelityManager implements FidelityManagement<Signature>, 
         return service(mogram, null);
     }
 
+    public void initialize() {
+       // implement is subclasses
+    }
+
+    public void initialize(List<Fidelity<Fidelity>> fidelities) {
+        for (Fidelity fi : fidelities) {
+            put(fi.getName(), fi);
+        }
+    }
+
     public EventRegistration register(long eventID, MarshalledObject handback,
                                       RemoteEventListener toInform, long leaseLenght)
             throws UnknownEventException, RemoteException {
@@ -163,6 +169,12 @@ abstract public class FidelityManager implements FidelityManagement<Signature>, 
                     }
                 }
             }
+        }
+    }
+
+    public void add(Fidelity<Fidelity>... sysFis) {
+        for (Fidelity<Fidelity> sysFi :sysFis){
+            metafidelities.put(sysFi.getName(), sysFi);
         }
     }
 

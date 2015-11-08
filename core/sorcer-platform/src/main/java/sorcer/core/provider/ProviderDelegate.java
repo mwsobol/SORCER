@@ -624,10 +624,10 @@ public class ProviderDelegate {
     }
 
     private void initThreadGroups() {
-        namedGroup = new ThreadGroup("Provider Group: {}" + getProviderName());
+        namedGroup = new ThreadGroup("Provider Group: " + getProviderName());
         namedGroup.setDaemon(true);
         namedGroup.setMaxPriority(Thread.NORM_PRIORITY - 1);
-        interfaceGroup = new ThreadGroup("Interface Threads");
+        interfaceGroup = new ThreadGroup("Interface Group: " + getProviderName());
 		interfaceGroup.setDaemon(true);
 		interfaceGroup.setMaxPriority(Thread.NORM_PRIORITY - 1);
 	}
@@ -694,7 +694,7 @@ public class ProviderDelegate {
             // SORCER.ANY is required for a ProviderWorker
             // to avoid matching to any provider name
             // that is Java null matching everything
-            envelop = ExertionEnvelop.getTemplate(publishedServiceTypes[i], SorcerConstants.ANY);
+            envelop = ExertionEnvelop.getTemplate(publishedServiceTypes[i], getProviderName());
             if (spaceReadiness) {
                 worker = new SpaceIsReadyTaker(new SpaceTaker.SpaceTakerData(envelop,
                                                                              memberInfo,
@@ -703,7 +703,7 @@ public class ProviderDelegate {
                                                                              spaceGroup,
                                                                              workerTransactional,
                                                                              queueSize == 0),
-                                               spaceWorkerPool);
+										spaceWorkerPool);
                 spaceTakers.add(worker);
             } else {
                 worker = new SpaceTaker(new SpaceTaker.SpaceTakerData(envelop,
@@ -728,7 +728,7 @@ public class ProviderDelegate {
 			// System.out.println("space template: " +
 			// envelop.describe());
 
-			if (!matchInterfaceOnly) {
+			if (matchInterfaceOnly) {
 				// spaceWorkerPool = Executors.newFixedThreadPool(workerCount);
 				spaceWorkerPool = new ThreadPoolExecutor(workerCount,
 						maximumPoolSize > workerCount ? maximumPoolSize
@@ -737,7 +737,7 @@ public class ProviderDelegate {
 								(queueSize == 0 ? workerCount : queueSize)), factory);
 				spaceHandlingPools.add(spaceWorkerPool);
 				envelop = ExertionEnvelop.getTemplate(publishedServiceTypes[i],
-						getProviderName());
+						SorcerConstants.ANY);
 				if (spaceReadiness) {
 					worker = new SpaceIsReadyTaker(
 							new SpaceTaker.SpaceTakerData(envelop, memberInfo,
@@ -760,8 +760,8 @@ public class ProviderDelegate {
 				// envelop.describe());
 			}
 		}
-		// interfaceGroup.list();
-		// namedGroup.list();
+//		 interfaceGroup.list();
+//		 namedGroup.list();
 	}
 
 	public Task doTask(Task task, Transaction transaction) throws MogramException, SignatureException, RemoteException {

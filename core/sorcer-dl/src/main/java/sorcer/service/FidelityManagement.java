@@ -30,8 +30,6 @@ import java.util.Map;
  */
 public interface FidelityManagement<T extends Arg> extends Service {
 
-    public void initialize();
-
     public Map<String, Fidelity<T>> getFidelities() throws RemoteException;
 
     public Map<String, Fidelity<Fidelity>> getMetafidelities() throws RemoteException;
