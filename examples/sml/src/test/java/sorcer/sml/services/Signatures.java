@@ -11,6 +11,7 @@ import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.core.provider.RemoteServiceShell;
 import sorcer.core.provider.exerter.ServiceShell;
 import sorcer.service.*;
+import sorcer.service.Strategy.Shell;
 
 import java.lang.reflect.Proxy;
 import java.util.Calendar;
@@ -288,7 +289,7 @@ public class Signatures {
 				context("add", inEnt("arg/x1", 20.0),
 						inEnt("arg/x2", 80.0), result("result/y")));
 
-		Context  out = exec(sig("add", Adder.class, Strategy.Shell.REMOTE), f5);
+		Context  out = exec(sig("add", Adder.class, Shell.REMOTE), f5);
 		assertEquals(get(out), 100.00);
 	}
 

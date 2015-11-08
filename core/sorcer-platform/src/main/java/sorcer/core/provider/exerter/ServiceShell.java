@@ -409,16 +409,16 @@ public class ServiceShell implements RemoteServiceShell, Service, Servicer, Exer
 			provider = ((NetSignature) signature).getProvider();
 			if (provider == null) {
 				// check proxy cache
-                try {
-                    provider = proxies.get(signature);
-                } catch(CacheLoader.InvalidCacheLoadException e) {
-                    String message =
-                        String.format("Provider name: [%s], type: %s not found, make sure it is running and there is " +
-                                      "an available lookup service with correct discovery settings",
-                                      signature.getProviderName(), signature.getServiceType().getName());
-                    logger.error(message);
-                    throw new ExertionException(message);
-                }
+				try {
+					provider = proxies.get(signature);
+				} catch(CacheLoader.InvalidCacheLoadException e) {
+					String message =
+							String.format("Provider name: [%s], type: %s not found, make sure it is running and there is " +
+											"an available lookup service with correct discovery settings",
+									signature.getProviderName(), signature.getServiceType().getName());
+					logger.error(message);
+					throw new ExertionException(message);
+				}
 				// lookup proxy
 				/*if (provider == null) {
 					long t0 = System.currentTimeMillis();
@@ -437,7 +437,7 @@ public class ServiceShell implements RemoteServiceShell, Service, Servicer, Exer
 			signature = new NetSignature("service", Spacer.class, Sorcer.getActualSpacerName());
 			exertion.setProcessSignature(signature);
 		}
- 		if (provider != null) {
+		if (provider != null) {
 			if (provider instanceof Service) {
 				// cache the provider for the signature
 				((NetSignature) signature).setProvider((Service) provider);
@@ -530,11 +530,11 @@ public class ServiceShell implements RemoteServiceShell, Service, Servicer, Exer
 		TransactionManager transactionManager = TransactionManagerAccessor.getTransactionManager();
 		Transaction txn = null;
 
-        LockResult lr = locker.getLock(""+ exertion.getProcessSignature().getServiceType(),
-                                       new ProviderID(mutexId),
-                                       txn,
-                                       exertion.getId());
-        if (lr.didSucceed()) {
+		LockResult lr = locker.getLock(""+ exertion.getProcessSignature().getServiceType(),
+				new ProviderID(mutexId),
+				txn,
+				exertion.getId());
+		if (lr.didSucceed()) {
 			((ControlContext)exertion.getControlContext()).setMutexId(provider.getProviderID());
 			Exertion xrt = provider.service(exertion, transaction);
 			txn.commit();
@@ -648,7 +648,7 @@ public class ServiceShell implements RemoteServiceShell, Service, Servicer, Exer
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.util.concurrent.Callable#call()
 	 */
 	@Override
@@ -826,7 +826,7 @@ public class ServiceShell implements RemoteServiceShell, Service, Servicer, Exer
 			((Mogram) service).setScope(cxt);
 			return (T) exert((Mogram) service);
 		} else if (service instanceof NetSignature
-				&& ((Signature) service).getServiceType() == RemoteServiceShell.class) {
+				&& ((Signature) service).getServiceType() == sorcer.core.provider.RemoteServiceShell.class) {
 			Provider prv = (Provider) Accessor.get().getService((Signature) service);
 			return (T) ((Exertion) prv.service(mogram, txn)).getContext();
 		} else if (service instanceof Par) {
@@ -884,7 +884,7 @@ public class ServiceShell implements RemoteServiceShell, Service, Servicer, Exer
 			cxt.substitute(args);
 			Signature.ReturnPath returnPath = cxt.getReturnPath();
 			if (cxt instanceof EntModel) {
-		          return ((Model)service).getResponse(args);
+				return ((Model)service).getResponse(args);
 			} else if (returnPath != null){
 				return cxt.getValue(returnPath.path, args);
 			} else {
@@ -915,7 +915,7 @@ public class ServiceShell implements RemoteServiceShell, Service, Servicer, Exer
 				ObjectTask ot = new ObjectTask(signature, cxt);
 				return (T) ((Exertion)exert(ot)).getContext();
 			} else if (signature instanceof NetSignature
-					&& ((Signature) signature).getServiceType() == RemoteServiceShell.class) {
+					&& ((Signature) signature).getServiceType() == sorcer.core.provider.RemoteServiceShell.class) {
 				Provider prv = (Provider) Accessor.get().getService(signature);
 				return (T) ((Exertion) prv.service(mogram, txn)).getContext();
 			} else if ((((ServiceSignature) signature).isShellRemote())

@@ -345,19 +345,17 @@ public class ArithmeticNetTest implements SorcerConstants {
 	
 	@Test
 	public void exerterTest() throws Exception {
-	Mogram f5 = task(
-			"f5",
+	Mogram f5 = task("f5",
 			sig("add", Adder.class),
 			context("add", inEnt("arg/x1", 20.0),
 					inEnt("arg/x2", 80.0), outEnt("result/y", null)),
 			strategy(Monitor.NO, Wait.YES));
 	
-	Mogram out = null;
 //	long start = System.currentTimeMillis();
 	Exerter exerter = Accessor.get().getService(null, Exerter.class);
 //	logger.info("got exerter: " + exerter);
 
-	out = exerter.exert(f5, null);
+	Mogram out = exerter.exert(f5, null);
 //	long end = System.currentTimeMillis();
 	
 //	logger.info("task f5 context: " + context(out));
