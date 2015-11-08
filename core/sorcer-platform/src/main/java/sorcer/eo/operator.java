@@ -1449,7 +1449,7 @@ public class operator {
 	}
 
 
-	public static <M extends Service> M mogram(Object... items) throws MogramException {
+	public static <M extends Mogram> M mogram(Object... items) throws MogramException {
 		String name = "unknown" + count++;
 		if (items.length == 1 && items[0] instanceof NetletSignature) {
 			String source = ((NetletSignature)items[0]).getServiceSource();
