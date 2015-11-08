@@ -20,6 +20,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
 import static sorcer.co.operator.get;
+import static sorcer.co.operator.lambda;
 import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.get;
 import static sorcer.eo.operator.result;
@@ -60,8 +61,8 @@ public class Services {
     public void lambdaInvoker() throws Exception {
 
         Model mo = model(ent("x", 10.0), ent("y", 20.0),
-                ent(invoker("lambda", cxt -> (double) value(cxt, "x")
-                        + (double) value(cxt, "y")
+                ent(invoker("lambda", (Context<Double> cxt) -> value(cxt, "x")
+                        + value(cxt, "y")
                         + 30)));
         logger.info("invoke value: " + value(mo, "lambda"));
         assertEquals(value(mo, "lambda"), 60.0);
@@ -72,12 +73,12 @@ public class Services {
 
         Model mo = model(ent("multiply/x1", 10.0), ent("multiply/x2", 50.0),
                 ent("add/x1", 20.0), ent("add/x2", 80.0),
-                ent("add", model ->
-                        (double) value(model, "add/x1") + (double) value(model, "add/x2")),
-                ent("multiply", model ->
-                        (double) val(model, "multiply/x1") * (double) val(model, "multiply/x2")),
-                ent("subtract", model ->
-                        (double) v(model, "multiply") - (double) v(model, "add")),
+                lambda("add", (Context<Double> model) ->
+                        value(model, "add/x1") + value(model, "add/x2")),
+                lambda("multiply", (Context<Double> model) ->
+                        val(model, "multiply/x1") * val(model, "multiply/x2")),
+                lambda("subtract", (Context<Double> model) ->
+                        v(model, "multiply") - v(model, "add")),
                 response("subtract", "multiply", "add"));
 
         dependsOn(mo, ent("subtract", paths("multiply", "add")));

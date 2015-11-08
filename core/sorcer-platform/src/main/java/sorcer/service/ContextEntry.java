@@ -25,6 +25,6 @@ import java.io.Serializable;
 @FunctionalInterface
 public interface ContextEntry<T> extends Serializable {
 
-    Entry<T> call(Context context) throws MogramException;
+    Entry<T> call(Context<T> context) throws MogramException;
 
 }

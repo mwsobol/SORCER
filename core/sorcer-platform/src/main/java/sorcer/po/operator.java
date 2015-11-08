@@ -357,11 +357,11 @@ public class operator {
 		}
 	}
 
-	public static ServiceInvoker invoker(String name, ContextCallable condition) throws InvocationException {
+	public static <T> ServiceInvoker invoker(String name, ContextCallable<T> condition) throws InvocationException {
 		return new ServiceInvoker(name, condition, null);
 	}
 
-	public static ServiceInvoker invoker(String name, ContextCallable condition, Context scope) throws InvocationException {
+	public static <T> ServiceInvoker invoker(String name, ContextCallable<T> condition, Context scope) throws InvocationException {
 		return new ServiceInvoker(name, condition, scope);
 	}
 

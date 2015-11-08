@@ -291,20 +291,20 @@ public class operator {
 			return new Par<T>(path, value);
 		} else if (value instanceof Evaluation) {
 			return new Entry<T>(path, value);
-		} else if (value instanceof ContextCallable) {
-			return (Entry<T>) new Srv(path, value);
-		} else if (value instanceof ContextEntry) {
-			return (Entry<T>) new Srv(path, value);
 		} else {
 			return new Entry<T>(path, value);
 		}
 	}
 
-	public static Srv ent(String path, ContextCallable call) {
+	public static <T> Srv lambda(String path, ContextEntry<T> call) {
 		return new Srv(path, call);
 	}
 
-	public static Srv ent(String path, ContextCallable call, Signature.ReturnPath returnPath) {
+	public static <T> Srv lambda(String path, ContextCallable<T> call) {
+		return new Srv(path, call);
+	}
+
+	public static <T> Srv lambda(String path, ContextCallable<T> call, Signature.ReturnPath returnPath) {
 		return new Srv(path, call, returnPath);
 	}
 
