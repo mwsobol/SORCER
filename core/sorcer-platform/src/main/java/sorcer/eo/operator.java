@@ -1129,6 +1129,12 @@ public class operator {
 		return exertion.getFidelities();
 	}
 
+	public static Fidelity<Fidelity> fi(String name, Fidelity... fidelities) {
+		Fidelity<Fidelity> fi = new Fidelity(new Fidelity(fidelities));
+		fi.setName(name);
+		return fi;
+	}
+
 	public static Fidelity<Fidelity> fi(Fidelity... fidelities) {
 		Fidelity<Fidelity> fi = new Fidelity(new Fidelity(fidelities));
 		return fi;
