@@ -17,6 +17,9 @@
 package sorcer.co;
 
 import groovy.lang.Closure;
+import org.rioproject.resolver.Artifact;
+import org.rioproject.resolver.ResolverException;
+import org.rioproject.resolver.ResolverHelper;
 import sorcer.co.tuple.*;
 import sorcer.core.context.Copier;
 import sorcer.core.context.ListContext;
@@ -41,6 +44,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.*;
@@ -124,8 +128,18 @@ public class operator {
     }
 
 	public static Path file(String filename) {
+		if(Artifact.isArtifact(filename)) {
+			try {
+				URL url = ResolverHelper.getResolver().getLocation(filename, "ntl");
+				File file = new File(url.toURI());
+				return new Path(file.getPath());
+			} catch (ResolverException | URISyntaxException e) {
+				e.printStackTrace();
+			}
+		}
 		return new Path (filename);
 	}
+
 	public static Class[] types(Class... classes) {
 		return classes;
 	}
