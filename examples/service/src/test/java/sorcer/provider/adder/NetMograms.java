@@ -19,7 +19,6 @@ import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.get;
 import static sorcer.eo.operator.value;
 import static sorcer.mo.operator.response;
-import static sorcer.mo.operator.srvModel;
 
 /**
  * @author Mike Sobolewski
@@ -102,8 +101,9 @@ public class NetMograms {
 				response("add", "arg/x1", "arg/x2"));
 
 		Context out = response(mod);
-		assertTrue(operator.get(out, "add").equals(100.0));
 
+		logger.info("out: " +out );
+		assertTrue(operator.get(out, "add").equals(100.0));
 		assertTrue(operator.get(mod, "result/y").equals(100.0));
 
 	}

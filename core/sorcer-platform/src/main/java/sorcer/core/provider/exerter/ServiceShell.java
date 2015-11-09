@@ -229,12 +229,6 @@ public class ServiceShell implements RemoteServiceShell, Service, Servicer, Exer
 				}
 			}
 		}
-//		if (exertion instanceof Block) {
-//			resetScope(exertion, argCxt, entries);
-//		}
-//		else if (exertion.getScope() != null) {
-//			exertion.getDataContext().append((Context)exertion.getScope());
-//		}
 		Exec.State state = ((ServiceExertion)mogram).getControlContext().getExecState();
 		if (state == State.INITIAL) {
 			if(mogram instanceof Exertion) {
@@ -406,19 +400,23 @@ public class ServiceShell implements RemoteServiceShell, Service, Servicer, Exer
 			}
 			if (logger.isDebugEnabled())
 				logger.debug("ServiceShell's service accessor: {}", Accessor.get().getClass().getName());
+
+			// if space exertion should go to Spacer
+			if (!exertion.isJob()
+					&& exertion.getControlContext().getAccessType() == Access.PULL) {
+				signature = new NetSignature("service", Spacer.class, Sorcer.getActualSpacerName());
+				exertion.correctProcessSignature(signature);
+			}
 			provider = ((NetSignature) signature).getProvider();
 			if (provider == null) {
 				// check proxy cache
-				try {
-					provider = proxies.get(signature);
-				} catch(CacheLoader.InvalidCacheLoadException e) {
-					String message =
-							String.format("Provider name: [%s], type: %s not found, make sure it is running and there is " +
-											"an available lookup service with correct discovery settings",
-									signature.getProviderName(), signature.getServiceType().getName());
-					logger.error(message);
-					throw new ExertionException(message);
-				}
+				provider = proxies.get(signature);
+				String message =
+						String.format("Provider name: [%s], type: %s not found, make sure it is running and there is " +
+										"an available lookup service with correct discovery settings",
+								signature.getProviderName(), signature.getServiceType().getName());
+				logger.error(message);
+
 				// lookup proxy
 				/*if (provider == null) {
 					long t0 = System.currentTimeMillis();
@@ -432,11 +430,6 @@ public class ServiceShell implements RemoteServiceShell, Service, Servicer, Exer
 			throw new ExertionException(e);
 		}
 
-		if (!exertion.isJob()
-				&& exertion.getControlContext().getAccessType() == Access.PULL) {
-			signature = new NetSignature("service", Spacer.class, Sorcer.getActualSpacerName());
-			exertion.setProcessSignature(signature);
-		}
 		if (provider != null) {
 			if (provider instanceof Service) {
 				// cache the provider for the signature

@@ -40,7 +40,6 @@ import net.jini.lookup.entry.Name;
 import net.jini.security.AccessPermission;
 import net.jini.security.TrustVerifier;
 import net.jini.space.JavaSpace05;
-import org.omg.stub.java.rmi._Remote_Stub;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.container.jeri.AbstractExporterFactory;
@@ -70,7 +69,6 @@ import sorcer.security.sign.SignedTaskInterface;
 import sorcer.security.sign.TaskAuditor;
 import sorcer.security.util.SorcerPrincipal;
 import sorcer.service.*;
-import sorcer.service.Evaluation;
 import sorcer.service.jobber.JobberAccessor;
 import sorcer.service.space.SpaceAccessor;
 import sorcer.service.txmgr.TransactionManagerAccessor;
@@ -170,8 +168,8 @@ public class ProviderDelegate {
 
 	protected boolean idPersistent = false;
 
-	/** if true then we match all entries with interface names only. */
-	protected boolean matchInterfaceOnly = false;
+	/** if true then we match all entries with interface type only. */
+	protected boolean matchInterfaceOnly = true;
 
 	/** if true then its provider can be monitored for its exerting behavior. */
 	protected boolean monitorable = false;
@@ -486,7 +484,7 @@ public class ProviderDelegate {
 
         try {
             matchInterfaceOnly = (Boolean) jconfig.getEntry(ServiceProvider.COMPONENT, INTERFACE_ONLY, boolean.class,
-                                                            false);
+                                                            true);
         } catch (Exception e) {
             logger.warn("Problem getting {}.{}", ServiceProvider.COMPONENT, INTERFACE_ONLY, e);
         }
@@ -764,7 +762,8 @@ public class ProviderDelegate {
 //		 namedGroup.list();
 	}
 
-	public Task doTask(Task task, Transaction transaction) throws MogramException, SignatureException, RemoteException {
+	public Task doTask(Task task, Transaction transaction)
+			throws MogramException, SignatureException, RemoteException {
 		// prepare a default net batch task (has all sigs of PROC type)
 		// and make the last signature as master PROC type only.
 		task.correctBatchSignatures();
@@ -1694,15 +1693,12 @@ public class ProviderDelegate {
 
 		String pn = task.getProcessSignature().getProviderName();
 		if (pn != null && !matchInterfaceOnly) {
-			if (!(pn.equals(SorcerConstants.ANY) || SorcerConstants.ANY
-					.equals(pn.trim()))) {
-				if (!pn.equals(getProviderName())) {
-					servicetask.getContext().reportException(
-							new ExertionException(
-									"No valid task for service provider: "
-											+ config.getProviderName()));
-					return false;
-				}
+			if (!pn.equals(getProviderName())) {
+				servicetask.getContext().reportException(
+						new ExertionException(
+								"Not valid task for service provider: "
+										+ config.getProviderName() + " for:" + pn));
+				return false;
 			}
 		}
 		Class st = ((NetSignature) task.getProcessSignature()).getServiceType();

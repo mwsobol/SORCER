@@ -112,7 +112,11 @@ abstract public class FidelityManager implements FidelityManagement<Signature>, 
        // implement is subclasses
     }
 
-    public void initialize(List<Fidelity<Fidelity>> fidelities) {
+    public void init(List<Fidelity<Fidelity>> fidelities) {
+        if (fidelities == null || fidelities.size() == 0) {
+            initialize();
+            return;
+        }
         for (Fidelity fi : fidelities) {
             put(fi.getName(), fi);
         }
@@ -173,7 +177,7 @@ abstract public class FidelityManager implements FidelityManagement<Signature>, 
     }
 
     public void add(Fidelity<Fidelity>... sysFis) {
-        for (Fidelity<Fidelity> sysFi :sysFis){
+        for (Fidelity<Fidelity> sysFi : sysFis){
             metafidelities.put(sysFi.getName(), sysFi);
         }
     }

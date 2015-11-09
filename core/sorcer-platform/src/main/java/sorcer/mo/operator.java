@@ -256,11 +256,11 @@ public class operator {
             } else if (item instanceof Srv && ((Entry)item)._2 instanceof MultiFidelity) {
                 metaFiEnts.add((Srv)item);
             } else if (item instanceof Fidelity) {
-                if (((Fidelity)item).getSelects().get(0) instanceof Arg)
-                    responsePaths = ((Fidelity)item);
-            } else if (item instanceof Fidelity) {
-                if (((Fidelity)item).getSelects().get(0) instanceof Fidelity)
+                if (((Fidelity)item).getSelects().get(0) instanceof Fidelity) {
                     metaFis.add((Fidelity<Fidelity>) item);
+                } else if (((Fidelity)item).getSelects().get(0) instanceof Name){
+                    responsePaths = ((Fidelity<Arg>) item);
+                }
             }
         }
         if (model == null)
@@ -268,7 +268,7 @@ public class operator {
 
         if (fiManager != null) {
             model.setFiManager(fiManager);
-            fiManager.initialize(metaFis);
+            fiManager.init(metaFis);
             fiManager.setMogram(model);
             MultiFidelity mFi = null;
             if ((metaFiEnts.size() > 0)) {

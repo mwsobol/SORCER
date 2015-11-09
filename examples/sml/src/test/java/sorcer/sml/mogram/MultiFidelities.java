@@ -71,9 +71,9 @@ public class MultiFidelities {
         FidelityManager manager = new FidelityManager() {
             @Override
             public void initialize() {
-                Fidelity<Fidelity> fi2 = fi("sysFi2", fi("divide", "mFi2"), fi("multiply", "mFi3"));
-                Fidelity<Fidelity> fi3 = fi("sysFi3",fi("average", "mFi2"), fi("divide", "mFi3"));
-                add(fi2, fi3);
+                // define model metafidelities Fidelity<Fidelity>
+                add(fi("sysFi2", fi("divide", "mFi2"), fi("multiply", "mFi3")));
+                add(fi("sysFi3", fi("average", "mFi2"), fi("divide", "mFi3")));
             }
 
             @Override
@@ -127,7 +127,7 @@ public class MultiFidelities {
     }
 
     @Test
-    public void fidelityManagerNotInitialized() throws Exception {
+    public void notInitializedFidelityManager() throws Exception {
 
         FidelityManager manager = new FidelityManager() {
 
@@ -191,8 +191,8 @@ public class MultiFidelities {
             @Override
             public void initialize() {
                 // define model metafidelities Fidelity<Fidelity>
-                put("sysFi2", fi(fi("divide", "mFi2"), fi("multiply", "mFi3")));
-                put("sysFi3", fi(fi("average", "mFi2"), fi("divide", "mFi3")));
+                add(fi("sysFi2", fi("divide", "mFi2"), fi("multiply", "mFi3")));
+                add(fi("sysFi3", fi("average", "mFi2"), fi("divide", "mFi3")));
             }
 
             @Override
