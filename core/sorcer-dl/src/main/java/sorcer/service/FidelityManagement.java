@@ -34,6 +34,8 @@ public interface FidelityManagement<T extends Arg> extends Service {
 
     public Map<String, Fidelity<Fidelity>> getMetafidelities() throws RemoteException;
 
+    public void morph(String... fiNames) throws RemoteException;
+
     public EventRegistration register(long eventID, MarshalledObject<?> handback,
                                       RemoteEventListener toInform, long leaseLenght)
             throws UnknownEventException, RemoteException;

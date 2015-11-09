@@ -266,6 +266,10 @@ public class operator {
         if (model == null)
             model = new SrvModel();
 
+        if (metaFiEnts != null || metaFis != null) {
+           if (fiManager == null)
+               fiManager = new FidelityManager(model.getName());
+        }
         if (fiManager != null) {
             model.setFiManager(fiManager);
             fiManager.init(metaFis);

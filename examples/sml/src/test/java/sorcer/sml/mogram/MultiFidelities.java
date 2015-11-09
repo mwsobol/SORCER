@@ -1,5 +1,6 @@
 package sorcer.sml.mogram;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -10,6 +11,7 @@ import sorcer.arithmetic.provider.impl.*;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.invoker.Observable;
 import sorcer.core.plexus.FidelityManager;
+import sorcer.core.plexus.Morpher;
 import sorcer.core.plexus.MultiFidelity;
 import sorcer.service.Context;
 import sorcer.service.EvaluationException;
@@ -149,6 +151,8 @@ public class MultiFidelities {
         Fidelity<Fidelity> fi2 = fi("sysFi2",fi("divide", "mFi2"), fi("multiply", "mFi3"));
         Fidelity<Fidelity> fi3 = fi("sysFi3", fi("average", "mFi2"), fi("divide", "mFi3"));
 
+
+
         Signature add = sig("add", AdderImpl.class,
                 result("result/y1", inPaths("arg/x1", "arg/x2")));
         Signature subtract = sig("subtract", SubtractorImpl.class,
@@ -166,6 +170,59 @@ public class MultiFidelities {
                 ent("mFi2", mFi(average, divide, subtract)),
                 ent("mFi3", mFi(average, divide, multiply)),
                 manager, fi2, fi3,
+                response("mFi1", "mFi2", "mFi3", "arg/x1", "arg/x2"));
+
+        // fidelities morphed by the model's fidelity manager
+        Context out = response(mod);
+        logger.info("out: " + out);
+        assertTrue(get(out, "mFi1").equals(100.0));
+        assertTrue(get(out, "mFi2").equals(9.0));
+        assertTrue(get(out, "mFi3").equals(900.0));
+
+        // first closing the fidelity for mFi1
+        // then fidelities morphed by the model's fidelity manager accordingly
+        out = response(mod , fi("multiply", "mFi1"));
+        logger.info("out: " + out);
+        assertTrue(get(out, "mFi1").equals(900.0));
+        assertTrue(get(out, "mFi2").equals(50.0));
+        assertTrue(get(out, "mFi3").equals(9.0));
+    }
+
+    @Ignore
+    @Test
+    public void morphingMultiFidelityModel() throws Exception {
+
+        Morpher morpher = (mgr, mFi, value) -> {
+            Fidelity<Signature> fi =  mFi.getFidelity();
+            if (fi.getPath().equals("mFi1") && fi.getSelectedName().equals("add")) {
+                if (((Double) value) <= 200.0) {
+                    mgr.morph("sysFi2");
+                } else {
+                    mgr.morph("sysFi3");
+                }
+            }
+        };
+
+        Fidelity<Fidelity> fi2 = fi("sysFi2",fi("divide", "mFi2"), fi("multiply", "mFi3"));
+        Fidelity<Fidelity> fi3 = fi("sysFi3", fi("average", "mFi2"), fi("divide", "mFi3"));
+
+        Signature add = sig("add", AdderImpl.class,
+                result("result/y1", inPaths("arg/x1", "arg/x2")));
+        Signature subtract = sig("subtract", SubtractorImpl.class,
+                result("result/y2", inPaths("arg/x1", "arg/x2")));
+        Signature average = sig("average", AveragerImpl.class,
+                result("result/y2", inPaths("arg/x1", "arg/x2")));
+        Signature multiply = sig("multiply", MultiplierImpl.class,
+                result("result/y1", inPaths("arg/x1", "arg/x2")));
+        Signature divide = sig("divide", DividerImpl.class,
+                result("result/y2", inPaths("arg/x1", "arg/x2")));
+
+        // three entry multifidelity model
+        Model mod = model(inEnt("arg/x1", 90.0), inEnt("arg/x2", 10.0),
+                ent("mFi1", mFi(morpher, add, multiply)),
+                ent("mFi2", mFi(morpher, average, divide, subtract)),
+                ent("mFi3", mFi(morpher, average, divide, multiply)),
+                fi2, fi3,
                 response("mFi1", "mFi2", "mFi3", "arg/x1", "arg/x2"));
 
         // fidelities morphed by the model's fidelity manager

@@ -25,6 +25,7 @@ import net.jini.core.transaction.TransactionException;
 import net.jini.id.Uuid;
 import net.jini.id.UuidFactory;
 import sorcer.core.context.model.ent.Entry;
+import sorcer.core.invoker.Observable;
 import sorcer.core.invoker.Observer;
 import sorcer.service.*;
 
@@ -37,7 +38,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Created by Mike Sobolewski on 6/14/15.
  */
-abstract public class FidelityManager implements FidelityManagement<Signature>, Observer, Identifiable, Serializable {
+public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Observer, Identifiable, Serializable {
 
     // sequence number for unnamed instances
     protected static int count = 0;
@@ -47,7 +48,7 @@ abstract public class FidelityManager implements FidelityManagement<Signature>, 
     Uuid id = UuidFactory.generate();
 
     // fidelities for signatures
-    protected Map<String, Fidelity<Signature>> fidelities = new ConcurrentHashMap<>();
+    protected Map<String, Fidelity<T>> fidelities = new ConcurrentHashMap<>();
 
     // fidelities for fidelites
     protected Map<String, Fidelity<Fidelity>> metafidelities = new ConcurrentHashMap<>();
@@ -58,6 +59,10 @@ abstract public class FidelityManager implements FidelityManagement<Signature>, 
 
     public FidelityManager() {
         name = "fiManager" +  count++;
+    }
+
+    public FidelityManager(String name) {
+        this.name = name;
     }
 
     public FidelityManager(Mogram mogram) {
@@ -74,15 +79,15 @@ abstract public class FidelityManager implements FidelityManagement<Signature>, 
     }
 
     @Override
-    public Map<String, Fidelity<Signature>> getFidelities() {
+    public Map<String, Fidelity<T>> getFidelities() {
         return fidelities;
     }
 
-    public void setFidelities(Map<String, Fidelity<Signature>> fidelities) {
+    public void setFidelities(Map<String, Fidelity<T>> fidelities) {
         this.fidelities = fidelities;
     }
 
-    public void addFidelity(String path, Fidelity<Signature> fi) {
+    public void addFidelity(String path, Fidelity<T> fi) {
             this.fidelities.put(path, fi);
     }
 
@@ -99,9 +104,9 @@ abstract public class FidelityManager implements FidelityManagement<Signature>, 
     }
 
     @Override
-    public <T extends Mogram> T service(T mogram, Transaction txn) throws TransactionException, MogramException, RemoteException {
+    public <M extends Mogram> M service(M mogram, Transaction txn) throws TransactionException, MogramException, RemoteException {
         this.mogram = mogram;
-        return (T) mogram.exert(txn);
+        return (M) mogram.exert(txn);
     }
 
     public <T extends Mogram> T service(T mogram) throws TransactionException, MogramException, RemoteException {
@@ -165,9 +170,9 @@ abstract public class FidelityManager implements FidelityManagement<Signature>, 
             for (Fidelity fi : fis) {
                 name = fi.getName();
                 path = fi.getPath();
-                Iterator<Map.Entry<String, Fidelity<Signature>>> i = fidelities.entrySet().iterator();
+                Iterator<Map.Entry<String, Fidelity<T>>> i = fidelities.entrySet().iterator();
                 while (i.hasNext()) {
-                    Map.Entry<String, Fidelity<Signature>> fiEnt = i.next();
+                    Map.Entry<String, Fidelity<T>> fiEnt = i.next();
                     if (fiEnt.getKey().equals(path)) {
                         fiEnt.getValue().setFidelitySelection(name);
                     }
@@ -210,6 +215,11 @@ abstract public class FidelityManager implements FidelityManagement<Signature>, 
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public void update(Observable observable, Object obj) throws EvaluationException, RemoteException {
+        // implemnt in subclasses
     }
 
     static class Session {
