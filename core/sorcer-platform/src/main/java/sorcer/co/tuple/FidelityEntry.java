@@ -23,26 +23,51 @@ package sorcer.co.tuple;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.service.Fidelity;
 
-public class FidelityEntry<T> extends Entry<T> {
+import java.util.HashMap;
+import java.util.Map;
+
+public class FidelityEntry extends Entry<Fidelity> {
 	private static final long serialVersionUID = -508307270964254478L;
-	
+
+	// fidelities for this entry
+	protected Map<String, Fidelity> fidelities;
+
+	// the current fidelity alias, as it is named in 'fidelities'
+	// its original name might be different if aliasing is used
+	// for already existing names
+	protected String fidelitySelector;
+
 	protected Fidelity fidelity;
-	
-	public FidelityEntry(String x1, T value) {
-		super(x1, value);
+
+	public FidelityEntry(String name) {
+		super(name);
 	}
 
-	public FidelityEntry(String x1, Fidelity fidelity) {
-		super(x1);
-		this.fidelity = fidelity;
+	public FidelityEntry(String name, Fidelity... fidelities) {
+		super(name);
+		this.fidelities = new HashMap<String, Fidelity>();
+		for (Fidelity f : fidelities)  {
+			this.fidelities.put(f.getName(), f);
+		}
+		this.fidelity = fidelities[0];
+		fidelitySelector =  fidelity.getName();
 	}
 	
-	public Fidelity fidelity() {
+	public Fidelity getFidelity() {
 		return fidelity;
 	}
 	
-	public void fidelity(Fidelity fidelity) {
+	public void setFidelity(Fidelity fidelity) {
 		this.fidelity = fidelity;
 	}
-	
+
+
+	public Map<String, Fidelity> getFidelities() {
+		return fidelities;
+	}
+
+	public void setFidelities(Map<String, Fidelity> fidelities) {
+		this.fidelities = fidelities;
+	}
+
 }

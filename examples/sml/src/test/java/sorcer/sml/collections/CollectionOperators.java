@@ -10,17 +10,17 @@ import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.provider.impl.SubtractorImpl;
 import sorcer.co.tuple.*;
+import sorcer.core.Name;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.par.Par;
 import sorcer.core.context.model.par.ParModel;
-import sorcer.core.invoker.ServiceInvoker;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.service.*;
+import sorcer.util.Runner;
 import sorcer.util.Table;
 
 import java.io.Serializable;
 import java.net.URL;
-import java.rmi.RemoteException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +29,7 @@ import java.util.Set;
 import static org.junit.Assert.*;
 import static sorcer.co.operator.*;
 import static sorcer.co.operator.asis;
+import static sorcer.co.operator.map;
 import static sorcer.co.operator.path;
 import static sorcer.co.operator.persistent;
 import static sorcer.co.operator.put;
@@ -36,14 +37,16 @@ import static sorcer.co.operator.set;
 import static sorcer.co.operator.value;
 import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.add;
-import static sorcer.eo.operator.asis;
 import static sorcer.eo.operator.get;
 import static sorcer.eo.operator.pipe;
+import static sorcer.eo.operator.print;
 import static sorcer.eo.operator.put;
 import static sorcer.eo.operator.value;
 import static sorcer.mo.operator.entModel;
+import static sorcer.mo.operator.run;
 import static sorcer.po.operator.add;
 import static sorcer.po.operator.*;
+import static sorcer.po.operator.map;
 import static sorcer.po.operator.set;
 
 
@@ -107,7 +110,7 @@ public class CollectionOperators {
 		Double[] da = array(1.1, 2.1, 3.1);
 		assertArrayEquals(da, new Double[] { 1.1, 2.1, 3.1 } );
 
-		Object[] oa = array(array(1.1, 2.1, 3.1),  4.1,  array(11.1, 12.1, 13.1));
+		Object[] oa = objects(array(1.1, 2.1, 3.1),  4.1,  array(11.1, 12.1, 13.1));
 		assertArrayEquals((Double[])oa[0], array(1.1, 2.1, 3.1));
 		assertEquals(oa[1], 4.1);
 		assertArrayEquals((Double[])oa[2], array(11.1, 12.1, 13.1));
@@ -359,7 +362,7 @@ public class CollectionOperators {
 		assertTrue(get(cxt, "arg/x4").equals(1.4));
 		assertTrue(get(cxt, "arg/x5").equals(1.5));
 		assertTrue(get(cxt, "arg/x6").equals(1.6));
-		assertTrue(get(cxt, "arg/x7") instanceof ServiceInvoker);
+		assertTrue(asis(cxt, "arg/x7") instanceof Par);
 
 		// aliasing entries with reactive value entries - rvEnt
 		put(cxt, rvEnt("arg/x6", ent("overwrite", 20.0)));
@@ -373,10 +376,11 @@ public class CollectionOperators {
 		put(cxt, ent("arg/x6", par("overwrite", 40.0)));
 		assertTrue(value(cxt, "arg/x6").equals(40.0));
 
-		// repeatedly reactive evaluations
-		assertTrue(get(cxt, "arg/x7") instanceof ServiceInvoker);
-		rrvEnt(cxt, "arg/x7");
-		assertEquals(2.4, (Double) value(cxt, "arg/x7"), 0.0000001);
+		logger.info("x1: " + value(cxt, "arg/x1"));
+		logger.info("x3: " + value(cxt, "arg/x3"));
+
+		assertTrue(asis(cxt, "arg/x7") instanceof Par);
+		assertEquals(4.0, value(cxt, "arg/x7"));
 
 	}
 
@@ -483,4 +487,40 @@ public class CollectionOperators {
 
 	}
 
+	@Test
+	public void runClosure() throws Exception {
+
+		Runnable r = () -> {
+			try {
+				System.out.println("context: " + context(ent("x", 10)));
+			} catch (ContextException e) {
+				e.printStackTrace();
+			}
+		};
+
+		r.run();
+
+		new Thread(r).start();
+	}
+
+	@Test
+	public void callClosure() throws Exception {
+		// invoke run using Lambda expression
+		run(args -> System.out.println("Closing with: " + args[0].getName()),
+				new Name("Hello"));
+
+		// invoke run using  Lambda object matched to interface
+		Runner r = args -> {
+			try {
+				print(exert(context(ent("x", 10)), args));
+			} catch (MogramException e) {
+				e.printStackTrace();
+			}
+		};
+
+		r.exec(ent("x", "Hello"));
+
+		run(r, ent("x", "Hello"));
+
+	}
 }

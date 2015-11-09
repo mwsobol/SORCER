@@ -70,7 +70,7 @@ import static sorcer.eo.operator.*;
  * @author Mike Sobolewski
  */
 @SuppressWarnings("rawtypes")
-public class ServiceShell implements Shell, Service, Exerter, Callable {
+public class ServiceShell implements Shell, Service, Servicer, Exerter, Callable {
 	protected final static Logger logger = LoggerFactory.getLogger(ServiceShell.class);
 	private Service service;
 	private Mogram mogram;
@@ -82,13 +82,16 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 	private static LoadingCache<Signature, Object> proxies;
 
 	public ServiceShell() {
+		setupProxyCache();
 	}
 
 	public ServiceShell(Mogram mogram) {
+		this();
 		this.mogram = mogram;
 	}
 
 	public ServiceShell(Mogram mogram, Transaction txn) {
+		this();
 		this.mogram = mogram;
 		transaction = txn;
 	}
@@ -98,15 +101,15 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 	}
 
 	private static void setupProxyCache() {
-		LoadingCache<Signature, Object> proxies =  CacheBuilder.newBuilder()
+		proxies =  CacheBuilder.newBuilder()
 				.maximumSize(20)
 				.expireAfterWrite(30, TimeUnit.MINUTES)
-				.removalListener(null)
+//				.removalListener(null)
 				.build(new CacheLoader<Signature, Object>() {
-							public Object load(Signature signature) {
-								return Accessor.get().getService(signature);
-							}
-						});
+					public Object load(Signature signature) {
+						return Accessor.get().getService(signature);
+					}
+				});
 	}
 
 	public <T extends Mogram> T  exert(Arg... entries) throws TransactionException,
@@ -114,10 +117,6 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 		return exert((Transaction) null, (String) null, entries);
 	}
 
-	/* (non-Javadoc)
-	 * @see sorcer.service.Exerter#exert(sorcer.service.Exertion, sorcer.service.Parameter[])
-	 */
-	@Override
 	public Mogram exert(Mogram xrt, Arg... entries)
 			throws TransactionException, MogramException, RemoteException {
 		try {
@@ -143,9 +142,8 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 							|| (exertion.getControlContext() != null
 							&& ((ControlContext) exertion.getControlContext()).isShellRemote())) {
 						Exerter prv = (Exerter) Accessor.get().getService(sig(Shell.class));
-						result = (Exertion)prv.exert(input, transaction, entries);
+						result = prv.exert(input, transaction, entries);
 					} else {
-//						sorcer.core.provider.exerter.ServiceShell se = new sorcer.core.provider.exerter.ServiceShell(input);
 						try {
 							input.substitute(entries);
 						} catch (Exception e) {
@@ -175,12 +173,11 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 	public <T extends Mogram> T service(T mogram, Transaction txn)
 			throws TransactionException, MogramException, RemoteException {
 		if (service != null)
-			return service.service(mogram);
+			return service.service(mogram, txn);
 		else
 			return (T) exert(mogram, txn);
 	}
 
-	@Override
 	public <T extends Mogram> T service(T mogram)
 			throws TransactionException, MogramException, RemoteException {
 		return  service(mogram, null);
@@ -301,7 +298,7 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 			}
 			// check if the exertion has to be initialized (to original state)
 			// or used as is after resuming from suspension or failure
-			if (((ServiceExertion)exertion).isInitializable()) {
+			if (exertion.isInitializable()) {
 				initExecState(entries);
 			}
 			realizeDependencies(entries);
@@ -346,7 +343,7 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 	private Exertion dispatchExertion(ServiceExertion exertion, String providerName)
 			throws ExertionException, ExecutionException {
 		Signature signature = exertion.getProcessSignature();
-		Service provider = null;
+		Object provider = null;
 		try {
 			// If the exertion is a job rearrange the inner exertions to make sure the
 			// dependencies are not broken
@@ -357,6 +354,20 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 //			 execute modeling tasks
 			if (exertion instanceof ModelingTask && exertion.getFidelity().getSelects().size() == 1) {
 				return ((Task) exertion).doTask(transaction);
+			}
+
+			// handle delegated tasks with fidelities
+			if (exertion.getClass() == Task.class) {
+				if (exertion.getFidelity().getSelects().size() == 1) {
+					return ((Task) exertion).doTask(transaction);
+				} else {
+					try {
+						return new ControlFlowManager().doTask((Task) exertion);
+					} catch (ContextException e) {
+						e.printStackTrace();
+						throw new ExertionException(e);
+					}
+				}
 			}
 
 			// execute object tasks and jobs
@@ -395,8 +406,28 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 			}
 			if (logger.isDebugEnabled())
 				logger.debug("ServiceShell's service accessor: {}", Accessor.get().getClass().getName());
-			provider = ((NetSignature) signature).getService();
-			((NetSignature)signature).setProvider(provider);
+			provider = ((NetSignature) signature).getProvider();
+			if (provider == null) {
+				// check proxy cache
+                try {
+                    provider = proxies.get(signature);
+                } catch(CacheLoader.InvalidCacheLoadException e) {
+                    String message =
+                        String.format("Provider name: [%s], type: %s not found, make sure it is running and there is " +
+                                      "an available lookup service with correct discovery settings",
+                                      signature.getProviderName(), signature.getServiceType().getName());
+                    logger.error(message);
+                    throw new ExertionException(message);
+                }
+				// lookup proxy
+				/*if (provider == null) {
+					long t0 = System.currentTimeMillis();
+					provider = Accessor.get().getService(signature);
+					if (logger.isDebugEnabled())
+					 logger.info("Return from Accessor.getService(), round trip: {} millis",
+							 (System.currentTimeMillis() - t0));
+				}*/
+			}
 		} catch (Exception e) {
 			throw new ExertionException(e);
 		}
@@ -406,51 +437,27 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 			signature = new NetSignature("service", Spacer.class, Sorcer.getActualSpacerName());
 			exertion.setProcessSignature(signature);
 		}
-		// find the provider and check if the provider is a smart proxy
-		Object prv = provider;
-        if (prv == null) {
-            long t0 = System.currentTimeMillis();
-            prv = Accessor.get().getService(signature);
-            logger.info("Return from Accessor.getService(), round trip: {} millis", (System.currentTimeMillis()-t0));
-            // check for a space task
-
-            /* =============================================================================== *
-             * The following code commented by DR, this provisioning approach is not supported *
-             * =============================================================================== */
-
- 			/*if (prv == null && exertion.isProvisionable() && signature instanceof NetSignature) {
+ 		if (provider != null) {
+			if (provider instanceof Service) {
+				// cache the provider for the signature
+				((NetSignature) signature).setProvider((Service) provider);
+				proxies.put(signature, provider);
+			} else if (exertion instanceof Task){
+				// exert smart proxy as an object task delegate
 				try {
-					logger.debug("Provisioning: " + signature);
-					prv = ServiceDirectoryProvisioner.getProvisioner().provision(signature);
-				} catch (ProvisioningException pe) {
-					logger.warn("Provider not available and not provisioned: " + pe.getMessage());
-					exertion.setStatus(Exec.FAILED);
-					exertion.reportException(new RuntimeException(
-							"Cannot find provider and provisioning returned error: " + pe.getMessage()));
-					return exertion;
-				}
-			}*/
-			if (prv != null) {
-				if (prv instanceof Service) {
-					// cache the provider for the signature
-					provider = (Service) prv;
-					((NetSignature) signature).setProvider(provider);
-				} else if (exertion instanceof Task){
-					// exert smart proxy as an object task delegate
-					try {
-						ObjectSignature sig = new ObjectSignature();
-						sig.setSelector(signature.getSelector());
-						sig.setTarget(prv);
-						Context cxt = exertion.getContext();
-						((Task)exertion).setDelegate(new ObjectTask(sig, cxt));
-						return ((Task)exertion).doTask(transaction);
-					} catch (Exception e) {
-						throw new ExertionException(e);
-					}
+					ObjectSignature sig = new ObjectSignature();
+					sig.setSelector(signature.getSelector());
+					sig.setTarget(provider);
+					Context cxt = exertion.getContext();
+					((Task)exertion).setDelegate(new ObjectTask(sig, cxt));
+					return ((Task)exertion).doTask(transaction);
+				} catch (Exception e) {
+					throw new ExertionException(e);
 				}
 			}
 		}
-		this.provider = (Service)prv;
+		this.provider = (Service)provider;
+		// continue exerting
 		return null;
 	}
 
@@ -593,7 +600,7 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 						for (Setter p : ps) {
 							if (p != null && (p instanceof Par) && ((Par) p).isMappable()) {
 								String from = ((Par) p).getName();
-								Object obj = null;
+								Object obj;
 								if (mogram instanceof Job)
 									obj = ((Job) mogram).getJobContext().getValue(from);
 								else {
@@ -634,9 +641,9 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 	@Override
 	public String toString() {
 		if (mogram == null)
-			return "Exerter";
+			return "ServiceShell";
 		else
-			return "Exerter for: " + mogram.getName();
+			return "ServiceShell for: " + mogram.getName();
 	}
 
 	/*
@@ -675,7 +682,7 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 				}
 				return finalize((Exertion) out, args);
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.error("Failed in evaluate", e);
 				throw new ExertionException(e);
 			}
 		} else {
@@ -807,9 +814,8 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 			return (T) prv.service(mogram, txn);
 		} else if (service instanceof Provider) {
 			Task out = (Task) service.service(mogram, txn);
-			return (T)out.getContext();
-		}
-		else if (service instanceof Mogram) {
+			return (T) out.getContext();
+		} else if (service instanceof Mogram) {
 			Context cxt;
 			if (mogram instanceof Exertion) {
 				cxt = ((Exertion) exert(mogram)).getContext();
@@ -817,16 +823,19 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 //				cxt = (Context) ((Model) mogram).getResult();
 				cxt = (Context) mogram;
 			}
-			((Mogram)service).setScope(cxt);
-			return (T) exert((Mogram)service);
-		}
-		else if (service instanceof NetSignature
-				&& ((Signature)service).getServiceType() == sorcer.core.provider.Shell.class) {
-			Provider prv= (Provider) Accessor.get().getService((Signature) service);
+			((Mogram) service).setScope(cxt);
+			return (T) exert((Mogram) service);
+		} else if (service instanceof NetSignature
+				&& ((Signature) service).getServiceType() == sorcer.core.provider.Shell.class) {
+			Provider prv = (Provider) Accessor.get().getService((Signature) service);
 			return (T) ((Exertion) prv.service(mogram, txn)).getContext();
-		} else {
-			return (T) service.service(mogram, txn);
+		} else if (service instanceof Par) {
+			((Par)service).setScope(mogram);
+			Object val =((Par)service).getValue();
+			((Context)mogram).putValue(((Par)service).getName(), val);
+			return (T) mogram;
 		}
+		return (T) service.service(mogram, txn);
 	}
 
 	public <T extends Mogram> T exec(Service srv, Mogram mog)
@@ -834,8 +843,8 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 		return exec(srv, mog, null);
 	}
 
-	public  <T extends Service> Object exec(T srv, Arg... entries)
-			throws MogramException, TransactionException, RemoteException {
+	public  <T extends Service> Object exec(T srv, Arg... args)
+			throws MogramException, RemoteException {
 		this.service = srv;
 		if (srv instanceof NetletSignature) {
 			try {
@@ -845,20 +854,43 @@ public class ServiceShell implements Shell, Service, Exerter, Callable {
 			} catch (Throwable throwable) {
 				throw new MogramException(throwable);
 			}
-		}
-		if (service instanceof Exertion) {
-			return value((Evaluation) service, entries);
-		} else if (service instanceof EntModel) {
-			((Model)service).getResponse(entries);
-		} else {
-			ServiceContext cxt = (ServiceContext)service;
-			cxt.substitute(entries);
-			Signature.ReturnPath returnPath = cxt.getReturnPath();
-			if (returnPath != null) {
-				return cxt.getValue(returnPath.path, entries);
+		} else if (srv instanceof Entry) {
+			((Entry)service).getValue(args);
+		} if (service instanceof Signature) {
+			Context cxt = null;
+			for(Arg arg : args) {
+				if (arg instanceof Context) {
+					cxt = (Context)arg;
+					break;
+				}
+			}
+			Task out = null;
+			if (cxt != null) {
+				try {
+					Task in = task((Signature) service, cxt);
+					out = ((Task) in).exert(args);
+				} catch (Exception e) {
+					throw new MogramException(e);
+				}
+				return context(out);
 			} else
+				throw new MogramException("Missing service context for: " + srv);
+		} else if (service instanceof Exertion) {
+			return value((Evaluation) service, args);
+		} else if (service instanceof EntModel) {
+			((Model)service).getResponse(args);
+		} else if (service instanceof Context) {
+			ServiceContext cxt = (ServiceContext)service;
+			cxt.substitute(args);
+			Signature.ReturnPath returnPath = cxt.getReturnPath();
+			if (cxt instanceof EntModel) {
+		          return ((Model)service).getResponse(args);
+			} else if (returnPath != null){
+				return cxt.getValue(returnPath.path, args);
+			} else {
 				throw new ExertionException("No return path in the context: "
 						+ cxt.getName());
+			}
 		}
 		return null;
 	}

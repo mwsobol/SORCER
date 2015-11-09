@@ -22,13 +22,14 @@ import net.jini.core.lease.Lease;
 import net.jini.lease.LeaseRenewalManager;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.par.ParModel;
-import sorcer.core.exertion.AltExertion;
-import sorcer.core.exertion.LoopExertion;
-import sorcer.core.exertion.OptExertion;
+import sorcer.core.exertion.AltMogram;
+import sorcer.core.exertion.LoopMogram;
+import sorcer.core.exertion.OptMogram;
 import sorcer.core.monitor.MonitorUtil;
 import sorcer.core.monitor.MonitoringSession;
 import sorcer.core.provider.Provider;
 import sorcer.service.*;
+import sorcer.service.modeling.Model;
 
 import java.rmi.RemoteException;
 import java.util.List;
@@ -86,6 +87,12 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
         try {
             postUpdate(result);
             Condition.cleanupScripts(result);
+            if (result instanceof ConditionalMogram) {
+                Mogram target = ((ConditionalMogram)result).getTarget();
+                if (target instanceof Model) {
+                    xrt.getContext().append((Context)((Model)target).getResult());
+                }
+            }
             //TODO Not very nice
             /*MonitoringSession monSession = MonitorUtil.getMonitoringSession(result);
             if (result.isBlock() && result.isMonitorable() && monSession!=null) {
@@ -98,7 +105,7 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
                 }
                 monSession.changed(result.getContext(), (isFailed ? Exec.FAILED : Exec.DONE));
             }*/
-        } catch (RemoteException e) {
+        } catch (Exception e) {
             throw new ExertionException(e);
         /*} catch (MonitorException e) {
             throw new ExertionException(e);*/
@@ -106,8 +113,8 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
     }
 
     private void preUpdate(Exertion exertion) throws ContextException {
-		if (exertion instanceof AltExertion) {
-			for (OptExertion oe : ((AltExertion)exertion).getOptExertions()) {
+		if (exertion instanceof AltMogram) {
+			for (OptMogram oe : ((AltMogram)exertion).getOptExertions()) {
                 oe.getCondition().getConditionalContext().append(xrt.getContext());
 				oe.getCondition().setStatus(null);
 			}
@@ -124,20 +131,20 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
                     logger.error("Problem initializing Monitor Session for: " + exertion.getName(), e);
                 }
             }
-		} else if (exertion instanceof OptExertion) {
-			Context pc = ((OptExertion)exertion).getCondition().getConditionalContext();
-			((OptExertion)exertion).getCondition().setStatus(null);
+		} else if (exertion instanceof OptMogram) {
+			Context pc = ((OptMogram)exertion).getCondition().getConditionalContext();
+			((OptMogram)exertion).getCondition().setStatus(null);
 			if (pc == null) {
 				pc = new ParModel(exertion.getName());
-				((OptExertion)exertion).getCondition().setConditionalContext(pc);
+				((OptMogram)exertion).getCondition().setConditionalContext(pc);
             }
             pc.append(xrt.getContext());
-		} else if (exertion instanceof LoopExertion && ((LoopExertion)exertion).getCondition() != null) {
-            ((LoopExertion)exertion).getCondition().setStatus(null);
-			Context pc = ((LoopExertion)exertion).getCondition().getConditionalContext();			
+		} else if (exertion instanceof LoopMogram && ((LoopMogram)exertion).getCondition() != null) {
+            ((LoopMogram)exertion).getCondition().setStatus(null);
+			Context pc = ((LoopMogram)exertion).getCondition().getConditionalContext();
 			if (pc == null) {
 				pc = new ParModel(exertion.getName());
-				((LoopExertion)exertion).getCondition().setConditionalContext(pc);
+				((LoopMogram)exertion).getCondition().setConditionalContext(pc);
 			}
 			pc.append(xrt.getContext());
 		} else {
@@ -148,8 +155,8 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
 	private void postUpdate(Exertion exertion) throws ContextException, RemoteException {
         if (exertion instanceof Job) {
             xrt.getDataContext().append(exertion.getDataContext());
-        } else if (exertion instanceof AltExertion) {
-			xrt.getContext().append(((AltExertion)exertion).getActiveOptExertion().getDataContext());
+        } else if (exertion instanceof AltMogram) {
+			xrt.getContext().append(((AltMogram)exertion).getActiveOptExertion().getDataContext());
             /*MonitoringSession monSession = MonitorUtil.getMonitoringSession(exertion);
             if (exertion.isMonitorable() && monSession!=null) {
                 try {
@@ -163,7 +170,7 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
                     logger.error("Problem removing monitoring lease for: " + exertion.getName(), e);
                 }
             } */
-		} else if (exertion instanceof OptExertion) {
+		} else if (exertion instanceof OptMogram) {
 			xrt.getContext().append(exertion.getDataContext());
 		}
 

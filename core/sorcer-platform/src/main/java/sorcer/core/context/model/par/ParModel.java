@@ -96,7 +96,7 @@ public class ParModel<T> extends EntModel<T> implements Invocation<T>, Mappable<
         add(objects);
     }
 
-	public T getValue(String path, Arg... entries) throws ContextException {
+	public T getValue(String path, Arg... entries) throws EvaluationException {
 		try {
 			append(entries);
 			T val = null;
@@ -108,7 +108,7 @@ public class ParModel<T> extends EntModel<T> implements Invocation<T>, Mappable<
 					val = (T) getReturnValue(rp);
 				else if (modelStrategy.getResponsePaths() != null
 						&& modelStrategy.getResponsePaths().size() == 1) {
-					val = asis(modelStrategy.getResponsePaths().get(0));
+					val = asis(modelStrategy.getResponsePaths().get(0).getName());
 				} else {
 					val = (T) super.getValue(path, entries);
 				}
@@ -126,11 +126,22 @@ public class ParModel<T> extends EntModel<T> implements Invocation<T>, Mappable<
 				return (T) ((Evaluation) val).getValue(entries);
 			} else if (path == null && val == null && modelStrategy.getResponsePaths() != null) {
 				if (modelStrategy.getResponsePaths().size() == 1)
-					return (T) getValue(modelStrategy.getResponsePaths().get(0), entries);
+					return (T) getValue(modelStrategy.getResponsePaths().get(0).getName(), entries);
 				else
 					return (T) getResponse();
 			} else {
-				return (T) val;
+				if (val == null && scope != null && scope != this) {
+					Object o = (T) scope.getValue(path);
+					if (o != Context.none && o != null)
+						return (T) o;
+					else
+						return (T) scope.getSoftValue(path);
+				} else {
+					if (val == null)
+						return getSoftValue(path);
+					else
+						return (T) val;
+				}
 			}
 		} catch (Exception e) {
 			throw new EvaluationException(e);
@@ -349,10 +360,6 @@ public class ParModel<T> extends EntModel<T> implements Invocation<T>, Mappable<
 		return val;
 	}
 
-	public boolean isContextChanged() {
-		return isChanged;
-	}
-
 	public void setContextChanged(boolean contextChanged) {
 		this.isChanged = contextChanged;
 	}
@@ -434,7 +441,7 @@ public class ParModel<T> extends EntModel<T> implements Invocation<T>, Mappable<
 		}
 		return this;
 	}
-    
+
 	@Override
 	public String toString() {
 		return this.getClass().getName() + ":" + getName() + "\nkeys: " + keySet()

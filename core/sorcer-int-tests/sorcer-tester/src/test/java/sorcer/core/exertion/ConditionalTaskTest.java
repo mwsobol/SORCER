@@ -45,7 +45,7 @@ public class ConditionalTaskTest {
 				context(inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
 						result("result/y")));
 
-		OptExertion ift = opt("ift", condition(pm,
+		OptMogram ift = opt("ift", condition(pm,
 				"{ x, y -> x > y }", "x", "y"), task);
 
 		add(pm, ift);
@@ -87,16 +87,16 @@ public class ConditionalTaskTest {
 				cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
 						result("result/y")));
 		
-		OptExertion opt1 = opt("opt1", condition(pm,
+		OptMogram opt1 = opt("opt1", condition(pm,
 				"{ x1, y1 -> x1 > y1 }", "x1", "y1"), t3);
 
-		OptExertion opt2 = opt("opt2", condition(pm,
+		OptMogram opt2 = opt("opt2", condition(pm,
 				"{ x2, y2 -> x2 >= y2 }", "x2", "y2"), t4);
 
 		// no condition means condition(true)
-		OptExertion opt3 = opt("op3", t5);
+		OptMogram opt3 = opt("op3", t5);
 
-		AltExertion alt = alt("alt", opt1, opt2, opt3);
+		AltMogram alt = alt("alt", opt1, opt2, opt3);
 		add(pm, opt1, opt2, opt3, alt);
 
 //		logger.info("opt1 value: " + value(opt1));

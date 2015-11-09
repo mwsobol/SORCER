@@ -301,7 +301,7 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
     }
 
     @Override
-    public void setScope(Context scope) throws ContextException {
+    public void setScope(Context scope) {
         this.scope = scope;
     }
 
@@ -401,9 +401,12 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
             }
         }
 
-        for (Signature s1 : serviceFidelity.getSelects()) {
-            if (s1.getType() == Signature.Type.PROC) {
-                sig = s1;
+        if (serviceFidelitySelector != null) {
+            serviceFidelity = serviceFidelities.get(serviceFidelitySelector);
+        }
+        for (Signature s : serviceFidelity.getSelects()) {
+            if (s.getType() == Signature.Type.PROC) {
+                sig = s;
                 break;
             }
         }

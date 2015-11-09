@@ -44,6 +44,7 @@ import net.jini.security.proxytrust.TrustEquivalence;
 import org.rioproject.admin.ServiceActivityProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.ControlContext;
 import sorcer.core.context.ServiceContext;
@@ -240,14 +241,10 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
             com.sun.jini.start.ClassLoaderUtil.displayContextClassLoaderTree();
         // System.out.println("service provider class loader: " +
         // serviceClassLoader);
-        String providerProperties = null;
-        try {
-            providerProperties = (String) Config.getNonNullEntry(config,
-                                                                 COMPONENT, "properties", String.class, "");
-        } catch (ConfigurationException e) {
-            // e.printStackTrace();
-            logger.warn("init", e);
-        }
+		String providerProperties =
+				(String) config.getEntry(COMPONENT, "propertiesFile", String.class, "");
+	    // setup injections by subclasses of this class
+		providerSetup();
 		// configure the provider's delegate
         delegate.getProviderConfig().init(true, providerProperties);
         ((ScratchManagerSupport)scratchManager).setProperties(getProviderProperties());
@@ -257,8 +254,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
         // decide if thread management is needed for ExertionDispatcher
         setupThreadManager();
         init(args, lifeCycle);
-
-        logger.info("<init> (String[], LifeCycle); name = " + this.getName());
+        logger.info("<init> (String[], LifeCycle); name = {}", this.getName());
     }
 
     // this is only used to instantiate provider impl objects and use their
@@ -269,7 +265,15 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
         ((ScratchManagerSupport)scratchManager).setProperties(getProviderProperties());
 	}
 
-    protected void setScratchManager(final ScratchManager scratchManager) {
+	/**
+	 * Subclasses inject problematically configurable entities,
+	 * for example proxies for this provider.
+	 */
+	protected void providerSetup() {
+		// optional programmatic setup by subclassing provider
+	}
+
+	protected void setScratchManager(final ScratchManager scratchManager) {
         if(scratchManager!=null) {
             this.scratchManager = scratchManager;
             logger.info("Set ScratchManager with {}", this.scratchManager.getClass().getName());
@@ -595,9 +599,9 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		boolean unexported;
 		try {
 			unexported = delegate.unexport(force);
-		} catch (NoSuchObjectException e) {
+		} catch (NoSuchObjectException | IllegalStateException e) {
 			unexported= false;
-			logger.warn("Could not unexport", e);
+			logger.warn("Could not unexport ProviderDelegate", e);
 		}
 		return unexported;
 	}
@@ -1388,7 +1392,24 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		logger.debug("service: " + exertion.getName());
 		// create an instance of the ControlFlowManager and call on the
 		// process method, returns an Exertion
-		return (Exertion)getControlFlownManager(exertion).process();
+
+		if(delegate.isRemoteLogging()) {
+			MDC.put(MDC_SORCER_REMOTE_CALL, MDC_SORCER_REMOTE_CALL);
+			MDC.put(MDC_PROVIDER_ID, this.getId().toString());
+			MDC.put(MDC_PROVIDER_NAME, this.getName());
+			if (exertion != null && exertion.getId() != null)
+				MDC.put(MDC_MOGRAM_ID, exertion.getId().toString());
+		}
+
+		Exertion out = (Exertion)getControlFlownManager(exertion).process();
+
+		if(delegate.isRemoteLogging()) {
+			MDC.remove(MDC_PROVIDER_NAME);
+			MDC.remove(MDC_SORCER_REMOTE_CALL);
+			MDC.remove(MDC_MOGRAM_ID);
+			MDC.remove(MDC_PROVIDER_ID);
+		}
+		return  out;
 	}
 
 	protected ControlFlowManager getControlFlownManager(Exertion exertion) throws ExertionException {
@@ -1423,7 +1444,6 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		return task;
 	}
 
-	@Override
 	public Exertion service(Mogram exertion) throws RemoteException,
 			ExertionException {
 		return doExertion((Exertion)exertion, null);
@@ -1718,7 +1738,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 			providers.remove(this);
 			tally = tally - 1;
 
-			logger.debug("destroyed provider: " + getProviderName() + ", providers left: " + tally);
+			logger.debug("destroyed provider: {} providers left: {}" + getProviderName(), tally);
 			//if (threadManager != null)
 			//	threadManager.terminate();
 
@@ -1733,7 +1753,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 			}
 
 		} catch(Exception e) {
-			logger.error("Problem destroying service "+getProviderName(), e);
+			logger.error("Problem destroying service " + getProviderName(), e);
 		}
 	}
 
@@ -1777,14 +1797,15 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	 *
 	 * @see Provider#destroy()
 	 */
-	public void destroyNode() {
+	public void destroyNode() throws RemoteException {
 		logger.info("providers.size() = " + providers.size());
 		for (ServiceProvider provider : providers) {
 			logger.info("calling destroy on provider name = " + provider.getName());
 			provider.destroy();
 		}
-		logger.info("Returning from destroyNode()");
-		//checkAndMaybeKillJVM();
+		// exit JVM after destroying all providers
+		logger.debug("calling destroy provider node");
+		System.exit(0);
 	}
 
 	/** {@inheritDoc} */

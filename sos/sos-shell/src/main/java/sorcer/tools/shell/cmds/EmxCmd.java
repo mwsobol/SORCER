@@ -313,7 +313,7 @@ public class EmxCmd extends ShellCmd {
                     + "|@ @|bold,blue EXERTION # " + i + "|@ @|blue ---------|@"));
 
             String color = "bold ";
-            switch (Exec.State.val(exertionInfos[i].getStatus())) {
+            switch (Exec.State.state(exertionInfos[i].getStatus())) {
                 case INITIAL : color = "yellow ";
                     break;
                 case INSPACE : color = "bold,yellow ";

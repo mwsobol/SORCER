@@ -32,8 +32,7 @@ import sorcer.service.Identifiable;
 public class Observable implements EvaluationModel, Serializable {
 	static final long serialVersionUID = -6036250788560831439L;
 	protected boolean changed = false;
-	protected static Logger logger = LoggerFactory.getLogger(Observable.class
-			.getName());
+	protected static Logger logger = LoggerFactory.getLogger(Observable.class);
 	// initialized in addObserver
 	// observer id-observer self
 	protected Map<Uuid, Observer> observerMap = null;
@@ -63,7 +62,7 @@ public class Observable implements EvaluationModel, Serializable {
 	}
 	
 	/**
-	 * If this object has changed, as indicated by the <code>hasChanged</code>
+	 * If this object has changed, as indicated by the <code>isChanged</code>
 	 * method, then notify all of its observers and then call the
 	 * <code>clearChanged</code> method to indicate that this object has no
 	 * longer changed.
@@ -84,7 +83,7 @@ public class Observable implements EvaluationModel, Serializable {
 	}
 
 	/**
-	 * If this object has changed, as indicated by the <code>isValid</code>
+	 * If this object has changed, as indicated by the <code>isChanged</code>
 	 * method, then notify all of its observers and then call the
 	 * <code>clearChanged</code> method to indicate that this object has no
 	 * longer changed.
@@ -97,7 +96,7 @@ public class Observable implements EvaluationModel, Serializable {
 	 * @throws RemoteException 
 	 * @throws EvaluationException 
 	 * @see Observable#clearChanged()
-	 * @see Observable#hasChanged()
+	 * @see Observable#isChanged()
 	 * @see Observer#update(Observable, Object)
 	 */
 	public void notifyObservers(Object arg) throws EvaluationException, RemoteException {
@@ -159,7 +158,7 @@ public class Observable implements EvaluationModel, Serializable {
 
 	/**
 	 * Marks this <tt>Observable</tt> object as having been changed; the
-	 * <tt>hasChanged</tt> method will now return <tt>true</tt>.
+	 * <tt>isChanged</tt> method will now return <tt>true</tt>.
 	 */
 	public synchronized void setChanged() {
 		changed = true;

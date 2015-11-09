@@ -23,13 +23,10 @@ import net.jini.core.lookup.ServiceTemplate;
 import net.jini.core.transaction.TransactionException;
 import sorcer.core.Dispatcher;
 import sorcer.core.exertion.NetTask;
-import sorcer.core.monitor.MonitorUtil;
-import sorcer.core.monitor.MonitoringSession;
 import sorcer.core.provider.Concatenator;
 import sorcer.core.provider.Provider;
 import sorcer.core.provider.ServiceProvider;
 import sorcer.core.signature.NetSignature;
-import sorcer.ext.ProvisioningException;
 import sorcer.service.*;
 
 import java.rmi.RemoteException;
@@ -140,7 +137,7 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
             // Catalog lookup or use Lookup Service for the particular
             // service
             Service service = (Service) Accessor.get().getService(sig);
-            if (service == null && task.isProvisionable()) {
+            /*if (service == null && task.isProvisionable()) {
                 MonitoringSession monSession = MonitorUtil.getMonitoringSession(task);
                 if (task.isMonitorable() && monSession!=null) {
                     logger.debug("Notifying monitor about Provisioning of exertion: " + task.getName());
@@ -162,7 +159,7 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
                     logger.warn(msg);
                     throw new ExertionException(msg, task);
                 }
-            }
+            }*/
             if (service == null) {
                 String msg;
                 // get the PROCESS Method and grab provider name + interface

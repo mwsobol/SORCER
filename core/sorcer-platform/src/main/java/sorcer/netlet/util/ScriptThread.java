@@ -145,6 +145,7 @@ public class ScriptThread extends Thread {
 
     private static String[] staticImports = {
             "sorcer.service.Strategy",
+            "sorcer.service.Deployment",
             "sorcer.eo.operator",
             "sorcer.co.operator",
             "sorcer.po.operator",

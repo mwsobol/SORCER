@@ -17,13 +17,13 @@
 
 package sorcer.service;
 
+import sorcer.core.context.model.par.ParException;
+
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
-
-import sorcer.core.context.model.par.ParException;
 
 
 /**
@@ -154,7 +154,11 @@ public class ArgList extends ArrayList<Arg> {
 		for (int i = 0; i < size(); i++) {
 			Object obj = get(i);
 			if (obj instanceof Evaluation)
-				values.add(((Evaluation)obj).getValue());
+				try {
+					values.add(((Evaluation)obj).getValue());
+				} catch (ContextException e) {
+					throw new EvaluationException(e);
+				}
 			else
 				values.add(null);
 		}

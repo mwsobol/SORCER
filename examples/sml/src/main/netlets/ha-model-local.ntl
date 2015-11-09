@@ -1,22 +1,36 @@
 #!/usr/bin/env nsh
+/*
+* Copyright to the original author or authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
 
-@Codebase(group='org.sorcer', module='arithmetic', version='${sorcer.version}', classifier='dl')
-@Load(group='org.sorcer', module='arithmetic', version='${sorcer.version}', classifier='prv')
+@Codebase(group='org.sorcer', module='sml', version='${sorcer.version}', classifier='dl')
+@Load(group='org.sorcer', module='sml', version='${sorcer.version}')
 import sorcer.arithmetic.provider.impl.AdderImpl
 import sorcer.arithmetic.provider.impl.MultiplierImpl
 import sorcer.arithmetic.provider.impl.SubtractorImpl
 
-Model m = model("Hello Arithmetic Srv Model",
+Model m = model(
         inEnt("multiply/x1", 10.0d), inEnt("multiply/x2", 50.0d),
         inEnt("add/x1", 20.0d), inEnt("add/x2", 80.0d),
-        srv(sig("multiply", MultiplierImpl.class, result("multiply/out",
+        ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
                 inPaths("multiply/x1", "multiply/x2")))),
-        srv(sig("add", AdderImpl.class, result("add/out",
+        ent(sig("add", AdderImpl.class, result("add/out",
                 inPaths("add/x1", "add/x2")))),
-        srv(sig("subtract", SubtractorImpl.class, result("model/response",
+        ent(sig("out", "subtract", SubtractorImpl.class, result("model/response",
                 inPaths("multiply/out", "add/out")))),
-        srv("y1", "multiply/x1"),
-        response("subtract"));
+        response("out"));
 
-dependsOn(m, ent("subtract", paths("multiply", "add")));
+dependsOn(m, ent("out", paths("multiply", "add")));
 

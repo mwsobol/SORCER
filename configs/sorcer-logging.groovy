@@ -144,9 +144,9 @@ logger("org.rioproject.resolver.aether.util.ConsoleRepositoryListener", WARN)
  * ==================================================================*/
 
 logger("sorcer.util.ProviderAccessor", WARN)
-logger("sorcer.core.provider.cataloger.ServiceCataloger", WARN)
+logger("sorcer.core.provider.cataloger.ServiceCataloger", INFO)
 //logger("sorcer.provider.boot", TRACE)
-logger("sorcer.core.provider.ServiceProvider", WARN)
+logger("sorcer.core.provider.ServiceProvider", INFO)
 logger("sorcer.core.provider.ControlFlowManager", WARN)
 logger("sorcer.core.provider.ProviderDelegate", WARN)
 logger("sorcer.tools.shell.NetworkShell", WARN)

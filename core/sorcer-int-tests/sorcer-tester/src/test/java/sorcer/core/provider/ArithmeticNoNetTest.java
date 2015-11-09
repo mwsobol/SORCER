@@ -20,6 +20,7 @@ import sorcer.service.Strategy.Access;
 import sorcer.service.Strategy.Flow;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.get;
 import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
@@ -156,7 +157,25 @@ public class ArithmeticNoNetTest implements SorcerConstants {
 		task.setContext(context);
 		return task;
 	}
-	
+
+	@Test
+	public void objectTaskFidelity() throws Exception {
+
+		Task t4 = task("t4",
+				sFi("object1", sig("multiply", MultiplierImpl.class)),
+				sFi("object2", sig("add", AdderImpl.class)),
+				context("shared", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
+						outEnt("result/y")));
+
+		Context out = context(exert(t4, fi("object1")));
+		logger.info("task context: " + context(t4));
+		assertTrue(value(out, "result/y").equals(500.0));
+
+		out = context(exert(t4, fi("object2")));
+		logger.info("task context: " + context(t4));
+		assertTrue(value(out, "result/y").equals(60.0));
+	}
+
 	@Test
 	public void contexterTest() throws Exception {
 		// get a context for the template context in the task
@@ -165,8 +184,8 @@ public class ArithmeticNoNetTest implements SorcerConstants {
 
 		Context result = context(exert(cxtt));
 //		logger.info("contexter context: " + result);
-		assertEquals(get(result, "arg/x1"), 20.0);
-		assertEquals(get(result, "arg/x2"), 80.0);
+		assertTrue(get(result, "arg/x1").equals(20.0));
+		assertTrue(get(result, "arg/x2").equals(80.0));
 	}
 	
 	@Test
@@ -178,7 +197,7 @@ public class ArithmeticNoNetTest implements SorcerConstants {
 		
 		Context result = context(exert(t5));
 //		logger.info("task context: " + result);
-		assertEquals(get(result, "result/y"), 100.0);
+		assertTrue(get(result, "result/y").equals(100.0));
 	}
 	
 	@Test

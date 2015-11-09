@@ -23,6 +23,7 @@ import sorcer.core.context.ApplicationDescription;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.EntryList;
+import sorcer.core.invoker.ServiceInvoker;
 import sorcer.service.*;
 import sorcer.service.modeling.Variability;
 import sorcer.util.url.sos.SdbUtil;
@@ -43,8 +44,8 @@ import java.util.*;
  * @author Mike Sobolewski
  */
 @SuppressWarnings({"unchecked", "rawtypes" })
-public class Par<T> extends Entry<T> implements Variability<T>, Arg, Mappable<T>, Evaluation<T>,
-	Invocation<T>, Setter, Scopable, Comparable<T>, Reactive<T>, Serializable {
+public class Par<T> extends Entry<T> implements Variability<T>, Arg, Mappable<T>,
+		Invocation<T>, Setter, Scopable, Comparable<T>, Reactive<T>, Serializable {
 
 	private static final long serialVersionUID = 7495489980319169695L;
 	 
@@ -83,7 +84,7 @@ public class Par<T> extends Entry<T> implements Variability<T>, Arg, Mappable<T>
 		value = (T)identifiable;
 	}
 	
-	public Par(String path, T argument) throws EvaluationException {
+	public Par(String path, T argument) {
 		super(path);
 		name = path;
 		
@@ -202,6 +203,9 @@ public class Par<T> extends Entry<T> implements Variability<T>, Arg, Mappable<T>
 	@Override
 	public T getValue(Arg... entries) throws EvaluationException, RemoteException {
 		// check for a constant or cached value
+		if (value instanceof Incrementor || ((value instanceof ServiceInvoker) &&
+				scope != null && (scope instanceof ParModel) && ((ParModel)scope).isChanged()))
+			isValid = false;
 		if (_2 != null && isValid && entries.length == 00 && !isPersistent) {
 			try {
 				if (_2 instanceof String

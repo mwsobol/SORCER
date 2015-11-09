@@ -17,6 +17,10 @@
 
 package sorcer.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import sorcer.core.Name;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,9 +29,11 @@ import java.util.List;
  * @author Mike Sobolewski
  *
  */
-public class Fidelity<T> implements Arg, Serializable {
-	
+public class Fidelity<T extends Arg> implements Arg, Serializable {
+
 	private static final long serialVersionUID = -875629011139790420L;
+
+	public final static Logger logger = LoggerFactory.getLogger(Fidelity.class);
 
 	public enum Type implements Arg {
 		EMPTY, NAME, SYS, SIG, EXERT, CONTEXT, COMPONENT, COMPOSITE, MULTI, VAR;
@@ -39,10 +45,6 @@ public class Fidelity<T> implements Arg, Serializable {
 
 	private static int count = 0;
 
-	public void setSelects(List<T> selects) {
-		this.selects = selects;
-	}
-
 	protected String name;
 
 	protected List<T> selects = new ArrayList<T>();
@@ -50,24 +52,52 @@ public class Fidelity<T> implements Arg, Serializable {
 	// component exertion path
 	protected String path = "";
 
+	protected T selection;
+
 	public Type type = Type.NAME;
 
 	public Fidelity() {
 		super();
 		name = "fidelity" + count++;
 	}
-	
+
 	public Fidelity(String name) {
 		this.name = name;
 	}
-	
+
+	public Fidelity(Arg name) {
+		this.name = name.getName();
+	}
+
 	public Fidelity(T[] selects) {
 		name = "fidelity" + count++;
 		for (T s : selects)
 			this.selects.add(s);
 	}
-	
-	public Fidelity(String name, T[] selects) {
+
+	public T getSelect(String name) {
+		for (T s : selects) {
+			if (s.getName().equals(name)) {
+				return s;
+			}
+			break;
+		}
+		return null;
+	}
+
+	public Fidelity(String... selects) {
+		this.name = "";
+		for (String s : selects)
+			this.selects.add((T) new Name(s));
+	}
+
+	public Fidelity(String name, String... selects) {
+		this.name = name;
+		for (String s : selects)
+			this.selects.add((T) new Name(s));
+	}
+
+	public Fidelity(String name, T... selects) {
 		this.name = name;
 		for (T s : selects)
 			this.selects.add(s);
@@ -103,12 +133,33 @@ public class Fidelity<T> implements Arg, Serializable {
 		this.name = name;
 	}
 
-	public T getSelect() {
-		return selects.get(0);
+	public T getSelection() {
+		return selection;
+	}
+
+	public String getSelectedName() {
+		return selection.getName();
+	}
+
+	public void setFidelitySelection(String fiName) {
+		for (T item : selects) {
+			if (item.getName().equals(fiName)) {
+				this.selection = item;
+			}
+
+		}
+	}
+
+	public void setSelection(T selection) {
+		this.selection = selection;
 	}
 
 	public List<T> getSelects() {
 		return selects;
+	}
+
+	public void setSelects(List<T> selects) {
+		this.selects = selects;
 	}
 
 	public String getPath() {

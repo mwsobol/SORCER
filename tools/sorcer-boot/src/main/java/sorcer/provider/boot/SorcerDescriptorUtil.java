@@ -551,7 +551,7 @@ public class SorcerDescriptorUtil {
 	
 	/**
 	 * Get the {@link com.sun.jini.start.ServiceDescriptor} instance for
-	 * {@link sorcer.core.provider.ServiceTasker} with beaned
+	 * {@link sorcer.core.provider.ServiceProvider} with beaned
 	 * {@link sorcer.core.provider.exerter.ServiceShell}, called Exerter.
 	 * 
 	 * @param policy
@@ -574,7 +574,7 @@ public class SorcerDescriptorUtil {
 
 	/**
 	 * Get the {@link com.sun.jini.start.ServiceDescriptor} instance for
-	 * {@link sorcer.core.provider.ServiceTasker} with beaned
+	 * {@link sorcer.core.provider.ServiceProvider} with beaned
 	 * {@link sorcer.core.provider.exerter.ServiceShell}, called Exerter.
 	 * 
 	 * @param policy
@@ -600,7 +600,7 @@ public class SorcerDescriptorUtil {
 	
 	/**
 	 * Get the {@link com.sun.jini.start.ServiceDescriptor} instance for
-	 * {@link sorcer.core.provider.ServiceTasker} with beaned
+	 * {@link sorcer.core.provider.ServiceProvider} with beaned
 	 * {@link sorcer.core.provider.exerter.ServiceShell}, called Exerter.
 	 * 
 	 * @param policy
@@ -635,7 +635,7 @@ public class SorcerDescriptorUtil {
         String exerterCodebase = Booter.getCodebase(getDefaultSorcerExports(),
                                                     hostAddress,
                                                     Integer.toString(port));
-		String implClass = "sorcer.core.provider.ServiceTasker";
+		String implClass = "sorcer.core.provider.ServiceProvider";
 		return (new SorcerServiceDescriptor(exerterCodebase, policy,
 				exerterClasspath, implClass, exerterConfig));
 
@@ -1100,7 +1100,7 @@ public class SorcerDescriptorUtil {
         String loggerCodebase = Booter.getCodebase(getDefaultSorcerExports(),
                                                    hostAddress,
                                                    Integer.toString(port));
-		// Logger is a partner to ServiceTasker
+		// Logger is a partner to ServiceProvider
 		String implClass = "sorcer.core.provider.ServiceProvider";
 
 		return (new SorcerServiceDescriptor(loggerCodebase, policy,

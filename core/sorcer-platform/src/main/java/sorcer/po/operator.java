@@ -20,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.co.tuple.ExecPath;
 import sorcer.co.tuple.InputEntry;
+import sorcer.co.tuple.Path;
 import sorcer.co.tuple.Tuple2;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.EntryList;
@@ -125,7 +126,7 @@ public class operator {
 		return new EntryList(entries);
 	}
 
-	public static Fidelity<String> parFi(String name) {
+	public static Fidelity<Arg> parFi(String name) {
 		return new Fidelity(name);
 	}
 
@@ -224,7 +225,7 @@ public class operator {
 			throws ContextException {
 		Object parEntry = context.asis(parname);
 		if (parEntry == null)
-			parEntry = context.addPar(parname, value);
+			context.addPar(parname, value);
 		else if (parEntry instanceof Setter) {
 			try {
 				((Setter) parEntry).setValue(value);
@@ -236,9 +237,10 @@ public class operator {
 			if (par.getScope() != null && par.getContextable() == null)
 				par.getScope().putValue(par.getName(), value);
 		}
-		// just assing the value
+		// just ssetting the value
 		else {
 			context.putValue(parname, value);
+			context.setIsChanged(true);
 		}
 
 	}
@@ -292,10 +294,15 @@ public class operator {
 				else
 					return invoker.invoke(parModel, parameters);
 			} else if (obj instanceof Invocation) {
+				Object out;
 				if (scope != null)
-					return ((Invocation) obj).invoke(scope, parameters);
+					out = ((Invocation) obj).invoke(scope, parameters);
 				else
-					return ((Invocation) obj).invoke(null, parameters);
+					out = ((Invocation) obj).invoke(null, parameters);
+//				if (parModel.getScope() == null)
+//					parModel.setScope(new ServiceContext());
+//				parModel.getScope().putValue(parname, out);
+				return out;
 			} else if (obj instanceof Agent) {
 				return ((Agent)obj).getValue(parameters);
 			}
@@ -338,6 +345,26 @@ public class operator {
 		return new ServiceInvoker(evaluator, parEntries);
 	}
 
+	public static ServiceInvoker invoker(ContextCallable condition) throws InvocationException {
+		return new ServiceInvoker(null, condition, null);
+	}
+
+	public static ServiceInvoker invoker(ContextCallable condition, Context scope) throws InvocationException {
+		try {
+			return new ServiceInvoker(null, condition, scope);
+		} catch (Exception e) {
+			throw new InvocationException("Failed to create invoker!", e);
+		}
+	}
+
+	public static ServiceInvoker invoker(String name, ContextCallable condition) throws InvocationException {
+		return new ServiceInvoker(name, condition, null);
+	}
+
+	public static ServiceInvoker invoker(String name, ContextCallable condition, Context scope) throws InvocationException {
+		return new ServiceInvoker(name, condition, scope);
+	}
+
 	public static ServiceInvoker invoker(String name, String expression, Arg... pars) {
 		return new GroovyInvoker(name, expression, pars);
 	}
@@ -348,6 +375,10 @@ public class operator {
 
 	public static ServiceInvoker invoker(String expression, Arg... pars) {
 		return new GroovyInvoker(expression, pars);
+	}
+
+	public static ServiceInvoker print(String path) {
+		return new GroovyInvoker("_print_", new Path<>(path));
 	}
 
 	public static ServiceInvoker invoker(String expression) {

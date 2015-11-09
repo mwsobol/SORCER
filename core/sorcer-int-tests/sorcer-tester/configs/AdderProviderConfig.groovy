@@ -25,7 +25,7 @@ import java.util.logging.Level
  */
 @Component('sorcer.core.provider.ServiceProvider')
 class AdderProviderConfig {
-    /* service provider genetic properties */
+    /* service provider generic properties */
     String name = "Adder"
     String description = "Adder - bean provider"
     String location = "AFRL/WPAFB"
@@ -51,9 +51,9 @@ class AdderProviderConfig {
      *
      * @return An array of service implementation classes required to load the service
      */
-    Class[] getBeanClasses() {
+    /*Class[] getBeanClasses() {
         return [junit.sorcer.core.provider.AdderImpl.class]
-    }
+    }*/
 
 
     Class[] getPublishedInterfaces() {

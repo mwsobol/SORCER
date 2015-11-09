@@ -44,7 +44,7 @@ public class JobUtil {
                                                 getConfigDir()+"/multiplier-prv-fork.config":
                                                 "org.sorcer:deploy-tests:config:"+System.getProperty("sorcer.version")),
                                   idle(1),
-                                  ServiceDeployment.Type.SELF)),
+                                  Deployment.Type.SELF)),
                        context("multiply", inEnt("arg/x1", 10.0d),
                                inEnt("arg/x2", 50.0d), result("result/y1")));
 

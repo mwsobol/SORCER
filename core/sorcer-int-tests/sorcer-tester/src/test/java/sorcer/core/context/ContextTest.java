@@ -60,7 +60,7 @@ public class ContextTest {
 		assertEquals(cxt.getValue("arg/x1"), 20.0);
 //		logger.info("val x1 = " + cxt.getValue("x1"));
 		assertEquals(cxt.getValue("x1"), null);
-//		logger.info("weak x1 = " + cxt.getWeakValue("arg/var/x1"));
+//		logger.info("weak x1 = " + cxt.getSoftValue("arg/var/x1"));
 		assertEquals(cxt.getSoftValue("arg/var/x1"), 20.0);
 	}
 }

@@ -20,6 +20,7 @@ package sorcer.core.context.model.ent;
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
 import sorcer.co.tuple.Tuple2;
+import sorcer.core.Name;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.service.*;
@@ -39,7 +40,7 @@ import static sorcer.eo.operator.add;
  * @author Mike Sobolewski
  */
 @SuppressWarnings("unchecked")
-public class Entry<T> extends Tuple2<String, T> implements Service, Dependency, Comparable<T>, Setter, Evaluation<T>, Invocation<T>, Reactive<T>, Arg {
+public class Entry<T> extends Tuple2<String, T> implements Service, Dependency, Comparable<T>, Setter, Invocation<T>, Reactive<T>, Arg {
 	private static final long serialVersionUID = 5168783170981015779L;
 
 	public int index;
@@ -101,11 +102,11 @@ public class Entry<T> extends Tuple2<String, T> implements Service, Dependency, 
 						val = (T) ((UuidObject) val).getObject();
 				} else {
 					if (val instanceof UuidObject) {
-						url =  (URL) SdbUtil.store(val);
+						url = SdbUtil.store(val);
 					} else {
 						UuidObject uo = new UuidObject(val);
 						uo.setName(_1);
-						url =  (URL)  SdbUtil.store(uo);
+						url = SdbUtil.store(uo);
 					}
 					this._2 = (T)url;
 				}
@@ -248,7 +249,7 @@ public class Entry<T> extends Tuple2<String, T> implements Service, Dependency, 
 		if (mogram instanceof EntModel) {
 			if (_2 != null && _2 != Context.none)
 				add((Context)mogram, this);
-			((ServiceContext)mogram).getModelStrategy().getResponsePaths().add(_1);
+			((ServiceContext)mogram).getModelStrategy().getResponsePaths().add(new Name(_1));
 			out = (Context) ((Model)mogram).getResponse();
 		} else if (mogram instanceof ServiceContext) {
 			if (_2 == null || _2 == Context.none) {
@@ -269,12 +270,6 @@ public class Entry<T> extends Tuple2<String, T> implements Service, Dependency, 
 			out.putValue(_1, cxt.getValue(_1));
 		}
 		return out;
-	}
-
-	@Override
-	public Mogram service(Mogram mogram) throws TransactionException,
-			MogramException, RemoteException {
-		return service(mogram, null);
 	}
 
 	@Override

@@ -30,7 +30,7 @@ import sorcer.service.Signature.Type;
 
 import java.rmi.RemoteException;
 
-public class NetBlock extends Block implements Evaluation<Object>, Invocation<Object> {
+public class NetBlock extends Block implements Invocation<Object> {
 
 	private static final long serialVersionUID = 3420416993635766567L;
 	

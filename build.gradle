@@ -14,7 +14,13 @@
  * limitations under the License.
  */
 
-project.version = '5.3.7'
+/* Grab the current branch from git and append to version */
+String ref = new File(rootProject.projectDir, ".git/HEAD").text
+int ndx = ref.lastIndexOf("/")
+String branch = ref.substring(ndx+1).trim()
+String branchRef = branch.equals("master")?"":"-$branch"
+
+version = "5.3.15$branchRef"
 
 apply plugin: 'idea'
 idea {
@@ -86,7 +92,16 @@ subprojects {
             }
             /* Always run tests */
             test.outputs.upToDateWhen { false }
-
+            /*
+             * Inject an allTest task for projects with a Test class that has a name of "test"
+             */
+            Test tester = tasks.getByName("test")
+            if (tester != null) {
+                task "allTest" {
+                    description = "Runs all tests in a project"
+                    dependsOn(test)
+                }
+            }
             compileJava.options.encoding = 'UTF-8'
             apply from: file("${rootProject.projectDir.path}/gradle/bootme.gradle")
 
@@ -126,7 +141,7 @@ def isAnAggregateTest(graph) {
 }
 
 def isAnAllTest(graph, name) {
-    return (graph.hasTask(":allTests") || graph.hasTask(":${name}:allTest"))
+    return (graph.hasTask(":allTests") || graph.hasTask("${name}:allTest"))
 }
 
 gradle.taskGraph.whenReady { graph ->
@@ -141,7 +156,7 @@ gradle.taskGraph.whenReady { graph ->
             tasks.withType(Test) {
                 if(isAnAggregateTest(graph))
                     reports.html.enabled = false
-                if(!isAnAllTest(graph, project.name)) {
+                if(!isAnAllTest(graph, project.path)) {
                     useJUnit {
                         excludeCategories 'org.sorcer.test.TestsRequiringRio'
                     }

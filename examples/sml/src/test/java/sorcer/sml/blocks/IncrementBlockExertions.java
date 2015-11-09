@@ -1,5 +1,6 @@
 package sorcer.sml.blocks;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -9,12 +10,15 @@ import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.core.SorcerConstants;
 import sorcer.core.provider.rendezvous.ServiceConcatenator;
-import sorcer.service.*;
+import sorcer.service.Block;
+import sorcer.service.Context;
+import sorcer.service.Incrementor;
+import sorcer.service.Task;
 
 import static org.junit.Assert.assertEquals;
-import static sorcer.co.operator.ent;
 import static sorcer.co.operator.inEnt;
 import static sorcer.eo.operator.*;
+import static sorcer.eo.operator.loop;
 import static sorcer.po.operator.*;
 
 /**
@@ -37,46 +41,28 @@ public class IncrementBlockExertions implements SorcerConstants {
 	}
 
 	@Test
-	public void taskIncrementor() throws Exception {
-		Task spaceTask = task(
-				"space task",
-				sig("add", AdderImpl.class),
-				model("add", inEnt("arg/x1", 20),
-						inEnt("arg/x2", 80.0), result("task/result")));
-
-		Incrementor i = inc(invoker(context(spaceTask), "arg/x1"), 2);
-		Context cxt2 = model(ent("z2", i));
-		assertEquals(value(cxt2, "z2"), 22);
-		assertEquals(value(cxt2, "z2"), 24);
-	}
-
-	@Test
 	public void taskIncrement() throws Exception {
-		Task t = task(
-				"space task",
-				sig("add", AdderImpl.class),
+		Task t = task(sig("add", AdderImpl.class),
 				model("add", inEnt("arg/x1", inc("arg/x2", 2.0)),
-						inEnt("arg/x2", 80.0), result("task/result")),
-				strategy(Strategy.Access.PULL, Strategy.Wait.YES));
+						inEnt("arg/x2", 80.0), result("task/result")));
 
 //		logger.info("result: " + value(t));
 		assertEquals(value(t), 162.00);
 	}
 
-//	@Test
-//	public void taskIncrementLoop() throws Exception {
-//		Task spaceTask = task(
-//				"space task",
-//				sig("add", AdderImpl.class),
-//				model("add", inEnt("arg/x1", inc("arg/x2", 2.0)),
-//						inEnt("arg/x2", 80.0), result("task/result")),
-//				strategy(Strategy.Access.PULL, Strategy.Wait.YES));
-//
-//		Block spaceBlock = block(sig(ServiceConcatenator.class),
-//				loop(0, 10, spaceTask));
-//
-//		spaceBlock = exert(spaceBlock);
-//		logger.info("block context" + context(spaceBlock));
-////		assertEquals(get(context(spaceBlock), "result/average"), 100.00);
-//	}
+	@Ignore
+	@Test
+	public void taskIncrementLoop() throws Exception {
+		Task ti = task(
+				sig("add", AdderImpl.class),
+				model("add", inEnt("arg/x1", inc("arg/x2", 2.0)),
+						inEnt("arg/x2", 80.0), result("task/result")));
+
+		Block lb = block(sig(ServiceConcatenator.class),
+				loop(0, 10, ti));
+
+		lb = exert(lb);
+		logger.info("block context" + context(lb));
+//		assertEquals(get(context(lb), "task/result"), 100.00);
+	}
 }

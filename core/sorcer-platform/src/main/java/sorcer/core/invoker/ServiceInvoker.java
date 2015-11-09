@@ -21,6 +21,7 @@ import net.jini.id.Uuid;
 import net.jini.id.UuidFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.par.Par;
 import sorcer.core.context.model.par.ParModel;
@@ -88,7 +89,9 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 	// indication that value has been calculated with recent arguments
 	private boolean valueIsValid = false;
 		
-	protected ParModel invokeContext;
+	protected Context invokeContext;
+
+	protected ContextCallable lambda;
 
 	// set of dependent variables for this evaluator
 	protected ArgSet pars = new ArgSet();
@@ -108,7 +111,28 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 			this.name = name;
 		invokeContext = new ParModel("model/par");
 	}
-	
+
+	public ServiceInvoker(ContextCallable lambda) throws InvocationException {
+		this(null, lambda, null);
+	}
+
+	public ServiceInvoker(String name, ContextCallable lambda, Context context) throws InvocationException {
+		this.name = name;
+		if (context == null)
+			invokeContext = new ParModel("model/par");
+		else {
+			if (context instanceof ParModel)
+				invokeContext = (ParModel)context;
+			else
+				try {
+					invokeContext = new ParModel(context);
+				} catch (Exception e) {
+					throw new InvocationException("Failed to create invoker!", e);
+				}
+		}
+		this.lambda = lambda;
+	}
+
 	public ServiceInvoker(ParModel context) {
 		this(context.getName());
 		invokeContext = context;
@@ -179,7 +203,7 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 	 */
 	@Override
 	public T getValue(Arg... entries) throws EvaluationException, RemoteException {
-			if (evaluator != null)
+			if (lambda != null || evaluator != null)
 				return (T) invokeEvaluator(entries);
 			else
 				throw new EvaluationException("Evaluation#getValue() not implemented by: " + this.getClass().getName());
@@ -231,7 +255,7 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 	 */
 	public ServiceInvoker addPar(Object par) throws EvaluationException, RemoteException {
 		if (par instanceof Par) {
-			invokeContext.put(((Par) par).getName(), par);
+			((ServiceContext)invokeContext).put(((Par) par).getName(), par);
 			if (((Par) par).asis() instanceof ServiceInvoker) {
 				((ServiceInvoker) ((Par) par).getValue()).addObserver(this);
 				pars.add((Par) par);
@@ -313,14 +337,16 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 					
 				invokeContext.substitute(entries);
 			}
-			if (invokeContext.isContextChanged()) {
+			if (((ServiceContext)invokeContext).isChanged()) {
 				valueIsValid = false;
 				pars.clearArgs();
 			}
 			if (valueIsValid)
 				return value;
 			else {
-				if (evaluator != null)
+				if (lambda != null) {
+					   value = (T) lambda.call(invokeContext);
+				} else if (evaluator != null)
 					value = (T) invokeEvaluator(entries);
 				else
 					value = getValue(entries);
@@ -335,13 +361,18 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 	
 	private Object invokeEvaluator(Arg... entries)
 			throws InvocationException {
-		init(pars);
 		try {
-			evaluator.addArgs(pars);
-			return evaluator.getValue(entries);
+			init(pars);
+			if (lambda != null) {
+				return lambda.call(invokeContext);
+			} else if (evaluator != null) {
+				evaluator.addArgs(pars);
+				return evaluator.getValue(entries);
+			}
 		} catch (Exception e) {
 			throw new InvocationException(e);
 		}
+		throw new InvocationException("No evaluator available!");
 	}
 	
 	private void init(ArgSet set){
@@ -392,15 +423,7 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 	 */
 	@Override
 	public void setScope(Context scope) throws ContextException {
-		if (scope instanceof ParModel) {
-			this.invokeContext = (ParModel) scope;
-		} else if (scope instanceof Context) {
-			try {
-				this.invokeContext = new ParModel(scope);
-			} catch (Exception e) {
-				throw new ContextException();
-			}
-		}
+		invokeContext = scope;
 	}
 	
 	/**
@@ -470,6 +493,7 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 	@Override
 	public T evaluate(Arg... entries) throws EvaluationException,
 			RemoteException {
+
 		return invoke(entries);
 	}
 
@@ -507,13 +531,21 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 
 	@Override
 	 public boolean isReactive() {
-		return isReactive;
+		return true;
 	}
 
 	@Override
 	public Reactive<T> setReactive(boolean isReactive) {
 		this.isReactive = isReactive;
 		return this;
+	}
+
+	public ContextCallable getLambda() {
+		return lambda;
+	}
+
+	public void setLambda(ContextCallable lambda) {
+		this.lambda = lambda;
 	}
 
 }

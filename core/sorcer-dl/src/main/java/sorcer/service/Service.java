@@ -47,7 +47,7 @@ public interface Service {
 			throws TransactionException, MogramException, RemoteException;
 
 
-	public <T extends Mogram> T service(T mogram)
-			throws TransactionException, MogramException, RemoteException;
+//	public <T extends Mogram> T service(T mogram)
+//			throws TransactionException, MogramException, RemoteException;
 
 }

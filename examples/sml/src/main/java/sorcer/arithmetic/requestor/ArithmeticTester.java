@@ -359,7 +359,7 @@ private Exertion f1SEQpull() throws Exception {
 		Exerter exerter = Accessor.get().getService(null, Exerter.class);
 		logger.info("got exerter: " + exerter);
 
-		out = exerter.exert(f5);
+		out = exerter.exert(f5, null);
 		long end = System.currentTimeMillis();
 		
 		if (out.getExceptions().size() > 0) {
@@ -518,7 +518,7 @@ private Exertion f1SEQpull() throws Exception {
 		int poolSize = new Integer(size);
 		int tally = new Integer(size);
 		Task task = null;
-		ExertionCallable ec = null;
+		ExertCallable ec = null;
 		long start = System.currentTimeMillis();
 		List<Future<Exertion>> fList = new ArrayList<Future<Exertion>>(tally);
 		ExecutorService pool = Executors.newFixedThreadPool(poolSize);
@@ -526,7 +526,7 @@ private Exertion f1SEQpull() throws Exception {
 			task = getTask();
 			task.getControlContext().setAccessType(Access.PULL);
 			task.setName("f5-" + i);
-			ec = new ExertionCallable(task);
+			ec = new ExertCallable(task);
 			logger.info("exertion submit: " + task.getName());
 			Future<Exertion> future = pool.submit(ec);
 			fList.add(future);

@@ -15,11 +15,14 @@
  * limitations under the License.
  */
 
-@Codebase(group='org.sorcer', module='arithmetic', version='${sorcer.version}', classifier='dl')
+@Codebase(group='org.sorcer', module='sml', version='${sorcer.version}', classifier='dl')
 import sorcer.arithmetic.provider.Adder
 
 Double v1 = 100.0;
 Double v2 = 200.0;
 
 task("hello adder", sig("add", Adder.class),
-        context("adder", inEnt("arg/x1", v1), inEnt("arg/x2", v2), result("out/y")));
+        context("adder",
+                inEnt("arg/x1", v1),
+                inEnt("arg/x2", v2),
+                result("out/y")));

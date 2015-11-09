@@ -44,8 +44,8 @@ public class AdderImpl implements Adder {
 			cxt.putValue("calculated/provider", provider.getProviderName());
 		else
 			cxt.putValue("calculated/provider", getClass().getName());
-		if (((ServiceContext)context).getReturnPath() != null) {
-			((ServiceContext)context).setReturnValue(result);
+		if (context.getReturnPath() != null) {
+			context.setReturnValue(result);
 		} else if (outpaths.size() == 1) {
 			// put the result in the existing output path
 			cxt.putValue(outpaths.get(0), result);

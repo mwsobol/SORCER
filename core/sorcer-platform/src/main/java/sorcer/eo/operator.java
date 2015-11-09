@@ -16,6 +16,7 @@
  */
 package sorcer.eo;
 
+import groovy.lang.Closure;
 import net.jini.core.lookup.ServiceItem;
 import net.jini.core.lookup.ServiceTemplate;
 import net.jini.core.transaction.Transaction;
@@ -24,6 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.co.operator.DataEntry;
 import sorcer.co.tuple.*;
+import sorcer.core.Name;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.*;
 import sorcer.core.context.model.QueueStrategy;
@@ -36,6 +38,7 @@ import sorcer.core.context.model.srv.Srv;
 import sorcer.core.deploy.ServiceDeployment;
 import sorcer.core.exertion.*;
 import sorcer.core.invoker.InvokeIncrementor;
+import sorcer.core.plexus.MultiFidelity;
 import sorcer.core.provider.*;
 import sorcer.core.provider.exerter.Binder;
 import sorcer.core.provider.rendezvous.ServiceConcatenator;
@@ -64,6 +67,7 @@ import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.*;
 
+import static sorcer.co.operator.srv;
 import static sorcer.mo.operator.entModel;
 import static sorcer.mo.operator.srvModel;
 import static sorcer.po.operator.parModel;
@@ -238,7 +242,8 @@ public class operator {
 //	}
 
 	public static Context subcontext(Context context, List<String> paths) throws ContextException {
-		return context.getSubcontext((String[]) paths.toArray());
+		String[] pl = new String[paths.size()];
+		return context.getSubcontext((String[]) paths.toArray(pl));
 	}
 
 	public static Context subcontext(Context context, String... paths) throws ContextException {
@@ -308,14 +313,14 @@ public class operator {
 				returnPath = (ReturnPath) o;
 			} else if (o instanceof ExecPath) {
 				execPath = (ExecPath) o;
+			} else if (o instanceof Par) {
+				parEntryList.add((Par) o);
 			} else if (o instanceof Tuple2) {
 				entryList.add((Tuple2) o);
 			} else if (o instanceof Context.Type) {
 				types.add((Context.Type) o);
 			} else if (o instanceof String) {
 				name = (String) o;
-			} else if (o instanceof Par) {
-				parEntryList.add((Par) o);
 			} else if (o instanceof EntryList) {
 				entryLists.add((EntryList) o);
 			} else if (o instanceof MapContext) {
@@ -410,7 +415,7 @@ public class operator {
 		}
 		if (response != null) {
 			if (response.path() != null) {
-				((ServiceContext) cxt).getModelStrategy().getResponsePaths().add(response.path());
+				((ServiceContext) cxt).getModelStrategy().getResponsePaths().add(new Name(response.path()));
 			}
 			((ServiceContext) cxt).getModelStrategy().setResult(response.path(), response.target);
 		}
@@ -461,12 +466,16 @@ public class operator {
 		for (int i = 0; i < entryList.size(); i++) {
 			Tuple2 t = entryList.get(i);
 			if (t instanceof Srv) {
-//				try {
-//					if (t.getValue() == Context.none && !t.getName().equals(t.path()))
-//                        t.setValue(pcxt);
-//				} catch (RemoteException e) {
-//					throw new ContextException(e);
-//				}
+				try {
+					if (t.asis() instanceof Scopable) {
+						if (((Scopable) t.value()).getScope() != null)
+							((Scopable) t.value()).getScope().setScope(pcxt);
+						else
+							((Scopable) t.value()).setScope(pcxt);
+					}
+				} catch (RemoteException e) {
+					throw new ContextException(e);
+				}
 				pcxt.putInoutValueAt(t.path(), t, i + 1);
 			} else if (t instanceof InputEntry) {
 				Object par = t.value();
@@ -494,6 +503,9 @@ public class operator {
 				if (t.isPersistent()) {
 					setPar(pcxt, (Entry) entryList.get(i), i);
 				} else {
+					if (t.value() instanceof Scopable) {
+						((Scopable) t.value()).setScope(pcxt);
+					}
 					pcxt.putValueAt(t.path(), t.value(), i + 1);
 				}
 			} else if (t instanceof DataEntry) {
@@ -550,6 +562,16 @@ public class operator {
 		}
 	}
 
+	public Context rm(Model model, String path) {
+		return remove(model, path);
+	}
+
+	public Context remove(Model model, String path) {
+		ServiceContext context = (ServiceContext) model;
+		context.getData().remove(path);
+		return context;
+	}
+
 	public static Context add(Model model, Identifiable... objects)
 			throws RemoteException, ContextException {
 		boolean isReactive = false;
@@ -557,6 +579,10 @@ public class operator {
 		for (Identifiable i : objects) {
 			if (i instanceof Reactive && ((Reactive) i).isReactive()) {
 				isReactive = true;
+			}
+			if (i instanceof Mogram) {
+				((Mogram) i).setScope((Context)model);
+				i = srv(i);
 			}
 			if (context instanceof PositionalContext) {
 				PositionalContext pc = (PositionalContext) context;
@@ -775,6 +801,12 @@ public class operator {
 		return signature.getSelector();
 	}
 
+	public static Signature sig(String name, String operation, Class serviceType)
+			throws SignatureException {
+		ServiceSignature signature = (ServiceSignature) sig(operation, serviceType, new Arg[]{});
+		signature.setName(name);
+		return signature;
+	}
 
 	public static Signature sig(String operation, Class serviceType)
 			throws SignatureException {
@@ -815,6 +847,36 @@ public class operator {
 			return defaultSig(serviceType);
 		else
 			return sig("?", serviceType, args);
+	}
+
+	public static Signature sig(String operation, Object provider, Arg... args) throws SignatureException {
+		ObjectSignature sig = new ObjectSignature();
+		sig.setName(operation);
+		sig.setSelector(operation);
+		sig.setTarget(provider);
+		if (args.length > 0) {
+			for (Object o : args) {
+				if (o instanceof Type) {
+					sig.setType((Type) o);
+				} else if (o instanceof Operating) {
+					sig.setActive((Operating) o);
+				} else if (o instanceof ServiceShell) {
+					sig.setShellRemote((ServiceShell) o);
+				} else if (o instanceof ReturnPath) {
+					sig.setReturnPath((ReturnPath) o);
+				} else if (o instanceof ServiceDeployment) {
+					sig.setProvisionable(true);
+					sig.setDeployment((ServiceDeployment) o);
+				}
+			}
+		}
+		return sig;
+	}
+
+	public static Signature sig(String name, String operation, Class serviceType, Arg... args) throws SignatureException {
+		ServiceSignature s = (ServiceSignature) sig(operation, serviceType, args);
+		s.setName(name);
+		return s;
 	}
 
 	public static Signature sig(String operation, Class serviceType, Arg... args) throws SignatureException {
@@ -875,6 +937,14 @@ public class operator {
 		}
 
 		return sig;
+	}
+
+	public static String property(String property) {
+		return System.getProperty(property);
+	}
+
+	public static String home() {
+		return Sorcer.getHome();
 	}
 
 	public static ProviderName prvName(String name) {
@@ -1024,15 +1094,21 @@ public class operator {
 //		return new Tuple2<String, String> (componentPath, fidelityName);
 //	}
 
-	public static Fidelity<String> cFi(String componentPath, String fidelityName) {
-		Fidelity<String> fi = new Fidelity(componentPath, fidelityName);
+	public static Fidelity<Arg> cFi(String componentPath, String fidelityName) {
+		Fidelity<Arg> fi = new Fidelity(componentPath, new Name(fidelityName));
 		fi.setPath(componentPath);
 		fi.type = Fidelity.Type.COMPONENT;
 		return fi;
 	}
 
-	public static Fidelity<String> fi(String name, String... selectors) {
-		Fidelity<String> fi = new Fidelity(name, selectors);
+	public static Fidelity<Arg> fi(String name, String... selectors) {
+		Fidelity fi = new Fidelity(name, selectors);
+		fi.type = Fidelity.Type.NAME;
+		return fi;
+	}
+
+	public static Fidelity<Arg> fi(String name, Arg... selectors) {
+		Fidelity fi = new Fidelity(name, selectors);
 		fi.type = Fidelity.Type.NAME;
 		return fi;
 	}
@@ -1053,6 +1129,26 @@ public class operator {
 		return exertion.getFidelities();
 	}
 
+	public static Fidelity<Fidelity> fi(Fidelity... fidelities) {
+		Fidelity<Fidelity> fi = new Fidelity(new Fidelity(fidelities));
+		return fi;
+	}
+
+	public static MultiFidelity<Entry> mFi(Entry... entries) {
+		MultiFidelity<Entry> multiFi = new MultiFidelity(new Fidelity(entries));
+		return multiFi;
+	}
+
+	public static MultiFidelity<Signature> mFi(Signature... signatures) {
+		MultiFidelity<Signature> multiFi = new MultiFidelity(new Fidelity(signatures));
+		return multiFi;
+	}
+
+	public static MultiFidelity<Signature> multiFi(Signature... signatures) {
+		MultiFidelity<Signature> multiFi = new MultiFidelity(new Fidelity(signatures));
+		return multiFi;
+	}
+
 	public static Fidelity<Signature> sFi(Signature... signatures) {
 		Fidelity<Signature> fi = new Fidelity(signatures);
 		fi.type = Fidelity.Type.EXERT;
@@ -1061,6 +1157,13 @@ public class operator {
 
 	public static Fidelity<?> fi(String name) {
 		Fidelity<?> fi = new Fidelity(name);
+		fi.type = Fidelity.Type.EMPTY;
+		return fi;
+	}
+
+	public static Fidelity<?> fi(String name, String path) {
+		Fidelity<?> fi = new Fidelity(name);
+		fi.setPath(path);
 		fi.type = Fidelity.Type.EMPTY;
 		return fi;
 	}
@@ -1340,7 +1443,7 @@ public class operator {
 	}
 
 
-	public static <M extends Service> M mogram(Object... items) throws MogramException {
+	public static <M extends Mogram> M mogram(Object... items) throws MogramException {
 		String name = "unknown" + count++;
 		if (items.length == 1 && items[0] instanceof NetletSignature) {
 			String source = ((NetletSignature)items[0]).getServiceSource();
@@ -1397,7 +1500,7 @@ public class operator {
 		for (int i = 0; i < items.length; i++) {
 			if (items[i] instanceof Exertion || items[i] instanceof EntModel ) {
 				exertions.add((Mogram) items[i]);
-				if (items[i] instanceof ConditionalExertion)
+				if (items[i] instanceof ConditionalMogram)
 					isBlock = true;
 			} else if (items[i] instanceof Signature) {
 				sig = (Signature) items[i];
@@ -1718,6 +1821,16 @@ public class operator {
 		return value(model, evalSelector, entries);
 	}
 
+	public static <T> T val(Context<T> model, String evalSelector,
+						  Arg... entries) throws ContextException {
+		return value(model, evalSelector, entries);
+	}
+
+	public static <T> T v(Context<T> model, String evalSelector,
+							 Arg... entries) throws ContextException {
+		return value(model, evalSelector, entries);
+	}
+
 	public static <T> T value(Context<T> model, String evalSelector,
 							  Arg... entries) throws ContextException {
 		if (model instanceof ParModel) {
@@ -1910,15 +2023,13 @@ public class operator {
 
 	public static <T extends Service> T exert(T mogram, Arg... args) throws MogramException {
 		try {
-			if (mogram instanceof Exertion) {
-				return ((Exertion) mogram).exert(null, args);
-			} else if (mogram instanceof Model) {
-				return (T) ((Model) mogram).exert(null, args);
+			if (mogram instanceof Mogram) {
+				return ((Mogram)mogram).exert(null, args);
 			}
 		} catch (Exception e) {
 			throw new ExertionException(e);
 		}
-		throw new ExertionException("Unknown type of mogram");
+		throw new ExertionException("Unknown type of mogram: " + mogram.getClass().getName());
 	}
 
 	public static <T extends Exertion> T exec(Exerter exerter, Exertion input,
@@ -2398,6 +2509,14 @@ public class operator {
 		return new Condition(parcontext, expression, pars);
 	}
 
+	public static Condition condition(Closure condition) {
+		return new Condition(condition);
+	}
+
+	public static Condition condition(ContextCondition condition) {
+		return new Condition(condition);
+	}
+
 	public static Condition condition(String expression,
 									  String... pars) {
 		return new Condition(expression, pars);
@@ -2407,47 +2526,47 @@ public class operator {
 		return new Condition(condition);
 	}
 
-	public static OptExertion opt(String name, Exertion target) {
-		return new OptExertion(name, target);
+	public static OptMogram opt(String name, Exertion target) {
+		return new OptMogram(name, target);
 	}
 
-	public static OptExertion opt(Condition condition,
+	public static OptMogram opt(Condition condition,
 								  Exertion target) {
-		return new OptExertion(condition, target);
+		return new OptMogram(condition, target);
 	}
 
 
-	public static OptExertion opt(String name, Condition condition,
+	public static OptMogram opt(String name, Condition condition,
 								  Exertion target) {
-		return new OptExertion(name, condition, target);
+		return new OptMogram(name, condition, target);
 	}
 
-	public static AltExertion alt(OptExertion... exertions) {
-		return new AltExertion(exertions);
+	public static AltMogram alt(OptMogram... exertions) {
+		return new AltMogram(exertions);
 	}
 
-	public static AltExertion alt(String name, OptExertion... exertions) {
-		return new AltExertion(name, exertions);
+	public static AltMogram alt(String name, OptMogram... exertions) {
+		return new AltMogram(name, exertions);
 	}
 
 
-	public static LoopExertion loop(Condition condition,
+	public static LoopMogram loop(Condition condition,
+								  Mogram target) {
+		return new LoopMogram(null, condition, target);
+	}
+
+	public static LoopMogram loop(int from, int to, Condition condition,
 									Exertion target) {
-		return new LoopExertion(null, condition, target);
+		return new LoopMogram(null, from, to, condition, target);
 	}
 
-	public static LoopExertion loop(int from, int to, Condition condition,
+	public static LoopMogram loop(int from, int to, Exertion target) {
+		return new LoopMogram(null, from, to, null, target);
+	}
+
+	public static LoopMogram loop(String name, Condition condition,
 									Exertion target) {
-		return new LoopExertion(null, from, to, condition, target);
-	}
-
-	public static LoopExertion loop(int from, int to, Exertion target) {
-		return new LoopExertion(null, from, to, null, target);
-	}
-
-	public static LoopExertion loop(String name, Condition condition,
-									Exertion target) {
-		return new LoopExertion(name, condition, target);
+		return new LoopMogram(name, condition, target);
 	}
 
 	public static Exertion exertion(Mappable mappable, String path)
@@ -2467,27 +2586,27 @@ public class operator {
 					+ mappable.getName());
 	}
 
-	public static Signature dispatcher(Signature signature) {
+	public static Signature dispatcherSig(Signature signature) {
 		((ServiceSignature)signature).addRank(Kind.DISPATCHER);
 		return signature;
 	}
 
-	public static Signature model(Signature signature) {
+	public static Signature modelSig(Signature signature) {
 		((ServiceSignature)signature).addRank(new Kind[]{Kind.MODEL, Kind.TASKER});
 		return signature;
 	}
 
-	public static Signature modelManager(Signature signature) {
+	public static Signature modelManagerSig(Signature signature) {
 		((ServiceSignature)signature).addRank(Kind.MODEL, Kind.MODEL_MANAGER);
 		return signature;
 	}
 
-	public static Signature optimizer(Signature signature) {
+	public static Signature optimizerSig(Signature signature) {
 		((ServiceSignature)signature).addRank(Kind.OPTIMIZER, Kind.TASKER);
 		return signature;
 	}
 
-	public static Signature explorer(Signature signature) {
+	public static Signature explorerSig(Signature signature) {
 		((ServiceSignature)signature).addRank(Kind.EXPLORER, Kind.TASKER);
 		return signature;
 	}
@@ -2555,22 +2674,22 @@ public class operator {
 				pm.setInitContext(context);
 			}
 			for (Mogram e : mograms) {
-				if (e instanceof AltExertion) {
-					List<OptExertion> opts = ((AltExertion) e).getOptExertions();
-					for (OptExertion oe : opts) {
+				if (e instanceof AltMogram) {
+					List<OptMogram> opts = ((AltMogram) e).getOptExertions();
+					for (OptMogram oe : opts) {
 						oe.getCondition().setConditionalContext(pm);
 					}
-				} else if (e instanceof OptExertion) {
-					((OptExertion)e).getCondition().setConditionalContext(pm);
-				} else if (e instanceof LoopExertion) {
-					if (((LoopExertion)e).getCondition() != null)
-						((LoopExertion)e).getCondition().setConditionalContext(pm);
-					Exertion target = ((LoopExertion)e).getTarget();
+				} else if (e instanceof OptMogram) {
+					((OptMogram)e).getCondition().setConditionalContext(pm);
+				} else if (e instanceof LoopMogram) {
+					if (((LoopMogram)e).getCondition() != null)
+						((LoopMogram)e).getCondition().setConditionalContext(pm);
+					Mogram target = ((LoopMogram)e).getTarget();
 					if (target instanceof EvaluationTask && ((EvaluationTask)target).getEvaluation() instanceof Par) {
 						Par p = (Par)((EvaluationTask)target).getEvaluation();
 						p.setScope(pm);
-						if (((ServiceContext)target.getContext()).getReturnPath() == null)
-							((ServiceContext)target.getContext()).setReturnPath(p.getName());
+						if (target instanceof Exertion && ((Exertion)target).getContext().getReturnPath() == null)
+							((ServiceContext)((Exertion)target).getContext()).setReturnPath(p.getName());
 					}
 //				} else if (e instanceof VarTask) {
 //					pm.append(((VarSignature)e.getProcessSignature()).getVariability());

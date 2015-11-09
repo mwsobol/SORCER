@@ -40,6 +40,7 @@ import net.jini.lookup.entry.Name;
 import net.jini.security.AccessPermission;
 import net.jini.security.TrustVerifier;
 import net.jini.space.JavaSpace05;
+import org.omg.stub.java.rmi._Remote_Stub;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.container.jeri.AbstractExporterFactory;
@@ -69,6 +70,7 @@ import sorcer.security.sign.SignedTaskInterface;
 import sorcer.security.sign.TaskAuditor;
 import sorcer.security.util.SorcerPrincipal;
 import sorcer.service.*;
+import sorcer.service.Evaluation;
 import sorcer.service.jobber.JobberAccessor;
 import sorcer.service.space.SpaceAccessor;
 import sorcer.service.txmgr.TransactionManagerAccessor;
@@ -217,6 +219,7 @@ public class ProviderDelegate {
 
 	/** Map of exertion ID's and state of execution */
 	static final Map exertionStateTable = Collections.synchronizedMap(new HashMap(11));
+
 	/**
 	 * A smart proxy instance
 	 */
@@ -627,6 +630,10 @@ public class ProviderDelegate {
         interfaceGroup = new ThreadGroup("Interface Threads");
 		interfaceGroup.setDaemon(true);
 		interfaceGroup.setMaxPriority(Thread.NORM_PRIORITY - 1);
+	}
+
+	public void setSmartProxy(Object smartProxy) {
+		this.smartProxy = smartProxy;
 	}
 
 	public void startSpaceTakers() throws ConfigurationException, RemoteException {
@@ -2412,7 +2419,7 @@ public class ProviderDelegate {
 			outerProxy = null;
 		}
 
-		if (partnerExporter != null) {
+		if (partnerExporter != null && outerProxy !=null) {
 			exports.remove(innerProxy);
 			success &= partnerExporter.unexport(force);
 			outerProxy = null;
@@ -2432,7 +2439,7 @@ public class ProviderDelegate {
 			return adminProxy;
 		try {
             adminProxy = ProviderProxy.wrapAdminProxy(outerProxy,
-                                                      getAdminProviderUuid());
+					getAdminProviderUuid());
         } catch (Exception e) {
             logger.warn("No admin proxy created by: {}", provider, e);
         }
@@ -2442,9 +2449,9 @@ public class ProviderDelegate {
     public Object getAdminProxy() {
         try {
             providerProxy = ProviderProxy.wrapServiceProxy(adminProxy,
-                                                           getProviderUuid(),
-                                                           adminProxy,
-                                                           Administrable.class);
+					getProviderUuid(),
+					adminProxy,
+					Administrable.class);
         } catch (Exception e) {
 			logger.warn("No admin proxy created by: {}", provider, e);
 		}
@@ -2491,7 +2498,7 @@ public class ProviderDelegate {
 
 	/** {@inheritDoc} */
 	public Remote getInner() {
-		return (Remote) innerProxy;
+		return innerProxy;
 	}
 
 	/** {@inheritDoc} */
@@ -2548,9 +2555,12 @@ public class ProviderDelegate {
 			logger.info(">>>>> exporterPort: " + exporterPort);
 
 			try {
-				// initialize smart proxy
-				smartProxy = config.getEntry(ServiceProvider.COMPONENT,
-						SMART_PROXY, Object.class, null);
+				// check if not set by the provider
+				if (smartProxy == null) {
+					// initialize smart proxy
+					smartProxy = config.getEntry(ServiceProvider.COMPONENT,
+							SMART_PROXY, Object.class, null);
+				}
 			} catch (Exception e) {
 				logger.warn(">>>>> NO SMART PROXY specified", e);
 				smartProxy = null;
@@ -2952,6 +2962,10 @@ public class ProviderDelegate {
 
 	public boolean spaceEnabled() {
 		return spaceEnabled;
+	}
+
+	public boolean isRemoteLogging() {
+		return remoteLogging;
 	}
 
 	public List<ExecutorService> getSpaceHandlingPools() {

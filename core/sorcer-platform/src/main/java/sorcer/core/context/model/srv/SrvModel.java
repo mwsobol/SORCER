@@ -17,10 +17,15 @@
 
 package sorcer.core.context.model.srv;
 
+import groovy.lang.Closure;
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
+import sorcer.co.tuple.MogramEntry;
 import sorcer.co.tuple.SignatureEntry;
+import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.par.ParModel;
+import sorcer.core.invoker.ServiceInvoker;
+import sorcer.core.plexus.MultiFidelity;
 import sorcer.core.provider.rendezvous.ServiceModeler;
 import sorcer.core.signature.ServiceSignature;
 import sorcer.eo.operator;
@@ -28,10 +33,7 @@ import sorcer.service.*;
 import sorcer.service.modeling.Model;
 
 import java.rmi.RemoteException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static sorcer.eo.operator.*;
 
@@ -163,12 +165,13 @@ public class SrvModel extends ParModel<Object> implements Model {
         }
     }
 
-    public Object getValue(String path, Arg... entries) throws ContextException {
+    public Object getValue(String path, Arg... entries) throws EvaluationException {
         Object val = null;
         try {
             append(entries);
 
             if (path != null) {
+                execDependencies(path, entries);
                 val = get(path);
             } else {
                 Signature.ReturnPath rp = returnPath(entries);
@@ -179,28 +182,57 @@ public class SrvModel extends ParModel<Object> implements Model {
             }
 
             if (val instanceof Srv) {
-                if (((Srv) val).asis() instanceof SignatureEntry) {
+                Object val2 = ((Srv) val).asis();
+                if (val2 instanceof SignatureEntry) {
                     // return the calculated value
                     if (((Srv) val).getSrvValue() != null)
                         return ((Srv) val).getSrvValue();
-                    ServiceSignature sig = (ServiceSignature) ((SignatureEntry) ((Srv) val).asis()).value();
-                    Context out = execSignature(sig);
-                    if (sig.getReturnPath() != null) {
-                        Object obj = out.getValue(sig.getReturnPath().path);
-                        if (obj == null)
-                            obj = out.getValue(path);
-                        if (obj != null) {
-                            ((Srv)val).setSrvValue(obj);
-                            return obj;
-                        } else {
-                            logger.warn("no value for return path: {} in: {}", sig.getReturnPath().path, out);
-                            return out;
-                        }
-                    } else {
-                        return out;
+                    else {
+                        Signature sig = ((SignatureEntry) ((Srv) val).asis()).value();
+                        return evalSignature(sig, path);
                     }
+                } else if (val2 instanceof Fidelity) {
+                    Signature sig = (Signature) getFi((Fidelity) val2, entries, path);
+                    return evalSignature(sig, path);
+                } else if (val2 instanceof MultiFidelity) {
+                    Object obj = getFi(((MultiFidelity) val2).getFidelity(), entries, path);
+                    Object out = null;
+                    if (obj instanceof Signature)
+                        out = evalSignature((Signature)obj, path);
+                    else if (obj instanceof Entry) {
+                        Arg[] args = Arrays.copyOf(entries, entries.length+1);
+                        args[entries.length] = this;
+                        out = ((Entry) obj).getValue(args);
+                    }
+                    ((MultiFidelity) val2).setChanged();
+                    ((MultiFidelity) val2).notifyObservers(out);
+                    return out;
+                } else if (val2 instanceof MogramEntry) {
+                    return evalMogram((MogramEntry)val2, path, entries);
+                } else if (val2 instanceof ContextCallable) {
+                    Object obj = ((ContextCallable)val2).call(this);
+                    ((Srv) get(path)).setSrvValue(obj);
+                    return obj;
+                } else if (val2 instanceof ContextEntry) {
+                    Entry entry = ((ContextEntry)val2).call(this);
+                    ((Srv) get(path)).setSrvValue(entry.value());
+                    putValue(path, entry.value());
+                    if (path != entry.getName())
+                        putValue(entry.getName(), entry.value());
+                    return entry;
+                } else if (val2 instanceof Closure) {
+                    Entry entry = (Entry) ((Closure)val2).call(this);
+                    ((Srv) get(path)).setSrvValue(entry.value());
+                    putValue(path, entry.value());
+                    if (path != entry.getName())
+                        putValue(entry.getName(), entry.value());
+                    return entry;
+                } else if (val2 instanceof ServiceInvoker) {
+                    val =  ((ServiceInvoker)val2).invoke(entries);
+                    ((Srv) get(path)).setSrvValue(val);
+                    return val;
                 } else {
-                    if (((Srv) val).getValue() == Context.none) {
+                    if (val2 == Context.none) {
                         return getValue(((Srv) val).getName());
                     }
                 }
@@ -213,7 +245,76 @@ public class SrvModel extends ParModel<Object> implements Model {
         return val;
     }
 
-    public Context execSignature(Signature sig) throws Exception {
+    public Object evalSignature(Signature sig, String path) throws MogramException {
+        Context out = execSignature(sig);
+        if (sig.getReturnPath() != null) {
+            Object obj = out.getValue(sig.getReturnPath().path);
+            if (obj == null)
+                obj = out.getValue(path);
+            if (obj != null) {
+                ((Srv)get(path)).setSrvValue(obj);
+                return obj;
+            } else {
+                logger.warn("no value for return path: {} in: {}", sig.getReturnPath().path, out);
+                return out;
+            }
+        } else {
+            return out;
+        }
+    }
+
+    private Object evalMogram(MogramEntry mogramEntry, String path, Arg... entries)
+            throws MogramException, RemoteException, TransactionException {
+        Mogram out = mogramEntry.asis().exert(entries);
+        if (out instanceof Exertion){
+            Context outCxt = ((Exertion) out).getContext();
+            if (outCxt.getReturnPath() != null) {
+                Object obj = outCxt.getReturnValue();
+                ((Srv)get(path)).setSrvValue(obj);
+                return obj;
+            }
+            else {
+                ((Srv) get(path)).setSrvValue(outCxt);
+                return outCxt;
+            }
+        } else if (out instanceof Model) {
+            Context outCxt = (Context) ((Model)out).getResponse(entries);
+            append(outCxt);
+            return outCxt;
+        }
+        return null;
+    }
+
+    protected <T extends Arg> T getFi(Fidelity<T> fi, Arg[] entries, String path) {
+        Fidelity<Signature> selected = null;
+        for (Arg arg : entries) {
+            if (arg instanceof Fidelity && ((Fidelity)arg).type == Fidelity.Type.EMPTY) {
+                if (((Fidelity)arg).getPath().equals(path)) {
+                    selected = (Fidelity) arg;
+                    break;
+                }
+            }
+
+        }
+        List<T> choices = fi.getSelects();
+        for (T s : choices) {
+            if (selected == null && fi.getSelection() != null)
+                return fi.getSelection();
+            else {
+                String selectName = null;
+                if (selected != null) {
+                    selectName = selected.getName();
+                } else {
+                    selectName = choices.get(0).getName();
+                }
+                if (s.getName().equals(selectName))
+                    return s;
+            }
+        }
+        return null;
+    }
+
+    public Context execSignature(Signature sig) throws MogramException {
         String[] ips = sig.getReturnPath().inPaths;
         String[] ops = sig.getReturnPath().outPaths;
         execDependencies(sig);
@@ -224,7 +325,12 @@ public class SrvModel extends ParModel<Object> implements Model {
         if (sig.getReturnPath() != null) {
             incxt.setReturnPath(sig.getReturnPath());
         }
-        Context outcxt = ((Task) task(sig, incxt).exert()).getContext();
+        Context outcxt = null;
+        try {
+            outcxt = ((Task) task(sig, incxt).exert()).getContext();
+        } catch (Exception e) {
+            throw new MogramException(e);
+        }
         if (ops != null && ops.length > 0) {
             outcxt = outcxt.getSubcontext(ops);
         }
@@ -232,14 +338,18 @@ public class SrvModel extends ParModel<Object> implements Model {
         return outcxt;
     }
 
-    protected void execDependencies(Signature sig, Arg... args) throws ContextException {
+    protected void execDependencies(String path, Arg... args) throws ContextException {
         Map<String, List<String>> dpm = modelStrategy.getDependentPaths();
-        List<String> dpl = dpm.get(sig.getName());
+        List<String> dpl = dpm.get(path);
         if (dpl != null && dpl.size() > 0) {
             for (String p : dpl) {
                 getValue(p, args);
             }
         }
+    }
+
+    protected void execDependencies(Signature sig, Arg... args) throws ContextException {
+        execDependencies(sig.getName(), args);
     }
 
     /**
@@ -282,12 +392,24 @@ public class SrvModel extends ParModel<Object> implements Model {
             } else {
                 // evaluate model responses
                 getResponse(entries);
-//                getValue(entries);
                 return this;
             }
         } catch (Exception e) {
             throw new ExertionException(e);
         }
+    }
+
+    public SrvModel clearOutputs() throws EvaluationException, RemoteException {
+        Iterator<Map.Entry<String, Object>> i = entryIterator();
+        while (i.hasNext()) {
+            Map.Entry e = i.next();
+            if (e.getValue() instanceof Srv) {
+                ((Srv) e.getValue()).srvValue = null;
+            } else if (e.getValue() instanceof Entry && ((Entry)e.getValue()).asis() instanceof Evaluation) {
+                ((Entry)e.getValue()).isValid(false);
+            }
+        }
+        return this;
     }
 
 }

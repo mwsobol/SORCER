@@ -25,7 +25,7 @@ import java.util.logging.Level
  */
 @Component('sorcer.core.provider.ServiceProvider')
 class AdderProviderConfig {
-    /* service provider genetic properties */
+    /* service provider generic properties */
     String name = "Adder"
     String description = "Adder - bean provider"
     String location = "AFRL/WPAFB"

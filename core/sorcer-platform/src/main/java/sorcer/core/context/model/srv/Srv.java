@@ -18,7 +18,7 @@ import java.util.Map;
 /**
  * Created by Mike Sobolewski on 4/14/15.
  */
-public class Srv extends Entry<Object> implements Variability<Object>, Arg, Evaluation<Object>,
+public class Srv extends Entry<Object> implements Variability<Object>, Arg,
         Comparable<Object>, Reactive<Object>, Serializable {
 
     private static Logger logger = LoggerFactory.getLogger(Srv.class.getName());
@@ -28,8 +28,6 @@ public class Srv extends Entry<Object> implements Variability<Object>, Arg, Eval
     protected Object srvValue;
 
     Type type = Type.PAR;;
-
-    protected String selectedFidelity;
 
     // srv fidelities
     protected Map<String, Object> fidelities;
@@ -110,7 +108,6 @@ public class Srv extends Entry<Object> implements Variability<Object>, Arg, Eval
         return ((SignatureEntry)_2)._2.service(mogram, txn);
     }
 
-    @Override
     public Mogram service(Mogram mogram) throws TransactionException, MogramException, RemoteException {
         return service(mogram, null);
     }
@@ -129,6 +126,22 @@ public class Srv extends Entry<Object> implements Variability<Object>, Arg, Eval
     public Object getValue(Arg... entries) throws EvaluationException, RemoteException {
         if (srvValue != null && isValid) {
             return srvValue;
+        } else if (_2 instanceof SignatureEntry) {
+            SrvModel mod = null;
+            for (Arg arg : entries) {
+                if (arg instanceof SrvModel) {
+                    mod = (SrvModel) arg;
+                    break;
+                }
+            }
+            if (mod != null) {
+                try {
+                    return mod.evalSignature(((SignatureEntry)_2)._2, _1);
+                } catch (Exception e) {
+                    throw new EvaluationException(e);
+                }
+            } else
+                throw new EvaluationException("No model available for entry: " + this);
         } else {
             return super.getValue(entries);
         }

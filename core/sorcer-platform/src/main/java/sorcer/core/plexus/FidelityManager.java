@@ -18,21 +18,22 @@
 package sorcer.core.plexus;
 
 import net.jini.core.event.EventRegistration;
-import net.jini.core.event.RemoteEvent;
 import net.jini.core.event.RemoteEventListener;
 import net.jini.core.event.UnknownEventException;
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
-import sorcer.core.context.ModelStrategy;
-import sorcer.service.Fidelity;
-import sorcer.service.FidelityManagement;
-import sorcer.service.Mogram;
-import sorcer.service.MogramException;
+import net.jini.id.Uuid;
+import net.jini.id.UuidFactory;
+import sorcer.core.context.model.ent.Entry;
+import sorcer.core.invoker.Observer;
+import sorcer.service.*;
 
 import java.io.Serializable;
 import java.rmi.MarshalledObject;
 import java.rmi.RemoteException;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -40,63 +41,75 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Created by Mike Sobolewski on 6/14/15.
  */
-public class FidelityManager<T> implements FidelityManagement<T>, Serializable {
+abstract public class FidelityManager implements FidelityManagement<Signature>, Observer, Identifiable, Serializable {
 
-    // fidelities for this service
-    protected Map<String, Fidelity<T>> fidelities = new ConcurrentHashMap<String, Fidelity<T>>();
+    // sequence number for unnamed instances
+    protected static int count = 0;
 
-    protected Fidelity<T> selectedFidelity;
+    private String name;
 
-    protected ModelStrategy runtime;
+    Uuid id = UuidFactory.generate();
+
+    // fidelities for signatures
+    protected Map<String, Fidelity<Signature>> fidelities = new ConcurrentHashMap<>();
+
+    // fidelities for fidelites
+    protected Map<String, Fidelity<Fidelity>> metafidelities = new ConcurrentHashMap<>();
+
+    protected Mogram mogram;
 
     protected Map<Long, Session> sessions;
 
+    public FidelityManager() {
+        name = "fiManager" +  count++;
+    }
+
     public FidelityManager(Mogram mogram) {
-        this.runtime = new ModelStrategy(mogram);
+        this.mogram = mogram;
+        name = "fiManager" +  count++;
     }
 
-    public void addFidelity(Fidelity<T>... fidelities) {
-        for (Fidelity f : fidelities)
-            this.fidelities.put(f.getName(), f);
+    public Map<String, Fidelity<Fidelity>> getMetafidelities() {
+        return metafidelities;
     }
 
-    public void setSelectedFidelity(String name) {
-        selectedFidelity = fidelities.get(name);
+    public void setMetafidelities(Map<String, Fidelity<Fidelity>> metafidelities) {
+        this.metafidelities = metafidelities;
     }
 
     @Override
-    public Map<String, Fidelity<T>> getFidelities() {
+    public Map<String, Fidelity<Signature>> getFidelities() {
         return fidelities;
     }
 
-    @Override
-    public Fidelity<T> getSelectedFidelity() {
-        return selectedFidelity;
+    public void setFidelities(Map<String, Fidelity<Signature>> fidelities) {
+        this.fidelities = fidelities;
+    }
+
+    public void addFidelity(String path, Fidelity<Signature> fi) {
+            this.fidelities.put(path, fi);
+    }
+
+    public void addMetafidelity(String path, Fidelity<Fidelity> fi) {
+        this.metafidelities.put(path, fi);
+    }
+
+    public Mogram getMogram() {
+        return mogram;
+    }
+
+    public void setMogram(Mogram mogram) {
+        this.mogram = mogram;
     }
 
     @Override
     public <T extends Mogram> T service(T mogram, Transaction txn) throws TransactionException, MogramException, RemoteException {
-        runtime.setTarget(mogram);
-        return (T) runtime.exert(txn);
+        this.mogram = mogram;
+        return (T) mogram.exert(txn);
     }
 
-    @Override
     public <T extends Mogram> T service(T mogram) throws TransactionException, MogramException, RemoteException {
-        runtime.setTarget(mogram);
-        return (T) runtime.exert();
-    }
-
-    public ModelStrategy getRuntime() {
-        return runtime;
-    }
-
-    public void setRuntime(ModelStrategy runtime) {
-        this.runtime = runtime;
-    }
-
-    @Override
-    public void notify(RemoteEvent remoteEvent) throws UnknownEventException, RemoteException {
-
+        return service(mogram, null);
     }
 
     public EventRegistration register(long eventID, MarshalledObject handback,
@@ -127,6 +140,60 @@ public class FidelityManager<T> implements FidelityManagement<T>, Serializable {
         } else
             throw new UnknownEventException("No registration for eventID: "
                     + eventID);
+    }
+
+    public Map<Long, Session> getSessions() {
+        return sessions;
+    }
+
+    public void morph(String... fiNames) {
+        for (String fiName : fiNames) {
+            Fidelity mFi = metafidelities.get(fiName);
+            List<Fidelity> fis = mFi.getSelects();
+            String name = null;
+            String path = null;
+            for (Fidelity fi : fis) {
+                name = fi.getName();
+                path = fi.getPath();
+                Iterator<Map.Entry<String, Fidelity<Signature>>> i = fidelities.entrySet().iterator();
+                while (i.hasNext()) {
+                    Map.Entry<String, Fidelity<Signature>> fiEnt = i.next();
+                    if (fiEnt.getKey().equals(path)) {
+                        fiEnt.getValue().setFidelitySelection(name);
+                    }
+                }
+            }
+        }
+    }
+
+    public void put(String sysFiName, Fidelity<Fidelity> sysFi) {
+        metafidelities.put(sysFiName, sysFi);
+    }
+
+    public void put(Entry<Fidelity<Fidelity>>... entries) {
+        try {
+            for(Entry<Fidelity<Fidelity>> e : entries) {
+                metafidelities.put(e.getName(), e.getValue());
+            }
+        } catch (EvaluationException e) {
+            e.printStackTrace();
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public Uuid getId() {
+        return id;
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     static class Session {

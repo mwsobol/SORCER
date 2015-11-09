@@ -32,6 +32,7 @@ import sorcer.eo.operator;
 import sorcer.service.*;
 import sorcer.util.MavenUtil;
 
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
 import java.util.Arrays;
@@ -192,7 +193,6 @@ public class
             provider = null;
             provider = (Provider)Accessor.get().getService(this);
         }
-
         return provider;
     }
 
@@ -336,6 +336,12 @@ public class
 //		return m;
 //	}
 
+	@Override
+	public void close() throws RemoteException, IOException {
+		if (provider instanceof Closing)
+			((Closing)provider).close();
+	}
+
 	public Exertion invokeMethod(Exertion ex) throws RemoteException,
 			ExertionException {
 		// If customized method provided by Mobile Agent
@@ -345,7 +351,7 @@ public class
 				return (Exertion) m.invoke(this, new Object[] { ex });
 
 			if (((ServiceProvider) provider).isValidMethod(selector)) {
-				return (Exertion) ((ServiceProvider) provider).getDelegate()
+				return ((ServiceProvider) provider).getDelegate()
 						.invokeMethod(selector, ex);
 			} else {
 				ExertionException eme = new ExertionException(

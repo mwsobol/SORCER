@@ -20,6 +20,7 @@ package sorcer.service.modeling;
 import sorcer.service.*;
 
 import java.rmi.RemoteException;
+import java.util.Observer;
 
 /**
  * An top-level common interface for all service Models in SORCER.
@@ -133,4 +134,5 @@ public interface Model extends Mogram, Dependency {
      * @throws ModelException
      */
     public MogramStrategy getModelStrategy() throws ModelException;
+
 }

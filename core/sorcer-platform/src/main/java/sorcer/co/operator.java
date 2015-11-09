@@ -16,6 +16,7 @@
  */
 package sorcer.co;
 
+import groovy.lang.Closure;
 import sorcer.co.tuple.*;
 import sorcer.core.context.Copier;
 import sorcer.core.context.ListContext;
@@ -23,6 +24,8 @@ import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.par.Par;
 import sorcer.core.context.model.srv.Srv;
+import sorcer.core.invoker.ServiceInvoker;
+import sorcer.core.plexus.MultiFidelity;
 import sorcer.core.provider.DatabaseStorer;
 import sorcer.core.signature.NetletSignature;
 import sorcer.core.signature.ObjectSignature;
@@ -30,10 +33,7 @@ import sorcer.netlet.ScriptExerter;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
 import sorcer.service.modeling.Variability;
-import sorcer.util.Loop;
-import sorcer.util.Response;
-import sorcer.util.Sorcer;
-import sorcer.util.Table;
+import sorcer.util.*;
 import sorcer.util.bdb.objects.UuidObject;
 import sorcer.util.url.sos.SdbUtil;
 
@@ -44,6 +44,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.*;
+import java.util.Collections;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class operator {
@@ -137,6 +138,10 @@ public class operator {
 		return elems;
 	}
 
+	public static Object[] objects(Object... elems) {
+		return elems;
+	}
+
 	public static <T> T[] array(List<T> list) {
 		T[] na = (T[]) Array.newInstance(list.get(0).getClass(), list.size());
 		return list.toArray(na);
@@ -155,15 +160,15 @@ public class operator {
 	}
 
 	public static <T> List<T> list(T... elems) {
-		List<T> out = new ArrayList<T>(elems.length);
-		for (T each : elems) {
-			out.add(each);
-		}
-		return out;
+        List<T> list = new ArrayList<>();
+        Collections.addAll(list, elems);
+		return list;
 	}
 
 	public static List<Object> row(Object... elems) {
-		return Arrays.asList(elems);
+        List<Object> list = new ArrayList<>();
+        Collections.addAll(list, elems);
+        return list;
 	}
 
 	public static List<Object> values(Response response) {
@@ -175,11 +180,9 @@ public class operator {
 	}
 
 	public static List<Object> values(Object... elems) {
-		List<Object> list = new ArrayList<Object>();
-		for(Object o: elems) {
-			list.add(o);
-		}
-		return list;
+        List<Object> list = new ArrayList<>();
+        Collections.addAll(list, elems);
+        return list;
 	}
 
 	public static List<String> header(String... elems) {
@@ -191,11 +194,9 @@ public class operator {
 	}
 
 	public static List<String> names(String... elems) {
-		List<String> out = new ArrayList<String>(elems.length);
-		for (String each : elems) {
-			out.add(each);
-		}
-		return out;
+        List<String> list = new ArrayList<>();
+        Collections.addAll(list, elems);
+		return list;
 	}
 
 	public static List<String> names(List<String>... nameLists) {
@@ -218,16 +219,47 @@ public class operator {
         return new Entry(path, ((Context)model).asis(path));
     }
 
+	public static <T extends Arg> Srv ent(String name, MultiFidelity<T> fidelity) {
+		return srv(name, fidelity);
+	}
+
+	public static Srv ent(String name, Fidelity<Signature> fidelity) {
+		return srv(name, fidelity);
+	}
+
+	public static Srv ent(Fidelity<Signature> fidelity) {
+		return srv(fidelity);
+	}
+
+	public static Srv srv(Fidelity<Signature> fidelity) {
+		Srv service = new Srv(fidelity.getName(), fidelity);
+		return service;
+	}
+
+	public static <T extends Arg> Srv srv(String name, Fidelity<T> fidelity) {
+		Srv service = new Srv(name, fidelity);
+		return service;
+	}
+
+	public static Srv srv(String name, MultiFidelity<Signature> fidelity) {
+		Srv service = new Srv(name, fidelity);
+		return service;
+	}
+
 	public static Srv srv(String name, Identifiable item) {
 		String srvName = item.getName();
 		if (name != null)
 			srvName = name;
 
-		if (item instanceof Signature)
+		if (item instanceof Signature) {
 			return new Srv(srvName,
 					new SignatureEntry(item.getName(), (Signature) item));
-		else
+		} else if (item instanceof Mogram) {
+			return new Srv(srvName,
+					new MogramEntry(item.getName(), (Mogram) item));
+		} else {
 			return new Srv(srvName, item);
+		}
 	}
 
     public static Srv srv(Identifiable item) {
@@ -242,14 +274,59 @@ public class operator {
 		return new Srv(path, model, name, type);
 	}
 
-	public static Srv srv(String name, String path) {
+	public static Srv aka(String name, String path) {
 		return new Srv(path, null, name);
 	}
 
-	public static <T> Entry<T> ent(String path, T value) {
-		return new Entry<T>(path, value);
+	public static Srv alias(String name, String path) {
+		return new Srv(path, null, name);
 	}
 
+//	public static <T> Entry<T> ent(String path, T value) {
+//		return new Entry<T>(path, value);
+//	}
+
+	public static <T> Entry<T> ent(String path, T value) {
+		if (value instanceof Invocation) {
+			return new Par<T>(path, value);
+		} else if (value instanceof Evaluation) {
+			return new Entry<T>(path, value);
+		} else if (value instanceof ContextCallable) {
+			return (Entry<T>) new Srv(path, value);
+		} else if (value instanceof ContextEntry) {
+			return (Entry<T>) new Srv(path, value);
+		} else {
+			return new Entry<T>(path, value);
+		}
+	}
+
+	public static Srv ent(String path, ContextCallable call) {
+		return new Srv(path, call);
+	}
+
+	public static Srv ent(String path, Closure call) {
+		return new Srv(path, call);
+	}
+
+	public static Srv cxtEnt(String path, ContextEntry call) {
+		return new Srv(path, call);
+	}
+
+	public static Srv xrtEnt(String path, ExertionCallable call) {
+		return new Srv(path, call);
+	}
+
+	public static Srv ent(ServiceInvoker invoker) {
+		return new Srv(invoker.getName(), invoker);
+	}
+
+	public static Par ent(String path, Invocation invoker) {
+		return new Par(path, invoker);
+	}
+
+	public static Srv ent(Signature sig) {
+		return srv(sig);
+	}
 	public static DependencyEntry dep(String path, List<String> paths) {
 		return new DependencyEntry(path, paths);
 	}
@@ -681,6 +758,20 @@ public class operator {
 		return map;
 	}
 
+	public static Object rasis(Entry entry)
+			throws ContextException {
+		String path = entry.path();
+		Object o = asis(entry);
+		while (o instanceof Entry && ((Entry)o)._1.equals(path)) {
+			o = asis((Entry)o);;
+		}
+		return o;
+	}
+
+	public static Object get(Entry entry) throws ContextException {
+		return rasis(entry);
+	}
+
 	public static Object asis(Entry entry)
 			throws ContextException {
 		if (entry instanceof Par) {
@@ -693,19 +784,26 @@ public class operator {
 			return entry._2;
 	}
 
-	public static <T> T get(Context<T> context, String path)
+	public static <T> T get(Mogram mogram, String path)
 			throws ContextException {
-		return  context.asis(path);
-	}
-
-	public static <T> T get(Model model, String path)
-			throws ContextException {
-		return  ((ServiceContext<T>)model).asis(path);
+		if (mogram instanceof Model)
+			return rasis((ServiceContext<T>)mogram, path);
+		else
+			return ((ServiceContext<T>)((Exertion)mogram).getContext()).getValue(path);
 	}
 
 	public static <T> T asis(Context<T> context, String path)
 			throws ContextException {
 		return  context.asis(path);
+	}
+
+	public static <T> T rasis(Context<T> context, String path)
+			throws ContextException {
+		Object o = context.asis(path);
+		if (o instanceof Entry)
+			return (T)rasis((Entry)o);
+		else
+			return (T)o;
 	}
 
 	public static <T> T asis(Model model, String path)
@@ -724,7 +822,9 @@ public class operator {
     }
 
     public static List<String> paths(String... paths) {
-       return Arrays.asList(paths);
+        List<String> list = new ArrayList<>();
+        Collections.addAll(list, paths);
+        return list;
     }
 
 	public static List<String> paths(Context context) throws ContextException {

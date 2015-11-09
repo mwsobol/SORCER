@@ -66,7 +66,7 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
 	private SorcerDatabaseViews views;
 
 	public DatabaseProvider() throws RemoteException {
-		// do nothing
+		super();
 	}
 
 	/**

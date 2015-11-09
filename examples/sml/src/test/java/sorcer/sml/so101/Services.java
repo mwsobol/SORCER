@@ -111,7 +111,7 @@ public class Services {
                         inPaths("add/x1", "add/x2")))),
                 srv(sig("subtract", SubtractorImpl.class, result("model/response",
                         inPaths("multiply/out", "add/out")))),
-                srv("y1", "multiply/x1"),
+                aka("y1", "multiply/x1"),
                 response("subtract"));
 
         dependsOn(m, ent("subtract", paths("multiply", "add")));

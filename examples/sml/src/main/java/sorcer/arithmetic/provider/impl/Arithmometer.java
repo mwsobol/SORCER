@@ -45,8 +45,7 @@ public class Arithmometer implements SorcerConstants, Serializable {
 
 	public static final String RESULT_PATH = "result/value";
 			
-	public final static Logger logger = LoggerFactory.getLogger(Arithmometer.class
-			.getName());
+	public final static Logger logger = LoggerFactory.getLogger(Arithmometer.class);
 
 	/**
 	 * Implements the {@link Adder} interface.
@@ -230,16 +229,7 @@ public class Arithmometer implements SorcerConstants, Serializable {
 			logger.info("arithmometer context: " + context);
 			//logger.info("selector: " + ((ServiceContext)context).getCurrentSelector());
 			// get sorted list of input values
-			List<Double> inputs = (List<Double>)Contexts.getNamedInValues(context);
-			if (inputs == null || inputs.size() == 0) {
-				inputs = (List<Double>)Contexts.getPrefixedInValues(context);
-//				logger.info("prefixed inputs: \n" + inputs);
-			}
-			//logger.info("named inputs: \n" + inputs);
-			if (inputs == null || inputs.size() == 0)
-				inputs = (List<Double>)context.getInValues();
-			logger.info("inputs: \n" + inputs);
-			logger.info("inputs paths: \n" + Contexts.getInPaths(context));
+			List<Double> inputs = determineInputs(context);
 			List<String> outpaths = context.getOutPaths();
 			//logger.info("outpaths: \n" + outpaths);
 			double result = 0.0;
@@ -266,8 +256,10 @@ public class Arithmometer implements SorcerConstants, Serializable {
 			} else if (selector.equals(DIVIDE)) {
 				if (inputs.size() > 2 || inputs.size() < 2)
 					throw new ContextException("two arguments needed for division");
-				result = (Double)revalue(context.getInValueAt(1));
-				result /= (Double)revalue(context.getInValueAt(2));
+//				result = (Double)revalue(context.getInValueAt(1));
+//				result /= (Double)revalue(context.getInValueAt(2));
+				result = (Double)revalue(inputs.get(0));
+				result /= (Double)revalue(inputs.get(1));
 			} else if (selector.equals(AVERAGE)) {
 				if (inputs.size() == 0) {
 					inputs = (List<Double>) Contexts.getNamedOutValues(context);
@@ -361,7 +353,30 @@ public class Arithmometer implements SorcerConstants, Serializable {
 		}
 		return context;
 	}
-	
+
+	private List<Double> determineInputs(PositionalContext context) throws ContextException {
+		List<Double> inputs = (List<Double>) Contexts.getNamedInValues(context);
+		if (inputs == null || inputs.size() == 0) {
+			inputs = (List<Double>) Contexts.getPrefixedInValues(context);
+//				logger.info("prefixed inputs: \n" + inputs);
+		}
+		//logger.info("named inputs: \n" + inputs);
+		if (inputs == null || inputs.size() == 0)
+			inputs = (List<Double>) context.getInValues();
+		if (inputs == null || inputs.size() == 0) {
+			logger.info("context size: \n" + context.size());
+			if (context.size() == 2) {
+				inputs.add((Double) context.getValueAt(0));
+				inputs.add((Double) context.getValueAt(1));
+//				logger.info("first: \n" + context.getValueAt(0));
+//				logger.info("second: \n" + context.getValueAt(1));
+			}
+		}
+		logger.info("inputs: \n" + inputs);
+		logger.info("inputs paths: \n" + Contexts.getInPaths(context));
+		return inputs;
+	}
+
 	/**
 	 * Returns name of the local host.
 	 * 

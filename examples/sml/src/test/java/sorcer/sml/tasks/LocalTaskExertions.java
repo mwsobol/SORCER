@@ -2,19 +2,23 @@ package sorcer.sml.tasks;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.Adder;
+import sorcer.arithmetic.provider.Multiplier;
 import sorcer.arithmetic.provider.impl.*;
 import sorcer.service.*;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
+import static sorcer.co.operator.get;
+import static sorcer.eo.operator.args;
 import static sorcer.eo.operator.*;
+import static sorcer.eo.operator.get;
+import static sorcer.eo.operator.value;
 
 /**
  * @author Mike Sobolewski
@@ -81,6 +85,19 @@ public class LocalTaskExertions {
 		assertEquals("Wrong value for 400.0", get(batch3, "result/y"), 400.0);
     }
 
+	@Test
+	public void batchFiTask() throws Exception {
+
+		Task t4 = task("t4",
+				sFi("object", sig("multiply", MultiplierImpl.class), sig("add", AdderImpl.class)),
+				sFi("net", sig("multiply", Multiplier.class), sig("add", Adder.class)),
+				context("shared", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
+						outEnt("result/y")));
+
+		t4 = exert(t4, fi("object"));
+		logger.info("task context: " + context(t4));
+
+	}
 
     @Test
     public void prefixedBatchTask() throws Exception {
@@ -99,6 +116,23 @@ public class LocalTaskExertions {
 
     }
 
+	@Test
+	public void objectTaskFidelity() throws Exception {
+
+		Task t4 = task("t4",
+				sFi("object1", sig("multiply", MultiplierImpl.class)),
+				sFi("object2", sig("add", AdderImpl.class)),
+				context("shared", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
+						outEnt("result/y")));
+
+		Context out = context(exert(t4, fi("object1")));
+		logger.info("task context: " + context(t4));
+		assertTrue(value(out, "result/y").equals(500.0));
+
+		out = context(exert(t4, fi("object2")));
+		logger.info("task context: " + context(t4));
+		assertTrue(value(out, "result/y").equals(60.0));
+	}
 
 	@Test
 	public void arithmeticMultiFiObjectTaskTest() throws Exception {

@@ -16,22 +16,20 @@
 
 package sorcer.resolver;
 
-import org.rioproject.resolver.Resolver;
-import org.rioproject.resolver.ResolverException;
-import org.rioproject.resolver.ResolverHelper;
+import org.rioproject.resolver.*;
 import org.rioproject.url.artifact.ArtifactURLConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.net.URL;
+import java.util.Collection;
 
 /**
  * @author Paweł Rubach
  */
-public class SorcerRioResolver extends SorcerResolver {
-
+public class SorcerRioResolver extends SorcerResolver implements SettableResolver {
     private static final Logger logger = LoggerFactory.getLogger(SorcerRioResolver.class);
-
     private final Resolver resolver;
 
     public SorcerRioResolver() {
@@ -51,7 +49,7 @@ public class SorcerRioResolver extends SorcerResolver {
         while (tries < 5 && (cp == null || cp.length == 0)) {
             try {
                 cp = resolver.getClassPathFor(artifactURLConfiguration.getArtifact(),
-                        artifactURLConfiguration.getRepositories());
+                                              artifactURLConfiguration.getRepositories());
             } catch (Exception e) {
                 logger.warn("Failed to resolve at {} attempt: {}", tries, artifactURLConfiguration.getArtifact());
                 logger.debug("Resolver error", e);
@@ -81,4 +79,19 @@ public class SorcerRioResolver extends SorcerResolver {
     public URL getLocation(String path) throws SorcerResolverException {
         throw new SorcerResolverException("NOT IMPLEMENTED in this Resolver");
     }
+
+    @Override public SettableResolver setRemoteRepositories(Collection<RemoteRepository> repositories) {
+        if(resolver instanceof SettableResolver) {
+            ((SettableResolver)resolver).setRemoteRepositories(repositories);
+        }
+        return this;
+    }
+
+    @Override public SettableResolver setFlatDirectories(Collection<File> directories) {
+        if(resolver instanceof SettableResolver) {
+            ((SettableResolver)resolver).setFlatDirectories(directories);
+        }
+        return this;
+    }
+
 }

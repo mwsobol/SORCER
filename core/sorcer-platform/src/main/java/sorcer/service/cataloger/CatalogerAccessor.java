@@ -65,14 +65,14 @@ public class CatalogerAccessor  {
     }
 
     public Cataloger doGetCataloger(String name) {
-        String CatalogerName = (name == null) ? providerNameUtil.getName(Cataloger.class) : name;
+        String catalogerName = (name == null) ? providerNameUtil.getName(Cataloger.class) : name;
         Cataloger cataloger = cache.get(Cataloger.class.getName());
         try {
             if (Accessor.isAlive((Provider) cataloger)) {
                 log.info(">>>returned cached cataloger ({}) by {}",
                          ((Provider) cataloger).getProviderID(), Accessor.get().getClass().getName());
             } else {
-                cataloger = Accessor.get().getService(CatalogerName, Cataloger.class);
+                cataloger = Accessor.get().getService(catalogerName, Cataloger.class);
                 if (cataloger!=null)
                     cache.put(Cataloger.class.getName(), cataloger);
             }

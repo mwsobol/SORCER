@@ -24,7 +24,7 @@ import java.net.URL;
 import java.rmi.RemoteException;
 
 @SuppressWarnings("unchecked")
-public class AnnotatedEntry<T> extends Tuple3<String, T, String> implements Arg, Evaluation<T> {
+public class AnnotatedEntry<T> extends Tuple3<String, T, String> implements Arg {
 	private static final long serialVersionUID = 5168783170981015779L;
 	
 	public int index;

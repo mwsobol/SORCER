@@ -29,6 +29,7 @@ import sorcer.service.Strategy.Provision;
 import sorcer.service.modeling.Variability;
 import sorcer.util.Log;
 
+import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -438,6 +439,11 @@ public class ServiceSignature implements Signature, SorcerConstants {
 		this.codebase = codebase;
 	}
 
+	@Override
+	public void close() throws RemoteException, IOException {
+		// implemented in subclasses
+	}
+
 	/**
 	 * Returns a method provided by the requestor itself to substitute the
 	 * existing provider'smethod. The implementation of this requestor's method
@@ -591,7 +597,6 @@ public class ServiceSignature implements Signature, SorcerConstants {
 		}
 	}
 
-	@Override
 	public Mogram service(Mogram mogram) throws TransactionException,
 			MogramException, RemoteException {
 		return service(mogram, null);

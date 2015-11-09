@@ -16,6 +16,8 @@ import sorcer.service.Block;
 import sorcer.service.Signature;
 import sorcer.service.Task;
 
+import java.io.Serializable;
+
 import static org.junit.Assert.assertEquals;
 import static sorcer.co.operator.ent;
 import static sorcer.co.operator.inEnt;
@@ -31,7 +33,7 @@ import static sorcer.po.operator.*;
 @SuppressWarnings("unchecked")
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/sml")
-public class NetBlockExertions implements SorcerConstants {
+public class NetBlockExertions implements SorcerConstants, Serializable {
 	private final static Logger logger = LoggerFactory.getLogger(NetBlockExertions.class);
 
 	@Test
@@ -157,10 +159,12 @@ public class NetBlockExertions implements SorcerConstants {
 				context("average", inEnt("arg/t4"), inEnt("arg/t5"),
 						result("block/result")));
 
-		Block block = block("block", sig(Concatenator.class),
-				t4, t5, alt(
-				opt(condition("{ t4, t5 -> t4 > t5 }", "t4", "t5"), t3),
-				opt(condition("{ t4, t5 -> t4 <= t5 }", "t4", "t5"), t6)));
+		Block block = block("block",
+				t4,
+				t5,
+				alt(opt(condition(cxt -> (double)value(cxt, "t4") > (double)value(cxt, "t5")), t3),
+						opt(condition(cxt -> (double)value(cxt, "t4") <= (double)value(cxt, "t5")), t6)));
+
 
 		block = exert(block);
 //		logger.info("block context 1: " + context(block));
@@ -188,7 +192,7 @@ public class NetBlockExertions implements SorcerConstants {
 		
 		Block block = block("block", sig(Concatenator.class),
 				t4,
-				opt(condition("{ out -> out > 600 }", "out"), t5));
+				opt(condition(cxt -> (double)value(cxt, "out") > 600.0), t5));
 		
 		block = exert(block);
 		logger.info("block context 1: " + context(block));
@@ -216,9 +220,9 @@ public class NetBlockExertions implements SorcerConstants {
 				 
 		Block block = block("block", sig(Concatenator.class),
 				context(ent("x1", 4), ent("x2", 5)),
-				task(par("y", invoker("x1 * x2", pars("x1", "x2")))), 
-				alt("altx", opt(condition("{ y -> y > 50 }", "y"), t4), 
-				    opt(condition("{ y -> y <= 50 }", "y"), t5)));
+				task(par("y", invoker("x1 * x2", pars("x1", "x2")))),
+				alt(opt(condition(cxt -> (int)value(cxt, "y") > 50.0), t4),
+						opt(condition(cxt -> (int)value(cxt, "y") <= 50 ), t5)));
 				
 		block = exert(block);
 		logger.info("block context: " + context(block));
@@ -238,7 +242,8 @@ public class NetBlockExertions implements SorcerConstants {
 
 		Block block = block("block", sig(Concatenator.class),
 				context(ent("x1", 10.0), ent("x2", 20.0), ent("z", 100.0)),
-				loop(condition("{ x1, x2, z -> x1 + x2 < z }", "x1", "x2", "z"), 
+				loop(condition(cxt -> (double)value(cxt, "x1") + (double)value(cxt, "x2")
+								< (double)value(cxt, "z")),
 						task(par("x1", invoker("x1 + 3", pars("x1"))))));
 		
 		block = exert(block);

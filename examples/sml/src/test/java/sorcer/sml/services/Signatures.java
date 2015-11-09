@@ -278,6 +278,23 @@ public class Signatures {
 		assertEquals(get(out), 100.00);
 	}
 
+	@Test
+	public void netletSignature() throws Exception {
+		String netlet = System.getProperty("project.dir")+"/src/main/netlets/ha-job-local.ntl";
+
+		Signature sig = sig(file(netlet));
+//		logger.info("job service: " + exec(sig));
+		assertTrue(exec(sig).equals(400.0));
+	}
+
+	@Test
+	public void netletSignatureprovider() throws Exception {
+		String netlet = System.getProperty("project.dir")+"/src/main/netlets/ha-job-local.ntl";
+
+		Service srv = (Service)provider(sig(file(netlet)));
+//		logger.info("job service: " + exec(srv));
+		assertTrue(exec(srv).equals(400.0));
+	}
 
 	@Test
 	public void localSigConnector() throws Exception {

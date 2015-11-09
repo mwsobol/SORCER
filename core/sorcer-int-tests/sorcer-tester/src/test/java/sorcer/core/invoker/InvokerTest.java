@@ -1,6 +1,5 @@
 package sorcer.core.invoker;
 
-import junit.framework.Assert;
 import net.jini.core.transaction.TransactionException;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,6 +16,7 @@ import sorcer.core.context.model.par.Par;
 import sorcer.core.context.model.par.ParModel;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.service.*;
+import sorcer.service.modeling.Model;
 import sorcer.util.Sorcer;
 import sorcer.util.exec.ExecUtils.CmdResult;
 
@@ -37,6 +37,8 @@ import static sorcer.po.operator.add;
 import static sorcer.po.operator.alt;
 import static sorcer.po.operator.*;
 import static sorcer.po.operator.get;
+import static sorcer.po.operator.loop;
+import static sorcer.po.operator.map;
 import static sorcer.po.operator.opt;
 import static sorcer.po.operator.put;
 import static sorcer.po.operator.scope;
@@ -64,7 +66,7 @@ public class InvokerTest {
 		z = par("z", invoker("x - y", x, y));
 
 	}
-	
+
 	// member subclass of Invocable with Context parameter used below with
 	// contextMethodAttachmentWithArgs()
 	// there are constructor's context and invoke metod's context as parameters
@@ -74,16 +76,26 @@ public class InvokerTest {
 		}
 
 		public Double invoke(Context arg) throws Exception {
-			x.setValue((Double) arg.getValue("x"));
-			y.setValue((Double) context.getValue("y"));
+			x.setValue(arg.getValue("x"));
+			y.setValue(context.getValue("y"));
 			// x set from 'arg'
-			Assert.assertEquals((Double) value(x), 200.0);
+			assertTrue(value(x).equals(200.0));
 			// y set from construtor's context 'in'
-			Assert.assertEquals((Double) value(y), 30.0);
-			Assert.assertEquals((Double) value(z), 170.0);
-			return (Double)value(x) + (Double)value(y) + (Double) value(pm, "z");
+			assertTrue(value(y).equals(30.0));
+			assertTrue(value(z).equals(170.0));
+			return value(x) + value(y) + (double) value(pm, "z");
 		}
 	};
+
+	@Test
+	public void lambdaInvoker() throws RemoteException, ContextException,
+			SignatureException, ExertionException {
+		Invocation invoker = invoker("lambda",
+				cxt ->  (double) value(cxt, "x") + (double) value(cxt, "y") + 30,
+				context(ent("x", 10.0), ent("y", 20.0)));
+		logger.info("invoke value: " + invoke(invoker));
+		assertEquals(invoke(invoker), 60.0);
+	}
 
 	@Test
 	public void methodInvokerTest() throws RemoteException, ContextException {
@@ -108,6 +120,49 @@ public class InvokerTest {
 		assertEquals(invoke(pm, "expr"), 60.0);
 		logger.info("get value: " + value(pm, "expr"));
 		assertEquals(value(pm, "expr"), 60.0);
+	}
+
+	@Test
+	public void lambdaInvokerTest() throws RemoteException, ContextException,
+			SignatureException, ExertionException {
+		ParModel pm = parModel("model");
+		add(pm, par("x", 10.0), par("y", 20.0));
+		add(pm, invoker("lambda", cxt -> (double)value(cxt, "x") + (double)value(cxt, "y") + 30));
+		logger.info("invoke value: " + invoke(pm, "lambda"));
+		assertEquals(invoke(pm, "lambda"), 60.0);
+		logger.info("get value: " + value(pm, "lambda"));
+		assertEquals(value(pm, "lambda"), 60.0);
+	}
+
+	@Test
+	public void lambdaInvokerTest2() throws RemoteException, ContextException,
+			SignatureException, ExertionException {
+
+		Model mo = model(ent("x", 10.0), ent("y", 20.0),
+				ent(invoker("lambda", cxt -> (double) value(cxt, "x")
+									+ (double) value(cxt, "y")
+									+ 30)));
+		logger.info("invoke value: " + value(mo, "lambda"));
+		assertEquals(value(mo, "lambda"), 60.0);
+	}
+
+	@Test
+	public void lambdaInvokerTest3() throws RemoteException, ContextException,
+			SignatureException, ExertionException {
+
+
+		Context scope = context(ent("x1", 20.0), ent("y1", 40.0));
+
+		Model mo = model(ent("x", 10.0), ent("y", 20.0),
+			ent(invoker("lambda", (cxt) -> {
+						return (double) value(cxt, "x")
+								+ (double) value(cxt, "y")
+								+ (double) value(cxt, "y1")
+								+ 30;
+					},
+				scope)));
+		logger.info("invoke value: " + value(mo, "lambda"));
+		assertEquals(value(mo, "lambda"), 100.0);
 	}
 
 	@Test
@@ -332,11 +387,32 @@ public class InvokerTest {
 	}
 
 	@Test
-	public void optInvokerTest() throws RemoteException, ContextException {
+	public void optInvokerTest1() throws RemoteException, ContextException {
 		ParModel pm = new ParModel("par-model");
 
 		OptInvoker opt = new OptInvoker("opt", new Condition(pm,
 				"{ x, y -> x > y }", "x", "y"), invoker("x + y",
+				pars("x", "y")));
+
+		pm.add(opt);
+		pm.putValue("x", 10.0);
+		pm.putValue("y", 20.0);
+
+		assertEquals(opt.getValue(), null);
+
+		pm.putValue("x", 300.0);
+		pm.putValue("y", 200.0);
+		logger.info("opt value: " + opt.getValue());
+		assertEquals(opt.getValue(), 500.0);
+	}
+
+	@Test
+	public void optInvokerTest2() throws RemoteException, ContextException {
+		// Java 8 lambdas style
+		ParModel pm = new ParModel("par-model");
+
+		OptInvoker opt = new OptInvoker("opt", new Condition(pm,
+				cxt -> (double)v(cxt, "x") > (double)v(cxt, "y")), invoker("x + y",
 				pars("x", "y")));
 
 		pm.add(opt);

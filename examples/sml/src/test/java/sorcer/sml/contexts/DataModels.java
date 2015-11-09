@@ -16,11 +16,15 @@ import java.util.List;
 import static org.junit.Assert.*;
 import static sorcer.co.operator.asis;
 import static sorcer.co.operator.*;
+import static sorcer.co.operator.get;
 import static sorcer.co.operator.path;
-import static sorcer.mo.operator.*;
 import static sorcer.eo.operator.*;
+import static sorcer.eo.operator.get;
 import static sorcer.eo.operator.put;
 import static sorcer.eo.operator.value;
+import static sorcer.mo.operator.*;
+import static sorcer.mo.operator.inputs;
+import static sorcer.mo.operator.returnPath;
 /**
  * @author Mike Sobolewski
  */
@@ -44,7 +48,6 @@ public class DataModels {
 
         // aliasing with an reactive value entry - rvEnt
         put(cxt, rvEnt("arg/x1", value(cxt, "arg/x5")));
-        assertNotEquals(get(cxt, "arg/x1"), 1.5);
         assertTrue(value(cxt, "arg/x1").equals(1.5));
 
         Context<Double> subcxt = context(cxt, list("arg/x4", "arg/x5"));
@@ -288,4 +291,36 @@ public class DataModels {
         cxt = exert(cxt, inEnt("x1", 50.0d));
         assertTrue(value(cxt, "x1").equals(50.0));
     }
+
+
+    @Test
+    public void contextModelService() throws Exception {
+        Context cxt = context(inEnt("x1", 20.0d), inEnt("x2", 40.0d),
+                returnPath("x2"));
+//        logger.info("service: " + exec(cxt));
+        assertEquals(exec(cxt), 40.0);
+    }
+
+
+    @Test
+    public void contextModelResponse() throws Exception {
+        Context cxt = context(inEnt("x1", 20.0d), inEnt("x2", 40.0d));
+        responseUp(cxt, "x1");
+        Context out = response(cxt);
+//        logger.info("response1: " + out);
+        assertTrue(out.size() == 1);
+        assertTrue(get(out, "x1").equals(20.0));
+        responseUp(cxt, "x2");
+        out = response(cxt);
+//        logger.info("response2: " + out);
+        assertTrue(out.size() == 2);
+        assertTrue(get(out, "x1").equals(20.0));
+        assertTrue(get(out, "x2").equals(40.0));
+        responseDown(cxt, "x2");
+        out = response(cxt);
+        assertTrue(get(out, "x1").equals(20.0));
+//        logger.info("response3: " + out);
+        assertTrue(out.size() == 1);
+    }
+
 }
