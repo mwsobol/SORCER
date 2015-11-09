@@ -13,7 +13,6 @@ import org.sorcer.test.TestsRequiringRio;
  * Class
  */
 @Category(TestsRequiringRio.class)
-//@Categories.IncludeCategory(TestsRequiringRio.class)
 public class DeploySetup {
     static ProvisionMonitor monitor;
 
