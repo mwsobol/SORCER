@@ -219,7 +219,12 @@ public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Ob
 
     @Override
     public void update(Observable observable, Object obj) throws EvaluationException, RemoteException {
-        // implemnt in subclasses
+        // implement in subclasses and use this morphers provided by MultiFidelities (observables)
+
+        MultiFidelity mFi = (MultiFidelity)observable;
+        Morpher morpher = mFi.getMorpher();
+        if (morpher != null)
+            morpher.morph(this, mFi, obj);
     }
 
     static class Session {
