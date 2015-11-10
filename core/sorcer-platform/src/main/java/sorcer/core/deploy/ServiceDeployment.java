@@ -288,21 +288,6 @@ public class ServiceDeployment implements Serializable, Deployment {
         return unique;
     }
 
-    public static String createDeploymentID(final String ssb) throws NoSuchAlgorithmException {
-    	MessageDigest md = MessageDigest.getInstance("MD5");
-		md.update(ssb.getBytes());
-		byte byteData[] = md.digest();
-		// convert the byte to hex
-		StringBuilder hexString = new StringBuilder();
-        for (byte data : byteData) {
-            String hex = Integer.toHexString(0xff & data);
-            if (hex.length() == 1)
-                hexString.append('0');
-            hexString.append(hex);
-        }
-		return hexString.toString();
-    }
-
 	public boolean isProvisionable() {
 		return isProvisionable;
 	}
