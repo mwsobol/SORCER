@@ -305,9 +305,7 @@ public class operator {
 				return out;
 			} else if (obj instanceof Agent) {
 				return ((Agent)obj).getValue(parameters);
-			}
-
-			else {
+			} else {
 				throw new InvocationException("No invoker for: " + parname);
 			}
 		} catch (ContextException e) {
