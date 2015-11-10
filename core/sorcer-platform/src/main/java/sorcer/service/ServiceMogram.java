@@ -850,7 +850,7 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
         return serviceFidelity.selects.size()>1;
     }
 
-    public void setProcessSignature(Signature signature) {
+    public void correctProcessSignature(Signature signature) {
         for (Signature sig : this.serviceFidelity.selects) {
             if (sig.getType() != Signature.Type.PROC) {
                 this.serviceFidelity.selects.remove(sig);

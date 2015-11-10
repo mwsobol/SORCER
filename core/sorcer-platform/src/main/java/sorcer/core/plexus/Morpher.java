@@ -1,6 +1,6 @@
-#!/usr/bin/env nsh
 /*
- * Copyright to the original author or authors.
+ * Copyright 2009 the original author or authors.
+ * Copyright 2009 SorcerSoft.org.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,14 +15,17 @@
  * limitations under the License.
  */
 
+package sorcer.core.plexus;
 
+import sorcer.service.Arg;
+import sorcer.service.FidelityManagement;
 
-@Codebase(group='org.sorcer', module='sml', version='${sorcer.version}', classifier='dl')
-@Load(group='org.sorcer', module='sml', version='${sorcer.version}')
-import static sorcer.co.operator.file
+import java.rmi.RemoteException;
 
-String sorcerVersion = property("sorcer.version")
-String netletArtifact = "org.sorcer:sml:ntl:ha-job-local:$sorcerVersion";
+/**
+ * Created by Mike Sobolewski on 11/9/15.
+ */
+public interface Morpher<T extends Arg> {
 
-// a provider is a sevice job declared by the netletArtifact of a file
-provider(sig(file(netletArtifact)))
+    public void morph(FidelityManagement<T> manager, MultiFidelity mFi, Object value) throws RemoteException;
+}

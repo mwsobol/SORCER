@@ -26,6 +26,7 @@ import sorcer.core.provider.logger.LoggerRemoteException;
 import sorcer.core.provider.logger.RemoteLoggerListener;
 import sorcer.netlet.ScriptExerter;
 import sorcer.service.*;
+import sorcer.service.modeling.Model;
 import sorcer.ui.util.JIconButton;
 import sorcer.ui.util.TextAreaPrintStream;
 import sorcer.ui.util.WindowUtilities;
@@ -502,7 +503,17 @@ public class EditorView extends JPanel implements HyperlinkListener {
 	private void processExerion(Mogram mogram) throws MogramException{
 		String codebase = System.getProperty("java.rmi.server.codebase");
 		logger.debug("Using exertlet codebase: " + codebase);
-		
+
+		if (mogram instanceof Model) {
+			Context out = null;
+			try {
+				out = (Context) ((Model)mogram).getResponse();
+			} catch (Exception e) {
+				throw new MogramException(e);
+			}
+			showResults(out);
+			return;
+		}
 		if (mogram.getStatus() == Exec.DONE) {
 		showResults(mogram);
 		return;

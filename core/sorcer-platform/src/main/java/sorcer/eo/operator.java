@@ -38,6 +38,7 @@ import sorcer.core.context.model.srv.Srv;
 import sorcer.core.deploy.ServiceDeployment;
 import sorcer.core.exertion.*;
 import sorcer.core.invoker.InvokeIncrementor;
+import sorcer.core.plexus.Morpher;
 import sorcer.core.plexus.MultiFidelity;
 import sorcer.core.provider.*;
 import sorcer.core.provider.exerter.Binder;
@@ -1129,6 +1130,12 @@ public class operator {
 		return exertion.getFidelities();
 	}
 
+	public static Fidelity<Fidelity> fi(String name, Fidelity... fidelities) {
+		Fidelity<Fidelity> fi = new Fidelity(new Fidelity(fidelities));
+		fi.setName(name);
+		return fi;
+	}
+
 	public static Fidelity<Fidelity> fi(Fidelity... fidelities) {
 		Fidelity<Fidelity> fi = new Fidelity(new Fidelity(fidelities));
 		return fi;
@@ -1141,6 +1148,12 @@ public class operator {
 
 	public static MultiFidelity<Signature> mFi(Signature... signatures) {
 		MultiFidelity<Signature> multiFi = new MultiFidelity(new Fidelity(signatures));
+		return multiFi;
+	}
+
+	public static MultiFidelity<Signature> mFi(Morpher morpher, Signature... signatures) {
+		MultiFidelity<Signature> multiFi = new MultiFidelity(new Fidelity(signatures));
+		multiFi.setMorpher(morpher);
 		return multiFi;
 	}
 

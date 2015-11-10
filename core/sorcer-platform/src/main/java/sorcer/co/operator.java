@@ -17,6 +17,9 @@
 package sorcer.co;
 
 import groovy.lang.Closure;
+import org.rioproject.resolver.Artifact;
+import org.rioproject.resolver.ResolverException;
+import org.rioproject.resolver.ResolverHelper;
 import sorcer.co.tuple.*;
 import sorcer.core.context.Copier;
 import sorcer.core.context.ListContext;
@@ -41,6 +44,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.*;
@@ -124,8 +128,18 @@ public class operator {
     }
 
 	public static Path file(String filename) {
+		if(Artifact.isArtifact(filename)) {
+			try {
+				URL url = ResolverHelper.getResolver().getLocation(filename, "ntl");
+				File file = new File(url.toURI());
+				return new Path(file.getPath());
+			} catch (ResolverException | URISyntaxException e) {
+				e.printStackTrace();
+			}
+		}
 		return new Path (filename);
 	}
+
 	public static Class[] types(Class... classes) {
 		return classes;
 	}
@@ -291,20 +305,20 @@ public class operator {
 			return new Par<T>(path, value);
 		} else if (value instanceof Evaluation) {
 			return new Entry<T>(path, value);
-		} else if (value instanceof ContextCallable) {
-			return (Entry<T>) new Srv(path, value);
-		} else if (value instanceof ContextEntry) {
-			return (Entry<T>) new Srv(path, value);
 		} else {
 			return new Entry<T>(path, value);
 		}
 	}
 
-	public static Srv ent(String path, ContextCallable call) {
+	public static <T> Srv lambda(String path, ContextEntry<T> call) {
 		return new Srv(path, call);
 	}
 
-	public static Srv ent(String path, ContextCallable call, Signature.ReturnPath returnPath) {
+	public static <T> Srv lambda(String path, ContextCallable<T> call) {
+		return new Srv(path, call);
+	}
+
+	public static <T> Srv lambda(String path, ContextCallable<T> call, Signature.ReturnPath returnPath) {
 		return new Srv(path, call, returnPath);
 	}
 

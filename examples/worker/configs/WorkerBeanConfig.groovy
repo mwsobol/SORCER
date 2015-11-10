@@ -34,6 +34,7 @@ class WorkerBeanConfig {
     // String properties="provider.properties";
 
     boolean spaceEnabled = true
+    boolean matchInterfaceOnly = false
     // boolean workerTransactional = true;
     // int workerCount = 100;
     // boolean  monitorEnabled = true;

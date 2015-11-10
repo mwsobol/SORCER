@@ -40,7 +40,6 @@ import net.jini.lookup.entry.Name;
 import net.jini.security.AccessPermission;
 import net.jini.security.TrustVerifier;
 import net.jini.space.JavaSpace05;
-import org.omg.stub.java.rmi._Remote_Stub;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.container.jeri.AbstractExporterFactory;
@@ -70,7 +69,6 @@ import sorcer.security.sign.SignedTaskInterface;
 import sorcer.security.sign.TaskAuditor;
 import sorcer.security.util.SorcerPrincipal;
 import sorcer.service.*;
-import sorcer.service.Evaluation;
 import sorcer.service.jobber.JobberAccessor;
 import sorcer.service.space.SpaceAccessor;
 import sorcer.service.txmgr.TransactionManagerAccessor;
@@ -170,8 +168,8 @@ public class ProviderDelegate {
 
 	protected boolean idPersistent = false;
 
-	/** if true then we match all entries with interface names only. */
-	protected boolean matchInterfaceOnly = false;
+	/** if true then we match all entries with interface type only. */
+	protected boolean matchInterfaceOnly = true;
 
 	/** if true then its provider can be monitored for its exerting behavior. */
 	protected boolean monitorable = false;
@@ -486,7 +484,7 @@ public class ProviderDelegate {
 
         try {
             matchInterfaceOnly = (Boolean) jconfig.getEntry(ServiceProvider.COMPONENT, INTERFACE_ONLY, boolean.class,
-                                                            false);
+                                                            true);
         } catch (Exception e) {
             logger.warn("Problem getting {}.{}", ServiceProvider.COMPONENT, INTERFACE_ONLY, e);
         }
@@ -624,10 +622,10 @@ public class ProviderDelegate {
     }
 
     private void initThreadGroups() {
-        namedGroup = new ThreadGroup("Provider Group: {}" + getProviderName());
+        namedGroup = new ThreadGroup("Provider Group: " + getProviderName());
         namedGroup.setDaemon(true);
         namedGroup.setMaxPriority(Thread.NORM_PRIORITY - 1);
-        interfaceGroup = new ThreadGroup("Interface Threads");
+        interfaceGroup = new ThreadGroup("Interface Group: " + getProviderName());
 		interfaceGroup.setDaemon(true);
 		interfaceGroup.setMaxPriority(Thread.NORM_PRIORITY - 1);
 	}
@@ -694,7 +692,7 @@ public class ProviderDelegate {
             // SORCER.ANY is required for a ProviderWorker
             // to avoid matching to any provider name
             // that is Java null matching everything
-            envelop = ExertionEnvelop.getTemplate(publishedServiceTypes[i], SorcerConstants.ANY);
+            envelop = ExertionEnvelop.getTemplate(publishedServiceTypes[i], getProviderName());
             if (spaceReadiness) {
                 worker = new SpaceIsReadyTaker(new SpaceTaker.SpaceTakerData(envelop,
                                                                              memberInfo,
@@ -703,7 +701,7 @@ public class ProviderDelegate {
                                                                              spaceGroup,
                                                                              workerTransactional,
                                                                              queueSize == 0),
-                                               spaceWorkerPool);
+										spaceWorkerPool);
                 spaceTakers.add(worker);
             } else {
                 worker = new SpaceTaker(new SpaceTaker.SpaceTakerData(envelop,
@@ -728,7 +726,7 @@ public class ProviderDelegate {
 			// System.out.println("space template: " +
 			// envelop.describe());
 
-			if (!matchInterfaceOnly) {
+			if (matchInterfaceOnly) {
 				// spaceWorkerPool = Executors.newFixedThreadPool(workerCount);
 				spaceWorkerPool = new ThreadPoolExecutor(workerCount,
 						maximumPoolSize > workerCount ? maximumPoolSize
@@ -737,7 +735,7 @@ public class ProviderDelegate {
 								(queueSize == 0 ? workerCount : queueSize)), factory);
 				spaceHandlingPools.add(spaceWorkerPool);
 				envelop = ExertionEnvelop.getTemplate(publishedServiceTypes[i],
-						getProviderName());
+						SorcerConstants.ANY);
 				if (spaceReadiness) {
 					worker = new SpaceIsReadyTaker(
 							new SpaceTaker.SpaceTakerData(envelop, memberInfo,
@@ -760,11 +758,12 @@ public class ProviderDelegate {
 				// envelop.describe());
 			}
 		}
-		// interfaceGroup.list();
-		// namedGroup.list();
+//		 interfaceGroup.list();
+//		 namedGroup.list();
 	}
 
-	public Task doTask(Task task, Transaction transaction) throws MogramException, SignatureException, RemoteException {
+	public Task doTask(Task task, Transaction transaction)
+			throws MogramException, SignatureException, RemoteException {
 		// prepare a default net batch task (has all sigs of PROC type)
 		// and make the last signature as master PROC type only.
 		task.correctBatchSignatures();
@@ -1694,15 +1693,12 @@ public class ProviderDelegate {
 
 		String pn = task.getProcessSignature().getProviderName();
 		if (pn != null && !matchInterfaceOnly) {
-			if (!(pn.equals(SorcerConstants.ANY) || SorcerConstants.ANY
-					.equals(pn.trim()))) {
-				if (!pn.equals(getProviderName())) {
-					servicetask.getContext().reportException(
-							new ExertionException(
-									"No valid task for service provider: "
-											+ config.getProviderName()));
-					return false;
-				}
+			if (!pn.equals(getProviderName())) {
+				servicetask.getContext().reportException(
+						new ExertionException(
+								"Not valid task for service provider: "
+										+ config.getProviderName() + " for:" + pn));
+				return false;
 			}
 		}
 		Class st = ((NetSignature) task.getProcessSignature()).getServiceType();

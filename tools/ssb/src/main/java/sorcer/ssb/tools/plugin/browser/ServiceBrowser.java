@@ -42,6 +42,7 @@ import javax.swing.UIManager;
 import javax.swing.plaf.metal.MetalLookAndFeel;
 
 import net.jini.config.Configuration;
+import sorcer.service.Accessor;
 import sorcer.ssb.jini.studio.CodeServer;
 import sorcer.ssb.jini.studio.StudioTheme;
 //import sorcer.ssb.osx.OSXApplication;
@@ -85,7 +86,7 @@ public class ServiceBrowser {
 	public static void start(String[] args, boolean pluginStart,
 			Configuration config) {
 		if (System.getSecurityManager() == null) {
-			System.setSecurityManager(new RMISecurityManager());
+			System.setSecurityManager(new SecurityManager());
 		}
 		setConfiguration(config);
 		try {
@@ -95,6 +96,8 @@ public class ServiceBrowser {
 					ServiceBrowserUI.terminateAll();
 				}
 			});
+
+			Accessor.create();
 
 			ABOUT = TITLE;
 			isPlugin = pluginStart;

@@ -29,6 +29,7 @@ import javax.security.auth.login.LoginContext;
 import net.jini.config.Configuration;
 import net.jini.config.ConfigurationProvider;
 import sorcer.core.SorcerConstants;
+import sorcer.service.Accessor;
 import sorcer.ssb.jini.studio.CodeServer;
 import sorcer.tools.webster.InternalWebster;
 import sorcer.util.Sorcer;
@@ -37,7 +38,7 @@ public class StartSorcerBrowser {
 	public static boolean isWebsterInt = false;
 	
 	public static void main(String[] args) {
-		System.setSecurityManager(new RMISecurityManager());
+		System.setSecurityManager(new SecurityManager());
 
 		// Initialize system properties: configs/sorcer.env
 		Sorcer.getEnvProperties();
@@ -50,7 +51,7 @@ public class StartSorcerBrowser {
 		}
 		String codebase = System.getProperty("java.rmi.server.codebase");
 		System.out.println("Using codebase: " + codebase);
-		
+
 		if (isWebsterInt) {
 			String roots = System.getProperty(SorcerConstants.WEBSTER_ROOTS);
 			String[] tokens = null;

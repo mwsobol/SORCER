@@ -123,11 +123,12 @@ public class WorkerExertionsTest {
 
 
 		Task bt = task("pBatch", 
-					type(sig("doWork#w1", Worker.class, prvName("Worker1"), result("req/arg/1")), 
-							Signature.PRE),
-					type(sig("doWork#w2", Worker.class, prvName("Worker2"), result("req/arg/2")), 
-							Signature.PRE),
-					sig("doWork", Worker.class, prvName("Worker3"), result("prv/result")),
+					type(sig("doWork#w1", Worker.class, prvName("Worker1"),
+							result("req/arg/1")), Signature.PRE),
+					type(sig("doWork#w2", Worker.class, prvName("Worker2"),
+							result("req/arg/2")), Signature.PRE),
+					sig("doWork", Worker.class, prvName("Worker3"),
+							result("prv/result")),
 					context);
 
 		requestTime(bt);
@@ -156,9 +157,9 @@ public class WorkerExertionsTest {
 				outEnt("prv/result"));
 
 		Job job = job("strategy", 
-				task("work1", sig("doWork", Worker.class), cxt1),
-				task("work2", sig("doWork", Worker.class), cxt2),
-				task("work3", sig("doWork", Worker.class), cxt3),
+				task("work1", sig("doWork", Worker.class, prvName("Worker1")), cxt1),
+				task("work2", sig("doWork", Worker.class, prvName("Worker2")), cxt2),
+				task("work3", sig("doWork", Worker.class, prvName("Worker3")), cxt3),
 				pipe(outPoint("strategy/work1", "prv/result"), inPoint("strategy/work3", "req/arg/1")),
 				pipe(outPoint("strategy/work2", "prv/result"), inPoint("strategy/work3", "req/arg/2")));
 

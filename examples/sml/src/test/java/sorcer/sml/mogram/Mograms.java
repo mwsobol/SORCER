@@ -220,9 +220,9 @@ public class Mograms {
 
         Double delta = 0.5;
 
-        ContextEntry entFunction = cxt -> {
+        ContextEntry<Double> entFunction = (Context<Double> cxt) -> {
             Double out = 1000.0;
-            out = (Double) value(cxt, "multiply");
+            out = value(cxt, "multiply");
             out = out + 1000.0 + delta;
             return ent("out", out);
         };
@@ -240,7 +240,7 @@ public class Mograms {
 
         dependsOn(mo, ent("subtract", paths("multiply", "add")));
 
-        add(mo, ent("lambda", entFunction));
+        add(mo, lambda("lambda", entFunction));
 
         Context out = response(mo);
         logger.info("response: " + out);
@@ -252,7 +252,7 @@ public class Mograms {
     @Test
     public void modelEntrySubstitution() throws Exception {
 
-        ContextEntry callTask = context -> {
+        ContextEntry<Double> callTask = (Context<Double> context) -> {
             Context out = null;
             Double value = null;
             try {
@@ -289,7 +289,7 @@ public class Mograms {
         dependsOn(mo, ent("subtract", paths("lambda", "add")));
 
         add(mo, innerTask);
-        add(mo, ent("lambda", callTask));
+        add(mo, lambda("lambda", callTask));
         responseDown(mo, "multiply");
         responseUp(mo, "lambda");
 

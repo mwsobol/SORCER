@@ -35,12 +35,12 @@ public class ArithmeticMograms {
 
 		Model mo = model(ent("multiply/x1", 10.0), ent("multiply/x2", 50.0),
 				ent("add/x1", 20.0), ent("add/x2", 80.0),
-				ent("add", model ->
-						(double) value(model, "add/x1") + (double) value(model, "add/x2")),
-				ent("multiply", model ->
-						(double) val(model, "multiply/x1") * (double) val(model, "multiply/x2")),
-				ent("subtract", model ->
-						(double) v(model, "multiply") - (double) v(model, "add")),
+				lambda("add", (Context <Double> model) ->
+						value(model, "add/x1") + value(model, "add/x2")),
+				lambda("multiply", (Context <Double> model) ->
+						val(model, "multiply/x1") * val(model, "multiply/x2")),
+				lambda("subtract", (Context <Double> model) ->
+						v(model, "multiply") - v(model, "add")),
 				response("subtract", "multiply", "add"));
 
 		dependsOn(mo, ent("subtract", paths("multiply", "add")));
@@ -58,16 +58,16 @@ public class ArithmeticMograms {
 		Model mo = model(ent("multiply/x1", 10.0), ent("multiply/x2", 50.0),
 				ent("add/x1", 20.0), ent("add/x2", 80.0),
 				ent("arg/x1", 30.0), ent("arg/x2", 90.0),
-				ent("add", model ->
-						(double) value(model, "add/x1") + (double) value(model, "add/x2"),
+				lambda("add", (Context <Double> model) ->
+						value(model, "add/x1") + value(model, "add/x2"),
 						result("add/out",
 								inPaths("add/x1", "add/x2"))),
-				ent("multiply", model ->
-						(double) val(model, "multiply/x1") * (double) val(model, "multiply/x2"),
+				lambda("multiply", (Context <Double> model) ->
+						val(model, "multiply/x1") * val(model, "multiply/x2"),
 						result("multiply/out",
 								inPaths("multiply/x1", "multiply/x2"))),
-				ent("subtract", model ->
-						(double) v(model, "multiply/out") - (double) v(model, "add/out"),
+				lambda("subtract", (Context <Double> model) ->
+						v(model, "multiply/out") - v(model, "add/out"),
 						result("model/response")),
 				response("subtract", "multiply/out", "add/out", "model/response"));
 

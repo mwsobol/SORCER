@@ -20,9 +20,7 @@ package sorcer.core.plexus;
 import net.jini.id.Uuid;
 import net.jini.id.UuidFactory;
 import sorcer.core.invoker.Observable;
-import sorcer.service.Arg;
-import sorcer.service.Fidelity;
-import sorcer.service.Identifiable;
+import sorcer.service.*;
 
 import java.io.Serializable;
 import java.util.List;
@@ -34,6 +32,8 @@ public class MultiFidelity<T extends Arg> extends Observable implements Identifi
 
     // fidelity of fidelities T  taht is observable
     private Fidelity<T> fidelity;
+
+    private Morpher morpher;
 
     private Uuid id = UuidFactory.generate();
 
@@ -94,6 +94,14 @@ public class MultiFidelity<T extends Arg> extends Observable implements Identifi
         fidelity.setName(name);
     }
 
+    public Morpher getMorpher() {
+        return morpher;
+    }
+
+    public void setMorpher(Morpher morpher) {
+        this.morpher = morpher;
+    }
+
     @Override
     public String toString() {
         return fidelity.getName() + (fidelity.getPath() != null ?
@@ -103,4 +111,5 @@ public class MultiFidelity<T extends Arg> extends Observable implements Identifi
     public int size() {
         return fidelity.getSelects().size();
     }
+
 }

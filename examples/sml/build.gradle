@@ -67,11 +67,16 @@ dependencies {
 }
 
 def deployConfigArithmetic = file("configs/arithmetic-prv.config")
+def haLocal = file("src/main/netlets/ha-job-local.ntl")
+def haRemote = file("src/main/netlets/ha-job-remote.ntl")
+
 //def deployConfigMultipler = file("configs/multiplier-prv.config")
 artifacts {
 	archives arithmeticDlJar
 	archives arithmeticReqJar
 	archives arithmeticPrvUiJar
+	archives file: haLocal, classifier: "ha-job-local"
+	archives file: haRemote, classifier: "ha-job-remote"
 	archives file: deployConfigArithmetic, classifier: "deploy"
 //	archives file: deployConfigMultipler, classifier: "deploy-multiplier"
 }
