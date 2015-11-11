@@ -21,16 +21,16 @@ import sorcer.arithmetic.provider.Adder
 import sorcer.arithmetic.provider.Multiplier
 import sorcer.arithmetic.provider.Subtractor
 
-Model m = model(
-        inEnt("multiply/x1", 10.0d), inEnt("multiply/x2", 50.0d),
-        inEnt("add/x1", 20.0d), inEnt("add/x2", 80.0d),
-        ent(sig("multiply", Multiplier.class, result("multiply/out",
-                inPaths("multiply/x1", "multiply/x2")))),
-        ent(sig("add", Adder.class, result("add/out",
-                inPaths("add/x1", "add/x2")))),
-        ent(sig("out", "subtract", Subtractor.class, result("model/response",
-                inPaths("multiply/out", "add/out")))),
-        response("out"));
+Model mo = model(
+        inEnt("arg/x1", 10.0d), inEnt("arg/x2", 50.0d),
+        inEnt("arg/x3", 20.0d), inEnt("arg/x4", 80.0d),
+        ent(sig("multiply", Multiplier.class, result("result/y1",
+                inPaths("arg/x1", "arg/x2")))),
+        ent(sig("add", Adder.class, result("result/y2",
+                inPaths("arg/x3", "arg/x4")))),
+        ent(sig("out", "subtract", Subtractor.class, result("result/y3",
+                inPaths("result/y1", "result/y2")))),
+        response("out", "result/y1", "result/y2", "result/y3"));
 
-dependsOn(m, ent("out", paths("multiply", "add")));
+dependsOn(mo, ent("out", paths("multiply", "add")));
 

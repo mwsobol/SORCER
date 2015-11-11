@@ -955,19 +955,21 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	 * @return an array of service UI descriptors
 	 */
 	public UIDescriptor[] getServiceUIEntries() {
-		UIDescriptor uiDesc1 = null;
-		try {
-			uiDesc1 = UIDescriptorFactory.getUIDescriptor(
-					MainUI.ROLE,
-					new UIComponentFactory(new URL[] {new URL(String.format("%s/sorcer-ui-%s.jar",
-							Sorcer.getWebsterUrl(),
-							SOS.getSorcerVersion()))
-					},
-							"sorcer.ui.exertlet.NetletEditor"));
-		} catch (Exception ex) {
-			logger.debug("getServiceUI", ex);
-		}
+		// Service UI as a panel of the ServiceBrowser
+//		UIDescriptor uiDesc1 = null;
+//		try {
+//			uiDesc1 = UIDescriptorFactory.getUIDescriptor(
+//					MainUI.ROLE,
+//					new UIComponentFactory(new URL[] {new URL(String.format("%s/sorcer-ui-%s.jar",
+//							Sorcer.getWebsterUrl(),
+//							SOS.getSorcerVersion()))
+//					},
+//							"sorcer.ui.exertlet.NetletEditor"));
+//		} catch (Exception ex) {
+//			logger.debug("getServiceUI", ex);
+//		}
 
+		// Service UI as a standalone frame is the ServiceBrowser
 		UIDescriptor uiDesc2 = null;
 		try {
 			URL uiUrl = new URL(Sorcer.getWebsterUrl() + "/exertlet-ui.jar");
@@ -983,7 +985,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 			logger.debug("getServiceUI", ex);
 		}
 
-		return new UIDescriptor[] { getProviderUIDescriptor(), uiDesc1/*, uiDesc2 */};
+		return new UIDescriptor[] { getProviderUIDescriptor(), uiDesc2 };
 	}
 
 	/**

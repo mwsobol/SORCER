@@ -14,7 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+/**
+ * @author Mike Sobolewski
+ */
 package sorcer.ui.exertlet;
 
 import net.jini.core.lookup.ServiceItem;
