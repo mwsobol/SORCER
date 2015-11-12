@@ -503,6 +503,16 @@ public class operator {
 		return new Entry<T>(path, value, association);
 	}
 
+	public static Entry set(Entry entry, Object value)
+			throws ContextException {
+		try {
+			entry.setValue(value);
+		} catch (RemoteException e) {
+			throw new ContextException(e);
+		}
+		return entry;
+	}
+
 	public static <S extends Setter> boolean isDB(S setter) {
 		return isPersistent(setter);
 	}

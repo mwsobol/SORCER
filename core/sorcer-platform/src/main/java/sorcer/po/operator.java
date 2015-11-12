@@ -22,6 +22,7 @@ import sorcer.co.tuple.ExecPath;
 import sorcer.co.tuple.InputEntry;
 import sorcer.co.tuple.Path;
 import sorcer.co.tuple.Tuple2;
+import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.EntryList;
 import sorcer.core.context.model.par.Agent;
@@ -268,12 +269,12 @@ public class operator {
 	}
 
 	public static Object invoke(Invocation invoker, Arg... parameters)
-			throws InvocationException, RemoteException {
+			throws ContextException, RemoteException {
 		return invoker.invoke(null, parameters);
 	}
 
 	public static Object invoke(Invocation invoker, Context context, Arg... parameters)
-			throws InvocationException, RemoteException {
+			throws ContextException, RemoteException {
 		return invoker.invoke(context, parameters);
 	}
 
@@ -373,6 +374,20 @@ public class operator {
 		return invoker;
 	}
 
+	public static ServiceInvoker expr(String expression, sorcer.eo.operator.Args args, Context scope) throws ContextException {
+		return invoker(expression, args,  scope);
+	}
+
+	public static ServiceInvoker invoker(String expression, sorcer.eo.operator.Args args, Context scope) throws ContextException {
+		GroovyInvoker invoker = new GroovyInvoker(expression, args.args());
+		invoker.setScope(scope);
+		return invoker;
+	}
+
+	public static ServiceInvoker expr(String expression, sorcer.eo.operator.Args args) {
+		return 	invoker(expression, args);
+		}
+
 	public static ServiceInvoker invoker(String expression, sorcer.eo.operator.Args args) {
 		return new GroovyInvoker(expression, args.args());
 	}
@@ -440,15 +455,19 @@ public class operator {
 	}
 
 	public static MethodInvoker methodInvoker(String selector, Object methodObject, Par... parEntries) {
-		return new MethodInvoker(selector, methodObject, selector, parEntries);
+		return methodInvoker(selector, methodObject, null, parEntries);
 	}
 
 	public static MethodInvoker methodInvoker(String selector, Object methodObject,
 											  Context context, Par... parEntries) {
 		MethodInvoker mi = new MethodInvoker(selector, methodObject, selector,
 				parEntries);
-		mi.setArgs(new Class[] { Context.class });
-		mi.setContext(context);
+		Context cxt = context;
+		if (context == null) {
+			cxt = new ServiceContext();
+		}
+		mi.setArgs(new Class[]{Context.class});
+		mi.setContext(cxt);
 		return mi;
 	}
 

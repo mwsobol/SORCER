@@ -278,7 +278,7 @@ public class ServiceShell implements RemoteServiceShell, Service, Servicer, Exer
 			for (Evaluation<Object> depender : dependers) {
 				try {
 					((Invocation)depender).invoke(mogram.getScope(), entries);
-				} catch (InvocationException e) {
+				} catch (Exception e) {
 					throw new ExertionException(e);
 				}
 			}
