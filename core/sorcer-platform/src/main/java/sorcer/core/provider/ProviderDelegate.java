@@ -180,6 +180,9 @@ public class ProviderDelegate {
 	/* use Spacer workers, when false no space computing support. */
 	protected boolean spaceEnabled = false;
 
+	/* delay space takers startup in miliseconds */
+	protected int spaceTakerDelay = 1000;
+
 	protected boolean spaceReadiness = false;
 
 	protected boolean spaceSecurityEnabled = false;
@@ -490,11 +493,19 @@ public class ProviderDelegate {
         }
 
         try {
-            spaceEnabled = (Boolean) jconfig.getEntry(ServiceProvider.COMPONENT, SPACE_ENABLED, boolean.class,
-                                                      false);
-        } catch (Exception e) {
-            logger.warn("Problem getting {}.{}", ServiceProvider.COMPONENT, SPACE_ENABLED, e);
-        }
+			spaceEnabled = (Boolean) jconfig.getEntry(ServiceProvider.COMPONENT, SPACE_ENABLED, boolean.class,
+					false);
+		} catch (Exception e) {
+			logger.warn("Problem getting {}.{}", ServiceProvider.COMPONENT, SPACE_ENABLED, e);
+		}
+
+		try {
+			spaceTakerDelay = (Integer) jconfig.getEntry(ServiceProvider.COMPONENT, SPACE_TAKER_DELAY, Integer.class,
+					1000); // defult 1000 milisecnds
+		} catch (Exception e) {
+			logger.warn("Problem getting {}.{}", ServiceProvider.COMPONENT, SPACE_TAKER_DELAY, e);
+		}
+
         try {
             workerCount = (Integer) jconfig.getEntry(ServiceProvider.COMPONENT,
                                                      WORKER_COUNT, int.class, 10);
@@ -3050,6 +3061,8 @@ public class ProviderDelegate {
 	public static final String DISCOVERY_ENABLED = "discoveryEnabled";
 
 	public static final String SPACE_ENABLED = "spaceEnabled";
+
+	public static final String SPACE_TAKER_DELAY = "spaceTakerDelay";
 
 	public static final String SPACE_READINESS = "spaceReadiness";
 
