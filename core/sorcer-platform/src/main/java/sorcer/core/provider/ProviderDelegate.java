@@ -722,7 +722,8 @@ public class ProviderDelegate {
 
             Thread sith = ifaceWorkerFactory.newThread(worker);
 			sith.start();			
-			logger.info("*** space worker {} started for: {}", i, publishedServiceTypes[i]);
+			logger.info("*** {} named space worker {} started for: {}",
+					getProviderName(), i, publishedServiceTypes[i]);
 			// System.out.println("space template: " +
 			// envelop.describe());
 
@@ -752,8 +753,8 @@ public class ProviderDelegate {
 				}
 				Thread snth = namedWorkerFactory.newThread(worker);
 				snth.start();
-				logger.info("*** named space worker-" + i + " started for: "
-						+ publishedServiceTypes[i] + ":" + getProviderName());
+				logger.info("*** {} unnamed space worker {} started for: ",
+						getProviderName(), i, publishedServiceTypes[i]);
 				// System.out.println("space template: " +
 				// envelop.describe());
 			}

@@ -726,7 +726,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 					delegate.initSpaceSupport();
 					return null;
 				}
-			}, 0, TimeUnit.MILLISECONDS);
+			}, 1000, TimeUnit.MILLISECONDS);
 		} catch (Throwable e) {
 			initFailed(e);
 		}
@@ -1951,7 +1951,6 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 
 		public void run() {
 			try {
-				delegate.initSpaceSupport();
 				while (running.get()) {
 					Thread.sleep(ProviderDelegate.KEEP_ALIVE_TIME);
 
@@ -1969,11 +1968,6 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 			} catch (Exception doNothing) {
 			}
 		}
-	}
-
-	public void initSpaceSupport() throws ConfigurationException {
-		delegate.spaceEnabled(true);
-		delegate.initSpaceSupport();
 	}
 
 	/*
