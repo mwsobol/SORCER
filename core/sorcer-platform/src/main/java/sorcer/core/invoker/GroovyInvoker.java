@@ -81,7 +81,7 @@ public class GroovyInvoker<T> extends ServiceInvoker<T> {
 	}
 
 	public GroovyInvoker(String name, String expression, Arg... parameters) {
-		this(name, expression, ArgSet.asSet(parameters));
+		this(name, expression, new ArgSet(parameters));
 	}
 
 	public GroovyInvoker(File scriptFile, Par... parameters)
