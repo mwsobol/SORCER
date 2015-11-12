@@ -53,7 +53,7 @@ public class ParModelTest {
 			ContextException {
 		ParModel pm = parModel("par-model");
 		add(pm, par("x", 10.0), par("y", 20.0));
-		add(pm, invoker("add", "x + y", pars("x", "y")));
+		add(pm, invoker("add", "x + y", args("x", "y")));
 
 //		logger.info("adder value: " + value(pm, "add"));
 		assertEquals(value(pm, "add"), 30.0);

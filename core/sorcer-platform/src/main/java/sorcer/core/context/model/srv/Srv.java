@@ -14,6 +14,7 @@ import sorcer.service.modeling.Variability;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.Map;
+import java.util.concurrent.Callable;
 
 /**
  * Created by Mike Sobolewski on 4/14/15.
@@ -139,6 +140,12 @@ public class Srv extends Entry<Object> implements Variability<Object>, Arg,
     public Object getValue(Arg... entries) throws EvaluationException, RemoteException {
         if (srvValue != null && isValid) {
             return srvValue;
+        } else if (_2 instanceof Callable) {
+            try {
+                return ((Callable) _2).call();
+            } catch (Exception e) {
+                throw new EvaluationException(e);
+            }
         } else if (_2 instanceof SignatureEntry) {
             SrvModel mod = null;
             for (Arg arg : entries) {

@@ -343,36 +343,42 @@ public class operator {
 		return new ServiceInvoker(evaluator, parEntries);
 	}
 
-	public static ServiceInvoker invoker(ContextCallable condition) throws InvocationException {
-		return new ServiceInvoker(null, condition, null);
+	public static ServiceInvoker invoker(ContextCallable lambda) throws InvocationException {
+		return new ServiceInvoker(null, lambda, null);
 	}
 
-	public static ServiceInvoker invoker(ContextCallable condition, Context scope) throws InvocationException {
+	public static ServiceInvoker invoker(ContextCallable lambda, Context scope) throws InvocationException {
 		try {
-			return new ServiceInvoker(null, condition, scope);
+			return new ServiceInvoker(null, lambda, scope);
 		} catch (Exception e) {
 			throw new InvocationException("Failed to create invoker!", e);
 		}
 	}
 
-	public static <T> ServiceInvoker invoker(String name, ContextCallable<T> condition) throws InvocationException {
-		return new ServiceInvoker(name, condition, null);
+	public static <T> ServiceInvoker invoker(String name, ContextCallable<T> lambda) throws InvocationException {
+		return new ServiceInvoker(name, lambda, null);
 	}
 
-	public static <T> ServiceInvoker invoker(String name, ContextCallable<T> condition, Context scope) throws InvocationException {
-		return new ServiceInvoker(name, condition, scope);
+	public static <T> ServiceInvoker invoker(String name, ContextCallable<T> lambda, Context scope) throws InvocationException {
+		return new ServiceInvoker(name, lambda, scope);
 	}
 
-	public static ServiceInvoker invoker(String name, String expression, Arg... pars) {
-		return new GroovyInvoker(name, expression, pars);
+	public static ServiceInvoker invoker(String name, String expression, sorcer.eo.operator.Args args) {
+		return new GroovyInvoker(name, expression, args.args());
 	}
 
-	public static ServiceInvoker invoker(String name, String expression, Par... parEntries) {
-		return new GroovyInvoker(name, expression, parEntries);
+	public static ServiceInvoker invoker(String name, String expression, sorcer.eo.operator.Args args, Context scope) throws ContextException {
+		GroovyInvoker invoker = new GroovyInvoker(name, expression, args.args());
+		invoker.setScope(scope);
+		return invoker;
 	}
 
-	public static ServiceInvoker invoker(String expression, Arg... pars) {
-		return new GroovyInvoker(expression, pars);
+	public static ServiceInvoker invoker(String expression, sorcer.eo.operator.Args args) {
+		return new GroovyInvoker(expression, args.args());
+	}
+
+	public static ServiceInvoker invoker(String expression, Arg... args) {
+		return new GroovyInvoker(expression, args);
 	}
 
 	public static ServiceInvoker print(String path) {

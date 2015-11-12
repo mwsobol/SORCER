@@ -31,7 +31,7 @@ green {
 <p class="basicText">A <em>task exertion</em> is comprised of <em>name</em>, service <em>signature</em> (<code>sig</code>), and <em>service data</em> (<code>context</code>). A context model is an associative memory with <em>paths</em> (like file paths, e.g., <code>"arg/x1"</code>) that create a service namespace along with their respective values.</p>
 <p class="basicText">For example a <em>service</em> <code>f4=x1*x2;</code> can be represented by the following task: </p>
 <blockquote>
-  <p class="basicText"><code>Task f4 = <span class="light-green">task</span>("f4", <span class="red"><br /> &nbsp; &nbsp; sig</span>("<span class="red">multiply</span>", <span class="red">Multiplier.class</span>), <br />
+  <p class="basicText"><code>Task f4 = <span class="light-green">task</span>("f4", <span class="red">sig</span>("<span class="red">multiply</span>", <span class="red">Multiplier.class</span>), <br />
   	    	</code><span class="light-blue"><code>&nbsp; &nbsp; context</code></span><code>("multiply", <span class="light-blue">inEnt</span>("arg/x1", 10.0),
   	    	<span class="light-blue">inEnt</span>("arg/x2", 50.0), <span class="light-blue"><br /> &nbsp; &nbsp; outEnt</span>("result/y1")));  </code></p>
 </blockquote>
@@ -40,20 +40,17 @@ green {
   <code>f1(f2(f4,f5),f3)</code> can be defined as follows: <br />
   execution of <code>f2</code> (<code>f4=x1*x2 and f5=x3+x4</code> in parallel) and then <code>f3=f4-f5</code>.</p>
 <blockquote>
-  <p class="basicText"> <code>Task f4 = <span class="blue"><span class="green"><span class="light-green">task</span></span></span>("f4", <br />
-    <span class="red"> &nbsp; &nbsp; sig</span>("<span class="red">multiply</span>", <span class="red">Multiplier.class</span>), <br />
+  <p class="basicText"> <code>Task f4 = <span class="blue"><span class="green"><span class="light-green">task</span></span></span>("f4", <span class="red">sig</span>("<span class="red">multiply</span>", <span class="red">Multiplier.class</span>), <br />
     <span class="light-blue"> &nbsp; &nbsp; context</span>("multiply", <span class="blue"><span class="magenta">inEnt</span></span>("arg/x1", 10.0), <span class="blue"><span class="magenta">inEnt</span></span>("arg/x2", 50.0),
     <span class="blue"><span class="light-blue"> <br /> 
     &nbsp; &nbsp; </span></span><span class="magenta">result</span>("result/y1")));</code>  </p>
-  <p class="basicText"><code>Task f5 = <span class="green"><span class="light-green">task</span></span>("f5", <br />
-    <span class="red"> &nbsp; &nbsp; sig</span>("<span class="red">add</span>", <span class="red">Adder.class</span>), <br />
+  <p class="basicText"><code>Task f5 = <span class="green"><span class="light-green">task</span></span>("f5", <span class="red">sig</span>("<span class="red">add</span>", <span class="red">Adder.class</span>), <br />
     <span class="light-blue"> &nbsp; &nbsp; context</span>("add", <span class="blue"><span class="magenta">inEnt</span></span>("arg/x3", 20.0), <span class="blue"><span class="magenta">inEnt</span></span>("arg/x4", 80.0),
     <span class="blue"> <br /> 
     &nbsp; &nbsp; </span><span class="magenta">result</span></span>("result/y2")));</code></p>
   <p class="basicText">
     
-    <code>Task f3 = <span class="green"><span class="light-green">task</span></span>("f3", <br />
-    <span class="red"> &nbsp; &nbsp; sig</span>("<span class="red">subtract</span>", <span class="red">Subtractor.class</span>), <br />
+    <code>Task f3 = <span class="green"><span class="light-green">task</span></span>("f3", <span class="red">sig</span>("<span class="red">subtract</span>", <span class="red">Subtractor.class</span>), <br />
     <span class="light-blue"> &nbsp; &nbsp; context</span>("subtract", <span class="blue"><span class="magenta">inEnt</span></span>("arg/x5"), <span class="blue"><span class="magenta">inEnt</span></span>("arg/x6"),
       <span class="blue"><span class="light-blue"><br /> 
       &nbsp; &nbsp; </span></span><span class="magenta">result</span>("result/y3")));</code>  </p>
@@ -72,7 +69,7 @@ green {
 </blockquote>
 <p class="basicText">To get a <em>context value</em>, for example the value <code>&quot;result/y3&quot;</code> in the context of task <code>f3</code>, call the <code>get</code> operator: </p>
 <blockquote>
-  <p class="basicText"><code>get(<span class="blue"><span class="light-blue">outEnt</span></span>, "f1/f3/result/y3");</code></p>
+  <p class="basicText"><code>get(context(out), "f1/f3/result/y3");</code></p>
 </blockquote>
 
 <p class="basicText">
@@ -96,7 +93,11 @@ A  <em>block</em> is a concatenation of exertions with control-flow exertions to
     <span class="magenta"> <br /> &nbsp; &nbsp; &nbsp; &nbsp; inPaths</span>("result/y1", "result/y2")))),
   <span class="magenta"> <br /> &nbsp; &nbsp; response</span>("out", "result/y1", "result/y2", "result/y3"));</code></p>
 </blockquote>
-<p class="basicText"> See more at <a href="http://sorcersoft.org/project/site/tutorials.html">SORCER tutorials</a> </p>
+<p class="basicText">To evaluate a model call </p>
+<blockquote>
+  <p class="basicText"><code>Context cxt = response(mo); </code>and for a value, for example <code>&quot;result/y3&quot;</code>, <code>get(cxt, &quot;result/y3&quot;</code>);</p>
+</blockquote>
+<p class="basicText">See more at <a href="http://sorcersoft.org/project/site/tutorials.html">SORCER tutorials</a> </p>
 <p class="basicText">To use classes that come from external providers in your code you can dynamically load a jar file by using the following declaration.
     The jar files specified this way will be loaded from external http code servers (websters).
 </p>

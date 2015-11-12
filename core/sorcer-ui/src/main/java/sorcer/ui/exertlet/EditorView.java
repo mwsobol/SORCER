@@ -376,7 +376,7 @@ public class EditorView extends JPanel implements HyperlinkListener {
 							result = scriptExerter.execute();
 						}
 						if (result instanceof Mogram) {
-							processExerion((Mogram) result);
+							processMogram((Mogram) result);
 						} else if (result != null) {
 							openOutPanel(result.toString());
                         } else {
@@ -486,7 +486,7 @@ public class EditorView extends JPanel implements HyperlinkListener {
 				result = scriptExerter.execute();
 			}
 			if (result instanceof Exertion)
-				processExerion((Exertion) result);
+				processMogram((Exertion) result);
 			else if (result != null) {
 				logger.debug("<< executing scrip: " + script);
 				logger.debug(">> scrip result: " + script);
@@ -503,12 +503,16 @@ public class EditorView extends JPanel implements HyperlinkListener {
 		}
 	}
 
-	private void processExerion(Mogram mogram) throws MogramException{
+	private void processMogram(Mogram mogram) throws MogramException{
 		String codebase = System.getProperty("java.rmi.server.codebase");
 		logger.debug("Using exertlet codebase: " + codebase);
-
+		if (mogram.getStatus() == Exec.DONE) {
+			showResults(mogram);
+			return;
+		}
+		boolean done = false;
+		Mogram out = null;
 		if (mogram instanceof Model) {
-			Context out = null;
 			try {
 				out = (Context) ((Model)mogram).getResponse();
 			} catch (Exception e) {
@@ -517,12 +521,7 @@ public class EditorView extends JPanel implements HyperlinkListener {
 			showResults(out);
 			return;
 		}
-		if (mogram.getStatus() == Exec.DONE) {
-		showResults(mogram);
-		return;
-		}
-		Mogram out = null;
-		boolean done = false;
+
 		try {
 			Class<?>[] interfaces = provider.getClass().getInterfaces();
 			for (int i = 0; i < interfaces.length; i++) {

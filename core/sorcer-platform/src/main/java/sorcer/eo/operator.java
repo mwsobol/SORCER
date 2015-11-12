@@ -2299,10 +2299,6 @@ public class operator {
 		return new Args(args);
 	}
 
-	public static Args args(String path, Object... args) {
-		return new Args(path, args);
-	}
-
 	public static class Args extends Path {
 		private static final long serialVersionUID = 1L;
 
@@ -2315,6 +2311,14 @@ public class operator {
 		public Args(String path, Object... args) {
 			this.args = args;
 			this._1 = path;
+		}
+
+		public Arg[] args() {
+			Arg[] as = new Arg[args.length];
+			for (int i = 0; i < args.length; i++) {
+				as[i] = new Entry(args[i].toString());
+			}
+			return as;
 		}
 
 		@Override

@@ -36,7 +36,10 @@ import sorcer.netlet.ScriptExerter;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
 import sorcer.service.modeling.Variability;
-import sorcer.util.*;
+import sorcer.util.Loop;
+import sorcer.util.Response;
+import sorcer.util.Sorcer;
+import sorcer.util.Table;
 import sorcer.util.bdb.objects.UuidObject;
 import sorcer.util.url.sos.SdbUtil;
 
@@ -48,7 +51,9 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.*;
-import java.util.Collections;
+import java.util.concurrent.Callable;
+
+import static sorcer.po.operator.invoker;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class operator {
@@ -160,9 +165,6 @@ public class operator {
 		T[] na = (T[]) Array.newInstance(list.get(0).getClass(), list.size());
 		return list.toArray(na);
 
-	}
-	public static Arg[] args(Arg... elems) {
-		return elems;
 	}
 
 	public static Set<Object> bag(Object... elems) {
@@ -314,8 +316,16 @@ public class operator {
 		return new Srv(path, call);
 	}
 
+	public static <T> Srv lambda(String path, Callable<T> call) {
+		return new Srv(path, call);
+	}
+
 	public static <T> Srv lambda(String path, ContextCallable<T> call) {
 		return new Srv(path, call);
+	}
+
+	public static <T> Srv lambda(String path, ContextCallable<T> lambda, Context context) throws InvocationException {
+		return new Srv(path, invoker(lambda, context));
 	}
 
 	public static <T> Srv lambda(String path, ContextCallable<T> call, Signature.ReturnPath returnPath) {

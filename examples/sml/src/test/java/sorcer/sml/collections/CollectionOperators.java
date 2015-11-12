@@ -421,7 +421,7 @@ public class CollectionOperators {
 
 		ParModel pm = parModel("par-model", ent("John/weight", 180.0));
 		add(pm, par("x", 10.0), ent("y", 20.0));
-		add(pm, invoker("add", "x + y", pars("x", "y")));
+		add(pm, invoker("add", "x + y", args("x", "y")));
 
 //		logger.info("adder value: " + value(pm, "add"));
 		assertEquals(value(pm, "John/weight"), 180.0);
