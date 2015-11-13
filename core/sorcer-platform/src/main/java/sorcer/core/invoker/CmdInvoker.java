@@ -27,6 +27,7 @@ import java.rmi.RemoteException;
 import java.util.Arrays;
 import java.util.List;
 
+import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.par.Par;
 import sorcer.service.Arg;
 import sorcer.service.ArgSet;
@@ -72,7 +73,7 @@ public class CmdInvoker extends ServiceInvoker implements CmdInvoking {
 		this.pars = new ArgSet(parEntries);
 	}
 
-	public CmdInvoker(String[] cmdarray, Par... parEntries) {
+	public CmdInvoker(String[] cmdarray, Entry... parEntries) {
 		this.cmdarray = cmdarray;
 		this.pars = new ArgSet(parEntries);
 	}

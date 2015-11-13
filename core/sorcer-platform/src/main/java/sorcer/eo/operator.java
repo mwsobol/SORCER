@@ -57,6 +57,7 @@ import sorcer.service.modeling.Variability;
 import sorcer.util.Loop;
 import sorcer.util.ObjectCloner;
 import sorcer.util.Sorcer;
+import sorcer.util.exec.ExecUtils;
 import sorcer.util.url.sos.SdbUtil;
 
 import java.io.File;
@@ -1799,10 +1800,8 @@ public class operator {
 			synchronized (evaluation) {
 				if (evaluation instanceof Exertion) {
 					return (T) evaluate((Exertion) evaluation, entries);
-				} else if (evaluation instanceof Par){
-					return ((Par<T>)evaluation).getValue(entries);
 				} else if (evaluation instanceof Entry){
-					return ((Entry<T>)evaluation).getValue(entries);
+					return evaluation.getValue(entries);
 				} else if (evaluation instanceof Incrementor){
 					return ((Incrementor<T>) evaluation).next();
 				} else {
@@ -2321,6 +2320,14 @@ public class operator {
 			return as;
 		}
 
+        public String[] argsToStrings() {
+            String[] as = new String[args.length];
+            for (int i = 0; i < args.length; i++) {
+                as[i] = args[i].toString();
+            }
+            return as;
+        }
+
 		@Override
 		public String toString() {
 			return "args: " + Arrays.toString(args);
@@ -2530,8 +2537,8 @@ public class operator {
 		return new Condition(condition);
 	}
 
-	public static Condition condition(ContextCondition condition) {
-		return new Condition(condition);
+	public static <T> Condition condition(ContextCondition<T> lambda) {
+		return new Condition(lambda);
 	}
 
 	public static Condition condition(String expression,

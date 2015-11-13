@@ -189,11 +189,9 @@ public class  LocalBlockExertions implements SorcerConstants {
 				context("average", inEnt("arg/t4"), inEnt("arg/t5"),
 						result("block/result", Direction.OUT)));
 
-		Block block = block("block",
-				t4,
-				t5,
-				alt(opt(condition(cxt -> (double)v(cxt, "t4") > (double)v(cxt, "t5")), t3),
-						opt(condition(cxt -> (double)v(cxt, "t4") <= (double)v(cxt, "t5")), t6)));
+		Block block = block("block", t4, t5,
+				alt(opt(condition((Context<Double> cxt) -> v(cxt, "t4") > v(cxt, "t5")), t3),
+						opt(condition((Context<Double> cxt) -> v(cxt, "t4") <= v(cxt, "t5")), t6)));
 
 //		logger.info("block: " + block);
 //		logger.info("exertions: " + exertions(block));
@@ -228,11 +226,9 @@ public class  LocalBlockExertions implements SorcerConstants {
 				context("average", inEnt("arg/t4"), inEnt("arg/t5"),
 						result("block/result", Direction.OUT)));
 
-		block = block("block",
-				t4,
-				t5,
-				alt(opt(condition(cxt -> (double)value(cxt, "t4") > (double)value(cxt, "t5")), t3),
-						opt(condition(cxt -> (double)value(cxt, "t4") <= (double)value(cxt, "t5")), t6)));
+		block = block("block", t4, t5,
+				alt(opt(condition((Context<Double> cxt) -> (double)value(cxt, "t4") > (double)value(cxt, "t5")), t3),
+						opt(condition((Context<Double> cxt) -> value(cxt, "t4") <= value(cxt, "t5")), t6)));
 		result = exert(block, ent("block/t5/arg/x1", 200.0), ent("block/t5/arg/x2", 800.0));
 		assertEquals(value(context(result), "block/result"), 750.00);
 	}
@@ -248,9 +244,8 @@ public class  LocalBlockExertions implements SorcerConstants {
 				context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
 						result("out")));
 
-		Block block = block("block",
-				t4,
-				opt(condition(cxt -> (double)value(cxt, "out") > 600.0), t5));
+		Block block = block("block", t4,
+				opt(condition((Context<Double> cxt) -> value(cxt, "out") > 600.0), t5));
 
 		block = exert(block);
 //		logger.info("block context: " + context(block));
@@ -269,8 +264,8 @@ public class  LocalBlockExertions implements SorcerConstants {
 	public void loopBlockTest() throws Exception {
 		Block block = block("block",
 				context(ent("x1", 10.0), ent("x2", 20.0), ent("z", 100.0)),
-				loop(condition(cxt -> (double)value(cxt, "x1") + (double)value(cxt, "x2")
-								< (double)value(cxt, "z")),
+				loop(condition((Context<Double> cxt) -> value(cxt, "x1") + value(cxt, "x2")
+								< value(cxt, "z")),
 						task(par("x1", invoker("x1 + 3", pars("x1"))))));
 
 		block = exert(block);
@@ -294,8 +289,8 @@ public class  LocalBlockExertions implements SorcerConstants {
 		Block block = block("block", sig("execute", ServiceConcatenator.class),
 				context(inEnt("x1", 4), inEnt("x2", 5)),
 				task(par("y", invoker("x1 * x2", pars("x1", "x2")))),
-				alt(opt(condition(cxt -> (int)v(cxt, "y") > 50), t4),
-						opt(condition(cxt -> (int)value(cxt, "y") <= 50), t5)));
+				alt(opt(condition((Context<Integer> cxt) -> v(cxt, "y") > 50), t4),
+						opt(condition((Context<Integer> cxt) -> value(cxt, "y") <= 50), t5)));
 
 		logger.info("block: " + block);
 		logger.info("exertions: " + exertions(block));

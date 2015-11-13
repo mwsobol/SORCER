@@ -10,6 +10,7 @@ import sorcer.arithmetic.provider.Adder;
 import sorcer.arithmetic.provider.Multiplier;
 import sorcer.arithmetic.provider.Subtractor;
 import sorcer.arithmetic.provider.impl.*;
+import sorcer.core.plexus.Morpher;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
@@ -19,7 +20,11 @@ import static org.junit.Assert.assertTrue;
 
 import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
+import static sorcer.eo.operator.loop;
 import static sorcer.mo.operator.response;
+import static sorcer.po.operator.invoker;
+import static sorcer.po.operator.par;
+import static sorcer.po.operator.pars;
 
 /**
  * @author Mike Sobolewski
@@ -190,6 +195,45 @@ public class ArithmeticMograms {
 		assertEquals(value(context(result), "block/result"), 400.00);
 	}
 
+    @Test
+    public void altBlock() throws Exception {
+        Task t3 = task("t3", sig("subtract", SubtractorImpl.class),
+                context("subtract", inEnt("arg/t4"), inEnt("arg/t5"),
+                        result("block/result", Signature.Direction.OUT)));
+
+        Task t4 = task("t4", sig("multiply", MultiplierImpl.class),
+                context("multiply", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
+                        result("arg/t4", Signature.Direction.IN)));
+
+        Task t5 = task("t5", sig("add", AdderImpl.class),
+                context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
+                        result("arg/t5", Signature.Direction.IN)));
+
+        Task t6 = task("t6", sig("average", AveragerImpl.class),
+                context("average", inEnt("arg/t4"), inEnt("arg/t5"),
+                        result("block/result", Signature.Direction.OUT)));
+
+        Block block = block("block", t4, t5,
+                alt(opt(condition((Context<Double> cxt) -> v(cxt, "t4") > v(cxt, "t5")), t3),
+                        opt(condition((Context<Double> cxt) -> v(cxt, "t4") <= v(cxt, "t5")), t6)));
+
+
+        Block result = exert(block);
+        assertEquals(value(context(result), "block/result"), 400.00);
+    }
+
+    @Test
+    public void loopBlock() throws Exception {
+        Block block = block("block",
+                context(ent("x1", 10.0), ent("x2", 20.0), ent("z", 100.0)),
+                loop(condition((Context<Double> scope) -> value(scope, "x1") + value(scope, "x2")
+                                < value(scope, "z")),
+                        task(ent("x1", invoker("x1 + 3", args("x1"))))));
+
+        block = exert(block);
+        assertEquals(value(context(block), "x1"), 82.00);
+    }
+
 	@Test
 	public void jobPipeline() throws Exception {
 
@@ -248,6 +292,69 @@ public class ArithmeticMograms {
 		assertTrue(get(context, "j1/t3/result/y").equals(400.0));
 	}
 
+    @Test
+    public void amorphousModel() throws Exception {
+
+        Morpher mFi1Morpher = (mgr, mFi, value) -> {
+            Fidelity<Signature> fi =  mFi.getFidelity();
+            if (fi.getSelectedName().equals("add")) {
+                if (((Double) value) <= 200.0) {
+                    mgr.morph("sysFi2");
+                } else {
+                    mgr.morph("sysFi3");
+                }
+            }
+        };
+
+        Morpher mFi2Morpher = (mgr, mFi, value) -> {
+            Fidelity<Signature> fi =  mFi.getFidelity();
+            if (fi.getSelectedName().equals("divide")) {
+                if (((Double) value) <= 9.0) {
+                    mgr.morph("sysFi4");
+                } else {
+                    mgr.morph("sysFi3");
+                }
+            }
+        };
+
+        Fidelity<Fidelity> fi2 = fi("sysFi2",fi("divide", "mFi2"), fi("multiply", "mFi3"));
+        Fidelity<Fidelity> fi3 = fi("sysFi3", fi("average", "mFi2"), fi("divide", "mFi3"));
+        Fidelity<Fidelity> fi4 = fi("sysFi4", fi("average", "mFi3"));
+
+        Signature add = sig("add", AdderImpl.class,
+                result("result/y1", inPaths("arg/x1", "arg/x2")));
+        Signature subtract = sig("subtract", SubtractorImpl.class,
+                result("result/y2", inPaths("arg/x1", "arg/x2")));
+        Signature average = sig("average", AveragerImpl.class,
+                result("result/y2", inPaths("arg/x1", "arg/x2")));
+        Signature multiply = sig("multiply", MultiplierImpl.class,
+                result("result/y1", inPaths("arg/x1", "arg/x2")));
+        Signature divide = sig("divide", DividerImpl.class,
+                result("result/y2", inPaths("arg/x1", "arg/x2")));
+
+        // three entry multifidelity model with morphers
+        Model mod = model(inEnt("arg/x1", 90.0), inEnt("arg/x2", 10.0),
+                ent("mFi1", mFi(mFi1Morpher, add, multiply)),
+                ent("mFi2", mFi(mFi2Morpher, average, divide, subtract)),
+                ent("mFi3", mFi(average, divide, multiply)),
+                fi2, fi3, fi4,
+                response("mFi1", "mFi2", "mFi3", "arg/x1", "arg/x2"));
+
+        // fidelities morphed by the model's fidelity manager
+        Context out = response(mod);
+        logger.info("out: " + out);
+        assertTrue(get(out, "mFi1").equals(100.0));
+        assertTrue(get(out, "mFi2").equals(9.0));
+        assertTrue(get(out, "mFi3").equals(50.0));
+
+        // first closing the fidelity for mFi1
+        // then fidelities morphed by the model's fidelity manager accordingly
+        out = response(mod , fi("multiply", "mFi1"));
+        logger.info("out: " + out);
+        assertTrue(get(out, "mFi1").equals(900.0));
+        assertTrue(get(out, "mFi2").equals(50.0));
+        assertTrue(get(out, "mFi3").equals(9.0));
+    }
 }
 	
 	

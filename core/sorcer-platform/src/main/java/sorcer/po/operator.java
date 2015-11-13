@@ -405,10 +405,13 @@ public class operator {
 	}
 
 	public static ServiceInvoker invoker(Exertion exertion) {
-		return new ExertInvoker(exertion);
-	}
+        return new ExertInvoker(exertion);
+    }
 
-	public static InvokeIncrementor inc(String path) {
+    public static ServiceInvoker invoker(sorcer.eo.operator.Args args) {
+        return new CmdInvoker(args.argsToStrings());
+    }
+    public static InvokeIncrementor inc(String path) {
 		return new IntegerIncrementor(path, 1);
 	}
 

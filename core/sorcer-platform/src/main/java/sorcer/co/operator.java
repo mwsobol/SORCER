@@ -372,9 +372,13 @@ public class operator {
         return srv(sig, context);
     }
 
+    public static Srv ent(String name, Signature sig, Context context) {
+        return srv(name, sig, context);
+    }
 	public static Srv ent(Signature sig) {
 		return srv(sig);
 	}
+
 	public static DependencyEntry dep(String path, List<String> paths) {
 		return new DependencyEntry(path, paths);
 	}

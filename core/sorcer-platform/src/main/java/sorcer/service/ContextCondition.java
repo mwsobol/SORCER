@@ -22,8 +22,8 @@ import java.io.Serializable;
  * Created by Mike Sobolewski on 10/30/15.
  */
 @FunctionalInterface
- public interface ContextCondition extends Serializable {
+ public interface ContextCondition<T> extends Serializable {
 
-    boolean call(Context context) throws MogramException;
+    boolean call(Context<T> context) throws MogramException;
 
 }
