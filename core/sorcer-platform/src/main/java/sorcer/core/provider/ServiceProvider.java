@@ -726,7 +726,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 					delegate.initSpaceSupport();
 					return null;
 				}
-			}, 1000, TimeUnit.MILLISECONDS);
+			}, delegate.spaceTakerDelay, TimeUnit.MILLISECONDS);
 		} catch (Throwable e) {
 			initFailed(e);
 		}

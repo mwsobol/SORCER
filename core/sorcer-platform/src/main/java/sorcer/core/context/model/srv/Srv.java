@@ -16,6 +16,8 @@ import java.rmi.RemoteException;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
+import static sorcer.eo.operator.task;
+
 /**
  * Created by Mike Sobolewski on 4/14/15.
  */
@@ -160,11 +162,39 @@ public class Srv extends Entry<Object> implements Variability<Object>, Arg,
                 } catch (Exception e) {
                     throw new EvaluationException(e);
                 }
-            } else
-                throw new EvaluationException("No model available for entry: " + this);
+            } else if (((SignatureEntry)_2).getContext() != null) {
+                try {
+                    return execSignature(((SignatureEntry)_2)._2,
+                            ((SignatureEntry)_2).getContext());
+                } catch (MogramException e) {
+                    throw new EvaluationException(e);
+                }
+            }
+            throw new EvaluationException("No model available for entry: " + this);
         } else {
             return super.getValue(entries);
         }
+    }
+
+    public Object execSignature(Signature sig, Context scope) throws MogramException {
+        String[] ips = sig.getReturnPath().inPaths;
+        String[] ops = sig.getReturnPath().outPaths;
+        Context incxt = scope;
+        if (sig.getReturnPath() != null) {
+            incxt.setReturnPath(sig.getReturnPath());
+        }
+        Context outcxt = null;
+        try {
+            outcxt = ((Task) task(sig, incxt).exert()).getContext();
+            if (ops != null && ops.length > 0) {
+                return outcxt.getSubcontext(ops);
+            } else if (sig.getReturnPath() != null) {
+                return outcxt.getReturnValue();
+            }
+        } catch (Exception e) {
+            throw new MogramException(e);
+        }
+        return outcxt;
     }
 
     public Object getSrvValue() {

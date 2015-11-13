@@ -352,6 +352,20 @@ public interface Signature extends Service, Comparable, Dependency, Identifiable
 		public String getName() {
 			return toString();
 		}
+
+        static public Direction fromString(String direction) {
+            if (direction == null) {
+                return null;
+            } else if (direction.equals(""+IN)) {
+                return IN;
+            } else if (direction.equals(""+OUT)) {
+                return OUT;
+            } else if (direction.equals(""+INOUT)) {
+                return INOUT;
+            } else {
+                return null;
+            }
+        }
 	};
 
     public static class From extends ArrayList<String> {

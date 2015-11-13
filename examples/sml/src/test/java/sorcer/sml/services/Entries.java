@@ -6,8 +6,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
+import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.core.context.model.ent.Entry;
-import sorcer.core.invoker.Invocable;
 import sorcer.service.*;
 
 import java.rmi.RemoteException;
@@ -16,9 +16,10 @@ import static java.lang.Math.pow;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
+import static sorcer.co.operator.direction;
 import static sorcer.eo.operator.*;
 import static sorcer.po.operator.*;
-
+import static sorcer.service.Signature.Direction;
 
 /**
  * @author Mike Sobolewski
@@ -35,16 +36,22 @@ public class Entries {
 
 		Entry x0 = ent("arg/x1", 100.0);
 		assertEquals(100.0, value(x0));
+        assertTrue(direction(x0) == null);
 
 		Entry x1 = inEnt("arg/x1", 20.0);
 		assertEquals(20.0, value(x1));
+        assertTrue(direction(x1) == Direction.IN);
 
 		Entry x2 = outEnt("arg/x2", 80.0);
 		assertEquals(80.0, value(x2));
+        assertTrue(direction(x2) == Direction.OUT);
 
+        // entry of entry
 		Entry x3 = inoutEnt("arg/x3", x2);
 		assertEquals(80.0, value(x3));
+        assertTrue(direction(x3) == Direction.INOUT);
 		assertEquals(name(asis(x3)), "arg/x2");
+        assertTrue(direction((Entry) asis(x3)) == Direction.OUT);
 	}
 
 	@Test
@@ -106,9 +113,18 @@ public class Entries {
 
 		Entry y2 = lambda("add", (Context<Double> cxt) ->
 						value(cxt, "x1") + value(cxt, "x2"),
-				context(ent("x1", 10.0), ent("x2", 20.0)));
+				    context(ent("x1", 10.0), ent("x2", 20.0)));
 
 		assertEquals(30.0, value(y2));
 	}
 
+    @Test
+    public void signatureEntry() throws Exception {
+
+        Entry y1 = ent(sig("add", AdderImpl.class, result("add/out",
+                        inPaths("add/x1", "add/x2"))),
+                    context(inEnt("x1", 10.0), inEnt("x2", 20.0)));
+
+        assertEquals(30.0, value(y1));
+    }
 }

@@ -262,14 +262,22 @@ public class operator {
 		return service;
 	}
 
-	public static Srv srv(String name, Identifiable item) {
+    public static Srv srv(String name, Identifiable item) {
+        return srv(name,  item,  null);
+    }
+
+    public static Srv srv(Identifiable item, Context context) {
+        return srv(null,  item,  context);
+    }
+
+	public static Srv srv(String name, Identifiable item, Context context) {
 		String srvName = item.getName();
 		if (name != null)
 			srvName = name;
 
 		if (item instanceof Signature) {
 			return new Srv(srvName,
-					new SignatureEntry(item.getName(), (Signature) item));
+					new SignatureEntry(item.getName(), (Signature) item, context));
 		} else if (item instanceof Mogram) {
 			return new Srv(srvName,
 					new MogramEntry(item.getName(), (Mogram) item));
@@ -312,6 +320,14 @@ public class operator {
 		}
 	}
 
+    public static String annotation(Entry entry) {
+        return entry.annotation();
+    }
+
+    public static Signature.Direction direction(Entry entry) {
+        return Signature.Direction.fromString(entry.annotation());
+    }
+
 	public static <T> Srv lambda(String path, ContextEntry<T> call) {
 		return new Srv(path, call);
 	}
@@ -351,6 +367,10 @@ public class operator {
 	public static Par ent(String path, Invocation invoker) {
 		return new Par(path, invoker);
 	}
+
+    public static Srv ent(Signature sig, Context context) {
+        return srv(sig, context);
+    }
 
 	public static Srv ent(Signature sig) {
 		return srv(sig);

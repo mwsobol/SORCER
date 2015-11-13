@@ -84,9 +84,9 @@ public class Entry<T> extends Tuple2<String, T> implements Service, Dependency, 
 		this.index = index;
 	}
 
-	public Entry(final String path, final T value, final String association) {
+	public Entry(final String path, final T value, final String annotation) {
 		this(path, value);
-		this.annotation = association;
+		this.annotation = annotation;
 	}
 
 	@Override

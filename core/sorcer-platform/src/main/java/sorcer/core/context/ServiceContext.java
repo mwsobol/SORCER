@@ -968,17 +968,27 @@ public class ServiceContext<T> extends ServiceMogram implements
 
 	public Context mark(String path, String association) throws ContextException {
 		int firstAPS = association.indexOf(APS);
-		if (firstAPS <= 0)
-			throw new ContextException(
-					"No attribute or metaattribute specified in: "
-							+ association);
+        String assoc = association;
+		if (firstAPS <= 0) {
+            if (association.toLowerCase().equals(Context.DA_IN)) {
+                assoc = Context.CONTEXT_PARAMETER
+                        + APS + Context.DA_IN + APS + APS;
+            } else if (association.toLowerCase().equals(Context.DA_OUT)) {
+                assoc = Context.CONTEXT_PARAMETER
+                        + APS + Context.DA_OUT + APS + APS;
+            } else if (association.toLowerCase().equals(Context.DA_INOUT)) {
+                assoc = Context.CONTEXT_PARAMETER
+                        + APS + Context.DA_INOUT + APS + APS;
+            } else {
+                throw new ContextException(
+                        "No attribute or metaattribute specified in: "
+                                + association);
+            }
+        }
 
-		String[] attributes = SorcerUtil.tokenize(association, APS);
-		String values = association.substring(attributes[0].length() + 1);
-		if (attributes.length == 2)
-			return addComponentAssociation(path, attributes[0], values);
-		else
-			return addCompositeAssociation(path, attributes[0], values);
+		String[] attributes = SorcerUtil.tokenize(assoc, APS);
+		String values = assoc.substring(attributes[0].length() + 1);
+        return addComponentAssociation(path, attributes[0], values);
 	}
 
 	public Context addComponentAssociation(String path, String attribute,
