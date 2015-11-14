@@ -8,18 +8,9 @@ import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.core.context.model.ent.Entry;
-import sorcer.core.context.model.par.ParModel;
-import sorcer.core.invoker.CmdInvoker;
-import sorcer.core.invoker.ServiceInvoker;
 import sorcer.service.*;
 import sorcer.util.GenericUtil;
-import sorcer.util.Sorcer;
-import sorcer.util.exec.ExecUtils;
-
-import java.io.File;
-import java.io.StringReader;
 import java.rmi.RemoteException;
-import java.util.Properties;
 
 import static java.lang.Math.pow;
 import static org.junit.Assert.assertEquals;
@@ -31,7 +22,6 @@ import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.args;
 import static sorcer.eo.operator.value;
 import static sorcer.po.operator.*;
-import static sorcer.po.operator.set;
 import static sorcer.service.Signature.Direction;
 import static sorcer.util.exec.ExecUtils.CmdResult;
 

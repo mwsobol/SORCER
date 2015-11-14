@@ -5,6 +5,8 @@
 
 package sorcer.util.exec;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sorcer.service.*;
 
 import java.io.ByteArrayOutputStream;
@@ -22,7 +24,9 @@ import java.rmi.RemoteException;
  */
 public class ExecUtils {
 
-	private ExecUtils() {
+    private static Logger logger = LoggerFactory.getLogger(ExecUtils.class.getName());
+
+    private ExecUtils() {
 	}
 
 	/**
@@ -186,11 +190,13 @@ public class ExecUtils {
 		}
 		process.waitFor();
 		int exitValue = process.exitValue();
+        logger.info("exitValue: " + exitValue);
 
 		if (stdout != null) {
 			stdout.throwIfHadException();
 			out = new String(stdout.getResult());
-		}
+            logger.info("out: " + out);
+        }
 		stderr.throwIfHadException();
 		String err = new String(stderr.getResult());
 
