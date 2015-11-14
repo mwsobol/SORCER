@@ -500,7 +500,7 @@ public class ProviderDelegate {
 		}
 
 		try {
-			spaceTakerDelay = (Integer) jconfig.getEntry(ServiceProvider.COMPONENT, SPACE_TAKER_DELAY, Integer.class,
+			spaceTakerDelay = (Integer) jconfig.getEntry(ServiceProvider.COMPONENT, SPACE_TAKER_DELAY, int.class,
 					1000); // defult 1000 milisecnds
 		} catch (Exception e) {
 			logger.warn("Problem getting {}.{}", ServiceProvider.COMPONENT, SPACE_TAKER_DELAY, e);
