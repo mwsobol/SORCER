@@ -37,19 +37,6 @@ public class Services {
     private final static Logger logger = LoggerFactory.getLogger(Services.class);
 
     @Test
-    public void lambdaService() throws Exception  {
-
-          Service srv = (Servicer servicer, Arg[] args) -> {
-//        Service srv = (servicer,args) -> {
-//            Entry e = (Entry)servicer;
-            return value((Entry)servicer);
-          };
-
-           Object obj = srv.exec(ent("x", 20.0), ent("y", 30.0));
-
-    }
-
-    @Test
     public void evaluateModel() throws Exception  {
 
         Model context = model(ent("x1", 20.0), ent("x2", 80.0),
@@ -76,6 +63,18 @@ public class Services {
                         + 30)));
         logger.info("invoke value: " + value(mo, "lambda"));
         assertEquals(value(mo, "lambda"), 60.0);
+    }
+
+    @Test
+    public void lambdaService() throws Exception  {
+
+        Service srv = (Servicer servicer, Arg[] args) -> {
+            set((Entry) servicer, value((Entry) args[0]));
+            return servicer;
+        };
+
+        Entry e = (Entry) exec(srv, ent("x", 20.0), ent("y", 30.0));
+        assertEquals(value(e), 30.0);
     }
 
     @Test

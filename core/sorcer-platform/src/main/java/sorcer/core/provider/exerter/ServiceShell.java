@@ -70,7 +70,7 @@ import static sorcer.eo.operator.*;
  * @author Mike Sobolewski
  */
 @SuppressWarnings("rawtypes")
-public class ServiceShell implements RemoteServiceShell, Servicer, Exerter, Callable {
+public class ServiceShell implements RemoteServiceShell, Exerter, Callable {
 	protected final static Logger logger = LoggerFactory.getLogger(ServiceShell.class);
 	private Servicer service;
 	private Mogram mogram;

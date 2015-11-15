@@ -1750,22 +1750,35 @@ public class operator {
 
 	public static <T extends Mogram> T exec(Servicer service, Mogram mogram)
 			throws TransactionException, MogramException, RemoteException {
-		return new sorcer.core.provider.exerter.ServiceShell().exec(service, mogram, null);
+		if (service instanceof Signature){
+			return exec((Signature)service, mogram, (Transaction)null);
+		} else {
+			return new sorcer.core.provider.exerter.ServiceShell().exec(service, mogram, null);
+		}
 	}
-
-	public static <T extends Mogram> T exec(Signature signature, Mogram mogram)
-			throws ExertionException {
-		return exec(signature, mogram, null);
-	}
+//	public static <T extends Mogram> T exec(Signature signature, Mogram mogram)
+//			throws ExertionException {
+//		return exec(signature, mogram, null);
+//	}
 
 	public static <T extends Mogram> T exec(Signature signature, Mogram mogram, Transaction txn)
 			throws ExertionException {
 		return new sorcer.core.provider.exerter.ServiceShell().exec(signature, mogram, txn);
 	}
 
-	public static <T extends Servicer> Object exec(T service, Arg... entries)
+	public static Object exec(Servicer servicer, Arg... entries)
 			throws MogramException, TransactionException, RemoteException {
-		return new sorcer.core.provider.exerter.ServiceShell().exec(service, entries);
+		return new sorcer.core.provider.exerter.ServiceShell().exec(servicer, entries);
+	}
+
+	public static Object exec(Service service, Servicer servicer, Arg...  args)
+			throws MogramException, TransactionException, RemoteException {
+		if (servicer instanceof Signature &&   args[0] instanceof Mogram) {
+			return exec(servicer, (Mogram) args[0], (Transaction) null);
+		} else {
+			// lambada service
+			return service.exec(servicer, args);
+		}
 	}
 
 	public static <T> T eval(Context<T> model, Arg... entries)
