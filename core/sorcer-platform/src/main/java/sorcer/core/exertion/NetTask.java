@@ -105,11 +105,11 @@ public class NetTask extends ObjectTask implements Invocation<Object> {
 		this.serviceFidelity.getSelects().addAll(Arrays.asList(signatures));
 	}
 
-	public void setService(Service provider) {
+	public void setService(Servicer provider) {
 		((NetSignature) getProcessSignature()).setProvider(provider);
 	}
 
-	public Service getService() {
+	public Servicer getService() {
 		return ((NetSignature) getProcessSignature()).getService();
 	}
 

@@ -1,6 +1,5 @@
 package sorcer.provider.adder;
 
-import net.jini.core.transaction.Transaction;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.sorcer.test.ProjectContext;
@@ -33,10 +32,10 @@ public class LocalMograms {
 	@Test
 	public void exertTask() throws Exception {
 
-		Service t5 = task("t5", sig("add", AdderImpl.class),
+		Servicer t5 = task("t5", sig("add", AdderImpl.class),
 				cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0)));
 
-		Service out = exert(t5);
+		Servicer out = exert(t5);
 		Context cxt = context(out);
 		logger.info("out context: " + cxt);
 		logger.info("context @ arg/x1: " + get(cxt, "arg/x1"));

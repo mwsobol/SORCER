@@ -569,6 +569,14 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		return isBusy();
 	}
 
+	@Override
+	public <T extends Servicer> Object exec(T srv, Arg... entries) throws MogramException, RemoteException {
+		if (srv instanceof Mogram)
+			return service((Mogram) srv);
+		else
+			return null;
+	}
+
 	/**
 	 * This method spawns a separate thread to destroy this provider after 1
 	 * sec, should make a reasonable attempt to let this remote call return

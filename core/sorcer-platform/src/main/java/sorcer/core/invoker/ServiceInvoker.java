@@ -548,4 +548,12 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 		this.lambda = lambda;
 	}
 
+	@Override
+	public <T extends Servicer> Object exec(T srv, Arg... entries) throws MogramException, RemoteException {
+		if (srv instanceof Context) {
+			invokeContext = (Context) srv;
+			return getValue(entries);
+		}
+		return null;
+	}
 }

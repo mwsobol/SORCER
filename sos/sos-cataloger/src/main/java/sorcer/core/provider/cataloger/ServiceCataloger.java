@@ -46,7 +46,7 @@ import sorcer.core.provider.cataloger.ui.CatalogerUI;
 import sorcer.core.signature.NetSignature;
 import sorcer.jini.lookup.entry.SorcerServiceInfo;
 import sorcer.service.Context;
-import sorcer.service.Service;
+import sorcer.service.Servicer;
 import sorcer.service.Task;
 import sorcer.serviceui.UIDescriptorFactory;
 import sorcer.serviceui.UIFrameFactory;
@@ -68,7 +68,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 /**
- * The facility for maintaining a cache of all SORCER providers {@link Service}s
+ * The facility for maintaining a cache of all SORCER providers {@link Servicer}s
  * as specified by <code>provider.template.match=sorcer.service.Service</code>
  * in the <code>sorcer.env</code> configuration file.
  * <p>
@@ -799,7 +799,7 @@ public class ServiceCataloger extends ServiceProvider implements Cataloger {
 						serviceName = service.getClass().getName();
 				}
 				// list only interfaces of the Service type in package name
-				if (service instanceof Service) {
+				if (service instanceof Servicer) {
 					if (map.get(serviceName) == null) {
 						map.put(serviceName, SorcerUtil.arrayToString(clazz)
 								+ ";;" + SorcerUtil.arrayToString(attributes));
@@ -838,7 +838,7 @@ public class ServiceCataloger extends ServiceProvider implements Cataloger {
 						serviceName = service.getClass().getName();
 				}
 				// list only interfaces of the Service type in package name
-				if (service instanceof Service) {
+				if (service instanceof Servicer) {
 					String annotation = RMIClassLoader.getClassAnnotation(service.getClass());
 					if(annotation!=null && annotation.length()>0) {
 						StringTokenizer tok = new StringTokenizer(annotation, " ");

@@ -245,7 +245,7 @@ public class ProviderDelegate {
 	/**
 	 * An outer service proxy, by default the proxy of this provider, is used
 	 * by service requestors if provider's smart proxy is absent. At least
-	 * two generic Remote interface: {@link Service} and {@link Provider} are
+	 * two generic Remote interface: {@link Servicer} and {@link Provider} are
 	 * implemented by outer proxies of all SORCER service providers. Each SORCER
 	 * provider uses outer proxy to actually call directly its provider and make
 	 * redirected calls using its inner proxy (redirected remote invocations).
@@ -1089,7 +1089,7 @@ public class ProviderDelegate {
 			Provider requestor) throws MogramException,
 			RemoteException, SignatureException, ContextException {
 		// check if we do not look with the same exertion
-		Service recipient = null;
+		Servicer recipient = null;
 		String prvName = task.getProcessSignature().getProviderName();
 		NetSignature fm = (NetSignature) task.getProcessSignature();
 		ServiceID serviceID = fm.getServiceID();
@@ -1116,11 +1116,11 @@ public class ProviderDelegate {
 			}
 		}
 		if (serviceID != null)
-			recipient = (Service) Accessor.get().getService(serviceID);
+			recipient = (Servicer) Accessor.get().getService(serviceID);
 		else if (prvType != null && prvName != null) {
-			recipient = (Service) Accessor.get().getService(prvName, prvType);
+			recipient = (Servicer) Accessor.get().getService(prvName, prvType);
 		} else if (prvType != null) {
-			recipient = (Service) Accessor.get().getService(null, prvType);
+			recipient = (Servicer) Accessor.get().getService(null, prvType);
 		}
 		if (recipient == null) {
 			visited.remove(serviceID);

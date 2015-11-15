@@ -3159,4 +3159,10 @@ public class ServiceContext<T> extends ServiceMogram implements
 		return modelStrategy.getDependers();
 	}
 
+	@Override
+	public <T extends Servicer> Object exec(T srv, Arg... entries) throws MogramException, RemoteException {
+		if (srv instanceof Context)
+			scope = (((Context)srv));
+		return getResponse(entries);
+	}
 }

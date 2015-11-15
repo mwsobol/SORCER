@@ -165,7 +165,7 @@ public class Signatures {
 	public void localService() throws Exception {
 
 		// request the local service
-		Service as = task("as", sig("add", AdderImpl.class),
+		Servicer as = task("as", sig("add", AdderImpl.class),
 				context("add",
 						inEnt("arg/x1", 20.0),
 						inEnt("arg/x2", 80.0),
@@ -180,7 +180,7 @@ public class Signatures {
 	public void referencingRemoteProvider() throws Exception {
 
 		// request the remote service
-		Service as = task("as", sig("add", Adder.class),
+		Servicer as = task("as", sig("add", Adder.class),
 				context("add",
 						inEnt("arg/x1", 20.0),
 						inEnt("arg/x2", 80.0),
@@ -201,7 +201,7 @@ public class Signatures {
 		assertTrue(prv instanceof Proxy);
 
 		// request the remote service
-		Service as = task("as", ps,
+		Servicer as = task("as", ps,
 				context("add",
 						inEnt("arg/x1", 20.0),
 						inEnt("arg/x2", 80.0),
@@ -306,7 +306,7 @@ public class Signatures {
 	public void netletSignatureprovider() throws Exception {
 		String netlet = System.getProperty("project.dir")+"/src/main/netlets/ha-job-local.ntl";
 
-		Service srv = (Service)provider(sig(file(netlet)));
+		Servicer srv = (Servicer)provider(sig(file(netlet)));
 //		logger.info("job service: " + exec(srv));
 		assertTrue(exec(srv).equals(400.0));
 	}
@@ -326,11 +326,11 @@ public class Signatures {
 		Signature ps = sig("add", AdderImpl.class, prvName("Adder"), outConnector);
 
 		// request the remote service
-		Service as = task("as", ps, cxt);
+		Servicer as = task("as", ps, cxt);
 
 		logger.info("input context: " + context(as));
 
-		Service task = exert(as);
+		Servicer task = exert(as);
 
 		logger.info("input context: " + context(task));
 
@@ -355,11 +355,11 @@ public class Signatures {
 		Signature ps = sig("add", Adder.class, prvName("Adder"), inc);
 
 		// request the remote service
-		Service as = task("as", ps, cxt);
+		Servicer as = task("as", ps, cxt);
 
 		logger.info("input context: " + context(as));
 
-		Service task = exert(as);
+		Servicer task = exert(as);
 
 		logger.info("input context: " + context(task));
 

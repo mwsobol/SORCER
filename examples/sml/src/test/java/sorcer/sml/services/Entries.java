@@ -91,6 +91,11 @@ public class Entries {
                 set(y, value(cxt, "y"));
             return value(y) + value(x) + value(z);
         }
+
+        @Override
+        public <T extends Servicer> Object exec(T srv, Arg... entries) throws MogramException, RemoteException {
+            return invoke((Context)srv, entries);
+        }
     };
 
 	@Test

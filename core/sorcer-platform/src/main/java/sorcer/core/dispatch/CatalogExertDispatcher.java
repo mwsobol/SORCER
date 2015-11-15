@@ -136,7 +136,7 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
             NetSignature sig = (NetSignature) task.getProcessSignature();
             // Catalog lookup or use Lookup Service for the particular
             // service
-            Service service = (Service) Accessor.get().getService(sig);
+            Servicer service = (Servicer) Accessor.get().getService(sig);
             /*if (service == null && task.isProvisionable()) {
                 MonitoringSession monSession = MonitorUtil.getMonitoringSession(task);
                 if (task.isMonitorable() && monSession!=null) {
@@ -208,7 +208,7 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
                         }
                         else {
                             logger.info("Problem exerting task, retrying " + tried + " time: " + xrt.getName() + " " + re.getMessage());
-                            service = (Service) Accessor.get().getService(sig);
+                            service = (Servicer) Accessor.get().getService(sig);
                             try {
                                 logger.info("+++++++++++++++Got service: " + ((Provider)service).getProviderID());
                             } catch (Exception e) {

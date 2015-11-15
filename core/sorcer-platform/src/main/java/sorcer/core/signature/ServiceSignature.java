@@ -631,4 +631,12 @@ public class ServiceSignature implements Signature, SorcerConstants {
 		return dependers;
 	}
 
+	@Override
+	public <T extends Servicer> Object exec(T srv, Arg... entries) throws MogramException, RemoteException {
+		if (srv instanceof Exertion) {
+			Provider prv = (Provider) Accessor.get().getService(this);
+			return prv.exec(srv);
+		}
+		return null;
+	}
 }

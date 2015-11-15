@@ -227,6 +227,11 @@ public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Ob
             morpher.morph(this, mFi, obj);
     }
 
+    @Override
+    public <T extends Servicer> Object exec(T srv, Arg... entries) throws MogramException, RemoteException {
+        return null;
+    }
+
     static class Session {
         long eventID;
         Object source;

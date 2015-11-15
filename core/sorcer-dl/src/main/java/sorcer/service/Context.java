@@ -18,7 +18,6 @@
 
 package sorcer.service;
 
-import net.jini.id.Uuid;
 import sorcer.core.SorcerConstants;
 import sorcer.core.provider.Provider;
 
@@ -27,7 +26,6 @@ import sorcer.service.modeling.Model;
 import java.io.Serializable;
 import java.net.URL;
 import java.rmi.RemoteException;
-import java.security.Principal;
 import java.util.*;
 
 /**
@@ -57,7 +55,7 @@ import java.util.*;
  * critical when a namespace in the context may change or when data nodes
  * contain remote references, for example a URL. It is usually assumed that
  * provider-enforced data associations are more stable than user-oriented paths.
- * Each direct service invocation {@link Service#service} requires data in the
+ * Each direct service invocation {@link Servicer#service} requires data in the
  * ServiceContext format.
  * <p>
  * Service contexts are defined by this common interface with efficient

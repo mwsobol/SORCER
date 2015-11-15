@@ -67,7 +67,7 @@ public class operator {
 		return p;
 	}
 
-	public static Par map(Par par, Service map) {
+	public static Par map(Par par, Servicer map) {
 		par.setMappable((Mappable)map);
 		return par;
 	}
@@ -82,7 +82,7 @@ public class operator {
 		if (object instanceof Context) {
 			p = new Par(path, argument);
 			p.setScope(object);
-		} else if (object instanceof Service) {
+		} else if (object instanceof Servicer) {
 			p = new Par(path, argument, object);
 		}
 		return p;
@@ -102,7 +102,7 @@ public class operator {
 		return p;
 	}
 
-	public static Par pipe(Mappable in, String name, String path, Service out) throws ContextException {
+	public static Par pipe(Mappable in, String name, String path, Servicer out) throws ContextException {
 		Par p = new Par(name, path, out);
 		add(p, in);
 		return p;

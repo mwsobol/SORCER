@@ -42,7 +42,7 @@ import java.util.Vector;
  * 
  * @author Mike Sobolewski
  */
-abstract public class RendezvousBean implements Service, Executor {
+abstract public class RendezvousBean implements Servicer, Executor {
 	private Logger logger = LoggerFactory.getLogger(RendezvousBean.class.getName());
 
 	protected ServiceProvider provider;
@@ -165,10 +165,10 @@ abstract public class RendezvousBean implements Service, Executor {
             if (mogram instanceof ObjectJob || mogram instanceof ObjectBlock)
                 out = execute(mogram, transaction);
             else
-                out = getControlFlownManager((Exertion)mogram).process();
+                out = getControlFlownManager(mogram).process();
 
 			if (mogram instanceof Exertion)
-				((Exertion)mogram).getDataContext().setExertion(null);
+				mogram.getDataContext().setExertion(null);
         }
 		catch (Exception e) {
 			e.printStackTrace();
@@ -180,7 +180,7 @@ abstract public class RendezvousBean implements Service, Executor {
     protected ControlFlowManager getControlFlownManager(Mogram exertion) throws ExertionException {
         try {
             if (exertion instanceof Exertion) {
-                if (((Exertion)exertion).isMonitorable())
+                if (exertion.isMonitorable())
                     return new MonitoringControlFlowManager((Exertion)exertion, delegate, this);
                 else
                     return new ControlFlowManager((Exertion)exertion, delegate, this);
@@ -205,4 +205,15 @@ abstract public class RendezvousBean implements Service, Executor {
 		return execute(mogram, null);
 	}
 
+	@Override
+	public <T extends Servicer> Object exec(T srv, Arg... entries) throws MogramException, RemoteException {
+		if (srv instanceof Mogram)
+			try {
+				return service((Mogram) srv);
+			} catch (TransactionException e) {
+				throw new MogramException(e);
+			}
+		else
+			return null;
+	}
 }

@@ -434,21 +434,21 @@ public class CollectionOperators {
 	@Test
 	public void serviceMogramming() throws Exception {
 
-		Service c4 = context("multiply", inEnt("arg/x1"), inEnt("arg/x2"),
+		Servicer c4 = context("multiply", inEnt("arg/x1"), inEnt("arg/x2"),
 				outEnt("result/y"));
 
-		Service c5 = context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
+		Servicer c5 = context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
 				outEnt("result/y"));
 
-		Service t3 = task("t3", sig("subtract", SubtractorImpl.class),
+		Servicer t3 = task("t3", sig("subtract", SubtractorImpl.class),
 				context("subtract", inEnt("arg/x1", null), inEnt("arg/x2"),
 						outEnt("result/y")));
 
-		Service t4 = task("t4", sig("multiply", MultiplierImpl.class), c4);
+		Servicer t4 = task("t4", sig("multiply", MultiplierImpl.class), c4);
 
-		Service t5 = task("t5", sig("add", AdderImpl.class), c5);
+		Servicer t5 = task("t5", sig("add", AdderImpl.class), c5);
 
-		Service j1 = job("j1", sig("service", ServiceJobber.class),
+		Servicer j1 = job("j1", sig("service", ServiceJobber.class),
 				job("j2", t4, t5, sig("service", ServiceJobber.class)),
 				t3,
 				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
@@ -468,8 +468,8 @@ public class CollectionOperators {
 		set(x2p, 50.0);
 
 		// update par references
-		Service j2 = exert(j1);
-		Service c4s = taskContext("j1/t4", j2);
+		Servicer j2 = exert(j1);
+		Servicer c4s = taskContext("j1/t4", j2);
 
 		// get service j2 direct result value
 		assertEquals(get(j2, "j1/t3/result/y"), 400.0);

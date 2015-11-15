@@ -321,4 +321,12 @@ import java.util.Map;
 		}
 	}
 
+	@Override
+	public <T extends Servicer> Object exec(T srv, Arg... entries) throws MogramException, RemoteException {
+		if (srv instanceof Context) {
+			conditionalContext = (Context<?>) srv;
+			return isTrue();
+		}
+		return null;
+	}
 }

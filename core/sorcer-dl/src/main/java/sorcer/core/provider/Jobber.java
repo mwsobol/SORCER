@@ -19,7 +19,7 @@ package sorcer.core.provider;
 
 import java.rmi.Remote;
 
-import sorcer.service.Service;
+import sorcer.service.Servicer;
 
 /**
  * A service coordinating a {@link sorcer.service.Job} execution by creating a
@@ -28,5 +28,5 @@ import sorcer.service.Service;
  * 
  * @author Mike Sobolewski
  */
-public interface Jobber extends Service, Remote {
+public interface Jobber extends Servicer, Remote {
 }

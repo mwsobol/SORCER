@@ -236,4 +236,8 @@ public class MultiFidelityMogram extends ServiceMogram {
         fidelityManager.mogram.appendTrace(info);
     }
 
+    @Override
+    public <T extends Servicer> Object exec(T srv, Arg... entries) throws MogramException, RemoteException {
+        return null;
+    }
 }

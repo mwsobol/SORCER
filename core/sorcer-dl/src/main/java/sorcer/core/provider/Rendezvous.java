@@ -19,7 +19,7 @@ package sorcer.core.provider;
 
 import java.rmi.Remote;
 
-import sorcer.service.Service;
+import sorcer.service.Servicer;
 
 
 /**
@@ -29,6 +29,6 @@ import sorcer.service.Service;
  * @author Mike Sobolewski
  */
 
-public interface Rendezvous extends Service, Jobber, Spacer, Concatenator, Remote {
+public interface Rendezvous extends Servicer, Jobber, Spacer, Concatenator, Remote {
 
 }

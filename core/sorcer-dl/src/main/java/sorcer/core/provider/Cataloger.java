@@ -28,7 +28,7 @@ import net.jini.core.lookup.ServiceItem;
 import net.jini.core.lookup.ServiceMatches;
 import net.jini.core.lookup.ServiceTemplate;
 import sorcer.service.Context;
-import sorcer.service.Service;
+import sorcer.service.Servicer;
 
 /**
  * Defines the interface for the SORCER catalog service. It is implemented by
@@ -36,7 +36,7 @@ import sorcer.service.Service;
  * 
  */
 
-public interface Cataloger extends Service, Remote {
+public interface Cataloger extends Servicer, Remote {
 
 	/**
 	 * Returns a SORCER service provider identified by its primary service type.

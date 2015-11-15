@@ -12,7 +12,7 @@ import sorcer.arithmetic.provider.impl.SubtractorImpl;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.service.Context;
 import sorcer.service.Mogram;
-import sorcer.service.Service;
+import sorcer.service.Servicer;
 import sorcer.service.Strategy;
 import sorcer.service.modeling.Model;
 
@@ -180,11 +180,11 @@ public class Services {
     @Test
     public void exertTask() throws Exception {
 
-        Service t5 = task("t5", sig("add", AdderImpl.class),
+        Servicer t5 = task("t5", sig("add", AdderImpl.class),
                 cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
                         outEnt("result/y")));
 
-        Service out = exert(t5);
+        Servicer out = exert(t5);
         Context cxt = context(out);
         logger.info("out context: " + cxt);
         logger.info("context @ arg/x1: " + value(cxt, "arg/x1"));
@@ -199,7 +199,7 @@ public class Services {
     @Test
     public void evaluateTask() throws Exception {
 
-        Service t5 = task("t5", sig("add", AdderImpl.class),
+        Servicer t5 = task("t5", sig("add", AdderImpl.class),
                 cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
                         result("result/y")));
 
@@ -215,19 +215,19 @@ public class Services {
     @Test
     public void exertJob() throws Exception {
 
-        Service t3 = task("t3", sig("subtract", SubtractorImpl.class),
+        Servicer t3 = task("t3", sig("subtract", SubtractorImpl.class),
                 cxt("subtract", inEnt("arg/x1"), inEnt("arg/x2"), outEnt("result/y")));
 
-        Service t4 = task("t4", sig("multiply", MultiplierImpl.class),
+        Servicer t4 = task("t4", sig("multiply", MultiplierImpl.class),
                 // cxt("multiply", in("super/arg/x1"), in("arg/x2", 50.0),
                 cxt("multiply", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
                         outEnt("result/y")));
 
-        Service t5 = task("t5", sig("add", AdderImpl.class),
+        Servicer t5 = task("t5", sig("add", AdderImpl.class),
                 cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
                         outEnt("result/y")));
 
-        Service job = //j1(j2(t4(x1, x2), t5(x1, x2)), t3(x1, x2))
+        Servicer job = //j1(j2(t4(x1, x2), t5(x1, x2)), t3(x1, x2))
                 job("j1", sig(ServiceJobber.class),
                         cxt(inEnt("arg/x1", 10.0),
                                 result("job/result", outPaths("j1/t3/result/y"))),
@@ -241,7 +241,7 @@ public class Services {
         logger.info("srv j1/j2/t4 context: " + context(job, "j1/j2/t4"));
         logger.info("srv j1/j2/t5 context: " + context(job, "j1/j2/t5"));
 
-        Service exertion = exert(job);
+        Servicer exertion = exert(job);
         logger.info("srv job context: " + upcontext(exertion));
         logger.info("exertion value @ j1/t3/arg/x2 = " + get(exertion, "j1/t3/arg/x2"));
         assertEquals(100.0, get(exertion, "j1/t3/arg/x2"));
@@ -252,17 +252,17 @@ public class Services {
     @Test
     public void evaluateJob() throws Exception {
 
-        Service t3 = task("t3", sig("subtract", SubtractorImpl.class),
+        Servicer t3 = task("t3", sig("subtract", SubtractorImpl.class),
                 cxt("subtract", inEnt("arg/x1"), inEnt("arg/x2"), result("result/y")));
 
-        Service t4 = task("t4", sig("multiply", MultiplierImpl.class),
+        Servicer t4 = task("t4", sig("multiply", MultiplierImpl.class),
                 cxt("multiply", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0), result("result/y")));
 
-        Service t5 = task("t5", sig("add", AdderImpl.class),
+        Servicer t5 = task("t5", sig("add", AdderImpl.class),
                 cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0), result("result/y")));
 
         //TODO: CHECK Access.PULL doesn't work with ServiceJobber!!!
-        Service job = //j1(j2(t4(x1, x2), t5(x1, x2)), t3(x1, x2))
+        Servicer job = //j1(j2(t4(x1, x2), t5(x1, x2)), t3(x1, x2))
                 job("j1", sig(ServiceJobber.class), result("job/result", outPaths("j1/t3/result/y")),
                         job("j2", sig(ServiceJobber.class), t4, t5, strategy(Strategy.Flow.PAR, Strategy.Access.PUSH)),
                         t3,

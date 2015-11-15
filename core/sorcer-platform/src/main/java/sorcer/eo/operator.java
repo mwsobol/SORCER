@@ -57,7 +57,6 @@ import sorcer.service.modeling.Variability;
 import sorcer.util.Loop;
 import sorcer.util.ObjectCloner;
 import sorcer.util.Sorcer;
-import sorcer.util.exec.ExecUtils;
 import sorcer.util.url.sos.SdbUtil;
 
 import java.io.File;
@@ -194,26 +193,26 @@ public class operator {
 		return context(entries);
 	}
 
-	public static Context cxt(Service exertion) throws ContextException {
+	public static Context cxt(Servicer exertion) throws ContextException {
 		return upcontext(exertion);
 	}
 
-	public static Context ccxt(Service exertion) throws ContextException {
+	public static Context ccxt(Servicer exertion) throws ContextException {
 		return ((ServiceExertion) exertion).getDataContext();
 	}
 
-	public static Context upcxt(Service exertion) throws ContextException {
+	public static Context upcxt(Servicer exertion) throws ContextException {
 		return upcontext(exertion);
 	}
 
-	public static Context upcontext(Service exertion) throws ContextException {
+	public static Context upcontext(Servicer exertion) throws ContextException {
 		if (exertion instanceof CompoundExertion)
 			return ((ServiceExertion) exertion).getContext();
 		else
 			return ((ServiceExertion) exertion).getDataContext();
 	}
 
-	public static Context taskContext(String path, Service service) throws ContextException {
+	public static Context taskContext(String path, Servicer service) throws ContextException {
 		if (service instanceof ServiceExertion) {
 			return ((CompoundExertion) service).getComponentContext(path);
 		} else
@@ -1744,12 +1743,12 @@ public class operator {
 		}
 	}
 
-	public static <T extends Mogram> T exec(Service service, Mogram mogram, Transaction txn)
+	public static <T extends Mogram> T exec(Servicer service, Mogram mogram, Transaction txn)
 			throws TransactionException, MogramException, RemoteException {
 		return new sorcer.core.provider.exerter.ServiceShell().exec(service, mogram, txn);
 	}
 
-	public static <T extends Mogram> T exec(Service service, Mogram mogram)
+	public static <T extends Mogram> T exec(Servicer service, Mogram mogram)
 			throws TransactionException, MogramException, RemoteException {
 		return new sorcer.core.provider.exerter.ServiceShell().exec(service, mogram, null);
 	}
@@ -1764,7 +1763,7 @@ public class operator {
 		return new sorcer.core.provider.exerter.ServiceShell().exec(signature, mogram, txn);
 	}
 
-	public static <T extends Service> Object exec(T service, Arg... entries)
+	public static <T extends Servicer> Object exec(T service, Arg... entries)
 			throws MogramException, TransactionException, RemoteException {
 		return new sorcer.core.provider.exerter.ServiceShell().exec(service, entries);
 	}
@@ -1823,7 +1822,7 @@ public class operator {
 		return value((Context<Object>) model, evalSelector, entries);
 	}
 
-	public static <T extends Context> T exec(Service model, String evalSelector,
+	public static <T extends Context> T exec(Servicer model, String evalSelector,
 											 Arg... entries) throws ContextException {
 		return value((Context<T>) model, evalSelector, entries);
 	}
@@ -1953,7 +1952,7 @@ public class operator {
 		return values;
 	}
 
-	public static Object get(Service service, String path)
+	public static Object get(Servicer service, String path)
 			throws ContextException, ExertionException {
 		if (service instanceof Exertion)
 			return get((Exertion) service, path);
@@ -2033,7 +2032,7 @@ public class operator {
 		return exertion.getExceptions();
 	}
 
-	public static <T extends Service> T exert(T mogram, Arg... args) throws MogramException {
+	public static <T extends Servicer> T exert(T mogram, Arg... args) throws MogramException {
 		try {
 			if (mogram instanceof Mogram) {
 				return ((Mogram)mogram).exert(null, args);
@@ -2423,7 +2422,7 @@ public class operator {
 		return new OutEndPoint(outComponent, outPath);
 	}
 
-	public static OutEndPoint outPoint(Service outExertion, String outPath) {
+	public static OutEndPoint outPoint(Servicer outExertion, String outPath) {
 		return new OutEndPoint((Exertion)outExertion, outPath);
 	}
 
@@ -2431,7 +2430,7 @@ public class operator {
 		return new InEndPoint(inComponent, inPath);
 	}
 
-	public static InEndPoint inPoint(Service inExertion, String inPath) {
+	public static InEndPoint inPoint(Servicer inExertion, String inPath) {
 		return new InEndPoint((Exertion)inExertion, inPath);
 	}
 
@@ -2450,16 +2449,16 @@ public class operator {
 		}
 	}
 
-	public static List<Service> providers(Signature signature)
+	public static List<Servicer> providers(Signature signature)
 			throws SignatureException {
 		ServiceTemplate st = new ServiceTemplate(null, new Class[] { signature.getServiceType() }, null);
 		ServiceItem[] sis = Accessor.get().getServiceItems(st, null);
 		if (sis == null)
 			throw new SignatureException("No available providers of type: "
 					+ signature.getServiceType().getName());
-		List<Service> servicers = new ArrayList<Service>(sis.length);
+		List<Servicer> servicers = new ArrayList<Servicer>(sis.length);
 		for (ServiceItem si : sis) {
-			servicers.add((Service) si.service);
+			servicers.add((Servicer) si.service);
 		}
 		return servicers;
 	}
@@ -2500,7 +2499,7 @@ public class operator {
 				provider = ((NetSignature) signature).getService();
 				if (provider == null) {
 					provider = Accessor.get().getService(signature);
-					((NetSignature) signature).setProvider((Service)provider);
+					((NetSignature) signature).setProvider((Servicer)provider);
 				}
 			} else if (signature.getClass() == ObjectSignature.class) {
 				if (target != null) {

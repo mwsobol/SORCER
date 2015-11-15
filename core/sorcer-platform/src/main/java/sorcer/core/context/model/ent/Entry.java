@@ -40,7 +40,7 @@ import static sorcer.eo.operator.add;
  * @author Mike Sobolewski
  */
 @SuppressWarnings("unchecked")
-public class Entry<T> extends Tuple2<String, T> implements Service, Dependency, Comparable<T>, Setter, Invocation<T>, Reactive<T>, Arg {
+public class Entry<T> extends Tuple2<String, T> implements Servicer, Dependency, Comparable<T>, Setter, Invocation<T>, Reactive<T>, Arg {
 	private static final long serialVersionUID = 5168783170981015779L;
 
 	public int index;
@@ -275,5 +275,11 @@ public class Entry<T> extends Tuple2<String, T> implements Service, Dependency, 
 	@Override
 	public T invoke(Context<T> context, Arg... entries) throws InvocationException, RemoteException {
 		return _2;
+	}
+
+	@Override
+	public <S extends Servicer> Object exec(S srv, Arg... entries) throws MogramException, RemoteException {
+		_2 = (T) srv;
+		return getValue(entries);
 	}
 }

@@ -27,7 +27,7 @@ import sorcer.core.provider.Provider;
 import sorcer.core.signature.NetSignature;
 import sorcer.service.Context;
 import sorcer.service.ContextManagement;
-import sorcer.service.Service;
+import sorcer.service.Servicer;
 import sorcer.service.Task;
 
 import javax.swing.*;
@@ -454,7 +454,7 @@ public class SignatureDispatcherForProvider implements SignatureDispatchment {
 			Task task = new NetTask(model.getSelectedInterfaceName()
 					+ model.getSelectedMethod(), method);
 			task.setContext(theContext);
-			NetTask task2 = (NetTask) ((Service) provider).service(task,
+			NetTask task2 = (NetTask) ((Servicer) provider).service(task,
 					null);
 			return task2.getContext();
 		} catch (Exception e) {

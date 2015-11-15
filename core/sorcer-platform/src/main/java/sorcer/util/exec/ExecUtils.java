@@ -7,13 +7,11 @@ package sorcer.util.exec;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sorcer.service.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.rmi.RemoteException;
 
 /**
  * Utility methods to interact with and manage native processes started from
@@ -280,7 +278,7 @@ public class ExecUtils {
 	 * @author Dawid Kurzyniec
 	 * @version 1.0
 	 */
-	public static class CmdResult implements Evaluation {
+	public static class CmdResult {
 		final int exitValue;
 		final String out;
 		final String err;
@@ -311,20 +309,6 @@ public class ExecUtils {
 			return sb.toString();
 		}
 
-        @Override
-        public Object asis() throws EvaluationException, RemoteException {
-            return this;
-        }
-
-        @Override
-        public Object getValue(Arg... entries) throws EvaluationException, RemoteException {
-            return out;
-        }
-
-        @Override
-        public Substitutable substitute(Arg... entries) throws SetterException, RemoteException {
-            return null;
-        }
     }
 
 	public static void handleProcess(Process process, InputStream stdin,

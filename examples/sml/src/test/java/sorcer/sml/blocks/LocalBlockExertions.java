@@ -119,12 +119,12 @@ public class  LocalBlockExertions implements SorcerConstants {
 				context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
 						result("block/result")));
 
-		Service sb = block("block",
+		Servicer sb = block("block",
 				context(ent("y1", 100), ent("y2", 200)),
 				alt(opt(condition("{ y1, y2 -> y1 > y2 }", "y1", "y2"), t4),
 						opt(condition("{ y1, y2 -> y1 <= y2 }", "y1", "y2"), t5)));
 
-		Service out = exert(sb);
+		Servicer out = exert(sb);
 //		logger.info("block context1: " + context(block));
 //		logger.info("result: " + value(context(block), "block/result"));
 		assertEquals(value(context(out), "block/result"), 100.00);

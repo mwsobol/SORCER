@@ -72,7 +72,7 @@ public class ProviderProvisionManager {
         }
 
         public void run() {
-            Service service = (Service) Accessor.get().getService(srvToProvision.getSignature());
+            Servicer service = (Servicer) Accessor.get().getService(srvToProvision.getSignature());
             while (service==null && srvToProvision.getProvisionAttempts() < MAX_ATTEMPTS) {
                 srvToProvision.incrementProvisionAttempts();
                 try {

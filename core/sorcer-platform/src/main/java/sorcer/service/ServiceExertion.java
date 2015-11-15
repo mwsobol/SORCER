@@ -46,6 +46,8 @@ import java.security.Principal;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import static sorcer.eo.operator.value;
+
 /**
  * @author Mike Sobolewski
  */
@@ -284,12 +286,12 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
         controlContext.setFlowType(type);
     }
 
-    public void setService(Service provider) {
+    public void setService(Servicer provider) {
         NetSignature ps = (NetSignature) getProcessSignature();
         ps.setProvider(provider);
     }
 
-    public Service getService() {
+    public Servicer getService() {
         NetSignature ps = (NetSignature) getProcessSignature();
         return ps.getService();
     }
@@ -943,6 +945,15 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
     @Override
     public void appendTrace(String info) {
         getControlContext().appendTrace(info);
+    }
+
+    @Override
+    public <T extends Servicer> Object exec(T srv, Arg... entries) throws MogramException, RemoteException {
+        if (srv instanceof Context)        {
+              dataContext = (ServiceContext) srv;
+              return value(this, entries);
+        }
+        return null;
     }
 
     public String describe() {

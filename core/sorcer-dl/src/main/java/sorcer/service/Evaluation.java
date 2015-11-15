@@ -25,7 +25,7 @@ import java.rmi.RemoteException;
  * 
  * @author Mike Sobolewski
  */
-public interface  Evaluation <T> extends Substitutable {
+public interface  Evaluation <T> extends Substitutable, Service {
 
 	/**
 	 * Returns the value of the existing value of this evaluation that might be invalid.

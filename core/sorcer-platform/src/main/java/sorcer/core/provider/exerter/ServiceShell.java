@@ -70,15 +70,15 @@ import static sorcer.eo.operator.*;
  * @author Mike Sobolewski
  */
 @SuppressWarnings("rawtypes")
-public class ServiceShell implements RemoteServiceShell, Service, Servicer, Exerter, Callable {
+public class ServiceShell implements RemoteServiceShell, Servicer, Exerter, Callable {
 	protected final static Logger logger = LoggerFactory.getLogger(ServiceShell.class);
-	private Service service;
+	private Servicer service;
 	private Mogram mogram;
 	private File mogramSource;
 	private Transaction transaction;
 	private static MutualExclusion locker;
 	// a refrence to a provider running this mogram
-	private Service provider;
+	private Servicer provider;
 	private static LoadingCache<Signature, Object> proxies;
 
 	public ServiceShell() {
@@ -431,9 +431,9 @@ public class ServiceShell implements RemoteServiceShell, Service, Servicer, Exer
 		}
 
 		if (provider != null) {
-			if (provider instanceof Service) {
+			if (provider instanceof Servicer) {
 				// cache the provider for the signature
-				((NetSignature) signature).setProvider((Service) provider);
+				((NetSignature) signature).setProvider((Servicer) provider);
 				proxies.put(signature, provider);
 			} else if (exertion instanceof Task){
 				// exert smart proxy as an object task delegate
@@ -449,7 +449,7 @@ public class ServiceShell implements RemoteServiceShell, Service, Servicer, Exer
 				}
 			}
 		}
-		this.provider = (Service)provider;
+		this.provider = (Servicer)provider;
 		// continue exerting
 		return null;
 	}
@@ -798,7 +798,7 @@ public class ServiceShell implements RemoteServiceShell, Service, Servicer, Exer
 		return closedTask;
 	}
 
-	public <T extends Mogram> T exec(Service srv, Mogram mog, Transaction txn)
+	public <T extends Mogram> T exec(Servicer srv, Mogram mog, Transaction txn)
 			throws TransactionException, MogramException, RemoteException {
 		this.service = srv;
 		this.mogram = mog;
@@ -831,12 +831,12 @@ public class ServiceShell implements RemoteServiceShell, Service, Servicer, Exer
 		return (T) service.service(mogram, txn);
 	}
 
-	public <T extends Mogram> T exec(Service srv, Mogram mog)
+	public <T extends Mogram> T exec(Servicer srv, Mogram mog)
 			throws TransactionException, MogramException, RemoteException {
 		return exec(srv, mog, null);
 	}
 
-	public  <T extends Service> Object exec(T srv, Arg... args)
+	public  <T extends Servicer> Object exec(T srv, Arg... args)
 			throws MogramException, RemoteException {
 		this.service = srv;
 		if (srv instanceof NetletSignature) {

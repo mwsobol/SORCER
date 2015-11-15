@@ -182,7 +182,7 @@ public class
 		attributes.addAll(attributes);
 	}
 
-    public Service getService() {
+    public Servicer getService() {
         if (provider == null) return provider;
         try {
             // ping provider to see if alive
@@ -200,7 +200,7 @@ public class
         return provider;
     }
 
-    public void setProvider(Service provider) {
+    public void setProvider(Servicer provider) {
         this.provider = (Provider)provider;
     }
 
