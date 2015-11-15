@@ -162,7 +162,7 @@ public class Tuple2<T1, T2> implements Arg, Serializable, Identifiable, Evaluati
 	}
 
 	@Override
-	public <T extends Servicer> Object exec(T srv, Arg... entries) throws MogramException, RemoteException {
+	public Object exec(Servicer srv, Arg... entries) throws MogramException, RemoteException {
 		_2 = (T2) srv;
 		return getValue(entries);
 	}

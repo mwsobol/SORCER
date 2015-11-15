@@ -3160,7 +3160,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	}
 
 	@Override
-	public <T extends Servicer> Object exec(T srv, Arg... entries) throws MogramException, RemoteException {
+	public Object exec(Servicer srv, Arg... entries) throws MogramException, RemoteException {
 		if (srv instanceof Context)
 			scope = (((Context)srv));
 		return getResponse(entries);

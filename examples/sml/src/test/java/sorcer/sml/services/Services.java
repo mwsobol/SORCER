@@ -9,18 +9,15 @@ import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.provider.impl.SubtractorImpl;
+import sorcer.core.context.model.ent.Entry;
 import sorcer.core.provider.rendezvous.ServiceJobber;
-import sorcer.service.Context;
-import sorcer.service.Mogram;
-import sorcer.service.Servicer;
-import sorcer.service.Strategy;
+import sorcer.service.*;
 import sorcer.service.modeling.Model;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
 import static sorcer.co.operator.get;
-import static sorcer.co.operator.lambda;
 import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.get;
 import static sorcer.eo.operator.result;
@@ -38,6 +35,19 @@ import static sorcer.po.operator.invoker;
 @ProjectContext("examples/sml")
 public class Services {
     private final static Logger logger = LoggerFactory.getLogger(Services.class);
+
+    @Test
+    public void lambdaService() throws Exception  {
+
+          Service srv = (Servicer servicer, Arg[] args) -> {
+//        Service srv = (servicer,args) -> {
+//            Entry e = (Entry)servicer;
+            return value((Entry)servicer);
+          };
+
+           Object obj = srv.exec(ent("x", 20.0), ent("y", 30.0));
+
+    }
 
     @Test
     public void evaluateModel() throws Exception  {

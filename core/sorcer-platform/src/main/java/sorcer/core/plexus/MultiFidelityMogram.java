@@ -237,7 +237,7 @@ public class MultiFidelityMogram extends ServiceMogram {
     }
 
     @Override
-    public <T extends Servicer> Object exec(T srv, Arg... entries) throws MogramException, RemoteException {
+    public Object exec(Servicer srv, Arg... entries) throws MogramException, RemoteException {
         return null;
     }
 }

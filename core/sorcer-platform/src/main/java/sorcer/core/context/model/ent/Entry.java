@@ -278,7 +278,7 @@ public class Entry<T> extends Tuple2<String, T> implements Servicer, Dependency,
 	}
 
 	@Override
-	public <S extends Servicer> Object exec(S srv, Arg... entries) throws MogramException, RemoteException {
+	public Object exec(Servicer srv, Arg... entries) throws MogramException, RemoteException {
 		_2 = (T) srv;
 		return getValue(entries);
 	}

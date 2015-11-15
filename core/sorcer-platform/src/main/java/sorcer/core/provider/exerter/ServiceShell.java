@@ -836,7 +836,7 @@ public class ServiceShell implements RemoteServiceShell, Servicer, Exerter, Call
 		return exec(srv, mog, null);
 	}
 
-	public  <T extends Servicer> Object exec(T srv, Arg... args)
+	public Object exec(Servicer srv, Arg... args)
 			throws MogramException, RemoteException {
 		this.service = srv;
 		if (srv instanceof NetletSignature) {
