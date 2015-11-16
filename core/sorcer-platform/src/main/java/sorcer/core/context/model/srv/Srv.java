@@ -43,9 +43,14 @@ public class Srv extends Entry<Object> implements Variability<Object>, Arg,
     }
 
     public Srv(String name, String path, Type type) {
-        super(name);
+        super(path, name);
         this.name = name;
         this.type = type;
+    }
+
+    public Srv(String name, String path, ExecService service) {
+        super(path, service);
+        this.name = name;
     }
 
     public Srv(String path, Object value) {
@@ -195,6 +200,16 @@ public class Srv extends Entry<Object> implements Variability<Object>, Arg,
             throw new MogramException(e);
         }
         return outcxt;
+    }
+
+    @Override
+    public Object exec(Servicer srv, Arg... entries) throws MogramException, RemoteException {
+        if (srv instanceof SrvModel && _2 instanceof ContextCallable) {
+            return  ((ContextCallable)_2).call((Context)srv);
+        } else {
+            _2 = srv;
+            return getValue(entries);
+        }
     }
 
     public Object getSrvValue() {

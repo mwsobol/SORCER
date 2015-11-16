@@ -17,14 +17,13 @@ import sorcer.service.modeling.Model;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-
 import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
+import static sorcer.eo.operator.get;
 import static sorcer.eo.operator.loop;
+import static sorcer.eo.operator.value;
 import static sorcer.mo.operator.response;
 import static sorcer.po.operator.invoker;
-import static sorcer.po.operator.par;
-import static sorcer.po.operator.pars;
 
 /**
  * @author Mike Sobolewski
@@ -36,7 +35,8 @@ public class ArithmeticMograms {
 	private final static Logger logger = LoggerFactory.getLogger(ArithmeticMograms.class);
 
 	@Test
-	public void lambdaModel() throws Exception {
+	public void lambdaEntryModel() throws Exception {
+		// all model entries as functions - Java lambda expressions
 
 		Model mo = model(ent("multiply/x1", 10.0), ent("multiply/x2", 50.0),
 				ent("add/x1", 20.0), ent("add/x2", 80.0),
@@ -54,6 +54,38 @@ public class ArithmeticMograms {
 		logger.info("model response: " + out);
 		assertTrue(get(out, "subtract").equals(400.0));
 		assertTrue(get(out, "multiply").equals(500.0));
+		assertTrue(get(out, "add").equals(100.0));
+	}
+
+	@Test
+	public void dynamicLambdaModel() throws Exception {
+		// change scope at runtime for a selected entry ("multiply") in the model
+
+		Model mo = model(ent("multiply/x1", 10.0), ent("multiply/x2", 50.0),
+				ent("add/x1", 20.0), ent("add/x2", 80.0),
+				lambda("add", (Context <Double> model) ->
+						value(model, "add/x1") + value(model, "add/x2")),
+				lambda("multiply", (Context <Double> model) ->
+						val(model, "multiply/x1") * val(model, "multiply/x2")),
+				lambda("subtract", (Context <Double> model) ->
+						v(model, "multiply") - v(model, "add")),
+				ent("multiply2", "multiply", (Service entry, Context scope) -> {
+					double out = (double) exec(entry, scope);
+					if (out > 400) {
+						set(scope, "multiply/x1", 20.0);
+						set(scope, "multiply/x2", 50.0);
+						out = (double) exec(entry, scope);
+					}
+					return out;
+				} ),
+				response("subtract", "multiply2", "add"));
+
+		dependsOn(mo, ent("subtract", paths("multiply2", "add")));
+
+		Context out = response(mo);
+		logger.info("model response: " + out);
+		assertTrue(get(out, "subtract").equals(900.0));
+		assertTrue(get(out, "multiply2").equals(1000.0));
 		assertTrue(get(out, "add").equals(100.0));
 	}
 

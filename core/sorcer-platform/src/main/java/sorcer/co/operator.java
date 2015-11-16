@@ -348,6 +348,10 @@ public class operator {
 		return new Srv(path, call, returnPath);
 	}
 
+	public static <T> Srv ent(String path, String name, ExecService service) {
+		return new Srv(name, path, service);
+	}
+
 	public static Srv ent(String path, Closure call) {
 		return new Srv(path, call);
 	}
@@ -535,6 +539,11 @@ public class operator {
 			throw new ContextException(e);
 		}
 		return entry;
+	}
+
+	public static Context set(Context context, String path, Object value) throws ContextException {
+		context.putValue(path, value);
+		return context;
 	}
 
 	public static <S extends Setter> boolean isDB(S setter) {
