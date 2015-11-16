@@ -306,18 +306,14 @@ public class operator {
 		return new Srv(path, null, name);
 	}
 
-//	public static <T> Entry<T> ent(String path, T value) {
-//		return new Entry<T>(path, value);
-//	}
 
 	public static <T> Entry<T> ent(String path, T value) {
 		if (value instanceof Invocation) {
 			return new Par<T>(path, value);
 		} else if (value instanceof Evaluation) {
 			return new Entry<T>(path, value);
-		} else {
+		} else
 			return new Entry<T>(path, value);
-		}
 	}
 
     public static String annotation(Entry entry) {
@@ -328,13 +324,14 @@ public class operator {
         return Signature.Direction.fromString(entry.annotation());
     }
 
+	public static <T> Srv lambda(String path, Callable<T> call) {
+		return new Srv(path, call);
+	}
+
 	public static <T> Srv lambda(String path, ContextEntry<T> call) {
 		return new Srv(path, call);
 	}
 
-	public static <T> Srv lambda(String path, Callable<T> call) {
-		return new Srv(path, call);
-	}
 
 	public static <T> Srv lambda(String path, ContextCallable<T> call) {
 		return new Srv(path, call);
@@ -342,6 +339,17 @@ public class operator {
 
 	public static <T> Srv lambda(String path, ContextCallable<T> lambda, Context context) throws InvocationException {
 		return new Srv(path, invoker(lambda, context));
+	}
+
+	public static boolean isSorcerLambda(Class clazz) {
+		Class[] types = { ContextEntry.class, ContextCallable.class, ExecService.class,
+				ContextCondition.class, Callable.class };
+		for (Class cl : types) {
+			if (clazz == cl) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public static <T> Srv lambda(String path, ContextCallable<T> call, Signature.ReturnPath returnPath) {

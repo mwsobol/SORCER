@@ -230,9 +230,12 @@ public class SrvModel extends ParModel<Object> implements Model {
                 } else if (val2 instanceof ContextEntry) {
                     Entry entry = ((ContextEntry)val2).call(this);
                     ((Srv) get(path)).setSrvValue(entry.value());
-                    putValue(path, entry.value());
+//                    putValue(path, entry.value());
                     if (path != entry.getName())
                         putValue(entry.getName(), entry.value());
+                    else if (asis(entry.getName()) instanceof Srv) {
+                        ((Srv)asis(entry.getName())).setSrvValue(entry.value());
+                    }
                     return entry;
                 } else if (val2 instanceof Closure) {
                     Entry entry = (Entry) ((Closure)val2).call(this);

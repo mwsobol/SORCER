@@ -221,8 +221,7 @@ public class Mograms {
         Double delta = 0.5;
 
         ContextEntry<Double> entFunction = (Context<Double> cxt) -> {
-            Double out = 1000.0;
-            out = value(cxt, "multiply");
+            double out = value(cxt, "multiply");
             out = out + 1000.0 + delta;
             return ent("out", out);
         };
@@ -250,7 +249,7 @@ public class Mograms {
     }
 
     @Test
-    public void modelEntrySubstitution() throws Exception {
+    public void entryReturnValueSubstitution() throws Exception {
 
         ContextEntry<Double> callTask = (Context<Double> context) -> {
             Context out = null;

@@ -7,20 +7,22 @@ import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.impl.AdderImpl;
+import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.service.*;
+import sorcer.service.modeling.Model;
 import sorcer.util.GenericUtil;
+
 import java.rmi.RemoteException;
 
 import static java.lang.Math.pow;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static sorcer.co.operator.set;
+import static sorcer.co.operator.asis;
 import static sorcer.co.operator.*;
-import static sorcer.co.operator.direction;
+import static sorcer.co.operator.set;
 import static sorcer.eo.operator.*;
-import static sorcer.eo.operator.args;
-import static sorcer.eo.operator.value;
+import static sorcer.mo.operator.response;
 import static sorcer.po.operator.*;
 import static sorcer.service.Signature.Direction;
 import static sorcer.util.exec.ExecUtils.CmdResult;
@@ -136,6 +138,46 @@ public class Entries {
         logger.info("User: " + userName);
         logger.info("Got: " + result.getOut());
         assertEquals(userName.toLowerCase(), result.getOut().trim().toLowerCase());
+    }
+
+    @Test
+    public void checkSystemCallExitValue() throws Exception {
+        Args args;
+        if (GenericUtil.isLinuxOrMac()) {
+            args = args("sh",  "-c", "echo $USER");
+        } else {
+            args = args("cmd",  "/C", "echo %USERNAME%");
+        }
+
+        ContextEntry verifyExitValue = (Context cxt) -> {
+            CmdResult out = (CmdResult)value(cxt, "cmd");
+            int code = out.getExitValue();
+            ent("cmd/exitValue", code);
+            if (code == -1) {
+                EvaluationException ex = new EvaluationException();
+                cxt.reportException("cmd failed for lambda", ex);
+                throw ex;
+            } else
+                return ent("cmd/out", out.getOut());
+        };
+
+        Model m = model(
+                inEnt("multiply/x1", 10.0), inEnt("multiply/x2", 50.0),
+                inEnt("add/x1", 20.0), inEnt("add/x2", 80.0),
+                ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
+                        inPaths("multiply/x1", "multiply/x2")))),
+                ent(sig("add", AdderImpl.class, result("add/out",
+                        inPaths("add/x1", "add/x2")))),
+                ent("cmd", invoker(args)),
+                lambda("lambda", verifyExitValue),
+                response("lambda", "cmd", "cmd/out"));
+
+        Context out = response(m);
+
+        String un = property("user.name");
+        assertTrue(((String)get(out, "lambda")).trim().equals(un));
+        assertTrue(((String)get(out, "cmd/out")).trim().equals(un));
+        assertTrue(((CmdResult)get(out, "cmd")).getOut().trim().equals(un));
     }
 
 	@Test
