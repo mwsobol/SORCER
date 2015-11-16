@@ -222,6 +222,11 @@ public class SrvModel extends ParModel<Object> implements Model {
                     if (rp != null && rp.path != null)
                         putValue(((Srv) val).getReturnPath().path, obj);
                     return obj;
+                } else if (val2 instanceof ExecService) {
+                        String entryPath = ((Entry)val).getName();
+                        Object out = ((ExecService)val2).exec((Service) this.asis(entryPath), this);
+                        ((Srv) get(path)).setSrvValue(out);
+                        return out;
                 } else if (val2 instanceof ContextEntry) {
                     Entry entry = ((ContextEntry)val2).call(this);
                     ((Srv) get(path)).setSrvValue(entry.value());
