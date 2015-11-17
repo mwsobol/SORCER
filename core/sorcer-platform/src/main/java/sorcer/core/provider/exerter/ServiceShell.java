@@ -848,7 +848,7 @@ public class ServiceShell implements RemoteServiceShell, Exerter, Callable {
 				throw new MogramException(throwable);
 			}
 		} else if (srv instanceof Entry) {
-			((Entry)service).getValue(args);
+			return ((Entry)service).getValue(args);
 		} if (service instanceof Signature) {
 			Context cxt = null;
 			for(Arg arg : args) {

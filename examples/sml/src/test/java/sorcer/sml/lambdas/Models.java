@@ -1,0 +1,264 @@
+package sorcer.sml.lambdas;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.sorcer.test.ProjectContext;
+import org.sorcer.test.SorcerTestRunner;
+import sorcer.arithmetic.provider.impl.*;
+import sorcer.co.operator;
+import sorcer.core.plexus.Morpher;
+import sorcer.service.*;
+import sorcer.service.modeling.Model;
+
+import static org.junit.Assert.assertTrue;
+import static sorcer.co.operator.*;
+import static sorcer.eo.operator.*;
+import static sorcer.eo.operator.get;
+import static sorcer.eo.operator.value;
+import static sorcer.mo.operator.response;
+import static sorcer.mo.operator.responseDown;
+import static sorcer.mo.operator.responseUp;
+
+/**
+ * @author Mike Sobolewski
+ */
+@SuppressWarnings({ "unchecked", "rawtypes" })
+@RunWith(SorcerTestRunner.class)
+@ProjectContext("examples/sml")
+public class Models {
+	private final static Logger logger = LoggerFactory.getLogger(Models.class);
+
+
+	@Test
+	public void lambdaModel() throws Exception {
+
+		Model mo = model(ent("multiply/x1", 10.0), ent("multiply/x2", 50.0),
+				ent("add/x1", 20.0), ent("add/x2", 80.0),
+				lambda("add", (Context<Double> model) ->
+						value(model, "add/x1") + value(model, "add/x2")),
+				lambda("multiply", (Context<Double> model) ->
+						val(model, "multiply/x1") * val(model, "multiply/x2")),
+				lambda("subtract", (Context<Double> model) ->
+						v(model, "multiply") - v(model, "add")),
+				response("subtract", "multiply", "add"));
+
+		dependsOn(mo, ent("subtract", paths("multiply", "add")));
+
+		Context out = response(mo);
+		logger.info("model response: " + out);
+		assertTrue(operator.get(out, "subtract").equals(400.0));
+		assertTrue(operator.get(out, "multiply").equals(500.0));
+		assertTrue(operator.get(out, "add").equals(100.0));
+	}
+
+	@Test
+	public void dynamicLambdaModel() throws Exception {
+		// change scope at runtime for a selected entry ("multiply") in the model
+
+		Model mo = model(ent("multiply/x1", 10.0), ent("multiply/x2", 50.0),
+				ent("add/x1", 20.0), ent("add/x2", 80.0),
+				lambda("add", (Context <Double> model) ->
+						value(model, "add/x1") + value(model, "add/x2")),
+				lambda("multiply", (Context <Double> model) ->
+						val(model, "multiply/x1") * val(model, "multiply/x2")),
+				lambda("subtract", (Context <Double> model) ->
+						v(model, "multiply") - v(model, "add")),
+				lambda("multiply2", "multiply", (Service entry, Context scope) -> {
+					double out = (double) exec(entry, scope);
+					if (out > 400) {
+						set(scope, "multiply/x1", 20.0);
+						set(scope, "multiply/x2", 50.0);
+						out = (double) exec(entry, scope);
+					}
+					return out;
+				} ),
+				response("subtract", "multiply2", "add"));
+
+		dependsOn(mo, ent("subtract", paths("multiply2", "add")));
+
+		Context out = response(mo);
+		logger.info("model response: " + out);
+		assertTrue(get(out, "subtract").equals(900.0));
+		assertTrue(get(out, "multiply2").equals(1000.0));
+		assertTrue(get(out, "add").equals(100.0));
+	}
+
+	@Test
+	public void lambdaModelWithReturnPath() throws Exception {
+
+		Model mo = model(ent("multiply/x1", 10.0), ent("multiply/x2", 50.0),
+				ent("add/x1", 20.0), ent("add/x2", 80.0),
+				ent("arg/x1", 30.0), ent("arg/x2", 90.0),
+				lambda("add", (Context <Double> model) ->
+								value(model, "add/x1") + value(model, "add/x2"),
+						result("add/out",
+								inPaths("add/x1", "add/x2"))),
+				lambda("multiply", (Context <Double> model) ->
+								val(model, "multiply/x1") * val(model, "multiply/x2"),
+						result("multiply/out",
+								inPaths("multiply/x1", "multiply/x2"))),
+				lambda("subtract", (Context <Double> model) ->
+								v(model, "multiply/out") - v(model, "add/out"),
+						result("model/response")),
+				response("subtract", "multiply/out", "add/out", "model/response"));
+
+		dependsOn(mo, ent("subtract", paths("multiply", "add")));
+
+		Context out = response(mo);
+		logger.info("model response: " + out);
+		assertTrue(get(out, "model/response").equals(400.0));
+		assertTrue(get(out, "multiply/out").equals(500.0));
+		assertTrue(get(out, "add/out").equals(100.0));
+	}
+
+	@Test
+	public void addLambdaEntry() throws Exception {
+
+		Double delta = 0.5;
+
+		ContextEntry<Double> entFunction = (Context<Double> cxt) -> {
+			double out = value(cxt, "multiply");
+			out = out + 1000.0 + delta;
+			return ent("out", out);
+		};
+
+		Model mo = model(
+				inEnt("multiply/x1", 10.0), inEnt("multiply/x2", 50.0),
+				inEnt("add/x1", 20.0), inEnt("add/x2", 80.0),
+				ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
+						inPaths("multiply/x1", "multiply/x2")))),
+				ent(sig("add", AdderImpl.class, result("add/out",
+						inPaths("add/x1", "add/x2")))),
+				ent(sig("subtract", SubtractorImpl.class, result("subtract/out",
+						inPaths("multiply/out", "add/out")))),
+				response("subtract", "lambda", "out"));
+
+		dependsOn(mo, ent("subtract", paths("multiply", "add")));
+
+		add(mo, lambda("lambda", entFunction));
+
+		Context out = response(mo);
+		logger.info("response: " + out);
+		assertTrue(operator.get(out, "subtract").equals(400.0));
+		assertTrue(operator.get(out, "out").equals(1500.5));
+		assertTrue(operator.get(out, "lambda").equals(1500.5));
+	}
+
+	@Test
+	public void entryReturnValueSubstitution() throws Exception {
+
+		ContextEntry<Double> callTask = (Context<Double> context) -> {
+			Context out = null;
+			Double value = null;
+			try {
+				Task task = operator.get(context, "task/multiply");
+				put(context(task), "arg/x1", 20.0);
+				put(context(task), "arg/x2", 100.0);
+				out = context(exert(task));
+				value = operator.get(out, "multiply/result");
+			} catch (ContextException e) {
+				e.printStackTrace();
+			}
+			// owerite the original value with a new task
+			return ent("multiply/out", value);
+		};
+
+		// usage of in and out connectors associated with model
+		Task innerTask = task(
+				"task/multiply",
+				sig("multiply", MultiplierImpl.class),
+				context("multiply", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
+						result("multiply/result")));
+
+		Model mo = model(
+				inEnt("multiply/x1", 10.0), inEnt("multiply/x2", 50.0),
+				inEnt("add/x1", 20.0), inEnt("add/x2", 80.0),
+				ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
+						inPaths("multiply/x1", "multiply/x2")))),
+				ent(sig("add", AdderImpl.class, result("add/out",
+						inPaths("add/x1", "add/x2")))),
+				ent(sig("subtract", SubtractorImpl.class, result("subtract/out",
+						inPaths("multiply/out", "add/out")))),
+				response("subtract", "multiply"));
+
+		dependsOn(mo, ent("subtract", paths("lambda", "add")));
+
+		add(mo, innerTask);
+		add(mo, lambda("lambda", callTask));
+		responseDown(mo, "multiply");
+		responseUp(mo, "lambda");
+
+		Context out = response(mo);
+		logger.info("response: " + out);
+		assertTrue(operator.get(out, "subtract").equals(1900.0));
+		assertTrue(operator.get(out, "lambda").equals(2000.0));
+	}
+
+    @Test
+    public void amorphousModel() throws Exception {
+
+        Morpher mFi1Morpher = (mgr, mFi, value) -> {
+            Fidelity<Signature> fi =  mFi.getFidelity();
+            if (fi.getSelectedName().equals("add")) {
+                if (((Double) value) <= 200.0) {
+                    mgr.morph("sysFi2");
+                } else {
+                    mgr.morph("sysFi3");
+                }
+            }
+        };
+
+        Morpher mFi2Morpher = (mgr, mFi, value) -> {
+            Fidelity<Signature> fi =  mFi.getFidelity();
+            if (fi.getSelectedName().equals("divide")) {
+                if (((Double) value) <= 9.0) {
+                    mgr.morph("sysFi4");
+                } else {
+                    mgr.morph("sysFi3");
+                }
+            }
+        };
+
+        Fidelity<Fidelity> fi2 = fi("sysFi2",fi("divide", "mFi2"), fi("multiply", "mFi3"));
+        Fidelity<Fidelity> fi3 = fi("sysFi3", fi("average", "mFi2"), fi("divide", "mFi3"));
+        Fidelity<Fidelity> fi4 = fi("sysFi4", fi("average", "mFi3"));
+
+        Signature add = sig("add", AdderImpl.class,
+                result("result/y1", inPaths("arg/x1", "arg/x2")));
+        Signature subtract = sig("subtract", SubtractorImpl.class,
+                result("result/y2", inPaths("arg/x1", "arg/x2")));
+        Signature average = sig("average", AveragerImpl.class,
+                result("result/y2", inPaths("arg/x1", "arg/x2")));
+        Signature multiply = sig("multiply", MultiplierImpl.class,
+                result("result/y1", inPaths("arg/x1", "arg/x2")));
+        Signature divide = sig("divide", DividerImpl.class,
+                result("result/y2", inPaths("arg/x1", "arg/x2")));
+
+        // three entry multifidelity model with morphers
+        Model mod = model(inEnt("arg/x1", 90.0), inEnt("arg/x2", 10.0),
+                ent("mFi1", mFi(mFi1Morpher, add, multiply)),
+                ent("mFi2", mFi(mFi2Morpher, average, divide, subtract)),
+                ent("mFi3", mFi(average, divide, multiply)),
+                fi2, fi3, fi4,
+                response("mFi1", "mFi2", "mFi3", "arg/x1", "arg/x2"));
+
+        // fidelities morphed by the model's fidelity manager
+        Context out = response(mod);
+        logger.info("out: " + out);
+        assertTrue(get(out, "mFi1").equals(100.0));
+        assertTrue(get(out, "mFi2").equals(9.0));
+        assertTrue(get(out, "mFi3").equals(50.0));
+
+        // first closing the fidelity for mFi1
+        // then fidelities morphed by the model's fidelity manager accordingly
+        out = response(mod , fi("multiply", "mFi1"));
+        logger.info("out: " + out);
+        assertTrue(get(out, "mFi1").equals(900.0));
+        assertTrue(get(out, "mFi2").equals(50.0));
+        assertTrue(get(out, "mFi3").equals(9.0));
+    }
+}
+	
+	

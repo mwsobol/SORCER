@@ -9,8 +9,11 @@ import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.impl.*;
 import sorcer.core.context.model.srv.SrvModel;
 import sorcer.core.provider.rendezvous.ServiceJobber;
-import sorcer.service.*;
+import sorcer.service.Block;
+import sorcer.service.Context;
+import sorcer.service.Job;
 import sorcer.service.Strategy.Flow;
+import sorcer.service.Task;
 import sorcer.service.modeling.Model;
 
 import static org.junit.Assert.assertTrue;
@@ -18,7 +21,6 @@ import static sorcer.co.operator.*;
 import static sorcer.co.operator.get;
 import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.loop;
-import static sorcer.eo.operator.put;
 import static sorcer.eo.operator.result;
 import static sorcer.eo.operator.value;
 import static sorcer.mo.operator.*;
@@ -215,86 +217,4 @@ public class Mograms {
         assertTrue(get(out, "out").equals(450.0));
     }
 
-    @Test
-     public void lambdaEntry() throws Exception {
-
-        Double delta = 0.5;
-
-        ContextEntry<Double> entFunction = (Context<Double> cxt) -> {
-            double out = value(cxt, "multiply");
-            out = out + 1000.0 + delta;
-            return ent("out", out);
-        };
-
-        Model mo = model(
-                inEnt("multiply/x1", 10.0), inEnt("multiply/x2", 50.0),
-                inEnt("add/x1", 20.0), inEnt("add/x2", 80.0),
-                ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
-                        inPaths("multiply/x1", "multiply/x2")))),
-                ent(sig("add", AdderImpl.class, result("add/out",
-                        inPaths("add/x1", "add/x2")))),
-                ent(sig("subtract", SubtractorImpl.class, result("subtract/out",
-                        inPaths("multiply/out", "add/out")))),
-                response("subtract", "lambda", "out"));
-
-        dependsOn(mo, ent("subtract", paths("multiply", "add")));
-
-        add(mo, lambda("lambda", entFunction));
-
-        Context out = response(mo);
-        logger.info("response: " + out);
-        assertTrue(get(out, "subtract").equals(400.0));
-        assertTrue(get(out, "out").equals(1500.5));
-        assertTrue(get(out, "lambda").equals(1500.5));
-    }
-
-    @Test
-    public void entryReturnValueSubstitution() throws Exception {
-
-        ContextEntry<Double> callTask = (Context<Double> context) -> {
-            Context out = null;
-            Double value = null;
-            try {
-                Task task = get(context, "task/multiply");
-                put(context(task), "arg/x1", 20.0);
-                put(context(task), "arg/x2", 100.0);
-                out = context(exert(task));
-                value = get(out, "multiply/result");
-            } catch (ContextException e) {
-                e.printStackTrace();
-            }
-            // owerite the original value with a new task
-            return ent("multiply/out", value);
-        };
-
-        // usage of in and out connectors associated with model
-        Task innerTask = task(
-                "task/multiply",
-                sig("multiply", MultiplierImpl.class),
-                context("multiply", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
-                        result("multiply/result")));
-
-        Model mo = model(
-                inEnt("multiply/x1", 10.0), inEnt("multiply/x2", 50.0),
-                inEnt("add/x1", 20.0), inEnt("add/x2", 80.0),
-                ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
-                        inPaths("multiply/x1", "multiply/x2")))),
-                ent(sig("add", AdderImpl.class, result("add/out",
-                        inPaths("add/x1", "add/x2")))),
-                ent(sig("subtract", SubtractorImpl.class, result("subtract/out",
-                        inPaths("multiply/out", "add/out")))),
-                response("subtract", "multiply"));
-
-        dependsOn(mo, ent("subtract", paths("lambda", "add")));
-
-        add(mo, innerTask);
-        add(mo, lambda("lambda", callTask));
-        responseDown(mo, "multiply");
-        responseUp(mo, "lambda");
-
-        Context out = response(mo);
-        logger.info("response: " + out);
-        assertTrue(get(out, "subtract").equals(1900.0));
-        assertTrue(get(out, "lambda").equals(2000.0));
-    }
 }

@@ -320,18 +320,21 @@ public class operator {
         return entry.annotation();
     }
 
-    public static Signature.Direction direction(Entry entry) {
-        return Signature.Direction.fromString(entry.annotation());
-    }
+	public static Signature.Direction direction(Entry entry) {
+		return Signature.Direction.fromString(entry.annotation());
+	}
+
+	public static Srv lambda(String path, String name, sorcer.eo.operator.Args args, Service service) {
+		return new Srv(name, path, args.argsToStrings(), service);
+	}
+
+	public static <T> Srv lambda(String path, String name, Servant servant) {
+		return new Srv(name, path, servant);
+	}
 
 	public static <T> Srv lambda(String path, Callable<T> call) {
 		return new Srv(path, call);
 	}
-
-	public static <T> Srv lambda(String path, ContextEntry<T> call) {
-		return new Srv(path, call);
-	}
-
 
 	public static <T> Srv lambda(String path, ContextCallable<T> call) {
 		return new Srv(path, call);
@@ -341,8 +344,12 @@ public class operator {
 		return new Srv(path, invoker(lambda, context));
 	}
 
+	public static <T> Srv lambda(String path, ContextEntry<T> call) {
+		return new Srv(path, call);
+	}
+
 	public static boolean isSorcerLambda(Class clazz) {
-		Class[] types = { ContextEntry.class, ContextCallable.class, ExecService.class,
+		Class[] types = { ContextEntry.class, ContextCallable.class, Servant.class,
 				ContextCondition.class, Callable.class };
 		for (Class cl : types) {
 			if (clazz == cl) {
@@ -354,10 +361,6 @@ public class operator {
 
 	public static <T> Srv lambda(String path, ContextCallable<T> call, Signature.ReturnPath returnPath) {
 		return new Srv(path, call, returnPath);
-	}
-
-	public static <T> Srv ent(String path, String name, ExecService service) {
-		return new Srv(name, path, service);
 	}
 
 	public static Srv ent(String path, Closure call) {

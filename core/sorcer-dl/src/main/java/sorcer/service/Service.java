@@ -7,13 +7,16 @@
  */
 package sorcer.service;
 
+import net.jini.core.transaction.TransactionException;
+
 import java.rmi.RemoteException;
 
 /**
  * Created by Mike Sobolewski.
  */
+@FunctionalInterface
 public interface Service {
 
-    public Object exec(Servicer srv, Arg... entries) throws MogramException, RemoteException;
+    public Object exec(Servicer srv, Arg... entries) throws MogramException, RemoteException, TransactionException;
 
 }

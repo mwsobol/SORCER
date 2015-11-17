@@ -341,7 +341,7 @@ public class Signatures {
 
 
 	@Test
-	public void rmoteSigConnector() throws Exception {
+	public void remoteSigConnector() throws Exception {
 
 		Context cxt = context(
 				inEnt("y1", 20.0),

@@ -30,6 +30,8 @@ public class Srv extends Entry<Object> implements Variability<Object>, Arg,
 
     protected Object srvValue;
 
+    protected String[] paths;
+
     protected Signature.ReturnPath returnPath;
 
     Type type = Type.PAR;;
@@ -48,7 +50,13 @@ public class Srv extends Entry<Object> implements Variability<Object>, Arg,
         this.type = type;
     }
 
-    public Srv(String name, String path, ExecService service) {
+    public Srv(String name, String path, String[] paths, Service service) {
+        super(path, service);
+        this.name = name;
+        this.paths = paths;
+    }
+
+    public Srv(String name, String path, Servant service) {
         super(path, service);
         this.name = name;
     }
@@ -97,6 +105,10 @@ public class Srv extends Entry<Object> implements Variability<Object>, Arg,
     @Override
     public Class<?> getValueType() {
         return null;
+    }
+
+    public String[] getPaths() {
+        return paths;
     }
 
     @Override

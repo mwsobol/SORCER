@@ -222,15 +222,14 @@ public class SrvModel extends ParModel<Object> implements Model {
                     if (rp != null && rp.path != null)
                         putValue(((Srv) val).getReturnPath().path, obj);
                     return obj;
-                } else if (val2 instanceof ExecService) {
+                }  else if (val2 instanceof Servant) {
                         String entryPath = ((Entry)val).getName();
-                        Object out = ((ExecService)val2).exec((Service) this.asis(entryPath), this);
+                        Object out = ((Servant)val2).exec((Service) this.asis(entryPath), this);
                         ((Srv) get(path)).setSrvValue(out);
                         return out;
                 } else if (val2 instanceof ContextEntry) {
                     Entry entry = ((ContextEntry)val2).call(this);
                     ((Srv) get(path)).setSrvValue(entry.value());
-//                    putValue(path, entry.value());
                     if (path != entry.getName())
                         putValue(entry.getName(), entry.value());
                     else if (asis(entry.getName()) instanceof Srv) {
@@ -248,6 +247,29 @@ public class SrvModel extends ParModel<Object> implements Model {
                     val =  ((ServiceInvoker)val2).invoke(entries);
                     ((Srv) get(path)).setSrvValue(val);
                     return val;
+                } else if (val2 instanceof Service) {
+                    String entryPath = ((Entry)val).getName();
+                    String[] paths = ((Srv)val).getPaths();
+                    Arg[] args = null;
+                    if (paths == null || paths.length == 0) {
+                        args = new Arg[]{this};
+                    } else {
+                        args = new Arg[paths.length];
+                        for (int i = 0; i < paths.length; i++) {
+                            if (!(asis(paths[i]) instanceof Arg))
+                                args[i] = new Entry(paths[i], asis(paths[i]));
+                            else
+                                args[i] = (Arg) asis(paths[i]);
+                        }
+                    }
+                    // make from a value of entry and Entry (Servicer)
+                    Object servicer = asis(entryPath);
+                    if (!(servicer instanceof Servicer)) {
+                        servicer = new  Entry(entryPath, servicer);
+                    }
+                    Object out = ((Service)val2).exec((Servicer) servicer, args);
+                    ((Srv) get(path)).setSrvValue(out);
+                    return out;
                 } else {
                     if (val2 == Context.none) {
                         return getValue(((Srv) val).getName());

@@ -9,9 +9,11 @@ import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.provider.impl.SubtractorImpl;
-import sorcer.core.context.model.ent.Entry;
 import sorcer.core.provider.rendezvous.ServiceJobber;
-import sorcer.service.*;
+import sorcer.service.Context;
+import sorcer.service.Mogram;
+import sorcer.service.Servicer;
+import sorcer.service.Strategy;
 import sorcer.service.modeling.Model;
 
 import static org.junit.Assert.assertEquals;
@@ -52,51 +54,6 @@ public class Services {
         assertEquals(1, size(out));
         assertTrue(get(out, "result/y").equals(100.0));
 
-    }
-
-    @Test
-    public void lambdaInvoker() throws Exception {
-
-        Model mo = model(ent("x", 10.0), ent("y", 20.0),
-                ent(invoker("lambda", (Context<Double> cxt) -> value(cxt, "x")
-                        + value(cxt, "y")
-                        + 30)));
-        logger.info("invoke value: " + value(mo, "lambda"));
-        assertEquals(value(mo, "lambda"), 60.0);
-    }
-
-    @Test
-    public void lambdaService() throws Exception  {
-
-        Service srv = (Servicer servicer, Arg[] args) -> {
-            set((Entry) servicer, value((Entry) args[0]));
-            return servicer;
-        };
-
-        Entry e = (Entry) exec(srv, ent("x", 20.0), ent("y", 30.0));
-        assertEquals(value(e), 30.0);
-    }
-
-    @Test
-    public void lambdaModel() throws Exception {
-
-        Model mo = model(ent("multiply/x1", 10.0), ent("multiply/x2", 50.0),
-                ent("add/x1", 20.0), ent("add/x2", 80.0),
-                lambda("add", (Context<Double> model) ->
-                        value(model, "add/x1") + value(model, "add/x2")),
-                lambda("multiply", (Context<Double> model) ->
-                        val(model, "multiply/x1") * val(model, "multiply/x2")),
-                lambda("subtract", (Context<Double> model) ->
-                        v(model, "multiply") - v(model, "add")),
-                response("subtract", "multiply", "add"));
-
-        dependsOn(mo, ent("subtract", paths("multiply", "add")));
-
-        Context out = response(mo);
-        logger.info("model response: " + out);
-        assertTrue(get(out, "subtract").equals(400.0));
-        assertTrue(get(out, "multiply").equals(500.0));
-        assertTrue(get(out, "add").equals(100.0));
     }
 
     @Test
@@ -169,7 +126,7 @@ public class Services {
     }
 
     @Test
-    public void exertMogramn() throws Exception  {
+    public void exertMogram() throws Exception  {
 
         Mogram mogram = mogram(sig("add", AdderImpl.class),
                             cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),

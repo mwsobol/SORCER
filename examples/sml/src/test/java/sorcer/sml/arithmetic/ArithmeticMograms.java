@@ -69,7 +69,7 @@ public class ArithmeticMograms {
 						val(model, "multiply/x1") * val(model, "multiply/x2")),
 				lambda("subtract", (Context <Double> model) ->
 						v(model, "multiply") - v(model, "add")),
-				ent("multiply2", "multiply", (Service entry, Context scope) -> {
+				lambda("multiply2", "multiply", (Service entry, Context scope) -> {
 					double out = (double) exec(entry, scope);
 					if (out > 400) {
 						set(scope, "multiply/x1", 20.0);
