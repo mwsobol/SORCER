@@ -1089,7 +1089,7 @@ public class ProviderDelegate {
 			Provider requestor) throws MogramException,
 			RemoteException, SignatureException, ContextException {
 		// check if we do not look with the same exertion
-		Server recipient = null;
+		Service recipient = null;
 		String prvName = task.getProcessSignature().getProviderName();
 		NetSignature fm = (NetSignature) task.getProcessSignature();
 		ServiceID serviceID = fm.getServiceID();
@@ -1116,11 +1116,11 @@ public class ProviderDelegate {
 			}
 		}
 		if (serviceID != null)
-			recipient = (Server) Accessor.get().getService(serviceID);
+			recipient = (Service) Accessor.get().getService(serviceID);
 		else if (prvType != null && prvName != null) {
-			recipient = (Server) Accessor.get().getService(prvName, prvType);
+			recipient = (Service) Accessor.get().getService(prvName, prvType);
 		} else if (prvType != null) {
-			recipient = (Server) Accessor.get().getService(null, prvType);
+			recipient = (Service) Accessor.get().getService(null, prvType);
 		}
 		if (recipient == null) {
 			visited.remove(serviceID);
@@ -1139,7 +1139,7 @@ public class ProviderDelegate {
 			throw re;
 		} else
 			try {
-				Task result = (Task) recipient.exert(task, null);
+				Task result = (Task) ((Exerter)recipient).exert(task, null);
 				if (result != null) {
 					visited.remove(serviceID);
 					return result;

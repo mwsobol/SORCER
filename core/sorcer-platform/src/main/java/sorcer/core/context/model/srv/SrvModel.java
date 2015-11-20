@@ -264,7 +264,7 @@ public class SrvModel extends ParModel<Object> implements Model {
                     }
                     // make from a value of entry and Entry (Server)
                     Object server = asis(entryPath);
-                    if (!(server instanceof Server)) {
+                    if (!(server instanceof Service)) {
                         server = new  Entry(entryPath, server);
                     }
                     Object out = ((Service)val2).exec(new Arg[] { (Arg)server });

@@ -175,7 +175,7 @@ public class OperationalStringFactoryTest {
     public void testServiceProperties() throws Exception {
         Task task = task("f5",
                 sig("Foo",
-                        Server.class,
+                        Service.class,
                         deploy(configuration(JobUtil.getConfigDir() + "/TestConfig.groovy"))),
                 context("foo", inEnt("arg/x3", 20.0d), inEnt("arg/x4", 80.0d),
                         result("result/y2")));

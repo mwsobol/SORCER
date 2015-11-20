@@ -10,7 +10,6 @@ import org.sorcer.test.SorcerTestRunner;
 import sorcer.core.SorcerConstants;
 import sorcer.core.signature.NetSignature;
 import sorcer.service.Accessor;
-import sorcer.service.Server;
 import sorcer.util.ProviderAccessor;
 import sorcer.util.ProviderLookup;
 import sorcer.util.Stopwatch;
@@ -50,7 +49,7 @@ public class ProviderAccessorTest implements SorcerConstants {
 	@Test
 	public void providerLookupTest() throws Exception {
 		long startTime = System.currentTimeMillis();
-		Server provider = (Server)new ProviderLookup().getService(Jobber.class);
+		Object provider = new ProviderLookup().getService(Jobber.class);
 		//logger.info("ProviderLookup provider: " + provider);
 		logger.info(Stopwatch.getTimeString(System.currentTimeMillis() - startTime));
 		assertNotNull(provider);

@@ -34,10 +34,6 @@ package sorcer.security.sign;
  * limitations under the License.
  */
 
-import java.security.AccessController;
-
-import javax.security.auth.Subject;
-
 import net.jini.core.lookup.ServiceItem;
 import net.jini.core.lookup.ServiceTemplate;
 import net.jini.discovery.LookupDiscovery;
@@ -45,7 +41,10 @@ import net.jini.lease.LeaseRenewalManager;
 import net.jini.lookup.LookupCache;
 import net.jini.lookup.ServiceDiscoveryManager;
 import sorcer.core.context.ServiceContext;
-import sorcer.service.Server;
+import sorcer.service.Service;
+
+import javax.security.auth.Subject;
+import java.security.AccessController;
 
 /**
  * <p>
@@ -139,7 +138,7 @@ public class TaskAuditor {
 				sdm = new ServiceDiscoveryManager(disco,
 						new LeaseRenewalManager());
 				lCache1 = sdm.createLookupCache(new ServiceTemplate(null,
-						new Class[] { Server.class }, null),
+						new Class[] { Service.class }, null),
 						null, null);
 			} catch (Exception e) {
 				e.printStackTrace();

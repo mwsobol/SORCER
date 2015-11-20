@@ -8,17 +8,15 @@ import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.tester.provider.Adder;
 import sorcer.arithmetic.tester.provider.impl.AdderImpl;
-import sorcer.service.Context;
-import sorcer.service.Server;
-import sorcer.service.Signature;
-import sorcer.service.SignatureException;
+import sorcer.service.*;
 
 import java.lang.reflect.Proxy;
 import java.util.Calendar;
 import java.util.Date;
 
 import static org.junit.Assert.*;
-import static sorcer.co.operator.*;
+import static sorcer.co.operator.inEnt;
+import static sorcer.co.operator.instance;
 import static sorcer.eo.operator.*;
 import static sorcer.mo.operator.inConn;
 import static sorcer.mo.operator.outConn;
@@ -166,7 +164,7 @@ public class SignatureTest {
 		assertFalse(prv instanceof Proxy);
 
 		// request the local service
-		Server as = task("as", lps,
+		Service as = task("as", lps,
 				context("add",
 						inEnt("arg/x1", 20.0),
 						inEnt("arg/x2", 80.0),
@@ -187,7 +185,7 @@ public class SignatureTest {
 		assertTrue(prv instanceof Proxy);
 
 		// request the remote service
-		Server as = task("as", rps,
+		Service as = task("as", rps,
 				context("add",
 						inEnt("arg/x1", 20.0),
 						inEnt("arg/x2", 80.0),
@@ -208,7 +206,7 @@ public class SignatureTest {
 		assertTrue(prv instanceof Proxy);
 
 		// request the remote service
-		Server as = task("as", ps,
+		Service as = task("as", ps,
 				context("add",
 						inEnt("arg/x1", 20.0),
 						inEnt("arg/x2", 80.0),
@@ -232,11 +230,11 @@ public class SignatureTest {
 		Signature ps = sig("add", AdderImpl.class, prvName("Adder"), outConnector);
 
 		// request the remote service
-		Server as = task("as", ps, cxt);
+		Mogram as = task("as", ps, cxt);
 
 		logger.info("input context: " + context(as));
 
-		Server task = exert(as);
+		Mogram task = exert(as);
 
 		logger.info("input context: " + context(task));
 
@@ -260,11 +258,11 @@ public class SignatureTest {
 		Signature ps = sig("add", Adder.class, prvName("Adder"), inc);
 
 		// request the remote service
-		Server as = task("as", ps, cxt);
+		Mogram as = task("as", ps, cxt);
 
 		logger.info("input context: " + context(as));
 
-		Server task = exert(as);
+		Mogram task = exert(as);
 
 		logger.info("input context: " + context(task));
 

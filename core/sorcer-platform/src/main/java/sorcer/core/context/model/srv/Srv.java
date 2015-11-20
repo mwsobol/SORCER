@@ -1,6 +1,5 @@
 package sorcer.core.context.model.srv;
 
-import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -136,10 +135,10 @@ public class Srv extends Entry<Object> implements Variability<Object>, Arg,
 
     }
 
-    @Override
-    public Mogram exert(Mogram mogram, Transaction txn, Arg... args) throws TransactionException, MogramException, RemoteException {
-        return ((SignatureEntry)_2)._2.exert(mogram, txn);
-    }
+//    @Override
+//    public Mogram exert(Mogram mogram, Transaction txn, Arg... args) throws TransactionException, MogramException, RemoteException {
+//        return ((Exerter)((SignatureEntry)_2)._2).exert(mogram, txn);
+//    }
 
     public Mogram exert(Mogram mogram) throws TransactionException, MogramException, RemoteException {
         return exert(mogram, null);

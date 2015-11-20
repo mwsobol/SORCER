@@ -23,7 +23,7 @@ import net.jini.core.lookup.ServiceItem;
 import net.jini.core.lookup.ServiceMatches;
 import net.jini.core.lookup.ServiceTemplate;
 import sorcer.service.Context;
-import sorcer.service.Server;
+import sorcer.service.Service;
 
 import java.net.URL;
 import java.rmi.Remote;
@@ -36,12 +36,12 @@ import java.util.Map;
  * 
  */
 
-public interface Cataloger extends Server, Remote {
+public interface Cataloger extends Service, Remote {
 
 	/**
 	 * Returns a SORCER service provider identified by its primary service type.
 	 * 
-	 * @param primaryInterface
+	 * @param primaryInterfaces
 	 *            - the interface of a SORCER provider
 	 * @return a SORCER service provider
 	 * @throws RemoteException
@@ -54,7 +54,7 @@ public interface Cataloger extends Server, Remote {
 	 * 
 	 * @param providerName
 	 *            - a provider name, a friendly provider's ID.
-	 * @param primaryInterface
+	 * @param primaryInterfaces
 	 *            - interface of a SORCER provider
 	 * @return a SORCER service provider
 	 * @throws RemoteException
@@ -68,7 +68,7 @@ public interface Cataloger extends Server, Remote {
 	 * 
 	 * @param providerName
 	 *            - a provider name, a friendy provider's ID.
-	 * @param primaryInterface
+	 * @param serviceTypes
 	 *            - the interface of a SORCER provider
 	 * @return ServiceItem
 	 * @throws RemoteException
@@ -154,7 +154,7 @@ public interface Cataloger extends Server, Remote {
 	 * 
 	 * @param providerName
 	 *            String of the currently selected provider
-	 * @param interfaceName
+	 * @param serviceType
 	 *            the currently selected interface
 	 * @return a String array of the methods implemented by the interface.
 	 * @throws RemoteException

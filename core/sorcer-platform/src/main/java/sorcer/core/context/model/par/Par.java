@@ -110,7 +110,7 @@ public class Par<T> extends Entry<T> implements Variability<T>, Arg, Mappable<T>
 	public Par(String path, Object argument, Object scope)
 			throws ContextException {
 		this(path, (T) argument);
-		if (argument instanceof String && scope instanceof Server) {
+		if (argument instanceof String && scope instanceof Service) {
 			mappable = (Mappable) scope;
 			if (scope instanceof Context) {
 				if (((ServiceContext) scope).containsPath(Condition._closure_))

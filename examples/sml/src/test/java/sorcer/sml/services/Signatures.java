@@ -164,7 +164,7 @@ public class Signatures {
 	public void localService() throws Exception {
 
 		// request the local service
-		Server as = task("as", sig("add", AdderImpl.class),
+		Service as = task("as", sig("add", AdderImpl.class),
 				context("add",
 						inEnt("arg/x1", 20.0),
 						inEnt("arg/x2", 80.0),
@@ -179,7 +179,7 @@ public class Signatures {
 	public void referencingRemoteProvider() throws Exception {
 
 		// request the remote service
-		Server as = task("as", sig("add", Adder.class),
+		Service as = task("as", sig("add", Adder.class),
 				context("add",
 						inEnt("arg/x1", 20.0),
 						inEnt("arg/x2", 80.0),
@@ -200,7 +200,7 @@ public class Signatures {
 		assertTrue(prv instanceof Proxy);
 
 		// request the remote service
-		Server as = task("as", ps,
+		Service as = task("as", ps,
 				context("add",
 						inEnt("arg/x1", 20.0),
 						inEnt("arg/x2", 80.0),
@@ -301,7 +301,7 @@ public class Signatures {
 	public void netletSignatureprovider() throws Exception {
 		String netlet = System.getProperty("project.dir")+"/src/main/netlets/ha-job-local.ntl";
 
-		Server srv = (Server)provider(sig(file(netlet)));
+		Service srv = (Service)provider(sig(file(netlet)));
 //		logger.info("job service: " + exec(srv));
 		assertTrue(exec(srv).equals(400.0));
 	}
@@ -325,7 +325,7 @@ public class Signatures {
 
 		logger.info("input context: " + context(as));
 
-		Server task = exert(as);
+		Service task = exert(as);
 
 		logger.info("input context: " + context(task));
 

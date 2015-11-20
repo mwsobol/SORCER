@@ -174,8 +174,8 @@ public class EntModels {
 				result("result/y"));
 
 		Entry ie = ent("multiply", invoker("x1 * x2", ents("x1", "x2")));
-		Context result = exec(ie, em);
-		assertEquals(1600.0, value(result, "multiply"));
+		Object result = exec(ie, em);
+		assertEquals(1600.0, result);
 
 	}
 
@@ -188,8 +188,8 @@ public class EntModels {
 				inEnt("y2", 80.0));
 
 		Entry se = srv(sig("add", AdderImpl.class, result("add", inPaths("y1", "y2"))));
-		Context result = exec(se, sm);
-		assertEquals(100.0, value(result, "add"));
+		Object result = exec(se, sm);
+		assertEquals(100.0, result);
 
 	}
 
@@ -202,8 +202,8 @@ public class EntModels {
 				inEnt("y2", 80.0));
 
 		Entry se = srv(sig("add", Adder.class, result("add", inPaths("y1", "y2"))));
-		Context result = exec(se, sm);
-		assertEquals(100.0, value(result, "add"));
+		Object result = exec(se, sm);
+		assertEquals(100.0, result);
 
 	}
 

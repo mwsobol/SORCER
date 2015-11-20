@@ -21,6 +21,7 @@ import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
 import net.jini.id.Uuid;
 import sorcer.core.context.ThrowableTrace;
+import sorcer.core.provider.Exerter;
 
 import java.rmi.RemoteException;
 import java.security.Principal;
@@ -33,7 +34,7 @@ import java.util.Map;
  *
  * @author Mike Sobolewski
  */
-public interface Mogram extends Server, Projection<Signature>, Scopable, Substitutable, Identifiable,  Arg {
+public interface Mogram extends Service, Exerter, Projection<Signature>, Scopable, Substitutable, Identifiable,  Arg {
 
     /**
      * Exerts this mogram by the assigned service provider if it is set. If a service

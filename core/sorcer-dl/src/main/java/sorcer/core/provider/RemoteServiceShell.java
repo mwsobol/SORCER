@@ -17,8 +17,6 @@
 
 package sorcer.core.provider;
 
-import sorcer.service.Server;
-
 import java.rmi.Remote;
 
 /**
@@ -27,5 +25,5 @@ import java.rmi.Remote;
  *
  * @author Mike Sobolewski
  */
-public interface RemoteServiceShell extends Server, Remote {
+public interface RemoteServiceShell extends Remote, Exerter {
 }

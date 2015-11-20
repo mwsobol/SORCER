@@ -33,7 +33,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.*;
-import static sorcer.co.operator.get;
 import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.get;
@@ -353,10 +352,10 @@ public class ArithmeticNetTest implements SorcerConstants {
 			strategy(Monitor.NO, Wait.YES));
 	
 //	long start = System.currentTimeMillis();
- 	RemoteServiceShell exerter = Accessor.get().getService(null, RemoteServiceShell.class);
+ 	RemoteServiceShell shell = Accessor.get().getService(null, RemoteServiceShell.class);
 //	logger.info("got exerter: " + exerter);
 
-	Mogram out = exerter.exert(f5, null);
+	Mogram out = shell.exert(f5, null);
 //	long end = System.currentTimeMillis();
 	
 //	logger.info("task f5 context: " + context(out));

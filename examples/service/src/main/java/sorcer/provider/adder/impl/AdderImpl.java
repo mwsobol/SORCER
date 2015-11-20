@@ -3,7 +3,6 @@ package sorcer.provider.adder.impl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.context.PositionalContext;
-import sorcer.core.context.ServiceContext;
 import sorcer.core.provider.Provider;
 import sorcer.core.provider.ServiceProvider;
 import sorcer.provider.adder.Adder;
@@ -87,7 +86,7 @@ public class AdderImpl implements Adder {
         // save it in the session
         ss.setAttribute("sum", result);
         // set it in the returned context
-        ((ServiceContext)cxt).setReturnValue(result);
+        cxt.setReturnValue(result);
         return context;
     }
 

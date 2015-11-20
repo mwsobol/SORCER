@@ -59,10 +59,10 @@ public interface Arg {
 		return null;
 	}
 
-	public static Server getServer(Arg[] args) {
+	public static Service getService(Arg[] args) {
 		for (Arg arg : args) {
-			if (arg instanceof Server)
-				return (Server)arg;
+			if (arg instanceof Service)
+				return (Service)arg;
 		}
 		return null;
 	}

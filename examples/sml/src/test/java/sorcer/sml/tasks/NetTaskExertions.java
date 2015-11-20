@@ -21,7 +21,6 @@ import sorcer.service.Strategy.Wait;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
-import static sorcer.co.operator.get;
 import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.get;
 import static sorcer.eo.operator.value;
@@ -135,8 +134,8 @@ public class NetTaskExertions {
 						inEnt("arg/x2", 80.0), result("result/y")),
 				strategy(Monitor.NO, Wait.YES));
 
-		Context out = exec(sig(RemoteServiceShell.class), f5);
-		assertTrue(get(out, "result/y").equals(100.00));
+		Object out = exec(sig(RemoteServiceShell.class), f5);
+		assertTrue(get((Context)out, "result/y").equals(100.00));
 
 	}
 

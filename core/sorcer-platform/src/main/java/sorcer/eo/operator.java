@@ -206,11 +206,11 @@ public class operator {
 		return upcontext(mogram);
 	}
 
-	public static Context upcontext(Exertion exertion) throws ContextException {
-		if (exertion instanceof CompoundExertion)
-			return ((ServiceExertion) exertion).getContext();
+	public static Context upcontext(Mogram mogram) throws ContextException {
+		if (mogram instanceof CompoundExertion)
+			return ((ServiceExertion) mogram).getContext();
 		else
-			return ((ServiceExertion) exertion).getDataContext();
+			return  mogram.getDataContext();
 	}
 
 	public static Context taskContext(String path, Exertion service) throws ContextException {
@@ -2469,7 +2469,7 @@ public class operator {
 		return new OutEndPoint(outComponent, outPath);
 	}
 
-	public static OutEndPoint outPoint(Exertion outExertion, String outPath) {
+	public static OutEndPoint outPoint(Mogram outExertion, String outPath) {
 		return new OutEndPoint((Exertion)outExertion, outPath);
 	}
 
@@ -2477,7 +2477,7 @@ public class operator {
 		return new InEndPoint(inComponent, inPath);
 	}
 
-	public static InEndPoint inPoint(Exertion inExertion, String inPath) {
+	public static InEndPoint inPoint(Mogram inExertion, String inPath) {
 		return new InEndPoint((Exertion)inExertion, inPath);
 	}
 
@@ -2546,7 +2546,7 @@ public class operator {
 				provider = ((NetSignature) signature).getService();
 				if (provider == null) {
 					provider = Accessor.get().getService(signature);
-					((NetSignature) signature).setProvider((Server)provider);
+					((NetSignature) signature).setProvider((Service)provider);
 				}
 			} else if (signature.getClass() == ObjectSignature.class) {
 				if (target != null) {

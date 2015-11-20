@@ -70,9 +70,9 @@ import static sorcer.eo.operator.*;
  * @author Mike Sobolewski
  */
 @SuppressWarnings("rawtypes")
-public class ServiceShell implements RemoteServiceShell, Callable {
+public class ServiceShell implements RemoteServiceShell, Exerter, Client, Callable {
 	protected final static Logger logger = LoggerFactory.getLogger(ServiceShell.class);
-	private Server service;
+	private Service service;
 	private Mogram mogram;
 	private File mogramSource;
 	private Transaction transaction;
@@ -790,7 +790,7 @@ public class ServiceShell implements RemoteServiceShell, Callable {
 		return closedTask;
 	}
 
-	public <T extends Mogram> T exert(Server srv, Mogram mog, Transaction txn)
+	public <T extends Mogram> T exert(Service srv, Mogram mog, Transaction txn)
 			throws TransactionException, MogramException, RemoteException {
 		this.service = srv;
 		this.mogram = mog;
@@ -825,7 +825,7 @@ public class ServiceShell implements RemoteServiceShell, Callable {
 
 	public Object exec(Arg... args)
 			throws MogramException, RemoteException {
-		Server server = Arg.getServer(args);
+		Service server = Arg.getService(args);
 		if (server != null )
 			this.service = server;
 		else
@@ -916,5 +916,10 @@ public class ServiceShell implements RemoteServiceShell, Callable {
 		} catch (Exception e) {
 			throw new ExertionException(e);
 		}
+	}
+
+	@Override
+	public Context exec(Service service, Context context) throws MogramException, RemoteException, TransactionException {
+		return null;
 	}
 }

@@ -182,7 +182,7 @@ public class NetSignature extends ObjectSignature {
 		attributes.addAll(attributes);
 	}
 
-    public Service getService() {
+    public Provider getService() {
         if (provider == null) return provider;
         try {
             // ping provider to see if alive

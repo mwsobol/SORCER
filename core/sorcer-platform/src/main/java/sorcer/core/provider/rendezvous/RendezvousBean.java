@@ -42,7 +42,7 @@ import java.util.Vector;
  * 
  * @author Mike Sobolewski
  */
-abstract public class RendezvousBean implements Server {
+abstract public class RendezvousBean implements Service, Exerter {
 	private Logger logger = LoggerFactory.getLogger(RendezvousBean.class.getName());
 
 	protected ServiceProvider provider;

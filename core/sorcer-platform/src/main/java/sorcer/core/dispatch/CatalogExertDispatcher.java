@@ -24,6 +24,7 @@ import net.jini.core.transaction.TransactionException;
 import sorcer.core.Dispatcher;
 import sorcer.core.exertion.NetTask;
 import sorcer.core.provider.Concatenator;
+import sorcer.core.provider.Exerter;
 import sorcer.core.provider.Provider;
 import sorcer.core.provider.ServiceProvider;
 import sorcer.core.signature.NetSignature;
@@ -136,7 +137,7 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
             NetSignature sig = (NetSignature) task.getProcessSignature();
             // Catalog lookup or use Lookup Service for the particular
             // service
-            Server service = (Server) Accessor.get().getService(sig);
+            Service service = (Service) Accessor.get().getService(sig);
             /*if (service == null && task.isProvisionable()) {
                 MonitoringSession monSession = MonitorUtil.getMonitoringSession(task);
                 if (task.isMonitorable() && monSession!=null) {
@@ -199,7 +200,7 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
                          * (RemoteServiceTask)provider.service(task); }
                          */
                         logger.debug("getting result from provider...");
-                        result = service.exert(task, null);
+                        result = ((Exerter)service).exert(task, null);
 
                     } catch (Exception re) {
                         if (tried >= maxTries) {
@@ -208,7 +209,7 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
                         }
                         else {
                             logger.info("Problem exerting task, retrying " + tried + " time: " + xrt.getName() + " " + re.getMessage());
-                            service = (Server) Accessor.get().getService(sig);
+                            service = (Service) Accessor.get().getService(sig);
                             try {
                                 logger.info("+++++++++++++++Got service: " + ((Provider)service).getProviderID());
                             } catch (Exception e) {

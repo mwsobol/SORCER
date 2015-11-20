@@ -21,7 +21,7 @@ package sorcer.util;
 import net.jini.config.Configuration;
 import net.jini.config.EmptyConfiguration;
 import sorcer.core.provider.Provider;
-import sorcer.service.Server;
+import sorcer.service.Service;
 import sorcer.service.Signature;
 
 /**
@@ -71,8 +71,8 @@ public class ProviderLookup extends ServiceAccessor {
 	 *            a provider service type (interface)
 	 * @return a SORCER service provider
 	 */
-	public Server getProvider(String providerName, String serviceType) {
-		return (Server) getService(providerName, serviceType);
+	public Service getProvider(String providerName, String serviceType) {
+		return (Service) getService(providerName, serviceType);
 	}
 
 	/**
@@ -104,7 +104,7 @@ public class ProviderLookup extends ServiceAccessor {
 	 *            a provider service type (interface)
 	 * @return a SORCER service provider
 	 */
-	public Server getProvider(String serviceType) {
+	public Service getProvider(String serviceType) {
 		return getProvider(null, serviceType);
 	}
 

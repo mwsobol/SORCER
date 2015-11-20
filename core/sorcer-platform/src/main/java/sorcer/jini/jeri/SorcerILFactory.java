@@ -172,7 +172,7 @@ public class SorcerILFactory extends BasicILFactory {
 			if (curr != null && !exposedInterfaces.contains(curr))
 				exposedInterfaces.add(curr);
 		}
-		exposedInterfaces.add(Server.class);
+		exposedInterfaces.add(Service.class);
 		exposedInterfaces.add(RemoteMethodControl.class);
 		exposedInterfaces.add(TrustEquivalence.class);
 		// exposedInterfaces.add(net.jini.admin.Administrable.class);

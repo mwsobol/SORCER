@@ -1,5 +1,6 @@
 package sorcer.sml.services;
 
+import net.jini.core.transaction.TransactionException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -93,8 +94,8 @@ public class Entries {
         }
 
         @Override
-        public Object exec(Service srv, Arg... entries) throws MogramException, RemoteException {
-            return invoke((Context)srv, entries);
+        public Object exec(Arg... args) throws MogramException, RemoteException, TransactionException {
+            return invoke(Arg.getContext(args), args);
         }
     };
 
