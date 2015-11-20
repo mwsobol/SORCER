@@ -113,7 +113,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
      * @see sorcer.service.Service#service(sorcer.service.Exertion,
      * net.jini.core.transaction.Transaction)
      */
-    public <T extends Mogram> T service(T exertion, Transaction txn)
+    public <T extends Mogram> T exert(T exertion, Transaction txn, Arg... args)
             throws TransactionException, MogramException, RemoteException {
         if (exertion == null)
             return exert();
@@ -286,12 +286,12 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
         controlContext.setFlowType(type);
     }
 
-    public void setService(Servicer provider) {
+    public void setService(Service provider) {
         NetSignature ps = (NetSignature) getProcessSignature();
         ps.setProvider(provider);
     }
 
-    public Servicer getService() {
+    public Service getService() {
         NetSignature ps = (NetSignature) getProcessSignature();
         return ps.getService();
     }
@@ -743,7 +743,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
                     && !getProcessSignature().getServiceType()
                     .isAssignableFrom(Spacer.class)) {
                 sig.setServiceType(Spacer.class);
-                ((NetSignature) sig).setSelector("service");
+                ((NetSignature) sig).setSelector("exert");
                 sig.setProviderName(ANY);
                 sig.setType(Signature.Type.PROC);
                 getControlContext().setAccessType(access);
@@ -752,7 +752,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
                     .isAssignableFrom(Jobber.class)) {
                 if (sig.getServiceType().isAssignableFrom(Spacer.class)) {
                     sig.setServiceType(Jobber.class);
-                    ((NetSignature) sig).setSelector("service");
+                    ((NetSignature) sig).setSelector("exert");
                     sig.setProviderName(ANY);
                     sig.setType(Signature.Type.PROC);
                     getControlContext().setAccessType(access);
@@ -948,10 +948,11 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
     }
 
     @Override
-    public Object exec(Servicer srv, Arg... entries) throws MogramException, RemoteException {
-        if (srv instanceof Context)        {
-              dataContext = (ServiceContext) srv;
-              return value(this, entries);
+    public Object exec(Arg... args) throws MogramException, RemoteException {
+        Context cxt = Arg.getContext(args);
+        if (cxt != null) {
+              dataContext = (ServiceContext) cxt;
+              return value(this, args);
         }
         return null;
     }

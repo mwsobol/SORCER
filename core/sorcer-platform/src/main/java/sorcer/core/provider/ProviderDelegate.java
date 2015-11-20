@@ -245,7 +245,7 @@ public class ProviderDelegate {
 	/**
 	 * An outer service proxy, by default the proxy of this provider, is used
 	 * by service requestors if provider's smart proxy is absent. At least
-	 * two generic Remote interface: {@link Servicer} and {@link Provider} are
+	 * two generic Remote interface: {@link Server} and {@link Provider} are
 	 * implemented by outer proxies of all SORCER service providers. Each SORCER
 	 * provider uses outer proxy to actually call directly its provider and make
 	 * redirected calls using its inner proxy (redirected remote invocations).
@@ -1089,7 +1089,7 @@ public class ProviderDelegate {
 			Provider requestor) throws MogramException,
 			RemoteException, SignatureException, ContextException {
 		// check if we do not look with the same exertion
-		Servicer recipient = null;
+		Server recipient = null;
 		String prvName = task.getProcessSignature().getProviderName();
 		NetSignature fm = (NetSignature) task.getProcessSignature();
 		ServiceID serviceID = fm.getServiceID();
@@ -1116,11 +1116,11 @@ public class ProviderDelegate {
 			}
 		}
 		if (serviceID != null)
-			recipient = (Servicer) Accessor.get().getService(serviceID);
+			recipient = (Server) Accessor.get().getService(serviceID);
 		else if (prvType != null && prvName != null) {
-			recipient = (Servicer) Accessor.get().getService(prvName, prvType);
+			recipient = (Server) Accessor.get().getService(prvName, prvType);
 		} else if (prvType != null) {
-			recipient = (Servicer) Accessor.get().getService(null, prvType);
+			recipient = (Server) Accessor.get().getService(null, prvType);
 		}
 		if (recipient == null) {
 			visited.remove(serviceID);
@@ -1139,7 +1139,7 @@ public class ProviderDelegate {
 			throw re;
 		} else
 			try {
-				Task result = (Task) recipient.service(task, null);
+				Task result = (Task) recipient.exert(task, null);
 				if (result != null) {
 					visited.remove(serviceID);
 					return result;
@@ -1176,7 +1176,7 @@ public class ProviderDelegate {
 
 		Job outJob;
 		try {
-			outJob = (Job) jobber.service(job, null);
+			outJob = (Job) ((Exerter)jobber).exert(job, null);
 		} catch (TransactionException te) {
 			throw new ExertionException("transaction failure", te);
 		}
@@ -1730,8 +1730,10 @@ public class ProviderDelegate {
 		}
 		servicetask.getContext().reportException(
 				new ExertionException(
-						"No valid task for published service types:\n"
-								+ Arrays.toString(publishedServiceTypes)));
+						"Not valid task for published service types: \n"
+								+ Arrays.toString(publishedServiceTypes)
+								+ "\nwith Signature: \n"
+								+ servicetask.getProcessSignature()));
 		return false;
 	}
 

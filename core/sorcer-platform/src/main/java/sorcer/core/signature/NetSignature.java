@@ -38,10 +38,10 @@ import java.rmi.RemoteException;
 import java.util.Arrays;
 import java.util.List;
 
+import static sorcer.eo.operator.context;
 import static sorcer.eo.operator.sig;
 
-public class
-    NetSignature extends ObjectSignature {
+public class NetSignature extends ObjectSignature {
 
 	private static final long serialVersionUID = 1L;
 
@@ -182,7 +182,7 @@ public class
 		attributes.addAll(attributes);
 	}
 
-    public Servicer getService() {
+    public Service getService() {
         if (provider == null) return provider;
         try {
             // ping provider to see if alive
@@ -200,7 +200,7 @@ public class
         return provider;
     }
 
-    public void setProvider(Servicer provider) {
+    public void setProvider(Service provider) {
         this.provider = (Provider)provider;
     }
 
@@ -394,18 +394,18 @@ public class
 	}
 
 	@Override
-	public Mogram service(Mogram mogram) throws TransactionException,
+	public Mogram exert(Mogram mogram) throws TransactionException,
 			MogramException, RemoteException {
-		return service(mogram, null);
+		return exert(mogram, null);
 	}
 
 	@Override
-	public Mogram service(Mogram mogram, Transaction txn) throws TransactionException,
+	public Context exert(Mogram mogram, Transaction txn, Arg... args) throws TransactionException,
 			MogramException, RemoteException {
 		try {
 			if (this.isShellRemote()) {
 				Provider prv= (Provider) Accessor.get().getService(sig(RemoteServiceShell.class));
-				return ((Exertion) prv.service(mogram, txn)).getContext();
+				return ((Exertion) prv.exert(mogram, txn)).getContext();
 			}
 			Provider prv = (Provider) operator.provider(this);
 			Context cxt = null;
@@ -443,5 +443,15 @@ public class
 				+ serviceType + ";" + selector 
 					+ (prefix !=null ? "#" + prefix : "") 
 					+ (returnPath != null ? ";"  + "result " + returnPath : "");
+	}
+
+	@Override
+	public Object exec(Arg... args) throws MogramException, RemoteException, TransactionException {
+		Context cxt = Arg.getContext(args);
+		if (cxt != null) {
+			return context(exert(cxt));
+		}
+
+		return null;
 	}
 }

@@ -1,6 +1,5 @@
 package sorcer.sml.mogram;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -23,8 +22,8 @@ import java.rmi.RemoteException;
 
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
-import static sorcer.co.operator.get;
 import static sorcer.eo.operator.*;
+import static sorcer.eo.operator.get;
 import static sorcer.mo.operator.response;
 
 /**

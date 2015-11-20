@@ -31,6 +31,8 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.rmi.RemoteException;
 
+import static sorcer.eo.operator.context;
+
 public class ObjectSignature extends ServiceSignature {
 
 	static final long serialVersionUID = 8042346568722803852L;
@@ -338,27 +340,26 @@ public class ObjectSignature extends ServiceSignature {
 	}
 
 	@Override
-	public Mogram service(Mogram mogram) throws TransactionException,
+	public Mogram exert(Mogram mogram) throws TransactionException,
 			MogramException, RemoteException {
-		return service(mogram, null);
+		return exert(mogram, null);
 	}
 
-	@Override
-	public Mogram service(Mogram mogram, Transaction txn) throws TransactionException,
+	public Mogram exert(Mogram mogram, Transaction txn) throws TransactionException,
 			MogramException, RemoteException {
 		Context cxt = null;
 		ObjectTask task = null;
 		if (mogram instanceof Context)
 			cxt = (Context)mogram;
 		else
-			cxt = mogram.exert(txn);
+			cxt = context(mogram.exert(txn));
 
 		try {
 			task = new ObjectTask(this, cxt);
 		} catch (SignatureException e) {
 			throw new MogramException(e);
 		}
-		return ((Task)task.exert(txn)).getContext();
+		return (Mogram) task.exert(txn).getContext();
 	}
 
 	public String toString() {

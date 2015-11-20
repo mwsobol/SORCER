@@ -6,7 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
-import sorcer.co.operator;
 import sorcer.service.*;
 import sorcer.service.Strategy.Access;
 import sorcer.service.Strategy.Wait;
@@ -103,8 +102,8 @@ public class NetMograms {
 		Context out = response(mod);
 
 		logger.info("out: " +out );
-		assertTrue(operator.get(out, "add").equals(100.0));
-		assertTrue(operator.get(mod, "result/y").equals(100.0));
+		assertTrue(get(out, "add").equals(100.0));
+		assertTrue(get(mod, "result/y").equals(100.0));
 
 	}
 }

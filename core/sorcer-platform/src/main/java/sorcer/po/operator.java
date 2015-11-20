@@ -67,7 +67,7 @@ public class operator {
 		return p;
 	}
 
-	public static Par map(Par par, Servicer map) {
+	public static Par map(Par par, Service map) {
 		par.setMappable((Mappable)map);
 		return par;
 	}
@@ -82,7 +82,7 @@ public class operator {
 		if (object instanceof Context) {
 			p = new Par(path, argument);
 			p.setScope(object);
-		} else if (object instanceof Servicer) {
+		} else if (object instanceof Service) {
 			p = new Par(path, argument, object);
 		}
 		return p;
@@ -102,7 +102,7 @@ public class operator {
 		return p;
 	}
 
-	public static Par pipe(Mappable in, String name, String path, Servicer out) throws ContextException {
+	public static Par pipe(Mappable in, String name, String path, Service out) throws ContextException {
 		Par p = new Par(name, path, out);
 		add(p, in);
 		return p;
@@ -344,11 +344,11 @@ public class operator {
 		return new ServiceInvoker(evaluator, parEntries);
 	}
 
-	public static ServiceInvoker invoker(ContextCallable lambda) throws InvocationException {
+	public static ServiceInvoker invoker(ValueCallable lambda) throws InvocationException {
 		return new ServiceInvoker(null, lambda, null);
 	}
 
-	public static ServiceInvoker invoker(ContextCallable lambda, Context scope) throws InvocationException {
+	public static ServiceInvoker invoker(ValueCallable lambda, Context scope) throws InvocationException {
 		try {
 			return new ServiceInvoker(null, lambda, scope);
 		} catch (Exception e) {
@@ -356,11 +356,11 @@ public class operator {
 		}
 	}
 
-	public static <T> ServiceInvoker invoker(String name, ContextCallable<T> lambda) throws InvocationException {
+	public static <T> ServiceInvoker invoker(String name, ValueCallable<T> lambda) throws InvocationException {
 		return new ServiceInvoker(name, lambda, null);
 	}
 
-	public static <T> ServiceInvoker invoker(String name, ContextCallable<T> lambda, Context scope) throws InvocationException {
+	public static <T> ServiceInvoker invoker(String name, ValueCallable<T> lambda, Context scope) throws InvocationException {
 		return new ServiceInvoker(name, lambda, scope);
 	}
 

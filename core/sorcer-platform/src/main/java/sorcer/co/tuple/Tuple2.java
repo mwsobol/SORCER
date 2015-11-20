@@ -17,6 +17,7 @@
 
 package sorcer.co.tuple;
 
+import net.jini.core.transaction.TransactionException;
 import net.jini.id.Uuid;
 import net.jini.id.UuidFactory;
 import sorcer.core.context.model.ent.Entry;
@@ -162,8 +163,7 @@ public class Tuple2<T1, T2> implements Arg, Serializable, Identifiable, Evaluati
 	}
 
 	@Override
-	public Object exec(Servicer srv, Arg... entries) throws MogramException, RemoteException {
-		_2 = (T2) srv;
+	public Object exec(Arg... entries) throws MogramException, RemoteException, TransactionException {
 		return getValue(entries);
 	}
 }

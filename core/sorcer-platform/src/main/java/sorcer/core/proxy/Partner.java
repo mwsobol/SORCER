@@ -17,15 +17,15 @@
 
 package sorcer.core.proxy;
 
-import sorcer.service.Servicer;
+import sorcer.service.Service;
 
 /**
  * Servers and other compound proxies using inner proxies to extend their
  * functionalty via calls on the inner proxies implement this interface. To
  * provide service-to-service functionality this interface extends
- * {@link Servicer}.
+ * {@link Service}.
  * 
  * @author Mike Sobolewski
  */
-public interface Partner extends Outer, Servicer {
+public interface Partner extends Outer, Service {
 }

@@ -16,14 +16,15 @@
  */
 
 package sorcer.service;
+import sorcer.core.context.model.ent.Entry;
 import java.io.Serializable;
 
 /**
  * Created by Mike Sobolewski on 10/30/15.
  */
 @FunctionalInterface
- public interface ContextCondition<T> extends Serializable {
+public interface EntryCollable<T> extends Serializable {
 
-    boolean call(Context<T> context) throws MogramException;
+    Entry<T> call(Context<T> context) throws MogramException;
 
 }

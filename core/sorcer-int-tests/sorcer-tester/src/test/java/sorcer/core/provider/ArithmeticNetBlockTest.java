@@ -49,7 +49,7 @@ public class ArithmeticNetBlockTest implements SorcerConstants {
 				context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
 						result("block/result")));
 		
-		Block block = block("block", sig(Concatenator.class),
+		Block block = block("block", // sig(Concatenator.class),
 				context(ent("y1", 100), ent("y2", 200)),
 				alt(opt(condition("{ y1, y2 -> y1 > y2 }", "y1", "y2"), t4), 
 					opt(condition("{ y1, y2 -> y1 <= y2 }", "y1", "y2"), t5)));
@@ -83,10 +83,10 @@ public class ArithmeticNetBlockTest implements SorcerConstants {
 				context("average", inEnt("arg/t4"), inEnt("arg/t5"),
 						result("block/result")));
 		
-		Block block = block("block", sig(Concatenator.class),
-				t4, t5, alt(
-				opt(condition("{ t4, t5 -> t4 > t5 }", "t4", "t5"), t3), 
-				opt(condition("{ t4, t5 -> t4 <= t5 }", "t4", "t5"), t6)));
+		Block block = block("block", //sig(Concatenator.class),
+				t4, t5,
+				alt(opt(condition("{ t4, t5 -> t4 > t5 }", "t4", "t5"), t3),
+					opt(condition("{ t4, t5 -> t4 <= t5 }", "t4", "t5"), t6)));
 
 		block = exert(block);
 		logger.info("block context 1: " + context(block));
@@ -109,7 +109,7 @@ public class ArithmeticNetBlockTest implements SorcerConstants {
 				context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
 						result("out")));
 		
-		Block block = block("block", sig(Concatenator.class),
+		Block block = block("block", //sig(Concatenator.class),
 				t4,
 				opt(condition("{ out -> out > 600 }", "out"), t5));
 		

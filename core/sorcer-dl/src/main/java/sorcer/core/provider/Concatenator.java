@@ -17,7 +17,7 @@
 
 package sorcer.core.provider;
 
-import sorcer.service.Servicer;
+import sorcer.service.Service;
 
 import java.rmi.Remote;
 
@@ -28,5 +28,5 @@ import java.rmi.Remote;
  * 
  * @author Mike Sobolewski
  */
-public interface Concatenator extends Servicer, Remote {
+public interface Concatenator extends Remote {
 }

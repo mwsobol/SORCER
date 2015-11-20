@@ -328,29 +328,29 @@ public class operator {
 		return new Srv(name, path, args.argsToStrings(), service);
 	}
 
-	public static <T> Srv lambda(String path, String name, Servant servant) {
-		return new Srv(name, path, servant);
+	public static <T> Srv lambda(String path, String name, Client<T> client) {
+		return new Srv(name, path, client);
 	}
 
 	public static <T> Srv lambda(String path, Callable<T> call) {
 		return new Srv(path, call);
 	}
 
-	public static <T> Srv lambda(String path, ContextCallable<T> call) {
+	public static <T> Srv lambda(String path, ValueCallable<T> call) {
 		return new Srv(path, call);
 	}
 
-	public static <T> Srv lambda(String path, ContextCallable<T> lambda, Context context) throws InvocationException {
+	public static <T> Srv lambda(String path, ValueCallable<T> lambda, Context context) throws InvocationException {
 		return new Srv(path, invoker(lambda, context));
 	}
 
-	public static <T> Srv lambda(String path, ContextEntry<T> call) {
+	public static <T> Srv lambda(String path, EntryCollable<T> call) {
 		return new Srv(path, call);
 	}
 
 	public static boolean isSorcerLambda(Class clazz) {
-		Class[] types = { ContextEntry.class, ContextCallable.class, Servant.class,
-				ContextCondition.class, Callable.class };
+		Class[] types = { EntryCollable.class, ValueCallable.class, Client.class,
+				ConditionCollable.class, Callable.class };
 		for (Class cl : types) {
 			if (clazz == cl) {
 				return true;
@@ -359,7 +359,7 @@ public class operator {
 		return false;
 	}
 
-	public static <T> Srv lambda(String path, ContextCallable<T> call, Signature.ReturnPath returnPath) {
+	public static <T> Srv lambda(String path, ValueCallable<T> call, Signature.ReturnPath returnPath) {
 		return new Srv(path, call, returnPath);
 	}
 
@@ -367,11 +367,11 @@ public class operator {
 		return new Srv(path, call);
 	}
 
-	public static Srv cxtEnt(String path, ContextEntry call) {
+	public static Srv cxtEnt(String path, EntryCollable call) {
 		return new Srv(path, call);
 	}
 
-	public static Srv xrtEnt(String path, ExertionCallable call) {
+	public static Srv xrtEnt(String path, ContextCallable call) {
 		return new Srv(path, call);
 	}
 
@@ -866,13 +866,13 @@ public class operator {
 			return entry._2;
 	}
 
-	public static <T> T get(Mogram mogram, String path)
-			throws ContextException {
-		if (mogram instanceof Model)
-			return rasis((ServiceContext<T>)mogram, path);
-		else
-			return ((ServiceContext<T>)((Exertion)mogram).getContext()).getValue(path);
-	}
+//	public static <T> T get(Mogram mogram, String path)
+//			throws ContextException {
+//		if (mogram instanceof Model)
+//			return rasis((ServiceContext<T>)mogram, path);
+//		else
+//			return ((ServiceContext<T>)((Exertion)mogram).getContext()).getValue(path);
+//	}
 
 	public static <T> T asis(Context<T> context, String path)
 			throws ContextException {

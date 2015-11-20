@@ -19,8 +19,6 @@ package sorcer.core.provider;
 
 import java.rmi.Remote;
 
-import sorcer.service.Servicer;
-
 /**
  * SORCER also extends task/job execution abilities through the use of a space
  * rendezvous service implementing the Spacer interface. The Spacer service can
@@ -28,5 +26,5 @@ import sorcer.service.Servicer;
  * JavaSpace in which several providers can retrieve relevant exertions from the
  * object space, execute them, and return the results back to the object space.
  */
-public interface Spacer extends Servicer, Remote {
+public interface Spacer extends Remote {
 }

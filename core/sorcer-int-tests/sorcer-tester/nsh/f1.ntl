@@ -1,17 +1,14 @@
 #!/usr/bin/env nsh
+import sorcer.arithmetic.provider.Adder
 
 codebase artifact:org.sorcer/arithmetic/jar/dl/${sorcer.version}
 
-import sorcer.arithmetic.provider.Adder;
-import sorcer.arithmetic.provider.Multiplier;
-import sorcer.arithmetic.provider.Subtractor;
-import sorcer.arithmetic.provider.Divider;
-import sorcer.service.Task;
-import sorcer.core.provider.Jobber;
-import sorcer.util.SOS;
-import sorcer.service.Deployment.Type;
-
-
+import sorcer.arithmetic.provider.Multiplier
+import sorcer.arithmetic.provider.Subtractor
+import sorcer.core.provider.Jobber
+import sorcer.service.Deployment.Type
+import sorcer.service.Task
+import sorcer.util.SOS
 //println "Codebase: " + System.getProperty("java.rmi.server.codebase");
 // Service Composition f1(f2(f4, f5), f3)
 
@@ -30,7 +27,7 @@ Task f3 = task("f3", sig("subtract", Subtractor.class, deploy(configuration("org
 		outEnt(path("result/y3"), null)));
 		
 
-job("f1", sig("service", Jobber.class, deploy(idle(1))), job("f2", f4, f5, strategy(Provision.YES, Flow.PAR, Access.PUSH)), f3, strategy(Provision.YES, Flow.SEQ, Access.PUSH),
+job("f1", sig("exert", Jobber.class, deploy(idle(1))), job("f2", f4, f5, strategy(Provision.YES, Flow.PAR, Access.PUSH)), f3, strategy(Provision.YES, Flow.SEQ, Access.PUSH),
 	pipe(outPoint(f4, path("result/y1")), inPoint(f3, path("arg/x5"))),
 	pipe(outPoint(f5, path("result/y2")), inPoint(f3, path("arg/x6"))));
 

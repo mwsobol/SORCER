@@ -93,7 +93,7 @@ public class Entries {
         }
 
         @Override
-        public Object exec(Servicer srv, Arg... entries) throws MogramException, RemoteException {
+        public Object exec(Service srv, Arg... entries) throws MogramException, RemoteException {
             return invoke((Context)srv, entries);
         }
     };

@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
 import sorcer.core.SorcerConstants;
 import sorcer.core.provider.Provider;
 import sorcer.core.signature.NetSignature;
-import sorcer.service.Servicer;
+import sorcer.service.Server;
 import sorcer.service.Signature;
 import sorcer.service.SignatureException;
 
@@ -306,7 +306,7 @@ public class ProviderLocator {
 	}
 
 	
-	public static Servicer getService(Signature signature) throws SignatureException {
+	public static Server getService(Signature signature) throws SignatureException {
 		Object proxy = null;
 		try {
 			if (((NetSignature)signature).isUnicast()) {
@@ -315,7 +315,7 @@ public class ProviderLocator {
 					proxy = getService(locator,
                             signature.getServiceType(), signature
                             .getProviderName());
-					if (proxy != null && proxy instanceof Servicer)
+					if (proxy != null && proxy instanceof Server)
 						break;
                 }
 			} else {
@@ -326,11 +326,11 @@ public class ProviderLocator {
 		} catch (Exception ioe) {
 			throw new SignatureException(ioe);
 		} 
-		if (proxy == null || !(proxy instanceof Servicer)) {
+		if (proxy == null || !(proxy instanceof Server)) {
 			throw new SignatureException("Cannot find service for: "
 					+ signature);
 		} else
-			return (Servicer) proxy;
+			return (Server) proxy;
 	}
 
     public static Provider getProvider(Signature signature) throws SignatureException {

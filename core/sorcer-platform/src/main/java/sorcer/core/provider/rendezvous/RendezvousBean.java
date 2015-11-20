@@ -42,7 +42,7 @@ import java.util.Vector;
  * 
  * @author Mike Sobolewski
  */
-abstract public class RendezvousBean implements Servicer, Executor {
+abstract public class RendezvousBean implements Server {
 	private Logger logger = LoggerFactory.getLogger(RendezvousBean.class.getName());
 
 	protected ServiceProvider provider;
@@ -153,8 +153,7 @@ abstract public class RendezvousBean implements Servicer, Executor {
 	/* (non-Javadoc)
 	 * @see sorcer.core.provider.ServiceBean#service(sorcer.service.Exertion, net.jini.core.transaction.Transaction)
 	 */
-	@Override
-	public Mogram service(Mogram mogram, Transaction transaction) throws RemoteException, ExertionException {
+	public Mogram exert(Mogram mogram, Transaction transaction, Arg... args) throws RemoteException, ExertionException {
 		Mogram out = null;
 		try {
             logger.info("Got exertion to process: " + mogram.toString());
@@ -193,10 +192,6 @@ abstract public class RendezvousBean implements Servicer, Executor {
         }
     }
 
-	public Mogram service(Mogram mogram) throws RemoteException, ExertionException, TransactionException {
-		return service(mogram, null);
-	}
-		
 	abstract public Mogram execute(Mogram mogram, Transaction txn)
 			throws TransactionException, ExertionException, RemoteException;
 	
@@ -206,11 +201,12 @@ abstract public class RendezvousBean implements Servicer, Executor {
 	}
 
 	@Override
-	public Object exec(Servicer srv, Arg... entries) throws MogramException, RemoteException {
-		if (srv instanceof Mogram)
+	public Object exec(Arg... args) throws MogramException, RemoteException {
+		Mogram mog = Arg.getMogram(args);
+		if (mog != null)
 			try {
-				return service((Mogram) srv);
-			} catch (TransactionException e) {
+				return exert(mog, null);
+			} catch (Exception e) {
 				throw new MogramException(e);
 			}
 		else

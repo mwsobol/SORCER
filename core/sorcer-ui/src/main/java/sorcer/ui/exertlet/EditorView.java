@@ -527,7 +527,7 @@ public class EditorView extends JPanel implements HyperlinkListener {
 			for (int i = 0; i < interfaces.length; i++) {
 				if (interfaces[i] == mogram.getProcessSignature()
 						.getServiceType()) {
-					out = provider.service(mogram, null);
+					out = provider.exert(mogram, null);
 					//logger.debug(">>> done by " + provider);
 					done = true;
 					break;

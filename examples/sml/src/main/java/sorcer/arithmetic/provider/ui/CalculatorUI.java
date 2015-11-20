@@ -8,7 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.provider.Provider;
 import sorcer.core.provider.ServiceProvider;
-import sorcer.service.Servicer;
+import sorcer.service.Server;
 import sorcer.serviceui.UIComponentFactory;
 import sorcer.serviceui.UIDescriptorFactory;
 import sorcer.util.Sorcer;
@@ -54,7 +54,7 @@ public class CalculatorUI extends JPanel implements ActionListener {
 	private ServiceItem item;
 
 	// SORCER provider proxy Service#service(Exertion)
-	private Servicer provider;
+	private Server provider;
 
 	/** Creates new CalulatorUI Component */
 	public CalculatorUI(Object obj) {

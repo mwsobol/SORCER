@@ -399,8 +399,8 @@ public class ParModels {
 
 		Task t5 = task("t5", sig("add", AdderImpl.class), c5);
 
-		Job j1 = job("j1", sig("service", ServiceJobber.class),
-				job("j2", t4, t5, sig("service", ServiceJobber.class)),
+		Job j1 = job("j1", sig("exert", ServiceJobber.class),
+				job("j2", t4, t5, sig("exert", ServiceJobber.class)),
 				t3,
 				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
 				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
@@ -452,8 +452,8 @@ public class ParModels {
 
 		Task t5 = task("t5", sig("add", AdderImpl.class), c5);
 
-		Job j1 = job("j1", sig("service", ServiceJobber.class),
-				job("j2", t4, t5, sig("service", ServiceJobber.class)),
+		Job j1 = job("j1", sig("exert", ServiceJobber.class),
+				job("j2", t4, t5, sig("exert", ServiceJobber.class)),
 				t3,
 				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
 				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));

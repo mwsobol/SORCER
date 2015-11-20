@@ -455,7 +455,7 @@ public class SpaceTaker implements Runnable {
 							.getDelegate()).doTask((Task) se, transaction);
 				} else {
 					// delegate it to another collaborating service
-					out = (ServiceExertion) data.provider.service(se,
+					out = (ServiceExertion) data.provider.exert(se,
 							transaction);
 				}
 				if (out != null) {

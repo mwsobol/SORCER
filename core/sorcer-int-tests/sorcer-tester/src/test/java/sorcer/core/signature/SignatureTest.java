@@ -9,7 +9,7 @@ import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.tester.provider.Adder;
 import sorcer.arithmetic.tester.provider.impl.AdderImpl;
 import sorcer.service.Context;
-import sorcer.service.Servicer;
+import sorcer.service.Server;
 import sorcer.service.Signature;
 import sorcer.service.SignatureException;
 
@@ -166,7 +166,7 @@ public class SignatureTest {
 		assertFalse(prv instanceof Proxy);
 
 		// request the local service
-		Servicer as = task("as", lps,
+		Server as = task("as", lps,
 				context("add",
 						inEnt("arg/x1", 20.0),
 						inEnt("arg/x2", 80.0),
@@ -187,7 +187,7 @@ public class SignatureTest {
 		assertTrue(prv instanceof Proxy);
 
 		// request the remote service
-		Servicer as = task("as", rps,
+		Server as = task("as", rps,
 				context("add",
 						inEnt("arg/x1", 20.0),
 						inEnt("arg/x2", 80.0),
@@ -208,7 +208,7 @@ public class SignatureTest {
 		assertTrue(prv instanceof Proxy);
 
 		// request the remote service
-		Servicer as = task("as", ps,
+		Server as = task("as", ps,
 				context("add",
 						inEnt("arg/x1", 20.0),
 						inEnt("arg/x2", 80.0),
@@ -232,11 +232,11 @@ public class SignatureTest {
 		Signature ps = sig("add", AdderImpl.class, prvName("Adder"), outConnector);
 
 		// request the remote service
-		Servicer as = task("as", ps, cxt);
+		Server as = task("as", ps, cxt);
 
 		logger.info("input context: " + context(as));
 
-		Servicer task = exert(as);
+		Server task = exert(as);
 
 		logger.info("input context: " + context(task));
 
@@ -260,11 +260,11 @@ public class SignatureTest {
 		Signature ps = sig("add", Adder.class, prvName("Adder"), inc);
 
 		// request the remote service
-		Servicer as = task("as", ps, cxt);
+		Server as = task("as", ps, cxt);
 
 		logger.info("input context: " + context(as));
 
-		Servicer task = exert(as);
+		Server task = exert(as);
 
 		logger.info("input context: " + context(task));
 

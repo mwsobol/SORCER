@@ -160,8 +160,7 @@ public class EntModels {
 				inEnt("x2", 80.0));
 
 		Entry e = ent("x2");
-		Context result = exec(e, cxt);
-		assertEquals(80.0, value(result, "x2"));
+		assertEquals(80.0, exec(e, cxt));
 
 	}
 

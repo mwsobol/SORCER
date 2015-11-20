@@ -17,18 +17,18 @@
 
 package sorcer.core.provider;
 
-import java.net.URL;
-import java.rmi.Remote;
-import java.rmi.RemoteException;
-import java.util.Map;
-
 import net.jini.core.discovery.LookupLocator;
 import net.jini.core.lookup.ServiceID;
 import net.jini.core.lookup.ServiceItem;
 import net.jini.core.lookup.ServiceMatches;
 import net.jini.core.lookup.ServiceTemplate;
 import sorcer.service.Context;
-import sorcer.service.Servicer;
+import sorcer.service.Server;
+
+import java.net.URL;
+import java.rmi.Remote;
+import java.rmi.RemoteException;
+import java.util.Map;
 
 /**
  * Defines the interface for the SORCER catalog service. It is implemented by
@@ -36,7 +36,7 @@ import sorcer.service.Servicer;
  * 
  */
 
-public interface Cataloger extends Servicer, Remote {
+public interface Cataloger extends Server, Remote {
 
 	/**
 	 * Returns a SORCER service provider identified by its primary service type.

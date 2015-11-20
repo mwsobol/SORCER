@@ -103,14 +103,13 @@ public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Ob
         this.mogram = mogram;
     }
 
-    @Override
-    public <M extends Mogram> M service(M mogram, Transaction txn) throws TransactionException, MogramException, RemoteException {
+    public <M extends Mogram> M exert(M mogram, Transaction txn, Arg... args) throws TransactionException, MogramException, RemoteException {
         this.mogram = mogram;
         return (M) mogram.exert(txn);
     }
 
-    public <T extends Mogram> T service(T mogram) throws TransactionException, MogramException, RemoteException {
-        return service(mogram, null);
+    public <T extends Mogram> T exert(T mogram) throws TransactionException, MogramException, RemoteException {
+        return exert(mogram, null);
     }
 
     public void initialize() {
@@ -228,7 +227,7 @@ public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Ob
     }
 
     @Override
-    public Object exec(Servicer srv, Arg... entries) throws MogramException, RemoteException {
+    public Object exec(Arg... args) throws MogramException, RemoteException {
         return null;
     }
 

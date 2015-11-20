@@ -40,7 +40,7 @@ import static sorcer.eo.operator.add;
  * @author Mike Sobolewski
  */
 @SuppressWarnings("unchecked")
-public class Entry<T> extends Tuple2<String, T> implements Servicer, Dependency, Comparable<T>, Setter, Invocation<T>, Reactive<T>, Arg {
+public class Entry<T> extends Tuple2<String, T> implements Service, Dependency, Comparable<T>, Setter, Invocation<T>, Reactive<T>, Arg {
 	private static final long serialVersionUID = 5168783170981015779L;
 
 	public int index;
@@ -241,8 +241,7 @@ public class Entry<T> extends Tuple2<String, T> implements Servicer, Dependency,
 		return this;
 	}
 
-	@Override
-	public Mogram service(Mogram mogram, Transaction txn) throws TransactionException,
+	public Mogram exert(Mogram mogram, Transaction txn, Arg... args) throws TransactionException,
 			MogramException, RemoteException {
 		Context cxt = null;
 		Context out = new ServiceContext();
@@ -269,7 +268,7 @@ public class Entry<T> extends Tuple2<String, T> implements Servicer, Dependency,
 			cxt = ((Exertion) mogram.exert(txn)).getContext();
 			out.putValue(_1, cxt.getValue(_1));
 		}
-		return out;
+		return (Mogram) out;
 	}
 
 	@Override
@@ -278,8 +277,8 @@ public class Entry<T> extends Tuple2<String, T> implements Servicer, Dependency,
 	}
 
 	@Override
-	public Object exec(Servicer srv, Arg... entries) throws MogramException, RemoteException {
-		_2 = (T) srv;
+	public Object exec(Arg... entries) throws MogramException, RemoteException {
 		return getValue(entries);
 	}
+
 }

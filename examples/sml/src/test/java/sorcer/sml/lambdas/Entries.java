@@ -17,7 +17,6 @@ import static java.lang.Math.pow;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
-import static sorcer.co.operator.get;
 import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.value;
 import static sorcer.mo.operator.response;
@@ -67,8 +66,8 @@ public class Entries {
             args = args("cmd",  "/C", "echo %USERNAME%");
         }
 
-        // a lambda as a ContextEntry used to enhance the behavior of a model
-        ContextEntry verifyExitValue = (Context cxt) -> {
+        // a lambda as a EntryCollable used to enhance the behavior of a model
+        EntryCollable verifyExitValue = (Context cxt) -> {
             CmdResult out = (CmdResult)value(cxt, "cmd");
             int code = out.getExitValue();
             ent("cmd/exitValue", code);
@@ -115,23 +114,23 @@ public class Entries {
 
         // an entry as a Service lambda
         Model mo = model(ent("x", 10.0), ent("y", 20.0),
-                lambda("s1", "x", args("y"), (Servicer servicer, Arg[] args) -> {
-                    set((Entry) servicer, value((Entry) args[0]));
-                    return exec(servicer); }));
+                lambda("s1", "x", args("y"), (Service service, Arg[] args) -> {
+                    set((Entry) service, value((Entry) args[0]));
+                    return exec(service); }));
 
         logger.info("s1", value(mo, "s1"));
         assertEquals(value(mo, "s1"), 20.0);
     }
 
     @Test
-    public void lambdaServant() throws Exception {
+    public void lambdaClient() throws Exception {
 
-        // entries as ContextCallable as Servant lambdas
+        // entries as ValueCallable and  Client lambdas
         Model mo = model(ent("multiply/x1", 10.0), ent("multiply/x2", 50.0),
                 lambda("multiply", (Context<Double> model) ->
                         val(model, "multiply/x1") * val(model, "multiply/x2")),
-                lambda("multiply2", "multiply", (Service entry, Context scope) -> {
-                    double out = (double) exec(entry, scope);
+                lambda("multiply2", "multiply", (Service entry, Context<Double> scope) -> {
+                    double out = exec(entry, scope);
                     if (out > 400) {
                         set(scope, "multiply/x1", 20.0);
                         set(scope, "multiply/x2", 50.0);

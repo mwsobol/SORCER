@@ -136,7 +136,7 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
             NetSignature sig = (NetSignature) task.getProcessSignature();
             // Catalog lookup or use Lookup Service for the particular
             // service
-            Servicer service = (Servicer) Accessor.get().getService(sig);
+            Server service = (Server) Accessor.get().getService(sig);
             /*if (service == null && task.isProvisionable()) {
                 MonitoringSession monSession = MonitorUtil.getMonitoringSession(task);
                 if (task.isMonitorable() && monSession!=null) {
@@ -199,7 +199,7 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
                          * (RemoteServiceTask)provider.service(task); }
                          */
                         logger.debug("getting result from provider...");
-                        result = service.service(task, null);
+                        result = service.exert(task, null);
 
                     } catch (Exception re) {
                         if (tried >= maxTries) {
@@ -208,7 +208,7 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
                         }
                         else {
                             logger.info("Problem exerting task, retrying " + tried + " time: " + xrt.getName() + " " + re.getMessage());
-                            service = (Servicer) Accessor.get().getService(sig);
+                            service = (Server) Accessor.get().getService(sig);
                             try {
                                 logger.info("+++++++++++++++Got service: " + ((Provider)service).getProviderID());
                             } catch (Exception e) {
@@ -283,7 +283,7 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
 					if (!provider.getProviderID().equals(concatenators[i].serviceID)) {
 						logger.trace("Concatenator: [{}] ServiceID: {}", i, concatenators[i].serviceID);
 						Provider rconcatenator = (Provider) concatenators[i].service;
-						return rconcatenator.service(block, null);
+						return rconcatenator.exert(block, null);
 					}
 				}
 			}

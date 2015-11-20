@@ -2,23 +2,21 @@ package sorcer.provider.adder;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.provider.adder.impl.AdderImpl;
 import sorcer.service.*;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import sorcer.service.modeling.Model;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
-import static sorcer.eo.operator.result;
+import static sorcer.eo.operator.get;
 import static sorcer.eo.operator.value;
 import static sorcer.mo.operator.response;
-import static sorcer.mo.operator.srvModel;
 
 /**
  * @author Mike Sobolewski
@@ -32,10 +30,10 @@ public class LocalMograms {
 	@Test
 	public void exertTask() throws Exception {
 
-		Servicer t5 = task("t5", sig("add", AdderImpl.class),
+		Task t5 = task("t5", sig("add", AdderImpl.class),
 				cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0)));
 
-		Servicer out = exert(t5);
+		Task out = exert(t5);
 		Context cxt = context(out);
 		logger.info("out context: " + cxt);
 		logger.info("context @ arg/x1: " + get(cxt, "arg/x1"));

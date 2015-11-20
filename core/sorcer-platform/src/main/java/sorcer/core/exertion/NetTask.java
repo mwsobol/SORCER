@@ -105,11 +105,11 @@ public class NetTask extends ObjectTask implements Invocation<Object> {
 		this.serviceFidelity.getSelects().addAll(Arrays.asList(signatures));
 	}
 
-	public void setService(Servicer provider) {
+	public void setService(Service provider) {
 		((NetSignature) getProcessSignature()).setProvider(provider);
 	}
 
-	public Servicer getService() {
+	public Service getService() {
 		return ((NetSignature) getProcessSignature()).getService();
 	}
 
@@ -142,4 +142,12 @@ public class NetTask extends ObjectTask implements Invocation<Object> {
 		return temp;
 	}
 
+	@Override
+	public Object exec(Arg... args) throws MogramException, RemoteException {
+		try {
+			return doTask(null);
+		} catch (SignatureException e) {
+			throw new MogramException(e);
+		}
+	}
 }

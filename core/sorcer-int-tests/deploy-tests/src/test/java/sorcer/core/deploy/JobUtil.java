@@ -63,7 +63,7 @@ public class JobUtil {
                        context("subtract", inEnt("arg/x5"),
                                inEnt("arg/x6"), result("result/y3")));
 
-        return job("f1", sig("service", Jobber.class, deploy(idle(1))),
+        return job("f1", sig("exert", Jobber.class, deploy(idle(1))),
                    job("f2", f4, f5), f3,
                    strategy(Provision.YES),
                    pipe(outPoint(f4, "result/y1"), inPoint(f3, "arg/x5")),
@@ -122,7 +122,7 @@ public class JobUtil {
                        context("subtract", inEnt("arg/x5"),
                                inEnt("arg/x6"), result("result/y3")));
 
-        return job("f1", sig("service", Jobber.class, deploy(idle(1))),
+        return job("f1", sig("exert", Jobber.class, deploy(idle(1))),
                    job("f2", f4, f5), f3,
                    strategy(Provision.YES),
                    pipe(outPoint(f4, "result/y1"), inPoint(f3, "arg/x5")),

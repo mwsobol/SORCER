@@ -18,6 +18,7 @@
 package sorcer.service;
 
 import groovy.lang.Closure;
+import net.jini.core.transaction.TransactionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.context.ServiceContext;
@@ -65,7 +66,7 @@ import java.util.Map;
 
 	protected String closureExpression;
 
-	transient protected ContextCondition lambda;
+	transient protected ConditionCollable lambda;
 
 	transient private Closure closure;
 
@@ -77,7 +78,7 @@ import java.util.Map;
 		// do nothing
 	}
 
-	public Condition(ContextCondition lambda) {
+	public Condition(ConditionCollable lambda) {
 		this.lambda = lambda;
 	}
 
@@ -109,12 +110,12 @@ import java.util.Map;
 		this.pars = parameters;
 	}
 
-	public Condition(ContextCondition closure, String... parameters) {
+	public Condition(ConditionCollable closure, String... parameters) {
 		this.lambda = closure;
 		this.pars = parameters;
 	}
 
-	public Condition(Context<?> context, ContextCondition closure, String... parameters) {
+	public Condition(Context<?> context, ConditionCollable closure, String... parameters) {
 		this.lambda = closure;
 		conditionalContext = context;
 		this.pars = parameters;
@@ -179,7 +180,7 @@ import java.util.Map;
 			return false;
 	}
 
-	private boolean evaluateLambda(ContextCondition lambda) throws MogramException {
+	private boolean evaluateLambda(ConditionCollable lambda) throws MogramException {
 		return lambda.call(conditionalContext);
 	}
 
@@ -249,11 +250,11 @@ import java.util.Map;
 		this.closure = closure;
 	}
 
-	public ContextCondition getLambda() {
+	public ConditionCollable getLambda() {
 		return lambda;
 	}
 
-	public void setLambda(ContextCondition lambda) {
+	public void setLambda(ConditionCollable lambda) {
 		this.lambda = lambda;
 	}
 
@@ -321,10 +322,12 @@ import java.util.Map;
 		}
 	}
 
+
 	@Override
-	public Object exec(Servicer srv, Arg... entries) throws MogramException, RemoteException {
-		if (srv instanceof Context) {
-			conditionalContext = (Context<?>) srv;
+	public Object exec(Arg... args) throws MogramException, RemoteException, TransactionException {
+		Context cxt = Arg.getContext(args);
+		if (cxt != null) {
+			conditionalContext = cxt;
 			return isTrue();
 		}
 		return null;

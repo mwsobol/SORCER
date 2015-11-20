@@ -1,6 +1,6 @@
 /*
- * Copyright 2010 the original author or authors.
- * Copyright 2010 SorcerSoft.org.
+ * Copyright 2009 the original author or authors.
+ * Copyright 2009 SorcerSoft.org.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
  */
 
 package sorcer.service;
+
 import java.io.Serializable;
 
 /**
@@ -24,6 +25,6 @@ import java.io.Serializable;
 @FunctionalInterface
 public interface ContextCallable<T> extends Serializable {
 
-    T call(Context<T> context) throws MogramException;
+    Context call(Mogram mogram) throws MogramException;
 
 }

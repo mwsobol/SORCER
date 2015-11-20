@@ -83,7 +83,7 @@ public class SrvModel extends ParModel<Object> implements Model {
     private void setSignature() {
         subjectPath = "service/model";
         try {
-            subjectValue = sig("service", ServiceModeler.class);
+            subjectValue = sig("exert", ServiceModeler.class);
         } catch (SignatureException e) {
             // ignore it;
         }
@@ -209,26 +209,26 @@ public class SrvModel extends ParModel<Object> implements Model {
                     return out;
                 } else if (val2 instanceof MogramEntry) {
                     return evalMogram((MogramEntry)val2, path, entries);
-                } else if (val2 instanceof ContextCallable) {
+                } else if (val2 instanceof ValueCallable) {
                     Signature.ReturnPath rp = ((Srv) val).getReturnPath();
                     Object obj = null;
                     if (rp != null && rp.inPaths != null) {
                         Context cxt = getSubcontext(rp.inPaths);
-                        obj = ((ContextCallable)val2).call(cxt);
+                        obj = ((ValueCallable)val2).call(cxt);
                     } else {
-                        obj = ((ContextCallable) val2).call(this);
+                        obj = ((ValueCallable) val2).call(this);
                     }
                     ((Srv) get(path)).setSrvValue(obj);
                     if (rp != null && rp.path != null)
                         putValue(((Srv) val).getReturnPath().path, obj);
                     return obj;
-                }  else if (val2 instanceof Servant) {
+                }  else if (val2 instanceof Client) {
                         String entryPath = ((Entry)val).getName();
-                        Object out = ((Servant)val2).exec((Service) this.asis(entryPath), this);
+                        Object out = ((Client)val2).exec((Service) this.asis(entryPath), this);
                         ((Srv) get(path)).setSrvValue(out);
                         return out;
-                } else if (val2 instanceof ContextEntry) {
-                    Entry entry = ((ContextEntry)val2).call(this);
+                } else if (val2 instanceof EntryCollable) {
+                    Entry entry = ((EntryCollable)val2).call(this);
                     ((Srv) get(path)).setSrvValue(entry.value());
                     if (path != entry.getName())
                         putValue(entry.getName(), entry.value());
@@ -262,12 +262,12 @@ public class SrvModel extends ParModel<Object> implements Model {
                                 args[i] = (Arg) asis(paths[i]);
                         }
                     }
-                    // make from a value of entry and Entry (Servicer)
-                    Object servicer = asis(entryPath);
-                    if (!(servicer instanceof Servicer)) {
-                        servicer = new  Entry(entryPath, servicer);
+                    // make from a value of entry and Entry (Server)
+                    Object server = asis(entryPath);
+                    if (!(server instanceof Server)) {
+                        server = new  Entry(entryPath, server);
                     }
-                    Object out = ((Service)val2).exec((Servicer) servicer, args);
+                    Object out = ((Service)val2).exec(new Arg[] { (Arg)server });
                     ((Srv) get(path)).setSrvValue(out);
                     return out;
                 } else {

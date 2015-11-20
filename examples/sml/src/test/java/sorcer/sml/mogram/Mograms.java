@@ -18,7 +18,6 @@ import sorcer.service.modeling.Model;
 
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
-import static sorcer.co.operator.get;
 import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.loop;
 import static sorcer.eo.operator.result;
@@ -57,7 +56,7 @@ public class Mograms {
         Context taskOutConnector = outConn(inEnt("add/x1", "j2/t4/multiply/result/y"),
                 inEnt("multiply/x1", "j2/t5/add/result/y"));
 
-        Job j2 = job("j2", sig("service", ServiceJobber.class),
+        Job j2 = job("j2", sig("exert", ServiceJobber.class),
                 t4, t5, strategy(Flow.PAR),
                 taskOutConnector);
 

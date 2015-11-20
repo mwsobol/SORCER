@@ -69,8 +69,8 @@ public class ArithmeticMograms {
 						val(model, "multiply/x1") * val(model, "multiply/x2")),
 				lambda("subtract", (Context <Double> model) ->
 						v(model, "multiply") - v(model, "add")),
-				lambda("multiply2", "multiply", (Service entry, Context scope) -> {
-					double out = (double) exec(entry, scope);
+				lambda("multiply2", "multiply", (Service entry, Context<Double> scope) -> {
+					double out = exec(entry, scope);
 					if (out > 400) {
 						set(scope, "multiply/x1", 20.0);
 						set(scope, "multiply/x2", 50.0);
@@ -284,14 +284,14 @@ public class ArithmeticMograms {
 				context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
 						outEnt("result/y")));
 
-		Job job = job(sig("service", ServiceJobber.class),
+		Job job = job(sig("exert", ServiceJobber.class),
 				"j1", t4, t5, t3,
 				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
 				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
 
 		Context context = upcontext(exert(job));
 		logger.info("job context: " + context);
-		assertTrue(get(context, "j1/t3/result/y").equals(400.0));
+		assertTrue(value(context, "j1/t3/result/y").equals(400.0));
 	}
 
 	@Test
@@ -300,28 +300,28 @@ public class ArithmeticMograms {
 		Task t3 = task("t3",
 				sig("subtract", SubtractorImpl.class),
 				context("subtract", inEnt("arg/x1"), inEnt("arg/x2"),
-						outEnt("result/y", null)));
+						result("result/y")));
 
 		Task t4 = task("t4",
 				sig("multiply", MultiplierImpl.class),
 				context("multiply", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
-						outEnt("result/y")));
+						result("result/y")));
 
 		Task t5 = task("t5",
 				sig("add", AdderImpl.class),
 				context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
-						outEnt("result/y")));
+						result("result/y")));
 
 		// Service Composition j1(j2(t4(x1, x2), t5(x1, x2)), t3(x1, x2))
 		Job job = job(
-				"j1", sig("service", ServiceJobber.class),
+				"j1", sig("exert", ServiceJobber.class),
 				job("j2", t4, t5), t3,
 				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
 				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
 
 		Context context = upcontext(exert(job));
 		logger.info("job context: " + context);
-		assertTrue(get(context, "j1/t3/result/y").equals(400.0));
+		assertTrue(value(context, "j1/t3/result/y").equals(400.0));
 	}
 
     @Test

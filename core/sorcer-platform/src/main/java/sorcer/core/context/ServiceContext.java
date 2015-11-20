@@ -19,6 +19,7 @@ package sorcer.core.context;
 
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
+import net.jini.id.Uuid;
 import net.jini.id.UuidFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,7 +41,6 @@ import sorcer.core.provider.Provider;
 import sorcer.core.provider.ServiceProvider;
 import sorcer.core.signature.NetSignature;
 import sorcer.eo.operator;
-import sorcer.security.util.SorcerPrincipal;
 import sorcer.service.*;
 import sorcer.service.Signature.Direction;
 import sorcer.service.Signature.ReturnPath;
@@ -163,44 +163,44 @@ public class ServiceContext<T> extends ServiceMogram implements
 		this.subjectValue = subjectValue;
 	}
 
-	public ServiceContext(Context<T> cntxt) throws ContextException {
-		this(cntxt.getSubjectPath(), cntxt.getSubjectValue());
-		// Note, I'm not making new objects here, only creating
-		// new references
+	public ServiceContext(Context<T> context) throws ContextException {
+		this(context.getSubjectPath(), context.getSubjectValue());
+		ServiceContext cxt = (ServiceContext)context;
 		String path;
 		T obj;
-		Iterator i = ((ServiceContext)cntxt).keyIterator();
+		Iterator i = cxt.keyIterator();
 		while (i.hasNext()) {
 			path = (String) i.next();
-			obj = (T) ((ServiceContext)cntxt).get(path);
+			obj = (T) cxt.get(path);
 			if (obj == null)
-				put(path, (T)none);
+				put(path, (T) none);
 			else
 				put(path, obj);
 		}
-		setMetacontext(cntxt.getMetacontext());
+
+		setMetacontext(cxt.getMetacontext());
 		// copy instance fields
-		mogramId = cntxt.getId();
-		parentPath = cntxt.getParentPath();
-		parentId = cntxt.getParentId();
+		mogramId = (Uuid)cxt.getId();
+		parentPath = cxt.getParentPath();
+		parentId = cxt.getParentId();
 		creationDate = new Date();
-		description = cntxt.getDescription();
-		scopeCode = cntxt.getScopeCode();
-		scope = cntxt.getScope();
-		initContext = ((ServiceContext) cntxt).getInitContext();
-		ownerId = cntxt.getOwnerId();
-		subjectId = cntxt.getSubjectId();
-		projectName = cntxt.getProjectName();
-		accessClass = cntxt.getAccessClass();
-		isExportControlled = cntxt.isExportControlled();
-		goodUntilDate = cntxt.getGoodUntilDate();
-		domainId = cntxt.getDomainId();
-		subdomainId = cntxt.getSubdomainId();
-		domainName = cntxt.getDomainName();
-		subdomainName = cntxt.getSubdomainName();
-		exertion = (ServiceExertion) cntxt.getMogram();
-		principal = (SorcerPrincipal)cntxt.getPrincipal();
-		isPersistantTaskAssociated = ((ServiceContext) cntxt).isPersistantTaskAssociated;
+		description = cxt.getDescription();
+		scopeCode = cxt.getScopeCode();
+		scope = cxt.getScope();
+		initContext = ((ServiceContext) cxt).getInitContext();
+		ownerId = cxt.getOwnerId();
+		subjectId = cxt.getSubjectId();
+		projectName = cxt.getProjectName();
+		accessClass = cxt.getAccessClass();
+		isExportControlled = cxt.isExportControlled();
+		goodUntilDate = cxt.getGoodUntilDate();
+		domainId = cxt.getDomainId();
+		subdomainId = cxt.getSubdomainId();
+		domainName = cxt.getDomainName();
+		subdomainName = cxt.getSubdomainName();
+		exertion = (ServiceExertion) cxt.getMogram();
+		principal = cxt.getPrincipal();
+		isPersistantTaskAssociated = cxt.isPersistantTaskAssociated;
 	}
 
 	public ServiceContext(Object object) throws ContextException {
@@ -279,7 +279,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		return this;
 	}
 
-	public Context clearScope() throws ContextException {
+	public ServiceContext clearScope() throws ContextException {
 //		clearReturnPath
 		return this;
 	}
@@ -2744,7 +2744,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 			result = modelStrategy.outcome;
 			modelStrategy.outcome.setModeling(true);
 		}
-		result.setName("Response of model: " + name);
+		((ServiceContext)result).setName("Response of model: " + name);
 		return result;
 	}
 
@@ -2953,7 +2953,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 				if (si.getScope() == null || si.getScope().size() == 0)
 					((ServiceInvoker) p.asis()).setScope(this);
 				else {
-					si.getScope().setScope(this);
+					((ServiceContext)si.getScope()).setScope(this);
 				}
 			}
 		} catch (RemoteException e) {
@@ -3052,22 +3052,21 @@ public class ServiceContext<T> extends ServiceMogram implements
 	}
 
 	/* (non-Javadoc)
-     * @see sorcer.service.Service#service(sorcer.service.Exertion, net.jini.core.transaction.Transaction)
+     * @see sorcer.service.Service#exert(sorcer.service.Exertion, net.jini.core.transaction.Transaction)
      */
-	@Override
-	public <T extends Mogram> T service(T mogram, Transaction txn) throws TransactionException,
+	public <T extends Mogram> T exert(T mogram, Transaction txn, Arg... args) throws TransactionException,
 			MogramException, RemoteException {
 		try {
-			((ServiceExertion)exertion).getContext().appendContext(this);
+			exertion.getContext().appendContext(this);
 		} catch (Exception e) {
 			throw new ExertionException(e);
 		}
 		return (T) exertion.exert(txn);
 	}
 
-	public <T extends Mogram> T service(T mogram) throws TransactionException,
+	public <T extends Mogram> T exert(T mogram) throws TransactionException,
 			MogramException, RemoteException {
-		return (T) service(exertion, null);
+		return (T) exert(exertion, null, (Arg[])null);
 	}
 
 	public Context updateContext(String... paths) throws ContextException {
@@ -3160,9 +3159,13 @@ public class ServiceContext<T> extends ServiceMogram implements
 	}
 
 	@Override
-	public Object exec(Servicer srv, Arg... entries) throws MogramException, RemoteException {
-		if (srv instanceof Context)
-			scope = (((Context)srv));
-		return getResponse(entries);
+	public Object exec(Arg... args) throws MogramException, RemoteException {
+		Context cxt = Arg.getContext(args);
+		if (cxt != null) {
+			scope = cxt;
+			return getResponse(args);
+		} else {
+			return getValue(args);
+		}
 	}
 }

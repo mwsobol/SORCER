@@ -19,7 +19,6 @@ import java.util.Date;
 
 import static org.junit.Assert.*;
 import static sorcer.co.operator.*;
-import static sorcer.eo.operator.args;
 import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.get;
 import static sorcer.eo.operator.value;
@@ -165,7 +164,7 @@ public class Signatures {
 	public void localService() throws Exception {
 
 		// request the local service
-		Servicer as = task("as", sig("add", AdderImpl.class),
+		Server as = task("as", sig("add", AdderImpl.class),
 				context("add",
 						inEnt("arg/x1", 20.0),
 						inEnt("arg/x2", 80.0),
@@ -180,7 +179,7 @@ public class Signatures {
 	public void referencingRemoteProvider() throws Exception {
 
 		// request the remote service
-		Servicer as = task("as", sig("add", Adder.class),
+		Server as = task("as", sig("add", Adder.class),
 				context("add",
 						inEnt("arg/x1", 20.0),
 						inEnt("arg/x2", 80.0),
@@ -201,7 +200,7 @@ public class Signatures {
 		assertTrue(prv instanceof Proxy);
 
 		// request the remote service
-		Servicer as = task("as", ps,
+		Server as = task("as", ps,
 				context("add",
 						inEnt("arg/x1", 20.0),
 						inEnt("arg/x2", 80.0),
@@ -214,30 +213,26 @@ public class Signatures {
 	@Test
 	public void signatureLocalService() throws Exception {
 
-		Context cxt = context(
+		Context<Double> cxt = context(
 				inEnt("y1", 20.0),
 				inEnt("y2", 80.0),
 				result("result/y"));
 
-		Context result = exec(sig("add", AdderImpl.class), cxt);
-		assertEquals(20.0, value(result, "y1"));
-		assertEquals(80.0, value(result, "y2"));
-		assertEquals(100.0, value(result, "result/y"));
+		Double result = exec(sig("add", AdderImpl.class), cxt);
+		assertTrue(result.equals(100.0));
 	}
 
 
 	@Test
 	public void signatureRemoteService() throws Exception {
 
-		Context cxt = context(
+		Context<Double> cxt = context(
 				inEnt("y1", 20.0),
 				inEnt("y2", 80.0),
 				result("result/y"));
 
-		Context result = exec(sig("add", Adder.class), cxt);
-		assertEquals(20.0, value(result, "y1"));
-		assertEquals(80.0, value(result, "y2"));
-		assertEquals(100.0, value(result, "result/y"));
+		Double result = exec(sig("add", Adder.class), cxt);
+		assertTrue(result.equals(100.0));
 	}
 
 
@@ -263,7 +258,7 @@ public class Signatures {
 				context("add", inEnt("arg/x1", 20.0),
 						inEnt("arg/x2", 80.0), result("result/y")));
 
-		Context  out = exec(sig(ServiceShell.class), f5);
+		Context  out = (Context) exec(sig(ServiceShell.class), f5);
 		assertEquals(get(out), 100.00);
 	}
 
@@ -272,12 +267,12 @@ public class Signatures {
 		// The SORCER Remote Service Shell as a service provider
 		Task f5 = task(
 				"f5",
-				sig("add", Adder.class),
+				sig("add", AdderImpl.class),
 				context("add", inEnt("arg/x1", 20.0),
 						inEnt("arg/x2", 80.0), result("result/y")));
 
-		Context  out = exec(sig(RemoteServiceShell.class), f5);
-		assertEquals(get(out), 100.00);
+		Context  out = (Context) exec(sig(RemoteServiceShell.class), f5);
+		assertEquals(get(out, "result/y"), 100.00);
 	}
 
 	@Test
@@ -289,7 +284,7 @@ public class Signatures {
 				context("add", inEnt("arg/x1", 20.0),
 						inEnt("arg/x2", 80.0), result("result/y")));
 
-		Context  out = exec(sig("add", Adder.class, Shell.REMOTE), f5);
+		Context  out = (Context) exec(sig("add", Adder.class, Shell.REMOTE), f5);
 		assertEquals(get(out), 100.00);
 	}
 
@@ -306,7 +301,7 @@ public class Signatures {
 	public void netletSignatureprovider() throws Exception {
 		String netlet = System.getProperty("project.dir")+"/src/main/netlets/ha-job-local.ntl";
 
-		Servicer srv = (Servicer)provider(sig(file(netlet)));
+		Server srv = (Server)provider(sig(file(netlet)));
 //		logger.info("job service: " + exec(srv));
 		assertTrue(exec(srv).equals(400.0));
 	}
@@ -326,11 +321,11 @@ public class Signatures {
 		Signature ps = sig("add", AdderImpl.class, prvName("Adder"), outConnector);
 
 		// request the remote service
-		Servicer as = task("as", ps, cxt);
+		Task as = task("as", ps, cxt);
 
 		logger.info("input context: " + context(as));
 
-		Servicer task = exert(as);
+		Server task = exert(as);
 
 		logger.info("input context: " + context(task));
 
@@ -355,11 +350,11 @@ public class Signatures {
 		Signature ps = sig("add", Adder.class, prvName("Adder"), inc);
 
 		// request the remote service
-		Servicer as = task("as", ps, cxt);
+		Task as = task("as", ps, cxt);
 
 		logger.info("input context: " + context(as));
 
-		Servicer task = exert(as);
+		Task task = exert(as);
 
 		logger.info("input context: " + context(task));
 

@@ -56,7 +56,7 @@ public class Srv extends Entry<Object> implements Variability<Object>, Arg,
         this.paths = paths;
     }
 
-    public Srv(String name, String path, Servant service) {
+    public Srv(String name, String path, Client service) {
         super(path, service);
         this.name = name;
     }
@@ -137,12 +137,12 @@ public class Srv extends Entry<Object> implements Variability<Object>, Arg,
     }
 
     @Override
-    public Mogram service(Mogram mogram, Transaction txn) throws TransactionException, MogramException, RemoteException {
-        return ((SignatureEntry)_2)._2.service(mogram, txn);
+    public Mogram exert(Mogram mogram, Transaction txn, Arg... args) throws TransactionException, MogramException, RemoteException {
+        return ((SignatureEntry)_2)._2.exert(mogram, txn);
     }
 
-    public Mogram service(Mogram mogram) throws TransactionException, MogramException, RemoteException {
-        return service(mogram, null);
+    public Mogram exert(Mogram mogram) throws TransactionException, MogramException, RemoteException {
+        return exert(mogram, null);
     }
 
     @Override
@@ -215,13 +215,17 @@ public class Srv extends Entry<Object> implements Variability<Object>, Arg,
     }
 
     @Override
-    public Object exec(Servicer srv, Arg... entries) throws MogramException, RemoteException {
-        if (srv instanceof SrvModel && _2 instanceof ContextCallable) {
-            return  ((ContextCallable)_2).call((Context)srv);
-        } else {
-            _2 = srv;
-            return getValue(entries);
+    public Object exec(Arg... args) throws MogramException, RemoteException {
+        Model mod = Arg.getModel(args);
+        if (mod != null) {
+            if (mod instanceof SrvModel && _2 instanceof ValueCallable) {
+                return ((ValueCallable) _2).call((Context) mod);
+            } else {
+                _2 = mod;
+                return getValue(args);
+            }
         }
+        return null;
     }
 
     public Object getSrvValue() {

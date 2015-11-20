@@ -36,6 +36,7 @@ import java.lang.reflect.Method;
 import java.rmi.RemoteException;
 import java.util.*;
 
+import static sorcer.eo.operator.context;
 import static sorcer.eo.operator.provider;
 import static sorcer.eo.operator.task;
 
@@ -580,26 +581,30 @@ public class ServiceSignature implements Signature, SorcerConstants {
 				.compareTo(""+((ServiceSignature) signature).providerName));
 	}
 
-	@Override
-	public Mogram service(Mogram mogram, Transaction txn) throws TransactionException,
-			MogramException, RemoteException {
-		Provider prv = (Provider)Accessor.get().getService(this);
+	public Mogram exert(Mogram mogram, Transaction txn, Arg... args)
+			throws TransactionException, MogramException, RemoteException {
+		Context cxt = null;
 		if (mogram instanceof Context) {
-			Task out = null;
-			try {
-				out = task(this, (Context)mogram);
-			} catch (SignatureException e) {
-				throw new MogramException(e);
-			}
-			return prv.service(out, txn).getContext();
+			cxt = (Context)mogram;
 		} else {
-			return prv.service(mogram, txn);
+			 cxt = context(exert(mogram, txn, args));
 		}
+		Task out = null;
+		try {
+			out = task(this, cxt);
+		} catch (SignatureException e) {
+			throw new MogramException(e);
+		}
+		Object result = exert(out);
+		if (result instanceof Context)
+			return (Mogram)result;
+		else
+			return (Mogram) ((Task)exert(out)).getContext();
 	}
 
-	public Mogram service(Mogram mogram) throws TransactionException,
+	public Mogram exert(Mogram mogram) throws TransactionException,
 			MogramException, RemoteException {
-		return service(mogram, null);
+		return exert(mogram, null);
 	}
 
 	public Context getInConnector() {
@@ -632,11 +637,13 @@ public class ServiceSignature implements Signature, SorcerConstants {
 	}
 
 	@Override
-	public Object exec(Servicer srv, Arg... entries) throws MogramException, RemoteException, TransactionException {
-		if (srv instanceof Exertion) {
+	public Object exec(Arg... entries) throws MogramException, RemoteException, TransactionException {
+		Exertion xrt = Arg.getExertion(entries);
+		if (xrt != null) {
 			Provider prv = (Provider) Accessor.get().getService(this);
-			return prv.exec(srv);
+			return prv.exert(xrt, null, entries);
 		}
 		return null;
 	}
+
 }

@@ -207,11 +207,11 @@ public class MultiFidelityMogram extends ServiceMogram {
     }
 
     @Override
-    public <T extends Mogram> T service(T mogram, Transaction txn) throws TransactionException, MogramException, RemoteException {
+    public <T extends Mogram> T exert(T mogram, Transaction txn, Arg... args) throws TransactionException, MogramException, RemoteException {
         return null;
     }
 
-    public <T extends Mogram> T service(T mogram) throws TransactionException, MogramException, RemoteException {
+    public <T extends Mogram> T exert(T mogram) throws TransactionException, MogramException, RemoteException {
         return null;
     }
 
@@ -237,7 +237,7 @@ public class MultiFidelityMogram extends ServiceMogram {
     }
 
     @Override
-    public Object exec(Servicer srv, Arg... entries) throws MogramException, RemoteException {
+    public Object exec(Arg... entries) throws MogramException, RemoteException {
         return null;
     }
 }

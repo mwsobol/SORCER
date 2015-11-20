@@ -40,7 +40,7 @@ Task f3 = task("f3", sig("subtract", Subtractor.class,
         context("subtract", inEnt("arg/x5"),
                 inEnt("arg/x6"), result("result/y3")));
 
-job("f1", sig("service", Jobber.class, deploy(idle(1))),
+job("f1", sig("exert", Jobber.class, deploy(idle(1))),
         job("f2", f4, f5), f3,
         strategy(Strategy.Provision.YES),
         pipe(outPoint(f4, "result/y1"), inPoint(f3, "arg/x5")),

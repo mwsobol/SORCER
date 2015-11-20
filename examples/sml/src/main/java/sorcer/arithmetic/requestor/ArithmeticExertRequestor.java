@@ -43,8 +43,8 @@ public class ArithmeticExertRequestor extends ExertRequestor {
 						outEnt("result/y")));
 
 		Job job = job("j1", sFi("object", sig("service", ServiceJobber.class)),
-				sFi("net", sig("service", Jobber.class)),
-				job("j2", sig("service", ServiceJobber.class), t4, t5),
+				sFi("net", sig("exert", Jobber.class)),
+				job("j2", sig("exert", ServiceJobber.class), t4, t5),
 				t3,
 				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
 				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")),
@@ -58,6 +58,6 @@ public class ArithmeticExertRequestor extends ExertRequestor {
 	@Override
 	public void postprocess(String... args) throws ExertionException, ContextException {
 		super.postprocess();
-		logger.info("<<<<<<<<<< f5 context: \n" + upcontext(mogram));
+		logger.info("<<<<<<<<<< f5 context: \n" + upcontext((Exertion)mogram));
 	}
 }

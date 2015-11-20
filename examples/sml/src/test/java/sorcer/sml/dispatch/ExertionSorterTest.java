@@ -64,7 +64,7 @@ public class ExertionSorterTest {
                         outEnt("result/y", null)));
 
         // Service Composition j1(j2(t4(x1, x2), t5(x1, x2)), t3(x1, x2))
-        return job("j1", t3, // sig("service", Jobber.class),
+        return job("j1", t3, // sig("exert", Jobber.class),
                 job("j2", t5, t4, strategy(flow, access)),
                 pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
                 pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));

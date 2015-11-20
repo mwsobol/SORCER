@@ -53,14 +53,14 @@ public class LocalJobExertions implements SorcerConstants {
 				context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
 						outEnt("result/y")));
 
-		Job job = job(sig("service", ServiceJobber.class),
+		Job job = job(sig("exert", ServiceJobber.class),
 				"j1", t4, t5, t3,
 				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
 				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
 
 		Context context = upcontext(exert(job));
 		logger.info("job context: " + context);
-		assertTrue(get(context, "j1/t3/result/y").equals(400.0));
+		assertTrue(value(context, "j1/t3/result/y").equals(400.0));
 
 	}
 
@@ -87,14 +87,14 @@ public class LocalJobExertions implements SorcerConstants {
 
 		// Service Composition j1(j2(t4(x1, x2), t5(x1, x2)), t3(x1, x2))
 		Job job = job(
-				"j1", sig("service", ServiceJobber.class),
+				"j1", sig("exert", ServiceJobber.class),
 				job("j2", t4, t5), t3,
 				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
 				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
 
 		Context context = upcontext(exert(job));
 		logger.info("job context: " + context);
-		assertTrue(get(context, "j1/t3/result/y").equals(400.0));
+		assertTrue(value(context, "j1/t3/result/y").equals(400.0));
 
 	}
 
@@ -107,8 +107,8 @@ public class LocalJobExertions implements SorcerConstants {
 
 		Context result = context(exert(cxtt));
 //		logger.info("contexter context: " + result);
-		assertTrue(get(result, "arg/x1").equals(20.0));
-		assertTrue(get(result, "arg/x2").equals(80.0));
+		assertTrue(value(result, "arg/x1").equals(20.0));
+		assertTrue(value(result, "arg/x2").equals(80.0));
 
 	}
 	
@@ -122,7 +122,7 @@ public class LocalJobExertions implements SorcerConstants {
 		
 		Context result = context(exert(t5));
 //		logger.info("task context: " + result);
-		assertTrue(get(result, "result/y").equals(100.0));
+		assertTrue(value(result, "result/y").equals(100.0));
 
 	}
 	
@@ -156,9 +156,9 @@ public class LocalJobExertions implements SorcerConstants {
 
 		Context context = upcontext(exert(job));
 		logger.info("job context: " + context);
-		assertTrue(get(context, "j1/t3/arg/x1").equals(500.0));
-		assertTrue(get(context, "j1/t3/arg/x2").equals(100.0));
-		assertTrue(get(context, "j1/t3/result/y").equals(400.0));
+		assertTrue(value(context, "j1/t3/arg/x1").equals(500.0));
+		assertTrue(value(context, "j1/t3/arg/x2").equals(100.0));
+		assertTrue(value(context, "j1/t3/result/y").equals(400.0));
 
 	}
 

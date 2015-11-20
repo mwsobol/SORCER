@@ -570,11 +570,12 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	}
 
 	@Override
-	public Object exec(Servicer srv, Arg... entries) throws MogramException, RemoteException {
-		if (srv instanceof Mogram)
-			return service((Mogram) srv);
-		else
-			return null;
+	public Object exec(Arg... args) throws MogramException, RemoteException {
+		Mogram srv = Arg.getMogram(args);
+		if (srv != null) {
+			return service(srv);
+		}
+		return null;
 	}
 
 	/**
@@ -1460,7 +1461,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	}
 
 	@Override
-	public Exertion service(Mogram mogram, Transaction txn) throws TransactionException,
+	public Mogram exert(Mogram mogram, Transaction txn, Arg... args) throws TransactionException,
 			ExertionException, RemoteException {
 		if (mogram instanceof Task) {
 			ServiceContext cxt;

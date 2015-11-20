@@ -28,8 +28,21 @@ import java.rmi.RemoteException;
  *
  * @author Mike Sobolewski
  */
+@FunctionalInterface
 public interface Exerter {
 
+	/**
+	 * A generic service request as specified by a mogram - a generic compound service.
+	 * It can be carried out dynamically by any
+	 * <code>Service</code> peer matching the exertion's {@link Signature}.
+	 *
+	 * @param mogram an input mogram
+	 * @param txn      The transaction (if any) under which to provide service.
+	 * @return a resulting mogram
+	 * @throws TransactionException if a transaction error occurs
+	 * @throws ExertionException    if an exertion invocation failed for any reason
+	 * @throws RemoteException
+	 */
 	public <T extends Mogram> T exert(T mogram, Transaction txn, Arg... entries)
 			throws TransactionException, MogramException, RemoteException;
 

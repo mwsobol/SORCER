@@ -17,6 +17,6 @@ import java.rmi.RemoteException;
 @FunctionalInterface
 public interface Service {
 
-    public Object exec(Servicer srv, Arg... entries) throws MogramException, RemoteException, TransactionException;
+    public Object exec(Arg... args) throws MogramException, RemoteException, TransactionException;
 
 }

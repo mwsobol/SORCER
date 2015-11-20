@@ -45,7 +45,7 @@ import net.jini.lease.LeaseRenewalManager;
 import net.jini.lookup.LookupCache;
 import net.jini.lookup.ServiceDiscoveryManager;
 import sorcer.core.context.ServiceContext;
-import sorcer.service.Servicer;
+import sorcer.service.Server;
 
 /**
  * <p>
@@ -139,7 +139,7 @@ public class TaskAuditor {
 				sdm = new ServiceDiscoveryManager(disco,
 						new LeaseRenewalManager());
 				lCache1 = sdm.createLookupCache(new ServiceTemplate(null,
-						new Class[] { Servicer.class }, null),
+						new Class[] { Server.class }, null),
 						null, null);
 			} catch (Exception e) {
 				e.printStackTrace();

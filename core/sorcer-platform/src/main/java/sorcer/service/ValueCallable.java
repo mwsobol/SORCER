@@ -16,18 +16,14 @@
  */
 
 package sorcer.service;
-
-import net.jini.core.transaction.TransactionException;
-
 import java.io.Serializable;
-import java.rmi.RemoteException;
 
 /**
  * Created by Mike Sobolewski on 10/30/15.
  */
 @FunctionalInterface
-public interface Servant<T> extends Serializable {
+public interface ValueCallable<T> extends Serializable {
 
-    Object exec(Service service, Context context) throws MogramException, RemoteException, TransactionException;
+    T call(Context<T> context) throws MogramException;
 
 }

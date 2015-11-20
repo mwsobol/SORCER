@@ -40,7 +40,7 @@ public class NetJob extends Job implements Invocation<Object> {
 	public NetJob(String name) {
 		super(name);
 		try {
-			addSignature(new NetSignature("service", Jobber.class, Type.PROC));
+			addSignature(new NetSignature("exert", Jobber.class, Type.PROC));
 		} catch (SignatureException e) {
 			e.printStackTrace();
 		}

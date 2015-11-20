@@ -27,7 +27,7 @@ import sorcer.core.context.PositionalContext;
 import sorcer.core.provider.Provider;
 import sorcer.provider.adder.Adder;
 import sorcer.service.ContextException;
-import sorcer.service.Servicer;
+import sorcer.service.Server;
 import sorcer.serviceui.UIComponentFactory;
 import sorcer.serviceui.UIDescriptorFactory;
 import sorcer.util.Sorcer;
@@ -46,7 +46,7 @@ public class AdderUI extends JPanel implements SorcerConstants {
 
 	private final static Logger logger = LoggerFactory.getLogger(AdderUI.class.getName());
 
-    private Servicer provider;
+    private Server provider;
 
 	private PositionalContext context;
 

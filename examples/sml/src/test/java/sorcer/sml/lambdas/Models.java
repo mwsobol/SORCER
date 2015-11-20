@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.impl.*;
-import sorcer.co.operator;
 import sorcer.core.plexus.Morpher;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
@@ -16,10 +15,10 @@ import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.get;
+import static sorcer.eo.operator.put;
+import static sorcer.eo.operator.result;
 import static sorcer.eo.operator.value;
-import static sorcer.mo.operator.response;
-import static sorcer.mo.operator.responseDown;
-import static sorcer.mo.operator.responseUp;
+import static sorcer.mo.operator.*;
 
 /**
  * @author Mike Sobolewski
@@ -48,9 +47,9 @@ public class Models {
 
 		Context out = response(mo);
 		logger.info("model response: " + out);
-		assertTrue(operator.get(out, "subtract").equals(400.0));
-		assertTrue(operator.get(out, "multiply").equals(500.0));
-		assertTrue(operator.get(out, "add").equals(100.0));
+		assertTrue(get(out, "subtract").equals(400.0));
+		assertTrue(get(out, "multiply").equals(500.0));
+		assertTrue(get(out, "add").equals(100.0));
 	}
 
 	@Test
@@ -65,12 +64,12 @@ public class Models {
 						val(model, "multiply/x1") * val(model, "multiply/x2")),
 				lambda("subtract", (Context <Double> model) ->
 						v(model, "multiply") - v(model, "add")),
-				lambda("multiply2", "multiply", (Service entry, Context scope) -> {
-					double out = (double) exec(entry, scope);
+				lambda("multiply2", "multiply", (Service entry, Context<Double> scope) -> {
+					double out = exec(entry, scope);
 					if (out > 400) {
 						set(scope, "multiply/x1", 20.0);
 						set(scope, "multiply/x2", 50.0);
-						out = (double) exec(entry, scope);
+						out = exec(entry, scope);
 					}
 					return out;
 				} ),
@@ -118,7 +117,7 @@ public class Models {
 
 		Double delta = 0.5;
 
-		ContextEntry<Double> entFunction = (Context<Double> cxt) -> {
+		EntryCollable<Double> entFunction = (Context<Double> cxt) -> {
 			double out = value(cxt, "multiply");
 			out = out + 1000.0 + delta;
 			return ent("out", out);
@@ -141,26 +140,22 @@ public class Models {
 
 		Context out = response(mo);
 		logger.info("response: " + out);
-		assertTrue(operator.get(out, "subtract").equals(400.0));
-		assertTrue(operator.get(out, "out").equals(1500.5));
-		assertTrue(operator.get(out, "lambda").equals(1500.5));
+		assertTrue(get(out, "subtract").equals(400.0));
+		assertTrue(get(out, "out").equals(1500.5));
+		assertTrue(get(out, "lambda").equals(1500.5));
 	}
 
 	@Test
 	public void entryReturnValueSubstitution() throws Exception {
 
-		ContextEntry<Double> callTask = (Context<Double> context) -> {
+		EntryCollable<Double> callTask = (Context<Double> context) -> {
 			Context out = null;
 			Double value = null;
-			try {
-				Task task = operator.get(context, "task/multiply");
-				put(context(task), "arg/x1", 20.0);
-				put(context(task), "arg/x2", 100.0);
-				out = context(exert(task));
-				value = operator.get(out, "multiply/result");
-			} catch (ContextException e) {
-				e.printStackTrace();
-			}
+			Task task = (Task)get(context, "task/multiply");
+			put(context(task), "arg/x1", 20.0);
+			put(context(task), "arg/x2", 100.0);
+			out = context(exert(task));
+			value = (Double)get(out, "multiply/result");
 			// owerite the original value with a new task
 			return ent("multiply/out", value);
 		};
@@ -192,8 +187,8 @@ public class Models {
 
 		Context out = response(mo);
 		logger.info("response: " + out);
-		assertTrue(operator.get(out, "subtract").equals(1900.0));
-		assertTrue(operator.get(out, "lambda").equals(2000.0));
+		assertTrue(get(out, "subtract").equals(1900.0));
+		assertTrue(get(out, "lambda").equals(2000.0));
 	}
 
     @Test

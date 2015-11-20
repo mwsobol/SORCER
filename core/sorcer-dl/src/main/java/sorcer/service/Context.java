@@ -55,7 +55,7 @@ import java.util.*;
  * critical when a namespace in the context may change or when data nodes
  * contain remote references, for example a URL. It is usually assumed that
  * provider-enforced data associations are more stable than user-oriented paths.
- * Each direct service invocation {@link Servicer#service} requires data in the
+ * Each direct service invocation {@link Server#service} requires data in the
  * ServiceContext format.
  * <p>
  * Service contexts are defined by this common interface with efficient
@@ -76,7 +76,7 @@ import java.util.*;
  */
 @SuppressWarnings("rawtypes")
 public interface Context<T> extends Model, Mappable<T>, Serializable,
-		Contexter<T>, Paradigmatic, Arg {
+		Contexter<T>, Paradigmatic {
 
 	/** parameter (par) */
 	final static String PATH_PAR = "par";

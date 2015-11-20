@@ -38,7 +38,7 @@ class StartAll {
         String configPath = "${projectBuildDir}/../configs"
 
         def descriptors = []
-        ["adder", "multiplier", "divider", "subtractor", "averager", "exertleter", "contexter", "parmodel"].each { provider ->
+        ["adder", "multiplier", "divider", "subtractor", "averager", "exerter", "contexter", "parmodel"].each { provider ->
             def configArg = ["${configPath}/${provider}-prv.config"]
             def codebase = "${relativeRepoPath}/sorcer-tester-${sorcerVersion}-dl.jar sorcer-dl-${sorcerVersion}.jar jsk-dl-${riverVersion}.jar"
 

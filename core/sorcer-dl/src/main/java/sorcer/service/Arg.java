@@ -17,6 +17,8 @@
 
 package sorcer.service;
 
+import sorcer.service.modeling.Model;
+
 /**
  * Any named input value in particular a free variable. 
  */
@@ -24,4 +26,46 @@ package sorcer.service;
 public interface Arg {
 	
 	public String getName();
+
+	public static Context getContext(Arg[] args) {
+		  for (Arg arg : args) {
+			  if (arg instanceof Context)
+			   return (Context)arg;
+		  }
+		return null;
+	}
+
+	public static Exertion getExertion(Arg[] args) {
+		for (Arg arg : args) {
+			if (arg instanceof Exertion)
+				return (Exertion)arg;
+		}
+		return null;
+	}
+
+	public static Model getModel(Arg[] args) {
+		for (Arg arg : args) {
+			if (arg instanceof Model)
+				return (Model)arg;
+		}
+		return null;
+	}
+
+	public static Mogram getMogram(Arg[] args) {
+		for (Arg arg : args) {
+			if (arg instanceof Mogram)
+				return (Mogram)arg;
+		}
+		return null;
+	}
+
+	public static Server getServer(Arg[] args) {
+		for (Arg arg : args) {
+			if (arg instanceof Server)
+				return (Server)arg;
+		}
+		return null;
+	}
 }
+
+
