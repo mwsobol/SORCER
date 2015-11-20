@@ -92,7 +92,7 @@ public class ServiceSignature implements Signature, SorcerConstants {
 
 	protected boolean isProvisionable = false;
 
-	// shell can be used to execute exertions locally or remotely (as ServiceProvider)
+	// shell can be used to exert exertions locally or remotely (as ServiceProvider)
 	protected boolean isShellRemote = false;
 
 	protected Context inConnector;

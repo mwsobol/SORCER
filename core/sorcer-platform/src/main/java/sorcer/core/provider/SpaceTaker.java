@@ -467,7 +467,7 @@ public class SpaceTaker implements Runnable {
 					ee.state = Exec.ERROR;
 					ee.exertion = se;
 					se.reportException(new ExertionError(
-							"Not able to execute exertion envelope for exertionID: "
+							"Not able to exert exertion envelope for exertionID: "
 									+ ee.exertionID));
 				}
                 if (se.isMonitorable() && se.isTask() && monSession!=null) {

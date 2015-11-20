@@ -284,7 +284,7 @@ public class ControlFlowManager {
             logger.info("Got Concatenator: " + concatenator);
             return (Block)((Exerter)concatenator).exert(block, null);
         }
-        return (Block)((ServiceConcatenator)concatenator).execute(block);
+        return (Block)((ServiceConcatenator)concatenator).exert(block);
 	}
 
     /**
@@ -505,7 +505,7 @@ public class ControlFlowManager {
             cxt.setExertion(task);
             task.setContext(cxt);
         }
-        // execute service task
+        // exert service task
 		Fidelity<Signature> ts = new Fidelity<Signature>();
         Signature tsig = task.getProcessSignature();
         ((ServiceContext)task.getContext()).getModelStrategy().setCurrentSelector(tsig.getSelector());

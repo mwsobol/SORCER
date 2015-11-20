@@ -1063,7 +1063,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	 * Defines rediness of the provider: true if this provider is ready to
 	 * process the incoming exertion, otherwise false.
 	 *
-	 * @return true if the provider is redy to execute the exertion
+	 * @return true if the provider is redy to exert the exertion
 	 */
 	public boolean isReady(Exertion exertion) {
 		return true;

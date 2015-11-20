@@ -41,9 +41,9 @@ public class ServiceConcatenator extends RendezvousBean implements Concatenator 
 		// do nothing
 	}
 
-	public Mogram execute(Mogram mogram, Transaction txn)
+	public Mogram exert(Mogram mogram, Transaction txn)
 			throws TransactionException, ExertionException, RemoteException {
-		logger.info("********************************************* ServiceConcatenator.execute, block = " + mogram);
+		logger.info("********************************************* ServiceConcatenator.exert, block = " + mogram);
 		Exertion exertion = (Exertion) mogram;
 		setServiceID(exertion);
 		Block result = null;
@@ -64,7 +64,7 @@ public class ServiceConcatenator extends RendezvousBean implements Concatenator 
 		} catch (Throwable e) {
 			throw new ExertionException(e);
 		}
-		logger.info("********************************************* ServiceConcatenator.execute(), block = " + result);
+		logger.info("********************************************* ServiceConcatenator.exert(), block = " + result);
 		return result;
 	}
 

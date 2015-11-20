@@ -162,7 +162,7 @@ abstract public class RendezvousBean implements Service, Exerter {
 					(provider.getProviderName() != null ? provider.getProviderName() + " " : "")
 					+ this.getClass().getName());
             if (mogram instanceof ObjectJob || mogram instanceof ObjectBlock)
-                out = execute(mogram, transaction);
+                out = exert(mogram, transaction);
             else
                 out = getControlFlownManager(mogram).process();
 
@@ -192,12 +192,12 @@ abstract public class RendezvousBean implements Service, Exerter {
         }
     }
 
-	abstract public Mogram execute(Mogram mogram, Transaction txn)
+	abstract public Mogram exert(Mogram mogram, Transaction txn)
 			throws TransactionException, ExertionException, RemoteException;
 	
-	public Mogram execute(Mogram mogram)
+	public Mogram exert(Mogram mogram)
 			throws TransactionException, ExertionException, RemoteException {
-		return execute(mogram, null);
+		return exert(mogram, null);
 	}
 
 	@Override

@@ -29,14 +29,14 @@ public interface GroupManagement extends Remote, RemotePartner
 	//------------------------------------------------------------------------------------------------------------
 	
 	/**
-	 * execute update
+	 * exert update
 	 * 
 	 * @param context		information context
 	 * @return				results context
 	 */
 	public Context executeUpdate(Context context) throws RemoteException;
 	/**
-	 * execute query
+	 * exert query
 	 * 
 	 * @param context		information context
 	 * @return				results context

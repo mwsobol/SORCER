@@ -333,7 +333,7 @@ public class ServiceShell implements RemoteServiceShell, Exerter, Client, Callab
 				ExertionSorter es = new ExertionSorter(exertion);
 				exertion = (ServiceExertion)es.getSortedJob();
 			}
-//			 execute modeling tasks
+//			 exert modeling tasks
 			if (exertion instanceof ModelingTask && exertion.getFidelity().getSelects().size() == 1) {
 				return ((Task) exertion).doTask(transaction);
 			}
@@ -352,7 +352,7 @@ public class ServiceShell implements RemoteServiceShell, Exerter, Client, Callab
 				}
 			}
 
-			// execute object tasks and jobs
+			// exert object tasks and jobs
 			if (!(signature instanceof NetSignature)) {
 				if (exertion instanceof Task) {
 					if (exertion.getFidelity().getSelects().size() == 1) {

@@ -116,7 +116,7 @@ public class LoopInvoker<V> extends ServiceInvoker<V> {
 					obj = target.getValue(entries);
 				}
 			} else if (condition != null && max - min > 0) {
-				// execute min times
+				// exert min times
 				for (int i = 0; i < min; i++) {
 					obj = target.getValue(entries);
 				}

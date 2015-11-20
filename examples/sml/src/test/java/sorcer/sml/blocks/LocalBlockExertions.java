@@ -286,7 +286,7 @@ public class  LocalBlockExertions implements SorcerConstants {
 				context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
 						result("block/result")));
 
-		Block block = block("block", sig("execute", ServiceConcatenator.class),
+		Block block = block("block", sig("exert", ServiceConcatenator.class),
 				context(inEnt("x1", 4), inEnt("x2", 5)),
 				task(par("y", invoker("x1 * x2", pars("x1", "x2")))),
 				alt(opt(condition((Context<Integer> cxt) -> v(cxt, "y") > 50), t4),

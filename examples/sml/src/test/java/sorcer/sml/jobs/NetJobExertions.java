@@ -95,13 +95,14 @@ public class NetJobExertions implements SorcerConstants {
 	
 	@Test
 	public void exertJobPushSeqTest() throws Exception {
-		
+		ServiceMogram.debug = true;
+
 		Job job = createJob(Flow.SEQ, Access.PUSH);
-		logger.info("job j1: " + job);
+//		logger.info("job j1: " + job);
 		job = exert(job);
-		logger.info("job j1: " + job);
-		//logger.info("job j1 job context: " + context(job));
-		logger.info("job j1 job context: " + upcontext(job));
+		logger.info("job j1: " + job.describe());
+//		logger.info("job j1 job context: " + context(job, "j1/t3));
+//		logger.info("job j1 job context: " + upcontext(job));
 		//logger.info("job j1 value @ j1/t3/result/y = " + get(job, "j1/t3/result/y"));
 		assertEquals(get(job, "j1/t3/result/y"), 400.00);
 		

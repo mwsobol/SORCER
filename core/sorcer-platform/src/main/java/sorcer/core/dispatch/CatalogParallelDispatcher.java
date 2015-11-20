@@ -101,7 +101,7 @@ public class CatalogParallelDispatcher extends CatalogExertDispatcher {
 				dispatchers.remove(xrt.getId());
 				return;
 			}*/
-			// finally execute Master Exertion
+			// finally exert Master Exertion
 			masterXrt = (ServiceExertion) execExertion(masterXrt);
 			masterXrt.stopExecTime();
 			if (masterXrt.getStatus() <= FAILED)

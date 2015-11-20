@@ -145,7 +145,7 @@ public class LoopMogram extends ConditionalMogram {
 					}
 				}
 			} else if (condition != null && max - min > 0) {
-				// execute min times
+				// exert min times
 				for (int i = 0; i < min; i++) {
 					target = target.exert(txn);
 				}

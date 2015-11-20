@@ -147,10 +147,10 @@ public class LocalJobExertions implements SorcerConstants {
 		// Service Composition j1(j2(t4(x1, x2), t5(x1, x2)), t3(x1, x2))
 		Job job = job(
 				"j1",
-				sig("execute", ServiceJobber.class),
+				sig("exert", ServiceJobber.class),
 				cxt(inEnt("arg/x1", 10.0),
 						result("job/result", outPaths("j1/t3/result/y"))),
-				job("j2", sig("execute", ServiceJobber.class), t4, t5), t3,
+				job("j2", sig("exert", ServiceJobber.class), t4, t5), t3,
 				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
 				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
 
@@ -183,10 +183,10 @@ public class LocalJobExertions implements SorcerConstants {
 		// Service Composition j1(j2(t4(x1, x2), t5(x1, x2)), t3(x1, x2))
 		Job job = job(
 				"j1",
-				sig("execute", ServiceJobber.class),
+				sig("exert", ServiceJobber.class),
 				cxt(inEnt("arg/x1", 10.0),
 						result("job/result", outPaths("j1/t3/result/y"))),
-				job("j2", sig("execute", ServiceJobber.class), t4, t5), t3,
+				job("j2", sig("exert", ServiceJobber.class), t4, t5), t3,
 				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
 				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
 

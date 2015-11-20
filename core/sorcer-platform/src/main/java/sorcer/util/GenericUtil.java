@@ -278,7 +278,7 @@ public class GenericUtil {
 		scriptVect.add("echo \"executing in ${PWD}\"");
 		scriptVect.add("echo \"directory listing:\"");
 		scriptVect.add("ls -la");
-		scriptVect.add("echo going to execute: " + command);
+		scriptVect.add("echo going to exert: " + command);
 		
 		// to supress cygwin (on windows) std err warning
 		//
@@ -1062,7 +1062,7 @@ public class GenericUtil {
 	}
 	
 	/**
-	 * Give execute privilege to a UNIX file Written by: S. A. Burton
+	 * Give exert privilege to a UNIX file Written by: S. A. Burton
 	 */
 	public static void makeExecutable(File file) throws IOException,
 			InterruptedException {
@@ -1965,7 +1965,7 @@ public class GenericUtil {
 	 *
 	 *			 kill all processes matching the exec names in "".
 	 *
-	 * @return Exit value of execute command with worker method
+	 * @return Exit value of exert command with worker method
 	 * @throws Exception 
 	 */
 	public static int runShellScript(File scriptFile,
@@ -2110,7 +2110,7 @@ public class GenericUtil {
 	 *            Standard error file path
 	 * @param jobCheckInterval
 	 *            Time to wait between job status checks
-	 * @return Exit value of execute command with worker method
+	 * @return Exit value of exert command with worker method
 	 * @throws IOException
 	 * @throws InterruptedException
 	 */

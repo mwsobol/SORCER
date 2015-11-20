@@ -25,7 +25,6 @@ import sorcer.core.dispatch.DispatcherException;
 import sorcer.core.dispatch.DispatcherFactory;
 import sorcer.core.dispatch.ExertionDispatcherFactory;
 import sorcer.core.dispatch.SpaceTaskDispatcher;
-import sorcer.core.exertion.NetJob;
 import sorcer.core.exertion.NetTask;
 import sorcer.core.loki.member.LokiMemberUtil;
 import sorcer.core.provider.Provider;
@@ -33,7 +32,6 @@ import sorcer.core.provider.Spacer;
 import sorcer.service.*;
 
 import java.rmi.RemoteException;
-import java.util.HashSet;
 
 import static sorcer.util.StringUtils.tName;
 
@@ -44,7 +42,7 @@ import static sorcer.util.StringUtils.tName;
  * 
  * @author Mike Sobolewski
  */
-public class ServiceSpacer extends ServiceJobber implements Spacer, Executor {
+public class ServiceSpacer extends ServiceJobber implements Spacer {
     private Logger logger = LoggerFactory.getLogger(ServiceSpacer.class.getName());
 
     private LokiMemberUtil myMemberUtil;
@@ -61,7 +59,7 @@ public class ServiceSpacer extends ServiceJobber implements Spacer, Executor {
     public Exertion execute(Exertion exertion, Transaction txn)
             throws TransactionException, RemoteException, ExertionException {
         if (exertion.isJob())
-            return (Exertion)super.execute(exertion, txn);
+            return (Exertion)super.exert(exertion, txn);
         else
             return doTask(exertion);
     }

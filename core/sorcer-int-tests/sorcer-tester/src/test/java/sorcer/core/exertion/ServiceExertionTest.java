@@ -167,8 +167,8 @@ public class ServiceExertionTest {
 
 		// Service Composition j1(j2(t4(x1, x2), t5(x1, x2)), t3(x1, x2))
 		//Job j1= job("j1", job("j2", t4, t5, strategy(Flow.PARALLEL, Access.PULL)), t3,
-		Job job = job("j1", sig("execute", ServiceJobber.class), 
-					job("j2", sig("execute", ServiceJobber.class), t4, t5), 
+		Job job = job("j1", sig("exert", ServiceJobber.class),
+					job("j2", sig("exert", ServiceJobber.class), t4, t5),
 					t3,
 					pipe(outPoint(t4, path(result, y)), inPoint(t3, path(arg, x1))),
 					pipe(outPoint(t5, path(result, y)), inPoint(t3, path(arg, x2))));
@@ -206,9 +206,9 @@ public class ServiceExertionTest {
 
 		// Service Composition j1(j2(t4(x1, x2), t5(x1, x2)), t3(x1, x2))
 		//Job j1= job("j1", job("j2", t4, t5, strategy(Flow.PARALLEL, Access.PULL)), t3,
-		Job job = xrt("j1", sig("execute", ServiceJobber.class), 
+		Job job = xrt("j1", sig("exert", ServiceJobber.class),
 					cxt(inEnt("arg/x1", 10.0), outEnt("job/result")), 
-				xrt("j2", sig("execute", ServiceJobber.class), t4, t5), 
+				xrt("j2", sig("exert", ServiceJobber.class), t4, t5),
 				t3,
 				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
 				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));

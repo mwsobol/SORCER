@@ -480,7 +480,7 @@ public class CollectionOperators {
 		set(j1p, 1000.0);
 		assertEquals(value(j1p), 1000.0);
 
-		// execute original service and get its par value
+		// exert original service and get its par value
 		exert(j1);
 		// j1p is the alias to context value of j1 at j1/t3/result/y
 		assertEquals(value(pc, "j1p"), 400.0);

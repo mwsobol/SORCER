@@ -780,7 +780,7 @@ public class ProviderDelegate {
 		// and make the last signature as master PROC type only.
 		task.correctBatchSignatures();
 		task.getControlContext().appendTrace(
-				provider.getProviderName() + " to execute: "
+				provider.getProviderName() + " to exert: "
 						+ (task.getProcessSignature()!=null ? task.getProcessSignature().getSelector() : "null") + ":"
 						+ (task.getProcessSignature()!=null ? task.getProcessSignature().getServiceType() : "null") + ":"
 						+ getHostName());

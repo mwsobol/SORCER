@@ -979,7 +979,7 @@ public class operator {
 				serviceType == ServiceSpacer.class ||
 				serviceType == ServiceConcatenator.class ||
 				serviceType == ServiceRendezvous.class) {
-			return sig("execute", serviceType);
+			return sig("exert", serviceType);
 		} else if (serviceType == Jobber.class ||
 				serviceType == Spacer.class ||
 				serviceType == Concatenator.class ||
@@ -1005,7 +1005,7 @@ public class operator {
 		if (serviceType.isInterface()) {
 			sig = new NetSignature("exert", serviceType);
 		} else if (Executor.class.isAssignableFrom(serviceType)) {
-			sig = new ObjectSignature("execute", serviceType);
+			sig = new ObjectSignature("exert", serviceType);
 		} else {
 			sig = new ObjectSignature(serviceType);
 		}

@@ -22,7 +22,7 @@ import java.io.Serializable;
 import sorcer.security.util.SorcerPrincipal;
 
 /* A Mandate is a serialized command object that contains all
- *  the data required to execute a specific request.
+ *  the data required to exert a specific request.
  */
 public class Mandate implements Serializable {
 

@@ -104,7 +104,7 @@ class MethodView extends JPanel implements ActionListener {
 
 		JScrollPane sp = new JScrollPane(_table);
 		add(sp, BorderLayout.CENTER);
-		// create the execute button
+		// create the exert button
 		JPanel ctrls = new JPanel();
 		add(ctrls, BorderLayout.SOUTH);
 

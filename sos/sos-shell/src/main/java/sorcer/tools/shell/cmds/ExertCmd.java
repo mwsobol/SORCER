@@ -50,7 +50,7 @@ public class ExertCmd extends ShellCmd {
 
 		COMMAND_USAGE = "exert [-eval] [-stgy] [[-s | --s | --m] <output filename>] <input filename>";
 
-		COMMAND_HELP = "Manage and execute the federation of services specified by the <input filename>;"
+		COMMAND_HELP = "Manage and exert the federation of services specified by the <input filename>;"
 				+ "\n  -eval   evaluation result"
 				+ "\n  -stgy   print the executed exertion with control context"
 				+ "\n  -db   save the command output in a DB"
@@ -179,7 +179,7 @@ public class ExertCmd extends ShellCmd {
             }
         }
 
-//		if (NetworkShell.getInstance().isDebug()) out.println("Starting execute netlet!");
+//		if (NetworkShell.getInstance().isDebug()) out.println("Starting exert netlet!");
 		Object result = scriptExerter.execute();
 //		out.println(">>>>>>>>>>> result: " + result);
 		if (result != null) {

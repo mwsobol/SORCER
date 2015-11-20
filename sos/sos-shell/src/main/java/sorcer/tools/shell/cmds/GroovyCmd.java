@@ -128,7 +128,7 @@ public class GroovyCmd extends ShellCmd {
 			out.println(outObject.toString());
 		} else {
 			if (et.getTarget() != null) {
-				out.println("\n--- Failed to execute script ---");
+				out.println("\n--- Failed to exert script ---");
 				out.println((et.getTarget()));
 				if (!commandLine) {
 					System.err.println(et.getTarget());

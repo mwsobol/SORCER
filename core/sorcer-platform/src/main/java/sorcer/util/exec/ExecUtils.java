@@ -38,7 +38,7 @@ public class ExecUtils {
 	 * </pre>
 	 * 
 	 * @param cmd
-	 *            the command to execute
+	 *            the command to exert
 	 * @return the results of the command execution
 	 * @throws IOException
 	 *             if an I/O error occurs
@@ -76,7 +76,7 @@ public class ExecUtils {
 	 * </pre>
 	 * 
 	 * @param cmdarray
-	 *            the command and arguments to execute
+	 *            the command and arguments to exert
 	 * @return the results of the command execution
 	 * @throws IOException
 	 *             if an I/O error occurs
