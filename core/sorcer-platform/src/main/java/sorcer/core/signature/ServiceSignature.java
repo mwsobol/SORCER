@@ -36,9 +36,7 @@ import java.lang.reflect.Method;
 import java.rmi.RemoteException;
 import java.util.*;
 
-import static sorcer.eo.operator.context;
-import static sorcer.eo.operator.provider;
-import static sorcer.eo.operator.task;
+import static sorcer.eo.operator.*;
 
 public class ServiceSignature implements Signature, SorcerConstants {
 
@@ -637,11 +635,19 @@ public class ServiceSignature implements Signature, SorcerConstants {
 	}
 
 	@Override
-	public Object exec(Arg... entries) throws MogramException, RemoteException, TransactionException {
-		Exertion xrt = Arg.getExertion(entries);
-		if (xrt != null) {
-			Provider prv = (Provider) Accessor.get().getService(this);
-			return prv.exert(xrt, null, entries);
+	public Object exec(Arg... args) throws MogramException, RemoteException, TransactionException {
+		Mogram mog = Arg.getMogram(args);
+		if (mog != null) {
+			if (mog instanceof Context) {
+				try {
+					return value(task(this, (Context) mog));
+				} catch (SignatureException e) {
+					throw new MogramException(e);
+				}
+			} else if (mog instanceof Exertion) {
+				Provider prv = (Provider) Accessor.get().getService(this);
+				return context(prv.exert(mog, null, args));
+			}
 		}
 		return null;
 	}
