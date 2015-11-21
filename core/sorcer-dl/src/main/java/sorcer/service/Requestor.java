@@ -1,7 +1,7 @@
 /*
- * Copyright 2015 the original author or authors.
- * Copyright 2015 SorcerSoft.org.
- *  
+ * Copyright 2010 the original author or authors.
+ * Copyright 2010 SorcerSoft.org.
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,18 +15,19 @@
  * limitations under the License.
  */
 
-package sorcer.core.provider;
+package sorcer.service;
 
-import sorcer.service.Service;
+import net.jini.core.transaction.TransactionException;
 
-import java.rmi.Remote;
+import java.io.Serializable;
+import java.rmi.RemoteException;
 
 /**
- * A service coordinating a {@link sorcer.service.modeling.Model} execution by creating a
- * runtime federation of all needed service providers to execute all requested
- * entries (variables) of the received model.
- *
- * @author Mike Sobolewski
+ * Created by Mike Sobolewski on 10/30/15.
  */
-public interface Modeler extends Service, Exerter, Remote {
+@FunctionalInterface
+public interface Requestor<T> extends Serializable {
+
+    T exec(Service service, Context<T> context) throws MogramException, RemoteException, TransactionException;
+
 }

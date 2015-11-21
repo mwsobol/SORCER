@@ -26,6 +26,8 @@ import net.jini.jeri.ServerCapabilities;
 import net.jini.security.proxytrust.ProxyTrust;
 import net.jini.security.proxytrust.ServerProxyTrust;
 import net.jini.security.proxytrust.TrustEquivalence;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import sorcer.service.*;
 
@@ -35,8 +37,6 @@ import java.rmi.Remote;
 import java.rmi.server.ExportException;
 import java.security.Permission;
 import java.util.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static sorcer.core.SorcerConstants.*;
 
@@ -50,7 +50,7 @@ import static sorcer.core.SorcerConstants.*;
  * calls to the right exposed object. SORCER service beans (objects with methods
  * taking a parameter {@link sorcer.service.Context} and returning
  * {@link sorcer.service.Context} can be used transparently as
- * {@link Server}s with either
+ * {@link Service}s with either
  * {@link sorcer.core.provider.ServiceProvider}
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -273,22 +273,40 @@ public class SorcerILFactory extends BasicILFactory {
 			try {
 				// handle context management by the containing provider
 				if (decl == ContextManagement.class) {
-					obj = method.invoke((ContextManagement) impl, args);
+					obj = method.invoke(impl, args);
 					return obj;
 				}
-				// Check if the invocation is to be made on provider's service
-				// beans
-				Object service = serviceBeanMap.get(method.getDeclaringClass());
-				if (service != null) {
-					obj = method.invoke(service, args);
-				/*	if (obj instanceof Task) {
-						((Task)obj).setStatus(Exec.DONE);
-					}*/
+				// Check first if the invocation is to be made on Exterer beans
+				// then on provider's service beans
+				logger.warn("ZZZZZZZZ method called: " + method);
+				logger.warn("ZZZZZZZZ DeclaringClass: " + method.getDeclaringClass());
+				logger.warn("ZZZZZZZZ ILF impl: " + impl);
+				logger.warn("ZZZZZZZZ args: " + Arrays.toString(args));
+
+				Object service = null;
+				if (args.length > 0 &&  args[0] instanceof CompoundExertion) {
+					Object first = args[0];
+					logger.warn("ZZZZZZZZ first arg: " + first);
+					logger.warn("ZZZZZZZZ signatureType: " + ((Exertion) args[0]).getProcessSignature().getServiceType());
+					logger.warn("ZZZZZZZZ keys set: " + serviceBeanMap.keySet());
+					service = serviceBeanMap.get(((Exertion) args[0]).getProcessSignature().getServiceType());
+					if (service != null) {
+						logger.warn("ZZZZZZZZ selected bean service: " + service);
+						obj = method.invoke(service, args);
+					}
 				} else {
-                    obj = method.invoke(impl, args);
+					 service = serviceBeanMap.get(method.getDeclaringClass());
+						logger.warn("XXXXXXXXXXXXXXXX selected bean service: " + service);
+
+					if (service != null) {
+						obj = method.invoke(service, args);
+					} else {
+						obj = method.invoke(impl, args);
+					}
 				}
 			} catch (Throwable t) {
-				throw new ExertionException(t);
+				t.printStackTrace();
+				throw new ExertionException("for method: " + method, t);
 			}
 			return obj;
 		}

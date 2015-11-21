@@ -70,7 +70,7 @@ import static sorcer.eo.operator.*;
  * @author Mike Sobolewski
  */
 @SuppressWarnings("rawtypes")
-public class ServiceShell implements RemoteServiceShell, Exerter, Client, Callable {
+public class ServiceShell implements RemoteServiceShell, Requestor, Callable {
 	protected final static Logger logger = LoggerFactory.getLogger(ServiceShell.class);
 	private Service service;
 	private Mogram mogram;
@@ -446,7 +446,7 @@ public class ServiceShell implements RemoteServiceShell, Exerter, Client, Callab
 		return null;
 	}
 
-	private Exertion serviceExertion(ServiceExertion exertion, Signature signature)
+	private Exertion callProvider(ServiceExertion exertion, Signature signature)
 			throws TransactionException, MogramException, RemoteException {
 		if (provider == null) {
 			logger.warn("* Provider not available for: " + signature);
@@ -502,7 +502,7 @@ public class ServiceShell implements RemoteServiceShell, Exerter, Client, Callab
 		}
 		if (xrt !=  null)
 			return xrt;
-		return serviceExertion(exertion, exertion.getProcessSignature());
+		return callProvider(exertion, exertion.getProcessSignature());
 	}
 
 	private Exertion serviceMutualExclusion(Provider provider,
@@ -797,15 +797,20 @@ public class ServiceShell implements RemoteServiceShell, Exerter, Client, Callab
 		if (service instanceof Signature) {
 			Provider prv = (Provider) Accessor.get().getService((Signature) service);
 			return (T) prv.exert(mogram, txn);
-		} else if (service instanceof Provider) {
-			Task out = (Task) ((Exerter)service).exert(mogram, txn);
+		} else if (service instanceof Jobber) {
+			Task out = (Task) ((Jobber)service).exert(mogram, txn);
+			return (T) out.getContext();
+		} if (service instanceof Spacer) {
+			Task out = (Task) ((Spacer) service).exert(mogram, txn);
+			return (T) out.getContext();
+		} if (service instanceof Concatenator) {
+			Task out = (Task) ((Concatenator) service).exert(mogram, txn);
 			return (T) out.getContext();
 		} else if (service instanceof Mogram) {
 			Context cxt;
 			if (mogram instanceof Exertion) {
 				cxt = ((Exertion) exert(mogram)).getContext();
 			} else {
-//				cxt = (Context) ((Model) mogram).getResult();
 				cxt = (Context) mogram;
 			}
 			((Mogram) service).setScope(cxt);
@@ -823,59 +828,57 @@ public class ServiceShell implements RemoteServiceShell, Exerter, Client, Callab
 		return (T) ((Exerter)service).exert(mogram, txn);
 	}
 
-	public Object exec(Arg... args)
+	public Object exec(Service service, Arg... args)
 			throws MogramException, RemoteException {
-		Service server = Arg.getService(args);
-		if (server != null )
-			this.service = server;
-		else
-			return null;
+		try {
+			if (service != null )
+				this.service = service;
+			else
+				return null;
 
-		if (server instanceof NetletSignature) {
-			try {
+			if (service instanceof NetletSignature) {
 				ScriptExerter se = new ScriptExerter(System.out, null, Sorcer.getWebsterUrl(), true);
-				se.readFile(new File(((NetletSignature)server).getServiceSource()));
+				se.readFile(new File(((NetletSignature)service).getServiceSource()));
 				return evaluate((Mogram)se.parse());
-			} catch (Throwable throwable) {
-				throw new MogramException(throwable);
 			}
-		} else if (server instanceof Entry) {
-			return ((Entry)service).getValue(args);
-		} if (service instanceof Signature) {
-			Context cxt = null;
-			for(Arg arg : args) {
-				if (arg instanceof Context) {
-					cxt = (Context)arg;
-					break;
+//			else if (service instanceof Entry || service instanceof Signature ) {
+//					return service.exec(args);
+//			} if (service instanceof Signature) {
+//				Task in = null;
+//				Context cxt = Arg.getContext(args);
+//				if (cxt == null) {
+//					in = (Task) Arg.getExertion(args);
+//				}
+//				Object out = null;
+//				if (cxt != null) {
+//					in = task((Signature) service, cxt);
+//					out = value(in, args);
+//				} else if (in != null) {
+//					out = value(in, args);
+//				} else {
+//					throw new MogramException("Missing service context for: " + service);
+//				}
+//				return out;
+//			}
+			else if (service instanceof Exertion) {
+				return value((Evaluation) service, args);
+			} else if (service instanceof EntModel) {
+				((Model)service).getResponse(args);
+			} else if (service instanceof Context) {
+				ServiceContext cxt = (ServiceContext)service;
+				cxt.substitute(args);
+				Signature.ReturnPath returnPath = cxt.getReturnPath();
+				if (cxt instanceof EntModel) {
+					return ((Model)service).getResponse(args);
+				} else if (returnPath != null){
+					return cxt.getValue(returnPath.path, args);
+				} else {
+					throw new ExertionException("No return path in the context: "
+							+ cxt.getName());
 				}
 			}
-			Task out = null;
-			if (cxt != null) {
-				try {
-					Task in = task((Signature) service, cxt);
-					out = ((Task) in).exert(args);
-				} catch (Exception e) {
-					throw new MogramException(e);
-				}
-				return context(out);
-			} else
-				throw new MogramException("Missing service context for: " + server);
-		} else if (service instanceof Exertion) {
-			return value((Evaluation) service, args);
-		} else if (service instanceof EntModel) {
-			((Model)service).getResponse(args);
-		} else if (service instanceof Context) {
-			ServiceContext cxt = (ServiceContext)service;
-			cxt.substitute(args);
-			Signature.ReturnPath returnPath = cxt.getReturnPath();
-			if (cxt instanceof EntModel) {
-				return ((Model)service).getResponse(args);
-			} else if (returnPath != null){
-				return cxt.getValue(returnPath.path, args);
-			} else {
-				throw new ExertionException("No return path in the context: "
-						+ cxt.getName());
-			}
+		} catch (Throwable ex) {
+			throw new MogramException(ex);
 		}
 		return null;
 	}
@@ -920,6 +923,11 @@ public class ServiceShell implements RemoteServiceShell, Exerter, Client, Callab
 
 	@Override
 	public Context exec(Service service, Context context) throws MogramException, RemoteException, TransactionException {
+		return null;
+	}
+
+	@Override
+	public Object exec(Arg... args) throws MogramException, RemoteException, TransactionException {
 		return null;
 	}
 }

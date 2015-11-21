@@ -282,7 +282,7 @@ public class ControlFlowManager {
                 }
             }
             logger.info("Got Concatenator: " + concatenator);
-            return (Block)((Exerter)concatenator).exert(block, null);
+            return concatenator.exert(block, null);
         }
         return (Block)((ServiceConcatenator)concatenator).exert(block);
 	}
@@ -315,9 +315,9 @@ public class ControlFlowManager {
                         }
                     }
                     logger.info("Got Spacer: " + spacerService);
-                    return ((Exerter)spacerService).exert(xrt, null);
+                    return spacerService.exert(xrt, null);
                 }
-				Mogram job = ((Executor)spacer).execute(xrt, null);
+				Mogram job = spacer.exert(xrt, null);
                 logger.info("spacable exerted = " + job);
                 return job;
             }
@@ -334,10 +334,10 @@ public class ControlFlowManager {
                         } catch (AccessorException e) {
                             throw new ExertionException("Could not find Jobber", e);
                         }
-                    logger.info("Got Jobber: " + jobber);
-                    return ((Exerter)jobberService).exert(xrt, null);
+                    logger.info("Got Remote Jobber: " + jobber);
+                    return jobberService.exert(xrt, null);
                 }
-				Mogram job = ((Executor)jobber).execute(xrt, null);
+				Mogram job = jobber.exert(xrt, null);
                 logger.info("job exerted = " + job);
                 return job;
             }

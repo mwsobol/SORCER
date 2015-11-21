@@ -114,12 +114,11 @@ public class Entries {
 
         // an entry as a Service lambda
         Model mo = model(ent("x", 10.0), ent("y", 20.0),
-                lambda("s1", "x", args("y"), (Arg[] args) -> {
-                    Service srv = Arg.getService(args);
-                    set((Entry)srv, value((Entry) args[0]));
-                    return exec(srv); }));
+                lambda("s1", args("x", "y"), (Arg[] args) -> {
+                    Arg.setValue(args, "x",  Arg.getValue(args, "y"));
+                    return exec(Arg.getEntry(args, "x")); }));
 
-        logger.info("s1", value(mo, "s1"));
+        logger.info("s1 value: ", value(mo, "s1"));
         assertEquals(value(mo, "s1"), 20.0);
     }
 

@@ -126,7 +126,7 @@ public class NetTaskExertions {
 	@Test
 	public void serviceShellTest() throws Exception {
 
-		// The SORCER Service Shell as a service provider
+		// The signature as a service provider
 		Task f5 = task(
 				"f5",
 				sig("add", Adder.class),
@@ -135,7 +135,7 @@ public class NetTaskExertions {
 				strategy(Monitor.NO, Wait.YES));
 
 		Object out = exec(sig(RemoteServiceShell.class), f5);
-		assertTrue(get((Context)out, "result/y").equals(100.00));
+		assertTrue(out.equals(100.00));
 
 	}
 

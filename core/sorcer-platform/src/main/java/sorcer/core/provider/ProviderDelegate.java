@@ -2702,28 +2702,31 @@ public class ProviderDelegate {
 
 		serviceComponents = new Hashtable<Class, Object>();
 
-		for (Object serviceBean : serviceBeans) {
-			Class[] interfaces =  serviceBean.getClass().getInterfaces();
-			logger.debug("service component interfaces" + Arrays.toString(interfaces));
-
-			List<Class> exposedInterfaces = new LinkedList<Class>();
-			for (Class publishedType : publishedServiceTypes) {
-				if (publishedType.isInstance(serviceBean)) {
+		for (Class publishedType : publishedServiceTypes) {
+			for (Object serviceBean : serviceBeans) {
+				if (publishedType.isInstance(serviceBean))  {
 					serviceComponents.put(publishedType, serviceBean);
-					exposedInterfaces.add(publishedType);
-					for (Class iface : publishedType.getInterfaces()) {
-						if (!iface.equals(Remote.class)
-								&& !iface.equals(Serializable.class)) {
-							serviceComponents.put(iface, serviceBean);
-							exposedInterfaces.add(iface);
-						}
-					}
 				}
 			}
-			logger.debug("service component exposed interfaces" + exposedInterfaces);
+
+//			List<Class> exposedInterfaces = new LinkedList<Class>();
+//			for (Class publishedType : publishedServiceTypes) {
+//				if (publishedType.isInstance(serviceBean)) {
+//					serviceComponents.put(publishedType, serviceBean);
+//					exposedInterfaces.add(publishedType);
+//					for (Class iface : publishedType.getInterfaces()) {
+//						if (!iface.equals(Remote.class)
+//								&& !iface.equals(Serializable.class)) {
+//							serviceComponents.put(iface, serviceBean);
+//							exposedInterfaces.add(iface);
+//						}
+//					}
+//				}
+//			}
+//			logger.debug("service component exposed interfaces" + exposedInterfaces);
 		}
 
-		logger.info("service components" + serviceComponents);
+		logger.warn("YYYYYYYYYYYYYYYYYYYYY service components" + serviceComponents);
 	}
 
 	private Object instantiateScriplet(String scripletFilename)

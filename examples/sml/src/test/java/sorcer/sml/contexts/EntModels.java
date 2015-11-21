@@ -159,8 +159,8 @@ public class EntModels {
 				inEnt("x1", 20.0),
 				inEnt("x2", 80.0));
 
-		Entry e = ent("x2");
-		assertEquals(80.0, exec(e, cxt));
+		Entry e = ent("x2", 100.0);
+		assertEquals(100.0, value((Context)exec(e, cxt), "x2"));
 
 	}
 
@@ -188,8 +188,8 @@ public class EntModels {
 				inEnt("y2", 80.0));
 
 		Entry se = srv(sig("add", AdderImpl.class, result("add", inPaths("y1", "y2"))));
-		Object result = exec(se, sm);
-		assertEquals(100.0, result);
+		Context result = (Context) exec(se, sm);
+		assertEquals(100.0, value(result, "add"));
 
 	}
 
@@ -202,8 +202,8 @@ public class EntModels {
 				inEnt("y2", 80.0));
 
 		Entry se = srv(sig("add", Adder.class, result("add", inPaths("y1", "y2"))));
-		Object result = exec(se, sm);
-		assertEquals(100.0, result);
+		Context result = (Context) exec(se, sm);
+		assertEquals(100.0, value(result, "add"));
 
 	}
 

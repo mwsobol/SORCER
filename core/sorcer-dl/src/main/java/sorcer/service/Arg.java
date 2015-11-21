@@ -17,6 +17,7 @@
 
 package sorcer.service;
 
+import sorcer.core.Name;
 import sorcer.service.modeling.Model;
 
 /**
@@ -63,6 +64,37 @@ public interface Arg {
 		for (Arg arg : args) {
 			if (arg instanceof Service)
 				return (Service)arg;
+		}
+		return null;
+	}
+
+	public static Object getValue(Arg[] args, String path) {
+		for (Arg arg : args) {
+			if (arg instanceof Duo && ((Duo)arg).name().equals(path))
+				return ((Duo)arg).value();
+		}
+		return null;
+	}
+
+	public static void setValue(Arg[] args, String path, Object value) {
+		for (Arg arg : args) {
+			if (arg instanceof Duo && ((Duo)arg).name().equals(path))
+				((Duo)arg).set(value);
+		}
+	}
+
+	public static Duo getEntry(Arg[] args, String name) {
+		for (Arg arg : args) {
+			if (arg instanceof Duo && ((Duo) arg).name().equals(name))
+				return (Duo)arg;
+		}
+		return null;
+	}
+
+	public static Name getName(Arg[] args) {
+		for (Arg arg : args) {
+			if (arg instanceof Name)
+				return (Name)arg;
 		}
 		return null;
 	}

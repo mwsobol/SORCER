@@ -75,7 +75,7 @@ abstract public class RendezvousBean implements Service, Exerter {
 		if (ex != null && ((ServiceExertion) ex).getId() == null) {
 			((ServiceExertion) ex)
 					.setId(UuidFactory.generate());
-			if (((ServiceExertion) ex).isJob()) {
+			if (ex.isJob()) {
 				for (int i = 0; i < ((Job) ex).size(); i++)
 					replaceNullExertionIDs(((Job) ex).get(i));
 			}
@@ -83,7 +83,7 @@ abstract public class RendezvousBean implements Service, Exerter {
 	}
 
 	protected void notifyViaEmail(Exertion ex) throws ContextException {
-		if (ex == null || ((ServiceExertion) ex).isTask())
+		if (ex == null || ex.isTask())
 			return;
 		Job job = (Job) ex;
 		Vector recipents = null;
@@ -113,10 +113,10 @@ abstract public class RendezvousBean implements Service, Exerter {
 		}
 		String comment = "Your job '" + job.getName()
 				+ "' has been submitted.\n" + to;
-		((ControlContext) ((NetJob)job).getControlContext()).setFeedback(comment);
+		job.getControlContext().setFeedback(comment);
 		if (job.getMasterExertion() != null
-				&& ((ServiceExertion) job.getMasterExertion()).isTask()) {
-			((ServiceExertion) (job.getMasterExertion())).getContext()
+				&& job.getMasterExertion().isTask()) {
+			job.getMasterExertion().getContext()
 					.putValue(Context.JOB_COMMENTS, comment);
 
 			Contexts.markOut(((ServiceExertion) (job.getMasterExertion()))
@@ -156,15 +156,18 @@ abstract public class RendezvousBean implements Service, Exerter {
 	public Mogram exert(Mogram mogram, Transaction transaction, Arg... args) throws RemoteException, ExertionException {
 		Mogram out = null;
 		try {
-            logger.info("Got exertion to process: " + mogram.toString());
 			setServiceID(mogram);
 			mogram.appendTrace("mogram: " + mogram.getName() + " rendezvous: " +
 					(provider.getProviderName() != null ? provider.getProviderName() + " " : "")
 					+ this.getClass().getName());
-            if (mogram instanceof ObjectJob || mogram instanceof ObjectBlock)
-                out = exert(mogram, transaction);
-            else
-                out = getControlFlownManager(mogram).process();
+            if (mogram instanceof ObjectJob || mogram instanceof ObjectBlock || provider != null) {
+				logger.info("ZZZZZ running bean: " + this);
+				out = exert(mogram, transaction);
+
+			} else {
+				logger.info("ZZZZZ running provider: " + this);
+				out = getControlFlownManager(mogram).process();
+			}
 
 			if (mogram instanceof Exertion)
 				mogram.getDataContext().setExertion(null);

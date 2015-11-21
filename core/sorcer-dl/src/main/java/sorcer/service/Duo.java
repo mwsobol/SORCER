@@ -1,6 +1,6 @@
 /*
- * Copyright 2010 the original author or authors.
- * Copyright 2010 SorcerSoft.org.
+ * Copyright 2009 the original author or authors.
+ * Copyright 2009 SorcerSoft.org.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,17 +17,15 @@
 
 package sorcer.service;
 
-import net.jini.core.transaction.TransactionException;
-
-import java.io.Serializable;
-import java.rmi.RemoteException;
-
 /**
- * Created by Mike Sobolewski on 10/30/15.
+ * Created by Mike Sobolewski on 11/21/15.
  */
-@FunctionalInterface
-public interface Client<T> extends Serializable {
+public interface Duo<T> extends Arg, Service {
 
-    T exec(Service service, Context<T> context) throws MogramException, RemoteException, TransactionException;
+    public Object name();
+
+    public Object value();
+
+    public void set(T value);
 
 }

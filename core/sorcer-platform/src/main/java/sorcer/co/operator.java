@@ -324,11 +324,15 @@ public class operator {
 		return Signature.Direction.fromString(entry.annotation());
 	}
 
+	public static Srv lambda(String path, sorcer.eo.operator.Args args, Service service) {
+		return new Srv(path, path, args.argsToStrings(), service);
+	}
+
 	public static Srv lambda(String path, String name, sorcer.eo.operator.Args args, Service service) {
 		return new Srv(name, path, args.argsToStrings(), service);
 	}
 
-	public static <T> Srv lambda(String path, String name, Client<T> client) {
+	public static <T> Srv lambda(String path, String name, Requestor<T> client) {
 		return new Srv(name, path, client);
 	}
 
@@ -349,7 +353,7 @@ public class operator {
 	}
 
 	public static boolean isSorcerLambda(Class clazz) {
-		Class[] types = { EntryCollable.class, ValueCallable.class, Client.class,
+		Class[] types = { EntryCollable.class, ValueCallable.class, Requestor.class,
 				ConditionCollable.class, Callable.class };
 		for (Class cl : types) {
 			if (clazz == cl) {

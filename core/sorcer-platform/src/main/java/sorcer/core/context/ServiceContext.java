@@ -56,6 +56,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
 import static sorcer.eo.operator.sig;
+import static sorcer.eo.operator.task;
 
 /**
  * Implements the base-level service context interface {@link Context}.
@@ -1437,6 +1438,29 @@ public class ServiceContext<T> extends ServiceMogram implements
 			}
 		}
 		return subcntxt;
+	}
+
+	public Context execSignature(Signature sig) throws MogramException {
+		String[] ips = sig.getReturnPath().inPaths;
+		String[] ops = sig.getReturnPath().outPaths;
+		Context incxt = this;
+		if (ips != null && ips.length > 0) {
+			incxt = this.getEvaluatedSubcontext(ips);
+		}
+		if (sig.getReturnPath() != null) {
+			incxt.setReturnPath(sig.getReturnPath());
+		}
+		Context outcxt = null;
+		try {
+			outcxt = ((Task) task(sig, incxt).exert()).getContext();
+		} catch (Exception e) {
+			throw new MogramException(e);
+		}
+		if (ops != null && ops.length > 0) {
+			outcxt = outcxt.getSubcontext(ops);
+		}
+		this.appendInout(outcxt);
+		return outcxt;
 	}
 
 	public ServiceContext getEvaluatedSubcontext(String... paths) throws ContextException {

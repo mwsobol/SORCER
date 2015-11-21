@@ -24,10 +24,7 @@ import net.jini.lookup.entry.Name;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.exertion.NetTask;
-import sorcer.core.provider.Provider;
-import sorcer.core.provider.ServiceProvider;
-import sorcer.core.provider.RemoteServiceShell;
-import sorcer.core.provider.Version;
+import sorcer.core.provider.*;
 import sorcer.eo.operator;
 import sorcer.service.*;
 import sorcer.util.MavenUtil;
@@ -38,8 +35,7 @@ import java.rmi.RemoteException;
 import java.util.Arrays;
 import java.util.List;
 
-import static sorcer.eo.operator.context;
-import static sorcer.eo.operator.sig;
+import static sorcer.eo.operator.*;
 
 public class NetSignature extends ObjectSignature {
 
@@ -447,11 +443,31 @@ public class NetSignature extends ObjectSignature {
 
 	@Override
 	public Object exec(Arg... args) throws MogramException, RemoteException, TransactionException {
+		Mogram mog = Arg.getMogram(args);
 		Context cxt = Arg.getContext(args);
-		if (cxt != null) {
-			return context(exert(cxt));
+		Mogram result = null;
+		try {
+			if (mog != null) {
+				if (serviceType == RemoteServiceShell.class) {
+					Exerter prv = (Exerter) Accessor.get().getService(sig(RemoteServiceShell.class));
+					result = prv.exert(mog, null);
+				}
+			} else if (cxt != null) {
+				Task in = task(this, cxt);
+				result = exert(in, null);
+			} else {
+				if (mog.getProcessSignature() != null
+						&& ((ServiceSignature) mog.getProcessSignature()).isShellRemote()) {
+					Exerter prv = null;
+					prv = (Exerter) Accessor.get().getService(sig(RemoteServiceShell.class));
+					result = prv.exert(mog, null);
+				} else {
+					result = (exert(mog));
+				}
+			}
+		} catch (Exception ex) {
+			throw new MogramException(ex);
 		}
-
-		return null;
+		return context(result);
 	}
 }

@@ -92,7 +92,7 @@ public class NetJobExertions implements SorcerConstants {
 		assertEquals(get(job, "j1/t3/result/y"), 400.00);
 		
 	}
-	
+
 	@Test
 	public void exertJobPushSeqTest() throws Exception {
 		ServiceMogram.debug = true;
@@ -167,6 +167,7 @@ public class NetJobExertions implements SorcerConstants {
 		assertEquals(value(context, "j1/t3/result/y"), 400.0);
 	}
 
+	@Ignore
 	@Test
 	public void remoteServiceShell() throws Exception {
 		
@@ -189,7 +190,7 @@ public class NetJobExertions implements SorcerConstants {
 						outEnt("result/y", null)));
 
 		// Service Composition j1(j2(t4(x1, x2), t5(x1, x2)), t3(x1, x2))
-		Job job = job("j1", sig("exert", ServiceJobber.class),
+		Job job = job("j1", // sig("exert", ServiceJobber.class),
 				job("j2", t4, t5), t3,
 				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
 				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));

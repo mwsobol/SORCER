@@ -352,14 +352,14 @@ public class ObjectSignature extends ServiceSignature {
 		if (mogram instanceof Context)
 			cxt = (Context)mogram;
 		else
-			cxt = context(mogram.exert(txn));
+			cxt = context(mogram.exert());
 
 		try {
 			task = new ObjectTask(this, cxt);
 		} catch (SignatureException e) {
 			throw new MogramException(e);
 		}
-		return (Mogram) task.exert(txn).getContext();
+		return task.exert(txn).getContext();
 	}
 
 	public String toString() {

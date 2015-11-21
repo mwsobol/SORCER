@@ -43,9 +43,6 @@ import sorcer.core.plexus.MultiFidelity;
 import sorcer.core.provider.*;
 import sorcer.core.provider.exerter.Binder;
 import sorcer.core.provider.rendezvous.ServiceConcatenator;
-import sorcer.core.provider.rendezvous.ServiceJobber;
-import sorcer.core.provider.rendezvous.ServiceRendezvous;
-import sorcer.core.provider.rendezvous.ServiceSpacer;
 import sorcer.core.signature.*;
 import sorcer.netlet.ScriptExerter;
 import sorcer.service.*;
@@ -975,20 +972,13 @@ public class operator {
 	}
 
 	public static Signature defaultSig(Class<?> serviceType) throws SignatureException {
-		if (serviceType == ServiceJobber.class ||
-				serviceType == ServiceSpacer.class ||
-				serviceType == ServiceConcatenator.class ||
-				serviceType == ServiceRendezvous.class) {
-			return sig("exert", serviceType);
-		} else if (serviceType == Jobber.class ||
-				serviceType == Spacer.class ||
-				serviceType == Concatenator.class ||
-				serviceType == Rendezvous.class) {
-			return sig("exert", serviceType);
-		} else if (Modeling.class.isAssignableFrom(serviceType)) {
+		if (Modeling.class.isAssignableFrom(serviceType)) {
 			return sig("evaluate", serviceType);
+		} else if (Service.class.isAssignableFrom(serviceType)) {
+			return sig("exert", serviceType);
+		} else {
+			return sig(serviceType, (ReturnPath) null);
 		}
-		return sig(serviceType, (ReturnPath) null);
 	}
 
 	public static Signature sig(Class<?> serviceType, ReturnPath returnPath, ServiceDeployment deployment)
@@ -1591,8 +1581,6 @@ public class operator {
 			if (!defaultSig) {
 				job.getFidelity().getSelects().clear();
 				job.addSignature(signature);
-			} else {
-				job.addSignature(signature);
 			}
 		} else {
 			job = new Job(name);
@@ -1819,11 +1807,11 @@ public class operator {
 		return (T)service.exec(new Arg[] { mogram });
 	}
 
-	public static Object exec(Service service, Arg... args)
-			throws MogramException, TransactionException, RemoteException {
-		Mogram mog = Arg.getMogram(args);
-		return new sorcer.core.provider.exerter.ServiceShell().exert(mog, args);
-	}
+//	public static Object exec(Service service, Arg... args)
+//			throws MogramException, TransactionException, RemoteException {
+//		Mogram mog = Arg.getMogram(args);
+//		return new sorcer.core.provider.exerter.ServiceShell().exert(mog, args);
+//	}
 
 //	public static Object exec(Service service, Server server, Arg...  args)
 //			throws MogramException, TransactionException, RemoteException {
@@ -1889,34 +1877,40 @@ public class operator {
 		return value((Context<Object>) model, evalSelector, args);
 	}
 
-	public static <T extends Context> T exec(Service model, String evalSelector,
-											 Arg... args) throws ContextException {
-		return value((Context<T>) model, evalSelector, args);
+	public static Object exec(Service service, Arg... args) throws MogramException, RemoteException {
+		try {
+			if (service instanceof Entry || service instanceof Signature )
+				return service.exec(args);
+		else
+			return new sorcer.core.provider.exerter.ServiceShell().exec(service, args);
+		} catch (Exception e) {
+			throw new MogramException(e);
+		}
 	}
 
-	public static <T> T eval(Context<T> model, String evalSelector,
+	public static <T> T eval(Context<T> model, String path,
 							 Arg... args) throws ContextException {
-		return value(model, evalSelector, args);
+		return value(model, path, args);
 	}
 
-	public static <T> T val(Context<T> model, String evalSelector,
+	public static <T> T val(Context<T> model, String path,
 						  Arg... entries) throws ContextException {
-		return value(model, evalSelector, entries);
+		return value(model, path, entries);
 	}
 
-	public static <T> T v(Context<T> model, String evalSelector,
+	public static <T> T v(Context<T> model, String path,
 							 Arg... args) throws ContextException {
-		return value(model, evalSelector, args);
+		return value(model, path, args);
 	}
 
-	public static <T> T value(Context<T> model, String evalSelector,
+	public static <T> T value(Context<T> model, String path,
 							  Arg... args) throws ContextException {
 		if (model instanceof ParModel) {
-			return (T) ((ParModel) model).getValue(evalSelector,
+			return (T) ((ParModel) model).getValue(path,
 					args);
 		}  else if (model instanceof Context) {
 			try {
-				Object val = ((Context) model).getValue(evalSelector,
+				Object val = ((Context) model).getValue(path,
 						args);
 				if (SdbUtil.isSosURL(val)) {
 					return (T) ((URL) val).getContent();
