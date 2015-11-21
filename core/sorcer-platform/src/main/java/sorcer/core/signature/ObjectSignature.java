@@ -23,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.exertion.ObjectTask;
 import sorcer.core.invoker.MethodInvoker;
+import sorcer.core.provider.exerter.ServiceShell;
 import sorcer.service.*;
 import sorcer.service.modeling.Modeling;
 
@@ -32,6 +33,7 @@ import java.lang.reflect.Modifier;
 import java.rmi.RemoteException;
 
 import static sorcer.eo.operator.context;
+import static sorcer.eo.operator.task;
 
 public class ObjectSignature extends ServiceSignature {
 
@@ -340,12 +342,12 @@ public class ObjectSignature extends ServiceSignature {
 	}
 
 	@Override
-	public Mogram exert(Mogram mogram) throws TransactionException,
+	public Context exert(Mogram mogram) throws TransactionException,
 			MogramException, RemoteException {
 		return exert(mogram, null);
 	}
 
-	public Mogram exert(Mogram mogram, Transaction txn) throws TransactionException,
+	public Context exert(Mogram mogram, Transaction txn) throws TransactionException,
 			MogramException, RemoteException {
 		Context cxt = null;
 		ObjectTask task = null;
@@ -360,6 +362,24 @@ public class ObjectSignature extends ServiceSignature {
 			throw new MogramException(e);
 		}
 		return task.exert(txn).getContext();
+	}
+
+	@Override
+	public Object exec(Arg... args) throws MogramException, RemoteException, TransactionException {
+		Mogram mog = Arg.getMogram(args);
+		if (mog != null) {
+			if (serviceType == ServiceShell.class) {
+				ServiceShell shell = new ServiceShell(mog);
+				return context(shell.exert(args));
+			} else if (mog instanceof Context) {
+				try {
+					return exert(task(this, (Context)mog));
+				} catch (SignatureException e) {
+					throw new MogramException(e);
+				}
+			}
+		}
+		return null;
 	}
 
 	public String toString() {

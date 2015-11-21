@@ -125,24 +125,24 @@ public class Entries {
     @Test
     public void lambdaClient() throws Exception {
 
-        // entries as ValueCallable and  Client lambdas
+        // entries as ValueCallable and  Requestor lambdas
         Model mo = model(ent("multiply/x1", 10.0), ent("multiply/x2", 50.0),
                 lambda("multiply", (Context<Double> model) ->
                         val(model, "multiply/x1") * val(model, "multiply/x2")),
-                lambda("multiply2", "multiply", (Service entry, Context<Double> scope) -> {
-                    double out = exec(entry, scope);
+                lambda("multiply2", "multiply", (Service entry, Context scope) -> {
+                    double out = (double)exec(entry, scope);
                     if (out > 400) {
                         set(scope, "multiply/x1", 20.0);
                         set(scope, "multiply/x2", 50.0);
-                        out = (double) exec(entry, scope);
+                        out = (double)exec(entry, scope);
                     }
-                    return out;
+                    return context(ent("multiply2", out));
                 }),
                 response("multiply2"));
 
-        Context out = response(mo);
-        logger.info("model response: " + out);
-        assertTrue(get(out, "multiply2").equals(1000.0));
+        Context result = response(mo);
+        logger.info("model response: " + result);
+        assertTrue(get(result, "multiply2").equals(1000.0));
     }
 
 }

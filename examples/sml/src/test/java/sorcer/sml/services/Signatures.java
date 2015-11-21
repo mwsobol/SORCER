@@ -218,8 +218,8 @@ public class Signatures {
 				inEnt("y2", 80.0),
 				result("result/y"));
 
-		Double result = exec(sig("add", AdderImpl.class), cxt);
-		assertTrue(result.equals(100.0));
+		Context result = (Context) exec(sig("add", AdderImpl.class), cxt);
+		assertTrue(value(result, "result/y").equals(100.0));
 	}
 
 
@@ -231,8 +231,8 @@ public class Signatures {
 				inEnt("y2", 80.0),
 				result("result/y"));
 
-		Double result = exec(sig("add", Adder.class), cxt);
-		assertTrue(result.equals(100.0));
+		Context result = (Context) exec(sig("add", Adder.class), cxt);
+		assertTrue(value(result, "result/y").equals(100.0));
 	}
 
 
@@ -259,7 +259,7 @@ public class Signatures {
 						inEnt("arg/x2", 80.0), result("result/y")));
 
 		Context  out = (Context) exec(sig(ServiceShell.class), f5);
-		assertEquals(get(out), 100.00);
+		assertEquals(value(out, "result/y"), 100.00);
 	}
 
 	@Test
@@ -267,7 +267,7 @@ public class Signatures {
 		// The SORCER Remote Service Shell as a service provider
 		Task f5 = task(
 				"f5",
-				sig("add", AdderImpl.class),
+				sig("add", Adder.class),
 				context("add", inEnt("arg/x1", 20.0),
 						inEnt("arg/x2", 80.0), result("result/y")));
 

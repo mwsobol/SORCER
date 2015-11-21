@@ -64,14 +64,14 @@ public class Models {
 						val(model, "multiply/x1") * val(model, "multiply/x2")),
 				lambda("subtract", (Context <Double> model) ->
 						v(model, "multiply") - v(model, "add")),
-				lambda("multiply2", "multiply", (Service entry, Context<Double> scope) -> {
-					double out = exec(entry, scope);
+				lambda("multiply2", "multiply", (Service entry, Context scope) -> {
+					double out = (double) exec(entry, scope);
 					if (out > 400) {
 						set(scope, "multiply/x1", 20.0);
 						set(scope, "multiply/x2", 50.0);
-						out = exec(entry, scope);
+						out = (double)exec(entry, scope);
 					}
-					return out;
+					return context(ent("multiply2", out));
 				} ),
 				response("subtract", "multiply2", "add"));
 

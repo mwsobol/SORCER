@@ -332,7 +332,7 @@ public class operator {
 		return new Srv(name, path, args.argsToStrings(), service);
 	}
 
-	public static <T> Srv lambda(String path, String name, Requestor<T> client) {
+	public static Srv lambda(String path, String name, Requestor client) {
 		return new Srv(name, path, client);
 	}
 

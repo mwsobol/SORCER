@@ -26,8 +26,8 @@ import java.rmi.RemoteException;
  * Created by Mike Sobolewski on 10/30/15.
  */
 @FunctionalInterface
-public interface Requestor<T> extends Serializable {
+public interface Requestor extends Serializable {
 
-    T exec(Service service, Context<T> context) throws MogramException, RemoteException, TransactionException;
+    Context exec(Service service, Context context) throws MogramException, RemoteException, TransactionException;
 
 }

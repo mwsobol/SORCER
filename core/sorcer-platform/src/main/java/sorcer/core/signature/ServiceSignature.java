@@ -23,7 +23,6 @@ import net.jini.core.transaction.TransactionException;
 import org.slf4j.Logger;
 import sorcer.core.SorcerConstants;
 import sorcer.core.deploy.ServiceDeployment;
-import sorcer.core.provider.Provider;
 import sorcer.service.*;
 import sorcer.service.Strategy.Provision;
 import sorcer.service.modeling.Variability;
@@ -579,7 +578,7 @@ public class ServiceSignature implements Signature, SorcerConstants {
 				.compareTo(""+((ServiceSignature) signature).providerName));
 	}
 
-	public Mogram exert(Mogram mogram, Transaction txn, Arg... args)
+	public Context exert(Mogram mogram, Transaction txn, Arg... args)
 			throws TransactionException, MogramException, RemoteException {
 		Context cxt = null;
 		if (mogram instanceof Context) {
@@ -595,12 +594,12 @@ public class ServiceSignature implements Signature, SorcerConstants {
 		}
 		Object result = exert(out);
 		if (result instanceof Context)
-			return (Mogram)result;
+			return (Context)result;
 		else
-			return (Mogram) ((Task)exert(out)).getContext();
+			return ((Task)exert(out)).getContext();
 	}
 
-	public Mogram exert(Mogram mogram) throws TransactionException,
+	public Context exert(Mogram mogram) throws TransactionException,
 			MogramException, RemoteException {
 		return exert(mogram, null);
 	}
@@ -636,20 +635,7 @@ public class ServiceSignature implements Signature, SorcerConstants {
 
 	@Override
 	public Object exec(Arg... args) throws MogramException, RemoteException, TransactionException {
-		Mogram mog = Arg.getMogram(args);
-		if (mog != null) {
-			if (mog instanceof Context) {
-				try {
-					return value(task(this, (Context) mog));
-				} catch (SignatureException e) {
-					throw new MogramException(e);
-				}
-			} else if (mog instanceof Exertion) {
-				Provider prv = (Provider) Accessor.get().getService(this);
-				return context(prv.exert(mog, null, args));
-			}
-		}
-		return null;
+	    throw new MogramException("Signature service exec should be implementd in subclasses");
 	}
 
 }

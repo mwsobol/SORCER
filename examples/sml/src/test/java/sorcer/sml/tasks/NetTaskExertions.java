@@ -134,8 +134,8 @@ public class NetTaskExertions {
 						inEnt("arg/x2", 80.0), result("result/y")),
 				strategy(Monitor.NO, Wait.YES));
 
-		Object out = exec(sig(RemoteServiceShell.class), f5);
-		assertTrue(out.equals(100.00));
+		Context out = (Context) exec(sig(RemoteServiceShell.class), f5);
+		assertTrue(value(out, "result/y").equals(100.00));
 
 	}
 

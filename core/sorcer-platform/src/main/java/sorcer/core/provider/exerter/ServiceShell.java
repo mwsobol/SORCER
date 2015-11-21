@@ -114,11 +114,6 @@ public class ServiceShell implements RemoteServiceShell, Requestor, Callable {
 		}
 	}
 
-	public <T extends Mogram> T  exert(Arg... entries) throws TransactionException,
-			MogramException, RemoteException {
-		return exert((Transaction) null, (String) null, entries);
-	}
-
 	public Mogram exert(Mogram xrt, Arg... entries)
 			throws TransactionException, MogramException, RemoteException {
 		try {
@@ -690,7 +685,7 @@ public class ServiceShell implements RemoteServiceShell, Requestor, Callable {
 
 	private static Object finalize(Exertion xrt, Arg... args) throws ContextException, RemoteException {
 		Context dcxt = xrt.getDataContext();
-		Signature.ReturnPath rPath =	dcxt.getReturnPath();
+		Signature.ReturnPath rPath = dcxt.getReturnPath();
 		// check if it was already finalized
 		if (((ServiceContext) dcxt).isFinalized()) {
 			return dcxt.getValue(rPath.path);
@@ -840,27 +835,7 @@ public class ServiceShell implements RemoteServiceShell, Requestor, Callable {
 				ScriptExerter se = new ScriptExerter(System.out, null, Sorcer.getWebsterUrl(), true);
 				se.readFile(new File(((NetletSignature)service).getServiceSource()));
 				return evaluate((Mogram)se.parse());
-			}
-//			else if (service instanceof Entry || service instanceof Signature ) {
-//					return service.exec(args);
-//			} if (service instanceof Signature) {
-//				Task in = null;
-//				Context cxt = Arg.getContext(args);
-//				if (cxt == null) {
-//					in = (Task) Arg.getExertion(args);
-//				}
-//				Object out = null;
-//				if (cxt != null) {
-//					in = task((Signature) service, cxt);
-//					out = value(in, args);
-//				} else if (in != null) {
-//					out = value(in, args);
-//				} else {
-//					throw new MogramException("Missing service context for: " + service);
-//				}
-//				return out;
-//			}
-			else if (service instanceof Exertion) {
+			} else if (service instanceof Exertion) {
 				return value((Evaluation) service, args);
 			} else if (service instanceof EntModel) {
 				((Model)service).getResponse(args);
@@ -883,51 +858,19 @@ public class ServiceShell implements RemoteServiceShell, Requestor, Callable {
 		return null;
 	}
 
-	public  <T extends Mogram> T exec(Signature signature, Mogram mogram)
-			throws ExertionException {
-		return exec(signature, mogram, null);
-	}
-
-	public  <T extends Mogram> T exec(Signature signature, Mogram mog, Transaction txn)
-			throws ExertionException {
-		this.service = signature;
-		this.mogram = mog;
-		try {
-			Context cxt = null;
-			if (mogram instanceof EntModel) {
-				cxt = (Context) ((Model) mogram).getResponse();
-			} else if (mogram instanceof ServiceContext) {
-				cxt = (Context) mogram;
-			}
-			if (cxt != null && signature instanceof ObjectSignature) {
-				ObjectTask ot = new ObjectTask(signature, cxt);
-				return (T) ((Exertion)exert(ot)).getContext();
-			} else if (signature instanceof NetSignature
-					&& ((Signature) signature).getServiceType() == sorcer.core.provider.RemoteServiceShell.class) {
-				Provider prv = (Provider) Accessor.get().getService(signature);
-				return (T) ((Exertion) prv.exert(mogram, txn)).getContext();
-			} else if ((((ServiceSignature) signature).isShellRemote())
-					|| ((mogram instanceof Exertion) && ((Exertion) mogram).getControlContext() != null
-					&& ((ControlContext) ((Exertion) mogram).getControlContext()).isShellRemote())) {
-				Exerter prv = (Exerter) Accessor.get().getService(sig(RemoteServiceShell.class));
-				return (T) ((Exertion)prv.exert(mogram, txn)).getContext();
-			} else if (signature.getServiceType() == ServiceShell.class) {
-				return (T) ((Exertion)exert(mogram, txn)).getContext();
-			} else {
-				return (T) signature.exec(new Arg[] { (Context)mogram });
-			}
-		} catch (Exception e) {
-			throw new ExertionException(e);
-		}
-	}
-
 	@Override
 	public Context exec(Service service, Context context) throws MogramException, RemoteException, TransactionException {
-		return null;
+		return (Context) exec(service, new Arg[] {context});
+	}
+
+
+	public <T extends Mogram> T  exert(Arg... args) throws TransactionException,
+			MogramException, RemoteException {
+		return exert((Transaction) null, (String) null, args);
 	}
 
 	@Override
 	public Object exec(Arg... args) throws MogramException, RemoteException, TransactionException {
-		return null;
+		return evaluate(args);
 	}
 }

@@ -258,6 +258,10 @@ public class operator {
 
 	public static Context context(Object... entries)
 			throws ContextException {
+		// do not create a context from Context, jut return
+		if (entries.length == 1 && entries[0] instanceof Context)
+			 return  (Context)entries[0];
+
 		Context cxt = null;
 		List<MapContext> connList = new ArrayList<MapContext>();
 
@@ -1774,55 +1778,6 @@ public class operator {
 		return service.exert(mogram, txn, entries);
 	}
 
-//	public static <T extends Exertion> T exec(Exerter exerter, Exertion input,
-//											  Arg... entries) throws ExertionException {
-//		try {
-//			return (T) exerter.exert(input, null, entries);
-//		} catch (Exception e) {
-//			throw new ExertionException(e);
-//		}
-//	}
-
-//	public static Context exec(Mogram mogram, Context contex, Arg... args)
-//			throws TransactionException, MogramException, RemoteException {
-//		Context cxt = null;
-//		if (mogram instanceof Context) {
-//			cxt = (Context)mogram;
-//		} else {
-//			cxt = context(exert(mogram));
-//		}
-//		if (server instanceof Signature){
-//			if (((Signature)server).getServiceType() == ServiceShell.class)
-//				return cxt;
-//			else
-//			 	return (Context)server.exec(cxt);
-//		} else {
-//			return new sorcer.core.provider.exerter.ServiceShell().exec(server, mogram);
-//		}
-//		return (Context)mogram.exert(contex, args);
-//	}
-
-	public static <T> T exec(Service service, Context<T> mogram)
-			throws TransactionException, MogramException, RemoteException {
-		return (T)service.exec(new Arg[] { mogram });
-	}
-
-//	public static Object exec(Service service, Arg... args)
-//			throws MogramException, TransactionException, RemoteException {
-//		Mogram mog = Arg.getMogram(args);
-//		return new sorcer.core.provider.exerter.ServiceShell().exert(mog, args);
-//	}
-
-//	public static Object exec(Service service, Server server, Arg...  args)
-//			throws MogramException, TransactionException, RemoteException {
-//		if (service instanceof Signature &&  server instanceof Mogram) {
-//			return service.exec(server, (Mogram) args[0], (Transaction) null);
-//		} else {
-//			// lambada service
-//			return service.exec(server, args);
-//		}
-//	}
-
 	public static <T> T eval(Context<T> model, Arg... args)
 			throws ContextException {
 		return value(model, args);
@@ -1934,7 +1889,7 @@ public class operator {
 							  Arg... args) throws EvaluationException {
 		if (evaluation instanceof Exertion) {
 			try {
-				((ServiceContext)((Exertion) evaluation).getContext())
+				((ServiceContext)((Exertion) evaluation).getDataContext())
 						.setReturnPath(new ReturnPath(evalSelector));
 				return (T) evaluate((Exertion) evaluation, args);
 			} catch (Exception e) {
@@ -1982,22 +1937,6 @@ public class operator {
 	public static <T> T getAt(Context<T> context, String tuple) throws ContextException {
 		return valuesAt(context, tuple).get(0);
 	}
-
-//	public static <T> List<T> inValues(Context<T> context) throws ContextException {
-//		return ((ServiceContext)context).getInValues();
-//	}
-//
-//	public static <T> List<T> inPaths(Context<T> context) throws ContextException {
-//		return ((ServiceContext)context).getInPaths();
-//	}
-//
-//	public static <T> List<T> outValues(Context<T> context) throws ContextException {
-//		return ((ServiceContext)context).getOutValues();
-//	}
-//
-//	public static <T> List<T> outPaths(Context<T> context) throws ContextException {
-//		return ((ServiceContext)context).getOutPaths();
-//	}
 
 	public static <T> T getAt(Context<T> context, int i) throws ContextException {
 		if (!(context instanceof Positioning))

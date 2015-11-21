@@ -12,7 +12,6 @@ import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.provider.impl.SubtractorImpl;
-import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.par.Agent;
 import sorcer.core.context.model.par.Par;
 import sorcer.core.context.model.par.ParModel;
@@ -41,6 +40,7 @@ import static sorcer.mo.operator.response;
 import static sorcer.mo.operator.responseUp;
 import static sorcer.po.operator.add;
 import static sorcer.po.operator.*;
+import static sorcer.po.operator.loop;
 import static sorcer.po.operator.map;
 import static sorcer.po.operator.put;
 import static sorcer.po.operator.set;
@@ -664,10 +664,9 @@ public class ParModels {
 				Volume.class.getName(), new URL(Sorcer
 				.getWebsterUrl() + "/pml-"+sorcerVersion+".jar")));
 
-		Entry ent = (Entry) get((Context)value(pm,"getSphereVolume"), "sphere/volume");
+		Object result = value((Context)value(pm,"getSphereVolume"), "sphere/volume");
 
-//		logger.info("val: " + value(ent));
-		assertTrue(value(ent).equals(33510.32163829113));
+		assertTrue(result.equals(33510.32163829113));
 
 		// invoke the agent directly
 		invoke(pm,

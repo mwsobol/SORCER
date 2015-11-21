@@ -21,8 +21,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
-import static sorcer.eo.operator.names;
-import static sorcer.eo.operator.path;
+import static sorcer.eo.operator.value;
 
 /**
  * @author Mike Sobolewski
@@ -68,38 +67,30 @@ public class ServiceExertionTest {
 	
 	@Test
 	public void exertJobTest() throws Exception {
-		// just get value from job's context
-		//logger.info("eJob value @  t3/arg/x2 = " + get(eJob, "j1/t3/arg/x2"));
-		assertTrue("Wrong eJob value for " + Context.none, 
-				get(eJob, "/j1/t3/arg/x2").equals(Context.none));
+		// get value from job's exerted context
+		assertTrue(value(eJob, "j1/t3/arg/x2").equals(100.0));
 		
-		// exert and then get the value from job's context
-		eJob = exert(eJob);
-		
-		logger.info("eJob jobContext: " + upcontext(eJob));
+		// exert and then get the job's context (upcotext - a kind of supercontext)
+		Context out = upcontext(exert(eJob));
+		logger.info("job context: " + out);
+
 		//logger.info("eJob value @  j2/t5/arg/x1 = " + get(eJob, "j2/t5/arg/x1"));
-		assertTrue("Wrong eJob value for 20.0", get(eJob, "/j1/j2/t5/arg/x1").equals(20.0));
+		assertTrue(value(out, "j1/j2/t5/arg/x1").equals(20.0));
 			
 		//logger.info("eJob value @ j2/t4/arg/x1 = " + exert(eJob, path("j1/j2/t4/arg/x1")));
-		assertTrue("Wrong eJob value for 10.0", get(eJob, "/j1/j2/t4/arg/x1").equals(10.0));
+		assertTrue(value(out, "j1/j2/t4/arg/x1").equals(10.0));
 
 		//logger.info("eJob value @  j1/j2/t5/arg/x2 = " + exert(eJob, "j1/j2/t5/arg/x2"));
-		assertTrue("Wrong eJob value for 80.0", get(eJob, "/j1/j2/t5/arg/x2").equals(80.0));
+		assertTrue(value(out, "j1/j2/t5/arg/x2").equals(80.0));
 		
 		//logger.info("eJob value @  j2/t5/arg/x1 = " + exert(eJob, "j2/t5/arg/x1"));
-		assertTrue("Wrong eJob value for 20.0", get(eJob, "/j1/j2/t5/arg/x1").equals(20.0));
+		assertTrue(value(out, "j1/j2/t5/arg/x1").equals(20.0));
 		
 		//logger.info("eJob value @  j2/t4/arg/x2 = " + exert(eJob, "j2/t4/arg/x2"));
-		assertTrue("Wrong eJob value for 50.0", get(eJob, "/j1/j2/t4/arg/x2").equals(50.0));
-			
-		logger.info("job context: " + upcontext(eJob));
-		logger.info("value at j1/t3/result/y: " + get(eJob, "j1/t3/result/y"));
-		logger.info("value at t3, result/y: " + get(eJob, "t3", "result/y"));
+		assertTrue( value(out, "j1/j2/t4/arg/x2").equals(50.0));
 
-		// absolute path
-		assertEquals("Wrong value for 400.0", get(eJob, "/j1/t3/result/y"), 400.0);
-		//local t3 path
-		assertEquals("Wrong value for 400.0", get(eJob, "t3", "result/y"), 400.0);
+		// final result by three services
+		assertEquals(value(out, "j1/t3/result/y"), 400.0);
 	}
 
 	@Test
@@ -154,7 +145,7 @@ public class ServiceExertionTest {
 //		   pipe(out(t5, path(result, y)), in(t3, path(arg, x2))));
 		
 		Task t3 = task("t3", sig("subtract", SubtractorImpl.class), 
-				context("subtract", inEnt(path(arg, x1), null), inEnt(path(arg, x2), null),
+				context("subtract", inEnt(path(arg, x1)), inEnt(path(arg, x2)),
 						outEnt(path(result, y))));
 
 		Task t4 = task("t4", sig("multiply", MultiplierImpl.class), 

@@ -390,7 +390,7 @@ public class NetSignature extends ObjectSignature {
 	}
 
 	@Override
-	public Mogram exert(Mogram mogram) throws TransactionException,
+	public Context exert(Mogram mogram) throws TransactionException,
 			MogramException, RemoteException {
 		return exert(mogram, null);
 	}
@@ -443,27 +443,27 @@ public class NetSignature extends ObjectSignature {
 
 	@Override
 	public Object exec(Arg... args) throws MogramException, RemoteException, TransactionException {
-		Mogram mog = Arg.getMogram(args);
+		Exertion mog = Arg.getExertion(args);
 		Context cxt = Arg.getContext(args);
 		Mogram result = null;
 		try {
-			if (mog != null) {
+			if (mog != null && cxt == null) {
 				if (serviceType == RemoteServiceShell.class) {
 					Exerter prv = (Exerter) Accessor.get().getService(sig(RemoteServiceShell.class));
 					result = prv.exert(mog, null);
+				} else {
+					if (mog.getProcessSignature() != null
+							&& ((ServiceSignature) mog.getProcessSignature()).isShellRemote()) {
+						Exerter prv = null;
+						prv = (Exerter) Accessor.get().getService(sig(RemoteServiceShell.class));
+						result = prv.exert(mog, null);
+					} else {
+						result = (exert(mog));
+					}
 				}
-			} else if (cxt != null) {
+			}else if (cxt != null) {
 				Task in = task(this, cxt);
 				result = exert(in, null);
-			} else {
-				if (mog.getProcessSignature() != null
-						&& ((ServiceSignature) mog.getProcessSignature()).isShellRemote()) {
-					Exerter prv = null;
-					prv = (Exerter) Accessor.get().getService(sig(RemoteServiceShell.class));
-					result = prv.exert(mog, null);
-				} else {
-					result = (exert(mog));
-				}
 			}
 		} catch (Exception ex) {
 			throw new MogramException(ex);
