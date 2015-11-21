@@ -25,6 +25,7 @@ import sorcer.core.context.ServiceContext;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
+import sorcer.service.modeling.Variability;
 import sorcer.util.bdb.objects.UuidObject;
 import sorcer.util.url.sos.SdbUtil;
 
@@ -40,12 +41,14 @@ import static sorcer.eo.operator.add;
  * @author Mike Sobolewski
  */
 @SuppressWarnings("unchecked")
-public class Entry<T> extends Tuple2<String, T> implements Service, Dependency, Comparable<T>, Setter, Invocation<T>, Reactive<T>, Arg {
+public class Entry<T> extends Tuple2<String, T> implements Duo<T>, Service, Dependency, Comparable<T>, Setter, Invocation<T>, Reactive<T>, Arg {
 	private static final long serialVersionUID = 5168783170981015779L;
 
 	public int index;
 
 	protected String annotation;
+
+	protected Variability.Type type = Variability.Type.PAR;;
 
 	// its arguments are always evaluated if active (either Evaluataion or Invocation type)
 	protected boolean isReactive = false;
@@ -76,6 +79,9 @@ public class Entry<T> extends Tuple2<String, T> implements Service, Dependency, 
 		if (SdbUtil.isSosURL(v)) {
 			isPersistent = true;
 		}
+		if (v.getClass().getName().indexOf("Lambda") > 0)
+			type = Variability.Type.LAMBDA;
+
 		this._2 = v;
 	}
 
@@ -271,14 +277,34 @@ public class Entry<T> extends Tuple2<String, T> implements Service, Dependency, 
 		return (Mogram) out;
 	}
 
+	public Variability.Type getType() {
+		return type;
+	}
+
 	@Override
 	public T invoke(Context<T> context, Arg... entries) throws InvocationException, RemoteException {
 		return _2;
 	}
 
 	@Override
-	public Object exec(Arg... entries) throws MogramException, RemoteException {
-		return getValue(entries);
+	public Object exec(Arg... args) throws MogramException, RemoteException {
+		Context cxt = Arg.getContext(args);
+		if (cxt != null) {
+			// entry substitution
+		 	cxt.putValue(_1, _2);
+			return cxt;
+		} else {
+			return _2;
+		}
 	}
 
+	@Override
+	public String name() {
+		return _1;
+	}
+
+	@Override
+	public void set(T object) {
+		_2 = object;
+	}
 }

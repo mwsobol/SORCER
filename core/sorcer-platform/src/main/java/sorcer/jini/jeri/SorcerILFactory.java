@@ -276,28 +276,15 @@ public class SorcerILFactory extends BasicILFactory {
 					obj = method.invoke(impl, args);
 					return obj;
 				}
-				// Check first if the invocation is to be made on Exterer beans
-				// then on provider's service beans
-				logger.warn("ZZZZZZZZ method called: " + method);
-				logger.warn("ZZZZZZZZ DeclaringClass: " + method.getDeclaringClass());
-				logger.warn("ZZZZZZZZ ILF impl: " + impl);
-				logger.warn("ZZZZZZZZ args: " + Arrays.toString(args));
 
 				Object service = null;
 				if (args.length > 0 &&  args[0] instanceof CompoundExertion) {
-					Object first = args[0];
-					logger.warn("ZZZZZZZZ first arg: " + first);
-					logger.warn("ZZZZZZZZ signatureType: " + ((Exertion) args[0]).getProcessSignature().getServiceType());
-					logger.warn("ZZZZZZZZ keys set: " + serviceBeanMap.keySet());
 					service = serviceBeanMap.get(((Exertion) args[0]).getProcessSignature().getServiceType());
 					if (service != null) {
-						logger.warn("ZZZZZZZZ selected bean service: " + service);
 						obj = method.invoke(service, args);
 					}
 				} else {
 					 service = serviceBeanMap.get(method.getDeclaringClass());
-						logger.warn("XXXXXXXXXXXXXXXX selected bean service: " + service);
-
 					if (service != null) {
 						obj = method.invoke(service, args);
 					} else {

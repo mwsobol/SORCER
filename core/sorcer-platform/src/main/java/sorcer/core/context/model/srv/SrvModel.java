@@ -31,6 +31,7 @@ import sorcer.core.signature.ServiceSignature;
 import sorcer.eo.operator;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
+import sorcer.service.modeling.Variability;
 
 import java.rmi.RemoteException;
 import java.util.*;
@@ -209,7 +210,7 @@ public class SrvModel extends ParModel<Object> implements Model {
                     return out;
                 } else if (val2 instanceof MogramEntry) {
                     return evalMogram((MogramEntry)val2, path, entries);
-                } else if (val2 instanceof ValueCallable) {
+                } else if (val2 instanceof ValueCallable && ((Srv) val).getType() == Variability.Type.LAMBDA) {
                     Signature.ReturnPath rp = ((Srv) val).getReturnPath();
                     Object obj = null;
                     if (rp != null && rp.inPaths != null) {
@@ -222,12 +223,12 @@ public class SrvModel extends ParModel<Object> implements Model {
                     if (rp != null && rp.path != null)
                         putValue(((Srv) val).getReturnPath().path, obj);
                     return obj;
-                }  else if (val2 instanceof Client) {
+                }  else if (val2 instanceof Requestor && ((Srv) val).getType() == Variability.Type.LAMBDA) {
                         String entryPath = ((Entry)val).getName();
-                        Object out = ((Client)val2).exec((Service) this.asis(entryPath), this);
+                        Object out = ((Requestor)val2).exec((Service) this.asis(entryPath), this);
                         ((Srv) get(path)).setSrvValue(out);
                         return out;
-                } else if (val2 instanceof EntryCollable) {
+                } else if (val2 instanceof EntryCollable && ((Srv) val).getType() == Variability.Type.LAMBDA) {
                     Entry entry = ((EntryCollable)val2).call(this);
                     ((Srv) get(path)).setSrvValue(entry.value());
                     if (path != entry.getName())
@@ -247,7 +248,7 @@ public class SrvModel extends ParModel<Object> implements Model {
                     val =  ((ServiceInvoker)val2).invoke(entries);
                     ((Srv) get(path)).setSrvValue(val);
                     return val;
-                } else if (val2 instanceof Service) {
+                } else if (val2 instanceof Service && ((Srv) val).getType() == Variability.Type.LAMBDA) {
                     String entryPath = ((Entry)val).getName();
                     String[] paths = ((Srv)val).getPaths();
                     Arg[] args = null;
@@ -262,12 +263,7 @@ public class SrvModel extends ParModel<Object> implements Model {
                                 args[i] = (Arg) asis(paths[i]);
                         }
                     }
-                    // make from a value of entry and Entry (Server)
-                    Object server = asis(entryPath);
-                    if (!(server instanceof Service)) {
-                        server = new  Entry(entryPath, server);
-                    }
-                    Object out = ((Service)val2).exec(new Arg[] { (Arg)server });
+                    Object out = ((Service)val2).exec(args);
                     ((Srv) get(path)).setSrvValue(out);
                     return out;
                 } else {
@@ -354,27 +350,8 @@ public class SrvModel extends ParModel<Object> implements Model {
     }
 
     public Context execSignature(Signature sig) throws MogramException {
-        String[] ips = sig.getReturnPath().inPaths;
-        String[] ops = sig.getReturnPath().outPaths;
         execDependencies(sig);
-        Context incxt = this;
-        if (ips != null && ips.length > 0) {
-            incxt = this.getEvaluatedSubcontext(ips);
-        }
-        if (sig.getReturnPath() != null) {
-            incxt.setReturnPath(sig.getReturnPath());
-        }
-        Context outcxt = null;
-        try {
-            outcxt = ((Task) task(sig, incxt).exert()).getContext();
-        } catch (Exception e) {
-            throw new MogramException(e);
-        }
-        if (ops != null && ops.length > 0) {
-            outcxt = outcxt.getSubcontext(ops);
-        }
-        this.appendInout(outcxt);
-        return outcxt;
+        return  super.execSignature(sig);
     }
 
     protected void execDependencies(String path, Arg... args) throws ContextException {

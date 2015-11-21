@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.co.tuple.SignatureEntry;
 import sorcer.core.context.ApplicationDescription;
+import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
@@ -33,8 +34,6 @@ public class Srv extends Entry<Object> implements Variability<Object>, Arg,
 
     protected Signature.ReturnPath returnPath;
 
-    Type type = Type.PAR;;
-
     // srv fidelities
     protected Map<String, Object> fidelities;
 
@@ -55,7 +54,7 @@ public class Srv extends Entry<Object> implements Variability<Object>, Arg,
         this.paths = paths;
     }
 
-    public Srv(String name, String path, Client service) {
+    public Srv(String name, String path, Requestor service) {
         super(path, service);
         this.name = name;
     }
@@ -89,11 +88,6 @@ public class Srv extends Entry<Object> implements Variability<Object>, Arg,
     public Srv(String name, Model model, String path) {
         super(path, model);
         this.name = name;
-    }
-
-    @Override
-    public Type getType() {
-        return type;
     }
 
     @Override
@@ -219,6 +213,8 @@ public class Srv extends Entry<Object> implements Variability<Object>, Arg,
         if (mod != null) {
             if (mod instanceof SrvModel && _2 instanceof ValueCallable) {
                 return ((ValueCallable) _2).call((Context) mod);
+            } else if  (mod instanceof Context && _2 instanceof SignatureEntry) {
+                return ((ServiceContext)mod).execSignature(((SignatureEntry) _2)._2);
             } else {
                 _2 = mod;
                 return getValue(args);

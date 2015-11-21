@@ -161,11 +161,8 @@ abstract public class RendezvousBean implements Service, Exerter {
 					(provider.getProviderName() != null ? provider.getProviderName() + " " : "")
 					+ this.getClass().getName());
             if (mogram instanceof ObjectJob || mogram instanceof ObjectBlock || provider != null) {
-				logger.info("ZZZZZ running bean: " + this);
 				out = exert(mogram, transaction);
-
 			} else {
-				logger.info("ZZZZZ running provider: " + this);
 				out = getControlFlownManager(mogram).process();
 			}
 

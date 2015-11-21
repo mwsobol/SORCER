@@ -2630,7 +2630,7 @@ public class ProviderDelegate {
                 exporterFactory = ExporterFactories.EXPORTER;
 
 			if (allBeans.size() > 0) {
-				logger.debug("*** all beans by XXXX " + getProviderName()
+				logger.debug("*** all beans by: " + getProviderName()
 						+ " for: \n" + allBeans);
 				serviceBeans = allBeans.toArray();
 				initServiceBeans(serviceBeans);
@@ -2725,8 +2725,6 @@ public class ProviderDelegate {
 //			}
 //			logger.debug("service component exposed interfaces" + exposedInterfaces);
 		}
-
-		logger.warn("YYYYYYYYYYYYYYYYYYYYY service components" + serviceComponents);
 	}
 
 	private Object instantiateScriplet(String scripletFilename)
