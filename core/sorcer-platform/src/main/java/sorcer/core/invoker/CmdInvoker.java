@@ -171,7 +171,6 @@ public class CmdInvoker extends ServiceInvoker implements CmdInvoking {
 			try {
 				if (cmd == null && cmdarray == null)
 					throw new EvaluationException("No args for CmdEvaluator!");
-
 				if (cmd != null) {
 					if (stdin != null) {
 						out = ExecUtils.execCommand(Runtime.getRuntime().exec(

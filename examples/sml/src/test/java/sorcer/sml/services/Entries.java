@@ -118,7 +118,7 @@ public class Entries {
     public void systemCmdInvoker() throws Exception {
         Args args;
         if (GenericUtil.isLinuxOrMac()) {
-            args = args("sh",  "-c", "echo $USER");
+            args = args("sh", "-c", "echo $USER");
         } else {
             args = args("cmd",  "/C", "echo %USERNAME%");
         }

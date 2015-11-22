@@ -10,10 +10,13 @@ import sorcer.arithmetic.provider.Adder;
 import sorcer.arithmetic.provider.Multiplier;
 import sorcer.arithmetic.provider.Subtractor;
 import sorcer.arithmetic.provider.impl.*;
+import sorcer.core.context.model.srv.Srv;
 import sorcer.core.plexus.Morpher;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
+
+import java.util.function.Function;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -81,7 +84,14 @@ public class ArithmeticMograms {
 				response("subtract", "multiply2", "add"));
 
 		dependsOn(mo, ent("subtract", paths("multiply2", "add")));
-
+		Object val = mo.get("subtract");
+		if (val instanceof Srv) {
+			Srv srv = ((Srv)val);
+			if (srv._2 instanceof ContextCallable) {
+				ContextCallable ctx = (ContextCallable) srv._2;
+				logger.info("class: " + ctx.getClass());
+			}
+		}
 		Context out = response(mo);
 		logger.info("model response: " + out);
 		assertTrue(get(out, "subtract").equals(900.0));

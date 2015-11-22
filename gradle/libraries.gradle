@@ -34,6 +34,7 @@ ext {
     plexusVersion = "3.0.15"
     jansiVersion = "1.11"
     commonsIoVersion = "2.4"
+    commonsExecVersion = "1.3"
     guavaVersion = "16.0.1"
     logbackVersion = "1.1.3"
     jffpVersion = "1.2"

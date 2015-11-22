@@ -15,6 +15,7 @@ import sorcer.core.exertion.TaskTest;
 import sorcer.core.provider.Concatenator;
 import sorcer.service.*;
 import sorcer.util.Sorcer;
+import sorcer.util.exec.CommonsExecUtil;
 import sorcer.util.exec.ExecUtils;
 
 import java.io.IOException;
@@ -43,7 +44,7 @@ public class MonitoringTest {
 	public static void init() throws IOException {
 		nshCmd = new StringBuilder(new java.io.File(Sorcer.getHomeDir(),
 				"bin"+ java.io.File.separator + "nsh").getCanonicalPath()).toString();
-		cmds = new String[] { nshCmd, "-c", "emx", "-a"};
+		cmds = new String[] { "-c", "emx", "-a"};
 	}
 
 	@Test
@@ -158,8 +159,9 @@ public class MonitoringTest {
 
 	}
 
-	private static void verifyExertionMonitorStatus(Exertion exertion, String state) throws IOException, InterruptedException {
-		ExecUtils.CmdResult result = ExecUtils.execCommand(cmds);
+	private static void verifyExertionMonitorStatus(Exertion exertion, String state) throws Exception {
+		ExecUtils.CmdResult result = CommonsExecUtil.execCmd(nshCmd, cmds);
+
 		String res = result.getOut();
 		for (Mogram xrt : exertion.getAllMograms())
 			verifyMonitorStatus(result.getOut(), ((Exertion)xrt).getId(), "DONE");
