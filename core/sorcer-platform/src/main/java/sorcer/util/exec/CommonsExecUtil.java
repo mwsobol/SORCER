@@ -1,8 +1,9 @@
 package sorcer.util.exec;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
 
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
@@ -12,15 +13,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Execute helper using apache commons exed
- *
- *  add this dependency to your pom.xml:
- <dependency>
- <groupId>org.apache.commons</groupId>
- <artifactId>commons-exec</artifactId>
- <version>1.2</version>
- </dependency>
-
+ * @author Pawel Rubach
+ * based on
  * @author wf
  *
  */
@@ -30,14 +24,6 @@ public class CommonsExecUtil {
 
     protected final static boolean debug = true;
 
-    /**
-     * LogOutputStream
-     * http://stackoverflow.com/questions/7340452/process-output-from
-     * -apache-commons-exec
-     *
-     * @author wf
-     *
-     */
     public static class ExecResult extends LogOutputStream {
         private final List<String> lines = new LinkedList<String>();
 
@@ -53,7 +39,7 @@ public class CommonsExecUtil {
         public String toString()  {
             StringBuilder sb = new StringBuilder();
             for (String s : getLines())
-                sb.append(s);
+                sb.append(s+"\n");
             return sb.toString();
         }
     }
@@ -61,20 +47,44 @@ public class CommonsExecUtil {
     /**
      * execute the given command
      * @param cmd - the command
-     * @param exitValue - the expected exit Value
-     * @return the output as lines and exit Code
-     * @throws Exception
+     * @return CmdResult
+     * @throws IOException
      */
-    public static ExecUtils.CmdResult execCmd(String cmd, String[] args) throws Exception {
+    public static ExecUtils.CmdResult execCommand(String cmd) throws IOException {
+        return execCommand(cmd, null);
+    }
+
+    /**
+     * execute the given command
+     * @param cmd - the command
+     * @param args - String array of arguments
+     * @return CmdResult
+     * @throws IOException
+     */public static ExecUtils.CmdResult execCommand(String cmd, String[] args) throws IOException {
+        return execCommand(cmd, args, null);
+    }
+
+
+    /**
+     * execute the given command
+     * @param cmd - the command
+     * @param args - String array of arguments
+     * @param inputStream - stdin
+     * @return CmdResult
+     * @throws IOException
+     */
+    public static ExecUtils.CmdResult execCommand(String cmd, String[] args, InputStream inputStream) throws IOException {
         if (debug)
             logger.info("running "+cmd);
         CommandLine commandLine = CommandLine.parse(cmd);
-        if (args!=null) commandLine.addArguments(args);
+        if (args!=null) commandLine.addArguments(args, false);
         DefaultExecutor executor = new DefaultExecutor();
         ExecResult out = new ExecResult();
         ExecResult err = new ExecResult();
-        executor.setStreamHandler(new PumpStreamHandler(out, err));
+        executor.setStreamHandler(new PumpStreamHandler(out, err, inputStream));
         ExecUtils.CmdResult cmdResult = new ExecUtils.CmdResult(executor.execute(commandLine), out.toString(), err.toString());
+        logger.info("Got OUT: " + out.toString());
+        logger.info("Got ERR: " + err.toString());
         return cmdResult;
     }
 

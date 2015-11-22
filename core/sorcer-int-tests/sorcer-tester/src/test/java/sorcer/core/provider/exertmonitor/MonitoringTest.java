@@ -160,9 +160,8 @@ public class MonitoringTest {
 	}
 
 	private static void verifyExertionMonitorStatus(Exertion exertion, String state) throws Exception {
-		ExecUtils.CmdResult result = CommonsExecUtil.execCmd(nshCmd, cmds);
+		ExecUtils.CmdResult result = CommonsExecUtil.execCommand(nshCmd, cmds);
 
-		String res = result.getOut();
 		for (Mogram xrt : exertion.getAllMograms())
 			verifyMonitorStatus(result.getOut(), ((Exertion)xrt).getId(), "DONE");
 	}
