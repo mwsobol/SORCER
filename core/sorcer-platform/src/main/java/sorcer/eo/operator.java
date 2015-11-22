@@ -1722,6 +1722,8 @@ public class operator {
 //					}
 //				}
 //			}
+		} else if (mogram instanceof Exertion) {
+			obj = ((Exertion)mogram).getValue(path);
 		} else if (mogram instanceof Model) {
 			return rasis((ServiceContext) mogram, path);
 		} else if (mogram instanceof Exertion) {
@@ -1729,6 +1731,26 @@ public class operator {
 		}
 		return obj;
 	}
+
+//	public static Object get(Mogram service, String path)
+//			throws ContextException, ExertionException {
+//		Object obj = ((ServiceContext) service).asis(path);
+//		if (obj != null) {
+//			while (obj instanceof Mappable ||
+//					(obj instanceof Reactive && ((Reactive)obj).isReactive())) {
+//				try {
+//					obj = ((Evaluation) obj).asis();
+//				} catch (RemoteException e) {
+//					throw new ContextException(e);
+//				}
+//			}
+//		} else if (service instanceof Exertion) {
+//			obj = ((Exertion)service).getValue(path);
+//		} else if (service instanceof Context) {
+//			obj = ((Context)service).getValue(path);
+//		}
+//		return obj;
+//	}
 
 	public static Object get(Exertion exertion, String component, String path)
 			throws ExertionException {
@@ -1951,26 +1973,6 @@ public class operator {
 		}
 		return values;
 	}
-
-//	public static Object get(Mogram service, String path)
-//			throws ContextException, ExertionException {
-//		Object obj = ((ServiceContext) service).asis(path);
-//		if (obj != null) {
-//			while (obj instanceof Mappable ||
-//					(obj instanceof Reactive && ((Reactive)obj).isReactive())) {
-//				try {
-//					obj = ((Evaluation) obj).asis();
-//				} catch (RemoteException e) {
-//					throw new ContextException(e);
-//				}
-//			}
-//		} else if (service instanceof Exertion) {
-//			obj = ((Exertion)service).getValue(path);
-//		} else if (service instanceof Context) {
-//			obj = ((Context)service).getValue(path);
-//		}
-//		return obj;
-//	}
 
 	public static List<Mogram> exertions(Mogram mogram) {
 		if (mogram instanceof Exertion)

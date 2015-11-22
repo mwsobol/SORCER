@@ -2,7 +2,6 @@ package sorcer.core.provider.exertmonitor;
 
 import net.jini.id.Uuid;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -20,11 +19,13 @@ import sorcer.util.exec.ExecUtils;
 
 import java.io.IOException;
 
-import static org.junit.Assert.*;
-import static sorcer.co.operator.ent;
-import static sorcer.co.operator.inEnt;
-import static sorcer.co.operator.outEnt;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
+import static sorcer.eo.operator.get;
+import static sorcer.eo.operator.value;
 
 /**
  * @author Pawel Rubach
@@ -131,7 +132,6 @@ public class MonitoringTest {
 		return job;
 	}
 
-	@Ignore
 	@Test
 	public void optBlockTest() throws Exception {
 		Task t4 = task("t4", sig("multiply", Multiplier.class), strategy(Strategy.Monitor.YES),
