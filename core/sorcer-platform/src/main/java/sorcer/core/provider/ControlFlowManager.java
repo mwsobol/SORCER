@@ -319,7 +319,7 @@ public class ControlFlowManager {
                     logger.info("Got Spacer: " + spacerService);
                     return spacerService.exert(xrt, null);
                 }
-				Mogram job = ((ServiceSpacer)spacer).execute(xrt, null);
+				Mogram job = ((ServiceSpacer)spacer).localExert(xrt, null);
                 logger.info("spacable exerted = " + job);
                 return job;
             }
@@ -339,7 +339,7 @@ public class ControlFlowManager {
                     logger.info("Got Remote Jobber: " + jobber);
                     return jobberService.exert(xrt, null);
                 }
-				Mogram job = ((ServiceJobber)jobber).execute(xrt, null);
+				Mogram job = ((ServiceJobber)jobber).localExert(xrt, null);
                 logger.info("job exerted = " + job);
                 return job;
             }

@@ -41,7 +41,7 @@ public class ServiceConcatenator extends RendezvousBean implements Concatenator 
 		// do nothing
 	}
 
-	public Mogram execute(Mogram mogram, Transaction txn)
+	public Mogram localExert(Mogram mogram, Transaction txn)
 			throws TransactionException, ExertionException, RemoteException {
 		logger.info("********************************************* ServiceConcatenator.exert, block = " + mogram);
 		Exertion exertion = (Exertion) mogram;

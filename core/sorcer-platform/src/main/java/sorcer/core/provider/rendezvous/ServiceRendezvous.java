@@ -45,7 +45,7 @@ public class ServiceRendezvous extends RendezvousBean implements Rendezvous, Spa
 	public ServiceRendezvous() throws RemoteException {
 	}
 	
-	public Mogram execute(Mogram mogram, Transaction txn)
+	public Mogram localExert(Mogram mogram, Transaction txn)
 			throws TransactionException, ExertionException, RemoteException {
 		Exertion exertion = (Exertion) mogram;
 		if (!isConfigured)
@@ -59,7 +59,7 @@ public class ServiceRendezvous extends RendezvousBean implements Rendezvous, Spa
 		if (exertion.isTask()) {
 			ServiceSpacer spacer = (ServiceSpacer) delegate
 					.getBean(Spacer.class);
-			return spacer.execute(exertion, txn);
+			return spacer.localExert(exertion, txn);
 		} else if (exertion instanceof Job) {
 			if (((ControlContext) exertion.getControlContext()).getAccessType() == Access.PUSH) {
 				ServiceJobber jobber = (ServiceJobber) delegate
@@ -69,7 +69,7 @@ public class ServiceRendezvous extends RendezvousBean implements Rendezvous, Spa
 					.getAccessType() == Access.PULL) {
 				ServiceSpacer spacer = (ServiceSpacer) delegate
 						.getBean(Spacer.class);
-				return spacer.execute(exertion, txn);
+				return spacer.localExert(exertion, txn);
 			}
 		} else if (exertion instanceof Block) {
 			ServiceConcatenator concatenator = (ServiceConcatenator) delegate

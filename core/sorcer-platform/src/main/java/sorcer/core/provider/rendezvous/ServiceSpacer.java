@@ -56,10 +56,10 @@ public class ServiceSpacer extends ServiceJobber implements Spacer {
         myMemberUtil = new LokiMemberUtil(ServiceSpacer.class.getName());
     }
 
-    public Exertion execute(Exertion exertion, Transaction txn)
+    public Exertion localExert(Exertion exertion, Transaction txn)
             throws TransactionException, RemoteException, ExertionException {
         if (exertion.isJob())
-            return (Exertion)super.execute(exertion, txn);
+            return (Exertion)super.localExert(exertion, txn);
         else
             return doTask(exertion);
     }
