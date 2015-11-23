@@ -16,8 +16,6 @@ import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
 
-import java.util.function.Function;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
@@ -142,6 +140,8 @@ public class ArithmeticMograms {
 						inPaths("multiply/out", "add/out")))),
 				response("subtract"));
 
+		/*SrvModelSorter sms = new SrvModelSorter((SrvModel)m);
+		m = sms.getSortedJob();*/
 		dependsOn(m, ent("subtract", paths("multiply", "add")));
 //        logger.info("response: " + response(m));
 		Context out = response(m);
