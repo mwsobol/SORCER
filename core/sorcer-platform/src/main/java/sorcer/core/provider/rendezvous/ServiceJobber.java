@@ -41,7 +41,7 @@ public class ServiceJobber extends RendezvousBean implements Jobber {
 		// do nothing
 	}
 
-	public Mogram exert(Mogram mogram, Transaction txn)
+	public Mogram execute(Mogram mogram, Transaction txn)
 			throws TransactionException, ExertionException, RemoteException {
 
             setServiceID(mogram);

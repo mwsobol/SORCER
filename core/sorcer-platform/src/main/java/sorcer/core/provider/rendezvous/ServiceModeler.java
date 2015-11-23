@@ -47,7 +47,7 @@ public class ServiceModeler extends RendezvousBean implements Modeler {
         // do nothing
     }
 
-    public Mogram exert(Mogram mogram, Transaction txn)
+    public Mogram execute(Mogram mogram, Transaction txn)
             throws TransactionException, ExertionException, RemoteException {
         //logger.info("*********************************************ServiceModeler.exert, model = " + mogram);
         setServiceID(mogram);

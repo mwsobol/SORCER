@@ -45,7 +45,7 @@ public class ServiceRendezvous extends RendezvousBean implements Rendezvous, Spa
 	public ServiceRendezvous() throws RemoteException {
 	}
 	
-	public Mogram exert(Mogram mogram, Transaction txn)
+	public Mogram execute(Mogram mogram, Transaction txn)
 			throws TransactionException, ExertionException, RemoteException {
 		Exertion exertion = (Exertion) mogram;
 		if (!isConfigured)

@@ -160,8 +160,8 @@ abstract public class RendezvousBean implements Service, Exerter {
 			mogram.appendTrace("mogram: " + mogram.getName() + " rendezvous: " +
 					(provider.getProviderName() != null ? provider.getProviderName() + " " : "")
 					+ this.getClass().getName());
-            if (mogram instanceof ObjectJob || mogram instanceof ObjectBlock || provider != null) {
-				out = exert(mogram, transaction);
+            if (mogram instanceof ObjectJob || mogram instanceof ObjectBlock) {
+				out = execute(mogram, transaction);
 			} else {
 				out = getControlFlownManager(mogram).process();
 			}
@@ -192,12 +192,12 @@ abstract public class RendezvousBean implements Service, Exerter {
         }
     }
 
-	abstract public Mogram exert(Mogram mogram, Transaction txn)
+	abstract public Mogram execute(Mogram mogram, Transaction txn)
 			throws TransactionException, ExertionException, RemoteException;
 	
 	public Mogram exert(Mogram mogram)
 			throws TransactionException, ExertionException, RemoteException {
-		return exert(mogram, null);
+		return execute(mogram, null);
 	}
 
 	@Override
