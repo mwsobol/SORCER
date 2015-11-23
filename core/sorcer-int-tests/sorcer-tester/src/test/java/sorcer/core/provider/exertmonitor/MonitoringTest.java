@@ -14,7 +14,9 @@ import sorcer.arithmetic.tester.provider.Subtractor;
 import sorcer.core.exertion.TaskTest;
 import sorcer.core.provider.Concatenator;
 import sorcer.service.*;
+import sorcer.util.GenericUtil;
 import sorcer.util.Sorcer;
+import sorcer.util.exec.CommonsExecUtil;
 import sorcer.util.exec.ExecUtils;
 
 import java.io.IOException;
@@ -42,8 +44,10 @@ public class MonitoringTest {
 	@BeforeClass
 	public static void init() throws IOException {
 		nshCmd = new StringBuilder(new java.io.File(Sorcer.getHomeDir(),
-				"bin"+ java.io.File.separator + "nsh").getCanonicalPath()).toString();
-		cmds = new String[] { nshCmd, "-c", "emx", "-a"};
+				"bin"+ java.io.File.separator + "nsh"
+						+ (GenericUtil.isWindows() ? ".bat" : ""))
+				.getCanonicalPath()).toString();
+		cmds = new String[] { "-c", "emx", "-a"};
 	}
 
 	@Test
@@ -158,9 +162,9 @@ public class MonitoringTest {
 
 	}
 
-	private static void verifyExertionMonitorStatus(Exertion exertion, String state) throws IOException, InterruptedException {
-		ExecUtils.CmdResult result = ExecUtils.execCommand(cmds);
-		String res = result.getOut();
+	private static void verifyExertionMonitorStatus(Exertion exertion, String state) throws Exception {
+		ExecUtils.CmdResult result = CommonsExecUtil.execCommand(nshCmd, cmds);
+
 		for (Mogram xrt : exertion.getAllMograms())
 			verifyMonitorStatus(result.getOut(), ((Exertion)xrt).getId(), "DONE");
 	}
