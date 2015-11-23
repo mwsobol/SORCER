@@ -4,11 +4,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
-import org.apache.commons.exec.CommandLine;
-import org.apache.commons.exec.DefaultExecutor;
-import org.apache.commons.exec.LogOutputStream;
-import org.apache.commons.exec.PumpStreamHandler;
+import org.apache.commons.exec.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,7 +62,6 @@ public class CommonsExecUtil {
         return execCommand(cmd, args, null);
     }
 
-
     /**
      * execute the given command
      * @param cmd - the command
@@ -74,15 +71,36 @@ public class CommonsExecUtil {
      * @throws IOException
      */
     public static ExecUtils.CmdResult execCommand(String cmd, String[] args, InputStream inputStream) throws IOException {
+        return execCommand(cmd, args, inputStream, false);
+    }
+
+
+    /**
+     * execute the given command
+     * @param cmd - the command
+     * @param args - String array of arguments
+     * @param inputStream - stdin
+     * @param handleQuotes
+     * @return CmdResult
+     * @throws IOException
+     */
+    public static ExecUtils.CmdResult execCommand(String cmd, String[] args, InputStream inputStream, boolean handleQuotes) throws IOException {
         if (debug)
             logger.info("running "+cmd);
-        CommandLine commandLine = CommandLine.parse(cmd);
-        if (args!=null) commandLine.addArguments(args, false);
-        DefaultExecutor executor = new DefaultExecutor();
         ExecResult out = new ExecResult();
         ExecResult err = new ExecResult();
-        executor.setStreamHandler(new PumpStreamHandler(out, err, inputStream));
-        ExecUtils.CmdResult cmdResult = new ExecUtils.CmdResult(executor.execute(commandLine), out.toString(), err.toString());
+        ExecUtils.CmdResult cmdResult;
+        int exitValue = 0;
+        try {
+            CommandLine commandLine = CommandLine.parse(cmd);
+            if (args != null) commandLine.addArguments(args, handleQuotes);
+            DefaultExecutor executor = new DefaultExecutor();
+            executor.setStreamHandler(new PumpStreamHandler(out, err, inputStream));
+            exitValue = executor.execute(commandLine);
+        } catch (ExecuteException ee) {
+            exitValue = ee.getExitValue();
+        }
+        cmdResult = new ExecUtils.CmdResult(exitValue, out.toString(), err.toString());
         logger.info("Got OUT: " + out.toString());
         logger.info("Got ERR: " + err.toString());
         return cmdResult;

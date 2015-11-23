@@ -14,6 +14,7 @@ import sorcer.arithmetic.tester.provider.Subtractor;
 import sorcer.core.exertion.TaskTest;
 import sorcer.core.provider.Concatenator;
 import sorcer.service.*;
+import sorcer.util.GenericUtil;
 import sorcer.util.Sorcer;
 import sorcer.util.exec.CommonsExecUtil;
 import sorcer.util.exec.ExecUtils;
@@ -43,7 +44,9 @@ public class MonitoringTest {
 	@BeforeClass
 	public static void init() throws IOException {
 		nshCmd = new StringBuilder(new java.io.File(Sorcer.getHomeDir(),
-				"bin"+ java.io.File.separator + "nsh").getCanonicalPath()).toString();
+				"bin"+ java.io.File.separator + "nsh"
+						+ (GenericUtil.isWindows() ? ".bat" : ""))
+				.getCanonicalPath()).toString();
 		cmds = new String[] { "-c", "emx", "-a"};
 	}
 
