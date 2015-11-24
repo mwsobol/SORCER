@@ -11,6 +11,8 @@ import sorcer.arithmetic.provider.Multiplier;
 import sorcer.arithmetic.provider.Subtractor;
 import sorcer.arithmetic.provider.impl.*;
 import sorcer.core.context.model.srv.Srv;
+import sorcer.core.context.model.srv.SrvModel;
+import sorcer.core.dispatch.SrvModelAutoDeps;
 import sorcer.core.plexus.Morpher;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.service.*;
@@ -140,9 +142,8 @@ public class ArithmeticMograms {
 						inPaths("multiply/out", "add/out")))),
 				response("subtract"));
 
-		/*SrvModelSorter sms = new SrvModelSorter((SrvModel)m);
-		m = sms.getSortedJob();*/
-		dependsOn(m, ent("subtract", paths("multiply", "add")));
+		m = new SrvModelAutoDeps((SrvModel)m).get();
+		//dependsOn(m, ent("subtract", paths("multiply", "add")));
 //        logger.info("response: " + response(m));
 		Context out = response(m);
 
@@ -164,7 +165,8 @@ public class ArithmeticMograms {
 						inPaths("multiply/out", "add/out")))),
 				response("subtract"));
 
-		dependsOn(m, ent("subtract", paths("multiply", "add")));
+		m = new SrvModelAutoDeps((SrvModel)m).get();
+		//dependsOn(m, ent("subtract", paths("multiply", "add")));
 //        logger.info("response: " + response(m));
 		Context out = response(m);
 
@@ -186,7 +188,8 @@ public class ArithmeticMograms {
 						inPaths("multiply/out", "add/out")))),
 				response("subtract"));
 
-		dependsOn(m, ent("subtract", paths("multiply", "add")));
+		//dependsOn(m, ent("subtract", paths("multiply", "add")));
+		m = new SrvModelAutoDeps((SrvModel)m).get();
 //        logger.info("response: " + response(m));
 		Context out = response(m);
 
