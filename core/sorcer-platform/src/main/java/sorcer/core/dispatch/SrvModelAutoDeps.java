@@ -1,11 +1,26 @@
+/*
+ * Copyright 2015 the original author or authors.
+ * Copyright 2015 Sorcersoft.com
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package sorcer.core.dispatch;
 
 import org.codehaus.plexus.util.dag.CycleDetectedException;
 import org.codehaus.plexus.util.dag.DAG;
 import org.codehaus.plexus.util.dag.TopologicalSorter;
 import org.codehaus.plexus.util.dag.Vertex;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import sorcer.co.operator;
 import sorcer.co.tuple.SignatureEntry;
 import sorcer.core.context.model.ent.Entry;
@@ -26,16 +41,15 @@ import static sorcer.co.operator.paths;
  */
 public class SrvModelAutoDeps {
 
-    private static Logger logger = LoggerFactory.getLogger(SrvModelAutoDeps.class.getName());
     private final DAG dag;
     private final Map entryMap;
     private final Map<String, String> entryToResultMap;
     private SrvModel srvModel;
 
     /**
-     * Construct the ExertionSorter
+     * Construct the SrvModelAutoDeps
      */
-    public SrvModelAutoDeps(SrvModel srvModel) throws ContextException, SortingException {
+    public SrvModelAutoDeps(SrvModel srvModel) throws SortingException {
 
         dag = new DAG();
         entryMap = new HashMap();
@@ -46,7 +60,6 @@ public class SrvModelAutoDeps {
 
         try {
             getMapping(this.srvModel);
-
             List<String> sortedData = new ArrayList<String>();
             for (Iterator i = TopologicalSorter.sort(dag).iterator(); i.hasNext(); ) {
                 sortedData.add((String) i.next());
@@ -58,16 +71,15 @@ public class SrvModelAutoDeps {
     }
 
     /**
-     * Return the reordered job
-     *
-     * @return
+     * Return the processed SrvModel
+     * @return srvModel
      */
     public SrvModel get() {
         return srvModel;
     }
 
     /**
-     * Actually rearrange the exertions in the job according to the sorting
+     * Add dependency information to the srvModel
      *
      * @param srvModel
      * @throws CycleDetectedException
@@ -98,17 +110,22 @@ public class SrvModelAutoDeps {
     }
 
     /**
-     * Add the job and all inner exertions as vertexes
+     * Add SrvModel entries as Vertexes to the Directed Acyclic Graph (DAG)
      *
      * @param srvModel
      * @throws SortingException
      */
-    private void addVertex(SrvModel srvModel) throws ContextException, SortingException {
+    private void addVertex(SrvModel srvModel) throws SortingException {
 
         for (String entryName : srvModel.getData().keySet()) {
-            if (dag.getVertex(entryName) != null) {
-                throw new SortingException("Entry named: '" + entryName +
-                        " is duplicated in the model: '" + srvModel.getName() + "' (" + srvModel.getId() + ")");
+
+            if (dag.getVertex(entryName) != null
+                    && entryMap.get(entryMap)!=null
+                    && (!srvModel.getData().get(entryName).equals(entryMap.get(entryMap)))) {
+                        throw new SortingException("Entry named: '" + entryName +
+                            " is duplicated in the model: '" + srvModel.getName() + "(" + srvModel.getId() + ")" +
+                            "'\n" + entryName + "=" + entryMap.get(entryMap)
+                            + "\n" + entryName + "=" + srvModel.getData().get(entryName));
             }
 
             dag.addVertex(entryName);
@@ -139,7 +156,7 @@ public class SrvModelAutoDeps {
      * @throws CycleDetectedException
      * @throws SortingException
      */
-    private void getMapping(SrvModel srvModel) throws CycleDetectedException, ContextException, SortingException {
+    private void getMapping(SrvModel srvModel) throws CycleDetectedException, SortingException {
         for (String entryName : srvModel.getData().keySet()) {
             Object entry = srvModel.getData().get(entryName);
             if (entry instanceof Entry) {

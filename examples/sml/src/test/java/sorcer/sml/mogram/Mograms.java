@@ -166,7 +166,7 @@ public class Mograms {
                         inPaths("multiply/x1", "multiply/x2")))),
                 ent(sig("add", AdderImpl.class, result("add/out",
                         inPaths("add/x1", "add/x2")))),
-                ent(sig("subtract", SubtractorImpl.class, result("model/response",
+                ent(sig("subtract", SubtractorImpl.class, result("subtract/out",
                         inPaths("multiply/out", "add/out")))),
                 ent(sig("out", "average", AveragerImpl.class, result("model/response",
                         inPaths("task/multiply", "subtract")))),
