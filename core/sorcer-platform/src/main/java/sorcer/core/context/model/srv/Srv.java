@@ -63,6 +63,7 @@ public class Srv extends Entry<Object> implements Variability<Object>, Arg,
     public Srv(String path, Object value, String[] paths) {
         super(path, value);
         this.name = path;
+        this.paths = paths;
     }
     public Srv(String path, Object value) {
         super(path, value);

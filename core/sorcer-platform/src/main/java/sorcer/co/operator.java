@@ -351,6 +351,10 @@ public class operator {
 		return new Srv(path, invoker(lambda, context));
 	}
 
+	public static <T> Srv lambda(String path, ValueCallable<T> lambda, sorcer.eo.operator.Args args, Context context) throws InvocationException {
+		return new Srv(path, invoker(lambda, context), args.argsToStrings());
+	}
+
 	public static <T> Srv lambda(String path, EntryCollable<T> call) {
 		return new Srv(path, call);
 	}
