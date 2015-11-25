@@ -223,7 +223,7 @@ public class operator {
 		return out;
 	}
 
-	public static <T1, T2> Tuple2<T1, T2> duo(T1 x1, T2 x2) {
+	public static <T1, T2> Tuple2<T1, T2> assoc(T1 x1, T2 x2) {
 		return new Tuple2<T1, T2>(x1, x2);
 	}
 

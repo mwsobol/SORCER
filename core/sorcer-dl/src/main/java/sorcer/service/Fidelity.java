@@ -150,8 +150,16 @@ public class Fidelity<T extends Arg> implements Arg, Serializable {
 		}
 	}
 
+	public void clear() {
+		selects.clear();
+	}
+
 	public void setSelection(T selection) {
 		this.selection = selection;
+	}
+
+	public T get(int index) {
+		return selects.get(index);
 	}
 
 	public void addSelect(T select) {

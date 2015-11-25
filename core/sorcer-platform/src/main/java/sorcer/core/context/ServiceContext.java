@@ -243,9 +243,9 @@ public class ServiceContext<T> extends ServiceMogram implements
 
 		// specify four SORCER standard composite attributes
 		try {
-			// default relation tags: tag, duo, and triplet
+			// default relation tags: tag, assoc, and triplet
 			setAttribute("tag");
-			setAttribute("duo|_1|_2");
+			setAttribute("assoc|_1|_2");
 			setAttribute("triplet|_1|_2|_3");
 			// context path tag
 			setAttribute(PATH_PAR);

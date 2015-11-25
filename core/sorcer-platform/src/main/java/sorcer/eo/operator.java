@@ -372,7 +372,7 @@ public class operator {
 				if (subject != null)
 					cxt.setSubject(subject.path(), subject.value());
 				else
-					((ServiceContext)cxt).setName(name);
+					cxt.setName(name);
 			} else {
 				if (subject != null) {
 					cxt = new PositionalContext(name, subject.path(),
@@ -1407,6 +1407,7 @@ public class operator {
 		boolean srvType = false;
 		boolean hasExertion = false;
 		boolean hasSignature = false;
+		boolean manualDeps = false;
 		for (Object i : items) {
 			if (i instanceof String) {
 				name = (String) i;
@@ -1427,6 +1428,8 @@ public class operator {
 				} catch (Exception e) {
 					throw new ModelException(e);
 				}
+			} else if (i.equals(Strategy.Flow.MANUAL)) {
+				manualDeps = true;
 			}
 		}
 		if ((hasEntry || hasSignature && hasEntry) && !hasExertion) {
@@ -1445,7 +1448,7 @@ public class operator {
 				mo = context(items);
 
 			mo.setName(name);
-			if (mo instanceof SrvModel)
+			if (mo instanceof SrvModel && ! manualDeps)
 				mo = new SrvModelAutoDeps((SrvModel)mo).get();
 			return (M) mo;
 		}
