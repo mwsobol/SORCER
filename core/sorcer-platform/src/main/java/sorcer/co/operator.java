@@ -870,14 +870,6 @@ public class operator {
 			return entry._2;
 	}
 
-//	public static <T> T get(Mogram mogram, String path)
-//			throws ContextException {
-//		if (mogram instanceof Model)
-//			return rasis((ServiceContext<T>)mogram, path);
-//		else
-//			return ((ServiceContext<T>)((Exertion)mogram).getContext()).getValue(path);
-//	}
-
 	public static <T> T asis(Context<T> context, String path)
 			throws ContextException {
 		return  context.asis(path);
@@ -938,7 +930,7 @@ public class operator {
 		return model;
     }
 
-    public static Map<String, List<String>> dependentPaths(Model model) {
+    public static Map<String, List<String>> dependencies(Model model) {
          return ((ServiceContext)model).getModelStrategy().getDependentPaths();
     }
     

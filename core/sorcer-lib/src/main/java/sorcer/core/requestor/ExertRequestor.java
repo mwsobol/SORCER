@@ -116,7 +116,7 @@ abstract public class ExertRequestor implements Requestor, SorcerConstants {
 	}
 
 	abstract public Mogram getMogram(String... args)
-			throws MogramException, SignatureException, IOException;
+			throws Exception;
 
 	public String getJobberName() {
 		return jobberName;

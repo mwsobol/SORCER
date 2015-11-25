@@ -6,16 +6,14 @@ import sorcer.service.*;
 import sorcer.service.modeling.Model;
 
 import java.io.File;
-import java.io.IOException;
 
 import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
-import static sorcer.mo.operator.*;
+import static sorcer.mo.operator.response;
 
 public class AdderRequestor extends ExertRequestor {
 
-    public Mogram getMogram(String... args)
-            throws MogramException, SignatureException, IOException {
+    public Mogram getMogram(String... args) throws Exception {
 
         if (args != null && args.length == 2) {
             if (args[1].equals("netlet")) {
@@ -40,7 +38,7 @@ public class AdderRequestor extends ExertRequestor {
                         result("out/y")));
     }
 
-    private Model createModel() throws ContextException, SignatureException {
+    private Model createModel() throws Exception {
         Double v1 = new Double(getProperty("arg/x1"));
         Double v2 = new Double(getProperty("arg/x2"));
 

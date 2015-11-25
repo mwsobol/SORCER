@@ -11,8 +11,6 @@ import sorcer.arithmetic.provider.Multiplier;
 import sorcer.arithmetic.provider.Subtractor;
 import sorcer.arithmetic.provider.impl.*;
 import sorcer.core.context.model.srv.Srv;
-import sorcer.core.context.model.srv.SrvModel;
-import sorcer.core.dispatch.SrvModelAutoDeps;
 import sorcer.core.plexus.Morpher;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.service.*;
@@ -129,7 +127,7 @@ public class ArithmeticMograms {
 
 	@Test
 	public void sigLocalModel() throws Exception {
-		// get responses from a local service model
+		// get responses from a local service model and resolve dependencies
 
 		Model m = model(
 				inEnt("multiply/x1", 10.0), inEnt("multiply/x2", 50.0),
@@ -142,8 +140,7 @@ public class ArithmeticMograms {
 						inPaths("multiply/out", "add/out")))),
 				response("subtract"));
 
-		m = new SrvModelAutoDeps((SrvModel)m).get();
-		//dependsOn(m, ent("subtract", paths("multiply", "add")));
+		logger.info("dependencies: " + dependencies(m));
 //        logger.info("response: " + response(m));
 		Context out = response(m);
 
@@ -152,7 +149,7 @@ public class ArithmeticMograms {
 
 	@Test
 	public void sigRemoteModel() throws Exception {
-		// get responses from a remote service model
+		// get responses from a remote service model and resolve dependencies
 
 		Model m = model(
 				inEnt("multiply/x1", 10.0), inEnt("multiply/x2", 50.0),
@@ -165,8 +162,7 @@ public class ArithmeticMograms {
 						inPaths("multiply/out", "add/out")))),
 				response("subtract"));
 
-		m = new SrvModelAutoDeps((SrvModel)m).get();
-		//dependsOn(m, ent("subtract", paths("multiply", "add")));
+		logger.info("dependencies: " + dependencies(m));
 //        logger.info("response: " + response(m));
 		Context out = response(m);
 
@@ -175,7 +171,7 @@ public class ArithmeticMograms {
 
 	@Test
 	public void sigMixedModel() throws Exception {
-		// get responses from a remote service model
+		// get responses from a remote service model and resolve dependencies
 
 		Model m = model(
 				inEnt("multiply/x1", 10.0), inEnt("multiply/x2", 50.0),
@@ -188,8 +184,7 @@ public class ArithmeticMograms {
 						inPaths("multiply/out", "add/out")))),
 				response("subtract"));
 
-		//dependsOn(m, ent("subtract", paths("multiply", "add")));
-		m = new SrvModelAutoDeps((SrvModel)m).get();
+		logger.info("dependencies: " + dependencies(m));
 //        logger.info("response: " + response(m));
 		Context out = response(m);
 

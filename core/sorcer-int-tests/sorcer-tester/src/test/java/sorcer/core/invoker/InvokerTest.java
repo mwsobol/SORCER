@@ -134,8 +134,7 @@ public class InvokerTest {
 	}
 
 	@Test
-	public void lambdaInvokerTest2() throws RemoteException, ContextException,
-			SignatureException, ExertionException {
+	public void lambdaInvokerTest2() throws Exception {
 
 		Model mo = model(ent("x", 10.0), ent("y", 20.0),
 				ent(invoker("lambda", cxt -> (double) value(cxt, "x")
@@ -146,8 +145,7 @@ public class InvokerTest {
 	}
 
 	@Test
-	public void lambdaInvokerTest3() throws RemoteException, ContextException,
-			SignatureException, ExertionException {
+	public void lambdaInvokerTest3() throws Exception {
 
 
 		Context scope = context(ent("x1", 20.0), ent("y1", 40.0));

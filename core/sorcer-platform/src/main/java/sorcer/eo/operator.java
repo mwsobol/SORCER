@@ -35,7 +35,10 @@ import sorcer.core.context.model.ent.EntryList;
 import sorcer.core.context.model.par.Par;
 import sorcer.core.context.model.par.ParModel;
 import sorcer.core.context.model.srv.Srv;
+import sorcer.core.context.model.srv.SrvModel;
 import sorcer.core.deploy.ServiceDeployment;
+import sorcer.core.dispatch.SortingException;
+import sorcer.core.dispatch.SrvModelAutoDeps;
 import sorcer.core.exertion.*;
 import sorcer.core.invoker.InvokeIncrementor;
 import sorcer.core.plexus.Morpher;
@@ -1396,22 +1399,19 @@ public class operator {
 		return mogram(items);
 	}
 
-	public static <M extends Model> M model(Object... items) throws ContextException, ModelException {
+	public static <M extends Model> M model(Object... items) throws ContextException, SortingException {
 		String name = "unknown" + count++;
 		boolean hasEntry = false;
 		boolean evalType = false;
 		boolean parType = false;
 		boolean srvType = false;
 		boolean hasExertion = false;
-		boolean hasContext = false;
 		boolean hasSignature = false;
 		for (Object i : items) {
 			if (i instanceof String) {
 				name = (String) i;
 			} else if (i instanceof Exertion) {
 				hasExertion = true;
-			} else if (i instanceof Context) {
-				hasContext = true;
 			} else if (i instanceof Signature) {
 				hasSignature = true;
 			} else if (i instanceof Entry) {
@@ -1444,7 +1444,9 @@ public class operator {
 			else
 				mo = context(items);
 
-			((ServiceContext)mo).setName(name);
+			mo.setName(name);
+			if (mo instanceof SrvModel)
+				mo = new SrvModelAutoDeps((SrvModel)mo).get();
 			return (M) mo;
 		}
 		throw new ModelException("do not know what model to create");

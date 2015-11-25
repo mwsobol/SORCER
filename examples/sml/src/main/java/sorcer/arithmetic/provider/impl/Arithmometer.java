@@ -372,6 +372,9 @@ public class Arithmometer implements SorcerConstants, Serializable {
 //				logger.info("second: \n" + context.getValueAt(1));
 			}
 		}
+		if (inputs != null && inputs.size() < 2) {
+			inputs = context.getAllInValues();
+		}
 		logger.info("inputs: \n" + inputs);
 		logger.info("inputs paths: \n" + Contexts.getInPaths(context));
 		return inputs;

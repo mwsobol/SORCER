@@ -1,21 +1,18 @@
 package sorcer.sml.dispatch;
 
 import org.junit.Test;
-import org.junit.Ignore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.arithmetic.provider.impl.DividerImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.provider.impl.SubtractorImpl;
-import sorcer.core.context.ModelStrategy;
-import sorcer.core.context.model.srv.SrvModel;
-import sorcer.core.dispatch.SrvModelAutoDeps;
 import sorcer.service.Context;
 import sorcer.service.modeling.Model;
 
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
+import static sorcer.eo.operator.get;
 import static sorcer.eo.operator.*;
 import static sorcer.mo.operator.response;
 
@@ -42,22 +39,19 @@ public class SrvModelAutoDepsTest {
                         inPaths("model/response", "multiply/x1")))),
                 response("divide"));
 
-        m = new SrvModelAutoDeps((SrvModel)m).get();
+        logger.info("Map of dependents: " + dependencies(m));
         logger.info("response: " + response(m));
         Context out = response(m);
         logger.info("result: " + get(out, "divide"));
         assertTrue(get(out, "divide").equals(40.0));
     }
 
-
-    //TODO Doesn't work eventhough the SrvModelAutoDeps correctly adds dependentPaths - it seems they're not processed correctly during evaluation.
-    @Ignore
     @Test
     public void sigLocalComplexModel() throws Exception {
         Model m = model(
                 inEnt("multiply/x1", 10.0), inEnt("multiply/x2", 50.0),
                 inEnt("add/x1", 20.0), inEnt("add/x2", 80.0),
-                inEnt("addfinal/x1", 1000.0),
+                inEnt("addfinal/x1", 1000.0), inEnt("divider/out"),
                 ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
                         inPaths("multiply/x1", "multiply/x2")))),
                 ent(sig("add", AdderImpl.class, result("add/out",
@@ -70,8 +64,7 @@ public class SrvModelAutoDepsTest {
                         inPaths("addfinal/x1", "divider/out")))),
                 response("addfinal"));
 
-        m = new SrvModelAutoDeps((SrvModel)m).get();
-        logger.info("Map of dependents: " + ((ModelStrategy)m.getModelStrategy()).getDependentPaths());
+        logger.info("Map of dependents: " + dependencies(m));
         logger.info("response: " + response(m));
         Context out = response(m);
         logger.info("result: " + get(out, "addfinal"));

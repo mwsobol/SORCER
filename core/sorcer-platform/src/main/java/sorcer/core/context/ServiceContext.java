@@ -1289,6 +1289,10 @@ public class ServiceContext<T> extends ServiceMogram implements
 		return Contexts.getInPaths(this);
 	}
 
+	public List<String> getAllInPaths() throws ContextException {
+		return Contexts.getAllInPaths(this);
+	}
+
 	public ParList getPars() {
 		ParList pl = new ParList();
 		Iterator<Map.Entry<String, T>> i = entryIterator();
@@ -1321,6 +1325,18 @@ public class ServiceContext<T> extends ServiceMogram implements
 	 */
 	public List<Object> getInValues() throws ContextException {
 		List<?> inpaths = Contexts.getInPaths(this);
+		List<Object> list = new ArrayList<Object>(inpaths.size());
+		for (Object path : inpaths)
+			try {
+				list.add(getValue((String) path));
+			} catch (Exception e) {
+				throw new ContextException(e);
+			}
+		return list;
+	}
+
+	public List<Object> getAllInValues() throws ContextException {
+		List<?> inpaths = Contexts.getAllInPaths(this);
 		List<Object> list = new ArrayList<Object>(inpaths.size());
 		for (Object path : inpaths)
 			try {
@@ -1472,7 +1488,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 			if (inpaths.contains(path))
 				subcntxt.putInValue(path, getValue(path));
 			else if (outpaths.contains(path))
-				subcntxt.putOutValue(path, getValue(path));
+				subcntxt.putInoutValue(path, getValue(path));
 			else
 				subcntxt.putValue(path, getValue(path));
 		}

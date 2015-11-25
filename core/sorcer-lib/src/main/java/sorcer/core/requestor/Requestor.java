@@ -24,8 +24,7 @@ import java.io.IOException;
 
 public interface Requestor {
 
-	public Mogram getMogram(String... args) throws MogramException,
-			SignatureException, IOException;
+	public Mogram getMogram(String... args) throws Exception;
 
 	public Transaction getTransaction();
 
