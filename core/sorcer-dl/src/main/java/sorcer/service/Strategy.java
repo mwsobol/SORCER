@@ -32,7 +32,7 @@ public interface Strategy extends Arg {
 	 * <code>STEP</code> (stepwise)) for all component exertions at the same level.
 	 */
 	public enum Flow implements Arg {
-		SEQ, PAR, STEP, AUTO;
+		SEQ, PAR, STEP, AUTO, MANUAL;
 
 		/* (non-Javadoc)
 		 * @see sorcer.service.Arg#getName()

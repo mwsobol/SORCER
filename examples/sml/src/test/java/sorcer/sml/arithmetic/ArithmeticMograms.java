@@ -42,11 +42,11 @@ public class ArithmeticMograms {
 		Model mo = model(ent("multiply/x1", 10.0), ent("multiply/x2", 50.0),
 				ent("add/x1", 20.0), ent("add/x2", 80.0),
 				lambda("add", (Context <Double> model) ->
-						value(model, "add/x1") + value(model, "add/x2")),
+						value(model, "add/x1") + value(model, "add/x2"), args("add/x1", "add/x2")),
 				lambda("multiply", (Context <Double> model) ->
-						val(model, "multiply/x1") * val(model, "multiply/x2")),
+						val(model, "multiply/x1") * val(model, "multiply/x2"), args("multiply/x1", "multiply/x2")),
 				lambda("subtract", (Context <Double> model) ->
-						v(model, "multiply") - v(model, "add")),
+						v(model, "multiply") - v(model, "add"), args("multiply", "add")),
 				response("subtract", "multiply", "add"));
 
 		dependsOn(mo, ent("subtract", paths("multiply", "add")));

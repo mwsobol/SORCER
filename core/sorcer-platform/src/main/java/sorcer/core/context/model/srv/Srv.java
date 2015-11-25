@@ -7,6 +7,7 @@ import sorcer.co.tuple.SignatureEntry;
 import sorcer.core.context.ApplicationDescription;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.ent.Entry;
+import sorcer.eo.operator;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
 import sorcer.service.modeling.Variability;
@@ -48,7 +49,7 @@ public class Srv extends Entry<Object> implements Variability<Object>, Arg,
         this.type = type;
     }
 
-    public Srv(String name, String path, String[] paths, Service service) {
+    public Srv(String name, String path,  Service service, String[] paths) {
         super(path, service);
         this.name = name;
         this.paths = paths;
@@ -59,6 +60,10 @@ public class Srv extends Entry<Object> implements Variability<Object>, Arg,
         this.name = name;
     }
 
+    public Srv(String path, Object value, String[] paths) {
+        super(path, value);
+        this.name = path;
+    }
     public Srv(String path, Object value) {
         super(path, value);
         this.name = path;

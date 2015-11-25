@@ -324,12 +324,12 @@ public class operator {
 		return Signature.Direction.fromString(entry.annotation());
 	}
 
-	public static Srv lambda(String path, sorcer.eo.operator.Args args, Service service) {
-		return new Srv(path, path, args.argsToStrings(), service);
+	public static Srv lambda(String path, Service service, sorcer.eo.operator.Args args) {
+		return new Srv(path, path, service, args.argsToStrings());
 	}
 
-	public static Srv lambda(String path, String name, sorcer.eo.operator.Args args, Service service) {
-		return new Srv(name, path, args.argsToStrings(), service);
+	public static Srv lambda(String path, Service service,  String name, sorcer.eo.operator.Args args) {
+		return new Srv(name, path, service,  args.argsToStrings());
 	}
 
 	public static Srv lambda(String path, String name, Requestor client) {
@@ -342,6 +342,9 @@ public class operator {
 
 	public static <T> Srv lambda(String path, ValueCallable<T> call) {
 		return new Srv(path, call);
+	}
+	public static <T> Srv lambda(String path, ValueCallable<T> call, sorcer.eo.operator.Args args) {
+		return new Srv(path, call, args.argsToStrings());
 	}
 
 	public static <T> Srv lambda(String path, ValueCallable<T> lambda, Context context) throws InvocationException {

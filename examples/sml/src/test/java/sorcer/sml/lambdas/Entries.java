@@ -114,9 +114,10 @@ public class Entries {
 
         // an entry as a Service lambda
         Model mo = model(ent("x", 10.0), ent("y", 20.0),
-                lambda("s1", args("x", "y"), (Arg[] args) -> {
+                lambda("s1", (Arg[] args) -> {
                     Arg.setValue(args, "x",  Arg.getValue(args, "y"));
-                    return exec(Arg.getEntry(args, "x")); }));
+                    return exec(Arg.getEntry(args, "x")); },
+                        args("x", "y")));
 
         logger.info("s1 value: ", value(mo, "s1"));
         assertEquals(value(mo, "s1"), 20.0);
