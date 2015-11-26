@@ -46,7 +46,8 @@ public class ArithmeticMograms {
 				lambda("multiply", (Context <Double> model) ->
 						val(model, "multiply/x1") * val(model, "multiply/x2"), args("multiply/x1", "multiply/x2")),
 				lambda("subtract", (Context <Double> model) ->
-						v(model, "multiply") - v(model, "add"), args("multiply", "add")),
+						v(model, "multiply") - v(model, "add"), result("add/out",
+                        inPaths("multiply", "add"))),
 				response("subtract", "multiply", "add"));
 
 		dependsOn(mo, ent("subtract", paths("multiply", "add")));
