@@ -859,8 +859,11 @@ public class ServiceShell implements RemoteServiceShell, Requestor, Callable {
 	}
 
 	@Override
-	public Context exec(Service service, Context context) throws MogramException, RemoteException, TransactionException {
-		return (Context) exec(service, new Arg[] {context});
+	public Context exec(Service service, Context context, Arg[] args) throws MogramException, RemoteException, TransactionException {
+		Arg[] extArgs = new Arg[args.length+1];
+		Arrays.copyOf(args, args.length+1);
+		extArgs[args.length] = context;
+		return (Context) exec(service, extArgs);
 	}
 
 

@@ -225,7 +225,7 @@ public class SrvModel extends ParModel<Object> implements Model {
                     return obj;
                 }  else if (val2 instanceof Requestor && ((Srv) val).getType() == Variability.Type.LAMBDA) {
                         String entryPath = ((Entry)val).getName();
-                        Object out = ((Requestor)val2).exec((Service) this.asis(entryPath), this);
+                        Object out = ((Requestor)val2).exec((Service) this.asis(entryPath), this, entries);
                         ((Srv) get(path)).setSrvValue(out);
                         return out;
                 } else if (val2 instanceof EntryCollable && ((Srv) val).getType() == Variability.Type.LAMBDA) {
