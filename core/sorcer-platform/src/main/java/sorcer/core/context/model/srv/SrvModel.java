@@ -320,12 +320,14 @@ public class SrvModel extends ParModel<Object> implements Model {
         return null;
     }
 
-    protected <T extends Arg> T getFi(Fidelity<T> fi, Arg[] entries, String path) {
+    protected <T extends Arg> T getFi(Fidelity<T> fi, Arg[] entries, String path) throws ContextException {
         Fidelity<Signature> selected = null;
         for (Arg arg : entries) {
             if (arg instanceof Fidelity && ((Fidelity)arg).type == Fidelity.Type.EMPTY) {
                 if (((Fidelity)arg).getPath().equals(path)) {
                     selected = (Fidelity) arg;
+                    ((Entry)asis(path)).isValid(false);
+                    isChanged();
                     break;
                 }
             }

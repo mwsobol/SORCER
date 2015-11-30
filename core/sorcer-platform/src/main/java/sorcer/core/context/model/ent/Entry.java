@@ -200,6 +200,9 @@ public class Entry<T> extends Tuple2<String, T> implements Duo<T>, Service, Depe
 
 	public void isValid(boolean state) {
 		isValid = state;
+		if (_2  instanceof Entry) {
+			((Entry)_2).isValid(state);
+		}
 	}
 
 	@Override

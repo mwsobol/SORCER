@@ -22,6 +22,8 @@ import java.rmi.RemoteException;
 
 public interface Setter extends Serializable {
 
+	public String getName();
+
 	public void setValue(Object value) throws SetterException, RemoteException;
 	
 	public boolean isPersistent();

@@ -80,7 +80,6 @@ public class Fidelity<T extends Arg> implements Arg, Serializable {
 			if (s.getName().equals(name)) {
 				return s;
 			}
-			break;
 		}
 		return null;
 	}
