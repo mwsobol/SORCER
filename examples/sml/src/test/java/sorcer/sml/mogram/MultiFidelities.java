@@ -12,12 +12,14 @@ import sorcer.core.invoker.Observable;
 import sorcer.core.plexus.FidelityManager;
 import sorcer.core.plexus.Morpher;
 import sorcer.core.plexus.MultiFidelity;
+import sorcer.core.provider.Provider;
 import sorcer.service.Context;
 import sorcer.service.EvaluationException;
 import sorcer.service.Fidelity;
 import sorcer.service.Signature;
 import sorcer.service.modeling.Model;
 
+import java.net.URL;
 import java.rmi.RemoteException;
 
 import static org.junit.Assert.assertTrue;
@@ -309,4 +311,30 @@ public class MultiFidelities {
         assertTrue(get(out, "mFi2").equals(50.0));
         assertTrue(get(out, "mFi3").equals(9.0));
     }
+
+
+    public void tipVerticalDisplacementSchema() throws Exception {
+
+        Model mdl = model(
+                inEnt("mstc/geom/input/object", sig(Class.class, "createGeomObject")),
+                inEnt("mstc/geom/input/file", new URL("pathToMy file")),
+                ent("span", sig("generateGeom", Provider.class,
+                        result("structural/analysis/out",
+                        inPaths("mstc/geom/input", "mstc/geom/file")))),
+                ent("tip/displacement", sFi(
+                        sig("astros", "getDisplacement", Provider.class,
+                                result("astros/tip/displacement",
+                                inPaths("structural/analysis/out"))),
+                        sig("nastran", "getDisplacement", Provider.class,
+                                result("nastran/tip/displacement",
+                                        inPaths("structural/analysis/out"))))),
+                response("mstc/geom/input/object", "mstc/geom/input/file", "tip/displacement"));
+
+        Context out = response(mdl, fi("astros", "tip/displacement"));
+
+        // or
+
+        out = response(mdl, fi("nastran", "tip/displacement"));
+    }
+
 }
