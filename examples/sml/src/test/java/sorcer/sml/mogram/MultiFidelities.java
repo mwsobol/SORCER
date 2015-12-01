@@ -31,7 +31,6 @@ import static sorcer.mo.operator.response;
 /**
  * Created by Mike Sobolewski on 10/26/15.
  */
-@SuppressWarnings({ "unchecked", "rawtypes" })
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/sml")
 public class MultiFidelities {
@@ -311,7 +310,6 @@ public class MultiFidelities {
         assertTrue(get(out, "mFi2").equals(50.0));
         assertTrue(get(out, "mFi3").equals(9.0));
     }
-
 
     public void tipVerticalDisplacementSchema() throws Exception {
 

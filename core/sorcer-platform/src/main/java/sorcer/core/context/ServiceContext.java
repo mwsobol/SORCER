@@ -45,6 +45,7 @@ import sorcer.service.*;
 import sorcer.service.Signature.Direction;
 import sorcer.service.Signature.ReturnPath;
 import sorcer.service.modeling.Model;
+import sorcer.service.modeling.Variability;
 import sorcer.util.ObjectCloner;
 import sorcer.util.SorcerUtil;
 
@@ -86,7 +87,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	protected String parameterTypesPath;
 
 	// a flag for the context to be shared
-	// for data piping see: map. connect, pipe
+	// for data piping see: map, connect, pipe
 	protected boolean isShared = false;
 
 	protected String prefix = "";
@@ -108,6 +109,11 @@ public class ServiceContext<T> extends ServiceMogram implements
 	protected boolean isFinalized = false;
 
 	protected ModelStrategy modelStrategy = new ModelStrategy(this);
+
+	protected Variability.Type type = Variability.Type.SELF;
+
+	Signature.Direction direction = Signature.Direction.INOUT;
+
 	/**
 	 * For persistence layers to differentiate with saved context already
 	 * associated to task or not.
@@ -3172,6 +3178,14 @@ public class ServiceContext<T> extends ServiceMogram implements
 			return data.put(key, value);
 	}
 
+	public Variability.Type getType() {
+		return type;
+	}
+
+	public void setType(Variability.Type type) {
+		this.type = type;
+	}
+
 	public Iterator<String> keyIterator() {
 		return keySet().iterator();
 	}
@@ -3198,6 +3212,14 @@ public class ServiceContext<T> extends ServiceMogram implements
 		return modelStrategy.getDependers();
 	}
 
+	public Direction getDirection() {
+		return direction;
+	}
+
+	public void setDirection(Direction direction) {
+		this.direction = direction;
+	}
+	
 	@Override
 	public Object exec(Arg... args) throws MogramException, RemoteException {
 		Context cxt = Arg.getContext(args);
