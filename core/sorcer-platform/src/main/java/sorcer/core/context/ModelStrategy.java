@@ -19,7 +19,7 @@ import java.util.Map;
  */
 public class ModelStrategy implements MogramStrategy, Projection<Arg>, Serializable {
 
-    protected List<ThrowableTrace> exceptions;
+    protected List<ThrowableTrace> exceptions = new ArrayList<ThrowableTrace>();
 
     private List<String> traceList;
 
@@ -121,11 +121,7 @@ public class ModelStrategy implements MogramStrategy, Projection<Arg>, Serializa
     }
 
     public List<ThrowableTrace> getExceptions() {
-        exceptions = new ArrayList<ThrowableTrace>();
-        if (exceptions != null)
-            return exceptions;
-        else
-            return new ArrayList<ThrowableTrace>();
+        return exceptions;
     }
 
     public List<String> getTraceList() {
