@@ -46,7 +46,7 @@ public class MultiFidelities {
                         sig("multiply", MultiplierImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))))),
                 response("mFi", "arg/x1", "arg/x2"));
 
-        Context out = response(mod, fi("multiply", "mFi"));
+        Context out = response(mod, fi("mFi", "multiply"));
         logger.info("out: " + out);
         assertTrue(get(out, "mFi").equals(900.0));
         assertTrue(get(mod, "result/y").equals(900.0));
@@ -61,7 +61,7 @@ public class MultiFidelities {
                         sig("multiply", MultiplierImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))))),
                 response("mFi", "arg/x1", "arg/x2"));
 
-        Context out = response(mod, fi("add", "mFi"));
+        Context out = response(mod, fi("mFi", "add"));
         logger.info("out: " + out);
         assertTrue(get(out, "mFi").equals(100.0));
         assertTrue(get(mod, "result/y").equals(100.0));
@@ -74,8 +74,8 @@ public class MultiFidelities {
             @Override
             public void initialize() {
                 // define model metafidelities Fidelity<Fidelity>
-                add(fi("sysFi2", fi("divide", "mFi2"), fi("multiply", "mFi3")));
-                add(fi("sysFi3", fi("average", "mFi2"), fi("divide", "mFi3")));
+                add(fi("sysFi2", fi("mFi2", "divide"), fi("mFi3", "multiply")));
+                add(fi("sysFi3", fi("mFi2", "average"), fi("mFi3", "divide")));
             }
 
             @Override
@@ -121,7 +121,7 @@ public class MultiFidelities {
 
         // first closing the fidelity for mFi1
         // then fidelities morphed by the model's fidelity manager accordingly
-        out = response(mod , fi("multiply", "mFi1"));
+        out = response(mod , fi("mFi1", "multiply"));
         logger.info("out: " + out);
         assertTrue(get(out, "mFi1").equals(900.0));
         assertTrue(get(out, "mFi2").equals(50.0));
@@ -148,8 +148,8 @@ public class MultiFidelities {
             }
         };
 
-        Fidelity<Fidelity> fi2 = fi("sysFi2",fi("divide", "mFi2"), fi("multiply", "mFi3"));
-        Fidelity<Fidelity> fi3 = fi("sysFi3", fi("average", "mFi2"), fi("divide", "mFi3"));
+        Fidelity<Fidelity> fi2 = fi("sysFi2",fi("mFi2", "divide"), fi("mFi3", "multiply"));
+        Fidelity<Fidelity> fi3 = fi("sysFi3", fi("mFi2", "average"), fi("mFi3", "divide"));
 
         Signature add = sig("add", AdderImpl.class,
                 result("result/y1", inPaths("arg/x1", "arg/x2")));
@@ -179,7 +179,7 @@ public class MultiFidelities {
 
         // first closing the fidelity for mFi1
         // then fidelities morphed by the model's fidelity manager accordingly
-        out = response(mod , fi("multiply", "mFi1"));
+        out = response(mod , fi("mFi1", "multiply"));
         logger.info("out: " + out);
         assertTrue(get(out, "mFi1").equals(900.0));
         assertTrue(get(out, "mFi2").equals(50.0));
@@ -193,8 +193,8 @@ public class MultiFidelities {
             @Override
             public void initialize() {
                 // define model metafidelities Fidelity<Fidelity>
-                add(fi("sysFi2", fi("divide", "mFi2"), fi("multiply", "mFi3")));
-                add(fi("sysFi3", fi("average", "mFi2"), fi("divide", "mFi3")));
+                add(fi("sysFi2", fi("mFi2", "divide"), fi("mFi3", "multiply")));
+                add(fi("sysFi3", fi("mFi2", "average"), fi("mFi3", "divide")));
             }
 
             @Override
@@ -240,7 +240,7 @@ public class MultiFidelities {
 
         // first closing the fidelity for mFi1
         // then fidelities morphed by the model's fidelity manager accordingly
-        out = response(mod , fi("multiply", "mFi1"));
+        out = response(mod , fi("mFi1", "multiply"));
         logger.info("out: " + out);
         assertTrue(get(out, "mFi1").equals(900.0));
         assertTrue(get(out, "mFi2").equals(50.0));
@@ -272,9 +272,9 @@ public class MultiFidelities {
             }
         };
 
-        Fidelity<Fidelity> fi2 = fi("sysFi2",fi("divide", "mFi2"), fi("multiply", "mFi3"));
-        Fidelity<Fidelity> fi3 = fi("sysFi3", fi("average", "mFi2"), fi("divide", "mFi3"));
-        Fidelity<Fidelity> fi4 = fi("sysFi4", fi("average", "mFi3"));
+        Fidelity<Fidelity> fi2 = fi("sysFi2",fi("mFi2", "divide"), fi("mFi3", "multiply"));
+        Fidelity<Fidelity> fi3 = fi("sysFi3", fi("mFi2", "average"), fi("mFi3", "divide"));
+        Fidelity<Fidelity> fi4 = fi("sysFi4", fi("mFi3", "average"));
 
         Signature add = sig("add", AdderImpl.class,
                 result("result/y1", inPaths("arg/x1", "arg/x2")));
@@ -304,35 +304,11 @@ public class MultiFidelities {
 
         // first closing the fidelity for mFi1
         // then fidelities morphed by the model's fidelity manager accordingly
-        out = response(mod , fi("multiply", "mFi1"));
+        out = response(mod , fi("mFi1", "multiply"));
         logger.info("out: " + out);
         assertTrue(get(out, "mFi1").equals(900.0));
         assertTrue(get(out, "mFi2").equals(50.0));
         assertTrue(get(out, "mFi3").equals(9.0));
-    }
-
-    public void tipVerticalDisplacementSchema() throws Exception {
-
-        Model mdl = model(
-                inEnt("mstc/geom/input/object", sig(Class.class, "createGeomObject")),
-                inEnt("mstc/geom/input/file", new URL("pathToMy file")),
-                ent("span", sig("generateGeom", Provider.class,
-                        result("structural/analysis/out",
-                        inPaths("mstc/geom/input", "mstc/geom/file")))),
-                ent("tip/displacement", sFi(
-                        sig("astros", "getDisplacement", Provider.class,
-                                result("astros/tip/displacement",
-                                inPaths("structural/analysis/out"))),
-                        sig("nastran", "getDisplacement", Provider.class,
-                                result("nastran/tip/displacement",
-                                        inPaths("structural/analysis/out"))))),
-                response("mstc/geom/input/object", "mstc/geom/input/file", "tip/displacement"));
-
-        Context out = response(mdl, fi("astros", "tip/displacement"));
-
-        // or
-
-        out = response(mdl, fi("nastran", "tip/displacement"));
     }
 
 }

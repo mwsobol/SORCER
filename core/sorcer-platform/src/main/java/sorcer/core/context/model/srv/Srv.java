@@ -41,7 +41,6 @@ public class Srv extends Entry<Object> implements Variability<Object>, Arg,
     public Srv(String name) {
         super(name);
         this.name = name;
-        type = Variability.Type.SRV;;
     }
 
     public Srv(String name, String path, Type type) {
@@ -54,25 +53,21 @@ public class Srv extends Entry<Object> implements Variability<Object>, Arg,
         super(path, service);
         this.name = name;
         this.paths = paths;
-        type = Variability.Type.SRV;;
     }
 
     public Srv(String name, String path, Requestor service) {
         super(path, service);
         this.name = name;
-        type = Variability.Type.SRV;;
     }
 
     public Srv(String path, Object value, String[] paths) {
         super(path, value);
         this.name = path;
         this.paths = paths;
-        type = Variability.Type.SRV;;
     }
     public Srv(String path, Object value) {
         super(path, value);
         this.name = path;
-        type = Variability.Type.SRV;;
     }
 
     public Srv(String path, Object value, Signature.ReturnPath returnPath) {
@@ -84,13 +79,11 @@ public class Srv extends Entry<Object> implements Variability<Object>, Arg,
         super(path, value);
         this.returnPath = returnPath;
         this.name = name;
-        type = Variability.Type.SRV;;
     }
 
     public Srv(String name, Object value, String path) {
         super(path, value);
         this.name = name;
-        type = Variability.Type.SRV;;
     }
 
     public Srv(String name, Object value, String path, Type type) {
@@ -101,7 +94,6 @@ public class Srv extends Entry<Object> implements Variability<Object>, Arg,
     public Srv(String name, Model model, String path) {
         super(path, model);
         this.name = name;
-        type = Variability.Type.SRV;;
     }
 
     @Override
@@ -142,6 +134,11 @@ public class Srv extends Entry<Object> implements Variability<Object>, Arg,
     public void valueChanged(Object obj) throws EvaluationException, RemoteException {
 
     }
+
+//    @Override
+//    public Mogram exert(Mogram mogram, Transaction txn, Arg... args) throws TransactionException, MogramException, RemoteException {
+//        return ((Exerter)((SignatureEntry)_2)._2).exert(mogram, txn);
+//    }
 
     public Mogram exert(Mogram mogram) throws TransactionException, MogramException, RemoteException {
         return exert(mogram, null);

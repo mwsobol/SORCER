@@ -26,7 +26,7 @@ public class InputEntry<T> extends Entry<T> {
 	public InputEntry(String path, T value, int index) {
 		super(path, value);
 		this.index = index;
-        annotation = "" + Signature.Direction.IN;
+        annotation = Signature.Direction.IN;
     }
 
 	public InputEntry(String path, T value, boolean isPersistant, int index) {

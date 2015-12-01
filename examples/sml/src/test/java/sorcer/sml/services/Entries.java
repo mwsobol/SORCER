@@ -29,7 +29,6 @@ import static sorcer.util.exec.ExecUtils.CmdResult;
 /**
  * @author Mike Sobolewski
  */
-@SuppressWarnings({ "rawtypes", "unchecked" } )
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/sml")
 public class Entries {

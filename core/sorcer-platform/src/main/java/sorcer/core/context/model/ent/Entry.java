@@ -46,7 +46,7 @@ public class Entry<T> extends Tuple2<String, T> implements Duo<T>, Service, Depe
 
 	public int index;
 
-	protected String annotation;
+	protected Object annotation;
 
 	protected Variability.Type type = Variability.Type.PAR;;
 
@@ -152,11 +152,11 @@ public class Entry<T> extends Tuple2<String, T> implements Duo<T>, Service, Depe
 		return index;
 	}
 
-	public String annotation() {
+	public Object annotation() {
 		return annotation;
 	}
 
-	public void annotation(String annotation) {
+	public void annotation(Object annotation) {
 		this.annotation = annotation;
 	}
 

@@ -36,7 +36,7 @@ public class Fidelity<T extends Arg> implements Arg, Serializable {
 	public final static Logger logger = LoggerFactory.getLogger(Fidelity.class);
 
 	public enum Type implements Arg {
-		EMPTY, NAME, SYS, SIG, EXERT, CONTEXT, COMPONENT, COMPOSITE, MULTI, VAR;
+		EMPTY, NAME, SYS, SIG, ENTRY, EXERT, CONTEXT, COMPONENT, COMPOSITE, MULTI, VAR;
 
 		public String getName() {
 			return toString();

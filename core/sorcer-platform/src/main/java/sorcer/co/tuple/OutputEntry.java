@@ -25,7 +25,7 @@ public class OutputEntry<T> extends Entry<T> {
 
 	public OutputEntry() {
 		super();
-        annotation = "" + Signature.Direction.OUT;
+        annotation = Signature.Direction.OUT;
     }
 
 	public OutputEntry(String path) {
@@ -42,7 +42,7 @@ public class OutputEntry<T> extends Entry<T> {
 
 	public OutputEntry(String path, T value, boolean isPersistant, int index) {
 		super(path, value, isPersistant, index);
-        annotation = "" + Signature.Direction.OUT;
+        annotation = Signature.Direction.OUT;
     }
 
 }

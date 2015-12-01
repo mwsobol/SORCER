@@ -35,7 +35,7 @@ import sorcer.core.signature.ObjectSignature;
 import sorcer.netlet.ScriptExerter;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
-import sorcer.service.modeling.Variability;
+import sorcer.service.modeling.Variability.Type;
 import sorcer.util.Loop;
 import sorcer.util.Response;
 import sorcer.util.Sorcer;
@@ -294,7 +294,7 @@ public class operator {
 		return new Srv(path, model, name);
 	}
 
-	public static Srv srv(String name, String path, Model model, Variability.Type type) {
+	public static Srv srv(String name, String path, Model model, Type type) {
 		return new Srv(path, model, name, type);
 	}
 
@@ -316,12 +316,16 @@ public class operator {
 			return new Entry<T>(path, value);
 	}
 
-    public static String annotation(Entry entry) {
+    public static Object annotation(Entry entry) {
         return entry.annotation();
     }
 
 	public static Signature.Direction direction(Entry entry) {
-		return Signature.Direction.fromString(entry.annotation());
+		Object ann = entry.annotation();
+		if (ann instanceof String)
+			return Signature.Direction.fromString((String) ann);
+		else
+			return (Signature.Direction) ann;
 	}
 
 	public static Srv lambda(String path, Service service, sorcer.eo.operator.Args args) {
@@ -351,12 +355,17 @@ public class operator {
 		return new Srv(path, invoker(lambda, context));
 	}
 
-	public static <T> Srv lambda(String path, ValueCallable<T> lambda, sorcer.eo.operator.Args args, Context context) throws InvocationException {
+	public static <T> Srv lambda(String path, ValueCallable<T> lambda, sorcer.eo.operator.Args args, Context context)
+			throws InvocationException {
 		return new Srv(path, invoker(lambda, context), args.argsToStrings());
 	}
 
 	public static <T> Srv lambda(String path, EntryCollable<T> call) {
 		return new Srv(path, call);
+	}
+
+	public static <T> Srv lambda(String path, ValueCallable<T> call, Signature.ReturnPath returnPath) {
+		return new Srv(path, call, returnPath);
 	}
 
 	public static boolean isSorcerLambda(Class clazz) {
@@ -368,10 +377,6 @@ public class operator {
 			}
 		}
 		return false;
-	}
-
-	public static <T> Srv lambda(String path, ValueCallable<T> call, Signature.ReturnPath returnPath) {
-		return new Srv(path, call, returnPath);
 	}
 
 	public static Srv ent(String path, Closure call) {
@@ -450,7 +455,7 @@ public class operator {
 	public static <T> OutputEntry<T> outEnt(String path, T value) {
 		if (value instanceof String && ((String)value).indexOf('|') > 0) {
 			OutputEntry oe =  outEnt(path, null);
-			oe.annotation((String)value);
+			oe.annotation(value);
 			return oe;
 		}
 		return new OutputEntry(path, value, 0);

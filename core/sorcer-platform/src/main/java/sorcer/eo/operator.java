@@ -648,7 +648,7 @@ public class operator {
 			}
 			if (i instanceof Entry) {
 				Entry e = (Entry) i;
-				if (e.isAnnotated()) context.mark(e.path(), e.annotation());
+				if (e.isAnnotated()) context.mark(e.path(), e.annotation().toString());
 				if (e.asis() instanceof Scopable) {
 					((Scopable) e.asis()).setScope(context);
 				}
@@ -714,7 +714,7 @@ public class operator {
 			}
 			if (i instanceof Entry) {
 				Entry e = (Entry) i;
-				if (e.isAnnotated()) context.mark(e.path(), e.annotation());
+				if (e.isAnnotated()) context.mark(e.path(), e.annotation().toString());
 				if (e.asis() instanceof Scopable) {
 					((Scopable) e.asis()).setScope(context);
 				}
@@ -1166,13 +1166,19 @@ public class operator {
 		return fi;
 	}
 
+	public static Fidelity<Entry> eFi(Entry... entries) {
+		Fidelity<Entry> fi = new Fidelity(entries);
+		fi.type = Fidelity.Type.ENTRY;
+		return fi;
+	}
+
 	public static Fidelity<?> fi(String name) {
 		Fidelity<?> fi = new Fidelity(name);
 		fi.type = Fidelity.Type.EMPTY;
 		return fi;
 	}
 
-	public static Fidelity<?> fi(String name, String path) {
+	public static Fidelity<?> fi(String path, String name) {
 		Fidelity<?> fi = new Fidelity(name);
 		fi.setPath(path);
 		fi.type = Fidelity.Type.EMPTY;
@@ -2205,7 +2211,7 @@ public class operator {
 		return el;
 	}
 
-	public static Object target(Object object) {
+	public static PathResponse target(Object object) {
 		return new PathResponse(object);
 	}
 

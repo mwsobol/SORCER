@@ -417,7 +417,7 @@ public class Par<T> extends Entry<T> implements Variability<T>, Arg, Mappable<T>
 	 */
 	@Override
 	public Type getType() {
-		return Type.PARAMETER;
+		return type;
 	}
 
 	/* (non-Javadoc)

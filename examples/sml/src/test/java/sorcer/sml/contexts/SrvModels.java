@@ -95,12 +95,12 @@ public class SrvModels {
 
         logger.info("fidelity: " + asis(mod, "mFi"));
 
-//        Context out = response(mod, fi("add", "mFi"));
+//        Context out = response(mod, fi("mFi", "add"));
 //        logger.info("out: " + out);
 //        assertTrue(get(out, "mFi").equals(100.0));
 //        assertTrue(get(mod, "result/y").equals(100.0));
 
-        Context out = response(mod, fi("multiply", "mFi"));
+        Context out = response(mod, fi("mFi", "multiply"));
         logger.info("out: " + out);
         assertTrue(get(out, "mFi").equals(900.0));
         assertTrue(get(mod, "result/y").equals(900.0));

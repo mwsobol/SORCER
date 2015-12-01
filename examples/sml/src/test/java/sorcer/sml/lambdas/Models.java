@@ -216,9 +216,9 @@ public class Models {
             }
         };
 
-        Fidelity<Fidelity> fi2 = fi("sysFi2",fi("divide", "mFi2"), fi("multiply", "mFi3"));
-        Fidelity<Fidelity> fi3 = fi("sysFi3", fi("average", "mFi2"), fi("divide", "mFi3"));
-        Fidelity<Fidelity> fi4 = fi("sysFi4", fi("average", "mFi3"));
+        Fidelity<Fidelity> fi2 = fi("sysFi2",fi("mFi2", "divide"), fi("mFi3", "multiply"));
+        Fidelity<Fidelity> fi3 = fi("sysFi3", fi("mFi2", "average"), fi("mFi3", "divide"));
+        Fidelity<Fidelity> fi4 = fi("sysFi4", fi("mFi3", "average"));
 
         Signature add = sig("add", AdderImpl.class,
                 result("result/y1", inPaths("arg/x1", "arg/x2")));
@@ -248,7 +248,7 @@ public class Models {
 
         // first closing the fidelity for mFi1
         // then fidelities morphed by the model's fidelity manager accordingly
-        out = response(mod , fi("multiply", "mFi1"));
+        out = response(mod , fi("mFi1", "multiply"));
         logger.info("out: " + out);
         assertTrue(get(out, "mFi1").equals(900.0));
         assertTrue(get(out, "mFi2").equals(50.0));
