@@ -12,14 +12,12 @@ import sorcer.core.invoker.Observable;
 import sorcer.core.plexus.FidelityManager;
 import sorcer.core.plexus.Morpher;
 import sorcer.core.plexus.MultiFidelity;
-import sorcer.core.provider.Provider;
 import sorcer.service.Context;
 import sorcer.service.EvaluationException;
 import sorcer.service.Fidelity;
 import sorcer.service.Signature;
 import sorcer.service.modeling.Model;
 
-import java.net.URL;
 import java.rmi.RemoteException;
 
 import static org.junit.Assert.assertTrue;
@@ -50,6 +48,25 @@ public class MultiFidelities {
         logger.info("out: " + out);
         assertTrue(get(out, "mFi").equals(900.0));
         assertTrue(get(mod, "result/y").equals(900.0));
+    }
+
+    @Test
+    public void entMultiFidelityModel1() throws Exception {
+
+        // three entry model
+        Model mod = model(
+                ent("arg/x1", eFi(inEnt("arg/x1/fi1", 10.0), inEnt("arg/x1/fi2", 11.0))),
+                ent("arg/x2", eFi(inEnt("arg/x2/fi1", 90.0), inEnt("arg/x2/fi2", 91.0))),
+                ent("mFi", sFi(sig("add", AdderImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))),
+                        sig("multiply", MultiplierImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))))),
+                response("mFi", "arg/x1", "arg/x2"));
+
+        Context out = response(mod, fi("arg/x1", "arg/x1/fi2"), fi("arg/x2", "arg/x2/fi2"), fi("mFi", "multiply"));
+        logger.info("out: " + out);
+        assertTrue(get(out, "arg/x1").equals(11.0));
+        assertTrue(get(out, "arg/x2").equals(91.0));
+        assertTrue(get(out, "mFi").equals(1001.0));
+        assertTrue(get(mod, "result/y").equals(1001.0));
     }
 
     @Test

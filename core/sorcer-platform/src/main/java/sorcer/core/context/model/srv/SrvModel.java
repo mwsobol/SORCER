@@ -166,20 +166,19 @@ public class SrvModel extends ParModel<Object> implements Model {
         }
     }
 
-    public Object getValue(String path, Arg... entries) throws EvaluationException {
+    public Object getValue(String path, Arg... items) throws EvaluationException {
         Object val = null;
         try {
-            append(entries);
-
+            append(items);
             if (path != null) {
-                execDependencies(path, entries);
+                execDependencies(path, items);
                 val = get(path);
             } else {
-                Signature.ReturnPath rp = returnPath(entries);
+                Signature.ReturnPath rp = returnPath(items);
                 if (rp != null)
                     val = getReturnValue(rp);
                 else
-                    val = super.getValue(path, entries);
+                    val = super.getValue(path, items);
             }
 
             if (val instanceof Srv) {
@@ -193,23 +192,29 @@ public class SrvModel extends ParModel<Object> implements Model {
                         return evalSignature(sig, path);
                     }
                 } else if (val2 instanceof Fidelity) {
-                    Signature sig = (Signature) getFi((Fidelity) val2, entries, path);
-                    return evalSignature(sig, path);
+                    Object selection = getFi((Fidelity) val2, items, path);
+                    if (selection instanceof Signature) {
+                        return evalSignature((Signature) selection, path, items);
+                    } else if (selection instanceof Evaluation) {
+                        return ((Evaluation)selection).getValue(items);
+                    } else {
+                        return selection;
+                    }
                 } else if (val2 instanceof MultiFidelity) {
-                    Object obj = getFi(((MultiFidelity) val2).getFidelity(), entries, path);
+                    Object obj = getFi(((MultiFidelity) val2).getFidelity(), items, path);
                     Object out = null;
                     if (obj instanceof Signature)
                         out = evalSignature((Signature)obj, path);
                     else if (obj instanceof Entry) {
-                        Arg[] args = Arrays.copyOf(entries, entries.length+1);
-                        args[entries.length] = this;
+                        Arg[] args = Arrays.copyOf(items, items.length+1);
+                        args[items.length] = this;
                         out = ((Entry) obj).getValue(args);
                     }
                     ((MultiFidelity) val2).setChanged();
                     ((MultiFidelity) val2).notifyObservers(out);
                     return out;
                 } else if (val2 instanceof MogramEntry) {
-                    return evalMogram((MogramEntry)val2, path, entries);
+                    return evalMogram((MogramEntry)val2, path, items);
                 } else if (val2 instanceof ValueCallable && ((Srv) val).getType() == Variability.Type.LAMBDA) {
                     Signature.ReturnPath rp = ((Srv) val).getReturnPath();
                     Object obj = null;
@@ -225,7 +230,7 @@ public class SrvModel extends ParModel<Object> implements Model {
                     return obj;
                 }  else if (val2 instanceof Requestor && ((Srv) val).getType() == Variability.Type.LAMBDA) {
                         String entryPath = ((Entry)val).getName();
-                        Object out = ((Requestor)val2).exec((Service) this.asis(entryPath), this, entries);
+                        Object out = ((Requestor)val2).exec((Service) this.asis(entryPath), this, items);
                         ((Srv) get(path)).setSrvValue(out);
                         return out;
                 } else if (val2 instanceof EntryCollable && ((Srv) val).getType() == Variability.Type.LAMBDA) {
@@ -245,7 +250,7 @@ public class SrvModel extends ParModel<Object> implements Model {
                         putValue(entry.getName(), entry.value());
                     return entry;
                 } else if (val2 instanceof ServiceInvoker) {
-                    val =  ((ServiceInvoker)val2).invoke(entries);
+                    val =  ((ServiceInvoker)val2).invoke(items);
                     ((Srv) get(path)).setSrvValue(val);
                     return val;
                 } else if (val2 instanceof Service && ((Srv) val).getType() == Variability.Type.LAMBDA) {
@@ -272,7 +277,7 @@ public class SrvModel extends ParModel<Object> implements Model {
                     }
                 }
             } else {
-                return super.getValue(path, entries);
+                return super.getValue(path, items);
             }
         } catch (Exception e) {
             throw new EvaluationException(e);
@@ -280,8 +285,8 @@ public class SrvModel extends ParModel<Object> implements Model {
         return val;
     }
 
-    public Object evalSignature(Signature sig, String path) throws MogramException {
-        Context out = execSignature(sig);
+    public Object evalSignature(Signature sig, String path, Arg... items) throws MogramException {
+        Context out = execSignature(sig, items);
         if (sig.getReturnPath() != null) {
             Object obj = out.getValue(sig.getReturnPath().path);
             if (obj == null)
@@ -321,7 +326,7 @@ public class SrvModel extends ParModel<Object> implements Model {
     }
 
     protected <T extends Arg> T getFi(Fidelity<T> fi, Arg[] entries, String path) throws ContextException {
-        Fidelity<Signature> selected = null;
+        Fidelity selected = null;
         for (Arg arg : entries) {
             if (arg instanceof Fidelity && ((Fidelity)arg).type == Fidelity.Type.EMPTY) {
                 if (((Fidelity)arg).getPath().equals(path)) {
@@ -331,7 +336,6 @@ public class SrvModel extends ParModel<Object> implements Model {
                     break;
                 }
             }
-
         }
         List<T> choices = fi.getSelects();
         for (T s : choices) {
@@ -344,16 +348,18 @@ public class SrvModel extends ParModel<Object> implements Model {
                 } else {
                     selectName = choices.get(0).getName();
                 }
-                if (s.getName().equals(selectName))
+                if (s.getName().equals(selectName)) {
+                    fi.setSelection(s);
                     return s;
+                }
             }
         }
         return null;
     }
 
-    public Context execSignature(Signature sig) throws MogramException {
+    public Context execSignature(Signature sig, Arg... items) throws MogramException {
         execDependencies(sig);
-        return  super.execSignature(sig);
+        return  super.execSignature(sig, items);
     }
 
     protected void execDependencies(String path, Arg... args) throws ContextException {

@@ -1462,12 +1462,12 @@ public class ServiceContext<T> extends ServiceMogram implements
 		return subcntxt;
 	}
 
-	public Context execSignature(Signature sig) throws MogramException {
+	public Context execSignature(Signature sig, Arg... items) throws MogramException {
 		String[] ips = sig.getReturnPath().inPaths;
 		String[] ops = sig.getReturnPath().outPaths;
 		Context incxt = this;
 		if (ips != null && ips.length > 0) {
-			incxt = this.getEvaluatedSubcontext(ips);
+			incxt = this.getEvaluatedSubcontext(ips, items);
 		}
 		if (sig.getReturnPath() != null) {
 			incxt.setReturnPath(sig.getReturnPath());
@@ -1485,18 +1485,18 @@ public class ServiceContext<T> extends ServiceMogram implements
 		return outcxt;
 	}
 
-	public ServiceContext getEvaluatedSubcontext(String... paths) throws ContextException {
+	public ServiceContext getEvaluatedSubcontext(String[] paths, Arg[] items) throws ContextException {
 		ServiceContext subcntxt = getSubcontext();
 		List<String> inpaths = getInPaths();
 		List<String> outpaths = getOutPaths();
 
 		for (String path : paths) {
 			if (inpaths.contains(path))
-				subcntxt.putInValue(path, getValue(path));
+				subcntxt.putInValue(path, getValue(path, items));
 			else if (outpaths.contains(path))
-				subcntxt.putInoutValue(path, getValue(path));
+				subcntxt.putInoutValue(path, getValue(path, items));
 			else
-				subcntxt.putValue(path, getValue(path));
+				subcntxt.putValue(path, getValue(path, items));
 		}
 		return subcntxt;
 	}

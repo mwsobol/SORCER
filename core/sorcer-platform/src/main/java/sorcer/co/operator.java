@@ -312,8 +312,11 @@ public class operator {
 			return new Par<T>(path, value);
 		} else if (value instanceof Evaluation) {
 			return new Entry<T>(path, value);
-		} else
+		} else if (value instanceof Fidelity) {
+			return (Entry<T>) new Srv(path, value);
+		} else {
 			return new Entry<T>(path, value);
+		}
 	}
 
     public static Object annotation(Entry entry) {

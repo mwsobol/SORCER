@@ -73,6 +73,7 @@ public class Fidelity<T extends Arg> implements Arg, Serializable {
 		name = "fidelity" + count++;
 		for (T s : selects)
 			this.selects.add(s);
+		selection =  selects[0];
 	}
 
 	public T getSelect(String name) {
