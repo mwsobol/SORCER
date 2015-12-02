@@ -23,7 +23,6 @@ import static sorcer.mo.operator.*;
 /**
  * @author Mike Sobolewski
  */
-@SuppressWarnings({ "unchecked", "rawtypes" })
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/sml")
 public class Models {
@@ -194,16 +193,18 @@ public class Models {
     @Test
     public void amorphousModel() throws Exception {
 
-        Morpher mFi1Morpher = (mgr, mFi, value) -> {
-            Fidelity<Signature> fi =  mFi.getFidelity();
-            if (fi.getSelectedName().equals("add")) {
-                if (((Double) value) <= 200.0) {
-                    mgr.morph("sysFi2");
-                } else {
-                    mgr.morph("sysFi3");
-                }
-            }
-        };
+		Morpher mFi1Morpher = (mgr, mFi, value) -> {
+			Fidelity<Signature> fi =  mFi.getFidelity();
+			if (fi.getSelectedName().equals("add")) {
+				if (((Double) value) <= 200.0) {
+					mgr.morph("sysFi2");
+				} else {
+					mgr.morph("sysFi3");
+				}
+			} else if (fi.getPath().equals("mFi1") && fi.getSelectedName().equals("multiply")) {
+				mgr.morph("sysFi3");
+			}
+		};
 
         Morpher mFi2Morpher = (mgr, mFi, value) -> {
             Fidelity<Signature> fi =  mFi.getFidelity();

@@ -36,7 +36,7 @@ public class MultiFidelities {
     private final static Logger logger = LoggerFactory.getLogger(MultiFidelities.class);
 
     @Test
-    public void sigMultiFidelityModel1() throws Exception {
+    public void sigMultiFidelityModel() throws Exception {
 
         // three entry model
         Model mod = model(inEnt("arg/x1", 10.0), inEnt("arg/x2", 90.0),
@@ -51,7 +51,7 @@ public class MultiFidelities {
     }
 
     @Test
-    public void entMultiFidelityModel1() throws Exception {
+    public void entMultiFidelityModel() throws Exception {
 
         // three entry model
         Model mod = model(
@@ -105,6 +105,8 @@ public class MultiFidelities {
                         } else {
                             morph("sysFi3");
                         }
+                    } else if (fi.getPath().equals("mFi1") && fi.getSelectedName().equals("multiply")) {
+                        morph("sysFi3");
                     }
                 }
             }
@@ -160,6 +162,8 @@ public class MultiFidelities {
                         } else {
                             morph("sysFi3");
                         }
+                    } else if (fi.getPath().equals("mFi1") && fi.getSelectedName().equals("multiply")) {
+                        morph("sysFi3");
                     }
                 }
             }
@@ -224,6 +228,8 @@ public class MultiFidelities {
                         } else {
                             morph("sysFi3");
                         }
+                    } else if (fi.getPath().equals("mFi1") && fi.getSelectedName().equals("multiply")) {
+                        morph("sysFi3");
                     }
                 }
             }
@@ -275,6 +281,8 @@ public class MultiFidelities {
                 } else {
                     mgr.morph("sysFi3");
                 }
+            } else if (fi.getPath().equals("mFi1") && fi.getSelectedName().equals("multiply")) {
+                mgr.morph("sysFi3");
             }
         };
 
