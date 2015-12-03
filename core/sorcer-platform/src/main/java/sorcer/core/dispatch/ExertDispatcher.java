@@ -237,7 +237,7 @@ abstract public class ExertDispatcher implements Dispatcher {
         }
     }
 
-    protected void collectResults() throws ExertionException, SignatureException{}
+    protected void collectResults() throws ExertionException, SignatureException, RemoteException {}
     //protected abstract void dispatchExertions() throws ExertionException, SignatureException;
 
     protected void collectOutputs(Mogram mo) throws ContextException {

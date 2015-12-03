@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import sorcer.co.tuple.ExecPath;
 import sorcer.core.SorcerConstants;
 import sorcer.core.monitor.MonitoringSession;
+import sorcer.core.plexus.FidelityManager;
 import sorcer.core.signature.NetSignature;
 import sorcer.core.signature.ServiceSignature;
 import sorcer.security.util.SorcerPrincipal;
@@ -58,6 +59,8 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
     protected String domainName;
 
     protected String subdomainName;
+
+    protected FidelityManagement fiManager;
 
     /**
      * position of component Mogram in a compund mogram
@@ -739,6 +742,14 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
     public void addFidelity(String name, Fidelity fidelity) {
         Fidelity nf = new Fidelity(name, fidelity);
         putFidelity(name, nf);
+    }
+
+    public FidelityManagement getFiManager() {
+        return fiManager;
+    }
+
+    public void setFiManager(FidelityManager fiManager) {
+        this.fiManager = fiManager;
     }
 
     public Fidelity selectFidelity(Arg... entries)  {

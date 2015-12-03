@@ -133,7 +133,7 @@ public class AltMogram extends ConditionalMogram {
 	}
 
 	@Override
-	public List<ThrowableTrace> getExceptions(List<ThrowableTrace> exceptions) {
+	public List<ThrowableTrace> getExceptions(List<ThrowableTrace> exceptions) throws RemoteException {
 		for (Exertion ext : optExertions) {
 			exceptions.addAll(((ServiceExertion)ext).getExceptions(exceptions));
 		}

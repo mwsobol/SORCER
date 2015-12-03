@@ -124,7 +124,7 @@ public class OptMogram extends ConditionalMogram {
 	}
 	
 	@Override
-	public List<ThrowableTrace> getExceptions(List<ThrowableTrace> exceptions) {
+	public List<ThrowableTrace> getExceptions(List<ThrowableTrace> exceptions) throws RemoteException {
 		exceptions.addAll(target.getExceptions());
 		exceptions.addAll(this.getExceptions());
 		return exceptions;

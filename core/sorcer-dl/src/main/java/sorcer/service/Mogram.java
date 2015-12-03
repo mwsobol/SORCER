@@ -86,18 +86,18 @@ public interface Mogram extends Service, Exerter, Projection<Signature>, Scopabl
      * Returns the list of traces of thrown exceptions from this mogram.
      * @return ThrowableTrace list
      */
-    public List<ThrowableTrace> getExceptions();
+    public List<ThrowableTrace> getExceptions() throws RemoteException;
 
     /**
      * Returns the list of traces left by collborating services.
      * @return ThrowableTrace list
      */
-    public List<String> getTrace();
+    public List<String> getTrace() throws RemoteException;
 
     /**
      * Appends a trace info to a trace list of this mogram.
      */
-    public void appendTrace(String info);
+    public void appendTrace(String info) throws RemoteException;
 
     /**
      * Returns the list of all traces of thrown exceptions with exceptions of
@@ -105,7 +105,7 @@ public interface Mogram extends Service, Exerter, Projection<Signature>, Scopabl
      *
      * @return ThrowableTrace list
      */
-    public List<ThrowableTrace> getAllExceptions();
+    public List<ThrowableTrace> getAllExceptions() throws RemoteException;
 
     /**
      * Returns a service fidelity of this exertion that consists of process
@@ -130,7 +130,7 @@ public interface Mogram extends Service, Exerter, Projection<Signature>, Scopabl
      * @return <code>true</code> if this exertion requires its execution to be
      *         monitored.
      */
-    public boolean isMonitorable();
+    public boolean isMonitorable() throws RemoteException;
 
     public Mogram substitute(Arg... entries) throws SetterException;
 

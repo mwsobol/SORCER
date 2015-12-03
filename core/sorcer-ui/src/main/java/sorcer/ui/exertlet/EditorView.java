@@ -562,15 +562,19 @@ public class EditorView extends JPanel implements HyperlinkListener {
 		}
 		if (mogram instanceof Exertion) {
 			Exertion exertion = (Exertion)mogram;
-			if (exertion.getExceptions().size() > 0) {
-				openOutPanel(exertion.getExceptions().toString());
-			} else {
-				StringBuilder sb = new StringBuilder(exertion.getContext().toString());
-				if (debug) {
-					sb.append("\n");
-					sb.append(((ServiceExertion) exertion).getControlInfo().toString());
-				}
-				openOutPanel(sb.toString());
+			try {
+				if (exertion.getExceptions().size() > 0) {
+                    openOutPanel(exertion.getExceptions().toString());
+                } else {
+                    StringBuilder sb = new StringBuilder(exertion.getContext().toString());
+                    if (debug) {
+                        sb.append("\n");
+                        sb.append(((ServiceExertion) exertion).getControlInfo().toString());
+                    }
+                    openOutPanel(sb.toString());
+                }
+			} catch (RemoteException e) {
+				throw new ContextException(e);
 			}
 		} else {
 			openOutPanel(mogram.toString());

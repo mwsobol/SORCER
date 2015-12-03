@@ -112,7 +112,7 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
         }
     }
 
-    private void preUpdate(Exertion exertion) throws ContextException {
+    private void preUpdate(Exertion exertion) throws ContextException, RemoteException {
 		if (exertion instanceof AltMogram) {
 			for (OptMogram oe : ((AltMogram)exertion).getOptExertions()) {
                 oe.getCondition().getConditionalContext().append(xrt.getContext());

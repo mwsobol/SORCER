@@ -351,10 +351,10 @@ public class Job extends CompoundExertion {
 	}
 
 	@Override
-	public List<ThrowableTrace> getExceptions() {
+	public List<ThrowableTrace> getExceptions() throws RemoteException {
 		List<ThrowableTrace> exceptions = new ArrayList<ThrowableTrace>();
 		for (Mogram ext : mograms) {
-			exceptions.addAll(((Exertion)ext).getExceptions());
+			exceptions.addAll(ext.getExceptions());
 		}
 		return exceptions;
 	}

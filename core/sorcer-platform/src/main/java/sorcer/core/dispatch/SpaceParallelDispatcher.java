@@ -140,7 +140,7 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
 		}
 	}
 
-	public void collectResults() throws ExertionException, SignatureException {
+	public void collectResults() throws ExertionException, SignatureException, RemoteException {
 		int count = 0;
 		// get all children of the underlying parent job
         List<ExertionEnvelop> templates = Arrays.asList(getTemplate(DONE), getTemplate(FAILED), getTemplate(ERROR));
@@ -197,7 +197,7 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
         return tmpl;
     }
 
-    protected void handleResult(Collection<ExertionEnvelop> results) throws ExertionException, SignatureException {
+    protected void handleResult(Collection<ExertionEnvelop> results) throws ExertionException, SignatureException, RemoteException {
         boolean poisoned = false;
         for (ExertionEnvelop resultEnvelop : results) {
 
@@ -342,7 +342,7 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
         changeDoneExertionIndex(result.getIndex());
     }
 
-    protected void handleError(Exertion exertion) {
+    protected void handleError(Exertion exertion) throws RemoteException {
         if (exertion != xrt)
             ((NetJob) xrt).setMogramAt(exertion,
                     exertion.getIndex());

@@ -36,8 +36,6 @@ import java.util.Date;
  */
 public class EntModel<T> extends PositionalContext<T> implements Invocation<T>, Contexter<T> {
 
-    private FidelityManagement fiManager;
-
     public static EntModel instance(Signature builder) throws SignatureException {
         EntModel model = (EntModel) sorcer.co.operator.instance(builder);
         model.setBuilder(builder);
@@ -80,14 +78,6 @@ public class EntModel<T> extends PositionalContext<T> implements Invocation<T>, 
         } catch (Exception e) {
             throw new InvocationException(e);
         }
-    }
-
-    public FidelityManagement getFiManager() {
-        return fiManager;
-    }
-
-    public void setFiManager(FidelityManager fiManager) {
-        this.fiManager = fiManager;
     }
 
 //    @Override

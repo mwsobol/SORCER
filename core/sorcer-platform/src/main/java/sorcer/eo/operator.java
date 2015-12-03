@@ -2033,7 +2033,7 @@ public class operator {
 	}
 
 
-	public static List<ThrowableTrace> exceptions(Exertion exertion) {
+	public static List<ThrowableTrace> exceptions(Exertion exertion) throws RemoteException {
 		return exertion.getExceptions();
 	}
 

@@ -1017,7 +1017,7 @@ public class ProviderDelegate {
 
 	private Context execContextualBean(Method m, Task task, Object impl)
 			throws ContextException, IllegalArgumentException,
-			IllegalAccessException, InvocationTargetException {
+			IllegalAccessException, InvocationTargetException, RemoteException {
 		Context result;
 		result = task.getContext();
 		String selector = task.getProcessSignature().getSelector();
@@ -1050,7 +1050,7 @@ public class ProviderDelegate {
 
 	private Context execParametricBean(Method m, Task task,
 			Object impl) throws IllegalArgumentException,
-			IllegalAccessException, InvocationTargetException, ContextException {
+			IllegalAccessException, InvocationTargetException, ContextException, RemoteException {
 		Context result = task.getContext();
 		String selector = task.getProcessSignature().getSelector();
 		Class[] argTypes = ((ServiceContext)result).getParameterTypes();

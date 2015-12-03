@@ -18,6 +18,7 @@
 
 package sorcer.core.dispatch;
 
+import java.rmi.RemoteException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -45,7 +46,7 @@ public class SpaceTaskDispatcher extends SpaceParallelDispatcher {
     }
 
     @Override
-    protected void handleResult(Collection<ExertionEnvelop> results) throws ExertionException, SignatureException {
+    protected void handleResult(Collection<ExertionEnvelop> results) throws ExertionException, SignatureException, RemoteException {
         if (results.size() != 1)
             throw new ExertionException("Invalid number of results (" + results.size() + "), expecting 1");
 

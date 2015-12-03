@@ -118,7 +118,12 @@ public class SpaceTaker implements Runnable {
 		}
 
 		public String toString() {
-			return entry.describe();
+			try {
+				return entry.describe();
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			}
+			return null;
 		}
 	}
 
