@@ -50,8 +50,6 @@ public class ArithmeticMograms {
                         inPaths("multiply", "add"))),
 				response("subtract", "multiply", "add"));
 
-		dependsOn(mo, ent("subtract", paths("multiply", "add")));
-
 		Context out = response(mo);
 		logger.info("model response: " + out);
 		assertTrue(get(out, "subtract").equals(400.0));
@@ -114,10 +112,8 @@ public class ArithmeticMograms {
 								inPaths("multiply/x1", "multiply/x2"))),
 				lambda("subtract", (Context <Double> model) ->
 						v(model, "multiply/out") - v(model, "add/out"),
-						result("model/response")),
+						result("model/response", inPaths("multiply/out", "add/out"))),
 				response("subtract", "multiply/out", "add/out", "model/response"));
-
-		dependsOn(mo, ent("subtract", paths("multiply", "add")));
 
 		Context out = response(mo);
 		logger.info("model response: " + out);

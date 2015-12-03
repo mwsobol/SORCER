@@ -24,6 +24,7 @@ import org.codehaus.plexus.util.dag.Vertex;
 import sorcer.co.operator;
 import sorcer.co.tuple.SignatureEntry;
 import sorcer.core.context.model.ent.Entry;
+import sorcer.core.context.model.srv.Srv;
 import sorcer.core.context.model.srv.SrvModel;
 import sorcer.service.*;
 
@@ -134,14 +135,19 @@ public class SrvModelAutoDeps {
             Object entry = srvModel.getData().get(entryName);
             if (entry instanceof Entry) {
                 Object entryVal = ((Entry)entry)._2;
+                Signature.ReturnPath rp = null;
                 if (entryVal instanceof SignatureEntry) {
                     Signature signature = ((SignatureEntry)entryVal)._2;
-                    if (signature.getReturnPath()!=null) {
-                        dag.addVertex(signature.getReturnPath().getName());
-                        entryToResultMap.put(signature.getReturnPath().getName(), entryName);
-                    }
-
+                    if (signature!=null) rp = signature.getReturnPath();
+                } else if (entry instanceof Srv) {
+                    rp = ((Srv) entry).getReturnPath();
                 }
+                if (rp!=null) {
+                    dag.addVertex(rp.getName());
+                    entryToResultMap.put(rp.getName(), entryName);
+                }
+
+
             }
             if (srvModel.getData().get(entryName) instanceof SrvModel) {
                 addVertex((SrvModel)srvModel.getData().get(entryName));
@@ -160,15 +166,19 @@ public class SrvModelAutoDeps {
         for (String entryName : srvModel.getData().keySet()) {
             Object entry = srvModel.getData().get(entryName);
             if (entry instanceof Entry) {
+                Signature.ReturnPath rp = null;
                 Object entryVal = ((Entry)entry)._2;
                 if (entryVal instanceof SignatureEntry) {
                     Signature signature = ((SignatureEntry)entryVal)._2;
-                    if (signature.getReturnPath()!=null) {
-                        dag.addEdge(signature.getReturnPath().getName(), entryName);
-                        if (signature.getReturnPath().inPaths != null) {
-                            for (String inPath : signature.getReturnPath().inPaths) {
-                                dag.addEdge(inPath, signature.getReturnPath().getName());
-                            }
+                    rp =  signature.getReturnPath();
+                } else if (entry instanceof Srv) {
+                    rp = ((Srv)entry).getReturnPath();
+                }
+                if (rp!=null) {
+                    dag.addEdge(rp.getName(), entryName);
+                    if (rp.inPaths != null) {
+                        for (String inPath : rp.inPaths) {
+                            dag.addEdge(inPath, rp.getName());
                         }
                     }
                 }

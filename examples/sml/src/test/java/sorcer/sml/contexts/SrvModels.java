@@ -282,7 +282,7 @@ public class SrvModels {
 //                dep("subtract", paths("multiply", "add")));
 
         responseUp(model, "add", "multiply", "subtract");
-        dependsOn(model, ent("subtract", paths("multiply", "add")));
+//        dependsOn(model, ent("subtract", paths("multiply", "add")));
         // specify how model connects to exertion
         outConn(model, outConnector);
 
@@ -344,7 +344,7 @@ public class SrvModels {
 //                ent("z1", "multiply/x1"), srv("z2", "add/x2"), srv("z3", "subtract/out"));
 
         responseUp(model, "add", "multiply", "subtract");
-        dependsOn(model, ent("subtract", paths("multiply", "add")));
+     //   dependsOn(model, ent("subtract", paths("multiply", "add")));
         // specify how model connects to exertion
         outConn(model, modelOutConnector);
 

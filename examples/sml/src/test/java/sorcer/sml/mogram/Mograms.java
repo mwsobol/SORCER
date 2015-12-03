@@ -74,7 +74,7 @@ public class Mograms {
                         inPaths("multiply/out", "add/out")))));
 
         responseUp(model, "add", "multiply", "subtract");
-        dependsOn(model, ent("subtract", paths("multiply", "add")));
+        //dependsOn(model, ent("subtract", paths("multiply", "add")));
         // specify how model connects to exertion
         outConn(model, modelOutConnector);
 
@@ -172,7 +172,7 @@ public class Mograms {
                         inPaths("task/multiply", "subtract")))),
                 response("task/multiply", "subtract", "out"));
 
-        dependsOn(m, ent("subtract", paths("multiply", "add")));
+       // dependsOn(m, ent("subtract", paths("multiply", "add")));
 
         add(m, innerTask);
 
@@ -205,7 +205,7 @@ public class Mograms {
                         inPaths("inner/multiply/out", "subtract")))),
                 response("inner/multiply", "subtract", "out"));
 
-        dependsOn(outerModel, ent("subtract", paths("multiply", "add")));
+       // dependsOn(outerModel, ent("subtract", paths("multiply", "add")));
 
         add(outerModel, innerModel, inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0));
 
