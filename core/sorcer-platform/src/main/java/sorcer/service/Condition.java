@@ -136,42 +136,40 @@ import java.util.Map;
 
 		Object obj = null;
 		Object[] args = null;
-		if (lambda != null) {
-			try {
+		try {
+			if (lambda != null) {
 				return evaluateLambda(lambda);
-			} catch (MogramException e) {
-				throw new ContextException(e);
-			}
-		} else if (closure != null) {
-			if (closureExpression != null) {
-				// old version for textual closure in a conditon
-				obj = evaluateTextualClosure(closure);
-			} else {
-				return (Boolean) closure.call(conditionalContext);
-			}
-		} else if (evaluationPath != null && conditionalContext != null) {
-			obj = conditionalContext.getValue(evaluationPath);
-		} else if (closureExpression != null && conditionalContext != null) {
-			ArgSet ps = new ArgSet();
-			for (String name : pars) {
-				ps.add(new Par(name));
-			}
-			ServiceInvoker invoker = new GroovyInvoker(closureExpression, ps.toArray());
-			invoker.setScope(conditionalContext);
-			conditionalContext.putValue(_closure_, invoker);
-			closure = (Closure) conditionalContext.getValue(_closure_);
-			args = new Object[pars.length];
-			for (int i = 0; i < pars.length; i++) {
-				try {
+			} else if (closure != null) {
+				if (closureExpression != null) {
+					// old version for textual closure in a conditon
+					obj = evaluateTextualClosure(closure);
+				} else {
+					return (Boolean) closure.call(conditionalContext);
+				}
+			} else if (evaluationPath != null && conditionalContext != null) {
+				obj = conditionalContext.getValue(evaluationPath);
+			} else if (closureExpression != null && conditionalContext != null) {
+				ArgSet ps = new ArgSet();
+				for (String name : pars) {
+					ps.add(new Par(name));
+				}
+				ServiceInvoker invoker = new GroovyInvoker(closureExpression, ps.toArray());
+				invoker.setScope(conditionalContext);
+				conditionalContext.putValue(_closure_, invoker);
+				closure = (Closure) conditionalContext.getValue(_closure_);
+				args = new Object[pars.length];
+				for (int i = 0; i < pars.length; i++) {
 					args[i] = ((ServiceContext) conditionalContext).getValueEndsWith(pars[i]);
 					if (args[i] instanceof Evaluation)
 						args[i] = ((Evaluation) args[i]).getValue();
-				} catch (RemoteException e) {
-					throw new ContextException(e);
 				}
+				obj = closure.call(args);
 			}
-			obj = closure.call(args);
+		} catch (Exception e) {
+			status = false;
+			throw new ContextException(e);
 		}
+
 		if (obj instanceof Boolean)
 			return (Boolean) obj;
 		else if (obj != null)
@@ -199,7 +197,7 @@ import java.util.Map;
 		}
 		obj =  closure.call(args);
 		if (obj instanceof Boolean)
-			return (Boolean) obj;
+			return obj;
 		else if (obj != null)
 			return true;
 		else
