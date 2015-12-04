@@ -193,7 +193,7 @@ public class SrvModels {
                 aka("y1", "multiply/x1"),
                 response("subtract"));
 
-        dependsOn(m, ent("subtract", paths("multiply", "add")));
+        //dependsOn(m, ent("subtract", paths("multiply", "add")));
 //        logger.info("response: " + response(m));
         Context out = response(m);
 
@@ -216,7 +216,7 @@ public class SrvModels {
                         inPaths("multiply/out", "add/out")))),
                 response("out"));
 
-        dependsOn(m, ent("out", paths("multiply", "add")));
+       // dependsOn(m, ent("out", paths("multiply", "add")));
 //        logger.info("response: " + response(m));
         Context out = response(m);
 

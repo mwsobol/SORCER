@@ -113,7 +113,7 @@ public class Services {
                 aka("y1", "multiply/x1"),
                 response("subtract"));
 
-        dependsOn(m, ent("subtract", paths("multiply", "add")));
+        //dependsOn(m, ent("subtract", paths("multiply", "add")));
         logger.info("response: " + response(m));
         Context out = response(m);
 

@@ -133,7 +133,7 @@ public class Models {
 						inPaths("multiply/out", "add/out")))),
 				response("subtract", "lambda", "out"));
 
-		dependsOn(mo, ent("subtract", paths("multiply", "add")));
+	//	dependsOn(mo, ent("subtract", paths("multiply", "add")));
 
 		add(mo, lambda("lambda", entFunction));
 
