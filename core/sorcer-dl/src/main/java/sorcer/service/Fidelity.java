@@ -85,6 +85,10 @@ public class Fidelity<T extends Arg> implements Arg, Serializable {
 		return null;
 	}
 
+	public void removeSelect(T select) {
+		this.selects.remove(select);
+	}
+
 	public Fidelity(String... selects) {
 		this.name = "";
 		for (String s : selects)
