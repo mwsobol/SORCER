@@ -394,15 +394,26 @@ public class ServiceShell implements RemoteServiceShell, Requestor, Callable {
 			if (provider == null) {
 				// check proxy cache
 //				provider = Accessor.get().getService(signature);
-				provider = proxies.get(signature);
+
+				try {
+					provider = proxies.get(signature);
+				} catch(CacheLoader.InvalidCacheLoadException e) {
+					String message =
+							String.format("Provider name: [%s], type: %s not found in proxies cache, make sure it is running and there is " +
+											"an available lookup service with correct discovery settings",
+									signature.getProviderName(), signature.getServiceType().getName());
+					logger.error(message);
+					//throw new ExertionException(message);
+				}
+				provider = Accessor.get().getService(signature);
 				if (provider == null) {
 					String message =
 							String.format("Provider name: [%s], type: %s not found, make sure it is running and there is " +
 											"an available lookup service with correct discovery settings",
 									signature.getProviderName(), signature.getServiceType().getName());
 					logger.error(message);
+					throw new ExertionException(message);
 				}
-
 				// lookup proxy
 				/*if (provider == null) {
 					long t0 = System.currentTimeMillis();

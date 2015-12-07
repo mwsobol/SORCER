@@ -1540,7 +1540,7 @@ public class SorcerEnv extends SOS {
 	public static String getActualName(String name) {
 		if (nameSuffixed()) {
 			String suffix = props.getProperty(S_NAME_SUFFIX, getDefaultNameSuffix(3));
-			if (name.indexOf(suffix) > 0)
+			if (name.endsWith(suffix))
 				return name;
 			else
 				return name + "-" + suffix;
