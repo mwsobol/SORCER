@@ -154,6 +154,8 @@ public class ObjectTask extends Task {
 					}
 				} else if (dataContext.getScope() != null) {
 					dataContext.getScope().append((Context)result);
+				} else {
+					dataContext = (ServiceContext) result;
 				}
 			} else {
 				dataContext.setReturnValue(result);
