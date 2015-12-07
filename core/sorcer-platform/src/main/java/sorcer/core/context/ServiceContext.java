@@ -2502,17 +2502,31 @@ public class ServiceContext<T> extends ServiceMogram implements
 	}
 
 	public void reportException(String message, Throwable t, ProviderInfo info) {
-		exertion.getControlContext().addException(new ServiceException(message, t, info));
+		ServiceException se = new ServiceException(message, t, info);
+		if (exertion != null)
+			exertion.getControlContext().addException(se);
+		else
+			modelStrategy.exceptions.add(new ThrowableTrace(se));
 	}
 
 	public void reportException(String message, Throwable t, Provider provider) {
-		exertion.getControlContext().addException(new ServiceException(message, t,
-				new ProviderInfo(((ServiceProvider)provider).getDelegate().getServiceInfo())));
+		ServiceException se = new ServiceException(message, t,
+				new ProviderInfo(((ServiceProvider)provider).getDelegate().getServiceInfo()));
+
+		if (exertion != null)
+			exertion.getControlContext().addException(se);
+		else
+			modelStrategy.exceptions.add(new ThrowableTrace(se));
 	}
 
 	public void reportException(String message, Throwable t, Provider provider,  ProviderInfo info) {
-		exertion.getControlContext().addException(new ServiceException(message, t,
-				new ProviderInfo(((ServiceProvider)provider).getDelegate().getServiceInfo()).append(info)));
+		ServiceException se = new ServiceException(message, t,
+				new ProviderInfo(((ServiceProvider)provider).getDelegate().getServiceInfo()).append(info));
+
+		if (exertion != null)
+			exertion.getControlContext().addException(se);
+		else
+			modelStrategy.exceptions.add(new ThrowableTrace(se));
 	}
 
 	/*
@@ -2522,8 +2536,10 @@ public class ServiceContext<T> extends ServiceMogram implements
 	 */
 	@Override
 	public void appendTrace(String footprint) {
-		if (exertion!=null)
+		if (exertion != null)
 			exertion.getControlContext().appendTrace(footprint);
+		else
+			modelStrategy.appendTrace(footprint);
 	}
 
 	@Override

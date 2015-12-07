@@ -392,20 +392,14 @@ public class ServiceShell implements RemoteServiceShell, Requestor, Callable {
 			}
 			provider = ((NetSignature) signature).getProvider();
 			if (provider == null) {
-				// check proxy cache
-//				provider = Accessor.get().getService(signature);
-
+                // check proxy cache amd ping with a provider name
 				try {
 					provider = proxies.get(signature);
-				} catch(CacheLoader.InvalidCacheLoadException e) {
-					String message =
-							String.format("Provider name: [%s], type: %s not found in proxies cache, make sure it is running and there is " +
-											"an available lookup service with correct discovery settings",
-									signature.getProviderName(), signature.getServiceType().getName());
-					logger.error(message);
-					//throw new ExertionException(message);
+					((Provider)provider).getProviderName();
+				} catch(RuntimeException e) {
+					proxies.refresh(signature);
+					provider = proxies.get(signature);
 				}
-				provider = Accessor.get().getService(signature);
 				if (provider == null) {
 					String message =
 							String.format("Provider name: [%s], type: %s not found, make sure it is running and there is " +
@@ -431,8 +425,8 @@ public class ServiceShell implements RemoteServiceShell, Requestor, Callable {
 			if (provider instanceof Provider) {
 				// cache the provider for the signature
 				((NetSignature) signature).setProvider((Provider) provider);
-				if (proxies != null)
-					proxies.put(signature, provider);
+//				if (proxies != null)
+//					proxies.put(signature, provider);
 			} else if (exertion instanceof Task){
 				// exert smart proxy as an object task delegate
 				try {
