@@ -21,7 +21,6 @@ import static sorcer.mo.operator.response;
 /**
  * @author Mike Sobolewski
  */
-@SuppressWarnings({ "unchecked", "rawtypes" })
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/service")
 public class LocalMograms {

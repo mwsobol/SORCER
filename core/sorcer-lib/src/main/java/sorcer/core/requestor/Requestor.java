@@ -22,16 +22,16 @@ import sorcer.service.*;
 
 import java.io.IOException;
 
-public interface Requestor {
+public interface Requestor extends Service {
 
-	public Mogram getMogram(String... args) throws Exception;
+	public Mogram getMogram(String... args) throws MogramException;
 
 	public Transaction getTransaction();
 
-	public void preprocess(String... args) throws ExertionException, ContextException;
+	public void preprocess(String... args) throws MogramException, ContextException;
 
-	public void process(String... args) throws ExertionException, ContextException;
+	public void process(String... args) throws MogramException, ContextException;
 	
-	public void postprocess(String... args) throws ExertionException, ContextException;
+	public void postprocess(String... args) throws MogramException, ContextException;
 
 }

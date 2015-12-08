@@ -70,6 +70,11 @@ public class MultiFidelityMogram extends ServiceMogram {
     }
 
     @Override
+    public Context getContext() throws ContextException {
+        return subsystems;
+    }
+
+    @Override
     public Mogram clearScope() throws MogramException {
         return subsystems.clearScope();
     }

@@ -19,6 +19,7 @@ package sorcer.core.requestor;
 
 import groovy.lang.GroovyShell;
 import net.jini.core.transaction.Transaction;
+import net.jini.core.transaction.TransactionException;
 import org.codehaus.groovy.control.CompilationFailedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,6 +37,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.rmi.RemoteException;
 import java.util.*;
 
 import static sorcer.eo.operator.prvName;
@@ -43,23 +45,57 @@ import static sorcer.eo.operator.prvName;
 /**
  * @author Mike Sobolewski
  */
-abstract public class ExertRequestor implements Requestor, SorcerConstants {
+public class ExertRequestor implements Requestor, SorcerConstants {
 	/** Logger for logging information about this instance */
 	protected static final Logger logger = LoggerFactory.getLogger(ExertRequestor.class.getName());
 
 	protected Properties props;
+	static protected Class target;
+	static protected String[] args;
 	protected Mogram mogram;
 	protected String jobberName;
 	protected GroovyShell shell;
 	protected RemoteLoggerListener listener;
 	protected static ExertRequestor requestor = null;
 	final static String REQUESTOR_PROPERTIES_FILENAME = "requestor.properties";
-	
+
+	public ExertRequestor() {
+		// do nothing
+	}
+
+	public ExertRequestor(Class requestorType, String... args) {
+		target = requestorType;
+		ExertRequestor.args = args;
+	}
+
 	public static void main(String... args) throws Exception {
 		prepareToRun(args);
 		requestor.preprocess(args);
 		requestor.process(args);
 		requestor.postprocess();
+	}
+
+	@Override
+	public Object exec(Arg... args) throws MogramException, RemoteException, TransactionException {
+		prepareToRun();
+		requestor.preprocess(Arg.asStrings(args));
+		try {
+			if (requestor.jobberName != null) {
+				Arg[] ext = new Arg[args.length+1];
+				System.arraycopy(args,  0, ext,  1, args.length);
+				ext[0] = prvName(requestor.jobberName);
+				mogram = requestor.mogram.exert(requestor.getTransaction(), ext);
+			} else {
+				if (args == null)
+					mogram = requestor.mogram.exert(requestor.getTransaction());
+				else
+					mogram = requestor.mogram.exert(requestor.getTransaction(), args);
+			}
+
+		} catch (Exception e) {
+			throw new ExertionException(e);
+		}
+		return mogram.getContext();
 	}
 
 	public static void prepareToRun(String... args) {
@@ -70,16 +106,19 @@ abstract public class ExertRequestor implements Requestor, SorcerConstants {
 		Sorcer.getEnvProperties();
 
 		String requestorType = null;
-		if (args.length == 0) {
+		if (args.length == 0 && target == null) {
 			System.err
-					.println("Usage: java sorcer.core.requestor.ServiceRequestor  <requestorType>");
+					.println("Usage: java sorcer.core.requestor.ExertRequestor  <requestorType>");
 			System.exit(1);
-		} else {
-			requestorType = args[0];
 		}
 		try {
-			requestor = (ExertRequestor) Class.forName(requestorType)
-					.newInstance();
+			if (target != null) {
+				requestor = (ExertRequestor) target.newInstance();
+			} else {
+				requestorType = args[0];
+				requestor = (ExertRequestor) Class.forName(requestorType)
+						.newInstance();
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.info("Not able to create service requestor: " + requestorType);
@@ -108,15 +147,16 @@ abstract public class ExertRequestor implements Requestor, SorcerConstants {
 				e.printStackTrace();
 			}
 		}
-
 	}
 
 	public void setMogram(Mogram mogram) {
 		this.mogram = mogram;
 	}
 
-	abstract public Mogram getMogram(String... args)
-			throws Exception;
+	public Mogram getMogram(String... args) throws MogramException {
+		// implement in subclsses
+		throw new MogramException("Mograms should be declared in subclasses!");
+	}
 
 	public String getJobberName() {
 		return jobberName;
@@ -126,6 +166,9 @@ abstract public class ExertRequestor implements Requestor, SorcerConstants {
 		Mogram in = null;
 		try {
 			in = requestor.getMogram(args);
+			if (in == null)
+				throw new ExertionException("No mogram definde for this requestor!");
+
 			if (logger.isDebugEnabled())
 				logger.debug("ServiceRequestor java.rmi.server.codebase: "
 						+ System.getProperty("java.rmi.server.codebase"));
@@ -223,12 +266,10 @@ abstract public class ExertRequestor implements Requestor, SorcerConstants {
 	 *            the properties file name see #getProperty
 	 */
 	public void loadProperties(String filename) {
-		logger.info("loading requestor properties:" + filename);
-		String propsFile = System.getProperty("requestor.properties.file");
-
 		try {
-			if (propsFile != null) {
-				props.load(new FileInputStream(propsFile));
+			props = new Properties();
+			if (filename != null) {
+				props.load(new FileInputStream(filename));
 			} else {
 				// check the class resource
 				InputStream is = this.getClass().getResourceAsStream(filename);
@@ -236,7 +277,6 @@ abstract public class ExertRequestor implements Requestor, SorcerConstants {
 				if (is == null)
 					is = (InputStream) (new FileInputStream(filename));
 				if (is != null) {
-					props = new Properties();
 					props.load(is);
 				} else {
 					System.err

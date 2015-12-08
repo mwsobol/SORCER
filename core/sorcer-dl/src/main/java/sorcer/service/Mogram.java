@@ -80,6 +80,8 @@ public interface Mogram extends Service, Exerter, Projection<Signature>, Scopabl
 
     public void setStatus(int value);
 
+    public Context getContext() throws ContextException;
+
     public Mogram clearScope() throws MogramException;
 
     /**

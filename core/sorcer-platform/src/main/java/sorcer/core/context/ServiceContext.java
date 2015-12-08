@@ -3090,6 +3090,11 @@ public class ServiceContext<T> extends ServiceMogram implements
 	}
 
 	@Override
+	public Context getContext() throws ContextException {
+		return this;
+	}
+
+	@Override
 	public <T extends Mogram> T exert(Transaction txn, Arg... entries) throws TransactionException,
 			ExertionException, RemoteException {
 		Signature signature = null;

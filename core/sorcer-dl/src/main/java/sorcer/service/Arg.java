@@ -98,6 +98,14 @@ public interface Arg {
 		}
 		return null;
 	}
+
+	public static String[] asStrings(Arg[] args) {
+		String[] argsAsStrings = new String[args.length];
+		for (int i = 0; i < args.length; i++) {
+			argsAsStrings[i] = argsAsStrings[i].toString();
+		}
+		return argsAsStrings;
+	}
 }
 
 

@@ -1,11 +1,14 @@
 package sorcer.requestor.adder;
 
+import net.jini.core.transaction.TransactionException;
 import sorcer.core.requestor.ExertRequestor;
 import sorcer.provider.adder.Adder;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
 
 import java.io.File;
+import java.io.IOException;
+import java.rmi.RemoteException;
 
 import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
@@ -13,20 +16,30 @@ import static sorcer.mo.operator.response;
 
 public class AdderRequestor extends ExertRequestor {
 
-    public Mogram getMogram(String... args) throws Exception {
+    public Mogram getMogram(String... args) throws MogramException {
 
+        String option = "exertion";
         if (args != null && args.length == 2) {
-            if (args[1].equals("netlet")) {
+            option = args[1];
+        } else if (this.args != null) {
+            option = this.args[0];
+        } else {
+            throw new MogramException("wrong arguments for: ExertRequestor type, mogram type");
+        }
+        try {
+            if (option.equals("netlet")) {
                 return (Exertion) evaluate(new File("src/main/netlets/adder.ntl"));
-            } else if (args[1].equals("dynamic")) {
+            } else if (option.equals("dynamic")) {
                 return (Exertion) evaluate(new File("src/main/netlets/adder-sbp.ntl"));
-            } else if (args[1].equals("model")) {
+            } else if (option.equals("model")) {
                 return createModel();
-            } else if (args[1].equals("exertion")) {
+            } else if (option.equals("exertion")) {
                 return createExertion();
             }
+        } catch (Exception e) {
+            throw new MogramException(e);
         }
-        throw new MogramException("wrong arguments for: ExertRequestor type, mogram type");
+        return null;
     }
 
     private Exertion createExertion() throws ContextException, SignatureException, ExertionException {
@@ -47,4 +60,5 @@ public class AdderRequestor extends ExertRequestor {
                 srv(sig("add", Adder.class, result("result/y", inPaths("arg/x1", "arg/x2")))),
                 response("add", "arg/x1", "arg/x2"));
     }
+
 }
