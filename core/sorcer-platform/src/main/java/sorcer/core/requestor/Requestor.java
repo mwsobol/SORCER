@@ -18,9 +18,10 @@
 package sorcer.core.requestor;
 
 import net.jini.core.transaction.Transaction;
-import sorcer.service.*;
-
-import java.io.IOException;
+import sorcer.service.ContextException;
+import sorcer.service.Mogram;
+import sorcer.service.MogramException;
+import sorcer.service.Service;
 
 public interface Requestor extends Service {
 

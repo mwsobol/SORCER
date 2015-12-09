@@ -339,6 +339,7 @@ public class ExertRequestor implements Requestor, SorcerConstants {
         System.setProperty("java.protocol.handler.pkgs", "net.jini.url|sorcer.util.url|org.rioproject.url");
         System.setProperty("java.security.policy", Sorcer.getHome() + "/policy/sorcer.policy");
         System.setProperty("logback.configurationFile", Sorcer.getHome() + "/configs/sorcer-logging.groovy");
-        System.setSecurityManager(new SecurityManager());
+        if (System.getSecurityManager() == null)
+			System.setSecurityManager(new SecurityManager());
     }
 }

@@ -46,6 +46,7 @@ import sorcer.core.plexus.MultiFidelity;
 import sorcer.core.provider.*;
 import sorcer.core.provider.exerter.Binder;
 import sorcer.core.provider.rendezvous.ServiceConcatenator;
+import sorcer.core.requestor.ExertRequestor;
 import sorcer.core.signature.*;
 import sorcer.netlet.ScriptExerter;
 import sorcer.service.*;
@@ -88,6 +89,10 @@ public class operator {
 
 	public static void requestTime(Exertion exertion) {
 		((ServiceExertion) exertion).setExecTimeRequested(true);
+	}
+
+	public static ExertRequestor requestor(Class requestorType, String... args) {
+		return  new ExertRequestor(requestorType, args);
 	}
 
 	public static String path(List<String> attributes) {
@@ -1867,10 +1872,14 @@ public class operator {
 
 	public static Object exec(Service service, Arg... args) throws MogramException, RemoteException {
 		try {
-			if (service instanceof Entry || service instanceof Signature )
+			if (service instanceof Entry || service instanceof Signature ) {
 				return service.exec(args);
-		else
-			return new sorcer.core.provider.exerter.ServiceShell().exec(service, args);
+			} else if (service instanceof Mogram) {
+				return new sorcer.core.provider.exerter.ServiceShell().exec(service, args);
+			} else {
+				return service.exec(args);
+			}
+
 		} catch (Exception e) {
 			throw new MogramException(e);
 		}
