@@ -26,8 +26,12 @@ import sorcer.co.tuple.SignatureEntry;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.srv.Srv;
 import sorcer.core.context.model.srv.SrvModel;
+import sorcer.core.dispatch.graph.DirectedGraph;
+import sorcer.core.dispatch.graph.DirectedGraphRenderer;
+import sorcer.core.dispatch.graph.GraphNodeRenderer;
 import sorcer.service.*;
 
+import java.io.StringWriter;
 import java.util.*;
 
 import static sorcer.co.operator.ent;
@@ -46,6 +50,8 @@ public class SrvModelAutoDeps {
     private final Map entryMap;
     private final Map<String, String> entryToResultMap;
     private SrvModel srvModel;
+    private List<String> sortedData;
+    private List<String> topNodes = new ArrayList<String>();
 
     /**
      * Construct the SrvModelAutoDeps
@@ -56,12 +62,11 @@ public class SrvModelAutoDeps {
         entryMap = new HashMap();
         entryToResultMap = new HashMap<String, String>();
         this.srvModel = srvModel;
-
         addVertex(this.srvModel);
 
         try {
             getMapping(this.srvModel);
-            List<String> sortedData = new ArrayList<String>();
+            sortedData = new ArrayList<String>();
             for (Iterator i = TopologicalSorter.sort(dag).iterator(); i.hasNext(); ) {
                 sortedData.add((String) i.next());
             }
@@ -78,6 +83,39 @@ public class SrvModelAutoDeps {
     public SrvModel get() {
         return srvModel;
     }
+
+    /**
+     * Return the processed SrvModel
+     * @return srvModel
+     */
+    public String printDeps() {
+        DirectedGraphRenderer<String> graphRenderer = new DirectedGraphRenderer<String>(new GraphNodeRenderer<String>() {
+            public void renderTo(String node, StringBuilder output) {
+                //output.append(entryToResultMap.get(node));
+                output.append(node + "\n");
+            }
+        }, new DirectedGraph<String, Object>() {
+            public void getNodeValues(String node, Collection<? super Object> values, Collection<? super String> connectedNodes) {
+                for (String dependency : sortedData) {
+                    Vertex vertex = dag.getVertex(node);
+
+                    if (vertex.getParentLabels().contains(dependency)) {
+                        connectedNodes.add(dependency);
+                    }
+                }
+            }
+        });
+        StringBuilder writer = new StringBuilder("\n");
+        if (topNodes.size()>0) {
+            for (String node : topNodes)
+                graphRenderer.renderTo(node, writer);
+        } else {
+            for (String node : sortedData)
+                graphRenderer.renderTo(node, writer);
+        }
+        return writer.toString();
+    }
+
 
     /**
      * Add dependency information to the srvModel
@@ -105,7 +143,10 @@ public class SrvModelAutoDeps {
                         }
                     }
                 }
-                if (paths.size()>0) operator.dependsOn(srvModel, ent(entryName, paths(paths.toArray(new String[0]))));
+                if (paths.size()>0) {
+                    operator.dependsOn(srvModel, ent(entryName, paths(paths.toArray(new String[0]))));
+                    topNodes.add(entryName);
+                }
             }
         }
     }

@@ -11,6 +11,7 @@ import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.arithmetic.provider.impl.AveragerImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.provider.impl.SubtractorImpl;
+import sorcer.core.context.model.srv.SrvModel;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.service.Block;
 import sorcer.service.Context;
@@ -239,6 +240,7 @@ public class SrvModels {
                 aka("y1", "multiply/x1"));
 
 
+        logger.info("DEPS: " + printDeps((SrvModel)m));
         // get a scalar response
         responseUp(m, "subtract");
         logger.info("response: " + response(m));
@@ -277,7 +279,7 @@ public class SrvModels {
                 aka("y1", "multiply/x1"), aka("y2", "add/x2"), aka("y3", "subtract/response"));
 
 //                dep("subtract", paths("multiply", "add")));
-
+        logger.info("DEPS: " + printDeps((SrvModel)model));
         responseUp(model, "add", "multiply", "subtract");
         // specify how model connects to exertion
         outConn(model, outConnector);
