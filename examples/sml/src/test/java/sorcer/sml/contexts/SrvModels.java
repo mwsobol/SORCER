@@ -11,6 +11,7 @@ import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.arithmetic.provider.impl.AveragerImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.provider.impl.SubtractorImpl;
+import sorcer.core.context.model.srv.SrvModel;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.service.Block;
 import sorcer.service.Context;
@@ -193,7 +194,6 @@ public class SrvModels {
                 aka("y1", "multiply/x1"),
                 response("subtract"));
 
-        //dependsOn(m, ent("subtract", paths("multiply", "add")));
 //        logger.info("response: " + response(m));
         Context out = response(m);
 
@@ -216,7 +216,6 @@ public class SrvModels {
                         inPaths("multiply/out", "add/out")))),
                 response("out"));
 
-       // dependsOn(m, ent("out", paths("multiply", "add")));
 //        logger.info("response: " + response(m));
         Context out = response(m);
 
@@ -241,9 +240,9 @@ public class SrvModels {
                 aka("y1", "multiply/x1"));
 
 
+        logger.info("DEPS: " + printDeps((SrvModel)m));
         // get a scalar response
         responseUp(m, "subtract");
-        dependsOn(m, ent("subtract", paths("multiply", "add")));
         logger.info("response: " + response(m));
         Context out = response(m);
 
@@ -280,9 +279,8 @@ public class SrvModels {
                 aka("y1", "multiply/x1"), aka("y2", "add/x2"), aka("y3", "subtract/response"));
 
 //                dep("subtract", paths("multiply", "add")));
-
+        logger.info("DEPS: " + printDeps((SrvModel)model));
         responseUp(model, "add", "multiply", "subtract");
-//        dependsOn(model, ent("subtract", paths("multiply", "add")));
         // specify how model connects to exertion
         outConn(model, outConnector);
 
@@ -344,7 +342,6 @@ public class SrvModels {
 //                ent("z1", "multiply/x1"), srv("z2", "add/x2"), srv("z3", "subtract/out"));
 
         responseUp(model, "add", "multiply", "subtract");
-     //   dependsOn(model, ent("subtract", paths("multiply", "add")));
         // specify how model connects to exertion
         outConn(model, modelOutConnector);
 

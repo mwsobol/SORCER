@@ -309,6 +309,7 @@ public class operator {
 		QueueStrategy modelStrategy = null;
 		Signature sig = null;
 		Class customContextClass = null;
+		boolean manualDeps = false;
 		for (Object o : entries) {
 			if (o instanceof Complement) {
 				subject = (Complement) o;
@@ -342,6 +343,8 @@ public class operator {
 				sig = (Signature) o;
 			} else if (o instanceof Class) {
 				customContextClass = (Class) o;
+			} else if (Strategy.Flow.MANUAL.equals(o)) {
+				manualDeps = true;
 			}
 		}
 
@@ -454,6 +457,13 @@ public class operator {
 		}
 		if (sig != null)
 			cxt.setSubject(sig.getSelector(), sig.getServiceType());
+		if (cxt instanceof SrvModel && ! manualDeps) {
+			try {
+				cxt = new SrvModelAutoDeps((SrvModel) cxt).get();
+			} catch (SortingException e) {
+				throw new ContextException("Problem with dependencies: " + e);
+			}
+		}
 		return cxt;
 	}
 

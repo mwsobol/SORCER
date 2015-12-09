@@ -26,6 +26,8 @@ import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.par.ParModel;
 import sorcer.core.context.model.srv.Srv;
 import sorcer.core.context.model.srv.SrvModel;
+import sorcer.core.dispatch.SortingException;
+import sorcer.core.dispatch.SrvModelAutoDeps;
 import sorcer.core.plexus.FidelityManager;
 import sorcer.core.plexus.MultiFidelity;
 import sorcer.core.plexus.MultiFidelityMogram;
@@ -301,6 +303,10 @@ public class operator {
 
     public static void run(sorcer.util.Runner runner, Arg... args) throws SignatureException, MogramException {
         runner.exec(args);
+    }
+
+    public static String printDeps(SrvModel model) throws SortingException {
+        return new SrvModelAutoDeps(model).printDeps();
     }
 
 }

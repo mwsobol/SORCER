@@ -42,8 +42,6 @@ public class Models {
 						v(model, "multiply") - v(model, "add")),
 				response("subtract", "multiply", "add"));
 
-		dependsOn(mo, ent("subtract", paths("multiply", "add")));
-
 		Context out = response(mo);
 		logger.info("model response: " + out);
 		assertTrue(get(out, "subtract").equals(400.0));
