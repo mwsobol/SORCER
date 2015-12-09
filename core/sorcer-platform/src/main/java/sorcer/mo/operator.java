@@ -305,8 +305,8 @@ public class operator {
         runner.exec(args);
     }
 
-    public static String printDeps(SrvModel model) throws SortingException {
-        return new SrvModelAutoDeps(model).printDeps();
+    public static String printDeps(Model model) throws SortingException {
+        return new SrvModelAutoDeps((SrvModel)model).printDeps();
     }
 
 }

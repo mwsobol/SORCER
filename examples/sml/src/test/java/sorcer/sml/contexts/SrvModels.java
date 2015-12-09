@@ -11,7 +11,6 @@ import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.arithmetic.provider.impl.AveragerImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.provider.impl.SubtractorImpl;
-import sorcer.core.context.model.srv.SrvModel;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.service.Block;
 import sorcer.service.Context;
@@ -228,7 +227,7 @@ public class SrvModels {
 
         // get responses from a service model
 
-        Model m = srvModel(
+        Model mdl = srvModel(
                 inEnt("multiply/x1", 10.0), inEnt("multiply/x2", 50.0),
                 inEnt("add/x1", 20.0), inEnt("add/x2", 80.0),
                 ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
@@ -240,17 +239,17 @@ public class SrvModels {
                 aka("y1", "multiply/x1"));
 
 
-        logger.info("DEPS: " + printDeps((SrvModel)m));
+        logger.info("DEPS: " + printDeps(mdl));
         // get a scalar response
-        responseUp(m, "subtract");
-        logger.info("response: " + response(m));
-        Context out = response(m);
+        responseUp(mdl, "subtract");
+        logger.info("response: " + response(mdl));
+        Context out = response(mdl);
 
         assertTrue(get(out, "subtract").equals(400.0));
 
         // stepup a response context
-        responseUp(m, "add", "multiply", "y1");
-        out = response(m);
+        responseUp(mdl, "add", "multiply", "y1");
+        out = response(mdl);
         logger.info("out: " + out);
         assertTrue(get(out, "add").equals(100.0));
         assertTrue(get(out, "multiply").equals(500.0));
@@ -258,7 +257,7 @@ public class SrvModels {
 
         assertTrue(response(out, "y1").equals(10.0));
 
-        logger.info("model: " + m);
+        logger.info("model: " + mdl);
     }
 
     @Test
@@ -279,7 +278,7 @@ public class SrvModels {
                 aka("y1", "multiply/x1"), aka("y2", "add/x2"), aka("y3", "subtract/response"));
 
 //                dep("subtract", paths("multiply", "add")));
-        logger.info("DEPS: " + printDeps((SrvModel)model));
+        logger.info("DEPS: " + printDeps(model));
         responseUp(model, "add", "multiply", "subtract");
         // specify how model connects to exertion
         outConn(model, outConnector);

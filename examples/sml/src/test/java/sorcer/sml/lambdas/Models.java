@@ -32,7 +32,7 @@ public class Models {
 	@Test
 	public void lambdaModel() throws Exception {
 
-		Model mo = model(ent("multiply/x1", 10.0), ent("multiply/x2", 50.0),
+		Model mdl = model(ent("multiply/x1", 10.0), ent("multiply/x2", 50.0),
 				ent("add/x1", 20.0), ent("add/x2", 80.0),
 				lambda("add", (Context<Double> model) ->
 						value(model, "add/x1") + value(model, "add/x2")),
@@ -42,7 +42,8 @@ public class Models {
 						v(model, "multiply") - v(model, "add")),
 				response("subtract", "multiply", "add"));
 
-		Context out = response(mo);
+		logger.info("DEPS: " + printDeps(mdl));
+		Context out = response(mdl);
 		logger.info("model response: " + out);
 		assertTrue(get(out, "subtract").equals(400.0));
 		assertTrue(get(out, "multiply").equals(500.0));
@@ -100,6 +101,7 @@ public class Models {
 						result("model/response")),
 				response("subtract", "multiply/out", "add/out", "model/response"));
 
+		logger.info("DEPS: " + printDeps(mo));
 		dependsOn(mo, ent("subtract", paths("multiply", "add")));
 
 		Context out = response(mo);
