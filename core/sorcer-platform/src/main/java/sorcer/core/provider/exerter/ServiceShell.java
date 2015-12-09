@@ -56,6 +56,7 @@ import sorcer.service.txmgr.TransactionManagerAccessor;
 import sorcer.util.Sorcer;
 
 import java.io.File;
+import java.rmi.ConnectException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -396,7 +397,7 @@ public class ServiceShell implements RemoteServiceShell, Requestor, Callable {
 				try {
 					provider = proxies.get(signature);
 					((Provider)provider).getProviderName();
-				} catch(RuntimeException e) {
+				} catch(Exception e) {
 					proxies.refresh(signature);
 					provider = proxies.get(signature);
 				}
