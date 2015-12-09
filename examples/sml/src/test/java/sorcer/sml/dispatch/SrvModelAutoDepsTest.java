@@ -15,6 +15,7 @@ import static sorcer.co.operator.*;
 import static sorcer.eo.operator.get;
 import static sorcer.eo.operator.*;
 import static sorcer.mo.operator.response;
+import static sorcer.mo.operator.printDeps;
 
 /**
  * Created by pol on 24.11.15.
@@ -40,6 +41,7 @@ public class SrvModelAutoDepsTest {
                 response("divide"));
 
         logger.info("Map of dependents: " + dependencies(m));
+        logger.info("Dependencies: " + printDeps(m));
         logger.info("response: " + response(m));
         Context out = response(m);
         logger.info("result: " + get(out, "divide"));
@@ -65,6 +67,7 @@ public class SrvModelAutoDepsTest {
                 response("addfinal"));
 
         logger.info("Map of dependents: " + dependencies(m));
+        logger.info("Dependencies: " + printDeps(m));
         logger.info("response: " + response(m));
         Context out = response(m);
         logger.info("result: " + get(out, "addfinal"));

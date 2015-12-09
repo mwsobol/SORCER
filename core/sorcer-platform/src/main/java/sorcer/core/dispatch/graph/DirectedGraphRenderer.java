@@ -34,7 +34,7 @@ public class DirectedGraphRenderer<N> {
         renderTo(root, renderer, rendered, false);
         if (omittedDetails) {
             output.append("\n");
-            output.append("(*) - details omitted (listed previously)");
+            output.append("(*) - listed previously\n\n");
         }
     }
 
@@ -45,8 +45,9 @@ public class DirectedGraphRenderer<N> {
             public void execute(StringBuilder output) {
                 nodeRenderer.renderTo(node, output);
                 if (alreadySeen) {
-                    output.append(" (*)");
-                }
+                    output.append(" (*)\n");
+                } else
+                    output.append("\n");
             }
         }, lastChild);
 

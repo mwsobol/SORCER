@@ -92,7 +92,7 @@ public class SrvModelAutoDeps {
         DirectedGraphRenderer<String> graphRenderer = new DirectedGraphRenderer<String>(new GraphNodeRenderer<String>() {
             public void renderTo(String node, StringBuilder output) {
                 //output.append(entryToResultMap.get(node));
-                output.append(node + "\n");
+                output.append(node);
             }
         }, new DirectedGraph<String, Object>() {
             public void getNodeValues(String node, Collection<? super Object> values, Collection<? super String> connectedNodes) {
@@ -145,7 +145,11 @@ public class SrvModelAutoDeps {
                 }
                 if (paths.size()>0) {
                     operator.dependsOn(srvModel, ent(entryName, paths(paths.toArray(new String[0]))));
-                    topNodes.add(entryName);
+                    String topNode = entryName;
+                    if (entryToResultMap.containsKey(entryName))
+                        topNode = entryToResultMap.get(entryName);
+                    if (!topNodes.contains(topNode))
+                        topNodes.add(entryName);
                 }
             }
         }
