@@ -22,6 +22,7 @@ import sorcer.core.DispatchResult;
 import sorcer.core.Dispatcher;
 import sorcer.core.provider.Provider;
 import sorcer.core.provider.ServiceProvider;
+import sorcer.service.Arg;
 import sorcer.service.Block;
 import sorcer.service.ContextException;
 import sorcer.service.Exec;
@@ -39,12 +40,12 @@ public class BlockThread extends Thread {
 	private static final int SLEEP_TIME = 250;
 	// doBlock method calls internally
 	private Block block;
-
+	private Arg[] args;
 	private Block result;
-
 	Provider provider;
 
-	public BlockThread(Block block, Provider provider) {
+	public BlockThread(Block block, Provider provider, Arg... args) {
+		this.args = args;
 		this.block = block;
 		this.provider = provider;
 	}
@@ -71,7 +72,7 @@ public class BlockThread extends Thread {
 			else
 				dispatcher = ExertionDispatcherFactory.getFactory().createDispatcher(block, provider);
 
-            dispatcher.exec();
+            dispatcher.exec(args);
             DispatchResult result = dispatcher.getResult();
 
 			/*int COUNT = 1000;

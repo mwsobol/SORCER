@@ -774,7 +774,7 @@ public class ProviderDelegate {
 //		 namedGroup.list();
 	}
 
-	public Task doTask(Task task, Transaction transaction)
+	public Task doTask(Task task, Transaction transaction, Arg... args)
 			throws MogramException, SignatureException, RemoteException {
 		// prepare a default net batch task (has all sigs of PROC type)
 		// and make the last signature as master PROC type only.
@@ -834,7 +834,7 @@ public class ProviderDelegate {
 							((ServiceContext) task.getContext()).setReturnPath(tsig.getReturnPath());
 
 					if (isBeanable(task)) {
-						task = useServiceComponents(task, transaction);
+						task = useServiceComponents(task, transaction, args);
 					} else {
 						logger.info("going to execTask(); transaction = {}", transaction);
 						task = execTask(task);
@@ -931,7 +931,7 @@ public class ProviderDelegate {
 		return false;
 	}
 
-	private Task useServiceComponents(Task task, Transaction transaction)
+	private Task useServiceComponents(Task task, Transaction transaction, Arg... args)
 			throws ContextException {
 		String selector = task.getProcessSignature().getSelector();
 		Class serviceType = task.getProcessSignature().getServiceType();
@@ -993,9 +993,9 @@ public class ProviderDelegate {
 
 				Context result = task.getContext();
 				if (isContextual) 
-					result = execContextualBean(m, task, impl);
+					result = execContextualBean(m, task, impl, args);
 				else
-					result = execParametricBean(m, task, impl);
+					result = execParametricBean(m, task, impl, args);
 
 				// clear task in the context
 				result.setExertion(null);
@@ -1015,16 +1015,16 @@ public class ProviderDelegate {
 		return task;
 	}
 
-	private Context execContextualBean(Method m, Task task, Object impl)
+	private Context execContextualBean(Method m, Task task, Object impl, Arg... args)
 			throws ContextException, IllegalArgumentException,
 			IllegalAccessException, InvocationTargetException, RemoteException {
 		Context result;
 		result = task.getContext();
 		String selector = task.getProcessSignature().getSelector();
-		Object[] args = new Object[] { task.getContext() };
+		Object[] pars = new Object[] { task.getContext() };
 		if (selector.equals("invoke")
 				&& (impl instanceof Exertion || impl instanceof ParModel)) {
-			Object obj = m.invoke(impl, new Object[] { args[0], new Arg[] {} });
+			Object obj = m.invoke(impl, new Object[] { pars[0], args });
 
 			if (obj instanceof Job)
 				result = ((Job) obj).getJobContext();
@@ -1041,26 +1041,26 @@ public class ProviderDelegate {
 			}
 		} else {
 			logger.debug("getProviderName: {} invoking: {}" + getProviderName(), m);
-			logger.debug("imp: {} args: {}" + impl, Arrays.toString(args));
-			result = (Context) m.invoke(impl, args);
+			logger.debug("imp: {} args: {}" + impl, Arrays.toString(pars));
+			result = (Context) m.invoke(impl, pars);
 			logger.debug("result: {}", result);
 		}
 		return result;
 	}
 
 	private Context execParametricBean(Method m, Task task,
-			Object impl) throws IllegalArgumentException,
+			Object impl, Arg... args) throws IllegalArgumentException,
 			IllegalAccessException, InvocationTargetException, ContextException, RemoteException {
 		Context result = task.getContext();
 		String selector = task.getProcessSignature().getSelector();
 		Class[] argTypes = ((ServiceContext)result).getParameterTypes();
-		Object[] args = ((ServiceContext)result).getArgs();
+		Object[] pars = ((ServiceContext)result).getArgs();
 		if (selector.equals("exert") && impl instanceof ServiceShell) {
 			Exertion xrt = null;
-			if (args.length == 1) {
-				xrt = (Exertion) m.invoke(impl, new Object[] { args[0], new Arg[] {} });
+			if (pars.length == 1) {
+				xrt = (Exertion) m.invoke(impl, new Object[] { pars[0], args });
 			} else {
-				xrt = (Exertion) m.invoke(impl, args);
+				xrt = (Exertion) m.invoke(impl, pars);
 			}
 			if (xrt.isJob())
 				result = ((Job) xrt).getJobContext();
@@ -1074,13 +1074,13 @@ public class ProviderDelegate {
 		} else if (selector.equals("getValue") && impl instanceof Evaluation) {
 			Object obj;
 			if (argTypes == null) {
-				obj = m.invoke(impl, new Object[] { new Arg[] {} });
+				obj = m.invoke(impl, new Object[] { args });
 			} else {
-				obj = m.invoke(impl, args);
+				obj = m.invoke(impl, pars);
 			}
 			result.setReturnValue(obj);
 		} else {
-			result.setReturnValue(m.invoke(impl, args));
+			result.setReturnValue(m.invoke(impl, pars));
 		}
 		return result;
 	}

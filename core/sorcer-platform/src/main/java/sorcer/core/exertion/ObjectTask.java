@@ -86,7 +86,7 @@ public class ObjectTask extends Task {
 	}
 
 	@SuppressWarnings("unchecked")
-	public Task doTask(Transaction txn) throws ExertionException, SignatureException, RemoteException, MogramException {
+	public Task doTask(Transaction txn, Arg... args) throws ExertionException, SignatureException, RemoteException, MogramException {
 		if (delegate != null)
 			return delegate.doTask(txn);
 
@@ -125,7 +125,6 @@ public class ObjectTask extends Task {
 			if (os.getReturnPath() != null)
 				dataContext.setReturnPath(os.getReturnPath());
 
-//			Context currentContext = dataContext;
 			if (result == null) {
 				if (getArgs() == null && os.getParameterTypes() == null) {
 					// assume this task context is used by the signature's
@@ -139,8 +138,7 @@ public class ObjectTask extends Task {
 					evaluator
 							.setArgs(getParameterTypes(), (Object[]) getArgs());
 				}
-				// evaluator.setParameters(context);
-				result = evaluator.evaluate();
+				result = evaluator.evaluate(args);
 			}
 
 			if (result instanceof Context) {

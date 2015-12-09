@@ -41,16 +41,16 @@ public class CatalogParallelDispatcher extends CatalogExertDispatcher {
 	}
 
     @Override
-    public void exec() {
+    public void exec(Arg... args) {
         executor.submit(new Runnable() {
             @Override
             public void run() {
-                CatalogParallelDispatcher.super.exec();
+                CatalogParallelDispatcher.super.exec(args);
             }
         });
     }
 
-    public void doExec() throws ExertionException,
+    public void doExec(Arg... args) throws ExertionException,
 			SignatureException {
         List<Future<Exertion>> results = new ArrayList<Future<Exertion>>(inputXrts.size());
         for (Mogram mogram : inputXrts) {

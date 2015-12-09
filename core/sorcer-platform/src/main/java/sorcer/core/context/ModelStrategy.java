@@ -21,7 +21,7 @@ public class ModelStrategy implements MogramStrategy, Projection<Arg>, Serializa
 
     protected List<ThrowableTrace> exceptions = new ArrayList<ThrowableTrace>();
 
-    private List<String> traceList;
+    protected List<String> traceList = new ArrayList<String>();
 
     private boolean isTraceable = false;
 

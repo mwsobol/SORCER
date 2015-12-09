@@ -85,7 +85,7 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
     }
 
     @Override
-    public void doExec() throws SignatureException, ExertionException {
+    public void doExec(Arg... args) throws SignatureException, ExertionException {
         new Thread(disatchGroup, new CollectResultThread(), tName("collect-" + xrt.getName())).start();
 
         for (Mogram mogram : inputXrts) {

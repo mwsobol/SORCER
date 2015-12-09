@@ -2806,7 +2806,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 			result = modelStrategy.outcome;
 			modelStrategy.outcome.setModeling(true);
 		}
-		((ServiceContext)result).setName("Response of model: " + name);
+		result.setName("Response of model: " + name);
 		return result;
 	}
 

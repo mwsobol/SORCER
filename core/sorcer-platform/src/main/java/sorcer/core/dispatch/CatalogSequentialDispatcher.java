@@ -40,7 +40,7 @@ public class CatalogSequentialDispatcher extends CatalogExertDispatcher {
         super(job, sharedContext, isSpawned, provider, provisionManager);
     }
 
-    protected void doExec() throws MogramException,
+    protected void doExec(Arg... args) throws MogramException,
             SignatureException {
 
         String pn;
@@ -84,7 +84,7 @@ public class CatalogSequentialDispatcher extends CatalogExertDispatcher {
                     // signatures
                     if (previous != null && se.isTask() && ((Task) se).isContinous())
                         se.setContext(previous);
-                    dispatchExertion(se);
+                    dispatchExertion(se, args);
                     previous = se.getContext();
                 } else if (mogram instanceof EntModel) {
                     ((EntModel)mogram).updateEntries(xrt.getContext());
@@ -98,7 +98,7 @@ public class CatalogSequentialDispatcher extends CatalogExertDispatcher {
         }
 
         if (masterXrt != null) {
-            masterXrt = (ServiceExertion) execExertion(masterXrt); // executeMasterExertion();
+            masterXrt = (ServiceExertion) execExertion(masterXrt, args); // executeMasterExertion();
             if (masterXrt.getStatus() <= FAILED) {
                 state = FAILED;
                 xrt.setStatus(FAILED);
@@ -113,8 +113,8 @@ public class CatalogSequentialDispatcher extends CatalogExertDispatcher {
         xrt.setStatus(DONE);
     }
 
-    protected void dispatchExertion(ServiceExertion se) throws SignatureException, ExertionException {
-        se = (ServiceExertion) execExertion(se);
+    protected void dispatchExertion(ServiceExertion se, Arg... args) throws SignatureException, ExertionException {
+        se = (ServiceExertion) execExertion(se, args);
         if (se.getStatus() <= FAILED) {
             xrt.setStatus(FAILED);
             state = FAILED;
@@ -144,4 +144,5 @@ public class CatalogSequentialDispatcher extends CatalogExertDispatcher {
     protected List<Mogram> getInputExertions() throws ContextException {
         return Mograms.getInputExertions(((Job) xrt));
     }
+
 }

@@ -96,7 +96,7 @@ public class Entry<T> extends Tuple2<String, T> implements Duo<T>, Service, Depe
 	}
 
 	@Override
-	public T getValue(Arg... entries) throws EvaluationException, RemoteException {
+	public T getValue(Arg... args) throws EvaluationException, RemoteException {
 		T val = this._2;
 		URL url = null;
 		try {
@@ -117,9 +117,20 @@ public class Entry<T> extends Tuple2<String, T> implements Duo<T>, Service, Depe
 					this._2 = (T)url;
 				}
 			} else if (val instanceof ServiceInvoker) {
-				return ((ServiceInvoker<T>) val).invoke(entries);
+				return ((ServiceInvoker<T>) val).invoke(args);
 			} else if (val instanceof Evaluation) {
-				return ((Evaluation<T>) val).getValue(entries);
+				return ((Evaluation<T>) val).getValue(args);
+			} else if (val instanceof Fidelity) {
+				// return the selected fidelity of this entry
+				for (Arg arg : args) {
+					if (arg instanceof Fidelity) {
+						if (((Fidelity)arg).getPath().equals(_1)) {
+							((Fidelity) val).setFidelitySelection(arg.getName());
+							break;
+						}
+					}
+				}
+				return (T) ((Entry)((Fidelity) val).getSelection()).getValue();
 			}
 		} catch (Exception e) {
 			throw new EvaluationException(e);

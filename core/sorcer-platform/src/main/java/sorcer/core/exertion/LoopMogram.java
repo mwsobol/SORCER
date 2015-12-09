@@ -106,7 +106,7 @@ public class LoopMogram extends ConditionalMogram {
 	}
 
 	@Override
-	public Task doTask(Transaction txn) throws ExertionException,
+	public Task doTask(Transaction txn, Arg... args) throws ExertionException,
 			SignatureException, RemoteException {
 		try {
 			if (condition == null) {
@@ -134,25 +134,25 @@ public class LoopMogram extends ConditionalMogram {
 						if (sig != null && sig.getVariability() != null) {
 							((Task) target).getContext().append(condition.getConditionalContext());
 						}
-						target = target.exert(txn);
+						target = target.exert(txn, args);
 						if (sig != null && sig.getVariability() != null) {
 							((Task) target).updateConditionalContext(condition);
 						}
 					} else {
 						if (target instanceof SrvModel)
 							((SrvModel)target).clearOutputs();
-						target = target.exert(txn);
+						target = target.exert(txn, args);
 					}
 				}
 			} else if (condition != null && max - min > 0) {
 				// exert min times
 				for (int i = 0; i < min; i++) {
-					target = target.exert(txn);
+					target = target.exert(txn, args);
 				}
 				for (int i = 0; i < max - min; i++) {
 					target = target.exert(txn);
 					if (condition.isTrue())
-						target = target.exert(txn);
+						target = target.exert(txn, args);
 					else
 						return this;
 				}

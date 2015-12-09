@@ -109,12 +109,12 @@ public class Task extends ServiceExertion {
 		}
 	}
 
-	public Task doTask() throws MogramException, SignatureException,
+	public Task doTask(Arg... args) throws MogramException, SignatureException,
 			RemoteException {
-		return doTask(null);
+		return doTask(null, args);
 	}
 	
-	public Task doTask(Transaction txn) throws ExertionException,
+	public Task doTask(Transaction txn, Arg... args) throws ExertionException,
 			SignatureException, RemoteException, MogramException {
 		if (delegate != null && serviceFidelity != delegate.serviceFidelity) {
 			delegate = null;
@@ -154,7 +154,7 @@ public class Task extends ServiceExertion {
 				}
 			}
 		}
-		Task done = delegate.doTask(txn);
+		Task done = delegate.doTask(txn, args);
 		setContext(done.getDataContext());
 		setControlContext(done.getControlContext());
 		return this;

@@ -58,6 +58,14 @@ public class Entries {
         assertTrue(direction((Entry) asis(x4)) == Direction.OUT);
 	}
 
+    @Test
+    public void entFidelities() throws Exception {
+        Entry mfi = inEnt("by", eFi(inEnt("by-10", 10.0), inEnt("by-20", 20.0)));
+
+        assertTrue(value(mfi, fi("by", "by-20")).equals(20.0));
+        assertTrue(value(mfi, fi("by", "by-10")).equals(10.0));
+    }
+
 	@Test
 	public void expressionEntry() throws Exception {
 

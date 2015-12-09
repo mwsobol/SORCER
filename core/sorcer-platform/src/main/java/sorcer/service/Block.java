@@ -67,7 +67,7 @@ public abstract class Block extends CompoundExertion {
 			this.dataContext = (ServiceContext) context;
 	}
 	
-	public abstract Block doBlock(Transaction txn) throws ExertionException,
+	public abstract Block doBlock(Transaction txn, Arg... args) throws ExertionException,
 		SignatureException, RemoteException, TransactionException, MogramException;
 	
 	/* (non-Javadoc)

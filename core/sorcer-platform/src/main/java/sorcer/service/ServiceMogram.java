@@ -776,13 +776,15 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
             if (sf == null)
                 logger.warn("no such service fidelity: {} for: {}", selector, this);
         }
-        if (sf.type == Fidelity.Type.EXERT) {
-            serviceFidelity = sf;
-            serviceFidelitySelector = selector;
-        } else if (sf.type == Fidelity.Type.COMPOSITE) {
-            selectCompositeFidelity(sf);
-        } else if (sf.type == Fidelity.Type.EMPTY) {
-            selectFidelity(sf.getName());
+        if (sf != null) {
+            if (sf.type == Fidelity.Type.EXERT) {
+                serviceFidelity = sf;
+                serviceFidelitySelector = selector;
+            } else if (sf.type == Fidelity.Type.COMPOSITE) {
+                selectCompositeFidelity(sf);
+            } else if (sf.type == Fidelity.Type.EMPTY) {
+                selectFidelity(sf.getName());
+            }
         }
         trimAllNotSerializableSignatures();
         return serviceFidelity;

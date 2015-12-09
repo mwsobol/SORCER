@@ -318,7 +318,7 @@ public class ServiceShell implements RemoteServiceShell, Requestor, Callable {
 		return exertion;
 	}
 
-	private Exertion dispatchExertion(ServiceExertion exertion, String providerName)
+	private Exertion dispatchExertion(ServiceExertion exertion, String providerName, Arg... args)
 			throws ExertionException, ExecutionException {
 		Signature signature = exertion.getProcessSignature();
 		Object provider = null;
@@ -352,7 +352,7 @@ public class ServiceShell implements RemoteServiceShell, Requestor, Callable {
 			if (!(signature instanceof NetSignature)) {
 				if (exertion instanceof Task) {
 					if (exertion.getFidelity().getSelects().size() == 1) {
-						return ((Task) exertion).doTask(transaction);
+						return ((Task) exertion).doTask(transaction, args);
 					} else {
 						try {
 							return new ControlFlowManager().doTask((Task) exertion);
@@ -364,7 +364,7 @@ public class ServiceShell implements RemoteServiceShell, Requestor, Callable {
 				} else if (exertion instanceof Job) {
 					return ((Job) exertion).doJob(transaction);
 				} else if (exertion instanceof Block) {
-					return ((Block) exertion).doBlock(transaction);
+					return ((Block) exertion).doBlock(transaction, args);
 				}
 			}
 			// check for missing signature of inconsistent PULL/PUSH cases
@@ -497,7 +497,7 @@ public class ServiceShell implements RemoteServiceShell, Requestor, Callable {
 		initExertion(exertion, txn, entries);
 		Exertion xrt;
 		try {
-			xrt = dispatchExertion(exertion, providerName);
+			xrt = dispatchExertion(exertion, providerName, entries);
 		} catch (Exception e) {
 			throw new MogramException(e);
 		}

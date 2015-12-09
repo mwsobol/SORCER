@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.impl.*;
+import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.srv.SrvModel;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.service.Block;
@@ -29,7 +30,6 @@ import static sorcer.po.operator.invoker;
 /**
  * Created by Mike Sobolewski on 10/21/15.
  */
-@SuppressWarnings({ "unchecked", "rawtypes" })
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/sml")
 public class Mograms {
@@ -119,34 +119,38 @@ public class Mograms {
 
         IncrementerImpl incrementer = new IncrementerImpl(100.0);
 
-        Model model = model(
-                inEnt("by", 10.0), inEnt("out", 0.0),
+        Model mdl = model(
+                inEnt("by",10.0), inEnt("out", 0.0),
+//                inEnt("by", eFi(inEnt("by-10", 10.0), inEnt("by-20", 20.0))), inEnt("out", 0.0),
                 ent(sig("increment", incrementer, result("out", inPaths("by")))),
                 ent("multiply", invoker("add * out", ents("add", "out"))));
 
 
-        responseUp(model, "increment", "out", "multiply");
+        responseUp(mdl, "increment", "out", "multiply");
 //        Model exerted = exert(model);
 //        logger.info("out context: " + exerted);
 //        assertTrue(value(exerted, "out").equals(110.0));
+
+        logger.info("DEPS: " + printDeps(mdl));
 
         Block looping = block(
                 context(inEnt("offDesignCasesTemplate", "URL")),
                 task(sig("add", AdderImpl.class),
                         context(inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0), result("add"))),
                 loop(condition(cxt -> (double)value(cxt, "out") < 1000.0),
-                        model));
+                        mdl));
 
-        looping = exert(looping);
+//        looping = exert(looping);
+        looping = exert(looping, fi("by", "by-20"));
         logger.info("block context: " + context(looping));
         logger.info("result: " + value(context(looping), "out"));
-        logger.info("model result: " + value(result(model), "out"));
-        logger.info("multiply result: " + value(result(model), "multiply"));
+        logger.info("model result: " + value(result(mdl), "out"));
+        logger.info("multiply result: " + value(result(mdl), "multiply"));
         // out variable in blosck
         assertTrue(value(context(looping), "out").equals(1000.0));
         // out variable in model
-        assertTrue(value(result(model), "out").equals(1000.0));
-        assertTrue(value(result(model), "multiply").equals(100000.0));
+        assertTrue(value(result(mdl), "out").equals(1000.0));
+        assertTrue(value(result(mdl), "multiply").equals(100000.0));
     }
 
     @Test

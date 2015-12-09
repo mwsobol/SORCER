@@ -87,7 +87,7 @@ public class EvaluationTask extends Task {
 	 * @see sorcer.service.Task#doTask(net.jini.core.transaction.Transaction)
 	 */
 	@Override
-	public Task doTask(Transaction txn) throws ExertionException,
+	public Task doTask(Transaction txn, Arg... entries) throws ExertionException,
 			SignatureException {
 		dataContext.getModelStrategy().setCurrentSelector(getProcessSignature().getSelector());
 		dataContext.setCurrentPrefix(getProcessSignature().getPrefix());
@@ -130,12 +130,12 @@ public class EvaluationTask extends Task {
 				if (evaluator instanceof Par && dataContext.getScope() != null)
 					((Par) evaluator).getScope().append(dataContext.getScope());
 			}
-			Object result = evaluator.getValue();
+			Object result = evaluator.getValue(entries);
 			if (getProcessSignature().getReturnPath() != null)
 				dataContext.setReturnPath(getProcessSignature().getReturnPath());
 			dataContext.setReturnValue(result);
 			if (evaluator instanceof Scopable) {
-				((Context)((Scopable)evaluator).getScope()).putValue(dataContext.getReturnPath().path, result);
+				(((Scopable)evaluator).getScope()).putValue(dataContext.getReturnPath().path, result);
 			}
 			if (evaluator instanceof Par && dataContext.getScope() != null)
 				dataContext.getScope().putValue(((Par) evaluator).getName(), result);

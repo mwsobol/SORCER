@@ -23,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.context.model.srv.SrvModel;
 import sorcer.core.provider.Modeler;
+import sorcer.service.Arg;
 import sorcer.service.ExertionException;
 import sorcer.service.Mogram;
 import sorcer.service.Task;
@@ -47,7 +48,7 @@ public class ServiceModeler extends RendezvousBean implements Modeler {
         // do nothing
     }
 
-    public Mogram localExert(Mogram mogram, Transaction txn)
+    public Mogram localExert(Mogram mogram, Transaction txn, Arg... args)
             throws TransactionException, ExertionException, RemoteException {
         //logger.info("*********************************************ServiceModeler.exert, model = " + mogram);
         setServiceID(mogram);

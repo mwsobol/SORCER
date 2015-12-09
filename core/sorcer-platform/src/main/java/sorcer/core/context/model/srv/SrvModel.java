@@ -189,7 +189,7 @@ public class SrvModel extends ParModel<Object> implements Model {
                         return ((Srv) val).getSrvValue();
                     else {
                         Signature sig = ((SignatureEntry) ((Srv) val).asis()).value();
-                        return evalSignature(sig, path);
+                        return evalSignature(sig, path, items);
                     }
                 } else if (val2 instanceof Fidelity) {
                     Object selection = getFi((Fidelity) val2, items, path);
@@ -358,7 +358,7 @@ public class SrvModel extends ParModel<Object> implements Model {
     }
 
     public Context execSignature(Signature sig, Arg... items) throws MogramException {
-        execDependencies(sig);
+        execDependencies(sig, items);
         return  super.execSignature(sig, items);
     }
 

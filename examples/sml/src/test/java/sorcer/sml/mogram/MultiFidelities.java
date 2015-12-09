@@ -24,6 +24,7 @@ import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.get;
+import static sorcer.mo.operator.printDeps;
 import static sorcer.mo.operator.response;
 
 /**
@@ -54,19 +55,21 @@ public class MultiFidelities {
     public void entMultiFidelityModel() throws Exception {
 
         // three entry model
-        Model mod = model(
+        Model mdl = model(
                 ent("arg/x1", eFi(inEnt("arg/x1/fi1", 10.0), inEnt("arg/x1/fi2", 11.0))),
                 ent("arg/x2", eFi(inEnt("arg/x2/fi1", 90.0), inEnt("arg/x2/fi2", 91.0))),
                 ent("mFi", sFi(sig("add", AdderImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))),
                         sig("multiply", MultiplierImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))))),
                 response("mFi", "arg/x1", "arg/x2"));
 
-        Context out = response(mod, fi("arg/x1", "arg/x1/fi2"), fi("arg/x2", "arg/x2/fi2"), fi("mFi", "multiply"));
+        logger.info("DEPS: " + printDeps(mdl));
+
+        Context out = response(mdl, fi("arg/x1", "arg/x1/fi2"), fi("arg/x2", "arg/x2/fi2"), fi("mFi", "multiply"));
         logger.info("out: " + out);
         assertTrue(get(out, "arg/x1").equals(11.0));
         assertTrue(get(out, "arg/x2").equals(91.0));
         assertTrue(get(out, "mFi").equals(1001.0));
-        assertTrue(get(mod, "result/y").equals(1001.0));
+        assertTrue(get(mdl, "result/y").equals(1001.0));
     }
 
     @Test

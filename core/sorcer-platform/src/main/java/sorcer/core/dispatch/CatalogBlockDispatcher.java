@@ -53,8 +53,8 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
 
 
     @Override
-    protected void doExec() throws MogramException, SignatureException {
-        super.doExec();
+    protected void doExec(Arg... args) throws MogramException, SignatureException {
+        super.doExec(args);
 		try {
 			Condition.cleanupScripts(xrt);
 		} catch (ContextException e) {

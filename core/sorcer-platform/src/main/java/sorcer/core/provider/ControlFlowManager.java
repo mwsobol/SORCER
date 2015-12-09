@@ -270,8 +270,6 @@ public class ControlFlowManager {
 
 	public Block doBlock(Block block) throws RemoteException, MogramException,
 			SignatureException, TransactionException, ContextException {
-
-
         if (concatenator == null) {
             String spacerName = block.getRendezvousName();
             if (spacerName != null) {
@@ -286,7 +284,7 @@ public class ControlFlowManager {
             logger.info("Got Concatenator: " + concatenator);
             return concatenator.exert(block, null);
         }
-        return (Block)((ServiceConcatenator)concatenator).exert(block);
+        return (Block)((ServiceConcatenator)concatenator).localExert(block, null);
 	}
 
     /**
