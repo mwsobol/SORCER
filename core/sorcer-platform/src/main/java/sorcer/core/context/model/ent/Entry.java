@@ -119,7 +119,11 @@ public class Entry<T> extends Tuple2<String, T> implements Duo<T>, Service, Depe
 			} else if (val instanceof ServiceInvoker) {
 				return ((ServiceInvoker<T>) val).invoke(args);
 			} else if (val instanceof Evaluation) {
-				return ((Evaluation<T>) val).getValue(args);
+				if (val instanceof Entry && ((Entry)val).getName().equals(_1)) {
+					return (T) ((Entry)val).getValue();
+				} else {
+					return ((Evaluation<T>) val).getValue(args);
+				}
 			} else if (val instanceof Fidelity) {
 				// return the selected fidelity of this entry
 				for (Arg arg : args) {
@@ -234,6 +238,9 @@ public class Entry<T> extends Tuple2<String, T> implements Duo<T>, Service, Depe
 		String en = "";
 		try {
 			if (_2 instanceof Evaluation && ((Evaluation) _2).asis() != null) {
+				if (this == _2) {
+					return "[" + _1 + ":" + ((Entry)_2)._2 + "]";  // loop
+				}
 				en = ((Evaluation) _2).asis().toString();
 			} else {
 				en = "" + _2;

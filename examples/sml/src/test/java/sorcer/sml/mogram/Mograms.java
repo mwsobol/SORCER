@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.impl.*;
-import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.srv.SrvModel;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.service.Block;
@@ -20,6 +19,7 @@ import sorcer.service.modeling.Model;
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
+import static sorcer.eo.operator.get;
 import static sorcer.eo.operator.loop;
 import static sorcer.eo.operator.result;
 import static sorcer.eo.operator.value;
@@ -120,13 +120,14 @@ public class Mograms {
         IncrementerImpl incrementer = new IncrementerImpl(100.0);
 
         Model mdl = model(
-                inEnt("by",10.0), inEnt("out", 0.0),
-//                inEnt("by", eFi(inEnt("by-10", 10.0), inEnt("by-20", 20.0))), inEnt("out", 0.0),
+//                inEnt("by",10.0), inEnt("out", 0.0),
+//                ent("by", eFi(inEnt("by-10", 10.0), inEnt("by-20", 20.0))), inEnt("out", 0.0),
+                inEnt("by", eFi(inEnt("by-10", 10.0), inEnt("by-20", 20.0))), inEnt("out", 0.0),
                 ent(sig("increment", incrementer, result("out", inPaths("by")))),
                 ent("multiply", invoker("add * out", ents("add", "out"))));
 
 
-        responseUp(mdl, "increment", "out", "multiply");
+        responseUp(mdl, "increment", "out", "multiply", "by");
 //        Model exerted = exert(model);
 //        logger.info("out context: " + exerted);
 //        assertTrue(value(exerted, "out").equals(110.0));
@@ -151,6 +152,7 @@ public class Mograms {
         // out variable in model
         assertTrue(value(result(mdl), "out").equals(1000.0));
         assertTrue(value(result(mdl), "multiply").equals(100000.0));
+        assertTrue(value(result(mdl), "by").equals(20.0));
     }
 
     @Test

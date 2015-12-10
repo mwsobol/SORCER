@@ -282,11 +282,22 @@ public class SrvModel extends ParModel<Object> implements Model {
         } catch (Exception e) {
             throw new EvaluationException(e);
         }
+        // the same entry in entry
+        if (val instanceof Entry && ((Entry) val).name().equals(path)) {
+            return ((Entry) val).value();
+        }
+        if (val instanceof Fidelity) {
+            try {
+                return ((Entry)((Fidelity)val).getSelection()).getValue();
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
         return val;
     }
 
-    public Object evalSignature(Signature sig, String path, Arg... items) throws MogramException {
-        Context out = execSignature(sig, items);
+    public Object evalSignature(Signature sig, String path, Arg... args) throws MogramException {
+        Context out = execSignature(sig, args);
         if (sig.getReturnPath() != null) {
             Object obj = out.getValue(sig.getReturnPath().path);
             if (obj == null)
@@ -437,4 +448,17 @@ public class SrvModel extends ParModel<Object> implements Model {
         return this;
     }
 
+    public SrvModel getSubcontext(String... paths) throws ContextException {
+        // bare-bones subcontext
+        SrvModel subcntxt = new SrvModel();
+        subcntxt.setSubject(subjectPath, subjectValue);
+        subcntxt.setName(getName() + "-subcontext");
+        subcntxt.setDomainId(getDomainId());
+        subcntxt.setSubdomainId(getSubdomainId());
+        if  (paths != null && paths.length > 0) {
+            for (int i = 0; i < paths.length; i++)
+                subcntxt.putInoutValueAt(paths[i], getValue(paths[i]), tally + 1);
+        }
+        return subcntxt;
+    }
 }

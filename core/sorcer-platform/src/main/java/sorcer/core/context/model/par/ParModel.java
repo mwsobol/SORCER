@@ -96,21 +96,21 @@ public class ParModel<T> extends EntModel<T> implements Invocation<T>, Mappable<
         add(objects);
     }
 
-	public T getValue(String path, Arg... entries) throws EvaluationException {
+	public T getValue(String path, Arg... args) throws EvaluationException {
 		try {
-			append(entries);
+			append(args);
 			T val = null;
 			if (path != null) {
 				val = (T) get(path);
 			} else {
-				Signature.ReturnPath rp = returnPath(entries);
+				Signature.ReturnPath rp = returnPath(args);
 				if (rp != null)
 					val = (T) getReturnValue(rp);
 				else if (modelStrategy.getResponsePaths() != null
 						&& modelStrategy.getResponsePaths().size() == 1) {
 					val = asis(modelStrategy.getResponsePaths().get(0).getName());
 				} else {
-					val = (T) super.getValue(path, entries);
+					val = (T) super.getValue(path, args);
 				}
 			}
 
@@ -123,10 +123,12 @@ public class ParModel<T> extends EntModel<T> implements Invocation<T>, Mappable<
 			}
 
 			if (val != null && val instanceof Evaluation) {
-				return (T) ((Evaluation) val).getValue(entries);
+				return (T) ((Evaluation) val).getValue(args);
+			}   if (val instanceof Fidelity) {
+				return (T) new Entry(path, val).getValue(args);
 			} else if (path == null && val == null && modelStrategy.getResponsePaths() != null) {
 				if (modelStrategy.getResponsePaths().size() == 1)
-					return (T) getValue(modelStrategy.getResponsePaths().get(0).getName(), entries);
+					return (T) getValue(modelStrategy.getResponsePaths().get(0).getName(), args);
 				else
 					return (T) getResponse();
 			} else {
