@@ -32,9 +32,9 @@ import static sorcer.po.operator.invoker;
  */
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/sml")
-public class Mograms {
+public class ServiceMograms {
 
-    private final static Logger logger = LoggerFactory.getLogger(Mograms.class);
+    private final static Logger logger = LoggerFactory.getLogger(ServiceMograms.class);
 
     @Test
     public void exertExertionToModelMogram() throws Exception {
@@ -123,7 +123,7 @@ public class Mograms {
 //                inEnt("by",10.0), inEnt("out", 0.0),
 //                ent("by", eFi(inEnt("by-10", 10.0), inEnt("by-20", 20.0))), inEnt("out", 0.0),
                 inEnt("by", eFi(inEnt("by-10", 10.0), inEnt("by-20", 20.0))), inEnt("out", 0.0),
-                ent(sig("increment", incrementer, result("out", inPaths("by")))),
+                ent(sig("increment", incrementer, result("out", inPaths("by", "template")))),
                 ent("multiply", invoker("add * out", ents("add", "out"))));
 
 
@@ -135,11 +135,13 @@ public class Mograms {
         logger.info("DEPS: " + printDeps(mdl));
 
         Block looping = block(
-                context(inEnt("offDesignCasesTemplate", "URL")),
+                context(inEnt("template", "URL")),
                 task(sig("add", AdderImpl.class),
                         context(inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0), result("add"))),
                 loop(condition(cxt -> (double)value(cxt, "out") < 1000.0),
                         mdl));
+
+//        logger.info("DEPS: " + printDeps(looping));
 
 //        looping = exert(looping);
         looping = exert(looping, fi("by", "by-20"));

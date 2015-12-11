@@ -15,11 +15,9 @@
  */
 package sorcer.data;
 
-import junit.framework.Assert;
 import org.junit.Test;
 import org.rioproject.config.Constants;
 import org.rioproject.impl.util.FileUtils;
-import sorcer.data.DataService;
 
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -62,7 +60,7 @@ public class DataServiceTest {
         DataService dataService = new DataService(System.getProperty("user.dir"));
         try {
             dataService.start();
-            Assert.assertTrue(verify(dataService.getDataURL(new File(System.getProperty("user.dir")))));
+            assertTrue(verify(dataService.getDataURL(new File(System.getProperty("user.dir")))));
         } finally {
             dataService.stop();
         }
@@ -72,7 +70,7 @@ public class DataServiceTest {
     public void testStartAndStop() throws IOException {
         DataService dataService = new DataService(System.getProperty("user.dir"));
         dataService.start();
-        Assert.assertTrue(verify(dataService.getDataURL(new File(System.getProperty("user.dir")))));
+        assertTrue(verify(dataService.getDataURL(new File(System.getProperty("user.dir")))));
         dataService.stop();
         dataService.getDataURL(System.getProperty("user.dir"));
     }
@@ -81,8 +79,8 @@ public class DataServiceTest {
     public void testMultiple() throws IOException {
         DataService dataService = new DataService(20001, System.getProperty("user.dir")).start();
         DataService dataService2 = new DataService(20001, System.getProperty("user.dir")).start();
-        Assert.assertTrue(verify(dataService.getDataURL(new File(System.getProperty("user.dir")))));
-        Assert.assertTrue(verify(dataService2.getDataURL(new File(System.getProperty("user.dir")))));
+        assertTrue(verify(dataService.getDataURL(new File(System.getProperty("user.dir")))));
+        assertTrue(verify(dataService2.getDataURL(new File(System.getProperty("user.dir")))));
         dataService.stop();
         dataService2.getDataURL(System.getProperty("user.dir"));
     }
@@ -110,7 +108,7 @@ public class DataServiceTest {
         System.out.println("Created " + f1.getPath());
         URL url = dataService.getDataURL(f1);
         File f2 = dataService.getDataFile(url);
-        Assert.assertTrue(f2.getPath().equals(f1.getPath()));
+        assertTrue(f2.getPath().equals(f1.getPath()));
     }
 
     @Test(expected=FileNotFoundException.class)
@@ -132,7 +130,7 @@ public class DataServiceTest {
         f1.createNewFile();
         f1.deleteOnExit();
         File f2 = dataService.getDataFile(f1.toURI().toURL());
-        Assert.assertTrue(f2.getPath().equals(f1.getPath()));
+        assertTrue(f2.getPath().equals(f1.getPath()));
     }
 
     @Test(expected=FileNotFoundException.class)
@@ -185,7 +183,7 @@ public class DataServiceTest {
                                                                   System.getProperty("user.name"),
                                                                   File.separator))).getAbsolutePath();
         System.err.println("===> "+dataDirName);
-        Assert.assertTrue(dataDirName.equals(DataService.getDataDir()));
+        assertTrue(dataDirName.equals(DataService.getDataDir()));
     }
 
     void write(File f) throws IOException {
@@ -208,7 +206,7 @@ public class DataServiceTest {
         try {
             connection = (HttpURLConnection) url.openConnection();
             connection.connect();
-            Assert.assertEquals(HttpURLConnection.HTTP_OK, connection.getResponseCode());
+            assertTrue(HttpURLConnection.HTTP_OK == connection.getResponseCode());
             verified = true;
         } catch (Exception e) {
             e.printStackTrace();

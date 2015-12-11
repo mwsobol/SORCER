@@ -169,36 +169,6 @@ public class Mograms implements SorcerConstants {
 		// sc.removeAttribute(SORCER.EXCEPTIONS);
 	}
 
-//	public static void preserveNodeReferences(Exertion ref, Exertion res)
-//			throws ContextException {
-//		if (((ServiceExertion) ref).isJob() && ((ServiceExertion) res).isJob())
-//			preserveNodeReferences((Job) ref, (Job) res);
-//		else
-//			preserveNodeReferences((ServiceExertion) ref, (ServiceExertion) res);
-//	}
-//
-//	public static void preserveNodeReferences(Job refJob,
-//			Job resJob) throws ContextException {
-//		int size = (refJob.size() < resJob.size()) ? refJob.size() : resJob
-//				.size();
-//		for (int i = 0; i < size; i++) {
-//			if (((ServiceExertion) refJob.get(i)).isJob()
-//					&& ((ServiceExertion) resJob.get(i)).isJob())
-//				preserveNodeReferences((Job) refJob.get(i),
-//						(Job) resJob.get(i));
-//			else if (((ServiceExertion) refJob.get(i)).isTask()
-//					&& ((ServiceExertion) resJob.get(i)).isTask())
-//				preserveNodeReferences(((ServiceExertion) refJob.get(i))
-//						.getContext(), ((ServiceExertion) resJob.get(i))
-//						.getContext());
-//		}
-//	}
-//
-//	public static void preserveNodeReferences(Context refContext,
-//			Context resContext) throws ContextException {
-//		Contexts.copyContextNodesFrom(resContext, refContext);
-//	}
-
 	public static void replaceNullIDs(Exertion ex) throws ContextException {
 		if (ex == null)
 			return;

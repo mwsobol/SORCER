@@ -16,7 +16,6 @@ import java.util.List;
 import static org.junit.Assert.*;
 import static sorcer.co.operator.asis;
 import static sorcer.co.operator.*;
-import static sorcer.co.operator.get;
 import static sorcer.co.operator.path;
 import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.get;
@@ -28,7 +27,6 @@ import static sorcer.mo.operator.returnPath;
 /**
  * @author Mike Sobolewski
  */
-@SuppressWarnings({ "unchecked", "rawtypes" })
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/sml")
 public class DataModels {

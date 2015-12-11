@@ -16,14 +16,13 @@
  */
 package sorcer.tools.webster;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.util.StringTokenizer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Helper class for starting an Internal Webster
@@ -79,7 +78,7 @@ public class InternalWebster {
 		String roots;
 		InetAddress ip = InetAddress.getLocalHost();
 		String localIPAddress = ip.getHostAddress();
-		String iGridHome = System.getProperty("sorcer.home");
+		String sorcerHome = System.getProperty("sorcer.home");
         StringBuilder sb = new StringBuilder();
 		if (websterRoots == null) {
 			// defaults Sorcer roots
@@ -94,13 +93,13 @@ public class InternalWebster {
 			// defaults iGrid roots
 			String fs = File.separator;
 			sb = new StringBuilder();
-			sb.append(iGridHome).append(fs).append("lib").append(fs).append("sorcer").append(fs).append("lib-dl")
-					.append(';').append(iGridHome).append(fs).append("lib").append(fs).append("sorcer").append(fs).append("lib")
-					.append(';').append(iGridHome).append(fs).append("lib").append(fs).append("eng").append(fs).append("lib-dl")
-					.append(';').append(iGridHome).append(fs).append("lib").append(fs).append("eng").append(fs).append("lib")
-					.append(';').append(iGridHome).append(fs).append("lib").append(fs).append("river").append(fs).append("lib-dl")
-					.append(';').append(iGridHome).append(fs).append("deploy")
-					.append(';').append(iGridHome).append(fs).append("lib").append(fs).append("local").append(fs).append("lib-dl");
+			sb.append(sorcerHome).append(fs).append("lib").append(fs).append("sorcer").append(fs).append("lib-dl")
+					.append(';').append(sorcerHome).append(fs).append("lib").append(fs).append("sorcer").append(fs).append("lib")
+					.append(';').append(sorcerHome).append(fs).append("lib").append(fs).append("eng").append(fs).append("lib-dl")
+					.append(';').append(sorcerHome).append(fs).append("lib").append(fs).append("eng").append(fs).append("lib")
+					.append(';').append(sorcerHome).append(fs).append("lib").append(fs).append("river").append(fs).append("lib-dl")
+					.append(';').append(sorcerHome).append(fs).append("deploy")
+					.append(';').append(sorcerHome).append(fs).append("lib").append(fs).append("local").append(fs).append("lib-dl");
 			roots = sb.toString();
 		}
 

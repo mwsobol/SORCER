@@ -33,7 +33,6 @@ import static sorcer.po.operator.invoker;
 /**
  * Created by Mike Sobolewski on 4/15/15.
  */
-@SuppressWarnings({ "unchecked", "rawtypes" })
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/sml")
 public class SrvModels {
