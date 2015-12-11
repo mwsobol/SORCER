@@ -6,6 +6,8 @@ import sorcer.core.Name;
 import sorcer.service.*;
 import sorcer.service.MogramStrategy;
 import sorcer.util.FileURLHandler;
+import sorcer.service.Strategy.Access;
+import sorcer.service.Strategy.Flow;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
@@ -30,6 +32,10 @@ public class ModelStrategy implements MogramStrategy, Projection<Arg>, Serializa
     private boolean isProvisionable = false;
 
     private Mogram target;
+
+    private Access accessType;
+
+    private Flow flowType;
 
     protected transient FileURLHandler dataService;
 
@@ -207,6 +213,22 @@ public class ModelStrategy implements MogramStrategy, Projection<Arg>, Serializa
 
     public <T extends Mogram> Mogram exert(Arg... entries) throws TransactionException, MogramException, RemoteException {
         return target.exert(entries);
+    }
+
+    public void setAccessType(Access access) {
+        accessType = access;
+    }
+
+    public Access getAccessType() {
+        return accessType;
+    }
+
+    public Flow getFlowType() {
+        return flowType;
+    }
+
+    public void setFlowType(Flow flowType) {
+        this.flowType = flowType;
     }
 
     public void setOutcome(Context outcome) {

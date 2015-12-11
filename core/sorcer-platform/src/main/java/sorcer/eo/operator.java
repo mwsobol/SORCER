@@ -272,6 +272,8 @@ public class operator {
 
 		Context cxt = null;
 		List<MapContext> connList = new ArrayList<MapContext>();
+		Strategy.Access accessType = null;
+		Strategy.Flow flowType = null;
 
 		if (entries[0] instanceof Exertion) {
 			Exertion xrt = (Exertion) entries[0];
@@ -345,6 +347,10 @@ public class operator {
 				customContextClass = (Class) o;
 			} else if (Strategy.Flow.MANUAL.equals(o)) {
 				manualDeps = true;
+			} else if (o instanceof Strategy.Access) {
+				accessType = (Strategy.Access)o;
+			} else if (o instanceof Strategy.Access) {
+				flowType = (Strategy.Flow)o;
 			}
 		}
 
@@ -455,6 +461,10 @@ public class operator {
 				dm.put(path, dependentPaths);
 			}
 		}
+		if (accessType != null)
+			cxt.getModelStrategy().setAccessType(accessType);
+		if (flowType != null)
+			cxt.getModelStrategy().setFlowType(flowType);
 		if (sig != null)
 			cxt.setSubject(sig.getSelector(), sig.getServiceType());
 		if (cxt instanceof SrvModel && ! manualDeps) {
