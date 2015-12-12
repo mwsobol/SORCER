@@ -9,6 +9,7 @@ import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.impl.*;
 import sorcer.core.context.model.srv.SrvModel;
 import sorcer.core.provider.rendezvous.ServiceJobber;
+import sorcer.core.provider.rendezvous.ServiceModeler;
 import sorcer.service.Block;
 import sorcer.service.Context;
 import sorcer.service.Job;
@@ -191,7 +192,7 @@ public class ServiceMograms {
         assertTrue(get(out, "out").equals(450.0));
     }
 
-    @Test
+       @Test
     public void modelWithInnerModel() throws Exception {
         // get responses from a service model with inner model
 
@@ -213,7 +214,7 @@ public class ServiceMograms {
                         inPaths("inner/multiply/out", "subtract")))),
                 response("inner/multiply", "subtract", "out"));
 
-       // dependsOn(outerModel, ent("subtract", paths("multiply", "add")));
+        // dependsOn(outerModel, ent("subtract", paths("multiply", "add")));
 
         add(outerModel, innerModel, inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0));
 
@@ -222,6 +223,42 @@ public class ServiceMograms {
         assertTrue(get(out, "inner/multiply/out").equals(500.0));
         assertTrue(get(out, "subtract").equals(400.0));
         assertTrue(get(out, "out").equals(450.0));
+    }
+
+    @Test
+    public void modelTask() throws Exception {
+        // get responses from a service model with inner model
+
+        Model innerMdl = model("inner/multiply",
+                ent(sig("inner/multiply/out", "multiply", MultiplierImpl.class,
+                        result("multiply/out", inPaths("arg/x1", "arg/x2")))),
+                response("inner/multiply/out"));
+
+        Model outerMdl = model(
+                inEnt("multiply/x1", 10.0), inEnt("multiply/x2", 50.0),
+                inEnt("add/x1", 20.0), inEnt("add/x2", 80.0),
+                ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
+                        inPaths("multiply/x1", "multiply/x2")))),
+                ent(sig("add", AdderImpl.class, result("add/out",
+                        inPaths("add/x1", "add/x2")))),
+                ent(sig("subtract", SubtractorImpl.class, result("subtract/out",
+                        inPaths("multiply/out", "add/out")))),
+                ent(sig("out", "average", AveragerImpl.class, result("model/response",
+                        inPaths("inner/multiply/out", "subtract")))),
+                response("inner/multiply", "subtract", "out"));
+
+        // dependsOn(outerModel, ent("subtract", paths("multiply", "add")));
+
+        add(outerMdl, innerMdl, inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0));
+
+        Task mt = task("modelTask", sig("response", ServiceModeler.class), outerMdl);
+        logger.info("ZZZZZZZZZZ modelTask: " + exert(mt));
+
+//        Context out = response(outerModel);
+//        logger.info("response: " + out);
+//        assertTrue(get(out, "inner/multiply/out").equals(500.0));
+//        assertTrue(get(out, "subtract").equals(400.0));
+//        assertTrue(get(out, "out").equals(450.0));
     }
 
 }

@@ -4,10 +4,10 @@ import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
 import sorcer.core.Name;
 import sorcer.service.*;
-import sorcer.service.MogramStrategy;
-import sorcer.util.FileURLHandler;
 import sorcer.service.Strategy.Access;
 import sorcer.service.Strategy.Flow;
+import sorcer.service.Strategy.Opti;
+import sorcer.util.FileURLHandler;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
@@ -36,6 +36,8 @@ public class ModelStrategy implements MogramStrategy, Projection<Arg>, Serializa
     private Access accessType;
 
     private Flow flowType;
+
+    private Opti optiType;
 
     protected transient FileURLHandler dataService;
 
@@ -104,12 +106,11 @@ public class ModelStrategy implements MogramStrategy, Projection<Arg>, Serializa
 
     @Override
     public void setOpti(Strategy.Opti optiType) {
-
+        this.optiType = optiType;
     }
-
     @Override
     public Strategy.Opti getOpti() {
-        return null;
+        return optiType;
     }
 
     @Override
