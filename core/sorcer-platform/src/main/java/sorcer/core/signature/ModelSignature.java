@@ -18,6 +18,7 @@ package sorcer.core.signature;
 import sorcer.service.Arg;
 import sorcer.service.Fidelity;
 import sorcer.service.Signature;
+import sorcer.service.modeling.Model;
 import sorcer.service.modeling.Modeling;
 import sorcer.service.modeling.Variability;
 
@@ -31,11 +32,21 @@ public class ModelSignature extends ServiceSignature {
 
 	private Signature innerSignature;
 	
-	private Modeling model;
+	private Model model;
 
 	public ModelSignature(String selector, Modeling model, Arg... paramters) {
 		this.selector = selector;
 		this.model = model;
+		for (Arg p : paramters) {
+			if (p instanceof ReturnPath) {
+				this.returnPath = (ReturnPath)p;
+			}
+		}
+	}
+
+	public ModelSignature(String selector, Class serviceType, Arg... paramters) {
+		this.selector = selector;
+		this.serviceType = serviceType;
 		for (Arg p : paramters) {
 			if (p instanceof ReturnPath) {
 				this.returnPath = (ReturnPath)p;
@@ -108,11 +119,11 @@ public class ModelSignature extends ServiceSignature {
 		this.fidelity = fidelity;
 	}
 
-	public Modeling getModel() {
+	public Model getModel() {
 		return model;
 	}
 	
-	public void setModel(Modeling model) {
+	public void setModel(Model model) {
 		this.model = model;
 	}
 	
