@@ -368,7 +368,7 @@ public interface Signature extends Service, Comparable, Dependency, Identifiable
         }
 	};
 
-    public static class From extends ArrayList<String> {
+    public static class From extends ArrayList<String> implements Arg {
         private static final long serialVersionUID = 1L;
 
         public From() {
@@ -384,9 +384,14 @@ public interface Signature extends Service, Comparable, Dependency, Identifiable
         public From(int initialCapacity) {
             super(initialCapacity);
         }
-    }
 
-    public static class In extends ArrayList<String> {
+		@Override
+		public String getName() {
+			return toString();
+		}
+	}
+
+    public static class In extends ArrayList<String> implements Arg {
         private static final long serialVersionUID = 1L;
 
         public In() {
@@ -402,7 +407,12 @@ public interface Signature extends Service, Comparable, Dependency, Identifiable
         public In(int initialCapacity) {
             super(initialCapacity);
         }
-    }
+
+		@Override
+		public String getName() {
+			return toString();
+		}
+	}
     
 	static final Type SRV = Type.PROC;
 	static final Type PRE = Type.PRE;
