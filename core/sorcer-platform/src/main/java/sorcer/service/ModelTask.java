@@ -16,10 +16,11 @@
 package sorcer.service;
 
 import net.jini.core.transaction.Transaction;
+import sorcer.core.context.ContextFilter;
 import sorcer.core.context.ServiceContext;
-import sorcer.core.signature.ModelSignature;
-import sorcer.core.signature.NetSignature;
 import sorcer.core.signature.ObjectSignature;
+import sorcer.service.modeling.FilterException;
+import sorcer.service.modeling.Model;
 import sorcer.service.modeling.Modeling;
 import sorcer.service.modeling.ModelingTask;
 
@@ -30,11 +31,13 @@ import java.rmi.RemoteException;
  * 
  * @author Mike Sobolewski
  */
-abstract public class ModelTask extends Task implements ModelingTask {
+public class ModelTask extends Task implements ModelingTask {
 	
-	private static final long serialVersionUID = 7755033700015872647L;
+	private static final long serialVersionUID = 1L;
 	
 	protected Modeling model;
+
+	protected ContextFilter contextFilter;
 
 	protected ServiceContext modelContext;
 
@@ -46,34 +49,27 @@ abstract public class ModelTask extends Task implements ModelingTask {
 		super(name);
 	}
 
-	abstract public Task doTask(Transaction txn, Arg... args) throws ExertionException,
-			SignatureException, RemoteException;
+	public ModelTask(String name, Signature signature) {
+		super(name);
+		addSignature(signature);
+	}
 
-	abstract protected ServiceContext createModelContext(ServiceContext context, Signature targetSignature)
-	throws ContextException;
-	
-	public ServiceContext getModelContext() throws ContextException,
-			SignatureException {
-		if (model != null) {
-			return createModelContext(dataContext, new ObjectSignature(
-					getProcessSignature().getSelector(),
-					model.getClass()));
-		} else {
-			Object model = instance((ObjectSignature) ((ModelSignature) getProcessSignature())
-					.getInnerSignature());
-			String selector = getProcessSignature().getSelector();
-			Signature sig = null;
-			if (model instanceof Class && ((Class) model).isInterface()) {
-				sig = new NetSignature(selector, (Class) model);
-			} else {
-				try {
-					sig = new ObjectSignature(selector, model, null);
-				} catch (Exception e) {
-					throw new SignatureException(e);
-				}
-			}
-			return createModelContext(dataContext, sig);
+	public Task doTask(Transaction txn, Arg... args) throws ExertionException,
+			SignatureException, RemoteException {
+		try {
+			model = ((Model)model).exert(txn, args);
+		} catch (Exception e) {
+			throw new ExertionException(e);
 		}
+		return this;
+	}
+
+	protected Context createModelContext(ServiceContext context, Signature targetSignature)
+			throws ContextException, FilterException {
+		if (contextFilter == null)
+			return (Context) model;
+		else
+			return (Context) contextFilter.doFilter(model);
 	}
 	
 	private  Object instance(ObjectSignature signature)
