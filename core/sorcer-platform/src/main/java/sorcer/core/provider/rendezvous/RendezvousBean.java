@@ -24,12 +24,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.Contexts;
-import sorcer.core.context.ControlContext;
-import sorcer.core.exertion.NetJob;
 import sorcer.core.exertion.ObjectBlock;
 import sorcer.core.exertion.ObjectJob;
 import sorcer.core.provider.*;
 import sorcer.service.*;
+import sorcer.service.modeling.Model;
+import sorcer.service.modeling.ModelingTask;
 import sorcer.util.Sorcer;
 import sorcer.util.SorcerUtil;
 
@@ -87,8 +87,7 @@ abstract public class RendezvousBean implements Service, Exerter {
 			return;
 		Job job = (Job) ex;
 		Vector recipents = null;
-		String notifyees = ((ControlContext) ((NetJob)job).getControlContext())
-				.getNotifyList();
+		String notifyees = job.getControlContext().getNotifyList();
 		if (notifyees != null) {
 			String[] list = SorcerUtil.tokenize(notifyees, SorcerConstants.MAIL_SEP);
 			recipents = new Vector(list.length);
@@ -119,8 +118,7 @@ abstract public class RendezvousBean implements Service, Exerter {
 			job.getMasterExertion().getContext()
 					.putValue(Context.JOB_COMMENTS, comment);
 
-			Contexts.markOut(((ServiceExertion) (job.getMasterExertion()))
-					.getContext(), Context.JOB_COMMENTS);
+			Contexts.markOut((job.getMasterExertion()).getContext(), Context.JOB_COMMENTS);
 
 		}
 	}
@@ -134,8 +132,8 @@ abstract public class RendezvousBean implements Service, Exerter {
         if (id != null) {
             logger.trace(id.getLeastSignificantBits() + ":"
                           + id.getMostSignificantBits());
-            ((ServiceExertion) ex).setLsbId(id.getLeastSignificantBits());
-            ((ServiceExertion) ex).setMsbId(id.getMostSignificantBits());
+            ((ServiceMogram) ex).setLsbId(id.getLeastSignificantBits());
+            ((ServiceMogram) ex).setMsbId(id.getMostSignificantBits());
         }
     }
 
@@ -158,9 +156,10 @@ abstract public class RendezvousBean implements Service, Exerter {
 		try {
 			setServiceID(mogram);
 			mogram.appendTrace("mogram: " + mogram.getName() + " rendezvous: " +
-					(provider.getProviderName() != null ? provider.getProviderName() + " " : "")
+					(provider != null ? provider.getProviderName() + " " : "")
 					+ this.getClass().getName());
-            if (mogram instanceof ObjectJob || mogram instanceof ObjectBlock) {
+            if (mogram instanceof ObjectJob || mogram instanceof ObjectBlock
+					|| mogram instanceof Model || mogram instanceof ModelingTask) {
 				out = localExert(mogram, transaction, args);
 			} else {
 				out = getControlFlownManager(mogram).process();
@@ -170,7 +169,7 @@ abstract public class RendezvousBean implements Service, Exerter {
 				mogram.getDataContext().setExertion(null);
         }
 		catch (Exception e) {
-			e.printStackTrace();
+			logger.debug("exert failed for: " + mogram.getName(), e);
 			throw new ExertionException();
 		}
 		return out;

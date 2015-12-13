@@ -986,7 +986,7 @@ public class ProviderDelegate {
 				logger.info("Executing service bean method: " + m + " by: "
 						+ config.getProviderName() + " isContextual: " + isContextual);
 				task.getContext().setExertion(task);
-				((ServiceContext) task.getContext()).getModelStrategy().setCurrentSelector(selector);
+				((ServiceContext) task.getContext()).getMogramStrategy().setCurrentSelector(selector);
 				String pf = task.getProcessSignature().getPrefix();
 				if (pf != null)
 					((ServiceContext) task.getContext()).setCurrentPrefix(pf);
@@ -1219,7 +1219,7 @@ public class ProviderDelegate {
 				if (sig.getReturnPath() != null)
 					cxt.setReturnPath(sig.getReturnPath());
 
-				cxt.getModelStrategy().setCurrentSelector(sig.getSelector());
+				cxt.getMogramStrategy().setCurrentSelector(sig.getSelector());
 				cxt.setCurrentPrefix(sig.getPrefix());
 
 				cxt.setExertion(task);

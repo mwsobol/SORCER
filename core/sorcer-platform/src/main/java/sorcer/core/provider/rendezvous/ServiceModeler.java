@@ -21,18 +21,17 @@ import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sorcer.core.context.ContextSelection;
+import sorcer.core.context.ModelerNetTask;
+import sorcer.core.context.ModelerObjectTask;
+import sorcer.core.context.TaskModel;
 import sorcer.core.context.model.srv.SrvModel;
 import sorcer.core.provider.Modeler;
-import sorcer.service.Arg;
-import sorcer.service.ExertionException;
-import sorcer.service.Mogram;
-import sorcer.service.Task;
+import sorcer.core.signature.ObjectSignature;
+import sorcer.service.*;
 import sorcer.service.modeling.Model;
 
 import java.rmi.RemoteException;
-
-import static sorcer.eo.operator.sig;
-import static sorcer.eo.operator.task;
 
 /**
  * ServiceModler - The SORCER rendezvous service provider that manages
@@ -42,7 +41,7 @@ import static sorcer.eo.operator.task;
  * @author Mike Sobolewski
  */
 public class ServiceModeler extends RendezvousBean implements Modeler {
-    private Logger logger = LoggerFactory.getLogger(ServiceModeler.class.getName());
+    private Logger logger = LoggerFactory.getLogger(ServiceModeler.class);
 
     public ServiceModeler() throws RemoteException {
         // do nothing
@@ -50,27 +49,54 @@ public class ServiceModeler extends RendezvousBean implements Modeler {
 
     public Mogram localExert(Mogram mogram, Transaction txn, Arg... args)
             throws TransactionException, ExertionException, RemoteException {
-        //logger.info("*********************************************ServiceModeler.exert, model = " + mogram);
         setServiceID(mogram);
-        SrvModel model = (SrvModel) mogram;
-        Model result = null;
+        Mogram result = null;
+        Model model = null;
+        Signature builder = null;
+        ContextSelection contextSelector = null;
+        Context dataContext = null;
+        TaskModel taskModel = null;
         try {
-            if (model.getSubjectValue() instanceof Class) {
-                Task task = task(model.getName(), sig(model.getSubjectPath(), model.getSubjectValue()), model);
-                Task out = task.exert();
-                logger.trace("<==== Result: " + out);
-                result = out.getDataContext();
-            } else {
-                Task task = task(model.getName(), model);
-                Task out = task.exert();
-                logger.trace("<==== Result: " + out);
-                result = out.getDataContext();
+            if (mogram instanceof SrvModel) {
+                 return ((SrvModel)mogram).exert(args);
+            } else if (mogram instanceof ModelerObjectTask) {
+                taskModel = ((ModelerObjectTask) mogram).getTaskModel();
+                if (taskModel != null) {
+                    model = taskModel.getModel();
+                    builder = taskModel.getBuilder();
+                    contextSelector = taskModel.getModelSelector();
+                }
+            } else if (mogram instanceof ModelerNetTask) {
+                taskModel = ((ModelerNetTask) mogram).getTaskModel();
+                if (taskModel != null) {
+                    model = taskModel.getModel();
+                    builder = taskModel.getBuilder();
+                    contextSelector = taskModel.getModelSelector();
+                }
             }
+
+            dataContext =  mogram.getDataContext();
+
+            if (dataContext instanceof Model) {
+                result = (Mogram) dataContext.getResponse(args);
+                if (builder != null) {
+                    model = (Model) ((ObjectSignature)builder).newInstance();
+                }
+                if (model != null) {
+                    model.substitute(result);
+                    result = model.exert(args);
+                }
+                if (contextSelector != null) {
+                    result = (Mogram) contextSelector.doSelection(result);
+                }
+            }
+            ((ServiceExertion)mogram).setContext((Context)result);
+            logger.trace("<==== Result: " + result);
+
         } catch (Throwable e) {
             throw new ExertionException(e);
         }
-        //logger.info("*********************************************ServiceModeler.exert(), model = " + result);
-        return result;
+        return mogram;
     }
 
 }

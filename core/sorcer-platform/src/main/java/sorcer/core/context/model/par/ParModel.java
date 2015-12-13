@@ -106,9 +106,9 @@ public class ParModel<T> extends EntModel<T> implements Invocation<T>, Mappable<
 				Signature.ReturnPath rp = returnPath(args);
 				if (rp != null)
 					val = (T) getReturnValue(rp);
-				else if (modelStrategy.getResponsePaths() != null
-						&& modelStrategy.getResponsePaths().size() == 1) {
-					val = asis(modelStrategy.getResponsePaths().get(0).getName());
+				else if (mogramStrategy.getResponsePaths() != null
+						&& mogramStrategy.getResponsePaths().size() == 1) {
+					val = asis(mogramStrategy.getResponsePaths().get(0).getName());
 				} else {
 					val = (T) super.getValue(path, args);
 				}
@@ -126,9 +126,9 @@ public class ParModel<T> extends EntModel<T> implements Invocation<T>, Mappable<
 				return (T) ((Evaluation) val).getValue(args);
 			}   if (val instanceof Fidelity) {
 				return (T) new Entry(path, val).getValue(args);
-			} else if (path == null && val == null && modelStrategy.getResponsePaths() != null) {
-				if (modelStrategy.getResponsePaths().size() == 1)
-					return (T) getValue(modelStrategy.getResponsePaths().get(0).getName(), args);
+			} else if (path == null && val == null && mogramStrategy.getResponsePaths() != null) {
+				if (mogramStrategy.getResponsePaths().size() == 1)
+					return (T) getValue(mogramStrategy.getResponsePaths().get(0).getName(), args);
 				else
 					return (T) getResponse();
 			} else {

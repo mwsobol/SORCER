@@ -219,6 +219,10 @@ public interface Signature extends Service, Comparable, Dependency, Identifiable
             }
         }
 
+		public ReturnPath(From outPaths) {
+			 this(null, null, outPaths);
+		}
+
         public ReturnPath(String path, In inPaths, From outPaths) {
             this.path = path;
             if (outPaths != null && outPaths.size() > 0) {

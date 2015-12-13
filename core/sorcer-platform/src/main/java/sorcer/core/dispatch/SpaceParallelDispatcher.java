@@ -95,7 +95,7 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
                 try {
                     if (monSession.getState()==State.INITIAL.ordinal()) {
                         logger.info("initializing monitoring from SpaceParallelDispatcher for " + mogram.getName());
-                        monSession.init(ExertionDispatcherFactory.LEASE_RENEWAL_PERIOD, ExertionDispatcherFactory.DEFAULT_TIMEOUT_PERIOD);
+                        monSession.init(MogramDispatcherFactory.LEASE_RENEWAL_PERIOD, MogramDispatcherFactory.DEFAULT_TIMEOUT_PERIOD);
                     }
                 } catch (MonitorException me) {
                     logger.error("Problem starting monitoring for " + xrt.getName() + " " + me.getMessage());

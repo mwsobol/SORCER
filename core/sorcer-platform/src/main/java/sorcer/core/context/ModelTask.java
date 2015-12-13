@@ -13,36 +13,33 @@
  * of any information, apparatus, product, or process disclosed, or represents that its use would not infringe privately
  * owned rights.
  */
-package sorcer.service;
+package sorcer.core.context;
 
 import net.jini.core.transaction.Transaction;
-import sorcer.core.context.ContextFilter;
-import sorcer.core.context.ServiceContext;
 import sorcer.core.signature.ObjectSignature;
+import sorcer.service.*;
 import sorcer.service.modeling.FilterException;
 import sorcer.service.modeling.Model;
-import sorcer.service.modeling.Modeling;
-import sorcer.service.modeling.ModelingTask;
 
 import java.rmi.RemoteException;
 
 /**
- *  * The SORCER var-oriented model task extending the basic task implementation {@link Task}.
+ *  * The SORCER model task extending the basic task implementation {@link Task}.
  * 
  * @author Mike Sobolewski
  */
-public class ModelTask extends Task implements ModelingTask {
+public class ModelTask extends Task {
 	
 	private static final long serialVersionUID = 1L;
 	
-	protected Modeling model;
+	protected Model model;
 
-	protected ContextFilter contextFilter;
+	protected ContextSelector contextFilter;
 
 	protected ServiceContext modelContext;
 
 	public ModelTask() {
-		// do nathing
+		// do nothing
 	}
 
 	public ModelTask(String name) {
@@ -57,7 +54,11 @@ public class ModelTask extends Task implements ModelingTask {
 	public Task doTask(Transaction txn, Arg... args) throws ExertionException,
 			SignatureException, RemoteException {
 		try {
-			model = ((Model)model).exert(txn, args);
+			if (model != null) {
+				model = ((Model) model).exert(txn, args);
+			} else {
+				super.doTask(args);
+			}
 		} catch (Exception e) {
 			throw new ExertionException(e);
 		}
@@ -69,7 +70,7 @@ public class ModelTask extends Task implements ModelingTask {
 		if (contextFilter == null)
 			return (Context) model;
 		else
-			return (Context) contextFilter.doFilter(model);
+			return (Context) contextFilter.doSelection(model);
 	}
 	
 	private  Object instance(ObjectSignature signature)
@@ -82,11 +83,11 @@ public class ModelTask extends Task implements ModelingTask {
 			return signature.initInstance();
 	}
 	
-	public Modeling getModel() {
+	public Model getModel() {
 		return model;
 	}
 	
-	public void setModel(Modeling model) {
+	public void setModel(Model model) {
 		this.model = model;
 	}
 

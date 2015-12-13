@@ -62,6 +62,8 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
 
     protected FidelityManagement fiManager;
 
+    protected MogramStrategy mogramStrategy;
+
     /**
      * position of component Mogram in a compund mogram
      */
@@ -857,6 +859,15 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
             this.serviceFidelity = new Fidelity();
             this.serviceFidelity.selects.addAll(fidelity.selects);
         }
+    }
+
+    @Override
+    public MogramStrategy getMogramStrategy() {
+        return mogramStrategy;
+    }
+
+    public void setModelStrategy(MogramStrategy strategy) {
+        mogramStrategy = strategy;
     }
 
     public boolean isBatch() {

@@ -46,6 +46,7 @@ import sorcer.core.plexus.MultiFidelity;
 import sorcer.core.provider.*;
 import sorcer.core.provider.exerter.Binder;
 import sorcer.core.provider.rendezvous.ServiceConcatenator;
+import sorcer.core.provider.rendezvous.ServiceModeler;
 import sorcer.core.requestor.ExertRequestor;
 import sorcer.core.signature.*;
 import sorcer.netlet.ScriptExerter;
@@ -54,6 +55,7 @@ import sorcer.service.Signature.*;
 import sorcer.service.Strategy.*;
 import sorcer.service.modeling.Model;
 import sorcer.service.modeling.Modeling;
+import sorcer.service.modeling.ModelingTask;
 import sorcer.service.modeling.Variability;
 import sorcer.util.Loop;
 import sorcer.util.ObjectCloner;
@@ -435,9 +437,9 @@ public class operator {
 		}
 		if (response != null) {
 			if (response.path() != null) {
-				((ServiceContext) cxt).getModelStrategy().getResponsePaths().add(new Name(response.path()));
+				((ServiceContext) cxt).getMogramStrategy().getResponsePaths().add(new Name(response.path()));
 			}
-			((ServiceContext) cxt).getModelStrategy().setResult(response.path(), response.target);
+			((ServiceContext) cxt).getMogramStrategy().setResult(response.path(), response.target);
 		}
 		if (entryLists.size() > 0) {
 			((ServiceContext) cxt).setEntryLists(entryLists);
@@ -445,14 +447,14 @@ public class operator {
 		if (connList.size() > 0) {
 			for (MapContext conn : connList) {
 				if (conn.direction == MapContext.Direction.IN) {
-					((ServiceContext) cxt).getModelStrategy().setInConnector(conn);
+					((ServiceContext) cxt).getMogramStrategy().setInConnector(conn);
 				} else {
-					((ServiceContext) cxt).getModelStrategy().setOutConnector(conn);
+					((ServiceContext) cxt).getMogramStrategy().setOutConnector(conn);
 				}
 			}
 		}
 		if (depList.size() > 0) {
-			Map<String, List<String>> dm = ((ServiceContext) cxt).getModelStrategy().getDependentPaths();
+			Map<String, List<String>> dm = ((ServiceContext) cxt).getMogramStrategy().getDependentPaths();
 			String path = null;
 			List<String> dependentPaths = null;
 			for (DependencyEntry e : depList) {
@@ -462,9 +464,9 @@ public class operator {
 			}
 		}
 		if (accessType != null)
-			cxt.getModelStrategy().setAccessType(accessType);
+			cxt.getMogramStrategy().setAccessType(accessType);
 		if (flowType != null)
-			cxt.getModelStrategy().setFlowType(flowType);
+			cxt.getMogramStrategy().setFlowType(flowType);
 		if (sig != null)
 			cxt.setSubject(sig.getSelector(), sig.getServiceType());
 		if (cxt instanceof SrvModel && ! manualDeps) {
@@ -926,6 +928,9 @@ public class operator {
 			}
 		}
 		Signature sig = null;
+//		if (Modeler.class.isAssignableFrom(serviceType)) {
+//			sig = new ModelSignature(operation, serviceType, providerName, args);
+//		} else
 		if (serviceType.isInterface()) {
 			sig = new NetSignature(operation, serviceType, providerName);
 		} else {
@@ -958,6 +963,8 @@ public class operator {
 					((ServiceSignature) sig).setShellRemote((Strategy.Shell) o);
 				} else if (o instanceof ReturnPath) {
 					sig.setReturnPath((ReturnPath) o);
+				} else if (o instanceof Signature.From ) {
+					sig.setReturnPath(new ReturnPath((Signature.From)o));
 				} else if (o instanceof ServiceDeployment) {
 					((ServiceSignature) sig).setProvisionable(true);
 					((ServiceSignature) sig).setDeployment((ServiceDeployment) o);
@@ -1304,6 +1311,28 @@ public class operator {
 		return task(signature, null);
 	}
 
+	public static ModelingTask modelerTask(String name, Signature signature)
+			throws SignatureException {
+		ModelingTask task = null;
+		if (signature instanceof NetSignature) {
+			task = new ModelerNetTask(name, signature);
+		} else if (signature instanceof ObjectSignature) {
+			task = new ModelerObjectTask(name, signature);
+		}
+		return task;
+	}
+
+	public static ModelingTask modelerTask(Signature signature, Context context)
+			throws SignatureException {
+		ModelingTask task = null;
+		if (signature instanceof NetSignature) {
+			task = new ModelerNetTask(signature, context);
+		} else if (signature instanceof ObjectSignature) {
+			task = new ModelerObjectTask(signature, context);
+		}
+		return task;
+	}
+
 	public static Task task(Signature signature, Context context)
 			throws SignatureException {
 		Task task;
@@ -1377,19 +1406,21 @@ public class operator {
 			}
 		}
 		if (ss != null) {
-			if (ss instanceof NetSignature) {
-				try {
-					task = new NetTask(tname, (NetSignature) ss);
-				} catch (SignatureException e) {
-					throw new ExertionException(e);
+			try {
+				if (((ServiceSignature)ss).isModelerSignature()) {
+					task = (Task) modelerTask(tname, ss);
+				} else if (ss instanceof NetSignature) {
+					task = new NetTask(tname, ss);
+				} else if (ss instanceof ObjectSignature) {
+					task = new ObjectTask(ss.getSelector(), (ObjectSignature) ss);
+					task.setName(tname);
+				} else if (ss instanceof EvaluationSignature) {
+					task = new EvaluationTask(tname, (EvaluationSignature) ss);
+				} else if (ss instanceof ServiceSignature) {
+					task = new Task(tname, ss);
 				}
-			} else if (ss instanceof ObjectSignature) {
-				task = new ObjectTask(ss.getSelector(), (ObjectSignature) ss);
-				task.setName(tname);
-			} else if (ss instanceof EvaluationSignature) {
-				task = new EvaluationTask(tname, (EvaluationSignature) ss);
-			} else if (ss instanceof ServiceSignature) {
-				task = new Task(tname, ss);
+			} catch (SignatureException e) {
+				throw new ExertionException(e);
 			}
 			ops.remove(ss);
 		}
@@ -1659,9 +1690,9 @@ public class operator {
 		if (connList != null) {
 			for (MapContext conn : connList) {
 				if (conn.direction == MapContext.Direction.IN)
-					((ServiceContext)job.getDataContext()).getModelStrategy().setInConnector(conn);
+					((ServiceContext)job.getDataContext()).getMogramStrategy().setInConnector(conn);
 				else
-					((ServiceContext)job.getDataContext()).getModelStrategy().setOutConnector(conn);
+					((ServiceContext)job.getDataContext()).getMogramStrategy().setOutConnector(conn);
 			}
 		}
 
@@ -2177,7 +2208,7 @@ public class operator {
 	}
 
 	public static Link getLink(Context context, String path) throws ContextException {
-		return (ContextLink)context.getLink(path);
+		return context.getLink(path);
 	}
 
 	public static <T> ControlContext strategy(T... entries) {
@@ -2509,11 +2540,8 @@ public class operator {
 		}
 		Object target = null;
 		Object provider = null;
-		Class<?> providerType = null;
-		if (signature.getClass() == NetSignature.class) {
-			providerType = ((NetSignature) signature).getServiceType();
-		} else if (signature.getClass() == ObjectSignature.class) {
-			providerType = ((ObjectSignature) signature).getProviderType();
+		Class<?> providerType = signature.getServiceType();
+		if (signature.getClass() == ObjectSignature.class) {
 			target = ((ObjectSignature) signature).getTarget();
 		}
 		try {
@@ -2539,6 +2567,15 @@ public class operator {
 						provider = sorcer.co.operator.instance(signature);
 						((ObjectSignature)signature).setTarget(provider);
 					}
+				}
+			} else if (signature instanceof ModelSignature) {
+				if (target != null) {
+					provider = target;
+				} else if (ServiceModeler.class.isAssignableFrom(providerType)) {
+					provider = providerType.newInstance();
+				} else if (providerType.isInterface()
+						&& (Modeler.class.isAssignableFrom(providerType))) {
+					provider = Accessor.create().getService(signature);
 				}
 			} else if (signature instanceof EvaluationSignature) {
 				provider = ((EvaluationSignature) signature).getEvaluator();

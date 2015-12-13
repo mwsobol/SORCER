@@ -89,7 +89,7 @@ public class EvaluationTask extends Task {
 	@Override
 	public Task doTask(Transaction txn, Arg... entries) throws ExertionException,
 			SignatureException {
-		dataContext.getModelStrategy().setCurrentSelector(getProcessSignature().getSelector());
+		dataContext.getMogramStrategy().setCurrentSelector(getProcessSignature().getSelector());
 		dataContext.setCurrentPrefix(getProcessSignature().getPrefix());
 
 		if (serviceFidelity.getSelects().size() > 1) {

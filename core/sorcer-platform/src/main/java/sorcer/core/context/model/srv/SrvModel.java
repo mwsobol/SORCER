@@ -376,7 +376,7 @@ public class SrvModel extends ParModel<Object> implements Model {
     }
 
     protected void execDependencies(String path, Arg... args) throws ContextException {
-        Map<String, List<String>> dpm = modelStrategy.getDependentPaths();
+        Map<String, List<String>> dpm = mogramStrategy.getDependentPaths();
         List<String> dpl = dpm.get(path);
         if (dpl != null && dpl.size() > 0) {
             for (String p : dpl) {

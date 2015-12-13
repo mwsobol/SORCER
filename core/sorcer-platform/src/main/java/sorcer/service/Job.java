@@ -384,8 +384,8 @@ public class Job extends CompoundExertion {
 	}
 
 	public Context finalizeOutDataContext() throws ContextException {
-		if (dataContext.getModelStrategy().getOutConnector() != null) {
-			updateContextWith(dataContext.getModelStrategy().getOutConnector());
+		if (dataContext.getMogramStrategy().getOutConnector() != null) {
+			updateContextWith(dataContext.getMogramStrategy().getOutConnector());
 		}
 		return dataContext;
 	}

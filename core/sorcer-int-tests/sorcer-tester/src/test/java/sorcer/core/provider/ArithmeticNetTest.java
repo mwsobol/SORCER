@@ -1,6 +1,5 @@
 package sorcer.core.provider;
 
-import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -41,17 +40,11 @@ import static sorcer.eo.operator.value;
 /**
  * @author Mike Sobolewski
  */
-@SuppressWarnings({ "rawtypes", "unchecked" })
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("core/sorcer-int-tests/sorcer-tester")
 public class ArithmeticNetTest implements SorcerConstants {
 
 	private static final Logger logger = LoggerFactory.getLogger(ArithmeticNetTest.class);
-
-    @BeforeClass
-    public static void setup() {
-        Accessor.create();
-    }
 
 	@Test
 	public void getProviderTest() throws Exception {

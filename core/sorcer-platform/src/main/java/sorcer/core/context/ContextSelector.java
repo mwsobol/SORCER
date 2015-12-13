@@ -22,7 +22,6 @@ import sorcer.service.Context;
 import sorcer.service.ContextException;
 import sorcer.service.SetterException;
 import sorcer.service.Task;
-import sorcer.service.modeling.FilterException;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -30,7 +29,7 @@ import java.util.Iterator;
 import java.util.List;
 
 @SuppressWarnings("rawtypes")
-public class ContextFilter {
+public class ContextSelector {
 	static final long serialVersionUID = -1L;
 
 	protected static int count = 0;
@@ -38,10 +37,10 @@ public class ContextFilter {
 	// name of this filter
 	protected String name;
 
-	final protected static Logger logger = LoggerFactory.getLogger(ContextFilter.class
+	final protected static Logger logger = LoggerFactory.getLogger(ContextSelector.class
 			.getName());
 
-	private static String defaultName = "cxtFil-";
+	private static String defaultName = "cxtSel-";
 
 	private List<String> paths = new ArrayList<String>();
 
@@ -51,22 +50,22 @@ public class ContextFilter {
 
 	private String selectedTaskName;
 
-	public ContextFilter(String path) {
+	public ContextSelector(String path) {
 		name = defaultName + count++;
 		selectedPath = path;
 		this.paths.add(path);
 	}
 	
-	public ContextFilter(String filterName, String path) {
-		if (filterName == null)
+	public ContextSelector(String selectorName, String path) {
+		if (selectorName == null)
 			name = defaultName + count++;
 		else
-			name = filterName;
+			name = selectorName;
 		selectedPath = path;
 		this.paths.add(path);
 	}
-	
-	public ContextFilter(Task task, String path) {
+
+	public ContextSelector(Task task, String path) {
 		name = defaultName + count++;
 		selectedTaskName = task.getName();
 		selectedPath = path;
@@ -87,23 +86,18 @@ public class ContextFilter {
 		this.paths.addAll(paths);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see sorcer.calculus.FilterManagement#doFilter()
-	 */
-	public Object doFilter(Object input) throws FilterException {
+	public Object doSelection(Object input) throws ContextException {
 		Object in = input;
 		if (input != null && in instanceof Context) {
 			target = in;
 		} else
-			throw new FilterException("ContextFilter requires input of Context type.");
+			throw new ContextException("ContextSelector requires input of Context type.");
 
 		try {
 			if (selectedTaskName != null) {
 				target = ((ServiceContext)in).getTaskContext(selectedTaskName);
 			} else {
-				in = filterOut((Context) target);
+				in = select((Context) target);
 			}
 		} catch (ContextException e) {
 			e.printStackTrace();
@@ -111,9 +105,9 @@ public class ContextFilter {
 		return in;
 	}
 
-	private Object filterOut(Context in) throws ContextException {
+	private Object select(Context in) throws ContextException {
 		Object val;
-		Context out = new ServiceContext("Filtered Context");
+		Context out = new ServiceContext("Selected Context");
 		if (name != null)
 			out.setSubject("filter" + SorcerConstants.CPS + name, new Date());
 
@@ -143,19 +137,15 @@ public class ContextFilter {
 		return path;
 	}
 	
-	public String setPath(int index) throws FilterException {
+	public String setPath(int index) throws ContextException {
 		String sp = paths.get(index);
 		if (sp == null)
-			throw new FilterException("unknown path in this filter at: " + index);
+			throw new ContextException("unknown path in this filter at: " + index);
 		selectedPath = sp;
 		return sp;
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see sorcer.calculus.FilterManagement#setValue(java.lang.Object)
-	 */
+
 	public void setValue(Object value) throws SetterException {
 		if (paths.size() == 1) {
 			try {
@@ -169,14 +159,10 @@ public class ContextFilter {
 	}
 
 	public String info() {
-		return "Context Filter for:" + paths;
+		return "ContextSelector for:" + paths;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see sorcer.calculus.Filter(java.lang.String, java.lang.Object)
-	 */
+
 	public void setValue(String selector, Object value) throws SetterException {
 		try {
 			if (target == null)
@@ -190,7 +176,7 @@ public class ContextFilter {
 	
 	/**
 	 * <p>
-	 * Returns a task name of this filter direct target responseContext. The task responseContext is
+	 * Returns a task name of this selector direct target responseContext. The task responseContext is
 	 * subcontext of the input (indirect) job responseContext.
 	 * </p>
 	 * 

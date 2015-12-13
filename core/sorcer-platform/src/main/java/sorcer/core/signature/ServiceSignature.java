@@ -23,6 +23,7 @@ import net.jini.core.transaction.TransactionException;
 import org.slf4j.Logger;
 import sorcer.core.SorcerConstants;
 import sorcer.core.deploy.ServiceDeployment;
+import sorcer.core.provider.Modeler;
 import sorcer.service.*;
 import sorcer.service.Strategy.Provision;
 import sorcer.service.modeling.Variability;
@@ -618,6 +619,13 @@ public class ServiceSignature implements Signature, SorcerConstants {
 
 	public void setOutConnector(Context outConnector) {
 		this.outConnector = outConnector;
+	}
+
+	public boolean isModelerSignature() {
+		if(serviceType != null)
+			return (Modeler.class.isAssignableFrom(serviceType));
+		else
+			return false;
 	}
 
 	@Override

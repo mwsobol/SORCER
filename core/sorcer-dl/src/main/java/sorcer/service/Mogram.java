@@ -34,7 +34,7 @@ import java.util.Map;
  *
  * @author Mike Sobolewski
  */
-public interface Mogram extends Service, Exerter, Projection<Signature>, Scopable, Substitutable, Identifiable,  Arg {
+public interface Mogram extends Identifiable, Service, Exerter, Projection<Signature>, Scopable, Substitutable,  Arg {
 
     /**
      * Exerts this mogram by the assigned service provider if it is set. If a service
@@ -284,6 +284,8 @@ public interface Mogram extends Service, Exerter, Projection<Signature>, Scopabl
      * @throws RemoteException
      */
     public Signature getBuilder(Arg... args) throws MogramException;
+
+    public MogramStrategy getMogramStrategy();
 
     public void setBuilder(Signature builder) throws MogramException;
 

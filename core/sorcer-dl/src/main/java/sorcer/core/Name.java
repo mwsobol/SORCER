@@ -19,10 +19,12 @@ package sorcer.core;
 
 import sorcer.service.Arg;
 
+import java.io.Serializable;
+
 /**
  * Created by Mike Sobolewski
  */
-public class Name implements Arg {
+public class Name implements Arg, Serializable {
     
     private String name;
 

@@ -275,7 +275,7 @@ public class Entry<T> extends Tuple2<String, T> implements Duo<T>, Service, Depe
 		if (mogram instanceof EntModel) {
 			if (_2 != null && _2 != Context.none)
 				add((Context)mogram, this);
-			((ServiceContext)mogram).getModelStrategy().getResponsePaths().add(new Name(_1));
+			((ServiceContext)mogram).getMogramStrategy().getResponsePaths().add(new Name(_1));
 			out = (Context) ((Model)mogram).getResponse();
 		} else if (mogram instanceof ServiceContext) {
 			if (_2 == null || _2 == Context.none) {

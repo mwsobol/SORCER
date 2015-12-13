@@ -19,7 +19,6 @@ import sorcer.service.Arg;
 import sorcer.service.Fidelity;
 import sorcer.service.Signature;
 import sorcer.service.modeling.Model;
-import sorcer.service.modeling.Modeling;
 import sorcer.service.modeling.Variability;
 
 public class ModelSignature extends ServiceSignature {
@@ -34,28 +33,31 @@ public class ModelSignature extends ServiceSignature {
 	
 	private Model model;
 
-	public ModelSignature(String selector, Modeling model, Arg... paramters) {
-		this.selector = selector;
-		this.model = model;
-		for (Arg p : paramters) {
+	public ModelSignature(String selector, Class serviceType, String providerName, Arg... parameters) {
+		super(selector, selector);
+		this.serviceType = serviceType;
+		if (providerName == null || providerName.length() == 0)
+			this.providerName = ANY;
+		else
+			this.providerName = providerName;
+		for (Arg p : parameters) {
 			if (p instanceof ReturnPath) {
 				this.returnPath = (ReturnPath)p;
 			}
 		}
 	}
 
+	public ModelSignature(String selector, Model model) {
+		super(selector, selector);
+		this.model = model;
+	}
+
 	public ModelSignature(String selector, Class serviceType, Arg... paramters) {
-		this.selector = selector;
-		this.serviceType = serviceType;
-		for (Arg p : paramters) {
-			if (p instanceof ReturnPath) {
-				this.returnPath = (ReturnPath)p;
-			}
-		}
+		this(selector, serviceType, null, paramters);
 	}
 	
 	public ModelSignature(String selector, Signature innerSignature, Arg... paramters) {
-		this.selector = selector;
+		super(selector, selector);
 		this.innerSignature = innerSignature;
 		if (innerSignature instanceof NetSignature)
 			providerName = innerSignature.getProviderName();

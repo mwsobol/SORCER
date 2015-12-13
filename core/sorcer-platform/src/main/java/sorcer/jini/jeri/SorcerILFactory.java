@@ -30,6 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import sorcer.service.*;
+import sorcer.service.modeling.ModelingTask;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -278,7 +279,8 @@ public class SorcerILFactory extends BasicILFactory {
 				}
 
 				Object service = null;
-				if (args.length > 0 &&  args[0] instanceof CompoundExertion) {
+				if (args.length > 0 &&
+						(args[0] instanceof CompoundExertion || args[0] instanceof ModelingTask)) {
 					service = serviceBeanMap.get(((Exertion) args[0]).getProcessSignature().getServiceType());
 					if (service != null) {
 						obj = method.invoke(service, args);

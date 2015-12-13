@@ -253,7 +253,7 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
         runningExertionIDs.add(job.getId());
 
         // create a new instance of a dispatcher
-        Dispatcher dispatcher = ExertionDispatcherFactory.getFactory()
+        Dispatcher dispatcher = MogramDispatcherFactory.getFactory()
                 .createDispatcher(job, sharedContexts, true, provider);
         dispatcher.exec(args);
         // wait until serviceJob is done by dispatcher
@@ -297,7 +297,7 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
 			runningExertionIDs.add(block.getId());
 
 			// create a new instance of a dispatcher
-			dispatcher = ExertionDispatcherFactory.getFactory()
+			dispatcher = MogramDispatcherFactory.getFactory()
 					.createDispatcher(block, sharedContexts, true, provider);
 
             dispatcher.exec(args);

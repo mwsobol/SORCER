@@ -20,11 +20,13 @@ package sorcer.service;
 import sorcer.core.Name;
 import sorcer.service.modeling.Model;
 
+import java.io.Serializable;
+
 /**
  * Any named input value in particular a free variable. 
  */
 
-public interface Arg {
+public interface Arg extends Serializable {
 	
 	public String getName();
 

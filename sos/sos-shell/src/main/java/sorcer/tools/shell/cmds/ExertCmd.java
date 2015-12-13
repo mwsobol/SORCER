@@ -227,7 +227,7 @@ public class ExertCmd extends ShellCmd {
 			}
 			if (ifMogramControl) {
 				out.println("\n---> OUTPUT STRATEGY --->");
-				out.println(((Model) out).getModelStrategy());
+				out.println(((Model) out).getMogramStrategy());
 			}
 		} else {
 			if (target != null) {

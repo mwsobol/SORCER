@@ -230,7 +230,7 @@ public class MethodInvoker<T> extends ServiceInvoker<T> implements MethodInvokin
 						parameters2[1] = new Arg[0];
 						parameters = parameters2;
 					// ignore default setup for exerting mograms
-					} else if (paramTypes[0] == Mogram.class
+					} else if (Mogram.class.isAssignableFrom(paramTypes[0])
 							&& selector.equals("exert"))	{
 						paramTypes = new Class[3];
 						paramTypes[0] = Mogram.class;
@@ -262,7 +262,7 @@ public class MethodInvoker<T> extends ServiceInvoker<T> implements MethodInvokin
 				}
 			}
 			if (context != null)
-				((ServiceContext)context).getModelStrategy().setCurrentSelector(selector);
+				((ServiceContext)context).getMogramStrategy().setCurrentSelector(selector);
 			val = m.invoke(target, parameters);
 		} catch (Exception e) {
 			StringBuilder message = new StringBuilder();
