@@ -192,7 +192,7 @@ public class Models {
 	}
 
 	@Test
-	public void modelTaskIncrementLoop() throws Exception {
+	public void lambdaTaskInLoop() throws Exception {
 		Task ti = task(
 				sig("add", AdderImpl.class),
 				model("add", inEnt("arg/x1", inc("arg/x2", 2.0)),
