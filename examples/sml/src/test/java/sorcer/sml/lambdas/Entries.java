@@ -1,11 +1,9 @@
 package sorcer.sml.lambdas;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
-import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.core.context.model.ent.Entry;
@@ -18,6 +16,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
+import static sorcer.eo.operator.get;
 import static sorcer.eo.operator.value;
 import static sorcer.mo.operator.response;
 import static sorcer.po.operator.invoker;
@@ -26,7 +25,6 @@ import static sorcer.util.exec.ExecUtils.CmdResult;
 /**
  * @author Mike Sobolewski
  */
-@RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/sml")
 public class Entries {
 	private final static Logger logger = LoggerFactory.getLogger(Entries.class);
@@ -46,7 +44,7 @@ public class Entries {
 //
 //        assertEquals(30.0, value(y2));
 
-        // the model itself as a free variable of the lambda
+        // the model itself as a free variable of the lambda y2
         Model mo = model(ent("x1", 10.0), ent("x2", 20.0),
                 lambda("y2", (Context<Double> cxt) ->
                         value(cxt, "x1") + value(cxt, "x2")));
@@ -124,7 +122,6 @@ public class Entries {
 
     @Test
     public void lambdaClient() throws Exception {
-
         // entries as ValueCallable and  Requestor lambdas
         Model mo = model(ent("multiply/x1", 10.0), ent("multiply/x2", 50.0),
                 lambda("multiply", (Context<Double> model) ->

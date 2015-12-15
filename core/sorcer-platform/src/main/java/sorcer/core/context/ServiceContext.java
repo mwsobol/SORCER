@@ -193,7 +193,6 @@ public class ServiceContext<T> extends ServiceMogram implements
 		parentId = cxt.getParentId();
 		creationDate = new Date();
 		description = cxt.getDescription();
-		scopeCode = cxt.getScopeCode();
 		scope = cxt.getScope();
 		initContext = ((ServiceContext) cxt).getInitContext();
 		ownerId = cxt.getOwnerId();
@@ -339,7 +338,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		}
 		if (rp != null) {
 			try {
-				if (rp.path != null && rp.path.equals("self")) {
+				if (rp.path != null && rp.path.equals(Signature.SELF)) {
 					return (T) this;
 				} else if (rp.outPaths != null && rp.outPaths.length > 0) {
 					val = (T)getSubcontext(rp.outPaths);
@@ -1892,7 +1891,6 @@ public class ServiceContext<T> extends ServiceMogram implements
 	public String toStringComplete(String cr, StringBuffer sb) {
 		sb.append("Domain:").append(domainId);
 		sb.append(" SubDomain:" + subdomainId);
-		sb.append(" Scope:" + scopeCode);
 		sb.append(" ID:" + mogramId);
 		sb.append("\nPaths: \n");
 		Iterator<String> e = null;

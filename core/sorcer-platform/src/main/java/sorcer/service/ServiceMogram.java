@@ -79,8 +79,6 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
     // the mogram's scope
     protected Context scope;
 
-    protected Integer scopeCode = PRIVATE_SCOPE;
-
     protected String description;
 
     protected String projectName;
@@ -155,7 +153,6 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
         subdomainId = "0";
         accessClass = PUBLIC;
         isExportControlled = Boolean.FALSE;
-        scopeCode = new Integer(PRIVATE_SCOPE);
         status = new Integer(INITIAL);
         principal = new SorcerPrincipal(System.getProperty("user.name"));
         principal.setId(principal.getName());
@@ -294,10 +291,6 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
 
     public void setSessionId(Uuid sessionId) {
         this.sessionId = sessionId;
-    }
-
-    public void setScopeCode(int value) {
-        scopeCode = new Integer(value);
     }
 
     @Override
@@ -539,10 +532,6 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
 
     public Date getCreationDate() {
         return creationDate;
-    }
-
-    public Integer getScopeCode() {
-        return scopeCode;
     }
 
     public String getDomainName() {

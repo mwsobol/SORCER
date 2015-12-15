@@ -1048,7 +1048,7 @@ public class Table implements ModelTable {
 					StorageManagement objectStore = ((StorageManagement) Accessor.get().getService(outputStorageSignature));
 					outputTableURL = (URL)objectStore.contextStore(cxt).getValue("object/url");
 				}
-			} else if (url.getHost().equals("self")) {
+			} else if (url.getHost().equals(Signature.SELF)) {
 				outputTableURL = ((DatabaseStorer) provider).storeObject(this);				
 			} else {
 				String serviceType = url.getHost();

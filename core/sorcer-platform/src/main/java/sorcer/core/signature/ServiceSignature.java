@@ -104,12 +104,6 @@ public class ServiceSignature implements Signature, SorcerConstants {
 	private String[] contextTemplateIDs;
 
 	/**
-	 * when a method implementation is provided 'order' indicates whether a
-	 * method is tried first (SELF) or the provider is called first (PROVIDER)
-	 */
-	private int order = SELF;
-
-	/**
 	 * URL for a mobile agent: an inserted custom method executed by service
 	 * providers
 	 */
@@ -210,14 +204,6 @@ public class ServiceSignature implements Signature, SorcerConstants {
 		return ownerID;
 	}
 
-	public boolean isSelfFirst() {
-		return order == SELF;
-	}
-
-	public boolean isProviderFist() {
-		return order == PROVIDER;
-	}
-
 	public String getAgentCodebase() {
 		return agentCodebase;
 	}
@@ -267,7 +253,6 @@ public class ServiceSignature implements Signature, SorcerConstants {
 		group = method.group;
 		contextTemplateIDs = method.contextTemplateIDs;
 		exertion = method.exertion;
-		order = method.order;
 		setSelector(method.selector);
 
 		return this;

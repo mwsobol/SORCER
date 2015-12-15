@@ -8,6 +8,7 @@ import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.impl.*;
 import sorcer.core.plexus.Morpher;
+import sorcer.core.provider.rendezvous.ServiceConcatenator;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
 
@@ -19,6 +20,7 @@ import static sorcer.eo.operator.put;
 import static sorcer.eo.operator.result;
 import static sorcer.eo.operator.value;
 import static sorcer.mo.operator.*;
+import static sorcer.po.operator.inc;
 
 /**
  * @author Mike Sobolewski
@@ -27,7 +29,6 @@ import static sorcer.mo.operator.*;
 @ProjectContext("examples/sml")
 public class Models {
 	private final static Logger logger = LoggerFactory.getLogger(Models.class);
-
 
 	@Test
 	public void lambdaModel() throws Exception {
@@ -188,6 +189,51 @@ public class Models {
 		logger.info("response: " + out);
 		assertTrue(get(out, "subtract").equals(1900.0));
 		assertTrue(get(out, "lambda").equals(2000.0));
+	}
+
+	@Test
+	public void modelTaskIncrementLoop() throws Exception {
+		Task ti = task(
+				sig("add", AdderImpl.class),
+				model("add", inEnt("arg/x1", inc("arg/x2", 2.0)),
+						inEnt("arg/x2", 80.0), result("task/result")));
+
+		Block lb = block(sig(ServiceConcatenator.class),
+				context(ent("sum", 0.0)),
+				loop(0, 100, task(lambda("sum", (Context<Double> cxt) -> {
+					Double out = value(cxt, "sum") + (Double)value(ti);
+					set(context(ti), "arg/x2", (Double)value(context(ti), "arg/x2") + 1.5);
+					return out; }))));
+		lb = exert(lb);
+
+		assertTrue(value(context(lb), "sum").equals(31050.0));
+	}
+
+	@Test
+	public void canditionalEntryRangeLoop() throws Exception {
+		Task ti = task(
+				sig("add", AdderImpl.class),
+				model("add", inEnt("arg/x1", inc("arg/x2", 2.0)),
+						inEnt("arg/x2", 80.0), result("task/result")));
+
+		Block lb = block(sig(ServiceConcatenator.class),
+				context(ent("sum", 0.0),
+						ent("from", 320.0), ent("to", 420.0)),
+				loop(0, 100, task(lambda("sum", (Context<Double> cxt) -> {
+					Double from = value(cxt, "from");
+					Double to = value(cxt, "to");
+					Double out = value(cxt, "sum") + (Double)value(ti);
+					set(context(ti), "arg/x2", (Double)value(context(ti), "arg/x2") + 1.5);
+
+					// skip value 333 but with increase by 100
+					if (out > from && out < to) {
+						out = value(cxt, "sum") + 100.0;
+					}
+					return out; }))));
+
+		lb = exert(lb);
+		logger.info("block context: " + context(lb));
+		assertTrue(value(context(lb), "sum").equals(30985.0));
 	}
 
     @Test

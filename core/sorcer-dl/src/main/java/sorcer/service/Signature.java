@@ -198,7 +198,7 @@ public interface Signature extends Service, Comparable, Dependency, Identifiable
 
 		public ReturnPath() {
 			// return the context
-			path = "self";
+			path = Signature.SELF;
 		}
 
         public ReturnPath(String path, From argPaths) {
@@ -417,7 +417,9 @@ public interface Signature extends Service, Comparable, Dependency, Identifiable
 			return toString();
 		}
 	}
-    
+
+	static final String SELF = "_self_";
+	static final String SELF_VALUE = "_self_value_";
 	static final Type SRV = Type.PROC;
 	static final Type PRE = Type.PRE;
 	static final Type POST = Type.POST;

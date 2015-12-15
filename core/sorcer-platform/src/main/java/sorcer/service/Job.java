@@ -542,7 +542,7 @@ public class Job extends CompoundExertion {
 		ReturnPath rp = ((ServiceContext) dataContext).getReturnPath();
 		Object obj = null;
 		if (rp != null) {
-			if (rp.path == null || rp.path.equals("self")) {
+			if (rp.path == null || rp.path.equals(Signature.SELF)) {
 				return this;
 			} else if (rp.type != null) {
 				obj = rp.type.cast(getContext().getValue(rp.path));

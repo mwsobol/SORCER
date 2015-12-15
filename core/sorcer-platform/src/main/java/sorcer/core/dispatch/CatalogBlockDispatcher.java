@@ -172,7 +172,9 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
             } */
 		} else if (exertion instanceof OptMogram) {
 			xrt.getContext().append(exertion.getDataContext());
-		}
+		} else if (exertion instanceof LoopMogram) {
+            xrt.getContext().append(((LoopMogram)exertion).getTarget().getScope());
+        }
 
 //		if (exertion instanceof AltExertion) {
 //			((ParModel)((Block)xrt).getContext()).appendNew(((AltExertion)exertion).getActiveOptExertion().getContext());

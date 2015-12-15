@@ -2136,7 +2136,7 @@ public class operator {
 	}
 
 	public static ReturnPath result(In inPaths) {
-		return new ReturnPath("self", inPaths);
+		return new ReturnPath(Signature.SELF, inPaths);
 	}
 
 	public static ReturnPath result(String path, In inPaths, From outPaths) {
@@ -2638,7 +2638,7 @@ public class operator {
 	}
 
 	public static LoopMogram loop(int from, int to, Condition condition,
-									Exertion target) {
+									Mogram target) {
 		return new LoopMogram(null, from, to, condition, target);
 	}
 

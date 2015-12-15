@@ -1,6 +1,5 @@
 package sorcer.sml.blocks;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -9,8 +8,6 @@ import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.core.SorcerConstants;
-import sorcer.core.provider.rendezvous.ServiceConcatenator;
-import sorcer.service.Block;
 import sorcer.service.Context;
 import sorcer.service.Incrementor;
 import sorcer.service.Task;
@@ -18,13 +15,12 @@ import sorcer.service.Task;
 import static org.junit.Assert.assertEquals;
 import static sorcer.co.operator.inEnt;
 import static sorcer.eo.operator.*;
-import static sorcer.eo.operator.loop;
 import static sorcer.po.operator.*;
+
 
 /**
  * @author Mike Sobolewski
  */
-@SuppressWarnings("unchecked")
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/sml")
 public class IncrementBlockExertions implements SorcerConstants {
@@ -50,19 +46,4 @@ public class IncrementBlockExertions implements SorcerConstants {
 		assertEquals(value(t), 162.00);
 	}
 
-	@Ignore
-	@Test
-	public void taskIncrementLoop() throws Exception {
-		Task ti = task(
-				sig("add", AdderImpl.class),
-				model("add", inEnt("arg/x1", inc("arg/x2", 2.0)),
-						inEnt("arg/x2", 80.0), result("task/result")));
-
-		Block lb = block(sig(ServiceConcatenator.class),
-				loop(0, 10, ti));
-
-		lb = exert(lb);
-		logger.info("block context" + context(lb));
-//		assertEquals(get(context(lb), "task/result"), 100.00);
-	}
 }

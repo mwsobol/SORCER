@@ -27,7 +27,6 @@ import static sorcer.po.operator.*;
 /**
  * @author Mike Sobolewski
  */
-@SuppressWarnings("unchecked")
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/sml")
 public class  LocalBlockExertions implements SorcerConstants {
@@ -54,7 +53,6 @@ public class  LocalBlockExertions implements SorcerConstants {
 		assertEquals(value(context(result), "block/result"), 400.00);
 
 	}
-
 
 	@Test
 	public void closingBlockTest() throws Exception {
@@ -141,7 +139,6 @@ public class  LocalBlockExertions implements SorcerConstants {
 
 	}
 
-
 	@Test
 	public void directAltBlockTest() throws Exception {
 
@@ -169,7 +166,6 @@ public class  LocalBlockExertions implements SorcerConstants {
 		assertEquals(value(context(block), "block/result"), 500.0);
 
 	}
-
 
 	@Test
 	public void altBlockTest() throws Exception {
@@ -233,7 +229,6 @@ public class  LocalBlockExertions implements SorcerConstants {
 		assertEquals(value(context(result), "block/result"), 750.00);
 	}
 
-
 	@Test
 	public void optBlockTest() throws Exception {
 		Task t4 = task("t4", sig("multiply", MultiplierImpl.class),
@@ -259,7 +254,6 @@ public class  LocalBlockExertions implements SorcerConstants {
 		assertEquals(value(context(block), "out"), 100.0);
 	}
 
-
 	@Test
 	public void loopBlockTest() throws Exception {
 		Block block = block("block",
@@ -273,7 +267,6 @@ public class  LocalBlockExertions implements SorcerConstants {
 		logger.info("result: " + value(context(block), "x1"));
 		assertEquals(value(context(block), "x1"), 82.00);
 	}
-
 
 	@Test
 	public void parBlockTest() throws Exception {

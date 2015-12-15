@@ -154,7 +154,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
                 Context cxt = xrt.getContext();
                 if (rp.path == null)
                     obj = cxt;
-                else if (rp.path.equals("self"))
+                else if (rp.path.equals(Signature.SELF))
                     obj = xrt;
                 else  if (rp.outPaths != null) {
                     obj = ((ServiceContext)cxt).getSubcontext(rp.outPaths);
@@ -578,7 +578,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
             RemoteException {
         ReturnPath returnPath = getDataContext().getReturnPath();
         if (returnPath != null) {
-            if (returnPath.path == null || returnPath.path.equals("self"))
+            if (returnPath.path == null || returnPath.path.equals(Signature.SELF))
                 return getContext();
             else
                 return getContext().getValue(returnPath.path, entries);
@@ -797,7 +797,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
             if (rp != null) {
                 if (rp.path == null)
                     return cxt;
-                else if (rp.path.equals("self"))
+                else if (rp.path.equals(Signature.SELF))
                     return this;
                 else if (rp.path != null) {
                     cxt.setReturnValue(cxt.getValue(rp.path));
@@ -990,7 +990,6 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
                 .append("\tGood Until Date:      " + goodUntilDate + "\n")
                 .append("\tAccess Class:         " + accessClass + "\n")
                 .append("\tIs Export Controlled: " + isExportControlled + "\n")
-                .append("\tScope Code:           " + scopeCode + "\n")
                 .append("\tPriority:             " + priority + "\n")
                 .append("\tProvider Name:        "
                         + getProcessSignature().getProviderName() + "\n")

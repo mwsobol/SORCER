@@ -238,10 +238,6 @@ public interface Mogram extends Identifiable, Service, Exerter, Projection<Signa
 
     /**
      */
-    public Integer getScopeCode();
-
-    /**
-     */
     public String getOwnerId();
 
     /**

@@ -18,14 +18,14 @@ package sorcer.core.provider.rendezvous;
 
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sorcer.core.dispatch.BlockThread;
 import sorcer.core.exertion.NetJob;
 import sorcer.core.provider.Concatenator;
 import sorcer.service.*;
 
 import java.rmi.RemoteException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * ServiceJobber - The SORCER rendezvous service provider that manages
@@ -43,7 +43,6 @@ public class ServiceConcatenator extends RendezvousBean implements Concatenator 
 
 	public Mogram localExert(Mogram mogram, Transaction txn, Arg... args)
 			throws TransactionException, ExertionException, RemoteException {
-		logger.info("********************************************* ServiceConcatenator.exert, block = " + mogram);
 		Exertion exertion = (Exertion) mogram;
 		setServiceID(exertion);
 		Block result = null;
@@ -64,7 +63,6 @@ public class ServiceConcatenator extends RendezvousBean implements Concatenator 
 		} catch (Throwable e) {
 			throw new ExertionException(e);
 		}
-		logger.info("********************************************* ServiceConcatenator.exert(), block = " + result);
 		return result;
 	}
 
