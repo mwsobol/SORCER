@@ -166,6 +166,7 @@ public class NetJobExertions implements SorcerConstants {
 		assertEquals(value(context, "j1/t3/result/y"), 400.0);
 	}
 
+	@Ignore
 	@Test
 	public void remoteServiceShell() throws Exception {
 		
