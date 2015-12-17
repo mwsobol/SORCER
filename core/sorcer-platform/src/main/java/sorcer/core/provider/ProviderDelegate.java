@@ -2492,7 +2492,8 @@ public class ProviderDelegate {
 					((Partnership) partner).setAdmin(adminProxy);
 				}
 				providerProxy = ProviderProxy.wrapServiceProxy(outerProxy,
-						getProviderUuid(), adminProxy);
+						getProviderUuid(), adminProxy, publishedServiceTypes);
+				logger.info("ZZZZZZZZZZZZZZZZZ publishedServiceTypes: " + Arrays.toString(publishedServiceTypes));
 				return providerProxy;
 			} else if (smartProxy instanceof Partnership) {
 				((Partnership) smartProxy).setInner(outerProxy);

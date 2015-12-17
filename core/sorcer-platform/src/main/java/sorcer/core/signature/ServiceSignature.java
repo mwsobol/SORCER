@@ -75,7 +75,10 @@ public class ServiceSignature implements Signature, SorcerConstants {
 
 	protected Class<?> serviceType;
 
-	// implementation of the serviceInfo
+	// service typed to be mached by its service proxy
+	protected Class[] matchTypes;
+
+	// implementation of the serviceType
 	protected Class<?> providerType;
 
 	protected String group = "";
@@ -142,6 +145,14 @@ public class ServiceSignature implements Signature, SorcerConstants {
 
 	public Class<?> getServiceType() {
 		return serviceType;
+	}
+
+	public Class[] getMatchTypes() {
+		return matchTypes;
+	}
+
+	public void setMatchTypes(Class[] matchTypes) {
+		this.matchTypes = matchTypes;
 	}
 
 	/**

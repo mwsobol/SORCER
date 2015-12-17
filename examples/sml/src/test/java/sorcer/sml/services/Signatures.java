@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.Adder;
+import sorcer.arithmetic.provider.MikeAdder;
 import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.core.provider.RemoteServiceShell;
 import sorcer.core.provider.exerter.ServiceShell;
@@ -29,7 +30,6 @@ import static sorcer.mo.operator.outConn;
 /**
  * @author Mike Sobolewski
  */
-@SuppressWarnings({ "rawtypes", "unchecked" } )
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/sml")
 public class Signatures {
@@ -180,6 +180,21 @@ public class Signatures {
 
 		// request the remote service
 		Service as = task("as", sig("add", Adder.class),
+				context("add",
+						inEnt("arg/x1", 20.0),
+						inEnt("arg/x2", 80.0),
+						result("result/y")));
+
+		assertEquals(100.0, exec(as));
+
+	}
+
+
+	@Test
+	public void referencingRemoteProviderWithMultiTypes() throws Exception {
+
+		// request the remote service
+		Service as = task("as", matchSigs(sig("add", Adder.class), MikeAdder.class),
 				context("add",
 						inEnt("arg/x1", 20.0),
 						inEnt("arg/x2", 80.0),

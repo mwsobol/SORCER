@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * A service <code>Signature</code> is an indirect behavioral feature of
@@ -98,6 +99,14 @@ public interface Signature extends Service, Comparable, Dependency, Identifiable
 	 * @return name of service interface
 	 */
 	public Class<?> getServiceType();
+
+	/**
+	 * Returns an array of service types of this signature
+	 * to be matched by its service proxy.
+	 *
+	 * @return array of service types matched by service proxy
+	 */
+	public Class[] getMatchTypes();
 
 	/**
 	 * Assigns a path to the return value by this signature.

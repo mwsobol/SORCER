@@ -846,6 +846,17 @@ public class operator {
 		return sig(operation, serviceType, new Arg[]{});
 	}
 
+	public static Signature matchSigs(Signature signature, Class... matchTypes)
+			throws SignatureException {
+		Class[] types = matchTypes;
+		if (signature.getServiceType() != null) {
+			types = Arrays.copyOf(matchTypes, matchTypes.length+1);
+			types[matchTypes.length] = signature.getServiceType();
+		}
+		((ServiceSignature)signature).setMatchTypes(types);
+		return signature;
+	}
+
 	public static ReturnPath returnPath(Arg... args) {
 		for (Arg a : args) {
 			if (a instanceof ReturnPath)
