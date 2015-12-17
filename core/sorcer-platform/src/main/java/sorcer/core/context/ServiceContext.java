@@ -2100,17 +2100,19 @@ public class ServiceContext<T> extends ServiceMogram implements
 		if (returnPath == null)
 			returnPath = new ReturnPath(Context.RETURN);
 
-		if (value == null)
-			putValue(returnPath.path, (T)none);
-		else
-			putValue(returnPath.path, value);
+		if (returnPath.path != null) {
+			if (value == null)
+				putValue(returnPath.path, (T)none);
+			else
+				putValue(returnPath.path, value);
 
-		if (returnPath.direction == Direction.IN)
-			Contexts.markIn(this, returnPath.path);
-		else if (returnPath.direction == Direction.OUT)
-			Contexts.markOut(this, returnPath.path);
-		if (returnPath.direction == Direction.INOUT)
-			Contexts.markInout(this, returnPath.path);
+			if (returnPath.direction == Direction.IN)
+				Contexts.markIn(this, returnPath.path);
+			else if (returnPath.direction == Direction.OUT)
+				Contexts.markOut(this, returnPath.path);
+			if (returnPath.direction == Direction.INOUT)
+				Contexts.markInout(this, returnPath.path);
+		}
 	}
 
 	public ReturnPath getReturnJobPath() {
@@ -2671,7 +2673,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	}
 
 	public T get(String path) {
-		if (data !=null)
+		if (path != null)
 			return data.get(path);
 		else
 			return (T) Context.none;

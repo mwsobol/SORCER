@@ -25,7 +25,6 @@ import static sorcer.eo.operator.*;
 /**
  * @author Mike Sobolewski
  */
-@SuppressWarnings({ "rawtypes", "unchecked" })
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/sml")
 public class LocalJobExertions implements SorcerConstants {

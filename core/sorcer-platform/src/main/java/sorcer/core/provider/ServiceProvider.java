@@ -1465,7 +1465,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		if (mogram instanceof Task) {
 			ServiceContext cxt;
 			try {
-				cxt = (ServiceContext) ((Task)mogram).getDataContext();
+				cxt = (ServiceContext) mogram.getDataContext();
 				cxt.updateContextWith(mogram.getProcessSignature().getInConnector());
 				Uuid id = cxt.getId();
 				ProviderSession ps = sessions.get(id);

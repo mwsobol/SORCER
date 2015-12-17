@@ -35,14 +35,7 @@ public class Entries {
         // no free variables
         Entry y1 = lambda("y1", () -> 20.0 * pow(0.5, 6) + 10.0);
 
-//        assertEquals(10.3125, value(y1));
-//
-//        // the context argument as a free variable of the lambda
-//        Entry y2 = lambda("y2", (Context<Double> cxt) ->
-//                        value(cxt, "x1") + value(cxt, "x2"),
-//                context(ent("x1", 10.0), ent("x2", 20.0)));
-//
-//        assertEquals(30.0, value(y2));
+        assertEquals(10.3125, value(y1));
 
         // the model itself as a free variable of the lambda y2
         Model mo = model(ent("x1", 10.0), ent("x2", 20.0),

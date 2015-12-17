@@ -476,7 +476,7 @@ public class Job extends CompoundExertion {
 		int index = path.indexOf(last);
 		String contextPath = path.substring(index + last.length() + 1);
 
-		return ((Exertion)exti).getContext().getValue(contextPath);
+		return exti.getContext().getValue(contextPath);
 	}
 	
 	/* (non-Javadoc)

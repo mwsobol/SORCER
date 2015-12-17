@@ -39,7 +39,6 @@ import static sorcer.po.operator.put;
 /**
  * @author Mike Sobolewski
  */
-@SuppressWarnings({ "rawtypes", "unchecked" })
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/sml")
 public class NetJobExertions implements SorcerConstants {
@@ -167,7 +166,6 @@ public class NetJobExertions implements SorcerConstants {
 		assertEquals(value(context, "j1/t3/result/y"), 400.0);
 	}
 
-	@Ignore
 	@Test
 	public void remoteServiceShell() throws Exception {
 		
@@ -224,7 +222,7 @@ public class NetJobExertions implements SorcerConstants {
 
 		// Service Composition j1(j2(t4(x1, x2), t5(x1, x2)), t3(x1, x2))
 		Job job = job(
-				"j1", sig("exert", ServiceJobber.class, Shell.REMOTE),
+				"j1", sig("exert", Jobber.class, Shell.REMOTE),
 				job("j2", t4, t5), t3,
 				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
 				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
@@ -373,7 +371,7 @@ public class NetJobExertions implements SorcerConstants {
 		task = task("invoke", sig("invoke", Invocation.class, prvName("Arithmetic Exerter")), invokeContext);
 //		logger.info("j1/t3/result/y: " + value(task, "j1/t3/result/y"));
 		assertEquals(value(task, "j1/t3/result/y"), 400.0);
-		
+
 	}
 
 	@Test

@@ -2704,11 +2704,15 @@ public class ProviderDelegate {
 
 		for (Class publishedType : publishedServiceTypes) {
 			for (Object serviceBean : serviceBeans) {
-				if (publishedType.isInstance(serviceBean))  {
+				if (publishedType.isInstance(serviceBean)) {
 					serviceComponents.put(publishedType, serviceBean);
 				}
 			}
 
+//		for (Object serviceBean : serviceBeans) {
+//			Class[] interfaces =  serviceBean.getClass().getInterfaces();
+//			logger.debug("service component interfaces" + Arrays.toString(interfaces));
+//
 //			List<Class> exposedInterfaces = new LinkedList<Class>();
 //			for (Class publishedType : publishedServiceTypes) {
 //				if (publishedType.isInstance(serviceBean)) {
@@ -2725,6 +2729,8 @@ public class ProviderDelegate {
 //			}
 //			logger.debug("service component exposed interfaces" + exposedInterfaces);
 		}
+
+		logger.debug("service components" + serviceComponents);
 	}
 
 	private Object instantiateScriplet(String scripletFilename)

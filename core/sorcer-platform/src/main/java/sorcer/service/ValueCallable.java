@@ -17,6 +17,7 @@
 
 package sorcer.service;
 import java.io.Serializable;
+import java.rmi.RemoteException;
 
 /**
  * Created by Mike Sobolewski on 10/30/15.
@@ -24,6 +25,6 @@ import java.io.Serializable;
 @FunctionalInterface
 public interface ValueCallable<T> extends Serializable {
 
-    T call(Context<T> context) throws MogramException;
+    T call(Context<T> context) throws MogramException, RemoteException;
 
 }

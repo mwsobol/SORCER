@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.impl.*;
+import sorcer.core.context.model.ent.Entry;
 import sorcer.core.plexus.Morpher;
 import sorcer.core.provider.rendezvous.ServiceConcatenator;
 import sorcer.service.*;
@@ -50,6 +51,73 @@ public class Models {
 		assertTrue(get(out, "multiply").equals(500.0));
 		assertTrue(get(out, "add").equals(100.0));
 	}
+
+	@Test
+	public void settingLambdaModel() throws Exception {
+
+		Model mdl = model(ent("multiply/x1", 10.0), ent("multiply/x2", 50.0),
+				ent("add/x1", 20.0), ent("add/x2", 80.0),
+				lambda("add", (Context<Double> model) ->
+						value(model, "add/x1") + value(model, "add/x2")),
+				lambda("multiply", (Context<Double> model) ->
+						val(model, "multiply/x1") * val(model, "multiply/x2")),
+				lambda("subtract", (Context<Double> model) ->
+						v(model, "multiply") - v(model, "add")),
+				response("subtract", "multiply", "add"));
+
+		logger.info("DEPS: " + printDeps(mdl));
+		Context out = response(mdl, ent("multiply/x1", 20.0), ent("multiply/x2", 100.0));
+		logger.info("model response: " + out);
+		assertTrue(get(out, "subtract").equals(1900.0));
+		assertTrue(get(out, "multiply").equals(2000.0));
+		assertTrue(get(out, "add").equals(100.0));
+	}
+
+	@Test
+	public void lazyLambdaModel() throws Exception {
+		// evaluate multiply only once
+
+		Model mo = model(ent("multiply/x1", 10.0), ent("multiply/x2", 50.0),
+				ent("add/x1", 20.0), ent("add/x2", 80.0),
+				ent("multiply/done", false),
+				lambda("add", (Context<Double> model) ->
+						value(model, "add/x1") + value(model, "add/x2")),
+				lambda("multiply", (Context<Double> model) ->
+						val(model, "multiply/x1") * val(model, "multiply/x2")),
+				lambda("subtract", (Context<Double> model) ->
+						v(model, "multiply") - v(model, "add")),
+				lambda("multiply2", (Context<Object> cxt) -> {
+					Entry multiply = (Entry) asis(cxt, "multiply");
+					double out = 0;
+					if (value(cxt, "multiply/done").equals(false)) {
+						out = (double) exec(multiply, cxt) + 10.0;
+						set(cxt, "multiply/done", true);
+					} else {
+						out = (double)value(cxt, "multiply");
+					}
+					return out;
+				}),
+				lambda("multiply3", (Context<Object> cxt) -> {
+					Entry multiply = (Entry) asis(cxt, "multiply");
+					double out = 0;
+					if (value(cxt, "multiply/done").equals(false)) {
+						out = (double) exec(multiply, cxt);
+						set(cxt, "multiply/done", true);
+					} else {
+						out = (double)value(cxt, "multiply");
+					}
+					return out;
+				}),
+				response("multiply2", "multiply3"));
+
+//		dependsOn(mo, ent("subtract", paths("multiply2", "add")));
+
+		Context out = response(mo);
+		logger.info("model response: " + out);
+		assertTrue(get(out, "multiply2").equals(510.0));
+		assertTrue(get(out, "multiply3").equals(500.0));
+	}
+
 
 	@Test
 	public void dynamicLambdaModel() throws Exception {

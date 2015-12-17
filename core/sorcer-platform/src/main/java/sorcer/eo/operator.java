@@ -215,7 +215,7 @@ public class operator {
 
 	public static Context upcontext(Mogram mogram) throws ContextException {
 		if (mogram instanceof CompoundExertion)
-			return ((ServiceExertion) mogram).getContext();
+			return mogram.getContext();
 		else
 			return  mogram.getDataContext();
 	}
