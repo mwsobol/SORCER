@@ -102,11 +102,18 @@ public class ServiceAccessor implements DynamicAccessor {
 	 * @return A ServiceItem
 	 */
 	public ServiceItem getServiceItem(String providerName, Class serviceType) {
-        String name = overrideName(providerName, serviceType);
-        Class[] serviceTypes = new Class[] { serviceType };
-        Entry[] attrSets = new Entry[] { new Name(name) };
-        ServiceTemplate template = new ServiceTemplate(null, serviceTypes, attrSets);
-        return getServiceItem(template, null);
+		String name = overrideName(providerName, serviceType);
+		Class[] serviceTypes = new Class[] { serviceType };
+		Entry[] attrSets = new Entry[] { new Name(name) };
+		ServiceTemplate template = new ServiceTemplate(null, serviceTypes, attrSets);
+		return getServiceItem(template, null);
+	}
+
+	public ServiceItem getServiceItem(String providerName, Class[] serviceTypes) {
+		String name = overrideName(providerName, serviceTypes[serviceTypes.length-1]);
+		Entry[] attrSets = new Entry[] { new Name(name) };
+		ServiceTemplate template = new ServiceTemplate(null, serviceTypes, attrSets);
+		return getServiceItem(template, null);
 	}
 
 	/**
@@ -294,7 +301,11 @@ public class ServiceAccessor implements DynamicAccessor {
 	}
 
     public ServiceItem getServiceItem(Signature signature) {
-        return getServiceItem(signature.getProviderName(), signature.getServiceType());
+		if (signature.getMatchTypes() != null) {
+			return getServiceItem(signature.getProviderName(), signature.getMatchTypes());
+		} else {
+			return getServiceItem(signature.getProviderName(), signature.getServiceType());
+		}
     }
 
     public  Object getService(Signature signature) {
