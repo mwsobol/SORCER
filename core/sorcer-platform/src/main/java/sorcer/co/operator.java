@@ -409,6 +409,7 @@ public class operator {
     public static Srv ent(String name, Signature sig, Context context) {
         return srv(name, sig, context);
     }
+
 	public static Srv ent(Signature sig) {
 		return srv(sig);
 	}

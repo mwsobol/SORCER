@@ -347,7 +347,7 @@ public class operator {
 				sig = (Signature) o;
 			} else if (o instanceof Class) {
 				customContextClass = (Class) o;
-			} else if (Strategy.Flow.MANUAL.equals(o)) {
+			} else if (Strategy.Flow.EXPLICIT.equals(o)) {
 				manualDeps = true;
 			} else if (o instanceof Strategy.Access) {
 				accessType = (Strategy.Access)o;
@@ -1501,7 +1501,7 @@ public class operator {
 				} catch (Exception e) {
 					throw new ModelException(e);
 				}
-			} else if (i.equals(Strategy.Flow.MANUAL)) {
+			} else if (i.equals(Strategy.Flow.EXPLICIT)) {
 				manualDeps = true;
 			}
 		}

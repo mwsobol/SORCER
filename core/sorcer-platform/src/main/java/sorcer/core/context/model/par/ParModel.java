@@ -269,7 +269,7 @@ public class ParModel<T> extends EntModel<T> implements Invocation<T>, Mappable<
 		return this;
 	}
 
-	private void updateEvaluations() {
+	protected void updateEvaluations() {
 		Iterator<Map.Entry<String,T>>  i = entryIterator();
 		while (i.hasNext()) {
 			Map.Entry<String,T> entry = i.next();
