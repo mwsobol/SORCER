@@ -1868,6 +1868,11 @@ public class operator {
 		}
 	}
 
+	public static <T extends Mogram> T exert(Provider service, T mogram, Arg... entries)
+			throws TransactionException, MogramException, RemoteException {
+		return service.exert(mogram, null, entries);
+	}
+
 	public static <T extends Mogram> T exert(Mogram service, T mogram, Arg... entries)
 			throws TransactionException, MogramException, RemoteException {
 		return service.exert(mogram, null, entries);

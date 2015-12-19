@@ -2493,7 +2493,6 @@ public class ProviderDelegate {
 				}
 				providerProxy = ProviderProxy.wrapServiceProxy(outerProxy,
 						getProviderUuid(), adminProxy, publishedServiceTypes);
-				logger.info("ZZZZZZZZZZZZZZZZZ publishedServiceTypes: " + Arrays.toString(publishedServiceTypes));
 				return providerProxy;
 			} else if (smartProxy instanceof Partnership) {
 				((Partnership) smartProxy).setInner(outerProxy);
@@ -2703,34 +2702,35 @@ public class ProviderDelegate {
 
 		serviceComponents = new Hashtable<Class, Object>();
 
-		for (Class publishedType : publishedServiceTypes) {
+		if (serviceComponents.size() == 1) {
 			for (Object serviceBean : serviceBeans) {
-				if (publishedType.isInstance(serviceBean)) {
-					serviceComponents.put(publishedType, serviceBean);
+				Class[] interfaces = serviceBean.getClass().getInterfaces();
+				logger.debug("service component interfaces" + Arrays.toString(interfaces));
+				List<Class> exposedInterfaces = new LinkedList<Class>();
+				for (Class publishedType : publishedServiceTypes) {
+					if (publishedType.isInstance(serviceBean)) {
+						serviceComponents.put(publishedType, serviceBean);
+						exposedInterfaces.add(publishedType);
+						for (Class iface : publishedType.getInterfaces()) {
+							if (!iface.equals(Remote.class)
+									&& !iface.equals(Serializable.class)) {
+								serviceComponents.put(iface, serviceBean);
+								exposedInterfaces.add(iface);
+							}
+						}
+					}
+				}
+				logger.debug("service component exposed interfaces" + exposedInterfaces);
+			}
+		} else {
+			for (Class publishedType : publishedServiceTypes) {
+				for (Object serviceBean : serviceBeans) {
+					if (publishedType.isInstance(serviceBean)) {
+						serviceComponents.put(publishedType, serviceBean);
+					}
 				}
 			}
-
-//		for (Object serviceBean : serviceBeans) {
-//			Class[] interfaces =  serviceBean.getClass().getInterfaces();
-//			logger.debug("service component interfaces" + Arrays.toString(interfaces));
-//
-//			List<Class> exposedInterfaces = new LinkedList<Class>();
-//			for (Class publishedType : publishedServiceTypes) {
-//				if (publishedType.isInstance(serviceBean)) {
-//					serviceComponents.put(publishedType, serviceBean);
-//					exposedInterfaces.add(publishedType);
-//					for (Class iface : publishedType.getInterfaces()) {
-//						if (!iface.equals(Remote.class)
-//								&& !iface.equals(Serializable.class)) {
-//							serviceComponents.put(iface, serviceBean);
-//							exposedInterfaces.add(iface);
-//						}
-//					}
-//				}
-//			}
-//			logger.debug("service component exposed interfaces" + exposedInterfaces);
 		}
-
 		logger.debug("service components" + serviceComponents);
 	}
 

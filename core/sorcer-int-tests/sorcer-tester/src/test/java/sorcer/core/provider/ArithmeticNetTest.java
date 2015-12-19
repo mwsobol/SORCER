@@ -19,6 +19,7 @@ import sorcer.core.context.PositionalContext;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.deploy.ServiceDeployment;
 import sorcer.core.exertion.NetTask;
+import sorcer.core.provider.exerter.ServiceShell;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.core.signature.NetSignature;
 import sorcer.core.signature.ServiceSignature;
@@ -335,25 +336,33 @@ public class ArithmeticNetTest implements SorcerConstants {
 		assertEquals(get(job, "j1/t3/result/y"), 400.00);
 	}
 
-	@Ignore
 	@Test
-	public void exerterTest() throws Exception {
-	Mogram f5 = task("f5",
-			sig("add", Adder.class),
-			context("add", inEnt("arg/x1", 20.0),
-					inEnt("arg/x2", 80.0), outEnt("result/y", null)),
-			strategy(Monitor.NO, Wait.YES));
-	
-//	long start = System.currentTimeMillis();
- 	RemoteServiceShell shell = Accessor.get().getService(null, RemoteServiceShell.class);
-//	logger.info("got exerter: " + exerter);
+	public void localServiceShellTest() throws Exception {
+		Mogram f5 = task("f5",
+				sig("add", AdderImpl.class),
+				context("add", inEnt("arg/x1", 20.0),
+						inEnt("arg/x2", 80.0), outEnt("result/y", null)),
+				strategy(Monitor.NO, Wait.YES));
 
-	Mogram out = shell.exert(f5, null);
-//	long end = System.currentTimeMillis();
-	
-//	logger.info("task f5 context: " + context(out));
-//	logger.info("task f5 result/y: " + get(context(out), "result/y"));
-	assertTrue(get(out, "result/y").equals(100.00));
+		ServiceShell shell = (ServiceShell) provider(sig(ServiceShell.class));
+		Mogram out = shell.exert(f5, null);
+		logger.info("task out: " + context(out));
+
+		assertTrue(get(out, "result/y").equals(100.00));
+	}
+
+	@Test
+	public void remoteServiceShellTest() throws Exception {
+		Mogram f5 = task("f5",
+				sig("add", Adder.class),
+				context("add", inEnt("arg/x1", 20.0),
+						inEnt("arg/x2", 80.0), outEnt("result/y", null)),
+				strategy(Monitor.NO, Wait.YES));
+
+		Exerter shell = (Exerter) provider(sig(RemoteServiceShell.class));
+
+		Mogram out = shell.exert(f5, null);
+		assertTrue(get(out, "result/y").equals(100.00));
 	}
 
 	@Ignore

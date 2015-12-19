@@ -15,9 +15,7 @@ import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.provider.impl.SubtractorImpl;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.model.par.ParModel;
-import sorcer.core.provider.Jobber;
-import sorcer.core.provider.RemoteServiceShell;
-import sorcer.core.provider.ServiceTasker;
+import sorcer.core.provider.*;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.service.*;
 import sorcer.service.Strategy.Access;
@@ -194,9 +192,10 @@ public class NetJobExertions implements SorcerConstants {
 				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
 				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
 
-		Object context = exec(sig(RemoteServiceShell.class), job);
-		logger.info("job context: " + context);
-		assertEquals(value((Context)context, "j1/t3/result/y"), 400.0);
+		Provider shell = (Provider) provider(sig(RemoteServiceShell.class));
+		Context out = upcontext(exert(shell, job));
+		logger.info("job context: " + out);
+		assertEquals(value(out, "j1/t3/result/y"), 400.0);
 
 	}
 

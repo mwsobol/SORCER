@@ -65,7 +65,7 @@ public class Job extends CompoundExertion {
 	protected final static Logger logger = LoggerFactory.getLogger(Job.class.getName());
 
 	protected Job delegate;
-	
+
 	public Integer state = new Integer(INITIAL);
 
 	/**

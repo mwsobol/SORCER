@@ -28,9 +28,7 @@ import sorcer.core.context.model.par.Par;
 import sorcer.core.deploy.DeploymentIdFactory;
 import sorcer.core.deploy.ServiceDeployment;
 import sorcer.core.invoker.ExertInvoker;
-import sorcer.core.provider.Jobber;
-import sorcer.core.provider.ProviderName;
-import sorcer.core.provider.Spacer;
+import sorcer.core.provider.*;
 import sorcer.core.provider.exerter.ServiceShell;
 import sorcer.core.signature.NetSignature;
 import sorcer.core.signature.ServiceSignature;
@@ -57,6 +55,9 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
     static final long serialVersionUID = -3907402419486719293L;
 
     protected final static Logger logger = LoggerFactory.getLogger(ServiceExertion.class.getName());
+
+    // The service provider for this job service bean
+    protected ServiceProvider provider;
 
     protected ServiceContext dataContext;
 
@@ -92,6 +93,13 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
         super.init();
         dataContext = new PositionalContext(name);
         controlContext = new ControlContext(this);
+    }
+
+    /*
+   *  Initialization for a service bean of this type
+   */
+    public void init(Provider provider) {
+        this.provider = (ServiceProvider)provider;
     }
 
     /*
@@ -775,12 +783,20 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
         return this;
     }
 
+    public Object getValue(Arg... entries) throws EvaluationException,
+            RemoteException {
+       if (provider == null) {
+           return evaluate(entries);
+       } else {
+           return ((Evaluation)provider).getValue(entries);
+       }
+    }
     /*
      * (non-Javadoc)
      *
      * @see sorcer.service.Evaluation#getValue()
      */
-    public Object getValue(Arg... entries) throws EvaluationException,
+    public Object evaluate(Arg... entries) throws EvaluationException,
             RemoteException {
         Context cxt = null;
         try {
