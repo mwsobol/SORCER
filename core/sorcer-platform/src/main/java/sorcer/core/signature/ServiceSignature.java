@@ -546,6 +546,7 @@ public class ServiceSignature implements Signature, SorcerConstants {
 	public void setReturnPath(String path, Direction direction) {
 		returnPath = new ReturnPath<Object>(path, direction);
 	}
+
 	public ReturnPath getReturnPath() {
 		return returnPath;
 	}

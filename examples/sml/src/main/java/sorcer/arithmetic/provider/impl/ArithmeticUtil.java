@@ -4,6 +4,7 @@ import sorcer.arithmetic.provider.Adder;
 import sorcer.arithmetic.provider.Multiplier;
 import sorcer.arithmetic.provider.Subtractor;
 import sorcer.core.SorcerConstants;
+import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.service.Context;
 import sorcer.service.Exertion;
 import sorcer.service.Job;
@@ -54,7 +55,28 @@ public class ArithmeticUtil implements SorcerConstants {
 		return createJob(Flow.SEQ, Access.PUSH);
 	}
 
-	
+	public static Job createLocalJob() throws Exception {
+		Task t3 = task("t3", sig("subtract", SubtractorImpl.class),
+				context("subtract", inEnt("arg/x1"), inEnt("arg/x2"),
+						outEnt("result/y")));
+
+		Task t4 = task("t4", sig("multiply", MultiplierImpl.class),
+				context("multiply", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
+						outEnt("result/y")));
+
+		Task t5 = task("t5", sig("add", AdderImpl.class),
+				context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
+						outEnt("result/y")));
+
+		// Service Composition j1(j2(t4(x1, x2), t5(x1, x2)), t3(x1, x2))
+		Job job = job("j1", sig("exert", ServiceJobber.class),
+				job("j2", t4, t5, sig("exert", ServiceJobber.class)),
+				t3,
+				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
+				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
+
+		return job;
+	}
 		
 	public static Context createContext() throws Exception {
 		return context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0));

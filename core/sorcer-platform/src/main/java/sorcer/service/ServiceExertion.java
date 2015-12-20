@@ -121,12 +121,57 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
      * @see sorcer.service.Service#service(sorcer.service.Exertion,
      * net.jini.core.transaction.Transaction)
      */
-    public <T extends Mogram> T exert(T exertion, Transaction txn, Arg... args)
+    public <T extends Mogram> T exert(T mogram, Transaction txn, Arg... args)
             throws TransactionException, MogramException, RemoteException {
-        if (exertion == null)
-            return exert();
+        try {
+            if (mogram instanceof Exertion) {
+                ServiceExertion exertion = (ServiceExertion) mogram;
+                Class serviceType = exertion.getServiceType();
+                if (Invocation.class.isAssignableFrom(serviceType)) {
+                    Object out = this.invoke(exertion.getContext(), args);
+                    handleExertOutput(exertion, out);
+                    return (T) exertion;
+                } else if (Evaluation.class.isAssignableFrom(serviceType)) {
+                    Object out = this.getValue(args);
+                    handleExertOutput(exertion, out);
+                    return (T) exertion;
+                }
+            }
+            getContext().appendContext(mogram.getContext());
+            return (T) exert(txn);
+        } catch (Exception e) {
+            e.printStackTrace();
+            mogram.getContext().reportException(e);
+            if (e instanceof Exception)
+                mogram.setStatus(FAILED);
+            else
+                mogram.setStatus(ERROR);
+
+            throw new ExertionException(e);
+        }
+    }
+
+    private void handleExertOutput(ServiceExertion exertion, Object result ) throws ContextException {
+        ServiceContext dataContext = (ServiceContext) exertion.getDataContext();
+        if (result instanceof Context)
+            dataContext.updateEntries((Context)result);
+
+        Signature.ReturnPath rp = dataContext.getReturnPath();
+        if (rp == null)
+            rp = exertion.getProcessSignature().getReturnPath();
         else
-            return (T) exertion.exert(txn);
+            exertion.getProcessSignature().setReturnPath(rp);
+
+        if (rp != null) {
+            if (((Context) result).getValue(rp.path) != null) {
+                dataContext.setReturnValue(((Context) result).getValue(rp.path));
+                dataContext.setFinalized(true);
+            }
+        } else {
+            dataContext.setReturnValue(result);
+        }
+        exertion.setStatus(DONE);
+
     }
 
     /*
@@ -176,6 +221,11 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
         }
     }
 
+    public Object invoke(Context context)
+            throws RemoteException, InvocationException {
+        return invoke(context, new Arg[] {});
+    }
+
     /*
      * (non-Javadoc)
      *
@@ -192,7 +242,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
                     for (Mogram e : exts) {
                         Object link = context.getLink(e.getName());
                         if (link instanceof ContextLink) {
-                            ((Exertion)e).getContext().append(
+                            e.getContext().append(
                                     ((ContextLink) link).getContext());
                         }
                     }
@@ -537,8 +587,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
             for (Arg e : entries) {
                 if (e instanceof Entry) {
                     try {
-                        putValue((String) ((Entry) e).path(),
-                                ((Entry) e).value());
+                        putValue(((Entry) e).path(), ((Entry) e).value());
                     } catch (ContextException ex) {
                         ex.printStackTrace();
                         throw new SetterException(ex);
@@ -802,7 +851,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
         try {
             substitute(entries);
             Exertion evaluatedExertion = exert(entries);
-            ReturnPath rp = ((ServiceContext)evaluatedExertion.getDataContext())
+            ReturnPath rp = evaluatedExertion.getDataContext()
                     .getReturnPath();
             if (evaluatedExertion instanceof Job) {
                 cxt = ((Job) evaluatedExertion).getJobContext();

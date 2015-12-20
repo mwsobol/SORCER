@@ -45,6 +45,7 @@ import sorcer.core.plexus.Morpher;
 import sorcer.core.plexus.MultiFidelity;
 import sorcer.core.provider.*;
 import sorcer.core.provider.exerter.Binder;
+import sorcer.core.provider.exerter.ServiceShell;
 import sorcer.core.provider.rendezvous.ServiceConcatenator;
 import sorcer.core.provider.rendezvous.ServiceModeler;
 import sorcer.core.requestor.ExertRequestor;
@@ -1868,7 +1869,7 @@ public class operator {
 		}
 	}
 
-	public static <T extends Mogram> T exert(Provider service, T mogram, Arg... entries)
+	public static <T extends Mogram> T exert(Exerter service, T mogram, Arg... entries)
 			throws TransactionException, MogramException, RemoteException {
 		return service.exert(mogram, null, entries);
 	}
@@ -2097,7 +2098,7 @@ public class operator {
 			throws ContextException, RemoteException, ExertionException {
 		synchronized (mogram) {
 			if (mogram instanceof Exertion)
-				return new sorcer.core.provider.exerter.ServiceShell().evaluate(mogram, args);
+				return new ServiceShell().evaluate(mogram, args);
 			else if (mogram instanceof Modeling) {
 				mogram.substitute(args);
 				((Modeling) mogram).evaluate();

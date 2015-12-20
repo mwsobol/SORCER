@@ -35,11 +35,13 @@ import sorcer.core.context.model.par.ParList;
 import sorcer.core.context.model.par.ParModel;
 import sorcer.core.context.node.ContextNode;
 import sorcer.core.context.node.ContextNodeException;
+import sorcer.core.exertion.NetTask;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.core.monitor.MonitorUtil;
 import sorcer.core.provider.Provider;
 import sorcer.core.provider.ServiceProvider;
 import sorcer.core.signature.NetSignature;
+import sorcer.core.signature.ServiceSignature;
 import sorcer.eo.operator;
 import sorcer.service.*;
 import sorcer.service.Signature.Direction;
@@ -3128,11 +3130,55 @@ public class ServiceContext<T> extends ServiceMogram implements
 	public <T extends Mogram> T exert(T mogram, Transaction txn, Arg... args) throws TransactionException,
 			MogramException, RemoteException {
 		try {
+			if (mogram instanceof NetTask) {
+				Task task = (NetTask)mogram;
+				Class serviceType = task.getServiceType();
+				 if (Invocation.class.isAssignableFrom(serviceType)) {
+					 Object out = ((Invocation)this).invoke(task.getContext(), args);
+					 handleExertOutput(task, out);
+					 return (T) task;
+				 } else if (Evaluation.class.isAssignableFrom(serviceType)) {
+					 Object out = ((Evaluation)this).getValue(args);
+					 handleExertOutput(task, out);
+					 return (T) task;
+				 }
+			}
 			exertion.getContext().appendContext(this);
+			return (T) exertion.exert(txn);
 		} catch (Exception e) {
+			e.printStackTrace();
+			mogram.getContext().reportException(e);
+			if (e instanceof Exception)
+				mogram.setStatus(FAILED);
+			else
+				mogram.setStatus(ERROR);
+
 			throw new ExertionException(e);
 		}
-		return (T) exertion.exert(txn);
+	}
+
+	private void handleExertOutput(Task task, Object result ) throws ContextException {
+		ServiceContext dataContext = (ServiceContext) task.getDataContext();
+		if (result instanceof Context) {
+			Signature.ReturnPath rp = dataContext.getReturnPath();
+			if (rp != null) {
+				if (((Context) result).getValue(rp.path) != null) {
+					dataContext.setReturnValue(((Context) result).getValue(rp.path));
+				} else if (rp.outPaths != null && rp.outPaths.length > 0) {
+					Context out = dataContext.getSubcontext(rp.outPaths);
+					dataContext.setReturnValue(out);
+				}
+			} else if (dataContext.getScope() != null) {
+				dataContext.getScope().append((Context)result);
+			} else {
+				dataContext = (ServiceContext) result;
+			}
+		} else {
+			dataContext.setReturnValue(result);
+		}
+		dataContext.updateContextWith(((ServiceSignature)task.getProcessSignature()).getOutConnector());
+		task.setContext(dataContext);
+		task.setStatus(DONE);
 	}
 
 	public <T extends Mogram> T exert(T mogram) throws TransactionException,

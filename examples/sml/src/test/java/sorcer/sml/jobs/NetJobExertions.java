@@ -15,7 +15,10 @@ import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.provider.impl.SubtractorImpl;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.model.par.ParModel;
-import sorcer.core.provider.*;
+import sorcer.core.provider.Jobber;
+import sorcer.core.provider.Provider;
+import sorcer.core.provider.RemoteServiceShell;
+import sorcer.core.provider.ServiceTasker;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.service.*;
 import sorcer.service.Strategy.Access;
@@ -164,7 +167,6 @@ public class NetJobExertions implements SorcerConstants {
 		assertEquals(value(context, "j1/t3/result/y"), 400.0);
 	}
 
-	@Ignore
 	@Test
 	public void remoteServiceShell() throws Exception {
 		
@@ -333,13 +335,12 @@ public class NetJobExertions implements SorcerConstants {
 		return f1;
 	}
 
-	@Ignore
 	@Test
-	public void arithmeticJobExerter() throws Exception {
+	public void arithmeticJobNetExerter() throws Exception {
 
 		// get the current value of the exertlet
 		Task task = task("eval", sig("getValue", Evaluation.class, prvName("Arithmetic Exerter")));
-		logger.info("j1/t3/result/y: " + value(task, "j1/t3/result/y"));
+//		logger.info("j1/t3/result/y: " + value(task, "j1/t3/result/y"));
 		assertEquals(value(task, "j1/t3/result/y"), 400.0);
 
 		// update inputs contexts
@@ -349,6 +350,8 @@ public class NetJobExertions implements SorcerConstants {
 		link(invokeContext, "t4", multiplyContext);
 		link(invokeContext, "t5", addContext);
 		task = task("invoke", sig("invoke", Invocation.class, prvName("Arithmetic Exerter")), invokeContext);
+		logger.info("j1/t3/result/y: " + context(task));
+
 		logger.info("j1/t3/result/y: " + value(task, "j1/t3/result/y"));
 		assertEquals(value(task, "j1/t3/result/y"), 500.0);
 

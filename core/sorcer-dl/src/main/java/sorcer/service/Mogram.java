@@ -84,6 +84,8 @@ public interface Mogram extends Identifiable, Service, Exerter, Projection<Signa
 
     public Mogram clearScope() throws MogramException;
 
+    public void reportException(Throwable t);
+
     /**
      * Returns the list of traces of thrown exceptions from this mogram.
      * @return ThrowableTrace list

@@ -128,36 +128,32 @@ public class ServiceShell implements RemoteServiceShell, Requestor, Callable {
 	 */
 	@Override
 	public  <T extends Mogram> T exert(T mogram, Transaction transaction, Arg... entries) throws ExertionException {
+		Mogram result = null;
 		try {
-			Mogram result = null;
-			try {
-				if (mogram instanceof Exertion) {
-					Exertion exertion = ((Exertion)mogram);
-					if ((mogram.getProcessSignature() != null
-							&& ((ServiceSignature) mogram.getProcessSignature()).isShellRemote())
-							|| (exertion.getControlContext() != null
-							&& ((ControlContext) exertion.getControlContext()).isShellRemote())) {
-						Exerter prv = (Exerter) Accessor.get().getService(sig(RemoteServiceShell.class));
-						result = prv.exert(mogram, transaction, entries);
-					} else {
-						try {
-							mogram.substitute(entries);
-						} catch (Exception e) {
-							throw new ExertionException(e);
-						}
-						this.mogram = mogram;
-						result = exert(transaction, null);
-					}
+			if (mogram instanceof Exertion) {
+				Exertion exertion = (Exertion)mogram;
+				if ((mogram.getProcessSignature() != null
+						&& ((ServiceSignature) mogram.getProcessSignature()).isShellRemote())
+						|| (exertion.getControlContext() != null
+						&& ((ControlContext) exertion.getControlContext()).isShellRemote())) {
+					Exerter prv = (Exerter) Accessor.get().getService(sig(RemoteServiceShell.class));
+					result = prv.exert(mogram, transaction, entries);
+				} else {
+					mogram.substitute(entries);
+					this.mogram = mogram;
+					result = exert(transaction, null);
 				}
-			} catch (Exception e) {
-				e.printStackTrace();
-				if (result != null)
-					((ServiceExertion) result).reportException(e);
 			}
-			return (T) result;
 		} catch (Exception e) {
-			throw new ExertionException(e);
+			e.printStackTrace();
+			if (result != null) {
+				result.reportException(e);
+			} else {
+				mogram.reportException(e);
+				result = mogram;
+			}
 		}
+		return (T) result;
 	}
 
 	public  <T extends Mogram> T exert(String providerName) throws TransactionException,

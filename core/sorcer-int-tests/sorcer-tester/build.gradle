@@ -73,7 +73,8 @@ def repoPath() {
 bootme {
     starterConfig = file("${projectDir.path}/configs/StartAll.groovy")
     systemProperties = ["relative.repo.path" : repoPath()]
-    //spawn = false
+//    spawn = false
+//    debug = true
 }
 
 test {
