@@ -124,8 +124,8 @@ public class operator {
 		return ((ServiceContext)context).getOutPaths();
 	}
 
-	public static Signature.From outPaths(String... elems) {
-		return new Signature.From(elems);
+	public static Signature.Out outPaths(String... elems) {
+		return new Signature.Out(elems);
 	}
 
     public static Signature.In inPaths(String... elems) {

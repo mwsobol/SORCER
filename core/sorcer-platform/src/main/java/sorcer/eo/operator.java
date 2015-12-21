@@ -975,8 +975,18 @@ public class operator {
 					((ServiceSignature) sig).setShellRemote((Strategy.Shell) o);
 				} else if (o instanceof ReturnPath) {
 					sig.setReturnPath((ReturnPath) o);
-				} else if (o instanceof Signature.From ) {
-					sig.setReturnPath(new ReturnPath((Signature.From)o));
+				} else if (o instanceof In ) {
+					if (sig.getReturnPath() == null) {
+						sig.setReturnPath(new ReturnPath((In) o));
+					} else {
+						sig.getReturnPath().inPaths = ((In) o).getPaths();
+					}
+				} else if (o instanceof Out) {
+					if (sig.getReturnPath() == null) {
+						sig.setReturnPath(new ReturnPath((Out) o));
+					} else {
+						sig.getReturnPath().outPaths = ((Out) o).getPaths();
+					}
 				} else if (o instanceof ServiceDeployment) {
 					((ServiceSignature) sig).setProvisionable(true);
 					((ServiceSignature) sig).setDeployment((ServiceDeployment) o);
@@ -2136,7 +2146,7 @@ public class operator {
 		return new ReturnPath(path);
 	}
 
-	public static ReturnPath result(From paths) {
+	public static ReturnPath result(Out paths) {
 		return new ReturnPath(null, paths);
 	}
 
@@ -2144,7 +2154,7 @@ public class operator {
 		return new ReturnPath();
 	}
 
-	public static ReturnPath result(String path, From outPaths) {
+	public static ReturnPath result(String path, Out outPaths) {
 		return new ReturnPath(path, outPaths);
 	}
 
@@ -2156,7 +2166,7 @@ public class operator {
 		return new ReturnPath(Signature.SELF, inPaths);
 	}
 
-	public static ReturnPath result(String path, In inPaths, From outPaths) {
+	public static ReturnPath result(String path, In inPaths, Out outPaths) {
 		return new ReturnPath(path, inPaths, outPaths);
 	}
 

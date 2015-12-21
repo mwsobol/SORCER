@@ -24,7 +24,6 @@ import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 /**
  * A service <code>Signature</code> is an indirect behavioral feature of
@@ -210,7 +209,7 @@ public interface Signature extends Service, Comparable, Dependency, Identifiable
 			path = Signature.SELF;
 		}
 
-        public ReturnPath(String path, From argPaths) {
+        public ReturnPath(String path, Out argPaths) {
             this.path = path;
             if (argPaths != null && argPaths.size() > 0) {
                 String[] ps = new String[argPaths.size()];
@@ -228,11 +227,15 @@ public interface Signature extends Service, Comparable, Dependency, Identifiable
             }
         }
 
-		public ReturnPath(From outPaths) {
+		public ReturnPath(Out outPaths) {
 			 this(null, null, outPaths);
 		}
 
-        public ReturnPath(String path, In inPaths, From outPaths) {
+		public ReturnPath(In inPaths) {
+			this(null, inPaths, null);
+		}
+
+        public ReturnPath(String path, In inPaths, Out outPaths) {
             this.path = path;
             if (outPaths != null && outPaths.size() > 0) {
                 String[] ps = new String[outPaths.size()];
@@ -381,22 +384,27 @@ public interface Signature extends Service, Comparable, Dependency, Identifiable
         }
 	};
 
-    public static class From extends ArrayList<String> implements Arg {
+    public static class Out extends ArrayList<String> implements Arg {
         private static final long serialVersionUID = 1L;
 
-        public From() {
+        public Out() {
             super();
         }
 
-        public From(String[] names) {
+        public Out(String[] names) {
             for (String name : names) {
                 add(name) ;
             }
         }
 
-        public From(int initialCapacity) {
+        public Out(int initialCapacity) {
             super(initialCapacity);
         }
+
+		public String[] getPaths() {
+			String[] paths = new String[size()];
+			return this.toArray(paths);
+		}
 
 		@Override
 		public String getName() {
@@ -420,6 +428,11 @@ public interface Signature extends Service, Comparable, Dependency, Identifiable
         public In(int initialCapacity) {
             super(initialCapacity);
         }
+
+		public String[] getPaths() {
+			String[] paths = new String[size()];
+			return this.toArray(paths);
+		}
 
 		@Override
 		public String getName() {
