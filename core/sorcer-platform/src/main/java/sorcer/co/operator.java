@@ -558,8 +558,8 @@ public class operator {
 		return ie;
 	}
 
-	public static <T> Entry<T> ent(String path, T value, String association) {
-		return new Entry<T>(path, value, association);
+	public static <T> TagEntry<T> ent(String path, T value, String association) {
+		return new TagEntry(path, value, association);
 	}
 
 	public static Entry set(Entry entry, Object value)

@@ -323,7 +323,7 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 	 * @return this context value at the path
 	 * @throws ContextException
 	 */
-	public T asis(String path) throws ContextException;
+	public T asis(String path);
 
 	public void setReturnValue(Object value) throws ContextException;
 

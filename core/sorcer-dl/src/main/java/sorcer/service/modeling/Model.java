@@ -116,6 +116,17 @@ public interface Model extends Mogram, Dependency {
     public void setBuilder(Signature signature);
 
     /**
+     * Returns a value of the object at the path
+     * (evaluation or invocation on this object if needed).
+     *
+     * @param path
+     *            the variable name
+     * @return this model value at the path
+     * @throws ModelException
+     */
+    public Object getValue(String path, Arg... args) throws ContextException;
+
+    /**
      * Returns a value of the object at the path as is
      * (no evaluation or invocation on this object).
      *
@@ -124,7 +135,7 @@ public interface Model extends Mogram, Dependency {
      * @return this model value at the path
      * @throws ModelException
      */
-    public Object get(String path) throws ModelException;
+    public Object asis(String path);
 
     /**
      * Returns a model controller for this model.

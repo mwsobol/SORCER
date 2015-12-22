@@ -2660,8 +2660,8 @@ public class ServiceContext<T> extends ServiceMogram implements
 		MonitorUtil.checkpoint(this);
 	}
 
-	public T asis(String path) throws ContextException {
-		T val;
+	public T asis(String path)  {
+		T val = null;
 		synchronized (this) {
 			if (isRevaluable == true) {
 				isRevaluable = false;
@@ -2672,10 +2672,16 @@ public class ServiceContext<T> extends ServiceMogram implements
 			}
 		}
 		// potentially context link
-		if (val == null)
-			return getValue(path);
-		else
+		if (val == null) {
+			try {
+				return getValue(path);
+			} catch (ContextException e) {
+				e.printStackTrace();
+			}
+		} else {
 			return val;
+		}
+		return val;
 	}
 
 	public T get(String path) {
@@ -3082,12 +3088,8 @@ public class ServiceContext<T> extends ServiceMogram implements
 			return false;
 
 		for (String  path : keySet()) {
-			try {
-				if (!asis(path).equals(((ServiceContext) object).asis(path)))
-					return false;
-			} catch (ContextException e) {
-				e.printStackTrace();
-			}
+			if (!asis(path).equals(((ServiceContext) object).asis(path)))
+				return false;
 		}
 		return true;
 	}

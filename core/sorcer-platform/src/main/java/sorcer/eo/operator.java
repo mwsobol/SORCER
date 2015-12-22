@@ -1795,7 +1795,7 @@ public class operator {
 			throws ContextException {
 		Object obj = null;
 		if (mogram instanceof Context) {
-			obj = ((Context)mogram).get(path);
+			obj = ((ServiceContext)mogram).get(path);
 			if (mogram instanceof EntModel) {
 				while (obj instanceof Entry && ((Entry)obj).getName().equals(path)) {
 					obj = ((Entry)obj).value();
