@@ -50,6 +50,8 @@ import sorcer.core.provider.rendezvous.ServiceConcatenator;
 import sorcer.core.provider.rendezvous.ServiceModeler;
 import sorcer.core.requestor.ExertRequestor;
 import sorcer.core.signature.*;
+import sorcer.core.signature.ServiceSignature.ReturnPath;
+import sorcer.core.signature.ServiceSignature.*;
 import sorcer.netlet.ScriptExerter;
 import sorcer.service.*;
 import sorcer.service.Signature.*;
@@ -154,7 +156,15 @@ public class operator {
 		return obj;
 	}
 
-	public static String path(String... attributes) {
+	public static Path path(String path) {
+		return new Path(path);
+	}
+
+	public static Path path(String path, Object info) {
+		return new Path(path, info);
+	}
+
+	public static String attPath(String... attributes) {
 		if (attributes.length == 0)
 			return null;
 		if (attributes.length > 1) {
@@ -228,36 +238,13 @@ public class operator {
 			throw new ContextException("Service not an exertion: " + service);
 	}
 
-//	public static FidelityContext fiContext(Fidelity... fidelityInfos)
-//			throws ContextException {
-//		return fiContext(null, fidelityInfos);
-//	}
-//
-//	public static FidelityContext sFiContext(String name, Fidelity... fidelities)
-//			throws ContextException {
-//		FidelityContext fiCxt = new FidelityContext(name);
-//		for (Fidelity e : fidelities) {
-//			if (e instanceof Fidelity) {
-//				try {
-//					fiCxt.put(e.getName(), e);
-//				} catch (Exception ex) {
-//					if (ex instanceof ContextException)
-//						throw (ContextException) ex;
-//					else
-//						throw new ContextException(ex);
-//				}
-//			}
-//		}
-//		return fiCxt;
-//	}
-
-	public static Context subcontext(Context context, List<String> paths) throws ContextException {
-		String[] pl = new String[paths.size()];
-		return context.getSubcontext((String[]) paths.toArray(pl));
+	public static Context subcontext(Context context, List<Path> paths) throws ContextException {
+		Path[] pl = new Path[paths.size()];
+		return context.getDirectionalSubcontext(paths.toArray(pl));
 	}
 
-	public static Context subcontext(Context context, String... paths) throws ContextException {
-		return context.getSubcontext(paths);
+	public static Context subcontext(Context context, Path... paths) throws ContextException {
+		return context.getDirectionalSubcontext(paths);
 	}
 
 	public static Context scope(Object... entries) throws ContextException {
@@ -271,7 +258,7 @@ public class operator {
 			throws ContextException {
 		// do not create a context from Context, jut return
 		if (entries.length == 1 && entries[0] instanceof Context)
-			 return  (Context)entries[0];
+			return  (Context)entries[0];
 
 		Context cxt = null;
 		List<MapContext> connList = new ArrayList<MapContext>();
@@ -292,7 +279,7 @@ public class operator {
 			return ((Exertion) ((CompoundExertion) entries[1]).getComponentMogram(
 					(String) entries[0])).getContext();
 		} else if (entries[0] instanceof Context && entries[1] instanceof List) {
-			return ((ServiceContext) entries[0]).getSubcontext((List) entries[1]);
+			return ((ServiceContext) entries[0]).getDirectionalSubcontext(Path.getSigPaths((List)entries[1]));
 		} else if (entries[0] instanceof Model) {
 			cxt = (PositionalContext) entries[0];
 		} else {
@@ -455,9 +442,9 @@ public class operator {
 			}
 		}
 		if (depList.size() > 0) {
-			Map<String, List<String>> dm = ((ServiceContext) cxt).getMogramStrategy().getDependentPaths();
+			Map<String, List<Path>> dm = ((ServiceContext) cxt).getMogramStrategy().getDependentPaths();
 			String path = null;
-			List<String> dependentPaths = null;
+			List<Path> dependentPaths = null;
 			for (DependencyEntry e : depList) {
 				path = e.getName();
 				dependentPaths = e.value();
@@ -979,13 +966,13 @@ public class operator {
 					if (sig.getReturnPath() == null) {
 						sig.setReturnPath(new ReturnPath((In) o));
 					} else {
-						sig.getReturnPath().inPaths = ((In) o).getPaths();
+						((ReturnPath)sig.getReturnPath()).inPaths = ((In) o).getSigPaths();
 					}
 				} else if (o instanceof Out) {
 					if (sig.getReturnPath() == null) {
 						sig.setReturnPath(new ReturnPath((Out) o));
 					} else {
-						sig.getReturnPath().outPaths = ((Out) o).getPaths();
+						((ReturnPath)sig.getReturnPath()).outPaths = ((Out) o).getSigPaths();
 					}
 				} else if (o instanceof ServiceDeployment) {
 					((ServiceSignature) sig).setProvisionable(true);
@@ -1969,12 +1956,12 @@ public class operator {
 	}
 
 	public static <T> T val(Context<T> model, String path,
-						  Arg... entries) throws ContextException {
+							Arg... entries) throws ContextException {
 		return value(model, path, entries);
 	}
 
 	public static <T> T v(Context<T> model, String path,
-							 Arg... args) throws ContextException {
+						  Arg... args) throws ContextException {
 		return value(model, path, args);
 	}
 
@@ -2022,7 +2009,7 @@ public class operator {
 
 	/**
 	 * Assigns the maker for this context, for example "triplet|one|two|three" is a
-	 * marker (relation) named 'triplet' as a product of three "places" _1, _2, _3.
+	 * marker (relation) named 'triplet' as a product of three "places" path, info, _3.
 	 *
 	 * @param context
 	 * @param marker
@@ -2175,11 +2162,11 @@ public class operator {
 	}
 
 	public static ReturnPath result(String path, Direction direction,
-									String[] paths) {
+									Path[] paths) {
 		return new ReturnPath(path, direction, paths);
 	}
 
-	public static ReturnPath result(String path, Class type, String[] paths) {
+	public static ReturnPath result(String path, Class type, Path[] paths) {
 		return new ReturnPath(path, Direction.OUT, type, paths);
 	}
 
@@ -2312,7 +2299,7 @@ public class operator {
 
 		public PathResponse(String path, Object target) {
 			this.target = target;
-			this._1 = path;
+			this.path = path;
 		}
 
 		@Override
@@ -2360,7 +2347,7 @@ public class operator {
 
 		public ParameterTypes(String path, Class... parameterTypes) {
 			this.parameterTypes = parameterTypes;
-			this._1 = path;
+			this.path = path;
 		}
 
 		@Override
@@ -2388,7 +2375,7 @@ public class operator {
 
 		public Args(String path, Object... args) {
 			this.args = args;
-			this._1 = path;
+			this.path = path;
 		}
 
 		public Arg[] args() {
@@ -2399,13 +2386,13 @@ public class operator {
 			return as;
 		}
 
-        public String[] argsToStrings() {
-            String[] as = new String[args.length];
-            for (int i = 0; i < args.length; i++) {
-                as[i] = args[i].toString();
-            }
-            return as;
-        }
+		public String[] argsToStrings() {
+			String[] as = new String[args.length];
+			for (int i = 0; i < args.length; i++) {
+				as[i] = args[i].toString();
+			}
+			return as;
+		}
 
 		@Override
 		public String toString() {
@@ -2640,13 +2627,13 @@ public class operator {
 	}
 
 	public static OptMogram opt(Condition condition,
-								  Exertion target) {
+								Exertion target) {
 		return new OptMogram(condition, target);
 	}
 
 
 	public static OptMogram opt(String name, Condition condition,
-								  Exertion target) {
+								Exertion target) {
 		return new OptMogram(name, condition, target);
 	}
 
@@ -2665,7 +2652,7 @@ public class operator {
 	}
 
 	public static LoopMogram loop(int from, int to, Condition condition,
-									Mogram target) {
+								  Mogram target) {
 		return new LoopMogram(null, from, to, condition, target);
 	}
 
@@ -2674,7 +2661,7 @@ public class operator {
 	}
 
 	public static LoopMogram loop(String name, Condition condition,
-									Exertion target) {
+								  Exertion target) {
 		return new LoopMogram(name, condition, target);
 	}
 

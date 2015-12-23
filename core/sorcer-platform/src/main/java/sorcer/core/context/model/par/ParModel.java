@@ -24,6 +24,7 @@ import sorcer.core.invoker.ServiceInvoker;
 import sorcer.service.*;
 import sorcer.service.modeling.Variability;
 import sorcer.util.Response;
+import sorcer.core.signature.ServiceSignature.ReturnPath;
 
 import java.rmi.RemoteException;
 import java.util.*;
@@ -103,7 +104,7 @@ public class ParModel<T> extends EntModel<T> implements Invocation<T>, Mappable<
 			if (path != null) {
 				val = (T) get(path);
 			} else {
-				Signature.ReturnPath rp = returnPath(args);
+				ReturnPath rp = returnPath(args);
 				if (rp != null)
 					val = (T) getReturnValue(rp);
 				else if (mogramStrategy.getResponsePaths() != null
@@ -292,19 +293,19 @@ public class ParModel<T> extends EntModel<T> implements Invocation<T>, Mappable<
 		Object result = null;
 		try {
 			if (context != null) {
-				Signature.ReturnPath rp = ((ServiceContext)context).getReturnPath();
+				ReturnPath rp = ((ServiceContext)context).getReturnPath();
 				this.append(context);
 				// check for multiple responses of this model
 				if (rp != null && rp.outPaths.length > 0) {
 					Object val = null;
 					if (rp.outPaths.length == 1)
-						val = getValue(rp.outPaths[0]);
+						val = getValue(rp.outPaths[0].path);
 					else {
 						List vals = new ArrayList(rp.outPaths.length);
 						for (int j = 0; j < rp.outPaths.length; j++)   {
-							vals.add(getValue(rp.outPaths[j]));
+							vals.add(getValue(rp.outPaths[j].path));
 						}
-						val = new Response(Arrays.asList(rp.outPaths), vals);
+						val = new Response(Path.getPathList(rp.outPaths), vals);
 					}
 					((ServiceContext)context).setFinalized(true);
 					return (T) val;
@@ -343,18 +344,18 @@ public class ParModel<T> extends EntModel<T> implements Invocation<T>, Mappable<
 		}
 	}
 
-	private Object getReturnValue(Signature.ReturnPath rp) throws ContextException {
+	private Object getReturnValue(ReturnPath rp) throws ContextException {
 		Object val = null;
 		// check for multiple responses of this model
 		if (rp != null && rp.outPaths.length > 0) {
 			if (rp.outPaths.length == 1)
-				val = getValue(rp.outPaths[0]);
+				val = getValue(rp.outPaths[0].path);
 			else {
 				List vals = new ArrayList(rp.outPaths.length);
 				for (int j = 0; j < rp.outPaths.length; j++) {
-					vals.add(getValue(rp.outPaths[j]));
+					vals.add(getValue(rp.outPaths[j].path));
 				}
-				val = new Response(Arrays.asList(rp.outPaths), vals);
+				val = new Response(Path.getPathList(rp.outPaths), vals);
 			}
 		} else if (rp != null && rp.path != null) {
 			val = getValue(rp.path);

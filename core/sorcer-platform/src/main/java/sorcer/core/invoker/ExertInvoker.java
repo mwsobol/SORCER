@@ -21,8 +21,7 @@ import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.par.Par;
 import sorcer.service.*;
-import sorcer.service.Signature.ReturnPath;
-
+import sorcer.core.signature.ServiceSignature.ReturnPath;
 import java.rmi.RemoteException;
 
 /**

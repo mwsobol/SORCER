@@ -29,9 +29,9 @@ import sorcer.core.context.model.srv.SrvModel;
 import sorcer.core.dispatch.graph.DirectedGraph;
 import sorcer.core.dispatch.graph.DirectedGraphRenderer;
 import sorcer.core.dispatch.graph.GraphNodeRenderer;
+import sorcer.core.signature.ServiceSignature.ReturnPath;
 import sorcer.service.*;
 
-import java.io.StringWriter;
 import java.util.*;
 
 import static sorcer.co.operator.ent;
@@ -144,7 +144,7 @@ public class SrvModelAutoDeps {
                     }
                 }
                 if (paths.size()>0) {
-                    operator.dependsOn(srvModel, ent(entryName, paths(paths.toArray(new String[0]))));
+                    operator.dependsOn(srvModel, ent(entryName, new ArrayList(paths).add(new String[0])));
                     String topNode = entryName;
                     if (entryToResultMap.containsKey(entryName))
                         topNode = entryToResultMap.get(entryName);
@@ -180,10 +180,10 @@ public class SrvModelAutoDeps {
             Object entry = srvModel.getData().get(entryName);
             if (entry instanceof Entry) {
                 Object entryVal = ((Entry)entry)._2;
-                Signature.ReturnPath rp = null;
+                ReturnPath rp = null;
                 if (entryVal instanceof SignatureEntry) {
                     Signature signature = ((SignatureEntry)entryVal)._2;
-                    if (signature!=null) rp = signature.getReturnPath();
+                    if (signature!=null) rp = (ReturnPath)signature.getReturnPath();
                 } else if (entry instanceof Srv) {
                     rp = ((Srv) entry).getReturnPath();
                 }
@@ -211,19 +211,19 @@ public class SrvModelAutoDeps {
         for (String entryName : srvModel.getData().keySet()) {
             Object entry = srvModel.getData().get(entryName);
             if (entry instanceof Entry) {
-                Signature.ReturnPath rp = null;
+                ReturnPath rp = null;
                 Object entryVal = ((Entry)entry)._2;
                 if (entryVal instanceof SignatureEntry) {
                     Signature signature = ((SignatureEntry)entryVal)._2;
-                    rp =  signature.getReturnPath();
+                    rp =  (ReturnPath)signature.getReturnPath();
                 } else if (entry instanceof Srv) {
                     rp = ((Srv)entry).getReturnPath();
                 }
                 if (rp!=null) {
                     dag.addEdge(rp.getName(), entryName);
                     if (rp.inPaths != null) {
-                        for (String inPath : rp.inPaths) {
-                            dag.addEdge(inPath, rp.getName());
+                        for (Path inPath : rp.inPaths) {
+                            dag.addEdge(inPath.path, rp.getName());
                         }
                     }
                 }

@@ -1,7 +1,7 @@
 /*
- * Copyright 2012 the original author or authors.
- * Copyright 2012 SorcerSoft.org.
- *  
+ * Copyright 2015 the original author or authors.
+ * Copyright 2015 SorcerSoft.org.
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -14,20 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package sorcer.service;
 
-package sorcer.co.tuple;
+/**
+ * Created by Mike Sobolewski on 12/22/15.
+ */
+public interface SignatureReturnPath {
 
-public class Path<T2> extends Tuple2<String, T2> {
-	
-	private static final long serialVersionUID = -3968682348032416823L;
-	
-	public Path() { }
+    String getPath();
 
-	public Path(String path) {
-		this._1 = path;
-	}
+    void setPath(String path);
 
-	public String path() {
-		return  this._1;
-	}
+    String[] getInPaths();
+
+    String[] getOutPaths();
 }

@@ -70,7 +70,7 @@ import java.util.*;
  * more meta-attribute meaning than XML attributes. While context attributes
  * provide a name space for direct access to data nodes via
  * {@link Context#getValue}, data attributes specify the data node for indirect
- * efficient retrieval (search) by service providers. 
+ * efficient retrieval (search) by service providers.
  *
  * @author Mike Sobolewski
  */
@@ -634,12 +634,12 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 	public String getLocalMetapath(String metaattributeName)
 			throws ContextException;
 
-	public Context getSubcontext(String... paths) throws ContextException;
+	public Context getDirectionalSubcontext(Path... paths) throws ContextException;
 
 	public boolean isValid(Signature method) throws ContextException;
 
 	/**
-	 * Returns a list of all paths of this context. 
+	 * Returns a list of all paths of this context.
 	 *
 	 * @return <code>List</code>
 	 * @throws ContextException
@@ -909,9 +909,9 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 
 	public int size();
 
-	Signature.ReturnPath getReturnPath();
+	SignatureReturnPath getReturnPath();
 
-	Context setReturnPath(Signature.ReturnPath returnPath);
+	Context setReturnPath(SignatureReturnPath returnPath);
 
 	public enum Type {
 		ASSOCIATIVE, SHARED, POSITIONAL, LIST, SCOPE, INDEXED, ARRAY

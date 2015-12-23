@@ -18,7 +18,6 @@
 package sorcer.core.invoker;
 
 import groovy.lang.GroovyShell;
-import sorcer.co.tuple.Path;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.par.Par;
 import sorcer.service.*;

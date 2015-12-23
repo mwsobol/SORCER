@@ -18,11 +18,11 @@
 package sorcer.core.signature;
 
 import net.jini.core.transaction.TransactionException;
-import sorcer.co.tuple.Path;
 import sorcer.netlet.ScriptExerter;
 import sorcer.service.Arg;
 import sorcer.service.Mogram;
 import sorcer.service.MogramException;
+import sorcer.service.Path;
 import sorcer.util.Sorcer;
 
 import java.io.File;

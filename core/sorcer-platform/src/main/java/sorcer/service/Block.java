@@ -27,6 +27,8 @@ import sorcer.core.exertion.LoopMogram;
 import sorcer.core.exertion.OptMogram;
 import sorcer.util.SorcerUtil;
 import sorcer.util.url.sos.SdbUtil;
+import sorcer.core.signature.ServiceSignature.ReturnPath;
+
 
 import java.io.IOException;
 import java.net.URL;
@@ -343,7 +345,7 @@ public abstract class Block extends CompoundExertion {
 //			dataContext.getScope().removePath((String) path);
 		}
 
-		Signature.ReturnPath rp = dataContext.getReturnPath();
+		ReturnPath rp = dataContext.getReturnPath();
 		if (rp != null && rp.path != null)
 			dataContext.removePath(rp.path);
 

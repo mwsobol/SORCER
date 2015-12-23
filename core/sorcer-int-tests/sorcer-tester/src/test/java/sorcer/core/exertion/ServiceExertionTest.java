@@ -26,7 +26,6 @@ import static sorcer.eo.operator.value;
 /**
  * @author Mike Sobolewski
  */
-@SuppressWarnings("unchecked")
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("core/sorcer-int-tests/sorcer-tester")
 public class ServiceExertionTest {
@@ -56,10 +55,10 @@ public class ServiceExertionTest {
 
 		// exert and them get the value from task's context
 		//logger.info("eTask value @ result/y = " + get(exert(eTask), path(result, y)));
-		assertTrue("Wrong eTask value for 100.0", get(eTask, path(result, y)).equals(100.0));
+		assertTrue("Wrong eTask value for 100.0", get(eTask, attPath(result, y)).equals(100.0));
 		
 		//logger.info("eTask value @ arg/x1 = " + exert(eTask, path("arg/x1")));
-		assertTrue("Wrong eTask value for 20.0", get(eTask, path("arg/x1")).equals(20.0));
+		assertTrue("Wrong eTask value for 20.0", get(eTask, attPath("arg/x1")).equals(20.0));
 
 		//logger.info("eTask value @  arg/x2 = " + exert(eTask, "arg/x2"));
 		assertTrue("Wrong eTask value for 80.0", get(eTask, "arg/x2").equals(80.0));
@@ -117,8 +116,8 @@ public class ServiceExertionTest {
 //		      out(path(result, y), null)));
 
 		Task task = task("t1", sig("add", AdderImpl.class), 
-				   context("add", inEnt(path(arg, x1), 20.0), inEnt(path(arg, x2), 80.0),
-				      outEnt(path(result, y), null)));
+				   context("add", inEnt(attPath(arg, x1), 20.0), inEnt(attPath(arg, x2), 80.0),
+				      outEnt(attPath(result, y), null)));
 		
 		return task;
 	}
@@ -145,24 +144,24 @@ public class ServiceExertionTest {
 //		   pipe(out(t5, path(result, y)), in(t3, path(arg, x2))));
 		
 		Task t3 = task("t3", sig("subtract", SubtractorImpl.class), 
-				context("subtract", inEnt(path(arg, x1)), inEnt(path(arg, x2)),
-						outEnt(path(result, y))));
+				context("subtract", inEnt(attPath(arg, x1)), inEnt(attPath(arg, x2)),
+						outEnt(attPath(result, y))));
 
 		Task t4 = task("t4", sig("multiply", MultiplierImpl.class), 
-				context("multiply", inEnt(path(arg, x1), 10.0), inEnt(path(arg, x2), 50.0),
-						outEnt(path(result, y))));
+				context("multiply", inEnt(attPath(arg, x1), 10.0), inEnt(attPath(arg, x2), 50.0),
+						outEnt(attPath(result, y))));
 
 		Task t5 = task("t5", sig("add", AdderImpl.class), 
-				context("add", inEnt(path(arg, x1), 20.0), inEnt(path(arg, x2), 80.0),
-						outEnt(path(result, y))));
+				context("add", inEnt(attPath(arg, x1), 20.0), inEnt(attPath(arg, x2), 80.0),
+						outEnt(attPath(result, y))));
 
 		// Service Composition j1(j2(t4(x1, x2), t5(x1, x2)), t3(x1, x2))
 		//Job j1= job("j1", job("j2", t4, t5, strategy(Flow.PARALLEL, Access.PULL)), t3,
 		Job job = job("j1", sig("exert", ServiceJobber.class),
 					job("j2", sig("exert", ServiceJobber.class), t4, t5),
 					t3,
-					pipe(outPoint(t4, path(result, y)), inPoint(t3, path(arg, x1))),
-					pipe(outPoint(t5, path(result, y)), inPoint(t3, path(arg, x2))));
+					pipe(outPoint(t4, attPath(result, y)), inPoint(t3, attPath(arg, x1))),
+					pipe(outPoint(t5, attPath(result, y)), inPoint(t3, attPath(arg, x2))));
 				
 		return job;
 	}

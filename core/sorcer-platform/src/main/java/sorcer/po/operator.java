@@ -20,7 +20,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.co.tuple.ExecPath;
 import sorcer.co.tuple.InputEntry;
-import sorcer.co.tuple.Path;
 import sorcer.co.tuple.Tuple2;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.ent.Entry;
@@ -397,7 +396,7 @@ public class operator {
 	}
 
 	public static ServiceInvoker print(String path) {
-		return new GroovyInvoker("_print_", new Path<>(path));
+		return new GroovyInvoker("_print_", new Path(path));
 	}
 
 	public static ServiceInvoker invoker(String expression) {

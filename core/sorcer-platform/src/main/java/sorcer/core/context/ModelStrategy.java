@@ -52,7 +52,7 @@ public class ModelStrategy implements MogramStrategy, Projection<Arg>, Serializa
     // mapping from paths of this context to input paths of requestors
     protected Context outConnector;
 
-    protected Map<String, List<String>> dependentPaths;
+    protected Map<String, List<Path>> dependentPaths;
 
     protected Fidelity<Arg> selectedFidelity;
 
@@ -143,9 +143,9 @@ public class ModelStrategy implements MogramStrategy, Projection<Arg>, Serializa
         return getExceptions();
     }
 
-    public Map<String, List<String>> getDependentPaths() {
+    public Map<String, List<Path>> getDependentPaths() {
         if (dependentPaths == null) {
-            dependentPaths = new HashMap<String, List<String>>();
+            dependentPaths = new HashMap<String, List<Path>>();
         }
         return dependentPaths;
     }

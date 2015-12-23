@@ -32,6 +32,7 @@ import sorcer.core.plexus.MultiFidelity;
 import sorcer.core.provider.DatabaseStorer;
 import sorcer.core.signature.NetletSignature;
 import sorcer.core.signature.ObjectSignature;
+import sorcer.core.signature.ServiceSignature;
 import sorcer.netlet.ScriptExerter;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
@@ -42,6 +43,7 @@ import sorcer.util.Sorcer;
 import sorcer.util.Table;
 import sorcer.util.bdb.objects.UuidObject;
 import sorcer.util.url.sos.SdbUtil;
+import sorcer.core.signature.ServiceSignature.ReturnPath;
 
 import java.io.File;
 import java.io.IOException;
@@ -124,13 +126,21 @@ public class operator {
 		return ((ServiceContext)context).getOutPaths();
 	}
 
-	public static Signature.Out outPaths(String... elems) {
-		return new Signature.Out(elems);
+	public static ServiceSignature.Out outPaths(String... elems) {
+		return new ServiceSignature.Out(elems);
 	}
 
-    public static Signature.In inPaths(String... elems) {
-        return new Signature.In(elems);
-    }
+	public static ServiceSignature.Out outPaths(Path... elems) {
+		return new ServiceSignature.Out(elems);
+	}
+
+	public static ServiceSignature.In inPaths(String... elems) {
+		return new ServiceSignature.In(elems);
+	}
+
+	public static ServiceSignature.In inPaths(Path... elems) {
+		return new ServiceSignature.In(elems);
+	}
 
 	public static Path file(String filename) {
 		if(Artifact.isArtifact(filename)) {
@@ -367,7 +377,7 @@ public class operator {
 		return new Srv(path, call);
 	}
 
-	public static <T> Srv lambda(String path, ValueCallable<T> call, Signature.ReturnPath returnPath) {
+	public static <T> Srv lambda(String path, ValueCallable<T> call, ReturnPath returnPath) {
 		return new Srv(path, call, returnPath);
 	}
 
@@ -414,7 +424,7 @@ public class operator {
 		return srv(sig);
 	}
 
-	public static DependencyEntry dep(String path, List<String> paths) {
+	public static DependencyEntry dep(String path, List<Path> paths) {
 		return new DependencyEntry(path, paths);
 	}
 
@@ -915,11 +925,22 @@ public class operator {
         return new Copier(fromContext, fromEntries, toContext, toEntries);
     }
 
-    public static List<String> paths(String... paths) {
-        List<String> list = new ArrayList<>();
-        Collections.addAll(list, paths);
-        return list;
-    }
+	public static List<Path> paths(Object... paths) {
+		List<Path> list = new ArrayList<>();
+		for (Object o : paths) {
+			if (o instanceof String)
+				list.add(new Path((String)o));
+			if (o instanceof Path)
+				list.add((Path)o);
+		}
+		return list;
+	}
+
+//    public static List<String> paths(String... paths) {
+//        List<String> list = new ArrayList<>();
+//        Collections.addAll(list, paths);
+//        return list;
+//    }
 
 	public static List<String> paths(Context context) throws ContextException {
 		return context.getPaths();
@@ -932,21 +953,21 @@ public class operator {
 	}
 
 	public static Model dependsOn(Model model, Entry... entries) {
-        Map<String, List<String>> dm = ((ServiceContext)model).getMogramStrategy().getDependentPaths();
+        Map<String, List<Path>> dm = ((ServiceContext)model).getMogramStrategy().getDependentPaths();
         String path = null;
         Object dependentPaths = null;
         for (Entry e : entries) {
             dependentPaths = e.value();
-            if (dependentPaths instanceof List){
+            if (dependentPaths instanceof List) {
                 path = e.getName();
                 dependentPaths =  e.value();
-                dm.put(path, (List<String>)dependentPaths);
+                dm.put(path, (List<Path>) dependentPaths);
             }
         }
 		return model;
     }
 
-    public static Map<String, List<String>> dependencies(Model model) {
+    public static Map<String, List<Path>> dependencies(Model model) {
          return ((ServiceContext)model).getMogramStrategy().getDependentPaths();
     }
     

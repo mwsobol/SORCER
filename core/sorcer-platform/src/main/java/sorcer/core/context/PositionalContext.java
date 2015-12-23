@@ -70,7 +70,7 @@ public class PositionalContext<T> extends ServiceContext<T> implements
     }
 
     public ServiceContext getEvaluatedInSubcontext(String... paths) throws ContextException {
-        PositionalContext subcntxt = getSubcontext();
+        PositionalContext subcntxt = (PositionalContext) getSubcontext();
         List<String>  ips = getInPaths();
         for (String p : paths) {
             for (int i = 1; i <= tally; i++) {
