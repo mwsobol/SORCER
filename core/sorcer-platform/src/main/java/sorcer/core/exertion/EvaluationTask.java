@@ -18,11 +18,14 @@
 package sorcer.core.exertion;
 
 import net.jini.core.transaction.Transaction;
+import net.jini.core.transaction.TransactionException;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.par.Par;
 import sorcer.core.context.model.par.ParModel;
+import sorcer.core.context.model.srv.Srv;
 import sorcer.core.signature.EvaluationSignature;
 import sorcer.service.*;
+import sorcer.service.modeling.Variability;
 
 import java.rmi.RemoteException;
 import java.util.Map;
@@ -51,8 +54,10 @@ public class EvaluationTask extends Task {
 		if (es.getEvaluator() instanceof Par) {
 			if (dataContext.getScope() == null)
 				dataContext.setScope(new ParModel(name));
-//			((Par) es.getEvaluator()).setScope(dataContext.getScope());
-//			((Par) es.getEvaluator()).getScope().remove(((Par)es.getEvaluator()).key());
+		}
+		if (evaluator instanceof Srv) {
+			if (dataContext.getReturnPath() == null)
+				dataContext.setReturnPath(Signature.SELF_VALUE);
 		}
 	}
 
@@ -87,9 +92,9 @@ public class EvaluationTask extends Task {
 	 * @see sorcer.service.Task#doTask(net.jini.core.transaction.Transaction)
 	 */
 	@Override
-	public Task doTask(Transaction txn, Arg... entries) throws ExertionException,
+	public Task doTask(Transaction txn, Arg... args) throws ExertionException,
 			SignatureException {
-		dataContext.getModelStrategy().setCurrentSelector(getProcessSignature().getSelector());
+		dataContext.getMogramStrategy().setCurrentSelector(getProcessSignature().getSelector());
 		dataContext.setCurrentPrefix(getProcessSignature().getPrefix());
 
 		if (serviceFidelity.getSelects().size() > 1) {
@@ -108,11 +113,11 @@ public class EvaluationTask extends Task {
 
 			if (evaluator instanceof Evaluator) {
 				ArgSet vs = ((Evaluator) evaluator).getArgs();
-				Object args = dataContext.getArgs();
+				Object pars = dataContext.getArgs();
 				Object val;
-				if (args != null && args instanceof Map) {
+				if (args != null && pars instanceof Map) {
 					for (Arg v : vs) {
-						val = ((Map<String, Object>) args).get(v.getName());
+						val = ((Map<String, Object>) pars).get(v.getName());
 						if (val != null && (val instanceof Setter)) {
 							((Setter) v).setValue(val);
 						}
@@ -130,14 +135,21 @@ public class EvaluationTask extends Task {
 				if (evaluator instanceof Par && dataContext.getScope() != null)
 					((Par) evaluator).getScope().append(dataContext.getScope());
 			}
-			Object result = evaluator.getValue(entries);
+
+			Object result = null;
+			if (evaluator instanceof Srv) {
+				result = handleSrvEntry((Srv)evaluator, args);
+			} else {
+				result = evaluator.getValue(args);
+			}
+
 			if (getProcessSignature().getReturnPath() != null)
 				dataContext.setReturnPath(getProcessSignature().getReturnPath());
 			dataContext.setReturnValue(result);
 			if (evaluator instanceof Scopable) {
 				(((Scopable)evaluator).getScope()).putValue(dataContext.getReturnPath().path, result);
 			}
-			if (evaluator instanceof Par && dataContext.getScope() != null)
+			if (evaluator instanceof Srv && dataContext.getScope() != null)
 				dataContext.getScope().putValue(((Par) evaluator).getName(), result);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -145,6 +157,30 @@ public class EvaluationTask extends Task {
 		}
 		dataContext.appendTrace("task" + getName() + " by: " + getEvaluation());
 		return this;
+	}
+
+	private Object handleSrvEntry(Srv evaluator, Arg... args) throws MogramException, RemoteException, TransactionException {
+		Object out = null;
+		Object val = null;
+
+		if (evaluator instanceof Srv) {
+			if (isChanged())
+				evaluator.isValid(false);
+			val = evaluator.asis();
+		}
+
+		if (val instanceof ValueCallable && evaluator.getType() == Variability.Type.LAMBDA) {
+			Signature.ReturnPath rp = evaluator.getReturnPath();
+			if (rp != null && rp.inPaths != null) {
+				Context cxt = getScope().getSubcontext(rp.inPaths);
+				out = ((ValueCallable)val).call(cxt);
+			} else {
+				out = ((ValueCallable) val).call(getScope());
+			}
+			if (rp != null && rp.path != null)
+				putValue((evaluator).getReturnPath().path, out);
+		}
+		return out;
 	}
 
 	public Evaluation getEvaluation() {

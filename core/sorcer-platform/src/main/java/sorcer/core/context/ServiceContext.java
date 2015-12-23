@@ -35,11 +35,13 @@ import sorcer.core.context.model.par.ParList;
 import sorcer.core.context.model.par.ParModel;
 import sorcer.core.context.node.ContextNode;
 import sorcer.core.context.node.ContextNodeException;
+import sorcer.core.exertion.NetTask;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.core.monitor.MonitorUtil;
 import sorcer.core.provider.Provider;
 import sorcer.core.provider.ServiceProvider;
 import sorcer.core.signature.NetSignature;
+import sorcer.core.signature.ServiceSignature;
 import sorcer.eo.operator;
 import sorcer.service.*;
 import sorcer.service.Signature.Direction;
@@ -108,7 +110,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 
 	protected boolean isFinalized = false;
 
-	protected ModelStrategy modelStrategy = new ModelStrategy(this);
+	protected ModelStrategy mogramStrategy = new ModelStrategy(this);
 
 	protected Variability.Type type = Variability.Type.SELF;
 
@@ -150,6 +152,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 			this.name = name;
 		}
 		mogramId = UuidFactory.generate();
+		mogramStrategy = new ModelStrategy(this);
 		creationDate = new Date();
 	}
 
@@ -192,7 +195,6 @@ public class ServiceContext<T> extends ServiceMogram implements
 		parentId = cxt.getParentId();
 		creationDate = new Date();
 		description = cxt.getDescription();
-		scopeCode = cxt.getScopeCode();
 		scope = cxt.getScope();
 		initContext = ((ServiceContext) cxt).getInitContext();
 		ownerId = cxt.getOwnerId();
@@ -293,22 +295,22 @@ public class ServiceContext<T> extends ServiceMogram implements
 
 	@Override
 	public List<ThrowableTrace> getExceptions() {
-		return modelStrategy.getExceptions();
+		return mogramStrategy.getExceptions();
 	}
 
 	@Override
 	public List<String> getTrace() {
-		return modelStrategy.getTraceList();
+		return mogramStrategy.getTraceList();
 	}
 
 	@Override
 	public List<ThrowableTrace> getAllExceptions() {
-		return modelStrategy.getAllExceptions();
+		return mogramStrategy.getAllExceptions();
 	}
 
 	@Override
 	public boolean isMonitorable() {
-		return modelStrategy.isMonitorable();
+		return mogramStrategy.isMonitorable();
 	}
 
 	public Context getInitContext() {
@@ -338,7 +340,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		}
 		if (rp != null) {
 			try {
-				if (rp.path != null && rp.path.equals("self")) {
+				if (rp.path != null && rp.path.equals(Signature.SELF)) {
 					return (T) this;
 				} else if (rp.outPaths != null && rp.outPaths.length > 0) {
 					val = (T)getSubcontext(rp.outPaths);
@@ -1463,18 +1465,22 @@ public class ServiceContext<T> extends ServiceMogram implements
 	}
 
 	public Context execSignature(Signature sig, Arg... items) throws MogramException {
+		if (sig.getReturnPath() == null)
+			throw new MogramException("No signature return path defined!");
+
+		if (sig.getReturnPath().path == null) {
+			sig.getReturnPath().path = sig.getName();
+		}
 		String[] ips = sig.getReturnPath().inPaths;
 		String[] ops = sig.getReturnPath().outPaths;
 		Context incxt = this;
 		if (ips != null && ips.length > 0) {
 			incxt = this.getEvaluatedSubcontext(ips, items);
 		}
-		if (sig.getReturnPath() != null) {
-			incxt.setReturnPath(sig.getReturnPath());
-		}
+		incxt.setReturnPath(sig.getReturnPath());
 		Context outcxt = null;
 		try {
-			outcxt = ((Task) task(sig, incxt).exert()).getContext();
+			outcxt = task(sig, incxt).exert().getContext();
 		} catch (Exception e) {
 			throw new MogramException(e);
 		}
@@ -1891,7 +1897,6 @@ public class ServiceContext<T> extends ServiceMogram implements
 	public String toStringComplete(String cr, StringBuffer sb) {
 		sb.append("Domain:").append(domainId);
 		sb.append(" SubDomain:" + subdomainId);
-		sb.append(" Scope:" + scopeCode);
 		sb.append(" ID:" + mogramId);
 		sb.append("\nPaths: \n");
 		Iterator<String> e = null;
@@ -2101,17 +2106,19 @@ public class ServiceContext<T> extends ServiceMogram implements
 		if (returnPath == null)
 			returnPath = new ReturnPath(Context.RETURN);
 
-		if (value == null)
-			putValue(returnPath.path, (T)none);
-		else
-			putValue(returnPath.path, value);
+		if (returnPath.path != null) {
+			if (value == null)
+				putValue(returnPath.path, (T)none);
+			else
+				putValue(returnPath.path, value);
 
-		if (returnPath.direction == Direction.IN)
-			Contexts.markIn(this, returnPath.path);
-		else if (returnPath.direction == Direction.OUT)
-			Contexts.markOut(this, returnPath.path);
-		if (returnPath.direction == Direction.INOUT)
-			Contexts.markInout(this, returnPath.path);
+			if (returnPath.direction == Direction.IN)
+				Contexts.markIn(this, returnPath.path);
+			else if (returnPath.direction == Direction.OUT)
+				Contexts.markOut(this, returnPath.path);
+			if (returnPath.direction == Direction.INOUT)
+				Contexts.markInout(this, returnPath.path);
+		}
 	}
 
 	public ReturnPath getReturnJobPath() {
@@ -2491,14 +2498,14 @@ public class ServiceContext<T> extends ServiceMogram implements
 		if (exertion != null)
 			exertion.getControlContext().addException(t);
 		else
-			modelStrategy.exceptions.add(new ThrowableTrace(t));
+			mogramStrategy.exceptions.add(new ThrowableTrace(t));
 	}
 
 	public void reportException(String message, Throwable t) {
 		if (exertion != null)
 			exertion.getControlContext().addException(message, t);
 		else
-			modelStrategy.exceptions.add(new ThrowableTrace(message, t));
+			mogramStrategy.exceptions.add(new ThrowableTrace(message, t));
 	}
 
 	public void reportException(String message, Throwable t, ProviderInfo info) {
@@ -2506,7 +2513,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		if (exertion != null)
 			exertion.getControlContext().addException(se);
 		else
-			modelStrategy.exceptions.add(new ThrowableTrace(se));
+			mogramStrategy.exceptions.add(new ThrowableTrace(se));
 	}
 
 	public void reportException(String message, Throwable t, Provider provider) {
@@ -2516,7 +2523,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		if (exertion != null)
 			exertion.getControlContext().addException(se);
 		else
-			modelStrategy.exceptions.add(new ThrowableTrace(se));
+			mogramStrategy.exceptions.add(new ThrowableTrace(se));
 	}
 
 	public void reportException(String message, Throwable t, Provider provider,  ProviderInfo info) {
@@ -2526,7 +2533,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		if (exertion != null)
 			exertion.getControlContext().addException(se);
 		else
-			modelStrategy.exceptions.add(new ThrowableTrace(se));
+			mogramStrategy.exceptions.add(new ThrowableTrace(se));
 	}
 
 	/*
@@ -2539,7 +2546,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		if (exertion != null)
 			exertion.getControlContext().appendTrace(footprint);
 		else
-			modelStrategy.appendTrace(footprint);
+			mogramStrategy.appendTrace(footprint);
 	}
 
 	@Override
@@ -2672,7 +2679,10 @@ public class ServiceContext<T> extends ServiceMogram implements
 	}
 
 	public T get(String path) {
-		return data.get(path);
+		if (path != null)
+			return data.get(path);
+		else
+			return (T) Context.none;
 	}
 
 	public Context setOutValues(Context<T> context) throws ContextException,
@@ -2700,8 +2710,8 @@ public class ServiceContext<T> extends ServiceMogram implements
 			throws ContextException {
 		// first managed dependencies
 		String currentPath = path;
-		if (modelStrategy.dependers != null && modelStrategy.dependers.size() > 0) {
-			for (Evaluation eval : modelStrategy.dependers)  {
+		if (mogramStrategy.dependers != null && mogramStrategy.dependers.size() > 0) {
+			for (Evaluation eval : mogramStrategy.dependers)  {
 				try {
 					eval.getValue(entries);
 				} catch (RemoteException e) {
@@ -2713,9 +2723,9 @@ public class ServiceContext<T> extends ServiceMogram implements
 		try {
 			substitute(entries);
 			if (currentPath == null) {
-				if (modelStrategy.responsePaths != null && modelStrategy.responsePaths.size()>0) {
-					if (modelStrategy.responsePaths.size() == 1)
-						currentPath = modelStrategy.responsePaths.get(0).getName();
+				if (mogramStrategy.responsePaths != null && mogramStrategy.responsePaths.size()>0) {
+					if (mogramStrategy.responsePaths.size() == 1)
+						currentPath = mogramStrategy.responsePaths.get(0).getName();
 					else
 						return (T) getResponse();
 				}
@@ -2768,21 +2778,21 @@ public class ServiceContext<T> extends ServiceMogram implements
 
 	@Override
 	public Context getInConnector(Arg... args) throws ContextException, RemoteException {
-		return modelStrategy.getInConnector();
+		return mogramStrategy.getInConnector();
 	}
 
 	@Override
 	public Context getOutConnector(Arg... args) throws ContextException, RemoteException {
-		return modelStrategy.getOutConnector();
+		return mogramStrategy.getOutConnector();
 	}
 
 	@Override
 	public Context getResponse(Arg... args) throws ContextException, RemoteException {
 		Context result = null;
-		if (modelStrategy.outConnector != null) {
+		if (mogramStrategy.outConnector != null) {
 			ServiceContext mc = null;
 			try {
-				mc = (ServiceContext) ObjectCloner.clone(modelStrategy.outConnector);
+				mc = (ServiceContext) ObjectCloner.clone(mogramStrategy.outConnector);
 			} catch (Exception e) {
 				throw new ContextException(e);
 			}
@@ -2791,20 +2801,20 @@ public class ServiceContext<T> extends ServiceMogram implements
 				Map.Entry pairs = (Map.Entry) it.next();
 				mc.putInValue((String) pairs.getKey(), getValue((String) pairs.getValue()));
 			}
-			if (modelStrategy.responsePaths != null && modelStrategy.responsePaths.size() > 0) {
-				getMergedSubcontext(mc, modelStrategy.responsePaths, args);
-				modelStrategy.outcome = mc;
-				modelStrategy.outcome.setModeling(true);
-				result = modelStrategy.outcome;
+			if (mogramStrategy.responsePaths != null && mogramStrategy.responsePaths.size() > 0) {
+				getMergedSubcontext(mc, mogramStrategy.responsePaths, args);
+				mogramStrategy.outcome = mc;
+				mogramStrategy.outcome.setModeling(true);
+				result = mogramStrategy.outcome;
 			}
 		} else {
-			if (modelStrategy.responsePaths != null && modelStrategy.responsePaths.size() > 0) {
-				modelStrategy.outcome = getMergedSubcontext(null, modelStrategy.responsePaths, args);
+			if (mogramStrategy.responsePaths != null && mogramStrategy.responsePaths.size() > 0) {
+				mogramStrategy.outcome = getMergedSubcontext(null, mogramStrategy.responsePaths, args);
 			} else {
-				modelStrategy.outcome = substitute(args);
+				mogramStrategy.outcome = substitute(args);
 			}
-			result = modelStrategy.outcome;
-			modelStrategy.outcome.setModeling(true);
+			result = mogramStrategy.outcome;
+			mogramStrategy.outcome.setModeling(true);
 		}
 		result.setName("Response of model: " + name);
 		return result;
@@ -2812,7 +2822,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 
 	@Override
 	public Object getResult() throws ContextException, RemoteException {
-		return modelStrategy.outcome;
+		return mogramStrategy.outcome;
 	}
 
 	@Override
@@ -3124,11 +3134,55 @@ public class ServiceContext<T> extends ServiceMogram implements
 	public <T extends Mogram> T exert(T mogram, Transaction txn, Arg... args) throws TransactionException,
 			MogramException, RemoteException {
 		try {
+			if (mogram instanceof NetTask) {
+				Task task = (NetTask)mogram;
+				Class serviceType = task.getServiceType();
+				 if (Invocation.class.isAssignableFrom(serviceType)) {
+					 Object out = ((Invocation)this).invoke(task.getContext(), args);
+					 handleExertOutput(task, out);
+					 return (T) task;
+				 } else if (Evaluation.class.isAssignableFrom(serviceType)) {
+					 Object out = ((Evaluation)this).getValue(args);
+					 handleExertOutput(task, out);
+					 return (T) task;
+				 }
+			}
 			exertion.getContext().appendContext(this);
+			return (T) exertion.exert(txn);
 		} catch (Exception e) {
+			e.printStackTrace();
+			mogram.getContext().reportException(e);
+			if (e instanceof Exception)
+				mogram.setStatus(FAILED);
+			else
+				mogram.setStatus(ERROR);
+
 			throw new ExertionException(e);
 		}
-		return (T) exertion.exert(txn);
+	}
+
+	private void handleExertOutput(Task task, Object result ) throws ContextException {
+		ServiceContext dataContext = (ServiceContext) task.getDataContext();
+		if (result instanceof Context) {
+			Signature.ReturnPath rp = dataContext.getReturnPath();
+			if (rp != null) {
+				if (((Context) result).getValue(rp.path) != null) {
+					dataContext.setReturnValue(((Context) result).getValue(rp.path));
+				} else if (rp.outPaths != null && rp.outPaths.length > 0) {
+					Context out = dataContext.getSubcontext(rp.outPaths);
+					dataContext.setReturnValue(out);
+				}
+			} else if (dataContext.getScope() != null) {
+				dataContext.getScope().append((Context)result);
+			} else {
+				dataContext = (ServiceContext) result;
+			}
+		} else {
+			dataContext.setReturnValue(result);
+		}
+		dataContext.updateContextWith(((ServiceSignature)task.getProcessSignature()).getOutConnector());
+		task.setContext(dataContext);
+		task.setStatus(DONE);
 	}
 
 	public <T extends Mogram> T exert(T mogram) throws TransactionException,
@@ -3219,18 +3273,18 @@ public class ServiceContext<T> extends ServiceMogram implements
 		data.putAll((Map<? extends String, ? extends T>) ((ServiceContext) context).data);
 	}
 
-	public ModelStrategy getModelStrategy() {
-		return modelStrategy;
+	public ModelStrategy getMogramStrategy() {
+		return mogramStrategy;
 	}
 
 	@Override
 	public void addDependers(Evaluation... dependers) {
-		modelStrategy.addDependers(dependers);
+		mogramStrategy.addDependers(dependers);
 	}
 
 	@Override
 	public List<Evaluation> getDependers() {
-		return modelStrategy.getDependers();
+		return mogramStrategy.getDependers();
 	}
 
 	public Direction getDirection() {

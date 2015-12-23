@@ -18,41 +18,38 @@
 package sorcer.core.dispatch;
 
 import net.jini.config.ConfigurationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sorcer.core.DispatchResult;
 import sorcer.core.Dispatcher;
 import sorcer.core.provider.Provider;
 import sorcer.core.provider.ServiceProvider;
-import sorcer.service.Arg;
-import sorcer.service.Block;
-import sorcer.service.ContextException;
+import sorcer.service.*;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-public class BlockThread extends Thread {
-	private final static Logger logger = LoggerFactory.getLogger(BlockThread.class
+public class ModelThread extends Thread {
+	private final static Logger logger = LoggerFactory.getLogger(ModelThread.class
 			.getName());
 
 	private static final int SLEEP_TIME = 250;
 	// doBlock method calls internally
-	private Block block;
+	private Task task;
 	private Arg[] args;
-	private Block result;
+	private Task result;
 	Provider provider;
 
-	public BlockThread(Block block, Provider provider, Arg... args) {
+	public ModelThread(Task task, Provider provider, Arg... args) {
 		this.args = args;
-		this.block = block;
+		this.task = task;
 		this.provider = provider;
 	}
 
 	public void run() {
 		logger.debug("*** Exertion dispatcher started with control context ***\n"
-				+ block.getControlContext());
+				+ task.getControlContext());
 		Dispatcher dispatcher = null;
 		try {
 			String exertionDeploymentConfig = null;
-			if (block.isProvisionable()) {
+			if (task.isProvisionable()) {
 				try {
 					exertionDeploymentConfig =
 							(String)((ServiceProvider)provider).getProviderConfiguration().getEntry("sorcer.core.provider.ServiceProvider",
@@ -64,9 +61,9 @@ public class BlockThread extends Thread {
 				}
 			}
 			if (exertionDeploymentConfig != null)
-				dispatcher = MogramDispatcherFactory.getFactory().createDispatcher(block, provider, exertionDeploymentConfig);
+				dispatcher = MogramDispatcherFactory.getFactory().createDispatcher(task, provider, exertionDeploymentConfig);
 			else
-				dispatcher = MogramDispatcherFactory.getFactory().createDispatcher(block, provider);
+				dispatcher = MogramDispatcherFactory.getFactory().createDispatcher(task, provider);
 
             dispatcher.exec(args);
             DispatchResult result = dispatcher.getResult();
@@ -86,19 +83,19 @@ public class BlockThread extends Thread {
 			} */
 
 			logger.debug("*** Dispatcher exit state = " + dispatcher.getClass().getName()  + " state: " + result.state
-					+ " for block***\n" + block.getControlContext());
-            this.result = (Block) result.exertion;
+					+ " for block***\n" + task.getControlContext());
+            this.result = (Task) result.exertion;
         } catch (DispatcherException de) {
 			de.printStackTrace();
 		}
 		//result = (Block) dispatcher.getMogram();
 	}
 
-	public Block getBlock() {
-		return block;
+	public Task getTask() {
+		return task;
 	}
 
-	public Block getResult() throws ContextException {
+	public Task getResult() throws ContextException {
 		return result;
 	}
 }

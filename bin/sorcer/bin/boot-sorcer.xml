@@ -68,8 +68,8 @@
 			<sysproperty key="java.protocol.handler.pkgs" value="net.jini.url|sorcer.util.url|org.rioproject.url" />
 			<!--sysproperty key=""webster.debug"" value="true" /-->
 			<!--sysproperty key="webster.port" value="60009" /-->
-<!--			<jvmarg value="-Xdebug"/>
-			<jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,address=8000"/>-->
+			<!--jvmarg value="-Xdebug"/>
+			<jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,address=8001"/-->
 		</java>
 	</target>
 

@@ -121,10 +121,10 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
             MonitoringSession monSession = MonitorUtil.getMonitoringSession(exertion);
             if (exertion.isMonitorable() && monSession!=null) {
                 try {
-                    monSession.init((Monitorable) provider.getProxy(), ExertionDispatcherFactory.LEASE_RENEWAL_PERIOD,
-                            ExertionDispatcherFactory.DEFAULT_TIMEOUT_PERIOD);
+                    monSession.init((Monitorable) provider.getProxy(), MogramDispatcherFactory.LEASE_RENEWAL_PERIOD,
+                            MogramDispatcherFactory.DEFAULT_TIMEOUT_PERIOD);
                     if (getLrm()==null) setLrm(new LeaseRenewalManager());
-                    getLrm().renewUntil(monSession.getLease(), Lease.FOREVER, ExertionDispatcherFactory.LEASE_RENEWAL_PERIOD, null);
+                    getLrm().renewUntil(monSession.getLease(), Lease.FOREVER, MogramDispatcherFactory.LEASE_RENEWAL_PERIOD, null);
                 } catch (RemoteException re) {
                     logger.error("Problem initializing Monitor Session for: " + exertion.getName(), re);
                 } catch (MonitorException e) {
@@ -172,7 +172,9 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
             } */
 		} else if (exertion instanceof OptMogram) {
 			xrt.getContext().append(exertion.getDataContext());
-		}
+		} else if (exertion instanceof LoopMogram) {
+            xrt.getContext().append(((LoopMogram)exertion).getTarget().getScope());
+        }
 
 //		if (exertion instanceof AltExertion) {
 //			((ParModel)((Block)xrt).getContext()).appendNew(((AltExertion)exertion).getActiveOptExertion().getContext());

@@ -28,7 +28,6 @@ import static sorcer.eo.operator.value;
 /**
  * @author Mike Sobolewski
  */
-@SuppressWarnings({ "unchecked", "rawtypes" })
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/sml")
 public class NetTaskExertions {

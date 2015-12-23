@@ -7,7 +7,6 @@ import sorcer.co.tuple.SignatureEntry;
 import sorcer.core.context.ApplicationDescription;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.ent.Entry;
-import sorcer.eo.operator;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
 import sorcer.service.modeling.Variability;
@@ -127,18 +126,13 @@ public class Srv extends Entry<Object> implements Variability<Object>, Arg,
 
     @Override
     public boolean isValueCurrent() {
-        return false;
+        return isValid;
     }
 
     @Override
     public void valueChanged(Object obj) throws EvaluationException, RemoteException {
-
+        srvValue = obj;
     }
-
-//    @Override
-//    public Mogram exert(Mogram mogram, Transaction txn, Arg... args) throws TransactionException, MogramException, RemoteException {
-//        return ((Exerter)((SignatureEntry)_2)._2).exert(mogram, txn);
-//    }
 
     public Mogram exert(Mogram mogram) throws TransactionException, MogramException, RemoteException {
         return exert(mogram, null);
@@ -146,7 +140,7 @@ public class Srv extends Entry<Object> implements Variability<Object>, Arg,
 
     @Override
     public void valueChanged() throws EvaluationException {
-
+          isValid = false;
     }
 
     @Override

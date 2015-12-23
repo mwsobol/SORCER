@@ -450,7 +450,7 @@ public class NetSignature extends ObjectSignature {
 			if (mog != null && cxt == null) {
 				if (serviceType == RemoteServiceShell.class) {
 					Exerter prv = (Exerter) Accessor.get().getService(sig(RemoteServiceShell.class));
-					result = prv.exert(mog, null);
+					result = prv.exert(mog, null, new Arg[] {});
 				} else {
 					if (mog.getProcessSignature() != null
 							&& ((ServiceSignature) mog.getProcessSignature()).isShellRemote()) {

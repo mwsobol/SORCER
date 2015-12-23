@@ -21,7 +21,7 @@ import net.jini.core.transaction.TransactionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.dispatch.DispatcherFactory;
-import sorcer.core.dispatch.ExertionDispatcherFactory;
+import sorcer.core.dispatch.MogramDispatcherFactory;
 import sorcer.core.dispatch.MogramThread;
 import sorcer.core.provider.Jobber;
 import sorcer.service.*;
@@ -67,7 +67,7 @@ public class ServiceJobber extends RendezvousBean implements Jobber {
 	}
 
     protected DispatcherFactory getDispatcherFactory(Exertion exertion) {
-        return ExertionDispatcherFactory.getFactory();
+        return MogramDispatcherFactory.getFactory();
     }
 
 }

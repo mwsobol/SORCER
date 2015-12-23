@@ -9,35 +9,35 @@ import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.core.SorcerConstants;
-import sorcer.core.provider.Concatenator;
-import sorcer.core.provider.Jobber;
-import sorcer.core.provider.Provider;
-import sorcer.core.provider.Spacer;
+import sorcer.core.provider.*;
 import sorcer.service.Accessor;
+import sorcer.service.DynamicAccessor;
 import sorcer.util.ProviderAccessor;
 import sorcer.util.ProviderLookup;
 import sorcer.util.Stopwatch;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static sorcer.eo.operator.matchSigs;
 import static sorcer.eo.operator.provider;
 import static sorcer.eo.operator.sig;
 
 /**
  * @author Mike Sobolewski
  */
-@SuppressWarnings("rawtypes")
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/sml")
 public class ServiceAccessors implements SorcerConstants {
 	private final static Logger logger = LoggerFactory.getLogger(ServiceAccessors.class);
     static ProviderAccessor providerAccessor;
     static ProviderLookup providerLookup;
+	static DynamicAccessor dynamicAccessoror;
 
     @BeforeClass
     public static void setup() {
         providerAccessor = new ProviderAccessor(EmptyConfiguration.INSTANCE);
         providerLookup = new ProviderLookup();
+		dynamicAccessoror = Accessor.get();
     }
 
 	@Test
@@ -57,7 +57,26 @@ public class ServiceAccessors implements SorcerConstants {
 		logger.info(Stopwatch.getTimeString(System.currentTimeMillis() - startTime));
 		assertTrue(provider instanceof Jobber);
 	}
-	
+
+	@Test
+	public void dynamicAccessorSig() throws Exception {
+		long startTime = System.currentTimeMillis();
+		Provider provider = (Provider) dynamicAccessoror.getService(sig(SorcerJobber.class));
+//		logger.info("Accessor provider: " + provider);
+		logger.info(Stopwatch.getTimeString(System.currentTimeMillis() - startTime));
+		assertTrue(provider instanceof Jobber);
+	}
+
+	@Test
+	public void dynamicAccessorMultiSig() throws Exception {
+		long startTime = System.currentTimeMillis();
+		Provider provider = (Provider) dynamicAccessoror.getService(
+				matchSigs(sig(SorcerJobber.class), SorcerJobber.class));
+//		logger.info("Accessor provider: " + provider);
+		logger.info(Stopwatch.getTimeString(System.currentTimeMillis() - startTime));
+		assertTrue(provider instanceof Jobber);
+	}
+
 	@Test
 	public void providerLocatorSig() throws Exception {
 		long startTime = System.currentTimeMillis();
@@ -84,7 +103,7 @@ public class ServiceAccessors implements SorcerConstants {
 		logger.info(Stopwatch.getTimeString(System.currentTimeMillis() - startTime));
 		assertNotNull(provider);
 	}
-	
+
 	@Test
 	public void providerLocatorType() throws Exception {
 		long startTime = System.currentTimeMillis();

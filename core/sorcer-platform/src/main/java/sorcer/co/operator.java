@@ -124,8 +124,8 @@ public class operator {
 		return ((ServiceContext)context).getOutPaths();
 	}
 
-	public static Signature.From outPaths(String... elems) {
-		return new Signature.From(elems);
+	public static Signature.Out outPaths(String... elems) {
+		return new Signature.Out(elems);
 	}
 
     public static Signature.In inPaths(String... elems) {
@@ -409,6 +409,7 @@ public class operator {
     public static Srv ent(String name, Signature sig, Context context) {
         return srv(name, sig, context);
     }
+
 	public static Srv ent(Signature sig) {
 		return srv(sig);
 	}
@@ -931,7 +932,7 @@ public class operator {
 	}
 
 	public static Model dependsOn(Model model, Entry... entries) {
-        Map<String, List<String>> dm = ((ServiceContext)model).getModelStrategy().getDependentPaths();
+        Map<String, List<String>> dm = ((ServiceContext)model).getMogramStrategy().getDependentPaths();
         String path = null;
         Object dependentPaths = null;
         for (Entry e : entries) {
@@ -946,7 +947,7 @@ public class operator {
     }
 
     public static Map<String, List<String>> dependencies(Model model) {
-         return ((ServiceContext)model).getModelStrategy().getDependentPaths();
+         return ((ServiceContext)model).getMogramStrategy().getDependentPaths();
     }
     
     public static Dependency dependsOn(Dependency dependee,  Evaluation... dependers) throws ContextException {

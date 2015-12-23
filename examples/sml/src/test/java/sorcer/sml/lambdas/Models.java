@@ -7,7 +7,9 @@ import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.impl.*;
+import sorcer.core.context.model.ent.Entry;
 import sorcer.core.plexus.Morpher;
+import sorcer.core.provider.rendezvous.ServiceConcatenator;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
 
@@ -19,6 +21,7 @@ import static sorcer.eo.operator.put;
 import static sorcer.eo.operator.result;
 import static sorcer.eo.operator.value;
 import static sorcer.mo.operator.*;
+import static sorcer.po.operator.inc;
 
 /**
  * @author Mike Sobolewski
@@ -27,7 +30,6 @@ import static sorcer.mo.operator.*;
 @ProjectContext("examples/sml")
 public class Models {
 	private final static Logger logger = LoggerFactory.getLogger(Models.class);
-
 
 	@Test
 	public void lambdaModel() throws Exception {
@@ -49,6 +51,73 @@ public class Models {
 		assertTrue(get(out, "multiply").equals(500.0));
 		assertTrue(get(out, "add").equals(100.0));
 	}
+
+	@Test
+	public void settingLambdaModel() throws Exception {
+
+		Model mdl = model(ent("multiply/x1", 10.0), ent("multiply/x2", 50.0),
+				ent("add/x1", 20.0), ent("add/x2", 80.0),
+				lambda("add", (Context<Double> model) ->
+						value(model, "add/x1") + value(model, "add/x2")),
+				lambda("multiply", (Context<Double> model) ->
+						val(model, "multiply/x1") * val(model, "multiply/x2")),
+				lambda("subtract", (Context<Double> model) ->
+						v(model, "multiply") - v(model, "add")),
+				response("subtract", "multiply", "add"));
+
+		logger.info("DEPS: " + printDeps(mdl));
+		Context out = response(mdl, ent("multiply/x1", 20.0), ent("multiply/x2", 100.0));
+		logger.info("model response: " + out);
+		assertTrue(get(out, "subtract").equals(1900.0));
+		assertTrue(get(out, "multiply").equals(2000.0));
+		assertTrue(get(out, "add").equals(100.0));
+	}
+
+	@Test
+	public void lazyLambdaModel() throws Exception {
+		// evaluate multiply only once
+
+		Model mo = model(ent("multiply/x1", 10.0), ent("multiply/x2", 50.0),
+				ent("add/x1", 20.0), ent("add/x2", 80.0),
+				ent("multiply/done", false),
+				lambda("add", (Context<Double> model) ->
+						value(model, "add/x1") + value(model, "add/x2")),
+				lambda("multiply", (Context<Double> model) ->
+						val(model, "multiply/x1") * val(model, "multiply/x2")),
+				lambda("subtract", (Context<Double> model) ->
+						v(model, "multiply") - v(model, "add")),
+				lambda("multiply2", (Context<Object> cxt) -> {
+					Entry multiply = (Entry) asis(cxt, "multiply");
+					double out = 0;
+					if (value(cxt, "multiply/done").equals(false)) {
+						out = (double) exec(multiply, cxt) + 10.0;
+						set(cxt, "multiply/done", true);
+					} else {
+						out = (double)value(cxt, "multiply");
+					}
+					return out;
+				}),
+				lambda("multiply3", (Context<Object> cxt) -> {
+					Entry multiply = (Entry) asis(cxt, "multiply");
+					double out = 0;
+					if (value(cxt, "multiply/done").equals(false)) {
+						out = (double) exec(multiply, cxt);
+						set(cxt, "multiply/done", true);
+					} else {
+						out = (double)value(cxt, "multiply");
+					}
+					return out;
+				}),
+				response("multiply2", "multiply3"));
+
+//		dependsOn(mo, ent("subtract", paths("multiply2", "add")));
+
+		Context out = response(mo);
+		logger.info("model response: " + out);
+		assertTrue(get(out, "multiply2").equals(510.0));
+		assertTrue(get(out, "multiply3").equals(500.0));
+	}
+
 
 	@Test
 	public void dynamicLambdaModel() throws Exception {
@@ -188,6 +257,51 @@ public class Models {
 		logger.info("response: " + out);
 		assertTrue(get(out, "subtract").equals(1900.0));
 		assertTrue(get(out, "lambda").equals(2000.0));
+	}
+
+	@Test
+	public void lambdaTaskInLoop() throws Exception {
+		Task ti = task(
+				sig("add", AdderImpl.class),
+				model("add", inEnt("arg/x1", inc("arg/x2", 2.0)),
+						inEnt("arg/x2", 80.0), result("task/result")));
+
+		Block lb = block(sig(ServiceConcatenator.class),
+				context(ent("sum", 0.0)),
+				loop(0, 100, task(lambda("sum", (Context<Double> cxt) -> {
+					Double out = value(cxt, "sum") + (Double)value(ti);
+					set(context(ti), "arg/x2", (Double)value(context(ti), "arg/x2") + 1.5);
+					return out; }))));
+		lb = exert(lb);
+
+		assertTrue(value(context(lb), "sum").equals(31050.0));
+	}
+
+	@Test
+	public void canditionalEntryRangeLoop() throws Exception {
+		Task ti = task(
+				sig("add", AdderImpl.class),
+				model("add", inEnt("arg/x1", inc("arg/x2", 2.0)),
+						inEnt("arg/x2", 80.0), result("task/result")));
+
+		Block lb = block(sig(ServiceConcatenator.class),
+				context(ent("sum", 0.0),
+						ent("from", 320.0), ent("to", 420.0)),
+				loop(0, 100, task(lambda("sum", (Context<Double> cxt) -> {
+					Double from = value(cxt, "from");
+					Double to = value(cxt, "to");
+					Double out = value(cxt, "sum") + (Double)value(ti);
+					set(context(ti), "arg/x2", (Double)value(context(ti), "arg/x2") + 1.5);
+
+					// skip value 333 but with increase by 100
+					if (out > from && out < to) {
+						out = value(cxt, "sum") + 100.0;
+					}
+					return out; }))));
+
+		lb = exert(lb);
+		logger.info("block context: " + context(lb));
+		assertTrue(value(context(lb), "sum").equals(30985.0));
 	}
 
     @Test

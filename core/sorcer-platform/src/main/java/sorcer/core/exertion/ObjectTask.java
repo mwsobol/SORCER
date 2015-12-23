@@ -92,7 +92,7 @@ public class ObjectTask extends Task {
 
 		MethodInvoker evaluator = null;
 		ObjectSignature os = (ObjectSignature) getProcessSignature();
-		dataContext.getModelStrategy().setCurrentSelector(os.getSelector());
+		dataContext.getMogramStrategy().setCurrentSelector(os.getSelector());
 		dataContext.setCurrentPrefix(os.getPrefix());
 		try {
 			if (getProcessSignature().getReturnPath() != null && getProcessSignature().getReturnPath().inPaths != null)

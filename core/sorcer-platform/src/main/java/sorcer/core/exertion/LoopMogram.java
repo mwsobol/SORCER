@@ -18,7 +18,6 @@
 package sorcer.core.exertion;
 
 import net.jini.core.transaction.Transaction;
-import sorcer.core.context.ServiceContext;
 import sorcer.core.context.ThrowableTrace;
 import sorcer.core.context.model.srv.SrvModel;
 import sorcer.service.*;
@@ -64,13 +63,13 @@ public class LoopMogram extends ConditionalMogram {
 	 * @param name
 	 * @param min
 	 * @param max
-	 * @param exertion
+	 * @param mogram
 	 */
-	public LoopMogram(String name, int min, int max, Exertion exertion) {
+	public LoopMogram(String name, int min, int max, Mogram mogram) {
 		super(name);
 		this.min = min;
 		this.max = max;
-		target = exertion;
+		target = mogram;
 	}
 
 	/**
@@ -97,7 +96,7 @@ public class LoopMogram extends ConditionalMogram {
 	 * @param invoker
 	 */
 	public LoopMogram(String name, int min, int max, Condition condition,
-					  Exertion invoker) {
+					  Mogram invoker) {
 		super(name);
 		this.min = min;
 		this.max = max;
@@ -109,9 +108,21 @@ public class LoopMogram extends ConditionalMogram {
 	public Task doTask(Transaction txn, Arg... args) throws ExertionException,
 			SignatureException, RemoteException {
 		try {
+			// update the scope of target
+			if (target.getScope() == null) {
+				target.setScope(scope);
+			} else {
+				target.getScope().append(scope);
+			}
+
+			Signature.ReturnPath rp = target.getContext().getReturnPath();
+
 			if (condition == null) {
 				for (int i = 0; i < max - min; i++) {
 					target = target.exert(txn);
+					if (rp != null && rp.path != null) {
+						scope.putValue(target.getName(), target.getContext().getReturnValue());
+					}
 				}
 				return this;
 			} else if (condition != null && max - min == 0) {
@@ -121,18 +132,12 @@ public class LoopMogram extends ConditionalMogram {
 					if (cxt != null && cxt.size() > 0) {
 						((Context) target).append(cxt);
 					}
-					// update the scope of target
-					if (target.getScope() == null) {
-						target.setScope(scope);
-					} else {
-						target.getScope().append(scope);
-					}
 				}
 				while (condition.isTrue()) {
 					if (target instanceof Exertion) {
 						Signature sig = target.getProcessSignature();
 						if (sig != null && sig.getVariability() != null) {
-							((Task) target).getContext().append(condition.getConditionalContext());
+							target.getContext().append(condition.getConditionalContext());
 						}
 						target = target.exert(txn, args);
 						if (sig != null && sig.getVariability() != null) {

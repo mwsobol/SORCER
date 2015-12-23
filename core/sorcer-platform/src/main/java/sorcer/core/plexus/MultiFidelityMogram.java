@@ -80,6 +80,11 @@ public class MultiFidelityMogram extends ServiceMogram {
     }
 
     @Override
+    public void reportException(Throwable t) {
+
+    }
+
+    @Override
     public List<ThrowableTrace> getExceptions() throws RemoteException {
         return fiManager.getMogram().getExceptions();
     }

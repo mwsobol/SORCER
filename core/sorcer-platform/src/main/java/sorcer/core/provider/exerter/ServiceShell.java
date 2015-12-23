@@ -51,12 +51,10 @@ import sorcer.service.*;
 import sorcer.service.Exec.State;
 import sorcer.service.Strategy.Access;
 import sorcer.service.modeling.Model;
-import sorcer.service.modeling.ModelingTask;
 import sorcer.service.txmgr.TransactionManagerAccessor;
 import sorcer.util.Sorcer;
 
 import java.io.File;
-import java.rmi.ConnectException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -130,36 +128,32 @@ public class ServiceShell implements RemoteServiceShell, Requestor, Callable {
 	 */
 	@Override
 	public  <T extends Mogram> T exert(T mogram, Transaction transaction, Arg... entries) throws ExertionException {
+		Mogram result = null;
 		try {
-			Mogram result = null;
-			try {
-				if (mogram instanceof Exertion) {
-					Exertion exertion = ((Exertion)mogram);
-					if ((mogram.getProcessSignature() != null
-							&& ((ServiceSignature) mogram.getProcessSignature()).isShellRemote())
-							|| (exertion.getControlContext() != null
-							&& ((ControlContext) exertion.getControlContext()).isShellRemote())) {
-						Exerter prv = (Exerter) Accessor.get().getService(sig(RemoteServiceShell.class));
-						result = prv.exert(mogram, transaction, entries);
-					} else {
-						try {
-							mogram.substitute(entries);
-						} catch (Exception e) {
-							throw new ExertionException(e);
-						}
-						this.mogram = mogram;
-						result = exert(transaction, null);
-					}
+			if (mogram instanceof Exertion) {
+				Exertion exertion = (Exertion)mogram;
+				if ((mogram.getProcessSignature() != null
+						&& ((ServiceSignature) mogram.getProcessSignature()).isShellRemote())
+						|| (exertion.getControlContext() != null
+						&& ((ControlContext) exertion.getControlContext()).isShellRemote())) {
+					Exerter prv = (Exerter) Accessor.get().getService(sig(RemoteServiceShell.class));
+					result = prv.exert(mogram, transaction, entries);
+				} else {
+					mogram.substitute(entries);
+					this.mogram = mogram;
+					result = exert(transaction, null);
 				}
-			} catch (Exception e) {
-				e.printStackTrace();
-				if (result != null)
-					((ServiceExertion) result).reportException(e);
 			}
-			return (T) result;
 		} catch (Exception e) {
-			throw new ExertionException(e);
+			e.printStackTrace();
+			if (result != null) {
+				result.reportException(e);
+			} else {
+				mogram.reportException(e);
+				result = mogram;
+			}
 		}
+		return (T) result;
 	}
 
 	public  <T extends Mogram> T exert(String providerName) throws TransactionException,
@@ -318,6 +312,23 @@ public class ServiceShell implements RemoteServiceShell, Requestor, Callable {
 		return exertion;
 	}
 
+	public Mogram exerting(Transaction txn, String providerName, Arg... entries)
+			throws TransactionException, MogramException, RemoteException {
+		ServiceExertion exertion = (ServiceExertion) mogram;
+		initExertion(exertion, txn, entries);
+		Exertion xrt;
+		try {
+			xrt = dispatchExertion(exertion, providerName, entries);
+		} catch (Exception e) {
+			throw new MogramException(e);
+		}
+		if (xrt !=  null)
+			return xrt;
+		else {
+			return callProvider(exertion, exertion.getProcessSignature(), entries);
+		}
+	}
+
 	private Exertion dispatchExertion(ServiceExertion exertion, String providerName, Arg... args)
 			throws ExertionException, ExecutionException {
 		Signature signature = exertion.getProcessSignature();
@@ -329,10 +340,10 @@ public class ServiceShell implements RemoteServiceShell, Requestor, Callable {
 				ExertionSorter es = new ExertionSorter(exertion);
 				exertion = (ServiceExertion)es.getSortedJob();
 			}
-//			 exert modeling tasks
-			if (exertion instanceof ModelingTask && exertion.getFidelity().getSelects().size() == 1) {
-				return ((Task) exertion).doTask(transaction);
-			}
+//			 exert modeling local tasks
+//			if (exertion instanceof ModelingTask && exertion.getFidelity().getSelects().size() == 1) {
+//				return ((Task) exertion).doTask(transaction);
+//			}
 
 			// handle delegated tasks with fidelities
 			if (exertion.getClass() == Task.class) {
@@ -447,7 +458,7 @@ public class ServiceShell implements RemoteServiceShell, Requestor, Callable {
 		return null;
 	}
 
-	private Exertion callProvider(ServiceExertion exertion, Signature signature)
+	private Exertion callProvider(ServiceExertion exertion, Signature signature, Arg... entries)
 			throws TransactionException, MogramException, RemoteException {
 		if (provider == null) {
 			logger.warn("* Provider not available for: " + signature);
@@ -472,7 +483,7 @@ public class ServiceShell implements RemoteServiceShell, Requestor, Callable {
 //						 } catch (Exception e) {
 //							 e.printStackTrace();
 //						 }
-			Exertion result = provider.exert(exertion, transaction);
+			Exertion result = provider.exert(exertion, transaction, entries);
 			if (result != null && result.getExceptions().size() > 0) {
 				for (ThrowableTrace et : result.getExceptions()) {
 					Throwable t = et.getThrowable();
@@ -489,21 +500,6 @@ public class ServiceShell implements RemoteServiceShell, Requestor, Callable {
 			}
 			return result;
 		}
-	}
-
-	public Mogram exerting(Transaction txn, String providerName, Arg... entries)
-			throws TransactionException, MogramException, RemoteException {
-		ServiceExertion exertion = (ServiceExertion) mogram;
-		initExertion(exertion, txn, entries);
-		Exertion xrt;
-		try {
-			xrt = dispatchExertion(exertion, providerName, entries);
-		} catch (Exception e) {
-			throw new MogramException(e);
-		}
-		if (xrt !=  null)
-			return xrt;
-		return callProvider(exertion, exertion.getProcessSignature());
 	}
 
 	private Exertion serviceMutualExclusion(Provider provider,

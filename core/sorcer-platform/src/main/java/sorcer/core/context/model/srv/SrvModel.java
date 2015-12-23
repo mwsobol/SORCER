@@ -182,10 +182,12 @@ public class SrvModel extends ParModel<Object> implements Model {
             }
 
             if (val instanceof Srv) {
+                if (isChanged())
+                     ((Srv) val).isValid(false);
                 Object val2 = ((Srv) val).asis();
                 if (val2 instanceof SignatureEntry) {
                     // return the calculated value
-                    if (((Srv) val).getSrvValue() != null)
+                    if (((Srv) val).getSrvValue() != null && ((Srv) val).isValueCurrent())
                         return ((Srv) val).getSrvValue();
                     else {
                         Signature sig = ((SignatureEntry) ((Srv) val).asis()).value();
@@ -374,7 +376,7 @@ public class SrvModel extends ParModel<Object> implements Model {
     }
 
     protected void execDependencies(String path, Arg... args) throws ContextException {
-        Map<String, List<String>> dpm = modelStrategy.getDependentPaths();
+        Map<String, List<String>> dpm = mogramStrategy.getDependentPaths();
         List<String> dpl = dpm.get(path);
         if (dpl != null && dpl.size() > 0) {
             for (String p : dpl) {

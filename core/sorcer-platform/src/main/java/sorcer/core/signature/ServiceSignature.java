@@ -23,6 +23,7 @@ import net.jini.core.transaction.TransactionException;
 import org.slf4j.Logger;
 import sorcer.core.SorcerConstants;
 import sorcer.core.deploy.ServiceDeployment;
+import sorcer.core.provider.Modeler;
 import sorcer.service.*;
 import sorcer.service.Strategy.Provision;
 import sorcer.service.modeling.Variability;
@@ -74,7 +75,10 @@ public class ServiceSignature implements Signature, SorcerConstants {
 
 	protected Class<?> serviceType;
 
-	// implementation of the serviceInfo
+	// service typed to be mached by its service proxy
+	protected Class[] matchTypes;
+
+	// implementation of the serviceType
 	protected Class<?> providerType;
 
 	protected String group = "";
@@ -101,12 +105,6 @@ public class ServiceSignature implements Signature, SorcerConstants {
 	 * identified by this method
 	 */
 	private String[] contextTemplateIDs;
-
-	/**
-	 * when a method implementation is provided 'order' indicates whether a
-	 * method is tried first (SELF) or the provider is called first (PROVIDER)
-	 */
-	private int order = SELF;
 
 	/**
 	 * URL for a mobile agent: an inserted custom method executed by service
@@ -147,6 +145,14 @@ public class ServiceSignature implements Signature, SorcerConstants {
 
 	public Class<?> getServiceType() {
 		return serviceType;
+	}
+
+	public Class[] getMatchTypes() {
+		return matchTypes;
+	}
+
+	public void setMatchTypes(Class[] matchTypes) {
+		this.matchTypes = matchTypes;
 	}
 
 	/**
@@ -209,14 +215,6 @@ public class ServiceSignature implements Signature, SorcerConstants {
 		return ownerID;
 	}
 
-	public boolean isSelfFirst() {
-		return order == SELF;
-	}
-
-	public boolean isProviderFist() {
-		return order == PROVIDER;
-	}
-
 	public String getAgentCodebase() {
 		return agentCodebase;
 	}
@@ -266,7 +264,6 @@ public class ServiceSignature implements Signature, SorcerConstants {
 		group = method.group;
 		contextTemplateIDs = method.contextTemplateIDs;
 		exertion = method.exertion;
-		order = method.order;
 		setSelector(method.selector);
 
 		return this;
@@ -549,6 +546,7 @@ public class ServiceSignature implements Signature, SorcerConstants {
 	public void setReturnPath(String path, Direction direction) {
 		returnPath = new ReturnPath<Object>(path, direction);
 	}
+
 	public ReturnPath getReturnPath() {
 		return returnPath;
 	}
@@ -618,6 +616,13 @@ public class ServiceSignature implements Signature, SorcerConstants {
 
 	public void setOutConnector(Context outConnector) {
 		this.outConnector = outConnector;
+	}
+
+	public boolean isModelerSignature() {
+		if(serviceType != null)
+			return (Modeler.class.isAssignableFrom(serviceType));
+		else
+			return false;
 	}
 
 	@Override

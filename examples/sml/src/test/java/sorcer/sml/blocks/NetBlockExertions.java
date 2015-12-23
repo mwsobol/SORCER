@@ -31,7 +31,6 @@ import static sorcer.po.operator.*;
 /**
  * @author Mike Sobolewski
  */
-@SuppressWarnings("unchecked")
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/sml")
 public class NetBlockExertions implements SorcerConstants, Serializable {
@@ -58,7 +57,6 @@ public class NetBlockExertions implements SorcerConstants, Serializable {
 		assertEquals(value(context(result), "block/result"), 400.00);
 
 	}
-
 
 	@Test
 	public void contextBlockTest() throws Exception {
@@ -109,7 +107,6 @@ public class NetBlockExertions implements SorcerConstants, Serializable {
 
 	}
 
-
 	@Test
 	public void contextAltTest() throws Exception {
 
@@ -139,7 +136,6 @@ public class NetBlockExertions implements SorcerConstants, Serializable {
 		assertEquals(value(context(block), "block/result"), 500.0);
 
 	}
-
 
 	@Test
 	public void taskAltBlockTest() throws Exception {
@@ -177,7 +173,6 @@ public class NetBlockExertions implements SorcerConstants, Serializable {
 
 	}
 
-
 	@Test
 	public void optBlockTest() throws Exception {
 
@@ -204,7 +199,6 @@ public class NetBlockExertions implements SorcerConstants, Serializable {
 		assertEquals(value(context(block), "out"), 100.0);
 
 	}
-
 
 	@Test
 	public void parBlockTest() throws Exception {
@@ -234,7 +228,6 @@ public class NetBlockExertions implements SorcerConstants, Serializable {
 //		assertEquals(value(context(block), "block/result"), 500.00);
 
 	}
-
 
 	@Test
 	public void loopBlockTest() throws Exception {

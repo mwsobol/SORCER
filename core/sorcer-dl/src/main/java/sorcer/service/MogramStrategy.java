@@ -49,5 +49,9 @@ public interface MogramStrategy {
 
     public void setOpti(Strategy.Opti optiType);
 
+    public Strategy.Access getAccessType();
+
+    public Strategy.Flow getFlowType();
+
     public Strategy.Opti getOpti();
 }

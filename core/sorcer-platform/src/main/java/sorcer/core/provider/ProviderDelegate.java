@@ -986,7 +986,7 @@ public class ProviderDelegate {
 				logger.info("Executing service bean method: " + m + " by: "
 						+ config.getProviderName() + " isContextual: " + isContextual);
 				task.getContext().setExertion(task);
-				((ServiceContext) task.getContext()).getModelStrategy().setCurrentSelector(selector);
+				((ServiceContext) task.getContext()).getMogramStrategy().setCurrentSelector(selector);
 				String pf = task.getProcessSignature().getPrefix();
 				if (pf != null)
 					((ServiceContext) task.getContext()).setCurrentPrefix(pf);
@@ -1219,7 +1219,7 @@ public class ProviderDelegate {
 				if (sig.getReturnPath() != null)
 					cxt.setReturnPath(sig.getReturnPath());
 
-				cxt.getModelStrategy().setCurrentSelector(sig.getSelector());
+				cxt.getMogramStrategy().setCurrentSelector(sig.getSelector());
 				cxt.setCurrentPrefix(sig.getPrefix());
 
 				cxt.setExertion(task);
@@ -2492,7 +2492,7 @@ public class ProviderDelegate {
 					((Partnership) partner).setAdmin(adminProxy);
 				}
 				providerProxy = ProviderProxy.wrapServiceProxy(outerProxy,
-						getProviderUuid(), adminProxy);
+						getProviderUuid(), adminProxy, publishedServiceTypes);
 				return providerProxy;
 			} else if (smartProxy instanceof Partnership) {
 				((Partnership) smartProxy).setInner(outerProxy);
@@ -2702,29 +2702,36 @@ public class ProviderDelegate {
 
 		serviceComponents = new Hashtable<Class, Object>();
 
-		for (Class publishedType : publishedServiceTypes) {
+		if (serviceComponents.size() == 1) {
 			for (Object serviceBean : serviceBeans) {
-				if (publishedType.isInstance(serviceBean))  {
-					serviceComponents.put(publishedType, serviceBean);
+				Class[] interfaces = serviceBean.getClass().getInterfaces();
+				logger.debug("service component interfaces" + Arrays.toString(interfaces));
+				List<Class> exposedInterfaces = new LinkedList<Class>();
+				for (Class publishedType : publishedServiceTypes) {
+					if (publishedType.isInstance(serviceBean)) {
+						serviceComponents.put(publishedType, serviceBean);
+						exposedInterfaces.add(publishedType);
+						for (Class iface : publishedType.getInterfaces()) {
+							if (!iface.equals(Remote.class)
+									&& !iface.equals(Serializable.class)) {
+								serviceComponents.put(iface, serviceBean);
+								exposedInterfaces.add(iface);
+							}
+						}
+					}
+				}
+				logger.debug("service component exposed interfaces" + exposedInterfaces);
+			}
+		} else {
+			for (Class publishedType : publishedServiceTypes) {
+				for (Object serviceBean : serviceBeans) {
+					if (publishedType.isInstance(serviceBean)) {
+						serviceComponents.put(publishedType, serviceBean);
+					}
 				}
 			}
-
-//			List<Class> exposedInterfaces = new LinkedList<Class>();
-//			for (Class publishedType : publishedServiceTypes) {
-//				if (publishedType.isInstance(serviceBean)) {
-//					serviceComponents.put(publishedType, serviceBean);
-//					exposedInterfaces.add(publishedType);
-//					for (Class iface : publishedType.getInterfaces()) {
-//						if (!iface.equals(Remote.class)
-//								&& !iface.equals(Serializable.class)) {
-//							serviceComponents.put(iface, serviceBean);
-//							exposedInterfaces.add(iface);
-//						}
-//					}
-//				}
-//			}
-//			logger.debug("service component exposed interfaces" + exposedInterfaces);
 		}
+		logger.debug("service components" + serviceComponents);
 	}
 
 	private Object instantiateScriplet(String scripletFilename)

@@ -52,7 +52,6 @@ import sorcer.core.exertion.NetTask;
 import sorcer.core.proxy.Outer;
 import sorcer.core.proxy.Partner;
 import sorcer.core.proxy.Partnership;
-import sorcer.core.signature.ServiceSignature;
 import sorcer.scratch.ScratchManager;
 import sorcer.scratch.ScratchManagerSupport;
 import sorcer.service.*;
@@ -1466,7 +1465,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		if (mogram instanceof Task) {
 			ServiceContext cxt;
 			try {
-				cxt = (ServiceContext) ((Task)mogram).getDataContext();
+				cxt = (ServiceContext) mogram.getDataContext();
 				cxt.updateContextWith(mogram.getProcessSignature().getInConnector());
 				Uuid id = cxt.getId();
 				ProviderSession ps = sessions.get(id);
@@ -1522,7 +1521,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 
 	// TODO in/out/inout marking as defined in the inConnector
 	private void updateContext(Task task) throws ContextException {
-		Context connector = ((ServiceSignature)task.getProcessSignature()).getInConnector();
+		Context connector = task.getProcessSignature().getInConnector();
 		if (connector != null){
 			Context dataContext = task.getDataContext();
 			Iterator it = ((Map) connector).entrySet().iterator();

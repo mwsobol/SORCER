@@ -65,7 +65,7 @@ public class Job extends CompoundExertion {
 	protected final static Logger logger = LoggerFactory.getLogger(Job.class.getName());
 
 	protected Job delegate;
-	
+
 	public Integer state = new Integer(INITIAL);
 
 	/**
@@ -384,8 +384,8 @@ public class Job extends CompoundExertion {
 	}
 
 	public Context finalizeOutDataContext() throws ContextException {
-		if (dataContext.getModelStrategy().getOutConnector() != null) {
-			updateContextWith(dataContext.getModelStrategy().getOutConnector());
+		if (dataContext.getMogramStrategy().getOutConnector() != null) {
+			updateContextWith(dataContext.getMogramStrategy().getOutConnector());
 		}
 		return dataContext;
 	}
@@ -476,7 +476,7 @@ public class Job extends CompoundExertion {
 		int index = path.indexOf(last);
 		String contextPath = path.substring(index + last.length() + 1);
 
-		return ((Exertion)exti).getContext().getValue(contextPath);
+		return exti.getContext().getValue(contextPath);
 	}
 	
 	/* (non-Javadoc)
@@ -542,7 +542,7 @@ public class Job extends CompoundExertion {
 		ReturnPath rp = ((ServiceContext) dataContext).getReturnPath();
 		Object obj = null;
 		if (rp != null) {
-			if (rp.path == null || rp.path.equals("self")) {
+			if (rp.path == null || rp.path.equals(Signature.SELF)) {
 				return this;
 			} else if (rp.type != null) {
 				obj = rp.type.cast(getContext().getValue(rp.path));

@@ -5,14 +5,12 @@ import org.junit.runner.RunWith;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.impl.AdderImpl;
+import sorcer.arithmetic.provider.impl.ArithmeticUtil;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.provider.impl.SubtractorImpl;
 import sorcer.core.SorcerConstants;
 import sorcer.core.provider.rendezvous.ServiceJobber;
-import sorcer.service.Context;
-import sorcer.service.Job;
-import sorcer.service.Signature;
-import sorcer.service.Task;
+import sorcer.service.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +23,6 @@ import static sorcer.eo.operator.*;
 /**
  * @author Mike Sobolewski
  */
-@SuppressWarnings({ "rawtypes", "unchecked" })
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/sml")
 public class LocalJobExertions implements SorcerConstants {
@@ -196,4 +193,42 @@ public class LocalJobExertions implements SorcerConstants {
 
 	}
 
+	@Test
+	public void arithmeticJobLocalExerter() throws Exception {
+
+		Job exerter = ArithmeticUtil.createLocalJob();
+		Context out = (Context) exerter.invoke(context(ent("j1/t3/result/y")));
+//		logger.info("j1/t3/result/y: " + value);
+		assertEquals(value(out, "j1/t3/result/y"), 400.0);
+
+		// update inputs contexts
+		Context multiplyContext = context("multiply", inEnt("arg/x1", 10.0), inEnt("arg/x2", 70.0));
+		Context addContext = context("add", inEnt("arg/x1", 90.0), inEnt("arg/x2", 110.0));
+		Context invokeContext = context("invoke");
+		link(invokeContext, "t4", multiplyContext);
+		link(invokeContext, "t5", addContext);
+		out = (Context) exerter.invoke(invokeContext);
+//		logger.info("j1/t3/result/y: " + value);
+		assertEquals(value(out, "j1/t3/result/y"), 500.0);
+
+		// update contexts partially
+		multiplyContext = context("multiply", inEnt("arg/x1", 20.0));
+		addContext = context("add", inEnt("arg/x1", 80.0));
+		invokeContext = context("invoke");
+		link(invokeContext, "t4", multiplyContext);
+		link(invokeContext, "t5", addContext);
+		out = (Context) exerter.invoke(invokeContext);
+//		logger.info("j1/t3/result/y: " + value);
+		assertEquals(value(out, "j1/t3/result/y"), 1210.0);
+
+		// reverse the state to the initial one
+		multiplyContext = context("multiply", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0));
+		addContext = context("add", inEnt("arg/x1", 80.0), inEnt("arg/x2", 20.0));
+		invokeContext = context("invoke");
+		link(invokeContext, "t4", multiplyContext);
+		link(invokeContext, "t5", addContext);
+		out = (Context) exerter.invoke(invokeContext);
+//		logger.info("j1/t3/result/y: " + value);
+		assertEquals(value(out, "j1/t3/result/y"), 400.0);
+	}
 }

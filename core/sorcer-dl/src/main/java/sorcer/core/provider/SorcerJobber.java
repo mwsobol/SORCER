@@ -1,6 +1,6 @@
 /*
- * Copyright 2010 the original author or authors.
- * Copyright 2010 SorcerSoft.org.
+ * Copyright 2009 the original author or authors.
+ * Copyright 2009 SorcerSoft.org.
  *  
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,14 +15,16 @@
  * limitations under the License.
  */
 
-package sorcer.service.modeling;
+package sorcer.core.provider;
 
+import sorcer.service.Service;
+
+import java.rmi.Remote;
 
 /**
+ * A tag interface for SORCER Jobber
  * @author Mike Sobolewski
  */
-public interface ModelingTask {
-
-    public Model getModel();
-
+public interface SorcerJobber {
+    // to differentiate from other versions of Jobbers
 }

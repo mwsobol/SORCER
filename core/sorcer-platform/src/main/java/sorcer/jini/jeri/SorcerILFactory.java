@@ -19,6 +19,7 @@ package sorcer.jini.jeri;
 
 import net.jini.core.constraint.MethodConstraints;
 import net.jini.core.constraint.RemoteMethodControl;
+import net.jini.core.transaction.Transaction;
 import net.jini.jeri.BasicILFactory;
 import net.jini.jeri.BasicInvocationDispatcher;
 import net.jini.jeri.InvocationDispatcher;
@@ -29,6 +30,9 @@ import net.jini.security.proxytrust.TrustEquivalence;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
+import sorcer.core.provider.Modeler;
+import sorcer.core.provider.RemoteServiceShell;
+import sorcer.core.provider.exerter.ServiceShell;
 import sorcer.service.*;
 
 import java.lang.reflect.Method;
@@ -53,7 +57,9 @@ import static sorcer.core.SorcerConstants.*;
  * {@link Service}s with either
  * {@link sorcer.core.provider.ServiceProvider}
  */
-@SuppressWarnings({ "rawtypes", "unchecked" })
+/**
+ * @author Mike Sobolewski
+ */
 public class SorcerILFactory extends BasicILFactory {
 	protected final Logger logger = LoggerFactory.getLogger(BasicILFactory.class
 			.getName());
@@ -249,53 +255,72 @@ public class SorcerILFactory extends BasicILFactory {
         }
 
 		protected Object doInvoke(Remote impl, Method method, Object[] args,
-				Collection context) throws Throwable {
-			if (impl == null || args == null || context == null)
-				throw new NullPointerException();
+							  Collection context) throws Throwable {
+		if (impl == null || args == null || context == null)
+			throw new NullPointerException();
 
-			if (!method.isAccessible()
-					&& !(Modifier.isPublic(method.getDeclaringClass()
-							.getModifiers()) && Modifier.isPublic(method
-							.getModifiers())))
-				throw new IllegalArgumentException(
-						"method not public or set accessible");
+		if (!method.isAccessible()
+				&& !(Modifier.isPublic(method.getDeclaringClass()
+				.getModifiers()) && Modifier.isPublic(method
+				.getModifiers())))
+			throw new IllegalArgumentException(
+					"method not public or set accessible");
 
-			Class decl = method.getDeclaringClass();
-			if (decl == ProxyTrust.class
-					&& method.getName().equals("getProxyVerifier")
-					&& impl instanceof ServerProxyTrust) {
-				if (args.length != 0)
-					throw new IllegalArgumentException("incorrect arguments");
+		Class decl = method.getDeclaringClass();
+		if (decl == ProxyTrust.class
+				&& method.getName().equals("getProxyVerifier")
+				&& impl instanceof ServerProxyTrust) {
+			if (args.length != 0)
+				throw new IllegalArgumentException("incorrect arguments");
 
-				return ((ServerProxyTrust) impl).getProxyVerifier();
+			return ((ServerProxyTrust) impl).getProxyVerifier();
+		}
+		Object obj = null;
+		try {
+			// handle context management by the containing provider
+			if (decl == ContextManagement.class) {
+				obj = method.invoke(impl, args);
+				return obj;
 			}
-			Object obj = null;
-			try {
-				// handle context management by the containing provider
-				if (decl == ContextManagement.class) {
-					obj = method.invoke(impl, args);
-					return obj;
-				}
 
-				Object service = null;
-				if (args.length > 0 &&  args[0] instanceof CompoundExertion) {
-					service = serviceBeanMap.get(((Exertion) args[0]).getProcessSignature().getServiceType());
-					if (service != null) {
-						obj = method.invoke(service, args);
-					}
+			Object service = null;
+			if (args.length > 0 && isSorcerType(args[0])) {
+				service = serviceBeanMap.get(((Exertion) args[0]).getProcessSignature().getServiceType());
+				if (service != null) {
+					obj = method.invoke(service, args);
 				} else {
-					 service = serviceBeanMap.get(method.getDeclaringClass());
-					if (service != null) {
-						obj = method.invoke(service, args);
-					} else {
-						obj = method.invoke(impl, args);
-					}
+					service = serviceBeanMap.get(RemoteServiceShell.class);
+					obj = ((ServiceShell)service).exert((Mogram)args[0], (Transaction)args[1], (Arg[]) args[2]);
 				}
-			} catch (Throwable t) {
-				t.printStackTrace();
-				throw new ExertionException("for method: " + method, t);
+			} else {
+				service = serviceBeanMap.get(method.getDeclaringClass());
+				if (service != null) {
+					obj = method.invoke(service, args);
+				} else {
+					obj = method.invoke(impl, args);
+				}
 			}
-			return obj;
+		} catch (Throwable t) {
+			logger.debug("SorcerILFactory failed " + t);
+			throw new ExertionException(t);
+		}
+		return obj;
+	}
+}
+
+	private boolean isSorcerType(Object target) {
+		if (target instanceof Exertion) {
+			Class serviceType = ((Exertion)target).getProcessSignature().getServiceType();
+			if (target instanceof CompoundExertion
+					|| Modeler.class.isAssignableFrom(serviceType)
+//					|| Modeling.class.isAssignableFrom(serviceType)
+					|| Evaluation.class.isAssignableFrom(serviceType)
+					|| Invocation.class.isAssignableFrom(serviceType))
+				return true;
+			else
+				return false;
+		} else {
+			return false;
 		}
 	}
 

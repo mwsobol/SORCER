@@ -80,14 +80,14 @@ public class operator {
     }
 
     public static Model inConn(Model model, Context inConnector) {
-        ((ServiceContext)model).getModelStrategy().setInConnector(inConnector);
+        ((ServiceContext)model).getMogramStrategy().setInConnector(inConnector);
         if (inConnector instanceof MapContext)
             ((MapContext)inConnector).direction =  MapContext.Direction.IN;
         return model;
     }
 
     public static Model outConn(Model model, Context outConnector) {
-        ((ServiceContext) model).getModelStrategy().setOutConnector(outConnector);
+        ((ServiceContext) model).getMogramStrategy().setOutConnector(outConnector);
         if (outConnector instanceof MapContext)
             ((MapContext)outConnector).direction = MapContext.Direction.OUT;
         return model;
@@ -95,22 +95,22 @@ public class operator {
 
     public static Model responseUp(Model model, String... responsePaths) throws ContextException {
         for (String path : responsePaths)
-            ((ServiceContext)model).getModelStrategy().getResponsePaths().add(new Name(path));
+            ((ServiceContext)model).getMogramStrategy().getResponsePaths().add(new Name(path));
         return model;
     }
 
     public static Model responseDown(Model model, String... responsePaths) throws ContextException {
         for (String path : responsePaths)
-            ((ServiceContext)model).getModelStrategy().getResponsePaths().remove(new Name(path));
+            ((ServiceContext)model).getMogramStrategy().getResponsePaths().remove(new Name(path));
         return model;
     }
 
     public static Context result(Model model) throws ContextException {
-        return ((ServiceContext)model).getModelStrategy().getOutcome();
+        return ((ServiceContext)model).getMogramStrategy().getOutcome();
     }
 
     public static Object resultAt(Model model, String path) throws ContextException {
-        return ((ServiceContext)((ServiceContext)model).getModelStrategy().getOutcome()).get(path);
+        return ((ServiceContext)((ServiceContext)model).getMogramStrategy().getOutcome()).get(path);
     }
 
     public static  ServiceContext substitute(ServiceContext model, Entry... entries) throws ContextException {
@@ -289,7 +289,7 @@ public class operator {
         }
 
         if (responsePaths != null) {
-            model.getModelStrategy().setResponsePaths(((Fidelity) responsePaths).getSelects());
+            model.getMogramStrategy().setResponsePaths(((Fidelity) responsePaths).getSelects());
         }
         if (complement != null) {
             model.setSubject(complement.path(), complement.value());

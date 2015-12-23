@@ -100,6 +100,14 @@ public interface Signature extends Service, Comparable, Dependency, Identifiable
 	public Class<?> getServiceType();
 
 	/**
+	 * Returns an array of service types of this signature
+	 * to be matched by its service proxy.
+	 *
+	 * @return array of service types matched by service proxy
+	 */
+	public Class[] getMatchTypes();
+
+	/**
 	 * Assigns a path to the return value by this signature.
 	 * 
 	 * @param path
@@ -198,10 +206,10 @@ public interface Signature extends Service, Comparable, Dependency, Identifiable
 
 		public ReturnPath() {
 			// return the context
-			path = "self";
+			path = Signature.SELF;
 		}
 
-        public ReturnPath(String path, From argPaths) {
+        public ReturnPath(String path, Out argPaths) {
             this.path = path;
             if (argPaths != null && argPaths.size() > 0) {
                 String[] ps = new String[argPaths.size()];
@@ -219,7 +227,15 @@ public interface Signature extends Service, Comparable, Dependency, Identifiable
             }
         }
 
-        public ReturnPath(String path, In inPaths, From outPaths) {
+		public ReturnPath(Out outPaths) {
+			 this(null, null, outPaths);
+		}
+
+		public ReturnPath(In inPaths) {
+			this(null, inPaths, null);
+		}
+
+        public ReturnPath(String path, In inPaths, Out outPaths) {
             this.path = path;
             if (outPaths != null && outPaths.size() > 0) {
                 String[] ps = new String[outPaths.size()];
@@ -368,25 +384,35 @@ public interface Signature extends Service, Comparable, Dependency, Identifiable
         }
 	};
 
-    public static class From extends ArrayList<String> {
+    public static class Out extends ArrayList<String> implements Arg {
         private static final long serialVersionUID = 1L;
 
-        public From() {
+        public Out() {
             super();
         }
 
-        public From(String[] names) {
+        public Out(String[] names) {
             for (String name : names) {
                 add(name) ;
             }
         }
 
-        public From(int initialCapacity) {
+        public Out(int initialCapacity) {
             super(initialCapacity);
         }
-    }
 
-    public static class In extends ArrayList<String> {
+		public String[] getPaths() {
+			String[] paths = new String[size()];
+			return this.toArray(paths);
+		}
+
+		@Override
+		public String getName() {
+			return toString();
+		}
+	}
+
+    public static class In extends ArrayList<String> implements Arg {
         private static final long serialVersionUID = 1L;
 
         public In() {
@@ -402,8 +428,20 @@ public interface Signature extends Service, Comparable, Dependency, Identifiable
         public In(int initialCapacity) {
             super(initialCapacity);
         }
-    }
-    
+
+		public String[] getPaths() {
+			String[] paths = new String[size()];
+			return this.toArray(paths);
+		}
+
+		@Override
+		public String getName() {
+			return toString();
+		}
+	}
+
+	static final String SELF = "_self_";
+	static final String SELF_VALUE = "_self_value_";
 	static final Type SRV = Type.PROC;
 	static final Type PRE = Type.PRE;
 	static final Type POST = Type.POST;
