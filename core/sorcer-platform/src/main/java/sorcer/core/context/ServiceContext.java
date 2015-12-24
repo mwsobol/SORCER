@@ -1446,17 +1446,21 @@ public class ServiceContext<T> extends ServiceMogram implements
 			incxt = this.getEvaluatedSubcontext(ips, items);
 		}
 		incxt.setReturnPath(sig.getReturnPath());
-		Context outcxt = null;
+		String returnPath = incxt.getReturnPath().getPath();
+		Context outcxt, resultContext = null;
 		try {
 			outcxt = task(sig, incxt).exert().getContext();
 		} catch (Exception e) {
 			throw new MogramException(e);
 		}
+		resultContext = outcxt;
 		if (ops != null && ops.length > 0) {
-			outcxt = outcxt.getDirectionalSubcontext(ops);
+			resultContext = outcxt.getDirectionalSubcontext(ops);
+			// make sure the result is returned correctly
+			resultContext.putValue(returnPath, outcxt.getPath(returnPath));
 		}
 		this.appendInout(outcxt);
-		return outcxt;
+		return resultContext;
 	}
 
 	public ServiceContext getSubcontext(Path[] paths) throws ContextException {
@@ -1487,12 +1491,12 @@ public class ServiceContext<T> extends ServiceMogram implements
 		List<String> outpaths = getOutPaths();
 		if  (paths != null && paths.length > 0) {
 			for (Path path : paths) {
-				if (inpaths.contains(path))
-					subcntxt.putInValue(path.path, get(path));
-				else if (outpaths.contains(path))
-					subcntxt.putOutValue(path.path, get(path));
+				if (inpaths.contains(path.path))
+					subcntxt.putInValue(path.path, get(path.path));
+				else if (outpaths.contains(path.path))
+					subcntxt.putOutValue(path.path, get(path.path));
 				else
-					subcntxt.putValue(path.path, get(path));
+					subcntxt.putValue(path.path, get(path.path));
 			}
 		}
 		return subcntxt;
