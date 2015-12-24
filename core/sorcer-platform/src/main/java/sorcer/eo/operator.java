@@ -242,7 +242,8 @@ public class operator {
 //	}
 
 	public static Context subcontext(Context context, List<String> paths) throws ContextException {
-		return context.getSubcontext((String[]) paths.toArray());
+		String[] ps = new String[paths.size()];
+		return context.getSubcontext(paths.toArray(ps));
 	}
 
 	public static Context subcontext(Context context, String... paths) throws ContextException {
