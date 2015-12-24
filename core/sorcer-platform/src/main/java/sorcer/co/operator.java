@@ -424,12 +424,8 @@ public class operator {
 		return srv(sig);
 	}
 
-//	public static DependencyEntry dep(String path, List<Path> paths) {
-//		return new DependencyEntry(path, paths);
-//	}
-
-	public static DependencyEntry dep(String path, Path[] paths) {
-		return new DependencyEntry(path, Arrays.asList(paths));
+	public static DependencyEntry dep(String path, List<Path> paths) {
+		return new DependencyEntry(path, paths);
 	}
 
 	public static <T> Entry<T> rvEnt(String path, T value) {
