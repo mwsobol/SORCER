@@ -1508,7 +1508,10 @@ public class ServiceContext<T> extends ServiceMogram implements
 		List<String> outpaths = getOutPaths();
 
 		for (Path path : paths) {
-			if (inpaths.contains(path.path))
+			// mark the context with provided info
+			if(path.info != null) {
+				subcntxt.putValue(path.path, getValue(path.path), path.info.toString());
+			} else if (inpaths.contains(path.path))
 				subcntxt.putInValue(path.path, getValue(path.path, items));
 			else if (outpaths.contains(path))
 				subcntxt.putInoutValue(path.path, getValue(path.path, items));
