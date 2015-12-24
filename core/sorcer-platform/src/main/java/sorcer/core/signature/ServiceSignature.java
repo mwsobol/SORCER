@@ -871,12 +871,18 @@ public class ServiceSignature implements Signature, SorcerConstants {
 
 		@Override
 		public String[] getInPaths() {
-			return getPaths(inPaths);
+			if (inPaths != null)
+				return getPaths(inPaths);
+			else
+				return null;
 		}
 
 		@Override
 		public String[] getOutPaths() {
-			return getPaths(outPaths);
+			if (outPaths != null)
+				return getPaths(outPaths);
+			else
+				return null;
 		}
 	}
 }
