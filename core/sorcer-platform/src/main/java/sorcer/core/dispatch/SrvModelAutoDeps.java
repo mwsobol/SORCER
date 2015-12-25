@@ -144,8 +144,7 @@ public class SrvModelAutoDeps {
                     }
                 }
                 if (paths.size()>0) {
-//                    operator.dependsOn(srvModel, ent(entryName, new ArrayList(paths).add(new String[0])));
-                    operator.dependsOn(srvModel, ent(entryName, paths(paths.toArray(new String[0]))));
+                    operator.dependsOn(srvModel, ent(entryName, paths(paths.toArray())));
                     String topNode = entryName;
                     if (entryToResultMap.containsKey(entryName))
                         topNode = entryToResultMap.get(entryName);
