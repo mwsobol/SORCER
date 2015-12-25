@@ -1,7 +1,7 @@
 /*
- * Copyright 2009 the original author or authors.
- * Copyright 2009 SorcerSoft.org.
- *  
+ * Copyright 2015 the original author or authors.
+ * Copyright 2015 SorcerSoft.org.
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,14 +16,16 @@
  */
 package sorcer.service;
 
-
 /**
- * @author Mike Sobolewski
- *
+ * Created by Mike Sobolewski on 12/22/15.
  */
-public interface AssociativeContext<T> {
+public interface SignatureReturnPath {
 
-	public T putValue(String path, T value) throws ContextException;
+    String getPath();
 
-	public T getValue(String path, Arg... parameters) throws ContextException;
+    void setPath(String path);
+
+    String[] getInPaths();
+
+    String[] getOutPaths();
 }

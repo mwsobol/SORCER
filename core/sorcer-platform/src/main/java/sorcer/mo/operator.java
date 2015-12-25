@@ -33,6 +33,7 @@ import sorcer.core.plexus.MultiFidelity;
 import sorcer.core.plexus.MultiFidelityMogram;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
+import sorcer.core.signature.ServiceSignature.ReturnPath;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -208,8 +209,8 @@ public class operator {
         return map;
     }
 
-    public static Signature.ReturnPath returnPath(String path) {
-        return  new Signature.ReturnPath<>(path);
+    public static ReturnPath returnPath(String path) {
+        return  new ReturnPath<>(path);
     }
 
     public static Fidelity<Arg> response(String... paths) {

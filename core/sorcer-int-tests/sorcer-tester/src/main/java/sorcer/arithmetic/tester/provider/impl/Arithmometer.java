@@ -1,5 +1,6 @@
 package sorcer.arithmetic.tester.provider.impl;
 
+import static sorcer.eo.operator.attPath;
 import static sorcer.eo.operator.path;
 import static sorcer.eo.operator.revalue;
 
@@ -17,7 +18,7 @@ import sorcer.core.context.Contexts;
 import sorcer.core.context.PositionalContext;
 import sorcer.core.context.ServiceContext;
 import sorcer.service.*;
-import sorcer.service.Signature.ReturnPath;
+import sorcer.core.signature.ServiceSignature.ReturnPath;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class Arithmometer implements SorcerConstants, Serializable {
@@ -175,7 +176,7 @@ public class Arithmometer implements SorcerConstants, Serializable {
 			else if (outpaths.size() == 1) {
 				// put the result in the existing output path
 				cxt.putValue(outpaths.get(0), result);
-				cxt.putValue(path(outpaths.get(0), ArrayContext.DESCRIPTION), outputMessage);
+				cxt.putValue(attPath(outpaths.get(0), ArrayContext.DESCRIPTION), outputMessage);
 			} else {
 				// put the result for a new output path
 				logger.info("max index; " + cxt.getMaxIndex());
@@ -189,7 +190,7 @@ public class Arithmometer implements SorcerConstants, Serializable {
 			Fidelity fi = context.getMogram().getFidelity();
 			if (fi != null)
 				cxt.putValue("task/fidelity", fi);
-			cxt.putValue(path(outpaths.get(0), ArrayContext.DESCRIPTION), outputMessage);
+			cxt.putValue(attPath(outpaths.get(0), ArrayContext.DESCRIPTION), outputMessage);
 		} catch (Exception ex) {
 			context.reportException(ex);
 			throw new ContextException(selector + " calculate exception", ex);
@@ -236,8 +237,8 @@ public class Arithmometer implements SorcerConstants, Serializable {
 			} else if (selector.equals(SUBTRACT)) {
 				ReturnPath<?> rp = ((ServiceContext<?>) context).getReturnPath();
 				if (rp != null && rp.inPaths != null && rp.inPaths.length > 0) {
-					result = (Double) revalue(cxt.getValue(rp.inPaths[0]));
-					result -= (Double) revalue(cxt.getValue(rp.inPaths[1]));
+					result = (Double) revalue(cxt.getValue(rp.inPaths[0].path));
+					result -= (Double) revalue(cxt.getValue(rp.inPaths[1].path));
 				} else {
 					if (inputs.size() > 2) {
 						throw new ContextException("more than two arguments for subtraction");
@@ -270,10 +271,10 @@ public class Arithmometer implements SorcerConstants, Serializable {
 			else if (outpaths.size() == 1) {
 				// put the result in the existing output path
 				cxt.putValue(outpaths.get(0), result);
-				cxt.putValue(path(outpaths.get(0), ArrayContext.DESCRIPTION), outputMessage);
+				cxt.putValue(attPath(outpaths.get(0), ArrayContext.DESCRIPTION), outputMessage);
 			} else {
 				cxt.putValue(RESULT_PATH, result);
-				cxt.putValue(path(RESULT_PATH, ArrayContext.DESCRIPTION), outputMessage);
+				cxt.putValue(attPath(RESULT_PATH, ArrayContext.DESCRIPTION), outputMessage);
 			}
 			Signature sig = context.getMogram().getProcessSignature();
 			if (sig != null)

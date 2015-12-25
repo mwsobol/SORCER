@@ -44,7 +44,7 @@ public class LocalMograms {
 
 		// get the subcontext output from the context
 		assertTrue(context(ent("arg/x1", 20.0), ent("result/value", 100.0)).equals(
-				subcontext(cxt, paths("arg/x1", "result/value"))));
+				value(cxt, outPaths("arg/x1", "result/value"))));
 
 	}
 

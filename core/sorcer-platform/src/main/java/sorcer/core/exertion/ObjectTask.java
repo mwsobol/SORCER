@@ -23,6 +23,7 @@ import sorcer.core.context.ServiceContext;
 import sorcer.core.invoker.MethodInvoker;
 import sorcer.core.signature.ObjectSignature;
 import sorcer.service.*;
+import sorcer.core.signature.ServiceSignature.ReturnPath;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -95,8 +96,8 @@ public class ObjectTask extends Task {
 		dataContext.getMogramStrategy().setCurrentSelector(os.getSelector());
 		dataContext.setCurrentPrefix(os.getPrefix());
 		try {
-			if (getProcessSignature().getReturnPath() != null && getProcessSignature().getReturnPath().inPaths != null)
-				dataContext.updateContext(getProcessSignature().getReturnPath().inPaths);
+			if (getProcessSignature().getReturnPath() != null && ((ReturnPath)getProcessSignature().getReturnPath()).inPaths != null)
+				dataContext.updateContext(((ReturnPath)getProcessSignature().getReturnPath()).inPaths);
 			else
 				dataContext.updateContext();
 //			dataContext = (ServiceContext)dataContext.getCurrentContext();
@@ -130,24 +131,22 @@ public class ObjectTask extends Task {
 					// assume this task context is used by the signature's
 					// provider
 					if (dataContext != null) {
-						evaluator
-								.setParameterTypes(new Class[] { Context.class });
+						evaluator.setParameterTypes(new Class[] { Context.class });
 						evaluator.setContext(dataContext);
 					}
 				} else if (dataContext.getArgsPath() != null) {
-					evaluator
-							.setArgs(getParameterTypes(), (Object[]) getArgs());
+					evaluator.setArgs(getParameterTypes(), (Object[]) getArgs());
 				}
 				result = evaluator.evaluate(args);
 			}
 
 			if (result instanceof Context) {
-				Signature.ReturnPath rp = dataContext.getReturnPath();
+				ReturnPath rp = dataContext.getReturnPath();
 				if (rp != null) {
 					if (((Context) result).getValue(rp.path) != null) {
 						dataContext.setReturnValue(((Context) result).getValue(rp.path));
 					} else if (rp.outPaths != null && rp.outPaths.length > 0) {
-						Context out = dataContext.getSubcontext(rp.outPaths);
+						Context out = dataContext.getDirectionalSubcontext(rp.outPaths);
 						dataContext.setReturnValue(out);
 					}
 				} else if (dataContext.getScope() != null) {

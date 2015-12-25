@@ -45,6 +45,7 @@ import sorcer.core.signature.NetSignature;
 import sorcer.core.signature.NetletSignature;
 import sorcer.core.signature.ObjectSignature;
 import sorcer.core.signature.ServiceSignature;
+import sorcer.core.signature.ServiceSignature.*;
 import sorcer.jini.lookup.ProviderID;
 import sorcer.netlet.ScriptExerter;
 import sorcer.service.*;
@@ -53,6 +54,7 @@ import sorcer.service.Strategy.Access;
 import sorcer.service.modeling.Model;
 import sorcer.service.txmgr.TransactionManagerAccessor;
 import sorcer.util.Sorcer;
+import sorcer.core.signature.ServiceSignature.ReturnPath;
 
 import java.io.File;
 import java.rmi.RemoteException;
@@ -141,7 +143,7 @@ public class ServiceShell implements RemoteServiceShell, Requestor, Callable {
 				} else {
 					mogram.substitute(entries);
 					this.mogram = mogram;
-					result = exert(transaction, null);
+					result = exert(transaction, null, entries);
 				}
 			}
 		} catch (Exception e) {
@@ -673,10 +675,10 @@ public class ServiceShell implements RemoteServiceShell, Requestor, Callable {
 	}
 
 	private static Exertion initialize(Exertion xrt, Arg... args) throws ContextException {
-		Signature.ReturnPath rPath = null;
+		ReturnPath rPath = null;
 		for (Arg a : args) {
-			if (a instanceof Signature.ReturnPath) {
-				rPath = (Signature.ReturnPath) a;
+			if (a instanceof ReturnPath) {
+				rPath = (ReturnPath) a;
 				break;
 			}
 		}
@@ -687,10 +689,17 @@ public class ServiceShell implements RemoteServiceShell, Requestor, Callable {
 
 	private static Object finalize(Exertion xrt, Arg... args) throws ContextException, RemoteException {
 		Context dcxt = xrt.getDataContext();
-		Signature.ReturnPath rPath = dcxt.getReturnPath();
+		ReturnPath rPath = (ReturnPath)dcxt.getReturnPath();
 		// check if it was already finalized
 		if (((ServiceContext) dcxt).isFinalized()) {
 			return dcxt.getValue(rPath.path);
+		}
+		// lookup arguments to consider here
+		Out outputs = null;
+		for (Arg arg : args) {
+			if (arg instanceof Out) {
+				outputs = (Out)arg;
+			}
 		}
 		// get the compound service context
 		Context acxt = xrt.getContext();
@@ -698,11 +707,11 @@ public class ServiceShell implements RemoteServiceShell, Requestor, Callable {
 		if (rPath != null && xrt.isCompound()) {
 			// if Path.outPaths.length > 1 return subcontext
 			if (rPath.outPaths != null && rPath.outPaths.length == 1) {
-				Object val = acxt.getValue(rPath.outPaths[0]);
+				Object val = acxt.getValue(rPath.outPaths[0].path);
 				dcxt.putValue(rPath.path, val);
 				return val;
 			} else {
-				Signature.ReturnPath rp = ((ServiceContext) dcxt).getReturnPath();
+				ReturnPath rp = ((ServiceContext) dcxt).getReturnPath();
 				if (rp != null && rPath.path != null) {
 					Object result = acxt.getValue(rp.path);
 					if (result instanceof Context)
@@ -712,8 +721,8 @@ public class ServiceShell implements RemoteServiceShell, Requestor, Callable {
 						Context out = new ServiceContext();
 						logger.debug("\nselected paths: " + Arrays.toString(rPath.outPaths)
 								+ "\nfrom context: " + acxt);
-						for (String p : rPath.outPaths) {
-							out.putValue(p, acxt.getValue(p));
+						for (Path p : rPath.outPaths) {
+							out.putValue(p.path, acxt.getValue(p.path));
 						}
 						dcxt.setReturnValue(out);
 						result = out;
@@ -726,7 +735,7 @@ public class ServiceShell implements RemoteServiceShell, Requestor, Callable {
 		} else if (rPath != null) {
 			if (rPath.outPaths != null) {
 				if (rPath.outPaths.length == 1) {
-					Object val = acxt.getValue(rPath.outPaths[0]);
+					Object val = acxt.getValue(rPath.outPaths[0].path);
 					acxt.putValue(rPath.path, val);
 					return val;
 				} else if (rPath.outPaths.length > 1) {
@@ -751,6 +760,9 @@ public class ServiceShell implements RemoteServiceShell, Requestor, Callable {
 			}
 		} else if (obj instanceof Context && rPath != null && rPath.path != null) {
 			return (((Context)obj).getValue(rPath.path));
+		}
+		if (outputs != null) {
+			obj = ((ServiceContext) acxt).getSubcontext(Path.getSigPathArray(outputs));
 		}
 		return obj;
 	}
@@ -806,7 +818,7 @@ public class ServiceShell implements RemoteServiceShell, Requestor, Callable {
 		} else if (service instanceof Mogram) {
 			Context cxt;
 			if (mogram instanceof Exertion) {
-				cxt = ((Exertion) exert(mogram)).getContext();
+				cxt = exert(mogram).getContext();
 			} else {
 				cxt = (Context) mogram;
 			}
@@ -815,7 +827,7 @@ public class ServiceShell implements RemoteServiceShell, Requestor, Callable {
 		} else if (service instanceof NetSignature
 				&& ((Signature) service).getServiceType() == sorcer.core.provider.RemoteServiceShell.class) {
 			Provider prv = (Provider) Accessor.get().getService((Signature) service);
-			return (T) ((Exertion) prv.exert(mogram, txn)).getContext();
+			return (T) prv.exert(mogram, txn).getContext();
 		} else if (service instanceof Par) {
 			((Par)service).setScope(mogram);
 			Object val =((Par)service).getValue();
@@ -844,7 +856,7 @@ public class ServiceShell implements RemoteServiceShell, Requestor, Callable {
 			} else if (service instanceof Context) {
 				ServiceContext cxt = (ServiceContext)service;
 				cxt.substitute(args);
-				Signature.ReturnPath returnPath = cxt.getReturnPath();
+				ReturnPath returnPath = cxt.getReturnPath();
 				if (cxt instanceof EntModel) {
 					return ((Model)service).getResponse(args);
 				} else if (returnPath != null){

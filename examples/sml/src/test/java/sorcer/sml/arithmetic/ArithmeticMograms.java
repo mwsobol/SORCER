@@ -81,7 +81,7 @@ public class ArithmeticMograms {
 				response("subtract", "multiply2", "add"));
 
 		dependsOn(mo, ent("subtract", paths("multiply2", "add")));
-		Object val = mo.get("subtract");
+		Object val = asis(mo, "subtract");
 		if (val instanceof Srv) {
 			Srv srv = ((Srv)val);
 			if (srv.value() instanceof ContextCallable) {

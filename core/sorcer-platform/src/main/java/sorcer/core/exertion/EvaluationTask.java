@@ -26,6 +26,7 @@ import sorcer.core.context.model.srv.Srv;
 import sorcer.core.signature.EvaluationSignature;
 import sorcer.service.*;
 import sorcer.service.modeling.Variability;
+import sorcer.core.signature.ServiceSignature.ReturnPath;
 
 import java.rmi.RemoteException;
 import java.util.Map;
@@ -170,9 +171,9 @@ public class EvaluationTask extends Task {
 		}
 
 		if (val instanceof ValueCallable && evaluator.getType() == Variability.Type.LAMBDA) {
-			Signature.ReturnPath rp = evaluator.getReturnPath();
+			ReturnPath rp = evaluator.getReturnPath();
 			if (rp != null && rp.inPaths != null) {
-				Context cxt = getScope().getSubcontext(rp.inPaths);
+				Context cxt = getScope().getDirectionalSubcontext(rp.inPaths);
 				out = ((ValueCallable)val).call(cxt);
 			} else {
 				out = ((ValueCallable) val).call(getScope());

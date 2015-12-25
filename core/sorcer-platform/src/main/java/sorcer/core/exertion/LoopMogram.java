@@ -22,6 +22,7 @@ import sorcer.core.context.ThrowableTrace;
 import sorcer.core.context.model.srv.SrvModel;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
+import sorcer.core.signature.ServiceSignature.ReturnPath;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -115,7 +116,7 @@ public class LoopMogram extends ConditionalMogram {
 				target.getScope().append(scope);
 			}
 
-			Signature.ReturnPath rp = target.getContext().getReturnPath();
+			ReturnPath rp = (ReturnPath)target.getContext().getReturnPath();
 
 			if (condition == null) {
 				for (int i = 0; i < max - min; i++) {

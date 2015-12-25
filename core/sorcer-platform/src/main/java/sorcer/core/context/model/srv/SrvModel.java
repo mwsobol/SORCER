@@ -32,6 +32,7 @@ import sorcer.eo.operator;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
 import sorcer.service.modeling.Variability;
+import sorcer.core.signature.ServiceSignature.ReturnPath;
 
 import java.rmi.RemoteException;
 import java.util.*;
@@ -174,7 +175,7 @@ public class SrvModel extends ParModel<Object> implements Model {
                 execDependencies(path, items);
                 val = get(path);
             } else {
-                Signature.ReturnPath rp = returnPath(items);
+                ReturnPath rp = returnPath(items);
                 if (rp != null)
                     val = getReturnValue(rp);
                 else
@@ -218,10 +219,10 @@ public class SrvModel extends ParModel<Object> implements Model {
                 } else if (val2 instanceof MogramEntry) {
                     return evalMogram((MogramEntry)val2, path, items);
                 } else if (val2 instanceof ValueCallable && ((Srv) val).getType() == Variability.Type.LAMBDA) {
-                    Signature.ReturnPath rp = ((Srv) val).getReturnPath();
+                    ReturnPath rp = ((Srv) val).getReturnPath();
                     Object obj = null;
                     if (rp != null && rp.inPaths != null) {
-                        Context cxt = getSubcontext(rp.inPaths);
+                        Context cxt = getEvaluatedSubcontext(rp.inPaths, items);
                         obj = ((ValueCallable)val2).call(cxt);
                     } else {
                         obj = ((ValueCallable) val2).call(this);
@@ -301,14 +302,14 @@ public class SrvModel extends ParModel<Object> implements Model {
     public Object evalSignature(Signature sig, String path, Arg... args) throws MogramException {
         Context out = execSignature(sig, args);
         if (sig.getReturnPath() != null) {
-            Object obj = out.getValue(sig.getReturnPath().path);
+            Object obj = out.getValue(((ReturnPath)sig.getReturnPath()).path);
             if (obj == null)
                 obj = out.getValue(path);
             if (obj != null) {
                 ((Srv)get(path)).setSrvValue(obj);
                 return obj;
             } else {
-                logger.warn("no value for return path: {} in: {}", sig.getReturnPath().path, out);
+                logger.warn("no value for return path: {} in: {}", ((ReturnPath)sig.getReturnPath()).path, out);
                 return out;
             }
         } else {
@@ -376,11 +377,11 @@ public class SrvModel extends ParModel<Object> implements Model {
     }
 
     protected void execDependencies(String path, Arg... args) throws ContextException {
-        Map<String, List<String>> dpm = mogramStrategy.getDependentPaths();
-        List<String> dpl = dpm.get(path);
+        Map<String, List<Path>> dpm = mogramStrategy.getDependentPaths();
+        List<Path> dpl = dpm.get(path);
         if (dpl != null && dpl.size() > 0) {
-            for (String p : dpl) {
-                getValue(p, args);
+            for (Path p : dpl) {
+                getValue(p.path, args);
             }
 
         }
@@ -450,7 +451,7 @@ public class SrvModel extends ParModel<Object> implements Model {
         return this;
     }
 
-    public SrvModel getSubcontext(String... paths) throws ContextException {
+    public SrvModel getInoutSubcontext(String... paths) throws ContextException {
         // bare-bones subcontext
         SrvModel subcntxt = new SrvModel();
         subcntxt.setSubject(subjectPath, subjectValue);

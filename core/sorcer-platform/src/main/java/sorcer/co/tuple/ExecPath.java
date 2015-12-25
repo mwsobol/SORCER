@@ -17,25 +17,27 @@
 
 package sorcer.co.tuple;
 
+import sorcer.service.Path;
+
 import java.io.Serializable;
 
 
-public class ExecPath extends Path<Object> implements Serializable {
+public class ExecPath extends Path implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
 	public ExecPath() { }
 
 	public ExecPath(String path) {
-		this._1 = path;
+		this.path = path;
 	}
 	
 	public ExecPath(String path, Object executor) {
-		this._1 = path;
-		this._2 = executor;
+		this.path = path;
+		this.info = executor;
 	}
 	
 	public String path() {
-		return _1;
+		return path;
 	}
 }

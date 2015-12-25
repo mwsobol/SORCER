@@ -33,7 +33,7 @@ import sorcer.core.provider.exerter.ServiceShell;
 import sorcer.core.signature.NetSignature;
 import sorcer.core.signature.ServiceSignature;
 import sorcer.security.util.SorcerPrincipal;
-import sorcer.service.Signature.ReturnPath;
+import sorcer.core.signature.ServiceSignature.ReturnPath;
 import sorcer.service.Strategy.Access;
 import sorcer.service.Strategy.Flow;
 
@@ -156,9 +156,9 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
         if (result instanceof Context)
             dataContext.updateEntries((Context)result);
 
-        Signature.ReturnPath rp = dataContext.getReturnPath();
+        ReturnPath rp = dataContext.getReturnPath();
         if (rp == null)
-            rp = exertion.getProcessSignature().getReturnPath();
+            rp = (ReturnPath)exertion.getProcessSignature().getReturnPath();
         else
             exertion.getProcessSignature().setReturnPath(rp);
 
@@ -210,7 +210,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
                 else if (rp.path.equals(Signature.SELF))
                     obj = xrt;
                 else  if (rp.outPaths != null) {
-                    obj = ((ServiceContext)cxt).getSubcontext(rp.outPaths);
+                    obj = ((ServiceContext)cxt).getDirectionalSubcontext(rp.outPaths);
                 } else {
                     obj = cxt.getValue(rp.path);
                 }
@@ -633,7 +633,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
      */
     public Object getReturnValue(Arg... entries) throws ContextException,
             RemoteException {
-        ReturnPath returnPath = getDataContext().getReturnPath();
+        ReturnPath returnPath = (ReturnPath)getDataContext().getReturnPath();
         if (returnPath != null) {
             if (returnPath.path == null || returnPath.path.equals(Signature.SELF))
                 return getContext();
@@ -851,7 +851,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
         try {
             substitute(entries);
             Exertion evaluatedExertion = exert(entries);
-            ReturnPath rp = evaluatedExertion.getDataContext()
+            ReturnPath rp = (ReturnPath)evaluatedExertion.getDataContext()
                     .getReturnPath();
             if (evaluatedExertion instanceof Job) {
                 cxt = ((Job) evaluatedExertion).getJobContext();
@@ -868,7 +868,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
                     cxt.setReturnValue(cxt.getValue(rp.path));
                     Context out = null;
                     if (rp.outPaths != null && rp.outPaths.length > 0) {
-                        out = ((ServiceContext)cxt).getSubcontext(rp.outPaths);
+                        out = ((ServiceContext)cxt).getDirectionalSubcontext(rp.outPaths);
                         cxt.setReturnValue(out);
                         return out;
                     }

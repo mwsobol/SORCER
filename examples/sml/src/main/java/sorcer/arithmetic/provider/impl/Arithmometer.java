@@ -16,7 +16,7 @@ import sorcer.service.Context;
 import sorcer.service.ContextException;
 import sorcer.service.Fidelity;
 import sorcer.service.Signature;
-import sorcer.service.Signature.ReturnPath;
+import sorcer.core.signature.ServiceSignature.ReturnPath;
 
 import java.io.Serializable;
 import java.net.InetAddress;
@@ -24,6 +24,7 @@ import java.net.UnknownHostException;
 import java.rmi.RemoteException;
 import java.util.List;
 
+import static sorcer.eo.operator.attPath;
 import static sorcer.eo.operator.path;
 import static sorcer.eo.operator.revalue;
 
@@ -189,7 +190,7 @@ public class Arithmometer implements SorcerConstants, Serializable {
 			else if (outpaths.size() == 1) {
 				// put the result in the existing output path
 				cxt.putValue(outpaths.get(0), result);
-				cxt.putValue(path(outpaths.get(0), ArrayContext.DESCRIPTION), outputMessage);
+				cxt.putValue(attPath(outpaths.get(0), ArrayContext.DESCRIPTION), outputMessage);
 			} else {
 				// put the result for a new output path
 				logger.info("max index; " + cxt.getMaxIndex());
@@ -240,8 +241,8 @@ public class Arithmometer implements SorcerConstants, Serializable {
 			} else if (selector.equals(SUBTRACT)) {
 				ReturnPath<?> rp = ((ServiceContext<?>) context).getReturnPath();
 				if (rp != null && rp.inPaths != null && rp.inPaths.length > 0) {
-					result = (Double) revalue(cxt.getValue(rp.inPaths[0]));
-					result -= (Double) revalue(cxt.getValue(rp.inPaths[1]));
+					result = (Double) revalue(cxt.getValue(rp.inPaths[0].path));
+					result -= (Double) revalue(cxt.getValue(rp.inPaths[1].path));
 				} else {
 					if (inputs.size() > 2 || inputs.size() < 2) {
 						throw new ContextException("two arguments needed for subtraction");
@@ -292,10 +293,10 @@ public class Arithmometer implements SorcerConstants, Serializable {
 					}
 				}
 				cxt.putValue(outpath, result);
-				cxt.putValue(path(outpath, ArrayContext.DESCRIPTION), outputMessage);
+				cxt.putValue(attPath(outpath, ArrayContext.DESCRIPTION), outputMessage);
 			} else {
 				cxt.putValue(RESULT_PATH, result);
-				cxt.putValue(path(RESULT_PATH, ArrayContext.DESCRIPTION), outputMessage);
+				cxt.putValue(attPath(RESULT_PATH, ArrayContext.DESCRIPTION), outputMessage);
 			}
 			Signature sig = context.getMogram().getProcessSignature();
 			if (sig != null)
@@ -325,7 +326,7 @@ public class Arithmometer implements SorcerConstants, Serializable {
 				if (outpath.indexOf("${name}") >= 0) {
 					String out = outpath.replace("${name}",
 							context.getMogram().getName());
-					context.getReturnPath().path = out;
+					context.getReturnPath().setPath(out);
 				}
 				context.setReturnValue(result);
 			} else if (outpaths.size() == 1) {
@@ -339,11 +340,11 @@ public class Arithmometer implements SorcerConstants, Serializable {
 					}
 				}
 				context.putValue(outpath, result);
-				context.putValue(path(outpath, ArrayContext.DESCRIPTION),
+				context.putValue(attPath(outpath, ArrayContext.DESCRIPTION),
 						outputMessage);
 			} else {
 				context.putValue(RESULT_PATH, result);
-				context.putValue(path(RESULT_PATH, ArrayContext.DESCRIPTION),
+				context.putValue(attPath(RESULT_PATH, ArrayContext.DESCRIPTION),
 						outputMessage);
 			}
 		} catch (Exception ex) {

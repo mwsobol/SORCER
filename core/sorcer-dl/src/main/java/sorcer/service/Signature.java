@@ -1,7 +1,7 @@
 /*
  * Copyright 2009 the original author or authors.
  * Copyright 2009 SorcerSoft.org.
- *  
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -22,8 +22,6 @@ import sorcer.service.modeling.Variability;
 import java.io.IOException;
 import java.io.Serializable;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  * A service <code>Signature</code> is an indirect behavioral feature of
@@ -41,7 +39,7 @@ import java.util.Arrays;
  * be requested dynamically at the boundary of a service provider. Operations
  * include modifying a service {@link Context} or disclosing information about
  * the service context.
- * 
+ *
  * @author Mike Sobolewski
  */
 @SuppressWarnings("rawtypes")
@@ -56,7 +54,7 @@ public interface Signature extends Service, Comparable, Dependency, Identifiable
 
 	/**
 	 * Returns an operation name of this signature.
-	 * 
+	 *
 	 * @return name of operation
 	 */
 	public String getSelector();
@@ -64,14 +62,14 @@ public interface Signature extends Service, Comparable, Dependency, Identifiable
 	/**
 	 * Returns a fragment of operation of this signature. It's the part
 	 * preceeding # in its selector.
-	 * 
+	 *
 	 * @return fragment of operation
 	 */
 	public String getPrefix();
 
 	/**
 	 * Returns a service provider name.
-	 * 
+	 *
 	 * @return name of service provider
 	 */
 	public String getProviderName();
@@ -85,16 +83,16 @@ public interface Signature extends Service, Comparable, Dependency, Identifiable
 
 	/**
 	 * Returns a provider of <code>Variability</code> type.
-	 * 
+	 *
 	 * @return Variability of this service provider
 	 */
 	public Variability<?> getVariability();
-	
+
 	public void setProviderName(String providerName);
 
 	/**
 	 * Returns a service type name of this signature.
-	 * 
+	 *
 	 * @return name of service interface
 	 */
 	public Class<?> getServiceType();
@@ -109,17 +107,17 @@ public interface Signature extends Service, Comparable, Dependency, Identifiable
 
 	/**
 	 * Assigns a path to the return value by this signature.
-	 * 
+	 *
 	 * @param path
 	 *            to the return value
 	 */
-	public void setReturnPath(ReturnPath path);
+	public void setReturnPath(SignatureReturnPath path);
 
 	public void setReturnPath(String path);
 
 	/**
 	 * Assigns a path to the return value with a path and directional attribute.
-	 * 
+	 *
 	 * @param path
 	 *            to the return value
 	 * @param direction
@@ -129,14 +127,14 @@ public interface Signature extends Service, Comparable, Dependency, Identifiable
 
 	/**
 	 * Returns a path to the return value by this signature.
-	 * 
+	 *
 	 * @return path to the return value
 	 */
-	public ReturnPath getReturnPath();
+	public SignatureReturnPath getReturnPath();
 
 	/**
 	 * Assigns a service type name of this signature.
-	 * 
+	 *
 	 * @return name of service interface
 	 * @param serviceType
 	 *            name of service interface
@@ -145,7 +143,7 @@ public interface Signature extends Service, Comparable, Dependency, Identifiable
 
 	/**
 	 * Returns a signature type of this signature.
-	 * 
+	 *
 	 * @return a type of this signature
 	 */
 	public Type getType();
@@ -160,7 +158,7 @@ public interface Signature extends Service, Comparable, Dependency, Identifiable
 
 	/**
 	 * Assigns a signature <code>type</code> for this service signature.
-	 * 
+	 *
 	 * @param type
 	 *            a signature type
 	 */
@@ -169,7 +167,7 @@ public interface Signature extends Service, Comparable, Dependency, Identifiable
 	/**
 	 * Returns a codebase for the code implementing this signature. The codebase
 	 * is a space separated string (list) of URls.
-	 * 
+	 *
 	 * @return a codebase for the code implementing this signature
 	 */
 	public String getCodebase();
@@ -177,7 +175,7 @@ public interface Signature extends Service, Comparable, Dependency, Identifiable
 	/**
 	 * Assigns a codbase to <code>urls</code> for the code implementing this
 	 * signature. The codebase is a space separated string (list) of URls.
-	 * 
+	 *
 	 * @param urls
 	 *            a list of space separated URLS
 	 */
@@ -192,120 +190,10 @@ public interface Signature extends Service, Comparable, Dependency, Identifiable
 
 	/**
 	 * Returns a deployment for provisioning a referenced service provider;
-	 * 
+	 *
 	 */
 	public Deployment getDeployment();
 
-	public static class ReturnPath<T> implements Serializable, Arg {
-		static final long serialVersionUID = 6158097800741638834L;
-		public String path;
-		public Direction direction;
-		public String[] outPaths;
-        public String[] inPaths;
-		public Class<T> type;
-
-		public ReturnPath() {
-			// return the context
-			path = Signature.SELF;
-		}
-
-        public ReturnPath(String path, Out argPaths) {
-            this.path = path;
-            if (argPaths != null && argPaths.size() > 0) {
-                String[] ps = new String[argPaths.size()];
-                this.outPaths = argPaths.toArray(ps);
-                direction = Direction.OUT;
-            }
-        }
-
-        public ReturnPath(String path, In argPaths) {
-            this.path = path;
-            if (argPaths != null && argPaths.size() > 0) {
-                String[] ps = new String[argPaths.size()];
-                this.inPaths = argPaths.toArray(ps);
-                direction = Direction.IN;
-            }
-        }
-
-		public ReturnPath(Out outPaths) {
-			 this(null, null, outPaths);
-		}
-
-		public ReturnPath(In inPaths) {
-			this(null, inPaths, null);
-		}
-
-        public ReturnPath(String path, In inPaths, Out outPaths) {
-            this.path = path;
-            if (outPaths != null && outPaths.size() > 0) {
-                String[] ps = new String[outPaths.size()];
-                this.outPaths = outPaths.toArray(ps);
-            }
-            if (inPaths != null && inPaths.size() > 0) {
-                String[] ps = new String[inPaths.size()];
-                this.inPaths = inPaths.toArray(ps);
-            }
-            direction = Direction.INOUT;
-        }
-        
-		public ReturnPath(String path, String... argPaths) {
-			this.path = path;
-			if (argPaths != null && argPaths.length > 0) {
-				this.outPaths = argPaths;
-				direction = Direction.OUT;
-			}
-		}
-
-		public ReturnPath(String path, Direction direction, String... argPaths) {
-			this.path = path;
-			this.outPaths = argPaths;
-			this.direction = direction;
-		}
-
-		public ReturnPath(String path, Direction direction,
-				Class<T> returnType, String... argPaths) {
-			this.path = path;
-			this.direction = direction;
-			this.outPaths = argPaths;
-			type = returnType;
-		}
-
-		public String getName() {
-			return path;
-		}
-
-		public String toString() {
-			String params = "";
-			if (outPaths != null)
-				params = " outPaths: " + Arrays.toString(outPaths);
-			return path + params;
-		}
-
-		@Override
-		public boolean equals(Object o) {
-			if (this == o) return true;
-			if (o == null || getClass() != o.getClass()) return false;
-
-			ReturnPath that = (ReturnPath) o;
-
-			if (!Arrays.equals(outPaths, that.outPaths)) return false;
-			if (direction != that.direction) return false;
-			if (!path.equals(that.path)) return false;
-			if (type != null ? !type.equals(that.type) : that.type != null) return false;
-
-			return true;
-		}
-
-		@Override
-		public int hashCode() {
-			int result = path.hashCode();
-			result = 31 * result + (direction != null ? direction.hashCode() : 0);
-			result = 31 * result + (outPaths != null ? Arrays.hashCode(outPaths) : 0);
-            result = 31 * result + (inPaths != null ? Arrays.hashCode(outPaths) : 0);
-			result = 31 * result + (type != null ? type.hashCode() : 0);
-			return result;
-		}
-	}
 
 	/**
 	 * There are four types of {@link Signature} operations that can be
@@ -369,76 +257,20 @@ public interface Signature extends Service, Comparable, Dependency, Identifiable
 			return toString();
 		}
 
-        static public Direction fromString(String direction) {
-            if (direction == null) {
-                return null;
-            } else if (direction.equals(""+IN)) {
-                return IN;
-            } else if (direction.equals(""+OUT)) {
-                return OUT;
-            } else if (direction.equals(""+INOUT)) {
-                return INOUT;
-            } else {
-                return null;
-            }
-        }
+		static public Direction fromString(String direction) {
+			if (direction == null) {
+				return null;
+			} else if (direction.equals(""+IN)) {
+				return IN;
+			} else if (direction.equals(""+OUT)) {
+				return OUT;
+			} else if (direction.equals(""+INOUT)) {
+				return INOUT;
+			} else {
+				return null;
+			}
+		}
 	};
-
-    public static class Out extends ArrayList<String> implements Arg {
-        private static final long serialVersionUID = 1L;
-
-        public Out() {
-            super();
-        }
-
-        public Out(String[] names) {
-            for (String name : names) {
-                add(name) ;
-            }
-        }
-
-        public Out(int initialCapacity) {
-            super(initialCapacity);
-        }
-
-		public String[] getPaths() {
-			String[] paths = new String[size()];
-			return this.toArray(paths);
-		}
-
-		@Override
-		public String getName() {
-			return toString();
-		}
-	}
-
-    public static class In extends ArrayList<String> implements Arg {
-        private static final long serialVersionUID = 1L;
-
-        public In() {
-            super();
-        }
-
-        public In(String[] names) {
-            for (String name : names) {
-                add(name) ;
-            }
-        }
-
-        public In(int initialCapacity) {
-            super(initialCapacity);
-        }
-
-		public String[] getPaths() {
-			String[] paths = new String[size()];
-			return this.toArray(paths);
-		}
-
-		@Override
-		public String getName() {
-			return toString();
-		}
-	}
 
 	static final String SELF = "_self_";
 	static final String SELF_VALUE = "_self_value_";

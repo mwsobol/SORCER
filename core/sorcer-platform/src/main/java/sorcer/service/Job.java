@@ -35,7 +35,7 @@ import sorcer.core.signature.NetSignature;
 import sorcer.core.signature.ObjectSignature;
 import sorcer.security.util.Auth;
 import sorcer.security.util.SorcerPrincipal;
-import sorcer.service.Signature.ReturnPath;
+import sorcer.core.signature.ServiceSignature.ReturnPath;
 import sorcer.service.Strategy.Access;
 import sorcer.util.SorcerUtil;
 

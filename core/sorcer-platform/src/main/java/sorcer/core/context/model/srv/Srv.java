@@ -10,6 +10,7 @@ import sorcer.core.context.model.ent.Entry;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
 import sorcer.service.modeling.Variability;
+import sorcer.core.signature.ServiceSignature.ReturnPath;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
@@ -32,7 +33,7 @@ public class Srv extends Entry<Object> implements Variability<Object>, Arg,
 
     protected String[] paths;
 
-    protected Signature.ReturnPath returnPath;
+    protected ReturnPath returnPath;
 
     // srv fidelities
     protected Map<String, Object> fidelities;
@@ -69,12 +70,12 @@ public class Srv extends Entry<Object> implements Variability<Object>, Arg,
         this.name = path;
     }
 
-    public Srv(String path, Object value, Signature.ReturnPath returnPath) {
+    public Srv(String path, Object value, ReturnPath returnPath) {
         this(path, value);
         this.returnPath = returnPath;
     }
 
-    public Srv(String name, String path, Object value, Signature.ReturnPath returnPath) {
+    public Srv(String name, String path, Object value, ReturnPath returnPath) {
         super(path, value);
         this.returnPath = returnPath;
         this.name = name;
@@ -187,8 +188,8 @@ public class Srv extends Entry<Object> implements Variability<Object>, Arg,
     }
 
     public Object execSignature(Signature sig, Context scope) throws MogramException {
-        String[] ips = sig.getReturnPath().inPaths;
-        String[] ops = sig.getReturnPath().outPaths;
+        Path[] ips = ((ReturnPath)sig.getReturnPath()).inPaths;
+        Path[] ops = ((ReturnPath)sig.getReturnPath()).outPaths;
         Context incxt = scope;
         if (sig.getReturnPath() != null) {
             incxt.setReturnPath(sig.getReturnPath());
@@ -197,7 +198,7 @@ public class Srv extends Entry<Object> implements Variability<Object>, Arg,
         try {
             outcxt = ((Task) task(sig, incxt).exert()).getContext();
             if (ops != null && ops.length > 0) {
-                return outcxt.getSubcontext(ops);
+                return outcxt.getDirectionalSubcontext(ops);
             } else if (sig.getReturnPath() != null) {
                 return outcxt.getReturnValue();
             }
@@ -231,11 +232,11 @@ public class Srv extends Entry<Object> implements Variability<Object>, Arg,
         this.srvValue = srvValue;
     }
 
-    public Signature.ReturnPath getReturnPath() {
+    public ReturnPath getReturnPath() {
         return returnPath;
     }
 
-    public void setReturnPath(Signature.ReturnPath returnPath) {
+    public void setReturnPath(ReturnPath returnPath) {
         this.returnPath = returnPath;
     }
 

@@ -1,6 +1,6 @@
 /*
- * Copyright 2012 the original author or authors.
- * Copyright 2012 SorcerSoft.org.
+ * Copyright 2015 the original author or authors.
+ * Copyright 2015 SorcerSoft.org.
  *  
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,20 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package sorcer.co.tuple;
 
-public class Path<T2> extends Tuple2<String, T2> {
-	
-	private static final long serialVersionUID = -3968682348032416823L;
-	
-	public Path() { }
+import sorcer.core.context.model.ent.Entry;
 
-	public Path(String path) {
-		this._1 = path;
-	}
+public class TagEntry<T> extends Entry<T> {
+    private static final long serialVersionUID = 1L;
 
-	public String path() {
-		return  this._1;
-	}
+    public TagEntry(String association) {
+        super();
+        annotation = association;
+    }
+
+    public TagEntry(String path, T value) {
+        this(path, value, null);
+    }
+
+    public TagEntry(String path, T value, String association) {
+        super(path, value);
+        annotation = association;
+    }
+
 }

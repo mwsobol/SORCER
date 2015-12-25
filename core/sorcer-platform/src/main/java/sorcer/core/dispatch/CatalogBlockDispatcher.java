@@ -30,6 +30,7 @@ import sorcer.core.monitor.MonitoringSession;
 import sorcer.core.provider.Provider;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
+import sorcer.core.signature.ServiceSignature.ReturnPath;
 
 import java.rmi.RemoteException;
 import java.util.List;
@@ -184,7 +185,7 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
 		
 		ServiceContext cxt = (ServiceContext)xrt.getDataContext();
 		if (exertion.getDataContext().getReturnPath() != null)
-            cxt.putValue(exertion.getContext().getReturnPath().path,
+            cxt.putValue(((ReturnPath)exertion.getContext().getReturnPath()).path,
                     exertion.getDataContext().getReturnValue());
 		else
              cxt.updateEntries(exertion.getDataContext());
