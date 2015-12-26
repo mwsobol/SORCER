@@ -43,7 +43,7 @@ import sorcer.util.Sorcer;
 import sorcer.util.Table;
 import sorcer.util.bdb.objects.UuidObject;
 import sorcer.util.url.sos.SdbUtil;
-import sorcer.core.signature.ServiceSignature.ReturnPath;
+import sorcer.service.Signature.ReturnPath;
 
 import java.io.File;
 import java.io.IOException;

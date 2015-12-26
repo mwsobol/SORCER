@@ -22,7 +22,7 @@ import sorcer.core.context.ThrowableTrace;
 import sorcer.core.context.model.srv.SrvModel;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
-import sorcer.core.signature.ServiceSignature.ReturnPath;
+import sorcer.service.Signature.ReturnPath;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;

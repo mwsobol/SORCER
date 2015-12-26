@@ -46,7 +46,7 @@ import sorcer.eo.operator;
 import sorcer.service.*;
 import sorcer.service.Signature.Direction;
 import sorcer.core.signature.ServiceSignature.*;
-import sorcer.core.signature.ServiceSignature.ReturnPath;
+import sorcer.service.Signature.ReturnPath;
 import sorcer.service.modeling.Model;
 import sorcer.service.modeling.Variability;
 import sorcer.util.ObjectCloner;
@@ -2757,8 +2757,8 @@ public class ServiceContext<T> extends ServiceMogram implements
 				}
 				else if (returnPath != null)
 					return getReturnValue(entries);
-				else if (entries.length == 1 && entries[0] instanceof Out) {
-					return (T) getSubcontext(((Out)entries[0]).getSigPaths());
+				else if (entries.length == 1 && entries[0] instanceof Signature.Out) {
+					return (T) getSubcontext(((Signature.Out)entries[0]).getSigPaths());
 				} else {
 					return (T) this;
 				}

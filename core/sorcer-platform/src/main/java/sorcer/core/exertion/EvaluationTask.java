@@ -26,7 +26,7 @@ import sorcer.core.context.model.srv.Srv;
 import sorcer.core.signature.EvaluationSignature;
 import sorcer.service.*;
 import sorcer.service.modeling.Variability;
-import sorcer.core.signature.ServiceSignature.ReturnPath;
+import sorcer.service.Signature.ReturnPath;
 
 import java.rmi.RemoteException;
 import java.util.Map;

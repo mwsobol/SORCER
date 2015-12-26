@@ -50,7 +50,7 @@ import sorcer.core.provider.rendezvous.ServiceConcatenator;
 import sorcer.core.provider.rendezvous.ServiceModeler;
 import sorcer.core.requestor.ExertRequestor;
 import sorcer.core.signature.*;
-import sorcer.core.signature.ServiceSignature.ReturnPath;
+import sorcer.service.Signature.ReturnPath;
 import sorcer.core.signature.ServiceSignature.*;
 import sorcer.netlet.ScriptExerter;
 import sorcer.service.*;

@@ -22,6 +22,8 @@ import sorcer.service.modeling.Variability;
 import java.io.IOException;
 import java.io.Serializable;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * A service <code>Signature</code> is an indirect behavioral feature of
@@ -278,4 +280,246 @@ public interface Signature extends Service, Comparable, Dependency, Identifiable
 	static final Type PRE = Type.PRE;
 	static final Type POST = Type.POST;
 	static final Type APD = Type.APD_DATA;
+
+
+	public static class Out extends ArrayList<Path> implements Arg {
+		private static final long serialVersionUID = 1L;
+
+		public Out() {
+			super();
+		}
+
+		public Out(Path[] paths) {
+			for (Path path : paths) {
+				add(path) ;
+			}
+		}
+
+		public Out(String[] names) {
+			for (String name : names) {
+				add(new Path(name)) ;
+			}
+		}
+
+		public Out(int initialCapacity) {
+			super(initialCapacity);
+		}
+
+		public String[] getPaths() {
+			String[] paths = new String[size()];
+			for (int i = 0; i < size(); i++)
+				paths[i] = get(i).path();
+
+			return paths;
+		}
+
+		public Path[] getSigPaths() {
+			Path[] paths = new Path[size()];
+			return this.toArray(paths);
+		}
+
+		@Override
+		public String getName() {
+			return toString();
+		}
+
+	}
+
+	public static class In extends ArrayList<Path> implements Arg {
+		private static final long serialVersionUID = 1L;
+
+		public In() {
+			super();
+		}
+
+		public In(Path[] paths) {
+			for (Path path : paths) {
+				add(path) ;
+			}
+		}
+		public In(String[] names) {
+			for (String name : names) {
+				add(new Path(name)) ;
+			}
+		}
+
+		public In(int initialCapacity) {
+			super(initialCapacity);
+		}
+
+		public String[] getPaths() {
+			String[] paths = new String[size()];
+			for (int i = 0; i < size(); i++)
+				paths[i] = get(i).path();
+
+			return paths;
+		}
+
+		public Path[] getSigPaths() {
+			Path[] paths = new Path[size()];
+			return this.toArray(paths);
+		}
+
+		@Override
+		public String getName() {
+			return toString();
+		}
+	}
+
+	public static class ReturnPath<T> implements SignatureReturnPath, Serializable, Arg {
+		static final long serialVersionUID = 6158097800741638834L;
+		public String path;
+		public Direction direction;
+		public Path[] outPaths;
+		public Path[] inPaths;
+		public Class<T> type;
+
+		public ReturnPath() {
+			// return the context
+			path = Signature.SELF;
+		}
+
+		public ReturnPath(String path, Out argPaths) {
+			this.path = path;
+			if (argPaths != null && argPaths.size() > 0) {
+				Path[] ps = new Path[argPaths.size()];
+				this.outPaths = argPaths.toArray(ps);
+				direction = Direction.OUT;
+			}
+		}
+
+		public ReturnPath(String path, In argPaths) {
+			this.path = path;
+			if (argPaths != null && argPaths.size() > 0) {
+				Path[] ps = new Path[argPaths.size()];
+				this.inPaths = argPaths.toArray(ps);
+				direction = Direction.IN;
+			}
+		}
+
+		public ReturnPath(Out outPaths) {
+			this(null, null, outPaths);
+		}
+
+		public ReturnPath(In inPaths) {
+			this(null, inPaths, null);
+		}
+
+		public ReturnPath(String path, In inPaths, Out outPaths) {
+			this.path = path;
+			if (outPaths != null && outPaths.size() > 0) {
+				Path[] ps = new Path[outPaths.size()];
+				this.outPaths = outPaths.toArray(ps);
+			}
+			if (inPaths != null && inPaths.size() > 0) {
+				Path[] ps = new Path[inPaths.size()];
+				this.inPaths = inPaths.toArray(ps);
+			}
+			direction = Direction.INOUT;
+		}
+
+		public ReturnPath(String path, Path... argPaths) {
+			this.path = path;
+			if (argPaths != null && argPaths.length > 0) {
+				this.outPaths = argPaths;
+				direction = Direction.OUT;
+			}
+		}
+
+		public ReturnPath(String path, Direction direction, Path... argPaths) {
+			this.path = path;
+			this.outPaths = argPaths;
+			this.direction = direction;
+		}
+
+		public ReturnPath(String path, Direction direction,
+						  Class<T> returnType, Path... argPaths) {
+			this.path = path;
+			this.direction = direction;
+			this.outPaths = argPaths;
+			type = returnType;
+		}
+
+		public String getName() {
+			return path;
+		}
+
+		public String toString() {
+			StringBuffer sb = new StringBuffer(path != null ? path : "no path");
+			if (outPaths != null)
+				sb.append("\noutPaths: " + Arrays.toString(outPaths));
+			if (inPaths != null)
+				sb.append("\ninPaths: " + Arrays.toString(inPaths));
+			return sb.toString();
+		}
+
+		@Override
+		public boolean equals(Object o) {
+			if (this == o) return true;
+			if (o == null || getClass() != o.getClass()) return false;
+
+			ReturnPath that = (ReturnPath) o;
+
+			if (!Arrays.equals(outPaths, that.outPaths)) return false;
+			if (direction != that.direction) return false;
+			if (!path.equals(that.path)) return false;
+			if (type != null ? !type.equals(that.type) : that.type != null) return false;
+
+			return true;
+		}
+
+
+		@Override
+		public int hashCode() {
+			int result = path.hashCode();
+			result = 31 * result + (direction != null ? direction.hashCode() : 0);
+			result = 31 * result + (outPaths != null ? Arrays.hashCode(outPaths) : 0);
+			result = 31 * result + (inPaths != null ? Arrays.hashCode(outPaths) : 0);
+			result = 31 * result + (type != null ? type.hashCode() : 0);
+			return result;
+		}
+
+		public static String[] getPaths(Path[] paths) {
+			String[] ps = new String[paths.length];
+			for (int i = 0; i < paths.length; i++) {
+				ps[i] = paths[i].path();
+			}
+			return ps;
+		}
+
+		public Path[] getInSigPaths() {
+			return inPaths;
+		}
+
+
+		public Path[] getOutSigPaths() {
+			return outPaths;
+		}
+
+		@Override
+		public String getPath() {
+			return path;
+		}
+
+		@Override
+		public void setPath(String path) {
+			this.path = path;
+		}
+
+		@Override
+		public String[] getInPaths() {
+			if (inPaths != null)
+				return getPaths(inPaths);
+			else
+				return null;
+		}
+
+		@Override
+		public String[] getOutPaths() {
+			if (outPaths != null)
+				return getPaths(outPaths);
+			else
+				return null;
+		}
+	}
 }

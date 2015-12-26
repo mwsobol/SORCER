@@ -54,7 +54,7 @@ import sorcer.service.Strategy.Access;
 import sorcer.service.modeling.Model;
 import sorcer.service.txmgr.TransactionManagerAccessor;
 import sorcer.util.Sorcer;
-import sorcer.core.signature.ServiceSignature.ReturnPath;
+import sorcer.service.Signature.ReturnPath;
 
 import java.io.File;
 import java.rmi.RemoteException;
@@ -695,10 +695,10 @@ public class ServiceShell implements RemoteServiceShell, Requestor, Callable {
 			return dcxt.getValue(rPath.path);
 		}
 		// lookup arguments to consider here
-		Out outputs = null;
+		Signature.Out outputs = null;
 		for (Arg arg : args) {
-			if (arg instanceof Out) {
-				outputs = (Out)arg;
+			if (arg instanceof Signature.Out) {
+				outputs = (Signature.Out)arg;
 			}
 		}
 		// get the compound service context
