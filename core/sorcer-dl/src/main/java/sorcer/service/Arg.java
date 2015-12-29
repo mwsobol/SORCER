@@ -72,23 +72,23 @@ public interface Arg extends Serializable {
 
 	public static Object getValue(Arg[] args, String path) {
 		for (Arg arg : args) {
-			if (arg instanceof Duo && ((Duo)arg).name().equals(path))
-				return ((Duo)arg).value();
+			if (arg instanceof Varying && ((Varying)arg).name().equals(path))
+				return ((Varying)arg).value();
 		}
 		return null;
 	}
 
 	public static void setValue(Arg[] args, String path, Object value) {
 		for (Arg arg : args) {
-			if (arg instanceof Duo && ((Duo)arg).name().equals(path))
-				((Duo)arg).set(value);
+			if (arg instanceof Varying && ((Varying)arg).name().equals(path))
+				((Varying)arg).set(value);
 		}
 	}
 
-	public static Duo getEntry(Arg[] args, String name) {
+	public static Varying getEntry(Arg[] args, String name) {
 		for (Arg arg : args) {
-			if (arg instanceof Duo && ((Duo) arg).name().equals(name))
-				return (Duo)arg;
+			if (arg instanceof Varying && ((Varying) arg).name().equals(name))
+				return (Varying)arg;
 		}
 		return null;
 	}
