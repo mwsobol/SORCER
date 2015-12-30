@@ -20,7 +20,7 @@ package sorcer.service;
 /**
  * Created by Mike Sobolewski on 11/21/15.
  */
-public interface Varying<T> extends Arg, Service {
+public interface Function<T> extends Arg, Service {
 
     public Object name();
 
