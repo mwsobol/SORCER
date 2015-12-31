@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 
+/**
+ * @author Mike Sobolewski
+ */
 package sorcer.core.context.model.srv;
 
 public interface SrvModeling {
