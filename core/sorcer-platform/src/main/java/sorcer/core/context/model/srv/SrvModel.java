@@ -50,7 +50,7 @@ import static sorcer.eo.operator.*;
  *   
  * Created by Mike Sobolewski on 1/29/15.
  */
-public class SrvModel extends ParModel<Object> {
+public class SrvModel extends ParModel<Object> implements Model, Invocation<Object>, SrvModeling {
 
     public static SrvModel instance(Signature builder) throws SignatureException {
         SrvModel model = (SrvModel) sorcer.co.operator.instance(builder);
