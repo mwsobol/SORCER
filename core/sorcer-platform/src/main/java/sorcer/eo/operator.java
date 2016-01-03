@@ -2073,7 +2073,7 @@ public class operator {
 	public static Mogram tracable(Mogram xrt) {
 		List<Mogram> mograms = ((ServiceMogram) xrt).getAllMograms();
 		for (Mogram m : mograms) {
-			((ControlContext) ((Exertion) m).getControlContext()).setTracable(true);
+			((Exertion) m).getControlContext().setTracable(true);
 		}
 		return xrt;
 	}
@@ -2099,7 +2099,7 @@ public class operator {
 			else if (mogram instanceof Modeling) {
 				mogram.substitute(args);
 				((Modeling) mogram).evaluate();
-				return ((Modeling) mogram).getResult();
+				return ((Model)mogram).getResult();
 			} else {
 				return ((Evaluation) mogram).getValue(args);
 			}
