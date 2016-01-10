@@ -22,7 +22,6 @@ import net.jini.core.transaction.TransactionException;
 import sorcer.co.tuple.Tuple2;
 import sorcer.core.Name;
 import sorcer.core.context.ServiceContext;
-import sorcer.core.invoker.ServiceInvoker;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
 import sorcer.service.modeling.Variability;
@@ -41,7 +40,7 @@ import static sorcer.eo.operator.add;
  * @author Mike Sobolewski
  */
 @SuppressWarnings("unchecked")
-public class Entry<T> extends Tuple2<String, T> implements Callable<T>, Dependency, Comparable<T>, Setter, Invocation<T>, Reactive<T>, Arg {
+public class Entry<T> extends Tuple2<String, T> implements Callable<T>, Dependency, Comparable<T>, Setter, Reactive<T>, Arg {
 	private static final long serialVersionUID = 5168783170981015779L;
 
 	public int index;
@@ -116,8 +115,8 @@ public class Entry<T> extends Tuple2<String, T> implements Callable<T>, Dependen
 					}
 					this._2 = (T)url;
 				}
-			} else if (val instanceof ServiceInvoker) {
-				return ((ServiceInvoker<T>) val).invoke(args);
+			} else if (val instanceof Invocation) {
+				return (T) ((Invocation) val).invoke(null, args);
 			} else if (val instanceof Evaluation) {
 				if (val instanceof Entry && ((Entry)val).getName().equals(_1)) {
 					return (T) ((Entry)val).getValue();
@@ -135,6 +134,10 @@ public class Entry<T> extends Tuple2<String, T> implements Callable<T>, Dependen
 					}
 				}
 				return (T) ((Entry)((Fidelity) val).getSelection()).getValue();
+			} else if (val instanceof Callable) {
+				return (T) ((Callable)val).call(args);
+			} else if (val instanceof Service) {
+				return (T) ((Service)val).exec(args);
 			}
 		} catch (Exception e) {
 			throw new EvaluationException(e);
@@ -302,10 +305,10 @@ public class Entry<T> extends Tuple2<String, T> implements Callable<T>, Dependen
 		return type;
 	}
 
-	@Override
-	public T invoke(Context<T> context, Arg... entries) throws InvocationException, RemoteException {
-		return _2;
-	}
+//	@Override
+//	public T invoke(Context<T> context, Arg... entries) throws InvocationException, RemoteException {
+//		return _2;
+//	}
 
 	@Override
 	public Object exec(Arg... args) throws MogramException, RemoteException {

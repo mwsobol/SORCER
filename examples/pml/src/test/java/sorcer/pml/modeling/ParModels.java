@@ -49,7 +49,6 @@ import static sorcer.po.operator.set;
 /**
  * @author Mike Sobolewski
  */
-@SuppressWarnings({ "rawtypes", "unchecked" })
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/pml")
 public class ParModels {

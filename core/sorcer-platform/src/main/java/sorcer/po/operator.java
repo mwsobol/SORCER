@@ -166,10 +166,13 @@ public class operator {
 		}
 		if (obj instanceof Invocation)
 			return (Invocation) obj;
-		else if (obj != null)
-			return new Entry(path,obj);
-		else
-			throw new NoneException("No such invoker at: " + path + " in: " + mappable.getName());
+		else if (obj != null) {
+			if (obj instanceof Double)
+				return new DoubleIncrementor(path, null, (Double) obj);
+			if (obj instanceof Integer)
+				return new IntegerIncrementor(path, null, (Integer) obj);
+		}
+		throw new NoneException("No such invoker at: " + path + " in: " + mappable.getName());
 	}
 
 	public static void clearPars(Object invoker) throws EvaluationException {
@@ -419,7 +422,12 @@ public class operator {
 	}
 
 	public static InvokeIncrementor inc(Invocation invoker, int increment) {
-		return new IntegerIncrementor(invoker, increment);
+		if (invoker instanceof IntegerIncrementor) {
+			((IntegerIncrementor) invoker).setIncrement(increment);
+			return (IntegerIncrementor) invoker;
+		} else {
+			return new IntegerIncrementor(invoker, increment);
+		}
 	}
 
 	public static InvokeIncrementor inc(Invocation<Integer> invoker) {
@@ -434,8 +442,14 @@ public class operator {
 		return new DoubleIncrementor(path, increment);
 	}
 
+
 	public static InvokeIncrementor inc(Invocation invoker, double increment) {
-		return new DoubleIncrementor(invoker, increment);
+		if (invoker instanceof IntegerIncrementor) {
+			((DoubleIncrementor) invoker).setIncrement(increment);
+			return (DoubleIncrementor) invoker;
+		} else {
+			return new DoubleIncrementor(invoker, increment);
+		}
 	}
 
 	public static InvokeIncrementor dinc(Invocation<Double> invoker) {
