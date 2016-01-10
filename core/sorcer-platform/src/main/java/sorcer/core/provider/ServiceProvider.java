@@ -73,6 +73,7 @@ import java.rmi.RemoteException;
 import java.security.*;
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static sorcer.util.StringUtils.tName;

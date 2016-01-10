@@ -41,7 +41,7 @@ import static sorcer.eo.operator.add;
  * @author Mike Sobolewski
  */
 @SuppressWarnings("unchecked")
-public class Entry<T> extends Tuple2<String, T> implements Function<T>, Dependency, Comparable<T>, Setter, Invocation<T>, Reactive<T>, Arg {
+public class Entry<T> extends Tuple2<String, T> implements Callable<T>, Dependency, Comparable<T>, Setter, Invocation<T>, Reactive<T>, Arg {
 	private static final long serialVersionUID = 5168783170981015779L;
 
 	public int index;
@@ -325,7 +325,8 @@ public class Entry<T> extends Tuple2<String, T> implements Function<T>, Dependen
 	}
 
 	@Override
-	public void set(T object) {
-		_2 = object;
+	public T call(Arg... args) throws EvaluationException, RemoteException {
+		return getValue(args);
 	}
+
 }

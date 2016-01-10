@@ -17,20 +17,20 @@
 
 package sorcer.service;
 
+import java.rmi.RemoteException;
+
 /**
- * Represents a function that accepts aany numcer of arguments
+ * Represents a function that accepts any numcer of arguments
  * to produces a result as a <code>Service</code>.
  *
  * @param <T> the type of the result of the function
  *
  * Created by Mike Sobolewski on 11/21/15.
  */
-public interface Function<T> extends Arg, Service {
+public interface Callable<T> extends Arg, Service {
 
-    public Object name();
+    public String name();
 
-    public Object value();
-
-    public void set(T value);
+    public T call(Arg... args) throws EvaluationException, RemoteException;
 
 }

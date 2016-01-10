@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.*;
+import java.util.concurrent.Callable;
 
 import sorcer.core.exertion.Mograms;
 import sorcer.core.provider.Provider;
