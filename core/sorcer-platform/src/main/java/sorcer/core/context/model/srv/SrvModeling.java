@@ -1,7 +1,7 @@
 /*
- * Copyright 2009 the original author or authors.
- * Copyright 2009 SorcerSoft.org.
- *
+ * Copyright 2015 the original author or authors.
+ * Copyright 2015 SorcerSoft.org.
+ *  
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,17 +15,10 @@
  * limitations under the License.
  */
 
-package sorcer.service;
-
 /**
- * Created by Mike Sobolewski on 11/21/15.
+ * @author Mike Sobolewski
  */
-public interface Duo<T> extends Arg, Service {
+package sorcer.core.context.model.srv;
 
-    public Object name();
-
-    public Object value();
-
-    public void set(T value);
-
+public interface SrvModeling {
 }

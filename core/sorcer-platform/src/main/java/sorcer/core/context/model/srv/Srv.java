@@ -10,7 +10,7 @@ import sorcer.core.context.model.ent.Entry;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
 import sorcer.service.modeling.Variability;
-import sorcer.core.signature.ServiceSignature.ReturnPath;
+import sorcer.service.Signature.ReturnPath;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;

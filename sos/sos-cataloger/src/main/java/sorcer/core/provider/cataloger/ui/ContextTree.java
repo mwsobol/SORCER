@@ -93,7 +93,7 @@ public class ContextTree extends JPanel {
 	 */
 	MouseListener treeMouseListener = new MouseAdapter() {
 		/**
-		 * Function called when the user presses the mouse
+		 * Callable called when the user presses the mouse
 		 */
 		public void mousePressed(MouseEvent e) {
 			int selRow = tree.getRowForLocation(e.getX(), e.getY()); // get the

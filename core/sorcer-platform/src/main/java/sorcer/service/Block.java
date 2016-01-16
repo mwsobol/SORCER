@@ -27,7 +27,7 @@ import sorcer.core.exertion.LoopMogram;
 import sorcer.core.exertion.OptMogram;
 import sorcer.util.SorcerUtil;
 import sorcer.util.url.sos.SdbUtil;
-import sorcer.core.signature.ServiceSignature.ReturnPath;
+import sorcer.service.Signature.ReturnPath;
 
 
 import java.io.IOException;

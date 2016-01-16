@@ -22,9 +22,10 @@ import sorcer.core.context.model.ent.EntModel;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.service.*;
+import sorcer.service.modeling.Model;
 import sorcer.service.modeling.Variability;
 import sorcer.util.Response;
-import sorcer.core.signature.ServiceSignature.ReturnPath;
+import sorcer.service.Signature.ReturnPath;
 
 import java.rmi.RemoteException;
 import java.util.*;
@@ -59,7 +60,7 @@ import static sorcer.eo.operator.returnPath;
  * @author Mike Sobolewski
  */
 @SuppressWarnings({"unchecked", "rawtypes"  })
-public class ParModel<T> extends EntModel<T> implements Invocation<T>, Mappable<T>, ParModeling {
+public class ParModel<T> extends EntModel<T> implements Model, Invocation<T>, Mappable<T>, ParModeling {
 
     private static final long serialVersionUID = -6932730998474298653L;
 

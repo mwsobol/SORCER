@@ -29,7 +29,7 @@ import sorcer.core.context.model.srv.SrvModel;
 import sorcer.core.dispatch.graph.DirectedGraph;
 import sorcer.core.dispatch.graph.DirectedGraphRenderer;
 import sorcer.core.dispatch.graph.GraphNodeRenderer;
-import sorcer.core.signature.ServiceSignature.ReturnPath;
+import sorcer.service.Signature.ReturnPath;
 import sorcer.service.*;
 
 import java.util.*;

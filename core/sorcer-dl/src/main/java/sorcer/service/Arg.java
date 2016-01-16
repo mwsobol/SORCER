@@ -21,9 +21,10 @@ import sorcer.core.Name;
 import sorcer.service.modeling.Model;
 
 import java.io.Serializable;
+import java.rmi.RemoteException;
 
 /**
- * Any named input value in particular a free variable. 
+ * Any named configuration parameter value in particular a free variable.
  */
 
 public interface Arg extends Serializable {
@@ -70,25 +71,25 @@ public interface Arg extends Serializable {
 		return null;
 	}
 
-	public static Object getValue(Arg[] args, String path) {
+	public static Object getValue(Arg[] args, String path) throws EvaluationException, RemoteException {
 		for (Arg arg : args) {
-			if (arg instanceof Duo && ((Duo)arg).name().equals(path))
-				return ((Duo)arg).value();
+			if (arg instanceof Callable && ((Callable)arg).name().equals(path))
+				return ((Callable)arg).call(args);
 		}
 		return null;
 	}
 
-	public static void setValue(Arg[] args, String path, Object value) {
+	public static void setValue(Arg[] args, String path, Object value) throws SetterException, RemoteException {
 		for (Arg arg : args) {
-			if (arg instanceof Duo && ((Duo)arg).name().equals(path))
-				((Duo)arg).set(value);
+			if (arg instanceof Callable && ((Callable)arg).name().equals(path))
+				((Setter)arg).setValue(value);
 		}
 	}
 
-	public static Duo getEntry(Arg[] args, String name) {
+	public static Callable getEntry(Arg[] args, String name) {
 		for (Arg arg : args) {
-			if (arg instanceof Duo && ((Duo) arg).name().equals(name))
-				return (Duo)arg;
+			if (arg instanceof Callable && ((Callable) arg).name().equals(name))
+				return (Callable)arg;
 		}
 		return null;
 	}

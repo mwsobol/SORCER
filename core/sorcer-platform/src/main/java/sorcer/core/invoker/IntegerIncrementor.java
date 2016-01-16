@@ -34,6 +34,10 @@ public class IntegerIncrementor extends InvokeIncrementor<Integer> {
         this.increment = increment;
     }
 
+    public IntegerIncrementor(String path, Integer increment, Integer value) {
+        super(path, increment, value);
+    }
+
     public IntegerIncrementor(Invocation invoker, Integer increment) {
         super(invoker, increment);
     }
@@ -41,5 +45,9 @@ public class IntegerIncrementor extends InvokeIncrementor<Integer> {
     @Override
     protected Integer getIncrement(Integer value, Integer increment) {
         return value + increment;
+    }
+
+    public void setIncrement(Integer increment) {
+        this.increment = increment;
     }
 }

@@ -49,6 +49,12 @@ public abstract class InvokeIncrementor<T> extends ServiceInvoker<T> implements 
 		this.increment = increment;
 	}
 
+	public InvokeIncrementor(String path, T increment, T value) {
+		this.path = path;
+		this.increment = increment;
+		this.value = value;
+	}
+
 	public InvokeIncrementor(Invocation invoker, T increment) {
 		this.target = invoker;
 		this.increment = increment;

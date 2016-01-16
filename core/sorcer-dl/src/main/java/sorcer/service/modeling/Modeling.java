@@ -27,8 +27,7 @@ import sorcer.service.EvaluationException;
 import java.rmi.MarshalledObject;
 import java.rmi.RemoteException;
 
-@SuppressWarnings("rawtypes") 
-public interface Modeling extends Model {
+public interface Modeling {
 	
 //	public String getName() throws RemoteException;
 	

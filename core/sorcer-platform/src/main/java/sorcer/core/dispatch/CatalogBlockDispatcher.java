@@ -30,7 +30,7 @@ import sorcer.core.monitor.MonitoringSession;
 import sorcer.core.provider.Provider;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
-import sorcer.core.signature.ServiceSignature.ReturnPath;
+import sorcer.service.Signature.ReturnPath;
 
 import java.rmi.RemoteException;
 import java.util.List;

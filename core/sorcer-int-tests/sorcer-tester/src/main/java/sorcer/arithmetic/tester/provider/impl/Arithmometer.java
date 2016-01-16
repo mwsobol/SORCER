@@ -18,7 +18,7 @@ import sorcer.core.context.Contexts;
 import sorcer.core.context.PositionalContext;
 import sorcer.core.context.ServiceContext;
 import sorcer.service.*;
-import sorcer.core.signature.ServiceSignature.ReturnPath;
+import sorcer.service.Signature.ReturnPath;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class Arithmometer implements SorcerConstants, Serializable {

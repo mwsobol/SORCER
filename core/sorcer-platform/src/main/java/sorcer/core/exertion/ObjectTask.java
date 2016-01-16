@@ -23,7 +23,7 @@ import sorcer.core.context.ServiceContext;
 import sorcer.core.invoker.MethodInvoker;
 import sorcer.core.signature.ObjectSignature;
 import sorcer.service.*;
-import sorcer.core.signature.ServiceSignature.ReturnPath;
+import sorcer.service.Signature.ReturnPath;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

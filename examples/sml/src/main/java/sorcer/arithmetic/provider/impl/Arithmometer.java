@@ -16,7 +16,7 @@ import sorcer.service.Context;
 import sorcer.service.ContextException;
 import sorcer.service.Fidelity;
 import sorcer.service.Signature;
-import sorcer.core.signature.ServiceSignature.ReturnPath;
+import sorcer.service.Signature.ReturnPath;
 
 import java.io.Serializable;
 import java.net.InetAddress;

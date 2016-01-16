@@ -35,8 +35,15 @@ public class DoubleIncrementor extends InvokeIncrementor<Double> {
         this.increment = increment;
     }
 
+    public DoubleIncrementor(String path, Double increment, Double value) {
+        super(path, increment, value);
+    }
     public DoubleIncrementor(Invocation invoker, Double increment) {
         super(invoker, increment);
+    }
+
+    public void setIncrement(Double increment) {
+        this.increment = increment;
     }
 
     @Override

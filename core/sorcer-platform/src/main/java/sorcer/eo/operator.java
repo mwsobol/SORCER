@@ -50,10 +50,10 @@ import sorcer.core.provider.rendezvous.ServiceConcatenator;
 import sorcer.core.provider.rendezvous.ServiceModeler;
 import sorcer.core.requestor.ExertRequestor;
 import sorcer.core.signature.*;
-import sorcer.core.signature.ServiceSignature.ReturnPath;
-import sorcer.core.signature.ServiceSignature.*;
+import sorcer.service.Signature.ReturnPath;
 import sorcer.netlet.ScriptExerter;
 import sorcer.service.*;
+import sorcer.service.Path;
 import sorcer.service.Signature.*;
 import sorcer.service.Strategy.*;
 import sorcer.service.modeling.Model;
@@ -2073,7 +2073,7 @@ public class operator {
 	public static Mogram tracable(Mogram xrt) {
 		List<Mogram> mograms = ((ServiceMogram) xrt).getAllMograms();
 		for (Mogram m : mograms) {
-			((ControlContext) ((Exertion) m).getControlContext()).setTracable(true);
+			((Exertion) m).getControlContext().setTracable(true);
 		}
 		return xrt;
 	}
@@ -2099,7 +2099,7 @@ public class operator {
 			else if (mogram instanceof Modeling) {
 				mogram.substitute(args);
 				((Modeling) mogram).evaluate();
-				return ((Modeling) mogram).getResult();
+				return ((Model)mogram).getResult();
 			} else {
 				return ((Evaluation) mogram).getValue(args);
 			}
