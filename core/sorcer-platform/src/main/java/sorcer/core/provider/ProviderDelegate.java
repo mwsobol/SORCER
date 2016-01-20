@@ -245,7 +245,7 @@ public class ProviderDelegate {
 	/**
 	 * An outer service proxy, by default the proxy of this provider, is used
 	 * by service requestors if provider's smart proxy is absent. At least
-	 * two generic Remote interface: {@link Server} and {@link Provider} are
+	 * two generic Remote interface: {@link Service} and {@link Provider} are
 	 * implemented by outer proxies of all SORCER service providers. Each SORCER
 	 * provider uses outer proxy to actually call directly its provider and make
 	 * redirected calls using its inner proxy (redirected remote invocations).
@@ -281,7 +281,7 @@ public class ProviderDelegate {
 	 * Exposed service type components. A key is an interface and a value its
 	 * implementing service-object.
 	 */
-	private Map<Class, Object> serviceComponents;
+	private Map<Class<?>, Object> serviceComponents;
 
 	/**
 	 * Indicates a single threaded execution for service beans or providers
@@ -606,7 +606,11 @@ public class ProviderDelegate {
             // e.printStackTrace();
         }
         if ((serviceTypes != null) && (serviceTypes.length > 0)) {
-            publishedServiceTypes = serviceTypes;
+            Set<Class<?>> toPublish = new HashSet<>();
+            for(Class<?> c : serviceTypes) {
+                toPublish.addAll(getAllInterfaces(c));
+            }
+            publishedServiceTypes = toPublish.toArray(new Class<?>[toPublish.size()]);
             logger.info("*** published services: {}", Arrays.toString(publishedServiceTypes));
         }
         // get exporters for outer and inner proxy
@@ -628,8 +632,20 @@ public class ProviderDelegate {
         exports.put(outerProxy, outerExporter);
         logger.debug(">>>>>>>>>>> exported outerProxy: \n{}, outerExporter: \n{}", outerProxy, outerExporter);
 
-        logger.info("PROXIES >>>>> provider: {}\nsmart: {}\nouter: {}\ninner: {}\nadmin: {}",
+        logger.info("PROXIES >>>>>\nprovider: {}\nsmart: {}\nouter: {}\ninner: {}\nadmin: {}",
                     providerProxy, smartProxy, outerProxy, innerProxy, adminProxy);
+    }
+
+    private Collection<Class<?>> getAllInterfaces(Class<?> c) {
+        Set<Class<?>> set = new HashSet<>();
+        if(!c.getPackage().getName().startsWith("java")) {
+            set.add(c);
+            for (Class<?> i : c.getInterfaces()) {
+                set.add(i);
+                set.addAll(getAllInterfaces(i));
+            }
+        }
+        return set;
     }
 
     private void initThreadGroups() {
@@ -1469,8 +1485,7 @@ public class ProviderDelegate {
 			serviceType.iconName = config.getIconName();
 
 			if (publishedServiceTypes == null && spaceEnabled) {
-				logger.error(getProviderName()
-						+ " does NOT declare its space interfaces");
+				logger.error("{} does NOT declare its space interfaces", getProviderName());
 				provider.destroy();
 			}
 			if (publishedServiceTypes != null) {
@@ -1717,9 +1732,7 @@ public class ProviderDelegate {
 
 		if (publishedServiceTypes == null) {
 			servicetask.getContext().reportException(
-					new ExertionException(
-							"No published interfaces defined by: "
-									+ getProviderName()));
+					new ExertionException("No published interfaces defined by: "+ getProviderName()));
 			return false;
 		} else {
 			for (int i = 0; i < publishedServiceTypes.length; i++) {
@@ -1729,11 +1742,10 @@ public class ProviderDelegate {
 			}
 		}
 		servicetask.getContext().reportException(
-				new ExertionException(
-						"Not valid task for published service types: \n"
-								+ Arrays.toString(publishedServiceTypes)
-								+ "\nwith Signature: \n"
-								+ servicetask.getProcessSignature()));
+			new ExertionException("Not valid task for published service types: \n"
+								  + Arrays.toString(publishedServiceTypes)
+								  + "\nwith Signature: \n"
+								  + servicetask.getProcessSignature()));
 		return false;
 	}
 
@@ -2118,33 +2130,32 @@ public class ProviderDelegate {
 					}
 				}
 
-				String expandingEnv = null;
-					try {
-						if (jiniConfig != null)
-							expandingEnv = (String) jiniConfig.getEntry(
-									ServiceProvider.COMPONENT, "expandingEnv",
-									String.class);
-					} catch (ConfigurationException e) {
-						expandingEnv = null;
-					}
-					if (expandingEnv != null) {
-						props = Sorcer.loadProperties(expandingEnv, filename);
-					}
-					else {
-						props = Sorcer.loadProperties(is);
-						is.close();
-						// copy loaded provider's properties to global Env
-						// properties
-						Sorcer.updateFromProperties(props);
-					}
+                String expandingEnv = null;
+                try {
+                    if (jiniConfig != null)
+                        expandingEnv = (String) jiniConfig.getEntry(ServiceProvider.COMPONENT,
+                                                                    "expandingEnv",
+                                                                    String.class);
+                } catch (ConfigurationException e) {
+                    expandingEnv = null;
+                }
+                if (expandingEnv != null) {
+                    props = Sorcer.loadProperties(expandingEnv, filename);
+                } else {
+                    props = Sorcer.loadProperties(is);
+                    is.close();
+                    // copy loaded provider's properties to global Env
+                    // properties
+                    Sorcer.updateFromProperties(props);
+                }
 //					logger.debug("*** loaded provider properties: /configs/" + filename + ":\n"
 //							+ GenericUtil.getPropertiesString(props));
-			} catch (Exception ex) {
-				logger.warn("Not able to load provider's properties: " + filename, ex);
-			}
-		}
+            } catch (Exception ex) {
+                logger.warn("Not able to load provider's properties: " + filename, ex);
+            }
+        }
 
-		public Properties getProviderProperties() {
+        public Properties getProviderProperties() {
 			return props;
 		}
 
@@ -2448,8 +2459,7 @@ public class ProviderDelegate {
 		if (adminProxy != null)
 			return adminProxy;
 		try {
-            adminProxy = ProviderProxy.wrapAdminProxy(outerProxy,
-					getAdminProviderUuid());
+            adminProxy = ProviderProxy.wrapAdminProxy(outerProxy, getAdminProviderUuid());
         } catch (Exception e) {
             logger.warn("No admin proxy created by: {}", provider, e);
         }
@@ -2459,9 +2469,9 @@ public class ProviderDelegate {
     public Object getAdminProxy() {
         try {
             providerProxy = ProviderProxy.wrapServiceProxy(adminProxy,
-					getProviderUuid(),
-					adminProxy,
-					Administrable.class);
+                                                           getProviderUuid(),
+                                                           adminProxy,
+                                                           Administrable.class);
         } catch (Exception e) {
 			logger.warn("No admin proxy created by: {}", provider, e);
 		}
@@ -2491,17 +2501,20 @@ public class ProviderDelegate {
 					((Partnership) partner).setInner(innerProxy);
 					((Partnership) partner).setAdmin(adminProxy);
 				}
-				providerProxy = ProviderProxy.wrapServiceProxy(outerProxy,
-						getProviderUuid(), adminProxy, publishedServiceTypes);
-				return providerProxy;
-			} else if (smartProxy instanceof Partnership) {
-				((Partnership) smartProxy).setInner(outerProxy);
-				((Partnership) smartProxy).setAdmin(adminProxy);
-			}
-			providerProxy = ProviderProxy.wrapServiceProxy(smartProxy,
-					getProviderUuid(), adminProxy);
-		} catch (ProviderException e) {
-			logger.warn("No proxy created by: {}", provider, e);
+                providerProxy = ProviderProxy.wrapServiceProxy(outerProxy,
+                                                               getProviderUuid(),
+                                                               adminProxy,
+                                                               publishedServiceTypes);
+                return providerProxy;
+            } else if (smartProxy instanceof Partnership) {
+                ((Partnership) smartProxy).setInner(outerProxy);
+                ((Partnership) smartProxy).setAdmin(adminProxy);
+            }
+            providerProxy = ProviderProxy.wrapServiceProxy(smartProxy,
+                                                           getProviderUuid(),
+                                                           adminProxy);
+        } catch (ProviderException e) {
+            logger.warn("No proxy created by: {}", provider, e);
 		}
 		return providerProxy;
 	}
@@ -2536,129 +2549,133 @@ public class ProviderDelegate {
 	 * accepts the exported inner proxy.
 	 * </ol>
 	 * 
-	 * @param config
-	 *            the configuration to use for supplying the exporter
-	 * @return the exporter to use to export this server
-	 * @throws ConfigurationException
-	 *             if a problem occurs retrieving entries from the configuration
+	 * @param config the configuration to use for supplying the exporter
 	 */
 	private void getExporters(Configuration config) {
 		try {
-			String exporterInterface = Sorcer.getProperty(P_EXPORTER_INTERFACE);
-			try {
-				exporterInterface = (String) config.getEntry(
-						ServiceProvider.COMPONENT, EXPORTER_INTERFACE,
-						String.class, SorcerEnv.getLocalHost().getHostAddress());
+            String exporterInterface = Sorcer.getProperty(P_EXPORTER_INTERFACE);
+            try {
+                exporterInterface = (String) config.getEntry(ServiceProvider.COMPONENT,
+                                                             EXPORTER_INTERFACE,
+                                                             String.class,
+                                                             SorcerEnv.getLocalHost().getHostAddress());
 			} catch (Exception e) {
 				// do nothng
 			}
-			logger.info(">>>>> exporterInterface: " + exporterInterface);
+			logger.info(">>>>> exporterInterface: {}", exporterInterface);
 
-			int exporterPort = 0;
+			int exporterPort;
 			String port = Sorcer.getProperty(P_EXPORTER_PORT);
 			if (port != null)
 				exporterPort = Integer.parseInt(port);
             else
-                exporterPort = (Integer) config.getEntry(
-                    ServiceProvider.COMPONENT, EXPORTER_PORT,
-                    Integer.class, 0);
-			logger.info(">>>>> exporterPort: " + exporterPort);
+                exporterPort = (Integer) config.getEntry(ServiceProvider.COMPONENT,
+                                                         EXPORTER_PORT,
+                                                         Integer.class,
+                                                         0);
+			logger.info(">>>>> exporterPort: {}", exporterPort);
 
 			try {
 				// check if not set by the provider
 				if (smartProxy == null) {
 					// initialize smart proxy
 					smartProxy = config.getEntry(ServiceProvider.COMPONENT,
-							SMART_PROXY, Object.class, null);
+												 SMART_PROXY,
+												 Object.class,
+												 null);
 				}
 			} catch (Exception e) {
 				logger.warn(">>>>> NO SMART PROXY specified", e);
 				smartProxy = null;
 			}
 
-			List<Object> allBeans = new ArrayList<Object>();
-			// find it out if service bean instances are available
-			Object[] beans = (Object[]) Config.getNonNullEntry(config,
-					ServiceProvider.COMPONENT, BEANS, Object[].class,
-					new Object[] {});
+			List<Object> allBeans = new ArrayList<>();
+            // find it out if service bean instances are available
+            Object[] beans = (Object[]) Config.getNonNullEntry(config,
+                                                               ServiceProvider.COMPONENT,
+                                                               BEANS,
+                                                               Object[].class,
+                                                               new Object[] {});
 			if (beans.length > 0) {
-				logger.debug("*** service beans by " + getProviderName()
-						+ "\nfor: " + Arrays.toString(beans));
-				for (int i = 0; i < beans.length; i++) {
-					allBeans.add(beans[i]);
-					exports.put(beans[i], this);
-				}
+				logger.debug("*** service beans by {}\nfor: {}", getProviderName(), Arrays.toString(beans));
+                for (Object bean : beans) {
+                    allBeans.add(bean);
+                    exports.put(bean, this);
+                }
 			}
 
-			// find it out if data service bean instances are available
-			Object[] dataBeans = (Object[]) Config.getNonNullEntry(config,
-					ServiceProvider.COMPONENT, DATA_BEANS, Object[].class,
-					new Object[] {}, getProviderProperties());
-			if (dataBeans.length > 0) {
-				logger.debug("*** data service beans by " + getProviderName()
-						+ "\nfor: " + Arrays.toString(dataBeans));
-				for (int i = 0; i < dataBeans.length; i++) {
-					allBeans.add(dataBeans[i]);
-					exports.put(dataBeans[i], this);
-				}
+            // find it out if data service bean instances are available
+            Object[] dataBeans = (Object[]) Config.getNonNullEntry(config,
+                                                                   ServiceProvider.COMPONENT,
+                                                                   DATA_BEANS,
+                                                                   Object[].class,
+                                                                   new Object[] {},
+                                                                   getProviderProperties());
+            if (dataBeans.length > 0) {
+				logger.debug("*** data service beans by {}\nfor: {}", getProviderName(), Arrays.toString(dataBeans));
+                for (Object dataBean : dataBeans) {
+                    allBeans.add(dataBean);
+                    exports.put(dataBean, this);
+                }
 			}
 
-			// find it out if service classes are available
-			Class[] beanClasses = (Class[]) Config.getNonNullEntry(config,
-					ServiceProvider.COMPONENT, BEAN_CLASSES, Class[].class,
-					new Class[] {});
+            // find it out if service classes are available
+            Class[] beanClasses = (Class[]) Config.getNonNullEntry(config,
+                                                                   ServiceProvider.COMPONENT,
+                                                                   BEAN_CLASSES,
+                                                                   Class[].class,
+                                                                   new Class[] {});
 			if (beanClasses.length > 0) {
-				logger.debug("*** service bean classes by " + getProviderName()
-						+ " for: \n" + Arrays.toString(beanClasses));
-				for (int i = 0; i < beanClasses.length; i++)
-					allBeans.add(instantiate(beanClasses[i]));
+				logger.debug("*** service bean classes by {} for: \n{}", getProviderName(), Arrays.toString(beanClasses));
+                for (Class beanClass : beanClasses)
+                    allBeans.add(instantiate(beanClass));
 			}
 
 			// find it out if Groovy scripts are available
-			String[] scriptlets = (String[]) Config.getNonNullEntry(config,
-					ServiceProvider.COMPONENT, SCRIPTLETS, String[].class,
-					new String[] {});
-			if (scriptlets.length > 0) {
-				logger.debug("*** service scriptlets by " + getProviderName()
-						+ " for: \n" + Arrays.toString(scriptlets));
-				for (int i = 0; i < scriptlets.length; i++)
-					allBeans.add(instantiateScriplet(scriptlets[i]));
+            String[] scriptlets = (String[]) Config.getNonNullEntry(config,
+                                                                    ServiceProvider.COMPONENT,
+                                                                    SCRIPTLETS,
+                                                                    String[].class,
+                                                                    new String[] {});
+            if (scriptlets.length > 0) {
+				logger.debug("*** service scriptlets by {} for: \n{}", getProviderName(), Arrays.toString(scriptlets));
+                for (String scriptlet : scriptlets)
+                    allBeans.add(instantiateScriplet(scriptlet));
 			}
 
-            exporterFactory = (AbstractExporterFactory) config.getEntry(ServiceProvider.COMPONENT, "exporterFactory", AbstractExporterFactory.class, null);
+            exporterFactory = (AbstractExporterFactory) config.getEntry(ServiceProvider.COMPONENT,
+                                                                        "exporterFactory",
+                                                                        AbstractExporterFactory.class,
+                                                                        null);
             if (exporterFactory == null)
                 exporterFactory = ExporterFactories.EXPORTER;
 
 			if (allBeans.size() > 0) {
-				logger.debug("*** all beans by: " + getProviderName()
-						+ " for: \n" + allBeans);
+				logger.debug("*** all beans by: {} for: \n{}", getProviderName(), allBeans);
 				serviceBeans = allBeans.toArray();
 				initServiceBeans(serviceBeans);
                 SorcerILFactory ilFactory = new SorcerILFactory(serviceComponents, implClassLoader);
                 ilFactory.setRemoteLogging(remoteLogging);
                 outerExporter = exporterFactory.get(ilFactory);
+                logger.info("{}, {}", outerExporter, ((BasicJeriExporter)outerExporter).getInvocationLayerFactory().getClass().getName());
 			} else {
-				logger.info("*** NO beans used by " + getProviderName());
-				outerExporter = (Exporter) config.getEntry(
-						ServiceProvider.COMPONENT,
-						EXPORTER,
-						Exporter.class,
-						null);
+				logger.info("*** NO beans used by {}", getProviderName());
+                outerExporter = (Exporter) config.getEntry(ServiceProvider.COMPONENT,
+                                                           EXPORTER,
+                                                           Exporter.class,
+                                                           null);
 				if (outerExporter == null) {
                     outerExporter = exporterFactory.get();
 				}
-                logger.info("current exporter: "
-                        + outerExporter.toString());
-
-				try {
-					partnerExporter = (Exporter) Config.getNonNullEntry(config,
-							ServiceProvider.COMPONENT, SERVER_EXPORTER,
-							Exporter.class);
+                logger.info("current exporter: {}", outerExporter.toString());
+                try {
+                    partnerExporter = (Exporter) Config.getNonNullEntry(config,
+                                                                        ServiceProvider.COMPONENT, SERVER_EXPORTER,
+                                                                        Exporter.class);
 					if (partnerExporter == null) {
 						logger.warn("NO provider inner exporter defined!!!");
 					} else {
-						logger.debug("your partner exporter: "
-								+ partnerExporter);
+						logger.debug("your partner exporter: {}", partnerExporter);
 					}
 				} catch (ConfigurationException e) {
 					// do nothing
@@ -2688,39 +2705,31 @@ public class ProviderDelegate {
 	 * @param serviceBeans
 	 *            service objects exposing their interface types
 	 */
-	private void initServiceBeans(Object[] serviceBeans) {
-		if (serviceBeans == null)
-			try {
-				throw new NullPointerException("No service beans defined by: "
-						+ provider.getProviderName());
-			} catch (RemoteException e) {
-				// should never happen as provider is a local object
-				throw new RuntimeException(e);
-			}
+    private void initServiceBeans(Object[] serviceBeans) {
+        if (serviceBeans == null)
+            throw new NullPointerException("No service beans defined by: "+ getProviderName());
 
 		callProviders(serviceBeans);
-
-		serviceComponents = new Hashtable<Class, Object>();
+		serviceComponents = new HashMap<>();
 
 		if (serviceComponents.size() == 1) {
 			for (Object serviceBean : serviceBeans) {
 				Class[] interfaces = serviceBean.getClass().getInterfaces();
-				logger.debug("service component interfaces" + Arrays.toString(interfaces));
-				List<Class> exposedInterfaces = new LinkedList<Class>();
+				logger.debug("service component interfaces {}", Arrays.toString(interfaces));
+				List<Class> exposedInterfaces = new LinkedList<>();
 				for (Class publishedType : publishedServiceTypes) {
 					if (publishedType.isInstance(serviceBean)) {
 						serviceComponents.put(publishedType, serviceBean);
 						exposedInterfaces.add(publishedType);
 						for (Class iface : publishedType.getInterfaces()) {
-							if (!iface.equals(Remote.class)
-									&& !iface.equals(Serializable.class)) {
+							if (!iface.equals(Remote.class) && !iface.equals(Serializable.class)) {
 								serviceComponents.put(iface, serviceBean);
 								exposedInterfaces.add(iface);
 							}
 						}
 					}
 				}
-				logger.debug("service component exposed interfaces" + exposedInterfaces);
+				logger.debug("service component exposed interfaces {}", exposedInterfaces);
 			}
 		} else {
 			for (Class publishedType : publishedServiceTypes) {
@@ -2731,7 +2740,7 @@ public class ProviderDelegate {
 				}
 			}
 		}
-		logger.debug("service components" + serviceComponents);
+		logger.info("service components: {}", serviceComponents);
 	}
 
 	private Object instantiateScriplet(String scripletFilename)
