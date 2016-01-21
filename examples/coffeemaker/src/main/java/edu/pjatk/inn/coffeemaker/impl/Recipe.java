@@ -73,70 +73,70 @@ public class Recipe implements Serializable {
 			this.amtChocolate = amtChocolate;
 		}
 	}
-    /**
-	 * @return   Returns the amtCoffee.
+	/**
+	 * @return Returns the amount of coffee.
 	 */
     public int getAmtCoffee() {
 		return amtCoffee;
 	}
-    /**
-	 * @param amtCoffee   The amtCoffee to set.
+	/**
+	 * @param amtCoffee The amount of coffee to set.
 	 */
     public void setAmtCoffee(int amtCoffee) {
 		if (amtCoffee >= 0) {
 			this.amtCoffee = amtCoffee;
 		}
 	}
-    /**
-	 * @return   Returns the amtMilk.
+	/**
+	 * @return Returns the amount of milk.
 	 */
     public int getAmtMilk() {
 		return amtMilk;
 	}
-    /**
-	 * @param amtMilk   The amtMilk to set.
+	/**
+	 * @param amtMilk The amount of milk to set.
 	 */
     public void setAmtMilk(int amtMilk) {
 		if (amtMilk >= 0) {
 			this.amtMilk = amtMilk;
 		}
 	}
-    /**
-	 * @return   Returns the amtSugar.
+	/**
+	 * @return Returns the amount of sugar.
 	 */
     public int getAmtSugar() {
 		return amtSugar;
 	}
-    /**
-	 * @param amtSugar   The amtSugar to set.
+	/**
+	 * @param amtSugar The amount of sugar to set.
 	 */
     public void setAmtSugar(int amtSugar) {
 		if (amtSugar >= 0) {
 			this.amtSugar = amtSugar;
 		}
 	}
-    /**
-	 * @return   Returns the name.
+	/**
+	 * @return Returns the name of recipe.
 	 */
     public String getName() {
 		return name;
 	}
-    /**
-	 * @param name   The name to set.
+	/**
+	 * @param name The name of recipe to set.
 	 */
     public void setName(String name) {
     	if(name != null) {
     		this.name = name;
     	}
 	}
-    /**
-	 * @return   Returns the price.
+	/**
+	 * @return Returns the price of beverage.
 	 */
     public int getPrice() {
 		return price;
 	}
-    /**
-	 * @param price   The price to set.
+	/**
+	 * @param price The price of beverage to set.
 	 */
     public void setPrice(int price) {
 		if (price >= 0) {
