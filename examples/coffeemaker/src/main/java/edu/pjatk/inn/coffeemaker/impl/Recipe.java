@@ -143,27 +143,46 @@ public class Recipe implements Serializable {
 			this.price = price;
 		}
 	}
-    public boolean equals(Recipe r) {
-        if((this.name).equals(r.getName())) {
-            return true;
-        }
-        return false;
-    }
-    public String toString() {
-    	return name;
-    }
+	/**
+	 * @param r Recipe to compare with.
+	 * @return Return true value if the recipe in the parameter is equal to this recipe, otherwise return false.
+	 */
+	public boolean equals(Recipe r) {
+		if ((this.name).equals(r.getName())) {
+			return true;
+		}
+		return false;
+	}
 
+	/**
+	 * Returns a string representation of this Recipe
+	 *
+	 * @return a string representation
+	 */
+	public String toString() {
+		return name;
+	}
+
+	/**
+	 * @param context Context needed to set recipe fields.
+	 * @return Returns the recipe.
+	 */
 	static public Recipe getRecipe(Context context) throws ContextException {
 		Recipe r = new Recipe();
-		r.name = (String)context.getValue("name");
-		r.price = (int)context.getValue("price");
-		r.amtCoffee = (int)context.getValue("amtCoffee");
-		r.amtMilk = (int)context.getValue("amtMilk");
-		r.amtSugar = (int)context.getValue("amtSugar");
-		r.amtChocolate = (int)context.getValue("amtChocolate");
+		r.name = (String) context.getValue("name");
+		r.price = (int) context.getValue("price");
+		r.amtCoffee = (int) context.getValue("amtCoffee");
+		r.amtMilk = (int) context.getValue("amtMilk");
+		r.amtSugar = (int) context.getValue("amtSugar");
+		r.amtChocolate = (int) context.getValue("amtChocolate");
 		return r;
 	}
 
+	/**
+	 * @param recipe Recipe to set context values.
+	 * @return Returns the context based on <code>recipe</code> fields.
+	 * @throws ContextException if any of <code>recipe</code> fields is null.
+	 */
 	static public Context getContext(Recipe recipe) throws ContextException {
 		Context cxt = new ServiceContext();
 		cxt.putValue("name", recipe.getName());
