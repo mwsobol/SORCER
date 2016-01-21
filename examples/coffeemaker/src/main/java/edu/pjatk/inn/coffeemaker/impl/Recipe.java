@@ -7,16 +7,49 @@ import sorcer.service.ContextException;
 import java.io.Serializable;
 
 /**
+ * Recipe class used to model information about recipe in
+ * coffee maker.
+ *
  * @author   Sarah & Mike
  */
 public class Recipe implements Serializable {
+    /**
+     * The unique name of recipe
+     */
     private String name;
+    /**
+     * The price of beverage prepared according to this recipe
+     */
     private int price;
+    /**
+     * The units of coffe in this recipe
+     */
     private int amtCoffee;
+    /**
+     * The units of milk in this recipe
+     */
     private int amtMilk;
+    /**
+     * The units of sugar in this recipe
+     */
     private int amtSugar;
+    /**
+     * The units of chocolate in this recipe
+     */
     private int amtChocolate;
-    
+
+    /**
+     * Default Constructor.
+     * The default behaviour of recipe object
+     * <ul>
+     * <li>name is empty string</li>
+     * <li>price is 0</li>
+     * <li>amtCoffe is 0</li>
+     * <li>amtMilk is 0</li>
+     * <li>amtSugar is 0</li>
+     * <li>amtChocolate is 0</li>
+     * </ul>
+     */
     public Recipe() {
     	this.name = "";
     	this.price = 0;
@@ -25,20 +58,20 @@ public class Recipe implements Serializable {
     	this.amtSugar = 0;
     	this.amtChocolate = 0;
     }
-    
+
     /**
-	 * @return   Returns the amtChocolate.
+	 * @return   Returns the amount of chocolate.
 	 */
     public int getAmtChocolate() {
 		return amtChocolate;
 	}
     /**
-	 * @param amtChocolate   The amtChocolate to set.
+	 * @param amtChocolate   The amount of chocolate to set.
 	 */
     public void setAmtChocolate(int amtChocolate) {
 		if (amtChocolate >= 0) {
 			this.amtChocolate = amtChocolate;
-		} 
+		}
 	}
     /**
 	 * @return   Returns the amtCoffee.
@@ -52,7 +85,7 @@ public class Recipe implements Serializable {
     public void setAmtCoffee(int amtCoffee) {
 		if (amtCoffee >= 0) {
 			this.amtCoffee = amtCoffee;
-		} 
+		}
 	}
     /**
 	 * @return   Returns the amtMilk.
@@ -66,7 +99,7 @@ public class Recipe implements Serializable {
     public void setAmtMilk(int amtMilk) {
 		if (amtMilk >= 0) {
 			this.amtMilk = amtMilk;
-		} 
+		}
 	}
     /**
 	 * @return   Returns the amtSugar.
@@ -80,7 +113,7 @@ public class Recipe implements Serializable {
     public void setAmtSugar(int amtSugar) {
 		if (amtSugar >= 0) {
 			this.amtSugar = amtSugar;
-		} 
+		}
 	}
     /**
 	 * @return   Returns the name.
@@ -108,8 +141,8 @@ public class Recipe implements Serializable {
     public void setPrice(int price) {
 		if (price >= 0) {
 			this.price = price;
-		} 
-	} 
+		}
+	}
     public boolean equals(Recipe r) {
         if((this.name).equals(r.getName())) {
             return true;
