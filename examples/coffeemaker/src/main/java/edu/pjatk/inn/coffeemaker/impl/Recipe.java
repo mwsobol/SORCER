@@ -92,6 +92,8 @@ public class Recipe implements Serializable {
 	}
 
     /**
+	 * Returns the amount of sugar.
+	 *
 	 * @return   Returns the amtSugar.
 	 */
     public int getAmtSugar() {
@@ -99,6 +101,9 @@ public class Recipe implements Serializable {
 	}
 
     /**
+	 * Sets the amount of sugar to the recipe if amtSugar
+	 * is greater than or equal to 0.
+	 *
 	 * @param amtSugar   The amtSugar to set.
 	 */
     public void setAmtSugar(int amtSugar) {
@@ -108,6 +113,8 @@ public class Recipe implements Serializable {
 	}
 
     /**
+	 * Returns the name.
+	 *
 	 * @return   Returns the name.
 	 */
     public String getName() {
