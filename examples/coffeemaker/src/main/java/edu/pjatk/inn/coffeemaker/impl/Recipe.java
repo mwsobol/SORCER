@@ -7,8 +7,12 @@ import sorcer.service.ContextException;
 import java.io.Serializable;
 
 /**
+ * COPYRIGHT (C) 2016 Sarah & Mike. All Rights Reserved.
+ * Recipe class for the coffee maker.
+ *
  * @author   Sarah & Mike
  */
+
 public class Recipe implements Serializable {
     private String name;
     private int price;
@@ -16,7 +20,10 @@ public class Recipe implements Serializable {
     private int amtMilk;
     private int amtSugar;
     private int amtChocolate;
-    
+
+	/**
+	 * Constructor for the Recipe class.
+	 */
     public Recipe() {
     	this.name = "";
     	this.price = 0;
@@ -27,39 +34,54 @@ public class Recipe implements Serializable {
     }
     
     /**
-	 * @return   Returns the amtChocolate.
+	 * Returns the amount of chocolate.
+	 *
+	 * @return int The amount of chocolate.
 	 */
     public int getAmtChocolate() {
 		return amtChocolate;
 	}
+
     /**
-	 * @param amtChocolate   The amtChocolate to set.
+	 * Sets the amount of chocolate to the recipe if
+	 * amtChocolate is greater than or equal to 0
+	 *
+	 * @param amtChocolate The amount of chocolate to set.
 	 */
     public void setAmtChocolate(int amtChocolate) {
 		if (amtChocolate >= 0) {
 			this.amtChocolate = amtChocolate;
 		} 
 	}
+
     /**
-	 * @return   Returns the amtCoffee.
+	 * Returns the amount of coffee.
+	 *
+	 * @return int The amount of coffee.
 	 */
     public int getAmtCoffee() {
 		return amtCoffee;
 	}
+
     /**
-	 * @param amtCoffee   The amtCoffee to set.
+	 * Sets the amount of coffee to the recipe if amtCoffee
+	 * is greater than or equal to 0.
+	 *
+	 * @param amtCoffee The amount of coffee to set.
 	 */
     public void setAmtCoffee(int amtCoffee) {
 		if (amtCoffee >= 0) {
 			this.amtCoffee = amtCoffee;
 		} 
 	}
+
     /**
 	 * @return   Returns the amtMilk.
 	 */
     public int getAmtMilk() {
 		return amtMilk;
 	}
+
     /**
 	 * @param amtMilk   The amtMilk to set.
 	 */
@@ -68,12 +90,14 @@ public class Recipe implements Serializable {
 			this.amtMilk = amtMilk;
 		} 
 	}
+
     /**
 	 * @return   Returns the amtSugar.
 	 */
     public int getAmtSugar() {
 		return amtSugar;
 	}
+
     /**
 	 * @param amtSugar   The amtSugar to set.
 	 */
@@ -82,12 +106,14 @@ public class Recipe implements Serializable {
 			this.amtSugar = amtSugar;
 		} 
 	}
+
     /**
 	 * @return   Returns the name.
 	 */
     public String getName() {
 		return name;
 	}
+
     /**
 	 * @param name   The name to set.
 	 */
@@ -96,12 +122,14 @@ public class Recipe implements Serializable {
     		this.name = name;
     	}
 	}
+
     /**
 	 * @return   Returns the price.
 	 */
     public int getPrice() {
 		return price;
 	}
+
     /**
 	 * @param price   The price to set.
 	 */
@@ -109,17 +137,26 @@ public class Recipe implements Serializable {
 		if (price >= 0) {
 			this.price = price;
 		} 
-	} 
+	}
+
     public boolean equals(Recipe r) {
         if((this.name).equals(r.getName())) {
             return true;
         }
         return false;
     }
+
     public String toString() {
     	return name;
     }
 
+	/**
+	 * Returns recipe for coffee of the given Context.
+	 *
+	 * @param context The context to create recipe from.
+	 * @return Recipe The Recipe created by the given context.
+	 * @throws ContextException
+     */
 	static public Recipe getRecipe(Context context) throws ContextException {
 		Recipe r = new Recipe();
 		r.name = (String)context.getValue("name");
@@ -131,6 +168,13 @@ public class Recipe implements Serializable {
 		return r;
 	}
 
+	/**
+	 * Returns the context of the given recipe.
+	 *
+	 * @param recipe The recipe to create context from.
+	 * @return Context The context created by the given recipe.
+	 * @throws ContextException
+     */
 	static public Context getContext(Recipe recipe) throws ContextException {
 		Context cxt = new ServiceContext();
 		cxt.putValue("name", recipe.getName());
