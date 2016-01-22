@@ -182,7 +182,7 @@ public class Recipe implements Serializable {
 	/**
 	 * Returns recipe for coffee of the given Context.
 	 *
-	 * @param context The context of application.
+	 * @param context The context to create recipe from.
 	 * @return Recipe The Recipe created by the given context.
 	 * @throws ContextException
      */
