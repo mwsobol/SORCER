@@ -152,6 +152,12 @@ public class Recipe implements Serializable {
 		} 
 	}
 
+	/**
+	 * Return boolean(true/false) of equals of object Recipe type
+	 * @param r  Recipe object
+	 *           r.getName name of recipe
+	 */
+
     public boolean equals(Recipe r) {
         if((this.name).equals(r.getName())) {
             return true;
@@ -159,6 +165,9 @@ public class Recipe implements Serializable {
         return false;
     }
 
+	/**
+	 * Return string value of name
+	 * */
     public String toString() {
     	return name;
     }
