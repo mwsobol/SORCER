@@ -76,13 +76,17 @@ public class Recipe implements Serializable {
 	}
 
     /**
-	 * @return   Returns the amtMilk.
+	 * Return the amount of milk.
+	 * @return   Returns the amtMilk, if amtMilk
+	 * is greater than or equal to 0.
+	 *
 	 */
     public int getAmtMilk() {
 		return amtMilk;
 	}
 
     /**
+	 * Set the amount of milk to the recipe.
 	 * @param amtMilk   The amtMilk to set.
 	 */
     public void setAmtMilk(int amtMilk) {
@@ -94,7 +98,7 @@ public class Recipe implements Serializable {
     /**
 	 * Returns the amount of sugar.
 	 *
-	 * @return   Returns the amtSugar.
+	 * @return  int  Returns the amtSugar.
 	 */
     public int getAmtSugar() {
 		return amtSugar;
@@ -115,7 +119,8 @@ public class Recipe implements Serializable {
     /**
 	 * Returns the name.
 	 *
-	 * @return   Returns the name.
+	 * @return   Returns String the name.
+	 *
 	 */
     public String getName() {
 		return name;
@@ -142,7 +147,7 @@ public class Recipe implements Serializable {
 	}
 
     /**
-	 * Sets the price if price is greater than or equal to 0.
+	 * Set the price if price is greater than or equal to 0.
 	 *
 	 * @param price   The price to set.
 	 */
@@ -156,6 +161,7 @@ public class Recipe implements Serializable {
 	 * Return boolean(true/false) of equals of object Recipe type
 	 * @param r  Recipe object
 	 *           r.getName name of recipe
+	 * @return boolean
 	 */
 
     public boolean equals(Recipe r) {
@@ -167,6 +173,7 @@ public class Recipe implements Serializable {
 
 	/**
 	 * Return string value of name
+	 * @return String
 	 * */
     public String toString() {
     	return name;
@@ -175,7 +182,7 @@ public class Recipe implements Serializable {
 	/**
 	 * Returns recipe for coffee of the given Context.
 	 *
-	 * @param context The context to create recipe from.
+	 * @param context The context of application.
 	 * @return Recipe The Recipe created by the given context.
 	 * @throws ContextException
      */
