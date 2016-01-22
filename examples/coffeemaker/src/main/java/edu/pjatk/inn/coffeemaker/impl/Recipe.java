@@ -76,9 +76,9 @@ public class Recipe implements Serializable {
 	}
 
     /**
-	 * Return the amount of milk.
-	 * @return   Returns the amtMilk, if amtMilk
-	 * is greater than or equal to 0.
+	 * Returns the amount of milk.
+     *
+	 * @return int  Returns the amtMilk.
 	 *
 	 */
     public int getAmtMilk() {
@@ -86,8 +86,9 @@ public class Recipe implements Serializable {
 	}
 
     /**
-	 * Set the amount of milk to the recipe.
-	 * @param amtMilk   The amtMilk to set.
+	 * Sets the amount of milk to the recipe.
+     *
+	 * @param amtMilk The amount of amtMilk to set.
 	 */
     public void setAmtMilk(int amtMilk) {
 		if (amtMilk >= 0) {
@@ -117,9 +118,9 @@ public class Recipe implements Serializable {
 	}
 
     /**
-	 * Returns the name.
+	 * Returns the name of the recipe.
 	 *
-	 * @return   Returns String the name.
+	 * @return String  The name of the recipe.
 	 *
 	 */
     public String getName() {
@@ -127,7 +128,8 @@ public class Recipe implements Serializable {
 	}
 
     /**
-	 * Set the name if name not equal to NULL(empty field).
+	 * Sets the name of recipe if name is not equal
+     * to NULL(empty field).
 	 *
 	 * @param name   The name to set.
 	 */
@@ -138,16 +140,16 @@ public class Recipe implements Serializable {
 	}
 
     /**
-	 * Return the price.
+	 * Returns the price of recipe.
 	 *
-	 * @return   Returns the price.
+	 * @return int The price of recipe.
 	 */
     public int getPrice() {
 		return price;
 	}
 
     /**
-	 * Set the price if price is greater than or equal to 0.
+	 * Sets the price if price is greater than or equal to 0.
 	 *
 	 * @param price   The price to set.
 	 */
@@ -158,9 +160,11 @@ public class Recipe implements Serializable {
 	}
 
 	/**
-	 * Return boolean(true/false) of equals of object Recipe type
+	 * Returns boolean(true/false) if the name
+     * of the current Recipe(this) equals to name of
+     * Recipe object r.
+     *
 	 * @param r  Recipe object
-	 *           r.getName name of recipe
 	 * @return boolean
 	 */
 
@@ -172,18 +176,20 @@ public class Recipe implements Serializable {
     }
 
 	/**
-	 * Return string value of name
-	 * @return String
+	 * Returns the name of recipe.
+     *
+	 * @return String The name of recipe.
 	 * */
     public String toString() {
     	return name;
     }
 
 	/**
-	 * Returns recipe for coffee of the given Context.
+	 * Returns the recipe for coffee of the given Context.
 	 *
-	 * @param context The context to create recipe from.
-	 * @return Recipe The Recipe created by the given context.
+	 * @param context The context of application
+     *                to create recipe from.
+	 * @return Recipe The object Recipe created by the given context.
 	 * @throws ContextException
      */
 	static public Recipe getRecipe(Context context) throws ContextException {
