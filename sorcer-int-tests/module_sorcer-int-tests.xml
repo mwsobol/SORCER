@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_sorcer-int-tests" default="compile.module.sorcer-int-tests">
+  <dirname property="module.sorcer-int-tests.basedir" file="${ant.file.module_sorcer-int-tests}"/>
+  
+  <property name="module.jdk.home.sorcer-int-tests" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.sorcer-int-tests" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.sorcer-int-tests" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.sorcer-int-tests" value="-encoding windows-1250 -source 8 ${compiler.args}"/>
+  
+  <property name="sorcer-int-tests.output.dir" value="${module.sorcer-int-tests.basedir}/build"/>
+  <property name="sorcer-int-tests.testoutput.dir" value="${module.sorcer-int-tests.basedir}/build"/>
+  
+  <path id="sorcer-int-tests.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="sorcer-int-tests.module.production.classpath">
+    <path refid="${module.jdk.classpath.sorcer-int-tests}"/>
+  </path>
+  
+  <path id="sorcer-int-tests.runtime.production.module.classpath">
+    <pathelement location="${sorcer-int-tests.output.dir}"/>
+  </path>
+  
+  <path id="sorcer-int-tests.module.classpath">
+    <path refid="${module.jdk.classpath.sorcer-int-tests}"/>
+    <pathelement location="${sorcer-int-tests.output.dir}"/>
+  </path>
+  
+  <path id="sorcer-int-tests.runtime.module.classpath">
+    <pathelement location="${sorcer-int-tests.output.dir}"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.sorcer-int-tests">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.sorcer-int-tests">
+    <patternset refid="excluded.from.module.sorcer-int-tests"/>
+  </patternset>
+  
+  
+  <target name="compile.module.sorcer-int-tests" depends="compile.module.sorcer-int-tests.production,compile.module.sorcer-int-tests.tests" description="Compile module sorcer-int-tests"/>
+  
+  <target name="compile.module.sorcer-int-tests.production" depends="register.custom.compilers" description="Compile module sorcer-int-tests; production classes"/>
+  
+  <target name="compile.module.sorcer-int-tests.tests" depends="register.custom.compilers,compile.module.sorcer-int-tests.production" description="compile module sorcer-int-tests; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.sorcer-int-tests" description="cleanup module">
+    <delete dir="${sorcer-int-tests.output.dir}"/>
+    <delete dir="${sorcer-int-tests.testoutput.dir}"/>
+  </target>
+</project>
