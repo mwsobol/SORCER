@@ -122,6 +122,8 @@ public class Recipe implements Serializable {
 	}
 
     /**
+	 * Set the name if name not equal to NULL(empty field).
+	 *
 	 * @param name   The name to set.
 	 */
     public void setName(String name) {
@@ -131,6 +133,8 @@ public class Recipe implements Serializable {
 	}
 
     /**
+	 * Return the price.
+	 *
 	 * @return   Returns the price.
 	 */
     public int getPrice() {
@@ -138,6 +142,8 @@ public class Recipe implements Serializable {
 	}
 
     /**
+	 * Sets the price if price is greater than or equal to 0.
+	 *
 	 * @param price   The price to set.
 	 */
     public void setPrice(int price) {
