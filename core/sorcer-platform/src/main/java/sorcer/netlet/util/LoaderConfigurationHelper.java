@@ -85,7 +85,7 @@ public class LoaderConfigurationHelper {
                 } catch (MalformedURLException e) {
                     throw new RuntimeException(e);
                 }
-        } else if ("file".equals(scheme) || scheme==null) {
+        } else if ("file".equals(scheme) || scheme==null || (new File(str).exists())) {
             return getFilesFromFilteredPath(str);
         }
         }
