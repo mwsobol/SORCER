@@ -65,7 +65,7 @@ public class tests_s13353 {
 //	Milk: 3
 //	Sugar: -1
     public void addInventory4 () throws  Exception {
-        assertTrue(coffeeMaker.addInventory(5,3,-1,0));
+        assertFalse(coffeeMaker.addInventory(5,3,-1,0));
     }
 
     @Test
