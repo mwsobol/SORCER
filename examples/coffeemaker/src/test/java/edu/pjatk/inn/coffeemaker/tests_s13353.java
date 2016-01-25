@@ -83,7 +83,7 @@ public class tests_s13353 {
 //	Enter: 4
 //	Coffee: -1
     public void addInventory2 () throws Exception {
-        coffeeMaker.addInventory(-1,0,0,0);
+        assertFalse(coffeeMaker.addInventory(-1,0,0,0));
     }
 
     @Test
@@ -92,7 +92,7 @@ public class tests_s13353 {
 //	Coffee: 5
 //	Milk: -1
     public void  addInventory3 () throws Exception {
-        coffeeMaker.addInventory(5,-1,0,0);
+        assertFalse(coffeeMaker.addInventory(5,-1,0,0));
     }
 
     @Test
@@ -113,7 +113,7 @@ public class tests_s13353 {
 //	Sugar: 7
 //	Chocolate: -1
     public void addInventory5 () throws Exception {
-        coffeeMaker.addInventory(5,3,7,-1);
+        assertFalse(coffeeMaker.addInventory(5,3,7,-1));
     }
 
 /*    @Test
@@ -121,7 +121,7 @@ public class tests_s13353 {
 //	Enter: 4
 //	Coffee: a
     public void addInventory6 () throws Exception {
-        coffeeMaker.addInventory(Integer.parseInt("a"),0,0,0);
+        assertFalse(coffeeMaker.addInventory(Integer.parseInt("a"),0,0,0));
     }*/
 
 /*    @Test
@@ -130,7 +130,7 @@ public class tests_s13353 {
 //	Coffee: 5
 //	Milk: a
     public void addInventory7 () throws Exception {
-        coffeeMaker.addInventory(5,Integer.parseInt("a"),0,0);
+        assertFalse(coffeeMaker.addInventory(5,Integer.parseInt("a"),0,0));
     }*/
 }
 
