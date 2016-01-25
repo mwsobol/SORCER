@@ -1,6 +1,7 @@
 package edu.pjatk.inn.coffeemaker.impl;
 
 import sorcer.core.context.ServiceContext;
+import sorcer.core.invoker.IntegerIncrementor;
 import sorcer.service.Context;
 import sorcer.service.ContextException;
 
@@ -48,10 +49,22 @@ public class Recipe implements Serializable {
 	 *
 	 * @param amtChocolate The amount of chocolate to set.
 	 */
-    public void setAmtChocolate(int amtChocolate) {
+    /*public void setAmtChocolate(int amtChocolate) {
 		if (amtChocolate >= 0) {
 			this.amtChocolate = amtChocolate;
 		} 
+	}*/
+
+	//Vitalii Upir s13261
+	// rewrite method seAmtChocolate to check type of amtChocolate variable
+	public void setAmtChocolate(Object amtChocolate){
+		if(amtChocolate!=null){
+			if(amtChocolate.getClass()==Integer.class){
+				if((int)amtChocolate>=0){
+					this.amtChocolate = (int)amtChocolate;
+				}else this.amtChocolate = -1;
+			}else this.amtChocolate = -1;
+		}else this.amtChocolate = -1;
 	}
 
     /**
@@ -69,11 +82,24 @@ public class Recipe implements Serializable {
 	 *
 	 * @param amtCoffee The amount of coffee to set.
 	 */
-    public void setAmtCoffee(int amtCoffee) {
+    /*public void setAmtCoffee(int amtCoffee) {
 		if (amtCoffee >= 0) {
 			this.amtCoffee = amtCoffee;
 		} 
+	}*/
+
+	//Vitalii Upir s13261
+	// rewrite method setAmtCoffee to check type of amtCoffee variable
+	public void setAmtCoffee(Object amtCoffee){
+		if(amtCoffee!=null){
+			if(amtCoffee.getClass()==Integer.class){
+				if((int)amtCoffee>=0){
+					this.amtCoffee = (int)amtCoffee;
+				}else this.amtCoffee = -1;
+			}else this.amtCoffee = -1;
+		}else this.amtCoffee = -1;
 	}
+
 
     /**
 	 * Return the amount of milk.
@@ -89,10 +115,22 @@ public class Recipe implements Serializable {
 	 * Set the amount of milk to the recipe.
 	 * @param amtMilk   The amtMilk to set.
 	 */
-    public void setAmtMilk(int amtMilk) {
+    /*public void setAmtMilk(int amtMilk) {
 		if (amtMilk >= 0) {
 			this.amtMilk = amtMilk;
 		} 
+	}*/
+
+	//Vitalii Upir s13261
+	// rewrite method setAmtMilk to check type of amtMilk variable
+	public void setAmtMilk(Object amtMilk){
+		if(amtMilk!=null){
+			if(amtMilk.getClass()==Integer.class){
+				if((int)amtMilk>=0){
+					this.amtMilk = (int)amtMilk;
+				}else this.amtMilk = -1;
+			}else this.amtMilk = -1;
+		}else this.amtMilk = -1;
 	}
 
     /**
@@ -110,10 +148,22 @@ public class Recipe implements Serializable {
 	 *
 	 * @param amtSugar   The amtSugar to set.
 	 */
-    public void setAmtSugar(int amtSugar) {
+    /*public void setAmtSugar(int amtSugar) {
 		if (amtSugar >= 0) {
 			this.amtSugar = amtSugar;
 		} 
+	}*/
+
+	//Vitalii Upir s13261
+	// rewrite method setAmtSugar to check type of amtSugar variable
+	public void setAmtSugar(Object amtSugar){
+		if(amtSugar!=null){
+			if(amtSugar.getClass()==Integer.class){
+				if((int)amtSugar>=0){
+					this.amtSugar = (int)amtSugar;
+				}else this.amtSugar = -1;
+			}else this.amtSugar = -1;
+		}else this.amtSugar = -1;
 	}
 
     /**
@@ -151,10 +201,21 @@ public class Recipe implements Serializable {
 	 *
 	 * @param price   The price to set.
 	 */
-    public void setPrice(int price) {
+   /* public void setPrice(int price) {
 		if (price >= 0) {
 			this.price = price;
 		} 
+	}*/
+	//Vitalii Upir s13261
+	// rewrite method setPrice to check type of price variable
+	public void setPrice(Object price) {
+		if(price!=null) {
+			if (price.getClass() == Integer.class) {
+				if ((int) price >= 0) {
+					this.price = (int) price;
+				} else this.price = -1;
+			} else this.price = -1;
+		}else  this.price = -1;
 	}
 
 	/**
