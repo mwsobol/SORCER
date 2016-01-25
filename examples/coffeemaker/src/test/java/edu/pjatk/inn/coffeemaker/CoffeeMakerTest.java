@@ -15,6 +15,7 @@ import sorcer.service.Exertion;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 import static sorcer.eo.operator.*;
 
 /**
@@ -27,12 +28,20 @@ public class CoffeeMakerTest {
 
 	private CoffeeMaker coffeeMaker;
 	private Inventory inventory;
-	private Recipe espresso, mocha, macchiato, americano;
+	private Recipe espresso, mocha, macchiato, americano,coffee;
 
 	@Before
 	public void setUp() throws ContextException {
 		coffeeMaker = new CoffeeMaker();
 		inventory = coffeeMaker.checkInventory();
+
+		coffee = new Recipe();
+		coffee.setName("Coffee");
+	    coffee.setPrice(50);
+		coffee.setAmtCoffee(3);
+		coffee.setAmtMilk(1);
+		coffee.setAmtSugar(1);
+		coffee.setAmtChocolate(0);
 
 		espresso = new Recipe();
 		espresso.setName("espresso");
@@ -119,6 +128,61 @@ public class CoffeeMakerTest {
 	public void makeCoffee() throws Exception {
 		coffeeMaker.addRecipe(espresso);
 		assertEquals(coffeeMaker.makeCoffee(espresso, 200), 150);
+	}
+	//Please input an integer.
+	// Return to main menu
+	@Test
+	public void addInventory8() throws Exception {
+	assertFalse(coffeeMaker.addInventory(5,3,Integer.parseInt("a"),0));
+}
+	//Please input an integer.
+	// Return to main menu
+	@Test
+	public void addInventory9() throws Exception {
+	assertFalse(coffeeMaker.addInventory(5,3,7,Integer.parseInt("a")));
+}
+	//Coffee: 15
+	// Milk: 15
+	// Sugar: 15
+	// Chocolate: 15
+	@Test
+	public void checkInventory() throws Exception {
+		assertTrue((inventory.getChocolate()==15) && (inventory.getCoffee()==15) &&
+				(inventory.getMilk()==15) && (inventory.getSugar()==15));
+	}
+	//Your change is 10.
+	// Return to main menu
+	@Test
+	public void purchaseBeverage1() throws Exception {
+		coffeeMaker.addRecipe(coffee);
+	assertEquals(coffeeMaker.makeCoffee(coffee,60),10);
+}
+	//Your change is 40
+	// Return to main menu
+	// Coffee: 15
+	// Milk: 15
+	// Sugar: 15
+	// Chocolate: 15
+	@Test
+	public void purchaseBeverage2() throws Exception {
+		coffeeMaker.addRecipe(coffee);
+		assertTrue((coffeeMaker.makeCoffee(coffee,40)==40) && (inventory.getChocolate()==15) &&
+				(inventory.getCoffee()==15) && (inventory.getMilk()==15) && (inventory.getSugar()==15));
+	}
+	//Your change is 50
+	// Return to main menu
+	@Test
+	public void purchaseBeverage3() throws Exception {
+		Recipe newDrink = new Recipe();
+		newDrink.setName("Coffee");
+		newDrink.setPrice(50);
+		newDrink.setAmtCoffee(16);
+		newDrink.setAmtMilk(2);
+		newDrink.setAmtSugar(3);
+		newDrink.setAmtChocolate(5);
+		coffeeMaker.addRecipe(newDrink);
+		assertEquals(coffeeMaker.makeCoffee(newDrink,50),50);
+
 	}
 
 }
