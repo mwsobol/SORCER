@@ -129,19 +129,8 @@ public class CoffeeMakerTest {
 		coffeeMaker.addRecipe(espresso);
 		assertEquals(coffeeMaker.makeCoffee(espresso, 200), 150);
 	}
-	//Please input an integer.
-	// Return to main menu
-	@Test
-	public void addInventory8() throws Exception {
-	assertFalse(coffeeMaker.addInventory(5,3,Integer.parseInt("a"),0));
-}
-	//Please input an integer.
-	// Return to main menu
-	@Test
-	public void addInventory9() throws Exception {
-	assertFalse(coffeeMaker.addInventory(5,3,7,Integer.parseInt("a")));
-}
-	//Coffee: 15
+
+	///Coffee: 15
 	// Milk: 15
 	// Sugar: 15
 	// Chocolate: 15

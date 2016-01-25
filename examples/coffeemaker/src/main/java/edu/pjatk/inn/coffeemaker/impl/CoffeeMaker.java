@@ -24,7 +24,7 @@ public class CoffeeMaker implements CoffeeMaking, CoffeeService {
     /**
      * Number of getRecipes in coffee maker
      */
-    private final int NUM_RECIPES = 3; //BUG should be NUM_RECIPE = 3
+    private final int NUM_RECIPES = 3;
     /**
      * Array describing if the array is full
      */
@@ -58,7 +58,7 @@ public class CoffeeMaker implements CoffeeMaking, CoffeeService {
         boolean canAddRecipe = true;
 
         //Vitalii Upir
-        //Check the value of price, coffe units, milk units, sugar units, chocolate units that is not less than than 0.
+        //Check the value of price, coffee units, milk units, sugar units, chocolate units that is not less than 0.
         if (r.getPrice() < 0 || r.getAmtCoffee() < 0 || r.getAmtMilk() < 0
                 || r.getAmtSugar() < 0 || r.getAmtChocolate() < 0)
         {
@@ -105,7 +105,8 @@ public class CoffeeMaker implements CoffeeMaking, CoffeeService {
         if (r != null) {
             for (int i = 0; i < NUM_RECIPES; i++) {
                 if (r.equals(recipeArray[i])) {
-                    recipeArray[i] = new Recipe();  //BUG should be new Recipe();
+                    recipeArray[i] = new Recipe();
+                    recipeFull[i] = false;
                     canDeleteRecipe = true;
                 }
             }
@@ -140,7 +141,8 @@ public class CoffeeMaker implements CoffeeMaking, CoffeeService {
         boolean canEditRecipe = false;
         for (int i = 0; i < NUM_RECIPES; i++) {
             if (recipeArray[i].getName() != null) {
-                if (newRecipe.equals(recipeArray[i])) {//BUG shoud be oldRecipe.equals(recipeArray[i])
+                if (oldRecipe.equals(recipeArray[i])) {
+                    deleteRecipe(oldRecipe);
                     recipeArray[i] = new Recipe();
                     if (addRecipe(newRecipe)) {
                         canEditRecipe = true;
@@ -163,15 +165,15 @@ public class CoffeeMaker implements CoffeeMaking, CoffeeService {
      * @param amtChocolate
      * @return boolean
      */
-    public boolean addInventory(int amtCoffee, int amtMilk, int amtSugar, int amtChocolate) {//BUG should be type Object
+    public boolean addInventory(Object amtCoffee, Object amtMilk, Object amtSugar, Object amtChocolate) {
         boolean canAddInventory = true;
-        if (amtCoffee < 0 || amtMilk < 0 || amtSugar > 0 || amtChocolate < 0) {  //BUG should be amtSugar < 0 and cast to (int)
+        if ((Integer)amtCoffee < 0 || (Integer)amtMilk < 0 || (Integer)amtSugar < 0 || (Integer)amtChocolate < 0) {
             canAddInventory = false;
         } else {
-            inventory.setCoffee(inventory.getCoffee() + amtCoffee);
-            inventory.setMilk(inventory.getMilk() + amtMilk);
-            inventory.setSugar(inventory.getSugar() + amtSugar);
-            inventory.setChocolate(inventory.getChocolate() + amtChocolate);
+            inventory.setCoffee(inventory.getCoffee() + (Integer)amtCoffee);
+            inventory.setMilk(inventory.getMilk() + (Integer)amtMilk);
+            inventory.setSugar(inventory.getSugar() + (Integer)amtSugar);
+            inventory.setChocolate(inventory.getChocolate() + (Integer)amtChocolate);
         }
         return canAddInventory;
     }
@@ -202,7 +204,7 @@ public class CoffeeMaker implements CoffeeMaking, CoffeeService {
             canMakeCoffee = false;
         }
         if (canMakeCoffee) {
-            inventory.setCoffee(inventory.getCoffee() + r.getAmtCoffee()); //BUG should be -
+            inventory.setCoffee(inventory.getCoffee() - r.getAmtCoffee());
             inventory.setMilk(inventory.getMilk() - r.getAmtMilk());
             inventory.setSugar(inventory.getSugar() - r.getAmtSugar());
             inventory.setChocolate(inventory.getChocolate() - r.getAmtChocolate());
