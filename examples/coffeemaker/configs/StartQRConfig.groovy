@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package examples.coffeemaker
+package examples.service
 
 import com.sun.jini.start.ServiceDescriptor
 import org.rioproject.config.Component
@@ -36,16 +36,14 @@ class StartAll {
         String configPath = "${projectBuildDir}/../configs"
 
         def descriptors = []
-        ["coffeemaker", "delivery", "qr"].each { provider ->
-            def configArg = ["${configPath}/${provider}-prv.config"]
-            def codebase = "${relativeRepoPath}/coffeemaker-${sorcerVersion}-dl.jar sorcer-dl-${sorcerVersion}.jar sorcer-ui-${sorcerVersion}.jar jsk-dl-${riverVersion}.jar"
+        def configArg = ["${configPath}/qr-prv.config"]
+        def codebase = "${relativeRepoPath}/qr-${sorcerVersion}-dl.jar ${relativeRepoPath}/qr-${sorcerVersion}-ui.jar sorcer-dl-${sorcerVersion}.jar sorcer-ui-${sorcerVersion}.jar jsk-dl-${riverVersion}.jar"
 
-            descriptors << new SorcerServiceDescriptor(codebase,
-                    policy,
-                    "${buildLibPath}/coffeemaker-${sorcerVersion}-prv.jar",
-                    "sorcer.core.provider.ServiceTasker",
-                    configArg as String[])
-        }
+        descriptors << new SorcerServiceDescriptor(codebase,
+                                                   policy,
+                                                   "${buildLibPath}/qr-${sorcerVersion}-prv.jar${File.pathSeparator}${buildLibPath}/qr-${sorcerVersion}-ui.jar",
+                                                   "sorcer.core.provider.ServiceTasker",
+                                                   configArg as String[])
         return descriptors as ServiceDescriptor[]
     }
 }
