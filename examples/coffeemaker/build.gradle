@@ -120,11 +120,11 @@ test {
     testLogging {
         events "passed", "skipped", "failed"/*, "standardOut", "standardError"*/
     }
-//    dependsOn([install])
-    dependsOn([install, bootme])
-    finalizedBy(stopme)
+    dependsOn([install])
+//    dependsOn([install, bootme])
+//    finalizedBy(stopme)
 }
-test.enabled = false
+//test.enabled = false
 
 
 
