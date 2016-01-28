@@ -121,8 +121,8 @@ task runRequestor(type:JavaExec, dependsOn:[install]) {
             "${websterUrl}/${repoPath()}/coffeemaker-${version}-dl.jar ${websterUrl}/sorcer-dl-${version}.jar ${websterUrl}/jsk-dl-${riverVersion}.jar"
 
     dependsOn([install, bootme])
-//  args = ["edu.pjatk.inn.requestor.CoffeeMakerExertRequestor", "netlet"]
-    args = ["edu.pjatk.inn.requestor.CoffeeMakerExertRequestor", "exertion"]
+  args = ["edu.pjatk.inn.requestor.CoffeeMakerExertRequestor", "netlet"]
+//    args = ["edu.pjatk.inn.requestor.CoffeeMakerExertRequestor", "exertion"]
 //    args = ["edu.pjatk.inn.requestor.CoffeeMakerExertRequestor", "model"]
     finalizedBy (stopme)
 }
@@ -136,8 +136,8 @@ test {
         events "passed", "skipped", "failed"/*, "standardOut", "standardError"*/
     }
     dependsOn([install])
-//    dependsOn([install, bootme])
-//    finalizedBy(stopme)
+    dependsOn([install, bootme])
+    finalizedBy(stopme)
 }
 //test.enabled = false
 
