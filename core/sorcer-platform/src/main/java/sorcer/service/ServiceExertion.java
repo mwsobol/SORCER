@@ -179,8 +179,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
      *
      * @see sorcer.service.Invoker#invoke()
      */
-    public Object invoke() throws RemoteException,
-            InvocationException {
+    public Object invoke() throws InvocationException {
         return invoke(new Arg[]{});
     }
 
@@ -189,8 +188,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
      *
      * @see sorcer.service.Invoker#invoke(sorcer.service.Arg[])
      */
-    public Object invoke(Arg[] entries) throws RemoteException,
-            InvocationException {
+    public Object invoke(Arg[] entries) throws InvocationException {
         ReturnPath rp = null;
         for (Arg a : entries) {
             if (a instanceof ReturnPath) {
@@ -221,8 +219,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
         }
     }
 
-    public Object invoke(Context context)
-            throws RemoteException, InvocationException {
+    public Object invoke(Context context) throws InvocationException {
         return invoke(context, new Arg[] {});
     }
 
@@ -232,8 +229,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
      * @see sorcer.service.Invoker#invoke(sorcer.service.Context,
      * sorcer.service.Arg[])
      */
-    public Object invoke(Context context, Arg[] entries)
-            throws RemoteException, InvocationException {
+    public Object invoke(Context context, Arg[] entries) throws InvocationException {
         try {
             substitute(entries);
             if (context != null) {
@@ -720,7 +716,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
      * @see sorcer.service.Exertion#getExceptions()
      */
     @Override
-    public List<ThrowableTrace> getExceptions() throws RemoteException {
+    public List<ThrowableTrace> getExceptions() {
         if (controlContext != null)
             return controlContext.getExceptions();
         else
@@ -733,12 +729,12 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
      * @see sorcer.service.Exertion#getExceptions()
      */
     @Override
-    public List<ThrowableTrace> getAllExceptions() throws RemoteException {
+    public List<ThrowableTrace> getAllExceptions() {
         List<ThrowableTrace> exceptions = new ArrayList<ThrowableTrace>();
         return getExceptions(exceptions);
     }
 
-    public List<ThrowableTrace> getExceptions(List<ThrowableTrace> exs) throws RemoteException {
+    public List<ThrowableTrace> getExceptions(List<ThrowableTrace> exs) {
         if (controlContext != null)
             exs.addAll(controlContext.getExceptions());
         return exs;

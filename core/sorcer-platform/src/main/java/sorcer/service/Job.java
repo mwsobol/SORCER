@@ -339,22 +339,23 @@ public class Job extends CompoundExertion {
 	public String toString() {
 		StringBuffer desc = new StringBuffer(super.toString());
 		desc.append("\n=== START PRINTING JOB ===\n");	
-		desc
-				.append("\n=============================\nListing Component Exertions\n=============================\n");
+		desc.append("\n=============================\nListing Component Exertions\n=============================\n");
 		for (int i = 0; i < size(); i++) {
-			desc.append("\n===========\n Exertion ").append(i).append(
-					"\n===========\n").append(
-					((ServiceExertion) get(i)).describe());
+			desc.append("\n===========\n Exertion ").append(i).append("\n===========\n").append((get(i)).describe());
 		}
 		desc.append("\n=== DONE PRINTING JOB ===\n");
 		return desc.toString();
 	}
 
 	@Override
-	public List<ThrowableTrace> getExceptions() throws RemoteException {
+	public List<ThrowableTrace> getExceptions() {
 		List<ThrowableTrace> exceptions = new ArrayList<ThrowableTrace>();
 		for (Mogram ext : mograms) {
-			exceptions.addAll(ext.getExceptions());
+			try {
+				exceptions.addAll(ext.getExceptions());
+			} catch (RemoteException e) {
+				exceptions.add(new ThrowableTrace("Problem while collecting exceptions", e));
+			}
 		}
 		return exceptions;
 	}
