@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_deploy-tests" default="compile.module.deploy-tests">
+  <dirname property="module.deploy-tests.basedir" file="${ant.file.module_deploy-tests}"/>
+  
+  <property name="module.jdk.home.deploy-tests" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.deploy-tests" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.deploy-tests" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.deploy-tests" value="-encoding windows-1250 -source 8 ${compiler.args}"/>
+  
+  <property name="deploy-tests.output.dir" value="${module.deploy-tests.basedir}/build/classes/main"/>
+  <property name="deploy-tests.testoutput.dir" value="${module.deploy-tests.basedir}/build/classes/test"/>
+  
+  <path id="deploy-tests.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="deploy-tests.module.production.classpath">
+    <path refid="${module.jdk.classpath.deploy-tests}"/>
+  </path>
+  
+  <path id="deploy-tests.runtime.production.module.classpath">
+    <pathelement location="${deploy-tests.output.dir}"/>
+  </path>
+  
+  <path id="deploy-tests.module.classpath">
+    <path refid="${module.jdk.classpath.deploy-tests}"/>
+    <pathelement location="${deploy-tests.output.dir}"/>
+    <pathelement location="${sorcer-platform.testoutput.dir}"/>
+    <pathelement location="${sorcer-platform.output.dir}"/>
+    <pathelement location="${sorcer-dl.testoutput.dir}"/>
+    <pathelement location="${sorcer-dl.output.dir}"/>
+    <path refid="library.gradle:_net.jini:jsk-platform:2.2.2.classpath"/>
+    <path refid="library.gradle:_org.rioproject:rio-api:5.2.2.classpath"/>
+    <path refid="library.gradle:_org.slf4j:slf4j-api:1.7.12.classpath"/>
+    <path refid="library.gradle:_ch.qos.logback:logback-classic:1.1.3.classpath"/>
+    <path refid="library.gradle:_net.jini:jsk-resources:2.2.2.classpath"/>
+    <path refid="library.gradle:_net.jini.lookup:serviceui:2.2.2.classpath"/>
+    <path refid="library.gradle:_net.jini:jsk-dl:2.2.2.classpath"/>
+    <path refid="library.gradle:_ch.qos.logback:logback-core:1.1.3.classpath"/>
+    <pathelement location="${webster.testoutput.dir}"/>
+    <pathelement location="${webster.output.dir}"/>
+    <path refid="library.gradle:_org.rioproject:rio-platform:5.2.2.classpath"/>
+    <path refid="library.gradle:_org.apache.river:start:2.2.2.classpath"/>
+    <pathelement location="${sorcer-resolving-loader.testoutput.dir}"/>
+    <pathelement location="${sorcer-resolving-loader.output.dir}"/>
+    <pathelement location="C:/Program Files/Java/jdk1.8.0_40/lib/tools.jar"/>
+    <path refid="library.gradle:_net.jini:jsk-lib:2.2.2.classpath"/>
+    <path refid="library.gradle:_org.rioproject:rio-lib:5.2.2.classpath"/>
+    <path refid="library.gradle:_org.rioproject.monitor:monitor-api:5.2.2.classpath"/>
+    <path refid="library.gradle:_org.rioproject.cybernode:cybernode-api:5.2.2.classpath"/>
+    <path refid="library.gradle:_com.sleepycat:je:5.0.104.classpath"/>
+    <path refid="library.gradle:_org.dancres:lockmgr:2.1.7.classpath"/>
+    <path refid="library.gradle:_javax.inject:javax.inject:1.classpath"/>
+    <path refid="library.gradle:_com.google.guava:guava:16.0.1.classpath"/>
+    <path refid="library.gradle:_org.codehaus.plexus:plexus-utils:3.0.15.classpath"/>
+    <path refid="library.gradle:_commons-io:commons-io:2.4.classpath"/>
+    <path refid="library.gradle:_org.apache.commons:commons-exec:1.3.classpath"/>
+    <path refid="library.gradle:_org.rioproject:rio-logging-support:5.2.2.classpath"/>
+    <path refid="library.gradle:_org.rioproject:rio-proxy:5.2.2.classpath"/>
+    <path refid="library.gradle:_org.codehaus.groovy:groovy-all:2.3.8.classpath"/>
+    <path refid="library.gradle:_junit:junit:4.12.classpath"/>
+    <path refid="library.gradle:_junit-addons:junit-addons:1.4.classpath"/>
+    <path refid="library.gradle:_org.hamcrest:hamcrest-core:1.3.classpath"/>
+    <path refid="library.gradle:_xerces:xercesimpl:2.6.2.classpath"/>
+    <path refid="library.gradle:_xerces:xmlparserapis:2.6.2.classpath"/>
+    <pathelement location="${sorcer-tester.testoutput.dir}"/>
+    <pathelement location="${sorcer-tester.output.dir}"/>
+    <pathelement location="${sorcer-lib.testoutput.dir}"/>
+    <pathelement location="${sorcer-lib.output.dir}"/>
+  </path>
+  
+  <path id="deploy-tests.runtime.module.classpath">
+    <pathelement location="${deploy-tests.testoutput.dir}"/>
+    <pathelement location="${deploy-tests.output.dir}"/>
+    <path refid="sorcer-platform.runtime.module.classpath"/>
+    <path refid="sorcer-tester.runtime.module.classpath"/>
+    <path refid="library.gradle:_junit:junit:4.12.classpath"/>
+    <path refid="library.gradle:_junit-addons:junit-addons:1.4.classpath"/>
+    <path refid="library.gradle:_org.hamcrest:hamcrest-core:1.3.classpath"/>
+    <path refid="library.gradle:_xerces:xercesimpl:2.6.2.classpath"/>
+    <path refid="library.gradle:_xerces:xmlparserapis:2.6.2.classpath"/>
+    <path refid="library.gradle:_org.slf4j:slf4j-api:1.7.12.classpath"/>
+    <path refid="library.gradle:_ch.qos.logback:logback-classic:1.1.3.classpath"/>
+    <path refid="library.gradle:_ch.qos.logback:logback-core:1.1.3.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.deploy-tests">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.deploy-tests">
+    <patternset refid="excluded.from.module.deploy-tests"/>
+  </patternset>
+  
+  <path id="deploy-tests.module.test.sourcepath">
+    <dirset dir="${module.deploy-tests.basedir}">
+      <include name="src/test/java"/>
+      <include name="src/test/resources"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.deploy-tests" depends="compile.module.deploy-tests.production,compile.module.deploy-tests.tests" description="Compile module deploy-tests"/>
+  
+  <target name="compile.module.deploy-tests.production" depends="register.custom.compilers,compile.module.sorcer-platform,compile.module.sorcer-tester" description="Compile module deploy-tests; production classes"/>
+  
+  <target name="compile.module.deploy-tests.tests" depends="register.custom.compilers,compile.module.deploy-tests.production" description="compile module deploy-tests; test classes" unless="skip.tests">
+    <mkdir dir="${deploy-tests.testoutput.dir}"/>
+    <javac2 destdir="${deploy-tests.testoutput.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.deploy-tests}/javac">
+      <compilerarg line="${compiler.args.deploy-tests}"/>
+      <bootclasspath refid="deploy-tests.module.bootclasspath"/>
+      <classpath refid="deploy-tests.module.classpath"/>
+      <src refid="deploy-tests.module.test.sourcepath"/>
+      <patternset refid="excluded.from.compilation.deploy-tests"/>
+    </javac2>
+    
+    <copy todir="${deploy-tests.testoutput.dir}">
+      <fileset dir="${module.deploy-tests.basedir}/src/test/java">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+      <fileset dir="${module.deploy-tests.basedir}/src/test/resources">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="clean.module.deploy-tests" description="cleanup module">
+    <delete dir="${deploy-tests.output.dir}"/>
+    <delete dir="${deploy-tests.testoutput.dir}"/>
+  </target>
+</project>

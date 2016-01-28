@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_sos-cataloger" default="compile.module.sos-cataloger">
+  <dirname property="module.sos-cataloger.basedir" file="${ant.file.module_sos-cataloger}"/>
+  
+  <property name="module.jdk.home.sos-cataloger" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.sos-cataloger" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.sos-cataloger" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.sos-cataloger" value="-encoding windows-1250 -source 8 ${compiler.args}"/>
+  
+  <property name="sos-cataloger.output.dir" value="${module.sos-cataloger.basedir}/build/classes/main"/>
+  <property name="sos-cataloger.testoutput.dir" value="${module.sos-cataloger.basedir}/build/classes/test"/>
+  
+  <path id="sos-cataloger.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="sos-cataloger.module.production.classpath">
+    <path refid="${module.jdk.classpath.sos-cataloger}"/>
+    <pathelement location="${sorcer-ui.output.dir}"/>
+    <pathelement location="${sorcer-platform.output.dir}"/>
+    <pathelement location="${sorcer-dl.output.dir}"/>
+    <path refid="library.gradle:_net.jini:jsk-platform:2.2.2.classpath"/>
+    <path refid="library.gradle:_org.rioproject:rio-api:5.2.2.classpath"/>
+    <path refid="library.gradle:_org.slf4j:slf4j-api:1.7.12.classpath"/>
+    <path refid="library.gradle:_ch.qos.logback:logback-classic:1.1.3.classpath"/>
+    <path refid="library.gradle:_net.jini:jsk-resources:2.2.2.classpath"/>
+    <path refid="library.gradle:_net.jini.lookup:serviceui:2.2.2.classpath"/>
+    <path refid="library.gradle:_net.jini:jsk-dl:2.2.2.classpath"/>
+    <path refid="library.gradle:_ch.qos.logback:logback-core:1.1.3.classpath"/>
+    <pathelement location="${webster.output.dir}"/>
+    <path refid="library.gradle:_org.rioproject:rio-platform:5.2.2.classpath"/>
+    <path refid="library.gradle:_org.apache.river:start:2.2.2.classpath"/>
+    <pathelement location="${sorcer-resolving-loader.output.dir}"/>
+    <pathelement location="C:/Program Files/Java/jdk1.8.0_40/lib/tools.jar"/>
+    <path refid="library.gradle:_net.jini:jsk-lib:2.2.2.classpath"/>
+    <path refid="library.gradle:_org.rioproject:rio-lib:5.2.2.classpath"/>
+    <path refid="library.gradle:_org.rioproject.monitor:monitor-api:5.2.2.classpath"/>
+    <path refid="library.gradle:_org.rioproject.cybernode:cybernode-api:5.2.2.classpath"/>
+    <path refid="library.gradle:_com.sleepycat:je:5.0.104.classpath"/>
+    <path refid="library.gradle:_org.dancres:lockmgr:2.1.7.classpath"/>
+    <path refid="library.gradle:_javax.inject:javax.inject:1.classpath"/>
+    <path refid="library.gradle:_com.google.guava:guava:16.0.1.classpath"/>
+    <path refid="library.gradle:_org.codehaus.plexus:plexus-utils:3.0.15.classpath"/>
+    <path refid="library.gradle:_commons-io:commons-io:2.4.classpath"/>
+    <path refid="library.gradle:_org.apache.commons:commons-exec:1.3.classpath"/>
+    <path refid="library.gradle:_org.rioproject:rio-logging-support:5.2.2.classpath"/>
+    <path refid="library.gradle:_org.rioproject:rio-proxy:5.2.2.classpath"/>
+    <path refid="library.gradle:_org.codehaus.groovy:groovy-all:2.3.8.classpath"/>
+  </path>
+  
+  <path id="sos-cataloger.runtime.production.module.classpath">
+    <pathelement location="${sos-cataloger.output.dir}"/>
+    <path refid="sorcer-ui.runtime.production.module.classpath"/>
+  </path>
+  
+  <path id="sos-cataloger.module.classpath">
+    <path refid="${module.jdk.classpath.sos-cataloger}"/>
+    <pathelement location="${sos-cataloger.output.dir}"/>
+    <pathelement location="${sorcer-ui.testoutput.dir}"/>
+    <pathelement location="${sorcer-ui.output.dir}"/>
+    <pathelement location="${sorcer-platform.testoutput.dir}"/>
+    <pathelement location="${sorcer-platform.output.dir}"/>
+    <pathelement location="${sorcer-dl.testoutput.dir}"/>
+    <pathelement location="${sorcer-dl.output.dir}"/>
+    <path refid="library.gradle:_net.jini:jsk-platform:2.2.2.classpath"/>
+    <path refid="library.gradle:_org.rioproject:rio-api:5.2.2.classpath"/>
+    <path refid="library.gradle:_org.slf4j:slf4j-api:1.7.12.classpath"/>
+    <path refid="library.gradle:_ch.qos.logback:logback-classic:1.1.3.classpath"/>
+    <path refid="library.gradle:_net.jini:jsk-resources:2.2.2.classpath"/>
+    <path refid="library.gradle:_net.jini.lookup:serviceui:2.2.2.classpath"/>
+    <path refid="library.gradle:_net.jini:jsk-dl:2.2.2.classpath"/>
+    <path refid="library.gradle:_ch.qos.logback:logback-core:1.1.3.classpath"/>
+    <pathelement location="${webster.testoutput.dir}"/>
+    <pathelement location="${webster.output.dir}"/>
+    <path refid="library.gradle:_org.rioproject:rio-platform:5.2.2.classpath"/>
+    <path refid="library.gradle:_org.apache.river:start:2.2.2.classpath"/>
+    <pathelement location="${sorcer-resolving-loader.testoutput.dir}"/>
+    <pathelement location="${sorcer-resolving-loader.output.dir}"/>
+    <pathelement location="C:/Program Files/Java/jdk1.8.0_40/lib/tools.jar"/>
+    <path refid="library.gradle:_net.jini:jsk-lib:2.2.2.classpath"/>
+    <path refid="library.gradle:_org.rioproject:rio-lib:5.2.2.classpath"/>
+    <path refid="library.gradle:_org.rioproject.monitor:monitor-api:5.2.2.classpath"/>
+    <path refid="library.gradle:_org.rioproject.cybernode:cybernode-api:5.2.2.classpath"/>
+    <path refid="library.gradle:_com.sleepycat:je:5.0.104.classpath"/>
+    <path refid="library.gradle:_org.dancres:lockmgr:2.1.7.classpath"/>
+    <path refid="library.gradle:_javax.inject:javax.inject:1.classpath"/>
+    <path refid="library.gradle:_com.google.guava:guava:16.0.1.classpath"/>
+    <path refid="library.gradle:_org.codehaus.plexus:plexus-utils:3.0.15.classpath"/>
+    <path refid="library.gradle:_commons-io:commons-io:2.4.classpath"/>
+    <path refid="library.gradle:_org.apache.commons:commons-exec:1.3.classpath"/>
+    <path refid="library.gradle:_org.rioproject:rio-logging-support:5.2.2.classpath"/>
+    <path refid="library.gradle:_org.rioproject:rio-proxy:5.2.2.classpath"/>
+    <path refid="library.gradle:_org.codehaus.groovy:groovy-all:2.3.8.classpath"/>
+  </path>
+  
+  <path id="sos-cataloger.runtime.module.classpath">
+    <pathelement location="${sos-cataloger.testoutput.dir}"/>
+    <pathelement location="${sos-cataloger.output.dir}"/>
+    <path refid="sorcer-ui.runtime.module.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.sos-cataloger">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.sos-cataloger">
+    <patternset refid="excluded.from.module.sos-cataloger"/>
+  </patternset>
+  
+  <path id="sos-cataloger.module.sourcepath">
+    <dirset dir="${module.sos-cataloger.basedir}">
+      <include name="src/main/java"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.sos-cataloger" depends="compile.module.sos-cataloger.production,compile.module.sos-cataloger.tests" description="Compile module sos-cataloger"/>
+  
+  <target name="compile.module.sos-cataloger.production" depends="register.custom.compilers,compile.module.sorcer-ui" description="Compile module sos-cataloger; production classes">
+    <mkdir dir="${sos-cataloger.output.dir}"/>
+    <javac2 destdir="${sos-cataloger.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.sos-cataloger}/javac">
+      <compilerarg line="${compiler.args.sos-cataloger}"/>
+      <bootclasspath refid="sos-cataloger.module.bootclasspath"/>
+      <classpath refid="sos-cataloger.module.production.classpath"/>
+      <src refid="sos-cataloger.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.sos-cataloger"/>
+    </javac2>
+    
+    <copy todir="${sos-cataloger.output.dir}">
+      <fileset dir="${module.sos-cataloger.basedir}/src/main/java">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.sos-cataloger.tests" depends="register.custom.compilers,compile.module.sos-cataloger.production" description="compile module sos-cataloger; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.sos-cataloger" description="cleanup module">
+    <delete dir="${sos-cataloger.output.dir}"/>
+    <delete dir="${sos-cataloger.testoutput.dir}"/>
+  </target>
+</project>

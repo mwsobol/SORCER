@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_webster" default="compile.module.webster">
+  <dirname property="module.webster.basedir" file="${ant.file.module_webster}"/>
+  
+  <property name="module.jdk.home.webster" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.webster" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.webster" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.webster" value="-encoding windows-1250 -source 8 ${compiler.args}"/>
+  
+  <property name="webster.output.dir" value="${module.webster.basedir}/build/classes/main"/>
+  <property name="webster.testoutput.dir" value="${module.webster.basedir}/build/classes/test"/>
+  
+  <path id="webster.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="webster.module.production.classpath">
+    <path refid="${module.jdk.classpath.webster}"/>
+    <path refid="library.gradle:_net.jini:jsk-platform:2.2.2.classpath"/>
+    <path refid="library.gradle:_org.rioproject:rio-platform:5.2.2.classpath"/>
+    <path refid="library.gradle:_org.apache.river:start:2.2.2.classpath"/>
+    <path refid="library.gradle:_org.slf4j:slf4j-api:1.7.12.classpath"/>
+    <path refid="library.gradle:_net.jini:jsk-resources:2.2.2.classpath"/>
+  </path>
+  
+  <path id="webster.runtime.production.module.classpath">
+    <pathelement location="${webster.output.dir}"/>
+    <path refid="library.gradle:_net.jini:jsk-platform:2.2.2.classpath"/>
+    <path refid="library.gradle:_org.rioproject:rio-platform:5.2.2.classpath"/>
+    <path refid="library.gradle:_org.apache.river:start:2.2.2.classpath"/>
+    <path refid="library.gradle:_org.slf4j:slf4j-api:1.7.12.classpath"/>
+    <path refid="library.gradle:_net.jini:jsk-resources:2.2.2.classpath"/>
+  </path>
+  
+  <path id="webster.module.classpath">
+    <path refid="${module.jdk.classpath.webster}"/>
+    <pathelement location="${webster.output.dir}"/>
+    <path refid="library.gradle:_net.jini:jsk-platform:2.2.2.classpath"/>
+    <path refid="library.gradle:_org.rioproject:rio-platform:5.2.2.classpath"/>
+    <path refid="library.gradle:_org.apache.river:start:2.2.2.classpath"/>
+    <path refid="library.gradle:_org.slf4j:slf4j-api:1.7.12.classpath"/>
+    <path refid="library.gradle:_net.jini:jsk-resources:2.2.2.classpath"/>
+  </path>
+  
+  <path id="webster.runtime.module.classpath">
+    <pathelement location="${webster.testoutput.dir}"/>
+    <pathelement location="${webster.output.dir}"/>
+    <path refid="library.gradle:_net.jini:jsk-platform:2.2.2.classpath"/>
+    <path refid="library.gradle:_org.rioproject:rio-platform:5.2.2.classpath"/>
+    <path refid="library.gradle:_org.apache.river:start:2.2.2.classpath"/>
+    <path refid="library.gradle:_org.slf4j:slf4j-api:1.7.12.classpath"/>
+    <path refid="library.gradle:_net.jini:jsk-resources:2.2.2.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.webster">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.webster">
+    <patternset refid="excluded.from.module.webster"/>
+  </patternset>
+  
+  <path id="webster.module.sourcepath">
+    <dirset dir="${module.webster.basedir}">
+      <include name="src/main/java"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.webster" depends="compile.module.webster.production,compile.module.webster.tests" description="Compile module webster"/>
+  
+  <target name="compile.module.webster.production" depends="register.custom.compilers" description="Compile module webster; production classes">
+    <mkdir dir="${webster.output.dir}"/>
+    <javac2 destdir="${webster.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.webster}/javac">
+      <compilerarg line="${compiler.args.webster}"/>
+      <bootclasspath refid="webster.module.bootclasspath"/>
+      <classpath refid="webster.module.production.classpath"/>
+      <src refid="webster.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.webster"/>
+    </javac2>
+    
+    <copy todir="${webster.output.dir}">
+      <fileset dir="${module.webster.basedir}/src/main/java">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.webster.tests" depends="register.custom.compilers,compile.module.webster.production" description="compile module webster; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.webster" description="cleanup module">
+    <delete dir="${webster.output.dir}"/>
+    <delete dir="${webster.testoutput.dir}"/>
+  </target>
+</project>

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_distribution" default="compile.module.distribution">
+  <dirname property="module.distribution.basedir" file="${ant.file.module_distribution}"/>
+  
+  <property name="module.jdk.home.distribution" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.distribution" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.distribution" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.distribution" value="-encoding windows-1250 -source 8 ${compiler.args}"/>
+  
+  <property name="distribution.output.dir" value="${module.distribution.basedir}/build"/>
+  <property name="distribution.testoutput.dir" value="${module.distribution.basedir}/build"/>
+  
+  <path id="distribution.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="distribution.module.production.classpath">
+    <path refid="${module.jdk.classpath.distribution}"/>
+  </path>
+  
+  <path id="distribution.runtime.production.module.classpath">
+    <pathelement location="${distribution.output.dir}"/>
+  </path>
+  
+  <path id="distribution.module.classpath">
+    <path refid="${module.jdk.classpath.distribution}"/>
+    <pathelement location="${distribution.output.dir}"/>
+  </path>
+  
+  <path id="distribution.runtime.module.classpath">
+    <pathelement location="${distribution.output.dir}"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.distribution">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.distribution">
+    <patternset refid="excluded.from.module.distribution"/>
+  </patternset>
+  
+  
+  <target name="compile.module.distribution" depends="compile.module.distribution.production,compile.module.distribution.tests" description="Compile module distribution"/>
+  
+  <target name="compile.module.distribution.production" depends="register.custom.compilers" description="Compile module distribution; production classes"/>
+  
+  <target name="compile.module.distribution.tests" depends="register.custom.compilers,compile.module.distribution.production" description="compile module distribution; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.distribution" description="cleanup module">
+    <delete dir="${distribution.output.dir}"/>
+    <delete dir="${distribution.testoutput.dir}"/>
+  </target>
+</project>

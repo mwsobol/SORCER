@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_worker" default="compile.module.worker">
+  <dirname property="module.worker.basedir" file="${ant.file.module_worker}"/>
+  
+  <property name="module.jdk.home.worker" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.worker" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.worker" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.worker" value="-encoding windows-1250 -source 8 ${compiler.args}"/>
+  
+  <property name="worker.output.dir" value="${module.worker.basedir}/build/classes/main"/>
+  <property name="worker.testoutput.dir" value="${module.worker.basedir}/build/classes/test"/>
+  
+  <path id="worker.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="worker.module.production.classpath">
+    <path refid="${module.jdk.classpath.worker}"/>
+    <pathelement location="${sorcer-platform.output.dir}"/>
+    <pathelement location="${sorcer-dl.output.dir}"/>
+    <path refid="library.gradle:_net.jini:jsk-platform:2.2.2.classpath"/>
+    <path refid="library.gradle:_org.rioproject:rio-api:5.2.2.classpath"/>
+    <path refid="library.gradle:_org.slf4j:slf4j-api:1.7.12.classpath"/>
+    <path refid="library.gradle:_ch.qos.logback:logback-classic:1.1.3.classpath"/>
+    <path refid="library.gradle:_net.jini:jsk-resources:2.2.2.classpath"/>
+    <path refid="library.gradle:_net.jini.lookup:serviceui:2.2.2.classpath"/>
+    <path refid="library.gradle:_net.jini:jsk-dl:2.2.2.classpath"/>
+    <path refid="library.gradle:_ch.qos.logback:logback-core:1.1.3.classpath"/>
+    <pathelement location="${webster.output.dir}"/>
+    <path refid="library.gradle:_org.rioproject:rio-platform:5.2.2.classpath"/>
+    <path refid="library.gradle:_org.apache.river:start:2.2.2.classpath"/>
+    <pathelement location="${sorcer-resolving-loader.output.dir}"/>
+    <pathelement location="C:/Program Files/Java/jdk1.8.0_40/lib/tools.jar"/>
+    <path refid="library.gradle:_net.jini:jsk-lib:2.2.2.classpath"/>
+    <path refid="library.gradle:_org.rioproject:rio-lib:5.2.2.classpath"/>
+    <path refid="library.gradle:_org.rioproject.monitor:monitor-api:5.2.2.classpath"/>
+    <path refid="library.gradle:_org.rioproject.cybernode:cybernode-api:5.2.2.classpath"/>
+    <path refid="library.gradle:_com.sleepycat:je:5.0.104.classpath"/>
+    <path refid="library.gradle:_org.dancres:lockmgr:2.1.7.classpath"/>
+    <path refid="library.gradle:_javax.inject:javax.inject:1.classpath"/>
+    <path refid="library.gradle:_com.google.guava:guava:16.0.1.classpath"/>
+    <path refid="library.gradle:_org.codehaus.plexus:plexus-utils:3.0.15.classpath"/>
+    <path refid="library.gradle:_commons-io:commons-io:2.4.classpath"/>
+    <path refid="library.gradle:_org.apache.commons:commons-exec:1.3.classpath"/>
+    <path refid="library.gradle:_org.rioproject:rio-logging-support:5.2.2.classpath"/>
+    <path refid="library.gradle:_org.rioproject:rio-proxy:5.2.2.classpath"/>
+    <path refid="library.gradle:_org.codehaus.groovy:groovy-all:2.3.8.classpath"/>
+    <pathelement location="${sorcer-lib.output.dir}"/>
+    <pathelement location="${sos-db-prv.output.dir}"/>
+  </path>
+  
+  <path id="worker.runtime.production.module.classpath">
+    <pathelement location="${worker.output.dir}"/>
+    <path refid="sorcer-platform.runtime.production.module.classpath"/>
+    <path refid="sorcer-lib.runtime.production.module.classpath"/>
+    <path refid="sos-db-prv.runtime.production.module.classpath"/>
+  </path>
+  
+  <path id="worker.module.classpath">
+    <path refid="${module.jdk.classpath.worker}"/>
+    <pathelement location="${worker.output.dir}"/>
+    <pathelement location="${sorcer-platform.testoutput.dir}"/>
+    <pathelement location="${sorcer-platform.output.dir}"/>
+    <pathelement location="${sorcer-dl.testoutput.dir}"/>
+    <pathelement location="${sorcer-dl.output.dir}"/>
+    <path refid="library.gradle:_net.jini:jsk-platform:2.2.2.classpath"/>
+    <path refid="library.gradle:_org.rioproject:rio-api:5.2.2.classpath"/>
+    <path refid="library.gradle:_org.slf4j:slf4j-api:1.7.12.classpath"/>
+    <path refid="library.gradle:_ch.qos.logback:logback-classic:1.1.3.classpath"/>
+    <path refid="library.gradle:_net.jini:jsk-resources:2.2.2.classpath"/>
+    <path refid="library.gradle:_net.jini.lookup:serviceui:2.2.2.classpath"/>
+    <path refid="library.gradle:_net.jini:jsk-dl:2.2.2.classpath"/>
+    <path refid="library.gradle:_ch.qos.logback:logback-core:1.1.3.classpath"/>
+    <pathelement location="${webster.testoutput.dir}"/>
+    <pathelement location="${webster.output.dir}"/>
+    <path refid="library.gradle:_org.rioproject:rio-platform:5.2.2.classpath"/>
+    <path refid="library.gradle:_org.apache.river:start:2.2.2.classpath"/>
+    <pathelement location="${sorcer-resolving-loader.testoutput.dir}"/>
+    <pathelement location="${sorcer-resolving-loader.output.dir}"/>
+    <pathelement location="C:/Program Files/Java/jdk1.8.0_40/lib/tools.jar"/>
+    <path refid="library.gradle:_net.jini:jsk-lib:2.2.2.classpath"/>
+    <path refid="library.gradle:_org.rioproject:rio-lib:5.2.2.classpath"/>
+    <path refid="library.gradle:_org.rioproject.monitor:monitor-api:5.2.2.classpath"/>
+    <path refid="library.gradle:_org.rioproject.cybernode:cybernode-api:5.2.2.classpath"/>
+    <path refid="library.gradle:_com.sleepycat:je:5.0.104.classpath"/>
+    <path refid="library.gradle:_org.dancres:lockmgr:2.1.7.classpath"/>
+    <path refid="library.gradle:_javax.inject:javax.inject:1.classpath"/>
+    <path refid="library.gradle:_com.google.guava:guava:16.0.1.classpath"/>
+    <path refid="library.gradle:_org.codehaus.plexus:plexus-utils:3.0.15.classpath"/>
+    <path refid="library.gradle:_commons-io:commons-io:2.4.classpath"/>
+    <path refid="library.gradle:_org.apache.commons:commons-exec:1.3.classpath"/>
+    <path refid="library.gradle:_org.rioproject:rio-logging-support:5.2.2.classpath"/>
+    <path refid="library.gradle:_org.rioproject:rio-proxy:5.2.2.classpath"/>
+    <path refid="library.gradle:_org.codehaus.groovy:groovy-all:2.3.8.classpath"/>
+    <pathelement location="${sorcer-lib.testoutput.dir}"/>
+    <pathelement location="${sorcer-lib.output.dir}"/>
+    <pathelement location="${sos-db-prv.testoutput.dir}"/>
+    <pathelement location="${sos-db-prv.output.dir}"/>
+    <path refid="library.gradle:_junit:junit:4.12.classpath"/>
+    <path refid="library.gradle:_junit-addons:junit-addons:1.4.classpath"/>
+    <path refid="library.gradle:_org.hamcrest:hamcrest-core:1.3.classpath"/>
+    <path refid="library.gradle:_xerces:xercesimpl:2.6.2.classpath"/>
+    <path refid="library.gradle:_xerces:xmlparserapis:2.6.2.classpath"/>
+  </path>
+  
+  <path id="worker.runtime.module.classpath">
+    <pathelement location="${worker.testoutput.dir}"/>
+    <pathelement location="${worker.output.dir}"/>
+    <path refid="sorcer-platform.runtime.module.classpath"/>
+    <path refid="sorcer-lib.runtime.module.classpath"/>
+    <path refid="sos-db-prv.runtime.module.classpath"/>
+    <path refid="library.gradle:_org.slf4j:slf4j-api:1.7.12.classpath"/>
+    <path refid="library.gradle:_ch.qos.logback:logback-classic:1.1.3.classpath"/>
+    <path refid="library.gradle:_ch.qos.logback:logback-core:1.1.3.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.worker">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.worker">
+    <patternset refid="excluded.from.module.worker"/>
+  </patternset>
+  
+  <path id="worker.module.sourcepath">
+    <dirset dir="${module.worker.basedir}">
+      <include name="src/main/java"/>
+      <include name="src/main/resources"/>
+    </dirset>
+  </path>
+  
+  <path id="worker.module.test.sourcepath">
+    <dirset dir="${module.worker.basedir}">
+      <include name="src/test/java"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.worker" depends="compile.module.worker.production,compile.module.worker.tests" description="Compile module worker"/>
+  
+  <target name="compile.module.worker.production" depends="register.custom.compilers,compile.module.sorcer-platform,compile.module.sorcer-lib,compile.module.sos-db-prv" description="Compile module worker; production classes">
+    <mkdir dir="${worker.output.dir}"/>
+    <javac2 destdir="${worker.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.worker}/javac">
+      <compilerarg line="${compiler.args.worker}"/>
+      <bootclasspath refid="worker.module.bootclasspath"/>
+      <classpath refid="worker.module.production.classpath"/>
+      <src refid="worker.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.worker"/>
+    </javac2>
+    
+    <copy todir="${worker.output.dir}">
+      <fileset dir="${module.worker.basedir}/src/main/java">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+      <fileset dir="${module.worker.basedir}/src/main/resources">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.worker.tests" depends="register.custom.compilers,compile.module.worker.production" description="compile module worker; test classes" unless="skip.tests">
+    <mkdir dir="${worker.testoutput.dir}"/>
+    <javac2 destdir="${worker.testoutput.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.worker}/javac">
+      <compilerarg line="${compiler.args.worker}"/>
+      <bootclasspath refid="worker.module.bootclasspath"/>
+      <classpath refid="worker.module.classpath"/>
+      <src refid="worker.module.test.sourcepath"/>
+      <patternset refid="excluded.from.compilation.worker"/>
+    </javac2>
+    
+    <copy todir="${worker.testoutput.dir}">
+      <fileset dir="${module.worker.basedir}/src/test/java">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="clean.module.worker" description="cleanup module">
+    <delete dir="${worker.output.dir}"/>
+    <delete dir="${worker.testoutput.dir}"/>
+  </target>
+</project>

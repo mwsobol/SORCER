@@ -1,0 +1,63 @@
+1.
+Test wykrywaj¹cy addRecipe15
+Mo¿na dodaæ do 4 przepisów, a maxymalnie powinny byæ 3.
+ private final int NUM_RECIPES = 4;
+Nale¿y zmieniæ NUM_RECIPES = 3
+2.
+Test wykrywaj¹cy makeCoffe
+inventory.setCoffee(inventory.getCoffee() + r.getAmtCoffee());
+Podczas przygotowania do zapasów dodawana jest iloœæ kawy
+potrzebna na przygotowanie receptury, a powinna byæ odejmowana.
+inventory.setCoffee(inventory.getCoffee() - r.getAmtCoffee());
+3. Test wykrywaj¹cy addInventory1
+if(amtCoffee < 0 || amtMilk < 0 || amtSugar > 0 || amtChocolate < 0) { 
+   canAddInventory = false;
+}
+Podczas dodawania do inventory wiêkszej iloœci cukru ni¿ 0,
+nie ma mo¿liwoœci dodania. Powinno byæ
+if(amtCoffee < 0 || amtMilk < 0 || amtSugar < 0 || amtChocolate < 0) { 
+   canAddInventory = false;
+}
+4. Test wykrywaj¹cy editRecipe2
+metoda edytuj¹ca przepis podczas edycji porównuje zamiast
+starego obiektu nowy 
+if(recipeArray[i].getName() != null) {
+             if(newRecipe.equals(recipeArray[i])) {
+              recipeArray[i] = new Recipe();
+    	      if(addRecipe(newRecipe)) {
+               canEditRecipe = true;
+              } else {
+               //Unreachable line of code
+               canEditRecipe = false;
+              }
+	}
+}
+Powinno siê mieniæ na 
+	if(oldRecipe.equals(recipeArray[i])) {
+              recipeArray[i] = new Recipe();
+     	      recipeFull[i] = false;
+              if(addRecipe(newRecipe)) {
+               canEditRecipe = true;
+              } else {
+               //Unreachable line of code
+               canEditRecipe = false;
+              }
+	}
+
+5. Test wykrywaj¹cy deleteRecipe
+W metodzie deleteRecipe nie jest usuwana recipe 
+ if(r.equals(recipeArray[i])) {
+       recipeArray[i] = recipeArray[i]; 
+       canDeleteRecipe = true;
+   }
+Powinno byæ
+ if(r.equals(recipeArray[i])) {
+       recipeArray[i] = new Recipe(); 
+       recipeFull[i] = false;
+       canDeleteRecipe = true;
+   }
+
+
+
+
+
