@@ -254,7 +254,7 @@ public class CoffeeMaker implements CoffeeMaking, CoffeeService {
 			amtPaid  = (Integer)context.getValue("coffee/paid");
 		Recipe r = getRecipeForName(recipeName);
 		if (amtPaid != 0)
-			context.putValue("change", makeCoffee(r, amtPaid));
+			context.putValue("coffee/change", makeCoffee(r, amtPaid));
 		context.putValue("price", r.getPrice());
 
 		if (context.getReturnPath() != null) {

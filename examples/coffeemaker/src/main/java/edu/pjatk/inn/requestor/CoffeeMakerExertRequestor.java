@@ -2,9 +2,6 @@ package edu.pjatk.inn.requestor;
 
 import edu.pjatk.inn.coffeemaker.CoffeeService;
 import edu.pjatk.inn.coffeemaker.Delivery;
-import edu.pjatk.inn.coffeemaker.impl.CoffeeMaker;
-import edu.pjatk.inn.coffeemaker.impl.DeliveryImpl;
-import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.core.requestor.ExertRequestor;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
@@ -13,9 +10,7 @@ import java.io.File;
 
 import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
-import static sorcer.mo.operator.response;
 import static sorcer.mo.operator.responseUp;
-import static sorcer.eo.operator.result;
 import static sorcer.po.operator.invoker;
 
 public class CoffeeMakerExertRequestor extends ExertRequestor {
@@ -32,7 +27,7 @@ public class CoffeeMakerExertRequestor extends ExertRequestor {
         }
         try {
             if (option.equals("netlet")) {
-                return (Exertion) evaluate(new File("src/main/netlets/coffeeMaker.ntl"));
+                return (Exertion) evaluate(new File("src/main/netlets/coffeemaker-exertion-remote.ntl"));
             } else if (option.equals("model")) {
                 return createModel();
             } else if (option.equals("exertion")) {
@@ -59,13 +54,16 @@ public class CoffeeMakerExertRequestor extends ExertRequestor {
         Task coffee = task("coffee", sig("makeCoffee", CoffeeService.class), context(
                 ent("recipe/name", "espresso"),
                 ent("coffee/paid", 120),
+                ent("coffee/change"),
                 ent("recipe", getEspressoContext())));
 
         Task delivery = task("delivery", sig("deliver", Delivery.class), context(
                 ent("location", "PJATK"),
+                ent("delivery/paid"),
                 ent("room", "101")));
 
-        Job drinkCoffee = job(coffee, delivery);
+        Job drinkCoffee = job(coffee, delivery,
+                pipe(outPoint(coffee, "coffee/change"), inPoint(delivery, "delivery/paid")));
 
         return drinkCoffee;
     }
