@@ -13,6 +13,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
@@ -22,12 +23,21 @@ import java.util.Properties;
 @SuppressWarnings("rawtypes")
 public class ScannerImpl implements Scanner {
 
-    private static final String latteCode = Scanner.latteCode;
-    private static final String cappuccinoCode = Scanner.cappuccinoCode;
-    private static final String chocoCode = Scanner.chocoCode;
+    private static final String latteCode = "c1,m1,s2,ch0,p123,Latte";
+    private static final String cappuccinoCode = "c2,m1,s1,ch0,p32,Cappuccino";
+    private static final String chocoCode = "c0,m1,s2,ch1,p23,Choco";
+
+    protected static List<String> recipesCode;
+
+    public ScannerImpl() {
+        recipesCode = new ArrayList<>();
+        recipesCode.add(latteCode);
+        recipesCode.add(cappuccinoCode);
+        recipesCode.add(chocoCode);
+    }
 
     public static final String RESULT_PATH = "result/value";
-
+    public static final String RESULT_STATUS = "result/status";
     private ServiceProvider provider;
 
     private static Logger logger = LoggerFactory.getLogger(ScannerImpl.class.getName());
@@ -44,24 +54,46 @@ public class ScannerImpl implements Scanner {
 
         List<String> inputs = cxt.getInValues();
         logger.info("inputs: " + inputs);
-        List<String> outpaths = cxt.getOutPaths();
-        logger.info("outpaths: " + outpaths);
-        Recipe recipe = decode(inputs.get(0));
+        List<String> outputs = cxt.getOutPaths();
+        logger.info("outputs: " + outputs);
+
+
         // update the service context
         if (provider != null)
             cxt.putValue("scanner/provider", provider.getProviderName());
         else
             cxt.putValue("scanner/provider", getClass().getName());
-        if (cxt.getReturnPath() != null) {
-            cxt.setReturnValue(recipe);
-        } else if (outpaths.size() == 1) {
-            // put the result in the existing output path
-            cxt.putValue(outpaths.get(0), recipe);
+        if (isRecipeCodeExist(inputs.get(0))) {
+            Recipe recipe = decode(inputs.get(0));
+            cxt.putValue(RESULT_STATUS, true);
+            if (cxt.getReturnPath() != null) {
+                cxt.setReturnValue(recipe);
+            } else if (outputs.size() == 1) {
+                // put the result in the existing output path
+                cxt.putValue(outputs.get(0), recipe);
+            } else {
+                cxt.putValue(RESULT_PATH, recipe);
+            }
         } else {
-            cxt.putValue(RESULT_PATH, recipe);
+            cxt.putValue(RESULT_STATUS, false);
+            cxt.putValue(RESULT_PATH, "Sorry");
         }
-
         return cxt;
+    }
+
+    protected boolean isRecipeCodeExist(String recipeCode) {
+        final boolean[] is = new boolean[1];
+        /*recipesCode.forEach(s -> {
+            if (s.equals(recipeCode)) {
+                is[0] = true;
+            } else is[0] = false;
+        });*/
+        for(int i=0; i<=recipesCode.size()-1;i++){
+            if(recipesCode.get(i).equals(recipeCode)){
+                is[0]=true;
+            }
+        }
+        return is[0];
     }
 
     protected Recipe decode(String code) {
