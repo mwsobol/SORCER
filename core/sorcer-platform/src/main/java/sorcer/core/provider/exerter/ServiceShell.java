@@ -45,16 +45,15 @@ import sorcer.core.signature.NetSignature;
 import sorcer.core.signature.NetletSignature;
 import sorcer.core.signature.ObjectSignature;
 import sorcer.core.signature.ServiceSignature;
-import sorcer.core.signature.ServiceSignature.*;
 import sorcer.jini.lookup.ProviderID;
 import sorcer.netlet.ScriptExerter;
 import sorcer.service.*;
 import sorcer.service.Exec.State;
+import sorcer.service.Signature.ReturnPath;
 import sorcer.service.Strategy.Access;
 import sorcer.service.modeling.Model;
 import sorcer.service.txmgr.TransactionManagerAccessor;
 import sorcer.util.Sorcer;
-import sorcer.service.Signature.ReturnPath;
 
 import java.io.File;
 import java.rmi.RemoteException;
@@ -78,7 +77,7 @@ public class ServiceShell implements RemoteServiceShell, Requestor, Callable {
 	private File mogramSource;
 	private Transaction transaction;
 	private static MutualExclusion locker;
-	// a refrence to a provider running this mogram
+	// a reference to a provider running this mogram
 	private Exerter provider;
 	private static LoadingCache<Signature, Object> proxies;
 
@@ -104,12 +103,11 @@ public class ServiceShell implements RemoteServiceShell, Requestor, Callable {
 	private static void setupProxyCache() {
 		if (proxies == null) {
 			proxies = CacheBuilder.newBuilder()
-					.maximumSize(20)
-					.expireAfterWrite(30, TimeUnit.MINUTES)
-//				.removalListener(null)
-					.build(new CacheLoader<Signature, Object>() {
-						public Object load(Signature signature) {
-							return Accessor.get().getService(signature);
+						  .maximumSize(20)
+						  .expireAfterWrite(30, TimeUnit.MINUTES)
+						  .build(new CacheLoader<Signature, Object>() {
+							  public Object load(Signature signature) {
+								  return Accessor.get().getService(signature);
 						}
 					});
 		}
@@ -406,7 +404,7 @@ public class ServiceShell implements RemoteServiceShell, Requestor, Callable {
 			}
 			provider = ((NetSignature) signature).getProvider();
 			if (provider == null) {
-                // check proxy cache amd ping with a provider name
+                // check proxy cache and ping with a provider name
 				try {
 					provider = proxies.get(signature);
 					((Provider)provider).getProviderName();

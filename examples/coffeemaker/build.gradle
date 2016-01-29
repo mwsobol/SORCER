@@ -119,6 +119,21 @@ task runCoffeemaker(type:JavaExec, dependsOn:[install]) {
     standardInput = System.in
 }
 
+//task runRequestor(type:JavaExec, dependsOn:[jar, "bootme"]) {
+task runRequestor(type:JavaExec, dependsOn:[install]) {
+    description = 'Runs a service requestor executing a local or remote service.'
+    main = "sorcer.core.requestor.ExertRequestor"
+    classpath = sourceSets.main.runtimeClasspath
+    systemProperty "java.rmi.server.codebase",
+            "${websterUrl}/${repoPath()}/coffeemaker-${version}-dl.jar ${websterUrl}/sorcer-dl-${version}.jar ${websterUrl}/jsk-dl-${riverVersion}.jar"
+
+    dependsOn([install, bootme])
+  args = ["edu.pjatk.inn.requestor.CoffeeMakerExertRequestor", "netlet"]
+//    args = ["edu.pjatk.inn.requestor.CoffeeMakerExertRequestor", "exertion"]
+//    args = ["edu.pjatk.inn.requestor.CoffeeMakerExertRequestor", "model"]
+    finalizedBy (stopme)
+}
+
 test {
     description = 'Tests local and remote services with JUnit test case.'
     systemProperty "java.rmi.server.codebase",
@@ -127,7 +142,7 @@ test {
     testLogging {
         events "passed", "skipped", "failed"/*, "standardOut", "standardError"*/
     }
-//    dependsOn([install])
+    dependsOn([install])
     dependsOn([install, bootme])
     finalizedBy(stopme)
 }
