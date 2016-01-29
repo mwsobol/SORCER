@@ -49,7 +49,7 @@ public interface CoffeeMaking {
      * @param amtChocolate
      * @return boolean
      */
-    public boolean addInventory(int amtCoffee, int amtMilk, int amtSugar, int amtChocolate) throws RemoteException;
+    public boolean addInventory(Object amtCoffee, Object amtMilk, Object amtSugar, Object amtChocolate) throws RemoteException;
     
     /**
      * Returns the inventory of the coffee maker

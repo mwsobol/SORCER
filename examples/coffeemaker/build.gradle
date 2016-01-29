@@ -42,6 +42,7 @@ task servicePrvDlJar(type: Jar) {
     include('edu/pjatk/inn/coffeemaker/*')
     include('edu/pjatk/inn/coffeemaker/impl/Recipe.class')
     include('edu/pjatk/inn/coffeemaker/impl/Inventory.class')
+    include('edu/pjatk/inn/coffeemaker/impl/ScannerImpl.class')
     from sourceSets.main.resources
     include('sorcer.jpg')
 }
@@ -90,6 +91,12 @@ bootme {
 //    spawn = false
 //    debug = true
 }
+
+/*bootQr{
+    description = 'Starts up a service provider'
+    starterConfig = file("${projectDir.path}/configs/ScannerPrvConfig.groovy")
+    systemProperties = ["relative.repo.path" : repoPath()]
+}*/
 
 def script = "${project.buildDir}/bin/${project.name}.sh"
 

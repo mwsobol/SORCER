@@ -1,0 +1,8 @@
+1. Possibility to add more than 3 recipes.(4)
+2. Possibility to set recipe with the name that already exists.(edit recipe, searching by newRecipe instead of oldRecipe),  newRecipe.equals(recipeArray[i]) changed to oldRecipe.equals(recipeArray[i])
+3. Possibility to add non positive amount of amtSugar(addInventory).
+4. The amount of Coffee was adding instead of be removed from inventory after purchaseBeverage(makeCoffee)
+5. RecipeFull was not updating while deleteRecipe method, recipe was not deleting recipeArray[i] = new Recipe();.
+
+Additional bugs:
+1. In addInventory method all parameters should be Object. (Changed)
