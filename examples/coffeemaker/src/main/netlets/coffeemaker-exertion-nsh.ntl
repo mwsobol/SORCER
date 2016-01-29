@@ -1,8 +1,8 @@
+#!/usr/bin/env nsh
+
+@Codebase(group='org.sorcer', module='coffeemaker', version='${sorcer.version}', classifier='dl')
 import edu.pjatk.inn.coffeemaker.CoffeeService
 import edu.pjatk.inn.coffeemaker.Delivery
-import sorcer.service.*
-import static sorcer.co.operator.*
-import static sorcer.eo.operator.*
 
 Context espresso = context(ent("name", "espresso"), ent("price", 50),
                 ent("amtCoffee", 6), ent("amtMilk", 0),

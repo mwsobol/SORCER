@@ -113,10 +113,11 @@ task runCoffeemaker(type:JavaExec, dependsOn:[install]) {
 }
 
 //task runRequestor(type:JavaExec, dependsOn:[jar, "bootme"]) {
-task runRequestor(type:JavaExec, dependsOn:[install]) {
+task runRequestor(type:JavaExec, dependsOn:[jar]) {
     description = 'Runs a service requestor executing a local or remote service.'
     main = "sorcer.core.requestor.ExertRequestor"
     classpath = sourceSets.main.runtimeClasspath
+    systemProperty "project.version", "${version}"
     systemProperty "java.rmi.server.codebase",
             "${websterUrl}/${repoPath()}/coffeemaker-${version}-dl.jar ${websterUrl}/sorcer-dl-${version}.jar ${websterUrl}/jsk-dl-${riverVersion}.jar"
 
