@@ -1,0 +1,34 @@
+#!/usr/bin/env nsh
+
+
+@Codebase(group='org.sorcer', module='coffeemaker', version='${sorcer.version}', classifier='dl')
+import edu.pjatk.inn.coffeemaker.Delivery
+import edu.pjatk.inn.coffeemaker.Scanner
+import edu.pjatk.inn.coffeemaker.CoffeeService
+import static sorcer.co.operator.inEnt
+import static sorcer.eo.operator.*
+
+
+String codeRecipe = "c1,m1,s2,ch0,p123,latte";
+int paid = 200;
+
+        Task scanner = task("hello scanner", sig("scan", Scanner.class), context("scanner", inEnt("code", codeRecipe)));
+
+        Task coffee = task("coffee", sig("makeCoffee", CoffeeService.class), context(
+                ent("recipe/name", "latte"),
+                ent("coffee/paid", paid),
+                ent("coffee/change"),
+                ent("recipe")));
+
+        Task delivery = task("delivery", sig("deliver", Delivery.class), context(
+                        ent("location", "PJATK"),
+                        ent("delivery/paid"),
+                        ent("room", "Duza alua")));
+         if(get(exert(scanner),"result/status")){
+                job(scanner, coffee, delivery,
+                        pipe(outPoint(scanner, "result/value"), inPoint(coffee, "recipe")),
+                        pipe(outPoint(coffee, "coffee/change"), inPoint(delivery, "delivery/paid"))
+                );
+         } else{
+          scanner;
+         }

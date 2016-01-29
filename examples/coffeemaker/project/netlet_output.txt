@@ -1,0 +1,67 @@
+Context name: job-85
+
+  subject: job/data/context:job-85
+
+Context name: unknown83
+  coffee/change = 77
+  coffee/paid = 200
+  price = 123
+  recipe = Context name: unknown23
+  amtChocolate = 0
+  amtCoffee = 1
+  amtMilk = 1
+  amtSugar = 2
+  name = latte
+  price = 123
+  recipe/added = false
+  recipe/name = latte
+  task/provider = CoffeeMaker-vital@172.23.66.83:172.23.66.83
+  job-85/coffee/coffee/change = 77
+  job-85/coffee/coffee/paid = 200
+  job-85/coffee/price = 123
+  job-85/coffee/recipe = Context name: unknown23
+  amtChocolate = 0
+  amtCoffee = 1
+  amtMilk = 1
+  amtSugar = 2
+  name = latte
+  price = 123
+  recipe/added = false
+  job-85/coffee/recipe/name = latte
+  job-85/coffee/task/provider = CoffeeMaker-vital@172.23.66.83:172.23.66.83
+Context name: unknown84
+  deliver/change = 17
+  delivery/cost = 60
+  delivery/paid = 77
+  location = PJATK
+  room = Duza alua
+  task/provider = Coffee Delivery-vital@172.23.66.83:172.23.66.83
+  job-85/delivery/deliver/change = 17
+  job-85/delivery/delivery/cost = 60
+  job-85/delivery/delivery/paid = 77
+  job-85/delivery/location = PJATK
+  job-85/delivery/room = Duza alua
+  job-85/delivery/task/provider = Coffee Delivery-vital@172.23.66.83:172.23.66.83
+Context name: scanner
+  code = c1,m1,s2,ch0,p123,latte
+  result/status = true
+  result/value = Context name: unknown23
+  amtChocolate = 0
+  amtCoffee = 1
+  amtMilk = 1
+  amtSugar = 2
+  name = latte
+  price = 123
+  scanner/provider = Scanner-vital
+  task/provider = Scanner-vital@172.23.66.83:172.23.66.83
+  job-85/hello scanner/code = c1,m1,s2,ch0,p123,latte
+  job-85/hello scanner/result/status = true
+  job-85/hello scanner/result/value = Context name: unknown23
+  amtChocolate = 0
+  amtCoffee = 1
+  amtMilk = 1
+  amtSugar = 2
+  name = latte
+  price = 123
+  job-85/hello scanner/scanner/provider = Scanner-vital
+  job-85/hello scanner/task/provider = Scanner-vital@172.23.66.83:172.23.66.83
