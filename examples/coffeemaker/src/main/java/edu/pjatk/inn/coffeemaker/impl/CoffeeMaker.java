@@ -265,15 +265,14 @@ public class CoffeeMaker implements CoffeeMaking, CoffeeService {
         context.putValue("getRecipes", rl);
         return context;
     }
-
-<<<<<<< HEAD
+/*
     @Override
     public Context makeCoffee(Context context) throws RemoteException, ContextException {
         String recipeName = (String) context.getValue("recipe/name");
         Recipe r = getRecipeForName(recipeName);
         context.putValue("", makeCoffee(r, r.getPrice()));
         context.putValue("price", r.getPrice());
-=======
+    }*/
 	@Override
 	public Context makeCoffee(Context context) throws RemoteException, ContextException {
 		String recipeName = (String)context.getValue("recipe/name");
@@ -287,7 +286,6 @@ public class CoffeeMaker implements CoffeeMaking, CoffeeService {
 		if (amtPaid != 0)
 			context.putValue("coffee/change", makeCoffee(r, amtPaid));
 		context.putValue("price", r.getPrice());
->>>>>>> refs/remotes/mwsobol/develop
 
         if (context.getReturnPath() != null) {
             context.setReturnValue(r.getPrice());

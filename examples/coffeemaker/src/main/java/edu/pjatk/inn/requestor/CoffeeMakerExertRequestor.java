@@ -2,6 +2,10 @@ package edu.pjatk.inn.requestor;
 
 import edu.pjatk.inn.coffeemaker.CoffeeService;
 import edu.pjatk.inn.coffeemaker.Delivery;
+import edu.pjatk.inn.coffeemaker.Scanner;
+import edu.pjatk.inn.coffeemaker.impl.Recipe;
+import edu.pjatk.inn.coffeemaker.impl.ScannerImpl;
+import sorcer.core.provider.Jobber;
 import sorcer.core.requestor.ExertRequestor;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
@@ -51,6 +55,7 @@ public class CoffeeMakerExertRequestor extends ExertRequestor {
     }
 
     private Exertion createExertion() throws Exception {
+       /*
         Task coffee = task("coffee", sig("makeCoffee", CoffeeService.class), context(
                 ent("recipe/name", "espresso"),
                 ent("coffee/paid", 120),
@@ -63,9 +68,35 @@ public class CoffeeMakerExertRequestor extends ExertRequestor {
                 ent("room", "101")));
 
         Job drinkCoffee = job(coffee, delivery,
-                pipe(outPoint(coffee, "coffee/change"), inPoint(delivery, "delivery/paid")));
+                pipe(outPoint(coffee, "coffee/change"), inPoint(delivery, "delivery/paid")));*/
 
-        return drinkCoffee;
+
+        String v1 = "c1,m1,s2,ch0,p123";
+        int v2 = 200;
+
+        Context cxt = context("scanner", inEnt("code", v1));
+        Task scanner = task("hello scanner", sig("scan", Scanner.class), cxt);
+
+        Task coffee = task("coffee", sig("makeCoffee", CoffeeService.class), context(
+                ent("recipe/name", "latte"),
+                ent("coffee/paid", 200),
+                ent("coffee/change"),
+                ent("recipe")));
+
+        Task delivery = task("delivery", sig("deliver", Delivery.class), context(
+                ent("location", "PJATK"),
+                ent("delivery/paid"),
+                ent("room", "room 110A")));
+        if ((Boolean) exert(scanner).getValue("result/status")) {
+            Job drinkCoffee = job(scanner, coffee, delivery,
+                    pipe(outPoint(scanner, "result/value"), inPoint(coffee, "recipe")),
+                    pipe(outPoint(coffee, "coffee/change"), inPoint(delivery, "delivery/paid"))
+            );
+            return drinkCoffee;
+        }else{
+            return exert(scanner);
+        }
+
     }
 
     private Model createModel() throws Exception {

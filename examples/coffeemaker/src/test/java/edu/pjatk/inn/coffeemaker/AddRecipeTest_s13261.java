@@ -4,6 +4,7 @@ import edu.pjatk.inn.coffeemaker.impl.CoffeeMaker;
 import edu.pjatk.inn.coffeemaker.impl.Inventory;
 import edu.pjatk.inn.coffeemaker.impl.ScannerImpl;
 import edu.pjatk.inn.coffeemaker.impl.Recipe;
+import edu.pjatk.inn.requestor.CoffeemakerRequestor;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -11,8 +12,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
-import sorcer.service.ContextException;
-import sorcer.service.Exertion;
+import sorcer.core.provider.Jobber;
+import sorcer.service.*;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -246,13 +247,30 @@ public class AddRecipeTest_s13261 {
 
         if (get(context(exert(cmt)), ScannerImpl.RESULT_STATUS).equals(true)) {
             logger.info("checkIf", "cooool");
-            logger.info("checkIf", get(context(cmt),ScannerImpl.RESULT_PATH));
+            logger.info("checkIf", get(context(cmt), ScannerImpl.RESULT_PATH));
 
         } else {
             logger.info("checkIf", "Baaadd");
-            logger.info("checkIf", get(context(cmt),ScannerImpl.RESULT_PATH));
+            logger.info("checkIf", get(context(cmt), ScannerImpl.RESULT_PATH));
         }
     }
 
+    @Test
+    public void test() throws Exception {
+        String v1 = "c1,m1,s2,ch0,p123,latte";
+        int v2 = 200;
 
+        Context cxt = context("scanner", inEnt("code", v1));
+        Task scanner = task("hello scanner", sig("scan", ScannerImpl.class), cxt);
+
+        Task coffee = task("coffee", sig("makeCoffee", CoffeeMaker.class), context(
+                ent("recipe/name", "latte"),
+                ent("coffee/paid", 200),
+                ent("coffee/change"),
+                ent("recipe")));
+
+        Job drinkCoffee = job(scanner, coffee,
+                pipe(outPoint(scanner, "result/value"), inPoint(coffee, "recipe")));
+
+    }
 }

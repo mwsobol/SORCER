@@ -17,13 +17,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import static sorcer.co.operator.ent;
+import static sorcer.eo.operator.context;
+
 /**
  * Created by vital on 01/28/16.
  */
 @SuppressWarnings("rawtypes")
 public class ScannerImpl implements Scanner {
 
-    private static final String latteCode = "c1,m1,s2,ch0,p123,Latte";
+    private static final String latteCode = "c1,m1,s2,ch0,p123,latte";
     private static final String cappuccinoCode = "c2,m1,s1,ch0,p32,Cappuccino";
     private static final String chocoCode = "c0,m1,s2,ch1,p23,Choco";
 
@@ -66,19 +69,26 @@ public class ScannerImpl implements Scanner {
         if (isRecipeCodeExist(inputs.get(0))) {
             Recipe recipe = decode(inputs.get(0));
             cxt.putValue(RESULT_STATUS, true);
+            //cxt = (PositionalContext) getRecipeContext(recipe);
             if (cxt.getReturnPath() != null) {
-                cxt.setReturnValue(recipe);
+                cxt.setReturnValue(getRecipeContext(recipe));
             } else if (outputs.size() == 1) {
                 // put the result in the existing output path
-                cxt.putValue(outputs.get(0), recipe);
+                cxt.putValue(outputs.get(0), getRecipeContext(recipe));
             } else {
-                cxt.putValue(RESULT_PATH, recipe);
+                cxt.putValue(RESULT_PATH, getRecipeContext(recipe));
             }
         } else {
             cxt.putValue(RESULT_STATUS, false);
-            cxt.putValue(RESULT_PATH, "Sorry");
+            cxt.putValue(RESULT_PATH, "Sorry, you sent incorrect code!!!");
         }
         return cxt;
+    }
+
+    public static Context getRecipeContext(Recipe recipe) throws ContextException {
+        return context( ent("name", recipe.getName()), ent("price", recipe.getPrice()),
+                ent("amtCoffee", recipe.getAmtCoffee()), ent("amtMilk", recipe.getAmtMilk()),
+                ent("amtSugar", recipe.getAmtSugar()), ent("amtChocolate", recipe.getAmtChocolate()));
     }
 
     protected boolean isRecipeCodeExist(String recipeCode) {
