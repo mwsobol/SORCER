@@ -1,0 +1,19 @@
+#!/usr/bin/env nsh
+
+@Codebase(group='org.sorcer', module='coffeemaker', version='${sorcer.version}', classifier='dl')
+import edu.pjatk.inn.coffeemaker.CoffeeService
+import edu.pjatk.inn.coffeemaker.Delivery
+
+Task coffee = task("coffee", sig("makeCoffee", CoffeeService.class), context(
+        ent("recipe/name", "espresso"),
+        ent("coffee/paid", 120),
+        ent("coffee/change"),
+        ent("recipe", getEspressoContext())));
+
+Task delivery = task("delivery", sig("deliver", Delivery.class), context(
+        ent("location", "PJATK"),
+        ent("delivery/paid"),
+        ent("room", "101")));
+
+job(coffee, delivery,
+        pipe(outPoint(coffee, "coffee/change"), inPoint(delivery, "delivery/paid")));

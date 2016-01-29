@@ -30,7 +30,6 @@ import sorcer.service.modeling.Variability;
 import sorcer.util.Log;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

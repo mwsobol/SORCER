@@ -383,8 +383,10 @@ public class SorcerEnv extends SOS {
 				File file = new File(filename);
                 String fn = "configs/" + file.getName();
                 ClassLoader resourceLoader = Thread.currentThread().getContextClassLoader();
+				if(logger.isTraceEnabled()) {
+					logger.trace("Using {}: {}", resourceLoader.getClass().getName(), resourceLoader);
+				}
                 if(logger.isDebugEnabled()) {
-                    logger.debug("Using "+resourceLoader.getClass().getName()+": "+resourceLoader);
                     Enumeration<URL> resources = resourceLoader.getResources(fn);
                     StringBuilder sb = new StringBuilder();
                     while(resources.hasMoreElements()) {
