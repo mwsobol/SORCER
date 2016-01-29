@@ -2,6 +2,7 @@ package edu.pjatk.inn.coffeemaker;
 
 import edu.pjatk.inn.coffeemaker.impl.CoffeeMaker;
 import edu.pjatk.inn.coffeemaker.impl.Inventory;
+import edu.pjatk.inn.coffeemaker.impl.ScannerImpl;
 import edu.pjatk.inn.coffeemaker.impl.Recipe;
 import org.junit.Before;
 import org.junit.Test;
@@ -11,10 +12,14 @@ import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.service.ContextException;
+import sorcer.service.Exertion;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static sorcer.co.operator.at;
+import static sorcer.co.operator.inEnt;
+import static sorcer.eo.operator.*;
 
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/coffeemaker")
@@ -22,6 +27,7 @@ public class AddRecipeTest_s13261 {
   private final static Logger logger = LoggerFactory.getLogger(AddRecipeTest_s13261.class);
 
   private CoffeeMaker coffeeMaker;
+  private ScannerImpl qr;
   private Inventory inventory;
   private Recipe mocha, latte, coffee, hotChoco;
 
@@ -220,6 +226,17 @@ public class AddRecipeTest_s13261 {
   //There are no recipes to delete
   public void deleteRecipe2() {
     assertFalse(coffeeMaker.deleteRecipe(coffee));
+  }
+
+
+  @Test
+  //There are no recipes to delete
+  public void addQR() throws Exception {
+    Exertion cmt = task(sig("scan", ScannerImpl.class),
+            context("scanner", inEnt("code", Scanner.latteCode),at(ScannerImpl.RESULT_PATH,new Recipe()),result(ScannerImpl.RESULT_PATH)));
+
+    logger.info("Context: " + context(exert(cmt)));
+    //assertEquals(coffeeMaker.getRecipeForName("espresso").getName(), "espresso");
   }
 
 }

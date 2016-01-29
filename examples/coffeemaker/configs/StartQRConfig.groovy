@@ -36,7 +36,7 @@ class StartAll {
         String configPath = "${projectBuildDir}/../configs"
 
         def descriptors = []
-        def configArg = ["${configPath}/qr-prv.config"]
+        def configArg = ["${configPath}/scanner-prv.config"]
         def codebase = "${relativeRepoPath}/qr-${sorcerVersion}-dl.jar ${relativeRepoPath}/qr-${sorcerVersion}-ui.jar sorcer-dl-${sorcerVersion}.jar sorcer-ui-${sorcerVersion}.jar jsk-dl-${riverVersion}.jar"
 
         descriptors << new SorcerServiceDescriptor(codebase,

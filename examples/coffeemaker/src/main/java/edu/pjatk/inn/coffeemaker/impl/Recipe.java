@@ -241,9 +241,26 @@ public class Recipe implements Serializable {
      *
 	 * @return String The name of recipe.
 	 * */
-    public String toString() {
+   /* public String toString() {
     	return name;
-    }
+    }*/
+
+	/**
+	 * Returns the name of recipe.
+	 *
+	 * @return String The name of recipe.
+	 */
+	@Override
+	public String toString() {
+		return "Recipe{" +
+				"name='" + name + '\'' +
+				", price=" + price +
+				", amtCoffee=" + amtCoffee +
+				", amtMilk=" + amtMilk +
+				", amtSugar=" + amtSugar +
+				", amtChocolate=" + amtChocolate +
+				'}';
+	}
 
 	/**
 	 * Returns the recipe for coffee of the given Context.

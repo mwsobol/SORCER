@@ -15,6 +15,7 @@
  */
 package edu.pjatk.inn.coffeemaker.configs
 
+import edu.pjatk.inn.coffeemaker.impl.ScannerImpl
 import org.rioproject.config.Component
 
 import java.util.logging.Level
@@ -47,7 +48,7 @@ class QRPrvConfig {
      * @return An array of service implementation classes required to load the service
      */
     Class[] getBeanClasses() {
-        return [edu.pjatk.inn.coffeemaker.impl.QRImpl.class]
+        return [ScannerImpl.class]
     }
 
 
@@ -57,6 +58,6 @@ class QRPrvConfig {
 
     /* This is declared as a static property so the class below can reference it, and used by the published interfaces
      * method above. Removes duplication. */
-    static String interfaceClass = "edu.pjatk.inn.coffeemaker.QR.class"
+    static String interfaceClass = "edu.pjatk.inn.coffeemaker.Scanner.class"
 
 }

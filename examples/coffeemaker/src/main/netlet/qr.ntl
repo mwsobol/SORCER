@@ -17,15 +17,15 @@
 
 // Adder sorcer.netlet for testing the requestor of the examples/server project
 
-import edu.pjatk.inn.coffeemaker.QR
+import edu.pjatk.inn.coffeemaker.Scanner
 
 import static sorcer.co.operator.inEnt
 import static sorcer.eo.operator.*
 
-String v1 = "c1,m1,s2,ch0,p123";
+String v1 = "c1,m1,s2,ch0,p123,Latte";
 int v2 = 200;
 
-task("hello qr", sig("scan", QR.class),
-    context("qr", inEnt("code", v1), result("recipe")));
+task("hello scanner", sig("scan", Scanner.class),
+    context("scanner", inEnt("code", v1), result("recipe")));
 
 
