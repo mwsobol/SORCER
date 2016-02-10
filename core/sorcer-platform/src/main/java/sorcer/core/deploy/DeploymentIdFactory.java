@@ -47,15 +47,22 @@ public class DeploymentIdFactory {
         StringBuilder ssb = new StringBuilder();
         List<String> items = new ArrayList<String>();
         for (Signature s : list) {
-            items.add(s.getProviderName());
-            items.add(s.getServiceType().getName());
+            String item = String.format("%s%s", s.getProviderName(), s.getServiceType().getName());
+            if(!items.contains(item))
+                items.add(item);
         }
         java.util.Collections.sort(items);
         for (String item : items) {
             ssb.append(item);
         }
-        logger.debug("Create deployment name from: {}", ssb.toString());
-        return createDeploymentID(ssb.toString());
+
+        String deploymentID = createDeploymentID(ssb.toString());
+        if(logger.isDebugEnabled()) {
+            logger.debug("Create deployment name from Signature list: {}\nID: {}",
+                         ssb.toString(),
+                         deploymentID);
+        }
+        return deploymentID;
 
     }
 
@@ -78,8 +85,13 @@ public class DeploymentIdFactory {
         for (String item : items) {
             nameBuilder.append(item);
         }
-        logger.debug("Create deployment name from: {}", nameBuilder.toString());
-        return createDeploymentID(nameBuilder.toString());
+        String deploymentID = createDeploymentID(nameBuilder.toString());
+        if(logger.isDebugEnabled()) {
+            logger.debug("Create deployment name from service element: {}\nID: {}",
+                         nameBuilder.toString(),
+                         deploymentID);
+        }
+        return deploymentID;
     }
 
     static String createDeploymentID(final String ssb) throws NoSuchAlgorithmException {
