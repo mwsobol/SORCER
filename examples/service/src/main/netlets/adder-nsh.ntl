@@ -1,3 +1,4 @@
+#!/usr/bin/env nsh
 /*
  * Copyright to the original author or authors.
  *
@@ -14,11 +15,8 @@
  * limitations under the License.
  */
 
-// Adder sorcer.netlet for testing the requestor of the examples/server project
-
+@Codebase(group='org.sorcer', module='adder', version='${sorcer.version}', classifier='dl')
 import sorcer.provider.adder.Adder
-import static sorcer.co.operator.*
-import static sorcer.eo.operator.*
 
 Double v1 = 100.0;
 Double v2 = 200.0;

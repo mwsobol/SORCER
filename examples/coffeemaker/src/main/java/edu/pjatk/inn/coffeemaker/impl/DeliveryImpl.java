@@ -14,8 +14,11 @@ public class DeliveryImpl implements Delivery {
     @Override
     public Context deliver(Context context) throws RemoteException, ContextException {
         // from/to any place the flat rate $0.60
-        int flatRate = 60;
+        Integer flatRate = 60;
         context.putValue("delivery/cost", flatRate);
+        if (context.getValue("delivery/paid") != null) {
+            context.putValue("deliver/change", ((Integer) context.getValue("delivery/paid")) - flatRate);
+        }
 
         if (context.getReturnPath() != null) {
             context.setReturnValue(flatRate);
