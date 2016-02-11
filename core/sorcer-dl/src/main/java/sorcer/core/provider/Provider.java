@@ -17,28 +17,28 @@
 
 package sorcer.core.provider;
 
+import net.jini.admin.Administrable;
+import net.jini.core.entry.Entry;
+import net.jini.core.lookup.ServiceID;
+import org.slf4j.Logger;
+import sorcer.service.Monitorable;
+import sorcer.service.Service;
+
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.security.Policy;
 import java.util.List;
 import java.util.Properties;
-import org.slf4j.Logger;
-
-import net.jini.admin.Administrable;
-import net.jini.core.entry.Entry;
-import net.jini.core.lookup.ServiceID;
-import sorcer.service.Monitorable;
-import sorcer.service.Service;
 
 /**
  * This is an interface that defines how a provider interacts with other code 
- * the through the methods that are exposed. It extends {@link Service}, 
+ * the through the methods that are exposed. It extends {@link Service},
  * {@link sorcer.service.Monitorable}, and {@link Remote}.
  * @see Service
  * @see Monitorable
  * @see Remote
  */
-public interface Provider extends Service, Monitorable, Administrable, Remote {
+public interface Provider extends Service, Exerter, Monitorable, Administrable, Remote {
 
 	public ServiceID getProviderID() throws RemoteException;
 
@@ -65,7 +65,7 @@ public interface Provider extends Service, Monitorable, Administrable, Remote {
 	/**
 	 * Destroy the service, if possible, including its persistent storage.
 	 * 
-	 * @see sorcer.core.provider.base.Provider#destroy()
+	 * @see sorcer.core.provider.Provider#destroy()
 	 */
 	public void destroy() throws RemoteException;
 
@@ -73,7 +73,7 @@ public interface Provider extends Service, Monitorable, Administrable, Remote {
 	 * Destroy all services in this node (virtual machine) by calling each
 	 * destroy().
 	 * 
-	 * @see sorcer.core.provider.base.Provider#destroy()
+	 * @see sorcer.core.provider.Provider#destroy()
 	 */
 	public void destroyNode() throws RemoteException;
 	

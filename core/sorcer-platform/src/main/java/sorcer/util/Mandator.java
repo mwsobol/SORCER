@@ -20,7 +20,7 @@ package sorcer.util;
 import java.rmi.RemoteException;
 
 /**
- * This interface defines the remote method client can execute on the remote
+ * This interface defines the remote method client can exert on the remote
  * object via a Mandate argument.
  */
 public interface Mandator extends java.rmi.Remote {

@@ -15,10 +15,14 @@
  * limitations under the License.
  */
 
+
+
 @Codebase(group='org.sorcer', module='sml', version='${sorcer.version}', classifier='dl')
 @Load(group='org.sorcer', module='sml', version='${sorcer.version}')
 import static sorcer.co.operator.file
 
-String netlet = "/Volumes/SSSD/git/SORCER/examples/sml/src/main/netlets/ha-job-local.ntl";
+String sorcerVersion = property("sorcer.version")
+String netletArtifact = "org.sorcer:sml:ntl:ha-job-local:$sorcerVersion";
 
-provider(sig(file(netlet)))
+// a provider is a sevice job declared by the netletArtifact of a file
+provider(sig(file(netletArtifact)))

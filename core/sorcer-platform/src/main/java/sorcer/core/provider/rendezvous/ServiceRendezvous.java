@@ -45,7 +45,7 @@ public class ServiceRendezvous extends RendezvousBean implements Rendezvous, Spa
 	public ServiceRendezvous() throws RemoteException {
 	}
 	
-	public Mogram execute(Mogram mogram, Transaction txn)
+	public Mogram localExert(Mogram mogram, Transaction txn, Arg... args)
 			throws TransactionException, ExertionException, RemoteException {
 		Exertion exertion = (Exertion) mogram;
 		if (!isConfigured)
@@ -55,26 +55,26 @@ public class ServiceRendezvous extends RendezvousBean implements Rendezvous, Spa
 				throw new ExertionException(ex);
 			}
 		
-		logger.info("*********************************************ServiceRendezvous.execute, exertion = " + exertion);
+		logger.info("*********************************************ServiceRendezvous.exert, exertion = " + exertion);
 		if (exertion.isTask()) {
 			ServiceSpacer spacer = (ServiceSpacer) delegate
 					.getBean(Spacer.class);
-			return spacer.execute(exertion, txn);
+			return spacer.localExert(exertion, txn, args);
 		} else if (exertion instanceof Job) {
-			if (((ControlContext) exertion.getControlContext()).getAccessType() == Access.PUSH) {
+			if ((exertion.getControlContext()).getAccessType() == Access.PUSH) {
 				ServiceJobber jobber = (ServiceJobber) delegate
 						.getBean(Jobber.class);
-				return jobber.execute(exertion, txn);
-			} else if (((ControlContext) exertion.getControlContext())
+				return jobber.exert(exertion, txn, args);
+			} else if ((exertion.getControlContext())
 					.getAccessType() == Access.PULL) {
 				ServiceSpacer spacer = (ServiceSpacer) delegate
 						.getBean(Spacer.class);
-				return spacer.execute(exertion, txn);
+				return spacer.localExert(exertion, txn, args);
 			}
 		} else if (exertion instanceof Block) {
 			ServiceConcatenator concatenator = (ServiceConcatenator) delegate
 					.getBean(Concatenator.class);
-			return concatenator.execute(exertion, txn);
+			return concatenator.exert(exertion, txn, args);
 		}
 		throw new ExertionException("now rendevous service available for exertion of this type: " + exertion.getClass());
 	}

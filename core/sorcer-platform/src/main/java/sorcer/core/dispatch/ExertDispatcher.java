@@ -101,7 +101,7 @@ abstract public class ExertDispatcher implements Dispatcher {
         this.provisionManager = provisionManager;
     }
 
-    public void exec() {
+    public void exec(Arg... args) {
         dispatchers.put(xrt.getId(), this);
         state = Exec.RUNNING;
         xrt.setStatus(state);
@@ -110,7 +110,7 @@ abstract public class ExertDispatcher implements Dispatcher {
         }
         try {
             beforeParent(xrt);
-            doExec();
+            doExec(args);
             afterExec(xrt);
             xrt.finalizeOutDataContext();
         } catch (Exception e) {
@@ -129,7 +129,7 @@ abstract public class ExertDispatcher implements Dispatcher {
         }
     }
 
-    abstract protected void doExec() throws SignatureException, ExertionException, RemoteException, MogramException;
+    abstract protected void doExec(Arg... args) throws SignatureException, ExertionException, RemoteException, MogramException;
     abstract protected List<Mogram> getInputExertions() throws ContextException;
 
     protected void beforeParent(Exertion exertion) throws ContextException, ExertionException {
@@ -237,7 +237,7 @@ abstract public class ExertDispatcher implements Dispatcher {
         }
     }
 
-    protected void collectResults() throws ExertionException, SignatureException{}
+    protected void collectResults() throws ExertionException, SignatureException, RemoteException {}
     //protected abstract void dispatchExertions() throws ExertionException, SignatureException;
 
     protected void collectOutputs(Mogram mo) throws ContextException {

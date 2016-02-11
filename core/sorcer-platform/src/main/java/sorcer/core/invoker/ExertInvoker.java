@@ -16,21 +16,13 @@
  */
 package sorcer.core.invoker;
 
-import java.rmi.RemoteException;
-
 import net.jini.core.transaction.Transaction;
-import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.ServiceContext;
+import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.par.Par;
-import sorcer.service.Arg;
-import sorcer.service.ArgSet;
-import sorcer.service.Context;
-import sorcer.service.Exertion;
-import sorcer.service.InvocationException;
-import sorcer.service.Job;
-import sorcer.service.ServiceExertion;
-import sorcer.service.SetterException;
+import sorcer.service.*;
 import sorcer.service.Signature.ReturnPath;
+import java.rmi.RemoteException;
 
 /**
  * @author Mike Sobolewski
@@ -84,7 +76,7 @@ public class ExertInvoker extends ServiceInvoker implements ExertionInvoking {
 			if (returnPath != null) {
 				if (returnPath.path == null)
 					return cxt;
-				else if (returnPath.path.equals("self"))
+				else if (returnPath.path.equals(Signature.SELF))
 					return this;
 				else
 					return cxt.getReturnValue();

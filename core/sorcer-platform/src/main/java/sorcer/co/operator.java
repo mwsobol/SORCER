@@ -17,6 +17,9 @@
 package sorcer.co;
 
 import groovy.lang.Closure;
+import org.rioproject.resolver.Artifact;
+import org.rioproject.resolver.ResolverException;
+import org.rioproject.resolver.ResolverHelper;
 import sorcer.co.tuple.*;
 import sorcer.core.context.Copier;
 import sorcer.core.context.ListContext;
@@ -29,22 +32,30 @@ import sorcer.core.plexus.MultiFidelity;
 import sorcer.core.provider.DatabaseStorer;
 import sorcer.core.signature.NetletSignature;
 import sorcer.core.signature.ObjectSignature;
+import sorcer.core.signature.ServiceSignature;
 import sorcer.netlet.ScriptExerter;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
-import sorcer.service.modeling.Variability;
-import sorcer.util.*;
+import sorcer.service.modeling.Variability.Type;
+import sorcer.util.Loop;
+import sorcer.util.Response;
+import sorcer.util.Sorcer;
+import sorcer.util.Table;
 import sorcer.util.bdb.objects.UuidObject;
 import sorcer.util.url.sos.SdbUtil;
+import sorcer.service.Signature.ReturnPath;
 
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.*;
-import java.util.Collections;
+import java.util.concurrent.Callable;
+
+import static sorcer.po.operator.invoker;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class operator {
@@ -115,17 +126,35 @@ public class operator {
 		return ((ServiceContext)context).getOutPaths();
 	}
 
-	public static Signature.From outPaths(String... elems) {
-		return new Signature.From(elems);
+	public static ServiceSignature.Out outPaths(String... elems) {
+		return new ServiceSignature.Out(elems);
 	}
 
-    public static Signature.In inPaths(String... elems) {
-        return new Signature.In(elems);
-    }
+	public static ServiceSignature.Out outPaths(Path... elems) {
+		return new ServiceSignature.Out(elems);
+	}
+
+	public static ServiceSignature.In inPaths(String... elems) {
+		return new ServiceSignature.In(elems);
+	}
+
+	public static ServiceSignature.In inPaths(Path... elems) {
+		return new ServiceSignature.In(elems);
+	}
 
 	public static Path file(String filename) {
+		if(Artifact.isArtifact(filename)) {
+			try {
+				URL url = ResolverHelper.getResolver().getLocation(filename, "ntl");
+				File file = new File(url.toURI());
+				return new Path(file.getPath());
+			} catch (ResolverException | URISyntaxException e) {
+				e.printStackTrace();
+			}
+		}
 		return new Path (filename);
 	}
+
 	public static Class[] types(Class... classes) {
 		return classes;
 	}
@@ -146,9 +175,6 @@ public class operator {
 		T[] na = (T[]) Array.newInstance(list.get(0).getClass(), list.size());
 		return list.toArray(na);
 
-	}
-	public static Arg[] args(Arg... elems) {
-		return elems;
 	}
 
 	public static Set<Object> bag(Object... elems) {
@@ -207,7 +233,7 @@ public class operator {
 		return out;
 	}
 
-	public static <T1, T2> Tuple2<T1, T2> duo(T1 x1, T2 x2) {
+	public static <T1, T2> Tuple2<T1, T2> assoc(T1 x1, T2 x2) {
 		return new Tuple2<T1, T2>(x1, x2);
 	}
 
@@ -246,14 +272,22 @@ public class operator {
 		return service;
 	}
 
-	public static Srv srv(String name, Identifiable item) {
+    public static Srv srv(String name, Identifiable item) {
+        return srv(name,  item,  null);
+    }
+
+    public static Srv srv(Identifiable item, Context context) {
+        return srv(null,  item,  context);
+    }
+
+	public static Srv srv(String name, Identifiable item, Context context) {
 		String srvName = item.getName();
 		if (name != null)
 			srvName = name;
 
 		if (item instanceof Signature) {
 			return new Srv(srvName,
-					new SignatureEntry(item.getName(), (Signature) item));
+					new SignatureEntry(item.getName(), (Signature) item, context));
 		} else if (item instanceof Mogram) {
 			return new Srv(srvName,
 					new MogramEntry(item.getName(), (Mogram) item));
@@ -270,7 +304,7 @@ public class operator {
 		return new Srv(path, model, name);
 	}
 
-	public static Srv srv(String name, String path, Model model, Variability.Type type) {
+	public static Srv srv(String name, String path, Model model, Type type) {
 		return new Srv(path, model, name, type);
 	}
 
@@ -282,37 +316,91 @@ public class operator {
 		return new Srv(path, null, name);
 	}
 
-//	public static <T> Entry<T> ent(String path, T value) {
-//		return new Entry<T>(path, value);
-//	}
 
 	public static <T> Entry<T> ent(String path, T value) {
 		if (value instanceof Invocation) {
 			return new Par<T>(path, value);
 		} else if (value instanceof Evaluation) {
 			return new Entry<T>(path, value);
-		} else if (value instanceof ContextCallable) {
-			return (Entry<T>) new Srv(path, value);
-		} else if (value instanceof ContextEntry) {
+		} else if (value instanceof Fidelity) {
 			return (Entry<T>) new Srv(path, value);
 		} else {
 			return new Entry<T>(path, value);
 		}
 	}
 
-	public static Srv ent(String path, ContextCallable call) {
+    public static Object annotation(Entry entry) {
+        return entry.annotation();
+    }
+
+	public static Signature.Direction direction(Entry entry) {
+		Object ann = entry.annotation();
+		if (ann instanceof String)
+			return Signature.Direction.fromString((String) ann);
+		else
+			return (Signature.Direction) ann;
+	}
+
+	public static Srv lambda(String path, Service service, sorcer.eo.operator.Args args) {
+		return new Srv(path, path, service, args.argsToStrings());
+	}
+
+	public static Srv lambda(String path, Service service,  String name, sorcer.eo.operator.Args args) {
+		return new Srv(name, path, service,  args.argsToStrings());
+	}
+
+	public static Srv lambda(String path, String name, Requestor client) {
+		return new Srv(name, path, client);
+	}
+
+	public static <T> Srv lambda(String path, Callable<T> call) {
 		return new Srv(path, call);
+	}
+
+	public static <T> Srv lambda(String path, ValueCallable<T> call) {
+		return new Srv(path, call);
+	}
+	public static <T> Srv lambda(String path, ValueCallable<T> call, sorcer.eo.operator.Args args) {
+		return new Srv(path, call, args.argsToStrings());
+	}
+
+	public static <T> Srv lambda(String path, ValueCallable<T> lambda, Context context) throws InvocationException {
+		return new Srv(path, invoker(lambda, context));
+	}
+
+	public static <T> Srv lambda(String path, ValueCallable<T> lambda, sorcer.eo.operator.Args args, Context context)
+			throws InvocationException {
+		return new Srv(path, invoker(lambda, context), args.argsToStrings());
+	}
+
+	public static <T> Srv lambda(String path, EntryCollable<T> call) {
+		return new Srv(path, call);
+	}
+
+	public static <T> Srv lambda(String path, ValueCallable<T> call, ReturnPath returnPath) {
+		return new Srv(path, call, returnPath);
+	}
+
+	public static boolean isSorcerLambda(Class clazz) {
+		Class[] types = { EntryCollable.class, ValueCallable.class, Requestor.class,
+				ConditionCollable.class, Callable.class };
+		for (Class cl : types) {
+			if (clazz == cl) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public static Srv ent(String path, Closure call) {
 		return new Srv(path, call);
 	}
 
-	public static Srv cxtEnt(String path, ContextEntry call) {
+	public static Srv cxtEnt(String path, EntryCollable call) {
 		return new Srv(path, call);
 	}
 
-	public static Srv xrtEnt(String path, ExertionCallable call) {
+	public static Srv xrtEnt(String path, ContextCallable call) {
 		return new Srv(path, call);
 	}
 
@@ -324,10 +412,19 @@ public class operator {
 		return new Par(path, invoker);
 	}
 
+    public static Srv ent(Signature sig, Context context) {
+        return srv(sig, context);
+    }
+
+    public static Srv ent(String name, Signature sig, Context context) {
+        return srv(name, sig, context);
+    }
+
 	public static Srv ent(Signature sig) {
 		return srv(sig);
 	}
-	public static DependencyEntry dep(String path, List<String> paths) {
+
+	public static DependencyEntry dep(String path, List<Path> paths) {
 		return new DependencyEntry(path, paths);
 	}
 
@@ -372,7 +469,7 @@ public class operator {
 	public static <T> OutputEntry<T> outEnt(String path, T value) {
 		if (value instanceof String && ((String)value).indexOf('|') > 0) {
 			OutputEntry oe =  outEnt(path, null);
-			oe.annotation((String)value);
+			oe.annotation(value);
 			return oe;
 		}
 		return new OutputEntry(path, value, 0);
@@ -471,8 +568,23 @@ public class operator {
 		return ie;
 	}
 
-	public static <T> Entry<T> ent(String path, T value, String association) {
-		return new Entry<T>(path, value, association);
+	public static <T> TagEntry<T> ent(String path, T value, String association) {
+		return new TagEntry(path, value, association);
+	}
+
+	public static Entry set(Entry entry, Object value)
+			throws ContextException {
+		try {
+			entry.setValue(value);
+		} catch (RemoteException e) {
+			throw new ContextException(e);
+		}
+		return entry;
+	}
+
+	public static Context set(Context context, String path, Object value) throws ContextException {
+		context.putValue(path, value);
+		return context;
 	}
 
 	public static <S extends Setter> boolean isDB(S setter) {
@@ -784,14 +896,6 @@ public class operator {
 			return entry._2;
 	}
 
-	public static <T> T get(Mogram mogram, String path)
-			throws ContextException {
-		if (mogram instanceof Model)
-			return rasis((ServiceContext<T>)mogram, path);
-		else
-			return ((ServiceContext<T>)((Exertion)mogram).getContext()).getValue(path);
-	}
-
 	public static <T> T asis(Context<T> context, String path)
 			throws ContextException {
 		return  context.asis(path);
@@ -821,11 +925,22 @@ public class operator {
         return new Copier(fromContext, fromEntries, toContext, toEntries);
     }
 
-    public static List<String> paths(String... paths) {
-        List<String> list = new ArrayList<>();
-        Collections.addAll(list, paths);
-        return list;
-    }
+	public static List<Path> paths(Object... paths) {
+		List<Path> list = new ArrayList<>();
+		for (Object o : paths) {
+			if (o instanceof String)
+				list.add(new Path((String)o));
+			if (o instanceof Path)
+				list.add((Path)o);
+		}
+		return list;
+	}
+
+//    public static List<String> paths(String... paths) {
+//        List<String> list = new ArrayList<>();
+//        Collections.addAll(list, paths);
+//        return list;
+//    }
 
 	public static List<String> paths(Context context) throws ContextException {
 		return context.getPaths();
@@ -838,22 +953,22 @@ public class operator {
 	}
 
 	public static Model dependsOn(Model model, Entry... entries) {
-        Map<String, List<String>> dm = ((ServiceContext)model).getModelStrategy().getDependentPaths();
+        Map<String, List<Path>> dm = ((ServiceContext)model).getMogramStrategy().getDependentPaths();
         String path = null;
         Object dependentPaths = null;
         for (Entry e : entries) {
             dependentPaths = e.value();
-            if (dependentPaths instanceof List){
+            if (dependentPaths instanceof List) {
                 path = e.getName();
                 dependentPaths =  e.value();
-                dm.put(path, (List<String>)dependentPaths);
+                dm.put(path, (List<Path>) dependentPaths);
             }
         }
 		return model;
     }
 
-    public static Map<String, List<String>> dependentPaths(Model model) {
-         return ((ServiceContext)model).getModelStrategy().getDependentPaths();
+    public static Map<String, List<Path>> dependencies(Model model) {
+         return ((ServiceContext)model).getMogramStrategy().getDependentPaths();
     }
     
     public static Dependency dependsOn(Dependency dependee,  Evaluation... dependers) throws ContextException {

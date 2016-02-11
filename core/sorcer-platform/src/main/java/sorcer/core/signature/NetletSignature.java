@@ -17,7 +17,18 @@
 
 package sorcer.core.signature;
 
-import sorcer.co.tuple.Path;
+import net.jini.core.transaction.TransactionException;
+import sorcer.netlet.ScriptExerter;
+import sorcer.service.Arg;
+import sorcer.service.Mogram;
+import sorcer.service.MogramException;
+import sorcer.service.Path;
+import sorcer.util.Sorcer;
+
+import java.io.File;
+import java.rmi.RemoteException;
+
+import static sorcer.eo.operator.evaluate;
 
 /**
  * Created by Mike Sobolewski on 8/3/15.
@@ -47,4 +58,15 @@ public class NetletSignature extends ServiceSignature {
         this.serviceSource = serviceSource;
     }
 
+
+    @Override
+    public Object exec(Arg... args) throws MogramException, RemoteException, TransactionException {
+        try {
+            ScriptExerter se = new ScriptExerter(System.out, null, Sorcer.getWebsterUrl(), true);
+            se.readFile(new File(serviceSource.getName()));
+            return evaluate((Mogram)se.parse());
+        } catch (Throwable throwable) {
+            throw new MogramException(throwable);
+        }
+    }
 }

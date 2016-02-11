@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.*;
+import java.util.concurrent.Callable;
 
 import sorcer.core.exertion.Mograms;
 import sorcer.core.provider.Provider;
@@ -41,16 +42,16 @@ public class CatalogParallelDispatcher extends CatalogExertDispatcher {
 	}
 
     @Override
-    public void exec() {
+    public void exec(Arg... args) {
         executor.submit(new Runnable() {
             @Override
             public void run() {
-                CatalogParallelDispatcher.super.exec();
+                CatalogParallelDispatcher.super.exec(args);
             }
         });
     }
 
-    public void doExec() throws ExertionException,
+    public void doExec(Arg... args) throws ExertionException,
 			SignatureException {
         List<Future<Exertion>> results = new ArrayList<Future<Exertion>>(inputXrts.size());
         for (Mogram mogram : inputXrts) {
@@ -101,7 +102,7 @@ public class CatalogParallelDispatcher extends CatalogExertDispatcher {
 				dispatchers.remove(xrt.getId());
 				return;
 			}*/
-			// finally execute Master Exertion
+			// finally exert Master Exertion
 			masterXrt = (ServiceExertion) execExertion(masterXrt);
 			masterXrt.stopExecTime();
 			if (masterXrt.getStatus() <= FAILED)

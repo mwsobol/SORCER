@@ -1,21 +1,12 @@
 package sorcer.arithmetic.provider.impl;
 
-import net.jini.lookup.entry.UIDescriptor;
-import net.jini.lookup.ui.MainUI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sorcer.arithmetic.provider.Adder;
 import sorcer.arithmetic.provider.Incrementer;
-import sorcer.arithmetic.provider.ui.CalculatorUI;
 import sorcer.core.provider.Provider;
 import sorcer.service.Context;
 import sorcer.service.ContextException;
-import sorcer.service.MonitorException;
-import sorcer.serviceui.UIComponentFactory;
-import sorcer.serviceui.UIDescriptorFactory;
-import sorcer.util.Sorcer;
 
-import java.net.URL;
 import java.rmi.RemoteException;
 
 @SuppressWarnings("rawtypes")

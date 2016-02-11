@@ -23,6 +23,7 @@ import sorcer.core.context.ServiceContext;
 import sorcer.core.invoker.MethodInvoker;
 import sorcer.core.signature.ObjectSignature;
 import sorcer.service.*;
+import sorcer.service.Signature.ReturnPath;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -86,17 +87,17 @@ public class ObjectTask extends Task {
 	}
 
 	@SuppressWarnings("unchecked")
-	public Task doTask(Transaction txn) throws ExertionException, SignatureException, RemoteException, MogramException {
+	public Task doTask(Transaction txn, Arg... args) throws ExertionException, SignatureException, RemoteException, MogramException {
 		if (delegate != null)
 			return delegate.doTask(txn);
 
 		MethodInvoker evaluator = null;
 		ObjectSignature os = (ObjectSignature) getProcessSignature();
-		dataContext.getModelStrategy().setCurrentSelector(os.getSelector());
+		dataContext.getMogramStrategy().setCurrentSelector(os.getSelector());
 		dataContext.setCurrentPrefix(os.getPrefix());
 		try {
-			if (getProcessSignature().getReturnPath() != null && getProcessSignature().getReturnPath().inPaths != null)
-				dataContext.updateContext(getProcessSignature().getReturnPath().inPaths);
+			if (getProcessSignature().getReturnPath() != null && ((ReturnPath)getProcessSignature().getReturnPath()).inPaths != null)
+				dataContext.updateContext(((ReturnPath)getProcessSignature().getReturnPath()).inPaths);
 			else
 				dataContext.updateContext();
 //			dataContext = (ServiceContext)dataContext.getCurrentContext();
@@ -125,35 +126,33 @@ public class ObjectTask extends Task {
 			if (os.getReturnPath() != null)
 				dataContext.setReturnPath(os.getReturnPath());
 
-//			Context currentContext = dataContext;
 			if (result == null) {
 				if (getArgs() == null && os.getParameterTypes() == null) {
 					// assume this task context is used by the signature's
 					// provider
 					if (dataContext != null) {
-						evaluator
-								.setParameterTypes(new Class[] { Context.class });
+						evaluator.setParameterTypes(new Class[] { Context.class });
 						evaluator.setContext(dataContext);
 					}
 				} else if (dataContext.getArgsPath() != null) {
-					evaluator
-							.setArgs(getParameterTypes(), (Object[]) getArgs());
+					evaluator.setArgs(getParameterTypes(), (Object[]) getArgs());
 				}
-				// evaluator.setParameters(context);
-				result = evaluator.evaluate();
+				result = evaluator.evaluate(args);
 			}
 
 			if (result instanceof Context) {
-				Signature.ReturnPath rp = dataContext.getReturnPath();
+				ReturnPath rp = dataContext.getReturnPath();
 				if (rp != null) {
 					if (((Context) result).getValue(rp.path) != null) {
 						dataContext.setReturnValue(((Context) result).getValue(rp.path));
 					} else if (rp.outPaths != null && rp.outPaths.length > 0) {
-						Context out = dataContext.getSubcontext(rp.outPaths);
+						Context out = dataContext.getDirectionalSubcontext(rp.outPaths);
 						dataContext.setReturnValue(out);
 					}
 				} else if (dataContext.getScope() != null) {
 					dataContext.getScope().append((Context)result);
+				} else {
+					dataContext = (ServiceContext) result;
 				}
 			} else {
 				dataContext.setReturnValue(result);

@@ -18,17 +18,18 @@
 package sorcer.co.tuple;
 
 import sorcer.core.context.model.ent.Entry;
+import sorcer.service.Path;
 
 import java.util.List;
 
 /**
  * Created by Mike Sobolewski on 6/21/15.
  */
-public class DependencyEntry extends Entry<List<String>> {
+public class DependencyEntry extends Entry<List<Path>> {
     private static final long serialVersionUID = 1L;
 
     @SuppressWarnings("unchecked")
-    public DependencyEntry(String path, List<String> paths) {
+    public DependencyEntry(String path, List<Path> paths) {
         super(path, paths);
     }
 }

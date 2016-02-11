@@ -278,7 +278,7 @@ public class GenericUtil {
 		scriptVect.add("echo \"executing in ${PWD}\"");
 		scriptVect.add("echo \"directory listing:\"");
 		scriptVect.add("ls -la");
-		scriptVect.add("echo going to execute: " + command);
+		scriptVect.add("echo going to exert: " + command);
 		
 		// to supress cygwin (on windows) std err warning
 		//
@@ -1062,7 +1062,7 @@ public class GenericUtil {
 	}
 	
 	/**
-	 * Give execute privilege to a UNIX file Written by: S. A. Burton
+	 * Give exert privilege to a UNIX file Written by: S. A. Burton
 	 */
 	public static void makeExecutable(File file) throws IOException,
 			InterruptedException {
@@ -1889,7 +1889,48 @@ public class GenericUtil {
 				, printStdError, doSynchronizedLaunch, null);
 		
 	}
-	
+
+	public static File getCygwinHome() throws Exception {
+
+		String cygwinHome = null;
+
+		String nativeOpenDistHome = System.getProperty("native.open.dist");
+		if (nativeOpenDistHome != null) {
+			File nativeOpenHome = new File(System.getProperty("native.open.dist"));
+			if (nativeOpenHome.exists() && nativeOpenHome.canRead()) {
+				File cygwinHomeF = new File(nativeOpenHome, "win/cygwin");
+				if (cygwinHomeF.exists() && cygwinHomeF.canRead()) {
+					cygwinHome = cygwinHomeF.getAbsolutePath().replace("\\", "/");
+				}
+			}
+		}
+
+		if (cygwinHome == null) {
+			String cygwinHomeTest = GenericUtil.getEnvVarNoException("CYGWIN_HOME").trim().replace("\\", "/");
+			File cygwinHomeFile = new File(cygwinHomeTest);
+			if ((cygwinHomeFile.exists()) && (cygwinHomeFile.canRead())) {
+				cygwinHome = cygwinHomeTest;
+			}
+		}
+
+		String msg = "***warn: cannot determine cygwin home.";
+		if (cygwinHome == null) {
+			logger.warn(msg);
+			throw new Exception(msg);
+		}
+
+		return new File(cygwinHome);
+	}
+
+	public static boolean cygwinHomeExists() {
+		try {
+			getCygwinHome();
+		} catch (Exception e) {
+			return false;
+		}
+		return true;
+	}
+
 	private static int wrapperScriptId = 0;
 	/**
 	 * Runs a series of commands that are in a vector in a UNIX or 
@@ -1924,7 +1965,7 @@ public class GenericUtil {
 	 *
 	 *			 kill all processes matching the exec names in "".
 	 *
-	 * @return Exit value of execute command with worker method
+	 * @return Exit value of exert command with worker method
 	 * @throws Exception 
 	 */
 	public static int runShellScript(File scriptFile,
@@ -1969,39 +2010,61 @@ public class GenericUtil {
 			scriptCommand[0] = "cmd";
 			scriptCommand[1] = "/C";
 
-			String iGridHome = GenericUtil.getEnvVar("SORCER_HOME").trim().replace("\\", "/");
+			//String iGridHome = GenericUtil.getEnvVar("SORCER_HOME").trim().replace("\\", "/");
 			
 			String shExec = null;
-			String cygwinHome = null;
-			String cygwinHomeTest = GenericUtil.getEnvVarNoException("CYGWIN_HOME").trim().replace("\\", "/");
-			logger.info("cygwinHomeTest = " + cygwinHomeTest);
-			if (cygwinHomeTest != null) {
-				File cygwinHomeFile = new File(cygwinHomeTest);
-				if ((cygwinHomeFile.exists()) && (cygwinHomeFile.canRead())) {
-					cygwinHome = cygwinHomeTest;
-				} else {
-					String msg = "***warn: CYGWIN_HOME location is not readable: " 
-							+ cygwinHomeTest;
-					System.out.println(msg);
-					logger.warn(msg);
-				}
-			}
+//			String cygwinHome = null;
+//
+//			String nativeOpenDistHome = System.getProperty("native.open.dist");
+//			if (nativeOpenDistHome != null) {
+//				File nativeOpenHome = new File(System.getProperty("native.open.dist"));
+//				if (nativeOpenHome.exists() && nativeOpenHome.canRead()) {
+//					File cygwinHomeF = new File(nativeOpenHome, "win/cygwin");
+//					if (cygwinHomeF.exists() && cygwinHomeF.canRead()) {
+//						cygwinHome = cygwinHomeF.getAbsolutePath().replace("\\", "/");
+//					}
+//				}
+//			}
+//
+//			if (cygwinHome == null) {
+//				String cygwinHomeTest = GenericUtil.getEnvVarNoException("CYGWIN_HOME").trim().replace("\\", "/");
+//				File cygwinHomeFile = new File(cygwinHomeTest);
+//				if ((cygwinHomeFile.exists()) && (cygwinHomeFile.canRead())) {
+//					cygwinHome = cygwinHomeTest;
+//				}
+//			}
+//
+//			String msg = "***warn: CYGWIN_HOME location is not readable: "
+//			if (cygwinHome == null) logger.warn(msg);
+
+//			logger.info("cygwinHomeTest = " + cygwinHomeTest);
+//			if (cygwinHomeTest != null) {
+//				File cygwinHomeFile = new File(cygwinHomeTest);
+//				if ((cygwinHomeFile.exists()) && (cygwinHomeFile.canRead())) {
+//					cygwinHome = cygwinHomeTest;
+//				} else {
+//							+ cygwinHomeTest;
+//					System.out.println(msg);
+//
+//				}
+//			}
 			
-			// try default location fo cygwin home
-			if (cygwinHome == null) {
-				File cygwinHomeFile = new File(iGridHome + "/../Library/cygwin");
-				if ((cygwinHomeFile.exists()) && (cygwinHomeFile.canRead())) {
-					cygwinHome = cygwinHomeTest;
-				} else {
-					String msg = "***error: the environment variable CYGWIN_HOME is not set correctly." 
-							+ "(Check env and make sure to use DOS file path format.)";
-					logger.error(msg);
-					throw new Exception(msg);
-				}
-			}
-			
-			
-			shExec = cygwinHome.trim().replace("\\", "/") + "/bin/sh.exe";
+//			// try default location fo cygwin home
+//			if (cygwinHome == null) {
+//				File cygwinHomeFile = new File(iGridHome + "/../Library/cygwin");
+//				if ((cygwinHomeFile.exists()) && (cygwinHomeFile.canRead())) {
+//					cygwinHome = cygwinHomeTest;
+//				} else {
+//					String msg = "***error: the environment variable CYGWIN_HOME is not set correctly."
+//							+ "(Check env and make sure to use DOS file path format.)";
+//					logger.error(msg);
+//					throw new Exception(msg);
+//				}
+//			}
+
+			String cygwinHome = (getCygwinHome()).getAbsolutePath().replace("\\", "/");
+
+			shExec = cygwinHome + "/bin/sh.exe";
 			try {
 				GenericUtil.checkFileExistsAndIsReadable(new File(shExec), null);
 			} catch (Exception e) {
@@ -2047,7 +2110,7 @@ public class GenericUtil {
 	 *            Standard error file path
 	 * @param jobCheckInterval
 	 *            Time to wait between job status checks
-	 * @return Exit value of execute command with worker method
+	 * @return Exit value of exert command with worker method
 	 * @throws IOException
 	 * @throws InterruptedException
 	 */

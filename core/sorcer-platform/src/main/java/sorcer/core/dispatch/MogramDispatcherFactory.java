@@ -18,85 +18,87 @@
 
 package sorcer.core.dispatch;
 
+    import net.jini.core.lease.Lease;
+import net.jini.lease.LeaseRenewalManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import sorcer.core.Dispatcher;
+import sorcer.core.deploy.ServiceDeployment;
+import sorcer.core.exertion.Mograms;
+import sorcer.core.loki.member.LokiMemberUtil;
+import sorcer.core.monitor.MonitorUtil;
+import sorcer.core.monitor.MonitoringSession;
+import sorcer.core.provider.Cataloger;
+import sorcer.core.provider.Provider;
+import sorcer.core.signature.ServiceSignature;
+import sorcer.service.*;
+import sorcer.service.modeling.Model;
+
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import net.jini.core.lease.Lease;
-import net.jini.lease.LeaseRenewalManager;
-import sorcer.core.deploy.ServiceDeployment;
-import sorcer.core.monitor.MonitorUtil;
-import sorcer.core.monitor.MonitoringSession;
-import sorcer.core.provider.Cataloger;
-import sorcer.core.Dispatcher;
-import sorcer.core.provider.Provider;
-import sorcer.core.exertion.Mograms;
-import sorcer.core.loki.member.LokiMemberUtil;
-import sorcer.core.signature.ServiceSignature;
-import sorcer.service.*;
-
-import static sorcer.core.monitor.MonitorUtil.getMonitoringSession;
 
 /**
  * This class creates instances of appropriate subclasses of Dispatcher. The
- * appropriate subclass is determined by calling the ServiceJob object's
+ * appropriate subclass is determined by calling the provided Mogram insatnce.
  */
-public class ExertionDispatcherFactory implements DispatcherFactory {
+public class MogramDispatcherFactory implements DispatcherFactory {
     public static Cataloger catalog; // The service catalog object
-    private final static Logger logger = LoggerFactory.getLogger(ExertionDispatcherFactory.class.getName());
+    private final static Logger logger = LoggerFactory.getLogger(MogramDispatcherFactory.class.getName());
 
     private LokiMemberUtil loki;
 
     public static final long LEASE_RENEWAL_PERIOD = 1 * 1000 * 60L;
     public static final long DEFAULT_TIMEOUT_PERIOD = 1 * 1000 * 90L;
 
-    protected ExertionDispatcherFactory(LokiMemberUtil loki){
+    protected MogramDispatcherFactory(LokiMemberUtil loki){
         this.loki = loki;
 	}
 
 	public static DispatcherFactory getFactory() {
-		return new ExertionDispatcherFactory(null);
+		return new MogramDispatcherFactory(null);
 	}
 
 	public static DispatcherFactory getFactory(LokiMemberUtil loki) {
-		return new ExertionDispatcherFactory(loki);
+		return new MogramDispatcherFactory(loki);
 	}
 
-    public Dispatcher createDispatcher(Exertion exertion,
+    public Dispatcher createDispatcher(Mogram mogram,
                                        Set<Context> sharedContexts,
                                        boolean isSpawned,
                                        Provider provider) throws DispatcherException {
         Dispatcher dispatcher = null;
         ProvisionManager provisionManager = null;
-        List<ServiceDeployment> deployments = ((ServiceExertion)exertion).getDeployments();
-        if (deployments.size() > 0 && (((ServiceSignature) exertion.getProcessSignature()).isProvisionable() || exertion.isProvisionable()))
-            provisionManager = new ProvisionManager(exertion);
+        if (mogram instanceof Exertion) {
+            List<ServiceDeployment> deployments = ((ServiceExertion) mogram).getDeployments();
+            if (deployments.size() > 0 && (((ServiceSignature) mogram.getProcessSignature()).isProvisionable()
+                    || ((Exertion)mogram).isProvisionable()))
+                provisionManager = new ProvisionManager((Exertion)mogram);
+        }
 
         try {
-            if(exertion instanceof Job)
-                exertion = new ExertionSorter(exertion).getSortedJob();
+            if(mogram instanceof Job)
+                mogram = new ExertionSorter((Job)mogram).getSortedJob();
 
-			if (Mograms.isCatalogBlock(exertion) && exertion instanceof Block) {
+			if ( mogram instanceof Block && Mograms.isCatalogBlock((Exertion)mogram)) {
 				logger.info("Running Catalog Block Dispatcher...");
-                dispatcher = new CatalogBlockDispatcher(exertion,
+                dispatcher = new CatalogBlockDispatcher((Block)mogram,
 						                                  sharedContexts,
 						                                  isSpawned,
 						                                  provider,
                          provisionManager);
-			} else if (isSpaceSequential(exertion)) {
+			} else if (isSpaceSequential(mogram)) {
 				logger.info("Running Space Sequential Dispatcher...");
-				dispatcher = new SpaceSequentialDispatcher(exertion,
+				dispatcher = new SpaceSequentialDispatcher((Exertion)mogram,
 						                                  sharedContexts,
 						                                  isSpawned,
 						                                  loki,
 						                                  provider,
                         provisionManager);
 			}
-            if (dispatcher==null && exertion instanceof Job) {
-                Job job = (Job) exertion;
+            if (dispatcher==null && mogram instanceof Job) {
+                Job job = (Job) mogram;
                 if (Mograms.isSpaceParallel(job)) {
                     logger.info("Running Space Parallel Dispatcher...");
                     dispatcher = new SpaceParallelDispatcher(job,
@@ -122,9 +124,9 @@ public class ExertionDispatcherFactory implements DispatcherFactory {
                 }
             }
             assert dispatcher != null;
-            MonitoringSession monSession = MonitorUtil.getMonitoringSession(exertion);
-            if (exertion.isMonitorable() && monSession!=null) {
-                logger.debug("Initializing monitor session for : " + exertion.getName());
+            MonitoringSession monSession = MonitorUtil.getMonitoringSession(mogram);
+            if (mogram.isMonitorable() && monSession!=null) {
+                logger.debug("Initializing monitor session for : " + mogram.getName());
                 if (!(monSession.getState()==Exec.INSPACE)) {
                     monSession.init((Monitorable) provider.getProxy(), LEASE_RENEWAL_PERIOD,
                             DEFAULT_TIMEOUT_PERIOD);
@@ -135,8 +137,8 @@ public class ExertionDispatcherFactory implements DispatcherFactory {
                 lrm.renewUntil(monSession.getLease(), Lease.FOREVER, LEASE_RENEWAL_PERIOD, null);
                 dispatcher.setLrm(lrm);
 
-                logger.debug("Exertion state: " + Exec.State.name(exertion.getStatus()));
-                logger.debug("Session for the exertion = " + monSession);
+                logger.debug("Exertion state: " + Exec.State.name(mogram.getStatus()));
+                logger.debug("Session for the mogram = " + monSession);
                 logger.debug("Lease to be renewed for duration = " +
                         (monSession.getLease().getExpiration() - System
                                 .currentTimeMillis()));
@@ -147,30 +149,35 @@ public class ExertionDispatcherFactory implements DispatcherFactory {
             throw e;
         } catch (Exception e) {
             throw new DispatcherException(
-                    "Failed to create the exertion dispatcher for job: "+ exertion.getName(), e);
+                    "Failed to create the mogram dispatcher for job: "+ mogram.getName(), e);
         }
         return dispatcher;
     }
 
-    protected boolean isSpaceSequential(Exertion exertion) {
-        if(exertion instanceof Job) {
-            Job job = (Job) exertion;
+    protected boolean isSpaceSequential(Mogram mogram) {
+        if(mogram instanceof Job) {
+            Job job = (Job) mogram;
             return Mograms.isSpaceSingleton(job) || Mograms.isSpaceSequential(job);
+        } else if(mogram instanceof Block)
+            return Mograms.isSpaceBlock((Block)mogram);
+        else  if(mogram instanceof Model) {
+            MogramStrategy ms = mogram.getMogramStrategy();
+            return ms.getAccessType() == Strategy.Access.PULL &&  ms.getFlowType() == Strategy.Flow.SEQ;
         }
-        return Mograms.isSpaceBlock(exertion);
+        return false;
     }
 
     /**
      * Returns an instance of the appropriate subclass of Dispatcher as
-     * determined from information provided by the given Job instance.
+     * determined from information provided by the given Mogram instance.
      *
-     * @param exertion
+     * @param mogram
      *            The SORCER job that will be used to perform a collection of
      *            components exertions
      */
     @Override
-    public Dispatcher createDispatcher(Exertion exertion, Provider provider, String... config) throws DispatcherException {
-        return createDispatcher(exertion, Collections.synchronizedSet(new HashSet<Context>()), false, provider);
+    public Dispatcher createDispatcher(Mogram mogram, Provider provider, String... config) throws DispatcherException {
+        return createDispatcher(mogram, Collections.synchronizedSet(new HashSet<Context>()), false, provider);
     }
 
     @Override

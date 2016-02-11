@@ -22,9 +22,9 @@ import net.jini.core.transaction.TransactionException;
 import sorcer.co.tuple.Tuple2;
 import sorcer.core.Name;
 import sorcer.core.context.ServiceContext;
-import sorcer.core.invoker.ServiceInvoker;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
+import sorcer.service.modeling.Variability;
 import sorcer.util.bdb.objects.UuidObject;
 import sorcer.util.url.sos.SdbUtil;
 
@@ -40,12 +40,14 @@ import static sorcer.eo.operator.add;
  * @author Mike Sobolewski
  */
 @SuppressWarnings("unchecked")
-public class Entry<T> extends Tuple2<String, T> implements Service, Dependency, Comparable<T>, Setter, Invocation<T>, Reactive<T>, Arg {
+public class Entry<T> extends Tuple2<String, T> implements Callable<T>, Dependency, Comparable<T>, Setter, Reactive<T>, Arg {
 	private static final long serialVersionUID = 5168783170981015779L;
 
 	public int index;
 
-	protected String annotation;
+	protected Object annotation;
+
+	protected Variability.Type type = Variability.Type.PAR;;
 
 	// its arguments are always evaluated if active (either Evaluataion or Invocation type)
 	protected boolean isReactive = false;
@@ -76,6 +78,9 @@ public class Entry<T> extends Tuple2<String, T> implements Service, Dependency, 
 		if (SdbUtil.isSosURL(v)) {
 			isPersistent = true;
 		}
+		if (v.getClass().getName().indexOf("Lambda") > 0)
+			type = Variability.Type.LAMBDA;
+
 		this._2 = v;
 	}
 
@@ -84,13 +89,13 @@ public class Entry<T> extends Tuple2<String, T> implements Service, Dependency, 
 		this.index = index;
 	}
 
-	public Entry(final String path, final T value, final String association) {
+	public Entry(final String path, final T value, final String annotation) {
 		this(path, value);
-		this.annotation = association;
+		this.annotation = annotation;
 	}
 
 	@Override
-	public T getValue(Arg... entries) throws EvaluationException, RemoteException {
+	public T getValue(Arg... args) throws EvaluationException, RemoteException {
 		T val = this._2;
 		URL url = null;
 		try {
@@ -110,10 +115,29 @@ public class Entry<T> extends Tuple2<String, T> implements Service, Dependency, 
 					}
 					this._2 = (T)url;
 				}
-			} else if (val instanceof ServiceInvoker) {
-				return ((ServiceInvoker<T>) val).invoke(entries);
+			} else if (val instanceof Invocation) {
+				return (T) ((Invocation) val).invoke(null, args);
 			} else if (val instanceof Evaluation) {
-				return ((Evaluation<T>) val).getValue(entries);
+				if (val instanceof Entry && ((Entry)val).getName().equals(_1)) {
+					return (T) ((Entry)val).getValue();
+				} else {
+					return ((Evaluation<T>) val).getValue(args);
+				}
+			} else if (val instanceof Fidelity) {
+				// return the selected fidelity of this entry
+				for (Arg arg : args) {
+					if (arg instanceof Fidelity) {
+						if (((Fidelity)arg).getPath().equals(_1)) {
+							((Fidelity) val).setFidelitySelection(arg.getName());
+							break;
+						}
+					}
+				}
+				return (T) ((Entry)((Fidelity) val).getSelection()).getValue();
+			} else if (val instanceof Callable) {
+				return (T) ((Callable)val).call(args);
+			} else if (val instanceof Service) {
+				return (T) ((Service)val).exec(args);
 			}
 		} catch (Exception e) {
 			throw new EvaluationException(e);
@@ -146,11 +170,11 @@ public class Entry<T> extends Tuple2<String, T> implements Service, Dependency, 
 		return index;
 	}
 
-	public String annotation() {
+	public Object annotation() {
 		return annotation;
 	}
 
-	public void annotation(String annotation) {
+	public void annotation(Object annotation) {
 		this.annotation = annotation;
 	}
 
@@ -194,6 +218,9 @@ public class Entry<T> extends Tuple2<String, T> implements Service, Dependency, 
 
 	public void isValid(boolean state) {
 		isValid = state;
+		if (_2  instanceof Entry) {
+			((Entry)_2).isValid(state);
+		}
 	}
 
 	@Override
@@ -214,6 +241,9 @@ public class Entry<T> extends Tuple2<String, T> implements Service, Dependency, 
 		String en = "";
 		try {
 			if (_2 instanceof Evaluation && ((Evaluation) _2).asis() != null) {
+				if (this == _2) {
+					return "[" + _1 + ":" + ((Entry)_2)._2 + "]";  // loop
+				}
 				en = ((Evaluation) _2).asis().toString();
 			} else {
 				en = "" + _2;
@@ -241,15 +271,14 @@ public class Entry<T> extends Tuple2<String, T> implements Service, Dependency, 
 		return this;
 	}
 
-	@Override
-	public Mogram service(Mogram mogram, Transaction txn) throws TransactionException,
+	public Mogram exert(Mogram mogram, Transaction txn, Arg... args) throws TransactionException,
 			MogramException, RemoteException {
 		Context cxt = null;
 		Context out = new ServiceContext();
 		if (mogram instanceof EntModel) {
 			if (_2 != null && _2 != Context.none)
 				add((Context)mogram, this);
-			((ServiceContext)mogram).getModelStrategy().getResponsePaths().add(new Name(_1));
+			((ServiceContext)mogram).getMogramStrategy().getResponsePaths().add(new Name(_1));
 			out = (Context) ((Model)mogram).getResponse();
 		} else if (mogram instanceof ServiceContext) {
 			if (_2 == null || _2 == Context.none) {
@@ -269,11 +298,38 @@ public class Entry<T> extends Tuple2<String, T> implements Service, Dependency, 
 			cxt = ((Exertion) mogram.exert(txn)).getContext();
 			out.putValue(_1, cxt.getValue(_1));
 		}
-		return out;
+		return (Mogram) out;
+	}
+
+	public Variability.Type getType() {
+		return type;
+	}
+
+//	@Override
+//	public T invoke(Context<T> context, Arg... entries) throws InvocationException, RemoteException {
+//		return _2;
+//	}
+
+	@Override
+	public Object exec(Arg... args) throws MogramException, RemoteException {
+		Context cxt = Arg.getContext(args);
+		if (cxt != null) {
+			// entry substitution
+		 	cxt.putValue(_1, _2);
+			return cxt;
+		} else {
+			return _2;
+		}
 	}
 
 	@Override
-	public T invoke(Context<T> context, Arg... entries) throws InvocationException, RemoteException {
-		return _2;
+	public String name() {
+		return _1;
 	}
+
+	@Override
+	public T call(Arg... args) throws EvaluationException, RemoteException {
+		return getValue(args);
+	}
+
 }

@@ -12,18 +12,19 @@ import sorcer.arithmetic.provider.impl.AveragerImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.provider.impl.SubtractorImpl;
 import sorcer.core.provider.rendezvous.ServiceJobber;
-import sorcer.service.*;
+import sorcer.service.Block;
+import sorcer.service.Context;
+import sorcer.service.Job;
 import sorcer.service.Strategy.Flow;
+import sorcer.service.Task;
 import sorcer.service.modeling.Model;
-
-import java.rmi.RemoteException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
 import static sorcer.co.operator.asis;
-import static sorcer.co.operator.get;
 import static sorcer.eo.operator.*;
+import static sorcer.eo.operator.get;
 import static sorcer.eo.operator.result;
 import static sorcer.eo.operator.value;
 import static sorcer.mo.operator.*;
@@ -32,7 +33,6 @@ import static sorcer.po.operator.invoker;
 /**
  * Created by Mike Sobolewski on 4/15/15.
  */
-@SuppressWarnings({ "unchecked", "rawtypes" })
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/sml")
 public class SrvModels {
@@ -40,8 +40,7 @@ public class SrvModels {
     private final static Logger logger = LoggerFactory.getLogger(SrvModels.class);
 
     @Test
-    public void lambdaInvoker() throws RemoteException, ContextException,
-            SignatureException, ExertionException {
+    public void lambdaInvoker() throws Exception {
 
         Model mo = model(ent("x", 10.0), ent("y", 20.0),
                 ent(invoker("lambda", cxt -> (double) value(cxt, "x")
@@ -52,8 +51,7 @@ public class SrvModels {
     }
 
     @Test
-    public void lambdaInvokerWithScopel() throws RemoteException, ContextException,
-            SignatureException, ExertionException {
+    public void lambdaInvokerWithScopel() throws Exception {
 
 
         Context scope = context(ent("x1", 20.0), ent("y1", 40.0));
@@ -96,12 +94,12 @@ public class SrvModels {
 
         logger.info("fidelity: " + asis(mod, "mFi"));
 
-//        Context out = response(mod, fi("add", "mFi"));
+//        Context out = response(mod, fi("mFi", "add"));
 //        logger.info("out: " + out);
 //        assertTrue(get(out, "mFi").equals(100.0));
 //        assertTrue(get(mod, "result/y").equals(100.0));
 
-        Context out = response(mod, fi("multiply", "mFi"));
+        Context out = response(mod, fi("mFi", "multiply"));
         logger.info("out: " + out);
         assertTrue(get(out, "mFi").equals(900.0));
         assertTrue(get(mod, "result/y").equals(900.0));
@@ -194,7 +192,6 @@ public class SrvModels {
                 aka("y1", "multiply/x1"),
                 response("subtract"));
 
-        dependsOn(m, ent("subtract", paths("multiply", "add")));
 //        logger.info("response: " + response(m));
         Context out = response(m);
 
@@ -217,7 +214,6 @@ public class SrvModels {
                         inPaths("multiply/out", "add/out")))),
                 response("out"));
 
-        dependsOn(m, ent("out", paths("multiply", "add")));
 //        logger.info("response: " + response(m));
         Context out = response(m);
 
@@ -230,7 +226,7 @@ public class SrvModels {
 
         // get responses from a service model
 
-        Model m = srvModel(
+        Model mdl = srvModel(
                 inEnt("multiply/x1", 10.0), inEnt("multiply/x2", 50.0),
                 inEnt("add/x1", 20.0), inEnt("add/x2", 80.0),
                 ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
@@ -242,17 +238,17 @@ public class SrvModels {
                 aka("y1", "multiply/x1"));
 
 
+        logger.info("DEPS: " + printDeps(mdl));
         // get a scalar response
-        responseUp(m, "subtract");
-        dependsOn(m, ent("subtract", paths("multiply", "add")));
-        logger.info("response: " + response(m));
-        Context out = response(m);
+        responseUp(mdl, "subtract");
+        logger.info("response: " + response(mdl));
+        Context out = response(mdl);
 
         assertTrue(get(out, "subtract").equals(400.0));
 
         // stepup a response context
-        responseUp(m, "add", "multiply", "y1");
-        out = response(m);
+        responseUp(mdl, "add", "multiply", "y1");
+        out = response(mdl);
         logger.info("out: " + out);
         assertTrue(get(out, "add").equals(100.0));
         assertTrue(get(out, "multiply").equals(500.0));
@@ -260,7 +256,7 @@ public class SrvModels {
 
         assertTrue(response(out, "y1").equals(10.0));
 
-        logger.info("model: " + m);
+        logger.info("model: " + mdl);
     }
 
     @Test
@@ -281,9 +277,8 @@ public class SrvModels {
                 aka("y1", "multiply/x1"), aka("y2", "add/x2"), aka("y3", "subtract/response"));
 
 //                dep("subtract", paths("multiply", "add")));
-
+        logger.info("DEPS: " + printDeps(model));
         responseUp(model, "add", "multiply", "subtract");
-        dependsOn(model, ent("subtract", paths("multiply", "add")));
         // specify how model connects to exertion
         outConn(model, outConnector);
 
@@ -325,7 +320,7 @@ public class SrvModels {
         Context taskOutConnector = outConn(inEnt("add/x1", "j2/t4/multiply/result/y"),
                 inEnt("multiply/x1", "j2/t5/add/result/y"));
 
-        Job j2 = job("j2", sig("service", ServiceJobber.class),
+        Job j2 = job("j2", sig("exert", ServiceJobber.class),
                 t4, t5, strategy(Flow.PAR),
                 taskOutConnector);
 
@@ -345,7 +340,6 @@ public class SrvModels {
 //                ent("z1", "multiply/x1"), srv("z2", "add/x2"), srv("z3", "subtract/out"));
 
         responseUp(model, "add", "multiply", "subtract");
-        dependsOn(model, ent("subtract", paths("multiply", "add")));
         // specify how model connects to exertion
         outConn(model, modelOutConnector);
 

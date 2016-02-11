@@ -80,7 +80,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
     public static final String NSH_HELP="SORCER Network Shell - command line options:\n" +
              "\t<file[.ext]> \t\t- exert the sorcer.netlet script provided in the specified file\n" +
              "\t-b <file[.ext]> \t- run batch file - start non-interactive shell\n" +
-             "\t\t\t\tand execute commands specified in file\n" +
+             "\t\t\t\tand exert commands specified in file\n" +
              "\t-c <command [args]> \t- start non-interactive shell and run <command> with arguments\n" +
              "\t\t\t\tto see the full list of available commands run 'nsh -c help'\n" +
              "\t-e <file[.ext]> \t- evaluate groovy script contained in specified file\n" +

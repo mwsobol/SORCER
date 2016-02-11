@@ -39,7 +39,7 @@ public class NetBlock extends Block implements Invocation<Object> {
 	}
 
 	public NetBlock(String name) throws SignatureException {
-		super(name, new NetSignature("service", Concatenator.class, Type.PROC));
+		super(name, new NetSignature("exert", Concatenator.class, Type.PROC));
 	}
 	
 	public NetBlock(String name, Context context)
@@ -71,10 +71,10 @@ public class NetBlock extends Block implements Invocation<Object> {
 		return temp;
 	}
 
-	public Block doBlock(Transaction txn) throws  MogramException,
+	public Block doBlock(Transaction txn, Arg... args) throws  MogramException,
 			SignatureException, RemoteException, TransactionException {
 		ServiceShell se = new ServiceShell(this);
-		return (Block)se.exert(txn, null);
+		return (Block)se.exert(txn, null, args);
 	}
 
 }

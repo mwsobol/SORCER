@@ -25,7 +25,6 @@ import sorcer.core.exertion.NetTask;
 import sorcer.core.exertion.ObjectTask;
 import sorcer.core.provider.ControlFlowManager;
 import sorcer.core.signature.NetSignature;
-import sorcer.core.signature.ObjectSignature;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -109,13 +108,21 @@ public class Task extends ServiceExertion {
 		}
 	}
 
-	public Task doTask() throws MogramException, SignatureException,
+	public Task doTask(Arg... args) throws MogramException, SignatureException,
 			RemoteException {
-		return doTask(null);
+		return doTask(null, args);
 	}
 	
-	public Task doTask(Transaction txn) throws ExertionException,
+	public Task doTask(Transaction txn, Arg... args) throws ExertionException,
 			SignatureException, RemoteException, MogramException {
+		initDelegate();
+		Task done = delegate.doTask(txn, args);
+		setContext(done.getDataContext());
+		setControlContext(done.getControlContext());
+		return this;
+	}
+
+	public void initDelegate() throws ContextException, ExertionException {
 		if (delegate != null && serviceFidelity != delegate.serviceFidelity) {
 			delegate = null;
 			dataContext.clearReturnPath();
@@ -141,11 +148,9 @@ public class Task extends ServiceExertion {
 						} catch (SignatureException e) {
 							throw new ExertionException(e);
 						}
-					} else if (ss instanceof ObjectSignature) {
-						delegate = new ObjectTask(ss.getSelector(),
-								(ObjectSignature) ss);
-						delegate.setName(name);
-					} 
+					} else {
+						delegate = new ObjectTask(name, ss);
+					}
 					delegate.setFidelities(getFidelities());
 					delegate.setFidelity(getFidelity());
 					delegate.setSelectedFidelitySelector(serviceFidelitySelector);
@@ -154,12 +159,8 @@ public class Task extends ServiceExertion {
 				}
 			}
 		}
-		Task done = delegate.doTask(txn);
-		setContext(done.getDataContext());
-		setControlContext(done.getControlContext());
-		return this;
 	}
-	
+
 	public Task doTask(Exertion xrt, Transaction txn) throws ExertionException {
 		// implemented for example by VarTask
 		return null;

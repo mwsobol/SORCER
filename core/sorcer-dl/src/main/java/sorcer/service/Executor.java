@@ -28,7 +28,7 @@ import java.rmi.RemoteException;
  * An top-level common local interface for all service-to-service (S2S)
  * providers in SORCER. Each service accepts a service-oriented mogram
  * {@link sorcer.service.Mogram} to be processed locally as the follow up of
- * {@link Service#service(Mogram, Transaction)} and returns the mogram after
+ * {@link Exerter#exert(Mogram, Transaction)} and returns the mogram after
  * executing it locally.
  * 
  * @author Mike Sobolewski

@@ -28,7 +28,6 @@ import static sorcer.po.operator.invoker;
 /**
  * @author Mike Sobolewski
  */
-@SuppressWarnings({ "unchecked", "rawtypes" })
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/sml")
 public class EntModels {
@@ -159,9 +158,8 @@ public class EntModels {
 				inEnt("x1", 20.0),
 				inEnt("x2", 80.0));
 
-		Entry e = ent("x2");
-		Context result = exec(e, cxt);
-		assertEquals(80.0, value(result, "x2"));
+		Entry e = ent("x2", 100.0);
+		assertEquals(100.0, value((Context)exec(e, cxt), "x2"));
 
 	}
 
@@ -175,8 +173,8 @@ public class EntModels {
 				result("result/y"));
 
 		Entry ie = ent("multiply", invoker("x1 * x2", ents("x1", "x2")));
-		Context result = exec(ie, em);
-		assertEquals(1600.0, value(result, "multiply"));
+		Object result = exec(ie, em);
+		assertEquals(1600.0, result);
 
 	}
 
@@ -189,7 +187,7 @@ public class EntModels {
 				inEnt("y2", 80.0));
 
 		Entry se = srv(sig("add", AdderImpl.class, result("add", inPaths("y1", "y2"))));
-		Context result = exec(se, sm);
+		Context result = (Context) exec(se, sm);
 		assertEquals(100.0, value(result, "add"));
 
 	}
@@ -203,7 +201,7 @@ public class EntModels {
 				inEnt("y2", 80.0));
 
 		Entry se = srv(sig("add", Adder.class, result("add", inPaths("y1", "y2"))));
-		Context result = exec(se, sm);
+		Context result = (Context) exec(se, sm);
 		assertEquals(100.0, value(result, "add"));
 
 	}

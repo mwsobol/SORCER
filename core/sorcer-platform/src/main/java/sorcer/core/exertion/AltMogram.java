@@ -57,7 +57,7 @@ public class AltMogram extends ConditionalMogram {
 	}
 
 	@Override
-	public Task doTask(Transaction txn) throws ExertionException,
+	public Task doTask(Transaction txn, Arg... args) throws ExertionException,
 			SignatureException, RemoteException {
 		OptMogram opt = null;
 		try {
@@ -70,7 +70,7 @@ public class AltMogram extends ConditionalMogram {
 						Condition.clenupContextScripts(cxt);
 							opt.getTarget().getDataContext().updateEntries(cxt);
 					}
-					Exertion out = opt.getTarget().exert(txn);
+					Exertion out = opt.getTarget().exert(txn, args);
 					opt.setTarget(out);
 					dataContext = (ServiceContext) out.getContext();
 					controlContext.append(out.getControlContext());

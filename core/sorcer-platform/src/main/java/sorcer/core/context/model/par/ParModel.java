@@ -22,8 +22,10 @@ import sorcer.core.context.model.ent.EntModel;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.service.*;
+import sorcer.service.modeling.Model;
 import sorcer.service.modeling.Variability;
 import sorcer.util.Response;
+import sorcer.service.Signature.ReturnPath;
 
 import java.rmi.RemoteException;
 import java.util.*;
@@ -58,7 +60,7 @@ import static sorcer.eo.operator.returnPath;
  * @author Mike Sobolewski
  */
 @SuppressWarnings({"unchecked", "rawtypes"  })
-public class ParModel<T> extends EntModel<T> implements Invocation<T>, Mappable<T>, ParModeling {
+public class ParModel<T> extends EntModel<T> implements Model, Invocation<T>, Mappable<T>, ParModeling {
 
     private static final long serialVersionUID = -6932730998474298653L;
 
@@ -96,21 +98,21 @@ public class ParModel<T> extends EntModel<T> implements Invocation<T>, Mappable<
         add(objects);
     }
 
-	public T getValue(String path, Arg... entries) throws EvaluationException {
+	public T getValue(String path, Arg... args) throws EvaluationException {
 		try {
-			append(entries);
+			append(args);
 			T val = null;
 			if (path != null) {
 				val = (T) get(path);
 			} else {
-				Signature.ReturnPath rp = returnPath(entries);
+				ReturnPath rp = returnPath(args);
 				if (rp != null)
 					val = (T) getReturnValue(rp);
-				else if (modelStrategy.getResponsePaths() != null
-						&& modelStrategy.getResponsePaths().size() == 1) {
-					val = asis(modelStrategy.getResponsePaths().get(0).getName());
+				else if (mogramStrategy.getResponsePaths() != null
+						&& mogramStrategy.getResponsePaths().size() == 1) {
+					val = asis(mogramStrategy.getResponsePaths().get(0).getName());
 				} else {
-					val = (T) super.getValue(path, entries);
+					val = (T) super.getValue(path, args);
 				}
 			}
 
@@ -123,10 +125,12 @@ public class ParModel<T> extends EntModel<T> implements Invocation<T>, Mappable<
 			}
 
 			if (val != null && val instanceof Evaluation) {
-				return (T) ((Evaluation) val).getValue(entries);
-			} else if (path == null && val == null && modelStrategy.getResponsePaths() != null) {
-				if (modelStrategy.getResponsePaths().size() == 1)
-					return (T) getValue(modelStrategy.getResponsePaths().get(0).getName(), entries);
+				return (T) ((Evaluation) val).getValue(args);
+			}   if (val instanceof Fidelity) {
+				return (T) new Entry(path, val).getValue(args);
+			} else if (path == null && val == null && mogramStrategy.getResponsePaths() != null) {
+				if (mogramStrategy.getResponsePaths().size() == 1)
+					return (T) getValue(mogramStrategy.getResponsePaths().get(0).getName(), args);
 				else
 					return (T) getResponse();
 			} else {
@@ -267,7 +271,7 @@ public class ParModel<T> extends EntModel<T> implements Invocation<T>, Mappable<
 		return this;
 	}
 
-	private void updateEvaluations() {
+	protected void updateEvaluations() {
 		Iterator<Map.Entry<String,T>>  i = entryIterator();
 		while (i.hasNext()) {
 			Map.Entry<String,T> entry = i.next();
@@ -290,19 +294,19 @@ public class ParModel<T> extends EntModel<T> implements Invocation<T>, Mappable<
 		Object result = null;
 		try {
 			if (context != null) {
-				Signature.ReturnPath rp = ((ServiceContext)context).getReturnPath();
+				ReturnPath rp = ((ServiceContext)context).getReturnPath();
 				this.append(context);
 				// check for multiple responses of this model
 				if (rp != null && rp.outPaths.length > 0) {
 					Object val = null;
 					if (rp.outPaths.length == 1)
-						val = getValue(rp.outPaths[0]);
+						val = getValue(rp.outPaths[0].path);
 					else {
 						List vals = new ArrayList(rp.outPaths.length);
 						for (int j = 0; j < rp.outPaths.length; j++)   {
-							vals.add(getValue(rp.outPaths[j]));
+							vals.add(getValue(rp.outPaths[j].path));
 						}
-						val = new Response(Arrays.asList(rp.outPaths), vals);
+						val = new Response(Path.getPathList(rp.outPaths), vals);
 					}
 					((ServiceContext)context).setFinalized(true);
 					return (T) val;
@@ -341,18 +345,18 @@ public class ParModel<T> extends EntModel<T> implements Invocation<T>, Mappable<
 		}
 	}
 
-	private Object getReturnValue(Signature.ReturnPath rp) throws ContextException {
+	private Object getReturnValue(ReturnPath rp) throws ContextException {
 		Object val = null;
 		// check for multiple responses of this model
 		if (rp != null && rp.outPaths.length > 0) {
 			if (rp.outPaths.length == 1)
-				val = getValue(rp.outPaths[0]);
+				val = getValue(rp.outPaths[0].path);
 			else {
 				List vals = new ArrayList(rp.outPaths.length);
 				for (int j = 0; j < rp.outPaths.length; j++) {
-					vals.add(getValue(rp.outPaths[j]));
+					vals.add(getValue(rp.outPaths[j].path));
 				}
-				val = new Response(Arrays.asList(rp.outPaths), vals);
+				val = new Response(Path.getPathList(rp.outPaths), vals);
 			}
 		} else if (rp != null && rp.path != null) {
 			val = getValue(rp.path);

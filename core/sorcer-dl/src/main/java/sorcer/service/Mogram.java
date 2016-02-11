@@ -21,6 +21,7 @@ import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
 import net.jini.id.Uuid;
 import sorcer.core.context.ThrowableTrace;
+import sorcer.core.provider.Exerter;
 
 import java.rmi.RemoteException;
 import java.security.Principal;
@@ -33,7 +34,7 @@ import java.util.Map;
  *
  * @author Mike Sobolewski
  */
-public interface Mogram extends Service, Projection<Signature>, Scopable, Substitutable, Identifiable {
+public interface Mogram extends Identifiable, Service, Exerter, Projection<Signature>, Scopable, Substitutable,  Arg {
 
     /**
      * Exerts this mogram by the assigned service provider if it is set. If a service
@@ -79,24 +80,28 @@ public interface Mogram extends Service, Projection<Signature>, Scopable, Substi
 
     public void setStatus(int value);
 
+    public Context getContext() throws ContextException;
+
     public Mogram clearScope() throws MogramException;
+
+    public void reportException(Throwable t);
 
     /**
      * Returns the list of traces of thrown exceptions from this mogram.
      * @return ThrowableTrace list
      */
-    public List<ThrowableTrace> getExceptions();
+    public List<ThrowableTrace> getExceptions() throws RemoteException;
 
     /**
      * Returns the list of traces left by collborating services.
      * @return ThrowableTrace list
      */
-    public List<String> getTrace();
+    public List<String> getTrace() throws RemoteException;
 
     /**
      * Appends a trace info to a trace list of this mogram.
      */
-    public void appendTrace(String info);
+    public void appendTrace(String info) throws RemoteException;
 
     /**
      * Returns the list of all traces of thrown exceptions with exceptions of
@@ -104,7 +109,7 @@ public interface Mogram extends Service, Projection<Signature>, Scopable, Substi
      *
      * @return ThrowableTrace list
      */
-    public List<ThrowableTrace> getAllExceptions();
+    public List<ThrowableTrace> getAllExceptions() throws RemoteException;
 
     /**
      * Returns a service fidelity of this exertion that consists of process
@@ -129,7 +134,7 @@ public interface Mogram extends Service, Projection<Signature>, Scopable, Substi
      * @return <code>true</code> if this exertion requires its execution to be
      *         monitored.
      */
-    public boolean isMonitorable();
+    public boolean isMonitorable() throws RemoteException;
 
     public Mogram substitute(Arg... entries) throws SetterException;
 
@@ -235,10 +240,6 @@ public interface Mogram extends Service, Projection<Signature>, Scopable, Substi
 
     /**
      */
-    public Integer getScopeCode();
-
-    /**
-     */
     public String getOwnerId();
 
     /**
@@ -281,6 +282,8 @@ public interface Mogram extends Service, Projection<Signature>, Scopable, Substi
      * @throws RemoteException
      */
     public Signature getBuilder(Arg... args) throws MogramException;
+
+    public MogramStrategy getMogramStrategy();
 
     public void setBuilder(Signature builder) throws MogramException;
 

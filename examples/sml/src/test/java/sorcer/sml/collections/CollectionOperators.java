@@ -421,7 +421,7 @@ public class CollectionOperators {
 
 		ParModel pm = parModel("par-model", ent("John/weight", 180.0));
 		add(pm, par("x", 10.0), ent("y", 20.0));
-		add(pm, invoker("add", "x + y", pars("x", "y")));
+		add(pm, invoker("add", "x + y", args("x", "y")));
 
 //		logger.info("adder value: " + value(pm, "add"));
 		assertEquals(value(pm, "John/weight"), 180.0);
@@ -434,22 +434,22 @@ public class CollectionOperators {
 	@Test
 	public void serviceMogramming() throws Exception {
 
-		Service c4 = context("multiply", inEnt("arg/x1"), inEnt("arg/x2"),
+		Context c4 = context("multiply", inEnt("arg/x1"), inEnt("arg/x2"),
 				outEnt("result/y"));
 
-		Service c5 = context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
+		Context c5 = context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
 				outEnt("result/y"));
 
-		Service t3 = task("t3", sig("subtract", SubtractorImpl.class),
+		Exertion t3 = task("t3", sig("subtract", SubtractorImpl.class),
 				context("subtract", inEnt("arg/x1", null), inEnt("arg/x2"),
 						outEnt("result/y")));
 
-		Service t4 = task("t4", sig("multiply", MultiplierImpl.class), c4);
+		Exertion t4 = task("t4", sig("multiply", MultiplierImpl.class), c4);
 
-		Service t5 = task("t5", sig("add", AdderImpl.class), c5);
+		Exertion t5 = task("t5", sig("add", AdderImpl.class), c5);
 
-		Service j1 = job("j1", sig("service", ServiceJobber.class),
-				job("j2", t4, t5, sig("service", ServiceJobber.class)),
+		Exertion j1 = job("j1", sig("exert", ServiceJobber.class),
+				job("j2", t4, t5, sig("exert", ServiceJobber.class)),
 				t3,
 				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
 				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
@@ -468,8 +468,8 @@ public class CollectionOperators {
 		set(x2p, 50.0);
 
 		// update par references
-		Service j2 = exert(j1);
-		Service c4s = taskContext("j1/t4", j2);
+		Exertion j2 = exert(j1);
+		Context c4s = taskContext("j1/t4", j2);
 
 		// get service j2 direct result value
 		assertEquals(get(j2, "j1/t3/result/y"), 400.0);
@@ -480,7 +480,7 @@ public class CollectionOperators {
 		set(j1p, 1000.0);
 		assertEquals(value(j1p), 1000.0);
 
-		// execute original service and get its par value
+		// exert original service and get its par value
 		exert(j1);
 		// j1p is the alias to context value of j1 at j1/t3/result/y
 		assertEquals(value(pc, "j1p"), 400.0);

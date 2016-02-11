@@ -22,15 +22,12 @@ import sorcer.core.DispatchResult;
 import sorcer.core.Dispatcher;
 import sorcer.core.provider.Provider;
 import sorcer.core.provider.ServiceProvider;
+import sorcer.service.Arg;
 import sorcer.service.Block;
 import sorcer.service.ContextException;
-import sorcer.service.Exec;
 
-import java.rmi.RemoteException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static sorcer.util.StringUtils.tName;
 
 public class BlockThread extends Thread {
 	private final static Logger logger = LoggerFactory.getLogger(BlockThread.class
@@ -39,12 +36,12 @@ public class BlockThread extends Thread {
 	private static final int SLEEP_TIME = 250;
 	// doBlock method calls internally
 	private Block block;
-
+	private Arg[] args;
 	private Block result;
-
 	Provider provider;
 
-	public BlockThread(Block block, Provider provider) {
+	public BlockThread(Block block, Provider provider, Arg... args) {
+		this.args = args;
 		this.block = block;
 		this.provider = provider;
 	}
@@ -67,11 +64,11 @@ public class BlockThread extends Thread {
 				}
 			}
 			if (exertionDeploymentConfig != null)
-				dispatcher = ExertionDispatcherFactory.getFactory().createDispatcher(block, provider, exertionDeploymentConfig);
+				dispatcher = MogramDispatcherFactory.getFactory().createDispatcher(block, provider, exertionDeploymentConfig);
 			else
-				dispatcher = ExertionDispatcherFactory.getFactory().createDispatcher(block, provider);
+				dispatcher = MogramDispatcherFactory.getFactory().createDispatcher(block, provider);
 
-            dispatcher.exec();
+            dispatcher.exec(args);
             DispatchResult result = dispatcher.getResult();
 
 			/*int COUNT = 1000;

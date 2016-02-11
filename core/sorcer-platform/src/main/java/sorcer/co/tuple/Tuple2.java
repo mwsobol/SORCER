@@ -17,6 +17,7 @@
 
 package sorcer.co.tuple;
 
+import net.jini.core.transaction.TransactionException;
 import net.jini.id.Uuid;
 import net.jini.id.UuidFactory;
 import sorcer.core.context.model.ent.Entry;
@@ -161,4 +162,8 @@ public class Tuple2<T1, T2> implements Arg, Serializable, Identifiable, Evaluati
 		this.isPersistent = isPersistent;
 	}
 
+	@Override
+	public Object exec(Arg... entries) throws MogramException, RemoteException, TransactionException {
+		return getValue(entries);
+	}
 }

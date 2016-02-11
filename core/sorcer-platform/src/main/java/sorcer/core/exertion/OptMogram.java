@@ -61,13 +61,13 @@ public class OptMogram extends ConditionalMogram {
 		this.target = exertion;
 	}
 
-	public Task doTask(Transaction txn) throws ExertionException,
+	public Task doTask(Transaction txn, Arg... args) throws ExertionException,
 			SignatureException, RemoteException {
 		try {
 
 			if (condition.isTrue()) {
 				isActive = true;
-				target = target.exert(txn);
+				target = target.exert(txn, args);
 //				if (target.getScope() != null) {
 //					((Context) target.getScope()).append(dataContext);
 //				} else {
@@ -75,7 +75,7 @@ public class OptMogram extends ConditionalMogram {
 //				}
 				dataContext = (ServiceContext) target.getDataContext();
 				if (target instanceof Exertion) {
-					((Exertion) target).getContext().setExertion(null);
+					target.getContext().setExertion(null);
 					controlContext.append(((Exertion)target).getControlContext());
 				}
 				dataContext.putValue(Condition.CONDITION_VALUE, true);
@@ -125,7 +125,11 @@ public class OptMogram extends ConditionalMogram {
 	
 	@Override
 	public List<ThrowableTrace> getExceptions(List<ThrowableTrace> exceptions) {
-		exceptions.addAll(target.getExceptions());
+		try {
+			exceptions.addAll(target.getExceptions());
+		} catch (RemoteException e) {
+			exceptions.add(new ThrowableTrace("Problem while collecting exceptions", e));
+		}
 		exceptions.addAll(this.getExceptions());
 		return exceptions;
 	}

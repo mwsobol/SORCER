@@ -24,7 +24,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.PositionalContext;
-import sorcer.core.provider.Provider;
 import sorcer.provider.adder.Adder;
 import sorcer.service.ContextException;
 import sorcer.service.Service;
@@ -63,7 +62,7 @@ public class AdderUI extends JPanel implements SorcerConstants {
 			logger.info("service class: " + item.service.getClass().getName()
 					+ "\nservice object: " + item.service);
 
-			provider = (Provider) item.service;
+			provider = (Service) item.service;
 
 			// Schedule a job for the event-dispatching thread:
 			// creating this application's service UI.

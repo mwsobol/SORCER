@@ -17,18 +17,11 @@
 
 package sorcer.service.modeling;
 
+import sorcer.core.context.ApplicationDescription;
+import sorcer.service.*;
+
 import java.io.Serializable;
 import java.rmi.RemoteException;
-
-import sorcer.core.context.ApplicationDescription;
-import sorcer.service.ArgException;
-import sorcer.service.ArgSet;
-import sorcer.service.Evaluation;
-import sorcer.service.EvaluationException;
-import sorcer.service.Identifiable;
-import sorcer.service.Perturbation;
-import sorcer.service.Setter;
-import sorcer.service.SetterException;
 
 /**
  * A variable has id, name and value. Its value can be evaluated by a related
@@ -49,7 +42,8 @@ public interface Variability<T> extends Identifiable, Evaluation<T>, Setter, Per
 	public enum Type {
 		INPUT, CONSTANT, INVARIANT, OUTPUT, RESPONSE, DESIGN, PARAMETER, LINKED, CONSTRAINT, OBJECTIVE, 
 		DERIVATIVE, GRADIENT, RANDOM, BOUNDED, FUNDMENTAL, RAW, DELEGATION, COMPOSITION, 
-		FILTER, PERSISTER, EVALUATOR, EVALUATION, PRODUCT, WATCHABLE, ENT, PAR, VAR, SRV, VAL, NONE
+		FILTER, PERSISTER, EVALUATOR, EVALUATION, PRODUCT, WATCHABLE, ENT, PAR, VAR, SRV, LAMBDA, VAL,
+		DATA, CONTEXT, MODEL, EXERTION, SELF, NONE
 	}
 
 	public enum MathType {

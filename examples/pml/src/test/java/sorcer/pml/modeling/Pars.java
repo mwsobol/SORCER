@@ -142,9 +142,9 @@ public class Pars {
 		ParModel pm = parModel("par-model", par("v1", 1.0), par("v2", 2.0));
 		add(pm, par("x", 10.0), ent("y", 20.0));
 		// add an active ent, no scope
-		add(pm, invoker("add1", "x + y", pars("x", "y")));
+		add(pm, invoker("add1", "x + y", args("x", "y")));
 		// add a par with own scope
-		add(pm, par(invoker("add2", "x + y", pars("x", "y")), context(ent("x", 30), ent("y", 40.0))
+		add(pm, par(invoker("add2", "x + y", args("x", "y")), context(ent("x", 30), ent("y", 40.0))
 		));
 		
 		assertEquals(value(pm, "add1"), 30.0);

@@ -18,6 +18,7 @@
 package sorcer.co.tuple;
 
 import sorcer.core.context.model.ent.Entry;
+import sorcer.service.Context;
 import sorcer.service.Signature;
 
 /**
@@ -27,8 +28,23 @@ public class SignatureEntry extends Entry<Signature> {
 
     private static final long serialVersionUID = 1L;
 
+    public Context getContext() {
+        return context;
+    }
+
+    public void setContext(Context context) {
+        this.context = context;
+    }
+
+    private Context context;
+
     public SignatureEntry(String path, Signature value) {
         super(path, value);
+    }
+
+    public SignatureEntry(String path, Signature value, Context context) {
+        super(path, value);
+        this.context = context;
     }
 
 }

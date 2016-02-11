@@ -5,6 +5,9 @@
 
 package sorcer.util.exec;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,7 +22,9 @@ import java.io.OutputStream;
  */
 public class ExecUtils {
 
-	private ExecUtils() {
+    private static Logger logger = LoggerFactory.getLogger(ExecUtils.class.getName());
+
+    private ExecUtils() {
 	}
 
 	/**
@@ -33,7 +38,7 @@ public class ExecUtils {
 	 * </pre>
 	 * 
 	 * @param cmd
-	 *            the command to execute
+	 *            the command to exert
 	 * @return the results of the command execution
 	 * @throws IOException
 	 *             if an I/O error occurs
@@ -71,7 +76,7 @@ public class ExecUtils {
 	 * </pre>
 	 * 
 	 * @param cmdarray
-	 *            the command and arguments to execute
+	 *            the command and arguments to exert
 	 * @return the results of the command execution
 	 * @throws IOException
 	 *             if an I/O error occurs
@@ -183,11 +188,13 @@ public class ExecUtils {
 		}
 		process.waitFor();
 		int exitValue = process.exitValue();
+        logger.info("exitValue: " + exitValue);
 
 		if (stdout != null) {
 			stdout.throwIfHadException();
 			out = new String(stdout.getResult());
-		}
+            logger.info("out: " + out);
+        }
 		stderr.throwIfHadException();
 		String err = new String(stderr.getResult());
 
@@ -301,7 +308,8 @@ public class ExecUtils {
 					.append("\nexitValue: ").append(exitValue).append("]");
 			return sb.toString();
 		}
-	}
+
+    }
 
 	public static void handleProcess(Process process, InputStream stdin,
 			OutputStream stdout, OutputStream stderr) throws IOException {

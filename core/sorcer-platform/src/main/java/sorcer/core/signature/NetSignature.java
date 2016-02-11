@@ -24,10 +24,7 @@ import net.jini.lookup.entry.Name;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.exertion.NetTask;
-import sorcer.core.provider.Provider;
-import sorcer.core.provider.ServiceProvider;
-import sorcer.core.provider.Shell;
-import sorcer.core.provider.Version;
+import sorcer.core.provider.*;
 import sorcer.eo.operator;
 import sorcer.service.*;
 import sorcer.util.MavenUtil;
@@ -38,10 +35,9 @@ import java.rmi.RemoteException;
 import java.util.Arrays;
 import java.util.List;
 
-import static sorcer.eo.operator.sig;
+import static sorcer.eo.operator.*;
 
-public class
-    NetSignature extends ObjectSignature {
+public class NetSignature extends ObjectSignature {
 
 	private static final long serialVersionUID = 1L;
 
@@ -182,7 +178,7 @@ public class
 		attributes.addAll(attributes);
 	}
 
-    public Service getService() {
+    public Provider getService() {
         if (provider == null) return provider;
         try {
             // ping provider to see if alive
@@ -394,18 +390,18 @@ public class
 	}
 
 	@Override
-	public Mogram service(Mogram mogram) throws TransactionException,
+	public Context exert(Mogram mogram) throws TransactionException,
 			MogramException, RemoteException {
-		return service(mogram, null);
+		return exert(mogram, null);
 	}
 
 	@Override
-	public Mogram service(Mogram mogram, Transaction txn) throws TransactionException,
+	public Context exert(Mogram mogram, Transaction txn, Arg... args) throws TransactionException,
 			MogramException, RemoteException {
 		try {
 			if (this.isShellRemote()) {
-				Provider prv= (Provider) Accessor.get().getService(sig(Shell.class));
-				return ((Exertion) prv.service(mogram, txn)).getContext();
+				Provider prv= (Provider) Accessor.get().getService(sig(RemoteServiceShell.class));
+				return ((Exertion) prv.exert(mogram, txn)).getContext();
 			}
 			Provider prv = (Provider) operator.provider(this);
 			Context cxt = null;
@@ -443,5 +439,35 @@ public class
 				+ serviceType + ";" + selector 
 					+ (prefix !=null ? "#" + prefix : "") 
 					+ (returnPath != null ? ";"  + "result " + returnPath : "");
+	}
+
+	@Override
+	public Object exec(Arg... args) throws MogramException, RemoteException, TransactionException {
+		Exertion mog = Arg.getExertion(args);
+		Context cxt = Arg.getContext(args);
+		Mogram result = null;
+		try {
+			if (mog != null && cxt == null) {
+				if (serviceType == RemoteServiceShell.class) {
+					Exerter prv = (Exerter) Accessor.get().getService(sig(RemoteServiceShell.class));
+					result = prv.exert(mog, null, new Arg[] {});
+				} else {
+					if (mog.getProcessSignature() != null
+							&& ((ServiceSignature) mog.getProcessSignature()).isShellRemote()) {
+						Exerter prv = null;
+						prv = (Exerter) Accessor.get().getService(sig(RemoteServiceShell.class));
+						result = prv.exert(mog, null);
+					} else {
+						result = (exert(mog));
+					}
+				}
+			}else if (cxt != null) {
+				Task in = task(this, cxt);
+				result = exert(in, null);
+			}
+		} catch (Exception ex) {
+			throw new MogramException(ex);
+		}
+		return context(result);
 	}
 }

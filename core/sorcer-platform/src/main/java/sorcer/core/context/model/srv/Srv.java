@@ -1,19 +1,23 @@
 package sorcer.core.context.model.srv;
 
-import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.co.tuple.SignatureEntry;
 import sorcer.core.context.ApplicationDescription;
+import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
 import sorcer.service.modeling.Variability;
+import sorcer.service.Signature.ReturnPath;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.Map;
+import java.util.concurrent.Callable;
+
+import static sorcer.eo.operator.task;
 
 /**
  * Created by Mike Sobolewski on 4/14/15.
@@ -27,7 +31,9 @@ public class Srv extends Entry<Object> implements Variability<Object>, Arg,
 
     protected Object srvValue;
 
-    Type type = Type.PAR;;
+    protected String[] paths;
+
+    protected ReturnPath returnPath;
 
     // srv fidelities
     protected Map<String, Object> fidelities;
@@ -38,14 +44,41 @@ public class Srv extends Entry<Object> implements Variability<Object>, Arg,
     }
 
     public Srv(String name, String path, Type type) {
-        super(name);
+        super(path, name);
         this.name = name;
         this.type = type;
     }
 
+    public Srv(String name, String path,  Service service, String[] paths) {
+        super(path, service);
+        this.name = name;
+        this.paths = paths;
+    }
+
+    public Srv(String name, String path, Requestor service) {
+        super(path, service);
+        this.name = name;
+    }
+
+    public Srv(String path, Object value, String[] paths) {
+        super(path, value);
+        this.name = path;
+        this.paths = paths;
+    }
     public Srv(String path, Object value) {
         super(path, value);
         this.name = path;
+    }
+
+    public Srv(String path, Object value, ReturnPath returnPath) {
+        this(path, value);
+        this.returnPath = returnPath;
+    }
+
+    public Srv(String name, String path, Object value, ReturnPath returnPath) {
+        super(path, value);
+        this.returnPath = returnPath;
+        this.name = name;
     }
 
     public Srv(String name, Object value, String path) {
@@ -64,11 +97,6 @@ public class Srv extends Entry<Object> implements Variability<Object>, Arg,
     }
 
     @Override
-    public Type getType() {
-        return type;
-    }
-
-    @Override
     public ApplicationDescription getDescription() {
         return null;
     }
@@ -76,6 +104,10 @@ public class Srv extends Entry<Object> implements Variability<Object>, Arg,
     @Override
     public Class<?> getValueType() {
         return null;
+    }
+
+    public String[] getPaths() {
+        return paths;
     }
 
     @Override
@@ -95,26 +127,21 @@ public class Srv extends Entry<Object> implements Variability<Object>, Arg,
 
     @Override
     public boolean isValueCurrent() {
-        return false;
+        return isValid;
     }
 
     @Override
     public void valueChanged(Object obj) throws EvaluationException, RemoteException {
-
+        srvValue = obj;
     }
 
-    @Override
-    public Mogram service(Mogram mogram, Transaction txn) throws TransactionException, MogramException, RemoteException {
-        return ((SignatureEntry)_2)._2.service(mogram, txn);
-    }
-
-    public Mogram service(Mogram mogram) throws TransactionException, MogramException, RemoteException {
-        return service(mogram, null);
+    public Mogram exert(Mogram mogram) throws TransactionException, MogramException, RemoteException {
+        return exert(mogram, null);
     }
 
     @Override
     public void valueChanged() throws EvaluationException {
-
+          isValid = false;
     }
 
     @Override
@@ -126,6 +153,12 @@ public class Srv extends Entry<Object> implements Variability<Object>, Arg,
     public Object getValue(Arg... entries) throws EvaluationException, RemoteException {
         if (srvValue != null && isValid) {
             return srvValue;
+        } else if (_2 instanceof Callable) {
+            try {
+                return ((Callable) _2).call();
+            } catch (Exception e) {
+                throw new EvaluationException(e);
+            }
         } else if (_2 instanceof SignatureEntry) {
             SrvModel mod = null;
             for (Arg arg : entries) {
@@ -140,11 +173,55 @@ public class Srv extends Entry<Object> implements Variability<Object>, Arg,
                 } catch (Exception e) {
                     throw new EvaluationException(e);
                 }
-            } else
-                throw new EvaluationException("No model available for entry: " + this);
+            } else if (((SignatureEntry)_2).getContext() != null) {
+                try {
+                    return execSignature(((SignatureEntry)_2)._2,
+                            ((SignatureEntry)_2).getContext());
+                } catch (MogramException e) {
+                    throw new EvaluationException(e);
+                }
+            }
+            throw new EvaluationException("No model available for entry: " + this);
         } else {
             return super.getValue(entries);
         }
+    }
+
+    public Object execSignature(Signature sig, Context scope) throws MogramException {
+        Path[] ips = ((ReturnPath)sig.getReturnPath()).inPaths;
+        Path[] ops = ((ReturnPath)sig.getReturnPath()).outPaths;
+        Context incxt = scope;
+        if (sig.getReturnPath() != null) {
+            incxt.setReturnPath(sig.getReturnPath());
+        }
+        Context outcxt = null;
+        try {
+            outcxt = ((Task) task(sig, incxt).exert()).getContext();
+            if (ops != null && ops.length > 0) {
+                return outcxt.getDirectionalSubcontext(ops);
+            } else if (sig.getReturnPath() != null) {
+                return outcxt.getReturnValue();
+            }
+        } catch (Exception e) {
+            throw new MogramException(e);
+        }
+        return outcxt;
+    }
+
+    @Override
+    public Object exec(Arg... args) throws MogramException, RemoteException {
+        Model mod = Arg.getModel(args);
+        if (mod != null) {
+            if (mod instanceof SrvModel && _2 instanceof ValueCallable) {
+                return ((ValueCallable) _2).call((Context) mod);
+            } else if  (mod instanceof Context && _2 instanceof SignatureEntry) {
+                return ((ServiceContext)mod).execSignature(((SignatureEntry) _2)._2);
+            } else {
+                _2 = mod;
+                return getValue(args);
+            }
+        }
+        return null;
     }
 
     public Object getSrvValue() {
@@ -153,6 +230,14 @@ public class Srv extends Entry<Object> implements Variability<Object>, Arg,
 
     public void setSrvValue(Object srvValue) {
         this.srvValue = srvValue;
+    }
+
+    public ReturnPath getReturnPath() {
+        return returnPath;
+    }
+
+    public void setReturnPath(ReturnPath returnPath) {
+        this.returnPath = returnPath;
     }
 
     @Override

@@ -18,15 +18,15 @@ package sorcer.core.provider.rendezvous;
 
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sorcer.core.dispatch.DispatcherFactory;
-import sorcer.core.dispatch.ExertionDispatcherFactory;
+import sorcer.core.dispatch.MogramDispatcherFactory;
 import sorcer.core.dispatch.MogramThread;
 import sorcer.core.provider.Jobber;
 import sorcer.service.*;
 
 import java.rmi.RemoteException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * ServiceJobber - The SORCER rendezvous service provider that provides
@@ -41,7 +41,7 @@ public class ServiceJobber extends RendezvousBean implements Jobber {
 		// do nothing
 	}
 
-	public Mogram execute(Mogram mogram, Transaction txn)
+	public Mogram localExert(Mogram mogram, Transaction txn, Arg... args)
 			throws TransactionException, ExertionException, RemoteException {
 
             setServiceID(mogram);
@@ -67,7 +67,7 @@ public class ServiceJobber extends RendezvousBean implements Jobber {
 	}
 
     protected DispatcherFactory getDispatcherFactory(Exertion exertion) {
-        return ExertionDispatcherFactory.getFactory();
+        return MogramDispatcherFactory.getFactory();
     }
 
 }

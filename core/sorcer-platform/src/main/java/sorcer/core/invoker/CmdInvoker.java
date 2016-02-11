@@ -27,11 +27,13 @@ import java.rmi.RemoteException;
 import java.util.Arrays;
 import java.util.List;
 
+import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.par.Par;
 import sorcer.service.Arg;
 import sorcer.service.ArgSet;
 import sorcer.service.ContextException;
 import sorcer.service.EvaluationException;
+import sorcer.util.exec.CommonsExecUtil;
 import sorcer.util.exec.ExecUtils;
 import sorcer.util.exec.ExecUtils.CmdResult;
 import sorcer.util.exec.NullInputStream;
@@ -72,7 +74,7 @@ public class CmdInvoker extends ServiceInvoker implements CmdInvoking {
 		this.pars = new ArgSet(parEntries);
 	}
 
-	public CmdInvoker(String[] cmdarray, Par... parEntries) {
+	public CmdInvoker(String[] cmdarray, Entry... parEntries) {
 		this.cmdarray = cmdarray;
 		this.pars = new ArgSet(parEntries);
 	}
@@ -170,20 +172,25 @@ public class CmdInvoker extends ServiceInvoker implements CmdInvoking {
 			try {
 				if (cmd == null && cmdarray == null)
 					throw new EvaluationException("No args for CmdEvaluator!");
-
 				if (cmd != null) {
 					if (stdin != null) {
-						out = ExecUtils.execCommand(Runtime.getRuntime().exec(
-								cmd), stdin);      
+						out = CommonsExecUtil.execCommand(cmd, null, stdin);
+						//ExecUtils.execCommand(Runtime.getRuntime().exec(
+						//		cmd), stdin);
 					} else {
-						out = ExecUtils.execCommand(cmd);
+						out = CommonsExecUtil.execCommand(cmd);
+						//out = ExecUtils.execCommand(cmd);
 					}
 				} else if (cmdarray != null) {
+					String command = cmdarray[0];
+					String[] args = new String[cmdarray.length-1];
+					for (int i=1;i<cmdarray.length;i++) {
+						args[i-1] = cmdarray[i];
+					}
 					if (stdin != null) {
-						out = ExecUtils.execCommand(Runtime.getRuntime().exec(
-								cmdarray), stdin);
+						out = CommonsExecUtil.execCommand(command, args, stdin);
 					} else {
-						out = ExecUtils.execCommand(cmdarray);
+						out = CommonsExecUtil.execCommand(command, args);
 					}
 				}
 			} catch (Exception e) {
@@ -239,9 +246,10 @@ public class CmdInvoker extends ServiceInvoker implements CmdInvoking {
 		CmdResult result = null;
 		if (stdin != null)
 			result = ExecUtils.execCommand(process, stdin, true);
-		else
+		else {
 			result = ExecUtils
 					.execCommand(process, new NullInputStream(), true);
+		}
 
 		logOut.close();
 		logger.info(Arrays.toString(cmdarray) + " completed with status = "

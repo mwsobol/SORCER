@@ -20,8 +20,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.co.tuple.ExecPath;
 import sorcer.co.tuple.InputEntry;
-import sorcer.co.tuple.Path;
 import sorcer.co.tuple.Tuple2;
+import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.EntryList;
 import sorcer.core.context.model.par.Agent;
@@ -166,10 +166,13 @@ public class operator {
 		}
 		if (obj instanceof Invocation)
 			return (Invocation) obj;
-		else if (obj != null)
-			return new Entry(path,obj);
-		else
-			throw new NoneException("No such invoker at: " + path + " in: " + mappable.getName());
+		else if (obj != null) {
+			if (obj instanceof Double)
+				return new DoubleIncrementor(path, null, (Double) obj);
+			if (obj instanceof Integer)
+				return new IntegerIncrementor(path, null, (Integer) obj);
+		}
+		throw new NoneException("No such invoker at: " + path + " in: " + mappable.getName());
 	}
 
 	public static void clearPars(Object invoker) throws EvaluationException {
@@ -268,12 +271,12 @@ public class operator {
 	}
 
 	public static Object invoke(Invocation invoker, Arg... parameters)
-			throws InvocationException, RemoteException {
+			throws ContextException, RemoteException {
 		return invoker.invoke(null, parameters);
 	}
 
 	public static Object invoke(Invocation invoker, Context context, Arg... parameters)
-			throws InvocationException, RemoteException {
+			throws ContextException, RemoteException {
 		return invoker.invoke(context, parameters);
 	}
 
@@ -305,9 +308,7 @@ public class operator {
 				return out;
 			} else if (obj instanceof Agent) {
 				return ((Agent)obj).getValue(parameters);
-			}
-
-			else {
+			} else {
 				throw new InvocationException("No invoker for: " + parname);
 			}
 		} catch (ContextException e) {
@@ -345,40 +346,60 @@ public class operator {
 		return new ServiceInvoker(evaluator, parEntries);
 	}
 
-	public static ServiceInvoker invoker(ContextCallable condition) throws InvocationException {
-		return new ServiceInvoker(null, condition, null);
+	public static ServiceInvoker invoker(ValueCallable lambda) throws InvocationException {
+		return new ServiceInvoker(null, lambda, null);
 	}
 
-	public static ServiceInvoker invoker(ContextCallable condition, Context scope) throws InvocationException {
+	public static ServiceInvoker invoker(ValueCallable lambda, Context scope) throws InvocationException {
 		try {
-			return new ServiceInvoker(null, condition, scope);
+			return new ServiceInvoker(null, lambda, scope);
 		} catch (Exception e) {
 			throw new InvocationException("Failed to create invoker!", e);
 		}
 	}
 
-	public static ServiceInvoker invoker(String name, ContextCallable condition) throws InvocationException {
-		return new ServiceInvoker(name, condition, null);
+	public static <T> ServiceInvoker invoker(String name, ValueCallable<T> lambda) throws InvocationException {
+		return new ServiceInvoker(name, lambda, null);
 	}
 
-	public static ServiceInvoker invoker(String name, ContextCallable condition, Context scope) throws InvocationException {
-		return new ServiceInvoker(name, condition, scope);
+	public static <T> ServiceInvoker invoker(String name, ValueCallable<T> lambda, Context scope) throws InvocationException {
+		return new ServiceInvoker(name, lambda, scope);
 	}
 
-	public static ServiceInvoker invoker(String name, String expression, Arg... pars) {
-		return new GroovyInvoker(name, expression, pars);
+	public static ServiceInvoker invoker(String name, String expression, sorcer.eo.operator.Args args) {
+		return new GroovyInvoker(name, expression, args.args());
 	}
 
-	public static ServiceInvoker invoker(String name, String expression, Par... parEntries) {
-		return new GroovyInvoker(name, expression, parEntries);
+	public static ServiceInvoker invoker(String name, String expression, sorcer.eo.operator.Args args, Context scope) throws ContextException {
+		GroovyInvoker invoker = new GroovyInvoker(name, expression, args.args());
+		invoker.setScope(scope);
+		return invoker;
 	}
 
-	public static ServiceInvoker invoker(String expression, Arg... pars) {
-		return new GroovyInvoker(expression, pars);
+	public static ServiceInvoker expr(String expression, sorcer.eo.operator.Args args, Context scope) throws ContextException {
+		return invoker(expression, args,  scope);
+	}
+
+	public static ServiceInvoker invoker(String expression, sorcer.eo.operator.Args args, Context scope) throws ContextException {
+		GroovyInvoker invoker = new GroovyInvoker(expression, args.args());
+		invoker.setScope(scope);
+		return invoker;
+	}
+
+	public static ServiceInvoker expr(String expression, sorcer.eo.operator.Args args) {
+		return 	invoker(expression, args);
+		}
+
+	public static ServiceInvoker invoker(String expression, sorcer.eo.operator.Args args) {
+		return new GroovyInvoker(expression, args.args());
+	}
+
+	public static ServiceInvoker invoker(String expression, Arg... args) {
+		return new GroovyInvoker(expression, args);
 	}
 
 	public static ServiceInvoker print(String path) {
-		return new GroovyInvoker("_print_", new Path<>(path));
+		return new GroovyInvoker("_print_", new Path(path));
 	}
 
 	public static ServiceInvoker invoker(String expression) {
@@ -386,10 +407,13 @@ public class operator {
 	}
 
 	public static ServiceInvoker invoker(Exertion exertion) {
-		return new ExertInvoker(exertion);
-	}
+        return new ExertInvoker(exertion);
+    }
 
-	public static InvokeIncrementor inc(String path) {
+    public static ServiceInvoker invoker(sorcer.eo.operator.Args args) {
+        return new CmdInvoker(args.argsToStrings());
+    }
+    public static InvokeIncrementor inc(String path) {
 		return new IntegerIncrementor(path, 1);
 	}
 
@@ -398,7 +422,12 @@ public class operator {
 	}
 
 	public static InvokeIncrementor inc(Invocation invoker, int increment) {
-		return new IntegerIncrementor(invoker, increment);
+		if (invoker instanceof IntegerIncrementor) {
+			((IntegerIncrementor) invoker).setIncrement(increment);
+			return (IntegerIncrementor) invoker;
+		} else {
+			return new IntegerIncrementor(invoker, increment);
+		}
 	}
 
 	public static InvokeIncrementor inc(Invocation<Integer> invoker) {
@@ -413,8 +442,14 @@ public class operator {
 		return new DoubleIncrementor(path, increment);
 	}
 
+
 	public static InvokeIncrementor inc(Invocation invoker, double increment) {
-		return new DoubleIncrementor(invoker, increment);
+		if (invoker instanceof IntegerIncrementor) {
+			((DoubleIncrementor) invoker).setIncrement(increment);
+			return (DoubleIncrementor) invoker;
+		} else {
+			return new DoubleIncrementor(invoker, increment);
+		}
 	}
 
 	public static InvokeIncrementor dinc(Invocation<Double> invoker) {
@@ -436,15 +471,19 @@ public class operator {
 	}
 
 	public static MethodInvoker methodInvoker(String selector, Object methodObject, Par... parEntries) {
-		return new MethodInvoker(selector, methodObject, selector, parEntries);
+		return methodInvoker(selector, methodObject, null, parEntries);
 	}
 
 	public static MethodInvoker methodInvoker(String selector, Object methodObject,
 											  Context context, Par... parEntries) {
 		MethodInvoker mi = new MethodInvoker(selector, methodObject, selector,
 				parEntries);
-		mi.setArgs(new Class[] { Context.class });
-		mi.setContext(context);
+		Context cxt = context;
+		if (context == null) {
+			cxt = new ServiceContext();
+		}
+		mi.setArgs(new Class[]{Context.class});
+		mi.setContext(cxt);
 		return mi;
 	}
 

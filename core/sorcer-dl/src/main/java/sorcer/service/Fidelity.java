@@ -36,7 +36,7 @@ public class Fidelity<T extends Arg> implements Arg, Serializable {
 	public final static Logger logger = LoggerFactory.getLogger(Fidelity.class);
 
 	public enum Type implements Arg {
-		EMPTY, NAME, SYS, SIG, EXERT, CONTEXT, COMPONENT, COMPOSITE, MULTI, VAR;
+		EMPTY, NAME, SYS, SIG, ENTRY, EXERT, CONTEXT, COMPONENT, COMPOSITE, MULTI, VAR;
 
 		public String getName() {
 			return toString();
@@ -73,6 +73,7 @@ public class Fidelity<T extends Arg> implements Arg, Serializable {
 		name = "fidelity" + count++;
 		for (T s : selects)
 			this.selects.add(s);
+		selection =  selects[0];
 	}
 
 	public T getSelect(String name) {
@@ -80,9 +81,12 @@ public class Fidelity<T extends Arg> implements Arg, Serializable {
 			if (s.getName().equals(name)) {
 				return s;
 			}
-			break;
 		}
 		return null;
+	}
+
+	public void removeSelect(T select) {
+		this.selects.remove(select);
 	}
 
 	public Fidelity(String... selects) {
@@ -150,8 +154,20 @@ public class Fidelity<T extends Arg> implements Arg, Serializable {
 		}
 	}
 
+	public void clear() {
+		selects.clear();
+	}
+
 	public void setSelection(T selection) {
 		this.selection = selection;
+	}
+
+	public T get(int index) {
+		return selects.get(index);
+	}
+
+	public void addSelect(T select) {
+		selects.add(select);
 	}
 
 	public List<T> getSelects() {

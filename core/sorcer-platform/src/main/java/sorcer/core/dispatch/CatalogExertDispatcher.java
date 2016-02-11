@@ -24,6 +24,7 @@ import net.jini.core.transaction.TransactionException;
 import sorcer.core.Dispatcher;
 import sorcer.core.exertion.NetTask;
 import sorcer.core.provider.Concatenator;
+import sorcer.core.provider.Exerter;
 import sorcer.core.provider.Provider;
 import sorcer.core.provider.ServiceProvider;
 import sorcer.core.signature.NetSignature;
@@ -46,7 +47,7 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
         super(job, sharedContext, isSpawned, provider, provisionManager);
     }
 
-    protected Exertion execExertion(Exertion ex) throws SignatureException,
+    protected Exertion execExertion(Exertion ex, Arg... args) throws SignatureException,
             ExertionException {
         beforeExec(ex);
         // set subject before task goes out.
@@ -54,11 +55,11 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
         ServiceExertion result = null;
         try {
             if (ex.isTask()) {
-                result = execTask((Task) ex);
+                result = execTask((Task) ex, args);
             } else if (ex.isJob()) {
-                result = execJob((Job) ex);
+                result = execJob((Job) ex, args);
             } else if (ex.isBlock()) {
-                result = execBlock((Block) ex);
+                result = execBlock((Block) ex, args);
             } else {
                 logger.warn("Unknown ServiceExertion: {}", ex);
             }
@@ -99,16 +100,16 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
         afterExec(result);
     }
 
-    protected Task execTask(Task task) throws MogramException,
+    protected Task execTask(Task task, Arg... args) throws MogramException,
             SignatureException, RemoteException {
         if (task instanceof NetTask) {
-            return execServiceTask(task);
+            return execServiceTask(task, args);
         } else {
-            return task.doTask();
+            return task.doTask(args);
         }
     }
 
-    protected Task execServiceTask(Task task) throws ExertionException {
+    protected Task execServiceTask(Task task, Arg... args) throws ExertionException {
         logger.info("Starting execServiceTask for: " + task.getName());
         Task result = null;
         int maxTries = 6;
@@ -199,7 +200,7 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
                          * (RemoteServiceTask)provider.service(task); }
                          */
                         logger.debug("getting result from provider...");
-                        result = service.service(task, null);
+                        result = ((Exerter)service).exert(task, null);
 
                     } catch (Exception re) {
                         if (tried >= maxTries) {
@@ -245,16 +246,16 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
         return result;
     }
 
-    protected Job execJob(Job job)
+    protected Job execJob(Job job, Arg ... args)
             throws DispatcherException, InterruptedException,
             RemoteException {
 
         runningExertionIDs.add(job.getId());
 
         // create a new instance of a dispatcher
-        Dispatcher dispatcher = ExertionDispatcherFactory.getFactory()
+        Dispatcher dispatcher = MogramDispatcherFactory.getFactory()
                 .createDispatcher(job, sharedContexts, true, provider);
-        dispatcher.exec();
+        dispatcher.exec(args);
         // wait until serviceJob is done by dispatcher
         Job out = (Job) dispatcher.getResult().exertion;
         // Not sure if good place
@@ -265,7 +266,7 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
         return out;
     }
 
-	private Block execBlock(Block block)
+	private Block execBlock(Block block, Arg... args)
 			throws DispatcherException, InterruptedException,
 			MogramException, RemoteException {
 
@@ -283,7 +284,7 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
 					if (!provider.getProviderID().equals(concatenators[i].serviceID)) {
 						logger.trace("Concatenator: [{}] ServiceID: {}", i, concatenators[i].serviceID);
 						Provider rconcatenator = (Provider) concatenators[i].service;
-						return rconcatenator.service(block, null);
+						return rconcatenator.exert(block, null);
 					}
 				}
 			}
@@ -296,10 +297,10 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
 			runningExertionIDs.add(block.getId());
 
 			// create a new instance of a dispatcher
-			dispatcher = ExertionDispatcherFactory.getFactory()
+			dispatcher = MogramDispatcherFactory.getFactory()
 					.createDispatcher(block, sharedContexts, true, provider);
 
-            dispatcher.exec();
+            dispatcher.exec(args);
 			// wait until a block is done by dispatcher
 			Block out = (Block) dispatcher.getResult().exertion;
             out.getControlContext().appendTrace((provider.getProviderName() != null

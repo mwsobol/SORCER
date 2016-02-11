@@ -1,7 +1,7 @@
 /*
- * Copyright 2010 the original author or authors.
- * Copyright 2010 SorcerSoft.org.
- *
+ * Copyright 2015 the original author or authors.
+ * Copyright 2015 SorcerSoft.org.
+ *  
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,16 +15,10 @@
  * limitations under the License.
  */
 
-package sorcer.service;
-import sorcer.core.context.model.ent.Entry;
-import java.io.Serializable;
-
 /**
- * Created by Mike Sobolewski on 10/30/15.
+ * @author Mike Sobolewski
  */
-@FunctionalInterface
-public interface ContextEntry<T> extends Serializable {
+package sorcer.core.context.model.srv;
 
-    Entry<T> call(Context context) throws MogramException;
-
+public interface SrvModeling {
 }

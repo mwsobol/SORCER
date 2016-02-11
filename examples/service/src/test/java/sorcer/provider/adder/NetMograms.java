@@ -6,7 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
-import sorcer.co.operator;
 import sorcer.service.*;
 import sorcer.service.Strategy.Access;
 import sorcer.service.Strategy.Wait;
@@ -19,12 +18,10 @@ import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.get;
 import static sorcer.eo.operator.value;
 import static sorcer.mo.operator.response;
-import static sorcer.mo.operator.srvModel;
 
 /**
  * @author Mike Sobolewski
  */
-@SuppressWarnings({ "unchecked", "rawtypes" })
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/service")
 public class NetMograms {
@@ -102,9 +99,10 @@ public class NetMograms {
 				response("add", "arg/x1", "arg/x2"));
 
 		Context out = response(mod);
-		assertTrue(operator.get(out, "add").equals(100.0));
 
-		assertTrue(operator.get(mod, "result/y").equals(100.0));
+		logger.info("out: " +out );
+		assertTrue(get(out, "add").equals(100.0));
+		assertTrue(get(mod, "result/y").equals(100.0));
 
 	}
 }

@@ -27,6 +27,7 @@ import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.service.*;
+import sorcer.util.SorcerEnv;
 
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -88,7 +89,7 @@ public class OperationalStringFactoryTest {
 
         OperationalString multiply = allOperationalStrings.get(0);
         assertEquals(1, multiply.getServices().length);
-        assertEquals("Multiplier", multiply.getServices()[0].getName());
+        assertEquals(SorcerEnv.getActualName("Multiplier"), multiply.getServices()[0].getName());
         UndeployOption undeployOption = multiply.getUndeployOption();
         assertNotNull(undeployOption);
         assertTrue(UndeployOption.Type.WHEN_IDLE.equals(multiply.getUndeployOption().getType()));
@@ -98,7 +99,7 @@ public class OperationalStringFactoryTest {
         String name = job.getDeploymentId();
         assertTrue(name.equals(federated.getName()));
         assertEquals(2, federated.getServices().length);
-        assertEquals("Adder", federated.getServices()[0].getName());
+        assertEquals(SorcerEnv.getActualName("Adder"), federated.getServices()[0].getName());
 
         ServiceElement subtract = federated.getServices()[1];
         Assert.assertTrue(subtract.getPlanned()==2);
@@ -125,7 +126,7 @@ public class OperationalStringFactoryTest {
 
         OperationalString multiply = allOperationalStrings.get(0);
         assertEquals(1, multiply.getServices().length);
-        assertEquals("Multiplier", multiply.getServices()[0].getName());
+        assertEquals(SorcerEnv.getActualName("Multiplier"), multiply.getServices()[0].getName());
         UndeployOption undeployOption = multiply.getUndeployOption();
         assertNotNull(undeployOption);
         assertTrue(UndeployOption.Type.WHEN_IDLE.equals(multiply.getUndeployOption().getType()));

@@ -18,7 +18,6 @@
 package sorcer.core.invoker;
 
 import groovy.lang.GroovyShell;
-import sorcer.co.tuple.Path;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.par.Par;
 import sorcer.service.*;
@@ -81,7 +80,7 @@ public class GroovyInvoker<T> extends ServiceInvoker<T> {
 	}
 
 	public GroovyInvoker(String name, String expression, Arg... parameters) {
-		this(name, expression, ArgSet.asSet(parameters));
+		this(name, expression, new ArgSet(parameters));
 	}
 
 	public GroovyInvoker(File scriptFile, Par... parameters)

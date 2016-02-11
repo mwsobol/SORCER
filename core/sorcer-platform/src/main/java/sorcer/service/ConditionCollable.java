@@ -1,7 +1,7 @@
 /*
  * Copyright 2010 the original author or authors.
  * Copyright 2010 SorcerSoft.org.
- *  
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,24 +15,15 @@
  * limitations under the License.
  */
 
-package sorcer.core.requestor;
+package sorcer.service;
+import java.io.Serializable;
 
-import net.jini.core.transaction.Transaction;
-import sorcer.service.*;
+/**
+ * Created by Mike Sobolewski on 10/30/15.
+ */
+@FunctionalInterface
+ public interface ConditionCollable<T> extends Serializable {
 
-import java.io.IOException;
-
-public interface Requestor {
-
-	public Mogram getMogram(String... args) throws MogramException,
-			SignatureException, IOException;
-
-	public Transaction getTransaction();
-
-	public void preprocess(String... args) throws ExertionException, ContextException;
-
-	public void process(String... args) throws ExertionException, ContextException;
-	
-	public void postprocess(String... args) throws ExertionException, ContextException;
+    boolean call(Context<T> context) throws MogramException;
 
 }

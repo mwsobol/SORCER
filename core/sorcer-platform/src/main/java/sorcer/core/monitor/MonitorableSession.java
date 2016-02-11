@@ -53,7 +53,7 @@ import java.rmi.RemoteException;
  * stop signal to the monitorable and notify the Broker via
  * RemoteEventListener.notify().
  * 
- * For Space based programming, since we don't know who will execute the job,
+ * For Space based programming, since we don't know who will exert the job,
  * broker calls init(space, timeout, duration). This means that the monitor is
  * going to mark the timeout and duration of this session. Note that from this
  * moment, the session is not activated. It waits till the timeout period for

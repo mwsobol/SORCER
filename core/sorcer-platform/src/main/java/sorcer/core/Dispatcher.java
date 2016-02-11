@@ -18,10 +18,11 @@
 package sorcer.core;
 
 import net.jini.lease.LeaseRenewalManager;
+import sorcer.service.Arg;
 
-public interface Dispatcher {
+ public interface Dispatcher {
 
-    void exec();
+    void exec(Arg... arg);
 
     DispatchResult getResult();
 

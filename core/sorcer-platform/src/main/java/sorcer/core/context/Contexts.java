@@ -730,16 +730,29 @@ public class Contexts implements SorcerConstants {
 	 * @throws ContextException
 	 */
 	public static List<String> getInPaths(Context cntxt) throws ContextException {
-		// get all the in and inout paths
+		// get all the in and in paths
 		String inAssoc = Context.DIRECTION + APS + Context.DA_IN;
 		String[] inPaths = getMarkedPaths(cntxt, inAssoc);
 		List<String> list = new ArrayList<String>(inPaths.length);
 
 		if (inPaths != null)
 			Collections.addAll(list, inPaths);
+
 		return list;
 	}
-	
+
+	public static List<String> getInoutPaths(Context cntxt) throws ContextException {
+		// get all the in and inout paths
+		String inAssoc = Context.DIRECTION + APS + Context.DA_INOUT;
+		String[] inPaths = getMarkedPaths(cntxt, inAssoc);
+		List<String> list = new ArrayList<String>(inPaths.length);
+
+		if (inPaths != null)
+			Collections.addAll(list, inPaths);
+
+		return list;
+	}
+
 	/**
 	 * Returns a list of all paths marked as data input.
 	 * 
@@ -766,7 +779,7 @@ public class Contexts implements SorcerConstants {
 
 	public static List getNamedInPaths(Context cntxt) throws ContextException {
 		// get all the in and inout paths
-		String cs = ((ServiceContext)cntxt).getModelStrategy().getCurrentSelector();
+		String cs = ((ServiceContext)cntxt).getMogramStrategy().getCurrentSelector();
 		if (cs != null)
 			return getPrefixedInPaths(cntxt, cs);
 		else
@@ -829,7 +842,7 @@ public class Contexts implements SorcerConstants {
 
 	public static List getNamedOutPaths(Context cntxt) throws ContextException {
 		// get all the in and out paths
-		return getPrefixedOutPaths(cntxt, ((ServiceContext)cntxt).getModelStrategy().getCurrentSelector());
+		return getPrefixedOutPaths(cntxt, ((ServiceContext)cntxt).getMogramStrategy().getCurrentSelector());
 	}
 	
 	public static List getPrefixedOutPaths(Context cntxt) throws ContextException {

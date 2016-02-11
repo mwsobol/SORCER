@@ -17,7 +17,6 @@
 
 package sorcer.mo;
 
-import sorcer.co.tuple.Path;
 import sorcer.co.tuple.Tuple2;
 import sorcer.core.Name;
 import sorcer.core.context.MapContext;
@@ -27,11 +26,14 @@ import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.par.ParModel;
 import sorcer.core.context.model.srv.Srv;
 import sorcer.core.context.model.srv.SrvModel;
+import sorcer.core.dispatch.SortingException;
+import sorcer.core.dispatch.SrvModelAutoDeps;
 import sorcer.core.plexus.FidelityManager;
 import sorcer.core.plexus.MultiFidelity;
-import sorcer.core.plexus.MultiFidelityService;
+import sorcer.core.plexus.MultiFidelityMogram;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
+import sorcer.service.Signature.ReturnPath;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -79,14 +81,14 @@ public class operator {
     }
 
     public static Model inConn(Model model, Context inConnector) {
-        ((ServiceContext)model).getModelStrategy().setInConnector(inConnector);
+        ((ServiceContext)model).getMogramStrategy().setInConnector(inConnector);
         if (inConnector instanceof MapContext)
             ((MapContext)inConnector).direction =  MapContext.Direction.IN;
         return model;
     }
 
     public static Model outConn(Model model, Context outConnector) {
-        ((ServiceContext) model).getModelStrategy().setOutConnector(outConnector);
+        ((ServiceContext) model).getMogramStrategy().setOutConnector(outConnector);
         if (outConnector instanceof MapContext)
             ((MapContext)outConnector).direction = MapContext.Direction.OUT;
         return model;
@@ -94,22 +96,22 @@ public class operator {
 
     public static Model responseUp(Model model, String... responsePaths) throws ContextException {
         for (String path : responsePaths)
-            ((ServiceContext)model).getModelStrategy().getResponsePaths().add(new Name(path));
+            ((ServiceContext)model).getMogramStrategy().getResponsePaths().add(new Name(path));
         return model;
     }
 
     public static Model responseDown(Model model, String... responsePaths) throws ContextException {
         for (String path : responsePaths)
-            ((ServiceContext)model).getModelStrategy().getResponsePaths().remove(new Name(path));
+            ((ServiceContext)model).getMogramStrategy().getResponsePaths().remove(new Name(path));
         return model;
     }
 
     public static Context result(Model model) throws ContextException {
-        return ((ServiceContext)model).getModelStrategy().getOutcome();
+        return ((ServiceContext)model).getMogramStrategy().getOutcome();
     }
 
     public static Object resultAt(Model model, String path) throws ContextException {
-        return ((ServiceContext)((ServiceContext)model).getModelStrategy().getOutcome()).get(path);
+        return ((ServiceContext)((ServiceContext)model).getMogramStrategy().getOutcome()).get(path);
     }
 
     public static  ServiceContext substitute(ServiceContext model, Entry... entries) throws ContextException {
@@ -207,8 +209,8 @@ public class operator {
         return map;
     }
 
-    public static Signature.ReturnPath returnPath(String path) {
-        return  new Signature.ReturnPath<>(path);
+    public static ReturnPath returnPath(String path) {
+        return  new ReturnPath<>(path);
     }
 
     public static Fidelity<Arg> response(String... paths) {
@@ -232,7 +234,7 @@ public class operator {
                 fidelities.add((Fidelity)item);
             }
         }
-        MultiFidelityService model = new MultiFidelityService();
+        MultiFidelityMogram model = new MultiFidelityMogram();
         model.addSelectionFidelities(fidelities);
         return srvModel(items);
     }
@@ -243,6 +245,7 @@ public class operator {
         Fidelity<Arg> responsePaths = null;
         SrvModel model = null;
         FidelityManager fiManager = null;
+        List<Fidelity<Fidelity>> metaFis = new ArrayList<Fidelity<Fidelity>>();
         List<Srv> metaFiEnts = new ArrayList<Srv>();
         for (Object item : items) {
             if (item instanceof Signature) {
@@ -251,26 +254,34 @@ public class operator {
                 complement = (sorcer.eo.operator.Complement)item;
             } else if (item instanceof Model) {
                 model = ((SrvModel)item);
-            } else if (item instanceof Fidelity) {
-                responsePaths = ((Fidelity)item);
             } else if (item instanceof FidelityManager) {
                 fiManager = ((FidelityManager)item);
             } else if (item instanceof Srv && ((Entry)item)._2 instanceof MultiFidelity) {
                 metaFiEnts.add((Srv)item);
+            } else if (item instanceof Fidelity) {
+                if (((Fidelity) item).getSelects().get(0) instanceof Fidelity) {
+                    metaFis.add((Fidelity<Fidelity>) item);
+                } else if (((Fidelity) item).getSelects().get(0) instanceof Name) {
+                    responsePaths = ((Fidelity<Arg>) item);
+                }
             }
         }
         if (model == null)
             model = new SrvModel();
 
+        if (metaFiEnts != null || metaFis != null) {
+           if (fiManager == null)
+               fiManager = new FidelityManager(model.getName());
+        }
         if (fiManager != null) {
             model.setFiManager(fiManager);
-            fiManager.initialize();
+            fiManager.init(metaFis);
             fiManager.setMogram(model);
             MultiFidelity mFi = null;
             if ((metaFiEnts.size() > 0)) {
                 for (Srv metaFiEnt : metaFiEnts) {
                     mFi = (MultiFidelity) metaFiEnt._2;
-                    fiManager.addFidelity(metaFiEnt._1, mFi.getMultiFidelity());
+                    fiManager.addFidelity(metaFiEnt._1, mFi.getFidelity());
                     mFi.setPath(metaFiEnt._1);
                     mFi.setSelection((Arg) mFi.getSelects().get(0));
                     mFi.addObserver(fiManager);
@@ -278,19 +289,8 @@ public class operator {
             }
         }
 
-//        if (sigs != null && sigs.size() > 0) {
-//            Fidelity fidelity = new Fidelity();
-//            for (Signature sig : sigs)
-//                fidelity.getSelects().add(sig);
-//            model.addServiceFidelity(fidelity);
-//            model.selectedServiceFidelity(fidelity.getName());
-//        }
-//        else {
-//            model.setSubject("execute", ServiceModeler.class);
-//        }
-
         if (responsePaths != null) {
-            model.getModelStrategy().setResponsePaths(((Fidelity) responsePaths).getSelects());
+            model.getMogramStrategy().setResponsePaths(((Fidelity) responsePaths).getSelects());
         }
         if (complement != null) {
             model.setSubject(complement.path(), complement.value());
@@ -304,6 +304,10 @@ public class operator {
 
     public static void run(sorcer.util.Runner runner, Arg... args) throws SignatureException, MogramException {
         runner.exec(args);
+    }
+
+    public static String printDeps(Mogram model) throws SortingException {
+        return new SrvModelAutoDeps((SrvModel)model).printDeps();
     }
 
 }

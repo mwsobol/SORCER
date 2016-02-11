@@ -28,8 +28,8 @@ import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static sorcer.co.operator.args;
 import static sorcer.co.operator.*;
+import static sorcer.eo.operator.args;
 import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.pipe;
 import static sorcer.eo.operator.value;
@@ -41,7 +41,6 @@ import static sorcer.po.operator.loop;
 import static sorcer.po.operator.map;
 import static sorcer.po.operator.opt;
 import static sorcer.po.operator.put;
-import static sorcer.po.operator.scope;
 import static sorcer.po.operator.set;
 
 /**
@@ -115,7 +114,7 @@ public class InvokerTest {
 			SignatureException, ExertionException {
 		ParModel pm = parModel("par-model");
 		add(pm, par("x", 10.0), par("y", 20.0));
-		add(pm, invoker("expr", "x + y + 30", pars("x", "y")));
+		add(pm, invoker("expr", "x + y + 30", args("x", "y")));
 		logger.info("invoke value: " + invoke(pm, "expr"));
 		assertEquals(invoke(pm, "expr"), 60.0);
 		logger.info("get value: " + value(pm, "expr"));
@@ -135,8 +134,7 @@ public class InvokerTest {
 	}
 
 	@Test
-	public void lambdaInvokerTest2() throws RemoteException, ContextException,
-			SignatureException, ExertionException {
+	public void lambdaInvokerTest2() throws Exception {
 
 		Model mo = model(ent("x", 10.0), ent("y", 20.0),
 				ent(invoker("lambda", cxt -> (double) value(cxt, "x")
@@ -147,8 +145,7 @@ public class InvokerTest {
 	}
 
 	@Test
-	public void lambdaInvokerTest3() throws RemoteException, ContextException,
-			SignatureException, ExertionException {
+	public void lambdaInvokerTest3() throws Exception {
 
 
 		Context scope = context(ent("x1", 20.0), ent("y1", 40.0));
@@ -195,8 +192,8 @@ public class InvokerTest {
 		Task t4 = task("t4", sig("multiply", MultiplierImpl.class), c4);
 		Task t5 = task("t5", sig("add", AdderImpl.class), c5);
 
-		Job j1 = job("j1", sig("service", ServiceJobber.class),
-					job("j2", t4, t5, sig("service", ServiceJobber.class)), t3,
+		Job j1 = job("j1", sig("exert", ServiceJobber.class),
+					job("j2", t4, t5, sig("exert", ServiceJobber.class)), t3,
 					pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
 					pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")),
 					result("j1/t3/result/y"));
@@ -221,8 +218,8 @@ public class InvokerTest {
 		Task t4 = task("t4", sig("multiply", MultiplierImpl.class), c4);
 		Task t5 = task("t5", sig("add", AdderImpl.class), c5);
 
-		Job j1 = job("j1", sig("service", ServiceJobber.class),
-					job("j2", t4, t5, sig("service", ServiceJobber.class)), t3,
+		Job j1 = job("j1", sig("exert", ServiceJobber.class),
+					job("j2", t4, t5, sig("exert", ServiceJobber.class)), t3,
 					pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
 					pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")),
 					result("j1/t3/result/y"));
@@ -256,7 +253,7 @@ public class InvokerTest {
 		Par x1, x2, y;
 		x1 = par("x1", 1.0);
 		x2 = par("x2", 2.0);
-		y = par("y", invoker("x1 + x2", args(x1, x2)));
+		y = par("y", invoker("x1 + x2", args("x1", "x2")));
 		
 //		logger.info("y: " + value(y));
 //		assertEquals(value(y), 3.0);
@@ -264,7 +261,7 @@ public class InvokerTest {
 		invoke(y, ent("x1", 10.0), ent("x2", 20.0));
 //		logger.info("y: " + value(y));
 		assertTrue(value(y).equals(30.0));
-		
+
 //		logger.info("y scope: " + scope(y));
 		assertEquals(scope(y), null);
 	}
@@ -285,8 +282,8 @@ public class InvokerTest {
 		Task t4 = task("t4", sig("multiply", MultiplierImpl.class), c4);
 		Task t5 = task("t5", sig("add", AdderImpl.class), c5);
 
-		Job j1 = job("j1", sig("service", ServiceJobber.class),
-				job("j2", t4, t5, sig("service", ServiceJobber.class)), t3,
+		Job j1 = job("j1", sig("exert", ServiceJobber.class),
+				job("j2", t4, t5, sig("exert", ServiceJobber.class)), t3,
 				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
 				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
 

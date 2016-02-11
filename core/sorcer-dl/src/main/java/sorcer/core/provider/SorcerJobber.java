@@ -1,6 +1,6 @@
 /*
- * Copyright 2010 the original author or authors.
- * Copyright 2010 SorcerSoft.org.
+ * Copyright 2009 the original author or authors.
+ * Copyright 2009 SorcerSoft.org.
  *  
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,10 +22,9 @@ import sorcer.service.Service;
 import java.rmi.Remote;
 
 /**
- * A service shell creates and manages runtime federation of all needed 
- * service providers to execute an exertion.
- *
+ * A tag interface for SORCER Jobber
  * @author Mike Sobolewski
  */
-public interface Shell extends Service, Exerter, Remote {
+public interface SorcerJobber {
+    // to differentiate from other versions of Jobbers
 }

@@ -13,6 +13,7 @@ import sorcer.arithmetic.provider.Subtractor;
 import sorcer.core.SorcerConstants;
 import sorcer.core.provider.Concatenator;
 import sorcer.service.Block;
+import sorcer.service.Context;
 import sorcer.service.Signature;
 import sorcer.service.Task;
 
@@ -30,7 +31,6 @@ import static sorcer.po.operator.*;
 /**
  * @author Mike Sobolewski
  */
-@SuppressWarnings("unchecked")
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/sml")
 public class NetBlockExertions implements SorcerConstants, Serializable {
@@ -57,7 +57,6 @@ public class NetBlockExertions implements SorcerConstants, Serializable {
 		assertEquals(value(context(result), "block/result"), 400.00);
 
 	}
-
 
 	@Test
 	public void contextBlockTest() throws Exception {
@@ -108,7 +107,6 @@ public class NetBlockExertions implements SorcerConstants, Serializable {
 
 	}
 
-
 	@Test
 	public void contextAltTest() throws Exception {
 
@@ -121,7 +119,7 @@ public class NetBlockExertions implements SorcerConstants, Serializable {
 						result("block/result")));
 		
 		Block block = block(context(ent("y1", 100), ent("y2", 200)),
-				alt(opt(condition("{ y1, y2 -> y1 > y2 }", "y1", "y2"), t4), 
+				alt(opt(condition("{ y1, y2 -> y1 > y2 }", "y1", "y2"), t4),
 					opt(condition("{ y1, y2 -> y1 <= y2 }", "y1", "y2"), t5)));
 		
 		block = exert(block);
@@ -138,7 +136,6 @@ public class NetBlockExertions implements SorcerConstants, Serializable {
 		assertEquals(value(context(block), "block/result"), 500.0);
 
 	}
-
 
 	@Test
 	public void taskAltBlockTest() throws Exception {
@@ -159,11 +156,9 @@ public class NetBlockExertions implements SorcerConstants, Serializable {
 				context("average", inEnt("arg/t4"), inEnt("arg/t5"),
 						result("block/result")));
 
-		Block block = block("block",
-				t4,
-				t5,
-				alt(opt(condition(cxt -> (double)value(cxt, "t4") > (double)value(cxt, "t5")), t3),
-						opt(condition(cxt -> (double)value(cxt, "t4") <= (double)value(cxt, "t5")), t6)));
+		Block block = block("block", t4, t5,
+				alt(opt(condition((Context <Double> cxt) -> value(cxt, "t4") > value(cxt, "t5")), t3),
+					opt(condition(cxt -> (double)value(cxt, "t4") <= (double)value(cxt, "t5")), t6)));
 
 
 		block = exert(block);
@@ -177,7 +172,6 @@ public class NetBlockExertions implements SorcerConstants, Serializable {
 		assertEquals(value(context(block), "block/result"), 750.00);
 
 	}
-
 
 	@Test
 	public void optBlockTest() throws Exception {
@@ -205,7 +199,6 @@ public class NetBlockExertions implements SorcerConstants, Serializable {
 		assertEquals(value(context(block), "out"), 100.0);
 
 	}
-
 
 	@Test
 	public void parBlockTest() throws Exception {
@@ -235,7 +228,6 @@ public class NetBlockExertions implements SorcerConstants, Serializable {
 //		assertEquals(value(context(block), "block/result"), 500.00);
 
 	}
-
 
 	@Test
 	public void loopBlockTest() throws Exception {

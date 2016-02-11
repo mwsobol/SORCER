@@ -17,19 +17,31 @@
 package sorcer.co.tuple;
 
 import sorcer.core.context.model.ent.Entry;
+import sorcer.service.Signature;
 
 public class InoutEntry<T> extends Entry<T> {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@SuppressWarnings("unchecked")
-	public InoutEntry(String path, T value, int index) {
-		super(path, value);
-		this.index = index;
-	}
+    public InoutEntry() {
+        super();
+        annotation = Signature.Direction.INOUT;
+    }
 
-	 InoutEntry(String path, T value, boolean isPersistant, int index) {
-		this(path, value, index);
-		this.isPersistent = isPersistant;
-	}
+    public InoutEntry(String path) {
+        this(path, null, false, 0);
+    }
+
+    public InoutEntry(String path, T value) {
+        this(path, value, 0);
+    }
+
+    public InoutEntry(String path, T value, int index) {
+        this(path, value, false, index);
+    }
+
+    InoutEntry(String path, T value, boolean isPersistant, int index) {
+        super(path, value, isPersistant, index);
+        annotation = Signature.Direction.INOUT;
+    }
 
 }

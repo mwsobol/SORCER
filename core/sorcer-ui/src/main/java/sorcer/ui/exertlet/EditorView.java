@@ -15,6 +15,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+/**
+ * @author Mike Sobolewski
+ */
 package sorcer.ui.exertlet;
 
 import net.jini.core.transaction.TransactionException;
@@ -26,6 +29,7 @@ import sorcer.core.provider.logger.LoggerRemoteException;
 import sorcer.core.provider.logger.RemoteLoggerListener;
 import sorcer.netlet.ScriptExerter;
 import sorcer.service.*;
+import sorcer.service.modeling.Model;
 import sorcer.ui.util.JIconButton;
 import sorcer.ui.util.TextAreaPrintStream;
 import sorcer.ui.util.WindowUtilities;
@@ -372,7 +376,7 @@ public class EditorView extends JPanel implements HyperlinkListener {
 							result = scriptExerter.execute();
 						}
 						if (result instanceof Mogram) {
-							processExerion((Mogram) result);
+							processMogram((Mogram) result);
 						} else if (result != null) {
 							openOutPanel(result.toString());
                         } else {
@@ -482,7 +486,7 @@ public class EditorView extends JPanel implements HyperlinkListener {
 				result = scriptExerter.execute();
 			}
 			if (result instanceof Exertion)
-				processExerion((Exertion) result);
+				processMogram((Exertion) result);
 			else if (result != null) {
 				logger.debug("<< executing scrip: " + script);
 				logger.debug(">> scrip result: " + script);
@@ -499,22 +503,31 @@ public class EditorView extends JPanel implements HyperlinkListener {
 		}
 	}
 
-	private void processExerion(Mogram mogram) throws MogramException{
+	private void processMogram(Mogram mogram) throws MogramException{
 		String codebase = System.getProperty("java.rmi.server.codebase");
 		logger.debug("Using exertlet codebase: " + codebase);
-		
 		if (mogram.getStatus() == Exec.DONE) {
-		showResults(mogram);
-		return;
+			showResults(mogram);
+			return;
 		}
-		Mogram out = null;
 		boolean done = false;
+		Mogram out = null;
+		if (mogram instanceof Model) {
+			try {
+				out = (Context) ((Model)mogram).getResponse();
+			} catch (Exception e) {
+				throw new MogramException(e);
+			}
+			showResults(out);
+			return;
+		}
+
 		try {
 			Class<?>[] interfaces = provider.getClass().getInterfaces();
 			for (int i = 0; i < interfaces.length; i++) {
 				if (interfaces[i] == mogram.getProcessSignature()
 						.getServiceType()) {
-					out = provider.service(mogram, null);
+					out = provider.exert(mogram, null);
 					//logger.debug(">>> done by " + provider);
 					done = true;
 					break;
@@ -549,15 +562,19 @@ public class EditorView extends JPanel implements HyperlinkListener {
 		}
 		if (mogram instanceof Exertion) {
 			Exertion exertion = (Exertion)mogram;
-			if (exertion.getExceptions().size() > 0) {
-				openOutPanel(exertion.getExceptions().toString());
-			} else {
-				StringBuilder sb = new StringBuilder(exertion.getContext().toString());
-				if (debug) {
-					sb.append("\n");
-					sb.append(((ServiceExertion) exertion).getControlInfo().toString());
-				}
-				openOutPanel(sb.toString());
+			try {
+				if (exertion.getExceptions().size() > 0) {
+                    openOutPanel(exertion.getExceptions().toString());
+                } else {
+                    StringBuilder sb = new StringBuilder(exertion.getContext().toString());
+                    if (debug) {
+                        sb.append("\n");
+                        sb.append(((ServiceExertion) exertion).getControlInfo().toString());
+                    }
+                    openOutPanel(sb.toString());
+                }
+			} catch (RemoteException e) {
+				throw new ContextException(e);
 			}
 		} else {
 			openOutPanel(mogram.toString());

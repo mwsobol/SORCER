@@ -201,12 +201,12 @@ public class Par<T> extends Entry<T> implements Variability<T>, Arg, Mappable<T>
 	 * @see sorcer.service.Evaluation#getValue(sorcer.co.tuple.Parameter[])
 	 */
 	@Override
-	public T getValue(Arg... entries) throws EvaluationException, RemoteException {
+	public T getValue(Arg... args) throws EvaluationException, RemoteException {
 		// check for a constant or cached value
 		if (value instanceof Incrementor || ((value instanceof ServiceInvoker) &&
 				scope != null && (scope instanceof ParModel) && ((ParModel)scope).isChanged()))
 			isValid = false;
-		if (_2 != null && isValid && entries.length == 00 && !isPersistent) {
+		if (_2 != null && isValid && args.length == 00 && !isPersistent) {
 			try {
 				if (_2 instanceof String
 						&& mappable != null && mappable.getValue((String)_2) != null)
@@ -219,7 +219,7 @@ public class Par<T> extends Entry<T> implements Variability<T>, Arg, Mappable<T>
 		}
 		T val = null;
 		try {
-			substitute(entries);
+			substitute(args);
 			if (selectedFidelity != null) {
 				Object obj = fidelities.get(selectedFidelity);
 				if (!isFidelityValid(obj)) {
@@ -269,7 +269,7 @@ public class Par<T> extends Entry<T> implements Variability<T>, Arg, Mappable<T>
 						}
 					}
 				}
-				val = ((Evaluation<T>) val).getValue(entries);
+				val = ((Evaluation<T>) val).getValue(args);
 				_2 = val;
 				isValid = true;
 			}
@@ -417,7 +417,7 @@ public class Par<T> extends Entry<T> implements Variability<T>, Arg, Mappable<T>
 	 */
 	@Override
 	public Type getType() {
-		return Type.PARAMETER;
+		return type;
 	}
 
 	/* (non-Javadoc)
@@ -689,5 +689,16 @@ public class Par<T> extends Entry<T> implements Variability<T>, Arg, Mappable<T>
 	@Override
 	public boolean isReactive() {
 		return true;
+	}
+
+	@Override
+	public Object exec(Arg... args) throws MogramException, RemoteException {
+		Context cxt = Arg.getContext(args);
+		if (cxt != null) {
+			scope = cxt;
+			return getValue(args);
+		} else {
+			return getValue(args);
+		}
 	}
 }

@@ -528,46 +528,6 @@ public interface SorcerConstants {
 	 */
 	static public final int ATTRIBUTE_MODIFIED = 32;
 
-	/** *********** Static persistence scope values ********** */
-	static public final int PRIVATE_SCOPE = 1;
-
-	static public final int SYSTEM_SCOPE = 2;
-
-	static public final int PUBLIC_SCOPE = 4;
-
-	static public final int RUNTIME = 1;
-
-	static public final int NOTRUNTIME = 0;
-
-	static public final String MAIL_SEP = ",";
-
-	static public final String SUBCONTEXT_CONTROL_CONTEXT_STR = "Task Domain";
-
-	// EMPTY LEAF NODE ie. node with nod data and not empty string
-	// final static String EMPTYLEAF = "Enter New Leaf Node";
-
-	static public final String DATANODE_FLAG = "SORCER DATANODE:";
-
-	public static int SELF = 0;
-
-	public static int PROVIDER = 1;
-
-	static final int PREPROCESS = 0;
-
-	static final int PROCESS = 1;
-
-	static final int POSTPROCESS = 2;
-
-	static final int APPEND = 3;
-
-	static final String SPOSTPROCESS = "Postprocess";
-
-	static final String SPREPROCESS = "Preprocess";
-
-	static final String SPROCESS = "Process";
-
-	static final String SAPPEND = "Append";
-
 	/**
 	 * the different types of tasks that are created
 	 */

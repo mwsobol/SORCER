@@ -23,7 +23,7 @@ import net.jini.core.transaction.TransactionException;
 import org.slf4j.Logger;
 import sorcer.core.SorcerConstants;
 import sorcer.core.deploy.ServiceDeployment;
-import sorcer.core.provider.Provider;
+import sorcer.core.provider.Modeler;
 import sorcer.service.*;
 import sorcer.service.Strategy.Provision;
 import sorcer.service.modeling.Variability;
@@ -36,8 +36,7 @@ import java.lang.reflect.Method;
 import java.rmi.RemoteException;
 import java.util.*;
 
-import static sorcer.eo.operator.provider;
-import static sorcer.eo.operator.task;
+import static sorcer.eo.operator.*;
 
 public class ServiceSignature implements Signature, SorcerConstants {
 
@@ -55,7 +54,7 @@ public class ServiceSignature implements Signature, SorcerConstants {
 
 	protected String ownerID;
 
-	protected ReturnPath<?> returnPath;
+	protected ReturnPath returnPath;
 
 	// the indicated usage of this signature
 	protected Set<Kind> rank = new HashSet<Kind>();
@@ -76,7 +75,10 @@ public class ServiceSignature implements Signature, SorcerConstants {
 
 	protected Class<?> serviceType;
 
-	// implementation of the serviceInfo
+	// service typed to be mached by its service proxy
+	protected Class[] matchTypes;
+
+	// implementation of the serviceType
 	protected Class<?> providerType;
 
 	protected String group = "";
@@ -91,7 +93,7 @@ public class ServiceSignature implements Signature, SorcerConstants {
 
 	protected boolean isProvisionable = false;
 
-	// shell can be used to execute exertions locally or remotely (as ServiceProvider)
+	// shell can be used to exert exertions locally or remotely (as ServiceProvider)
 	protected boolean isShellRemote = false;
 
 	protected Context inConnector;
@@ -103,12 +105,6 @@ public class ServiceSignature implements Signature, SorcerConstants {
 	 * identified by this method
 	 */
 	private String[] contextTemplateIDs;
-
-	/**
-	 * when a method implementation is provided 'order' indicates whether a
-	 * method is tried first (SELF) or the provider is called first (PROVIDER)
-	 */
-	private int order = SELF;
 
 	/**
 	 * URL for a mobile agent: an inserted custom method executed by service
@@ -149,6 +145,14 @@ public class ServiceSignature implements Signature, SorcerConstants {
 
 	public Class<?> getServiceType() {
 		return serviceType;
+	}
+
+	public Class[] getMatchTypes() {
+		return matchTypes;
+	}
+
+	public void setMatchTypes(Class[] matchTypes) {
+		this.matchTypes = matchTypes;
 	}
 
 	/**
@@ -211,14 +215,6 @@ public class ServiceSignature implements Signature, SorcerConstants {
 		return ownerID;
 	}
 
-	public boolean isSelfFirst() {
-		return order == SELF;
-	}
-
-	public boolean isProviderFist() {
-		return order == PROVIDER;
-	}
-
 	public String getAgentCodebase() {
 		return agentCodebase;
 	}
@@ -268,7 +264,6 @@ public class ServiceSignature implements Signature, SorcerConstants {
 		group = method.group;
 		contextTemplateIDs = method.contextTemplateIDs;
 		exertion = method.exertion;
-		order = method.order;
 		setSelector(method.selector);
 
 		return this;
@@ -504,8 +499,9 @@ public class ServiceSignature implements Signature, SorcerConstants {
 		this.group = group;
 	}
 
-	public void setReturnPath(ReturnPath returnPath) {
-		this.returnPath = returnPath;
+	@Override
+	public void setReturnPath(SignatureReturnPath returnPath) {
+		this.returnPath = (ReturnPath)returnPath;
 	}
 
 	public boolean isProvisionable() {
@@ -534,8 +530,8 @@ public class ServiceSignature implements Signature, SorcerConstants {
 	}
 
 
-	public void setShellRemote(Strategy.ServiceShell shellExec) {
-		if (shellExec == Strategy.ServiceShell.REMOTE) {
+	public void setShellRemote(Strategy.Shell shellExec) {
+		if (shellExec == Strategy.Shell.REMOTE) {
 			this.isShellRemote = true;
 		} else {
 			this.isShellRemote = false;
@@ -551,6 +547,7 @@ public class ServiceSignature implements Signature, SorcerConstants {
 	public void setReturnPath(String path, Direction direction) {
 		returnPath = new ReturnPath<Object>(path, direction);
 	}
+
 	public ReturnPath getReturnPath() {
 		return returnPath;
 	}
@@ -580,26 +577,30 @@ public class ServiceSignature implements Signature, SorcerConstants {
 				.compareTo(""+((ServiceSignature) signature).providerName));
 	}
 
-	@Override
-	public Mogram service(Mogram mogram, Transaction txn) throws TransactionException,
-			MogramException, RemoteException {
-		Provider prv = (Provider)Accessor.get().getService(this);
+	public Context exert(Mogram mogram, Transaction txn, Arg... args)
+			throws TransactionException, MogramException, RemoteException {
+		Context cxt = null;
 		if (mogram instanceof Context) {
-			Task out = null;
-			try {
-				out = task(this, (Context)mogram);
-			} catch (SignatureException e) {
-				throw new MogramException(e);
-			}
-			return prv.service(out, txn).getContext();
+			cxt = (Context)mogram;
 		} else {
-			return prv.service(mogram, txn);
+			 cxt = context(exert(mogram, txn, args));
 		}
+		Task out = null;
+		try {
+			out = task(this, cxt);
+		} catch (SignatureException e) {
+			throw new MogramException(e);
+		}
+		Object result = exert(out);
+		if (result instanceof Context)
+			return (Context)result;
+		else
+			return ((Task)exert(out)).getContext();
 	}
 
-	public Mogram service(Mogram mogram) throws TransactionException,
+	public Context exert(Mogram mogram) throws TransactionException,
 			MogramException, RemoteException {
-		return service(mogram, null);
+		return exert(mogram, null);
 	}
 
 	public Context getInConnector() {
@@ -618,6 +619,13 @@ public class ServiceSignature implements Signature, SorcerConstants {
 		this.outConnector = outConnector;
 	}
 
+	public boolean isModelerSignature() {
+		if(serviceType != null)
+			return (Modeler.class.isAssignableFrom(serviceType));
+		else
+			return false;
+	}
+
 	@Override
 	public void addDependers(Evaluation... dependers) {
 		if (this.dependers == null)
@@ -631,4 +639,8 @@ public class ServiceSignature implements Signature, SorcerConstants {
 		return dependers;
 	}
 
+	@Override
+	public Object exec(Arg... args) throws MogramException, RemoteException, TransactionException {
+	    throw new MogramException("Signature service exec should be implementd in subclasses");
+	}
 }

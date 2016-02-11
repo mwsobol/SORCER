@@ -27,6 +27,10 @@ public interface MogramStrategy {
 
     public void setMonitorable(boolean state);
 
+    public void setAccessType(Strategy.Access access);
+
+    public void setFlowType(Strategy.Flow flow);
+
     public boolean isProvisionable();
 
     public void setProvisionable(boolean state);
@@ -44,6 +48,10 @@ public interface MogramStrategy {
     public void addException(String message, Throwable t);
 
     public void setOpti(Strategy.Opti optiType);
+
+    public Strategy.Access getAccessType();
+
+    public Strategy.Flow getFlowType();
 
     public Strategy.Opti getOpti();
 }

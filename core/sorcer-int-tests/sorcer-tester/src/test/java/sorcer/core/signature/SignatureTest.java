@@ -8,17 +8,15 @@ import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.tester.provider.Adder;
 import sorcer.arithmetic.tester.provider.impl.AdderImpl;
-import sorcer.service.Context;
-import sorcer.service.Service;
-import sorcer.service.Signature;
-import sorcer.service.SignatureException;
+import sorcer.service.*;
 
 import java.lang.reflect.Proxy;
 import java.util.Calendar;
 import java.util.Date;
 
 import static org.junit.Assert.*;
-import static sorcer.co.operator.*;
+import static sorcer.co.operator.inEnt;
+import static sorcer.co.operator.instance;
 import static sorcer.eo.operator.*;
 import static sorcer.mo.operator.inConn;
 import static sorcer.mo.operator.outConn;
@@ -232,11 +230,11 @@ public class SignatureTest {
 		Signature ps = sig("add", AdderImpl.class, prvName("Adder"), outConnector);
 
 		// request the remote service
-		Service as = task("as", ps, cxt);
+		Mogram as = task("as", ps, cxt);
 
 		logger.info("input context: " + context(as));
 
-		Service task = exert(as);
+		Mogram task = exert(as);
 
 		logger.info("input context: " + context(task));
 
@@ -260,11 +258,11 @@ public class SignatureTest {
 		Signature ps = sig("add", Adder.class, prvName("Adder"), inc);
 
 		// request the remote service
-		Service as = task("as", ps, cxt);
+		Mogram as = task("as", ps, cxt);
 
 		logger.info("input context: " + context(as));
 
-		Service task = exert(as);
+		Mogram task = exert(as);
 
 		logger.info("input context: " + context(task));
 

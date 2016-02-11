@@ -59,8 +59,8 @@ public class JobTest {
 				context("subtract", inEnt("arg/x5", null),
 						inEnt("arg/x6"), outEnt("result/y3")));
 
-		Job f1 = job("f1", sig("service", Jobber.class, "Jobber"),
-				job(sig("service", Jobber.class, "Jobber"), "f2", f4, f5), f3,
+		Job f1 = job("f1", sig("exert", Jobber.class, "Jobber"),
+				job(sig("exert", Jobber.class, "Jobber"), "f2", f4, f5), f3,
 				strategy(Strategy.Provision.YES),
 				pipe(outPoint(f4, "result/y1"), inPoint(f3, "arg/x5")),
 				pipe(outPoint(f5, "result/y2"), inPoint(f3, "arg/x6")));

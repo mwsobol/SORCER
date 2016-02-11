@@ -286,30 +286,30 @@ public class SorcerDatabaseRunner {
 	
 	private Task getTask() throws ExertionException, SignatureException, ContextException {
 		Task f4 = task("f4", sig("multiply", Multiplier.class), 
-				context("multiply", inEnt(path("arg/x1"), 10.0), inEnt(path("arg/x2"), 50.0),
-						outEnt(path("result/y1"), null)));
+				context("multiply", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
+						outEnt("result/y1")));
 		return f4;
 	}
 		
 	private Job getJob() throws ExertionException, SignatureException, ContextException {
 		Task f4 = task("f4", sig("multiply", Multiplier.class), 
-				context("multiply", inEnt(path("arg/x1"), 10.0), inEnt(path("arg/x2"), 50.0),
-						outEnt(path("result/y1"), null)));
+				context("multiply", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
+						outEnt("result/y1")));
 
 		Task f5 = task("f5", sig("add", Adder.class), 
-				context("add", inEnt(path("arg/x3"), 20.0), inEnt(path("arg/x4"), 80.0),
-						outEnt(path("result/y2"), null)));
+				context("add", inEnt("arg/x3", 20.0), inEnt("arg/x4", 80.0),
+						outEnt("result/y2")));
 
 		Task f3 = task("f3", sig("subtract", Subtractor.class), 
-				context("subtract", inEnt(path("arg/x5"), null), inEnt(path("arg/x6"), null),
-						outEnt(path("result/y3"), null)));
+				context("subtract", inEnt("arg/x5"), inEnt("arg/x6"),
+						outEnt("result/y3")));
 
 		// Service Composition f1(f2(x1, x2), f3(x1, x2))
 		// Service Composition f2(f4(x1, x2), f5(x1, x2))
 		//Job f1= job("f1", job("f2", f4, f5, strategy(Flow.PAR, Access.PULL)), f3,
 		Job f1= job("f1", job("f2", f4, f5), f3,
-				pipe(outPoint(f4, path("result/y1")), inPoint(f3, path("arg/x5"))),
-				pipe(outPoint(f5, path("result/y2")), inPoint(f3, path("arg/x6"))));
+				pipe(outPoint(f4, "result/y1"), inPoint(f3, "arg/x5")),
+				pipe(outPoint(f5, "result/y2"), inPoint(f3, "arg/x6")));
 		return f1;
 	}
 	

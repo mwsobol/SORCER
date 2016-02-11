@@ -17,12 +17,12 @@
 
 package sorcer.core.proxy;
 
-import java.rmi.Remote;
-import java.rmi.RemoteException;
-
 import net.jini.admin.Administrable;
 import sorcer.core.provider.ProviderException;
 import sorcer.service.Service;
+
+import java.rmi.Remote;
+import java.rmi.RemoteException;
 
 /**
  * Smart proxies and composite proxies extending their functionalty via calls on

@@ -1,6 +1,6 @@
 /*
- * Copyright 2010 the original author or authors.
- * Copyright 2010 SorcerSoft.org.
+ * Copyright 2009 the original author or authors.
+ * Copyright 2009 SorcerSoft.org.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,21 @@
  */
 
 package sorcer.service;
-import java.io.Serializable;
+
+import java.rmi.RemoteException;
 
 /**
- * Created by Mike Sobolewski on 10/30/15.
+ * Represents a function that accepts any numcer of arguments
+ * to produces a result as a <code>Service</code>.
+ *
+ * @param <T> the type of the result of the function
+ *
+ * Created by Mike Sobolewski on 11/21/15.
  */
-@FunctionalInterface
- public interface ContextCondition extends Serializable {
+public interface Callable<T> extends Arg, Service {
 
-    boolean call(Context context) throws MogramException;
+    public String name();
+
+    public T call(Arg... args) throws EvaluationException, RemoteException;
 
 }

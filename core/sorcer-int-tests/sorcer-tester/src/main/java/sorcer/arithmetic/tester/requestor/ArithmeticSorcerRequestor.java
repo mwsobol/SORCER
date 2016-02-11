@@ -38,9 +38,9 @@ public class ArithmeticSorcerRequestor extends SorcerRequestor {
                 context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
                         outEnt("result/y")));
 
-        Job job = job("j1", sFi("object", sig("service", ServiceJobber.class)),
-                sFi("net", sig("service", Jobber.class)),
-                job("j2", sig("service", ServiceJobber.class), t4, t5),
+        Job job = job("j1", sFi("object", sig("exert", ServiceJobber.class)),
+                sFi("net", sig("exert", Jobber.class)),
+                job("j2", sig("exert", ServiceJobber.class), t4, t5),
                 t3,
                 pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
                 pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")),

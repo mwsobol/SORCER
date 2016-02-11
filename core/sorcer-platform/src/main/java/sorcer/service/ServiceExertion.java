@@ -25,11 +25,10 @@ import org.slf4j.LoggerFactory;
 import sorcer.core.context.*;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.par.Par;
+import sorcer.core.deploy.DeploymentIdFactory;
 import sorcer.core.deploy.ServiceDeployment;
 import sorcer.core.invoker.ExertInvoker;
-import sorcer.core.provider.Jobber;
-import sorcer.core.provider.ProviderName;
-import sorcer.core.provider.Spacer;
+import sorcer.core.provider.*;
 import sorcer.core.provider.exerter.ServiceShell;
 import sorcer.core.signature.NetSignature;
 import sorcer.core.signature.ServiceSignature;
@@ -45,6 +44,8 @@ import java.security.Principal;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import static sorcer.eo.operator.value;
+
 /**
  * @author Mike Sobolewski
  */
@@ -54,6 +55,9 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
     static final long serialVersionUID = -3907402419486719293L;
 
     protected final static Logger logger = LoggerFactory.getLogger(ServiceExertion.class.getName());
+
+    // The service provider for this job service bean
+    protected ServiceProvider provider;
 
     protected ServiceContext dataContext;
 
@@ -92,6 +96,13 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
     }
 
     /*
+   *  Initialization for a service bean of this type
+   */
+    public void init(Provider provider) {
+        this.provider = (ServiceProvider)provider;
+    }
+
+    /*
      * (non-Javadoc)
      *
      * @see sorcer.service.Service#service(sorcer.service.Mogram)
@@ -110,12 +121,57 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
      * @see sorcer.service.Service#service(sorcer.service.Exertion,
      * net.jini.core.transaction.Transaction)
      */
-    public <T extends Mogram> T service(T exertion, Transaction txn)
+    public <T extends Mogram> T exert(T mogram, Transaction txn, Arg... args)
             throws TransactionException, MogramException, RemoteException {
-        if (exertion == null)
-            return exert();
+        try {
+            if (mogram instanceof Exertion) {
+                ServiceExertion exertion = (ServiceExertion) mogram;
+                Class serviceType = exertion.getServiceType();
+                if (Invocation.class.isAssignableFrom(serviceType)) {
+                    Object out = this.invoke(exertion.getContext(), args);
+                    handleExertOutput(exertion, out);
+                    return (T) exertion;
+                } else if (Evaluation.class.isAssignableFrom(serviceType)) {
+                    Object out = this.getValue(args);
+                    handleExertOutput(exertion, out);
+                    return (T) exertion;
+                }
+            }
+            getContext().appendContext(mogram.getContext());
+            return (T) exert(txn);
+        } catch (Exception e) {
+            e.printStackTrace();
+            mogram.getContext().reportException(e);
+            if (e instanceof Exception)
+                mogram.setStatus(FAILED);
+            else
+                mogram.setStatus(ERROR);
+
+            throw new ExertionException(e);
+        }
+    }
+
+    private void handleExertOutput(ServiceExertion exertion, Object result ) throws ContextException {
+        ServiceContext dataContext = (ServiceContext) exertion.getDataContext();
+        if (result instanceof Context)
+            dataContext.updateEntries((Context)result);
+
+        ReturnPath rp = dataContext.getReturnPath();
+        if (rp == null)
+            rp = (ReturnPath)exertion.getProcessSignature().getReturnPath();
         else
-            return (T) exertion.exert(txn);
+            exertion.getProcessSignature().setReturnPath(rp);
+
+        if (rp != null) {
+            if (((Context) result).getValue(rp.path) != null) {
+                dataContext.setReturnValue(((Context) result).getValue(rp.path));
+                dataContext.setFinalized(true);
+            }
+        } else {
+            dataContext.setReturnValue(result);
+        }
+        exertion.setStatus(DONE);
+
     }
 
     /*
@@ -123,8 +179,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
      *
      * @see sorcer.service.Invoker#invoke()
      */
-    public Object invoke() throws RemoteException,
-            InvocationException {
+    public Object invoke() throws InvocationException {
         return invoke(new Arg[]{});
     }
 
@@ -133,8 +188,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
      *
      * @see sorcer.service.Invoker#invoke(sorcer.service.Arg[])
      */
-    public Object invoke(Arg[] entries) throws RemoteException,
-            InvocationException {
+    public Object invoke(Arg[] entries) throws InvocationException {
         ReturnPath rp = null;
         for (Arg a : entries) {
             if (a instanceof ReturnPath) {
@@ -151,10 +205,10 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
                 Context cxt = xrt.getContext();
                 if (rp.path == null)
                     obj = cxt;
-                else if (rp.path.equals("self"))
+                else if (rp.path.equals(Signature.SELF))
                     obj = xrt;
                 else  if (rp.outPaths != null) {
-                    obj = ((ServiceContext)cxt).getSubcontext(rp.outPaths);
+                    obj = ((ServiceContext)cxt).getDirectionalSubcontext(rp.outPaths);
                 } else {
                     obj = cxt.getValue(rp.path);
                 }
@@ -165,14 +219,17 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
         }
     }
 
+    public Object invoke(Context context) throws InvocationException {
+        return invoke(context, new Arg[] {});
+    }
+
     /*
      * (non-Javadoc)
      *
      * @see sorcer.service.Invoker#invoke(sorcer.service.Context,
      * sorcer.service.Arg[])
      */
-    public Object invoke(Context context, Arg[] entries)
-            throws RemoteException, InvocationException {
+    public Object invoke(Context context, Arg[] entries) throws InvocationException {
         try {
             substitute(entries);
             if (context != null) {
@@ -181,7 +238,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
                     for (Mogram e : exts) {
                         Object link = context.getLink(e.getName());
                         if (link instanceof ContextLink) {
-                            ((Exertion)e).getContext().append(
+                            e.getContext().append(
                                     ((ContextLink) link).getContext());
                         }
                     }
@@ -310,12 +367,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
     }
 
     public String getDeploymentId(List<Signature> list) throws NoSuchAlgorithmException {
-        StringBuilder ssb = new StringBuilder();
-        for (Signature s : list) {
-            ssb.append(s.getProviderName());
-            ssb.append(s.getServiceType());
-        }
-        return ServiceDeployment.createDeploymentID(ssb.toString());
+        return DeploymentIdFactory.create(list);
     }
 
     public String getDeploymentId() throws NoSuchAlgorithmException {
@@ -429,6 +481,10 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
         return controlContext;
     }
 
+    public ControlContext getMogramStrategy() {
+        return controlContext;
+    }
+
     public Context getContext() throws ContextException {
         return getDataContext();
     }
@@ -491,8 +547,8 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
             throws ContextException;
 
     public Context finalizeOutDataContext() throws ContextException {
-        if (dataContext.getModelStrategy().getOutConnector() != null) {
-            dataContext.updateContextWith(dataContext.getModelStrategy().getOutConnector());
+        if (dataContext.getMogramStrategy().getOutConnector() != null) {
+            dataContext.updateContextWith(dataContext.getMogramStrategy().getOutConnector());
         }
         return dataContext;
     }
@@ -527,8 +583,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
             for (Arg e : entries) {
                 if (e instanceof Entry) {
                     try {
-                        putValue((String) ((Entry) e).path(),
-                                ((Entry) e).value());
+                        putValue(((Entry) e).path(), ((Entry) e).value());
                     } catch (ContextException ex) {
                         ex.printStackTrace();
                         throw new SetterException(ex);
@@ -574,9 +629,9 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
      */
     public Object getReturnValue(Arg... entries) throws ContextException,
             RemoteException {
-        ReturnPath returnPath = getDataContext().getReturnPath();
+        ReturnPath returnPath = (ReturnPath)getDataContext().getReturnPath();
         if (returnPath != null) {
-            if (returnPath.path == null || returnPath.path.equals("self"))
+            if (returnPath.path == null || returnPath.path.equals(Signature.SELF))
                 return getContext();
             else
                 return getContext().getValue(returnPath.path, entries);
@@ -745,7 +800,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
                     && !getProcessSignature().getServiceType()
                     .isAssignableFrom(Spacer.class)) {
                 sig.setServiceType(Spacer.class);
-                ((NetSignature) sig).setSelector("service");
+                ((NetSignature) sig).setSelector("exert");
                 sig.setProviderName(ANY);
                 sig.setType(Signature.Type.PROC);
                 getControlContext().setAccessType(access);
@@ -754,7 +809,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
                     .isAssignableFrom(Jobber.class)) {
                 if (sig.getServiceType().isAssignableFrom(Spacer.class)) {
                     sig.setServiceType(Jobber.class);
-                    ((NetSignature) sig).setSelector("service");
+                    ((NetSignature) sig).setSelector("exert");
                     sig.setProviderName(ANY);
                     sig.setType(Signature.Type.PROC);
                     getControlContext().setAccessType(access);
@@ -773,18 +828,26 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
         return this;
     }
 
+    public Object getValue(Arg... entries) throws EvaluationException,
+            RemoteException {
+       if (provider == null) {
+           return evaluate(entries);
+       } else {
+           return ((Evaluation)provider).getValue(entries);
+       }
+    }
     /*
      * (non-Javadoc)
      *
      * @see sorcer.service.Evaluation#getValue()
      */
-    public Object getValue(Arg... entries) throws EvaluationException,
+    public Object evaluate(Arg... entries) throws EvaluationException,
             RemoteException {
         Context cxt = null;
         try {
             substitute(entries);
             Exertion evaluatedExertion = exert(entries);
-            ReturnPath rp = ((ServiceContext)evaluatedExertion.getDataContext())
+            ReturnPath rp = (ReturnPath)evaluatedExertion.getDataContext()
                     .getReturnPath();
             if (evaluatedExertion instanceof Job) {
                 cxt = ((Job) evaluatedExertion).getJobContext();
@@ -795,13 +858,13 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
             if (rp != null) {
                 if (rp.path == null)
                     return cxt;
-                else if (rp.path.equals("self"))
+                else if (rp.path.equals(Signature.SELF))
                     return this;
                 else if (rp.path != null) {
                     cxt.setReturnValue(cxt.getValue(rp.path));
                     Context out = null;
                     if (rp.outPaths != null && rp.outPaths.length > 0) {
-                        out = ((ServiceContext)cxt).getSubcontext(rp.outPaths);
+                        out = ((ServiceContext)cxt).getDirectionalSubcontext(rp.outPaths);
                         cxt.setReturnValue(out);
                         return out;
                     }
@@ -949,6 +1012,16 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
         getControlContext().appendTrace(info);
     }
 
+    @Override
+    public Object exec(Arg... args) throws MogramException, RemoteException {
+        Context cxt = Arg.getContext(args);
+        if (cxt != null) {
+              dataContext = (ServiceContext) cxt;
+              return value(this, args);
+        }
+        return null;
+    }
+
     public String describe() {
         if (!debug)
             return info();
@@ -978,7 +1051,6 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
                 .append("\tGood Until Date:      " + goodUntilDate + "\n")
                 .append("\tAccess Class:         " + accessClass + "\n")
                 .append("\tIs Export Controlled: " + isExportControlled + "\n")
-                .append("\tScope Code:           " + scopeCode + "\n")
                 .append("\tPriority:             " + priority + "\n")
                 .append("\tProvider Name:        "
                         + getProcessSignature().getProviderName() + "\n")

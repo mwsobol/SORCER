@@ -19,6 +19,7 @@ package sorcer.service;
 
 import net.jini.id.Uuid;
 import java.io.Serializable;
+import java.rmi.RemoteException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -58,7 +59,7 @@ public class ExertionInfo implements Comparable, Serializable {
 		this.name = name;
 	}
 	
-	public ExertionInfo(Exertion exertion) {
+	public ExertionInfo(Exertion exertion) throws RemoteException {
 		name = exertion.getName();
 		id = exertion.getId();
 		status = exertion.getStatus();
@@ -69,7 +70,7 @@ public class ExertionInfo implements Comparable, Serializable {
         this.exertion = exertion;
 	}
 
-	public ExertionInfo(Exertion exertion, Uuid storeId) {
+	public ExertionInfo(Exertion exertion, Uuid storeId) throws RemoteException {
 		this(exertion);
 		this.storeId = storeId;
 	}

@@ -65,7 +65,7 @@ public class Job extends CompoundExertion {
 	protected final static Logger logger = LoggerFactory.getLogger(Job.class.getName());
 
 	protected Job delegate;
-	
+
 	public Integer state = new Integer(INITIAL);
 
 	/**
@@ -118,7 +118,7 @@ public class Job extends CompoundExertion {
 	 */
 	protected void init() {
 		super.init();
-		NetSignature s = new NetSignature("service", Jobber.class);
+		NetSignature s = new NetSignature("exert", Jobber.class);
 		// Needs to be RemoteJobber for Cataloger to find it
 		// s.setServiceType(Jobber.class.getName());
 		s.setProviderName(null);
@@ -339,12 +339,9 @@ public class Job extends CompoundExertion {
 	public String toString() {
 		StringBuffer desc = new StringBuffer(super.toString());
 		desc.append("\n=== START PRINTING JOB ===\n");	
-		desc
-				.append("\n=============================\nListing Component Exertions\n=============================\n");
+		desc.append("\n=============================\nListing Component Exertions\n=============================\n");
 		for (int i = 0; i < size(); i++) {
-			desc.append("\n===========\n Exertion ").append(i).append(
-					"\n===========\n").append(
-					((ServiceExertion) get(i)).describe());
+			desc.append("\n===========\n Exertion ").append(i).append("\n===========\n").append((get(i)).describe());
 		}
 		desc.append("\n=== DONE PRINTING JOB ===\n");
 		return desc.toString();
@@ -354,7 +351,11 @@ public class Job extends CompoundExertion {
 	public List<ThrowableTrace> getExceptions() {
 		List<ThrowableTrace> exceptions = new ArrayList<ThrowableTrace>();
 		for (Mogram ext : mograms) {
-			exceptions.addAll(((Exertion)ext).getExceptions());
+			try {
+				exceptions.addAll(ext.getExceptions());
+			} catch (RemoteException e) {
+				exceptions.add(new ThrowableTrace("Problem while collecting exceptions", e));
+			}
 		}
 		return exceptions;
 	}
@@ -384,8 +385,8 @@ public class Job extends CompoundExertion {
 	}
 
 	public Context finalizeOutDataContext() throws ContextException {
-		if (dataContext.getModelStrategy().getOutConnector() != null) {
-			updateContextWith(dataContext.getModelStrategy().getOutConnector());
+		if (dataContext.getMogramStrategy().getOutConnector() != null) {
+			updateContextWith(dataContext.getMogramStrategy().getOutConnector());
 		}
 		return dataContext;
 	}
@@ -476,7 +477,7 @@ public class Job extends CompoundExertion {
 		int index = path.indexOf(last);
 		String contextPath = path.substring(index + last.length() + 1);
 
-		return ((Exertion)exti).getContext().getValue(contextPath);
+		return exti.getContext().getValue(contextPath);
 	}
 	
 	/* (non-Javadoc)
@@ -542,7 +543,7 @@ public class Job extends CompoundExertion {
 		ReturnPath rp = ((ServiceContext) dataContext).getReturnPath();
 		Object obj = null;
 		if (rp != null) {
-			if (rp.path == null || rp.path.equals("self")) {
+			if (rp.path == null || rp.path.equals(Signature.SELF)) {
 				return this;
 			} else if (rp.type != null) {
 				obj = rp.type.cast(getContext().getValue(rp.path));

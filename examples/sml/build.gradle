@@ -67,11 +67,16 @@ dependencies {
 }
 
 def deployConfigArithmetic = file("configs/arithmetic-prv.config")
+def haLocal = file("src/main/netlets/ha-job-local.ntl")
+def haRemote = file("src/main/netlets/ha-job-remote.ntl")
+
 //def deployConfigMultipler = file("configs/multiplier-prv.config")
 artifacts {
 	archives arithmeticDlJar
 	archives arithmeticReqJar
 	archives arithmeticPrvUiJar
+	archives file: haLocal, classifier: "ha-job-local"
+	archives file: haRemote, classifier: "ha-job-remote"
 	archives file: deployConfigArithmetic, classifier: "deploy"
 //	archives file: deployConfigMultipler, classifier: "deploy-multiplier"
 }
@@ -136,8 +141,9 @@ task runRequestor(type:JavaExec, dependsOn:[jar]) {
 
 test {
 	systemProperty "java.rmi.server.codebase",
-			"${websterUrl}/${repoPath()}/sml-${version}.jar ${websterUrl}/sorcer-dl-${version}.jar ${websterUrl}/jsk-dl-${riverVersion}.jar"
+			"${websterUrl}/${repoPath()}/sml-${version}-dl.jar ${websterUrl}/sorcer-dl-${version}.jar ${websterUrl}/jsk-dl-${riverVersion}.jar"
 
+	systemProperty "project.dir", "${project.projectDir.path}"
 	testLogging {
 		events "passed", "skipped", "failed"/*, "standardOut"*/, "standardError"
 	}

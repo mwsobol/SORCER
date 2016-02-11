@@ -12,7 +12,6 @@ import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.provider.impl.SubtractorImpl;
-import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.par.Agent;
 import sorcer.core.context.model.par.Par;
 import sorcer.core.context.model.par.ParModel;
@@ -41,6 +40,7 @@ import static sorcer.mo.operator.response;
 import static sorcer.mo.operator.responseUp;
 import static sorcer.po.operator.add;
 import static sorcer.po.operator.*;
+import static sorcer.po.operator.loop;
 import static sorcer.po.operator.map;
 import static sorcer.po.operator.put;
 import static sorcer.po.operator.set;
@@ -49,7 +49,6 @@ import static sorcer.po.operator.set;
 /**
  * @author Mike Sobolewski
  */
-@SuppressWarnings({ "rawtypes", "unchecked" })
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/pml")
 public class ParModels {
@@ -399,8 +398,8 @@ public class ParModels {
 
 		Task t5 = task("t5", sig("add", AdderImpl.class), c5);
 
-		Job j1 = job("j1", sig("service", ServiceJobber.class),
-				job("j2", t4, t5, sig("service", ServiceJobber.class)),
+		Job j1 = job("j1", sig("exert", ServiceJobber.class),
+				job("j2", t4, t5, sig("exert", ServiceJobber.class)),
 				t3,
 				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
 				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
@@ -452,8 +451,8 @@ public class ParModels {
 
 		Task t5 = task("t5", sig("add", AdderImpl.class), c5);
 
-		Job j1 = job("j1", sig("service", ServiceJobber.class),
-				job("j2", t4, t5, sig("service", ServiceJobber.class)),
+		Job j1 = job("j1", sig("exert", ServiceJobber.class),
+				job("j2", t4, t5, sig("exert", ServiceJobber.class)),
 				t3,
 				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
 				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
@@ -664,10 +663,9 @@ public class ParModels {
 				Volume.class.getName(), new URL(Sorcer
 				.getWebsterUrl() + "/pml-"+sorcerVersion+".jar")));
 
-		Entry ent = (Entry) get((Context)value(pm,"getSphereVolume"), "sphere/volume");
+		Object result = value((Context)value(pm,"getSphereVolume"), "sphere/volume");
 
-//		logger.info("val: " + value(ent));
-		assertTrue(value(ent).equals(33510.32163829113));
+		assertTrue(result.equals(33510.32163829113));
 
 		// invoke the agent directly
 		invoke(pm,

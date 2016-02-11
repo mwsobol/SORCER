@@ -29,6 +29,7 @@ dependencies {
     compile "com.google.guava:guava:${guavaVersion}"
     compile "org.codehaus.plexus:plexus-utils:${plexusVersion}"
     compile "commons-io:commons-io:${commonsIoVersion}"
+    compile "org.apache.commons:commons-exec:${commonsExecVersion}"
     compile project(':sorcer-dl')
     compile files("${System.properties['java.home']}/../lib/tools.jar")
     compile project(':webster')
@@ -50,6 +51,7 @@ jar {
         include "org/rioproject/impl/jmx/JMXConnectionUtil.class"
         include "org/rioproject/impl/jmx/MBeanServerFactory.class"
         include "org/rioproject/event/RemoteServiceEvent.class"
+        include "org/rioproject/resolver/ResolverException.class"
     }
     manifest {
         attributes("Implementation-Title": "SORCER Platform",

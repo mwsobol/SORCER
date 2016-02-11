@@ -30,6 +30,7 @@ import sorcer.core.monitor.MonitoringSession;
 import sorcer.core.provider.Provider;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
+import sorcer.service.Signature.ReturnPath;
 
 import java.rmi.RemoteException;
 import java.util.List;
@@ -53,8 +54,8 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
 
 
     @Override
-    protected void doExec() throws MogramException, SignatureException {
-        super.doExec();
+    protected void doExec(Arg... args) throws MogramException, SignatureException {
+        super.doExec(args);
 		try {
 			Condition.cleanupScripts(xrt);
 		} catch (ContextException e) {
@@ -112,7 +113,7 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
         }
     }
 
-    private void preUpdate(Exertion exertion) throws ContextException {
+    private void preUpdate(Exertion exertion) throws ContextException, RemoteException {
 		if (exertion instanceof AltMogram) {
 			for (OptMogram oe : ((AltMogram)exertion).getOptExertions()) {
                 oe.getCondition().getConditionalContext().append(xrt.getContext());
@@ -121,10 +122,10 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
             MonitoringSession monSession = MonitorUtil.getMonitoringSession(exertion);
             if (exertion.isMonitorable() && monSession!=null) {
                 try {
-                    monSession.init((Monitorable) provider.getProxy(), ExertionDispatcherFactory.LEASE_RENEWAL_PERIOD,
-                            ExertionDispatcherFactory.DEFAULT_TIMEOUT_PERIOD);
+                    monSession.init((Monitorable) provider.getProxy(), MogramDispatcherFactory.LEASE_RENEWAL_PERIOD,
+                            MogramDispatcherFactory.DEFAULT_TIMEOUT_PERIOD);
                     if (getLrm()==null) setLrm(new LeaseRenewalManager());
-                    getLrm().renewUntil(monSession.getLease(), Lease.FOREVER, ExertionDispatcherFactory.LEASE_RENEWAL_PERIOD, null);
+                    getLrm().renewUntil(monSession.getLease(), Lease.FOREVER, MogramDispatcherFactory.LEASE_RENEWAL_PERIOD, null);
                 } catch (RemoteException re) {
                     logger.error("Problem initializing Monitor Session for: " + exertion.getName(), re);
                 } catch (MonitorException e) {
@@ -172,7 +173,9 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
             } */
 		} else if (exertion instanceof OptMogram) {
 			xrt.getContext().append(exertion.getDataContext());
-		}
+		} else if (exertion instanceof LoopMogram) {
+            xrt.getContext().append(((LoopMogram)exertion).getTarget().getScope());
+        }
 
 //		if (exertion instanceof AltExertion) {
 //			((ParModel)((Block)xrt).getContext()).appendNew(((AltExertion)exertion).getActiveOptExertion().getContext());
@@ -182,7 +185,7 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
 		
 		ServiceContext cxt = (ServiceContext)xrt.getDataContext();
 		if (exertion.getDataContext().getReturnPath() != null)
-            cxt.putValue(exertion.getContext().getReturnPath().path,
+            cxt.putValue(((ReturnPath)exertion.getContext().getReturnPath()).path,
                     exertion.getDataContext().getReturnValue());
 		else
              cxt.updateEntries(exertion.getDataContext());

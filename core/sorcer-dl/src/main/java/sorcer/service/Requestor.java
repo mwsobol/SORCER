@@ -1,7 +1,7 @@
 /*
- * Copyright 2012 the original author or authors.
- * Copyright 2012 SorcerSoft.org.
- *  
+ * Copyright 2010 the original author or authors.
+ * Copyright 2010 SorcerSoft.org.
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,19 +15,19 @@
  * limitations under the License.
  */
 
-package sorcer.co.tuple;
+package sorcer.service;
 
-public class Path<T2> extends Tuple2<String, T2> {
-	
-	private static final long serialVersionUID = -3968682348032416823L;
-	
-	public Path() { }
+import net.jini.core.transaction.TransactionException;
 
-	public Path(String path) {
-		this._1 = path;
-	}
+import java.io.Serializable;
+import java.rmi.RemoteException;
 
-	public String path() {
-		return  this._1;
-	}
+/**
+ * Created by Mike Sobolewski on 10/30/15.
+ */
+@FunctionalInterface
+public interface Requestor extends Serializable {
+
+    Context exec(Service service, Context context, Arg[] args) throws MogramException, RemoteException, TransactionException;
+
 }

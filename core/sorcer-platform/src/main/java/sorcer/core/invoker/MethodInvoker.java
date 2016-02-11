@@ -17,6 +17,7 @@
 
 package sorcer.core.invoker;
 
+import net.jini.core.transaction.Transaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.context.ServiceContext;
@@ -176,7 +177,7 @@ public class MethodInvoker<T> extends ServiceInvoker<T> implements MethodInvokin
 	}
 
 	@Override
-	public T getValue(Arg... entries) throws EvaluationException {
+	public T getValue(Arg... args) throws EvaluationException {
 		Object[] parameters = getParameters();
 		Object val;
 		Class<?> evalClass = null;
@@ -220,7 +221,7 @@ public class MethodInvoker<T> extends ServiceInvoker<T> implements MethodInvokin
 					// exception when Arg... is not specified for the invoke
 					if (target instanceof Invocation && paramTypes.length == 1
 							&&  paramTypes[0] == Context.class
-							&& selector.equals("invoke"))	{
+							&& (selector.equals("invoke")))	{
 						paramTypes = new Class[2];
 						paramTypes[0] = Context.class;
 						paramTypes[1] = Arg[].class;
@@ -228,9 +229,20 @@ public class MethodInvoker<T> extends ServiceInvoker<T> implements MethodInvokin
 						parameters2[0] = parameters[0];
 						parameters2[1] = new Arg[0];
 						parameters = parameters2;
-					// ignore default setup for exertion tasks the call the object provider
-					}
-					else if (paramTypes.length == 1 && (paramTypes[0] == Context.class)
+					// ignore default setup for exerting mograms
+					} else if (Mogram.class.isAssignableFrom(paramTypes[0])
+							&& selector.equals("exert"))	{
+						paramTypes = new Class[3];
+						paramTypes[0] = Mogram.class;
+						paramTypes[1] = Transaction.class;
+						paramTypes[2] = Arg[].class;
+						Object[] parameters2 = new Object[3];
+						parameters2[0] = parameters[0];
+						parameters2[1] = null; // Transaction
+						parameters2[2] = args;
+						parameters = parameters2;
+						// ignore default setup for exertion tasks the call the object provider
+					} else if (paramTypes.length == 1 && (paramTypes[0] == Context.class)
 							&& ((Context)parameters[0]).size() == 0 && !(target instanceof Evaluation)) {
 						paramTypes = null;
 						parameters = null;
@@ -250,7 +262,7 @@ public class MethodInvoker<T> extends ServiceInvoker<T> implements MethodInvokin
 				}
 			}
 			if (context != null)
-				((ServiceContext)context).getModelStrategy().setCurrentSelector(selector);
+				((ServiceContext)context).getMogramStrategy().setCurrentSelector(selector);
 			val = m.invoke(target, parameters);
 		} catch (Exception e) {
 			StringBuilder message = new StringBuilder();

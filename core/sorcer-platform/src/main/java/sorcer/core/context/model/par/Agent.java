@@ -110,11 +110,11 @@ public class Agent<T> extends Par<T> implements Serializable {
 	}
 	
 	@Override
-	public T getValue(Arg... entries) throws EvaluationException, RemoteException {
+	public T getValue(Arg... args) throws EvaluationException, RemoteException {
 		if (value != null && invoker != null && invoker.valueValid())
 			return value;
 		else
-			return (T)evaluate(entries);
+			return (T)evaluate(args);
 	}
 	
 	/* (non-Javadoc)

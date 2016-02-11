@@ -28,6 +28,8 @@ import sorcer.service.Exec;
 import sorcer.service.Exertion;
 import sorcer.service.ServiceExertion;
 
+import java.rmi.RemoteException;
+
 public class ExertionEnvelop implements Entry {
 
 	private static final long serialVersionUID = -7997472556200082660L;
@@ -167,7 +169,7 @@ public class ExertionEnvelop implements Entry {
 		return sb.toString();
 	}
 	
-	public String describe() {
+	public String describe() throws RemoteException {
 		StringBuffer sb = new StringBuffer("\nExertionEnvelop: ");
 		sb.append("exertionID=").append(exertionID)
 		.append(", isJob=").append(isJob)

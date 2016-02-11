@@ -1,25 +1,22 @@
 package sorcer.provider.adder;
 
-import net.jini.core.transaction.Transaction;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.provider.adder.impl.AdderImpl;
 import sorcer.service.*;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import sorcer.service.modeling.Model;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
-import static sorcer.eo.operator.result;
+import static sorcer.eo.operator.get;
 import static sorcer.eo.operator.value;
 import static sorcer.mo.operator.response;
-import static sorcer.mo.operator.srvModel;
 
 /**
  * @author Mike Sobolewski
@@ -32,10 +29,10 @@ public class LocalMograms {
 	@Test
 	public void exertTask() throws Exception {
 
-		Service t5 = task("t5", sig("add", AdderImpl.class),
+		Task t5 = task("t5", sig("add", AdderImpl.class),
 				cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0)));
 
-		Service out = exert(t5);
+		Task out = exert(t5);
 		Context cxt = context(out);
 		logger.info("out context: " + cxt);
 		logger.info("context @ arg/x1: " + get(cxt, "arg/x1"));
@@ -47,7 +44,7 @@ public class LocalMograms {
 
 		// get the subcontext output from the context
 		assertTrue(context(ent("arg/x1", 20.0), ent("result/value", 100.0)).equals(
-				subcontext(cxt, paths("arg/x1", "result/value"))));
+				value(cxt, outPaths("arg/x1", "result/value"))));
 
 	}
 

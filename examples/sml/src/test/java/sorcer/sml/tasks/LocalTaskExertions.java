@@ -23,7 +23,6 @@ import static sorcer.eo.operator.value;
 /**
  * @author Mike Sobolewski
  */
-@SuppressWarnings({ "unchecked", "rawtypes" })
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/sml")
 public class LocalTaskExertions {
@@ -47,7 +46,7 @@ public class LocalTaskExertions {
 
 		// get the subcontext output from the context
 		assertTrue(context(ent("result/value", 100.0), ent("arg/x1", 20.0)).equals(
-				value(cxt, result("result/value", outPaths("result/value", "arg/x1")))));
+				value(cxt, outPaths("result/value", "arg/x1"))));
 
 	}
 
@@ -57,15 +56,14 @@ public class LocalTaskExertions {
 		Task t6 = task("t6", sig("average", AveragerImpl.class),
 				cxt("average", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0), result("result/y")));
 
-//		// get the result value
-//		assertEquals(50.0, value(t6));
+		// get the result value
+		assertEquals(50.0, value(t6));
 
 		// get the subcontext output from the exertion
 		assertTrue(context(ent("result/y", 50.0), ent("arg/x1", 20.0)).equals(
-				value(t6, result("result/y", outPaths("result/y", "arg/x1")))));
+				value(t6, outPaths("result/y", "arg/x1"))));
 
 	}
-
 
     @Test
     public void batchTask() throws Exception {

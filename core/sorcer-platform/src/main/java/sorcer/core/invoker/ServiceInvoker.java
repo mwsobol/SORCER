@@ -91,7 +91,7 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 		
 	protected Context invokeContext;
 
-	protected ContextCallable lambda;
+	protected ValueCallable lambda;
 
 	// set of dependent variables for this evaluator
 	protected ArgSet pars = new ArgSet();
@@ -112,11 +112,11 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 		invokeContext = new ParModel("model/par");
 	}
 
-	public ServiceInvoker(ContextCallable lambda) throws InvocationException {
+	public ServiceInvoker(ValueCallable lambda) throws InvocationException {
 		this(null, lambda, null);
 	}
 
-	public ServiceInvoker(String name, ContextCallable lambda, Context context) throws InvocationException {
+	public ServiceInvoker(String name, ValueCallable lambda, Context context) throws InvocationException {
 		this.name = name;
 		if (context == null)
 			invokeContext = new ParModel("model/par");
@@ -335,7 +335,7 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 				if (invokeContext == null)
 					invokeContext = new ParModel("model/par");
 					
-				invokeContext.substitute(entries);
+				((ServiceContext)invokeContext).substitute(entries);
 			}
 			if (((ServiceContext)invokeContext).isChanged()) {
 				valueIsValid = false;
@@ -540,12 +540,21 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 		return this;
 	}
 
-	public ContextCallable getLambda() {
+	public ValueCallable getLambda() {
 		return lambda;
 	}
 
-	public void setLambda(ContextCallable lambda) {
+	public void setLambda(ValueCallable lambda) {
 		this.lambda = lambda;
 	}
 
+	@Override
+	public Object exec(Arg... args) throws MogramException, RemoteException {
+		Context cxt = Arg.getContext(args);
+		if (cxt !=null) {
+			invokeContext = cxt;
+			return getValue(args);
+		}
+		return null;
+	}
 }

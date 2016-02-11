@@ -383,8 +383,10 @@ public class SorcerEnv extends SOS {
 				File file = new File(filename);
                 String fn = "configs/" + file.getName();
                 ClassLoader resourceLoader = Thread.currentThread().getContextClassLoader();
+				if(logger.isTraceEnabled()) {
+					logger.trace("Using {}: {}", resourceLoader.getClass().getName(), resourceLoader);
+				}
                 if(logger.isDebugEnabled()) {
-                    logger.debug("Using "+resourceLoader.getClass().getName()+": "+resourceLoader);
                     Enumeration<URL> resources = resourceLoader.getResources(fn);
                     StringBuilder sb = new StringBuilder();
                     while(resources.hasMoreElements()) {
@@ -1540,7 +1542,7 @@ public class SorcerEnv extends SOS {
 	public static String getActualName(String name) {
 		if (nameSuffixed()) {
 			String suffix = props.getProperty(S_NAME_SUFFIX, getDefaultNameSuffix(3));
-			if (name.indexOf(suffix) > 0)
+			if (name.endsWith(suffix))
 				return name;
 			else
 				return name + "-" + suffix;

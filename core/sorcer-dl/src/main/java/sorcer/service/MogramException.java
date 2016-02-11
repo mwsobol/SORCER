@@ -76,7 +76,7 @@ public class MogramException extends Exception {
      * @param cause
      *            the nested throwable cause
      */
-    public MogramException(String message, Exertion exertion, Throwable cause) {
+    public MogramException(String message, Mogram mogram, Throwable cause) {
         super(message, cause);
         this.mogram = mogram;
     }

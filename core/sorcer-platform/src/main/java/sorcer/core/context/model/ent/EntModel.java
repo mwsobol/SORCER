@@ -1,8 +1,8 @@
 package sorcer.core.context.model.ent;
 
 import sorcer.core.context.PositionalContext;
-import sorcer.core.plexus.FidelityManager;
 import sorcer.service.*;
+import sorcer.service.modeling.Model;
 
 import java.rmi.RemoteException;
 import java.util.Date;
@@ -34,9 +34,7 @@ import java.util.Date;
  *
  * @author Mike Sobolewski
  */
-public class EntModel<T> extends PositionalContext<T> implements Invocation<T>, Contexter<T> {
-
-    private FidelityManager fiManager;
+public class EntModel<T> extends PositionalContext<T> implements Model, Invocation<T>, Contexter<T> {
 
     public static EntModel instance(Signature builder) throws SignatureException {
         EntModel model = (EntModel) sorcer.co.operator.instance(builder);
@@ -80,14 +78,6 @@ public class EntModel<T> extends PositionalContext<T> implements Invocation<T>, 
         } catch (Exception e) {
             throw new InvocationException(e);
         }
-    }
-
-    public FidelityManager getFiManager() {
-        return fiManager;
-    }
-
-    public void setFiManager(FidelityManager fiManager) {
-        this.fiManager = fiManager;
     }
 
 //    @Override

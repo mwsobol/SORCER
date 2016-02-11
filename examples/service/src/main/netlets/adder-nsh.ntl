@@ -1,6 +1,6 @@
+#!/usr/bin/env nsh
 /*
- * Copyright 2009 the original author or authors.
- * Copyright 2009 SorcerSoft.org.
+ * Copyright to the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,14 +15,13 @@
  * limitations under the License.
  */
 
-package sorcer.service;
+@Codebase(group='org.sorcer', module='adder', version='${sorcer.version}', classifier='dl')
+import sorcer.provider.adder.Adder
 
-/**
- * Created by Mike Sobolewski on 10/30/15.
- */
-@FunctionalInterface
-public interface ExertionCallable<T> {
+Double v1 = 100.0;
+Double v2 = 200.0;
 
-    Context<T> call(Exertion exertion) throws MogramException;
+task("hello adder", sig("add", Adder.class),
+    context("adder", inEnt("arg/x1", v1), inEnt("arg/x2", v2), result("out/y")));
 
-}
+

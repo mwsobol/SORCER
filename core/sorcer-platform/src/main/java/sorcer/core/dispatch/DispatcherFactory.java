@@ -21,7 +21,7 @@ package sorcer.core.dispatch;
 import sorcer.core.Dispatcher;
 import sorcer.core.provider.Provider;
 import sorcer.service.Context;
-import sorcer.service.Exertion;
+import sorcer.service.Mogram;
 import sorcer.service.Task;
 
 import java.util.Set;
@@ -36,12 +36,12 @@ public interface DispatcherFactory {
      * Dispatcher as determined from information provided by the given
      * instance of ServiceJob.
      *
-     * @param exertion The SORCER job that will be used to perform a collection
+     * @param mogram The SORCER job that will be used to perform a collection
      *                 of SERVICE tasks.
      */
-	 public Dispatcher createDispatcher(Exertion exertion, Provider provider, String... config) throws DispatcherException;
+	 public Dispatcher createDispatcher(Mogram mogram, Provider provider, String... config) throws DispatcherException;
 
     public SpaceTaskDispatcher createDispatcher(Task Task, Provider provider, String... config) throws DispatcherException;
 
-    public Dispatcher createDispatcher(Exertion exertion, Set<Context> sharedContexts, boolean isSpawned, Provider provider) throws DispatcherException;
+    public Dispatcher createDispatcher(Mogram mogram, Set<Context> sharedContexts, boolean isSpawned, Provider provider) throws DispatcherException;
 }

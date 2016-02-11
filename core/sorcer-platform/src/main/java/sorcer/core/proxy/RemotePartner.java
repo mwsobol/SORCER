@@ -17,14 +17,14 @@
 
 package sorcer.core.proxy;
 
-import java.rmi.Remote;
-
 import sorcer.service.Service;
+
+import java.rmi.Remote;
 
 /**
  * Remote servers and other compound remote proxies using inner proxies to
  * extend their functionality via calls on the inner proxies implement this
- * interface. To provide service-to-service functionality this interface extends
+ * interface. To provider service-to-service functionality this interface extends
  * {@link Service}.
  * 
  * @author Mike Sobolewski

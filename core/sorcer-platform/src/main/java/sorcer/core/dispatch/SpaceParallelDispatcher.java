@@ -85,7 +85,7 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
     }
 
     @Override
-    public void doExec() throws SignatureException, ExertionException {
+    public void doExec(Arg... args) throws SignatureException, ExertionException {
         new Thread(disatchGroup, new CollectResultThread(), tName("collect-" + xrt.getName())).start();
 
         for (Mogram mogram : inputXrts) {
@@ -95,7 +95,7 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
                 try {
                     if (monSession.getState()==State.INITIAL.ordinal()) {
                         logger.info("initializing monitoring from SpaceParallelDispatcher for " + mogram.getName());
-                        monSession.init(ExertionDispatcherFactory.LEASE_RENEWAL_PERIOD, ExertionDispatcherFactory.DEFAULT_TIMEOUT_PERIOD);
+                        monSession.init(MogramDispatcherFactory.LEASE_RENEWAL_PERIOD, MogramDispatcherFactory.DEFAULT_TIMEOUT_PERIOD);
                     }
                 } catch (MonitorException me) {
                     logger.error("Problem starting monitoring for " + xrt.getName() + " " + me.getMessage());
@@ -140,7 +140,7 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
 		}
 	}
 
-	public void collectResults() throws ExertionException, SignatureException {
+	public void collectResults() throws ExertionException, SignatureException, RemoteException {
 		int count = 0;
 		// get all children of the underlying parent job
         List<ExertionEnvelop> templates = Arrays.asList(getTemplate(DONE), getTemplate(FAILED), getTemplate(ERROR));
@@ -197,7 +197,7 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
         return tmpl;
     }
 
-    protected void handleResult(Collection<ExertionEnvelop> results) throws ExertionException, SignatureException {
+    protected void handleResult(Collection<ExertionEnvelop> results) throws ExertionException, SignatureException, RemoteException {
         boolean poisoned = false;
         for (ExertionEnvelop resultEnvelop : results) {
 
@@ -342,7 +342,7 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
         changeDoneExertionIndex(result.getIndex());
     }
 
-    protected void handleError(Exertion exertion) {
+    protected void handleError(Exertion exertion) throws RemoteException {
         if (exertion != xrt)
             ((NetJob) xrt).setMogramAt(exertion,
                     exertion.getIndex());

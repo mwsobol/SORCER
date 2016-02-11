@@ -108,10 +108,8 @@ public class ProvisionManager {
                 if(!completionService.take().get()) {
                     deployed = false;
                 }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
+            } catch (InterruptedException | ExecutionException e) {
+                logger.warn("Might be an issue getting results", e);
             }
         }
         return deployed;
@@ -160,8 +158,9 @@ public class ProvisionManager {
                 if(deployment!=null) {
                     deployment.setDeployedNames(deploymentNames);
                 } else {
-                    logger.warn("There was no ServiceDeployment for %s, "+exertion.getName()+" "+
-                                   "try and load all NetSignatures and set deployment names");
+                    logger.warn("There was no ServiceDeployment for %s, " +
+                                        "try and load all NetSignatures and set deployment names",
+                                exertion.getName());
                     for (Signature netSignature : getNetSignatures()) {
                         if (netSignature.getDeployment() == null)
                             continue;

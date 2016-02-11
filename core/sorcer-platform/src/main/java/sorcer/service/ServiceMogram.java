@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import sorcer.co.tuple.ExecPath;
 import sorcer.core.SorcerConstants;
 import sorcer.core.monitor.MonitoringSession;
+import sorcer.core.plexus.FidelityManager;
 import sorcer.core.signature.NetSignature;
 import sorcer.core.signature.ServiceSignature;
 import sorcer.security.util.SorcerPrincipal;
@@ -59,6 +60,10 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
 
     protected String subdomainName;
 
+    protected FidelityManagement fiManager;
+
+    protected MogramStrategy mogramStrategy;
+
     /**
      * position of component Mogram in a compund mogram
      */
@@ -73,8 +78,6 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
 
     // the mogram's scope
     protected Context scope;
-
-    protected Integer scopeCode = PRIVATE_SCOPE;
 
     protected String description;
 
@@ -150,7 +153,6 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
         subdomainId = "0";
         accessClass = PUBLIC;
         isExportControlled = Boolean.FALSE;
-        scopeCode = new Integer(PRIVATE_SCOPE);
         status = new Integer(INITIAL);
         principal = new SorcerPrincipal(System.getProperty("user.name"));
         principal.setId(principal.getName());
@@ -289,10 +291,6 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
 
     public void setSessionId(Uuid sessionId) {
         this.sessionId = sessionId;
-    }
-
-    public void setScopeCode(int value) {
-        scopeCode = new Integer(value);
     }
 
     @Override
@@ -536,10 +534,6 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
         return creationDate;
     }
 
-    public Integer getScopeCode() {
-        return scopeCode;
-    }
-
     public String getDomainName() {
         return domainName;
     }
@@ -741,6 +735,14 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
         putFidelity(name, nf);
     }
 
+    public FidelityManagement getFiManager() {
+        return fiManager;
+    }
+
+    public void setFiManager(FidelityManager fiManager) {
+        this.fiManager = fiManager;
+    }
+
     public Fidelity selectFidelity(Arg... entries)  {
         Fidelity fi = null;
         if (entries != null && entries.length > 0) {
@@ -765,13 +767,15 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
             if (sf == null)
                 logger.warn("no such service fidelity: {} for: {}", selector, this);
         }
-        if (sf.type == Fidelity.Type.EXERT) {
-            serviceFidelity = sf;
-            serviceFidelitySelector = selector;
-        } else if (sf.type == Fidelity.Type.COMPOSITE) {
-            selectCompositeFidelity(sf);
-        } else if (sf.type == Fidelity.Type.EMPTY) {
-            selectFidelity(sf.getName());
+        if (sf != null) {
+            if (sf.type == Fidelity.Type.EXERT) {
+                serviceFidelity = sf;
+                serviceFidelitySelector = selector;
+            } else if (sf.type == Fidelity.Type.COMPOSITE) {
+                selectCompositeFidelity(sf);
+            } else if (sf.type == Fidelity.Type.EMPTY) {
+                selectFidelity(sf.getName());
+            }
         }
         trimAllNotSerializableSignatures();
         return serviceFidelity;
@@ -846,11 +850,20 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
         }
     }
 
+    @Override
+    public MogramStrategy getMogramStrategy() {
+        return mogramStrategy;
+    }
+
+    public void setModelStrategy(MogramStrategy strategy) {
+        mogramStrategy = strategy;
+    }
+
     public boolean isBatch() {
         return serviceFidelity.selects.size()>1;
     }
 
-    public void setProcessSignature(Signature signature) {
+    public void correctProcessSignature(Signature signature) {
         for (Signature sig : this.serviceFidelity.selects) {
             if (sig.getType() != Signature.Type.PROC) {
                 this.serviceFidelity.selects.remove(sig);

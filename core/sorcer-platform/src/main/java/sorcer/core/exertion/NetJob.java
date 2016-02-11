@@ -19,13 +19,10 @@ package sorcer.core.exertion;
 
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
-import sorcer.core.provider.Jobber;
 import sorcer.core.provider.exerter.ServiceShell;
-import sorcer.core.signature.NetSignature;
 import sorcer.security.util.Auth;
 import sorcer.security.util.SorcerPrincipal;
 import sorcer.service.*;
-import sorcer.service.Signature.Type;
 
 import java.rmi.RemoteException;
 
@@ -39,11 +36,6 @@ public class NetJob extends Job implements Invocation<Object> {
 
 	public NetJob(String name) {
 		super(name);
-		try {
-			addSignature(new NetSignature("service", Jobber.class, Type.PROC));
-		} catch (SignatureException e) {
-			e.printStackTrace();
-		}
 	}
 	
 	public NetJob(String name, Signature signature) {

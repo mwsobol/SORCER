@@ -18,7 +18,6 @@
 
 package sorcer.service;
 
-import net.jini.id.Uuid;
 import sorcer.core.SorcerConstants;
 import sorcer.core.provider.Provider;
 
@@ -27,7 +26,6 @@ import sorcer.service.modeling.Model;
 import java.io.Serializable;
 import java.net.URL;
 import java.rmi.RemoteException;
-import java.security.Principal;
 import java.util.*;
 
 /**
@@ -57,7 +55,7 @@ import java.util.*;
  * critical when a namespace in the context may change or when data nodes
  * contain remote references, for example a URL. It is usually assumed that
  * provider-enforced data associations are more stable than user-oriented paths.
- * Each direct service invocation {@link Service#service} requires data in the
+ * Each direct service invocation {@link Server#service} requires data in the
  * ServiceContext format.
  * <p>
  * Service contexts are defined by this common interface with efficient
@@ -72,13 +70,13 @@ import java.util.*;
  * more meta-attribute meaning than XML attributes. While context attributes
  * provide a name space for direct access to data nodes via
  * {@link Context#getValue}, data attributes specify the data node for indirect
- * efficient retrieval (search) by service providers. 
+ * efficient retrieval (search) by service providers.
  *
  * @author Mike Sobolewski
  */
 @SuppressWarnings("rawtypes")
 public interface Context<T> extends Model, Mappable<T>, Serializable,
-		Contexter<T>, Paradigmatic, Arg {
+		Contexter<T>, Paradigmatic {
 
 	/** parameter (par) */
 	final static String PATH_PAR = "par";
@@ -325,7 +323,7 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 	 * @return this context value at the path
 	 * @throws ContextException
 	 */
-	public T asis(String path) throws ContextException;
+	public T asis(String path);
 
 	public void setReturnValue(Object value) throws ContextException;
 
@@ -636,12 +634,12 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 	public String getLocalMetapath(String metaattributeName)
 			throws ContextException;
 
-	public Context getSubcontext(String... paths) throws ContextException;
+	public Context getDirectionalSubcontext(Path... paths) throws ContextException;
 
 	public boolean isValid(Signature method) throws ContextException;
 
 	/**
-	 * Returns a list of all paths of this context. 
+	 * Returns a list of all paths of this context.
 	 *
 	 * @return <code>List</code>
 	 * @throws ContextException
@@ -911,9 +909,9 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 
 	public int size();
 
-	Signature.ReturnPath getReturnPath();
+	SignatureReturnPath getReturnPath();
 
-	Context setReturnPath(Signature.ReturnPath returnPath);
+	Context setReturnPath(SignatureReturnPath returnPath);
 
 	public enum Type {
 		ASSOCIATIVE, SHARED, POSITIONAL, LIST, SCOPE, INDEXED, ARRAY

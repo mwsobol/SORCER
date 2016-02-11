@@ -25,6 +25,8 @@ import sorcer.core.context.ThrowableTrace;
 import sorcer.core.exertion.*;
 import sorcer.core.provider.rendezvous.RendezvousBean;
 import sorcer.core.provider.rendezvous.ServiceConcatenator;
+import sorcer.core.provider.rendezvous.ServiceJobber;
+import sorcer.core.provider.rendezvous.ServiceSpacer;
 import sorcer.service.*;
 import sorcer.service.Strategy.Access;
 import sorcer.service.jobber.JobberAccessor;
@@ -268,8 +270,6 @@ public class ControlFlowManager {
 
 	public Block doBlock(Block block) throws RemoteException, MogramException,
 			SignatureException, TransactionException, ContextException {
-
-
         if (concatenator == null) {
             String spacerName = block.getRendezvousName();
             if (spacerName != null) {
@@ -282,9 +282,9 @@ public class ControlFlowManager {
                 }
             }
             logger.info("Got Concatenator: " + concatenator);
-            return (Block)concatenator.service(block, null);
+            return concatenator.exert(block, null);
         }
-        return (Block)((ServiceConcatenator)concatenator).execute(block);
+        return (Block)((ServiceConcatenator)concatenator).localExert(block, null);
 	}
 
     /**
@@ -315,9 +315,9 @@ public class ControlFlowManager {
                         }
                     }
                     logger.info("Got Spacer: " + spacerService);
-                    return spacerService.service(xrt, null);
+                    return spacerService.exert(xrt, null);
                 }
-				Mogram job = ((Executor)spacer).execute(xrt, null);
+				Mogram job = ((ServiceSpacer)spacer).localExert(xrt, null);
                 logger.info("spacable exerted = " + job);
                 return job;
             }
@@ -334,10 +334,10 @@ public class ControlFlowManager {
                         } catch (AccessorException e) {
                             throw new ExertionException("Could not find Jobber", e);
                         }
-                    logger.info("Got Jobber: " + jobber);
-                    return jobberService.service(xrt, null);
+                    logger.info("Got Remote Jobber: " + jobber);
+                    return jobberService.exert(xrt, null);
                 }
-				Mogram job = ((Executor)jobber).execute(xrt, null);
+				Mogram job = ((ServiceJobber)jobber).localExert(xrt, null);
                 logger.info("job exerted = " + job);
                 return job;
             }
@@ -505,10 +505,10 @@ public class ControlFlowManager {
             cxt.setExertion(task);
             task.setContext(cxt);
         }
-        // execute service task
+        // exert service task
 		Fidelity<Signature> ts = new Fidelity<Signature>();
         Signature tsig = task.getProcessSignature();
-        ((ServiceContext)task.getContext()).getModelStrategy().setCurrentSelector(tsig.getSelector());
+        ((ServiceContext)task.getContext()).getMogramStrategy().setCurrentSelector(tsig.getSelector());
         ((ServiceContext)task.getContext()).setCurrentPrefix(tsig.getPrefix());
 
         ts.getSelects().add(tsig);
@@ -568,7 +568,7 @@ public class ControlFlowManager {
             try {
                 t = task(task.getName() + "-" + i, signatures.get(i), shared);
                 signatures.get(i).setType(Signature.SRV);
-                ((ServiceContext)shared).getModelStrategy().setCurrentSelector(signatures.get(i).getSelector());
+                ((ServiceContext)shared).getMogramStrategy().setCurrentSelector(signatures.get(i).getSelector());
                 ((ServiceContext)shared).setCurrentPrefix(signatures.get(i).getPrefix());
 
                 Fidelity<Signature> tmp = new Fidelity<Signature>();

@@ -38,37 +38,40 @@ import java.util.Map;
  *
  * Created by Mike Sobolewski
  */
-public class MultiFidelityService extends ServiceMogram {
+public class MultiFidelityMogram extends ServiceMogram {
 
     // subsystems of this system aggregated into systems via system fidelites
     protected Context<Mogram> subsystems = new ParModel<Mogram>();
-
-    protected FidelityManager fidelityManager;
 
     // service fidelities for this model
     protected Map<String, Fidelity<Arg>> selectionFidelities;
 
     protected Fidelity<Arg> selectedFidelity;
 
-    public MultiFidelityService() {
+    public MultiFidelityMogram() {
     }
 
-    public MultiFidelityService(String name) throws SignatureException {
+    public MultiFidelityMogram(String name) throws SignatureException {
         super(name);
     }
 
-    public MultiFidelityService(String name, Signature signature) throws SignatureException {
+    public MultiFidelityMogram(String name, Signature signature) throws SignatureException {
         super(name, signature);
     }
 
     @Override
     public <T extends Mogram> T exert(Transaction txn, Arg... entries) throws TransactionException, MogramException, RemoteException {
-        return (T) fidelityManager.mogram.exert(txn, entries);
+        return (T) fiManager.getMogram().exert(txn, entries);
     }
 
     @Override
     public <T extends Mogram> T exert(Arg... entries) throws TransactionException, MogramException, RemoteException {
-        return (T) fidelityManager.mogram.exert(entries);
+        return (T) fiManager.getMogram().exert(entries);
+    }
+
+    @Override
+    public Context getContext() throws ContextException {
+        return subsystems;
     }
 
     @Override
@@ -77,23 +80,28 @@ public class MultiFidelityService extends ServiceMogram {
     }
 
     @Override
-    public List<ThrowableTrace> getExceptions() {
-        return fidelityManager.mogram.getExceptions();
+    public void reportException(Throwable t) {
+
     }
 
     @Override
-    public List<String> getTrace() {
-        return fidelityManager.mogram.getTrace();
+    public List<ThrowableTrace> getExceptions() throws RemoteException {
+        return fiManager.getMogram().getExceptions();
     }
 
     @Override
-    public List<ThrowableTrace> getAllExceptions() {
-        return fidelityManager.mogram.getAllExceptions();
+    public List<String> getTrace() throws RemoteException {
+        return fiManager.getMogram().getTrace();
     }
 
     @Override
-    public boolean isMonitorable() {
-        return fidelityManager.mogram.isMonitorable();
+    public List<ThrowableTrace> getAllExceptions() throws RemoteException {
+        return fiManager.getMogram().getAllExceptions();
+    }
+
+    @Override
+    public boolean isMonitorable() throws RemoteException {
+        return fiManager.getMogram().isMonitorable();
     }
 
     @Override
@@ -207,11 +215,11 @@ public class MultiFidelityService extends ServiceMogram {
     }
 
     @Override
-    public <T extends Mogram> T service(T mogram, Transaction txn) throws TransactionException, MogramException, RemoteException {
+    public <T extends Mogram> T exert(T mogram, Transaction txn, Arg... args) throws TransactionException, MogramException, RemoteException {
         return null;
     }
 
-    public <T extends Mogram> T service(T mogram) throws TransactionException, MogramException, RemoteException {
+    public <T extends Mogram> T exert(T mogram) throws TransactionException, MogramException, RemoteException {
         return null;
     }
 
@@ -223,17 +231,14 @@ public class MultiFidelityService extends ServiceMogram {
         this.subsystems = subsystems;
     }
 
-    public FidelityManager getFidelityManager() {
-        return fidelityManager;
-    }
 
-    public void setFidelityManager(FidelityManager fidelityManager) {
-        this.fidelityManager = fidelityManager;
+    @Override
+    public void appendTrace(String info) throws RemoteException {
+        fiManager.getMogram().appendTrace(info);
     }
 
     @Override
-    public void appendTrace(String info) {
-        fidelityManager.mogram.appendTrace(info);
+    public Object exec(Arg... entries) throws MogramException, RemoteException {
+        return null;
     }
-
 }

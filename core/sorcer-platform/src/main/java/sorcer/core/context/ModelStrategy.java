@@ -4,7 +4,9 @@ import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
 import sorcer.core.Name;
 import sorcer.service.*;
-import sorcer.service.MogramStrategy;
+import sorcer.service.Strategy.Access;
+import sorcer.service.Strategy.Flow;
+import sorcer.service.Strategy.Opti;
 import sorcer.util.FileURLHandler;
 
 import java.io.Serializable;
@@ -19,9 +21,9 @@ import java.util.Map;
  */
 public class ModelStrategy implements MogramStrategy, Projection<Arg>, Serializable {
 
-    protected List<ThrowableTrace> exceptions;
+    protected List<ThrowableTrace> exceptions = new ArrayList<ThrowableTrace>();
 
-    private List<String> traceList;
+    protected List<String> traceList = new ArrayList<String>();
 
     private boolean isTraceable = false;
 
@@ -30,6 +32,12 @@ public class ModelStrategy implements MogramStrategy, Projection<Arg>, Serializa
     private boolean isProvisionable = false;
 
     private Mogram target;
+
+    private Access accessType;
+
+    private Flow flowType;
+
+    private Opti optiType;
 
     protected transient FileURLHandler dataService;
 
@@ -44,7 +52,7 @@ public class ModelStrategy implements MogramStrategy, Projection<Arg>, Serializa
     // mapping from paths of this context to input paths of requestors
     protected Context outConnector;
 
-    protected Map<String, List<String>> dependentPaths;
+    protected Map<String, List<Path>> dependentPaths;
 
     protected Fidelity<Arg> selectedFidelity;
 
@@ -98,12 +106,11 @@ public class ModelStrategy implements MogramStrategy, Projection<Arg>, Serializa
 
     @Override
     public void setOpti(Strategy.Opti optiType) {
-
+        this.optiType = optiType;
     }
-
     @Override
     public Strategy.Opti getOpti() {
-        return null;
+        return optiType;
     }
 
     @Override
@@ -121,11 +128,7 @@ public class ModelStrategy implements MogramStrategy, Projection<Arg>, Serializa
     }
 
     public List<ThrowableTrace> getExceptions() {
-        exceptions = new ArrayList<ThrowableTrace>();
-        if (exceptions != null)
-            return exceptions;
-        else
-            return new ArrayList<ThrowableTrace>();
+        return exceptions;
     }
 
     public List<String> getTraceList() {
@@ -140,9 +143,9 @@ public class ModelStrategy implements MogramStrategy, Projection<Arg>, Serializa
         return getExceptions();
     }
 
-    public Map<String, List<String>> getDependentPaths() {
+    public Map<String, List<Path>> getDependentPaths() {
         if (dependentPaths == null) {
-            dependentPaths = new HashMap<String, List<String>>();
+            dependentPaths = new HashMap<String, List<Path>>();
         }
         return dependentPaths;
     }
@@ -211,6 +214,22 @@ public class ModelStrategy implements MogramStrategy, Projection<Arg>, Serializa
 
     public <T extends Mogram> Mogram exert(Arg... entries) throws TransactionException, MogramException, RemoteException {
         return target.exert(entries);
+    }
+
+    public void setAccessType(Access access) {
+        accessType = access;
+    }
+
+    public Access getAccessType() {
+        return accessType;
+    }
+
+    public Flow getFlowType() {
+        return flowType;
+    }
+
+    public void setFlowType(Flow flowType) {
+        this.flowType = flowType;
     }
 
     public void setOutcome(Context outcome) {

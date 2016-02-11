@@ -18,6 +18,7 @@
 package sorcer.service;
 
 import groovy.lang.Closure;
+import net.jini.core.transaction.TransactionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.context.ServiceContext;
@@ -65,7 +66,7 @@ import java.util.Map;
 
 	protected String closureExpression;
 
-	transient protected ContextCondition lambda;
+	transient protected ConditionCollable lambda;
 
 	transient private Closure closure;
 
@@ -77,7 +78,7 @@ import java.util.Map;
 		// do nothing
 	}
 
-	public Condition(ContextCondition lambda) {
+	public Condition(ConditionCollable lambda) {
 		this.lambda = lambda;
 	}
 
@@ -109,12 +110,12 @@ import java.util.Map;
 		this.pars = parameters;
 	}
 
-	public Condition(ContextCondition closure, String... parameters) {
+	public Condition(ConditionCollable closure, String... parameters) {
 		this.lambda = closure;
 		this.pars = parameters;
 	}
 
-	public Condition(Context<?> context, ContextCondition closure, String... parameters) {
+	public Condition(Context<?> context, ConditionCollable closure, String... parameters) {
 		this.lambda = closure;
 		conditionalContext = context;
 		this.pars = parameters;
@@ -135,42 +136,40 @@ import java.util.Map;
 
 		Object obj = null;
 		Object[] args = null;
-		if (lambda != null) {
-			try {
+		try {
+			if (lambda != null) {
 				return evaluateLambda(lambda);
-			} catch (MogramException e) {
-				throw new ContextException(e);
-			}
-		} else if (closure != null) {
-			if (closureExpression != null) {
-				// old version for textual closure in a conditon
-				obj = evaluateTextualClosure(closure);
-			} else {
-				return (Boolean) closure.call(conditionalContext);
-			}
-		} else if (evaluationPath != null && conditionalContext != null) {
-			obj = conditionalContext.getValue(evaluationPath);
-		} else if (closureExpression != null && conditionalContext != null) {
-			ArgSet ps = new ArgSet();
-			for (String name : pars) {
-				ps.add(new Par(name));
-			}
-			ServiceInvoker invoker = new GroovyInvoker(closureExpression, ps.toArray());
-			invoker.setScope(conditionalContext);
-			conditionalContext.putValue(_closure_, invoker);
-			closure = (Closure) conditionalContext.getValue(_closure_);
-			args = new Object[pars.length];
-			for (int i = 0; i < pars.length; i++) {
-				try {
+			} else if (closure != null) {
+				if (closureExpression != null) {
+					// old version for textual closure in a conditon
+					obj = evaluateTextualClosure(closure);
+				} else {
+					return (Boolean) closure.call(conditionalContext);
+				}
+			} else if (evaluationPath != null && conditionalContext != null) {
+				obj = conditionalContext.getValue(evaluationPath);
+			} else if (closureExpression != null && conditionalContext != null) {
+				ArgSet ps = new ArgSet();
+				for (String name : pars) {
+					ps.add(new Par(name));
+				}
+				ServiceInvoker invoker = new GroovyInvoker(closureExpression, ps.toArray());
+				invoker.setScope(conditionalContext);
+				conditionalContext.putValue(_closure_, invoker);
+				closure = (Closure) conditionalContext.getValue(_closure_);
+				args = new Object[pars.length];
+				for (int i = 0; i < pars.length; i++) {
 					args[i] = ((ServiceContext) conditionalContext).getValueEndsWith(pars[i]);
 					if (args[i] instanceof Evaluation)
 						args[i] = ((Evaluation) args[i]).getValue();
-				} catch (RemoteException e) {
-					throw new ContextException(e);
 				}
+				obj = closure.call(args);
 			}
-			obj = closure.call(args);
+		} catch (Exception e) {
+			status = false;
+			throw new ContextException(e);
 		}
+
 		if (obj instanceof Boolean)
 			return (Boolean) obj;
 		else if (obj != null)
@@ -179,7 +178,7 @@ import java.util.Map;
 			return false;
 	}
 
-	private boolean evaluateLambda(ContextCondition lambda) throws MogramException {
+	private boolean evaluateLambda(ConditionCollable lambda) throws MogramException {
 		return lambda.call(conditionalContext);
 	}
 
@@ -198,7 +197,7 @@ import java.util.Map;
 		}
 		obj =  closure.call(args);
 		if (obj instanceof Boolean)
-			return (Boolean) obj;
+			return obj;
 		else if (obj != null)
 			return true;
 		else
@@ -249,11 +248,11 @@ import java.util.Map;
 		this.closure = closure;
 	}
 
-	public ContextCondition getLambda() {
+	public ConditionCollable getLambda() {
 		return lambda;
 	}
 
-	public void setLambda(ContextCondition lambda) {
+	public void setLambda(ConditionCollable lambda) {
 		this.lambda = lambda;
 	}
 
@@ -321,4 +320,14 @@ import java.util.Map;
 		}
 	}
 
+
+	@Override
+	public Object exec(Arg... args) throws MogramException, RemoteException, TransactionException {
+		Context cxt = Arg.getContext(args);
+		if (cxt != null) {
+			conditionalContext = cxt;
+			return isTrue();
+		}
+		return null;
+	}
 }

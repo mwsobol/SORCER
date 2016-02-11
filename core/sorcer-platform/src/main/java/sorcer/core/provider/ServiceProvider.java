@@ -52,7 +52,6 @@ import sorcer.core.exertion.NetTask;
 import sorcer.core.proxy.Outer;
 import sorcer.core.proxy.Partner;
 import sorcer.core.proxy.Partnership;
-import sorcer.core.signature.ServiceSignature;
 import sorcer.scratch.ScratchManager;
 import sorcer.scratch.ScratchManagerSupport;
 import sorcer.service.*;
@@ -74,6 +73,7 @@ import java.rmi.RemoteException;
 import java.security.*;
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static sorcer.util.StringUtils.tName;
@@ -241,14 +241,8 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
             com.sun.jini.start.ClassLoaderUtil.displayContextClassLoaderTree();
         // System.out.println("service provider class loader: " +
         // serviceClassLoader);
-        String providerProperties = null;
-        try {
-            providerProperties = (String) Config.getNonNullEntry(config,
-                                                                 COMPONENT, "properties", String.class, "");
-        } catch (ConfigurationException e) {
-            // e.printStackTrace();
-            logger.warn("init", e);
-        }
+		String providerProperties =
+				(String) config.getEntry(COMPONENT, "propertiesFile", String.class, "");
 	    // setup injections by subclasses of this class
 		providerSetup();
 		// configure the provider's delegate
@@ -260,8 +254,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
         // decide if thread management is needed for ExertionDispatcher
         setupThreadManager();
         init(args, lifeCycle);
-
-        logger.info("<init> (String[], LifeCycle); name = " + this.getName());
+        logger.info("<init> (String[], LifeCycle); name = {}", this.getName());
     }
 
     // this is only used to instantiate provider impl objects and use their
@@ -576,6 +569,15 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		return isBusy();
 	}
 
+	@Override
+	public Object exec(Arg... args) throws MogramException, RemoteException {
+		Mogram srv = Arg.getMogram(args);
+		if (srv != null) {
+			return service(srv);
+		}
+		return null;
+	}
+
 	/**
 	 * This method spawns a separate thread to destroy this provider after 1
 	 * sec, should make a reasonable attempt to let this remote call return
@@ -733,7 +735,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 					delegate.initSpaceSupport();
 					return null;
 				}
-			}, 0, TimeUnit.MILLISECONDS);
+			}, delegate.spaceTakerDelay, TimeUnit.MILLISECONDS);
 		} catch (Throwable e) {
 			initFailed(e);
 		}
@@ -962,19 +964,21 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	 * @return an array of service UI descriptors
 	 */
 	public UIDescriptor[] getServiceUIEntries() {
-		UIDescriptor uiDesc1 = null;
-		try {
-			uiDesc1 = UIDescriptorFactory.getUIDescriptor(
-					MainUI.ROLE,
-					new UIComponentFactory(new URL[] {new URL(String.format("%s/sorcer-ui-%s.jar",
-							Sorcer.getWebsterUrl(),
-							SOS.getSorcerVersion()))
-					},
-							"sorcer.ui.exertlet.NetletEditor"));
-		} catch (Exception ex) {
-			logger.debug("getServiceUI", ex);
-		}
+		// Service UI as a panel of the ServiceBrowser
+//		UIDescriptor uiDesc1 = null;
+//		try {
+//			uiDesc1 = UIDescriptorFactory.getUIDescriptor(
+//					MainUI.ROLE,
+//					new UIComponentFactory(new URL[] {new URL(String.format("%s/sorcer-ui-%s.jar",
+//							Sorcer.getWebsterUrl(),
+//							SOS.getSorcerVersion()))
+//					},
+//							"sorcer.ui.exertlet.NetletEditor"));
+//		} catch (Exception ex) {
+//			logger.debug("getServiceUI", ex);
+//		}
 
+		// Service UI as a standalone frame is the ServiceBrowser
 		UIDescriptor uiDesc2 = null;
 		try {
 			URL uiUrl = new URL(Sorcer.getWebsterUrl() + "/exertlet-ui.jar");
@@ -990,7 +994,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 			logger.debug("getServiceUI", ex);
 		}
 
-		return new UIDescriptor[] { getProviderUIDescriptor(), uiDesc1/*, uiDesc2 */};
+		return new UIDescriptor[] { getProviderUIDescriptor(), uiDesc2 };
 	}
 
 	/**
@@ -1059,7 +1063,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	 * Defines rediness of the provider: true if this provider is ready to
 	 * process the incoming exertion, otherwise false.
 	 *
-	 * @return true if the provider is redy to execute the exertion
+	 * @return true if the provider is redy to exert the exertion
 	 */
 	public boolean isReady(Exertion exertion) {
 		return true;
@@ -1457,12 +1461,12 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	}
 
 	@Override
-	public Exertion service(Mogram mogram, Transaction txn) throws TransactionException,
+	public Mogram exert(Mogram mogram, Transaction txn, Arg... args) throws TransactionException,
 			ExertionException, RemoteException {
 		if (mogram instanceof Task) {
 			ServiceContext cxt;
 			try {
-				cxt = (ServiceContext) ((Task)mogram).getDataContext();
+				cxt = (ServiceContext) mogram.getDataContext();
 				cxt.updateContextWith(mogram.getProcessSignature().getInConnector());
 				Uuid id = cxt.getId();
 				ProviderSession ps = sessions.get(id);
@@ -1518,7 +1522,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 
 	// TODO in/out/inout marking as defined in the inConnector
 	private void updateContext(Task task) throws ContextException {
-		Context connector = ((ServiceSignature)task.getProcessSignature()).getInConnector();
+		Context connector = task.getProcessSignature().getInConnector();
 		if (connector != null){
 			Context dataContext = task.getDataContext();
 			Iterator it = ((Map) connector).entrySet().iterator();
@@ -1956,7 +1960,6 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 
 		public void run() {
 			try {
-				delegate.initSpaceSupport();
 				while (running.get()) {
 					Thread.sleep(ProviderDelegate.KEEP_ALIVE_TIME);
 
@@ -1974,11 +1977,6 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 			} catch (Exception doNothing) {
 			}
 		}
-	}
-
-	public void initSpaceSupport() throws ConfigurationException {
-		delegate.spaceEnabled(true);
-		delegate.initSpaceSupport();
 	}
 
 	/*

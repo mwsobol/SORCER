@@ -12,7 +12,7 @@ import sorcer.arithmetic.provider.Multiplier;
 import sorcer.arithmetic.provider.Subtractor;
 import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
-import sorcer.core.provider.Shell;
+import sorcer.core.provider.RemoteServiceShell;
 import sorcer.service.*;
 import sorcer.service.Strategy.Access;
 import sorcer.service.Strategy.Monitor;
@@ -21,7 +21,6 @@ import sorcer.service.Strategy.Wait;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
-import static sorcer.co.operator.get;
 import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.get;
 import static sorcer.eo.operator.value;
@@ -29,7 +28,6 @@ import static sorcer.eo.operator.value;
 /**
  * @author Mike Sobolewski
  */
-@SuppressWarnings({ "unchecked", "rawtypes" })
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/sml")
 public class NetTaskExertions {
@@ -127,7 +125,7 @@ public class NetTaskExertions {
 	@Test
 	public void serviceShellTest() throws Exception {
 
-		// The SORCER Service Shell as a service provider
+		// The signature as a service provider
 		Task f5 = task(
 				"f5",
 				sig("add", Adder.class),
@@ -135,8 +133,8 @@ public class NetTaskExertions {
 						inEnt("arg/x2", 80.0), result("result/y")),
 				strategy(Monitor.NO, Wait.YES));
 
-		Context out = exec(sig(Shell.class), f5);
-		assertTrue(get(out, "result/y").equals(100.00));
+		Context out = (Context) exec(sig(RemoteServiceShell.class), f5);
+		assertTrue(value(out, "result/y").equals(100.00));
 
 	}
 

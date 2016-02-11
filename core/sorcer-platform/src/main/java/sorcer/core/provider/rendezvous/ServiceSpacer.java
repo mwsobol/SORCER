@@ -21,11 +21,7 @@ import net.jini.core.transaction.TransactionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.DispatchResult;
-import sorcer.core.dispatch.DispatcherException;
-import sorcer.core.dispatch.DispatcherFactory;
-import sorcer.core.dispatch.ExertionDispatcherFactory;
-import sorcer.core.dispatch.SpaceTaskDispatcher;
-import sorcer.core.exertion.NetJob;
+import sorcer.core.dispatch.*;
 import sorcer.core.exertion.NetTask;
 import sorcer.core.loki.member.LokiMemberUtil;
 import sorcer.core.provider.Provider;
@@ -33,7 +29,6 @@ import sorcer.core.provider.Spacer;
 import sorcer.service.*;
 
 import java.rmi.RemoteException;
-import java.util.HashSet;
 
 import static sorcer.util.StringUtils.tName;
 
@@ -44,7 +39,7 @@ import static sorcer.util.StringUtils.tName;
  * 
  * @author Mike Sobolewski
  */
-public class ServiceSpacer extends ServiceJobber implements Spacer, Executor {
+public class ServiceSpacer extends RendezvousBean implements Spacer {
     private Logger logger = LoggerFactory.getLogger(ServiceSpacer.class.getName());
 
     private LokiMemberUtil myMemberUtil;
@@ -58,12 +53,37 @@ public class ServiceSpacer extends ServiceJobber implements Spacer, Executor {
         myMemberUtil = new LokiMemberUtil(ServiceSpacer.class.getName());
     }
 
-    public Exertion execute(Exertion exertion, Transaction txn)
-            throws TransactionException, RemoteException, ExertionException {
-        if (exertion.isJob())
-            return (Exertion)super.execute(exertion, txn);
+    @Override
+    public Mogram localExert(Mogram mogram, Transaction txn, Arg... args)
+            throws TransactionException, ExertionException, RemoteException {
+         if (mogram instanceof Exertion && ((Exertion)mogram).isCompound())
+            return doCompound(mogram, txn);
         else
-            return doTask(exertion);
+            return doTask((Task)mogram);
+    }
+
+    public Mogram doCompound(Mogram mogram, Transaction txn, Arg... args)
+            throws TransactionException, ExertionException, RemoteException {
+        setServiceID(mogram);
+        try {
+            MogramThread mogramThread = new MogramThread(mogram, provider, getDispatcherFactory((Exertion)mogram));
+            if (((Exertion)mogram).getControlContext().isMonitorable()
+                    && !((Exertion)mogram).getControlContext().isWaitable()) {
+                replaceNullExertionIDs((Exertion)mogram);
+                notifyViaEmail((Exertion)mogram);
+                new Thread(mogramThread, ((Job)mogram).getContextName()).start();
+                return mogram;
+            } else {
+                mogramThread.run();
+                Mogram result = mogramThread.getResult();
+                logger.debug("<== Result: " + result);
+                return result;
+            }
+        } catch (Exception e) {
+            ((ServiceExertion)mogram).reportException(e);
+            logger.warn("Error: " + e.getMessage());
+            return mogram;
+        }
     }
 
     protected class TaskThread extends Thread {
@@ -130,11 +150,10 @@ public class ServiceSpacer extends ServiceJobber implements Spacer, Executor {
         }
     }
 
-	@Override
     protected DispatcherFactory getDispatcherFactory(Exertion exertion) {
         if (exertion.isSpacable())
-            return ExertionDispatcherFactory.getFactory(myMemberUtil);
+            return MogramDispatcherFactory.getFactory(myMemberUtil);
         else
-            return super.getDispatcherFactory(exertion);
+            return getDispatcherFactory(exertion);
     }
 }

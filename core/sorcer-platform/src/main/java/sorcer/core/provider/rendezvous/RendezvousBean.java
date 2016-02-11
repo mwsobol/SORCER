@@ -22,14 +22,13 @@ import net.jini.core.transaction.TransactionException;
 import net.jini.id.UuidFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sorcer.core.SorcerConstants;
 import sorcer.core.context.Contexts;
-import sorcer.core.context.ControlContext;
-import sorcer.core.exertion.NetJob;
 import sorcer.core.exertion.ObjectBlock;
 import sorcer.core.exertion.ObjectJob;
 import sorcer.core.provider.*;
 import sorcer.service.*;
+import sorcer.service.modeling.Model;
+import sorcer.service.modeling.ModelingTask;
 import sorcer.util.Sorcer;
 import sorcer.util.SorcerUtil;
 
@@ -42,7 +41,7 @@ import java.util.Vector;
  * 
  * @author Mike Sobolewski
  */
-abstract public class RendezvousBean implements Service, Executor {
+abstract public class RendezvousBean implements Service, Exerter {
 	private Logger logger = LoggerFactory.getLogger(RendezvousBean.class.getName());
 
 	protected ServiceProvider provider;
@@ -75,7 +74,7 @@ abstract public class RendezvousBean implements Service, Executor {
 		if (ex != null && ((ServiceExertion) ex).getId() == null) {
 			((ServiceExertion) ex)
 					.setId(UuidFactory.generate());
-			if (((ServiceExertion) ex).isJob()) {
+			if (ex.isJob()) {
 				for (int i = 0; i < ((Job) ex).size(); i++)
 					replaceNullExertionIDs(((Job) ex).get(i));
 			}
@@ -83,14 +82,13 @@ abstract public class RendezvousBean implements Service, Executor {
 	}
 
 	protected void notifyViaEmail(Exertion ex) throws ContextException {
-		if (ex == null || ((ServiceExertion) ex).isTask())
+		if (ex == null || ex.isTask())
 			return;
 		Job job = (Job) ex;
 		Vector recipents = null;
-		String notifyees = ((ControlContext) ((NetJob)job).getControlContext())
-				.getNotifyList();
+		String notifyees = job.getControlContext().getNotifyList();
 		if (notifyees != null) {
-			String[] list = SorcerUtil.tokenize(notifyees, SorcerConstants.MAIL_SEP);
+			String[] list = SorcerUtil.tokenize(notifyees, ",");
 			recipents = new Vector(list.length);
 			for (int i = 0; i < list.length; i++)
 				recipents.addElement(list[i]);
@@ -113,14 +111,13 @@ abstract public class RendezvousBean implements Service, Executor {
 		}
 		String comment = "Your job '" + job.getName()
 				+ "' has been submitted.\n" + to;
-		((ControlContext) ((NetJob)job).getControlContext()).setFeedback(comment);
+		job.getControlContext().setFeedback(comment);
 		if (job.getMasterExertion() != null
-				&& ((ServiceExertion) job.getMasterExertion()).isTask()) {
-			((ServiceExertion) (job.getMasterExertion())).getContext()
+				&& job.getMasterExertion().isTask()) {
+			job.getMasterExertion().getContext()
 					.putValue(Context.JOB_COMMENTS, comment);
 
-			Contexts.markOut(((ServiceExertion) (job.getMasterExertion()))
-					.getContext(), Context.JOB_COMMENTS);
+			Contexts.markOut((job.getMasterExertion()).getContext(), Context.JOB_COMMENTS);
 
 		}
 	}
@@ -134,8 +131,8 @@ abstract public class RendezvousBean implements Service, Executor {
         if (id != null) {
             logger.trace(id.getLeastSignificantBits() + ":"
                           + id.getMostSignificantBits());
-            ((ServiceExertion) ex).setLsbId(id.getLeastSignificantBits());
-            ((ServiceExertion) ex).setMsbId(id.getMostSignificantBits());
+            ((ServiceMogram) ex).setLsbId(id.getLeastSignificantBits());
+            ((ServiceMogram) ex).setMsbId(id.getMostSignificantBits());
         }
     }
 
@@ -153,25 +150,25 @@ abstract public class RendezvousBean implements Service, Executor {
 	/* (non-Javadoc)
 	 * @see sorcer.core.provider.ServiceBean#service(sorcer.service.Exertion, net.jini.core.transaction.Transaction)
 	 */
-	@Override
-	public Mogram service(Mogram mogram, Transaction transaction) throws RemoteException, ExertionException {
+	public Mogram exert(Mogram mogram, Transaction transaction, Arg... args) throws RemoteException, ExertionException {
 		Mogram out = null;
 		try {
-            logger.info("Got exertion to process: " + mogram.toString());
 			setServiceID(mogram);
 			mogram.appendTrace("mogram: " + mogram.getName() + " rendezvous: " +
-					(provider.getProviderName() != null ? provider.getProviderName() + " " : "")
+					(provider != null ? provider.getProviderName() + " " : "")
 					+ this.getClass().getName());
-            if (mogram instanceof ObjectJob || mogram instanceof ObjectBlock)
-                out = execute(mogram, transaction);
-            else
-                out = getControlFlownManager((Exertion)mogram).process();
+            if (mogram instanceof ObjectJob || mogram instanceof ObjectBlock
+					|| mogram instanceof Model || mogram instanceof ModelingTask) {
+				out = localExert(mogram, transaction, args);
+			} else {
+				out = getControlFlownManager(mogram).process();
+			}
 
 			if (mogram instanceof Exertion)
-				((Exertion)mogram).getDataContext().setExertion(null);
+				mogram.getDataContext().setExertion(null);
         }
 		catch (Exception e) {
-			e.printStackTrace();
+			logger.debug("exert failed for: " + mogram.getName(), e);
 			throw new ExertionException();
 		}
 		return out;
@@ -180,7 +177,7 @@ abstract public class RendezvousBean implements Service, Executor {
     protected ControlFlowManager getControlFlownManager(Mogram exertion) throws ExertionException {
         try {
             if (exertion instanceof Exertion) {
-                if (((Exertion)exertion).isMonitorable())
+                if (exertion.isMonitorable())
                     return new MonitoringControlFlowManager((Exertion)exertion, delegate, this);
                 else
                     return new ControlFlowManager((Exertion)exertion, delegate, this);
@@ -193,16 +190,19 @@ abstract public class RendezvousBean implements Service, Executor {
         }
     }
 
-	public Mogram service(Mogram mogram) throws RemoteException, ExertionException, TransactionException {
-		return service(mogram, null);
-	}
-		
-	abstract public Mogram execute(Mogram mogram, Transaction txn)
+	abstract public Mogram localExert(Mogram mogram, Transaction txn, Arg... args)
 			throws TransactionException, ExertionException, RemoteException;
-	
-	public Mogram execute(Mogram mogram)
-			throws TransactionException, ExertionException, RemoteException {
-		return execute(mogram, null);
-	}
 
+	@Override
+	public Object exec(Arg... args) throws MogramException, RemoteException {
+		Mogram mog = Arg.getMogram(args);
+		if (mog != null)
+			try {
+				return exert(mog, null, args);
+			} catch (Exception e) {
+				throw new MogramException(e);
+			}
+		else
+			return null;
+	}
 }

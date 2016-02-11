@@ -78,8 +78,8 @@ public class MonitorUtil {
         }
     }
 
-    public static MonitoringSession getMonitoringSession(Exertion exertion) {
-        return getMonitoringSession(exertion.getControlContext());
+    public static MonitoringSession getMonitoringSession(Mogram mogram) {
+        return getMonitoringSession(((Exertion)mogram).getControlContext());
     }
 
     public static MonitoringSession getMonitoringSession(StrategyContext controlContext) {

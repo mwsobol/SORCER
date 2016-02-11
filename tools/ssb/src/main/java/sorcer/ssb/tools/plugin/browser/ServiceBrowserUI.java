@@ -2237,14 +2237,6 @@ public class ServiceBrowserUI extends Thread implements RemoteEventListener,
 	public void notify(RemoteEvent theEvent) throws UnknownEventException,
 			java.rmi.RemoteException {
 
-		// Removed: v5.2 [IX03]
-		// if(_disco==null){
-		// System.err.println("#### Remote event received with null discovery:
-		// ignoring event");
-		// MISSING RETURN
-		// ADDED v5.1 IX03
-		// return;
-		// }
 		synchronized (_discoveryLock) {
 			while (_inDiscoveredImpl) {
 				_logger.info("##### Waiting for discovery to complete");
@@ -2265,11 +2257,10 @@ public class ServiceBrowserUI extends Thread implements RemoteEventListener,
 		int trans = se.getTransition();
 		ServiceRegistrar lus = (ServiceRegistrar) theEvent.getSource();
 		final ServiceID lusSid = lus.getServiceID();
-
 		final ServiceItem item = se.getServiceItem();
 
 		DefaultMutableTreeNode lusNode = getLUSNode(lusSid);
-		final Object[] eventData = new Object[] { lusNode.toString(),
+		final Object[] eventData = new Object[] {  lusNode == null ? "null" : lusNode.toString(),
 				new java.util.Date(), "",// name
 				"",// event type
 				sid };
@@ -2281,7 +2272,6 @@ public class ServiceBrowserUI extends Thread implements RemoteEventListener,
 
 				item.service = _servicePreparer.prepareProxy(item.service);
 				try {
-
 					ServiceNode sNode = new ServiceNode(item);
 					DefaultMutableTreeNode service = new DefaultMutableTreeNode(
 							sNode);

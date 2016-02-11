@@ -12,7 +12,6 @@ import sorcer.arithmetic.tester.provider.impl.AdderImpl;
 import sorcer.arithmetic.tester.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.tester.provider.impl.SubtractorImpl;
 import sorcer.core.context.ServiceContext;
-import sorcer.core.context.model.ent.Entry;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.service.*;
@@ -26,6 +25,7 @@ import static org.junit.Assert.*;
 import static sorcer.co.operator.asis;
 import static sorcer.co.operator.*;
 import static sorcer.co.operator.persistent;
+import static sorcer.eo.operator.args;
 import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.get;
 import static sorcer.eo.operator.pipe;
@@ -53,7 +53,7 @@ public class ParModelTest {
 			ContextException {
 		ParModel pm = parModel("par-model");
 		add(pm, par("x", 10.0), par("y", 20.0));
-		add(pm, invoker("add", "x + y", pars("x", "y")));
+		add(pm, invoker("add", "x + y", args("x", "y")));
 
 //		logger.info("adder value: " + value(pm, "add"));
 		assertEquals(value(pm, "add"), 30.0);
@@ -341,8 +341,8 @@ public class ParModelTest {
 
 		Task t5 = task("t5", sig("add", AdderImpl.class), c5);
 
-		Job j1 = job("j1", sig("service", ServiceJobber.class),
-				job("j2", t4, t5, sig("service", ServiceJobber.class)), 
+		Job j1 = job("j1", sig("exert", ServiceJobber.class),
+				job("j2", t4, t5, sig("exert", ServiceJobber.class)),
 				t3,
 				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
 				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
@@ -394,8 +394,8 @@ public class ParModelTest {
 
 		Task t5 = task("t5", sig("add", AdderImpl.class), c5);
 
-		Job j1 = job("j1", sig("service", ServiceJobber.class),
-				job("j2", t4, t5, sig("service", ServiceJobber.class)), 
+		Job j1 = job("j1", sig("exert", ServiceJobber.class),
+				job("j2", t4, t5, sig("exert", ServiceJobber.class)),
 				t3,
 				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
 				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
@@ -531,10 +531,10 @@ public class ParModelTest {
 				new URL(Sorcer.getWebsterUrl()
 						+ "/sorcer-tester-" + sorcerVersion + ".jar")));
 
-		Entry ent = (Entry) get((Context)value(pm,"getSphereVolume"), "sphere/volume");
+		Object result =  value((Context)value(pm,"getSphereVolume"), "sphere/volume");
 
 //		logger.info("val: " + value(ent));
-		assertTrue(value(ent).equals(33510.32163829113));
+		assertTrue(result.equals(33510.32163829113));
 
 		// invoke the agent directly
 		invoke(pm,

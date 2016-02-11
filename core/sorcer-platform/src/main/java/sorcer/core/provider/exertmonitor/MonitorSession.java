@@ -130,7 +130,7 @@ public class MonitorSession extends ArrayList<MonitorSession> implements
 	}
 
 	private MonitorSession(Exertion xrt, Exertion runtimeXrt,
-			MonitorSession parentSession) {
+			MonitorSession parentSession) throws RemoteException {
 
 		super();
 
@@ -147,7 +147,7 @@ public class MonitorSession extends ArrayList<MonitorSession> implements
 						cookie));
 	}
 
-	private void init() {
+	private void init() throws RemoteException {
 		cookie = UuidFactory.generate();
 		if (initialExertion.isJob() || initialExertion.isBlock())
 			addSessions((CompoundExertion) initialExertion, (CompoundExertion) runtimeExertion, this);
@@ -156,7 +156,7 @@ public class MonitorSession extends ArrayList<MonitorSession> implements
             addSessionsForConditionals((ConditionalMogram)initialExertion, (ConditionalMogram)runtimeExertion, this);
     }
 
-	private void addSessions(CompoundExertion initial, CompoundExertion runtime, MonitorSession parent) {
+	private void addSessions(CompoundExertion initial, CompoundExertion runtime, MonitorSession parent) throws RemoteException {
 		for (int i = 0; i < initial.size(); i++) {
             if (!runtime.get(i).isMonitorable())
                 ((ServiceExertion)runtime.get(i)).setMonitored(true);
@@ -165,7 +165,7 @@ public class MonitorSession extends ArrayList<MonitorSession> implements
         }
 	}
 
-    private void addSessionsForConditionals(ConditionalMogram initial, ConditionalMogram runtime, MonitorSession parent) {
+    private void addSessionsForConditionals(ConditionalMogram initial, ConditionalMogram runtime, MonitorSession parent) throws RemoteException {
         for (int i = 0; i<initial.getTargets().size(); i++) {
             if (!runtime.getTargets().get(i).isMonitorable())
                 ((ServiceExertion)runtime.getTargets().get(i)).setMonitored(true);

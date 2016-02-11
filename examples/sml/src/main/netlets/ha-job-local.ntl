@@ -33,9 +33,9 @@ Task f3 = task("f3",
         sig("subtract", SubtractorImpl.class),
         context("subtract", inEnt("arg/x5"), inEnt("arg/x6"), result("result/y3")));
 
-job("f1", sig("execute", ServiceJobber.class),
+job("f1", sig("exert", ServiceJobber.class),
         cxt(inEnt("arg/x1", 20.0d),
                 result("job/result", outPaths("f1/f3/result/y3"))),
-        job("f2", sig("execute", ServiceJobber.class), f4, f5), f3,
+        job("f2", sig("exert", ServiceJobber.class), f4, f5), f3,
         pipe(outPoint(f4, "result/y1"), inPoint(f3, "arg/x5")),
         pipe(outPoint(f5, "result/y2"), inPoint(f3, "arg/x6")));

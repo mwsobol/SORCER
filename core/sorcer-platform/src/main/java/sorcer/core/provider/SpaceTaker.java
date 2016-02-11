@@ -118,7 +118,12 @@ public class SpaceTaker implements Runnable {
 		}
 
 		public String toString() {
-			return entry.describe();
+			try {
+				return entry.describe();
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			}
+			return null;
 		}
 	}
 
@@ -222,7 +227,6 @@ public class SpaceTaker implements Runnable {
 			numThreadsWorker++;
 			prefix = "adding worker thread";
 			threadIdString = Integer.toString(numCallsWorker);
-			//threadIdString = this.toString();
 			threadIdsWorker.add(threadIdString);
 		} else {
 			numThreadsWorker--;
@@ -249,8 +253,6 @@ public class SpaceTaker implements Runnable {
 			try {
 				space = SpaceAccessor.getSpace(data.spaceName);
 				if (space == null) {
-//					doLog("\t***warning: space taker did not get SPACE.",
-//							threadId, null);
 					Thread.sleep(spaceTimeout / 6);
 					continue;
 				}
@@ -389,15 +391,12 @@ public class SpaceTaker implements Runnable {
             } catch (RemoteException re) {
                 logger.warn("Problem getting provider ID in SpaceTaker");
             }
-            //
 			String threadId = doThreadMonitorWorker(null);
 
 			Entry result = doEnvelope(ee, (txnCreated == null) ? null
 					: txnCreated.transaction, threadId, txnCreated);
-//			doLog("\tDONE calling doEnvelope(); result = " + result, threadId, txnCreated);
 
 			if (result != null) {
-//				doLog("\tcalling space.write()...", threadId, txnCreated);
 				try {
 					space.write(result, null, Lease.FOREVER);
 				} catch (Exception e) {
@@ -412,7 +411,6 @@ public class SpaceTaker implements Runnable {
 					doThreadMonitorWorker(threadId);
 					return;
 				}
-//				doLog("\tDONE calling space.write().", threadId, txnCreated);
 				if (txnCreated != null) {
 					try {
 						TX.commitTransaction(txnCreated);
@@ -462,7 +460,7 @@ public class SpaceTaker implements Runnable {
 							.getDelegate()).doTask((Task) se, transaction);
 				} else {
 					// delegate it to another collaborating service
-					out = (ServiceExertion) data.provider.service(se,
+					out = (ServiceExertion) data.provider.exert(se,
 							transaction);
 				}
 				if (out != null) {
@@ -474,7 +472,7 @@ public class SpaceTaker implements Runnable {
 					ee.state = Exec.ERROR;
 					ee.exertion = se;
 					se.reportException(new ExertionError(
-							"Not able to execute exertion envelope for exertionID: "
+							"Not able to exert exertion envelope for exertionID: "
 									+ ee.exertionID));
 				}
                 if (se.isMonitorable() && se.isTask() && monSession!=null) {
