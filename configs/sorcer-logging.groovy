@@ -64,11 +64,11 @@ if (System.getProperty("forceConsoleLogging")!=null || System.console() != null)
             withJansi = true
 
             encoder(PatternLayoutEncoder) {
-                pattern = "%highlight(%-5level) %d{HH:mm:ss.SSS} %logger{36} - %msg%n%rEx"
+                pattern = "%highlight(%-5level) %d{HH:mm:ss.SSS} %logger{36} %X{mogId} - %msg%n%rEx"
             }
         } else {
             encoder(PatternLayoutEncoder) {
-                pattern = "%-5level %d{HH:mm:ss.SSS} %logger{36} - %msg%n%rEx"
+                pattern = "%-5level %d{HH:mm:ss.SSS} %logger{36} %X{mogId} - %msg%n%rEx"
             }
         }
     }
@@ -98,7 +98,7 @@ if (System.getProperty("org.rioproject.service")!=null) {
 
         }
         encoder(PatternLayoutEncoder) {
-            pattern = "%-5level %d{HH:mm:ss.SSS} %logger{36} - %msg%n%rEx"
+            pattern = "%-5level %d{HH:mm:ss.SSS} %logger{36} %X{mogId} - %msg%n%rEx"
         }
     }
     appenders << "ROLLING"

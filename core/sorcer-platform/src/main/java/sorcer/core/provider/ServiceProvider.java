@@ -1398,42 +1398,40 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	 * @throws java.rmi.RemoteException
 	 * @throws sorcer.service.ExertionException
 	 */
-	public Exertion doExertion(final Exertion exertion, Transaction txn)
-			throws ExertionException {
-		logger.debug("service: " + exertion.getName());
-		// create an instance of the ControlFlowManager and call on the
-		// process method, returns an Exertion
+    public Exertion doExertion(final Exertion exertion, Transaction txn) throws ExertionException {
+        logger.debug("service: " + exertion.getName());
+        // create an instance of the ControlFlowManager and call on the
+        // process method, returns an Exertion
+        Exertion out;
+        try {
+            MDC.put(MDC_SORCER_REMOTE_CALL, MDC_SORCER_REMOTE_CALL);
+            MDC.put(MDC_PROVIDER_ID, this.getId().toString());
+            MDC.put(MDC_PROVIDER_NAME, this.getName());
+            if (exertion.getId() != null)
+                MDC.put(MDC_MOGRAM_ID, exertion.getId().toString());
 
-		if(delegate.isRemoteLogging()) {
-			MDC.put(MDC_SORCER_REMOTE_CALL, MDC_SORCER_REMOTE_CALL);
-			MDC.put(MDC_PROVIDER_ID, this.getId().toString());
-			MDC.put(MDC_PROVIDER_NAME, this.getName());
-			if (exertion != null && exertion.getId() != null)
-				MDC.put(MDC_MOGRAM_ID, exertion.getId().toString());
-		}
+            out = (Exertion) getControlFlownManager(exertion).process();
 
-		Exertion out = (Exertion)getControlFlownManager(exertion).process();
+        } finally  {
+            MDC.remove(MDC_PROVIDER_NAME);
+            MDC.remove(MDC_SORCER_REMOTE_CALL);
+            MDC.remove(MDC_MOGRAM_ID);
+            MDC.remove(MDC_PROVIDER_ID);
+        }
+        return out;
+    }
 
-		if(delegate.isRemoteLogging()) {
-			MDC.remove(MDC_PROVIDER_NAME);
-			MDC.remove(MDC_SORCER_REMOTE_CALL);
-			MDC.remove(MDC_MOGRAM_ID);
-			MDC.remove(MDC_PROVIDER_ID);
-		}
-		return  out;
-	}
-
-	protected ControlFlowManager getControlFlownManager(Exertion exertion) throws ExertionException {
-		List<Class> publishedIfaces = Arrays.asList(this.delegate.getPublishedServiceTypes());
-		if (!(exertion instanceof Task) && (!publishedIfaces.contains(Spacer.class))
-				&& (!publishedIfaces.contains(Jobber.class)) && (!publishedIfaces.contains(Concatenator.class)))
-			throw new ExertionException(new IllegalArgumentException("Unknown exertion type " + exertion));
-		try {
-			if (exertion.isMonitorable())
-				return new MonitoringControlFlowManager(exertion, delegate);
-			else
-				return new ControlFlowManager(exertion, delegate);
-		} catch (Exception e) {
+    protected ControlFlowManager getControlFlownManager(Exertion exertion) throws ExertionException {
+        List<Class> publishedIfaces = Arrays.asList(this.delegate.getPublishedServiceTypes());
+        if (!(exertion instanceof Task) && (!publishedIfaces.contains(Spacer.class))
+            && (!publishedIfaces.contains(Jobber.class)) && (!publishedIfaces.contains(Concatenator.class)))
+            throw new ExertionException(new IllegalArgumentException("Unknown exertion type " + exertion));
+        try {
+            if (exertion.isMonitorable())
+                return new MonitoringControlFlowManager(exertion, delegate);
+            else
+                return new ControlFlowManager(exertion, delegate);
+        } catch (Exception e) {
 			((Task) exertion).reportException(e);
 			throw new ExertionException(e);
 		}

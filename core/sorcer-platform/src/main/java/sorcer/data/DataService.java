@@ -26,7 +26,11 @@ import sorcer.util.GenericUtil;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.*;
+import java.net.HttpURLConnection;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.UnknownHostException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -39,7 +43,7 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 public class DataService implements FileURLHandler {
     private int port;
-    private final String[] roots;
+    private String[] roots;
     private final AtomicReference<Webster> websterRef = new AtomicReference<>();
     private String address;
     private static final Logger logger = LoggerFactory.getLogger(DataService.class.getName());
@@ -66,8 +70,15 @@ public class DataService implements FileURLHandler {
                         "create DataService using the data dir (" + getDataDir() + "), " +
                         "and an anonymous port");
             dataService = new DataService(0, getDataDir().split(";")).start();
+
+            System.setProperty(DATA_URL, String.format("http://%s:%d", dataService.address, dataService.port));
+            System.setProperty(Constants.WEBSTER, String.format("http://%s:%d", dataService.address, dataService.port));
         }
         return dataService;
+    }
+
+    public static DataService getDataService(int port) {
+        return new DataService(port, getRoots(port));
     }
 
     /**
@@ -123,14 +134,18 @@ public class DataService implements FileURLHandler {
                 address = websterRef.get().getAddress();
                 logger.info(String.format("Started data service on: %s:%d\n%s",
                                           address, port, formatRoots()));
-                System.setProperty(DATA_URL, String.format("http://%s:%d", address, port));
-                System.setProperty(Constants.WEBSTER, String.format("http://%s:%d", address, port));
+                writeRoots();
             } catch (IOException e) {
                 try {
                     address = HostUtil.getInetAddress().getHostAddress();
                 } catch (UnknownHostException e1) {
                     logger.error("Can not get host address", e1);
                     throw new RuntimeException("Can not get host address", e1);
+                }
+                if(!websterRoots.equals(getDefaultDataDir())) {
+                    String derivedRoots = getRoots(port);
+                    if(derivedRoots!=null)
+                        roots = derivedRoots.split(";");
                 }
                 logger.warn(String.format("Data service already running, join %s:%d\n%s",
                                              address, port, formatRoots()));
@@ -283,6 +298,7 @@ public class DataService implements FileURLHandler {
             websterRef.set(null);
         }
         address = null;
+        getRootsFile(port).delete();
     }
 
     IOException verify(URL url) {
@@ -318,14 +334,54 @@ public class DataService implements FileURLHandler {
     public static String getDataDir() {
         String dataDir = System.getProperty(DATA_DIR);
         if(dataDir==null) {
-            dataDir = new File(String.format("%s%ssorcer-%s%sdata",
-                                             System.getProperty("java.io.tmpdir"),
-                                             File.separator,
-                                             System.getProperty("user.name"),
-                                             File.separator)).getAbsolutePath();
+            dataDir = getDefaultDataDir();
             System.setProperty(DATA_DIR, dataDir);
         }
         return dataDir;
+    }
+
+    static String getRoots(int port) {
+        File rootsFile = getRootsFile(port);
+        String roots = null;
+        if(rootsFile.exists()) {
+            try {
+                roots = new String(Files.readAllBytes(rootsFile.toPath()));
+            } catch (IOException e) {
+                logger.error("Could not read {}", rootsFile.getPath(), e);
+            }
+        }
+        return roots;
+    }
+
+    static File getRootsFile(int port) {
+        File rootsDir = new File(getDefaultDataDir(), "roots");
+        if(!rootsDir.exists())
+            rootsDir.mkdirs();
+        return new File(rootsDir, Integer.toString(port)+".roots");
+    }
+
+    void writeRoots() {
+        File rootsFile = getRootsFile(port);
+        rootsFile.deleteOnExit();
+        StringBuilder websterRoots = new StringBuilder();
+        for(String root : roots) {
+            if (websterRoots.length() > 0)
+                websterRoots.append(";");
+            websterRoots.append(root);
+        }
+        try {
+            Files.write(rootsFile.toPath(), websterRoots.toString().getBytes());
+        } catch (IOException e) {
+            logger.error("Could not save {}", rootsFile.getPath(), e);
+        }
+    }
+
+    static String getDefaultDataDir() {
+        return new File(String.format("%s%ssorcer-%s%sdata",
+                                      System.getProperty("java.io.tmpdir"),
+                                      File.separator,
+                                      System.getProperty("user.name"),
+                                      File.separator)).getAbsolutePath();
     }
 
     /**

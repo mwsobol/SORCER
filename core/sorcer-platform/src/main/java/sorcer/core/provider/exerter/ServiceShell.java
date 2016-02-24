@@ -176,8 +176,12 @@ public class ServiceShell implements RemoteServiceShell, Requestor, Callable {
 				ServiceExertion exertion = (ServiceExertion)mogram;
 				exertion.selectFidelity(entries);
 				Mogram out = exerting(txn, providerName, entries);
-				if (out instanceof Exertion)
+				if (out instanceof Exertion) {
+					if(out.getStatus()==Exec.ERROR || out.getStatus()==Exec.FAILED) {
+						return (T) out;
+					}
 					postProcessExertion(out);
+				}
 				if (exertion.isProxy()) {
 					Exertion xrt = (Exertion) out;
 					exertion.setContext(xrt.getDataContext());

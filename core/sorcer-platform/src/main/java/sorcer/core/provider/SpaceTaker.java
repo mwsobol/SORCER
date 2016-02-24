@@ -379,9 +379,8 @@ public class SpaceTaker implements Runnable {
 		}
 
 		public void run() {
-            if(remoteLogging)
-                MDC.put(SorcerConstants.MDC_SORCER_REMOTE_CALL, SorcerConstants.MDC_SORCER_REMOTE_CALL);
-            if (ee.exertion!=null && ee.exertion.getId()!=null)
+			MDC.put(SorcerConstants.MDC_SORCER_REMOTE_CALL, SorcerConstants.MDC_SORCER_REMOTE_CALL);
+			if (ee.exertion!=null && ee.exertion.getId()!=null)
                 MDC.put(SorcerConstants.MDC_MOGRAM_ID, ee.exertion.getId().toString());
             try {
                 String prvId = null;

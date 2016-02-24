@@ -1452,7 +1452,7 @@ public class ProviderDelegate {
 			m.invoke(computeResourceInfo, (Object[]) null);
 			attrVec.add((Entry) computeResourceInfo);
 		} catch (Exception e) {
-			// This happens if RIO classes are not in classpath. Ignore
+			// This happens if Rio classes are not in classpath. Ignore
 		}
 
 		attrVec.addAll(extraLookupAttributes);
