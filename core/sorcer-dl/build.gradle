@@ -13,6 +13,7 @@ jar {
     from(configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }) {
         include "org/rioproject/entry/ComputeResourceInfo.class"
         include "org/rioproject/entry/OperationalStringEntry.class"
+        include "org/rioproject/entry/ServiceInfo.class"
     }
     manifest {
         attributes("Implementation-Title": "SORCER Exported Classes", "Implementation-Version": version)

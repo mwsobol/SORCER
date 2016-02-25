@@ -30,6 +30,7 @@ class Sorcer {
     static String riverVersion = versionProps.getProperty("river.version")
     static String blitzVersion = versionProps.getProperty("blitz.version")
     static String commonsIoVersion = versionProps.getProperty("commonsio.version")
+    static String jeVersion = versionProps.getProperty("je.version")
 
     static getSorcerHome() {
         String sorcerHome = System.getProperty("sorcer.home", System.getenv("SORCER_HOME"))
@@ -38,7 +39,7 @@ class Sorcer {
         }
         sorcerHome
     }
-    
+
     static loadVersions() {
         Properties props = new Properties()
         File propsFile = new File("${sorcerHome}/configs/versions.properties")

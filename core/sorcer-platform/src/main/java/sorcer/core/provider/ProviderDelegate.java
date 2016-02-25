@@ -999,8 +999,9 @@ public class ProviderDelegate {
 					isContextual = false;
 				} else
 					m = impl.getClass().getMethod(selector, argTypes);
-				logger.info("Executing service bean method: " + m + " by: "
-						+ config.getProviderName() + " isContextual: " + isContextual);
+				if(logger.isTraceEnabled())
+					logger.trace("Executing service bean method: {} by: {} isContextual: {}",
+								 m, config.getProviderName(), isContextual);
 				task.getContext().setExertion(task);
 				((ServiceContext) task.getContext()).getMogramStrategy().setCurrentSelector(selector);
 				String pf = task.getProcessSignature().getPrefix();

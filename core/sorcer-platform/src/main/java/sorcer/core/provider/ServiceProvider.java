@@ -1404,9 +1404,11 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
         // process method, returns an Exertion
         Exertion out;
         try {
-            MDC.put(MDC_SORCER_REMOTE_CALL, MDC_SORCER_REMOTE_CALL);
-            MDC.put(MDC_PROVIDER_ID, this.getId().toString());
-            MDC.put(MDC_PROVIDER_NAME, this.getName());
+			if(delegate.isRemoteLogging()) {
+				MDC.put(MDC_SORCER_REMOTE_CALL, MDC_SORCER_REMOTE_CALL);
+				MDC.put(MDC_PROVIDER_ID, this.getId().toString());
+				MDC.put(MDC_PROVIDER_NAME, this.getName());
+			}
             if (exertion.getId() != null)
                 MDC.put(MDC_MOGRAM_ID, exertion.getId().toString());
 

@@ -243,7 +243,8 @@ public class SorcerILFactory extends BasicILFactory {
         }
 
         private void setupLogging(Remote impl, Object[] args) {
-            MDC.put(MDC_SORCER_REMOTE_CALL, MDC_SORCER_REMOTE_CALL);
+            if (remoteLogging)
+                MDC.put(MDC_SORCER_REMOTE_CALL, MDC_SORCER_REMOTE_CALL);
             if (impl instanceof Identifiable) {
                 Identifiable identifiable = (Identifiable) impl;
                 MDC.put(MDC_PROVIDER_ID, identifiable.getId().toString());
