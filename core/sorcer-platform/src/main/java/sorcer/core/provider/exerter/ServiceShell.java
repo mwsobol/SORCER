@@ -286,9 +286,7 @@ public class ServiceShell implements RemoteServiceShell, Requestor, Callable {
 						provisionManager.deployServices();
 					}
 				} catch (DispatcherException e) {
-					throw new ExertionException(
-							"Unable to deploy services for: "
-									+ mogram.getName(), e);
+					throw new ExertionException("Unable to deploy services for: "+ mogram.getName(), e);
 				}
 			}
 //			//TODO disabled due to problem with monitoring. Needs to be fixed to run with monitoring
@@ -464,18 +462,39 @@ public class ServiceShell implements RemoteServiceShell, Requestor, Callable {
 
 	private Exertion callProvider(ServiceExertion exertion, Signature signature, Arg... entries)
 			throws TransactionException, MogramException, RemoteException {
+
+        String providerName = null;
+        ServiceID providerID = null;
+        try {
+            providerName = ((Provider) provider).getProviderName();
+            providerID = ((Provider) provider).getProviderID();
+        } catch(RemoteException e) {
+            logger.error("Unable to connect to {}", signature, e);
+            if(exertion.isProvisionable()) {
+                try {
+                    logger.info("Attempt self-healing, dynamically provision {}", signature);
+                    ProvisionManager provisionManager = new ProvisionManager(exertion);
+                    provisionManager.deployServices();
+                    provider = (Exerter)Accessor.get().getService(signature);
+                    if(provider!=null)
+                        logger.info("Successfully re-created {}", signature);
+                } catch (DispatcherException e1) {
+                    provider = null;
+                    logger.error("Unable to deploy provider", e1);
+                }
+            } else {
+                provider = null;
+            }
+        }
 		if (provider == null) {
-			logger.warn("* Provider not available for: " + signature);
+			logger.warn("* Provider not available for: {}", signature);
 			exertion.setStatus(Exec.FAILED);
-			exertion.reportException(new RuntimeException(
-					"Cannot find provider for: " + signature));
+			exertion.reportException(new RuntimeException("Cannot find provider for: " + signature));
 			return exertion;
 		}
 		exertion.trimAllNotSerializableSignatures();
-		exertion.getControlContext().appendTrace(
-				"shell: " + ((Provider) provider).getProviderName()
-						+ ":" + ((Provider) provider).getProviderID());
-		logger.info("Provider found for: " + signature + "\n\t" + provider);
+		exertion.getControlContext().appendTrace(String.format("shell: %s:%s", providerName, providerID));
+		logger.info("Provider found for: {}\n\t{}", signature, provider);
 		if (((Provider) provider).mutualExclusion()) {
 			return serviceMutualExclusion((Provider) provider, exertion,
 					transaction);

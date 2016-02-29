@@ -55,7 +55,8 @@ class StartMonitorConfig {
              "${sorcerHome}/lib/blitz",
              "${sorcerHome}/lib",
              "${sorcerHome}/lib/rio-${version}/lib-dl",
-             "${sorcerHome}/lib/rio-${version}/lib"].each { root ->
+             "${sorcerHome}/lib/rio-${version}/lib",
+             "${sorcerHome}"].each { root ->
                 websterRoots << ';'
                 websterRoots << root
             }

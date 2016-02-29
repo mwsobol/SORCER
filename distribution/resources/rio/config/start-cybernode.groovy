@@ -53,7 +53,8 @@ class StartCybernodeConfig {
 
     String[] websterRoots() {
         String m2Repo = Repository.getLocalRepository().absolutePath
-        def websterRoots = ["${RioHome.get()}/lib", ';', m2Repo,';', sorcerData()]
+        String sorcerHome = System.getProperty("sorcer.home")
+        def websterRoots = ["${RioHome.get()}/lib", ';', m2Repo,';', sorcerData(), ';', "${sorcerHome}"]
 
         StringBuilder roots = new StringBuilder()
         websterRoots.each {

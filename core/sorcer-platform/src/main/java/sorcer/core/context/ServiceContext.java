@@ -70,51 +70,37 @@ public class ServiceContext<T> extends ServiceMogram implements
 		Context<T>, AssociativeContext<T>, Contexter<T>, SorcerConstants {
 
 	private static final long serialVersionUID = 3311956866023311727L;
-
 	protected Map<String, T> data = new ConcurrentHashMap<String, T>();
-
 	protected String subjectPath = "";
-
 	protected Object subjectValue = "";
-
 	// default value new ReturnPath(Context.RETURN);
 	protected ReturnPath<T> returnPath;
-
 	protected ReturnPath<T> returnJobPath;
 
 	// for calls by reflection for 'args' Object[] set the path
 	// or use the default one: Context.ARGS
 	//protected String argsPath = Context.ARGS;
 	protected String argsPath;
-
 	protected String parameterTypesPath;
 
 	// a flag for the context to be shared
 	// for data piping see: map, connect, pipe
 	protected boolean isShared = false;
-
 	protected String prefix = "";
-
 	protected List<EntryList> entryLists;
 	/**
 	 * metacontext: key is a metaattribute and value is a map of
 	 * path/metapath entries
 	 */
 	protected Map<String, Map<String,String>> metacontext;
-
 	protected Context initContext;
 
 	/** The exertion that uses this context */
 	protected ServiceExertion exertion;
-
 	protected String currentPrefix;
-
 	protected boolean isFinalized = false;
-
 	protected ModelStrategy mogramStrategy = new ModelStrategy(this);
-
 	protected Variability.Type type = Variability.Type.SELF;
-
 	Signature.Direction direction = Signature.Direction.INOUT;
 
 	/**
@@ -127,8 +113,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	public final static String EMPTY_LEAF = ":Empty";
 
 	// this class logger
-	protected static Logger logger = LoggerFactory.getLogger(ServiceContext.class
-			.getName());
+	static Logger logger = LoggerFactory.getLogger(ServiceContext.class);
 
 	/**
 	 * Default constructor for the ServiceContext class. The constructor calls the method init, 

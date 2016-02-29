@@ -20,6 +20,8 @@ package sorcer.core.context.model.srv;
 import groovy.lang.Closure;
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sorcer.co.tuple.MogramEntry;
 import sorcer.co.tuple.SignatureEntry;
 import sorcer.core.context.model.ent.Entry;
@@ -51,6 +53,7 @@ import static sorcer.eo.operator.*;
  * Created by Mike Sobolewski on 1/29/15.
  */
 public class SrvModel extends ParModel<Object> implements Model, Invocation<Object> {
+    private static final Logger logger = LoggerFactory.getLogger(SrvModel.class);
 
     public static SrvModel instance(Signature builder) throws SignatureException {
         SrvModel model = (SrvModel) sorcer.co.operator.instance(builder);
