@@ -391,7 +391,8 @@ public class ServiceAccessor implements DynamicAccessor {
             return null;
         if (SorcerConstants.NAME_DEFAULT.equals(providerName))
             providerName = providerNameUtil.getName(serviceType);
-        return Sorcer.getActualName(providerName);
+//        return Sorcer.getActualName(providerName);
+        return providerName;
     }
 
     private void checkNullName(ServiceTemplate template) {
