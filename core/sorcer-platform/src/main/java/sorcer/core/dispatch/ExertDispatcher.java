@@ -42,7 +42,7 @@ import static sorcer.service.Exec.*;
 
 @SuppressWarnings("rawtypes")
 abstract public class ExertDispatcher implements Dispatcher {
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
+    private final Logger logger = LoggerFactory.getLogger(ExertDispatcher.class);
 
     protected ServiceExertion xrt;
 
@@ -66,8 +66,7 @@ abstract public class ExertDispatcher implements Dispatcher {
 
     protected Provider provider;
 
-    protected static Map<Uuid, Dispatcher> dispatchers
-            = new HashMap<Uuid, Dispatcher>();
+    protected static Map<Uuid, Dispatcher> dispatchers = new HashMap<Uuid, Dispatcher>();
 
 	protected ThreadGroup disatchGroup;
     protected ProvisionManager provisionManager;
@@ -114,7 +113,7 @@ abstract public class ExertDispatcher implements Dispatcher {
             afterExec(xrt);
             xrt.finalizeOutDataContext();
         } catch (Exception e) {
-            logger.warn("Exertion dispatcher thread killed by exception: {}", e.getMessage());
+            logger.warn("Exertion dispatcher thread killed by exception: ", e);
             xrt.setStatus(Exec.FAILED);
             state = Exec.FAILED;
             xrt.reportException(e);

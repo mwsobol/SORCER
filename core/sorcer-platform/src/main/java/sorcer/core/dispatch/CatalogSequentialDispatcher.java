@@ -17,6 +17,8 @@
 
 package sorcer.core.dispatch;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sorcer.core.context.model.ent.EntModel;
 import sorcer.core.exertion.Mograms;
 import sorcer.core.provider.Provider;
@@ -30,6 +32,7 @@ import java.util.Set;
 import static sorcer.service.Exec.*;
 
 public class CatalogSequentialDispatcher extends CatalogExertDispatcher {
+    private final Logger logger = LoggerFactory.getLogger(CatalogSequentialDispatcher.class);
 
 	@SuppressWarnings("rawtypes")
     public CatalogSequentialDispatcher(Exertion job,

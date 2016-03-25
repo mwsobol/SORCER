@@ -1,23 +1,21 @@
 package sorcer.core.provider.exertmonitor;
 
-import java.io.IOException;
-import java.rmi.RMISecurityManager;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
-import net.jini.core.event.RemoteEventListener;
-import sorcer.core.exertion.NetTask;
-import sorcer.core.exertion.ObjectTask;
-import sorcer.core.provider.exertmonitor.MonitorSession;
-import sorcer.core.provider.exertmonitor.db.SessionDatabase;
-import sorcer.core.provider.exertmonitor.db.SessionDatabaseViews;
-
 import com.sleepycat.collections.StoredValueSet;
 import com.sleepycat.collections.TransactionRunner;
 import com.sleepycat.collections.TransactionWorker;
 import com.sleepycat.je.DatabaseException;
+import net.jini.core.event.RemoteEventListener;
+import sorcer.core.exertion.NetTask;
+import sorcer.core.exertion.ObjectTask;
+import sorcer.core.provider.exertmonitor.db.SessionDatabase;
+import sorcer.core.provider.exertmonitor.db.SessionDatabaseViews;
+import sorcer.service.MonitorException;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 /**
  * SessionDatabaseRunner is the main entry point for the program and may be run as
@@ -49,7 +47,7 @@ public class SessionDatabaseRunner {
      */
     public static void main(String... args) {
     	if (System.getSecurityManager() == null)
-			System.setSecurityManager(new RMISecurityManager());
+			System.setSecurityManager(new SecurityManager());
         System.out.println("\nRunning sample: " + SessionDatabaseRunner.class);
 
         // Parse the command line arguments.
@@ -175,7 +173,7 @@ public class SessionDatabaseRunner {
 			sessionSet.add(new MonitorSession(new NetTask("t1"), (RemoteEventListener)null, 10));
 			sessionSet.add(new MonitorSession(new ObjectTask("t2"), (RemoteEventListener)null, 100));
 //			sessionSet.add(new MonitorSession(new ResponseTask("t3"), (RemoteEventListener)null, 1000));
-		} catch (IOException e) {
+		} catch (MonitorException e) {
 			e.printStackTrace();
 		}
     }

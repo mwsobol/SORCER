@@ -1399,7 +1399,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	 * @throws sorcer.service.ExertionException
 	 */
     public Exertion doExertion(final Exertion exertion, Transaction txn) throws ExertionException {
-        logger.debug("service: " + exertion.getName());
+        logger.debug("service: {}", exertion.getName());
         // create an instance of the ControlFlowManager and call on the
         // process method, returns an Exertion
         Exertion out;
@@ -1513,9 +1513,8 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		try {
 			out = doExertion(exertion, txn);
 		} catch (Exception e) {
-			e.printStackTrace();
-			((ServiceExertion) out).reportException(new ExertionException(
-					getProviderName() + " failed", e));
+			logger.error("{} failed", getProviderName(), e);
+			out.reportException(new ExertionException(getProviderName() + " failed", e));
 		}
 		return out;
 	}
