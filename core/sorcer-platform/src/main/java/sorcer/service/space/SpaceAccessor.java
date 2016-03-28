@@ -60,7 +60,8 @@ public class SpaceAccessor {
                 cache = null;
             }
         }
-        javaSpace = Accessor.get().getService(spaceName, JavaSpace05.class);
+       // javaSpace = Accessor.get().getService(spaceName, JavaSpace05.class);
+        javaSpace = Accessor.get().getService("*", JavaSpace05.class);
         try {
             javaSpace.readIfExists(new Name("_SORCER_"), null, JavaSpace.NO_WAIT);
             cache = javaSpace;
