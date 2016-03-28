@@ -24,6 +24,8 @@ import net.jini.core.lease.Lease;
 import net.jini.entry.UnusableEntriesException;
 import net.jini.id.Uuid;
 import net.jini.space.JavaSpace05;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sorcer.core.exertion.ExertionEnvelop;
 import sorcer.core.exertion.Mograms;
 import sorcer.core.exertion.NetJob;
@@ -45,10 +47,10 @@ import static sorcer.service.Exec.*;
 import static sorcer.util.StringUtils.tName;
 
 public class SpaceParallelDispatcher extends ExertDispatcher {
-
     protected JavaSpace05 space;
     private int doneExertionIndex = 0;
     protected LokiMemberUtil loki;
+    private final Logger logger = LoggerFactory.getLogger(SpaceParallelDispatcher.class);
 
     public SpaceParallelDispatcher(Exertion exertion,
            Set<Context> sharedContexts,

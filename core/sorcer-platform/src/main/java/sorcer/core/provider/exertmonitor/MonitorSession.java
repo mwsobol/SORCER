@@ -34,7 +34,6 @@ import sorcer.core.provider.exertmonitor.lease.MonitorLandlord;
 import sorcer.service.*;
 import sorcer.util.ObjectCloner;
 
-import java.io.IOException;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -42,6 +41,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static sorcer.core.monitor.MonitorUtil.setMonitorSession;
 
@@ -61,36 +61,22 @@ public class MonitorSession extends ArrayList<MonitorSession> implements
 	}
 
 	public transient static MonitorLandlord mLandlord;
-
 	public transient static MonitoringManagement sessionManager;
-
 	public transient static ExecutorService eventPool;
-
 	static transient final String LOGGER = "sorcer.core.provider.monitor.SessionResource";
-
 	static transient final Logger logger = LoggerFactory.getLogger(LOGGER);
-
 	static transient final int EVENT_TASK_POOL_MIN = 1;
-
 	static transient final int EVENT_TASK_POOL_MAX = 5;
-
 	static transient final long INITIAL_TIMEOUT = Long.MAX_VALUE;
-
 	private Uuid cookie;
-
 	private ServiceExertion initialExertion;
-
 	private ServiceExertion runtimeExertion;
-
 	private Monitorable provider;
-
 	private MonitorSession parentResource;
-
 	private RemoteEventListener listener;
-
 	private long expiration;
-
 	private long timeout;
+    private final AtomicInteger sequenceNumber = new AtomicInteger(1);
 
 	// The state which is sorcer.core.monitor.ExertionState
 	// final int INITIAL = 1;
@@ -104,12 +90,12 @@ public class MonitorSession extends ArrayList<MonitorSession> implements
 
 	private Lease lease;
 
-	public MonitorSession(Exertion ex, RemoteEventListener listener,
-			long duration) throws IOException {
-		super();
+    public MonitorSession(Exertion ex,
+                          RemoteEventListener listener,
+                          long duration) throws MonitorException {
+        super();
 		if (ex == null)
-			throw new NullPointerException(
-					"Assertion Failed: initialExertion cannot be NULL");
+			throw new NullPointerException("Assertion Failed: initialExertion cannot be NULL");
 
 		this.initialExertion = (ServiceExertion) ex;
 		runtimeExertion = (ServiceExertion) ObjectCloner.cloneAnnotated(ex);
@@ -129,25 +115,20 @@ public class MonitorSession extends ArrayList<MonitorSession> implements
 				sessionManager, cookie, lease));
 	}
 
-	private MonitorSession(Exertion xrt, Exertion runtimeXrt,
-			MonitorSession parentSession) throws RemoteException {
-
+	private MonitorSession(Exertion xrt, Exertion runtimeXrt, MonitorSession parentSession) throws MonitorException {
 		super();
-
 		if (xrt == null || runtimeXrt == null)
-			throw new NullPointerException(
-					"Assertion Failed: initialExertion cannot be NULL");
+			throw new NullPointerException("Assertion Failed: initialExertion cannot be NULL");
 
 		this.initialExertion = (ServiceExertion) xrt;
 		this.runtimeExertion = (ServiceExertion) runtimeXrt;
 		this.parentResource = parentSession;
 		this.listener = parentSession.getListener();
 		init();
-        setMonitorSession(runtimeXrt, new MonitorableSession(sessionManager,
-						cookie));
+        setMonitorSession(runtimeXrt, new MonitorableSession(sessionManager, cookie));
 	}
 
-	private void init() throws RemoteException {
+	private void init() throws MonitorException {
 		cookie = UuidFactory.generate();
 		if (initialExertion.isJob() || initialExertion.isBlock())
 			addSessions((CompoundExertion) initialExertion, (CompoundExertion) runtimeExertion, this);
@@ -156,19 +137,27 @@ public class MonitorSession extends ArrayList<MonitorSession> implements
             addSessionsForConditionals((ConditionalMogram)initialExertion, (ConditionalMogram)runtimeExertion, this);
     }
 
-	private void addSessions(CompoundExertion initial, CompoundExertion runtime, MonitorSession parent) throws RemoteException {
+	private void addSessions(CompoundExertion initial, CompoundExertion runtime, MonitorSession parent) throws MonitorException {
 		for (int i = 0; i < initial.size(); i++) {
-            if (!runtime.get(i).isMonitorable())
-                ((ServiceExertion)runtime.get(i)).setMonitored(true);
-            add(new MonitorSession(initial.get(i),
-                    runtime.get(i), parent));
+            try {
+                if (!runtime.get(i).isMonitorable())
+                    ((ServiceExertion)runtime.get(i)).setMonitored(true);
+            } catch (RemoteException e) {
+                throw new MonitorException("Could not determine whether Exertion is monitorable", e);
+            }
+            add(new MonitorSession(initial.get(i), runtime.get(i), parent));
         }
 	}
 
-    private void addSessionsForConditionals(ConditionalMogram initial, ConditionalMogram runtime, MonitorSession parent) throws RemoteException {
+    private void addSessionsForConditionals(ConditionalMogram initial, ConditionalMogram runtime, MonitorSession parent)
+        throws MonitorException {
         for (int i = 0; i<initial.getTargets().size(); i++) {
-            if (!runtime.getTargets().get(i).isMonitorable())
-                ((ServiceExertion)runtime.getTargets().get(i)).setMonitored(true);
+            try {
+                if (!runtime.getTargets().get(i).isMonitorable())
+                    ((ServiceExertion)runtime.getTargets().get(i)).setMonitored(true);
+            } catch (RemoteException e) {
+                throw new MonitorException("Could not determine whether Exertion is monitorable", e);
+            }
             add(new MonitorSession((Exertion)initial.getTargets().get(i), (Exertion)runtime.getTargets().get(i), parent));
         }
     }
@@ -275,7 +264,7 @@ public class MonitorSession extends ArrayList<MonitorSession> implements
 	}
 
 	public void done(Context<?> ctx, StrategyContext controlContext) throws MonitorException {
-        logger.info("Done exertion: " + runtimeExertion.getName());
+        logger.info("Done exertion: {}", runtimeExertion.getName());
 		if (ctx == null)
 			throw new NullPointerException("Assertion Failed: ctx cannot be null");
 
@@ -287,8 +276,7 @@ public class MonitorSession extends ArrayList<MonitorSession> implements
 					+ Exec.State.name(getState()));
 		}
 
-		logger.info(
-				" This exertion is completed " + runtimeExertion.getName());
+		logger.info("This exertion is completed " + runtimeExertion.getName());
 
 		runtimeExertion.setStatus(Exec.DONE);
         if (runtimeExertion instanceof ServiceExertion) {
@@ -568,14 +556,19 @@ public class MonitorSession extends ArrayList<MonitorSession> implements
 
 	// Event firing mechanism
 	private void fireRemoteEvent() {
-        if (listener != null)
-        try {
-			MonitorEvent event = new MonitorEvent(sessionManager,
-					runtimeExertion, runtimeExertion.getStatus());
-			eventPool.submit(new MonitorEventTask(event, listener));
-		} catch (Exception e) {
-			logger.error( "Dispatching Monitoring Event", e);
-		}
+        if (listener != null) {
+            try {
+                MonitorEvent event = new MonitorEvent(sessionManager,
+                                                      runtimeExertion,
+                                                      runtimeExertion.getStatus());
+                event.setSequenceNumber(sequenceNumber.getAndIncrement());
+                eventPool.submit(new MonitorEventTask(event, listener));
+            } catch (Exception e) {
+                logger.error("Dispatching Monitoring Event", e);
+            }
+        } else {
+            logger.warn("No RemoteEventListener to notify for "+runtimeExertion.getName());
+        }
 	}
 
 	static class MonitorEventTask implements Runnable {

@@ -27,9 +27,7 @@ import java.io.Serializable;
  * Monitor Event is passed back by MonitorManager to notify the Service Broker
  * about any monitoring events.
  */
-public class MonitorEvent extends RemoteServiceEvent implements Serializable,
-        Exec {
-
+public class MonitorEvent extends RemoteServiceEvent implements Serializable, Exec {
 	static final long serialVersionUID = -5433981459997252761L;
 	private int cause;
 	private Exertion ex;

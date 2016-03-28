@@ -18,19 +18,22 @@
 
 package sorcer.core.dispatch;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.*;
-import java.util.concurrent.Callable;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sorcer.core.exertion.Mograms;
 import sorcer.core.provider.Provider;
 import sorcer.service.*;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.*;
+
 import static sorcer.service.Exec.*;
 
 public class CatalogParallelDispatcher extends CatalogExertDispatcher {
+    private final Logger logger = LoggerFactory.getLogger(CatalogParallelDispatcher.class);
     protected ExecutorService executor = Executors.newCachedThreadPool();
 
     public CatalogParallelDispatcher(Job job,

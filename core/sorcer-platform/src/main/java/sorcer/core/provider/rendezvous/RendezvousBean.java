@@ -159,8 +159,10 @@ abstract public class RendezvousBean implements Service, Exerter {
 					+ this.getClass().getName());
             if (mogram instanceof ObjectJob || mogram instanceof ObjectBlock
 					|| mogram instanceof Model || mogram instanceof ModelingTask) {
+				logger.info("{} is a local exertion", mogram.getName());
 				out = localExert(mogram, transaction, args);
 			} else {
+                logger.info("{} is a remote exertion", mogram.getName());
 				out = getControlFlownManager(mogram).process();
 			}
 

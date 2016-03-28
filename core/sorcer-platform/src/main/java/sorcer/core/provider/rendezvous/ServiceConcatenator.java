@@ -21,7 +21,6 @@ import net.jini.core.transaction.TransactionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.dispatch.BlockThread;
-import sorcer.core.exertion.NetJob;
 import sorcer.core.provider.Concatenator;
 import sorcer.service.*;
 
@@ -45,10 +44,10 @@ public class ServiceConcatenator extends RendezvousBean implements Concatenator 
 			throws TransactionException, ExertionException, RemoteException {
 		Exertion exertion = (Exertion) mogram;
 		setServiceID(exertion);
-		Block result = null;
+		Block result;
 		try {
 			if (((ServiceExertion)exertion).getControlContext().isMonitorable()
-					&& !(((NetJob)exertion).getControlContext()).isWaitable()) {
+					&& !(((ServiceExertion)exertion).getControlContext()).isWaitable()) {
 				replaceNullExertionIDs(exertion);
 				new BlockThread((Block) exertion, provider).start();
 				return exertion;
@@ -61,6 +60,7 @@ public class ServiceConcatenator extends RendezvousBean implements Concatenator 
 				logger.trace("<==== Result: " + result);
 			}
 		} catch (Throwable e) {
+			logger.error("Failed exerting {}", mogram.getName(), e);
 			throw new ExertionException(e);
 		}
 		return result;

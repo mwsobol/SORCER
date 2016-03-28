@@ -96,16 +96,6 @@ public class DataServiceTest {
     }
 
     @Test
-    public void testMultiple3() throws IOException {
-        DataService dataService = new DataService(20001, System.getProperty("user.dir")).start();
-        DataService dataService2 = DataService.getDataService(20001).start();
-        assertTrue(verify(dataService.getDataURL(new File(System.getProperty("user.dir")))));
-        assertTrue(verify(dataService2.getDataURL(new File(System.getProperty("user.dir")))));
-        dataService.stop();
-        dataService2.getDataURL(System.getProperty("user.dir"));
-    }
-
-    @Test
     public void testPlatformDataService() throws UnknownHostException {
         System.clearProperty(Constants.WEBSTER);
         System.clearProperty(Constants.WEBSTER_ROOTS);

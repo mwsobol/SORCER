@@ -18,14 +18,14 @@
 
 package sorcer.core.monitor;
 
-import java.io.IOException;
-import java.rmi.RemoteException;
-
 import net.jini.core.event.RemoteEventListener;
 import sorcer.core.provider.MonitorManagementSession;
-import sorcer.core.provider.exertmonitor.IMonitorSession;
 import sorcer.service.Exertion;
+import sorcer.service.MonitorException;
 import sorcer.service.Monitorable;
+
+import java.io.IOException;
+import java.rmi.RemoteException;
 
 /**
  * 
@@ -42,9 +42,9 @@ import sorcer.service.Monitorable;
 
 public interface MonitorManagement extends Monitorable {
 
-	public Exertion register(RemoteEventListener lstnr, Exertion ex,
-			long duration) throws RemoteException;
+    Exertion register(RemoteEventListener lstnr, Exertion ex, long duration) throws MonitorException,
+                                                                                    RemoteException;
 
-	public boolean persist(MonitorManagementSession session) throws IOException;
+	boolean persist(MonitorManagementSession session) throws IOException;
 
 }

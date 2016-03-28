@@ -77,10 +77,6 @@ public class DataService implements FileURLHandler {
         return dataService;
     }
 
-    public static DataService getDataService(int port) {
-        return new DataService(port, getRoots(port));
-    }
-
     /**
      * Create a DataService with roots. The resulting service will use an anonymous port.
      *
@@ -340,7 +336,7 @@ public class DataService implements FileURLHandler {
         return dataDir;
     }
 
-    static String getRoots(int port) {
+    public static String getRoots(int port) {
         File rootsFile = getRootsFile(port);
         String roots = null;
         if(rootsFile.exists()) {
@@ -349,6 +345,9 @@ public class DataService implements FileURLHandler {
             } catch (IOException e) {
                 logger.error("Could not read {}", rootsFile.getPath(), e);
             }
+        } else {
+            if(logger.isTraceEnabled())
+                logger.trace("roots file for {} does not exist", port);
         }
         return roots;
     }

@@ -34,4 +34,8 @@ public class MonitorException extends Exception {
 	public MonitorException(Exception e) {
 		super(e);
 	}
+
+	public MonitorException(String cause, Exception e) {
+		super(cause, e);
+	}
 }

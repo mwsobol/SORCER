@@ -68,7 +68,7 @@ public class MonitoringControlFlowManager extends ControlFlowManager {
                 logger.info("No Monitor Session, registering for: " + exertion.getName());
                 exertion = register(exertion);
             }
-        } catch (RemoteException e) {
+        } catch (RemoteException | MonitorException e) {
             throw new ExertionException(e);
         }
         monSession = getMonitoringSession(exertion);
@@ -110,10 +110,11 @@ public class MonitoringControlFlowManager extends ControlFlowManager {
         }
     }
 
-    private Exertion register(Exertion exertion) throws RemoteException {
+    private Exertion register(Exertion exertion) throws RemoteException, MonitorException {
 
         ServiceExertion registeredExertion = (ServiceExertion) (sessionMonitor.register(null,
-                exertion, DEFAULT_TIMEOUT_PERIOD));
+                                                                                        exertion,
+                                                                                        DEFAULT_TIMEOUT_PERIOD));
         MonitoringSession session = getMonitoringSession(registeredExertion);
         log.debug("Session for the exertion = {}", session);
         log.debug("Lease to be renewed for duration = {}",

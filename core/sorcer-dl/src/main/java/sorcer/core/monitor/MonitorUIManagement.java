@@ -17,6 +17,9 @@
  */
 package sorcer.core.monitor;
 
+import net.jini.core.event.EventRegistration;
+import net.jini.core.event.RemoteEventListener;
+import net.jini.core.lease.LeaseDeniedException;
 import net.jini.id.Uuid;
 import sorcer.core.UEID;
 import sorcer.service.Exec;
@@ -56,9 +59,8 @@ public interface MonitorUIManagement {
 	 *             if there is a communication error
 	 * 
 	 */
-	public Map<Uuid, ExertionInfo> getMonitorableExertionInfo(
-			Exec.State aspect, Principal principal)
-			throws RemoteException, MonitorException;
+	Map<Uuid, ExertionInfo> getMonitorableExertionInfo(Exec.State aspect, Principal principal)
+		throws RemoteException, MonitorException;
 
 	/**
 	 * For this reference ID, which references a exertion in a monitor, get the
@@ -71,8 +73,8 @@ public interface MonitorUIManagement {
 	 *             if there is a communication error
 	 * 
 	 */
-	public Exertion getMonitorableExertion(UEID cookie, Principal credentials)
-			throws RemoteException, MonitorException;
+    Exertion getMonitorableExertion(UEID cookie, Principal credentials)
+        throws RemoteException, MonitorException;
 
 	/**
 	 * For this reference ID, which references a exertion in a datastore, get the
@@ -85,6 +87,28 @@ public interface MonitorUIManagement {
 	 *             if there is a communication error
 	 * 
 	 */
-	public Exertion getMonitorableExertion(Uuid id, Principal credentials)
+	Exertion getMonitorableExertion(Uuid id, Principal credentials)
 			throws RemoteException, MonitorException;
+
+    /**
+     * The register method creates a leased
+     * {@link net.jini.core.event.EventRegistration} for the notification of
+     * sorcer.core.monitor.MonitorEvent events that correspond to exertions
+     * being monitored for a provided Principal.
+     * type passed in based on the requested lease duration. The implied
+     * semantics of notification are dependant on
+     * {@code org.rioproject.event.EventHandler} specializations.
+     *
+     * @param principal The Principal identifying events that match the provided
+     *                  Principal. If null, all Exertions will be matched.
+     * @param listener A RemoteEventListener.
+     * @param duration Requested EventRegistration lease duration
+     *
+     * @return An EventRegistration
+     *
+     * @throws IllegalArgumentException if any of the parameters are null
+     * @throws LeaseDeniedException if the duration parameter is not accepted
+     * @throws RemoteException if communication errors occur
+     */
+    EventRegistration register(Principal principal, RemoteEventListener listener, long duration) throws LeaseDeniedException, RemoteException;
 }

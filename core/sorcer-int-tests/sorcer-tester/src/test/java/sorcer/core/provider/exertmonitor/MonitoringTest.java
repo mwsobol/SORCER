@@ -21,9 +21,7 @@ import sorcer.util.exec.ExecUtils;
 
 import java.io.IOException;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.get;
@@ -111,7 +109,7 @@ public class MonitoringTest {
 	}
 
 	// two level job composition with PULL and PAR execution
-	private static Job createJob(Strategy.Flow flow, Strategy.Access access) throws Exception {
+	static Job createJob(Strategy.Flow flow, Strategy.Access access) throws Exception {
 
 		Task t3 = task("t3", sig("subtract", Subtractor.class),
 				context("subtract", inEnt("arg/x1"), inEnt("arg/x2"),
