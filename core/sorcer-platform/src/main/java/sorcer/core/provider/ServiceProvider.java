@@ -1251,6 +1251,14 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	private double avgExecTime = 0;
 	private double totalCallTime = 0;
 
+	public synchronized String getThreadStatus() {
+		String msg = "provider class = " + this.getClass()
+				+ "\ntotal service op calls = " + numCalls
+				+ "\nnumber of service op calls running = "	+ numThreads
+				+ "\nservice op call ids running = " + threadIds;
+		return msg;
+	}
+
 	public synchronized String doThreadMonitor(String serviceIdString) {
 		String prefix;
 		if (serviceIdString == null) {

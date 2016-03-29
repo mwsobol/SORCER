@@ -109,5 +109,6 @@ public interface Provider extends Service, Exerter, Monitorable, Administrable, 
 	public Logger getProviderLogger() throws RemoteException;
 
 	public Logger getRemoteLogger() throws RemoteException;
+
 	
 }
