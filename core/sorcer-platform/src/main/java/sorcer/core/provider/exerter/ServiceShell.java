@@ -401,7 +401,8 @@ public class ServiceShell implements RemoteServiceShell, Requestor, Callable {
 			// if space exertion should go to Spacer
 			if (!exertion.isJob()
 					&& exertion.getControlContext().getAccessType() == Access.PULL) {
-				signature = new NetSignature("exert", Spacer.class, Sorcer.getActualSpacerName());
+				//signature = new NetSignature("exert", Spacer.class, Sorcer.getActualSpacerName());
+				signature = new NetSignature("exert", Spacer.class);
 				exertion.correctProcessSignature(signature);
 			}
 			provider = ((NetSignature) signature).getProvider();
