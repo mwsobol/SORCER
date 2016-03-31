@@ -199,6 +199,7 @@ if (System.getProperty("org.rioproject.service")!=null) {
 //logger("sorcer.ui.tools", DEBUG)
 //logger("sorcer.util", DEBUG)
 
+logger("sorcer", OFF)
 root(INFO, appenders)
 
 
