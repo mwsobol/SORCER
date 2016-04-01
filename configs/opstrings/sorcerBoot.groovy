@@ -84,7 +84,8 @@ deployment(name: "Sorcer OS") {
         maintain 1
     }
 
-    service(name: SorcerEnv.getActualSpaceName(), fork:getForkMode()) {
+    //service(name: SorcerEnv.getActualSpaceName(), fork:getForkMode()) {
+    service(name: SorcerEnv.getActualSpaceName(), fork:"yes", jvmArgs: "-Xmx2G") {
         interfaces {
             classes 'net.jini.space.JavaSpace05'
             resources "blitz-dl-${Sorcer.blitzVersion}.jar", "blitzui-${Sorcer.blitzVersion}.jar"
