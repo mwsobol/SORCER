@@ -911,14 +911,22 @@ public class operator {
 		return s;
 	}
 
-	public static Signature sig(String operation, Class serviceType, Arg... args) throws SignatureException {
+    public static Signature sig(String operation, Class serviceType, Arg... args) throws SignatureException {
+        return sigActualName(true, operation, serviceType, args);
+    }
+
+        public static Signature sigActualName(boolean callActualName, String operation, Class serviceType, Arg... args) throws SignatureException {
 		String providerName = null;
 		Provision p = null;
 		List<MapContext> connList = new ArrayList<MapContext>();
 		if (args != null) {
 			for (Object o : args) {
 				if (o instanceof ProviderName) {
-					providerName = Sorcer.getActualName(((ProviderName) o).getName());
+                    if (callActualName) {
+                        providerName = Sorcer.getActualName(((ProviderName) o).getName());
+                    } else {
+                        providerName = ((ProviderName) o).getName();
+                    }
 				} else if (o instanceof Provision) {
 					p = (Provision) o;
 				} else if (o instanceof MapContext) {
