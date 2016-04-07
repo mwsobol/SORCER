@@ -126,7 +126,7 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
             if (exertion.isMonitorable() && monSession!=null) {
                 try {
                     monSession.init((Monitorable) provider.getProxy(),
-                                    MogramDispatcherFactory.LEASE_RENEWAL_PERIOD,
+                                    MogramDispatcherFactory.DEFAULT_LEASE_PERIOD,
                                     MogramDispatcherFactory.DEFAULT_TIMEOUT_PERIOD);
                     if (getLrm() == null)
                         setLrm(new LeaseRenewalManager());

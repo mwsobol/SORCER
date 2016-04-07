@@ -228,9 +228,7 @@ public class ControlFlowManager {
                 }
             }
             return result;
-        } catch (RuntimeException e) {
-            throw e;
-        } catch (ExertionException e) {
+        } catch (RuntimeException | ExertionException e) {
             throw e;
         } catch (Exception e) {
             throw new ExertionException(e.getMessage(), e);

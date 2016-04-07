@@ -19,13 +19,13 @@ package sorcer.core.provider.exertmonitor;
 
 import com.sleepycat.collections.StoredMap;
 import com.sleepycat.je.DatabaseException;
+import com.sun.jini.landlord.LeasedResource;
 import com.sun.jini.start.LifeCycle;
 import net.jini.core.event.EventRegistration;
 import net.jini.core.event.RemoteEventListener;
 import net.jini.core.lease.Lease;
 import net.jini.core.lease.LeaseDeniedException;
 import net.jini.id.Uuid;
-import org.rioproject.event.EventProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.UEID;
@@ -45,17 +45,18 @@ import java.io.File;
 import java.io.IOException;
 import java.rmi.RemoteException;
 import java.security.Principal;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 public class ExertMonitor extends ServiceProvider implements MonitoringManagement {
 	static transient final Logger logger = LoggerFactory.getLogger(ExertMonitor.class.getName());
 	private MonitorLandlord landlord;
 	private SessionDatabase db;
 	private StoredMap<UuidKey, MonitorManagementSession> resources;
-    private Map<Uuid, UuidKey> cacheSessionKeyMap = new HashMap<Uuid, UuidKey>();
+    private Map<Uuid, UuidKey> cacheSessionKeyMap = new HashMap<>();
     private final Object resourcesWriteLock = new Object();
     private ExertMonitorEventHandler eventHandler;
-    private EventProducer eventProducer;
 
 	public ExertMonitor(String[] args, LifeCycle lifeCycle) throws Exception {
 		super(args, lifeCycle);
@@ -63,7 +64,7 @@ public class ExertMonitor extends ServiceProvider implements MonitoringManagemen
 	}
 
 	private void initMonitor() throws Exception {
-		landlord = new MonitorLandlord();
+		landlord = new MonitorLandlord(getProviderConfiguration());
 		String dbHome = getProperty("monitor.database.home");
 		File dbHomeFile = null;
 		if (dbHome == null || dbHome.length() == 0) {
@@ -136,15 +137,12 @@ public class ExertMonitor extends ServiceProvider implements MonitoringManagemen
 		MonitorSession resource;
 
 		// Check if landlord is keeping it in memory
-		Hashtable lresources = landlord.getResources();
+		Map<Uuid, LeasedResource> lresources = landlord.getResources();
 		if (lresources.get(cookie) != null)
 			return (MonitorSession) lresources.get(cookie);
 
-		Uuid key;
-		for (Enumeration e = lresources.keys(); e.hasMoreElements();) {
-			key = (Uuid) e.nextElement();
-			resource = ((MonitorSession) lresources.get(key))
-			.getSessionResource(cookie);
+		for(Map.Entry<Uuid, LeasedResource> entry : lresources.entrySet()) {
+			resource = ((MonitorSession) entry.getValue()).getSessionResource(cookie);
 			if (resource != null)
 				return resource;
 		}
@@ -328,7 +326,7 @@ public class ExertMonitor extends ServiceProvider implements MonitoringManagemen
 	}
 
     private Map<Uuid, ExertionInfo> getMonitorableExertionInfo(MonitorSession monitorSession, UuidKey key, Exec.State state, Principal principal) throws RemoteException,MonitorException {
-        Map<Uuid, ExertionInfo> table = new HashMap<Uuid, ExertionInfo>();
+        Map<Uuid, ExertionInfo> table = new HashMap<>();
         logger.debug("Trying to get exertionInfos for: {} state: {} for: {}", monitorSession, (state==null?"null":state.toString()), principal);
         ServiceExertion xrt = (ServiceExertion) (monitorSession).getRuntimeExertion();
         if (xrt.getPrincipal().getId()
@@ -418,6 +416,7 @@ public class ExertMonitor extends ServiceProvider implements MonitoringManagemen
 	 */
 	@Override
 	public boolean persist(MonitorManagementSession session) throws IOException {
+        logger.warn("Persist {}", session);
 		resources.put(new UuidKey(((MonitorSession)session).getCookie()), session);
 		return true;
 	}

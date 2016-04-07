@@ -56,6 +56,7 @@ import sorcer.core.misc.MsgRef;
 import sorcer.core.monitor.MonitoringSession;
 import sorcer.core.provider.ServiceProvider.ProxyVerifier;
 import sorcer.core.provider.exerter.ServiceShell;
+import sorcer.core.provider.exertmonitor.DefaultMonitoringBeanHandler;
 import sorcer.core.proxy.Partnership;
 import sorcer.core.proxy.ProviderProxy;
 import sorcer.core.service.Configurer;
@@ -219,7 +220,7 @@ public class ProviderDelegate {
     public int processedExertionsCount=0;
 
 	/** Map of exertion ID's and state of execution */
-	static final Map exertionStateTable = Collections.synchronizedMap(new HashMap(11));
+	final Map exertionStateTable = Collections.synchronizedMap(new HashMap(11));
 
 	/**
 	 * A smart proxy instance
@@ -984,18 +985,14 @@ public class ProviderDelegate {
 			Method m = null;
 			try {
 				// select the proper method for the bean type
-				if (selector.equals("invoke") && (impl instanceof Exertion  
-						|| impl instanceof ParModel)) {
-					m = impl.getClass().getMethod(selector,
-							new Class[] { Context.class, Arg[].class });
+				if (selector.equals("invoke") && (impl instanceof Exertion || impl instanceof ParModel)) {
+					m = impl.getClass().getMethod(selector, Context.class, Arg[].class);
 					isContextual = true;
 				} else if (selector.equals("exert") && impl instanceof ServiceShell) {
-					m = impl.getClass().getMethod(selector,
-							new Class[] { Mogram.class, Arg[].class });
+					m = impl.getClass().getMethod(selector, Mogram.class, Arg[].class);
 					isContextual = false;
 				} else if (selector.equals("getValue") && impl instanceof Evaluation) {
-					m = impl.getClass().getMethod(selector,
-							new Class[] { Arg[].class });
+					m = impl.getClass().getMethod(selector, Arg[].class);
 					isContextual = false;
 				} else
 					m = impl.getClass().getMethod(selector, argTypes);
@@ -2657,6 +2654,7 @@ public class ProviderDelegate {
 				initServiceBeans(serviceBeans);
                 SorcerILFactory ilFactory = new SorcerILFactory(serviceComponents, implClassLoader);
                 ilFactory.setRemoteLogging(remoteLogging);
+                ilFactory.setBeanMonitorListener(new DefaultMonitoringBeanHandler(config, this));
                 outerExporter = exporterFactory.get(ilFactory);
                 logger.info("{}, {}", outerExporter, ((BasicJeriExporter)outerExporter).getInvocationLayerFactory().getClass().getName());
 			} else {

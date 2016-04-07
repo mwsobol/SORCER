@@ -91,18 +91,16 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
         new Thread(disatchGroup, new CollectResultThread(), tName("collect-" + xrt.getName())).start();
 
         for (Mogram mogram : inputXrts) {
-            logger.info("Calling monSession.init from SpaceParallelDispatcher for: " + mogram.getName());
+            logger.info("Calling monSession.init from SpaceParallelDispatcher for: {}", mogram.getName());
             MonitoringSession monSession = MonitorUtil.getMonitoringSession((Exertion)mogram);
             if (xrt.isMonitorable() && monSession!=null) {
                 try {
                     if (monSession.getState()==State.INITIAL.ordinal()) {
-                        logger.info("initializing monitoring from SpaceParallelDispatcher for " + mogram.getName());
-                        monSession.init(MogramDispatcherFactory.LEASE_RENEWAL_PERIOD, MogramDispatcherFactory.DEFAULT_TIMEOUT_PERIOD);
+                        logger.info("initializing monitoring from SpaceParallelDispatcher for{}", mogram.getName());
+                        monSession.init(Lease.FOREVER, MogramDispatcherFactory.DEFAULT_TIMEOUT_PERIOD);
                     }
-                } catch (MonitorException me) {
-                    logger.error("Problem starting monitoring for " + xrt.getName() + " " + me.getMessage());
-                } catch (RemoteException re) {
-                    logger.error("Problem starting monitoring for " + xrt.getName() + " " + re.getMessage());
+                } catch (MonitorException | RemoteException e) {
+                    logger.error("Problem starting monitoring for {}", xrt.getName(), e);
                 }
             }
             dispatchExertion((Exertion)mogram);

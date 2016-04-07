@@ -1774,11 +1774,10 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	}
 
 	public boolean isBusy() {
-		boolean isBusy = false;
 		//if (threadManager != null)
 		//	isBusy = isBusy || threadManager.getPending().size() > 0;
-		isBusy = isBusy || delegate.exertionStateTable.size() > 0;
-		logger.info("Is busy? {}", isBusy);
+		boolean isBusy = delegate.exertionStateTable.size() > 0;
+		logger.info("{} is busy? {}", getName(), isBusy);
 		return isBusy;
 	}
 

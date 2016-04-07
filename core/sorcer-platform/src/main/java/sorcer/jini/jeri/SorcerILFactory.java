@@ -30,6 +30,7 @@ import org.slf4j.MDC;
 import sorcer.core.provider.Modeler;
 import sorcer.core.provider.RemoteServiceShell;
 import sorcer.core.provider.exerter.ServiceShell;
+import sorcer.core.provider.exertmonitor.MonitoringBeanHandler;
 import sorcer.service.*;
 
 import java.lang.reflect.Method;
@@ -66,6 +67,11 @@ public class SorcerILFactory extends BasicILFactory {
      * implementing object.
      */
     protected final Map<Class<?>, Object> serviceBeanMap = new ConcurrentHashMap<>();
+
+    /**
+     * Listener for monitoring of service bean activity
+     */
+    private MonitoringBeanHandler monitoringBeanHandler;
 
     /**
      * Creates a <code>SorcerILFactory</code> instance with no server
@@ -322,7 +328,10 @@ public class SorcerILFactory extends BasicILFactory {
                             logger.trace("Process bean invocation for\n{}{}\n{}{}",
                                          indent, method, indent, service.getClass().getName());
                         }
-                        obj = method.invoke(service, args);
+                        if (monitoringBeanHandler != null)
+                            return monitoringBeanHandler.invoke(method, service, args);
+                        else
+                            obj = method.invoke(service, args);
                     } else {
                         if (logger.isTraceEnabled()) {
                             String indent = "    ";
@@ -380,5 +389,9 @@ public class SorcerILFactory extends BasicILFactory {
 
     public void setRemoteLogging(boolean remoteLogging) {
         this.remoteLogging = remoteLogging;
+    }
+
+    public void setBeanMonitorListener(MonitoringBeanHandler monitoringBeanHandler) {
+        this.monitoringBeanHandler = monitoringBeanHandler;
     }
 }

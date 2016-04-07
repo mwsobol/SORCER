@@ -76,8 +76,7 @@ public interface MonitorSessionManagement extends MonitorManagement {
 	 * @see TransactionConstants
 	 */
 
-	public Lease init(Uuid cookie, Monitorable mntrbl, long duration,
-			long timeout) throws RemoteException, MonitorException;
+	Lease init(Uuid cookie, Monitorable mntrbl, long duration, long timeout) throws RemoteException, MonitorException;
 
 	/**
 	 * 
@@ -107,8 +106,7 @@ public interface MonitorSessionManagement extends MonitorManagement {
 	 * 
 	 * */
 
-	public void init(Uuid cookie, long duration, long timeout)
-			throws RemoteException, MonitorException;
+	void init(Uuid cookie, long duration, long timeout) throws RemoteException, MonitorException;
 
 	/**
 	 * 
@@ -133,8 +131,7 @@ public interface MonitorSessionManagement extends MonitorManagement {
 	 * 
 	 * */
 
-	public Lease init(Uuid cookie, Monitorable mntrbl) throws RemoteException,
-			MonitorException;
+	Lease init(Uuid cookie, Monitorable mntrbl) throws RemoteException, MonitorException;
 
 	/**
 	 * Providers use this method to update the state of monitorable exertion.
@@ -153,10 +150,9 @@ public interface MonitorSessionManagement extends MonitorManagement {
 	 *             if there is a communication error
 	 **/
 	
-	public void update(Uuid cookie, Context ctx, StrategyContext controlContext, int aspect)
-			throws RemoteException, MonitorException;
+	void update(Uuid cookie, Context ctx, StrategyContext controlContext, int aspect) throws RemoteException,
+																							 MonitorException;
 	
-	public int getState(Uuid cookie) throws RemoteException,
-			MonitorException;
+	int getState(Uuid cookie) throws RemoteException, MonitorException;
 
 }

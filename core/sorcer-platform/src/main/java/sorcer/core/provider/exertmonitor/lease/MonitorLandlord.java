@@ -18,187 +18,65 @@
 
 package sorcer.core.provider.exertmonitor.lease;
 
-import java.net.UnknownHostException;
-import java.rmi.Remote;
-import java.rmi.RemoteException;
-import java.rmi.server.ExportException;
-import java.text.SimpleDateFormat;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Map;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import com.sun.jini.landlord.LeasedResource;
+import net.jini.config.Configuration;
 import net.jini.core.lease.Lease;
 import net.jini.core.lease.LeaseDeniedException;
 import net.jini.core.lease.UnknownLeaseException;
-import net.jini.id.ReferentUuid;
 import net.jini.id.Uuid;
-import net.jini.id.UuidFactory;
-import net.jini.jeri.BasicILFactory;
-import net.jini.jeri.BasicJeriExporter;
-import net.jini.jeri.tcp.TcpServerEndpoint;
-
-import com.sun.jini.landlord.Landlord;
-import com.sun.jini.landlord.LeaseFactory;
-import com.sun.jini.landlord.LeasedResource;
+import org.rioproject.impl.service.LandlordLessor;
+import org.rioproject.util.TimeUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sorcer.core.provider.exertmonitor.MonitorSession;
-import sorcer.util.Sorcer;
+import sorcer.service.MonitorException;
 
-import static sorcer.util.StringUtils.*;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
-public class MonitorLandlord implements Landlord, Runnable, ReferentUuid, Remote {
+import static sorcer.util.StringUtils.tName;
 
-	public static interface MonitorLeasedResource extends LeasedResource {
+public class MonitorLandlord implements Runnable {
 
-		public void leaseCancelled();
+	public interface MonitorLeasedResource extends LeasedResource {
 
-		public void setTimeout(long timeoutDuration);
+		void leaseCancelled();
 
-		public long getTimeout();
+		void setTimeout(long timeoutDuration);
 
-		public void timedOut();
+		long getTimeout();
 
+		void timedOut();
 	}
 
-	private transient LeaseFactory lFactory;
-    private transient Uuid landlordUuid;
-    private transient Landlord proxy;
+	private LandlordLessor landlord;
 	private volatile boolean run = true;
+	private static final Logger logger = LoggerFactory.getLogger(MonitorLandlord.class);
+	private static final long DEFAULT_SLEEP_TIME = TimeUnit.SECONDS.toMillis(3);
 
-	static transient final String LOGGER = "sorcer.core.provider.monitor.lease.MonitorLandlord";
-	static transient final Logger logger = LoggerFactory.getLogger(LOGGER);
-
-	// A simple leasing policy...10 minute leases.
-	protected static final int DEFAULT_MAX_LEASE = 1000 * 60 * 1;
-
-    protected int maxLease = DEFAULT_MAX_LEASE;
-
-	protected static final int DEFAULT_SLEEP_TIME = 1000 * 3;
-
-	public static Hashtable resources;
-
-	public MonitorLandlord() throws ExportException {
-		resources = new Hashtable();
-		landlordUuid = UuidFactory.generate();
-		export();
-		this.lFactory = new LeaseFactory(proxy, landlordUuid);
+	public MonitorLandlord(Configuration config) throws IOException {
+		landlord = new LandlordLessor(config);
+        Thread llt = new Thread(this, tName("MonitorLandlord.checkLeases"));
+        llt.setDaemon(true);
+        llt.start();
 	}
 
-	public void export() throws ExportException {
-        BasicJeriExporter exporter = null;
-        try {
-            exporter = new BasicJeriExporter(
-                    TcpServerEndpoint.getInstance(Sorcer.getLocalHost().getHostAddress(), 0), new BasicILFactory());
-        } catch (UnknownHostException e) {
-            logger.warn("Could not resolve hostAddress - starting on default interface");
-            exporter = new BasicJeriExporter(
-                    TcpServerEndpoint.getInstance(0), new BasicILFactory());
-        }
-        proxy = (Landlord) exporter.export(this);
-		Thread llt = new Thread(this, tName("MonitorLandlord.checkLeases"));
-		llt.setDaemon(true);
-		llt.start();
-	}
-
-	public Object getServiceProxy() {
-		return proxy;
-	}
-
-	public Lease newLease(LeasedResource resource) {
-		resources.put(resource.getCookie(), resource);
-		return lFactory
-				.newLease(resource.getCookie(), resource.getExpiration());
-	}
-
-	// Change the maximum lease time from the default.
-	public void setMaxLease(int maxLease) {
-		this.maxLease = maxLease;
-	}
-
-	// Apply the policy to a requested duration
-	// to get an actual expiration time.
-	public long getExpiration(long request) {
-		if (request > maxLease || request == Lease.ANY)
-			return System.currentTimeMillis() + maxLease;
-		else
-			return System.currentTimeMillis() + request;
-	}
-
-	// Cancel the lease represented by 'cookie'
-	public void cancel(Uuid cookie) throws UnknownLeaseException,
-			RemoteException {
-
-		MonitorLeasedResource resource;
-		resource = (MonitorLeasedResource) resources.get(cookie);
-		if (resource != null) {
-			resource.leaseCancelled();
-			return;
+	public Lease newLease(LeasedResource resource, long duration) throws MonitorException {
+		try {
+            Lease lease = landlord.newLease(resource, duration);
+            SimpleDateFormat sdf = new SimpleDateFormat("yy/MM/dd HH:mm:ss");
+            logger.info("Granted new lease, requested duration: {}, expiration: {}",
+                        TimeUtil.format(duration), sdf.format(lease.getExpiration()));
+			return lease;
+		} catch (LeaseDeniedException e) {
+			logger.warn("Failed granting new lease", e);
+			throw new MonitorException("Failed granting new lease", e);
 		}
-
-		throw new UnknownLeaseException(cookie.toString());
-	}
-
-	// Cancel a set of leases
-	public Map cancelAll(Uuid[] cookies) throws RemoteException {
-		Map exceptionMap = null;
-
-		for (int i = 0; i < cookies.length; i++) {
-			try {
-				cancel(cookies[i]);
-			} catch (UnknownLeaseException ex) {
-				if (exceptionMap == null) {
-					exceptionMap = new HashMap();
-				}
-				exceptionMap.put(cookies[i], ex);
-			}
-		}
-		return exceptionMap;
-	}
-
-	// Renew the lease specified by 'cookie'
-	public long renew(Uuid cookie, long extension)
-			throws UnknownLeaseException, LeaseDeniedException, RemoteException {
-
-		MonitorLeasedResource resource;
-		resource = (MonitorLeasedResource) resources.get(cookie);
-		if (resource != null) {
-			long expiration = getExpiration(extension);
-			resource.setExpiration(expiration);
-			// logger.info("Lease renewd for resource ="+resource+
-			// " next lease duration="+ (expiration -
-			// System.currentTimeMillis()));
-
-			return expiration - System.currentTimeMillis();
-		}
-		throw new UnknownLeaseException(cookie.toString());
-	}
-
-	// Renew a set of leases.
-	public Landlord.RenewResults renewAll(Uuid[] cookies, long[] extensions)
-			throws RemoteException {
-		long[] granted = new long[cookies.length];
-		Exception[] denied = null;
-
-		for (int i = 0; i < cookies.length; i++) {
-			try {
-				granted[i] = renew(cookies[i], extensions[i]);
-			} catch (Exception ex) {
-				if (denied == null) {
-					denied = new Exception[cookies.length + 1];
-				}
-				denied[i + 1] = ex;
-			}
-		}
-
-		Landlord.RenewResults results = new Landlord.RenewResults(granted,
-				denied);
-		logger.info( "leases renewed Landlord.RenewResults="
-				+ results);
-		return results;
 	}
 
 	public void run() {
@@ -208,6 +86,7 @@ public class MonitorLandlord implements Landlord, Runnable, ReferentUuid, Remote
 			try {
 				Thread.sleep(timeToSleep);
 			} catch (InterruptedException ex) {
+                //ignore
 			}
 
 			long currentTime = System.currentTimeMillis();
@@ -222,50 +101,46 @@ public class MonitorLandlord implements Landlord, Runnable, ReferentUuid, Remote
 	}
 
 	public void checkLeasesAndTimeouts() {
-		// logger.info("Checking for leases and time outs");
 		MonitorLeasedResource resource;
-		Uuid cookie;
 		long now = System.currentTimeMillis();
-		for (Enumeration e = resources.keys(); e.hasMoreElements();) {
-			cookie = (Uuid) e.nextElement();
-			resource = (MonitorLeasedResource) resources.get(cookie);
+        List<MonitorLeasedResource> removals = new ArrayList<>();
+        for(LeasedResource leasedResource : landlord.getLeasedResources())  {
+            resource = (MonitorLeasedResource) leasedResource;
             String name = (((MonitorSession)resource).getRuntimeExertion()!=null ?
-                    ((MonitorSession)resource).getRuntimeExertion().getName() : " NOT EXERTION");
+                           ((MonitorSession)resource).getRuntimeExertion().getName() : " NOT EXERTION");
             SimpleDateFormat sdf = new SimpleDateFormat("yy/MM/dd HH:mm:ss");
-            logger.info("Checking lease: " + name + " " + sdf.format(Math.min(resource.getTimeout(), resource.getExpiration()))
-			+ (resource.getExpiration()<resource.getTimeout() ? " E" : " T"));
+            logger.info("Checking lease: {} {}", name, sdf.format(resource.getExpiration()));
 
 			if (resource.getExpiration() < now) {
-				logger.info( "Lease cancelled for resource ="
-						+ resource);
-				resource.leaseCancelled();
-				resources.remove(resource.getCookie());
-			} else if (resource.getTimeout() < now) {
-				logger.info( "Timeout for resource =" + resource
-						+ " resource.getTimeout()=" + resource.getTimeout()
-						+ " now=" + now + " resource.getTimeout()-now="
-						+ (resource.getTimeout() - now));
-				resource.timedOut();
-				resources.remove(resource.getCookie());
+                removals.add(resource);
 			}
 		}
-
+        for(MonitorLeasedResource m : removals) {
+            logger.info("Lease cancelled for resource = {}", m);
+            m.leaseCancelled();
+            remove(m);
+        }
 	}
 
 	public void remove(LeasedResource lr) {
-		logger.info( "Removing landlord resource =" + lr);
-		resources.remove(lr.getCookie());
-	}
+		logger.info("Removing landlord resource = {}", lr);
+        try {
+            landlord.cancel(lr.getCookie());
+        } catch (UnknownLeaseException e) {
+            logger.debug("Can not cancel unknown lease");
+        }
+    }
 
-	public Hashtable getResources() {
-		return resources;
-	}
-
-	public Uuid getReferentUuid() {
-		return landlordUuid;
+	public Map<Uuid, LeasedResource> getResources() {
+        Map<Uuid, LeasedResource> resources = new HashMap<>();
+        for(LeasedResource sr : landlord.getLeasedResources()) {
+            resources.put(sr.getCookie(), sr);
+        }
+        return resources;
 	}
 	
 	public void terminate() {
 		run = false;
+        landlord.stop();
 	}
 }
