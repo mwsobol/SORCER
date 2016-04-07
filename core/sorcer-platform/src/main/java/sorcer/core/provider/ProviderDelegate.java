@@ -56,7 +56,6 @@ import sorcer.core.misc.MsgRef;
 import sorcer.core.monitor.MonitoringSession;
 import sorcer.core.provider.ServiceProvider.ProxyVerifier;
 import sorcer.core.provider.exerter.ServiceShell;
-import sorcer.core.provider.exertmonitor.DefaultMonitoringBeanHandler;
 import sorcer.core.proxy.Partnership;
 import sorcer.core.proxy.ProviderProxy;
 import sorcer.core.service.Configurer;
@@ -2654,7 +2653,7 @@ public class ProviderDelegate {
 				initServiceBeans(serviceBeans);
                 SorcerILFactory ilFactory = new SorcerILFactory(serviceComponents, implClassLoader);
                 ilFactory.setRemoteLogging(remoteLogging);
-                ilFactory.setBeanMonitorListener(new DefaultMonitoringBeanHandler(config, this));
+                //ilFactory.setMonitoringBeanHandler(new DefaultMonitoringBeanHandler(config, this));
                 outerExporter = exporterFactory.get(ilFactory);
                 logger.info("{}, {}", outerExporter, ((BasicJeriExporter)outerExporter).getInvocationLayerFactory().getClass().getName());
 			} else {

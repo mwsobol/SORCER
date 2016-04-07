@@ -31,6 +31,7 @@ import sorcer.core.monitor.MonitoringManagement;
 import sorcer.core.provider.MonitorManagementSession;
 import sorcer.core.provider.Provider;
 import sorcer.core.provider.exertmonitor.lease.MonitorLandlord;
+import sorcer.core.provider.exertmonitor.lease.MonitorLeasedResource;
 import sorcer.service.*;
 import sorcer.util.ObjectCloner;
 
@@ -45,9 +46,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static sorcer.core.monitor.MonitorUtil.setMonitorSession;
 
-public class MonitorSession extends ArrayList<MonitorSession> implements
-		MonitorLandlord.MonitorLeasedResource, Serializable, MonitorManagementSession {
-
+public class MonitorSession extends ArrayList<MonitorSession> implements MonitorLeasedResource,
+																		 Serializable,
+                                                                         MonitorManagementSession {
 	static final long serialVersionUID = -4427096084987355507L;
 
 	// ThreadPool for event processing
@@ -106,7 +107,8 @@ public class MonitorSession extends ArrayList<MonitorSession> implements
 		//setTimeout(Long.MAX_VALUE);
 		setTimeout(INITIAL_TIMEOUT);
 		if (mLandlord != null) {
-			lease = mLandlord.newLease(this, duration);
+            setExpiration(mLandlord.getExpiration(duration));
+            lease = mLandlord.newLease(this);
 		}
         setMonitorSession(runtimeExertion, new MonitorableSession(sessionManager, cookie, lease));
 	}
@@ -196,9 +198,10 @@ public class MonitorSession extends ArrayList<MonitorSession> implements
         if (runtimeExertion.getControlContext().getStopwatch()==null)
             runtimeExertion.startExecTime();
 		this.provider = executor;
+		setExpiration(mLandlord.getExpiration(duration));
 		setTimeout(System.currentTimeMillis() + timeout);
 		persist();
-		return mLandlord.newLease(this, duration);
+		return mLandlord.newLease(this);
 	}
 
 	public void init(long duration, long timeout) throws MonitorException {
@@ -209,11 +212,12 @@ public class MonitorSession extends ArrayList<MonitorSession> implements
             throw new MonitorException("Session already active state="+ Exec.State.name(getState()));
 		}
 
+		setExpiration(mLandlord.getExpiration(duration));
 		setTimeout(System.currentTimeMillis() + timeout);
         logger.warn("SETTING INSPACE for: {}", runtimeExertion.getName());
 		runtimeExertion.setStatus(Exec.INSPACE);
 		persist();
-		lease = mLandlord.newLease(this, duration);
+		lease = mLandlord.newLease(this);
 	}
 
 	public Lease init(Monitorable executor) throws MonitorException {

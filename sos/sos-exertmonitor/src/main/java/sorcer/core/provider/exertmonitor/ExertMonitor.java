@@ -64,7 +64,7 @@ public class ExertMonitor extends ServiceProvider implements MonitoringManagemen
 	}
 
 	private void initMonitor() throws Exception {
-		landlord = new MonitorLandlord(getProviderConfiguration());
+		landlord = new MonitorLandlord();
 		String dbHome = getProperty("monitor.database.home");
 		File dbHomeFile = null;
 		if (dbHome == null || dbHome.length() == 0) {

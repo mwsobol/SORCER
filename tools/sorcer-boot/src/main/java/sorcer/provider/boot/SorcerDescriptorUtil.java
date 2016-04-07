@@ -625,10 +625,12 @@ public class SorcerDescriptorUtil {
 			throws IOException {
 		if (sorcerHome == null)
 			throw new RuntimeException("'sorcer.home' property not declared");
-		
+
+        File rioLib = new File(sorcerHome+fs+"rio-"+rioVersion+fs+"lib");
 		// service provider classpath
 		String exerterClasspath = ConfigUtil.concat(new Object[] {
-				sorcerLib,fs,"sorcer",fs,"lib",fs,"sorcer-platform-" + sorcerVersion + ".jar"
+				sorcerLib,fs,"sorcer",fs,"lib",fs,"sorcer-platform-" + sorcerVersion + ".jar",
+                ps,rioLib,fs,"rio-lib-" + rioVersion + ".jar"
 		});
 
 		// service provider codebase

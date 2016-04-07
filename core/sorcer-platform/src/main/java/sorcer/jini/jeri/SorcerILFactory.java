@@ -20,7 +20,10 @@ package sorcer.jini.jeri;
 import net.jini.core.constraint.MethodConstraints;
 import net.jini.core.constraint.RemoteMethodControl;
 import net.jini.core.transaction.Transaction;
-import net.jini.jeri.*;
+import net.jini.jeri.BasicILFactory;
+import net.jini.jeri.BasicInvocationDispatcher;
+import net.jini.jeri.InvocationDispatcher;
+import net.jini.jeri.ServerCapabilities;
 import net.jini.security.proxytrust.ProxyTrust;
 import net.jini.security.proxytrust.ServerProxyTrust;
 import net.jini.security.proxytrust.TrustEquivalence;
@@ -30,7 +33,6 @@ import org.slf4j.MDC;
 import sorcer.core.provider.Modeler;
 import sorcer.core.provider.RemoteServiceShell;
 import sorcer.core.provider.exerter.ServiceShell;
-import sorcer.core.provider.exertmonitor.MonitoringBeanHandler;
 import sorcer.service.*;
 
 import java.lang.reflect.Method;
@@ -71,7 +73,7 @@ public class SorcerILFactory extends BasicILFactory {
     /**
      * Listener for monitoring of service bean activity
      */
-    private MonitoringBeanHandler monitoringBeanHandler;
+    //private MonitoringBeanHandler monitoringBeanHandler;
 
     /**
      * Creates a <code>SorcerILFactory</code> instance with no server
@@ -328,9 +330,9 @@ public class SorcerILFactory extends BasicILFactory {
                             logger.trace("Process bean invocation for\n{}{}\n{}{}",
                                          indent, method, indent, service.getClass().getName());
                         }
-                        if (monitoringBeanHandler != null)
+                        /*if (monitoringBeanHandler != null)
                             return monitoringBeanHandler.invoke(method, service, args);
-                        else
+                        else*/
                             obj = method.invoke(service, args);
                     } else {
                         if (logger.isTraceEnabled()) {
@@ -391,7 +393,7 @@ public class SorcerILFactory extends BasicILFactory {
         this.remoteLogging = remoteLogging;
     }
 
-    public void setBeanMonitorListener(MonitoringBeanHandler monitoringBeanHandler) {
+    /*public void setMonitoringBeanHandler(MonitoringBeanHandler monitoringBeanHandler) {
         this.monitoringBeanHandler = monitoringBeanHandler;
-    }
+    }*/
 }
