@@ -4241,12 +4241,12 @@ public class GenericUtil {
 	}
 	
 	public static synchronized void appendFileContents(String msg, File file) {
-		if (file.isDirectory()) file = new File(file, "genericUtil.txt");
-		try {
-			GenericUtil.appendFileContents(file, new String[] {msg});
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+//		if (file.isDirectory()) file = new File(file, "genericUtil.txt");
+//		try {
+//			GenericUtil.appendFileContents(file, new String[] {msg});
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
 	}
 
 	public static String findExistingDirectory(String[] dirs) {
