@@ -561,12 +561,12 @@ public class Par<T> extends Entry<T> implements Variability<T>, Arg, Mappable<T>
 	 * @see sorcer.service.Invocation#invoke(sorcer.service.Context, sorcer.service.Arg[])
 	 */
 	@Override
-	public T invoke(Context context, Arg... entries) throws RemoteException,
+	public T invoke(Context context, Arg... args) throws RemoteException,
 			InvocationException {
 		try {
 			if (context != null)
 				scope.append(context);
-			return getValue(entries);
+			return getValue(args);
 		} catch (Exception e) {
 			throw new InvocationException(e);
 		}

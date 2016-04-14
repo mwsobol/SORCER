@@ -1,6 +1,7 @@
 package sorcer.pml.modeling;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -12,6 +13,7 @@ import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.provider.impl.SubtractorImpl;
 import sorcer.core.context.model.par.Par;
 import sorcer.core.context.model.par.ParModel;
+import sorcer.core.context.model.par.SysCall;
 import sorcer.core.invoker.AltInvoker;
 import sorcer.core.invoker.Invocable;
 import sorcer.core.invoker.OptInvoker;
@@ -284,14 +286,56 @@ public class Invokers {
 		assertTrue("EXPECTED '0' return value, GOT: "+result.getExitValue(), result.getExitValue() == 0);
 		Properties props = new Properties();
 		props.load(new StringReader(result.getOut()));
+        set(pm, "y", new Double(props.getProperty("cylinder/volume")));
 
-		set(pm, "y", new Double(props.getProperty("cylinder/volume")));
-
+        logger.info("x value:" + value(pm, "x"));
+        logger.info("y value:" + value(pm, "y"));
+        logger.info("multiply value:" + value(pm, "add"));
+        assertTrue(value(pm, "add").equals(47.69911184307752));
 		logger.info("x value:" + value(pm, "x"));
 		logger.info("y value:" + value(pm, "y"));
 		logger.info("multiply value:" + value(pm, "add"));
 		assertTrue(value(pm, "add").equals(47.69911184307752));
 	}
+
+    @Ignore
+    @Test
+    public void systemCall() throws Exception {
+        String riverVersion = System.getProperty("river.version");
+        String sorcerVersion = System.getProperty("sorcer.version");
+        String slf4jVersion = System.getProperty("slf4j.version");
+        String logbackVersion = System.getProperty("logback.version");
+        String buildDir = System.getProperty("project.build.dir");
+
+        String cp = buildDir + "/libs/pml-" + sorcerVersion + "-bean.jar" + File.pathSeparator
+                + Sorcer.getHome() + "/lib/sorcer/lib/sorcer-platform-" + sorcerVersion + ".jar"  + File.pathSeparator
+                + Sorcer.getHome() + "/lib/logging/slf4j-api-" + slf4jVersion + ".jar"  + File.pathSeparator
+                + Sorcer.getHome() + "/lib/logging/logback-core-" + logbackVersion + ".jar"  + File.pathSeparator
+                + Sorcer.getHome() + "/lib/logging/logback-classic-" + logbackVersion + ".jar"  + File.pathSeparator
+                + Sorcer.getHome() + "/lib/river/jsk-platform-" + riverVersion + ".jar"  + File.pathSeparator
+                + Sorcer.getHome() + "/lib/river/jsk-lib-" + riverVersion + ".jar ";
+
+
+        ParModel pm = parModel(par("x", 10.0), par("y"),
+                par("multiply", invoker("x * y", pars("x", "y"))),
+                par("add", invoker("x + y", pars("x", "y"))));
+
+        SysCall caller = sysCall("volume", cxt(ent("cmd", "java -cp  " + cp + Volume.class.getName()),
+                inEnt("cylinder"), outEnt("cylinder/volume")));
+        add(pm, caller);
+
+        Context result = (Context) invoke(pm, "volume");
+        // get from the result the volume of cylinder and assign to y parameter
+        assertTrue("EXPECTED '0' return value, GOT: "+value(result, "exitValue"),
+                value(result, "exitValue").equals(0));
+
+        set(pm, "y", new Double((String)value(result, "cylinder/volume")));
+
+        logger.info("x value:" + value(pm, "x"));
+        logger.info("y value:" + value(pm, "y"));
+        logger.info("multiply value:" + value(pm, "add"));
+        assertTrue(value(pm, "add").equals(47.69911184307752));
+    }
 
 	@Test
 	public void conditionalInvoker() throws Exception {

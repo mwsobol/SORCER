@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * @author Pawel Rubach
- * based on
+ * based on ExecUtils
  * @author wf
  *
  */

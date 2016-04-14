@@ -41,13 +41,11 @@ import sorcer.util.exec.NullInputStream;
 /**
  * @author Mike Sobolewski
  */
-
-@SuppressWarnings({ "rawtypes", "unchecked" })
 public class CmdInvoker extends ServiceInvoker implements CmdInvoking {
 
 	private static final long serialVersionUID = -4035189000192693692L;
-	
-	private String cmd;
+
+    private String cmd;
 	private String[] cmdarray;
 	private File scriptFile;
 	private File logFile;
@@ -57,7 +55,11 @@ public class CmdInvoker extends ServiceInvoker implements CmdInvoking {
 	{
 		defaultName = "cmdInvoker-";
 	}
-	
+
+    public CmdInvoker() {
+        super();
+    }
+
 	public CmdInvoker(String cmd) {
 		super();
 		this.cmd = cmd;
@@ -256,5 +258,21 @@ public class CmdInvoker extends ServiceInvoker implements CmdInvoking {
 				+ process.exitValue());
 		return result;
 	}
+
+    public String getCmd() {
+        return cmd;
+    }
+
+    public void setCmd(String cmd) {
+        this.cmd = cmd;
+    }
+
+    public String[] getCmdarray() {
+        return cmdarray;
+    }
+
+    public void setCmdarray(String[] cmdarray) {
+        this.cmdarray = cmdarray;
+    }
 
 }

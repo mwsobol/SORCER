@@ -27,6 +27,7 @@ import sorcer.core.context.model.ent.EntryList;
 import sorcer.core.context.model.par.Agent;
 import sorcer.core.context.model.par.Par;
 import sorcer.core.context.model.par.ParModel;
+import sorcer.core.context.model.par.SysCall;
 import sorcer.core.invoker.*;
 import sorcer.service.*;
 
@@ -397,6 +398,10 @@ public class operator {
 	public static ServiceInvoker invoker(String expression, Arg... args) {
 		return new GroovyInvoker(expression, args);
 	}
+
+    public static SysCall sysCall(String name, Context context) throws ContextException {
+        return new SysCall(name, context);
+    }
 
 	public static ServiceInvoker print(String path) {
 		return new GroovyInvoker("_print_", new Path(path));
