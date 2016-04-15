@@ -16,13 +16,13 @@
 
 version = sorcerVersion
 
-dependencies { compile project(':sorcer-platform') }
-
 jar {
     manifest {
         attributes("Implementation-Title": "SORCER SysCaller Service", "Implementation-Version": version)
     }
 
 }
+
+dependencies { compile project(':sorcer-platform') }
 
 

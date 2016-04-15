@@ -145,7 +145,7 @@ logger("org.rioproject.resolver.aether.util.ConsoleRepositoryListener", WARN)
 
 logger("sorcer.util.ProviderAccessor", WARN)
 logger("sorcer.core.provider.cataloger.ServiceCataloger", WARN)
-//logger("sorcer.provider.boot", TRACE)
+logger("sorcer.provider.boot", INFO)
 logger("sorcer.core.provider.ServiceProvider", INFO)
 //logger("sorcer.core.provider.rendezvous.RendezvousBean", ALL)
 //logger("sorcer.core.provider.rendezvous.ServiceModeler", ALL)

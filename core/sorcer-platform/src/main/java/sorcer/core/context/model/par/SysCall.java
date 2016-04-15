@@ -51,7 +51,6 @@ public class SysCall extends Par<Context> implements Serializable {
         inPaths = ((ServiceContext)context).getInPaths();
         outPaths = ((ServiceContext)context).getOutPaths();
 
-        CmdInvoker invoker = null;
         if (name != null)
             invoker = new CmdInvoker();
         else
@@ -75,6 +74,22 @@ public class SysCall extends Par<Context> implements Serializable {
             out = new ServiceContext(name);
 
         try {
+            if (invoker.getCmd() != null && inPaths.size() > 0) {
+                // add input arguments
+                StringBuilder cmd = new StringBuilder(invoker.getCmd());
+                Object val = null;
+                for (String path : inPaths) {
+                    val = invoker.getScope().getValue(path);
+                    if (val == null || val == Context.none) {
+                        cmd.append(" " + path);
+                    } else {
+                        cmd.append(" -" + path);
+                        cmd.append("=" + val);
+                    }
+                }
+                invoker.setCmd(cmd.toString());
+            }
+
             ExecUtils.CmdResult result = (ExecUtils.CmdResult) invoker.invoke(args);
             // get from the result the volume of cylinder and assign to y parameter
 

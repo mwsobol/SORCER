@@ -23,7 +23,7 @@ import java.rmi.RemoteException;
 import sorcer.service.Context;
 import sorcer.service.ContextException;
 
-public interface Caller extends Remote {
+public interface SysCaller extends Remote {
 
-	public Context execute(Context context) throws RemoteException, ContextException;
+	public Context exec(Context context) throws RemoteException, ContextException;
 }

@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<!-- 
+Replace MYPROVIDER with your provider name and specify property value for "provider.class."
+Also you might need to adjust the classpath (provider.classpath) for your provider 
+-->
+
+<project name="sysCaller" default="run.provider" basedir=".">
+
+	<!-- load system environment variables -->
+	<property environment="env" />
+	<import file="${env.IGRID_HOME}/bin/common-run.xml" />
+
+	<echo message="IGRID_HOME: ${iGrid.home}" />
+	<echo message="Webster: ${provider.webster.url}" />
+
+	<!-- set property values -->
+	<property name="provider.name" value="logger" />
+	<property name="provider.class" value="sorcer.core.provider.logger.ServiceLogger" />
+
+	<!-- define provider classpath -->
+	<path id="project.classpath">
+		<pathelement location="${sorcer.lib}/${provider.name}.jar" />
+		<pathelement location="${sorcer.lib}/sorcer-platform.jar" />
+		<pathelement location="${jini.lib}/jsk-lib.jar" />
+		<pathelement location="${jini.lib}/jsk-platorm.jar" />
+		<pathelement location="${jini.lib}/serviceui.jar" />
+		<pathelement location="${lib}/rio/rio.jar" />
+	</path>
+
+	<!-- define provider codebase -->
+	<property name="j1" value="${provider.webster.url}/${provider.name}-dl.jar" />
+	<property name="j2" value="${provider.webster.url}/sorcer-dl.jar" />
+	<property name="j3" value="${provider.webster.url}/jsk-dl.jar" />
+	<property name="j4" value="${provider.webster.url}/${provider.name}-ui.jar" />
+
+	<target name="run.provider">
+		<java jar="${jini.lib}/start.jar" fork="yes">
+			<sysproperty key="java.security.manager" value="" />
+			<sysproperty key="java.util.logging.config.file" value="${iGrid.home}/configs/sorcer.logging" />
+			<sysproperty key="java.security.policy" value="../policy/logger-prv.policy" />
+			<sysproperty key="sorcer.provider.codebase" value="${j1} ${j2} ${j3} ${j4}" />
+			<sysproperty key="sorcer.provider.classpath" value="${toString:project.classpath}" />
+			<sysproperty key="sorcer.provider.impl" value="${provider.class}" />
+			<sysproperty key="sorcer.provider.config" value="../configs/${provider.name}-prv.config" />
+			<sysproperty key="sorcer.env.file" value="${iGrid.home}/configs/sorcer.env" />
+			<sysproperty key="iGrid.home" value="${iGrid.home}" />
+			<arg value="${iGrid.home}/configs/startup-prv.config" />
+		</java>
+	</target>
+
+</project>

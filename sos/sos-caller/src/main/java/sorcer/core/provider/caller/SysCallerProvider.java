@@ -21,28 +21,30 @@ import com.sun.jini.start.LifeCycle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.context.model.par.SysCall;
-import sorcer.core.provider.Caller;
+import sorcer.core.provider.SysCaller;
 import sorcer.core.provider.ServiceProvider;
 import sorcer.service.Context;
 import sorcer.service.ContextException;
 import java.rmi.RemoteException;
 
 
-public class SysCaller extends ServiceProvider implements Caller {
+public class SysCallerProvider extends ServiceProvider implements SysCaller {
 
-	private static Logger logger = LoggerFactory.getLogger(SysCaller.class);
+	private static Logger logger = LoggerFactory.getLogger(SysCallerProvider.class);
 
-	public SysCaller() throws Exception {
+	public SysCallerProvider() throws Exception {
 		// do nothing
 	}
 
-	public SysCaller(String[] args, LifeCycle lifeCycle) throws Exception {
+	public SysCallerProvider(String[] args, LifeCycle lifeCycle) throws Exception {
 		super(args, lifeCycle);
 	}
 
 	@Override
-	public Context execute(Context context) throws ContextException, RemoteException {
+	public Context exec(Context context) throws ContextException, RemoteException {
         String name = (String)context.getValue("name");
+		if (name == null)
+			name = context.getName();
         SysCall caller = new SysCall(name, context);
         return caller.getValue();
 	}

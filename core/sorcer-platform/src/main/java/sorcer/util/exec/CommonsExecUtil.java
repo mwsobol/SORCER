@@ -43,7 +43,7 @@ public class CommonsExecUtil {
     }
 
     /**
-     * execute the given command
+     * exec the given command
      * @param cmd - the command
      * @return CmdResult
      * @throws IOException
@@ -53,7 +53,7 @@ public class CommonsExecUtil {
     }
 
     /**
-     * execute the given command
+     * exec the given command
      * @param cmd - the command
      * @param args - String array of arguments
      * @return CmdResult
@@ -63,7 +63,7 @@ public class CommonsExecUtil {
     }
 
     /**
-     * execute the given command
+     * exec the given command
      * @param cmd - the command
      * @param args - String array of arguments
      * @param inputStream - stdin
@@ -76,7 +76,7 @@ public class CommonsExecUtil {
 
 
     /**
-     * execute the given command
+     * exec the given command
      * @param cmd - the command
      * @param args - String array of arguments
      * @param inputStream - stdin

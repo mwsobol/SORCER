@@ -103,7 +103,7 @@ task gatherDeps() {
                 println "Processing ${project.path}"
                 ["jsk, start, service-ui"  : "lib/river",
                  "blitz, lockmgr"          : "lib/blitz",
-                 "je, xerces, xml, javax.inject, plexus-utils, jansi, commons-io, guava"  : "lib/common",
+                 "je, xerces, xml, javax.inject, plexus-utils, jansi, commons-io, commons-exec, guava"  : "lib/common",
                  "slf4j, logback"          : "lib/logging",
                  "groovy"                  : "lib/common/groovy"].each {
                     prefix, dest ->
@@ -166,6 +166,7 @@ task createDistribution(dependsOn: [":sorcer-boot:install",
                               ":sorcer-ui:install",
                               ":sorcer-test:install",
                               ":sos-cataloger:install",
+                              ":sos-caller:install",
                               ":sos-db-prv:install",
                               ":sos-exertmonitor:install",
                               ":sos-logger:install",
@@ -241,6 +242,7 @@ task createDistribution(dependsOn: [":sorcer-boot:install",
                 include "bin/sorcer/rendezvous/configs/concatenator-prv.config"
                 include "bin/sorcer/rendezvous/configs/all-rendezvous-prv.config"
                 include "bin/sorcer/cataloger/configs/cataloger-prv.config"
+                include "bin/sorcer/sysCaller/configs/sysCaller-prv.config"
                 include "bin/sorcer/logger/configs/logger-prv.config"
                 include "bin/sorcer/exertmonitor/configs/exertmonitor-prv.config"
                 include "bin/sorcer/exertmonitor/configs/exertmonitor-prv.properties"
@@ -308,6 +310,7 @@ task createDistribution(dependsOn: [":sorcer-boot:install",
         versionProps.setProperty("sorcer.version", version.toString())
         versionProps.setProperty("blitz.version", blitzVersion)
         versionProps.setProperty("je.version", jeVersion)
+        versionProps.setProperty("commonsExec.version", commonsExecVersion)
         versionProps.setProperty("groovy.version", groovyVersion)
         versionProps.setProperty("slf4j.version", slf4jVersion)
         versionProps.setProperty("logback.version", logbackVersion)
