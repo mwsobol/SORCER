@@ -47,6 +47,8 @@ public class Entry<T> extends Tuple2<String, T> implements Callable<T>, Dependen
 
 	protected Object annotation;
 
+	protected Class valClass;
+
 	protected Variability.Type type = Variability.Type.PAR;;
 
 	// its arguments are always evaluated if active (either Evaluataion or Invocation type)
@@ -309,6 +311,14 @@ public class Entry<T> extends Tuple2<String, T> implements Callable<T>, Dependen
 //	public T invoke(Context<T> context, Arg... entries) throws InvocationException, RemoteException {
 //		return _2;
 //	}
+
+	public Class getValClass() {
+		return valClass;
+	}
+
+	public void setValClass(Class valClass) {
+		this.valClass = valClass;
+	}
 
 	@Override
 	public Object exec(Arg... args) throws MogramException, RemoteException {

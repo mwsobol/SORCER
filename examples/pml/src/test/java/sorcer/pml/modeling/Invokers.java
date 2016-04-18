@@ -10,6 +10,9 @@ import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.provider.impl.SubtractorImpl;
+import sorcer.core.context.Contexts;
+import sorcer.core.context.ServiceContext;
+import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.par.Par;
 import sorcer.core.context.model.par.ParModel;
 import sorcer.core.context.model.par.SysCall;
@@ -363,6 +366,9 @@ public class Invokers {
 
 		Context out = context(exert(callerTask));
 		logger.info("out:" + out);
+		assertTrue(value(out, "cylinder/height").equals("3.0"));
+		assertTrue(value(out, "cylinder/radius").equals("2.0"));
+		assertTrue(value(out, "cylinder/volume").equals("37.69911184307752"));
 	}
 
 	@Test
@@ -384,24 +390,71 @@ public class Invokers {
 		Model sm = srvModel(par("x", 10.0), par("y"),
 				par("multiply", invoker("x * y", pars("x", "y"))),
 				par("add", invoker("x + y", pars("x", "y"))),
-				srv("volume", sig("exec", SysCaller.class, result("volume/out")),
+				srv("volume", sig("exec", SysCaller.class,
 						cxt(ent("cmd", "java -cp  " + cp + Volume.class.getName()),
-						inEnt("cylinder"), outEnt("cylinder/volume"), outEnt("cylinder/radius"),
-						outEnt("cylinder/height"))));
+						inEnt("cylinder"), outEnt("cylinder/volume", double.class), outEnt("cylinder/radius"),
+						outEnt("cylinder/height")))));
 
-		Context result = (Context) value(sm, "volume");
-		// get from the result the volume of cylinder and assign to y parameter
-		assertTrue("EXPECTED '0' return value, GOT: "+value(result, "exit/value"),
-				value(result, "exit/value").equals(0));
+		String volume = (String)value(sm, "volume");
+		logger.info("volume: " + volume);
+		assertTrue(volume.equals("37.69911184307752"));
+		assertTrue(value(sm, "cylinder/height").equals("3.0"));
+		assertTrue(value(sm, "cylinder/radius").equals("2.0"));
+		assertTrue(value(sm, "cylinder/volume").equals("37.69911184307752"));
 
-		set(pm, "y", new Double((String)value(result, "cylinder/volume")));
+		// type conversion for numbers
+		double v = Double.valueOf(volume).doubleValue();
+		assertTrue(v == 37.69911184307752);
+		volume = Double.toString(v);
+		assertTrue(value(sm, "cylinder/volume").equals(volume));
+	}
 
-		logger.info("cylinder/radius:" + value(result, "cylinder/radius"));
-		logger.info("cylinder/height:" + value(result, "cylinder/height"));
-		logger.info("x value:" + value(sm, "x"));
-		logger.info("y value:" + value(sm, "y"));
-		logger.info("multiply value:" + value(sm, "add"));
-		assertTrue(value(sm, "add").equals(47.69911184307752));
+	@Test
+	public void systemCallerWithTypes() throws Exception {
+		String riverVersion = System.getProperty("river.version");
+		String sorcerVersion = System.getProperty("sorcer.version");
+		String slf4jVersion = System.getProperty("slf4j.version");
+		String logbackVersion = System.getProperty("logback.version");
+		String buildDir = System.getProperty("project.build.dir");
+
+		String cp = buildDir + "/libs/pml-" + sorcerVersion + "-bean.jar" + File.pathSeparator
+				+ Sorcer.getHome() + "/lib/sorcer/lib/sorcer-platform-" + sorcerVersion + ".jar"  + File.pathSeparator
+				+ Sorcer.getHome() + "/lib/logging/slf4j-api-" + slf4jVersion + ".jar"  + File.pathSeparator
+				+ Sorcer.getHome() + "/lib/logging/logback-core-" + logbackVersion + ".jar"  + File.pathSeparator
+				+ Sorcer.getHome() + "/lib/logging/logback-classic-" + logbackVersion + ".jar"  + File.pathSeparator
+				+ Sorcer.getHome() + "/lib/river/jsk-platform-" + riverVersion + ".jar"  + File.pathSeparator
+				+ Sorcer.getHome() + "/lib/river/jsk-lib-" + riverVersion + ".jar ";
+
+		Model sm = srvModel(par("x", 10.0), par("y"),
+				par("multiply", invoker("x * y", pars("x", "y"))),
+				par("add", invoker("x + y", pars("x", "y"))),
+				srv("volume", sig("exec", SysCaller.class,
+						cxt(ent("cmd", "java -cp  " + cp + Volume.class.getName()),
+								inEnt("cylinder", Arg.class),
+								outEnt("cylinder/volume", double.class),
+								outEnt("cylinder/radius", double.class),
+								outEnt("cylinder/height", double.class)))));
+
+		Double volume = (Double) value(sm, "volume");
+		logger.info("volume: " + volume);
+		assertTrue(volume.equals(37.69911184307752));
+		assertTrue(value(sm, "cylinder/height").equals(3.0));
+		assertTrue(value(sm, "cylinder/radius").equals(2.0));
+		assertTrue(value(sm, "cylinder/volume").equals(37.69911184307752));
+	}
+
+	@Test
+	public void classType() throws Exception {
+		ServiceContext context = (ServiceContext) cxt(inEnt("cylinder", String.class),
+				inEnt("cylinder/height", 3.0, double.class),
+				outEnt("cylinder/volume", double.class),
+				outEnt("cylinder/radius", double.class),
+				outEnt("cylinder/height", double.class));
+		String ct = context.getValClass("cylinder/volume");
+		logger.info("ct: " + ct);
+		logger.info("double?: " + context.isDouble("cylinder/volume"));
+		Class cl = new Double(3.0).getClass();
+		logger.info("cl: " + cl);
 	}
 
 	@Test
@@ -418,7 +471,7 @@ public class Invokers {
 
 		pm.putValue("x", 300.0);
 		pm.putValue("y", 200.0);
-		 logger.info("condition value: " + pm.getValue("condition"));
+		logger.info("condition value: " + pm.getValue("condition"));
 		assertEquals(pm.getValue("condition"), true);
 
 		// enclosing class conditional context

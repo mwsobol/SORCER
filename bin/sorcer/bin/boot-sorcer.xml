@@ -41,6 +41,7 @@
                 <pathelement location="${rio.lib}/logging/jul-to-slf4j-${slf4j.version}.jar" />
                 <pathelement location="${rio.lib}/logging/logback-classic-${logback.version}.jar" />
 				<pathelement location="${common.lib}/commons-io-${commonsio.version}.jar" />
+				<pathelement location="${common.lib}/commons-exec-${commonsExec.version}.jar" />
 			</classpath>
             <env key="SORCER_HOME" value="${sorcer.home}"/>
 			<env key="RIO_HOME" value="${sorcer.home}/rio-${rio.version}"/>

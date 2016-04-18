@@ -373,6 +373,7 @@ public interface Signature extends Service, Comparable, Dependency, Identifiable
 		public Path[] outPaths;
 		public Path[] inPaths;
 		public Class<T> type;
+		private Context dataContext;
 
 		public ReturnPath() {
 			// return the context
@@ -468,6 +469,13 @@ public interface Signature extends Service, Comparable, Dependency, Identifiable
 			return true;
 		}
 
+		public Context getDataContext() {
+			return dataContext;
+		}
+
+		public void setDataContext(Context dataContext) {
+			this.dataContext = dataContext;
+		}
 
 		@Override
 		public int hashCode() {

@@ -181,7 +181,7 @@ public class CmdInvoker extends ServiceInvoker implements CmdInvoking {
 						//		cmd), stdin);
 					} else {
 						out = CommonsExecUtil.execCommand(cmd);
-						//out = ExecUtils.execCommand(cmd);
+//						out = ExecUtils.execCommand(cmd);
 					}
 				} else if (cmdarray != null) {
 					String command = cmdarray[0];

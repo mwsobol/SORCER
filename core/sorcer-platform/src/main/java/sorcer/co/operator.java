@@ -472,7 +472,10 @@ public class operator {
 			oe.annotation(value);
 			return oe;
 		}
-		return new OutputEntry(path, value, 0);
+		OutputEntry ent = new OutputEntry(path, value, 0);
+		if (value instanceof Class)
+			ent.setValClass((Class) value);
+		return ent;
 	}
 
 	public static <T> OutputEntry<T> outEnt(String path, T value, String annotation) {
@@ -548,6 +551,18 @@ public class operator {
 		InputEntry<T> ie = inEnt(path, value);
 		ie.annotation(annotation);
 		return ie;
+	}
+
+	public static <T> InputEntry<T> inEnt(String path, T value, Class valClass, String annotation) {
+		InputEntry<T> ie = new InputEntry(path, value, 0);
+		if (valClass != null)
+			ie.setValClass(valClass);
+		ie.annotation(annotation);
+		return ie;
+	}
+
+	public static <T> InputEntry<T> inEnt(String path, T value, Class valClass) {
+		return inEnt(path, value, valClass, null);
 	}
 
 	public static InputEntry inoutEnt(String path) {

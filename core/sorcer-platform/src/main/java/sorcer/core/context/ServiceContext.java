@@ -59,6 +59,9 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
+import static sorcer.co.operator.inEnt;
+import static sorcer.co.operator.outEnt;
+import static sorcer.eo.operator.cxt;
 import static sorcer.eo.operator.sig;
 import static sorcer.eo.operator.task;
 
@@ -248,7 +251,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 					+ FORMAT + APS + MODIFIER);
 			// directional attributes with the context ID
 			setCompositeAttribute(CONTEXT_PARAMETER + APS + DIRECTION + APS
-					+ PATH + APS + CONTEXT_ID);
+					+ PATH + APS + CONTEXT_ID + APS + VAL_CLASS);
 			// relationship to providers
 			setCompositeAttribute(ACTION + APS + PROVIDER_NAME + APS
 					+ INTERFACE + APS + SELECTOR);
@@ -1287,6 +1290,51 @@ public class ServiceContext<T> extends ServiceMogram implements
 		return Contexts.getAllInPaths(this);
 	}
 
+	public String getValClass(String path) throws ContextException {
+		String vc = (String) ((Hashtable)getMetacontext().get("vc")).get(path);
+		return vc;
+	}
+
+	public boolean isString(String path) throws ContextException {
+		String vc = (String) ((Hashtable)getMetacontext().get("vc")).get(path);
+		return vc.equals(""+ String.class);
+	}
+
+	public boolean isInt(String path) throws ContextException {
+		String vc = (String) ((Hashtable)getMetacontext().get("vc")).get(path);
+		boolean is = vc.equals(""+ int.class) || vc.equals(""+ Integer.class);
+		return is;
+	}
+	public boolean isShort(String path) throws ContextException {
+		String vc = (String) ((Hashtable)getMetacontext().get("vc")).get(path);
+		boolean is = vc.equals(""+ short.class) || vc.equals(""+ Short.class);
+		return is;
+	}
+
+	public boolean isLong(String path) throws ContextException {
+		String vc = (String) ((Hashtable)getMetacontext().get("vc")).get(path);
+		boolean is = vc.equals(""+ long.class) || vc.equals(""+ long.class);
+		return is;
+	}
+
+	public boolean isFloat(String path) throws ContextException {
+		String vc = (String) ((Hashtable)getMetacontext().get("vc")).get(path);
+		boolean is = vc.equals(""+ float.class) || vc.equals(""+ float.class);
+		return is;
+	}
+
+	public boolean isDouble(String path) throws ContextException {
+		String vc = (String) ((Hashtable)getMetacontext().get("vc")).get(path);
+		boolean is = vc.equals(""+ double.class) || vc.equals(""+ Double.class);
+		return is;
+	}
+
+	public boolean isByte(String path) throws ContextException {
+		String vc = (String) ((Hashtable)getMetacontext().get("vc")).get(path);
+		boolean is = vc.equals(""+ byte.class) || vc.equals(""+ Byte.class);
+		return is;
+	}
+
 	public ParList getPars() {
 		ParList pl = new ParList();
 		Iterator<Map.Entry<String, T>> i = entryIterator();
@@ -1426,9 +1474,15 @@ public class ServiceContext<T> extends ServiceMogram implements
 		}
 		Path[] ips = ((ReturnPath)sig.getReturnPath()).getInSigPaths();
 		Path[] ops = ((ReturnPath)sig.getReturnPath()).getOutSigPaths();
-		Context incxt = this;
-		if (ips != null && ips.length > 0) {
-			incxt = this.getEvaluatedSubcontext(ips, items);
+		Context incxt;
+		if (((ReturnPath) sig.getReturnPath()).getDataContext() != null) {
+			incxt = ((ReturnPath) sig.getReturnPath()).getDataContext();
+			incxt.setScope(this);
+		} else {
+			incxt = this;
+			if (ips != null && ips.length > 0) {
+				incxt = this.getEvaluatedSubcontext(ips, items);
+			}
 		}
 		incxt.setReturnPath(sig.getReturnPath());
 		String returnPath = incxt.getReturnPath().getPath();

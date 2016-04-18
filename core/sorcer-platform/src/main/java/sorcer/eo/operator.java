@@ -512,7 +512,7 @@ public class operator {
 				if (t.isPersistent()) {
 					setPar(pcxt, t, i);
 				} else {
-					pcxt.putOutValueAt(t.path(), t.value(), i + 1);
+					pcxt.putOutValueAt(t.path(), t.value(), ((OutputEntry) t).getValClass(), i + 1);
 				}
 			} else if (t instanceof InoutEntry) {
 				if (t.isPersistent()) {
@@ -979,6 +979,12 @@ public class operator {
 					((ServiceSignature) sig).setDeployment((ServiceDeployment) o);
 				} else if (o instanceof Version && sig instanceof NetSignature) {
 					((NetSignature) sig).setVersion(((Version) o).getName());
+				} else if (o instanceof ServiceContext) {
+					if (sig.getReturnPath() == null) {
+						sig.setReturnPath(new ReturnPath());
+						((ReturnPath) sig.getReturnPath()).setDataContext((Context) o);
+					} else
+						throw new SignatureException("No return path defined in: " + sig);
 				}
 			}
 		}
