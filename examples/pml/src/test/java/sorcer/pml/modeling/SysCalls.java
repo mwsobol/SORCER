@@ -227,7 +227,7 @@ public class SysCalls {
 	}
 
 	@Test
-	public void classType() throws Exception {
+	public void classTypes() throws Exception {
 		ServiceContext context = (ServiceContext) cxt(inEnt("cylinder", String.class),
 				inEnt("cylinder/height", 3.0, double.class),
 				outEnt("cylinder/volume", double.class),
