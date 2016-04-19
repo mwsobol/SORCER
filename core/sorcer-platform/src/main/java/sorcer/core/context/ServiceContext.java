@@ -970,13 +970,13 @@ public class ServiceContext<T> extends ServiceMogram implements
 		if (firstAPS <= 0) {
             if (association.toLowerCase().equals(Context.DA_IN)) {
                 assoc = Context.CONTEXT_PARAMETER
-                        + APS + Context.DA_IN + APS + APS;
+                        + APS + Context.DA_IN + APS + APS + APS;
             } else if (association.toLowerCase().equals(Context.DA_OUT)) {
                 assoc = Context.CONTEXT_PARAMETER
-                        + APS + Context.DA_OUT + APS + APS;
+                        + APS + Context.DA_OUT + APS + APS + APS;
             } else if (association.toLowerCase().equals(Context.DA_INOUT)) {
                 assoc = Context.CONTEXT_PARAMETER
-                        + APS + Context.DA_INOUT + APS + APS;
+                        + APS + Context.DA_INOUT + APS + APS + APS;
             } else {
                 throw new ContextException(
                         "No attribute or metaattribute specified in: "
@@ -1332,6 +1332,12 @@ public class ServiceContext<T> extends ServiceMogram implements
 	public boolean isByte(String path) throws ContextException {
 		String vc = (String) ((Hashtable)getMetacontext().get("vc")).get(path);
 		boolean is = vc.equals(""+ byte.class) || vc.equals(""+ Byte.class);
+		return is;
+	}
+
+	public boolean isBoolean(String path) throws ContextException {
+		String vc = (String) ((Hashtable)getMetacontext().get("vc")).get(path);
+		boolean is = vc.equals(""+ boolean.class) || vc.equals(""+ Boolean.class);
 		return is;
 	}
 

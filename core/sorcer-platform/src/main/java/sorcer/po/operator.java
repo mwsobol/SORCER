@@ -30,6 +30,7 @@ import sorcer.core.context.model.par.ParModel;
 import sorcer.core.context.model.par.SysCall;
 import sorcer.core.invoker.*;
 import sorcer.service.*;
+import sorcer.service.modeling.Model;
 
 import java.net.URL;
 import java.rmi.RemoteException;
@@ -225,11 +226,11 @@ public class operator {
 		return parEntry;
 	}
 
-	public static void set(ParModel context, String parname, Object value)
+	public static void set(Model context, String parname, Object value)
 			throws ContextException {
 		Object parEntry = context.asis(parname);
 		if (parEntry == null)
-			context.addPar(parname, value);
+			((ParModel)context).addPar(parname, value);
 		else if (parEntry instanceof Setter) {
 			try {
 				((Setter) parEntry).setValue(value);
@@ -243,8 +244,8 @@ public class operator {
 		}
 		// just ssetting the value
 		else {
-			context.putValue(parname, value);
-			context.setIsChanged(true);
+			((ParModel)context).putValue(parname, value);
+			((ParModel)context).setIsChanged(true);
 		}
 
 	}

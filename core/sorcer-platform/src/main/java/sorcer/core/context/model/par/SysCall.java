@@ -34,6 +34,7 @@ import java.util.Properties;
 public class SysCall extends Par<Context> implements Serializable {
 
     private CmdInvoker invoker;
+    private ServiceContext dataContext;
     private List<String> inPaths;
     private List<String> outPaths;
 
@@ -48,6 +49,7 @@ public class SysCall extends Par<Context> implements Serializable {
         String scriptFilename = (String)context.getValue("filename");
         Context scope = (Context)context.getValue("scope");
 
+        dataContext = (ServiceContext) context;
         inPaths = ((ServiceContext)context).getInPaths();
         outPaths = ((ServiceContext)context).getOutPaths();
 
@@ -101,7 +103,7 @@ public class SysCall extends Par<Context> implements Serializable {
             if (outPaths != null) {
                 for (String key : outPaths) {
                     if (props.containsKey(key)) {
-                        out.putValue(key, props.getProperty(key));
+                        out.putValue(key, getTypedValue(key, props.getProperty(key)));
                     }
                 }
             } else {
@@ -114,4 +116,23 @@ public class SysCall extends Par<Context> implements Serializable {
         return out;
     }
 
+    private Object getTypedValue(String path, String value) throws ContextException {
+        Object obj = value;
+        if (dataContext.isDouble(path)) {
+            obj = new Double(value);
+        } else if (dataContext.isInt(path)) {
+            obj = new Integer(value);
+        } else if (dataContext.isLong(path)) {
+            obj = new Long(value);
+        } else if (dataContext.isFloat(path)) {
+            obj = new Float(value);
+        } else if (dataContext.isShort(path)) {
+            obj = new Short(value);
+        } else if (dataContext.isByte(path)) {
+            obj = new Byte(value);
+        } else if (dataContext.isBoolean(path)) {
+            obj = new Boolean(value);
+        }
+        return obj;
+    }
 }

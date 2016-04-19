@@ -979,7 +979,9 @@ public class operator {
 					((ServiceSignature) sig).setDeployment((ServiceDeployment) o);
 				} else if (o instanceof Version && sig instanceof NetSignature) {
 					((NetSignature) sig).setVersion(((Version) o).getName());
-				} else if (o instanceof ServiceContext) {
+				} else if (o instanceof ServiceContext
+						// not applied to connctors in Signatures
+						&& o.getClass() != MapContext.class) {
 					if (sig.getReturnPath() == null) {
 						sig.setReturnPath(new ReturnPath());
 						((ReturnPath) sig.getReturnPath()).setDataContext((Context) o);
