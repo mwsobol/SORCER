@@ -30,7 +30,7 @@ import sorcer.core.dispatch.SortingException;
 import sorcer.core.dispatch.SrvModelAutoDeps;
 import sorcer.core.plexus.FidelityManager;
 import sorcer.core.plexus.MultiFidelity;
-import sorcer.core.plexus.MultiFidelityMogram;
+import sorcer.core.plexus.MultifidelityMogram;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
 import sorcer.service.Signature.ReturnPath;
@@ -234,9 +234,12 @@ public class operator {
                 fidelities.add((Fidelity)item);
             }
         }
-        MultiFidelityMogram model = new MultiFidelityMogram();
+        MultifidelityMogram model = new MultifidelityMogram();
         model.addSelectionFidelities(fidelities);
-        return srvModel(items);
+        Object[] dest = new Object[items.length+1];
+        System.arraycopy(items,  0, dest,  1, items.length);
+        dest[0] = model;
+        return srvModel(dest);
     }
 
     public static Model srvModel(Object... items) throws ContextException {
