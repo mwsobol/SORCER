@@ -29,16 +29,18 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * A system is a service (mogram) with multiple projections of its subsystems.
- * Each projection of the system can be treated as a service fidelity selectable
- * at runtime from multiple subsystems available. A fidelity is associated with
- * the result of executing a single subsystem or multiple subsystems in parallels
- * according to dependency management of its underlying subsystems. The result is
- * a merged service context of all contexts received from its fidelity subsystems.
+ * A metasystem is represented by a mogram with multiple projections of its
+ * subsystems so it's a system of systems.
+ *
+ * Each projection of the system can be treated as a fidelity selectable
+ * at runtime for a group of multiple subsystems available in the metasystem.
+ * A fidelity is associated with the result of executing a its own and/or other
+ * subsystems and related services. The result of a metasystem is a merged
+ * service context of all contexts received foe its current fidelity.
  *
  * Created by Mike Sobolewski
  */
-public class MultiFidelityMogram extends ServiceMogram {
+public class MultifidelityMogram extends ServiceMogram {
 
     // subsystems of this system aggregated into systems via system fidelites
     protected Context<Mogram> subsystems = new ParModel<Mogram>();
@@ -48,14 +50,14 @@ public class MultiFidelityMogram extends ServiceMogram {
 
     protected Fidelity<Arg> selectedFidelity;
 
-    public MultiFidelityMogram() {
+    public MultifidelityMogram() {
     }
 
-    public MultiFidelityMogram(String name) throws SignatureException {
+    public MultifidelityMogram(String name) throws SignatureException {
         super(name);
     }
 
-    public MultiFidelityMogram(String name, Signature signature) throws SignatureException {
+    public MultifidelityMogram(String name, Signature signature) throws SignatureException {
         super(name, signature);
     }
 
