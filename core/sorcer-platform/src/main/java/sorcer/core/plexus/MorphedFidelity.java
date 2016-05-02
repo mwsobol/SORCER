@@ -28,20 +28,20 @@ import java.util.List;
 /**
  * Created by Mike Sobolewski on 10/26/15.
  */
-public class MultiFidelity<T extends Arg> extends Observable implements Identifiable, Arg, Serializable {
+public class MorphedFidelity<T extends Arg> extends Observable implements Identifiable, Arg, Serializable {
 
-    // fidelity of fidelities T  taht is observable
+    // fidelity of fidelities T  that is observable
     private Fidelity<T> fidelity;
 
     private Morpher morpher;
 
     private Uuid id = UuidFactory.generate();
 
-    public MultiFidelity(Fidelity fi) {
+    public MorphedFidelity(Fidelity fi) {
         fidelity = fi;
     }
 
-    public MultiFidelity(FidelityManager manager) {
+    public MorphedFidelity(FidelityManager manager) {
         addObserver(manager);
     }
 
@@ -49,16 +49,16 @@ public class MultiFidelity<T extends Arg> extends Observable implements Identifi
         return fidelity;
     }
 
-    public void setMultiFidelity(Fidelity<T> fi) {
+    public void setFidelity(Fidelity<T> fi) {
         this.fidelity = fi;
     }
 
-    public T getSelection() {
-        return fidelity.getSelection();
+    public T getSelect() {
+        return fidelity.getSelect();
     }
 
-    public void setSelection(T selection) {
-        fidelity.setSelection(selection);
+    public void setSelect(T selection) {
+        fidelity.setSelect(selection);
     }
 
     public T getSelect(String name) {

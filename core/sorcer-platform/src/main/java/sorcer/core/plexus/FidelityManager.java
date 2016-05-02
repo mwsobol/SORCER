@@ -116,6 +116,10 @@ public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Ob
        // implement is subclasses
     }
 
+    public void init(Fidelity<Fidelity> fidelity) {
+        put(fidelity.getName(), fidelity);
+    }
+
     public void init(List<Fidelity<Fidelity>> fidelities) {
         if (fidelities == null || fidelities.size() == 0) {
             initialize();
@@ -173,10 +177,18 @@ public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Ob
                 while (i.hasNext()) {
                     Map.Entry<String, Fidelity<T>> fiEnt = i.next();
                     if (fiEnt.getKey().equals(path)) {
-                        fiEnt.getValue().setFidelitySelection(name);
+                        fiEnt.getValue().setSelect(name);
                     }
                 }
             }
+        }
+    }
+
+    @Override
+    public void reconfigure(String... fiNames) throws RemoteException {
+        if (metafidelities.size() == 1 && fiNames.length == 1) {
+            Fidelity<Fidelity> metaFi = metafidelities.get(name);
+            metaFi.setSelect(fiNames[0]);
         }
     }
 
@@ -218,9 +230,9 @@ public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Ob
 
     @Override
     public void update(Observable observable, Object obj) throws EvaluationException, RemoteException {
-        // implement in subclasses and use this morphers provided by MultiFidelities (observables)
+        // implement in subclasses and use the morphers provided by MorphedFidelities (observables)
 
-        MultiFidelity mFi = (MultiFidelity)observable;
+        MorphedFidelity mFi = (MorphedFidelity)observable;
         Morpher morpher = mFi.getMorpher();
         if (morpher != null)
             morpher.morph(this, mFi, obj);

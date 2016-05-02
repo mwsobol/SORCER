@@ -386,7 +386,7 @@ public class ContextEditWindow extends JFrame implements ActionListener {
 		}
 
 		/**
-		 * The actionPerformed event takes the current selection and updates the
+		 * The actionPerformed event takes the current select and updates the
 		 * interface to reflect the data type. For example Groovy expressions
 		 * have a larger edit window and more detailed instructions than an
 		 * integer field. This is also how new instructions can be added to the

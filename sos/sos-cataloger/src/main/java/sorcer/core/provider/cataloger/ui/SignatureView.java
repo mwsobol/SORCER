@@ -156,11 +156,11 @@ public class SignatureView extends JPanel implements Observer {
 	 * @param search
 	 *            search string
 	 * @param providerL
-	 *            list selection listener for the provider list
+	 *            list select listener for the provider list
 	 * @param interfaceL
-	 *            list selection listener for the interface List
+	 *            list select listener for the interface List
 	 * @param methodL
-	 *            list selection listener for the method List
+	 *            list select listener for the method List
 	 */
 	public void addListeners(ActionListener search,
 			ListSelectionListener providerL, ListSelectionListener interfaceL,

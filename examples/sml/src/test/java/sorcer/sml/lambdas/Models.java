@@ -309,20 +309,20 @@ public class Models {
 
 		Morpher mFi1Morpher = (mgr, mFi, value) -> {
 			Fidelity<Signature> fi =  mFi.getFidelity();
-			if (fi.getSelectedName().equals("add")) {
+			if (fi.getSelectName().equals("add")) {
 				if (((Double) value) <= 200.0) {
 					mgr.morph("sysFi2");
 				} else {
 					mgr.morph("sysFi3");
 				}
-			} else if (fi.getPath().equals("mFi1") && fi.getSelectedName().equals("multiply")) {
+			} else if (fi.getPath().equals("mFi1") && fi.getSelectName().equals("multiply")) {
 				mgr.morph("sysFi3");
 			}
 		};
 
         Morpher mFi2Morpher = (mgr, mFi, value) -> {
             Fidelity<Signature> fi =  mFi.getFidelity();
-            if (fi.getSelectedName().equals("divide")) {
+            if (fi.getSelectName().equals("divide")) {
                 if (((Double) value) <= 9.0) {
                     mgr.morph("sysFi4");
                 } else {

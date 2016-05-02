@@ -138,7 +138,7 @@ public class ContextTree extends JPanel {
 		tree = new JTree(treeModel);
 		tree.setEditable(false);// maybe later we might want it
 
-		// make it single selection
+		// make it single select
 		tree.getSelectionModel().setSelectionMode(
 				TreeSelectionModel.SINGLE_TREE_SELECTION);
 
@@ -347,7 +347,7 @@ public class ContextTree extends JPanel {
 			}
 		}
 
-		// Either there was no selection, or the root was selected.
+		// Either there was no select, or the root was selected.
 		toolkit.beep();
 	}
 

@@ -42,7 +42,8 @@ import sorcer.core.dispatch.SrvModelAutoDeps;
 import sorcer.core.exertion.*;
 import sorcer.core.invoker.InvokeIncrementor;
 import sorcer.core.plexus.Morpher;
-import sorcer.core.plexus.MultiFidelity;
+import sorcer.core.plexus.MorphedFidelity;
+import sorcer.core.plexus.MultifidelityMogram;
 import sorcer.core.provider.*;
 import sorcer.core.provider.exerter.Binder;
 import sorcer.core.provider.exerter.ServiceShell;
@@ -1188,24 +1189,42 @@ public class operator {
 		return fi;
 	}
 
-	public static MultiFidelity<Entry> mFi(Entry... entries) {
-		MultiFidelity<Entry> multiFi = new MultiFidelity(new Fidelity(entries));
+	public static MorphedFidelity<Entry> mFi(Entry... entries) {
+		MorphedFidelity<Entry> multiFi = new MorphedFidelity(new Fidelity(entries));
 		return multiFi;
 	}
 
-	public static MultiFidelity<Signature> mFi(Signature... signatures) {
-		MultiFidelity<Signature> multiFi = new MultiFidelity(new Fidelity(signatures));
+	public static MorphedFidelity<Signature> mFi(Signature... signatures) {
+		MorphedFidelity<Signature> multiFi = new MorphedFidelity(new Fidelity(signatures));
 		return multiFi;
 	}
 
-	public static MultiFidelity<Signature> mFi(Morpher morpher, Signature... signatures) {
-		MultiFidelity<Signature> multiFi = new MultiFidelity(new Fidelity(signatures));
+	public static MorphedFidelity<Signature> mFi(Morpher morpher, Signature... signatures) {
+		MorphedFidelity<Signature> multiFi = new MorphedFidelity(new Fidelity(signatures));
 		multiFi.setMorpher(morpher);
 		return multiFi;
 	}
 
-	public static MultiFidelity<Signature> multiFi(Signature... signatures) {
-		MultiFidelity<Signature> multiFi = new MultiFidelity(new Fidelity(signatures));
+	public static void selectFi(Mogram mogram, String selection) {
+		((MultifidelityMogram)mogram).selectFidelity(selection);
+	}
+
+	public static MultifidelityMogram multiFiMogram(MorphedFidelity<Mogram> morphedFi) {
+		return new MultifidelityMogram(morphedFi);
+	}
+
+	public static MorphedFidelity<Mogram> fi(Mogram... selections) {
+		return new MorphedFidelity(new Fidelity(selections));
+	}
+
+	public static MorphedFidelity<Mogram> mFi(Morpher morpher, Mogram... selections) {
+		MorphedFidelity<Mogram> multiFi = new MorphedFidelity(new Fidelity(selections));
+		multiFi.setMorpher(morpher);
+		return multiFi;
+	}
+
+	public static MorphedFidelity<Signature> multiFi(Signature... signatures) {
+		MorphedFidelity<Signature> multiFi = new MorphedFidelity(new Fidelity(signatures));
 		return multiFi;
 	}
 

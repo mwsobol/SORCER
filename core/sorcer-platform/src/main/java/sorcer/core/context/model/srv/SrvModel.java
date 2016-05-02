@@ -27,7 +27,7 @@ import sorcer.co.tuple.SignatureEntry;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.par.ParModel;
 import sorcer.core.invoker.ServiceInvoker;
-import sorcer.core.plexus.MultiFidelity;
+import sorcer.core.plexus.MorphedFidelity;
 import sorcer.core.provider.rendezvous.ServiceModeler;
 import sorcer.core.signature.ServiceSignature;
 import sorcer.eo.operator;
@@ -206,8 +206,8 @@ public class SrvModel extends ParModel<Object> implements Model, Invocation<Obje
                     } else {
                         return selection;
                     }
-                } else if (val2 instanceof MultiFidelity) {
-                    Object obj = getFi(((MultiFidelity) val2).getFidelity(), items, path);
+                } else if (val2 instanceof MorphedFidelity) {
+                    Object obj = getFi(((MorphedFidelity) val2).getFidelity(), items, path);
                     Object out = null;
                     if (obj instanceof Signature)
                         out = evalSignature((Signature)obj, path);
@@ -216,8 +216,8 @@ public class SrvModel extends ParModel<Object> implements Model, Invocation<Obje
                         args[items.length] = this;
                         out = ((Entry) obj).getValue(args);
                     }
-                    ((MultiFidelity) val2).setChanged();
-                    ((MultiFidelity) val2).notifyObservers(out);
+                    ((MorphedFidelity) val2).setChanged();
+                    ((MorphedFidelity) val2).notifyObservers(out);
                     return out;
                 } else if (val2 instanceof MogramEntry) {
                     return evalMogram((MogramEntry)val2, path, items);
@@ -294,7 +294,7 @@ public class SrvModel extends ParModel<Object> implements Model, Invocation<Obje
         }
         if (val instanceof Fidelity) {
             try {
-                return ((Entry)((Fidelity)val).getSelection()).getValue();
+                return ((Entry)((Fidelity)val).getSelect()).getValue();
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
@@ -356,8 +356,8 @@ public class SrvModel extends ParModel<Object> implements Model, Invocation<Obje
         }
         List<T> choices = fi.getSelects();
         for (T s : choices) {
-            if (selected == null && fi.getSelection() != null)
-                return fi.getSelection();
+            if (selected == null && fi.getSelect() != null)
+                return fi.getSelect();
             else {
                 String selectName = null;
                 if (selected != null) {
@@ -366,7 +366,7 @@ public class SrvModel extends ParModel<Object> implements Model, Invocation<Obje
                     selectName = choices.get(0).getName();
                 }
                 if (s.getName().equals(selectName)) {
-                    fi.setSelection(s);
+                    fi.setSelect(s);
                     return s;
                 }
             }
