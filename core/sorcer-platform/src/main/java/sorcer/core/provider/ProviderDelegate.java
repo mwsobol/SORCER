@@ -1451,6 +1451,15 @@ public class ProviderDelegate {
 		} catch (Exception e) {
 			// This happens if Rio classes are not in classpath. Ignore
 		}
+		try {
+			Class c = this.getClass().getClassLoader().loadClass("org.rioproject.entry.ServiceInfo");
+			Object serviceInfo = c.newInstance();
+			Method m = c.getMethod("initialize", String.class, String.class);
+			m.invoke(serviceInfo, getProviderName(), "");
+			attrVec.add((Entry) serviceInfo);
+		} catch (Exception e) {
+			// This happens if Rio classes are not in classpath. Ignore
+		}
 
 		attrVec.addAll(extraLookupAttributes);
 
