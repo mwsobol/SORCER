@@ -12,7 +12,7 @@ import sorcer.core.invoker.Observable;
 import sorcer.core.plexus.FidelityManager;
 import sorcer.core.plexus.Morpher;
 import sorcer.core.plexus.MorphedFidelity;
-import sorcer.core.plexus.MultifidelityMogram;
+import sorcer.core.plexus.MultifidelityService;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
 
@@ -353,7 +353,7 @@ public class MultiFidelities {
                         outEnt("result/y")));
 
 
-        MultifidelityMogram mfm = multiFiMogram(fi(t5, t4));
+        MultifidelityService mfm = multiFiMogram(fi(t5, t4));
         Mogram mog = exert(mfm);
         logger.info("out: " + mog.getContext());
         assertTrue(value(context(mog), "result/y").equals(100.0));
@@ -393,7 +393,7 @@ public class MultiFidelities {
             }
         };
 
-        MultifidelityMogram mfm = multiFiMogram(mFi(mFi1mrph, t5, t4));
+        MultifidelityService mfm = multiFiMogram(mFi(mFi1mrph, t5, t4));
         Mogram mog = exert(mfm);
         logger.info("out: " + mog.getContext());
         assertTrue(value(context(mog), "result/y").equals(100.0));
