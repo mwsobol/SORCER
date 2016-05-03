@@ -10,12 +10,17 @@ import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.provider.impl.SubtractorImpl;
+import sorcer.core.context.Contexts;
+import sorcer.core.context.ServiceContext;
+import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.par.Par;
 import sorcer.core.context.model.par.ParModel;
+import sorcer.core.context.model.par.SysCall;
 import sorcer.core.invoker.AltInvoker;
 import sorcer.core.invoker.Invocable;
 import sorcer.core.invoker.OptInvoker;
 import sorcer.core.invoker.ServiceInvoker;
+import sorcer.core.provider.SysCaller;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.pml.provider.impl.Volume;
 import sorcer.service.*;
@@ -33,6 +38,7 @@ import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.pipe;
 import static sorcer.eo.operator.value;
+import static sorcer.mo.operator.srvModel;
 import static sorcer.po.operator.add;
 import static sorcer.po.operator.alt;
 import static sorcer.po.operator.*;
@@ -256,44 +262,6 @@ public class Invokers {
 	}
 
 	@Test
-	public void systemCmdInvoker() throws Exception {
-		String riverVersion = System.getProperty("river.version");
-		String sorcerVersion = System.getProperty("sorcer.version");
-		String slf4jVersion = System.getProperty("slf4j.version");
-		String logbackVersion = System.getProperty("logback.version");
-		String buildDir = System.getProperty("project.build.dir");
-
-        String cp = buildDir + "/libs/pml-" + sorcerVersion + "-bean.jar" + File.pathSeparator
-        		+ Sorcer.getHome() + "/lib/sorcer/lib/sorcer-platform-" + sorcerVersion + ".jar"  + File.pathSeparator
-				+ Sorcer.getHome() + "/lib/logging/slf4j-api-" + slf4jVersion + ".jar"  + File.pathSeparator
-				+ Sorcer.getHome() + "/lib/logging/logback-core-" + logbackVersion + ".jar"  + File.pathSeparator
-				+ Sorcer.getHome() + "/lib/logging/logback-classic-" + logbackVersion + ".jar"  + File.pathSeparator
-				+ Sorcer.getHome() + "/lib/river/jsk-platform-" + riverVersion + ".jar"  + File.pathSeparator
-				+ Sorcer.getHome() + "/lib/river/jsk-lib-" + riverVersion + ".jar ";
-
-		ServiceInvoker cmd = cmdInvoker("volume",
-				"java -cp  " + cp + Volume.class.getName() + " cylinder");
-
-		ParModel pm = parModel(par(cmd),
-				par("x", 10.0), par("y"),
-				par("multiply", invoker("x * y", pars("x", "y"))),
-				par("add", invoker("x + y", pars("x", "y"))));
-
-		CmdResult result = (CmdResult) invoke(pm, "volume");
-		// get from the result the volume of cylinder and assign to y parameter
-		assertTrue("EXPECTED '0' return value, GOT: "+result.getExitValue(), result.getExitValue() == 0);
-		Properties props = new Properties();
-		props.load(new StringReader(result.getOut()));
-
-		set(pm, "y", new Double(props.getProperty("cylinder/volume")));
-
-		logger.info("x value:" + value(pm, "x"));
-		logger.info("y value:" + value(pm, "y"));
-		logger.info("multiply value:" + value(pm, "add"));
-		assertTrue(value(pm, "add").equals(47.69911184307752));
-	}
-
-	@Test
 	public void conditionalInvoker() throws Exception {
 		final ParModel pm = new ParModel("par-model");
 		pm.putValue("x", 10.0);
@@ -307,7 +275,7 @@ public class Invokers {
 
 		pm.putValue("x", 300.0);
 		pm.putValue("y", 200.0);
-		 logger.info("condition value: " + pm.getValue("condition"));
+		logger.info("condition value: " + pm.getValue("condition"));
 		assertEquals(pm.getValue("condition"), true);
 
 		// enclosing class conditional context

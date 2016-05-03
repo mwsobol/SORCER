@@ -21,6 +21,8 @@ package sorcer.core.dispatch;
 import net.jini.core.lookup.ServiceItem;
 import net.jini.core.lookup.ServiceTemplate;
 import net.jini.core.transaction.TransactionException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sorcer.core.Dispatcher;
 import sorcer.core.exertion.NetTask;
 import sorcer.core.provider.Concatenator;
@@ -38,6 +40,7 @@ import static sorcer.service.Exec.*;
 @SuppressWarnings("rawtypes")
 
 abstract public class CatalogExertDispatcher extends ExertDispatcher {
+    private final Logger logger = LoggerFactory.getLogger(CatalogExertDispatcher.class);
 
     public CatalogExertDispatcher(Exertion job,
                                   Set<Context> sharedContext,

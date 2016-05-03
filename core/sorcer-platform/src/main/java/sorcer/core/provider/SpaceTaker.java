@@ -258,8 +258,7 @@ public class SpaceTaker implements Runnable {
 				}
 
 				if (data.noQueue) {
-					if (((ThreadPoolExecutor) pool).getActiveCount() != ((ThreadPoolExecutor) pool)
-							.getCorePoolSize()) {
+					if (((ThreadPoolExecutor) pool).getActiveCount() != ((ThreadPoolExecutor) pool).getCorePoolSize()) {
                         Transaction tx = null;
 						if (isTransactional) {
 							txnCreated = TX.createTransaction(transactionLeaseTimeout);
@@ -327,7 +326,7 @@ public class SpaceTaker implements Runnable {
 	protected boolean isAbandoned(Exertion exertion) {
 		if (space != null) {
 			ExertionEnvelop ee = new ExertionEnvelop();
-			ee.parentID = ((ServiceExertion) exertion).getParentId();
+			ee.parentID = exertion.getParentId();
 			ee.state = Exec.POISONED;
 			try {
 				if (space.readIfExists(ee, null, JavaSpace.NO_WAIT) != null) {
@@ -366,9 +365,10 @@ public class SpaceTaker implements Runnable {
 		private Transaction.Created txnCreated;
 		private boolean remoteLogging;
 
-
 		SpaceWorker(ExertionEnvelop envelope,
-                    Transaction.Created workerTxnCreated, Provider provider, boolean remoteLogging)
+                    Transaction.Created workerTxnCreated,
+                    Provider provider,
+                    boolean remoteLogging)
 				throws UnknownLeaseException {
             this.provider = provider;
 			ee = envelope;
@@ -393,8 +393,8 @@ public class SpaceTaker implements Runnable {
             }
 			String threadId = doThreadMonitorWorker(null);
 
-			Entry result = doEnvelope(ee, (txnCreated == null) ? null
-					: txnCreated.transaction, threadId, txnCreated);
+			Entry result = doEnvelope(ee,
+                                      (txnCreated == null) ? null : txnCreated.transaction, threadId, txnCreated);
 
 			if (result != null) {
 				try {
@@ -443,25 +443,25 @@ public class SpaceTaker implements Runnable {
 			ServiceExertion se;
             ServiceExertion out;
             try {
-				ee.exertion.getControlContext().appendTrace(
-						"spacer: " + data.provider.getProviderName());
+				ee.exertion.getControlContext().appendTrace("spacer: "+data.provider.getProviderName());
 				se = (ServiceExertion) ee.exertion;
                 MonitoringSession monSession = MonitorUtil.getMonitoringSession(se);
 
                 if (se.isMonitorable() && se.isTask() && monSession!=null) {
-                    monSession.init((Monitorable)provider.getProxy());
-                    lrm.renewUntil(monSession.getLease(), Lease.ANY, null);
+                    try {
+                        monSession.init((Monitorable)provider.getProxy());
+                        lrm.renewUntil(monSession.getLease(), Lease.FOREVER, TimeUnit.SECONDS.toMillis(30), null);
+                    } catch (RemoteException | MonitorException e) {
+                        logger.warn("Failed setting up monitoring session", e);
+                    }
                 }
-
 
 				if (se instanceof Task) {
 					// task for the worker's provider
-					out = ((ProviderDelegate) ((ServiceProvider) data.provider)
-							.getDelegate()).doTask((Task) se, transaction);
+					out = (((ServiceProvider)data.provider).getDelegate()).doTask((Task) se, transaction);
 				} else {
 					// delegate it to another collaborating service
-					out = (ServiceExertion) data.provider.exert(se,
-							transaction);
+					out = data.provider.exert(se, transaction);
 				}
 				if (out != null) {
 					out.setStatus(Exec.DONE);
@@ -471,24 +471,31 @@ public class SpaceTaker implements Runnable {
 					se.setStatus(Exec.ERROR);
 					ee.state = Exec.ERROR;
 					ee.exertion = se;
-					se.reportException(new ExertionError(
-							"Not able to exert exertion envelope for exertionID: "
-									+ ee.exertionID));
+					se.reportException(new ExertionError("Not able to exert exertion envelope for exertionID: "+ ee.exertionID));
 				}
                 if (se.isMonitorable() && se.isTask() && monSession!=null) {
-                    monSession.changed(se.getContext(), se.getControlContext(), se.getStatus());
-                    lrm.remove(monSession.getLease());
+                    try {
+                        monSession.changed(se.getContext(), se.getControlContext(), se.getStatus());
+                    } catch(RemoteException | MonitorException | ContextException e) {
+                        logger.error("Failed updating MonitorSession", e);
+                    } finally {
+                        try {
+                            lrm.remove(monSession.getLease());
+                        } catch (UnknownLeaseException e) {
+                            logger.warn("Failed removing monitoring session lease", e);
+                        }
+                    }
                 }
             } catch (Throwable th) {
 				logger.debug("doEnvelope", th);
 				if (th instanceof Exception) {
 					ee.state = Exec.FAILED;
-					((ServiceExertion) ee.exertion).setStatus(Exec.FAILED);
+					ee.exertion.setStatus(Exec.FAILED);
 				} else if (th instanceof Error) {
 					ee.state = Exec.ERROR;
-					((ServiceExertion) ee.exertion).setStatus(Exec.ERROR);
+					ee.exertion.setStatus(Exec.ERROR);
 				}
-				((ServiceExertion) ee.exertion).reportException(th);
+				ee.exertion.reportException(th);
 			}
 			return ee;
 		}

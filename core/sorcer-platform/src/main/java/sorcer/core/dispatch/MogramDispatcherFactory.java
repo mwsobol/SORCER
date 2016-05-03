@@ -1,4 +1,4 @@
-    /*
+/*
  * Copyright 2010 the original author or authors.
  * Copyright 2010 SorcerSoft.org.
  * Copyright 2013, 2014 Sorcersoft.com S.A.
@@ -18,7 +18,7 @@
 
 package sorcer.core.dispatch;
 
-    import net.jini.core.lease.Lease;
+import net.jini.core.lease.Lease;
 import net.jini.lease.LeaseRenewalManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +38,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 /**
  * This class creates instances of appropriate subclasses of Dispatcher. The
@@ -49,20 +50,21 @@ public class MogramDispatcherFactory implements DispatcherFactory {
 
     private LokiMemberUtil loki;
 
-    public static final long LEASE_RENEWAL_PERIOD = 1 * 1000 * 60L;
-    public static final long DEFAULT_TIMEOUT_PERIOD = 1 * 1000 * 90L;
+    public static final long DEFAULT_LEASE_PERIOD = TimeUnit.MINUTES.toMillis(5);
+    public static final long LEASE_RENEWAL_PERIOD = TimeUnit.SECONDS.toMillis(60);
+    public static final long DEFAULT_TIMEOUT_PERIOD = TimeUnit.SECONDS.toMillis(90);
 
     protected MogramDispatcherFactory(LokiMemberUtil loki){
         this.loki = loki;
-	}
+    }
 
-	public static DispatcherFactory getFactory() {
-		return new MogramDispatcherFactory(null);
-	}
+    public static DispatcherFactory getFactory() {
+        return new MogramDispatcherFactory(null);
+    }
 
-	public static DispatcherFactory getFactory(LokiMemberUtil loki) {
-		return new MogramDispatcherFactory(loki);
-	}
+    public static DispatcherFactory getFactory(LokiMemberUtil loki) {
+        return new MogramDispatcherFactory(loki);
+    }
 
     public Dispatcher createDispatcher(Mogram mogram,
                                        Set<Context> sharedContexts,
@@ -128,8 +130,9 @@ public class MogramDispatcherFactory implements DispatcherFactory {
             if (mogram.isMonitorable() && monSession!=null) {
                 logger.debug("Initializing monitor session for : " + mogram.getName());
                 if (!(monSession.getState()==Exec.INSPACE)) {
-                    monSession.init((Monitorable) provider.getProxy(), LEASE_RENEWAL_PERIOD,
-                            DEFAULT_TIMEOUT_PERIOD);
+                    monSession.init((Monitorable) provider.getProxy(),
+                                    DEFAULT_LEASE_PERIOD,
+                                    DEFAULT_TIMEOUT_PERIOD);
                 } else {
                     monSession.init((Monitorable)provider.getProxy());
                 }

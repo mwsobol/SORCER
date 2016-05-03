@@ -338,11 +338,11 @@ public class Signatures {
 		// request the remote service
 		Task as = task("as", ps, cxt);
 
-		logger.info("input context: " + context(as));
+		logger.info("as task context: " + context(as));
 
 		Service task = exert(as);
 
-		logger.info("input context: " + context(task));
+		logger.info("task context: " + context(task));
 
 		assertEquals(20.0, value(context(task), "arg/x1"));
 		assertEquals(80.0, value(context(task), "arg/x2"));

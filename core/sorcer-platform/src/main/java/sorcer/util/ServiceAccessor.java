@@ -122,7 +122,7 @@ public class ServiceAccessor implements DynamicAccessor {
 	 * operation - matching is done by lookup services while passing a filter is
 	 * done on the client side. Clients should provide a service filter, usually
 	 * as an object of an inner class. A filter narrows the template matching by
-	 * applying more precise, for example boolean selection as required by the
+	 * applying more precise, for example boolean select as required by the
 	 * client. No lookup cache is used by this <code>getServiceItem</code>
 	 * method.
 	 *

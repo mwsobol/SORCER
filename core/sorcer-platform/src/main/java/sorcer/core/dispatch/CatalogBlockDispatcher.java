@@ -20,6 +20,8 @@ package sorcer.core.dispatch;
 
 import net.jini.core.lease.Lease;
 import net.jini.lease.LeaseRenewalManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.par.ParModel;
 import sorcer.core.exertion.AltMogram;
@@ -44,6 +46,7 @@ import java.util.Set;
 @SuppressWarnings({"rawtypes", "unchecked" })
 
 public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
+    private final Logger logger = LoggerFactory.getLogger(CatalogBlockDispatcher.class);
 
 	public CatalogBlockDispatcher(Exertion block, Set<Context> sharedContext,
 			boolean isSpawned, Provider provider,
@@ -122,20 +125,22 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
             MonitoringSession monSession = MonitorUtil.getMonitoringSession(exertion);
             if (exertion.isMonitorable() && monSession!=null) {
                 try {
-                    monSession.init((Monitorable) provider.getProxy(), MogramDispatcherFactory.LEASE_RENEWAL_PERIOD,
-                            MogramDispatcherFactory.DEFAULT_TIMEOUT_PERIOD);
-                    if (getLrm()==null) setLrm(new LeaseRenewalManager());
-                    getLrm().renewUntil(monSession.getLease(), Lease.FOREVER, MogramDispatcherFactory.LEASE_RENEWAL_PERIOD, null);
-                } catch (RemoteException re) {
-                    logger.error("Problem initializing Monitor Session for: " + exertion.getName(), re);
-                } catch (MonitorException e) {
-                    logger.error("Problem initializing Monitor Session for: " + exertion.getName(), e);
+                    monSession.init((Monitorable) provider.getProxy(),
+                                    MogramDispatcherFactory.DEFAULT_LEASE_PERIOD,
+                                    MogramDispatcherFactory.DEFAULT_TIMEOUT_PERIOD);
+                    if (getLrm() == null)
+                        setLrm(new LeaseRenewalManager());
+                    getLrm().renewUntil(monSession.getLease(),
+                                        Lease.FOREVER,
+                                        MogramDispatcherFactory.LEASE_RENEWAL_PERIOD, null);
+                } catch (RemoteException | MonitorException | NullPointerException e) {
+                    logger.error("Problem initializing MonitoringSession for: {}", exertion.getName(), e);
                 }
             }
-		} else if (exertion instanceof OptMogram) {
-			Context pc = ((OptMogram)exertion).getCondition().getConditionalContext();
-			((OptMogram)exertion).getCondition().setStatus(null);
-			if (pc == null) {
+        } else if (exertion instanceof OptMogram) {
+            Context pc = ((OptMogram)exertion).getCondition().getConditionalContext();
+            ((OptMogram)exertion).getCondition().setStatus(null);
+            if (pc == null) {
 				pc = new ParModel(exertion.getName());
 				((OptMogram)exertion).getCondition().setConditionalContext(pc);
             }

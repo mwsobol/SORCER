@@ -36,6 +36,8 @@ public interface FidelityManagement<T extends Arg> extends Service {
 
     public void morph(String... fiNames) throws RemoteException;
 
+    public void reconfigure(String... fiNames) throws RemoteException;
+
     public Mogram getMogram() throws RemoteException;
 
     public EventRegistration register(long eventID, MarshalledObject<?> handback,

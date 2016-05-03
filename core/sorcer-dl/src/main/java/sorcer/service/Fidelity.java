@@ -52,7 +52,7 @@ public class Fidelity<T extends Arg> implements Arg, Serializable {
 	// component exertion path
 	protected String path = "";
 
-	protected T selection;
+	protected T select;
 
 	public Type type = Type.NAME;
 
@@ -73,7 +73,7 @@ public class Fidelity<T extends Arg> implements Arg, Serializable {
 		name = "fidelity" + count++;
 		for (T s : selects)
 			this.selects.add(s);
-		selection =  selects[0];
+		select =  selects[0];
 	}
 
 	public T getSelect(String name) {
@@ -137,18 +137,18 @@ public class Fidelity<T extends Arg> implements Arg, Serializable {
 		this.name = name;
 	}
 
-	public T getSelection() {
-		return selection;
+	public T getSelect() {
+		return select;
 	}
 
-	public String getSelectedName() {
-		return selection.getName();
+	public String getSelectName() {
+		return select.getName();
 	}
 
-	public void setFidelitySelection(String fiName) {
+	public void setSelect(String fiName) {
 		for (T item : selects) {
 			if (item.getName().equals(fiName)) {
-				this.selection = item;
+				this.select = item;
 			}
 
 		}
@@ -158,8 +158,8 @@ public class Fidelity<T extends Arg> implements Arg, Serializable {
 		selects.clear();
 	}
 
-	public void setSelection(T selection) {
-		this.selection = selection;
+	public void setSelect(T selection) {
+		this.select = selection;
 	}
 
 	public T get(int index) {

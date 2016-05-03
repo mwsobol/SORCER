@@ -42,8 +42,7 @@ import java.net.URL;
 import java.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import sorcer.util.SorcerEnv;
 
 /**
  * Create a {@link ServiceElement} from a {@link ServiceSignature}.
@@ -104,6 +103,9 @@ public final class ServiceElementFactory  {
         if(name==null) {
             name = configuration.getEntry(component, "name", String.class, null);
         }
+        if(name!=null)
+            name = SorcerEnv.getActualName(name);
+
         String[] interfaces = configuration.getEntry("sorcer.core.exertion.deployment",
                                                      "interfaces",
                                                      String[].class,
@@ -198,8 +200,9 @@ public final class ServiceElementFactory  {
                                                            excludeIPs,
                                                            webster);
         ServiceElement service = create(serviceDetails, deployment);
-        if(logger.isDebugEnabled())
-            logger.debug(String.format("Created ServiceElement\n=================\n%s\n=================\nFrom [%s]", service, deployment));
+        if(logger.isTraceEnabled())
+            logger.trace("Created ServiceElement\n=================\n{}\n=================\nFrom [{}]",
+                         service, deployment);
         return service;
     }
 
@@ -212,11 +215,11 @@ public final class ServiceElementFactory  {
             if(deployment.getWebsterUrl()==null) {
                 websterUrl = Sorcer.getWebsterUrl();
                 if(logger.isDebugEnabled())
-                    logger.debug("Set code base derived from Sorcer.getWebsterUrl: "+websterUrl);
+                    logger.debug("Set code base derived from Sorcer.getWebsterUrl: {}", websterUrl);
             } else {
                 websterUrl = deployment.getWebsterUrl();
                 if(logger.isDebugEnabled())
-                    logger.debug("Set code base derived from Deployment: "+websterUrl);
+                    logger.debug("Set code base derived from Deployment: {}", websterUrl);
             }
         } else {
             websterUrl = serviceDetails.webster;
@@ -247,31 +250,7 @@ public final class ServiceElementFactory  {
         service.setComponentBundle(main);
         service.setExportBundles(exports.toArray(new ClassBundle[exports.size()]));
 
-        String serviceName;
-        if(serviceDetails.name==null) {
-		    /* Get the (simple) name from the fully qualified interface */
-            if(deployment.getName()==null) {
-                StringBuilder nameBuilder = new StringBuilder();
-                for(String s : serviceDetails.interfaces) {
-                    String value;
-                    int ndx = s.lastIndexOf(".");
-                    if (ndx > 0) {
-                        value = s.substring(ndx + 1);
-                    } else {
-                        value = s;
-                    }
-                    if(nameBuilder.length()>0) {
-                        nameBuilder.append(" | ");
-                    }
-                    nameBuilder.append(value);
-                }
-                serviceName = nameBuilder.toString();
-            } else {
-                serviceName = deployment.getName();
-            }
-        } else {
-            serviceName = serviceDetails.name;
-        }
+        String serviceName = serviceDetails.name;
 
         if(serviceDetails.maxPerNode>0) {
             service.setMaxPerMachine(serviceDetails.maxPerNode);

@@ -117,9 +117,7 @@ public class MonitorableSession implements MonitoringSession {
 	 * @see TransactionConstants
 	 */
 
-	public void init(Monitorable mntrbl, long duration, long timeout)
-			throws RemoteException, MonitorException {
-
+	public void init(Monitorable mntrbl, long duration, long timeout) throws RemoteException, MonitorException {
 		lease = msm.init(cookie, mntrbl, duration, timeout);
 	}
 
@@ -151,9 +149,7 @@ public class MonitorableSession implements MonitoringSession {
 	 * 
 	 * */
 
-	public void init(long duration, long timeout) throws RemoteException,
-			MonitorException {
-
+	public void init(long duration, long timeout) throws RemoteException, MonitorException {
 		msm.init(cookie, duration, timeout);
 	}
 
@@ -180,9 +176,7 @@ public class MonitorableSession implements MonitoringSession {
 	 * 
 	 * */
 
-	public void init(Monitorable mntrbl) throws RemoteException,
-			MonitorException {
-
+	public void init(Monitorable mntrbl) throws RemoteException, MonitorException {
 		lease = msm.init(cookie, mntrbl);
 	}
 
@@ -204,7 +198,7 @@ public class MonitorableSession implements MonitoringSession {
 	 **/
 
 	public void changed(Context ctx, StrategyContext controlContext, int aspect) throws RemoteException,
-			MonitorException {
+																						MonitorException {
 		msm.update(cookie, ctx, controlContext, aspect);
 
 	}

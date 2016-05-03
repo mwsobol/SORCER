@@ -41,6 +41,7 @@
                 <pathelement location="${rio.lib}/logging/jul-to-slf4j-${slf4j.version}.jar" />
                 <pathelement location="${rio.lib}/logging/logback-classic-${logback.version}.jar" />
 				<pathelement location="${common.lib}/commons-io-${commonsio.version}.jar" />
+				<pathelement location="${common.lib}/commons-exec-${commonsExec.version}.jar" />
 			</classpath>
             <env key="SORCER_HOME" value="${sorcer.home}"/>
 			<env key="RIO_HOME" value="${sorcer.home}/rio-${rio.version}"/>
@@ -51,6 +52,7 @@
 			<sysproperty key="blitz.version" value="${blitz.version}" />
 			<sysproperty key="je.version" value="${je.version}" />
 			<sysproperty key="guava.version" value="${guava.version}" />
+			<sysproperty key="commonsExec.version" value="${commonsExec.version}" />
 			<sysproperty key="rio.version" value="${rio.version}" />
 			<sysproperty key="plexus.version" value="${plexus.version}" />
             <sysproperty key="commonsio.version" value="${commonsio.version}" />

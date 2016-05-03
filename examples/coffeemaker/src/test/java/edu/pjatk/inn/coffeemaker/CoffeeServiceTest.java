@@ -1,5 +1,7 @@
 package edu.pjatk.inn.coffeemaker;
 
+import edu.pjatk.inn.coffeemaker.impl.CoffeeMaker;
+import edu.pjatk.inn.coffeemaker.impl.DeliveryImpl;
 import edu.pjatk.inn.coffeemaker.impl.Recipe;
 import org.junit.After;
 import org.junit.Before;
@@ -9,10 +11,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
+import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.eo.operator;
-import sorcer.service.Context;
-import sorcer.service.ContextException;
-import sorcer.service.Exertion;
+import sorcer.service.*;
 import sorcer.service.modeling.Model;
 
 import static edu.pjatk.inn.coffeemaker.impl.Recipe.getRecipe;
@@ -153,5 +154,23 @@ public class CoffeeServiceTest {
 		assertEquals(value(result(mod), "change$"), 10);
 	}
 
+	@Test
+	public void getCoffee() throws Exception {
+
+		Task coffee = task("coffee", sig("makeCoffee", CoffeeMaker.class), context(
+				inEnt("recipe/name", "espresso"),
+				inEnt("coffee/paid", 120),
+				inEnt("recipe", espresso)));
+
+		Task delivery = task("delivery", sig("deliver", DeliveryImpl.class), context(
+				inEnt("location", "PJATK"),
+				inEnt("room", "101")));
+
+		Job drinkCoffee = job(sig("exert", ServiceJobber.class), coffee, delivery);
+
+		Context out = upcontext(exert(drinkCoffee));
+
+		logger.info("out: " + out);
+	}
 }
 

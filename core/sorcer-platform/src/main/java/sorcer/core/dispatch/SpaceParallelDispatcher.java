@@ -24,6 +24,8 @@ import net.jini.core.lease.Lease;
 import net.jini.entry.UnusableEntriesException;
 import net.jini.id.Uuid;
 import net.jini.space.JavaSpace05;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sorcer.core.exertion.ExertionEnvelop;
 import sorcer.core.exertion.Mograms;
 import sorcer.core.exertion.NetJob;
@@ -45,10 +47,10 @@ import static sorcer.service.Exec.*;
 import static sorcer.util.StringUtils.tName;
 
 public class SpaceParallelDispatcher extends ExertDispatcher {
-
     protected JavaSpace05 space;
     private int doneExertionIndex = 0;
     protected LokiMemberUtil loki;
+    private final Logger logger = LoggerFactory.getLogger(SpaceParallelDispatcher.class);
 
     public SpaceParallelDispatcher(Exertion exertion,
            Set<Context> sharedContexts,
@@ -89,18 +91,16 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
         new Thread(disatchGroup, new CollectResultThread(), tName("collect-" + xrt.getName())).start();
 
         for (Mogram mogram : inputXrts) {
-            logger.info("Calling monSession.init from SpaceParallelDispatcher for: " + mogram.getName());
+            logger.info("Calling monSession.init from SpaceParallelDispatcher for: {}", mogram.getName());
             MonitoringSession monSession = MonitorUtil.getMonitoringSession((Exertion)mogram);
             if (xrt.isMonitorable() && monSession!=null) {
                 try {
                     if (monSession.getState()==State.INITIAL.ordinal()) {
-                        logger.info("initializing monitoring from SpaceParallelDispatcher for " + mogram.getName());
-                        monSession.init(MogramDispatcherFactory.LEASE_RENEWAL_PERIOD, MogramDispatcherFactory.DEFAULT_TIMEOUT_PERIOD);
+                        logger.info("initializing monitoring from SpaceParallelDispatcher for{}", mogram.getName());
+                        monSession.init(Lease.FOREVER, MogramDispatcherFactory.DEFAULT_TIMEOUT_PERIOD);
                     }
-                } catch (MonitorException me) {
-                    logger.error("Problem starting monitoring for " + xrt.getName() + " " + me.getMessage());
-                } catch (RemoteException re) {
-                    logger.error("Problem starting monitoring for " + xrt.getName() + " " + re.getMessage());
+                } catch (MonitorException | RemoteException e) {
+                    logger.error("Problem starting monitoring for {}", xrt.getName(), e);
                 }
             }
             dispatchExertion((Exertion)mogram);

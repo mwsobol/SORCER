@@ -246,8 +246,15 @@ public class CoffeeMaker implements CoffeeMaking, CoffeeService {
 	@Override
 	public Context makeCoffee(Context context) throws RemoteException, ContextException {
 		String recipeName = (String)context.getValue("recipe/name");
+		Context recipeContext = (Context)context.getValue("recipe");
+		if (recipeContext != null)
+			addRecipe(recipeContext);
+		int amtPaid = 0;
+		if (context.getValue("coffee/paid") != null)
+			amtPaid  = (Integer)context.getValue("coffee/paid");
 		Recipe r = getRecipeForName(recipeName);
-		context.putValue("", makeCoffee(r, r.getPrice()));
+		if (amtPaid != 0)
+			context.putValue("coffee/change", makeCoffee(r, amtPaid));
 		context.putValue("price", r.getPrice());
 
 		if (context.getReturnPath() != null) {

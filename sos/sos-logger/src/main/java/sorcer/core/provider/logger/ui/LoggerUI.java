@@ -267,7 +267,7 @@ public class LoggerUI extends JPanel implements Observer {
 
 	/**
 	 * Create a SINGLE_SELECTION ListSelectionModel that calls a new method,
-	 * updateSingleSelection(), each time the selection changes. This can be a
+	 * updateSingleSelection(), each time the select changes. This can be a
 	 * little bit more convenient than using the ListModels
 	 * ListSelectionListener, since ListSelectionListeners are only given the
 	 * range of indices that the change spans.

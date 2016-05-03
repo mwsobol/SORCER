@@ -27,5 +27,5 @@ import java.rmi.RemoteException;
  */
 public interface Morpher<T extends Arg> {
 
-    public void morph(FidelityManagement<T> manager, MultiFidelity mFi, Object value) throws RemoteException;
+    public void morph(FidelityManagement<T> manager, MorphedFidelity mFi, Object value) throws RemoteException;
 }

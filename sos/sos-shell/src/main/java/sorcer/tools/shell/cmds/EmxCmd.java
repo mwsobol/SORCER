@@ -118,7 +118,7 @@ public class EmxCmd extends ShellCmd {
 				xrtType = getStatus(next);
 				printMonitoredExertions(xrtType);
 			} else if (next.equals("-x")) {
-				// clear monitor selection
+				// clear monitor select
 				selectedMonitor = -1;
 			} else if (next.equals("-e")) {
 				isEmxMode = false;

@@ -28,7 +28,7 @@ import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.par.Par;
 import sorcer.core.context.model.srv.Srv;
 import sorcer.core.invoker.ServiceInvoker;
-import sorcer.core.plexus.MultiFidelity;
+import sorcer.core.plexus.MorphedFidelity;
 import sorcer.core.provider.DatabaseStorer;
 import sorcer.core.signature.NetletSignature;
 import sorcer.core.signature.ObjectSignature;
@@ -245,7 +245,7 @@ public class operator {
         return new Entry(path, ((Context)model).asis(path));
     }
 
-	public static <T extends Arg> Srv ent(String name, MultiFidelity<T> fidelity) {
+	public static <T extends Arg> Srv ent(String name, MorphedFidelity<T> fidelity) {
 		return srv(name, fidelity);
 	}
 
@@ -267,7 +267,7 @@ public class operator {
 		return service;
 	}
 
-	public static Srv srv(String name, MultiFidelity<Signature> fidelity) {
+	public static Srv srv(String name, MorphedFidelity<Signature> fidelity) {
 		Srv service = new Srv(name, fidelity);
 		return service;
 	}
@@ -472,7 +472,10 @@ public class operator {
 			oe.annotation(value);
 			return oe;
 		}
-		return new OutputEntry(path, value, 0);
+		OutputEntry ent = new OutputEntry(path, value, 0);
+		if (value instanceof Class)
+			ent.setValClass((Class) value);
+		return ent;
 	}
 
 	public static <T> OutputEntry<T> outEnt(String path, T value, String annotation) {
@@ -548,6 +551,18 @@ public class operator {
 		InputEntry<T> ie = inEnt(path, value);
 		ie.annotation(annotation);
 		return ie;
+	}
+
+	public static <T> InputEntry<T> inEnt(String path, T value, Class valClass, String annotation) {
+		InputEntry<T> ie = new InputEntry(path, value, 0);
+		if (valClass != null)
+			ie.setValClass(valClass);
+		ie.annotation(annotation);
+		return ie;
+	}
+
+	public static <T> InputEntry<T> inEnt(String path, T value, Class valClass) {
+		return inEnt(path, value, valClass, null);
 	}
 
 	public static InputEntry inoutEnt(String path) {

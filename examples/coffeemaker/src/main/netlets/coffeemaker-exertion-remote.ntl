@@ -1,0 +1,23 @@
+import edu.pjatk.inn.coffeemaker.CoffeeService
+import edu.pjatk.inn.coffeemaker.Delivery
+import sorcer.service.*
+import static sorcer.co.operator.*
+import static sorcer.eo.operator.*
+
+Context espresso = context(ent("name", "espresso"), ent("price", 50),
+                ent("amtCoffee", 6), ent("amtMilk", 0),
+                ent("amtSugar", 1), ent("amtChocolate", 0));
+
+Task coffee = task("coffee", sig("makeCoffee", CoffeeService.class), context(
+        ent("recipe/name", "espresso"),
+        ent("coffee/paid", 120),
+        ent("coffee/change"),
+        ent("recipe", espresso)));
+
+Task delivery = task("delivery", sig("deliver", Delivery.class), context(
+        ent("location", "PJATK"),
+        ent("delivery/paid"),
+        ent("room", "101")));
+
+job(coffee, delivery,
+        pipe(outPoint(coffee, "coffee/change"), inPoint(delivery, "delivery/paid")));

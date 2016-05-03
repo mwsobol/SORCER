@@ -90,6 +90,9 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 	/** directional attribute (da) */
 	final static String DIRECTION = "da";
 
+	/** entry value class (vc) */
+	final static String VAL_CLASS = "vc";
+
 	/** operand positioning (OPP) for operators (direction with index) */
 	final static String OPP = "opp";
 

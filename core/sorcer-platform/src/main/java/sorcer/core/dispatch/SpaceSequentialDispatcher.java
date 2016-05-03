@@ -18,13 +18,16 @@
 
 package sorcer.core.dispatch;
 
-import java.util.Set;
-
-import sorcer.core.provider.Provider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sorcer.core.loki.member.LokiMemberUtil;
+import sorcer.core.provider.Provider;
 import sorcer.service.*;
 
+import java.util.Set;
+
 public class SpaceSequentialDispatcher extends SpaceParallelDispatcher {
+    private final Logger logger = LoggerFactory.getLogger(SpaceSequentialDispatcher.class);
 
 	public SpaceSequentialDispatcher(Exertion job,
             Set<Context> sharedContexts,

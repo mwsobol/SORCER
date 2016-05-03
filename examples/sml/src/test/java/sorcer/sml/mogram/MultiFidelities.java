@@ -11,11 +11,9 @@ import sorcer.core.context.model.ent.Entry;
 import sorcer.core.invoker.Observable;
 import sorcer.core.plexus.FidelityManager;
 import sorcer.core.plexus.Morpher;
-import sorcer.core.plexus.MultiFidelity;
-import sorcer.service.Context;
-import sorcer.service.EvaluationException;
-import sorcer.service.Fidelity;
-import sorcer.service.Signature;
+import sorcer.core.plexus.MorphedFidelity;
+import sorcer.core.plexus.MultifidelityMogram;
+import sorcer.service.*;
 import sorcer.service.modeling.Model;
 
 import java.rmi.RemoteException;
@@ -100,15 +98,15 @@ public class MultiFidelities {
 
             @Override
             public void update(Observable mFi, Object value) throws EvaluationException, RemoteException {
-                if (mFi instanceof MultiFidelity) {
-                    Fidelity<Signature> fi = ((MultiFidelity) mFi).getFidelity();
-                    if (fi.getPath().equals("mFi1") && fi.getSelectedName().equals("add")) {
+                if (mFi instanceof MorphedFidelity) {
+                    Fidelity<Signature> fi = ((MorphedFidelity) mFi).getFidelity();
+                    if (fi.getPath().equals("mFi1") && fi.getSelectName().equals("add")) {
                         if (((Double) value) <= 200.0) {
                             morph("sysFi2");
                         } else {
                             morph("sysFi3");
                         }
-                    } else if (fi.getPath().equals("mFi1") && fi.getSelectedName().equals("multiply")) {
+                    } else if (fi.getPath().equals("mFi1") && fi.getSelectName().equals("multiply")) {
                         morph("sysFi3");
                     }
                 }
@@ -157,15 +155,15 @@ public class MultiFidelities {
 
             @Override
             public void update(Observable mFi, Object value) throws EvaluationException, RemoteException {
-                if (mFi instanceof MultiFidelity) {
-                    Fidelity<Signature> fi = ((MultiFidelity) mFi).getFidelity();
-                    if (fi.getPath().equals("mFi1") && fi.getSelectedName().equals("add")) {
+                if (mFi instanceof MorphedFidelity) {
+                    Fidelity<Signature> fi = ((MorphedFidelity) mFi).getFidelity();
+                    if (fi.getPath().equals("mFi1") && fi.getSelectName().equals("add")) {
                         if (((Double) value) <= 200.0) {
                             morph("sysFi2");
                         } else {
                             morph("sysFi3");
                         }
-                    } else if (fi.getPath().equals("mFi1") && fi.getSelectedName().equals("multiply")) {
+                    } else if (fi.getPath().equals("mFi1") && fi.getSelectName().equals("multiply")) {
                         morph("sysFi3");
                     }
                 }
@@ -223,15 +221,15 @@ public class MultiFidelities {
 
             @Override
             public void update(Observable mFi, Object value) throws EvaluationException, RemoteException {
-                if (mFi instanceof MultiFidelity) {
-                    Fidelity<Signature> fi = ((MultiFidelity) mFi).getFidelity();
-                    if (fi.getPath().equals("mFi1") && fi.getSelectedName().equals("add")) {
+                if (mFi instanceof MorphedFidelity) {
+                    Fidelity<Signature> fi = ((MorphedFidelity) mFi).getFidelity();
+                    if (fi.getPath().equals("mFi1") && fi.getSelectName().equals("add")) {
                         if (((Double) value) <= 200.0) {
                             morph("sysFi2");
                         } else {
                             morph("sysFi3");
                         }
-                    } else if (fi.getPath().equals("mFi1") && fi.getSelectedName().equals("multiply")) {
+                    } else if (fi.getPath().equals("mFi1") && fi.getSelectName().equals("multiply")) {
                         morph("sysFi3");
                     }
                 }
@@ -278,20 +276,20 @@ public class MultiFidelities {
 
         Morpher mFi1mrph = (mgr, mFi, value) -> {
             Fidelity<Signature> fi =  mFi.getFidelity();
-            if (fi.getSelectedName().equals("add")) {
+            if (fi.getSelectName().equals("add")) {
                 if (((Double) value) <= 200.0) {
                     mgr.morph("sysFi2");
                 } else {
                     mgr.morph("sysFi3");
                 }
-            } else if (fi.getPath().equals("mFi1") && fi.getSelectedName().equals("multiply")) {
+            } else if (fi.getPath().equals("mFi1") && fi.getSelectName().equals("multiply")) {
                 mgr.morph("sysFi3");
             }
         };
 
         Morpher mFi2mrph = (mgr, mFi, value) -> {
             Fidelity<Signature> fi =  mFi.getFidelity();
-            if (fi.getSelectedName().equals("divide")) {
+            if (fi.getSelectName().equals("divide")) {
                 if (((Double) value) <= 9.0) {
                     mgr.morph("sysFi4");
                 } else {
@@ -339,4 +337,69 @@ public class MultiFidelities {
         assertTrue(get(out, "mFi3").equals(9.0));
     }
 
+    @Test
+    public void reconfigureMultifidelityMogram() throws Exception {
+
+        Task t4 = task(
+                "t4",
+                sig("multiply", MultiplierImpl.class),
+                context("multiply", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
+                        outEnt("result/y")));
+
+        Task t5 = task(
+                "t5",
+                sig("add", AdderImpl.class),
+                context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
+                        outEnt("result/y")));
+
+
+        MultifidelityMogram mfm = multiFiMogram(fi(t5, t4));
+        Mogram mog = exert(mfm);
+        logger.info("out: " + mog.getContext());
+        assertTrue(value(context(mog), "result/y").equals(100.0));
+
+        selectFi(mfm, "t4");
+        mog = exert(mfm);
+        logger.info("out: " + mog.getContext());
+        assertTrue(value(context(mog), "result/y").equals(500.0));
+    }
+
+    @Test
+    public void mortphMultifidelityMogram() throws Exception {
+
+        Task t4 = task(
+                "t4",
+                sig("multiply", MultiplierImpl.class),
+                context("multiply", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
+                        outEnt("result/y")));
+
+        Task t5 = task(
+                "t5",
+                sig("add", AdderImpl.class),
+                context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
+                        outEnt("result/y")));
+
+
+        Morpher mFi1mrph = (mgr, mFi, value) -> {
+            Fidelity<Signature> fi =  mFi.getFidelity();
+            if (fi.getSelectName().equals("t5")) {
+                try {
+                    if (((Double) value(context(value), "result/y")) <= 200.0) {
+                        mgr.reconfigure("t4");
+                    }
+                } catch (ContextException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        MultifidelityMogram mfm = multiFiMogram(mFi(mFi1mrph, t5, t4));
+        Mogram mog = exert(mfm);
+        logger.info("out: " + mog.getContext());
+        assertTrue(value(context(mog), "result/y").equals(100.0));
+
+        mog = exert(mfm);
+        logger.info("out: " + mog.getContext());
+        assertTrue(value(context(mog), "result/y").equals(500.0));
+    }
 }

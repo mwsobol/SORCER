@@ -639,13 +639,13 @@ public class ParModels {
 
 
 	@Test
-	public void methodAttachmentWithArgs() throws Exception {
+	public void attachMethodInvokerWithContext() throws Exception {
 
 		Par z = par("z", invoker("x + y", x, y));
 		add(pm, x, y, z, par("limit", 60.0));
 
 		add(pm, methodInvoker("call", new Config()));
-		logger.info("call value:" + invoke(pm, "call"));
+//		logger.info("call value:" + invoke(pm, "call"));
 		assertEquals(invoke(pm, "call", context(ent("limit", 100.0))), 420.0);
 
 	}
@@ -659,9 +659,9 @@ public class ParModels {
 		// set the sphere/radius in the model
 		put(pm, "sphere/radius", 20.0);
 		// attach the agent to the par-model and invoke
-		pm.add(new Agent("getSphereVolume",
-				Volume.class.getName(), new URL(Sorcer
-				.getWebsterUrl() + "/pml-"+sorcerVersion+".jar")));
+        add(pm, agent("getSphereVolume",
+                Volume.class.getName(), new URL(Sorcer
+                        .getWebsterUrl() + "/pml-" + sorcerVersion+".jar")));
 
 		Object result = value((Context)value(pm,"getSphereVolume"), "sphere/volume");
 
@@ -670,10 +670,10 @@ public class ParModels {
 		// invoke the agent directly
 		invoke(pm,
 				"getSphereVolume",
-				new Agent("getSphereVolume",
-						"sorcer.arithmetic.tester.volume.Volume",
-						new URL(Sorcer.getWebsterUrl()
-								+ "/sorcer-tester-"+sorcerVersion+".jar")));
+                agent("getSphereVolume",
+                        "sorcer.arithmetic.tester.volume.Volume",
+                        new URL(Sorcer.getWebsterUrl()
+                                + "/sorcer-tester-" + sorcerVersion+".jar")));
 
 //		logger.info("val: " + value(pm, "sphere/volume"));
 		assertTrue(value(pm, "sphere/volume").equals(33510.32163829113));

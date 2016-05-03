@@ -17,16 +17,15 @@
 
 package sorcer.core.monitor;
 
-import java.io.Serializable;
-import java.rmi.RemoteException;
-
+import net.jini.core.lease.Lease;
+import net.jini.core.transaction.server.TransactionConstants;
 import sorcer.core.context.StrategyContext;
 import sorcer.service.Context;
 import sorcer.service.MonitorException;
 import sorcer.service.Monitorable;
 
-import net.jini.core.lease.Lease;
-import net.jini.core.transaction.server.TransactionConstants;
+import java.io.Serializable;
+import java.rmi.RemoteException;
 
 /**
  * An interface for controlling the session in the server. The session is
@@ -75,8 +74,7 @@ public interface MonitoringSession extends Serializable {
 	 * @see TransactionConstants
 	 */
 
-	public void init(Monitorable mntrbl, long duration, long timeout)
-			throws RemoteException, MonitorException;
+	void init(Monitorable mntrbl, long duration, long timeout) throws RemoteException, MonitorException;
 
 	/**
 	 * 
@@ -106,8 +104,7 @@ public interface MonitoringSession extends Serializable {
 	 * 
 	 * */
 
-	public void init(long duration, long timeout) throws RemoteException,
-			MonitorException;
+	void init(long duration, long timeout) throws RemoteException, MonitorException;
 
 	/**
 	 * 
@@ -132,8 +129,7 @@ public interface MonitoringSession extends Serializable {
 	 * 
 	 * */
 
-	public void init(Monitorable mntrbl) throws RemoteException,
-			MonitorException;
+	void init(Monitorable mntrbl) throws RemoteException, MonitorException;
 
 	/**
 	 * Providers use this method to update the monitoring session
@@ -152,14 +148,13 @@ public interface MonitoringSession extends Serializable {
 	 *             if there is a communication error
 	 **/
 
-	public void changed(Context ctx, StrategyContext controlContext, int aspect) throws RemoteException,
-			MonitorException;
+	void changed(Context ctx, StrategyContext controlContext, int aspect) throws RemoteException, MonitorException;
 
 	/**
 	 * The lease for this session
 	 **/
-	public Lease getLease();
+	Lease getLease();
 
-	public int getState() throws RemoteException, MonitorException;
+	int getState() throws RemoteException, MonitorException;
 
 }

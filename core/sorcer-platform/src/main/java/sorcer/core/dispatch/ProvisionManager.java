@@ -23,6 +23,8 @@ import org.rioproject.opstring.OperationalString;
 import org.rioproject.opstring.OperationalStringException;
 import org.rioproject.opstring.OperationalStringManager;
 import org.rioproject.opstring.ServiceElement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sorcer.core.deploy.OperationalStringFactory;
 import sorcer.core.deploy.ProvisionMonitorCache;
 import sorcer.core.deploy.ServiceDeployment;
@@ -36,10 +38,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The {@code ProvisionManager} handles the dynamic creation of {@link OperationalString}s created
@@ -74,9 +72,9 @@ public class ProvisionManager {
 
     private synchronized void doGetDeployAdmin() throws RemoteException {
         if(deployAdmin==null) {
-            logger.info(String.format("Discover a DeployAdmin reference using %s ...",
-                                      getDiscoveryInfo()));
+            logger.info("Discover a DeployAdmin reference using {} ...", getDiscoveryInfo());
             deployAdmin = provisionMonitorCache.getDeployAdmin();
+            logger.info("Obtained a DeployAdmin reference");
         }
     }
 
@@ -125,29 +123,27 @@ public class ProvisionManager {
                 for (Map.Entry<ServiceDeployment.Unique, List<OperationalString>> entry : deployments.entrySet()) {
                     for (OperationalString deployment : entry.getValue()) {
                         if(logger.isDebugEnabled())
-                            logger.debug(String.format("Processing deployment %s", deployment.getName()));
+                            logger.debug("Processing deployment {}", deployment.getName());
                         if(deployAdmin.hasDeployed(deployment.getName())) {
                             if (entry.getKey() == ServiceDeployment.Unique.YES) {
                                 String newName = createDeploymentName(deployment.getName(),
                                                                       deployAdmin.getOperationalStringManagers());
                                 if(logger.isDebugEnabled())
-                                    logger.debug(String.format("Deployment for %s already exists, created new name [%s], " +
+                                    logger.debug("Deployment for {} already exists, created new name [{}], " +
                                                           "proceed with autonomic deployment",
-                                                          deployment.getName(), newName));
+                                                          deployment.getName(), newName);
                                 ((OpString)deployment).setName(newName);
                             } else {
                                 if(logger.isDebugEnabled())
-                                    logger.debug(String.format("Deployment for %s already exists",
-                                                          deployment.getName()));
+                                    logger.debug("Deployment for {} already exists", deployment.getName());
                                 if(!deploymentNames.contains(deployment.getName()))
                                     deploymentNames.add(deployment.getName());
                                 continue;
                             }
                         } else {
                             if(logger.isDebugEnabled())
-                                logger.debug(String.format(
-                                        "Deployment for %s not found, request autonomic deployment",
-                                        deployment.getName()));
+                                logger.debug("Deployment for {} not found, request autonomic deployment",
+                                             deployment.getName());
                         }
                         deployAdmin.deploy(deployment);
                         if(!deploymentNames.contains(deployment.getName()))
@@ -178,9 +174,7 @@ public class ProvisionManager {
             if(e instanceof DispatcherException)
                 throw (DispatcherException)e;
 
-            logger.warn(
-                       String.format("Unable to process deployment for %s", exertion.getName()),
-                       e);
+            logger.warn("Unable to process deployment for {}", exertion.getName(), e);
             throw new DispatcherException(String.format("While trying to provision exertion %s", exertion.getName()), e);
         }
         return true;
@@ -277,13 +271,16 @@ public class ProvisionManager {
                             try {
                                 numDeployed = mgr.getServiceBeanInstances(elem).length;
                                 deploy.put(elem, numDeployed);
-                                if(counter % 50 == 0)
-                                System.out.println(String.format(
-                                        "Service %s/%-12s is pending. Planned [%s], deployed [%d]",
-                                        elem.getOperationalStringName(),
-                                        elem.getName(),
-                                        elem.getPlanned(),
-                                        numDeployed));
+                                if(counter % 50 == 0) {
+                                    if(logger.isDebugEnabled()) {
+                                        logger.debug(String.format(
+                                            "Service %s/%-12s is pending. Planned [%s], deployed [%d]",
+                                            elem.getOperationalStringName(),
+                                            elem.getName(),
+                                            elem.getPlanned(),
+                                            numDeployed));
+                                    }
+                                }
                             } catch (OperationalStringException notReady) {
                                 if(logger.isTraceEnabled())
                                     logger.trace(notReady.getMessage());
@@ -292,12 +289,12 @@ public class ProvisionManager {
                             String name = String.format("%s/%s", elem.getOperationalStringName(), elem.getName());
                             if(!deployedServices.contains(name)) {
                                 if(logger.isDebugEnabled()) {
-                                    System.out.println(String.format(
-                                            "Service %s/%-12s is deployed. Planned [%s], deployed [%d]",
-                                            elem.getOperationalStringName(),
-                                            elem.getName(),
-                                            elem.getPlanned(),
-                                            numDeployed));
+                                    logger.debug(String.format(
+                                        "Service %s/%-12s is deployed. Planned [%s], deployed [%d]",
+                                        elem.getOperationalStringName(),
+                                        elem.getName(),
+                                        elem.getPlanned(),
+                                        numDeployed));
                                 }
                                 deployedServices.add(name);
                             }
@@ -309,7 +306,7 @@ public class ProvisionManager {
                     }
                 }
             } catch(Exception e) {
-                logger.warn("Failed waiting for deployment ["+deployment+"]", e);
+                logger.warn("Failed waiting for deployment [{}]", deployment, e);
                 return false;
             }
             return true;

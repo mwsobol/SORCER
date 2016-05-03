@@ -17,23 +17,20 @@
 
 package sorcer.core.provider.exertmonitor;
 
-import java.io.File;
-import java.io.IOException;
-import java.rmi.RemoteException;
-import java.security.Principal;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.Map;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import com.sleepycat.collections.StoredMap;
+import com.sleepycat.je.DatabaseException;
+import com.sun.jini.landlord.LeasedResource;
+import com.sun.jini.start.LifeCycle;
+import net.jini.core.event.EventRegistration;
 import net.jini.core.event.RemoteEventListener;
 import net.jini.core.lease.Lease;
+import net.jini.core.lease.LeaseDeniedException;
 import net.jini.id.Uuid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sorcer.core.UEID;
 import sorcer.core.context.StrategyContext;
+import sorcer.core.monitor.MonitorEvent;
 import sorcer.core.monitor.MonitoringManagement;
 import sorcer.core.provider.MonitorManagementSession;
 import sorcer.core.provider.ServiceProvider;
@@ -44,21 +41,22 @@ import sorcer.security.util.SorcerPrincipal;
 import sorcer.service.*;
 import sorcer.util.bdb.objects.UuidKey;
 
-import com.sleepycat.collections.StoredMap;
-import com.sleepycat.je.DatabaseException;
-import com.sun.jini.start.LifeCycle;
+import java.io.File;
+import java.io.IOException;
+import java.rmi.RemoteException;
+import java.security.Principal;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 public class ExertMonitor extends ServiceProvider implements MonitoringManagement {
-
 	static transient final Logger logger = LoggerFactory.getLogger(ExertMonitor.class.getName());
-
 	private MonitorLandlord landlord;
-
 	private SessionDatabase db;
-	
 	private StoredMap<UuidKey, MonitorManagementSession> resources;
-
-    private Map<Uuid, UuidKey> cacheSessionKeyMap = new HashMap<Uuid, UuidKey>();
+    private Map<Uuid, UuidKey> cacheSessionKeyMap = new HashMap<>();
+    private final Object resourcesWriteLock = new Object();
+    private ExertMonitorEventHandler eventHandler;
 
 	public ExertMonitor(String[] args, LifeCycle lifeCycle) throws Exception {
 		super(args, lifeCycle);
@@ -91,28 +89,19 @@ public class ExertMonitor extends ServiceProvider implements MonitoringManagemen
 		// statically initialize
 		MonitorSession.mLandlord = landlord;
 		MonitorSession.sessionManager = (MonitoringManagement) getServiceProxy();
+
+        eventHandler = new ExertMonitorEventHandler(getProviderConfiguration());
 	}
 
-	final Object resourcesWriteLock = new Object();
-
-	public Exertion register(RemoteEventListener lstnr, Exertion ex,
-			long duration) throws RemoteException {
-
-		MonitorSession resource;
-		try {
-			resource = new MonitorSession(ex, lstnr, duration);
-		} catch (IOException ioe) {
-			throw new RemoteException(ioe.getMessage());
-		}
-
+	public Exertion register(RemoteEventListener lstnr, Exertion ex, long duration) throws MonitorException {
+		MonitorSession resource = new MonitorSession(ex, lstnr, duration);
 		synchronized (resourcesWriteLock) {
 			try {
 				persist(resource);
 			} catch (IOException e) {
-				e.printStackTrace();
+				logger.warn("Problem persisting Exertion", e);
 			}
 		}
-
 		return resource.getRuntimeExertion();
 	}
 
@@ -132,38 +121,28 @@ public class ExertMonitor extends ServiceProvider implements MonitoringManagemen
 	 * @throws MonitorException
 	 *             1) If there is no such session 2) If this session is already
 	 *             active
-	 * @throws RemoteException
-	 *             if there is a communication error
-	 * 
 	 */
-
-	public Lease init(Uuid cookie, Monitorable mntrbl, long duration,
-			long timeout) throws RemoteException, MonitorException {
-
-		// Get the SessionResource correspoding to this cookie
+	public Lease init(Uuid cookie, Monitorable mntrbl, long duration, long timeout) throws MonitorException {
+		// Get the SessionResource corresponding to this cookie
 		MonitorSession resource = findSessionResource(cookie);
-
 		if (resource == null)
 			throw new MonitorException("There exists no such session");
-
-		return resource.init(mntrbl, duration, timeout);
+        Lease lease = resource.init(mntrbl, duration, timeout);
+        Exertion exertion = resource.getRuntimeExertion();
+        eventHandler.fire(new MonitorEvent(getProxy(), exertion, exertion.getStatus()));
+		return lease;
 	}
 	
-	private MonitorSession findSessionResource(Uuid cookie)
-			throws MonitorException {
-
+	private MonitorSession findSessionResource(Uuid cookie) throws MonitorException {
 		MonitorSession resource;
 
 		// Check if landlord is keeping it in memory
-		Hashtable lresources = landlord.getResources();
+		Map<Uuid, LeasedResource> lresources = landlord.getResources();
 		if (lresources.get(cookie) != null)
 			return (MonitorSession) lresources.get(cookie);
 
-		Uuid key;
-		for (Enumeration e = lresources.keys(); e.hasMoreElements();) {
-			key = (Uuid) e.nextElement();
-			resource = ((MonitorSession) lresources.get(key))
-			.getSessionResource(cookie);
+		for(Map.Entry<Uuid, LeasedResource> entry : lresources.entrySet()) {
+			resource = ((MonitorSession) entry.getValue()).getSessionResource(cookie);
 			if (resource != null)
 				return resource;
 		}
@@ -173,24 +152,24 @@ public class ExertMonitor extends ServiceProvider implements MonitoringManagemen
 
 		// Ok it's not with landlord. So we retrieve it from the database
 		synchronized (resourcesWriteLock) {
-			Iterator<Map.Entry<UuidKey, MonitorManagementSession>> si = resources.entrySet().iterator();
-			Map.Entry<UuidKey, MonitorManagementSession> next;
-			while (si.hasNext()) {
-				next = si.next();
-				try {
-					resource = getSession(next.getKey()).getSessionResource(cookie);
-				} catch (Exception e) {
-					throw new MonitorException(e);
-				} 
-				if (resource != null)
-					return resource;
-			}
-		}
-			return null;
-	}
+            Iterator<Map.Entry<UuidKey, MonitorManagementSession>> si = resources.entrySet().iterator();
+            Map.Entry<UuidKey, MonitorManagementSession> next;
+            while (si.hasNext()) {
+                next = si.next();
+                try {
+                    resource = getSession(next.getKey()).getSessionResource(cookie);
+                } catch (Exception e) {
+                    throw new MonitorException(e);
+                }
+                if (resource != null)
+                    return resource;
+            }
+        }
+        return null;
+    }
 
-	/**
-	 * 
+    /**
+     *
 	 * If the Broker wants to drop the exertion to space, then the Broker has no
 	 * idea who will pick up this exertion. In that case, it doesn't make sense
 	 * for the broker to force leasing. However, it may activate the the session
@@ -211,21 +190,15 @@ public class ExertMonitor extends ServiceProvider implements MonitoringManagemen
 	 * @throws MonitorException
 	 *             1) If this session is already active 2) If there is no such
 	 *             session
-	 * 
-	 * @throws RemoteException
-	 *             if there is a communication error
-	 * 
 	 */
-
-	public void init(Uuid cookie, long duration, long timeout)
-			throws RemoteException, MonitorException {
-		// Get the SessionResource correspoding to this cookie
+	public void init(Uuid cookie, long duration, long timeout) throws MonitorException {
+		// Get the SessionResource corresponding to this cookie
 		MonitorSession resource = findSessionResource(cookie);
-
 		if (resource == null)
 			throw new MonitorException("There exists no such session");
-
 		resource.init(duration, timeout);
+        Exertion exertion = resource.getRuntimeExertion();
+        eventHandler.fire(new MonitorEvent(getProxy(), exertion, exertion.getStatus()));
 	}
 
 	/**
@@ -245,21 +218,16 @@ public class ExertMonitor extends ServiceProvider implements MonitoringManagemen
 	 * @throws MonitorException
 	 *             1) If there is no such session 2) The execution has been
 	 *             inited by some one else.
-	 * 
-	 * @throws RemoteException
-	 *             if there is a communication error
-	 * 
 	 */
-
-	public Lease init(Uuid cookie, Monitorable mntrbl) throws RemoteException,
-			MonitorException {
-		// Get the SessionResource correspoding to this cookie
+	public Lease init(Uuid cookie, Monitorable mntrbl) throws MonitorException {
+		// Get the SessionResource corresponding to this cookie
 		MonitorSession resource = findSessionResource(cookie);
-
 		if (resource == null)
 			throw new MonitorException("There exists no such session");
-
-		return resource.init(mntrbl);
+        Lease lease = resource.init(mntrbl);
+        Exertion exertion = resource.getRuntimeExertion();
+        eventHandler.fire(new MonitorEvent(getProxy(), exertion, exertion.getStatus()));
+		return lease;
 	}
 
 	/**
@@ -271,20 +239,15 @@ public class ExertMonitor extends ServiceProvider implements MonitoringManagemen
 	 * 
 	 * @throws MonitorException
 	 *             1) If there is no such session 2) The session is not valid
-	 * 
-	 * @throws RemoteException
-	 *             if there is a communication error
 	 */
-
-	private void update(int aspect, Uuid cookie, Context ctx, StrategyContext controlContext) throws RemoteException,
-			MonitorException {
+    private void update(int aspect, Uuid cookie, Context ctx, StrategyContext controlContext) throws MonitorException {
 		// Get the SessionResource corresponding to this cookie
 		MonitorSession resource = findSessionResource(cookie);
 		if (resource == null)
-			throw new MonitorException("There exists no such session for: "
-					+ cookie);
-
+			throw new MonitorException("There exists no such session for: "+ cookie);
 		resource.update(ctx, controlContext, aspect);
+        Exertion exertion = resource.getRuntimeExertion();
+        eventHandler.fire(new MonitorEvent(getProxy(), exertion, exertion.getStatus()));
 	}
 
 	/**
@@ -296,20 +259,15 @@ public class ExertMonitor extends ServiceProvider implements MonitoringManagemen
 	 * @throws MonitorException
 	 *             1) If there is no such session 2) The exertion does not
 	 *             belong to this session
-	 * 
-	 * @throws RemoteException
-	 *             if there is a communication error
-	 */
-
-	private void done(Uuid cookie, Context ctx, StrategyContext controlContext) throws RemoteException,
-			MonitorException {
-		// Get the SessionResource correspoding to this cookie
+     */
+    private void done(Uuid cookie, Context ctx, StrategyContext controlContext) throws MonitorException {
+		// Get the SessionResource corresponding to this cookie
 		MonitorSession resource = findSessionResource(cookie);
-
 		if (resource == null)
 			throw new MonitorException("There exists no such session");
-		
 		resource.done(ctx, controlContext);
+        Exertion exertion = resource.getRuntimeExertion();
+        eventHandler.fire(new MonitorEvent(getProxy(), exertion, exertion.getStatus()));
 	}
 
 	/**
@@ -321,27 +279,20 @@ public class ExertMonitor extends ServiceProvider implements MonitoringManagemen
 	 * @throws MonitorException
 	 *             1) If there is no such session 2) The exertion does not
 	 *             belong to this session
-	 * 
-	 * @throws RemoteException
-	 *             if there is a communication error
 	 */
-	private void failed(Uuid cookie, Context ctx, StrategyContext controlContext) throws RemoteException,
-			MonitorException {
+	private void failed(Uuid cookie, Context ctx, StrategyContext controlContext) throws MonitorException {
 		MonitorSession resource = findSessionResource(cookie);
-
 		if (resource == null)
 			throw new MonitorException("There exists no such session");
-
 		resource.failed(ctx, controlContext);
+        Exertion exertion = resource.getRuntimeExertion();
+        eventHandler.fire(new MonitorEvent(getProxy(), exertion, exertion.getStatus()));
 	}
 
-	public int getState(Uuid cookie) throws RemoteException, MonitorException {
-
+	public int getState(Uuid cookie) throws MonitorException {
 		MonitorSession resource = findSessionResource(cookie);
-
 		if (resource == null)
 			throw new MonitorException("There exists no such session");
-
 		return resource.getState();
 	}
 
@@ -350,17 +301,13 @@ public class ExertMonitor extends ServiceProvider implements MonitoringManagemen
 	 * infos from all the monitor managers and return a Hashtable where
 	 * 
 	 * key -> ExertionReferenceID value -> Some info regarding this exertion
-	 * 
-	 * @throws RemoteException
-	 *             if there is a communication error
+	 *
 	 * @throws MonitorException
-	 * 
 	 */
-	public Map<Uuid, ExertionInfo> getMonitorableExertionInfo(
-			Exec.State state, Principal principal) throws RemoteException,
-			MonitorException {
-        logger.debug("Trying to get exertionInfos for: " + state.toString() + " for: "  + principal);
-		Map<Uuid, ExertionInfo> table = new HashMap<Uuid, ExertionInfo>();
+	public Map<Uuid, ExertionInfo> getMonitorableExertionInfo(Exec.State state,
+															  Principal principal) throws MonitorException {
+        logger.debug("Trying to get exertionInfos for: {} for: {}", (state==null?"null":state.toString()), principal);
+		Map<Uuid, ExertionInfo> table = new HashMap<>();
 		try {
 			if (resources==null) return table;
 			Iterator<UuidKey> ki = resources.keySet().iterator();
@@ -371,15 +318,16 @@ public class ExertMonitor extends ServiceProvider implements MonitoringManagemen
                 table.putAll(getMonitorableExertionInfo(monSession, key, state, principal));
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("Failed getting ExertionInfo for principal: {}, State: {}",
+                         principal.getName(), (state==null?"null":state.toString()), e);
 			throw new MonitorException(e);
 		}
 		return table;
 	}
 
     private Map<Uuid, ExertionInfo> getMonitorableExertionInfo(MonitorSession monitorSession, UuidKey key, Exec.State state, Principal principal) throws RemoteException,MonitorException {
-        Map<Uuid, ExertionInfo> table = new HashMap<Uuid, ExertionInfo>();
-        logger.debug("Trying to get exertionInfos for: " + monitorSession + " state: " + state.toString() + " for: "  + principal);
+        Map<Uuid, ExertionInfo> table = new HashMap<>();
+        logger.debug("Trying to get exertionInfos for: {} state: {} for: {}", monitorSession, (state==null?"null":state.toString()), principal);
         ServiceExertion xrt = (ServiceExertion) (monitorSession).getRuntimeExertion();
         if (xrt.getPrincipal().getId()
                 .equals(((SorcerPrincipal) principal).getId())) {
@@ -394,35 +342,24 @@ public class ExertMonitor extends ServiceProvider implements MonitoringManagemen
         return table;
     }
 
+    public Exertion getMonitorableExertion(Uuid id, Principal principal) throws MonitorException {
+        Exertion xrt = getSession(id).getRuntimeExertion();
+        if (((ServiceExertion) xrt).getPrincipal().getId().equals(((SorcerPrincipal) principal).getId()))
+            return xrt;
+        else
+            return null;
+    }
 
-
-
-	public Exertion getMonitorableExertion(Uuid id, Principal principal)
-			throws RemoteException, MonitorException {
-			Exertion xrt = getSession(id).getRuntimeExertion();
-			if (((ServiceExertion) xrt).getPrincipal().getId()
-					.equals(((SorcerPrincipal) principal).getId()))
-				return xrt;
-			else
-				return null;
-	}
-
-	/**
-	 * For this reference ID, which references a exertion in a monitor, get the
+    /**
+     * For this reference ID, which references a exertion in a monitor, get the
 	 * exertion if the client has enough credentials.
-	 * 
-	 * @throws RemoteException
-	 *             if there is a communication error
-	 * 
 	 */
-	public Exertion getMonitorableExertion(UEID cookie, Principal principal)
-			throws RemoteException, MonitorException {
+	public Exertion getMonitorableExertion(UEID cookie, Principal principal) throws MonitorException {
         UuidKey lkey = cacheSessionKeyMap.get(cookie.exertionID);
         Exertion ex;
         if (lkey!=null) {
             ex = (getSession(lkey)).getRuntimeExertion();
-            if (ex!=null && ((ServiceExertion) ex).getPrincipal().getId()
-                    .equals(((SorcerPrincipal) principal).getId()))
+            if (ex!=null && ((ServiceExertion) ex).getPrincipal().getId().equals(((SorcerPrincipal) principal).getId()))
                 return ex;
             else
                 return null;
@@ -433,24 +370,25 @@ public class ExertMonitor extends ServiceProvider implements MonitoringManagemen
 			ex = (getSession(lkey)).getRuntimeExertion();
             if (ex!=null) cacheSessionKeyMap.put(ex.getId(), lkey);
             if (cookie.exertionID.equals(ex.getId().toString())
-					&& ((ServiceExertion) ex).getPrincipal().getId()
-							.equals(((SorcerPrincipal) principal).getId()))
+					&& ((ServiceExertion) ex).getPrincipal().getId().equals(((SorcerPrincipal) principal).getId()))
 				return ex;
 		}
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * sorcer.core.monitor.MonitorSessionManagement#update(net.jini.id.Uuid,
-	 * sorcer.service.Context,
-	 * sorcer.core.monitor.MonitorSessionManagement.Aspect)
-	 */
-	@Override
-	public void update(Uuid cookie, Context ctx, StrategyContext controlContext, int aspect)
-			throws RemoteException, MonitorException {
+
+    @Override
+    public EventRegistration register(Principal principal, RemoteEventListener listener, long duration)
+        throws LeaseDeniedException, RemoteException {
+        if(principal!=null && !(principal instanceof SorcerPrincipal)) {
+            throw new LeaseDeniedException("supplied principal is not the correct type, must be "+
+                                           SorcerPrincipal.class.getName());
+        }
+        return eventHandler.register(this.getProxy(), listener, (SorcerPrincipal)principal, duration);
+    }
+
+    @Override
+	public void update(Uuid cookie, Context ctx, StrategyContext controlContext, int aspect) throws MonitorException {
 		if (aspect==Exec.UPDATED || aspect==Exec.PROVISION) {
 			update(aspect, cookie, ctx, controlContext);
 		} else if (aspect==Exec.DONE) {
@@ -469,6 +407,7 @@ public class ExertMonitor extends ServiceProvider implements MonitoringManagemen
 			e.printStackTrace();
 		}
 		landlord.terminate();
+        eventHandler.terminate();
 		super.destroy();
 	}
 
@@ -477,6 +416,7 @@ public class ExertMonitor extends ServiceProvider implements MonitoringManagemen
 	 */
 	@Override
 	public boolean persist(MonitorManagementSession session) throws IOException {
+        logger.warn("Persist {}", session);
 		resources.put(new UuidKey(((MonitorSession)session).getCookie()), session);
 		return true;
 	}

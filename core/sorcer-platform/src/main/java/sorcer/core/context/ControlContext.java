@@ -185,6 +185,7 @@ public class ControlContext extends ServiceContext<Object> implements StrategyCo
 		setComponentAttribute(PRIORITY);
 		setComponentAttribute(NOTIFY_EXEC);
 		setMonitorable(false);
+		//setMonitorable(true);
 		setProvisionable(false);
 		setShellRemote(false);
 		setNotifierEnabled(false);

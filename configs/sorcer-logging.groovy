@@ -64,11 +64,11 @@ if (System.getProperty("forceConsoleLogging")!=null || System.console() != null)
             withJansi = true
 
             encoder(PatternLayoutEncoder) {
-                pattern = "%highlight(%-5level) %d{HH:mm:ss.SSS} %logger{36} - %msg%n%rEx"
+                pattern = "%highlight(%-5level) %d{HH:mm:ss.SSS} %logger{36} %X{mogId} - %msg%n%rEx"
             }
         } else {
             encoder(PatternLayoutEncoder) {
-                pattern = "%-5level %d{HH:mm:ss.SSS} %logger{36} - %msg%n%rEx"
+                pattern = "%-5level %d{HH:mm:ss.SSS} %logger{36} %X{mogId} - %msg%n%rEx"
             }
         }
     }
@@ -98,7 +98,7 @@ if (System.getProperty("org.rioproject.service")!=null) {
 
         }
         encoder(PatternLayoutEncoder) {
-            pattern = "%-5level %d{HH:mm:ss.SSS} %logger{36} - %msg%n%rEx"
+            pattern = "%-5level %d{HH:mm:ss.SSS} %logger{36} %X{mogId} - %msg%n%rEx"
         }
     }
     appenders << "ROLLING"
@@ -145,11 +145,10 @@ logger("org.rioproject.resolver.aether.util.ConsoleRepositoryListener", WARN)
 
 logger("sorcer.util.ProviderAccessor", WARN)
 logger("sorcer.core.provider.cataloger.ServiceCataloger", WARN)
-//logger("sorcer.provider.boot", TRACE)
-logger("sorcer.core.provider.ServiceProvider", WARN)
+logger("sorcer.provider.boot", INFO)
+logger("sorcer.core.provider.ServiceProvider", INFO)
 //logger("sorcer.core.provider.rendezvous.RendezvousBean", ALL)
 //logger("sorcer.core.provider.rendezvous.ServiceModeler", ALL)
-//logger("sorcer.jini.jeri.SorcerILFactory", ALL)
 logger("sorcer.core.provider.ControlFlowManager", WARN)
 logger("sorcer.core.provider.ProviderDelegate", INFO)
 logger("sorcer.tools.shell.NetworkShell", WARN)
@@ -195,7 +194,7 @@ logger("sorcer.modeling.core.context.model.var.ParametricModel", WARN)
  * ==================================================================*/
 logger("sorcer.core.context.eval", OFF)
 logger("sorcer.core.context", TRACE)
-logger("sorcer.jini.jeri.SorcerILFactory", TRACE)
+logger("sorcer.jini.jeri.SorcerILFactory", WARN)
 
 logger("sorcer.ui.tools", DEBUG)
 logger("sorcer.util", DEBUG)

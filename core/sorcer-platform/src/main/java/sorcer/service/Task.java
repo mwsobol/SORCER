@@ -258,6 +258,7 @@ public class Task extends ServiceExertion {
 		sb.append(dataContext.getName() + ": ");
 		sb.append(dataContext.getSubjectPath() + " = ");
 		sb.append(dataContext.getSubjectValue());
+		sb.append(dataContext.toString());
 		sb.append("\n=== DONE PRINTING TASK ===\n");
 
 		return sb.toString();

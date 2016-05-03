@@ -348,8 +348,7 @@ public class Contexts implements SorcerConstants {
 					"no marked attribute as in, out, or inout");
 		if (cp.startsWith(Context.DA_IN)) {
 			cp0 = Context.DA_INOUT + cp.substring(Context.DA_IN.length());
-			fromContext.mark(toPath, Context.CONTEXT_PARAMETER
-					+ SorcerConstants.APS + cp0);
+			fromContext.mark(toPath, Context.CONTEXT_PARAMETER + APS + cp0 + APS + APS + APS);
 		} else if (cp.startsWith(Context.DA_OUT)) {
 			// do nothing for now
 		} else {
@@ -357,7 +356,7 @@ public class Contexts implements SorcerConstants {
 		}
 		toContext.mark(toPath, Context.CONTEXT_PARAMETER
 				+ APS + Context.DA_IN + APS
-				+ fromPath + APS + fromContext.getId());
+				+ fromPath + APS + fromContext.getId() + APS);
 	}
 
 	public static String getFormattedOut(Context sc, boolean isHTML) {
@@ -410,7 +409,7 @@ public class Contexts implements SorcerConstants {
 	public static Context markIn(Context cntxt, String path)
 			throws ContextException {
 		return cntxt.mark(path, Context.CONTEXT_PARAMETER
-				+ APS + Context.DA_IN + APS + APS);
+				+ APS + Context.DA_IN + APS + APS + APS);
 	}
 
 	/**
@@ -419,7 +418,7 @@ public class Contexts implements SorcerConstants {
 	public static Context markOut(Context cntxt, String path)
 			throws ContextException {
 		return cntxt.mark(path, Context.CONTEXT_PARAMETER
-				+ APS + Context.DA_OUT + APS + APS);
+				+ APS + Context.DA_OUT + APS + APS + APS);
 	}
 
 	/**
@@ -428,19 +427,19 @@ public class Contexts implements SorcerConstants {
 	public static Context markInout(Context cntxt, String path)
 			throws ContextException {
 		return cntxt.mark(path, Context.CONTEXT_PARAMETER
-				+ APS + Context.DA_INOUT + APS + APS);
+				+ APS + Context.DA_INOUT + APS + APS + APS);
 	}
 	
 	public static Context markOutPipe(Context cntxt, String path)
 			throws ContextException {
 		return cntxt
-				.mark(path, Context.PIPE + APS + Context.DA_OUT + APS + APS);
+				.mark(path, Context.PIPE + APS + Context.DA_OUT + APS + APS + APS);
 	}
 
 	public static Context markInPipe(Context cntxt, String path)
 			throws ContextException {
 		return cntxt.mark(path, Context.PIPE + APS
-				+ Context.DA_IN + APS + APS);
+				+ Context.DA_IN + APS + APS + APS);
 	}
 	
 	public static Object getValueAt(Context cxt, int index)

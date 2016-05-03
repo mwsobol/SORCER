@@ -45,16 +45,15 @@ import sorcer.core.signature.NetSignature;
 import sorcer.core.signature.NetletSignature;
 import sorcer.core.signature.ObjectSignature;
 import sorcer.core.signature.ServiceSignature;
-import sorcer.core.signature.ServiceSignature.*;
 import sorcer.jini.lookup.ProviderID;
 import sorcer.netlet.ScriptExerter;
 import sorcer.service.*;
 import sorcer.service.Exec.State;
+import sorcer.service.Signature.ReturnPath;
 import sorcer.service.Strategy.Access;
 import sorcer.service.modeling.Model;
 import sorcer.service.txmgr.TransactionManagerAccessor;
 import sorcer.util.Sorcer;
-import sorcer.service.Signature.ReturnPath;
 
 import java.io.File;
 import java.rmi.RemoteException;
@@ -78,7 +77,7 @@ public class ServiceShell implements RemoteServiceShell, Requestor, Callable {
 	private File mogramSource;
 	private Transaction transaction;
 	private static MutualExclusion locker;
-	// a refrence to a provider running this mogram
+	// a reference to a provider running this mogram
 	private Exerter provider;
 	private static LoadingCache<Signature, Object> proxies;
 
@@ -104,12 +103,11 @@ public class ServiceShell implements RemoteServiceShell, Requestor, Callable {
 	private static void setupProxyCache() {
 		if (proxies == null) {
 			proxies = CacheBuilder.newBuilder()
-					.maximumSize(20)
-					.expireAfterWrite(30, TimeUnit.MINUTES)
-//				.removalListener(null)
-					.build(new CacheLoader<Signature, Object>() {
-						public Object load(Signature signature) {
-							return Accessor.get().getService(signature);
+						  .maximumSize(20)
+						  .expireAfterWrite(30, TimeUnit.MINUTES)
+						  .build(new CacheLoader<Signature, Object>() {
+							  public Object load(Signature signature) {
+								  return Accessor.get().getService(signature);
 						}
 					});
 		}
@@ -178,8 +176,12 @@ public class ServiceShell implements RemoteServiceShell, Requestor, Callable {
 				ServiceExertion exertion = (ServiceExertion)mogram;
 				exertion.selectFidelity(entries);
 				Mogram out = exerting(txn, providerName, entries);
-				if (out instanceof Exertion)
+				if (out instanceof Exertion) {
+					if(out.getStatus()==Exec.ERROR || out.getStatus()==Exec.FAILED) {
+						return (T) out;
+					}
 					postProcessExertion(out);
+				}
 				if (exertion.isProxy()) {
 					Exertion xrt = (Exertion) out;
 					exertion.setContext(xrt.getDataContext());
@@ -284,9 +286,7 @@ public class ServiceShell implements RemoteServiceShell, Requestor, Callable {
 						provisionManager.deployServices();
 					}
 				} catch (DispatcherException e) {
-					throw new ExertionException(
-							"Unable to deploy services for: "
-									+ mogram.getName(), e);
+					throw new ExertionException("Unable to deploy services for: "+ mogram.getName(), e);
 				}
 			}
 //			//TODO disabled due to problem with monitoring. Needs to be fixed to run with monitoring
@@ -406,7 +406,7 @@ public class ServiceShell implements RemoteServiceShell, Requestor, Callable {
 			}
 			provider = ((NetSignature) signature).getProvider();
 			if (provider == null) {
-                // check proxy cache amd ping with a provider name
+                // check proxy cache and ping with a provider name
 				try {
 					provider = proxies.get(signature);
 					((Provider)provider).getProviderName();
@@ -462,18 +462,39 @@ public class ServiceShell implements RemoteServiceShell, Requestor, Callable {
 
 	private Exertion callProvider(ServiceExertion exertion, Signature signature, Arg... entries)
 			throws TransactionException, MogramException, RemoteException {
+
+        String providerName = null;
+        ServiceID providerID = null;
+        try {
+            providerName = ((Provider) provider).getProviderName();
+            providerID = ((Provider) provider).getProviderID();
+        } catch(RemoteException e) {
+            logger.error("Unable to connect to {}", signature, e);
+            if(exertion.isProvisionable()) {
+                try {
+                    logger.info("Attempt self-healing, dynamically provision {}", signature);
+                    ProvisionManager provisionManager = new ProvisionManager(exertion);
+                    provisionManager.deployServices();
+                    provider = (Exerter)Accessor.get().getService(signature);
+                    if(provider!=null)
+                        logger.info("Successfully re-created {}", signature);
+                } catch (DispatcherException e1) {
+                    provider = null;
+                    logger.error("Unable to deploy provider", e1);
+                }
+            } else {
+                provider = null;
+            }
+        }
 		if (provider == null) {
-			logger.warn("* Provider not available for: " + signature);
+			logger.warn("* Provider not available for: {}", signature);
 			exertion.setStatus(Exec.FAILED);
-			exertion.reportException(new RuntimeException(
-					"Cannot find provider for: " + signature));
+			exertion.reportException(new RuntimeException("Cannot find provider for: " + signature));
 			return exertion;
 		}
 		exertion.trimAllNotSerializableSignatures();
-		exertion.getControlContext().appendTrace(
-				"shell: " + ((Provider) provider).getProviderName()
-						+ ":" + ((Provider) provider).getProviderID());
-		logger.info("Provider found for: " + signature + "\n\t" + provider);
+		exertion.getControlContext().appendTrace(String.format("shell: %s:%s", providerName, providerID));
+		logger.info("Provider found for: {}\n\t{}", signature, provider);
 		if (((Provider) provider).mutualExclusion()) {
 			return serviceMutualExclusion((Provider) provider, exertion,
 					transaction);

@@ -87,7 +87,10 @@ public class ProviderProxy implements Serializable {
 	 *         implements <code>RemoteMethodControl</code> if the given
 	 *         <code>server</code> does.
 	 */
-	public static Object wrapServiceProxy(Object proxy, Uuid proxyID, Object adminProxy, Class... additionalInterfaces) {
+	public static Object wrapServiceProxy(Object proxy,
+                                          Uuid proxyID,
+                                          Object adminProxy,
+                                          Class... additionalInterfaces) {
 
 		if (proxy == null)
 			throw new NullPointerException("Cannot have a server which is null");
@@ -105,7 +108,7 @@ public class ProviderProxy implements Serializable {
 	public static Object wrapAdminProxy(Object adminProxy, Uuid adminProxyID, Class... additionalInterfaces) {
 
 		if (adminProxy == null)
-			throw new NullPointerException("Cannot have a admin server which is null");
+			throw new NullPointerException("Cannot have an admin server which is null");
 
 		ReferentUuidInvocationHandler handler =
                 (adminProxy instanceof RemoteMethodControl) ?
@@ -123,7 +126,9 @@ public class ProviderProxy implements Serializable {
 		protected final Uuid proxyID;
 		protected final Object adminProxy;
 
-		public ReferentUuidInvocationHandler(Object proxy, Uuid proxyID, Object adminProxy) {
+		public ReferentUuidInvocationHandler(Object proxy,
+                                             Uuid proxyID,
+                                             Object adminProxy) {
 			this.proxy = proxy;
 			this.proxyID = proxyID;
 			this.adminProxy = adminProxy;
@@ -205,7 +210,16 @@ public class ProviderProxy implements Serializable {
         }
 
         protected Object doInvoke(Object server, String selector, Method m, Object[] args) throws IllegalAccessException, InvocationTargetException, RemoteException {
-            return m.invoke(proxy, args);
+            try {
+                if(logger.isTraceEnabled()) {
+					String indent = "    ";
+					logger.trace("Invoking\n{}{}", indent, m);
+				}
+                return m.invoke(proxy, args);
+            } catch (IllegalAccessException | InvocationTargetException e) {
+                logger.error("Failed invoking {}", m, e);
+                throw e;
+            }
         }
 
         private void readObject(ObjectInputStream s) throws IOException, ClassNotFoundException {
@@ -237,7 +251,9 @@ public class ProviderProxy implements Serializable {
 	private static class ConstrainableInvocationHandler extends ReferentUuidInvocationHandler {
 		private static final long serialVersionUID = -1L;
 
-		public ConstrainableInvocationHandler(Object server, Uuid proxyID, Object adminProxy) {
+		public ConstrainableInvocationHandler(Object server,
+                                              Uuid proxyID,
+                                              Object adminProxy) {
 			super(server, proxyID, adminProxy);
 		}
 

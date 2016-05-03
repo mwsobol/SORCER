@@ -95,7 +95,7 @@ public class DataStorageCmd extends ShellCmd {
 			} else if (next.equals("-s")) {
 				showStorageServices();
 				selectedDataStorer = -1;
-				// remove storage selection
+				// remove storage select
 			} else if (next.equals("-x")) {
 				selectedDataStorer = -1;
 			} else if (next.equals("-r")) {

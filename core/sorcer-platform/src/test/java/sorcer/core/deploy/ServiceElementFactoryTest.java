@@ -23,11 +23,13 @@ import org.rioproject.deploy.SystemRequirements;
 import org.rioproject.opstring.ServiceElement;
 import org.rioproject.resolver.ResolverException;
 import org.rioproject.system.capability.connectivity.TCPConnectivity;
-//import org.rioproject.tools.webster.Webster;
 import sorcer.core.provider.ServiceProvider;
 import sorcer.core.signature.NetSignature;
+import sorcer.tools.webster.Webster;
+import sorcer.util.SorcerEnv;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.URISyntaxException;
 
 import static sorcer.eo.operator.*;
@@ -46,7 +48,8 @@ public class ServiceElementFactoryTest {
         deployment.setMultiplicity(10);
         ServiceElement serviceElement = ServiceElementFactory.create(deployment);
         Assert.assertEquals(10, serviceElement.getPlanned());
-        Assert.assertEquals("The Great and wonderful Oz", serviceElement.getName());
+        Assert.assertEquals(SorcerEnv.getActualName("The Great and wonderful Oz"),
+                            serviceElement.getName());
         Assert.assertEquals("foo.Impl", serviceElement.getComponentBundle().getClassName());
         Assert.assertTrue(serviceElement.getExportBundles().length==1);
         Assert.assertEquals("foo.Interface", serviceElement.getExportBundles()[0].getClassName());
@@ -55,7 +58,7 @@ public class ServiceElementFactoryTest {
     @Test
     public void setDeploymentWebsterUrl() throws IOException, ConfigurationException, URISyntaxException, ResolverException {
         ServiceDeployment deployment = new ServiceDeployment();
-        deployment.setConfig(getConfigDir()+"/TestIP.groovy");
+        deployment.setConfig(getConfigDir() + "/TestIP.groovy");
         deployment.setWebsterUrl("http://spongebob:8080");
         ServiceElement serviceElement = ServiceElementFactory.create(deployment);
         Assert.assertTrue(serviceElement.getExportURLs().length > 1);
@@ -80,9 +83,9 @@ public class ServiceElementFactoryTest {
     @Test
     public void setDeploymentWebsterFromConfig() throws IOException, ConfigurationException, URISyntaxException, ResolverException {
         ServiceDeployment deployment = new ServiceDeployment();
-        deployment.setConfig(getConfigDir()+"/testWebster.config");
+        deployment.setConfig(getConfigDir() + "/testWebster.config");
         ServiceElement serviceElement = ServiceElementFactory.create(deployment);
-        Assert.assertTrue(serviceElement.getExportURLs().length>1);
+        Assert.assertTrue(serviceElement.getExportURLs().length > 1);
         Assert.assertEquals(serviceElement.getExportURLs()[0].getHost(), "127.0.0.1");
         Assert.assertEquals(serviceElement.getExportURLs()[0].getPort(), 8080);
     }
@@ -90,28 +93,28 @@ public class ServiceElementFactoryTest {
     @Test
     public void testConfigurationAsFile() {
         ServiceDeployment deployment = new ServiceDeployment();
-        deployment.setConfig(getConfigDir()+"/testIP.config");
+        deployment.setConfig(getConfigDir() + "/testIP.config");
         Assert.assertNotNull(deployment.getConfig());
         Assert.assertEquals(getConfigDir()+"/testIP.config",
                             deployment.getConfig());
     }
 
-//    @Test
-//    public void testConfigurationAsHTTP() throws IOException, ConfigurationException {
-//        String configDirToServe = getConfigDir();
-//        Webster webster = new Webster(0, configDirToServe, null);
-//        try {
-//            ServiceDeployment deployment = new ServiceDeployment();
-//            String hostName = InetAddress.getLocalHost().getHostName();
-//            int port = webster.getPort();
-//            deployment.setConfig("http://"+hostName+":"+port+"/testIP.config");
-//            Assert.assertNotNull(deployment.getConfig());
-//            Assert.assertEquals("http://"+hostName+":"+port+"/testIP.config",
-//                                deployment.getConfig());
-//        } finally {
-//            webster.terminate();
-//        }
-//    }
+    @Test
+    public void testConfigurationAsHTTP() throws IOException, ConfigurationException {
+        String configDirToServe = getConfigDir();
+        Webster webster = new Webster(0, configDirToServe, null);
+        try {
+            ServiceDeployment deployment = new ServiceDeployment();
+            String hostName = InetAddress.getLocalHost().getHostName();
+            int port = webster.getPort();
+            deployment.setConfig("http://"+hostName+":"+port+"/testIP.config");
+            Assert.assertNotNull(deployment.getConfig());
+            Assert.assertEquals("http://"+hostName+":"+port+"/testIP.config",
+                                deployment.getConfig());
+        } finally {
+            webster.terminate();
+        }
+    }
 
     @Test
     public void testIPAddresses() throws Exception {
@@ -131,7 +134,7 @@ public class ServiceElementFactoryTest {
     @Test
     public void testIPAddressestisingConfiguration() throws IOException, ConfigurationException, URISyntaxException, ResolverException {
         ServiceDeployment deployment = new ServiceDeployment();
-        deployment.setConfig(getConfigDir()+"/testIP.config");
+        deployment.setConfig(getConfigDir() + "/testIP.config");
         verifyServiceElement(ServiceElementFactory.create(deployment));
     }
 

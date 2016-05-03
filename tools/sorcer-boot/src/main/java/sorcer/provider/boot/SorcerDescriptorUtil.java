@@ -40,6 +40,7 @@ public class SorcerDescriptorUtil {
 	private static String commonsIoVersion = System.getProperty("commonsio.version");
 	private static String riverVersion = System.getProperty("river.version");
 	private static String jeVersion = System.getProperty("je.version");
+	private static String commonsExecVersion = System.getProperty("commonsExec.version");
 	private static String rioVersion = System.getProperty("rio.version");
 
 	private static String fs = File.separator;
@@ -625,10 +626,12 @@ public class SorcerDescriptorUtil {
 			throws IOException {
 		if (sorcerHome == null)
 			throw new RuntimeException("'sorcer.home' property not declared");
-		
+
+        File rioLib = new File(sorcerHome+fs+"rio-"+rioVersion+fs+"lib");
 		// service provider classpath
 		String exerterClasspath = ConfigUtil.concat(new Object[] {
-				sorcerLib,fs,"sorcer",fs,"lib",fs,"sorcer-platform-" + sorcerVersion + ".jar"
+				sorcerLib,fs,"sorcer",fs,"lib",fs,"sorcer-platform-" + sorcerVersion + ".jar",
+                ps,rioLib,fs,"rio-lib-" + rioVersion + ".jar"
 		});
 
 		// service provider codebase
@@ -715,11 +718,13 @@ public class SorcerDescriptorUtil {
 			throws IOException {
 		if (sorcerHome == null)
 			throw new RuntimeException("'sorcer.home' property not declared");
-		
+
+        File rioLib = new File(sorcerHome+fs+"rio-"+rioVersion+fs+"lib");
 		// service provider classpath
 		String exertmonitor = ConfigUtil.concat(new Object[] {
 				sorcerLib,fs,"sorcer",fs,"lib",fs,"sos-exertmonitor-",sorcerVersion,".jar",
-				ps,sorcerLib,fs,"common",fs,"je-", jeVersion ,".jar"
+				ps,sorcerLib,fs,"common",fs,"je-", jeVersion ,".jar",
+                ps,rioLib,fs,"rio-lib-" + rioVersion + ".jar"
 		});
 		
 		// service provider codebase
@@ -1008,6 +1013,99 @@ public class SorcerDescriptorUtil {
 		String implClass = "sorcer.core.provider.cataloger.ServiceCataloger";
 		return (new SorcerServiceDescriptor(catalogCodebase, policy,
 				catalogClasspath, implClass, catalogerConfig));
+
+	}
+
+	/**
+	 * Get the {@link com.sun.jini.start.ServiceDescriptor} instance for
+	 * {@link sorcer.core.provider.SysCaller} using the Webster port created
+	 * by this utility.
+	 *
+	 * @param policy
+	 *            The security policy file to use
+	 * @param catalogerConfig
+	 *            The configuration options the SysCaller will use
+	 * @return The {@link com.sun.jini.start.ServiceDescriptor} instance for the
+	 *         Cataloger using an anonymous port. The <tt>sos-SysCaller.jar</tt> file
+	 *         will be loaded from <tt>sorcer.home/lib</tt>
+	 *
+	 * @throws IOException
+	 *             If there are problems getting the anonymous port
+	 * @throws RuntimeException
+	 *             If the <tt>sorcer.home</tt> system property is not set
+	 */
+	public static ServiceDescriptor getSysCaller(String policy,
+												 String... sysCallerConfig) throws IOException {
+		return (getSysCaller(policy, Booter.getPort(), sysCallerConfig));
+	}
+
+	/**
+	 * Get the {@link com.sun.jini.start.ServiceDescriptor} instance for
+	 * {@link sorcer.core.provider.SysCaller}.
+	 *
+	 * @param policy
+	 *            The security policy file to use
+	 * @param port
+	 *            The port to use when constructing the codebase
+	 * @param catalogerConfig
+	 *            The configuration options the SysCaller will use
+	 * @return The {@link com.sun.jini.start.ServiceDescriptor} instance for the
+	 *         Cataloger using an anonymous port. The <tt>sos-SysCaller.jar</tt> file
+	 *         will be loaded from <tt>sorcer.home/lib</tt>
+	 *
+	 * @throws IOException
+	 *             If there are problems getting the anonymous port
+	 * @throws RuntimeException
+	 *             If the <tt>sorcer.home</tt> system property is not set
+	 */
+	public static ServiceDescriptor getSysCaller(String policy, int port,
+												 String... sysCallerConfig) throws IOException {
+		return (getSysCaller(policy, Booter.getHostAddress(), port, sysCallerConfig));
+
+	}
+
+	/**
+	 * Get the {@link com.sun.jini.start.ServiceDescriptor} instance for
+	 * {@link sorcer.core.provider.SysCaller}.
+	 *
+	 * @param policy
+	 *            The security policy file to use
+	 * @param hostAddress
+	 *            The address to use when constructing the codebase
+	 * @param port
+	 *            The port to use when constructing the codebase
+	 * @param catalogerConfig
+	 *            The configuration options the SysCaller will use
+	 * @return The {@link com.sun.jini.start.ServiceDescriptor} instance for the
+	 *         Cataloger using an anonymous port. The <tt>sos-SysCaller.jar</tt> file
+	 *         will be loaded from <tt>sorcer.home/lib</tt>
+	 *
+	 * @throws IOException
+	 *             If there are problems getting the anonymous port
+	 * @throws RuntimeException
+	 *             If the <tt>sorcer.home</tt> system property is not set
+	 */
+	public static ServiceDescriptor getSysCaller(String policy,
+												 String hostAddress, int port, String... sysCallerConfig)
+			throws IOException {
+		if (sorcerHome == null)
+			throw new RuntimeException("'sorcer.home' property not declared");
+
+		// service provider classpath
+		String sysCallerClasspath = ConfigUtil.concat(new Object[] {
+				sorcerLib,fs,"sorcer",fs,"lib",fs,"sos-caller-"+sorcerVersion + ".jar",
+				ps,sorcerLib,fs,"common",fs,"commons-exec-",commonsExecVersion,".jar"
+		});
+
+		// service provider codebase
+		List<String> codebase = new ArrayList<String>();
+		Collections.addAll(codebase, getDefaultSorcerExports());
+		String sysCallerCodebase = Booter.getCodebase(codebase.toArray(new String[codebase.size()]),
+				hostAddress,
+				Integer.toString(port));
+		String implClass = "sorcer.core.provider.caller.SysCallerProvider";
+		return (new SorcerServiceDescriptor(sysCallerCodebase, policy,
+				sysCallerClasspath, implClass, sysCallerConfig));
 
 	}
 

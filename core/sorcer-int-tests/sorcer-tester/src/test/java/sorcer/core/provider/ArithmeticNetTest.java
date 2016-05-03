@@ -632,7 +632,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 		Job job = createProvisionedJob();
 		String did =  job.getDeploymentId();
 		logger.info("job deploy id: " + did);
-		assertEquals(did, "d381a9e0e4c511d36ede631c6d6a9ee9");
+		assertEquals("92215227390b7d4d70ef738c18e883e7", did);
 	}
 
 	public static Context createContext() throws Exception {
