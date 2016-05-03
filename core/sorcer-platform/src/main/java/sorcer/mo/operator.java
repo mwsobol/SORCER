@@ -30,7 +30,6 @@ import sorcer.core.dispatch.SortingException;
 import sorcer.core.dispatch.SrvModelAutoDeps;
 import sorcer.core.plexus.FidelityManager;
 import sorcer.core.plexus.MorphedFidelity;
-import sorcer.core.plexus.MultifidelityMogram;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
 import sorcer.service.Signature.ReturnPath;
