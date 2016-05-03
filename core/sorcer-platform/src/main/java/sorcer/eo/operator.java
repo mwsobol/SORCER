@@ -43,7 +43,7 @@ import sorcer.core.exertion.*;
 import sorcer.core.invoker.InvokeIncrementor;
 import sorcer.core.plexus.Morpher;
 import sorcer.core.plexus.MorphedFidelity;
-import sorcer.core.plexus.MultifidelityMogram;
+import sorcer.core.plexus.MultifidelityService;
 import sorcer.core.provider.*;
 import sorcer.core.provider.exerter.Binder;
 import sorcer.core.provider.exerter.ServiceShell;
@@ -1206,11 +1206,11 @@ public class operator {
 	}
 
 	public static void selectFi(Mogram mogram, String selection) {
-		((MultifidelityMogram)mogram).selectFidelity(selection);
+		((MultifidelityService)mogram).selectFidelity(selection);
 	}
 
-	public static MultifidelityMogram multiFiMogram(MorphedFidelity<Mogram> morphedFi) {
-		return new MultifidelityMogram(morphedFi);
+	public static MultifidelityService multiFiMogram(MorphedFidelity<Mogram> morphedFi) {
+		return new MultifidelityService(morphedFi);
 	}
 
 	public static MorphedFidelity<Mogram> fi(Mogram... selections) {

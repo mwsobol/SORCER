@@ -21,14 +21,10 @@ import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.ThrowableTrace;
-import sorcer.core.context.model.par.ParModel;
-import sorcer.core.context.model.srv.Srv;
 import sorcer.service.*;
 
 import java.rmi.RemoteException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * A metasystem is represented by a mogram with multiple projections of its
@@ -42,14 +38,14 @@ import java.util.Map;
  *
  * Created by Mike Sobolewski
  */
-public class MultifidelityMogram extends ServiceMogram {
+public class MultifidelityService extends ServiceMogram {
 
     protected MorphedFidelity<Mogram> morphedFidelity;
 
-    public MultifidelityMogram() {
+    public MultifidelityService() {
     }
 
-    public MultifidelityMogram(String name) throws SignatureException {
+    public MultifidelityService(String name) throws SignatureException {
         super(name);
     }
 
@@ -58,7 +54,7 @@ public class MultifidelityMogram extends ServiceMogram {
         return scope.clearScope();
     }
 
-    public MultifidelityMogram(MorphedFidelity<Mogram> fidelity)  {
+    public MultifidelityService(MorphedFidelity<Mogram> fidelity)  {
         super(fidelity.getName());
         morphedFidelity = fidelity;
         if (fiManager == null)
@@ -70,7 +66,7 @@ public class MultifidelityMogram extends ServiceMogram {
         morphedFidelity.addObserver((FidelityManager)fiManager);
     }
 
-    public MultifidelityMogram(String name, MorphedFidelity<Mogram> fidelity) {
+    public MultifidelityService(String name, MorphedFidelity<Mogram> fidelity) {
         super(name);
         morphedFidelity = fidelity;
     }
