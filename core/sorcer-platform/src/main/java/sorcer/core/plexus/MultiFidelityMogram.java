@@ -19,8 +19,10 @@ package sorcer.core.plexus;
 
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
+import sorcer.core.context.ServiceContext;
 import sorcer.core.context.ThrowableTrace;
 import sorcer.core.context.model.par.ParModel;
+import sorcer.core.context.model.srv.Srv;
 import sorcer.service.*;
 
 import java.rmi.RemoteException;
@@ -42,13 +44,7 @@ import java.util.Map;
  */
 public class MultifidelityMogram extends ServiceMogram {
 
-    // subsystems of this system aggregated into systems via system fidelites
-    protected Context<Mogram> subsystems = new ParModel<Mogram>();
-
-    // service fidelities for this model
-    protected Map<String, Fidelity<Arg>> selectionFidelities;
-
-    protected Fidelity<Arg> selectedFidelity;
+    protected MorphedFidelity<Mogram> morphedFidelity;
 
     public MultifidelityMogram() {
     }
@@ -57,33 +53,62 @@ public class MultifidelityMogram extends ServiceMogram {
         super(name);
     }
 
-    public MultifidelityMogram(String name, Signature signature) throws SignatureException {
-        super(name, signature);
+    @Override
+    public Mogram clearScope() throws MogramException {
+        return scope.clearScope();
+    }
+
+    public MultifidelityMogram(MorphedFidelity<Mogram> fidelity)  {
+        super(fidelity.getName());
+        morphedFidelity = fidelity;
+        if (fiManager == null)
+            fiManager = new FidelityManager(morphedFidelity.getName());
+
+        ((FidelityManager)fiManager).init(morphedFidelity.getFidelity());
+        ((FidelityManager)fiManager).setMogram(this);
+        ((FidelityManager)fiManager).addFidelity(morphedFidelity.getName(), morphedFidelity.getFidelity());
+        morphedFidelity.addObserver((FidelityManager)fiManager);
+    }
+
+    public MultifidelityMogram(String name, MorphedFidelity<Mogram> fidelity) {
+        super(name);
+        morphedFidelity = fidelity;
     }
 
     @Override
     public <T extends Mogram> T exert(Transaction txn, Arg... entries) throws TransactionException, MogramException, RemoteException {
-        return (T) fiManager.getMogram().exert(txn, entries);
+        T out = morphedFidelity.getSelect().exert(txn, entries);
+        morphedFidelity.setChanged();
+        morphedFidelity.notifyObservers(out);
+        return out;
     }
 
     @Override
     public <T extends Mogram> T exert(Arg... entries) throws TransactionException, MogramException, RemoteException {
-        return (T) fiManager.getMogram().exert(entries);
+        T out = morphedFidelity.getSelect().exert(entries);
+        morphedFidelity.setChanged();
+        morphedFidelity.notifyObservers(out);
+        return out;
     }
 
     @Override
     public Context getContext() throws ContextException {
-        return subsystems;
+        return morphedFidelity.getSelect().getContext();
     }
 
-    @Override
-    public Mogram clearScope() throws MogramException {
-        return subsystems.clearScope();
+    public void setDataContext(ServiceContext dataContext) {
+        ((ServiceExertion)morphedFidelity.getSelect()).setContext(dataContext);
     }
 
     @Override
     public void reportException(Throwable t) {
 
+    }
+
+    @Override
+    public Fidelity selectFidelity(String selector) {
+        morphedFidelity.getFidelity().setSelect(selector);
+        return morphedFidelity.getFidelity();
     }
 
     @Override
@@ -121,99 +146,12 @@ public class MultifidelityMogram extends ServiceMogram {
         return toString();
     }
 
-    /**
-     * Returns the current values of atributes (fidelites) of a given projection.
-     *
-     * @return the projection values of this evaluation
-     * @throws EvaluationException
-     * @throws RemoteException
-     */
-//    public MultiFidelityService setProjection(String... fidelities) throws EvaluationException, RemoteException {
-//        for (String path : fidelities)
-//            fidelityManager.runtime.getResponsePaths().add(path);
-//        return this;
-//    }
-//
-//    public void setSelectionFidelities(String fidelityName) {
-//        Fidelity fi = selectionFidelities.get(fidelityName);
-//        fidelityManager.runtime.setCurrentSelector(fi.getName());
-//    }
-//
-//    public void setSelectionFidelities(Fidelity<String> fidelity) {
-//        selectionFidelities.put(fidelity.getName(), fidelity);
-//        fidelityManager.runtime.setCurrentSelector(fidelity.getName());
-//    }
-//
-//    public Fidelity<String> getSelectionFidelity() {
-//        return selectionFidelities.get(fidelityManager.runtime.getCurrentSelector());
-//    }
-
-    public void addSelectionFidelities(List<Fidelity<Arg>> fidelities) {
-        for (Fidelity<Arg> fi : fidelities)
-            addSelectionFidelity(fi);
+    public MorphedFidelity getMorphedFidelity() {
+        return morphedFidelity;
     }
 
-    public void addSelectionFidelities(Fidelity<Arg>... fidelities) {
-        for (Fidelity<Arg> fi : fidelities)
-            addSelectionFidelity(fi);
-    }
-
-    public void addSelectionFidelity(Fidelity<Arg> fidelity) {
-        if (selectionFidelities == null)
-            selectionFidelities = new HashMap<String, Fidelity<Arg>>();
-        selectionFidelities.put(fidelity.getName(), fidelity);
-    }
-
-//    public void selectSelectionFidelity(String fidelity) throws ExertionException {
-//        if (fidelity != null && selectionFidelities != null
-//                && selectionFidelities.containsKey(fidelity)) {
-//            fidelityManager.runtime.setCurrentSelector(selectionFidelities.get(fidelity).getName());
-//            fidelityManager.runtime.getResponsePaths().clear();
-//            fidelityManager.runtime.getResponsePaths().add(fidelityManager.runtime.getCurrentSelector());
-//        }
-//    }
-
-    public Mogram put(Mogram mogram) throws ContextException {
-        subsystems.putValue(mogram.getName(), mogram);
-        return mogram;
-    }
-
-    public Mogram put(final String path, Mogram value) throws ContextException {
-        if (path == null)
-            throw new IllegalArgumentException("path must not be null");
-
-        subsystems.putValue(path, value);
-        return (Mogram) value;
-    }
-
-//    public Context getValue(Arg... entries) throws EvaluationException {
-//        try {
-//            Mogram mogram = subsystems.getValue(fidelityManager.runtime.getResponsePaths().get(0));
-//            mogram = mogram.exert(entries);
-//            if (mogram instanceof Exertion)
-//                return ((Exertion) mogram).getContext();
-//            else
-//                return fidelityManager.runtime.getOutcome();
-//        } catch (Exception e) {
-//            throw new EvaluationException(e);
-//        }
-//    }
-//
-//    public Object getResponse(String fidelity, Arg... entries) throws ContextException {
-//        try {
-//            selectSelectionFidelity(fidelity);
-//        } catch (ExertionException e) {
-//            throw new ContextException(e);
-//        }
-//        return getValue(entries);
-//    }
-
-    public Fidelity<Arg> getSelectedSelectionFidelity() {
-        return selectedFidelity;
-    }
-
-    public void setSelectedSelectionFidelity(Fidelity<Arg> selectedFidelity) {
-        this.selectedFidelity = selectedFidelity;
+    public void setMorphedFidelity(MorphedFidelity morphedFidelity) {
+        this.morphedFidelity = morphedFidelity;
     }
 
     @Override
@@ -224,15 +162,6 @@ public class MultifidelityMogram extends ServiceMogram {
     public <T extends Mogram> T exert(T mogram) throws TransactionException, MogramException, RemoteException {
         return null;
     }
-
-    public Context<Mogram> getSubsystems() {
-        return subsystems;
-    }
-
-    public void setSubsystems(Context<Mogram> subsystems) {
-        this.subsystems = subsystems;
-    }
-
 
     @Override
     public void appendTrace(String info) throws RemoteException {
