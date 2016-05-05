@@ -235,7 +235,11 @@ public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Ob
         MorphedFidelity mFi = (MorphedFidelity)observable;
         Morpher morpher = mFi.getMorpher();
         if (morpher != null)
-            morpher.morph(this, mFi, obj);
+            try {
+                morpher.morph(this, mFi, obj);
+            } catch (ServiceException e) {
+                throw new EvaluationException(e);
+            }
     }
 
     @Override

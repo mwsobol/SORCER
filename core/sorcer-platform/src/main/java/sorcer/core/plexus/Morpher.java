@@ -19,6 +19,7 @@ package sorcer.core.plexus;
 
 import sorcer.service.Arg;
 import sorcer.service.FidelityManagement;
+import sorcer.service.ServiceException;
 
 import java.rmi.RemoteException;
 
@@ -27,5 +28,5 @@ import java.rmi.RemoteException;
  */
 public interface Morpher<T extends Arg> {
 
-    public void morph(FidelityManagement<T> manager, MorphedFidelity mFi, Object value) throws RemoteException;
+    public void morph(FidelityManagement<T> manager, MorphedFidelity mFi, Object value) throws RemoteException, ServiceException;
 }

@@ -27,7 +27,7 @@ import java.io.Serializable;
 import java.rmi.RemoteException;
 
 @SuppressWarnings("unchecked")
-public class Tuple2<T1, T2> implements Arg, Serializable, Identifiable, Evaluation<T2>, Setter {
+public class Tuple2<T1, T2> implements Serializable, Identifiable, Evaluation<T2>, Setter {
 	private  static final long serialVersionUID = -6519678282532888568L;
 	public T1 _1 = null;
 	public T2 _2 = null;
@@ -163,7 +163,7 @@ public class Tuple2<T1, T2> implements Arg, Serializable, Identifiable, Evaluati
 	}
 
 	@Override
-	public Object exec(Arg... entries) throws MogramException, RemoteException, TransactionException {
+	public Object exec(Arg... entries) throws ServiceException, RemoteException, TransactionException {
 		return getValue(entries);
 	}
 }
