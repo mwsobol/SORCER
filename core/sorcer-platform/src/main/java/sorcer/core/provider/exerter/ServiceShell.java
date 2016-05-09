@@ -30,6 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.ControlContext;
+import sorcer.core.context.ModelTask;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.ThrowableTrace;
 import sorcer.core.context.model.ent.EntModel;
@@ -54,6 +55,7 @@ import sorcer.service.Exec.State;
 import sorcer.service.Signature.ReturnPath;
 import sorcer.service.Strategy.Access;
 import sorcer.service.modeling.Model;
+import sorcer.service.modeling.ModelingTask;
 import sorcer.service.txmgr.TransactionManagerAccessor;
 import sorcer.util.Sorcer;
 
@@ -345,9 +347,9 @@ public class ServiceShell implements RemoteServiceShell, Requestor, Callable {
 				exertion = (ServiceExertion)es.getSortedJob();
 			}
 //			 exert modeling local tasks
-//			if (exertion instanceof ModelingTask && exertion.getFidelity().getSelects().size() == 1) {
-//				return ((Task) exertion).doTask(transaction);
-//			}
+			if (exertion instanceof ModelTask && exertion.getFidelity().getSelects().size() == 1) {
+				return ((Task) exertion).doTask(transaction);
+			}
 
 			// handle delegated tasks with fidelities
 			if (exertion.getClass() == Task.class) {
