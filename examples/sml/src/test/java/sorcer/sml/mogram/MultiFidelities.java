@@ -12,7 +12,7 @@ import sorcer.core.invoker.Observable;
 import sorcer.core.plexus.FidelityManager;
 import sorcer.core.plexus.Morpher;
 import sorcer.core.plexus.MorphedFidelity;
-import sorcer.core.plexus.MultifidelityMogram;
+import sorcer.core.plexus.MultifidelityService;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
 
@@ -274,7 +274,7 @@ public class MultiFidelities {
     @Test
     public void morphingMultiFidelityModel() throws Exception {
 
-        Morpher mFi1mrph = (mgr, mFi, value) -> {
+        Morpher morpher1 = (mgr, mFi, value) -> {
             Fidelity<Signature> fi =  mFi.getFidelity();
             if (fi.getSelectName().equals("add")) {
                 if (((Double) value) <= 200.0) {
@@ -287,7 +287,7 @@ public class MultiFidelities {
             }
         };
 
-        Morpher mFi2mrph = (mgr, mFi, value) -> {
+        Morpher morpher2 = (mgr, mFi, value) -> {
             Fidelity<Signature> fi =  mFi.getFidelity();
             if (fi.getSelectName().equals("divide")) {
                 if (((Double) value) <= 9.0) {
@@ -315,8 +315,8 @@ public class MultiFidelities {
 
         // three entry multifidelity model with morphers
         Model mod = model(inEnt("arg/x1", 90.0), inEnt("arg/x2", 10.0),
-                ent("mFi1", mFi(mFi1mrph, add, multiply)),
-                ent("mFi2", mFi(mFi2mrph, average, divide, subtract)),
+                ent("mFi1", mFi(morpher1, add, multiply)),
+                ent("mFi2", mFi(morpher2, average, divide, subtract)),
                 ent("mFi3", mFi(average, divide, multiply)),
                 fi2, fi3, fi4,
                 response("mFi1", "mFi2", "mFi3", "arg/x1", "arg/x2"));
@@ -338,7 +338,106 @@ public class MultiFidelities {
     }
 
     @Test
-    public void reconfigureMultifidelityMogram() throws Exception {
+    public void selectMultifidelityEntries() throws Exception {
+        Entry e1 = ent("x1", 5.0);
+        Entry e2 = ent("x2", 6.0);
+        Entry e3 = ent("x3", 7.0);
+
+        MultifidelityService mfs = multiFiService("entries", fi(e1, e2, e3));
+
+        Object out = exec(mfs);
+        logger.info("out: " + out);
+        assertTrue(out.equals(5.0));
+
+        selectFi(mfs, "x2");
+        out = exec(mfs);
+        logger.info("out: " + out);
+        assertTrue(out.equals(6.0));
+
+        selectFi(mfs, "x3");
+        out = exec(mfs);
+        logger.info("out: " + out);
+        assertTrue(out.equals(7.0));
+    }
+
+    @Test
+    public void morphMultifidelityEntries() throws Exception {
+        Entry e1 = ent("x1", 5.0);
+        Entry e2 = ent("x2", 6.0);
+        Entry e3 = ent("x3", 7.0);
+
+        Morpher morpher = (mgr, mFi, value) -> {
+            Fidelity<Signature> fi =  mFi.getFidelity();
+            if (fi.getSelectName().equals("x1")) {
+                if (((double)value) <= 5.0) {
+                    mgr.reconfigure("x3");
+                }
+            }
+        };
+
+        MultifidelityService mfs = multiFiService("entries", mFi(morpher, e1, e2, e3));
+
+        Object out = exec(mfs);
+        logger.info("out: " + out);
+        assertTrue(out.equals(5.0));
+
+        out = exec(mfs);
+        logger.info("out: " + out);
+        assertTrue(out.equals(7.0));
+    }
+
+    @Test
+    public void selectMultifidelitySignatures() throws Exception {
+
+        Context cxt = context(inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
+                outEnt("result/y"));
+        Signature ms = sig("multiply", MultiplierImpl.class);
+        Signature as = sig("add", AdderImpl.class);
+
+        MultifidelityService mfs = multiFiService(fi(ms, as), cxt);
+
+        Context out = (Context) exec(mfs);
+        logger.info("out: " + out);
+        assertTrue(value(context(out), "result/y").equals(500.0));
+
+        selectFi(mfs, "add");
+        out = (Context) exec(mfs);
+        assertTrue(value(context(out), "result/y").equals(60.0));
+    }
+
+    @Test
+    public void morphMultifidelitySignatures() throws Exception {
+
+        Context cxt = context(inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
+                outEnt("result/y"));
+        Signature ms = sig("multiply", MultiplierImpl.class);
+        Signature as = sig("add", AdderImpl.class);
+
+        Morpher morpher = (mgr, mFi, value) -> {
+            Fidelity<Signature> fi =  mFi.getFidelity();
+            if (fi.getSelectName().equals("multiply")) {
+                try {
+                    if (((Double) value(context(value), "result/y")) >= 500.0) {
+                        mgr.reconfigure("add");
+                    }
+                } catch (ContextException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        MultifidelityService mfs = multiFiService(mFi(morpher, ms, as), cxt);
+
+        Context out = (Context) exec(mfs);
+        logger.info("out: " + out);
+        assertTrue(value(context(out), "result/y").equals(500.0));
+
+        out = (Context) exec(mfs);
+        assertTrue(value(context(out), "result/y").equals(60.0));
+    }
+
+    @Test
+    public void selectMultifidelityMogram() throws Exception {
 
         Task t4 = task(
                 "t4",
@@ -353,19 +452,19 @@ public class MultiFidelities {
                         outEnt("result/y")));
 
 
-        MultifidelityMogram mfm = multiFiMogram(fi(t5, t4));
-        Mogram mog = exert(mfm);
+        MultifidelityService mfs = multiFiService(mFi(t5, t4));
+        Mogram mog = exert(mfs);
         logger.info("out: " + mog.getContext());
         assertTrue(value(context(mog), "result/y").equals(100.0));
 
-        selectFi(mfm, "t4");
-        mog = exert(mfm);
+        selectFi(mfs, "t4");
+        mog = exert(mfs);
         logger.info("out: " + mog.getContext());
         assertTrue(value(context(mog), "result/y").equals(500.0));
     }
 
     @Test
-    public void mortphMultifidelityMogram() throws Exception {
+    public void morphMultifidelityMogram() throws Exception {
 
         Task t4 = task(
                 "t4",
@@ -380,7 +479,7 @@ public class MultiFidelities {
                         outEnt("result/y")));
 
 
-        Morpher mFi1mrph = (mgr, mFi, value) -> {
+        Morpher morpher = (mgr, mFi, value) -> {
             Fidelity<Signature> fi =  mFi.getFidelity();
             if (fi.getSelectName().equals("t5")) {
                 try {
@@ -393,13 +492,14 @@ public class MultiFidelities {
             }
         };
 
-        MultifidelityMogram mfm = multiFiMogram(mFi(mFi1mrph, t5, t4));
-        Mogram mog = exert(mfm);
+        MultifidelityService mfs = multiFiService(mFi(morpher, t5, t4));
+        Mogram mog = exert(mfs);
         logger.info("out: " + mog.getContext());
         assertTrue(value(context(mog), "result/y").equals(100.0));
 
-        mog = exert(mfm);
+        mog = exert(mfs);
         logger.info("out: " + mog.getContext());
         assertTrue(value(context(mog), "result/y").equals(500.0));
     }
+
 }

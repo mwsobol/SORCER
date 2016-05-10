@@ -104,6 +104,11 @@ public class Entries {
         public Object exec(Arg... args) throws MogramException, RemoteException, TransactionException {
             return invoke(Arg.getContext(args), args);
         }
+
+        @Override
+        public String getName() {
+            return getClass().getName();
+        }
     };
 
 	@Test

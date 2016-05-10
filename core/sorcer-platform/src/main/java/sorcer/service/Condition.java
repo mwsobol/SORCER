@@ -56,9 +56,10 @@ import java.util.Map;
 	protected final static Logger logger = LoggerFactory.getLogger(Condition.class
 			.getName());
 
-
 	public static String CONDITION_VALUE = "condition/value";
 	public static String CONDITION_TARGET = "condition/target";
+
+	private String name;
 
 	protected Context<?> conditionalContext;
 
@@ -320,7 +321,6 @@ import java.util.Map;
 		}
 	}
 
-
 	@Override
 	public Object exec(Arg... args) throws MogramException, RemoteException, TransactionException {
 		Context cxt = Arg.getContext(args);
@@ -329,5 +329,14 @@ import java.util.Map;
 			return isTrue();
 		}
 		return null;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	@Override
+	public String getName() {
+		return name;
 	}
 }

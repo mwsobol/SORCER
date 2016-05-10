@@ -209,7 +209,7 @@ public class Srv extends Entry<Object> implements Variability<Object>, Arg,
     }
 
     @Override
-    public Object exec(Arg... args) throws MogramException, RemoteException {
+    public Object exec(Arg... args) throws ServiceException, RemoteException {
         Model mod = Arg.getModel(args);
         if (mod != null) {
             if (mod instanceof SrvModel && _2 instanceof ValueCallable) {

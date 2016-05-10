@@ -160,7 +160,7 @@ public class EvaluationTask extends Task {
 		return this;
 	}
 
-	private Object handleSrvEntry(Srv evaluator, Arg... args) throws MogramException, RemoteException, TransactionException {
+	private Object handleSrvEntry(Srv evaluator, Arg... args) throws ServiceException, RemoteException, TransactionException {
 		Object out = null;
 		Object val = null;
 

@@ -25,7 +25,7 @@ package sorcer.service;
  *
  * @author Mike Sobolewski
  */
-public class MogramException extends Exception {
+public class MogramException extends ServiceException {
 
     private static final long serialVersionUID = -1L;
 

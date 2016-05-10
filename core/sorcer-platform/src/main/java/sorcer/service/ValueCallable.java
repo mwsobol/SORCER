@@ -25,6 +25,6 @@ import java.rmi.RemoteException;
 @FunctionalInterface
 public interface ValueCallable<T> extends Serializable {
 
-    T call(Context<T> context) throws MogramException, RemoteException;
+    T call(Context<T> context) throws ServiceException, RemoteException;
 
 }

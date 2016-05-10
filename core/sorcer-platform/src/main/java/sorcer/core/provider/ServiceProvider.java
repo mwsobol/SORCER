@@ -66,7 +66,9 @@ import sorcer.util.url.sos.SdbURLStreamHandlerFactory;
 import javax.security.auth.Subject;
 import javax.security.auth.login.LoginContext;
 import java.io.*;
+import java.net.Inet4Address;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.rmi.NoSuchObjectException;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
@@ -1250,6 +1252,22 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	private int numCalls = 0;
 	private double avgExecTime = 0;
 	private double totalCallTime = 0;
+
+	public synchronized String getThreadStatus() {
+
+		String host = "unknown";
+		try {
+			host = Inet4Address.getLocalHost().getHostAddress();
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+		}
+		String msg = "host = " + host + " "
+				   + "\ntotal service op calls = " + numCalls + " "
+				   + "\nnumber of service op calls running = "	+ numThreads + " "
+				   + "\nservice op call ids running = " + threadIds + " "
+		           + "\naverage exec time = " + avgExecTime;
+		return msg;
+	}
 
 	public synchronized String doThreadMonitor(String serviceIdString) {
 		String prefix;

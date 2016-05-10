@@ -30,6 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.ControlContext;
+import sorcer.core.context.ModelTask;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.ThrowableTrace;
 import sorcer.core.context.model.ent.EntModel;
@@ -40,6 +41,8 @@ import sorcer.core.dispatch.DispatcherException;
 import sorcer.core.dispatch.ExertionSorter;
 import sorcer.core.dispatch.ProvisionManager;
 import sorcer.core.exertion.ObjectTask;
+import sorcer.core.plexus.MorphedFidelity;
+import sorcer.core.plexus.MultifidelityService;
 import sorcer.core.provider.*;
 import sorcer.core.signature.NetSignature;
 import sorcer.core.signature.NetletSignature;
@@ -52,6 +55,7 @@ import sorcer.service.Exec.State;
 import sorcer.service.Signature.ReturnPath;
 import sorcer.service.Strategy.Access;
 import sorcer.service.modeling.Model;
+import sorcer.service.modeling.ModelingTask;
 import sorcer.service.txmgr.TransactionManagerAccessor;
 import sorcer.util.Sorcer;
 
@@ -343,9 +347,9 @@ public class ServiceShell implements RemoteServiceShell, Requestor, Callable {
 				exertion = (ServiceExertion)es.getSortedJob();
 			}
 //			 exert modeling local tasks
-//			if (exertion instanceof ModelingTask && exertion.getFidelity().getSelects().size() == 1) {
-//				return ((Task) exertion).doTask(transaction);
-//			}
+			if (exertion instanceof ModelTask && exertion.getFidelity().getSelects().size() == 1) {
+				return ((Task) exertion).doTask(transaction);
+			}
 
 			// handle delegated tasks with fidelities
 			if (exertion.getClass() == Task.class) {
@@ -709,6 +713,10 @@ public class ServiceShell implements RemoteServiceShell, Requestor, Callable {
 	}
 
 	private static Object finalize(Exertion xrt, Arg... args) throws ContextException, RemoteException {
+		// if the exertion failed return exceptions instead of requested value
+		if (xrt.getExceptions().size() > 0) {
+			return xrt.getExceptions();
+		}
 		Context dcxt = xrt.getDataContext();
 		ReturnPath rPath = (ReturnPath)dcxt.getReturnPath();
 		// check if it was already finalized
@@ -859,7 +867,7 @@ public class ServiceShell implements RemoteServiceShell, Requestor, Callable {
 	}
 
 	public Object exec(Service service, Arg... args)
-			throws MogramException, RemoteException {
+			throws ServiceException, RemoteException {
 		try {
 			if (service != null )
 				this.service = service;
@@ -886,15 +894,43 @@ public class ServiceShell implements RemoteServiceShell, Requestor, Callable {
 					throw new ExertionException("No return path in the context: "
 							+ cxt.getName());
 				}
+			} else if (service instanceof MultifidelityService) {
+				Fidelity<PrimitiveService> sfi = ((MultifidelityService)service).getServiceFidelity();
+				if (sfi == null) {
+					Fidelity fi = ((MultifidelityService)service).getMorphedFidelity().getFidelity();
+					Object select = fi.getSelect();
+					if (select != null) {
+						MorphedFidelity morphedFidelity = ((MultifidelityService)service).getMorphedFidelity();
+						Object out = null;
+						if (select instanceof Mogram)
+							out = ((Mogram) select).exert(args);
+						else {
+							Context cxt = ((MultifidelityService)service).getScope();
+							if (select instanceof Signature && cxt != null)
+								out = ((Service) select).exec(cxt);
+							else
+								out = ((Service) select).exec(args);
+						}
+
+						morphedFidelity.setChanged();
+						morphedFidelity.notifyObservers(out);
+						return out;
+					}
+				}
+				Context cxt = ((MultifidelityService)service).getScope();
+				if (sfi.getSelect() instanceof Signature && cxt != null)
+					return sfi.getSelect().exec(cxt);
+				else
+					return sfi.getSelect().exec(args);
 			}
 		} catch (Throwable ex) {
-			throw new MogramException(ex);
+			throw new ServiceException(ex);
 		}
 		return null;
 	}
 
 	@Override
-	public Context exec(Service service, Context context, Arg[] args) throws MogramException, RemoteException, TransactionException {
+	public Context exec(Service service, Context context, Arg[] args) throws ServiceException, RemoteException, TransactionException {
 		Arg[] extArgs = new Arg[args.length+1];
 		Arrays.copyOf(args, args.length+1);
 		extArgs[args.length] = context;

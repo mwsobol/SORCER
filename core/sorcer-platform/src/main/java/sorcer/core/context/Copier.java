@@ -25,7 +25,7 @@ import java.rmi.RemoteException;
  * Copier copies values of entries from one Context to another one.
  */
 public class Copier implements Evaluation<Context> {
-
+	private String name;
 	private Context fromContext;
 	private Arg[] fromEntries;
 	private Context toContext;
@@ -72,5 +72,14 @@ public class Copier implements Evaluation<Context> {
 			return getValue(args);
 		}
 		return null;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	@Override
+	public String getName() {
+		return name;
 	}
 }

@@ -912,14 +912,22 @@ public class operator {
 		return s;
 	}
 
-	public static Signature sig(String operation, Class serviceType, Arg... args) throws SignatureException {
+    public static Signature sig(String operation, Class serviceType, Arg... args) throws SignatureException {
+        return sigActualName(true, operation, serviceType, args);
+    }
+
+        public static Signature sigActualName(boolean callActualName, String operation, Class serviceType, Arg... args) throws SignatureException {
 		String providerName = null;
 		Provision p = null;
 		List<MapContext> connList = new ArrayList<MapContext>();
 		if (args != null) {
 			for (Object o : args) {
 				if (o instanceof ProviderName) {
-					providerName = Sorcer.getActualName(((ProviderName) o).getName());
+                    if (callActualName) {
+                        providerName = Sorcer.getActualName(((ProviderName) o).getName());
+                    } else {
+                        providerName = ((ProviderName) o).getName();
+                    }
 				} else if (o instanceof Provision) {
 					p = (Provision) o;
 				} else if (o instanceof MapContext) {
@@ -1156,6 +1164,18 @@ public class operator {
 		return fi;
 	}
 
+	public static Fidelity<PrimitiveService> fi(String name, PrimitiveService... selectors) {
+		Fidelity fi = new Fidelity(name, selectors);
+		fi.type = Fidelity.Type.SERVICE;
+		return fi;
+	}
+
+	public static Fidelity<PrimitiveService> fi(PrimitiveService... selectors) {
+		Fidelity fi = new Fidelity(selectors);
+		fi.type = Fidelity.Type.SERVICE;
+		return fi;
+	}
+
 	public static Fidelity<Arg> fi(String name, Arg... selectors) {
 		Fidelity fi = new Fidelity(name, selectors);
 		fi.type = Fidelity.Type.NAME;
@@ -1189,19 +1209,14 @@ public class operator {
 		return fi;
 	}
 
-	public static MorphedFidelity<Entry> mFi(Entry... entries) {
-		MorphedFidelity<Entry> multiFi = new MorphedFidelity(new Fidelity(entries));
-		return multiFi;
-	}
-
-	public static MorphedFidelity<Signature> mFi(Signature... signatures) {
-		MorphedFidelity<Signature> multiFi = new MorphedFidelity(new Fidelity(signatures));
-		return multiFi;
-	}
-
-	public static MorphedFidelity<Signature> mFi(Morpher morpher, Signature... signatures) {
-		MorphedFidelity<Signature> multiFi = new MorphedFidelity(new Fidelity(signatures));
+	public static MorphedFidelity<PrimitiveService> mFi(Morpher morpher, PrimitiveService... services) {
+		MorphedFidelity<PrimitiveService> multiFi = new MorphedFidelity(new Fidelity(services));
 		multiFi.setMorpher(morpher);
+		return multiFi;
+	}
+
+	public static MorphedFidelity<PrimitiveService> mFi(PrimitiveService... services) {
+		MorphedFidelity<PrimitiveService> multiFi = new MorphedFidelity(new Fidelity(services));
 		return multiFi;
 	}
 
@@ -1209,18 +1224,25 @@ public class operator {
 		((MultifidelityService)mogram).selectFidelity(selection);
 	}
 
-	public static MultifidelityService multiFiMogram(MorphedFidelity<Mogram> morphedFi) {
-		return new MultifidelityService(morphedFi);
+	public static MultifidelityService multiFiService(Fidelity<PrimitiveService> fidelity) {
+		return new MultifidelityService(fidelity.getName(), fidelity);
+	}
+	public static MultifidelityService multiFiService(MorphedFidelity<PrimitiveService> fidelity) {
+		return new MultifidelityService(fidelity.getName(), fidelity);
 	}
 
-	public static MorphedFidelity<Mogram> fi(Mogram... selections) {
-		return new MorphedFidelity(new Fidelity(selections));
+	public static MultifidelityService multiFiService(String name, Fidelity<PrimitiveService> fidelity) {
+		return new MultifidelityService(name, fidelity);
+	}
+	public static MultifidelityService multiFiService(String name, MorphedFidelity<PrimitiveService> fidelity) {
+		return new MultifidelityService(name, fidelity);
 	}
 
-	public static MorphedFidelity<Mogram> mFi(Morpher morpher, Mogram... selections) {
-		MorphedFidelity<Mogram> multiFi = new MorphedFidelity(new Fidelity(selections));
-		multiFi.setMorpher(morpher);
-		return multiFi;
+	public static MultifidelityService multiFiService(Fidelity<PrimitiveService> fidelity, Context context) {
+		return new MultifidelityService(context, fidelity);
+	}
+	public static MultifidelityService multiFiService(MorphedFidelity<PrimitiveService> fidelity, Context context) {
+		return new MultifidelityService(context, fidelity);
 	}
 
 	public static MorphedFidelity<Signature> multiFi(Signature... signatures) {
@@ -1962,7 +1984,7 @@ public class operator {
 		return value((Context<Object>) model, evalSelector, args);
 	}
 
-	public static Object exec(Service service, Arg... args) throws MogramException, RemoteException {
+	public static Object exec(Service service, Arg... args) throws ServiceException, RemoteException {
 		try {
 			if (service instanceof Entry || service instanceof Signature ) {
 				return service.exec(args);
@@ -1973,7 +1995,7 @@ public class operator {
 			}
 
 		} catch (Exception e) {
-			throw new MogramException(e);
+			throw new ServiceException(e);
 		}
 	}
 

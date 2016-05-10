@@ -284,7 +284,11 @@ public class ServiceContext<T> extends ServiceMogram implements
 
 	@Override
 	public List<ThrowableTrace> getExceptions() {
-		return mogramStrategy.getExceptions();
+		if (exertion != null)
+			// compatibility for contexts with exertions
+			return exertion.getExceptions();
+		else
+			return mogramStrategy.getAllExceptions();
 	}
 
 	@Override
@@ -294,7 +298,18 @@ public class ServiceContext<T> extends ServiceMogram implements
 
 	@Override
 	public List<ThrowableTrace> getAllExceptions() {
-		return mogramStrategy.getAllExceptions();
+		List<ThrowableTrace> exertExceptions;
+		if (exertion != null)
+			exertExceptions = exertion.getExceptions();
+		else
+			exertExceptions = new ArrayList<ThrowableTrace>();
+
+		if (mogramStrategy == null)
+			return mogramStrategy.getAllExceptions();
+		else {
+			exertExceptions.addAll(mogramStrategy.getAllExceptions());
+		}
+		return exertExceptions;
 	}
 
 	@Override
