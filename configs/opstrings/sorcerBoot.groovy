@@ -30,6 +30,7 @@ class Sorcer {
     static String riverVersion = versionProps.getProperty("river.version")
     static String blitzVersion = versionProps.getProperty("blitz.version")
     static String commonsIoVersion = versionProps.getProperty("commonsio.version")
+    //static String commonsExecVersion = versionProps.getProperty("commonsExec.version")
     static String jeVersion = versionProps.getProperty("je.version")
 
     static getSorcerHome() {
@@ -153,6 +154,19 @@ deployment(name: "Sorcer OS") {
                       "rio-api-${RioVersion.VERSION}.jar"
         }
         configuration new File("${Sorcer.sorcerHome}/bin/sorcer/logger/configs/logger-prv.config").text
+        maintain 1
+    }
+
+    service(name: SorcerEnv.getActualName("System Caller")) {
+        interfaces {
+            classes 'sorcer.core.provider.SysCaller'
+            resources getCommonDLs() as String[]
+        }
+        implementation(class: 'sorcer.core.provider.caller.SysCallerProvider') {
+            resources "sos-caller-${Sorcer.sorcerVersion}.jar"/*,
+                      "commons-exec-${Sorcer.commonsExecVersion}.jar"*/
+        }
+        configuration new File("${Sorcer.sorcerHome}/bin/sorcer/sysCaller/configs/sysCaller-prv.config").text
         maintain 1
     }
 

@@ -38,6 +38,7 @@ class SorcerPlatformConfig {
                         "javax.inject-"   : "lib/common | Javax Inject",
                         "guava-"          : "lib/common | Guava",
                         "plexus-utils-"   : "lib/common | Plexus Utils",
+                        "commons-exec-"   : "lib/common | Apache Commons Exec",
                         "Sorcer-Platform" : "lib/sorcer/lib | Sorcer Platform"]
             jars.each { jar, data ->
                 String[] parts = data.split("\\|")
