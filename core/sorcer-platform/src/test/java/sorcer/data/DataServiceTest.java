@@ -16,7 +16,6 @@
 package sorcer.data;
 
 import org.junit.Test;
-import org.rioproject.config.Constants;
 import org.rioproject.impl.util.FileUtils;
 
 import java.io.*;
@@ -97,8 +96,7 @@ public class DataServiceTest {
 
     @Test
     public void testPlatformDataService() throws UnknownHostException {
-        System.clearProperty(Constants.WEBSTER);
-        System.clearProperty(Constants.WEBSTER_ROOTS);
+        System.clearProperty(DataService.DATA_URL);
         File dataDir = new File(DataService.getDataDir());
         if(!dataDir.exists())
             dataDir.mkdirs();
