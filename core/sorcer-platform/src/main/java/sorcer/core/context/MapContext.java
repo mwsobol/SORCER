@@ -5,7 +5,7 @@ package sorcer.core.context;
  */
 public class MapContext extends ServiceContext {
 
-    public enum Direction { IN, OUT }
+    public enum Direction { IN, OUT, FILTER }
 
     public Direction direction;
 

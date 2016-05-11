@@ -1489,15 +1489,16 @@ public class ServiceContext<T> extends ServiceMogram implements
 	public Context execSignature(Signature sig, Arg... items) throws MogramException {
 		if (sig.getReturnPath() == null)
 			throw new MogramException("No signature return path defined!");
+		ReturnPath rp = (ReturnPath) sig.getReturnPath();
 
-		if (sig.getReturnPath().getPath() == null) {
-			((ReturnPath)sig.getReturnPath()).path = sig.getName();
+		if (rp.getPath() == null) {
+			rp.path = sig.getName();
 		}
-		Path[] ips = ((ReturnPath)sig.getReturnPath()).getInSigPaths();
-		Path[] ops = ((ReturnPath)sig.getReturnPath()).getOutSigPaths();
+		Path[] ips = rp.getInSigPaths();
+		Path[] ops = rp.getOutSigPaths();
 		Context incxt;
-		if (((ReturnPath) sig.getReturnPath()).getDataContext() != null) {
-			incxt = ((ReturnPath) sig.getReturnPath()).getDataContext();
+		if (rp.getDataContext() != null) {
+			incxt = rp.getDataContext();
 			incxt.setScope(this);
 		} else {
 			incxt = this;
@@ -1505,21 +1506,27 @@ public class ServiceContext<T> extends ServiceMogram implements
 				incxt = this.getEvaluatedSubcontext(ips, items);
 			}
 		}
-		incxt.setReturnPath(sig.getReturnPath());
-		String returnPath = incxt.getReturnPath().getPath();
+		incxt.setReturnPath(rp);
+		String returnPath = rp.getPath();
 		Context outcxt, resultContext = null;
 		try {
+			// define output context here
+			sig.setReturnPath((SignatureReturnPath)null);
 			outcxt = task(sig, incxt).exert().getContext();
+			// restore return path
+			sig.setReturnPath(rp);
 		} catch (Exception e) {
 			throw new MogramException(e);
 		}
 		resultContext = outcxt;
 		if (ops != null && ops.length > 0) {
-			resultContext = outcxt.getDirectionalSubcontext(ops);
+			Context returnContext = outcxt.getDirectionalSubcontext(ops);
 			// make sure the result is returned correctly
-			resultContext.putValue(returnPath, outcxt.getPath(returnPath));
+			resultContext.putValue(returnPath, returnContext);
+			this.appendInout(returnContext);
+		} else {
+			this.appendInout(outcxt);
 		}
-		this.appendInout(outcxt);
 		return resultContext;
 	}
 

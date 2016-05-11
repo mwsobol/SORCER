@@ -192,6 +192,17 @@ public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Ob
         }
     }
 
+    @Override
+    public void reconfigure(Fidelity... fidelities) throws RemoteException {
+        if (this.fidelities.size() > 0) {
+            for (Fidelity fi : fidelities) {
+                if (this.fidelities.get(fi.getPath()) != null) {
+                    this.fidelities.get(fi.getPath()).setSelect(fi.getName());
+                }
+            }
+        }
+    }
+
     public void add(Fidelity<Fidelity>... sysFis) {
         for (Fidelity<Fidelity> sysFi : sysFis){
             metafidelities.put(sysFi.getName(), sysFi);
