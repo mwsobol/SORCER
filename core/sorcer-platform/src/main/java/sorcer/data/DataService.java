@@ -59,7 +59,7 @@ public class DataService implements FileURLHandler {
      */
     public static DataService getPlatformDataService() {
         DataService dataService;
-        String webster = System.getProperty(Constants.WEBSTER);
+        String webster = System.getProperty(DATA_URL, System.getProperty(Constants.WEBSTER));
         if(webster!=null) {
             int ndx = webster.lastIndexOf(":");
             int port = Integer.parseInt(webster.substring(ndx+1));
@@ -72,7 +72,6 @@ public class DataService implements FileURLHandler {
             dataService = new DataService(0, getDataDir().split(";")).start();
 
             System.setProperty(DATA_URL, String.format("http://%s:%d", dataService.address, dataService.port));
-            System.setProperty(Constants.WEBSTER, String.format("http://%s:%d", dataService.address, dataService.port));
         }
         return dataService;
     }
