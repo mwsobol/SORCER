@@ -41,6 +41,7 @@ import sorcer.core.dispatch.SortingException;
 import sorcer.core.dispatch.SrvModelAutoDeps;
 import sorcer.core.exertion.*;
 import sorcer.core.invoker.InvokeIncrementor;
+import sorcer.core.plexus.FidelityManager;
 import sorcer.core.plexus.Morpher;
 import sorcer.core.plexus.MorphedFidelity;
 import sorcer.core.plexus.MultifidelityService;
@@ -255,8 +256,7 @@ public class operator {
 		return context(args);
 	}
 
-	public static Context context(Object... entries)
-			throws ContextException {
+	public static Context context(Object... entries) throws ContextException {
 		// do not create a context from Context, jut return
 		if (entries.length == 1 && entries[0] instanceof Context)
 			return  (Context)entries[0];
@@ -265,6 +265,7 @@ public class operator {
 		List<MapContext> connList = new ArrayList<MapContext>();
 		Strategy.Access accessType = null;
 		Strategy.Flow flowType = null;
+		Strategy.FidelityMangement fm = null;
 
 		if (entries[0] instanceof Exertion) {
 			Exertion xrt = (Exertion) entries[0];
@@ -342,6 +343,8 @@ public class operator {
 				accessType = (Strategy.Access)o;
 			} else if (o instanceof Strategy.Access) {
 				flowType = (Strategy.Flow)o;
+			} else if (o instanceof Strategy.FidelityMangement) {
+				fm = (Strategy.FidelityMangement)o;
 			}
 		}
 
@@ -465,7 +468,31 @@ public class operator {
 				throw new ContextException("Problem with dependencies: " + e);
 			}
 		}
+		if (fm == FidelityMangement.YES) {
+			try {
+				((ServiceMogram)cxt).setFiManager(createFiManager(cxt));
+			} catch (RemoteException e) {
+				throw new ContextException(e);
+			}
+		}
 		return cxt;
+	}
+
+	private static FidelityManager createFiManager(Context cxt) throws EvaluationException, RemoteException {
+		FidelityManager fim = new FidelityManager(cxt);
+		Map<String, Fidelity> fiMap = new HashMap<>();
+		Map.Entry<String,Object> e;
+		Object val = null;
+		Iterator<Map.Entry<String,Object>> i = ((ServiceContext)cxt).entryIterator();
+		while(i.hasNext()) {
+			e = i.next();
+			val = e.getValue();
+			if (val instanceof Srv && ((Srv)val).asis() instanceof Fidelity) {
+				fiMap.put(e.getKey(), (Fidelity)((Srv)val).asis());
+			}
+		}
+		fim.setFidelities(fiMap);
+		return fim;
 	}
 
 	private static Context getPersistedContext(Object... entries) throws ContextException {
@@ -1218,6 +1245,10 @@ public class operator {
 	public static MorphedFidelity<PrimitiveService> mFi(PrimitiveService... services) {
 		MorphedFidelity<PrimitiveService> multiFi = new MorphedFidelity(new Fidelity(services));
 		return multiFi;
+	}
+
+	public static void selectFis(Mogram mogram, Fidelity... fidelities) throws RemoteException {
+		((ServiceMogram)mogram).getFiManager().reconfigure(fidelities);
 	}
 
 	public static void selectFi(Mogram mogram, String selection) {

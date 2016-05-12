@@ -126,7 +126,16 @@ public interface Strategy extends Arg {
 			return toString();
 		}
 	}
-	
+
+	public enum FidelityMangement implements Arg {
+		YES, NO;
+
+		@Override
+		public String getName() {
+				return toString();
+			};
+	}
+
 	public enum Opti implements Arg {
 		MAX, MIN;
 
