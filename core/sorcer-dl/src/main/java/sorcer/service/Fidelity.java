@@ -43,7 +43,7 @@ public class Fidelity<T extends Arg> implements Arg, Serializable {
 		}
 	}
 
-	private static int count = 0;
+	protected static int count = 0;
 
 	protected String name;
 

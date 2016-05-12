@@ -201,12 +201,20 @@ public class ServiceContext<T> extends ServiceMogram implements
 		isPersistantTaskAssociated = cxt.isPersistantTaskAssociated;
 	}
 
-	public ServiceContext(Object object) throws ContextException {
-		this((object instanceof Identifiable) ? ((Identifiable) object).getName() : null);
+	public ServiceContext(List<Identifiable> objects) throws ContextException {
+		for (Identifiable obj : objects) {
+			putValue(obj.getName(), obj);
+		}
+	}
+
+	public ServiceContext(Object... objects) throws ContextException {
 		setArgsPath(Context.PARAMETER_VALUES);
-		setArgs(new Object[]{object});
+		setArgs(objects);
 		setParameterTypesPath(Context.PARAMETER_TYPES);
-		setParameterTypes(new Class[] { object.getClass() });
+		Class[] parTypes = new Class[objects.length];
+		for (int i = 0; i < objects.length; i++) {
+			parTypes[i] = objects[i].getClass();
+		}
 	}
 
 	/**

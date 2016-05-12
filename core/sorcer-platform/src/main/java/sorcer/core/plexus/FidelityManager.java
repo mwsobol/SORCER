@@ -66,8 +66,8 @@ public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Ob
     }
 
     public FidelityManager(Mogram mogram) {
+        this("fiManager" +  count++);
         this.mogram = mogram;
-        name = "fiManager" +  count++;
     }
 
     public Map<String, Fidelity<Fidelity>> getMetafidelities() {
@@ -193,7 +193,7 @@ public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Ob
     }
 
     @Override
-    public void reconfigure(Fidelity... fidelities) throws RemoteException {
+    public void reconfigure(Fidelity... fidelities) throws ContextException, RemoteException {
         if (this.fidelities.size() > 0) {
             for (Fidelity fi : fidelities) {
                 if (this.fidelities.get(fi.getPath()) != null) {

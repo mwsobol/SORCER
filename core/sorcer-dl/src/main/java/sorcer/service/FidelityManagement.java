@@ -38,7 +38,7 @@ public interface FidelityManagement<T extends Arg> extends Service {
 
     public void reconfigure(String... fiNames) throws RemoteException;
 
-    public void reconfigure(Fidelity... fidelities) throws RemoteException;
+    public void reconfigure(Fidelity... fidelities) throws RemoteException, ContextException;
 
     public Mogram getMogram() throws RemoteException;
 

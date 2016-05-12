@@ -1247,7 +1247,7 @@ public class operator {
 		return multiFi;
 	}
 
-	public static void selectFis(Mogram mogram, Fidelity... fidelities) throws RemoteException {
+	public static void selectFis(Mogram mogram, Fidelity... fidelities) throws RemoteException, ContextException {
 		((ServiceMogram)mogram).getFiManager().reconfigure(fidelities);
 	}
 
