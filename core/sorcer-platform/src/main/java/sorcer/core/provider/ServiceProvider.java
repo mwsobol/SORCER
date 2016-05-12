@@ -1261,7 +1261,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		}
-		String msg = "host = " + host + " "
+		String msg =   "host ip address             = " + host + " "
 				   + "\ntotal service op calls      = " + numCalls + " "
 				   + "\nservice op calls running    = "	+ numThreads + " "
 				   + "\nservice op call ids running = " + threadIds + " "
