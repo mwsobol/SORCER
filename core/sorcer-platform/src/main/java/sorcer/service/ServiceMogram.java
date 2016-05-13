@@ -14,6 +14,7 @@ import sorcer.security.util.SorcerPrincipal;
 
 import javax.security.auth.Subject;
 import java.io.Serializable;
+import java.rmi.RemoteException;
 import java.security.Principal;
 import java.util.*;
 
@@ -834,6 +835,18 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
         }
         trimNotSerializableSignatures(serviceFidelity);
         return serviceFidelity;
+    }
+
+    @Override
+    public void reconfigure(Fidelity... fidelities) throws ContextException, RemoteException {
+        if (fiManager != null)
+            fiManager.reconfigure(fidelities);
+    }
+
+    @Override
+    public void morph(String... metaFiNames) throws RemoteException {
+        if (fiManager != null)
+            fiManager.morph(metaFiNames);
     }
 
     public void removeSignature(int index) {

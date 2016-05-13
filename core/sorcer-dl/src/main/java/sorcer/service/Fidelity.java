@@ -85,10 +85,6 @@ public class Fidelity<T extends Arg> implements Arg, Serializable {
 		return null;
 	}
 
-	public void removeSelect(T select) {
-		this.selects.remove(select);
-	}
-
 	public Fidelity(String... selects) {
 		this.name = "";
 		for (String s : selects)
@@ -154,6 +150,17 @@ public class Fidelity<T extends Arg> implements Arg, Serializable {
 		}
 	}
 
+	public String getPath(String fidelityName) {
+		for (T select : selects) {
+			if (select.getName().equals(fidelityName)) {
+				if (select instanceof Fidelity) {
+					return ((Fidelity) select).getPath();
+				}
+			}
+		}
+		return null;
+	}
+
 	public void clear() {
 		selects.clear();
 	}
@@ -162,12 +169,16 @@ public class Fidelity<T extends Arg> implements Arg, Serializable {
 		this.select = selection;
 	}
 
-	public T get(int index) {
-		return selects.get(index);
+	public void removeSelect(T select) {
+		this.selects.remove(select);
 	}
 
 	public void addSelect(T select) {
 		selects.add(select);
+	}
+
+	public T get(int index) {
+		return selects.get(index);
 	}
 
 	public List<T> getSelects() {

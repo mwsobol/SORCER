@@ -265,6 +265,20 @@ public interface Mogram extends Identifiable, Service, Exerter, Projection<Signa
     public Context getDataContext() throws ContextException;
 
     /**
+     * Reconfigure this model with given fudelities.
+     *
+     * @param fidelities
+     */
+    public void reconfigure(Fidelity... fidelities) throws ContextException, RemoteException;
+
+    /**
+     * Reconfigure this model with given names of metafidelities.
+     *
+     * @param metaFiNames
+     */
+    public void morph(String... metaFiNames) throws RemoteException;
+
+    /**
      * Check if this context is export controlled, accessible to principals from
      * export controlled countries.
      *
