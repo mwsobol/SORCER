@@ -85,7 +85,7 @@ public class MultiFidelities {
 
         logger.info("DEPS: " + printDeps(mdl));
 
-        selectFis(mdl, fi("arg/x1", "arg/x1/fi2"), fi("arg/x2", "arg/x2/fi2"), fi("mFi", "multiply"));
+        reconfigure(mdl, fi("arg/x1", "arg/x1/fi2"), fi("arg/x2", "arg/x2/fi2"), fi("mFi", "multiply"));
         Context out = response(mdl);
         logger.info("out: " + out);
         assertTrue(get(out, "arg/x1").equals(11.0));
