@@ -23,6 +23,7 @@ import sorcer.co.tuple.Tuple2;
 import sorcer.core.Name;
 import sorcer.core.context.ServiceContext;
 import sorcer.service.*;
+import sorcer.service.modeling.EvaluationComponent;
 import sorcer.service.modeling.Model;
 import sorcer.service.modeling.Variability;
 import sorcer.util.bdb.objects.UuidObject;
@@ -40,7 +41,7 @@ import static sorcer.eo.operator.add;
  * @author Mike Sobolewski
  */
 @SuppressWarnings("unchecked")
-public class Entry<T> extends Tuple2<String, T> implements Callable<T>, Dependency, Comparable<T>, Setter, Reactive<T> {
+public class Entry<T> extends Tuple2<String, T> implements Callable<T>, Dependency, Comparable<T>, EvaluationComponent, Setter, Reactive<T> {
 	private static final long serialVersionUID = 5168783170981015779L;
 
 	public int index;

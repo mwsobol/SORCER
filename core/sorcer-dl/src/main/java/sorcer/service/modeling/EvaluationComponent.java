@@ -1,7 +1,7 @@
 /*
  * Copyright 2013 the original author or authors.
  * Copyright 2013 SorcerSoft.org.
- *  
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -14,25 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package sorcer.service.modeling;
 
-import java.rmi.RemoteException;
-
 /**
- *
- * @author Mike Sobolewski
+ * Created by sobol on 5/14/16.
  */
-public interface Filtration<T> extends EvaluationComponent {
-
-    /**
-     * Returns the filtered out value from the given input.
-     *
-     * @return the filtered out value
-     * @throws FilterException
-     * @throws RemoteException
-     */
-    public Object doFilter(Object input) throws FilterException, RemoteException;
-
-    public Object getTarget();
+public interface EvaluationComponent {
 }
+
+

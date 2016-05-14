@@ -32,7 +32,7 @@ import java.rmi.RemoteException;
  *
  * @author Mike Sobolewski
  */
-public interface Getter<T> {
+public interface Getter<T> extends EvaluationComponent {
 
     public String getName();
 

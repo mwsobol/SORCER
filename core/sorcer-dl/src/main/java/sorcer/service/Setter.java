@@ -17,10 +17,12 @@
 
 package sorcer.service;
 
+import sorcer.service.modeling.EvaluationComponent;
+
 import java.io.Serializable;
 import java.rmi.RemoteException;
 
-public interface Setter extends Serializable {
+public interface Setter extends EvaluationComponent, Serializable {
 
 	public String getName();
 
