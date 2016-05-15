@@ -242,7 +242,7 @@ public class MethodInvoker<T> extends ServiceInvoker<T> implements MethodInvokin
 						parameters2[2] = args;
 						parameters = parameters2;
 						// ignore default setup for exertion tasks the call the object provider
-					} else if (paramTypes.length == 1 && (paramTypes[0] == Context.class)
+					} else if (parameters != null && paramTypes.length == 1 && (paramTypes[0] == Context.class)
 							&& ((Context)parameters[0]).size() == 0 && !(target instanceof Evaluation)) {
 						paramTypes = null;
 						parameters = null;

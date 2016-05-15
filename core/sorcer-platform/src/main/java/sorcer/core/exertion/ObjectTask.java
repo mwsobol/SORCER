@@ -123,16 +123,17 @@ public class ObjectTask extends Task {
 					evaluator = new MethodInvoker(prv, os.getSelector());
 				}
 			}
+			evaluator.setParameterTypes(new Class[] { Context.class });
 			if (os.getReturnPath() != null)
 				dataContext.setReturnPath(os.getReturnPath());
 
 			if (result == null) {
-				if (getArgs() == null && os.getParameterTypes() == null) {
+				if (getArgs() == null) {
 					// assume this task context is used by the signature's
 					// provider
 					if (dataContext != null) {
-						evaluator.setParameterTypes(new Class[] { Context.class });
 						evaluator.setContext(dataContext);
+						evaluator.setParameterTypes(new Class[] { Context.class });
 					}
 				} else if (dataContext.getArgsPath() != null) {
 					evaluator.setArgs(getParameterTypes(), (Object[]) getArgs());

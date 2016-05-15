@@ -17,6 +17,8 @@
 
 package sorcer.service;
 
+import sorcer.service.modeling.EvaluationComponent;
+
 import java.rmi.RemoteException;
 
 
@@ -25,7 +27,7 @@ import java.rmi.RemoteException;
  * 
  * @author Mike Sobolewski
  */
-public interface  Evaluation <T> extends Substitutable, PrimitiveService {
+public interface  Evaluation <T> extends Substitutable, PrimitiveService, EvaluationComponent {
 
 	/**
 	 * Returns the value of the existing value of this evaluation that might be invalid.

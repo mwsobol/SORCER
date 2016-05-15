@@ -177,11 +177,11 @@ public class ObjectSignature extends ServiceSignature {
 		this.args = args;
 	}
 
-	public Class<?>[] getParameterTypes() throws ContextException {
+	public Class<?>[] getParameterTypes() {
 		return argTypes;
 	}
 
-	public void setParameterTypes(Class<?>... types) throws ContextException {
+	public void setParameterTypes(Class<?>... types) {
 		argTypes = types;
 	}
 
@@ -373,6 +373,7 @@ public class ObjectSignature extends ServiceSignature {
 				return context(shell.exert(args));
 			} else if (mog instanceof Context) {
 				try {
+					argTypes = new Class[] { Context.class };
 					return exert(task(this, (Context)mog));
 				} catch (SignatureException e) {
 					throw new MogramException(e);
