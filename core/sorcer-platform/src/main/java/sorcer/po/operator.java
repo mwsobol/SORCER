@@ -128,8 +128,8 @@ public class operator {
 		return new EntryList(entries);
 	}
 
-	public static Fidelity<Arg> parFi(String name) {
-		return new Fidelity(name);
+	public static ServiceFidelity<Arg> parFi(String name) {
+		return new ServiceFidelity(name);
 	}
 
 	public static Entry parFi(Par parEntry) {

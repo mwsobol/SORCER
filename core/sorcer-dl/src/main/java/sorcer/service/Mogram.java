@@ -120,12 +120,12 @@ public interface Mogram extends Identifiable, Service, Exerter, Projection<Signa
      * @return a collection of all service signatures
      * @see #getProcessSignature
      */
-    public Fidelity<Signature> getFidelity();
+    public ServiceFidelity<Signature> getFidelity();
 
     /**
      * Returns a map of all available service fidelities of this exertion.
      */
-    public Map<String, Fidelity> getFidelities();
+    public Map<String, ServiceFidelity> getFidelities();
 
     /**
      * Returns <code>true</code> if this exertion should be monitored for its
@@ -269,7 +269,7 @@ public interface Mogram extends Identifiable, Service, Exerter, Projection<Signa
      *
      * @param fidelities
      */
-    public void reconfigure(Fidelity... fidelities) throws ContextException, RemoteException;
+    public void reconfigure(ServiceFidelity... fidelities) throws ContextException, RemoteException;
 
     /**
      * Reconfigure this model with given names of metafidelities.

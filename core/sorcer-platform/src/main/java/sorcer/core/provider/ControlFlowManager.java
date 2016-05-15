@@ -488,7 +488,7 @@ public class ControlFlowManager {
 
     public Task doBatchTask(Task task) throws MogramException,
             SignatureException, RemoteException, ContextException {
-        Fidelity tf = task.getFidelity();
+        ServiceFidelity tf = task.getFidelity();
         task.correctBatchSignatures();
         task.startExecTime();
         // append context from Contexters
@@ -504,7 +504,7 @@ public class ControlFlowManager {
             task.setContext(cxt);
         }
         // exert service task
-		Fidelity<Signature> ts = new Fidelity<Signature>();
+		ServiceFidelity<Signature> ts = new ServiceFidelity<Signature>();
         Signature tsig = task.getProcessSignature();
         ((ServiceContext)task.getContext()).getMogramStrategy().setCurrentSelector(tsig.getSelector());
         ((ServiceContext)task.getContext()).setCurrentPrefix(tsig.getPrefix());
@@ -569,7 +569,7 @@ public class ControlFlowManager {
                 ((ServiceContext)shared).getMogramStrategy().setCurrentSelector(signatures.get(i).getSelector());
                 ((ServiceContext)shared).setCurrentPrefix(signatures.get(i).getPrefix());
 
-                Fidelity<Signature> tmp = new Fidelity<Signature>();
+                ServiceFidelity<Signature> tmp = new ServiceFidelity<Signature>();
                 tmp.getSelects().add(signatures.get(i));
                 t.setFidelity(tmp);
                 t.setContinous(true);

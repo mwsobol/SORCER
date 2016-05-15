@@ -212,8 +212,8 @@ public class operator {
         return  new ReturnPath<>(path);
     }
 
-    public static Fidelity<Arg> response(String... paths) {
-        return  new Fidelity(paths);
+    public static ServiceFidelity<Arg> response(String... paths) {
+        return  new ServiceFidelity(paths);
     }
 
     public static Paradigmatic modeling(Paradigmatic paradigm) {
@@ -229,10 +229,10 @@ public class operator {
     public static Model srvModel(Object... items) throws ContextException {
         sorcer.eo.operator.Complement complement = null;
         List<Signature> sigs = new ArrayList<Signature>();
-        Fidelity<Arg> responsePaths = null;
+        ServiceFidelity<Arg> responsePaths = null;
         SrvModel model = null;
         FidelityManager fiManager = null;
-        List<Fidelity<Fidelity>> metaFis = new ArrayList<Fidelity<Fidelity>>();
+        List<ServiceFidelity<ServiceFidelity>> metaFis = new ArrayList<ServiceFidelity<ServiceFidelity>>();
         List<Srv> metaFiEnts = new ArrayList<Srv>();
         for (Object item : items) {
             if (item instanceof Signature) {
@@ -245,11 +245,11 @@ public class operator {
                 fiManager = ((FidelityManager)item);
             } else if (item instanceof Srv && ((Entry)item)._2 instanceof MorphedFidelity) {
                 metaFiEnts.add((Srv)item);
-            } else if (item instanceof Fidelity) {
-                if (((Fidelity) item).getSelects().get(0) instanceof Fidelity) {
-                    metaFis.add((Fidelity<Fidelity>) item);
-                } else if (((Fidelity) item).getSelects().get(0) instanceof Name) {
-                    responsePaths = ((Fidelity<Arg>) item);
+            } else if (item instanceof ServiceFidelity) {
+                if (((ServiceFidelity) item).getSelects().get(0) instanceof ServiceFidelity) {
+                    metaFis.add((ServiceFidelity<ServiceFidelity>) item);
+                } else if (((ServiceFidelity) item).getSelects().get(0) instanceof Name) {
+                    responsePaths = ((ServiceFidelity<Arg>) item);
                 }
             }
         }
@@ -277,7 +277,7 @@ public class operator {
         }
 
         if (responsePaths != null) {
-            model.getMogramStrategy().setResponsePaths(((Fidelity) responsePaths).getSelects());
+            model.getMogramStrategy().setResponsePaths(((ServiceFidelity) responsePaths).getSelects());
         }
         if (complement != null) {
             model.setSubject(complement.path(), complement.value());

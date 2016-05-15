@@ -323,7 +323,7 @@ public class Par<T> extends Entry<T> implements Variability<T>, Mappable<T>,
 							scope.append(((Par<T>) p).getScope());
 
 					}
-				} else if (p instanceof Fidelity && fidelities != null) {
+				} else if (p instanceof ServiceFidelity && fidelities != null) {
 					selectedFidelity = p.getName();
 				} else if (p instanceof Context) {
 					if (scope == null)

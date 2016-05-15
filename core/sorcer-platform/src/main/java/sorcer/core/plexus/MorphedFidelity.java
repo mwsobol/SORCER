@@ -26,18 +26,19 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * Created by Mike Sobolewski on 10/26/15.
+ * Created by Mike Sobolewski on 04/26/16.
  */
-public class MorphedFidelity<T extends Arg> extends Observable implements Identifiable, Arg, Serializable {
+public class MorphedFidelity<T extends Arg> extends Observable implements
+        Identifiable, Multifidelity<T>, Arg, Serializable {
 
     // fidelity of fidelities T  that is observable
-    private Fidelity<T> fidelity;
+    private ServiceFidelity<T> fidelity;
 
     private Morpher morpher;
 
     private Uuid id = UuidFactory.generate();
 
-    public MorphedFidelity(Fidelity fi) {
+    public MorphedFidelity(ServiceFidelity fi) {
         fidelity = fi;
     }
 
@@ -45,16 +46,26 @@ public class MorphedFidelity<T extends Arg> extends Observable implements Identi
         addObserver(manager);
     }
 
-    public Fidelity<T> getFidelity() {
+    public ServiceFidelity<T> getFidelity() {
         return fidelity;
     }
 
-    public void setFidelity(Fidelity<T> fi) {
+    public void setFidelity(ServiceFidelity<T> fi) {
         this.fidelity = fi;
     }
 
     public T getSelect() {
         return fidelity.getSelect();
+    }
+
+    @Override
+    public void setSelect(String name) {
+        fidelity.setSelect(name);
+    }
+
+    @Override
+    public void addSelect(T fidelity) {
+        this.fidelity.addSelect(fidelity);
     }
 
     public void setSelect(T selection) {

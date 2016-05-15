@@ -123,7 +123,7 @@ public class MultiFidelities {
             @Override
             public void update(Observable mFi, Object value) throws EvaluationException, RemoteException {
                 if (mFi instanceof MorphedFidelity) {
-                    Fidelity<Signature> fi = ((MorphedFidelity) mFi).getFidelity();
+                    ServiceFidelity<Signature> fi = ((MorphedFidelity) mFi).getFidelity();
                     if (fi.getPath().equals("mFi1") && fi.getSelectName().equals("add")) {
                         if (((Double) value) <= 200.0) {
                             morph("sysFi2");
@@ -180,7 +180,7 @@ public class MultiFidelities {
             @Override
             public void update(Observable mFi, Object value) throws EvaluationException, RemoteException {
                 if (mFi instanceof MorphedFidelity) {
-                    Fidelity<Signature> fi = ((MorphedFidelity) mFi).getFidelity();
+                    ServiceFidelity<Signature> fi = ((MorphedFidelity) mFi).getFidelity();
                     if (fi.getPath().equals("mFi1") && fi.getSelectName().equals("add")) {
                         if (((Double) value) <= 200.0) {
                             morph("sysFi2");
@@ -194,8 +194,8 @@ public class MultiFidelities {
             }
         };
 
-        Fidelity<Fidelity> fi2 = fi("sysFi2",fi("mFi2", "divide"), fi("mFi3", "multiply"));
-        Fidelity<Fidelity> fi3 = fi("sysFi3", fi("mFi2", "average"), fi("mFi3", "divide"));
+        ServiceFidelity<ServiceFidelity> fi2 = fi("sysFi2",fi("mFi2", "divide"), fi("mFi3", "multiply"));
+        ServiceFidelity<ServiceFidelity> fi3 = fi("sysFi3", fi("mFi2", "average"), fi("mFi3", "divide"));
 
         Signature add = sig("add", AdderImpl.class,
                 result("result/y1", inPaths("arg/x1", "arg/x2")));
@@ -246,7 +246,7 @@ public class MultiFidelities {
             @Override
             public void update(Observable mFi, Object value) throws EvaluationException, RemoteException {
                 if (mFi instanceof MorphedFidelity) {
-                    Fidelity<Signature> fi = ((MorphedFidelity) mFi).getFidelity();
+                    ServiceFidelity<Signature> fi = ((MorphedFidelity) mFi).getFidelity();
                     if (fi.getPath().equals("mFi1") && fi.getSelectName().equals("add")) {
                         if (((Double) value) <= 200.0) {
                             morph("sysFi2");
@@ -299,7 +299,7 @@ public class MultiFidelities {
     public void morphingMultiFidelityModel() throws Exception {
 
         Morpher morpher1 = (mgr, mFi, value) -> {
-            Fidelity<Signature> fi =  mFi.getFidelity();
+            ServiceFidelity<Signature> fi =  mFi.getFidelity();
             if (fi.getSelectName().equals("add")) {
                 if (((Double) value) <= 200.0) {
                     mgr.morph("sysFi2");
@@ -312,7 +312,7 @@ public class MultiFidelities {
         };
 
         Morpher morpher2 = (mgr, mFi, value) -> {
-            Fidelity<Signature> fi =  mFi.getFidelity();
+            ServiceFidelity<Signature> fi =  mFi.getFidelity();
             if (fi.getSelectName().equals("divide")) {
                 if (((Double) value) <= 9.0) {
                     mgr.morph("sysFi4");
@@ -322,9 +322,9 @@ public class MultiFidelities {
             }
         };
 
-        Fidelity<Fidelity> fi2 = fi("sysFi2",fi("mFi2", "divide"), fi("mFi3", "multiply"));
-        Fidelity<Fidelity> fi3 = fi("sysFi3", fi("mFi2", "average"), fi("mFi3", "divide"));
-        Fidelity<Fidelity> fi4 = fi("sysFi4", fi("mFi3", "average"));
+        ServiceFidelity<ServiceFidelity> fi2 = fi("sysFi2",fi("mFi2", "divide"), fi("mFi3", "multiply"));
+        ServiceFidelity<ServiceFidelity> fi3 = fi("sysFi3", fi("mFi2", "average"), fi("mFi3", "divide"));
+        ServiceFidelity<ServiceFidelity> fi4 = fi("sysFi4", fi("mFi3", "average"));
 
         Signature add = sig("add", AdderImpl.class,
                 result("result/y1", inPaths("arg/x1", "arg/x2")));
@@ -391,7 +391,7 @@ public class MultiFidelities {
         Entry e3 = ent("x3", 7.0);
 
         Morpher morpher = (mgr, mFi, value) -> {
-            Fidelity<Signature> fi =  mFi.getFidelity();
+            ServiceFidelity<Signature> fi =  mFi.getFidelity();
             if (fi.getSelectName().equals("x1")) {
                 if (((double)value) <= 5.0) {
                     mgr.reconfigure("x3");
@@ -438,7 +438,7 @@ public class MultiFidelities {
         Signature as = sig("add", AdderImpl.class);
 
         Morpher morpher = (mgr, mFi, value) -> {
-            Fidelity<Signature> fi =  mFi.getFidelity();
+            ServiceFidelity<Signature> fi =  mFi.getFidelity();
             if (fi.getSelectName().equals("multiply")) {
                 try {
                     if (((Double) value(context(value), "result/y")) >= 500.0) {
@@ -504,7 +504,7 @@ public class MultiFidelities {
 
 
         Morpher morpher = (mgr, mFi, value) -> {
-            Fidelity<Signature> fi =  mFi.getFidelity();
+            ServiceFidelity<Signature> fi =  mFi.getFidelity();
             if (fi.getSelectName().equals("t5")) {
                 try {
                     if (((Double) value(context(value), "result/y")) <= 200.0) {

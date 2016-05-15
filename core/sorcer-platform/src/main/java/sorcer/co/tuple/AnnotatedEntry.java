@@ -30,7 +30,7 @@ public class AnnotatedEntry<T> extends Tuple3<String, T, String> implements Arg 
 	public int index;
 	public boolean isPersistant = false;
 	public URL datastoreURL;
-	public Fidelity fidelity;
+	public ServiceFidelity fidelity;
 	
 	public AnnotatedEntry() {
 	}

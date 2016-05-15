@@ -480,15 +480,15 @@ public class operator {
 
 	private static FidelityManager createFiManager(Context cxt) throws EvaluationException, RemoteException {
 		FidelityManager fim = new FidelityManager(cxt);
-		Map<String, Fidelity> fiMap = new HashMap<>();
+		Map<String, ServiceFidelity> fiMap = new HashMap<>();
 		Map.Entry<String,Object> e;
 		Object val = null;
 		Iterator<Map.Entry<String,Object>> i = ((ServiceContext)cxt).entryIterator();
 		while(i.hasNext()) {
 			e = i.next();
 			val = e.getValue();
-			if (val instanceof Srv && ((Srv)val).asis() instanceof Fidelity) {
-				fiMap.put(e.getKey(), (Fidelity)((Srv)val).asis());
+			if (val instanceof Srv && ((Srv)val).asis() instanceof ServiceFidelity) {
+				fiMap.put(e.getKey(), (ServiceFidelity)((Srv)val).asis());
 			}
 		}
 		fim.setFidelities(fiMap);
@@ -1169,8 +1169,8 @@ public class operator {
 		return new EvaluationTask(signature, context);
 	}
 
-	public static Fidelity fiFi(String name) {
-		return new Fidelity(name);
+	public static ServiceFidelity fiFi(String name) {
+		return new ServiceFidelity(name);
 	}
 
 
@@ -1178,42 +1178,42 @@ public class operator {
 //		return new Tuple2<String, String> (componentPath, fidelityName);
 //	}
 
-	public static Fidelity<Arg> cFi(String componentPath, String fidelityName) {
-		Fidelity<Arg> fi = new Fidelity(componentPath, new Name(fidelityName));
+	public static ServiceFidelity<Arg> cFi(String componentPath, String fidelityName) {
+		ServiceFidelity<Arg> fi = new ServiceFidelity(componentPath, new Name(fidelityName));
 		fi.setPath(componentPath);
-		fi.type = Fidelity.Type.COMPONENT;
+		fi.type = ServiceFidelity.Type.COMPONENT;
 		return fi;
 	}
 
-	public static Fidelity<Arg> fi(String name, String... selectors) {
-		Fidelity fi = new Fidelity(name, selectors);
-		fi.type = Fidelity.Type.NAME;
+	public static ServiceFidelity<Arg> fi(String name, String... selectors) {
+		ServiceFidelity fi = new ServiceFidelity(name, selectors);
+		fi.type = ServiceFidelity.Type.NAME;
 		return fi;
 	}
 
-	public static Fidelity<PrimitiveService> fi(String name, PrimitiveService... selectors) {
-		Fidelity fi = new Fidelity(name, selectors);
-		fi.type = Fidelity.Type.SERVICE;
+	public static ServiceFidelity<PrimitiveService> fi(String name, PrimitiveService... selectors) {
+		ServiceFidelity fi = new ServiceFidelity(name, selectors);
+		fi.type = ServiceFidelity.Type.SERVICE;
 		return fi;
 	}
 
-	public static Fidelity<PrimitiveService> fi(PrimitiveService... selectors) {
-		Fidelity fi = new Fidelity(selectors);
-		fi.type = Fidelity.Type.SERVICE;
+	public static ServiceFidelity<PrimitiveService> fi(PrimitiveService... selectors) {
+		ServiceFidelity fi = new ServiceFidelity(selectors);
+		fi.type = ServiceFidelity.Type.SERVICE;
 		return fi;
 	}
 
-	public static Fidelity<Arg> fi(String name, Arg... selectors) {
-		Fidelity fi = new Fidelity(name, selectors);
-		fi.type = Fidelity.Type.NAME;
+	public static ServiceFidelity<Arg> fi(String name, Arg... selectors) {
+		ServiceFidelity fi = new ServiceFidelity(name, selectors);
+		fi.type = ServiceFidelity.Type.NAME;
 		return fi;
 	}
 
-	public static Map<String, Fidelity> sFis(Mogram exertion) {
+	public static Map<String, ServiceFidelity> sFis(Mogram exertion) {
 		return ((ServiceExertion) exertion).getServiceFidelities();
 	}
 
-	public static Fidelity<Signature> sFi(Mogram mogram) {
+	public static ServiceFidelity<Signature> sFi(Mogram mogram) {
 		return mogram.getFidelity();
 	}
 
@@ -1221,33 +1221,33 @@ public class operator {
 		return ((ServiceExertion) exertion).getSelectedFidelitySelector();
 	}
 
-	public static Map<String, Fidelity> srvFis(Exertion exertion) {
+	public static Map<String, ServiceFidelity> srvFis(Exertion exertion) {
 		return exertion.getFidelities();
 	}
 
-	public static Fidelity<Fidelity> fi(String name, Fidelity... fidelities) {
-		Fidelity<Fidelity> fi = new Fidelity(new Fidelity(fidelities));
+	public static ServiceFidelity<ServiceFidelity> fi(String name, ServiceFidelity... fidelities) {
+		ServiceFidelity<ServiceFidelity> fi = new ServiceFidelity(new ServiceFidelity(fidelities));
 		fi.setName(name);
 		return fi;
 	}
 
-	public static Fidelity<Fidelity> fi(Fidelity... fidelities) {
-		Fidelity<Fidelity> fi = new Fidelity(new Fidelity(fidelities));
+	public static ServiceFidelity<ServiceFidelity> fi(ServiceFidelity... fidelities) {
+		ServiceFidelity<ServiceFidelity> fi = new ServiceFidelity(new ServiceFidelity(fidelities));
 		return fi;
 	}
 
 	public static MorphedFidelity<PrimitiveService> mFi(Morpher morpher, PrimitiveService... services) {
-		MorphedFidelity<PrimitiveService> multiFi = new MorphedFidelity(new Fidelity(services));
+		MorphedFidelity<PrimitiveService> multiFi = new MorphedFidelity(new ServiceFidelity(services));
 		multiFi.setMorpher(morpher);
 		return multiFi;
 	}
 
 	public static MorphedFidelity<PrimitiveService> mFi(PrimitiveService... services) {
-		MorphedFidelity<PrimitiveService> multiFi = new MorphedFidelity(new Fidelity(services));
+		MorphedFidelity<PrimitiveService> multiFi = new MorphedFidelity(new ServiceFidelity(services));
 		return multiFi;
 	}
 
-	public static void reconfigure(Mogram mogram, Fidelity... fidelities) throws RemoteException, ContextException {
+	public static void reconfigure(Mogram mogram, ServiceFidelity... fidelities) throws RemoteException, ContextException {
 		((ServiceMogram)mogram).getFiManager().reconfigure(fidelities);
 	}
 
@@ -1255,21 +1255,21 @@ public class operator {
 		((MultifidelityService)mogram).selectFidelity(selection);
 	}
 
-	public static MultifidelityService multiFiService(Fidelity<PrimitiveService> fidelity) {
+	public static MultifidelityService multiFiService(ServiceFidelity<PrimitiveService> fidelity) {
 		return new MultifidelityService(fidelity.getName(), fidelity);
 	}
 	public static MultifidelityService multiFiService(MorphedFidelity<PrimitiveService> fidelity) {
 		return new MultifidelityService(fidelity.getName(), fidelity);
 	}
 
-	public static MultifidelityService multiFiService(String name, Fidelity<PrimitiveService> fidelity) {
+	public static MultifidelityService multiFiService(String name, ServiceFidelity<PrimitiveService> fidelity) {
 		return new MultifidelityService(name, fidelity);
 	}
 	public static MultifidelityService multiFiService(String name, MorphedFidelity<PrimitiveService> fidelity) {
 		return new MultifidelityService(name, fidelity);
 	}
 
-	public static MultifidelityService multiFiService(Fidelity<PrimitiveService> fidelity, Context context) {
+	public static MultifidelityService multiFiService(ServiceFidelity<PrimitiveService> fidelity, Context context) {
 		return new MultifidelityService(context, fidelity);
 	}
 	public static MultifidelityService multiFiService(MorphedFidelity<PrimitiveService> fidelity, Context context) {
@@ -1277,50 +1277,50 @@ public class operator {
 	}
 
 	public static MorphedFidelity<Signature> multiFi(Signature... signatures) {
-		MorphedFidelity<Signature> multiFi = new MorphedFidelity(new Fidelity(signatures));
+		MorphedFidelity<Signature> multiFi = new MorphedFidelity(new ServiceFidelity(signatures));
 		return multiFi;
 	}
 
-	public static Fidelity<Signature> sFi(Signature... signatures) {
-		Fidelity<Signature> fi = new Fidelity(signatures);
-		fi.type = Fidelity.Type.EXERT;
+	public static ServiceFidelity<Signature> sFi(Signature... signatures) {
+		ServiceFidelity<Signature> fi = new ServiceFidelity(signatures);
+		fi.type = ServiceFidelity.Type.EXERT;
 		return fi;
 	}
 
-	public static Fidelity<Entry> eFi(Entry... entries) {
-		Fidelity<Entry> fi = new Fidelity(entries);
-		fi.type = Fidelity.Type.ENTRY;
+	public static ServiceFidelity<Entry> eFi(Entry... entries) {
+		ServiceFidelity<Entry> fi = new ServiceFidelity(entries);
+		fi.type = ServiceFidelity.Type.ENTRY;
 		return fi;
 	}
 
-	public static Fidelity<?> fi(String name) {
-		Fidelity<?> fi = new Fidelity(name);
-		fi.type = Fidelity.Type.EMPTY;
+	public static ServiceFidelity<?> fi(String name) {
+		ServiceFidelity<?> fi = new ServiceFidelity(name);
+		fi.type = ServiceFidelity.Type.EMPTY;
 		return fi;
 	}
 
-	public static Fidelity<?> fi(String path, String name) {
-		Fidelity<?> fi = new Fidelity(name);
+	public static ServiceFidelity<?> fi(String path, String name) {
+		ServiceFidelity<?> fi = new ServiceFidelity(name);
 		fi.setPath(path);
-		fi.type = Fidelity.Type.EMPTY;
+		fi.type = ServiceFidelity.Type.EMPTY;
 		return fi;
 	}
 
-	public static Fidelity<Fidelity> sFi(Fidelity... fidelities) {
-		Fidelity<Fidelity> fi = new Fidelity<Fidelity>(fidelities);
-		fi.type = Fidelity.Type.MULTI;
+	public static ServiceFidelity<ServiceFidelity> sFi(ServiceFidelity... fidelities) {
+		ServiceFidelity<ServiceFidelity> fi = new ServiceFidelity<ServiceFidelity>(fidelities);
+		fi.type = ServiceFidelity.Type.MULTI;
 		return fi;
 	}
 
-	public static Fidelity<Fidelity> sFi(String name, Fidelity... fidelities) {
-		Fidelity<Fidelity> fi = new Fidelity<Fidelity>(name, fidelities);
-		fi.type = Fidelity.Type.COMPOSITE;
+	public static ServiceFidelity<ServiceFidelity> sFi(String name, ServiceFidelity... fidelities) {
+		ServiceFidelity<ServiceFidelity> fi = new ServiceFidelity<ServiceFidelity>(name, fidelities);
+		fi.type = ServiceFidelity.Type.COMPOSITE;
 		return fi;
 	}
 
-	public static Fidelity<Signature> sFi(String name, Signature... signatures) {
-		Fidelity<Signature> fi = new Fidelity<Signature>(name, signatures);
-		fi.type = Fidelity.Type.EXERT;
+	public static ServiceFidelity<Signature> sFi(String name, Signature... signatures) {
+		ServiceFidelity<Signature> fi = new ServiceFidelity<Signature>(name, signatures);
+		fi.type = ServiceFidelity.Type.EXERT;
 		return fi;
 	}
 
@@ -1462,7 +1462,7 @@ public class operator {
 		Task task = null;
 		Access access = null;
 		Flow flow = null;
-		List<Fidelity> fidelities = null;
+		List<ServiceFidelity> fidelities = null;
 		ControlContext cc = null;
 		for (Object o : elems) {
 			if (o instanceof ControlContext) {
@@ -1477,10 +1477,10 @@ public class operator {
 				access = (Access) o;
 			} else if (o instanceof Flow) {
 				flow = (Flow) o;
-			} else if (o instanceof Fidelity) {
+			} else if (o instanceof ServiceFidelity) {
 				if (fidelities == null)
-					fidelities = new ArrayList<Fidelity>();
-				fidelities.add((Fidelity) o);
+					fidelities = new ArrayList<ServiceFidelity>();
+				fidelities.add((ServiceFidelity) o);
 			}
 		}
 		Signature ss = null;
@@ -1694,8 +1694,8 @@ public class operator {
 		ReturnPath rp = null;
 		List<Exertion> exertions = new ArrayList<Exertion>();
 		List<Pipe> pipes = new ArrayList<Pipe>();
-		List<Fidelity> fidelities = null;
-		List<Fidelity> fiList = null;
+		List<ServiceFidelity> fidelities = null;
+		List<ServiceFidelity> fiList = null;
 		List<MapContext> connList = new ArrayList<MapContext>();
 
 		for (int i = 0; i < elems.length; i++) {
@@ -1715,14 +1715,14 @@ public class operator {
 				signature = ((Signature) elems[i]);
 			} else if (elems[i] instanceof ReturnPath) {
 				rp = ((ReturnPath) elems[i]);
-			} else if (elems[i] instanceof Fidelity) {
+			} else if (elems[i] instanceof ServiceFidelity) {
 				if (fidelities == null)
-					fidelities = new ArrayList<Fidelity>();
-				fidelities.add((Fidelity) elems[i]);
+					fidelities = new ArrayList<ServiceFidelity>();
+				fidelities.add((ServiceFidelity) elems[i]);
 			} else if (elems[i] instanceof FidelityContext) {
 				if (fiList == null)
-					fiList = new ArrayList<Fidelity>();
-				fiList.add((Fidelity) elems[i]);
+					fiList = new ArrayList<ServiceFidelity>();
+				fiList.add((ServiceFidelity) elems[i]);
 			}
 
 		}
@@ -1772,7 +1772,7 @@ public class operator {
 			}
 		}
 		if (fiList != null) {
-			for (Fidelity fi : fiList) {
+			for (ServiceFidelity fi : fiList) {
 				job.addFidelity(fi);
 			}
 		}

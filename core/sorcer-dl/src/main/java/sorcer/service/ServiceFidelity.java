@@ -29,11 +29,11 @@ import java.util.List;
  * @author Mike Sobolewski
  *
  */
-public class Fidelity<T extends Arg> implements Arg, Serializable {
+public class ServiceFidelity<T extends Arg> implements Multifidelity<T>, Arg, Serializable {
 
 	private static final long serialVersionUID = -875629011139790420L;
 
-	public final static Logger logger = LoggerFactory.getLogger(Fidelity.class);
+	public final static Logger logger = LoggerFactory.getLogger(ServiceFidelity.class);
 
 	public enum Type implements Arg {
 		EMPTY, NAME, SYS, SIG, ENTRY, EXERT, CONTEXT, COMPONENT, COMPOSITE, MULTI, VAR, SERVICE;
@@ -56,20 +56,20 @@ public class Fidelity<T extends Arg> implements Arg, Serializable {
 
 	public Type type = Type.NAME;
 
-	public Fidelity() {
+	public ServiceFidelity() {
 		super();
 		name = "fidelity" + count++;
 	}
 
-	public Fidelity(String name) {
+	public ServiceFidelity(String name) {
 		this.name = name;
 	}
 
-	public Fidelity(Arg name) {
+	public ServiceFidelity(Arg name) {
 		this.name = name.getName();
 	}
 
-	public Fidelity(T[] selects) {
+	public ServiceFidelity(T[] selects) {
 		name = "fidelity" + count++;
 		for (T s : selects)
 			this.selects.add(s);
@@ -85,25 +85,25 @@ public class Fidelity<T extends Arg> implements Arg, Serializable {
 		return null;
 	}
 
-	public Fidelity(String... selects) {
+	public ServiceFidelity(String... selects) {
 		this.name = "";
 		for (String s : selects)
 			this.selects.add((T) new Name(s));
 	}
 
-	public Fidelity(String name, String... selects) {
+	public ServiceFidelity(String name, String... selects) {
 		this.name = name;
 		for (String s : selects)
 			this.selects.add((T) new Name(s));
 	}
 
-	public Fidelity(String name, T... selects) {
+	public ServiceFidelity(String name, T... selects) {
 		this.name = name;
 		for (T s : selects)
 			this.selects.add(s);
 	}
 
-	public Fidelity(Fidelity<T> fidelity) {
+	public ServiceFidelity(ServiceFidelity<T> fidelity) {
 		for (T s : fidelity.selects)
 			selects.add(s);
 		this.path = fidelity.path;
@@ -114,7 +114,7 @@ public class Fidelity<T extends Arg> implements Arg, Serializable {
 			this.name = "fidelity" + count++;
 	}
 
-	public Fidelity(String name, Fidelity<T> fidelity) {
+	public ServiceFidelity(String name, ServiceFidelity<T> fidelity) {
 		for (T s : fidelity.selects)
 			selects.add(s);
 		this.path = fidelity.path;
@@ -122,13 +122,13 @@ public class Fidelity<T extends Arg> implements Arg, Serializable {
 		this.name = name;
 	}
 
-	public Fidelity(String name, List<T> selectors) {
+	public ServiceFidelity(String name, List<T> selectors) {
 		for (T s : selectors)
 			selects.add(s);
 		this.name = name;
 	}
 
-	public Fidelity(String name, T selector) {
+	public ServiceFidelity(String name, T selector) {
 		selects.add(selector);
 		this.name = name;
 	}
@@ -153,8 +153,8 @@ public class Fidelity<T extends Arg> implements Arg, Serializable {
 	public String getPath(String fidelityName) {
 		for (T select : selects) {
 			if (select.getName().equals(fidelityName)) {
-				if (select instanceof Fidelity) {
-					return ((Fidelity) select).getPath();
+				if (select instanceof ServiceFidelity) {
+					return ((ServiceFidelity) select).getPath();
 				}
 			}
 		}

@@ -126,17 +126,17 @@ public class Entry<T> extends Tuple2<String, T> implements Callable<T>, Dependen
 				} else {
 					return ((Evaluation<T>) val).getValue(args);
 				}
-			} else if (val instanceof Fidelity) {
+			} else if (val instanceof ServiceFidelity) {
 				// return the selected fidelity of this entry
 				for (Arg arg : args) {
-					if (arg instanceof Fidelity) {
-						if (((Fidelity)arg).getPath().equals(_1)) {
-							((Fidelity) val).setSelect(arg.getName());
+					if (arg instanceof ServiceFidelity) {
+						if (((ServiceFidelity)arg).getPath().equals(_1)) {
+							((ServiceFidelity) val).setSelect(arg.getName());
 							break;
 						}
 					}
 				}
-				return (T) ((Entry)((Fidelity) val).getSelect()).getValue();
+				return (T) ((Entry)((ServiceFidelity) val).getSelect()).getValue();
 			} else if (val instanceof Callable) {
 				return (T) ((Callable)val).call(args);
 			} else if (val instanceof Service) {

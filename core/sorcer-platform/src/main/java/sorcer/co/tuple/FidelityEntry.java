@@ -21,52 +21,52 @@ package sorcer.co.tuple;
  */
 
 import sorcer.core.context.model.ent.Entry;
-import sorcer.service.Fidelity;
+import sorcer.service.ServiceFidelity;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class FidelityEntry extends Entry<Fidelity> {
+public class FidelityEntry extends Entry<ServiceFidelity> {
 	private static final long serialVersionUID = -508307270964254478L;
 
 	// fidelities for this entry
-	protected Map<String, Fidelity> fidelities;
+	protected Map<String, ServiceFidelity> fidelities;
 
 	// the current fidelity alias, as it is named in 'fidelities'
 	// its original name might be different if aliasing is used
 	// for already existing names
 	protected String fidelitySelector;
 
-	protected Fidelity fidelity;
+	protected ServiceFidelity fidelity;
 
 	public FidelityEntry(String name) {
 		super(name);
 	}
 
-	public FidelityEntry(String name, Fidelity... fidelities) {
+	public FidelityEntry(String name, ServiceFidelity... fidelities) {
 		super(name);
-		this.fidelities = new HashMap<String, Fidelity>();
-		for (Fidelity f : fidelities)  {
+		this.fidelities = new HashMap<String, ServiceFidelity>();
+		for (ServiceFidelity f : fidelities)  {
 			this.fidelities.put(f.getName(), f);
 		}
 		this.fidelity = fidelities[0];
 		fidelitySelector =  fidelity.getName();
 	}
 	
-	public Fidelity getFidelity() {
+	public ServiceFidelity getFidelity() {
 		return fidelity;
 	}
 	
-	public void setFidelity(Fidelity fidelity) {
+	public void setFidelity(ServiceFidelity fidelity) {
 		this.fidelity = fidelity;
 	}
 
 
-	public Map<String, Fidelity> getFidelities() {
+	public Map<String, ServiceFidelity> getFidelities() {
 		return fidelities;
 	}
 
-	public void setFidelities(Map<String, Fidelity> fidelities) {
+	public void setFidelities(Map<String, ServiceFidelity> fidelities) {
 		this.fidelities = fidelities;
 	}
 

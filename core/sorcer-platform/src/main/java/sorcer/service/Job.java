@@ -105,7 +105,7 @@ public class Job extends CompoundExertion {
 		this.description = description;
 	}
 
-	public Job(String name, String description, Fidelity fidelity) {
+	public Job(String name, String description, ServiceFidelity fidelity) {
 		this(name, description);
 		this.serviceFidelity = fidelity;
 	}
@@ -126,7 +126,7 @@ public class Job extends CompoundExertion {
 		serviceFidelity.selects.add(s); // Add the signature
 	}
 
-	public Fidelity getFidelity() {
+	public ServiceFidelity getFidelity() {
 //		if (fidelity != null)
 //			for (int i = 0; i < fidelity.size(); i++)
 //				signatures.get(i).setProviderName(controlContext.getRendezvousName());
@@ -590,10 +590,10 @@ public class Job extends CompoundExertion {
 	}
 	
 	public void applyFidelityContext(FidelityContext fiContext) throws ExertionException {
-		Collection<Fidelity> fidelities = fiContext.values();
+		Collection<ServiceFidelity> fidelities = fiContext.values();
 		ServiceExertion se = null;
-		for (Fidelity fi : fidelities) {
-			if (fi instanceof Fidelity) {
+		for (ServiceFidelity fi : fidelities) {
+			if (fi instanceof ServiceFidelity) {
 				se = (ServiceExertion) getComponentMogram(fi.getPath());
 				se.selectFidelity(fi.getName());
 			}

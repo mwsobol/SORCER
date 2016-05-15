@@ -1,6 +1,6 @@
 /*
- * Copyright 2013 the original author or authors.
- * Copyright 2013 SorcerSoft.org.
+ * Copyright 2016 the original author or authors.
+ * Copyright 2016 SorcerSoft.org.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,12 +17,24 @@
 
 package sorcer.service;
 
+import java.util.List;
+
 /**
- * Created by Mike Sobolewski on 5/12/15.
+ * Created by Mike Sobolewski on 5/15/16.
  */
-public interface Projection<T extends Arg> {
+public interface Multifidelity<Fi> {
 
-    public ServiceFidelity<T> getFidelity();
+    public String getName();
 
-    public void setFidelity(ServiceFidelity<T> fidelity);
+    public String getPath();
+
+    public Fi getSelect();
+
+    public void setSelect(String name);
+
+    public void addSelect(Fi fidelity);
+
+    public List<Fi> getSelects();
+
+
 }

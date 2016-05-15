@@ -115,38 +115,38 @@ public class SrvModel extends ParModel<Object> implements Model, Invocation<Obje
     }
 
     public void selectedServiceFidelity(String name) {
-        Fidelity<Signature> fidelity = serviceFidelities.get(name);
+        ServiceFidelity<Signature> fidelity = serviceFidelities.get(name);
         serviceFidelitySelector = name;
         this.serviceFidelity = fidelity;
     }
 
-    public void addServiceFidelity(Fidelity fidelity) {
+    public void addServiceFidelity(ServiceFidelity fidelity) {
         putServiceFidelity(fidelity.getName(), fidelity);
         serviceFidelitySelector = fidelity.getName();
         this.serviceFidelity = fidelity;
     }
 
-    public void setServiceFidelity(Fidelity fidelity) {
+    public void setServiceFidelity(ServiceFidelity fidelity) {
         this.serviceFidelity = fidelity;
         putServiceFidelity(fidelity.getName(), fidelity);
         serviceFidelitySelector = fidelity.getName();
     }
 
-    public void setServiceFidelity(String name, Fidelity fidelity) {
+    public void setServiceFidelity(String name, ServiceFidelity fidelity) {
         this.serviceFidelity = fidelity;
         putServiceFidelity(name, fidelity);
         serviceFidelitySelector = name;
     }
 
-    public void putServiceFidelity(Fidelity fidelity) {
+    public void putServiceFidelity(ServiceFidelity fidelity) {
         if (serviceFidelities == null)
-            serviceFidelities = new HashMap<String, Fidelity>();
+            serviceFidelities = new HashMap<String, ServiceFidelity>();
         serviceFidelities.put(fidelity.getName(), fidelity);
     }
 
-    public void putServiceFidelity(String name, Fidelity fidelity) {
+    public void putServiceFidelity(String name, ServiceFidelity fidelity) {
         if (serviceFidelities == null)
-            serviceFidelities = new HashMap<String, Fidelity>();
+            serviceFidelities = new HashMap<String, ServiceFidelity>();
         serviceFidelities.put(name, fidelity);
     }
 
@@ -161,7 +161,7 @@ public class SrvModel extends ParModel<Object> implements Model, Invocation<Obje
     public void selectServiceFidelity(String selector) throws ExertionException {
         if (selector != null && serviceFidelities != null
                 && serviceFidelities.containsKey(selector)) {
-            Fidelity sf = serviceFidelities.get(selector);
+            ServiceFidelity sf = serviceFidelities.get(selector);
 
             if (sf == null)
                 throw new ExertionException("no such service fidelity: " + selector + " at: " + this);
@@ -197,8 +197,8 @@ public class SrvModel extends ParModel<Object> implements Model, Invocation<Obje
                         Signature sig = ((SignatureEntry) ((Srv) val).asis()).value();
                         return evalSignature(sig, path, items);
                     }
-                } else if (val2 instanceof Fidelity) {
-                    Object selection = getFi((Fidelity) val2, items, path);
+                } else if (val2 instanceof ServiceFidelity) {
+                    Object selection = getFi((ServiceFidelity) val2, items, path);
                     if (selection instanceof Signature) {
                         return evalSignature((Signature) selection, path, items);
                     } else if (selection instanceof Evaluation) {
@@ -292,9 +292,9 @@ public class SrvModel extends ParModel<Object> implements Model, Invocation<Obje
         if (val instanceof Entry && ((Entry) val).name().equals(path)) {
             return ((Entry) val).value();
         }
-        if (val instanceof Fidelity) {
+        if (val instanceof ServiceFidelity) {
             try {
-                return ((Entry)((Fidelity)val).getSelect()).getValue();
+                return ((Entry)((ServiceFidelity)val).getSelect()).getValue();
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
@@ -342,12 +342,12 @@ public class SrvModel extends ParModel<Object> implements Model, Invocation<Obje
         return null;
     }
 
-    protected <T extends Arg> T getFi(Fidelity<T> fi, Arg[] entries, String path) throws ContextException {
-        Fidelity selected = null;
+    protected <T extends Arg> T getFi(ServiceFidelity<T> fi, Arg[] entries, String path) throws ContextException {
+        ServiceFidelity selected = null;
         for (Arg arg : entries) {
-            if (arg instanceof Fidelity && ((Fidelity)arg).type == Fidelity.Type.EMPTY) {
-                if (((Fidelity)arg).getPath().equals(path)) {
-                    selected = (Fidelity) arg;
+            if (arg instanceof ServiceFidelity && ((ServiceFidelity)arg).type == ServiceFidelity.Type.EMPTY) {
+                if (((ServiceFidelity)arg).getPath().equals(path)) {
+                    selected = (ServiceFidelity) arg;
                     ((Entry)asis(path)).isValid(false);
                     isChanged();
                     break;
@@ -404,7 +404,7 @@ public class SrvModel extends ParModel<Object> implements Model, Invocation<Obje
         serviceFidelity.getSelects().add(signature);
     }
 
-    public Fidelity getServiceFidelity() {
+    public ServiceFidelity getServiceFidelity() {
         return serviceFidelity;
     }
 
@@ -412,7 +412,7 @@ public class SrvModel extends ParModel<Object> implements Model, Invocation<Obje
         if (this.serviceFidelity != null)
             this.serviceFidelity.getSelects().addAll(Arrays.asList(signatures));
         else {
-            this.serviceFidelity = new Fidelity();
+            this.serviceFidelity = new ServiceFidelity();
             this.serviceFidelity.getSelects().addAll(Arrays.asList(signatures));
         }
     }

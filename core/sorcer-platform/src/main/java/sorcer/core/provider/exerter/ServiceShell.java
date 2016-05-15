@@ -55,7 +55,6 @@ import sorcer.service.Exec.State;
 import sorcer.service.Signature.ReturnPath;
 import sorcer.service.Strategy.Access;
 import sorcer.service.modeling.Model;
-import sorcer.service.modeling.ModelingTask;
 import sorcer.service.txmgr.TransactionManagerAccessor;
 import sorcer.util.Sorcer;
 
@@ -895,9 +894,9 @@ public class ServiceShell implements RemoteServiceShell, Requestor, Callable {
 							+ cxt.getName());
 				}
 			} else if (service instanceof MultifidelityService) {
-				Fidelity<PrimitiveService> sfi = ((MultifidelityService)service).getServiceFidelity();
+				ServiceFidelity<PrimitiveService> sfi = ((MultifidelityService)service).getServiceFidelity();
 				if (sfi == null) {
-					Fidelity fi = ((MultifidelityService)service).getMorphedFidelity().getFidelity();
+					ServiceFidelity fi = ((MultifidelityService)service).getMorphedFidelity().getFidelity();
 					Object select = fi.getSelect();
 					if (select != null) {
 						MorphedFidelity morphedFidelity = ((MultifidelityService)service).getMorphedFidelity();

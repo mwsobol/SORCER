@@ -14,7 +14,7 @@ import sorcer.core.context.PositionalContext;
 import sorcer.core.context.ServiceContext;
 import sorcer.service.Context;
 import sorcer.service.ContextException;
-import sorcer.service.Fidelity;
+import sorcer.service.ServiceFidelity;
 import sorcer.service.Signature;
 import sorcer.service.Signature.ReturnPath;
 
@@ -25,7 +25,6 @@ import java.rmi.RemoteException;
 import java.util.List;
 
 import static sorcer.eo.operator.attPath;
-import static sorcer.eo.operator.path;
 import static sorcer.eo.operator.revalue;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -201,7 +200,7 @@ public class Arithmometer implements SorcerConstants, Serializable {
 			Signature sig = context.getMogram().getProcessSignature();
 			if (sig != null)
 				cxt.putValue("task/signature", sig);
-			Fidelity fi = context.getMogram().getFidelity();
+			ServiceFidelity fi = context.getMogram().getFidelity();
 			if (fi != null)
 				cxt.putValue("task/fidelity", fi);
 		} catch (Exception ex) {
@@ -301,7 +300,7 @@ public class Arithmometer implements SorcerConstants, Serializable {
 			Signature sig = context.getMogram().getProcessSignature();
 			if (sig != null)
 				cxt.putValue("task/signature", sig);
-			Fidelity fi = context.getMogram().getFidelity();
+			ServiceFidelity fi = context.getMogram().getFidelity();
 			if (fi != null)
 				cxt.putValue("task/fidelity", fi);
 		} catch (Exception ex) {

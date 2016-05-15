@@ -249,20 +249,20 @@ public class operator {
 		return srv(name, fidelity);
 	}
 
-	public static Srv ent(String name, Fidelity<Signature> fidelity) {
+	public static Srv ent(String name, ServiceFidelity<Signature> fidelity) {
 		return srv(name, fidelity);
 	}
 
-	public static Srv ent(Fidelity<Signature> fidelity) {
+	public static Srv ent(ServiceFidelity<Signature> fidelity) {
 		return srv(fidelity);
 	}
 
-	public static Srv srv(Fidelity<Signature> fidelity) {
+	public static Srv srv(ServiceFidelity<Signature> fidelity) {
 		Srv service = new Srv(fidelity.getName(), fidelity);
 		return service;
 	}
 
-	public static <T extends Arg> Srv srv(String name, Fidelity<T> fidelity) {
+	public static <T extends Arg> Srv srv(String name, ServiceFidelity<T> fidelity) {
 		Srv service = new Srv(name, fidelity);
 		return service;
 	}
@@ -322,7 +322,7 @@ public class operator {
 			return new Par<T>(path, value);
 		} else if (value instanceof Evaluation) {
 			return new Entry<T>(path, value);
-		} else if (value instanceof Fidelity) {
+		} else if (value instanceof ServiceFidelity) {
 			return (Entry<T>) new Srv(path, value);
 		} else {
 			return new Entry<T>(path, value);

@@ -30,15 +30,15 @@ import java.util.Map;
  */
 public interface FidelityManagement<T extends Arg> extends Service {
 
-    public Map<String, Fidelity<T>> getFidelities() throws RemoteException;
+    public Map<String, ServiceFidelity<T>> getFidelities() throws RemoteException;
 
-    public Map<String, Fidelity<Fidelity>> getMetafidelities() throws RemoteException;
+    public Map<String, ServiceFidelity<ServiceFidelity>> getMetafidelities() throws RemoteException;
 
     public void morph(String... fiNames) throws RemoteException;
 
     public void reconfigure(String... fiNames) throws RemoteException;
 
-    public void reconfigure(Fidelity... fidelities) throws RemoteException, ContextException;
+    public void reconfigure(ServiceFidelity... fidelities) throws RemoteException, ContextException;
 
     public Mogram getMogram() throws RemoteException;
 

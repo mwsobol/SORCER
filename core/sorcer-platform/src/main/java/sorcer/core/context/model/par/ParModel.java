@@ -126,7 +126,7 @@ public class ParModel<T> extends EntModel<T> implements Model, Invocation<T>, Ma
 
 			if (val != null && val instanceof Evaluation) {
 				return (T) ((Evaluation) val).getValue(args);
-			}   if (val instanceof Fidelity) {
+			}   if (val instanceof ServiceFidelity) {
 				return (T) new Entry(path, val).getValue(args);
 			} else if (path == null && val == null && mogramStrategy.getResponsePaths() != null) {
 				if (mogramStrategy.getResponsePaths().size() == 1)

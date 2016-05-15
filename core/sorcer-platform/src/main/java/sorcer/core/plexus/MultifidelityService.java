@@ -40,7 +40,7 @@ import java.util.List;
  */
 public class MultifidelityService extends ServiceMogram {
 
-    protected Fidelity<PrimitiveService> serviceFidelity;
+    protected ServiceFidelity<PrimitiveService> serviceFidelity;
 
     protected MorphedFidelity<PrimitiveService> morphedFidelity;
 
@@ -72,7 +72,7 @@ public class MultifidelityService extends ServiceMogram {
         morphedFidelity.addObserver((FidelityManager)fiManager);
     }
 
-    public MultifidelityService(String name, Fidelity<PrimitiveService> fidelity) {
+    public MultifidelityService(String name, ServiceFidelity<PrimitiveService> fidelity) {
         super(name);
         serviceFidelity = fidelity;
     }
@@ -82,7 +82,7 @@ public class MultifidelityService extends ServiceMogram {
         scope = context;
     }
 
-    public MultifidelityService(Context context, Fidelity<PrimitiveService> fidelity) {
+    public MultifidelityService(Context context, ServiceFidelity<PrimitiveService> fidelity) {
         this(context.getName(), fidelity);
         scope = context;
     }
@@ -118,7 +118,7 @@ public class MultifidelityService extends ServiceMogram {
     }
 
     @Override
-    public Fidelity selectFidelity(String selector) {
+    public ServiceFidelity selectFidelity(String selector) {
         if (serviceFidelity != null) {
             serviceFidelity.setSelect(selector);
             return serviceFidelity;
@@ -163,11 +163,11 @@ public class MultifidelityService extends ServiceMogram {
         return toString();
     }
 
-    public Fidelity<PrimitiveService> getServiceFidelity() {
+    public ServiceFidelity<PrimitiveService> getServiceFidelity() {
         return serviceFidelity;
     }
 
-    public void setServiceFidelity(Fidelity<PrimitiveService> serviceFidelity) {
+    public void setServiceFidelity(ServiceFidelity<PrimitiveService> serviceFidelity) {
         this.serviceFidelity = serviceFidelity;
     }
 
