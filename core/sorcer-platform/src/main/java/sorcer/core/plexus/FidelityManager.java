@@ -29,7 +29,6 @@ import sorcer.core.invoker.Observable;
 import sorcer.core.invoker.Observer;
 import sorcer.service.*;
 
-import java.io.Serializable;
 import java.rmi.MarshalledObject;
 import java.rmi.RemoteException;
 import java.util.*;
@@ -38,7 +37,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Created by Mike Sobolewski on 6/14/15.
  */
-public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Observer, Identifiable, Serializable {
+public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Observer, Identifiable {
 
     // sequence number for unnamed instances
     protected static int count = 0;

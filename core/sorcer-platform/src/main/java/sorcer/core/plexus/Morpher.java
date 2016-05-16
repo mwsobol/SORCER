@@ -26,6 +26,7 @@ import java.rmi.RemoteException;
 /**
  * Created by Mike Sobolewski on 11/9/15.
  */
+@FunctionalInterface
 public interface Morpher<T extends Arg> {
 
     public void morph(FidelityManagement<T> manager, MorphedFidelity mFi, Object value) throws RemoteException, ServiceException;

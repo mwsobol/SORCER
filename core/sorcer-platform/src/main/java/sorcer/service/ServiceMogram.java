@@ -736,7 +736,7 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
         putFidelity(name, nf);
     }
 
-    public FidelityManagement getFiManager() {
+    public FidelityManagement getFidelityManager() {
         return fiManager;
     }
 

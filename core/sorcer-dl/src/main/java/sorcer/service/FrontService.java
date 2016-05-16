@@ -14,28 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package sorcer.service;
 
-import java.io.Serializable;
-import java.util.List;
-
 /**
- * Created by Mike Sobolewski on 5/15/16.
+ * Created by Mike Sobolewski on 5/16/16.
  */
-public interface Multifidelity<Fi> extends PrimitiveService, Serializable {
-
-    public String getName();
-
-    public String getPath();
-
-    public Fi getSelect();
-
-    public void setSelect(String name);
-
-    public void addSelect(Fi fidelity);
-
-    public List<Fi> getSelects();
-
-
+public interface FrontService extends Service, Arg {
 }

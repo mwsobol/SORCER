@@ -17,19 +17,20 @@
 
 package sorcer.core.plexus;
 
+import net.jini.core.transaction.TransactionException;
 import net.jini.id.Uuid;
 import net.jini.id.UuidFactory;
 import sorcer.core.invoker.Observable;
 import sorcer.service.*;
 
-import java.io.Serializable;
+import java.rmi.RemoteException;
 import java.util.List;
 
 /**
  * Created by Mike Sobolewski on 04/26/16.
  */
 public class MorphedFidelity<T extends Arg> extends Observable implements
-        Identifiable, Multifidelity<T>, Arg, Serializable {
+        Identifiable, Multifidelity<T>, Arg {
 
     // fidelity of fidelities T  that is observable
     private ServiceFidelity<T> fidelity;
@@ -90,6 +91,13 @@ public class MorphedFidelity<T extends Arg> extends Observable implements
 
     public void setPath(String fidelityPath) {
         fidelity.setPath(fidelityPath);;
+    }
+
+    @Override
+    public Object exec(Arg... args) throws ServiceException, RemoteException, TransactionException {
+        if (fidelity.getSelect() instanceof Service) {
+            return ((Service)fidelity.getSelect()).exec(args);
+        } else return fidelity.getSelect();
     }
 
     @Override

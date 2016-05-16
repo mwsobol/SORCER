@@ -1248,7 +1248,7 @@ public class operator {
 	}
 
 	public static void reconfigure(Mogram mogram, ServiceFidelity... fidelities) throws RemoteException, ContextException {
-		((ServiceMogram)mogram).getFiManager().reconfigure(fidelities);
+		((ServiceMogram)mogram).getFidelityManager().reconfigure(fidelities);
 	}
 
 	public static void selectFi(Mogram mogram, String selection) {

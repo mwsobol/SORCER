@@ -130,7 +130,7 @@ public class Entry<T> extends Tuple2<String, T> implements Callable<T>, Dependen
 				// return the selected fidelity of this entry
 				for (Arg arg : args) {
 					if (arg instanceof ServiceFidelity) {
-						if (((ServiceFidelity)arg).getPath().equals(_1)) {
+						if (((Multifidelity)arg).getPath().equals(_1)) {
 							((ServiceFidelity) val).setSelect(arg.getName());
 							break;
 						}

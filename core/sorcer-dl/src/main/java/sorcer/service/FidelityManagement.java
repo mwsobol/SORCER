@@ -21,6 +21,7 @@ import net.jini.core.event.EventRegistration;
 import net.jini.core.event.RemoteEventListener;
 import net.jini.core.event.UnknownEventException;
 
+import java.io.Serializable;
 import java.rmi.MarshalledObject;
 import java.rmi.RemoteException;
 import java.util.Map;
@@ -28,7 +29,7 @@ import java.util.Map;
 /**
  * Created by Mike Sobolewski on 6/14/15.
  */
-public interface FidelityManagement<T extends Arg> extends Service {
+public interface FidelityManagement<T extends Arg> extends Service, Serializable {
 
     public Map<String, ServiceFidelity<T>> getFidelities() throws RemoteException;
 
