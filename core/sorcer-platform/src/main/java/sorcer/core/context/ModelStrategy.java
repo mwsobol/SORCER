@@ -19,7 +19,7 @@ import java.util.Map;
 /**
  * Created by Mike Sobolewski
  */
-public class ModelStrategy implements MogramStrategy, Projection<Arg>, Serializable {
+public class ModelStrategy implements MogramStrategy, Serializable {
 
     protected List<ThrowableTrace> exceptions = new ArrayList<ThrowableTrace>();
 
@@ -244,12 +244,10 @@ public class ModelStrategy implements MogramStrategy, Projection<Arg>, Serializa
         this.target = target;
     }
 
-    @Override
     public ServiceFidelity<Arg> getFidelity() {
         return selectedFidelity;
     }
 
-    @Override
     public void setFidelity(ServiceFidelity<Arg> fidelity) {
         selectedFidelity = fidelity;
     }

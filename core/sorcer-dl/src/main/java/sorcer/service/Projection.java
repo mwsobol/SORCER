@@ -20,9 +20,9 @@ package sorcer.service;
 /**
  * Created by Mike Sobolewski on 5/12/15.
  */
-public interface Projection<T extends Arg> {
+public interface Projection {
 
-    public ServiceFidelity<T> getFidelity();
+    public ServiceFidelity<ServiceFidelity> getMetafidelity();
 
-    public void setFidelity(ServiceFidelity<T> fidelity);
+    public void setMetafidelity(ServiceFidelity<ServiceFidelity> fidelity);
 }

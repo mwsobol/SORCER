@@ -94,7 +94,12 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
 
     protected String dbUrl;
 
-    // service fidelities for this exertions
+    // service metafidelities for this mogram
+    protected Map<String, ServiceFidelity> serviceMetafidelities;
+
+    protected ServiceFidelity<ServiceFidelity> serviceMetafidelity = new ServiceFidelity<ServiceFidelity>();
+
+    // service fidelities for this mogram
     protected Map<String, ServiceFidelity> serviceFidelities;
 
     protected ServiceFidelity<Signature> serviceFidelity = new ServiceFidelity<Signature>();
@@ -615,7 +620,6 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
         return serviceFidelity;
     }
 
-    @Override
     public void setFidelity(ServiceFidelity fidelity) {
         serviceFidelity =  fidelity;
     }
@@ -788,7 +792,7 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
         String fn = (String) componentFidelity.getSelects().get(0);
         ServiceFidelity cf = ext.getFidelities().get(fn);
         if (cf != null) {
-            ext.setFidelity(cf);
+            ((ServiceMogram)ext).setFidelity(cf);
             setSelectedFidelitySelector(fn);
         } else {
             logger.warn("no such fidelity for {}" + componentFidelity);
@@ -887,4 +891,13 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
         this.serviceFidelity.selects.add(signature);
     }
 
+    @Override
+    public ServiceFidelity<ServiceFidelity> getMetafidelity() {
+        return serviceMetafidelity;
+    }
+
+    @Override
+    public void setMetafidelity(ServiceFidelity<ServiceFidelity> metafidelity) {
+        serviceMetafidelity = metafidelity;
+    }
 }
