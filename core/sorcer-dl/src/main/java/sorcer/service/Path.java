@@ -58,6 +58,11 @@ public class Path implements Arg {
 		return paths.toArray(sigPaths);
 	}
 
+	@Override
+	public String toString() {
+		return 	path + (info == null ? "" : ":" + info);
+	}
+
 	public static List<String> getPathList(Path[] sigPaths) {
 		List<String> paths = new ArrayList(sigPaths.length);
 		for (int i = 0; i < sigPaths.length; i++)
