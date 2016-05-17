@@ -184,6 +184,11 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 
 		}
 
+		@Override
+		public boolean equals(Object obj) {
+			return obj.toString().equals("none");
+		}
+
 		public String toString() {
 			return "none";
 		}
