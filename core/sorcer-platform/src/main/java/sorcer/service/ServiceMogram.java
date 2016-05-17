@@ -477,6 +477,7 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
             id = System.getProperty("user.name");
         ((ServiceSignature) signature).setOwnerId(id);
         serviceFidelity.getSelects().add(signature);
+        this.serviceFidelity.select = signature;
     }
 
     /**
@@ -861,6 +862,7 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
             this.serviceFidelity = new ServiceFidelity();
             this.serviceFidelity.selects.addAll(fidelity.selects);
         }
+        this.serviceFidelity.select = fidelity.selects.get(0);
     }
 
     @Override
