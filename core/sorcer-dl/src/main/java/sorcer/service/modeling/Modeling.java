@@ -23,6 +23,7 @@ import net.jini.core.event.UnknownEventException;
 import sorcer.service.Context;
 import sorcer.service.ContextException;
 import sorcer.service.EvaluationException;
+import sorcer.service.ServiceFidelity;
 
 import java.rmi.MarshalledObject;
 import java.rmi.RemoteException;
@@ -67,7 +68,9 @@ public interface Modeling {
 	public boolean writeResult() throws EvaluationException, RemoteException;
 	
 	public void setContext(Context<?> context) throws ContextException;
-	
+
+	public void reconfigure(ServiceFidelity... fidelities) throws ContextException, RemoteException;
+
 	public void isolateModel(Context<?> inContext) throws ContextException;
 	
 	public void initializeBuilder() throws ContextException;

@@ -67,7 +67,7 @@ public class SrvModel extends ParModel<Object> implements Model, Invocation<Obje
         setSignature();
     }
 
-    public SrvModel(String name)  {
+    public SrvModel(String name) {
         super(name);
         isRevaluable = true;
         setSignature();
@@ -170,7 +170,24 @@ public class SrvModel extends ParModel<Object> implements Model, Invocation<Obje
         }
     }
 
+    // call from VarModels
+    public Object getSrvValue(String path, Srv srv, Arg... items) throws EvaluationException {
+        try {
+            putValue(path, srv);
+        } catch (ContextException e) {
+            data.remove(path);
+            return new EvaluationException(e);
+        }
+        Object out = getSrvValue(path, items);
+        data.remove(path);
+        return out;
+    }
+
     public Object getValue(String path, Arg... items) throws EvaluationException {
+           return getSrvValue(path, items);
+    }
+
+    public Object getSrvValue(String path, Arg... items) throws EvaluationException {
         Object val = null;
         try {
             append(items);
@@ -187,7 +204,7 @@ public class SrvModel extends ParModel<Object> implements Model, Invocation<Obje
 
             if (val instanceof Srv) {
                 if (isChanged())
-                     ((Srv) val).isValid(false);
+                    ((Srv) val).isValid(false);
                 Object val2 = ((Srv) val).asis();
                 if (val2 instanceof SignatureEntry) {
                     // return the calculated value
@@ -235,10 +252,10 @@ public class SrvModel extends ParModel<Object> implements Model, Invocation<Obje
                         putValue(((Srv) val).getReturnPath().path, obj);
                     return obj;
                 }  else if (val2 instanceof Requestor && ((Srv) val).getType() == Variability.Type.LAMBDA) {
-                        String entryPath = ((Entry)val).getName();
-                        Object out = ((Requestor)val2).exec((Service) this.asis(entryPath), this, items);
-                        ((Srv) get(path)).setSrvValue(out);
-                        return out;
+                    String entryPath = ((Entry)val).getName();
+                    Object out = ((Requestor)val2).exec((Service) this.asis(entryPath), this, items);
+                    ((Srv) get(path)).setSrvValue(out);
+                    return out;
                 } else if (val2 instanceof EntryCollable && ((Srv) val).getType() == Variability.Type.LAMBDA) {
                     Entry entry = ((EntryCollable)val2).call(this);
                     ((Srv) get(path)).setSrvValue(entry.value());

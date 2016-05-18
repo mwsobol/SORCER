@@ -34,8 +34,6 @@ package sorcer.service;
  * limitations under the License.
  */
 import net.jini.core.transaction.TransactionException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import sorcer.core.Name;
 
 import java.rmi.RemoteException;
@@ -49,8 +47,6 @@ import java.util.List;
 public class ServiceFidelity<T extends Arg> implements Multifidelity<T>, Arg {
 
 	private static final long serialVersionUID = -875629011139790420L;
-
-	public final static Logger logger = LoggerFactory.getLogger(ServiceFidelity.class);
 
 	public enum Type implements Arg {
 		EMPTY, NAME, SYS, SIG, ENTRY, EXERT, CONTEXT, COMPONENT, COMPOSITE, MULTI, VAR, SERVICE;
