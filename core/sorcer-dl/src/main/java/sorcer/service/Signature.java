@@ -18,6 +18,7 @@
 package sorcer.service;
 
 import sorcer.service.modeling.EvaluationComponent;
+import sorcer.service.modeling.SupportComponent;
 import sorcer.service.modeling.Variability;
 
 import java.io.IOException;
@@ -46,7 +47,8 @@ import java.util.Arrays;
  * @author Mike Sobolewski
  */
 @SuppressWarnings("rawtypes")
-public interface Signature extends PrimitiveService, Comparable, Dependency, Identifiable, EvaluationComponent, Serializable {
+public interface Signature extends PrimitiveService, Comparable, Dependency, Identifiable,
+		EvaluationComponent, SupportComponent, Serializable {
 
 	/**
 	 * Returns a name of this signature.

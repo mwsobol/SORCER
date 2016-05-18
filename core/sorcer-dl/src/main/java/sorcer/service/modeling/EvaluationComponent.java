@@ -17,7 +17,7 @@
 package sorcer.service.modeling;
 
 /**
- * Created by sobol on 5/14/16.
+ * Created by Mike Sobolewski on 5/14/16.
  */
 public interface EvaluationComponent {
 }
