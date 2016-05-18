@@ -414,6 +414,10 @@ public class ProviderDelegate {
 		}
 	}*/
 
+    int getWorkerCount() {
+        return workerCount;
+    }
+
 	void initSpaceSupport() throws ConfigurationException {
 		if (!spaceEnabled)
 			return;
