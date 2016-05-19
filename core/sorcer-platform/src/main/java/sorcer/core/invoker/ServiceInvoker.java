@@ -558,13 +558,4 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 		return null;
 	}
 
-	@Override
-	public T getPerturbedValue(String varName) throws EvaluationException, RemoteException {
-		return null;
-	}
-
-	@Override
-	public double getPerturbation() {
-		return 0;
-	}
 }
