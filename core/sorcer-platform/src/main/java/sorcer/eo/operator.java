@@ -1290,8 +1290,8 @@ public class operator {
 		return fi;
 	}
 
-	public static ServiceFidelity[] fis(ServiceFidelity... fidelities) {
-		return fidelities;
+	public static FidelityList fis(ServiceFidelity... fidelities) {
+		return new FidelityList(fidelities);
 	}
 
 	public static ServiceFidelity<?> fi(String path, String name) {

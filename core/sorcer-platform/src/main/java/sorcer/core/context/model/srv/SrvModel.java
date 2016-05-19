@@ -361,16 +361,16 @@ public class SrvModel extends ParModel<Object> implements Model, Invocation<Obje
 
     protected <T extends Arg> T getFi(ServiceFidelity<T> fi, Arg[] entries, String path) throws ContextException {
         ServiceFidelity selected = null;
-        for (Arg arg : entries) {
-            if (arg instanceof ServiceFidelity && ((ServiceFidelity)arg).type == ServiceFidelity.Type.EMPTY) {
-                if (((ServiceFidelity)arg).getPath().equals(path)) {
-                    selected = (ServiceFidelity) arg;
-                    ((Entry)asis(path)).isValid(false);
-                    isChanged();
-                    break;
-                }
+        FidelityList fiList = FidelityList.selectFidelities(entries);
+        for (ServiceFidelity sfi : fiList) {
+            if (sfi.getPath().equals(path)) {
+                selected = sfi;
+                ((Entry) asis(path)).isValid(false);
+                isChanged();
+                break;
             }
         }
+
         List<T> choices = fi.getSelects();
         for (T s : choices) {
             if (selected == null && fi.getSelect() != null)

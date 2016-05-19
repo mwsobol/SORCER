@@ -63,7 +63,8 @@ public class MultiFidelities {
 
         logger.info("DEPS: " + printDeps(mdl));
 
-        Context out = response(mdl, fi("arg/x1", "arg/x1/fi2"), fi("arg/x2", "arg/x2/fi2"), fi("mFi", "multiply"));
+//        Context out = response(mdl, fi("arg/x1", "arg/x1/fi2"), fi("arg/x2", "arg/x2/fi2"), fi("mFi", "multiply"));
+        Context out = response(mdl, fi("arg/x1", "arg/x1/fi2"), fis( fi("arg/x2", "arg/x2/fi2"), fi("mFi", "multiply")));
         logger.info("out: " + out);
         assertTrue(get(out, "arg/x1").equals(11.0));
         assertTrue(get(out, "arg/x2").equals(91.0));
