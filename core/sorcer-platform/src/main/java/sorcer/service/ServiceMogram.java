@@ -178,6 +178,10 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
         index = i;
     }
 
+    public Uuid getMogramId() {
+        return mogramId;
+    }
+
     @Override
     public void setParentId(Uuid parentId) {
         this.parentId = parentId;
@@ -187,9 +191,9 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
         return parentId;
     }
 
-    public Uuid getMogramId() {
-        return mogramId;
-    }
+    public Context getSupercontext() throws ContextException {
+        return parent.getContext();
+    };
 
     public List<Mogram> getAllMograms() {
         List<Mogram> exs = new ArrayList<Mogram>();

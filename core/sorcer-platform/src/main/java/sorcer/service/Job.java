@@ -173,23 +173,15 @@ public class Job extends CompoundExertion {
 	@Override
 	public Mogram addMogram(Mogram ex) throws ExertionException {
 		mograms.add(ex);
-		((ServiceExertion) ex).setIndex(mograms.indexOf(ex));
+		ex.setIndex(mograms.indexOf(ex));
 		try {
 			controlContext.registerExertion(ex);
 		} catch (ContextException e) {
 			throw new ExertionException(e);
 		}
-		((ServiceExertion) ex).setParentId(getId());
+		ex.setParentId(getId());
+		((ServiceMogram)ex).setParent(this);
 		return this;
-	}
-
-	public void addExertions(List<Exertion> Mogram) {
-		if (this.mograms != null)
-			this.mograms.addAll(mograms);
-		else {
-			this.mograms = new ArrayList<Mogram>();
-			this.mograms.addAll(mograms);
-		}
 	}
 
 	public List<Mogram> getMograms(List<Mogram> exs) {

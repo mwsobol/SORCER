@@ -790,7 +790,7 @@ public class ServiceShell implements RemoteServiceShell, Requestor, Callable {
 			return (((Context)obj).getValue(rPath.path));
 		}
 		if (outputs != null) {
-			obj = ((ServiceContext) acxt).getSubcontext(Path.getSigPathArray(outputs));
+			obj = ((ServiceContext) acxt).getSubcontext(Path.toArray(outputs));
 		}
 		return obj;
 	}

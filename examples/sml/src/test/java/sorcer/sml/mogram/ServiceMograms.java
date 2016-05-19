@@ -11,6 +11,7 @@ import sorcer.arithmetic.provider.Averager;
 import sorcer.arithmetic.provider.Multiplier;
 import sorcer.arithmetic.provider.Subtractor;
 import sorcer.arithmetic.provider.impl.*;
+import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.srv.SrvModel;
 import sorcer.core.provider.Modeler;
 import sorcer.core.provider.rendezvous.ServiceJobber;
@@ -113,7 +114,7 @@ public class ServiceMograms {
         logger.info("out context: " + exerted);
         assertTrue(value(exerted, "out").equals(110.0));
 
-        ((SrvModel)exerted).clearOutputs();
+        ((SrvModel) exerted).clearOutputs();
 
         exerted = exert(model);
         logger.info("out context: " + exerted);
@@ -144,7 +145,7 @@ public class ServiceMograms {
                 context(inEnt("template", "URL")),
                 task(sig("add", AdderImpl.class),
                         context(inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0), result("add"))),
-                loop(condition(cxt -> (double)value(cxt, "out") < 1000.0),
+                loop(condition(cxt -> (double) value(cxt, "out") < 1000.0),
                         mdl));
 
 //        logger.info("DEPS: " + printDeps(looping));
@@ -164,7 +165,7 @@ public class ServiceMograms {
     }
 
     @Test
-     public void modelWithInnerTask() throws Exception {
+    public void modelWithInnerTask() throws Exception {
 
         // usage of in and out connectors associated with model
         Task innerTask = task(
@@ -186,7 +187,7 @@ public class ServiceMograms {
                         inPaths("task/multiply", "subtract")))),
                 response("task/multiply", "subtract", "out"));
 
-       // dependsOn(m, ent("subtract", paths("multiply", "add")));
+        // dependsOn(m, ent("subtract", paths("multiply", "add")));
 
         add(m, innerTask);
 
@@ -197,7 +198,7 @@ public class ServiceMograms {
         assertTrue(get(out, "out").equals(450.0));
     }
 
-       @Test
+    @Test
     public void modelWithInnerModel() throws Exception {
         // get responses from a service model with inner model
 
@@ -252,7 +253,7 @@ public class ServiceMograms {
                         inPaths("inner/multiply/out", "subtract")))),
                 response("inner/multiply", "subtract", "out"));
 
-        // dependsOn(outerModel, ent("subtract", paths("multiply", "add")));
+        // dependsOn(outerMdl, ent("subtract", paths("multiply", "add")));
 
         add(outerMdl, innerMdl, inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0));
 
@@ -288,7 +289,7 @@ public class ServiceMograms {
                         inPaths("inner/multiply/out", "subtract")))),
                 response("inner/multiply", "subtract", "out"));
 
-        // dependsOn(outerModel, ent("subtract", paths("multiply", "add")));
+         dependsOn(outerMdl, dep("subtract", paths("multiply", "add")));
 
         add(outerMdl, innerMdl, inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0));
 

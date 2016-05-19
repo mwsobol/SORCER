@@ -324,6 +324,8 @@ public class operator {
 			return new Entry<T>(path, value);
 		} else if (value instanceof ServiceFidelity) {
 			return (Entry<T>) new Srv(path, value);
+		} else if (value instanceof List && ((List)value).get(0) instanceof Path) {
+			return (Entry<T>) new DependencyEntry(path, (List)value);
 		} else {
 			return new Entry<T>(path, value);
 		}
@@ -424,8 +426,16 @@ public class operator {
 		return srv(sig);
 	}
 
+	public static DependencyEntry dep(String path, Path... paths) {
+		return new DependencyEntry(path, Arrays.asList(paths));
+	}
+
 	public static DependencyEntry dep(String path, List<Path> paths) {
 		return new DependencyEntry(path, paths);
+	}
+
+	public static DependencyEntry[] deps(DependencyEntry... dependencies) {
+		return dependencies;
 	}
 
 	public static <T> Entry<T> rvEnt(String path, T value) {
@@ -943,10 +953,13 @@ public class operator {
 	public static List<Path> paths(Object... paths) {
 		List<Path> list = new ArrayList<>();
 		for (Object o : paths) {
-			if (o instanceof String)
-				list.add(new Path((String)o));
-			if (o instanceof Path)
-				list.add((Path)o);
+			if (o instanceof String) {
+				list.add(new Path((String) o));
+			} else if (o instanceof Path) {
+				list.add((Path) o);
+			} else if (o instanceof Identifiable) {
+				list.add(new Path(((Identifiable)o).getName()));
+			}
 		}
 		return list;
 	}

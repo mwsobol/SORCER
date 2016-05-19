@@ -53,9 +53,17 @@ public class Path implements Arg {
 		return path;
 	}
 
-	public static Path[] getSigPathArray(List<Path> paths) {
+	public static Path[] toArray(List<Path> paths) {
+		Path[] pa = new Path[paths.size()];
+		return paths.toArray(pa);
+	}
+
+	public static Path[] getPathArray(List<String> paths) {
 		Path[] sigPaths = new Path[paths.size()];
-		return paths.toArray(sigPaths);
+		for (int i = 0; i < paths.size(); i++)
+			sigPaths[i] = new Path(paths.get(i));
+
+		return sigPaths;
 	}
 
 	@Override
@@ -63,45 +71,38 @@ public class Path implements Arg {
 		return 	path + (info == null ? "" : ":" + info);
 	}
 
-	public static List<String> getPathList(Path[] sigPaths) {
-		List<String> paths = new ArrayList(sigPaths.length);
-		for (int i = 0; i < sigPaths.length; i++)
-			paths.add(sigPaths[i].path);
+	public static List<String> getPathList(Path[] paths) {
+		List<String> sl = new ArrayList(paths.length);
+		for (int i = 0; i < paths.length; i++)
+			sl.add(paths[i].path);
 
-		return paths;
+		return sl;
 	}
 
 	public static List<Path> getPathList(List<String> paths) {
-		ArrayList sigPaths = new ArrayList(paths.size());
+		ArrayList pal = new ArrayList(paths.size());
 
 		for(int i = 0; i < paths.size(); ++i) {
-			sigPaths.add(new Path(paths.get(i)));
+			pal.add(new Path(paths.get(i)));
 		}
 
-		return sigPaths;
+		return pal;
 	}
 
-	public static String[] getPaths(Path[] sigPaths) {
-		String[] paths = new String[sigPaths.length];
-		for (int i = 0; i < sigPaths.length; i++)
-			paths[i] = sigPaths[i].path;
+	public static String[] getPathNames(Path[] paths) {
+		String[] sa = new String[paths.length];
+		for (int i = 0; i < paths.length; i++)
+			sa[i] = paths[i].path;
 
-		return paths;
+		return sa;
 	}
 
-	public static String[] getPaths(List<Path> sigPaths) {
-		String[] paths = new String[sigPaths.size()];
-		for (int i = 0; i < sigPaths.size(); i++)
-			paths[i] = sigPaths.get(i).path;
-
-		return paths;
-	}
-
-	public static Path[] getSigPaths(List<String> paths) {
-		Path[] sigPaths = new Path[paths.size()];
+	public static String[] getPathNames(List<Path> paths) {
+		String[] sa = new String[paths.size()];
 		for (int i = 0; i < paths.size(); i++)
-			sigPaths[i] = new Path(paths.get(i));
+			sa[i] = paths.get(i).path;
 
-		return sigPaths;
+		return sa;
 	}
+
 }

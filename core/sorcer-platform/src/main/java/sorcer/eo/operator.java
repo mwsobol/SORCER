@@ -87,7 +87,6 @@ import static sorcer.po.operator.parModel;
  *
  * @author Mike Sobolewski
  */
-@SuppressWarnings({ "rawtypes", "unchecked" })
 public class operator {
 
 	protected static int count = 0;
@@ -281,7 +280,7 @@ public class operator {
 			return ((Exertion) ((CompoundExertion) entries[1]).getComponentMogram(
 					(String) entries[0])).getContext();
 		} else if (entries[0] instanceof Context && entries[1] instanceof List) {
-			return ((ServiceContext) entries[0]).getDirectionalSubcontext(Path.getSigPaths((List)entries[1]));
+			return ((ServiceContext) entries[0]).getDirectionalSubcontext(Path.getPathArray((List)entries[1]));
 		} else if (entries[0] instanceof Model) {
 			cxt = (PositionalContext) entries[0];
 		} else {
@@ -1169,15 +1168,6 @@ public class operator {
 		return new EvaluationTask(signature, context);
 	}
 
-	public static ServiceFidelity fiFi(String name) {
-		return new ServiceFidelity(name);
-	}
-
-
-//	public static Tuple2<String, String> cFi(String componentPath, String fidelityName) {
-//		return new Tuple2<String, String> (componentPath, fidelityName);
-//	}
-
 	public static ServiceFidelity<Arg> cFi(String componentPath, String fidelityName) {
 		ServiceFidelity<Arg> fi = new ServiceFidelity(componentPath, new Name(fidelityName));
 		fi.setPath(componentPath);
@@ -1185,7 +1175,8 @@ public class operator {
 		return fi;
 	}
 
-	public static ServiceFidelity<Arg> fi(String name, String... selectors) {
+	// name or selector fidelity
+	public static ServiceFidelity<Arg> nFi(String name, String... selectors) {
 		ServiceFidelity fi = new ServiceFidelity(name, selectors);
 		fi.type = ServiceFidelity.Type.NAME;
 		return fi;
@@ -1297,6 +1288,10 @@ public class operator {
 		ServiceFidelity<?> fi = new ServiceFidelity(name);
 		fi.type = ServiceFidelity.Type.EMPTY;
 		return fi;
+	}
+
+	public static ServiceFidelity[] fis(ServiceFidelity... fidelities) {
+		return fidelities;
 	}
 
 	public static ServiceFidelity<?> fi(String path, String name) {

@@ -67,6 +67,8 @@ public interface Mogram extends Identifiable, Service, Exerter, Projection, Scop
 
     public void setIndex(int i);
 
+    public Mogram getParent();
+
     public void setParentId(Uuid parentId);
 
     public Signature getProcessSignature();
@@ -81,6 +83,8 @@ public interface Mogram extends Identifiable, Service, Exerter, Projection, Scop
     public void setStatus(int value);
 
     public Context getContext() throws ContextException;
+
+	public Context getSupercontext() throws ContextException;
 
     public Mogram clearScope() throws MogramException;
 
