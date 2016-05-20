@@ -265,6 +265,7 @@ public class operator {
 		Strategy.Access accessType = null;
 		Strategy.Flow flowType = null;
 		Strategy.FidelityMangement fm = null;
+		FidelityManager fiManager = null;
 
 		if (entries[0] instanceof Exertion) {
 			Exertion xrt = (Exertion) entries[0];
@@ -277,8 +278,8 @@ public class operator {
 			return new PositionalContext((String) entries[0]);
 		} else if (entries.length == 2 && entries[0] instanceof String
 				&& entries[1] instanceof Exertion) {
-			return ((Exertion) ((CompoundExertion) entries[1]).getComponentMogram(
-					(String) entries[0])).getContext();
+			return ((CompoundExertion) entries[1]).getComponentMogram(
+					(String) entries[0]).getContext();
 		} else if (entries[0] instanceof Context && entries[1] instanceof List) {
 			return ((ServiceContext) entries[0]).getDirectionalSubcontext(Path.getPathArray((List)entries[1]));
 		} else if (entries[0] instanceof Model) {
@@ -302,7 +303,7 @@ public class operator {
 		QueueStrategy modelStrategy = null;
 		Signature sig = null;
 		Class customContextClass = null;
-		boolean manualDeps = false;
+		boolean autoDeps = true;
 		for (Object o : entries) {
 			if (o instanceof Complement) {
 				subject = (Complement) o;
@@ -336,14 +337,16 @@ public class operator {
 				sig = (Signature) o;
 			} else if (o instanceof Class) {
 				customContextClass = (Class) o;
-			} else if (Strategy.Flow.EXPLICIT.equals(o)) {
-				manualDeps = true;
 			} else if (o instanceof Strategy.Access) {
 				accessType = (Strategy.Access)o;
 			} else if (o instanceof Strategy.Access) {
 				flowType = (Strategy.Flow)o;
 			} else if (o instanceof Strategy.FidelityMangement) {
 				fm = (Strategy.FidelityMangement)o;
+			} else if (o instanceof FidelityManager) {
+				fiManager = ((FidelityManager)o);
+			} else if (o.equals(Strategy.Flow.EXPLICIT)) {
+				autoDeps = false;
 			}
 		}
 
@@ -460,38 +463,50 @@ public class operator {
 			cxt.getMogramStrategy().setFlowType(flowType);
 		if (sig != null)
 			cxt.setSubject(sig.getSelector(), sig.getServiceType());
-		if (cxt instanceof SrvModel && ! manualDeps) {
+		if (cxt instanceof SrvModel && autoDeps) {
 			try {
 				cxt = new SrvModelAutoDeps((SrvModel) cxt).get();
 			} catch (SortingException e) {
 				throw new ContextException("Problem with dependencies: " + e);
 			}
 		}
-		if (fm == FidelityMangement.YES) {
-			try {
-				((ServiceMogram)cxt).setFiManager(createFiManager(cxt));
-			} catch (RemoteException e) {
-				throw new ContextException(e);
-			}
+
+		if (cxt.getFidelityManager() == null && fm == Strategy.FidelityMangement.YES) {
+			((ServiceContext)cxt).setFidelityManager(new FidelityManager(cxt));
+			setupFiManager(cxt);
+		} else if (fiManager != null) {
+			((ServiceContext)cxt).setFidelityManager(fiManager);
+			setupFiManager(cxt);
+		} else if (cxt.getFidelityManager() != null) {
+			setupFiManager(cxt);
 		}
+
 		return cxt;
 	}
 
-	private static FidelityManager createFiManager(Context cxt) throws EvaluationException, RemoteException {
-		FidelityManager fim = new FidelityManager(cxt);
-		Map<String, ServiceFidelity> fiMap = new HashMap<>();
-		Map.Entry<String,Object> e;
-		Object val = null;
-		Iterator<Map.Entry<String,Object>> i = ((ServiceContext)cxt).entryIterator();
-		while(i.hasNext()) {
-			e = i.next();
-			val = e.getValue();
-			if (val instanceof Srv && ((Srv)val).asis() instanceof ServiceFidelity) {
-				fiMap.put(e.getKey(), (ServiceFidelity)((Srv)val).asis());
-			}
+	private static FidelityManager setupFiManager(Context cxt) throws ContextException {
+		if (cxt.getFidelityManager() == null) {
+			((ServiceContext)cxt).setFidelityManager(new FidelityManager(cxt));
 		}
-		fim.setFidelities(fiMap);
-		return fim;
+		try {
+			Map<String, ServiceFidelity> fiMap =
+					fiMap = cxt.getFidelityManager().getFidelities();
+
+			Map.Entry<String,Object> e;
+			Object val = null;
+			Iterator<Map.Entry<String,Object>> i = ((ServiceContext)cxt).entryIterator();
+			while(i.hasNext()) {
+				e = i.next();
+				val = e.getValue();
+				if (val instanceof Srv && ((Srv)val).asis() instanceof ServiceFidelity) {
+					fiMap.put(e.getKey(), (ServiceFidelity)((Srv)val).asis());
+				}
+			}
+		} catch (Exception ex) {
+			throw new ContextException(ex);
+		}
+
+		return (FidelityManager)cxt.getFidelityManager();
 	}
 
 	private static Context getPersistedContext(Object... entries) throws ContextException {
@@ -1553,7 +1568,7 @@ public class operator {
 		boolean srvType = false;
 		boolean hasExertion = false;
 		boolean hasSignature = false;
-		boolean manualDeps = false;
+		boolean autoDeps = true;
 		for (Object i : items) {
 			if (i instanceof String) {
 				name = (String) i;
@@ -1575,7 +1590,7 @@ public class operator {
 					throw new ModelException(e);
 				}
 			} else if (i.equals(Strategy.Flow.EXPLICIT)) {
-				manualDeps = true;
+				autoDeps = false;
 			}
 		}
 		if ((hasEntry || hasSignature && hasEntry) && !hasExertion) {
@@ -1594,7 +1609,7 @@ public class operator {
 				mo = context(items);
 
 			mo.setName(name);
-			if (mo instanceof SrvModel && ! manualDeps)
+			if (mo instanceof SrvModel && autoDeps)
 				mo = new SrvModelAutoDeps((SrvModel)mo).get();
 			return (M) mo;
 		}

@@ -228,12 +228,12 @@ public class operator {
 
     public static Model srvModel(Object... items) throws ContextException {
         sorcer.eo.operator.Complement complement = null;
-        List<Signature> sigs = new ArrayList<Signature>();
+        List<Signature> sigs = new ArrayList<>();
         ServiceFidelity<Arg> responsePaths = null;
         SrvModel model = null;
         FidelityManager fiManager = null;
-        List<ServiceFidelity<ServiceFidelity>> metaFis = new ArrayList<ServiceFidelity<ServiceFidelity>>();
-        List<Srv> metaFiEnts = new ArrayList<Srv>();
+        List<ServiceFidelity<ServiceFidelity>> metaFis = new ArrayList<>();
+        List<Srv> morphedFiEnts = new ArrayList<Srv>();
         for (Object item : items) {
             if (item instanceof Signature) {
                 sigs.add((Signature)item);
@@ -244,7 +244,7 @@ public class operator {
             } else if (item instanceof FidelityManager) {
                 fiManager = ((FidelityManager)item);
             } else if (item instanceof Srv && ((Entry)item)._2 instanceof MorphedFidelity) {
-                metaFiEnts.add((Srv)item);
+                morphedFiEnts.add((Srv)item);
             } else if (item instanceof ServiceFidelity) {
                 if (((ServiceFidelity) item).getSelects().get(0) instanceof ServiceFidelity) {
                     metaFis.add((ServiceFidelity<ServiceFidelity>) item);
@@ -256,20 +256,20 @@ public class operator {
         if (model == null)
             model = new SrvModel();
 
-        if (metaFiEnts != null || metaFis != null) {
+        if (morphedFiEnts != null || metaFis != null) {
            if (fiManager == null)
-               fiManager = new FidelityManager(model.getName());
+               fiManager = new FidelityManager(model);
         }
         if (fiManager != null) {
-            model.setFiManager(fiManager);
+            model.setFidelityManager(fiManager);
             fiManager.init(metaFis);
             fiManager.setMogram(model);
             MorphedFidelity mFi = null;
-            if ((metaFiEnts.size() > 0)) {
-                for (Srv metaFiEnt : metaFiEnts) {
-                    mFi = (MorphedFidelity) metaFiEnt._2;
-                    fiManager.addFidelity(metaFiEnt._1, mFi.getFidelity());
-                    mFi.setPath(metaFiEnt._1);
+            if ((morphedFiEnts.size() > 0)) {
+                for (Srv morphedFiEnt : morphedFiEnts) {
+                    mFi = (MorphedFidelity) morphedFiEnt._2;
+                    fiManager.addFidelity(morphedFiEnt._1, mFi.getFidelity());
+                    mFi.setPath(morphedFiEnt._1);
                     mFi.setSelect((Arg) mFi.getSelects().get(0));
                     mFi.addObserver(fiManager);
                 }

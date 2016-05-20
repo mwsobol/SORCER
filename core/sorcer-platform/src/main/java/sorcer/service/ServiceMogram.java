@@ -63,6 +63,8 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
 
     protected FidelityManagement fiManager;
 
+    protected FidelityList fiConfig;
+
     protected MogramStrategy mogramStrategy;
 
     /**
@@ -749,8 +751,16 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
         return fiManager;
     }
 
-    public void setFiManager(FidelityManager fiManager) {
+    public void setFidelityManager(FidelityManager fiManager) {
         this.fiManager = fiManager;
+    }
+
+    public FidelityList getFiConfig() {
+        return fiConfig;
+    }
+
+    public void setFiConfig(FidelityList fiConfig) {
+        this.fiConfig = fiConfig;
     }
 
     public ServiceFidelity selectFidelity(Arg... entries)  {

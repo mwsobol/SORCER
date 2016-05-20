@@ -79,19 +79,19 @@ public class MultiFidelities {
         Model mdl = model(
                 ent("arg/x1", eFi(inEnt("arg/x1/fi1", 10.0), inEnt("arg/x1/fi2", 11.0))),
                 ent("arg/x2", eFi(inEnt("arg/x2/fi1", 90.0), inEnt("arg/x2/fi2", 91.0))),
-                ent("mFi", sFi(sig("add", AdderImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))),
+                ent("sFi", sFi(sig("add", AdderImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))),
                         sig("multiply", MultiplierImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))))),
                 FidelityMangement.YES,
-                response("mFi", "arg/x1", "arg/x2"));
+                response("sFi", "arg/x1", "arg/x2"));
 
         logger.info("DEPS: " + printDeps(mdl));
 
-        reconfigure(mdl, fi("arg/x1", "arg/x1/fi2"), fi("arg/x2", "arg/x2/fi2"), fi("mFi", "multiply"));
+        reconfigure(mdl, fi("arg/x1", "arg/x1/fi2"), fi("arg/x2", "arg/x2/fi2"), fi("sFi", "multiply"));
         Context out = response(mdl);
         logger.info("out: " + out);
         assertTrue(get(out, "arg/x1").equals(11.0));
         assertTrue(get(out, "arg/x2").equals(91.0));
-        assertTrue(get(out, "mFi").equals(1001.0));
+        assertTrue(get(out, "sFi").equals(1001.0));
         assertTrue(get(mdl, "result/y").equals(1001.0));
     }
 
@@ -340,10 +340,13 @@ public class MultiFidelities {
 
         // three entry multifidelity model with morphers
         Model mod = model(inEnt("arg/x1", 90.0), inEnt("arg/x2", 10.0),
+				ent("arg/y1", eFi(inEnt("arg/y1/fi1", 10.0), inEnt("arg/y1/fi2", 11.0))),
+				ent("arg/y2", eFi(inEnt("arg/y2/fi1", 90.0), inEnt("arg/y2/fi2", 91.0))),
                 ent("mFi1", mFi(morpher1, add, multiply)),
                 ent("mFi2", mFi(morpher2, average, divide, subtract)),
                 ent("mFi3", mFi(average, divide, multiply)),
                 fi2, fi3, fi4,
+                FidelityMangement.YES,
                 response("mFi1", "mFi2", "mFi3", "arg/x1", "arg/x2"));
 
         // fidelities morphed by the model's fidelity manager
