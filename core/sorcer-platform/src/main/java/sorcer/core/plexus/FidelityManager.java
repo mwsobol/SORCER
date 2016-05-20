@@ -87,6 +87,7 @@ public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Ob
     }
 
     public void addFidelity(String path, ServiceFidelity<T> fi) {
+        if (fi != null)
             this.fidelities.put(path, fi);
     }
 
