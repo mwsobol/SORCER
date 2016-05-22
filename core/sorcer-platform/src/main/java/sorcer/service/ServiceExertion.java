@@ -794,7 +794,6 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
         Signature sig = getProcessSignature();
         if (sig != null) {
             Access access = getControlContext().getAccessType();
-
             if (Access.PULL == access
                     && !getProcessSignature().getServiceType()
                     .isAssignableFrom(Spacer.class)) {

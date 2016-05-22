@@ -56,6 +56,7 @@ import sorcer.service.Signature.ReturnPath;
 import sorcer.service.Strategy.Access;
 import sorcer.service.modeling.Model;
 import sorcer.service.txmgr.TransactionManagerAccessor;
+import sorcer.util.ProviderLocator;
 import sorcer.util.Sorcer;
 
 import java.io.File;
@@ -106,11 +107,19 @@ public class ServiceShell implements RemoteServiceShell, Requestor, Callable {
 	private static void setupProxyCache() {
 		if (proxies == null) {
 			proxies = CacheBuilder.newBuilder()
-						  .maximumSize(20)
-						  .expireAfterWrite(30, TimeUnit.MINUTES)
-						  .build(new CacheLoader<Signature, Object>() {
-							  public Object load(Signature signature) {
-								  return Accessor.get().getService(signature);
+					.maximumSize(20)
+					.expireAfterWrite(30, TimeUnit.MINUTES)
+					.build(new CacheLoader<Signature, Object>() {
+						public Object load(Signature signature) {
+							if (signature.getProviderName() instanceof ServiceName) {
+								try {
+									return ProviderLocator.getProvider(signature);
+								} catch (SignatureException e) {
+									e.printStackTrace();
+								}
+								return Context.none;
+							} else
+								return Accessor.get().getService(signature);
 						}
 					});
 		}
@@ -404,7 +413,11 @@ public class ServiceShell implements RemoteServiceShell, Requestor, Callable {
 			// if space exertion should go to Spacer
 			if (!exertion.isJob()
 					&& exertion.getControlContext().getAccessType() == Access.PULL) {
-				signature = new NetSignature("exert", Spacer.class, Sorcer.getActualSpacerName());
+				String srvName = Sorcer.getActualSpacerName();
+				if (signature.getProviderName() instanceof ServiceName) {
+					srvName =  signature.getProviderName().getName();
+				}
+				signature = new NetSignature("exert", Spacer.class, srvName);
 				exertion.correctProcessSignature(signature);
 			}
 			provider = ((NetSignature) signature).getProvider();

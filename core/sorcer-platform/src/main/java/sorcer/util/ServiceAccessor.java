@@ -165,7 +165,7 @@ public class ServiceAccessor implements DynamicAccessor {
 			LookupLocator[] locators = getLookupLocators();
             Set<String> groupsSet = new HashSet<>();
             String[] groups = DiscoveryGroupManagement.ALL_GROUPS;
-            if(SorcerEnv.getLookupGroups()!=null) {
+            if (SorcerEnv.getLookupGroups() != null) {
                 Collections.addAll(groupsSet, SorcerEnv.getLookupGroups());
                 groupsSet.add(Sorcer.getSpaceGroup());
                 groups = groupsSet.toArray(new String[groupsSet.size()]);

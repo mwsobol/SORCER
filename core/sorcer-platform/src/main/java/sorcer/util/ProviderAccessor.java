@@ -31,11 +31,13 @@ import org.slf4j.LoggerFactory;
 import sorcer.core.SorcerConstants;
 import sorcer.core.provider.Cataloger;
 import sorcer.core.provider.Provider;
+import sorcer.core.provider.ServiceName;
 import sorcer.core.signature.NetSignature;
 import sorcer.jini.lookup.entry.SorcerServiceInfo;
 import sorcer.river.Filters;
 import sorcer.service.Accessor;
 import sorcer.service.Signature;
+import sorcer.service.SignatureException;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -90,8 +92,13 @@ public class ProviderAccessor extends ServiceAccessor {
      *            the signature of service provider
      * @return a SORCER provider service
      */
-    public Provider getProvider(Signature signature) {
-        return (Provider)getService(signature);
+    public Provider getProvider(Signature signature) throws SignatureException {
+		if (signature.getProviderName() instanceof ServiceName) {
+			// for handling dynamic groups in signature
+			return ProviderLocator.getProvider(signature);
+		} else {
+			return (Provider) getService(signature);
+		}
     }
 
     /**
@@ -102,9 +109,9 @@ public class ProviderAccessor extends ServiceAccessor {
      *            a provider service type (interface)
      * @return a SORCER provider service
      */
-    public Provider getProvider(Class serviceType) {
-        return getProvider(new NetSignature(serviceType));
-    }
+    public Provider getProvider(Class serviceType) throws SignatureException {
+		return getProvider(new NetSignature(serviceType));
+	}
 
     /**
 	 * Returns a SORCER service provider registered with the most significant

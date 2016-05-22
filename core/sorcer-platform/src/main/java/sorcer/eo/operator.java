@@ -42,8 +42,8 @@ import sorcer.core.dispatch.SrvModelAutoDeps;
 import sorcer.core.exertion.*;
 import sorcer.core.invoker.InvokeIncrementor;
 import sorcer.core.plexus.FidelityManager;
-import sorcer.core.plexus.Morpher;
 import sorcer.core.plexus.MorphedFidelity;
+import sorcer.core.plexus.Morpher;
 import sorcer.core.plexus.MultifidelityService;
 import sorcer.core.provider.*;
 import sorcer.core.provider.exerter.Binder;
@@ -52,10 +52,8 @@ import sorcer.core.provider.rendezvous.ServiceConcatenator;
 import sorcer.core.provider.rendezvous.ServiceModeler;
 import sorcer.core.requestor.ExertRequestor;
 import sorcer.core.signature.*;
-import sorcer.service.Signature.ReturnPath;
 import sorcer.netlet.ScriptExerter;
 import sorcer.service.*;
-import sorcer.service.Path;
 import sorcer.service.Signature.*;
 import sorcer.service.Strategy.*;
 import sorcer.service.modeling.Model;
@@ -972,7 +970,8 @@ public class operator {
             for (Object o : args) {
                 if (o instanceof ProviderName) {
                     providerName = (ProviderName)o;
-                    providerName.setName(Sorcer.getActualName(providerName.getName()));
+                    if (!(providerName instanceof ServiceName))
+                        providerName.setName(Sorcer.getActualName(providerName.getName()));
                 } else if (o instanceof Provision) {
                     p = (Provision) o;
                 } else if (o instanceof MapContext) {

@@ -2199,45 +2199,60 @@ public class ProviderDelegate {
 		 */
 		private void loadJiniConfiguration(Configuration config) {
 			String val = null;
-
+			String srvName = null;
 			try {
-				val = (String) jiniConfig.getEntry(ServiceProvider.COMPONENT,
-						J_PROVIDER_NAME, String.class);
+				srvName = (String) jiniConfig.getEntry(ServiceProvider.COMPONENT,
+						J_SERVICE_PROVIDER_NAME, String.class);
 			} catch (ConfigurationException e) {
-				val = null;
+				srvName = null;
 			}
-			if ((val != null) && (val.length() > 0))
-				setProviderName(val);
+			if ((srvName != null) && (srvName.length() > 0)) {
+				setProviderName(srvName);
+			}
 
-			String nameSuffixed = "";
-			boolean globalNameSuffixed = Sorcer.nameSuffixed();
-			try {
-				nameSuffixed = (String) config.getEntry(
-						ServiceProvider.COMPONENT, "nameSuffixed", String.class,
-						"");
-			} catch (ConfigurationException e1) {
-				nameSuffixed = "";
+			if (srvName == null) {
+				try {
+					val = (String) jiniConfig.getEntry(ServiceProvider.COMPONENT,
+							J_PROVIDER_NAME, String.class);
+				} catch (ConfigurationException e) {
+					val = null;
+				}
+				if ((val != null) && (val.length() > 0))
+					setProviderName(val);
 			}
-			// check for the specified suffix by the user
-			String suffix = Sorcer.getNameSuffix();
 
-			String suffixedName = null;
-			if (nameSuffixed.length() == 0) {
-				if (suffix == null)
-					suffixedName = Sorcer.getSuffixedName(val);
-				else
-					suffixedName = val + "-" + suffix;
-			} else if (!nameSuffixed.equals("true")
-					&& !nameSuffixed.equals("false")) {
-				suffixedName = val + "-" + nameSuffixed;
-				nameSuffixed = "true";
-			}
-			// add provider name and SorcerServiceType entries
-			// nameSuffixed not defined by this provider but in sorcer.env
-			if (nameSuffixed.length() == 0 && globalNameSuffixed) {
-				setProviderName(suffixedName);
-			} else if (nameSuffixed.equals("true")) {
-				setProviderName(suffixedName);
+			// for suffixed name, when srvName is null
+			if (val != null) {
+				String nameSuffixed = "";
+				boolean globalNameSuffixed = Sorcer.nameSuffixed();
+				try {
+					nameSuffixed = (String) config.getEntry(
+							ServiceProvider.COMPONENT, J_PROVIDER_NAME_SUFFIXED, String.class,
+							"");
+				} catch (ConfigurationException e1) {
+					nameSuffixed = "";
+				}
+				// check for the specified suffix by the user
+				String suffix = Sorcer.getNameSuffix();
+
+				String suffixedName = null;
+				if (nameSuffixed.length() == 0) {
+					if (suffix == null)
+						suffixedName = Sorcer.getSuffixedName(val);
+					else
+						suffixedName = val + "-" + suffix;
+				} else if (!nameSuffixed.equals("true")
+						&& !nameSuffixed.equals("false")) {
+					suffixedName = val + "-" + nameSuffixed;
+					nameSuffixed = "true";
+				}
+				// add provider name and SorcerServiceType entries
+				// nameSuffixed not defined by this provider but in sorcer.env
+				if (nameSuffixed.length() == 0 && globalNameSuffixed) {
+					setProviderName(suffixedName);
+				} else if (nameSuffixed.equals("true")) {
+					setProviderName(suffixedName);
+				}
 			}
 
 			try {

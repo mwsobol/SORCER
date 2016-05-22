@@ -32,7 +32,7 @@ import static sorcer.eo.operator.value;
 @ProjectContext("examples/sml")
 public class NetTaskExertions {
 	private final static Logger logger = LoggerFactory.getLogger(NetTaskExertions.class);
-	
+
 	@Test
 	public void exertTask() throws Exception  {
 
@@ -53,42 +53,55 @@ public class NetTaskExertions {
 		assertTrue(context(ent("arg/x1", 20.0), ent("result/y", 100.0)).equals(
 				value(cxt, result("result/context", outPaths("arg/x1", "result/y")))));
 	}
-	
-	
+
+	@Test
+	public void exertTaskSrvName() throws Exception  {
+
+		Task t5 = task("t5", sig("add", Adder.class, srvName("Adder-ms")),
+				cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0), result("result/y")));
+
+		Exertion out = exert(t5);
+		Context cxt = context(out);
+		logger.info("out context: " + cxt);
+		logger.info("context @ arg/x1: " + value(cxt, "arg/x1"));
+		logger.info("context @ arg/x2: " + value(cxt, "arg/x2"));
+		logger.info("context @ result/y: " + value(cxt, "result/y"));
+
+		// get a single context argument
+		assertEquals(100.0, value(cxt, "result/y"));
+
+		// get the subcontext output from the context
+		assertTrue(context(ent("arg/x1", 20.0), ent("result/y", 100.0)).equals(
+				value(cxt, result("result/context", outPaths("arg/x1", "result/y")))));
+	}
+
+	@Test
+	public void exertTaskSrvNameGroup() throws Exception  {
+
+		String group = System.getProperty("user.name");
+
+		Task t5 = task("t5", sig("add", Adder.class, srvName("Adder-ms", group)),
+				cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0), result("result/y")));
+
+		Exertion out = exert(t5);
+		Context cxt = context(out);
+		logger.info("out context: " + cxt);
+		logger.info("context @ arg/x1: " + value(cxt, "arg/x1"));
+		logger.info("context @ arg/x2: " + value(cxt, "arg/x2"));
+		logger.info("context @ result/y: " + value(cxt, "result/y"));
+
+		// get a single context argument
+		assertEquals(100.0, value(cxt, "result/y"));
+
+		// get the subcontext output from the context
+		assertTrue(context(ent("arg/x1", 20.0), ent("result/y", 100.0)).equals(
+				value(cxt, result("result/context", outPaths("arg/x1", "result/y")))));
+	}
+
 	@Test
 	public void evaluateTask() throws SignatureException, ExertionException, ContextException  {
 
 		Task t5 = task("t5", sig("add", Adder.class),
-				cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0), result("result/y")));
-
-		// get the result value
-		assertTrue(value(t5).equals(100.0));
-
-		// get the subcontext output from the exertion
-		assertTrue(context(ent("arg/x1", 20.0), ent("result/z", 100.0)).equals(
-				value(t5, result("result/z", outPaths("arg/x1", "result/z")))));
-
-	}
-
-	@Test
-	public void evaluateTaskPrvName() throws SignatureException, ExertionException, ContextException  {
-
-		Task t5 = task("t5", sig("add", Adder.class, prvName("Adder")),
-				cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0), result("result/y")));
-
-		// get the result value
-		assertTrue(value(t5).equals(100.0));
-
-		// get the subcontext output from the exertion
-		assertTrue(context(ent("arg/x1", 20.0), ent("result/z", 100.0)).equals(
-				value(t5, result("result/z", outPaths("arg/x1", "result/z")))));
-
-	}
-
-	@Test
-	public void evaluateSrvPrvName() throws SignatureException, ExertionException, ContextException  {
-
-		Task t5 = task("t5", sig("add", Adder.class, srvName("Adder", "ms")),
 				cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0), result("result/y")));
 
 		// get the result value

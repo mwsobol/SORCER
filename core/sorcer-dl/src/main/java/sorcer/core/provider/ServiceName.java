@@ -22,9 +22,12 @@ import java.util.Arrays;
 /**
  * Created by Mike Sobolewski on 5/22/16.
  */
-public class ServiceName extends ProviderName{
+public class ServiceName extends ProviderName {
 
-    private String[]  groups;
+//    DiscoveryGroupManagement.ALL_GROUPS;
+//    DiscoveryGroupManagement.NO_GROUPS;
+    // initilaize to NO_GROUPS
+    private String[]  groups = new String[0];
 
     public ServiceName() {
         super();
@@ -47,5 +50,13 @@ public class ServiceName extends ProviderName{
     @Override
     public String toString() {
         return name + ":" + Arrays.toString(groups);
+    }
+
+    @Override
+    public void setName(String name) {
+        if (name != null)
+            throw  new RuntimeException("Name is not modifible!");
+        else
+            this.name = name;
     }
 }
