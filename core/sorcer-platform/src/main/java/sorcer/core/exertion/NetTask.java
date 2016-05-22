@@ -20,6 +20,7 @@ package sorcer.core.exertion;
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
 import net.jini.id.Uuid;
+import sorcer.core.provider.ProviderName;
 import sorcer.core.provider.exerter.ServiceShell;
 import sorcer.core.signature.NetSignature;
 import sorcer.service.*;
@@ -138,7 +139,7 @@ public class NetTask extends ObjectTask implements Invocation<Object> {
 
 	public static NetTask getTemplate(String provider) {
 		NetTask temp = getTemplate();
-		temp.getProcessSignature().setProviderName(provider);
+		temp.getProcessSignature().setProviderName(new ProviderName(provider));
 		return temp;
 	}
 

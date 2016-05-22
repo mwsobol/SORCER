@@ -17,6 +17,7 @@
 
 package sorcer.service;
 
+import sorcer.core.provider.ProviderName;
 import sorcer.service.modeling.EvaluationComponent;
 import sorcer.service.modeling.SupportComponent;
 import sorcer.service.modeling.Variability;
@@ -77,7 +78,7 @@ public interface Signature extends PrimitiveService, Comparable, Dependency, Ide
 	 *
 	 * @return name of service provider
 	 */
-	public String getProviderName();
+	public ProviderName getProviderName();
 
 	/**
 	 * Returns a service provider.
@@ -93,7 +94,7 @@ public interface Signature extends PrimitiveService, Comparable, Dependency, Ide
 	 */
 	public Variability<?> getVariability();
 
-	public void setProviderName(String providerName);
+	public void setProviderName(ProviderName providerName);
 
 	/**
 	 * Returns a service type name of this signature.

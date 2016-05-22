@@ -65,14 +65,14 @@ public class NetSignature extends ObjectSignature {
     private static Logger logger = LoggerFactory.getLogger(ObjectSignature.class);
 
 	public NetSignature() {
-		providerName = ANY;
+		providerName = new ProviderName();
 	}
 
 	public NetSignature(ServiceSignature signature) {
 		this(signature.getSelector(), signature.getServiceType(), signature
-				.getProviderName());
+				.getProviderName().getName());
 	}
-	
+
 	public NetSignature(Class<?> serviceType) {
 		this("none", serviceType, ANY);
 	}
@@ -80,6 +80,14 @@ public class NetSignature extends ObjectSignature {
 	public NetSignature(String selector, Class<?> serviceType) {
 		this(selector, serviceType, ANY);
 	}
+
+
+	public NetSignature(String selector, Class<?> serviceType, ProviderName providerName) {
+		this(selector, serviceType);
+		this.providerName =  providerName;
+		execType = Type.PROC;
+	}
+
 
 	public NetSignature(String selector, Class<?> serviceType,
 			String providerName) {
@@ -113,9 +121,9 @@ public class NetSignature extends ObjectSignature {
         if (serviceType!=null && version==null)
             this.version = MavenUtil.findVersion(serviceType);
 		if (providerName == null || providerName.length() == 0)
-			this.providerName = ANY;
+			this.providerName = new ProviderName(ANY);
 		else
-			this.providerName = providerName;
+			this.providerName = new ProviderName(providerName);
 		if (methodType == null) 
 			execType = Type.PROC;
 		else
@@ -164,7 +172,7 @@ public class NetSignature extends ObjectSignature {
 
 	public List<Entry> getAttributes() {
 		if (attributes == null || attributes.size() == 0) {
-			Entry[] atts = new Entry[] { new Name(providerName) };
+			Entry[] atts = new Entry[] { new Name(providerName.getName()) };
 			return Arrays.asList(atts);
 		}
 		return attributes;
@@ -201,16 +209,16 @@ public class NetSignature extends ObjectSignature {
     }
 
 	public String action() {
-		String pn = (providerName == null) ? ANY : providerName;
+		String pn = (providerName == null) ? ANY : providerName.getName();
 		return serviceType + ", " + selector + ", " + pn;
 	}
 
-	public String getProviderName() {
+	public ProviderName getProviderName() {
 		return providerName;
 	}
 
 	public void setProviderName(String name) {
-		providerName = name;
+		providerName.setName(name);
 	}
 
 	public void setOwnerId(String oid) {

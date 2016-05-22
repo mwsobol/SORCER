@@ -1103,7 +1103,7 @@ public class ProviderDelegate {
 			RemoteException, SignatureException, ContextException {
 		// check if we do not look with the same exertion
 		Service recipient = null;
-		String prvName = task.getProcessSignature().getProviderName();
+		String prvName = task.getProcessSignature().getProviderName().getName();
 		NetSignature fm = (NetSignature) task.getProcessSignature();
 		ServiceID serviceID = fm.getServiceID();
 		Class prvType = fm.getServiceType();
@@ -1724,7 +1724,7 @@ public class ProviderDelegate {
 		// task.getName() + "' not authorized to use the service '" +
 		// providerName + "'");
 
-		String pn = task.getProcessSignature().getProviderName();
+		String pn = task.getProcessSignature().getProviderName().getName();
 		if (pn != null && !matchInterfaceOnly) {
 			if (!pn.equals(getProviderName())) {
 				servicetask.getContext().reportException(

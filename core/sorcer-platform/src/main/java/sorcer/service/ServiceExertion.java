@@ -680,7 +680,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
         List<Signature> netSignatures = new ArrayList<Signature>();
         for (Signature s : allSigs) {
             if (s instanceof NetSignature)
-                netSignatures.add((NetSignature)s);
+                netSignatures.add(s);
         }
         Collections.sort(netSignatures);
         return netSignatures;
@@ -692,7 +692,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
         List<Signature> netSignatures = new ArrayList<Signature>();
         for (Signature s : allSigs) {
             if (s instanceof NetSignature)
-                netSignatures.add((NetSignature)s);
+                netSignatures.add(s);
         }
         Collections.sort(netSignatures);
         return netSignatures;
@@ -800,7 +800,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
                     .isAssignableFrom(Spacer.class)) {
                 sig.setServiceType(Spacer.class);
                 ((NetSignature) sig).setSelector("exert");
-                sig.setProviderName(ANY);
+                sig.getProviderName().setName(ANY);
                 sig.setType(Signature.Type.PROC);
                 getControlContext().setAccessType(access);
             } else if (Access.PUSH == access
@@ -809,7 +809,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
                 if (sig.getServiceType().isAssignableFrom(Spacer.class)) {
                     sig.setServiceType(Jobber.class);
                     ((NetSignature) sig).setSelector("exert");
-                    sig.setProviderName(ANY);
+                    sig.getProviderName().setName(ANY);
                     sig.setType(Signature.Type.PROC);
                     getControlContext().setAccessType(access);
                 }

@@ -15,6 +15,7 @@
  */
 package sorcer.core.signature;
 
+import sorcer.core.provider.ProviderName;
 import sorcer.service.Arg;
 import sorcer.service.ServiceFidelity;
 import sorcer.service.Signature;
@@ -37,9 +38,9 @@ public class ModelSignature extends ServiceSignature {
 		super(selector, selector);
 		this.serviceType = serviceType;
 		if (providerName == null || providerName.length() == 0)
-			this.providerName = ANY;
+			this.providerName = new ProviderName(ANY);
 		else
-			this.providerName = providerName;
+			this.providerName = new ProviderName(providerName);
 		for (Arg p : parameters) {
 			if (p instanceof ReturnPath) {
 				this.returnPath = (ReturnPath)p;

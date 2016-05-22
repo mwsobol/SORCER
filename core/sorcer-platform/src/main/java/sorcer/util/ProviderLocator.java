@@ -314,14 +314,14 @@ public class ProviderLocator {
 				for (String locator : locators) {
 					proxy = getService(locator,
                             signature.getServiceType(), signature
-                            .getProviderName());
+                            .getProviderName().getName());
 					if (proxy != null && proxy instanceof Service)
 						break;
                 }
 			} else {
 				proxy = getService(signature.getServiceType(),
                         signature.getProviderName().equals(SorcerConstants.ANY)
-                                ? null : signature.getProviderName(), WAIT_FOR);
+                                ? null : signature.getProviderName().getName(), WAIT_FOR);
 			}
 		} catch (Exception ioe) {
 			throw new SignatureException(ioe);

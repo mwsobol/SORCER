@@ -302,9 +302,9 @@ public class ServiceAccessor implements DynamicAccessor {
 
     public ServiceItem getServiceItem(Signature signature) {
 		if (signature.getMatchTypes() != null) {
-			return getServiceItem(signature.getProviderName(), signature.getMatchTypes());
+			return getServiceItem(signature.getProviderName().getName(), signature.getMatchTypes());
 		} else {
-			return getServiceItem(signature.getProviderName(), signature.getServiceType());
+			return getServiceItem(signature.getProviderName().getName(), signature.getServiceType());
 		}
     }
 

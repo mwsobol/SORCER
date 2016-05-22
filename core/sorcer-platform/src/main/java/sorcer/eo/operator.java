@@ -965,95 +965,90 @@ public class operator {
 	}
 
     public static Signature sig(String operation, Class serviceType, Arg... args) throws SignatureException {
-        return sigActualName(true, operation, serviceType, args);
-    }
-
-        public static Signature sigActualName(boolean callActualName, String operation, Class serviceType, Arg... args) throws SignatureException {
-		String providerName = null;
-		Provision p = null;
-		List<MapContext> connList = new ArrayList<MapContext>();
-		if (args != null) {
-			for (Object o : args) {
-				if (o instanceof ProviderName) {
-                    if (callActualName) {
-                        providerName = Sorcer.getActualName(((ProviderName) o).getName());
-                    } else {
-                        providerName = ((ProviderName) o).getName();
-                    }
-				} else if (o instanceof Provision) {
-					p = (Provision) o;
-				} else if (o instanceof MapContext) {
-					connList.add(((MapContext) o));
-				}
-			}
-		}
-		Signature sig = null;
+        ProviderName providerName = null;
+        Provision p = null;
+        List<MapContext> connList = new ArrayList<MapContext>();
+        if (args != null) {
+            for (Object o : args) {
+                if (o instanceof ProviderName) {
+                    providerName = (ProviderName)o;
+                    providerName.setName(Sorcer.getActualName(providerName.getName()));
+                } else if (o instanceof Provision) {
+                    p = (Provision) o;
+                } else if (o instanceof MapContext) {
+                    connList.add(((MapContext) o));
+                }
+            }
+        }
+        if (providerName == null)
+            providerName = new ProviderName();
+        Signature sig = null;
 //		if (Modeler.class.isAssignableFrom(serviceType)) {
 //			sig = new ModelSignature(operation, serviceType, providerName, args);
 //		} else
-		if (serviceType.isInterface()) {
-			sig = new NetSignature(operation, serviceType, providerName);
-		} else {
-			sig = new ObjectSignature(operation, serviceType);
-			sig.setProviderName(providerName);
-		}
-		((ServiceSignature) sig).setName(operation);
+        if (serviceType.isInterface()) {
+            sig = new NetSignature(operation, serviceType, providerName);
+        } else {
+            sig = new ObjectSignature(operation, serviceType);
+            sig.setProviderName(providerName);
+        }
+        ((ServiceSignature) sig).setName(operation);
 
-		if (connList != null) {
-			for (MapContext conn : connList) {
-				if (conn.direction == MapContext.Direction.IN)
-					((ServiceSignature) sig).setInConnector(conn);
-				else
-					((ServiceSignature) sig).setOutConnector(conn);
-			}
-		}
+        if (connList != null) {
+            for (MapContext conn : connList) {
+                if (conn.direction == MapContext.Direction.IN)
+                    ((ServiceSignature) sig).setInConnector(conn);
+                else
+                    ((ServiceSignature) sig).setOutConnector(conn);
+            }
+        }
 
-		if (p != null)
-			((ServiceSignature) sig).setProvisionable(p);
+        if (p != null)
+            ((ServiceSignature) sig).setProvisionable(p);
 
-		if (args.length > 0) {
-			for (Object o : args) {
-				if (o instanceof Type) {
-					sig.setType((Type) o);
-				} else if (o instanceof Operating) {
-					((ServiceSignature) sig).setActive((Operating) o);
-				} else if (o instanceof Provision) {
-					((ServiceSignature) sig).setProvisionable((Provision) o);
-				} else if (o instanceof Strategy.Shell) {
-					((ServiceSignature) sig).setShellRemote((Strategy.Shell) o);
-				} else if (o instanceof ReturnPath) {
-					sig.setReturnPath((ReturnPath) o);
-				} else if (o instanceof In ) {
-					if (sig.getReturnPath() == null) {
-						sig.setReturnPath(new ReturnPath((In) o));
-					} else {
-						((ReturnPath)sig.getReturnPath()).inPaths = ((In) o).getSigPaths();
-					}
-				} else if (o instanceof Out) {
-					if (sig.getReturnPath() == null) {
-						sig.setReturnPath(new ReturnPath((Out) o));
-					} else {
-						((ReturnPath)sig.getReturnPath()).outPaths = ((Out) o).getSigPaths();
-					}
-				} else if (o instanceof ServiceDeployment) {
-					((ServiceSignature) sig).setProvisionable(true);
-					((ServiceSignature) sig).setDeployment((ServiceDeployment) o);
-				} else if (o instanceof Version && sig instanceof NetSignature) {
-					((NetSignature) sig).setVersion(((Version) o).getName());
-				} else if (o instanceof ServiceContext
-						// not applied to connctors in Signatures
-						&& o.getClass() != MapContext.class) {
-					if (sig.getReturnPath() == null) {
-						sig.setReturnPath(new ReturnPath());
-						((ReturnPath) sig.getReturnPath()).setDataContext((Context) o);
-					} else
-						throw new SignatureException("No return path defined in: " + sig);
-				}
-			}
-		}
+        if (args.length > 0) {
+            for (Object o : args) {
+                if (o instanceof Type) {
+                    sig.setType((Type) o);
+                } else if (o instanceof Operating) {
+                    ((ServiceSignature) sig).setActive((Operating) o);
+                } else if (o instanceof Provision) {
+                    ((ServiceSignature) sig).setProvisionable((Provision) o);
+                } else if (o instanceof Strategy.Shell) {
+                    ((ServiceSignature) sig).setShellRemote((Strategy.Shell) o);
+                } else if (o instanceof ReturnPath) {
+                    sig.setReturnPath((ReturnPath) o);
+                } else if (o instanceof In ) {
+                    if (sig.getReturnPath() == null) {
+                        sig.setReturnPath(new ReturnPath((In) o));
+                    } else {
+                        ((ReturnPath)sig.getReturnPath()).inPaths = ((In) o).getSigPaths();
+                    }
+                } else if (o instanceof Out) {
+                    if (sig.getReturnPath() == null) {
+                        sig.setReturnPath(new ReturnPath((Out) o));
+                    } else {
+                        ((ReturnPath)sig.getReturnPath()).outPaths = ((Out) o).getSigPaths();
+                    }
+                } else if (o instanceof ServiceDeployment) {
+                    ((ServiceSignature) sig).setProvisionable(true);
+                    ((ServiceSignature) sig).setDeployment((ServiceDeployment) o);
+                } else if (o instanceof Version && sig instanceof NetSignature) {
+                    ((NetSignature) sig).setVersion(((Version) o).getName());
+                } else if (o instanceof ServiceContext
+                        // not applied to connctors in Signatures
+                        && o.getClass() != MapContext.class) {
+                    if (sig.getReturnPath() == null) {
+                        sig.setReturnPath(new ReturnPath());
+                        ((ReturnPath) sig.getReturnPath()).setDataContext((Context) o);
+                    } else
+                        throw new SignatureException("No return path defined in: " + sig);
+                }
+            }
+        }
 
-		return sig;
-	}
+        return sig;
+    }
 
 	public static String property(String property) {
 		return System.getProperty(property);
@@ -1065,6 +1060,10 @@ public class operator {
 
 	public static ProviderName prvName(String name) {
 		return new ProviderName(name);
+	}
+
+	public static ServiceName srvName(String name, String... group) {
+		return new ServiceName(name, group);
 	}
 
 	public static String actualName(String name) {

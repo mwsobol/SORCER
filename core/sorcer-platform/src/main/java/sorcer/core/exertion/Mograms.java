@@ -214,10 +214,10 @@ public class Mograms implements SorcerConstants {
 
 		ExertionEnvelop eenv = ExertionEnvelop.getTemplate();
 		eenv.serviceType = ((NetSignature) ex.getProcessSignature()).getServiceType();
-		eenv.providerName = ((NetSignature) ex.getProcessSignature()).getProviderName();
+		eenv.providerName = ex.getProcessSignature().getProviderName().getName();
 		eenv.exertion = ex;
-		eenv.exertionID = ((ServiceExertion)ex).getId();
-		eenv.isJob = new Boolean(((ServiceExertion) ex).isJob());
+		eenv.exertionID = ex.getId();
+		eenv.isJob = new Boolean(ex.isJob());
 		eenv.state = new Integer(Exec.INITIAL);
 		return eenv;
 	}

@@ -17,8 +17,6 @@
 
 package sorcer.core.exertion;
 
-import javax.security.auth.Subject;
-
 import net.jini.core.entry.Entry;
 import net.jini.id.Uuid;
 import net.jini.lookup.entry.Name;
@@ -28,6 +26,7 @@ import sorcer.service.Exec;
 import sorcer.service.Exertion;
 import sorcer.service.ServiceExertion;
 
+import javax.security.auth.Subject;
 import java.rmi.RemoteException;
 
 public class ExertionEnvelop implements Entry {
@@ -111,7 +110,7 @@ public class ExertionEnvelop implements Entry {
 		
 		ee.exertion = ex;
 		ee.serviceType = ss.getServiceType();
-		ee.providerName = ss.getProviderName();
+		ee.providerName = ss.getProviderName().getName();
 		ee.exertionID = ex.getId();
 		ee.parentID = ((ServiceExertion) ex).getParentId();
 		ee.isJob = new Boolean(ex.isJob());

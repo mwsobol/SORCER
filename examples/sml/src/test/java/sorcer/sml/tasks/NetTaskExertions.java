@@ -71,6 +71,36 @@ public class NetTaskExertions {
 	}
 
 	@Test
+	public void evaluateTaskPrvName() throws SignatureException, ExertionException, ContextException  {
+
+		Task t5 = task("t5", sig("add", Adder.class, prvName("Adder")),
+				cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0), result("result/y")));
+
+		// get the result value
+		assertTrue(value(t5).equals(100.0));
+
+		// get the subcontext output from the exertion
+		assertTrue(context(ent("arg/x1", 20.0), ent("result/z", 100.0)).equals(
+				value(t5, result("result/z", outPaths("arg/x1", "result/z")))));
+
+	}
+
+	@Test
+	public void evaluateSrvPrvName() throws SignatureException, ExertionException, ContextException  {
+
+		Task t5 = task("t5", sig("add", Adder.class, srvName("Adder", "ms")),
+				cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0), result("result/y")));
+
+		// get the result value
+		assertTrue(value(t5).equals(100.0));
+
+		// get the subcontext output from the exertion
+		assertTrue(context(ent("arg/x1", 20.0), ent("result/z", 100.0)).equals(
+				value(t5, result("result/z", outPaths("arg/x1", "result/z")))));
+
+	}
+
+	@Test
 	public void evaluateAverager() throws Exception {
 
 		Task t5 = task(

@@ -84,7 +84,7 @@ public class ServiceDirectoryProvisioner implements Provisioner {
     @SuppressWarnings("unchecked")
     public <T> T provision(Signature sig) throws ProvisioningException {
         String typeName = (sig.getServiceType()!=null ? sig.getServiceType().getName() : null);
-        String name = (sig.getProviderName()!=null ? sig.getProviderName() : "*");
+        String name = (sig.getProviderName()!=null ? sig.getProviderName().getName() : "*");
         String version = ((sig instanceof NetSignature) ? ((NetSignature)sig).getVersion() : null);
         logger.warn("called provision {} {} {}", typeName, version, name);
         Tuple3 provT = new Tuple3(typeName, (version!=null ? version : "NULL"), (name!=null ? name : "NULL"));

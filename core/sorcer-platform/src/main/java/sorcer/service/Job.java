@@ -121,7 +121,7 @@ public class Job extends CompoundExertion {
 		NetSignature s = new NetSignature("exert", Jobber.class);
 		// Needs to be RemoteJobber for Cataloger to find it
 		// s.setServiceType(Jobber.class.getName());
-		s.setProviderName(null);
+		s.getProviderName().setName(null);
 		s.setType(Signature.Type.PROC);
 		serviceFidelity.selects.add(s); // Add the signature
 	}

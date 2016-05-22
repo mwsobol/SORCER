@@ -396,7 +396,7 @@ public class ServiceShell implements RemoteServiceShell, Requestor, Callable {
 			}
 
 			if (providerName != null && providerName.length() > 0) {
-				signature.setProviderName(providerName);
+				signature.getProviderName().setName(providerName);
 			}
 			if (logger.isDebugEnabled())
 				logger.debug("ServiceShell's service accessor: {}", Accessor.get().getClass().getName());
@@ -577,7 +577,7 @@ public class ServiceShell implements RemoteServiceShell, Requestor, Callable {
 					.isAssignableFrom(Spacer.class)) {
 				sig.setServiceType(Spacer.class);
 				((NetSignature) sig).setSelector("exert");
-				sig.setProviderName(SorcerConstants.ANY);
+				sig.getProviderName().setName(SorcerConstants.ANY);
 				sig.setType(Signature.Type.PROC);
 				exertion.getControlContext().setAccessType(access);
 			} else if (Access.PUSH == access
@@ -586,7 +586,7 @@ public class ServiceShell implements RemoteServiceShell, Requestor, Callable {
 				if (sig.getServiceType().isAssignableFrom(Spacer.class)) {
 					sig.setServiceType(Jobber.class);
 					((NetSignature) sig).setSelector("exert");
-					sig.setProviderName(SorcerConstants.ANY);
+					sig.getProviderName().setName(SorcerConstants.ANY);
 					sig.setType(Signature.Type.PROC);
 					exertion.getControlContext().setAccessType(access);
 				}
