@@ -311,9 +311,9 @@ public class Par<T> extends Entry<T> implements Variability<T>, Mappable<T>,
 	 * @see sorcer.service.Evaluation#substitute(sorcer.co.tuple.Parameter[])
 	 */
 	@Override
-	public Par<T> substitute(Arg... parameters) throws SetterException {
+	public void substitute(Arg... parameters) throws SetterException {
 		if (parameters == null)
-			return this;
+			return;
 		for (Arg p : parameters) {
 			try {
 				if (p instanceof Par) {
@@ -336,7 +336,6 @@ public class Par<T> extends Entry<T> implements Variability<T>, Mappable<T>,
 				throw new SetterException(e);
 			}
 		}
-		return this;
 	}
 
 	private boolean isFidelityValid(Object fidelity) throws EvaluationException {

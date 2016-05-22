@@ -577,7 +577,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
     }
 
     @Override
-    public ServiceExertion substitute(Arg... entries)
+    public void substitute(Arg... entries)
             throws SetterException {
         if (entries != null && entries.length > 0) {
             for (Arg e : entries) {
@@ -602,7 +602,6 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
                 throw new SetterException(e);
             }
         }
-        return this;
     }
 
     protected void updateControlContect(ControlContext startegy) {

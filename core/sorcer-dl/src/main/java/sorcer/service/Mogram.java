@@ -145,8 +145,6 @@ public interface Mogram extends Identifiable, Service, Exerter, Projection, Scop
      */
     public boolean isMonitorable() throws RemoteException;
 
-    public Mogram substitute(Arg... entries) throws SetterException;
-
     /**
      * The exertion format for thin exertions (no RMI and Jini classes)
      */

@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.co.tuple.ExecPath;
 import sorcer.core.SorcerConstants;
+import sorcer.core.context.ContextSelector;
 import sorcer.core.monitor.MonitoringSession;
 import sorcer.core.plexus.FidelityManager;
 import sorcer.core.signature.NetSignature;
@@ -67,6 +68,7 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
 
     protected MogramStrategy mogramStrategy;
 
+    protected ContextSelector contextSelector;
     /**
      * position of component Mogram in a compund mogram
      */
@@ -628,6 +630,14 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
 
     public void setFidelity(ServiceFidelity fidelity) {
         serviceFidelity =  fidelity;
+    }
+
+    public ContextSelector getContextSelector() {
+        return contextSelector;
+    }
+
+    public void setContextSelector(ContextSelector contextSelector) {
+        this.contextSelector = contextSelector;
     }
 
     public Mogram getComponentMogram(String path) {

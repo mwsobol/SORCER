@@ -593,7 +593,7 @@ public class Job extends CompoundExertion {
 	}
 
 	@Override
-	public ServiceExertion substitute(Arg... entries)
+	public void substitute(Arg... entries)
 			throws SetterException {
 		try {
 			if (entries != null) {
@@ -616,6 +616,5 @@ public class Job extends CompoundExertion {
 			ex.printStackTrace();
 			throw new SetterException(ex);
 		}
-		return this;
 	}
 }

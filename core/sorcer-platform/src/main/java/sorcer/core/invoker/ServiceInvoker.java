@@ -398,7 +398,7 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 	 * @see sorcer.service.Evaluation#substitute(sorcer.co.tuple.Parameter[])
 	 */
 	@Override
-	public Evaluation substitute(Arg... entries)
+	public void substitute(Arg... entries)
 			throws SetterException {
 		for (Arg e : entries) {
 			if (e instanceof Entry<?>) {
@@ -411,7 +411,6 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 			}
 
 		}
-		return this;
 	}
 
 	public Context getScope() {

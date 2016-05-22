@@ -149,8 +149,7 @@ public class MultifidelityService extends ServiceMogram {
     }
 
     @Override
-    public Mogram substitute(Arg... entries) throws SetterException {
-        return null;
+    public void substitute(Arg... entries) throws SetterException {
     }
 
     @Override

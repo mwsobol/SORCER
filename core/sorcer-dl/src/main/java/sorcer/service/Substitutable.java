@@ -32,6 +32,6 @@ public interface Substitutable {
      * @throws EvaluationException
      * @throws ContextException
      */
-    public Substitutable substitute(Arg... entries) throws SetterException, RemoteException;
+    public void substitute(Arg... entries) throws SetterException, RemoteException;
 
 }

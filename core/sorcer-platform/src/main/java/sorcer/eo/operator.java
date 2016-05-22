@@ -864,6 +864,11 @@ public class operator {
 		return signature.getSelector();
 	}
 
+	public static ContextSelector selector(String... paths) {
+		List<String> pathList = Arrays.asList(paths);
+		return new ContextSelector(pathList);
+	}
+
 	public static Signature sig(String name, String operation, Class serviceType)
 			throws SignatureException {
 		ServiceSignature signature = (ServiceSignature) sig(operation, serviceType, new Arg[]{});

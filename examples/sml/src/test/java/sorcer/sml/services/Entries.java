@@ -160,4 +160,25 @@ public class Entries {
 
         assertEquals(30.0, value(y1));
     }
+
+    @Test
+    public void getValueyWithSelector() throws Exception {
+
+        Entry y1 = ent("y1", sig("add", AdderImpl.class),
+                context(inEnt("x1", 10.0), inEnt("x2", 20.0)));
+
+//        logger.info("out value: {}", value(y1, selector("result/value")));
+        assertEquals(30.0,  value(y1, selector("result/value")));
+    }
+
+    @Test
+    public void valueOfentryWithSelector() throws Exception {
+
+        Entry y1 = ent("y1", sig("add", AdderImpl.class),
+                context(inEnt("x1", 10.0), inEnt("x2", 20.0)),
+                selector("result/value"));
+
+//        logger.info("out value: {}", value(y1));
+        assertEquals(30.0,  value(y1));
+    }
 }

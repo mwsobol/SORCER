@@ -45,7 +45,6 @@ import sorcer.core.signature.ServiceSignature;
 import sorcer.eo.operator;
 import sorcer.service.*;
 import sorcer.service.Signature.Direction;
-import sorcer.core.signature.ServiceSignature.*;
 import sorcer.service.Signature.ReturnPath;
 import sorcer.service.modeling.Model;
 import sorcer.service.modeling.Variability;
@@ -59,9 +58,6 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
-import static sorcer.co.operator.inEnt;
-import static sorcer.co.operator.outEnt;
-import static sorcer.eo.operator.cxt;
 import static sorcer.eo.operator.sig;
 import static sorcer.eo.operator.task;
 
@@ -2663,9 +2659,9 @@ public class ServiceContext<T> extends ServiceMogram implements
 			return null;
 	}
 
-	public ServiceContext substitute(Arg... entries) throws SetterException {
+	public void substitute(Arg... entries) throws SetterException {
 		if (entries == null)
-			return this;
+			return;
 		ReturnPath rPath = null;
 		for (Arg a : entries) {
 			if (a instanceof ReturnPath) {
@@ -2699,7 +2695,6 @@ public class ServiceContext<T> extends ServiceMogram implements
 			ex.printStackTrace();
 			throw new SetterException(ex);
 		}
-		return this;
 	}
 
 	@Override
@@ -2915,7 +2910,8 @@ public class ServiceContext<T> extends ServiceMogram implements
 			if (mogramStrategy.responsePaths != null && mogramStrategy.responsePaths.size() > 0) {
 				mogramStrategy.outcome = getMergedSubcontext(null, mogramStrategy.responsePaths, args);
 			} else {
-				mogramStrategy.outcome = substitute(args);
+				substitute(args);
+				mogramStrategy.outcome = this;
 			}
 			result = mogramStrategy.outcome;
 			mogramStrategy.outcome.setModeling(true);

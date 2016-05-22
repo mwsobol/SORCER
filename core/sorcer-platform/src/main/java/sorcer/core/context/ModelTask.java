@@ -70,7 +70,7 @@ public class ModelTask extends Task {
 		if (contextFilter == null)
 			return (Context) model;
 		else
-			return (Context) contextFilter.doSelection(model);
+			return (Context) contextFilter.doSelect(model);
 	}
 	
 	private  Object instance(ObjectSignature signature)

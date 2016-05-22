@@ -93,14 +93,13 @@ public class AnnotatedEntry<T> extends Tuple3<String, T, String> implements Arg 
 	 * @see sorcer.service.Evaluation#substitute(sorcer.service.Arg[])
 	 */
 	@Override
-	public AnnotatedEntry substitute(Arg... entries)
+	public void substitute(Arg... entries)
 			throws SetterException {
 		for (Arg a : entries) {
 			if (a.getName().equals(getName()) && a instanceof Entry) {
 				_2 = ((Entry<T>)a).value();
 			}
 		}
-		return this;
 	}
 	
 	@Override

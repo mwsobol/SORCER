@@ -227,10 +227,9 @@ import java.util.Map;
 	}
 
     @Override
-    public Evaluation<Object> substitute(Arg... entries)
+    public void substitute(Arg... entries)
 			throws SetterException {
         ((ServiceContext)conditionalContext).substitute(entries);
-		return this;
 	}
 	
 	public Boolean getStatus() {

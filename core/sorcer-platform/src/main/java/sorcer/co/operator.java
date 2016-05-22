@@ -280,20 +280,27 @@ public class operator {
         return srv(null,  item,  context);
     }
 
-	public static Srv srv(String name, Identifiable item, Context context) {
+	public static Srv srv(String name, Identifiable item, Context context, Arg... args) {
 		String srvName = item.getName();
+		Srv srv = null;
 		if (name != null)
 			srvName = name;
 
 		if (item instanceof Signature) {
-			return new Srv(srvName,
+			srv = new Srv(srvName,
 					new SignatureEntry(item.getName(), (Signature) item, context));
 		} else if (item instanceof Mogram) {
-			return new Srv(srvName,
+			srv = new Srv(srvName,
 					new MogramEntry(item.getName(), (Mogram) item));
 		} else {
-			return new Srv(srvName, item);
+			srv = new Srv(srvName, item);
 		}
+		try {
+			srv.substitute(args);
+		} catch (SetterException e) {
+			e.printStackTrace();
+		}
+		return srv;
 	}
 
     public static Srv srv(Identifiable item) {
@@ -418,8 +425,8 @@ public class operator {
         return srv(sig, context);
     }
 
-    public static Srv ent(String name, Signature sig, Context context) {
-        return srv(name, sig, context);
+    public static Srv ent(String name, Signature sig, Context context, Arg... args) {
+        return srv(name, sig, context, args);
     }
 
 	public static Srv ent(Signature sig) {
