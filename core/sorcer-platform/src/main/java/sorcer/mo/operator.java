@@ -93,6 +93,11 @@ public class operator {
         return model;
     }
 
+    public static Model responseClear(Model model) throws ContextException {
+            ((ServiceContext)model).getMogramStrategy().getResponsePaths().clear();
+        return model;
+    }
+
     public static Model responseUp(Model model, String... responsePaths) throws ContextException {
         for (String path : responsePaths)
             ((ServiceContext)model).getMogramStrategy().getResponsePaths().add(new Name(path));

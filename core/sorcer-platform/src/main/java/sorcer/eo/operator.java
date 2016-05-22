@@ -266,7 +266,7 @@ public class operator {
 		Strategy.Flow flowType = null;
 		Strategy.FidelityMangement fm = null;
 		FidelityManager fiManager = null;
-
+        FidelityList fiList = null;
 		if (entries[0] instanceof Exertion) {
 			Exertion xrt = (Exertion) entries[0];
 			if (entries.length >= 2 && entries[1] instanceof String)
@@ -345,7 +345,9 @@ public class operator {
 				fm = (Strategy.FidelityMangement)o;
 			} else if (o instanceof FidelityManager) {
 				fiManager = ((FidelityManager)o);
-			} else if (o.equals(Strategy.Flow.EXPLICIT)) {
+			} else if (o instanceof FidelityList) {
+                fiList = ((FidelityList)o);
+            } else if (o.equals(Strategy.Flow.EXPLICIT)) {
 				autoDeps = false;
 			}
 		}
@@ -480,6 +482,8 @@ public class operator {
 		} else if (cxt.getFidelityManager() != null) {
 			setupFiManager(cxt);
 		}
+        if (fiList != null)
+            ((ServiceMogram)cxt).setFiConfig(fiList);
 
 		return cxt;
 	}
@@ -502,6 +506,8 @@ public class operator {
 					fiMap.put(e.getKey(), (ServiceFidelity)((Srv)val).asis());
 				}
 			}
+            if (((ServiceContext)cxt).getFiConfig() != null)
+                cxt.reconfigure(((ServiceContext)cxt).getFiConfig().toFidelityArray());
 		} catch (Exception ex) {
 			throw new ContextException(ex);
 		}
@@ -3070,7 +3076,7 @@ public class operator {
 		return new IP(ips);
 	}
 
-	public static IP ips_exclude(String... ips) {
+	public static IP ipsExclude(String... ips) {
 		IP ip = new IP(ips);
 		ip.exclude = true;
 		return ip;

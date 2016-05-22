@@ -110,36 +110,46 @@ public class operator {
 		return new Tuple6<T1,T2,T3,T4,T5,T6>( x1, x2, x3, x4, x5, x6 );
 	}
 
-	public static <T> List<T> inValues(Context<T> context) throws ContextException {
+	public static <T> List<T> inCotextValues(Context<T> context) throws ContextException {
 		return ((ServiceContext)context).getInValues();
 	}
 
-	public static <T> List<T> inPaths(Context<T> context) throws ContextException {
+	public static <T> List<T> inContextContextPaths(Context<T> context) throws ContextException {
 		return ((ServiceContext)context).getInPaths();
 	}
 
-	public static <T> List<T> outValues(Context<T> context) throws ContextException {
+	public static <T> List<T> outContextValues(Context<T> context) throws ContextException {
 		return ((ServiceContext)context).getOutValues();
 	}
 
-	public static <T> List<T> outPaths(Context<T> context) throws ContextException {
+	public static <T> List<T> outContextPaths(Context<T> context) throws ContextException {
 		return ((ServiceContext)context).getOutPaths();
 	}
 
-	public static ServiceSignature.Out outPaths(String... elems) {
-		return new ServiceSignature.Out(elems);
+	public static ServiceSignature.Out outPaths(Object... elems) {
+        List<Path> pl = new ArrayList(elems.length);
+        for (Object o : elems) {
+            if (o instanceof String) {
+                pl.add(new Path((String)o));
+            } else if  (o instanceof Path) {
+                pl.add(((Path)o));
+            }
+        }
+        Path[]  pa = new Path[pl.size()];
+        return new ServiceSignature.Out(pl.toArray(pa));
 	}
 
-	public static ServiceSignature.Out outPaths(Path... elems) {
-		return new ServiceSignature.Out(elems);
-	}
-
-	public static ServiceSignature.In inPaths(String... elems) {
-		return new ServiceSignature.In(elems);
-	}
-
-	public static ServiceSignature.In inPaths(Path... elems) {
-		return new ServiceSignature.In(elems);
+	public static ServiceSignature.In inPaths(Object... elems) {
+        List<Path> pl = new ArrayList(elems.length);
+        for (Object o : elems) {
+            if (o instanceof String) {
+                pl.add(new Path((String)o));
+            } else if  (o instanceof Path) {
+                pl.add(((Path)o));
+            }
+        }
+        Path[]  pa = new Path[pl.size()];
+		return new ServiceSignature.In(pl.toArray(pa));
 	}
 
 	public static Path file(String filename) {
