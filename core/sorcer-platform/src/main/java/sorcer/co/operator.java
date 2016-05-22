@@ -114,7 +114,7 @@ public class operator {
 		return ((ServiceContext)context).getInValues();
 	}
 
-	public static <T> List<T> inContextContextPaths(Context<T> context) throws ContextException {
+	public static <T> List<T> inContextPaths(Context<T> context) throws ContextException {
 		return ((ServiceContext)context).getInPaths();
 	}
 
