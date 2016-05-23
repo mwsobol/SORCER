@@ -30,7 +30,6 @@ import static sorcer.eo.operator.value;
 /**
  * @author Pawel Rubach
  */
-@SuppressWarnings("unchecked")
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("core/sorcer-int-tests/sorcer-tester")
 public class MonitoringTest {

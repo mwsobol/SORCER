@@ -98,7 +98,5 @@ public interface Modeling {
 	public static String IN_TABLE_RESOURCE = "table/in/resource";
 	
 	public static String OUT_TABLE_RESOURCE = "table/out/resource";
-	
-	public static String VAR_INFOS = "var/infos";
-	
+
 }
