@@ -77,7 +77,7 @@ public class NetTaskExertions {
 	}
 
 	@Test
-	public void exertTaskSrvNameGroup() throws Exception  {
+	public void exertTaskGroups() throws Exception  {
 		String group = System.getProperty("user.name");
 
 		Task t5 = task("t5", sig("add", Adder.class, srvName("Adder", group)),
@@ -105,6 +105,31 @@ public class NetTaskExertions {
 		Task t5 = task("t5", sig("add", Adder.class,
 				types(Service.class, Provider.class),
 				srvName("Adder", group)),
+				cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0), result("result/y")));
+
+		Exertion out = exert(t5);
+		Context cxt = context(out);
+		logger.info("out context: " + cxt);
+		logger.info("context @ arg/x1: " + value(cxt, "arg/x1"));
+		logger.info("context @ arg/x2: " + value(cxt, "arg/x2"));
+		logger.info("context @ result/y: " + value(cxt, "result/y"));
+
+		// get a single context argument
+		assertEquals(100.0, value(cxt, "result/y"));
+
+		// get the subcontext output from the context
+		assertTrue(context(ent("arg/x1", 20.0), ent("result/y", 100.0)).equals(
+				value(cxt, result("result/context", outPaths("arg/x1", "result/y")))));
+	}
+
+	@Test
+	public void exertTaskLookupLocators() throws Exception  {
+		String group = System.getProperty("user.name");
+
+		Task t5 = task("t5", sig("add", Adder.class,
+				types(Service.class, Provider.class),
+				// comma separated list of hosts, when empty localhost is a default locator
+				srvName("Adder", locators(), group)),
 				cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0), result("result/y")));
 
 		Exertion out = exert(t5);

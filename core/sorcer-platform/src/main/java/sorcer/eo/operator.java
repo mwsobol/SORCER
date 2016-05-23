@@ -71,6 +71,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.net.InetAddress;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.rmi.RemoteException;
 import java.util.*;
 
@@ -1069,6 +1070,23 @@ public class operator {
 
 	public static ServiceName srvName(String name, String... group) {
 		return new ServiceName(name, group);
+	}
+
+	public static ServiceName srvName(String name, ArgList locators, String... group) {
+		return new ServiceName(name, locators.getNameArray(), group);
+	}
+
+	public static ArgList locators(String... locators) {
+		if (locators == null || locators.length == 0) {
+			try {
+				return new ArgList(InetAddress.getLocalHost().getHostName());
+			} catch (UnknownHostException e) {
+				e.printStackTrace();
+			}
+		} else {
+			return new ArgList(locators);
+		}
+		return null;
 	}
 
 	public static String actualName(String name) {

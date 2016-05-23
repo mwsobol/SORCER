@@ -54,7 +54,7 @@ public class NetSignature extends ObjectSignature {
 
 	private String portalURL;
 
-	private boolean isUnicast;
+	private boolean isUnicast = false;
 
 	// provider bound to this signature
 	transient private Provider provider;

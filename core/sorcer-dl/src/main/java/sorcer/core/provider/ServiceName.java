@@ -18,6 +18,7 @@
 package sorcer.core.provider;
 
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by Mike Sobolewski on 5/22/16.
@@ -29,6 +30,8 @@ public class ServiceName extends ProviderName {
     // initilaize to NO_GROUPS
     private String[]  groups = new String[0];
 
+    private  String[] locators;
+
     public ServiceName() {
         super();
         this.groups = new String[] {};
@@ -39,12 +42,31 @@ public class ServiceName extends ProviderName {
         this.groups = groups;
     }
 
+    public ServiceName(String name, String[] locators, String... groups) {
+        super(name);
+        this.locators = locators;
+        this.groups = groups;
+    }
+
     public String[] getGroups() {
         return groups;
     }
 
     public void setGroups(String[] groups) {
         this.groups = groups;
+    }
+
+    public String[] getLocators() {
+        return locators;
+    }
+
+    public void setLocators(String[] locators) {
+        this.locators = locators;
+    }
+
+    public void setLocators(List<String> locators) {
+        this.locators = new String[locators.size()];
+        this.locators = locators.toArray(this.locators);
     }
 
     @Override

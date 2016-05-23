@@ -32,6 +32,7 @@ import net.jini.lookup.entry.Name;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.provider.Provider;
+import sorcer.core.provider.ProviderName;
 import sorcer.core.provider.ServiceName;
 import sorcer.core.signature.NetSignature;
 import sorcer.service.Service;
@@ -47,7 +48,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * ProviderLoactor is a simple wrapper class over Jini's LookupDiscover. It
+ * ProviderLoactor is a simple wrapper class over Jini's LookupDiscovery. It
  * which returns the first matching instance of a service either via unicast or
  * multicast discovery with support for SORCER signatures
  */
@@ -101,22 +102,29 @@ public class ProviderLocator {
 	 * @throws java.io.IOException
 	 * @throws ClassNotFoundException
 	 */
-	public static Object getService(String lusHost, Class serviceClass,
-			String serviceName) throws
+	public static Object getService(String lusHost, Class serviceClass, Class[] matchTypes,
+									String serviceName) throws
 			java.io.IOException, ClassNotFoundException {
 
-		Class[] types = new Class[] { serviceClass };
+		Class[] types =  new Class[] { serviceClass };
+		if (matchTypes != null && matchTypes.length > 0) {
+			TypeList allTypes = new TypeList(matchTypes);
+			allTypes.add(0, serviceClass);
+			types = new Class[allTypes.size()];
+			allTypes.toArray(types);
+		}
+
 		Entry[] entry = null;
 
 		if (serviceName != null) {
 			entry = new Entry[] { new Name(serviceName) };
 		}
 
-		ServiceTemplate _template = new ServiceTemplate(null, types, entry);
+		ServiceTemplate template = new ServiceTemplate(null, types, entry);
 		LookupLocator loc = new LookupLocator("jini://" + lusHost);
 		ServiceRegistrar reggie = loc.getRegistrar();
 
-		return reggie.lookup(_template);
+		return reggie.lookup(template);
 	}
 
 	/**
@@ -323,20 +331,26 @@ public class ProviderLocator {
 	public static Service getService(Signature signature) throws SignatureException {
 		Object proxy = null;
 		try {
-			if (((NetSignature)signature).isUnicast()) {
-				String[] locators = SorcerEnv.getLookupLocators();
+			String[] groups = null;
+			String[] locators = null;
+			if (signature.getProviderName() instanceof ServiceName) {
+				groups = ((ServiceName)signature.getProviderName()).getGroups();
+			}
+			ProviderName pn = signature.getProviderName();
+			if (pn instanceof  ServiceName) {
+				locators = ((ServiceName) pn).getLocators();
+			}
+			if (((NetSignature)signature).isUnicast() || locators != null) {
+				if (locators == null)
+					locators = SorcerEnv.getLookupLocators();
 				for (String locator : locators) {
 					proxy = getService(locator,
-                            signature.getServiceType(), signature
+                            signature.getServiceType(), signature.getMatchTypes(), signature
                             .getProviderName().getName());
 					if (proxy != null && proxy instanceof Service)
 						break;
                 }
 			} else {
-				String[] groups = null;
-				if (signature.getProviderName() instanceof ServiceName) {
-					groups = ((ServiceName)signature.getProviderName()).getGroups();
-				}
 				proxy = getService(signature.getServiceType(), signature.getMatchTypes(),
                         signature.getProviderName().getName(), groups, WAIT_FOR);
 			}
