@@ -37,6 +37,7 @@ import sorcer.core.signature.NetSignature;
 import sorcer.service.Service;
 import sorcer.service.Signature;
 import sorcer.service.SignatureException;
+import sorcer.service.TypeList;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -130,7 +131,7 @@ public class ProviderLocator {
 	public static Object getService(Class serviceClass)
 			throws java.io.IOException, InterruptedException {
 
-		return getService(serviceClass, null, null, Long.MAX_VALUE);
+		return getService(serviceClass, null, null, null, Long.MAX_VALUE);
 	}
 
     /**
@@ -146,7 +147,7 @@ public class ProviderLocator {
     public static Provider getProvider(Class serviceClass)
             throws java.io.IOException, InterruptedException {
 
-        return (Provider)getService(serviceClass, null, null, Long.MAX_VALUE);
+        return (Provider)getService(serviceClass, null, null, null, Long.MAX_VALUE);
     }
 
 	/**
@@ -163,7 +164,7 @@ public class ProviderLocator {
 	public static Object getService(Class serviceClass, long waitTime)
 			throws java.io.IOException, InterruptedException {
 
-		return getService(serviceClass, null, null, waitTime);
+		return getService(serviceClass, null, null, null, waitTime);
 	}
 
 	/**
@@ -177,17 +178,23 @@ public class ProviderLocator {
 	 * @throws InterruptedException
 	 * @return
 	 */
-	public static Object getService(Class serviceClass, String serviceName, String[] groups,
+	public static Object getService(Class serviceClass, Class[] matchTypes, String serviceName, String[] groups,
 			long waitTime) throws java.io.IOException, InterruptedException {
 
 		ProviderLocator sl = new ProviderLocator();
-		return sl.getServiceImpl(serviceClass, serviceName, groups, waitTime);
+		return sl.getServiceImpl(serviceClass, matchTypes, serviceName, groups, waitTime);
 	}
 
-	private Object getServiceImpl(Class serviceClass, String serviceName, String[] groups,
+	private Object getServiceImpl(Class serviceClass, Class[] matchTypes, String serviceName, String[] groups,
 			long waitTime) throws java.io.IOException, InterruptedException {
 
-		Class[] types = new Class[] { serviceClass };
+		Class[] types =  new Class[] { serviceClass };
+		if (matchTypes != null && matchTypes.length > 0) {
+			TypeList allTypes = new TypeList(matchTypes);
+			allTypes.add(0, serviceClass);
+			types = new Class[allTypes.size()];
+			allTypes.toArray(types);
+		}
 		Entry[] entry = null;
 
 		if (serviceName != null) {
@@ -239,7 +246,6 @@ public class ProviderLocator {
             }
         }
         if (result.size() < minMatches) {
-            //TODO this is exactly the same as ProviderLookup. Consider extending that class
             LookupDiscovery disco = null;
             try {
                 disco = new LookupDiscovery(groups);
@@ -331,7 +337,7 @@ public class ProviderLocator {
 				if (signature.getProviderName() instanceof ServiceName) {
 					groups = ((ServiceName)signature.getProviderName()).getGroups();
 				}
-				proxy = getService(signature.getServiceType(),
+				proxy = getService(signature.getServiceType(), signature.getMatchTypes(),
                         signature.getProviderName().getName(), groups, WAIT_FOR);
 			}
 		} catch (Exception ioe) {
@@ -356,7 +362,7 @@ public class ProviderLocator {
  */
     public <T> T getProvider(String serviceName, Class<T> serviceType) {
         try {
-            return (T)getServiceImpl(serviceType, serviceName, null, WAIT_FOR);
+            return (T)getServiceImpl(serviceType, null, serviceName, null, WAIT_FOR);
         } catch (Exception e) {
             return null;
         }

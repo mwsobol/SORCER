@@ -12,6 +12,7 @@ import sorcer.arithmetic.provider.Multiplier;
 import sorcer.arithmetic.provider.Subtractor;
 import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
+import sorcer.core.provider.Provider;
 import sorcer.core.provider.RemoteServiceShell;
 import sorcer.service.*;
 import sorcer.service.Strategy.Access;
@@ -57,7 +58,7 @@ public class NetTaskExertions {
 	@Test
 	public void exertTaskSrvName() throws Exception  {
 
-		Task t5 = task("t5", sig("add", Adder.class, srvName("Adder-ms")),
+		Task t5 = task("t5", sig("add", Adder.class, srvName("Adder")),
 				cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0), result("result/y")));
 
 		Exertion out = exert(t5);
@@ -77,10 +78,33 @@ public class NetTaskExertions {
 
 	@Test
 	public void exertTaskSrvNameGroup() throws Exception  {
-
 		String group = System.getProperty("user.name");
 
-		Task t5 = task("t5", sig("add", Adder.class, srvName("Adder-ms", group)),
+		Task t5 = task("t5", sig("add", Adder.class, srvName("Adder", group)),
+				cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0), result("result/y")));
+
+		Exertion out = exert(t5);
+		Context cxt = context(out);
+		logger.info("out context: " + cxt);
+		logger.info("context @ arg/x1: " + value(cxt, "arg/x1"));
+		logger.info("context @ arg/x2: " + value(cxt, "arg/x2"));
+		logger.info("context @ result/y: " + value(cxt, "result/y"));
+
+		// get a single context argument
+		assertEquals(100.0, value(cxt, "result/y"));
+
+		// get the subcontext output from the context
+		assertTrue(context(ent("arg/x1", 20.0), ent("result/y", 100.0)).equals(
+				value(cxt, result("result/context", outPaths("arg/x1", "result/y")))));
+	}
+
+	@Test
+	public void exertTaskMatchTypes() throws Exception  {
+		String group = System.getProperty("user.name");
+
+		Task t5 = task("t5", sig("add", Adder.class,
+				types(Service.class, Provider.class),
+				srvName("Adder", group)),
 				cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0), result("result/y")));
 
 		Exertion out = exert(t5);

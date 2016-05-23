@@ -165,10 +165,6 @@ public class operator {
 		return new Path (filename);
 	}
 
-	public static Class[] types(Class... classes) {
-		return classes;
-	}
-
 	public static Object[] typeArgs(Object... args) {
 		return args;
 	}

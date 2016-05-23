@@ -1017,7 +1017,9 @@ public class operator {
                     ((ServiceSignature) sig).setShellRemote((Strategy.Shell) o);
                 } else if (o instanceof ReturnPath) {
                     sig.setReturnPath((ReturnPath) o);
-                } else if (o instanceof In ) {
+                } else if (o instanceof TypeList) {
+					((ServiceSignature)sig).setMatchTypes(((TypeList) o).toTypeArray());
+				} else if (o instanceof In ) {
                     if (sig.getReturnPath() == null) {
                         sig.setReturnPath(new ReturnPath((In) o));
                     } else {
@@ -1048,6 +1050,10 @@ public class operator {
 
         return sig;
     }
+
+	public static TypeList types(Class... types) {
+		return new TypeList(types);
+	}
 
 	public static String property(String property) {
 		return System.getProperty(property);

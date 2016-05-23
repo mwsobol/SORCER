@@ -16,7 +16,6 @@
  */
 package sorcer.service;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Set;
 
@@ -40,8 +39,8 @@ public class FidelityList extends ArrayList<ServiceFidelity> implements Arg {
 		super(size);
 	}
 
-	public FidelityList(Set<ServiceFidelity> parSet) {
-		addAll(parSet);
+	public FidelityList(Set<ServiceFidelity> fiSet) {
+		addAll(fiSet);
 	}
 
 	public FidelityList(ServiceFidelity... array) {
