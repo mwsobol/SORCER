@@ -1241,10 +1241,10 @@ public class ProviderDelegate {
 				if (sig instanceof NetSignature)
 					((NetSignature) sig).setProvider(provider);
 				task.setStatus(Exec.FAILED);
-				logger.info("DELEGATE EXECUTING TASK: " + task + " by sig: "
+				logger.debug("DELEGATE EXECUTING TASK: " + task + " by sig: "
 						+ task.getProcessSignature() + " for context: " + cxt);
 				cxt = (ServiceContext) invokeMethod(sig.getSelector(), cxt);
-				logger.info("doTask: TASK DONE BY DELEGATE OF ="
+				logger.debug("doTask: TASK DONE BY DELEGATE OF ="
 						+ provider.getProviderName());
 				task.setContext(cxt);
 				task.setStatus(Exec.DONE);
@@ -1256,7 +1256,7 @@ public class ProviderDelegate {
 				// clear the exertion and the context
 				cxt.setExertion(null);
 				task.setService(null);
-				logger.info("CONTEXT GOING OUT: " + cxt);
+				logger.debug("CONTEXT GOING OUT: " + cxt);
 			}
 		} catch (ContextException e) {
 			throw new ExertionException(e);
