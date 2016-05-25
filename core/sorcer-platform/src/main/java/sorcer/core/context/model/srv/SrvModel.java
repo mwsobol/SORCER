@@ -229,9 +229,9 @@ public class SrvModel extends ParModel<Object> implements Model, Invocation<Obje
                     if (obj instanceof Signature)
                         out = evalSignature((Signature)obj, path);
                     else if (obj instanceof Entry) {
-                        Arg[] nargs = Arrays.copyOf(args, args.length+1);
-                        args[args.length] = this;
-                        out = ((Entry) obj).getValue(nargs);
+//                        Arg[] nargs = Arrays.copyOf(args, args.length+1);
+//                        args[args.length] = this;
+                        out = ((Entry) obj).getValue(args);
                     }
                     ((MorphedFidelity) val2).setChanged();
                     ((MorphedFidelity) val2).notifyObservers(out);
