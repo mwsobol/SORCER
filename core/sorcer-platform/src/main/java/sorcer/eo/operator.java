@@ -1077,16 +1077,18 @@ public class operator {
 	}
 
 	public static ArgList locators(String... locators) {
+		ArgList argList = new ArgList();
 		if (locators == null || locators.length == 0) {
 			try {
-				return new ArgList(InetAddress.getLocalHost().getHostName());
+				argList = new ArgList(InetAddress.getLocalHost().getHostName());
 			} catch (UnknownHostException e) {
 				e.printStackTrace();
 			}
 		} else {
-			return new ArgList(locators);
+			argList = new ArgList(locators);
 		}
-		return null;
+		argList.setType(Variability.Type.LOCATOR);
+		return argList;
 	}
 
 	public static String actualName(String name) {

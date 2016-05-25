@@ -52,7 +52,7 @@ public class Entry<T> extends Tuple2<String, T> implements Callable<T>, Dependen
 
 	protected Class valClass;
 
-	protected Variability.Type type = Variability.Type.PAR;;
+	protected Variability.Type type = Variability.Type.PAR;
 
 	// its arguments are always evaluated if active (either Evaluataion or Invocation type)
 	protected boolean isReactive = false;

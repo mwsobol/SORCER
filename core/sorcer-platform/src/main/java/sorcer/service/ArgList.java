@@ -19,6 +19,7 @@ package sorcer.service;
 
 import sorcer.core.Name;
 import sorcer.core.context.model.par.ParException;
+import sorcer.service.modeling.Variability;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -33,6 +34,8 @@ import java.util.Set;
 public class ArgList extends ArrayList<Arg> {
 
 	static final long serialVersionUID = -4997255102658715823L;
+
+	protected Variability.Type type = Variability.Type.ARG;;
 
 	public ArgList() {
 		super();
@@ -74,6 +77,14 @@ public class ArgList extends ArrayList<Arg> {
 			}
 		}
 		return null;
+	}
+
+	public Variability.Type getType() {
+		return type;
+	}
+
+	public void setType(Variability.Type type) {
+		this.type = type;
 	}
 
 	public void setArgValue(String parName, Object value)

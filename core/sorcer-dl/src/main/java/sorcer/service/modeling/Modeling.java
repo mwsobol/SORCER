@@ -51,7 +51,7 @@ public interface Modeling {
 	public void notifyUpdateEvaluation(Context modelContext)
 			throws EvaluationException, RemoteException;
 
-	public void evaluate() throws EvaluationException, RemoteException;
+	public void evaluate(ServiceFidelity... fidelities) throws EvaluationException, RemoteException;
 
 	public Context evaluate(Context modelContext) throws EvaluationException,
 			RemoteException;
@@ -92,11 +92,15 @@ public interface Modeling {
 	public static String IN_STREAM = "table/instream";
 	
 	public static String OUT_STREAM = "table/outstream";
-	
-	public static String MODEL_STRATEGY = "model/strategy";
-	
+
 	public static String IN_TABLE_RESOURCE = "table/in/resource";
 	
 	public static String OUT_TABLE_RESOURCE = "table/out/resource";
+
+	public static String MODEL_STRATEGY = "model/strategy";
+
+	// fidelity manger configuration data
+	public static final String MODEL_MORPHERS = "model/fidelity/morhers";
+
 
 }

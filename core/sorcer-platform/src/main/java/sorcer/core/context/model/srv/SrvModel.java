@@ -171,35 +171,35 @@ public class SrvModel extends ParModel<Object> implements Model, Invocation<Obje
     }
 
     // call from VarModels
-    public Object getSrvValue(String path, Srv srv, Arg... items) throws EvaluationException {
+    public Object getSrvValue(String path, Srv srv, Arg... args) throws EvaluationException {
         try {
             putValue(path, srv);
         } catch (ContextException e) {
             data.remove(path);
             return new EvaluationException(e);
         }
-        Object out = getSrvValue(path, items);
+        Object out = getSrvValue(path, args);
         data.remove(path);
         return out;
     }
 
-    public Object getValue(String path, Arg... items) throws EvaluationException {
-           return getSrvValue(path, items);
+    public Object getValue(String path, Arg... args) throws EvaluationException {
+           return getSrvValue(path, args);
     }
 
-    public Object getSrvValue(String path, Arg... items) throws EvaluationException {
+    public Object getSrvValue(String path, Arg... args) throws EvaluationException {
         Object val = null;
         try {
-            append(items);
+            append(args);
             if (path != null) {
-                execDependencies(path, items);
+                execDependencies(path, args);
                 val = get(path);
             } else {
-                ReturnPath rp = returnPath(items);
+                ReturnPath rp = returnPath(args);
                 if (rp != null)
                     val = getReturnValue(rp);
                 else
-                    val = super.getValue(path, items);
+                    val = super.getValue(path, args);
             }
 
             if (val instanceof Srv) {
@@ -212,37 +212,37 @@ public class SrvModel extends ParModel<Object> implements Model, Invocation<Obje
                         return ((Srv) val).getSrvValue();
                     else {
                         Signature sig = ((SignatureEntry) ((Srv) val).asis()).value();
-                        return evalSignature(sig, path, items);
+                        return evalSignature(sig, path, args);
                     }
                 } else if (val2 instanceof ServiceFidelity) {
-                    Object selection = getFi((ServiceFidelity) val2, items, path);
+                    Object selection = getFi((ServiceFidelity) val2, args, path);
                     if (selection instanceof Signature) {
-                        return evalSignature((Signature) selection, path, items);
+                        return evalSignature((Signature) selection, path, args);
                     } else if (selection instanceof Evaluation) {
-                        return ((Evaluation)selection).getValue(items);
+                        return ((Evaluation)selection).getValue(args);
                     } else {
                         return selection;
                     }
                 } else if (val2 instanceof MorphedFidelity) {
-                    Object obj = getFi(((MorphedFidelity) val2).getFidelity(), items, path);
+                    Object obj = getFi(((MorphedFidelity) val2).getFidelity(), args, path);
                     Object out = null;
                     if (obj instanceof Signature)
                         out = evalSignature((Signature)obj, path);
                     else if (obj instanceof Entry) {
-                        Arg[] args = Arrays.copyOf(items, items.length+1);
-                        args[items.length] = this;
-                        out = ((Entry) obj).getValue(args);
+                        Arg[] nargs = Arrays.copyOf(args, args.length+1);
+                        args[args.length] = this;
+                        out = ((Entry) obj).getValue(nargs);
                     }
                     ((MorphedFidelity) val2).setChanged();
                     ((MorphedFidelity) val2).notifyObservers(out);
                     return out;
                 } else if (val2 instanceof MogramEntry) {
-                    return evalMogram((MogramEntry)val2, path, items);
+                    return evalMogram((MogramEntry)val2, path, args);
                 } else if (val2 instanceof ValueCallable && ((Srv) val).getType() == Variability.Type.LAMBDA) {
                     ReturnPath rp = ((Srv) val).getReturnPath();
                     Object obj = null;
                     if (rp != null && rp.inPaths != null) {
-                        Context cxt = getEvaluatedSubcontext(rp.inPaths, items);
+                        Context cxt = getEvaluatedSubcontext(rp.inPaths, args);
                         obj = ((ValueCallable)val2).call(cxt);
                     } else {
                         obj = ((ValueCallable) val2).call(this);
@@ -253,7 +253,7 @@ public class SrvModel extends ParModel<Object> implements Model, Invocation<Obje
                     return obj;
                 }  else if (val2 instanceof Requestor && ((Srv) val).getType() == Variability.Type.LAMBDA) {
                     String entryPath = ((Entry)val).getName();
-                    Object out = ((Requestor)val2).exec((Service) this.asis(entryPath), this, items);
+                    Object out = ((Requestor)val2).exec((Service) this.asis(entryPath), this, args);
                     ((Srv) get(path)).setSrvValue(out);
                     return out;
                 } else if (val2 instanceof EntryCollable && ((Srv) val).getType() == Variability.Type.LAMBDA) {
@@ -273,25 +273,25 @@ public class SrvModel extends ParModel<Object> implements Model, Invocation<Obje
                         putValue(entry.getName(), entry.value());
                     return entry;
                 } else if (val2 instanceof ServiceInvoker) {
-                    val =  ((ServiceInvoker)val2).invoke(items);
+                    val =  ((ServiceInvoker)val2).invoke(args);
                     ((Srv) get(path)).setSrvValue(val);
                     return val;
                 } else if (val2 instanceof Service && ((Srv) val).getType() == Variability.Type.LAMBDA) {
                     String entryPath = ((Entry)val).getName();
                     String[] paths = ((Srv)val).getPaths();
-                    Arg[] args = null;
+                    Arg[] nargs = null;
                     if (paths == null || paths.length == 0) {
-                        args = new Arg[]{this};
+                        nargs = new Arg[]{this};
                     } else {
-                        args = new Arg[paths.length];
+                        nargs = new Arg[paths.length];
                         for (int i = 0; i < paths.length; i++) {
                             if (!(asis(paths[i]) instanceof Arg))
-                                args[i] = new Entry(paths[i], asis(paths[i]));
+                                nargs[i] = new Entry(paths[i], asis(paths[i]));
                             else
-                                args[i] = (Arg) asis(paths[i]);
+                                nargs[i] = (Arg) asis(paths[i]);
                         }
                     }
-                    Object out = ((Service)val2).exec(args);
+                    Object out = ((Service)val2).exec(nargs);
                     ((Srv) get(path)).setSrvValue(out);
                     return out;
                 } else {
@@ -300,7 +300,7 @@ public class SrvModel extends ParModel<Object> implements Model, Invocation<Obje
                     }
                 }
             } else {
-                return super.getValue(path, items);
+                return super.getValue(path, args);
             }
         } catch (Exception e) {
             throw new EvaluationException(e);
