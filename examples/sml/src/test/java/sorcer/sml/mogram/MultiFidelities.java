@@ -465,7 +465,7 @@ public class MultiFidelities {
     }
 
     @Test
-    public void selectMultifidelityMogram() throws Exception {
+    public void selectMultifidelityService() throws Exception {
 
         Task t4 = task(
                 "t4",
@@ -492,7 +492,7 @@ public class MultiFidelities {
     }
 
     @Test
-    public void morphMultifidelityMogram() throws Exception {
+    public void morphMultifidelityService() throws Exception {
 
         Task t4 = task(
                 "t4",

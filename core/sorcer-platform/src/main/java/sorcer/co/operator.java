@@ -1137,4 +1137,7 @@ public class operator {
 			return ((ObjectSignature) signature).initInstance();
 	}
 
+	public static URL url(String urlName) throws MalformedURLException {
+		return new URL(urlName);
+	}
 }

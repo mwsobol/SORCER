@@ -43,7 +43,7 @@ public class ServiceMograms {
     private final static Logger logger = LoggerFactory.getLogger(ServiceMograms.class);
 
     @Test
-    public void exertExertionToModelMogram() throws Exception {
+    public void blockWithExertionAndModel() throws Exception {
 
         // usage of in and out connectors associated with model
         Task t4 = task(
@@ -121,13 +121,11 @@ public class ServiceMograms {
     }
 
     @Test
-    public void exertMstcGateSchema() throws Exception {
+    public void loopWithModel() throws Exception {
 
         IncrementerImpl incrementer = new IncrementerImpl(100.0);
 
         Model mdl = model(
-//                inEnt("by",10.0), inEnt("out", 0.0),
-//                ent("by", eFi(inEnt("by-10", 10.0), inEnt("by-20", 20.0))), inEnt("out", 0.0),
                 inEnt("by", eFi(inEnt("by-10", 10.0), inEnt("by-20", 20.0))), inEnt("out", 0.0),
                 ent(sig("increment", incrementer, result("out", inPaths("by", "template")))),
                 ent("multiply", invoker("add * out", ents("add", "out"))));
@@ -148,8 +146,6 @@ public class ServiceMograms {
                         mdl));
 
 //        logger.info("DEPS: " + printDeps(looping));
-
-//        looping = exert(looping);
         looping = exert(looping, fi("by", "by-20"));
         logger.info("block context: " + context(looping));
         logger.info("result: " + value(context(looping), "out"));
@@ -231,7 +227,7 @@ public class ServiceMograms {
     }
 
     @Test
-    public void localModelTask() throws Exception {
+    public void localModeler() throws Exception {
         // get responses from a service model with inner model
 
         Model innerMdl = model("inner/multiply",
@@ -267,7 +263,7 @@ public class ServiceMograms {
     }
 
     @Test
-    public void remoteModelTask() throws Exception {
+    public void remoteModeler() throws Exception {
         // get responses from a service model with inner model
 
         Model innerMdl = model("inner/multiply",

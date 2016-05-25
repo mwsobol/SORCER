@@ -170,7 +170,11 @@ public class SrvModel extends ParModel<Object> implements Model, Invocation<Obje
         }
     }
 
-    // call from VarModels
+    public Object getValue(String path, Arg... args) throws EvaluationException {
+        return getSrvValue(path, args);
+    }
+
+    // calls from VarModels to call Srv entries of Vars
     public Object getSrvValue(String path, Srv srv, Arg... args) throws EvaluationException {
         try {
             putValue(path, srv);
@@ -183,10 +187,7 @@ public class SrvModel extends ParModel<Object> implements Model, Invocation<Obje
         return out;
     }
 
-    public Object getValue(String path, Arg... args) throws EvaluationException {
-           return getSrvValue(path, args);
-    }
-
+    // used as getValue but renamed to alter polymorphic chaining
     public Object getSrvValue(String path, Arg... args) throws EvaluationException {
         Object val = null;
         try {
@@ -276,7 +277,6 @@ public class SrvModel extends ParModel<Object> implements Model, Invocation<Obje
                     ((Srv) get(path)).setSrvValue(val);
                     return val;
                 } else if (val2 instanceof Service && ((Srv) val).getType() == Variability.Type.LAMBDA) {
-                    String entryPath = ((Entry)val).getName();
                     String[] paths = ((Srv)val).getPaths();
                     Arg[] nargs = null;
                     if (paths == null || paths.length == 0) {
