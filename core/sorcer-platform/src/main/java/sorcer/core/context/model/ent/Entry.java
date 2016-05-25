@@ -38,11 +38,9 @@ import java.util.List;
 
 import static sorcer.eo.operator.add;
 
-
 /**
  * @author Mike Sobolewski
  */
-@SuppressWarnings("unchecked")
 public class Entry<T> extends Tuple2<String, T> implements Callable<T>, Dependency, Comparable<T>, EvaluationComponent, SupportComponent, Setter, Reactive<T> {
 	private static final long serialVersionUID = 5168783170981015779L;
 
@@ -64,6 +62,8 @@ public class Entry<T> extends Tuple2<String, T> implements Callable<T>, Dependen
 
 	// dependency management for this Entry
 	protected List<Evaluation> dependers = new ArrayList<Evaluation>();
+
+	protected Context scope;
 
 	public Entry() {
 	}
@@ -338,10 +338,13 @@ public class Entry<T> extends Tuple2<String, T> implements Callable<T>, Dependen
 		return type;
 	}
 
-//	@Override
-//	public T invoke(Context<T> context, Arg... entries) throws InvocationException, RemoteException {
-//		return _2;
-//	}
+	public Context getScope() {
+		return scope;
+	}
+
+	public void setScope(Context scope) {
+		this.scope = scope;
+	}
 
 	public Class getValClass() {
 		return valClass;

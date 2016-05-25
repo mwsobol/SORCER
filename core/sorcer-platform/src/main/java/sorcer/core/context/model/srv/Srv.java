@@ -159,16 +159,9 @@ public class Srv extends Entry<Object> implements Variability<Object>, Arg,
             if (_2 instanceof Callable) {
                 return ((Callable) _2).call();
             } else if (_2 instanceof SignatureEntry) {
-                SrvModel mod = null;
-                for (Arg arg : entries) {
-                    if (arg instanceof SrvModel) {
-                        mod = (SrvModel) arg;
-                        break;
-                    }
-                }
-                if (mod != null) {
+                if (scope != null && scope instanceof SrvModel) {
                     try {
-                        return mod.evalSignature(((SignatureEntry)_2)._2, _1);
+                        return ((SrvModel)scope).evalSignature(((SignatureEntry)_2)._2, _1);
                     } catch (Exception e) {
                         throw new EvaluationException(e);
                     }
