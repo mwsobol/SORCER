@@ -2222,8 +2222,13 @@ public class operator {
 			if (mogram instanceof Exertion)
 				return new ServiceShell().evaluate(mogram, args);
 			else if (mogram instanceof Modeling) {
-				mogram.substitute(args);
-				((Modeling) mogram).evaluate();
+				Context cxt = Arg.getContext(args);
+				if (cxt != null) {
+					return ((Modeling) mogram).evaluate(cxt);
+				} else {
+					mogram.substitute(args);
+					((Modeling) mogram).evaluate();
+				}
 				return ((Model)mogram).getResult();
 			} else {
 				return ((Evaluation) mogram).getValue(args);
