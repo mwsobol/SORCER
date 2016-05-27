@@ -2406,13 +2406,17 @@ public class operator {
 	}
 
 	public static EntryList inputs(Entry...  entries) {
-		return initialDesign(entries);
+		return designInputs(entries);
 	}
 
-	public static EntryList initialDesign(Entry...  entries) {
+	public static EntryList designInputs(Entry...  entries) {
 		EntryList el = new EntryList(entries);
 		el.setType(EntryList.Type.INITIAL_DESIGN);
 		return el;
+	}
+
+	public static EntryList initialDesign(Entry...  entries) {
+		return designInputs(entries);
 	}
 
 	public static PathResponse target(Object object) {
