@@ -244,7 +244,7 @@ public class Entry<T> extends Tuple2<String, T> implements Callable<T>, Dependen
 	public void isValid(boolean state) {
 		isValid = state;
 		if (_2  instanceof Entry) {
-			((Entry)_2).isValid(state);
+			((Entry)_2).isValid = state;
 		}
 	}
 
@@ -275,7 +275,7 @@ public class Entry<T> extends Tuple2<String, T> implements Callable<T>, Dependen
 		try {
 			if (_2 instanceof Evaluation && ((Evaluation) _2).asis() != null) {
 				if (this == _2) {
-					return "[" + _1 + ":" + ((Entry)_2)._2 + "]";  // loop
+					return "[" + _1 + ":" + ((Evaluation)_2).getName() + "x]";  // loop
 				}
 				en = ((Evaluation) _2).asis().toString();
 			} else {
