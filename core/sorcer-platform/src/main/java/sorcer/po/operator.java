@@ -36,6 +36,8 @@ import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.concurrent.Callable;
 
+import static sorcer.eo.operator.context;
+
 /**
  * @author Mike Sobolewski
  */
@@ -83,6 +85,9 @@ public class operator {
 		if (object instanceof Context) {
 			p = new Par(path, argument);
 			p.setScope(object);
+		} else if (object instanceof Entry) {
+			p = new Par(path, argument);
+			p.setScope(context((Entry)object));
 		} else if (object instanceof Service) {
 			p = new Par(path, argument, object);
 		}
