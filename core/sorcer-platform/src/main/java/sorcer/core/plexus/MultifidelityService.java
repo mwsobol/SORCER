@@ -40,9 +40,9 @@ import java.util.List;
  */
 public class MultifidelityService extends ServiceMogram {
 
-    protected ServiceFidelity<PrimitiveService> serviceFidelity;
+    protected ServiceFidelity<FrontService> serviceFidelity;
 
-    protected MorphedFidelity<PrimitiveService> morphedFidelity;
+    protected MorphedFidelity<FrontService> morphedFidelity;
 
     public MultifidelityService() {
     }
@@ -56,11 +56,11 @@ public class MultifidelityService extends ServiceMogram {
         return scope.clearScope();
     }
 
-    public MultifidelityService(MorphedFidelity<PrimitiveService> fidelity) {
+    public MultifidelityService(MorphedFidelity<FrontService> fidelity) {
         this(fidelity.getName(), fidelity);
     }
 
-    public MultifidelityService(String name, MorphedFidelity<PrimitiveService> fidelity)  {
+    public MultifidelityService(String name, MorphedFidelity<FrontService> fidelity)  {
         super(name);
         morphedFidelity = fidelity;
         if (fiManager == null)
@@ -72,17 +72,17 @@ public class MultifidelityService extends ServiceMogram {
         morphedFidelity.addObserver((FidelityManager)fiManager);
     }
 
-    public MultifidelityService(String name, ServiceFidelity<PrimitiveService> fidelity) {
+    public MultifidelityService(String name, ServiceFidelity<FrontService> fidelity) {
         super(name);
         serviceFidelity = fidelity;
     }
 
-    public MultifidelityService(Context context, MorphedFidelity<PrimitiveService> fidelity)  {
+    public MultifidelityService(Context context, MorphedFidelity<FrontService> fidelity)  {
         this(context.getName(), fidelity);
         scope = context;
     }
 
-    public MultifidelityService(Context context, ServiceFidelity<PrimitiveService> fidelity) {
+    public MultifidelityService(Context context, ServiceFidelity<FrontService> fidelity) {
         this(context.getName(), fidelity);
         scope = context;
     }
@@ -162,11 +162,11 @@ public class MultifidelityService extends ServiceMogram {
         return toString();
     }
 
-    public ServiceFidelity<PrimitiveService> getServiceFidelity() {
+    public ServiceFidelity<FrontService> getServiceFidelity() {
         return serviceFidelity;
     }
 
-    public void setServiceFidelity(ServiceFidelity<PrimitiveService> serviceFidelity) {
+    public void setServiceFidelity(ServiceFidelity<FrontService> serviceFidelity) {
         this.serviceFidelity = serviceFidelity;
     }
 
