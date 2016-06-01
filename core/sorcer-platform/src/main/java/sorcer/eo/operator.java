@@ -2259,6 +2259,11 @@ public class operator {
 		return new OutputEntry(null, value, 0);
 	}
 
+	public static Signature space(Signature signature) {
+		((ServiceSignature)signature).setAccessType(Access.PULL);
+		return signature;
+	}
+
 	public static ReturnPath result(String path) {
 		return new ReturnPath(path);
 	}

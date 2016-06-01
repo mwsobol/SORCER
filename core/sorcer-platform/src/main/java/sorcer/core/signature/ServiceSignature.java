@@ -58,6 +58,7 @@ public class ServiceSignature implements Signature, SorcerConstants {
 
 	protected ReturnPath returnPath;
 
+
 	// the indicated usage of this signature
 	protected Set<Kind> rank = new HashSet<Kind>();
 
@@ -76,6 +77,8 @@ public class ServiceSignature implements Signature, SorcerConstants {
 	private ServiceID serviceID;
 
 	protected Class<?> serviceType;
+
+	private Strategy.Access accessType = Strategy.Access.PUSH;
 
 	// service typed to be mached by its service proxy
 	protected Class[] matchTypes;
@@ -627,6 +630,14 @@ public class ServiceSignature implements Signature, SorcerConstants {
 			return (Modeler.class.isAssignableFrom(serviceType));
 		else
 			return false;
+	}
+
+	public Strategy.Access getAccessType() {
+		return accessType;
+	}
+
+	public void setAccessType(Strategy.Access accessType) {
+		this.accessType = accessType;
 	}
 
 	@Override

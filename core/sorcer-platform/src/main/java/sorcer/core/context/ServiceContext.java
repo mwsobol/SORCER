@@ -1516,6 +1516,8 @@ public class ServiceContext<T> extends ServiceMogram implements
 		try {
 			// define output context here
 			sig.setReturnPath((SignatureReturnPath)null);
+			Task sTask = task(sig, incxt);
+			sTask.setAccess(sig.getAccessType());
 			outcxt = task(sig, incxt).exert().getContext();
 			// restore return path
 			sig.setReturnPath(rp);
