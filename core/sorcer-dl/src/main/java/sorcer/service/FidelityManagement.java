@@ -47,6 +47,8 @@ public interface FidelityManagement<T extends Arg> extends Service, Serializable
                                       RemoteEventListener toInform, long leaseLenght)
             throws UnknownEventException, RemoteException;
 
+    public void addTrace(ServiceFidelity fi);
+
     public void deregister(long eventID) throws UnknownEventException,
             RemoteException;
 

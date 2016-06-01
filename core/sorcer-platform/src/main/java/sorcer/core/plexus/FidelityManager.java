@@ -52,6 +52,9 @@ public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Ob
     // fidelities for fidelites
     protected Map<String, ServiceFidelity<ServiceFidelity>> metafidelities = new ConcurrentHashMap<>();
 
+    // changed fidelities by morphers
+    protected List<ServiceFidelity> fiTrace = new ArrayList();
+
     protected Mogram mogram;
 
     protected Map<Long, Session> sessions;
@@ -89,6 +92,19 @@ public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Ob
     public void addFidelity(String path, ServiceFidelity<T> fi) {
         if (fi != null)
             this.fidelities.put(path, fi);
+    }
+
+    public List<ServiceFidelity> getFiTrace() {
+        return fiTrace;
+    }
+
+    public void setFiTrace(List<ServiceFidelity> fiTrace) {
+        this.fiTrace = fiTrace;
+    }
+
+    public void addTrace(ServiceFidelity fi) {
+        if (fi != null)
+            this.fiTrace.add(fi);
     }
 
     public void addMetafidelity(String path, ServiceFidelity<ServiceFidelity> fi) {
@@ -184,6 +200,7 @@ public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Ob
         }
     }
 
+
     @Override
     public void reconfigure(String... fiNames) throws RemoteException {
         if (metafidelities.size() == 1 && fiNames.length == 1) {
@@ -194,6 +211,11 @@ public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Ob
 
     @Override
     public void reconfigure(ServiceFidelity... fidelities) throws ContextException, RemoteException {
+        if (fidelities == null || fidelities.length == 0) {
+            ServiceFidelity[] config = new ServiceFidelity[fiTrace.size()];
+            reconfigure(fiTrace.toArray(config));
+            return;
+        }
         if (this.fidelities.size() > 0) {
             for (ServiceFidelity fi : fidelities) {
                 if (this.fidelities.get(fi.getPath()) != null) {
