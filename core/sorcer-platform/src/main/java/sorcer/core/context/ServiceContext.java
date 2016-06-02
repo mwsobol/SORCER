@@ -3392,7 +3392,11 @@ public class ServiceContext<T> extends ServiceMogram implements
 	public void setDirection(Direction direction) {
 		this.direction = direction;
 	}
-	
+
+	public Entry<T> getEntry(String path) {
+		return new Entry(path, data.get(path));
+	}
+
 	@Override
 	public Object exec(Arg... args) throws MogramException, RemoteException {
 		Context cxt = Arg.getContext(args);
