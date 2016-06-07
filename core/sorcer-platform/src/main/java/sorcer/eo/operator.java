@@ -41,10 +41,7 @@ import sorcer.core.dispatch.SortingException;
 import sorcer.core.dispatch.SrvModelAutoDeps;
 import sorcer.core.exertion.*;
 import sorcer.core.invoker.InvokeIncrementor;
-import sorcer.core.plexus.FidelityManager;
-import sorcer.core.plexus.MorphedFidelity;
-import sorcer.core.plexus.Morpher;
-import sorcer.core.plexus.MultifidelityService;
+import sorcer.core.plexus.*;
 import sorcer.core.provider.*;
 import sorcer.core.provider.exerter.Binder;
 import sorcer.core.provider.exerter.ServiceShell;
@@ -1342,6 +1339,22 @@ public class operator {
 
 	public static FidelityList fis(ServiceFidelity... fidelities) {
 		return new FidelityList(fidelities);
+	}
+
+	public static FidelityList fis(Arg... args) {
+		FidelityList fl = new FidelityList();
+		for (Arg arg : args) {
+			if (arg instanceof ServiceFidelity) {
+				fl.add((ServiceFidelity)arg);
+			} else if (arg instanceof FidelityList) {
+				fl.addAll((FidelityList)arg);
+			}
+		}
+		return fl;
+	}
+
+	public static FiEntry fiEnt(int index, FidelityList fiList) {
+		return new FiEntry(index, fiList);
 	}
 
 	public static ServiceFidelity<?> fi(String path, String name) {

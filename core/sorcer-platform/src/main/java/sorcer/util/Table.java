@@ -257,8 +257,11 @@ public class Table implements ModelTable {
 		List colList = new ArrayList();
 		for (int i = 0; i< rowCount; i++){
 			List<?> rowi = getRow(i);
-			Object elei = rowi.get(colIndex);
-			colList.add(elei);
+			// fill in with null missing elements
+			if (colIndex >= rowi.size())
+				colList.add(null);
+			else
+				colList.add(rowi.get(colIndex));
 		}
 		return colList;
 	}

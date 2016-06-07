@@ -181,6 +181,17 @@ public class ServiceFidelity<T extends Arg> implements Multifidelity<T>, Arg {
 		} else return select;
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if ((obj instanceof ServiceFidelity) &&
+				name.equals(((ServiceFidelity)obj).getName()) &&
+				path.equals(((ServiceFidelity)obj).getPath())) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 	public void clear() {
 		selects.clear();
 	}

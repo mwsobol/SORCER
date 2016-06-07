@@ -1,5 +1,5 @@
 /*
-* Copyright 2015 SORCERsoft.org.
+* Copyright 2016 SORCERsoft.org.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -14,20 +14,25 @@
 * limitations under the License.
 */
 
-
 package sorcer.core.plexus;
 
-import sorcer.service.Arg;
-import sorcer.service.FidelityManagement;
-import sorcer.service.ServiceException;
-
-import java.rmi.RemoteException;
+import sorcer.co.tuple.Tuple2;
+import sorcer.service.FidelityList;
 
 /**
- * Created by Mike Sobolewski on 11/9/15.
+ * Created by Mike Sobolewski on 6/7/16.
  */
-@FunctionalInterface
-public interface Morpher<T extends Arg> {
+public class FiEntry extends Tuple2<Integer, FidelityList> {
 
-    public void morph(FidelityManagement<T> manager, MorphedFidelity mFi, Object value) throws RemoteException, ServiceException;
+	public FiEntry(int index, FidelityList list) {
+		super(index, list);
+	}
+
+	public int getIndex() {
+		return _1;
+	}
+
+	public FidelityList getFidelities() {
+		return _2;
+	}
 }
