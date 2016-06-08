@@ -22,8 +22,7 @@ import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.par.Par;
 import sorcer.service.*;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -42,6 +41,8 @@ public class GroovyInvoker<T> extends ServiceInvoker<T> {
 	// counter for unnamed instances
 	protected static int count;
 
+	private static StringBuilder staticImports;
+
 	/**
 	 * expression to be evaluated
 	 */
@@ -56,6 +57,9 @@ public class GroovyInvoker<T> extends ServiceInvoker<T> {
 
 	public GroovyInvoker() {
 		super(defaultName + count++);
+		if (staticImports == null) {
+			staticImports = readStaticImports();
+		}
 	}
 
 	public GroovyInvoker(String expression) {
@@ -119,7 +123,8 @@ public class GroovyInvoker<T> extends ServiceInvoker<T> {
 						throw new InvocationException(e);
 					}
 				} else {
-					result = shell.evaluate(expression);
+					staticImports.append(expression);
+					result = shell.evaluate(staticImports.toString());
 				}
 			}
 //			TODO testing
@@ -178,6 +183,32 @@ public class GroovyInvoker<T> extends ServiceInvoker<T> {
 			}
 			shell.setVariable(key, val);
 		}
+	}
+
+	private StringBuilder readStaticImports() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("import static sorcer.eo.operator.*;\n")
+				.append("import static sorcer.co.operator.*;\n")
+				.append("import static sorcer.po.operator.*;\n")
+				.append("//import static sorcer.vo.operator.*;\n")
+				.append("//import static sorcer.tools.shell.NetworkShell.nshUrl;\n")
+				.append("//common SORCER classes\n")
+				.append("import sorcer.service.*;\n")
+				.append("import sorcer.service.Signature.*;\n")
+				.append("import sorcer.core.exertion.*;\n")
+				.append("import sorcer.service.Strategy.*;\n")
+				.append("import sorcer.service.Strategy.Flow;\n")
+				.append("import sorcer.service.Strategy.Access;\n")
+				.append("import sorcer.service.Strategy.Provision;\n")
+				.append("import sorcer.service.Strategy.Monitor;\n")
+				.append("import sorcer.service.Strategy.Wait;\n")
+				.append("import sorcer.service.*;\n")
+				.append("import sorcer.core.context.model.*;\n")
+				.append("//import sorcer.vfe.util.*;\n")
+				.append("//import sorcer.vfe.*;\n")
+				.append("import java.io.*;");
+
+		return sb;
 	}
 
 	public void clean() {

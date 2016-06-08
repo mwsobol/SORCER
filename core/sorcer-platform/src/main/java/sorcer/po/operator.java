@@ -417,6 +417,10 @@ public class operator {
 		return new GroovyInvoker(expression);
 	}
 
+	public static ServiceInvoker expr(String expression) {
+		return new GroovyInvoker(expression);
+	}
+
 	public static ServiceInvoker invoker(Exertion exertion) {
         return new ExertInvoker(exertion);
     }

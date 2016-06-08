@@ -4,6 +4,7 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.plexus.FiMap;
+import sorcer.service.EvaluationException;
 import sorcer.service.FidelityList;
 import sorcer.util.ModelTable;
 import sorcer.util.Table;
@@ -11,6 +12,8 @@ import sorcer.util.Table;
 import static org.junit.Assert.assertEquals;
 import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
+import static sorcer.po.operator.expr;
+import static sorcer.po.operator.invoker;
 
 
 /**
@@ -127,4 +130,14 @@ public class FidelityTest {
 		assertEquals(fiMap.get(1), fis(fi("tip/displacement", "astros")));
 		assertEquals(fiMap.get(3), fis(fi("tip/displacement", "nastran")));
 	}
+
+	@Test
+	public void getFpdis() throws EvaluationException {
+		String fis = "fis(fi('tip/displacement', 'astros'))";
+
+		FidelityList fl = (FidelityList) value(expr(fis));
+		logger.info("fi map populated: " + fl);
+		assertEquals(fl, fis(fi("tip/displacement", "astros")));
+	}
+
 }
