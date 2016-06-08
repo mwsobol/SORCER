@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.plexus.FiMap;
 import sorcer.service.FidelityList;
+import sorcer.util.ModelTable;
 import sorcer.util.Table;
 
 import static org.junit.Assert.assertEquals;
@@ -67,7 +68,7 @@ public class FidelityTest {
 				row(150.0),
 				row(160.0));
 
-		Table fiTable = appendFidelities(dataTable,
+		ModelTable fiTable = appendFidelities(dataTable,
 				fiEnt(1, fis(fi("atX", "x1"))),
 				fiEnt(3, fis(fi("atX", "x1"), fi("atY", "y2"))));
 
@@ -92,7 +93,7 @@ public class FidelityTest {
                 row(150.0),
                 row(160.0));
 
-        Table fiTable = populateFidelities(dataTable,
+        ModelTable fiTable = populateFidelities(dataTable,
                 fiEnt(1, fis(fi("atX", "x1"))),
                 fiEnt(3, fis(fi("atX", "x1"), fi("atY", "y2"))));
 
