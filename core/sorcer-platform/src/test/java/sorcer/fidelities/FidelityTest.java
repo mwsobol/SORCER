@@ -52,7 +52,7 @@ public class FidelityTest {
 		FiMap fm = new FiMap();
 		fm.add(fiEnt(2, fis(fi("atX", "x1"))));
 		fm.add(fiEnt(5, fis(fi("atX", "x1"), fi("atY", "y2"))));
-		fm.populateMap(10);
+		fm.populateFidelities(10);
 		assertEquals(fm.size(), 9);
 		assertEquals(fm.get(10), fis(fi("atX", "x1"), fi("atY", "y2")));
 	}
@@ -67,13 +67,13 @@ public class FidelityTest {
 				row(150.0),
 				row(160.0));
 
-		Table fiTable = multiFidelities(dataTable,
+		Table fiTable = appendFidelities(dataTable,
 				fiEnt(1, fis(fi("atX", "x1"))),
 				fiEnt(3, fis(fi("atX", "x1"), fi("atY", "y2"))));
 
 		logger.info("fi table: " + fiTable);
         FiMap fiMap = new FiMap(dataTable);
-        fiMap.populateMap(dataTable.getRowCount()-1);
+        fiMap.populateFidelities(dataTable.getRowCount()-1);
         logger.info("fi map populated: " + fiMap);
         assertEquals(fiMap.get(0), null);
         assertEquals(fiMap.get(1), fis(fi("atX", "x1")));
@@ -92,18 +92,13 @@ public class FidelityTest {
                 row(150.0),
                 row(160.0));
 
-//        Table fiTable = multiFis(dataTable,
-//                fiEnt(1, fis(fi("atX", "x1"))),
-//                fiEnt(3, fis(fi("atX", "x1"), fi("atY", "y2"))));
-
-        Table fiTable = populateMultifidelities(dataTable,
+        Table fiTable = populateFidelities(dataTable,
                 fiEnt(1, fis(fi("atX", "x1"))),
                 fiEnt(3, fis(fi("atX", "x1"), fi("atY", "y2"))));
 
         logger.info("fi table: " + fiTable);
         FiMap fiMap = new FiMap(dataTable);
-//        fiMap.populateMap(dataTable.getRowCount()-1);
-        logger.info("fi map populated: " + fiMap);
+        logger.info("fi map: " + fiMap);
         assertEquals(fiMap.get(0), null);
         assertEquals(fiMap.get(1), fis(fi("atX", "x1")));
         assertEquals(fiMap.get(2), fis(fi("atX", "x1")));
@@ -126,7 +121,7 @@ public class FidelityTest {
 		assertEquals(fiMap.get(1), null);
 		assertEquals(fiMap.get(3), null);
 
-		fiMap.populateMap(dataTable.getRowCount()-1);
+		fiMap.populateFidelities(dataTable.getRowCount()-1);
 		logger.info("fi map populated: " + fiMap);
 		assertEquals(fiMap.get(1), fis(fi("tip/displacement", "astros")));
 		assertEquals(fiMap.get(3), fis(fi("tip/displacement", "nastran")));

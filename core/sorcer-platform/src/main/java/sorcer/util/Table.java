@@ -582,7 +582,7 @@ public class Table implements ModelTable {
 	 *            the index of the column being deleted
 	 * @throws EvaluationException 
 	 */
-	public void removeColumn( int colID) throws EvaluationException {
+	public void removeColumn(int colID) throws EvaluationException {
 		int rowSize = getRowCount();
 	
 			for (int i = 0; i < rowSize; i++) {
@@ -802,8 +802,8 @@ public class Table implements ModelTable {
 		return qTable;
 	}
 
-	public int columnIndexOf(String gradientName) {
-		return columnIdentifiers.indexOf(gradientName);
+	public int columnIndexOf(String columnName) {
+		return columnIdentifiers.indexOf(columnName);
 	}
 
 	public int rowIndexOf(String variableName) {
@@ -1407,6 +1407,12 @@ public class Table implements ModelTable {
 
 	public void setFiColumnName(String fiColumnName) {
 		this.fiColumnName = fiColumnName;
+	}
+
+	public Table trimFidelities() throws EvaluationException {
+		removeColumn(columnIdentifiers.indexOf(fiColumnName));
+		columnIdentifiers.remove(fiColumnName);
+		return this;
 	}
 
 	@Override

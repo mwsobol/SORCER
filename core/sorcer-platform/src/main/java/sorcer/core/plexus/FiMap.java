@@ -28,6 +28,8 @@ import java.util.List;
 public class FiMap extends HashMap<Integer, FidelityList> {
 
 	private String fiColumnName = "fis";
+
+	private List<FidelityList> fiList;
 	/**
 	 * Constructs an empty <tt>FiMap</tt> with the specified initial
 	 * capacity and the default load factor (0.75).
@@ -48,10 +50,10 @@ public class FiMap extends HashMap<Integer, FidelityList> {
 	}
 
 	public FiMap(Table table) {
-		List fisColumn = table.getColumn(fiColumnName);
-		if (fisColumn != null && fisColumn.size() > 0) {
-			for (int i = 0; i < fisColumn.size(); i++) {
-				put(i, (FidelityList) fisColumn.get(i));
+		fiList = table.getColumn(fiColumnName);
+		if (fiList != null && fiList.size() > 0) {
+			for (int i = 0; i < fiList.size(); i++) {
+				put(i, fiList.get(i));
 			}
 		}
 	}
@@ -71,6 +73,10 @@ public class FiMap extends HashMap<Integer, FidelityList> {
 		return fiEnt;
 	}
 
+	public List<FidelityList> getFiList() {
+		return fiList;
+	}
+
 	public String getFiColumnName() {
 		return fiColumnName;
 	}
@@ -79,12 +85,13 @@ public class FiMap extends HashMap<Integer, FidelityList> {
 		this.fiColumnName = fiColumnName;
 	}
 
-	public void populateMap(int size) {
+	public void populateFidelities(int size) {
 		int maxIdex = size;
 
 		for (int i = 0; i < maxIdex; i++) {
 			if (get(i) != null && get(i + 1) == null) {
 				put(i + 1, get(i));
+				fiList.set(i+1, get(i));
 			}
 		}
 	}

@@ -38,10 +38,7 @@ import sorcer.netlet.ScriptExerter;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
 import sorcer.service.modeling.Variability.Type;
-import sorcer.util.Loop;
-import sorcer.util.Response;
-import sorcer.util.Sorcer;
-import sorcer.util.Table;
+import sorcer.util.*;
 import sorcer.util.bdb.objects.UuidObject;
 import sorcer.util.url.sos.SdbUtil;
 import sorcer.service.Signature.ReturnPath;
@@ -54,6 +51,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.*;
+import java.util.Collections;
 import java.util.concurrent.Callable;
 
 import static sorcer.po.operator.invoker;
@@ -852,11 +850,12 @@ public class operator {
 		return table;
 	}
 
-	public static Table populateMultifidelities(Table table, FiEntry... entries) {
-		List fiColumn = table.getColumn(table.getFiColumnName());
+	public static ModelTable populateFidelities(ModelTable table, FiEntry... entries) {
+		Table impl = (Table)table;
+		List fiColumn = impl.getColumn(impl.getFiColumnName());
 		if (fiColumn == null) {
-			fiColumn = new ArrayList(table.getRowCount());
-			while(fiColumn.size() < table.getRowCount())
+			fiColumn = new ArrayList(impl.getRowCount());
+			while(fiColumn.size() < impl.getRowCount())
 				fiColumn.add(null);
 		}
 		for (FiEntry fiEnt : entries) {
@@ -869,22 +868,23 @@ public class operator {
             }
         }
 
-        table.addColumn(table.getFiColumnName(), fiColumn);
-        return table;
+        impl.addColumn(impl.getFiColumnName(), fiColumn);
+        return impl;
 	}
 
-	public static Table multiFidelities(Table table, FiEntry... entries) {
-		List fiColumn = table.getColumn(table.getFiColumnName());
+	public static ModelTable appendFidelities(ModelTable table, FiEntry... entries) {
+		Table impl = (Table)table;
+		List fiColumn = impl.getColumn(impl.getFiColumnName());
 		if (fiColumn == null) {
-			fiColumn = new ArrayList(table.getRowCount());
-			while(fiColumn.size() < table.getRowCount())
+			fiColumn = new ArrayList(impl.getRowCount());
+			while(fiColumn.size() < impl.getRowCount())
 				fiColumn.add(null);
 		}
 		for (FiEntry fiEnt : entries) {
 			fiColumn.set(fiEnt.getIndex(), fiEnt.getFidelities());
 		}
-		table.addColumn(table.getFiColumnName(), fiColumn);
-		return table;
+		impl.addColumn(impl.getFiColumnName(), fiColumn);
+		return impl;
 	}
 
 	public static void rowNames(Table table, List rowIdentifiers) {
