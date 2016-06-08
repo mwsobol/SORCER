@@ -63,6 +63,9 @@ public class Table implements ModelTable {
 
 	protected String name = "Data Table";
 	/*  Enumeration type for length units */
+
+	private String fiColumnName = "fis";
+
 	public enum LengthUnits {
 		FEET, INCH, METER
 	}
@@ -253,9 +256,12 @@ public class Table implements ModelTable {
 	}
 
 	public List getColumn(int colIndex){
-		int rowCount = getRowCount(); new ArrayList<String>();
+		if (colIndex < 0)
+			return null;
+
+		int rowCount = getRowCount();
 		List colList = new ArrayList();
-		for (int i = 0; i< rowCount; i++){
+		for (int i = 0; i < rowCount; i++){
 			List<?> rowi = getRow(i);
 			// fill in with null missing elements
 			if (colIndex >= rowi.size())
@@ -606,29 +612,16 @@ public class Table implements ModelTable {
 			int columnSize = columnData.size();
 			int newColumn = getColumnCount() - 1;
 			for (int i = 0; i < columnSize; i++) {
-				
-				logger.info("0 dataList = " + dataList);
-			
 				if (dataList == null) {
 					dataList = Collections.synchronizedList(new ArrayList<List<?>>());		
 				}
-				logger.info("1 dataList = " + dataList);
-				logger.info("i = " + i);
-				logger.info("dataList.size() = " + dataList.size());
 				if (dataList.size() <= i) {
 					dataList.add(new ArrayList());
 				}
-				
 				List row = (List) dataList.get(i);
-				
-				logger.info("0 row = " + row);
-				
 				row.add(newColumn, columnData.get(i));
-				logger.info("1 row = " + row);
-
 			}
 		}
-
 	}
 
 	/**
@@ -645,10 +638,6 @@ public class Table implements ModelTable {
 	public void addColumn(String columnName, Object[] columnData) {
 		addColumn(columnName, convertToList(columnData));
 	}
-
-	//
-	// Implementing the TableModel interface
-	//
 
 	/**
 	 * Returns the number of rows in this data table.
@@ -1411,7 +1400,15 @@ public class Table implements ModelTable {
 		
 		return false;
 	}
-	
+
+	public String getFiColumnName() {
+		return fiColumnName;
+	}
+
+	public void setFiColumnName(String fiColumnName) {
+		this.fiColumnName = fiColumnName;
+	}
+
 	@Override
 	public boolean equals(Object table) {
 		if (table instanceof Table) {

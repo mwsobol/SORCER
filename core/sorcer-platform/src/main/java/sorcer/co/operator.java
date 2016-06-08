@@ -28,6 +28,7 @@ import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.par.Par;
 import sorcer.core.context.model.srv.Srv;
 import sorcer.core.invoker.ServiceInvoker;
+import sorcer.core.plexus.FiEntry;
 import sorcer.core.plexus.MorphedFidelity;
 import sorcer.core.provider.DatabaseStorer;
 import sorcer.core.signature.NetletSignature;
@@ -844,6 +845,46 @@ public class operator {
 			}
 		}
 		return out;
+	}
+
+	public static Table fiColumnName(Table table, String name) {
+		table.setFiColumnName(name);
+		return table;
+	}
+
+	public static Table populateMultifidelities(Table table, FiEntry... entries) {
+		List fiColumn = table.getColumn(table.getFiColumnName());
+		if (fiColumn == null) {
+			fiColumn = new ArrayList(table.getRowCount());
+			while(fiColumn.size() < table.getRowCount())
+				fiColumn.add(null);
+		}
+		for (FiEntry fiEnt : entries) {
+			fiColumn.set(fiEnt.getIndex(), fiEnt.getFidelities());
+		}
+
+        for (int i = 0; i < fiColumn.size()-1; i++) {
+            if (fiColumn.get(i) != null && fiColumn.get(i + 1) == null) {
+                fiColumn.set(i + 1, fiColumn.get(i));
+            }
+        }
+
+        table.addColumn(table.getFiColumnName(), fiColumn);
+        return table;
+	}
+
+	public static Table multiFidelities(Table table, FiEntry... entries) {
+		List fiColumn = table.getColumn(table.getFiColumnName());
+		if (fiColumn == null) {
+			fiColumn = new ArrayList(table.getRowCount());
+			while(fiColumn.size() < table.getRowCount())
+				fiColumn.add(null);
+		}
+		for (FiEntry fiEnt : entries) {
+			fiColumn.set(fiEnt.getIndex(), fiEnt.getFidelities());
+		}
+		table.addColumn(table.getFiColumnName(), fiColumn);
+		return table;
 	}
 
 	public static void rowNames(Table table, List rowIdentifiers) {

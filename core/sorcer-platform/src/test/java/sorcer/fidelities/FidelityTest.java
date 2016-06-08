@@ -8,9 +8,7 @@ import sorcer.service.FidelityList;
 import sorcer.util.Table;
 
 import static org.junit.Assert.assertEquals;
-import static sorcer.co.operator.header;
-import static sorcer.co.operator.row;
-import static sorcer.co.operator.table;
+import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
 
 
@@ -60,6 +58,60 @@ public class FidelityTest {
 	}
 
 	@Test
+	public void fidelityTable() {
+		Table dataTable = table(header("span"),
+				row(110.0),
+				row(120.0),
+				row(130.0),
+				row(140.0),
+				row(150.0),
+				row(160.0));
+
+		Table fiTable = multiFidelities(dataTable,
+				fiEnt(1, fis(fi("atX", "x1"))),
+				fiEnt(3, fis(fi("atX", "x1"), fi("atY", "y2"))));
+
+		logger.info("fi table: " + fiTable);
+        FiMap fiMap = new FiMap(dataTable);
+        fiMap.populateMap(dataTable.getRowCount()-1);
+        logger.info("fi map populated: " + fiMap);
+        assertEquals(fiMap.get(0), null);
+        assertEquals(fiMap.get(1), fis(fi("atX", "x1")));
+        assertEquals(fiMap.get(2), fis(fi("atX", "x1")));
+        assertEquals(fiMap.get(4), fis(fi("atX", "x1"), fi("atY", "y2")));
+        assertEquals(fiMap.get(5), fis(fi("atX", "x1"), fi("atY", "y2")));
+    }
+
+    @Test
+    public void populateFidelityTable() {
+        Table dataTable = table(header("span"),
+                row(110.0),
+                row(120.0),
+                row(130.0),
+                row(140.0),
+                row(150.0),
+                row(160.0));
+
+//        Table fiTable = multiFis(dataTable,
+//                fiEnt(1, fis(fi("atX", "x1"))),
+//                fiEnt(3, fis(fi("atX", "x1"), fi("atY", "y2"))));
+
+        Table fiTable = populateMultifidelities(dataTable,
+                fiEnt(1, fis(fi("atX", "x1"))),
+                fiEnt(3, fis(fi("atX", "x1"), fi("atY", "y2"))));
+
+        logger.info("fi table: " + fiTable);
+        FiMap fiMap = new FiMap(dataTable);
+//        fiMap.populateMap(dataTable.getRowCount()-1);
+        logger.info("fi map populated: " + fiMap);
+        assertEquals(fiMap.get(0), null);
+        assertEquals(fiMap.get(1), fis(fi("atX", "x1")));
+        assertEquals(fiMap.get(2), fis(fi("atX", "x1")));
+        assertEquals(fiMap.get(4), fis(fi("atX", "x1"), fi("atY", "y2")));
+        assertEquals(fiMap.get(5), fis(fi("atX", "x1"), fi("atY", "y2")));
+    }
+
+    @Test
 	public void selectFiMap() {
 		Table dataTable = table(header("span", "fis"),
 				row(110.0,  fis(fi("tip/displacement", "astros"))),
@@ -78,6 +130,5 @@ public class FidelityTest {
 		logger.info("fi map populated: " + fiMap);
 		assertEquals(fiMap.get(1), fis(fi("tip/displacement", "astros")));
 		assertEquals(fiMap.get(3), fis(fi("tip/displacement", "nastran")));
-
 	}
 }

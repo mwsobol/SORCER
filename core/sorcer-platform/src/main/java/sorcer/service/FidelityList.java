@@ -86,25 +86,27 @@ public class FidelityList extends ArrayList<ServiceFidelity> implements Arg {
 	public String toString() {
 		int tally = size();
 		StringBuilder sb = new StringBuilder("fis(");
-		sb.append("fi(\"").append(get(0).getPath()).append("\", \"");
-		if (tally == 1)
-			sb.append(get(0).getName()).append("\")");
-		else
-			sb.append(get(0).getName()).append("\"), ");
-
-		for (int i = 1; i < tally - 1; i++) {
-			sb.append("fi(\"").append(get(i).getPath()).append("\", \"");
-			if (size() == 1)
-				sb.append(get(i).getName()).append("\")");
+		if (size() > 0) {
+			sb.append("fi(\"").append(get(0).getPath()).append("\", \"");
+			if (tally == 1)
+				sb.append(get(0).getName()).append("\")");
 			else
-				sb.append(get(i).getName()).append("\"), ");
-		}
+				sb.append(get(0).getName()).append("\"), ");
 
-		if (tally > 1) {
-			sb.append("fi(\"").append(get(tally - 1).getPath()).append("\", \"");
-			sb.append(get(tally - 1).getName()).append("\")");
-		}
+			for (int i = 1; i < tally - 1; i++) {
+				sb.append("fi(\"").append(get(i).getPath()).append("\", \"");
+				if (size() == 1)
+					sb.append(get(i).getName()).append("\")");
+				else
+					sb.append(get(i).getName()).append("\"), ");
+			}
 
+			if (tally > 1) {
+				sb.append("fi(\"").append(get(tally - 1).getPath()).append("\", \"");
+				sb.append(get(tally - 1).getName()).append("\")");
+			}
+
+		}
 		sb.append(")");
 		return sb.toString();
 	}
