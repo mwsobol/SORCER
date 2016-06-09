@@ -19,6 +19,7 @@ package sorcer.core.plexus;
 import sorcer.service.FidelityList;
 import sorcer.util.Table;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -30,6 +31,7 @@ public class FiMap extends HashMap<Integer, FidelityList> {
 	private String fiColumnName = "fis";
 
 	private List<FidelityList> fiList;
+
 	/**
 	 * Constructs an empty <tt>FiMap</tt> with the specified initial
 	 * capacity and the default load factor (0.75).
@@ -47,6 +49,7 @@ public class FiMap extends HashMap<Integer, FidelityList> {
 	 */
 	public FiMap() {
 		super();
+		fiList = new ArrayList();
 	}
 
 	public FiMap(Table table) {
@@ -92,6 +95,17 @@ public class FiMap extends HashMap<Integer, FidelityList> {
 			if (get(i) != null && get(i + 1) == null) {
 				put(i + 1, get(i));
 				fiList.set(i+1, get(i));
+			}
+		}
+	}
+
+	public void populateFidelities(FidelityList fiConfig, int size) {
+		int maxIdex = size;
+
+		for (int i = 0; i < maxIdex; i++) {
+			if (get(i) != null && get(i + 1) == null) {
+				put(i + 1, fiConfig);
+				fiList.set(i+1, fiConfig);
 			}
 		}
 	}

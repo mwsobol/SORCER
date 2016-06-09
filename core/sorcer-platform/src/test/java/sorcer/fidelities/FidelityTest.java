@@ -52,16 +52,6 @@ public class FidelityTest {
 	}
 
 	@Test
-	public void populateMap() {
-		FiMap fm = new FiMap();
-		fm.add(fiEnt(2, fis(fi("atX", "x1"))));
-		fm.add(fiEnt(5, fis(fi("atX", "x1"), fi("atY", "y2"))));
-		fm.populateFidelities(10);
-		assertEquals(fm.size(), 9);
-		assertEquals(fm.get(10), fis(fi("atX", "x1"), fi("atY", "y2")));
-	}
-
-	@Test
 	public void fidelityTable() {
 		Table dataTable = table(header("span"),
 				row(110.0),
@@ -132,7 +122,7 @@ public class FidelityTest {
 	}
 
 	@Test
-	public void getFpdis() throws EvaluationException {
+	public void getFis() throws EvaluationException {
 		String fis = "fis(fi('tip/displacement', 'astros'))";
 
 		FidelityList fl = (FidelityList) value(expr(fis));

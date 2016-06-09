@@ -33,6 +33,8 @@ import java.rmi.RemoteException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static sorcer.eo.operator.fi;
+
 /**
  * Created by Mike Sobolewski on 6/14/15.
  */
@@ -199,13 +201,42 @@ public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Ob
         }
     }
 
-
     @Override
     public void reconfigure(String... fiNames) throws RemoteException {
         if (metafidelities.size() == 1 && fiNames.length == 1) {
             ServiceFidelity<ServiceFidelity> metaFi = metafidelities.get(name);
             metaFi.setSelect(fiNames[0]);
         }
+    }
+
+    public FidelityList resetFidelities() throws ContextException, RemoteException {
+        FidelityList fl = new FidelityList();
+        Collection<ServiceFidelity<T>> fc = fidelities.values();
+        for (ServiceFidelity sf : fc) {
+            sf.setSelect(sf.get(0));
+            fl.add(fi(sf.getPath(), sf.getSelect().getName()));
+        }
+        return fl;
+    }
+
+    public FidelityList getCurrentFidelities() throws ContextException, RemoteException {
+        FidelityList fl = new FidelityList();
+		Iterator<Map.Entry<String, ServiceFidelity<T>>> it = fidelities.entrySet().iterator();
+		while (it.hasNext()) {
+			Map.Entry<String, ServiceFidelity<T>> me = it.next();
+			fl.add(fi(me.getKey(), me.getValue().getSelect().getName()));
+		}
+        return fl;
+    }
+
+    public FidelityList getDefaultFidelities() throws ContextException, RemoteException {
+        FidelityList fl = new FidelityList();
+		Iterator<Map.Entry<String, ServiceFidelity<T>>> it = fidelities.entrySet().iterator();
+		while (it.hasNext()) {
+			Map.Entry<String, ServiceFidelity<T>> me = it.next();
+			fl.add(fi(me.getKey(), me.getValue().get(0).getName()));
+		}
+        return fl;
     }
 
     @Override

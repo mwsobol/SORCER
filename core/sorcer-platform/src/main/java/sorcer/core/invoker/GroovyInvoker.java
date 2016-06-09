@@ -21,6 +21,8 @@ import groovy.lang.GroovyShell;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.par.Par;
 import sorcer.service.*;
+import sorcer.util.Sorcer;
+import sorcer.util.SorcerEnv;
 
 import java.io.*;
 import java.rmi.RemoteException;
@@ -98,7 +100,7 @@ public class GroovyInvoker<T> extends ServiceInvoker<T> {
 	public T getValue(Arg... entries) throws InvocationException,
 			RemoteException {
 		Object result = null;
-		shell = new GroovyShell();
+		shell = new GroovyShell(Thread.currentThread().getContextClassLoader());
 		if (entries != null) {
 			for (Arg a : entries)
 				try {
@@ -123,8 +125,12 @@ public class GroovyInvoker<T> extends ServiceInvoker<T> {
 						throw new InvocationException(e);
 					}
 				} else {
-					staticImports.append(expression);
-					result = shell.evaluate(staticImports.toString());
+					StringBuilder sb = new StringBuilder(staticImports.toString());
+					sb.append(expression);
+					logger.debug(sb.toString());
+					synchronized (shell) {
+						result = shell.evaluate(sb.toString());
+					}
 				}
 			}
 //			TODO testing
@@ -206,7 +212,8 @@ public class GroovyInvoker<T> extends ServiceInvoker<T> {
 				.append("import sorcer.core.context.model.*;\n")
 				.append("//import sorcer.vfe.util.*;\n")
 				.append("//import sorcer.vfe.*;\n")
-				.append("import java.io.*;");
+				.append("import java.io.*;")
+				.append("\n");
 
 		return sb;
 	}
