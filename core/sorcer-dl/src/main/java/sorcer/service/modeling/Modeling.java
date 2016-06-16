@@ -32,7 +32,7 @@ public interface Modeling {
 	
 //	public String getName() throws RemoteException;
 	
-	public EventRegistration register(long eventID, MarshalledObject<?> handback,
+	public EventRegistration register(long eventID, MarshalledObject handback,
 			RemoteEventListener toInform, long leaseLenght)
 			throws UnknownEventException, RemoteException;
 
@@ -51,6 +51,9 @@ public interface Modeling {
 	public void notifyUpdateEvaluation(Context modelContext)
 			throws EvaluationException, RemoteException;
 
+	public Context setInputs(Context entries) throws ContextException,
+			RemoteException;
+
 	public void evaluate(ServiceFidelity... fidelities) throws EvaluationException, RemoteException;
 
 	public Context evaluate(Context modelContext) throws EvaluationException,
@@ -67,11 +70,11 @@ public interface Modeling {
 
 	public boolean writeResult() throws EvaluationException, RemoteException;
 	
-	public void setContext(Context<?> context) throws ContextException;
+	public void setContext(Context context) throws ContextException;
 
 	public void reconfigure(ServiceFidelity... fidelities) throws ContextException, RemoteException;
 
-	public void isolateModel(Context<?> inContext) throws ContextException;
+	public void isolateModel(Context inContext) throws ContextException;
 	
 	public void initializeBuilder() throws ContextException;
 	

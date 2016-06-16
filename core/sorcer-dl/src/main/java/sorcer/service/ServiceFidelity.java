@@ -238,7 +238,8 @@ public class ServiceFidelity<T extends Arg> implements Multifidelity<T>, Arg {
 	
 	@Override
 	public String toString() {
-		return name + (path != null ? "@" + path + " " : " ") + selects;
+		return (path != null ? path + "@" + name : name )
+				+ (selects != null && selects.size() > 0 ? ":" + selects : "");
 	}
 
 	public int size() {
