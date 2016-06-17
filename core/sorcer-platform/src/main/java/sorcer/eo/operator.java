@@ -883,7 +883,7 @@ public class operator {
 		return sig(operation, serviceType, new Arg[]{});
 	}
 
-	public static Signature matchSigs(Signature signature, Class... matchTypes)
+	public static Signature matchTypes(Signature signature, Class... matchTypes)
 			throws SignatureException {
 		Class[] types = matchTypes;
 		if (signature.getServiceType() != null) {
