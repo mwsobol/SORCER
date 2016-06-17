@@ -49,7 +49,7 @@ public class ServiceFidelity<T extends Arg> implements Multifidelity<T>, Arg {
 	private static final long serialVersionUID = -875629011139790420L;
 
 	public enum Type implements Arg {
-		EMPTY, NAME, SYS, SIG, ENTRY, EXERT, CONTEXT, COMPONENT, COMPOSITE, MULTI, VAR, SERVICE;
+		EMPTY, NAME, SYS, SIG, ENTRY, EXERT, CONTEXT, COMPONENT, COMPOSITE, MORPH, MULTI, VAR, SERVICE;
 
 		public String getName() {
 			return toString();
@@ -190,6 +190,10 @@ public class ServiceFidelity<T extends Arg> implements Multifidelity<T>, Arg {
 		} else {
 			return false;
 		}
+	}
+
+	public Type getType() {
+		return type;
 	}
 
 	public void clear() {

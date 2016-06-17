@@ -53,6 +53,9 @@ public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Ob
     // fidelities for fidelites
     protected Map<String, ServiceFidelity<ServiceFidelity>> metafidelities = new ConcurrentHashMap<>();
 
+    // fidelities for signatures and other selection of T
+    protected Map<String, MorphedFidelity> morphedFidelities = new ConcurrentHashMap<>();
+
     // changed fidelities by morphers
     protected List<ServiceFidelity> fiTrace = new ArrayList();
 
@@ -86,6 +89,11 @@ public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Ob
         return fidelities;
     }
 
+
+    public Map<String, MorphedFidelity> getMorphedFidelities() {
+        return morphedFidelities;
+    }
+
     public void setFidelities(Map<String, ServiceFidelity<T>> fidelities) {
         this.fidelities = fidelities;
     }
@@ -93,6 +101,11 @@ public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Ob
     public void addFidelity(String path, ServiceFidelity<T> fi) {
         if (fi != null)
             this.fidelities.put(path, fi);
+    }
+
+    public void addMorphedFidelity(String path, MorphedFidelity mFi) {
+        if (mFi != null)
+            this.morphedFidelities.put(path, mFi);
     }
 
     public List<ServiceFidelity> getFiTrace() {
@@ -194,6 +207,9 @@ public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Ob
                 while (i.hasNext()) {
                     Map.Entry<String, ServiceFidelity<T>> fiEnt = i.next();
                     if (fiEnt.getKey().equals(path)) {
+                        if (morphedFidelities.get(path) != null) {
+                            morphedFidelities.get(path).setMorpherSelect(name);
+                        }
                         fiEnt.getValue().setSelect(name);
                     }
                 }

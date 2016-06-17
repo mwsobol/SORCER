@@ -19,6 +19,7 @@ package sorcer.core.plexus;
 import net.jini.core.transaction.TransactionException;
 import net.jini.id.Uuid;
 import net.jini.id.UuidFactory;
+import sorcer.core.context.model.ent.Entry;
 import sorcer.core.invoker.Observable;
 import sorcer.service.*;
 
@@ -35,6 +36,8 @@ public class MorphedFidelity<T extends Arg> extends Observable implements
     private ServiceFidelity<T> fidelity;
 
     private Morpher morpher;
+
+    private ServiceFidelity<Entry> morpherFidelity;
 
     private Uuid id = UuidFactory.generate();
 
@@ -63,6 +66,19 @@ public class MorphedFidelity<T extends Arg> extends Observable implements
         fidelity.setSelect(name);
     }
 
+    public void setMorpherSelect(String name) {
+        if (morpherFidelity != null) {
+            morpherFidelity.setSelect(name);
+            try {
+                morpher = (Morpher) morpherFidelity.getSelect().getValue();
+            } catch (EvaluationException e) {
+                e.printStackTrace();
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     @Override
     public void addSelect(T fidelity) {
         this.fidelity.addSelect(fidelity);
@@ -81,7 +97,15 @@ public class MorphedFidelity<T extends Arg> extends Observable implements
     }
 
     public void setSelects(List<T> selects) {
-        fidelity.setSelects(selects);;
+        fidelity.setSelects(selects);
+    }
+
+    public ServiceFidelity<Entry> getMorpherFidelity() {
+        return morpherFidelity;
+    }
+
+    public void setMorpherFidelity(ServiceFidelity<Entry> morpherFidelity) {
+        this.morpherFidelity = morpherFidelity;
     }
 
     public String getPath() {

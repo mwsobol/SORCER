@@ -30,6 +30,7 @@ import sorcer.core.context.model.srv.Srv;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.core.plexus.FiEntry;
 import sorcer.core.plexus.MorphedFidelity;
+import sorcer.core.plexus.MultiFiRequest;
 import sorcer.core.provider.DatabaseStorer;
 import sorcer.core.signature.NetletSignature;
 import sorcer.core.signature.ObjectSignature;
@@ -247,7 +248,7 @@ public class operator {
 	}
 
     public static Entry ent(Model model, String path) throws ContextException {
-        return new Entry(path, ((Context)model).asis(path));
+        return new Entry(path, model.asis(path));
     }
 
 	public static <T extends Arg> Srv ent(String name, MorphedFidelity<T> fidelity) {
@@ -328,13 +329,14 @@ public class operator {
 		return new Srv(path, null, name);
 	}
 
-
 	public static <T> Entry<T> ent(String path, T value) {
 		if (value instanceof Invocation) {
 			return new Par<T>(path, value);
 		} else if (value instanceof Evaluation) {
 			return new Entry<T>(path, value);
 		} else if (value instanceof ServiceFidelity) {
+			return (Entry<T>) new Srv(path, value);
+		} else if (value instanceof MultiFiRequest) {
 			return (Entry<T>) new Srv(path, value);
 		} else if (value instanceof List && ((List)value).get(0) instanceof Path) {
 			return (Entry<T>) new DependencyEntry(path, (List)value);

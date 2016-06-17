@@ -153,7 +153,7 @@ public class Observable implements EvaluationModel, Serializable {
 
 	public void deleteObserver(Observer observer) {
 		if (observerMap != null)
-			observerMap.remove((Uuid)((Identifiable)observer).getId());
+			observerMap.remove(((Identifiable)observer).getId());
 	}
 
 	/**

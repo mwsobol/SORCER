@@ -1286,13 +1286,19 @@ public class operator {
 		return multiFi;
 	}
 
+	public static MorphedFidelity<Request> mFi(ServiceFidelity<Entry> sFi, Request... services) {
+		MorphedFidelity<Request> multiFi = new MorphedFidelity(new ServiceFidelity(services));
+		multiFi.setMorpherFidelity(sFi);
+		return multiFi;
+	}
+
 	public static MorphedFidelity<Request> mFi(Request... services) {
 		MorphedFidelity<Request> multiFi = new MorphedFidelity(new ServiceFidelity(services));
 		return multiFi;
 	}
 
 	public static void reconfigure(Mogram mogram, ServiceFidelity... fidelities) throws RemoteException, ContextException {
-		((ServiceMogram)mogram).getFidelityManager().reconfigure(fidelities);
+		mogram.getFidelityManager().reconfigure(fidelities);
 	}
 
 	public static void selectFi(Mogram mogram, String selection) {
@@ -1367,6 +1373,13 @@ public class operator {
 		ServiceFidelity<?> fi = new ServiceFidelity(name);
 		fi.setPath(path);
 		fi.type = ServiceFidelity.Type.EMPTY;
+		return fi;
+	}
+
+	public static ServiceFidelity<?> mFi(String path, String name) {
+		ServiceFidelity<?> fi = new ServiceFidelity(name);
+		fi.setPath(path);
+		fi.type = ServiceFidelity.Type.MORPH;
 		return fi;
 	}
 

@@ -28,6 +28,7 @@ import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.par.ParModel;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.core.plexus.MorphedFidelity;
+import sorcer.core.plexus.MultiFiRequest;
 import sorcer.core.provider.rendezvous.ServiceModeler;
 import sorcer.core.signature.ServiceSignature;
 import sorcer.eo.operator;
@@ -251,7 +252,13 @@ public class SrvModel extends ParModel<Object> implements Model, Invocation<Obje
                     if (rp != null && rp.path != null)
                         putValue(((Srv) val).getReturnPath().path, obj);
                     return obj;
-                }  else if (val2 instanceof Requestor && ((Srv) val).getType() == Variability.Type.LAMBDA) {
+                }  else if (val2 instanceof MultiFiRequest) {
+                    Object out = ((MultiFiRequest)val2).exert(args);
+                    if (out instanceof Exertion)
+                        out = ((Exertion)out).getContext();
+                    ((Srv) get(path)).setSrvValue(out);
+                    return out;
+                } else if (val2 instanceof Requestor && ((Srv) val).getType() == Variability.Type.LAMBDA) {
                     String entryPath = ((Entry)val).getName();
                     Object out = ((Requestor)val2).exec((Service) this.asis(entryPath), this, args);
                     ((Srv) get(path)).setSrvValue(out);

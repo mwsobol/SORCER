@@ -530,4 +530,110 @@ public class MultiFidelities {
         assertTrue(value(context(mog), "result/y").equals(500.0));
     }
 
+    @Test
+    public void morpherFidelities() throws Exception {
+
+        Signature add = sig("add", AdderImpl.class,
+            result("result/y1", inPaths("arg/x1", "arg/x2")));
+        Signature subtract = sig("subtract", SubtractorImpl.class,
+            result("result/y2", inPaths("arg/x1", "arg/x2")));
+        Signature average = sig("average", AveragerImpl.class,
+            result("result/y2", inPaths("arg/x1", "arg/x2")));
+        Signature multiply = sig("multiply", MultiplierImpl.class,
+            result("result/y1", inPaths("arg/x1", "arg/x2")));
+        Signature divide = sig("divide", DividerImpl.class,
+            result("result/y2", inPaths("arg/x1", "arg/x2")));
+
+        Task t4 = task("t4",
+            sig("multiply", MultiplierImpl.class),
+            context("multiply", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
+                outEnt("result/y")));
+
+        Task t5 = task("t5",
+            sig("add", AdderImpl.class),
+            context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
+                outEnt("result/y")));
+
+        Morpher morpher1 = (mgr, mFi, value) -> {
+            ServiceFidelity<Signature> fi =  mFi.getFidelity();
+            if (fi.getSelectName().equals("add")) {
+                if (((Double) value) <= 200.0) {
+                    mgr.morph("sysFi2");
+                } else {
+                    mgr.morph("sysFi3");
+                }
+            } else if (fi.getPath().equals("mFi1") && fi.getSelectName().equals("multiply")) {
+                mgr.morph("sysFi3");
+            }
+        };
+
+        Morpher morpher2 = (mgr, mFi, value) -> {
+            ServiceFidelity<Signature> fi =  mFi.getFidelity();
+            if (fi.getSelectName().equals("divide")) {
+                if (((Double) value) <= 9.0) {
+                    mgr.morph("sysFi4");
+                } else {
+                    mgr.morph("sysFi3");
+                }
+            }
+        };
+
+        Morpher morpher3 = (mgr, mFi, value) -> {
+            ServiceFidelity<Signature> fi =  mFi.getFidelity();
+            if (fi.getSelectName().equals("t5")) {
+                try {
+                    if (((Double) value(context(value), "result/y")) <= 200.0) {
+                        mgr.reconfigure("t4");
+                    }
+                } catch (ContextException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        Morpher morpher4 = (mgr, mFi, value) -> {
+            ServiceFidelity<Signature> fi =  mFi.getFidelity();
+            if (fi.getSelectName().equals("divide")) {
+                if (((Double) value) <= 9.0) {
+                    mgr.morph("sysFi5");
+                } else {
+                    mgr.morph("sysFi3");
+                }
+            }
+        };
+
+        ServiceFidelity<ServiceFidelity> fi2 = fi("sysFi2", mFi("mFi2", "ph4"), fi("mFi2", "divide"), fi("mFi3", "multiply"));
+        ServiceFidelity<ServiceFidelity> fi3 = fi("sysFi3", fi("mFi2", "average"), fi("mFi3", "divide"));
+        ServiceFidelity<ServiceFidelity> fi4 = fi("sysFi4", fi("mFi3", "average"));
+        ServiceFidelity<ServiceFidelity> fi5 = fi("sysFi5", fi("mFi4", "t4"));
+
+        // four entry multifidelity model with morphers
+        Model mod = model(inEnt("arg/x1", 90.0), inEnt("arg/x2", 10.0),
+            ent("arg/y1", eFi(inEnt("arg/y1/fi1", 10.0), inEnt("arg/y1/fi2", 11.0))),
+            ent("arg/y2", eFi(inEnt("arg/y2/fi1", 90.0), inEnt("arg/y2/fi2", 91.0))),
+            ent("mFi1", mFi(morpher1, add, multiply)),
+            ent("mFi2", mFi(eFi(ent("ph2", morpher2), ent("ph4", morpher4)), average, divide, subtract)),
+            ent("mFi3", mFi(average, divide, multiply)),
+            ent("mFi4", multiFiReq(mFi(morpher3, t5, t4))),
+            fi2, fi3, fi4, fi5,
+            FidelityMangement.YES,
+            response("mFi1", "mFi2", "mFi3", "mFi4", "arg/x1", "arg/x2"));
+
+        // fidelities morphed by the model's fidelity manager
+        Context out = response(mod);
+        logger.info("out: " + out);
+        assertTrue(get(out, "mFi1").equals(100.0));
+        assertTrue(get(out, "mFi2").equals(9.0));
+        assertTrue(get(out, "mFi3").equals(900.0));
+        assertTrue(get(out, "result/y").equals(100.0));
+
+        // first closing the fidelity for mFi1
+        // then fidelities morphed by the model's fidelity manager accordingly
+        out = response(mod , fi("mFi1", "multiply"));
+        logger.info("out: " + out);
+        assertTrue(get(out, "mFi1").equals(900.0));
+        assertTrue(get(out, "mFi2").equals(50.0));
+        assertTrue(get(out, "mFi3").equals(9.0));
+        assertTrue(get(out, "result/y").equals(500.0));
+    }
 }

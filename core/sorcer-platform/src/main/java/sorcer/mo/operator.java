@@ -30,6 +30,7 @@ import sorcer.core.dispatch.SortingException;
 import sorcer.core.dispatch.SrvModelAutoDeps;
 import sorcer.core.plexus.FidelityManager;
 import sorcer.core.plexus.MorphedFidelity;
+import sorcer.core.plexus.Morpher;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
 import sorcer.service.Signature.ReturnPath;
@@ -273,10 +274,15 @@ public class operator {
             if ((morphedFiEnts.size() > 0)) {
                 for (Srv morphedFiEnt : morphedFiEnts) {
                     mFi = (MorphedFidelity) morphedFiEnt._2;
+                    fiManager.addMorphedFidelity(morphedFiEnt._1, mFi);
                     fiManager.addFidelity(morphedFiEnt._1, mFi.getFidelity());
                     mFi.setPath(morphedFiEnt._1);
                     mFi.setSelect((Arg) mFi.getSelects().get(0));
                     mFi.addObserver(fiManager);
+                    if (mFi.getMorpherFidelity() != null) {
+                        // set the default morpher
+                        mFi.setMorpher((Morpher) ((Entry)mFi.getMorpherFidelity().get(0))._2);
+                    }
                 }
             }
         }
