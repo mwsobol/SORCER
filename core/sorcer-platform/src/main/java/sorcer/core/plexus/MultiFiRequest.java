@@ -38,16 +38,16 @@ import java.util.List;
  *
  * Created by Mike Sobolewski
  */
-public class MultifidelityService extends ServiceMogram {
+public class MultiFiRequest extends ServiceMogram {
 
     protected ServiceFidelity<Request> serviceFidelity;
 
     protected MorphedFidelity<Request> morphedFidelity;
 
-    public MultifidelityService() {
+    public MultiFiRequest() {
     }
 
-    public MultifidelityService(String name) throws SignatureException {
+    public MultiFiRequest(String name) throws SignatureException {
         super(name);
     }
 
@@ -56,11 +56,11 @@ public class MultifidelityService extends ServiceMogram {
         return scope.clearScope();
     }
 
-    public MultifidelityService(MorphedFidelity<Request> fidelity) {
+    public MultiFiRequest(MorphedFidelity<Request> fidelity) {
         this(fidelity.getName(), fidelity);
     }
 
-    public MultifidelityService(String name, MorphedFidelity<Request> fidelity)  {
+    public MultiFiRequest(String name, MorphedFidelity<Request> fidelity)  {
         super(name);
         morphedFidelity = fidelity;
         if (fiManager == null)
@@ -72,17 +72,17 @@ public class MultifidelityService extends ServiceMogram {
         morphedFidelity.addObserver((FidelityManager)fiManager);
     }
 
-    public MultifidelityService(String name, ServiceFidelity<Request> fidelity) {
+    public MultiFiRequest(String name, ServiceFidelity<Request> fidelity) {
         super(name);
         serviceFidelity = fidelity;
     }
 
-    public MultifidelityService(Context context, MorphedFidelity<Request> fidelity)  {
+    public MultiFiRequest(Context context, MorphedFidelity<Request> fidelity)  {
         this(context.getName(), fidelity);
         scope = context;
     }
 
-    public MultifidelityService(Context context, ServiceFidelity<Request> fidelity) {
+    public MultiFiRequest(Context context, ServiceFidelity<Request> fidelity) {
         this(context.getName(), fidelity);
         scope = context;
     }

@@ -12,7 +12,7 @@ import sorcer.core.invoker.Observable;
 import sorcer.core.plexus.FidelityManager;
 import sorcer.core.plexus.Morpher;
 import sorcer.core.plexus.MorphedFidelity;
-import sorcer.core.plexus.MultifidelityService;
+import sorcer.core.plexus.MultiFiRequest;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
 import sorcer.service.Strategy.*;
@@ -371,7 +371,7 @@ public class MultiFidelities {
         Entry e2 = ent("x2", 6.0);
         Entry e3 = ent("x3", 7.0);
 
-        MultifidelityService mfs = multiFiService("entries", fi(e1, e2, e3));
+        MultiFiRequest mfs = multiFiReq("entries", fi(e1, e2, e3));
 
         Object out = exec(mfs);
         logger.info("out: " + out);
@@ -403,7 +403,7 @@ public class MultiFidelities {
             }
         };
 
-        MultifidelityService mfs = multiFiService("entries", mFi(morpher, e1, e2, e3));
+        MultiFiRequest mfs = multiFiReq("entries", mFi(morpher, e1, e2, e3));
 
         Object out = exec(mfs);
         logger.info("out: " + out);
@@ -422,7 +422,7 @@ public class MultiFidelities {
         Signature ms = sig("multiply", MultiplierImpl.class);
         Signature as = sig("add", AdderImpl.class);
 
-        MultifidelityService mfs = multiFiService(fi(ms, as), cxt);
+        MultiFiRequest mfs = multiFiReq(fi(ms, as), cxt);
 
         Context out = (Context) exec(mfs);
         logger.info("out: " + out);
@@ -454,7 +454,7 @@ public class MultiFidelities {
             }
         };
 
-        MultifidelityService mfs = multiFiService(mFi(morpher, ms, as), cxt);
+        MultiFiRequest mfs = multiFiReq(mFi(morpher, ms, as), cxt);
 
         Context out = (Context) exec(mfs);
         logger.info("out: " + out);
@@ -465,7 +465,7 @@ public class MultiFidelities {
     }
 
     @Test
-    public void selectMultifidelityService() throws Exception {
+    public void selectMultiFiRequest() throws Exception {
 
         Task t4 = task(
                 "t4",
@@ -480,7 +480,7 @@ public class MultiFidelities {
                         outEnt("result/y")));
 
 
-        MultifidelityService mfs = multiFiService(mFi(t5, t4));
+        MultiFiRequest mfs = multiFiReq(mFi(t5, t4));
         Mogram mog = exert(mfs);
         logger.info("out: " + mog.getContext());
         assertTrue(value(context(mog), "result/y").equals(100.0));
@@ -492,7 +492,7 @@ public class MultiFidelities {
     }
 
     @Test
-    public void morphMultifidelityService() throws Exception {
+    public void morphMultiFiRequest() throws Exception {
 
         Task t4 = task(
                 "t4",
@@ -520,7 +520,7 @@ public class MultiFidelities {
             }
         };
 
-        MultifidelityService mfs = multiFiService(mFi(morpher, t5, t4));
+        MultiFiRequest mfs = multiFiReq(mFi(morpher, t5, t4));
         Mogram mog = exert(mfs);
         logger.info("out: " + mog.getContext());
         assertTrue(value(context(mog), "result/y").equals(100.0));

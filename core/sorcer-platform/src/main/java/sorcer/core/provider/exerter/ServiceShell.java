@@ -42,7 +42,7 @@ import sorcer.core.dispatch.ExertionSorter;
 import sorcer.core.dispatch.ProvisionManager;
 import sorcer.core.exertion.ObjectTask;
 import sorcer.core.plexus.MorphedFidelity;
-import sorcer.core.plexus.MultifidelityService;
+import sorcer.core.plexus.MultiFiRequest;
 import sorcer.core.provider.*;
 import sorcer.core.signature.NetSignature;
 import sorcer.core.signature.NetletSignature;
@@ -906,18 +906,18 @@ public class ServiceShell implements RemoteServiceShell, Requestor, Callable {
 					throw new ExertionException("No return path in the context: "
 							+ cxt.getName());
 				}
-			} else if (service instanceof MultifidelityService) {
-				ServiceFidelity<Request> sfi = ((MultifidelityService)service).getServiceFidelity();
+			} else if (service instanceof MultiFiRequest) {
+				ServiceFidelity<Request> sfi = ((MultiFiRequest)service).getServiceFidelity();
 				if (sfi == null) {
-					ServiceFidelity fi = ((MultifidelityService)service).getMorphedFidelity().getFidelity();
+					ServiceFidelity fi = ((MultiFiRequest)service).getMorphedFidelity().getFidelity();
 					Object select = fi.getSelect();
 					if (select != null) {
-						MorphedFidelity morphedFidelity = ((MultifidelityService)service).getMorphedFidelity();
+						MorphedFidelity morphedFidelity = ((MultiFiRequest)service).getMorphedFidelity();
 						Object out = null;
 						if (select instanceof Mogram)
 							out = ((Mogram) select).exert(args);
 						else {
-							Context cxt = ((MultifidelityService)service).getScope();
+							Context cxt = ((MultiFiRequest)service).getScope();
 							if (select instanceof Signature && cxt != null)
 								out = ((Service) select).exec(cxt);
 							else
@@ -929,7 +929,7 @@ public class ServiceShell implements RemoteServiceShell, Requestor, Callable {
 						return out;
 					}
 				}
-				Context cxt = ((MultifidelityService)service).getScope();
+				Context cxt = ((MultiFiRequest)service).getScope();
 				if (sfi.getSelect() instanceof Signature && cxt != null)
 					return sfi.getSelect().exec(cxt);
 				else

@@ -1296,28 +1296,28 @@ public class operator {
 	}
 
 	public static void selectFi(Mogram mogram, String selection) {
-		((MultifidelityService)mogram).selectFidelity(selection);
+		((MultiFiRequest)mogram).selectFidelity(selection);
 	}
 
-	public static MultifidelityService multiFiService(ServiceFidelity<Request> fidelity) {
-		return new MultifidelityService(fidelity.getName(), fidelity);
+	public static MultiFiRequest multiFiReq(ServiceFidelity<Request> fidelity) {
+		return new MultiFiRequest(fidelity.getName(), fidelity);
 	}
-	public static MultifidelityService multiFiService(MorphedFidelity<Request> fidelity) {
-		return new MultifidelityService(fidelity.getName(), fidelity);
-	}
-
-	public static MultifidelityService multiFiService(String name, ServiceFidelity<Request> fidelity) {
-		return new MultifidelityService(name, fidelity);
-	}
-	public static MultifidelityService multiFiService(String name, MorphedFidelity<Request> fidelity) {
-		return new MultifidelityService(name, fidelity);
+	public static MultiFiRequest multiFiReq(MorphedFidelity<Request> fidelity) {
+		return new MultiFiRequest(fidelity.getName(), fidelity);
 	}
 
-	public static MultifidelityService multiFiService(ServiceFidelity<Request> fidelity, Context context) {
-		return new MultifidelityService(context, fidelity);
+	public static MultiFiRequest multiFiReq(String name, ServiceFidelity<Request> fidelity) {
+		return new MultiFiRequest(name, fidelity);
 	}
-	public static MultifidelityService multiFiService(MorphedFidelity<Request> fidelity, Context context) {
-		return new MultifidelityService(context, fidelity);
+	public static MultiFiRequest multiFiReq(String name, MorphedFidelity<Request> fidelity) {
+		return new MultiFiRequest(name, fidelity);
+	}
+
+	public static MultiFiRequest multiFiReq(ServiceFidelity<Request> fidelity, Context context) {
+		return new MultiFiRequest(context, fidelity);
+	}
+	public static MultiFiRequest multiFiReq(MorphedFidelity<Request> fidelity, Context context) {
+		return new MultiFiRequest(context, fidelity);
 	}
 
 	public static MorphedFidelity<Signature> multiFi(Signature... signatures) {
