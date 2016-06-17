@@ -907,7 +907,7 @@ public class ServiceShell implements RemoteServiceShell, Requestor, Callable {
 							+ cxt.getName());
 				}
 			} else if (service instanceof MultifidelityService) {
-				ServiceFidelity<FrontService> sfi = ((MultifidelityService)service).getServiceFidelity();
+				ServiceFidelity<Request> sfi = ((MultifidelityService)service).getServiceFidelity();
 				if (sfi == null) {
 					ServiceFidelity fi = ((MultifidelityService)service).getMorphedFidelity().getFidelity();
 					Object select = fi.getSelect();

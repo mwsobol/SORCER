@@ -34,7 +34,7 @@ import java.util.Map;
  *
  * @author Mike Sobolewski
  */
-public interface Mogram extends Identifiable, Service, Exerter, Projection, Scopable, Substitutable, FrontService {
+public interface Mogram extends Identifiable, Service, Exerter, Projection, Scopable, Substitutable, Request {
 
     /**
      * Exerts this mogram by the assigned service provider if it is set. If a service

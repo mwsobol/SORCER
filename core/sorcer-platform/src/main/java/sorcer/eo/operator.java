@@ -1235,13 +1235,13 @@ public class operator {
 		return fi;
 	}
 
-	public static ServiceFidelity<FrontService> fi(String name, FrontService... selectors) {
+	public static ServiceFidelity<Request> fi(String name, Request... selectors) {
 		ServiceFidelity fi = new ServiceFidelity(name, selectors);
 		fi.type = ServiceFidelity.Type.SERVICE;
 		return fi;
 	}
 
-	public static ServiceFidelity<FrontService> fi(FrontService... selectors) {
+	public static ServiceFidelity<Request> fi(Request... selectors) {
 		ServiceFidelity fi = new ServiceFidelity(selectors);
 		fi.type = ServiceFidelity.Type.SERVICE;
 		return fi;
@@ -1280,14 +1280,14 @@ public class operator {
 		return fi;
 	}
 
-	public static MorphedFidelity<FrontService> mFi(Morpher morpher, FrontService... services) {
-		MorphedFidelity<FrontService> multiFi = new MorphedFidelity(new ServiceFidelity(services));
+	public static MorphedFidelity<Request> mFi(Morpher morpher, Request... services) {
+		MorphedFidelity<Request> multiFi = new MorphedFidelity(new ServiceFidelity(services));
 		multiFi.setMorpher(morpher);
 		return multiFi;
 	}
 
-	public static MorphedFidelity<FrontService> mFi(FrontService... services) {
-		MorphedFidelity<FrontService> multiFi = new MorphedFidelity(new ServiceFidelity(services));
+	public static MorphedFidelity<Request> mFi(Request... services) {
+		MorphedFidelity<Request> multiFi = new MorphedFidelity(new ServiceFidelity(services));
 		return multiFi;
 	}
 
@@ -1299,24 +1299,24 @@ public class operator {
 		((MultifidelityService)mogram).selectFidelity(selection);
 	}
 
-	public static MultifidelityService multiFiService(ServiceFidelity<FrontService> fidelity) {
+	public static MultifidelityService multiFiService(ServiceFidelity<Request> fidelity) {
 		return new MultifidelityService(fidelity.getName(), fidelity);
 	}
-	public static MultifidelityService multiFiService(MorphedFidelity<FrontService> fidelity) {
+	public static MultifidelityService multiFiService(MorphedFidelity<Request> fidelity) {
 		return new MultifidelityService(fidelity.getName(), fidelity);
 	}
 
-	public static MultifidelityService multiFiService(String name, ServiceFidelity<FrontService> fidelity) {
+	public static MultifidelityService multiFiService(String name, ServiceFidelity<Request> fidelity) {
 		return new MultifidelityService(name, fidelity);
 	}
-	public static MultifidelityService multiFiService(String name, MorphedFidelity<FrontService> fidelity) {
+	public static MultifidelityService multiFiService(String name, MorphedFidelity<Request> fidelity) {
 		return new MultifidelityService(name, fidelity);
 	}
 
-	public static MultifidelityService multiFiService(ServiceFidelity<FrontService> fidelity, Context context) {
+	public static MultifidelityService multiFiService(ServiceFidelity<Request> fidelity, Context context) {
 		return new MultifidelityService(context, fidelity);
 	}
-	public static MultifidelityService multiFiService(MorphedFidelity<FrontService> fidelity, Context context) {
+	public static MultifidelityService multiFiService(MorphedFidelity<Request> fidelity, Context context) {
 		return new MultifidelityService(context, fidelity);
 	}
 

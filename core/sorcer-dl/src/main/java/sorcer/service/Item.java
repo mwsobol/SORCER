@@ -17,15 +17,11 @@
 
 package sorcer.service;
 
-import net.jini.core.transaction.TransactionException;
-
-import java.rmi.RemoteException;
-
 /**
  * An top-level common interface for all primitive service in SORCER.
  * Items are copmponent services of compound services called mograms.
  *
  * @author Mike Sobolewski
  */
-public interface Item extends FrontService {
+public interface Item extends Request {
 }
