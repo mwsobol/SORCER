@@ -930,6 +930,12 @@ public class operator {
 			return sig("?", serviceType, args);
 	}
 
+	public static Signature sig(String operation, Signature signature) throws SignatureException {
+		((ServiceSignature)signature).setSelector(operation);
+		((ServiceSignature)signature).setName(operation);
+		return signature;
+	}
+
 	public static Signature sig(String operation, Object provider, Arg... args) throws SignatureException {
 		ObjectSignature sig = new ObjectSignature();
 		sig.setName(operation);
