@@ -534,7 +534,7 @@ public class operator {
 				try {
 					if (t.asis() instanceof Scopable) {
 						if (((Scopable) t.value()).getScope() != null)
-							((Scopable)((Scopable) t.value()).getScope()).setScope(pcxt);
+							((Scopable) t.value()).getScope().setScope(pcxt);
 						else
 							((Scopable) t.value()).setScope(pcxt);
 					}

@@ -23,6 +23,7 @@ import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.get;
+import static sorcer.eo.operator.loop;
 import static sorcer.mo.operator.printDeps;
 import static sorcer.mo.operator.response;
 
@@ -444,12 +445,8 @@ public class MultiFidelities {
         Morpher morpher = (mgr, mFi, value) -> {
             ServiceFidelity<Signature> fi =  mFi.getFidelity();
             if (fi.getSelectName().equals("multiply")) {
-                try {
-                    if (((Double) value(context(value), "result/y")) >= 500.0) {
-                        mgr.reconfigure("add");
-                    }
-                } catch (ContextException e) {
-                    e.printStackTrace();
+                if (((Double) value(context(value), "result/y")) >= 500.0) {
+                    mgr.reconfigure("add");
                 }
             }
         };
@@ -510,12 +507,8 @@ public class MultiFidelities {
         Morpher morpher = (mgr, mFi, value) -> {
             ServiceFidelity<Signature> fi =  mFi.getFidelity();
             if (fi.getSelectName().equals("t5")) {
-                try {
-                    if (((Double) value(context(value), "result/y")) <= 200.0) {
-                        mgr.reconfigure("t4");
-                    }
-                } catch (ContextException e) {
-                    e.printStackTrace();
+                if (((Double) value(context(value), "result/y")) <= 200.0) {
+                    mgr.reconfigure("t4");
                 }
             }
         };
@@ -530,32 +523,29 @@ public class MultiFidelities {
         assertTrue(value(context(mog), "result/y").equals(500.0));
     }
 
-    @Test
-    public void morpherFidelities() throws Exception {
+    public Model getMorphingModel() throws Exception {
 
         Signature add = sig("add", AdderImpl.class,
-            result("result/y1", inPaths("arg/x1", "arg/x2")));
+                result("y1", inPaths("arg/x1", "arg/x2")));
         Signature subtract = sig("subtract", SubtractorImpl.class,
-            result("result/y2", inPaths("arg/x1", "arg/x2")));
+                result("y2", inPaths("arg/x1", "arg/x2")));
         Signature average = sig("average", AveragerImpl.class,
-            result("result/y2", inPaths("arg/x1", "arg/x2")));
+                result("y3", inPaths("arg/x1", "arg/x2")));
         Signature multiply = sig("multiply", MultiplierImpl.class,
-            result("result/y1", inPaths("arg/x1", "arg/x2")));
+                result("y4", inPaths("arg/x1", "arg/x2")));
         Signature divide = sig("divide", DividerImpl.class,
-            result("result/y2", inPaths("arg/x1", "arg/x2")));
+                result("y5", inPaths("arg/x1", "arg/x2")));
 
         Task t4 = task("t4",
-            sig("multiply", MultiplierImpl.class),
-            context("multiply", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
-                outEnt("result/y")));
+                sig("multiply", MultiplierImpl.class,
+                        result("result/y", inPaths("arg/x1", "arg/x2"))));
 
         Task t5 = task("t5",
-            sig("add", AdderImpl.class),
-            context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
-                outEnt("result/y")));
+                sig("add", AdderImpl.class,
+                        result("result/y", inPaths("arg/x1", "arg/x2"))));
 
         Morpher morpher1 = (mgr, mFi, value) -> {
-            ServiceFidelity<Signature> fi =  mFi.getFidelity();
+            ServiceFidelity<Signature> fi = mFi.getFidelity();
             if (fi.getSelectName().equals("add")) {
                 if (((Double) value) <= 200.0) {
                     mgr.morph("sysFi2");
@@ -568,7 +558,7 @@ public class MultiFidelities {
         };
 
         Morpher morpher2 = (mgr, mFi, value) -> {
-            ServiceFidelity<Signature> fi =  mFi.getFidelity();
+            ServiceFidelity<Signature> fi = mFi.getFidelity();
             if (fi.getSelectName().equals("divide")) {
                 if (((Double) value) <= 9.0) {
                     mgr.morph("sysFi4");
@@ -579,20 +569,21 @@ public class MultiFidelities {
         };
 
         Morpher morpher3 = (mgr, mFi, value) -> {
-            ServiceFidelity<Signature> fi =  mFi.getFidelity();
+            ServiceFidelity<Signature> fi = mFi.getFidelity();
             if (fi.getSelectName().equals("t5")) {
-                try {
-                    if (((Double) value(context(value), "result/y")) <= 200.0) {
-                        mgr.reconfigure("t4");
-                    }
-                } catch (ContextException e) {
-                    e.printStackTrace();
+                Double val = ((Double) value(context(value), "result/y"));
+                if (val <= 200.0) {
+                    set(context(value), "result/y", val + 10.0);
+                    mgr.reconfigure("t4");
                 }
+            } else if (fi.getSelectName().equals("t4")) {
+                Double val = ((Double) value(context(value), "result/y"));
+                set(context(value), "result/y", val + 20.0);
             }
         };
 
         Morpher morpher4 = (mgr, mFi, value) -> {
-            ServiceFidelity<Signature> fi =  mFi.getFidelity();
+            ServiceFidelity<Signature> fi = mFi.getFidelity();
             if (fi.getSelectName().equals("divide")) {
                 if (((Double) value) <= 9.0) {
                     mgr.morph("sysFi5");
@@ -608,32 +599,60 @@ public class MultiFidelities {
         ServiceFidelity<ServiceFidelity> fi5 = fi("sysFi5", fi("mFi4", "t4"));
 
         // four entry multifidelity model with morphers
-        Model mod = model(inEnt("arg/x1", 90.0), inEnt("arg/x2", 10.0),
-            ent("arg/y1", eFi(inEnt("arg/y1/fi1", 10.0), inEnt("arg/y1/fi2", 11.0))),
-            ent("arg/y2", eFi(inEnt("arg/y2/fi1", 90.0), inEnt("arg/y2/fi2", 91.0))),
-            ent("mFi1", mFi(morpher1, add, multiply)),
-            ent("mFi2", mFi(eFi(ent("ph2", morpher2), ent("ph4", morpher4)), average, divide, subtract)),
-            ent("mFi3", mFi(average, divide, multiply)),
-            ent("mFi4", multiFiReq(mFi(morpher3, t5, t4))),
-            fi2, fi3, fi4, fi5,
-            FidelityMangement.YES,
-            response("mFi1", "mFi2", "mFi3", "mFi4", "arg/x1", "arg/x2"));
+        Model mdl = model(inEnt("arg/x1", 90.0), inEnt("arg/x2", 10.0),
+                ent("mFi1", mFi(morpher1, add, multiply)),
+                ent("mFi2", mFi(eFi(ent("ph2", morpher2), ent("ph4", morpher4)), average, divide, subtract)),
+                ent("mFi3", mFi(average, divide, multiply)),
+                ent("mFi4", multiFiReq(mFi(morpher3, t5, t4))),
+                fi2, fi3, fi4, fi5,
+                FidelityMangement.YES,
+                response("mFi1", "mFi2", "mFi3", "mFi4", "arg/x1", "arg/x2"));
 
+        return mdl;
+    }
+
+    @Test
+    public void morphingFidelities() throws Exception {
         // fidelities morphed by the model's fidelity manager
-        Context out = response(mod);
+        Model mdl = getMorphingModel();
+        Context out = response(mdl);
+
         logger.info("out: " + out);
         assertTrue(get(out, "mFi1").equals(100.0));
         assertTrue(get(out, "mFi2").equals(9.0));
         assertTrue(get(out, "mFi3").equals(900.0));
-        assertTrue(get(out, "result/y").equals(100.0));
+        assertTrue(get(out, "result/y").equals(110.0));
 
         // first closing the fidelity for mFi1
         // then fidelities morphed by the model's fidelity manager accordingly
-        out = response(mod , fi("mFi1", "multiply"));
+        out = response(mdl , fi("mFi1", "multiply"));
         logger.info("out: " + out);
         assertTrue(get(out, "mFi1").equals(900.0));
         assertTrue(get(out, "mFi2").equals(50.0));
         assertTrue(get(out, "mFi3").equals(9.0));
-        assertTrue(get(out, "result/y").equals(500.0));
+        assertTrue(get(out, "result/y").equals(920.0));
+
+        out = response(mdl);
+        logger.info("out: " + out);
+        assertTrue(get(out, "mFi1").equals(900.0));
+        assertTrue(get(out, "mFi2").equals(50.0));
+        assertTrue(get(out, "mFi3").equals(9.0));
+        assertTrue(get(out, "result/y").equals(940.0));
+    }
+
+    @Test
+    public void morphingFidelitiesLoop() throws Exception {
+        Model mdl = getMorphingModel();
+
+        Block mdlBlock = block(
+                context(ent("result/y", 0.0)),
+                loop(condition(cxt -> (double) value(cxt, "result/y") < 950.0), mdl));
+
+//        logger.info("DEPS: " + printDeps(mdl));
+        mdlBlock = exert(mdlBlock, fi("mFi1", "multiply"));
+        logger.info("block context: " + context(mdlBlock));
+        logger.info("result: " + value(context(mdlBlock), "result/y"));
+
+        assertTrue(value(context(mdlBlock), "result/y").equals(960.0));
     }
 }

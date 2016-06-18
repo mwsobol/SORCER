@@ -89,7 +89,9 @@ public class MultiFiRequest extends ServiceMogram {
 
     @Override
     public <T extends Mogram> T exert(Transaction txn, Arg... entries) throws TransactionException, MogramException, RemoteException {
-        T out = ((Mogram)morphedFidelity.getSelect()).exert(txn, entries);
+        Mogram mogram = (Mogram)morphedFidelity.getSelect();
+        mogram.getContext().setScope(scope);
+        T out = mogram.exert(txn, entries);
         morphedFidelity.setChanged();
         morphedFidelity.notifyObservers(out);
         return out;
@@ -97,15 +99,13 @@ public class MultiFiRequest extends ServiceMogram {
 
     @Override
     public <T extends Mogram> T exert(Arg... entries) throws TransactionException, MogramException, RemoteException {
-        T out = ((Mogram)morphedFidelity.getSelect()).exert(entries);
-        morphedFidelity.setChanged();
-        morphedFidelity.notifyObservers(out);
-        return out;
+        return exert(null, entries);
     }
 
     @Override
     public Context getContext() throws ContextException {
-        return ((Mogram)morphedFidelity.getSelect()).getContext();
+//        return ((Mogram)morphedFidelity.getSelect()).getContext();
+        return scope;
     }
 
     public void setDataContext(ServiceContext dataContext) {
