@@ -37,12 +37,12 @@ import sorcer.core.signature.ObjectSignature;
 import sorcer.core.signature.ServiceSignature;
 import sorcer.netlet.ScriptExerter;
 import sorcer.service.*;
+import sorcer.service.Signature.ReturnPath;
 import sorcer.service.modeling.Model;
 import sorcer.service.modeling.Variability.Type;
 import sorcer.util.*;
 import sorcer.util.bdb.objects.UuidObject;
 import sorcer.util.url.sos.SdbUtil;
-import sorcer.service.Signature.ReturnPath;
 
 import java.io.File;
 import java.io.IOException;
@@ -337,6 +337,11 @@ public class operator {
 		} else if (value instanceof ServiceFidelity) {
 			return (Entry<T>) new Srv(path, value);
 		} else if (value instanceof MultiFiRequest) {
+			try {
+				((MultiFiRequest)value).setUnifiedName(path);
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			}
 			return (Entry<T>) new Srv(path, value);
 		} else if (value instanceof List && ((List)value).get(0) instanceof Path) {
 			return (Entry<T>) new DependencyEntry(path, (List)value);

@@ -180,6 +180,10 @@ public class operator {
         }
     }
 
+    public static void traced(Model model, boolean isTraced) throws ContextException {
+        ((FidelityManager)model.getFidelityManager()).setTraced(isTraced);
+    }
+
     public static Entry entry(Model model, String path) throws ContextException {
         return new Entry(path, ((Context)model).asis(path));
     }

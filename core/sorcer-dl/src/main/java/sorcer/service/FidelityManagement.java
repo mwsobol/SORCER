@@ -24,6 +24,7 @@ import net.jini.core.event.UnknownEventException;
 import java.io.Serializable;
 import java.rmi.MarshalledObject;
 import java.rmi.RemoteException;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -42,6 +43,8 @@ public interface FidelityManagement<T extends Arg> extends Service, Serializable
     public void reconfigure(ServiceFidelity... fidelities) throws RemoteException, ContextException;
 
     public Mogram getMogram() throws RemoteException;
+
+    public List<ServiceFidelity> getFiTrace() throws RemoteException;
 
     public EventRegistration register(long eventID, MarshalledObject<?> handback,
                                       RemoteEventListener toInform, long leaseLenght)

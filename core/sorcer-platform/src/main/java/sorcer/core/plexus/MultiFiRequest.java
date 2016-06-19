@@ -24,7 +24,10 @@ import sorcer.core.context.ThrowableTrace;
 import sorcer.service.*;
 
 import java.rmi.RemoteException;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * A metasystem is represented by a mogram with multiple projections of its
@@ -64,7 +67,7 @@ public class MultiFiRequest extends ServiceMogram {
         super(name);
         morphedFidelity = fidelity;
         if (fiManager == null)
-            fiManager = new FidelityManager(morphedFidelity.getName());
+            fiManager = new FidelityManager(name);
 
         ((FidelityManager)fiManager).init(morphedFidelity.getFidelity());
         ((FidelityManager)fiManager).setMogram(this);
@@ -185,6 +188,22 @@ public class MultiFiRequest extends ServiceMogram {
 
     public <T extends Mogram> T exert(T mogram) throws TransactionException, MogramException, RemoteException {
         return null;
+    }
+
+    public void setUnifiedName(String name) throws RemoteException {
+        this.name = name;
+        ((FidelityManager)fiManager).setName(name);
+        Map<String, ServiceFidelity> fiMap = fiManager.getFidelities();
+        Set<String> fiSet = fiMap.keySet();
+        if (fiSet.size() == 1) {
+            Iterator<String> i = fiSet.iterator();
+            String sFiName = i.next();
+            fiManager.getFidelities();
+            ServiceFidelity sf = fiMap.get(sFiName);
+            sf.setName(name);
+            fiMap.put(name, sf);
+            fiMap.remove(sFiName);
+        }
     }
 
     @Override

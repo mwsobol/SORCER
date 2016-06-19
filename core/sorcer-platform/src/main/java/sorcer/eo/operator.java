@@ -2227,21 +2227,30 @@ public class operator {
 		return xrt.getComponentMogram(componentExertionName);
 	}
 
-	public static Mogram tracable(Mogram xrt) {
-		List<Mogram> mograms = ((ServiceMogram) xrt).getAllMograms();
+	public static Mogram tracable(Mogram mogram) {
+		List<Mogram> mograms = ((ServiceMogram) mogram).getAllMograms();
 		for (Mogram m : mograms) {
 			((Exertion) m).getControlContext().setTracable(true);
 		}
-		return xrt;
+		return mogram;
 	}
 
-	public static List<String> trace(Mogram xrt) {
-		List<Mogram> mograms = ((ServiceMogram)xrt).getAllMograms();
+	public static List<String> trace(Mogram mogram) {
+		List<Mogram> mograms = ((ServiceMogram)mogram).getAllMograms();
 		List<String> trace = new ArrayList<String>();
 		for (Mogram m : mograms) {
 			trace.addAll(((Exertion) m).getControlContext().getTrace());
 		}
 		return trace;
+	}
+
+	public static List<ServiceFidelity>  fiTrace(Mogram mogram) {
+		try {
+			return mogram.getFidelityManager().getFiTrace();
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		 return null;
 	}
 
 	public static void print(Object obj) {

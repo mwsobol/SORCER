@@ -10,12 +10,12 @@ import sorcer.arithmetic.provider.impl.*;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.invoker.Observable;
 import sorcer.core.plexus.FidelityManager;
-import sorcer.core.plexus.Morpher;
 import sorcer.core.plexus.MorphedFidelity;
+import sorcer.core.plexus.Morpher;
 import sorcer.core.plexus.MultiFiRequest;
 import sorcer.service.*;
+import sorcer.service.Strategy.FidelityMangement;
 import sorcer.service.modeling.Model;
-import sorcer.service.Strategy.*;
 
 import java.rmi.RemoteException;
 
@@ -24,8 +24,10 @@ import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.get;
 import static sorcer.eo.operator.loop;
+import static sorcer.eo.operator.value;
 import static sorcer.mo.operator.printDeps;
 import static sorcer.mo.operator.response;
+import static sorcer.mo.operator.traced;
 
 /**
  * Created by Mike Sobolewski on 10/26/15.
@@ -88,6 +90,7 @@ public class MultiFidelities {
         logger.info("DEPS: " + printDeps(mdl));
 
         reconfigure(mdl, fi("arg/x1", "arg/x1/fi2"), fi("arg/x2", "arg/x2/fi2"), fi("sFi", "multiply"));
+        logger.info("trace: " + fiTrace(mdl));
         Context out = response(mdl);
         logger.info("out: " + out);
         assertTrue(get(out, "arg/x1").equals(11.0));
@@ -615,9 +618,12 @@ public class MultiFidelities {
     public void morphingFidelities() throws Exception {
         // fidelities morphed by the model's fidelity manager
         Model mdl = getMorphingModel();
+        traced(mdl, true);
         Context out = response(mdl);
 
         logger.info("out: " + out);
+        logger.info("trace: " + fiTrace(mdl));
+        logger.info("trace: " + fiTrace((Mogram) get(mdl, "mFi4")));
         assertTrue(get(out, "mFi1").equals(100.0));
         assertTrue(get(out, "mFi2").equals(9.0));
         assertTrue(get(out, "mFi3").equals(900.0));
@@ -627,6 +633,8 @@ public class MultiFidelities {
         // then fidelities morphed by the model's fidelity manager accordingly
         out = response(mdl , fi("mFi1", "multiply"));
         logger.info("out: " + out);
+        logger.info("trace: " + fiTrace(mdl));
+        logger.info("trace: " + fiTrace((Mogram) get(mdl, "mFi4")));
         assertTrue(get(out, "mFi1").equals(900.0));
         assertTrue(get(out, "mFi2").equals(50.0));
         assertTrue(get(out, "mFi3").equals(9.0));
@@ -634,6 +642,8 @@ public class MultiFidelities {
 
         out = response(mdl);
         logger.info("out: " + out);
+        logger.info("trace: " + fiTrace(mdl));
+        logger.info("trace: " + fiTrace((Mogram) get(mdl, "mFi4")));
         assertTrue(get(out, "mFi1").equals(900.0));
         assertTrue(get(out, "mFi2").equals(50.0));
         assertTrue(get(out, "mFi3").equals(9.0));

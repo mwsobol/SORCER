@@ -61,7 +61,10 @@ public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Ob
 
     protected Mogram mogram;
 
+    protected boolean isTraced = false;
+
     protected Map<Long, Session> sessions;
+
 
     public FidelityManager() {
         name = "fiManager" +  count++;
@@ -72,7 +75,7 @@ public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Ob
     }
 
     public FidelityManager(Mogram mogram) {
-        this("fiManager" +  count++);
+        this(mogram.getName());
         this.mogram = mogram;
     }
 
@@ -200,6 +203,9 @@ public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Ob
             List<ServiceFidelity> fis = mFi.getSelects();
             String name = null;
             String path = null;
+            if (isTraced) {
+                fiTrace.add(new ServiceFidelity(fiName, fis));
+            }
             for (ServiceFidelity fi : fis) {
                 name = fi.getName();
                 path = fi.getPath();
@@ -214,14 +220,6 @@ public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Ob
                     }
                 }
             }
-        }
-    }
-
-    @Override
-    public void reconfigure(String... fiNames) throws RemoteException {
-        if (metafidelities.size() == 1 && fiNames.length == 1) {
-            ServiceFidelity<ServiceFidelity> metaFi = metafidelities.get(name);
-            metaFi.setSelect(fiNames[0]);
         }
     }
 
@@ -256,17 +254,32 @@ public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Ob
     }
 
     @Override
+    public void reconfigure(String... fiNames) throws RemoteException {
+        // applies to MultiFiRequests
+        if (fidelities.size() == 1 && fiNames.length == 1) {
+            ServiceFidelity fi = fidelities.get(name);
+            fi.setSelect(fiNames[0]);
+            if (isTraced) {
+                ServiceFidelity nsf = new ServiceFidelity(fiNames[0]);
+                nsf.setPath(name);
+                fiTrace.add(nsf);
+            }
+        }
+    }
+
+    @Override
     public void reconfigure(ServiceFidelity... fidelities) throws ContextException, RemoteException {
         if (fidelities == null || fidelities.length == 0) {
-            ServiceFidelity[] config = new ServiceFidelity[fiTrace.size()];
-            reconfigure(fiTrace.toArray(config));
             return;
         }
         if (this.fidelities.size() > 0) {
             for (ServiceFidelity fi : fidelities) {
-                if (this.fidelities.get(fi.getPath()) != null) {
-                    this.fidelities.get(fi.getPath()).setSelect(fi.getName());
+                ServiceFidelity sFi = this.fidelities.get(fi.getPath());
+                if (sFi != null) {
+                    sFi.setSelect(fi.getName());
                 }
+                if (isTraced)
+                    fiTrace.add(fi);
             }
         }
     }
@@ -292,6 +305,15 @@ public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Ob
             e.printStackTrace();
         }
     }
+
+    public boolean isTraced() {
+        return isTraced;
+    }
+
+    public void setTraced(boolean traced) {
+        isTraced = traced;
+    }
+
 
     @Override
     public Uuid getId() {
