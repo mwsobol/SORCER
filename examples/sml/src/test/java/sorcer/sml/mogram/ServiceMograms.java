@@ -121,7 +121,6 @@ public class ServiceMograms {
         assertTrue(value(exerted, "out").equals(120.0));
     }
 
-    @Ignore
     @Test
     public void loopWithModel() throws Exception {
 
@@ -131,7 +130,6 @@ public class ServiceMograms {
                 inEnt("by", eFi(inEnt("by-10", 10.0), inEnt("by-20", 20.0))), inEnt("out", 0.0),
                 ent(sig("increment", incrementer, result("out", inPaths("by", "template")))),
                 ent("multiply", invoker("add * out", ents("add", "out"))));
-
 
         responseUp(mdl, "increment", "out", "multiply", "by");
 //        Model exerted = exert(model);

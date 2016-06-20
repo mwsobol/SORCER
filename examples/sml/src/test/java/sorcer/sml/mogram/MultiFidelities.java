@@ -1,5 +1,6 @@
 package sorcer.sml.mogram;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -618,7 +619,7 @@ public class MultiFidelities {
         assertTrue(get(out, "mFi1").equals(100.0));
         assertTrue(get(out, "mFi2").equals(9.0));
         assertTrue(get(out, "mFi3").equals(900.0));
-        assertTrue(get(out, "result/y").equals(110.0));
+        assertTrue(get(out, "mFi4").equals(110.0));
 
         // closing the fidelity for mFi1
         out = response(mdl , fi("mFi1", "multiply"));
@@ -628,7 +629,7 @@ public class MultiFidelities {
         assertTrue(get(out, "mFi1").equals(900.0));
         assertTrue(get(out, "mFi2").equals(50.0));
         assertTrue(get(out, "mFi3").equals(9.0));
-        assertTrue(get(out, "result/y").equals(920.0));
+        assertTrue(get(out, "mFi4").equals(920.0));
 
         out = response(mdl);
         logger.info("out: " + out);
@@ -637,7 +638,7 @@ public class MultiFidelities {
         assertTrue(get(out, "mFi1").equals(900.0));
         assertTrue(get(out, "mFi2").equals(50.0));
         assertTrue(get(out, "mFi3").equals(9.0));
-        assertTrue(get(out, "result/y").equals(940.0));
+        assertTrue(get(out, "mFi4").equals(940.0));
     }
 
     @Test
@@ -645,14 +646,13 @@ public class MultiFidelities {
         Model mdl = getMorphingModel();
 
         Block mdlBlock = block(
-                context(ent("result/y", 0.0)),
-                loop(condition(cxt -> (double) value(cxt, "result/y") < 950.0), mdl));
+                loop(condition(cxt -> (double) value(cxt, "mFi4") < 950.0), mdl));
 
 //        logger.info("DEPS: " + printDeps(mdl));
         mdlBlock = exert(mdlBlock, fi("mFi1", "multiply"));
         logger.info("block context: " + context(mdlBlock));
-        logger.info("result: " + value(context(mdlBlock), "result/y"));
+        logger.info("result: " + value(context(mdlBlock), "mFi4"));
 
-        assertTrue(value(context(mdlBlock), "result/y").equals(960.0));
+        assertTrue(value(context(mdlBlock), "mFi4").equals(960.0));
     }
 }

@@ -254,9 +254,21 @@ public class SrvModel extends ParModel<Object> implements Model, Invocation<Obje
                     return obj;
                 }  else if (val2 instanceof MultiFiRequest) {
                     Object out = ((MultiFiRequest)val2).exert(args);
-                    if (out instanceof Exertion)
-                        out = ((Exertion)out).getContext();
-                    ((Srv) get(path)).setSrvValue(out);
+                    Context cxt = null;
+                    if (out instanceof Exertion) {
+                        cxt = ((Exertion) out).getContext();
+                        SignatureReturnPath rt = ((Exertion) out).getProcessSignature().getReturnPath();
+                        if (rt != null && rt.getPath() != null) {
+                            Object obj = cxt.getReturnValue();
+                            putOutValue(rt.getPath(), obj);
+                            ((Srv) get(path)).setSrvValue(obj);
+                            return obj;
+                        } else {
+                            ((Srv) get(path)).setSrvValue(cxt);
+                            return cxt;
+                        }
+                    }
+                    ((Srv) get(path)).setSrvValue(cxt);
                     return out;
                 } else if (val2 instanceof Client && ((Srv) val).getType() == Variability.Type.LAMBDA) {
                     String entryPath = ((Entry)val).getName();
