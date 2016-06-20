@@ -10,7 +10,7 @@ import sorcer.arithmetic.provider.impl.*;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.invoker.Observable;
 import sorcer.core.plexus.FidelityManager;
-import sorcer.core.plexus.MorphedFidelity;
+import sorcer.core.plexus.MorphFidelity;
 import sorcer.core.plexus.Morpher;
 import sorcer.core.plexus.MultiFiRequest;
 import sorcer.service.*;
@@ -127,8 +127,8 @@ public class MultiFidelities {
 
             @Override
             public void update(Observable mFi, Object value) throws EvaluationException, RemoteException {
-                if (mFi instanceof MorphedFidelity) {
-                    ServiceFidelity<Signature> fi = ((MorphedFidelity) mFi).getFidelity();
+                if (mFi instanceof MorphFidelity) {
+                    ServiceFidelity<Signature> fi = ((MorphFidelity) mFi).getFidelity();
                     if (fi.getPath().equals("mFi1") && fi.getSelectName().equals("add")) {
                         if (((Double) value) <= 200.0) {
                             morph("sysFi2");
@@ -161,15 +161,13 @@ public class MultiFidelities {
                 manager,
                 response("mFi1", "mFi2", "mFi3", "arg/x1", "arg/x2"));
 
-        // fidelities morphed by the model's fidelity manager
         Context out = response(mod);
         logger.info("out: " + out);
         assertTrue(get(out, "mFi1").equals(100.0));
         assertTrue(get(out, "mFi2").equals(9.0));
         assertTrue(get(out, "mFi3").equals(900.0));
 
-        // first closing the fidelity for mFi1
-        // then fidelities morphed by the model's fidelity manager accordingly
+        // closing the fidelity for mFi1
         out = response(mod , fi("mFi1", "multiply"));
         logger.info("out: " + out);
         assertTrue(get(out, "mFi1").equals(900.0));
@@ -184,8 +182,8 @@ public class MultiFidelities {
 
             @Override
             public void update(Observable mFi, Object value) throws EvaluationException, RemoteException {
-                if (mFi instanceof MorphedFidelity) {
-                    ServiceFidelity<Signature> fi = ((MorphedFidelity) mFi).getFidelity();
+                if (mFi instanceof MorphFidelity) {
+                    ServiceFidelity<Signature> fi = ((MorphFidelity) mFi).getFidelity();
                     if (fi.getPath().equals("mFi1") && fi.getSelectName().equals("add")) {
                         if (((Double) value) <= 200.0) {
                             morph("sysFi2");
@@ -221,7 +219,6 @@ public class MultiFidelities {
                 manager, fi2, fi3,
                 response("mFi1", "mFi2", "mFi3", "arg/x1", "arg/x2"));
 
-        // fidelities morphed by the model's fidelity manager
         Context out = response(mod);
         logger.info("out: " + out);
         assertTrue(get(out, "mFi1").equals(100.0));
@@ -249,8 +246,8 @@ public class MultiFidelities {
 
             @Override
             public void update(Observable mFi, Object value) throws EvaluationException, RemoteException {
-                if (mFi instanceof MorphedFidelity) {
-                    ServiceFidelity<Signature> fi = ((MorphedFidelity) mFi).getFidelity();
+                if (mFi instanceof MorphFidelity) {
+                    ServiceFidelity<Signature> fi = ((MorphFidelity) mFi).getFidelity();
                     if (fi.getPath().equals("mFi1") && fi.getSelectName().equals("add")) {
                         if (((Double) value) <= 200.0) {
                             morph("sysFi2");
@@ -283,7 +280,6 @@ public class MultiFidelities {
                 manager,
                 response("mFi1", "mFi2", "mFi3", "arg/x1", "arg/x2"));
 
-        // fidelities morphed by the model's fidelity manager
         Context out = response(mod);
         logger.info("out: " + out);
         assertTrue(get(out, "mFi1").equals(100.0));
@@ -291,7 +287,6 @@ public class MultiFidelities {
         assertTrue(get(out, "mFi3").equals(900.0));
 
         // first closing the fidelity for mFi1
-        // then fidelities morphed by the model's fidelity manager accordingly
         out = response(mod , fi("mFi1", "multiply"));
         logger.info("out: " + out);
         assertTrue(get(out, "mFi1").equals(900.0));
@@ -352,15 +347,13 @@ public class MultiFidelities {
                 FidelityMangement.YES,
                 response("mFi1", "mFi2", "mFi3", "arg/x1", "arg/x2"));
 
-        // fidelities morphed by the model's fidelity manager
         Context out = response(mod);
         logger.info("out: " + out);
         assertTrue(get(out, "mFi1").equals(100.0));
         assertTrue(get(out, "mFi2").equals(9.0));
         assertTrue(get(out, "mFi3").equals(50.0));
 
-        // first closing the fidelity for mFi1
-        // then fidelities morphed by the model's fidelity manager accordingly
+        // closing the fidelity for mFi1
         out = response(mod , fi("mFi1", "multiply"));
         logger.info("out: " + out);
         assertTrue(get(out, "mFi1").equals(900.0));
@@ -615,7 +608,6 @@ public class MultiFidelities {
 
     @Test
     public void morphingFidelities() throws Exception {
-        // fidelities morphed by the model's fidelity manager
         Model mdl = getMorphingModel();
         traced(mdl, true);
         Context out = response(mdl);
@@ -628,8 +620,7 @@ public class MultiFidelities {
         assertTrue(get(out, "mFi3").equals(900.0));
         assertTrue(get(out, "result/y").equals(110.0));
 
-        // first closing the fidelity for mFi1
-        // then fidelities morphed by the model's fidelity manager accordingly
+        // closing the fidelity for mFi1
         out = response(mdl , fi("mFi1", "multiply"));
         logger.info("out: " + out);
         logger.info("trace: " + fiTrace(mdl));

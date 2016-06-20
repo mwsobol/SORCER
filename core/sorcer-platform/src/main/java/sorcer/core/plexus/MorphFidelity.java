@@ -29,7 +29,7 @@ import java.util.List;
 /**
  * Created by Mike Sobolewski on 04/26/16.
  */
-public class MorphedFidelity<T extends Arg> extends Observable implements
+public class MorphFidelity<T extends Arg> extends Observable implements
         Identifiable, Multifidelity<T>, Arg {
 
     // fidelity of fidelities T  that is observable
@@ -43,12 +43,12 @@ public class MorphedFidelity<T extends Arg> extends Observable implements
 
     private Uuid id = UuidFactory.generate();
 
-    public MorphedFidelity(ServiceFidelity fi) {
+    public MorphFidelity(ServiceFidelity fi) {
         fidelity = fi;
         path = fi.getPath();
     }
 
-    public MorphedFidelity(FidelityManager manager) {
+    public MorphFidelity(FidelityManager manager) {
         addObserver(manager);
     }
 

@@ -29,7 +29,7 @@ import sorcer.core.context.model.par.Par;
 import sorcer.core.context.model.srv.Srv;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.core.plexus.FiEntry;
-import sorcer.core.plexus.MorphedFidelity;
+import sorcer.core.plexus.MorphFidelity;
 import sorcer.core.plexus.MultiFiRequest;
 import sorcer.core.provider.DatabaseStorer;
 import sorcer.core.signature.NetletSignature;
@@ -251,7 +251,7 @@ public class operator {
         return new Entry(path, model.asis(path));
     }
 
-	public static <T extends Arg> Srv ent(String name, MorphedFidelity<T> fidelity) {
+	public static <T extends Arg> Srv ent(String name, MorphFidelity<T> fidelity) {
 		fidelity.setPath(name);
 		fidelity.getFidelity().setPath(name);
 		return srv(name, fidelity);
@@ -275,7 +275,7 @@ public class operator {
 		return service;
 	}
 
-	public static Srv srv(String name, MorphedFidelity<Signature> fidelity) {
+	public static Srv srv(String name, MorphFidelity<Signature> fidelity) {
 		Srv service = new Srv(name, fidelity);
 		return service;
 	}

@@ -41,7 +41,7 @@ import sorcer.core.dispatch.DispatcherException;
 import sorcer.core.dispatch.ExertionSorter;
 import sorcer.core.dispatch.ProvisionManager;
 import sorcer.core.exertion.ObjectTask;
-import sorcer.core.plexus.MorphedFidelity;
+import sorcer.core.plexus.MorphFidelity;
 import sorcer.core.plexus.MultiFiRequest;
 import sorcer.core.provider.*;
 import sorcer.core.signature.NetSignature;
@@ -908,10 +908,10 @@ public class ServiceShell implements RemoteServiceShell, Requestor, Callable {
 				}
 			} else if (service instanceof MultiFiRequest) {
 				Object out = null;
-				MorphedFidelity morphedFidelity = ((MultiFiRequest)service).getMorphedFidelity();
+				MorphFidelity morphFidelity = ((MultiFiRequest)service).getMorphFidelity();
 				ServiceFidelity<Request> sfi = ((MultiFiRequest)service).getServiceFidelity();
 				if (sfi == null) {
-					ServiceFidelity fi = ((MultiFiRequest)service).getMorphedFidelity().getFidelity();
+					ServiceFidelity fi = ((MultiFiRequest)service).getMorphFidelity().getFidelity();
 					Object select = fi.getSelect();
 					if (select != null) {
 						if (select instanceof Mogram)
@@ -932,9 +932,9 @@ public class ServiceShell implements RemoteServiceShell, Requestor, Callable {
 					out = sfi.getSelect().exec(args);
 				}
 
-				if (morphedFidelity != null) {
-					morphedFidelity.setChanged();
-					morphedFidelity.notifyObservers(out);
+				if (morphFidelity != null) {
+					morphFidelity.setChanged();
+					morphFidelity.notifyObservers(out);
 				}
 				return out;
 			}

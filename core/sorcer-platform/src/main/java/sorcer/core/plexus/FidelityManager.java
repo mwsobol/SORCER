@@ -54,7 +54,7 @@ public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Ob
     protected Map<String, ServiceFidelity<ServiceFidelity>> metafidelities = new ConcurrentHashMap<>();
 
     // fidelities for signatures and other selection of T
-    protected Map<String, MorphedFidelity> morphedFidelities = new ConcurrentHashMap<>();
+    protected Map<String, MorphFidelity> morphFidelities = new ConcurrentHashMap<>();
 
     // changed fidelities by morphers
     protected List<ServiceFidelity> fiTrace = new ArrayList();
@@ -93,8 +93,8 @@ public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Ob
     }
 
 
-    public Map<String, MorphedFidelity> getMorphedFidelities() {
-        return morphedFidelities;
+    public Map<String, MorphFidelity> getMorphFidelities() {
+        return morphFidelities;
     }
 
     public void setFidelities(Map<String, ServiceFidelity<T>> fidelities) {
@@ -106,9 +106,9 @@ public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Ob
             this.fidelities.put(path, fi);
     }
 
-    public void addMorphedFidelity(String path, MorphedFidelity mFi) {
+    public void addMorphedFidelity(String path, MorphFidelity mFi) {
         if (mFi != null)
-            this.morphedFidelities.put(path, mFi);
+            this.morphFidelities.put(path, mFi);
     }
 
     public List<ServiceFidelity> getFiTrace() {
@@ -213,8 +213,8 @@ public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Ob
                 while (i.hasNext()) {
                     Map.Entry<String, ServiceFidelity<T>> fiEnt = i.next();
                     if (fiEnt.getKey().equals(path)) {
-                        if (morphedFidelities.get(path) != null) {
-                            morphedFidelities.get(path).setMorpherSelect(name);
+                        if (morphFidelities.get(path) != null) {
+                            morphFidelities.get(path).setMorpherSelect(name);
                         }
                         fiEnt.getValue().setSelect(name);
                     }
@@ -350,7 +350,7 @@ public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Ob
     public void update(Observable observable, Object obj) throws EvaluationException, RemoteException {
         // implement in subclasses and use the morphers provided by MorphedFidelities (observables)
 
-        MorphedFidelity mFi = (MorphedFidelity)observable;
+        MorphFidelity mFi = (MorphFidelity)observable;
         Morpher morpher = mFi.getMorpher();
         if (morpher != null)
             try {

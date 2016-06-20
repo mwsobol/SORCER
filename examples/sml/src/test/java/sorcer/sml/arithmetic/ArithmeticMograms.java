@@ -379,7 +379,6 @@ public class ArithmeticMograms {
                 fi2, fi3, fi4,
                 response("mFi1", "mFi2", "mFi3", "arg/x1", "arg/x2"));
 
-        // fidelities morphed by the model's fidelity manager
         Context out = response(mod);
         logger.info("out: " + out);
         assertTrue(get(out, "mFi1").equals(100.0));
@@ -387,7 +386,6 @@ public class ArithmeticMograms {
         assertTrue(get(out, "mFi3").equals(50.0));
 
         // first closing the fidelity for mFi1
-        // then fidelities morphed by the model's fidelity manager accordingly
         out = response(mod , fi("mFi1", "multiply"));
         logger.info("out: " + out);
         assertTrue(get(out, "mFi1").equals(900.0));

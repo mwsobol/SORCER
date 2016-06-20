@@ -29,7 +29,7 @@ import sorcer.core.context.model.srv.SrvModel;
 import sorcer.core.dispatch.SortingException;
 import sorcer.core.dispatch.SrvModelAutoDeps;
 import sorcer.core.plexus.FidelityManager;
-import sorcer.core.plexus.MorphedFidelity;
+import sorcer.core.plexus.MorphFidelity;
 import sorcer.core.plexus.Morpher;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
@@ -243,7 +243,7 @@ public class operator {
         SrvModel model = null;
         FidelityManager fiManager = null;
         List<ServiceFidelity<ServiceFidelity>> metaFis = new ArrayList<>();
-        List<Srv> morphedFiEnts = new ArrayList<Srv>();
+        List<Srv> morphFiEnts = new ArrayList<Srv>();
         for (Object item : items) {
             if (item instanceof Signature) {
                 sigs.add((Signature)item);
@@ -253,8 +253,8 @@ public class operator {
                 model = ((SrvModel)item);
             } else if (item instanceof FidelityManager) {
                 fiManager = ((FidelityManager)item);
-            } else if (item instanceof Srv && ((Entry)item)._2 instanceof MorphedFidelity) {
-                morphedFiEnts.add((Srv)item);
+            } else if (item instanceof Srv && ((Entry)item)._2 instanceof MorphFidelity) {
+                morphFiEnts.add((Srv)item);
             } else if (item instanceof ServiceFidelity) {
                 if (((ServiceFidelity) item).getSelects().get(0) instanceof ServiceFidelity) {
                     metaFis.add((ServiceFidelity<ServiceFidelity>) item);
@@ -266,7 +266,7 @@ public class operator {
         if (model == null)
             model = new SrvModel();
 
-        if (morphedFiEnts != null || metaFis != null) {
+        if (morphFiEnts != null || metaFis != null) {
            if (fiManager == null)
                fiManager = new FidelityManager(model);
         }
@@ -274,13 +274,13 @@ public class operator {
             model.setFidelityManager(fiManager);
             fiManager.init(metaFis);
             fiManager.setMogram(model);
-            MorphedFidelity mFi = null;
-            if ((morphedFiEnts.size() > 0)) {
-                for (Srv morphedFiEnt : morphedFiEnts) {
-                    mFi = (MorphedFidelity) morphedFiEnt._2;
-                    fiManager.addMorphedFidelity(morphedFiEnt._1, mFi);
-                    fiManager.addFidelity(morphedFiEnt._1, mFi.getFidelity());
-                    mFi.setPath(morphedFiEnt._1);
+            MorphFidelity mFi = null;
+            if ((morphFiEnts.size() > 0)) {
+                for (Srv morphFiEnt : morphFiEnts) {
+                    mFi = (MorphFidelity) morphFiEnt._2;
+                    fiManager.addMorphedFidelity(morphFiEnt._1, mFi);
+                    fiManager.addFidelity(morphFiEnt._1, mFi.getFidelity());
+                    mFi.setPath(morphFiEnt._1);
                     mFi.setSelect((Arg) mFi.getSelects().get(0));
                     mFi.addObserver(fiManager);
                     if (mFi.getMorpherFidelity() != null) {

@@ -45,7 +45,7 @@ public class MultiFiRequest extends ServiceMogram {
 
     protected ServiceFidelity<Request> serviceFidelity;
 
-    protected MorphedFidelity<Request> morphedFidelity;
+    protected MorphFidelity<Request> morphFidelity;
 
     public MultiFiRequest() {
     }
@@ -59,21 +59,21 @@ public class MultiFiRequest extends ServiceMogram {
         return scope.clearScope();
     }
 
-    public MultiFiRequest(MorphedFidelity<Request> fidelity) {
+    public MultiFiRequest(MorphFidelity<Request> fidelity) {
         this(fidelity.getName(), fidelity);
     }
 
-    public MultiFiRequest(String name, MorphedFidelity<Request> fidelity)  {
+    public MultiFiRequest(String name, MorphFidelity<Request> fidelity)  {
         super(name);
-        morphedFidelity = fidelity;
+        morphFidelity = fidelity;
         if (fiManager == null)
             fiManager = new FidelityManager(name);
 
-        ((FidelityManager)fiManager).init(morphedFidelity.getFidelity());
+        ((FidelityManager)fiManager).init(morphFidelity.getFidelity());
         ((FidelityManager)fiManager).setMogram(this);
-        ((FidelityManager)fiManager).addMorphedFidelity(morphedFidelity.getName(), morphedFidelity);
-        ((FidelityManager)fiManager).addFidelity(morphedFidelity.getName(), morphedFidelity.getFidelity());
-        morphedFidelity.addObserver((FidelityManager)fiManager);
+        ((FidelityManager)fiManager).addMorphedFidelity(morphFidelity.getName(), morphFidelity);
+        ((FidelityManager)fiManager).addFidelity(morphFidelity.getName(), morphFidelity.getFidelity());
+        morphFidelity.addObserver((FidelityManager)fiManager);
     }
 
     public MultiFiRequest(String name, ServiceFidelity<Request> fidelity) {
@@ -81,7 +81,7 @@ public class MultiFiRequest extends ServiceMogram {
         serviceFidelity = fidelity;
     }
 
-    public MultiFiRequest(Context context, MorphedFidelity<Request> fidelity)  {
+    public MultiFiRequest(Context context, MorphFidelity<Request> fidelity)  {
         this(context.getName(), fidelity);
         scope = context;
     }
@@ -93,11 +93,11 @@ public class MultiFiRequest extends ServiceMogram {
 
     @Override
     public <T extends Mogram> T exert(Transaction txn, Arg... entries) throws TransactionException, MogramException, RemoteException {
-        Mogram mogram = (Mogram)morphedFidelity.getSelect();
+        Mogram mogram = (Mogram) morphFidelity.getSelect();
         mogram.getContext().setScope(scope);
         T out = mogram.exert(txn, entries);
-        morphedFidelity.setChanged();
-        morphedFidelity.notifyObservers(out);
+        morphFidelity.setChanged();
+        morphFidelity.notifyObservers(out);
         return out;
     }
 
@@ -108,12 +108,12 @@ public class MultiFiRequest extends ServiceMogram {
 
     @Override
     public Context getContext() throws ContextException {
-//        return ((Mogram)morphedFidelity.getSelect()).getContext();
+//        return ((Mogram)morphFidelity.getSelect()).getContext();
         return scope;
     }
 
     public void setDataContext(ServiceContext dataContext) {
-        ((ServiceExertion)morphedFidelity.getSelect()).setContext(dataContext);
+        ((ServiceExertion) morphFidelity.getSelect()).setContext(dataContext);
     }
 
     @Override
@@ -127,8 +127,8 @@ public class MultiFiRequest extends ServiceMogram {
             serviceFidelity.setSelect(selector);
             return serviceFidelity;
         } else {
-            morphedFidelity.getFidelity().setSelect(selector);
-            return morphedFidelity.getFidelity();
+            morphFidelity.getFidelity().setSelect(selector);
+            return morphFidelity.getFidelity();
         }
     }
 
@@ -167,8 +167,8 @@ public class MultiFiRequest extends ServiceMogram {
     }
 
     public ServiceFidelity<Request> getServiceFidelity() {
-        if (serviceFidelity == null && morphedFidelity != null)
-            return morphedFidelity.getFidelity();
+        if (serviceFidelity == null && morphFidelity != null)
+            return morphFidelity.getFidelity();
         else {
             return serviceFidelity;
         }
@@ -178,12 +178,12 @@ public class MultiFiRequest extends ServiceMogram {
         this.serviceFidelity = serviceFidelity;
     }
 
-    public MorphedFidelity getMorphedFidelity() {
-        return morphedFidelity;
+    public MorphFidelity getMorphFidelity() {
+        return morphFidelity;
     }
 
-    public void setMorphedFidelity(MorphedFidelity morphedFidelity) {
-        this.morphedFidelity = morphedFidelity;
+    public void setMorphFidelity(MorphFidelity morphFidelity) {
+        this.morphFidelity = morphFidelity;
     }
 
     @Override

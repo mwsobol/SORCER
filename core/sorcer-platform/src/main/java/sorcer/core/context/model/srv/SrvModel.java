@@ -27,7 +27,7 @@ import sorcer.co.tuple.SignatureEntry;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.par.ParModel;
 import sorcer.core.invoker.ServiceInvoker;
-import sorcer.core.plexus.MorphedFidelity;
+import sorcer.core.plexus.MorphFidelity;
 import sorcer.core.plexus.MultiFiRequest;
 import sorcer.core.provider.rendezvous.ServiceModeler;
 import sorcer.core.signature.ServiceSignature;
@@ -225,8 +225,8 @@ public class SrvModel extends ParModel<Object> implements Model, Invocation<Obje
                     } else {
                         return selection;
                     }
-                } else if (val2 instanceof MorphedFidelity) {
-                    Object obj = getFi(((MorphedFidelity) val2).getFidelity(), args, path);
+                } else if (val2 instanceof MorphFidelity) {
+                    Object obj = getFi(((MorphFidelity) val2).getFidelity(), args, path);
                     Object out = null;
                     if (obj instanceof Signature)
                         out = evalSignature((Signature)obj, path);
@@ -234,8 +234,8 @@ public class SrvModel extends ParModel<Object> implements Model, Invocation<Obje
                         ((Entry)obj).setScope(this);
                         out = ((Entry) obj).getValue(args);
                     }
-                    ((MorphedFidelity) val2).setChanged();
-                    ((MorphedFidelity) val2).notifyObservers(out);
+                    ((MorphFidelity) val2).setChanged();
+                    ((MorphFidelity) val2).notifyObservers(out);
                     return out;
                 } else if (val2 instanceof MogramEntry) {
                     return evalMogram((MogramEntry)val2, path, args);
