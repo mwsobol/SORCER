@@ -252,6 +252,8 @@ public class operator {
     }
 
 	public static <T extends Arg> Srv ent(String name, MorphedFidelity<T> fidelity) {
+		fidelity.setPath(name);
+		fidelity.getFidelity().setPath(name);
 		return srv(name, fidelity);
 	}
 

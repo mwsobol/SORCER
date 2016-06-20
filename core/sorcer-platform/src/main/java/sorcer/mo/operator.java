@@ -185,7 +185,7 @@ public class operator {
     }
 
     public static Entry entry(Model model, String path) throws ContextException {
-        return new Entry(path, ((Context)model).asis(path));
+        return new Entry(path, model.asis(path));
     }
 
     public static Context inConn(List<Tuple2<String, ?>> entries) throws ContextException {

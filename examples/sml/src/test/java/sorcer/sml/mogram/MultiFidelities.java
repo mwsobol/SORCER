@@ -229,7 +229,6 @@ public class MultiFidelities {
         assertTrue(get(out, "mFi3").equals(900.0));
 
         // first closing the fidelity for mFi1
-        // then fidelities morphed by the model's fidelity manager accordingly
         out = response(mod , fi("mFi1", "multiply"));
         logger.info("out: " + out);
         assertTrue(get(out, "mFi1").equals(900.0));
@@ -407,7 +406,7 @@ public class MultiFidelities {
             }
         };
 
-        MultiFiRequest mfs = multiFiReq("entries", mFi(morpher, e1, e2, e3));
+        MultiFiRequest mfs = multiFiReq(mFi(morpher, e1, e2, e3));
 
         Object out = exec(mfs);
         logger.info("out: " + out);
@@ -449,12 +448,12 @@ public class MultiFidelities {
             ServiceFidelity<Signature> fi =  mFi.getFidelity();
             if (fi.getSelectName().equals("multiply")) {
                 if (((Double) value(context(value), "result/y")) >= 500.0) {
-                    mgr.reconfigure("add");
+                    mgr.reconfigure(fi("sigFi", "add"));
                 }
             }
         };
 
-        MultiFiRequest mfs = multiFiReq(mFi(morpher, ms, as), cxt);
+        MultiFiRequest mfs = multiFiReq(mFi("sigFi", morpher, ms, as), cxt);
 
         Context out = (Context) exec(mfs);
         logger.info("out: " + out);
@@ -480,7 +479,7 @@ public class MultiFidelities {
                         outEnt("result/y")));
 
 
-        MultiFiRequest mfs = multiFiReq(mFi(t5, t4));
+        MultiFiRequest mfs = multiFiReq(mFi("takFi", t5, t4));
         Mogram mog = exert(mfs);
         logger.info("out: " + mog.getContext());
         assertTrue(value(context(mog), "result/y").equals(100.0));
@@ -577,7 +576,7 @@ public class MultiFidelities {
                 Double val = ((Double) value(context(value), "result/y"));
                 if (val <= 200.0) {
                     set(context(value), "result/y", val + 10.0);
-                    mgr.reconfigure("t4");
+                    mgr.reconfigure(fi("mFi4","t4"));
                 }
             } else if (fi.getSelectName().equals("t4")) {
                 Double val = ((Double) value(context(value), "result/y"));

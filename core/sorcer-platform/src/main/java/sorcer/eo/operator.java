@@ -1286,6 +1286,12 @@ public class operator {
 		return multiFi;
 	}
 
+	public static MorphedFidelity<Request> mFi(String name, Morpher morpher, Request... services) {
+		MorphedFidelity<Request> multiFi = new MorphedFidelity(new ServiceFidelity(name, services));
+		multiFi.setMorpher(morpher);
+		return multiFi;
+	}
+
 	public static MorphedFidelity<Request> mFi(ServiceFidelity<Entry> sFi, Request... services) {
 		MorphedFidelity<Request> multiFi = new MorphedFidelity(new ServiceFidelity(services));
 		multiFi.setMorpherFidelity(sFi);
@@ -1294,6 +1300,11 @@ public class operator {
 
 	public static MorphedFidelity<Request> mFi(Request... services) {
 		MorphedFidelity<Request> multiFi = new MorphedFidelity(new ServiceFidelity(services));
+		return multiFi;
+	}
+
+	public static MorphedFidelity<Request> mFi(String name, Request... services) {
+		MorphedFidelity<Request> multiFi = new MorphedFidelity(new ServiceFidelity(name, services));
 		return multiFi;
 	}
 
@@ -1322,8 +1333,17 @@ public class operator {
 	public static MultiFiRequest multiFiReq(ServiceFidelity<Request> fidelity, Context context) {
 		return new MultiFiRequest(context, fidelity);
 	}
+
+	public static MultiFiRequest multiFiReq(String name, MorphedFidelity<Request> fidelity, Context context) {
+		MultiFiRequest mfr = new MultiFiRequest(context, fidelity);
+		mfr.setName(fidelity.getName());
+		return mfr;
+	}
+
 	public static MultiFiRequest multiFiReq(MorphedFidelity<Request> fidelity, Context context) {
-		return new MultiFiRequest(context, fidelity);
+		MultiFiRequest mfr = new MultiFiRequest(context, fidelity);
+		mfr.setName(fidelity.getName());
+		return mfr;
 	}
 
 	public static MorphedFidelity<Signature> multiFi(Signature... signatures) {

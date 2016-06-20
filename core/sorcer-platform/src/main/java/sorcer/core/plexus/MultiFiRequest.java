@@ -71,6 +71,7 @@ public class MultiFiRequest extends ServiceMogram {
 
         ((FidelityManager)fiManager).init(morphedFidelity.getFidelity());
         ((FidelityManager)fiManager).setMogram(this);
+        ((FidelityManager)fiManager).addMorphedFidelity(morphedFidelity.getName(), morphedFidelity);
         ((FidelityManager)fiManager).addFidelity(morphedFidelity.getName(), morphedFidelity.getFidelity());
         morphedFidelity.addObserver((FidelityManager)fiManager);
     }
@@ -166,7 +167,11 @@ public class MultiFiRequest extends ServiceMogram {
     }
 
     public ServiceFidelity<Request> getServiceFidelity() {
-        return serviceFidelity;
+        if (serviceFidelity == null && morphedFidelity != null)
+            return morphedFidelity.getFidelity();
+        else {
+            return serviceFidelity;
+        }
     }
 
     public void setServiceFidelity(ServiceFidelity<Request> serviceFidelity) {

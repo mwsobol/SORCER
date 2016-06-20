@@ -258,6 +258,9 @@ public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Ob
         // applies to MultiFiRequests
         if (fidelities.size() == 1 && fiNames.length == 1) {
             ServiceFidelity fi = fidelities.get(name);
+            if (fi == null) {
+                fi = selectFidelity(fiNames[0]);
+            }
             fi.setSelect(fiNames[0]);
             if (isTraced) {
                 ServiceFidelity nsf = new ServiceFidelity(fiNames[0]);
@@ -265,6 +268,20 @@ public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Ob
                 fiTrace.add(nsf);
             }
         }
+    }
+
+
+    private ServiceFidelity selectFidelity(String name) {
+        ServiceFidelity fi = fidelities.get(name);
+        if (fi == null) {
+            ServiceFidelity sf = fidelities.get(0);
+            List<ServiceFidelity> sfl = sf.getSelects();
+            for (ServiceFidelity f : sfl) {
+                if (f.getName().equals(name))
+                    return sf;
+            }
+        }
+        return null;
     }
 
     @Override

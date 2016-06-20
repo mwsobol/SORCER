@@ -1,5 +1,6 @@
 package sorcer.sml.mogram;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -120,6 +121,7 @@ public class ServiceMograms {
         assertTrue(value(exerted, "out").equals(120.0));
     }
 
+    @Ignore
     @Test
     public void loopWithModel() throws Exception {
 

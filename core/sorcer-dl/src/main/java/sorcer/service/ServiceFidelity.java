@@ -148,6 +148,11 @@ public class ServiceFidelity<T extends Arg> implements Multifidelity<T>, Arg {
 	}
 
 	public T getSelect() {
+		// if a select not set return the firts one option
+		if (select == null && selects.size() > 0) {
+			select = selects.get(0);
+		}
+
 		return select;
 	}
 

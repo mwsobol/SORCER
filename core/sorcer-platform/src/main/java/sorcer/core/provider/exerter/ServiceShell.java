@@ -907,13 +907,13 @@ public class ServiceShell implements RemoteServiceShell, Requestor, Callable {
 							+ cxt.getName());
 				}
 			} else if (service instanceof MultiFiRequest) {
+				Object out = null;
+				MorphedFidelity morphedFidelity = ((MultiFiRequest)service).getMorphedFidelity();
 				ServiceFidelity<Request> sfi = ((MultiFiRequest)service).getServiceFidelity();
 				if (sfi == null) {
 					ServiceFidelity fi = ((MultiFiRequest)service).getMorphedFidelity().getFidelity();
 					Object select = fi.getSelect();
 					if (select != null) {
-						MorphedFidelity morphedFidelity = ((MultiFiRequest)service).getMorphedFidelity();
-						Object out = null;
 						if (select instanceof Mogram)
 							out = ((Mogram) select).exert(args);
 						else {
@@ -923,17 +923,20 @@ public class ServiceShell implements RemoteServiceShell, Requestor, Callable {
 							else
 								out = ((Service) select).exec(args);
 						}
-
-						morphedFidelity.setChanged();
-						morphedFidelity.notifyObservers(out);
-						return out;
 					}
 				}
 				Context cxt = ((MultiFiRequest)service).getScope();
-				if (sfi.getSelect() instanceof Signature && cxt != null)
-					return sfi.getSelect().exec(cxt);
-				else
-					return sfi.getSelect().exec(args);
+				if (sfi.getSelect() instanceof Signature && cxt != null) {
+					out = sfi.getSelect().exec(cxt);
+				} else {
+					out = sfi.getSelect().exec(args);
+				}
+
+				if (morphedFidelity != null) {
+					morphedFidelity.setChanged();
+					morphedFidelity.notifyObservers(out);
+				}
+				return out;
 			}
 		} catch (Throwable ex) {
 			throw new ServiceException(ex);

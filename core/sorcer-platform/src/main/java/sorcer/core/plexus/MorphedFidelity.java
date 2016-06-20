@@ -37,12 +37,15 @@ public class MorphedFidelity<T extends Arg> extends Observable implements
 
     private Morpher morpher;
 
+    private String path;
+
     private ServiceFidelity<Entry> morpherFidelity;
 
     private Uuid id = UuidFactory.generate();
 
     public MorphedFidelity(ServiceFidelity fi) {
         fidelity = fi;
+        path = fi.getPath();
     }
 
     public MorphedFidelity(FidelityManager manager) {
@@ -109,11 +112,11 @@ public class MorphedFidelity<T extends Arg> extends Observable implements
     }
 
     public String getPath() {
-        return fidelity.getPath();
+        return path;
     }
 
     public void setPath(String fidelityPath) {
-        fidelity.setPath(fidelityPath);;
+        path = fidelityPath;
     }
 
     @Override
