@@ -55,7 +55,7 @@ public class Srv extends Entry<Object> implements Variability<Object>, Arg,
         this.paths = paths;
     }
 
-    public Srv(String name, String path, Requestor service) {
+    public Srv(String name, String path, Client service) {
         super(path, service);
         this.name = name;
     }

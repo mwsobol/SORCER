@@ -1,6 +1,6 @@
 /*
- * Copyright 2010 the original author or authors.
- * Copyright 2010 SorcerSoft.org.
+ * Copyright 2015 the original author or authors.
+ * Copyright 2015 SorcerSoft.org.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ import java.rmi.RemoteException;
  * Created by Mike Sobolewski on 10/30/15.
  */
 @FunctionalInterface
-public interface Requestor extends Serializable {
+public interface Client extends Serializable {
 
     Context exec(Service service, Context context, Arg[] args) throws ServiceException, RemoteException, TransactionException;
 

@@ -47,7 +47,7 @@ import sorcer.core.provider.exerter.Binder;
 import sorcer.core.provider.exerter.ServiceShell;
 import sorcer.core.provider.rendezvous.ServiceConcatenator;
 import sorcer.core.provider.rendezvous.ServiceModeler;
-import sorcer.core.requestor.ExertRequestor;
+import sorcer.core.requestor.ServiceRequestor;
 import sorcer.core.signature.*;
 import sorcer.netlet.ScriptExerter;
 import sorcer.service.*;
@@ -93,8 +93,8 @@ public class operator {
 		((ServiceExertion) exertion).setExecTimeRequested(true);
 	}
 
-	public static ExertRequestor requestor(Class requestorType, String... args) {
-		return  new ExertRequestor(requestorType, args);
+	public static ServiceRequestor requestor(Class requestorType, String... args) {
+		return  new ServiceRequestor(requestorType, args);
 	}
 
 	public static String path(List<String> attributes) {

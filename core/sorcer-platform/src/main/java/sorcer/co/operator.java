@@ -372,7 +372,7 @@ public class operator {
 		return new Srv(name, path, service,  args.argsToStrings());
 	}
 
-	public static Srv lambda(String path, String name, Requestor client) {
+	public static Srv lambda(String path, String name, Client client) {
 		return new Srv(name, path, client);
 	}
 
@@ -405,7 +405,7 @@ public class operator {
 	}
 
 	public static boolean isSorcerLambda(Class clazz) {
-		Class[] types = { EntryCollable.class, ValueCallable.class, Requestor.class,
+		Class[] types = { EntryCollable.class, ValueCallable.class, Client.class,
 				ConditionCollable.class, Callable.class };
 		for (Class cl : types) {
 			if (clazz == cl) {

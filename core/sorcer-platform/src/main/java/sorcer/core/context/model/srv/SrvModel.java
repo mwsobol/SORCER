@@ -258,9 +258,9 @@ public class SrvModel extends ParModel<Object> implements Model, Invocation<Obje
                         out = ((Exertion)out).getContext();
                     ((Srv) get(path)).setSrvValue(out);
                     return out;
-                } else if (val2 instanceof Requestor && ((Srv) val).getType() == Variability.Type.LAMBDA) {
+                } else if (val2 instanceof Client && ((Srv) val).getType() == Variability.Type.LAMBDA) {
                     String entryPath = ((Entry)val).getName();
-                    Object out = ((Requestor)val2).exec((Service) this.asis(entryPath), this, args);
+                    Object out = ((Client)val2).exec((Service) this.asis(entryPath), this, args);
                     ((Srv) get(path)).setSrvValue(out);
                     return out;
                 } else if (val2 instanceof EntryCollable && ((Srv) val).getType() == Variability.Type.LAMBDA) {

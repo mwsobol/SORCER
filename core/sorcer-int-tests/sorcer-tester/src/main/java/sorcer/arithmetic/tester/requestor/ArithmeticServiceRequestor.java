@@ -11,14 +11,14 @@ import sorcer.arithmetic.tester.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.tester.provider.impl.SubtractorImpl;
 import sorcer.core.provider.Jobber;
 import sorcer.core.provider.rendezvous.ServiceJobber;
-import sorcer.core.requestor.ExertRequestor;
+import sorcer.core.requestor.ServiceRequestor;
 import sorcer.service.*;
 
 import static sorcer.co.operator.inEnt;
 import static sorcer.co.operator.outEnt;
 import static sorcer.eo.operator.*;
 
-public class ArithmeticExertRequestor extends ExertRequestor {
+public class ArithmeticServiceRequestor extends ServiceRequestor {
 
 	/* (non-Javadoc)
 	 * @see sorcer.core.requestor.ExertionRunner#getMogram(java.lang.String[])
