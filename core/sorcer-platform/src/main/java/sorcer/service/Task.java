@@ -210,6 +210,10 @@ public class Task extends ServiceExertion {
 		throw new ExertionException("Not supported method in this class");
 	}
 
+	public boolean isNetTask() {
+		return getProcessSignature().getServiceType().isInterface();
+	}
+
 	// Just to remove if at all the places.
 	public boolean equals(Task task) throws Exception {
 		return name.equals(task.name);
@@ -377,8 +381,8 @@ public class Task extends ServiceExertion {
 	 */
 	@Override
 	public Object getValue(String path, Arg... args) throws ContextException {
-		if (path.startsWith("super")) {
-			return ((Exertion)parent).getContext().getValue(path.substring(6));
+		if (path.startsWith("super") && parent != null) {
+			return parent.getContext().getValue(path.substring(6));
 		} else {
 			return dataContext.getValue(path, args);
 		}

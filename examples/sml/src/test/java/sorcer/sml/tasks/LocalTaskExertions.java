@@ -133,7 +133,7 @@ public class LocalTaskExertions {
 	}
 
 	@Test
-	public void arithmeticMultiFiObjectTaskTest() throws Exception {
+	public void multiFiObjectTaskTest() throws Exception {
 		ServiceExertion.debug = true;
 
 		Task task = task("add",
@@ -142,9 +142,9 @@ public class LocalTaskExertions {
 				context(inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
 						result("result/y")));
 
-		logger.info("sFi: " + sFi(task));
-		assertTrue(sFis(task).size() == 2);
-		logger.info("selFis: " + fiName(task));
+		logger.info("task fi: " + fi(task));
+		assertTrue(fis(task).size() == 2);
+		logger.info("selected Fi: " + fiName(task));
 		assertTrue(fiName(task).equals("net"));
 
 		task = exert(task, fi("object"));

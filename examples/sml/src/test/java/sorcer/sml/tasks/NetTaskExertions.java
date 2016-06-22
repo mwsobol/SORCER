@@ -185,7 +185,7 @@ public class NetTaskExertions {
 				context(inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
 						result("result/y")));
 
-		logger.info("sFi: " + sFi(task));
+		logger.info("sFi: " + fi(task));
 		logger.info("sFis: " + size(srvFis(task)));
 
 //		task = exert(task, fi("object"));
@@ -247,7 +247,7 @@ public class NetTaskExertions {
 	}
 
 	@Test
-	public void netTaskFidelity() throws Exception {
+	public void multiFiTask() throws Exception {
 
 		Task t4 = task("t4",
 				sFi("net1", sig("multiply", Multiplier.class)),
@@ -279,23 +279,41 @@ public class NetTaskExertions {
 	}
 
 	@Test
-	public void netObjectFiTask() throws Exception {
+	public void multiFiObjectTaskTest() throws Exception {
+		ServiceExertion.debug = true;
 
 		Task task = task("add",
-				sFi("net", sig("add", Adder.class)),
-				sFi("object", sig("add", AdderImpl.class)),
+				sFi("object", sig("add", Adder.class)),
+				sFi("net", sig("add", AdderImpl.class)),
 				context(inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
 						result("result/y")));
 
-		logger.info("sFi: " + sFi(task));
-		assertTrue(sFis(task).size() == 2);
-		logger.info("fiName: " + fiName(task));
-		assertTrue(fiName(task).equals("net"));
+		logger.info("task fi: " + fi(task));
+		assertTrue(fis(task).size() == 2);
+		logger.info("selected Fi: " + fiName(task));
+		assertTrue(fiName(task).equals("object"));
 
 		task = exert(task, fi("net"));
 		logger.info("exerted: " + context(task));
 		assertTrue(fiName(task).equals("net"));
 		assertTrue(get(task).equals(100.0));
+	}
+
+
+	@Test
+	public void netContexterTaskTest() throws Exception {
+
+		Task t5 = task("t5", sig("add", Adder.class),
+				sig("getContext", Contexter.class, prvName("Add Contexter"), Signature.APD),
+				context("add", inEnt("arg/x1"), inEnt("arg/x2"),
+						result("result/y")));
+
+		Context result =  context(exert(t5));
+		logger.info("out context: " + result);
+		assertEquals(value(result, "arg/x1"), 20.0);
+		assertEquals(value(result, "arg/x2"), 80.0);
+		assertEquals(value(result, "result/y"), 100.0);
+
 	}
 
 }

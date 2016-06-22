@@ -518,7 +518,7 @@ public class ServiceShell implements RemoteServiceShell, Client, Callable {
 //			 test exertion for serialization
 //						 try {
 //							 logger.info("ExertProcessor.exert0(): going to serialize exertion for testing!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-//							 ObjectLogger.persistMarshalled("exertionfile", exertion);
+//							 ObjectLogger.persist("exertionfile", exertion);
 //						 } catch (Exception e) {
 //							 e.printStackTrace();
 //						 }

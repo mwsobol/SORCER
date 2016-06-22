@@ -1,6 +1,5 @@
 package sorcer.core.provider;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -115,7 +114,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 	}
 	
 	@Test
-	public void arithmeticProviderTest() throws Exception {
+	public void arithmeticProvider() throws Exception {
 		Task t5 = task(
 				"t5",
 				sig("add", Adder.class),
@@ -126,25 +125,26 @@ public class ArithmeticNetTest implements SorcerConstants {
 		//logger.info("t5 value: " + get(t5));
 		assertTrue(value(t5).equals(100.0));
 	}
-	
+
 	@Test
-	public void arithmeticNetMultiFiTaskTest() throws Exception {
+	public void multiFiObjectTaskTest() throws Exception {
+		ServiceExertion.debug = true;
+
 		Task task = task("add",
-				sFi("net", sig("add", Adder.class)),
-				sFi("object", sig("add", AdderImpl.class)),
+				sFi("object", sig("add", Adder.class)),
+				sFi("net", sig("add", AdderImpl.class)),
 				context(inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
 						result("result/y")));
-		
-		logger.info("sFi: " + sFi(task));
-		logger.info("sFis: " + srvFis(task));
 
-//		task = exert(task, sFi("object"));
-//		logger.info("exerted: " + task);
-//		assertTrue("Wrong value for 100.0", get(task).equals(100.0));
-		
+		logger.info("task fi: " + fi(task));
+		assertTrue(fis(task).size() == 2);
+		logger.info("selected Fi: " + fiName(task));
+		assertTrue(fiName(task).equals("object"));
+
 		task = exert(task, fi("net"));
-		logger.info("exerted: " + task);
-		assertTrue("Wrong value for 100.0", get(task).equals(100.0));
+		logger.info("exerted: " + context(task));
+		assertTrue(fiName(task).equals("net"));
+		assertTrue(get(task).equals(100.0));
 	}
 
 	private Job getMultiFiJob() throws Exception {
@@ -177,90 +177,74 @@ public class ArithmeticNetTest implements SorcerConstants {
 				t3,
 				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
 				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")),
-				sFi("job1", cFi("j1/j2/t4", "object"), cFi("j1/j2/t5", "net")),
-				sFi("job2",  cFi("j1/j2", "net"),
+				fi("job1", cFi("j1/j2/t4", "object"), cFi("j1/j2/t5", "net")),
+				fi("job2",  cFi("j1/j2", "net"),
 						cFi("j1/t3", "net"), cFi("j1/j2/t4", "net"), cFi("j1/j2/t5", "net")),
-				sFi("job3",  cFi("j1", "net"), cFi("j1/j2", "net"),
+				fi("job3",  cFi("j1", "net"), cFi("j1/j2", "net"),
 						cFi("j1/t3", "net"), cFi("j1/j2/t4", "net"), cFi("j1/j2/t5", "net")));
 
 		return (Job)tracable(job);
 	}
 
-	@Ignore
 	@Test
 	public void arithmeticMultiFiJobTest() throws Exception {
 
 		Job job = getMultiFiJob();
 
-		logger.info("sFi j1: " + sFi(job));
-		logger.info("sFis j1: " + sFis(job));
-		logger.info("sFi j2: " + sFi(exertion(job, "j1/j2")));
-		logger.info("sFis j2: " + sFis(exertion(job, "j1/tj2")));
-		logger.info("sFi t3: " + sFi(exertion(job, "j1/t3")));
-		logger.info("sFi t4: " + sFi(exertion(job, "j1/j2/t4")));
-		logger.info("sFi t5: " + sFi(exertion(job, "j1/j2/t5")));
+		logger.info("j1 fi: " + fi(job));
+		logger.info("j1 fis: " + fis(job));
+		logger.info("j2 fi: " + fi(exertion(job, "j1/j2")));
+		logger.info("j2 fis: " + fis(exertion(job, "j1/tj2")));
+		logger.info("t3 fi: " + fi(exertion(job, "j1/t3")));
+		logger.info("t4 fi: " + fi(exertion(job, "j1/j2/t4")));
+		logger.info("t5 fi: " + fi(exertion(job, "j1/j2/t5")));
 		logger.info("job context: " + upcontext(job));
 
 		// Jobbers and  all tasks are local
-		job = exert(job);
-		logger.info("job context: " + upcontext(job));
-		assertTrue(get(job, "j1/t3/result/y").equals(400.0));
+		Context out = upcontext(exert(job));
+		logger.info("job context: " + out);
+		assertTrue(value(out, "j1/t3/result/y").equals(400.0));
 
-		//  Local Jobbers with remote Multiplier nad Adder
+		//Local Jobbers with remote Multiplier nad Adder
 		job = getMultiFiJob();
 		job = exert(job, fi("object"), cFi("j1/j2/t4", "net"), cFi("j1/j2/t5", "net"));
-		logger.info("job context: " + upcontext(job));
+		out = upcontext(exert(job));
+		logger.info("job context: " + out);
 		logger.info("job trace: " + trace(job));
-		assertTrue(get(job, "j1/t3/result/y").equals(400.0));
+		assertTrue(value(out, "j1/t3/result/y").equals(400.0));
 
 		// Local Jobbers, Adder, and Multiplier with remote Subtractor
 		job = getMultiFiJob();
-		job = exert(job, cFi("j1", "object"), cFi("j1/t3", "net"));
-		logger.info("job context: " + upcontext(job));
+		job = exert(job, fi("object"), cFi("j1/t3", "net"));
+		out = upcontext(exert(job));
+		logger.info("job context: " + out);
 		logger.info("job trace: " + trace(job));
-		assertTrue(get(job, "j1/t3/result/y").equals(400.0));
+		assertTrue(value(out, "j1/t3/result/y").equals(400.0));
 
 		// Composite fidelity for local execution with remote Adder
 		job = getMultiFiJob();
 		job = exert(job, fi("job1"));
-		logger.info("job context: " + upcontext(job));
+		out = upcontext(exert(job));
+		logger.info("job context: " + out);
 		logger.info("job trace: " + trace(job));
-		assertTrue(get(job, "j1/t3/result/y").equals(400.0));
+		assertTrue(value(out, "j1/t3/result/y").equals(400.0));
 
 		// Composite fidelity for j1 local, j2 remote with all
 		// remote component services
 		job = getMultiFiJob();
 		job = exert(job, fi("job2"));
-		logger.info("job context: " + upcontext(job));
+		out = upcontext(exert(job));
+		logger.info("job context: " + out);
 		logger.info("job trace: " + trace(job));
-		assertTrue(get(job, "j1/t3/result/y").equals(400.0));
+		assertTrue(value(out, "j1/t3/result/y").equals(400.0));
 
 		// Composite fidelity for all remote services
 		job = getMultiFiJob();
 		job = exert(job, fi("job3"));
-		logger.info("job context: " + upcontext(job));
+		out = upcontext(exert(job));
+		logger.info("job context: " + out);
 		logger.info("job trace: " + trace(job));
-		assertTrue(get(job, "j1/t3/result/y").equals(400.0));
-	}
-
-	@Test
-	public void netObjectFiTask() throws Exception {
-
-		Task task = task("add",
-				sFi("net", sig("add", Adder.class)),
-				sFi("object", sig("add", AdderImpl.class)),
-				context(inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
-						result("result/y")));
-
-		logger.info("sFi: " + sFi(task));
-		assertTrue(sFis(task).size() == 2);
-		logger.info("fiName: " + fiName(task));
-		assertTrue(fiName(task).equals("net"));
-
-		task = exert(task, fi("net"));
-		logger.info("exerted: " + context(task));
-		assertTrue(fiName(task).equals("net"));
-		assertTrue(get(task).equals(100.0));
+		assertTrue(value(out, "j1/t3/result/y").equals(400.0));
 	}
 
 	@Test

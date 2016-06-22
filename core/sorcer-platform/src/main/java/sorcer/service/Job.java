@@ -180,7 +180,7 @@ public class Job extends CompoundExertion {
 			throw new ExertionException(e);
 		}
 		ex.setParentId(getId());
-		((ServiceMogram)ex).setParent(this);
+//		((ServiceMogram)ex).setParent(this);
 		return this;
 	}
 
@@ -477,8 +477,8 @@ public class Job extends CompoundExertion {
 	 */
 	@Override
 	public Object getValue(String path, Arg... args) throws ContextException {
-		if (path.startsWith("super")) {
-			return ((Exertion)parent).getContext().getValue(path.substring(6), args);
+		if (path.startsWith("super") && parent != null) {
+				return parent.getContext().getValue(path.substring(6), args);
 		} else {
 			if (path.indexOf(name) >= 0)
 				return getJobValue(path);

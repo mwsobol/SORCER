@@ -486,17 +486,15 @@ public class ControlContext extends ServiceContext<Object> implements StrategyCo
 
 	public void registerExertion(Mogram mogram) throws ContextException {
 		if (mogram instanceof Job)
-			put(((Job)mogram).getControlContext().getName(),
-					((ServiceExertion) mogram).getId());
+			put(((Job)mogram).getControlContext().getName(), mogram.getId());
 		else if (mogram instanceof Exertion) {
-			put(((Exertion) mogram).getContext().getName(), mogram.getId());
+			put(mogram.getContext().getName(), mogram.getId());
 		} else {
 			// TODO explain if registration is still needed
 			put(mogram.getName(), mogram.getId());
 			return;
 		}
-		setPriority((Exertion) mogram,
-				MAX_PRIORITY - ((ServiceExertion) mogram).getIndex());
+		setPriority((Exertion) mogram, MAX_PRIORITY - mogram.getIndex());
 		setExecTimeRequested(((Exertion)mogram), true);
 	}
 

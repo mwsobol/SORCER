@@ -1,6 +1,5 @@
 package sorcer.sml.jobs;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -276,23 +275,7 @@ public class NetJobExertions implements SorcerConstants {
 		assertEquals(value(result, "arg/x2"), 80.0);
 		
 	}
-	
-	@Test
-	public void netContexterTaskTest() throws Exception {
-		
-		Task t5 = task("t5", sig("add", Adder.class), 
-					sig("getContext", Contexter.class, prvName("Add Contexter"), Signature.APD),
-					context("add", inEnt("arg/x1"), inEnt("arg/x2"),
-						result("result/y")));
 
-		Context result =  context(exert(t5));
-		logger.info("out context: " + result);
-		assertEquals(value(result, "arg/x1"), 20.0);
-		assertEquals(value(result, "arg/x2"), 80.0);
-		assertEquals(value(result, "result/y"), 100.0);
-		
-	}
-	
 	public Job createProvisionedJob() throws Exception {
 		
 		Task f4 = task(
@@ -378,7 +361,7 @@ public class NetJobExertions implements SorcerConstants {
 	}
 
 	@Test
-	public void createMogram() throws Exception {
+	public void createModelWithTask() throws Exception {
 
 		ParModel vm = parModel(
 				"Hello Arithmetic #2",
@@ -429,29 +412,27 @@ public class NetJobExertions implements SorcerConstants {
 				t3,
 				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
 				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")),
-				sFi("job1", cFi("j1/j2/t4", "object"), cFi("j1/j2/t5", "net")),
-				sFi("job2",  cFi("j1/j2", "net"),
+				fi("job1", cFi("j1/j2/t4", "object"), cFi("j1/j2/t5", "net")),
+				fi("job2",  cFi("j1/j2", "net"),
 						cFi("j1/t3", "net"), cFi("j1/j2/t4", "net"), cFi("j1/j2/t5", "net")),
-				sFi("job3",  cFi("j1", "net"), cFi("j1/j2", "net"),
+				fi("job3",  cFi("j1", "net"), cFi("j1/j2", "net"),
 						cFi("j1/t3", "net"), cFi("j1/j2/t4", "net"), cFi("j1/j2/t5", "net")));
 
 		return (Job)tracable(job);
 	}
 
-	// Fix marshaling object signatures
-	@Ignore
 	@Test
 	public void arithmeticMultiFiJobTest() throws Exception {
 
 		Job job = getMultiFiJob();
 
-		logger.info("sFi j1: " + sFi(job));
-		logger.info("sFis j1: " + sFis(job));
-		logger.info("sFi j2: " + sFi(exertion(job, "j1/j2")));
-		logger.info("sFis j2: " + sFis(exertion(job, "j1/tj2")));
-		logger.info("sFi t3: " + sFi(exertion(job, "j1/t3")));
-		logger.info("sFi t4: " + sFi(exertion(job, "j1/j2/t4")));
-		logger.info("sFi t5: " + sFi(exertion(job, "j1/j2/t5")));
+		logger.info("j1 fi: " + fi(job));
+		logger.info("j1 fis: " + fis(job));
+		logger.info("j2 fi: " + fi(exertion(job, "j1/j2")));
+		logger.info("j2 fis: " + fis(exertion(job, "j1/tj2")));
+		logger.info("t3 fi: " + fi(exertion(job, "j1/t3")));
+		logger.info("t4 fi: " + fi(exertion(job, "j1/j2/t4")));
+		logger.info("t5 fi: " + fi(exertion(job, "j1/j2/t5")));
 		logger.info("job context: " + upcontext(job));
 
 		// Jobbers and  all tasks are local
@@ -459,24 +440,27 @@ public class NetJobExertions implements SorcerConstants {
 		logger.info("job context: " + out);
 		assertTrue(value(out, "j1/t3/result/y").equals(400.0));
 
-		//  Local Jobbers with remote Multiplier nad Adder
+		//Local Jobbers with remote Multiplier nad Adder
 		job = getMultiFiJob();
 		job = exert(job, fi("object"), cFi("j1/j2/t4", "net"), cFi("j1/j2/t5", "net"));
-		logger.info("job context: " + upcontext(job));
+		out = upcontext(exert(job));
+		logger.info("job context: " + out);
 		logger.info("job trace: " + trace(job));
 		assertTrue(value(out, "j1/t3/result/y").equals(400.0));
 
 		// Local Jobbers, Adder, and Multiplier with remote Subtractor
 		job = getMultiFiJob();
-		job = exert(job, cFi("j1", "object"), cFi("j1/t3", "net"));
-		logger.info("job context: " + upcontext(job));
+		job = exert(job, fi("object"), cFi("j1/t3", "net"));
+		out = upcontext(exert(job));
+		logger.info("job context: " + out);
 		logger.info("job trace: " + trace(job));
 		assertTrue(value(out, "j1/t3/result/y").equals(400.0));
 
 		// Composite fidelity for local execution with remote Adder
 		job = getMultiFiJob();
 		job = exert(job, fi("job1"));
-		logger.info("job context: " + upcontext(job));
+		out = upcontext(exert(job));
+		logger.info("job context: " + out);
 		logger.info("job trace: " + trace(job));
 		assertTrue(value(out, "j1/t3/result/y").equals(400.0));
 
@@ -484,14 +468,16 @@ public class NetJobExertions implements SorcerConstants {
 		// remote component services
 		job = getMultiFiJob();
 		job = exert(job, fi("job2"));
-		logger.info("job context: " + upcontext(job));
+		out = upcontext(exert(job));
+		logger.info("job context: " + out);
 		logger.info("job trace: " + trace(job));
 		assertTrue(value(out, "j1/t3/result/y").equals(400.0));
 
 		// Composite fidelity for all remote services
 		job = getMultiFiJob();
 		job = exert(job, fi("job3"));
-		logger.info("job context: " + upcontext(job));
+		out = upcontext(exert(job));
+		logger.info("job context: " + out);
 		logger.info("job trace: " + trace(job));
 		assertTrue(value(out, "j1/t3/result/y").equals(400.0));
 	}
