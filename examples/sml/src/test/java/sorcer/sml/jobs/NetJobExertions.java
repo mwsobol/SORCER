@@ -435,11 +435,11 @@ public class NetJobExertions implements SorcerConstants {
 		logger.info("t5 fi: " + fi(exertion(job, "j1/j2/t5")));
 		logger.info("job context: " + upcontext(job));
 		Context out = null;
-//		// Jobbers and  all tasks are local
-//		out = upcontext(exert(job));
-//		logger.info("job context: " + out);
-//		assertTrue(value(out, "j1/t3/result/y").equals(400.0));
-//
+		// Jobbers and  all tasks are local
+		out = upcontext(exert(job));
+		logger.info("job context: " + out);
+		assertTrue(value(out, "j1/t3/result/y").equals(400.0));
+
 //		//Local Jobbers with remote Multiplier nad Adder
 //		job = getMultiFiJob();
 //		job = exert(job, fi("object"), cFi("j1/j2/t4", "net"), cFi("j1/j2/t5", "net"));
@@ -447,7 +447,7 @@ public class NetJobExertions implements SorcerConstants {
 //		logger.info("job context: " + out);
 //		logger.info("job trace: " + trace(job));
 //		assertTrue(value(out, "j1/t3/result/y").equals(400.0));
-//
+
 //		// Local Jobbers, Adder, and Multiplier with remote Subtractor
 //		job = getMultiFiJob();
 //		job = exert(job, fi("object"), cFi("j1/t3", "net"));

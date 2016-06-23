@@ -98,11 +98,10 @@ public class ObjectTask extends Task {
 		try {
 			ReturnPath rt = (ReturnPath) getProcessSignature().getReturnPath();
 			if (rt != null && rt.inPaths != null)
-//				dataContext.updateContext(rt.inPaths);
 				dataContext.updateInOutPaths(rt.inPaths, rt.outPaths);
 			else
 				dataContext.updateContext();
-//			dataContext = (ServiceContext)dataContext.getCurrentContext();
+
 			if (dataContext.getArgs() != null)
 				os.setArgs(dataContext.getArgs());
 			if (dataContext.getParameterTypes() != null)

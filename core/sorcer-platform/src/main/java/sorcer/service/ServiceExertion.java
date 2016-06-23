@@ -136,8 +136,11 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
                     handleExertOutput(exertion, out);
                     return (T) exertion;
                 }
+            } else if (mogram instanceof Context) {
+                return (T) invoke((Context) mogram, args);
+            } else {
+                getContext().appendContext(mogram.getContext());
             }
-            getContext().appendContext(mogram.getContext());
             return (T) exert(txn);
         } catch (Exception e) {
             e.printStackTrace();

@@ -256,8 +256,7 @@ public class Arithmometer implements SorcerConstants, Serializable {
 			} else if (selector.equals(DIVIDE)) {
 				if (inputs.size() > 2 || inputs.size() < 2)
 					throw new ContextException("two arguments needed for division");
-//				result = (Double)revalue(context.getInValueAt(1));
-//				result /= (Double)revalue(context.getInValueAt(2));
+
 				result = (Double)revalue(inputs.get(0));
 				result /= (Double)revalue(inputs.get(1));
 			} else if (selector.equals(AVERAGE)) {

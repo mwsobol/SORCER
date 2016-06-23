@@ -1936,6 +1936,10 @@ public class operator {
 		}
 	}
 
+	public static Mogram sub(Exertion mogram, String path) {
+		return mogram.getComponentMogram(path);
+	}
+
 	public static Object get(Service mogram, String path)
 			throws ContextException {
 		Object obj = null;
@@ -1957,11 +1961,9 @@ public class operator {
 //				}
 //			}
 		} else if (mogram instanceof Exertion) {
-			obj = ((Exertion)mogram).getValue(path);
+			obj = (((Exertion) mogram).getContext()).asis(path);
 		} else if (mogram instanceof Model) {
-			return rasis((ServiceContext) mogram, path);
-		} else if (mogram instanceof Exertion) {
-			obj = (((Exertion) mogram).getContext()).getValue(path);
+			obj =  rasis((ServiceContext) mogram, path);
 		}
 		return obj;
 	}
@@ -1970,7 +1972,7 @@ public class operator {
 			throws ExertionException {
 		Exertion c = (Exertion) exertion.getMogram(component);
 		try {
-			return get((Mogram) c, path);
+			return get(c, path);
 		} catch (Exception e) {
 			throw new ExertionException(e);
 		}
