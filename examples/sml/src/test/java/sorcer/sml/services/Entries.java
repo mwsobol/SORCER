@@ -155,7 +155,7 @@ public class Entries {
     public void signatureEntry() throws Exception {
 
         Entry y1 = ent("y1", sig("add", AdderImpl.class, result("add/out",
-                        inPaths("add/x1", "add/x2"))),
+                        inPaths("x1", "x2"))),
                     context(inEnt("x1", 10.0), inEnt("x2", 20.0)));
 
         assertEquals(30.0, value(y1));

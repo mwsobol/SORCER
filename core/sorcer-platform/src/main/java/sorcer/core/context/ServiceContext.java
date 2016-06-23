@@ -2836,7 +2836,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 				}
 			}
 			if (currentPath.startsWith("super")) {
-				obj = (T) exertion.getContext().getValue(currentPath.substring(6));
+				obj = (T) exertion.getScope().getValue(currentPath.substring(6));
 			} else {
 				obj = (T) getValue0(currentPath);
 				if (obj instanceof Evaluation && isRevaluable) {
@@ -2862,7 +2862,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 					((Scopable)((Entry)obj).value()).setScope(this);
 				obj = (T) ((Evaluation) obj).getValue(entries);
 			}
-			if (obj == Context.none && scope != null)
+			if (scope != null && (obj == Context.none || obj == null ))
 				obj = (T ) scope.getValue(path, entries);
 
 			return (T) obj;
@@ -3288,7 +3288,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		return (T) exert(exertion, null, (Arg[])null);
 	}
 
-	public Context updateContext(Path... paths) throws ContextException {
+	public Context updateInOutPaths(Path[] inpaths, Path[] outpaths) throws ContextException, RemoteException {
 		if (containsPath(Condition._closure_)) {
 			remove(Condition._closure_);
 		}
@@ -3297,29 +3297,27 @@ public class ServiceContext<T> extends ServiceMogram implements
 			scope.remove(Condition._closure_);
 		}
 
-		if (scope != null && scope.size() > 0) {
-			List<String> allPaths = null;
-			List<String> cxtPaths = getPaths();
-			if (paths != null) {
-				allPaths = new ArrayList<String>();
-				allPaths.addAll(Path.getPathList(paths));
-				allPaths.addAll(cxtPaths);
-			} else {
-				allPaths = cxtPaths;
+		if (inpaths != null) {
+			for (Path path : inpaths) {
+				putInValue(path.getName(), (T) getValue(path.getName()));
 			}
-			List<String> inpaths = ((ServiceContext) scope).getInPaths();
-			List<String> outpaths = ((ServiceContext) scope).getOutPaths();
-			// append missing values available in the scope
-			for (String path : allPaths) {
-				if (getValue(path) == null || getValue(path) == Context.none) {
-					if (inpaths.contains(path))
-						putInValue(path, (T) scope.getValue(path));
-					else if (outpaths.contains(path))
-						putOutValue(path, (T) scope.getValue(path));
-					else
-						putValue(path, scope.getValue(path));
-				}
+		}
+
+		if (outpaths != null) {
+			for (Path path : outpaths) {
+				putOutValue(path.getName(), (T) getValue(path.getName()));
 			}
+		}
+		return this;
+	}
+
+	public Context updateContext(Path... paths) throws ContextException {
+		if (containsPath(Condition._closure_)) {
+			remove(Condition._closure_);
+		}
+		if (scope != null &&
+				scope.containsPath(Condition._closure_)) {
+			scope.remove(Condition._closure_);
 		}
 		return this;
 	}
@@ -3405,6 +3403,13 @@ public class ServiceContext<T> extends ServiceMogram implements
 			return getResponse(args);
 		} else {
 			return getValue(args);
+		}
+	}
+
+	public void clean() {
+		exertion = null;
+		if (scope != null) {
+			((ServiceContext) scope).clean();
 		}
 	}
 }

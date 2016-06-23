@@ -84,8 +84,6 @@ public interface Mogram extends Identifiable, Service, Exerter, Projection, Scop
 
     public Context getContext() throws ContextException;
 
-	public Context getSupercontext() throws ContextException;
-
     public Mogram clearScope() throws MogramException;
 
     public void reportException(Throwable t);

@@ -522,6 +522,8 @@ public class ServiceShell implements RemoteServiceShell, Client, Callable {
 //						 } catch (Exception e) {
 //							 e.printStackTrace();
 //						 }
+//			exertion.setControlContext(new ControlContext());
+//			exertion.getDataContext().setScope(null);
 			Exertion result = provider.exert(exertion, transaction, entries);
 			if (result != null && result.getExceptions().size() > 0) {
 				for (ThrowableTrace et : result.getExceptions()) {

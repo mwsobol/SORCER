@@ -288,7 +288,7 @@ public class Arithmometer implements SorcerConstants, Serializable {
 				if (outpath.indexOf("${name}") >= 0) {
 					if (outpath.indexOf("${name}") >= 0) {
 						outpath = outpath.replace("${name}", 
-							((ServiceContext)context).getMogram().getName());
+							context.getMogram().getName());
 					}
 				}
 				cxt.putValue(outpath, result);

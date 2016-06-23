@@ -31,9 +31,9 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
 
     protected Uuid mogramId;
 
-    protected Mogram parent;
-
     protected Uuid parentId;
+
+    protected Mogram parent;
 
     protected String parentPath = "";
 
@@ -193,13 +193,6 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
     public Uuid getParentId() {
         return parentId;
     }
-
-    public Context getSupercontext() throws ContextException {
-        if (parent != null)
-            return parent.getContext();
-        else
-            return null;
-    };
 
     public List<Mogram> getAllMograms() {
         List<Mogram> exs = new ArrayList<Mogram>();
@@ -807,7 +800,6 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
                 selectCompositeFidelity(sf);
             }
         }
-//        trimAllNotSerializableSignatures();
         return serviceFidelity;
     }
 
@@ -821,7 +813,6 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
         } else {
             logger.warn("no such fidelity for {}" + componentFidelity);
         }
-//        trimNotSerializableSignatures(cf);
         return cf;
     }
 

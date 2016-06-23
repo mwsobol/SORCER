@@ -262,7 +262,7 @@ public interface Context<T> extends Model, Mappable<T>, Serializable, Contexter<
 	 * @param task
 	 *            The task to set.
 	 */
-	public void setExertion(Exertion task) throws ExertionException;
+	public void setExertion(Exertion task);
 
 	/**
 	 * Returns the subject path in this context. A subject is a path/value

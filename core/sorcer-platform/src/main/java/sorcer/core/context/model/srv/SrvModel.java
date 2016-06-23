@@ -260,7 +260,7 @@ public class SrvModel extends ParModel<Object> implements Model, Invocation<Obje
                         SignatureReturnPath rt = ((Exertion) out).getProcessSignature().getReturnPath();
                         if (rt != null && rt.getPath() != null) {
                             Object obj = cxt.getReturnValue();
-                            putOutValue(rt.getPath(), obj);
+                            putInoutValue(rt.getPath(), obj);
                             ((Srv) get(path)).setSrvValue(obj);
                             return obj;
                         } else {

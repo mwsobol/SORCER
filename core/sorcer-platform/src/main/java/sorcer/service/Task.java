@@ -381,11 +381,13 @@ public class Task extends ServiceExertion {
 	 */
 	@Override
 	public Object getValue(String path, Arg... args) throws ContextException {
-		if (path.startsWith("super") && parent != null) {
-			return parent.getContext().getValue(path.substring(6));
-		} else {
-			return dataContext.getValue(path, args);
+		Object val = dataContext.getValue(path, args);
+		if (val == Context.none) {
+			if (scope != null){
+			val = scope.getValue(path, args);
+			}
 		}
+		return val;
 	}
 
 	public List<Mogram> getMograms(List<Mogram> exs) {

@@ -186,66 +186,66 @@ public class ArithmeticNetTest implements SorcerConstants {
 		return (Job)tracable(job);
 	}
 
-	@Test
-	public void arithmeticMultiFiJobTest() throws Exception {
-
-		Job job = getMultiFiJob();
-
-		logger.info("j1 fi: " + fi(job));
-		logger.info("j1 fis: " + fis(job));
-		logger.info("j2 fi: " + fi(exertion(job, "j1/j2")));
-		logger.info("j2 fis: " + fis(exertion(job, "j1/tj2")));
-		logger.info("t3 fi: " + fi(exertion(job, "j1/t3")));
-		logger.info("t4 fi: " + fi(exertion(job, "j1/j2/t4")));
-		logger.info("t5 fi: " + fi(exertion(job, "j1/j2/t5")));
-		logger.info("job context: " + upcontext(job));
-
-		// Jobbers and  all tasks are local
-		Context out = upcontext(exert(job));
-		logger.info("job context: " + out);
-		assertTrue(value(out, "j1/t3/result/y").equals(400.0));
-
-		//Local Jobbers with remote Multiplier nad Adder
-		job = getMultiFiJob();
-		job = exert(job, fi("object"), cFi("j1/j2/t4", "net"), cFi("j1/j2/t5", "net"));
-		out = upcontext(exert(job));
-		logger.info("job context: " + out);
-		logger.info("job trace: " + trace(job));
-		assertTrue(value(out, "j1/t3/result/y").equals(400.0));
-
-		// Local Jobbers, Adder, and Multiplier with remote Subtractor
-		job = getMultiFiJob();
-		job = exert(job, fi("object"), cFi("j1/t3", "net"));
-		out = upcontext(exert(job));
-		logger.info("job context: " + out);
-		logger.info("job trace: " + trace(job));
-		assertTrue(value(out, "j1/t3/result/y").equals(400.0));
-
-		// Composite fidelity for local execution with remote Adder
-		job = getMultiFiJob();
-		job = exert(job, fi("job1"));
-		out = upcontext(exert(job));
-		logger.info("job context: " + out);
-		logger.info("job trace: " + trace(job));
-		assertTrue(value(out, "j1/t3/result/y").equals(400.0));
-
-		// Composite fidelity for j1 local, j2 remote with all
-		// remote component services
-		job = getMultiFiJob();
-		job = exert(job, fi("job2"));
-		out = upcontext(exert(job));
-		logger.info("job context: " + out);
-		logger.info("job trace: " + trace(job));
-		assertTrue(value(out, "j1/t3/result/y").equals(400.0));
-
-		// Composite fidelity for all remote services
-		job = getMultiFiJob();
-		job = exert(job, fi("job3"));
-		out = upcontext(exert(job));
-		logger.info("job context: " + out);
-		logger.info("job trace: " + trace(job));
-		assertTrue(value(out, "j1/t3/result/y").equals(400.0));
-	}
+//	@Test
+//	public void arithmeticMultiFiJobTest() throws Exception {
+//
+//		Job job = getMultiFiJob();
+//
+//		logger.info("j1 fi: " + fi(job));
+//		logger.info("j1 fis: " + fis(job));
+//		logger.info("j2 fi: " + fi(exertion(job, "j1/j2")));
+//		logger.info("j2 fis: " + fis(exertion(job, "j1/tj2")));
+//		logger.info("t3 fi: " + fi(exertion(job, "j1/t3")));
+//		logger.info("t4 fi: " + fi(exertion(job, "j1/j2/t4")));
+//		logger.info("t5 fi: " + fi(exertion(job, "j1/j2/t5")));
+//		logger.info("job context: " + upcontext(job));
+//
+//		// Jobbers and  all tasks are local
+//		Context out = upcontext(exert(job));
+//		logger.info("job context: " + out);
+//		assertTrue(value(out, "j1/t3/result/y").equals(400.0));
+//
+//		//Local Jobbers with remote Multiplier nad Adder
+//		job = getMultiFiJob();
+//		job = exert(job, fi("object"), cFi("j1/j2/t4", "net"), cFi("j1/j2/t5", "net"));
+//		out = upcontext(exert(job));
+//		logger.info("job context: " + out);
+//		logger.info("job trace: " + trace(job));
+//		assertTrue(value(out, "j1/t3/result/y").equals(400.0));
+//
+//		// Local Jobbers, Adder, and Multiplier with remote Subtractor
+//		job = getMultiFiJob();
+//		job = exert(job, fi("object"), cFi("j1/t3", "net"));
+//		out = upcontext(exert(job));
+//		logger.info("job context: " + out);
+//		logger.info("job trace: " + trace(job));
+//		assertTrue(value(out, "j1/t3/result/y").equals(400.0));
+//
+//		// Composite fidelity for local execution with remote Adder
+//		job = getMultiFiJob();
+//		job = exert(job, fi("job1"));
+//		out = upcontext(exert(job));
+//		logger.info("job context: " + out);
+//		logger.info("job trace: " + trace(job));
+//		assertTrue(value(out, "j1/t3/result/y").equals(400.0));
+//
+//		// Composite fidelity for j1 local, j2 remote with all
+//		// remote component services
+//		job = getMultiFiJob();
+//		job = exert(job, fi("job2"));
+//		out = upcontext(exert(job));
+//		logger.info("job context: " + out);
+//		logger.info("job trace: " + trace(job));
+//		assertTrue(value(out, "j1/t3/result/y").equals(400.0));
+//
+//		// Composite fidelity for all remote services
+//		job = getMultiFiJob();
+//		job = exert(job, fi("job3"));
+//		out = upcontext(exert(job));
+//		logger.info("job context: " + out);
+//		logger.info("job trace: " + trace(job));
+//		assertTrue(value(out, "j1/t3/result/y").equals(400.0));
+//	}
 
 	@Test
 	public void averagerproxyProviderTest() throws Exception {

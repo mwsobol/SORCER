@@ -638,7 +638,7 @@ public class MultiFidelities {
         assertTrue(get(out, "mFi1").equals(900.0));
         assertTrue(get(out, "mFi2").equals(50.0));
         assertTrue(get(out, "mFi3").equals(9.0));
-        assertTrue(get(out, "mFi4").equals(940.0));
+        assertTrue(get(out, "mFi4").equals(828020.0));
     }
 
     @Test
@@ -653,6 +653,6 @@ public class MultiFidelities {
         logger.info("block context: " + context(mdlBlock));
         logger.info("result: " + value(context(mdlBlock), "mFi4"));
 
-        assertTrue(value(context(mdlBlock), "mFi4").equals(960.0));
+        assertTrue(value(context(mdlBlock), "mFi4").equals(920.0));
     }
 }

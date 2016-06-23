@@ -56,7 +56,6 @@ import java.util.*;
  * 
  * @author Mike Sobolewski
  */
-@SuppressWarnings("rawtypes")
 public class Job extends CompoundExertion {
 
 	private static final long serialVersionUID = -6161435179772214884L;
@@ -176,6 +175,7 @@ public class Job extends CompoundExertion {
 		ex.setIndex(mograms.indexOf(ex));
 		try {
 			controlContext.registerExertion(ex);
+			ex.getDataContext().setScope(dataContext);
 		} catch (ContextException e) {
 			throw new ExertionException(e);
 		}
@@ -477,14 +477,14 @@ public class Job extends CompoundExertion {
 	 */
 	@Override
 	public Object getValue(String path, Arg... args) throws ContextException {
-		if (path.startsWith("super") && parent != null) {
-				return parent.getContext().getValue(path.substring(6), args);
-		} else {
-			if (path.indexOf(name) >= 0)
-				return getJobValue(path);
-			else
-				return dataContext.getValue(path, args);
+		if (path.indexOf(name) >= 0) {
+			return getJobValue(path);
 		}
+		Object val = dataContext.getValue(path, args);
+		if (val == Context.none) {
+			val = scope.getValue(path, args);
+		}
+		return val;
 	}
 	
 	public Object putValue(String path, Object value) throws ContextException {

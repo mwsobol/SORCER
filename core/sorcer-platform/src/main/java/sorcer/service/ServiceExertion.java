@@ -402,7 +402,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
     public void setSessionId(Uuid id) {
         sessionId = id;
         if (this instanceof CompoundExertion) {
-            List<Mogram> v = ((CompoundExertion) this).getMograms();
+            List<Mogram> v =  this.getMograms();
             for (int i = 0; i < v.size(); i++) {
                 ((ServiceExertion) v.get(i)).setSessionId(id);
             }
@@ -411,8 +411,8 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
 
     public ServiceExertion setContext(Context context) {
         this.dataContext = (ServiceContext) context;
-        if (context != null)
-            ((ServiceContext) context).setExertion(this);
+//        if (context != null)
+//            context.setExertion(this);
         return this;
     }
 
@@ -493,7 +493,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
             throws ContextException {
         Exertion component = (Exertion)getMogram(componentExertionName);
         if (component != null)
-            return ((Exertion)getMogram(componentExertionName)).getContext();
+            return getMogram(componentExertionName).getContext();
         else
             return null;
     }
@@ -708,6 +708,11 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
         }
         return deploymnets;
     }
+
+	public void trimNotSerializableSignatures() {
+		super.trimNotSerializableSignatures();
+		dataContext.clean();
+	}
 
     /*
      * (non-Javadoc)
