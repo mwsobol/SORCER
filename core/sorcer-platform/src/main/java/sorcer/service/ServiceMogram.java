@@ -433,6 +433,20 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
 		}
 	}
 
+//	private void trimNotSerializableSignatures(ServiceFidelity<Signature> fidelity) {
+//		Iterator<Signature> i = fidelity.getSelects().iterator();
+//		while (i.hasNext()) {
+//            Signature sig = i.next();
+//			Class prvType = sig.getServiceType();
+//			if (prvType != null && !prvType.isInterface()
+//				&& !Serializable.class.isAssignableFrom(prvType)) {
+//                sig.setServiceType(null);
+//				((ServiceSignature)sig).setProviderType(null);
+//				logger.warn("cleared not serializable signature for: {}", sig);
+//			}
+//		}
+//	}
+
     public List<Signature> getApdProcessSignatures() {
         List<Signature> sl = new ArrayList<Signature>();
         for (Signature s : serviceFidelity.getSelects()) {

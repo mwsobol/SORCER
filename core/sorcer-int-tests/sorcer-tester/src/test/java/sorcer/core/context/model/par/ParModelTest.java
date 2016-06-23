@@ -274,36 +274,34 @@ public class ParModelTest {
 		assertEquals(content(url2), "myUrl2");
 	}
 
-	@Ignore
 	@Test
-	public void persistableMappableParsTest() throws SignatureException, ExertionException, ContextException, IOException {
-		Context cxt = context(ent("url", "myUrl"), ent("design/in", 25.0));
+	public void mappableParPersistence() throws Exception {
+
+		Context cxt = context(ent("url", "htt://sorcersoft.org"), ent("design/in", 25.0));
 
 		// persistent par
 		Par dbIn = persistent(map(par("dbIn", "design/in"), cxt));
-		assertEquals(value(dbIn), 25.0);  	// is persisted
-		logger.info("value dbIn asis design/in 1: " + dbIn.getMappable().asis("design/in"));
-
-		assertTrue(asis(cxt,"design/in") instanceof Par);
-		assertTrue(value((Par) asis(cxt, "design/in")).equals(25.0));
-		assertEquals(value(cxt, "design/in"), 25.0);
+		assertTrue(value(dbIn).equals(25.0));  	// is persisted
+		assertTrue(dbIn.asis().equals("design/in"));
+		assertTrue(value((Evaluation) asis(cxt, "design/in")).equals(25.0));
+		assertTrue(value(cxt, "design/in").equals(25.0));
 
 		set(dbIn, 30.0); 	// is persisted
-		
-//		logger.info("value dbIn asis: " + dbIn.asis());
-//		logger.info("value dbIn asis design/in 2: " + dbIn.getMappable().asis("design/in"));
-
-		logger.info("value dbIn: " + value(dbIn));
 		assertTrue(value(dbIn).equals(30.0));
-		
+
+		// associated context is updated accordingly
+		assertTrue(value(cxt, "design/in").equals(30.0));
+		assertTrue(asis(cxt, "design/in") instanceof Par);
+		assertTrue(asis((Par)asis(cxt, "design/in")) instanceof URL);
+
 		// not persistent par
-		Par up = map(par("up", "url"), cxt);
-		assertEquals(value(up), "myUrl");
-		
-		set(up, "newUrl");
-		assertEquals(value(up), "newUrl");
+		Par sorcer = map(par("sorcer", "url"), cxt);
+		assertEquals(value(sorcer), "htt://sorcersoft.org");
+
+		set(sorcer, "htt://sorcersoft.org/sobol");
+		assertTrue(value(sorcer).equals("htt://sorcersoft.org/sobol"));
 	}
-	
+
 	@Test
 	public void aliasedParsTest() throws ContextException, RemoteException {
 		Context cxt = context(ent("design/in1", 25.0), ent("design/in2", 35.0));

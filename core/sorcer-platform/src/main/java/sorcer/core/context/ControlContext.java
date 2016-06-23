@@ -670,6 +670,11 @@ public class ControlContext extends ServiceContext<Object> implements StrategyCo
 		this.mutexId = mutexId;
 	}
 
+	public void clean() {
+		super.clean();
+		scope = null;
+	}
+
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append(super.toString());

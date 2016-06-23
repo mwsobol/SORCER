@@ -99,10 +99,12 @@ public class Par<T> extends Entry<T> implements Variability<T>, Mappable<T>,
 			selectedFidelity = first.getName();
 			value = (T)first;
 		} else {
-			if (argument instanceof Evaluation || argument instanceof Invocation)
+			if (argument instanceof Evaluation || argument instanceof Invocation) {
 				value = argument;
-			else
+			} else {
 				_2 = argument;
+				value = argument;
+			}
 
 		}
 	}

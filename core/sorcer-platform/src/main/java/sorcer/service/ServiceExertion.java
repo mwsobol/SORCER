@@ -714,7 +714,8 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
 
 	public void trimNotSerializableSignatures() {
 		super.trimNotSerializableSignatures();
-		dataContext.clean();
+        getControlContext().setScope(null);
+        dataContext.clean();
 	}
 
     /*

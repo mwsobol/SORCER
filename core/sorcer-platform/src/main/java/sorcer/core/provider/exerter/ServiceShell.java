@@ -56,6 +56,7 @@ import sorcer.service.Signature.ReturnPath;
 import sorcer.service.Strategy.Access;
 import sorcer.service.modeling.Model;
 import sorcer.service.txmgr.TransactionManagerAccessor;
+import sorcer.util.ObjectLogger;
 import sorcer.util.ProviderLocator;
 import sorcer.util.Sorcer;
 
@@ -508,22 +509,20 @@ public class ServiceShell implements RemoteServiceShell, Client, Callable {
 			exertion.reportException(new RuntimeException("Cannot find provider for: " + signature));
 			return exertion;
 		}
-		exertion.trimAllNotSerializableSignatures();
+		exertion.trimNotSerializableSignatures();;
 		exertion.getControlContext().appendTrace(String.format("shell: %s:%s", providerName, providerID));
 		logger.info("Provider found for: {}\n\t{}", signature, provider);
 		if (((Provider) provider).mutualExclusion()) {
-			return serviceMutualExclusion((Provider) provider, exertion,
-					transaction);
+			return serviceMutualExclusion((Provider) provider, exertion, transaction);
 		} else {
-//			 test exertion for serialization
-//						 try {
-//							 logger.info("ExertProcessor.exert0(): going to serialize exertion for testing!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-//							 ObjectLogger.persist("exertionfile", exertion);
-//						 } catch (Exception e) {
-//							 e.printStackTrace();
-//						 }
-//			exertion.setControlContext(new ControlContext());
-//			exertion.getDataContext().setScope(null);
+			// test exertion for serialization
+//			try{
+//				ObjectLogger.persist("exertionfiles.srl", exertion);
+//				ObjectLogger.restore("exertionfiles.srl");
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//			}
+
 			Exertion result = provider.exert(exertion, transaction, entries);
 			if (result != null && result.getExceptions().size() > 0) {
 				for (ThrowableTrace et : result.getExceptions()) {

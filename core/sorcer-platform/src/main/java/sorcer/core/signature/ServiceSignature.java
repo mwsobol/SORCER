@@ -210,6 +210,10 @@ public class ServiceSignature implements Signature, SorcerConstants {
 		providerName = name;
 	}
 
+	public void setProviderType(Class<?> providerType) {
+		this.providerType = providerType;
+	}
+
 	public void setOwnerId(String oid) {
 		ownerID = oid;
 	}
