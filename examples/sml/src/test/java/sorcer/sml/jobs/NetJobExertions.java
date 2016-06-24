@@ -14,10 +14,7 @@ import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.provider.impl.SubtractorImpl;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.model.par.ParModel;
-import sorcer.core.provider.Jobber;
-import sorcer.core.provider.Provider;
-import sorcer.core.provider.RemoteServiceShell;
-import sorcer.core.provider.ServiceTasker;
+import sorcer.core.provider.*;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.service.*;
 import sorcer.service.Strategy.Access;
@@ -322,9 +319,10 @@ public class NetJobExertions implements SorcerConstants {
 	public void arithmeticJobNetExerter() throws Exception {
 
 		// get the current value of the exertlet
-		Task task = task("eval", sig("getValue", Evaluation.class, prvName("Arithmetic Exerter")));
+		Exerter exerter = task("eval", sig("getValue", Evaluation.class, prvName("Arithmetic Exerter")));
 //		logger.info("j1/t3/result/y: " + value(task, "j1/t3/result/y"));
-		assertEquals(value(task, "j1/t3/result/y"), 400.0);
+		Context out = exert(exerter, context());
+		assertEquals(value(out, "j1/t3/result/y"), 400.0);
 
 		// update inputs contexts
 		Context multiplyContext = context("multiply", inEnt("arg/x1", 10.0), inEnt("arg/x2", 70.0));
@@ -332,11 +330,10 @@ public class NetJobExertions implements SorcerConstants {
 		Context invokeContext = context("invoke");
 		link(invokeContext, "t4", multiplyContext);
 		link(invokeContext, "t5", addContext);
-		task = task("invoke", sig("invoke", Invocation.class, prvName("Arithmetic Exerter")), invokeContext);
-		logger.info("j1/t3/result/y: " + context(task));
-
-		logger.info("j1/t3/result/y: " + value(task, "j1/t3/result/y"));
-		assertEquals(value(task, "j1/t3/result/y"), 500.0);
+		exerter = task("invoke", sig("invoke", Invocation.class, prvName("Arithmetic Exerter")), invokeContext);
+		out = exert(exerter, invokeContext);
+		logger.info("j1/t3/result/y: " + value(out, "j1/t3/result/y"));
+		assertEquals(value(out, "j1/t3/result/y"), 500.0);
 
 		// update contexts partially
 		multiplyContext = context("multiply", inEnt("arg/x1", 20.0));
@@ -344,9 +341,10 @@ public class NetJobExertions implements SorcerConstants {
 		invokeContext = context("invoke");
 		link(invokeContext, "t4", multiplyContext);
 		link(invokeContext, "t5", addContext);
-		task = task("invoke", sig("invoke", Invocation.class, prvName("Arithmetic Exerter")), invokeContext);
-//		logger.info("j1/t3/result/y: " + value(task, "j1/t3/result/y"));
-		assertEquals(value(task, "j1/t3/result/y"), 1210.0);
+		exerter = task("invoke", sig("invoke", Invocation.class, prvName("Arithmetic Exerter")), invokeContext);
+		out = exert(exerter, invokeContext);
+		logger.info("j1/t3/result/y: " + value(out, "j1/t3/result/y"));
+		assertEquals(value(out, "j1/t3/result/y"), 1210.0);
 
 		// reverse the state to the initial one
 		multiplyContext = context("multiply", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0));
@@ -354,10 +352,10 @@ public class NetJobExertions implements SorcerConstants {
 		invokeContext = context("invoke");
 		link(invokeContext, "t4", multiplyContext);
 		link(invokeContext, "t5", addContext);
-		task = task("invoke", sig("invoke", Invocation.class, prvName("Arithmetic Exerter")), invokeContext);
-//		logger.info("j1/t3/result/y: " + value(task, "j1/t3/result/y"));
-		assertEquals(value(task, "j1/t3/result/y"), 400.0);
-
+		exerter = task("invoke", sig("invoke", Invocation.class, prvName("Arithmetic Exerter")), invokeContext);
+		out = exert(exerter, invokeContext);
+		logger.info("j1/t3/result/y: " + value(out, "j1/t3/result/y"));
+		assertEquals(value(out, "j1/t3/result/y"), 400.0);
 	}
 
 	@Test

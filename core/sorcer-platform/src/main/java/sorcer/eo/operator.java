@@ -253,8 +253,11 @@ public class operator {
 
 	public static Context context(Object... entries) throws ContextException {
 		// do not create a context from Context, jut return
-		if (entries.length == 1 && entries[0] instanceof Context)
-			return  (Context)entries[0];
+		if (entries == null || entries.length == 0) {
+			return new ServiceContext();
+		} else if (entries.length == 1 && entries[0] instanceof Context) {
+			return (Context) entries[0];
+		}
 
 		Context cxt = null;
 		List<MapContext> connList = new ArrayList<MapContext>();
