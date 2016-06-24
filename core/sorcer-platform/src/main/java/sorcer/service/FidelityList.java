@@ -74,7 +74,7 @@ public class FidelityList extends ArrayList<ServiceFidelity> implements Arg {
 	public static FidelityList selectFidelities(Arg[] entries) {
 		FidelityList out = new FidelityList();
 		for (Arg a : entries) {
-			if (a instanceof ServiceFidelity && ((ServiceFidelity)a).type == ServiceFidelity.Type.EMPTY) {
+			if (a instanceof ServiceFidelity && ((ServiceFidelity)a).type == ServiceFidelity.Type.GENERIC) {
 				out.add((ServiceFidelity)a);
 			} else if (a instanceof FidelityList) {
 				out.addAll((FidelityList)a);

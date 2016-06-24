@@ -71,6 +71,7 @@ import java.net.URL;
 import java.net.UnknownHostException;
 import java.rmi.RemoteException;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static sorcer.co.operator.rasis;
 import static sorcer.co.operator.srv;
@@ -1370,7 +1371,7 @@ public class operator {
 
 	public static ServiceFidelity<?> fi(String name) {
 		ServiceFidelity<?> fi = new ServiceFidelity(name);
-		fi.type = ServiceFidelity.Type.EMPTY;
+		fi.type = ServiceFidelity.Type.GENERIC;
 		return fi;
 	}
 
@@ -1397,7 +1398,7 @@ public class operator {
 	public static ServiceFidelity<?> fi(String path, String name) {
 		ServiceFidelity<?> fi = new ServiceFidelity(name);
 		fi.setPath(path);
-		fi.type = ServiceFidelity.Type.EMPTY;
+		fi.type = ServiceFidelity.Type.GENERIC;
 		return fi;
 	}
 
@@ -1550,9 +1551,13 @@ public class operator {
 		else
 			tname = name;
 		Task task = null;
+		FidelityManager fiManager = null;
+		Strategy.FidelityMangement fm = null;
 		Access access = null;
 		Flow flow = null;
-		List<ServiceFidelity> fidelities = null;
+		List<ServiceFidelity> fis = new ArrayList<>();
+		MorphFidelity mFi = null;
+		List<ServiceFidelity<ServiceFidelity>> metaFis = new ArrayList<>();
 		ControlContext cc = null;
 		for (Object o : elems) {
 			if (o instanceof ControlContext) {
@@ -1567,10 +1572,19 @@ public class operator {
 				access = (Access) o;
 			} else if (o instanceof Flow) {
 				flow = (Flow) o;
-			} else if (o instanceof ServiceFidelity) {
-				if (fidelities == null)
-					fidelities = new ArrayList<ServiceFidelity>();
-				fidelities.add((ServiceFidelity) o);
+			} else if (o instanceof FidelityManager) {
+				fiManager = ((FidelityManager) o);
+			} else if (o instanceof MorphFidelity) {
+				mFi = (MorphFidelity) o;
+			} else if (o instanceof ServiceFidelity && ((ServiceFidelity) o).getSelects().size() > 0) {
+				List ss = ((ServiceFidelity) o).getSelects();
+				if (ss.get(0) instanceof ServiceFidelity) {
+					metaFis.add((ServiceFidelity<ServiceFidelity>) o);
+				} else {
+					fis.add(((ServiceFidelity) o));
+				}
+			} else if (o instanceof Strategy.FidelityMangement) {
+				fm = (Strategy.FidelityMangement) o;
 			}
 		}
 		Signature ss = null;
@@ -1603,23 +1617,50 @@ public class operator {
 			}
 			ops.remove(ss);
 		}
-		if (fidelities != null && fidelities.size() > 0) {
+
+		if (context == null) {
+			context = new PositionalContext();
+		}
+
+		if (fis.size() > 0 || mFi != null) {
 			task = new Task(tname);
-			for (int i = 0; i < fidelities.size(); i++) {
-				task.putFidelity(fidelities.get(i).getName(), fidelities.get(i));
-			}
-			task.setFidelity(fidelities.get(0));
-			task.setSelectedFidelitySelector(fidelities.get(0).getName());
 		} else {
 			for (Signature signature : ops) {
 				task.addSignature(signature);
 			}
 		}
-
-		if (context == null) {
-			context = new PositionalContext();
-		}
 		task.setContext(context);
+
+
+		if (fis.size() > 0) {
+			for (int i = 0; i < fis.size(); i++) {
+				task.putFidelity(fis.get(i).getName(), fis.get(i));
+			}
+			task.setFidelity(fis.get(0));
+			task.setSelectedFidelitySelector(fis.get(0).getName());
+		}
+
+		if (mFi != null) {
+			List<ServiceFidelity> sList = mFi.getSelects();
+			for (int i = 0; i < mFi.getSelects().size(); i++) {
+				task.putFidelity(sList.get(i).getName(), sList.get(i));
+			}
+			task.setServiceMorphFidelities(mFi);
+		}
+
+		if (fm == Strategy.FidelityMangement.YES && task.getFidelityManager() == null
+				|| mFi != null) {
+			fiManager = new FidelityManager(task);
+			task.setFidelityManager(fiManager);
+		}
+
+		if (fiManager != null) {
+			task.setFidelityManager(fiManager);
+			fiManager.setFidelities(task.getServiceFidelities());
+			fiManager.setMetafidelities(task.getServiceMetafidelities());
+			if (mFi != null)
+				fiManager.getMorphFidelities().put(mFi.getName(), mFi);
+		}
 
 		if (access != null) {
 			task.setAccess(access);
@@ -1633,6 +1674,7 @@ public class operator {
 		if (ss != null && ((ServiceSignature) ss).isProvisionable()) {
 			task.setProvisionable(true);
 		}
+
 		return task;
 	}
 

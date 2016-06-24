@@ -1,6 +1,5 @@
 package sorcer.sml.mogram;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -35,9 +34,9 @@ import static sorcer.mo.operator.traced;
  */
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/sml")
-public class MultiFidelities {
+public class ModelMultiFidelities {
 
-    private final static Logger logger = LoggerFactory.getLogger(MultiFidelities.class);
+    private final static Logger logger = LoggerFactory.getLogger(ModelMultiFidelities.class);
 
     @Test
     public void sigMultiFidelityModel() throws Exception {

@@ -97,6 +97,10 @@ public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Ob
         return morphFidelities;
     }
 
+    public void setMorphFidelities(Map<String, MorphFidelity> morphFidelities) {
+        this.morphFidelities = morphFidelities;
+    }
+
     public void setFidelities(Map<String, ServiceFidelity<T>> fidelities) {
         this.fidelities = fidelities;
     }

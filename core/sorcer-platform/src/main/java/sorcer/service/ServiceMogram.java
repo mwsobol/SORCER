@@ -9,6 +9,7 @@ import sorcer.core.SorcerConstants;
 import sorcer.core.context.ContextSelector;
 import sorcer.core.monitor.MonitoringSession;
 import sorcer.core.plexus.FidelityManager;
+import sorcer.core.plexus.MorphFidelity;
 import sorcer.core.signature.ServiceSignature;
 import sorcer.security.util.SorcerPrincipal;
 
@@ -106,6 +107,8 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
     protected Map<String, ServiceFidelity> serviceFidelities;
 
     protected ServiceFidelity<Signature> serviceFidelity = new ServiceFidelity(ServiceFidelity.Type.SIG);
+
+    protected MorphFidelity serviceMorphFidelity;
 
     protected SorcerPrincipal principal;
 
@@ -433,20 +436,6 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
 		}
 	}
 
-//	private void trimNotSerializableSignatures(ServiceFidelity<Signature> fidelity) {
-//		Iterator<Signature> i = fidelity.getSelects().iterator();
-//		while (i.hasNext()) {
-//            Signature sig = i.next();
-//			Class prvType = sig.getServiceType();
-//			if (prvType != null && !prvType.isInterface()
-//				&& !Serializable.class.isAssignableFrom(prvType)) {
-//                sig.setServiceType(null);
-//				((ServiceSignature)sig).setProviderType(null);
-//				logger.warn("cleared not serializable signature for: {}", sig);
-//			}
-//		}
-//	}
-
     public List<Signature> getApdProcessSignatures() {
         List<Signature> sl = new ArrayList<Signature>();
         for (Signature s : serviceFidelity.getSelects()) {
@@ -718,6 +707,14 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
         return serviceMetafidelities;
     }
 
+    public MorphFidelity getServiceMorphFidelity() {
+        return serviceMorphFidelity;
+    }
+
+    public void setServiceMorphFidelities(MorphFidelity morphFidelity) {
+        this.serviceMorphFidelity = morphFidelity;
+    }
+
     public void setServiceMetafidelities(Map<String, ServiceFidelity> serviceMetafidelities) {
         this.serviceMetafidelities = serviceMetafidelities;
     }
@@ -786,7 +783,7 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
         ServiceFidelity fi = null;
         if (entries != null && entries.length > 0) {
             for (Arg a : entries)
-                if (a instanceof ServiceFidelity && ((ServiceFidelity)a).type == ServiceFidelity.Type.EMPTY) {
+                if (a instanceof ServiceFidelity && ((ServiceFidelity)a).type == ServiceFidelity.Type.GENERIC) {
                     fi = selectFidelity(a.getName());
                 } else if (a instanceof ServiceFidelity && ((ServiceFidelity)a).type == ServiceFidelity.Type.COMPONENT) {
                     fi = selectComponentFidelity((ServiceFidelity) a);
