@@ -179,18 +179,18 @@ public class ExertionMultiFidelities {
 
 			Job job = getMorphMultiFiJob();
 
-			logger.info("j1 fi: " + fi(job));
-			logger.info("j1 fis: " + fis(job));
-			logger.info("j2 fi: " + fi(exertion(job, "j1/j2")));
-			logger.info("j2 fis: " + fis(exertion(job, "j1/tj2")));
-			logger.info("t3 fi: " + fi(exertion(job, "j1/t3")));
-			logger.info("t4 fi: " + fi(exertion(job, "j1/j2/t4")));
-			logger.info("t5 fi: " + fi(exertion(job, "j1/j2/t5")));
-			logger.info("job context: " + upcontext(job));
-			Context out = null;
-			// Jobbers and  all tasks are local
-			out = upcontext(exert(job));
-			logger.info("job context: " + out);
-			assertTrue(value(out, "j1/t3/result/y").equals(400.0));
+//			logger.info("j1 fi: " + fi(job));
+//			logger.info("j1 fis: " + fis(job));
+//			logger.info("j2 fi: " + fi(exertion(job, "j1/j2")));
+//			logger.info("j2 fis: " + fis(exertion(job, "j1/tj2")));
+//			logger.info("t3 fi: " + fi(exertion(job, "j1/t3")));
+//			logger.info("t4 fi: " + fi(exertion(job, "j1/j2/t4")));
+//			logger.info("t5 fi: " + fi(exertion(job, "j1/j2/t5")));
+//			logger.info("job context: " + upcontext(job));
+//			Context out = null;
+//			// Jobbers and  all tasks are local
+//			out = upcontext(exert(job));
+//			logger.info("job context: " + out);
+//			assertTrue(value(out, "j1/t3/result/y").equals(400.0));
     }
 }
