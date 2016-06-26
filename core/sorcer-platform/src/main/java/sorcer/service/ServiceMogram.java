@@ -907,16 +907,6 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
         return selectedFidelity.selects.size() > 1;
     }
 
-    public void resetProcessSignature(Signature signature) {
-        for (Signature sig : this.selectedFidelity.selects) {
-            if (sig.getType() != Signature.Type.PROC) {
-                this.selectedFidelity.selects.remove(sig);
-            }
-        }
-        this.selectedFidelity.selects.add(signature);
-        this.selectedFidelity.select = signature;
-    }
-
     @Override
     public ServiceFidelity<ServiceFidelity> getMetafidelity() {
         return serviceMetafidelity;

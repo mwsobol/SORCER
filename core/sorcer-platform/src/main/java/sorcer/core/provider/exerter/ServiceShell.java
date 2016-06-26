@@ -73,7 +73,6 @@ import static sorcer.eo.operator.*;
 /**
  * @author Mike Sobolewski
  */
-@SuppressWarnings("rawtypes")
 public class ServiceShell implements RemoteServiceShell, Client, Callable {
 	protected final static Logger logger = LoggerFactory.getLogger(ServiceShell.class);
 	private Service service;
@@ -418,7 +417,6 @@ public class ServiceShell implements RemoteServiceShell, Client, Callable {
 					srvName =  signature.getProviderName().getName();
 				}
 				signature = new NetSignature("exert", Spacer.class, srvName);
-				exertion.resetProcessSignature(signature);
 			}
 			provider = ((NetSignature) signature).getProvider();
 			if (provider == null) {
@@ -478,7 +476,6 @@ public class ServiceShell implements RemoteServiceShell, Client, Callable {
 
 	private Exertion callProvider(ServiceExertion exertion, Signature signature, Arg... entries)
 			throws TransactionException, MogramException, RemoteException {
-
         String providerName = null;
         ServiceID providerID = null;
         try {
