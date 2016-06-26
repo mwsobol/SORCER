@@ -183,19 +183,6 @@ public class ExertionMultiFidelities {
 //			assertTrue(value(out, "j1/t3/result/y").equals(400.0));
     }
 
-	@Test
-    public void task1() throws Exception {
-        Task t3 = task("t3",
-                sFi("object", sig("subtract", SubtractorImpl.class)),
-                sFi("net", sig("subtract", Subtractor.class)),
-                context("subtract", inEnt("arg/x1"), inEnt("arg/x2"),
-                        outEnt("result/y")));
-
-        logger.info("FI: " + t3.selectFidelity());
-        logger.info("CONTEXT: " + context (t3));
-    }
-
-
     @Test
     public void task2() throws Exception {
 

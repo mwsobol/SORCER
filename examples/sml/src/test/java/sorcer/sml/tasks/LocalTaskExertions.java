@@ -73,8 +73,8 @@ public class LocalTaskExertions {
 						outEnt("result/y")));
 
 		t4 = exert(t4, fi("object"));
-		logger.info("task context: " + context(t4));
-
+//		logger.info("task context: " + context(t4));
+		assertEquals(get(context(t4), "result/y"), 500.0);
 	}
 
     @Test
@@ -88,11 +88,11 @@ public class LocalTaskExertions {
                 context(inEnt("multiply/x1", 10.0), inEnt("multiply/x2", 50.0),
                         inEnt("add/x1", 20.0), inEnt("add/x2", 80.0)));
 
-        logger.info("task getSelects:" + batch3.getSelectedFidelity());
+//        logger.info("task getSelects:" + batch3.getSelectedFidelity());
 
         batch3 = exert(batch3);
 		//logger.info("task result/y: " + get(batch3, "result/y"));
-		assertEquals("Wrong value for 400.0", get(batch3, "result/y"), 400.0);
+		assertEquals(get(batch3, "result/y"), 400.0);
     }
 
     @Test
@@ -122,11 +122,11 @@ public class LocalTaskExertions {
 						outEnt("result/y")));
 
 		Context out = context(exert(t4, fi("object1")));
-		logger.info("task context: " + context(t4));
+//		logger.info("task context: " + context(t4));
 		assertTrue(value(out, "result/y").equals(500.0));
 
 		out = context(exert(t4, fi("object2")));
-		logger.info("task context: " + context(t4));
+//		logger.info("task context: " + context(t4));
 		assertTrue(value(out, "result/y").equals(60.0));
 	}
 
@@ -140,13 +140,13 @@ public class LocalTaskExertions {
 				context(inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
 						result("result/y")));
 
-		logger.info("task fi: " + fi(task));
+//		logger.info("task fi: " + fi(task));
 		assertTrue(fis(task).size() == 2);
-		logger.info("selected Fi: " + fiName(task));
+//		logger.info("selected Fi: " + fiName(task));
 		assertTrue(fiName(task).equals("net"));
 
 		task = exert(task, fi("object"));
-		logger.info("exerted: " + context(task));
+//		logger.info("exerted: " + context(task));
 		assertTrue(fiName(task).equals("object"));
 		assertTrue(get(task).equals(100.0));
 	}
