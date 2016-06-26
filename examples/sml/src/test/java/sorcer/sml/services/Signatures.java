@@ -312,7 +312,7 @@ public class Signatures {
 	}
 
 	@Test
-	public void localShellService1() throws Exception {
+	public void localShellService() throws Exception {
 		// The SORCER Service Shell as a service provider
 		Task f5 = task(
 				"f5",

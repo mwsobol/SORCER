@@ -32,7 +32,6 @@ import sorcer.core.exertion.ObjectJob;
 import sorcer.core.provider.Jobber;
 import sorcer.core.provider.Spacer;
 import sorcer.core.signature.NetSignature;
-import sorcer.core.signature.ObjectSignature;
 import sorcer.security.util.Auth;
 import sorcer.security.util.SorcerPrincipal;
 import sorcer.service.Signature.ReturnPath;
@@ -106,7 +105,7 @@ public class Job extends CompoundExertion {
 
 	public Job(String name, String description, ServiceFidelity fidelity) {
 		this(name, description);
-		this.serviceFidelity = fidelity;
+		this.selectedFidelity = fidelity;
 	}
 
 	/**
@@ -122,14 +121,7 @@ public class Job extends CompoundExertion {
 		// s.setServiceType(Jobber.class.getName());
 		s.getProviderName().setName(null);
 		s.setType(Signature.Type.PROC);
-		serviceFidelity.selects.add(s); // Add the signature
-	}
-
-	public ServiceFidelity getFidelity() {
-//		if (fidelity != null)
-//			for (int i = 0; i < fidelity.size(); i++)
-//				signatures.get(i).setProviderName(controlContext.getRendezvousName());
-		return serviceFidelity;
+        selectedFidelity.selects.add(s); // Add the signature
 	}
 
 	@Override
@@ -191,53 +183,45 @@ public class Job extends CompoundExertion {
 		return exs;
 	}
 
-	public Job doJob(Transaction txn) throws MogramException,
-			SignatureException, RemoteException, TransactionException {
-		if (delegate == null) {
-			if (serviceFidelity != null) {
-				Signature ss = null;
-				if (serviceFidelity.selects.size() == 1) {
-					ss = serviceFidelity.selects.get(0);
-				} else if (serviceFidelity.selects.size() > 1) {
-					for (Signature s : serviceFidelity.selects) {
-						if (s.getType() == Signature.SRV) {
-							ss = s;
-							break;
-						}
-					}
-				}
-				if (ss != null) {
-					if (ss instanceof NetSignature) {
-						delegate = new NetJob(name);
-					} else if (ss instanceof ObjectSignature) {
-						delegate = new ObjectJob(ss.getSelector());
-						delegate.setName(name);
-					}
+    public Job doJob(Transaction txn) throws MogramException,
+            SignatureException, RemoteException, TransactionException {
+        if (delegate == null) {
+            if (delegate == null) {
+                Signature ps = selectedFidelity.select;
+                if (ps instanceof NetSignature) {
+                    delegate = new NetJob(name);
+                } else {
+                    delegate = new ObjectJob(name);
+                }
 
-					delegate.setFidelities(getFidelities());
-					delegate.setFidelity(getFidelity());
-					delegate.setSelectedFidelitySelector(serviceFidelitySelector);
-					delegate.setContext(dataContext);
-					delegate.setControlContext(controlContext);
-				}
-			}
-			if (delegate instanceof NetJob) {
-				delegate.setControlContext(controlContext);
-				if (controlContext.getAccessType().equals(Access.PULL)) {
-					Signature procSig = delegate.getProcessSignature();
-					procSig.setServiceType(Spacer.class);
-					delegate.serviceFidelity.selects.clear();
-					delegate.addSignature(procSig);
-				}
-			}
-			if (mograms.size() > 0) {
-				for (Mogram ex : mograms) {
-					delegate.addMogram(ex);
-				}
-			}
-		}
-		return delegate.doJob(txn);
-	}
+                delegate.setFidelityManager(getFidelityManager());
+                delegate.setFidelities(getFidelities());
+                delegate.setSelectedFidelity(getSelectedFidelity());
+                delegate.setServiceMorphFidelity(getServiceMorphFidelity());
+                delegate.setServiceMetafidelities(getServiceMetafidelities());
+                delegate.setSelectedFidelitySelector(serviceFidelitySelector);
+                delegate.setContext(dataContext);
+                delegate.setControlContext(controlContext);
+            }
+
+            if (delegate instanceof NetJob) {
+                delegate.setControlContext(controlContext);
+                if (controlContext.getAccessType().equals(Access.PULL)) {
+                    Signature procSig = delegate.getProcessSignature();
+                    procSig.setServiceType(Spacer.class);
+                    delegate.selectedFidelity.selects.clear();
+                    delegate.addSignature(procSig);
+                }
+            }
+            if (mograms.size() > 0) {
+                for (Mogram ex : mograms) {
+                    delegate.addMogram(ex);
+                }
+            }
+        }
+
+        return delegate.doJob(txn);
+    }
 
 	public void undoJob() throws ExertionException, SignatureException,
 			RemoteException {

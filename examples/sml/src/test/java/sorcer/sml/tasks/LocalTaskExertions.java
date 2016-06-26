@@ -14,8 +14,6 @@ import sorcer.service.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
-import static sorcer.co.operator.get;
-import static sorcer.eo.operator.args;
 import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.get;
 import static sorcer.eo.operator.value;
@@ -65,6 +63,20 @@ public class LocalTaskExertions {
 
 	}
 
+	@Test
+	public void batchFiTask() throws Exception {
+
+		Task t4 = task("t4",
+				sFi("net", sig("multiply", Multiplier.class), sig("add", Adder.class)),
+				sFi("object", sig("multiply", MultiplierImpl.class), sig("add", AdderImpl.class)),
+				context("shared", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
+						outEnt("result/y")));
+
+		t4 = exert(t4, fi("object"));
+		logger.info("task context: " + context(t4));
+
+	}
+
     @Test
     public void batchTask() throws Exception {
         // batch for the composition f1(f2(f3((x1, x2), f4(x1, x2)), f5(x1, x2))
@@ -76,26 +88,12 @@ public class LocalTaskExertions {
                 context(inEnt("multiply/x1", 10.0), inEnt("multiply/x2", 50.0),
                         inEnt("add/x1", 20.0), inEnt("add/x2", 80.0)));
 
-        logger.info("task getSelects:" + batch3.getFidelity());
+        logger.info("task getSelects:" + batch3.getSelectedFidelity());
 
         batch3 = exert(batch3);
 		//logger.info("task result/y: " + get(batch3, "result/y"));
 		assertEquals("Wrong value for 400.0", get(batch3, "result/y"), 400.0);
     }
-
-	@Test
-	public void batchFiTask() throws Exception {
-
-		Task t4 = task("t4",
-				sFi("object", sig("multiply", MultiplierImpl.class), sig("add", AdderImpl.class)),
-				sFi("net", sig("multiply", Multiplier.class), sig("add", Adder.class)),
-				context("shared", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
-						outEnt("result/y")));
-
-		t4 = exert(t4, fi("object"));
-		logger.info("task context: " + context(t4));
-
-	}
 
     @Test
     public void prefixedBatchTask() throws Exception {

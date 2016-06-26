@@ -43,7 +43,7 @@ import java.util.Set;
  */
 public class MultiFiRequest extends ServiceMogram {
 
-    protected ServiceFidelity<Request> serviceFidelity;
+    protected ServiceFidelity<Request> requestFidelity;
 
     protected MorphFidelity<Request> morphFidelity;
 
@@ -78,7 +78,7 @@ public class MultiFiRequest extends ServiceMogram {
 
     public MultiFiRequest(String name, ServiceFidelity<Request> fidelity) {
         super(name);
-        serviceFidelity = fidelity;
+        requestFidelity = fidelity;
     }
 
     public MultiFiRequest(Context context, MorphFidelity<Request> fidelity)  {
@@ -123,9 +123,9 @@ public class MultiFiRequest extends ServiceMogram {
 
     @Override
     public ServiceFidelity selectFidelity(String selector) {
-        if (serviceFidelity != null) {
-            serviceFidelity.setSelect(selector);
-            return serviceFidelity;
+        if (requestFidelity != null) {
+            requestFidelity.setSelect(selector);
+            return requestFidelity;
         } else {
             morphFidelity.getFidelity().setSelect(selector);
             return morphFidelity.getFidelity();
@@ -167,15 +167,15 @@ public class MultiFiRequest extends ServiceMogram {
     }
 
     public ServiceFidelity<Request> getServiceFidelity() {
-        if (serviceFidelity == null && morphFidelity != null)
+        if (requestFidelity == null && morphFidelity != null)
             return morphFidelity.getFidelity();
         else {
-            return serviceFidelity;
+            return requestFidelity;
         }
     }
 
-    public void setServiceFidelity(ServiceFidelity<Request> serviceFidelity) {
-        this.serviceFidelity = serviceFidelity;
+    public void setServiceFidelity(ServiceFidelity<Request> requestFidelity) {
+        this.requestFidelity = requestFidelity;
     }
 
     public MorphFidelity getMorphFidelity() {

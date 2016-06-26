@@ -86,8 +86,7 @@ public class ObjectTask extends Task {
 			this.dataContext = (ServiceContext) context;
 	}
 
-	@SuppressWarnings("unchecked")
-	public Task doTask(Transaction txn, Arg... args) throws ExertionException, SignatureException, RemoteException, MogramException {
+	public Task doTask(Transaction txn, Arg... args) throws SignatureException, RemoteException, MogramException {
 		if (delegate != null)
 			return delegate.doTask(txn);
 
@@ -160,6 +159,11 @@ public class ObjectTask extends Task {
 				dataContext.setReturnValue(result);
 			}
 			dataContext.updateContextWith(os.getOutConnector());
+
+			if (serviceMorphFidelity != null) {
+				serviceMorphFidelity.setChanged();
+				serviceMorphFidelity.notifyObservers(result);
+			}
 		} catch (Throwable e) {
 			e.printStackTrace();
 			dataContext.reportException(e);

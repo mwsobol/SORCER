@@ -108,68 +108,69 @@ public class SrvModel extends ParModel<Object> implements Model, Invocation<Obje
     }
 
     public boolean isBatch() {
-        for (Signature s : serviceFidelity.getSelects()) {
+        for (Signature s : selectedFidelity.getSelects()) {
             if (s.getType() != Signature.Type.PROC)
                 return false;
         }
         return true;
     }
 
-    public void selectedServiceFidelity(String name) {
-        ServiceFidelity<Signature> fidelity = serviceFidelities.get(name);
-        serviceFidelitySelector = name;
-        this.serviceFidelity = fidelity;
-    }
-
-    public void addServiceFidelity(ServiceFidelity fidelity) {
-        putServiceFidelity(fidelity.getName(), fidelity);
-        serviceFidelitySelector = fidelity.getName();
-        this.serviceFidelity = fidelity;
-    }
-
-    public void setServiceFidelity(ServiceFidelity fidelity) {
-        this.serviceFidelity = fidelity;
-        putServiceFidelity(fidelity.getName(), fidelity);
-        serviceFidelitySelector = fidelity.getName();
-    }
-
-    public void setServiceFidelity(String name, ServiceFidelity fidelity) {
-        this.serviceFidelity = fidelity;
-        putServiceFidelity(name, fidelity);
-        serviceFidelitySelector = name;
-    }
-
-    public void putServiceFidelity(ServiceFidelity fidelity) {
-        if (serviceFidelities == null)
-            serviceFidelities = new HashMap<String, ServiceFidelity>();
-        serviceFidelities.put(fidelity.getName(), fidelity);
-    }
-
-    public void putServiceFidelity(String name, ServiceFidelity fidelity) {
-        if (serviceFidelities == null)
-            serviceFidelities = new HashMap<String, ServiceFidelity>();
-        serviceFidelities.put(name, fidelity);
-    }
-
-    public Signature getProcessSignature() {
-        for (Signature s : serviceFidelity.getSelects()) {
-            if (s.getType() == Signature.Type.PROC)
-                return s;
-        }
-        return null;
-    }
-
-    public void selectServiceFidelity(String selector) throws ExertionException {
-        if (selector != null && serviceFidelities != null
-                && serviceFidelities.containsKey(selector)) {
-            ServiceFidelity sf = serviceFidelities.get(selector);
-
-            if (sf == null)
-                throw new ExertionException("no such service fidelity: " + selector + " at: " + this);
-            serviceFidelity = sf;
-            serviceFidelitySelector = selector;
-        }
-    }
+//    public void selectedServiceFidelity(String name) {
+//        ServiceFidelity<Signature> fidelity = serviceFidelities.get(name);
+//        serviceFidelitySelector = name;
+//        this.selectedFidelity = fidelity;
+//        selectFidelity();
+//    }
+//
+//    public void addServiceFidelity(ServiceFidelity fidelity) {
+//        putServiceFidelity(fidelity.getName(), fidelity);
+//        serviceFidelitySelector = fidelity.getName();
+//        this.selectedFidelity = fidelity;
+//    }
+//
+//    public void setServiceFidelity(ServiceFidelity fidelity) {
+//        this.serviceFidelity1 = fidelity;
+//        putServiceFidelity(fidelity.getName(), fidelity);
+//        serviceFidelitySelector = fidelity.getName();
+//    }
+//
+//    public void setServiceFidelity(String name, ServiceFidelity fidelity) {
+//        this.serviceFidelity1 = fidelity;
+//        putServiceFidelity(name, fidelity);
+//        serviceFidelitySelector = name;
+//    }
+//
+//    public void putServiceFidelity(ServiceFidelity fidelity) {
+//        if (serviceFidelities == null)
+//            serviceFidelities = new HashMap<String, ServiceFidelity>();
+//        serviceFidelities.put(fidelity.getName(), fidelity);
+//    }
+//
+//    public void putServiceFidelity(String name, ServiceFidelity fidelity) {
+//        if (serviceFidelities == null)
+//            serviceFidelities = new HashMap<String, ServiceFidelity>();
+//        serviceFidelities.put(name, fidelity);
+//    }
+//
+//    public Signature getProcessSignature() {
+//        for (Signature s : serviceFidelity1.getSelects()) {
+//            if (s.getType() == Signature.Type.PROC)
+//                return s;
+//        }
+//        return null;
+//    }
+//
+//    public void selectServiceFidelity(String selector) throws ExertionException {
+//        if (selector != null && serviceFidelities != null
+//                && serviceFidelities.containsKey(selector)) {
+//            ServiceFidelity sf = serviceFidelities.get(selector);
+//
+//            if (sf == null)
+//                throw new ExertionException("no such service fidelity: " + selector + " at: " + this);
+//            serviceFidelity1 = sf;
+//            serviceFidelitySelector = selector;
+//        }
+//    }
 
     public Object getValue(String path, Arg... args) throws EvaluationException {
         return getSrvValue(path, args);
@@ -436,19 +437,16 @@ public class SrvModel extends ParModel<Object> implements Model, Invocation<Obje
         if (signature == null)
             return;
         ((ServiceSignature) signature).setOwnerId(getOwnerId());
-        serviceFidelity.getSelects().add(signature);
-    }
-
-    public ServiceFidelity getServiceFidelity() {
-        return serviceFidelity;
+        selectedFidelity.getSelects().add(signature);
+        selectedFidelity.setSelect(signature);
     }
 
     public void addSignatures(Signature... signatures) {
-        if (this.serviceFidelity != null)
-            this.serviceFidelity.getSelects().addAll(Arrays.asList(signatures));
+        if (this.selectedFidelity != null)
+            this.selectedFidelity.getSelects().addAll(Arrays.asList(signatures));
         else {
-            this.serviceFidelity = new ServiceFidelity();
-            this.serviceFidelity.getSelects().addAll(Arrays.asList(signatures));
+            this.selectedFidelity = new ServiceFidelity(name);
+            this.selectedFidelity.getSelects().addAll(Arrays.asList(signatures));
         }
     }
 
@@ -457,8 +455,8 @@ public class SrvModel extends ParModel<Object> implements Model, Invocation<Obje
             ExertionException, RemoteException {
         Signature signature = null;
         try {
-            if (serviceFidelity != null) {
-                signature = getProcessSignature();
+            if (selectedFidelity != null) {
+                signature = selectedFidelity.getSelect();
             } else if (subjectValue != null && subjectValue instanceof Signature) {
                 signature = (Signature)subjectValue;
             }

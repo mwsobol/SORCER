@@ -9,29 +9,18 @@ import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.Adder;
 import sorcer.arithmetic.provider.Multiplier;
 import sorcer.arithmetic.provider.Subtractor;
-import sorcer.arithmetic.provider.impl.*;
-import sorcer.core.context.model.ent.Entry;
-import sorcer.core.invoker.Observable;
-import sorcer.core.plexus.FidelityManager;
-import sorcer.core.plexus.MorphFidelity;
+import sorcer.arithmetic.provider.impl.AdderImpl;
+import sorcer.arithmetic.provider.impl.MultiplierImpl;
+import sorcer.arithmetic.provider.impl.SubtractorImpl;
 import sorcer.core.plexus.Morpher;
-import sorcer.core.plexus.MultiFiRequest;
 import sorcer.core.provider.Jobber;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.service.*;
-import sorcer.service.Strategy.FidelityMangement;
-import sorcer.service.modeling.Model;
-
-import java.rmi.RemoteException;
 
 import static org.junit.Assert.assertTrue;
-import static sorcer.co.operator.*;
+import static sorcer.co.operator.inEnt;
+import static sorcer.co.operator.outEnt;
 import static sorcer.eo.operator.*;
-import static sorcer.eo.operator.get;
-import static sorcer.eo.operator.loop;
-import static sorcer.eo.operator.result;
-import static sorcer.eo.operator.value;
-import static sorcer.mo.operator.*;
 
 /**
  * Created by Mike Sobolewski on 06/24/16.
@@ -119,20 +108,20 @@ public class ExertionMultiFidelities {
 
     private Job getMorphMultiFiJob() throws Exception {
 
-		Morpher t4mrp = (mgr, mFi, value) -> {
+		Morpher t4mrp = (mgr, mFi, context) -> {
 			ServiceFidelity<Signature> fi = mFi.getFidelity();
-			if (fi.getSelectName().equals("t5")) {
-				if (((Double) value(context(value), "result/y")) <= 200.0) {
-					mgr.reconfigure("t4");
+			if (mFi.getPath().equals("t4")) {
+				if (((Double) value((Context)context, "result/y")) >= 200.0) {
+					mgr.reconfigure(fi("t5", "net"));
 				}
 			}
 		};
 
-		Morpher t5mrp = (mgr, mFi, value) -> {
+		Morpher t5mrp = (mgr, mFi, context) -> {
 			ServiceFidelity<Signature> fi = mFi.getFidelity();
-			if (fi.getSelectName().equals("t5")) {
-				if (((Double) value(context(value), "result/y")) <= 200.0) {
-					mgr.reconfigure("t4");
+			if (mFi.getPath().equals("t5")) {
+				if (((Double) value((Context)context, "result/y")) <= 200.0) {
+					mgr.reconfigure(fi("t4", "net"));
 				}
 			}
 		};
@@ -179,18 +168,57 @@ public class ExertionMultiFidelities {
 
 			Job job = getMorphMultiFiJob();
 
-//			logger.info("j1 fi: " + fi(job));
-//			logger.info("j1 fis: " + fis(job));
-//			logger.info("j2 fi: " + fi(exertion(job, "j1/j2")));
-//			logger.info("j2 fis: " + fis(exertion(job, "j1/tj2")));
-//			logger.info("t3 fi: " + fi(exertion(job, "j1/t3")));
-//			logger.info("t4 fi: " + fi(exertion(job, "j1/j2/t4")));
-//			logger.info("t5 fi: " + fi(exertion(job, "j1/j2/t5")));
-//			logger.info("job context: " + upcontext(job));
-//			Context out = null;
-//			// Jobbers and  all tasks are local
-//			out = upcontext(exert(job));
+			logger.info("j1 fi: " + fi(job));
+			logger.info("j1 fis: " + fis(job));
+			logger.info("j2 fi: " + fi(exertion(job, "j1/j2")));
+			logger.info("j2 fis: " + fis(exertion(job, "j1/tj2")));
+			logger.info("t3 fi: " + fi(exertion(job, "j1/t3")));
+			logger.info("t4 fi: " + fi(exertion(job, "j1/j2/t4")));
+			logger.info("t5 fi: " + fi(exertion(job, "j1/j2/t5")));
+			logger.info("job context: " + upcontext(job));
+			Context out = null;
+			// Jobbers and  all tasks are local
+			out = upcontext(exert(job));
 //			logger.info("job context: " + out);
 //			assertTrue(value(out, "j1/t3/result/y").equals(400.0));
+    }
+
+	@Test
+    public void task1() throws Exception {
+        Task t3 = task("t3",
+                sFi("object", sig("subtract", SubtractorImpl.class)),
+                sFi("net", sig("subtract", Subtractor.class)),
+                context("subtract", inEnt("arg/x1"), inEnt("arg/x2"),
+                        outEnt("result/y")));
+
+        logger.info("FI: " + t3.selectFidelity());
+        logger.info("CONTEXT: " + context (t3));
+    }
+
+
+    @Test
+    public void task2() throws Exception {
+
+        Morpher t4mrp = (mgr, mFi, context) -> {
+            ServiceFidelity<Signature> fi = mFi.getFidelity();
+            if (mFi.getPath().equals("t4")) {
+                if (((Double) value((Context)context, "result/y")) >= 200.0) {
+                    mgr.reconfigure(fi("t5", "net"));
+                }
+            }
+        };
+
+        Task t4 = task("t4",
+                mFi(t4mrp, sFi("object", sig("multiply", MultiplierImpl.class)),
+                        sFi("net", sig("multiply", Multiplier.class))),
+                context("multiply", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
+                        outEnt("result/y")));
+
+
+        logger.info("FI: " + t4.selectFidelity("net"));
+        logger.info("FI: " + t4.selectFidelity("object"));
+//        logger.info("FI: " + t4.selectFidelity(fi("t4", "net")));
+        logger.info("CONTEXT: " + context (t4));
+
     }
 }

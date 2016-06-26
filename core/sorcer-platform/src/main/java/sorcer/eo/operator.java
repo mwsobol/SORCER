@@ -71,7 +71,6 @@ import java.net.URL;
 import java.net.UnknownHostException;
 import java.rmi.RemoteException;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 import static sorcer.co.operator.rasis;
 import static sorcer.co.operator.srv;
@@ -1257,8 +1256,8 @@ public class operator {
 		return fi;
 	}
 
-	public static Map<String, ServiceFidelity> fis(Mogram exertion) {
-		return ((ServiceMogram) exertion).getServiceFidelities();
+	public static List<Signature>  fis(Mogram exertion) {
+		return ((ServiceMogram) exertion).getServiceFidelities().get(exertion.getName()).getSelects();
 	}
 
 	public static ServiceFidelity<Signature> fi(Mogram mogram) {
@@ -1371,7 +1370,7 @@ public class operator {
 
 	public static ServiceFidelity<?> fi(String name) {
 		ServiceFidelity<?> fi = new ServiceFidelity(name);
-		fi.type = ServiceFidelity.Type.GENERIC;
+		fi.type = ServiceFidelity.Type.SELECT;
 		return fi;
 	}
 
@@ -1398,7 +1397,7 @@ public class operator {
 	public static ServiceFidelity<?> fi(String path, String name) {
 		ServiceFidelity<?> fi = new ServiceFidelity(name);
 		fi.setPath(path);
-		fi.type = ServiceFidelity.Type.GENERIC;
+		fi.type = ServiceFidelity.Type.SELECT;
 		return fi;
 	}
 
@@ -1521,8 +1520,7 @@ public class operator {
 		} else if (signature instanceof ObjectSignature) {
 			task = new ObjectTask(signature, context);
 		} else if (signature instanceof EvaluationSignature) {
-			task = new EvaluationTask((EvaluationSignature) signature,
-					context);
+			task = new EvaluationTask((EvaluationSignature) signature, context);
 		} else {
 			task = new Task(signature, context);
 		}
@@ -1534,7 +1532,7 @@ public class operator {
 	public static Task batch(String name, Object... elems)
 			throws ExertionException {
 		Task batch = task(name, elems);
-		if (batch.getFidelity().getSelects().size() > 1)
+		if (batch.getSelectedFidelity().getSelects().size() > 1)
 			return batch;
 		else
 			throw new ExertionException(
@@ -1544,7 +1542,7 @@ public class operator {
 	public static Task task(String name, Object... elems)
 			throws ExertionException {
 		Context context = null;
-		List<Signature> ops = new ArrayList<Signature>();
+		List<Signature> ops = new ArrayList();
 		String tname;
 		if (name == null || name.length() == 0)
 			tname = getUnknown();
@@ -1557,7 +1555,7 @@ public class operator {
 		Flow flow = null;
 		List<ServiceFidelity> fis = new ArrayList<>();
 		MorphFidelity mFi = null;
-		List<ServiceFidelity<ServiceFidelity>> metaFis = new ArrayList<>();
+		List<ServiceFidelity<ServiceFidelity>> metaFis = new ArrayList();
 		ControlContext cc = null;
 		for (Object o : elems) {
 			if (o instanceof ControlContext) {
@@ -1598,7 +1596,9 @@ public class operator {
 				}
 			}
 		}
-		if (ss != null) {
+        ServiceFidelity srvFi = null;
+        ServiceFidelity sigFi = null;
+        if (ss != null) {
 			try {
 				if (((ServiceSignature)ss).isModelerSignature()) {
 					task = (Task) modelerTask(tname, ss);
@@ -1615,7 +1615,7 @@ public class operator {
 			} catch (SignatureException e) {
 				throw new ExertionException(e);
 			}
-			ops.remove(ss);
+            sigFi = new ServiceFidelity(tname, ops);
 		}
 
 		if (context == null) {
@@ -1624,29 +1624,49 @@ public class operator {
 
 		if (fis.size() > 0 || mFi != null) {
 			task = new Task(tname);
-		} else {
-			for (Signature signature : ops) {
-				task.addSignature(signature);
-			}
 		}
+
 		task.setContext(context);
 
-
 		if (fis.size() > 0) {
-			for (int i = 0; i < fis.size(); i++) {
-				task.putFidelity(fis.get(i).getName(), fis.get(i));
-			}
-			task.setFidelity(fis.get(0));
-			task.setSelectedFidelitySelector(fis.get(0).getName());
+            srvFi = new ServiceFidelity(tname, fis);
+        }
+
+        if (sigFi != null) {
+            sigFi.setName(tname);
+            sigFi.setPath(tname);
+            task.putFidelity(tname, sigFi);
+			task.setSelectedFidelity(sigFi);
+			task.setSelectedFidelitySelector(sigFi.getName());
 		}
+
+        if (srvFi != null) {
+            srvFi.setName(tname);
+            srvFi.setPath(tname);
+            task.putFidelity(tname, srvFi);
+            task.setSelectedFidelity(fis.get(0));
+            task.setSelectedFidelitySelector(fis.get(0).getName());
+            for (ServiceFidelity fi : fis) {
+                fi.setPath(task.getName());
+            }
+        }
 
 		if (mFi != null) {
-			List<ServiceFidelity> sList = mFi.getSelects();
-			for (int i = 0; i < mFi.getSelects().size(); i++) {
-				task.putFidelity(sList.get(i).getName(), sList.get(i));
-			}
-			task.setServiceMorphFidelities(mFi);
-		}
+            List<ServiceFidelity> sList = mFi.getFidelity().getSelects();
+            ServiceFidelity first = (ServiceFidelity) mFi.getFidelity().getSelects().get(0);
+            mFi.setName(task.getName());
+            mFi.setPath(task.getName());
+            mFi.getFidelity().setPath(task.getName());
+            mFi.getFidelity().setSelect(first);
+            for (Object fi : sList) {
+                ((ServiceFidelity)fi).setPath(task.getName());
+            }
+            task.putFidelity(task.getName(), mFi.getFidelity());
+            task.setSelectedFidelitySelector(first.getName());
+			task.setServiceMorphFidelity(mFi);
+			task.setSelectedFidelity(first);
+            task.setSelectedFidelity(first);
+        }
 
 		if (fm == Strategy.FidelityMangement.YES && task.getFidelityManager() == null
 				|| mFi != null) {
@@ -1658,8 +1678,14 @@ public class operator {
 			task.setFidelityManager(fiManager);
 			fiManager.setFidelities(task.getServiceFidelities());
 			fiManager.setMetafidelities(task.getServiceMetafidelities());
-			if (mFi != null)
+			if (mFi != null) {
 				fiManager.getMorphFidelities().put(mFi.getName(), mFi);
+				mFi.addObserver(fiManager);
+				if (mFi.getMorpherFidelity() != null) {
+					// set the default morpher
+					mFi.setMorpher((Morpher) ((Entry) mFi.getMorpherFidelity().get(0))._2);
+				}
+			}
 		}
 
 		if (access != null) {
@@ -1826,9 +1852,12 @@ public class operator {
 		ReturnPath rp = null;
 		List<Exertion> exertions = new ArrayList<Exertion>();
 		List<Pipe> pipes = new ArrayList<Pipe>();
-		List<ServiceFidelity> fiList = new ArrayList<>();
-		List<ServiceFidelity> metaFiList = new ArrayList<>();
-		List<MapContext> connList = new ArrayList<MapContext>();
+        FidelityManager fiManager = null;
+        Strategy.FidelityMangement fm = null;
+		List<ServiceFidelity> fis = new ArrayList<>();
+        MorphFidelity mFi = null;
+        List<ServiceFidelity<ServiceFidelity>> metaFis = new ArrayList();
+        List<MapContext> connList = new ArrayList<MapContext>();
 
 		for (int i = 0; i < elems.length; i++) {
 			if (elems[i] instanceof String) {
@@ -1847,13 +1876,21 @@ public class operator {
 				signature = ((Signature) elems[i]);
 			} else if (elems[i] instanceof ReturnPath) {
 				rp = ((ReturnPath) elems[i]);
-			} else if (elems[i] instanceof ServiceFidelity
-					&& ((ServiceFidelity) elems[i]).getType().equals(ServiceFidelity.Type.SIG)) {
-				fiList.add((ServiceFidelity) elems[i]);
-			} else if (elems[i] instanceof ServiceFidelity
-					&& ((ServiceFidelity) elems[i]).getType().equals(ServiceFidelity.Type.META)) {
-				metaFiList.add((ServiceFidelity) elems[i]);
-			}
+			} else if (elems[i] instanceof FidelityManager) {
+                fiManager = ((FidelityManager) elems[i]);
+            } else if (elems[i] instanceof MorphFidelity) {
+                mFi = (MorphFidelity) elems[i];
+            } else if (elems[i] instanceof ServiceFidelity
+                    && ((ServiceFidelity) elems[i]).getSelects().size() > 0) {
+                List ss = ((ServiceFidelity) elems[i]).getSelects();
+                if (ss.get(0) instanceof ServiceFidelity) {
+                    metaFis.add((ServiceFidelity<ServiceFidelity>) elems[i]);
+                } else {
+                    fis.add(((ServiceFidelity) elems[i]));
+                }
+            } else if (elems[i] instanceof Strategy.FidelityMangement) {
+                fm = (Strategy.FidelityMangement) elems[i];
+            }
 
 		}
 		Job job = null;
@@ -1862,20 +1899,27 @@ public class operator {
 		} else if (signature instanceof ObjectSignature) {
 			job = new ObjectJob(name);
 		} else {
-			if (fiList != null && fiList.size() > 0) {
+			if (fis != null && fis.size() > 0) {
 				job = new Job(name);
 			} else{
 				job = new NetJob(name);
 			}
 		}
 
-		if (fiList.size() > 0) {
-			for (int i = 0; i < fiList.size(); i++) {
-				job.addFidelity(fiList.get(i).getName(), fiList.get(i));
-			}
-			job.setFidelity(fiList.get(0));
-			job.setSelectedFidelitySelector(fiList.get(0).getName());
-		}
+        ServiceFidelity srvFi = null;
+        if (fis.size() > 0) {
+            srvFi = new ServiceFidelity(name, fis);
+        }
+        if (srvFi != null) {
+            srvFi.setName(name);
+            srvFi.setPath(name);
+            job.putFidelity(name, srvFi);
+            job.setSelectedFidelity(fis.get(0));
+            job.setSelectedFidelitySelector(fis.get(0).getName());
+            for (ServiceFidelity fi : fis) {
+                fi.setPath(job.getName());
+            }
+        }
 
 		if (data != null)
 			job.setContext(data);
@@ -1893,12 +1937,44 @@ public class operator {
 				job.getDataContext().setExertion(job);
 			}
 		}
-		if (metaFiList != null) {
-			for (ServiceFidelity fi : metaFiList) {
-				job.putMetafidelity(fi.getName(), fi);
-				job.setMetafidelity(metaFiList.get(0));
-			}
-		}
+
+        if (mFi != null) {
+            List<ServiceFidelity> sList = mFi.getFidelity().getSelects();
+            ServiceFidelity first = (ServiceFidelity) mFi.getFidelity().getSelects().get(0);
+            mFi.setName(job.getName());
+            mFi.setPath(job.getName());
+            mFi.getFidelity().setPath(job.getName());
+            mFi.getFidelity().setSelect(first);
+            for (Object fi : sList) {
+                ((ServiceFidelity)fi).setPath(job.getName());
+            }
+            job.putFidelity(job.getName(), mFi.getFidelity());
+            job.setSelectedFidelitySelector(first.getName());
+            job.setServiceMorphFidelity(mFi);
+            job.setSelectedFidelity(first);
+            job.setSelectedFidelity(first);
+        }
+
+        if (fm == Strategy.FidelityMangement.YES && job.getFidelityManager() == null
+                || mFi != null) {
+            fiManager = new FidelityManager(job);
+            job.setFidelityManager(fiManager);
+        }
+
+        if (fiManager != null) {
+            job.setFidelityManager(fiManager);
+            fiManager.setFidelities(job.getServiceFidelities());
+            fiManager.setMetafidelities(job.getServiceMetafidelities());
+            if (mFi != null) {
+                fiManager.getMorphFidelities().put(mFi.getName(), mFi);
+                mFi.addObserver(fiManager);
+                if (mFi.getMorpherFidelity() != null) {
+                    // set the default morpher
+                    mFi.setMorpher((Morpher) ((Entry) mFi.getMorpherFidelity().get(0))._2);
+                }
+            }
+        }
+
 		if (connList != null) {
 			for (MapContext conn : connList) {
 				if (conn.direction == MapContext.Direction.IN)
@@ -3007,7 +3083,7 @@ public class operator {
 					}
 				} else if (e instanceof Exertion) {
 					((ServiceContext)e.getDataContext()).setScope(pm.getScope());
-					((Exertion)e).getDataContext().updateEntries(pm.getScope());
+					e.getDataContext().updateEntries(pm.getScope());
 				}
 			}
 		} catch (Exception ex) {

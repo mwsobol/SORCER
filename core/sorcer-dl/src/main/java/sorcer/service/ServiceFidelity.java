@@ -49,7 +49,7 @@ public class ServiceFidelity<T extends Arg> implements Multifidelity<T>, Arg {
 	private static final long serialVersionUID = -875629011139790420L;
 
 	public enum Type implements Arg {
-		GENERIC, META, NAME, SYS, ENTRY, SIG, CONTEXT, COMPONENT,
+		SELECT, META, NAME, SYS, ENTRY, SIG, CONTEXT, COMPONENT,
 		MORPH, MULTI, VAR, REQUEST, UPDATE, ADD, REPLACE, DELETE;
 
 		public String getName() {
@@ -164,6 +164,14 @@ public class ServiceFidelity<T extends Arg> implements Multifidelity<T>, Arg {
 		return select.getName();
 	}
 
+	public List<String> getSelectNames() {
+		List<String> names = new ArrayList<>(selects.size());
+		for (T item : selects) {
+			names.add(item.getName());
+		}
+		return names;
+	}
+
 	public void setSelect(String fiName) {
 		for (T item : selects) {
 			if (item.getName().equals(fiName)) {
@@ -228,6 +236,18 @@ public class ServiceFidelity<T extends Arg> implements Multifidelity<T>, Arg {
 
 	public List<T> getSelects() {
 		return selects;
+	}
+
+	public Signature getProcessSignature() {
+		if (selects.size() > 0) {
+			for (T item : selects) {
+				if (item instanceof Signature
+						&& ((Signature) item).getType().equals(Signature.Type.PROC)) {
+					return (Signature) item;
+				}
+			}
+		}
+		return null;
 	}
 
 	public void setSelects(List<T> selects) {

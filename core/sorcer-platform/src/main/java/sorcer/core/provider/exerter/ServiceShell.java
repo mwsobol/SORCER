@@ -56,7 +56,6 @@ import sorcer.service.Signature.ReturnPath;
 import sorcer.service.Strategy.Access;
 import sorcer.service.modeling.Model;
 import sorcer.service.txmgr.TransactionManagerAccessor;
-import sorcer.util.ObjectLogger;
 import sorcer.util.ProviderLocator;
 import sorcer.util.Sorcer;
 
@@ -419,7 +418,7 @@ public class ServiceShell implements RemoteServiceShell, Client, Callable {
 					srvName =  signature.getProviderName().getName();
 				}
 				signature = new NetSignature("exert", Spacer.class, srvName);
-				exertion.correctProcessSignature(signature);
+				exertion.resetProcessSignature(signature);
 			}
 			provider = ((NetSignature) signature).getProvider();
 			if (provider == null) {

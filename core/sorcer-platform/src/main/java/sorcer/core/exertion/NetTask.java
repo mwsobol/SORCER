@@ -103,7 +103,8 @@ public class NetTask extends ObjectTask implements Invocation<Object> {
 		} catch (ExertionException e) {
 			e.printStackTrace();
 		}
-		this.serviceFidelity.getSelects().addAll(Arrays.asList(signatures));
+		this.selectedFidelity.getSelects().addAll(Arrays.asList(signatures));
+		selectedFidelity.setSelect(signatures[0]);
 	}
 
 	public void setService(Service provider) {
@@ -133,7 +134,8 @@ public class NetTask extends ObjectTask implements Invocation<Object> {
 		temp.status = INITIAL;
 		temp.priority = null;
 		temp.index = null;
-		temp.serviceFidelity = null;
+		temp.serviceFidelities = null;
+		temp.selectedFidelity = null;
 		return temp;
 	}
 

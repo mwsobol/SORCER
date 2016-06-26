@@ -200,8 +200,7 @@ public class NetTaskExertions {
 	@Test
 	public void spaceTask() throws Exception {
 
-		Task t5 = task(
-				"t5",
+		Task t5 = task("t5",
 				sig("add", Adder.class),
 				context("add", inEnt("arg/x1", 20.0),
 						inEnt("arg/x2", 80.0), outEnt("result/y")),
@@ -211,6 +210,7 @@ public class NetTaskExertions {
 		logger.info("t5 context: " + context(t5));
 		logger.info("t5 value: " + get(t5, "result/y"));
 		assertEquals("Wrong value for 100.0", get(t5, "result/y"), 100.0);
+
 	}
 
 	
@@ -218,8 +218,7 @@ public class NetTaskExertions {
 	public void serviceShellTest() throws Exception {
 
 		// The signature as a service provider
-		Task f5 = task(
-				"f5",
+		Task f5 = task("f5",
 				sig("add", Adder.class),
 				context("add", inEnt("arg/x1", 20.0),
 						inEnt("arg/x2", 80.0), result("result/y")),

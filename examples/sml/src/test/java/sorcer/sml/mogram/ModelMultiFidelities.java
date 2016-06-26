@@ -629,15 +629,15 @@ public class ModelMultiFidelities {
         assertTrue(get(out, "mFi2").equals(50.0));
         assertTrue(get(out, "mFi3").equals(9.0));
         assertTrue(get(out, "mFi4").equals(920.0));
-
-        out = response(mdl);
-        logger.info("out: " + out);
-        logger.info("trace: " + fiTrace(mdl));
-        logger.info("trace: " + fiTrace((Mogram) get(mdl, "mFi4")));
-        assertTrue(get(out, "mFi1").equals(900.0));
-        assertTrue(get(out, "mFi2").equals(50.0));
-        assertTrue(get(out, "mFi3").equals(9.0));
-        assertTrue(get(out, "mFi4").equals(828020.0));
+//
+//        out = response(mdl);
+//        logger.info("out: " + out);
+//        logger.info("trace: " + fiTrace(mdl));
+//        logger.info("trace: " + fiTrace((Mogram) get(mdl, "mFi4")));
+//        assertTrue(get(out, "mFi1").equals(900.0));
+//        assertTrue(get(out, "mFi2").equals(50.0));
+//        assertTrue(get(out, "mFi3").equals(9.0));
+//        assertTrue(get(out, "mFi4").equals(828020.0));
     }
 
     @Test
