@@ -113,6 +113,19 @@ public interface Mogram extends Identifiable, Service, Exerter, Projection, Scop
      */
     public List<ThrowableTrace> getAllExceptions() throws RemoteException;
 
+
+    /**
+     * Returns a service fidelity of this exertion that consists of process
+     * signature, all pre-processing, post-processing, and append signatures.
+     * There is only one process signature defining late binding to the service
+     * provider processing this exertion.
+     *
+     * @return a service fidelity
+     * @param selection
+     *            The service fidelity name.
+     */
+    public ServiceFidelity selectFidelity(String selection);
+
     /**
      * Returns a service fidelity of this exertion that consists of process
      * signature, all pre-processing, post-processing, and append signatures.
@@ -192,7 +205,7 @@ public interface Mogram extends Identifiable, Service, Exerter, Projection, Scop
 
 	/**
 	 * @param name
-	 *            The domainName to set.
+	 *            The domain name to set.
 	 */
 	public void setDomainName(String name);
 

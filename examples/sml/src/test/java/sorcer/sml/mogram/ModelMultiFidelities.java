@@ -568,12 +568,12 @@ public class ModelMultiFidelities {
             if (fi.getSelectName().equals("t5")) {
                 Double val = ((Double) value(context(value), "result/y"));
                 if (val <= 200.0) {
-                    set(context(value), "result/y", val + 10.0);
+                    setValue(context(value), "result/y", val + 10.0);
                     mgr.reconfigure(fi("mFi4","t4"));
                 }
             } else if (fi.getSelectName().equals("t4")) {
                 Double val = ((Double) value(context(value), "result/y"));
-                set(context(value), "result/y", val + 20.0);
+                setValue(context(value), "result/y", val + 20.0);
             }
         };
 

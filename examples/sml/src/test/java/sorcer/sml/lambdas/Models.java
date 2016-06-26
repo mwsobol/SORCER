@@ -134,8 +134,8 @@ public class Models {
 				lambda("multiply2", "multiply", (Service entry, Context scope, Arg[] args) -> {
 					double out = (double) exec(entry, scope);
 					if (out > 400) {
-						set(scope, "multiply/x1", 20.0);
-						set(scope, "multiply/x2", 50.0);
+						setValue(scope, "multiply/x1", 20.0);
+						setValue(scope, "multiply/x2", 50.0);
 						out = (double)exec(entry, scope);
 					}
 					return context(ent("multiply2", out));
@@ -270,7 +270,7 @@ public class Models {
 				context(ent("sum", 0.0)),
 				loop(0, 100, task(lambda("sum", (Context<Double> cxt) -> {
 					Double out = value(cxt, "sum") + (Double)value(ti);
-					set(context(ti), "arg/x2", (Double)value(context(ti), "arg/x2") + 1.5);
+					setValue(context(ti), "arg/x2", (Double)value(context(ti), "arg/x2") + 1.5);
 					return out; }))));
 		lb = exert(lb);
 
@@ -291,7 +291,7 @@ public class Models {
 					Double from = value(cxt, "from");
 					Double to = value(cxt, "to");
 					Double out = value(cxt, "sum") + (Double)value(ti);
-					set(context(ti), "arg/x2", (Double)value(context(ti), "arg/x2") + 1.5);
+					setValue(context(ti), "arg/x2", (Double)value(context(ti), "arg/x2") + 1.5);
 
 					// skip value 333 but with increase by 100
 					if (out > from && out < to) {

@@ -618,7 +618,7 @@ public class operator {
 		return new TagEntry(path, value, association);
 	}
 
-	public static Entry set(Entry entry, Object value)
+	public static Entry setValue(Entry entry, Object value)
 			throws ContextException {
 		try {
 			entry.setValue(value);
@@ -628,7 +628,7 @@ public class operator {
 		return entry;
 	}
 
-	public static Context set(Context context, String path, Object value) throws ContextException {
+	public static Context setValue(Context context, String path, Object value) throws ContextException {
 		context.putValue(path, value);
 		return context;
 	}

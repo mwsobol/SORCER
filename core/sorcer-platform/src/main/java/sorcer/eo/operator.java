@@ -824,8 +824,10 @@ public class operator {
 	public static String name(Object identifiable) {
 		if (identifiable instanceof Identifiable)
 			return ((Identifiable) identifiable).getName();
-		else
-			return null;
+		else if (identifiable instanceof Arg)
+            return ((Arg) identifiable).getName();
+        else
+			return "";
 	}
 
 	public static List<String> names(Identifiable... array) {
@@ -1263,6 +1265,10 @@ public class operator {
 	public static ServiceFidelity<Signature> fi(Mogram mogram) {
 		return mogram.getFidelity();
 	}
+
+    public static ServiceFidelity<Signature> fi(Mogram mogram, String selection) {
+        return mogram.selectFidelity(selection);
+    }
 
 	public static String fiName(Mogram exertion) {
 		return ((ServiceExertion) exertion).getSelectedFidelitySelector();
