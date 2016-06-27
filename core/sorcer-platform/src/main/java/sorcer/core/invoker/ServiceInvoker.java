@@ -490,9 +490,7 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 	 * @see sorcer.service.Evaluator#evaluate(sorcer.service.Arg[])
 	 */
 	@Override
-	public T evaluate(Arg... entries) throws EvaluationException,
-			RemoteException {
-
+	public T evaluate(Arg... entries) throws EvaluationException, RemoteException {
 		return invoke(entries);
 	}
 

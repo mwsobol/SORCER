@@ -60,6 +60,7 @@ public class ServiceJobber extends RendezvousBean implements Jobber {
                     return result;
                 }
             } catch (Exception e) {
+                e.printStackTrace();
                 mogram.reportException(e);
                 logger.warn("Error: " + e.getMessage());
                 return mogram;

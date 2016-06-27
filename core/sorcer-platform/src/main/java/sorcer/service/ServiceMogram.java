@@ -812,7 +812,7 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
         if (option != null && option instanceof ServiceFidelity) {
             ServiceFidelity sf = (ServiceFidelity)option;
             if (sf.type == ServiceFidelity.Type.SIG) {
-                selectedFidelity = sf;
+                selectedFidelity = (ServiceFidelity<Signature>) sf;
                 serviceFidelitySelector = selector;
             } else if (sf.type == ServiceFidelity.Type.META) {
                 selectCompositeFidelity(sf);

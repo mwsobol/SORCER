@@ -298,6 +298,12 @@ public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Ob
                 ServiceFidelity sFi = this.fidelities.get(fi.getPath());
                 if (sFi != null) {
                     sFi.setSelect(fi.getName());
+                    if (mogram instanceof Exertion) {
+                        ((ServiceMogram)mogram).setSelectedFidelity((ServiceFidelity) sFi.getSelect());
+                        if (mogram.getClass()==Task.class) {
+                            ((Task)mogram).setDelegate(null);
+                        }
+                    }
                 }
                 if (isTraced)
                     fiTrace.add(fi);

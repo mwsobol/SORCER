@@ -135,12 +135,13 @@ public class ExertionMultiFidelities {
 		assertTrue(value(out, "result/y").equals(300.0));
 	}
 
+
     private Job getMorphFiJob() throws Exception {
 
 		Morpher t4mrp = (mgr, mFi, context) -> {
 			if (mFi.getPath().equals("t4")) {
 				if (((Double) value((Context)context, "result/y")) >= 200.0) {
-					mgr.reconfigure(fi("t5", "net"));
+					mgr.reconfigure(fi("t4", "object2"));
 				}
 			}
 		};
@@ -148,7 +149,7 @@ public class ExertionMultiFidelities {
 		Morpher t5mrp = (mgr, mFi, context) -> {
 			if (mFi.getPath().equals("t5")) {
 				if (((Double) value((Context)context, "result/y")) <= 200.0) {
-					mgr.reconfigure(fi("t4", "net"));
+					mgr.reconfigure(fi("t5", "object2"));
 				}
 			}
 		};
@@ -160,14 +161,14 @@ public class ExertionMultiFidelities {
 				outEnt("result/y")));
 
 		Task t4 = task("t4",
-			mFi(t4mrp, sFi("object", sig("multiply", MultiplierImpl.class)),
-				sFi("net", sig("multiply", Multiplier.class))),
+			mFi(t4mrp, sFi("object1", sig("multiply", MultiplierImpl.class)),
+				sFi("object2", sig("add", AdderImpl.class))),
 			context("multiply", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
 				outEnt("result/y")));
 
 		Task t5 = task("t5",
-			mFi(t5mrp, sFi("object", sig("add", AdderImpl.class)),
-				sFi("net", sig("add", Adder.class))),
+			mFi(t5mrp, sFi("object1", sig("add", AdderImpl.class)),
+				sFi("object2", sig("multiply", MultiplierImpl.class))),
 			context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
 				outEnt("result/y")));
 
@@ -181,33 +182,43 @@ public class ExertionMultiFidelities {
 			t3,
 			pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
 			pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")),
-			fi("job1", cFi("j1/j2/t4", "object"), cFi("j1/j2/t5", "net")),
+			fi("job1", cFi("j1/j2/t4", "object1"), cFi("j1/j2/t5", "object2")),
 			fi("job2", cFi("j1/j2", "net"),
-				cFi("j1/t3", "net"), cFi("j1/j2/t4", "net"), cFi("j1/j2/t5", "net")),
-			fi("job3", cFi("j1", "net"), cFi("j1/j2", "net"),
-				cFi("j1/t3", "net"), cFi("j1/j2/t4", "net"), cFi("j1/j2/t5", "net")));
+				cFi("j1/t3", "object2"), cFi("j1/j2/t4", "object2"), cFi("j1/j2/t5", "object2")),
+			fi("job3", cFi("j1", "object2"), cFi("j1/j2", "object2"),
+				cFi("j1/t3", "object2"), cFi("j1/j2/t4", "object2"), cFi("j1/j2/t5", "object2")));
 
 		return (Job) tracable(job);
 	}
 
-		@Test
-		public void morphFiJobTest() throws Exception {
+    @Test
+    public void morphFiJobTest() throws Exception {
 
-			Job job = getMorphFiJob();
+        Job job = getMorphFiJob();
 
-			logger.info("j1 fi: " + fi(job));
-			logger.info("j1 fis: " + fis(job));
-			logger.info("j2 fi: " + fi(exertion(job, "j1/j2")));
-			logger.info("j2 fis: " + fis(exertion(job, "j1/tj2")));
-			logger.info("t3 fi: " + fi(exertion(job, "j1/t3")));
-			logger.info("t4 fi: " + fi(exertion(job, "j1/j2/t4")));
-			logger.info("t5 fi: " + fi(exertion(job, "j1/j2/t5")));
-			logger.info("job context: " + upcontext(job));
-			Context out = null;
-			// Jobbers and  all tasks are local
-			out = upcontext(exert(job));
-			logger.info("job context: " + out);
-			assertTrue(value(out, "j1/t3/result/y").equals(400.0));
+        logger.info("j1 fi: " + fi(job));
+        logger.info("j1 fis: " + fis(job));
+        logger.info("j2 fi: " + fi(exertion(job, "j1/j2")));
+        logger.info("j2 fis: " + fis(exertion(job, "j1/tj2")));
+        logger.info("t3 fi: " + fi(exertion(job, "j1/t3")));
+        logger.info("t4 fi: " + fi(exertion(job, "j1/j2/t4")));
+        logger.info("t5 fi: " + fi(exertion(job, "j1/j2/t5")));
+        logger.info("job context: " + upcontext(job));
+
+        logger.info("job context: " + context(job));
+
+        Context out = null;
+
+        // Jobbers and  all tasks are local
+        job = exert(job);
+        out = upcontext(job);
+        logger.info("job context: " + out);
+        assertTrue(value(out, "j1/t3/result/y").equals(400.0));
+
+        job = exert(job);
+        out = upcontext(job);
+        logger.info("job context: " + out);
+        assertTrue(value(out, "j1/t3/result/y").equals(-1540.0));
     }
 
 }
