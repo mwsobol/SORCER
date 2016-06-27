@@ -1561,7 +1561,6 @@ public class operator {
 		Flow flow = null;
 		List<ServiceFidelity> fis = new ArrayList<>();
 		MorphFidelity mFi = null;
-		List<ServiceFidelity<ServiceFidelity>> metaFis = new ArrayList();
 		ControlContext cc = null;
 		for (Object o : elems) {
 			if (o instanceof ControlContext) {
@@ -1580,13 +1579,8 @@ public class operator {
 				fiManager = ((FidelityManager) o);
 			} else if (o instanceof MorphFidelity) {
 				mFi = (MorphFidelity) o;
-			} else if (o instanceof ServiceFidelity && ((ServiceFidelity) o).getSelects().size() > 0) {
-				List ss = ((ServiceFidelity) o).getSelects();
-				if (ss.get(0) instanceof ServiceFidelity) {
-					metaFis.add((ServiceFidelity<ServiceFidelity>) o);
-				} else {
+			} else if (o instanceof ServiceFidelity) {
 					fis.add(((ServiceFidelity) o));
-				}
 			} else if (o instanceof Strategy.FidelityMangement) {
 				fm = (Strategy.FidelityMangement) o;
 			}
@@ -1662,10 +1656,10 @@ public class operator {
             ServiceFidelity first = (ServiceFidelity) mFi.getFidelity().getSelects().get(0);
             mFi.setName(task.getName());
             mFi.setPath(task.getName());
-            mFi.getFidelity().setPath(task.getName());
+            mFi.getFidelity().setPath(tname);
             mFi.getFidelity().setSelect(first);
             for (Object fi : sList) {
-                ((ServiceFidelity)fi).setPath(task.getName());
+                ((ServiceFidelity)fi).setPath(tname);
             }
             task.putFidelity(task.getName(), mFi.getFidelity());
             task.setSelectedFidelitySelector(first.getName());
@@ -1856,14 +1850,14 @@ public class operator {
 		ControlContext controlStrategy = null;
 		Context<?> data = null;
 		ReturnPath rp = null;
-		List<Exertion> exertions = new ArrayList<Exertion>();
-		List<Pipe> pipes = new ArrayList<Pipe>();
+		List<Exertion> exertions = new ArrayList();
+		List<Pipe> pipes = new ArrayList();
         FidelityManager fiManager = null;
         Strategy.FidelityMangement fm = null;
 		List<ServiceFidelity> fis = new ArrayList<>();
         MorphFidelity mFi = null;
         List<ServiceFidelity<ServiceFidelity>> metaFis = new ArrayList();
-        List<MapContext> connList = new ArrayList<MapContext>();
+        List<MapContext> connList = new ArrayList();
 
 		for (int i = 0; i < elems.length; i++) {
 			if (elems[i] instanceof String) {
@@ -1886,10 +1880,8 @@ public class operator {
                 fiManager = ((FidelityManager) elems[i]);
             } else if (elems[i] instanceof MorphFidelity) {
                 mFi = (MorphFidelity) elems[i];
-            } else if (elems[i] instanceof ServiceFidelity
-                    && ((ServiceFidelity) elems[i]).getSelects().size() > 0) {
-                List ss = ((ServiceFidelity) elems[i]).getSelects();
-                if (ss.get(0) instanceof ServiceFidelity) {
+            } else if (elems[i] instanceof ServiceFidelity) {
+                if (((ServiceFidelity) elems[i]).getType().equals(ServiceFidelity.Type.META)) {
                     metaFis.add((ServiceFidelity<ServiceFidelity>) elems[i]);
                 } else {
                     fis.add(((ServiceFidelity) elems[i]));
@@ -1897,7 +1889,6 @@ public class operator {
             } else if (elems[i] instanceof Strategy.FidelityMangement) {
                 fm = (Strategy.FidelityMangement) elems[i];
             }
-
 		}
 		Job job = null;
 		if (signature instanceof NetSignature) {
@@ -1959,6 +1950,19 @@ public class operator {
             job.setServiceMorphFidelity(mFi);
             job.setSelectedFidelity(first);
             job.setSelectedFidelity(first);
+        }
+
+        if (metaFis.size() > 0) {
+            ServiceFidelity<ServiceFidelity> metaFi = new ServiceFidelity(name, metaFis);
+            ServiceFidelity first = metaFis.get(0);
+            metaFi.setSelect(first);
+            metaFi.setName(job.getName());
+            metaFi.setPath(job.getName());
+            for (Object fi : metaFis) {
+                ((ServiceFidelity)fi).setPath(name);
+            }
+            job.putMetafidelity(job.getName(), metaFi);
+            job.setMetafidelity(first);
         }
 
         if (fm == Strategy.FidelityMangement.YES && job.getFidelityManager() == null

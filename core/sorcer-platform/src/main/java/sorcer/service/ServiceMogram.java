@@ -100,7 +100,7 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
     // service metafidelities for this mogram
     protected Map<String, ServiceFidelity> serviceMetafidelities;
 
-    protected ServiceFidelity serviceMetafidelity;
+    protected ServiceFidelity selectedMetafidelity;
 
     // service fidelities for this mogram
     protected Map<String, ServiceFidelity> serviceFidelities;
@@ -905,11 +905,11 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
 
     @Override
     public ServiceFidelity<ServiceFidelity> getMetafidelity() {
-        return serviceMetafidelity;
+        return selectedMetafidelity;
     }
 
     @Override
     public void setMetafidelity(ServiceFidelity<ServiceFidelity> metafidelity) {
-        serviceMetafidelity = metafidelity;
+        selectedMetafidelity = metafidelity;
     }
 }
