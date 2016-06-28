@@ -354,13 +354,13 @@ public class ServiceShell implements RemoteServiceShell, Client, Callable {
 				exertion = (ServiceExertion)es.getSortedJob();
 			}
 //			 exert modeling local tasks
-			if (exertion instanceof ModelTask && exertion.getFidelity().getSelects().size() == 1) {
+			if (exertion instanceof ModelTask && exertion.getSelectedFidelity().getSelects().size() == 1) {
 				return ((Task) exertion).doTask(transaction);
 			}
 
 			// handle delegated tasks with fidelities
 			if (exertion.getClass() == Task.class) {
-				if (exertion.getFidelity().getSelects().size() == 1) {
+				if (exertion.getSelectedFidelity().getSelects().size() == 1) {
 					return ((Task) exertion).doTask(transaction);
 				} else {
 					try {
@@ -375,7 +375,7 @@ public class ServiceShell implements RemoteServiceShell, Client, Callable {
 			// exert object tasks and jobs
 			if (!(signature instanceof NetSignature)) {
 				if (exertion instanceof Task) {
-					if (exertion.getFidelity().getSelects().size() == 1) {
+					if (exertion.getSelectedFidelity().getSelects().size() == 1) {
 						return ((Task) exertion).doTask(transaction, args);
 					} else {
 						try {

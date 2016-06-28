@@ -15,12 +15,14 @@ import sorcer.arithmetic.provider.impl.SubtractorImpl;
 import sorcer.core.plexus.Morpher;
 import sorcer.core.provider.Jobber;
 import sorcer.core.provider.rendezvous.ServiceJobber;
+import sorcer.core.service.Projection;
 import sorcer.service.*;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
+import static sorcer.eo.operator.value;
 
 /**
  * Created by Mike Sobolewski on 06/24/16.
@@ -220,5 +222,22 @@ public class ExertionMultiFidelities {
         logger.info("job context: " + out);
         assertTrue(value(out, "j1/t3/result/y").equals(-1540.0));
     }
+
+
+	@Test
+	public void projectionTets() throws Exception {
+		ServiceFidelity<Fidelity> sFi1 = fi("job2", cFi("j1/j2", "net"),
+				cFi("j1/t3", "object2"), cFi("j1/j2/t4", "object2"), cFi("j1/j2/t5", "object2"));
+
+		ServiceFidelity<Fidelity> sFi2 = fi("job2", cFi("j1/j2", "net"),
+				cFi("j1/t3", "object2"), cFi("j1/j2/t4", "object2"), cFi("j1/j2/t5", "object2"), sFi1);
+
+
+		logger.info("projection: " + sFi2);
+
+		Projection p1 = new Projection(sFi1);
+
+		Projection p2 = new Projection(sFi2);
+	}
 
 }

@@ -54,7 +54,7 @@ public class ModelMultiFidelities {
     }
 
     @Test
-    public void entMultiFidelityModel() throws Exception {
+    public void entMueactoringtiFidelityModel() throws Exception {
 
         // three entry model
         Model mdl = model(
@@ -67,7 +67,7 @@ public class ModelMultiFidelities {
         logger.info("DEPS: " + printDeps(mdl));
 
 //        Context out = response(mdl, fi("arg/x1", "arg/x1/fi2"), fi("arg/x2", "arg/x2/fi2"), fi("mFi", "multiply"));
-        Context out = response(mdl, fi("arg/x1", "arg/x1/fi2"), fis( fi("arg/x2", "arg/x2/fi2"), fi("mFi", "multiply")));
+        Context out = response(mdl, fi("arg/x1", "arg/x1/fi2"), fis(fi("arg/x2", "arg/x2/fi2"), fi("mFi", "multiply")));
         logger.info("out: " + out);
         assertTrue(get(out, "arg/x1").equals(11.0));
         assertTrue(get(out, "arg/x2").equals(91.0));
@@ -197,8 +197,8 @@ public class ModelMultiFidelities {
             }
         };
 
-        ServiceFidelity<ServiceFidelity> fi2 = fi("sysFi2",fi("mFi2", "divide"), fi("mFi3", "multiply"));
-        ServiceFidelity<ServiceFidelity> fi3 = fi("sysFi3", fi("mFi2", "average"), fi("mFi3", "divide"));
+        ServiceFidelity<Fidelity> fi2 = fi("sysFi2",fi("mFi2", "divide"), fi("mFi3", "multiply"));
+        ServiceFidelity<Fidelity> fi3 = fi("sysFi3", fi("mFi2", "average"), fi("mFi3", "divide"));
 
         Signature add = sig("add", AdderImpl.class,
                 result("result/y1", inPaths("arg/x1", "arg/x2")));
@@ -321,9 +321,9 @@ public class ModelMultiFidelities {
             }
         };
 
-        ServiceFidelity<ServiceFidelity> fi2 = fi("sysFi2",fi("mFi2", "divide"), fi("mFi3", "multiply"));
-        ServiceFidelity<ServiceFidelity> fi3 = fi("sysFi3", fi("mFi2", "average"), fi("mFi3", "divide"));
-        ServiceFidelity<ServiceFidelity> fi4 = fi("sysFi4", fi("mFi3", "average"));
+        ServiceFidelity<Fidelity> fi2 = fi("sysFi2",fi("mFi2", "divide"), fi("mFi3", "multiply"));
+        ServiceFidelity<Fidelity> fi3 = fi("sysFi3", fi("mFi2", "average"), fi("mFi3", "divide"));
+        ServiceFidelity<Fidelity> fi4 = fi("sysFi4", fi("mFi3", "average"));
 
         Signature add = sig("add", AdderImpl.class,
                 result("result/y1", inPaths("arg/x1", "arg/x2")));
@@ -588,10 +588,10 @@ public class ModelMultiFidelities {
             }
         };
 
-        ServiceFidelity<ServiceFidelity> fi2 = fi("sysFi2", mFi("mFi2", "ph4"), fi("mFi2", "divide"), fi("mFi3", "multiply"));
-        ServiceFidelity<ServiceFidelity> fi3 = fi("sysFi3", fi("mFi2", "average"), fi("mFi3", "divide"));
-        ServiceFidelity<ServiceFidelity> fi4 = fi("sysFi4", fi("mFi3", "average"));
-        ServiceFidelity<ServiceFidelity> fi5 = fi("sysFi5", fi("mFi4", "t4"));
+        ServiceFidelity<Fidelity> fi2 = fi("sysFi2", mFi("mFi2", "ph4"), fi("mFi2", "divide"), fi("mFi3", "multiply"));
+        ServiceFidelity<Fidelity> fi3 = fi("sysFi3", fi("mFi2", "average"), fi("mFi3", "divide"));
+        ServiceFidelity<Fidelity> fi4 = fi("sysFi4", fi("mFi3", "average"));
+        ServiceFidelity<Fidelity> fi5 = fi("sysFi5", fi("mFi4", "t4"));
 
         // four entry multifidelity model with morphers
         Model mdl = model(inEnt("arg/x1", 90.0), inEnt("arg/x2", 10.0),

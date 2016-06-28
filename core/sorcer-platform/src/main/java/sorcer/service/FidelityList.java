@@ -22,92 +22,92 @@ import java.util.Set;
 /**
  * Created by Mike Sobolewski on 5/19/16.
  */
-public class FidelityList extends ArrayList<ServiceFidelity> implements Arg {
+public class FidelityList extends ArrayList<Fidelity> implements Arg {
 
-	static final long serialVersionUID = 1L;
+    static final long serialVersionUID = 1L;
 
-	private static int count = 0;
+    private static int count = 0;
 
-	private String name;
+    private String name;
 
-	public FidelityList() {
-		super();
-		count++;
-	}
+    public FidelityList() {
+        super();
+        count++;
+    }
 
-	public FidelityList(int size) {
-		super(size);
-	}
+    public FidelityList(int size) {
+        super(size);
+    }
 
-	public FidelityList(Set<ServiceFidelity> fiSet) {
-		addAll(fiSet);
-	}
+    public FidelityList(Set<Fidelity> fiSet) {
+        addAll(fiSet);
+    }
 
-	public FidelityList(ServiceFidelity... array) {
-		super();
-		for (ServiceFidelity mf : array) {
-			add(mf);
-		}
-	}
+    public FidelityList(Fidelity... array) {
+        super();
+        for (Fidelity mf : array) {
+            add(mf);
+        }
+    }
 
-	public FidelityList(FidelityList... fiLists) {
-		super();
-		for (FidelityList fl : fiLists) {
-			addAll(fl);
-		}
-	}
+    public FidelityList(FidelityList... fiLists) {
+        super();
+        for (FidelityList fl : fiLists) {
+            addAll(fl);
+        }
+    }
 
-	@Override
-	public String getName() {
-		if (name == null)
-			return getClass().getName()+ "-" + count;
-		else
-		 return name;
-	}
+    @Override
+    public String getName() {
+        if (name == null)
+            return getClass().getName()+ "-" + count;
+        else
+            return name;
+    }
 
-	public ServiceFidelity[] toFidelityArray() {
-		ServiceFidelity[] sfis = new ServiceFidelity[this.size()];
-		this.toArray(sfis);
-		return sfis;
-	}
+    public Fidelity[] toFidelityArray() {
+        Fidelity[] sfis = new Fidelity[this.size()];
+        this.toArray(sfis);
+        return sfis;
+    }
 
-	public static FidelityList selectFidelities(Arg[] entries) {
-		FidelityList out = new FidelityList();
-		for (Arg a : entries) {
-			if (a instanceof ServiceFidelity && ((ServiceFidelity)a).type == ServiceFidelity.Type.SELECT) {
-				out.add((ServiceFidelity)a);
-			} else if (a instanceof FidelityList) {
-				out.addAll((FidelityList)a);
-			}
-		}
-		return out;
-	}
+    public static FidelityList selectFidelities(Arg[] entries) {
+        FidelityList out = new FidelityList();
+        for (Arg a : entries) {
+            if (a instanceof Fidelity && ((Fidelity)a).type == Fidelity.Type.SELECT) {
+                out.add((Fidelity)a);
+            } else if (a instanceof FidelityList) {
+                out.addAll((FidelityList)a);
+            }
+        }
+        return out;
+    }
 
-	public String toString() {
-		int tally = size();
-		StringBuilder sb = new StringBuilder("fis(");
-		if (size() > 0) {
-			sb.append("fi(\"").append(get(0).getPath()).append("\", \"");
-			if (tally == 1)
-				sb.append(get(0).getName()).append("\")");
-			else
-				sb.append(get(0).getName()).append("\"), ");
+    public String toString() {
+        int tally = size();
+        StringBuilder sb = new StringBuilder("fis(");
+        if (tally > 0) {
+            sb.append("fi(\"").append(get(0).getPath()).append("\", \"");
+            if (tally == 1)
+                sb.append(get(0).getName()).append("\")");
+            else
+                sb.append(get(0).getName()).append("\"), ");
 
-			for (int i = 1; i < tally - 1; i++) {
-				sb.append("fi(\"").append(get(i).getPath()).append("\", \"");
-				if (size() == 1)
-					sb.append(get(i).getName()).append("\")");
-				else
-					sb.append(get(i).getName()).append("\"), ");
-			}
+            for (int i = 1; i < tally - 1; i++) {
+                sb.append("fi(\"").append(get(i).getPath()).append("\", \"");
+                if (tally == 1)
+                    sb.append(get(i).getName()).append("\")");
+                else
+                    sb.append(get(i).getName()).append("\"), ");
+            }
 
-			if (tally > 1) {
-				sb.append("fi(\"").append(get(tally - 1).getPath()).append("\", \"");
-				sb.append(get(tally - 1).getName()).append("\")");
-			}
+            if (tally > 1) {
+                sb.append("fi(\"").append(get(tally - 1).getPath()).append("\", \"");
+                sb.append(get(tally - 1).getName()).append("\")");
+            }
 
-		}
-		sb.append(")");
-		return sb.toString();
-	}
+        }
+        sb.append(")");
+        return sb.toString();
+    }
 }

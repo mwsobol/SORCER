@@ -239,11 +239,11 @@ public class operator {
     public static Model srvModel(Object... items) throws ContextException {
         sorcer.eo.operator.Complement complement = null;
         List<Signature> sigs = new ArrayList<>();
-        ServiceFidelity<Arg> responsePaths = null;
+        Fidelity responsePaths = null;
         SrvModel model = null;
         FidelityManager fiManager = null;
-        List<ServiceFidelity<ServiceFidelity>> metaFis = new ArrayList<>();
-        List<Srv> morphFiEnts = new ArrayList<Srv>();
+        List<ServiceFidelity<Fidelity>> metaFis = new ArrayList<>();
+        List<Srv> morphFiEnts = new ArrayList();
         for (Object item : items) {
             if (item instanceof Signature) {
                 sigs.add((Signature)item);
@@ -255,11 +255,11 @@ public class operator {
                 fiManager = ((FidelityManager)item);
             } else if (item instanceof Srv && ((Entry)item)._2 instanceof MorphFidelity) {
                 morphFiEnts.add((Srv)item);
-            } else if (item instanceof ServiceFidelity) {
-                if (((ServiceFidelity) item).getSelects().get(0) instanceof ServiceFidelity) {
-                    metaFis.add((ServiceFidelity<ServiceFidelity>) item);
-                } else if (((ServiceFidelity) item).getSelects().get(0) instanceof Name) {
-                    responsePaths = ((ServiceFidelity<Arg>) item);
+            } else if (item instanceof Fidelity) {
+                if (((Fidelity) item).getType().equals(Fidelity.Type.META)) {
+                    metaFis.add((ServiceFidelity<Fidelity>) item);
+                } else {
+                    responsePaths = ((Fidelity) item);
                 }
             }
         }

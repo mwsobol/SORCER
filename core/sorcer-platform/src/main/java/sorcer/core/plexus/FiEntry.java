@@ -24,8 +24,8 @@ import sorcer.service.FidelityList;
  */
 public class FiEntry extends Tuple2<Integer, FidelityList> {
 
-	public FiEntry(int index, FidelityList list) {
-		super(index, list);
+	public FiEntry(int index, FidelityList projection) {
+		super(index, projection);
 	}
 
 	public int getIndex() {

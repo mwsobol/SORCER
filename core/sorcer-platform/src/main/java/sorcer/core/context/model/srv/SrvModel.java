@@ -30,6 +30,7 @@ import sorcer.core.invoker.ServiceInvoker;
 import sorcer.core.plexus.MorphFidelity;
 import sorcer.core.plexus.MultiFiRequest;
 import sorcer.core.provider.rendezvous.ServiceModeler;
+import sorcer.core.service.Projection;
 import sorcer.core.signature.ServiceSignature;
 import sorcer.eo.operator;
 import sorcer.service.*;
@@ -379,9 +380,9 @@ public class SrvModel extends ParModel<Object> implements Model, Invocation<Obje
     }
 
     protected <T extends Arg> T getFi(ServiceFidelity<T> fi, Arg[] entries, String path) throws ContextException {
-        ServiceFidelity selected = null;
-        FidelityList fiList = FidelityList.selectFidelities(entries);
-        for (ServiceFidelity sfi : fiList) {
+       Fidelity selected = null;
+        List<Fidelity> fiList = Projection.selectFidelities(entries);
+        for (Fidelity sfi : fiList) {
             if (sfi.getPath().equals(path)) {
                 selected = sfi;
                 ((Entry) asis(path)).isValid(false);

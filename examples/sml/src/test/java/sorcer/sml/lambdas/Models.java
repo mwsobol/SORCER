@@ -331,9 +331,9 @@ public class Models {
             }
         };
 
-        ServiceFidelity<ServiceFidelity> fi2 = fi("sysFi2",fi("mFi2", "divide"), fi("mFi3", "multiply"));
-        ServiceFidelity<ServiceFidelity> fi3 = fi("sysFi3", fi("mFi2", "average"), fi("mFi3", "divide"));
-        ServiceFidelity<ServiceFidelity> fi4 = fi("sysFi4", fi("mFi3", "average"));
+        ServiceFidelity<Fidelity> fi2 = fi("sysFi2",fi("mFi2", "divide"), fi("mFi3", "multiply"));
+        ServiceFidelity<Fidelity> fi3 = fi("sysFi3", fi("mFi2", "average"), fi("mFi3", "divide"));
+        ServiceFidelity<Fidelity> fi4 = fi("sysFi4", fi("mFi3", "average"));
 
         Signature add = sig("add", AdderImpl.class,
                 result("result/y1", inPaths("arg/x1", "arg/x2")));

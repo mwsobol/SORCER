@@ -654,7 +654,7 @@ public class LokiMemberUtil {
 				{
 					context1.iv(0,groupSeqId);
 					context1.iv(1,template.exertion.getName());
-					context1.iv(2,template.exertion.getFidelity().toString());
+					context1.iv(2,template.exertion.getSelectedFidelity().toString());
 					context1.iv(3,(new Timestamp(System.currentTimeMillis())).toString());
 					context1.iv(4,myName);
 					context1.iv(5,(new Timestamp(System.currentTimeMillis())).toString());

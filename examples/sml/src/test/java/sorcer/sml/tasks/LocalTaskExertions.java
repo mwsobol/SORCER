@@ -126,7 +126,7 @@ public class LocalTaskExertions {
 		assertTrue(value(out, "result/y").equals(500.0));
 
 		out = context(exert(t4, fi("object2")));
-//		logger.info("task context: " + context(t4));
+		logger.info("task context: " + context(t4));
 		assertTrue(value(out, "result/y").equals(60.0));
 	}
 

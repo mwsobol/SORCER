@@ -34,7 +34,7 @@ import java.util.Map;
  *
  * @author Mike Sobolewski
  */
-public interface Mogram extends Identifiable, Service, Exerter, Projection, Scopable, Substitutable, Request {
+public interface Mogram extends Identifiable, Service, Exerter, Scopable, Substitutable, Request {
 
     /**
      * Exerts this mogram by the assigned service provider if it is set. If a service
@@ -135,7 +135,7 @@ public interface Mogram extends Identifiable, Service, Exerter, Projection, Scop
      * @return a collection of all service signatures
      * @see #getProcessSignature
      */
-    public ServiceFidelity<Signature> getFidelity();
+    public ServiceFidelity<Signature> getSelectedFidelity();
 
     /**
      * Returns a map of all available service fidelities of this exertion.
@@ -287,7 +287,7 @@ public interface Mogram extends Identifiable, Service, Exerter, Projection, Scop
      *
      * @param fidelities
      */
-    public void reconfigure(ServiceFidelity... fidelities) throws ContextException, RemoteException;
+    public void reconfigure(Fidelity... fidelities) throws ContextException, RemoteException;
 
     /**
      * Reconfigure this model with given names of metafidelities.

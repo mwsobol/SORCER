@@ -34,17 +34,17 @@ public interface FidelityManagement<T extends Arg> extends Service, Serializable
 
     public Map<String, ServiceFidelity<T>> getFidelities() throws RemoteException;
 
-    public Map<String, ServiceFidelity<ServiceFidelity>> getMetafidelities() throws RemoteException;
+    public Map<String, ServiceFidelity<Fidelity>> getMetafidelities() throws RemoteException;
 
     public void morph(String... fiNames) throws RemoteException;
 
     public void reconfigure(String... fiNames) throws RemoteException;
 
-    public void reconfigure(ServiceFidelity... fidelities) throws RemoteException, ContextException;
+    public void reconfigure(Fidelity... fidelities) throws RemoteException, ContextException;
 
     public Mogram getMogram() throws RemoteException;
 
-    public List<ServiceFidelity> getFiTrace() throws RemoteException;
+    public List<Fidelity> getFiTrace() throws RemoteException;
 
     public EventRegistration register(long eventID, MarshalledObject<?> handback,
                                       RemoteEventListener toInform, long leaseLenght)

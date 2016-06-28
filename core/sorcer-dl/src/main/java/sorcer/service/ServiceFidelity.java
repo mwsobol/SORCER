@@ -44,31 +44,11 @@ import java.util.List;
  * @author Mike Sobolewski
  *
  */
-public class ServiceFidelity<T extends Arg> implements Multifidelity<T>, Arg {
+public class ServiceFidelity<T extends Arg> extends Fidelity<T> implements Multifidelity<T>  {
 
 	private static final long serialVersionUID = -875629011139790420L;
 
-	public enum Type implements Arg {
-		SELECT, META, NAME, SYS, ENTRY, SIG, CONTEXT, COMPONENT,
-		MORPH, MULTI, VAR, REQUEST, UPDATE, ADD, REPLACE, DELETE;
-
-		public String getName() {
-			return toString();
-		}
-	}
-
-	protected static int count = 0;
-
-	protected String name;
-
 	protected List<T> selects = new ArrayList<T>();
-
-	// component exertion path
-	protected String path = "";
-
-	protected T select;
-
-	public Type type = Type.NAME;
 
 	public ServiceFidelity() {
 		super();
@@ -85,6 +65,12 @@ public class ServiceFidelity<T extends Arg> implements Multifidelity<T>, Arg {
 
 	public ServiceFidelity(Arg name) {
 		this.name = name.getName();
+	}
+
+	public ServiceFidelity(Fidelity<T> fi) {
+		this.name = fi.getName();
+		this.path = fi.getPath();
+		this.select = fi.getSelect();
 	}
 
 	public ServiceFidelity(T[] selects) {
@@ -210,16 +196,8 @@ public class ServiceFidelity<T extends Arg> implements Multifidelity<T>, Arg {
 		}
 	}
 
-	public Type getType() {
-		return type;
-	}
-
 	public void clear() {
 		selects.clear();
-	}
-
-	public void setSelect(T selection) {
-		this.select = selection;
 	}
 
 	public void removeSelect(T select) {
@@ -254,22 +232,10 @@ public class ServiceFidelity<T extends Arg> implements Multifidelity<T>, Arg {
 		this.selects = selects;
 	}
 
-	public String getPath() {
-		return path;
+	public Fidelity createFidelity() {
+		return new Fidelity(getName(), getPath());
 	}
 
-	public void setPath(String fidelityPath) {
-		this.path = fidelityPath;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-	
 	@Override
 	public String toString() {
 		return (path != null ? path + "@" + name : name )

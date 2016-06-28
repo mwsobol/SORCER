@@ -37,5 +37,4 @@ public interface Multifidelity<Fi> extends Item, Serializable {
 
     public List<Fi> getSelects();
 
-
 }

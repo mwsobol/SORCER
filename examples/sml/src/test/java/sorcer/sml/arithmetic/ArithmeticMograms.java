@@ -202,7 +202,7 @@ public class ArithmeticMograms {
                 context(inEnt("multiply/x1", 10.0), inEnt("multiply/x2", 50.0),
                         inEnt("add/x1", 20.0), inEnt("add/x2", 80.0)));
 
-        logger.info("task getSelects:" + batch3.getFidelity());
+        logger.info("task getSelects:" + fi(batch3));
 
         batch3 = exert(batch3);
 		//logger.info("task result/y: " + get(batch3, "result/y"));
@@ -356,9 +356,9 @@ public class ArithmeticMograms {
             }
         };
 
-        ServiceFidelity<ServiceFidelity> fi2 = fi("sysFi2",fi("mFi2", "divide"), fi("mFi3", "multiply"));
-        ServiceFidelity<ServiceFidelity> fi3 = fi("sysFi3", fi("mFi2", "average"), fi("mFi3", "divide"));
-        ServiceFidelity<ServiceFidelity> fi4 = fi("sysFi4", fi("mFi3", "average"));
+        ServiceFidelity<Fidelity> fi2 = fi("sysFi2",fi("mFi2", "divide"), fi("mFi3", "multiply"));
+		ServiceFidelity<Fidelity> fi3 = fi("sysFi3", fi("mFi2", "average"), fi("mFi3", "divide"));
+		ServiceFidelity<Fidelity> fi4 = fi("sysFi4", fi("mFi3", "average"));
 
         Signature add = sig("add", AdderImpl.class,
                 result("result/y1", inPaths("arg/x1", "arg/x2")));
@@ -371,7 +371,7 @@ public class ArithmeticMograms {
         Signature divide = sig("divide", DividerImpl.class,
                 result("result/y2", inPaths("arg/x1", "arg/x2")));
 
-        // three entry multifidelity model with morphers
+        // multifidelity model with morphers
         Model mod = model(inEnt("arg/x1", 90.0), inEnt("arg/x2", 10.0),
                 ent("mFi1", mFi(mFi1Morpher, add, multiply)),
                 ent("mFi2", mFi(mFi2Morpher, average, divide, subtract)),

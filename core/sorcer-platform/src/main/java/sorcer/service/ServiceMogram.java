@@ -9,6 +9,7 @@ import sorcer.core.SorcerConstants;
 import sorcer.core.context.ContextSelector;
 import sorcer.core.monitor.MonitoringSession;
 import sorcer.core.plexus.MorphFidelity;
+import sorcer.core.service.Projection;
 import sorcer.core.signature.ServiceSignature;
 import sorcer.security.util.SorcerPrincipal;
 
@@ -63,7 +64,7 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
 
     protected FidelityManagement fiManager;
 
-    protected FidelityList fiConfig;
+    protected Projection projection;
 
     protected MogramStrategy mogramStrategy;
 
@@ -612,11 +613,6 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
         this.dbUrl = dbUrl;
     }
 
-    @Override
-    public ServiceFidelity<Signature> getFidelity() {
-        return this.selectedFidelity;
-    }
-
     public ServiceFidelity<Signature> getSelectedFidelity() {
         return selectedFidelity;
     }
@@ -777,22 +773,22 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
         this.fiManager = fiManager;
     }
 
-    public FidelityList getFiConfig() {
-        return fiConfig;
+    public Projection getProjection() {
+        return projection;
     }
 
-    public void setFiConfig(FidelityList fiConfig) {
-        this.fiConfig = fiConfig;
+    public void setProjection(Projection projection) {
+        this.projection = projection;
     }
 
     public ServiceFidelity selectFidelity(Arg... entries)  {
         ServiceFidelity fi = null;
         if (entries != null && entries.length > 0) {
             for (Arg a : entries)
-                if (a instanceof ServiceFidelity && ((ServiceFidelity)a).type == ServiceFidelity.Type.SELECT) {
+                if (a instanceof Fidelity && ((Fidelity)a).type == Fidelity.Type.SELECT) {
                     fi = selectFidelity(a.getName());
-                } else if (a instanceof ServiceFidelity && ((ServiceFidelity)a).type == ServiceFidelity.Type.COMPONENT) {
-                    fi = selectComponentFidelity((ServiceFidelity) a);
+                } else if (a instanceof Fidelity && ((Fidelity)a).type == Fidelity.Type.COMPONENT) {
+                    fi = selectComponentFidelity((Fidelity) a);
                 } else if (a instanceof ServiceFidelity && ((ServiceFidelity)a).type == ServiceFidelity.Type.META) {
                     fi = selectCompositeFidelity((ServiceFidelity) a);
                 }
@@ -824,9 +820,9 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
         return selectedFidelity;
     }
 
-    public ServiceFidelity selectComponentFidelity(ServiceFidelity componentFidelity) {
+    public ServiceFidelity selectComponentFidelity(Fidelity componentFidelity) {
         Mogram ext = getComponentMogram(componentFidelity.getPath());
-        String fn = ((Arg)componentFidelity.getSelects().get(0)).getName();
+        String fn = componentFidelity.getName();
         ServiceFidelity cf = ext.getFidelities().get(fn);
         if (cf != null) {
             this.setSelectedFidelity(cf);
@@ -864,7 +860,7 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
     }
 
     @Override
-    public void reconfigure(ServiceFidelity... fidelities) throws ContextException, RemoteException {
+    public void reconfigure(Fidelity... fidelities) throws ContextException, RemoteException {
         if (fiManager != null)
             fiManager.reconfigure(fidelities);
     }
@@ -903,13 +899,12 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
         return selectedFidelity.selects.size() > 1;
     }
 
-    @Override
-    public ServiceFidelity<ServiceFidelity> getMetafidelity() {
+
+    public ServiceFidelity<ServiceFidelity> getSelectedMetafidelity() {
         return selectedMetafidelity;
     }
 
-    @Override
-    public void setMetafidelity(ServiceFidelity<ServiceFidelity> metafidelity) {
+    public void setSelectedMetafidelity(ServiceFidelity<ServiceFidelity> metafidelity) {
         selectedMetafidelity = metafidelity;
     }
 }
