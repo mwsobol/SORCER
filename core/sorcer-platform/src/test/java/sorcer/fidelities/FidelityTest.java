@@ -126,7 +126,7 @@ public class FidelityTest {
 		assertEquals(fiMap.size(), 4);
 		assertEquals(fiMap.get(1), null);
 		assertEquals(fiMap.get(3), null);
-                                                                                  MF
+
 		fiMap.populateFidelities(dataTable.getRowCount()-1);
 		logger.info("fi map populated: " + fiMap);
 		assertEquals(fiMap.get(1), fiList(fi("tip/displacement", "astros")));

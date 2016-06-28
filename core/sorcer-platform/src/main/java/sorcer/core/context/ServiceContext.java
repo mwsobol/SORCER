@@ -64,7 +64,6 @@ import static sorcer.eo.operator.task;
 /**
  * Implements the base-level service context interface {@link Context}.
  */
-@SuppressWarnings({ "unchecked", "rawtypes"})
 public class ServiceContext<T> extends ServiceMogram implements
 		Context<T>, AssociativeContext<T>, Contexter<T>, SorcerConstants {
 

@@ -247,12 +247,12 @@ public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Ob
         return fl;
     }
 
-    public ServiceFidelityList getDefaultFidelities() throws ContextException, RemoteException {
-        ServiceFidelityList fl = new ServiceFidelityList();
+    public FidelityList getDefaultFidelities() throws ContextException, RemoteException {
+        FidelityList fl = new FidelityList();
 		Iterator<Map.Entry<String, ServiceFidelity<T>>> it = fidelities.entrySet().iterator();
 		while (it.hasNext()) {
 			Map.Entry<String, ServiceFidelity<T>> me = it.next();
-			fl.add(srvFi(me.getKey(), me.getValue().get(0).getName()));
+			fl.add(new Fidelity(me.getValue().get(0).getName(), me.getKey()));
 		}
         return fl;
     }

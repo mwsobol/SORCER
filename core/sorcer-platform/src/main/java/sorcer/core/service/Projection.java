@@ -59,7 +59,7 @@ public class Projection<T extends Fidelity> extends Fidelity<T> {
 		this.fidelity = fidelity;
 	}
 
-	public List<Fidelity> getFidelities() {
+	public FidelityList getFidelities() {
 		return fidelities;
 	}
 
