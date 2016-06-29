@@ -45,7 +45,6 @@ import sorcer.core.signature.ServiceSignature;
 import sorcer.eo.operator;
 import sorcer.service.*;
 import sorcer.service.Signature.Direction;
-import sorcer.core.signature.ServiceSignature.*;
 import sorcer.service.Signature.ReturnPath;
 import sorcer.service.modeling.Model;
 import sorcer.service.modeling.Variability;
@@ -59,16 +58,12 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
-import static sorcer.co.operator.inEnt;
-import static sorcer.co.operator.outEnt;
-import static sorcer.eo.operator.cxt;
 import static sorcer.eo.operator.sig;
 import static sorcer.eo.operator.task;
 
 /**
  * Implements the base-level service context interface {@link Context}.
  */
-@SuppressWarnings({ "unchecked", "rawtypes"})
 public class ServiceContext<T> extends ServiceMogram implements
 		Context<T>, AssociativeContext<T>, Contexter<T>, SorcerConstants {
 
@@ -1520,6 +1515,8 @@ public class ServiceContext<T> extends ServiceMogram implements
 		try {
 			// define output context here
 			sig.setReturnPath((SignatureReturnPath)null);
+			Task sTask = task(sig, incxt);
+			sTask.setAccess(sig.getAccessType());
 			outcxt = task(sig, incxt).exert().getContext();
 			// restore return path
 			sig.setReturnPath(rp);
@@ -2663,9 +2660,9 @@ public class ServiceContext<T> extends ServiceMogram implements
 			return null;
 	}
 
-	public ServiceContext substitute(Arg... entries) throws SetterException {
+	public void substitute(Arg... entries) throws SetterException {
 		if (entries == null)
-			return this;
+			return;
 		ReturnPath rPath = null;
 		for (Arg a : entries) {
 			if (a instanceof ReturnPath) {
@@ -2699,7 +2696,6 @@ public class ServiceContext<T> extends ServiceMogram implements
 			ex.printStackTrace();
 			throw new SetterException(ex);
 		}
-		return this;
 	}
 
 	@Override
@@ -2839,7 +2835,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 				}
 			}
 			if (currentPath.startsWith("super")) {
-				obj = (T) exertion.getContext().getValue(currentPath.substring(6));
+				obj = (T) exertion.getScope().getValue(currentPath.substring(6));
 			} else {
 				obj = (T) getValue0(currentPath);
 				if (obj instanceof Evaluation && isRevaluable) {
@@ -2865,7 +2861,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 					((Scopable)((Entry)obj).value()).setScope(this);
 				obj = (T) ((Evaluation) obj).getValue(entries);
 			}
-			if (obj == Context.none && scope != null)
+			if (scope != null && (obj == Context.none || obj == null ))
 				obj = (T ) scope.getValue(path, entries);
 
 			return (T) obj;
@@ -2915,7 +2911,8 @@ public class ServiceContext<T> extends ServiceMogram implements
 			if (mogramStrategy.responsePaths != null && mogramStrategy.responsePaths.size() > 0) {
 				mogramStrategy.outcome = getMergedSubcontext(null, mogramStrategy.responsePaths, args);
 			} else {
-				mogramStrategy.outcome = substitute(args);
+				substitute(args);
+				mogramStrategy.outcome = this;
 			}
 			result = mogramStrategy.outcome;
 			mogramStrategy.outcome.setModeling(true);
@@ -3290,7 +3287,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		return (T) exert(exertion, null, (Arg[])null);
 	}
 
-	public Context updateContext(Path... paths) throws ContextException {
+	public Context updateInOutPaths(Path[] inpaths, Path[] outpaths) throws ContextException, RemoteException {
 		if (containsPath(Condition._closure_)) {
 			remove(Condition._closure_);
 		}
@@ -3299,29 +3296,27 @@ public class ServiceContext<T> extends ServiceMogram implements
 			scope.remove(Condition._closure_);
 		}
 
-		if (scope != null && scope.size() > 0) {
-			List<String> allPaths = null;
-			List<String> cxtPaths = getPaths();
-			if (paths != null) {
-				allPaths = new ArrayList<String>();
-				allPaths.addAll(Path.getPathList(paths));
-				allPaths.addAll(cxtPaths);
-			} else {
-				allPaths = cxtPaths;
+		if (inpaths != null) {
+			for (Path path : inpaths) {
+				putInValue(path.getName(), (T) getValue(path.getName()));
 			}
-			List<String> inpaths = ((ServiceContext) scope).getInPaths();
-			List<String> outpaths = ((ServiceContext) scope).getOutPaths();
-			// append missing values available in the scope
-			for (String path : allPaths) {
-				if (getValue(path) == null || getValue(path) == Context.none) {
-					if (inpaths.contains(path))
-						putInValue(path, (T) scope.getValue(path));
-					else if (outpaths.contains(path))
-						putOutValue(path, (T) scope.getValue(path));
-					else
-						putValue(path, scope.getValue(path));
-				}
+		}
+
+		if (outpaths != null) {
+			for (Path path : outpaths) {
+				putOutValue(path.getName(), (T) getValue(path.getName()));
 			}
+		}
+		return this;
+	}
+
+	public Context updateContext(Path... paths) throws ContextException {
+		if (containsPath(Condition._closure_)) {
+			remove(Condition._closure_);
+		}
+		if (scope != null &&
+				scope.containsPath(Condition._closure_)) {
+			scope.remove(Condition._closure_);
 		}
 		return this;
 	}
@@ -3394,7 +3389,11 @@ public class ServiceContext<T> extends ServiceMogram implements
 	public void setDirection(Direction direction) {
 		this.direction = direction;
 	}
-	
+
+	public Entry<T> getEntry(String path) {
+		return new Entry(path, data.get(path));
+	}
+
 	@Override
 	public Object exec(Arg... args) throws MogramException, RemoteException {
 		Context cxt = Arg.getContext(args);
@@ -3403,6 +3402,13 @@ public class ServiceContext<T> extends ServiceMogram implements
 			return getResponse(args);
 		} else {
 			return getValue(args);
+		}
+	}
+
+	public void clean() {
+		exertion = null;
+		if (scope != null) {
+			((ServiceContext) scope).clean();
 		}
 	}
 }

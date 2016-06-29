@@ -17,7 +17,9 @@
 
 package sorcer.service;
 
+import sorcer.core.Name;
 import sorcer.core.context.model.par.ParException;
+import sorcer.service.modeling.Variability;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -33,6 +35,8 @@ public class ArgList extends ArrayList<Arg> {
 
 	static final long serialVersionUID = -4997255102658715823L;
 
+	protected Variability.Type type = Variability.Type.ARG;;
+
 	public ArgList() {
 		super();
 	}
@@ -41,13 +45,27 @@ public class ArgList extends ArrayList<Arg> {
 		super(size);
 	}
 
-	public ArgList(Set<Arg> parSet) {
-		addAll(parSet);
+	public ArgList(Arg... array) {
+		super();
+		for (Arg arg : array) {
+			add(arg);
+		}
 	}
 
-	public ArgList(ArgList... parLists) {
+	public ArgList(Set<Arg> argSet) {
+		addAll(argSet);
+	}
+
+	public ArgList(String... names) {
 		super();
-		for (ArgList pl : parLists) {
+		for (String s : names) {
+			add(new Name(s));
+		}
+	}
+
+	public ArgList(ArgList... argLists) {
+		super();
+		for (ArgList pl : argLists) {
 			addAll(pl);
 		}
 	}
@@ -59,6 +77,14 @@ public class ArgList extends ArrayList<Arg> {
 			}
 		}
 		return null;
+	}
+
+	public Variability.Type getType() {
+		return type;
+	}
+
+	public void setType(Variability.Type type) {
+		this.type = type;
 	}
 
 	public void setArgValue(String parName, Object value)
@@ -80,25 +106,25 @@ public class ArgList extends ArrayList<Arg> {
 			throw new ParException("No such Arg in the list: " + parName);
 	}
 	
-	public ArgList selectArgs(List<String>... parNames) {
+	public ArgList selectArgs(List<String>... names) {
 		List<String> allParNames = new ArrayList<String>();
-		for (List<String> nl : parNames) {
+		for (List<String> nl : names) {
 			allParNames.addAll(nl);
 		}
 		ArgList out = new ArgList();
-		for (Arg v : this) {
-			if (allParNames.contains(v.getName())) {
-				out.add(v);
+		for (Arg a : this) {
+			if (allParNames.contains(a.getName())) {
+				out.add(a);
 			}
 		}
 		return out;
 	}
 
-	public ArgList selectArgs(String... parNames) {
-		List<String> vnames = Arrays.asList(parNames);
+	public ArgList selectArgs(String... names) {
+		List<String> anames = Arrays.asList(names);
 		ArgList out = new ArgList();
 		for (Arg v : this) {
-			if (vnames.contains(v.getName())) {
+			if (anames.contains(v.getName())) {
 				out.add(v);
 			}
 		}
@@ -106,8 +132,8 @@ public class ArgList extends ArrayList<Arg> {
 	}
 
 	public boolean containsArgName(String name) {
-		for (Arg v : this) {
-			if (v.getName().equals(name))
+		for (Arg a : this) {
+			if (a.getName().equals(name))
 				return true;
 		}
 		return false;
@@ -118,8 +144,8 @@ public class ArgList extends ArrayList<Arg> {
 		if (!(obj instanceof Arg))
 			return false;
 		else {
-			for (Arg v : this) {
-				if (v.getName().equals(((Arg) obj).getName()))
+			for (Arg a : this) {
+				if (a.getName().equals(((Arg) obj).getName()))
 					return true;
 			}
 		}
@@ -131,9 +157,9 @@ public class ArgList extends ArrayList<Arg> {
 		if (obj == null || !(obj instanceof Arg)) {
 			return false;
 		} else {
-			for (Arg v : this) {
-				if (v.getName().equals(((Arg) obj).getName())) {
-					super.remove(v);
+			for (Arg a : this) {
+				if (a.getName().equals(((Arg) obj).getName())) {
+					super.remove(a);
 					return true;
 				}
 			}
@@ -141,10 +167,18 @@ public class ArgList extends ArrayList<Arg> {
 		return false;
 	}
 
-	public List<String> getNames() {
+	public List<String> getNameList() {
 		List<String> names = new ArrayList<String>(size());
 		for (int i = 0; i < size(); i++) {
 			names.add(get(i).getName());
+		}
+		return names;
+	}
+
+	public String[] getNameArray() {
+		String[] names = new String[size()];
+		for (int i = 0; i < size(); i++) {
+			names[i] = get(i).getName();
 		}
 		return names;
 	}
@@ -167,7 +201,7 @@ public class ArgList extends ArrayList<Arg> {
 	
 	public String describe() {
 		StringBuilder sb = new StringBuilder();
-		sb.append(getNames().toString());
+		sb.append(getNameList().toString());
 		sb.append("\n");
 		for (int i = 0; i < size(); i++) {
 			sb.append(get(i).getName());
@@ -180,7 +214,7 @@ public class ArgList extends ArrayList<Arg> {
 
 	@Override
 	public String toString() {
-		return getNames().toString();
+		return getNameList().toString();
 	}
 
 }

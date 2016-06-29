@@ -6,14 +6,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.co.tuple.ExecPath;
 import sorcer.core.SorcerConstants;
+import sorcer.core.context.ContextSelector;
 import sorcer.core.monitor.MonitoringSession;
-import sorcer.core.plexus.FidelityManager;
-import sorcer.core.signature.NetSignature;
+import sorcer.core.plexus.MorphFidelity;
+import sorcer.core.service.Projection;
 import sorcer.core.signature.ServiceSignature;
 import sorcer.security.util.SorcerPrincipal;
 
 import javax.security.auth.Subject;
 import java.io.Serializable;
+import java.rmi.RemoteException;
 import java.security.Principal;
 import java.util.*;
 
@@ -30,9 +32,9 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
 
     protected Uuid mogramId;
 
-    protected Mogram parent;
-
     protected Uuid parentId;
+
+    protected Mogram parent;
 
     protected String parentPath = "";
 
@@ -62,8 +64,11 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
 
     protected FidelityManagement fiManager;
 
+    protected Projection projection;
+
     protected MogramStrategy mogramStrategy;
 
+    protected ContextSelector contextSelector;
     /**
      * position of component Mogram in a compund mogram
      */
@@ -93,10 +98,17 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
 
     protected String dbUrl;
 
-    // service fidelities for this exertions
-    protected Map<String, Fidelity> serviceFidelities;
+    // service metafidelities for this mogram
+    protected Map<String, ServiceFidelity> serviceMetafidelities;
 
-    protected Fidelity<Signature> serviceFidelity = new Fidelity<Signature>();
+    protected ServiceFidelity selectedMetafidelity;
+
+    // service fidelities for this mogram
+    protected Map<String, ServiceFidelity> serviceFidelities;
+
+    protected ServiceFidelity<Signature> selectedFidelity = new ServiceFidelity(ServiceFidelity.Type.SIG);
+
+    protected MorphFidelity serviceMorphFidelity;
 
     protected SorcerPrincipal principal;
 
@@ -172,6 +184,10 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
         index = i;
     }
 
+    public Uuid getMogramId() {
+        return mogramId;
+    }
+
     @Override
     public void setParentId(Uuid parentId) {
         this.parentId = parentId;
@@ -179,10 +195,6 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
 
     public Uuid getParentId() {
         return parentId;
-    }
-
-    public Uuid getMogramId() {
-        return mogramId;
     }
 
     public List<Mogram> getAllMograms() {
@@ -386,61 +398,53 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
         return (priority == null) ? MIN_PRIORITY : priority;
     }
 
-    public Signature getProcessSignature() {
-        Signature sig = null;
-        if (serviceFidelity.type == Fidelity.Type.COMPOSITE) {
-            for (Object obj : serviceFidelity.selects) {
-                if (obj instanceof Fidelity) {
-                    if (((Fidelity) obj).type == Fidelity.Type.COMPONENT)
-                        selectComponentFidelity((Fidelity) obj);
-                    else
-                        selectFidelity((Fidelity) obj);
-                }
-            }
+	public Signature getProcessSignature() {
+        if (selectedFidelity.select != null) {
+            return selectedFidelity.select;
         }
 
-        if (serviceFidelitySelector != null) {
-            serviceFidelity = serviceFidelities.get(serviceFidelitySelector);
+		Signature sig = null;
+		for (Signature s : selectedFidelity.selects) {
+			if (s.getType() == Signature.Type.PROC) {
+				sig = s;
+				break;
+			}
+		}
+        if (sig != null) {
+            // a select is just a process signature for the selection
+            selectedFidelity.select = sig;
         }
-        for (Signature s : serviceFidelity.getSelects()) {
-            if (s.getType() == Signature.Type.PROC) {
-                sig = s;
-                break;
-            }
-        }
-        return sig;
-    }
+		return sig;
+	}
 
     public void trimNotSerializableSignatures() {
         if (serviceFidelities != null) {
             Iterator i = serviceFidelities.keySet().iterator();
             while (i.hasNext()) {
                 Object obj = serviceFidelities.get(i.next());
-                if (obj instanceof Fidelity)
-                    trimNotSerializableSignatures((Fidelity) obj);
+                if (obj instanceof ServiceFidelity)
+                    trimNotSerializableSignatures((ServiceFidelity) obj);
             }
         }
     }
 
-    private void trimNotSerializableSignatures(Fidelity<Signature> fidelity) {
-        Signature sig = getProcessSignature();
-        if (sig instanceof NetSignature) {
-            Iterator i = fidelity.getSelects().iterator();
+	private void trimNotSerializableSignatures(ServiceFidelity<Signature> fidelity) {
+        if (fidelity.getSelects().get(0)  instanceof Signature){
+            Iterator<Signature> i = fidelity.getSelects().iterator();
             while (i.hasNext()) {
-                Object obj = i.next();
-                if (obj instanceof Signature
-                        && !(Serializable.class.isAssignableFrom(((Signature) obj).getServiceType())
-                        || ((Signature) obj).getServiceType().isInterface())) {
+                Class prvType = i.next().getServiceType();
+                if (!prvType.isInterface()
+                        && !Serializable.class.isAssignableFrom(prvType)) {
                     i.remove();
-                    logger.warn("removed not remote signature: {}", obj);
+                    logger.warn("removed not serializable signature for: {}", prvType);
                 }
             }
         }
-    }
+	}
 
     public List<Signature> getApdProcessSignatures() {
         List<Signature> sl = new ArrayList<Signature>();
-        for (Signature s : serviceFidelity.getSelects()) {
+        for (Signature s : selectedFidelity.selects) {
             if (s.getType() == Signature.Type.APD_DATA)
                 sl.add(s);
         }
@@ -449,7 +453,7 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
 
     public List<Signature> getPreprocessSignatures() {
         List<Signature> sl = new ArrayList<Signature>();
-        for (Signature s : serviceFidelity.getSelects()) {
+        for (Signature s : selectedFidelity.selects) {
             if (s.getType() == Signature.Type.PRE)
                 sl.add(s);
         }
@@ -458,7 +462,7 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
 
     public List<Signature> getPostprocessSignatures() {
         List<Signature> sl = new ArrayList<Signature>();
-        for (Signature s : serviceFidelity.getSelects()) {
+        for (Signature s : selectedFidelity.selects) {
             if (s.getType() == Signature.Type.POST)
                 sl.add(s);
         }
@@ -475,7 +479,8 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
         if (id == null)
             id = System.getProperty("user.name");
         ((ServiceSignature) signature).setOwnerId(id);
-        serviceFidelity.getSelects().add(signature);
+        selectedFidelity.selects.add(signature);
+        this.selectedFidelity.select = signature;
     }
 
     /**
@@ -484,7 +489,7 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
      * @see #addSignature
      */
     public void removeSignature(Signature signature) {
-        serviceFidelity.getSelects().remove(signature);
+        selectedFidelity.selects.remove(signature);
     }
 
     public void setAccessClass(String s) {
@@ -608,14 +613,20 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
         this.dbUrl = dbUrl;
     }
 
-    @Override
-    public Fidelity<Signature> getFidelity() {
-        return serviceFidelity;
+    public ServiceFidelity<Signature> getSelectedFidelity() {
+        return selectedFidelity;
     }
 
-    @Override
-    public void setFidelity(Fidelity fidelity) {
-        serviceFidelity =  fidelity;
+    public void setSelectedFidelity(ServiceFidelity fidelity) {
+        this.selectedFidelity =  fidelity;
+    }
+
+    public ContextSelector getContextSelector() {
+        return contextSelector;
+    }
+
+    public void setContextSelector(ContextSelector contextSelector) {
+        this.contextSelector = contextSelector;
     }
 
     public Mogram getComponentMogram(String path) {
@@ -673,11 +684,11 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
     }
 
     @Override
-    public Map<String, Fidelity> getFidelities() {
+    public Map<String, ServiceFidelity> getFidelities() {
         return serviceFidelities;
     }
 
-    public void setFidelities(Map<String, Fidelity> fidelities) {
+    public void setFidelities(Map<String, ServiceFidelity> fidelities) {
         this.serviceFidelities = fidelities;
     }
 
@@ -689,12 +700,28 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
         this.serviceFidelitySelector = selectedFidelitySelector;
     }
 
-    public Map<String, Fidelity> getServiceFidelities() {
+    public Map<String, ServiceFidelity> getServiceFidelities() {
         return serviceFidelities;
     }
 
-    public void setServiceFidelities(Map<String, Fidelity> serviceFidelities) {
+    public void setServiceFidelities(Map<String, ServiceFidelity> serviceFidelities) {
         this.serviceFidelities = serviceFidelities;
+    }
+
+    public Map<String, ServiceFidelity> getServiceMetafidelities() {
+        return serviceMetafidelities;
+    }
+
+    public MorphFidelity getServiceMorphFidelity() {
+        return serviceMorphFidelity;
+    }
+
+    public void setServiceMorphFidelity(MorphFidelity morphFidelity) {
+        this.serviceMorphFidelity = morphFidelity;
+    }
+
+    public void setServiceMetafidelities(Map<String, ServiceFidelity> serviceMetafidelities) {
+        this.serviceMetafidelities = serviceMetafidelities;
     }
 
     @Override
@@ -706,148 +733,157 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
         this.builder = builder;
     }
 
-    public void addFidelity(Fidelity fidelity) {
-        putFidelity(fidelity.getName(), fidelity);
-        serviceFidelitySelector = fidelity.getName();
-        this.serviceFidelity = fidelity;
-    }
-
-    public void setFidelity(String name, Fidelity fidelity) {
-        this.serviceFidelity = new Fidelity(name, fidelity);
-        putFidelity(name, serviceFidelity);
+    public void setSelectedFidelity(String name, ServiceFidelity fidelity) {
+        this.selectedFidelity = fidelity;
         serviceFidelitySelector = name;
     }
 
-    public void putFidelity(Fidelity fidelity) {
-        if (serviceFidelities == null)
-            serviceFidelities = new HashMap<String, Fidelity>();
+    public void putFidelity(ServiceFidelity fidelity) {
+        if (serviceFidelities == null) {
+            serviceFidelities = new HashMap();
+        }
         serviceFidelities.put(fidelity.getName(), fidelity);
     }
 
-    public void putFidelity(String name, Fidelity fidelity) {
-        if (serviceFidelities == null)
-            serviceFidelities = new HashMap<String, Fidelity>();
-        serviceFidelities.put(name, new Fidelity(fidelity));
+    public void putFidelity(String name, ServiceFidelity fidelity) {
+        if (serviceFidelities == null) {
+            serviceFidelities = new HashMap();
+        }
+        serviceFidelities.put(name, fidelity);
     }
 
-    public void addFidelity(String name, Fidelity fidelity) {
-        Fidelity nf = new Fidelity(name, fidelity);
-        putFidelity(name, nf);
+    public void putMetafidelity(ServiceFidelity fidelity) {
+        if (serviceMetafidelities == null)
+            serviceMetafidelities = new HashMap<>();
+        serviceMetafidelities.put(fidelity.getName(), fidelity);
     }
 
-    public FidelityManagement getFiManager() {
+    public void putMetafidelity(String name, ServiceFidelity fidelity) {
+        if (serviceMetafidelities == null) {
+            serviceMetafidelities = new HashMap();
+        }
+        serviceMetafidelities.put(name, fidelity);
+    }
+
+    public FidelityManagement getFidelityManager() {
         return fiManager;
     }
 
-    public void setFiManager(FidelityManager fiManager) {
+    public void setFidelityManager(FidelityManagement fiManager) {
         this.fiManager = fiManager;
     }
 
-    public Fidelity selectFidelity(Arg... entries)  {
-        Fidelity fi = null;
+    public Projection getProjection() {
+        return projection;
+    }
+
+    public void setProjection(Projection projection) {
+        this.projection = projection;
+    }
+
+    public ServiceFidelity selectFidelity(Arg... entries)  {
+        ServiceFidelity fi = null;
         if (entries != null && entries.length > 0) {
             for (Arg a : entries)
-                if (a instanceof Fidelity && ((Fidelity)a).type == Fidelity.Type.EMPTY) {
+                if (a instanceof Fidelity && ((Fidelity)a).type == Fidelity.Type.SELECT) {
                     fi = selectFidelity(a.getName());
                 } else if (a instanceof Fidelity && ((Fidelity)a).type == Fidelity.Type.COMPONENT) {
                     fi = selectComponentFidelity((Fidelity) a);
-                } else if (a instanceof Fidelity && ((Fidelity)a).type == Fidelity.Type.COMPOSITE) {
-                    fi = selectCompositeFidelity((Fidelity) a);
+                } else if (a instanceof ServiceFidelity && ((ServiceFidelity)a).type == ServiceFidelity.Type.META) {
+                    fi = selectCompositeFidelity((ServiceFidelity) a);
                 }
         }
         return fi;
     }
 
-    public Fidelity selectFidelity(String selector) {
-        Fidelity sf = null;
+    public ServiceFidelity selectFidelity(String selector) {
+        Object option = null;
         if (selector != null && serviceFidelities != null
-                && serviceFidelities.containsKey(selector)) {
-            sf = serviceFidelities.get(selector);
+                && serviceFidelities.get(name).getSelectNames().contains(selector)) {
+            option = serviceFidelities.get(name).getSelect(selector);
 
-            if (sf == null)
+            if (option == null)
                 logger.warn("no such service fidelity: {} for: {}", selector, this);
         }
-        if (sf != null) {
-            if (sf.type == Fidelity.Type.EXERT) {
-                serviceFidelity = sf;
+        if (option != null && option instanceof ServiceFidelity) {
+            ServiceFidelity sf = (ServiceFidelity)option;
+            if (sf.type == ServiceFidelity.Type.SIG) {
+                selectedFidelity = (ServiceFidelity<Signature>) sf;
                 serviceFidelitySelector = selector;
-            } else if (sf.type == Fidelity.Type.COMPOSITE) {
+            } else if (sf.type == ServiceFidelity.Type.META) {
                 selectCompositeFidelity(sf);
-            } else if (sf.type == Fidelity.Type.EMPTY) {
-                selectFidelity(sf.getName());
             }
+        } else if (option instanceof Signature) {
+            selectedFidelity = serviceFidelities.get(name);
+            selectedFidelity.select = (Signature)option;
         }
-        trimAllNotSerializableSignatures();
-        return serviceFidelity;
+        return selectedFidelity;
     }
 
-    public Fidelity selectComponentFidelity(Fidelity componentFidelity) {
+    public ServiceFidelity selectComponentFidelity(Fidelity componentFidelity) {
         Mogram ext = getComponentMogram(componentFidelity.getPath());
-        String fn = (String) componentFidelity.getSelects().get(0);
-        Fidelity cf = ext.getFidelities().get(fn);
+        String fn = componentFidelity.getName();
+        ServiceFidelity cf = ext.getFidelities().get(fn);
         if (cf != null) {
-            ext.setFidelity(cf);
-            setSelectedFidelitySelector(fn);
+            this.setSelectedFidelity(cf);
+			((ServiceMogram)ext).setSelectedFidelitySelector(fn);
         } else {
             logger.warn("no such fidelity for {}" + componentFidelity);
         }
-        trimNotSerializableSignatures(cf);
         return cf;
-
-//
-//        if (ext != null && ext.getFidelity() != null
-//                && serviceFidelities.containsKey(componetFidelty.getName())) {
-//            Fidelity<Signature> sf = null;
-//            if (componetFidelty.selects != null && componetFidelty.selects.size() > 0)
-//                sf = new Fidelity(ext.getFidelities().get(componetFidelty.getName()), componetFidelty.selects);
-//            else
-//                sf = ext.getFidelities().get(componetFidelty.getName());
-//
-//            if (sf == null)
-//                throw new ExertionException("no such service fidelity: " + fn + " at: " + ext);
-//            ((ServiceExertion)ext).setFidelity(sf);
-//            ((ServiceExertion)ext).setSelectedFidelitySelector(fn);
-//        }
     }
 
-    public Fidelity selectCompositeFidelity(Fidelity fidelity) {
-        if (fidelity.type == Fidelity.Type.COMPOSITE) {
+    public ServiceFidelity selectCompositeFidelity(ServiceFidelity fidelity) {
+        if (fidelity.type == ServiceFidelity.Type.META) {
             for (Object obj : fidelity.selects) {
-                if (obj instanceof Fidelity) {
-                    if (((Fidelity) obj).type == Fidelity.Type.COMPONENT)
-                        selectComponentFidelity((Fidelity) obj);
+                if (obj instanceof ServiceFidelity) {
+                    if (((ServiceFidelity) obj).type == ServiceFidelity.Type.COMPONENT)
+                        selectComponentFidelity((ServiceFidelity) obj);
                     else
-                        selectFidelity(((Fidelity) obj).getName());
+                        selectFidelity(((ServiceFidelity) obj).getName());
                 }
             }
         }
         return fidelity;
     }
 
-    public Fidelity  selectFidelity()  {
+    public ServiceFidelity selectFidelity()  {
         if (serviceFidelitySelector != null && serviceFidelities != null
-                && serviceFidelities.containsKey(serviceFidelitySelector)) {
-            Fidelity sf = serviceFidelities.get(serviceFidelitySelector);
+                && serviceFidelities.get(name).getSelectNames().contains(serviceFidelitySelector)) {
+            ServiceFidelity sf = (ServiceFidelity) serviceFidelities.get(name).getSelect(serviceFidelitySelector);
             if (sf == null)
                 logger.warn("no such service fidelity: {}", serviceFidelitySelector);
-            serviceFidelity = sf;
+            selectedFidelity = sf;
         }
-        trimNotSerializableSignatures(serviceFidelity);
-        return serviceFidelity;
+        selectedFidelity.select = getProcessSignature();
+        return selectedFidelity;
+    }
+
+    @Override
+    public void reconfigure(Fidelity... fidelities) throws ContextException, RemoteException {
+        if (fiManager != null)
+            fiManager.reconfigure(fidelities);
+    }
+
+    @Override
+    public void morph(String... metaFiNames) throws RemoteException {
+        if (fiManager != null)
+            fiManager.morph(metaFiNames);
     }
 
     public void removeSignature(int index) {
-        serviceFidelity.selects.remove(index);
+        selectedFidelity.selects.remove(index);
     }
 
 
-    public void addSignatures(Fidelity<Signature> fidelity) {
-        if (this.serviceFidelity != null)
-            this.serviceFidelity.selects.addAll(fidelity.selects);
+    public void addSignatures(ServiceFidelity<Signature> fidelity) {
+        if (this.selectedFidelity != null)
+            this.selectedFidelity.selects.addAll(fidelity.selects);
         else {
-            this.serviceFidelity = new Fidelity();
-            this.serviceFidelity.selects.addAll(fidelity.selects);
+            this.selectedFidelity = new ServiceFidelity();
+            this.selectedFidelity.selects.addAll(fidelity.selects);
         }
+        this.selectedFidelity.select = fidelity.selects.get(0);
     }
 
     @Override
@@ -860,16 +896,15 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
     }
 
     public boolean isBatch() {
-        return serviceFidelity.selects.size()>1;
+        return selectedFidelity.selects.size() > 1;
     }
 
-    public void correctProcessSignature(Signature signature) {
-        for (Signature sig : this.serviceFidelity.selects) {
-            if (sig.getType() != Signature.Type.PROC) {
-                this.serviceFidelity.selects.remove(sig);
-            }
-        }
-        this.serviceFidelity.selects.add(signature);
+
+    public ServiceFidelity<ServiceFidelity> getSelectedMetafidelity() {
+        return selectedMetafidelity;
     }
 
+    public void setSelectedMetafidelity(ServiceFidelity<ServiceFidelity> metafidelity) {
+        selectedMetafidelity = metafidelity;
+    }
 }

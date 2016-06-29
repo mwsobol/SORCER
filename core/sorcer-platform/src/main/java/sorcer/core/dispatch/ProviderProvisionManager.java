@@ -56,7 +56,7 @@ public class ProviderProvisionManager {
             provGroup.setDaemon(true);
             provGroup.setMaxPriority(Thread.NORM_PRIORITY - 1);
             Thread pThread = new Thread(provGroup, new ProvisionThread(
-                    new SignatureElement(sig.getServiceType().getName(), sig.getProviderName(),
+                    new SignatureElement(sig.getServiceType().getName(), sig.getProviderName().getName(),
                             sig.getVersion(), sig, exertion, spaceExertDispatcher)
             ), tName("Provisioner-" + exertion.getName()));
             pThread.start();

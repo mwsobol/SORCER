@@ -1,6 +1,5 @@
 /*
-* Copyright 2013 the original author or authors.
-* Copyright 2013, 2014 Sorcersoft.com S.A.
+* Copyright 2015 SORCERsoft.org.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -29,16 +28,17 @@ import sorcer.core.invoker.Observable;
 import sorcer.core.invoker.Observer;
 import sorcer.service.*;
 
-import java.io.Serializable;
 import java.rmi.MarshalledObject;
 import java.rmi.RemoteException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static sorcer.eo.operator.srvFi;
+
 /**
  * Created by Mike Sobolewski on 6/14/15.
  */
-public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Observer, Identifiable, Serializable {
+public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Observer, Identifiable {
 
     // sequence number for unnamed instances
     protected static int count = 0;
@@ -47,15 +47,24 @@ public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Ob
 
     Uuid id = UuidFactory.generate();
 
-    // fidelities for signatures
-    protected Map<String, Fidelity<T>> fidelities = new ConcurrentHashMap<>();
+    // fidelities for signatures and other selection of T
+    protected Map<String, ServiceFidelity<T>> fidelities = new ConcurrentHashMap<>();
 
     // fidelities for fidelites
-    protected Map<String, Fidelity<Fidelity>> metafidelities = new ConcurrentHashMap<>();
+    protected Map<String, ServiceFidelity<Fidelity>> metafidelities = new ConcurrentHashMap<>();
+
+    // fidelities for signatures and other selection of T
+    protected Map<String, MorphFidelity> morphFidelities = new ConcurrentHashMap<>();
+
+    // changed fidelities by morphers
+    protected List<Fidelity> fiTrace = new ArrayList();
 
     protected Mogram mogram;
 
+    protected boolean isTraced = false;
+
     protected Map<Long, Session> sessions;
+
 
     public FidelityManager() {
         name = "fiManager" +  count++;
@@ -66,32 +75,60 @@ public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Ob
     }
 
     public FidelityManager(Mogram mogram) {
-        this("fiManager" +  count++);
+        this(mogram.getName());
         this.mogram = mogram;
     }
 
-    public Map<String, Fidelity<Fidelity>> getMetafidelities() {
+    public Map<String, ServiceFidelity<Fidelity>> getMetafidelities() {
         return metafidelities;
     }
 
-    public void setMetafidelities(Map<String, Fidelity<Fidelity>> metafidelities) {
+    public void setMetafidelities(Map<String, ServiceFidelity<Fidelity>> metafidelities) {
         this.metafidelities = metafidelities;
     }
 
     @Override
-    public Map<String, Fidelity<T>> getFidelities() {
+    public Map<String, ServiceFidelity<T>> getFidelities() {
         return fidelities;
     }
 
-    public void setFidelities(Map<String, Fidelity<T>> fidelities) {
+
+    public Map<String, MorphFidelity> getMorphFidelities() {
+        return morphFidelities;
+    }
+
+    public void setMorphFidelities(Map<String, MorphFidelity> morphFidelities) {
+        this.morphFidelities = morphFidelities;
+    }
+
+    public void setFidelities(Map<String, ServiceFidelity<T>> fidelities) {
         this.fidelities = fidelities;
     }
 
-    public void addFidelity(String path, Fidelity<T> fi) {
+    public void addFidelity(String path, ServiceFidelity<T> fi) {
+        if (fi != null)
             this.fidelities.put(path, fi);
     }
 
-    public void addMetafidelity(String path, Fidelity<Fidelity> fi) {
+    public void addMorphedFidelity(String path, MorphFidelity mFi) {
+        if (mFi != null)
+            this.morphFidelities.put(path, mFi);
+    }
+
+    public List<Fidelity> getFiTrace() {
+        return fiTrace;
+    }
+
+    public void setFiTrace(List<Fidelity> fiTrace) {
+        this.fiTrace = fiTrace;
+    }
+
+    public void addTrace(ServiceFidelity fi) {
+        if (fi != null)
+            this.fiTrace.add(fi);
+    }
+
+    public void addMetafidelity(String path, ServiceFidelity<Fidelity> fi) {
         this.metafidelities.put(path, fi);
     }
 
@@ -116,16 +153,16 @@ public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Ob
        // implement is subclasses
     }
 
-    public void init(Fidelity<Fidelity> fidelity) {
+    public void init(ServiceFidelity<Fidelity> fidelity) {
         put(fidelity.getName(), fidelity);
     }
 
-    public void init(List<Fidelity<Fidelity>> fidelities) {
+    public void init(List<ServiceFidelity<Fidelity>> fidelities) {
         if (fidelities == null || fidelities.size() == 0) {
             initialize();
             return;
         }
-        for (Fidelity fi : fidelities) {
+        for (ServiceFidelity fi : fidelities) {
             put(fi.getName(), fi);
         }
     }
@@ -166,17 +203,23 @@ public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Ob
 
     public void morph(String... fiNames) {
         for (String fiName : fiNames) {
-            Fidelity mFi = metafidelities.get(fiName);
+            ServiceFidelity<Fidelity> mFi = metafidelities.get(fiName);
             List<Fidelity> fis = mFi.getSelects();
             String name = null;
             String path = null;
+            if (isTraced) {
+                fiTrace.add(new ServiceFidelity(fiName, fis));
+            }
             for (Fidelity fi : fis) {
                 name = fi.getName();
                 path = fi.getPath();
-                Iterator<Map.Entry<String, Fidelity<T>>> i = fidelities.entrySet().iterator();
+                Iterator<Map.Entry<String, ServiceFidelity<T>>> i = fidelities.entrySet().iterator();
                 while (i.hasNext()) {
-                    Map.Entry<String, Fidelity<T>> fiEnt = i.next();
+                    Map.Entry<String, ServiceFidelity<T>> fiEnt = i.next();
                     if (fiEnt.getKey().equals(path)) {
+                        if (morphFidelities.get(path) != null) {
+                            morphFidelities.get(path).setMorpherSelect(name);
+                        }
                         fiEnt.getValue().setSelect(name);
                     }
                 }
@@ -184,38 +227,103 @@ public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Ob
         }
     }
 
-    @Override
-    public void reconfigure(String... fiNames) throws RemoteException {
-        if (metafidelities.size() == 1 && fiNames.length == 1) {
-            Fidelity<Fidelity> metaFi = metafidelities.get(name);
-            metaFi.setSelect(fiNames[0]);
+    public ServiceFidelityList resetFidelities() throws ContextException, RemoteException {
+        ServiceFidelityList fl = new ServiceFidelityList();
+        Collection<ServiceFidelity<T>> fc = fidelities.values();
+        for (ServiceFidelity sf : fc) {
+            sf.setSelect(sf.get(0));
+            fl.add(srvFi(sf.getPath(), sf.getSelect().getName()));
         }
+        return fl;
+    }
+
+    public ServiceFidelityList getCurrentFidelities() throws ContextException, RemoteException {
+        ServiceFidelityList fl = new ServiceFidelityList();
+		Iterator<Map.Entry<String, ServiceFidelity<T>>> it = fidelities.entrySet().iterator();
+		while (it.hasNext()) {
+			Map.Entry<String, ServiceFidelity<T>> me = it.next();
+			fl.add(srvFi(me.getKey(), me.getValue().getSelect().getName()));
+		}
+        return fl;
+    }
+
+    public FidelityList getDefaultFidelities() throws ContextException, RemoteException {
+        FidelityList fl = new FidelityList();
+		Iterator<Map.Entry<String, ServiceFidelity<T>>> it = fidelities.entrySet().iterator();
+		while (it.hasNext()) {
+			Map.Entry<String, ServiceFidelity<T>> me = it.next();
+			fl.add(new Fidelity(me.getValue().get(0).getName(), me.getKey()));
+		}
+        return fl;
     }
 
     @Override
-    public void reconfigure(Fidelity... fidelities) throws ContextException, RemoteException {
-        if (this.fidelities.size() > 0) {
-            for (Fidelity fi : fidelities) {
-                if (this.fidelities.get(fi.getPath()) != null) {
-                    this.fidelities.get(fi.getPath()).setSelect(fi.getName());
-                }
+    public void reconfigure(String... fiNames) throws RemoteException {
+        // applies to MultiFiRequests
+        if (fidelities.size() == 1 && fiNames.length == 1) {
+            ServiceFidelity fi = fidelities.get(name);
+            if (fi == null) {
+                fi = selectFidelity(fiNames[0]);
+            }
+            fi.setSelect(fiNames[0]);
+            if (isTraced) {
+                ServiceFidelity nsf = new ServiceFidelity(fiNames[0]);
+                nsf.setPath(name);
+                fiTrace.add(nsf);
             }
         }
     }
 
-    public void add(Fidelity<Fidelity>... sysFis) {
-        for (Fidelity<Fidelity> sysFi : sysFis){
+
+    private ServiceFidelity selectFidelity(String name) {
+        ServiceFidelity fi = fidelities.get(name);
+        if (fi == null) {
+            ServiceFidelity sf = fidelities.get(0);
+            List<ServiceFidelity> sfl = sf.getSelects();
+            for (ServiceFidelity f : sfl) {
+                if (f.getName().equals(name))
+                    return sf;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public void reconfigure(Fidelity... fidelities) throws ContextException, RemoteException {
+        if (fidelities == null || fidelities.length == 0) {
+            return;
+        }
+        if (this.fidelities.size() > 0) {
+            for (Fidelity fi : fidelities) {
+                ServiceFidelity sFi = this.fidelities.get(fi.getPath());
+                if (sFi != null) {
+                    sFi.setSelect(fi.getName());
+                    if (mogram instanceof Exertion) {
+                        ((ServiceMogram)mogram).setSelectedFidelity((ServiceFidelity) sFi.getSelect());
+                        if (mogram.getClass()==Task.class) {
+                            ((Task)mogram).setDelegate(null);
+                        }
+                    }
+                }
+                if (isTraced)
+                    fiTrace.add(fi);
+            }
+        }
+    }
+
+    public void add(ServiceFidelity<Fidelity>... sysFis) {
+        for (ServiceFidelity<Fidelity> sysFi : sysFis){
             metafidelities.put(sysFi.getName(), sysFi);
         }
     }
 
-    public void put(String sysFiName, Fidelity<Fidelity> sysFi) {
+    public void put(String sysFiName, ServiceFidelity<Fidelity> sysFi) {
         metafidelities.put(sysFiName, sysFi);
     }
 
-    public void put(Entry<Fidelity<Fidelity>>... entries) {
+    public void put(Entry<ServiceFidelity<Fidelity>>... entries) {
         try {
-            for(Entry<Fidelity<Fidelity>> e : entries) {
+            for(Entry<ServiceFidelity<Fidelity>> e : entries) {
                 metafidelities.put(e.getName(), e.getValue());
             }
         } catch (EvaluationException e) {
@@ -224,6 +332,15 @@ public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Ob
             e.printStackTrace();
         }
     }
+
+    public boolean isTraced() {
+        return isTraced;
+    }
+
+    public void setTraced(boolean traced) {
+        isTraced = traced;
+    }
+
 
     @Override
     public Uuid getId() {
@@ -243,7 +360,7 @@ public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Ob
     public void update(Observable observable, Object obj) throws EvaluationException, RemoteException {
         // implement in subclasses and use the morphers provided by MorphedFidelities (observables)
 
-        MorphedFidelity mFi = (MorphedFidelity)observable;
+        MorphFidelity mFi = (MorphFidelity)observable;
         Morpher morpher = mFi.getMorpher();
         if (morpher != null)
             try {

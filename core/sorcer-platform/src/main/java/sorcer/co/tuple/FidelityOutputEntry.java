@@ -17,15 +17,15 @@
 package sorcer.co.tuple;
 
 import sorcer.service.Arg;
-import sorcer.service.Fidelity;
+import sorcer.service.ServiceFidelity;
 
 public class FidelityOutputEntry<T, F extends Arg> extends OutputEntry<T> {
 
     private static final long serialVersionUID = 1L;
 
-    private Fidelity<F> fidelity;
+    private ServiceFidelity<F> fidelity;
 
-    public FidelityOutputEntry(String path, T value, Fidelity<F> fidelity) {
+    public FidelityOutputEntry(String path, T value, ServiceFidelity<F> fidelity) {
         super(path, value, 0);
         this.index = index;
         this.fidelity= fidelity;
@@ -41,11 +41,11 @@ public class FidelityOutputEntry<T, F extends Arg> extends OutputEntry<T> {
         this.isPersistent = isPersistant;
     }
 
-    public Fidelity<F> getFidelity() {
+    public ServiceFidelity<F> getFidelity() {
         return fidelity;
     }
 
-    public void setFidelity(Fidelity<F> fidelity) {
+    public void setFidelity(ServiceFidelity<F> fidelity) {
         this.fidelity = fidelity;
     }
 

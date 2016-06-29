@@ -18,7 +18,7 @@ import sorcer.util.Stopwatch;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static sorcer.eo.operator.matchSigs;
+import static sorcer.eo.operator.matchTypes;
 import static sorcer.eo.operator.provider;
 import static sorcer.eo.operator.sig;
 
@@ -71,7 +71,7 @@ public class ServiceAccessors implements SorcerConstants {
 	public void dynamicAccessorMultiSig() throws Exception {
 		long startTime = System.currentTimeMillis();
 		Provider provider = (Provider) dynamicAccessoror.getService(
-				matchSigs(sig(SorcerJobber.class), SorcerJobber.class));
+				matchTypes(sig(SorcerJobber.class), SorcerJobber.class));
 //		logger.info("Accessor provider: " + provider);
 		logger.info(Stopwatch.getTimeString(System.currentTimeMillis() - startTime));
 		assertTrue(provider instanceof Jobber);

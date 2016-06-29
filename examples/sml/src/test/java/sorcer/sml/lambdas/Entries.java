@@ -20,6 +20,7 @@ import static sorcer.eo.operator.get;
 import static sorcer.eo.operator.value;
 import static sorcer.mo.operator.response;
 import static sorcer.po.operator.invoker;
+import static sorcer.service.Arg.setArgValue;
 import static sorcer.util.exec.ExecUtils.CmdResult;
 
 /**
@@ -105,7 +106,7 @@ public class Entries {
         // an entry as a Service lambda
         Model mo = model(ent("x", 10.0), ent("y", 20.0),
                 lambda("s1", (Arg[] args) -> {
-                    Arg.setValue(args, "x",  Arg.getValue(args, "y"));
+                    setArgValue(args, "x",  Arg.getValue(args, "y"));
                     return exec(Arg.getEntry(args, "x")); },
                         args("x", "y")));
 
@@ -122,8 +123,8 @@ public class Entries {
                 lambda("multiply2", "multiply", (Service entry, Context scope, Arg[] args) -> {
                     double out = (double)exec(entry, scope);
                     if (out > 400) {
-                        set(scope, "multiply/x1", 20.0);
-                        set(scope, "multiply/x2", 50.0);
+                        setValue(scope, "multiply/x1", 20.0);
+                        setValue(scope, "multiply/x2", 50.0);
                         out = (double)exec(entry, scope);
                     }
                     return context(ent("multiply2", out));

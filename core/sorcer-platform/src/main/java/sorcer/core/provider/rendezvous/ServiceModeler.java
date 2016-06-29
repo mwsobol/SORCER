@@ -87,7 +87,7 @@ public class ServiceModeler extends RendezvousBean implements Modeler {
                     result = model.exert(args);
                 }
                 if (contextSelector != null) {
-                    result = (Mogram) contextSelector.doSelection(result);
+                    result = (Mogram) contextSelector.doSelect(result);
                 }
             }
             ((ServiceExertion)mogram).setContext((Context)result);

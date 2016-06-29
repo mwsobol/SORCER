@@ -18,7 +18,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.asis;
 import static sorcer.co.operator.*;
-import static sorcer.co.operator.set;
 import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.args;
 import static sorcer.eo.operator.value;
@@ -60,10 +59,10 @@ public class Entries {
 
     @Test
     public void entFidelities() throws Exception {
-        Entry mfi = inEnt("by", eFi(inEnt("by-10", 10.0), inEnt("by-20", 20.0)));
+        Entry mfiEnt = inEnt("by", eFi(inEnt("by-10", 10.0), inEnt("by-20", 20.0)));
 
-        assertTrue(value(mfi, fi("by", "by-20")).equals(20.0));
-        assertTrue(value(mfi, fi("by", "by-10")).equals(10.0));
+        assertTrue(value(mfiEnt, fi("by", "by-20")).equals(20.0));
+        assertTrue(value(mfiEnt, fi("by", "by-10")).equals(10.0));
     }
 
 	@Test
@@ -94,9 +93,9 @@ public class Entries {
             Entry<Double> z = ent("z", invoker("x - y", x, y));
 
             if (value(cxt, "x") != null)
-                set(x, value(cxt, "x"));
+                setValue(x, value(cxt, "x"));
             if (value(cxt, "y") != null)
-                set(y, value(cxt, "y"));
+                setValue(y, value(cxt, "y"));
             return value(y) + value(x) + value(z);
         }
 
@@ -155,9 +154,30 @@ public class Entries {
     public void signatureEntry() throws Exception {
 
         Entry y1 = ent("y1", sig("add", AdderImpl.class, result("add/out",
-                        inPaths("add/x1", "add/x2"))),
+                        inPaths("x1", "x2"))),
                     context(inEnt("x1", 10.0), inEnt("x2", 20.0)));
 
         assertEquals(30.0, value(y1));
+    }
+
+    @Test
+    public void getValueyWithSelector() throws Exception {
+
+        Entry y1 = ent("y1", sig("add", AdderImpl.class),
+                context(inEnt("x1", 10.0), inEnt("x2", 20.0)));
+
+//        logger.info("out value: {}", value(y1, selector("result/value")));
+        assertEquals(30.0,  value(y1, selector("result/value")));
+    }
+
+    @Test
+    public void valueOfentryWithSelector() throws Exception {
+
+        Entry y1 = ent("y1", sig("add", AdderImpl.class),
+                context(inEnt("x1", 10.0), inEnt("x2", 20.0)),
+                selector("result/value"));
+
+//        logger.info("out value: {}", value(y1));
+        assertEquals(30.0,  value(y1));
     }
 }

@@ -134,8 +134,8 @@ public class Models {
 				lambda("multiply2", "multiply", (Service entry, Context scope, Arg[] args) -> {
 					double out = (double) exec(entry, scope);
 					if (out > 400) {
-						set(scope, "multiply/x1", 20.0);
-						set(scope, "multiply/x2", 50.0);
+						setValue(scope, "multiply/x1", 20.0);
+						setValue(scope, "multiply/x2", 50.0);
 						out = (double)exec(entry, scope);
 					}
 					return context(ent("multiply2", out));
@@ -270,7 +270,7 @@ public class Models {
 				context(ent("sum", 0.0)),
 				loop(0, 100, task(lambda("sum", (Context<Double> cxt) -> {
 					Double out = value(cxt, "sum") + (Double)value(ti);
-					set(context(ti), "arg/x2", (Double)value(context(ti), "arg/x2") + 1.5);
+					setValue(context(ti), "arg/x2", (Double)value(context(ti), "arg/x2") + 1.5);
 					return out; }))));
 		lb = exert(lb);
 
@@ -291,7 +291,7 @@ public class Models {
 					Double from = value(cxt, "from");
 					Double to = value(cxt, "to");
 					Double out = value(cxt, "sum") + (Double)value(ti);
-					set(context(ti), "arg/x2", (Double)value(context(ti), "arg/x2") + 1.5);
+					setValue(context(ti), "arg/x2", (Double)value(context(ti), "arg/x2") + 1.5);
 
 					// skip value 333 but with increase by 100
 					if (out > from && out < to) {
@@ -308,7 +308,7 @@ public class Models {
     public void amorphousModel() throws Exception {
 
 		Morpher mFi1Morpher = (mgr, mFi, value) -> {
-			Fidelity<Signature> fi =  mFi.getFidelity();
+			ServiceFidelity<Signature> fi =  mFi.getFidelity();
 			if (fi.getSelectName().equals("add")) {
 				if (((Double) value) <= 200.0) {
 					mgr.morph("sysFi2");
@@ -321,7 +321,7 @@ public class Models {
 		};
 
         Morpher mFi2Morpher = (mgr, mFi, value) -> {
-            Fidelity<Signature> fi =  mFi.getFidelity();
+            ServiceFidelity<Signature> fi =  mFi.getFidelity();
             if (fi.getSelectName().equals("divide")) {
                 if (((Double) value) <= 9.0) {
                     mgr.morph("sysFi4");
@@ -331,9 +331,9 @@ public class Models {
             }
         };
 
-        Fidelity<Fidelity> fi2 = fi("sysFi2",fi("mFi2", "divide"), fi("mFi3", "multiply"));
-        Fidelity<Fidelity> fi3 = fi("sysFi3", fi("mFi2", "average"), fi("mFi3", "divide"));
-        Fidelity<Fidelity> fi4 = fi("sysFi4", fi("mFi3", "average"));
+        ServiceFidelity<Fidelity> fi2 = fi("sysFi2",fi("mFi2", "divide"), fi("mFi3", "multiply"));
+        ServiceFidelity<Fidelity> fi3 = fi("sysFi3", fi("mFi2", "average"), fi("mFi3", "divide"));
+        ServiceFidelity<Fidelity> fi4 = fi("sysFi4", fi("mFi3", "average"));
 
         Signature add = sig("add", AdderImpl.class,
                 result("result/y1", inPaths("arg/x1", "arg/x2")));
@@ -354,7 +354,6 @@ public class Models {
                 fi2, fi3, fi4,
                 response("mFi1", "mFi2", "mFi3", "arg/x1", "arg/x2"));
 
-        // fidelities morphed by the model's fidelity manager
         Context out = response(mod);
         logger.info("out: " + out);
         assertTrue(get(out, "mFi1").equals(100.0));
@@ -362,7 +361,6 @@ public class Models {
         assertTrue(get(out, "mFi3").equals(50.0));
 
         // first closing the fidelity for mFi1
-        // then fidelities morphed by the model's fidelity manager accordingly
         out = response(mod , fi("mFi1", "multiply"));
         logger.info("out: " + out);
         assertTrue(get(out, "mFi1").equals(900.0));

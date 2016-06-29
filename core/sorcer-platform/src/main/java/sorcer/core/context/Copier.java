@@ -59,9 +59,8 @@ public class Copier implements Evaluation<Context> {
 	}
 
 	@Override
-	public Evaluation<Context> substitute(Arg... entries) throws SetterException {
+	public void substitute(Arg... entries) throws SetterException {
         ((ServiceContext)toContext).substitute(entries);
-			return this;
 	}
 
 	@Override

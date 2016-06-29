@@ -31,12 +31,14 @@ import net.jini.lookup.ServiceItemFilter;
 import net.jini.lookup.entry.Name;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sorcer.core.SorcerConstants;
 import sorcer.core.provider.Provider;
+import sorcer.core.provider.ProviderName;
+import sorcer.core.provider.ServiceName;
 import sorcer.core.signature.NetSignature;
 import sorcer.service.Service;
 import sorcer.service.Signature;
 import sorcer.service.SignatureException;
+import sorcer.service.TypeList;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -46,9 +48,9 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * ProviderLoactor is a simple wrapper class over Jini's LookupDiscover. It
+ * ProviderLoactor is a simple wrapper class over Jini's LookupDiscovery. It
  * which returns the first matching instance of a service either via unicast or
- * multicast discovery
+ * multicast discovery with support for SORCER signatures
  */
 
 public class ProviderLocator {
@@ -59,9 +61,11 @@ public class ProviderLocator {
 
     final private static Logger log = LoggerFactory.getLogger(ProviderLocator.class);
 
-	private Object _proxy;
-	private final Object _lock = new Object();
-	private ServiceTemplate _template;
+	private Object proxy;
+
+	private final Object lock = new Object();
+
+	private ServiceTemplate template;
 
 	/**
 	 * Locates a service via Unicast discovery
@@ -98,22 +102,29 @@ public class ProviderLocator {
 	 * @throws java.io.IOException
 	 * @throws ClassNotFoundException
 	 */
-	public static Object getService(String lusHost, Class serviceClass,
-			String serviceName) throws
+	public static Object getService(String lusHost, Class serviceClass, Class[] matchTypes,
+									String serviceName) throws
 			java.io.IOException, ClassNotFoundException {
 
-		Class[] types = new Class[] { serviceClass };
+		Class[] types =  new Class[] { serviceClass };
+		if (matchTypes != null && matchTypes.length > 0) {
+			TypeList allTypes = new TypeList(matchTypes);
+			allTypes.add(0, serviceClass);
+			types = new Class[allTypes.size()];
+			allTypes.toArray(types);
+		}
+
 		Entry[] entry = null;
 
 		if (serviceName != null) {
 			entry = new Entry[] { new Name(serviceName) };
 		}
 
-		ServiceTemplate _template = new ServiceTemplate(null, types, entry);
+		ServiceTemplate template = new ServiceTemplate(null, types, entry);
 		LookupLocator loc = new LookupLocator("jini://" + lusHost);
 		ServiceRegistrar reggie = loc.getRegistrar();
 
-		return reggie.lookup(_template);
+		return reggie.lookup(template);
 	}
 
 	/**
@@ -128,7 +139,7 @@ public class ProviderLocator {
 	public static Object getService(Class serviceClass)
 			throws java.io.IOException, InterruptedException {
 
-		return getService(serviceClass, null, Long.MAX_VALUE);
+		return getService(serviceClass, null, null, null, Long.MAX_VALUE);
 	}
 
     /**
@@ -144,7 +155,7 @@ public class ProviderLocator {
     public static Provider getProvider(Class serviceClass)
             throws java.io.IOException, InterruptedException {
 
-        return (Provider)getService(serviceClass, null, Long.MAX_VALUE);
+        return (Provider)getService(serviceClass, null, null, null, Long.MAX_VALUE);
     }
 
 	/**
@@ -161,7 +172,7 @@ public class ProviderLocator {
 	public static Object getService(Class serviceClass, long waitTime)
 			throws java.io.IOException, InterruptedException {
 
-		return getService(serviceClass, null, waitTime);
+		return getService(serviceClass, null, null, null, waitTime);
 	}
 
 	/**
@@ -175,38 +186,50 @@ public class ProviderLocator {
 	 * @throws InterruptedException
 	 * @return
 	 */
-	public static Object getService(Class serviceClass, String serviceName,
+	public static Object getService(Class serviceClass, Class[] matchTypes, String serviceName, String[] groups,
 			long waitTime) throws java.io.IOException, InterruptedException {
 
 		ProviderLocator sl = new ProviderLocator();
-		return sl.getServiceImpl(serviceClass, serviceName, waitTime);
+		return sl.getServiceImpl(serviceClass, matchTypes, serviceName, groups, waitTime);
 	}
 
-	private Object getServiceImpl(Class serviceClass, String serviceName,
+	private Object getServiceImpl(Class serviceClass, Class[] matchTypes, String serviceName, String[] groups,
 			long waitTime) throws java.io.IOException, InterruptedException {
 
-		Class[] types = new Class[] { serviceClass };
+		Class[] types =  new Class[] { serviceClass };
+		if (matchTypes != null && matchTypes.length > 0) {
+			TypeList allTypes = new TypeList(matchTypes);
+			allTypes.add(0, serviceClass);
+			types = new Class[allTypes.size()];
+			allTypes.toArray(types);
+		}
 		Entry[] entry = null;
 
 		if (serviceName != null) {
 			entry = new Entry[] { new Name(serviceName) };
 		}
 
-		_template = new ServiceTemplate(null, types, entry);
+		template = new ServiceTemplate(null, types, entry);
 
-		LookupDiscovery disco = new LookupDiscovery(LookupDiscovery.ALL_GROUPS);
+		LookupDiscovery disco = null;
+        // no groups then use ALL_GROUPS
+		if (groups != null && groups.length > 0) {
+			disco = new LookupDiscovery(groups);
+		} else {
+			disco = new LookupDiscovery(LookupDiscovery.ALL_GROUPS);
+		}
 
 		disco.addDiscoveryListener(new Listener());
 
-		synchronized (_lock) {
-			_lock.wait(waitTime);
+		synchronized (lock) {
+			lock.wait(waitTime);
 		}
 
 		disco.terminate();
-		if (_proxy == null) {
+		if (proxy == null) {
 			throw new InterruptedException("Service not found within wait time");
 		}
-		return _proxy;
+		return proxy;
 
 	}
 
@@ -231,7 +254,6 @@ public class ProviderLocator {
             }
         }
         if (result.size() < minMatches) {
-            //TODO this is exactly the same as ProviderLookup. Consider extending that class
             LookupDiscovery disco = null;
             try {
                 disco = new LookupDiscovery(groups);
@@ -260,7 +282,7 @@ public class ProviderLocator {
 		// invoked when a LUS is discovered
 		public void discovered(DiscoveryEvent ev) {
 			ServiceRegistrar[] reg = ev.getRegistrars();
-			for (int i = 0; i < reg.length && _proxy == null; i++) {
+			for (int i = 0; i < reg.length && proxy == null; i++) {
 				findService(reg[i]);
 			}
 		}
@@ -272,10 +294,10 @@ public class ProviderLocator {
 	private void findService(ServiceRegistrar lus) {
 
 		try {
-			synchronized (_lock) {
-				_proxy = lus.lookup(_template);
-				if (_proxy != null) {
-					_lock.notifyAll();
+			synchronized (lock) {
+				proxy = lus.lookup(template);
+				if (proxy != null) {
+					lock.notifyAll();
 				}
 			}
 		} catch (RemoteException ex) {
@@ -309,19 +331,28 @@ public class ProviderLocator {
 	public static Service getService(Signature signature) throws SignatureException {
 		Object proxy = null;
 		try {
-			if (((NetSignature)signature).isUnicast()) {
-				String[] locators = SorcerEnv.getLookupLocators();
+			String[] groups = null;
+			String[] locators = null;
+			if (signature.getProviderName() instanceof ServiceName) {
+				groups = ((ServiceName)signature.getProviderName()).getGroups();
+			}
+			ProviderName pn = signature.getProviderName();
+			if (pn instanceof  ServiceName) {
+				locators = ((ServiceName) pn).getLocators();
+			}
+			if (((NetSignature)signature).isUnicast() || locators != null) {
+				if (locators == null)
+					locators = SorcerEnv.getLookupLocators();
 				for (String locator : locators) {
 					proxy = getService(locator,
-                            signature.getServiceType(), signature
-                            .getProviderName());
+                            signature.getServiceType(), signature.getMatchTypes(), signature
+                            .getProviderName().getName());
 					if (proxy != null && proxy instanceof Service)
 						break;
                 }
 			} else {
-				proxy = getService(signature.getServiceType(),
-                        signature.getProviderName().equals(SorcerConstants.ANY)
-                                ? null : signature.getProviderName(), WAIT_FOR);
+				proxy = getService(signature.getServiceType(), signature.getMatchTypes(),
+                        signature.getProviderName().getName(), groups, WAIT_FOR);
 			}
 		} catch (Exception ioe) {
 			throw new SignatureException(ioe);
@@ -345,7 +376,7 @@ public class ProviderLocator {
  */
     public <T> T getProvider(String serviceName, Class<T> serviceType) {
         try {
-            return (T)getServiceImpl(serviceType, serviceName, WAIT_FOR);
+            return (T)getServiceImpl(serviceType, null, serviceName, null, WAIT_FOR);
         } catch (Exception e) {
             return null;
         }

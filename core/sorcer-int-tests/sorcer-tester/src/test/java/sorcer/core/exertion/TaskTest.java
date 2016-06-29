@@ -145,9 +145,9 @@ public class TaskTest {
 				context(inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
 						result("result/y")));
 
-		logger.info("sFi: " + sFi(task));
-		assertTrue(sFis(task).size() == 2);
-		logger.info("selFis: " + fiName(task));
+		logger.info("task fi: " + fi(task));
+		assertTrue(fis(task).size() == 2);
+		logger.info("selecled fi: " + fiName(task));
 		assertTrue(fiName(task).equals("net"));
 
 		task = exert(task, fi("object"));
@@ -166,9 +166,9 @@ public class TaskTest {
 				context(inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
 						result("result/y")));
 
-		logger.info("sFi: " + sFi(task));
-		assertTrue(sFis(task).size() == 2);
-		logger.info("selFis: " + fiName(task));
+		logger.info("task fi: " + fi(task));
+		assertTrue(fis(task).size() == 2);
+		logger.info("selected Fi: " + fiName(task));
 		assertTrue(fiName(task).equals("net"));
 
 		task = exert(task, fi("net"));

@@ -28,22 +28,21 @@ import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.par.Par;
 import sorcer.core.context.model.srv.Srv;
 import sorcer.core.invoker.ServiceInvoker;
-import sorcer.core.plexus.MorphedFidelity;
+import sorcer.core.plexus.FiEntry;
+import sorcer.core.plexus.MorphFidelity;
+import sorcer.core.plexus.MultiFiRequest;
 import sorcer.core.provider.DatabaseStorer;
 import sorcer.core.signature.NetletSignature;
 import sorcer.core.signature.ObjectSignature;
 import sorcer.core.signature.ServiceSignature;
 import sorcer.netlet.ScriptExerter;
 import sorcer.service.*;
+import sorcer.service.Signature.ReturnPath;
 import sorcer.service.modeling.Model;
 import sorcer.service.modeling.Variability.Type;
-import sorcer.util.Loop;
-import sorcer.util.Response;
-import sorcer.util.Sorcer;
-import sorcer.util.Table;
+import sorcer.util.*;
 import sorcer.util.bdb.objects.UuidObject;
 import sorcer.util.url.sos.SdbUtil;
-import sorcer.service.Signature.ReturnPath;
 
 import java.io.File;
 import java.io.IOException;
@@ -53,6 +52,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.*;
+import java.util.Collections;
 import java.util.concurrent.Callable;
 
 import static sorcer.po.operator.invoker;
@@ -110,36 +110,46 @@ public class operator {
 		return new Tuple6<T1,T2,T3,T4,T5,T6>( x1, x2, x3, x4, x5, x6 );
 	}
 
-	public static <T> List<T> inValues(Context<T> context) throws ContextException {
+	public static <T> List<T> inCotextValues(Context<T> context) throws ContextException {
 		return ((ServiceContext)context).getInValues();
 	}
 
-	public static <T> List<T> inPaths(Context<T> context) throws ContextException {
+	public static <T> List<T> inContextPaths(Context<T> context) throws ContextException {
 		return ((ServiceContext)context).getInPaths();
 	}
 
-	public static <T> List<T> outValues(Context<T> context) throws ContextException {
+	public static <T> List<T> outContextValues(Context<T> context) throws ContextException {
 		return ((ServiceContext)context).getOutValues();
 	}
 
-	public static <T> List<T> outPaths(Context<T> context) throws ContextException {
+	public static <T> List<T> outContextPaths(Context<T> context) throws ContextException {
 		return ((ServiceContext)context).getOutPaths();
 	}
 
-	public static ServiceSignature.Out outPaths(String... elems) {
-		return new ServiceSignature.Out(elems);
+	public static ServiceSignature.Out outPaths(Object... elems) {
+        List<Path> pl = new ArrayList(elems.length);
+        for (Object o : elems) {
+            if (o instanceof String) {
+                pl.add(new Path((String)o));
+            } else if  (o instanceof Path) {
+                pl.add(((Path)o));
+            }
+        }
+        Path[]  pa = new Path[pl.size()];
+        return new ServiceSignature.Out(pl.toArray(pa));
 	}
 
-	public static ServiceSignature.Out outPaths(Path... elems) {
-		return new ServiceSignature.Out(elems);
-	}
-
-	public static ServiceSignature.In inPaths(String... elems) {
-		return new ServiceSignature.In(elems);
-	}
-
-	public static ServiceSignature.In inPaths(Path... elems) {
-		return new ServiceSignature.In(elems);
+	public static ServiceSignature.In inPaths(Object... elems) {
+        List<Path> pl = new ArrayList(elems.length);
+        for (Object o : elems) {
+            if (o instanceof String) {
+                pl.add(new Path((String)o));
+            } else if  (o instanceof Path) {
+                pl.add(((Path)o));
+            }
+        }
+        Path[]  pa = new Path[pl.size()];
+		return new ServiceSignature.In(pl.toArray(pa));
 	}
 
 	public static Path file(String filename) {
@@ -153,10 +163,6 @@ public class operator {
 			}
 		}
 		return new Path (filename);
-	}
-
-	public static Class[] types(Class... classes) {
-		return classes;
 	}
 
 	public static Object[] typeArgs(Object... args) {
@@ -242,32 +248,34 @@ public class operator {
 	}
 
     public static Entry ent(Model model, String path) throws ContextException {
-        return new Entry(path, ((Context)model).asis(path));
+        return new Entry(path, model.asis(path));
     }
 
-	public static <T extends Arg> Srv ent(String name, MorphedFidelity<T> fidelity) {
+	public static <T extends Arg> Srv ent(String name, MorphFidelity<T> fidelity) {
+		fidelity.setPath(name);
+		fidelity.getFidelity().setPath(name);
 		return srv(name, fidelity);
 	}
 
-	public static Srv ent(String name, Fidelity<Signature> fidelity) {
+	public static Srv ent(String name, ServiceFidelity<Signature> fidelity) {
 		return srv(name, fidelity);
 	}
 
-	public static Srv ent(Fidelity<Signature> fidelity) {
+	public static Srv ent(ServiceFidelity<Signature> fidelity) {
 		return srv(fidelity);
 	}
 
-	public static Srv srv(Fidelity<Signature> fidelity) {
+	public static Srv srv(ServiceFidelity<Signature> fidelity) {
 		Srv service = new Srv(fidelity.getName(), fidelity);
 		return service;
 	}
 
-	public static <T extends Arg> Srv srv(String name, Fidelity<T> fidelity) {
+	public static <T extends Arg> Srv srv(String name, ServiceFidelity<T> fidelity) {
 		Srv service = new Srv(name, fidelity);
 		return service;
 	}
 
-	public static Srv srv(String name, MorphedFidelity<Signature> fidelity) {
+	public static Srv srv(String name, MorphFidelity<Signature> fidelity) {
 		Srv service = new Srv(name, fidelity);
 		return service;
 	}
@@ -280,20 +288,27 @@ public class operator {
         return srv(null,  item,  context);
     }
 
-	public static Srv srv(String name, Identifiable item, Context context) {
+	public static Srv srv(String name, Identifiable item, Context context, Arg... args) {
 		String srvName = item.getName();
+		Srv srv = null;
 		if (name != null)
 			srvName = name;
 
 		if (item instanceof Signature) {
-			return new Srv(srvName,
+			srv = new Srv(srvName,
 					new SignatureEntry(item.getName(), (Signature) item, context));
 		} else if (item instanceof Mogram) {
-			return new Srv(srvName,
+			srv = new Srv(srvName,
 					new MogramEntry(item.getName(), (Mogram) item));
 		} else {
-			return new Srv(srvName, item);
+			srv = new Srv(srvName, item);
 		}
+		try {
+			srv.substitute(args);
+		} catch (SetterException e) {
+			e.printStackTrace();
+		}
+		return srv;
 	}
 
     public static Srv srv(Identifiable item) {
@@ -316,14 +331,22 @@ public class operator {
 		return new Srv(path, null, name);
 	}
 
-
 	public static <T> Entry<T> ent(String path, T value) {
 		if (value instanceof Invocation) {
 			return new Par<T>(path, value);
 		} else if (value instanceof Evaluation) {
 			return new Entry<T>(path, value);
-		} else if (value instanceof Fidelity) {
+		} else if (value instanceof ServiceFidelity) {
 			return (Entry<T>) new Srv(path, value);
+		} else if (value instanceof MultiFiRequest) {
+			try {
+				((MultiFiRequest)value).setUnifiedName(path);
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			}
+			return (Entry<T>) new Srv(path, value);
+		} else if (value instanceof List && ((List)value).get(0) instanceof Path) {
+			return (Entry<T>) new DependencyEntry(path, (List)value);
 		} else {
 			return new Entry<T>(path, value);
 		}
@@ -349,7 +372,7 @@ public class operator {
 		return new Srv(name, path, service,  args.argsToStrings());
 	}
 
-	public static Srv lambda(String path, String name, Requestor client) {
+	public static Srv lambda(String path, String name, Client client) {
 		return new Srv(name, path, client);
 	}
 
@@ -382,7 +405,7 @@ public class operator {
 	}
 
 	public static boolean isSorcerLambda(Class clazz) {
-		Class[] types = { EntryCollable.class, ValueCallable.class, Requestor.class,
+		Class[] types = { EntryCollable.class, ValueCallable.class, Client.class,
 				ConditionCollable.class, Callable.class };
 		for (Class cl : types) {
 			if (clazz == cl) {
@@ -416,16 +439,24 @@ public class operator {
         return srv(sig, context);
     }
 
-    public static Srv ent(String name, Signature sig, Context context) {
-        return srv(name, sig, context);
+    public static Srv ent(String name, Signature sig, Context context, Arg... args) {
+        return srv(name, sig, context, args);
     }
 
 	public static Srv ent(Signature sig) {
 		return srv(sig);
 	}
 
+	public static DependencyEntry dep(String path, Path... paths) {
+		return new DependencyEntry(path, Arrays.asList(paths));
+	}
+
 	public static DependencyEntry dep(String path, List<Path> paths) {
 		return new DependencyEntry(path, paths);
+	}
+
+	public static DependencyEntry[] deps(DependencyEntry... dependencies) {
+		return dependencies;
 	}
 
 	public static <T> Entry<T> rvEnt(String path, T value) {
@@ -587,7 +618,7 @@ public class operator {
 		return new TagEntry(path, value, association);
 	}
 
-	public static Entry set(Entry entry, Object value)
+	public static Entry setValue(Entry entry, Object value)
 			throws ContextException {
 		try {
 			entry.setValue(value);
@@ -597,7 +628,7 @@ public class operator {
 		return entry;
 	}
 
-	public static Context set(Context context, String path, Object value) throws ContextException {
+	public static Context setValue(Context context, String path, Object value) throws ContextException {
 		context.putValue(path, value);
 		return context;
 	}
@@ -823,6 +854,48 @@ public class operator {
 		return out;
 	}
 
+	public static Table fiColumnName(Table table, String name) {
+		table.setFiColumnName(name);
+		return table;
+	}
+
+	public static ModelTable populateFidelities(ModelTable table, FiEntry... entries) {
+		Table impl = (Table)table;
+		List fiColumn = impl.getColumn(impl.getFiColumnName());
+		if (fiColumn == null) {
+			fiColumn = new ArrayList(impl.getRowCount());
+			while(fiColumn.size() < impl.getRowCount())
+				fiColumn.add(null);
+		}
+		for (FiEntry fiEnt : entries) {
+			fiColumn.set(fiEnt.getIndex(), fiEnt.getFidelities());
+		}
+
+        for (int i = 0; i < fiColumn.size()-1; i++) {
+            if (fiColumn.get(i) != null && fiColumn.get(i + 1) == null) {
+                fiColumn.set(i + 1, fiColumn.get(i));
+            }
+        }
+
+        impl.addColumn(impl.getFiColumnName(), fiColumn);
+        return impl;
+	}
+
+	public static ModelTable appendFidelities(ModelTable table, FiEntry... entries) {
+		Table impl = (Table)table;
+		List fiColumn = impl.getColumn(impl.getFiColumnName());
+		if (fiColumn == null) {
+			fiColumn = new ArrayList(impl.getRowCount());
+			while(fiColumn.size() < impl.getRowCount())
+				fiColumn.add(null);
+		}
+		for (FiEntry fiEnt : entries) {
+			fiColumn.set(fiEnt.getIndex(), fiEnt.getFidelities());
+		}
+		impl.addColumn(impl.getFiColumnName(), fiColumn);
+		return impl;
+	}
+
 	public static void rowNames(Table table, List rowIdentifiers) {
 		table.setRowIdentifiers(rowIdentifiers);
 	}
@@ -943,10 +1016,13 @@ public class operator {
 	public static List<Path> paths(Object... paths) {
 		List<Path> list = new ArrayList<>();
 		for (Object o : paths) {
-			if (o instanceof String)
-				list.add(new Path((String)o));
-			if (o instanceof Path)
-				list.add((Path)o);
+			if (o instanceof String) {
+				list.add(new Path((String) o));
+			} else if (o instanceof Path) {
+				list.add((Path) o);
+			} else if (o instanceof Identifiable) {
+				list.add(new Path(((Identifiable)o).getName()));
+			}
 		}
 		return list;
 	}
@@ -1111,4 +1187,7 @@ public class operator {
 			return ((ObjectSignature) signature).initInstance();
 	}
 
+	public static URL url(String urlName) throws MalformedURLException {
+		return new URL(urlName);
+	}
 }

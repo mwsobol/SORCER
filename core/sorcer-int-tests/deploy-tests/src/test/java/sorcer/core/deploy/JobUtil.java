@@ -89,7 +89,7 @@ public class JobUtil {
                                  idle(1),
                                  opsys(opSys),
                                  arch(arch),
-                                 ips_exclude(ips),
+                                 ipsExclude(ips),
                                  ServiceDeployment.Type.SELF)),
                       context("multiply", inEnt("arg/x1", 10.0d),
                               inEnt("arg/x2", 50.0d), result("result/y1")));

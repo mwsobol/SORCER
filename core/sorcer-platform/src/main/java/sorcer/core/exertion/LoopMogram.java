@@ -144,9 +144,15 @@ public class LoopMogram extends ConditionalMogram {
 						if (sig != null && sig.getVariability() != null) {
 							((Task) target).updateConditionalContext(condition);
 						}
+					} else if (target instanceof SrvModel) {
+						((SrvModel) target).clearOutputs();
+						if (condition.getConditionalContext() == target) {
+							target = target.exert(txn, args);
+						} else {
+							Context response = ((SrvModel) target).getResponse(args);
+							condition.getConditionalContext().append(response);
+						}
 					} else {
-						if (target instanceof SrvModel)
-							((SrvModel)target).clearOutputs();
 						target = target.exert(txn, args);
 					}
 				}

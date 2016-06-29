@@ -21,9 +21,12 @@ import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
 import sorcer.co.tuple.Tuple2;
 import sorcer.core.Name;
+import sorcer.core.context.ContextSelection;
 import sorcer.core.context.ServiceContext;
 import sorcer.service.*;
+import sorcer.service.modeling.EvaluationComponent;
 import sorcer.service.modeling.Model;
+import sorcer.service.modeling.SupportComponent;
 import sorcer.service.modeling.Variability;
 import sorcer.util.bdb.objects.UuidObject;
 import sorcer.util.url.sos.SdbUtil;
@@ -35,12 +38,10 @@ import java.util.List;
 
 import static sorcer.eo.operator.add;
 
-
 /**
  * @author Mike Sobolewski
  */
-@SuppressWarnings("unchecked")
-public class Entry<T> extends Tuple2<String, T> implements Callable<T>, Dependency, Comparable<T>, Setter, Reactive<T> {
+public class Entry<T> extends Tuple2<String, T> implements Callable<T>, Dependency, Comparable<T>, EvaluationComponent, SupportComponent, Setter, Reactive<T> {
 	private static final long serialVersionUID = 5168783170981015779L;
 
 	public int index;
@@ -49,7 +50,7 @@ public class Entry<T> extends Tuple2<String, T> implements Callable<T>, Dependen
 
 	protected Class valClass;
 
-	protected Variability.Type type = Variability.Type.PAR;;
+	protected Variability.Type type = Variability.Type.PAR;
 
 	// its arguments are always evaluated if active (either Evaluataion or Invocation type)
 	protected boolean isReactive = false;
@@ -57,8 +58,12 @@ public class Entry<T> extends Tuple2<String, T> implements Callable<T>, Dependen
 	// when context of this entry is changed then isValid == false
 	protected boolean isValid = true;
 
+	protected ContextSelection contextSelector;
+
 	// dependency management for this Entry
 	protected List<Evaluation> dependers = new ArrayList<Evaluation>();
+
+	protected Context scope;
 
 	public Entry() {
 	}
@@ -101,7 +106,7 @@ public class Entry<T> extends Tuple2<String, T> implements Callable<T>, Dependen
 		T val = this._2;
 		URL url = null;
 		try {
-//			substitute(entries);
+			substitute(args);
 			if (isPersistent) {
 				if (SdbUtil.isSosURL(val)) {
 					val = (T) ((URL) val).getContent();
@@ -118,33 +123,51 @@ public class Entry<T> extends Tuple2<String, T> implements Callable<T>, Dependen
 					this._2 = (T)url;
 				}
 			} else if (val instanceof Invocation) {
-				return (T) ((Invocation) val).invoke(null, args);
+				val = (T) ((Invocation) val).invoke(null, args);
 			} else if (val instanceof Evaluation) {
 				if (val instanceof Entry && ((Entry)val).getName().equals(_1)) {
-					return (T) ((Entry)val).getValue();
+					val = (T) ((Entry)val).getValue();
 				} else {
-					return ((Evaluation<T>) val).getValue(args);
+					val = ((Evaluation<T>) val).getValue(args);
 				}
-			} else if (val instanceof Fidelity) {
+			} else if (val instanceof ServiceFidelity) {
 				// return the selected fidelity of this entry
 				for (Arg arg : args) {
 					if (arg instanceof Fidelity) {
 						if (((Fidelity)arg).getPath().equals(_1)) {
-							((Fidelity) val).setSelect(arg.getName());
+							((ServiceFidelity)val).setSelect(arg.getName());
 							break;
 						}
 					}
 				}
-				return (T) ((Entry)((Fidelity) val).getSelect()).getValue();
+				val = (T) ((Entry)((ServiceFidelity) val).getSelect()).getValue();
 			} else if (val instanceof Callable) {
-				return (T) ((Callable)val).call(args);
+				val = (T) ((Callable)val).call(args);
 			} else if (val instanceof Service) {
-				return (T) ((Service)val).exec(args);
+				val = (T) ((Service)val).exec(args);
 			}
 		} catch (Exception e) {
 			throw new EvaluationException(e);
 		}
-		return val;
+        if (contextSelector != null) {
+            try {
+                return (T) contextSelector.doSelect(val);
+            } catch (ContextException e) {
+                throw new EvaluationException(e);
+            }
+        } else
+            return val;
+	}
+
+	@Override
+	public void substitute(Arg... entries) throws SetterException {
+		if (entries != null) {
+			for (Arg a : entries) {
+				if (a instanceof ContextSelection) {
+					setContextSelector((ContextSelection) a);
+				}
+			}
+		}
 	}
 
 	@Override
@@ -221,7 +244,7 @@ public class Entry<T> extends Tuple2<String, T> implements Callable<T>, Dependen
 	public void isValid(boolean state) {
 		isValid = state;
 		if (_2  instanceof Entry) {
-			((Entry)_2).isValid(state);
+			((Entry)_2).isValid = state;
 		}
 	}
 
@@ -238,13 +261,21 @@ public class Entry<T> extends Tuple2<String, T> implements Callable<T>, Dependen
 		return dependers;
 	}
 
+	public ContextSelection getContextSelector() {
+		return contextSelector;
+	}
+
+	public void setContextSelector(ContextSelection contextSelector) {
+		this.contextSelector = contextSelector;
+	}
+
 	@Override
 	public String toString() {
 		String en = "";
 		try {
 			if (_2 instanceof Evaluation && ((Evaluation) _2).asis() != null) {
 				if (this == _2) {
-					return "[" + _1 + ":" + ((Entry)_2)._2 + "]";  // loop
+					return "[" + _1 + ":" + ((Evaluation)_2).getName() + "x]";  // loop
 				}
 				en = ((Evaluation) _2).asis().toString();
 			} else {
@@ -296,21 +327,24 @@ public class Entry<T> extends Tuple2<String, T> implements Callable<T>, Dependen
 			}
 		} else if (mogram instanceof Exertion) {
 			if (_2 != null && _2 != Context.none)
-				((Exertion) mogram).getContext().putValue(_1, _2);
-			cxt = ((Exertion) mogram.exert(txn)).getContext();
+				mogram.getContext().putValue(_1, _2);
+			cxt =  mogram.exert(txn).getContext();
 			out.putValue(_1, cxt.getValue(_1));
 		}
-		return (Mogram) out;
+		return out;
 	}
 
 	public Variability.Type getType() {
 		return type;
 	}
 
-//	@Override
-//	public T invoke(Context<T> context, Arg... entries) throws InvocationException, RemoteException {
-//		return _2;
-//	}
+	public Context getScope() {
+		return scope;
+	}
+
+	public void setScope(Context scope) {
+		this.scope = scope;
+	}
 
 	public Class getValClass() {
 		return valClass;

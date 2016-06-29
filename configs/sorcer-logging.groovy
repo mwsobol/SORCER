@@ -145,6 +145,7 @@ logger("org.rioproject.resolver.aether.util.ConsoleRepositoryListener", WARN)
 
 logger("sorcer.util.ProviderAccessor", WARN)
 logger("sorcer.core.provider.cataloger.ServiceCataloger", WARN)
+logger("sorcer.core.provider.exerter.ServiceShell", INFO)
 logger("sorcer.provider.boot", INFO)
 logger("sorcer.core.provider.ServiceProvider", INFO)
 //logger("sorcer.core.provider.rendezvous.RendezvousBean", ALL)
@@ -188,7 +189,7 @@ logger("sorcer.modeling.vfe.persist.TaskContextSetter", OFF)
 */
 logger("sorcer.modeling.core.context.model.var.ResponseModel", WARN)
 logger("sorcer.modeling.core.context.model.var.ParametricModel", WARN)
-
+logger("sorcer.util.Table", WARN)
 /* ==================================================================
  *  SORCER Other specialized loggers
  * ==================================================================*/

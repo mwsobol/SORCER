@@ -41,8 +41,8 @@ import sorcer.core.dispatch.DispatcherException;
 import sorcer.core.dispatch.ExertionSorter;
 import sorcer.core.dispatch.ProvisionManager;
 import sorcer.core.exertion.ObjectTask;
-import sorcer.core.plexus.MorphedFidelity;
-import sorcer.core.plexus.MultifidelityService;
+import sorcer.core.plexus.MorphFidelity;
+import sorcer.core.plexus.MultiFiRequest;
 import sorcer.core.provider.*;
 import sorcer.core.signature.NetSignature;
 import sorcer.core.signature.NetletSignature;
@@ -55,8 +55,8 @@ import sorcer.service.Exec.State;
 import sorcer.service.Signature.ReturnPath;
 import sorcer.service.Strategy.Access;
 import sorcer.service.modeling.Model;
-import sorcer.service.modeling.ModelingTask;
 import sorcer.service.txmgr.TransactionManagerAccessor;
+import sorcer.util.ProviderLocator;
 import sorcer.util.Sorcer;
 
 import java.io.File;
@@ -73,8 +73,7 @@ import static sorcer.eo.operator.*;
 /**
  * @author Mike Sobolewski
  */
-@SuppressWarnings("rawtypes")
-public class ServiceShell implements RemoteServiceShell, Requestor, Callable {
+public class ServiceShell implements RemoteServiceShell, Client, Callable {
 	protected final static Logger logger = LoggerFactory.getLogger(ServiceShell.class);
 	private Service service;
 	private Mogram mogram;
@@ -107,11 +106,19 @@ public class ServiceShell implements RemoteServiceShell, Requestor, Callable {
 	private static void setupProxyCache() {
 		if (proxies == null) {
 			proxies = CacheBuilder.newBuilder()
-						  .maximumSize(20)
-						  .expireAfterWrite(30, TimeUnit.MINUTES)
-						  .build(new CacheLoader<Signature, Object>() {
-							  public Object load(Signature signature) {
-								  return Accessor.get().getService(signature);
+					.maximumSize(20)
+					.expireAfterWrite(30, TimeUnit.MINUTES)
+					.build(new CacheLoader<Signature, Object>() {
+						public Object load(Signature signature) {
+							if (signature.getProviderName() instanceof ServiceName) {
+								try {
+									return ProviderLocator.getProvider(signature);
+								} catch (SignatureException e) {
+									e.printStackTrace();
+								}
+								return Context.none;
+							} else
+								return Accessor.get().getService(signature);
 						}
 					});
 		}
@@ -347,13 +354,13 @@ public class ServiceShell implements RemoteServiceShell, Requestor, Callable {
 				exertion = (ServiceExertion)es.getSortedJob();
 			}
 //			 exert modeling local tasks
-			if (exertion instanceof ModelTask && exertion.getFidelity().getSelects().size() == 1) {
+			if (exertion instanceof ModelTask && exertion.getSelectedFidelity().getSelects().size() == 1) {
 				return ((Task) exertion).doTask(transaction);
 			}
 
 			// handle delegated tasks with fidelities
 			if (exertion.getClass() == Task.class) {
-				if (exertion.getFidelity().getSelects().size() == 1) {
+				if (exertion.getSelectedFidelity().getSelects().size() == 1) {
 					return ((Task) exertion).doTask(transaction);
 				} else {
 					try {
@@ -368,7 +375,7 @@ public class ServiceShell implements RemoteServiceShell, Requestor, Callable {
 			// exert object tasks and jobs
 			if (!(signature instanceof NetSignature)) {
 				if (exertion instanceof Task) {
-					if (exertion.getFidelity().getSelects().size() == 1) {
+					if (exertion.getSelectedFidelity().getSelects().size() == 1) {
 						return ((Task) exertion).doTask(transaction, args);
 					} else {
 						try {
@@ -397,7 +404,7 @@ public class ServiceShell implements RemoteServiceShell, Requestor, Callable {
 			}
 
 			if (providerName != null && providerName.length() > 0) {
-				signature.setProviderName(providerName);
+				signature.getProviderName().setName(providerName);
 			}
 			if (logger.isDebugEnabled())
 				logger.debug("ServiceShell's service accessor: {}", Accessor.get().getClass().getName());
@@ -405,8 +412,11 @@ public class ServiceShell implements RemoteServiceShell, Requestor, Callable {
 			// if space exertion should go to Spacer
 			if (!exertion.isJob()
 					&& exertion.getControlContext().getAccessType() == Access.PULL) {
-				signature = new NetSignature("exert", Spacer.class, Sorcer.getActualSpacerName());
-				exertion.correctProcessSignature(signature);
+				String srvName = Sorcer.getActualSpacerName();
+				if (signature.getProviderName() instanceof ServiceName) {
+					srvName =  signature.getProviderName().getName();
+				}
+				signature = new NetSignature("exert", Spacer.class, srvName);
 			}
 			provider = ((NetSignature) signature).getProvider();
 			if (provider == null) {
@@ -466,7 +476,6 @@ public class ServiceShell implements RemoteServiceShell, Requestor, Callable {
 
 	private Exertion callProvider(ServiceExertion exertion, Signature signature, Arg... entries)
 			throws TransactionException, MogramException, RemoteException {
-
         String providerName = null;
         ServiceID providerID = null;
         try {
@@ -496,20 +505,20 @@ public class ServiceShell implements RemoteServiceShell, Requestor, Callable {
 			exertion.reportException(new RuntimeException("Cannot find provider for: " + signature));
 			return exertion;
 		}
-		exertion.trimAllNotSerializableSignatures();
+		exertion.trimNotSerializableSignatures();;
 		exertion.getControlContext().appendTrace(String.format("shell: %s:%s", providerName, providerID));
 		logger.info("Provider found for: {}\n\t{}", signature, provider);
 		if (((Provider) provider).mutualExclusion()) {
-			return serviceMutualExclusion((Provider) provider, exertion,
-					transaction);
+			return serviceMutualExclusion((Provider) provider, exertion, transaction);
 		} else {
-//			 test exertion for serialization
-//						 try {
-//							 logger.info("ExertProcessor.exert0(): going to serialize exertion for testing!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-//							 ObjectLogger.persistMarshalled("exertionfile", exertion);
-//						 } catch (Exception e) {
-//							 e.printStackTrace();
-//						 }
+			// test exertion for serialization
+//			try{
+//				ObjectLogger.persist("exertionfiles.srl", exertion);
+//				ObjectLogger.restore("exertionfiles.srl");
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//			}
+
 			Exertion result = provider.exert(exertion, transaction, entries);
 			if (result != null && result.getExceptions().size() > 0) {
 				for (ThrowableTrace et : result.getExceptions()) {
@@ -578,7 +587,7 @@ public class ServiceShell implements RemoteServiceShell, Requestor, Callable {
 					.isAssignableFrom(Spacer.class)) {
 				sig.setServiceType(Spacer.class);
 				((NetSignature) sig).setSelector("exert");
-				sig.setProviderName(SorcerConstants.ANY);
+				sig.getProviderName().setName(SorcerConstants.ANY);
 				sig.setType(Signature.Type.PROC);
 				exertion.getControlContext().setAccessType(access);
 			} else if (Access.PUSH == access
@@ -587,7 +596,7 @@ public class ServiceShell implements RemoteServiceShell, Requestor, Callable {
 				if (sig.getServiceType().isAssignableFrom(Spacer.class)) {
 					sig.setServiceType(Jobber.class);
 					((NetSignature) sig).setSelector("exert");
-					sig.setProviderName(SorcerConstants.ANY);
+					sig.getProviderName().setName(SorcerConstants.ANY);
 					sig.setType(Signature.Type.PROC);
 					exertion.getControlContext().setAccessType(access);
 				}
@@ -791,7 +800,7 @@ public class ServiceShell implements RemoteServiceShell, Requestor, Callable {
 			return (((Context)obj).getValue(rPath.path));
 		}
 		if (outputs != null) {
-			obj = ((ServiceContext) acxt).getSubcontext(Path.getSigPathArray(outputs));
+			obj = ((ServiceContext) acxt).getSubcontext(Path.toArray(outputs));
 		}
 		return obj;
 	}
@@ -894,34 +903,37 @@ public class ServiceShell implements RemoteServiceShell, Requestor, Callable {
 					throw new ExertionException("No return path in the context: "
 							+ cxt.getName());
 				}
-			} else if (service instanceof MultifidelityService) {
-				Fidelity<PrimitiveService> sfi = ((MultifidelityService)service).getServiceFidelity();
+			} else if (service instanceof MultiFiRequest) {
+				Object out = null;
+				MorphFidelity morphFidelity = ((MultiFiRequest)service).getMorphFidelity();
+				ServiceFidelity<Request> sfi = ((MultiFiRequest)service).getServiceFidelity();
 				if (sfi == null) {
-					Fidelity fi = ((MultifidelityService)service).getMorphedFidelity().getFidelity();
+					ServiceFidelity fi = ((MultiFiRequest)service).getMorphFidelity().getFidelity();
 					Object select = fi.getSelect();
 					if (select != null) {
-						MorphedFidelity morphedFidelity = ((MultifidelityService)service).getMorphedFidelity();
-						Object out = null;
 						if (select instanceof Mogram)
 							out = ((Mogram) select).exert(args);
 						else {
-							Context cxt = ((MultifidelityService)service).getScope();
+							Context cxt = ((MultiFiRequest)service).getScope();
 							if (select instanceof Signature && cxt != null)
 								out = ((Service) select).exec(cxt);
 							else
 								out = ((Service) select).exec(args);
 						}
-
-						morphedFidelity.setChanged();
-						morphedFidelity.notifyObservers(out);
-						return out;
 					}
 				}
-				Context cxt = ((MultifidelityService)service).getScope();
-				if (sfi.getSelect() instanceof Signature && cxt != null)
-					return sfi.getSelect().exec(cxt);
-				else
-					return sfi.getSelect().exec(args);
+				Context cxt = ((MultiFiRequest)service).getScope();
+				if (sfi.getSelect() instanceof Signature && cxt != null) {
+					out = sfi.getSelect().exec(cxt);
+				} else {
+					out = sfi.getSelect().exec(args);
+				}
+
+				if (morphFidelity != null) {
+					morphFidelity.setChanged();
+					morphFidelity.notifyObservers(out);
+				}
+				return out;
 			}
 		} catch (Throwable ex) {
 			throw new ServiceException(ex);

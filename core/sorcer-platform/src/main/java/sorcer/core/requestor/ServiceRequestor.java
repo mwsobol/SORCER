@@ -45,9 +45,9 @@ import static sorcer.eo.operator.prvName;
 /**
  * @author Mike Sobolewski
  */
-public class ExertRequestor implements Requestor, SorcerConstants {
+public class ServiceRequestor implements Requestor, SorcerConstants {
 	/** Logger for logging information about this instance */
-	protected static final Logger logger = LoggerFactory.getLogger(ExertRequestor.class.getName());
+	protected static final Logger logger = LoggerFactory.getLogger(ServiceRequestor.class.getName());
 
 	protected Properties props;
 	static protected Class target;
@@ -56,16 +56,16 @@ public class ExertRequestor implements Requestor, SorcerConstants {
 	protected String jobberName;
 	protected GroovyShell shell;
 	protected RemoteLoggerListener listener;
-	protected static ExertRequestor requestor = null;
+	protected static ServiceRequestor requestor = null;
 	final static String REQUESTOR_PROPERTIES_FILENAME = "requestor.properties";
 
-	public ExertRequestor() {
+	public ServiceRequestor() {
 		// do nothing
 	}
 
-	public ExertRequestor(Class requestorType, String... args) {
+	public ServiceRequestor(Class requestorType, String... args) {
 		target = requestorType;
-		ExertRequestor.args = args;
+		ServiceRequestor.args = args;
 	}
 
 	public static void main(String... args) throws Exception {
@@ -113,10 +113,10 @@ public class ExertRequestor implements Requestor, SorcerConstants {
 		}
 		try {
 			if (target != null) {
-				requestor = (ExertRequestor) target.newInstance();
+				requestor = (ServiceRequestor) target.newInstance();
 			} else {
 				requestorType = args[0];
-				requestor = (ExertRequestor) Class.forName(requestorType)
+				requestor = (ServiceRequestor) Class.forName(requestorType)
 						.newInstance();
 			}
 		} catch (Exception e) {
@@ -342,4 +342,18 @@ public class ExertRequestor implements Requestor, SorcerConstants {
         if (System.getSecurityManager() == null)
 			System.setSecurityManager(new SecurityManager());
     }
+
+	@Override
+	public Context exec(Service service, Context context, Arg[] args) throws ServiceException, RemoteException, TransactionException {
+		Object obj = exec(args);
+		if (obj instanceof Context) {
+			return context.append((Context)obj);
+		} if (obj instanceof Exertion) {
+			return context.append(((Exertion)obj).getContext());
+		} else {
+			context.putValue("requestor/result", obj);
+			return context;
+		}
+
+	}
 }

@@ -50,7 +50,8 @@ public abstract class Block extends CompoundExertion {
 	public Block(String name, Signature signature) {
 		super(name);
 		try {
-			serviceFidelity.selects.add(signature);
+			selectedFidelity.selects.add(signature);
+			selectedFidelity.select = signature;
 			try {
 				setContext(new ParModel("block context: " + getName()));
 //				persistContext();
@@ -302,7 +303,7 @@ public abstract class Block extends CompoundExertion {
 	}
 
 	@Override
-	public ServiceExertion substitute(Arg... entries)
+	public void substitute(Arg... entries)
 			throws SetterException {
 		try {
 			for (Arg e : entries) {
@@ -319,7 +320,6 @@ public abstract class Block extends CompoundExertion {
 			ex.printStackTrace();
 			throw new SetterException(ex);
 		}
-		return this;
 	}
 	
 	private void updateConditions() throws ContextException {

@@ -103,9 +103,10 @@ public class Task extends ServiceExertion {
 
 	public Task(String name, String description, List<Signature> signatures) {
 		this(name, description);
-		if (this.serviceFidelity != null) {
-			this.serviceFidelity.selects.addAll(signatures);
-		}
+		this.selectedFidelity = new ServiceFidelity(name);
+		this.selectedFidelity.type = ServiceFidelity.Type.SIG;
+		this.selectedFidelity.selects.addAll(signatures);
+		this.selectedFidelity.select = signatures.get(0);
 	}
 
 	public Task doTask(Arg... args) throws MogramException, SignatureException,
@@ -123,41 +124,27 @@ public class Task extends ServiceExertion {
 	}
 
 	public void initDelegate() throws ContextException, ExertionException {
-		if (delegate != null && serviceFidelity != delegate.serviceFidelity) {
+		if (delegate != null && selectedFidelity != delegate.selectedFidelity) {
 			delegate = null;
 			dataContext.clearReturnPath();
 		}
 
 		if (delegate == null) {
-			if (serviceFidelity != null) {
-				Signature ss = null;
-				if (serviceFidelity.selects.size() == 1) {
-					ss = serviceFidelity.selects.get(0);
-				} else if (serviceFidelity.selects.size() > 1) {
-					for (Signature s : serviceFidelity.selects) {
-						if (s.getType() == Signature.SRV) {
-							ss = s;
-							break;
-						}
-					}
-				}
-				if (ss != null) {
-					if (ss instanceof NetSignature) {
-						try {
-							delegate = new NetTask(name, ss);
-						} catch (SignatureException e) {
-							throw new ExertionException(e);
-						}
-					} else {
-						delegate = new ObjectTask(name, ss);
-					}
-					delegate.setFidelities(getFidelities());
-					delegate.setFidelity(getFidelity());
-					delegate.setSelectedFidelitySelector(serviceFidelitySelector);
-					delegate.setContext(dataContext);
-					delegate.setControlContext(controlContext);
-				}
+			Signature ps = selectedFidelity.select;
+			if (ps instanceof NetSignature) {
+				delegate = new NetTask(name);
+			} else {
+				delegate = new ObjectTask(name);
 			}
+
+			delegate.setFidelityManager(getFidelityManager());
+			delegate.setFidelities(getFidelities());
+			delegate.setSelectedFidelity(getSelectedFidelity());
+			delegate.setServiceMorphFidelity(getServiceMorphFidelity());
+			delegate.setServiceMetafidelities(getServiceMetafidelities());
+			delegate.setSelectedFidelitySelector(serviceFidelitySelector);
+			delegate.setContext(dataContext);
+			delegate.setControlContext(controlContext);
 		}
 	}
 
@@ -183,7 +170,7 @@ public class Task extends ServiceExertion {
 	
 	@Override
 	public boolean isCmd()  {
-		return (serviceFidelity.selects.size() == 1);
+		return (selectedFidelity.selects.size() == 1);
 	}
 	
 	public boolean hasChild(String childName) {
@@ -198,9 +185,9 @@ public class Task extends ServiceExertion {
 	public void setOwnerId(String oid) {
 		// Util.debug("Owner ID: " +oid);
 		this.ownerId = oid;
-		if (serviceFidelity.selects != null)
-			for (int i = 0; i < serviceFidelity.selects.size(); i++)
-				((NetSignature) serviceFidelity.selects.get(i)).setOwnerId(oid);
+		if (selectedFidelity.selects != null)
+			for (int i = 0; i < selectedFidelity.selects.size(); i++)
+				((NetSignature) selectedFidelity.selects.get(i)).setOwnerId(oid);
 		// Util.debug("Context : "+ context);
 		if (dataContext != null)
 			dataContext.setOwnerId(oid);
@@ -208,6 +195,10 @@ public class Task extends ServiceExertion {
 
 	public ServiceContext doIt() throws ExertionException {
 		throw new ExertionException("Not supported method in this class");
+	}
+
+	public boolean isNetTask() {
+		return getProcessSignature().getServiceType().isInterface();
 	}
 
 	// Just to remove if at all the places.
@@ -242,10 +233,10 @@ public class Task extends ServiceExertion {
 		sb.append(", selector: ").append(getSelector());
 		sb.append(", parent ID: ").append(parentId);
 
-		if (serviceFidelity.selects.size() == 1) {
+		if (selectedFidelity.selects.size() == 1) {
 			sb.append(getProcessSignature().getProviderName());
 		} else {
-			for (Signature s : serviceFidelity.selects) {
+			for (Signature s : selectedFidelity.selects) {
 				sb.append("\n  ").append(s);
 			}
 		}
@@ -369,7 +360,7 @@ public class Task extends ServiceExertion {
 	protected Task doBatchTask(Transaction txn) throws RemoteException,
 			MogramException, SignatureException, ContextException {
 		ControlFlowManager ep = new ControlFlowManager();
-		return ep.doBatchTask(this);
+		return ep.doFidelityTask(this);
 	}
 
 	/* (non-Javadoc)
@@ -377,11 +368,13 @@ public class Task extends ServiceExertion {
 	 */
 	@Override
 	public Object getValue(String path, Arg... args) throws ContextException {
-		if (path.startsWith("super")) {
-			return ((Exertion)parent).getContext().getValue(path.substring(6));
-		} else {
-			return dataContext.getValue(path, args);
+		Object val = dataContext.getValue(path, args);
+		if (val == Context.none) {
+			if (scope != null){
+			val = scope.getValue(path, args);
+			}
 		}
+		return val;
 	}
 
 	public List<Mogram> getMograms(List<Mogram> exs) {
@@ -402,21 +395,26 @@ public class Task extends ServiceExertion {
 	}
 
 	public void correctBatchSignatures() {
-		List<Signature> alls = this.getFidelity().getSelects();
-		Signature lastSig = alls.get(alls.size()-1);
-		if (alls.size() > 1 &&  this.isBatch() && !(lastSig instanceof NetSignature)) {
-			boolean allSrvType = true;
-			for (Signature sig : alls) {
-				if (!sig.getType().equals(Signature.SRV)) {
-					allSrvType = false;
-					break;
+		// if all signatures are of service process SRV type make all
+		// except the last one of preprocess PRE type
+		List<Signature> alls = selectedFidelity.selects;
+		if (alls.size() > 1) {
+			Signature lastSig = alls.get(alls.size() - 1);
+			if (alls.size() > 1 && this.isBatch() && !(lastSig instanceof NetSignature)) {
+				boolean allSrvType = true;
+				for (Signature sig : alls) {
+					if (!sig.getType().equals(Signature.SRV)) {
+						allSrvType = false;
+						break;
+					}
 				}
-			}
-			if (allSrvType) {
-				for (int i = 0; i < alls.size() - 1; i++) {
-					alls.get(i).setType(Signature.PRE);
+				if (allSrvType) {
+					for (int i = 0; i < alls.size() - 1; i++) {
+						alls.get(i).setType(Signature.PRE);
+					}
 				}
 			}
 		}
 	}
+
 }

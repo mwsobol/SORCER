@@ -75,8 +75,7 @@ import java.util.*;
  * @author Mike Sobolewski
  */
 @SuppressWarnings("rawtypes")
-public interface Context<T> extends Model, Mappable<T>, Serializable,
-		Contexter<T>, Paradigmatic {
+public interface Context<T> extends Model, Mappable<T>, Serializable, Contexter<T>, Paradigmatic {
 
 	/** parameter (par) */
 	final static String PATH_PAR = "par";
@@ -184,6 +183,11 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 
 		}
 
+		@Override
+		public boolean equals(Object obj) {
+			return obj.toString().equals("none");
+		}
+
 		public String toString() {
 			return "none";
 		}
@@ -258,7 +262,7 @@ public interface Context<T> extends Model, Mappable<T>, Serializable,
 	 * @param task
 	 *            The task to set.
 	 */
-	public void setExertion(Exertion task) throws ExertionException;
+	public void setExertion(Exertion task);
 
 	/**
 	 * Returns the subject path in this context. A subject is a path/value

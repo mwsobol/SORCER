@@ -86,8 +86,7 @@ public class ObjectTask extends Task {
 			this.dataContext = (ServiceContext) context;
 	}
 
-	@SuppressWarnings("unchecked")
-	public Task doTask(Transaction txn, Arg... args) throws ExertionException, SignatureException, RemoteException, MogramException {
+	public Task doTask(Transaction txn, Arg... args) throws SignatureException, RemoteException, MogramException {
 		if (delegate != null)
 			return delegate.doTask(txn);
 
@@ -96,11 +95,12 @@ public class ObjectTask extends Task {
 		dataContext.getMogramStrategy().setCurrentSelector(os.getSelector());
 		dataContext.setCurrentPrefix(os.getPrefix());
 		try {
-			if (getProcessSignature().getReturnPath() != null && ((ReturnPath)getProcessSignature().getReturnPath()).inPaths != null)
-				dataContext.updateContext(((ReturnPath)getProcessSignature().getReturnPath()).inPaths);
+			ReturnPath rt = (ReturnPath) getProcessSignature().getReturnPath();
+			if (rt != null && rt.inPaths != null)
+				dataContext.updateInOutPaths(rt.inPaths, rt.outPaths);
 			else
 				dataContext.updateContext();
-//			dataContext = (ServiceContext)dataContext.getCurrentContext();
+
 			if (dataContext.getArgs() != null)
 				os.setArgs(dataContext.getArgs());
 			if (dataContext.getParameterTypes() != null)
@@ -123,16 +123,17 @@ public class ObjectTask extends Task {
 					evaluator = new MethodInvoker(prv, os.getSelector());
 				}
 			}
+			evaluator.setParameterTypes(new Class[] { Context.class });
 			if (os.getReturnPath() != null)
 				dataContext.setReturnPath(os.getReturnPath());
 
 			if (result == null) {
-				if (getArgs() == null && os.getParameterTypes() == null) {
+				if (getArgs() == null) {
 					// assume this task context is used by the signature's
 					// provider
 					if (dataContext != null) {
-						evaluator.setParameterTypes(new Class[] { Context.class });
 						evaluator.setContext(dataContext);
+						evaluator.setParameterTypes(new Class[] { Context.class });
 					}
 				} else if (dataContext.getArgsPath() != null) {
 					evaluator.setArgs(getParameterTypes(), (Object[]) getArgs());
@@ -158,6 +159,11 @@ public class ObjectTask extends Task {
 				dataContext.setReturnValue(result);
 			}
 			dataContext.updateContextWith(os.getOutConnector());
+
+			if (serviceMorphFidelity != null) {
+				serviceMorphFidelity.setChanged();
+				serviceMorphFidelity.notifyObservers(result);
+			}
 		} catch (Throwable e) {
 			e.printStackTrace();
 			dataContext.reportException(e);

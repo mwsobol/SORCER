@@ -24,6 +24,8 @@ import org.slf4j.Logger;
 import sorcer.core.SorcerConstants;
 import sorcer.core.deploy.ServiceDeployment;
 import sorcer.core.provider.Modeler;
+import sorcer.core.provider.ProviderName;
+import sorcer.core.provider.ServiceName;
 import sorcer.service.*;
 import sorcer.service.Strategy.Provision;
 import sorcer.service.modeling.Variability;
@@ -56,6 +58,7 @@ public class ServiceSignature implements Signature, SorcerConstants {
 
 	protected ReturnPath returnPath;
 
+
 	// the indicated usage of this signature
 	protected Set<Kind> rank = new HashSet<Kind>();
 
@@ -69,19 +72,19 @@ public class ServiceSignature implements Signature, SorcerConstants {
 	// can
 	// be picked up by workers with template null/serviceInfo that are not named
 	// "providerName"
-	protected String providerName = ANY;
+	protected ProviderName providerName = new ProviderName(ANY);
 
 	private ServiceID serviceID;
 
 	protected Class<?> serviceType;
+
+	private Strategy.Access accessType = Strategy.Access.PUSH;
 
 	// service typed to be mached by its service proxy
 	protected Class[] matchTypes;
 
 	// implementation of the serviceType
 	protected Class<?> providerType;
-
-	protected String group = "";
 
 	protected Exertion exertion;
 
@@ -122,7 +125,7 @@ public class ServiceSignature implements Signature, SorcerConstants {
 	private ServiceDeployment deployment;
 
 	public ServiceSignature() {
-		providerName = ANY;
+		providerName = new ServiceName(ANY);
 	}
 
 	public ServiceSignature(String selector) {
@@ -194,7 +197,7 @@ public class ServiceSignature implements Signature, SorcerConstants {
 		return selector;
 	}
 
-	public String getProviderName() {
+	public ProviderName getProviderName() {
 		return providerName;
 	}
 
@@ -203,8 +206,12 @@ public class ServiceSignature implements Signature, SorcerConstants {
 		return provider(this);
 	}
 
-	public void setProviderName(String name) {
+	public void setProviderName(ProviderName name) {
 		providerName = name;
+	}
+
+	public void setProviderType(Class<?> providerType) {
+		this.providerType = providerType;
 	}
 
 	public void setOwnerId(String oid) {
@@ -261,7 +268,6 @@ public class ServiceSignature implements Signature, SorcerConstants {
 		agentClass = method.agentClass;
 		execType = method.execType;
 		isActive = method.isActive;
-		group = method.group;
 		contextTemplateIDs = method.contextTemplateIDs;
 		exertion = method.exertion;
 		setSelector(method.selector);
@@ -491,12 +497,16 @@ public class ServiceSignature implements Signature, SorcerConstants {
 		this.prefix = prefix;
 	}
 
-	public String getGroup() {
-		return group;
+	public String[] getGroups() {
+		if (providerName instanceof ServiceName)
+			return ((ServiceName)providerName).getGroups();
+		else
+			return null;
 	}
 
-	public void setGroup(String group) {
-		this.group = group;
+	public void setGroups(String[] groups) {
+		if (providerName instanceof ServiceName)
+			((ServiceName)providerName).setGroups(groups);
 	}
 
 	@Override
@@ -624,6 +634,14 @@ public class ServiceSignature implements Signature, SorcerConstants {
 			return (Modeler.class.isAssignableFrom(serviceType));
 		else
 			return false;
+	}
+
+	public Strategy.Access getAccessType() {
+		return accessType;
+	}
+
+	public void setAccessType(Strategy.Access accessType) {
+		this.accessType = accessType;
 	}
 
 	@Override

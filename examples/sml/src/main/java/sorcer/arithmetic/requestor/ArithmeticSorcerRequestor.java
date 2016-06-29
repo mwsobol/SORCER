@@ -44,8 +44,8 @@ public class ArithmeticSorcerRequestor extends SorcerRequestor {
                 t3,
                 pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
                 pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")),
-                sFi("job1", cFi("j1", "net"), cFi("j1/j2/t4", "net")),
-                sFi("job2", cFi("j1", "net"), cFi("j1/j2/t4", "net"), cFi("j1/j2/t5", "net")));
+                fi("job1", cFi("j1", "net"), cFi("j1/j2/t4", "net")),
+                fi("job2", cFi("j1", "net"), cFi("j1/j2/t4", "net"), cFi("j1/j2/t5", "net")));
 
         return job;
 

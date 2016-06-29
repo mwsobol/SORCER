@@ -1,6 +1,6 @@
 /*
- * Copyright 2013 the original author or authors.
- * Copyright 2013 SorcerSoft.org.
+ * Copyright 2016 the original author or authors.
+ * Copyright 2016 SorcerSoft.org.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package sorcer.service;
+package sorcer.service.modeling;
 
 /**
- * Created by Mike Sobolewski on 5/12/15.
+ * Created by Mike Sobolewski on 5/18/16.
  */
-public interface Projection<T extends Arg> {
-
-    public Fidelity<T> getFidelity();
-
-    public void setFidelity(Fidelity<T> fidelity);
+public interface SupportComponent {
 }

@@ -1,6 +1,6 @@
 /*
- * Copyright 2009 the original author or authors.
- * Copyright 2009 SorcerSoft.org.
+ * Copyright 2015 the original author or authors.
+ * Copyright 2015 SorcerSoft.org.
  *  
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ import java.util.Map;
  *
  * @author Mike Sobolewski
  */
-public interface Mogram extends Identifiable, Service, Exerter, Projection<Signature>, Scopable, Substitutable,  Arg {
+public interface Mogram extends Identifiable, Service, Exerter, Scopable, Substitutable, Request {
 
     /**
      * Exerts this mogram by the assigned service provider if it is set. If a service
@@ -66,6 +66,8 @@ public interface Mogram extends Identifiable, Service, Exerter, Projection<Signa
     public int getIndex();
 
     public void setIndex(int i);
+
+    public Mogram getParent();
 
     public void setParentId(Uuid parentId);
 
@@ -111,6 +113,19 @@ public interface Mogram extends Identifiable, Service, Exerter, Projection<Signa
      */
     public List<ThrowableTrace> getAllExceptions() throws RemoteException;
 
+
+    /**
+     * Returns a service fidelity of this exertion that consists of process
+     * signature, all pre-processing, post-processing, and append signatures.
+     * There is only one process signature defining late binding to the service
+     * provider processing this exertion.
+     *
+     * @return a service fidelity
+     * @param selection
+     *            The service fidelity name.
+     */
+    public ServiceFidelity selectFidelity(String selection);
+
     /**
      * Returns a service fidelity of this exertion that consists of process
      * signature, all pre-processing, post-processing, and append signatures.
@@ -120,12 +135,17 @@ public interface Mogram extends Identifiable, Service, Exerter, Projection<Signa
      * @return a collection of all service signatures
      * @see #getProcessSignature
      */
-    public Fidelity<Signature> getFidelity();
+    public ServiceFidelity<Signature> getSelectedFidelity();
 
     /**
      * Returns a map of all available service fidelities of this exertion.
      */
-    public Map<String, Fidelity> getFidelities();
+    public Map<String, ServiceFidelity> getFidelities();
+
+    /**
+     * Returns a fdelity manager for of this exertion.
+     */
+    public FidelityManagement getFidelityManager();
 
     /**
      * Returns <code>true</code> if this exertion should be monitored for its
@@ -135,8 +155,6 @@ public interface Mogram extends Identifiable, Service, Exerter, Projection<Signa
      *         monitored.
      */
     public boolean isMonitorable() throws RemoteException;
-
-    public Mogram substitute(Arg... entries) throws SetterException;
 
     /**
      * The exertion format for thin exertions (no RMI and Jini classes)
@@ -187,7 +205,7 @@ public interface Mogram extends Identifiable, Service, Exerter, Projection<Signa
 
 	/**
 	 * @param name
-	 *            The domainName to set.
+	 *            The domain name to set.
 	 */
 	public void setDomainName(String name);
 
@@ -263,6 +281,20 @@ public interface Mogram extends Identifiable, Service, Exerter, Projection<Signa
      * @throws ContextException
      */
     public Context getDataContext() throws ContextException;
+
+    /**
+     * Reconfigure this model with given fudelities.
+     *
+     * @param fidelities
+     */
+    public void reconfigure(Fidelity... fidelities) throws ContextException, RemoteException;
+
+    /**
+     * Reconfigure this model with given names of metafidelities.
+     *
+     * @param metaFiNames
+     */
+    public void morph(String... metaFiNames) throws RemoteException;
 
     /**
      * Check if this context is export controlled, accessible to principals from

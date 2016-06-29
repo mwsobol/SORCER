@@ -12,6 +12,7 @@ import sorcer.arithmetic.provider.Multiplier;
 import sorcer.arithmetic.provider.Subtractor;
 import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
+import sorcer.core.provider.Provider;
 import sorcer.core.provider.RemoteServiceShell;
 import sorcer.service.*;
 import sorcer.service.Strategy.Access;
@@ -32,7 +33,7 @@ import static sorcer.eo.operator.value;
 @ProjectContext("examples/sml")
 public class NetTaskExertions {
 	private final static Logger logger = LoggerFactory.getLogger(NetTaskExertions.class);
-	
+
 	@Test
 	public void exertTask() throws Exception  {
 
@@ -53,8 +54,99 @@ public class NetTaskExertions {
 		assertTrue(context(ent("arg/x1", 20.0), ent("result/y", 100.0)).equals(
 				value(cxt, result("result/context", outPaths("arg/x1", "result/y")))));
 	}
-	
-	
+
+	@Test
+	public void exertTaskSrvName() throws Exception  {
+
+		Task t5 = task("t5", sig("add", Adder.class, srvName("Adder")),
+				cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0), result("result/y")));
+
+		Exertion out = exert(t5);
+		Context cxt = context(out);
+		logger.info("out context: " + cxt);
+		logger.info("context @ arg/x1: " + value(cxt, "arg/x1"));
+		logger.info("context @ arg/x2: " + value(cxt, "arg/x2"));
+		logger.info("context @ result/y: " + value(cxt, "result/y"));
+
+		// get a single context argument
+		assertEquals(100.0, value(cxt, "result/y"));
+
+		// get the subcontext output from the context
+		assertTrue(context(ent("arg/x1", 20.0), ent("result/y", 100.0)).equals(
+				value(cxt, result("result/context", outPaths("arg/x1", "result/y")))));
+	}
+
+	@Test
+	public void exertTaskGroups() throws Exception  {
+		String group = System.getProperty("user.name");
+
+		Task t5 = task("t5", sig("add", Adder.class, srvName("Adder", group)),
+				cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0), result("result/y")));
+
+		Exertion out = exert(t5);
+		Context cxt = context(out);
+		logger.info("out context: " + cxt);
+		logger.info("context @ arg/x1: " + value(cxt, "arg/x1"));
+		logger.info("context @ arg/x2: " + value(cxt, "arg/x2"));
+		logger.info("context @ result/y: " + value(cxt, "result/y"));
+
+		// get a single context argument
+		assertEquals(100.0, value(cxt, "result/y"));
+
+		// get the subcontext output from the context
+		assertTrue(context(ent("arg/x1", 20.0), ent("result/y", 100.0)).equals(
+				value(cxt, result("result/context", outPaths("arg/x1", "result/y")))));
+	}
+
+	@Test
+	public void exertTaskMatchTypes() throws Exception  {
+		String group = System.getProperty("user.name");
+
+		Task t5 = task("t5", sig("add", Adder.class,
+				types(Service.class, Provider.class),
+				srvName("Adder", group)),
+				cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0), result("result/y")));
+
+		Exertion out = exert(t5);
+		Context cxt = context(out);
+		logger.info("out context: " + cxt);
+		logger.info("context @ arg/x1: " + value(cxt, "arg/x1"));
+		logger.info("context @ arg/x2: " + value(cxt, "arg/x2"));
+		logger.info("context @ result/y: " + value(cxt, "result/y"));
+
+		// get a single context argument
+		assertEquals(100.0, value(cxt, "result/y"));
+
+		// get the subcontext output from the context
+		assertTrue(context(ent("arg/x1", 20.0), ent("result/y", 100.0)).equals(
+				value(cxt, result("result/context", outPaths("arg/x1", "result/y")))));
+	}
+
+	@Test
+	public void exertTaskLookupLocators() throws Exception  {
+		String group = System.getProperty("user.name");
+
+		Task t5 = task("t5", sig("add", Adder.class,
+				types(Service.class, Provider.class),
+				// comma separated list of hosts, when empty localhost is a default locator
+				srvName("Adder", locators(), group)),
+				cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0), result("result/y")));
+
+		Exertion out = exert(t5);
+		Context cxt = context(out);
+		logger.info("out context: " + cxt);
+		logger.info("context @ arg/x1: " + value(cxt, "arg/x1"));
+		logger.info("context @ arg/x2: " + value(cxt, "arg/x2"));
+		logger.info("context @ result/y: " + value(cxt, "result/y"));
+
+		// get a single context argument
+		assertEquals(100.0, value(cxt, "result/y"));
+
+		// get the subcontext output from the context
+		assertTrue(context(ent("arg/x1", 20.0), ent("result/y", 100.0)).equals(
+				value(cxt, result("result/context", outPaths("arg/x1", "result/y")))));
+	}
+
 	@Test
 	public void evaluateTask() throws SignatureException, ExertionException, ContextException  {
 
@@ -93,7 +185,7 @@ public class NetTaskExertions {
 				context(inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
 						result("result/y")));
 
-		logger.info("sFi: " + sFi(task));
+		logger.info("sFi: " + fi(task));
 		logger.info("sFis: " + size(srvFis(task)));
 
 //		task = exert(task, fi("object"));
@@ -108,8 +200,7 @@ public class NetTaskExertions {
 	@Test
 	public void spaceTask() throws Exception {
 
-		Task t5 = task(
-				"t5",
+		Task t5 = task("t5",
 				sig("add", Adder.class),
 				context("add", inEnt("arg/x1", 20.0),
 						inEnt("arg/x2", 80.0), outEnt("result/y")),
@@ -119,6 +210,7 @@ public class NetTaskExertions {
 		logger.info("t5 context: " + context(t5));
 		logger.info("t5 value: " + get(t5, "result/y"));
 		assertEquals("Wrong value for 100.0", get(t5, "result/y"), 100.0);
+
 	}
 
 	
@@ -126,8 +218,7 @@ public class NetTaskExertions {
 	public void serviceShellTest() throws Exception {
 
 		// The signature as a service provider
-		Task f5 = task(
-				"f5",
+		Task f5 = task("f5",
 				sig("add", Adder.class),
 				context("add", inEnt("arg/x1", 20.0),
 						inEnt("arg/x2", 80.0), result("result/y")),
@@ -155,7 +246,7 @@ public class NetTaskExertions {
 	}
 
 	@Test
-	public void netTaskFidelity() throws Exception {
+	public void multiFiTask() throws Exception {
 
 		Task t4 = task("t4",
 				sFi("net1", sig("multiply", Multiplier.class)),
@@ -187,23 +278,41 @@ public class NetTaskExertions {
 	}
 
 	@Test
-	public void netObjectFiTask() throws Exception {
+	public void multiFiObjectTaskTest() throws Exception {
+		ServiceExertion.debug = true;
 
 		Task task = task("add",
-				sFi("net", sig("add", Adder.class)),
-				sFi("object", sig("add", AdderImpl.class)),
+				sFi("object", sig("add", Adder.class)),
+				sFi("net", sig("add", AdderImpl.class)),
 				context(inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
 						result("result/y")));
 
-		logger.info("sFi: " + sFi(task));
-		assertTrue(sFis(task).size() == 2);
-		logger.info("fiName: " + fiName(task));
-		assertTrue(fiName(task).equals("net"));
+		logger.info("task fi: " + fi(task));
+		assertTrue(fis(task).size() == 2);
+		logger.info("selected Fi: " + fiName(task));
+		assertTrue(fiName(task).equals("object"));
 
 		task = exert(task, fi("net"));
 		logger.info("exerted: " + context(task));
 		assertTrue(fiName(task).equals("net"));
 		assertTrue(get(task).equals(100.0));
+	}
+
+
+	@Test
+	public void netContexterTaskTest() throws Exception {
+
+		Task t5 = task("t5", sig("add", Adder.class),
+				sig("getContext", Contexter.class, prvName("Add Contexter"), Signature.APD),
+				context("add", inEnt("arg/x1"), inEnt("arg/x2"),
+						result("result/y")));
+
+		Context result =  context(exert(t5));
+		logger.info("out context: " + result);
+		assertEquals(value(result, "arg/x1"), 20.0);
+		assertEquals(value(result, "arg/x2"), 80.0);
+		assertEquals(value(result, "result/y"), 100.0);
+
 	}
 
 }

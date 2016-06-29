@@ -43,9 +43,7 @@ public class CatalogSequentialDispatcher extends CatalogExertDispatcher {
         super(job, sharedContext, isSpawned, provider, provisionManager);
     }
 
-    protected void doExec(Arg... args) throws MogramException,
-            SignatureException {
-
+    protected void doExec(Arg... args) throws MogramException, SignatureException {
         String pn;
         if (inputXrts == null) {
             xrt.setStatus(FAILED);

@@ -72,8 +72,8 @@ public class ArithmeticMograms {
 				lambda("multiply2", "multiply", (Service entry, Context scope, Arg[] args) -> {
 					double out = (double)exec(entry, scope);
 					if (out > 400) {
-						set(scope, "multiply/x1", 20.0);
-						set(scope, "multiply/x2", 50.0);
+						setValue(scope, "multiply/x1", 20.0);
+						setValue(scope, "multiply/x2", 50.0);
 						out = (double)exec(entry, scope);
 					}
 					return context(ent("multiply2", out));
@@ -202,7 +202,7 @@ public class ArithmeticMograms {
                 context(inEnt("multiply/x1", 10.0), inEnt("multiply/x2", 50.0),
                         inEnt("add/x1", 20.0), inEnt("add/x2", 80.0)));
 
-        logger.info("task getSelects:" + batch3.getFidelity());
+        logger.info("task getSelects:" + fi(batch3));
 
         batch3 = exert(batch3);
 		//logger.info("task result/y: " + get(batch3, "result/y"));
@@ -333,7 +333,7 @@ public class ArithmeticMograms {
     public void amorphousModel() throws Exception {
 
 		Morpher mFi1Morpher =  (mgr, mFi, value) -> {
-			Fidelity<Signature> fi =  mFi.getFidelity();
+			ServiceFidelity<Signature> fi =  mFi.getFidelity();
 			if (fi.getSelectName().equals("add")) {
 				if (((Double) value) <= 200.0) {
 					mgr.morph("sysFi2");
@@ -346,7 +346,7 @@ public class ArithmeticMograms {
 		};
 
         Morpher mFi2Morpher = (mgr, mFi, value) -> {
-            Fidelity<Signature> fi =  mFi.getFidelity();
+            ServiceFidelity<Signature> fi =  mFi.getFidelity();
             if (fi.getSelectName().equals("divide")) {
                 if (((Double) value) <= 9.0) {
                     mgr.morph("sysFi4");
@@ -356,9 +356,9 @@ public class ArithmeticMograms {
             }
         };
 
-        Fidelity<Fidelity> fi2 = fi("sysFi2",fi("mFi2", "divide"), fi("mFi3", "multiply"));
-        Fidelity<Fidelity> fi3 = fi("sysFi3", fi("mFi2", "average"), fi("mFi3", "divide"));
-        Fidelity<Fidelity> fi4 = fi("sysFi4", fi("mFi3", "average"));
+        ServiceFidelity<Fidelity> fi2 = fi("sysFi2",fi("mFi2", "divide"), fi("mFi3", "multiply"));
+		ServiceFidelity<Fidelity> fi3 = fi("sysFi3", fi("mFi2", "average"), fi("mFi3", "divide"));
+		ServiceFidelity<Fidelity> fi4 = fi("sysFi4", fi("mFi3", "average"));
 
         Signature add = sig("add", AdderImpl.class,
                 result("result/y1", inPaths("arg/x1", "arg/x2")));
@@ -371,7 +371,7 @@ public class ArithmeticMograms {
         Signature divide = sig("divide", DividerImpl.class,
                 result("result/y2", inPaths("arg/x1", "arg/x2")));
 
-        // three entry multifidelity model with morphers
+        // multifidelity model with morphers
         Model mod = model(inEnt("arg/x1", 90.0), inEnt("arg/x2", 10.0),
                 ent("mFi1", mFi(mFi1Morpher, add, multiply)),
                 ent("mFi2", mFi(mFi2Morpher, average, divide, subtract)),
@@ -379,7 +379,6 @@ public class ArithmeticMograms {
                 fi2, fi3, fi4,
                 response("mFi1", "mFi2", "mFi3", "arg/x1", "arg/x2"));
 
-        // fidelities morphed by the model's fidelity manager
         Context out = response(mod);
         logger.info("out: " + out);
         assertTrue(get(out, "mFi1").equals(100.0));
@@ -387,7 +386,6 @@ public class ArithmeticMograms {
         assertTrue(get(out, "mFi3").equals(50.0));
 
         // first closing the fidelity for mFi1
-        // then fidelities morphed by the model's fidelity manager accordingly
         out = response(mod , fi("mFi1", "multiply"));
         logger.info("out: " + out);
         assertTrue(get(out, "mFi1").equals(900.0));

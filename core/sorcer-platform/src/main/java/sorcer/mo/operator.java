@@ -29,7 +29,8 @@ import sorcer.core.context.model.srv.SrvModel;
 import sorcer.core.dispatch.SortingException;
 import sorcer.core.dispatch.SrvModelAutoDeps;
 import sorcer.core.plexus.FidelityManager;
-import sorcer.core.plexus.MorphedFidelity;
+import sorcer.core.plexus.MorphFidelity;
+import sorcer.core.plexus.Morpher;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
 import sorcer.service.Signature.ReturnPath;
@@ -90,6 +91,11 @@ public class operator {
         ((ServiceContext) model).getMogramStrategy().setOutConnector(outConnector);
         if (outConnector instanceof MapContext)
             ((MapContext)outConnector).direction = MapContext.Direction.OUT;
+        return model;
+    }
+
+    public static Model responseClear(Model model) throws ContextException {
+            ((ServiceContext)model).getMogramStrategy().getResponsePaths().clear();
         return model;
     }
 
@@ -174,8 +180,12 @@ public class operator {
         }
     }
 
+    public static void traced(Model model, boolean isTraced) throws ContextException {
+        ((FidelityManager)model.getFidelityManager()).setTraced(isTraced);
+    }
+
     public static Entry entry(Model model, String path) throws ContextException {
-        return new Entry(path, ((Context)model).asis(path));
+        return new Entry(path, model.asis(path));
     }
 
     public static Context inConn(List<Tuple2<String, ?>> entries) throws ContextException {
@@ -212,8 +222,8 @@ public class operator {
         return  new ReturnPath<>(path);
     }
 
-    public static Fidelity<Arg> response(String... paths) {
-        return  new Fidelity(paths);
+    public static ServiceFidelity<Arg> response(String... paths) {
+        return  new ServiceFidelity(paths);
     }
 
     public static Paradigmatic modeling(Paradigmatic paradigm) {
@@ -228,12 +238,12 @@ public class operator {
 
     public static Model srvModel(Object... items) throws ContextException {
         sorcer.eo.operator.Complement complement = null;
-        List<Signature> sigs = new ArrayList<Signature>();
-        Fidelity<Arg> responsePaths = null;
+        List<Signature> sigs = new ArrayList<>();
+        Fidelity responsePaths = null;
         SrvModel model = null;
         FidelityManager fiManager = null;
-        List<Fidelity<Fidelity>> metaFis = new ArrayList<Fidelity<Fidelity>>();
-        List<Srv> metaFiEnts = new ArrayList<Srv>();
+        List<ServiceFidelity<Fidelity>> metaFis = new ArrayList<>();
+        List<Srv> morphFiEnts = new ArrayList();
         for (Object item : items) {
             if (item instanceof Signature) {
                 sigs.add((Signature)item);
@@ -243,41 +253,46 @@ public class operator {
                 model = ((SrvModel)item);
             } else if (item instanceof FidelityManager) {
                 fiManager = ((FidelityManager)item);
-            } else if (item instanceof Srv && ((Entry)item)._2 instanceof MorphedFidelity) {
-                metaFiEnts.add((Srv)item);
+            } else if (item instanceof Srv && ((Entry)item)._2 instanceof MorphFidelity) {
+                morphFiEnts.add((Srv)item);
             } else if (item instanceof Fidelity) {
-                if (((Fidelity) item).getSelects().get(0) instanceof Fidelity) {
-                    metaFis.add((Fidelity<Fidelity>) item);
-                } else if (((Fidelity) item).getSelects().get(0) instanceof Name) {
-                    responsePaths = ((Fidelity<Arg>) item);
+                if (((Fidelity) item).getType().equals(Fidelity.Type.META)) {
+                    metaFis.add((ServiceFidelity<Fidelity>) item);
+                } else {
+                    responsePaths = ((Fidelity) item);
                 }
             }
         }
         if (model == null)
             model = new SrvModel();
 
-        if (metaFiEnts != null || metaFis != null) {
+        if (morphFiEnts != null || metaFis != null) {
            if (fiManager == null)
-               fiManager = new FidelityManager(model.getName());
+               fiManager = new FidelityManager(model);
         }
         if (fiManager != null) {
-            model.setFiManager(fiManager);
+            model.setFidelityManager(fiManager);
             fiManager.init(metaFis);
             fiManager.setMogram(model);
-            MorphedFidelity mFi = null;
-            if ((metaFiEnts.size() > 0)) {
-                for (Srv metaFiEnt : metaFiEnts) {
-                    mFi = (MorphedFidelity) metaFiEnt._2;
-                    fiManager.addFidelity(metaFiEnt._1, mFi.getFidelity());
-                    mFi.setPath(metaFiEnt._1);
+            MorphFidelity mFi = null;
+            if ((morphFiEnts.size() > 0)) {
+                for (Srv morphFiEnt : morphFiEnts) {
+                    mFi = (MorphFidelity) morphFiEnt._2;
+                    fiManager.addMorphedFidelity(morphFiEnt._1, mFi);
+                    fiManager.addFidelity(morphFiEnt._1, mFi.getFidelity());
+                    mFi.setPath(morphFiEnt._1);
                     mFi.setSelect((Arg) mFi.getSelects().get(0));
                     mFi.addObserver(fiManager);
+                    if (mFi.getMorpherFidelity() != null) {
+                        // set the default morpher
+                        mFi.setMorpher((Morpher) ((Entry)mFi.getMorpherFidelity().get(0))._2);
+                    }
                 }
             }
         }
 
         if (responsePaths != null) {
-            model.getMogramStrategy().setResponsePaths(((Fidelity) responsePaths).getSelects());
+            model.getMogramStrategy().setResponsePaths(((ServiceFidelity) responsePaths).getSelects());
         }
         if (complement != null) {
             model.setSubject(complement.path(), complement.value());

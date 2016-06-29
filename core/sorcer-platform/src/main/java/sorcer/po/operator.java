@@ -36,6 +36,8 @@ import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.concurrent.Callable;
 
+import static sorcer.eo.operator.context;
+
 /**
  * @author Mike Sobolewski
  */
@@ -83,6 +85,9 @@ public class operator {
 		if (object instanceof Context) {
 			p = new Par(path, argument);
 			p.setScope(object);
+		} else if (object instanceof Entry) {
+			p = new Par(path, argument);
+			p.setScope(context((Entry)object));
 		} else if (object instanceof Service) {
 			p = new Par(path, argument, object);
 		}
@@ -128,8 +133,8 @@ public class operator {
 		return new EntryList(entries);
 	}
 
-	public static Fidelity<Arg> parFi(String name) {
-		return new Fidelity(name);
+	public static ServiceFidelity<Arg> parFi(String name) {
+		return new ServiceFidelity(name);
 	}
 
 	public static Entry parFi(Par parEntry) {
@@ -409,6 +414,10 @@ public class operator {
 	}
 
 	public static ServiceInvoker invoker(String expression) {
+		return new GroovyInvoker(expression);
+	}
+
+	public static ServiceInvoker expr(String expression) {
 		return new GroovyInvoker(expression);
 	}
 

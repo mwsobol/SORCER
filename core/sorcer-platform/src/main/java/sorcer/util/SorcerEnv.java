@@ -659,7 +659,7 @@ public class SorcerEnv extends SOS {
 	 * @return number of max lookup matches
 	 */
 	public static int getLookupMaxMatches() {
-		return Integer.parseInt(getProperty(LOOKUP_MAX_MATCHES, "999"));
+		return Integer.parseInt(getProperty(LOOKUP_MAX_MATCHES, "99"));
 	}
 
 	/**
