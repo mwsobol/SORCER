@@ -15,8 +15,9 @@
  */
 package sorcer.core.signature;
 
+import sorcer.core.provider.ProviderName;
 import sorcer.service.Arg;
-import sorcer.service.Fidelity;
+import sorcer.service.ServiceFidelity;
 import sorcer.service.Signature;
 import sorcer.service.modeling.Model;
 import sorcer.service.modeling.Variability;
@@ -27,7 +28,7 @@ public class ModelSignature extends ServiceSignature {
 
 	private Variability<?> var;
 
-	private Fidelity fidelity;
+	private ServiceFidelity fidelity;
 
 	private Signature innerSignature;
 	
@@ -37,9 +38,9 @@ public class ModelSignature extends ServiceSignature {
 		super(selector, selector);
 		this.serviceType = serviceType;
 		if (providerName == null || providerName.length() == 0)
-			this.providerName = ANY;
+			this.providerName = new ProviderName(ANY);
 		else
-			this.providerName = providerName;
+			this.providerName = new ProviderName(providerName);
 		for (Arg p : parameters) {
 			if (p instanceof ReturnPath) {
 				this.returnPath = (ReturnPath)p;
@@ -68,7 +69,7 @@ public class ModelSignature extends ServiceSignature {
 		}
 	}
 
-	public ModelSignature(String selector, Fidelity varFidelity,
+	public ModelSignature(String selector, ServiceFidelity varFidelity,
 						  Signature targetSignature, Arg... paramters) {
 		this(selector, targetSignature);
 		this.fidelity = varFidelity;
@@ -105,7 +106,7 @@ public class ModelSignature extends ServiceSignature {
 	 * 
 	 * @return the fidelity
 	 */
-	public Fidelity getFidelity() {
+	public ServiceFidelity getFidelity() {
 		return fidelity;
 	}
 
@@ -117,7 +118,7 @@ public class ModelSignature extends ServiceSignature {
 	 * @param fidelity
 	 *            the fidelity to set
 	 */
-	public void setFidelity(Fidelity fidelity) {
+	public void setFidelity(ServiceFidelity fidelity) {
 		this.fidelity = fidelity;
 	}
 

@@ -27,7 +27,7 @@ import java.rmi.RemoteException;
  *
  * Created by Mike Sobolewski on 11/21/15.
  */
-public interface Callable<T> extends PrimitiveService {
+public interface Callable<T> extends Item {
 
     public String name();
 

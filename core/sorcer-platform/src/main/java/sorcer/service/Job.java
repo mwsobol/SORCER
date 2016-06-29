@@ -32,7 +32,6 @@ import sorcer.core.exertion.ObjectJob;
 import sorcer.core.provider.Jobber;
 import sorcer.core.provider.Spacer;
 import sorcer.core.signature.NetSignature;
-import sorcer.core.signature.ObjectSignature;
 import sorcer.security.util.Auth;
 import sorcer.security.util.SorcerPrincipal;
 import sorcer.service.Signature.ReturnPath;
@@ -56,7 +55,6 @@ import java.util.*;
  * 
  * @author Mike Sobolewski
  */
-@SuppressWarnings("rawtypes")
 public class Job extends CompoundExertion {
 
 	private static final long serialVersionUID = -6161435179772214884L;
@@ -105,9 +103,9 @@ public class Job extends CompoundExertion {
 		this.description = description;
 	}
 
-	public Job(String name, String description, Fidelity fidelity) {
+	public Job(String name, String description, ServiceFidelity fidelity) {
 		this(name, description);
-		this.serviceFidelity = fidelity;
+		this.selectedFidelity = fidelity;
 	}
 
 	/**
@@ -121,16 +119,9 @@ public class Job extends CompoundExertion {
 		NetSignature s = new NetSignature("exert", Jobber.class);
 		// Needs to be RemoteJobber for Cataloger to find it
 		// s.setServiceType(Jobber.class.getName());
-		s.setProviderName(null);
+		s.getProviderName().setName(null);
 		s.setType(Signature.Type.PROC);
-		serviceFidelity.selects.add(s); // Add the signature
-	}
-
-	public Fidelity getFidelity() {
-//		if (fidelity != null)
-//			for (int i = 0; i < fidelity.size(); i++)
-//				signatures.get(i).setProviderName(controlContext.getRendezvousName());
-		return serviceFidelity;
+        selectedFidelity.selects.add(s); // Add the signature
 	}
 
 	@Override
@@ -173,23 +164,16 @@ public class Job extends CompoundExertion {
 	@Override
 	public Mogram addMogram(Mogram ex) throws ExertionException {
 		mograms.add(ex);
-		((ServiceExertion) ex).setIndex(mograms.indexOf(ex));
+		ex.setIndex(mograms.indexOf(ex));
 		try {
 			controlContext.registerExertion(ex);
+			ex.getDataContext().setScope(dataContext);
 		} catch (ContextException e) {
 			throw new ExertionException(e);
 		}
-		((ServiceExertion) ex).setParentId(getId());
+		ex.setParentId(getId());
+//		((ServiceMogram)ex).setParent(this);
 		return this;
-	}
-
-	public void addExertions(List<Exertion> Mogram) {
-		if (this.mograms != null)
-			this.mograms.addAll(mograms);
-		else {
-			this.mograms = new ArrayList<Mogram>();
-			this.mograms.addAll(mograms);
-		}
 	}
 
 	public List<Mogram> getMograms(List<Mogram> exs) {
@@ -199,53 +183,45 @@ public class Job extends CompoundExertion {
 		return exs;
 	}
 
-	public Job doJob(Transaction txn) throws MogramException,
-			SignatureException, RemoteException, TransactionException {
-		if (delegate == null) {
-			if (serviceFidelity != null) {
-				Signature ss = null;
-				if (serviceFidelity.selects.size() == 1) {
-					ss = serviceFidelity.selects.get(0);
-				} else if (serviceFidelity.selects.size() > 1) {
-					for (Signature s : serviceFidelity.selects) {
-						if (s.getType() == Signature.SRV) {
-							ss = s;
-							break;
-						}
-					}
-				}
-				if (ss != null) {
-					if (ss instanceof NetSignature) {
-						delegate = new NetJob(name);
-					} else if (ss instanceof ObjectSignature) {
-						delegate = new ObjectJob(ss.getSelector());
-						delegate.setName(name);
-					}
+    public Job doJob(Transaction txn) throws MogramException,
+            SignatureException, RemoteException, TransactionException {
+        if (delegate == null) {
+            if (delegate == null) {
+                Signature ps = selectedFidelity.select;
+                if (ps instanceof NetSignature) {
+                    delegate = new NetJob(name);
+                } else {
+                    delegate = new ObjectJob(name);
+                }
 
-					delegate.setFidelities(getFidelities());
-					delegate.setFidelity(getFidelity());
-					delegate.setSelectedFidelitySelector(serviceFidelitySelector);
-					delegate.setContext(dataContext);
-					delegate.setControlContext(controlContext);
-				}
-			}
-			if (delegate instanceof NetJob) {
-				delegate.setControlContext(controlContext);
-				if (controlContext.getAccessType().equals(Access.PULL)) {
-					Signature procSig = delegate.getProcessSignature();
-					procSig.setServiceType(Spacer.class);
-					delegate.serviceFidelity.selects.clear();
-					delegate.addSignature(procSig);
-				}
-			}
-			if (mograms.size() > 0) {
-				for (Mogram ex : mograms) {
-					delegate.addMogram(ex);
-				}
-			}
-		}
-		return delegate.doJob(txn);
-	}
+                delegate.setFidelityManager(getFidelityManager());
+                delegate.setFidelities(getFidelities());
+                delegate.setSelectedFidelity(getSelectedFidelity());
+                delegate.setServiceMorphFidelity(getServiceMorphFidelity());
+                delegate.setServiceMetafidelities(getServiceMetafidelities());
+                delegate.setSelectedFidelitySelector(serviceFidelitySelector);
+                delegate.setContext(dataContext);
+                delegate.setControlContext(controlContext);
+            }
+
+            if (delegate instanceof NetJob) {
+                delegate.setControlContext(controlContext);
+                if (controlContext.getAccessType().equals(Access.PULL)) {
+                    Signature procSig = delegate.getProcessSignature();
+                    procSig.setServiceType(Spacer.class);
+                    delegate.selectedFidelity.selects.clear();
+                    delegate.addSignature(procSig);
+                }
+            }
+            if (mograms.size() > 0) {
+                for (Mogram ex : mograms) {
+                    delegate.addMogram(ex);
+                }
+            }
+        }
+
+        return delegate.doJob(txn);
+    }
 
 	public void undoJob() throws ExertionException, SignatureException,
 			RemoteException {
@@ -485,14 +461,14 @@ public class Job extends CompoundExertion {
 	 */
 	@Override
 	public Object getValue(String path, Arg... args) throws ContextException {
-		if (path.startsWith("super")) {
-			return ((Exertion)parent).getContext().getValue(path.substring(6), args);
-		} else {
-			if (path.indexOf(name) >= 0)
-				return getJobValue(path);
-			else
-				return dataContext.getValue(path, args);
+		if (path.indexOf(name) >= 0) {
+			return getJobValue(path);
 		}
+		Object val = dataContext.getValue(path, args);
+		if (val == Context.none) {
+			val = scope.getValue(path, args);
+		}
+		return val;
 	}
 	
 	public Object putValue(String path, Object value) throws ContextException {
@@ -590,10 +566,10 @@ public class Job extends CompoundExertion {
 	}
 	
 	public void applyFidelityContext(FidelityContext fiContext) throws ExertionException {
-		Collection<Fidelity> fidelities = fiContext.values();
+		Collection<ServiceFidelity> fidelities = fiContext.values();
 		ServiceExertion se = null;
-		for (Fidelity fi : fidelities) {
-			if (fi instanceof Fidelity) {
+		for (ServiceFidelity fi : fidelities) {
+			if (fi instanceof ServiceFidelity) {
 				se = (ServiceExertion) getComponentMogram(fi.getPath());
 				se.selectFidelity(fi.getName());
 			}
@@ -601,7 +577,7 @@ public class Job extends CompoundExertion {
 	}
 
 	@Override
-	public ServiceExertion substitute(Arg... entries)
+	public void substitute(Arg... entries)
 			throws SetterException {
 		try {
 			if (entries != null) {
@@ -624,6 +600,5 @@ public class Job extends CompoundExertion {
 			ex.printStackTrace();
 			throw new SetterException(ex);
 		}
-		return this;
 	}
 }

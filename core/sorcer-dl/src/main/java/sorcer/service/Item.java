@@ -1,6 +1,6 @@
 /*
- * Copyright 2010 the original author or authors.
- * Copyright 2010 SorcerSoft.org.
+ * Copyright 2016 the original author or authors.
+ * Copyright 2016 SorcerSoft.org.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,17 +17,11 @@
 
 package sorcer.service;
 
-import net.jini.core.transaction.TransactionException;
-
-import java.io.Serializable;
-import java.rmi.RemoteException;
-
 /**
- * Created by Mike Sobolewski on 10/30/15.
+ * An top-level common interface for all primitive service in SORCER.
+ * Items are copmponent services of compound services called mograms.
+ *
+ * @author Mike Sobolewski
  */
-@FunctionalInterface
-public interface Requestor extends Serializable {
-
-    Context exec(Service service, Context context, Arg[] args) throws ServiceException, RemoteException, TransactionException;
-
+public interface Item extends Request {
 }

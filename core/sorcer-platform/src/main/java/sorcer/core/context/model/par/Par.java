@@ -99,10 +99,12 @@ public class Par<T> extends Entry<T> implements Variability<T>, Mappable<T>,
 			selectedFidelity = first.getName();
 			value = (T)first;
 		} else {
-			if (argument instanceof Evaluation || argument instanceof Invocation)
+			if (argument instanceof Evaluation || argument instanceof Invocation) {
 				value = argument;
-			else
+			} else {
 				_2 = argument;
+				value = argument;
+			}
 
 		}
 	}
@@ -311,9 +313,9 @@ public class Par<T> extends Entry<T> implements Variability<T>, Mappable<T>,
 	 * @see sorcer.service.Evaluation#substitute(sorcer.co.tuple.Parameter[])
 	 */
 	@Override
-	public Par<T> substitute(Arg... parameters) throws SetterException {
+	public void substitute(Arg... parameters) throws SetterException {
 		if (parameters == null)
-			return this;
+			return;
 		for (Arg p : parameters) {
 			try {
 				if (p instanceof Par) {
@@ -323,7 +325,7 @@ public class Par<T> extends Entry<T> implements Variability<T>, Mappable<T>,
 							scope.append(((Par<T>) p).getScope());
 
 					}
-				} else if (p instanceof Fidelity && fidelities != null) {
+				} else if (p instanceof ServiceFidelity && fidelities != null) {
 					selectedFidelity = p.getName();
 				} else if (p instanceof Context) {
 					if (scope == null)
@@ -336,7 +338,6 @@ public class Par<T> extends Entry<T> implements Variability<T>, Mappable<T>,
 				throw new SetterException(e);
 			}
 		}
-		return this;
 	}
 
 	private boolean isFidelityValid(Object fidelity) throws EvaluationException {

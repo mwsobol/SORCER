@@ -849,7 +849,8 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 					groups = delegate.groupsToDiscover;
 				logger.warn(">>>> USING MULTICAST");
 			} else {
-				groups = LookupDiscoveryManager.NO_GROUPS;
+//				groups = LookupDiscoveryManager.NO_GROUPS;
+				groups = LookupDiscoveryManager.ALL_GROUPS;
 				logger.warn(">>>> USING UNICAST ONLY");
 			}
 

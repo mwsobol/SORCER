@@ -18,12 +18,9 @@
 package sorcer.core.requestor;
 
 import net.jini.core.transaction.Transaction;
-import sorcer.service.ContextException;
-import sorcer.service.Mogram;
-import sorcer.service.MogramException;
-import sorcer.service.Service;
+import sorcer.service.*;
 
-public interface Requestor extends Service {
+public interface Requestor extends Service, Client {
 
 	public Mogram getMogram(String... args) throws MogramException;
 

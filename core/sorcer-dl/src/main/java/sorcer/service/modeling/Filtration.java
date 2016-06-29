@@ -23,7 +23,7 @@ import java.rmi.RemoteException;
  *
  * @author Mike Sobolewski
  */
-public interface Filtration<T> {
+public interface Filtration<T> extends EvaluationComponent, SupportComponent {
 
     /**
      * Returns the filtered out value from the given input.

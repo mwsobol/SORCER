@@ -27,8 +27,10 @@ import sorcer.co.tuple.SignatureEntry;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.par.ParModel;
 import sorcer.core.invoker.ServiceInvoker;
-import sorcer.core.plexus.MorphedFidelity;
+import sorcer.core.plexus.MorphFidelity;
+import sorcer.core.plexus.MultiFiRequest;
 import sorcer.core.provider.rendezvous.ServiceModeler;
+import sorcer.core.service.Projection;
 import sorcer.core.signature.ServiceSignature;
 import sorcer.eo.operator;
 import sorcer.service.*;
@@ -67,7 +69,7 @@ public class SrvModel extends ParModel<Object> implements Model, Invocation<Obje
         setSignature();
     }
 
-    public SrvModel(String name)  {
+    public SrvModel(String name) {
         super(name);
         isRevaluable = true;
         setSignature();
@@ -107,87 +109,106 @@ public class SrvModel extends ParModel<Object> implements Model, Invocation<Obje
     }
 
     public boolean isBatch() {
-        for (Signature s : serviceFidelity.getSelects()) {
+        for (Signature s : selectedFidelity.getSelects()) {
             if (s.getType() != Signature.Type.PROC)
                 return false;
         }
         return true;
     }
 
-    public void selectedServiceFidelity(String name) {
-        Fidelity<Signature> fidelity = serviceFidelities.get(name);
-        serviceFidelitySelector = name;
-        this.serviceFidelity = fidelity;
+//    public void selectedServiceFidelity(String name) {
+//        ServiceFidelity<Signature> fidelity = serviceFidelities.get(name);
+//        serviceFidelitySelector = name;
+//        this.selectedFidelity = fidelity;
+//        selectFidelity();
+//    }
+//
+//    public void addServiceFidelity(ServiceFidelity fidelity) {
+//        putServiceFidelity(fidelity.getName(), fidelity);
+//        serviceFidelitySelector = fidelity.getName();
+//        this.selectedFidelity = fidelity;
+//    }
+//
+//    public void setServiceFidelity(ServiceFidelity fidelity) {
+//        this.serviceFidelity1 = fidelity;
+//        putServiceFidelity(fidelity.getName(), fidelity);
+//        serviceFidelitySelector = fidelity.getName();
+//    }
+//
+//    public void setServiceFidelity(String name, ServiceFidelity fidelity) {
+//        this.serviceFidelity1 = fidelity;
+//        putServiceFidelity(name, fidelity);
+//        serviceFidelitySelector = name;
+//    }
+//
+//    public void putServiceFidelity(ServiceFidelity fidelity) {
+//        if (serviceFidelities == null)
+//            serviceFidelities = new HashMap<String, ServiceFidelity>();
+//        serviceFidelities.put(fidelity.getName(), fidelity);
+//    }
+//
+//    public void putServiceFidelity(String name, ServiceFidelity fidelity) {
+//        if (serviceFidelities == null)
+//            serviceFidelities = new HashMap<String, ServiceFidelity>();
+//        serviceFidelities.put(name, fidelity);
+//    }
+//
+//    public Signature getProcessSignature() {
+//        for (Signature s : serviceFidelity1.getSelects()) {
+//            if (s.getType() == Signature.Type.PROC)
+//                return s;
+//        }
+//        return null;
+//    }
+//
+//    public void selectServiceFidelity(String selector) throws ExertionException {
+//        if (selector != null && serviceFidelities != null
+//                && serviceFidelities.containsKey(selector)) {
+//            ServiceFidelity sf = serviceFidelities.get(selector);
+//
+//            if (sf == null)
+//                throw new ExertionException("no such service fidelity: " + selector + " at: " + this);
+//            serviceFidelity1 = sf;
+//            serviceFidelitySelector = selector;
+//        }
+//    }
+
+    public Object getValue(String path, Arg... args) throws EvaluationException {
+        return getSrvValue(path, args);
     }
 
-    public void addServiceFidelity(Fidelity fidelity) {
-        putServiceFidelity(fidelity.getName(), fidelity);
-        serviceFidelitySelector = fidelity.getName();
-        this.serviceFidelity = fidelity;
-    }
-
-    public void setServiceFidelity(Fidelity fidelity) {
-        this.serviceFidelity = fidelity;
-        putServiceFidelity(fidelity.getName(), fidelity);
-        serviceFidelitySelector = fidelity.getName();
-    }
-
-    public void setServiceFidelity(String name, Fidelity fidelity) {
-        this.serviceFidelity = fidelity;
-        putServiceFidelity(name, fidelity);
-        serviceFidelitySelector = name;
-    }
-
-    public void putServiceFidelity(Fidelity fidelity) {
-        if (serviceFidelities == null)
-            serviceFidelities = new HashMap<String, Fidelity>();
-        serviceFidelities.put(fidelity.getName(), fidelity);
-    }
-
-    public void putServiceFidelity(String name, Fidelity fidelity) {
-        if (serviceFidelities == null)
-            serviceFidelities = new HashMap<String, Fidelity>();
-        serviceFidelities.put(name, fidelity);
-    }
-
-    public Signature getProcessSignature() {
-        for (Signature s : serviceFidelity.getSelects()) {
-            if (s.getType() == Signature.Type.PROC)
-                return s;
+    // calls from VarModels to call Srv entries of Vars
+    public Object getSrvValue(String path, Srv srv, Arg... args) throws EvaluationException {
+        try {
+            putValue(path, srv);
+        } catch (ContextException e) {
+            data.remove(path);
+            return new EvaluationException(e);
         }
-        return null;
+        Object out = getSrvValue(path, args);
+        data.remove(path);
+        return out;
     }
 
-    public void selectServiceFidelity(String selector) throws ExertionException {
-        if (selector != null && serviceFidelities != null
-                && serviceFidelities.containsKey(selector)) {
-            Fidelity sf = serviceFidelities.get(selector);
-
-            if (sf == null)
-                throw new ExertionException("no such service fidelity: " + selector + " at: " + this);
-            serviceFidelity = sf;
-            serviceFidelitySelector = selector;
-        }
-    }
-
-    public Object getValue(String path, Arg... items) throws EvaluationException {
+    // used as getValue but renamed to alter polymorphic chaining
+    public Object getSrvValue(String path, Arg... args) throws EvaluationException {
         Object val = null;
         try {
-            append(items);
+            append(args);
             if (path != null) {
-                execDependencies(path, items);
+                execDependencies(path, args);
                 val = get(path);
             } else {
-                ReturnPath rp = returnPath(items);
+                ReturnPath rp = returnPath(args);
                 if (rp != null)
                     val = getReturnValue(rp);
                 else
-                    val = super.getValue(path, items);
+                    val = super.getValue(path, args);
             }
 
             if (val instanceof Srv) {
                 if (isChanged())
-                     ((Srv) val).isValid(false);
+                    ((Srv) val).isValid(false);
                 Object val2 = ((Srv) val).asis();
                 if (val2 instanceof SignatureEntry) {
                     // return the calculated value
@@ -195,37 +216,36 @@ public class SrvModel extends ParModel<Object> implements Model, Invocation<Obje
                         return ((Srv) val).getSrvValue();
                     else {
                         Signature sig = ((SignatureEntry) ((Srv) val).asis()).value();
-                        return evalSignature(sig, path, items);
+                        return evalSignature(sig, path, args);
                     }
-                } else if (val2 instanceof Fidelity) {
-                    Object selection = getFi((Fidelity) val2, items, path);
+                } else if (val2 instanceof ServiceFidelity) {
+                    Object selection = getFi((ServiceFidelity) val2, args, path);
                     if (selection instanceof Signature) {
-                        return evalSignature((Signature) selection, path, items);
+                        return evalSignature((Signature) selection, path, args);
                     } else if (selection instanceof Evaluation) {
-                        return ((Evaluation)selection).getValue(items);
+                        return ((Evaluation)selection).getValue(args);
                     } else {
                         return selection;
                     }
-                } else if (val2 instanceof MorphedFidelity) {
-                    Object obj = getFi(((MorphedFidelity) val2).getFidelity(), items, path);
+                } else if (val2 instanceof MorphFidelity) {
+                    Object obj = getFi(((MorphFidelity) val2).getFidelity(), args, path);
                     Object out = null;
                     if (obj instanceof Signature)
                         out = evalSignature((Signature)obj, path);
                     else if (obj instanceof Entry) {
-                        Arg[] args = Arrays.copyOf(items, items.length+1);
-                        args[items.length] = this;
+                        ((Entry)obj).setScope(this);
                         out = ((Entry) obj).getValue(args);
                     }
-                    ((MorphedFidelity) val2).setChanged();
-                    ((MorphedFidelity) val2).notifyObservers(out);
+                    ((MorphFidelity) val2).setChanged();
+                    ((MorphFidelity) val2).notifyObservers(out);
                     return out;
                 } else if (val2 instanceof MogramEntry) {
-                    return evalMogram((MogramEntry)val2, path, items);
+                    return evalMogram((MogramEntry)val2, path, args);
                 } else if (val2 instanceof ValueCallable && ((Srv) val).getType() == Variability.Type.LAMBDA) {
                     ReturnPath rp = ((Srv) val).getReturnPath();
                     Object obj = null;
                     if (rp != null && rp.inPaths != null) {
-                        Context cxt = getEvaluatedSubcontext(rp.inPaths, items);
+                        Context cxt = getEvaluatedSubcontext(rp.inPaths, args);
                         obj = ((ValueCallable)val2).call(cxt);
                     } else {
                         obj = ((ValueCallable) val2).call(this);
@@ -234,11 +254,29 @@ public class SrvModel extends ParModel<Object> implements Model, Invocation<Obje
                     if (rp != null && rp.path != null)
                         putValue(((Srv) val).getReturnPath().path, obj);
                     return obj;
-                }  else if (val2 instanceof Requestor && ((Srv) val).getType() == Variability.Type.LAMBDA) {
-                        String entryPath = ((Entry)val).getName();
-                        Object out = ((Requestor)val2).exec((Service) this.asis(entryPath), this, items);
-                        ((Srv) get(path)).setSrvValue(out);
-                        return out;
+                }  else if (val2 instanceof MultiFiRequest) {
+                    Object out = ((MultiFiRequest)val2).exert(args);
+                    Context cxt = null;
+                    if (out instanceof Exertion) {
+                        cxt = ((Exertion) out).getContext();
+                        SignatureReturnPath rt = ((Exertion) out).getProcessSignature().getReturnPath();
+                        if (rt != null && rt.getPath() != null) {
+                            Object obj = cxt.getReturnValue();
+                            putInoutValue(rt.getPath(), obj);
+                            ((Srv) get(path)).setSrvValue(obj);
+                            return obj;
+                        } else {
+                            ((Srv) get(path)).setSrvValue(cxt);
+                            return cxt;
+                        }
+                    }
+                    ((Srv) get(path)).setSrvValue(cxt);
+                    return out;
+                } else if (val2 instanceof Client && ((Srv) val).getType() == Variability.Type.LAMBDA) {
+                    String entryPath = ((Entry)val).getName();
+                    Object out = ((Client)val2).exec((Service) this.asis(entryPath), this, args);
+                    ((Srv) get(path)).setSrvValue(out);
+                    return out;
                 } else if (val2 instanceof EntryCollable && ((Srv) val).getType() == Variability.Type.LAMBDA) {
                     Entry entry = ((EntryCollable)val2).call(this);
                     ((Srv) get(path)).setSrvValue(entry.value());
@@ -256,25 +294,24 @@ public class SrvModel extends ParModel<Object> implements Model, Invocation<Obje
                         putValue(entry.getName(), entry.value());
                     return entry;
                 } else if (val2 instanceof ServiceInvoker) {
-                    val =  ((ServiceInvoker)val2).invoke(items);
+                    val =  ((ServiceInvoker)val2).invoke(args);
                     ((Srv) get(path)).setSrvValue(val);
                     return val;
                 } else if (val2 instanceof Service && ((Srv) val).getType() == Variability.Type.LAMBDA) {
-                    String entryPath = ((Entry)val).getName();
                     String[] paths = ((Srv)val).getPaths();
-                    Arg[] args = null;
+                    Arg[] nargs = null;
                     if (paths == null || paths.length == 0) {
-                        args = new Arg[]{this};
+                        nargs = new Arg[]{this};
                     } else {
-                        args = new Arg[paths.length];
+                        nargs = new Arg[paths.length];
                         for (int i = 0; i < paths.length; i++) {
                             if (!(asis(paths[i]) instanceof Arg))
-                                args[i] = new Entry(paths[i], asis(paths[i]));
+                                nargs[i] = new Entry(paths[i], asis(paths[i]));
                             else
-                                args[i] = (Arg) asis(paths[i]);
+                                nargs[i] = (Arg) asis(paths[i]);
                         }
                     }
-                    Object out = ((Service)val2).exec(args);
+                    Object out = ((Service)val2).exec(nargs);
                     ((Srv) get(path)).setSrvValue(out);
                     return out;
                 } else {
@@ -283,7 +320,7 @@ public class SrvModel extends ParModel<Object> implements Model, Invocation<Obje
                     }
                 }
             } else {
-                return super.getValue(path, items);
+                return super.getValue(path, args);
             }
         } catch (Exception e) {
             throw new EvaluationException(e);
@@ -292,9 +329,9 @@ public class SrvModel extends ParModel<Object> implements Model, Invocation<Obje
         if (val instanceof Entry && ((Entry) val).name().equals(path)) {
             return ((Entry) val).value();
         }
-        if (val instanceof Fidelity) {
+        if (val instanceof ServiceFidelity) {
             try {
-                return ((Entry)((Fidelity)val).getSelect()).getValue();
+                return ((Entry)((ServiceFidelity)val).getSelect()).getValue();
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
@@ -342,18 +379,18 @@ public class SrvModel extends ParModel<Object> implements Model, Invocation<Obje
         return null;
     }
 
-    protected <T extends Arg> T getFi(Fidelity<T> fi, Arg[] entries, String path) throws ContextException {
-        Fidelity selected = null;
-        for (Arg arg : entries) {
-            if (arg instanceof Fidelity && ((Fidelity)arg).type == Fidelity.Type.EMPTY) {
-                if (((Fidelity)arg).getPath().equals(path)) {
-                    selected = (Fidelity) arg;
-                    ((Entry)asis(path)).isValid(false);
-                    isChanged();
-                    break;
-                }
+    protected <T extends Arg> T getFi(ServiceFidelity<T> fi, Arg[] entries, String path) throws ContextException {
+       Fidelity selected = null;
+        List<Fidelity> fiList = Projection.selectFidelities(entries);
+        for (Fidelity sfi : fiList) {
+            if (sfi.getPath().equals(path)) {
+                selected = sfi;
+                ((Entry) asis(path)).isValid(false);
+                isChanged();
+                break;
             }
         }
+
         List<T> choices = fi.getSelects();
         for (T s : choices) {
             if (selected == null && fi.getSelect() != null)
@@ -401,19 +438,16 @@ public class SrvModel extends ParModel<Object> implements Model, Invocation<Obje
         if (signature == null)
             return;
         ((ServiceSignature) signature).setOwnerId(getOwnerId());
-        serviceFidelity.getSelects().add(signature);
-    }
-
-    public Fidelity getServiceFidelity() {
-        return serviceFidelity;
+        selectedFidelity.getSelects().add(signature);
+        selectedFidelity.setSelect(signature);
     }
 
     public void addSignatures(Signature... signatures) {
-        if (this.serviceFidelity != null)
-            this.serviceFidelity.getSelects().addAll(Arrays.asList(signatures));
+        if (this.selectedFidelity != null)
+            this.selectedFidelity.getSelects().addAll(Arrays.asList(signatures));
         else {
-            this.serviceFidelity = new Fidelity();
-            this.serviceFidelity.getSelects().addAll(Arrays.asList(signatures));
+            this.selectedFidelity = new ServiceFidelity(name);
+            this.selectedFidelity.getSelects().addAll(Arrays.asList(signatures));
         }
     }
 
@@ -422,8 +456,8 @@ public class SrvModel extends ParModel<Object> implements Model, Invocation<Obje
             ExertionException, RemoteException {
         Signature signature = null;
         try {
-            if (serviceFidelity != null) {
-                signature = getProcessSignature();
+            if (selectedFidelity != null) {
+                signature = selectedFidelity.getSelect();
             } else if (subjectValue != null && subjectValue instanceof Signature) {
                 signature = (Signature)subjectValue;
             }

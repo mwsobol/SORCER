@@ -257,11 +257,11 @@ public class ControlFlowManager {
             result = (Task)doRendezvousExertion(task);
         } else if (delegate != null) {
             result = delegate.doTask(task, null);
-        }
-        else if (task.isConditional())
+        } else if (task.isConditional()) {
             result = doConditional(task);
-        else
-            result = doBatchTask(task);
+        } else {
+            result = doFidelityTask(task);
+        }
 
         return result;
     }
@@ -486,9 +486,9 @@ public class ControlFlowManager {
     }
 */
 
-    public Task doBatchTask(Task task) throws MogramException,
+    public Task doFidelityTask(Task task) throws MogramException,
             SignatureException, RemoteException, ContextException {
-        Fidelity tf = task.getFidelity();
+        ServiceFidelity tf = task.getSelectedFidelity();
         task.correctBatchSignatures();
         task.startExecTime();
         // append context from Contexters
@@ -504,13 +504,14 @@ public class ControlFlowManager {
             task.setContext(cxt);
         }
         // exert service task
-		Fidelity<Signature> ts = new Fidelity<Signature>();
+		ServiceFidelity<Signature> ts = new ServiceFidelity(task.getName());
         Signature tsig = task.getProcessSignature();
         ((ServiceContext)task.getContext()).getMogramStrategy().setCurrentSelector(tsig.getSelector());
         ((ServiceContext)task.getContext()).setCurrentPrefix(tsig.getPrefix());
 
         ts.getSelects().add(tsig);
-        task.setFidelity(ts);
+        task.setSelectedFidelity(ts);
+        ts.setSelect(tsig);
         if (tsig.getReturnPath() != null)
             ((ServiceContext)task.getContext()).setReturnPath(tsig.getReturnPath());
 
@@ -521,10 +522,11 @@ public class ControlFlowManager {
                     + task.getName());
             task.reportException(ex);
             task.setStatus(Exec.FAILED);
-            task.setFidelity(tf);
+            task.setSelectedFidelity(tf);
             return task;
         }
-        task.setFidelity(tf);
+        // reverse fidelity
+        task.setSelectedFidelity(tf);
         // do postprocessing
         if (task.getPostprocessSignatures().size() > 0) {
             Context cxt = postprocess(task);
@@ -537,10 +539,10 @@ public class ControlFlowManager {
                     + task.getName());
             task.reportException(ex);
             task.setStatus(Exec.FAILED);
-            task.setFidelity(tf);
+            task.setSelectedFidelity(tf);
             return task;
         }
-        task.setFidelity(tf);
+        task.setSelectedFidelity(tf);
         task.stopExecTime();
         return task;
     }
@@ -569,13 +571,13 @@ public class ControlFlowManager {
                 ((ServiceContext)shared).getMogramStrategy().setCurrentSelector(signatures.get(i).getSelector());
                 ((ServiceContext)shared).setCurrentPrefix(signatures.get(i).getPrefix());
 
-                Fidelity<Signature> tmp = new Fidelity<Signature>();
+                ServiceFidelity<Signature> tmp = new ServiceFidelity<Signature>();
                 tmp.getSelects().add(signatures.get(i));
-                t.setFidelity(tmp);
+                t.setSelectedFidelity(tmp);
                 t.setContinous(true);
                 t.setContext(shared);
 
-                logger.info("Sending one of the batch tasks to exert: " + t.getName() + " " + t.getFidelity());
+                logger.info("Sending one of the batch tasks to exert: " + t.getName() + " " + t.getSelectedFidelity());
                 t = t.doTask();
                 signatures.get(i).setType(type);
                 shared = t.getContext();

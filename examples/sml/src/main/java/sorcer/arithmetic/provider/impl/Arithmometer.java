@@ -14,7 +14,7 @@ import sorcer.core.context.PositionalContext;
 import sorcer.core.context.ServiceContext;
 import sorcer.service.Context;
 import sorcer.service.ContextException;
-import sorcer.service.Fidelity;
+import sorcer.service.ServiceFidelity;
 import sorcer.service.Signature;
 import sorcer.service.Signature.ReturnPath;
 
@@ -25,7 +25,6 @@ import java.rmi.RemoteException;
 import java.util.List;
 
 import static sorcer.eo.operator.attPath;
-import static sorcer.eo.operator.path;
 import static sorcer.eo.operator.revalue;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -201,7 +200,7 @@ public class Arithmometer implements SorcerConstants, Serializable {
 			Signature sig = context.getMogram().getProcessSignature();
 			if (sig != null)
 				cxt.putValue("task/signature", sig);
-			Fidelity fi = context.getMogram().getFidelity();
+			ServiceFidelity fi = context.getMogram().getSelectedFidelity();
 			if (fi != null)
 				cxt.putValue("task/fidelity", fi);
 		} catch (Exception ex) {
@@ -257,8 +256,7 @@ public class Arithmometer implements SorcerConstants, Serializable {
 			} else if (selector.equals(DIVIDE)) {
 				if (inputs.size() > 2 || inputs.size() < 2)
 					throw new ContextException("two arguments needed for division");
-//				result = (Double)revalue(context.getInValueAt(1));
-//				result /= (Double)revalue(context.getInValueAt(2));
+
 				result = (Double)revalue(inputs.get(0));
 				result /= (Double)revalue(inputs.get(1));
 			} else if (selector.equals(AVERAGE)) {
@@ -289,7 +287,7 @@ public class Arithmometer implements SorcerConstants, Serializable {
 				if (outpath.indexOf("${name}") >= 0) {
 					if (outpath.indexOf("${name}") >= 0) {
 						outpath = outpath.replace("${name}", 
-							((ServiceContext)context).getMogram().getName());
+							context.getMogram().getName());
 					}
 				}
 				cxt.putValue(outpath, result);
@@ -301,7 +299,7 @@ public class Arithmometer implements SorcerConstants, Serializable {
 			Signature sig = context.getMogram().getProcessSignature();
 			if (sig != null)
 				cxt.putValue("task/signature", sig);
-			Fidelity fi = context.getMogram().getFidelity();
+			ServiceFidelity fi = context.getMogram().getSelectedFidelity();
 			if (fi != null)
 				cxt.putValue("task/fidelity", fi);
 		} catch (Exception ex) {

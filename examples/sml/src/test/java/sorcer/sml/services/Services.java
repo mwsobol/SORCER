@@ -225,7 +225,8 @@ public class Services {
         //TODO: CHECK Access.PULL doesn't work with ServiceJobber!!!
         Mogram job = //j1(j2(t4(x1, x2), t5(x1, x2)), t3(x1, x2))
                 job("j1", sig(ServiceJobber.class), result("job/result", outPaths("j1/t3/result/y")),
-                        job("j2", sig(ServiceJobber.class), t4, t5, strategy(Strategy.Flow.PAR, Strategy.Access.PUSH)),
+                        job("j2", sig(ServiceJobber.class), t4, t5),
+//                            strategy(Strategy.Flow.PAR, Strategy.Access.PUSH)),
                         t3,
                         pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
                         pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));

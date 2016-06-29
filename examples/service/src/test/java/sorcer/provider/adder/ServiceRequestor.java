@@ -6,7 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
-import sorcer.core.requestor.ExertRequestor;
 import sorcer.requestor.adder.AdderRequestor;
 import sorcer.service.Context;
 
@@ -27,7 +26,7 @@ public class ServiceRequestor {
 //		ExertRequestor req = new ExertRequestor(AdderRequestor.class, "exertion");
 //		Context cxt = (Context) req.exec();
 
-		ExertRequestor req = requestor(AdderRequestor.class, "exertion");
+		sorcer.core.requestor.ServiceRequestor req = requestor(AdderRequestor.class, "exertion");
 		Context cxt = (Context) exec(req);
 
 		logger.info("out context: " + cxt);

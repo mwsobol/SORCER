@@ -16,6 +16,10 @@
  */
 
 package sorcer.service;
+
+import sorcer.service.modeling.EvaluationComponent;
+import sorcer.service.modeling.SupportComponent;
+
 import java.io.Serializable;
 import java.rmi.RemoteException;
 
@@ -23,7 +27,7 @@ import java.rmi.RemoteException;
  * Created by Mike Sobolewski on 10/30/15.
  */
 @FunctionalInterface
-public interface ValueCallable<T> extends Serializable {
+public interface ValueCallable<T> extends EvaluationComponent, SupportComponent, Serializable {
 
     T call(Context<T> context) throws ServiceException, RemoteException;
 

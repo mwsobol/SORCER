@@ -63,6 +63,9 @@ public class Table implements ModelTable {
 
 	protected String name = "Data Table";
 	/*  Enumeration type for length units */
+
+	private String fiColumnName = "fis";
+
 	public enum LengthUnits {
 		FEET, INCH, METER
 	}
@@ -253,12 +256,18 @@ public class Table implements ModelTable {
 	}
 
 	public List getColumn(int colIndex){
-		int rowCount = getRowCount(); new ArrayList<String>();
+		if (colIndex < 0)
+			return null;
+
+		int rowCount = getRowCount();
 		List colList = new ArrayList();
-		for (int i = 0; i< rowCount; i++){
+		for (int i = 0; i < rowCount; i++){
 			List<?> rowi = getRow(i);
-			Object elei = rowi.get(colIndex);
-			colList.add(elei);
+			// fill in with null missing elements
+			if (colIndex >= rowi.size())
+				colList.add(null);
+			else
+				colList.add(rowi.get(colIndex));
 		}
 		return colList;
 	}
@@ -573,7 +582,7 @@ public class Table implements ModelTable {
 	 *            the index of the column being deleted
 	 * @throws EvaluationException 
 	 */
-	public void removeColumn( int colID) throws EvaluationException {
+	public void removeColumn(int colID) throws EvaluationException {
 		int rowSize = getRowCount();
 	
 			for (int i = 0; i < rowSize; i++) {
@@ -603,29 +612,16 @@ public class Table implements ModelTable {
 			int columnSize = columnData.size();
 			int newColumn = getColumnCount() - 1;
 			for (int i = 0; i < columnSize; i++) {
-				
-				logger.info("0 dataList = " + dataList);
-			
 				if (dataList == null) {
 					dataList = Collections.synchronizedList(new ArrayList<List<?>>());		
 				}
-				logger.info("1 dataList = " + dataList);
-				logger.info("i = " + i);
-				logger.info("dataList.size() = " + dataList.size());
 				if (dataList.size() <= i) {
 					dataList.add(new ArrayList());
 				}
-				
 				List row = (List) dataList.get(i);
-				
-				logger.info("0 row = " + row);
-				
 				row.add(newColumn, columnData.get(i));
-				logger.info("1 row = " + row);
-
 			}
 		}
-
 	}
 
 	/**
@@ -642,10 +638,6 @@ public class Table implements ModelTable {
 	public void addColumn(String columnName, Object[] columnData) {
 		addColumn(columnName, convertToList(columnData));
 	}
-
-	//
-	// Implementing the TableModel interface
-	//
 
 	/**
 	 * Returns the number of rows in this data table.
@@ -810,8 +802,8 @@ public class Table implements ModelTable {
 		return qTable;
 	}
 
-	public int columnIndexOf(String gradientName) {
-		return columnIdentifiers.indexOf(gradientName);
+	public int columnIndexOf(String columnName) {
+		return columnIdentifiers.indexOf(columnName);
 	}
 
 	public int rowIndexOf(String variableName) {
@@ -1408,7 +1400,21 @@ public class Table implements ModelTable {
 		
 		return false;
 	}
-	
+
+	public String getFiColumnName() {
+		return fiColumnName;
+	}
+
+	public void setFiColumnName(String fiColumnName) {
+		this.fiColumnName = fiColumnName;
+	}
+
+	public Table trimFidelities() throws EvaluationException {
+		removeColumn(columnIdentifiers.indexOf(fiColumnName));
+		columnIdentifiers.remove(fiColumnName);
+		return this;
+	}
+
 	@Override
 	public boolean equals(Object table) {
 		if (table instanceof Table) {

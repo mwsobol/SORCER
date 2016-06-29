@@ -31,7 +31,7 @@
 
 	<target name="run.requestor">
 		<java classname="${requestor.class}" fork="yes">
-			<arg value="sorcer.arithmetic.requestor.ArithmeticExertRequestor" />
+			<arg value="sorcer.arithmetic.requestor.ArithmeticServiceRequestor" />
 			<classpath refid="project.classpath" />
 			<sysproperty key="java.util.logging.config.file" value="${sorcer.home}/configs/sorcer.logging" />
 			<sysproperty key="java.security.policy" value="../policy/${requestor.name}.policy" />

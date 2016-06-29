@@ -56,7 +56,7 @@ public class LocalJobExertions implements SorcerConstants {
 				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
 
 		Context context = upcontext(exert(job));
-		logger.info("job context: " + context);
+		logger.info("job upcontext: " + context);
 		assertTrue(value(context, "j1/t3/result/y").equals(400.0));
 
 	}
@@ -90,8 +90,165 @@ public class LocalJobExertions implements SorcerConstants {
 				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
 
 		Context context = upcontext(exert(job));
-		logger.info("job context: " + context);
+		logger.info("job upcontext: " + context);
 		assertTrue(value(context, "j1/t3/result/y").equals(400.0));
+
+	}
+
+	@Test
+	public void pathBindingContextScope() throws Exception {
+
+		Task t3 = task("t3", sig("subtract", SubtractorImpl.class),
+				cxt("subtract", inEnt("arg/z1"), inEnt("arg/z2"), outEnt("result/y")));
+
+		Task t4 = task("t4",
+				sig("multiply", MultiplierImpl.class),
+				cxt("multiply", inEnt("arg/x1"), inEnt("arg/x2"),
+						outEnt("result/y")));
+
+		Task t5 = task(
+				"t5",
+				sig("add", AdderImpl.class),
+				cxt("add", inEnt("arg/y1"), inEnt("arg/y2"),
+						outEnt("result/y")));
+
+		// Service Composition j1(j2(t4(x1, x2), t5(y1, y2)), t3(x1, x2))
+		Job job = job(
+				"j1",
+				sig("exert", ServiceJobber.class),
+				cxt(inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
+						inEnt("arg/y1", 20.0), inEnt("arg/y2", 80.0),
+						result("job/result", outPaths("j1/t3/result/y"))),
+				job("j2", sig("exert", ServiceJobber.class), t4, t5), t3,
+				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/z1")),
+				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/z2")));
+
+		Object result = evaluate(job);
+		logger.info("job result: " + result);
+		assertTrue(result.equals(400.0));
+
+	}
+
+	@Test
+	public void outerContextPaths() throws Exception {
+
+		Task t3 = task("t3", sig("subtract", SubtractorImpl.class),
+				cxt("subtract", inEnt("arg/z1"), inEnt("arg/z2"), outEnt("result/y")));
+
+		Task t4 = task("t4",
+				sig("multiply", MultiplierImpl.class),
+				cxt("multiply", inEnt("arg/x1"), inEnt("arg/x2"),
+						outEnt("result/y")));
+
+		Task t5 = task(
+				"t5",
+				sig("add", AdderImpl.class),
+				cxt("add", inEnt("arg/y1"), inEnt("arg/y2"),
+						outEnt("result/y")));
+
+		// Service Composition j1(j2(t4(x1, x2), t5(y1, y2)), t3(x1, x2))
+		Job job = job(
+				"j1",
+				sig("exert", ServiceJobber.class),
+				cxt(inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
+						inEnt("arg/y1", 20.0), inEnt("arg/y2", 80.0),
+						result("job/result", outPaths("j1/t3/result/y"))),
+				job("j2", sig("exert", ServiceJobber.class), t4, t5), t3,
+				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/z1")),
+				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/z2")));
+
+		Context outer = upcontext(job);
+		logger.info("job upcontext: " + outer);
+		assertTrue(value(outer, "j1/j2/t4/arg/x1").equals(10.0));
+		assertTrue(value(outer, "j1/j2/t4/arg/x2").equals(50.0));
+
+		assertTrue(value(outer, "j1/j2/t5/arg/y1").equals(20.0));
+		assertTrue(value(outer, "j1/j2/t5/arg/y2").equals(80.0));
+
+	}
+
+	@Test
+	public void executedUpcontextScope() throws Exception {
+
+		Task t3 = task("t3", sig("subtract", SubtractorImpl.class),
+				cxt("subtract", inEnt("arg/z1"), inEnt("arg/z2"), outEnt("result/y")));
+
+		Task t4 = task("t4",
+				sig("multiply", MultiplierImpl.class),
+				cxt("multiply", inEnt("arg/x1"), inEnt("arg/x2"),
+						outEnt("result/y")));
+
+		Task t5 = task(
+				"t5",
+				sig("add", AdderImpl.class),
+				cxt("add", inEnt("arg/y1"), inEnt("arg/y2"),
+						outEnt("result/y")));
+
+		// Service Composition j1(j2(t4(x1, x2), t5(y1, y2)), t3(x1, x2))
+		Job job = job(
+				"j1",
+				sig("exert", ServiceJobber.class),
+				cxt(inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
+						inEnt("arg/y1", 20.0), inEnt("arg/y2", 80.0),
+						result(outPaths("j1/t3/result/y"))),
+				job("j2", sig("exert", ServiceJobber.class), t4, t5), t3,
+				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/z1")),
+				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/z2")));
+
+
+		Job out = exert(job);
+
+//		logger.info("job j1 context: " + context(job));
+
+		Context outerContext = upcontext(out);
+//		logger.info("job j1 upcontext: " + outerContext);
+//		logger.info("task t3 context: " + context(get(job, "j1/t3")));
+
+		assertTrue(value(outerContext, "j1/j2/t4/arg/x1").equals(10.0));
+		assertTrue(value(outerContext, "j1/j2/t4/arg/x2").equals(50.0));
+		assertTrue(value(outerContext, "j1/j2/t4/result/y").equals(500.0));
+
+		assertTrue(value(outerContext, "j1/j2/t5/arg/y1").equals(20.0));
+		assertTrue(value(outerContext, "j1/j2/t5/arg/y2").equals(80.0));
+		assertTrue(value(outerContext, "j1/j2/t5/result/y").equals(100.0));
+
+		assertTrue(value(outerContext, "j1/t3/arg/z1").equals(500.0));
+		assertTrue(value(outerContext, "j1/t3/arg/z2").equals(100.0));
+		assertTrue(value(outerContext, "j1/t3/result/y").equals(400.0));
+
+	}
+
+	@Test
+	public void contextPathShadowing() throws Exception {
+
+		Task t3 = task("t3", sig("subtract", SubtractorImpl.class),
+				cxt("subtract", inEnt("arg/x1"), inEnt("arg/x2"), outEnt("result/y")));
+
+		Task t4 = task("t4",
+				sig("multiply", MultiplierImpl.class),
+				cxt("multiply", inEnt("arg/x1", 11.0), inEnt("arg/x2"),
+						outEnt("result/y")));
+
+		Task t5 = task(
+				"t5",
+				sig("add", AdderImpl.class),
+				cxt("add", inEnt("arg/y1"), inEnt("arg/y2"),
+						outEnt("result/y")));
+
+		// Service Composition j1(j2(t4(x1, x2), t5(y1, y2)), t3(x1, x2))
+		Job job = job(
+				"j1",
+				sig("exert", ServiceJobber.class),
+				cxt(inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
+						inEnt("arg/y1", 20.0), inEnt("arg/y2", 80.0),
+						result("job/result", outPaths("j1/t3/result/y"))),
+				job("j2", sig("exert", ServiceJobber.class), t4, t5), t3,
+				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
+				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
+
+		Object result = evaluate(job);
+		logger.info("job result: " + result);
+		assertTrue(result.equals(450.0));
 
 	}
 
@@ -151,11 +308,11 @@ public class LocalJobExertions implements SorcerConstants {
 				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
 				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
 
-		Context context = upcontext(exert(job));
-		logger.info("job context: " + context);
-		assertTrue(value(context, "j1/t3/arg/x1").equals(500.0));
-		assertTrue(value(context, "j1/t3/arg/x2").equals(100.0));
-		assertTrue(value(context, "j1/t3/result/y").equals(400.0));
+		Context outerContext = upcontext(exert(job));
+		logger.info("job upcontext: " + outerContext);
+		assertTrue(value(outerContext, "j1/t3/arg/x1").equals(500.0));
+		assertTrue(value(outerContext, "j1/t3/arg/x2").equals(100.0));
+		assertTrue(value(outerContext, "j1/t3/result/y").equals(400.0));
 
 	}
 
@@ -167,8 +324,8 @@ public class LocalJobExertions implements SorcerConstants {
 
 		Task t4 = task("t4",
 				sig("multiply", MultiplierImpl.class),
-				// cxt("multiply", in("super/arg/x1"), in("arg/x2", 50.0),
-				cxt("multiply", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
+				// "arg/x1; value is inthe scope of job j1
+				cxt("multiply", inEnt("arg/x1"), inEnt("arg/x2", 50.0),
 						outEnt("result/y")));
 
 		Task t5 = task(
@@ -194,11 +351,13 @@ public class LocalJobExertions implements SorcerConstants {
 	}
 
 	@Test
-	public void arithmeticJobLocalExerter() throws Exception {
+	public void arithmeticLocalJobExerter() throws Exception {
 
+		// exertion used as as service provider
 		Job exerter = ArithmeticUtil.createLocalJob();
-		Context out = (Context) exerter.invoke(context(ent("j1/t3/result/y")));
-//		logger.info("j1/t3/result/y: " + value);
+
+		Context out  = exert(exerter, context(ent("j1/t3/result/y")));
+		logger.info("j1/t3/result/y: " + value(out, "j1/t3/result/y"));
 		assertEquals(value(out, "j1/t3/result/y"), 400.0);
 
 		// update inputs contexts
@@ -207,8 +366,8 @@ public class LocalJobExertions implements SorcerConstants {
 		Context invokeContext = context("invoke");
 		link(invokeContext, "t4", multiplyContext);
 		link(invokeContext, "t5", addContext);
-		out = (Context) exerter.invoke(invokeContext);
-//		logger.info("j1/t3/result/y: " + value);
+		out = (exert(exerter, invokeContext));
+		logger.info("j1/t3/result/y: " + out);
 		assertEquals(value(out, "j1/t3/result/y"), 500.0);
 
 		// update contexts partially
@@ -217,8 +376,8 @@ public class LocalJobExertions implements SorcerConstants {
 		invokeContext = context("invoke");
 		link(invokeContext, "t4", multiplyContext);
 		link(invokeContext, "t5", addContext);
-		out = (Context) exerter.invoke(invokeContext);
-//		logger.info("j1/t3/result/y: " + value);
+		out = (exert(exerter, invokeContext));
+		logger.info("j1/t3/result/y: " + out);
 		assertEquals(value(out, "j1/t3/result/y"), 1210.0);
 
 		// reverse the state to the initial one
@@ -227,8 +386,8 @@ public class LocalJobExertions implements SorcerConstants {
 		invokeContext = context("invoke");
 		link(invokeContext, "t4", multiplyContext);
 		link(invokeContext, "t5", addContext);
-		out = (Context) exerter.invoke(invokeContext);
-//		logger.info("j1/t3/result/y: " + value);
+		out = (exert(exerter, invokeContext));
+		logger.info("j1/t3/result/y: " + out);
 		assertEquals(value(out, "j1/t3/result/y"), 400.0);
 	}
 }

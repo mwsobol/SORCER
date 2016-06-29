@@ -332,7 +332,7 @@ public class ParModels {
 
 		Context cxt = context(ent("design/in1", 25.0), ent("design/in2", 35.0));
 
-		// mapping parameters to cxt, z1 and x2 are par aliases
+		// mapping parameters to cxt, x1 and x2 are par aliases
 		Par x1 = par(cxt, "x1", "design/in1");
 		Par x2 = map(par("x2", "design/in2"), cxt);
 
@@ -350,11 +350,10 @@ public class ParModels {
 
 	}
 
-	@Ignore
 	@Test
 	public void mappableParPersistence() throws Exception {
 
-		Context cxt = context(ent("url", "myUrl"), ent("design/in", 25.0));
+		Context cxt = context(ent("url", "htt://sorcersoft.org"), ent("design/in", 25.0));
 
 		// persistent par
 		Par dbIn = persistent(map(par("dbIn", "design/in"), cxt));
@@ -372,11 +371,11 @@ public class ParModels {
 		assertTrue(asis((Par)asis(cxt, "design/in")) instanceof URL);
 
 		// not persistent par
-		Par up = map(par("up", "url"), cxt);
-		assertEquals(value(up), "myUrl");
+		Par sorcer = map(par("sorcer", "url"), cxt);
+		assertEquals(value(sorcer), "htt://sorcersoft.org");
 
-		set(up, "newUrl");
-		assertTrue(value(up).equals("newUrl"));
+		set(sorcer, "htt://sorcersoft.org/sobol");
+		assertTrue(value(sorcer).equals("htt://sorcersoft.org/sobol"));
 
 	}
 

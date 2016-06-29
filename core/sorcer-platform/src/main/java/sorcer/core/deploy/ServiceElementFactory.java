@@ -32,17 +32,17 @@ import org.rioproject.sla.ServiceLevelAgreements;
 import org.rioproject.system.capability.connectivity.TCPConnectivity;
 import org.rioproject.system.capability.platform.OperatingSystem;
 import org.rioproject.system.capability.platform.ProcessorArchitecture;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sorcer.core.signature.ServiceSignature;
 import sorcer.jini.lookup.entry.DeployInfo;
 import sorcer.util.Sorcer;
+import sorcer.util.SorcerEnv;
 
 import java.io.*;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import sorcer.util.SorcerEnv;
 
 /**
  * Create a {@link ServiceElement} from a {@link ServiceSignature}.

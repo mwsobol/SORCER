@@ -55,7 +55,7 @@ public class Srv extends Entry<Object> implements Variability<Object>, Arg,
         this.paths = paths;
     }
 
-    public Srv(String name, String path, Requestor service) {
+    public Srv(String name, String path, Client service) {
         super(path, service);
         this.name = name;
     }
@@ -153,50 +153,48 @@ public class Srv extends Entry<Object> implements Variability<Object>, Arg,
     public Object getValue(Arg... entries) throws EvaluationException, RemoteException {
         if (srvValue != null && isValid) {
             return srvValue;
-        } else if (_2 instanceof Callable) {
-            try {
+        }
+        try {
+            substitute(entries);
+            if (_2 instanceof Callable) {
                 return ((Callable) _2).call();
-            } catch (Exception e) {
-                throw new EvaluationException(e);
-            }
-        } else if (_2 instanceof SignatureEntry) {
-            SrvModel mod = null;
-            for (Arg arg : entries) {
-                if (arg instanceof SrvModel) {
-                    mod = (SrvModel) arg;
-                    break;
+            } else if (_2 instanceof SignatureEntry) {
+                if (scope != null && scope instanceof SrvModel) {
+                    try {
+                        return ((SrvModel)scope).evalSignature(((SignatureEntry)_2)._2, _1);
+                    } catch (Exception e) {
+                        throw new EvaluationException(e);
+                    }
+                } else if (((SignatureEntry)_2).getContext() != null) {
+                    try {
+                        return execSignature(((SignatureEntry)_2)._2,
+                                ((SignatureEntry)_2).getContext());
+                    } catch (MogramException e) {
+                        throw new EvaluationException(e);
+                    }
                 }
+                throw new EvaluationException("No model available for entry: " + this);
+            } else {
+                return super.getValue(entries);
             }
-            if (mod != null) {
-                try {
-                    return mod.evalSignature(((SignatureEntry)_2)._2, _1);
-                } catch (Exception e) {
-                    throw new EvaluationException(e);
-                }
-            } else if (((SignatureEntry)_2).getContext() != null) {
-                try {
-                    return execSignature(((SignatureEntry)_2)._2,
-                            ((SignatureEntry)_2).getContext());
-                } catch (MogramException e) {
-                    throw new EvaluationException(e);
-                }
-            }
-            throw new EvaluationException("No model available for entry: " + this);
-        } else {
-            return super.getValue(entries);
+        } catch (Exception e) {
+            throw new EvaluationException(e);
         }
     }
 
     public Object execSignature(Signature sig, Context scope) throws MogramException {
-        Path[] ips = ((ReturnPath)sig.getReturnPath()).inPaths;
-        Path[] ops = ((ReturnPath)sig.getReturnPath()).outPaths;
+        ReturnPath rp = (ReturnPath) sig.getReturnPath();
+        Path[] ops = null;
+        if (rp != null) {
+            ops = ((ReturnPath) sig.getReturnPath()).outPaths;
+        }
         Context incxt = scope;
         if (sig.getReturnPath() != null) {
             incxt.setReturnPath(sig.getReturnPath());
         }
         Context outcxt = null;
         try {
-            outcxt = ((Task) task(sig, incxt).exert()).getContext();
+            outcxt = task(sig, incxt).exert().getContext();
             if (ops != null && ops.length > 0) {
                 return outcxt.getDirectionalSubcontext(ops);
             } else if (sig.getReturnPath() != null) {
@@ -205,7 +203,14 @@ public class Srv extends Entry<Object> implements Variability<Object>, Arg,
         } catch (Exception e) {
             throw new MogramException(e);
         }
-        return outcxt;
+        if (contextSelector != null) {
+            try {
+                return contextSelector.doSelect(outcxt);
+            } catch (ContextException e) {
+                throw new EvaluationException(e);
+            }
+        } else
+            return outcxt;
     }
 
     @Override

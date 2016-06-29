@@ -1,6 +1,5 @@
 /*
-* Copyright 2013 the original author or authors.
-* Copyright 2013, 2014 Sorcersoft.com S.A.
+* Copyright 2016 SORCERsoft.org.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -17,44 +16,75 @@
 
 package sorcer.core.plexus;
 
+import net.jini.core.transaction.TransactionException;
 import net.jini.id.Uuid;
 import net.jini.id.UuidFactory;
+import sorcer.core.context.model.ent.Entry;
 import sorcer.core.invoker.Observable;
 import sorcer.service.*;
 
-import java.io.Serializable;
+import java.rmi.RemoteException;
 import java.util.List;
 
 /**
- * Created by Mike Sobolewski on 10/26/15.
+ * Created by Mike Sobolewski on 04/26/16.
  */
-public class MorphedFidelity<T extends Arg> extends Observable implements Identifiable, Arg, Serializable {
+public class MorphFidelity<T extends Arg> extends Observable implements
+        Identifiable, Multifidelity<T>, Arg {
 
     // fidelity of fidelities T  that is observable
-    private Fidelity<T> fidelity;
+    private ServiceFidelity<T> fidelity;
 
     private Morpher morpher;
 
+    private String path;
+
+    private ServiceFidelity<Entry> morpherFidelity;
+
     private Uuid id = UuidFactory.generate();
 
-    public MorphedFidelity(Fidelity fi) {
+    public MorphFidelity(ServiceFidelity fi) {
         fidelity = fi;
+        path = fi.getPath();
     }
 
-    public MorphedFidelity(FidelityManager manager) {
+    public MorphFidelity(FidelityManager manager) {
         addObserver(manager);
     }
 
-    public Fidelity<T> getFidelity() {
+    public ServiceFidelity<T> getFidelity() {
         return fidelity;
     }
 
-    public void setFidelity(Fidelity<T> fi) {
+    public void setFidelity(ServiceFidelity<T> fi) {
         this.fidelity = fi;
     }
 
     public T getSelect() {
         return fidelity.getSelect();
+    }
+
+    @Override
+    public void setSelect(String name) {
+        fidelity.setSelect(name);
+    }
+
+    public void setMorpherSelect(String name) {
+        if (morpherFidelity != null) {
+            morpherFidelity.setSelect(name);
+            try {
+                morpher = (Morpher) morpherFidelity.getSelect().getValue();
+            } catch (EvaluationException e) {
+                e.printStackTrace();
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
+    public void addSelect(T fidelity) {
+        this.fidelity.addSelect(fidelity);
     }
 
     public void setSelect(T selection) {
@@ -70,15 +100,30 @@ public class MorphedFidelity<T extends Arg> extends Observable implements Identi
     }
 
     public void setSelects(List<T> selects) {
-        fidelity.setSelects(selects);;
+        fidelity.setSelects(selects);
+    }
+
+    public ServiceFidelity<Entry> getMorpherFidelity() {
+        return morpherFidelity;
+    }
+
+    public void setMorpherFidelity(ServiceFidelity<Entry> morpherFidelity) {
+        this.morpherFidelity = morpherFidelity;
     }
 
     public String getPath() {
-        return fidelity.getPath();
+        return path;
     }
 
     public void setPath(String fidelityPath) {
-        fidelity.setPath(fidelityPath);;
+        path = fidelityPath;
+    }
+
+    @Override
+    public Object exec(Arg... args) throws ServiceException, RemoteException, TransactionException {
+        if (fidelity.getSelect() instanceof Service) {
+            return ((Service)fidelity.getSelect()).exec(args);
+        } else return fidelity.getSelect();
     }
 
     @Override

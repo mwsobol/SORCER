@@ -19,7 +19,7 @@ import java.util.Map;
 /**
  * Created by Mike Sobolewski
  */
-public class ModelStrategy implements MogramStrategy, Projection<Arg>, Serializable {
+public class ModelStrategy implements MogramStrategy, Serializable {
 
     protected List<ThrowableTrace> exceptions = new ArrayList<ThrowableTrace>();
 
@@ -54,10 +54,10 @@ public class ModelStrategy implements MogramStrategy, Projection<Arg>, Serializa
 
     protected Map<String, List<Path>> dependentPaths;
 
-    protected Fidelity<Arg> selectedFidelity;
+    protected ServiceFidelity<Arg> selectedFidelity;
 
     // select fidelities for this service context
-    protected Map<String, Fidelity<Arg>> selectFidelities;
+    protected Map<String, ServiceFidelity<Arg>> selectFidelities;
 
     // evaluated model response entries
     protected Context outcome;
@@ -186,7 +186,7 @@ public class ModelStrategy implements MogramStrategy, Projection<Arg>, Serializa
         return dependers;
     }
 
-    public void setSelectFidelities(Map<String, Fidelity<Arg>> selectFidelities) {
+    public void setSelectFidelities(Map<String, ServiceFidelity<Arg>> selectFidelities) {
         this.selectFidelities = selectFidelities;
     }
 
@@ -244,13 +244,11 @@ public class ModelStrategy implements MogramStrategy, Projection<Arg>, Serializa
         this.target = target;
     }
 
-    @Override
-    public Fidelity<Arg> getFidelity() {
+    public ServiceFidelity<Arg> getFidelity() {
         return selectedFidelity;
     }
 
-    @Override
-    public void setFidelity(Fidelity<Arg> fidelity) {
+    public void setFidelity(ServiceFidelity<Arg> fidelity) {
         selectedFidelity = fidelity;
     }
 

@@ -185,6 +185,7 @@ public class ProviderProxy implements Serializable {
             try {
             	return doInvoke(server, selector, m, args);
             } catch (InvocationTargetException ie) {
+//				ie.printStackTrace();
                 Throwable cause = ie.getCause();
                 // disable logging for calls coming from ServiceCataloger
                 if (cause instanceof ConnectException && MDC.get("java.net.ConnectException.ignore") == null) {
@@ -199,6 +200,7 @@ public class ProviderProxy implements Serializable {
                 // this block is for debugging, can be deleted
                 // do not report broken network connection on destruction or getAdmin after the service is
 				// undeployed by Rio
+//				e.printStackTrace();
 				logger.warn("Caught while invoking {}", selector, e);
                 if (!selector.equals("getAdmin"))
 					logger.warn("proxy method: {} for args: {}", m, Arrays.toString(args), e);

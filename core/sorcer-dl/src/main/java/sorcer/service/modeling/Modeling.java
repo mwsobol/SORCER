@@ -20,9 +20,7 @@ package sorcer.service.modeling;
 import net.jini.core.event.EventRegistration;
 import net.jini.core.event.RemoteEventListener;
 import net.jini.core.event.UnknownEventException;
-import sorcer.service.Context;
-import sorcer.service.ContextException;
-import sorcer.service.EvaluationException;
+import sorcer.service.*;
 
 import java.rmi.MarshalledObject;
 import java.rmi.RemoteException;
@@ -31,7 +29,7 @@ public interface Modeling {
 	
 //	public String getName() throws RemoteException;
 	
-	public EventRegistration register(long eventID, MarshalledObject<?> handback,
+	public EventRegistration register(long eventID, MarshalledObject handback,
 			RemoteEventListener toInform, long leaseLenght)
 			throws UnknownEventException, RemoteException;
 
@@ -50,7 +48,10 @@ public interface Modeling {
 	public void notifyUpdateEvaluation(Context modelContext)
 			throws EvaluationException, RemoteException;
 
-	public void evaluate() throws EvaluationException, RemoteException;
+	public Context setInputs(Context entries) throws ContextException,
+			RemoteException;
+
+	public void evaluate(ServiceFidelity... fidelities) throws EvaluationException, RemoteException;
 
 	public Context evaluate(Context modelContext) throws EvaluationException,
 			RemoteException;
@@ -66,9 +67,11 @@ public interface Modeling {
 
 	public boolean writeResult() throws EvaluationException, RemoteException;
 	
-	public void setContext(Context<?> context) throws ContextException;
-	
-	public void isolateModel(Context<?> inContext) throws ContextException;
+	public void setContext(Context context) throws ContextException;
+
+	public void reconfigure(Fidelity... fidelities) throws ContextException, RemoteException;
+
+	public void isolateModel(Context inContext) throws ContextException;
 	
 	public void initializeBuilder() throws ContextException;
 	
@@ -89,13 +92,15 @@ public interface Modeling {
 	public static String IN_STREAM = "table/instream";
 	
 	public static String OUT_STREAM = "table/outstream";
-	
-	public static String MODEL_STRATEGY = "model/strategy";
-	
+
 	public static String IN_TABLE_RESOURCE = "table/in/resource";
 	
 	public static String OUT_TABLE_RESOURCE = "table/out/resource";
-	
-	public static String VAR_INFOS = "var/infos";
-	
+
+	public static String MODEL_STRATEGY = "model/strategy";
+
+	// fidelity manger configuration data
+	public static final String MODEL_MORPHERS = "model/fidelity/morhers";
+
+
 }

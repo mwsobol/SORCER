@@ -38,7 +38,7 @@ import sorcer.util.SorcerUtil;
 @SuppressWarnings("rawtypes")
 public class ContextLink implements SorcerConstants, Link {
 
-	private Logger logger = LoggerFactory.getLogger(ContextLink.class.getName());
+	private static Logger logger = LoggerFactory.getLogger(ContextLink.class.getName());
 
 	private static final long serialVersionUID = -7115324059076651991L;
 

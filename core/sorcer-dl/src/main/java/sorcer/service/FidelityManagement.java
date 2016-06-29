@@ -21,18 +21,20 @@ import net.jini.core.event.EventRegistration;
 import net.jini.core.event.RemoteEventListener;
 import net.jini.core.event.UnknownEventException;
 
+import java.io.Serializable;
 import java.rmi.MarshalledObject;
 import java.rmi.RemoteException;
+import java.util.List;
 import java.util.Map;
 
 /**
  * Created by Mike Sobolewski on 6/14/15.
  */
-public interface FidelityManagement<T extends Arg> extends Service {
+public interface FidelityManagement<T extends Arg> extends Service, Serializable {
 
-    public Map<String, Fidelity<T>> getFidelities() throws RemoteException;
+    public Map<String, ServiceFidelity<T>> getFidelities() throws RemoteException;
 
-    public Map<String, Fidelity<Fidelity>> getMetafidelities() throws RemoteException;
+    public Map<String, ServiceFidelity<Fidelity>> getMetafidelities() throws RemoteException;
 
     public void morph(String... fiNames) throws RemoteException;
 
@@ -42,9 +44,13 @@ public interface FidelityManagement<T extends Arg> extends Service {
 
     public Mogram getMogram() throws RemoteException;
 
+    public List<Fidelity> getFiTrace() throws RemoteException;
+
     public EventRegistration register(long eventID, MarshalledObject<?> handback,
                                       RemoteEventListener toInform, long leaseLenght)
             throws UnknownEventException, RemoteException;
+
+    public void addTrace(ServiceFidelity fi);
 
     public void deregister(long eventID) throws UnknownEventException,
             RemoteException;

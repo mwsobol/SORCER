@@ -17,6 +17,9 @@
 
 package sorcer.service;
 
+import sorcer.core.provider.ProviderName;
+import sorcer.service.modeling.EvaluationComponent;
+import sorcer.service.modeling.SupportComponent;
 import sorcer.service.modeling.Variability;
 
 import java.io.IOException;
@@ -45,7 +48,8 @@ import java.util.Arrays;
  * @author Mike Sobolewski
  */
 @SuppressWarnings("rawtypes")
-public interface Signature extends PrimitiveService, Comparable, Dependency, Identifiable, Serializable {
+public interface Signature extends Item, Comparable, Dependency, Identifiable,
+		EvaluationComponent, SupportComponent, Serializable {
 
 	/**
 	 * Returns a name of this signature.
@@ -74,7 +78,7 @@ public interface Signature extends PrimitiveService, Comparable, Dependency, Ide
 	 *
 	 * @return name of service provider
 	 */
-	public String getProviderName();
+	public ProviderName getProviderName();
 
 	/**
 	 * Returns a service provider.
@@ -90,7 +94,7 @@ public interface Signature extends PrimitiveService, Comparable, Dependency, Ide
 	 */
 	public Variability<?> getVariability();
 
-	public void setProviderName(String providerName);
+	public void setProviderName(ProviderName providerName);
 
 	/**
 	 * Returns a service type name of this signature.
@@ -192,23 +196,27 @@ public interface Signature extends PrimitiveService, Comparable, Dependency, Ide
 
 	/**
 	 * Returns a deployment for provisioning a referenced service provider;
-	 *
 	 */
 	public Deployment getDeployment();
 
-
 	/**
-	 * There are four types of {@link Signature} operations that can be
-	 * associated with signatures: <code>PRE</code> (preprocess),
-	 * <code>PROC</code> (process/service) , <code>POST</code> (postprocess), and
-	 * <code>APD_DATA</code> (append data) and code>APD_CONTROL</code> (append
-	 * control strategy). Only one <code>PROC</code> signature can be associated
-	 * with any exertion. The <code>PROC</code> signature defines an executing
-	 * provider dynamically bounded at runtime. The <code>APD_DATA</code>
-	 * signatures are invoked invoked first to get specified contexts from
-	 * {@link sorcer.service.Contexter}s that are appended to the task's current
-	 * context.
+	 * Returns an access types to a provider, synchronous (PUSH) or asynchronous (PULL);
 	 */
+	public Strategy.Access getAccessType();
+
+
+		/**
+		 * There are four types of {@link Signature} operations that can be
+		 * associated with signatures: <code>PRE</code> (preprocess),
+		 * <code>PROC</code> (process/service) , <code>POST</code> (postprocess), and
+		 * <code>APD_DATA</code> (append data) and code>APD_CONTROL</code> (append
+		 * control strategy). Only one <code>PROC</code> signature can be associated
+		 * with any exertion. The <code>PROC</code> signature defines an executing
+		 * provider dynamically bounded at runtime. The <code>APD_DATA</code>
+		 * signatures are invoked invoked first to get specified contexts from
+		 * {@link sorcer.service.Contexter}s that are appended to the task's current
+		 * context.
+		 */
 	public enum Type implements Arg {
 		PROC, PRE, POST, SRV, APD_DATA, APD_CONTROL, BUILDER;
 
@@ -529,5 +537,6 @@ public interface Signature extends PrimitiveService, Comparable, Dependency, Ide
 			else
 				return null;
 		}
+
 	}
 }

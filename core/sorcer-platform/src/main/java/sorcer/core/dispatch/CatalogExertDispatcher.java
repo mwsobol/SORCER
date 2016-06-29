@@ -85,7 +85,6 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
     protected void afterExec(Exertion ex, Exertion result)
             throws SignatureException, ExertionException, ContextException {
         ServiceExertion ser = (ServiceExertion) result;
-//		((CompoundExertion)xrt).setMogramAt(result, result.getIndex());
 		((CompoundExertion)xrt).setMogramAt(result, ex.getIndex());
         if (ser.getStatus() > FAILED && ser.getStatus() != SUSPENDED) {
             ser.setStatus(DONE);
@@ -105,8 +104,8 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
 
     protected Task execTask(Task task, Arg... args) throws MogramException,
             SignatureException, RemoteException {
-        if (task instanceof NetTask) {
-            return execServiceTask(task, args);
+		if (task instanceof NetTask) {
+			return execServiceTask(task, args);
         } else {
             return task.doTask(args);
         }
@@ -114,7 +113,7 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
 
     protected Task execServiceTask(Task task, Arg... args) throws ExertionException {
         logger.info("Starting execServiceTask for: " + task.getName());
-        Task result = null;
+		Task result = null;
         int maxTries = 6;
         int tried=0;
         try {

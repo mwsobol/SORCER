@@ -1,6 +1,5 @@
 /*
-* Copyright 2013 the original author or authors.
-* Copyright 2013, 2014 Sorcersoft.com S.A.
+* Copyright 2016 SORCERsoft.org.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -15,6 +14,7 @@
 * limitations under the License.
 */
 
+
 package sorcer.core.plexus;
 
 import net.jini.core.transaction.Transaction;
@@ -24,7 +24,10 @@ import sorcer.core.context.ThrowableTrace;
 import sorcer.service.*;
 
 import java.rmi.RemoteException;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * A metasystem is represented by a mogram with multiple projections of its
@@ -38,16 +41,16 @@ import java.util.List;
  *
  * Created by Mike Sobolewski
  */
-public class MultifidelityService extends ServiceMogram {
+public class MultiFiRequest extends ServiceMogram {
 
-    protected Fidelity<PrimitiveService> serviceFidelity;
+    protected ServiceFidelity<Request> requestFidelity;
 
-    protected MorphedFidelity<PrimitiveService> morphedFidelity;
+    protected MorphFidelity<Request> morphFidelity;
 
-    public MultifidelityService() {
+    public MultiFiRequest() {
     }
 
-    public MultifidelityService(String name) throws SignatureException {
+    public MultiFiRequest(String name) throws SignatureException {
         super(name);
     }
 
@@ -56,60 +59,61 @@ public class MultifidelityService extends ServiceMogram {
         return scope.clearScope();
     }
 
-    public MultifidelityService(MorphedFidelity<PrimitiveService> fidelity) {
+    public MultiFiRequest(MorphFidelity<Request> fidelity) {
         this(fidelity.getName(), fidelity);
     }
 
-    public MultifidelityService(String name, MorphedFidelity<PrimitiveService> fidelity)  {
+    public MultiFiRequest(String name, MorphFidelity<Request> fidelity)  {
         super(name);
-        morphedFidelity = fidelity;
+        morphFidelity = fidelity;
         if (fiManager == null)
-            fiManager = new FidelityManager(morphedFidelity.getName());
+            fiManager = new FidelityManager(name);
 
-        ((FidelityManager)fiManager).init(morphedFidelity.getFidelity());
+        ((FidelityManager)fiManager).init(morphFidelity.getFidelity());
         ((FidelityManager)fiManager).setMogram(this);
-        ((FidelityManager)fiManager).addFidelity(morphedFidelity.getName(), morphedFidelity.getFidelity());
-        morphedFidelity.addObserver((FidelityManager)fiManager);
+        ((FidelityManager)fiManager).addMorphedFidelity(morphFidelity.getName(), morphFidelity);
+        ((FidelityManager)fiManager).addFidelity(morphFidelity.getName(), morphFidelity.getFidelity());
+        morphFidelity.addObserver((FidelityManager)fiManager);
     }
 
-    public MultifidelityService(String name, Fidelity<PrimitiveService> fidelity) {
+    public MultiFiRequest(String name, ServiceFidelity<Request> fidelity) {
         super(name);
-        serviceFidelity = fidelity;
+        requestFidelity = fidelity;
     }
 
-    public MultifidelityService(Context context, MorphedFidelity<PrimitiveService> fidelity)  {
+    public MultiFiRequest(Context context, MorphFidelity<Request> fidelity)  {
         this(context.getName(), fidelity);
         scope = context;
     }
 
-    public MultifidelityService(Context context, Fidelity<PrimitiveService> fidelity) {
+    public MultiFiRequest(Context context, ServiceFidelity<Request> fidelity) {
         this(context.getName(), fidelity);
         scope = context;
     }
 
     @Override
     public <T extends Mogram> T exert(Transaction txn, Arg... entries) throws TransactionException, MogramException, RemoteException {
-        T out = ((Mogram)morphedFidelity.getSelect()).exert(txn, entries);
-        morphedFidelity.setChanged();
-        morphedFidelity.notifyObservers(out);
+        Mogram mogram = (Mogram) morphFidelity.getSelect();
+        mogram.getContext().setScope(scope);
+        T out = mogram.exert(txn, entries);
+        morphFidelity.setChanged();
+        morphFidelity.notifyObservers(out);
         return out;
     }
 
     @Override
     public <T extends Mogram> T exert(Arg... entries) throws TransactionException, MogramException, RemoteException {
-        T out = ((Mogram)morphedFidelity.getSelect()).exert(entries);
-        morphedFidelity.setChanged();
-        morphedFidelity.notifyObservers(out);
-        return out;
+        return exert(null, entries);
     }
 
     @Override
     public Context getContext() throws ContextException {
-        return ((Mogram)morphedFidelity.getSelect()).getContext();
+//        return ((Mogram)morphFidelity.getSelect()).getContext();
+        return scope;
     }
 
     public void setDataContext(ServiceContext dataContext) {
-        ((ServiceExertion)morphedFidelity.getSelect()).setContext(dataContext);
+        ((ServiceExertion) morphFidelity.getSelect()).setContext(dataContext);
     }
 
     @Override
@@ -118,13 +122,13 @@ public class MultifidelityService extends ServiceMogram {
     }
 
     @Override
-    public Fidelity selectFidelity(String selector) {
-        if (serviceFidelity != null) {
-            serviceFidelity.setSelect(selector);
-            return serviceFidelity;
+    public ServiceFidelity selectFidelity(String selector) {
+        if (requestFidelity != null) {
+            requestFidelity.setSelect(selector);
+            return requestFidelity;
         } else {
-            morphedFidelity.getFidelity().setSelect(selector);
-            return morphedFidelity.getFidelity();
+            morphFidelity.getFidelity().setSelect(selector);
+            return morphFidelity.getFidelity();
         }
     }
 
@@ -149,8 +153,7 @@ public class MultifidelityService extends ServiceMogram {
     }
 
     @Override
-    public Mogram substitute(Arg... entries) throws SetterException {
-        return null;
+    public void substitute(Arg... entries) throws SetterException {
     }
 
     @Override
@@ -163,20 +166,24 @@ public class MultifidelityService extends ServiceMogram {
         return toString();
     }
 
-    public Fidelity<PrimitiveService> getServiceFidelity() {
-        return serviceFidelity;
+    public ServiceFidelity<Request> getServiceFidelity() {
+        if (requestFidelity == null && morphFidelity != null)
+            return morphFidelity.getFidelity();
+        else {
+            return requestFidelity;
+        }
     }
 
-    public void setServiceFidelity(Fidelity<PrimitiveService> serviceFidelity) {
-        this.serviceFidelity = serviceFidelity;
+    public void setServiceFidelity(ServiceFidelity<Request> requestFidelity) {
+        this.requestFidelity = requestFidelity;
     }
 
-    public MorphedFidelity getMorphedFidelity() {
-        return morphedFidelity;
+    public MorphFidelity getMorphFidelity() {
+        return morphFidelity;
     }
 
-    public void setMorphedFidelity(MorphedFidelity morphedFidelity) {
-        this.morphedFidelity = morphedFidelity;
+    public void setMorphFidelity(MorphFidelity morphFidelity) {
+        this.morphFidelity = morphFidelity;
     }
 
     @Override
@@ -186,6 +193,22 @@ public class MultifidelityService extends ServiceMogram {
 
     public <T extends Mogram> T exert(T mogram) throws TransactionException, MogramException, RemoteException {
         return null;
+    }
+
+    public void setUnifiedName(String name) throws RemoteException {
+        this.name = name;
+        ((FidelityManager)fiManager).setName(name);
+        Map<String, ServiceFidelity> fiMap = fiManager.getFidelities();
+        Set<String> fiSet = fiMap.keySet();
+        if (fiSet.size() == 1) {
+            Iterator<String> i = fiSet.iterator();
+            String sFiName = i.next();
+            fiManager.getFidelities();
+            ServiceFidelity sf = fiMap.get(sFiName);
+            sf.setName(name);
+            fiMap.put(name, sf);
+            fiMap.remove(sFiName);
+        }
     }
 
     @Override

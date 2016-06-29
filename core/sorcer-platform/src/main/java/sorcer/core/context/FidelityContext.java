@@ -19,14 +19,14 @@ package sorcer.core.context;
 
 
 import sorcer.service.Arg;
-import sorcer.service.Fidelity;
+import sorcer.service.ServiceFidelity;
 
 import java.util.HashMap;
 
 /**
  * @author Mike Sobolewski
  */
-public class FidelityContext extends HashMap<String, Fidelity> implements Arg {
+public class FidelityContext extends HashMap<String, ServiceFidelity> implements Arg {
 
 	static final long serialVersionUID = 6416935408459975973L;
 	

@@ -1,20 +1,17 @@
 package sorcer.requestor.adder;
 
-import net.jini.core.transaction.TransactionException;
-import sorcer.core.requestor.ExertRequestor;
+import sorcer.core.requestor.ServiceRequestor;
 import sorcer.provider.adder.Adder;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
 
 import java.io.File;
-import java.io.IOException;
-import java.rmi.RemoteException;
 
 import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
 import static sorcer.mo.operator.response;
 
-public class AdderRequestor extends ExertRequestor {
+public class AdderRequestor extends ServiceRequestor {
 
     public Mogram getMogram(String... args) throws MogramException {
 

@@ -49,7 +49,11 @@ public interface SorcerConstants {
 
 	public static final String P_PROVIDER_CONFIG = "provider.config.filename";
 
+	public static final String J_SERVICE_PROVIDER_NAME = "serviceName";
+
 	public static final String J_PROVIDER_NAME = "name";
+
+	public static final String J_PROVIDER_NAME_SUFFIXED = "nameSuffixed";
 
 	public static final String P_PROVIDR_HOST = "provider.host";
 

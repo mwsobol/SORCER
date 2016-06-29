@@ -1103,7 +1103,7 @@ public class ProviderDelegate {
 			RemoteException, SignatureException, ContextException {
 		// check if we do not look with the same exertion
 		Service recipient = null;
-		String prvName = task.getProcessSignature().getProviderName();
+		String prvName = task.getProcessSignature().getProviderName().getName();
 		NetSignature fm = (NetSignature) task.getProcessSignature();
 		ServiceID serviceID = fm.getServiceID();
 		Class prvType = fm.getServiceType();
@@ -1241,10 +1241,10 @@ public class ProviderDelegate {
 				if (sig instanceof NetSignature)
 					((NetSignature) sig).setProvider(provider);
 				task.setStatus(Exec.FAILED);
-				logger.info("DELEGATE EXECUTING TASK: " + task + " by sig: "
+				logger.debug("DELEGATE EXECUTING TASK: " + task + " by sig: "
 						+ task.getProcessSignature() + " for context: " + cxt);
 				cxt = (ServiceContext) invokeMethod(sig.getSelector(), cxt);
-				logger.info("doTask: TASK DONE BY DELEGATE OF ="
+				logger.debug("doTask: TASK DONE BY DELEGATE OF ="
 						+ provider.getProviderName());
 				task.setContext(cxt);
 				task.setStatus(Exec.DONE);
@@ -1256,7 +1256,7 @@ public class ProviderDelegate {
 				// clear the exertion and the context
 				cxt.setExertion(null);
 				task.setService(null);
-				logger.info("CONTEXT GOING OUT: " + cxt);
+				logger.debug("CONTEXT GOING OUT: " + cxt);
 			}
 		} catch (ContextException e) {
 			throw new ExertionException(e);
@@ -1724,7 +1724,7 @@ public class ProviderDelegate {
 		// task.getName() + "' not authorized to use the service '" +
 		// providerName + "'");
 
-		String pn = task.getProcessSignature().getProviderName();
+		String pn = task.getProcessSignature().getProviderName().getName();
 		if (pn != null && !matchInterfaceOnly) {
 			if (!pn.equals(getProviderName())) {
 				servicetask.getContext().reportException(
@@ -2199,45 +2199,60 @@ public class ProviderDelegate {
 		 */
 		private void loadJiniConfiguration(Configuration config) {
 			String val = null;
-
+			String srvName = null;
 			try {
-				val = (String) jiniConfig.getEntry(ServiceProvider.COMPONENT,
-						J_PROVIDER_NAME, String.class);
+				srvName = (String) jiniConfig.getEntry(ServiceProvider.COMPONENT,
+						J_SERVICE_PROVIDER_NAME, String.class);
 			} catch (ConfigurationException e) {
-				val = null;
+				srvName = null;
 			}
-			if ((val != null) && (val.length() > 0))
-				setProviderName(val);
+			if ((srvName != null) && (srvName.length() > 0)) {
+				setProviderName(srvName);
+			}
 
-			String nameSuffixed = "";
-			boolean globalNameSuffixed = Sorcer.nameSuffixed();
-			try {
-				nameSuffixed = (String) config.getEntry(
-						ServiceProvider.COMPONENT, "nameSuffixed", String.class,
-						"");
-			} catch (ConfigurationException e1) {
-				nameSuffixed = "";
+			if (srvName == null) {
+				try {
+					val = (String) jiniConfig.getEntry(ServiceProvider.COMPONENT,
+							J_PROVIDER_NAME, String.class);
+				} catch (ConfigurationException e) {
+					val = null;
+				}
+				if ((val != null) && (val.length() > 0))
+					setProviderName(val);
 			}
-			// check for the specified suffix by the user
-			String suffix = Sorcer.getNameSuffix();
 
-			String suffixedName = null;
-			if (nameSuffixed.length() == 0) {
-				if (suffix == null)
-					suffixedName = Sorcer.getSuffixedName(val);
-				else
-					suffixedName = val + "-" + suffix;
-			} else if (!nameSuffixed.equals("true")
-					&& !nameSuffixed.equals("false")) {
-				suffixedName = val + "-" + nameSuffixed;
-				nameSuffixed = "true";
-			}
-			// add provider name and SorcerServiceType entries
-			// nameSuffixed not defined by this provider but in sorcer.env
-			if (nameSuffixed.length() == 0 && globalNameSuffixed) {
-				setProviderName(suffixedName);
-			} else if (nameSuffixed.equals("true")) {
-				setProviderName(suffixedName);
+			// for suffixed name, when srvName is null
+			if (val != null) {
+				String nameSuffixed = "";
+				boolean globalNameSuffixed = Sorcer.nameSuffixed();
+				try {
+					nameSuffixed = (String) config.getEntry(
+							ServiceProvider.COMPONENT, J_PROVIDER_NAME_SUFFIXED, String.class,
+							"");
+				} catch (ConfigurationException e1) {
+					nameSuffixed = "";
+				}
+				// check for the specified suffix by the user
+				String suffix = Sorcer.getNameSuffix();
+
+				String suffixedName = null;
+				if (nameSuffixed.length() == 0) {
+					if (suffix == null)
+						suffixedName = Sorcer.getSuffixedName(val);
+					else
+						suffixedName = val + "-" + suffix;
+				} else if (!nameSuffixed.equals("true")
+						&& !nameSuffixed.equals("false")) {
+					suffixedName = val + "-" + nameSuffixed;
+					nameSuffixed = "true";
+				}
+				// add provider name and SorcerServiceType entries
+				// nameSuffixed not defined by this provider but in sorcer.env
+				if (nameSuffixed.length() == 0 && globalNameSuffixed) {
+					setProviderName(suffixedName);
+				} else if (nameSuffixed.equals("true")) {
+					setProviderName(suffixedName);
+				}
 			}
 
 			try {

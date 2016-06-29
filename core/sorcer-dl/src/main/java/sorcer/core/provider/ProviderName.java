@@ -18,25 +18,29 @@
 package sorcer.core.provider;
 
 import net.jini.core.lookup.ServiceID;
+import sorcer.core.SorcerConstants;
 import sorcer.service.Arg;
 import sorcer.service.Identifiable;
 
-public class ProviderName implements Identifiable, Arg {
+import java.io.Serializable;
 
-	private static int count = 0;
-	
-	private ServiceID id;
-	
-	private String  name;
+/**
+ * Created by Mike Sobolewski
+ */
+public class ProviderName implements Identifiable, Arg, Serializable {
+
+	protected ServiceID id;
+
+	protected String  name;
 
 	public ProviderName() {
-		this.name  = "unknown" + count++;
+		this.name  = SorcerConstants.ANY;
 	}
 	
 	public ProviderName(String name) {
 		this.name = name;
 	}
-	
+
 	@Override
 	public Object getId() {
 		return id;
@@ -46,5 +50,14 @@ public class ProviderName implements Identifiable, Arg {
 	public String getName() {
 		return name;
 	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+    @Override
+    public String toString() {
+        return name;
+    }
 
 }

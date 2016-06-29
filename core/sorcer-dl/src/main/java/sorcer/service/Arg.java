@@ -79,7 +79,7 @@ public interface Arg extends Serializable {
 		return null;
 	}
 
-	public static void setValue(Arg[] args, String path, Object value) throws SetterException, RemoteException {
+	public static void setArgValue(Arg[] args, String path, Object value) throws SetterException, RemoteException {
 		for (Arg arg : args) {
 			if (arg instanceof Callable && ((Callable)arg).name().equals(path))
 				((Setter)arg).setValue(value);

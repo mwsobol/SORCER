@@ -130,7 +130,7 @@ public class Tuple2<T1, T2> implements Serializable, Identifiable, Evaluation<T2
 	 * @see sorcer.service.Evaluation#substitute(sorcer.service.Arg[])
 	 */
 	@Override
-	public Tuple2 substitute(Arg... entries) throws SetterException {
+	public void substitute(Arg... entries) throws SetterException {
 		if (entries != null) {
 			for (Arg a : entries) {
 				if (a.getName().equals(getName()) && a instanceof Tuple2) {
@@ -138,7 +138,6 @@ public class Tuple2<T1, T2> implements Serializable, Identifiable, Evaluation<T2
 				}
 			}
 		}
-		return this;
 	}
 
 	/* (non-Javadoc)

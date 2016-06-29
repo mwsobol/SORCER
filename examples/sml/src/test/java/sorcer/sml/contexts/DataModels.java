@@ -131,16 +131,16 @@ public class DataModels {
         assertTrue(outputs.equals(paths(outputs(cxt))));
 
         // return all values of inEntries
-        assertEquals(inValues(cxt), list(1.5, 1.4, 1.3, 1.2));
+        assertEquals(inCotextValues(cxt), list(1.5, 1.4, 1.3, 1.2));
 
         // return all paths of inEntries
-        assertEquals(inPaths(cxt), list("arg/x5", "arg/x4", "arg/x3", "arg/x2"));
+        assertEquals(inContextPaths(cxt), list("arg/x5", "arg/x4", "arg/x3", "arg/x2"));
 
         // return all values of outEntries
-        assertEquals(outValues(cxt), list(1.8, 1.7, 1.9));
+        assertEquals(outContextValues(cxt), list(1.8, 1.7, 1.9));
 
         // return all paths of outEntries
-        assertEquals(outPaths(cxt), list("out/y2", "out/y1", "par/z"));
+        assertEquals(outContextPaths(cxt), list("out/y2", "out/y1", "par/z"));
 
     }
 

@@ -150,12 +150,9 @@ abstract public class ExertDispatcher implements Dispatcher {
         }
         // If Job, new dispatcher will update inputs for it's Exertion
         // in catalog dispatchers, if it is a job, then new dispatcher is
-        // spawned
-        // and the shared contexts are passed. So the new dispatcher will update
-        // inputs
-        // of tasks inside the jobExertion. But in space, all inputs to a new
-        // job are
-        // to be updated before dropping.
+        // spawned and the shared contexts are passed. So the new dispatcher
+        // will update inputs of tasks inside the jobExertion. But in space,
+        // all inputs to a new job are to be updated before dropping.
         try {
             exertion.getControlContext().appendTrace((provider.getProviderName() != null
                             ? provider.getProviderName() + " " : "")
