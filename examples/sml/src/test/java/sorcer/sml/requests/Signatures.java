@@ -1,4 +1,4 @@
-package sorcer.sml.services;
+package sorcer.sml.requests;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

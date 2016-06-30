@@ -879,14 +879,14 @@ public class operator {
 
 	public static Signature sig(String name, String operation, Class serviceType)
 			throws SignatureException {
-		ServiceSignature signature = (ServiceSignature) sig(operation, serviceType, new Arg[]{});
+		ServiceSignature signature = (ServiceSignature) sig(operation, serviceType, new Object[]{});
 		signature.setName(name);
 		return signature;
 	}
 
 	public static Signature sig(String operation, Class serviceType)
 			throws SignatureException {
-		return sig(operation, serviceType, new Arg[]{});
+		return sig(operation, serviceType, new Object[]{});
 	}
 
 	public static Signature matchTypes(Signature signature, Class... matchTypes)
@@ -929,26 +929,19 @@ public class operator {
 		}
 	}
 
-	public static Signature sig(Class serviceType, Arg... args) throws SignatureException {
-		if (args == null || args.length == 0)
-			return defaultSig(serviceType);
-		else
-			return sig("?", serviceType, args);
-	}
-
 	public static Signature sig(String operation, Signature signature) throws SignatureException {
 		((ServiceSignature)signature).setSelector(operation);
 		((ServiceSignature)signature).setName(operation);
 		return signature;
 	}
 
-	public static Signature sig(String operation, Object provider, Arg... args) throws SignatureException {
+	public static Signature sig(String operation, Object provider, Object... items) throws SignatureException {
 		ObjectSignature sig = new ObjectSignature();
 		sig.setName(operation);
 		sig.setSelector(operation);
 		sig.setTarget(provider);
-		if (args.length > 0) {
-			for (Object o : args) {
+		if (items.length > 0) {
+			for (Object o : items) {
 				if (o instanceof Type) {
 					sig.setType((Type) o);
 				} else if (o instanceof Operating) {
@@ -966,18 +959,48 @@ public class operator {
 		return sig;
 	}
 
-	public static Signature sig(String name, String operation, Class serviceType, Arg... args) throws SignatureException {
-		ServiceSignature s = (ServiceSignature) sig(operation, serviceType, args);
-		s.setName(name);
-		return s;
+	public static Signature sig(String name, String operation, Class serviceType, Object... items) throws SignatureException {
+		ServiceSignature ss = (ServiceSignature) sig(operation, serviceType, items);
+		ss.setName(name);
+		return ss;
 	}
 
-    public static Signature sig(String operation, Class serviceType, Arg... args) throws SignatureException {
-        ProviderName providerName = null;
+	public static Signature sig(Class serviceType, Object... items) throws SignatureException {
+		List<String> names = new ArrayList();
+		Operation op = null;
+		if (items == null || items.length == 0)
+			return defaultSig(serviceType);
+
+		for (Object o : items) {
+			if(o instanceof String) {
+				names.add((String)o);
+			} else if (o instanceof Operation) {
+				op = (Operation)o;
+			}
+		}
+		if (names.size() == 0) {
+			if (op != null) {
+				return sig(op.getName(), serviceType, items);
+			} else
+				return sig("?", serviceType, items);
+		} else if (names.size() == 1 && op == null) {
+			return sig(names.get(0), items);
+		} else if (names.size() == 2) {
+			// name is the first, selector the second String
+			ServiceSignature ss = sig(names.get(1), items);
+			ss.setName(names.get(0));
+		}
+		throw new SignatureException("no signature for: " + items);
+	}
+
+    public static Signature sig(String operation, Class serviceType, Object... items) throws SignatureException {
+		ProviderName providerName = null;
         Provision p = null;
+		Class[] matchClasses = null;
+		List<String> names = new ArrayList();
         List<MapContext> connList = new ArrayList<MapContext>();
-        if (args != null) {
-            for (Object o : args) {
+        if (items != null) {
+            for (Object o : items) {
                 if (o instanceof ProviderName) {
                     providerName = (ProviderName)o;
                     if (!(providerName instanceof ServiceName))
@@ -991,7 +1014,7 @@ public class operator {
         }
         if (providerName == null)
             providerName = new ProviderName();
-        Signature sig = null;
+        ServiceSignature sig = null;
 //		if (Modeler.class.isAssignableFrom(serviceType)) {
 //			sig = new ModelSignature(operation, serviceType, providerName, args);
 //		} else
@@ -1001,49 +1024,52 @@ public class operator {
             sig = new ObjectSignature(operation, serviceType);
             sig.setProviderName(providerName);
         }
-        ((ServiceSignature) sig).setName(operation);
+        sig.setName(operation);
 
         if (connList != null) {
             for (MapContext conn : connList) {
                 if (conn.direction == MapContext.Direction.IN)
-                    ((ServiceSignature) sig).setInConnector(conn);
+                    sig.setInConnector(conn);
                 else
-                    ((ServiceSignature) sig).setOutConnector(conn);
+                    sig.setOutConnector(conn);
             }
         }
-
         if (p != null)
-            ((ServiceSignature) sig).setProvisionable(p);
+            sig.setProvisionable(p);
 
-        if (args.length > 0) {
-            for (Object o : args) {
+        if (items.length > 0) {
+            for (Object o : items) {
                 if (o instanceof Type) {
                     sig.setType((Type) o);
-                } else if (o instanceof Operating) {
-                    ((ServiceSignature) sig).setActive((Operating) o);
+                } if (o instanceof Operation) {
+					sig.setSelector(((Operation)o).getName());
+				} else if (o instanceof Class[]) {
+					matchClasses = (Class[])o;
+				} else if (o instanceof Operating) {
+                    sig.setActive((Operating) o);
                 } else if (o instanceof Provision) {
-                    ((ServiceSignature) sig).setProvisionable((Provision) o);
+                    sig.setProvisionable((Provision) o);
                 } else if (o instanceof Strategy.Shell) {
-                    ((ServiceSignature) sig).setShellRemote((Strategy.Shell) o);
+                    sig.setShellRemote((Strategy.Shell) o);
                 } else if (o instanceof ReturnPath) {
                     sig.setReturnPath((ReturnPath) o);
                 } else if (o instanceof TypeList) {
-					((ServiceSignature)sig).setMatchTypes(((TypeList) o).toTypeArray());
+					sig.setMatchTypes(((TypeList) o).toTypeArray());
 				} else if (o instanceof In ) {
                     if (sig.getReturnPath() == null) {
                         sig.setReturnPath(new ReturnPath((In) o));
                     } else {
-                        ((ReturnPath)sig.getReturnPath()).inPaths = ((In) o).getSigPaths();
+                        sig.getReturnPath().inPaths = ((In) o).getSigPaths();
                     }
                 } else if (o instanceof Out) {
                     if (sig.getReturnPath() == null) {
                         sig.setReturnPath(new ReturnPath((Out) o));
                     } else {
-                        ((ReturnPath)sig.getReturnPath()).outPaths = ((Out) o).getSigPaths();
+                        sig.getReturnPath().outPaths = ((Out) o).getSigPaths();
                     }
                 } else if (o instanceof ServiceDeployment) {
-                    ((ServiceSignature) sig).setProvisionable(true);
-                    ((ServiceSignature) sig).setDeployment((ServiceDeployment) o);
+                    sig.setProvisionable(true);
+                    sig.setDeployment((ServiceDeployment) o);
                 } else if (o instanceof Version && sig instanceof NetSignature) {
                     ((NetSignature) sig).setVersion(((Version) o).getName());
                 } else if (o instanceof ServiceContext
@@ -1051,11 +1077,13 @@ public class operator {
                         && o.getClass() != MapContext.class) {
                     if (sig.getReturnPath() == null) {
                         sig.setReturnPath(new ReturnPath());
-                        ((ReturnPath) sig.getReturnPath()).setDataContext((Context) o);
+                        sig.getReturnPath().setDataContext((Context) o);
                     } else
                         throw new SignatureException("No return path defined in: " + sig);
-                }
-            }
+                } else if (o instanceof String) {
+					names.add((String)o);
+				}
+			}
         }
 
         return sig;
@@ -1121,7 +1149,7 @@ public class operator {
 		return signture;
 	}
 
-	public static Signature defaultSig(Class<?> serviceType) throws SignatureException {
+	public static Signature defaultSig(Class serviceType) throws SignatureException {
 		if (Modeling.class.isAssignableFrom(serviceType)) {
 			return sig("evaluate", serviceType);
 		} else if (Service.class.isAssignableFrom(serviceType)) {
@@ -1131,7 +1159,7 @@ public class operator {
 		}
 	}
 
-	public static Signature sig(Class<?> serviceType, ReturnPath returnPath, ServiceDeployment deployment)
+	public static Signature sig(Class serviceType, ReturnPath returnPath, ServiceDeployment deployment)
 			throws SignatureException {
 		Signature signature = sig(serviceType, returnPath);
 		((ServiceSignature) signature).setDeployment(deployment);
@@ -1139,7 +1167,7 @@ public class operator {
 		return signature;
 	}
 
-	public static Signature sig(Class<?> serviceType, ReturnPath returnPath)
+	public static Signature sig(Class serviceType, ReturnPath returnPath)
 			throws SignatureException {
 		Signature sig = null;
 		if (serviceType.isInterface()) {
@@ -3206,6 +3234,23 @@ public class operator {
 
 		public String getArch() {
 			return arch;
+		}
+	}
+
+	public static class Operation {
+
+		String selector;
+
+		public Operation(String selector) {
+			this.selector = selector;
+		}
+
+		public String getName() {
+			return selector;
+		}
+
+		public void setName(String op) {
+			this.selector = op;
 		}
 	}
 

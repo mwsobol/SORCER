@@ -1,4 +1,4 @@
-package sorcer.sml.services;
+package sorcer.sml.requests;
 
 import net.jini.core.transaction.TransactionException;
 import org.junit.Test;

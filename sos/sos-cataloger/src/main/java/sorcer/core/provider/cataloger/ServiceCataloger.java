@@ -1112,7 +1112,7 @@ public class ServiceCataloger extends ServiceProvider implements Cataloger {
 				if (sorcerTypes != null
 						&& sorcerTypes
 								.contains(((Class)serviceType).getName())) {
-					imap = new HashMap<String, List<String>>();
+					imap = new HashMap();
 					imap.put(((Class)serviceType).getName(),
 							getSelectorList((Class)serviceType));
 					ilist.add(imap);

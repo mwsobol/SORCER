@@ -1,4 +1,4 @@
-package sorcer.sml.services;
+package sorcer.sml.requests;
 
 import net.jini.config.EmptyConfiguration;
 import org.junit.BeforeClass;
