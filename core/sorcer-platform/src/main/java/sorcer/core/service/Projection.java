@@ -41,6 +41,11 @@ public class Projection extends ServiceFidelity<Fidelity> {
 		this.selects = Arrays.asList(fidelities);
 	}
 
+    public Projection(List<Fidelity> fidelities) {
+        super();
+        this.selects = fidelities;
+    }
+
 	public Projection(ServiceFidelity fidelity) {
 		this.name = fidelity.getName();
 		this.path = fidelity.getPath();
