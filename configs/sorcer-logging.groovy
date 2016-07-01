@@ -187,7 +187,7 @@ logger("sorcer.modeling.vfe.persist.TaskContextSetter", OFF)
 logger("sorcer.modeling.vfe.persist.TaskContextSetter", OFF)
 */
 logger("sorcer.modeling.core.context.model.var.ResponseModel", WARN)
-logger("sorcer.modeling.core.context.model.var.ParametricModel", WARN)
+logger("sorcer.modeling.core.context.model.var.ParametricModel", INFO)
 
 /* ==================================================================
  *  SORCER Other specialized loggers
