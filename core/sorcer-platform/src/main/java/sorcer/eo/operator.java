@@ -1360,9 +1360,13 @@ public class operator {
 		return fi;
 	}
 
-	// projection of
 	public static Projection po(Fidelity... fidelities) {
 		return new Projection(fidelities);
+	}
+
+	// projection of
+	public static Projection po(ServiceFidelity fidelity) {
+		return new Projection(fidelity);
 	}
 
 	public static FidelityList fis(Fidelity... fidelities) {

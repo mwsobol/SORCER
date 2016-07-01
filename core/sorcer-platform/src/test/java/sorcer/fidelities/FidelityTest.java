@@ -30,11 +30,11 @@ public class FidelityTest {
 
         Projection fl1 = po(fi("atX", "x1"));
         logger.info("as String: " + fl1);
-        assertEquals(fl1.toString(), "po(fi(\"atX\", \"x1\"))");
+        assertEquals(fl1.toString(), "fis(fi(\"atX\", \"x1\"))");
 
         Projection fl2 = po(fi("atX", "x1"), fi("atY", "y2"));
         logger.info("as String: " + fl2);
-        assertEquals(fl2.toString(), "po(fi(\"atX\", \"x1\"), fi(\"atY\", \"y2\"))");
+        assertEquals(fl2.toString(), "fis(fi(\"atX\", \"x1\"), fi(\"atY\", \"y2\"))");
 
     }
 

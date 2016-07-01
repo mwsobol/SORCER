@@ -23,48 +23,62 @@ import sorcer.service.FidelityList;
 import sorcer.service.ServiceFidelity;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
  * Created by Mike Sobolewski on 6/26/16.
  */
-public class Projection<T extends Fidelity> extends Fidelity<T> {
-
-    private Fidelity fidelity;
-
-	private FidelityList fidelities;
-
+public class Projection extends ServiceFidelity<Fidelity> {
 
 	public Projection(Fidelity fidelity) {
+		this.name = fidelity.getName();
+		this.path = fidelity.getPath();
+	}
+
+	public Projection(Fidelity[] fidelities) {
 		super();
-		this.fidelity = fidelity;
+		this.selects = Arrays.asList(fidelities);
 	}
 
-	public Projection(FidelityList fiList) {
-		super();
-		this.fidelity = fidelity;
-		this.fidelities = fiList;
+	public Projection(ServiceFidelity fidelity) {
+		this.name = fidelity.getName();
+		this.path = fidelity.getPath();
+		for (Object fi : fidelity.getSelects()) {
+			if (fi.getClass() == Fidelity.class) {
+				this.selects.add((Fidelity) fi);
+			} else if (fi instanceof ServiceFidelity
+					&& ((ServiceFidelity)fi).getType().equals(Type.META)) {
+				this.selects.add(new Projection((ServiceFidelity)fi));
+			}
+		}
 	}
 
-	public Projection(Fidelity... fidelities) {
-		super();
-		this.fidelities = new FidelityList(fidelities);
+	public Fidelity getSelect() {
+		return select;
 	}
 
-	public Fidelity getfidelity() {
-		return fidelity;
+	public List<Fidelity> getFidelities() {
+		return selects;
 	}
 
-    public void setFidelity(Fidelity fidelity) {
-		this.fidelity = fidelity;
-	}
-
-	public FidelityList getFidelities() {
-		return fidelities;
+	public List<Fidelity> getFidelities(String nodeName) {
+		if (name.equals(nodeName)) {
+			return selectFidelities();
+		} else {
+			for (Object fi : selects) {
+				if (fi instanceof Projection) {
+					if (((Projection) fi).getName().equals(nodeName)) {
+						return ((Projection) fi).selectFidelities();
+					}
+				}
+			}
+		}
+		return new ArrayList();
 	}
 
 	public void setFidelities(FidelityList fidelities) {
-		this.fidelities = fidelities;
+		this.selects = fidelities;
 	}
 
 	@Override
@@ -75,7 +89,7 @@ public class Projection<T extends Fidelity> extends Fidelity<T> {
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof Projection) {
-			return fidelities.equals(((Projection)obj).getFidelities());
+			return selects.equals(((Projection)obj).getFidelities());
 		} else {
 			return false;
 		}
@@ -83,30 +97,36 @@ public class Projection<T extends Fidelity> extends Fidelity<T> {
 
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder("po(");
-		if (fidelity == null) {
-			int tally = fidelities.size();
+		StringBuilder sb = new StringBuilder();
+		if (selectsFidelityTypeOnly()) {
+			List<Fidelity> fis = selectFidelities();
+			int tally = fis.size();
+			sb.append("fis(");
 			if (tally > 0) {
-				sb.append("fi(\"").append(fidelities.get(0).getPath()).append("\", \"");
+				sb.append("fi(\"").append(fis.get(0).getPath()).append("\", \"");
 				if (tally == 1)
-					sb.append(fidelities.get(0).getName()).append("\")");
+					sb.append(fis.get(0).getName()).append("\")");
 				else
-					sb.append(fidelities.get(0).getName()).append("\"), ");
+					sb.append(fis.get(0).getName()).append("\"), ");
 
 				for (int i = 1; i < tally - 1; i++) {
-					sb.append("fi(\"").append(fidelities.get(i).getPath()).append("\", \"");
+					sb.append("fi(\"").append(fis.get(i).getPath()).append("\", \"");
 					if (tally == 1)
-						sb.append(fidelities.get(i).getName()).append("\")");
+						sb.append(fis.get(i).getName()).append("\")");
 					else
-						sb.append(fidelities.get(i).getName()).append("\"), ");
+						sb.append(fis.get(i).getName()).append("\"), ");
 				}
 
 				if (tally > 1) {
-					sb.append("fi(\"").append(fidelities.get(tally - 1).getPath()).append("\", \"");
-					sb.append(fidelities.get(tally - 1).getName()).append("\")");
+					sb.append("fi(\"").append(fis.get(tally - 1).getPath()).append("\", \"");
+					sb.append(fis.get(tally - 1).getName()).append("\")");
 				}
 
 			}
+			sb.append(")");
+		} else {
+			sb.append("po(");
+			sb.append(super.toString());
 			sb.append(")");
 		}
 		return sb.toString();
@@ -114,9 +134,9 @@ public class Projection<T extends Fidelity> extends Fidelity<T> {
 
 	public List<Fidelity> getAllFidelities() {
 		List<Fidelity> out = new ArrayList();
-		for (Fidelity fi : fidelities) {
+		for (Fidelity fi : selects) {
 			if (fi instanceof Projection) {
-				out.addAll(((Projection)fi).getAllFidelities());
+				out.addAll(selectFidelities(((Projection)fi).getAllFidelities()));
 			} else if (fi.getClass() == Fidelity.class) {
 				out.add(fi);
 			}
