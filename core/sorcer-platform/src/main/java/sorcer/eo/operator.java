@@ -1245,19 +1245,6 @@ public class operator {
 		return new NetletSignature(source);
 	}
 
-	public static EvaluationTask task(EvaluationSignature signature)
-			throws ExertionException {
-		return new EvaluationTask(signature);
-	}
-
-	public static EvaluationTask task(Evaluation evaluator) throws ExertionException, SignatureException {
-		try {
-			return new EvaluationTask(evaluator);
-		} catch (Exception e) {
-			throw new ExertionException(e);
-		}
-	}
-
 	public static Signature builder(Signature signature) {
 		signature.setType(Type.BUILDER);
 		return signature;
@@ -1286,11 +1273,6 @@ public class operator {
 	public static Signature type(Signature signature, Signature.Type type) {
 		signature.setType(type);
 		return signature;
-	}
-
-	public static EvaluationTask task(EvaluationSignature signature,
-									  Context context) throws ExertionException {
-		return new EvaluationTask(signature, context);
 	}
 
 	public static Fidelity cFi(String componentPath, String fidelity) {
@@ -1544,27 +1526,56 @@ public class operator {
 		}
 	}
 
-	public static ObjectTask task(ObjectSignature signature)
-			throws SignatureException {
-		return new ObjectTask(signature.getSelector(),
-				(ObjectSignature) signature);
-	}
+    public static Task sigTask(Signature signature, Object... items) throws SignatureException {
+        Operation operation = null;
+        String name = null;
+        String selector = null;
+        List<String> strings = new ArrayList();
+        Context context = null;
+        for (Object item : items) {
+            if (item instanceof String) {
+                strings.add((String) item);
+            } else if (item instanceof Operation) {
+                operation = ((Operation) item);
+            } else if (item instanceof Context) {
+                context =  ((Context) item);
+            }
+        }
+        Task task = null;
+        if (operation != null) {
+            selector = operation.selector;
+        } else {
+            selector = signature.getSelector();
+        }
+        if (strings.size()==1) {
+            name = strings.get(0);
+        } else if (strings.size()==2) {
+            // if both string then the first one is name
+            name = strings.get(0);
+            selector = strings.get(0);
+        }
+        if (selector != null) {
+            ((ServiceSignature)signature).setSelector(selector);
+        }
 
-	public static ObjectTask task(ObjectSignature signature, Context context)
-			throws SignatureException {
-		return new ObjectTask(signature.getSelector(), signature, context);
-	}
+        if (name == null) {
+            name = signature.getSelector();
+        }
 
-	public static Task task(String name, Signature signature, Context context)
-			throws SignatureException {
-		Task task = task(signature, context);
-		task.setName(name);
-		return task;
-	}
-
-	public static Task task(Signature signature) throws SignatureException {
-		return task(signature, null);
-	}
+        if (signature.getClass() == ObjectSignature.class) {
+            task = new ObjectTask(name, signature);
+        } else if (signature.getClass() == NetSignature.class) {
+            task = new NetTask(name, signature);
+        } else if (signature.getClass() == EvaluationSignature.class) {
+            task = new EvaluationTask(name, (EvaluationSignature)signature);
+        } else if (signature.getClass() == NetSignature.class) {
+            task = new Task(name, signature);
+        }
+        if (context != null) {
+            task.setContext(context);
+        }
+        return task;
+    }
 
 	public static ModelingTask modelerTask(String name, Signature signature)
 			throws SignatureException {
@@ -1588,60 +1599,103 @@ public class operator {
 		return task;
 	}
 
-	public static Task task(Signature signature, Context context)
-			throws SignatureException {
-		Task task;
-		if (signature instanceof NetSignature) {
-			task = new NetTask(signature, context);
-		} else if (signature instanceof ObjectSignature) {
-			task = new ObjectTask(signature, context);
-		} else if (signature instanceof EvaluationSignature) {
-			task = new EvaluationTask((EvaluationSignature) signature, context);
-		} else {
-			task = new Task(signature, context);
-		}
-		if (((ServiceSignature) signature).isProvisionable())
-			task.setProvisionable(true);
-		return task;
-	}
+	public static Task task(Object... items) throws ExertionException {
+		if (items.length == 1 &&  items[0] instanceof Evaluation) {
+            // evaluation task for a single evalution
+            try {
+                return new EvaluationTask((Evaluation) items[0]);
+            } catch (RemoteException | ContextException e) {
+                throw new ExertionException(e);
+            }
+        }
 
-	public static Task batch(String name, Object... elems)
-			throws ExertionException {
-		Task batch = task(name, elems);
-		if (batch.getSelectedFidelity().getSelects().size() > 1)
-			return batch;
-		else
-			throw new ExertionException(
-					"A batch should comprise of more than one signature.");
-	}
+		Operation operation = null;
+        String name = null;
+        String selector = null;
+        List<String> strings = new ArrayList();
+        List<Signature> sigs = new ArrayList();
+        Signature srvSig = null;
+        Context context = null;
+        ControlContext cc = null;
+        // structural pass
+        for (Object item : items) {
+            if (item instanceof String) {
+                strings.add((String) item);
+            } else if (item instanceof Operation) {
+                operation = ((Operation) item);
+            } if (item instanceof ControlContext) {
+                cc = (ControlContext) item;
+            } else if (item instanceof Context) {
+                context = ((Context) item);
+            } else if (item instanceof Signature) {
+				sigs.add((Signature) item);
+			}
+        }
 
-	public static Task task(String name, Object... elems)
-			throws ExertionException {
-		Context context = null;
-		List<Signature> ops = new ArrayList();
-		String tname;
-		if (name == null || name.length() == 0)
-			tname = getUnknown();
-		else
-			tname = name;
-		Task task = null;
+        if (sigs.size() == 1) {
+            srvSig = sigs.get(0);
+        } else if (sigs.size() > 1) {
+            for (Signature s : sigs) {
+                if (s.getType() == Signature.SRV) {
+                    srvSig = s;
+                    break;
+                }
+            }
+        }
+
+        if (srvSig != null) {
+            if (operation != null) {
+                selector = operation.selector;
+            } else {
+                selector = srvSig.getSelector();
+            }
+
+            if (name == null) {
+                name = srvSig.getSelector();
+            }
+        }
+        if (strings.size()==1) {
+            name = strings.get(0);
+        } else if (strings.size()==2) {
+            // if both string then the first one is name
+            name = strings.get(0);
+            selector = strings.get(0);
+        }
+        if (selector != null) {
+            ((ServiceSignature)srvSig).setSelector(selector);
+        }
+
+        ServiceFidelity sigFi = null;
+        Task task = null;
+        // construction phase
+        if (srvSig != null) {
+            try {
+				if (((ServiceSignature)srvSig).isModelerSignature()) {
+					task = (Task) modelerTask(name, srvSig);
+				} else if (srvSig.getClass() == ObjectSignature.class) {
+                    task = new ObjectTask(name, srvSig);
+                } else if (srvSig.getClass() == NetSignature.class) {
+                    task = new NetTask(name, srvSig);
+                } else if (srvSig.getClass() == EvaluationSignature.class) {
+                    task = new EvaluationTask(name, (EvaluationSignature)srvSig);
+                } else if (srvSig.getClass() == ServiceSignature.class) {
+                    task = new Task(name, srvSig);
+                }
+            } catch (SignatureException e) {
+                throw new ExertionException(e);
+            }
+            sigFi = new ServiceFidelity(name, sigs);
+        }
+
 		FidelityManager fiManager = null;
 		Strategy.FidelityMangement fm = null;
 		Access access = null;
 		Flow flow = null;
 		List<ServiceFidelity> fis = new ArrayList<>();
 		MorphFidelity mFi = null;
-		ControlContext cc = null;
-		for (Object o : elems) {
-			if (o instanceof ControlContext) {
-				cc = (ControlContext) o;
-			} else if (o instanceof Context) {
-				context = (Context) o;
-			} else if (o instanceof Signature) {
-				ops.add((Signature) o);
-			} else if (o instanceof String) {
-				tname = (String) o;
-			} else if (o instanceof Access) {
+        // configuration pass
+		for (Object o : items) {
+            if (o instanceof Access) {
 				access = (Access) o;
 			} else if (o instanceof Flow) {
 				flow = (Flow) o;
@@ -1655,65 +1709,37 @@ public class operator {
 				fm = (Strategy.FidelityMangement) o;
 			}
 		}
-		Signature ss = null;
-		if (ops.size() == 1) {
-			ss = ops.get(0);
-		} else if (ops.size() > 1) {
-			for (Signature s : ops) {
-				if (s.getType() == Signature.SRV) {
-					ss = s;
-					break;
-				}
-			}
-		}
-        ServiceFidelity srvFi = null;
-        ServiceFidelity sigFi = null;
-        if (ss != null) {
-			try {
-				if (((ServiceSignature)ss).isModelerSignature()) {
-					task = (Task) modelerTask(tname, ss);
-				} else if (ss instanceof NetSignature) {
-					task = new NetTask(tname, ss);
-				} else if (ss instanceof ObjectSignature) {
-					task = new ObjectTask(ss.getSelector(), (ObjectSignature) ss);
-					task.setName(tname);
-				} else if (ss instanceof EvaluationSignature) {
-					task = new EvaluationTask(tname, (EvaluationSignature) ss);
-				} else if (ss instanceof ServiceSignature) {
-					task = new Task(tname, ss);
-				}
-			} catch (SignatureException e) {
-				throw new ExertionException(e);
-			}
-            sigFi = new ServiceFidelity(tname, ops);
-		}
 
 		if (context == null) {
 			context = new PositionalContext();
 		}
 
 		if (fis.size() > 0 || mFi != null) {
-			task = new Task(tname);
+			task = new Task(name);
 		}
 
 		task.setContext(context);
+        if (cc != null) {
+            task.setControlContext(cc);
+        }
 
-		if (fis.size() > 0) {
-            srvFi = new ServiceFidelity(tname, fis);
+        ServiceFidelity srvFi = null;
+        if (fis.size() > 0) {
+            srvFi = new ServiceFidelity(name, fis);
         }
 
         if (sigFi != null) {
-            sigFi.setName(tname);
-            sigFi.setPath(tname);
-            task.putFidelity(tname, sigFi);
+            sigFi.setName(name);
+            sigFi.setPath(name);
+            task.putFidelity(name, sigFi);
 			task.setSelectedFidelity(sigFi);
 			task.setSelectedFidelitySelector(sigFi.getName());
 		}
 
         if (srvFi != null) {
-            srvFi.setName(tname);
-            srvFi.setPath(tname);
-            task.putFidelity(tname, srvFi);
+            srvFi.setName(name);
+            srvFi.setPath(name);
+            task.putFidelity(name, srvFi);
             task.setSelectedFidelity(fis.get(0));
             task.setSelectedFidelitySelector(fis.get(0).getName());
             for (ServiceFidelity fi : fis) {
@@ -1726,10 +1752,10 @@ public class operator {
             ServiceFidelity first = (ServiceFidelity) mFi.getFidelity().getSelects().get(0);
             mFi.setName(task.getName());
             mFi.setPath(task.getName());
-            mFi.getFidelity().setPath(tname);
+            mFi.getFidelity().setPath(name);
             mFi.getFidelity().setSelect(first);
             for (Object fi : sList) {
-                ((ServiceFidelity)fi).setPath(tname);
+                ((ServiceFidelity)fi).setPath(name);
             }
             task.putFidelity(task.getName(), mFi.getFidelity());
             task.setSelectedFidelitySelector(first.getName());
@@ -1767,7 +1793,7 @@ public class operator {
 		if (cc != null) {
 			task.updateStrategy(cc);
 		}
-		if (ss != null && ((ServiceSignature) ss).isProvisionable()) {
+		if (srvSig != null && ((ServiceSignature) srvSig).isProvisionable()) {
 			task.setProvisionable(true);
 		}
 
@@ -1880,7 +1906,7 @@ public class operator {
 
 	public static <E extends Exertion> E xrt(String name, Object... elems)
 			throws ExertionException, ContextException, SignatureException {
-		return (E) exertion(name, elems);
+		return (E) exertion(name, (Object[])elems);
 	}
 
 	public static <E extends Exertion> E exertion(String name, Object... items) throws ExertionException,
@@ -1909,7 +1935,7 @@ public class operator {
 			j.setName(name);
 			return (E) j;
 		} else {
-			return (E)task(name, items);
+			return (E)task(items);
 		}
 	}
 

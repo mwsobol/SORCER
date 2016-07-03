@@ -47,7 +47,7 @@ public class EvaluationTask extends Task {
 	}
 
 	public EvaluationTask(Evaluation evaluator) throws ContextException, RemoteException {
-		super(((Identifiable) evaluator).getName());
+		super(evaluator.getName());
 		EvaluationSignature es = new EvaluationSignature(evaluator);
 		addSignature(es);
 		es.setEvaluator(evaluator);

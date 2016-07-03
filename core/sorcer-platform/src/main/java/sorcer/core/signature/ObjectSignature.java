@@ -381,13 +381,9 @@ public class ObjectSignature extends ServiceSignature {
 				ServiceShell shell = new ServiceShell(mog);
 				return context(shell.exert(args));
 			} else if (mog instanceof Context) {
-				try {
-					argTypes = new Class[] { Context.class };
-					return exert(task(this, (Context)mog));
-				} catch (SignatureException e) {
-					throw new MogramException(e);
-				}
-			}
+                argTypes = new Class[] { Context.class };
+                return exert(task(this, (Context)mog));
+            }
 		}
 		return null;
 	}

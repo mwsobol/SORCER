@@ -831,10 +831,11 @@ public class ServiceShell implements RemoteServiceShell, Client, Callable {
 				} catch (ContextException e) {
 					throw new ExertionException(e);
 				}
+				items.add(exertion.getName());
 				items.add(tc);
 				items.add(cc);
 				items.addAll(sigs);
-				closedTask = task(exertion.getName(), items.toArray());
+				closedTask = task(items.toArray());
 			}
 		}
 		try {

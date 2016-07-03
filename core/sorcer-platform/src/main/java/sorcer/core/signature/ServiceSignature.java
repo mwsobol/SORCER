@@ -600,12 +600,8 @@ public class ServiceSignature implements Signature, SorcerConstants {
 			 cxt = context(exert(mogram, txn, args));
 		}
 		Task out = null;
-		try {
-			out = task(this, cxt);
-		} catch (SignatureException e) {
-			throw new MogramException(e);
-		}
-		Object result = exert(out);
+        out = task(this, cxt);
+        Object result = exert(out);
 		if (result instanceof Context)
 			return (Context)result;
 		else

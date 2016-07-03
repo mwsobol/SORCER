@@ -233,7 +233,7 @@ public class NetTaskExertions {
 	public void batchTask() throws Exception {
 		// batch for the composition f1(f2(f3((x1, x2), f4(x1, x2)), f5(x1, x2))
 		// shared context with named paths
-		Task batch3 = batch("batch3",
+		Task batch3 = task("batch3",
 				type(sig("multiply", Multiplier.class, result("subtract/x1", Signature.Direction.IN)), Signature.PRE),
 				type(sig("add", Adder.class, result("subtract/x2", Signature.Direction.IN)), Signature.PRE),
 				sig("subtract", Subtractor.class, result("result/y", inPaths("subtract/x1", "subtract/x2"))),

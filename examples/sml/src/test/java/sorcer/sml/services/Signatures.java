@@ -60,7 +60,7 @@ public class Signatures {
 		logger.info("provider of s: " + prv);
 		assertTrue(prv instanceof Date);
 
-		logger.info("getTime: " + exec(xrt("gt", s)));
+//		logger.info("getTime: " + exec(xrt("gt", s)));
 		assertTrue(exec(xrt("gt", s)) instanceof Long);
 
 	}
@@ -77,7 +77,7 @@ public class Signatures {
 		logger.info("selector of s: " + selector(s));
 		logger.info("service type of s: " + type(s));
 		assertTrue(prv instanceof Date);
-		logger.info("time: " + exec(xrt("time", s)));
+//		logger.info("time: " + exec(xrt("time", s)));
 		assertTrue(exec(xrt("time", s)) instanceof Long);
 
 	}

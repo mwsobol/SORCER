@@ -39,6 +39,7 @@ import java.util.Map;
 
 import static org.fusesource.jansi.Ansi.ansi;
 
+@SuppressWarnings("unchecked")
 public class EmxCmd extends ShellCmd {
 
 	{
