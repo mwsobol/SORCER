@@ -25,6 +25,7 @@ import sorcer.core.signature.NetSignature;
 import sorcer.service.Exec;
 import sorcer.service.Exertion;
 import sorcer.service.ServiceExertion;
+import sorcer.service.SignatureException;
 
 import javax.security.auth.Subject;
 import java.rmi.RemoteException;
@@ -101,7 +102,7 @@ public class ExertionEnvelop implements Entry {
 		return ee;
 	}
 
-	public static ExertionEnvelop getTemplate(Exertion ex) {
+	public static ExertionEnvelop getTemplate(Exertion ex) throws SignatureException {
 		if (ex == null || ex.getProcessSignature() == null)
 			return null;
 

@@ -36,7 +36,7 @@ public class ModelSignature extends ServiceSignature {
 
 	public ModelSignature(String selector, Class serviceType, String providerName, Arg... parameters) {
 		super(selector, selector);
-		this.serviceType = serviceType;
+		this.serviceType.providerType = serviceType;
 		if (providerName == null || providerName.length() == 0)
 			this.providerName = new ProviderName(ANY);
 		else

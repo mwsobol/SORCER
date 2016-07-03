@@ -61,6 +61,8 @@ public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Ob
 
     protected Mogram mogram;
 
+    protected Mogram child;
+
     protected boolean isTraced = false;
 
     protected Map<Long, Session> sessions;
@@ -133,7 +135,10 @@ public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Ob
     }
 
     public Mogram getMogram() {
-        return mogram;
+        if (child != null)
+            return child;
+        else
+            return mogram;
     }
 
     public void setMogram(Mogram mogram) {
@@ -354,6 +359,14 @@ public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Ob
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Mogram getChild() {
+        return child;
+    }
+
+    public void setChild(Mogram child) {
+        this.child = child;
     }
 
     @Override

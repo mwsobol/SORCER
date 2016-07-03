@@ -101,7 +101,7 @@ public interface Signature extends Item, Comparable, Dependency, Identifiable,
 	 *
 	 * @return name of service interface
 	 */
-	public Class<?> getServiceType();
+	public Class<?> getServiceType() throws SignatureException;
 
 	/**
 	 * Returns an array of service types of this signature
@@ -372,6 +372,54 @@ public interface Signature extends Item, Comparable, Dependency, Identifiable,
 		public String getName() {
 			return toString();
 		}
+	}
+
+    public static class Operation implements Serializable, Arg {
+        static final long serialVersionUID = 1L;
+
+        public String selector;
+
+        @Override
+        public String getName() {
+            return selector;
+        }
+    }
+
+	public static class ServiceType implements Serializable, Arg {
+		static final long serialVersionUID = 1L;
+		public String typeName;
+		public Class providerType;
+        // service types implemented by the service provider
+        public Class[] matchTypes;
+
+		@Override
+		public String getName() {
+			if (typeName != null) {
+				return typeName;
+			} else {
+				return providerType.toString();
+			}
+		}
+
+        public Class getProviderType() throws SignatureException {
+            return getProviderType(null);
+        }
+
+        public Class getProviderType(ClassLoader loader) throws SignatureException {
+            if (providerType != null) {
+                return providerType;
+            } else if (typeName != null) {
+                try {
+                    if (loader == null)
+                        providerType = Class.forName(typeName);
+                    else
+                        providerType = Class.forName(typeName, true, loader);
+                } catch (ClassNotFoundException e) {
+                    throw new SignatureException(e);
+                }
+            }
+            return providerType;
+        }
 	}
 
 	public static class ReturnPath<T> implements SignatureReturnPath, Serializable, Arg {

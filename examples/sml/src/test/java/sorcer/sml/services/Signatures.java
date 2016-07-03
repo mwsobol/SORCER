@@ -256,6 +256,21 @@ public class Signatures {
 		assertEquals(100.0, value(context(out), "result/y"));
 	}
 
+
+	@Test
+	public void signatureWithProviderName() throws Exception  {
+		String group = System.getProperty("user.name");
+
+		Task t5 = task("t5", sig(type("sorcer.arithmetic.provider.Adder"), op("add"),
+				types(Service.class, Provider.class),
+				// comma separated list of hosts, when empty localhost is a default locator
+				srvName("Adder", locators(), group)),
+				cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0), result("result/y")));
+
+		Exertion out = exert(t5);
+		assertEquals(100.0, value(context(out), "result/y"));
+	}
+
 	@Test
 	public void referencingNamedRemoteProvider() throws Exception {
 

@@ -49,15 +49,11 @@ public class ServiceSignature implements Signature, SorcerConstants {
 
 	protected String name;
 
-	/** the name of operation */
-	protected String selector;
-
 	protected String prefix;
 
 	protected String ownerID;
 
 	protected ReturnPath returnPath;
-
 
 	// the indicated usage of this signature
 	protected Set<Kind> rank = new HashSet<Kind>();
@@ -76,15 +72,15 @@ public class ServiceSignature implements Signature, SorcerConstants {
 
 	private ServiceID serviceID;
 
-	protected Class<?> serviceType;
+	/** the name of operation */
+	protected String selector;
+
+	protected ServiceType serviceType = new ServiceType();
+
+	// implementation of the service interface
+	protected Class<?> providerType;
 
 	private Strategy.Access accessType = Strategy.Access.PUSH;
-
-	// service typed to be mached by its service proxy
-	protected Class[] matchTypes;
-
-	// implementation of the serviceType
-	protected Class<?> providerType;
 
 	protected Exertion exertion;
 
@@ -138,6 +134,14 @@ public class ServiceSignature implements Signature, SorcerConstants {
 		this.selector = selector;
 	}
 
+    public ServiceSignature(String selector, ServiceType serviceType, ProviderName providerName) {
+        this.name = selector;
+        this.selector = selector;
+        this.serviceType = serviceType;
+        this.providerName =  providerName;
+        execType = Type.PROC;
+    }
+
 	public void setExertion(Exertion exertion) throws ExertionException {
 		this.exertion = exertion;
 	}
@@ -146,16 +150,16 @@ public class ServiceSignature implements Signature, SorcerConstants {
 		return exertion;
 	}
 
-	public Class<?> getServiceType() {
-		return serviceType;
+	public Class getServiceType() throws SignatureException {
+		return serviceType.getProviderType();
 	}
 
 	public Class[] getMatchTypes() {
-		return matchTypes;
+		return serviceType.matchTypes;
 	}
 
 	public void setMatchTypes(Class[] matchTypes) {
-		this.matchTypes = matchTypes;
+		this.serviceType.matchTypes = matchTypes;
 	}
 
 	/**
@@ -190,7 +194,7 @@ public class ServiceSignature implements Signature, SorcerConstants {
 	}
 
 	public void setServiceType(Class<?> serviceType) {
-		this.serviceType = serviceType;
+		this.serviceType.providerType = serviceType;
 	}
 
 	public String getSelector() {
@@ -363,8 +367,8 @@ public class ServiceSignature implements Signature, SorcerConstants {
 			return false;
 		}
 		Method[] methods = null;
-		if (serviceType.isInterface())
-			methods = serviceType.getMethods();
+		if (serviceType.providerType.isInterface())
+			methods = serviceType.providerType.getMethods();
 		else
 			methods = providerType.getMethods();
 
@@ -486,7 +490,7 @@ public class ServiceSignature implements Signature, SorcerConstants {
 	}
 
 	public boolean isService() {
-		return serviceType.isInterface();
+		return serviceType.providerType.isInterface();
 	}
 
 	public String getPrefix() {
@@ -630,8 +634,8 @@ public class ServiceSignature implements Signature, SorcerConstants {
 	}
 
 	public boolean isModelerSignature() {
-		if(serviceType != null)
-			return (Modeler.class.isAssignableFrom(serviceType));
+		if(serviceType.providerType != null)
+			return (Modeler.class.isAssignableFrom(serviceType.providerType));
 		else
 			return false;
 	}

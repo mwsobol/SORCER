@@ -23,6 +23,7 @@ import net.jini.config.EmptyConfiguration;
 import sorcer.core.provider.Provider;
 import sorcer.service.Service;
 import sorcer.service.Signature;
+import sorcer.service.SignatureException;
 
 /**
  * A class which supports a simple Jini multicast lookup. It doesn't register
@@ -46,7 +47,7 @@ public class ProviderLookup extends ServiceAccessor {
      * @param signature a provider signature
      * @return a SORCER service provider
      */
-    public Provider getProvider(Signature signature) {
+    public Provider getProvider(Signature signature) throws SignatureException {
         return (Provider) getService(signature);
     }
 

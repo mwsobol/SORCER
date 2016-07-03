@@ -37,6 +37,7 @@ import sorcer.core.SorcerConstants;
 import sorcer.jini.lookup.entry.SorcerServiceInfo;
 import sorcer.service.DynamicAccessor;
 import sorcer.service.Signature;
+import sorcer.service.SignatureException;
 
 import java.io.IOException;
 import java.rmi.RemoteException;
@@ -300,7 +301,7 @@ public class ServiceAccessor implements DynamicAccessor {
 		sdManager = null;
 	}
 
-    public ServiceItem getServiceItem(Signature signature) {
+    public ServiceItem getServiceItem(Signature signature) throws SignatureException {
 		if (signature.getMatchTypes() != null) {
 			return getServiceItem(signature.getProviderName().getName(), signature.getMatchTypes());
 		} else {
@@ -308,7 +309,7 @@ public class ServiceAccessor implements DynamicAccessor {
 		}
     }
 
-    public  Object getService(Signature signature) {
+    public  Object getService(Signature signature) throws SignatureException {
         ServiceItem serviceItem = getServiceItem(signature);
         return serviceItem == null ? null : serviceItem.service;
     }

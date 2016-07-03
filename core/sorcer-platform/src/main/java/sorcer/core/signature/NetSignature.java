@@ -68,9 +68,13 @@ public class NetSignature extends ObjectSignature {
 		providerName = new ProviderName();
 	}
 
-	public NetSignature(ServiceSignature signature) {
-		this(signature.getSelector(), signature.getServiceType(), signature
-				.getProviderName().getName());
+	public NetSignature(ServiceSignature signature) throws SignatureException {
+		this.name = signature.name;
+		this.selector = signature.selector;
+		this.providerName =  signature.providerName;
+		this.serviceType = signature.serviceType;
+		this.providerType = signature.providerType;
+		this.returnPath = signature.returnPath;
 	}
 
 	public NetSignature(Class<?> serviceType) {
@@ -117,8 +121,8 @@ public class NetSignature extends ObjectSignature {
 	public NetSignature(String selector, Class<?> serviceType,
 						String providerName, Type methodType, Version version) {
 		this.version = version!=null ? version.getName() : null;
-		this.serviceType = serviceType;
-        if (serviceType!=null && version==null)
+		this.serviceType.providerType = serviceType;
+        if (serviceType != null && version == null)
             this.version = MavenUtil.findVersion(serviceType);
 		if (providerName == null || providerName.length() == 0)
 			this.providerName = new ProviderName(ANY);
@@ -138,7 +142,7 @@ public class NetSignature extends ObjectSignature {
     public NetSignature(String selector, String strServiceType) {
         try {
             Class serviceType = Class.forName(strServiceType);
-            this.serviceType = serviceType;
+            this.serviceType.providerType = serviceType;
             if (serviceType!=null) this.version = MavenUtil.findVersion(serviceType);
             setSelector(selector);
         } catch (ClassNotFoundException e) {
@@ -186,7 +190,7 @@ public class NetSignature extends ObjectSignature {
 		attributes.addAll(attributes);
 	}
 
-    public Provider getService() {
+    public Provider getService() throws SignatureException {
         if (provider == null) return provider;
         try {
             // ping provider to see if alive
@@ -456,7 +460,7 @@ public class NetSignature extends ObjectSignature {
 		Mogram result = null;
 		try {
 			if (mog != null && cxt == null) {
-				if (serviceType == RemoteServiceShell.class) {
+				if (serviceType.providerType == RemoteServiceShell.class) {
 					Exerter prv = (Exerter) Accessor.get().getService(sig(RemoteServiceShell.class));
 					result = prv.exert(mog, null, new Arg[] {});
 				} else {

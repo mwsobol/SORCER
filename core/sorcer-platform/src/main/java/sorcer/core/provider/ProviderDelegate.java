@@ -930,7 +930,7 @@ public class ProviderDelegate {
 		}
 	}
 
-	private boolean isBeanable(Task task) {
+	private boolean isBeanable(Task task) throws SignatureException {
 		if (serviceComponents == null || serviceComponents.size() == 0)
 			return false;
 		Class serviceType = task.getProcessSignature().getServiceType();
@@ -950,7 +950,12 @@ public class ProviderDelegate {
 	private Task useServiceComponents(Task task, Transaction transaction, Arg... args)
 			throws ContextException {
 		String selector = task.getProcessSignature().getSelector();
-		Class serviceType = task.getProcessSignature().getServiceType();
+		Class serviceType = null;
+		try {
+			serviceType = task.getProcessSignature().getServiceType();
+		} catch (SignatureException e) {
+			throw new ContextException(e);
+		}
 		Iterator i = serviceComponents.entrySet().iterator();
 		Map.Entry next;
 		Object impl = null;
@@ -1734,7 +1739,12 @@ public class ProviderDelegate {
 				return false;
 			}
 		}
-		Class st = ((NetSignature) task.getProcessSignature()).getServiceType();
+		Class st = null;
+		try {
+			st = ((NetSignature) task.getProcessSignature()).getServiceType();
+		} catch (SignatureException e) {
+			throw new ExertionException(e);
+		}
 
 		if (publishedServiceTypes == null) {
 			servicetask.getContext().reportException(

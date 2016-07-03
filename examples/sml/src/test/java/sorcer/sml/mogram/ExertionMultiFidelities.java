@@ -15,10 +15,9 @@ import sorcer.arithmetic.provider.impl.SubtractorImpl;
 import sorcer.core.plexus.Morpher;
 import sorcer.core.provider.Jobber;
 import sorcer.core.provider.rendezvous.ServiceJobber;
-import sorcer.core.service.Projection;
-import sorcer.service.*;
-
-import java.util.List;
+import sorcer.service.Context;
+import sorcer.service.Job;
+import sorcer.service.Task;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -224,45 +223,5 @@ public class ExertionMultiFidelities {
         logger.info("job context: " + out);
         assertTrue(value(out, "j1/t3/result/y").equals(-1540.0));
     }
-
-
-	@Test
-	public void projectionTests() throws Exception {
-		ServiceFidelity<Fidelity> sFi1 = fi("job1", cFi("j1/j2", "net"),
-				cFi("j1/t3", "object2"), cFi("j1/j2/t4", "object2"), cFi("j1/j2/t5", "object2"));
-
-		ServiceFidelity<Fidelity> sFi2 = fi("job2", cFi("j1/j2", "net"),
-				cFi("j1/t3", "object2"), cFi("j1/j2/t4", "object2"), cFi("j1/j2/t5", "object2"), sFi1);
-
-		ServiceFidelity<Fidelity> sFi3 = fi("job3", cFi("j1/j2", "net"),
-				cFi("j1/t3", "object2"), cFi("j1/j2/t4", "object2"), cFi("j1/j2/t5", "object2"), sFi1, sFi2);
-
-		Projection p1 = po(sFi1);
-		logger.info("projection: " + p1);
-
-		Projection p2 = po(sFi2);
-		logger.info("projection: " + p2);
-
-		Projection p3 = po(sFi3);
-		logger.info("projection: " + p3);
-
-		List<Fidelity> job1Fis1 = p1.getFidelities("job1");
-		logger.info("job1Fis1: " + job1Fis1);
-
-		List<Fidelity> job1Fis2 = p2.getFidelities("job2");
-		logger.info("job1Fis2: " + job1Fis2);
-		assertTrue(job1Fis1.equals(job1Fis2));
-
-		List<Fidelity> job1Fis3 = p3.getFidelities("job3");
-		logger.info("job1Fis3: " + job1Fis3);
-		assertTrue(job1Fis1.equals(job1Fis3));
-
-        List<Fidelity> job2Fis2 = p2.getFidelities("job2");
-        logger.info("job2Fis2: " + job2Fis2);
-
-        List<Fidelity> job2Fis3 = p3.getFidelities("job2");
-        logger.info("job2Fis3: " + job2Fis3);
-        assertTrue(job2Fis2.equals(job2Fis3));
-	}
 
 }

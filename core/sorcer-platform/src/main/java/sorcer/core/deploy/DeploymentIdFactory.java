@@ -21,6 +21,7 @@ import org.rioproject.opstring.ServiceElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.service.Signature;
+import sorcer.service.SignatureException;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -43,7 +44,7 @@ public class DeploymentIdFactory {
      *
      * @throws NoSuchAlgorithmException
      */
-    public static String create(List<Signature> list) throws NoSuchAlgorithmException {
+    public static String create(List<Signature> list) throws NoSuchAlgorithmException, SignatureException {
         StringBuilder ssb = new StringBuilder();
         List<String> items = new ArrayList<String>();
         for (Signature s : list) {

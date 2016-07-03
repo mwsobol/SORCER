@@ -463,15 +463,15 @@ public class operator {
 			cxt.getMogramStrategy().setAccessType(accessType);
 		if (flowType != null)
 			cxt.getMogramStrategy().setFlowType(flowType);
-		if (sig != null)
-			cxt.setSubject(sig.getSelector(), sig.getServiceType());
-		if (cxt instanceof SrvModel && autoDeps) {
-			try {
-				cxt = new SrvModelAutoDeps((SrvModel) cxt).get();
-			} catch (SortingException e) {
-				throw new ContextException("Problem with dependencies: " + e);
-			}
-		}
+        try {
+            if (sig != null)
+                cxt.setSubject(sig.getSelector(), sig.getServiceType());
+            if (cxt instanceof SrvModel && autoDeps) {
+                cxt = new SrvModelAutoDeps((SrvModel) cxt).get();
+            }
+        } catch (SignatureException | SortingException e) {
+            throw new ContextException(e);
+        }
 
 		if (cxt.getFidelityManager() == null && fm == Strategy.FidelityMangement.YES) {
 			((ServiceContext)cxt).setFidelityManager(new FidelityManager(cxt));
@@ -864,7 +864,7 @@ public class operator {
 		return model;
 	}
 
-	public static Class type(Signature signature) {
+	public static Class type(Signature signature) throws SignatureException {
 		return signature.getServiceType();
 	}
 
@@ -879,14 +879,14 @@ public class operator {
 
 	public static Signature sig(String name, String operation, Class serviceType)
 			throws SignatureException {
-		ServiceSignature signature = (ServiceSignature) sig(operation, serviceType, new Arg[]{});
+		ServiceSignature signature = (ServiceSignature) sig(operation, serviceType, new Object[]{});
 		signature.setName(name);
 		return signature;
 	}
 
 	public static Signature sig(String operation, Class serviceType)
 			throws SignatureException {
-		return sig(operation, serviceType, new Arg[]{});
+		return sig(operation, serviceType, new Object[]{});
 	}
 
 	public static Signature matchTypes(Signature signature, Class... matchTypes)
@@ -929,20 +929,13 @@ public class operator {
 		}
 	}
 
-	public static Signature sig(Class serviceType, Arg... args) throws SignatureException {
-		if (args == null || args.length == 0)
-			return defaultSig(serviceType);
-		else
-			return sig("?", serviceType, args);
-	}
-
 	public static Signature sig(String operation, Signature signature) throws SignatureException {
 		((ServiceSignature)signature).setSelector(operation);
 		((ServiceSignature)signature).setName(operation);
 		return signature;
 	}
 
-	public static Signature sig(String operation, Object provider, Arg... args) throws SignatureException {
+	public static Signature sig(String operation, Object provider, Object... args) throws SignatureException {
 		ObjectSignature sig = new ObjectSignature();
 		sig.setName(operation);
 		sig.setSelector(operation);
@@ -966,18 +959,59 @@ public class operator {
 		return sig;
 	}
 
-	public static Signature sig(String name, String operation, Class serviceType, Arg... args) throws SignatureException {
+	public static Signature sig(String name, String operation, Class serviceType, Object... args) throws SignatureException {
 		ServiceSignature s = (ServiceSignature) sig(operation, serviceType, args);
 		s.setName(name);
 		return s;
 	}
 
-    public static Signature sig(String operation, Class serviceType, Arg... args) throws SignatureException {
+    public static Signature sig(ServiceType serviceType, Object... items) throws SignatureException {
+        if (items == null || items.length == 0)
+            return defaultSig(serviceType.providerType);
+
+        String operation = null;
+        for (Object item : items) {
+            if (item instanceof String) {
+                operation = (String) item;
+            } else if (item instanceof Operation) {
+                operation = ((Operation)item).selector;
+            }
+        }
+        if (operation == null) {
+            return sig("?", serviceType.providerType, items);
+        } else {
+            Object[] dest = new Object[items.length+1];
+            System.arraycopy(items,  0, dest,  1, items.length);
+            dest[0] = serviceType;
+            return sig(operation, Object.class, dest);
+        }
+    }
+
+
+    public static Signature sig(Class serviceType, Object... items) throws SignatureException {
+        if (items == null || items.length == 0)
+            return defaultSig(serviceType);
+
+        String operation = null;
+        for (Object item : items) {
+            if (item instanceof String) {
+                operation = (String) item;
+            }
+        }
+        if (operation == null) {
+            return sig("?", serviceType, items);
+        } else {
+            return sig(operation, serviceType, items);
+        }
+    }
+
+    public static Signature sig(String operation, Class serviceType, Object... items) throws SignatureException {
         ProviderName providerName = null;
         Provision p = null;
         List<MapContext> connList = new ArrayList<MapContext>();
-        if (args != null) {
-            for (Object o : args) {
+        ServiceType srvType = null;
+        if (items != null) {
+            for (Object o : items) {
                 if (o instanceof ProviderName) {
                     providerName = (ProviderName)o;
                     if (!(providerName instanceof ServiceName))
@@ -986,6 +1020,18 @@ public class operator {
                     p = (Provision) o;
                 } else if (o instanceof MapContext) {
                     connList.add(((MapContext) o));
+                } else if (o instanceof ServiceType) {
+                    srvType = (ServiceType) o;
+                    // check if class can be loades
+//                    serviceType = srvType.providerType;
+//                    try {
+//                        if (serviceType == null) {
+//                            serviceType = srvType.getProviderType();
+//                        }
+//                    } catch (SignatureException se) {
+//                        logger.warn("failed to load type for: {}", srvType.typeName);
+//                        serviceType = Object.class;
+//                    }
                 }
             }
         }
@@ -995,7 +1041,9 @@ public class operator {
 //		if (Modeler.class.isAssignableFrom(serviceType)) {
 //			sig = new ModelSignature(operation, serviceType, providerName, args);
 //		} else
-        if (serviceType.isInterface()) {
+        if (srvType != null) {
+            sig = new ServiceSignature(operation, srvType, providerName);
+        } else if (serviceType.isInterface()) {
             sig = new NetSignature(operation, serviceType, providerName);
         } else {
             sig = new ObjectSignature(operation, serviceType);
@@ -1015,8 +1063,8 @@ public class operator {
         if (p != null)
             ((ServiceSignature) sig).setProvisionable(p);
 
-        if (args.length > 0) {
-            for (Object o : args) {
+        if (items.length > 0) {
+            for (Object o : items) {
                 if (o instanceof Type) {
                     sig.setType((Type) o);
                 } else if (o instanceof Operating) {
@@ -1059,6 +1107,24 @@ public class operator {
         }
 
         return sig;
+    }
+
+    public static Operation op(String selecor) {
+        Operation sop = new Operation();
+        sop.selector = selecor;
+        return sop;
+    }
+
+    public static ServiceType type(Class providerType) {
+        ServiceType st = new ServiceType();
+        st.providerType = providerType;
+        return st;
+    }
+
+    public static ServiceType type(String typeName) {
+        ServiceType st = new ServiceType();
+        st.typeName = typeName;
+        return st;
     }
 
 	public static TypeList types(Class... types) {
@@ -2020,7 +2086,23 @@ public class operator {
 		} else
 			throw new ExertionException("No component exertion defined.");
 
+		unifyFiManager(job);
 		return job;
+	}
+
+	static private void unifyFiManager(Job job) {
+		List<Mogram> Mogram = job.getMograms();
+		FidelityManager root = (FidelityManager)job.getFidelityManager();
+        if (root != null) {
+            FidelityManager child = null;
+            for (Mogram m : Mogram) {
+                child = (FidelityManager) m.getFidelityManager();
+                root.getFidelities().putAll(child.getFidelities());
+                root.getMetafidelities().putAll(child.getMetafidelities());
+                root.getMorphFidelities().putAll(child.getMorphFidelities());
+                ((ServiceMogram) m).setFidelityManager(root);
+            }
+        }
 	}
 
 	public static Object get(Context context) throws ContextException,

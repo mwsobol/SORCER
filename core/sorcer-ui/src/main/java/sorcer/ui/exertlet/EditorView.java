@@ -539,15 +539,7 @@ public class EditorView extends JPanel implements HyperlinkListener {
 				//com.sun.jini.start.ClassLoaderUtil.displayContextClassLoaderTree();
 				out = mogram.exert();
 			}
-		} catch (RemoteException e) {
-			openOutPanel(SorcerUtil.stackTraceToString(e));
-			logger.warn("Error while processing mogram", e);
-			return;
-		} catch (TransactionException e) {
-			openOutPanel(SorcerUtil.stackTraceToString(e));
-			logger.warn("Error while processing mogram", e);
-			return;
-		} catch (ExertionException e) {
+		} catch (RemoteException | SignatureException |TransactionException | ExertionException e) {
 			openOutPanel(SorcerUtil.stackTraceToString(e));
 			logger.warn("Error while processing mogram", e);
 			return;

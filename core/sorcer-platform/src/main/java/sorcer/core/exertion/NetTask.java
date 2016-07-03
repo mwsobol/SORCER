@@ -111,7 +111,7 @@ public class NetTask extends ObjectTask implements Invocation<Object> {
 		((NetSignature) getProcessSignature()).setProvider(provider);
 	}
 
-	public Service getService() {
+	public Service getService() throws SignatureException {
 		return ((NetSignature) getProcessSignature()).getService();
 	}
 

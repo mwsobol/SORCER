@@ -63,5 +63,5 @@ public interface DynamicAccessor {
      *
      * @return The first discovered service provider.
      */
-    Object getService(Signature signature);
+    Object getService(Signature signature) throws SignatureException;
 }

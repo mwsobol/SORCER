@@ -38,7 +38,7 @@ public class ProviderProvisionManager {
     private static final int MAX_ATTEMPTS = 3;
 
 
-    public static void provision(Exertion exertion, SpaceParallelDispatcher spaceExertDispatcher) {
+    public static void provision(Exertion exertion, SpaceParallelDispatcher spaceExertDispatcher) throws SignatureException {
         getInstance().doProvision(exertion, spaceExertDispatcher);
     }
 
@@ -48,7 +48,7 @@ public class ProviderProvisionManager {
         return instance;
     }
 
-    private void doProvision(Exertion exertion, SpaceParallelDispatcher spaceExertDispatcher) {
+    private void doProvision(Exertion exertion, SpaceParallelDispatcher spaceExertDispatcher) throws SignatureException {
         NetSignature sig = (NetSignature) exertion.getProcessSignature();
         // A hack to disable provisioning spacer itself
         if (!sig.getServiceType().getName().equals(Spacer.class.getName())) {
@@ -72,16 +72,26 @@ public class ProviderProvisionManager {
         }
 
         public void run() {
-            Service service = (Service) Accessor.get().getService(srvToProvision.getSignature());
+            Service service = null;
+            try {
+                service = (Service) Accessor.get().getService(srvToProvision.getSignature());
+            } catch (SignatureException e) {
+                logger.error("invalid signature" + srvToProvision);
+            }
             while (service==null && srvToProvision.getProvisionAttempts() < MAX_ATTEMPTS) {
                 srvToProvision.incrementProvisionAttempts();
                 try {
                     logger.info("Provisioning: " + srvToProvision.getSignature());
                     service = ServiceDirectoryProvisioner.getProvisioner().provision(srvToProvision.getSignature());
                 } catch (ProvisioningException pe) {
-                    String msg = "Problem provisioning " + srvToProvision.getSignature().getServiceType()
-                            + " (" + srvToProvision.getSignature().getProviderName() + ")"
-                            + " " + pe.getMessage();
+                    String msg = null;
+                    try {
+                        msg = "Problem provisioning " + srvToProvision.getSignature().getServiceType()
+                                + " (" + srvToProvision.getSignature().getProviderName() + ")"
+                                + " " + pe.getMessage();
+                    } catch (SignatureException e) {
+                        e.printStackTrace();
+                    }
                     logger.error(msg);
                 }
             }
@@ -102,7 +112,12 @@ public class ProviderProvisionManager {
     private void failExertionInSpace(SignatureElement sigEl, Exception exc) throws ExertionException {
         logger.info("Setting Failed state for service type: " + sigEl.getServiceType() + " exertion ID: " +
                 "" + sigEl.getExertion().getId());
-        ExertionEnvelop ee = ExertionEnvelop.getTemplate(sigEl.getExertion());
+        ExertionEnvelop ee = null;
+        try {
+            ee = ExertionEnvelop.getTemplate(sigEl.getExertion());
+        } catch (SignatureException e) {
+            throw new ExertionException(e);
+        }
 
         ExertionEnvelop result = null;
         result = sigEl.getSpaceExertDispatcher().takeEnvelop(ee);

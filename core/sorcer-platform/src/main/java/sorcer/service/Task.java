@@ -25,6 +25,8 @@ import sorcer.core.exertion.NetTask;
 import sorcer.core.exertion.ObjectTask;
 import sorcer.core.provider.ControlFlowManager;
 import sorcer.core.signature.NetSignature;
+import sorcer.core.signature.ObjectSignature;
+import sorcer.core.signature.ServiceSignature;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -123,29 +125,47 @@ public class Task extends ServiceExertion {
 		return this;
 	}
 
-	public void initDelegate() throws ContextException, ExertionException {
+	public void initDelegate() throws ContextException, ExertionException, SignatureException {
 		if (delegate != null && selectedFidelity != delegate.selectedFidelity) {
 			delegate = null;
 			dataContext.clearReturnPath();
 		}
 
-		if (delegate == null) {
-			Signature ps = selectedFidelity.select;
-			if (ps instanceof NetSignature) {
-				delegate = new NetTask(name);
-			} else {
-				delegate = new ObjectTask(name);
-			}
+		try {
+			if (delegate == null) {
+				ServiceSignature ts = (ServiceSignature) selectedFidelity.select;
+				if (ts.getClass() == ServiceSignature.class) {
+					ts = createSignature(ts);
+				}
+				if (ts instanceof NetSignature) {
+					delegate = new NetTask(name, ts);
+				} else {
+					delegate = new ObjectTask(name, ts);
+				}
+//				delegate.getSelectedFidelity().setSelect(ts);
 
-			delegate.setFidelityManager(getFidelityManager());
-			delegate.setFidelities(getFidelities());
-			delegate.setSelectedFidelity(getSelectedFidelity());
-			delegate.setServiceMorphFidelity(getServiceMorphFidelity());
-			delegate.setServiceMetafidelities(getServiceMetafidelities());
-			delegate.setSelectedFidelitySelector(serviceFidelitySelector);
-			delegate.setContext(dataContext);
-			delegate.setControlContext(controlContext);
+				delegate.setFidelityManager(getFidelityManager());
+				delegate.setFidelities(getFidelities());
+//				delegate.setSelectedFidelity(getSelectedFidelity());
+				delegate.setServiceMorphFidelity(getServiceMorphFidelity());
+				delegate.setServiceMetafidelities(getServiceMetafidelities());
+				delegate.setSelectedFidelitySelector(serviceFidelitySelector);
+				delegate.setContext(dataContext);
+				delegate.setControlContext(controlContext);
+			}
+		} catch (SignatureException e) {
+			throw new ExertionException(e);
 		}
+	}
+
+	private ServiceSignature createSignature(ServiceSignature signature) throws SignatureException {
+		ServiceSignature sig;
+		if (signature.getServiceType().isInterface()) {
+			sig = new NetSignature(signature);
+		} else {
+			sig = new ObjectSignature(signature);
+		}
+		return sig;
 	}
 
 	public Task doTask(Exertion xrt, Transaction txn) throws ExertionException {
@@ -197,7 +217,7 @@ public class Task extends ServiceExertion {
 		throw new ExertionException("Not supported method in this class");
 	}
 
-	public boolean isNetTask() {
+	public boolean isNetTask() throws SignatureException {
 		return getProcessSignature().getServiceType().isInterface();
 	}
 
@@ -229,7 +249,11 @@ public class Task extends ServiceExertion {
 		if (getProcessSignature() != null)
 			sb.append(getProcessSignature().getProviderName());
 		sb.append(", principal: ").append(getPrincipal());
-		sb.append(", serviceInfo: ").append(getServiceType());
+		try {
+			sb.append(", serviceInfo: ").append(getServiceType());
+		} catch (SignatureException e) {
+			e.printStackTrace();
+		}
 		sb.append(", selector: ").append(getSelector());
 		sb.append(", parent ID: ").append(parentId);
 
