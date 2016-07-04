@@ -347,7 +347,7 @@ public class ServiceShell implements RemoteServiceShell, Client, Callable {
 		Signature signature = exertion.getProcessSignature();
 		Object provider = null;
 		try {
-			// If the exertion is a job rearrange the inner exertions to make sure the
+			// If the exertion is a job rearrange the inner mograms to make sure the
 			// dependencies are not broken
 			if (exertion.isJob()) {
 				ExertionSorter es = new ExertionSorter(exertion);
@@ -579,7 +579,7 @@ public class ServiceShell implements RemoteServiceShell, Client, Callable {
 
 	/**
 	 * Depending on provider access type correct inconsistent signatures for
-	 * composite exertions only. Tasks go either to its provider directly or
+	 * composite mograms only. Tasks go either to its provider directly or
 	 * Spacer depending on their provider access type (PUSH or PULL).
 	 *
 	 * @return the corrected signature

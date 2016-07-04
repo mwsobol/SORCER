@@ -462,7 +462,7 @@ public class SrvModel extends ParModel<Object> implements Model, Invocation<Obje
                 signature = (Signature)subjectValue;
             }
             if (signature != null) {
-                Exertion out = operator.exertion(name, subjectValue, this).exert(txn, entries);
+                Exertion out = operator.xrt(name, subjectValue, this).exert(txn, entries);
                 Exertion xrt = out.exert();
                 return xrt.getDataContext();
             } else {

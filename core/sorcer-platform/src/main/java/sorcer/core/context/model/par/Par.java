@@ -259,7 +259,7 @@ public class Par<T> extends Entry<T> implements Variability<T>, Mappable<T>,
 				}
 
 				if (val instanceof Exertion) {
-					// TODO context binding for all exertions, works for tasks only
+					// TODO context binding for all mograms, works for tasks only
 					Context cxt = ((Exertion)val).getDataContext();
 					List<String> paths = ((ServiceContext)cxt).getPaths();
 					for (String an : (Set<String>)((ServiceContext)scope).keySet()) {

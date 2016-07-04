@@ -206,14 +206,6 @@ public class operator {
 		return (ControlContext) ((Exertion) exertion.getMogram(childName)).getControlContext();
 	}
 
-	public static Context cxt(Object... entries) throws ContextException {
-		return context(entries);
-	}
-
-	public static Context cxt(Mogram exertion) throws ContextException {
-		return context(exertion);
-	}
-
 	public static Context ccxt(Exertion exertion) throws ContextException {
 		return ((ServiceExertion) exertion).getControlContext();
 	}
@@ -252,12 +244,18 @@ public class operator {
 		return context(args);
 	}
 
+	public static Context cxt(Object... entries) throws ContextException {
+		return context(entries);
+	}
+
 	public static Context context(Object... entries) throws ContextException {
 		// do not create a context from Context, jut return
 		if (entries == null || entries.length == 0) {
 			return new ServiceContext();
 		} else if (entries.length == 1 && entries[0] instanceof Context) {
 			return (Context) entries[0];
+		} else if (entries.length == 1 && entries[0] instanceof Mogram) {
+			return ((Mogram)entries[0]).getContext();
 		}
 
 		Context cxt = null;
@@ -1807,8 +1805,8 @@ public class operator {
 		return task;
 	}
 
-	public static <M extends Mogram> M mog(Object... items) throws MogramException {
-		return mogram(items);
+	public static <M extends Model> M mdl(Object... items) throws ContextException, SortingException {
+		return model(items);
 	}
 
 	public static <M extends Model> M model(Object... items) throws ContextException, SortingException {
@@ -1867,6 +1865,16 @@ public class operator {
 		throw new ModelException("do not know what model to create");
 	}
 
+	public static List<Mogram> mograms(Mogram mogram) {
+		if (mogram instanceof Exertion)
+			return ((Exertion)mogram).getAllMograms();
+		else
+			return null;
+	}
+
+	public static <M extends Mogram> M mog(Object... items) throws MogramException {
+		return mogram(items);
+	}
 
 	public static <M extends Mogram> M mogram(Object... items) throws MogramException {
 		String name = "unknown" + count++;
@@ -1901,7 +1909,7 @@ public class operator {
 		}
 		try {
 			if ((hasSignature && hasContext || hasExertion) && !hasEntry) {
-				return (M) exertion(name, items);
+				return (M) xrt(name, items);
 			} else {
 				return model(items);
 			}
@@ -1911,9 +1919,9 @@ public class operator {
 		}
 	}
 
-	public static <E extends Exertion> E xrt(String name, Object... elems)
-			throws ExertionException, ContextException, SignatureException {
-		return (E) exertion(name, (Object[])elems);
+	public static <E extends Exertion> E xrt(String name, Object... items) throws ExertionException,
+			ContextException, SignatureException {
+		   return exertion(name, items);
 	}
 
 	public static <E extends Exertion> E exertion(String name, Object... items) throws ExertionException,
@@ -2108,7 +2116,7 @@ public class operator {
 //				logger.debug("to context: "
 //						+ ((Exertion) p.out).getDataContext().getName()
 //						+ " path: " + p.outPath);
-				// find component exertions for thir paths
+				// find component mograms for thir paths
 				if (!p.isExertional()) {
 					p.out = (Exertion)job.getComponentMogram(p.outComponentPath);
 					p.in = (Exertion)job.getComponentMogram(p.inComponentPath);
@@ -2457,15 +2465,8 @@ public class operator {
 		return values;
 	}
 
-	public static List<Mogram> exertions(Mogram mogram) {
-		if (mogram instanceof Exertion)
-			return ((Exertion)mogram).getAllMograms();
-		else
-			return null;
-	}
-
-	public static Mogram exertion(Exertion xrt, String componentExertionName) {
-		return xrt.getComponentMogram(componentExertionName);
+	public static Mogram xrt(Exertion exertion, String componentExertionName) {
+		return exertion.getComponentMogram(componentExertionName);
 	}
 
 	public static Mogram tracable(Mogram mogram) {
@@ -3086,7 +3087,7 @@ public class operator {
 		return new LoopMogram(name, condition, target);
 	}
 
-	public static Exertion exertion(Mappable mappable, String path)
+	public static Exertion xrt(Mappable mappable, String path)
 			throws ContextException {
 		Object obj = ((ServiceContext) mappable).asis(path);
 		while (obj instanceof Mappable || obj instanceof Par) {

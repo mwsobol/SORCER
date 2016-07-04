@@ -190,7 +190,7 @@ public class  LocalBlockExertions implements SorcerConstants {
 						opt(condition((Context<Double> cxt) -> v(cxt, "t4") <= v(cxt, "t5")), t6)));
 
 //		logger.info("block: " + block);
-//		logger.info("exertions: " + exertions(block));
+//		logger.info("mograms: " + mograms(block));
 //		logger.info("block context: " + context(block));
 
 		Block result = exert(block);
@@ -286,7 +286,7 @@ public class  LocalBlockExertions implements SorcerConstants {
 						opt(condition((Context<Integer> cxt) -> value(cxt, "y") <= 50), t5)));
 
 		logger.info("block: " + block);
-		logger.info("exertions: " + exertions(block));
+		logger.info("mograms: " + mograms(block));
 		logger.info("block context: " + context(block));
 
 		block = exert(block);

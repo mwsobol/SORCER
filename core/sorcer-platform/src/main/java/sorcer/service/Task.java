@@ -292,11 +292,11 @@ public class Task extends ServiceExertion {
 	}
 
 	/**
-	 * Returns true; elementary exertions are always "trees."
+	 * Returns true; elementary mograms are always "trees."
 	 * 
 	 * @param visited
 	 *            ignored
-	 * @return true; elementary exertions are always "trees"
+	 * @return true; elementary mograms are always "trees"
 	 * @see Exertion#isTree()
 	 */
 	public boolean isTree(Set visited) {
@@ -345,7 +345,7 @@ public class Task extends ServiceExertion {
 	 */
 	@Override
 	public Mogram addMogram(Mogram component) {
-		throw new RuntimeException("Tasks do not contain component exertions!");
+		throw new RuntimeException("Tasks do not contain component mograms!");
 	}
 
 	public Task getDelegate() {

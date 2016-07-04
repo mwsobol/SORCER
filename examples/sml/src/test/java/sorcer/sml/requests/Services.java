@@ -123,7 +123,7 @@ public class Services {
     @Test
     public void exertMogram() throws Exception  {
 
-        Mogram mogram = mogram(sig("add", AdderImpl.class),
+        Mogram mogram = mog(sig("add", AdderImpl.class),
                             cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
                             outEnt("result/y")));
 

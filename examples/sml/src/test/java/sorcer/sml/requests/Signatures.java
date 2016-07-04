@@ -346,7 +346,7 @@ public class Signatures {
 	@Test
 	public void evaluateNetletSignature() throws Exception {
 		String netlet = "src/main/netlets/ha-job-local.ntl";
-		assertEquals(evaluate(mogram(sig(file(netlet)))), 400.00);
+		assertEquals(evaluate(mog(sig(file(netlet)))), 400.00);
 	}
 
 	@Test

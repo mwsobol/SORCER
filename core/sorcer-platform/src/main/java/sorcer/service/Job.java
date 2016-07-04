@@ -48,7 +48,7 @@ import java.util.*;
  * instances with its own service {@link sorcer.service.Context} and a collection of service
  * {@link sorcer.service.Signature}s. The job's signature is usually referring to a
  * {@link Jobber} and the job's context describes the composition
- * of component exertions as defined by the Interpreter programming pattern.
+ * of component mograms as defined by the Interpreter programming pattern.
  * 
  * @see Exertion
  * @see Task
@@ -72,7 +72,7 @@ public class Job extends CompoundExertion {
 	 */
 	public Job() {
 		this("job-" + count++);
-		// exertions = Collections.synchronizedList(new ArrayList<Exertion>());
+		// mograms = Collections.synchronizedList(new ArrayList<Exertion>());
 	}
 
 	/**
@@ -142,9 +142,9 @@ public class Job extends CompoundExertion {
 	}
 
 	/**
-	 * Returns the number of exertions in this Job.
+	 * Returns the number of mograms in this Job.
 	 * 
-	 * @return the number of exertions in this Job.
+	 * @return the number of mograms in this Job.
 	 */
 	public int size() {
 		return mograms.size();
@@ -340,7 +340,7 @@ public class Job extends CompoundExertion {
 	 * Return true if this composite <code>Job</code> is a tree.
 	 * 
 	 * @param visited
-	 *            a set of visited exertions
+	 *            a set of visited mograms
 	 * @return true if this <code>Job</code> composite is a tree
 	 * @see sorcer.service.Exertion#isTree()
 	 */

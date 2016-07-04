@@ -30,7 +30,7 @@ import java.rmi.RemoteException;
 
 /**
  * ServiceJobber - The SORCER rendezvous service provider that provides
- * coordination for executing exertions using directly (PUSH) service providers.
+ * coordination for executing mograms using directly (PUSH) service providers.
  * 
  * @author Mike Sobolewski
  */

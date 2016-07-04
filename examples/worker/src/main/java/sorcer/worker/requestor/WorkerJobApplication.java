@@ -40,7 +40,7 @@ public class WorkerJobApplication {
 
 		Exertion result = new WorkerJobApplication()
 			.getExertion(pn1, pn2, pn3).exert();
-		// get contexts of component exertions - in this case tasks
+		// get contexts of component mograms - in this case tasks
 		logger.info("Output context1: \n" + result.getContext("work1"));
 		logger.info("Output context2: \n" + result.getContext("work2"));
 		logger.info("Output context3: \n" + result.getContext("work3"));

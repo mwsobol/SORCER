@@ -602,9 +602,9 @@ public class ArithmeticNetTest implements SorcerConstants {
 //		logger.info("allDeployments size: " + allDeployments.size());
 		assertEquals(allDeployments.size(), 3);
 
-		int f4Idle = ((ServiceSignature) ((Task) exertion(f1, "f1/f2/f4"))
+		int f4Idle = ((ServiceSignature) ((Task) xrt(f1, "f1/f2/f4"))
 				.getProcessSignature()).getDeployment().getIdle();
-		int f5Idle = ((ServiceSignature) ((Task) exertion(f1, "f1/f2/f5"))
+		int f5Idle = ((ServiceSignature) ((Task) xrt(f1, "f1/f2/f5"))
 				.getProcessSignature()).getDeployment().getIdle();
 //		logger.info("f4 idle: " + f4Idle);
 //		logger.info("f5 idle: " + f5Idle);

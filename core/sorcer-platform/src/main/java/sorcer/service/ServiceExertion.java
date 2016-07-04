@@ -785,7 +785,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
         List<Mogram> exertions = getAllMograms();
         // logger.info(" value = " + value);
         // logger.info(" this exertion = " + this);
-        // logger.info(" exertions = " + exertions);
+        // logger.info(" mograms = " + mograms);
         for (Mogram e : exertions) {
             if (e instanceof Exertion && !((Exertion)e).isJob()) {
                 // logger.info(" exertion i = "+ e.getName());

@@ -368,7 +368,7 @@ public class ParModelTest {
 		set(j1p, 1000.0);
 		assertTrue(value(j1p).equals(1000.0));
 
-		// par model with exertions
+		// par model with mograms
 		ParModel pc = parModel(x1p, x2p, j1p);
 		exert(j1);
 		// j1p is the alias to context value of j1 at j1/t3/result/y

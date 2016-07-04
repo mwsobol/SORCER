@@ -117,7 +117,7 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
     // for already existing names
     protected String serviceFidelitySelector;
 
-//    // fidelity Contexts for its component exertions
+//    // fidelity Contexts for its component mograms
 //    protected Map<String, FidelityContext> fidelityContexts;
 
     // Date of creation of this Exertion
@@ -673,7 +673,7 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
 
     /**
      * <p>
-     * Assigns a monitor session for this exertions.
+     * Assigns a monitor session for this mograms.
      * </p>
      *
      * @param monitorSession

@@ -80,11 +80,11 @@ public class ExertionMultiFidelities {
 
         logger.info("j1 fi: " + fi(job));
         logger.info("j1 fis: " + fis(job));
-        logger.info("j2 fi: " + fi(exertion(job, "j1/j2")));
-        logger.info("j2 fis: " + fis(exertion(job, "j1/tj2")));
-        logger.info("t3 fi: " + fi(exertion(job, "j1/t3")));
-        logger.info("t4 fi: " + fi(exertion(job, "j1/j2/t4")));
-        logger.info("t5 fi: " + fi(exertion(job, "j1/j2/t5")));
+        logger.info("j2 fi: " + fi(xrt(job, "j1/j2")));
+        logger.info("j2 fis: " + fis(xrt(job, "j1/tj2")));
+        logger.info("t3 fi: " + fi(xrt(job, "j1/t3")));
+        logger.info("t4 fi: " + fi(xrt(job, "j1/j2/t4")));
+        logger.info("t5 fi: " + fi(xrt(job, "j1/j2/t5")));
         logger.info("job context: " + upcontext(job));
         Context out = null;
         // Jobbers and  all tasks are local
@@ -201,11 +201,11 @@ public class ExertionMultiFidelities {
 
         logger.info("j1 fi: " + fi(job));
         logger.info("j1 fis: " + fis(job));
-        logger.info("j2 fi: " + fi(exertion(job, "j1/j2")));
-        logger.info("j2 fis: " + fis(exertion(job, "j1/tj2")));
-        logger.info("t3 fi: " + fi(exertion(job, "j1/t3")));
-        logger.info("t4 fi: " + fi(exertion(job, "j1/j2/t4")));
-        logger.info("t5 fi: " + fi(exertion(job, "j1/j2/t5")));
+        logger.info("j2 fi: " + fi(xrt(job, "j1/j2")));
+        logger.info("j2 fis: " + fis(xrt(job, "j1/tj2")));
+        logger.info("t3 fi: " + fi(xrt(job, "j1/t3")));
+        logger.info("t4 fi: " + fi(xrt(job, "j1/j2/t4")));
+        logger.info("t5 fi: " + fi(xrt(job, "j1/j2/t5")));
         logger.info("job context: " + upcontext(job));
 
         logger.info("job context: " + context(job));

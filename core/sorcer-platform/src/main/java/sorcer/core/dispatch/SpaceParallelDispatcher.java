@@ -360,7 +360,7 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
     }
 
     private void cleanRemainingFailedExertions(Uuid id) {
-        logger.debug("clean remaining failed exertions for {}", id);
+        logger.debug("clean remaining failed mograms for {}", id);
         ExertionEnvelop template = ExertionEnvelop.getParentTemplate(id, null);
         ExertionEnvelop ee = null;
 

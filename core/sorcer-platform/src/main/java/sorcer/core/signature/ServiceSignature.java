@@ -62,9 +62,9 @@ public class ServiceSignature implements Signature, SorcerConstants {
 	protected List<Evaluation> dependers = new ArrayList<Evaluation>();
 
 	// Must initialize to ANY to have correct JavaSpace workers behavior
-	// to have exertions with providerName/serviceInfo specified going to
+	// to have mograms with providerName/serviceInfo specified going to
 	// providers
-	// named "providerName". Otherwise, exertions with providerName/serviceInfo
+	// named "providerName". Otherwise, mograms with providerName/serviceInfo
 	// can
 	// be picked up by workers with template null/serviceInfo that are not named
 	// "providerName"
@@ -92,7 +92,7 @@ public class ServiceSignature implements Signature, SorcerConstants {
 
 	protected boolean isProvisionable = false;
 
-	// shell can be used to exert exertions locally or remotely (as ServiceProvider)
+	// shell can be used to exert mograms locally or remotely (as ServiceProvider)
 	protected boolean isShellRemote = false;
 
 	protected Context inConnector;

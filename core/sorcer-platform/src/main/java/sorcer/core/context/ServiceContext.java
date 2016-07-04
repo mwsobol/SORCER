@@ -288,7 +288,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	@Override
 	public List<ThrowableTrace> getExceptions() {
 		if (exertion != null)
-			// compatibility for contexts with exertions
+			// compatibility for contexts with mograms
 			return exertion.getExceptions();
 		else
 			return mogramStrategy.getAllExceptions();
@@ -3212,7 +3212,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		try {
 			if (subjectValue instanceof Class) {
 				signature = sig(subjectPath, subjectValue);
-				return (T) ((Exertion)operator.exertion(name, signature, this).exert(txn, entries)).getContext();
+				return (T) ((Exertion)operator.xrt(name, signature, this).exert(txn, entries)).getContext();
 			} else {
 				// evaluates model outputs - responses
 				getResponse(entries);
