@@ -379,6 +379,8 @@ public interface Signature extends Item, Comparable, Dependency, Identifiable,
 
         public String selector;
 
+		public String path;
+
         @Override
         public String getName() {
             return selector;

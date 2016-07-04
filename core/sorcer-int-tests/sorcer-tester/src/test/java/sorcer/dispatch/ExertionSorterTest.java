@@ -1,13 +1,13 @@
-package sorcer.sml.dispatch;
+package sorcer.dispatch;
 
 import org.junit.Assert;
 import org.junit.Test;
-import sorcer.arithmetic.provider.Adder;
-import sorcer.arithmetic.provider.Multiplier;
-import sorcer.arithmetic.provider.Subtractor;
-import sorcer.arithmetic.provider.impl.AdderImpl;
-import sorcer.arithmetic.provider.impl.MultiplierImpl;
-import sorcer.arithmetic.provider.impl.SubtractorImpl;
+import sorcer.arithmetic.tester.provider.Adder;
+import sorcer.arithmetic.tester.provider.Multiplier;
+import sorcer.arithmetic.tester.provider.Subtractor;
+import sorcer.arithmetic.tester.provider.impl.AdderImpl;
+import sorcer.arithmetic.tester.provider.impl.MultiplierImpl;
+import sorcer.arithmetic.tester.provider.impl.SubtractorImpl;
 import sorcer.core.dispatch.ExertionSorter;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.service.*;
@@ -16,9 +16,7 @@ import sorcer.service.Strategy.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static sorcer.co.operator.inEnt;
-import static sorcer.co.operator.outEnt;
-import static sorcer.co.operator.outPaths;
+import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
 
 /**

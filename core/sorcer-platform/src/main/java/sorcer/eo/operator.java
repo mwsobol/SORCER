@@ -1115,6 +1115,13 @@ public class operator {
         return sop;
     }
 
+    public static Operation op(String path, String selecor) {
+        Operation sop = new Operation();
+        sop.path = path;
+        sop.selector = selecor;
+        return sop;
+    }
+
     public static ServiceType type(Class providerType) {
         ServiceType st = new ServiceType();
         st.providerType = providerType;

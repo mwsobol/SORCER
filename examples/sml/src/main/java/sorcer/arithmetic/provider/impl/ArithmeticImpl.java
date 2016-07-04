@@ -7,6 +7,8 @@ import sorcer.service.MonitorException;
 
 import java.rmi.RemoteException;
 
+import static sorcer.eo.operator.value;
+
 public class ArithmeticImpl implements Arithmetic {
 
 //public class ArithmeticImpl implements Arithmetic, Adder {
@@ -22,6 +24,13 @@ public class ArithmeticImpl implements Arithmetic {
 	public Context add(Context context) throws RemoteException,
 			ContextException {
 		return arithmometer.add(context);
+	}
+
+	@Override
+	public Context add2(Context context) throws RemoteException, ContextException, MonitorException {
+		Context out = arithmometer.add(context);
+		out.putValue("result/value", (double)value(out, "result/value") + 100.0);
+		return out;
 	}
 
 	/*

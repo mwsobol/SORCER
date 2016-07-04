@@ -1,4 +1,4 @@
-package sorcer.sml.mogram;
+package sorcer.sml.mograms;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

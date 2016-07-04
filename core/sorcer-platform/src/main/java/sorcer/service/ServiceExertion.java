@@ -580,20 +580,25 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
     }
 
     @Override
-    public void substitute(Arg... entries)
+    public void substitute(Arg... args)
             throws SetterException {
-        if (entries != null && entries.length > 0) {
-            for (Arg e : entries) {
-                if (e instanceof Entry) {
+        if (args != null && args.length > 0) {
+            for (Arg arg : args) {
+                if (arg instanceof Entry) {
                     try {
-                        putValue(((Entry) e).path(), ((Entry) e).value());
+                        putValue(((Entry) arg).path(), ((Entry) arg).value());
                     } catch (ContextException ex) {
                         ex.printStackTrace();
                         throw new SetterException(ex);
                     }
                     // check for control strategy
-                } else if (e instanceof ControlContext) {
-                    updateControlContect((ControlContext)e);
+                } else if (arg instanceof ControlContext) {
+                    updateControlContect((ControlContext)arg);
+                } else if (arg instanceof Signature.Operation) {
+                    Signature.Operation op = (Signature.Operation)arg;
+                    if (name.equals(op.path)) {
+                        ((ServiceSignature)selectedFidelity.getSelect()).setSelector(op.selector);
+                    }
                 }
             }
         }
