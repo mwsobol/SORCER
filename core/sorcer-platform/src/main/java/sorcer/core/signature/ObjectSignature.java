@@ -376,14 +376,24 @@ public class ObjectSignature extends ServiceSignature {
 	@Override
 	public Object exec(Arg... args) throws MogramException, RemoteException, TransactionException {
 		Mogram mog = Arg.getMogram(args);
+		if (mog == null) {
+			mog = returnPath.getDataContext();
+		}
 		if (mog != null) {
 			if (serviceType.providerType == ServiceShell.class) {
 				ServiceShell shell = new ServiceShell(mog);
 				return context(shell.exert(args));
 			} else if (mog instanceof Context) {
-                argTypes = new Class[] { Context.class };
-                return exert(task(this, (Context)mog));
-            }
+				argTypes = new Class[] { Context.class };
+				Context out = null;
+				if (returnPath != null && returnPath.path != null) {
+					((Context) mog).setReturnPath(returnPath);
+					out = exert(task(this, mog));
+					return out.getValue(returnPath.path);
+				}
+				out = exert(task(this, mog));
+				return out;
+			}
 		}
 		return null;
 	}

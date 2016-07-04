@@ -2296,6 +2296,14 @@ public class operator {
 		return value(evaluation, args);
 	}
 
+	public static Object exec(Item item, Arg... args) throws ServiceException {
+		try {
+			return item.exec(args);
+		} catch (RemoteException | TransactionException e) {
+			throw new ServiceException(e);
+		}
+	}
+
 	public static <T> T value(Evaluation<T> evaluation, Arg... args)
 			throws EvaluationException {
 		try {

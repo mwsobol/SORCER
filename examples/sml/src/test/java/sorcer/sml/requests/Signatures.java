@@ -48,7 +48,6 @@ public class Signatures {
 
 	}
 
-
 	@Test
 	public void referencingInstances() throws Exception {
 
@@ -65,7 +64,6 @@ public class Signatures {
 
 	}
 
-
 	@Test
 	public void referencingClassWithConstructor() throws Exception {
 
@@ -81,7 +79,6 @@ public class Signatures {
 		assertTrue(exec(xrt("time", s)) instanceof Long);
 
 	}
-
 
 	@Test
 	public void referencingUtilityClass() throws Exception {
@@ -157,6 +154,38 @@ public class Signatures {
 		logger.info("time: " + exec(task("month", ps, cxt)));
 		assertTrue(exec(task("month", ps, cxt)) instanceof Integer);
 		assertTrue(exec(task("month", ps, cxt)).equals(((Calendar) prv).get(Calendar.MONTH)));
+
+	}
+
+	@Test
+	public void localSigService() throws Exception {
+
+		// request the local service
+		Signature ss = sig("add", AdderImpl.class,
+				context("add",
+						inEnt("arg/x1", 20.0),
+						inEnt("arg/x2", 80.0),
+						result("result/y")));
+
+//		logger.info("ss: " + exec(ss));
+
+		assertEquals(100.0, exec(ss));
+
+	}
+
+	@Test
+	public void remoteSigService() throws Exception {
+
+		// request the local service
+		Signature ss = sig("add", Adder.class,
+				context("add",
+						inEnt("arg/x1", 20.0),
+						inEnt("arg/x2", 80.0),
+						result("result/y")));
+
+//		logger.info("ss: " + exec(ss));
+
+        assertEquals(100.0, exec(ss));
 
 	}
 
