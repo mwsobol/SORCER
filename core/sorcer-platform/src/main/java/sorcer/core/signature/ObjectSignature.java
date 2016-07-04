@@ -376,7 +376,7 @@ public class ObjectSignature extends ServiceSignature {
 	@Override
 	public Object exec(Arg... args) throws MogramException, RemoteException, TransactionException {
 		Mogram mog = Arg.getMogram(args);
-		if (mog == null) {
+		if (mog == null && returnPath != null) {
 			mog = returnPath.getDataContext();
 		}
 		if (mog != null) {

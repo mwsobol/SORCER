@@ -457,6 +457,9 @@ public class NetSignature extends ObjectSignature {
 	public Object exec(Arg... args) throws MogramException, RemoteException, TransactionException {
 		Exertion mog = Arg.getExertion(args);
 		Context cxt = Arg.getContext(args);
+		if (cxt == null && returnPath != null) {
+			cxt = returnPath.getDataContext();
+		}
 		Mogram result = null;
 		try {
 			if (mog != null && cxt == null) {
@@ -473,9 +476,15 @@ public class NetSignature extends ObjectSignature {
 						result = (exert(mog));
 					}
 				}
-			}else if (cxt != null) {
-				Task in = task(this, cxt);
-				result = exert(in, null);
+			} else if (cxt != null) {
+				Context out = null;
+				if (returnPath != null && returnPath.path != null) {
+					cxt.setReturnPath(returnPath);
+					out = exert(task(this, cxt));
+					return out.getValue(returnPath.path);
+				}
+				out = exert(task(this, cxt));
+				return out;
 			}
 		} catch (Exception ex) {
 			throw new MogramException(ex);
