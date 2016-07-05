@@ -185,7 +185,7 @@ public class Signatures {
 
 //		logger.info("ss: " + exec(ss));
 
-        assertEquals(100.0, exec(ss));
+		assertEquals(100.0, exec(ss));
 
 	}
 
@@ -320,7 +320,7 @@ public class Signatures {
 	}
 
 	@Test
-	public void signatureLocalService() throws Exception {
+	public void execSignatureOfLocalService() throws Exception {
 
 		Context<Double> cxt = context(
 				inEnt("y1", 20.0),
@@ -332,7 +332,7 @@ public class Signatures {
 	}
 
 	@Test
-	public void signatureRemoteService() throws Exception {
+	public void execSignatureOfRemoteService() throws Exception {
 
 		Context<Double> cxt = context(
 				inEnt("y1", 20.0),
@@ -344,15 +344,24 @@ public class Signatures {
 	}
 
 	@Test
-	public void evaluateNetletSignature() throws Exception {
-		String netlet = "src/main/netlets/ha-job-local.ntl";
-		assertEquals(evaluate(mog(sig(file(netlet)))), 400.00);
-	}
-
-	@Test
 	public void execNetletSignature() throws Exception {
 		String netlet = "src/main/netlets/ha-job-local.ntl";
 		assertEquals(exec(sig(file(netlet))), 400.00);
+	}
+
+	@Test
+	public void netletSignatureProvider() throws Exception {
+		String netlet = System.getProperty("project.dir")+"/src/main/netlets/ha-job-local.ntl";
+
+		Service srv = (Service)provider(sig(file(netlet)));
+//		logger.info("job service: " + exec(srv));
+		assertTrue(exec(srv).equals(400.0));
+	}
+
+	@Test
+	public void execMogramWithNetletSignature() throws Exception {
+		String netlet = "src/main/netlets/ha-job-local.ntl";
+		assertEquals(exec(mog(sig(file(netlet)))), 400.00);
 	}
 
 	@Test
@@ -395,25 +404,7 @@ public class Signatures {
 	}
 
 	@Test
-	public void netletSignature() throws Exception {
-		String netlet = System.getProperty("project.dir")+"/src/main/netlets/ha-job-local.ntl";
-
-		Signature sig = sig(file(netlet));
-//		logger.info("job service: " + exec(sig));
-		assertTrue(exec(sig).equals(400.0));
-	}
-
-	@Test
-	public void netletSignatureprovider() throws Exception {
-		String netlet = System.getProperty("project.dir")+"/src/main/netlets/ha-job-local.ntl";
-
-		Service srv = (Service)provider(sig(file(netlet)));
-//		logger.info("job service: " + exec(srv));
-		assertTrue(exec(srv).equals(400.0));
-	}
-
-	@Test
-	public void localSigConnector() throws Exception {
+	public void localSigOutConnector() throws Exception {
 
 		Context cxt = context(
 				inEnt("y1", 20.0),
@@ -442,7 +433,7 @@ public class Signatures {
 
 
 	@Test
-	public void remoteSigConnector() throws Exception {
+	public void remoteSigInConnector() throws Exception {
 
 		Context cxt = context(
 				inEnt("y1", 20.0),

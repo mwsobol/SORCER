@@ -2317,7 +2317,7 @@ public class operator {
 		try {
 			synchronized (evaluation) {
 				if (evaluation instanceof Exertion) {
-					return (T) evaluate((Exertion) evaluation, args);
+					return (T) exec((Exertion) evaluation, args);
 				} else if (evaluation instanceof Entry){
 					return evaluation.getValue(args);
 				} else if (evaluation instanceof Incrementor){
@@ -2339,21 +2339,6 @@ public class operator {
 	public static Object value(Model model, String evalSelector,
 							   Arg... args) throws ContextException {
 		return value((Context<Object>) model, evalSelector, args);
-	}
-
-	public static Object exec(Service service, Arg... args) throws ServiceException, RemoteException {
-		try {
-			if (service instanceof Entry || service instanceof Signature ) {
-				return service.exec(args);
-			} else if (service instanceof Mogram) {
-				return new sorcer.core.provider.exerter.ServiceShell().exec(service, args);
-			} else {
-				return service.exec(args);
-			}
-
-		} catch (Exception e) {
-			throw new ServiceException(e);
-		}
 	}
 
 	public static <T> T eval(Context<T> model, String path,
@@ -2404,7 +2389,7 @@ public class operator {
 			try {
 				((ServiceContext)((Exertion) evaluation).getDataContext())
 						.setReturnPath(new ReturnPath(evalSelector));
-				return (T) evaluate((Exertion) evaluation, args);
+				return (T) exec((Exertion) evaluation, args);
 			} catch (Exception e) {
 				e.printStackTrace();
 				throw new EvaluationException(e);
@@ -2499,26 +2484,32 @@ public class operator {
 		System.out.println(obj.toString());
 	}
 
-	public static Object evaluate(Mogram mogram, Arg... args)
-			throws ContextException, RemoteException, ExertionException {
-		synchronized (mogram) {
-			if (mogram instanceof Exertion)
-				return new ServiceShell().evaluate(mogram, args);
-			else if (mogram instanceof Modeling) {
+	public static Object exec(Service service, Arg... args) throws ServiceException, RemoteException {
+		try {
+			if (service instanceof Entry || service instanceof Signature ) {
+				return service.exec(args);
+			} else if (service instanceof Context || service instanceof MultiFiRequest) {
+				return new sorcer.core.provider.exerter.ServiceShell().exec(service, args);
+			} else if (service instanceof Exertion) {
+				return new ServiceShell().evaluate((Mogram) service, args);
+			} else if (service instanceof Evaluation) {
+				return ((Evaluation) service).getValue(args);
+			} else if (service instanceof Modeling) {
 				Context cxt = Arg.getContext(args);
 				if (cxt != null) {
-					return ((Modeling) mogram).evaluate(cxt);
+					return ((Modeling) service).evaluate(cxt);
 				} else {
-					mogram.substitute(args);
-					((Modeling) mogram).evaluate();
+					((Context)service).substitute(args);
+					((Modeling) service).evaluate();
 				}
-				return ((Model)mogram).getResult();
-			} else {
-				return ((Evaluation) mogram).getValue(args);
+				return ((Model)service).getResult();
+			}else {
+				return service.exec(args);
 			}
+		} catch (Exception e) {
+			throw new ServiceException(e);
 		}
 	}
-
 
 	public static List<ThrowableTrace> exceptions(Exertion exertion) throws RemoteException {
 		return exertion.getExceptions();

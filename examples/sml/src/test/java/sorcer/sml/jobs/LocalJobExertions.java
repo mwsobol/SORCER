@@ -123,7 +123,7 @@ public class LocalJobExertions implements SorcerConstants {
 				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/z1")),
 				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/z2")));
 
-		Object result = evaluate(job);
+		Object result = exec(job);
 		logger.info("job result: " + result);
 		assertTrue(result.equals(400.0));
 
@@ -246,7 +246,7 @@ public class LocalJobExertions implements SorcerConstants {
 				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
 				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
 
-		Object result = evaluate(job);
+		Object result = exec(job);
 		logger.info("job result: " + result);
 		assertTrue(result.equals(450.0));
 
@@ -344,7 +344,7 @@ public class LocalJobExertions implements SorcerConstants {
 				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
 				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
 
-		Object result = evaluate(job);
+		Object result = exec(job);
 		logger.info("job result: " + result);
 		assertTrue(result.equals(400.0));
 
