@@ -3022,7 +3022,7 @@ public class operator {
 		return new Condition(condition);
 	}
 
-	public static <T> Condition condition(ConditionCollable<T> lambda) {
+	public static <T> Condition condition(ConditionCallable<T> lambda) {
 		return new Condition(lambda);
 	}
 

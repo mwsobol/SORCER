@@ -22,7 +22,7 @@ import java.io.Serializable;
  * Created by Mike Sobolewski on 10/30/15.
  */
 @FunctionalInterface
- public interface ConditionCollable<T> extends Serializable {
+ public interface ConditionCallable<T> extends Serializable {
 
     boolean call(Context<T> context) throws MogramException;
 
