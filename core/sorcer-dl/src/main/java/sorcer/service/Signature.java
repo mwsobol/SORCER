@@ -381,6 +381,8 @@ public interface Signature extends Item, Comparable, Dependency, Identifiable,
 
 		public String path;
 
+		public Strategy.Access accessType = Strategy.Access.PUSH;
+
         @Override
         public String getName() {
             return selector;

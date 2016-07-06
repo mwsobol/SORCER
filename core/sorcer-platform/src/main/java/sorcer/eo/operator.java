@@ -1107,16 +1107,31 @@ public class operator {
         return sig;
     }
 
-    public static Operation op(String selecor) {
+	public static Operation op(String selector, Strategy.Access access) {
+		Operation sop = new Operation();
+		sop.selector = selector;
+		sop.accessType = access;
+		return sop;
+	}
+
+    public static Operation op(String selector) {
         Operation sop = new Operation();
-        sop.selector = selecor;
+        sop.selector = selector;
         return sop;
     }
 
-    public static Operation op(String path, String selecor) {
+	public static Operation op(String path, String selector, Strategy.Access access) {
+		Operation sop = new Operation();
+		sop.path = path;
+		sop.selector = selector;
+		sop.accessType = access;
+		return sop;
+	}
+
+    public static Operation op(String path, String selector) {
         Operation sop = new Operation();
         sop.path = path;
-        sop.selector = selecor;
+        sop.selector = selector;
         return sop;
     }
 
@@ -1691,6 +1706,9 @@ public class operator {
             }
             sigFi = new ServiceFidelity(name, sigs);
         }
+		if (operation != null) {
+			task.setAccess(operation.accessType);
+		}
 
 		FidelityManager fiManager = null;
 		Strategy.FidelityMangement fm = null;

@@ -30,8 +30,8 @@ import static sorcer.po.operator.invoker;
  */
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/sml")
-public class Services {
-    private final static Logger logger = LoggerFactory.getLogger(Services.class);
+public class Mograms {
+    private final static Logger logger = LoggerFactory.getLogger(Mograms.class);
 
     @Test
     public void evaluateModel() throws Exception  {
