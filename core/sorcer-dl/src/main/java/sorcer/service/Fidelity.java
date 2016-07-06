@@ -3,7 +3,7 @@ package sorcer.service;
 /**
  * Created by Mike Sobolewski on 6/27/16.
  */
-public class Fidelity<T> implements Arg {
+public class Fidelity<T> implements Arg, net.jini.core.entry.Entry {
 
 	public enum Type implements Arg {
 		SELECT, META, NAME, SYS, ENTRY, SIG, CONTEXT, COMPONENT,

@@ -27,7 +27,7 @@ import java.io.Serializable;
 import java.rmi.RemoteException;
 
 @SuppressWarnings("unchecked")
-public class Tuple2<T1, T2> implements Serializable, Identifiable, Evaluation<T2>, Setter {
+public class Tuple2<T1, T2> implements net.jini.core.entry.Entry, Serializable, Identifiable, Evaluation<T2>, Setter, Arg {
 	private  static final long serialVersionUID = -6519678282532888568L;
 	public T1 _1 = null;
 	public T2 _2 = null;

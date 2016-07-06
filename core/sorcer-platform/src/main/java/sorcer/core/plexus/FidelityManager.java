@@ -17,18 +17,19 @@
 package sorcer.core.plexus;
 
 import net.jini.core.event.EventRegistration;
+import net.jini.core.event.RemoteEvent;
 import net.jini.core.event.RemoteEventListener;
 import net.jini.core.event.UnknownEventException;
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
 import net.jini.id.Uuid;
 import net.jini.id.UuidFactory;
+import sorcer.co.tuple.Tuple2;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.invoker.Observable;
 import sorcer.core.invoker.Observer;
 import sorcer.service.*;
 
-import java.rmi.MarshalledObject;
 import java.rmi.RemoteException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -65,8 +66,9 @@ public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Ob
 
     protected boolean isTraced = false;
 
-    protected Map<Long, Session> sessions;
+    Map<String, List<RemoteEventListener>> subscribers;
 
+    protected Map<Long, Session> sessions;
 
     public FidelityManager() {
         name = "fiManager" +  count++;
@@ -130,6 +132,24 @@ public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Ob
             this.fiTrace.add(fi);
     }
 
+    @Override
+    public void publish(net.jini.core.entry.Entry entry) throws RemoteException, ContextException {
+        PublishEvent event = null;
+        if (entry instanceof Tuple2) {
+            String path = ((Tuple2) entry).getName();
+            Object value = mogram.getContext().getValue(path);
+            try {
+                for (RemoteEventListener subscriber : subscribers.get(path)) {
+                    event = new PublishEvent(getId(), 0, 0, null, 0);
+                    event.setEntry(entry);
+                    subscriber.notify(event);
+                }
+            } catch (UnknownEventException e) {
+                throw new ContextException(e);
+            }
+        }
+    }
+
     public void addMetafidelity(String path, ServiceFidelity<Fidelity> fi) {
         this.metafidelities.put(path, fi);
     }
@@ -172,20 +192,14 @@ public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Ob
         }
     }
 
-    public EventRegistration register(long eventID, MarshalledObject handback,
-                                      RemoteEventListener toInform, long leaseLenght)
-            throws UnknownEventException, RemoteException {
-        return registerModel(eventID, handback, toInform, leaseLenght);
-    }
-
-    public EventRegistration registerModel(long eventID, MarshalledObject handback,
-                                           RemoteEventListener toInform, long leaseLenght)
+    @Override
+    public EventRegistration register(long eventID, String path, RemoteEventListener toInform, long leaseLenght)
             throws UnknownEventException, RemoteException {
         if (sessions == null) {
-            sessions = new HashMap<Long, Session>();
+            sessions = new HashMap();
         }
         String source = getClass().getName() + "-" + UUID.randomUUID();
-        Session session = new Session(eventID, source, handback, toInform,
+        Session session = new Session(eventID, source, path, toInform,
                 leaseLenght);
         sessions.put(eventID, session);
         EventRegistration er = new EventRegistration(eventID, source, null,
@@ -193,6 +207,7 @@ public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Ob
         return er;
     }
 
+    @Override
     public void deregister(long eventID) throws UnknownEventException,
             RemoteException {
         if (sessions.containsKey(eventID)) {
@@ -388,21 +403,26 @@ public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Ob
         return null;
     }
 
+    @Override
+    public void notify(RemoteEvent remoteEvent) throws UnknownEventException, RemoteException {
+
+    }
+
     static class Session {
         long eventID;
         Object source;
         long leaseLenght;
         long seqNum = 0;
         RemoteEventListener listener;
-        MarshalledObject handback;
+        String path;
 
-        Session(long eventID, Object source, MarshalledObject handback,
+        Session(long eventID, Object source, String path,
                 RemoteEventListener toInform, long leaseLenght) {
             this.eventID = eventID;
             this.source = source;
             this.leaseLenght = leaseLenght;
             this.listener = toInform;
-            this.handback = handback;
+            this.path = path;
         }
     }
 
