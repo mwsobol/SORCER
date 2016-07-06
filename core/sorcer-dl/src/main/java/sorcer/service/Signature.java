@@ -383,6 +383,8 @@ public interface Signature extends Item, Comparable, Dependency, Identifiable,
 
 		public Strategy.Access accessType = Strategy.Access.PUSH;
 
+		public boolean isProvisionable = false;
+
         @Override
         public String getName() {
             return selector;

@@ -58,7 +58,7 @@ public class ObjectSignature extends ServiceSignature {
 
 	public ObjectSignature(ServiceSignature signature) throws SignatureException {
         this.name = signature.name;
-        this.selector = signature.selector;
+        this.operation = signature.operation;
         this.providerName =  signature.providerName;
         this.serviceType = signature.serviceType;
         this.providerType = signature.providerType;
@@ -171,9 +171,9 @@ public class ObjectSignature extends ServiceSignature {
 	public MethodInvoker<?> createEvaluator() throws InstantiationException,
 			IllegalAccessException {
 		if (target == null && serviceType != null) {
-			evaluator = new MethodInvoker(serviceType.providerType.newInstance(), selector);
+			evaluator = new MethodInvoker(serviceType.providerType.newInstance(), operation.selector);
 		} else
-			evaluator = new MethodInvoker(target, selector);
+			evaluator = new MethodInvoker(target, operation.selector);
 		this.evaluator.setParameters(args);
 		return evaluator;
 	}
@@ -251,9 +251,9 @@ public class ObjectSignature extends ServiceSignature {
 		Method m;
 
 		try {
-			if(selector!=null) {
+			if(operation.selector!=null) {
 				try {
-					Method selectorMethod = providerType.getDeclaredMethod(selector, argTypes);
+					Method selectorMethod = providerType.getDeclaredMethod(operation.selector, argTypes);
 					if(Modifier.isStatic(selectorMethod.getModifiers())) {
 						return  selectorMethod.invoke(null, args);
 					}
@@ -272,7 +272,7 @@ public class ObjectSignature extends ServiceSignature {
 				if (initSelector != null)
 					m = providerType.getMethod(initSelector);
 				else
-					m = providerType.getMethod(selector);
+					m = providerType.getMethod(operation.selector);
 			}
 			if (args != null) {
 				obj = m.invoke(obj, args);
@@ -287,7 +287,7 @@ public class ObjectSignature extends ServiceSignature {
 			logger.error("initInstance failed", e);
 			try {
 				// check if that is SORCER service bean signature
-				m = providerType.getMethod(selector, Context.class);
+				m = providerType.getMethod(operation.selector, Context.class);
 				if (m.getReturnType() == Context.class)
 					return obj;
 				else
@@ -329,8 +329,8 @@ public class ObjectSignature extends ServiceSignature {
 
 	public Object build(Context<?> inContext) throws SignatureException {
 		Object obj;
-		if ((selector == null && initSelector == null)
-				|| (selector != null && selector.equals("new"))
+		if ((operation.selector == null && initSelector == null)
+				|| (operation.selector != null && operation.selector.equals("new"))
 				|| (initSelector != null && initSelector.equals("new"))) {
 			obj = newInstance();
 		} else {
@@ -400,7 +400,7 @@ public class ObjectSignature extends ServiceSignature {
 
 	public String toString() {
 		return this.getClass() + ";" + execType + ";"
-				+ (providerType == null ? "" : providerType + ";") + selector
+				+ (providerType == null ? "" : providerType + ";") + operation.selector
 				+ (prefix !=null ? "#" + prefix : "")
 				+ (returnPath != null ? ";"  + "result " + returnPath : "");
 	}

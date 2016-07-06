@@ -131,7 +131,7 @@ public class ModelSignature extends ServiceSignature {
 	}
 	
 	public String toString() {
-		return this.getClass() + ":" + selector + ":" + providerName + ";" + execType + ";"
+		return this.getClass() + ":" + operation.selector + ":" + providerName + ";" + execType + ";"
 				+ isActive + ";" + var + ";" + fidelity + ";/n" + "inner: " + innerSignature;
 	}
 }

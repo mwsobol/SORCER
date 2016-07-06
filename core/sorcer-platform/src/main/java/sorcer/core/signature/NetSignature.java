@@ -70,7 +70,7 @@ public class NetSignature extends ObjectSignature {
 
 	public NetSignature(ServiceSignature signature) throws SignatureException {
 		this.name = signature.name;
-		this.selector = signature.selector;
+		this.operation.selector = signature.operation.selector;
 		this.providerName =  signature.providerName;
 		this.serviceType = signature.serviceType;
 		this.providerType = signature.providerType;
@@ -214,7 +214,7 @@ public class NetSignature extends ObjectSignature {
 
 	public String action() {
 		String pn = (providerName == null) ? ANY : providerName.getName();
-		return serviceType + ", " + selector + ", " + pn;
+		return serviceType + ", " + operation.selector + ", " + pn;
 	}
 
 	public ProviderName getProviderName() {
@@ -358,12 +358,12 @@ public class NetSignature extends ObjectSignature {
 			if (m != null)
 				return (Exertion) m.invoke(this, new Object[] { ex });
 
-			if (((ServiceProvider) provider).isValidMethod(selector)) {
+			if (((ServiceProvider) provider).isValidMethod(operation.selector)) {
 				return ((ServiceProvider) provider).getDelegate()
-						.invokeMethod(selector, ex);
+						.invokeMethod(operation.selector, ex);
 			} else {
 				ExertionException eme = new ExertionException(
-						"Not supported method: " + serviceType + "#" + selector
+						"Not supported method: " + serviceType + "#" + operation.selector
 								+ " by: "
 								+ ((Provider) provider).getProviderName());
 				((ServiceProvider) provider).notifyException(ex, "unsupported method",
@@ -383,13 +383,13 @@ public class NetSignature extends ObjectSignature {
 			if (m != null)
 				return ((Context) m.invoke(this, new Object[] { context }));
 
-			if (((ServiceProvider) provider).isValidMethod(selector)) {
+			if (((ServiceProvider) provider).isValidMethod(operation.selector)) {
 				Context resultContext = ((ServiceProvider) provider)
-						.getDelegate().invokeMethod(selector, context);
+						.getDelegate().invokeMethod(operation.selector, context);
 				return resultContext;
 			} else {
 				ExertionException eme = new ExertionException(
-						"Not supported method: " + serviceType + "#" + selector
+						"Not supported method: " + serviceType + "#" + operation.selector
 								+ " by: "
 								+ ((Provider) provider).getProviderName());
 				((ServiceProvider) provider).notifyException(context.getMogram(),
@@ -448,7 +448,7 @@ public class NetSignature extends ObjectSignature {
 
 	public String toString() {
 		return this.getClass() + ":" + providerName + ";" + execType + ";"
-				+ serviceType + ";" + selector 
+				+ serviceType + ";" + operation.selector
 					+ (prefix !=null ? "#" + prefix : "") 
 					+ (returnPath != null ? ";"  + "result " + returnPath : "");
 	}

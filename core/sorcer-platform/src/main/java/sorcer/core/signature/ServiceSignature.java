@@ -72,16 +72,15 @@ public class ServiceSignature implements Signature, SorcerConstants {
 
 	private ServiceID serviceID;
 
-	/** the name of operation */
-	protected String selector;
+	/** signature operation */
+	protected Operation operation = new Operation();
 
 	protected ServiceType serviceType = new ServiceType();
 
 	// implementation of the service interface
 	protected Class<?> providerType;
 
-	private Strategy.Access accessType = Strategy.Access.PUSH;
-
+	// associated exertion only if needed
 	protected Exertion exertion;
 
 	/** preprocess, process, postprocess, append context */
@@ -90,13 +89,13 @@ public class ServiceSignature implements Signature, SorcerConstants {
 	/** indicates whether this method is being processed by the exert method */
 	protected boolean isActive = true;
 
-	protected boolean isProvisionable = false;
-
 	// shell can be used to exert mograms locally or remotely (as ServiceProvider)
 	protected boolean isShellRemote = false;
 
+	// context input connector
 	protected Context inConnector;
 
+	// context output connector
 	protected Context outConnector;
 
 	/**
@@ -125,18 +124,18 @@ public class ServiceSignature implements Signature, SorcerConstants {
 	}
 
 	public ServiceSignature(String selector) {
-		this.selector = selector;
+		this.operation.selector = selector;
 		name = selector;
 	}
 
 	public ServiceSignature(String name, String selector) {
 		this.name = name;
-		this.selector = selector;
+		this.operation.selector = selector;
 	}
 
     public ServiceSignature(String selector, ServiceType serviceType, ProviderName providerName) {
         this.name = selector;
-        this.selector = selector;
+        this.operation.selector = selector;
         this.serviceType = serviceType;
         this.providerName =  providerName;
         execType = Type.PROC;
@@ -198,7 +197,7 @@ public class ServiceSignature implements Signature, SorcerConstants {
 	}
 
 	public String getSelector() {
-		return selector;
+		return operation.selector;
 	}
 
 	public ProviderName getProviderName() {
@@ -274,7 +273,7 @@ public class ServiceSignature implements Signature, SorcerConstants {
 		isActive = method.isActive;
 		contextTemplateIDs = method.contextTemplateIDs;
 		exertion = method.exertion;
-		setSelector(method.selector);
+		setSelector(method.operation.selector);
 
 		return this;
 	}
@@ -350,20 +349,20 @@ public class ServiceSignature implements Signature, SorcerConstants {
 		if (selector != null) {
 			if (selector.indexOf("#") > 0) {
 				StringTokenizer token = new StringTokenizer(selector, "#");
-				this.selector = token.nextToken();
+				this.operation.selector = token.nextToken();
 				prefix = token.nextToken();
 			} else if (selector.equals("new")) {
-				this.selector = null;
+				this.operation.selector = null;
 			} else {
-				this.selector = selector;
+				this.operation.selector = selector;
 			}
 		} else {
-			this.selector = null;
+			this.operation.selector = null;
 		}
 	}
 
 	public boolean isSelectable() {
-		if (selector == null && serviceType == null) {
+		if (operation.selector == null && serviceType == null) {
 			return false;
 		}
 		Method[] methods = null;
@@ -373,7 +372,7 @@ public class ServiceSignature implements Signature, SorcerConstants {
 			methods = providerType.getMethods();
 
 		for (Method m : methods) {
-			if (m.getName().equals(selector)) {
+			if (m.getName().equals(operation.selector)) {
 				return true;
 			}
 		}
@@ -406,7 +405,7 @@ public class ServiceSignature implements Signature, SorcerConstants {
 	public String toString() {
 		return this.getClass() + ":" + providerName + ";" + execType + ";"
 				+ ";" + serviceType + ";"
-				+ (prefix != null ? "#" + selector : "")
+				+ (prefix != null ? "#" + operation.selector : "")
 				+ ";" + returnPath;
 	}
 
@@ -426,13 +425,13 @@ public class ServiceSignature implements Signature, SorcerConstants {
 			return false;
 		ServiceSignature sig = (ServiceSignature) signature;
 		return ("" + sig.serviceType).equals("" + serviceType)
-				&& ("" + sig.selector).equals("" + selector)
+				&& ("" + sig.operation.selector).equals("" + operation.selector)
 				&& ("" + sig.providerName).equals("" + providerName);
 	}
 
 	@Override
 	public int hashCode() {
-		return 31 * ("" + serviceType).hashCode() + ("" + selector).hashCode()
+		return 31 * ("" + serviceType).hashCode() + ("" + operation.selector).hashCode()
 				+ ("" + providerName).hashCode();
 	}
 
@@ -462,7 +461,7 @@ public class ServiceSignature implements Signature, SorcerConstants {
 			Class<?> clazz = getSubstituteClass();
 			if (clazz == null)
 				return null;
-			m = clazz.getMethod(selector, argTypes);
+			m = clazz.getMethod(operation.selector, argTypes);
 		} catch (NoSuchMethodException nsme) {
 			nsme.printStackTrace();
 			// logger.info("The method: \"" + selector
@@ -478,7 +477,7 @@ public class ServiceSignature implements Signature, SorcerConstants {
 
 	@Override
 	public Object getId() {
-		return selector;
+		return operation.selector;
 	}
 
 	public String getName() {
@@ -519,19 +518,19 @@ public class ServiceSignature implements Signature, SorcerConstants {
 	}
 
 	public boolean isProvisionable() {
-		return isProvisionable;
+		return operation.isProvisionable;
 	}
 
 	public void setProvisionable(boolean isProvisionable) {
-		this.isProvisionable = isProvisionable;
+		this.operation.isProvisionable = isProvisionable;
 	}
 
 	public void setProvisionable(Provision isProvisionable) {
 		if (isProvisionable == Provision.YES
 				|| isProvisionable == Provision.TRUE) {
-			this.isProvisionable = true;
+			this.operation.isProvisionable = true;
 		} else {
-			this.isProvisionable = true;
+			this.operation.isProvisionable = true;
 		}
 	}
 
@@ -584,8 +583,8 @@ public class ServiceSignature implements Signature, SorcerConstants {
 		int typeComp = (""+serviceType)
 				.compareTo(""+((ServiceSignature) signature).serviceType);
 		if (typeComp == 0) {
-			typeComp = (""+selector)
-					.compareTo(""+((ServiceSignature) signature).selector);
+			typeComp = (operation.selector)
+					.compareTo(""+((ServiceSignature) signature).operation.selector);
 		}
 		return (typeComp != 0 ? typeComp : (""+providerName)
 				.compareTo(""+((ServiceSignature) signature).providerName));
@@ -613,6 +612,14 @@ public class ServiceSignature implements Signature, SorcerConstants {
 		return exert(mogram, null);
 	}
 
+	public Operation getOperation() {
+		return operation;
+	}
+
+	public void setOperation(Operation operation) {
+		this.operation = operation;
+	}
+
 	public Context getInConnector() {
 		return inConnector;
 	}
@@ -637,11 +644,11 @@ public class ServiceSignature implements Signature, SorcerConstants {
 	}
 
 	public Strategy.Access getAccessType() {
-		return accessType;
+		return operation.accessType;
 	}
 
 	public void setAccessType(Strategy.Access accessType) {
-		this.accessType = accessType;
+		this.operation.accessType = accessType;
 	}
 
 	@Override

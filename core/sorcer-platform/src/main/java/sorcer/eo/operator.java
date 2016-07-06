@@ -985,6 +985,10 @@ public class operator {
         }
     }
 
+	public static Signature sig(Signature signature, Operation operation) throws SignatureException {
+		((ServiceSignature)signature).setOperation(operation);
+		return signature;
+	}
 
     public static Signature sig(Class serviceType, Object... items) throws SignatureException {
         if (items == null || items.length == 0)
@@ -1107,35 +1111,40 @@ public class operator {
         return sig;
     }
 
-	public static Operation op(String selector, Strategy.Access access) {
-		Operation sop = new Operation();
-		sop.selector = selector;
-		sop.accessType = access;
-		return sop;
+	public static Operation op(Signature sig) {
+		return ((ServiceSignature)sig).getOperation();
 	}
 
-    public static Operation op(String selector) {
-        Operation sop = new Operation();
-        sop.selector = selector;
-        return sop;
+    public static Operation op(String selector,  Arg... args) {
+		Operation sop = new Operation();
+		sop.selector = selector;
+		for (Arg arg : args) {
+			if (arg instanceof Strategy.Access) {
+				sop.accessType = (Strategy.Access)arg;
+			} else if (arg instanceof Strategy.Provision) {
+				sop.isProvisionable = Strategy.isProvisionable((Strategy.Provision)arg);
+			} if (arg instanceof Path) {
+				sop.path = arg.getName();
+			}
+		}
+		return sop;
     }
 
-	public static Operation op(String path, String selector, Strategy.Access access) {
+	public static Operation op(String path, String selector, Arg... args) {
 		Operation sop = new Operation();
 		sop.path = path;
 		sop.selector = selector;
-		sop.accessType = access;
+		for (Arg arg : args) {
+			if (arg instanceof Strategy.Access) {
+				sop.accessType = (Strategy.Access)arg;
+			} else if (arg instanceof Strategy.Provision) {
+				sop.isProvisionable = Strategy.isProvisionable((Strategy.Provision)arg);
+			}
+		}
 		return sop;
 	}
 
-    public static Operation op(String path, String selector) {
-        Operation sop = new Operation();
-        sop.path = path;
-        sop.selector = selector;
-        return sop;
-    }
-
-    public static ServiceType type(Class providerType) {
+	public static ServiceType type(Class providerType) {
         ServiceType st = new ServiceType();
         st.providerType = providerType;
         return st;

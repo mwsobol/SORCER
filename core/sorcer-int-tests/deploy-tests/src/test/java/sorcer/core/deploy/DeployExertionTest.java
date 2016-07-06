@@ -45,7 +45,7 @@ public class DeployExertionTest extends DeploySetup implements SorcerConstants {
     public void deployAndExec() throws Exception {
         Job f1 = JobUtil.createJob();
         assertTrue(f1.isProvisionable());
-        verifyExertion(f1);
+         verifyExertion(f1);
         /* Run it again to make sure that the existing deployment is used */
         verifyExertion(f1);
     }
