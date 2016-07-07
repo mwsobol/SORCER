@@ -17,6 +17,8 @@ import sorcer.util.Sorcer;
 import java.net.URL;
 import java.rmi.RemoteException;
 
+import static sorcer.eo.operator.value;
+
 @SuppressWarnings("rawtypes")
 public class AdderImpl implements Adder {
     private static final long serialVersionUID = -8098772962245123252L;
@@ -50,7 +52,16 @@ public class AdderImpl implements Adder {
 		
 		return out;
 	}
-	
+
+
+	public Context add2(Context context) throws RemoteException,
+			ContextException, MonitorException {
+		Context out = arithmometer.add(context);
+		out.putValue("result/value", (double)value(out, "result/value") + 100.0);
+		logger.info("add2 result: " + out);
+		return out;
+	}
+
 	public static UIDescriptor getCalculatorDescriptor() {
 		UIDescriptor uiDesc = null;
 		try {

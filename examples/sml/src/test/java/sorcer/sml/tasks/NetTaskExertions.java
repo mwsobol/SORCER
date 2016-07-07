@@ -56,6 +56,28 @@ public class NetTaskExertions {
 	}
 
 	@Test
+	public void exertOpTask() throws Exception  {
+
+		Task t5 = task(sig(Adder.class), op("add", Strategy.Access.PULL),
+				cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0)));
+
+		Exertion out = exert(t5);
+		Context cxt = context(out);
+		logger.info("out context: " + cxt);
+		logger.info("context @ arg/x1: " + get(cxt, "arg/x1"));
+		logger.info("context @ arg/x2: " + value(cxt, "arg/x2"));
+		logger.info("context @ result/value: " + value(cxt, "result/value"));
+
+		// get a single context argument
+		assertEquals(100.0, value(cxt, "result/value"));
+
+		// get the subcontext output from the context
+		assertTrue(context(ent("result/value", 100.0), ent("arg/x1", 20.0)).equals(
+				value(cxt, outPaths("result/value", "arg/x1"))));
+
+	}
+
+	@Test
 	public void exertTaskSrvName() throws Exception  {
 
 		Task t5 = task("t5", sig("add", Adder.class, srvName("Adder")),
@@ -233,7 +255,7 @@ public class NetTaskExertions {
 	public void batchTask() throws Exception {
 		// batch for the composition f1(f2(f3((x1, x2), f4(x1, x2)), f5(x1, x2))
 		// shared context with named paths
-		Task batch3 = batch("batch3",
+		Task batch3 = task("batch3",
 				type(sig("multiply", Multiplier.class, result("subtract/x1", Signature.Direction.IN)), Signature.PRE),
 				type(sig("add", Adder.class, result("subtract/x2", Signature.Direction.IN)), Signature.PRE),
 				sig("subtract", Subtractor.class, result("result/y", inPaths("subtract/x1", "subtract/x2"))),

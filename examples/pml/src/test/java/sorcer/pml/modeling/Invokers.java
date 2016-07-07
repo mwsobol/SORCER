@@ -10,35 +10,23 @@ import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.provider.impl.SubtractorImpl;
-import sorcer.core.context.Contexts;
-import sorcer.core.context.ServiceContext;
-import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.par.Par;
 import sorcer.core.context.model.par.ParModel;
-import sorcer.core.context.model.par.SysCall;
 import sorcer.core.invoker.AltInvoker;
 import sorcer.core.invoker.Invocable;
 import sorcer.core.invoker.OptInvoker;
 import sorcer.core.invoker.ServiceInvoker;
-import sorcer.core.provider.SysCaller;
 import sorcer.core.provider.rendezvous.ServiceJobber;
-import sorcer.pml.provider.impl.Volume;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
-import sorcer.util.Sorcer;
-import sorcer.util.exec.ExecUtils.CmdResult;
-
-import java.io.File;
-import java.io.StringReader;
-import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
+import static sorcer.eo.operator.args;
 import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.pipe;
 import static sorcer.eo.operator.value;
-import static sorcer.mo.operator.srvModel;
 import static sorcer.po.operator.add;
 import static sorcer.po.operator.alt;
 import static sorcer.po.operator.*;
@@ -148,7 +136,7 @@ public class Invokers {
 		Context c5 = context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
 				result("result/y"));
 
-		// exertions
+		// mograms
 		Task t3 = task(
 				"t3",
 				sig("subtract", SubtractorImpl.class),
@@ -173,7 +161,7 @@ public class Invokers {
 		Context c5 = context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
 				result("result/y"));
 
-		// exertions
+		// mograms
 		Task t3 = task(
 				"t3",
 				sig("subtract", SubtractorImpl.class),
@@ -235,7 +223,7 @@ public class Invokers {
 		Context c5 = context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
 				result("result/y"));
 
-		// exertions
+		// mograms
 		Task t3 = task(
 				"t3",
 				sig("subtract", SubtractorImpl.class),

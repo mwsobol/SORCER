@@ -157,4 +157,12 @@ public interface Strategy extends Arg {
 	public List<ThrowableTrace> getExceptions();
 	
 	public List<String> getTrace();
+
+	static public boolean isProvisionable(Strategy.Provision yesNo) {
+		if (yesNo.equals(Provision.YES) || yesNo.equals(Provision.TRUE)) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 }

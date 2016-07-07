@@ -406,7 +406,7 @@ public class operator {
 
 	public static boolean isSorcerLambda(Class clazz) {
 		Class[] types = { EntryCollable.class, ValueCallable.class, Client.class,
-				ConditionCollable.class, Callable.class };
+				ConditionCallable.class, Callable.class };
 		for (Class cl : types) {
 			if (clazz == cl) {
 				return true;

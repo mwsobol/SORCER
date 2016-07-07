@@ -348,7 +348,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
         ps.setProvider(provider);
     }
 
-    public Service getService() {
+    public Service getService() throws SignatureException {
         NetSignature ps = (NetSignature) getProcessSignature();
         return ps.getService();
     }
@@ -369,11 +369,11 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
         controlContext.setAccessType(accessType);
     }
 
-    public String getDeploymentId(List<Signature> list) throws NoSuchAlgorithmException {
+    public String getDeploymentId(List<Signature> list) throws NoSuchAlgorithmException, SignatureException {
         return DeploymentIdFactory.create(list);
     }
 
-    public String getDeploymentId() throws NoSuchAlgorithmException {
+    public String getDeploymentId() throws NoSuchAlgorithmException, SignatureException {
         return getDeploymentId(getAllNetTaskSignatures());
     }
 
@@ -435,7 +435,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
         return this;
     }
 
-    public Class getServiceType() {
+    public Class getServiceType() throws SignatureException {
         Signature signature = getProcessSignature();
         return (signature == null) ? null : signature.getServiceType();
     }
@@ -445,7 +445,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
         return (method == null) ? null : method.getSelector();
     }
 
-    public boolean isExecutable() {
+    public boolean isExecutable() throws SignatureException {
         if (getServiceType() != null)
             return true;
         else
@@ -580,20 +580,25 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
     }
 
     @Override
-    public void substitute(Arg... entries)
+    public void substitute(Arg... args)
             throws SetterException {
-        if (entries != null && entries.length > 0) {
-            for (Arg e : entries) {
-                if (e instanceof Entry) {
+        if (args != null && args.length > 0) {
+            for (Arg arg : args) {
+                if (arg instanceof Entry) {
                     try {
-                        putValue(((Entry) e).path(), ((Entry) e).value());
+                        putValue(((Entry) arg).path(), ((Entry) arg).value());
                     } catch (ContextException ex) {
                         ex.printStackTrace();
                         throw new SetterException(ex);
                     }
                     // check for control strategy
-                } else if (e instanceof ControlContext) {
-                    updateControlContect((ControlContext)e);
+                } else if (arg instanceof ControlContext) {
+                    updateControlContect((ControlContext)arg);
+                } else if (arg instanceof Signature.Operation) {
+                    Signature.Operation op = (Signature.Operation)arg;
+                    if (name.equals(op.path)) {
+                        ((ServiceSignature)selectedFidelity.getSelect()).setSelector(op.selector);
+                    }
                 }
             }
         }
@@ -712,7 +717,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
         return deploymnets;
     }
 
-	public void trimNotSerializableSignatures() {
+	public void trimNotSerializableSignatures() throws SignatureException {
 		super.trimNotSerializableSignatures();
         getControlContext().setScope(null);
         dataContext.clean();
@@ -780,7 +785,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
         List<Mogram> exertions = getAllMograms();
         // logger.info(" value = " + value);
         // logger.info(" this exertion = " + this);
-        // logger.info(" exertions = " + exertions);
+        // logger.info(" mograms = " + mograms);
         for (Mogram e : exertions) {
             if (e instanceof Exertion && !((Exertion)e).isJob()) {
                 // logger.info(" exertion i = "+ e.getName());
@@ -799,7 +804,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
         return  (controlContext.getAccessType().equals(Access.PULL));
     }
 
-    public Signature correctProcessSignature() {
+    public Signature correctProcessSignature() throws SignatureException {
         Signature sig = getProcessSignature();
         if (sig != null) {
             Access access = getControlContext().getAccessType();
@@ -1036,37 +1041,41 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm");
         String stdoutSep = "================================================================================\n";
         StringBuffer info = new StringBuffer();
-        info.append("\n" + stdoutSep)
-                .append("[SORCER Service Exertion]\n")
-                .append("\tExertion Type:        " + getClass().getName()
-                        + "\n")
-                .append("\tExertion Name:        " + name + "\n")
-                .append("\tExertion Status:      " + status + "\n")
-                .append("\tExertion ID:          " + mogramId + "\n")
-                .append("\tCreation Date:        " + sdf.format(creationDate) + "\n")
-                .append("\tRuntime ID:           " + runtimeId + "\n")
-                .append("\tParent ID:            " + parentId + "\n")
-                .append("\tOwner ID:             " + ownerId + "\n")
-                .append("\tSubject ID:           " + subjectId + "\n")
-                .append("\tDomain ID:            " + domainId + "\n")
-                .append("\tSubdomain ID:         " + subdomainId + "\n")
-                .append("\tlsb ID:               " + lsbId + "\n")
-                .append("\tmsb ID:               " + msbId + "\n")
-                .append("\tSession ID:           " + sessionId + "\n")
-                .append("\tDescription:          " + description + "\n")
-                .append("\tProject:              " + projectName + "\n")
-                .append("\tGood Until Date:      " + goodUntilDate + "\n")
-                .append("\tAccess Class:         " + accessClass + "\n")
-                .append("\tIs Export Controlled: " + isExportControlled + "\n")
-                .append("\tPriority:             " + priority + "\n")
-                .append("\tProvider Name:        "
-                        + getProcessSignature().getProviderName() + "\n")
-                .append("\tService Type:         "
-                        + getProcessSignature().getServiceType() + "\n")
-                .append("\tException Count:      " + getExceptionCount() + "\n")
-                .append("\tPrincipal:            " + principal + "\n")
-                .append(stdoutSep).append("[Control Context]\n")
-                .append(getControlContext() + "\n").append(stdoutSep);
+        try {
+            info.append("\n" + stdoutSep)
+                    .append("[SORCER Service Exertion]\n")
+                    .append("\tExertion Type:        " + getClass().getName()
+                            + "\n")
+                    .append("\tExertion Name:        " + name + "\n")
+                    .append("\tExertion Status:      " + status + "\n")
+                    .append("\tExertion ID:          " + mogramId + "\n")
+                    .append("\tCreation Date:        " + sdf.format(creationDate) + "\n")
+                    .append("\tRuntime ID:           " + runtimeId + "\n")
+                    .append("\tParent ID:            " + parentId + "\n")
+                    .append("\tOwner ID:             " + ownerId + "\n")
+                    .append("\tSubject ID:           " + subjectId + "\n")
+                    .append("\tDomain ID:            " + domainId + "\n")
+                    .append("\tSubdomain ID:         " + subdomainId + "\n")
+                    .append("\tlsb ID:               " + lsbId + "\n")
+                    .append("\tmsb ID:               " + msbId + "\n")
+                    .append("\tSession ID:           " + sessionId + "\n")
+                    .append("\tDescription:          " + description + "\n")
+                    .append("\tProject:              " + projectName + "\n")
+                    .append("\tGood Until Date:      " + goodUntilDate + "\n")
+                    .append("\tAccess Class:         " + accessClass + "\n")
+                    .append("\tIs Export Controlled: " + isExportControlled + "\n")
+                    .append("\tPriority:             " + priority + "\n")
+                    .append("\tProvider Name:        "
+                            + getProcessSignature().getProviderName() + "\n")
+                    .append("\tService Type:         "
+                            + getProcessSignature().getServiceType() + "\n")
+                    .append("\tException Count:      " + getExceptionCount() + "\n")
+                    .append("\tPrincipal:            " + principal + "\n")
+                    .append(stdoutSep).append("[Control Context]\n")
+                    .append(getControlContext() + "\n").append(stdoutSep);
+        } catch (SignatureException e) {
+            e.printStackTrace();
+        }
         String time = getControlContext().getExecTime();
         if (time != null && time.length() > 0) {
             info.append("\nExecution Time = " + time + "\n" + stdoutSep);

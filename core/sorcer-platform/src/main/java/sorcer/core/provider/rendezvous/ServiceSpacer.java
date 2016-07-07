@@ -34,8 +34,8 @@ import static sorcer.util.StringUtils.tName;
 
 /**
  * ServiceSpacer - The SORCER rendezvous service provider that provides
- * coordination for executing exertions using JavaSpace from which provides PULL
- * exertions to be executed.
+ * coordination for executing mograms using JavaSpace from which provides PULL
+ * mograms to be executed.
  * 
  * @author Mike Sobolewski
  */

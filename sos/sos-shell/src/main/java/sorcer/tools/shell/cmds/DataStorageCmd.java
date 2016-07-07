@@ -248,7 +248,7 @@ public class DataStorageCmd extends ShellCmd {
 			}
 		}
 //		if (all.size() == 0) {
-//			out.println("No monitored exertions at this time.");
+//			out.println("No monitored mograms at this time.");
 //			return;
 //		}
 //		recordInfos = new RecordInfo[all.size()];

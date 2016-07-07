@@ -184,7 +184,7 @@ public class InvokerTest {
 		Context c5 = context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
 				result("result/y"));
 
-		// exertions
+		// mograms
 		Task t3 = task(
 				"t3",
 				sig("subtract", SubtractorImpl.class),
@@ -210,7 +210,7 @@ public class InvokerTest {
 		Context c5 = context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
 				result("result/y"));
 
-		// exertions
+		// mograms
 		Task t3 = task(
 				"t3",
 				sig("subtract", SubtractorImpl.class),
@@ -274,7 +274,7 @@ public class InvokerTest {
 		Context c5 = context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
 				result("result/y"));
 
-		// exertions
+		// mograms
 		Task t3 = task(
 				"t3",
 				sig("subtract", SubtractorImpl.class),

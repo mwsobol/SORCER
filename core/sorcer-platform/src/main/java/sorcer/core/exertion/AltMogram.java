@@ -29,7 +29,7 @@ import java.util.List;
 
 /**
  * The alternative Exertion that executes sequentially a collection of optional
- * exertions. It executes the first optExertion in the collection such that its
+ * mograms. It executes the first optExertion in the collection such that its
  * condition is true.
  * 
  * @author Mike Sobolewski

@@ -39,6 +39,7 @@ import java.util.Map;
 
 import static org.fusesource.jansi.Ansi.ansi;
 
+@SuppressWarnings("unchecked")
 public class EmxCmd extends ShellCmd {
 
 	{
@@ -50,17 +51,17 @@ public class EmxCmd extends ShellCmd {
 			+ "\n\t\t\t  | [ -a | -d | -f | -r | -y | <exertion index>] "
 			+ "\n\t\t\t  | (-e | -c | -cc | -ccc) [<exertion index>] [-s <filename>]";
 
-		COMMAND_HELP = "Support for monitoring runtime exertions;"
+		COMMAND_HELP = "Support for monitoring runtime mograms;"
 				+ "\n  -mode   show current mode"
 				+ "\n  ('emx' mode) show EMX services or ('xrt' mode) print the selected exertion"
 				+ "\n  <EMX index>   select the EMX given <EMX index>"
 				+ "\n  -v   print the selected EMX service/exertion"
 				+ "\n  -x   clear the selection of MX service/exertion"
-				+ "\n  -a   show all monitored exertions"
-				+ "\n  -d   show done monitored exertions"
-				+ "\n  -f   show failed monitored exertions"
-				+ "\n  -r   show running monitored exertions"
-				+ "\n  -y   show asynchronous monitored exertions"
+				+ "\n  -a   show all monitored mograms"
+				+ "\n  -d   show done monitored mograms"
+				+ "\n  -f   show failed monitored mograms"
+				+ "\n  -r   show running monitored mograms"
+				+ "\n  -y   show asynchronous monitored mograms"
 				+ "\n  -e   print the selected exertion"
 				+ "\n  <exertion index>   select the exertion given <exertion index>"
 				+ "\n  -c   print the data context of selected exertion"
@@ -295,7 +296,7 @@ public class EmxCmd extends ShellCmd {
 			}
 		}
 		if (all.size() == 0) {
-			out.println("No monitored exertions at this time.");
+			out.println("No monitored mograms at this time.");
 			return;
 		}
 

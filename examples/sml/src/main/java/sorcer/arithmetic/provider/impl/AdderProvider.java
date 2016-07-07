@@ -16,6 +16,8 @@ import sorcer.util.Sorcer;
 import java.net.URL;
 import java.rmi.RemoteException;
 
+import static sorcer.eo.operator.value;
+
 public class AdderProvider extends ServiceTasker implements RemoteAdder {
 	private Arithmometer arithmometer = new Arithmometer();
 	
@@ -38,7 +40,14 @@ public class AdderProvider extends ServiceTasker implements RemoteAdder {
 		
 		return out;
 	}
-	
+
+	@Override
+	public Context add2(Context context) throws RemoteException, ContextException, MonitorException {
+		Context out = arithmometer.add(context);
+		out.putValue("result/value", (double)value(out, "result/value") + 100.0);
+		return out;
+	}
+
 	public static UIDescriptor getCalculatorDescriptor() {
 		UIDescriptor uiDesc = null;
 		try {

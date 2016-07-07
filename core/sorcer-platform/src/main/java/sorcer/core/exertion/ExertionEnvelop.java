@@ -25,6 +25,7 @@ import sorcer.core.signature.NetSignature;
 import sorcer.service.Exec;
 import sorcer.service.Exertion;
 import sorcer.service.ServiceExertion;
+import sorcer.service.SignatureException;
 
 import javax.security.auth.Subject;
 import java.rmi.RemoteException;
@@ -72,7 +73,7 @@ public class ExertionEnvelop implements Entry {
 	}
 	
 	/**
-	 * Create a template with an exertionID as the exertions's parentID.
+	 * Create a template with an exertionID as the mograms's parentID.
 	 * 
 	 * @param exertionID
 	 * @param providerName
@@ -87,7 +88,7 @@ public class ExertionEnvelop implements Entry {
 	}
 	
 	/**
-	 * Create a template for exertions.
+	 * Create a template for mograms.
 	 * 
 	 * @param exertionID
 	 * @param providerName
@@ -101,7 +102,7 @@ public class ExertionEnvelop implements Entry {
 		return ee;
 	}
 
-	public static ExertionEnvelop getTemplate(Exertion ex) {
+	public static ExertionEnvelop getTemplate(Exertion ex) throws SignatureException {
 		if (ex == null || ex.getProcessSignature() == null)
 			return null;
 

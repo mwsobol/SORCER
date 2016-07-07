@@ -43,7 +43,7 @@ public class AdderRequestor extends ServiceRequestor {
         Double v1 = new Double(getProperty("arg/x1"));
         Double v2 = new Double(getProperty("arg/x2"));
 
-        return exertion("hello adder", sig("add", Adder.class),
+        return xrt("hello adder", sig("add", Adder.class),
                 context("adder", inEnt("arg/x1", v1), inEnt("arg/x2", v2),
                         result("out/y")));
     }

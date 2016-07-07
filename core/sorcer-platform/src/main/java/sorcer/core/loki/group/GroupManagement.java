@@ -98,7 +98,7 @@ public interface GroupManagement extends Remote, RemotePartner
 	 */
 	public Context getGroups(Context context) throws RemoteException;
 	/**
-	 * get group exertions
+	 * get group mograms
 	 * 
 	 * @param context		information context
 	 * @return				results context
@@ -174,7 +174,7 @@ public interface GroupManagement extends Remote, RemotePartner
 	 */
 	public Context getExecutions(Context context) throws RemoteException;
 	/**
-	 * get all exertions
+	 * get all mograms
 	 * 
 	 * @param context		information context
 	 * @return				results context

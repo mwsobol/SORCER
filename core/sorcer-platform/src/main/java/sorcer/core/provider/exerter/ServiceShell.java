@@ -109,7 +109,7 @@ public class ServiceShell implements RemoteServiceShell, Client, Callable {
 					.maximumSize(20)
 					.expireAfterWrite(30, TimeUnit.MINUTES)
 					.build(new CacheLoader<Signature, Object>() {
-						public Object load(Signature signature) {
+						public Object load(Signature signature) throws SignatureException {
 							if (signature.getProviderName() instanceof ServiceName) {
 								try {
 									return ProviderLocator.getProvider(signature);
@@ -347,7 +347,7 @@ public class ServiceShell implements RemoteServiceShell, Client, Callable {
 		Signature signature = exertion.getProcessSignature();
 		Object provider = null;
 		try {
-			// If the exertion is a job rearrange the inner exertions to make sure the
+			// If the exertion is a job rearrange the inner mograms to make sure the
 			// dependencies are not broken
 			if (exertion.isJob()) {
 				ExertionSorter es = new ExertionSorter(exertion);
@@ -491,7 +491,7 @@ public class ServiceShell implements RemoteServiceShell, Client, Callable {
                     provider = (Exerter)Accessor.get().getService(signature);
                     if(provider!=null)
                         logger.info("Successfully re-created {}", signature);
-                } catch (DispatcherException e1) {
+                } catch (Exception e1) {
                     provider = null;
                     logger.error("Unable to deploy provider", e1);
                 }
@@ -505,11 +505,20 @@ public class ServiceShell implements RemoteServiceShell, Client, Callable {
 			exertion.reportException(new RuntimeException("Cannot find provider for: " + signature));
 			return exertion;
 		}
-		exertion.trimNotSerializableSignatures();;
+		try {
+			exertion.trimNotSerializableSignatures();
+		} catch (SignatureException e) {
+			throw new MogramException(e);
+		}
+		;
 		exertion.getControlContext().appendTrace(String.format("shell: %s:%s", providerName, providerID));
 		logger.info("Provider found for: {}\n\t{}", signature, provider);
 		if (((Provider) provider).mutualExclusion()) {
-			return serviceMutualExclusion((Provider) provider, exertion, transaction);
+			try {
+				return serviceMutualExclusion((Provider) provider, exertion, transaction);
+			} catch (SignatureException e) {
+				throw new MogramException(e);
+			}
 		} else {
 			// test exertion for serialization
 //			try{
@@ -540,7 +549,7 @@ public class ServiceShell implements RemoteServiceShell, Client, Callable {
 
 	private Exertion serviceMutualExclusion(Provider provider,
 											Exertion exertion, Transaction transaction) throws RemoteException,
-			TransactionException, MogramException {
+			TransactionException, MogramException, SignatureException {
 		ServiceID mutexId = provider.getProviderID();
 		if (locker == null) {
 			locker = Accessor.get().getService(null, MutualExclusion.class);
@@ -570,12 +579,12 @@ public class ServiceShell implements RemoteServiceShell, Client, Callable {
 
 	/**
 	 * Depending on provider access type correct inconsistent signatures for
-	 * composite exertions only. Tasks go either to its provider directly or
+	 * composite mograms only. Tasks go either to its provider directly or
 	 * Spacer depending on their provider access type (PUSH or PULL).
 	 *
 	 * @return the corrected signature
 	 */
-	public Signature correctProcessSignature() {
+	public Signature correctProcessSignature() throws SignatureException {
 		ServiceExertion exertion = (ServiceExertion)mogram;
 		if (!exertion.isJob())
 			return exertion.getProcessSignature();
@@ -822,10 +831,11 @@ public class ServiceShell implements RemoteServiceShell, Client, Callable {
 				} catch (ContextException e) {
 					throw new ExertionException(e);
 				}
+				items.add(exertion.getName());
 				items.add(tc);
 				items.add(cc);
 				items.addAll(sigs);
-				closedTask = task(exertion.getName(), items.toArray());
+				closedTask = task(items.toArray());
 			}
 		}
 		try {
@@ -842,7 +852,12 @@ public class ServiceShell implements RemoteServiceShell, Client, Callable {
 		this.service = srv;
 		this.mogram = mog;
 		if (service instanceof Signature) {
-			Provider prv = (Provider) Accessor.get().getService((Signature) service);
+			Provider prv = null;
+			try {
+				prv = (Provider) Accessor.get().getService((Signature) service);
+			} catch (SignatureException e) {
+				throw new MogramException(e);
+			}
 			return (T) prv.exert(mogram, txn);
 		} else if (service instanceof Jobber) {
 			Task out = (Task) ((Jobber)service).exert(mogram, txn);
@@ -862,15 +877,19 @@ public class ServiceShell implements RemoteServiceShell, Client, Callable {
 			}
 			((Mogram) service).setScope(cxt);
 			return (T) exert((Mogram) service);
-		} else if (service instanceof NetSignature
-				&& ((Signature) service).getServiceType() == sorcer.core.provider.RemoteServiceShell.class) {
-			Provider prv = (Provider) Accessor.get().getService((Signature) service);
-			return (T) prv.exert(mogram, txn).getContext();
-		} else if (service instanceof Par) {
-			((Par)service).setScope(mogram);
-			Object val =((Par)service).getValue();
-			((Context)mogram).putValue(((Par)service).getName(), val);
-			return (T) mogram;
+		} else try {
+			if (service instanceof NetSignature
+                    && ((Signature) service).getServiceType() == RemoteServiceShell.class) {
+                Provider prv = (Provider) Accessor.get().getService((Signature) service);
+                return (T) prv.exert(mogram, txn).getContext();
+            } else if (service instanceof Par) {
+                ((Par)service).setScope(mogram);
+                Object val =((Par)service).getValue();
+                ((Context)mogram).putValue(((Par)service).getName(), val);
+                return (T) mogram;
+            }
+		} catch (SignatureException e) {
+			throw new MogramException(e);
 		}
 		return (T) ((Exerter)service).exert(mogram, txn);
 	}

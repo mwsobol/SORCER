@@ -36,7 +36,7 @@ public class ModelSignature extends ServiceSignature {
 
 	public ModelSignature(String selector, Class serviceType, String providerName, Arg... parameters) {
 		super(selector, selector);
-		this.serviceType = serviceType;
+		this.serviceType.providerType = serviceType;
 		if (providerName == null || providerName.length() == 0)
 			this.providerName = new ProviderName(ANY);
 		else
@@ -131,7 +131,7 @@ public class ModelSignature extends ServiceSignature {
 	}
 	
 	public String toString() {
-		return this.getClass() + ":" + selector + ":" + providerName + ";" + execType + ";"
+		return this.getClass() + ":" + operation.selector + ":" + providerName + ";" + execType + ";"
 				+ isActive + ";" + var + ";" + fidelity + ";/n" + "inner: " + innerSignature;
 	}
 }

@@ -213,7 +213,11 @@ public class Mograms implements SorcerConstants {
 			throw new ExertionException("No Method For Exertion e=" + ex);
 
 		ExertionEnvelop eenv = ExertionEnvelop.getTemplate();
-		eenv.serviceType = ((NetSignature) ex.getProcessSignature()).getServiceType();
+		try {
+			eenv.serviceType = ((NetSignature) ex.getProcessSignature()).getServiceType();
+		} catch (SignatureException e) {
+			throw new ExertionException(e);
+		}
 		eenv.providerName = ex.getProcessSignature().getProviderName().getName();
 		eenv.exertion = ex;
 		eenv.exertionID = ex.getId();

@@ -1,4 +1,4 @@
-package sorcer.sml.mogram;
+package sorcer.sml.mograms;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,8 +15,9 @@ import sorcer.arithmetic.provider.impl.SubtractorImpl;
 import sorcer.core.plexus.Morpher;
 import sorcer.core.provider.Jobber;
 import sorcer.core.provider.rendezvous.ServiceJobber;
-import sorcer.core.service.Projection;
-import sorcer.service.*;
+import sorcer.service.Context;
+import sorcer.service.Job;
+import sorcer.service.Task;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -79,11 +80,11 @@ public class ExertionMultiFidelities {
 
         logger.info("j1 fi: " + fi(job));
         logger.info("j1 fis: " + fis(job));
-        logger.info("j2 fi: " + fi(exertion(job, "j1/j2")));
-        logger.info("j2 fis: " + fis(exertion(job, "j1/tj2")));
-        logger.info("t3 fi: " + fi(exertion(job, "j1/t3")));
-        logger.info("t4 fi: " + fi(exertion(job, "j1/j2/t4")));
-        logger.info("t5 fi: " + fi(exertion(job, "j1/j2/t5")));
+        logger.info("j2 fi: " + fi(xrt(job, "j1/j2")));
+        logger.info("j2 fis: " + fis(xrt(job, "j1/tj2")));
+        logger.info("t3 fi: " + fi(xrt(job, "j1/t3")));
+        logger.info("t4 fi: " + fi(xrt(job, "j1/j2/t4")));
+        logger.info("t5 fi: " + fi(xrt(job, "j1/j2/t5")));
         logger.info("job context: " + upcontext(job));
         Context out = null;
         // Jobbers and  all tasks are local
@@ -200,11 +201,11 @@ public class ExertionMultiFidelities {
 
         logger.info("j1 fi: " + fi(job));
         logger.info("j1 fis: " + fis(job));
-        logger.info("j2 fi: " + fi(exertion(job, "j1/j2")));
-        logger.info("j2 fis: " + fis(exertion(job, "j1/tj2")));
-        logger.info("t3 fi: " + fi(exertion(job, "j1/t3")));
-        logger.info("t4 fi: " + fi(exertion(job, "j1/j2/t4")));
-        logger.info("t5 fi: " + fi(exertion(job, "j1/j2/t5")));
+        logger.info("j2 fi: " + fi(xrt(job, "j1/j2")));
+        logger.info("j2 fis: " + fis(xrt(job, "j1/tj2")));
+        logger.info("t3 fi: " + fi(xrt(job, "j1/t3")));
+        logger.info("t4 fi: " + fi(xrt(job, "j1/j2/t4")));
+        logger.info("t5 fi: " + fi(xrt(job, "j1/j2/t5")));
         logger.info("job context: " + upcontext(job));
 
         logger.info("job context: " + context(job));
@@ -222,22 +223,5 @@ public class ExertionMultiFidelities {
         logger.info("job context: " + out);
         assertTrue(value(out, "j1/t3/result/y").equals(-1540.0));
     }
-
-
-	@Test
-	public void projectionTets() throws Exception {
-		ServiceFidelity<Fidelity> sFi1 = fi("job2", cFi("j1/j2", "net"),
-				cFi("j1/t3", "object2"), cFi("j1/j2/t4", "object2"), cFi("j1/j2/t5", "object2"));
-
-		ServiceFidelity<Fidelity> sFi2 = fi("job2", cFi("j1/j2", "net"),
-				cFi("j1/t3", "object2"), cFi("j1/j2/t4", "object2"), cFi("j1/j2/t5", "object2"), sFi1);
-
-
-		logger.info("projection: " + sFi2);
-
-		Projection p1 = new Projection(sFi1);
-
-		Projection p2 = new Projection(sFi2);
-	}
 
 }

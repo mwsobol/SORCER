@@ -30,7 +30,7 @@ import java.util.List;
 abstract public class CompoundExertion extends ServiceExertion {
 
 	/**
-	 * Component exertions of this job (the Composite Design pattern)
+	 * Component mograms of this job (the Composite Design pattern)
 	 */
 	protected List<Mogram> mograms = new ArrayList<Mogram>();
 
@@ -121,7 +121,7 @@ abstract public class CompoundExertion extends ServiceExertion {
 	/**
 	 * Returns all component <code>Mograms</code>s of this composite exertion.
 	 *
-	 * @return all component exertions
+	 * @return all component mograms
 	 */
 	public List<Mogram> getMograms() {
 		return mograms;

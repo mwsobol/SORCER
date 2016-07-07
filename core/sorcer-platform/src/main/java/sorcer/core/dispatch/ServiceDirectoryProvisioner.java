@@ -38,6 +38,7 @@ import sorcer.jini.lookup.AttributesUtil;
 import sorcer.service.Accessor;
 import sorcer.service.ServiceDirectory;
 import sorcer.service.Signature;
+import sorcer.service.SignatureException;
 import sorcer.util.SorcerEnv;
 import sorcer.util.rio.OpStringUtil;
 
@@ -83,7 +84,12 @@ public class ServiceDirectoryProvisioner implements Provisioner {
     @Override
     @SuppressWarnings("unchecked")
     public <T> T provision(Signature sig) throws ProvisioningException {
-        String typeName = (sig.getServiceType()!=null ? sig.getServiceType().getName() : null);
+        String typeName = null;
+        try {
+            typeName = (sig.getServiceType()!=null ? sig.getServiceType().getName() : null);
+        } catch (SignatureException e) {
+            throw new ProvisioningException(e);
+        }
         String name = (sig.getProviderName()!=null ? sig.getProviderName().getName() : "*");
         String version = ((sig instanceof NetSignature) ? ((NetSignature)sig).getVersion() : null);
         logger.warn("called provision {} {} {}", typeName, version, name);
@@ -98,7 +104,12 @@ public class ServiceDirectoryProvisioner implements Provisioner {
                 } catch (InterruptedException ie) {
                 }
             }
-            T service = (T) Accessor.get().getService(sig);
+            T service = null;
+            try {
+                service = (T) Accessor.get().getService(sig);
+            } catch (SignatureException e) {
+                throw new ProvisioningException(e);
+            }
             if (service!=null) return service;
         }
 

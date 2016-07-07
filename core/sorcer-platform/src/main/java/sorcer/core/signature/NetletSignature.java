@@ -28,8 +28,6 @@ import sorcer.util.Sorcer;
 import java.io.File;
 import java.rmi.RemoteException;
 
-import static sorcer.eo.operator.evaluate;
-
 /**
  * Created by Mike Sobolewski on 8/3/15.
  */
@@ -64,7 +62,7 @@ public class NetletSignature extends ServiceSignature {
         try {
             ScriptExerter se = new ScriptExerter(System.out, null, Sorcer.getWebsterUrl(), true);
             se.readFile(new File(serviceSource.getName()));
-            return evaluate((Mogram)se.parse());
+            return sorcer.eo.operator.exec((Mogram)se.parse());
         } catch (Throwable throwable) {
             throw new MogramException(throwable);
         }

@@ -232,8 +232,33 @@ public class ServiceFidelity<T extends Arg> extends Fidelity<T> implements Multi
 		this.selects = selects;
 	}
 
-	public Fidelity createFidelity() {
-		return new Fidelity(getName(), getPath());
+	protected boolean selectsFidelityTypeOnly() {
+		for (Object fi : selects) {
+			if (fi.getClass()!=Fidelity.class) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	public List<Fidelity> selectFidelities(List<Fidelity> fidelities) {
+		List<Fidelity> fis = new ArrayList();
+		for (Object fi : fidelities) {
+			if (fi.getClass()==Fidelity.class) {
+				fis.add((Fidelity)fi);
+			}
+		}
+		return fis;
+	}
+
+	protected List<Fidelity> selectFidelities() {
+		List<Fidelity> fis = new ArrayList();
+		for (Object fi : selects) {
+			if (fi.getClass()==Fidelity.class) {
+				fis.add((Fidelity)fi);
+			}
+		}
+		return fis;
 	}
 
 	@Override

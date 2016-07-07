@@ -81,7 +81,7 @@ public class ArithmeticNoNetBlockTest implements SorcerConstants {
 				opt(condition("{ t4, t5 -> t4 <= t5 }", "t4", "t5"), t6)));
 		
 //		logger.info("block: " + block);
-//		logger.info("exertions: " + exertions(block));
+//		logger.info("mograms: " + mograms(block));
 //		logger.info("block context: " + context(block));
 
 		block = exert(block);

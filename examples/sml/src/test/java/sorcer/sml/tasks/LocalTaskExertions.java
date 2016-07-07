@@ -25,11 +25,30 @@ import static sorcer.eo.operator.value;
 @ProjectContext("examples/sml")
 public class LocalTaskExertions {
 	private final static Logger logger = LoggerFactory.getLogger(LocalTaskExertions.class);
-	
+
+
 	@Test
 	public void exertTask() throws Exception  {
 
 		Task t5 = task("t5", sig("add", AdderImpl.class),
+				cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0)));
+
+		Exertion out = exert(t5);
+		Context cxt = context(out);
+
+		// get a single context argument
+		assertEquals(100.0, value(cxt, "result/value"));
+
+		// get the subcontext output from the context
+		assertTrue(context(ent("result/value", 100.0), ent("arg/x1", 20.0)).equals(
+				value(cxt, outPaths("result/value", "arg/x1"))));
+
+	}
+
+	@Test
+	public void exertOpTask() throws Exception  {
+
+		Task t5 = task(sig(AdderImpl.class), op("add"),
 				cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0)));
 
 		Exertion out = exert(t5);
@@ -44,6 +63,25 @@ public class LocalTaskExertions {
 
 		// get the subcontext output from the context
 		assertTrue(context(ent("result/value", 100.0), ent("arg/x1", 20.0)).equals(
+				value(cxt, outPaths("result/value", "arg/x1"))));
+
+	}
+
+	@Test
+	public void exertSubstituteOpTask() throws Exception  {
+
+		Task t5 = task("t5", sig(AdderImpl.class), op("add"),
+				cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0)));
+
+		Exertion out = exert(t5, op("t5", "add2"));
+		Context cxt = context(out);
+		logger.info("out context: " + cxt);
+
+		// get a single context argument
+		assertEquals(200.0, value(cxt, "result/value"));
+
+		// get the subcontext output from the context
+		assertTrue(context(ent("result/value", 200.0), ent("arg/x1", 20.0)).equals(
 				value(cxt, outPaths("result/value", "arg/x1"))));
 
 	}

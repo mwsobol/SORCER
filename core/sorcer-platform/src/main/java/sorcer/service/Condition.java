@@ -67,7 +67,7 @@ import java.util.Map;
 
 	protected String closureExpression;
 
-	transient protected ConditionCollable lambda;
+	transient protected ConditionCallable lambda;
 
 	transient private Closure closure;
 
@@ -79,7 +79,7 @@ import java.util.Map;
 		// do nothing
 	}
 
-	public Condition(ConditionCollable lambda) {
+	public Condition(ConditionCallable lambda) {
 		this.lambda = lambda;
 	}
 
@@ -111,12 +111,12 @@ import java.util.Map;
 		this.pars = parameters;
 	}
 
-	public Condition(ConditionCollable closure, String... parameters) {
+	public Condition(ConditionCallable closure, String... parameters) {
 		this.lambda = closure;
 		this.pars = parameters;
 	}
 
-	public Condition(Context<?> context, ConditionCollable closure, String... parameters) {
+	public Condition(Context<?> context, ConditionCallable closure, String... parameters) {
 		this.lambda = closure;
 		conditionalContext = context;
 		this.pars = parameters;
@@ -179,7 +179,7 @@ import java.util.Map;
 			return false;
 	}
 
-	private boolean evaluateLambda(ConditionCollable lambda) throws MogramException {
+	private boolean evaluateLambda(ConditionCallable lambda) throws MogramException {
 		return lambda.call(conditionalContext);
 	}
 
@@ -248,11 +248,11 @@ import java.util.Map;
 		this.closure = closure;
 	}
 
-	public ConditionCollable getLambda() {
+	public ConditionCallable getLambda() {
 		return lambda;
 	}
 
-	public void setLambda(ConditionCollable lambda) {
+	public void setLambda(ConditionCallable lambda) {
 		this.lambda = lambda;
 	}
 

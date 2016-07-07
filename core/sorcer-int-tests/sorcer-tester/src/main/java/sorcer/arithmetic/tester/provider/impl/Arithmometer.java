@@ -9,6 +9,8 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.rmi.RemoteException;
 import java.util.List;
+
+import groovy.lang.GroovyShell;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,14 +40,15 @@ public class Arithmometer implements SorcerConstants, Serializable {
 	public final static Logger logger = LoggerFactory.getLogger(Arithmometer.class
 			.getName());
 
+
 	/**
 	 * Implements the {@link Adder} interface.
-	 * 
+	 *
 	 * @param context
 	 *            input context for this operation
 	 * @return an output service context
 	 * @throws RemoteException
-	 * @throws ContextException 
+	 * @throws ContextException
 	 */
 	public Context add(Context context) throws RemoteException, ContextException {
 		if (context instanceof ArrayContext) {
@@ -57,12 +60,12 @@ public class Arithmometer implements SorcerConstants, Serializable {
 
 	/**
 	 * Implements the {@link Subtractor} interface.
-	 * 
+	 *
 	 * @param context
 	 *            input context for this operation
 	 * @return an output service context
 	 * @throws RemoteException
-	 * @throws ContextException 
+	 * @throws ContextException
 	 */
 	public Context subtract(Context context)
 			throws RemoteException, ContextException {
@@ -75,12 +78,12 @@ public class Arithmometer implements SorcerConstants, Serializable {
 
 	/**
 	 * Implements the {@link Multiplier} interface.
-	 * 
+	 *
 	 * @param context
 	 *            input context for this operation
 	 * @return an output service context
 	 * @throws RemoteException
-	 * @throws ContextException 
+	 * @throws ContextException
 	 */
 	public Context multiply(Context context)
 			throws RemoteException, ContextException {
@@ -93,11 +96,11 @@ public class Arithmometer implements SorcerConstants, Serializable {
 
 	/**
 	 * Implements the {@link Divider} interface.
-	 * 
+	 *
 	 * @param context
 	 *            input context for this operation
 	 * @return an output service context
-	 * @throws ContextException 
+	 * @throws ContextException
 	 * @throws RemoteException
 	 */
 	public Context divide(Context context) throws RemoteException, ContextException {
@@ -115,18 +118,22 @@ public class Arithmometer implements SorcerConstants, Serializable {
 			return calculateFromPositionalContext(context, AVERAGE);
 		}
 	}
-	
+
+	public Context calculate(Context context) throws RemoteException, ContextException {
+		return calculateExpression(context);
+	}
+
 	/**
 	 * Calculates the result of arithmetic operation specified by a selector
 	 * (add, subtract, multiply, or divide) from the instance of ArrayContext.
-	 * 
+	 *
 	 * @param context
 	 *            service context
 	 * @param selector
 	 *            a name of arithmetic operation
 	 * @return
 	 * @throws RemoteException
-	 * @throws ContextException 
+	 * @throws ContextException
 	 * @throws ContextException
 	 * @throws UnknownHostException
 	 */
@@ -161,7 +168,7 @@ public class Arithmometer implements SorcerConstants, Serializable {
 				result = inputs.get(0);
 				for (int i = 1; i < inputs.size(); i++)
 					result += inputs.get(i);
-				
+
 				result = result / inputs.size();
 			}
 
@@ -190,7 +197,6 @@ public class Arithmometer implements SorcerConstants, Serializable {
 			ServiceFidelity fi = context.getMogram().getSelectedFidelity();
 			if (fi != null)
 				cxt.putValue("task/fidelity", fi);
-			cxt.putValue(attPath(outpaths.get(0), ArrayContext.DESCRIPTION), outputMessage);
 		} catch (Exception ex) {
 			context.reportException(ex);
 			throw new ContextException(selector + " calculate exception", ex);
@@ -201,9 +207,8 @@ public class Arithmometer implements SorcerConstants, Serializable {
 	/**
 	 * Calculates the result of arithmetic operation specified by a selector
 	 * (add, subtract, multiply, or divide) from the instance of ServiceContext.
-	 * 
-	 * @param context
-	 *            service context
+	 *
+	 * @param cxt
 	 * @param selector
 	 *            a name of arithmetic operation
 	 * @return
@@ -211,27 +216,19 @@ public class Arithmometer implements SorcerConstants, Serializable {
 	 * @throws ContextException
 	 * @throws UnknownHostException
 	 */
-	private Context calculateFromPositionalContext(Context context, String selector)
+	private Context calculateFromPositionalContext(Context cxt, String selector)
 			throws RemoteException, ContextException {
-		PositionalContext cxt = (PositionalContext) context;
+		PositionalContext context = (PositionalContext) cxt;
 		try {
+			logger.info("arithmometer context: " + context);
 			//logger.info("selector: " + ((ServiceContext)context).getCurrentSelector());
 			// get sorted list of input values
-			List<Double> inputs = (List<Double>)Contexts.getNamedInValues(context);
-			if (inputs == null || inputs.size() == 0) {
-				inputs = (List<Double>)Contexts.getPrefixedInValues(context);
-//				logger.info("prefixed inputs: \n" + inputs);
-			}
-			//logger.info("named inputs: \n" + inputs);
-			if (inputs == null || inputs.size() == 0)
-				inputs = (List<Double>)cxt.getInValues();
-			logger.info("inputs: \n" + inputs);
-			List<String> outpaths = cxt.getOutPaths();
+			List<Double> inputs = determineInputs(context);
+			List<String> outpaths = context.getOutPaths();
 			//logger.info("outpaths: \n" + outpaths);
-
 			double result = 0.0;
-			if (selector.equals(ADD)) {				
-					result = (Double)revalue(inputs.get(0));
+			if (selector.equals(ADD)) {
+				result = (Double)revalue(inputs.get(0));
 				for (int i = 1; i < inputs.size(); i++)
 					result += (Double)revalue(inputs.get(i));
 			} else if (selector.equals(SUBTRACT)) {
@@ -240,38 +237,55 @@ public class Arithmometer implements SorcerConstants, Serializable {
 					result = (Double) revalue(cxt.getValue(rp.inPaths[0].path));
 					result -= (Double) revalue(cxt.getValue(rp.inPaths[1].path));
 				} else {
-					if (inputs.size() > 2) {
-						throw new ContextException("more than two arguments for subtraction");
+					if (inputs.size() > 2 || inputs.size() < 2) {
+						throw new ContextException("two arguments needed for subtraction");
 					}
-					result = (Double) revalue(cxt.getInValueAt(1));
-					result -= (Double) revalue(cxt.getInValueAt(2));
+					result = (Double) revalue(context.getInValueAt(1));
+					result -= (Double) revalue(context.getInValueAt(2));
 				}
 			} else if (selector.equals(MULTIPLY)) {
 				result = (Double)revalue(inputs.get(0));
 				for (int i = 1; i < inputs.size(); i++)
 					result *= (Double)revalue(inputs.get(i));
 			} else if (selector.equals(DIVIDE)) {
-				if (inputs.size() > 2)
-					throw new ContextException("more than two arguments for division");
-				result = (Double)revalue(cxt.getInValueAt(1));
-				result /= (Double)revalue(cxt.getInValueAt(2));
-			} else if (selector.equals(AVERAGE)) {				
+				if (inputs.size() > 2 || inputs.size() < 2)
+					throw new ContextException("two arguments needed for division");
+
 				result = (Double)revalue(inputs.get(0));
-				for (int i = 1; i < inputs.size(); i++) 
-					result += (Double)revalue(inputs.get(i));
-				
-				result = result / inputs.size();	
+				result /= (Double)revalue(inputs.get(1));
+			} else if (selector.equals(AVERAGE)) {
+				if (inputs.size() == 0) {
+					inputs = (List<Double>) Contexts.getNamedOutValues(context);
+				}
+				result = (Double) revalue(inputs.get(0));
+				for (int i = 1; i < inputs.size(); i++)
+					result += (Double) revalue(inputs.get(i));
+
+				result = result / inputs.size();
 			}
 			logger.info(selector + " result: \n" + result);
 
 			String outputMessage = "calculated by " + getHostname();
 			if (context.getReturnPath() != null) {
+				String outpath = context.getReturnPath().path;
+				if (outpath.indexOf("${name}") >= 0) {
+					String out = outpath.replace("${name}",
+							context.getMogram().getName());
+					context.getReturnPath().path = out;
+				}
 				context.setReturnValue(result);
 			}
 			else if (outpaths.size() == 1) {
 				// put the result in the existing output path
-				cxt.putValue(outpaths.get(0), result);
-				cxt.putValue(attPath(outpaths.get(0), ArrayContext.DESCRIPTION), outputMessage);
+				String outpath = outpaths.get(0);
+				if (outpath.indexOf("${name}") >= 0) {
+					if (outpath.indexOf("${name}") >= 0) {
+						outpath = outpath.replace("${name}",
+								context.getMogram().getName());
+					}
+				}
+				cxt.putValue(outpath, result);
+				cxt.putValue(attPath(outpath, ArrayContext.DESCRIPTION), outputMessage);
 			} else {
 				cxt.putValue(RESULT_PATH, result);
 				cxt.putValue(attPath(RESULT_PATH, ArrayContext.DESCRIPTION), outputMessage);
@@ -283,17 +297,85 @@ public class Arithmometer implements SorcerConstants, Serializable {
 			if (fi != null)
 				cxt.putValue("task/fidelity", fi);
 		} catch (Exception ex) {
-			// ContextException, UnknownHostException
 			ex.printStackTrace();
 			context.reportException(ex);
 			throw new ContextException(selector + " calculate exception", ex);
 		}
 		return context;
 	}
-	
+
+	private Context calculateExpression(Context context)
+			throws RemoteException, ContextException {
+		String expr = (String) context.getValue("arithmetic/expression");
+		List<String> outpaths = ((ServiceContext) context).getOutPaths();
+		GroovyShell gsh = new GroovyShell();
+		Object result = gsh.evaluate(expr);
+		String outputMessage;
+		try {
+			outputMessage = "calculated by " + getHostname();
+			if (context.getReturnPath() != null) {
+				String outpath = ((ServiceContext) context).getReturnPath().path;
+				if (outpath.indexOf("${name}") >= 0) {
+					String out = outpath.replace("${name}",
+							context.getMogram().getName());
+					context.getReturnPath().setPath(out);
+				}
+				context.setReturnValue(result);
+			} else if (outpaths.size() == 1) {
+				// put the result in the existing output path
+				String outpath = outpaths.get(0);
+				if (outpath.indexOf("${name}") >= 0) {
+					if (outpath.indexOf("${name}") >= 0) {
+						outpath = outpath.replace("${name}",
+								((ServiceContext) context).getMogram()
+										.getName());
+					}
+				}
+				context.putValue(outpath, result);
+				context.putValue(attPath(outpath, ArrayContext.DESCRIPTION),
+						outputMessage);
+			} else {
+				context.putValue(RESULT_PATH, result);
+				context.putValue(attPath(RESULT_PATH, ArrayContext.DESCRIPTION),
+						outputMessage);
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			context.reportException(ex);
+			throw new ContextException("calculate expression", ex);
+		}
+		return context;
+	}
+
+	private List<Double> determineInputs(PositionalContext context) throws ContextException {
+		List<Double> inputs = (List<Double>) Contexts.getNamedInValues(context);
+		if (inputs == null || inputs.size() == 0) {
+			inputs = (List<Double>) Contexts.getPrefixedInValues(context);
+//				logger.info("prefixed inputs: \n" + inputs);
+		}
+		//logger.info("named inputs: \n" + inputs);
+		if (inputs == null || inputs.size() == 0)
+			inputs = (List<Double>) context.getInValues();
+		if (inputs == null || inputs.size() == 0) {
+			logger.info("context size: \n" + context.size());
+			if (context.size() == 2) {
+				inputs.add((Double) context.getValueAt(0));
+				inputs.add((Double) context.getValueAt(1));
+//				logger.info("first: \n" + context.getValueAt(0));
+//				logger.info("second: \n" + context.getValueAt(1));
+			}
+		}
+		if (inputs != null && inputs.size() < 2) {
+			inputs = context.getAllInValues();
+		}
+		logger.info("inputs: \n" + inputs);
+		logger.info("inputs paths: \n" + Contexts.getInPaths(context));
+		return inputs;
+	}
+
 	/**
 	 * Returns name of the local host.
-	 * 
+	 *
 	 * @return local host name
 	 * @throws UnknownHostException
 	 */

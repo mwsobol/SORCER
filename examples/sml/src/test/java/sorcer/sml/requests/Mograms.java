@@ -30,8 +30,8 @@ import static sorcer.po.operator.invoker;
  */
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/sml")
-public class Services {
-    private final static Logger logger = LoggerFactory.getLogger(Services.class);
+public class Mograms {
+    private final static Logger logger = LoggerFactory.getLogger(Mograms.class);
 
     @Test
     public void evaluateModel() throws Exception  {
@@ -123,7 +123,7 @@ public class Services {
     @Test
     public void exertMogram() throws Exception  {
 
-        Mogram mogram = mogram(sig("add", AdderImpl.class),
+        Mogram mogram = mog(sig("add", AdderImpl.class),
                             cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
                             outEnt("result/y")));
 

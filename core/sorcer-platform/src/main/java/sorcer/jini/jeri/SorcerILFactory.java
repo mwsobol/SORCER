@@ -371,7 +371,7 @@ public class SorcerILFactory extends BasicILFactory {
         return bean;
     }
 
-    private static boolean isSorcerType(Object target) {
+    private static boolean isSorcerType(Object target) throws SignatureException {
         if (target instanceof Exertion) {
             Class serviceType = ((Exertion) target).getProcessSignature().getServiceType();
             if (target instanceof CompoundExertion

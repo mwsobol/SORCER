@@ -1,4 +1,4 @@
-package sorcer.sml.requests;
+package sorcer.util;
 
 import net.jini.config.EmptyConfiguration;
 import org.junit.BeforeClass;
@@ -12,9 +12,6 @@ import sorcer.core.SorcerConstants;
 import sorcer.core.provider.*;
 import sorcer.service.Accessor;
 import sorcer.service.DynamicAccessor;
-import sorcer.util.ProviderAccessor;
-import sorcer.util.ProviderLookup;
-import sorcer.util.Stopwatch;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -26,7 +23,7 @@ import static sorcer.eo.operator.sig;
  * @author Mike Sobolewski
  */
 @RunWith(SorcerTestRunner.class)
-@ProjectContext("examples/sml")
+@ProjectContext("core/sorcer-int-tests/sorcer-tester")
 public class ServiceAccessors implements SorcerConstants {
 	private final static Logger logger = LoggerFactory.getLogger(ServiceAccessors.class);
     static ProviderAccessor providerAccessor;

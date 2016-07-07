@@ -1501,7 +1501,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		}
 
 		// TODO transaction handling to be implemented when needed
-		// TO DO HANDLING SUSSPENDED exertions
+		// TO DO HANDLING SUSSPENDED mograms
 		// if (((ServiceExertion) exertion).monitorSession != null) {
 		// new Thread(new ServiceThread(exertion, this)).start();
 		// return exertion;

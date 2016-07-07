@@ -117,7 +117,7 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
     // for already existing names
     protected String serviceFidelitySelector;
 
-//    // fidelity Contexts for its component exertions
+//    // fidelity Contexts for its component mograms
 //    protected Map<String, FidelityContext> fidelityContexts;
 
     // Date of creation of this Exertion
@@ -216,7 +216,7 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
         return mogIdsList;
     }
 
-    public void trimAllNotSerializableSignatures() {
+    public void trimAllNotSerializableSignatures() throws SignatureException {
         trimNotSerializableSignatures();
         for (Mogram m : getAllMograms()) {
             ((ServiceMogram)m).trimNotSerializableSignatures();
@@ -417,7 +417,7 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
 		return sig;
 	}
 
-    public void trimNotSerializableSignatures() {
+    public void trimNotSerializableSignatures() throws SignatureException {
         if (serviceFidelities != null) {
             Iterator i = serviceFidelities.keySet().iterator();
             while (i.hasNext()) {
@@ -428,7 +428,7 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
         }
     }
 
-	private void trimNotSerializableSignatures(ServiceFidelity<Signature> fidelity) {
+	private void trimNotSerializableSignatures(ServiceFidelity<Signature> fidelity) throws SignatureException {
         if (fidelity.getSelects().get(0)  instanceof Signature){
             Iterator<Signature> i = fidelity.getSelects().iterator();
             while (i.hasNext()) {
@@ -673,7 +673,7 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
 
     /**
      * <p>
-     * Assigns a monitor session for this exertions.
+     * Assigns a monitor session for this mograms.
      * </p>
      *
      * @param monitorSession

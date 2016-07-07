@@ -77,7 +77,7 @@ public interface Exertion extends Mogram, Dependency, Invocation<Object>, Evalua
 	 * @return a deployment identifier 
 	 * @throws NoSuchAlgorithmException 
 	 */
-	public String getDeploymentId() throws NoSuchAlgorithmException;
+	public String getDeploymentId() throws NoSuchAlgorithmException, SignatureException;
 	
 	/**
 	 * Appends the specified component exertion to the end of its list of exertions.

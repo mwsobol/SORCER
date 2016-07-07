@@ -99,18 +99,24 @@ public class OperationalStringFactoryTest {
         String name = job.getDeploymentId();
         assertTrue(name.equals(federated.getName()));
         assertEquals(2, federated.getServices().length);
-        assertEquals(SorcerEnv.getActualName("Adder"), federated.getServices()[0].getName());
+        assertTrue(SorcerEnv.getActualName("Adder").equals(federated.getServices()[0].getName())
+            || SorcerEnv.getActualName("Subtractor").equals(federated.getServices()[0].getName()));
 
-        ServiceElement subtract = federated.getServices()[1];
-        Assert.assertTrue(subtract.getPlanned()==2);
-        Assert.assertTrue(subtract.getMaxPerMachine()==2);
-        Assert.assertTrue(subtract.getMachineBoundary() == ServiceElement.MachineBoundary.VIRTUAL);
+        ServiceElement subtract = null;
+        for (ServiceElement se : federated.getServices()) {
+            if (se.getName().startsWith("Subtractor")) {
+                subtract = se;
+                Assert.assertTrue(subtract.getPlanned() == 2);
+                Assert.assertTrue(subtract.getMaxPerMachine() == 2);
+                Assert.assertTrue(subtract.getMachineBoundary() == ServiceElement.MachineBoundary.VIRTUAL);
+            }
+        }
 
         assertNotNull(federated.getUndeployOption());
         assertTrue(UndeployOption.Type.WHEN_IDLE.equals(federated.getUndeployOption().getType()));
         assertTrue(1==federated.getUndeployOption().getWhen());
 
-        assertEquals(2, federated.getServices()[1].getPlanned());
+        assertEquals(2, subtract.getPlanned());
     }
 
     @Test

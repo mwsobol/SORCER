@@ -128,7 +128,7 @@ public class SorcerDatabaseTest implements SorcerConstants {
 	
 	@Test
 	public void storedExertionSetTest() throws Exception {
-        // get from the database two exertions persisted twice
+        // get from the database two mograms persisted twice
 		List<String> names = runner.returnExertionNames();
         List<String> ln = list("f1", "f4");
 		Collections.sort(names);

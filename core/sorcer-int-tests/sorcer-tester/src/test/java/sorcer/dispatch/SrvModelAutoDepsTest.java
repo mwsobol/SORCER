@@ -1,12 +1,12 @@
-package sorcer.sml.dispatch;
+package sorcer.dispatch;
 
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sorcer.arithmetic.provider.impl.AdderImpl;
-import sorcer.arithmetic.provider.impl.DividerImpl;
-import sorcer.arithmetic.provider.impl.MultiplierImpl;
-import sorcer.arithmetic.provider.impl.SubtractorImpl;
+import sorcer.arithmetic.tester.provider.impl.AdderImpl;
+import sorcer.arithmetic.tester.provider.impl.DividerImpl;
+import sorcer.arithmetic.tester.provider.impl.MultiplierImpl;
+import sorcer.arithmetic.tester.provider.impl.SubtractorImpl;
 import sorcer.service.Context;
 import sorcer.service.modeling.Model;
 
@@ -14,8 +14,8 @@ import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
 import static sorcer.eo.operator.get;
 import static sorcer.eo.operator.*;
-import static sorcer.mo.operator.response;
 import static sorcer.mo.operator.printDeps;
+import static sorcer.mo.operator.response;
 
 /**
  * Created by pol on 24.11.15.

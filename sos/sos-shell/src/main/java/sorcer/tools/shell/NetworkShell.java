@@ -75,6 +75,7 @@ import static sorcer.util.StringUtils.tName;
  * @author Mike Sobolewski
  * call the 'help' command at the nsh prompt
  */
+@SuppressWarnings("unchecked")
 public class NetworkShell implements DiscoveryListener, INetworkShell {
 
     public static final String NSH_HELP="SORCER Network Shell - command line options:\n" +

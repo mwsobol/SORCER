@@ -28,7 +28,7 @@ import java.rmi.RemoteException;
 
 /**
  * ServiceJobber - The SORCER rendezvous service provider that manages
- * coordination for executing exertions using service providers that 
+ * coordination for executing mograms using service providers that
  * form a dynamic service federation as specified signatures of component mograms.
  * 
  * @author Mike Sobolewski

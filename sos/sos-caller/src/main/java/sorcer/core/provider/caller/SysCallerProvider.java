@@ -27,7 +27,7 @@ import sorcer.service.Context;
 import sorcer.service.ContextException;
 import java.rmi.RemoteException;
 
-
+@SuppressWarnings("unchecked")
 public class SysCallerProvider extends ServiceProvider implements SysCaller {
 
 	private static Logger logger = LoggerFactory.getLogger(SysCallerProvider.class);

@@ -246,7 +246,7 @@ public interface Context<T> extends Model, Mappable<T>, Serializable, Contexter<
 	 *
 	 * @return Provider
 	 */
-	public Provider getProvider();
+	public Provider getProvider() throws SignatureException;
 
 	/**
 	 * Returns the result value associated with this context.

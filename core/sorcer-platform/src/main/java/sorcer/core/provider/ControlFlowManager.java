@@ -40,7 +40,7 @@ import static sorcer.eo.operator.task;
 
 /**
  * The ControlFlowManager class is responsible for handling control flow
- * exertions ({@link Conditional}, {@link NetJob}, {@link NetTask}).
+ * mograms ({@link Conditional}, {@link NetJob}, {@link NetTask}).
  * 
  * This class is used by the {@link sorcer.core.provider.exerter.ServiceShell} class for executing
  * Exertions.
@@ -56,7 +56,7 @@ public class ControlFlowManager {
     protected static final Logger logger = LoggerFactory.getLogger(ControlFlowManager.class);
 
 	/**
-	 * ExertionDelegate reference needed for handling exertions.
+	 * ExertionDelegate reference needed for handling mograms.
 	 */
 	protected ProviderDelegate delegate;
 

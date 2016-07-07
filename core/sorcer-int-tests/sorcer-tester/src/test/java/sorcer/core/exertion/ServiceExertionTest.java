@@ -44,7 +44,7 @@ public class ServiceExertionTest {
 	
 	@Before
 	public void setUp() throws Exception {
-		// create an exertions
+		// create an mograms
 		eTask = createTask();	
 		eJob = createJob();
 	}
@@ -95,17 +95,17 @@ public class ServiceExertionTest {
 	@Test
 	public void accessingComponentExertionsTest() throws EvaluationException,
 			RemoteException, ExertionException {
-		//logger.info("eJob exertions: " + names(exertions(eJob)));
-		assertTrue(names(exertions(eJob)).equals(list("t4", "t5", "j2", "t3", "j1")));
+		//logger.info("eJob mograms: " + names(mograms(eJob)));
+		assertTrue(names(mograms(eJob)).equals(list("t4", "t5", "j2", "t3", "j1")));
 
 		//logger.info("t4 exertion: " + exertion(eJob, "t4"));
-		assertTrue(name(exertion(eJob, "j1/j2/t4")).equals("t4"));
+		assertTrue(name(xrt(eJob, "j1/j2/t4")).equals("t4"));
 		
 		//logger.info("j2 exertion: " + exertion(eJob, "j2"));
-		assertTrue(name(exertion(eJob, "j1/j2")).equals("j2"));
+		assertTrue(name(xrt(eJob, "j1/j2")).equals("j2"));
 		
-		//logger.info("j2 exertion names: " + names(exertions(exertion(eJob, "j2"))));
-		assertTrue(names(exertions(exertion(eJob, "j1/j2"))).equals(list("t4", "t5", "j2")));
+		//logger.info("j2 exertion names: " + names(mograms(exertion(eJob, "j2"))));
+		assertTrue(names(mograms(xrt(eJob, "j1/j2"))).equals(list("t4", "t5", "j2")));
 	}
 
 	// a simple task

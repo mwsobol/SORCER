@@ -49,6 +49,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+@SuppressWarnings("unchecked")
 public class ExertMonitor extends ServiceProvider implements MonitoringManagement {
 	static transient final Logger logger = LoggerFactory.getLogger(ExertMonitor.class.getName());
 	private MonitorLandlord landlord;

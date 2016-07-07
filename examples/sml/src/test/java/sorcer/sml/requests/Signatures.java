@@ -48,7 +48,6 @@ public class Signatures {
 
 	}
 
-
 	@Test
 	public void referencingInstances() throws Exception {
 
@@ -60,11 +59,10 @@ public class Signatures {
 		logger.info("provider of s: " + prv);
 		assertTrue(prv instanceof Date);
 
-		logger.info("getTime: " + exec(xrt("gt", s)));
+//		logger.info("getTime: " + exec(xrt("gt", s)));
 		assertTrue(exec(xrt("gt", s)) instanceof Long);
 
 	}
-
 
 	@Test
 	public void referencingClassWithConstructor() throws Exception {
@@ -77,11 +75,10 @@ public class Signatures {
 		logger.info("selector of s: " + selector(s));
 		logger.info("service type of s: " + type(s));
 		assertTrue(prv instanceof Date);
-		logger.info("time: " + exec(xrt("time", s)));
+//		logger.info("time: " + exec(xrt("time", s)));
 		assertTrue(exec(xrt("time", s)) instanceof Long);
 
 	}
-
 
 	@Test
 	public void referencingUtilityClass() throws Exception {
@@ -157,6 +154,38 @@ public class Signatures {
 		logger.info("time: " + exec(task("month", ps, cxt)));
 		assertTrue(exec(task("month", ps, cxt)) instanceof Integer);
 		assertTrue(exec(task("month", ps, cxt)).equals(((Calendar) prv).get(Calendar.MONTH)));
+
+	}
+
+	@Test
+	public void localSigService() throws Exception {
+
+		// request the local service
+		Signature ss = sig("add", AdderImpl.class,
+				context("add",
+						inEnt("arg/x1", 20.0),
+						inEnt("arg/x2", 80.0),
+						result("result/y")));
+
+//		logger.info("ss: " + exec(ss));
+
+		assertEquals(100.0, exec(ss));
+
+	}
+
+	@Test
+	public void remoteSigService() throws Exception {
+
+		// request the local service
+		Signature ss = sig("add", Adder.class,
+				context("add",
+						inEnt("arg/x1", 20.0),
+						inEnt("arg/x2", 80.0),
+						result("result/y")));
+
+//		logger.info("ss: " + exec(ss));
+
+		assertEquals(100.0, exec(ss));
 
 	}
 
@@ -256,6 +285,21 @@ public class Signatures {
 		assertEquals(100.0, value(context(out), "result/y"));
 	}
 
+
+	@Test
+	public void signatureWithProviderName() throws Exception  {
+		String group = System.getProperty("user.name");
+
+		Task t5 = task("t5", sig(type("sorcer.arithmetic.provider.Adder"), op("add"),
+				types(Service.class, Provider.class),
+				// comma separated list of hosts, when empty localhost is a default locator
+				srvName("Adder", locators(), group)),
+				cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0), result("result/y")));
+
+		Exertion out = exert(t5);
+		assertEquals(100.0, value(context(out), "result/y"));
+	}
+
 	@Test
 	public void referencingNamedRemoteProvider() throws Exception {
 
@@ -276,7 +320,7 @@ public class Signatures {
 	}
 
 	@Test
-	public void signatureLocalService() throws Exception {
+	public void execSignatureOfLocalService() throws Exception {
 
 		Context<Double> cxt = context(
 				inEnt("y1", 20.0),
@@ -288,7 +332,7 @@ public class Signatures {
 	}
 
 	@Test
-	public void signatureRemoteService() throws Exception {
+	public void execSignatureOfRemoteService() throws Exception {
 
 		Context<Double> cxt = context(
 				inEnt("y1", 20.0),
@@ -300,15 +344,24 @@ public class Signatures {
 	}
 
 	@Test
-	public void evaluateNetletSignature() throws Exception {
-		String netlet = "src/main/netlets/ha-job-local.ntl";
-		assertEquals(evaluate(mogram(sig(file(netlet)))), 400.00);
-	}
-
-	@Test
 	public void execNetletSignature() throws Exception {
 		String netlet = "src/main/netlets/ha-job-local.ntl";
 		assertEquals(exec(sig(file(netlet))), 400.00);
+	}
+
+	@Test
+	public void netletSignatureProvider() throws Exception {
+		String netlet = System.getProperty("project.dir")+"/src/main/netlets/ha-job-local.ntl";
+
+		Service srv = (Service)provider(sig(file(netlet)));
+//		logger.info("job service: " + exec(srv));
+		assertTrue(exec(srv).equals(400.0));
+	}
+
+	@Test
+	public void execMogramWithNetletSignature() throws Exception {
+		String netlet = "src/main/netlets/ha-job-local.ntl";
+		assertEquals(exec(mog(sig(file(netlet)))), 400.00);
 	}
 
 	@Test
@@ -351,25 +404,7 @@ public class Signatures {
 	}
 
 	@Test
-	public void netletSignature() throws Exception {
-		String netlet = System.getProperty("project.dir")+"/src/main/netlets/ha-job-local.ntl";
-
-		Signature sig = sig(file(netlet));
-//		logger.info("job service: " + exec(sig));
-		assertTrue(exec(sig).equals(400.0));
-	}
-
-	@Test
-	public void netletSignatureprovider() throws Exception {
-		String netlet = System.getProperty("project.dir")+"/src/main/netlets/ha-job-local.ntl";
-
-		Service srv = (Service)provider(sig(file(netlet)));
-//		logger.info("job service: " + exec(srv));
-		assertTrue(exec(srv).equals(400.0));
-	}
-
-	@Test
-	public void localSigConnector() throws Exception {
+	public void localSigOutConnector() throws Exception {
 
 		Context cxt = context(
 				inEnt("y1", 20.0),
@@ -398,7 +433,7 @@ public class Signatures {
 
 
 	@Test
-	public void remoteSigConnector() throws Exception {
+	public void remoteSigInConnector() throws Exception {
 
 		Context cxt = context(
 				inEnt("y1", 20.0),
