@@ -298,6 +298,7 @@ public class ProviderDelegate {
 
 	private RemoteLoggerInstaller remoteLoggerInstaller;
 
+
 	/*
 	 * A nested class to hold the state information of the executing thread for
 	 * a served exertion.
@@ -648,6 +649,10 @@ public class ProviderDelegate {
         return set;
     }
 
+    public int getWorkerCount() {
+        return workerCount;
+    }
+
     private void initThreadGroups() {
         namedGroup = new ThreadGroup("Provider Group: " + getProviderName());
         namedGroup.setDaemon(true);
@@ -660,6 +665,7 @@ public class ProviderDelegate {
 	public void setSmartProxy(Object smartProxy) {
 		this.smartProxy = smartProxy;
 	}
+
 
 	public void startSpaceTakers() throws ConfigurationException, RemoteException {
 		ExecutorService spaceWorkerPool;

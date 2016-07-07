@@ -90,11 +90,11 @@ if (System.getProperty("org.rioproject.service")!=null) {
 
             /* Or whenever the file size reaches 10MB */
             timeBasedFileNamingAndTriggeringPolicy(SizeAndTimeBasedFNATP) {
-                maxFileSize = "10MB"
+                maxFileSize = "100MB"
             }
 
             /* Keep 5 archived logs */
-            maxHistory = 5
+            maxHistory = 50
 
         }
         encoder(PatternLayoutEncoder) {
@@ -108,98 +108,97 @@ if (System.getProperty("org.rioproject.service")!=null) {
 /* ==================================================================
  *  Rio Loggers
  * ==================================================================*/
-//logger("org.rioproject.cybernode", DEBUG)
-//logger("org.rioproject.cybernode.loader", DEBUG)
-//logger("org.rioproject.config", INFO)
-//logger("org.rioproject.resources.servicecore", INFO)
-//logger("org.rioproject.system", DEBUG)
-//logger("org.rioproject.impl.container.ServiceBeanLoader", INFO)
-//logger("org.rioproject.system.measurable", INFO)
-//logger("org.rioproject.impl.servicebean", INFO)
-//logger("org.rioproject.associations", INFO)
-//
-//logger("org.rioproject.monitor", DEBUG)
-//logger("org.rioproject.monitor.sbi", DEBUG)
-//logger("org.rioproject.monitor.provision", DEBUG)
-//logger("org.rioproject.monitor.selector", OFF)
-//logger("org.rioproject.monitor.services", DEBUG)
-//logger("org.rioproject.monitor.DeploymentVerifier", INFO)
-//logger("org.rioproject.monitor.InstantiatorResource", INFO)
-//logger("org.rioproject.monitor.service.managers.FixedServiceManager", INFO)
-//logger("org.rioproject.resolver.aether", OFF)
-//
-//logger("org.rioproject.rmi.ResolvingLoader", OFF)
-//
-//logger("org.rioproject.gnostic", INFO)
-//logger("org.rioproject.gnostic.drools", INFO)
-//logger("org.rioproject.gnostic.service.DroolsCEPManager", INFO)
-//logger("org.rioproject.config.GroovyConfig", INFO)
-//
-//logger("net.jini.discovery.LookupDiscovery", OFF)
-//logger("net.jini.lookup.JoinManager", OFF)
-//logger("org.rioproject.resolver.aether.util.ConsoleRepositoryListener", WARN)
-//
-///* ==================================================================
-// *  SORCER Loggers
-// * ==================================================================*/
-//
-//logger("sorcer.util.ProviderAccessor", WARN)
-//logger("sorcer.core.provider.cataloger.ServiceCataloger", WARN)
-////logger("sorcer.provider.boot", TRACE)
-//logger("sorcer.core.provider.ServiceProvider", INFO)
-////logger("sorcer.core.provider.rendezvous.RendezvousBean", ALL)
-////logger("sorcer.core.provider.rendezvous.ServiceModeler", ALL)
-//logger("sorcer.core.provider.ControlFlowManager", WARN)
-//logger("sorcer.core.provider.ProviderDelegate", INFO)
-//logger("sorcer.tools.shell.NetworkShell", WARN)
-//logger("sorcer.core.provider.exertmonitor.ExertMonitor", WARN)
-//logger("sorcer.core.provider.SpaceTaker", WARN)
-//logger("sorcer.core.provider.exertmonitor", TRACE)
-//logger("sorcer.core.monitor", TRACE)
-//logger("sorcer.core.dispatch", INFO)
-//logger("sorcer.core.dispatch.ExertionSorter", WARN)
-//logger("sorcer.rio.rmi", WARN)
-//logger("sorcer.service.Accessor", WARN)
-//logger("sorcer.core.provider.exerter", WARN)
-//logger("sorcer.platform.logger", WARN)
-//logger("sorcer.core.provider.logger", WARN)
-//
-///* ==================================================================
-// *  SORCER Variable oriented loggers
-// * ==================================================================*/
-//
-///*
-//logger("sorcer.modeling", OFF)
-//logger("sorcer.modeling.vfe.Var", OFF)
-//logger("sorcer.modeling.vfe.filter.Filter", OFF)
-//logger("sorcer.modeling.vfe.filter.BasicFileFilter", OFF)
-//logger("sorcer.modeling.vfe.evaluator", OFF)
-//logger("sorcer.modeling.vfe.ServiceEvaluator", INFO)
-//logger("sorcer.core.context.model", TRACE)
-//logger("sorcer.core.context.model.var", TRACE)
-//logger("sorcer.core.context.model.explore", TRACE)
-//logger("sorcer.core.context.model.opti", TRACE)
-//logger("sorcer.core.context.model.explore.Explorer", TRACE)
-//logger("sorcer.core.context.model.explore.ExploreDispatcher", TRACE)
-//logger("sorcer.core.context.model.explore.ModelManager", TRACE)
-//logger("sorcer.core.context.model.opti", TRACE)
-//logger("sorcer.modeling.vfe.persist.TaskContextSetter", OFF)
-//logger("sorcer.modeling.vfe.persist.TaskContextSetter", OFF)
-//*/
-//logger("sorcer.modeling.core.context.model.var.ResponseModel", WARN)
-//logger("sorcer.modeling.core.context.model.var.ParametricModel", WARN)
-//
-///* ==================================================================
-// *  SORCER Other specialized loggers
-// * ==================================================================*/
-//logger("sorcer.core.context.eval", OFF)
-//logger("sorcer.core.context", TRACE)
-//logger("sorcer.jini.jeri.SorcerILFactory", WARN)
-//
-//logger("sorcer.ui.tools", DEBUG)
-//logger("sorcer.util", DEBUG)
+logger("org.rioproject.cybernode", DEBUG)
+logger("org.rioproject.cybernode.loader", DEBUG)
+logger("org.rioproject.config", INFO)
+logger("org.rioproject.resources.servicecore", INFO)
+logger("org.rioproject.system", DEBUG)
+logger("org.rioproject.impl.container.ServiceBeanLoader", INFO)
+logger("org.rioproject.system.measurable", INFO)
+logger("org.rioproject.impl.servicebean", INFO)
+logger("org.rioproject.associations", INFO)
 
-logger("sorcer", OFF)
+logger("org.rioproject.monitor", DEBUG)
+logger("org.rioproject.monitor.sbi", DEBUG)
+logger("org.rioproject.monitor.provision", DEBUG)
+logger("org.rioproject.monitor.selector", OFF)
+logger("org.rioproject.monitor.services", DEBUG)
+logger("org.rioproject.monitor.DeploymentVerifier", INFO)
+logger("org.rioproject.monitor.InstantiatorResource", INFO)
+logger("org.rioproject.monitor.service.managers.FixedServiceManager", INFO)
+logger("org.rioproject.resolver.aether", OFF)
+
+logger("org.rioproject.rmi.ResolvingLoader", OFF)
+
+logger("org.rioproject.gnostic", INFO)
+logger("org.rioproject.gnostic.drools", INFO)
+logger("org.rioproject.gnostic.service.DroolsCEPManager", INFO)
+logger("org.rioproject.config.GroovyConfig", INFO)
+
+logger("net.jini.discovery.LookupDiscovery", OFF)
+logger("net.jini.lookup.JoinManager", OFF)
+logger("org.rioproject.resolver.aether.util.ConsoleRepositoryListener", WARN)
+
+/* ==================================================================
+ *  SORCER Loggers
+ * ==================================================================*/
+
+logger("sorcer.util.ProviderAccessor", WARN)
+logger("sorcer.core.provider.cataloger.ServiceCataloger", WARN)
+//logger("sorcer.provider.boot", TRACE)
+logger("sorcer.core.provider.ServiceProvider", INFO)
+//logger("sorcer.core.provider.rendezvous.RendezvousBean", ALL)
+//logger("sorcer.core.provider.rendezvous.ServiceModeler", ALL)
+logger("sorcer.core.provider.ControlFlowManager", WARN)
+logger("sorcer.core.provider.ProviderDelegate", INFO)
+logger("sorcer.tools.shell.NetworkShell", WARN)
+logger("sorcer.core.provider.exertmonitor.ExertMonitor", WARN)
+logger("sorcer.core.provider.SpaceTaker", WARN)
+logger("sorcer.core.provider.exertmonitor", TRACE)
+logger("sorcer.core.monitor", TRACE)
+logger("sorcer.core.dispatch", INFO)
+logger("sorcer.core.dispatch.ExertionSorter", WARN)
+logger("sorcer.rio.rmi", WARN)
+logger("sorcer.service.Accessor", WARN)
+logger("sorcer.core.provider.exerter", WARN)
+logger("sorcer.platform.logger", WARN)
+logger("sorcer.core.provider.logger", WARN)
+
+/* ==================================================================
+ *  SORCER Variable oriented loggers
+ * ==================================================================*/
+
+/*
+logger("sorcer.modeling", OFF)
+logger("sorcer.modeling.vfe.Var", OFF)
+logger("sorcer.modeling.vfe.filter.Filter", OFF)
+logger("sorcer.modeling.vfe.filter.BasicFileFilter", OFF)
+logger("sorcer.modeling.vfe.evaluator", OFF)
+logger("sorcer.modeling.vfe.ServiceEvaluator", INFO)
+logger("sorcer.core.context.model", TRACE)
+logger("sorcer.core.context.model.var", TRACE)
+logger("sorcer.core.context.model.explore", TRACE)
+logger("sorcer.core.context.model.opti", TRACE)
+logger("sorcer.core.context.model.explore.Explorer", TRACE)
+logger("sorcer.core.context.model.explore.ExploreDispatcher", TRACE)
+logger("sorcer.core.context.model.explore.ModelManager", TRACE)
+logger("sorcer.core.context.model.opti", TRACE)
+logger("sorcer.modeling.vfe.persist.TaskContextSetter", OFF)
+logger("sorcer.modeling.vfe.persist.TaskContextSetter", OFF)
+*/
+logger("sorcer.modeling.core.context.model.var.ResponseModel", WARN)
+logger("sorcer.modeling.core.context.model.var.ParametricModel", INFO)
+
+/* ==================================================================
+ *  SORCER Other specialized loggers
+ * ==================================================================*/
+logger("sorcer.core.context.eval", OFF)
+logger("sorcer.core.context", TRACE)
+logger("sorcer.jini.jeri.SorcerILFactory", WARN)
+
+logger("sorcer.ui.tools", DEBUG)
+logger("sorcer.util", DEBUG)
+
 root(INFO, appenders)
 
 

@@ -85,7 +85,7 @@ deployment(name: "Sorcer OS") {
     }
 
     //service(name: SorcerEnv.getActualSpaceName(), fork:getForkMode()) {
-    service(name: SorcerEnv.getActualSpaceName(), fork:"yes", jvmArgs: "-Xmx8G") {
+    service(name: SorcerEnv.getActualSpaceName(), fork:"yes", jvmArgs: "-Xmx16G") {
         interfaces {
             classes 'net.jini.space.JavaSpace05'
             resources "blitz-dl-${Sorcer.blitzVersion}.jar", "blitzui-${Sorcer.blitzVersion}.jar"
@@ -100,7 +100,8 @@ deployment(name: "Sorcer OS") {
         maintain 1
     }
 
-    service(name: SorcerEnv.getActualName("Rendezvous"), fork:getForkMode()) {
+    //service(name: SorcerEnv.getActualName("Rendezvous"), fork:getForkMode()) {
+    service(name: SorcerEnv.getActualName("Rendezvous"), fork:"yes", jvmArgs: "-Xmx16G") {
         interfaces {
             classes "sorcer.core.provider.Rendezvous",
                     "sorcer.core.provider.Jobber",

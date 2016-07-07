@@ -1261,12 +1261,12 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		}
-		String msg = "host = " + host + " "
-				   + "\ntotal service op calls = " + numCalls + " "
-				   + "\nnumber of service op calls running = "	+ numThreads + " "
+		String msg =   "host ip address             = " + host + " "
+				   + "\ntotal service op calls      = " + numCalls + " "
+				   + "\nservice op calls running    = "	+ numThreads + " "
 				   + "\nservice op call ids running = " + threadIds + " "
-		           + "\naverage exec time = " + avgExecTime;
-		return msg;
+		           + "\naverage exec time           = " + avgExecTime;
+        return msg;
 	}
 
 	public synchronized String doThreadMonitor(String serviceIdString) {
