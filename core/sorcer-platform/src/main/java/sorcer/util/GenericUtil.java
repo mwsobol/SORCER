@@ -1713,6 +1713,7 @@ public class GenericUtil {
 		
 		script.add("THIS_PID=$$");
 		script.add("echo \"THIS_PID=$THIS_PID\"");
+		script.add("echo \"THIS_PID=$THIS_PID\" >> " + wrapperLog);
 		script.add(childScriptFile.getAbsolutePath().replace("\\", "/") + " &");
 		script.add("SCRIPT_PID=$!");
 		script.add("echo \"SCRIPT_PID=$SCRIPT_PID\"");
@@ -1753,7 +1754,8 @@ public class GenericUtil {
 		script.add("\t\techo \"DONE dropping kill.txt file; killing child processes...\"");
 		script.add("\t\techo \"DONE dropping kill.txt file; killing child processes...\" >> " + wrapperLog);
 		script.add("\t\tkillChildProcess0 $THIS_PID");
-		script.add("\t\techo \"DONEkilling child processes; exiting with status = 1.\"");
+		script.add("\t\techo \"DONE killing child processes; exiting with status = 1.\"");
+		script.add("\t\techo \"DONE killing child processes; exiting with status = 1.\" >> " + wrapperLog);
 		script.add("\t\texit 1");
 		script.add("\tfi");
 		script.add("\t# check to see if child is still running");
@@ -1762,6 +1764,7 @@ public class GenericUtil {
 		script.add("\tIS_RUN=0");
 		script.add("\tIS_RUN=`ps -p $SCRIPT_PID > psLoop.txt ; awk -v p=\"$SCRIPT_PID\" 'BEGIN{flag=0} {if ($1~p) {flag=1}} END{print flag}' psLoop.txt`");
 		//script.add("\tIS_RUN=`ps -p $SCRIPT_PID > psLoop.txt ; awk -v p=\"$SCRIPT_PID\" 'BEGIN{flag=0} {if ($0~p) {flag=1}} END{print flag}' psLoop.txt`");
+		script.add("\techo \"loop: IS_RUN = $IS_RUN\"");
 		script.add("\techo \"loop: IS_RUN = $IS_RUN\" >> " + wrapperLog);
 
 		//script.add("\tif ps -p $SCRIPT_PID > /dev/null; then"); 
@@ -1770,6 +1773,7 @@ public class GenericUtil {
 		script.add("\t\tsleep 1");
 		//script.add("\t\tIS_RUN=`ps -p $SCRIPT_PID > psLoopDc.txt ; awk -v p=\"$SCRIPT_PID\" 'BEGIN{flag=0} {if ($0~p) {flag=1}} END{print flag}' psLoopDc.txt`");
 		script.add("\t\tIS_RUN=`ps -p $SCRIPT_PID > psLoopDc.txt ; sleep 1; awk -v p=\"$SCRIPT_PID\" 'BEGIN{flag=0} {if ($1~p) {flag=1}} END{print flag}' psLoopDc.txt`");
+		script.add("\t\techo \"loop2: IS_RUN = $IS_RUN\"");
 		script.add("\t\techo \"loop2: IS_RUN = $IS_RUN\" >> " + wrapperLog);
 
 		script.add("\t\tif [ $IS_RUN -eq 0 ]; then");
@@ -1809,7 +1813,7 @@ public class GenericUtil {
 		script.add("echo \"waiting for background processes...\"");
 		script.add("echo \"waiting for background processes...\" >> " + wrapperLog);
 		script.add("wait");
-		//script.add("wait $SCRIPT_PID");
+		script.add("wait $SCRIPT_PID");
 		script.add("EXIT_CODE=$?");
 		
 		script.add("echo \"done waiting, setting exit code from background process = $EXIT_CODE\"");
@@ -1838,6 +1842,7 @@ public class GenericUtil {
 //		script.add("\tEXIT_CODE=007");
 //		script.add("fi");
 		script.add("echo \"exiting with code = $EXIT_CODE\"");
+		script.add("echo \"exiting with code = $EXIT_CODE\" >> " + wrapperLog);
 		script.add("exit $EXIT_CODE");
 		
 		return script;
@@ -4241,12 +4246,12 @@ public class GenericUtil {
 	}
 	
 	public static synchronized void appendFileContents(String msg, File file) {
-//		if (file.isDirectory()) file = new File(file, "genericUtil.txt");
-//		try {
-//			GenericUtil.appendFileContents(file, new String[] {msg});
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
+		if (file.isDirectory()) file = new File(file, "genericUtil.txt");
+		try {
+			GenericUtil.appendFileContents(file, new String[] {msg});
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public static String findExistingDirectory(String[] dirs) {
