@@ -116,6 +116,7 @@ public class ServiceShell implements RemoteServiceShell, Client, Callable {
 								} catch (SignatureException e) {
 									e.printStackTrace();
 								}
+								logger.warn("No avaialble proxy for {} ", signature);
 								return Context.none;
 							} else
 								return Accessor.get().getService(signature);
