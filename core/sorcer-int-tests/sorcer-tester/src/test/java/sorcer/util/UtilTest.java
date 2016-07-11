@@ -15,10 +15,12 @@ import sorcer.service.space.SpaceAccessor;
 import java.io.File;
 import java.net.URL;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static sorcer.co.operator.list;
 
 /**
  * @author Mike Sobolewski
@@ -144,4 +146,19 @@ public class UtilTest {
 		File iobf = new File("test-index.obf");
 		iobf.delete();
 	}
+
+	@Test
+	public void compareResponses() throws Exception {
+		List<Double> doubles = list(2.0000000e+00,   2.6167384e+04,   8.8842861e-01,   1.2978275e+04,   1.4501674e+03);
+		String truth = "2.0000000e+00   2.6167384e+04   8.8842861e-01   1.2978275e+04   1.4501674e+03";
+
+		Response r1 = new Response(null, truth, " ");
+//		logger.info("r1:\n" + r1);
+
+		Response r2 = new Response(null, doubles);
+//		logger.info("r2:\n" + r2);
+
+		assertTrue(r1.compareTo(r2));
+	}
 }
+
