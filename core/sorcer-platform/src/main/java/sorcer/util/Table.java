@@ -1496,12 +1496,10 @@ public class Table implements ModelTable {
 	}
 
 	public boolean compareTo(Object table) {
-		return compareTo(table, 0.0);
+		return compareTo(table, 0.01);
 	}
 
 	public boolean compareTo(Object table, double delta) {
-		double delta1 = 0.01;
-		if (delta >  0) delta1 = delta;
 		if (dataList.size() != ((Table) table).dataList.size())
 			return false;
 
@@ -1512,7 +1510,7 @@ public class Table implements ModelTable {
 						if (dataList.get(i).get(j) instanceof Double) {
 							Object x = dataList.get(i).get(j);
 							Object y = ((Table) table).dataList.get(i).get(j);
-							if (Math.abs((double) x - (double) y) > delta1) {
+							if (Math.abs((double) x - (double) y) > delta) {
 								return false;
 							}
 						} else {

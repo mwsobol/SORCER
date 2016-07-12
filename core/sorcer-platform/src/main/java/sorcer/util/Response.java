@@ -88,23 +88,21 @@ public class Response extends Table implements ModelResponse {
 	}
 
 	public boolean compareTo(Object table) {
-		return compareTo(table, 0.0);
+		return compareTo(table, 0.01);
 	}
 
 	public boolean compareTo(Object table, double delta) {
-		double delta1 = 0.01;
-		if (delta > 0) delta1 = delta;
 		if (dataList.size() != ((Table) table).dataList.size())
 			return false;
 
 		List row = dataList.get(0);
 		if (table instanceof Table) {
 			if (cellType == Cell.DOUBLE) {
-				for (int i = 0; i <row.size(); i++) {
+				for (int i = 0; i < row.size(); i++) {
 					if (row.get(i) instanceof Double) {
 						Object x = row.get(i);
 						Object y = ((Table) table).dataList.get(0).get(i);
-						if (Math.abs((double) x - (double) y) > delta1) {
+						if (Math.abs((double) x - (double) y) > delta) {
 							return false;
 						}
 					} else {
