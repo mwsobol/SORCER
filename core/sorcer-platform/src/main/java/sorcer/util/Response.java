@@ -19,6 +19,7 @@ package sorcer.util;
 
 import sorcer.service.ModelResponse;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -43,6 +44,17 @@ public class Response extends Table implements ModelResponse {
 	public Response(List<String> names, List rowData) {
 		super(names, 1);
 		addRow(rowData);
+	}
+
+	public Response(List<String> names, String rowData, String delimeter) {
+		super(names, 1);
+		String[] tokens = SorcerUtil.getTokens(rowData, delimeter);
+		List<Double> doubles = new ArrayList<>();
+		for (String token : tokens) {
+			doubles.add(new Double(token));
+		}
+		cellType = Cell.DOUBLE;
+		addRow(doubles);
 	}
 
 	public List<String> getNames() {
@@ -74,4 +86,40 @@ public class Response extends Table implements ModelResponse {
 		}
 		return sb.toString();
 	}
+
+	public boolean compareTo(Object table) {
+		return compareTo(table, 0.01);
+	}
+
+	public boolean compareTo(Object table, double delta) {
+		if (dataList.size() != ((Table) table).dataList.size())
+			return false;
+
+		List row = dataList.get(0);
+		if (table instanceof Table) {
+			if (cellType == Cell.DOUBLE) {
+				for (int i = 0; i < row.size(); i++) {
+					if (row.get(i) instanceof Double) {
+						Object x = row.get(i);
+						Object y = ((Table) table).dataList.get(0).get(i);
+						if (Math.abs((double) x - (double) y) > delta) {
+							return false;
+						}
+					} else {
+						if (!row.get(i).equals(((Table) table).dataList.get(0).get(i))) {
+							return false;
+						}
+					}
+				}
+			} else {
+				if (!row.equals(((Table) table).dataList.get(0))) {
+					return false;
+				}
+			}
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 }

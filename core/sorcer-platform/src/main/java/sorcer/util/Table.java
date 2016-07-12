@@ -1494,4 +1494,40 @@ public class Table implements ModelTable {
 		outFileFM.flush();
 		outFileFM.close();
 	}
+
+	public boolean compareTo(Object table) {
+		return compareTo(table, 0.01);
+	}
+
+	public boolean compareTo(Object table, double delta) {
+		if (dataList.size() != ((Table) table).dataList.size())
+			return false;
+
+		if (table instanceof Table) {
+			for (int i = 0; i < dataList.size(); i++) {
+				if (cellType == Cell.DOUBLE) {
+					for (int j = 0; j < dataList.get(i).size(); j++) {
+						if (dataList.get(i).get(j) instanceof Double) {
+							Object x = dataList.get(i).get(j);
+							Object y = ((Table) table).dataList.get(i).get(j);
+							if (Math.abs((double) x - (double) y) > delta) {
+								return false;
+							}
+						} else {
+							if (!dataList.get(i).get(j).equals(((Table) table).dataList.get(i).get(j))) {
+								return false;
+							}
+						}
+					}
+				} else {
+					if (!dataList.get(i).equals(((Table) table).dataList.get(i))) {
+						return false;
+					}
+				}
+			}
+			return true;
+		} else {
+			return false;
+		}
+	}
 }
