@@ -149,19 +149,16 @@ public class UtilTest {
 
 	@Test
 	public void compareResponses() throws Exception {
-		List<Double> doubles1 = list(2.0000000e+00, 2.6167384e+04, 8.8842861e-01, 1.2978275e+04, 1.4501674e+03);
-		List<Double> doubles2 = list(2.0, 26167.384, 0.888, 12978.275, 1450.167);
-		String truth = "2.0000000e+00   2.6167384e+04   8.8842861e-01   1.2978275e+04   1.4501674e+03";
-		Response r1 = new Response(null, truth, " ");
+		List<Double> expectedValues = list(2.0, 26193.577, 0.888, 12980.178, 1450.230);
+		String result = "2.0000000e+00   2.6193577e+04   8.8827207e-01   1.2980178e+04   1.4502304e+03";
+
+		Response r1 = new Response(null, result, " ");
 //		logger.info("r1:\n" + r1);
 
-		Response r2 = new Response(null, doubles1);
+		Response r2 = new Response(null, expectedValues);
 //		logger.info("r2:\n" + r2);
-		assertTrue(r1.compareTo(r2, 0.5));
+		assertTrue(r1.compareTo(r2, 0.005));
 
-		r2 = new Response(null, doubles2);
-//		logger.info("r2:\n" + r2);
-		assertTrue(r1.compareTo(r2, 0.5));
 	}
 }
 
