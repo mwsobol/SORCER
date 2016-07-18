@@ -115,7 +115,7 @@ public class operator {
         return ((ServiceContext)model).getMogramStrategy().getOutcome();
     }
 
-    public static Object resultAt(Model model, String path) throws ContextException {
+    public static Object get(Model model, String path) throws ContextException {
         return ((ServiceContext)((ServiceContext)model).getMogramStrategy().getOutcome()).get(path);
     }
 

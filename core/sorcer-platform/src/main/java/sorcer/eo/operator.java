@@ -898,14 +898,6 @@ public class operator {
 		return signature;
 	}
 
-	public static ReturnPath returnPath(Arg... args) {
-		for (Arg a : args) {
-			if (a instanceof ReturnPath)
-				return (ReturnPath) a;
-		}
-		return null;
-	}
-
 	public static Signature sig(Class serviceType, String initSelector) throws SignatureException {
 		try {
 			Method selectorMethod = serviceType.getDeclaredMethod(initSelector, Context.class);

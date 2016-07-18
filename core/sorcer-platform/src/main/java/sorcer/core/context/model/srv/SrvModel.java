@@ -199,7 +199,7 @@ public class SrvModel extends ParModel<Object> implements Model, Invocation<Obje
                 execDependencies(path, args);
                 val = get(path);
             } else {
-                ReturnPath rp = returnPath(args);
+                ReturnPath rp = Arg.getReturnPath(args);
                 if (rp != null)
                     val = getReturnValue(rp);
                 else
