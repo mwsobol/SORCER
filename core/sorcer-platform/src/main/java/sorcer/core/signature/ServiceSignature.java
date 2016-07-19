@@ -117,7 +117,7 @@ public class ServiceSignature implements Signature, SorcerConstants {
 
 	private String portalURL;
 
-	private ServiceDeployment deployment;
+	protected ServiceDeployment deployment;
 
 	public ServiceSignature() {
 		providerName = new ServiceName(ANY);

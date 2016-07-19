@@ -74,6 +74,7 @@ public class NetSignature extends ObjectSignature {
 		this.providerName =  signature.providerName;
 		this.serviceType = signature.serviceType;
 		this.providerType = signature.providerType;
+		this.deployment = signature.deployment;
 		this.returnPath = signature.returnPath;
 	}
 
