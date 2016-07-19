@@ -1813,7 +1813,7 @@ public class GenericUtil {
 		script.add("echo \"waiting for background processes...\"");
 		script.add("echo \"waiting for background processes...\" >> " + wrapperLog);
 		script.add("wait");
-		script.add("wait $SCRIPT_PID");
+//		script.add("wait $SCRIPT_PID");
 		script.add("EXIT_CODE=$?");
 		
 		script.add("echo \"done waiting, setting exit code from background process = $EXIT_CODE\"");
@@ -2862,28 +2862,43 @@ public class GenericUtil {
 				if (exitValue == null || exitValue > 0) {
 					GenericUtil.appendFileContents("executeCommandWithWorker(): worker exit value was null or > 0, sending kill...", dir);
 					jobControlWriter.sendKillToWrapperScript();
-					
-					GenericUtil.appendFileContents("executeCommandWithWorker(): waiting for the kill; calling worker.join()...", dir);				
-					worker.join();
+//					GenericUtil.appendFileContents("executeCommandWithWorker(): waiting for the kill; calling worker.join()...", dir);
+//					worker.join();
 				} else {
 					GenericUtil.appendFileContents("executeCommandWithWorker(): calling jobControlWriter.closeDown()...", dir);				
 					jobControlWriter.closeDown();
 				}
 
 				
-				GenericUtil.appendFileContents("executeCommandWithWorker(): calling jobControlWriter.join()...", dir);
-				jobControlWriter.join();
-				GenericUtil.appendFileContents("executeCommandWithWorker(): DONE calling jobControlWriter.join()...closing gobblers...", dir);
+				GenericUtil.appendFileContents("executeCommandWithWorker(): calling jobControlWriter.join(1000)...", dir);
+				jobControlWriter.join(1000);
+				if (jobControlWriter.isAlive()) {
+					GenericUtil.appendFileContents("executeCommandWithWorker():calling jobControlWriter on output gobbler...", dir);
+				}
+
+				GenericUtil.appendFileContents("executeCommandWithWorker(): DONE calling jobControlWriter.join(1000)...closing gobblers...", dir);
 				outputGobbler.closeDown();
 				errorGobbler.closeDown();
-				GenericUtil.appendFileContents("executeCommandWithWorker(): DONE closing gobblers...calling join() on gobblers...", dir);
-				outputGobbler.join();
-				errorGobbler.join();
-				GenericUtil.appendFileContents("executeCommandWithWorker(): DONE joining gobblers...process.destroy()...", dir);
-				process.destroy();		
-				GenericUtil.appendFileContents("executeCommandWithWorker(): DONE process.destroy()...calling worker.join()...", dir);
-				worker.join();
-				GenericUtil.appendFileContents("executeCommandWithWorker(): DONE calling worker.join().", dir);
+				GenericUtil.appendFileContents("executeCommandWithWorker(): DONE closing gobblers...calling join(1000) on gobblers...", dir);
+				outputGobbler.join(1000);
+				errorGobbler.join(1000);
+
+				if (outputGobbler.isAlive()) {
+					GenericUtil.appendFileContents("executeCommandWithWorker():calling interrupt on output gobbler...", dir);
+					outputGobbler.interrupt();
+				}
+				if (outputGobbler.isAlive()){
+					GenericUtil.appendFileContents("executeCommandWithWorker():calling interrupt on errorGobbler gobbler...", dir);
+					errorGobbler.interrupt();
+				}
+				if (worker.isAlive()) {
+					GenericUtil.appendFileContents("executeCommandWithWorker():calling interrupt on worker", dir);
+					worker.interrupt();
+				}
+
+				GenericUtil.appendFileContents("executeCommandWithWorker(): calling process.destroy()...", dir);
+				process.destroy();
+
 				GenericUtil.appendFileContents("executeCommandWithWorker(): exitValue = " + exitValue, dir);
 				if (exitValue != null) {
 					logger.info("exitValue is not null; exitValue = " + exitValue);
