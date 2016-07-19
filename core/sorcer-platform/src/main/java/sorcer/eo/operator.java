@@ -2022,9 +2022,10 @@ public class operator {
 		}
 		Job job = null;
 		if (signature instanceof NetSignature) {
-			job = new NetJob(name);
+			job = new NetJob(name, signature);
 		} else if (signature instanceof ObjectSignature) {
-			job = new ObjectJob(name);
+			job = new ObjectJob(name, signature);
+
 		} else {
 			if (fis != null && fis.size() > 0) {
 				job = new Job(name);
