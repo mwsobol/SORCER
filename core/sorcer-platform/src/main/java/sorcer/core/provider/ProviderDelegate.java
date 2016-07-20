@@ -1277,8 +1277,7 @@ public class ProviderDelegate {
 			logger.info("Executing method: " + m + " by: "
 					+ config.getProviderName());
 
-			Exertion result = (Exertion) m
-					.invoke(provider, new Object[] { ex });
+			Exertion result = (Exertion) m.invoke(provider, new Object[]{ex});
 			return result;
 		} catch (Exception e) {
 			ex.getControlContext().addException(e);
@@ -1289,7 +1288,7 @@ public class ProviderDelegate {
 	public Context invokeMethod(String selector, Context sc)
 			throws ExertionException {
 		try {
-			Class[] argTypes = new Class[] { Context.class };
+			Class[] argTypes = new Class[] { sc.getClass() };
 			Object[] args = new Object[] { sc };
 			ServiceContext cxt = (ServiceContext) sc;
 			boolean isContextual = true;
@@ -1298,9 +1297,18 @@ public class ProviderDelegate {
 				args = cxt.getArgs();
 				isContextual = false;
 			}
-			Method execMethod = provider.getClass().getMethod(selector,
-					argTypes);
-			Context result = null;
+			Method execMethod = null;
+			for(Method m : provider.getClass().getMethods()) {
+				if(m.getName().equals(selector) && m.getParameterCount()==1) {
+					if(m.getParameterTypes()[0].isAssignableFrom(argTypes[0])) {
+						execMethod = m;
+						break;
+					}
+				}
+			}
+			if(execMethod==null)
+				execMethod = provider.getClass().getMethod(selector, argTypes);
+			Context result;
 			if (isContextual) {
 				result = (ServiceContext) execMethod.invoke(provider, args);
 				// Setting Return Values
