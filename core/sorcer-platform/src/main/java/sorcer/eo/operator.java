@@ -898,14 +898,6 @@ public class operator {
 		return signature;
 	}
 
-	public static ReturnPath returnPath(Arg... args) {
-		for (Arg a : args) {
-			if (a instanceof ReturnPath)
-				return (ReturnPath) a;
-		}
-		return null;
-	}
-
 	public static Signature sig(Class serviceType, String initSelector) throws SignatureException {
 		try {
 			Method selectorMethod = serviceType.getDeclaredMethod(initSelector, Context.class);
@@ -2030,9 +2022,10 @@ public class operator {
 		}
 		Job job = null;
 		if (signature instanceof NetSignature) {
-			job = new NetJob(name);
+			job = new NetJob(name, signature);
 		} else if (signature instanceof ObjectSignature) {
-			job = new ObjectJob(name);
+			job = new ObjectJob(name, signature);
+
 		} else {
 			if (fis != null && fis.size() > 0) {
 				job = new Job(name);

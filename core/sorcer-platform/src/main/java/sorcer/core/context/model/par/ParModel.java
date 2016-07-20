@@ -30,8 +30,6 @@ import sorcer.service.Signature.ReturnPath;
 import java.rmi.RemoteException;
 import java.util.*;
 
-import static sorcer.eo.operator.returnPath;
-
 /*
  * Copyright 2013 the original author or authors.
  * Copyright 20 SorcerSoft.org.
@@ -105,7 +103,7 @@ public class ParModel<T> extends EntModel<T> implements Model, Invocation<T>, Ma
 			if (path != null) {
 				val = (T) get(path);
 			} else {
-				ReturnPath rp = returnPath(args);
+				ReturnPath rp = Arg.getReturnPath(args);
 				if (rp != null)
 					val = (T) getReturnValue(rp);
 				else if (mogramStrategy.getResponsePaths() != null

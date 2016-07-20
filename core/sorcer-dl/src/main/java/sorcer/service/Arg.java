@@ -94,6 +94,14 @@ public interface Arg extends Serializable {
 		return null;
 	}
 
+	public static Signature.ReturnPath getReturnPath(Arg... args) {
+		for (Arg a : args) {
+			if (a instanceof Signature.ReturnPath)
+				return (Signature.ReturnPath) a;
+		}
+		return null;
+	}
+
 	public static Name getName(Arg[] args) {
 		for (Arg arg : args) {
 			if (arg instanceof Name)
