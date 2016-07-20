@@ -1292,8 +1292,6 @@ public class ProviderDelegate {
 			Object[] args = new Object[] { sc };
 			ServiceContext cxt = (ServiceContext) sc;
 			boolean isContextual = true;
-			logger.info("\n=====================\ncontext: {}\n=====================",
-					sc.getClass().getName());
 			if (cxt.getParameterTypes() != null & cxt.getArgs() != null) {
 				argTypes = cxt.getParameterTypes();
 				args = cxt.getArgs();
@@ -1310,7 +1308,7 @@ public class ProviderDelegate {
 			}
 			if(execMethod==null)
 				execMethod = provider.getClass().getMethod(selector, argTypes);
-			Context result = null;
+			Context result;
 			if (isContextual) {
 				result = (ServiceContext) execMethod.invoke(provider, args);
 				// Setting Return Values
