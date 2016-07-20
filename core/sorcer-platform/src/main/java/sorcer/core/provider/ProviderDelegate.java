@@ -1289,7 +1289,7 @@ public class ProviderDelegate {
 	public Context invokeMethod(String selector, Context sc)
 			throws ExertionException {
 		try {
-			Class[] argTypes = new Class[] { sc.getClass() };
+			Class[] argTypes = new Class[] { Context.class };
 			Object[] args = new Object[] { sc };
 			ServiceContext cxt = (ServiceContext) sc;
 			boolean isContextual = true;
