@@ -49,6 +49,7 @@ import sorcer.tools.shell.cmds.*;
 import sorcer.tools.webster.Webster;
 import sorcer.util.Sorcer;
 import sorcer.util.SorcerEnv;
+import sorcer.util.SorcerUtil;
 import sorcer.util.TimeUtil;
 import sorcer.util.eval.PropertyEvaluator;
 import sorcer.util.exec.ExecUtils;
@@ -1411,7 +1412,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 				"output", PrintStream.class, System.out);
 		shellInput = new BufferedReader(new InputStreamReader(System.in));
 		groups = (String[]) sysConfig.getEntry(CONFIG_COMPONENT, "groups",
-				String[].class, DiscoveryGroupManagement.ALL_GROUPS);
+				String[].class, Sorcer.getLookupGroups());
 		String[] apps = (String[]) sysConfig.getEntry(
 				CONFIG_COMPONENT, "applications", String[].class,
 				new String[0]);
@@ -1419,8 +1420,9 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 			appendApps(apps);
 		}
 
+		LookupLocator[] localLocators = new LookupLocator[] { new LookupLocator("jini://localhost") };
 		LookupLocator[] locators = (LookupLocator[]) sysConfig.getEntry(
-				CONFIG_COMPONENT, "locators", LookupLocator[].class, null);
+				CONFIG_COMPONENT, "locators", LookupLocator[].class, localLocators);
 
         debug = (Boolean) sysConfig.getEntry(CONFIG_COMPONENT,
                 "debug", boolean.class, Boolean.FALSE);
