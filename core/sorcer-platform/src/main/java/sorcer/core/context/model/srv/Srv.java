@@ -3,6 +3,7 @@ package sorcer.core.context.model.srv;
 import net.jini.core.transaction.TransactionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sorcer.co.tuple.MogramEntry;
 import sorcer.co.tuple.SignatureEntry;
 import sorcer.core.context.ApplicationDescription;
 import sorcer.core.context.ServiceContext;
@@ -161,19 +162,27 @@ public class Srv extends Entry<Object> implements Variability<Object>, Arg,
             } else if (_2 instanceof SignatureEntry) {
                 if (scope != null && scope instanceof SrvModel) {
                     try {
-                        return ((SrvModel)scope).evalSignature(((SignatureEntry)_2)._2, _1);
+                        return ((SrvModel) scope).evalSignature(((SignatureEntry) _2)._2, _1);
                     } catch (Exception e) {
                         throw new EvaluationException(e);
                     }
-                } else if (((SignatureEntry)_2).getContext() != null) {
+                } else if (((SignatureEntry) _2).getContext() != null) {
                     try {
-                        return execSignature(((SignatureEntry)_2)._2,
-                                ((SignatureEntry)_2).getContext());
+                        return execSignature(((SignatureEntry) _2)._2,
+                            ((SignatureEntry) _2).getContext());
                     } catch (MogramException e) {
                         throw new EvaluationException(e);
                     }
                 }
                 throw new EvaluationException("No model available for entry: " + this);
+            } else if (_2 instanceof MogramEntry) {
+                Context cxt = ((Mogram) ((Entry) _2)._2).exert(entries).getContext();
+                Object val = cxt.getValue("context/result");
+                if (val != null) {
+                    return val;
+                } else {
+                    return cxt;
+                }
             } else {
                 return super.getValue(entries);
             }

@@ -21,6 +21,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import sorcer.service.Arg;
+import sorcer.service.Condition;
+import sorcer.service.ConditionalInvocation;
 import sorcer.service.EvaluationException;
 
 /**
@@ -31,7 +33,7 @@ import sorcer.service.EvaluationException;
  * @author Mike Sobolewski
  */
 @SuppressWarnings({"rawtypes", "unchecked"})
-public class AltInvoker<V> extends ServiceInvoker<V> {
+public class AltInvoker<V> extends ServiceInvoker<V> implements ConditionalInvocation {
 	
 	protected List<OptInvoker> optInvokers;
 	
@@ -51,8 +53,22 @@ public class AltInvoker<V> extends ServiceInvoker<V> {
 		
 		for (OptInvoker opt : optInvokers) {
 			try {
-				if (opt.condition.isTrue())
-					return (V)opt.target.getValue(entries);
+				if (opt.getCondition() != null) {
+					if (opt.getCondition().getConditionalContext() == null) {
+						opt.getCondition().setConditionalContext(invokeContext);
+					} else {
+						opt.getCondition().getConditionalContext().append(invokeContext);
+					}
+
+					if (opt.target.getScope() == null) {
+						opt.target.setScope(invokeContext);
+					} else {
+						opt.target.getScope().append(invokeContext);
+					}
+				}
+				if (opt.condition.isTrue()) {
+					return (V) opt.target.getValue(entries);
+				}
 			} catch (Exception e) {
 				throw new EvaluationException(e);
 			}
@@ -63,5 +79,10 @@ public class AltInvoker<V> extends ServiceInvoker<V> {
 	
 	public OptInvoker getInvoker(int index) {
 		return optInvokers.get(index);
+	}
+
+	@Override
+	public Condition getCondition() {
+		return null;
 	}
 }

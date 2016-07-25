@@ -18,20 +18,17 @@
 package sorcer.core.invoker;
 
 import java.rmi.RemoteException;
+import java.util.concurrent.locks.*;
 
-import sorcer.service.Arg;
+import sorcer.service.*;
 import sorcer.service.Condition;
-import sorcer.service.Context;
-import sorcer.service.ContextException;
-import sorcer.service.EvaluationException;
-import sorcer.service.InvocationException;
 
 /**
  * The option Var. There is a single target invoker that executes if the condition is true (like if... then).
  * 
  * @author Mike Sobolewski
  */
-public class OptInvoker<T> extends ServiceInvoker<T> {
+public class OptInvoker<T> extends ServiceInvoker<T> implements ConditionalInvocation {
 	
 	protected Condition condition;
 	
@@ -104,5 +101,10 @@ public class OptInvoker<T> extends ServiceInvoker<T> {
 		if (target.getScope().size() == 0 && invokeContext.size() > 0) {
 			target.setScope(invokeContext);
 		}
+	}
+
+	@Override
+	public Condition getCondition() {
+		return condition;
 	}
 }

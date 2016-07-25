@@ -88,7 +88,7 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 
 	// indication that value has been calculated with recent arguments
 	private boolean valueIsValid = false;
-		
+
 	protected Context invokeContext;
 
 	protected ValueCallable lambda;

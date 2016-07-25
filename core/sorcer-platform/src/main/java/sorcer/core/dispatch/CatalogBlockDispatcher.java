@@ -25,15 +25,19 @@ import org.slf4j.LoggerFactory;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.par.ParModel;
 import sorcer.core.exertion.AltMogram;
+import sorcer.core.exertion.EvaluationTask;
 import sorcer.core.exertion.LoopMogram;
 import sorcer.core.exertion.OptMogram;
+import sorcer.core.invoker.ServiceInvoker;
 import sorcer.core.monitor.MonitorUtil;
 import sorcer.core.monitor.MonitoringSession;
 import sorcer.core.provider.Provider;
+import sorcer.core.signature.EvaluationSignature;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
 import sorcer.service.Signature.ReturnPath;
 
+import javax.xml.ws.spi.Invoker;
 import java.rmi.RemoteException;
 import java.util.List;
 import java.util.Set;
@@ -153,7 +157,19 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
 				((LoopMogram)exertion).getCondition().setConditionalContext(pc);
 			}
 			pc.append(xrt.getContext());
-		} else {
+		} else if (exertion instanceof EvaluationTask
+            && ((EvaluationSignature)exertion.getProcessSignature()).getEvaluator() instanceof ConditionalInvocation) {
+                ConditionalInvocation invoker = (ConditionalInvocation) ((EvaluationSignature)exertion.getProcessSignature()).getEvaluator();
+                 ((ServiceInvoker)invoker).getScope().append(xrt.getContext());
+			if (invoker.getCondition() != null) {
+				if (invoker.getCondition().getConditionalContext() != null) {
+				invoker.getCondition().getConditionalContext().append(xrt.getContext());
+				} else {
+					invoker.getCondition().setConditionalContext(xrt.getContext());
+				}
+				invoker.getCondition().setStatus(null);
+			}
+        } else {
             exertion.getDataContext().updateEntries(xrt.getContext());
         }
 	}
@@ -179,8 +195,10 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
 		} else if (exertion instanceof OptMogram) {
 			xrt.getContext().append(exertion.getDataContext());
 		} else if (exertion instanceof LoopMogram) {
-            xrt.getContext().append(((LoopMogram)exertion).getTarget().getScope());
-        }
+			xrt.getContext().append(((LoopMogram)exertion).getTarget().getScope());
+		} else if (exertion instanceof EvaluationTask) {
+			xrt.getContext().append(exertion.getContext());
+		}
 
 //		if (exertion instanceof AltExertion) {
 //			((ParModel)((Block)xrt).getContext()).appendNew(((AltExertion)exertion).getActiveOptExertion().getContext());

@@ -2337,7 +2337,7 @@ public class operator {
 		try {
 			synchronized (evaluation) {
 				if (evaluation instanceof Exertion) {
-					return (T) exec((Exertion) evaluation, args);
+					return (T) exec(evaluation, args);
 				} else if (evaluation instanceof Entry){
 					return evaluation.getValue(args);
 				} else if (evaluation instanceof Incrementor){
@@ -3141,13 +3141,17 @@ public class operator {
 	}
 
 	public static Block block(Object...  items) throws ExertionException {
-		List<Mogram> mograms = new ArrayList<Mogram>();
+		List<Mogram> mograms = new ArrayList<>();
+		List<Evaluator> evaluators = new ArrayList<>();
 		String name = null;
 		Signature sig = null;
 		Context context = null;
+		Evaluator evaluator = null;
 		for (int i = 0; i < items.length; i++) {
 			if (items[i] instanceof Exertion || items[i] instanceof EntModel) {
 				mograms.add((Mogram) items[i]);
+			} else if (items[i] instanceof Evaluation) {
+				evaluators.add((Evaluator)items[i]);
 			} else if (items[i] instanceof Context) {
 				context = (Context)items[i];
 			} else if (items[i] instanceof Signature) {
@@ -3178,8 +3182,11 @@ public class operator {
 				((ServiceContext)context).setInitContext((Context)ObjectCloner.clone(context));
 			}
 
-			for (Mogram e :mograms) {
-				block.addMogram(e);
+			for (Mogram m :mograms) {
+				block.addMogram(m);
+			}
+			for (Evaluator e :evaluators) {
+				block.addMogram(new EvaluationTask(e));
 			}
 		} catch (Exception se) {
 			throw new ExertionException(se);

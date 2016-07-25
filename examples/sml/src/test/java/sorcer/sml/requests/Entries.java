@@ -10,6 +10,7 @@ import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.service.*;
+import sorcer.service.modeling.Model;
 import sorcer.util.GenericUtil;
 
 import java.rmi.RemoteException;
@@ -161,7 +162,7 @@ public class Entries {
     }
 
     @Test
-    public void getValueyWithSelector() throws Exception {
+    public void getEntryValueWithArgSelector() throws Exception {
 
         Entry y1 = ent("y1", sig("add", AdderImpl.class),
                 context(inEnt("x1", 10.0), inEnt("x2", 20.0)));
@@ -171,7 +172,7 @@ public class Entries {
     }
 
     @Test
-    public void valueOfentryWithSelector() throws Exception {
+    public void getEntryValueWithSelector() throws Exception {
 
         Entry y1 = ent("y1", sig("add", AdderImpl.class),
                 context(inEnt("x1", 10.0), inEnt("x2", 20.0)),
@@ -179,5 +180,28 @@ public class Entries {
 
 //        logger.info("out value: {}", value(y1));
         assertEquals(30.0,  value(y1));
+    }
+
+    @Test
+    public void getConditionalBlockEntryValue() throws Exception {
+
+        Entry y1 = srv("y1", block("block", context(ent("x1", 10.0), ent("x2", 20.0)),
+            alt(opt(condition((Context<Double> cxt) -> v(cxt, "x1") > v(cxt, "x2")), expr("x1 + x2", args("x1", "x2"))),
+                opt(condition((Context<Double> cxt) -> v(cxt, "x1") <= v(cxt, "x2")), expr("x1 + x2", args("x1", "x2"))))));
+
+//        logger.info("out value: {}", value(y1));
+        assertEquals(30.0,  value(y1));
+    }
+
+    @Test
+    public void getConditionalInvokerEntryValue() throws Exception {
+
+        Model mdl = model(
+            ent("x1", 10.0), ent("x2", 20.0),
+            srv("y1", alt(opt(condition((Context<Double> cxt) -> v(cxt, "x1") > v(cxt, "x2")), expr("x1 + x2", args("x1", "x2"))),
+                opt(condition((Context<Double> cxt) -> v(cxt, "x1") <= v(cxt, "x2")), expr("x1 + x2", args("x1", "x2"))))));
+
+//        logger.info("out value: {}", value(y1));
+        assertEquals(30.0,  value(mdl, "y1"));
     }
 }

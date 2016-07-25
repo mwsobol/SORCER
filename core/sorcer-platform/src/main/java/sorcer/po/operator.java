@@ -526,12 +526,16 @@ public class operator {
 		return new CallableInvoker(name, callable, parEntries);
 	}
 
-	public static OptInvoker opt(String name, ServiceInvoker target) {
-		return new OptInvoker(name, target);
+	public static OptInvoker opt(Condition condition, ServiceInvoker target) {
+		return new OptInvoker(null, condition, target);
 	}
 
 	public static OptInvoker opt(String name, Condition condition, ServiceInvoker target) {
 		return new OptInvoker(name, condition, target);
+	}
+
+	public static AltInvoker alt(OptInvoker...  invokers) {
+		return new AltInvoker(null, invokers);
 	}
 
 	public static AltInvoker alt(String name, OptInvoker...  invokers) {
