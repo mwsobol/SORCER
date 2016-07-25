@@ -102,7 +102,7 @@ bootme {
 //task runRequestor(type:JavaExec, dependsOn:[jar, "bootme"]) {
 task runRequestor(type:JavaExec, dependsOn:[install]) {
     description = 'Runs a service requestor executing a local or remote service.'
-    main = "sorcer.core.requestor.ExertRequestor"
+    main = "sorcer.core.requestor.ServiceRequestor"
     classpath = sourceSets.main.runtimeClasspath
     systemProperty "java.util.logging.config.file", "${projectDir}/configs/sorcer-req.logging"
     systemProperty "requestor.properties", "${projectDir}/configs/adder-req.properties"
