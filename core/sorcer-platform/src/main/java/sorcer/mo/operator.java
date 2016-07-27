@@ -33,7 +33,7 @@ import sorcer.core.plexus.FidelityManager;
 import sorcer.core.plexus.MorphFidelity;
 import sorcer.core.plexus.Morpher;
 import sorcer.service.*;
-import sorcer.service.modeling.ContextModel;
+import sorcer.service.modeling.ServiceModel;
 import sorcer.service.modeling.Model;
 import sorcer.service.Signature.ReturnPath;
 
@@ -132,23 +132,23 @@ public class operator {
         return model;
     }
 
-    public static ContextModel responseUp(ContextModel model, String... responsePaths) throws ContextException {
+    public static ServiceModel responseUp(ServiceModel model, String... responsePaths) throws ContextException {
         for (String path : responsePaths)
             ((ServiceContext)model).getMogramStrategy().getResponsePaths().add(new Name(path));
         return model;
     }
 
-    public static ContextModel responseDown(ContextModel model, String... responsePaths) throws ContextException {
+    public static ServiceModel responseDown(ServiceModel model, String... responsePaths) throws ContextException {
         for (String path : responsePaths)
             ((ServiceContext)model).getMogramStrategy().getResponsePaths().remove(new Name(path));
         return model;
     }
 
-    public static Context result(ContextModel model) throws ContextException {
+    public static Context result(ServiceModel model) throws ContextException {
         return ((ServiceContext)model).getMogramStrategy().getOutcome();
     }
 
-    public static Object get(ContextModel model, String path) throws ContextException {
+    public static Object get(ServiceModel model, String path) throws ContextException {
         return ((ServiceContext)((ServiceContext)model).getMogramStrategy().getOutcome()).get(path);
     }
 
@@ -157,11 +157,11 @@ public class operator {
         return model;
     }
 
-    public static Context ins(ContextModel model) throws ContextException {
+    public static Context ins(ServiceModel model) throws ContextException {
         return inputs(model);
     }
 
-    public static Context allInputs(ContextModel model) throws ContextException {
+    public static Context allInputs(ServiceModel model) throws ContextException {
         try {
             return model.getAllInputs();
         } catch (RemoteException e) {
@@ -169,7 +169,7 @@ public class operator {
         }
     }
 
-    public static Context inputs(ContextModel model) throws ContextException {
+    public static Context inputs(ServiceModel model) throws ContextException {
         try {
             return model.getInputs();
         } catch (RemoteException e) {
@@ -177,11 +177,11 @@ public class operator {
         }
     }
 
-    public static Context outs(ContextModel model) throws ContextException {
+    public static Context outs(ServiceModel model) throws ContextException {
         return outputs(model);
     }
 
-    public static Context outputs(ContextModel model) throws ContextException {
+    public static Context outputs(ServiceModel model) throws ContextException {
         try {
             return model.getOutputs();
         } catch (RemoteException e) {
@@ -189,11 +189,11 @@ public class operator {
         }
     }
 
-    public static Object resp(ContextModel model, String path) throws ContextException {
+    public static Object resp(ServiceModel model, String path) throws ContextException {
         return response(model, path);
     }
 
-    public static Object response(ContextModel model, String path) throws ContextException {
+    public static Object response(ServiceModel model, String path) throws ContextException {
         try {
             return ((ServiceContext)model).getResponseAt(path);
         } catch (RemoteException e) {
@@ -201,11 +201,11 @@ public class operator {
         }
     }
 
-    public static Context resp(ContextModel model) throws ContextException {
+    public static Context resp(ServiceModel model) throws ContextException {
         return response(model);
     }
 
-    public static Context response(ContextModel model, Arg... args) throws ContextException {
+    public static Context response(ServiceModel model, Arg... args) throws ContextException {
         try {
             return (Context) model.getResponse(args);
         } catch (RemoteException e) {

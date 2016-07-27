@@ -38,7 +38,7 @@ import sorcer.core.signature.ServiceSignature;
 import sorcer.netlet.ScriptExerter;
 import sorcer.service.*;
 import sorcer.service.Signature.ReturnPath;
-import sorcer.service.modeling.ContextModel;
+import sorcer.service.modeling.ServiceModel;
 import sorcer.service.modeling.Model;
 import sorcer.service.modeling.Variability.Type;
 import sorcer.util.*;
@@ -1008,8 +1008,8 @@ public class operator {
         return  mappable.asis(path);
     }
 
-    public static Copier copier(ContextModel fromContext, Arg[] fromEntries,
-								ContextModel toContext, Arg[] toEntries) throws EvaluationException {
+    public static Copier copier(ServiceModel fromContext, Arg[] fromEntries,
+								ServiceModel toContext, Arg[] toEntries) throws EvaluationException {
         return new Copier(fromContext, fromEntries, toContext, toEntries);
     }
 

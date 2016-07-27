@@ -1829,7 +1829,7 @@ public class operator {
 		return model(items);
 	}
 
-	public static <M extends ContextModel> M model(Object... items) throws ContextException, SortingException {
+	public static <M extends ServiceModel> M model(Object... items) throws ContextException, SortingException {
 		String name = "unknown" + count++;
 		boolean hasEntry = false;
 		boolean evalType = false;
@@ -1863,7 +1863,7 @@ public class operator {
 			}
 		}
 		if ((hasEntry || hasSignature && hasEntry) && !hasExertion) {
-			ContextModel mo = null;
+			ServiceModel mo = null;
 			if (srvType) {
 				mo = srvModel(items);
 			} else if (parType) {

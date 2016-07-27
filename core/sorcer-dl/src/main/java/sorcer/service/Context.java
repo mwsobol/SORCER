@@ -21,8 +21,7 @@ package sorcer.service;
 import sorcer.core.SorcerConstants;
 import sorcer.core.provider.Provider;
 
-import sorcer.service.modeling.ContextModel;
-import sorcer.service.modeling.Model;
+import sorcer.service.modeling.ServiceModel;
 
 import java.io.Serializable;
 import java.net.URL;
@@ -76,7 +75,7 @@ import java.util.*;
  * @author Mike Sobolewski
  */
 @SuppressWarnings("rawtypes")
-public interface Context<T> extends ContextModel, Mogram, Dependency, Mappable<T>, Serializable, Contexter<T>, Paradigmatic {
+public interface Context<T> extends ServiceModel, Mogram, Dependency, Mappable<T>, Serializable, Contexter<T>, Paradigmatic {
 
 	/** parameter (par) */
 	final static String PATH_PAR = "par";

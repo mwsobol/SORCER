@@ -13,7 +13,7 @@ import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.par.Par;
 import sorcer.eo.operator;
 import sorcer.service.Context;
-import sorcer.service.modeling.ContextModel;
+import sorcer.service.modeling.ServiceModel;
 import sorcer.service.modeling.Model;
 
 import static org.junit.Assert.assertEquals;
@@ -160,7 +160,7 @@ public class EntModels {
 	@Test
 	public void invokerEntryService() throws Exception {
 
-		ContextModel em = model(
+		ServiceModel em = model(
 				inEnt("x1", 20.0),
 				inEnt("x2", 80.0),
 				result("result/y"));
@@ -173,7 +173,7 @@ public class EntModels {
 	@Test
 	public void srvEntryLocalService() throws Exception {
 
-		ContextModel sm = model(
+		ServiceModel sm = model(
 				inEnt("y1", 20.0),
 				inEnt("y2", 80.0));
 
@@ -185,7 +185,7 @@ public class EntModels {
 	@Test
 	public void srvEntryRemoteService() throws Exception {
 
-		ContextModel sm = model(
+		ServiceModel sm = model(
 				inEnt("y1", 20.0),
 				inEnt("y2", 80.0));
 

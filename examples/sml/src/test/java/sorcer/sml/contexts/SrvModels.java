@@ -18,7 +18,7 @@ import sorcer.service.Context;
 import sorcer.service.Job;
 import sorcer.service.Strategy.Flow;
 import sorcer.service.Task;
-import sorcer.service.modeling.ContextModel;
+import sorcer.service.modeling.ServiceModel;
 import sorcer.service.modeling.Model;
 
 import static org.junit.Assert.assertEquals;
@@ -167,7 +167,7 @@ public class SrvModels {
         // two response paths declared
         responseUp(m, "add", "multiply");
         // exert the model
-        ContextModel model = exert(m);
+        ServiceModel model = exert(m);
         logger.info("model: " + model);
 
         assertTrue(response(model, "add").equals(4.0));
