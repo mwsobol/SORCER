@@ -17,17 +17,14 @@
 
 package sorcer.service.modeling;
 
-import sorcer.service.Arg;
-import sorcer.service.Context;
-import sorcer.service.ContextException;
-import sorcer.service.ModelException;
+import sorcer.service.*;
 
 import java.rmi.RemoteException;
 
 /**
  * Created by Mike Sobolewski on 7/26/16.
  */
-public interface ContextModel {
+public interface ContextModel extends Arg {
 
 	/**
 	 * Returns the context of all responses of this model with a provided configuration.

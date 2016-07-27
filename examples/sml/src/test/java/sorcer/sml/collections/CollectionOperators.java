@@ -45,7 +45,7 @@ import static sorcer.eo.operator.print;
 import static sorcer.eo.operator.put;
 import static sorcer.eo.operator.value;
 import static sorcer.mo.operator.entModel;
-import static sorcer.mo.operator.run;
+import static sorcer.mo.operator.*;
 import static sorcer.po.operator.add;
 import static sorcer.po.operator.*;
 import static sorcer.po.operator.map;
@@ -428,7 +428,7 @@ public class CollectionOperators {
 //		logger.info("adder eval: " + eval(pm, "add"));
 		assertEquals(value(pm, "John/weight"), 180.0);
 		assertEquals(value(pm, "add"), 30.0);
-		set(pm, "x", 20.0);
+		setValue(pm, "x", 20.0);
 		assertEquals(value(pm, "add"), 40.0);
 
 	}

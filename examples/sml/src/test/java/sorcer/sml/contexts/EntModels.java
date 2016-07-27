@@ -58,7 +58,6 @@ public class EntModels {
 		assertTrue(asis(mdl, "arg/x7") instanceof Entry);
 		assertTrue(asis(mdl, "arg/x7") instanceof Par);
 		assertTrue(asis(asis(mdl, "arg/x7")) instanceof Double);
-
 	}
 
 	@Test
@@ -84,7 +83,6 @@ public class EntModels {
 		add(mdl, ent("invoke", invoker("x6 * x7 + x1", ents("x1", "x6", "x7"))));
 		result = (Double) eval(mdl, ent("arg/x6", 6.0), ent("arg/x7", 7.0));
 		assertTrue(result.equals(44.0));
-
 	}
 
 	@Test
@@ -107,7 +105,6 @@ public class EntModels {
 //		Double result =
 		operator.eval(mdl2);
 		assertTrue(operator.eval(mdl2).equals(22.0));
-
 	}
 
 	@Test
@@ -158,13 +155,12 @@ public class EntModels {
 
 		Entry e = ent("x2", 100.0);
 		assertEquals(100.0, value((Context)exec(e, cxt), "x2"));
-
 	}
 
 	@Test
 	public void invokerEntryService() throws Exception {
 
-		Model em = model(
+		ContextModel em = model(
 				inEnt("x1", 20.0),
 				inEnt("x2", 80.0),
 				result("result/y"));
@@ -172,33 +168,30 @@ public class EntModels {
 		Entry ie = ent("multiply", invoker("x1 * x2", ents("x1", "x2")));
 		Object result = exec(ie, em);
 		assertEquals(1600.0, result);
-
 	}
 
 	@Test
 	public void srvEntryLocalService() throws Exception {
 
-		Model sm = model(
+		ContextModel sm = model(
 				inEnt("y1", 20.0),
 				inEnt("y2", 80.0));
 
 		Entry se = srv(sig("add", AdderImpl.class, result("add", inPaths("y1", "y2"))));
 		Context result = (Context) exec(se, sm);
 		assertEquals(100.0, value(result, "add"));
-
 	}
 
 	@Test
 	public void srvEntryRemoteService() throws Exception {
 
-		Model sm = model(
+		ContextModel sm = model(
 				inEnt("y1", 20.0),
 				inEnt("y2", 80.0));
 
 		Entry se = srv(sig("add", Adder.class, result("add", inPaths("y1", "y2"))));
 		Context result = (Context) exec(se, sm);
 		assertEquals(100.0, value(result, "add"));
-
 	}
 
 }

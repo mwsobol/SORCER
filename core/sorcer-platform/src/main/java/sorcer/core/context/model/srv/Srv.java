@@ -9,9 +9,10 @@ import sorcer.core.context.ApplicationDescription;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.service.*;
+import sorcer.service.Signature.ReturnPath;
+import sorcer.service.modeling.ContextModel;
 import sorcer.service.modeling.Model;
 import sorcer.service.modeling.Variability;
-import sorcer.service.Signature.ReturnPath;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
@@ -224,7 +225,7 @@ public class Srv extends Entry<Object> implements Variability<Object>, Arg,
 
     @Override
     public Object exec(Arg... args) throws ServiceException, RemoteException {
-        Model mod = Arg.getModel(args);
+        ContextModel mod = Arg.getModel(args);
         if (mod != null) {
             if (mod instanceof SrvModel && _2 instanceof ValueCallable) {
                 return ((ValueCallable) _2).call((Context) mod);

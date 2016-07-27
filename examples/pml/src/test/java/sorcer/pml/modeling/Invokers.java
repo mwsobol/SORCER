@@ -17,16 +17,26 @@ import sorcer.core.invoker.Invocable;
 import sorcer.core.invoker.OptInvoker;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.core.provider.rendezvous.ServiceJobber;
-import sorcer.eo.operator;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
+import static sorcer.eo.operator.args;
 import static sorcer.eo.operator.*;
+import static sorcer.eo.operator.pipe;
+import static sorcer.eo.operator.value;
+import static sorcer.mo.operator.setValue;
+import static sorcer.po.operator.add;
+import static sorcer.po.operator.alt;
 import static sorcer.po.operator.*;
-import static sorcer.mo.operator.*;
+import static sorcer.po.operator.get;
+import static sorcer.po.operator.loop;
+import static sorcer.po.operator.map;
+import static sorcer.po.operator.opt;
+import static sorcer.po.operator.put;
+import static sorcer.po.operator.set;
 
 /**
  * @author Mike Sobolewski
@@ -232,8 +242,8 @@ public class Invokers {
 		add(pm, map(par("x1p", "arg/x1"), c4), map(par("x2p", "arg/x2"), c4), j1);
 
 		// setting context parameters in a job
-		set(pm, "x1p", 10.0);
-		set(pm, "x2p", 50.0);
+		setValue(pm, "x1p", 10.0);
+		setValue(pm, "x2p", 50.0);
 
 		add(pm, exertInvoker(j1, "j1/t3/result/y"));
 		// logger.info("call eval:" + invoke(pm, "invoke j1"));

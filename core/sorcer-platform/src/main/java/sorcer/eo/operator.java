@@ -54,10 +54,7 @@ import sorcer.netlet.ScriptExerter;
 import sorcer.service.*;
 import sorcer.service.Signature.*;
 import sorcer.service.Strategy.*;
-import sorcer.service.modeling.Model;
-import sorcer.service.modeling.Modeling;
-import sorcer.service.modeling.ModelingTask;
-import sorcer.service.modeling.Variability;
+import sorcer.service.modeling.*;
 import sorcer.util.Loop;
 import sorcer.util.ObjectCloner;
 import sorcer.util.Sorcer;
@@ -1832,7 +1829,7 @@ public class operator {
 		return model(items);
 	}
 
-	public static <M extends Model> M model(Object... items) throws ContextException, SortingException {
+	public static <M extends ContextModel> M model(Object... items) throws ContextException, SortingException {
 		String name = "unknown" + count++;
 		boolean hasEntry = false;
 		boolean evalType = false;
@@ -1866,20 +1863,20 @@ public class operator {
 			}
 		}
 		if ((hasEntry || hasSignature && hasEntry) && !hasExertion) {
-			Model mo = null;
-			if (srvType)
+			ContextModel mo = null;
+			if (srvType) {
 				mo = srvModel(items);
-			else if (parType)
+			} else if (parType) {
 				try {
 					return (M) parModel(name, items);
 				} catch (Exception e) {
 					throw new ModelException(e);
 				}
-			else if (evalType) {
+			} else {
 				mo = entModel(items);
 			}
 
-			mo.setName(name);
+			((ServiceMogram)mo).setName(name);
 			if (mo instanceof SrvModel && autoDeps)
 				mo = new SrvModelAutoDeps((SrvModel)mo).get();
 			return (M) mo;
@@ -2306,7 +2303,11 @@ public class operator {
 			throws ContextException {
 		try {
 			synchronized (model) {
-				return ((ParModel)model).getValue(args);
+				if (model instanceof ParModel) {
+					return ((ParModel) model).getValue(args);
+				} else {
+					return ((ServiceContext) model).getValue(args);
+				}
 			}
 		} catch (Exception e) {
 			throw new ContextException(e);
@@ -2363,8 +2364,7 @@ public class operator {
 	public static <T> T value(Context<T> context, String path,
 							  Arg... args) throws ContextException {
 		try {
-			Object val = ((Context) context).getValue(path,
-					args);
+			Object val = ((Context) context).getValue(path, args);
 			if (SdbUtil.isSosURL(val)) {
 				return (T) ((URL) val).getContent();
 			} else {

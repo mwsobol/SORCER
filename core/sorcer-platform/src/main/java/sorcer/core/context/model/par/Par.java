@@ -83,29 +83,38 @@ public class Par<T> extends Entry<T> implements Variability<T>, Mappable<T>,
 		name = identifiable.getName();
 		value = (T)identifiable;
 	}
-	
+
 	public Par(String path, T argument) {
 		super(path);
 		name = path;
-		
+
 		if (argument instanceof EntryList) {
 			if (fidelities == null)
 				fidelities = new HashMap<String, Object>();
-			for (Entry e : (EntryList)argument) {
+			for (Entry e : (EntryList) argument) {
 				fidelities.put(e.getName(), e);
 			}
-			
-			Entry first = ((EntryList)argument).get(0);
+
+			Entry first = ((EntryList) argument).get(0);
 			selectedFidelity = first.getName();
-			value = (T)first;
+			value = (T) first;
 		} else {
 			if (argument instanceof Evaluation || argument instanceof Invocation) {
-				value = argument;
-			} else {
-				_2 = argument;
-				value = argument;
-			}
+				if (argument instanceof ServiceInvoker) {
+					Context cxt = ((ServiceInvoker) argument).getScope();
+					if (cxt != null) {
+						scope = cxt;
+						if (argument instanceof ConditionalInvocation) {
+							((ConditionalInvocation) argument).getCondition().setConditionalContext(cxt);
+						}
+					}
+					value = argument;
+				} else {
+					_2 = argument;
+					value = argument;
+				}
 
+			}
 		}
 	}
 

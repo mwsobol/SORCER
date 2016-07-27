@@ -257,11 +257,13 @@ public class Entries {
 
 		Entry y1 = par("y1",
 			loop(condition((Context<Double> cxt) -> v(cxt, "x1") < v(cxt, "x2")),
-				invoker("lambda", (Context<Double> cxt) -> putValue(cxt, "x1", value(cxt, "x1") + 1.0)),
-				context(ent("x1", 10.0), ent("x2", 20.0))));
+				invoker("lambda",
+                        (Context<Double> cxt) -> { putValue(cxt, "x1", v(cxt, "x1") + 1.0);
+                            return v(cxt, "x1") * v(cxt, "x3"); }),
+				    context(ent("x1", 10.0), ent("x2", 20.0), ent("x3", 40.0))));
 
-        logger.info("out eval: {}", operator.eval(y1));
-//		assertEquals(30.0,  eval(y1));
+//        logger.info("out eval: {}", eval(y1));
+		assertEquals(800.0,  eval(y1));
 	}
 
 }

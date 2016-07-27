@@ -121,14 +121,16 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 		if (context == null)
 			invokeContext = new ParModel("model/par");
 		else {
-			if (context instanceof ParModel)
-				invokeContext = (ParModel)context;
-			else
-				try {
-					invokeContext = new ParModel(context);
-				} catch (Exception e) {
-					throw new InvocationException("Failed to create invoker!", e);
-				}
+			if (context instanceof ParModel) {
+				invokeContext = context;
+			}
+//			else {
+//				try {
+//					invokeContext = new ParModel(context);
+//				} catch (Exception e) {
+//					throw new InvocationException("Failed to create invoker!", e);
+//				}
+//			}
 		}
 		this.lambda = lambda;
 	}

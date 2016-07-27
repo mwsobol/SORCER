@@ -274,7 +274,7 @@ import java.util.Map;
 		clenupContextScripts(exertion.getContext());
 		for (Mogram e : exertion.getMograms()) {
 			if (e instanceof Exertion) {
-				clenupContextScripts(((Exertion) e).getContext());
+				clenupContextScripts(e.getContext());
 				clenupExertionScripts((Exertion) e);
 			}
 		}

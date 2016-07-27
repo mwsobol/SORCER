@@ -105,6 +105,7 @@ public class LoopInvoker<V> extends ServiceInvoker<V> implements ConditionalInvo
 				}
 				return obj;
 			} else if (condition != null && max - min == 0) {
+				target.setScope(invokeContext);
 				while (condition.isTrue()) {
 					obj = target.getValue(entries);
 				}

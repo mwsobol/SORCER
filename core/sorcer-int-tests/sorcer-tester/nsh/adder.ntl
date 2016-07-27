@@ -16,7 +16,8 @@
 
 // Adder sorcer.netlet for testing the requestor of the examples/server project
 
-@Codebase('org.sorcer:sorcer-tester:jar:dl:${sorcer.version}')
+//@Codebase('org.sorcer:sorcer-tester:jar:dl:${sorcer.version}')
+@Codebase(group='org.sorcer', module='sorcer-tester', version='${sorcer.version}', classifier='dl')
 
 import sorcer.arithmetic.tester.provider.Adder
 
