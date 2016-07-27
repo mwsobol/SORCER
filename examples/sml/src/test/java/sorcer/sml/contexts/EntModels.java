@@ -9,9 +9,8 @@ import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.Adder;
 import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.core.context.Copier;
+import sorcer.core.context.model.ent.Proc;
 import sorcer.core.context.model.ent.Entry;
-import sorcer.core.context.model.par.Par;
-import sorcer.eo.operator;
 import sorcer.service.Context;
 import sorcer.service.modeling.ServiceModel;
 import sorcer.service.modeling.Model;
@@ -38,15 +37,15 @@ public class EntModels {
 	@Test
 	public void entryModel() throws Exception {
 
-		// use entModel to create an EntModel the same way as a regular context
-		// or convert any context to entModel(<context>)
-		Model mdl = entModel(ent("arg/x1", 1.0), ent("arg/x2", 2.0),
+		// use procModel to create an ProcModel the same way as a regular context
+		// or convert any context to procModel(<context>)
+		Model mdl = procModel(ent("arg/x1", 1.0), ent("arg/x2", 2.0),
 				ent("arg/x3", 3.0), ent("arg/x4", 4.0), ent("arg/x5", 5.0));
 
 		add(mdl, ent("arg/x6", 6.0));
 		assertTrue(eval(mdl, "arg/x6").equals(6.0));
 
-		// ent is of the Evaluation type
+		// proc is of the Evaluation type
 		// entries in models are evaluated
 		put(mdl, ent("arg/x6", ent("overwrite", 20.0)));
 		assertTrue(eval(mdl, "arg/x6").equals(20.0));
@@ -56,14 +55,14 @@ public class EntModels {
 
 		assertTrue(eval(mdl, "arg/x7").equals(4.0));
 		assertTrue(asis(mdl, "arg/x7") instanceof Entry);
-		assertTrue(asis(mdl, "arg/x7") instanceof Par);
+		assertTrue(asis(mdl, "arg/x7") instanceof Proc);
 		assertTrue(asis(asis(mdl, "arg/x7")) instanceof Double);
 	}
 
 	@Test
 	public void modelingTarget() throws Exception {
 
-		Model mdl = entModel(ent("arg/x1", 1.0), ent("arg/x2", 2.0),
+		Model mdl = procModel(ent("arg/x1", 1.0), ent("arg/x2", 2.0),
 				ent("arg/x3", 3.0), ent("arg/x4", 4.0), ent("arg/x5", 5.0));
 
 		add(mdl, ent("invoke", invoker("x1 + x3", ents("x1", "x3"))));
@@ -78,7 +77,6 @@ public class EntModels {
 		Double result = (Double) eval(mdl, ent("arg/x1", 2.0), ent("arg/x2", 3.0));
 		assertTrue(result.equals(5.0));
 
-
 		// evaluate the model with new inputs
 		add(mdl, ent("invoke", invoker("x6 * x7 + x1", ents("x1", "x6", "x7"))));
 		result = (Double) eval(mdl, ent("arg/x6", 6.0), ent("arg/x7", 7.0));
@@ -86,15 +84,15 @@ public class EntModels {
 	}
 
 	@Test
-	public void contextDependencies() throws Exception {
+	public void modelDependencies() throws Exception {
 
-		Model mdl1 = entModel(ent("arg/x1", 1.0), ent("arg/x2", 2.0),
+		Model mdl1 = procModel(ent("arg/x1", 1.0), ent("arg/x2", 2.0),
 				ent("arg/x3", 3.0), ent("arg/x4", 4.0), ent("arg/x5", 5.0));
 		add(mdl1, ent("y1", invoker("x1 + x3", ents("x1", "x3"))));
 		add(mdl1, ent("y2", invoker("x4 * x5", ents("x1", "x3"))));
 
 		// mdl2 depends on values y1 and y2 calculated in cxt1
-		Model mdl2 = entModel(ent("arg/y3", 8.0), ent("arg/y4", 9.0), ent("arg/y5", 10.0));
+		Model mdl2 = procModel(ent("arg/y3", 8.0), ent("arg/y4", 9.0), ent("arg/y5", 10.0));
 		add(mdl2, ent("invoke", invoker("y1 + y2 + y4 + y5", ents("y1", "y2", "y4", "y5"))));
 		responseUp(mdl2, "invoke");
 
@@ -109,7 +107,7 @@ public class EntModels {
 
 	@Test
 	public void evaluateMultiEntryResponseModel() throws Exception {
-		Model mdl = entModel(ent("arg/x1", 1.0), ent("arg/x2", 2.0),
+		Model mdl = procModel(ent("arg/x1", 1.0), ent("arg/x2", 2.0),
 				ent("arg/x3", 3.0), ent("arg/x4", 4.0), ent("arg/x5", 5.0));
 
 		add(mdl, ent("add", invoker("x1 + x3", ents("x1", "x3"))));
@@ -129,7 +127,7 @@ public class EntModels {
 	@Test
 	public void exertEntModel() throws Exception {
 
-		Model mdl = entModel(ent("arg/x1", 1.0), ent("arg/x2", 2.0),
+		Model mdl = procModel(ent("arg/x1", 1.0), ent("arg/x2", 2.0),
 				ent("arg/x3", 3.0), ent("arg/x4", 4.0), ent("arg/x5", 5.0));
 
 		add(mdl, ent("add", invoker("x1 + x3", ents("x1", "x3"))));
@@ -150,8 +148,8 @@ public class EntModels {
 	public void contextEntryService() throws Exception {
 
 		Context cxt = context(
-				inEnt("x1", 20.0),
-				inEnt("x2", 80.0));
+				inVal("x1", 20.0),
+				inVal("x2", 80.0));
 
 		Entry e = ent("x2", 100.0);
 		assertEquals(100.0, value((Context)exec(e, cxt), "x2"));
@@ -161,8 +159,8 @@ public class EntModels {
 	public void invokerEntryService() throws Exception {
 
 		ServiceModel em = model(
-				inEnt("x1", 20.0),
-				inEnt("x2", 80.0),
+				inVal("x1", 20.0),
+				inVal("x2", 80.0),
 				result("result/y"));
 
 		Entry ie = ent("multiply", invoker("x1 * x2", ents("x1", "x2")));
@@ -174,8 +172,8 @@ public class EntModels {
 	public void srvEntryLocalService() throws Exception {
 
 		ServiceModel sm = model(
-				inEnt("y1", 20.0),
-				inEnt("y2", 80.0));
+				inVal("y1", 20.0),
+				inVal("y2", 80.0));
 
 		Entry se = srv(sig("add", AdderImpl.class, result("add", inPaths("y1", "y2"))));
 		Context result = (Context) exec(se, sm);
@@ -186,8 +184,8 @@ public class EntModels {
 	public void srvEntryRemoteService() throws Exception {
 
 		ServiceModel sm = model(
-				inEnt("y1", 20.0),
-				inEnt("y2", 80.0));
+				inVal("y1", 20.0),
+				inVal("y2", 80.0));
 
 		Entry se = srv(sig("add", Adder.class, result("add", inPaths("y1", "y2"))));
 		Context result = (Context) exec(se, sm);
