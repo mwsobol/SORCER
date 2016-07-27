@@ -871,6 +871,12 @@ public class operator {
 		return signature.getSelector();
 	}
 
+	public static ContextSelector selector(String componentName, List<Path> paths) {
+		ContextSelector cs = new ContextSelector(Path.getNameList(paths));
+		cs.setComponentName(componentName);
+		return cs;
+	}
+
 	public static ContextSelector selector(String... paths) {
 		List<String> pathList = Arrays.asList(paths);
 		return new ContextSelector(pathList);

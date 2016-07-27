@@ -262,7 +262,7 @@ public class Par<T> extends Entry<T> implements Variability<T>, Mappable<T>,
 				if (val instanceof Entry) {
 					Object ev = ((Entry)val).asis();
 					if (ev instanceof Scopable && ((Scopable)ev).getScope() != null) {
-						((Context)((Scopable)ev).getScope()).append(scope);
+						((Scopable)ev).getScope().append(scope);
 					}
 				}
 

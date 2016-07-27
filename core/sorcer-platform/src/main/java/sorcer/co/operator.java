@@ -998,12 +998,6 @@ public class operator {
 		return list;
 	}
 
-//    public static List<String> paths(String... paths) {
-//        List<String> list = new ArrayList<>();
-//        Collections.addAll(list, paths);
-//        return list;
-//    }
-
 	public static List<String> paths(Context context) throws ContextException {
 		return context.getPaths();
 	}

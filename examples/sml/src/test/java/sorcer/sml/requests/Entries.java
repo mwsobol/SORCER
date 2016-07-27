@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.impl.AdderImpl;
+import sorcer.core.context.ContextSelector;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.eo.operator;
 import sorcer.service.*;
@@ -25,6 +26,7 @@ import static sorcer.eo.operator.args;
 import static sorcer.eo.operator.value;
 import static sorcer.mo.operator.putValue;
 import static sorcer.po.operator.*;
+import static sorcer.po.operator.loop;
 import static sorcer.service.Signature.Direction;
 import static sorcer.util.exec.ExecUtils.CmdResult;
 
@@ -266,4 +268,18 @@ public class Entries {
 		assertEquals(800.0,  eval(y1));
 	}
 
+	@Test
+	public void getConditionalLoopSrvModel() throws Exception {
+
+		Model mdl = model(
+			ent("x1", 10.0), ent("x2", 20.0), ent("x3", 40.0),
+			par("y1",
+				loop(condition((Context<Double> cxt) -> v(cxt, "x1") < v(cxt, "x2")),
+					invoker("lambda",
+						(Context<Double> cxt) -> { putValue(cxt, "x1", v(cxt, "x1") + 1.0);
+							return v(cxt, "x1") * v(cxt, "x3"); }))));
+
+//        logger.info("out eval: {}", eval(mdl, "y1"));
+		assertEquals(800.0,  eval(mdl, "y1"));
+	}
 }
