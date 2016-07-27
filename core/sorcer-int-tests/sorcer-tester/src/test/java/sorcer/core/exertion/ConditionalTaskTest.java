@@ -9,14 +9,14 @@ import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.tester.provider.impl.AdderImpl;
 import sorcer.arithmetic.tester.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.tester.provider.impl.SubtractorImpl;
-import sorcer.core.context.model.par.ParModel;
+import sorcer.co.operator;
+import sorcer.core.context.model.ent.ProcModel;
 import sorcer.service.*;
 
 import java.rmi.RemoteException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static sorcer.co.operator.inEnt;
 import static sorcer.eo.operator.alt;
 import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.get;
@@ -37,12 +37,12 @@ public class ConditionalTaskTest {
 	@Test
 	public void arithmeticTaskTest() throws Exception {
 		// to test tracing of execution enable ServiceExertion.debug
-		ParModel pm = new ParModel("par-model");
+		ProcModel pm = new ProcModel("proc-model");
 
 		Task task = task(
 				"add",
 				sig("add", AdderImpl.class),
-				context(inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
+				context(operator.inVal("arg/x1", 20.0), operator.inVal("arg/x2", 80.0),
 						result("result/y")));
 
 		OptMogram ift = opt("ift", condition(pm,
@@ -68,7 +68,7 @@ public class ConditionalTaskTest {
 
 	@Test
 	public void altExertionTest() throws RemoteException, ContextException, SignatureException, ExertionException {
-		ParModel pm = parModel("par-model");
+		ProcModel pm = procModel("proc-model");
 		pm.putValue("x1", 30.0);
 		pm.putValue("y1", 20.0);
 		pm.putValue("x2", 50.0);
@@ -76,15 +76,15 @@ public class ConditionalTaskTest {
 
 
 		Task t3 = xrt("t3", sig("subtract", SubtractorImpl.class), 
-				cxt("subtract", inEnt("arg/x1", 200.0), inEnt("arg/x2", 50.0),
+				cxt("subtract", operator.inVal("arg/x1", 200.0), operator.inVal("arg/x2", 50.0),
 						result("result/y")));
 
 		Task t4 = xrt("t4", sig("multiply", MultiplierImpl.class), 
-				cxt("multiply", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
+				cxt("multiply", operator.inVal("arg/x1", 10.0), operator.inVal("arg/x2", 50.0),
 						result("result/y")));
 
 		Task t5 = xrt("t5", sig("add", AdderImpl.class), 
-				cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
+				cxt("add", operator.inVal("arg/x1", 20.0), operator.inVal("arg/x2", 80.0),
 						result("result/y")));
 		
 		OptMogram opt1 = opt("opt1", condition(pm,
@@ -123,7 +123,7 @@ public class ConditionalTaskTest {
 
 	@Test
 	public void loopExertionTest() throws RemoteException, ContextException {
-//		final ParModel pm = model("par-model");
+//		final ProcModel pm = model("proc-model");
 //		final Var<Double> x = var("x", 1.0);
 //		Var y = var("y", groovy("x + 1", x));
 //		add(pm, x);

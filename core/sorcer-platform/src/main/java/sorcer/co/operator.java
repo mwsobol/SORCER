@@ -16,7 +16,6 @@
  */
 package sorcer.co;
 
-import groovy.lang.Closure;
 import org.rioproject.resolver.Artifact;
 import org.rioproject.resolver.ResolverException;
 import org.rioproject.resolver.ResolverHelper;
@@ -24,10 +23,9 @@ import sorcer.co.tuple.*;
 import sorcer.core.context.Copier;
 import sorcer.core.context.ListContext;
 import sorcer.core.context.ServiceContext;
+import sorcer.core.context.model.ent.Proc;
 import sorcer.core.context.model.ent.Entry;
-import sorcer.core.context.model.par.Par;
 import sorcer.core.context.model.srv.Srv;
-import sorcer.core.invoker.ServiceInvoker;
 import sorcer.core.plexus.FiEntry;
 import sorcer.core.plexus.MorphFidelity;
 import sorcer.core.plexus.MultiFiRequest;
@@ -332,11 +330,13 @@ public class operator {
 		return new Srv(path, null, name);
 	}
 
+	public static <T> Entry<T> val(String path, T value) {
+		return new Entry<T>(path, value);
+	}
+
 	public static <T> Entry<T> ent(String path, T value) {
-		if (value instanceof Invocation) {
-			return new Par<T>(path, value);
-		} else if (value instanceof Evaluation) {
-			return new Entry<T>(path, value);
+		if (value instanceof Invocation || value instanceof Evaluation) {
+			return new Proc<T>(path, value);
 		} else if (value instanceof ServiceFidelity) {
 			return (Entry<T>) new Srv(path, value);
 		} else if (value instanceof MultiFiRequest) {
@@ -459,6 +459,10 @@ public class operator {
 			throw new ContextException("No Entry at path: " + path);
 	}
 
+	public static Entry<Object>  val(String path) {
+		return new Entry<Object>(path, null);
+	}
+
 	public static Entry<Object>  ent(String path) {
 		return new Entry<Object>(path, null);
 	}
@@ -469,9 +473,9 @@ public class operator {
 		return entry;
 	}
 
-	public static <T> OutputEntry<T> outEnt(String path, T value) {
+	public static <T> OutputEntry<T> outVal(String path, T value) {
 		if (value instanceof String && ((String)value).indexOf('|') > 0) {
-			OutputEntry oe =  outEnt(path, null);
+			OutputEntry oe =  outVal(path, null);
 			oe.annotation(value);
 			return oe;
 		}
@@ -481,8 +485,8 @@ public class operator {
 		return ent;
 	}
 
-	public static <T> OutputEntry<T> outEnt(String path, T value, String annotation) {
-		OutputEntry oe =  outEnt(path, value);
+	public static <T> OutputEntry<T> outVal(String path, T value, String annotation) {
+		OutputEntry oe =  outVal(path, value);
 		oe.annotation(annotation);
 		return oe;
 	}
@@ -504,11 +508,11 @@ public class operator {
 		return new DataEntry(Context.DSD_PATH, data);
 	}
 
-	public static <T> OutputEntry<T> outEnt(String path, T value, int index) {
+	public static <T> OutputEntry<T> outVal(String path, T value, int index) {
 		return new OutputEntry(path, value, index);
 	}
 
-	public static <T> OutputEntry<T> dbOutEnt(String path, T value) {
+	public static <T> OutputEntry<T> dbOutVal(String path, T value) {
 		return new OutputEntry(path, value, true, 0);
 	}
 
@@ -516,11 +520,11 @@ public class operator {
 		return new InputEntry(path, null, 0);
 	}
 
-	public static OutputEntry outEnt(String path) {
+	public static OutputEntry outVal(String path) {
 		return new OutputEntry(path, null, 0);
 	}
 
-	public static InputEntry inEnt(String path) {
+	public static InputEntry inVal(String path) {
 		return new InputEntry(path, null, 0);
 	}
 
@@ -532,31 +536,31 @@ public class operator {
 		return new Entry(path, value, index);
 	}
 
-	public static <T> InputEntry<T> inEnt(String path, T value) {
+	public static <T> InputEntry<T> inVal(String path, T value) {
 		return new InputEntry(path, value, 0);
 	}
 
-	public static <T> InputEntry<T> dbInEnt(String path, T value, String annotation) {
+	public static <T> InputEntry<T> dbInVal(String path, T value, String annotation) {
 		InputEntry<T> ie = new InputEntry(path, value, true, 0);
 		ie.annotation(annotation);
 		return ie;
 	}
 
-	public static <T> InputEntry<T> dbInEnt(String path, T value) {
+	public static <T> InputEntry<T> dbInVal(String path, T value) {
 		return new InputEntry(path, value, true, 0);
 	}
 
-	public static <T> InputEntry<T> inEnt(String path, T value, int index) {
+	public static <T> InputEntry<T> inVal(String path, T value, int index) {
 		return new InputEntry(path, value, index);
 	}
 
-	public static <T> InputEntry<T> inEnt(String path, T value, String annotation) {
-		InputEntry<T> ie = inEnt(path, value);
+	public static <T> InputEntry<T> inVal(String path, T value, String annotation) {
+		InputEntry<T> ie = inVal(path, value);
 		ie.annotation(annotation);
 		return ie;
 	}
 
-	public static <T> InputEntry<T> inEnt(String path, T value, Class valClass, String annotation) {
+	public static <T> InputEntry<T> inVal(String path, T value, Class valClass, String annotation) {
 		InputEntry<T> ie = new InputEntry(path, value, 0);
 		if (valClass != null)
 			ie.setValClass(valClass);
@@ -564,24 +568,24 @@ public class operator {
 		return ie;
 	}
 
-	public static <T> InputEntry<T> inEnt(String path, T value, Class valClass) {
-		return inEnt(path, value, valClass, null);
+	public static <T> InputEntry<T> inVal(String path, T value, Class valClass) {
+		return inVal(path, value, valClass, null);
 	}
 
-	public static InputEntry inoutEnt(String path) {
+	public static InputEntry inoutVal(String path) {
 		return new InputEntry(path, null, 0);
 	}
 
-	public static <T> InoutEntry<T> inoutEnt(String path, T value) {
+	public static <T> InoutEntry<T> inoutVal(String path, T value) {
 		return new InoutEntry(path, value, 0);
 	}
 
-	public static <T> InoutEntry<T> inoutEnt(String path, T value, int index) {
+	public static <T> InoutEntry<T> inoutVal(String path, T value, int index) {
 		return new InoutEntry(path, value, index);
 	}
 
-	public static <T> InoutEntry<T> inoutEnt(String path, T value, String annotation) {
-		InoutEntry<T> ie = inoutEnt(path, value);
+	public static <T> InoutEntry<T> inoutVal(String path, T value, String annotation) {
+		InoutEntry<T> ie = inoutVal(path, value);
 		ie.annotation(annotation);
 		return ie;
 	}
@@ -625,9 +629,9 @@ public class operator {
 						((Setter) entry).setPersistent(true);
 						dburl = SdbUtil.store(obj);
 						((Setter)entry).setValue(dburl);
-						if (object instanceof Par) {
+						if (object instanceof Proc) {
 							// its eval is now persisted
-							((Par)object)._2 = null;
+							((Proc)object)._2 = null;
 						}
 						return dburl;
 					}
@@ -661,8 +665,8 @@ public class operator {
 
 	public static void dbURL(Object object, URL dbUrl)
 			throws MalformedURLException {
-		if (object instanceof Par)
-			((Par) object).setDbURL(dbUrl);
+		if (object instanceof Proc)
+			((Proc) object).setDbURL(dbUrl);
 		else if (object instanceof ServiceContext)
 			((ServiceContext) object).setDbUrl("" + dbUrl);
 		else
@@ -670,8 +674,8 @@ public class operator {
 	}
 
 	public static URL dbURL(Object object) throws MalformedURLException {
-		if (object instanceof Par)
-			return ((Par) object).getDbURL();
+		if (object instanceof Proc)
+			return ((Proc) object).getDbURL();
 		else if (object instanceof ServiceContext)
 			return new URL(((ServiceContext) object).getDbUrl());
 		return null;
@@ -682,7 +686,7 @@ public class operator {
 	}
 
 	public static URL update(Object object) throws MogramException,
-			SignatureException, ContextException {
+			SignatureException {
 		return SdbUtil.update(object);
 	}
 
@@ -732,13 +736,13 @@ public class operator {
 		return entry;
 	}
 
-	public static <T> Entry<T> dbEnt(String path) {
-		Entry<T> e = new Par<T>(path);
+	public static <T> Entry<T> dbVal(String path) {
+		Entry<T> e = new Proc<T>(path);
 		e.setPersistent(true);
 		return e;
 	}
 
-	public static <T> Entry<T> dbEnt(String path, T value) throws EvaluationException {
+	public static <T> Entry<T> dbVal(String path, T value) throws EvaluationException {
 		Entry<T> e = new Entry<T>(path, value);
 		e.setPersistent(true);
 		if (SdbUtil.isSosURL(value)) {
@@ -945,7 +949,7 @@ public class operator {
 
 	public static Object asis(Entry entry)
 			throws ContextException {
-		if (entry instanceof Par) {
+		if (entry instanceof Proc) {
 			if (entry._2 != null && entry.isValid())
 				return entry._2;
 			else

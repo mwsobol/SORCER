@@ -31,8 +31,8 @@ import static sorcer.po.operator.invoker;
  */
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/sml")
-public class EntModels {
-	private final static Logger logger = LoggerFactory.getLogger(EntModels.class);
+public class ContextModels {
+	private final static Logger logger = LoggerFactory.getLogger(ContextModels.class);
 
 	@Test
 	public void entryModel() throws Exception {
@@ -100,9 +100,9 @@ public class EntModels {
 		Copier cp = copier(mdl1, ents("arg/x1", "arg/x2"), mdl2, ents("y1", "y2"));
 		dependsOn(mdl2, cp);
 
-//		Double result =
-		eval(mdl2);
-		assertTrue(eval(mdl2).equals(22.0));
+		Double result = (Double) eval(mdl2);
+//		logger.info("result: " + result);
+		assertTrue(result.equals(22.0));
 	}
 
 	@Test

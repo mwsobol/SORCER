@@ -84,12 +84,12 @@ A  <em>block</em> is a concatenation of exertions with control-flow exertions to
      </code><code><span class="light-blue"> &nbsp; &nbsp; </span><span class="magenta">inEnt</span>("arg/x1", 10.0d), <span class="magenta">inEnt</span>("arg/x2", 50.0d),
     <span class="magenta"> <br /> 
     &nbsp; &nbsp; inEnt</span>("arg/x3", 20.0d), <span class="magenta">inEnt</span>("arg/x4", 80.0d),
-    <br /> &nbsp; &nbsp; <span class="light-blue">ent</span>(<span class="red">sig</span>("<span class="red">multiply</span>", <span class="red">Multiplier.class</span>, <span class="magenta">result</span>("result/y1",
+    <br /> &nbsp; &nbsp; <span class="light-blue">proc</span>(<span class="red">sig</span>("<span class="red">multiply</span>", <span class="red">Multiplier.class</span>, <span class="magenta">result</span>("result/y1",
     <span class="magenta"><br /> &nbsp; &nbsp; &nbsp; &nbsp; inPaths</span>("arg/x1", "arg/x2")))),
     <span class="light-blue"> <br /> 
-    &nbsp; &nbsp; ent</span>(<span class="red">sig</span>("<span class="red">add</span>", <span class="red">Adder.class</span>, <span class="magenta">result</span>("result/y2",
+    &nbsp; &nbsp; proc</span>(<span class="red">sig</span>("<span class="red">add</span>", <span class="red">Adder.class</span>, <span class="magenta">result</span>("result/y2",
     <span class="magenta">  <br /> &nbsp; &nbsp; &nbsp; &nbsp; inPaths</span>("arg/x3", "arg/x4")))),
-    <span class="light-blue"> <br /> &nbsp; &nbsp; ent</span>(<span class="red">sig</span>("out", "<span class="red">subtract</span>", <span class="red">Subtractor.class</span>, <span class="magenta"> result</span>("result/y3",
+    <span class="light-blue"> <br /> &nbsp; &nbsp; proc</span>(<span class="red">sig</span>("out", "<span class="red">subtract</span>", <span class="red">Subtractor.class</span>, <span class="magenta"> result</span>("result/y3",
     <span class="magenta"> <br /> &nbsp; &nbsp; &nbsp; &nbsp; inPaths</span>("result/y1", "result/y2")))),
   <span class="magenta"> <br /> &nbsp; &nbsp; response</span>("out", "result/y1", "result/y2", "result/y3"));</code></p>
 </blockquote>

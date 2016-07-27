@@ -29,11 +29,10 @@ import sorcer.core.Name;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.*;
 import sorcer.core.context.model.QueueStrategy;
-import sorcer.core.context.model.ent.EntModel;
+import sorcer.core.context.model.ent.Proc;
+import sorcer.core.context.model.ent.ProcModel;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.EntryList;
-import sorcer.core.context.model.par.Par;
-import sorcer.core.context.model.par.ParModel;
 import sorcer.core.context.model.srv.Srv;
 import sorcer.core.context.model.srv.SrvModel;
 import sorcer.core.deploy.ServiceDeployment;
@@ -72,9 +71,7 @@ import java.util.*;
 
 import static sorcer.co.operator.rasis;
 import static sorcer.co.operator.srv;
-import static sorcer.mo.operator.entModel;
-import static sorcer.mo.operator.srvModel;
-import static sorcer.po.operator.parModel;
+import static sorcer.mo.operator.*;
 
 /**
  * Operators defined for the Service Modeling Language (SML).
@@ -285,7 +282,7 @@ public class operator {
 		}
 		String name = getUnknown();
 		List<Tuple2<String, ?>> entryList = new ArrayList<Tuple2<String, ?>>();
-		List<Par> parEntryList = new ArrayList<Par>();
+		List<Proc> procEntryList = new ArrayList<Proc>();
 		List<Context.Type> types = new ArrayList<Context.Type>();
 		List<EntryList> entryLists = new ArrayList<EntryList>();
 		List<DependencyEntry> depList = new ArrayList<DependencyEntry>();
@@ -314,8 +311,8 @@ public class operator {
 				returnPath = (ReturnPath) o;
 			} else if (o instanceof ExecPath) {
 				execPath = (ExecPath) o;
-			} else if (o instanceof Par) {
-				parEntryList.add((Par) o);
+			} else if (o instanceof Proc) {
+				procEntryList.add((Proc) o);
 			} else if (o instanceof Tuple2) {
 				entryList.add((Tuple2) o);
 			} else if (o instanceof Context.Type) {
@@ -399,8 +396,8 @@ public class operator {
 			if (entryList.size() > 0)
 				populteContext(cxt, entryList);
 		}
-		if (parEntryList.size() > 0) {
-			for (Par p : parEntryList)
+		if (procEntryList.size() > 0) {
+			for (Proc p : procEntryList)
 				cxt.putValue(p.getName(), p);
 		}
 		if (returnPath != null)
@@ -547,25 +544,25 @@ public class operator {
 					((Scopable) par).setScope(pcxt);
 				}
 				if (t.isPersistent()) {
-					setPar(pcxt, t, i);
+					setProc(pcxt, t, i);
 				} else {
 					pcxt.putInValueAt(t.path(), t.value(), i + 1);
 				}
 			} else if (t instanceof OutputEntry) {
 				if (t.isPersistent()) {
-					setPar(pcxt, t, i);
+					setProc(pcxt, t, i);
 				} else {
 					pcxt.putOutValueAt(t.path(), t.value(), ((OutputEntry) t).getValClass(), i + 1);
 				}
 			} else if (t instanceof InoutEntry) {
 				if (t.isPersistent()) {
-					setPar(pcxt, t, i);
+					setProc(pcxt, t, i);
 				} else {
 					pcxt.putInoutValueAt(t.path(), t.value(), i + 1);
 				}
 			} else if (t instanceof Entry) {
 				if (t.isPersistent()) {
-					setPar(pcxt, (Entry) entryList.get(i), i);
+					setProc(pcxt, (Entry) entryList.get(i), i);
 				} else {
 					if (t.value() instanceof Scopable) {
 						((Scopable) t.value()).setScope(pcxt);
@@ -593,28 +590,28 @@ public class operator {
 					((InvokeIncrementor)val).setScope(cxt);
 				}
 				if (((InputEntry) entryList.get(i)).isPersistent()) {
-					setPar(cxt, (InputEntry) entryList.get(i));
+					setProc(cxt, (InputEntry) entryList.get(i));
 				} else {
 					cxt.putInValue(((Entry) entryList.get(i)).path(),
 							((Entry) entryList.get(i)).value());
 				}
 			} else if (entryList.get(i) instanceof OutputEntry) {
 				if (((OutputEntry) entryList.get(i)).isPersistent()) {
-					setPar(cxt, (OutputEntry) entryList.get(i));
+					setProc(cxt, (OutputEntry) entryList.get(i));
 				} else {
 					cxt.putOutValue(((Entry) entryList.get(i)).path(),
 							((Entry) entryList.get(i)).value());
 				}
 			} else if (entryList.get(i) instanceof InoutEntry) {
 				if (((InoutEntry) entryList.get(i)).isPersistent()) {
-					setPar(cxt, (InoutEntry) entryList.get(i));
+					setProc(cxt, (InoutEntry) entryList.get(i));
 				} else {
 					cxt.putInoutValue(((Entry) entryList.get(i)).path(),
 							((Entry) entryList.get(i)).value());
 				}
 			} else if (entryList.get(i) instanceof Entry) {
 				if (((Entry) entryList.get(i)).isPersistent()) {
-					setPar(cxt, (Entry) entryList.get(i));
+					setProc(cxt, (Entry) entryList.get(i));
 				} else {
 					cxt.putValue(((Entry) entryList.get(i)).path(),
 							((Entry) entryList.get(i)).value());
@@ -640,16 +637,15 @@ public class operator {
 		return add((Context) model, objects);
 	}
 
-	public static Context add(Context model, Identifiable... objects)
+	public static Context add(Context context, Identifiable... objects)
 			throws RemoteException, ContextException {
 		boolean isReactive = false;
-		Context context = (Context) model;
 		for (Identifiable i : objects) {
 			if (i instanceof Reactive && ((Reactive) i).isReactive()) {
 				isReactive = true;
 			}
 			if (i instanceof Mogram) {
-				((Mogram) i).setScope((Context)model);
+				((Mogram) i).setScope(context);
 				i = srv(i);
 			}
 			if (context instanceof PositionalContext) {
@@ -673,7 +669,7 @@ public class operator {
 						pc.putInoutValueAt(i.getName(), ((Entry) i).value(), pc.getTally() + 1);
 					}
 				} else {
-					if (model instanceof EntModel || isReactive) {
+					if (context instanceof ProcModel || isReactive) {
 						pc.putValueAt(i.getName(), i, pc.getTally() + 1);
 					} else {
 						pc.putValueAt(i.getName(), ((Entry) i).value(), pc.getTally() + 1);
@@ -699,7 +695,7 @@ public class operator {
 						context.putInoutValue(i.getName(), ((Entry) i).value());
 					}
 				} else {
-					if (isReactive) {
+					if (context instanceof ProcModel || isReactive) {
 						context.putValue(i.getName(), i);
 					} else {
 						context.putValue(i.getName(), ((Entry) i).value());
@@ -716,6 +712,7 @@ public class operator {
 				}
 			}
 		}
+		((ServiceContext)context).isChanged();
 		return context;
 	}
 
@@ -723,8 +720,8 @@ public class operator {
 			throws ContextException {
 		try {
 			Object val = context.asis(path);
-			if (val instanceof Par && ((Par)val).isPersistent())
-				val = ((Par)val).asis();
+			if (val instanceof Proc && ((Proc)val).isPersistent())
+				val = ((Proc)val).asis();
 			if (SdbUtil.isSosURL(val)) {
 				SdbUtil.update((URL) val, value);
 			} else {
@@ -785,9 +782,9 @@ public class operator {
 		return context;
 	}
 
-	protected static void setPar(PositionalContext pcxt, Tuple2 entry, int i)
+	protected static void setProc(PositionalContext pcxt, Tuple2 entry, int i)
 			throws ContextException {
-		Par p = new Par(entry.path(), entry.value());
+		Proc p = new Proc(entry.path(), entry.value());
 		p.setPersistent(true);
 		if (entry instanceof InputEntry)
 			pcxt.putInValueAt(entry.path(), p, i + 1);
@@ -799,9 +796,9 @@ public class operator {
 			pcxt.putValueAt(entry.path(), p, i + 1);
 	}
 
-	protected static void setPar(Context cxt, Tuple2 entry)
+	protected static void setProc(Context cxt, Tuple2 entry)
 			throws ContextException {
-		Par p = new Par(entry.path(), entry.value());
+		Proc p = new Proc(entry.path(), entry.value());
 		p.setPersistent(true);
 		if (entry instanceof InputEntry)
 			cxt.putInValue(entry.path(), p);
@@ -1252,7 +1249,7 @@ public class operator {
 										  ReturnPath returnPath) throws SignatureException {
 		EvaluationSignature sig = null;
 		if (evaluator instanceof Scopable) {
-			sig = new EvaluationSignature(new Par((Identifiable) evaluator));
+			sig = new EvaluationSignature(new Proc((Identifiable) evaluator));
 		} else {
 			sig = new EvaluationSignature(evaluator);
 		}
@@ -1831,7 +1828,7 @@ public class operator {
 		return task;
 	}
 
-	public static <M extends Model> M mdl(Object... items) throws ContextException, SortingException {
+	public static <M extends ServiceModel> M mdl(Object... items) throws ContextException, SortingException {
 		return model(items);
 	}
 
@@ -1854,7 +1851,7 @@ public class operator {
 			} else if (i instanceof Entry) {
 				try {
 					hasEntry = true;
-					if (i instanceof Par)
+					if (i instanceof Proc)
 						parType = true;
 					else if (i instanceof Srv) {
 						srvType = true;
@@ -1874,12 +1871,12 @@ public class operator {
 				mo = srvModel(items);
 			} else if (parType) {
 				try {
-					return (M) parModel(name, items);
+					return (M) sorcer.po.operator.procModel(name, items);
 				} catch (Exception e) {
 					throw new ModelException(e);
 				}
 			} else {
-				mo = entModel(items);
+				mo = sorcer.mo.operator.procModel(items);
 			}
 
 			((ServiceMogram)mo).setName(name);
@@ -1956,7 +1953,7 @@ public class operator {
 		Context cxt = null;
 		boolean isBlock =false;
 		for (int i = 0; i < items.length; i++) {
-			if (items[i] instanceof Exertion || items[i] instanceof EntModel ) {
+			if (items[i] instanceof Exertion || items[i] instanceof ProcModel) {
 				exertions.add((Mogram) items[i]);
 				if (items[i] instanceof ConditionalMogram)
 					isBlock = true;
@@ -2229,7 +2226,7 @@ public class operator {
 		Object obj = null;
 		if (mogram instanceof Context) {
 			obj = ((ServiceContext)mogram).get(path);
-			if (mogram instanceof EntModel) {
+			if (mogram instanceof ProcModel) {
 				while (obj instanceof Entry && ((Entry)obj).getName().equals(path)) {
 					obj = ((Entry)obj).value();
 				}
@@ -2309,8 +2306,8 @@ public class operator {
 			throws ContextException {
 		try {
 			synchronized (model) {
-				if (model instanceof ParModel) {
-					return ((ParModel) model).getValue(args);
+				if (model instanceof ProcModel) {
+					return ((ProcModel) model).getValue(args);
 				} else {
 					return ((ServiceContext) model).getValue(args);
 				}
@@ -2820,7 +2817,7 @@ public class operator {
 		String outComponentPath;
 		String inComponentPath;
 
-		Par parEntry;
+		Proc procEntry;
 
 		Pipe(Exertion out, String outPath, Mappable in, String inPath) {
 			this.out = out;
@@ -2829,11 +2826,11 @@ public class operator {
 			this.inPath = inPath;
 			if ((in instanceof Exertion) && (out instanceof Exertion)) {
 				try {
-					parEntry = new Par(outPath, inPath, in);
+					procEntry = new Proc(outPath, inPath, in);
 				} catch (ContextException e) {
 					e.printStackTrace();
 				}
-				((ServiceExertion) out).addPersister(parEntry);
+				((ServiceExertion) out).addPersister(procEntry);
 			}
 		}
 
@@ -2847,11 +2844,11 @@ public class operator {
 
 			if ((in instanceof Exertion) && (out instanceof Exertion)) {
 				try {
-					parEntry = new Par(outPath, inPath, in);
+					procEntry = new Proc(outPath, inPath, in);
 				} catch (ContextException e) {
 					e.printStackTrace();
 				}
-				((ServiceExertion) out).addPersister(parEntry);
+				((ServiceExertion) out).addPersister(procEntry);
 			}
 		}
 
@@ -2860,9 +2857,9 @@ public class operator {
 		}
 	}
 
-	public static Par persistent(Pipe pipe) {
-		pipe.parEntry.setPersistent(true);
-		return pipe.parEntry;
+	public static Proc persistent(Pipe pipe) {
+		pipe.procEntry.setPersistent(true);
+		return pipe.procEntry;
 	}
 
 	private static class InEndPoint {
@@ -3012,7 +3009,7 @@ public class operator {
 		return provider;
 	}
 
-	public static Condition condition(ParModel parcontext, String expression,
+	public static Condition condition(ProcModel parcontext, String expression,
 									  String... pars) {
 		return new Condition(parcontext, expression, pars);
 	}
@@ -3080,7 +3077,7 @@ public class operator {
 	public static Exertion xrt(Mappable mappable, String path)
 			throws ContextException {
 		Object obj = ((ServiceContext) mappable).asis(path);
-		while (obj instanceof Mappable || obj instanceof Par) {
+		while (obj instanceof Mappable || obj instanceof Proc) {
 			try {
 				obj = ((Evaluation) obj).asis();
 			} catch (RemoteException e) {
@@ -3127,7 +3124,7 @@ public class operator {
 		Context context = null;
 		Evaluator evaluator = null;
 		for (int i = 0; i < items.length; i++) {
-			if (items[i] instanceof Exertion || items[i] instanceof EntModel) {
+			if (items[i] instanceof Exertion || items[i] instanceof ProcModel) {
 				mograms.add((Mogram) items[i]);
 			} else if (items[i] instanceof Evaluation) {
 				evaluators.add((Evaluator)items[i]);
@@ -3170,19 +3167,19 @@ public class operator {
 		} catch (Exception se) {
 			throw new ExertionException(se);
 		}
-		//make sure it has ParModel as the data context
-		ParModel pm = null;
+		//make sure it has ProcModel as the data context
+		ProcModel pm = null;
 		Context cxt = null;
 		try {
 			cxt = block.getDataContext();
 			if (cxt == null) {
-				cxt = new ParModel();
+				cxt = new ProcModel();
 				block.setContext(cxt);
 			}
-			if (cxt instanceof ParModel) {
-				pm = (ParModel)cxt;
+			if (cxt instanceof ProcModel) {
+				pm = (ProcModel)cxt;
 			} else {
-				pm = new ParModel("block context: " + cxt.getName());
+				pm = new ProcModel("block context: " + cxt.getName());
 				block.setContext(pm);
 				pm.append(cxt);
 				pm.setScope(pm);
@@ -3200,8 +3197,8 @@ public class operator {
 					if (((LoopMogram)e).getCondition() != null)
 						((LoopMogram)e).getCondition().setConditionalContext(pm);
 					Mogram target = ((LoopMogram)e).getTarget();
-					if (target instanceof EvaluationTask && ((EvaluationTask)target).getEvaluation() instanceof Par) {
-						Par p = (Par)((EvaluationTask)target).getEvaluation();
+					if (target instanceof EvaluationTask && ((EvaluationTask)target).getEvaluation() instanceof Proc) {
+						Proc p = (Proc)((EvaluationTask)target).getEvaluation();
 						p.setScope(pm);
 						if (target instanceof Exertion && ((Exertion)target).getContext().getReturnPath() == null)
 							((ServiceContext)((Exertion)target).getContext()).setReturnPath(p.getName());
@@ -3210,8 +3207,8 @@ public class operator {
 //					pm.append(((VarSignature)e.getProcessSignature()).getVariability());
 				} else if (e instanceof EvaluationTask) {
 					e.setScope(pm.getScope());
-					if (((EvaluationTask)e).getEvaluation() instanceof Par) {
-						Par p = (Par)((EvaluationTask)e).getEvaluation();
+					if (((EvaluationTask)e).getEvaluation() instanceof Proc) {
+						Proc p = (Proc)((EvaluationTask)e).getEvaluation();
 						pm.getScope().addPar(p);
 //						pm.addPar(p);
 

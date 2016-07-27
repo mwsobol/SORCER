@@ -113,13 +113,13 @@ public class WorkerExertionsTest {
 
 		// prefixed task context and output values
 		context = context("pBatch",
-					inEnt("w1/req/arg/1", 20), inEnt("w1/req/arg/2", 80), 
-					inEnt("w1/req/work", Works.work1), outEnt("req/arg/1", "tag|w1"),
+					inVal("w1/req/arg/1", 20), inVal("w1/req/arg/2", 80),
+					inVal("w1/req/work", Works.work1), outVal("req/arg/1", "tag|w1"),
 
-					inEnt("w2/req/arg/1", 10), inEnt("w2/req/arg/2", 50), 
-					inEnt("w2/req/work", Works.work2), outEnt("req/arg/2", "tag|w2"),
+					inVal("w2/req/arg/1", 10), inVal("w2/req/arg/2", 50),
+					inVal("w2/req/work", Works.work2), outVal("req/arg/2", "tag|w2"),
 
-					inEnt("req/work", Works.work3), outEnt("prv/result"));
+					inVal("req/work", Works.work3), outVal("prv/result"));
 
 
 		Task bt = task("pBatch", 
@@ -144,17 +144,17 @@ public class WorkerExertionsTest {
 		Context cxt1 = context(ent("req/name", "workaholic"), 
 				ent("req/arg/1", 20),  ent("req/arg/2", 80),
 				ent("req/work", Works.work1),  ent("tp/prv/name", "Worker1"),
-				outEnt("prv/result"));
+				outVal("prv/result"));
 
 		Context cxt2 = context(ent("req/name", "workaholic"), 
 				ent("req/arg/1", 10),  ent("req/arg/2", 50),
 				ent("req/work", Works.work2),  ent("tp/prv/name", "Worker2"),
-				outEnt("prv/result"));
+				outVal("prv/result"));
 
 		Context cxt3 = context(ent("req/name", "workaholic"), 
-				inEnt("req/arg/1"),  inEnt("req/arg/2"),
+				inVal("req/arg/1"),  inVal("req/arg/2"),
 				ent("req/work", Works.work3),  ent("tp/prv/name", "Worker3"),
-				outEnt("prv/result"));
+				outVal("prv/result"));
 
 		Job job = job("strategy", 
 				task("work1", sig("doWork", Worker.class, prvName("Worker1")), cxt1),

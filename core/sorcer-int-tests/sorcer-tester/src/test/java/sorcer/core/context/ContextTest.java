@@ -2,13 +2,14 @@ package sorcer.core.context;
  
 
 import org.junit.Test;
+import sorcer.co.operator;
 import sorcer.service.Context;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertEquals;
-import static sorcer.co.operator.inEnt;
+import static sorcer.co.operator.*;
 import static sorcer.eo.operator.context;
 
 /**
@@ -54,7 +55,7 @@ public class ContextTest {
 	
 	@Test
 	public void softValueTest() throws Exception {
-		Context cxt = context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0));
+		Context cxt = context("add", operator.inVal("arg/x1", 20.0), operator.inVal("arg/x2", 80.0));
 		
 //		logger.info("arg/x1 = " + cxt.getValue("arg/x1"));
 		assertEquals(cxt.getValue("arg/x1"), 20.0);

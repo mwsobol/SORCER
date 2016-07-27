@@ -21,10 +21,9 @@ import sorcer.co.tuple.Tuple2;
 import sorcer.core.Name;
 import sorcer.core.context.MapContext;
 import sorcer.core.context.ServiceContext;
-import sorcer.core.context.model.ent.EntModel;
+import sorcer.core.context.model.ent.Proc;
+import sorcer.core.context.model.ent.ProcModel;
 import sorcer.core.context.model.ent.Entry;
-import sorcer.core.context.model.par.Par;
-import sorcer.core.context.model.par.ParModel;
 import sorcer.core.context.model.srv.Srv;
 import sorcer.core.context.model.srv.SrvModel;
 import sorcer.core.dispatch.SortingException;
@@ -58,34 +57,34 @@ public class operator {
         throws ContextException {
         Object parEntry = context.asis(parname);
         if (parEntry == null)
-            ((ParModel)context).addPar(parname, value);
+            ((ProcModel)context).addPar(parname, value);
         else if (parEntry instanceof Setter) {
             try {
                 ((Setter) parEntry).setValue(value);
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
-        } else if (parEntry instanceof Par) {
-            Par par = (Par) parEntry;
-            if (par.getScope() != null && par.getContextable() == null)
-                par.getScope().putValue(par.getName(), value);
+        } else if (parEntry instanceof Proc) {
+            Proc proc = (Proc) parEntry;
+            if (proc.getScope() != null && proc.getContextable() == null)
+                proc.getScope().putValue(proc.getName(), value);
         }
         // just ssetting the eval
         else {
-            ((ParModel)context).putValue(parname, value);
-            ((ParModel)context).setIsChanged(true);
+            ((ProcModel)context).putValue(parname, value);
+            ((ProcModel)context).setIsChanged(true);
         }
         return value;
     }
 
-    public static EntModel entModel(String name, Signature builder) throws SignatureException {
-        EntModel model = (EntModel) sorcer.co.operator.instance(builder);
+    public static ProcModel procModel(String name, Signature builder) throws SignatureException {
+        ProcModel model = (ProcModel) sorcer.co.operator.instance(builder);
         model.setBuilder(builder);
         return model;
     }
 
-    public static ParModel parModel(String name, Signature builder) throws SignatureException {
-        ParModel model = (ParModel) sorcer.co.operator.instance(builder);
+    public static ProcModel parModel(String name, Signature builder) throws SignatureException {
+        ProcModel model = (ProcModel) sorcer.co.operator.instance(builder);
         model.setBuilder(builder);
         return model;
     }
@@ -96,21 +95,21 @@ public class operator {
         return model;
     }
 
-    public static Model entModel(Object... entries)
+    public static ProcModel procModel(Object... entries)
             throws ContextException {
         if (entries != null && entries.length == 1 && entries[0] instanceof Context) {
             ((Context)entries[0]).setModeling(true);
             try {
-                return new EntModel((Context)entries[0]);
+                return new ProcModel((Context)entries[0]);
             } catch (RemoteException e) {
                 throw new ContextException(e);
             }
         }
-        EntModel model = new EntModel();
+        ProcModel model = new ProcModel();
         Object[] dest = new Object[entries.length+1];
         System.arraycopy(entries,  0, dest,  1, entries.length);
         dest[0] = model;
-        return (Model) context(dest);
+        return (ProcModel) context(dest);
     }
 
     public static Model inConn(Model model, Context inConnector) {

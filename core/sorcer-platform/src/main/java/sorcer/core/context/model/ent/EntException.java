@@ -15,38 +15,38 @@
  * limitations under the License.
  */
 
-package sorcer.core.context.model.par;
+package sorcer.core.context.model.ent;
 
 import sorcer.service.EvaluationException;
 
-public class ParException extends EvaluationException {
+public class EntException extends EvaluationException {
 
 	private static final long serialVersionUID = 5987271488623420213L;
 	private String parName = null;
 	private Exception exception = null;
 	
-	public ParException() {
+	public EntException() {
 	}
 	/**
-	 * Constructs a new ParException with an embedded exception.
+	 * Constructs a new EntException with an embedded exception.
 	 * 
 	 * @param exception
 	 *            embedded exception
 	 */
-	public ParException(Exception exception) {
+	public EntException(Exception exception) {
 		super(exception);
 	}
 	
-	public ParException(String msg, Exception e) {
+	public EntException(String msg, Exception e) {
 		super(msg);
 		e.printStackTrace();
 	}
 
-	public ParException(String msg) {
+	public EntException(String msg) {
 		super(msg);
 	}
 	
-	public ParException(String msg, String parName, Exception exception) {
+	public EntException(String msg, String parName, Exception exception) {
 		super(msg);
 		this.parName = parName;
 		this.exception = exception;

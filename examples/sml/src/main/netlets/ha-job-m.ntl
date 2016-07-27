@@ -21,16 +21,16 @@ import sorcer.arithmetic.provider.Multiplier
 import sorcer.arithmetic.provider.Subtractor
 
 Task t3 = task("t3", sig("subtract", Subtractor.class),
-        context("subtract", inEnt("arg/x1"), inEnt("arg/x2"),
-                outEnt("result/y")), strategy(Monitor.YES));
+        context("subtract", inEnt("arg/x1"), inVal("arg/x2"),
+                outVal("result/y")), strategy(Monitor.YES));
 
 Task t4 = task("t4", sig("multiply", Multiplier.class),
-        context("multiply", inEnt("arg/x1", 10.0d), inEnt("arg/x2", 50.0d),
-                outEnt("result/y")), strategy(Monitor.YES));
+        context("multiply", inVal("arg/x1", 10.0d), inVal("arg/x2", 50.0d),
+                outVal("result/y")), strategy(Monitor.YES));
 
 Task t5 = task("t5", sig("add", Adder.class),
         context("add", inEnt("arg/x1", 20.0d), inEnt("arg/x2", 80.0d),
-                outEnt("result/y")), strategy(Monitor.YES));
+                outVal("result/y")), strategy(Monitor.YES));
 
 // Service Composition j1(j2(t4(x1, x2), t5(x1, x2)), t3(x1, x2))
 job("j1",

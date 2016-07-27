@@ -1,4 +1,4 @@
-package sorcer.core.context.model.par;
+package sorcer.core.context.model.ent;
 
 /*
  * Copyright 2013 the original author or authors.
@@ -31,7 +31,7 @@ import sorcer.service.EvaluationException;
  * @author Mike Sobolewski
  */
 @SuppressWarnings("rawtypes")
-public class ParSet extends TreeSet<Par> {
+public class ParSet extends TreeSet<Proc> {
 	
 	private static final long serialVersionUID = -4662755904016297879L;
 	
@@ -39,29 +39,29 @@ public class ParSet extends TreeSet<Par> {
 		super();
 	}
 
-	public ParSet(ParList parList) {
-		addAll(parList);
+	public ParSet(EntList entList) {
+		addAll(entList);
 	}
 	
-	public ParSet(Set<Par> parEntrySet) {
-		addAll(parEntrySet);
+	public ParSet(Set<Proc> procEntrySet) {
+		addAll(procEntrySet);
 	}
 
 	
-	public ParSet(ParList...  parLists) {
-		for (ParList vl : parLists) {
+	public ParSet(EntList... entLists) {
+		for (EntList vl : entLists) {
 			addAll(vl);
 		}
 	}
 	
-	public ParSet(Par<?>... parEntries) {
-		for (Par<?> v : parEntries) {
+	public ParSet(Proc<?>... procEntries) {
+		for (Proc<?> v : procEntries) {
 			add(v);
 		}
 	}
 	
-	public Par<?> getPar(String parName) throws ParException {
-		for (Par<?> v : this) {
+	public Proc<?> getPar(String parName) throws EntException {
+		for (Proc<?> v : this) {
 			if (v.getName().equals(parName))
 				return v;
 		}
@@ -70,29 +70,29 @@ public class ParSet extends TreeSet<Par> {
 	
 	public void setValue(String parName, Object value)
 			throws EvaluationException {
-		Par parEntry = null;
-		for (Par<?> p : this) {
+		Proc procEntry = null;
+		for (Proc<?> p : this) {
 			if (p.getName().equals(parName)) {
-				parEntry = p;
+				procEntry = p;
 				try {
-					parEntry.setValue(value);
+					procEntry.setValue(value);
 				} catch (Exception e) {
 					throw new EvaluationException(e);
 				}
 				break;
 			}
 		}
-		if (parEntry == null)
-			throw new ParException("No such Par in the list: " + parName);
+		if (procEntry == null)
+			throw new EntException("No such Proc in the list: " + parName);
 	}
 	
-	public ParList selectPars(List<String>... parnames) {
+	public EntList selectPars(List<String>... parnames) {
 		List<String> allParNames = new ArrayList<String>();
 		for (List<String> nl : parnames) {
 			allParNames.addAll(nl);
 		}
-		ParList out = new ParList();
-		for (Par<?> v : this) {
+		EntList out = new EntList();
+		for (Proc<?> v : this) {
 			if (allParNames.contains(v.getName())) {
 				out.add(v);
 			}
@@ -103,7 +103,7 @@ public class ParSet extends TreeSet<Par> {
 	public ParSet selectPars(String... parnames) {
 		List<String> vnames = Arrays.asList(parnames);
 		ParSet out = new ParSet();
-		for (Par<?> v : this) {
+		for (Proc<?> v : this) {
 			if (vnames.contains(v.getName())) {
 				out.add(v);
 			}
@@ -113,11 +113,11 @@ public class ParSet extends TreeSet<Par> {
 
 	@Override
 	public boolean contains(Object obj) {
-		if (!(obj instanceof Par<?>))
+		if (!(obj instanceof Proc<?>))
 			return false;
 		else {
-			for (Par<?> v : this) {
-				if (v.getName().equals(((Par<?>)obj).getName()))
+			for (Proc<?> v : this) {
+				if (v.getName().equals(((Proc<?>)obj).getName()))
 					return true;
 			}
 		}
@@ -126,11 +126,11 @@ public class ParSet extends TreeSet<Par> {
 	
 	@Override
 	public boolean remove(Object obj) {
-		if (obj == null || !(obj instanceof Par<?>)) {
+		if (obj == null || !(obj instanceof Proc<?>)) {
 			return false;
 		} else {
-			for (Par<?> v : this) {
-				if (v.getName().equals(((Par<?>) obj).getName())) {
+			for (Proc<?> v : this) {
+				if (v.getName().equals(((Proc<?>) obj).getName())) {
 					super.remove(v);
 					return true;
 				}
@@ -141,7 +141,7 @@ public class ParSet extends TreeSet<Par> {
 	
 	 public List<String> getNames() {
 		 List<String> names = new ArrayList<String>(size());
-		 Iterator<Par> i = iterator();
+		 Iterator<Proc> i = iterator();
 		 while (i.hasNext()) {
 			 names.add(i.next().getName());
 		 }
@@ -150,38 +150,38 @@ public class ParSet extends TreeSet<Par> {
 	 
 	 public List<Object> getValues() throws EvaluationException, RemoteException {
 		 List<Object> values = new ArrayList<Object>(size());
-		 Iterator<Par> i = iterator();
+		 Iterator<Proc> i = iterator();
 		 while (i.hasNext()) {
 			 values.add(i.next().getValue());
 		 }
 		 return values;
 	 }
 	 
-	 public Par<?>[] toArray() {
-		 Par<?>[] va = new Par[size()];
+	 public Proc<?>[] toArray() {
+		 Proc<?>[] va = new Proc[size()];
 		 return toArray(va);
 	 }
 			
-	 public ParList toParList() {
-		 ParList vl = new ParList(size());
-		 for (Par<?> v : this)
+	 public EntList toParList() {
+		 EntList vl = new EntList(size());
+		 for (Proc<?> v : this)
 			 vl.add(v);
 		 return vl;
 	 }
 
-	 public static ParSet asParSet(ParList list) {
+	 public static ParSet asParSet(EntList list) {
 		 return new ParSet(list);
 	 }
 
-	 public static ParList asList(Par<?>[] array) {
-		 ParList vl = new ParList(array.length);
-		 for (Par<?> v : array)
+	 public static EntList asList(Proc<?>[] array) {
+		 EntList vl = new EntList(array.length);
+		 for (Proc<?> v : array)
 			 vl.add(v);
 		 return vl;
 	 }
 
 	 public void clearPars() throws EvaluationException {
-			for (Par p : this) {
+			for (Proc p : this) {
 				try {
 					p.setValue(null);
 				} catch (Exception e) {

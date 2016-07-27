@@ -10,7 +10,6 @@ import sorcer.arithmetic.provider.impl.*;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.plexus.Morpher;
 import sorcer.core.provider.rendezvous.ServiceConcatenator;
-import sorcer.eo.operator;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
 
@@ -111,7 +110,7 @@ public class Models {
 				}),
 				response("multiply2", "multiply3"));
 
-//		dependsOn(mo, ent("subtract", paths("multiply2", "add")));
+//		dependsOn(mo, proc("subtract", paths("multiply2", "add")));
 
 		Context out = response(mo);
 		logger.info("model response: " + out);
@@ -193,8 +192,8 @@ public class Models {
 		};
 
 		Model mo = model(
-				inEnt("multiply/x1", 10.0), inEnt("multiply/x2", 50.0),
-				inEnt("add/x1", 20.0), inEnt("add/x2", 80.0),
+				inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
+				inVal("add/x1", 20.0), inVal("add/x2", 80.0),
 				ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
 						inPaths("multiply/x1", "multiply/x2")))),
 				ent(sig("add", AdderImpl.class, result("add/out",
@@ -203,7 +202,7 @@ public class Models {
 						inPaths("multiply/out", "add/out")))),
 				response("subtract", "lambda", "out"));
 
-	//	dependsOn(mo, ent("subtract", paths("multiply", "add")));
+	//	dependsOn(mo, proc("subtract", paths("multiply", "add")));
 
 		add(mo, lambda("lambda", entFunction));
 
@@ -233,12 +232,12 @@ public class Models {
 		Task innerTask = task(
 				"task/multiply",
 				sig("multiply", MultiplierImpl.class),
-				context("multiply", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
+				context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
 						result("multiply/result")));
 
 		Model mo = model(
-				inEnt("multiply/x1", 10.0), inEnt("multiply/x2", 50.0),
-				inEnt("add/x1", 20.0), inEnt("add/x2", 80.0),
+				inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
+				inVal("add/x1", 20.0), inVal("add/x2", 80.0),
 				ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
 						inPaths("multiply/x1", "multiply/x2")))),
 				ent(sig("add", AdderImpl.class, result("add/out",
@@ -264,8 +263,8 @@ public class Models {
 	public void lambdaTaskInLoop() throws Exception {
 		Task ti = task(
 				sig("add", AdderImpl.class),
-				model("add", inEnt("arg/x1", inc("arg/x2", 2.0)),
-						inEnt("arg/x2", 80.0), result("task/result")));
+				model("add", inVal("arg/x1", inc("arg/x2", 2.0)),
+						inVal("arg/x2", 80.0), result("task/result")));
 
 		Block lb = block(sig(ServiceConcatenator.class),
 				context(ent("sum", 0.0)),
@@ -282,8 +281,8 @@ public class Models {
 	public void canditionalEntryRangeLoop() throws Exception {
 		Task ti = task(
 				sig("add", AdderImpl.class),
-				model("add", inEnt("arg/x1", inc("arg/x2", 2.0)),
-						inEnt("arg/x2", 80.0), result("task/result")));
+				model("add", inVal("arg/x1", inc("arg/x2", 2.0)),
+						inVal("arg/x2", 80.0), result("task/result")));
 
 		Block lb = block(sig(ServiceConcatenator.class),
 				context(ent("sum", 0.0),
@@ -348,7 +347,7 @@ public class Models {
                 result("result/y2", inPaths("arg/x1", "arg/x2")));
 
         // three entry multifidelity model with morphers
-        Model mod = model(inEnt("arg/x1", 90.0), inEnt("arg/x2", 10.0),
+        Model mod = model(inVal("arg/x1", 90.0), inVal("arg/x2", 10.0),
                 ent("mFi1", mFi(mFi1Morpher, add, multiply)),
                 ent("mFi2", mFi(mFi2Morpher, average, divide, subtract)),
                 ent("mFi3", mFi(average, divide, multiply)),

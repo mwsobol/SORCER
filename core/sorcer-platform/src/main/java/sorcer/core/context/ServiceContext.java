@@ -28,11 +28,8 @@ import sorcer.co.tuple.OutputEntry;
 import sorcer.co.tuple.Tuple2;
 import sorcer.core.Name;
 import sorcer.core.SorcerConstants;
-import sorcer.core.context.model.ent.Entry;
-import sorcer.core.context.model.ent.EntryList;
-import sorcer.core.context.model.par.Par;
-import sorcer.core.context.model.par.ParList;
-import sorcer.core.context.model.par.ParModel;
+import sorcer.core.context.model.ent.*;
+import sorcer.core.context.model.ent.Proc;
 import sorcer.core.context.node.ContextNode;
 import sorcer.core.context.node.ContextNodeException;
 import sorcer.core.exertion.NetTask;
@@ -1364,14 +1361,14 @@ public class ServiceContext<T> extends ServiceMogram implements
 		return is;
 	}
 
-	public ParList getPars() {
-		ParList pl = new ParList();
+	public EntList getPars() {
+		EntList pl = new EntList();
 		Iterator<Map.Entry<String, T>> i = entryIterator();
 		Map.Entry<String, T> entry;
 		while (i.hasNext()) {
 			entry = i.next();
-			if (entry.getValue() instanceof Par) {
-				pl.add((Par)entry.getValue());
+			if (entry.getValue() instanceof Proc) {
+				pl.add((Proc)entry.getValue());
 			}
 		}
 		return pl;
@@ -1938,8 +1935,8 @@ public class ServiceContext<T> extends ServiceMogram implements
 			// sb.append(val.toString() + " ");
 			// }
 			try {
-				if (val instanceof Par)
-					val = "par: " + ((Par)val).getName();
+				if (val instanceof Proc)
+					val = "proc: " + ((Proc)val).getName();
 				else
 //					val = getValue(path);
 					val = asis(path);
@@ -2795,8 +2792,8 @@ public class ServiceContext<T> extends ServiceMogram implements
 		return this;
 	}
 
-	public Par getPar(String path) throws ContextException, RemoteException {
-		return new Par(path, this);
+	public Proc getPar(String path) throws ContextException, RemoteException {
+		return new Proc(path, this);
 	}
 
 	public T getValue(Arg... entries) throws EvaluationException, RemoteException {
@@ -3061,9 +3058,9 @@ public class ServiceContext<T> extends ServiceMogram implements
 	 */
 	@Override
 	public Object putDbValue(String path, Object value) throws ContextException, RemoteException {
-		Par parEntry = new Par(path, value == null ? Context.none : value);
-		parEntry.setPersistent(true);
-		return putValue(path, parEntry);
+		Proc procEntry = new Proc(path, value == null ? Context.none : value);
+		procEntry.setPersistent(true);
+		return putValue(path, procEntry);
 	}
 
 	/* (non-Javadoc)
@@ -3072,10 +3069,10 @@ public class ServiceContext<T> extends ServiceMogram implements
 	@Override
 	public Object putDbValue(String path, Object value, URL datastoreUrl)
 			throws ContextException, RemoteException {
-		Par parEntry = new Par(path, value == null ? Context.none : value);
-		parEntry.setPersistent(true);
-		parEntry.setDbURL(datastoreUrl);
-		return putValue(path, parEntry);
+		Proc procEntry = new Proc(path, value == null ? Context.none : value);
+		procEntry.setPersistent(true);
+		procEntry.setDbURL(datastoreUrl);
+		return putValue(path, procEntry);
 	}
 
 	public List<EntryList> getEntryLists() {
@@ -3112,11 +3109,11 @@ public class ServiceContext<T> extends ServiceMogram implements
 	}
 
 	/* (non-Javadoc)
-	 * @see sorcer.service.Context#addPar(sorcer.core.context.model.par.Par)
+	 * @see sorcer.service.Context#addPar(sorcer.core.context.model.proc.Proc)
 	 */
 	@Override
 	public Arg addPar(Arg par) throws ContextException {
-		Par p = (Par)par;
+		Proc p = (Proc)par;
 		put(p.getName(), (T)p);
 		if (p.getScope() == null || p.getScope().size() == 0)
 			p.setScope(this);
@@ -3136,10 +3133,10 @@ public class ServiceContext<T> extends ServiceMogram implements
 		return p;
 	}
 
-	public Par appendPar(Par p) throws ContextException {
+	public Proc appendPar(Proc p) throws ContextException {
 		put(p.getName(), (T)p);
 		if (p.getScope() == null)
-			p.setScope(new ParModel(p.getName()).append(this));
+			p.setScope(new ProcModel(p.getName()).append(this));
 		try {
 			if (p.asis() instanceof ServiceInvoker) {
 				((ServiceInvoker) p.asis()).setScope(this);
@@ -3155,8 +3152,8 @@ public class ServiceContext<T> extends ServiceMogram implements
 	 * @see sorcer.service.Context#addPar(java.lang.String, java.lang.Object)
 	 */
 	@Override
-	public Par addPar(String path, Object value) throws ContextException {
-		return new Par(path, value, this);
+	public Proc addPar(String path, Object value) throws ContextException {
+		return new Proc(path, value, this);
 	}
 
 

@@ -27,9 +27,9 @@ public class SrvModelAutoDepsTest {
     @Test
     public void sigLocalModel() throws Exception {
         Model m = model(
-                inEnt("multiply/x1", 10.0), inEnt("multiply/x2", 50.0),
-                inEnt("add/x1", 20.0), inEnt("add/x2", 80.0),
-                inEnt("addfinal/x1", 1000.0),
+                inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
+                inVal("add/x1", 20.0), inVal("add/x2", 80.0),
+                inVal("addfinal/x1", 1000.0),
                 ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
                         inPaths("multiply/x1", "multiply/x2")))),
                 ent(sig("add", AdderImpl.class, result("add/out",
@@ -51,9 +51,9 @@ public class SrvModelAutoDepsTest {
     @Test
     public void sigLocalComplexModel() throws Exception {
         Model m = model(
-                inEnt("multiply/x1", 10.0), inEnt("multiply/x2", 50.0),
-                inEnt("add/x1", 20.0), inEnt("add/x2", 80.0),
-                inEnt("addfinal/x1", 1000.0), inEnt("divider/out"),
+                inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
+                inVal("add/x1", 20.0), inVal("add/x2", 80.0),
+                inVal("addfinal/x1", 1000.0), inVal("divider/out"),
                 ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
                         inPaths("multiply/x1", "multiply/x2")))),
                 ent(sig("add", AdderImpl.class, result("add/out",

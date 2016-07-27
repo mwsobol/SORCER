@@ -40,20 +40,20 @@ public class ExertionMultiFidelities {
         Task t3 = task("t3",
             sFi("object", sig("subtract", SubtractorImpl.class)),
             sFi("net", sig("subtract", Subtractor.class)),
-            context("subtract", inEnt("arg/x1"), inEnt("arg/x2"),
-                outEnt("result/y")));
+            context("subtract", inVal("arg/x1"), inVal("arg/x2"),
+                outVal("result/y")));
 
         Task t4 = task("t4",
             sFi("object", sig("multiply", MultiplierImpl.class)),
             sFi("net", sig("multiply", Multiplier.class)),
-            context("multiply", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
-                outEnt("result/y")));
+            context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
+                outVal("result/y")));
 
         Task t5 = task("t5",
             sFi("object", sig("add", AdderImpl.class)),
             sFi("net", sig("add", Adder.class)),
-            context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
-                outEnt("result/y")));
+            context("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
+                outVal("result/y")));
 
         Job job = job("j1",
             sFi("object", sig("exert", ServiceJobber.class)),
@@ -124,8 +124,8 @@ public class ExertionMultiFidelities {
 		Task t4 = task("t4",
 				mFi(t4mrp, sFi("object", sig("multiply", MultiplierImpl.class)),
 						sFi("net", sig("multiply", Multiplier.class))),
-				context("multiply", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
-						outEnt("result/y")));
+				context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
+						outVal("result/y")));
 
 
 		assertEquals("object", fiName(t4));
@@ -161,20 +161,20 @@ public class ExertionMultiFidelities {
 		Task t3 = task("t3",
 			sFi("object", sig("subtract", SubtractorImpl.class)),
 			sFi("net", sig("subtract", Subtractor.class)),
-			context("subtract", inEnt("arg/x1"), inEnt("arg/x2"),
-				outEnt("result/y")));
+			context("subtract", inVal("arg/x1"), inVal("arg/x2"),
+				outVal("result/y")));
 
 		Task t4 = task("t4",
 			mFi(t4mrp, sFi("object1", sig("multiply", MultiplierImpl.class)),
 				sFi("object2", sig("add", AdderImpl.class))),
-			context("multiply", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
-				outEnt("result/y")));
+			context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
+				outVal("result/y")));
 
 		Task t5 = task("t5",
 			mFi(t5mrp, sFi("object1", sig("add", AdderImpl.class)),
 				sFi("object2", sig("multiply", MultiplierImpl.class))),
-			context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
-				outEnt("result/y")));
+			context("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
+				outVal("result/y")));
 
 		Job job = job("j1",
 			sFi("object", sig("exert", ServiceJobber.class)),

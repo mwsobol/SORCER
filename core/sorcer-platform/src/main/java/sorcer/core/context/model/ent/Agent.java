@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package sorcer.core.context.model.par;
+package sorcer.core.context.model.ent;
 
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
@@ -26,7 +26,6 @@ import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.Arrays;
 
-import sorcer.core.context.model.ent.Entry;
 import sorcer.core.invoker.MethodInvoker;
 import sorcer.service.Arg;
 import sorcer.service.Context;
@@ -36,7 +35,7 @@ import sorcer.service.EvaluationException;
  * @author Mike Sobolewski
  *
  */
-public class Agent<T> extends Par<T> implements Serializable {
+public class Agent<T> extends Proc<T> implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
@@ -99,8 +98,8 @@ public class Agent<T> extends Par<T> implements Serializable {
 				Object obj = constructor
 						.newInstance(new Object[] { scope });
 				invoker = new MethodInvoker(name, obj, name, getPars(entries));
-				if (scope instanceof ParModel)
-					invoker.setScope((ParModel)scope);
+				if (scope instanceof ProcModel)
+					invoker.setScope((ProcModel)scope);
 				invoker.setContext(scope);
 			} finally {
 				AccessController.doPrivileged(new PrivilegedAction() {
@@ -113,7 +112,7 @@ public class Agent<T> extends Par<T> implements Serializable {
 		} catch (Throwable e) {
 			e.printStackTrace();
 			throw new IllegalArgumentException(
-					"Unable to instantiate par agent :"
+					"Unable to instantiate proc agent :"
 							+ e.getClass().getName() + ": "
 							+ e.getLocalizedMessage());
 		}
@@ -138,11 +137,11 @@ public class Agent<T> extends Par<T> implements Serializable {
 		return (T) invoker;
 	}
 	
-	private Par[] getPars(Arg... entries) {
-		Par[] pa = new Par[entries.length];
+	private Proc[] getPars(Arg... entries) {
+		Proc[] pa = new Proc[entries.length];
 		if (entries != null && entries.length > 0) {
 			for (int i = 0; i < entries.length; i++)
-				pa[i] = (Par) entries[i];
+				pa[i] = (Proc) entries[i];
 		}
 		return pa;
 	}

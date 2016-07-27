@@ -163,8 +163,8 @@ public class Signatures {
 		// request the local service
 		Signature ss = sig("add", AdderImpl.class,
 				context("add",
-						inEnt("arg/x1", 20.0),
-						inEnt("arg/x2", 80.0),
+						inVal("arg/x1", 20.0),
+						inVal("arg/x2", 80.0),
 						result("result/y")));
 
 //		logger.info("ss: " + exec(ss));
@@ -179,8 +179,8 @@ public class Signatures {
 		// request the local service
 		Signature ss = sig("add", Adder.class,
 				context("add",
-						inEnt("arg/x1", 20.0),
-						inEnt("arg/x2", 80.0),
+						inVal("arg/x1", 20.0),
+						inVal("arg/x2", 80.0),
 						result("result/y")));
 
 //		logger.info("ss: " + exec(ss));
@@ -195,8 +195,8 @@ public class Signatures {
 		// request the local service
 		Service as = task("as", sig("add", AdderImpl.class),
 				context("add",
-						inEnt("arg/x1", 20.0),
-						inEnt("arg/x2", 80.0),
+						inVal("arg/x1", 20.0),
+						inVal("arg/x2", 80.0),
 						result("result/y")));
 
 		assertEquals(100.0, exec(as));
@@ -215,8 +215,8 @@ public class Signatures {
 		// request the local service
 		Service as = task("as", localProviderOperationSig,
 				context("add",
-						inEnt("arg/x1", 20.0),
-						inEnt("arg/x2", 80.0),
+						inVal("arg/x1", 20.0),
+						inVal("arg/x2", 80.0),
 						result("result/y")));
 
 		assertEquals(100.0, exec(as));
@@ -229,8 +229,8 @@ public class Signatures {
 		// request the remote service
 		Service as = task("as", sig("add", Adder.class),
 				context("add",
-						inEnt("arg/x1", 20.0),
-						inEnt("arg/x2", 80.0),
+						inVal("arg/x1", 20.0),
+						inVal("arg/x2", 80.0),
 						result("result/y")));
 
 		assertEquals(100.0, exec(as));
@@ -249,8 +249,8 @@ public class Signatures {
 		// request the remote service
 		Service as = task("as", remoteProviderOperationSig,
 				context("add",
-						inEnt("arg/x1", 20.0),
-						inEnt("arg/x2", 80.0),
+						inVal("arg/x1", 20.0),
+						inVal("arg/x2", 80.0),
 						result("result/y")));
 
 		assertEquals(100.0, exec(as));
@@ -263,8 +263,8 @@ public class Signatures {
 		// request the remote service
 		Service as = task("as", matchTypes(sig("add", Adder.class), MikeAdder.class),
 				context("add",
-						inEnt("arg/x1", 20.0),
-						inEnt("arg/x2", 80.0),
+						inVal("arg/x1", 20.0),
+						inVal("arg/x2", 80.0),
 						result("result/y")));
 
 		assertEquals(100.0, exec(as));
@@ -279,7 +279,7 @@ public class Signatures {
 				types(Service.class, Provider.class),
 				// comma separated list of hosts, when empty localhost is a default locator
 				srvName("Adder", locators(), group)),
-				cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0), result("result/y")));
+				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("result/y")));
 
 		Exertion out = exert(t5);
 		assertEquals(100.0, value(context(out), "result/y"));
@@ -294,7 +294,7 @@ public class Signatures {
 				types(Service.class, Provider.class),
 				// comma separated list of hosts, when empty localhost is a default locator
 				srvName("Adder", locators(), group)),
-				cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0), result("result/y")));
+				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("result/y")));
 
 		Exertion out = exert(t5);
 		assertEquals(100.0, value(context(out), "result/y"));
@@ -312,8 +312,8 @@ public class Signatures {
 		// request the remote service
 		Service as = task("as", ps,
 				context("add",
-						inEnt("arg/x1", 20.0),
-						inEnt("arg/x2", 80.0),
+						inVal("arg/x1", 20.0),
+						inVal("arg/x2", 80.0),
 						result("result/y")));
 
 		assertEquals(100.0, exec(as));
@@ -323,8 +323,8 @@ public class Signatures {
 	public void execSignatureOfLocalService() throws Exception {
 
 		Context<Double> cxt = context(
-				inEnt("y1", 20.0),
-				inEnt("y2", 80.0),
+				inVal("y1", 20.0),
+				inVal("y2", 80.0),
 				result("result/y"));
 
 		Context result = (Context) exec(sig("add", AdderImpl.class), cxt);
@@ -335,8 +335,8 @@ public class Signatures {
 	public void execSignatureOfRemoteService() throws Exception {
 
 		Context<Double> cxt = context(
-				inEnt("y1", 20.0),
-				inEnt("y2", 80.0),
+				inVal("y1", 20.0),
+				inVal("y2", 80.0),
 				result("result/y"));
 
 		Context result = (Context) exec(sig("add", Adder.class), cxt);
@@ -370,8 +370,8 @@ public class Signatures {
 		Task f5 = task(
 				"f5",
 				sig("add", Adder.class),
-				context("add", inEnt("arg/x1", 20.0),
-						inEnt("arg/x2", 80.0), result("result/y")));
+				context("add", inVal("arg/x1", 20.0),
+						inVal("arg/x2", 80.0), result("result/y")));
 
 		Context  out = (Context) exec(sig(ServiceShell.class), f5);
 		assertEquals(value(out, "result/y"), 100.00);
@@ -383,8 +383,8 @@ public class Signatures {
 		Task f5 = task(
 				"f5",
 				sig("add", Adder.class),
-				context("add", inEnt("arg/x1", 20.0),
-						inEnt("arg/x2", 80.0), result("result/y")));
+				context("add", inVal("arg/x1", 20.0),
+						inVal("arg/x2", 80.0), result("result/y")));
 
 		Context  out = (Context) exec(sig(RemoteServiceShell.class), f5);
 		assertEquals(get(out, "result/y"), 100.00);
@@ -396,8 +396,8 @@ public class Signatures {
 		Task f5 = task(
 				"f5",
 				sig("add", Adder.class),
-				context("add", inEnt("arg/x1", 20.0),
-						inEnt("arg/x2", 80.0), result("result/y")));
+				context("add", inVal("arg/x1", 20.0),
+						inVal("arg/x2", 80.0), result("result/y")));
 
 		Context  out = (Context) exec(sig("add", Adder.class, Shell.REMOTE), f5);
 		assertEquals(get(out), 100.00);
@@ -407,13 +407,13 @@ public class Signatures {
 	public void localSigOutConnector() throws Exception {
 
 		Context cxt = context(
-				inEnt("y1", 20.0),
-				inEnt("y2", 80.0),
+				inVal("y1", 20.0),
+				inVal("y2", 80.0),
 				result("result/y"));
 
 		Context outConnector = outConn(
-				inEnt("arg/x1", "y1"),
-				inEnt("arg/x2", "y2"));
+				inVal("arg/x1", "y1"),
+				inVal("arg/x2", "y2"));
 
 		Signature ps = sig("add", AdderImpl.class, prvName("Adder"), outConnector);
 
@@ -436,13 +436,13 @@ public class Signatures {
 	public void remoteSigInConnector() throws Exception {
 
 		Context cxt = context(
-				inEnt("y1", 20.0),
-				inEnt("y2", 80.0),
+				inVal("y1", 20.0),
+				inVal("y2", 80.0),
 				result("result/y"));
 
 		Context inc = inConn(
-				inEnt("arg/x1", "y1"),
-				inEnt("arg/x2", "y2"));
+				inVal("arg/x1", "y1"),
+				inVal("arg/x2", "y2"));
 
 		Signature ps = sig("add", Adder.class, prvName("Adder"), inc);
 

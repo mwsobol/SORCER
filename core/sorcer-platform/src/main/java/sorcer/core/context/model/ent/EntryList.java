@@ -17,8 +17,6 @@
 
 package sorcer.core.context.model.ent;
 
-import sorcer.core.context.model.par.Par;
-import sorcer.core.context.model.par.ParSet;
 import sorcer.service.EvaluationException;
 
 import java.rmi.RemoteException;
@@ -82,7 +80,7 @@ public class EntryList extends ArrayList<Entry> {
 	
 	public EntryList(ParSet parSet) {
 		super();
-		for (Par<?> p : parSet) {
+		for (Proc<?> p : parSet) {
 			add(new Entry(p.getName(), p));
 		}
 	}

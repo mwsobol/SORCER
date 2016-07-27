@@ -127,8 +127,8 @@ public class ArithmeticMograms {
 		// get responses from a local service model and resolve dependencies
 
 		Model m = model(
-				inEnt("multiply/x1", 10.0), inEnt("multiply/x2", 50.0),
-				inEnt("add/x1", 20.0), inEnt("add/x2", 80.0),
+				inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
+				inVal("add/x1", 20.0), inVal("add/x2", 80.0),
 				ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
 						inPaths("multiply/x1", "multiply/x2")))),
 				ent(sig("add", AdderImpl.class, result("add/out",
@@ -149,8 +149,8 @@ public class ArithmeticMograms {
 		// get responses from a remote service model and resolve dependencies
 
 		Model m = model(
-				inEnt("multiply/x1", 10.0), inEnt("multiply/x2", 50.0),
-				inEnt("add/x1", 20.0), inEnt("add/x2", 80.0),
+				inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
+				inVal("add/x1", 20.0), inVal("add/x2", 80.0),
 				ent(sig("multiply", Multiplier.class, result("multiply/out",
 						inPaths("multiply/x1", "multiply/x2")))),
 				ent(sig("add", Adder.class, result("add/out",
@@ -171,8 +171,8 @@ public class ArithmeticMograms {
 		// get responses from a remote service model and resolve dependencies
 
 		Model m = model(
-				inEnt("multiply/x1", 10.0), inEnt("multiply/x2", 50.0),
-				inEnt("add/x1", 20.0), inEnt("add/x2", 80.0),
+				inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
+				inVal("add/x1", 20.0), inVal("add/x2", 80.0),
 				ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
 						inPaths("multiply/x1", "multiply/x2")))),
 				ent(sig("add", AdderImpl.class, result("add/out",
@@ -199,8 +199,8 @@ public class ArithmeticMograms {
 						result("subtract/x2", Signature.Direction.IN)), Signature.PRE),
                 sig("subtract", SubtractorImpl.class,
 						result("result/y", inPaths("subtract/x1", "subtract/x2"))),
-                context(inEnt("multiply/x1", 10.0), inEnt("multiply/x2", 50.0),
-                        inEnt("add/x1", 20.0), inEnt("add/x2", 80.0)));
+                context(inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
+                        inVal("add/x1", 20.0), inVal("add/x2", 80.0)));
 
         logger.info("task getSelects:" + fi(batch3));
 
@@ -213,20 +213,20 @@ public class ArithmeticMograms {
 	public void arithmeticBlock() throws Exception {
 
 		Task t3 = task("t3", sig("subtract", SubtractorImpl.class),
-				context("subtract", inEnt("arg/t4"), inEnt("arg/t5"),
+				context("subtract", inVal("arg/t4"), inVal("arg/t5"),
 						result("block/result", Signature.Direction.OUT)));
 
 		Task t4 = task("t4", sig("multiply", MultiplierImpl.class),
-				context("multiply", inEnt("arg/x1"), inEnt("arg/x2"),
+				context("multiply", inVal("arg/x1"), inVal("arg/x2"),
 						result("arg/t4", Signature.Direction.IN)));
 
 		Task t5 = task("t5", sig("add", AdderImpl.class),
-				context("add", inEnt("arg/x3"), inEnt("arg/x4"),
+				context("add", inVal("arg/x3"), inVal("arg/x4"),
 						result("arg/t5", Signature.Direction.IN)));
 
 		Block block = block("block", t4, t5, t3, context(
-				inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
-				inEnt("arg/x3", 20.0), inEnt("arg/x4", 80.0)));
+				inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
+				inVal("arg/x3", 20.0), inVal("arg/x4", 80.0)));
 
 		Block result = exert(block);
 		assertEquals(value(context(result), "block/result"), 400.00);
@@ -235,19 +235,19 @@ public class ArithmeticMograms {
     @Test
     public void altBlock() throws Exception {
         Task t3 = task("t3", sig("subtract", SubtractorImpl.class),
-                context("subtract", inEnt("arg/t4"), inEnt("arg/t5"),
+                context("subtract", inVal("arg/t4"), inVal("arg/t5"),
                         result("block/result", Signature.Direction.OUT)));
 
         Task t4 = task("t4", sig("multiply", MultiplierImpl.class),
-                context("multiply", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
+                context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
                         result("arg/t4", Signature.Direction.IN)));
 
         Task t5 = task("t5", sig("add", AdderImpl.class),
-                context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
+                context("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
                         result("arg/t5", Signature.Direction.IN)));
 
         Task t6 = task("t6", sig("average", AveragerImpl.class),
-                context("average", inEnt("arg/t4"), inEnt("arg/t5"),
+                context("average", inVal("arg/t4"), inVal("arg/t5"),
                         result("block/result", Signature.Direction.OUT)));
 
         Block block = block("block", t4, t5,
@@ -276,18 +276,18 @@ public class ArithmeticMograms {
 
 		Task t3 = task("t3",
 				sig("subtract", SubtractorImpl.class),
-				context("subtract", inEnt("arg/x1"), inEnt("arg/x2"),
-						outEnt("result/y")));
+				context("subtract", inVal("arg/x1"), inVal("arg/x2"),
+						outVal("result/y")));
 
 		Task t4 = task("t4",
 				sig("multiply", MultiplierImpl.class),
-				context("multiply", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
-						outEnt("result/y")));
+				context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
+						outVal("result/y")));
 
 		Task t5 = task("t5",
 				sig("add", AdderImpl.class),
-				context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
-						outEnt("result/y")));
+				context("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
+						outVal("result/y")));
 
 		Job job = job(sig("exert", ServiceJobber.class),
 				"j1", t4, t5, t3,
@@ -304,17 +304,17 @@ public class ArithmeticMograms {
 
 		Task t3 = task("t3",
 				sig("subtract", SubtractorImpl.class),
-				context("subtract", inEnt("arg/x1"), inEnt("arg/x2"),
+				context("subtract", inVal("arg/x1"), inVal("arg/x2"),
 						result("result/y")));
 
 		Task t4 = task("t4",
 				sig("multiply", MultiplierImpl.class),
-				context("multiply", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
+				context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
 						result("result/y")));
 
 		Task t5 = task("t5",
 				sig("add", AdderImpl.class),
-				context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
+				context("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
 						result("result/y")));
 
 		// Service Composition j1(j2(t4(x1, x2), t5(x1, x2)), t3(x1, x2))
@@ -372,7 +372,7 @@ public class ArithmeticMograms {
                 result("result/y2", inPaths("arg/x1", "arg/x2")));
 
         // multifidelity model with morphers
-        Model mod = model(inEnt("arg/x1", 90.0), inEnt("arg/x2", 10.0),
+        Model mod = model(inVal("arg/x1", 90.0), inVal("arg/x2", 10.0),
                 ent("mFi1", mFi(mFi1Morpher, add, multiply)),
                 ent("mFi2", mFi(mFi2Morpher, average, divide, subtract)),
                 ent("mFi3", mFi(average, divide, multiply)),

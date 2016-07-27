@@ -22,9 +22,9 @@ import net.jini.id.UuidFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.context.ServiceContext;
+import sorcer.core.context.model.ent.Proc;
+import sorcer.core.context.model.ent.ProcModel;
 import sorcer.core.context.model.ent.Entry;
-import sorcer.core.context.model.par.Par;
-import sorcer.core.context.model.par.ParModel;
 import sorcer.service.*;
 
 import java.io.Serializable;
@@ -39,7 +39,7 @@ import java.util.List;
  * The Invoker defines context driven invocations on a parameter context
  * (invoke context) containing its parameter names (paths) and arguments
  * (values). The requested invocation is specified by the own invoke context and
- * eventual context of parameters (Par).
+ * eventual context of parameters (Proc).
  * 
  * The semantics for how parameters can be declared and how the arguments get
  * passed to the parameters of callable unit are defined by the language, but
@@ -109,7 +109,7 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 			this.name = defaultName + count++;
 		else
 			this.name = name;
-		invokeContext = new ParModel("model/par");
+		invokeContext = new ProcModel("model/proc");
 	}
 
 	public ServiceInvoker(ValueCallable lambda) throws InvocationException {
@@ -119,13 +119,13 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 	public ServiceInvoker(String name, ValueCallable lambda, Context context) throws InvocationException {
 		this.name = name;
 		if (context == null)
-			invokeContext = new ParModel("model/par");
+			invokeContext = new ProcModel("model/proc");
 		else {
-			if (context instanceof ParModel) {
+			if (context instanceof ProcModel) {
 				invokeContext = context;
 			} else {
 				try {
-					invokeContext = new ParModel(context);
+					invokeContext = new ProcModel(context);
 				} catch (Exception e) {
 					throw new InvocationException("Failed to create invoker!", e);
 				}
@@ -134,18 +134,18 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 		this.lambda = lambda;
 	}
 
-	public ServiceInvoker(ParModel context) {
+	public ServiceInvoker(ProcModel context) {
 		this(context.getName());
 		invokeContext = context;
 	}
 	
-	public ServiceInvoker(ParModel context, Evaluator evaluator, Par... parEntries) {
+	public ServiceInvoker(ProcModel context, Evaluator evaluator, Proc... procEntries) {
 		this(context);
 		this.evaluator = evaluator;
-		this.pars = new ArgSet(parEntries);
+		this.pars = new ArgSet(procEntries);
 	}
 	
-	public ServiceInvoker(ParModel context, Evaluator evaluator, ArgSet pars) {
+	public ServiceInvoker(ProcModel context, Evaluator evaluator, ArgSet pars) {
 		this(context);
 		this.evaluator = evaluator;
 		this.pars = pars;
@@ -157,10 +157,10 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 		this.pars = pars;
 	}
 	
-	public ServiceInvoker(Evaluator evaluator, Par... parEntries) {
+	public ServiceInvoker(Evaluator evaluator, Proc... procEntries) {
 		this(((Identifiable)evaluator).getName());
 		this.evaluator = evaluator;
-		this.pars = new ArgSet(parEntries);
+		this.pars = new ArgSet(procEntries);
 	}
 	
 	/**
@@ -243,8 +243,8 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 	}
 	
 	/**
-	 * Adds a new par to the invoker. This must be done before calling
-	 * {@link #invoke} so the invoker is aware that the new par may be added to
+	 * Adds a new proc to the invoker. This must be done before calling
+	 * {@link #invoke} so the invoker is aware that the new proc may be added to
 	 * the model.
 	 * 
 	 * @param par
@@ -255,11 +255,11 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 	 * @throws RemoteException
 	 */
 	public ServiceInvoker addPar(Object par) throws EvaluationException, RemoteException {
-		if (par instanceof Par) {
-			((ServiceContext)invokeContext).put(((Par) par).getName(), par);
-			if (((Par) par).asis() instanceof ServiceInvoker) {
-				((ServiceInvoker) ((Par) par).getValue()).addObserver(this);
-				pars.add((Par) par);
+		if (par instanceof Proc) {
+			((ServiceContext)invokeContext).put(((Proc) par).getName(), par);
+			if (((Proc) par).asis() instanceof ServiceInvoker) {
+				((ServiceInvoker) ((Proc) par).getValue()).addObserver(this);
+				pars.add((Proc) par);
 				value = null;
 				setChanged();
 				notifyObservers(this);
@@ -267,7 +267,7 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 			}
 		} else if (par instanceof Identifiable) {
 			try {
-				Par p = new Par(((Identifiable) par).getName(), par, invokeContext);
+				Proc p = new Proc(((Identifiable) par).getName(), par, invokeContext);
 				invokeContext.putValue(p.getName(), p);
 			} catch (ContextException e) {
 				throw new EvaluationException(e);
@@ -283,16 +283,16 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 		}
 	}
 	
-	synchronized public void addPars(List<Par> parEntryList)
+	synchronized public void addPars(List<Proc> procEntryList)
 			throws EvaluationException, RemoteException {
-		for (Par p : parEntryList) {
+		for (Proc p : procEntryList) {
 			addPar(p);
 		}
 	}
 	
-	synchronized public void addPars(Par... parEntries) throws EvaluationException,
+	synchronized public void addPars(Proc... procEntries) throws EvaluationException,
 			RemoteException {
-		for (Par p : parEntries) {
+		for (Proc p : procEntries) {
 			addPar(p);
 		}
 	}
@@ -316,7 +316,7 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 			throws RemoteException, InvocationException {
 		try {
 			if (invokeContext == null)
-				invokeContext = (ParModel) context;
+				invokeContext = (ProcModel) context;
 			else {
 				invokeContext.append(context);
 			}
@@ -334,7 +334,7 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 			if (entries != null && entries.length > 0) {
 				valueIsValid = false;
 				if (invokeContext == null)
-					invokeContext = new ParModel("model/par");
+					invokeContext = new ProcModel("model/proc");
 					
 				((ServiceContext)invokeContext).substitute(entries);
 			}
@@ -378,8 +378,8 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 	
 	private void init(ArgSet set){
 		for (Arg p : set) {
-			if (((Par)p).getScope() == null)
-				((Par)p).setScope(invokeContext);
+			if (((Proc)p).getScope() == null)
+				((Proc)p).setScope(invokeContext);
 		}
 	}
 	
@@ -455,7 +455,7 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 	public void clearPars() throws EvaluationException {
 		for (Arg p : pars) {
 			try {
-				((Par) p).setValue(null);
+				((Proc) p).setValue(null);
 			} catch (Exception e) {
 				throw new EvaluationException(e);
 			}
@@ -496,7 +496,7 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 	}
 
 	/* (non-Javadoc)
-	 * @see sorcer.service.Evaluator#addArgs(sorcer.core.context.model.par.ParSet)
+	 * @see sorcer.service.Evaluator#addArgs(sorcer.core.context.model.proc.ParSet)
 	 */
 	@Override
 	public void addArgs(ArgSet set) throws EvaluationException, RemoteException {

@@ -34,6 +34,7 @@ import sorcer.service.*;
 
 import java.util.*;
 
+import static sorcer.co.operator.dep;
 import static sorcer.co.operator.ent;
 import static sorcer.co.operator.paths;
 
@@ -144,7 +145,7 @@ public class SrvModelAutoDeps {
                     }
                 }
                 if (paths.size()>0) {
-                    operator.dependsOn(srvModel, ent(entryName, paths(paths.toArray())));
+                    operator.dependsOn(srvModel, dep(entryName, paths(paths.toArray())));
                     String topNode = entryName;
                     if (entryToResultMap.containsKey(entryName))
                         topNode = entryToResultMap.get(entryName);

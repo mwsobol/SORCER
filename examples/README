@@ -69,7 +69,7 @@ SML examples in the SORCER Project
 	eol/test/java/sorcer/eol/jobs	
 	eol/test/java/sorcer/eol/blocks	
 	
-7. Contexts and  ent-models
+7. Contexts and  proc-models
 	eol/test/java/sorcer/eol/contexts
 	test/java/sorcer/arithmetic/parModels
 	

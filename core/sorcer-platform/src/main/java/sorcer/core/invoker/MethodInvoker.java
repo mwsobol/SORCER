@@ -21,7 +21,7 @@ import net.jini.core.transaction.Transaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.context.ServiceContext;
-import sorcer.core.context.model.par.Par;
+import sorcer.core.context.model.ent.Proc;
 import sorcer.service.*;
 import sorcer.util.SorcerUtil;
 
@@ -87,41 +87,41 @@ public class MethodInvoker<T> extends ServiceInvoker<T> implements MethodInvokin
 		selector = methodName;
 	}
 
-	public MethodInvoker(Object target, Par... parEntries) {
+	public MethodInvoker(Object target, Proc... procEntries) {
 		this.target = target;
-		this.pars = new ArgSet(parEntries);
+		this.pars = new ArgSet(procEntries);
 	}
 
-	public MethodInvoker(Object target, String methodName, Par... parEntries) {
+	public MethodInvoker(Object target, String methodName, Proc... procEntries) {
 		this(methodName, target, methodName);
-		this.pars = new ArgSet(parEntries);
+		this.pars = new ArgSet(procEntries);
 	}
 
 	public MethodInvoker(String name, Object target, String methodName,
-			Par... parEntries) {
+			Proc... procEntries) {
 		this(name);
 		this.target = target;
 		selector = methodName;
-		this.pars = new ArgSet(parEntries);
+		this.pars = new ArgSet(procEntries);
 	}
 
 	public MethodInvoker(String name, String className, String methodName,
-			Par... parEntries) {
-		this(name, className, methodName, null, null, parEntries);
+			Proc... procEntries) {
+		this(name, className, methodName, null, null, procEntries);
 	}
 
 	public MethodInvoker(String name, String className, String methodName,
-			Class<?>[] signature, Par... parEntries) {
-		this(name, className, methodName, signature, null, parEntries);
+			Class<?>[] signature, Proc... procEntries) {
+		this(name, className, methodName, signature, null, procEntries);
 	}
 
 	public MethodInvoker(String name, String className, String methodName,
-			Class<?>[] paramTypes, String distributionParameter, Par... parEntries) {
+			Class<?>[] paramTypes, String distributionParameter, Proc... procEntries) {
 		this(name);
 		this.className = className;
 		selector = methodName;
 		this.paramTypes = paramTypes;
-		this.pars = new ArgSet(parEntries);
+		this.pars = new ArgSet(procEntries);
 		if (distributionParameter != null)
 			params = new Object[] { distributionParameter };
 	}

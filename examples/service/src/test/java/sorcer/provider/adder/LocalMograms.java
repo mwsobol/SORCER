@@ -6,7 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
-import sorcer.eo.operator;
 import sorcer.provider.adder.impl.AdderImpl;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
@@ -31,7 +30,7 @@ public class LocalMograms {
 	public void exertTask() throws Exception {
 
 		Task t5 = task("t5", sig("add", AdderImpl.class),
-				cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0)));
+				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0)));
 
 		Task out = exert(t5);
 		Context cxt = context(out);
@@ -54,7 +53,7 @@ public class LocalMograms {
 	public void evaluateTask() throws SignatureException, ExertionException, ContextException {
 
 		Task t5 = task("t5", sig("add", AdderImpl.class),
-				cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0), result("result/y")));
+				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("result/y")));
 
 		// get the result eval
 		assertEquals(100.0, eval(t5));
@@ -69,7 +68,7 @@ public class LocalMograms {
 	public void evalauteLocalModel() throws Exception {
 
 		// three entry model
-		Model mod = model(inEnt("arg/x1", 10.00), inEnt("arg/x2", 90.00),
+		Model mod = model(inVal("arg/x1", 10.00), inVal("arg/x2", 90.00),
 				srv(sig("add", AdderImpl.class, result("result/y", inPaths("arg/x1", "arg/x2")))),
 				response("add", "arg/x1", "arg/x2"));
 

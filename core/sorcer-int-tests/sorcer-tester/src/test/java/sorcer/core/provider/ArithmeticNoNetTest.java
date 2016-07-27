@@ -21,7 +21,6 @@ import sorcer.service.Strategy.Flow;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static sorcer.co.operator.get;
 import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.get;
@@ -164,8 +163,8 @@ public class ArithmeticNoNetTest implements SorcerConstants {
 		Task t4 = task("t4",
 				sFi("object1", sig("multiply", MultiplierImpl.class)),
 				sFi("object2", sig("add", AdderImpl.class)),
-				context("shared", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
-						outEnt("result/y")));
+				context("shared", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
+						outVal("result/y")));
 
 		Context out = context(exert(t4, fi("object1")));
 		logger.info("task context: " + context(t4));
@@ -192,7 +191,7 @@ public class ArithmeticNoNetTest implements SorcerConstants {
 	public void objectContexterTaskTest() throws Exception {
 		Task t5 = task("t5", sig("add", AdderImpl.class), 
 					type(sig("getContext", ArithmeticNetTest.createContext()), Signature.APD),
-					context("add", inEnt("arg/x1"), inEnt("arg/x2"),
+					context("add", inVal("arg/x1"), inVal("arg/x2"),
 							result("result/y")));
 		
 		Context result = context(exert(t5));
@@ -218,19 +217,19 @@ public class ArithmeticNoNetTest implements SorcerConstants {
 	// two level job composition
 	private Job createSrv() throws Exception {
 		Task t3 = task("t3", sig("subtract", SubtractorImpl.class),
-				cxt("subtract", inEnt("arg/x1"), inEnt("arg/x2"), outEnt("result/y")));
+				cxt("subtract", inVal("arg/x1"), inVal("arg/x2"), outVal("result/y")));
 
 		Task t4 = task("t4",
 				sig("multiply", MultiplierImpl.class),
 				// cxt("multiply", in("super/arg/x1"), in("arg/x2", 50.0),
-				cxt("multiply", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
-						outEnt("result/y")));
+				cxt("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
+						outVal("result/y")));
 
 		Task t5 = task(
 				"t5",
 				sig("add", AdderImpl.class),
-				cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
-						outEnt("result/y")));
+				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
+						outVal("result/y")));
 
 		// Service Composition j1(j2(t4(x1, x2), t5(x1, x2)), t3(x1, x2))
 		// Job j1= job("j1", job("j2", t4, t5, strategy(Flow.PARALLEL,
@@ -238,7 +237,7 @@ public class ArithmeticNoNetTest implements SorcerConstants {
 		Job job = job(
 				"j1",
 				sig("exert", ServiceJobber.class),
-				cxt(inEnt("arg/x1", 10.0),
+				cxt(inVal("arg/x1", 10.0),
 						result("job/result", outPaths("j1/t3/result/y"))),
 				job("j2", sig("exert", ServiceJobber.class), t4, t5), t3,
 				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),

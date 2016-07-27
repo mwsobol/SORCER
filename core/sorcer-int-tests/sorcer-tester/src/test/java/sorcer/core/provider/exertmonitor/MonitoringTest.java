@@ -53,8 +53,8 @@ public class MonitoringTest {
 		Task t5 = task(
 				"t5",
 				sig("add", Adder.class),
-				context("add", inEnt("arg/x1", 20.0),
-						inEnt("arg/x2", 80.0), outEnt("result/y")),
+				context("add", inVal("arg/x1", 20.0),
+						inVal("arg/x2", 80.0), outVal("result/y")),
 				strategy(Strategy.Access.PULL, Strategy.Wait.YES, Strategy.Monitor.YES));
 
 		t5 = exert(t5);
@@ -111,16 +111,16 @@ public class MonitoringTest {
 	static Job createJob(Strategy.Flow flow, Strategy.Access access) throws Exception {
 
 		Task t3 = task("t3", sig("subtract", Subtractor.class),
-				context("subtract", inEnt("arg/x1"), inEnt("arg/x2"),
-						outEnt("result/y")), strategy(Strategy.Monitor.YES));
+				context("subtract", inVal("arg/x1"), inVal("arg/x2"),
+						outVal("result/y")), strategy(Strategy.Monitor.YES));
 
 		Task t4 = task("t4", sig("multiply", Multiplier.class),
-				context("multiply", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
-						outEnt("result/y")), strategy(Strategy.Monitor.YES));
+				context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
+						outVal("result/y")), strategy(Strategy.Monitor.YES));
 
 		Task t5 = task("t5", sig("add", Adder.class),
-				context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
-						outEnt("result/y")), strategy(Strategy.Monitor.YES));
+				context("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
+						outVal("result/y")), strategy(Strategy.Monitor.YES));
 
 		// Service Composition j1(j2(t4(x1, x2), t5(x1, x2)), t3(x1, x2))
 		Job job = job("j1",
@@ -136,11 +136,11 @@ public class MonitoringTest {
 	@Test
 	public void optBlockTest() throws Exception {
 		Task t4 = task("t4", sig("multiply", Multiplier.class), strategy(Strategy.Monitor.YES),
-				context("multiply", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
+				context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
 						result("out")));
 
 		Task t5 = task("t5", sig("add", Adder.class), strategy(Strategy.Monitor.YES),
-				context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
+				context("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
 						result("out")));
 
 		Block block = block("block", sig(Concatenator.class), strategy(Strategy.Monitor.YES),

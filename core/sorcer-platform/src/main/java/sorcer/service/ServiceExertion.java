@@ -24,7 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.context.*;
 import sorcer.core.context.model.ent.Entry;
-import sorcer.core.context.model.par.Par;
+import sorcer.core.context.model.ent.Proc;
 import sorcer.core.deploy.DeploymentIdFactory;
 import sorcer.core.deploy.ServiceDeployment;
 import sorcer.core.invoker.ExertInvoker;
@@ -538,8 +538,8 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
         return controlContext.isExecTimeRequested();
     }
 
-    public Par getPar(String path) throws EvaluationException, RemoteException {
-        return new Par(path, this);
+    public Proc getPar(String path) throws EvaluationException, RemoteException {
+        return new Proc(path, this);
     }
 
     abstract public Context linkContext(Context context, String path)

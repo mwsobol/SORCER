@@ -14,12 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package sorcer.core.context.model.par;
+package sorcer.core.context.model.ent;
 
 import sorcer.core.context.Contexts;
+import sorcer.core.context.PositionalContext;
 import sorcer.core.context.ServiceContext;
-import sorcer.core.context.model.ent.EntModel;
-import sorcer.core.context.model.ent.Entry;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
@@ -48,7 +47,7 @@ import java.util.*;
  */
 
 /**
- * The ParModel is an active shared service context as a map of parameters (Pars),
+ * The ProcModel is an active shared service context as a map of parameters (Pars),
  * parameter name and its argument <name, argument> is the definition of a
  * independent and dependent arguments. Arguments that dependent on other
  * arguments are subroutines (invokers), so that, each time the subroutine is
@@ -58,39 +57,40 @@ import java.util.*;
  * @author Mike Sobolewski
  */
 @SuppressWarnings({"unchecked", "rawtypes"  })
-public class ParModel extends EntModel<Object> implements Model, Invocation<Object>, Mappable<Object>, ParModeling {
+public class ProcModel extends PositionalContext<Object> implements Model, Invocation<Object>,
+		Mappable<Object>, Contexter<Object>, EntModeling {
 
     private static final long serialVersionUID = -6932730998474298653L;
 
-	public static ParModel instance(Signature builder) throws SignatureException {
-		ParModel model = (ParModel) sorcer.co.operator.instance(builder);
+	public static ProcModel instance(Signature builder) throws SignatureException {
+		ProcModel model = (ProcModel) sorcer.co.operator.instance(builder);
 		model.setBuilder(builder);
 		return model;
 	}
 
-    public ParModel() {
+    public ProcModel() {
         super();
         name = PAR_MODEL;
-        setSubject("par/model", new Date());
+        setSubject("proc/model", new Date());
 
     }
 
-    public ParModel(String name) {
+    public ProcModel(String name) {
         super(name);
     }
 
-	public ParModel(String name, Signature builder) {
+	public ProcModel(String name, Signature builder) {
 		this(name);
 		this.builder = builder;
 	}
 
-    public ParModel(Context context) throws RemoteException, ContextException {
+    public ProcModel(Context context) throws RemoteException, ContextException {
         super(context);
         name = PAR_MODEL;
-        setSubject("par/model", new Date());
+        setSubject("proc/model", new Date());
     }
 
-    public ParModel(Identifiable... objects) throws RemoteException,
+    public ProcModel(Identifiable... objects) throws RemoteException,
             ContextException {
         this();
         add(objects);
@@ -114,8 +114,8 @@ public class ParModel extends EntModel<Object> implements Model, Invocation<Obje
 				}
 			}
 
-			if ((val instanceof Par) && (((Par) val).asis() instanceof Variability)) {
-				bindVar((Variability) ((Par) val).asis());
+			if ((val instanceof Proc) && (((Proc) val).asis() instanceof Variability)) {
+				bindVar((Variability) ((Proc) val).asis());
 			} else if (val instanceof Scopable && ((Scopable)val).getScope() != null) {
 				((Scopable)val).getScope().setScope(this);
 			} else if (val instanceof Entry && (((Entry)val).asis() instanceof Scopable)) {
@@ -158,6 +158,11 @@ public class ParModel extends EntModel<Object> implements Model, Invocation<Obje
 	@Override
 	public Object getValue(Arg... entries) throws EvaluationException {
 		try {
+			try {
+				realizeDependencies(entries);
+			} catch (RemoteException | ExertionException e) {
+				throw new EvaluationException(e);
+			}
 			return getValue(null, entries);
 		} catch (ContextException e) {
 			throw new EvaluationException(e);
@@ -169,8 +174,8 @@ public class ParModel extends EntModel<Object> implements Model, Invocation<Obje
 		isChanged = true;
 		Object obj = get(path);
 		try {
-			if (obj instanceof Par) {
-				((Par) obj).setValue(value);
+			if (obj instanceof Proc) {
+				((Proc) obj).setValue(value);
 				return value;
 			} else {
 				if (value instanceof Scopable) {
@@ -188,25 +193,27 @@ public class ParModel extends EntModel<Object> implements Model, Invocation<Obje
 		}
 	}
 
-	public Par getPar(String name) throws ContextException {
+	public Proc getPar(String name) throws ContextException {
 		Object obj = get(name);
-		if (obj instanceof Par)
-			return (Par) obj;
+		if (obj instanceof Proc)
+			return (Proc) obj;
 		else
-			return new Par(name, asis(name), this);
+			return new Proc(name, asis(name), this);
 	}
 	
 	public Variability bindVar(Variability var) throws EvaluationException,
 			ContextException, RemoteException {
 		ArgSet args = var.getArgs();
-		for (Arg v : args)
-			if (get(v.getName()) != null) {
-				((Variability) v).setValue(getValue(v.getName()));
-			}
+		if (args != null) {
+			for (Arg v : args)
+				if (get(v.getName()) != null) {
+					((Variability) v).setValue(getValue(v.getName()));
+				}
+		}
 		return var;
 	}
 	
-	public ParModel add(List<Identifiable> objects) throws EvaluationException,
+	public ProcModel add(List<Identifiable> objects) throws EvaluationException,
 			RemoteException, ContextException {
 		Identifiable[] objs = new Identifiable[objects.size()];
 		objects.toArray(objs);
@@ -214,19 +221,19 @@ public class ParModel extends EntModel<Object> implements Model, Invocation<Obje
 		return this;
 	}
 
-	public ParModel append(Arg... objects) throws ContextException,
+	public ProcModel append(Arg... objects) throws ContextException,
 			RemoteException {
-		Par p = null;
+		Proc p = null;
 		boolean changed = false;
 		for (Arg obj : objects) {
-			if (obj instanceof Par) {
-				p = (Par) obj;
+			if (obj instanceof Proc) {
+				p = (Proc) obj;
 			} else if (obj instanceof Entry) {
 				putValue((String) ((Entry) obj).key(),
 						((Entry) obj).value());
 			} else if (obj instanceof Identifiable) {
 				String pn = obj.getName();
-				p = new Par(pn, obj, new ParModel(pn).append(this));
+				p = new Proc(pn, obj, new ProcModel(pn).append(this));
 			}
 
 			if (p != null) {
@@ -241,14 +248,14 @@ public class ParModel extends EntModel<Object> implements Model, Invocation<Obje
 		return this;
 	}
 	
-	public ParModel add(Identifiable... objects) throws ContextException,
+	public ProcModel add(Identifiable... objects) throws ContextException,
 			RemoteException {
-		Par p = null;
+		Proc p = null;
 		boolean changed = false;
 		for (Identifiable obj : objects) {
 			String pn = obj.getName();
-			if (obj instanceof Par) {
-				p = (Par) obj;
+			if (obj instanceof Proc) {
+				p = (Proc) obj;
 			} else if (obj instanceof Variability) {
 				putValue(pn, obj);
 			} else if (obj instanceof Entry) {
@@ -312,7 +319,7 @@ public class ParModel extends EntModel<Object> implements Model, Invocation<Obje
 				if (((ServiceContext) context).getExecPath() != null) {
 					Object o = get(((ServiceContext) context).getExecPath()
 							.path());
-					if (o instanceof Par) {
+					if (o instanceof Proc) {
 						if (o instanceof Agent) {
 							if (((Agent) o).getScope() == null)
 								((Agent) o).setScope(this);
@@ -320,7 +327,7 @@ public class ParModel extends EntModel<Object> implements Model, Invocation<Obje
 								((Agent) o).getScope().append(this);
 							result = ((Agent) o).getValue(entries);
 						} else {
-							Object i = ((Par) get(((ServiceContext) context)
+							Object i = ((Proc) get(((ServiceContext) context)
 									.getExecPath().path())).asis();
 							if (i instanceof ServiceInvoker) {
 								result = ((ServiceInvoker) i).invoke(entries);
@@ -381,12 +388,30 @@ public class ParModel extends EntModel<Object> implements Model, Invocation<Obje
 		throw new ContextException("No such variability in context: " + name);
 	}
 	
-	private Par putVar(String path, Variability value) throws ContextException {
+	private Proc putVar(String path, Variability value) throws ContextException {
 		putValue(path, value);
 		markVar(this, path, value);
-		return new Par(path, value, this);
+		return new Proc(path, value, this);
 	}
-	
+
+	private void realizeDependencies(Arg... entries) throws RemoteException,
+			ExertionException {
+		List<Evaluation> dependers = getDependers();
+		if (dependers != null && dependers.size() > 0) {
+			for (Evaluation<Object> depender : dependers) {
+				try {
+					if (depender instanceof Invocation) {
+						((Invocation) depender).invoke(this, entries);
+					} else {
+						((Evaluation) depender).getValue(entries);
+					}
+				} catch (Exception e) {
+					throw new ExertionException(e);
+				}
+			}
+		}
+	}
+
 	/**
 	 * Returns an enumeration of all path marking variable nodes.
 	 * 

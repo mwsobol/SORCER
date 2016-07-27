@@ -17,9 +17,9 @@
 
 // model with three entries
 Model context = model(
-        ent("x1", 100.0d),
-        ent("x2", 200.0d),
-        ent("result/y", invoker("x1 + x2",
+        val("x1", 100.0d),
+        val("x2", 200.0d),
+        val("result/y", invoker("x1 + x2",
                 ents("x1", "x2"))));
 
 responseUp(context, "result/y", "x1");

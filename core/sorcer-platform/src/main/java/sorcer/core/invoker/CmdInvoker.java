@@ -27,8 +27,8 @@ import java.rmi.RemoteException;
 import java.util.Arrays;
 import java.util.List;
 
+import sorcer.core.context.model.ent.Proc;
 import sorcer.core.context.model.ent.Entry;
-import sorcer.core.context.model.par.Par;
 import sorcer.service.Arg;
 import sorcer.service.ArgSet;
 import sorcer.service.ContextException;
@@ -70,10 +70,10 @@ public class CmdInvoker extends ServiceInvoker implements CmdInvoking {
 		this.cmdarray = (String[]) list.toArray();
 	}
 	
-	public CmdInvoker(String name, String cmd, Par... parEntries) {
+	public CmdInvoker(String name, String cmd, Proc... procEntries) {
 		super(name);
 		this.cmd = cmd;
-		this.pars = new ArgSet(parEntries);
+		this.pars = new ArgSet(procEntries);
 	}
 
 	public CmdInvoker(String[] cmdarray, Entry... parEntries) {
@@ -82,12 +82,12 @@ public class CmdInvoker extends ServiceInvoker implements CmdInvoking {
 	}
 
 	public CmdInvoker(String shcmd, File scriptFile, boolean background,
-			File logFile, Par... parEntries) throws EvaluationException {
+			File logFile, Proc... procEntries) throws EvaluationException {
 		cmd = shcmd;
 		this.scriptFile = scriptFile;
 		this.logFile = logFile;
 		this.background = background;
-		this.pars = new ArgSet(parEntries);
+		this.pars = new ArgSet(procEntries);
 		if (!scriptFile.canExecute()) {
 			scriptFile.setExecutable(true);
 			logger.warn("script exec permission corrected for: " + scriptFile);
@@ -110,10 +110,10 @@ public class CmdInvoker extends ServiceInvoker implements CmdInvoking {
 	 * @throws EvaluationException
 	 */
 	public CmdInvoker(String argarray[], File script, boolean background,
-			InputStream stdin, File logFile, Par... parEntries) throws EvaluationException {
+			InputStream stdin, File logFile, Proc... procEntries) throws EvaluationException {
 		cmdarray = new String[argarray.length + 1];
 		this.scriptFile = script;
-		this.pars = new ArgSet(parEntries);
+		this.pars = new ArgSet(procEntries);
 		if (!scriptFile.canExecute()) {
 			scriptFile.setExecutable(true);
 			logger.warn("script exec permission corrected for: " + scriptFile);

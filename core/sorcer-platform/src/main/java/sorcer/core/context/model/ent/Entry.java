@@ -308,7 +308,7 @@ public class Entry<T> extends Tuple2<String, T> implements Callable<T>, Dependen
 			MogramException, RemoteException {
 		Context cxt = null;
 		Context out = new ServiceContext();
-		if (mogram instanceof EntModel) {
+		if (mogram instanceof ProcModel) {
 			if (_2 != null && _2 != Context.none)
 				add((Context)mogram, this);
 			((ServiceContext)mogram).getMogramStrategy().getResponsePaths().add(new Name(_1));

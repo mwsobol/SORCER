@@ -12,7 +12,6 @@ import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.core.provider.rendezvous.ServiceJobber;
-import sorcer.eo.operator;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
 
@@ -131,16 +130,16 @@ public class CoffeeServiceTest {
 
 		// order espresso with delivery
 		Model mod = model(
-				inEnt("recipe/name", "espresso"),
-				inEnt("paid$", 120),
-				inEnt("location", "PJATK"),
-				inEnt("room", "101"),
+				inVal("recipe/name", "espresso"),
+				inVal("paid$", 120),
+				inVal("location", "PJATK"),
+				inVal("room", "101"),
 
 				srv(sig("makeCoffee", CoffeeService.class,
 						result("coffee$", inPaths("recipe/name")))),
 				srv(sig("deliver", Delivery.class,
 						result("delivery$", inPaths("location", "room")))));
-//				ent("change$", invoker("paid$ - (coffee$ + delivery$)", ents("paid$", "coffee$", "delivery$"))));
+//				proc("change$", invoker("paid$ - (coffee$ + delivery$)", ents("paid$", "coffee$", "delivery$"))));
 
 		add(mod, ent("change$", invoker("paid$ - (coffee$ + delivery$)", ents("paid$", "coffee$", "delivery$"))));
 		dependsOn(mod, ent("change$", "makeCoffee"), ent("change$", "deliver"));
@@ -158,13 +157,13 @@ public class CoffeeServiceTest {
 	public void getCoffee() throws Exception {
 
 		Task coffee = task("coffee", sig("makeCoffee", CoffeeMaker.class), context(
-				inEnt("recipe/name", "espresso"),
-				inEnt("coffee/paid", 120),
-				inEnt("recipe", espresso)));
+				inVal("recipe/name", "espresso"),
+				inVal("coffee/paid", 120),
+				inVal("recipe", espresso)));
 
 		Task delivery = task("delivery", sig("deliver", DeliveryImpl.class), context(
-				inEnt("location", "PJATK"),
-				inEnt("room", "101")));
+				inVal("location", "PJATK"),
+				inVal("room", "101")));
 
 		Job drinkCoffee = job(sig("exert", ServiceJobber.class), coffee, delivery);
 

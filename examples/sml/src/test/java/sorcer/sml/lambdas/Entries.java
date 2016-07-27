@@ -7,7 +7,7 @@ import org.sorcer.test.ProjectContext;
 import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.core.context.model.ent.Entry;
-import sorcer.eo.operator;
+import sorcer.core.invoker.ServiceInvoker;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
 import sorcer.util.GenericUtil;
@@ -21,7 +21,7 @@ import static sorcer.eo.operator.get;
 import static sorcer.eo.operator.value;
 import static sorcer.mo.operator.*;
 import static sorcer.po.operator.invoker;
-import static sorcer.po.operator.par;
+import static sorcer.po.operator.*;
 import static sorcer.service.Arg.setArgValue;
 import static sorcer.util.exec.ExecUtils.CmdResult;
 
@@ -73,8 +73,8 @@ public class Entries {
         };
 
         Model m = model(
-                inEnt("multiply/x1", 10.0), inEnt("multiply/x2", 50.0),
-                inEnt("add/x1", 20.0), inEnt("add/x2", 80.0),
+                inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
+                inVal("add/x1", 20.0), inVal("add/x2", 80.0),
                 ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
                         inPaths("multiply/x1", "multiply/x2")))),
                 ent(sig("add", AdderImpl.class, result("add/out",
@@ -95,7 +95,7 @@ public class Entries {
     public void entryAsLambdaInvoker() throws Exception {
 
         Model mo = model(ent("x", 10.0), ent("y", 20.0),
-                par(invoker("lambda", (Context<Double> cxt) -> value(cxt, "x")
+                proc(invoker("lambda", (Context<Double> cxt) -> value(cxt, "x")
                         + value(cxt, "y")
                         + 30)));
         logger.info("invoke eval: " + eval(mo, "lambda"));

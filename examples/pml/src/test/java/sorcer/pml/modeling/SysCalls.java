@@ -7,11 +7,10 @@ import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.core.context.ServiceContext;
-import sorcer.core.context.model.par.ParModel;
-import sorcer.core.context.model.par.SysCall;
+import sorcer.core.context.model.ent.ProcModel;
+import sorcer.core.context.model.ent.SysCall;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.core.provider.SysCaller;
-import sorcer.eo.operator;
 import sorcer.pml.provider.impl.Volume;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
@@ -57,10 +56,10 @@ public class SysCalls {
 		ServiceInvoker cmd = cmdInvoker("volume",
 				"java -cp  " + cp + Volume.class.getName() + " cylinder");
 
-		ParModel pm = parModel(par(cmd),
-				par("x", 10.0), par("y"),
-				par("multiply", invoker("x * y", pars("x", "y"))),
-				par("add", invoker("x + y", pars("x", "y"))));
+		ProcModel pm = procModel(proc(cmd),
+				proc("x", 10.0), ent("y"),
+				proc("multiply", invoker("x * y", pars("x", "y"))),
+				proc("add", invoker("x + y", pars("x", "y"))));
 
 		CmdResult result = (CmdResult) invoke(pm, "volume");
 		// get from the result the volume of cylinder and assign to y parameter
@@ -95,13 +94,13 @@ public class SysCalls {
                 + Sorcer.getHome() + "/lib/river/jsk-platform-" + riverVersion + ".jar"  + File.pathSeparator
                 + Sorcer.getHome() + "/lib/river/jsk-lib-" + riverVersion + ".jar ";
 
-        ParModel pm = parModel(par("x", 10.0), par("y"),
-                par("multiply", invoker("x * y", pars("x", "y"))),
-                par("add", invoker("x + y", pars("x", "y"))));
+        ProcModel pm = procModel(proc("x", 10.0), ent("y"),
+                proc("multiply", invoker("x * y", pars("x", "y"))),
+                proc("add", invoker("x + y", pars("x", "y"))));
 
-        SysCall caller = sysCall("volume", cxt(ent("cmd", "java -cp  " + cp + Volume.class.getName()),
-                inEnt("cylinder"), outEnt("cylinder/volume"), outEnt("cylinder/radius"),
-				outEnt("cylinder/height")));
+        SysCall caller = sysCall("volume", cxt(proc("cmd", "java -cp  " + cp + Volume.class.getName()),
+                inVal("cylinder"), outVal("cylinder/volume"), outVal("cylinder/radius"),
+				outVal("cylinder/height")));
         add(pm, caller);
 
 		Context result = (Context) value(pm, "volume");
@@ -137,9 +136,9 @@ public class SysCalls {
 				+ Sorcer.getHome() + "/lib/river/jsk-lib-" + riverVersion + ".jar ";
 
 		Task callerTask = task("volume", sig("exec", SysCaller.class),
-						cxt(ent("cmd", "java -cp  " + cp + Volume.class.getName()),
-								inEnt("cylinder"), outEnt("cylinder/volume"), outEnt("cylinder/radius"),
-								outEnt("cylinder/height")));
+						cxt(proc("cmd", "java -cp  " + cp + Volume.class.getName()),
+								inVal("cylinder"), outVal("cylinder/volume"), outVal("cylinder/radius"),
+								outVal("cylinder/height")));
 
 		Context out = context(exert(callerTask));
 		logger.info("out:" + out);
@@ -164,13 +163,13 @@ public class SysCalls {
 				+ Sorcer.getHome() + "/lib/river/jsk-platform-" + riverVersion + ".jar"  + File.pathSeparator
 				+ Sorcer.getHome() + "/lib/river/jsk-lib-" + riverVersion + ".jar ";
 
-		Model sm = srvModel(par("x", 10.0), par("y"),
-				par("multiply", invoker("x * y", pars("x", "y"))),
-				par("add", invoker("x + y", pars("x", "y"))),
+		Model sm = srvModel(proc("x", 10.0), ent("y"),
+				proc("multiply", invoker("x * y", pars("x", "y"))),
+				proc("add", invoker("x + y", pars("x", "y"))),
 				srv("volume", sig("exec", SysCaller.class,
-						cxt(ent("cmd", "java -cp  " + cp + Volume.class.getName()),
-						inEnt("cylinder"), outEnt("cylinder/volume"), outEnt("cylinder/radius"),
-						outEnt("cylinder/height")))));
+						cxt(proc("cmd", "java -cp  " + cp + Volume.class.getName()),
+						inVal("cylinder"), outVal("cylinder/volume"), outVal("cylinder/radius"),
+						outVal("cylinder/height")))));
 
 		String volume = (String) eval(sm, "volume");
 		logger.info("volume: " + volume);
@@ -202,15 +201,15 @@ public class SysCalls {
 				+ Sorcer.getHome() + "/lib/river/jsk-platform-" + riverVersion + ".jar"  + File.pathSeparator
 				+ Sorcer.getHome() + "/lib/river/jsk-lib-" + riverVersion + ".jar ";
 
-		Model sm = srvModel(par("x", 10.0), par("y"),
-				par("multiply", invoker("x * y", pars("x", "y"))),
-				par("add", invoker("x + y", pars("x", "y"))),
+		Model sm = srvModel(proc("x", 10.0), ent("y"),
+				proc("multiply", invoker("x * y", pars("x", "y"))),
+				proc("add", invoker("x + y", pars("x", "y"))),
 				srv("volume", sig("exec", SysCaller.class,
-						cxt(ent("cmd", "java -cp  " + cp + Volume.class.getName()),
-								inEnt("cylinder", Arg.class),
-								outEnt("cylinder/volume", double.class),
-								outEnt("cylinder/radius", double.class),
-								outEnt("cylinder/height", double.class)))));
+						cxt(proc("cmd", "java -cp  " + cp + Volume.class.getName()),
+								inVal("cylinder", Arg.class),
+								outVal("cylinder/volume", double.class),
+								outVal("cylinder/radius", double.class),
+								outVal("cylinder/height", double.class)))));
 
 		Double volume = (Double) eval(sm, "volume");
 		logger.info("volume: " + volume);
@@ -227,11 +226,11 @@ public class SysCalls {
 
 	@Test
 	public void classTypes() throws Exception {
-		ServiceContext context = (ServiceContext) cxt(inEnt("cylinder", String.class),
-				inEnt("cylinder/height", 3.0, double.class),
-				outEnt("cylinder/volume", double.class),
-				outEnt("cylinder/radius", double.class),
-				outEnt("cylinder/height", double.class));
+		ServiceContext context = (ServiceContext) cxt(inVal("cylinder", String.class),
+				inVal("cylinder/height", 3.0, double.class),
+				outVal("cylinder/volume", double.class),
+				outVal("cylinder/radius", double.class),
+				outVal("cylinder/height", double.class));
 		String ct = context.getValClass("cylinder/volume");
 		logger.info("ct: " + ct);
 		logger.info("double?: " + context.isDouble("cylinder/volume"));

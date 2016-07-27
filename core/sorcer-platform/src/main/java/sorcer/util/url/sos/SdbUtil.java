@@ -19,6 +19,7 @@ package sorcer.util.url.sos;
 
 import net.jini.id.Uuid;
 import net.jini.id.UuidFactory;
+import sorcer.co.operator;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.provider.DatabaseStorer;
 import sorcer.core.provider.DatabaseStorer.Store;
@@ -35,7 +36,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static sorcer.co.operator.inEnt;
+import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
 
 /**
@@ -105,8 +106,7 @@ public class SdbUtil {
 
 	/**
 	 * Returns a context to be used with
-	 * {@link StorageManagement#rertieve(Context)}
-	 * 
+	 *
 	 * @param uuid
 	 *            {@link Uuid}
 	 * @param type
@@ -191,7 +191,7 @@ public class SdbUtil {
 		Task objectStoreTask = task(
 				"clear",
 				sig("contextClear", DatabaseStorer.class, prvName(storageName)),
-				context("clear", inEnt(StorageManagement.store_type, type),
+				context("clear", operator.inVal(StorageManagement.store_type, type),
 						result(StorageManagement.store_size)));
 		return (Integer) eval(objectStoreTask);
 	}
@@ -203,7 +203,7 @@ public class SdbUtil {
 		Task objectStoreTask = task(
 				"size",
 				sig("contextSize", DatabaseStorer.class, new ProviderName(storageName)),
-				context("size", inEnt(StorageManagement.store_type, type),
+				context("size", operator.inVal(StorageManagement.store_type, type),
 						result(StorageManagement.store_size)));
 		return (Integer) eval(objectStoreTask);
 	}
@@ -224,7 +224,7 @@ public class SdbUtil {
 		Task objectStoreTask = task(
 				"delete",
 				sig("contextDelete", DatabaseStorer.class, prvName(storageName)),
-				context("delete", inEnt(StorageManagement.object_deleted, object),
+				context("delete", operator.inVal(StorageManagement.object_deleted, object),
 						result(StorageManagement.object_url)));
 		return (URL) eval(objectStoreTask);
 	}
@@ -240,7 +240,7 @@ public class SdbUtil {
 					sig("contextDelete", Class.forName(serviceTypeName),
 							prvName(storageName)),
 					context("delete",
-							inEnt(StorageManagement.object_deleted, url),
+							operator.inVal(StorageManagement.object_deleted, url),
 							result(StorageManagement.object_url)));
 		} catch (ClassNotFoundException e) {
 			throw new SignatureException("No such service type: "
@@ -255,7 +255,7 @@ public class SdbUtil {
 		Task objectStoreTask = task(
 				"store",
 				sig("contextStore", DatabaseStorer.class, prvName(storageName)),
-				context("store", inEnt(StorageManagement.object_stored, object),
+				context("store", operator.inVal(StorageManagement.object_stored, object),
 						result(StorageManagement.object_url)));
 
 		Task out = exert(objectStoreTask);
@@ -268,7 +268,7 @@ public class SdbUtil {
 		Task objectStoreTask = task(
 				"write",
 				sig("contextWrite", DataspaceStorer.class, prvName(storageName)),
-				context("stored", inEnt(StorageManagement.object_stored, object),
+				context("stored", operator.inVal(StorageManagement.object_stored, object),
 						result("stored/object/url")));
 
 		return (URL) eval(objectStoreTask);

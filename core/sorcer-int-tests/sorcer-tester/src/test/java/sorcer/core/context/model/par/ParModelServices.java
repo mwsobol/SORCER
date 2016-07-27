@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.tester.provider.impl.ParModelImpl;
+import sorcer.core.context.model.ent.ProcModel;
 import sorcer.service.*;
 
 import java.rmi.RemoteException;
@@ -31,14 +32,14 @@ public class ParModelServices {
 	@Test
 	public void parModelerTest() throws RemoteException, ContextException,
 			ExertionException, SignatureException {
-		ParModel pm = ParModelImpl.getParModel();
+		ProcModel pm = ParModelImpl.getParModel();
 		logger.info("result: " + invoke(pm, "expr"));
 		assertEquals(invoke(pm, "expr"), 60.0);
 	}
 
 	@Test
 	public void parObjectModelServiceTest() throws Exception {
-		ParModel pm = ParModelImpl.getParModel();
+		ProcModel pm = ParModelImpl.getParModel();
 		Task pmt = task(sig("invoke", pm),
 				context(result("invoke/result", outPaths("expr"))));
 
@@ -54,7 +55,7 @@ public class ParModelServices {
 	public void parNetModelServiceTest() throws Exception,
 			ExertionException, SignatureException {
 		// the provider in ex6/bin parmodel-prv-run.xml
-		Task pmt = task(sig("invoke", Invocation.class, prvName("Arithmetic ParModel")),
+		Task pmt = task(sig("invoke", Invocation.class, prvName("Arithmetic ProcModel")),
 				context(result("invoke/result", outPaths("expr"))));
 
 		logger.info("result: " + eval(pmt));
@@ -68,7 +69,7 @@ public class ParModelServices {
 //	public void parObjectModelAgentTest() throws RemoteException, ContextException, ExertionException,
 //			SignatureException, MalformedURLException {
 //
-//		ParModel pm = ParModelImpl.getParModel();
+//		ProcModel pm = ParModelImpl.getParModel();
 //		Task pmt = task(sig("invoke", pm), context(
 //				invoker("getSphereVolume"),
 //				result("sphere/volume"),
@@ -87,7 +88,7 @@ public class ParModelServices {
 //	public void parObjectModelMultiAgentTest() throws RemoteException, ContextException, ExertionException,
 //			SignatureException, MalformedURLException {
 //
-//		ParModel pm = ParModelImpl.getParModel();
+//		ProcModel pm = ParModelImpl.getParModel();
 //
 //		// invoking non existing agent and the return eval specified
 //		Task pmt = task(sig("invoke", pm), context(
@@ -128,7 +129,7 @@ public class ParModelServices {
 //	public void parNetModelAgentTest() throws RemoteException, ContextException, ExertionException,
 //			SignatureException, MalformedURLException, TransactionException {
 //		// the provider in ex6/bin parmodel-prv-run.xml
-//		Task pmt = task(sig("invoke", Invocation.class, prvName("Arithmetic ParModel")),
+//		Task pmt = task(sig("invoke", Invocation.class, prvName("Arithmetic ProcModel")),
 //				context(invoker("getSphereVolume"),
 ////						result("sphere/volume"),
 //						ent("sphere/radius", 20.0),
@@ -145,7 +146,7 @@ public class ParModelServices {
 //		assertEquals(get(cxt, "sphere/radius"), 20.0);
 //		assertEquals(get(cxt, "sphere/volume"), 33510.32163829113);
 //
-//		pmt = task(sig("invoke", Invocation.class, prvName("Arithmetic ParModel")),
+//		pmt = task(sig("invoke", Invocation.class, prvName("Arithmetic ProcModel")),
 //				context(invoker("getSphereVolume"),
 //						result("sphere/volume"),
 //						ent("sphere/radius", 20.0),
@@ -162,7 +163,7 @@ public class ParModelServices {
 //	public void parNetModelMultiAgentTest() throws RemoteException, ContextException, ExertionException,
 //			SignatureException, MalformedURLException, TransactionException {
 //		// the provider in ex6/bin parmodel-prv-run.xml
-//		Task pmt = task(sig("invoke", Invocation.class, prvName("Arithmetic ParModel")),
+//		Task pmt = task(sig("invoke", Invocation.class, prvName("Arithmetic ProcModel")),
 //				context(invoker("getSphereVolume"),
 //						result("sphere/volume"),
 //						ent("sphere/radius", 20.0),
@@ -177,7 +178,7 @@ public class ParModelServices {
 //
 //		assertEquals(eval(pmt), 33510.32163829113);
 //
-//		pmt = task(sig("invoke", Invocation.class, prvName("Arithmetic ParModel")),
+//		pmt = task(sig("invoke", Invocation.class, prvName("Arithmetic ProcModel")),
 //				context(invoker("getCylinderSurface"),
 //						result("cylinder/surface"),
 //						invoker("getCylinderSurface"),

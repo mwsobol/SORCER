@@ -35,11 +35,11 @@ public class ArithmeticNoNetBlockTest implements SorcerConstants {
 	@Test
 	public void contextAltTest() throws Exception {
 		Task t4 = task("t4", sig("multiply", MultiplierImpl.class), 
-				context("multiply", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
+				context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
 						result("block/result")));
 
 		Task t5 = task("t5", sig("add", AdderImpl.class), 
-				context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
+				context("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
 						result("block/result")));
 		
 		Block block = block("block", sig("exert", ServiceConcatenator.class),
@@ -61,19 +61,19 @@ public class ArithmeticNoNetBlockTest implements SorcerConstants {
 	@Test
 	public void taskAltBlockTest() throws Exception {
 		Task t3 = task("t3", sig("subtract", SubtractorImpl.class), 
-				context("subtract", inEnt("arg/t4"), inEnt("arg/t5"),
+				context("subtract", inVal("arg/t4"), inVal("arg/t5"),
 						result("block/result")));
 
 		Task t4 = task("t4", sig("multiply", MultiplierImpl.class), 
-				context("multiply", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
+				context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
 						result("arg/t4")));
 
 		Task t5 = task("t5", sig("add", AdderImpl.class), 
-				context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
+				context("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
 						result("arg/t5")));
 		
 		Task t6 = task("t6", sig("average", AveragerImpl.class), 
-				context("average", inEnt("arg/t4"), inEnt("arg/t5"),
+				context("average", inVal("arg/t4"), inVal("arg/t5"),
 						result("block/result")));
 		
 		Block block = block("block", sig("exert", ServiceConcatenator.class), t4, t5, alt(
@@ -97,11 +97,11 @@ public class ArithmeticNoNetBlockTest implements SorcerConstants {
 	@Test
 	public void optBlockTest() throws Exception {
 		Task t4 = task("t4", sig("multiply", MultiplierImpl.class), 
-				context("multiply", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
+				context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
 						result("out")));
 		
 		Task t5 = task("t5", sig("add", AdderImpl.class), 
-				context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
+				context("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
 						result("out")));
 		
 		Block block = block("block", sig("exert", ServiceConcatenator.class), t4,
@@ -124,8 +124,8 @@ public class ArithmeticNoNetBlockTest implements SorcerConstants {
 		Task t4 = task("t4",
 				sFi("object", sig("multiply", MultiplierImpl.class), sig("add", AdderImpl.class)),
 				sFi("net", sig("multiply", Multiplier.class), sig("add", Adder.class)),
-				context("shared", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
-						outEnt("result/y")));
+				context("shared", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
+						outVal("result/y")));
 
 		t4 = exert(t4, fi("object"));
 		logger.info("task context: " + context(t4));

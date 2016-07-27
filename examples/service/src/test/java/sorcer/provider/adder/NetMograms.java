@@ -6,7 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
-import sorcer.eo.operator;
 import sorcer.service.*;
 import sorcer.service.Strategy.Access;
 import sorcer.service.Strategy.Wait;
@@ -32,7 +31,7 @@ public class NetMograms {
 	public void exertTask() throws Exception  {
 
 		Task t5 = task("t5", sig("add", Adder.class),
-				cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0), result("result/y")));
+				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("result/y")));
 
 		Exertion out = exert(t5);
 		Context cxt = context(out);
@@ -53,7 +52,7 @@ public class NetMograms {
     public void valueTask() throws SignatureException, ExertionException, ContextException  {
 
         Task t5 = task("t5", sig("add", Adder.class),
-                cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0), result("result/y")));
+                cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("result/y")));
 
         // get the result eval
         assertTrue(eval(t5).equals(100.0));
@@ -68,7 +67,7 @@ public class NetMograms {
     public void sessionTask() throws SignatureException, ExertionException, ContextException  {
 
         Task sum = task("t6", sig("sum", Adder.class),
-                cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0), result("result/y")));
+                cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("result/y")));
 
 		assertTrue(eval(sum).equals(100.0));
 		assertTrue(eval(sum).equals(200.0));
@@ -81,8 +80,8 @@ public class NetMograms {
 		Task t5 = task(
 				"t5",
 				sig("add", Adder.class),
-				context("add", inEnt("arg/x1", 20.0),
-						inEnt("arg/x2", 80.0), result("result/y")),
+				context("add", inVal("arg/x1", 20.0),
+						inVal("arg/x2", 80.0), result("result/y")),
 				strategy(Access.PULL, Wait.YES));
 
 		t5 = exert(t5);
@@ -95,7 +94,7 @@ public class NetMograms {
 	public void evalauteRemoteModel() throws Exception {
 
 		// three entry model
-		Model mod = model(inEnt("arg/x1", 10.00), inEnt("arg/x2", 90.00),
+		Model mod = model(inVal("arg/x1", 10.00), inVal("arg/x2", 90.00),
 				srv(sig("add", Adder.class, result("result/y", inPaths("arg/x1", "arg/x2")))),
 				response("add", "arg/x1", "arg/x2"));
 

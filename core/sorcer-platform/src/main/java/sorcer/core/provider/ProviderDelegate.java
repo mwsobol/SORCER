@@ -48,7 +48,7 @@ import sorcer.core.SorcerConstants;
 import sorcer.core.SorcerNotifierProtocol;
 import sorcer.core.context.Contexts;
 import sorcer.core.context.ServiceContext;
-import sorcer.core.context.model.par.ParModel;
+import sorcer.core.context.model.ent.ProcModel;
 import sorcer.core.exertion.ExertionEnvelop;
 import sorcer.core.exertion.NetTask;
 import sorcer.core.loki.member.LokiMemberUtil;
@@ -989,7 +989,7 @@ public class ProviderDelegate {
 			Method m = null;
 			try {
 				// select the proper method for the bean type
-				if (selector.equals("invoke") && (impl instanceof Exertion || impl instanceof ParModel)) {
+				if (selector.equals("invoke") && (impl instanceof Exertion || impl instanceof ProcModel)) {
 					m = impl.getClass().getMethod(selector, Context.class, Arg[].class);
 					isContextual = true;
 				} else if (selector.equals("exert") && impl instanceof ServiceShell) {
@@ -1041,7 +1041,7 @@ public class ProviderDelegate {
 		String selector = task.getProcessSignature().getSelector();
 		Object[] pars = new Object[] { task.getContext() };
 		if (selector.equals("invoke")
-				&& (impl instanceof Exertion || impl instanceof ParModel)) {
+				&& (impl instanceof Exertion || impl instanceof ProcModel)) {
 			Object obj = m.invoke(impl, new Object[] { pars[0], args });
 
 			if (obj instanceof Job)

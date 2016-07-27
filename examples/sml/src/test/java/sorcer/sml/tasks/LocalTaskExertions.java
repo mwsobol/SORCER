@@ -9,7 +9,6 @@ import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.Adder;
 import sorcer.arithmetic.provider.Multiplier;
 import sorcer.arithmetic.provider.impl.*;
-import sorcer.eo.operator;
 import sorcer.service.*;
 
 import static org.junit.Assert.assertEquals;
@@ -32,7 +31,7 @@ public class LocalTaskExertions {
 	public void exertTask() throws Exception  {
 
 		Task t5 = task("t5", sig("add", AdderImpl.class),
-				cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0)));
+				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0)));
 
 		Exertion out = exert(t5);
 		Context cxt = context(out);
@@ -50,7 +49,7 @@ public class LocalTaskExertions {
 	public void exertOpTask() throws Exception  {
 
 		Task t5 = task(sig(AdderImpl.class), op("add"),
-				cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0)));
+				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0)));
 
 		Exertion out = exert(t5);
 		Context cxt = context(out);
@@ -72,7 +71,7 @@ public class LocalTaskExertions {
 	public void exertSubstituteOpTask() throws Exception  {
 
 		Task t5 = task("t5", sig(AdderImpl.class), op("add"),
-				cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0)));
+				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0)));
 
 		Exertion out = exert(t5, op("t5", "add2"));
 		Context cxt = context(out);
@@ -91,7 +90,7 @@ public class LocalTaskExertions {
 	public void evaluateTask() throws SignatureException, ExertionException, ContextException  {
 
 		Task t6 = task("t6", sig("average", AveragerImpl.class),
-				cxt("average", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0), result("result/y")));
+				cxt("average", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("result/y")));
 
 		// get the result eval
 		assertEquals(50.0, eval(t6));
@@ -108,8 +107,8 @@ public class LocalTaskExertions {
 		Task t4 = task("t4",
 				sFi("net", sig("multiply", Multiplier.class), sig("add", Adder.class)),
 				sFi("object", sig("multiply", MultiplierImpl.class), sig("add", AdderImpl.class)),
-				context("shared", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
-						outEnt("result/y")));
+				context("shared", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
+						outVal("result/y")));
 
 		t4 = exert(t4, fi("object"));
 //		logger.info("task context: " + context(t4));
@@ -124,8 +123,8 @@ public class LocalTaskExertions {
                 type(sig("multiply", MultiplierImpl.class, result("subtract/x1", Signature.Direction.IN)), Signature.PRE),
                 type(sig("add", AdderImpl.class, result("subtract/x2", Signature.Direction.IN)), Signature.PRE),
                 sig("subtract", SubtractorImpl.class, result("result/y", inPaths("subtract/x1", "subtract/x2"))),
-                context(inEnt("multiply/x1", 10.0), inEnt("multiply/x2", 50.0),
-                        inEnt("add/x1", 20.0), inEnt("add/x2", 80.0)));
+                context(inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
+                        inVal("add/x1", 20.0), inVal("add/x2", 80.0)));
 
 //        logger.info("task getSelects:" + batch3.getSelectedFidelity());
 
@@ -143,8 +142,8 @@ public class LocalTaskExertions {
                 type(sig("multiply#op1", MultiplierImpl.class, result("op3/x1", Signature.Direction.IN)), Signature.PRE),
                 type(sig("add#op2", AdderImpl.class, result("op3/x2", Signature.Direction.IN)), Signature.PRE),
                 sig("subtract", SubtractorImpl.class, result("result/y", inPaths("op3/x1", "op3/x2"))),
-                context(inEnt("op1/x1", 10.0), inEnt("op1/x2", 50.0),
-                        inEnt("op2/x1", 20.0), inEnt("op2/x2", 80.0)));
+                context(inVal("op1/x1", 10.0), inVal("op1/x2", 50.0),
+                        inVal("op2/x1", 20.0), inVal("op2/x2", 80.0)));
 
         batch3 = exert(batch3);
 		assertTrue(get(batch3, "result/y").equals(400.0));
@@ -157,8 +156,8 @@ public class LocalTaskExertions {
 		Task t4 = task("t4",
 				sFi("object1", sig("multiply", MultiplierImpl.class)),
 				sFi("object2", sig("add", AdderImpl.class)),
-				context("shared", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
-						outEnt("result/y")));
+				context("shared", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
+						outVal("result/y")));
 
 		Context out = context(exert(t4, fi("object1")));
 //		logger.info("task context: " + context(t4));
@@ -176,7 +175,7 @@ public class LocalTaskExertions {
 		Task task = task("add",
 				sFi("net", sig("add", Adder.class)),
 				sFi("object", sig("add", AdderImpl.class)),
-				context(inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
+				context(inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
 						result("result/y")));
 
 //		logger.info("task fi: " + fi(task));

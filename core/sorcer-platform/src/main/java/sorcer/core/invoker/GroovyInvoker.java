@@ -19,10 +19,8 @@ package sorcer.core.invoker;
 
 import groovy.lang.GroovyShell;
 import sorcer.core.context.ServiceContext;
-import sorcer.core.context.model.par.Par;
+import sorcer.core.context.model.ent.Proc;
 import sorcer.service.*;
-import sorcer.util.Sorcer;
-import sorcer.util.SorcerEnv;
 
 import java.io.*;
 import java.rmi.RemoteException;
@@ -89,7 +87,7 @@ public class GroovyInvoker<T> extends ServiceInvoker<T> {
 		this(name, expression, new ArgSet(parameters));
 	}
 
-	public GroovyInvoker(File scriptFile, Par... parameters)
+	public GroovyInvoker(File scriptFile, Proc... parameters)
 			throws EvaluationException {
 		this();
 		this.scriptFile = scriptFile;
