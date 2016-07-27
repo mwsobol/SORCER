@@ -71,7 +71,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	protected Map<String, T> data = new ConcurrentHashMap<String, T>();
 	protected String subjectPath = "";
 	protected Object subjectValue = "";
-	// default value new ReturnPath(Context.RETURN);
+	// default eval new ReturnPath(Context.RETURN);
 	protected ReturnPath<T> returnPath;
 	protected ReturnPath<T> returnJobPath;
 
@@ -87,7 +87,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	protected String prefix = "";
 	protected List<EntryList> entryLists;
 	/**
-	 * metacontext: key is a metaattribute and value is a map of
+	 * metacontext: key is a metaattribute and eval is a map of
 	 * path/metapath entries
 	 */
 	protected Map<String, Map<String,String>> metacontext;
@@ -226,14 +226,14 @@ public class ServiceContext<T> extends ServiceMogram implements
 	 * separated list of component attributes. A 'metacontext' map contains all
 	 * simple attributes and component attributes (keys) associations with the
 	 * corresponding map holding associations between between a path (key) and
-	 * the value of attribute (key in 'metacontext').
+	 * the eval of attribute (key in 'metacontext').
 	 * <p>
 	 * The usage of metacontext is illustrated as follows:
 	 * a single attribute - 'tag'; cxt.mark("arg/x1", "tag|stress");
-	 * and get tagged value at arg/x1: cxt.getMarkedValues("tag|stress"));
+	 * and get tagged eval at arg/x1: cxt.getMarkedValues("tag|stress"));
 	 * relation - 'triplet|path|info|_3', 'triplet' is a relation name and path, _3, and _3
 	 * are component attributes; cxt.mark("arg/x3", "triplet|mike|w|sobol");
-	 * and get tagged value at arg/x3: cxt.getMarkedValues("triplet|mike|w|sobol"));
+	 * and get tagged eval at arg/x3: cxt.getMarkedValues("triplet|mike|w|sobol"));
 	 */
 	protected void init() {
 		super.init();
@@ -469,7 +469,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		}
 	}
 
-	// we assume that a path ending with name refers to its value
+	// we assume that a path ending with name refers to its eval
 	public T getValueEndsWith(String name) throws EvaluationException,
 			RemoteException {
 		T val = null;
@@ -562,7 +562,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 			obj = get(path);
 //			if (SdbUtil.isSosURL(obj)) {
 //				try {
-//				SdbUtil.update((URL)obj, value);
+//				SdbUtil.update((URL)obj, eval);
 //			} catch (Exception ex) {
 //				throw new ContextException(ex);
 //			}
@@ -582,7 +582,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 
 	public Object putValue(String path, Object value, String association)
 			throws ContextException {
-		// for the special case where the attribute-value pair or
+		// for the special case where the attribute-eval pair or
 		// (meta)association can be represented as a single string
 		T obj = putValue(path, value);
 		mark(path, association);
@@ -846,7 +846,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 
 	public boolean isLocalSingletonAttribute(String attributeName) {
 		// All Attributes are stored in the localContextAttributes hashtable
-		// and singletons have key equal to the value
+		// and singletons have key equal to the eval
 		return isLocalAttribute(attributeName)
 				&& getDataAttributeMap().get(attributeName).equals(
 				attributeName);
@@ -855,7 +855,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	public boolean isLocalMetaattribute(String attributeName) {
 		// Metaattributes are stored in the localContextAttributes
 		// hashtable and have key equal to the attribute set, not the
-		// value as with singleton attributes
+		// eval as with singleton attributes
 		return isLocalAttribute(attributeName)
 				&& !getDataAttributeMap().get(attributeName).equals(
 				attributeName);
@@ -882,7 +882,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	public boolean isSingletonAttribute(String attributeName)
 			throws ContextException {
 		// All Attributes are stored in the localContextAttributes hashtable
-		// and singletons have key equal to the value
+		// and singletons have key equal to the eval
 		boolean result = isLocalAttribute(attributeName)
 				&& getDataAttributeMap().get(attributeName).equals(
 				attributeName);
@@ -906,7 +906,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 			throws ContextException {
 		// Metaattributes are stored in the localContextAttributeisLos
 		// hashtable and have key equal to the attribute set, not the
-		// value as with singleton attributes
+		// eval as with singleton attributes
 		boolean result = isLocalAttribute(attributeName)
 				&& !getDataAttributeMap().get(attributeName).equals(
 				attributeName);
@@ -1081,7 +1081,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 				// values==null;
 				for (Object key : values.keySet()) {
 					/*
-					 * java 1.4.0 regex p = Pattern.compile(value); m =
+					 * java 1.4.0 regex p = Pattern.compile(eval); m =
 					 * p.matcher((String)values.get(key)); if (m.find())
 					 * keys.addElement(key);
 					 */
@@ -1944,7 +1944,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 //					val = getValue(path);
 					val = asis(path);
 			} catch (Exception ex) {
-				sb.append("\nUnable to retrieve value: " + ex.getMessage());
+				sb.append("\nUnable to retrieve eval: " + ex.getMessage());
 				ex.printStackTrace();
 				val = Context.none;;
 //				continue;
@@ -2014,7 +2014,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 				// System.out.println(" = "+getValue(path));
 				val = getValue(path);
 			} catch (Exception ex) {
-				sb.append("\nUnable to retrieve value: " + ex.getMessage());
+				sb.append("\nUnable to retrieve eval: " + ex.getMessage());
 				ex.printStackTrace();
 				continue;
 			}
@@ -2575,7 +2575,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 				if (initValue.equals(val)) {
 					if (initValue.getClass() != val.getClass())
 						throw new ContextException(
-								"The type of initial and new value does not mach: "
+								"The type of initial and new eval does not mach: "
 										+ initValue.getClass() + ":"
 										+ val.getClass());
 //					logger.info("init val = " + initValue + " swapping from "
@@ -2585,7 +2585,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 			} else {
 				if (val instanceof Identifiable
 						&& id.equals(((Identifiable) val).getId()))
-//					logger.info("id = " + id + " value changed to " + newVal);
+//					logger.info("id = " + id + " eval changed to " + newVal);
 					put(key, newVal);
 			}
 		}
@@ -2880,17 +2880,14 @@ public class ServiceContext<T> extends ServiceMogram implements
 		return getValue(path, entries);
 	}
 
-	@Override
 	public Context getInConnector(Arg... args) throws ContextException, RemoteException {
 		return mogramStrategy.getInConnector();
 	}
 
-	@Override
 	public Context getOutConnector(Arg... args) throws ContextException, RemoteException {
 		return mogramStrategy.getOutConnector();
 	}
 
-	@Override
 	public Context getResponse(Arg... args) throws ContextException, RemoteException {
 		Context result = null;
 		if (mogramStrategy.outConnector != null) {
@@ -2925,23 +2922,23 @@ public class ServiceContext<T> extends ServiceMogram implements
 		return result;
 	}
 
-	@Override
+
 	public Object getResult() throws ContextException, RemoteException {
 		return mogramStrategy.outcome;
 	}
 
-	@Override
+
 	public Context evaluate(Context inputContext) throws ContextException, RemoteException {
 		Object args = inputContext.getValue(argsPath);
 		if (args != null && args != Context.none)
 			substitute((Arg[])args);
-		Context inputs = inputContext.getInputs();
+		Context inputs = ((ServiceContext)inputContext).getInputs();
 		this.append(inputs);
 		getResponse();
 		return this;
 	}
 
-	@Override
+
 	public Context getInputs() throws ContextException, RemoteException {
 		List<String> paths = Contexts.getInPaths(this);
 		Context<T> inputs = new ServiceContext();
@@ -2951,7 +2948,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		return inputs;
 	}
 
-	@Override
+
 	public Context getAllInputs() throws ContextException, RemoteException {
 		List<String> paths = Contexts.getAllInPaths(this);
 		Context<T> inputs = new ServiceContext();
@@ -2961,7 +2958,6 @@ public class ServiceContext<T> extends ServiceMogram implements
 		return inputs;
 	}
 
-	@Override
 	public Context getOutputs() throws ContextException, RemoteException {
 		List<String> paths = Contexts.getOutPaths(this);
 		Context<T> inputs = new ServiceContext();

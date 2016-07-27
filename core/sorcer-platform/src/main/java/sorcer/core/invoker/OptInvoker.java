@@ -33,14 +33,25 @@ public class OptInvoker<T> extends ServiceInvoker<T> implements ConditionalInvoc
 	protected Condition condition;
 	
 	protected ServiceInvoker<T> target;
+
+	protected T value;
 	
 	public OptInvoker(String name) {
 		super(name);
 	}
-		
+
+	public OptInvoker(T value) {
+		this(null, value);
+	}
+
+	public OptInvoker(String name, T value) {
+		this(name);
+		this.value = value;
+	}
+
 	public OptInvoker(String name, ServiceInvoker<T> invoker) {
 		super(name);
-		this.condition = new Condition(true);
+		this.condition = null;
 		this.target = invoker;
 	}
 	
@@ -61,18 +72,24 @@ public class OptInvoker<T> extends ServiceInvoker<T> implements ConditionalInvoc
 	@Override
 	public T getValue(Arg... entries) throws EvaluationException, RemoteException {
 		try {
+			if (value != null) {
+				return value;
+			}
 			checkInvokeContext();
-			if (condition.isTrue())
+			if (condition == null || condition.isTrue())
 				return target.getValue(entries);
-			else 
+			else {
 				return null;
+			}
 		} catch (ContextException e) {
 			throw new InvocationException(e);
 		}
 	}
 	
-	public T invoke(Arg... entries) throws RemoteException,
-	InvocationException {
+	public T invoke(Arg... entries) throws RemoteException, InvocationException {
+		if (value != null) {
+			return value;
+		}
 		try {
 			checkInvokeContext();
 			if (condition.isTrue())
@@ -96,7 +113,15 @@ public class OptInvoker<T> extends ServiceInvoker<T> implements ConditionalInvoc
 			throw new InvocationException(e);
 		}
 	}
-	
+
+	public boolean isTrue() throws ContextException  {
+		if (condition == null) {
+			return true;
+		} else {
+			return condition.isTrue();
+		}
+	}
+
 	private void checkInvokeContext() throws RemoteException, ContextException {
 		if (target.getScope().size() == 0 && invokeContext.size() > 0) {
 			target.setScope(invokeContext);

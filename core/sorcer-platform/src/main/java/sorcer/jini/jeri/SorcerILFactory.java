@@ -65,7 +65,7 @@ import static sorcer.core.SorcerConstants.*;
 public class SorcerILFactory extends BasicILFactory {
     protected final Logger logger = LoggerFactory.getLogger(SorcerILFactory.class);
     /**
-     * Exposed service type map. A key is an interface and a value its
+     * Exposed service type map. A key is an interface and a eval its
      * implementing object.
      */
     protected final Map<Class<?>, Object> serviceBeanMap = new ConcurrentHashMap<>();

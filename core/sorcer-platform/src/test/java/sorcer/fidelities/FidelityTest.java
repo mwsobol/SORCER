@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.plexus.FiMap;
 import sorcer.core.service.Projection;
+import sorcer.eo.operator;
 import sorcer.service.EvaluationException;
 import sorcer.service.Fidelity;
 import sorcer.service.FidelityList;
@@ -18,7 +19,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
-import static sorcer.eo.operator.value;
 import static sorcer.po.operator.expr;
 
 
@@ -141,7 +141,7 @@ public class FidelityTest {
 	public void getFiList() throws EvaluationException {
 		String fis = "fis(fi('tip/displacement', 'astros'))";
 
-		FidelityList fl = (FidelityList) value(expr(fis));
+		FidelityList fl = (FidelityList) operator.eval(expr(fis));
 		logger.info("fi map populated: " + fl);
 		assertTrue(fl.equals(fis(fi("tip/displacement", "astros"))));
 	}
@@ -150,7 +150,7 @@ public class FidelityTest {
 	public void getProjection() throws EvaluationException {
 		String fis = "po(fi('tip/displacement', 'astros'))";
 
-		Projection fl = (Projection) value(expr(fis));
+		Projection fl = (Projection) operator.eval(expr(fis));
 		logger.info("fi map populated: " + fl);
    		assertTrue(fl.equals(po(fi("tip/displacement", "astros"))));
 	}

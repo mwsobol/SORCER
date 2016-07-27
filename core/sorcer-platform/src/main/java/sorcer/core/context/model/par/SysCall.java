@@ -97,7 +97,7 @@ public class SysCall extends Par<Context> implements Serializable {
 
             Properties props = new Properties();
             props.load(new StringReader(result.getOut()));
-            out.putValue("exit/value", result.getExitValue());
+            out.putValue("exit/eval", result.getExitValue());
 
             // copy requested outputs into the context
             if (outPaths != null) {

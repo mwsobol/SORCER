@@ -60,7 +60,7 @@ public class ConditionalTaskTest {
 		pm.putValue("x", 300.0);
 		pm.putValue("y", 200.0);
 		task = exert(ift);
-		// logger.info("opt value: " + exert(ift));
+		// logger.info("opt eval: " + exert(ift));
 		assertEquals(get(task, Condition.CONDITION_VALUE), true);
 		assertEquals(get(task, Condition.CONDITION_TARGET), "add");
 		assertEquals(get(task, "result/y"), 100.0);
@@ -99,26 +99,26 @@ public class ConditionalTaskTest {
 		AltMogram alt = alt("alt", opt1, opt2, opt3);
 		add(pm, opt1, opt2, opt3, alt);
 
-//		logger.info("opt1 value: " + value(opt1));
-		assertTrue(value(opt1).equals(150.0));
-//		logger.info("opt2 value: " + value(opt2));
-		assertTrue(value(opt2).equals(500.0));
-//		logger.info("opt3 value: " + value(opt3));
-		assertTrue(value(opt3).equals(100.0));
-//		logger.info("alt value: " + value(alt));
-		assertTrue(value(alt).equals(150.0));
+//		logger.info("opt1 eval: " + eval(opt1));
+		assertTrue(eval(opt1).equals(150.0));
+//		logger.info("opt2 eval: " + eval(opt2));
+		assertTrue(eval(opt2).equals(500.0));
+//		logger.info("opt3 eval: " + eval(opt3));
+		assertTrue(eval(opt3).equals(100.0));
+//		logger.info("alt eval: " + eval(alt));
+		assertTrue(eval(alt).equals(150.0));
 
 		pm.putValue("x1", 10.0);
 		pm.putValue("y1", 20.0);
-//		logger.info("opt value: " + value(alt));
+//		logger.info("opt eval: " + eval(alt));
 		logger.info("pm context 1: " + pm);
-		assertTrue(value(alt).equals(500.0));
+		assertTrue(eval(alt).equals(500.0));
 		
 		pm.putValue("x2", 40.0);
 		pm.putValue("y2", 50.0);
 		logger.info("pm context 2: " + pm);
-//		logger.info("opt valueX: " + value(alt));
-		assertTrue(value(alt).equals(100.0));
+//		logger.info("opt valueX: " + eval(alt));
+		assertTrue(eval(alt).equals(100.0));
 	}
 
 	@Test
@@ -133,9 +133,9 @@ public class ConditionalTaskTest {
 //		Runnable update = new Runnable() {
 //			 public void run() {
 //				 try {
-//					while ((Double)value(pm, "x") < 25.0) {
-//						 set(x, value(x) + 1.0);
-//						 System.out.println("running ... " + value(pm, "x"));
+//					while ((Double)eval(pm, "x") < 25.0) {
+//						 set(x, eval(x) + 1.0);
+//						 System.out.println("running ... " + eval(pm, "x"));
 //						 Thread.sleep(200);
 //					}
 //				} catch (Exception e) {
@@ -151,8 +151,8 @@ public class ConditionalTaskTest {
 //				y);
 //		
 //		add(pm, vloop);
-//		assertEquals(value(vloop), 20.0);
+//		assertEquals(eval(vloop), 20.0);
 
-//		logger.info("loop value: " + value(pm, "vloop"));
+//		logger.info("loop eval: " + eval(pm, "vloop"));
 	}
 }

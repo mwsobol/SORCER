@@ -200,7 +200,7 @@ abstract public class SorcerRequestor implements SorcerConstants {
 		String hn = System.getenv("IGRID_WEBSTER_INTERFACE");
 
 		if (hn != null && hn.length() > 0) {
-			logger.debug("webster hostname as the system environment value: "
+			logger.debug("webster hostname as the system environment eval: "
 					+ hn);
 			return hn;
 		}
@@ -208,7 +208,7 @@ abstract public class SorcerRequestor implements SorcerConstants {
 		hn = System.getProperty(R_WEBSTER_INTERFACE);
 		if (hn != null && hn.length() > 0) {
 			logger
-					.debug("webster hostname as '" + R_WEBSTER_INTERFACE + "' system property value: "
+					.debug("webster hostname as '" + R_WEBSTER_INTERFACE + "' system property eval: "
 							+ hn);
 			return hn;
 		}
@@ -216,14 +216,14 @@ abstract public class SorcerRequestor implements SorcerConstants {
 		hn = props.getProperty(R_WEBSTER_INTERFACE);
 		if (hn != null && hn.length() > 0) {
 			logger
-					.debug("webster hostname as '" + R_WEBSTER_INTERFACE + "' provider property value: "
+					.debug("webster hostname as '" + R_WEBSTER_INTERFACE + "' provider property eval: "
 							+ hn);
 			return hn;
 		}
 
 		try {
 			hn = Sorcer.getHostName();
-			logger.debug("webster hostname as the local host value: " + hn);
+			logger.debug("webster hostname as the local host eval: " + hn);
 		} catch (UnknownHostException e) {
 			logger.error("Cannot determine the webster hostname.");
 		}

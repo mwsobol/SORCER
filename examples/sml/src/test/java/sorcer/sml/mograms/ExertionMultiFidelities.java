@@ -24,6 +24,7 @@ import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.value;
+import static sorcer.mo.operator.putValue;
 
 /**
  * Created by Mike Sobolewski on 06/24/16.
@@ -115,7 +116,7 @@ public class ExertionMultiFidelities {
 		Morpher t4mrp = (mgr, mFi, context) -> {
 			if (mFi.getPath().equals("t4")) {
 				if (((Double) value((Context)context, "result/y")) >= 200.0) {
-					setValue((Context)context, "result/y", 300.0);
+					putValue((Context)context, "result/y", 300.0);
 				}
 			}
 		};

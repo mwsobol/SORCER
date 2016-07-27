@@ -390,7 +390,7 @@ public class ActivateWrapper implements Remote, Serializable {
     /*
      * Utility method that converts a <code>URL[]</code> into a corresponding,
      * space-separated string with the same array elements. Note that if the
-     * array has zero elements, the return value is null, not the empty string.
+     * array has zero elements, the return eval is null, not the empty string.
      */
     private static String urlsToPath(URL[] urls) {
         //TODO - check if spaces in file paths are properly escaped (i.e.%

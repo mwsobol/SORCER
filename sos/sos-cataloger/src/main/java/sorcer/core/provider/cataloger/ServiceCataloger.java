@@ -75,7 +75,7 @@ import java.util.concurrent.ConcurrentMap;
  * <ul>
  * <li>It uses <code>ServiceDiscoveryManager</code> with lookup cache.<br>
  * <li>It uses an internal map for storing services called {@link CatalogerInfo}
- * <li>The key of the map is an {@link InterfaceList}, the value is the list of
+ * <li>The key of the map is an {@link InterfaceList}, the eval is the list of
  * service proxies (<code>ServiceItem<code>s)
  * <li>{@link InterfaceList} is a list of interfaces with <code>equals</code>
  * overridden such that for <code>(interfaceList1.equals(interfaceList2)</code>
@@ -90,7 +90,7 @@ import java.util.concurrent.ConcurrentMap;
  * <ol>
  * <li><code>addServiceItem(SeviceItem)</code>: adds an entry to this hash map
  * such that the key is the <code>InterfaceList</code> describing the service.
- * value is the serviceItem itself. Value is added always to the first to
+ * eval is the serviceItem itself. Value is added always to the first to
  * improve load balancing heuristics (assuming that the latest served service is
  * always removed and added to the end
  * 
@@ -104,7 +104,7 @@ import java.util.concurrent.ConcurrentMap;
  * 
  * <li> <code>getServiceMethods())</code> returns a hash map with the key as a
  * service interface (those interfaces package name starting with
- * <code>sorcer.</code>) and its value is a list of interface's method names.
+ * <code>sorcer.</code>) and its eval is a list of interface's method names.
  * 
  * <li> <code>getMethodContext(providerName, methodName))</code> returns the
  * template context with which the provider is registered. This template context
@@ -401,13 +401,13 @@ public class ServiceCataloger extends ServiceProvider implements Cataloger {
 	 * overridden <code>equals</code> such that it follows the following
 	 * semantics: <code>arrayList1.equals(arrayList2</code> iff all interfaces
 	 * of arrayList2 are contained in arrayList1.<br>
-	 * The key value in <code>InterfaceList</code> is the list of service items
+	 * The key eval in <code>InterfaceList</code> is the list of service items
 	 * implementing its key interfaces. Methods <code>get</code> and
 	 * <code>put</code> are overridden to do nothing.
 	 * <p>
 	 * The method <code>addServiceItem(SeviceItem)</code> adds an entry to this
 	 * map such that the key is the <code>InterfaceList</code> describing this
-	 * service, the value is the serviceItem itself.
+	 * service, the eval is the serviceItem itself.
 	 * <p>
 	 * The method
 	 * <code>getServiceItem(String[] interfaces, String providerName)</code> not
@@ -1066,7 +1066,7 @@ public class ServiceCataloger extends ServiceProvider implements Cataloger {
 		/**
 		 * Returns a list of selectors of <code>serviceType</code> along with
 		 * hash tables per each interface. The hash table key is an interface
-		 * name and the value is a list of all interface selectors.
+		 * name and the eval is a list of all interface selectors.
 		 * 
 		 * @param serviceType
 		 * @return list of selectors of serviceType and its superinterface hash
@@ -1094,7 +1094,7 @@ public class ServiceCataloger extends ServiceProvider implements Cataloger {
 		/**
 		 * Returns a list of maps per each interface in the array clazz
 		 * such that they are registered by the service provider as sorcerTypes.
-		 * The hash table key is an interface name and the value is a list of
+		 * The hash table key is an interface name and the eval is a list of
 		 * all interface selectors.
 		 * 
 		 * @param clazz
@@ -1251,7 +1251,7 @@ public class ServiceCataloger extends ServiceProvider implements Cataloger {
 
 	/**
 	 * Returns at most maxMatches items matching the template, plus the total
-	 * number of items that match the template. The return value is never null,
+	 * number of items that match the template. The return eval is never null,
 	 * and the returned items array is only null if maxMatches is zero. For each
 	 * returned item, if the service object cannot be deserialized, the service
 	 * field of the item is set to null and no exception is thrown. Similarly,
@@ -1263,7 +1263,7 @@ public class ServiceCataloger extends ServiceProvider implements Cataloger {
 	 * @param maxMatches
 	 * @return a ServiceMatches instance that contains at most maxMatches items
 	 *         matching the template, plus the total number of items that match
-	 *         the template. The return value is never null, and the returned
+	 *         the template. The return eval is never null, and the returned
 	 *         items array is only null if maxMatches is zero.
 	 * @throws RemoteException
 	 */

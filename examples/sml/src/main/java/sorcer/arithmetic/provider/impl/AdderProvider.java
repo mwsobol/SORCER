@@ -44,7 +44,7 @@ public class AdderProvider extends ServiceTasker implements RemoteAdder {
 	@Override
 	public Context add2(Context context) throws RemoteException, ContextException, MonitorException {
 		Context out = arithmometer.add(context);
-		out.putValue("result/value", (double)value(out, "result/value") + 100.0);
+		out.putValue("result/eval", (double)value(out, "result/eval") + 100.0);
 		return out;
 	}
 

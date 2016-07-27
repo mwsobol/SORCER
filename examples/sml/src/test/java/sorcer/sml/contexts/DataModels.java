@@ -8,6 +8,7 @@ import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.core.context.ListContext;
 import sorcer.core.context.model.ent.Entry;
+import sorcer.eo.operator;
 import sorcer.service.Context;
 
 import java.net.URL;
@@ -44,7 +45,7 @@ public class DataModels {
         assertTrue(get(cxt, "arg/x1").equals(1.1));
         assertTrue(asis(cxt, "arg/x1").equals(1.1));
 
-        // aliasing with an reactive value entry - rvEnt
+        // aliasing with an reactive eval entry - rvEnt
         put(cxt, rvEnt("arg/x1", value(cxt, "arg/x5")));
         assertTrue(value(cxt, "arg/x1").equals(1.5));
 
@@ -84,15 +85,15 @@ public class DataModels {
 
         Entry<Double> in = inEnt("arg/x2", 10.0);
         assertTrue(path(in).equals("arg/x2"));
-        assertTrue(value(in).equals(10.0));
+        assertTrue(operator.eval(in).equals(10.0));
 
         Entry<Double> out = outEnt("arg/y", 20.0);
         assertTrue(path(out).equals("arg/y"));
-        assertTrue(value(out).equals(20.0));
+        assertTrue(operator.eval(out).equals(20.0));
 
         Entry<Double> inout = inoutEnt("arg/z", 30.0);
         assertTrue(path(inout).equals("arg/z"));
-        assertTrue(value(inout).equals(30.0));
+        assertTrue(operator.eval(inout).equals(30.0));
 
     }
 
@@ -111,11 +112,11 @@ public class DataModels {
 
         assertTrue(cxt instanceof Context);
 
-        // return the value at index 1 and 6 in cxt
+        // return the eval at index 1 and 6 in cxt
         assertTrue(get(cxt, 1).equals(1.1));
         assertTrue(get(cxt, 6).equals(1.6));
 
-        // return the value at position 1 and 6 in cxt
+        // return the eval at position 1 and 6 in cxt
         assertTrue(getAt(cxt, 1).equals(1.1));
         assertTrue(getAt(cxt, 6).equals(1.6));
 
@@ -219,12 +220,12 @@ public class DataModels {
     public void linkedContext() throws Exception {
 
         Context ac = context("add",
-                inEnt("arg1/value", 90.0),
-                inEnt("arg2/value", 110.0));
+                inEnt("arg1/eval", 90.0),
+                inEnt("arg2/eval", 110.0));
 
         Context mc = context("multiply",
-                inEnt("arg1/value", 10.0),
-                inEnt("arg2/value", 70.0));
+                inEnt("arg1/eval", 10.0),
+                inEnt("arg2/eval", 70.0));
 
         Context lc = context("invoke");
 
@@ -234,11 +235,11 @@ public class DataModels {
         ac = context(getLink(lc, "add"));
         mc = context(getLink(lc, "multiply"));
 
-        assertEquals(value(ac, "arg1/value"), 90.0);
-        assertEquals(value(mc, "arg2/value"), 70.0);
+        assertEquals(value(ac, "arg1/eval"), 90.0);
+        assertEquals(value(mc, "arg2/eval"), 70.0);
 
-        assertEquals(value(lc, "add/arg1/value"), 90.0);
-        assertEquals(value(lc, "multiply/arg2/value"), 70.0);
+        assertEquals(value(lc, "add/arg1/eval"), 90.0);
+        assertEquals(value(lc, "multiply/arg2/eval"), 70.0);
 
     }
 
@@ -246,40 +247,40 @@ public class DataModels {
     @Test
     public void sharedContext() throws Exception {
 
-        // two contexts ac and mc sharing arg1/value
-        // and arg3/value values over the network
+        // two contexts ac and mc sharing arg1/eval
+        // and arg3/eval values over the network
         Context ac = context("add",
-                inEnt("arg1/value", 90.0),
-                inEnt("arg2/value", 110.0),
-                inEnt("arg3/value", 100.0));
+                inEnt("arg1/eval", 90.0),
+                inEnt("arg2/eval", 110.0),
+                inEnt("arg3/eval", 100.0));
 
-        // make arg1/value persistent
-        URL a1vURL = storeArg(ac, "arg1/value");
+        // make arg1/eval persistent
+        URL a1vURL = storeArg(ac, "arg1/eval");
 
-        // make arg1/value in mc the same as in ac
+        // make arg1/eval in mc the same as in ac
         Context mc = context("multiply",
-                dbInEnt("arg1/value", a1vURL),
-                inEnt("arg2/value", 70.0),
-                inEnt("arg3/value", 200.0));
+                dbInEnt("arg1/eval", a1vURL),
+                inEnt("arg2/eval", 70.0),
+                inEnt("arg3/eval", 200.0));
 
-        // sharing arg1/value from mc in ac
-        assertTrue(value(ac, "arg1/value").equals(90.0));
-        assertTrue(value(mc, "arg1/value").equals(90.0));
+        // sharing arg1/eval from mc in ac
+        assertTrue(value(ac, "arg1/eval").equals(90.0));
+        assertTrue(value(mc, "arg1/eval").equals(90.0));
 
-        put(mc, "arg1/value", 200.0);
+        put(mc, "arg1/eval", 200.0);
 
-        assertTrue(value(ac, "arg1/value").equals(200.0));
-        assertTrue(value(mc, "arg1/value").equals(200.0));
+        assertTrue(value(ac, "arg1/eval").equals(200.0));
+        assertTrue(value(mc, "arg1/eval").equals(200.0));
 
-        // sharing arg3/value from ac in mc
-        assertTrue(value(ac, "arg3/value").equals(100.0));
-        assertTrue(value(mc, "arg3/value").equals(200.0));
-        URL a3vURL = storeArg(mc, "arg3/value");
-        add(ac, ent("arg3/value", a3vURL));
+        // sharing arg3/eval from ac in mc
+        assertTrue(value(ac, "arg3/eval").equals(100.0));
+        assertTrue(value(mc, "arg3/eval").equals(200.0));
+        URL a3vURL = storeArg(mc, "arg3/eval");
+        add(ac, ent("arg3/eval", a3vURL));
 
-        put(ac, "arg1/value", 300.0);
-        assertTrue(value(ac, "arg1/value").equals(300.0));
-        assertTrue(value(mc, "arg1/value").equals(300.0));
+        put(ac, "arg1/eval", 300.0);
+        assertTrue(value(ac, "arg1/eval").equals(300.0));
+        assertTrue(value(mc, "arg1/eval").equals(300.0));
 
     }
 

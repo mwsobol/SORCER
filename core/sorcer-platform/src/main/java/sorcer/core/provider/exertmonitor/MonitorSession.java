@@ -438,7 +438,7 @@ public class MonitorSession extends ArrayList<MonitorSession> implements Monitor
     /**
 	 * 
 	 * Searches if any SessionResource exists with this parent session with a
-	 * child session having the same value for the cookie.
+	 * child session having the same eval for the cookie.
 	 * 
 	 * @param cookie for which corresponding to a SessionResource contained
 	 *            in this session resource

@@ -18,6 +18,7 @@
 package sorcer.core.context;
 
 import sorcer.service.*;
+import sorcer.service.modeling.ContextModel;
 
 import java.rmi.RemoteException;
 
@@ -31,10 +32,10 @@ public class Copier implements Evaluation<Context> {
 	private Context toContext;
 	private Arg[] toEntries;
 
-	public Copier(Context fromContext, Arg[] fromEntries, Context toContext, Arg[] toEntries) throws EvaluationException {
-		this.fromContext = fromContext;
+	public Copier(ContextModel fromContext, Arg[] fromEntries, ContextModel toContext, Arg[] toEntries) throws EvaluationException {
+		this.fromContext = (Context)fromContext;
 		this.fromEntries = fromEntries;
-		this.toContext = toContext;
+		this.toContext = (Context)toContext;
 		this.toEntries = toEntries;
 		if (fromEntries.length != toEntries.length)
 			throw new EvaluationException("Sizes of from and to arguments do not match");

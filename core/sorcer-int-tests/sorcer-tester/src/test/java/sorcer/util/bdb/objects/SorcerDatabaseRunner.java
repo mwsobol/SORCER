@@ -336,7 +336,7 @@ public class SorcerDatabaseRunner {
 	}
 	
 	 /**
-     * Get the context names returned by an iterator of entity value objects.
+     * Get the context names returned by an iterator of entity eval objects.
 	 * @throws ClassNotFoundException 
 	 * @throws IOException 
      */
@@ -352,7 +352,7 @@ public class SorcerDatabaseRunner {
 		
 	
 	 /**
-     * Get the table names returned by an iterator of entity value objects.
+     * Get the table names returned by an iterator of entity eval objects.
 	 * @throws ClassNotFoundException 
 	 * @throws IOException 
      */
@@ -367,7 +367,7 @@ public class SorcerDatabaseRunner {
 	}
 	
 	 /**
-     * Get the exertion names returned by an iterator of entity value objects.
+     * Get the exertion names returned by an iterator of entity eval objects.
 	 * @throws ClassNotFoundException 
 	 * @throws IOException 
      */
@@ -382,7 +382,7 @@ public class SorcerDatabaseRunner {
 	}
 	
 	 /**
-     * Get the UuidObject names returned by an iterator of entity value objects.
+     * Get the UuidObject names returned by an iterator of entity eval objects.
 	 * @throws ClassNotFoundException 
 	 * @throws IOException 
      */
@@ -397,7 +397,7 @@ public class SorcerDatabaseRunner {
 	}
 	
     /**
-     * Print the objects returned by an iterator of entity value objects.
+     * Print the objects returned by an iterator of entity eval objects.
      * @throws ClassNotFoundException 
      * @throws IOException 
      */

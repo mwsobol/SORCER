@@ -1,7 +1,6 @@
 package sorcer.core.context.model.par;
 
 import groovy.lang.Closure;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -14,6 +13,7 @@ import sorcer.arithmetic.tester.provider.impl.SubtractorImpl;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.core.provider.rendezvous.ServiceJobber;
+import sorcer.eo.operator;
 import sorcer.service.*;
 import sorcer.util.Sorcer;
 
@@ -35,7 +35,7 @@ import static sorcer.po.operator.add;
 import static sorcer.po.operator.*;
 import static sorcer.po.operator.map;
 import static sorcer.po.operator.put;
-import static sorcer.po.operator.set;
+import static sorcer.mo.operator.*;
 
 
 /**
@@ -55,10 +55,10 @@ public class ParModelTest {
 		add(pm, par("x", 10.0), par("y", 20.0));
 		add(pm, invoker("add", "x + y", args("x", "y")));
 
-//		logger.info("adder value: " + value(pm, "add"));
+//		logger.info("adder eval: " + eval(pm, "add"));
 		assertEquals(value(pm, "add"), 30.0);
-		set(pm, "x", 20.0);
-//		assertEquals(value(pm, "add"), 40.0);
+		setValue(pm, "x", 20.0);
+//		assertEquals(eval(pm, "add"), 40.0);
 	}
 
 	@Test
@@ -73,12 +73,12 @@ public class ParModelTest {
 		assertEquals(pm.getValue("add"), 30.0);
 
 		responseUp(pm, "add");
-//		logger.info("pm context value: " + pm.getValue());
+//		logger.info("pm context eval: " + pm.getValue());
 		assertEquals(pm.getValue(), 30.0);
 
 		pm.putValue("x", 100.0);
 		pm.putValue("y", 200.0);
-//		logger.info("add value: " + pm.getValue("add"));
+//		logger.info("add eval: " + pm.getValue("add"));
 		assertEquals(pm.getValue("add"), 300.0);
 
 		assertEquals(pm.invoke(context(inEnt("x", 200.0), inEnt("y", 300.0))), 500.0);
@@ -100,13 +100,13 @@ public class ParModelTest {
 		assertEquals(y.getValue(), 20.0);
 		assertEquals(pm.getValue("y"), 20.0);
 
-		logger.info("add context value: " + pm.getValue("add"));
-		logger.info("add par value: " + add.getValue());
+		logger.info("add context eval: " + pm.getValue("add"));
+		logger.info("add par eval: " + add.getValue());
 		assertEquals(add.getValue(), 30.0);
 		assertEquals(pm.getValue("add"), 30.0);
 
 		responseUp(pm, "add");
-		logger.info("pm context value: " + pm.invoke(null));
+		logger.info("pm context eval: " + pm.invoke(null));
 		assertEquals(pm.invoke(null), 30.0);
 
 		x = pm.getPar("x");
@@ -129,7 +129,7 @@ public class ParModelTest {
 		assertEquals(value(pm, "y"), 20.0);
 		assertEquals(value(pm, "add"), 30.0);
 
-		assertEquals(value(pm), 30.0);
+		assertEquals(operator.eval(pm), 30.0);
 	}
 	
 	@Test
@@ -143,7 +143,7 @@ public class ParModelTest {
 		Par x = par(pm, "x");
 		logger.info("par x: " + x);
 		set(x, 20.0);
-		logger.info("val x: " + value(x));
+		logger.info("val x: " + operator.eval(x));
 		logger.info("val x: " + value(pm, "x"));
 
 		put(pm, "y", 40.0);
@@ -153,7 +153,7 @@ public class ParModelTest {
 		assertEquals(value(pm, "add"), 60.0);
 
 		// get modeling taget
-		assertEquals(value(pm), 60.0);
+		assertEquals(operator.eval(pm), 60.0);
 
 		add(pm, par("x", 10.0), par("y", 20.0));
 		assertEquals(value(pm, "x"), 10.0);
@@ -163,13 +163,13 @@ public class ParModelTest {
 		assertEquals(value(pm, "add"), 30.0);
 
 		value(pm, "add");
-		assertEquals(value(pm), 30.0);
+		assertEquals(operator.eval(pm), 30.0);
 
 		// with new arguments, closure
 		assertTrue(value(pm, par("x", 20.0), par("y", 30.0)).equals(50.0));
 
 		add(pm, par("z", invoker("(x * y) + add", pars("x", "y", "add"))));
-		logger.info("z value: " + value(pm, "z"));
+		logger.info("z eval: " + value(pm, "z"));
 		assertEquals(value(pm, "z"), 650.0);
 	}
 		
@@ -180,14 +180,14 @@ public class ParModelTest {
 
 		// mapping parameters to cxt, m1 and m2 are par aliases 
 		Par p1 = map(par("p1", "design/in"), cxt);
-		assertTrue(value(p1).equals(25.0));
+		assertTrue(operator.eval(p1).equals(25.0));
 		set(p1, 30.0);
-		assertTrue(value(p1).equals(30.0));
+		assertTrue(operator.eval(p1).equals(30.0));
 		
 		Par p2 = map(par("p2", "url"), cxt);
-		assertEquals(value(p2), "myUrl");
+		assertEquals(operator.eval(p2), "myUrl");
 		set(p2, "newUrl");
-		assertEquals(value(p2), "newUrl");
+		assertEquals(operator.eval(p2), "newUrl");
 	}
 	
 	@Test
@@ -252,16 +252,16 @@ public class ParModelTest {
 	
 	@Test
 	public void persistableParsTest() throws SignatureException, ExertionException, ContextException, IOException {	
-		// persistable just indicates that parameter is set given value that can be persist,
-		// for example when value(par) is invoked
+		// persistable just indicates that parameter is set given eval that can be persist,
+		// for example when eval(par) is invoked
 		Par dbp1 = persistent(par("design/in", 25.0));
 		Par dbp2 = dbPar("url", "myUrl1");
 
 		assertFalse(asis(dbp1) instanceof URL);
 		assertTrue(asis(dbp2) instanceof URL);
 		
-		assertTrue(value(dbp1).equals(25.0));
-		assertTrue(value(dbp2).equals("myUrl1"));
+		assertTrue(operator.eval(dbp1).equals(25.0));
+		assertTrue(operator.eval(dbp2).equals("myUrl1"));
 
 		assertTrue(asis(dbp1) instanceof URL);
 		assertTrue(asis(dbp2) instanceof URL);
@@ -281,13 +281,13 @@ public class ParModelTest {
 
 		// persistent par
 		Par dbIn = persistent(map(par("dbIn", "design/in"), cxt));
-		assertTrue(value(dbIn).equals(25.0));  	// is persisted
+		assertTrue(operator.eval(dbIn).equals(25.0));  	// is persisted
 		assertTrue(dbIn.asis().equals("design/in"));
-		assertTrue(value((Evaluation) asis(cxt, "design/in")).equals(25.0));
+		assertTrue(operator.eval((Evaluation) asis(cxt, "design/in")).equals(25.0));
 		assertTrue(value(cxt, "design/in").equals(25.0));
 
 		set(dbIn, 30.0); 	// is persisted
-		assertTrue(value(dbIn).equals(30.0));
+		assertTrue(operator.eval(dbIn).equals(30.0));
 
 		// associated context is updated accordingly
 		assertTrue(value(cxt, "design/in").equals(30.0));
@@ -296,10 +296,10 @@ public class ParModelTest {
 
 		// not persistent par
 		Par sorcer = map(par("sorcer", "url"), cxt);
-		assertEquals(value(sorcer), "htt://sorcersoft.org");
+		assertEquals(operator.eval(sorcer), "htt://sorcersoft.org");
 
 		set(sorcer, "htt://sorcersoft.org/sobol");
-		assertTrue(value(sorcer).equals("htt://sorcersoft.org/sobol"));
+		assertTrue(operator.eval(sorcer).equals("htt://sorcersoft.org/sobol"));
 	}
 
 	@Test
@@ -309,13 +309,13 @@ public class ParModelTest {
 		Par x1 = par(cxt, "x1", "design/in1");
 		Par x2 = map(par("x2", "design/in2"), cxt);
 
-		assertTrue(value(x1).equals(25.0));
+		assertTrue(operator.eval(x1).equals(25.0));
 		set(x1, 45.0);
-		assertTrue(value(x1).equals(45.0));
+		assertTrue(operator.eval(x1).equals(45.0));
 
-		assertTrue(value(x2).equals(35.0));
+		assertTrue(operator.eval(x2).equals(35.0));
 		set(x2, 55.0);
-		assertTrue(value(x2).equals(55.0));
+		assertTrue(operator.eval(x2).equals(55.0));
 		
 		ParModel pc = parModel(x1, x2);
 		assertTrue(value(pc, "x1").equals(45.0));
@@ -358,20 +358,20 @@ public class ParModelTest {
 		// update par references
 		j1 = exert(j1);
 		c4 = taskContext("j1/t4", j1);
-		logger.info("j1 value: " + upcontext(j1));
-		logger.info("j1p value: " + value(j1p));
+		logger.info("j1 eval: " + upcontext(j1));
+		logger.info("j1p eval: " + operator.eval(j1p));
 		
-		// get job parameter value
-		assertTrue(value(j1p).equals(400.0));
+		// get job parameter eval
+		assertTrue(operator.eval(j1p).equals(400.0));
 		
-		// set job parameter value
+		// set job parameter eval
 		set(j1p, 1000.0);
-		assertTrue(value(j1p).equals(1000.0));
+		assertTrue(operator.eval(j1p).equals(1000.0));
 
 		// par model with mograms
 		ParModel pc = parModel(x1p, x2p, j1p);
 		exert(j1);
-		// j1p is the alias to context value of j1 at j1/t3/result/y
+		// j1p is the alias to context eval of j1 at j1/t3/result/y
 		assertTrue(value(pc, "j1p").equals(400.0));
 	}
 	
@@ -413,8 +413,8 @@ public class ParModelTest {
 		j1 = exert(j1);
 		c4 = taskContext("j1/t4", j1);
 		
-		// get job parameter value
-		assertTrue(value(j1p).equals(400.0));
+		// get job parameter eval
+		assertTrue(operator.eval(j1p).equals(400.0));
 		
 		logger.info("j1 job context: " + upcontext(j1));
 		
@@ -481,12 +481,12 @@ public class ParModelTest {
 		
 		assertEquals(pm.getValue("x"), 10.0);
 		assertEquals(pm.getValue("y"), 20.0);
-		logger.info("condition value: " + flag.isTrue());
+		logger.info("condition eval: " + flag.isTrue());
 		assertEquals(flag.isTrue(), false);
 		
 		pm.putValue("x", 300.0);
 		pm.putValue("y", 200.0);
-		logger.info("condition value: " + flag.isTrue());
+		logger.info("condition eval: " + flag.isTrue());
 		assertEquals(flag.isTrue(), true);
 	}
 
@@ -501,12 +501,12 @@ public class ParModelTest {
 		
 		assertEquals(pm.getValue("x"), 10.0);
 		assertEquals(pm.getValue("y"), 20.0);
-		logger.info("condition value: " + flag.isTrue());
+		logger.info("condition eval: " + flag.isTrue());
 		assertEquals(flag.isTrue(), false);
 		
 		pm.putValue("x", 300.0);
 		pm.putValue("y", 200.0);
-		logger.info("condition value: " + flag.isTrue());
+		logger.info("condition eval: " + flag.isTrue());
 		assertEquals(flag.isTrue(), true);
 	}
 
@@ -531,7 +531,7 @@ public class ParModelTest {
 
 		Object result =  value((Context)value(pm,"getSphereVolume"), "sphere/volume");
 
-//		logger.info("val: " + value(ent));
+//		logger.info("val: " + eval(ent));
 		assertTrue(result.equals(33510.32163829113));
 
 		// invoke the agent directly
@@ -542,7 +542,7 @@ public class ParModelTest {
 						new URL(Sorcer.getWebsterUrl()
 								+ "/sorcer-tester-"+sorcerVersion+".jar")));
 
-//		logger.info("val: " + value(pm, "sphere/volume"));
+//		logger.info("val: " + eval(pm, "sphere/volume"));
 		assertTrue(value(pm, "sphere/volume").equals(33510.32163829113));
 	}
 }

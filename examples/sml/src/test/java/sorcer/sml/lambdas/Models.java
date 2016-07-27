@@ -10,6 +10,7 @@ import sorcer.arithmetic.provider.impl.*;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.plexus.Morpher;
 import sorcer.core.provider.rendezvous.ServiceConcatenator;
+import sorcer.eo.operator;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
 
@@ -37,9 +38,9 @@ public class Models {
 		Model mdl = model(ent("multiply/x1", 10.0), ent("multiply/x2", 50.0),
 				ent("add/x1", 20.0), ent("add/x2", 80.0),
 				lambda("add", (Context<Double> model) ->
-						value(model, "add/x1") + value(model, "add/x2")),
+						v(model, "add/x1") + v(model, "add/x2")),
 				lambda("multiply", (Context<Double> model) ->
-						val(model, "multiply/x1") * val(model, "multiply/x2")),
+						v(model, "multiply/x1") * v(model, "multiply/x2")),
 				lambda("subtract", (Context<Double> model) ->
 						v(model, "multiply") - v(model, "add")),
 				response("subtract", "multiply", "add"));
@@ -58,9 +59,9 @@ public class Models {
 		Model mdl = model(ent("multiply/x1", 10.0), ent("multiply/x2", 50.0),
 				ent("add/x1", 20.0), ent("add/x2", 80.0),
 				lambda("add", (Context<Double> model) ->
-						value(model, "add/x1") + value(model, "add/x2")),
+						v(model, "add/x1") + v(model, "add/x2")),
 				lambda("multiply", (Context<Double> model) ->
-						val(model, "multiply/x1") * val(model, "multiply/x2")),
+						v(model, "multiply/x1") * v(model, "multiply/x2")),
 				lambda("subtract", (Context<Double> model) ->
 						v(model, "multiply") - v(model, "add")),
 				response("subtract", "multiply", "add"));
@@ -81,9 +82,9 @@ public class Models {
 				ent("add/x1", 20.0), ent("add/x2", 80.0),
 				ent("multiply/done", false),
 				lambda("add", (Context<Double> model) ->
-						value(model, "add/x1") + value(model, "add/x2")),
+						v(model, "add/x1") + v(model, "add/x2")),
 				lambda("multiply", (Context<Double> model) ->
-						val(model, "multiply/x1") * val(model, "multiply/x2")),
+						v(model, "multiply/x1") * v(model, "multiply/x2")),
 				lambda("subtract", (Context<Double> model) ->
 						v(model, "multiply") - v(model, "add")),
 				lambda("multiply2", (Context<Object> cxt) -> {
@@ -126,16 +127,16 @@ public class Models {
 		Model mo = model(ent("multiply/x1", 10.0), ent("multiply/x2", 50.0),
 				ent("add/x1", 20.0), ent("add/x2", 80.0),
 				lambda("add", (Context <Double> model) ->
-						value(model, "add/x1") + value(model, "add/x2")),
+						v(model, "add/x1") + v(model, "add/x2")),
 				lambda("multiply", (Context <Double> model) ->
-						val(model, "multiply/x1") * val(model, "multiply/x2")),
+						v(model, "multiply/x1") * v(model, "multiply/x2")),
 				lambda("subtract", (Context <Double> model) ->
 						v(model, "multiply") - v(model, "add")),
 				lambda("multiply2", "multiply", (Service entry, Context scope, Arg[] args) -> {
 					double out = (double) exec(entry, scope);
 					if (out > 400) {
-						setValue(scope, "multiply/x1", 20.0);
-						setValue(scope, "multiply/x2", 50.0);
+						putValue(scope, "multiply/x1", 20.0);
+						putValue(scope, "multiply/x2", 50.0);
 						out = (double)exec(entry, scope);
 					}
 					return context(ent("multiply2", out));
@@ -158,11 +159,11 @@ public class Models {
 				ent("add/x1", 20.0), ent("add/x2", 80.0),
 				ent("arg/x1", 30.0), ent("arg/x2", 90.0),
 				lambda("add", (Context <Double> model) ->
-								value(model, "add/x1") + value(model, "add/x2"),
+								v(model, "add/x1") + v(model, "add/x2"),
 						result("add/out",
 								inPaths("add/x1", "add/x2"))),
 				lambda("multiply", (Context <Double> model) ->
-								val(model, "multiply/x1") * val(model, "multiply/x2"),
+								v(model, "multiply/x1") * v(model, "multiply/x2"),
 						result("multiply/out",
 								inPaths("multiply/x1", "multiply/x2"))),
 				lambda("subtract", (Context <Double> model) ->
@@ -224,7 +225,7 @@ public class Models {
 			put(context(task), "arg/x2", 100.0);
 			out = context(exert(task));
 			value = (Double)get(out, "multiply/result");
-			// owerite the original value with a new task
+			// owerite the original eval with a new task
 			return ent("multiply/out", value);
 		};
 
@@ -269,8 +270,8 @@ public class Models {
 		Block lb = block(sig(ServiceConcatenator.class),
 				context(ent("sum", 0.0)),
 				loop(0, 100, task(lambda("sum", (Context<Double> cxt) -> {
-					Double out = value(cxt, "sum") + (Double)value(ti);
-					setValue(context(ti), "arg/x2", (Double)value(context(ti), "arg/x2") + 1.5);
+					Double out = value(cxt, "sum") + (Double) operator.eval(ti);
+					putValue(context(ti), "arg/x2", (Double)value(context(ti), "arg/x2") + 1.5);
 					return out; }))));
 		lb = exert(lb);
 
@@ -290,10 +291,10 @@ public class Models {
 				loop(0, 100, task(lambda("sum", (Context<Double> cxt) -> {
 					Double from = value(cxt, "from");
 					Double to = value(cxt, "to");
-					Double out = value(cxt, "sum") + (Double)value(ti);
-					setValue(context(ti), "arg/x2", (Double)value(context(ti), "arg/x2") + 1.5);
+					Double out = value(cxt, "sum") + (Double) operator.eval(ti);
+					putValue(context(ti), "arg/x2", (Double)value(context(ti), "arg/x2") + 1.5);
 
-					// skip value 333 but with increase by 100
+					// skip eval 333 but with increase by 100
 					if (out > from && out < to) {
 						out = value(cxt, "sum") + 100.0;
 					}

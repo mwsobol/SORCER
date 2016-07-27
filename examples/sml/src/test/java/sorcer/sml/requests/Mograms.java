@@ -10,6 +10,7 @@ import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.provider.impl.SubtractorImpl;
 import sorcer.core.provider.rendezvous.ServiceJobber;
+import sorcer.eo.operator;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
 
@@ -45,7 +46,7 @@ public class Mograms {
         assertTrue(get(context, "x1").equals(20.0));
         assertTrue(get(context, "x2").equals(80.0));
 
-        Model out = response(context);
+        Context out = response(context);
         assertEquals(1, size(out));
         assertTrue(get(out, "result/y").equals(100.0));
 
@@ -57,16 +58,16 @@ public class Mograms {
         Model context = model(inEnt("x1", 20.0), inEnt("x2", 80.0),
                 outEnt("result/y", invoker("x1 + x2", ents("x1", "x2"))));
 
-        Model inputs = inputs(context);
+        Context inputs = inputs(context);
         logger.info("inputs : " + inputs(context));
         assertEquals(2, size(inputs));
-        Model outputs = outputs(context);
+        Context outputs = outputs(context);
         assertEquals(1, size(outputs));
         logger.info("outputs : " + outputs(context));
 
         // declare response paths
         responseUp(context, "result/y");
-        Model out = response(context);
+        Context out = response(context);
         assertEquals(1, size(out));
         assertTrue(get(out, "result/y").equals(100.0));
 
@@ -90,10 +91,10 @@ public class Mograms {
 
         logger.info("out : " + out);
         logger.info("out @ arg/x1: " + get(out, "arg/x1"));
-        logger.info("out @ arg/x2: " + value(out, "arg/x2"));
-        logger.info("out @ result/y: " + value(out, "result/y"));
+        logger.info("out @ arg/x2: " + operator.eval(out, "arg/x2"));
+        logger.info("out @ result/y: " + operator.eval(out, "result/y"));
 
-        assertEquals(100.0, value(out, "result/y"));
+        assertEquals(100.0, operator.eval(out, "result/y"));
 
     }
 
@@ -204,7 +205,7 @@ public class Mograms {
 
         Mogram exertion = exert(job);
         logger.info("srv job context: " + upcontext(exertion));
-        logger.info("exertion value @ j1/t3/arg/x2 = " + get(exertion, "j1/t3/arg/x2"));
+        logger.info("exertion eval @ j1/t3/arg/x2 = " + get(exertion, "j1/t3/arg/x2"));
         assertEquals(100.0, get(exertion, "j1/t3/arg/x2"));
 
     }
@@ -231,7 +232,7 @@ public class Mograms {
                         pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
                         pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
 
-        // get the result value
+        // get the result eval
         assertEquals(400.0, exec(job));
 
         // get the subcontext output from the exertion

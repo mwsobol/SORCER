@@ -27,14 +27,14 @@ public interface Incrementor<T> {
 	/**
 	 * Returns the next element of this incrementor.
 	 * 
-	 * @return the next value of this incrementor.
+	 * @return the next eval of this incrementor.
 	 * @exception NoSuchElementException
 	 *                iteration has no more elements.
 	 */
 	T next();
 	
 	/**
-	 * Resets the start value of the incrementor.
+	 * Resets the start eval of the incrementor.
 	 * 
 	 * @return the reseted incrementor.
 	 */

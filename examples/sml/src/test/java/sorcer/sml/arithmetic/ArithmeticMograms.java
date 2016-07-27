@@ -23,7 +23,7 @@ import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.get;
 import static sorcer.eo.operator.loop;
 import static sorcer.eo.operator.value;
-import static sorcer.mo.operator.response;
+import static sorcer.mo.operator.*;
 import static sorcer.po.operator.invoker;
 
 /**
@@ -44,9 +44,9 @@ public class ArithmeticMograms {
 				lambda("add", (Context <Double> model) ->
 						value(model, "add/x1") + value(model, "add/x2"), args("add/x1", "add/x2")),
 				lambda("multiply", (Context <Double> model) ->
-						val(model, "multiply/x1") * val(model, "multiply/x2"), args("multiply/x1", "multiply/x2")),
+						value(model, "multiply/x1") * value(model, "multiply/x2"), args("multiply/x1", "multiply/x2")),
 				lambda("subtract", (Context <Double> model) ->
-						v(model, "multiply") - v(model, "add"), result("add/out",
+						value(model, "multiply") - value(model, "add"), result("add/out",
                         inPaths("multiply", "add"))),
 				response("subtract", "multiply", "add"));
 
@@ -66,14 +66,14 @@ public class ArithmeticMograms {
 				lambda("add", (Context <Double> model) ->
 						value(model, "add/x1") + value(model, "add/x2")),
 				lambda("multiply", (Context <Double> model) ->
-						val(model, "multiply/x1") * val(model, "multiply/x2")),
+						value(model, "multiply/x1") * value(model, "multiply/x2")),
 				lambda("subtract", (Context <Double> model) ->
-						v(model, "multiply") - v(model, "add")),
+						value(model, "multiply") - value(model, "add")),
 				lambda("multiply2", "multiply", (Service entry, Context scope, Arg[] args) -> {
 					double out = (double)exec(entry, scope);
 					if (out > 400) {
-						setValue(scope, "multiply/x1", 20.0);
-						setValue(scope, "multiply/x2", 50.0);
+						putValue(scope, "multiply/x1", 20.0);
+						putValue(scope, "multiply/x2", 50.0);
 						out = (double)exec(entry, scope);
 					}
 					return context(ent("multiply2", out));
@@ -107,11 +107,11 @@ public class ArithmeticMograms {
 						result("add/out",
 								inPaths("add/x1", "add/x2"))),
 				lambda("multiply", (Context <Double> model) ->
-						val(model, "multiply/x1") * val(model, "multiply/x2"),
+								value(model, "multiply/x1") * value(model, "multiply/x2"),
 						result("multiply/out",
 								inPaths("multiply/x1", "multiply/x2"))),
 				lambda("subtract", (Context <Double> model) ->
-						v(model, "multiply/out") - v(model, "add/out"),
+						value(model, "multiply/out") - value(model, "add/out"),
 						result("model/response", inPaths("multiply/out", "add/out"))),
 				response("subtract", "multiply/out", "add/out", "model/response"));
 
@@ -251,8 +251,8 @@ public class ArithmeticMograms {
                         result("block/result", Signature.Direction.OUT)));
 
         Block block = block("block", t4, t5,
-                alt(opt(condition((Context<Double> cxt) -> v(cxt, "t4") > v(cxt, "t5")), t3),
-                        opt(condition((Context<Double> cxt) -> v(cxt, "t4") <= v(cxt, "t5")), t6)));
+                alt(opt(condition((Context<Double> cxt) -> value(cxt, "t4") > value(cxt, "t5")), t3),
+                        opt(condition((Context<Double> cxt) -> value(cxt, "t4") <= value(cxt, "t5")), t6)));
 
 
         Block result = exert(block);

@@ -97,7 +97,7 @@ public class Volume implements Sphere, Cylinder, Serializable {
 		if (scanner.hasNext()) {
 			String key = scanner.next().trim();
 			String value = scanner.next().trim();
-			logger.info("key: " + key + " value: " + value);
+			logger.info("key: " + key + " eval: " + value);
 			if (key.equals("cylinder/radius"))
 				radius = new Double(value);
 			else if (key.equals("cylinder/height"))

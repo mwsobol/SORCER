@@ -314,7 +314,7 @@ public class Contexts implements SorcerConstants {
 	}
 
 	/*
-	 * Return boolean result indicating if the value at the designated path is
+	 * Return boolean result indicating if the eval at the designated path is
 	 * set as an empty leaf node.
 	 */
 	public static boolean isEmptyLeafNode(Context cntxt, String path)
@@ -388,7 +388,7 @@ public class Contexts implements SorcerConstants {
 				try {
 					sb.append(sc.getValue(outPaths[i])).append(cr);
 				} catch (ContextException ex) {
-					sb.append("Unable to retrieve value").append(cr);
+					sb.append("Unable to retrieve eval").append(cr);
 				}
 			}
 		if (inoutPaths != null)
@@ -397,7 +397,7 @@ public class Contexts implements SorcerConstants {
 				try {
 					sb.append(sc.getValue(inoutPaths[i])).append(cr);
 				} catch (ContextException ex) {
-					sb.append("Unable to retrieve value").append(cr);
+					sb.append("Unable to retrieve eval").append(cr);
 				}
 			}
 		return sb.toString();
@@ -1226,7 +1226,7 @@ public class Contexts implements SorcerConstants {
 				while (e.hasMoreElements()) {
 					key = (String) e.nextElement();
 					/*
-					 * java 1.4.0 regex p = Pattern.compile(value); m =
+					 * java 1.4.0 regex p = Pattern.compile(eval); m =
 					 * p.matcher((String)values.get(key)); if (m.find())
 					 * keys.addElement(key);
 					 */
@@ -1364,7 +1364,7 @@ public class Contexts implements SorcerConstants {
 					values.add(attributeName + APS + val);
 			}
 		}
-		// we just added all the attribute-value pairs from
+		// we just added all the attribute-eval pairs from
 		// the top-level context; check first level links,
 		// which in turn will check their links, etc., etc.
 		List<String> paths= context.localLinkPaths();
@@ -1382,7 +1382,7 @@ public class Contexts implements SorcerConstants {
 	}
 
 	/**
-	 * Get all singleton associations (attribute-value pairs) at the specified
+	 * Get all singleton associations (attribute-eval pairs) at the specified
 	 * context node.
 	 * 
 	 * @param context
@@ -1426,7 +1426,7 @@ public class Contexts implements SorcerConstants {
 		Hashtable values;
 		attr = metaAssoc.substring(0, metaAssoc.indexOf(APS));
 		value = metaAssoc.substring(metaAssoc.indexOf(APS) + 1);
-//		System.out.println("attr, value" + attr + "," + value);
+//		System.out.println("attr, eval" + attr + "," + eval);
 		if (!context.isMetaattribute(attr))
 			return false;
 		values = (Hashtable) context.getMetacontext().get(attr);

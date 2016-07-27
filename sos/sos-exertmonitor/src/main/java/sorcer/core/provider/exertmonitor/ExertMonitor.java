@@ -301,7 +301,7 @@ public class ExertMonitor extends ServiceProvider implements MonitoringManagemen
 	 * The spec requires that this method gets all the monitorable exertion
 	 * infos from all the monitor managers and return a Hashtable where
 	 * 
-	 * key -> ExertionReferenceID value -> Some info regarding this exertion
+	 * key -> ExertionReferenceID eval -> Some info regarding this exertion
 	 *
 	 * @throws MonitorException
 	 */

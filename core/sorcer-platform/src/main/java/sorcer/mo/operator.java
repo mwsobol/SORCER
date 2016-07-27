@@ -23,6 +23,7 @@ import sorcer.core.context.MapContext;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.ent.EntModel;
 import sorcer.core.context.model.ent.Entry;
+import sorcer.core.context.model.par.Par;
 import sorcer.core.context.model.par.ParModel;
 import sorcer.core.context.model.srv.Srv;
 import sorcer.core.context.model.srv.SrvModel;
@@ -32,6 +33,7 @@ import sorcer.core.plexus.FidelityManager;
 import sorcer.core.plexus.MorphFidelity;
 import sorcer.core.plexus.Morpher;
 import sorcer.service.*;
+import sorcer.service.modeling.ContextModel;
 import sorcer.service.modeling.Model;
 import sorcer.service.Signature.ReturnPath;
 
@@ -40,10 +42,41 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static sorcer.eo.operator.context;
+
 /**
  * Created by Mike Sobolewski on 4/26/15.
  */
 public class operator {
+
+    public static <T> T putValue(Context<T> context, String path, T value) throws ContextException {
+        context.putValue(path, value);
+        return value;
+    }
+
+    public static Object setValue(Model context, String parname, Object value)
+        throws ContextException {
+        Object parEntry = context.asis(parname);
+        if (parEntry == null)
+            ((ParModel)context).addPar(parname, value);
+        else if (parEntry instanceof Setter) {
+            try {
+                ((Setter) parEntry).setValue(value);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        } else if (parEntry instanceof Par) {
+            Par par = (Par) parEntry;
+            if (par.getScope() != null && par.getContextable() == null)
+                par.getScope().putValue(par.getName(), value);
+        }
+        // just ssetting the eval
+        else {
+            ((ParModel)context).putValue(parname, value);
+            ((ParModel)context).setIsChanged(true);
+        }
+        return value;
+    }
 
     public static EntModel entModel(String name, Signature builder) throws SignatureException {
         EntModel model = (EntModel) sorcer.co.operator.instance(builder);
@@ -63,7 +96,7 @@ public class operator {
         return model;
     }
 
-    public static Context entModel(Object... entries)
+    public static Model entModel(Object... entries)
             throws ContextException {
         if (entries != null && entries.length == 1 && entries[0] instanceof Context) {
             ((Context)entries[0]).setModeling(true);
@@ -77,7 +110,7 @@ public class operator {
         Object[] dest = new Object[entries.length+1];
         System.arraycopy(entries,  0, dest,  1, entries.length);
         dest[0] = model;
-        return sorcer.eo.operator.context(dest);
+        return (Model) context(dest);
     }
 
     public static Model inConn(Model model, Context inConnector) {
@@ -99,23 +132,23 @@ public class operator {
         return model;
     }
 
-    public static Model responseUp(Model model, String... responsePaths) throws ContextException {
+    public static ContextModel responseUp(ContextModel model, String... responsePaths) throws ContextException {
         for (String path : responsePaths)
             ((ServiceContext)model).getMogramStrategy().getResponsePaths().add(new Name(path));
         return model;
     }
 
-    public static Model responseDown(Model model, String... responsePaths) throws ContextException {
+    public static ContextModel responseDown(ContextModel model, String... responsePaths) throws ContextException {
         for (String path : responsePaths)
             ((ServiceContext)model).getMogramStrategy().getResponsePaths().remove(new Name(path));
         return model;
     }
 
-    public static Context result(Model model) throws ContextException {
+    public static Context result(ContextModel model) throws ContextException {
         return ((ServiceContext)model).getMogramStrategy().getOutcome();
     }
 
-    public static Object get(Model model, String path) throws ContextException {
+    public static Object get(ContextModel model, String path) throws ContextException {
         return ((ServiceContext)((ServiceContext)model).getMogramStrategy().getOutcome()).get(path);
     }
 
@@ -124,11 +157,11 @@ public class operator {
         return model;
     }
 
-    public static Context ins(Model model) throws ContextException {
+    public static Context ins(ContextModel model) throws ContextException {
         return inputs(model);
     }
 
-    public static Context allInputs(Model model) throws ContextException {
+    public static Context allInputs(ContextModel model) throws ContextException {
         try {
             return model.getAllInputs();
         } catch (RemoteException e) {
@@ -136,7 +169,7 @@ public class operator {
         }
     }
 
-    public static Context inputs(Model model) throws ContextException {
+    public static Context inputs(ContextModel model) throws ContextException {
         try {
             return model.getInputs();
         } catch (RemoteException e) {
@@ -144,11 +177,11 @@ public class operator {
         }
     }
 
-    public static Context outs(Model model) throws ContextException {
+    public static Context outs(ContextModel model) throws ContextException {
         return outputs(model);
     }
 
-    public static Context outputs(Model model) throws ContextException {
+    public static Context outputs(ContextModel model) throws ContextException {
         try {
             return model.getOutputs();
         } catch (RemoteException e) {
@@ -156,11 +189,11 @@ public class operator {
         }
     }
 
-    public static Object resp(Model model, String path) throws ContextException {
+    public static Object resp(ContextModel model, String path) throws ContextException {
         return response(model, path);
     }
 
-    public static Object response(Model model, String path) throws ContextException {
+    public static Object response(ContextModel model, String path) throws ContextException {
         try {
             return ((ServiceContext)model).getResponseAt(path);
         } catch (RemoteException e) {
@@ -168,11 +201,11 @@ public class operator {
         }
     }
 
-    public static Context resp(Model model) throws ContextException {
+    public static Context resp(ContextModel model) throws ContextException {
         return response(model);
     }
 
-    public static Context response(Model model, Arg... args) throws ContextException {
+    public static Context response(ContextModel model, Arg... args) throws ContextException {
         try {
             return (Context) model.getResponse(args);
         } catch (RemoteException e) {
@@ -301,7 +334,7 @@ public class operator {
         Object[] dest = new Object[items.length+1];
         System.arraycopy(items,  0, dest,  1, items.length);
         dest[0] = model;
-        return sorcer.eo.operator.context(dest);
+        return (Model)context(dest);
     }
 
     public static void run(sorcer.util.Runner runner, Arg... args) throws SignatureException, MogramException {

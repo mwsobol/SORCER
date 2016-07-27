@@ -28,23 +28,23 @@ import sorcer.service.IndexedContext;
  * The Array context has an array like access to a service context. Accessing
  * and setting context values is done via integer indices. Implicit context paths
  * describe i-th element of "array" and are used by the following getters and
- * setters (where: v - value, c - comment, d - description, i - input, o -
+ * setters (where: v - eval, c - comment, d - description, i - input, o -
  * output) as follows:
  * <ol>
- * <li>the value of the i-th element: by v(i) and the setter v(i, obj);<br>
- * implicit path: array/[i]/value<br>
+ * <li>the eval of the i-th element: by v(i) and the setter v(i, obj);<br>
+ * implicit path: array/[i]/eval<br>
  * <li>the comment of the i-th element: by vc(i) and the setter vc(i, comment);<br>
  * implicit path: array/[i]/comment<br>
  * <li>the description of the i-th element: by vd(i) and the setter vd(i, description);<br>
  * implicit path: array/[i]/description
- * <li>the input value of the i-th element: by iv(i) and the setter iv(i, obj);<br>
- * implicit path: array/in/[i]/value<br>
+ * <li>the input eval of the i-th element: by iv(i) and the setter iv(i, obj);<br>
+ * implicit path: array/in/[i]/eval<br>
  * <li>the comment of the i-th element: by ivc(i) and the setter  ivc(i, comment);<br>
  * implicit path: array/in/[i]/comment<br>
  * <li>the description of the i-th element: by ivd(i) and the setter ivd(i, description);<br>
  * implicit path: array/in/[i]/description
- * <li>the output value of the i-th element: by ov(i) and the setter ov(i, obj);<br>
- * implicit path: array/out/[i]/value<br>
+ * <li>the output eval of the i-th element: by ov(i) and the setter ov(i, obj);<br>
+ * implicit path: array/out/[i]/eval<br>
  *<li>the comment of the i-th element: by ovc(i) and the setter ovc(i, comment);<br>
  * implicit path: array/out/[i]/comment<br>
  *<li>the description of the i-th element: by ovd(i) and the setter ovd(i, description);<br>
@@ -55,7 +55,7 @@ public class ArrayContext extends ServiceContext implements IndexedContext,
 
 	private static final long serialVersionUID = 108375572414579267L;
 
-	// maximal value index in a context, excluding comments and descriptions
+	// maximal eval index in a context, excluding comments and descriptions
 	protected int maxIndex = 0;
 
 	/**
@@ -80,11 +80,11 @@ public class ArrayContext extends ServiceContext implements IndexedContext,
 	}
 	
 	/**
-	 * Returns the value at the specified position in this context (v - Value).
+	 * Returns the eval at the specified position in this context (v - Value).
 	 * 
 	 * @param index
-	 *            index of value to return.
-	 * @return value at the specified index in
+	 *            index of eval to return.
+	 * @return eval at the specified index in
 	 * 
 	 * @throws ContextException
 	 */
@@ -93,13 +93,13 @@ public class ArrayContext extends ServiceContext implements IndexedContext,
 	}
 
 	/**
-	 * Replaces the value at the specified position in this context with the
-	 * specified value (v - Value).
+	 * Replaces the eval at the specified position in this context with the
+	 * specified eval (v - Value).
 	 * 
 	 * @param index
-	 *            index of value to replace.
+	 *            index of eval to replace.
 	 * @param value
-	 *            value to be stored at the specified position.
+	 *            eval to be stored at the specified position.
 	 * 
 	 * @throws ContextException
 	 */
@@ -111,12 +111,12 @@ public class ArrayContext extends ServiceContext implements IndexedContext,
 	}
 
 	/**
-	 * Returns the input value at the specified position in this context (iv -
+	 * Returns the input eval at the specified position in this context (iv -
 	 * Input Value).
 	 * 
 	 * @param index
-	 *            index of input value to return.
-	 * @return input value at the specified index in
+	 *            index of input eval to return.
+	 * @return input eval at the specified index in
 	 * 
 	 * @throws ContextException
 	 */
@@ -125,13 +125,13 @@ public class ArrayContext extends ServiceContext implements IndexedContext,
 	}
 
 	/**
-	 * Replaces the input value at the specified position in this context with
-	 * the specified value (iv - Input Value).
+	 * Replaces the input eval at the specified position in this context with
+	 * the specified eval (iv - Input Value).
 	 * 
 	 * @param index
-	 *            index of input value to replace.
+	 *            index of input eval to replace.
 	 * @param value
-	 *            input value to be stored at the specified position.
+	 *            input eval to be stored at the specified position.
 	 * 
 	 * @throws ContextException
 	 */
@@ -144,12 +144,12 @@ public class ArrayContext extends ServiceContext implements IndexedContext,
 	}
 
 	/**
-	 * Returns the output value at the specified position in this context (ov -
+	 * Returns the output eval at the specified position in this context (ov -
 	 * Output Value).
 	 * 
 	 * @param index
-	 *            index of output value to return.
-	 * @return output value at the specified index in
+	 *            index of output eval to return.
+	 * @return output eval at the specified index in
 	 * 
 	 * @throws ContextException
 	 */
@@ -158,13 +158,13 @@ public class ArrayContext extends ServiceContext implements IndexedContext,
 	}
 
 	/**
-	 * Replaces the output value at the specified position in this context with
-	 * the specified value (ov - Output Value).
+	 * Replaces the output eval at the specified position in this context with
+	 * the specified eval (ov - Output Value).
 	 * 
 	 * @param index
-	 *            index of output value to replace.
+	 *            index of output eval to replace.
 	 * @param value
-	 *            output value to be stored at the specified position.
+	 *            output eval to be stored at the specified position.
 	 * 
 	 * @throws ContextException
 	 */
@@ -201,7 +201,7 @@ public class ArrayContext extends ServiceContext implements IndexedContext,
 	}
 
 	/**
-	 * Returns the comment associated with a value at the specified position in
+	 * Returns the comment associated with a eval at the specified position in
 	 * this context (c - Comment).
 	 * 
 	 * @param index
@@ -215,7 +215,7 @@ public class ArrayContext extends ServiceContext implements IndexedContext,
 	}
 
 	/**
-	 * Assigns the comment associated with an input value at the specified
+	 * Assigns the comment associated with an input eval at the specified
 	 * position in this context (c - Comment).
 	 * 
 	 * @param index
@@ -228,7 +228,7 @@ public class ArrayContext extends ServiceContext implements IndexedContext,
 	}
 
 	/**
-	 * Returns the comment associated with an input value at the specified
+	 * Returns the comment associated with an input eval at the specified
 	 * position in this context (ivc - Input Value Comment).
 	 * 
 	 * @param index
@@ -242,7 +242,7 @@ public class ArrayContext extends ServiceContext implements IndexedContext,
 	}
 
 	/**
-	 * Assigns the comment associated with an input value at the specified
+	 * Assigns the comment associated with an input eval at the specified
 	 * position in this context (ivc - Input Value Comment).
 	 * 
 	 * @param index
@@ -255,7 +255,7 @@ public class ArrayContext extends ServiceContext implements IndexedContext,
 	}
 
 	/**
-	 * Returns the comment associated with an output value at the specified
+	 * Returns the comment associated with an output eval at the specified
 	 * position in this context (ovc - Output Value Comment).
 	 * 
 	 * @param index
@@ -269,7 +269,7 @@ public class ArrayContext extends ServiceContext implements IndexedContext,
 	}
 
 	/**
-	 * Assigns the comment associated with an output value at the specified
+	 * Assigns the comment associated with an output eval at the specified
 	 * position in this context (ovc - Output Value Comment).
 	 * 
 	 * @param index
@@ -306,7 +306,7 @@ public class ArrayContext extends ServiceContext implements IndexedContext,
 	}
 
 	/**
-	 * Returns the description associated with a value at the specified position
+	 * Returns the description associated with a eval at the specified position
 	 * in this context (d - Description).
 	 * 
 	 * @param index
@@ -320,7 +320,7 @@ public class ArrayContext extends ServiceContext implements IndexedContext,
 	}
 
 	/**
-	 * Assigns the description associated with a value at the specified position
+	 * Assigns the description associated with a eval at the specified position
 	 * in this context (d - Description).
 	 * 
 	 * @param index
@@ -334,7 +334,7 @@ public class ArrayContext extends ServiceContext implements IndexedContext,
 	}
 
 	/**
-	 * Returns the description associated with an input value at the specified
+	 * Returns the description associated with an input eval at the specified
 	 * position in this context (ivd - Input Value Description).
 	 * 
 	 * @param index
@@ -348,7 +348,7 @@ public class ArrayContext extends ServiceContext implements IndexedContext,
 	}
 
 	/**
-	 * Assigns the description associated with an input value at the specified
+	 * Assigns the description associated with an input eval at the specified
 	 * position in this context (ivd - Input Value Description).
 	 * 
 	 * @param index
@@ -361,7 +361,7 @@ public class ArrayContext extends ServiceContext implements IndexedContext,
 	}
 
 	/**
-	 * Returns the description associated with an output value at the specified
+	 * Returns the description associated with an output eval at the specified
 	 * position in this context (ovd - Output Value Description).
 	 * 
 	 * @param index
@@ -375,7 +375,7 @@ public class ArrayContext extends ServiceContext implements IndexedContext,
 	}
 
 	/**
-	 * Assigns the description associated with an output value at the specified
+	 * Assigns the description associated with an output eval at the specified
 	 * position in this context (ovd - Output Value Description).
 	 * 
 	 * @param index
@@ -520,9 +520,9 @@ public class ArrayContext extends ServiceContext implements IndexedContext,
 	// constants used for this context
 	public final static String IDEX = "index";
 
-	public final static String VAL = "value";
+	public final static String VAL = "eval";
 
-	public final static String VAL_ = "value" + CPS;
+	public final static String VAL_ = "eval" + CPS;
 
 	public final static String IN = "input";
 

@@ -732,7 +732,7 @@ public class ServiceShell implements RemoteServiceShell, Client, Callable {
 	}
 
 	private static Object finalize(Exertion xrt, Arg... args) throws ContextException, RemoteException {
-		// if the exertion failed return exceptions instead of requested value
+		// if the exertion failed return exceptions instead of requested eval
 		if (xrt.getExceptions().size() > 0) {
 			return xrt.getExceptions();
 		}
@@ -908,7 +908,7 @@ public class ServiceShell implements RemoteServiceShell, Client, Callable {
 				se.readFile(new File(((NetletSignature)service).getServiceSource()));
 				return evaluate((Mogram)se.parse());
 			} else if (service instanceof Exertion) {
-				return value((Evaluation) service, args);
+				return eval((Evaluation) service, args);
 			} else if (service instanceof EntModel) {
 				((Model)service).getResponse(args);
 			} else if (service instanceof Context) {

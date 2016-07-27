@@ -4,6 +4,7 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.context.ListContext;
+import sorcer.eo.operator;
 import sorcer.service.ContextException;
 import sorcer.service.EvaluationException;
 import sorcer.util.Table;
@@ -15,7 +16,6 @@ import java.util.Set;
 
 import static org.junit.Assert.*;
 import static sorcer.co.operator.*;
-import static sorcer.eo.operator.value;
 
 /**
  * @author Mike Sobolewski
@@ -55,7 +55,7 @@ public class CollectionOperatorsTest {
 		
 		// keys and values of entries
 		String k = key(ent("name", "Mike"));
-		Double v = value(ent("height", 174.0));
+		Double v = operator.eval(ent("height", 174.0));
 		assertEquals(k, "name");
 		assertTrue(v.equals(174.0));
 		
@@ -129,7 +129,7 @@ public class CollectionOperatorsTest {
 //		Tuple2 e2 = ent("x1", 10.0);
 //		//logger.info("tuple e2: " + e2);
 //		assertEquals("x1", e2.key());
-//		assertEquals(10.0, e2.value());
+//		assertEquals(10.0, e2.eval());
 //		
 //		Tuple3 e3a = ent("x1", 10.0, efFi("evaluator", "filter"));
 //		//logger.info("tuple e3a: " + e3a);

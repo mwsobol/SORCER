@@ -58,7 +58,7 @@ import java.util.*;
  * @author Mike Sobolewski
  */
 @SuppressWarnings({"unchecked", "rawtypes"  })
-public class ParModel<T> extends EntModel<T> implements Model, Invocation<T>, Mappable<T>, ParModeling {
+public class ParModel extends EntModel<Object> implements Model, Invocation<Object>, Mappable<Object>, ParModeling {
 
     private static final long serialVersionUID = -6932730998474298653L;
 
@@ -96,21 +96,21 @@ public class ParModel<T> extends EntModel<T> implements Model, Invocation<T>, Ma
         add(objects);
     }
 
-	public T getValue(String path, Arg... args) throws EvaluationException {
+	public Object getValue(String path, Arg... args) throws EvaluationException {
 		try {
 			append(args);
-			T val = null;
+			Object val = null;
 			if (path != null) {
-				val = (T) get(path);
+				val = get(path);
 			} else {
 				ReturnPath rp = Arg.getReturnPath(args);
 				if (rp != null)
-					val = (T) getReturnValue(rp);
+					val = getReturnValue(rp);
 				else if (mogramStrategy.getResponsePaths() != null
 						&& mogramStrategy.getResponsePaths().size() == 1) {
 					val = asis(mogramStrategy.getResponsePaths().get(0).getName());
 				} else {
-					val = (T) super.getValue(path, args);
+					val = super.getValue(path, args);
 				}
 			}
 
@@ -123,26 +123,26 @@ public class ParModel<T> extends EntModel<T> implements Model, Invocation<T>, Ma
 			}
 
 			if (val != null && val instanceof Evaluation) {
-				return (T) ((Evaluation) val).getValue(args);
+				return ((Evaluation) val).getValue(args);
 			}   if (val instanceof ServiceFidelity) {
-				return (T) new Entry(path, val).getValue(args);
+				return new Entry(path, val).getValue(args);
 			} else if (path == null && val == null && mogramStrategy.getResponsePaths() != null) {
 				if (mogramStrategy.getResponsePaths().size() == 1)
-					return (T) getValue(mogramStrategy.getResponsePaths().get(0).getName(), args);
+					return getValue(mogramStrategy.getResponsePaths().get(0).getName(), args);
 				else
-					return (T) getResponse();
+					return getResponse();
 			} else {
 				if (val == null && scope != null && scope != this) {
-					Object o = (T) scope.getValue(path);
+					Object o = scope.getValue(path);
 					if (o != Context.none && o != null)
-						return (T) o;
+						return o;
 					else
-						return (T) scope.getSoftValue(path);
+						return scope.getSoftValue(path);
 				} else {
 					if (val == null)
 						return getSoftValue(path);
 					else
-						return (T) val;
+						return val;
 				}
 			}
 		} catch (Exception e) {
@@ -156,22 +156,22 @@ public class ParModel<T> extends EntModel<T> implements Model, Invocation<T>, Ma
 	 * @see sorcer.service.Evaluation#getValue(sorcer.core.context.Path.Entry[])
 	 */
 	@Override
-	public T getValue(Arg... entries) throws EvaluationException {
+	public Object getValue(Arg... entries) throws EvaluationException {
 		try {
-			return (T) getValue(null, entries);
+			return getValue(null, entries);
 		} catch (ContextException e) {
 			throw new EvaluationException(e);
 		}
 	}
 	
 	@Override
-	public T putValue(String path, Object value) throws ContextException {
+	public Object putValue(String path, Object value) throws ContextException {
 		isChanged = true;
 		Object obj = get(path);
 		try {
 			if (obj instanceof Par) {
 				((Par) obj).setValue(value);
-				return (T) value;
+				return value;
 			} else {
 				if (value instanceof Scopable) {
 					Object scope = ((Scopable) value).getScope();
@@ -270,9 +270,9 @@ public class ParModel<T> extends EntModel<T> implements Model, Invocation<T>, Ma
 	}
 
 	protected void updateEvaluations() {
-		Iterator<Map.Entry<String,T>>  i = entryIterator();
+		Iterator<Map.Entry<String,Object>>  i = entryIterator();
 		while (i.hasNext()) {
-			Map.Entry<String,T> entry = i.next();
+			Map.Entry<String, Object> entry = i.next();
 			Object val = entry.getValue();
 			if (val instanceof Entry && ((Entry)val).value() instanceof Evaluation) {
 				((Entry) val).isValid(false);
@@ -287,7 +287,7 @@ public class ParModel<T> extends EntModel<T> implements Model, Invocation<T>, Ma
 	 * sorcer.service.Args[])
 	 */
 	@Override
-	public T invoke(Context context, Arg... entries) throws RemoteException,
+	public Object invoke(Context context, Arg... entries) throws RemoteException,
 			InvocationException {
 		Object result = null;
 		try {
@@ -307,7 +307,7 @@ public class ParModel<T> extends EntModel<T> implements Model, Invocation<T>, Ma
 						val = new Response(Path.getPathList(rp.outPaths), vals);
 					}
 					((ServiceContext)context).setFinalized(true);
-					return (T) val;
+					return val;
 				}
 				if (((ServiceContext) context).getExecPath() != null) {
 					Object o = get(((ServiceContext) context).getExecPath()
@@ -337,7 +337,7 @@ public class ParModel<T> extends EntModel<T> implements Model, Invocation<T>, Ma
 			} else {
 				result = getValue(entries);
 			}
-			return (T) result;
+			return result;
 		} catch (ContextException e) {
 			throw new InvocationException(e);
 		}
@@ -431,7 +431,7 @@ public class ParModel<T> extends EntModel<T> implements Model, Invocation<T>, Ma
 				+ var.getName() + APS + var.getType());
 	}
 	
-	public Context<T> appendNew(Context<T> context)
+	public Context<Object> appendNew(Context<Object> context)
 			throws ContextException, RemoteException {
 		ServiceContext cxt = (ServiceContext) context;
 		Iterator<Map.Entry<String, Object>> i = cxt.entryIterator();

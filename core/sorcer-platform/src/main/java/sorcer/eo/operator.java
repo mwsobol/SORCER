@@ -116,7 +116,7 @@ public class operator {
 								 Arg... entries) throws ContextException {
 		Object obj = value(evaluation, path, entries);
 		if (obj instanceof Evaluation) {
-			obj = value((Evaluation) obj, entries);
+			obj = eval((Evaluation) obj, entries);
 		}
 		return obj;
 	}
@@ -125,8 +125,8 @@ public class operator {
 								 Arg... entries) throws ContextException {
 		Object obj = null;
 		if (object instanceof Evaluation || object instanceof Context) {
-			obj = value((Evaluation) object, path, entries);
-			obj = value((Evaluation) obj, entries);
+			obj = eval((Evaluation) object, path, entries);
+			obj = eval((Evaluation) obj, entries);
 		} else if (object instanceof Context) {
 			obj = value((Context) object, path, entries);
 			obj = value((Context) obj, entries);
@@ -140,7 +140,7 @@ public class operator {
 			throws EvaluationException {
 		Object obj = null;
 		if (object instanceof Evaluation) {
-			obj = value((Evaluation) object, entries);
+			obj = eval((Evaluation) object, entries);
 		} else if (object instanceof Context) {
 			try {
 				obj = value((Context) object, entries);
@@ -639,7 +639,11 @@ public class operator {
 		return context;
 	}
 
-	public static Context add(Model model, Identifiable... objects)
+	public static Context add(Model model, Identifiable... objects) throws ContextException, RemoteException {
+		return add((Context) model, objects);
+	}
+
+	public static Context add(Context model, Identifiable... objects)
 			throws RemoteException, ContextException {
 		boolean isReactive = false;
 		Context context = (Context) model;
@@ -743,7 +747,7 @@ public class operator {
 	public static Context put(Context context, Identifiable... objects)
 			throws RemoteException, ContextException {
 		for (Identifiable i : objects) {
-			// just replace the value
+			// just replace the eval
 			if (((ServiceContext) context).containsPath(i.getName())) {
 				context.putValue(i.getName(), i);
 				continue;
@@ -1871,10 +1875,9 @@ public class operator {
 				} catch (Exception e) {
 					throw new ModelException(e);
 				}
-			else if (evalType)
+			else if (evalType) {
 				mo = entModel(items);
-			else
-				mo = context(items);
+			}
 
 			mo.setName(name);
 			if (mo instanceof SrvModel && autoDeps)
@@ -2195,7 +2198,7 @@ public class operator {
 			}
 		} else {
 			throw new EvaluationException(
-					"asis value can only be determined for objects of the "
+					"asis eval can only be determined for objects of the "
 							+ Evaluation.class + " type");
 		}
 	}
@@ -2299,29 +2302,26 @@ public class operator {
 		return service.exert(mogram, txn, entries);
 	}
 
-	public static <T> T eval(Context<T> model, Arg... args)
-			throws ContextException {
-		return value(model, args);
-	}
-
-	public static <T> T value(Context<T> model, Arg... args)
+	public static Object eval(Model model, Arg... args)
 			throws ContextException {
 		try {
 			synchronized (model) {
-				if (model instanceof ParModel) {
-					return ((ParModel<T>) model).getValue(args);
-				} else {
-					return (T) ((ServiceContext)model).getValue(args);
-				}
+				return ((ParModel)model).getValue(args);
 			}
 		} catch (Exception e) {
 			throw new ContextException(e);
 		}
 	}
 
-	public static <T> T eval(Evaluation<T> evaluation, Arg... args)
-			throws EvaluationException {
-		return value(evaluation, args);
+	public static <T> T value(Context<T> context, Arg... args)
+			throws ContextException {
+		try {
+			synchronized (context) {
+				return (T) ((ServiceContext)context).getValue(args);
+			}
+		} catch (Exception e) {
+			throw new ContextException(e);
+		}
 	}
 
 	public static Object execItem(Item item, Arg... args) throws ServiceException {
@@ -2332,7 +2332,7 @@ public class operator {
 		}
 	}
 
-	public static <T> T value(Evaluation<T> evaluation, Arg... args)
+	public static <T> T eval(Evaluation<T> evaluation, Arg... args)
 			throws EvaluationException {
 		try {
 			synchronized (evaluation) {
@@ -2353,58 +2353,31 @@ public class operator {
 
 	public static Object eval(Model model, String evalSelector,
 							  Arg... args) throws ContextException {
-		return value((Context<Object>) model, evalSelector, args);
+		return model.getValue(evalSelector, args);
 	}
 
-	public static Object value(Model model, String evalSelector,
-							   Arg... args) throws ContextException {
-		return value((Context<Object>) model, evalSelector, args);
-	}
-
-	public static <T> T eval(Context<T> model, String path,
-							 Arg... args) throws ContextException {
-		return value(model, path, args);
-	}
-
-	public static <T> T val(Context<T> model, String path,
-							Arg... entries) throws ContextException {
-		return value(model, path, entries);
-	}
-
-	public static <T> T v(Context<T> model, String path,
-						  Arg... args) throws ContextException {
-		return value(model, path, args);
-	}
-
-	public static <T> T value(Context<T> model, String path,
+	public static <T> T v(Context<T> context, String path,
 							  Arg... args) throws ContextException {
-		if (model instanceof ParModel) {
-			return (T) ((ParModel) model).getValue(path,
+		return value(context, path, args);
+	}
+	public static <T> T value(Context<T> context, String path,
+							  Arg... args) throws ContextException {
+		try {
+			Object val = ((Context) context).getValue(path,
 					args);
-		}  else if (model instanceof Context) {
-			try {
-				Object val = ((Context) model).getValue(path,
-						args);
-				if (SdbUtil.isSosURL(val)) {
-					return (T) ((URL) val).getContent();
-				} else {
-					return (T)val;
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-				throw new ContextException(e);
+			if (SdbUtil.isSosURL(val)) {
+				return (T) ((URL) val).getContent();
+			} else {
+				return (T)val;
 			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new ContextException(e);
 		}
-		return null;
 	}
 
 	public static <T> T eval(Evaluation<T> evaluation, String evalSelector,
 							 Arg... args) throws EvaluationException {
-		return value(evaluation, evalSelector, args);
-	}
-
-	public static <T> T value(Evaluation<T> evaluation, String evalSelector,
-							  Arg... args) throws EvaluationException {
 		if (evaluation instanceof Exertion) {
 			try {
 				((ServiceContext)((Exertion) evaluation).getDataContext())
@@ -2689,11 +2662,11 @@ public class operator {
 	}
 
 	public static Flow flow(Entry entry) throws EvaluationException {
-		return ((Strategy)value(entry)).getFlowType();
+		return ((Strategy) eval(entry)).getFlowType();
 	}
 
 	public static Access access(Entry entry) throws EvaluationException {
-		return ((Strategy)value(entry)).getAccessType();
+		return ((Strategy) eval(entry)).getAccessType();
 	}
 
 	public static Flow flow(Strategy strategy) {

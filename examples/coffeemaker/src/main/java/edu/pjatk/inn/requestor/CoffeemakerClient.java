@@ -288,7 +288,7 @@ public class CoffeemakerClient {
 	        returnString = br.readLine();
 	    }
 	    catch (IOException e){
-	        System.out.println("Error reading in value");
+	        System.out.println("Error reading in eval");
 	        mainMenu();
 	    }
 	    return returnString;

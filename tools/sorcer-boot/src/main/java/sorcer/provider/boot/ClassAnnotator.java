@@ -101,7 +101,7 @@ public class ClassAnnotator implements ClassAnnotation {
     /**
      * Utility method that converts a <code>URL[]</code> into a corresponding,
      * space-separated string with the same array elements. Note that if the
-     * array has zero elements, the return value is the empty string.
+     * array has zero elements, the return eval is the empty string.
      *
      * @param urls An array of URLs that are to be converted
      *
@@ -125,7 +125,7 @@ public class ClassAnnotator implements ClassAnnotation {
     /**
      * Utility method that converts a <code>URI[]</code> into a corresponding,
      * space-separated string with the same array elements. Note that if the
-     * array has zero elements, the return value is the empty string.
+     * array has zero elements, the return eval is the empty string.
      *
      * @param uris An array of URIs that are to be converted
      *

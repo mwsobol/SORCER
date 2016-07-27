@@ -44,7 +44,7 @@ import sorcer.core.context.node.ContextNode;
  * selected item is a path or if it is a data node.
  * 
  * <li>For paths user can specify the pathname and direction. <li>For data nodes
- * the user can select the data type and enter the types value
+ * the user can select the data type and enter the types eval
  * 
  * <b>Note if the provider is not complied with Groovy support the Groovy option
  * will not be available</b>
@@ -114,7 +114,7 @@ public class ContextEditWindow extends JFrame implements ActionListener {
 			JPanel listPane = new JPanel();
 			listPane.setLayout(new BoxLayout(listPane, BoxLayout.PAGE_AXIS));
 
-			instructions = new JLabel("<html><b>Enter the value below<b><br>");
+			instructions = new JLabel("<html><b>Enter the eval below<b><br>");
 
 			editField = new JTextArea(theNodeType.getValue());
 			scrollingArea = new JScrollPane(editField);
@@ -260,7 +260,7 @@ public class ContextEditWindow extends JFrame implements ActionListener {
 				// add some code to alert user they are not doing it right
 			}
 
-			theNodeType.setValue(value); // update the value
+			theNodeType.setValue(value); // update the eval
 			theNodeType.setDirection(direction.getSelectedItem().toString());
 			// currentNode.setUserObject(theNodeType);
 			theTree.updateModel(currentNode);
@@ -414,7 +414,7 @@ public class ContextEditWindow extends JFrame implements ActionListener {
 				mainPanel.setSize(new Dimension(500, 140));
 			} else {
 				instructions.setText("<html><b>Enter a " + currentSelection
-						+ " value below<b><p>");
+						+ " eval below<b><p>");
 				editField.setColumns(60);
 				editField.setRows(1);
 				// mainPanel.setPreferredSize(new Dimension(500,100));

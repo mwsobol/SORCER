@@ -177,7 +177,7 @@ public class Srv extends Entry<Object> implements Variability<Object>, Arg,
                 throw new EvaluationException("No model available for entry: " + this);
             } else if (_2 instanceof MogramEntry) {
                 Context cxt = ((Mogram) ((Entry) _2)._2).exert(entries).getContext();
-                Object val = cxt.getValue("context/result");
+                Object val = cxt.getValue(Context.RETURN);
                 if (val != null) {
                     return val;
                 } else {

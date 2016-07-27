@@ -379,8 +379,8 @@ public class SignatureDispatcherForProvider implements SignatureDispatchment {
 		 * cxt.putValue("deposit/amount",50);
 		 * cxt.putValue("withdrawal/amount",32);
 		 * cxt.putValue("balance/amount",0); cxt.putValue("test3/Slacker",new
-		 * ContextNode("master3","value")); cxt.putValue("test3/HEHE",new
-		 * ContextNode("master5","value")); }catch (ContextException e) {
+		 * ContextNode("master3","eval")); cxt.putValue("test3/HEHE",new
+		 * ContextNode("master5","eval")); }catch (ContextException e) {
 		 * e.printStackTrace();} System.out.println("context"+cxt); return cxt;
 		 */
 

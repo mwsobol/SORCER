@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
+import sorcer.eo.operator;
 import sorcer.service.*;
 import sorcer.service.Strategy.Access;
 import sorcer.service.Strategy.Wait;
@@ -54,12 +55,12 @@ public class NetMograms {
         Task t5 = task("t5", sig("add", Adder.class),
                 cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0), result("result/y")));
 
-        // get the result value
-        assertTrue(value(t5).equals(100.0));
+        // get the result eval
+        assertTrue(operator.eval(t5).equals(100.0));
 
         // get the subcontext output from the exertion
         assertTrue(context(ent("arg/x1", 20.0), ent("result/z", 100.0)).equals(
-                value(t5, result("result/z", outPaths("arg/x1", "result/z")))));
+                operator.eval(t5, result("result/z", outPaths("arg/x1", "result/z")))));
 
     }
 
@@ -69,9 +70,9 @@ public class NetMograms {
         Task sum = task("t6", sig("sum", Adder.class),
                 cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0), result("result/y")));
 
-		assertTrue(value(sum).equals(100.0));
-		assertTrue(value(sum).equals(200.0));
-		assertTrue(value(sum).equals(300.0));
+		assertTrue(operator.eval(sum).equals(100.0));
+		assertTrue(operator.eval(sum).equals(200.0));
+		assertTrue(operator.eval(sum).equals(300.0));
     }
 
     @Test
@@ -86,7 +87,7 @@ public class NetMograms {
 
 		t5 = exert(t5);
 		logger.info("t5 context: " + context(t5));
-		logger.info("t5 value: " + get(t5, "result/y"));
+		logger.info("t5 eval: " + get(t5, "result/y"));
 		assertEquals(get(t5, "result/y"), 100.0);
 	}
 

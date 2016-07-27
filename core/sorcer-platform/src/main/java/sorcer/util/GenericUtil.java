@@ -62,9 +62,9 @@ public class GenericUtil {
 		}
 
 		/**
-		 * This method gets the shell script exit value
+		 * This method gets the shell script exit eval
 		 *
-		 * @return Exit value
+		 * @return Exit eval
 		 */
 		public Integer getExitValue() {
 			return exitValue;
@@ -111,7 +111,7 @@ public class GenericUtil {
 		}
 
 		/**
-		 * This method gets the exit value of the shell script
+		 * This method gets the exit eval of the shell script
 		 * 
 		 * @return
 		 */
@@ -961,10 +961,10 @@ public class GenericUtil {
 	}
 
 	/**
-	 * This method returns a boolean value of true if the operating system name
+	 * This method returns a boolean eval of true if the operating system name
 	 * starts with Linux
 	 * 
-	 * @return Boolean value indicating if the operating system is Linux
+	 * @return Boolean eval indicating if the operating system is Linux
 	 */
 	public static boolean isLinux() {
 		if (whatOS().startsWith("Linux")) {
@@ -974,10 +974,10 @@ public class GenericUtil {
 	}
 
 	/**
-	 * This method returns a boolean value of true if the operating system name
+	 * This method returns a boolean eval of true if the operating system name
 	 * starts with Mac
 	 * 
-	 * @return Boolean value indicating if the operating system is Mac
+	 * @return Boolean eval indicating if the operating system is Mac
 	 */
 	public static boolean isMac() {
 		if (whatOS().startsWith("Mac")) {
@@ -987,7 +987,7 @@ public class GenericUtil {
 	}
 
 	/**
-	 * This method returns a boolean value of true if the operating system name
+	 * This method returns a boolean eval of true if the operating system name
 	 * starts with Linux and Mac
 	 * 
 	 * @return
@@ -1000,7 +1000,7 @@ public class GenericUtil {
 	}
 
 	/**
-	 * This method returns a boolean value of true if the operating system name
+	 * This method returns a boolean eval of true if the operating system name
 	 * starts with Win
 	 * 
 	 * @return
@@ -1538,7 +1538,7 @@ public class GenericUtil {
 	 *            Standard output
 	 * @param stderr
 	 *            Standard error
-	 * @return Exit value
+	 * @return Exit eval
 	 * @throws IOException
 	 * @throws InterruptedException
 	 */
@@ -1586,7 +1586,7 @@ public class GenericUtil {
 		redirectOutput(p, stdout);
 		redirectError(p, stderr);
 
-		// Wait for the process then return the exit value
+		// Wait for the process then return the exit eval
 		return p.waitFor();
 	}
 
@@ -1970,7 +1970,7 @@ public class GenericUtil {
 	 *
 	 *			 kill all processes matching the exec names in "".
 	 *
-	 * @return Exit value of exert command with worker method
+	 * @return Exit eval of exert command with worker method
 	 * @throws Exception 
 	 */
 	public static int runShellScript(File scriptFile,
@@ -2115,7 +2115,7 @@ public class GenericUtil {
 	 *            Standard error file path
 	 * @param jobCheckInterval
 	 *            Time to wait between job status checks
-	 * @return Exit value of exert command with worker method
+	 * @return Exit eval of exert command with worker method
 	 * @throws IOException
 	 * @throws InterruptedException
 	 */
@@ -2860,7 +2860,7 @@ public class GenericUtil {
 				GenericUtil.appendFileContents("executeCommandWithWorker(): exitValue = " + exitValue, dir);
 
 				if (exitValue == null || exitValue > 0) {
-					GenericUtil.appendFileContents("executeCommandWithWorker(): worker exit value was null or > 0, sending kill...", dir);
+					GenericUtil.appendFileContents("executeCommandWithWorker(): worker exit eval was null or > 0, sending kill...", dir);
 					jobControlWriter.sendKillToWrapperScript();
 //					GenericUtil.appendFileContents("executeCommandWithWorker(): waiting for the kill; calling worker.join()...", dir);
 //					worker.join();
@@ -3650,9 +3650,9 @@ public class GenericUtil {
 				+ middleScriptDoneFile);
 		middleScriptRecords.add("if [ $EXIT_VALUE -ne 0 ]; then");
 		middleScriptRecords
-				.add("	echo \"user script exit value was non-zero, EXIT_VALUE=$EXIT_VALUE, dropping middleFailFile and exiting with $EXIT_VALUE.\"");
+				.add("	echo \"user script exit eval was non-zero, EXIT_VALUE=$EXIT_VALUE, dropping middleFailFile and exiting with $EXIT_VALUE.\"");
 		middleScriptRecords
-				.add("	echo \"user script exit value was non-zero, EXIT_VALUE=$EXIT_VALUE, dropping middleFailFile and exiting with $EXIT_VALUE.\" > "
+				.add("	echo \"user script exit eval was non-zero, EXIT_VALUE=$EXIT_VALUE, dropping middleFailFile and exiting with $EXIT_VALUE.\" > "
 						+ middleScriptFailFile.getAbsolutePath());
 		middleScriptRecords.add("fi");
 		middleScriptRecords.add("rm -f "
@@ -3761,9 +3761,9 @@ public class GenericUtil {
 
 		slurmScriptRecords.add("if [ $EXIT_VALUE -ne 0 ]; then");
 		slurmScriptRecords
-				.add("	echo \"middle script exit value was non-zero, EXIT_VALUE=$EXIT_VALUE, dropping slurmFailFile and exiting with $EXIT_VALUE.\"");
+				.add("	echo \"middle script exit eval was non-zero, EXIT_VALUE=$EXIT_VALUE, dropping slurmFailFile and exiting with $EXIT_VALUE.\"");
 		slurmScriptRecords
-				.add("	echo \"middle script exit value was non-zero, EXIT_VALUE=$EXIT_VALUE, dropping slurmFailFile and exiting with $EXIT_VALUE.\" > "
+				.add("	echo \"middle script exit eval was non-zero, EXIT_VALUE=$EXIT_VALUE, dropping slurmFailFile and exiting with $EXIT_VALUE.\" > "
 						+ slurmFailFile.getAbsolutePath());
 		slurmScriptRecords.add("fi");
 

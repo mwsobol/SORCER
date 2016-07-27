@@ -508,7 +508,7 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
 			dbHome = (String) config.getEntry(ServiceProvider.COMPONENT,
 					DB_HOME, String.class);
 		} catch (Exception e) {
-			// do nothing, default value is used
+			// do nothing, default eval is used
 		}
 		logger.info("dbHome: " + dbHome);
 		if (dbHome == null || dbHome.length() == 0) {

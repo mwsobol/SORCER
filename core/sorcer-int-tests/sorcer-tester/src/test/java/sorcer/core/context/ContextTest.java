@@ -21,12 +21,12 @@ public class ContextTest {
 	@Test
 	public void linkedContext() throws Exception {
 		Context<Double> addContext = new PositionalContext("add");
-		addContext.putInValue("arg1/value", 90.0);
-		addContext.putInValue("arg2/value", 110.0);
+		addContext.putInValue("arg1/eval", 90.0);
+		addContext.putInValue("arg2/eval", 110.0);
 		
 		Context multiplyContext = new PositionalContext("multiply");
-		multiplyContext.putInValue("arg1/value", 10.0);
-		multiplyContext.putInValue("arg2/value", 70.0);
+		multiplyContext.putInValue("arg1/eval", 10.0);
+		multiplyContext.putInValue("arg2/eval", 70.0);
 		
 		ServiceContext invokeContext = new ServiceContext("invoke");
 //		add additional tests with offset
@@ -41,14 +41,14 @@ public class ContextTest {
 		
 //		logger.info("invoke context: " + invokeContext);
 
-//		logger.info("path arg1/value: " + addLink.getContext().getValue("arg1/value"));
-		assertEquals(addLink.getContext().getValue("arg1/value"), 90.0);
-//		logger.info("path arg2/value: " + multiplyLink.getContext().getValue("arg2/value"));
-		assertEquals(multiplyLink.getContext().getValue("arg2/value"), 70.0);
-//		logger.info("path add/arg1/value: " + invokeContext.getValue("add/arg1/value"));		
-		assertEquals(invokeContext.getValue("add/arg1/value"), 90.0);
-//		logger.info("path multiply/arg2/value: " + invokeContext.getValue("multiply/arg2/value"));		
-		assertEquals(invokeContext.getValue("multiply/arg2/value"), 70.0);
+//		logger.info("path arg1/eval: " + addLink.getContext().getValue("arg1/eval"));
+		assertEquals(addLink.getContext().getValue("arg1/eval"), 90.0);
+//		logger.info("path arg2/eval: " + multiplyLink.getContext().getValue("arg2/eval"));
+		assertEquals(multiplyLink.getContext().getValue("arg2/eval"), 70.0);
+//		logger.info("path add/arg1/eval: " + invokeContext.getValue("add/arg1/eval"));
+		assertEquals(invokeContext.getValue("add/arg1/eval"), 90.0);
+//		logger.info("path multiply/arg2/eval: " + invokeContext.getValue("multiply/arg2/eval"));
+		assertEquals(invokeContext.getValue("multiply/arg2/eval"), 70.0);
 
 	}
 	

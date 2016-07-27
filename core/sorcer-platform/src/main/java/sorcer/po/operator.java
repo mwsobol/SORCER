@@ -153,12 +153,12 @@ public class operator {
 		return pm;
 	}
 
-	public static <T> T get(ParModel<T> pm, String parname, Arg... parametrs)
+	public static Object get(ParModel pm, String parname, Arg... parametrs)
 			throws ContextException, RemoteException {
 		Object obj = pm.asis(parname);
 		if (obj instanceof Par)
 			obj = ((Par)obj).getValue(parametrs);
-		return (T)obj;
+		return obj;
 	}
 
 	public static Invocation invoker(Mappable mappable, String path)
@@ -229,30 +229,6 @@ public class operator {
 			parEntry.getScope().putValue(parEntry.getName(), value);
 		}
 		return parEntry;
-	}
-
-	public static void set(Model context, String parname, Object value)
-			throws ContextException {
-		Object parEntry = context.asis(parname);
-		if (parEntry == null)
-			((ParModel)context).addPar(parname, value);
-		else if (parEntry instanceof Setter) {
-			try {
-				((Setter) parEntry).setValue(value);
-			} catch (RemoteException e) {
-				e.printStackTrace();
-			}
-		} else if (parEntry instanceof Par) {
-			Par par = (Par) parEntry;
-			if (par.getScope() != null && par.getContextable() == null)
-				par.getScope().putValue(par.getName(), value);
-		}
-		// just ssetting the value
-		else {
-			((ParModel)context).putValue(parname, value);
-			((ParModel)context).setIsChanged(true);
-		}
-
 	}
 
 	public static Par add(Par parEntry, Object to)
@@ -526,8 +502,16 @@ public class operator {
 		return new CallableInvoker(name, callable, parEntries);
 	}
 
+	public static <T> OptInvoker<T> opt(T value) {
+		return new OptInvoker(value);
+	}
+
 	public static OptInvoker opt(Condition condition, ServiceInvoker target) {
 		return new OptInvoker(null, condition, target);
+	}
+
+	public static OptInvoker opt(String name, ServiceInvoker target) {
+		return new OptInvoker(name, target);
 	}
 
 	public static OptInvoker opt(String name, Condition condition, ServiceInvoker target) {
@@ -542,13 +526,23 @@ public class operator {
 		return new AltInvoker(name, invokers);
 	}
 
+	public static LoopInvoker loop(Condition condition, Invocation target) {
+		return new LoopInvoker(null, condition, target);
+	}
+
+	public static LoopInvoker loop(Condition condition, Invocation target, Context context) throws ContextException {
+		LoopInvoker invoker = new LoopInvoker(null, condition, target);
+		invoker.setScope(context);
+		return invoker;
+	}
+
 	public static LoopInvoker loop(String name, Condition condition, Invocation target) {
 		return new LoopInvoker(name, condition, target);
 	}
 
 	public static LoopInvoker loop(String name, Condition condition, Par target)
 			throws EvaluationException, RemoteException {
-		return new LoopInvoker(name, condition, (ServiceInvoker) ((Par) target).asis());
+		return new LoopInvoker(name, condition, (ServiceInvoker) target.asis());
 	}
 
 	public static OptInvoker get(AltInvoker invoker, int index) {
@@ -559,10 +553,6 @@ public class operator {
 			throws EvaluationException, RemoteException {
 		return new Agent(name, classNme, agentJar);
 	}
-
-//	public static ExecPath invoker(String name) {
-//		return new ExecPath(name);
-//	}
 
 	public static ExecPath invoker(String name, ServiceInvoker invoker) {
 		return new ExecPath(name, invoker);

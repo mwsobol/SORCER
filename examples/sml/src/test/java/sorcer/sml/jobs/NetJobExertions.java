@@ -9,13 +9,11 @@ import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.Adder;
 import sorcer.arithmetic.provider.Multiplier;
 import sorcer.arithmetic.provider.Subtractor;
-import sorcer.arithmetic.provider.impl.AdderImpl;
-import sorcer.arithmetic.provider.impl.MultiplierImpl;
-import sorcer.arithmetic.provider.impl.SubtractorImpl;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.model.par.ParModel;
 import sorcer.core.provider.*;
 import sorcer.core.provider.rendezvous.ServiceJobber;
+import sorcer.eo.operator;
 import sorcer.service.*;
 import sorcer.service.Strategy.Access;
 import sorcer.service.Strategy.Flow;
@@ -84,7 +82,7 @@ public class NetJobExertions implements SorcerConstants {
 		//logger.info("job j1: " + job);
 		//logger.info("job j1 job context: " + context(job));
 		logger.info("job j1 job context: " + upcontext(job));
-		//logger.info("job j1 value @ j1/t3/result/y = " + get(job, "j1/t3/result/y"));
+		//logger.info("job j1 eval @ j1/t3/result/y = " + get(job, "j1/t3/result/y"));
 		assertEquals(get(job, "j1/t3/result/y"), 400.00);
 		
 	}
@@ -99,7 +97,7 @@ public class NetJobExertions implements SorcerConstants {
 		logger.info("job j1: " + job.describe());
 //		logger.info("job j1 job context: " + context(job, "j1/t3));
 //		logger.info("job j1 job context: " + upcontext(job));
-		//logger.info("job j1 value @ j1/t3/result/y = " + get(job, "j1/t3/result/y"));
+		//logger.info("job j1 eval @ j1/t3/result/y = " + get(job, "j1/t3/result/y"));
 		assertEquals(get(job, "j1/t3/result/y"), 400.00);
 		
 	}
@@ -112,7 +110,7 @@ public class NetJobExertions implements SorcerConstants {
 		//logger.info("job j1: " + job);
 		//logger.info("job j1 job context: " + context(job));
 		logger.info("job j1 job context: " + upcontext(job));
-		//logger.info("job j1 value @ j1/t3/result/y = " + get(job, "j1/t3/result/y"));
+		//logger.info("job j1 eval @ j1/t3/result/y = " + get(job, "j1/t3/result/y"));
 		assertEquals(get(job, "j1/t3/result/y"), 400.00);
 
 	}
@@ -125,7 +123,7 @@ public class NetJobExertions implements SorcerConstants {
 		//logger.info("job j1: " + job);
 		//logger.info("job j1 job context: " + context(job));
 		logger.info("job j1 job context: " + upcontext(job));
-		//logger.info("job j1 value @ j1/t3/result/y = " + get(job, "j1/t3/result/y"));
+		//logger.info("job j1 eval @ j1/t3/result/y = " + get(job, "j1/t3/result/y"));
 		assertEquals(get(job, "j1/t3/result/y"), 400.00);
 		
 	}
@@ -318,9 +316,9 @@ public class NetJobExertions implements SorcerConstants {
 	@Test
 	public void arithmeticJobNetExerter() throws Exception {
 
-		// get the current value of the exertlet
+		// get the current eval of the exertlet
 		Exerter exerter = task("eval", sig("getValue", Evaluation.class, prvName("Arithmetic Exerter")));
-//		logger.info("j1/t3/result/y: " + value(task, "j1/t3/result/y"));
+//		logger.info("j1/t3/result/y: " + eval(task, "j1/t3/result/y"));
 		Context out = exert(exerter, context());
 		assertEquals(value(out, "j1/t3/result/y"), 400.0);
 
@@ -377,7 +375,7 @@ public class NetJobExertions implements SorcerConstants {
 		vm = put(vm, ent("x1", 10.0), ent("x2", 50.0),
 				ent("x4", 80.0));
 				 
-		assertTrue(value(par(vm, "j1")).equals(400.0));
+		assertTrue(operator.eval(par(vm, "j1")).equals(400.0));
 	}
 
 }

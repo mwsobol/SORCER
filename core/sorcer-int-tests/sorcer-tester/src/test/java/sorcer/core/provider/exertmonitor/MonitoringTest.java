@@ -60,8 +60,8 @@ public class MonitoringTest {
 		t5 = exert(t5);
 		logger.info("t5 context: " + context(t5));
 		assertNotNull(context(t5).asis("context/checkpoint/time"));
-		logger.info("t5 value: " + get(t5, "result/y"));
-		assertEquals("Wrong value for 100.0", 100d, get(t5, "result/y"));
+		logger.info("t5 eval: " + get(t5, "result/y"));
+		assertEquals("Wrong eval for 100.0", 100d, get(t5, "result/y"));
 
 		verifyExertionMonitorStatus(t5, "DONE");
 	}
@@ -149,12 +149,12 @@ public class MonitoringTest {
 
 		block = exert(block);
 		logger.info("block context 1: " + context(block));
-//		logger.info("result: " + value(context(block), "out"));
+//		logger.info("result: " + eval(context(block), "out"));
 		assertEquals(value(context(block), "out"), 500.0);
 
 		block = exert(block, ent("block/t4/arg/x1", 200.0), ent("block/t4/arg/x2", 800.0));
 		logger.info("block context 2: " + context(block));
-//		logger.info("result: " + value(context(block), "out"));
+//		logger.info("result: " + eval(context(block), "out"));
 		assertEquals(value(context(block), "out"), 100.0);
 
 	}

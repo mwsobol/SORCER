@@ -37,8 +37,8 @@ import java.util.Map;
 
 
 /**
- * A Condition specifies a conditional value in a given service context for its free variables
- * in the form of path/value pairs with paths being guard parameters of a closure expression.
+ * A Condition specifies a conditional eval in a given service context for its free variables
+ * in the form of path/eval pairs with paths being guard parameters of a closure expression.
  * 
  * @see LoopMogram
  * @see OptMogram
@@ -56,7 +56,7 @@ import java.util.Map;
 	protected final static Logger logger = LoggerFactory.getLogger(Condition.class
 			.getName());
 
-	public static String CONDITION_VALUE = "condition/value";
+	public static String CONDITION_VALUE = "condition/eval";
 	public static String CONDITION_TARGET = "condition/target";
 
 	private String name;

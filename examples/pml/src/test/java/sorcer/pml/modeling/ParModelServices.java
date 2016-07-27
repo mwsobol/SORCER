@@ -41,7 +41,7 @@ public class ParModelServices {
 		Task pmt = task(sig("invoke", pm),
 				context(result("invoke/result", outPaths("expr"))));
 
-		assertTrue(value(pmt).equals(60.0));
+		assertTrue(eval(pmt).equals(60.0));
 
 		assertTrue(get(exert(pmt), "invoke/result").equals(60.0));
 
@@ -54,7 +54,7 @@ public class ParModelServices {
 		Task pmt = task(sig("invoke", Invocation.class, prvName("ParModel Service")),
 				context(result("invoke/result", outPaths("expr"))));
 
-		assertTrue(value(pmt).equals(60.0));
+		assertTrue(eval(pmt).equals(60.0));
 		
 //		assertTrue(get(exert(pmt), "invoke/result").equals(60.0));
 

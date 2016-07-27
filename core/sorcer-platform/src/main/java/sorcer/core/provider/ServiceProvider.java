@@ -618,7 +618,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	}
 
 	/**
-	 * Returns a proxy object for this object. This value should not be null.
+	 * Returns a proxy object for this object. This eval should not be null.
 	 * Implements the <code>ServiceProxyAccessor</code> interface.
 	 *
 	 * @return a proxy object reference
@@ -677,7 +677,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	}
 
 	/**
-	 * Simple container for an alternative return a value so we can provide more
+	 * Simple container for an alternative return a eval so we can provide more
 	 * detailed diagnostics.
 	 */
 	class InitException extends Exception {
@@ -1881,7 +1881,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 					ServiceProvider.COMPONENT, THREAD_MANAGEMNT, boolean.class,
 					false);
 		} catch (Exception e) {
-			// do nothing, default value is used
+			// do nothing, default eval is used
 			// e.printStackTrace();
 		}
 		ConfigurableThreadFactory tf = new ConfigurableThreadFactory();

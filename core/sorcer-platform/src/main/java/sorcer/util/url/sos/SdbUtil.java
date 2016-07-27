@@ -193,7 +193,7 @@ public class SdbUtil {
 				sig("contextClear", DatabaseStorer.class, prvName(storageName)),
 				context("clear", inEnt(StorageManagement.store_type, type),
 						result(StorageManagement.store_size)));
-		return (Integer) value(objectStoreTask);
+		return (Integer) eval(objectStoreTask);
 	}
 
 	public static int size(Store type) throws ExertionException,
@@ -205,7 +205,7 @@ public class SdbUtil {
 				sig("contextSize", DatabaseStorer.class, new ProviderName(storageName)),
 				context("size", inEnt(StorageManagement.store_type, type),
 						result(StorageManagement.store_size)));
-		return (Integer) value(objectStoreTask);
+		return (Integer) eval(objectStoreTask);
 	}
 	
 	public static URL delete(Object object) throws ExertionException,
@@ -226,7 +226,7 @@ public class SdbUtil {
 				sig("contextDelete", DatabaseStorer.class, prvName(storageName)),
 				context("delete", inEnt(StorageManagement.object_deleted, object),
 						result(StorageManagement.object_url)));
-		return (URL) value(objectStoreTask);
+		return (URL) eval(objectStoreTask);
 	}
 
 	public static URL deleteURL(URL url) throws ExertionException,
@@ -246,7 +246,7 @@ public class SdbUtil {
 			throw new SignatureException("No such service type: "
 					+ serviceTypeName, e);
 		}
-		return (URL) value(objectStoreTask);
+		return (URL) eval(objectStoreTask);
 	}
 
 	public static URL store(Object object) throws MogramException,
@@ -271,7 +271,7 @@ public class SdbUtil {
 				context("stored", inEnt(StorageManagement.object_stored, object),
 						result("stored/object/url")));
 
-		return (URL) value(objectStoreTask);
+		return (URL) eval(objectStoreTask);
 	}
 
 	static public Object retrieve(URL url) throws ExertionException,
@@ -287,7 +287,7 @@ public class SdbUtil {
 						prvName(Sorcer.getActualDatabaseStorerName())),
 				SdbUtil.getRetrieveContext(storeUuid, storeType));
 		try {
-			return get((Context) value(objectRetrieveTask));
+			return get((Context) eval(objectRetrieveTask));
 		} catch (RemoteException e) {
 			throw new ExertionException(e);
 		}
@@ -316,7 +316,7 @@ public class SdbUtil {
 				sig("contextList", DatabaseStorer.class, prvName(providerName)),
 				SdbUtil.getListContext(type));
 
-		return (List<String>) value(listTask);
+		return (List<String>) eval(listTask);
 	}
 
 	static public List<String> list(Store storeType) throws ExertionException,
@@ -328,6 +328,6 @@ public class SdbUtil {
 				sig("contextList", DatabaseStorer.class, prvName(storageName)),
 				SdbUtil.getListContext(storeType));
 
-		return (List<String>) value(listTask);
+		return (List<String>) eval(listTask);
 	}
 }

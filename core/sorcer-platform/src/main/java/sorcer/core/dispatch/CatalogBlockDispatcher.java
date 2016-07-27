@@ -167,7 +167,7 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
 				} else {
 					invoker.getCondition().setConditionalContext(xrt.getContext());
 				}
-				invoker.getCondition().setStatus(null);
+                invoker.getCondition().setStatus(null);
 			}
         } else {
             exertion.getDataContext().updateEntries(xrt.getContext());

@@ -61,7 +61,7 @@ import net.jini.config.ConfigurationException;
  </td>
  <td style="vertical-align: top;">The port to use when
  creating the RMI Registry. This
- entry will be read at initialization, and based on the value provided
+ entry will be read at initialization, and based on the eval provided
  by the registryRetries property, will be incremented<br>
  </td>
  </tr>
@@ -199,7 +199,7 @@ public class RegistryUtil {
     /**
      * Get the registryPort property.
      *
-     * @param config The Configuration to use, if null a default value is
+     * @param config The Configuration to use, if null a default eval is
      * returned
      *
      * @return The port used to create RMI Registry instance
@@ -224,7 +224,7 @@ public class RegistryUtil {
     /**
      * Get the registryRetries property.
      *
-     * @param config The Configuration to use, if null a default value is
+     * @param config The Configuration to use, if null a default eval is
      * returned
      *
      * @return The number of times to attempt to find an RMI Registry instance

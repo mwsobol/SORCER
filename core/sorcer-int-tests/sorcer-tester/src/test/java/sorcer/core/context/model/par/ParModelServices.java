@@ -42,9 +42,9 @@ public class ParModelServices {
 		Task pmt = task(sig("invoke", pm),
 				context(result("invoke/result", outPaths("expr"))));
 
-		value(pmt);
-		logger.info("result: " + value(pmt));
-		assertTrue(value(pmt).equals(60.0));
+		eval(pmt);
+		logger.info("result: " + eval(pmt));
+		assertTrue(eval(pmt).equals(60.0));
 
 		logger.info("result: " + exert(pmt));
 		assertEquals(get(exert(pmt), "invoke/result"), 60.0);
@@ -57,8 +57,8 @@ public class ParModelServices {
 		Task pmt = task(sig("invoke", Invocation.class, prvName("Arithmetic ParModel")),
 				context(result("invoke/result", outPaths("expr"))));
 
-		logger.info("result: " + value(pmt));
-		assertTrue(value(pmt).equals(60.0));
+		logger.info("result: " + eval(pmt));
+		assertTrue(eval(pmt).equals(60.0));
 
 		logger.info("result: " + exert(pmt));
 		assertEquals(get(exert(pmt), "invoke/result"), 60.0);
@@ -78,8 +78,8 @@ public class ParModelServices {
 //						new URL(Sorcer.getWebsterUrl()
 //								+ "/sorcer-tester-"+sorcerVersion+".jar"))));
 //
-//		logger.info("result: " + value(pmt));
-//		assertEquals(value(pmt), 33510.32163829113);
+//		logger.info("result: " + eval(pmt));
+//		assertEquals(eval(pmt), 33510.32163829113);
 //	}
 //
 //
@@ -89,7 +89,7 @@ public class ParModelServices {
 //
 //		ParModel pm = ParModelImpl.getParModel();
 //
-//		// invoking non existing agent and the return value specified
+//		// invoking non existing agent and the return eval specified
 //		Task pmt = task(sig("invoke", pm), context(
 //				invoker("getSphereVolume"),
 //				result("sphere/volume"),
@@ -103,25 +103,25 @@ public class ParModelServices {
 //						new URL(Sorcer.getWebsterUrl()
 //								+ "/sorcer-tester-"+sorcerVersion+".jar"))));
 //
-//		logger.info("result: " + value(pmt));
-//		assertEquals(value(pmt), 33510.32163829113);
+//		logger.info("result: " + eval(pmt));
+//		assertEquals(eval(pmt), 33510.32163829113);
 //
-//		// the existing agent and the return value specified
+//		// the existing agent and the return eval specified
 //		pmt = task(sig("invoke", pm), context(
 //				invoker("getCylinderSurface"),
 //				result("cylinder/surface"),
 //				ent("cylinder/radius", 1.0),
 //				ent("cylinder/height", 2.0)));
 //
-//		assertEquals(value(pmt), 18.84955592153876);
+//		assertEquals(eval(pmt), 18.84955592153876);
 //
-//		// the existing agent and no return value specified
+//		// the existing agent and no return eval specified
 //		pmt = task(sig("invoke", pm), context(
 //				invoker("getCylinderSurface"),
 //				ent("cylinder/radius", 1.0),
 //				ent("cylinder/height", 2.0)));
 //
-//		assertEquals(get((Context)value(pmt), "cylinder/surface"), 18.84955592153876);
+//		assertEquals(get((Context)eval(pmt), "cylinder/surface"), 18.84955592153876);
 //	}
 //
 //	@Test
@@ -140,7 +140,7 @@ public class ParModelServices {
 //
 //
 ////		logger.info("result: " + pmt.exert());
-//		Context cxt = (Context)value(pmt);
+//		Context cxt = (Context)eval(pmt);
 //		logger.info("result cxt: " + cxt);
 //		assertEquals(get(cxt, "sphere/radius"), 20.0);
 //		assertEquals(get(cxt, "sphere/volume"), 33510.32163829113);
@@ -154,8 +154,8 @@ public class ParModelServices {
 //							new URL(Sorcer.getWebsterUrl()
 //									+ "/sorcer-tester-"+sorcerVersion+".jar"))));
 //
-////		logger.info("result: " + value(pmt));
-//		assertEquals(value(pmt), 33510.32163829113);
+////		logger.info("result: " + eval(pmt));
+//		assertEquals(eval(pmt), 33510.32163829113);
 //	}
 //
 //	@Test
@@ -175,7 +175,7 @@ public class ParModelServices {
 //								new URL(Sorcer.getWebsterUrl()
 //										+ "/sorcer-tester-" + sorcerVersion + ".jar"))));
 //
-//		assertEquals(value(pmt), 33510.32163829113);
+//		assertEquals(eval(pmt), 33510.32163829113);
 //
 //		pmt = task(sig("invoke", Invocation.class, prvName("Arithmetic ParModel")),
 //				context(invoker("getCylinderSurface"),
@@ -185,6 +185,6 @@ public class ParModelServices {
 //						ent("cylinder/radius", 1.0),
 //						ent("cylinder/height", 2.0)));
 //
-//		assertEquals(value(pmt), 18.84955592153876);
+//		assertEquals(eval(pmt), 18.84955592153876);
 //	}
 }

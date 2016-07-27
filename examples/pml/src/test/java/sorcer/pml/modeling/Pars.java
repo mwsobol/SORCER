@@ -8,6 +8,7 @@ import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.core.context.model.par.Par;
 import sorcer.core.context.model.par.ParModel;
+import sorcer.eo.operator;
 import sorcer.service.Context;
 
 import java.net.URL;
@@ -22,6 +23,7 @@ import static sorcer.eo.operator.value;
 import static sorcer.po.operator.add;
 import static sorcer.po.operator.*;
 import static sorcer.po.operator.set;
+import static sorcer.mo.operator.*;
 
 /**
  * @author Mike Sobolewski
@@ -39,8 +41,8 @@ public class Pars {
 
 		// par with its context scope
 		Par<?> add = par("add", invoker("x + y", pars("x", "y")), cxt);
-		logger.info("par value: " + value(add));
-		assertTrue(value(add).equals(50.0));
+		logger.info("par eval: " + operator.eval(add));
+		assertTrue(operator.eval(add).equals(50.0));
 	}
 
 
@@ -54,7 +56,7 @@ public class Pars {
 		add(cxt, add);
 
 		// evaluate the entry of the context
-		logger.info("context add value: " + value(cxt, "add"));
+		logger.info("context add eval: " + value(cxt, "add"));
 		assertTrue(value(cxt, "add").equals(50.0));
 
 	}
@@ -64,8 +66,8 @@ public class Pars {
 	public void closingParWihEntries() throws Exception {
 		Par y = par("y",
 				invoker("(x1 * x2) - (x3 + x4)", pars("x1", "x2", "x3", "x4")));
-		Object val = value(y, ent("x1", 10.0), ent("x2", 50.0), ent("x3", 20.0), ent("x4", 80.0));
-		// logger.info("y value: " + val);
+		Object val = operator.eval(y, ent("x1", 10.0), ent("x2", 50.0), ent("x3", 20.0), ent("x4", 80.0));
+		// logger.info("y eval: " + val);
 		assertEquals(val, 400.0);
 	}
 
@@ -76,9 +78,9 @@ public class Pars {
 		Par<?> add = par("add", invoker("x + y", pars("x", "y")));
 
 		Context<Double> cxt = context(ent("x", 10.0), ent("y", 20.0));
-		logger.info("par value: " + value(add, cxt));
+		logger.info("par eval: " + operator.eval(add, cxt));
 		// evaluate a par 
-		assertTrue(value(add, cxt).equals(30.0));
+		assertTrue(operator.eval(add, cxt).equals(30.0));
 
 	}
 
@@ -97,8 +99,8 @@ public class Pars {
 		assertTrue(content(dbp1Url).equals(25.0));
 		assertEquals(content(dbp2Url), "http://sorcersoft.org/sobol");
 		
-		assertTrue(value(dbp1).equals(25.0));
-		assertEquals(value(dbp2), "http://sorcersoft.org/sobol");
+		assertTrue(operator.eval(dbp1).equals(25.0));
+		assertEquals(operator.eval(dbp2), "http://sorcersoft.org/sobol");
 
 		// update persistent values
 		set(dbp1, 30.0);
@@ -116,23 +118,23 @@ public class Pars {
 	@Test
 	public void parFidelities() throws Exception {
 		
-		Par<Double> dbp = dbPar("shared/value", 25.0);
+		Par<Double> dbp = dbPar("shared/eval", 25.0);
 		
 		Par multi = par("multi",
-				parFi(ent("init/value"), 
+				parFi(ent("init/eval"),
 				dbp,
 				ent("invoke", invoker("x + y", pars("x", "y")))));
 		
 		Context<Double> cxt = context(ent("x", 10.0), 
-				ent("y", 20.0), ent("init/value", 49.0));
+				ent("y", 20.0), ent("init/eval", 49.0));
 		
 		set(dbp, 50.0);
 
-		assertTrue(value(multi, cxt, parFi("shared/value")).equals(50.0));
+		assertTrue(operator.eval(multi, cxt, parFi("shared/eval")).equals(50.0));
 
-		assertTrue(value(multi, cxt, parFi("init/value")).equals(49.0));
+		assertTrue(operator.eval(multi, cxt, parFi("init/eval")).equals(49.0));
 
-		assertTrue(value(multi, cxt, parFi("invoke")).equals(30.0));
+		assertTrue(operator.eval(multi, cxt, parFi("invoke")).equals(30.0));
 
 	}
 	
@@ -149,15 +151,13 @@ public class Pars {
 		
 		assertEquals(value(pm, "add1"), 30.0);
 		// change the scope of add1
-		set(pm, "x", 20.0);
+		setValue(pm, "x", 20.0);
 		assertEquals(value(pm, "add1"), 40.0);
 
 		assertEquals(value(pm, "add2"), 70.0);
-		// x is changed but add2 value is the same, has its own scope
-		set(pm, "x", 20.0);
+		// x is changed but add2 eval is the same, has its own scope
+		setValue(pm, "x", 20.0);
 		assertEquals(value(pm, "add2"), 70.0);
 		
 	}
-	
-	
 }

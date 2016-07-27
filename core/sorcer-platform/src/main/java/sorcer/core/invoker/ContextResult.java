@@ -33,21 +33,21 @@ public class ContextResult<Objec> extends ServiceContext<Object> {
 	private static final long serialVersionUID = 2716822310344630839L;
 	
 	public ContextResult(Object result, Exertion exertion) throws ContextException {
-		putValue("exit/value", 0);
+		putValue("exit/eval", 0);
 		putOutValue("result/out", result);
 		putErrValue("result/err", ((ControlContext)exertion.getControlContext()).getExceptions());
 		putValue("invoked/method", exertion.getProcessSignature());
 	}
 	
 	public ContextResult(CmdResult result) throws ContextException {
-		putValue("exit/value", result.getExitValue());
+		putValue("exit/eval", result.getExitValue());
 		putOutValue("result/out", result.getOut());
 		putErrValue("result/err", result.getErr());
 		putValue("invoked/method", result.getErr());
 	}
 		
 	public ContextResult(MethodInvoker<?> invoker) throws ContextException {
-		putValue("exit/value", 0);
+		putValue("exit/eval", 0);
 		putValue("invoker/type", invoker.getSelector());
 		putValue("invoked/method", invoker.getSelector());
 		putValue("method/parameters", invoker.getParameters());
@@ -60,7 +60,7 @@ public class ContextResult<Objec> extends ServiceContext<Object> {
 	}
 	
 	public int getExitValue() throws ContextException {
-		return (Integer)getValue("exit/value");
+		return (Integer)getValue("exit/eval");
 	}
 
 	public Object getOut() throws ContextException {

@@ -43,7 +43,7 @@ public class Arithmometer implements SorcerConstants, Serializable {
 
 	public static final String EXPRESSION = "expression";
 
-	public static final String RESULT_PATH = "result/value";
+	public static final String RESULT_PATH = "result/eval";
 			
 	public final static Logger logger = LoggerFactory.getLogger(Arithmometer.class);
 
@@ -181,11 +181,11 @@ public class Arithmometer implements SorcerConstants, Serializable {
 			logger.info(selector + " result: \n" + result);
 
 			String outputMessage = "calculated by " + getHostname();
-			// set return value
+			// set return eval
 			if (((ServiceContext)context).getReturnPath() != null) {
 				context.setReturnValue(result);
 			}
-			//other ways to indicate the output value
+			//other ways to indicate the output eval
 			else if (outpaths.size() == 1) {
 				// put the result in the existing output path
 				cxt.putValue(outpaths.get(0), result);

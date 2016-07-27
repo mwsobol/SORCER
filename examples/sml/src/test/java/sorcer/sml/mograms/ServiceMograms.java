@@ -15,6 +15,7 @@ import sorcer.core.context.model.srv.SrvModel;
 import sorcer.core.provider.Modeler;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.core.provider.rendezvous.ServiceModeler;
+import sorcer.eo.operator;
 import sorcer.service.Block;
 import sorcer.service.Context;
 import sorcer.service.Job;
@@ -111,13 +112,13 @@ public class ServiceMograms {
 
         Model exerted = exert(model);
         logger.info("out context: " + exerted);
-        assertTrue(value(exerted, "out").equals(110.0));
+        assertTrue(operator.eval(exerted, "out").equals(110.0));
 
         ((SrvModel) exerted).clearOutputs();
 
         exerted = exert(model);
         logger.info("out context: " + exerted);
-        assertTrue(value(exerted, "out").equals(120.0));
+        assertTrue(operator.eval(exerted, "out").equals(120.0));
     }
 
     @Test
@@ -133,7 +134,7 @@ public class ServiceMograms {
         responseUp(mdl, "increment", "out", "multiply", "by");
 //        Model exerted = exert(model);
 //        logger.info("out context: " + exerted);
-//        assertTrue(value(exerted, "out").equals(110.0));
+//        assertTrue(eval(exerted, "out").equals(110.0));
 
         logger.info("DEPS: " + printDeps(mdl));
 

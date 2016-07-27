@@ -520,7 +520,7 @@ public class ContextTree extends JPanel {
 	// node = (DefaultMutableTreeNode)(node.getChildAt(index));
 
 	// System.out.println("The user has finished editing the node.");
-	// System.out.println("New value: " + node.getUserObject());
+	// System.out.println("New eval: " + node.getUserObject());
 	/*
 	 * } public void treeNodesInserted(TreeModelEvent e) { } public void
 	 * treeNodesRemoved(TreeModelEvent e) { } public void

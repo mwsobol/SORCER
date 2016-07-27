@@ -25,9 +25,7 @@ import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.get;
 import static sorcer.eo.operator.loop;
 import static sorcer.eo.operator.value;
-import static sorcer.mo.operator.printDeps;
-import static sorcer.mo.operator.response;
-import static sorcer.mo.operator.traced;
+import static sorcer.mo.operator.*;
 
 /**
  * Created by Mike Sobolewski on 10/26/15.
@@ -568,12 +566,12 @@ public class ModelMultiFidelities {
             if (fi.getSelectName().equals("t5")) {
                 Double val = ((Double) value(context(value), "result/y"));
                 if (val <= 200.0) {
-                    setValue(context(value), "result/y", val + 10.0);
+                    putValue(context(value), "result/y", val + 10.0);
                     mgr.reconfigure(fi("mFi4","t4"));
                 }
             } else if (fi.getSelectName().equals("t4")) {
                 Double val = ((Double) value(context(value), "result/y"));
-                setValue(context(value), "result/y", val + 20.0);
+                putValue(context(value), "result/y", val + 20.0);
             }
         };
 

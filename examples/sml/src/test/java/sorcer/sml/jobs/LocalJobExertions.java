@@ -324,7 +324,7 @@ public class LocalJobExertions implements SorcerConstants {
 
 		Task t4 = task("t4",
 				sig("multiply", MultiplierImpl.class),
-				// "arg/x1; value is inthe scope of job j1
+				// "arg/x1; eval is inthe scope of job j1
 				cxt("multiply", inEnt("arg/x1"), inEnt("arg/x2", 50.0),
 						outEnt("result/y")));
 

@@ -75,7 +75,7 @@ public class ExchangeTasks {
 						result("values")));
 
 		long start = System.currentTimeMillis();
-		int[] out = (int[]) value(ex);
+		int[] out = (int[]) eval(ex);
 		logger.info("out: " + Arrays.toString(out));
 		long end = System.currentTimeMillis();
 		logger.info("Execution time: " + (end - start) + " ms"); 							// 25 ms
@@ -92,7 +92,7 @@ public class ExchangeTasks {
 						result("values")));
 
 		long start = System.currentTimeMillis();
-		int[] out = (int[]) value(ex);
+		int[] out = (int[]) eval(ex);
 		logger.info("out: " + Arrays.toString(out));
 		long end = System.currentTimeMillis();
 		logger.info("Execution time: " + (end - start) + " ms"); 							// 25 ms
@@ -109,7 +109,7 @@ public class ExchangeTasks {
 		int[] out = null;
 		long start = System.nanoTime();
 		for (int n = 0; n < ITERATIONS; n++) {
-			out = (int[]) value(ex);
+			out = (int[]) eval(ex);
 		}
 		long end = System.nanoTime();
 		logger.info("out: " + Arrays.toString(out));
@@ -152,7 +152,7 @@ public class ExchangeTasks {
 					cxt(ent("values", in), result("values")));
 
 		long start = System.currentTimeMillis();
-		int[] out = (int[]) value(ex);
+		int[] out = (int[]) eval(ex);
 		long end = System.currentTimeMillis();
 		logger.info("out: " + Arrays.toString(out));
 		logger.info("Execution time: " + (end - start) + " ms");							// 702 ms
@@ -166,7 +166,7 @@ public class ExchangeTasks {
 						result("values")));
 
 		long start = System.currentTimeMillis();
-		int[] out = (int[]) value(ex);
+		int[] out = (int[]) eval(ex);
 		long end = System.currentTimeMillis();
 		logger.info("out: " + Arrays.toString(out));
 		logger.info("Execution time: " + (end - start) + " ms");							// 25 ms
@@ -180,7 +180,7 @@ public class ExchangeTasks {
 						result("values")));
 
 		long start = System.currentTimeMillis();
-		int[] out = (int[]) value(ex);
+		int[] out = (int[]) eval(ex);
 		long end = System.currentTimeMillis();
 		logger.info("out: " + Arrays.toString(out));
 		logger.info("Execution time: " + (end - start) + " ms");							// 693 ms
@@ -196,7 +196,7 @@ public class ExchangeTasks {
 		int[] out = null;
 		long start = System.currentTimeMillis();
 		for (int n = 0; n < ITERATIONS; n++) {
-			out = (int[]) value(ex);
+			out = (int[]) eval(ex);
 		}
 		long end = System.currentTimeMillis();
 		logger.info("out: " + Arrays.toString(out));
@@ -214,7 +214,7 @@ public class ExchangeTasks {
 		int[] out = null;
 		long start = System.nanoTime();
 		for (int n = 0; n < ITERATIONS; n++) {
-			out = (int[]) value(ex);
+			out = (int[]) eval(ex);
 		}
 		long end = System.nanoTime();
 		logger.info("out: " + Arrays.toString(out));
@@ -234,7 +234,7 @@ public class ExchangeTasks {
 		int[] out = null;
 		long start = System.nanoTime();
 		for (int n = 0; n < ITERATIONS; n++) {
-			out = (int[]) value(ex);
+			out = (int[]) eval(ex);
 		}
 		long end = System.nanoTime();
 		logger.info("out: " + Arrays.toString(out));
@@ -254,7 +254,7 @@ public class ExchangeTasks {
 		int[] out = null;
 		long start = System.currentTimeMillis();
 		for (int n = 0; n < ITERATIONS; n++) {
-			out = (int[]) value(ex);
+			out = (int[]) eval(ex);
 		}
 		long end = System.currentTimeMillis();
 		logger.info("out: " + Arrays.toString(out));
@@ -318,7 +318,7 @@ public class ExchangeTasks {
 						result("output")));
 
 		long start = System.currentTimeMillis();
-		int[] out = (int[]) value(ipc);
+		int[] out = (int[]) eval(ipc);
 		long end = System.currentTimeMillis();
 		logger.info("Execution time: " + (end-start) + " ms");                        	// 464 ms
 		logger.info("read array: " + Arrays.toString(out));

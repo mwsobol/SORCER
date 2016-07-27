@@ -15,6 +15,7 @@ import sorcer.arithmetic.tester.volume.Volume;
 import sorcer.core.context.model.par.Par;
 import sorcer.core.context.model.par.ParModel;
 import sorcer.core.provider.rendezvous.ServiceJobber;
+import sorcer.eo.operator;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
 import sorcer.util.Sorcer;
@@ -42,6 +43,7 @@ import static sorcer.po.operator.map;
 import static sorcer.po.operator.opt;
 import static sorcer.po.operator.put;
 import static sorcer.po.operator.set;
+import static sorcer.mo.operator.*;
 
 /**
  * @author Mike Sobolewski
@@ -78,11 +80,11 @@ public class InvokerTest {
 			x.setValue(arg.getValue("x"));
 			y.setValue(context.getValue("y"));
 			// x set from 'arg'
-			assertTrue(value(x).equals(200.0));
+			assertTrue(operator.eval(x).equals(200.0));
 			// y set from construtor's context 'in'
-			assertTrue(value(y).equals(30.0));
-			assertTrue(value(z).equals(170.0));
-			return value(x) + value(y) + (double) value(pm, "z");
+			assertTrue(operator.eval(y).equals(30.0));
+			assertTrue(operator.eval(z).equals(170.0));
+			return operator.eval(x) + operator.eval(y) + (double) value(pm, "z");
 		}
 	};
 
@@ -92,7 +94,7 @@ public class InvokerTest {
 		Invocation invoker = invoker("lambda",
 				cxt ->  (double) value(cxt, "x") + (double) value(cxt, "y") + 30,
 				context(ent("x", 10.0), ent("y", 20.0)));
-		logger.info("invoke value: " + invoke(invoker));
+		logger.info("invoke eval: " + invoke(invoker));
 		assertEquals(invoke(invoker), 60.0);
 	}
 
@@ -105,7 +107,7 @@ public class InvokerTest {
 		Context in = context(ent("x", 20.0), ent("y", 30.0));
 		Context arg = context(ent("x", 200.0), ent("y", 300.0));
 		add(pm, methodInvoker("invoke", new Update(in), arg));
-		logger.info("call value:" + invoke(pm, "invoke"));
+		logger.info("call eval:" + invoke(pm, "invoke"));
 		assertEquals(invoke(pm, "invoke"), 400.0);
 	}
 
@@ -115,9 +117,9 @@ public class InvokerTest {
 		ParModel pm = parModel("par-model");
 		add(pm, par("x", 10.0), par("y", 20.0));
 		add(pm, invoker("expr", "x + y + 30", args("x", "y")));
-		logger.info("invoke value: " + invoke(pm, "expr"));
+		logger.info("invoke eval: " + invoke(pm, "expr"));
 		assertEquals(invoke(pm, "expr"), 60.0);
-		logger.info("get value: " + value(pm, "expr"));
+		logger.info("get eval: " + value(pm, "expr"));
 		assertEquals(value(pm, "expr"), 60.0);
 	}
 
@@ -127,9 +129,9 @@ public class InvokerTest {
 		ParModel pm = parModel("model");
 		add(pm, par("x", 10.0), par("y", 20.0));
 		add(pm, invoker("lambda", cxt -> (double)value(cxt, "x") + (double)value(cxt, "y") + 30));
-		logger.info("invoke value: " + invoke(pm, "lambda"));
+		logger.info("invoke eval: " + invoke(pm, "lambda"));
 		assertEquals(invoke(pm, "lambda"), 60.0);
-		logger.info("get value: " + value(pm, "lambda"));
+		logger.info("get eval: " + value(pm, "lambda"));
 		assertEquals(value(pm, "lambda"), 60.0);
 	}
 
@@ -140,8 +142,8 @@ public class InvokerTest {
 				ent(invoker("lambda", cxt -> (double) value(cxt, "x")
 									+ (double) value(cxt, "y")
 									+ 30)));
-		logger.info("invoke value: " + value(mo, "lambda"));
-		assertEquals(value(mo, "lambda"), 60.0);
+		logger.info("invoke eval: " + operator.eval(mo, "lambda"));
+		assertEquals(operator.eval(mo, "lambda"), 60.0);
 	}
 
 	@Test
@@ -158,8 +160,8 @@ public class InvokerTest {
 								+ 30;
 					},
 				scope)));
-		logger.info("invoke value: " + value(mo, "lambda"));
-		assertEquals(value(mo, "lambda"), 100.0);
+		logger.info("invoke eval: " + operator.eval(mo, "lambda"));
+		assertEquals(operator.eval(mo, "lambda"), 100.0);
 	}
 
 	@Test
@@ -172,7 +174,7 @@ public class InvokerTest {
 				context("multiply", inEnt("arg/x1", 50.0), inEnt("arg/x2", 10.0),
 						result("result/y")));
 
-		// logger.info("invoke value:" + invoke(t4));
+		// logger.info("invoke eval:" + invoke(t4));
 		assertEquals(invoke(t4), 500.0);
 	}
 
@@ -198,7 +200,7 @@ public class InvokerTest {
 					pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")),
 					result("j1/t3/result/y"));
 
-		// logger.info("invoke value:" + invoke(j1));
+		// logger.info("invoke eval:" + invoke(j1));
 		assertEquals(invoke(j1), 400.0);
 	}
 
@@ -230,11 +232,11 @@ public class InvokerTest {
 		ParModel pm = parModel("par-model");
 		add(pm, map(par("x1p", "arg/x1"), c4), map(par("x2p", "arg/x2"), c4), j1);
 		// setting context parameters in a job
-		set(pm, "x1p", 10.0);
-		set(pm, "x2p", 50.0);
+		setValue(pm, "x1p", 10.0);
+		setValue(pm, "x2p", 50.0);
 
 		add(pm, j1);
-		// logger.info("call value:" + invoke(pm, "j1"));
+		// logger.info("call eval:" + invoke(pm, "j1"));
 		assertEquals(invoke(pm, "j1"), 400.0);
 	}
 
@@ -243,7 +245,7 @@ public class InvokerTest {
 			SignatureException, ExertionException {
 
 		Par<Double> x1 = par("x1", 1.0);
-		// logger.info("invoke value:" + invoke(x1));
+		// logger.info("invoke eval:" + invoke(x1));
 		assertEquals(invoke(x1), 1.0);
 	}
 
@@ -255,12 +257,12 @@ public class InvokerTest {
 		x2 = par("x2", 2.0);
 		y = par("y", invoker("x1 + x2", args("x1", "x2")));
 		
-//		logger.info("y: " + value(y));
-//		assertEquals(value(y), 3.0);
+//		logger.info("y: " + eval(y));
+//		assertEquals(eval(y), 3.0);
 
 		invoke(y, ent("x1", 10.0), ent("x2", 20.0));
-//		logger.info("y: " + value(y));
-		assertTrue(value(y).equals(30.0));
+//		logger.info("y: " + eval(y));
+		assertTrue(operator.eval(y).equals(30.0));
 
 //		logger.info("y scope: " + scope(y));
 		assertEquals(scope(y), null);
@@ -290,11 +292,11 @@ public class InvokerTest {
 		ParModel pm = parModel("par-model");
 		add(pm, map(par("x1p", "arg/x1"), c4), map(par("x2p", "arg/x2"), c4), j1);
 		// setting context parameters in a job
-		set(pm, "x1p", 10.0);
-		set(pm, "x2p", 50.0);
+		setValue(pm, "x1p", 10.0);
+		setValue(pm, "x2p", 50.0);
 
 		add(pm, exertInvoker("invoke j1", j1, "j1/t3/result/y"));
-		// logger.info("call value:" + invoke(pm, "invoke j1"));
+		// logger.info("call eval:" + invoke(pm, "invoke j1"));
 		assertEquals(invoke(pm, "invoke j1"), 400.0);
 	}
 
@@ -326,15 +328,15 @@ public class InvokerTest {
 
 		CmdResult result = (CmdResult) invoke(pm, "volume");
 		// get from the result the volume of cylinder and assign to y parameter
-		assertTrue("EXPECTED '0' return value, GOT: "+result.getExitValue(), result.getExitValue() == 0);
+		assertTrue("EXPECTED '0' return eval, GOT: "+result.getExitValue(), result.getExitValue() == 0);
 		Properties props = new Properties();
 		props.load(new StringReader(result.getOut()));
 
-		set(pm, "y", new Double(props.getProperty("cylinder/volume")));
+		setValue(pm, "y", new Double(props.getProperty("cylinder/volume")));
 
-		logger.info("x value:" + value(pm, "x"));
-		logger.info("y value:" + value(pm, "y"));
-		logger.info("multiply value:" + value(pm, "add"));
+		logger.info("x eval:" + value(pm, "x"));
+		logger.info("y eval:" + value(pm, "y"));
+		logger.info("multiply eval:" + value(pm, "add"));
 		assertEquals(value(pm, "add"), 47.69911184307752);
 	}
 
@@ -355,13 +357,13 @@ public class InvokerTest {
 		assertEquals(pm.getValue("y"), 20.0);
 		
 		Object val = pm.getValue("condition");
-//		logger.info("condition value: " + val);
-//		logger.info("condition value: " + pm.getValue("condition"));
+//		logger.info("condition eval: " + val);
+//		logger.info("condition eval: " + pm.getValue("condition"));
 		assertEquals(pm.getValue("condition"), false);
 
 		pm.putValue("x", 300.0);
 		pm.putValue("y", 200.0);
-		// logger.info("condition value: " + pm.getValue("condition"));
+		// logger.info("condition eval: " + pm.getValue("condition"));
 		assertEquals(pm.getValue("condition"), true);
 
 		// enclosing class conditional context
@@ -399,7 +401,7 @@ public class InvokerTest {
 
 		pm.putValue("x", 300.0);
 		pm.putValue("y", 200.0);
-		logger.info("opt value: " + opt.getValue());
+		logger.info("opt eval: " + opt.getValue());
 		assertEquals(opt.getValue(), 500.0);
 	}
 
@@ -420,7 +422,7 @@ public class InvokerTest {
 
 		pm.putValue("x", 300.0);
 		pm.putValue("y", 200.0);
-		logger.info("opt value: " + opt.getValue());
+		logger.info("opt eval: " + opt.getValue());
 		assertEquals(opt.getValue(), 500.0);
 	}
 
@@ -433,12 +435,12 @@ public class InvokerTest {
 				opt("opt", condition(pm, "{ x, y -> x > y }", "x", "y"),
 						invoker("x + y", pars("x", "y"))));
 
-		logger.info("opt value: " + value(pm, "opt"));
+		logger.info("opt eval: " + value(pm, "opt"));
 		assertEquals(value(pm, "opt"), null);
 
 		put(pm, "x", 300.0);
 		put(pm, "y", 200.0);
-		logger.info("opt value: " + value(pm, "opt"));
+		logger.info("opt eval: " + value(pm, "opt"));
 		assertEquals(value(pm, "opt"), 500.0);
 	}
 
@@ -471,21 +473,21 @@ public class InvokerTest {
 		AltInvoker alt = new AltInvoker("alt", opt1, opt2, opt3, opt4);
 		add(pm, opt1, opt2, opt3, opt4, alt);
 
-		logger.info("opt1 value: " + value(opt1));
-		assertEquals(value(opt1), 60.0);
-		logger.info("opt2 value: " + value(opt2));
-		assertEquals(value(opt2), 70.0);
-		logger.info("opt3 value: " + value(opt3));
-		assertEquals(value(opt3), 80.0);
-		logger.info("opt4 value: " + value(opt4));
-		assertEquals(value(opt4), 90.0);
-		logger.info("alt value: " + value(alt));
-		assertEquals(value(alt), 60.0);
+		logger.info("opt1 eval: " + operator.eval(opt1));
+		assertEquals(operator.eval(opt1), 60.0);
+		logger.info("opt2 eval: " + operator.eval(opt2));
+		assertEquals(operator.eval(opt2), 70.0);
+		logger.info("opt3 eval: " + operator.eval(opt3));
+		assertEquals(operator.eval(opt3), 80.0);
+		logger.info("opt4 eval: " + operator.eval(opt4));
+		assertEquals(operator.eval(opt4), 90.0);
+		logger.info("alt eval: " + operator.eval(alt));
+		assertEquals(operator.eval(alt), 60.0);
 
 		pm.putValue("x", 300.0);
 		pm.putValue("y", 200.0);
-		logger.info("opt value: " + value(alt));
-		assertEquals(value(alt), 510.0);
+		logger.info("opt eval: " + operator.eval(alt));
+		assertEquals(operator.eval(alt), 510.0);
 
 		pm.putValue("x", 10.0);
 		pm.putValue("y", 20.0);
@@ -493,13 +495,13 @@ public class InvokerTest {
 		pm.putValue("y2", 50.0);
 		pm.putValue("x3", 50.0);
 		pm.putValue("y3", 60.0);
-		logger.info("opt value: " + alt.invoke());
-		assertEquals(value(alt), 70.0);
+		logger.info("opt eval: " + alt.invoke());
+		assertEquals(operator.eval(alt), 70.0);
 
 		pm.putValue("x2", 50.0);
 		pm.putValue("y2", 40.0);
-		logger.info("opt value: " + alt.invoke());
-		assertEquals(value(alt), 50.0);
+		logger.info("opt eval: " + alt.invoke());
+		assertEquals(operator.eval(alt), 50.0);
 	}
 
 	@Test
@@ -522,25 +524,25 @@ public class InvokerTest {
 
 		add(pm, alt, get(alt, 0), get(alt, 1), get(alt, 2), get(alt, 3));
 
-		logger.info("opt1 value : " + value(pm, "opt1"));
+		logger.info("opt1 eval : " + value(pm, "opt1"));
 		assertEquals(value(pm, "opt1"), null);
-		logger.info("opt2 value: " + value(pm, "opt2"));
+		logger.info("opt2 eval: " + value(pm, "opt2"));
 		assertEquals(value(pm, "opt2"), 50.0);
-		logger.info("opt3 value: " + value(pm, "opt3"));
+		logger.info("opt3 eval: " + value(pm, "opt3"));
 		assertEquals(value(pm, "opt3"), null);
-		logger.info("opt4 value: " + value(pm, "opt4"));
+		logger.info("opt4 eval: " + value(pm, "opt4"));
 		assertEquals(value(pm, "opt4"), 70.0);
-		logger.info("alt value: " + value(alt));
-		assertEquals(value(alt), 50.0);
+		logger.info("alt eval: " + operator.eval(alt));
+		assertEquals(operator.eval(alt), 50.0);
 
 		put(pm, ent("x", 300.0), ent("y", 200.0));
-		logger.info("alt value: " + value(alt));
-		assertEquals(value(alt), 510.0);
+		logger.info("alt eval: " + operator.eval(alt));
+		assertEquals(operator.eval(alt), 510.0);
 
 		put(pm, ent("x", 10.0), ent("y", 20.0), ent("x2", 40.0),
 				ent("y2", 50.0), ent("x3", 50.0), ent("y3", 60.0));
-		logger.info("alt value: " + value(alt));
-		assertEquals(value(alt), 70.0);
+		logger.info("alt eval: " + operator.eval(alt));
+		assertEquals(operator.eval(alt), 70.0);
 	}
 
 	@Test

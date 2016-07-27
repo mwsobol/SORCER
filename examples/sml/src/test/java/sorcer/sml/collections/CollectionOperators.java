@@ -15,7 +15,9 @@ import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.par.Par;
 import sorcer.core.context.model.par.ParModel;
 import sorcer.core.provider.rendezvous.ServiceJobber;
+import sorcer.eo.operator;
 import sorcer.service.*;
+import sorcer.service.modeling.Model;
 import sorcer.util.Runner;
 import sorcer.util.Table;
 
@@ -183,18 +185,18 @@ public class CollectionOperators {
 
 		assertFalse(isPersistent(e));
 		assertTrue(asis(e) instanceof Double);
-		assertTrue(value(e).equals(10.0));
+		assertTrue(operator.eval(e).equals(10.0));
 		assertTrue(asis(e).equals(10.0));
 
 		// make the entry persistent
-		// value is not yet persisted
+		// eval is not yet persisted
 		persistent(e);
 		assertTrue(isPersistent(e));
 		assertFalse(asis(e) instanceof URL);
-		assertTrue(value(e).equals(10.0));
+		assertTrue(operator.eval(e).equals(10.0));
 		assertTrue(asis(e) instanceof URL);
 		put(e, 50.0);
-		assertTrue(value(e).equals(50.0));
+		assertTrue(operator.eval(e).equals(50.0));
 		assertTrue(asis(e) instanceof URL);
 
 		// create service strategy entry
@@ -212,7 +214,7 @@ public class CollectionOperators {
 		assertTrue(access(se1).equals(access(st1)));
 
 		// store an object
-		store(value(se1));
+		store(operator.eval(se1));
 		Strategy st2 = (Strategy)content(se1Url);
 		assertTrue(flow(se1).equals(flow(st2)));
 		assertTrue(access(se1).equals(access(st2)));
@@ -226,30 +228,30 @@ public class CollectionOperators {
 		// create a persistent entry
 		Entry<Double> de = dbEnt("x3", 110.0);
 		assertFalse(asis(de) instanceof URL);
-		assertTrue(value(de).equals(110.0));
+		assertTrue(operator.eval(de).equals(110.0));
 		assertTrue(asis(de) instanceof URL);
 
 		// create an entry
 		Entry<Double> e = ent("x1", 10.0);
-		assertTrue(value(e).equals(10.0));
+		assertTrue(operator.eval(e).equals(10.0));
 		assertTrue(asis(e).equals(10.0));
 		assertFalse(asis(e) instanceof URL);
 
 		// make a persistent entry
-		// 'storeArg' operator makes the entry value persisted
+		// 'storeArg' operator makes the entry eval persisted
 		URL valUrl = storeArg(e);
-		assertTrue(value(e).equals(10.0));
+		assertTrue(operator.eval(e).equals(10.0));
 		assertTrue(asis(e) instanceof URL);
 
 		// create a persistent entry with URL
 		Entry<?> urle = dbEnt("x2", valUrl);
-		assertTrue(value(urle).equals(10.0));
+		assertTrue(operator.eval(urle).equals(10.0));
 		assertTrue(asis(urle) instanceof URL);
 
 		// assign a given URL
 		Entry<Object> dbe = dbEnt("y1");
 		put(dbe, valUrl);
-		assertTrue(value(dbe).equals(10.0));
+		assertTrue(operator.eval(dbe).equals(10.0));
 		assertTrue(asis(dbe) instanceof URL);
 
 	}
@@ -260,13 +262,13 @@ public class CollectionOperators {
 
 		Par add = par("add", invoker("x + y", pars("x", "y")));
 		Context<Double> cxt = context(ent("x", 10.0), ent("y", 20.0));
-		logger.info("par value: " + value(add, cxt));
-		assertTrue(value(add, cxt).equals(30.0));
+		logger.info("par eval: " + operator.eval(add, cxt));
+		assertTrue(operator.eval(add, cxt).equals(30.0));
 
 		cxt = context(ent("x", 20.0), ent("y", 30.0));
 		add = par("add", invoker("x + y", pars("x", "y")), cxt);
-		logger.info("par value: " + value(add));
-		assertTrue(value(add).equals(50.0));
+		logger.info("par eval: " + operator.eval(add));
+		assertTrue(operator.eval(add).equals(50.0));
 
 	}
 
@@ -281,8 +283,8 @@ public class CollectionOperators {
 		assertFalse(asis(dbp1) instanceof URL);
 		assertTrue(asis(dbp2) instanceof URL);
 
-		assertTrue(value(dbp1).equals(25.0));
-		assertEquals(value(dbp2), "http://sorcersoft.org/sobol");
+		assertTrue(operator.eval(dbp1).equals(25.0));
+		assertEquals(operator.eval(dbp2), "http://sorcersoft.org/sobol");
 
 		assertTrue(asis(dbp1) instanceof URL);
 		assertTrue(asis(dbp2) instanceof URL);
@@ -291,8 +293,8 @@ public class CollectionOperators {
 		URL p1Url = store(par("design/in", 30.0));
 		URL p2Url = store(par("url/sorcer", "http://sorcersoft.org"));
 
-		assertEquals(value((Par) content(p1Url)), 30.0);
-		assertEquals(value((Par)content(p2Url)), "http://sorcersoft.org");
+		assertEquals(operator.eval((Par) content(p1Url)), 30.0);
+		assertEquals(operator.eval((Par)content(p2Url)), "http://sorcersoft.org");
 
 	}
 
@@ -306,7 +308,7 @@ public class CollectionOperators {
 
 		// keys and values of entries
 		assertEquals(key(ent("name", "Mike")), "name");
-		assertEquals(value(ent("name", "Mike")), "Mike");
+		assertEquals(operator.eval(ent("name", "Mike")), "Mike");
 		// when using namespaces use path for the name of context (map) variables
 		assertEquals(path(ent("screen/height", 12.0)), "screen/height");
 
@@ -314,7 +316,7 @@ public class CollectionOperators {
 		assertEquals(keyValue(map1, "height"), 174.0);
 
 		assertTrue(key(ent("width", 2.0)).equals("width"));
-		assertTrue(value(ent("width", 2.0)).equals(2.0));
+		assertTrue(operator.eval(ent("width", 2.0)).equals(2.0));
 
 		assertEquals(keyValue(map1, "name"), "Mike");
 		assertEquals(keyValue(map1, "height"), 174.0);
@@ -364,11 +366,11 @@ public class CollectionOperators {
 		assertTrue(get(cxt, "arg/x6").equals(1.6));
 		assertTrue(asis(cxt, "arg/x7") instanceof Par);
 
-		// aliasing entries with reactive value entries - rvEnt
+		// aliasing entries with reactive eval entries - rvEnt
 		put(cxt, rvEnt("arg/x6", ent("overwrite", 20.0)));
 		assertTrue(value(cxt, "arg/x6").equals(20.0));
 		urvEnt(cxt, "arg/x6");
-		assertTrue(value((Evaluation)value(cxt, "arg/x6")).equals(20.0));
+		assertTrue(operator.eval((Evaluation)value(cxt, "arg/x6")).equals(20.0));
 		rrvEnt(cxt, "arg/x6");
 		assertTrue(value(cxt, "arg/x6").equals(20.0));
 
@@ -388,31 +390,31 @@ public class CollectionOperators {
 	@Test
 	public void entryModel() throws Exception {
 
-		Context cxt = entModel(ent("arg/x1", 1.0), ent("arg/x2", 2.0),
+		Model model = entModel(ent("arg/x1", 1.0), ent("arg/x2", 2.0),
 				ent("arg/x3", 3.0), ent("arg/x4", 4.0), ent("arg/x5", 5.0));
 
 //		add(cxt, ent("arg/x6", 6.0));
-//		assertTrue(value(cxt, "arg/x6").equals(6.0));
+//		assertTrue(eval(cxt, "arg/x6").equals(6.0));
 //
 //		put(cxt, ent("arg/x6", ent("overwrite", 20.0)));
-//		assertTrue(value(cxt, "arg/x6").equals(20.0));
+//		assertTrue(eval(cxt, "arg/x6").equals(20.0));
 //
 //		// model with invoker
 //		add(cxt, ent("arg/x7", invoker("x1 + x3", ents("x1", "x3"))));
 //
-//		assertTrue(value(cxt, "arg/x7").equals(4.0));
+//		assertTrue(eval(cxt, "arg/x7").equals(4.0));
 //
 //		// model with local service entry, own arguments
 //		add(cxt, ent("arg/x8", service(sig("add", AdderImpl.class),
 //				cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
 //						result("result/y")))));
-//		assertTrue(value(cxt, "arg/x8").equals(100.0));
+//		assertTrue(eval(cxt, "arg/x8").equals(100.0));
 
 		// model with local service entry, no arguments
-		add(cxt, ent("arg/x9", task(sig("multiply", MultiplierImpl.class),
+		add(model, ent("arg/x9", task(sig("multiply", MultiplierImpl.class),
 				cxt("add", inEnt("arg/x1"), inEnt("arg/x2"), result("result/y")))));
 
-		assertTrue(value(cxt, "arg/x9").equals(2.0));
+		assertTrue(eval(model, "arg/x9").equals(2.0));
 	}
 
 
@@ -423,7 +425,7 @@ public class CollectionOperators {
 		add(pm, par("x", 10.0), ent("y", 20.0));
 		add(pm, invoker("add", "x + y", args("x", "y")));
 
-//		logger.info("adder value: " + value(pm, "add"));
+//		logger.info("adder eval: " + eval(pm, "add"));
 		assertEquals(value(pm, "John/weight"), 180.0);
 		assertEquals(value(pm, "add"), 30.0);
 		set(pm, "x", 20.0);
@@ -471,18 +473,18 @@ public class CollectionOperators {
 		Exertion j2 = exert(j1);
 		Context c4s = taskContext("j1/t4", j2);
 
-		// get service j2 direct result value
+		// get service j2 direct result eval
 		assertEquals(get(j2, "j1/t3/result/y"), 400.0);
-		// get service par j1p value
-		assertEquals(value(j1p), 400.0);
+		// get service par j1p eval
+		assertEquals(operator.eval(j1p), 400.0);
 
-		// set job parameter value
+		// set job parameter eval
 		set(j1p, 1000.0);
-		assertEquals(value(j1p), 1000.0);
+		assertEquals(operator.eval(j1p), 1000.0);
 
-		// exert original service and get its par value
+		// exert original service and get its par eval
 		exert(j1);
-		// j1p is the alias to context value of j1 at j1/t3/result/y
+		// j1p is the alias to context eval of j1 at j1/t3/result/y
 		assertEquals(value(pc, "j1p"), 400.0);
 
 	}

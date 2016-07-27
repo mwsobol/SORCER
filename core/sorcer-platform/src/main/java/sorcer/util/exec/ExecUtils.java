@@ -273,7 +273,7 @@ public class ExecUtils {
 
 	/**
 	 * Represents the result of a native command. Consists of the process exit
-	 * value together with stdout and stderr dumped to strings.
+	 * eval together with stdout and stderr dumped to strings.
 	 * 
 	 * @author Dawid Kurzyniec
 	 * @version 1.0

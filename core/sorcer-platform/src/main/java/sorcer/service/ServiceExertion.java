@@ -32,6 +32,7 @@ import sorcer.core.provider.*;
 import sorcer.core.provider.exerter.ServiceShell;
 import sorcer.core.signature.NetSignature;
 import sorcer.core.signature.ServiceSignature;
+import sorcer.eo.operator;
 import sorcer.security.util.SorcerPrincipal;
 import sorcer.service.Signature.ReturnPath;
 import sorcer.service.Strategy.Access;
@@ -43,8 +44,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.Principal;
 import java.text.SimpleDateFormat;
 import java.util.*;
-
-import static sorcer.eo.operator.value;
 
 /**
  * @author Mike Sobolewski
@@ -783,7 +782,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
 
     public void updateValue(Object value) throws ContextException {
         List<Mogram> exertions = getAllMograms();
-        // logger.info(" value = " + value);
+        // logger.info(" eval = " + eval);
         // logger.info(" this exertion = " + this);
         // logger.info(" mograms = " + mograms);
         for (Mogram e : exertions) {
@@ -1029,7 +1028,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
         Context cxt = Arg.getContext(args);
         if (cxt != null) {
               dataContext = (ServiceContext) cxt;
-              return value(this, args);
+              return operator.eval(this, args);
         }
         return null;
     }

@@ -62,7 +62,7 @@ public class Par<T> extends Entry<T> implements Variability<T>, Mappable<T>,
 	// data store URL for this par
 	private URL dbURL;
 
-	// A context returning value at the path
+	// A context returning eval at the path
 	// that is this par name
 	// Sorcer Mappable: Context, Exertion, or Var args
 	protected Mappable mappable;
@@ -179,6 +179,7 @@ public class Par<T> extends Entry<T> implements Variability<T>, Mappable<T>,
 		} else if (value instanceof Evaluation) {
 			this.value = (T) value;
 		} else {
+			this.value = (T)value;
 			_2 = (T) value;
 		}
 	}
@@ -204,7 +205,7 @@ public class Par<T> extends Entry<T> implements Variability<T>, Mappable<T>,
 	 */
 	@Override
 	public T getValue(Arg... args) throws EvaluationException, RemoteException {
-		// check for a constant or cached value
+		// check for a constant or cached eval
 		if (value instanceof Incrementor || ((value instanceof ServiceInvoker) &&
 				scope != null && (scope instanceof ParModel) && ((ParModel)scope).isChanged()))
 			isValid = false;
@@ -393,7 +394,7 @@ public class Par<T> extends Entry<T> implements Variability<T>, Mappable<T>,
             ps = "" + value;
         }
 
-        return "par [name: " + name + ", value: " + ps + ", path: " + _1 + "]";
+        return "par [name: " + name + ", eval: " + ps + ", path: " + _1 + "]";
     }
 
 	/* (non-Javadoc)

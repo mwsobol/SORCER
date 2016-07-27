@@ -54,7 +54,7 @@ import static sorcer.eo.operator.*;
  *   
  * Created by Mike Sobolewski on 1/29/15.
  */
-public class SrvModel extends ParModel<Object> implements Model, Invocation<Object> {
+public class SrvModel extends ParModel implements Model, Invocation<Object> {
     private static final Logger logger = LoggerFactory.getLogger(SrvModel.class);
 
     public static SrvModel instance(Signature builder) throws SignatureException {
@@ -211,7 +211,7 @@ public class SrvModel extends ParModel<Object> implements Model, Invocation<Obje
                     ((Srv) val).isValid(false);
                 Object val2 = ((Srv) val).asis();
                 if (val2 instanceof SignatureEntry) {
-                    // return the calculated value
+                    // return the calculated eval
                     if (((Srv) val).getSrvValue() != null && ((Srv) val).isValueCurrent())
                         return ((Srv) val).getSrvValue();
                     else {
@@ -349,7 +349,7 @@ public class SrvModel extends ParModel<Object> implements Model, Invocation<Obje
                 ((Srv)get(path)).setSrvValue(obj);
                 return obj;
             } else {
-                logger.warn("no value for return path: {} in: {}", ((ReturnPath)sig.getReturnPath()).path, out);
+                logger.warn("no eval for return path: {} in: {}", ((ReturnPath)sig.getReturnPath()).path, out);
                 return out;
             }
         } else {
@@ -359,15 +359,19 @@ public class SrvModel extends ParModel<Object> implements Model, Invocation<Obje
 
     private Object evalMogram(MogramEntry mogramEntry, String path, Arg... entries)
             throws MogramException, RemoteException, TransactionException {
-        Mogram out = mogramEntry.asis().exert(entries);
+        Mogram mogram = mogramEntry.asis();
+		mogram.setScope(this);
+        Mogram out = mogram.exert(entries);
         if (out instanceof Exertion){
-            Context outCxt = ((Exertion) out).getContext();
+            Context outCxt = out.getContext();
             if (outCxt.getReturnPath() != null) {
                 Object obj = outCxt.getReturnValue();
                 ((Srv)get(path)).setSrvValue(obj);
                 return obj;
-            }
-            else {
+            } else if (outCxt.asis(Context.RETURN) != null) {
+				((Srv)get(path)).setSrvValue(outCxt.asis(Context.RETURN));
+				return outCxt.asis(Context.RETURN);
+			} else {
                 ((Srv) get(path)).setSrvValue(outCxt);
                 return outCxt;
             }
@@ -452,7 +456,7 @@ public class SrvModel extends ParModel<Object> implements Model, Invocation<Obje
     }
 
     @Override
-    public Model exert(Transaction txn, Arg... entries) throws TransactionException,
+    public Context exert(Transaction txn, Arg... entries) throws TransactionException,
             ExertionException, RemoteException {
         Signature signature = null;
         try {

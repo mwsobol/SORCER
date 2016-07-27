@@ -49,7 +49,7 @@ import java.util.List;
  * contexts, data structures defined in SORCER.
  * 
  * An invoke context is dictionary (associative array) composed of a collection
- * of (key, value) pairs, such that each possible key appears at most once in
+ * of (key, eval) pairs, such that each possible key appears at most once in
  * the collection. Keys are considered as parameters and values as arguments of
  * the service invokers accepting service contexts as their input data. A key is
  * expressed by a path of attributes like directories in paths of a file system.
@@ -60,7 +60,7 @@ import java.util.List;
  * called, the context arguments for that call can be assigned to the
  * corresponding parameters of the invoker. The context values for all paths
  * inside the context are defined explicitly by corresponding objects or
- * calculated by corresponding invokers. Thus, requesting a value for a path in
+ * calculated by corresponding invokers. Thus, requesting a eval for a path in
  * a context is a computation defined by a invoker composition within the scope
  * of the context.
  */
@@ -78,7 +78,7 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 	
 	protected Uuid id = UuidFactory.generate();
 
-	//the cached value
+	//the cached eval
 	protected T value;
 		
 	// invocation delegate to
@@ -86,7 +86,7 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 
 	private boolean isReactive = false;
 
-	// indication that value has been calculated with recent arguments
+	// indication that eval has been calculated with recent arguments
 	private boolean valueIsValid = false;
 
 	protected Context invokeContext;
@@ -194,10 +194,10 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 	
 	/**
 	 * <p>
-	 * Return the valid value
+	 * Return the valid eval
 	 * </p>
 	 * 
-	 * @return the valid value
+	 * @return the valid eval
 	 * @throws EvaluationException 
 	 * @throws RemoteException 
 	 */
@@ -235,7 +235,7 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 		// ignore updates from itself
 		valueValid(false);
 		
-		// set value to null so getValueAsIs returns null
+		// set eval to null so getValueAsIs returns null
 		value = null;
 		setChanged();
 		notifyObservers(this);

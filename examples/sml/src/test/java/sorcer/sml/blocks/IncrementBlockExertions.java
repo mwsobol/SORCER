@@ -42,8 +42,8 @@ public class IncrementBlockExertions implements SorcerConstants {
 				model("add", inEnt("arg/x1", inc("arg/x2", 2.0)),
 						inEnt("arg/x2", 80.0), result("task/result")));
 
-//		logger.info("result: " + value(t));
-		assertEquals(value(t), 162.00);
+//		logger.info("result: " + eval(t));
+		assertEquals(eval(t), 162.00);
 	}
 
 }

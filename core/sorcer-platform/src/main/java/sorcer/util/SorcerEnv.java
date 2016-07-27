@@ -428,7 +428,7 @@ public class SorcerEnv extends SOS {
 	}
 
 	/**
-	 * Loads data node (value) types from the SORCER data store or file. Data
+	 * Loads data node (eval) types from the SORCER data store or file. Data
 	 * node types specify application types of data nodes in service contexts.
 	 * It is analogous to MIME types in SORCER. Each type has a format
 	 * 'cnt/application/format/modifiers' or in the association format
@@ -601,7 +601,7 @@ public class SorcerEnv extends SOS {
 			key = (String) e.nextElement();
 			value = properties.getProperty(key);
 			// logger.info("key = " + key);
-			// logger.info("value = " + value);
+			// logger.info("eval = " + eval);
 			evalue = expandStringProperties(value, properties, expanding);
 			if (evalue != null)
 				properties.put(key, evalue);
@@ -700,28 +700,28 @@ public class SorcerEnv extends SOS {
 		String hn = System.getenv("DATA_SERVER_INTERFACE");
 
 		if (hn != null && hn.length() > 0) {
-			logger.debug("data server hostname as the system environment value: "
+			logger.debug("data server hostname as the system environment eval: "
 					+ hn);
 			return hn;
 		}
 
 		hn = System.getProperty(DATA_SERVER_INTERFACE);
 		if (hn != null && hn.length() > 0) {
-			logger.debug("data server hostname as 'data.server.interface' system property value: "
+			logger.debug("data server hostname as 'data.server.interface' system property eval: "
 					+ hn);
 			return hn;
 		}
 
 		hn = props.getProperty(DATA_SERVER_INTERFACE);
 		if (hn != null && hn.length() > 0) {
-			logger.debug("data server hostname as 'data.server.interface' provider property value: "
+			logger.debug("data server hostname as 'data.server.interface' provider property eval: "
 					+ hn);
 			return hn;
 		}
 
 		try {
 			hn = getHostName();
-			logger.debug("data.server.interface hostname as the local host value: "
+			logger.debug("data.server.interface hostname as the local host eval: "
 					+ hn);
 		} catch (UnknownHostException e) {
 			logger.error("Cannot determine the data.server.interface hostname.");
@@ -989,10 +989,10 @@ public class SorcerEnv extends SOS {
 	}
 
 	/**
-	 * Gets the value of a certain property.
+	 * Gets the eval of a certain property.
 	 * 
 	 * @param property the property to get
-	 * @return the string value of that property
+	 * @return the string eval of that property
 	 */
 	public static String getProperty(String property) {
         String p = null;
@@ -1005,12 +1005,12 @@ public class SorcerEnv extends SOS {
 	}
 
 	/**
-	 * Gets the value for a certain property or the default value if property is
+	 * Gets the eval for a certain property or the default eval if property is
 	 * not set.
 	 * 
 	 * @param property
 	 * @param defaultValue
-	 * @return the string value of that property
+	 * @return the string eval of that property
 	 */
 	public static String getProperty(String property, String defaultValue) {
 		return props.getProperty(property, defaultValue);
@@ -1326,7 +1326,7 @@ public class SorcerEnv extends SOS {
 	 * Get an anonymous port.
 	 * 
 	 * @return An anonymous port created by invoking {@code getPortAvailable()}.
-	 *         Once this method is called the return value is set statically for
+	 *         Once this method is called the return eval is set statically for
 	 *         future reference
 	 * @throws IOException
 	 *             If there are problems getting the anonymous port
@@ -1418,7 +1418,7 @@ public class SorcerEnv extends SOS {
 			throws ConfigurationException {
 		int p = value.indexOf("${", 0);
 		if (p == -1) {
-			// logger.info("returning value = " + value);
+			// logger.info("returning eval = " + eval);
 			return value;
 		}
 		int max = value.length();

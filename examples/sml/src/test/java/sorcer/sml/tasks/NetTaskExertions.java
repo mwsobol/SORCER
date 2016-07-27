@@ -14,6 +14,7 @@ import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.core.provider.Provider;
 import sorcer.core.provider.RemoteServiceShell;
+import sorcer.eo.operator;
 import sorcer.service.*;
 import sorcer.service.Strategy.Access;
 import sorcer.service.Strategy.Monitor;
@@ -66,14 +67,14 @@ public class NetTaskExertions {
 		logger.info("out context: " + cxt);
 		logger.info("context @ arg/x1: " + get(cxt, "arg/x1"));
 		logger.info("context @ arg/x2: " + value(cxt, "arg/x2"));
-		logger.info("context @ result/value: " + value(cxt, "result/value"));
+		logger.info("context @ result/eval: " + value(cxt, "result/eval"));
 
 		// get a single context argument
-		assertEquals(100.0, value(cxt, "result/value"));
+		assertEquals(100.0, value(cxt, "result/eval"));
 
 		// get the subcontext output from the context
-		assertTrue(context(ent("result/value", 100.0), ent("arg/x1", 20.0)).equals(
-				value(cxt, outPaths("result/value", "arg/x1"))));
+		assertTrue(context(ent("result/eval", 100.0), ent("arg/x1", 20.0)).equals(
+				value(cxt, outPaths("result/eval", "arg/x1"))));
 
 	}
 
@@ -175,12 +176,12 @@ public class NetTaskExertions {
 		Task t5 = task("t5", sig("add", Adder.class),
 				cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0), result("result/y")));
 
-		// get the result value
-		assertTrue(value(t5).equals(100.0));
+		// get the result eval
+		assertTrue(operator.eval(t5).equals(100.0));
 
 		// get the subcontext output from the exertion
 		assertTrue(context(ent("arg/x1", 20.0), ent("result/z", 100.0)).equals(
-				value(t5, result("result/z", outPaths("arg/x1", "result/z")))));
+				operator.eval(t5, result("result/z", outPaths("arg/x1", "result/z")))));
 
 	}
 
@@ -216,7 +217,7 @@ public class NetTaskExertions {
 
 		task = exert(task, fi("net"));
 		logger.info("exerted: " + task);
-		assertTrue("Wrong value for 100.0", (Double) get(task) == 100.0);
+		assertTrue("Wrong eval for 100.0", (Double) get(task) == 100.0);
 	}
 
 	@Test
@@ -230,8 +231,8 @@ public class NetTaskExertions {
 
 		t5 = exert(t5);
 		logger.info("t5 context: " + context(t5));
-		logger.info("t5 value: " + get(t5, "result/y"));
-		assertEquals("Wrong value for 100.0", get(t5, "result/y"), 100.0);
+		logger.info("t5 eval: " + get(t5, "result/y"));
+		assertEquals("Wrong eval for 100.0", get(t5, "result/y"), 100.0);
 
 	}
 

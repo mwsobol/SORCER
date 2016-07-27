@@ -533,7 +533,7 @@ private Exertion f1SEQpull() throws Exception {
 		}
 		pool.shutdown();
 		for (int i = 0; i < tally; i++) {
-			logger.info("got future value for: " + fList.get(i).get().getName());
+			logger.info("got future eval for: " + fList.get(i).get().getName());
 		}
 		long end = System.currentTimeMillis();
 		System.out.println("Execution time: " + (end - start) + " ms.");

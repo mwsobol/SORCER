@@ -278,7 +278,7 @@ public class ProviderDelegate {
 	private Object[] serviceBeans;
 
 	/**
-	 * Exposed service type components. A key is an interface and a value its
+	 * Exposed service type components. A key is an interface and a eval its
 	 * implementing service-object.
 	 */
 	private Map<Class<?>, Object> serviceComponents;
@@ -389,7 +389,7 @@ public class ProviderDelegate {
                                                                      boolean.class,
                                                                      false);
 		} catch (ConfigurationException e) {
-			// do nothing, used the default value
+			// do nothing, used the default eval
 		}
 	//	initDynamicServiceAccessor();
 	}
@@ -602,7 +602,7 @@ public class ProviderDelegate {
         try {
             serviceTypes = (Class[]) config.jiniConfig.getEntry(ServiceProvider.COMPONENT, J_INTERFACES, Class[].class);
         } catch (ConfigurationException e) {
-            // do nothing, used the default value
+            // do nothing, used the default eval
             // e.printStackTrace();
         }
         if ((serviceTypes != null) && (serviceTypes.length > 0)) {
@@ -2058,7 +2058,7 @@ public class ProviderDelegate {
 		 * @param key
 		 *            they key to set (usualy starts with provider.)
 		 * @param value
-		 *            the value to set to.
+		 *            the eval to set to.
 		 */
 		public void setProperty(String key, String value) {
 			props.setProperty(key, value);
@@ -2184,14 +2184,14 @@ public class ProviderDelegate {
 		}
 
 		/**
-		 * Returns a value of a comma separated property as defined in. If the
-		 * property value is not defined for the delegate's provider then the
-		 * equivalent SORCR environment value value is returned.
+		 * Returns a eval of a comma separated property as defined in. If the
+		 * property eval is not defined for the delegate's provider then the
+		 * equivalent SORCR environment eval eval is returned.
 		 * {@link SorcerConstants}.
 		 * 
 		 * @param key
 		 *            a property (attribute)
-		 * @return a property value
+		 * @return a property eval
 		 */
 		public String getProperty(String key) {
 			return props.getProperty(key);

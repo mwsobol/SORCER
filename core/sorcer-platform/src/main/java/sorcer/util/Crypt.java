@@ -57,7 +57,7 @@ public class Crypt {
 
 	/*
 	 * Selection blocks There are 8 sblocks, each of which is referenced by a 2
-	 * bit value which picks the row, and a 4 bit value which picks the column
+	 * bit eval which picks the row, and a 4 bit eval which picks the column
 	 * This number is then the 4 bit output for that select block
 	 */
 	int sblocks[][][] = {

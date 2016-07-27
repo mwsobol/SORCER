@@ -15,7 +15,7 @@ import java.util.List;
 
 @SuppressWarnings("rawtypes")
 public class AdderImpl implements Adder {
-	public static final String RESULT_PATH = "result/value";
+	public static final String RESULT_PATH = "result/eval";
 	private ServiceProvider provider;
 	private static Logger logger = LoggerFactory.getLogger(AdderImpl.class.getName());
 	
@@ -75,12 +75,12 @@ public class AdderImpl implements Adder {
         // add request values
         Context cxt = add(context);
         
-        // get previous 'add' value
+        // get previous 'add' eval
         Double previous = 0.0;
         if (ss.getAttribute("sum") != null)
             previous = (Double)ss.getAttribute("sum");
 
-        // get 'sum' value
+        // get 'sum' eval
         Double result = (Double)cxt.getReturnValue() + previous;
         
         // save it in the session

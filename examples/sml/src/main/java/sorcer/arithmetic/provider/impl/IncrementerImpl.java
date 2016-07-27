@@ -31,7 +31,7 @@ public class IncrementerImpl implements Incrementer {
 	public Context increment(Context context) throws RemoteException, ContextException {
 		Double incremnet = (Double)context.getValue("by");
 		value = value + incremnet;
-		context.putValue("value", value);
+		context.putValue("eval", value);
 		context.setReturnValue(value);
 		return context;
 	}

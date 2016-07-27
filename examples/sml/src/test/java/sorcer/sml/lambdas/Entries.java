@@ -7,6 +7,7 @@ import org.sorcer.test.ProjectContext;
 import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.core.context.model.ent.Entry;
+import sorcer.eo.operator;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
 import sorcer.util.GenericUtil;
@@ -18,7 +19,7 @@ import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.get;
 import static sorcer.eo.operator.value;
-import static sorcer.mo.operator.response;
+import static sorcer.mo.operator.*;
 import static sorcer.po.operator.invoker;
 import static sorcer.service.Arg.setArgValue;
 import static sorcer.util.exec.ExecUtils.CmdResult;
@@ -36,14 +37,14 @@ public class Entries {
         // no free variables
         Entry y1 = lambda("y1", () -> 20.0 * pow(0.5, 6) + 10.0);
 
-        assertEquals(10.3125, value(y1));
+        assertEquals(10.3125, operator.eval(y1));
 
         // the model itself as a free variable of the lambda y2
         Model mo = model(ent("x1", 10.0), ent("x2", 20.0),
                 lambda("y2", (Context<Double> cxt) ->
                         value(cxt, "x1") + value(cxt, "x2")));
 
-        assertEquals(30.0, value(mo, "y2"));
+        assertEquals(30.0, operator.eval(mo, "y2"));
 
     }
 
@@ -96,8 +97,8 @@ public class Entries {
                 ent(invoker("lambda", (Context<Double> cxt) -> value(cxt, "x")
                         + value(cxt, "y")
                         + 30)));
-        logger.info("invoke value: " + value(mo, "lambda"));
-        assertEquals(value(mo, "lambda"), 60.0);
+        logger.info("invoke eval: " + operator.eval(mo, "lambda"));
+        assertEquals(operator.eval(mo, "lambda"), 60.0);
     }
 
     @Test
@@ -110,8 +111,8 @@ public class Entries {
                     return exec(Arg.getEntry(args, "x")); },
                         args("x", "y")));
 
-        logger.info("s1 value: ", value(mo, "s1"));
-        assertEquals(value(mo, "s1"), 20.0);
+        logger.info("s1 eval: ", operator.eval(mo, "s1"));
+        assertEquals(operator.eval(mo, "s1"), 20.0);
     }
 
     @Test
@@ -119,12 +120,12 @@ public class Entries {
         // entries as ValueCallable and  Requestor lambdas
         Model mo = model(ent("multiply/x1", 10.0), ent("multiply/x2", 50.0),
                 lambda("multiply", (Context<Double> model) ->
-                        val(model, "multiply/x1") * val(model, "multiply/x2")),
+                        value(model, "multiply/x1") * value(model, "multiply/x2")),
                 lambda("multiply2", "multiply", (Service entry, Context scope, Arg[] args) -> {
                     double out = (double)exec(entry, scope);
                     if (out > 400) {
-                        setValue(scope, "multiply/x1", 20.0);
-                        setValue(scope, "multiply/x2", 50.0);
+                        putValue(scope, "multiply/x1", 20.0);
+                        putValue(scope, "multiply/x2", 50.0);
                         out = (double)exec(entry, scope);
                     }
                     return context(ent("multiply2", out));

@@ -12,6 +12,7 @@ import sorcer.arithmetic.tester.provider.impl.AdderImpl;
 import sorcer.arithmetic.tester.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.tester.provider.impl.SubtractorImpl;
 import sorcer.core.provider.rendezvous.ServiceJobber;
+import sorcer.eo.operator;
 import sorcer.service.*;
 import sorcer.util.Sorcer;
 
@@ -53,39 +54,39 @@ public class ServiceExertionTest {
 	public void exertTaskTest() throws Exception {
 		eTask = exert(eTask);
 
-		// exert and them get the value from task's context
-		//logger.info("eTask value @ result/y = " + get(exert(eTask), path(result, y)));
-		assertTrue("Wrong eTask value for 100.0", get(eTask, attPath(result, y)).equals(100.0));
+		// exert and them get the eval from task's context
+		//logger.info("eTask eval @ result/y = " + get(exert(eTask), path(result, y)));
+		assertTrue("Wrong eTask eval for 100.0", get(eTask, attPath(result, y)).equals(100.0));
 		
-		//logger.info("eTask value @ arg/x1 = " + exert(eTask, path("arg/x1")));
-		assertTrue("Wrong eTask value for 20.0", get(eTask, attPath("arg/x1")).equals(20.0));
+		//logger.info("eTask eval @ arg/x1 = " + exert(eTask, path("arg/x1")));
+		assertTrue("Wrong eTask eval for 20.0", get(eTask, attPath("arg/x1")).equals(20.0));
 
-		//logger.info("eTask value @  arg/x2 = " + exert(eTask, "arg/x2"));
-		assertTrue("Wrong eTask value for 80.0", get(eTask, "arg/x2").equals(80.0));
+		//logger.info("eTask eval @  arg/x2 = " + exert(eTask, "arg/x2"));
+		assertTrue("Wrong eTask eval for 80.0", get(eTask, "arg/x2").equals(80.0));
 	}
 	
 	@Test
 	public void exertJobTest() throws Exception {
-		// get value from job's exerted context
-		assertTrue(value(eJob, "j1/t3/arg/x2").equals(100.0));
+		// get eval from job's exerted context
+		assertTrue(operator.eval(eJob, "j1/t3/arg/x2").equals(100.0));
 		
 		// exert and then get the job's context (upcotext - a kind of supercontext)
 		Context out = upcontext(exert(eJob));
 		logger.info("job context: " + out);
 
-		//logger.info("eJob value @  j2/t5/arg/x1 = " + get(eJob, "j2/t5/arg/x1"));
+		//logger.info("eJob eval @  j2/t5/arg/x1 = " + get(eJob, "j2/t5/arg/x1"));
 		assertTrue(value(out, "j1/j2/t5/arg/x1").equals(20.0));
 			
-		//logger.info("eJob value @ j2/t4/arg/x1 = " + exert(eJob, path("j1/j2/t4/arg/x1")));
+		//logger.info("eJob eval @ j2/t4/arg/x1 = " + exert(eJob, path("j1/j2/t4/arg/x1")));
 		assertTrue(value(out, "j1/j2/t4/arg/x1").equals(10.0));
 
-		//logger.info("eJob value @  j1/j2/t5/arg/x2 = " + exert(eJob, "j1/j2/t5/arg/x2"));
+		//logger.info("eJob eval @  j1/j2/t5/arg/x2 = " + exert(eJob, "j1/j2/t5/arg/x2"));
 		assertTrue(value(out, "j1/j2/t5/arg/x2").equals(80.0));
 		
-		//logger.info("eJob value @  j2/t5/arg/x1 = " + exert(eJob, "j2/t5/arg/x1"));
+		//logger.info("eJob eval @  j2/t5/arg/x1 = " + exert(eJob, "j2/t5/arg/x1"));
 		assertTrue(value(out, "j1/j2/t5/arg/x1").equals(20.0));
 		
-		//logger.info("eJob value @  j2/t4/arg/x2 = " + exert(eJob, "j2/t4/arg/x2"));
+		//logger.info("eJob eval @  j2/t4/arg/x2 = " + exert(eJob, "j2/t4/arg/x2"));
 		assertTrue( value(out, "j1/j2/t4/arg/x2").equals(50.0));
 
 		// final result by three services
@@ -172,11 +173,11 @@ public class ServiceExertionTest {
 		Exertion xrt = createXrt();
 		logger.info("job context " + ((Job)xrt).getJobContext());
 		
-		logger.info("xrt value @  t3/arg/x1 = " + get(xrt, "t3/arg/x1"));
-		logger.info("xrt value @  t3/arg/x2 = " + get(xrt, "t3/arg/x2"));
-		logger.info("xrt value @  t3/result/y = " + get(xrt, "t3/result/y"));
+		logger.info("xrt eval @  t3/arg/x1 = " + get(xrt, "t3/arg/x1"));
+		logger.info("xrt eval @  t3/arg/x2 = " + get(xrt, "t3/arg/x2"));
+		logger.info("xrt eval @  t3/result/y = " + get(xrt, "t3/result/y"));
 
-		//assertTrue("Wrong xrt value for " + Context.Value.NULL, get(srv, "t3/arg/x2").equals(Context.Value.NULL));
+		//assertTrue("Wrong xrt eval for " + Context.Value.NULL, get(srv, "t3/arg/x2").equals(Context.Value.NULL));
 	}
 	
 	// two level job composition

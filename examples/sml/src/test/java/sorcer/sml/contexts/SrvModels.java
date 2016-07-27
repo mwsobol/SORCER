@@ -12,6 +12,7 @@ import sorcer.arithmetic.provider.impl.AveragerImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.provider.impl.SubtractorImpl;
 import sorcer.core.provider.rendezvous.ServiceJobber;
+import sorcer.eo.operator;
 import sorcer.service.Block;
 import sorcer.service.Context;
 import sorcer.service.Job;
@@ -46,8 +47,8 @@ public class SrvModels {
                 ent(invoker("lambda", cxt -> (double) value(cxt, "x")
                         + (double) value(cxt, "y")
                         + 30)));
-        logger.info("invoke value: " + value(mo, "lambda"));
-        assertEquals(value(mo, "lambda"), 60.0);
+        logger.info("invoke eval: " + operator.eval(mo, "lambda"));
+        assertEquals(operator.eval(mo, "lambda"), 60.0);
     }
 
     @Test
@@ -64,8 +65,8 @@ public class SrvModels {
                                     + 30;
                         },
                         scope)));
-        logger.info("invoke value: " + value(mo, "lambda"));
-        assertEquals(value(mo, "lambda"), 100.0);
+        logger.info("invoke eval: " + operator.eval(mo, "lambda"));
+        assertEquals(operator.eval(mo, "lambda"), 100.0);
     }
 
     @Test
@@ -172,7 +173,7 @@ public class SrvModels {
         System.out.println("responses: " + response(model));
 
         assertTrue(response(model).equals(context(ent("add", 4.0), ent("multiply", 20.0))));
-//                context(ent("add", 4.0), ent("multiply", 20.0), ent("result/value", 3.0))));
+//                context(ent("add", 4.0), ent("multiply", 20.0), ent("result/eval", 3.0))));
 
     }
 

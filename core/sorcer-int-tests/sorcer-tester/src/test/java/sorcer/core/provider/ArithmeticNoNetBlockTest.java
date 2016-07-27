@@ -49,12 +49,12 @@ public class ArithmeticNoNetBlockTest implements SorcerConstants {
 		
 		block = exert(block);
 //		logger.info("block context: " + context(block));
-//		logger.info("result: " + value(context(block), "block/result"));
+//		logger.info("result: " + eval(context(block), "block/result"));
 		assertEquals(value(context(block), "block/result"), 100.00);
 
 		block = exert(block, ent("y1", 200.0), ent("y2", 100.0));
 //		logger.info("block context: " + context(block));
-//		logger.info("result: " + value(context(block), "block/result"));
+//		logger.info("result: " + eval(context(block), "block/result"));
 		assertEquals(value(context(block), "block/result"), 500.0);
 	}
 	
@@ -85,7 +85,7 @@ public class ArithmeticNoNetBlockTest implements SorcerConstants {
 //		logger.info("block context: " + context(block));
 
 		block = exert(block);
-//		logger.info("result: " + value(context(block), "block/result"));
+//		logger.info("result: " + eval(context(block), "block/result"));
 		assertEquals(value(context(block), "block/result"), 400.00);
 		
 		block = exert(block, ent("block/t5/arg/x1", 200.0), ent("block/t5/arg/x2", 800.0));

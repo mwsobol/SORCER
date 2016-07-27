@@ -19,13 +19,13 @@ import javax.swing.JTextField;
 /**
  * The levels in descending order are:
  * <ul>
- * <li>SEVERE (highest value)
+ * <li>SEVERE (highest eval)
  * <li>WARNING
  * <li>INFO
  * <li>CONFIG
  * <li>FINE
  * <li>FINER
- * <li>FINEST (lowest value)
+ * <li>FINEST (lowest eval)
  * </ul>
  * 
  */

@@ -383,18 +383,18 @@ public class DataService implements FileURLHandler {
     }
 
     /**
-     * Get the value of the DATA_URL system property
+     * Get the eval of the DATA_URL system property
      *
-     * @return The value of the DATA_URL system property
+     * @return The eval of the DATA_URL system property
      */
     public String getDataUrl() {
         return String.format("http://%s:%d", address, port);
     }
 
     /**
-     * Get the value of the DATA_URL system property
+     * Get the eval of the DATA_URL system property
      *
-     * @return The value of the DATA_URL system property
+     * @return The eval of the DATA_URL system property
      */
     public String getDir() {
         return DataService.getDataDir();

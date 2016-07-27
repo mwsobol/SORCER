@@ -106,7 +106,7 @@ public class ScratchManagerSupport implements ScratchManager, Serializable {
         if (context.containsPath(SCRATCH_DIR_KEY) || context.containsPath(SCRATCH_URL_KEY)) {
             logger.warn("*** Warning: context already contains scratch dir or scratch url key; " +
                             "beware of using this method twice on the same context argument " +
-                            "(using getScratchDir() and add scratch dir key and value " +
+                            "(using getScratchDir() and add scratch dir key and eval " +
                             "yourself may be better).\n\tcontext name = {}\n\tcontext ={}",
                     context.getName(), context);
         }

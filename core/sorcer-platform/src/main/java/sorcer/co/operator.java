@@ -38,6 +38,7 @@ import sorcer.core.signature.ServiceSignature;
 import sorcer.netlet.ScriptExerter;
 import sorcer.service.*;
 import sorcer.service.Signature.ReturnPath;
+import sorcer.service.modeling.ContextModel;
 import sorcer.service.modeling.Model;
 import sorcer.service.modeling.Variability.Type;
 import sorcer.util.*;
@@ -628,11 +629,6 @@ public class operator {
 		return entry;
 	}
 
-	public static Context setValue(Context context, String path, Object value) throws ContextException {
-		context.putValue(path, value);
-		return context;
-	}
-
 	public static <S extends Setter> boolean isDB(S setter) {
 		return isPersistent(setter);
 	}
@@ -659,7 +655,7 @@ public class operator {
 						dburl = SdbUtil.store(obj);
 						((Setter)entry).setValue(dburl);
 						if (object instanceof Par) {
-							// its value is now persisted
+							// its eval is now persisted
 							((Par)object)._2 = null;
 						}
 						return dburl;
@@ -743,8 +739,12 @@ public class operator {
 		return collection.size();
 	}
 
-	public static int size(Model context) {
-		return ((ServiceContext)context).size();
+	public static int size(Model model) {
+		return ((ServiceContext)model).size();
+	}
+
+	public static int size(Context context) {
+		return context.size();
 	}
 
 	public static int size(Map map) {
@@ -1008,8 +1008,8 @@ public class operator {
         return  mappable.asis(path);
     }
 
-    public static Copier copier(Context fromContext, Arg[] fromEntries,
-                                Context toContext, Arg[] toEntries) throws EvaluationException {
+    public static Copier copier(ContextModel fromContext, Arg[] fromEntries,
+								ContextModel toContext, Arg[] toEntries) throws EvaluationException {
         return new Copier(fromContext, fromEntries, toContext, toEntries);
     }
 

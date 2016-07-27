@@ -9,6 +9,7 @@ import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.Adder;
 import sorcer.arithmetic.provider.Multiplier;
 import sorcer.arithmetic.provider.impl.*;
+import sorcer.eo.operator;
 import sorcer.service.*;
 
 import static org.junit.Assert.assertEquals;
@@ -37,11 +38,11 @@ public class LocalTaskExertions {
 		Context cxt = context(out);
 
 		// get a single context argument
-		assertEquals(100.0, value(cxt, "result/value"));
+		assertEquals(100.0, value(cxt, "result/eval"));
 
 		// get the subcontext output from the context
-		assertTrue(context(ent("result/value", 100.0), ent("arg/x1", 20.0)).equals(
-				value(cxt, outPaths("result/value", "arg/x1"))));
+		assertTrue(context(ent("result/eval", 100.0), ent("arg/x1", 20.0)).equals(
+				value(cxt, outPaths("result/eval", "arg/x1"))));
 
 	}
 
@@ -56,14 +57,14 @@ public class LocalTaskExertions {
 		logger.info("out context: " + cxt);
 		logger.info("context @ arg/x1: " + get(cxt, "arg/x1"));
 		logger.info("context @ arg/x2: " + value(cxt, "arg/x2"));
-		logger.info("context @ result/value: " + value(cxt, "result/value"));
+		logger.info("context @ result/eval: " + value(cxt, "result/eval"));
 
 		// get a single context argument
-		assertEquals(100.0, value(cxt, "result/value"));
+		assertEquals(100.0, value(cxt, "result/eval"));
 
 		// get the subcontext output from the context
-		assertTrue(context(ent("result/value", 100.0), ent("arg/x1", 20.0)).equals(
-				value(cxt, outPaths("result/value", "arg/x1"))));
+		assertTrue(context(ent("result/eval", 100.0), ent("arg/x1", 20.0)).equals(
+				value(cxt, outPaths("result/eval", "arg/x1"))));
 
 	}
 
@@ -78,11 +79,11 @@ public class LocalTaskExertions {
 		logger.info("out context: " + cxt);
 
 		// get a single context argument
-		assertEquals(200.0, value(cxt, "result/value"));
+		assertEquals(200.0, value(cxt, "result/eval"));
 
 		// get the subcontext output from the context
-		assertTrue(context(ent("result/value", 200.0), ent("arg/x1", 20.0)).equals(
-				value(cxt, outPaths("result/value", "arg/x1"))));
+		assertTrue(context(ent("result/eval", 200.0), ent("arg/x1", 20.0)).equals(
+				value(cxt, outPaths("result/eval", "arg/x1"))));
 
 	}
 
@@ -92,12 +93,12 @@ public class LocalTaskExertions {
 		Task t6 = task("t6", sig("average", AveragerImpl.class),
 				cxt("average", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0), result("result/y")));
 
-		// get the result value
-		assertEquals(50.0, value(t6));
+		// get the result eval
+		assertEquals(50.0, operator.eval(t6));
 
 		// get the subcontext output from the exertion
 		assertTrue(context(ent("result/y", 50.0), ent("arg/x1", 20.0)).equals(
-				value(t6, outPaths("result/y", "arg/x1"))));
+				operator.eval(t6, outPaths("result/y", "arg/x1"))));
 
 	}
 
@@ -198,8 +199,8 @@ public class LocalTaskExertions {
 						args(new double[]{10.0, 50.0}),
 						result("result/y")));
 
-		//logger.info("t4: " + value(t4));
-		assertTrue(value(t4).equals(500.0));
+		//logger.info("t4: " + eval(t4));
+		assertTrue(operator.eval(t4).equals(500.0));
 	}
 }
 	

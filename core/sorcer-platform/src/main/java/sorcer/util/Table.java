@@ -103,10 +103,10 @@ public class Table implements ModelTable {
 	
 	/** 
 	 * Flag indicating whether to include the header in a write operation
-	 * default value is true 
+	 * default eval is true
 	 */
 	protected boolean includeHeaderInWrite = true;
-	///** List of strings containing response names the default value is null */
+	///** List of strings containing response names the default eval is null */
 	//private List<String> responseNames = null;
 
 	/** The <code>List</code> of column identifiers. */
@@ -311,7 +311,7 @@ public class Table implements ModelTable {
 	 * truncating the <code>List</code> if it is too long, or adding
 	 * <code>null</code> values if it is too short.
 	 * <p>
-	 * Note that passing in a <code>null</code> value for <code>dataList</code>
+	 * Note that passing in a <code>null</code> eval for <code>dataList</code>
 	 * results in unspecified behavior, possibly an exception.
 	 * 
 	 * @param dataList
@@ -327,7 +327,7 @@ public class Table implements ModelTable {
 
 
 	/**
-	 * Replaces the value in the <code>dataList</code> instance variable with
+	 * Replaces the eval in the <code>dataList</code> instance variable with
 	 * the values in the array <code>dataList</code>. The first index in the
 	 * <code>Object[][]</code> array is the row index and the second is the
 	 * column index. <code>columnIdentifiers</code> are the names of the new
@@ -663,7 +663,7 @@ public class Table implements ModelTable {
 	/**
 	 * Returns the column name.
 	 * 
-	 * @return a name for this column using the string value of the appropriate
+	 * @return a name for this column using the string eval of the appropriate
 	 *         member in <code>columnIdentifiers</code>. If
 	 *         <code>columnIdentifiers</code> does not have an entry for this
 	 *         index, returns the default name provided by the superclass.
@@ -685,14 +685,14 @@ public class Table implements ModelTable {
 	}
 
 	/**
-	 * Returns an attribute value for the cell at <code>row</code> and
+	 * Returns an attribute eval for the cell at <code>row</code> and
 	 * <code>column</code>.
 	 * 
 	 * @param row
-	 *            the row whose value is to be queried
+	 *            the row whose eval is to be queried
 	 * @param column
-	 *            the column whose value is to be queried
-	 * @return the value Object at the specified cell
+	 *            the column whose eval is to be queried
+	 * @return the eval Object at the specified cell
 	 * @exception ArrayIndexOutOfBoundsException
 	 *                if an invalid row or column was given
 	 */
@@ -836,15 +836,15 @@ public class Table implements ModelTable {
 	}
 
 	/**
-	 * Sets the object value for the cell at <code>column</code> and
-	 * <code>row</code>. <code>aValue</code> is the new value.
+	 * Sets the object eval for the cell at <code>column</code> and
+	 * <code>row</code>. <code>aValue</code> is the new eval.
 	 * 
 	 * @param aValue
-	 *            the new value; this can be null
+	 *            the new eval; this can be null
 	 * @param row
-	 *            the row whose value is to be changed
+	 *            the row whose eval is to be changed
 	 * @param column
-	 *            the column whose value is to be changed
+	 *            the column whose eval is to be changed
 	 * @exception ArrayIndexOutOfBoundsException
 	 *                if an invalid row or column was given
 	 */

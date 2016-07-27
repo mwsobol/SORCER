@@ -99,7 +99,7 @@ public class FileTable<K,V> extends Identity implements Runnable, ModelTable {
 
 	public synchronized final void put(K key, V value) throws IOException {
 		if (! (value instanceof Serializable))
-			throw new IOException("Not serializable value");
+			throw new IOException("Not serializable eval");
 		Long oldPos = table.get(key);
 		long newPos;
 		if (oldPos == null)
@@ -534,7 +534,7 @@ public class FileTable<K,V> extends Identity implements Runnable, ModelTable {
 
 
 	/**
-	 * Returns the last recorded value in this data table.
+	 * Returns the last recorded eval in this data table.
 	 *
 	 * @return the last table entry
 	 */

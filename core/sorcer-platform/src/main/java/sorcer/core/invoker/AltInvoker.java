@@ -54,6 +54,7 @@ public class AltInvoker<V> extends ServiceInvoker<V> implements ConditionalInvoc
 		for (OptInvoker opt : optInvokers) {
 			try {
 				if (opt.getCondition() != null) {
+					opt.getCondition().setStatus(null);
 					if (opt.getCondition().getConditionalContext() == null) {
 						opt.getCondition().setConditionalContext(invokeContext);
 					} else {
@@ -66,8 +67,8 @@ public class AltInvoker<V> extends ServiceInvoker<V> implements ConditionalInvoc
 						opt.target.getScope().append(invokeContext);
 					}
 				}
-				if (opt.condition.isTrue()) {
-					return (V) opt.target.getValue(entries);
+				if (opt.isTrue()) {
+					return (V) opt.getValue(entries);
 				}
 			} catch (Exception e) {
 				throw new EvaluationException(e);
