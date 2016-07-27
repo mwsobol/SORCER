@@ -139,7 +139,7 @@ public class InvokerTest {
 	public void lambdaInvokerTest2() throws Exception {
 
 		Model mo = model(ent("x", 10.0), ent("y", 20.0),
-				ent(invoker("lambda", cxt -> (double) value(cxt, "x")
+				par(invoker("lambda", cxt -> (double) value(cxt, "x")
 									+ (double) value(cxt, "y")
 									+ 30)));
 		logger.info("invoke eval: " + operator.eval(mo, "lambda"));
@@ -153,7 +153,7 @@ public class InvokerTest {
 		Context scope = context(ent("x1", 20.0), ent("y1", 40.0));
 
 		Model mo = model(ent("x", 10.0), ent("y", 20.0),
-			ent(invoker("lambda", (cxt) -> {
+			par(invoker("lambda", (cxt) -> {
 						return (double) value(cxt, "x")
 								+ (double) value(cxt, "y")
 								+ (double) value(cxt, "y1")

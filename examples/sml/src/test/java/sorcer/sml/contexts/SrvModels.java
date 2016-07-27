@@ -31,6 +31,7 @@ import static sorcer.eo.operator.result;
 import static sorcer.eo.operator.value;
 import static sorcer.mo.operator.*;
 import static sorcer.po.operator.invoker;
+import static sorcer.po.operator.par;
 
 /**
  * Created by Mike Sobolewski on 4/15/15.
@@ -45,7 +46,7 @@ public class SrvModels {
     public void lambdaInvoker() throws Exception {
 
         Model mo = model(ent("x", 10.0), ent("y", 20.0),
-                ent(invoker("lambda", cxt -> (double) value(cxt, "x")
+                par(invoker("lambda", cxt -> (double) value(cxt, "x")
                         + (double) value(cxt, "y")
                         + 30)));
         logger.info("invoke eval: " + eval(mo, "lambda"));
@@ -59,7 +60,7 @@ public class SrvModels {
         Context scope = context(ent("x1", 20.0), ent("y1", 40.0));
 
         Model mo = model(ent("x", 10.0), ent("y", 20.0),
-                ent(invoker("lambda", (cxt) -> {
+                par(invoker("lambda", (cxt) -> {
                             return (double) value(cxt, "x")
                                     + (double) value(cxt, "y")
                                     + (double) value(cxt, "y1")

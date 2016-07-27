@@ -83,7 +83,7 @@ public class Invokers {
 	public void lambdaInvoker() throws Exception {
 
 		Model mo = model(ent("x", 10.0), ent("y", 20.0),
-				ent(invoker("lambda", (Context<Double> cxt) -> value(cxt, "x")
+				par(invoker("lambda", (Context<Double> cxt) -> value(cxt, "x")
 						+ value(cxt, "y")
 						+ 30)));
 		logger.info("invoke eval: " + eval(mo, "lambda"));

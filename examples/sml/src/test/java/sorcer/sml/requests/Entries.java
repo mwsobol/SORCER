@@ -93,7 +93,7 @@ public class Entries {
         public Double invoke(Context cxt, Arg... entries) throws RemoteException, ContextException {
             Entry<Double> x = ent("x", 20.0);
             Entry<Double> y = ent("y", 30.0);
-            Entry<Double> z = ent("z", invoker("x - y", x, y));
+            Entry<Double> z = par("z", invoker("x - y", x, y));
 
             if (value(cxt, "x") != null)
                 setValue(x, value(cxt, "x"));
@@ -156,7 +156,7 @@ public class Entries {
     @Test
     public void signatureEntry() throws Exception {
 
-        Entry y1 = ent("y1", sig("add", AdderImpl.class, result("add/out",
+        Entry y1 = srv("y1", sig("add", AdderImpl.class, result("add/out",
                         inPaths("x1", "x2"))),
                     context(inEnt("x1", 10.0), inEnt("x2", 20.0)));
 
@@ -166,7 +166,7 @@ public class Entries {
     @Test
     public void getEntryValueWithArgSelector() throws Exception {
 
-        Entry y1 = ent("y1", sig("add", AdderImpl.class),
+        Entry y1 = srv("y1", sig("add", AdderImpl.class),
                 context(inEnt("x1", 10.0), inEnt("x2", 20.0)));
 
 //        logger.info("out eval: {}", eval(y1, selector("result/eval")));
@@ -176,7 +176,7 @@ public class Entries {
     @Test
     public void getEntryValueWithSelector() throws Exception {
 
-        Entry y1 = ent("y1", sig("add", AdderImpl.class),
+        Entry y1 = srv("y1", sig("add", AdderImpl.class),
                 context(inEnt("x1", 10.0), inEnt("x2", 20.0)),
                 selector("result/eval"));
 

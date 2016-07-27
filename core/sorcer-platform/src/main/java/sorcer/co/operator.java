@@ -416,34 +416,6 @@ public class operator {
 		return false;
 	}
 
-	public static Srv ent(String path, Closure call) {
-		return new Srv(path, call);
-	}
-
-	public static Srv cxtEnt(String path, EntryCollable call) {
-		return new Srv(path, call);
-	}
-
-	public static Srv xrtEnt(String path, ContextCallable call) {
-		return new Srv(path, call);
-	}
-
-	public static Srv ent(ServiceInvoker invoker) {
-		return new Srv(invoker.getName(), invoker);
-	}
-
-	public static Par ent(String path, Invocation invoker) {
-		return new Par(path, invoker);
-	}
-
-    public static Srv ent(Signature sig, Context context) {
-        return srv(sig, context);
-    }
-
-    public static Srv ent(String name, Signature sig, Context context, Arg... args) {
-        return srv(name, sig, context, args);
-    }
-
 	public static Srv ent(Signature sig) {
 		return srv(sig);
 	}
@@ -486,7 +458,6 @@ public class operator {
 		else
 			throw new ContextException("No Entry at path: " + path);
 	}
-
 
 	public static Entry<Object>  ent(String path) {
 		return new Entry<Object>(path, null);

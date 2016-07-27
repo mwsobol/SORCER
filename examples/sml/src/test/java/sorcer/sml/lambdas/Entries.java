@@ -21,6 +21,7 @@ import static sorcer.eo.operator.get;
 import static sorcer.eo.operator.value;
 import static sorcer.mo.operator.*;
 import static sorcer.po.operator.invoker;
+import static sorcer.po.operator.par;
 import static sorcer.service.Arg.setArgValue;
 import static sorcer.util.exec.ExecUtils.CmdResult;
 
@@ -94,7 +95,7 @@ public class Entries {
     public void entryAsLambdaInvoker() throws Exception {
 
         Model mo = model(ent("x", 10.0), ent("y", 20.0),
-                ent(invoker("lambda", (Context<Double> cxt) -> value(cxt, "x")
+                par(invoker("lambda", (Context<Double> cxt) -> value(cxt, "x")
                         + value(cxt, "y")
                         + 30)));
         logger.info("invoke eval: " + eval(mo, "lambda"));

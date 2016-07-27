@@ -253,6 +253,14 @@ public class operator {
 		return null;
 	}
 
+	public static Par par(Invocation invoker) {
+		return new Par(invoker.getName(), invoker);
+	}
+
+	public static Par par(String path, Invocation invoker) {
+		return new Par(path, invoker);
+	}
+
 	public static Object invoke(Invocation invoker, Arg... parameters)
 			throws ContextException, RemoteException {
 		return invoker.invoke(null, parameters);
