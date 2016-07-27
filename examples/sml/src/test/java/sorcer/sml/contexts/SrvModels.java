@@ -48,8 +48,8 @@ public class SrvModels {
                 ent(invoker("lambda", cxt -> (double) value(cxt, "x")
                         + (double) value(cxt, "y")
                         + 30)));
-        logger.info("invoke eval: " + operator.eval(mo, "lambda"));
-        assertEquals(operator.eval(mo, "lambda"), 60.0);
+        logger.info("invoke eval: " + eval(mo, "lambda"));
+        assertEquals(eval(mo, "lambda"), 60.0);
     }
 
     @Test
@@ -66,8 +66,8 @@ public class SrvModels {
                                     + 30;
                         },
                         scope)));
-        logger.info("invoke eval: " + operator.eval(mo, "lambda"));
-        assertEquals(operator.eval(mo, "lambda"), 100.0);
+        logger.info("invoke eval: " + eval(mo, "lambda"));
+        assertEquals(eval(mo, "lambda"), 100.0);
     }
 
     @Test

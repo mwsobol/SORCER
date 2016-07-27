@@ -112,13 +112,13 @@ public class ServiceMograms {
 
         Model exerted = exert(model);
         logger.info("out context: " + exerted);
-        assertTrue(operator.eval(exerted, "out").equals(110.0));
+        assertTrue(eval(exerted, "out").equals(110.0));
 
         ((SrvModel) exerted).clearOutputs();
 
         exerted = exert(model);
         logger.info("out context: " + exerted);
-        assertTrue(operator.eval(exerted, "out").equals(120.0));
+        assertTrue(eval(exerted, "out").equals(120.0));
     }
 
     @Test

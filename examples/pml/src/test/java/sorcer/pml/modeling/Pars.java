@@ -41,8 +41,8 @@ public class Pars {
 
 		// par with its context scope
 		Par<?> add = par("add", invoker("x + y", pars("x", "y")), cxt);
-		logger.info("par eval: " + operator.eval(add));
-		assertTrue(operator.eval(add).equals(50.0));
+		logger.info("par eval: " + eval(add));
+		assertTrue(eval(add).equals(50.0));
 	}
 
 
@@ -66,7 +66,7 @@ public class Pars {
 	public void closingParWihEntries() throws Exception {
 		Par y = par("y",
 				invoker("(x1 * x2) - (x3 + x4)", pars("x1", "x2", "x3", "x4")));
-		Object val = operator.eval(y, ent("x1", 10.0), ent("x2", 50.0), ent("x3", 20.0), ent("x4", 80.0));
+		Object val = eval(y, ent("x1", 10.0), ent("x2", 50.0), ent("x3", 20.0), ent("x4", 80.0));
 		// logger.info("y eval: " + val);
 		assertEquals(val, 400.0);
 	}
@@ -78,9 +78,9 @@ public class Pars {
 		Par<?> add = par("add", invoker("x + y", pars("x", "y")));
 
 		Context<Double> cxt = context(ent("x", 10.0), ent("y", 20.0));
-		logger.info("par eval: " + operator.eval(add, cxt));
+		logger.info("par eval: " + eval(add, cxt));
 		// evaluate a par 
-		assertTrue(operator.eval(add, cxt).equals(30.0));
+		assertTrue(eval(add, cxt).equals(30.0));
 
 	}
 
@@ -99,8 +99,8 @@ public class Pars {
 		assertTrue(content(dbp1Url).equals(25.0));
 		assertEquals(content(dbp2Url), "http://sorcersoft.org/sobol");
 		
-		assertTrue(operator.eval(dbp1).equals(25.0));
-		assertEquals(operator.eval(dbp2), "http://sorcersoft.org/sobol");
+		assertTrue(eval(dbp1).equals(25.0));
+		assertEquals(eval(dbp2), "http://sorcersoft.org/sobol");
 
 		// update persistent values
 		set(dbp1, 30.0);
@@ -130,11 +130,11 @@ public class Pars {
 		
 		set(dbp, 50.0);
 
-		assertTrue(operator.eval(multi, cxt, parFi("shared/eval")).equals(50.0));
+		assertTrue(eval(multi, cxt, parFi("shared/eval")).equals(50.0));
 
-		assertTrue(operator.eval(multi, cxt, parFi("init/eval")).equals(49.0));
+		assertTrue(eval(multi, cxt, parFi("init/eval")).equals(49.0));
 
-		assertTrue(operator.eval(multi, cxt, parFi("invoke")).equals(30.0));
+		assertTrue(eval(multi, cxt, parFi("invoke")).equals(30.0));
 
 	}
 	

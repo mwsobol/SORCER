@@ -44,17 +44,17 @@ public class EntModels {
 				ent("arg/x3", 3.0), ent("arg/x4", 4.0), ent("arg/x5", 5.0));
 
 		add(mdl, ent("arg/x6", 6.0));
-		assertTrue(operator.eval(mdl, "arg/x6").equals(6.0));
+		assertTrue(eval(mdl, "arg/x6").equals(6.0));
 
 		// ent is of the Evaluation type
 		// entries in models are evaluated
 		put(mdl, ent("arg/x6", ent("overwrite", 20.0)));
-		assertTrue(operator.eval(mdl, "arg/x6").equals(20.0));
+		assertTrue(eval(mdl, "arg/x6").equals(20.0));
 
 		// invoker is of the Invocation type
 		add(mdl, ent("arg/x7", invoker("x1 + x3", ents("x1", "x3"))));
 
-		assertTrue(operator.eval(mdl, "arg/x7").equals(4.0));
+		assertTrue(eval(mdl, "arg/x7").equals(4.0));
 		assertTrue(asis(mdl, "arg/x7") instanceof Entry);
 		assertTrue(asis(mdl, "arg/x7") instanceof Par);
 		assertTrue(asis(asis(mdl, "arg/x7")) instanceof Double);
@@ -71,8 +71,8 @@ public class EntModels {
 		// declare response paths
 		responseUp(mdl, "invoke");
 		// evaluate the model
-		operator.eval(mdl);
-		assertTrue(operator.eval(mdl).equals(4.0));
+		eval(mdl);
+		assertTrue(eval(mdl).equals(4.0));
 
 		// evaluate the model with overwritten inputs
 		Double result = (Double) eval(mdl, ent("arg/x1", 2.0), ent("arg/x2", 3.0));
@@ -103,8 +103,8 @@ public class EntModels {
 		dependsOn(mdl2, cp);
 
 //		Double result =
-		operator.eval(mdl2);
-		assertTrue(operator.eval(mdl2).equals(22.0));
+		eval(mdl2);
+		assertTrue(eval(mdl2).equals(22.0));
 	}
 
 	@Test

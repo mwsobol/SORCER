@@ -37,14 +37,14 @@ public class Entries {
         // no free variables
         Entry y1 = lambda("y1", () -> 20.0 * pow(0.5, 6) + 10.0);
 
-        assertEquals(10.3125, operator.eval(y1));
+        assertEquals(10.3125, eval(y1));
 
         // the model itself as a free variable of the lambda y2
         Model mo = model(ent("x1", 10.0), ent("x2", 20.0),
                 lambda("y2", (Context<Double> cxt) ->
                         value(cxt, "x1") + value(cxt, "x2")));
 
-        assertEquals(30.0, operator.eval(mo, "y2"));
+        assertEquals(30.0, eval(mo, "y2"));
 
     }
 
@@ -97,8 +97,8 @@ public class Entries {
                 ent(invoker("lambda", (Context<Double> cxt) -> value(cxt, "x")
                         + value(cxt, "y")
                         + 30)));
-        logger.info("invoke eval: " + operator.eval(mo, "lambda"));
-        assertEquals(operator.eval(mo, "lambda"), 60.0);
+        logger.info("invoke eval: " + eval(mo, "lambda"));
+        assertEquals(eval(mo, "lambda"), 60.0);
     }
 
     @Test
@@ -111,8 +111,8 @@ public class Entries {
                     return exec(Arg.getEntry(args, "x")); },
                         args("x", "y")));
 
-        logger.info("s1 eval: ", operator.eval(mo, "s1"));
-        assertEquals(operator.eval(mo, "s1"), 20.0);
+        logger.info("s1 eval: ", eval(mo, "s1"));
+        assertEquals(eval(mo, "s1"), 20.0);
     }
 
     @Test

@@ -85,15 +85,15 @@ public class DataModels {
 
         Entry<Double> in = inEnt("arg/x2", 10.0);
         assertTrue(path(in).equals("arg/x2"));
-        assertTrue(operator.eval(in).equals(10.0));
+        assertTrue(eval(in).equals(10.0));
 
         Entry<Double> out = outEnt("arg/y", 20.0);
         assertTrue(path(out).equals("arg/y"));
-        assertTrue(operator.eval(out).equals(20.0));
+        assertTrue(eval(out).equals(20.0));
 
         Entry<Double> inout = inoutEnt("arg/z", 30.0);
         assertTrue(path(inout).equals("arg/z"));
-        assertTrue(operator.eval(inout).equals(30.0));
+        assertTrue(eval(inout).equals(30.0));
 
     }
 

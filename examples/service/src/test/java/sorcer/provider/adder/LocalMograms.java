@@ -57,11 +57,11 @@ public class LocalMograms {
 				cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0), result("result/y")));
 
 		// get the result eval
-		assertEquals(100.0, operator.eval(t5));
+		assertEquals(100.0, eval(t5));
 
 		// get the subcontext output from the exertion
 		assertTrue(context(ent("arg/x1", 20.0), ent("result/z", 100.0)).equals(
-				operator.eval(t5, result("result/z", outPaths("arg/x1", "result/z")))));
+				eval(t5, result("result/z", outPaths("arg/x1", "result/z")))));
 
 	}
 

@@ -172,18 +172,18 @@ public class SysCalls {
 						inEnt("cylinder"), outEnt("cylinder/volume"), outEnt("cylinder/radius"),
 						outEnt("cylinder/height")))));
 
-		String volume = (String) operator.eval(sm, "volume");
+		String volume = (String) eval(sm, "volume");
 		logger.info("volume: " + volume);
 		assertTrue(volume.equals("37.69911184307752"));
-		assertTrue(operator.eval(sm, "cylinder/height").equals("3.0"));
-		assertTrue(operator.eval(sm, "cylinder/radius").equals("2.0"));
-		assertTrue(operator.eval(sm, "cylinder/volume").equals("37.69911184307752"));
+		assertTrue(eval(sm, "cylinder/height").equals("3.0"));
+		assertTrue(eval(sm, "cylinder/radius").equals("2.0"));
+		assertTrue(eval(sm, "cylinder/volume").equals("37.69911184307752"));
 
 		// type conversion for numbers
 		double v = Double.valueOf(volume).doubleValue();
 		assertTrue(v == 37.69911184307752);
 		volume = Double.toString(v);
-		assertTrue(operator.eval(sm, "cylinder/volume").equals(volume));
+		assertTrue(eval(sm, "cylinder/volume").equals(volume));
 	}
 
 	@Test
@@ -212,17 +212,17 @@ public class SysCalls {
 								outEnt("cylinder/radius", double.class),
 								outEnt("cylinder/height", double.class)))));
 
-		Double volume = (Double) operator.eval(sm, "volume");
+		Double volume = (Double) eval(sm, "volume");
 		logger.info("volume: " + volume);
 		assertTrue(volume.equals(37.69911184307752));
-		assertTrue(operator.eval(sm, "cylinder/height").equals(3.0));
-		assertTrue(operator.eval(sm, "cylinder/radius").equals(2.0));
-		assertTrue(operator.eval(sm, "cylinder/volume").equals(37.69911184307752));
+		assertTrue(eval(sm, "cylinder/height").equals(3.0));
+		assertTrue(eval(sm, "cylinder/radius").equals(2.0));
+		assertTrue(eval(sm, "cylinder/volume").equals(37.69911184307752));
 
 		// use values fro system call in the model sm
 		setValue(sm, "y", volume);
-		logger.info("multiply eval:" + operator.eval(sm, "add"));
-		assertTrue(operator.eval(sm, "add").equals(47.69911184307752));
+		logger.info("multiply eval:" + eval(sm, "add"));
+		assertTrue(eval(sm, "add").equals(47.69911184307752));
 	}
 
 	@Test

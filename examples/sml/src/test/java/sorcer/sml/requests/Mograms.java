@@ -91,10 +91,10 @@ public class Mograms {
 
         logger.info("out : " + out);
         logger.info("out @ arg/x1: " + get(out, "arg/x1"));
-        logger.info("out @ arg/x2: " + operator.eval(out, "arg/x2"));
-        logger.info("out @ result/y: " + operator.eval(out, "result/y"));
+        logger.info("out @ arg/x2: " + eval(out, "arg/x2"));
+        logger.info("out @ result/y: " + eval(out, "result/y"));
 
-        assertEquals(100.0, operator.eval(out, "result/y"));
+        assertEquals(100.0, eval(out, "result/y"));
 
     }
 
