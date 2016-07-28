@@ -430,8 +430,8 @@ public class CollectionOperators {
 		ProcModel pc = procModel(x1p, x2p, j1p);
 
 		// setting context arguments
-		set(x1p, 10.0);
-		set(x2p, 50.0);
+		setValue(x1p, 10.0);
+		setValue(x2p, 50.0);
 
 		// update proc references
 		Exertion j2 = exert(j1);
@@ -443,7 +443,7 @@ public class CollectionOperators {
 		assertEquals(eval(j1p), 400.0);
 
 		// set job parameter eval
-		set(j1p, 1000.0);
+		setValue(j1p, 1000.0);
 		assertEquals(eval(j1p), 1000.0);
 
 		// exert original service and get its proc eval
