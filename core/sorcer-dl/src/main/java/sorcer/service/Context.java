@@ -77,8 +77,8 @@ import java.util.*;
 @SuppressWarnings("rawtypes")
 public interface Context<T> extends ServiceModel, Mogram, Dependency, Mappable<T>, Serializable, Contexter<T>, Paradigmatic {
 
-	/** parameter (par) */
-	final static String PATH_PAR = "par";
+	/** parameter (proc) */
+	final static String PATH_PAR = "proc";
 
 	/** context parameter (cp) */
 	final static String CONTEXT_PARAMETER = "cp";

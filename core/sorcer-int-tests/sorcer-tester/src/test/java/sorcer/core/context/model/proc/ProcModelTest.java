@@ -1,4 +1,4 @@
-package sorcer.core.context.model.par;
+package sorcer.core.context.model.proc;
 
 import groovy.lang.Closure;
 import org.junit.Test;
@@ -43,7 +43,6 @@ import static sorcer.mo.operator.*;
 /**
  * @author Mike Sobolewski
  */
-@SuppressWarnings({ "rawtypes", "unchecked" })
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("core/sorcer-int-tests/sorcer-tester")
 public class ProcModelTest {
@@ -131,7 +130,7 @@ public class ProcModelTest {
 		assertEquals(value(pm, "y"), 20.0);
 		assertEquals(value(pm, "add"), 30.0);
 
-		assertEquals(operator.eval(pm), 30.0);
+		assertEquals(eval(pm), 30.0);
 	}
 	
 	@Test
@@ -145,7 +144,7 @@ public class ProcModelTest {
 		Proc x = proc(pm, "x");
 		logger.info("proc x: " + x);
 		set(x, 20.0);
-		logger.info("val x: " + operator.eval(x));
+		logger.info("val x: " + eval(x));
 		logger.info("val x: " + value(pm, "x"));
 
 		put(pm, "y", 40.0);
@@ -155,7 +154,7 @@ public class ProcModelTest {
 		assertEquals(value(pm, "add"), 60.0);
 
 		// get modeling taget
-		assertEquals(operator.eval(pm), 60.0);
+		assertEquals(eval(pm), 60.0);
 
 		add(pm, proc("x", 10.0), proc("y", 20.0));
 		assertEquals(value(pm, "x"), 10.0);
@@ -165,7 +164,7 @@ public class ProcModelTest {
 		assertEquals(value(pm, "add"), 30.0);
 
 		value(pm, "add");
-		assertEquals(operator.eval(pm), 30.0);
+		assertEquals(eval(pm), 30.0);
 
 		// with new arguments, closure
 		assertTrue(value(pm, proc("x", 20.0), proc("y", 30.0)).equals(50.0));
@@ -182,14 +181,14 @@ public class ProcModelTest {
 
 		// mapping parameters to cxt, m1 and m2 are proc aliases
 		Proc p1 = as(proc("p1", "design/in"), cxt);
-		assertTrue(operator.eval(p1).equals(25.0));
+		assertTrue(eval(p1).equals(25.0));
 		set(p1, 30.0);
-		assertTrue(operator.eval(p1).equals(30.0));
+		assertTrue(eval(p1).equals(30.0));
 		
 		Proc p2 = as(proc("p2", "url"), cxt);
-		assertEquals(operator.eval(p2), "myUrl");
+		assertEquals(eval(p2), "myUrl");
 		set(p2, "newUrl");
-		assertEquals(operator.eval(p2), "newUrl");
+		assertEquals(eval(p2), "newUrl");
 	}
 	
 	@Test
@@ -262,8 +261,8 @@ public class ProcModelTest {
 		assertFalse(asis(dbp1) instanceof URL);
 		assertTrue(asis(dbp2) instanceof URL);
 		
-		assertTrue(operator.eval(dbp1).equals(25.0));
-		assertTrue(operator.eval(dbp2).equals("myUrl1"));
+		assertTrue(eval(dbp1).equals(25.0));
+		assertTrue(eval(dbp2).equals("myUrl1"));
 
 		assertTrue(asis(dbp1) instanceof URL);
 		assertTrue(asis(dbp2) instanceof URL);
@@ -279,17 +278,17 @@ public class ProcModelTest {
 	@Test
 	public void mappableProcPersistence() throws Exception {
 
-		Context cxt = context(proc("url", "htt://sorcersoft.org"), proc("design/in", 25.0));
+		Context cxt = context(val("url", "htt://sorcersoft.org"), val("design/in", 25.0));
 
 		// persistent proc
 		Proc dbIn = persistent(as(proc("dbIn", "design/in"), cxt));
-		assertTrue(operator.eval(dbIn).equals(25.0));  	// is persisted
+		assertTrue(eval(dbIn).equals(25.0));  	// is persisted
 		assertTrue(dbIn.asis().equals("design/in"));
-		assertTrue(operator.eval((Evaluation) asis(cxt, "design/in")).equals(25.0));
+		assertTrue(eval((Evaluation) asis(cxt, "design/in")).equals(25.0));
 		assertTrue(value(cxt, "design/in").equals(25.0));
 
 		set(dbIn, 30.0); 	// is persisted
-		assertTrue(operator.eval(dbIn).equals(30.0));
+		assertTrue(eval(dbIn).equals(30.0));
 
 		// associated context is updated accordingly
 		assertTrue(value(cxt, "design/in").equals(30.0));
@@ -298,10 +297,10 @@ public class ProcModelTest {
 
 		// not persistent proc
 		Proc sorcer = as(proc("sorcer", "url"), cxt);
-		assertEquals(operator.eval(sorcer), "htt://sorcersoft.org");
+		assertEquals(eval(sorcer), "htt://sorcersoft.org");
 
 		set(sorcer, "htt://sorcersoft.org/sobol");
-		assertTrue(operator.eval(sorcer).equals("htt://sorcersoft.org/sobol"));
+		assertTrue(eval(sorcer).equals("htt://sorcersoft.org/sobol"));
 	}
 
 	@Test
@@ -311,13 +310,13 @@ public class ProcModelTest {
 		Proc x1 = proc(cxt, "x1", "design/in1");
 		Proc x2 = as(proc("x2", "design/in2"), cxt);
 
-		assertTrue(operator.eval(x1).equals(25.0));
+		assertTrue(eval(x1).equals(25.0));
 		set(x1, 45.0);
-		assertTrue(operator.eval(x1).equals(45.0));
+		assertTrue(eval(x1).equals(45.0));
 
-		assertTrue(operator.eval(x2).equals(35.0));
+		assertTrue(eval(x2).equals(35.0));
 		set(x2, 55.0);
-		assertTrue(operator.eval(x2).equals(55.0));
+		assertTrue(eval(x2).equals(55.0));
 		
 		ProcModel pc = procModel(x1, x2);
 		assertTrue(value(pc, "x1").equals(45.0));
@@ -361,14 +360,14 @@ public class ProcModelTest {
 		j1 = exert(j1);
 		c4 = taskContext("j1/t4", j1);
 		logger.info("j1 eval: " + upcontext(j1));
-		logger.info("j1p eval: " + operator.eval(j1p));
+		logger.info("j1p eval: " + eval(j1p));
 		
 		// get job parameter eval
-		assertTrue(operator.eval(j1p).equals(400.0));
+		assertTrue(eval(j1p).equals(400.0));
 		
 		// set job parameter eval
 		set(j1p, 1000.0);
-		assertTrue(operator.eval(j1p).equals(1000.0));
+		assertTrue(eval(j1p).equals(1000.0));
 
 		// proc model with mograms
 		ProcModel pc = procModel(x1p, x2p, j1p);
@@ -416,7 +415,7 @@ public class ProcModelTest {
 		c4 = taskContext("j1/t4", j1);
 		
 		// get job parameter eval
-		assertTrue(operator.eval(j1p).equals(400.0));
+		assertTrue(eval(j1p).equals(400.0));
 		
 		logger.info("j1 job context: " + upcontext(j1));
 		

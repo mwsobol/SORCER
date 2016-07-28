@@ -14,9 +14,9 @@ import static sorcer.po.operator.*;
  *
  */
 @SuppressWarnings("rawtypes")
-public class ParModelImpl {
+public class ProcModelImpl {
 
-	public static ProcModel getParModel() throws EvaluationException,
+	public static ProcModel getProcModel() throws EvaluationException,
 			RemoteException, ContextException {
         ProcModel pm = procModel("proc-model");
         add(pm, proc("x", 10.0), proc("y", 20.0));
