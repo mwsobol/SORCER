@@ -905,7 +905,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
      * </p>
      *
      * @param dependers
-     *            the dependers to set
+     *            the dependers to setValue
      */
     public void setDependers(List<Evaluation> dependers) {
         this.dependers = dependers;
@@ -1025,7 +1025,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
 
     @Override
     public Object exec(Arg... args) throws MogramException, RemoteException {
-        Context cxt = Arg.getContext(args);
+        Context cxt = (Context) Arg.getServiceModel(args);
         if (cxt != null) {
               dataContext = (ServiceContext) cxt;
               return operator.eval(this, args);

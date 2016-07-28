@@ -519,7 +519,7 @@ public class Booter implements SorcerConstants {
 
 	/**
 	 * Gets the eval for a certain property or the default eval if property is
-	 * not set.
+	 * not setValue.
 	 * 
 	 * @param property
 	 * @param defaultValue

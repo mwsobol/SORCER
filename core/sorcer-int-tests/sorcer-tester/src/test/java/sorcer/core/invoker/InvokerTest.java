@@ -41,7 +41,6 @@ import static sorcer.po.operator.get;
 import static sorcer.po.operator.loop;
 import static sorcer.po.operator.opt;
 import static sorcer.po.operator.put;
-import static sorcer.po.operator.set;
 import static sorcer.mo.operator.*;
 
 /**
@@ -78,9 +77,9 @@ public class InvokerTest {
 		public Double invoke(Context arg) throws Exception {
 			x.setValue(arg.getValue("x"));
 			y.setValue(context.getValue("y"));
-			// x set from 'arg'
+			// x setValue from 'arg'
 			assertTrue(operator.eval(x).equals(200.0));
-			// y set from construtor's context 'in'
+			// y setValue from construtor's context 'in'
 			assertTrue(operator.eval(y).equals(30.0));
 			assertTrue(operator.eval(z).equals(170.0));
 			return operator.eval(x) + operator.eval(y) + (double) value(pm, "z");
@@ -99,8 +98,8 @@ public class InvokerTest {
 
 	@Test
 	public void methodInvokerTest() throws RemoteException, ContextException {
-		set(x, 10.0);
-		set(y, 20.0);
+		setValue(x, 10.0);
+		setValue(y, 20.0);
 		add(pm, x, y, z);
 
 		Context in = context(proc("x", 20.0), proc("y", 30.0));

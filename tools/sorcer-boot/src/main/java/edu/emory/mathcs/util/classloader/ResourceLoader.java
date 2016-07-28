@@ -42,7 +42,7 @@ import java.util.jar.Manifest;
  * of {@link java.net.URLClassLoader}, with JAR dependencies (Class-Path)
  * properly resolved and with JAR indexes properly handled.
  * <p>
- * This class provides two set of methods: <i>get</i> methods that return
+ * This class provides two setValue of methods: <i>get</i> methods that return
  * {@link edu.emory.mathcs.util.classloader.ResourceHandle}s (or their enumerations) and <i>find</i> methods that
  * return URLs (or their enumerations). If the resource is not found,
  * null (or empty enumeration) is returned. Resource handles represent a

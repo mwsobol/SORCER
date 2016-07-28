@@ -18,6 +18,7 @@ package sorcer.co.tuple;
 
 import sorcer.core.context.model.ent.Entry;
 import sorcer.service.Signature;
+import sorcer.service.modeling.Variability;
 
 public class InoutEntry<T> extends Entry<T> {
     private static final long serialVersionUID = 1L;
@@ -25,6 +26,7 @@ public class InoutEntry<T> extends Entry<T> {
     public InoutEntry() {
         super();
         annotation = Signature.Direction.INOUT;
+        type = Variability.Type.INOUT;
     }
 
     public InoutEntry(String path) {
@@ -41,6 +43,7 @@ public class InoutEntry<T> extends Entry<T> {
 
     InoutEntry(String path, T value, boolean isPersistant, int index) {
         super(path, value, isPersistant, index);
+        type = Variability.Type.INOUT;
         annotation = Signature.Direction.INOUT;
     }
 

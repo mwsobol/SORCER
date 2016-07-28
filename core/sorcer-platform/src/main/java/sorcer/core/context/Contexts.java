@@ -315,7 +315,7 @@ public class Contexts implements SorcerConstants {
 
 	/*
 	 * Return boolean result indicating if the eval at the designated path is
-	 * set as an empty leaf node.
+	 * setValue as an empty leaf node.
 	 */
 	public static boolean isEmptyLeafNode(Context cntxt, String path)
 			throws ContextException {
@@ -534,7 +534,7 @@ public class Contexts implements SorcerConstants {
 			obj = e.next();
 			if (obj != null && obj instanceof ContextNode)
 				nodes.add(obj);
-            // Look for ContextNodes also in values and set the ContextNode's direction
+            // Look for ContextNodes also in values and setValue the ContextNode's direction
             else {
                 Object val = ((ServiceContext)context).get((String)obj);
                 if (val!= null && val instanceof ContextNode) {
@@ -1118,7 +1118,7 @@ public class Contexts implements SorcerConstants {
 		Vector keys = new Vector();
 		if (cntxt.isSingletonAttribute(attribute)) {
 			values = (Hashtable) cntxt.getMetacontext().get(attribute);
-			if (values != null) { // if no attributes are set, values==null;
+			if (values != null) { // if no attributes are setValue, values==null;
 				Enumeration e = values.keys();
 				while (e.hasMoreElements())
 					keys.addElement((String) e.nextElement());
@@ -1220,7 +1220,7 @@ public class Contexts implements SorcerConstants {
 		Vector keys = new Vector();
 		if (cntxt.isSingletonAttribute(attr)) {
 			values = (Hashtable) cntxt.getMetacontext().get(attr);
-			if (values != null) { // if there are no attributes set,
+			if (values != null) { // if there are no attributes setValue,
 				// values==null;
 				Enumeration e = values.keys();
 				while (e.hasMoreElements()) {

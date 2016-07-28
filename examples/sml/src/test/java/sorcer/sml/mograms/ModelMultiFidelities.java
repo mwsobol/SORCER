@@ -52,7 +52,7 @@ public class ModelMultiFidelities {
     }
 
     @Test
-    public void entMueactoringtiFidelityModel() throws Exception {
+    public void entMultiFidelityModel() throws Exception {
 
         // three entry model
         Model mdl = model(

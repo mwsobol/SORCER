@@ -186,7 +186,7 @@ public class ProcModels {
 
 		Proc x = proc(pm, "x");
 		logger.info("proc x: " + x);
-		set(x, 20.0);
+		setValue(x, 20.0);
 		logger.info("val x: " + eval(x));
 		logger.info("val x: " + value(pm, "x"));
 
@@ -323,11 +323,11 @@ public class ProcModels {
 		Proc x2 = as(proc("x2", "design/in2"), cxt);
 
 		assertTrue(eval(x1).equals(25.0));
-		set(x1, 45.0);
+		setValue(x1, 45.0);
 		assertTrue(eval(x1).equals(45.0));
 
 		assertTrue(eval(x2).equals(35.0));
-		set(x2, 55.0);
+		setValue(x2, 55.0);
 		assertTrue(eval(x2).equals(55.0));
 
 		ProcModel pc = procModel(x1, x2);
@@ -348,7 +348,7 @@ public class ProcModels {
 		assertTrue(eval((Evaluation) asis(cxt, "design/in")).equals(25.0));
 		assertTrue(value(cxt, "design/in").equals(25.0));
 
-		set(dbIn, 30.0); 	// is persisted
+		setValue(dbIn, 30.0); 	// is persisted
 		assertTrue(eval(dbIn).equals(30.0));
 
 		// associated context is updated accordingly
@@ -360,7 +360,7 @@ public class ProcModels {
 		Proc sorcer = as(proc("sorcer", "url"), cxt);
 		assertEquals(eval(sorcer), "htt://sorcersoft.org");
 
-		set(sorcer, "htt://sorcersoft.org/sobol");
+		setValue(sorcer, "htt://sorcersoft.org/sobol");
 		assertTrue(eval(sorcer).equals("htt://sorcersoft.org/sobol"));
 
 	}
@@ -396,8 +396,8 @@ public class ProcModels {
 		Proc j1p = as(proc("j1p", "j1/t3/result/y"), j1);
 
 		// setting context parameters in a job
-		set(x1p, 10.0);
-		set(x2p, 50.0);
+		setValue(x1p, 10.0);
+		setValue(x2p, 50.0);
 
 		// update proc references
 		j1 = exert(j1);
@@ -408,8 +408,8 @@ public class ProcModels {
 		// get job parameter eval
 		assertTrue(eval(j1p).equals(400.0));
 
-		// set job parameter eval
-		set(j1p, 1000.0);
+		// setValue job parameter eval
+		setValue(j1p, 1000.0);
 		assertTrue(eval(j1p).equals(1000.0));
 
 		// map pars are aliased pars
@@ -450,8 +450,8 @@ public class ProcModels {
 		Proc t4x1p = proc("t4x1p", "j1/j2/t4/arg/x1", j1);
 
 		// setting context parameters in a job
-		set(c4x1p, 10.0);
-		set(c4x2p, 50.0);
+		setValue(c4x1p, 10.0);
+		setValue(c4x2p, 50.0);
 
 		// update proc references
 		j1 = exert(j1);
@@ -641,7 +641,7 @@ public class ProcModels {
 
 		String sorcerVersion = System.getProperty("sorcer.version");
 
-		// set the sphere/radius in the model
+		// setValue the sphere/radius in the model
 		put(pm, "sphere/radius", 20.0);
 		// attach the agent to the proc-model and invoke
         add(pm, agent("getSphereVolume",

@@ -225,7 +225,7 @@ public class Srv extends Entry<Object> implements Variability<Object>, Arg,
 
     @Override
     public Object exec(Arg... args) throws ServiceException, RemoteException {
-        ServiceModel mod = Arg.getModel(args);
+        ServiceModel mod = Arg.getServiceModel(args);
         if (mod != null) {
             if (mod instanceof SrvModel && _2 instanceof ValueCallable) {
                 return ((ValueCallable) _2).call((Context) mod);

@@ -90,7 +90,7 @@ public class Entries {
 	public static class Doer implements Invocation<Double> {
 
         @Override
-        public Double invoke(Context cxt, Arg... entries) throws RemoteException, ContextException {
+        public Double invoke(Context<Double> cxt, Arg... entries) throws RemoteException, ContextException {
             Entry<Double> x = proc("x", 20.0);
             Entry<Double> y = proc("y", 30.0);
             Entry<Double> z = proc("z", invoker("x - y", x, y));
@@ -104,7 +104,7 @@ public class Entries {
 
         @Override
         public Object exec(Arg... args) throws MogramException, RemoteException, TransactionException {
-            return invoke(Arg.getContext(args), args);
+            return invoke((Context)Arg.getServiceModel(args), args);
         }
 
         @Override

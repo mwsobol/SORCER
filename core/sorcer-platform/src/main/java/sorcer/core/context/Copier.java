@@ -66,7 +66,7 @@ public class Copier implements Evaluation<Context> {
 
 	@Override
 	public Object exec(Arg... args) throws MogramException, RemoteException {
-		Context cxt = Arg.getContext(args);
+		ServiceModel cxt = Arg.getServiceModel(args);
 		if (cxt != null) {
 			fromContext = (Context) cxt;
 			return getValue(args);

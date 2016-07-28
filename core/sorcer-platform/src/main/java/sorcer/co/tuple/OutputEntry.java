@@ -18,6 +18,7 @@ package sorcer.co.tuple;
 
 import sorcer.core.context.model.ent.Entry;
 import sorcer.service.Signature;
+import sorcer.service.modeling.Variability;
 
 public class OutputEntry<T> extends Entry<T> {
 
@@ -26,7 +27,8 @@ public class OutputEntry<T> extends Entry<T> {
 	public OutputEntry() {
 		super();
         annotation = Signature.Direction.OUT;
-    }
+		type = Variability.Type.OUTPUT;
+	}
 
 	public OutputEntry(String path) {
         this(path, null, false, 0);
@@ -34,15 +36,16 @@ public class OutputEntry<T> extends Entry<T> {
 
 	public OutputEntry(String path, T value) {
         this(path, value, false, 0);
-    }
+	}
 
     public OutputEntry(String path, T value, int index) {
 		this(path, value, false, index);
-    }
+	}
 
 	public OutputEntry(String path, T value, boolean isPersistant, int index) {
 		super(path, value, isPersistant, index);
         annotation = Signature.Direction.OUT;
-    }
+		type = Variability.Type.OUTPUT;
+	}
 
 }

@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * Basic set of simple {@link ServiceItemFilter}s
+ * Basic setValue of simple {@link ServiceItemFilter}s
  *
  * @author Rafał Krupiński
  */

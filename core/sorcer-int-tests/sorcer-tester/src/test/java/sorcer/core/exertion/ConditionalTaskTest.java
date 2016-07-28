@@ -134,7 +134,7 @@ public class ConditionalTaskTest {
 //			 public void run() {
 //				 try {
 //					while ((Double)eval(pm, "x") < 25.0) {
-//						 set(x, eval(x) + 1.0);
+//						 setValue(x, eval(x) + 1.0);
 //						 System.out.println("running ... " + eval(pm, "x"));
 //						 Thread.sleep(200);
 //					}

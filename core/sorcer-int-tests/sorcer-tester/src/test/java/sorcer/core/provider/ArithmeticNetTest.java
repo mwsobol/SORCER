@@ -394,7 +394,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 				Sorcer.getActualName("Arithmetic Exerter"));
 		Task task = new NetTask("eval", signature);
 		Task result = task.exert();
-		// no return path set so we get context (defualt behavior)
+		// no return path setValue so we get context (defualt behavior)
 		Context out = (Context) result.getReturnValue();
 		logger.info("result: " + out);
 		assertEquals(out.getValue("j1/t3/result/y"), 400.0);

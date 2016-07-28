@@ -34,7 +34,6 @@ import static sorcer.co.operator.asis;
 import static sorcer.co.operator.map;
 import static sorcer.co.operator.path;
 import static sorcer.co.operator.persistent;
-import static sorcer.co.operator.put;
 import static sorcer.co.operator.set;
 import static sorcer.co.operator.value;
 import static sorcer.eo.operator.*;
@@ -134,7 +133,7 @@ public class CollectionOperators {
 	@Test
 	public void genericSetOperator() throws Exception {
 
-		// the set operator creates instances of java.util.Set
+		// the setValue operator creates instances of java.util.Set
 		Set<Serializable> s = set("name", "Mike", "name", "Ray", tuple("height", 174));
 		assertEquals(s.size(), 4);
 		assertEquals(tuple("height", 174)._1, "height");
@@ -187,7 +186,7 @@ public class CollectionOperators {
 		assertFalse(asis(e) instanceof URL);
 		assertTrue(eval(e).equals(10.0));
 		assertTrue(asis(e) instanceof URL);
-		put(e, 50.0);
+		setValue(e, 50.0);
 		assertTrue(eval(e).equals(50.0));
 		assertTrue(asis(e) instanceof URL);
 
@@ -241,7 +240,7 @@ public class CollectionOperators {
 
 		// assign a given URL
 		Entry<Object> dbe = dbVal("y1");
-		put(dbe, valUrl);
+		setValue(dbe, valUrl);
 		assertTrue(eval(dbe).equals(10.0));
 		assertTrue(asis(dbe) instanceof URL);
 
@@ -433,7 +432,7 @@ public class CollectionOperators {
 		// get service proc j1p eval
 		assertEquals(eval(j1p), 400.0);
 
-		// set job parameter eval
+		// setValue job parameter eval
 		setValue(j1p, 1000.0);
 		assertEquals(eval(j1p), 1000.0);
 

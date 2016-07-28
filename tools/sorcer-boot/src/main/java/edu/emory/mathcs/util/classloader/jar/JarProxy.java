@@ -75,7 +75,7 @@ public class JarProxy implements JarURLConnection.JarOpener {
         if (result == null) {
             final URLConnection jarconn = url.openConnection();
 
-            // set up the properties based on the JarURLConnection
+            // setValue up the properties based on the JarURLConnection
             jarconn.setAllowUserInteraction(conn.getAllowUserInteraction());
             jarconn.setDoInput(conn.getDoInput());
             jarconn.setDoOutput(conn.getDoOutput());

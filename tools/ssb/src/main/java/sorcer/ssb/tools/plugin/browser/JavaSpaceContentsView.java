@@ -72,7 +72,7 @@ public class JavaSpaceContentsView extends JPanel implements Runnable {
 	 */
 	private long refreshRate = 5000;
 	/*
-	 * paused if set by the GUI then polling is suspended
+	 * paused if setValue by the GUI then polling is suspended
 	 */
 	private boolean paused = false;
 
@@ -143,10 +143,10 @@ public class JavaSpaceContentsView extends JPanel implements Runnable {
 	 * Poll the JavaSpaceAdmin proxy every <code>refreshRate</code> millis If we
 	 * get an Exception, drop out of the loop and report it The most likely
 	 * cause of an Exception occuring will be down to a retrieved entry not
-	 * having a valid codebase set for it
+	 * having a valid codebase setValue for it
 	 * 
 	 * If the client application that is writing the entries to the space is
-	 * being run from within the SSB environment, makes sure you have set a
+	 * being run from within the SSB environment, makes sure you have setValue a
 	 * codebase alias, but right clicking on the project icon and selecting
 	 * "Add alias to webserver" and then selecting "Yes" when prompted.
 	 */
@@ -168,7 +168,7 @@ public class JavaSpaceContentsView extends JPanel implements Runnable {
 				// drop out here if we get an exception,
 				// likely causes are UnusableEntryExceptions
 				// because the client program that wrote the entry
-				// didn't set a codebase (or set a wrong one) or the HTTPD of
+				// didn't setValue a codebase (or setValue a wrong one) or the HTTPD of
 				// the actual
 				// codebase isn't working
 				// JOptionPane.showMessageDialog(this,ex);

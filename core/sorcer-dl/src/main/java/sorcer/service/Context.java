@@ -310,9 +310,9 @@ public interface Context<T> extends ServiceModel, Mogram, Dependency, Mappable<T
 
 	public void appendTrace(String footprint);
 
-	public Context<T> append(Context<T> context) throws ContextException;
+	public Context append(Context context) throws ContextException;
 
-	public Context<T> updateEntries(Context<T> context) throws ContextException;
+	public Context<T> updateEntries(ServiceModel context) throws ContextException;
 	/**
 	 * Returns this context within its cuureent scope.
 	 *
@@ -341,9 +341,9 @@ public interface Context<T> extends ServiceModel, Mogram, Dependency, Mappable<T
 
 	public Object addValue(Identifiable value) throws ContextException;
 
-	public Arg addPar(Arg value) throws ContextException;
+	public Arg addProc(Arg value) throws ContextException;
 
-	public Arg addPar(String path, Object value) throws ContextException;
+	public Arg addProc(String path, Object value) throws ContextException;
 
 	public Arg getPar(String path) throws ContextException, RemoteException;
 

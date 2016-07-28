@@ -117,7 +117,7 @@ public class ProcModel extends PositionalContext<Object> implements Model, Invoc
 			if ((val instanceof Proc) && (((Proc) val).asis() instanceof Variability)) {
 				bindVar((Variability) ((Proc) val).asis());
 			} else if (val instanceof Scopable && ((Scopable)val).getScope() != null) {
-				((Scopable)val).getScope().setScope(this);
+				((Scopable)((Scopable)val).getScope()).setScope(this);
 			} else if (val instanceof Entry && (((Entry)val).asis() instanceof Scopable)) {
 				((Scopable) ((Entry)val).asis()).setScope(this);
 			}
@@ -137,7 +137,7 @@ public class ProcModel extends PositionalContext<Object> implements Model, Invoc
 					if (o != Context.none && o != null)
 						return o;
 					else
-						return scope.getSoftValue(path);
+						return ((ServiceContext)scope).getSoftValue(path);
 				} else {
 					if (val == null)
 						return getSoftValue(path);
@@ -265,7 +265,7 @@ public class ProcModel extends PositionalContext<Object> implements Model, Invoc
 			}
 			
 			if (p != null) {
-				addPar(p);
+				addProc(p);
 				changed = true;
 			}
 		}
@@ -446,7 +446,7 @@ public class ProcModel extends PositionalContext<Object> implements Model, Invoc
 	}
 	
 	/**
-	 * set context type as variable
+	 * setValue context type as variable
 	 * In ServiceContexr#init()
 	 * DATA_NODE_TYPE + APS + VAR + APS + type + APS
 	 */

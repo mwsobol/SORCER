@@ -12,6 +12,7 @@ import sorcer.core.plexus.MorphFidelity;
 import sorcer.core.service.Projection;
 import sorcer.core.signature.ServiceSignature;
 import sorcer.security.util.SorcerPrincipal;
+import sorcer.service.modeling.ServiceModel;
 
 import javax.security.auth.Subject;
 import java.io.Serializable;
@@ -677,7 +678,7 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
      * </p>
      *
      * @param monitorSession
-     *            the monitorSession to set
+     *            the monitorSession to setValue
      */
     public void setMonitorSession(MonitoringSession monitorSession) {
         this.monitorSession = monitorSession;

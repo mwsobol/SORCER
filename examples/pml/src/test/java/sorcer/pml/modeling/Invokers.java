@@ -22,6 +22,7 @@ import sorcer.service.modeling.Model;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static sorcer.co.operator.setValue;
 import static sorcer.co.operator.*;
 import static sorcer.eo.operator.args;
 import static sorcer.eo.operator.*;
@@ -35,7 +36,7 @@ import static sorcer.po.operator.get;
 import static sorcer.po.operator.loop;
 import static sorcer.po.operator.opt;
 import static sorcer.po.operator.put;
-import static sorcer.po.operator.set;
+
 
 /**
  * @author Mike Sobolewski
@@ -47,8 +48,8 @@ public class Invokers {
 	private final static Logger logger = LoggerFactory.getLogger(Invokers.class);
 
 	private ProcModel pm;
-	private Proc<Double> x;
-	private Proc<Double> y;
+	private Proc x;
+	private Proc y;
 	private Proc z;
 
 	// member subclass of Invocable with Context parameter used below with
@@ -59,14 +60,14 @@ public class Invokers {
 			super(context);
 		}
 		public Double invoke(Context arg) throws Exception {
-			set(x, value(arg, "x"));
-			set(y, value(context, "y"));
-			// x set from 'arg'
+			setValue(x, value(arg, "x"));
+			setValue(y, value(context, "y"));
+			// x setValue from 'arg'
 			assertTrue(eval(x).equals(200.0));
-			// y set from construtor's context 'in'
+			// y setValue from construtor's context 'in'
 			assertTrue(eval(y).equals(30.0));
 			assertTrue(eval(z).equals(170.0));
-			return eval(x) + eval(y) + (Double)eval(pm, "z");
+			return (double)eval(x) + (double)eval(y) + (double)eval(pm, "z");
 		}
 	};
 
@@ -91,8 +92,8 @@ public class Invokers {
 
 	@Test
 	public void objectMethodInvoker() throws Exception {
-		set(x, 10.0);
-		set(y, 20.0);
+		setValue(x, 10.0);
+		setValue(y, 20.0);
 		add(pm, x, y, z);
 
 //		logger.info("x:" + eval(pm, "x"));

@@ -44,6 +44,7 @@ import sorcer.service.*;
 import sorcer.service.Signature.Direction;
 import sorcer.service.Signature.ReturnPath;
 import sorcer.service.modeling.Model;
+import sorcer.service.modeling.ServiceModel;
 import sorcer.service.modeling.Variability;
 import sorcer.util.ObjectCloner;
 import sorcer.util.SorcerUtil;
@@ -72,7 +73,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	protected ReturnPath<T> returnPath;
 	protected ReturnPath<T> returnJobPath;
 
-	// for calls by reflection for 'args' Object[] set the path
+	// for calls by reflection for 'args' Object[] setValue the path
 	// or use the default one: Context.ARGS
 	//protected String argsPath = Context.ARGS;
 	protected String argsPath;
@@ -851,7 +852,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 
 	public boolean isLocalMetaattribute(String attributeName) {
 		// Metaattributes are stored in the localContextAttributes
-		// hashtable and have key equal to the attribute set, not the
+		// hashtable and have key equal to the attribute setValue, not the
 		// eval as with singleton attributes
 		return isLocalAttribute(attributeName)
 				&& !getDataAttributeMap().get(attributeName).equals(
@@ -902,7 +903,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	public boolean isMetaattribute(String attributeName)
 			throws ContextException {
 		// Metaattributes are stored in the localContextAttributeisLos
-		// hashtable and have key equal to the attribute set, not the
+		// hashtable and have key equal to the attribute setValue, not the
 		// eval as with singleton attributes
 		boolean result = isLocalAttribute(attributeName)
 				&& !getDataAttributeMap().get(attributeName).equals(
@@ -1074,7 +1075,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		List<String> keys = new ArrayList<String>();
 		if (isSingletonAttribute(attr)) {
 			values = (Map)getMetacontext().get(attr);
-			if (values != null) { // if there are no attributes set,
+			if (values != null) { // if there are no attributes setValue,
 				// values==null;
 				for (Object key : values.keySet()) {
 					/*
@@ -1658,7 +1659,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		return this;
 	}
 
-	public Context updateEntries(Context context) throws ContextException {
+	public Context updateEntries(ServiceModel context) throws ContextException {
 		if (context != null) {
 			List<String> inpaths = ((ServiceContext) context).getInPaths();
 			List<String> outpaths = ((ServiceContext) context).getOutPaths();
@@ -1686,7 +1687,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	 */
 	public Context append(Context context) throws ContextException {
 		if (context != null && this != context) {
-			putAll(context);
+			putAll((ServiceContext)context);
 			// annotate as in the argument context
 			List<String> inpaths = ((ServiceContext) context).getInPaths();
 			List<String> outpaths = ((ServiceContext) context).getOutPaths();
@@ -1850,9 +1851,9 @@ public class ServiceContext<T> extends ServiceMogram implements
 			}
 		}
 
-		// now all attributes are set, and metaattributes are set
-		// implicitly IF the metaattribute definitions are set in the
-		// new context. So, next we set the definitions, or at least
+		// now all attributes are setValue, and metaattributes are setValue
+		// implicitly IF the metaattribute definitions are setValue in the
+		// new context. So, next we setValue the definitions, or at least
 		// try...
 
 		String metapath_target, metapath_source;
@@ -2269,7 +2270,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 			if (data.containsKey(path) && data.get(path) instanceof Evaluation) {
 				if (scope == null)
 					scope = new ServiceContext();
-				scope.putInoutValue(pairs.getKey(), pairs.getValue());
+				((ServiceContext)scope).putInoutValue(pairs.getKey(), pairs.getValue());
 			} else {
 				putInoutValue(pairs.getKey(), (T) pairs.getValue());
 			}
@@ -3109,13 +3110,13 @@ public class ServiceContext<T> extends ServiceMogram implements
 	}
 
 	/* (non-Javadoc)
-	 * @see sorcer.service.Context#addPar(sorcer.core.context.model.proc.Proc)
+	 * @see sorcer.service.Context#addProc(sorcer.core.context.model.proc.Proc)
 	 */
 	@Override
-	public Arg addPar(Arg par) throws ContextException {
+	public Arg addProc(Arg par) throws ContextException {
 		Proc p = (Proc)par;
 		put(p.getName(), (T)p);
-		if (p.getScope() == null || p.getScope().size() == 0)
+		if (p.getScope() == null || ((ServiceContext)p.getScope()).size() == 0)
 			p.setScope(this);
 		try {
 			if (p.asis() instanceof ServiceInvoker) {
@@ -3149,10 +3150,10 @@ public class ServiceContext<T> extends ServiceMogram implements
 	}
 
 	/* (non-Javadoc)
-	 * @see sorcer.service.Context#addPar(java.lang.String, java.lang.Object)
+	 * @see sorcer.service.Context#addProc(java.lang.String, java.lang.Object)
 	 */
 	@Override
-	public Proc addPar(String path, Object value) throws ContextException {
+	public Proc addProc(String path, Object value) throws ContextException {
 		return new Proc(path, value, this);
 	}
 
@@ -3289,8 +3290,8 @@ public class ServiceContext<T> extends ServiceMogram implements
 			remove(Condition._closure_);
 		}
 		if (scope != null &&
-				scope.containsPath(Condition._closure_)) {
-			scope.remove(Condition._closure_);
+				((ServiceContext)scope).containsPath(Condition._closure_)) {
+			((ServiceContext)scope).remove(Condition._closure_);
 		}
 
 		if (inpaths != null) {
@@ -3312,8 +3313,8 @@ public class ServiceContext<T> extends ServiceMogram implements
 			remove(Condition._closure_);
 		}
 		if (scope != null &&
-				scope.containsPath(Condition._closure_)) {
-			scope.remove(Condition._closure_);
+				((ServiceContext)scope).containsPath(Condition._closure_)) {
+			((ServiceContext)scope).remove(Condition._closure_);
 		}
 		return this;
 	}
@@ -3393,7 +3394,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 
 	@Override
 	public Object exec(Arg... args) throws MogramException, RemoteException {
-		Context cxt = Arg.getContext(args);
+		Context cxt = (Context) Arg.getServiceModel(args);
 		if (cxt != null) {
 			scope = cxt;
 			return getResponse(args);

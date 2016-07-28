@@ -175,7 +175,7 @@ public class Arithmometer implements SorcerConstants, Serializable {
 			logger.info(selector + " result: \n" + result);
 
 			String outputMessage = "calculated by " + getHostname();
-			// set return eval
+			// setValue return eval
 			if (((ServiceContext)context).getReturnPath() != null) {
 				context.setReturnValue(result);
 			}

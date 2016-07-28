@@ -8,6 +8,7 @@ import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.core.context.model.ent.Proc;
 import sorcer.core.context.model.ent.ProcModel;
+import sorcer.po.operator;
 import sorcer.service.Context;
 
 import java.net.URL;
@@ -21,7 +22,6 @@ import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.value;
 import static sorcer.po.operator.add;
 import static sorcer.po.operator.*;
-import static sorcer.po.operator.set;
 import static sorcer.mo.operator.*;
 
 /**
@@ -102,8 +102,8 @@ public class Procedures {
 		assertEquals(eval(dbp2), "http://sorcersoft.org/sobol");
 
 		// update persistent values
-		set(dbp1, 30.0);
-		set(dbp2, "http://sorcersoft.org");
+		setValue(dbp1, 30.0);
+		setValue(dbp2, "http://sorcersoft.org");
 	
 		assertTrue(content(storeArg(dbp1)).equals(30.0));
 		assertEquals(content(storeArg(dbp2)), "http://sorcersoft.org");
@@ -113,7 +113,6 @@ public class Procedures {
 
 	}
 
-	
 	@Test
 	public void parFidelities() throws Exception {
 		
@@ -127,7 +126,7 @@ public class Procedures {
 		Context<Double> cxt = context(proc("x", 10.0),
 				proc("y", 20.0), proc("init/eval", 49.0));
 		
-		set(dbp, 50.0);
+		setValue(dbp, 50.0);
 
 		assertTrue(eval(multi, cxt, parFi("shared/eval")).equals(50.0));
 

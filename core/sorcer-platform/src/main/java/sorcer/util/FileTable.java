@@ -300,7 +300,7 @@ public class FileTable<K,V> extends Identity implements Runnable, ModelTable {
 	 * </p>
 	 *
 	 * @param inputFile
-	 *            the inputFile to set
+	 *            the inputFile to setValue
 	 */
 	public void setInputFile(String inputFile) {
 		this.inputFileName = inputFile;
@@ -323,7 +323,7 @@ public class FileTable<K,V> extends Identity implements Runnable, ModelTable {
 	 * </p>
 	 *
 	 * @param outputFile
-	 *            the outputFile to set
+	 *            the outputFile to setValue
 	 */
 	public void setOutputFile(String outputFile) {
 		this.outputFileName = outputFile;
@@ -346,7 +346,7 @@ public class FileTable<K,V> extends Identity implements Runnable, ModelTable {
 	 * </p>
 	 *
 	 * @param outputURL
-	 *            the outputURL to set
+	 *            the outputURL to setValue
 	 */
 	public void setOutputURL(URL outputURL) {
 		this.outputTableURL = outputURL;
@@ -369,7 +369,7 @@ public class FileTable<K,V> extends Identity implements Runnable, ModelTable {
 	 * </p>
 	 *
 	 * @param inputURL
-	 *            the inputURL to set
+	 *            the inputURL to setValue
 	 */
 	public void setInputURL(URL inputURL) {
 		this.inputTableURL = inputURL;
@@ -416,7 +416,7 @@ public class FileTable<K,V> extends Identity implements Runnable, ModelTable {
 	 * </p>
 	 *
 	 * @param inDelimiter
-	 *            the inDelimiter to set
+	 *            the inDelimiter to setValue
 	 */
 	public void setInDelimiter(String inDelimiter) {
 		this.inputTableDelimiter = inDelimiter;
@@ -439,7 +439,7 @@ public class FileTable<K,V> extends Identity implements Runnable, ModelTable {
 	 * </p>
 	 *
 	 * @param outDelimiter
-	 *            the outDelimiter to set
+	 *            the outDelimiter to setValue
 	 */
 	public void setOutDelimiter(String outDelimiter) {
 		this.outputTableDelimiter = outDelimiter;
@@ -467,7 +467,7 @@ public class FileTable<K,V> extends Identity implements Runnable, ModelTable {
 	 * <p>
 	 *
 	 * @param columnIdentifiers
-	 *            list of column identifiers. If <code>null</code>, set the
+	 *            list of column identifiers. If <code>null</code>, setValue the
 	 *            model to zero columns
 	 */
 	public void setColumnIdentifiers(List columnIdentifiers) {
@@ -496,7 +496,7 @@ public class FileTable<K,V> extends Identity implements Runnable, ModelTable {
 	 * <p>
 	 *
 	 * @param newIdentifiers
-	 *            array of column identifiers. If <code>null</code>, set the
+	 *            array of column identifiers. If <code>null</code>, setValue the
 	 *            model to zero columns
 	 */
 	public void setColumnIdentifiers(Object[] newIdentifiers) {

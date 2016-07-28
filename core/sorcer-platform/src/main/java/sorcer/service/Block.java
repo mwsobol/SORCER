@@ -370,7 +370,7 @@ public abstract class Block extends CompoundExertion {
 //			try {
 //				if (mo instanceof Exertion) {
 //					((Exertion) mo).clearScope();
-//					// set the initial scope from the block
+//					// setValue the initial scope from the block
 //					mo.setScope((Context) dataContext.getScope());
 //				}
 //			} catch (RemoteException e) {

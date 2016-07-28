@@ -57,7 +57,7 @@ public class operator {
         throws ContextException {
         Object parEntry = context.asis(parname);
         if (parEntry == null)
-            ((ProcModel)context).addPar(parname, value);
+            ((ProcModel)context).addProc(parname, value);
         else if (parEntry instanceof Setter) {
             try {
                 ((Setter) parEntry).setValue(value);
@@ -67,7 +67,7 @@ public class operator {
         } else if (parEntry instanceof Proc) {
             Proc proc = (Proc) parEntry;
             if (proc.getScope() != null && proc.getContextable() == null)
-                proc.getScope().putValue(proc.getName(), value);
+                ((ServiceContext)proc.getScope()).putValue(proc.getName(), value);
         }
         // just ssetting the eval
         else {
@@ -220,32 +220,32 @@ public class operator {
         return new Entry(path, model.asis(path));
     }
 
-    public static Context inConn(List<Tuple2<String, ?>> entries) throws ContextException {
+    public static Context inConn(List<Entry> entries) throws ContextException {
         MapContext map = new MapContext();
         map.direction = MapContext.Direction.IN;
         sorcer.eo.operator.populteContext(map, entries);
         return map;
     }
 
-    public static Context inConn(Tuple2<String, ?>... entries) throws ContextException {
+    public static Context inConn(Entry... entries) throws ContextException {
         MapContext map = new MapContext();
         map.direction = MapContext.Direction.IN;
-        List<Tuple2<String, ?>> items = Arrays.asList(entries);
+        List<Entry> items = Arrays.asList(entries);
         sorcer.eo.operator.populteContext(map, items);
         return map;
     }
 
-    public static Context outConn(List<Tuple2<String, ?>> entries) throws ContextException {
+    public static Context outConn(List<Entry> entries) throws ContextException {
         MapContext map = new MapContext();
         map.direction = MapContext.Direction.OUT;
         sorcer.eo.operator.populteContext(map, entries);
         return map;
     }
 
-    public static Context outConn(Tuple2<String, ?>... entries) throws ContextException {
+    public static Context outConn(Entry... entries) throws ContextException {
         MapContext map = new MapContext();
         map.direction = MapContext.Direction.OUT;
-        List<Tuple2<String, ?>> items = Arrays.asList(entries);
+        List<Entry> items = Arrays.asList(entries);
         sorcer.eo.operator.populteContext(map, items);
         return map;
     }
@@ -316,7 +316,7 @@ public class operator {
                     mFi.setSelect((Arg) mFi.getSelects().get(0));
                     mFi.addObserver(fiManager);
                     if (mFi.getMorpherFidelity() != null) {
-                        // set the default morpher
+                        // setValue the default morpher
                         mFi.setMorpher((Morpher) ((Entry)mFi.getMorpherFidelity().get(0))._2);
                     }
                 }

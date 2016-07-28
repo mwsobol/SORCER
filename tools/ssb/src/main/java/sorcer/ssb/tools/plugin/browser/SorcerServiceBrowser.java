@@ -130,7 +130,7 @@ public class SorcerServiceBrowser {
 			 * ServiceBrowserUI.BRANDED_HELP=new File(BROWSER_HOME + "/"+help);
 			 * } catch (Throwable t) { t.printStackTrace(); } } }
 			 */
-			// disable output unless debug settings set to true
+			// disable output unless debug settings setValue to true
 			boolean debug = Boolean.getBoolean("ssb.debug");
 			if (!debug) {
 				createLog();

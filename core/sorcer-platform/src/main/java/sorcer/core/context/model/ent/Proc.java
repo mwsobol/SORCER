@@ -23,6 +23,7 @@ import sorcer.core.context.ApplicationDescription;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.service.*;
+import sorcer.service.modeling.ServiceModel;
 import sorcer.service.modeling.Variability;
 import sorcer.util.url.sos.SdbUtil;
 
@@ -55,7 +56,7 @@ public class Proc<T> extends Entry<T> implements Variability<T>, Mappable<T>,
 
 	protected T value;
 
-	protected Context<T> scope;
+	protected Context scope;
 
 	// data store URL for this proc
 	private URL dbURL;
@@ -367,7 +368,7 @@ public class Proc<T> extends Entry<T> implements Variability<T>, Mappable<T>,
 
 	public void setScope(Context scope) {
 		if (scope != null && ((ServiceContext)scope).containsPath(Condition._closure_))
-			scope.remove(Condition._closure_);
+			((ServiceContext)scope).remove(Condition._closure_);
 		this.scope = scope;
 	}
 	
@@ -629,7 +630,7 @@ public class Proc<T> extends Entry<T> implements Variability<T>, Mappable<T>,
 	}
 
 	/* (non-Javadoc)
-	 * @see sorcer.core.context.model.Variability#addArgs(ArgSet set)
+	 * @see sorcer.core.context.model.Variability#addArgs(ArgSet setValue)
 	 */
 	@Override
 	public void addArgs(ArgSet set) throws EvaluationException {
@@ -700,7 +701,7 @@ public class Proc<T> extends Entry<T> implements Variability<T>, Mappable<T>,
 
 	@Override
 	public Object exec(Arg... args) throws MogramException, RemoteException {
-		Context cxt = Arg.getContext(args);
+		Context cxt = (Context) Arg.getServiceModel(args);
 		if (cxt != null) {
 			scope = cxt;
 			return getValue(args);

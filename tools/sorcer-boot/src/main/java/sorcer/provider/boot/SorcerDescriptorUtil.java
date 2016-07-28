@@ -64,7 +64,7 @@ public class SorcerDescriptorUtil {
 	 * @throws IOException
 	 *             If there are problems getting the anonymous port
 	 * @throws RuntimeException
-	 *             If the <tt>sorcer.home</tt> system property is not set
+	 *             If the <tt>sorcer.home</tt> system property is not setValue
 	 */
 	public static ServiceDescriptor getWebster(String policy, String[] roots)
 			throws IOException {
@@ -88,7 +88,7 @@ public class SorcerDescriptorUtil {
 	 * @throws IOException
 	 *             If there are problems getting the anonymous port
 	 * @throws RuntimeException
-	 *             If the <tt>sorcer.home</tt> system property is not set
+	 *             If the <tt>sorcer.home</tt> system property is not setValue
 	 */
 	public static ServiceDescriptor getWebster(String policy, int port,
 			String[] roots) throws IOException {
@@ -110,7 +110,7 @@ public class SorcerDescriptorUtil {
 	 * @param roots
 	 *            The roots webster should serve
 	 * @param debug
-	 *            If true, set the <tt>sorcer.tools.debug</tt> property
+	 *            If true, setValue the <tt>sorcer.tools.debug</tt> property
 	 * @return The {@link com.sun.jini.start.ServiceDescriptor} instance for
 	 *         webster using a specified port. The <tt>webster.jar</tt> file
 	 *         will be loaded from <tt>${sorcer.home}/common/sorcer</tt>
@@ -134,7 +134,7 @@ public class SorcerDescriptorUtil {
 	 * @param roots
 	 *            The roots webster should serve
 	 * @param debug
-	 *            If true, set the <tt>sorcer.tools.debug</tt> property
+	 *            If true, setValue the <tt>sorcer.tools.debug</tt> property
 	 * @return The {@link com.sun.jini.start.ServiceDescriptor} instance for
 	 *         webster using a specified port. The <tt>webster.jar</tt> file
 	 *         will be loaded from <tt>${sorcer.home}/common/sorcer</tt>
@@ -202,7 +202,7 @@ public class SorcerDescriptorUtil {
 	 * @throws IOException
 	 *             If there are problems getting the anonymous port
 	 * @throws RuntimeException
-	 *             If the <tt>sorcer.home</tt> system property is not set
+	 *             If the <tt>sorcer.home</tt> system property is not setValue
 	 */
 	public static ServiceDescriptor getProvider(String policy,
 			String... jobberConfig) throws IOException {
@@ -226,7 +226,7 @@ public class SorcerDescriptorUtil {
 	 * @throws IOException
 	 *             If there are problems getting the anonymous port
 	 * @throws RuntimeException
-	 *             If the <tt>sorcer.home</tt> system property is not set
+	 *             If the <tt>sorcer.home</tt> system property is not setValue
 	 */
 	public static ServiceDescriptor getProvider(String policy, int port,
 			String... jobberConfig) throws IOException {
@@ -253,7 +253,7 @@ public class SorcerDescriptorUtil {
 	 * @throws IOException
 	 *             If there are problems getting the anonymous port
 	 * @throws RuntimeException
-	 *             If the <tt>sorcer.home</tt> system property is not set
+	 *             If the <tt>sorcer.home</tt> system property is not setValue
 	 */
 	public static ServiceDescriptor getProvider(String policy,
 			String hostAddress, int port, String... jobberConfig)
@@ -299,7 +299,7 @@ public class SorcerDescriptorUtil {
 	 * @throws IOException
 	 *             If there are problems getting the anonymous port
 	 * @throws RuntimeException
-	 *             If the <tt>sorcer.home</tt> system property is not set
+	 *             If the <tt>sorcer.home</tt> system property is not setValue
 	 */
 	public static ServiceDescriptor getSpacer(String policy,
 			String... jobberConfig) throws IOException {
@@ -323,7 +323,7 @@ public class SorcerDescriptorUtil {
 	 * @throws IOException
 	 *             If there are problems getting the anonymous port
 	 * @throws RuntimeException
-	 *             If the <tt>sorcer.home</tt> system property is not set
+	 *             If the <tt>sorcer.home</tt> system property is not setValue
 	 */
 	public static ServiceDescriptor getSpacer(String policy, int port,
 			String... jobberConfig) throws IOException {
@@ -350,7 +350,7 @@ public class SorcerDescriptorUtil {
 	 * @throws IOException
 	 *             If there are problems getting the anonymous port
 	 * @throws RuntimeException
-	 *             If the <tt>sorcer.home</tt> system property is not set
+	 *             If the <tt>sorcer.home</tt> system property is not setValue
 	 */
 	public static ServiceDescriptor getSpacer(String policy,
 			String hostAddress, int port, String... spacerConfig)
@@ -388,7 +388,7 @@ public class SorcerDescriptorUtil {
 	 * @throws IOException
 	 *             If there are problems getting the anonymous port
 	 * @throws RuntimeException
-	 *             If the <tt>sorcer.home</tt> system property is not set
+	 *             If the <tt>sorcer.home</tt> system property is not setValue
 	 */
 	public static ServiceDescriptor getConcatenator(String policy, String... concatenatorConfig) throws IOException {
 		return (getConcatenator(policy, Booter.getPort(), concatenatorConfig));
@@ -411,7 +411,7 @@ public class SorcerDescriptorUtil {
 	 * @throws IOException
 	 *             If there are problems getting the anonymous port
 	 * @throws RuntimeException
-	 *             If the <tt>sorcer.home</tt> system property is not set
+	 *             If the <tt>sorcer.home</tt> system property is not setValue
 	 */
 	public static ServiceDescriptor getConcatenator(String policy, int port,
 			String... concatenatorConfig) throws IOException {
@@ -438,7 +438,7 @@ public class SorcerDescriptorUtil {
 	 * @throws IOException
 	 *             If there are problems getting the anonymous port
 	 * @throws RuntimeException
-	 *             If the <tt>sorcer.home</tt> system property is not set
+	 *             If the <tt>sorcer.home</tt> system property is not setValue
 	 */
 	public static ServiceDescriptor getConcatenator(String policy,
 			String hostAddress, int port, String... spacerConfig)
@@ -476,7 +476,7 @@ public class SorcerDescriptorUtil {
 	 * @throws IOException
 	 *             If there are problems getting the anonymous port
 	 * @throws RuntimeException
-	 *             If the <tt>sorcer.home</tt> system property is not set
+	 *             If the <tt>sorcer.home</tt> system property is not setValue
 	 */
 	public static ServiceDescriptor getJobber(String policy,
 			String... jobberConfig) throws IOException {
@@ -500,7 +500,7 @@ public class SorcerDescriptorUtil {
 	 * @throws IOException
 	 *             If there are problems getting the anonymous port
 	 * @throws RuntimeException
-	 *             If the <tt>sorcer.home</tt> system property is not set
+	 *             If the <tt>sorcer.home</tt> system property is not setValue
 	 */
 	public static ServiceDescriptor getJobber(String policy, int port,
 			String... jobberConfig) throws IOException {
@@ -527,7 +527,7 @@ public class SorcerDescriptorUtil {
 	 * @throws IOException
 	 *             If there are problems getting the anonymous port
 	 * @throws RuntimeException
-	 *             If the <tt>sorcer.home</tt> system property is not set
+	 *             If the <tt>sorcer.home</tt> system property is not setValue
 	 */
 	public static ServiceDescriptor getJobber(String policy,
 			String hostAddress, int port, String... jobberConfig)
@@ -566,7 +566,7 @@ public class SorcerDescriptorUtil {
 	 * @throws IOException
 	 *             If there are problems getting the anonymous port
 	 * @throws RuntimeException
-	 *             If the <tt>sorcer.home</tt> system property is not set
+	 *             If the <tt>sorcer.home</tt> system property is not setValue
 	 */
 	public static ServiceDescriptor getExerter(String policy,
 			String... exerterConfig) throws IOException {
@@ -591,7 +591,7 @@ public class SorcerDescriptorUtil {
 	 * @throws IOException
 	 *             If there are problems getting the anonymous port
 	 * @throws RuntimeException
-	 *             If the <tt>sorcer.home</tt> system property is not set
+	 *             If the <tt>sorcer.home</tt> system property is not setValue
 	 */
 	public static ServiceDescriptor getExerter(String policy, int port,
 			String... exertConfig) throws IOException {
@@ -619,7 +619,7 @@ public class SorcerDescriptorUtil {
 	 * @throws IOException
 	 *             If there are problems getting the anonymous port
 	 * @throws RuntimeException
-	 *             If the <tt>sorcer.home</tt> system property is not set
+	 *             If the <tt>sorcer.home</tt> system property is not setValue
 	 */
 	public static ServiceDescriptor getExerter(String policy,
 			String hostAddress, int port, String... exerterConfig)
@@ -660,7 +660,7 @@ public class SorcerDescriptorUtil {
 	 * @throws IOException
 	 *             If there are problems getting the anonymous port
 	 * @throws RuntimeException
-	 *             If the <tt>sorcer.home</tt> system property is not set
+	 *             If the <tt>sorcer.home</tt> system property is not setValue
 	 */
 	public static ServiceDescriptor getExertMonitor(String policy,
 			String... exertmonitorConfig) throws IOException {
@@ -684,7 +684,7 @@ public class SorcerDescriptorUtil {
 	 * @throws IOException
 	 *             If there are problems getting the anonymous port
 	 * @throws RuntimeException
-	 *             If the <tt>sorcer.home</tt> system property is not set
+	 *             If the <tt>sorcer.home</tt> system property is not setValue
 	 */
 	public static ServiceDescriptor getExertMonitor(String policy, int port,
 			String... exertmonitorConfig) throws IOException {
@@ -711,7 +711,7 @@ public class SorcerDescriptorUtil {
 	 * @throws IOException
 	 *             If there are problems getting the anonymous port
 	 * @throws RuntimeException
-	 *             If the <tt>sorcer.home</tt> system property is not set
+	 *             If the <tt>sorcer.home</tt> system property is not setValue
 	 */
 	public static ServiceDescriptor getExertMonitor(String policy,
 			String hostAddress, int port, String... exertmonitorConfig)
@@ -757,7 +757,7 @@ public class SorcerDescriptorUtil {
 	 * @throws IOException
 	 *             If there are problems getting the anonymous port
 	 * @throws RuntimeException
-	 *             If the <tt>sorcer.home</tt> system property is not set
+	 *             If the <tt>sorcer.home</tt> system property is not setValue
 	 */
 	public static ServiceDescriptor getDatabaseStorer(String policy,
 			String... sdbConfig) throws IOException {
@@ -781,7 +781,7 @@ public class SorcerDescriptorUtil {
 	 * @throws IOException
 	 *             If there are problems getting the anonymous port
 	 * @throws RuntimeException
-	 *             If the <tt>sorcer.home</tt> system property is not set
+	 *             If the <tt>sorcer.home</tt> system property is not setValue
 	 */
 	public static ServiceDescriptor getDatabaseStorer(String policy, int port,
 			String... sdbConfig) throws IOException {
@@ -808,7 +808,7 @@ public class SorcerDescriptorUtil {
 	 * @throws IOException
 	 *             If there are problems getting the anonymous port
 	 * @throws RuntimeException
-	 *             If the <tt>sorcer.home</tt> system property is not set
+	 *             If the <tt>sorcer.home</tt> system property is not setValue
 	 */
 	public static ServiceDescriptor getDatabaseStorer(String policy,
 			String hostAddress, int port, String... sdbConfig)
@@ -848,7 +848,7 @@ public class SorcerDescriptorUtil {
 	 * @throws IOException
 	 *             If there are problems getting the anonymous port
 	 * @throws RuntimeException
-	 *             If the <tt>sorcer.home</tt> system property is not set
+	 *             If the <tt>sorcer.home</tt> system property is not setValue
 	 */
 	public static ServiceDescriptor getDataspaceStorer(String policy,
 			String... sdbConfig) throws IOException {
@@ -872,7 +872,7 @@ public class SorcerDescriptorUtil {
 	 * @throws IOException
 	 *             If there are problems getting the anonymous port
 	 * @throws RuntimeException
-	 *             If the <tt>sorcer.home</tt> system property is not set
+	 *             If the <tt>sorcer.home</tt> system property is not setValue
 	 */
 	public static ServiceDescriptor getDataspaceStorer(String policy, int port,
 			String... sdbConfig) throws IOException {
@@ -899,7 +899,7 @@ public class SorcerDescriptorUtil {
 	 * @throws IOException
 	 *             If there are problems getting the anonymous port
 	 * @throws RuntimeException
-	 *             If the <tt>sorcer.home</tt> system property is not set
+	 *             If the <tt>sorcer.home</tt> system property is not setValue
 	 */
 	public static ServiceDescriptor getDataspaceStorer(String policy,
 			String hostAddress, int port, String... sdbConfig)
@@ -939,7 +939,7 @@ public class SorcerDescriptorUtil {
 	 * @throws IOException
 	 *             If there are problems getting the anonymous port
 	 * @throws RuntimeException
-	 *             If the <tt>sorcer.home</tt> system property is not set
+	 *             If the <tt>sorcer.home</tt> system property is not setValue
 	 */
 	public static ServiceDescriptor getCataloger(String policy,
 			String... catalogerConfig) throws IOException {
@@ -963,7 +963,7 @@ public class SorcerDescriptorUtil {
 	 * @throws IOException
 	 *             If there are problems getting the anonymous port
 	 * @throws RuntimeException
-	 *             If the <tt>sorcer.home</tt> system property is not set
+	 *             If the <tt>sorcer.home</tt> system property is not setValue
 	 */
 	public static ServiceDescriptor getCataloger(String policy, int port,
 			String... catalogerConfig) throws IOException {
@@ -990,7 +990,7 @@ public class SorcerDescriptorUtil {
 	 * @throws IOException
 	 *             If there are problems getting the anonymous port
 	 * @throws RuntimeException
-	 *             If the <tt>sorcer.home</tt> system property is not set
+	 *             If the <tt>sorcer.home</tt> system property is not setValue
 	 */
 	public static ServiceDescriptor getCataloger(String policy,
 			String hostAddress, int port, String... catalogerConfig)
@@ -1032,7 +1032,7 @@ public class SorcerDescriptorUtil {
 	 * @throws IOException
 	 *             If there are problems getting the anonymous port
 	 * @throws RuntimeException
-	 *             If the <tt>sorcer.home</tt> system property is not set
+	 *             If the <tt>sorcer.home</tt> system property is not setValue
 	 */
 	public static ServiceDescriptor getSysCaller(String policy,
 												 String... sysCallerConfig) throws IOException {
@@ -1056,7 +1056,7 @@ public class SorcerDescriptorUtil {
 	 * @throws IOException
 	 *             If there are problems getting the anonymous port
 	 * @throws RuntimeException
-	 *             If the <tt>sorcer.home</tt> system property is not set
+	 *             If the <tt>sorcer.home</tt> system property is not setValue
 	 */
 	public static ServiceDescriptor getSysCaller(String policy, int port,
 												 String... sysCallerConfig) throws IOException {
@@ -1083,7 +1083,7 @@ public class SorcerDescriptorUtil {
 	 * @throws IOException
 	 *             If there are problems getting the anonymous port
 	 * @throws RuntimeException
-	 *             If the <tt>sorcer.home</tt> system property is not set
+	 *             If the <tt>sorcer.home</tt> system property is not setValue
 	 */
 	public static ServiceDescriptor getSysCaller(String policy,
 												 String hostAddress, int port, String... sysCallerConfig)
@@ -1125,7 +1125,7 @@ public class SorcerDescriptorUtil {
 	 * @throws IOException
 	 *             If there are problems getting the anonymous port
 	 * @throws RuntimeException
-	 *             If the <tt>sorcer.home</tt> system property is not set
+	 *             If the <tt>sorcer.home</tt> system property is not setValue
 	 */
 	public static ServiceDescriptor getLogger(String policy,
 			String... loggerConfig) throws IOException {
@@ -1149,7 +1149,7 @@ public class SorcerDescriptorUtil {
 	 * @throws IOException
 	 *             If there are problems getting the anonymous port
 	 * @throws RuntimeException
-	 *             If the <tt>sorcer.home</tt> system property is not set
+	 *             If the <tt>sorcer.home</tt> system property is not setValue
 	 */
 	public static ServiceDescriptor getLogger(String policy, int port,
 			String... loggerConfig) throws IOException {
@@ -1176,7 +1176,7 @@ public class SorcerDescriptorUtil {
 	 * @throws IOException
 	 *             If there are problems getting the anonymous port
 	 * @throws RuntimeException
-	 *             If the <tt>sorcer.home</tt> system property is not set
+	 *             If the <tt>sorcer.home</tt> system property is not setValue
 	 */
 	public static ServiceDescriptor getLogger(String policy,
 			String hostAddress, int port, String... loggerConfig)
@@ -1222,7 +1222,7 @@ public class SorcerDescriptorUtil {
 	 * @throws IOException
 	 *             If there are problems getting the anonymous port
 	 * @throws RuntimeException
-	 *             If the <tt>JINI_HOME</tt> system property is not set
+	 *             If the <tt>JINI_HOME</tt> system property is not setValue
 	 */
 	public static ServiceDescriptor getLookup(String policy,
 			String... lookupConfig) throws IOException {
@@ -1246,7 +1246,7 @@ public class SorcerDescriptorUtil {
 	 * @throws IOException
 	 *             If there are problems getting the anonymous port
 	 * @throws RuntimeException
-	 *             If the <tt>JINI_HOME</tt> system property is not set
+	 *             If the <tt>JINI_HOME</tt> system property is not setValue
 	 */
 	public static ServiceDescriptor getLookup(String policy, int port,
 			String... lookupConfig) throws IOException {
@@ -1273,7 +1273,7 @@ public class SorcerDescriptorUtil {
 	 * @throws IOException
 	 *             If there are problems getting the anonymous port
 	 * @throws RuntimeException
-	 *             If the <tt>JINI_HOME</tt> system property is not set
+	 *             If the <tt>JINI_HOME</tt> system property is not setValue
 	 */
 	public static ServiceDescriptor getLookup(String policy,
 			String hostAddress, int port, String... lookupConfig)

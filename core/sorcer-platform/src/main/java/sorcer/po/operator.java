@@ -26,6 +26,7 @@ import sorcer.core.context.model.ent.*;
 import sorcer.core.context.model.ent.Proc;
 import sorcer.core.invoker.*;
 import sorcer.service.*;
+import sorcer.service.modeling.ServiceModel;
 
 import java.net.URL;
 import java.rmi.RemoteException;
@@ -211,19 +212,6 @@ public class operator {
 		}
 		procModel.setContextChanged(true);
 		return procModel;
-	}
-
-	public static Proc set(Proc procEntry, Object value)
-			throws ContextException {
-		try {
-			procEntry.setValue(value);
-		} catch (RemoteException e) {
-			throw new ContextException(e);
-		}
-		if (procEntry.getScope() != null && procEntry.getContextable() == null) {
-			procEntry.getScope().putValue(procEntry.getName(), value);
-		}
-		return procEntry;
 	}
 
 	public static Proc add(Proc procEntry, Object to)
@@ -569,7 +557,7 @@ public class operator {
 		return input(procEntry);
 	}
 
-	public static Context scope(Proc procEntry) {
+	public static ServiceModel scope(Proc procEntry) {
 		return procEntry.getScope();
 	}
 

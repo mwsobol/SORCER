@@ -26,6 +26,7 @@ import sorcer.core.context.model.ent.Proc;
 import sorcer.core.context.model.ent.ProcModel;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.service.*;
+import sorcer.service.modeling.ServiceModel;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
@@ -93,7 +94,7 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 
 	protected ValueCallable lambda;
 
-	// set of dependent variables for this evaluator
+	// setValue of dependent variables for this evaluator
 	protected ArgSet pars = new ArgSet();
 
 	/** Logger for logging information about instances of this type */
@@ -165,7 +166,7 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 	
 	/**
 	 * <p>
-	 * Returns a set of parameters (pars) of this invoker that are a a subset of
+	 * Returns a setValue of parameters (pars) of this invoker that are a a subset of
 	 * parameters of its invokeContext.
 	 * </p>
 	 * 
@@ -177,11 +178,11 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 
 	/**
 	 * <p>
-	 * Assigns a set of parameters (pars) for this invoker. 
+	 * Assigns a setValue of parameters (pars) for this invoker.
 	 * </p>
 	 * 
 	 * @param pars
-	 *            the pars to set
+	 *            the pars to setValue
 	 */
 	public ServiceInvoker setPars(ArgSet pars) {
 		this.pars = pars;
@@ -236,7 +237,7 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 		// ignore updates from itself
 		valueValid(false);
 		
-		// set eval to null so getValueAsIs returns null
+		// setValue eval to null so getValueAsIs returns null
 		value = null;
 		setChanged();
 		notifyObservers(this);
@@ -268,7 +269,7 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 		} else if (par instanceof Identifiable) {
 			try {
 				Proc p = new Proc(((Identifiable) par).getName(), par, invokeContext);
-				invokeContext.putValue(p.getName(), p);
+				((ServiceContext)invokeContext).putValue(p.getName(), p);
 			} catch (ContextException e) {
 				throw new EvaluationException(e);
 			}
@@ -346,7 +347,7 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 				return value;
 			else {
 				if (lambda != null) {
-					   value = (T) lambda.call(invokeContext);
+					   value = (T) lambda.call((Context)invokeContext);
 				} else if (evaluator != null)
 					value = (T) invokeEvaluator(entries);
 				else
@@ -365,7 +366,7 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 		try {
 			init(pars);
 			if (lambda != null) {
-				return lambda.call(invokeContext);
+				return lambda.call((Context)invokeContext);
 			} else if (evaluator != null) {
 				evaluator.addArgs(pars);
 				return evaluator.getValue(entries);
@@ -404,7 +405,7 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 		for (Arg e : entries) {
 			if (e instanceof Entry<?>) {
 				try {
-					invokeContext.putValue(((Entry<T>) e)._1,
+					((ServiceContext)invokeContext).putValue(((Entry<T>) e)._1,
 							((Entry<T>) e)._2);
 				} catch (ContextException ex) {
 					throw new SetterException(ex);
@@ -443,7 +444,7 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 	 * </p>
 	 * 
 	 * @param evaluator
-	 *            the evaluator to set
+	 *            the evaluator to setValue
 	 * @throws RemoteException 
 	 * @throws ContextException 
 	 */
@@ -548,7 +549,7 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 
 	@Override
 	public Object exec(Arg... args) throws MogramException, RemoteException {
-		Context cxt = Arg.getContext(args);
+		Context cxt = (Context)Arg.getServiceModel(args);
 		if (cxt !=null) {
 			invokeContext = cxt;
 			return getValue(args);

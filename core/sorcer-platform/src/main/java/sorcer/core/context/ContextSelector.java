@@ -194,7 +194,7 @@ public class ContextSelector implements ContextSelection {
 	 * </p>
 	 * 
 	 * @param selectedTaskName
-	 *            the selectedComponentName to set
+	 *            the selectedComponentName to setValue
 	 */
 	public void setComponentName(String selectedTaskName) {
 		this.selectedComponentName = selectedTaskName;

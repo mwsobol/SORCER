@@ -13,7 +13,7 @@ Also you might need to adjust the classpath (provider.classpath) for your provid
 	<echo message="SORCER_HOME: ${sorcer.home}" />
 	<echo message="WEBSTER: ${provider.webster.url}" />
 
-	<!-- set property values here -->
+	<!-- setValue property values here -->
 	<property name="provider.bean" value="parmodel" />
 	<property name="provider.class" value="sorcer.core.provider.ServiceTasker" />
 	<property name="webster" value="${provider.webster.url}" />

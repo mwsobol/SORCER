@@ -85,7 +85,7 @@ import java.util.concurrent.ConcurrentMap;
  * overridden to do nothing.
  * </ul>
  * <p>
- * Only access to {@link CatalogerInfo} is via a set of "service-aware" methods.
+ * Only access to {@link CatalogerInfo} is via a setValue of "service-aware" methods.
  * They include
  * <ol>
  * <li><code>addServiceItem(SeviceItem)</code>: adds an entry to this hash map
@@ -1254,9 +1254,9 @@ public class ServiceCataloger extends ServiceProvider implements Cataloger {
 	 * number of items that match the template. The return eval is never null,
 	 * and the returned items array is only null if maxMatches is zero. For each
 	 * returned item, if the service object cannot be deserialized, the service
-	 * field of the item is set to null and no exception is thrown. Similarly,
-	 * if an attribute set cannot be deserialized, that element of the
-	 * attributeSets array is set to null and no exception is thrown.
+	 * field of the item is setValue to null and no exception is thrown. Similarly,
+	 * if an attribute setValue cannot be deserialized, that element of the
+	 * attributeSets array is setValue to null and no exception is thrown.
 	 * 
 	 * @param tmpl
 	 *            - the template to match

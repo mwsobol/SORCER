@@ -340,7 +340,7 @@ public class Job extends CompoundExertion {
 	 * Return true if this composite <code>Job</code> is a tree.
 	 * 
 	 * @param visited
-	 *            a set of visited mograms
+	 *            a setValue of visited mograms
 	 * @return true if this <code>Job</code> composite is a tree
 	 * @see sorcer.service.Exertion#isTree()
 	 */

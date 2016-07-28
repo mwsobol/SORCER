@@ -53,7 +53,7 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
     protected Exertion execExertion(Exertion ex, Arg... args) throws SignatureException,
             ExertionException {
         beforeExec(ex);
-        // set subject before task goes out.
+        // setValue subject before task goes out.
         // ex.setSubject(subject);
         ServiceExertion result = null;
         try {
@@ -67,7 +67,7 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
                 logger.warn("Unknown ServiceExertion: {}", ex);
             }
             afterExec(ex, result);
-            // set subject after result is received
+            // setValue subject after result is received
             // result.setSubject(subject);
             result.setStatus(DONE);
         } catch (Exception e) {

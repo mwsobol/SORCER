@@ -31,10 +31,10 @@ public interface Arg extends Serializable {
 	
 	public String getName();
 
-	public static Context getContext(Arg[] args) {
+	public static ServiceModel getServiceModel(Arg[] args) {
 		  for (Arg arg : args) {
-			  if (arg instanceof Context)
-			   return (Context)arg;
+			  if (arg instanceof ServiceModel)
+			   return (ServiceModel)arg;
 		  }
 		return null;
 	}
@@ -43,14 +43,6 @@ public interface Arg extends Serializable {
 		for (Arg arg : args) {
 			if (arg instanceof Exertion)
 				return (Exertion)arg;
-		}
-		return null;
-	}
-
-	public static ServiceModel getModel(Arg[] args) {
-		for (Arg arg : args) {
-			if (arg instanceof ServiceModel)
-				return (ServiceModel)arg;
 		}
 		return null;
 	}

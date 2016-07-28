@@ -22,7 +22,7 @@ import java.util.NoSuchElementException;
 
 /*
  * CVSStringTokenizer is a class that controls simple linear tokenization
- * of a String in csv formatted strings. The set of delimiters, which 
+ * of a String in csv formatted strings. The setValue of delimiters, which
  * defaults to common whitespace characters, may be specified at creation 
  *time or on a per-token basis.<p>
  */

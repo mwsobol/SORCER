@@ -33,7 +33,7 @@ public class Recipe implements Serializable {
 		return amtChocolate;
 	}
     /**
-	 * @param amtChocolate   The amtChocolate to set.
+	 * @param amtChocolate   The amtChocolate to setValue.
 	 */
     public void setAmtChocolate(int amtChocolate) {
 		if (amtChocolate >= 0) {
@@ -47,7 +47,7 @@ public class Recipe implements Serializable {
 		return amtCoffee;
 	}
     /**
-	 * @param amtCoffee   The amtCoffee to set.
+	 * @param amtCoffee   The amtCoffee to setValue.
 	 */
     public void setAmtCoffee(int amtCoffee) {
 		if (amtCoffee >= 0) {
@@ -61,7 +61,7 @@ public class Recipe implements Serializable {
 		return amtMilk;
 	}
     /**
-	 * @param amtMilk   The amtMilk to set.
+	 * @param amtMilk   The amtMilk to setValue.
 	 */
     public void setAmtMilk(int amtMilk) {
 		if (amtMilk >= 0) {
@@ -75,7 +75,7 @@ public class Recipe implements Serializable {
 		return amtSugar;
 	}
     /**
-	 * @param amtSugar   The amtSugar to set.
+	 * @param amtSugar   The amtSugar to setValue.
 	 */
     public void setAmtSugar(int amtSugar) {
 		if (amtSugar >= 0) {
@@ -89,7 +89,7 @@ public class Recipe implements Serializable {
 		return name;
 	}
     /**
-	 * @param name   The name to set.
+	 * @param name   The name to setValue.
 	 */
     public void setName(String name) {
     	if(name != null) {
@@ -103,7 +103,7 @@ public class Recipe implements Serializable {
 		return price;
 	}
     /**
-	 * @param price   The price to set.
+	 * @param price   The price to setValue.
 	 */
     public void setPrice(int price) {
 		if (price >= 0) {

@@ -16,7 +16,6 @@ import sorcer.core.context.model.ent.Proc;
 import sorcer.core.context.model.ent.ProcModel;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.core.provider.rendezvous.ServiceJobber;
-import sorcer.eo.operator;
 import sorcer.service.*;
 import sorcer.util.Sorcer;
 
@@ -50,10 +49,10 @@ public class ProcModelTest {
 	public static String sorcerVersion = System.getProperty("sorcer.version");
 
 	@Test
-	public void adderParTest() throws EvaluationException, RemoteException,
+	public void adderProcTest() throws EvaluationException, RemoteException,
 			ContextException {
 		ProcModel pm = procModel("proc-model");
-		add(pm, proc("x", 10.0), proc("y", 20.0));
+		add(pm, ent("x", 10.0), ent("y", 20.0));
 		add(pm, invoker("add", "x + y", args("x", "y")));
 
 //		logger.info("adder eval: " + eval(pm, "add"));
@@ -65,9 +64,9 @@ public class ProcModelTest {
 	@Test
 	public void contextInvoker() throws Exception {
 		ProcModel pm = new ProcModel("proc-model");
-		add(pm, proc("x", 10.0));
-		add(pm, proc("y", 20.0));
-		add(pm, proc("add", invoker("x + y", pars("x", "y"))));
+		add(pm, ent("x", 10.0));
+		add(pm, ent("y", 20.0));
+		add(pm, ent("add", invoker("x + y", pars("x", "y"))));
 
 		assertEquals(pm.getValue("x"), 10.0);
 		assertEquals(pm.getValue("y"), 20.0);
@@ -143,7 +142,7 @@ public class ProcModelTest {
 
 		Proc x = proc(pm, "x");
 		logger.info("proc x: " + x);
-		set(x, 20.0);
+		setValue(x, 20.0);
 		logger.info("val x: " + eval(x));
 		logger.info("val x: " + value(pm, "x"));
 
@@ -182,12 +181,12 @@ public class ProcModelTest {
 		// mapping parameters to cxt, m1 and m2 are proc aliases
 		Proc p1 = as(proc("p1", "design/in"), cxt);
 		assertTrue(eval(p1).equals(25.0));
-		set(p1, 30.0);
+		setValue(p1, 30.0);
 		assertTrue(eval(p1).equals(30.0));
 		
 		Proc p2 = as(proc("p2", "url"), cxt);
 		assertEquals(eval(p2), "myUrl");
-		set(p2, "newUrl");
+		setValue(p2, "newUrl");
 		assertEquals(eval(p2), "newUrl");
 	}
 	
@@ -218,7 +217,7 @@ public class ProcModelTest {
 	}
 	
 	@Test
-	public void persistableEolParModel() throws ContextException, RemoteException {
+	public void dbBasedModel() throws ContextException, RemoteException {
 		Context c4 = context("multiply",
 				dbVal("arg/x0", 1.0), dbInVal("arg/x1", 10.0),
 				dbOutVal("arg/x2", 50.0), outVal("result/y"));
@@ -252,8 +251,8 @@ public class ProcModelTest {
 	}
 	
 	@Test
-	public void persistableParsTest() throws SignatureException, ExertionException, ContextException, IOException {	
-		// persistable just indicates that parameter is set given eval that can be persist,
+	public void persistableDbTest() throws SignatureException, ExertionException, ContextException, IOException {
+		// persistable just indicates that parameter is setValue given eval that can be persist,
 		// for example when eval(proc) is invoked
 		Proc dbp1 = persistent(proc("design/in", 25.0));
 		Proc dbp2 = dbPar("url", "myUrl1");
@@ -276,7 +275,7 @@ public class ProcModelTest {
 	}
 
 	@Test
-	public void mappableProcPersistence() throws Exception {
+	public void mappableDbPersistence() throws Exception {
 
 		Context cxt = context(val("url", "htt://sorcersoft.org"), val("design/in", 25.0));
 
@@ -287,7 +286,7 @@ public class ProcModelTest {
 		assertTrue(eval((Evaluation) asis(cxt, "design/in")).equals(25.0));
 		assertTrue(value(cxt, "design/in").equals(25.0));
 
-		set(dbIn, 30.0); 	// is persisted
+		setValue(dbIn, 30.0); 	// is persisted
 		assertTrue(eval(dbIn).equals(30.0));
 
 		// associated context is updated accordingly
@@ -299,23 +298,23 @@ public class ProcModelTest {
 		Proc sorcer = as(proc("sorcer", "url"), cxt);
 		assertEquals(eval(sorcer), "htt://sorcersoft.org");
 
-		set(sorcer, "htt://sorcersoft.org/sobol");
+		setValue(sorcer, "htt://sorcersoft.org/sobol");
 		assertTrue(eval(sorcer).equals("htt://sorcersoft.org/sobol"));
 	}
 
 	@Test
-	public void aliasedParsTest() throws ContextException, RemoteException {
+	public void aliasedProcTest() throws ContextException, RemoteException {
 		Context cxt = context(proc("design/in1", 25.0), proc("design/in2", 35.0));
 		
 		Proc x1 = proc(cxt, "x1", "design/in1");
 		Proc x2 = as(proc("x2", "design/in2"), cxt);
 
 		assertTrue(eval(x1).equals(25.0));
-		set(x1, 45.0);
+		setValue(x1, 45.0);
 		assertTrue(eval(x1).equals(45.0));
 
 		assertTrue(eval(x2).equals(35.0));
-		set(x2, 55.0);
+		setValue(x2, 55.0);
 		assertTrue(eval(x2).equals(55.0));
 		
 		ProcModel pc = procModel(x1, x2);
@@ -353,8 +352,8 @@ public class ProcModelTest {
 		Proc j1p = as(proc("j1p", "j1/t3/result/y"), j1);
 		
 		// setting context parameters in a job
-		set(x1p, 10.0);
-		set(x2p, 50.0);
+		setValue(x1p, 10.0);
+		setValue(x2p, 50.0);
 		
 		// update proc references
 		j1 = exert(j1);
@@ -365,8 +364,8 @@ public class ProcModelTest {
 		// get job parameter eval
 		assertTrue(eval(j1p).equals(400.0));
 		
-		// set job parameter eval
-		set(j1p, 1000.0);
+		// setValue job parameter eval
+		setValue(j1p, 1000.0);
 		assertTrue(eval(j1p).equals(1000.0));
 
 		// proc model with mograms
@@ -407,8 +406,8 @@ public class ProcModelTest {
 		Proc t4x1p = proc("t4x1p", "j1/j2/t4/arg/x1", j1);
 		
 		// setting context parameters in a job
-		set(c4x1p, 10.0);
-		set(c4x2p, 50.0);
+		setValue(c4x1p, 10.0);
+		setValue(c4x2p, 50.0);
 				
 		// update proc references
 		j1 = exert(j1);
@@ -469,7 +468,7 @@ public class ProcModelTest {
 	}
 
 	@Test
-	public void conditionalParModel() throws RemoteException, ContextException {
+	public void conditionalModel() throws RemoteException, ContextException {
 		final ProcModel pm = new ProcModel("proc-model");
 		pm.putValue("x", 10.0);
 		pm.putValue("y", 20.0);
@@ -492,7 +491,7 @@ public class ProcModelTest {
 	}
 
 	@Test
-	public void closingParModelConditions() throws RemoteException, ContextException {
+	public void closingModelConditions() throws RemoteException, ContextException {
 		final ProcModel pm = new ProcModel("proc-model");
 		pm.putValue("x", 10.0);
 		pm.putValue("y", 20.0);
@@ -522,7 +521,7 @@ public class ProcModelTest {
 		Proc<Double> y = proc("y", 20.0);
 		Proc z = proc("z", invoker("x - y", x, y));
 		
-		// set the sphere/radius in the model
+		// setValue the sphere/radius in the model
 		put(pm, "sphere/radius", 20.0);
 		// attach the agent to the proc-model and invoke
 		pm.add(new Agent("getSphereVolume",

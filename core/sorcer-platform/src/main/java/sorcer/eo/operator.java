@@ -281,11 +281,11 @@ public class operator {
 			if (cxt != null) return cxt;
 		}
 		String name = getUnknown();
-		List<Tuple2<String, ?>> entryList = new ArrayList<Tuple2<String, ?>>();
-		List<Proc> procEntryList = new ArrayList<Proc>();
-		List<Context.Type> types = new ArrayList<Context.Type>();
-		List<EntryList> entryLists = new ArrayList<EntryList>();
-		List<DependencyEntry> depList = new ArrayList<DependencyEntry>();
+		List<Entry> entryList = new ArrayList();
+		List<Proc> procEntryList = new ArrayList();
+		List<Context.Type> types = new ArrayList();
+		List<EntryList> entryLists = new ArrayList();
+		List<DependencyEntry> depList = new ArrayList();
 		Complement subject = null;
 		ReturnPath returnPath = null;
 		ExecPath execPath = null;
@@ -313,8 +313,8 @@ public class operator {
 				execPath = (ExecPath) o;
 			} else if (o instanceof Proc) {
 				procEntryList.add((Proc) o);
-			} else if (o instanceof Tuple2) {
-				entryList.add((Tuple2) o);
+			} else if (o instanceof Entry) {
+				entryList.add((Entry) o);
 			} else if (o instanceof Context.Type) {
 				types.add((Context.Type) o);
 			} else if (o instanceof String) {
@@ -523,14 +523,14 @@ public class operator {
 	}
 
 	protected static void popultePositionalContext(PositionalContext pcxt,
-												   List<Tuple2<String, ?>> entryList) throws ContextException {
+												   List<Entry> entryList) throws ContextException {
 		for (int i = 0; i < entryList.size(); i++) {
-			Tuple2 t = entryList.get(i);
+			Entry t = entryList.get(i);
 			if (t instanceof Srv) {
 				try {
 					if (t.asis() instanceof Scopable) {
 						if (((Scopable) t.value()).getScope() != null)
-							((Scopable) t.value()).getScope().setScope(pcxt);
+							((ServiceContext)((Scopable) t.value()).getScope()).setScope(pcxt);
 						else
 							((Scopable) t.value()).setScope(pcxt);
 					}
@@ -538,7 +538,7 @@ public class operator {
 					throw new ContextException(e);
 				}
 				pcxt.putInoutValueAt(t.path(), t, i + 1);
-			} else if (t instanceof InputEntry) {
+			} else if (t instanceof InputEntry || t.getType().equals(Variability.Type.INPUT)) {
 				Object par = t.value();
 				if (par instanceof Scopable) {
 					((Scopable) par).setScope(pcxt);
@@ -548,13 +548,13 @@ public class operator {
 				} else {
 					pcxt.putInValueAt(t.path(), t.value(), i + 1);
 				}
-			} else if (t instanceof OutputEntry) {
+			} else if (t instanceof OutputEntry || t.getType().equals(Variability.Type.OUTPUT)) {
 				if (t.isPersistent()) {
 					setProc(pcxt, t, i);
 				} else {
-					pcxt.putOutValueAt(t.path(), t.value(), ((OutputEntry) t).getValClass(), i + 1);
+					pcxt.putOutValueAt(t.path(), t.value(), t.getValClass(), i + 1);
 				}
-			} else if (t instanceof InoutEntry) {
+			} else if (t instanceof InoutEntry || t.getType().equals(Variability.Type.INOUT)) {
 				if (t.isPersistent()) {
 					setProc(pcxt, t, i);
 				} else {
@@ -562,7 +562,7 @@ public class operator {
 				}
 			} else if (t instanceof Entry) {
 				if (t.isPersistent()) {
-					setProc(pcxt, (Entry) entryList.get(i), i);
+					setProc(pcxt, entryList.get(i), i);
 				} else {
 					if (t.value() instanceof Scopable) {
 						((Scopable) t.value()).setScope(pcxt);
@@ -576,9 +576,10 @@ public class operator {
 	}
 
 	public static void populteContext(Context cxt,
-									  List<Tuple2<String, ?>> entryList) throws ContextException {
+									  List<Entry> entryList) throws ContextException {
 		for (int i = 0; i < entryList.size(); i++) {
-			if (entryList.get(i) instanceof InputEntry) {
+			Entry ent = entryList.get(i);
+			if (entryList.get(i) instanceof InputEntry || ent.getType().equals(Variability.Type.INPUT)) {
 				Object val = null;
 				try {
 					val = entryList.get(i).asis();
@@ -589,36 +590,31 @@ public class operator {
 						((InvokeIncrementor)val).getTarget() == null) {
 					((InvokeIncrementor)val).setScope(cxt);
 				}
-				if (((InputEntry) entryList.get(i)).isPersistent()) {
-					setProc(cxt, (InputEntry) entryList.get(i));
+				if (ent.isPersistent()) {
+					setProc(cxt, ent);
 				} else {
-					cxt.putInValue(((Entry) entryList.get(i)).path(),
-							((Entry) entryList.get(i)).value());
+					cxt.putInValue(ent.path(), ent.value());
 				}
-			} else if (entryList.get(i) instanceof OutputEntry) {
-				if (((OutputEntry) entryList.get(i)).isPersistent()) {
-					setProc(cxt, (OutputEntry) entryList.get(i));
+			} else if (ent instanceof OutputEntry || ent.getType().equals(Variability.Type.OUTPUT)) {
+				if (ent.isPersistent()) {
+					setProc(cxt, ent);
 				} else {
-					cxt.putOutValue(((Entry) entryList.get(i)).path(),
-							((Entry) entryList.get(i)).value());
+					cxt.putOutValue(ent.path(), ent.value());
 				}
-			} else if (entryList.get(i) instanceof InoutEntry) {
-				if (((InoutEntry) entryList.get(i)).isPersistent()) {
-					setProc(cxt, (InoutEntry) entryList.get(i));
+			} else if (entryList.get(i) instanceof InoutEntry || ent.getType().equals(Variability.Type.INOUT)) {
+				if (ent.isPersistent()) {
+					setProc(cxt, ent);
 				} else {
-					cxt.putInoutValue(((Entry) entryList.get(i)).path(),
-							((Entry) entryList.get(i)).value());
+					cxt.putInoutValue(ent.path(), ent.value());
 				}
 			} else if (entryList.get(i) instanceof Entry) {
-				if (((Entry) entryList.get(i)).isPersistent()) {
-					setProc(cxt, (Entry) entryList.get(i));
+				if (ent.isPersistent()) {
+					setProc(cxt, ent);
 				} else {
-					cxt.putValue(((Entry) entryList.get(i)).path(),
-							((Entry) entryList.get(i)).value());
+					cxt.putValue(ent.path(), ent.value());
 				}
 			} else if (entryList.get(i) instanceof DataEntry) {
-				cxt.putValue(Context.DSD_PATH,
-						((Entry) entryList.get(i)).value());
+				cxt.putValue(Context.DSD_PATH, ent.value());
 			}
 		}
 	}
@@ -1806,7 +1802,7 @@ public class operator {
 				fiManager.getMorphFidelities().put(mFi.getName(), mFi);
 				mFi.addObserver(fiManager);
 				if (mFi.getMorpherFidelity() != null) {
-					// set the default morpher
+					// setValue the default morpher
 					mFi.setMorpher((Morpher) ((Entry) mFi.getMorpherFidelity().get(0))._2);
 				}
 			}
@@ -2113,7 +2109,7 @@ public class operator {
 				fiManager.getMorphFidelities().put(mFi.getName(), mFi);
 				mFi.addObserver(fiManager);
 				if (mFi.getMorpherFidelity() != null) {
-					// set the default morpher
+					// setValue the default morpher
 					mFi.setMorpher((Morpher) ((Entry) mFi.getMorpherFidelity().get(0))._2);
 				}
 			}
@@ -2491,9 +2487,9 @@ public class operator {
 			} else if (service instanceof Evaluation) {
 				return ((Evaluation) service).getValue(args);
 			} else if (service instanceof Modeling) {
-				Context cxt = Arg.getContext(args);
+				ServiceModel cxt = Arg.getServiceModel(args);
 				if (cxt != null) {
-					return ((Modeling) service).evaluate(cxt);
+					return ((Modeling) service).evaluate((ServiceContext)cxt);
 				} else {
 					((Context)service).substitute(args);
 					((Modeling) service).evaluate();
@@ -3209,8 +3205,8 @@ public class operator {
 					e.setScope(pm.getScope());
 					if (((EvaluationTask)e).getEvaluation() instanceof Proc) {
 						Proc p = (Proc)((EvaluationTask)e).getEvaluation();
-						pm.getScope().addPar(p);
-//						pm.addPar(p);
+						((ProcModel)pm.getScope()).addProc(p);
+//						pm.addProc(p);
 
 					}
 				} else if (e instanceof Exertion) {

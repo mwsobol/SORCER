@@ -124,7 +124,7 @@ public class ObjectSignature extends ServiceSignature {
 	 * </p>
 	 *
 	 * @param target
-	 *            the  object provider to set
+	 *            the  object provider to setValue
 	 */
 	public void setTarget(Object target) {
 		this.target = target;
@@ -162,7 +162,7 @@ public class ObjectSignature extends ServiceSignature {
 	/**
 	 <p> Sets the evaluator for this signature. </p>
 
-	 @param evaluator the evaluation to set
+	 @param evaluator the evaluation to setValue
 	 */
 	public void setEvaluator(MethodInvoker evaluator) {
 		this.evaluator = evaluator;

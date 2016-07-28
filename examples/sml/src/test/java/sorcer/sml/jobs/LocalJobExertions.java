@@ -30,7 +30,7 @@ public class LocalJobExertions implements SorcerConstants {
 	private final static Logger logger = LoggerFactory.getLogger(LocalJobExertions.class);
 
 	@Test
-	public void jobPipeline() throws Exception {
+	public void jobPipelineValBased() throws Exception {
 
 		Task t3 = task(
 				"t3",
@@ -49,6 +49,38 @@ public class LocalJobExertions implements SorcerConstants {
 				sig("add", AdderImpl.class),
 				context("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
 						outVal("result/y")));
+
+		Job job = job(sig("exert", ServiceJobber.class),
+				"j1", t4, t5, t3,
+				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
+				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
+
+		Context context = upcontext(exert(job));
+		logger.info("job upcontext: " + context);
+		assertTrue(value(context, "j1/t3/result/y").equals(400.0));
+
+	}
+
+	@Test
+	public void jobPipelineEntBased() throws Exception {
+
+		Task t3 = task(
+				"t3",
+				sig("subtract", SubtractorImpl.class),
+				context("subtract", in(ent("arg/x1")), in(ent("arg/x2")),
+						out(ent("result/y"))));
+
+		Task t4 = task(
+				"t4",
+				sig("multiply", MultiplierImpl.class),
+				context("multiply", in(ent("arg/x1", 10.0)), in(ent("arg/x2", 50.0)),
+						out(ent("result/y"))));
+
+		Task t5 = task(
+				"t5",
+				sig("add", AdderImpl.class),
+				context("add", in(ent("arg/x1", 20.0)), in(ent("arg/x2", 80.0)),
+						out(ent("result/y"))));
 
 		Job job = job(sig("exert", ServiceJobber.class),
 				"j1", t4, t5, t3,

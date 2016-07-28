@@ -38,6 +38,7 @@ import sorcer.service.*;
 import sorcer.service.Signature.ReturnPath;
 import sorcer.service.modeling.ServiceModel;
 import sorcer.service.modeling.Model;
+import sorcer.service.modeling.Variability;
 import sorcer.service.modeling.Variability.Type;
 import sorcer.util.*;
 import sorcer.util.bdb.objects.UuidObject;
@@ -334,23 +335,57 @@ public class operator {
 		return new Entry<T>(path, value);
 	}
 
-	public static <T> Entry<T> ent(String path, T value) {
+	public static <T> Entry<T> ent(Path path, T value, Arg... args) {
+		Entry<T> entry = ent(path.getName(), value, args);
+		entry.annotation(path.info.toString());
+		return entry;
+	}
+
+	public static <T> Entry<T> ent(String path, T value, Arg... args) {
+		Entry<T> entry = null;
 		if (value instanceof Invocation || value instanceof Evaluation) {
-			return new Proc<T>(path, value);
+			entry = new Proc<T>(path, value);
 		} else if (value instanceof ServiceFidelity) {
-			return (Entry<T>) new Srv(path, value);
+			entry = (Entry<T>) new Srv(path, value);
 		} else if (value instanceof MultiFiRequest) {
 			try {
 				((MultiFiRequest)value).setUnifiedName(path);
 			} catch (RemoteException e) {
 				e.printStackTrace();
 			}
-			return (Entry<T>) new Srv(path, value);
+			entry = (Entry<T>) new Srv(path, value);
 		} else if (value instanceof List && ((List)value).get(0) instanceof Path) {
-			return (Entry<T>) new DependencyEntry(path, (List)value);
+			entry = (Entry<T>) new DependencyEntry(path, (List)value);
+		} else if (value instanceof ServiceMogram) {
+			entry = (Entry<T>) new Srv(path, value);
+		} else if (value instanceof Service) {
+			entry = (Entry<T>) new Proc(path, value);
 		} else {
-			return new Entry<T>(path, value);
+			entry = new Entry<T>(path, value);
 		}
+		Context cxt = null;
+		for (Arg arg : args) {
+			cxt = (Context) Arg.getServiceModel(args);
+		}
+		if (cxt != null && entry instanceof Proc) {
+			((Proc)entry).setScope(cxt);
+		}
+		return entry;
+	}
+
+	public static Entry in(Entry entry) {
+		entry.setType(Variability.Type.INPUT);
+		return entry;
+	}
+
+	public static Entry out(Entry entry) {
+		entry.setType(Variability.Type.OUTPUT);
+		return entry;
+	}
+
+	public static Entry inout(Entry entry) {
+		entry.setType(Variability.Type.INOUT);
+		return entry;
 	}
 
     public static Object annotation(Entry entry) {
@@ -460,17 +495,11 @@ public class operator {
 	}
 
 	public static Entry<Object>  val(String path) {
-		return new Entry<Object>(path, null);
+		return new Entry(path, null);
 	}
 
 	public static Entry<Object>  ent(String path) {
-		return new Entry<Object>(path, null);
-	}
-
-	public static <T> Entry<T> put(Entry<T> entry, T value)
-			throws SetterException, RemoteException {
-		entry.setValue(value);
-		return entry;
+		return new Entry(path, null);
 	}
 
 	public static <T> OutputEntry<T> outVal(String path, T value) {
@@ -491,13 +520,13 @@ public class operator {
 		return oe;
 	}
 
-	public static class DataEntry<T2> extends Tuple2<String, T2> {
+	public static class DataEntry<T> extends Entry<T> {
 		private static final long serialVersionUID = 1L;
 
-		DataEntry(String path, T2 value) {
-			T2 v = value;
+		DataEntry(String path, T value) {
+			T v = value;
 			if (v == null)
-				v = (T2) Context.none;
+				v = (T) Context.none;
 
 			this._1 = path;
 			this._2 = v;
@@ -594,22 +623,19 @@ public class operator {
 		return new TagEntry(path, value, association);
 	}
 
-	public static Entry setValue(Entry entry, Object value)
-			throws ContextException {
+	public static <T> Entry<T> setValue(Entry<T> entry, T value) throws ContextException {
 		try {
 			entry.setValue(value);
 		} catch (RemoteException e) {
 			throw new ContextException(e);
 		}
+		if (entry instanceof Proc) {
+			Proc procEntry = (Proc)entry;
+			if (procEntry.getScope() != null && procEntry.getContextable() == null) {
+				procEntry.getScope().putValue(procEntry.getName(), value);
+			}
+		}
 		return entry;
-	}
-
-	public static <S extends Setter> boolean isDB(S setter) {
-		return isPersistent(setter);
-	}
-
-	public static <S extends Setter> boolean isDb(S setter) {
-		return isPersistent(setter);
 	}
 
 	public static <S extends Setter> boolean isPersistent(S setter) {
