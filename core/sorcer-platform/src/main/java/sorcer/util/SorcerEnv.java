@@ -143,6 +143,8 @@ public class SorcerEnv extends SOS {
             if (hd == null)
                 hd = SOS.deriveSorcerHome();
             if (hd != null && hd.length() > 0) {
+				System.getenv().put("SORCER_HOME", hd);
+				System.setProperty(SORCER_HOME, hd);
                 return new File(hd);
             }
 

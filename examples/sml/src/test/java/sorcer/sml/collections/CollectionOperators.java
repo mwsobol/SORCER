@@ -101,7 +101,6 @@ public class CollectionOperators {
 
 	}
 
-
 	@Test
 	public void genericArrayOperator() throws Exception {
 
@@ -132,7 +131,6 @@ public class CollectionOperators {
 
 	}
 
-
 	@Test
 	public void genericSetOperator() throws Exception {
 
@@ -145,7 +143,6 @@ public class CollectionOperators {
 		assertTrue(s.contains(tuple("height", 174)));
 
 	}
-
 
 	@Test
 	public void tableOperator() throws Exception {
@@ -169,7 +166,6 @@ public class CollectionOperators {
 		assertEquals(value(t, 1, 1), 2.2);
 
 	}
-
 
 	@Test
 	public void entryOperator() throws Exception {
@@ -217,7 +213,6 @@ public class CollectionOperators {
 
 	}
 
-
 	@Test
 	public void dbEntryOperator() throws Exception {
 
@@ -252,7 +247,6 @@ public class CollectionOperators {
 
 	}
 
-
 	@Test
 	public void parOperator() throws Exception {
 
@@ -267,7 +261,6 @@ public class CollectionOperators {
 		assertTrue(eval(add).equals(50.0));
 
 	}
-
 
 	@Test
 	public void dbParOperator() throws Exception {
@@ -293,7 +286,6 @@ public class CollectionOperators {
 		assertEquals(eval((Proc)content(p2Url)), "http://sorcersoft.org");
 
 	}
-
 
 	@Test
 	public void mapOperator() throws Exception {
@@ -327,7 +319,6 @@ public class CollectionOperators {
 		assertTrue(map1.values().contains(174.0));
 
 	}
-
 
 	@Test
 	public void contextOperator() throws Exception {
