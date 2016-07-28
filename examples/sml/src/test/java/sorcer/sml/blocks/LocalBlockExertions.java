@@ -10,13 +10,16 @@ import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.arithmetic.provider.impl.AveragerImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.provider.impl.SubtractorImpl;
-import sorcer.co.operator;
 import sorcer.core.SorcerConstants;
 import sorcer.core.provider.rendezvous.ServiceConcatenator;
-import sorcer.service.*;
+import sorcer.service.Block;
+import sorcer.service.Context;
+import sorcer.service.Mogram;
 import sorcer.service.Signature.Direction;
+import sorcer.service.Task;
 
 import static org.junit.Assert.assertEquals;
+import static sorcer.co.operator.inVal;
 import static sorcer.eo.operator.alt;
 import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.loop;
@@ -35,15 +38,15 @@ public class  LocalBlockExertions implements SorcerConstants {
 	public void explicitDataBlockTest() throws Exception {
 
 		Task t3 = task("t3", sig("subtract", SubtractorImpl.class),
-				context("subtract", operator.inVal("arg/t4"), operator.inVal("arg/t5"),
+				context("subtract", inVal("arg/t4"), inVal("arg/t5"),
 						result("block/result", Direction.OUT)));
 
 		Task t4 = task("t4", sig("multiply", MultiplierImpl.class),
-				context("multiply", operator.inVal("arg/x1", 10.0), operator.inVal("arg/x2", 50.0),
+                context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
 						result("arg/t4", Direction.IN)));
 
 		Task t5 = task("t5", sig("add", AdderImpl.class),
-				context("add", operator.inVal("arg/x3", 20.0), operator.inVal("arg/x4", 80.0),
+                context("add", inVal("arg/x3", 20.0), inVal("arg/x4", 80.0),
 						result("arg/t5", Direction.IN)));
 
 		Block block = block("block", t4, t5, t3);
@@ -57,20 +60,20 @@ public class  LocalBlockExertions implements SorcerConstants {
 	public void closingBlockTest() throws Exception {
 
 		Task t3 = task("t3", sig("subtract", SubtractorImpl.class),
-				context("subtract", operator.inVal("arg/t4"), operator.inVal("arg/t5"),
+                context("subtract", inVal("arg/t4"), inVal("arg/t5"),
 						result("block/result", Direction.OUT)));
 
 		Task t4 = task("t4", sig("multiply", MultiplierImpl.class),
-				context("multiply", operator.inVal("arg/x1"), operator.inVal("arg/x2"),
+                context("multiply", inVal("arg/x1"), inVal("arg/x2"),
 						result("arg/t4", Direction.IN)));
 
 		Task t5 = task("t5", sig("add", AdderImpl.class),
-				context("add", operator.inVal("arg/x3"), operator.inVal("arg/x4"),
+                context("add", inVal("arg/x3"), inVal("arg/x4"),
 						result("arg/t5", Direction.IN)));
 
 		Block block = block("block", t4, t5, t3, context(
-				operator.inVal("arg/x1", 10.0), operator.inVal("arg/x2", 50.0),
-				operator.inVal("arg/x3", 20.0), operator.inVal("arg/x4", 80.0)));
+                inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
+                inVal("arg/x3", 20.0), inVal("arg/x4", 80.0)));
 
 		Block result = exert(block);
 		assertEquals(value(context(result), "block/result"), 400.00);
@@ -83,20 +86,20 @@ public class  LocalBlockExertions implements SorcerConstants {
 		// in t4: inVal("arg/x1", 20.0), inVal("arg/x2", 10.0)
 		// cosed with 10.0 and 50.0 respectively
 		Task t3 = task("t3", sig("subtract", SubtractorImpl.class),
-				context("subtract", operator.inVal("arg/t4"), operator.inVal("arg/t5"),
+                context("subtract", inVal("arg/t4"), inVal("arg/t5"),
 						result("block/result", Direction.OUT)));
 
 		Task t4 = task("t4", sig("multiply", MultiplierImpl.class),
-				context("multiply",  operator.inVal("arg/x1", 20.0), operator.inVal("arg/x2", 10.0),
+                context("multiply", inVal("arg/x1", 20.0), inVal("arg/x2", 10.0),
 						result("arg/t4", Direction.IN)));
 
 		Task t5 = task("t5", sig("add", AdderImpl.class),
-				context("add", operator.inVal("arg/x3"), operator.inVal("arg/x4"),
+                context("add", inVal("arg/x3"), inVal("arg/x4"),
 						result("arg/t5", Direction.IN)));
 
 		Block block = block("block", t4, t5, t3, context(
-				operator.inVal("arg/x1", 10.0), operator.inVal("arg/x2", 50.0),
-				operator.inVal("arg/x3", 20.0), operator.inVal("arg/x4", 80.0)));
+                inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
+                inVal("arg/x3", 20.0), inVal("arg/x4", 80.0)));
 
 		Block result = exert(block);
 		assertEquals(value(context(result), "block/result"), 400.00);
@@ -109,11 +112,11 @@ public class  LocalBlockExertions implements SorcerConstants {
 //		Context scope = context(proc("y1", 100), proc("y2", 200));
 
 		Task t4 = task("t4", sig("multiply", MultiplierImpl.class),
-				context("multiply", operator.inVal("arg/x1", 10.0), operator.inVal("arg/x2", 50.0),
+                context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
 						result("block/result")));
 
 		Task t5 = task("t5", sig("add", AdderImpl.class),
-				context("add", operator.inVal("arg/x1", 20.0), operator.inVal("arg/x2", 80.0),
+                context("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
 						result("block/result")));
 
 		Block sb = block("block",
@@ -142,11 +145,11 @@ public class  LocalBlockExertions implements SorcerConstants {
 	public void directAltBlockTest() throws Exception {
 
 		Task t4 = task("t4", sig("multiply", MultiplierImpl.class),
-				context("multiply", operator.inVal("arg/x1", 10.0), operator.inVal("arg/x2", 50.0),
+                context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
 						result("block/result")));
 
 		Task t5 = task("t5", sig("add", AdderImpl.class),
-				context("add", operator.inVal("arg/x1", 20.0), operator.inVal("arg/x2", 80.0),
+                context("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
 						result("block/result")));
 
 		Block block = block("block",
@@ -169,19 +172,19 @@ public class  LocalBlockExertions implements SorcerConstants {
 	@Test
 	public void altBlockTest() throws Exception {
 		Task t3 = task("t3", sig("subtract", SubtractorImpl.class),
-				context("subtract", operator.inVal("arg/t4"), operator.inVal("arg/t5"),
+                context("subtract", inVal("arg/t4"), inVal("arg/t5"),
 						result("block/result", Direction.OUT)));
 
 		Task t4 = task("t4", sig("multiply", MultiplierImpl.class),
-				context("multiply", operator.inVal("arg/x1", 10.0), operator.inVal("arg/x2", 50.0),
+                context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
 						result("arg/t4", Direction.IN)));
 
 		Task t5 = task("t5", sig("add", AdderImpl.class),
-				context("add", operator.inVal("arg/x1", 20.0), operator.inVal("arg/x2", 80.0),
+                context("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
 						result("arg/t5", Direction.IN)));
 
 		Task t6 = task("t6", sig("average", AveragerImpl.class),
-				context("average", operator.inVal("arg/t4"), operator.inVal("arg/t5"),
+                context("average", inVal("arg/t4"), inVal("arg/t5"),
 						result("block/result", Direction.OUT)));
 
 		Block block = block("block", t4, t5,
@@ -206,19 +209,19 @@ public class  LocalBlockExertions implements SorcerConstants {
 //		assertEquals(eval(context(result), "block/result"), 750.00);
 
 		t3 = task("t3", sig("subtract", SubtractorImpl.class),
-				context("subtract", operator.inVal("arg/t4"), operator.inVal("arg/t5"),
+                context("subtract", inVal("arg/t4"), inVal("arg/t5"),
 						result("block/result", Direction.OUT)));
 
 		t4 = task("t4", sig("multiply", MultiplierImpl.class),
-				context("multiply", operator.inVal("arg/x1", 10.0), operator.inVal("arg/x2", 50.0),
+                context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
 						result("arg/t4", Direction.IN)));
 
 		t5 = task("t5", sig("add", AdderImpl.class),
-				context("add", operator.inVal("arg/x1", 20.0), operator.inVal("arg/x2", 80.0),
+                context("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
 						result("arg/t5", Direction.IN)));
 
 		t6 = task("t6", sig("average", AveragerImpl.class),
-				context("average", operator.inVal("arg/t4"), operator.inVal("arg/t5"),
+                context("average", inVal("arg/t4"), inVal("arg/t5"),
 						result("block/result", Direction.OUT)));
 
 		block = block("block", t4, t5,
@@ -231,11 +234,11 @@ public class  LocalBlockExertions implements SorcerConstants {
 	@Test
 	public void optBlockTest() throws Exception {
 		Task t4 = task("t4", sig("multiply", MultiplierImpl.class),
-				context("multiply", operator.inVal("arg/x1", 10.0), operator.inVal("arg/x2", 50.0),
+                context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
 						result("out")));
 
 		Task t5 = task("t5", sig("add", AdderImpl.class),
-				context("add", operator.inVal("arg/x1", 20.0), operator.inVal("arg/x2", 80.0),
+                context("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
 						result("out")));
 
 		Block block = block("block", t4,
@@ -271,15 +274,15 @@ public class  LocalBlockExertions implements SorcerConstants {
 	public void parBlockTest() throws Exception {
 
 		Task t4 = task("t4", sig("multiply", MultiplierImpl.class),
-				context("multiply", operator.inVal("arg/x1", 10.0), operator.inVal("arg/x2", 50.0),
+                context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
 						result("block/result")));
 
 		Task t5 = task("t5", sig("add", AdderImpl.class),
-				context("add", operator.inVal("arg/x1", 20.0), operator.inVal("arg/x2", 80.0),
+                context("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
 						result("block/result")));
 
 		Block block = block("block", sig("exert", ServiceConcatenator.class),
-				context(operator.inVal("x1", 4), operator.inVal("x2", 5)),
+                context(inVal("x1", 4), inVal("x2", 5)),
 				task(proc("y", invoker("x1 * x2", pars("x1", "x2")))),
 				alt(opt(condition((Context<Integer> cxt) -> value(cxt, "y") > 50), t4),
 						opt(condition((Context<Integer> cxt) -> value(cxt, "y") <= 50), t5)));

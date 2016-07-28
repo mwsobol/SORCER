@@ -7,14 +7,13 @@ import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.impl.AdderImpl;
-import sorcer.co.operator;
 import sorcer.core.SorcerConstants;
 import sorcer.service.Context;
 import sorcer.service.Incrementor;
 import sorcer.service.Task;
 
 import static org.junit.Assert.assertEquals;
-import static sorcer.co.operator.*;
+import static sorcer.co.operator.inVal;
 import static sorcer.eo.operator.*;
 import static sorcer.po.operator.*;
 
@@ -29,8 +28,8 @@ public class IncrementBlockExertions implements SorcerConstants {
 
 	@Test
 	public void entryIncrementor() throws Exception {
-		Context cxt = model("add", operator.inVal("arg/x1", 20),
-						operator.inVal("arg/x2", 80.0), result("result++"));
+		Context cxt = model("add", inVal("arg/x1", 20),
+						inVal("arg/x2", 80.0), result("result++"));
 
 		Incrementor z2 = inc(invoker(cxt, "arg/x1"), 2);
 		assertEquals(next(z2), 22);
@@ -40,8 +39,8 @@ public class IncrementBlockExertions implements SorcerConstants {
 	@Test
 	public void taskIncrement() throws Exception {
 		Task t = task(sig("add", AdderImpl.class),
-				model("add", operator.inVal("arg/x1", inc("arg/x2", 2.0)),
-						operator.inVal("arg/x2", 80.0), result("task/result")));
+				model("add", inVal("arg/x1", inc("arg/x2", 2.0)),
+						inVal("arg/x2", 80.0), result("task/result")));
 
 //		logger.info("result: " + eval(t));
 		assertEquals(eval(t), 162.00);

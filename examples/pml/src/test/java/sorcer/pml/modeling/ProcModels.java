@@ -337,9 +337,9 @@ public class ProcModels {
 	}
 
 	@Test
-	public void mappableParPersistence() throws Exception {
+	public void mappableProcPersistence() throws Exception {
 
-		Context cxt = context(proc("url", "htt://sorcersoft.org"), proc("design/in", 25.0));
+		Context cxt = context(val("url", "htt://sorcersoft.org"), val("design/in", 25.0));
 
 		// persistent proc
 		Proc dbIn = persistent(as(proc("dbIn", "design/in"), cxt));

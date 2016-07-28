@@ -20,7 +20,7 @@ int ndx = ref.lastIndexOf("/")
 String branch = ref.substring(ndx+1).trim()
 String branchRef = branch.equals("master")?"":"-$branch"
 
-version = "5.3.39$branchRef"
+version = "5.4.0$branchRef"
 
 apply plugin: 'idea'
 idea {
@@ -50,7 +50,7 @@ task printClasspath() {
 
 task wrapper(type: Wrapper) {
     description = 'Prints the Gradle wrapper version.'
-    gradleVersion = '2.1'
+    gradleVersion = '2.12'
 }
 
 ext {
