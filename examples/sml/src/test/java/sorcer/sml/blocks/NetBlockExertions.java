@@ -20,6 +20,7 @@ import sorcer.service.Task;
 import java.io.Serializable;
 
 import static org.junit.Assert.assertEquals;
+import static sorcer.co.operator.ent;
 import static sorcer.co.operator.inVal;
 import static sorcer.eo.operator.alt;
 import static sorcer.eo.operator.*;
@@ -200,7 +201,7 @@ public class NetBlockExertions implements SorcerConstants, Serializable {
 	}
 
 	@Test
-	public void parBlockTest() throws Exception {
+	public void procBlockTest() throws Exception {
 
 		Task t4 = task("t4", sig("multiply", Multiplier.class),
                 context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
@@ -211,8 +212,8 @@ public class NetBlockExertions implements SorcerConstants, Serializable {
 						result("block/result")));
 				 
 		Block block = block("block", sig(Concatenator.class),
-				context(proc("x1", 4), proc("x2", 5)),
-				task(proc("y", invoker("x1 * x2", pars("x1", "x2")))),
+				context(ent("x1", 4), ent("x2", 5)),
+				task(proc("y", invoker("x1 * x2", args("x1", "x2")))),
 				alt(opt(condition(cxt -> (int)value(cxt, "y") > 50.0), t4),
 						opt(condition(cxt -> (int)value(cxt, "y") <= 50 ), t5)));
 				
@@ -235,7 +236,7 @@ public class NetBlockExertions implements SorcerConstants, Serializable {
 				context(proc("x1", 10.0), proc("x2", 20.0), proc("z", 100.0)),
 				loop(condition(cxt -> (double)value(cxt, "x1") + (double)value(cxt, "x2")
 								< (double)value(cxt, "z")),
-						task(proc("x1", invoker("x1 + 3", pars("x1"))))));
+						task(proc("x1", invoker("x1 + 3", args("x1"))))));
 		
 		block = exert(block);
 		logger.info("block context: " + context(block));

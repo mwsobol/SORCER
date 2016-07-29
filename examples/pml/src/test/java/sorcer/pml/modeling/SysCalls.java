@@ -58,8 +58,8 @@ public class SysCalls {
 
 		ProcModel pm = procModel(proc(cmd),
 				proc("x", 10.0), ent("y"),
-				proc("multiply", invoker("x * y", pars("x", "y"))),
-				proc("add", invoker("x + y", pars("x", "y"))));
+				proc("multiply", invoker("x * y", args("x", "y"))),
+				proc("add", invoker("x + y", args("x", "y"))));
 
 		CmdResult result = (CmdResult) invoke(pm, "volume");
 		// get from the result the volume of cylinder and assign to y parameter
@@ -94,9 +94,9 @@ public class SysCalls {
                 + Sorcer.getHome() + "/lib/river/jsk-platform-" + riverVersion + ".jar"  + File.pathSeparator
                 + Sorcer.getHome() + "/lib/river/jsk-lib-" + riverVersion + ".jar ";
 
-        ProcModel pm = procModel(proc("x", 10.0), ent("y"),
-                proc("multiply", invoker("x * y", pars("x", "y"))),
-                proc("add", invoker("x + y", pars("x", "y"))));
+        ProcModel pm = procModel(proc("x", 10.0), args("y"),
+                proc("multiply", invoker("x * y", args("x", "y"))),
+                proc("add", invoker("x + y", args("x", "y"))));
 
         SysCall caller = sysCall("volume", cxt(proc("cmd", "java -cp  " + cp + Volume.class.getName()),
                 inVal("cylinder"), outVal("cylinder/volume"), outVal("cylinder/radius"),
@@ -164,8 +164,8 @@ public class SysCalls {
 				+ Sorcer.getHome() + "/lib/river/jsk-lib-" + riverVersion + ".jar ";
 
 		Model sm = srvModel(proc("x", 10.0), ent("y"),
-				proc("multiply", invoker("x * y", pars("x", "y"))),
-				proc("add", invoker("x + y", pars("x", "y"))),
+				proc("multiply", invoker("x * y", args("x", "y"))),
+				proc("add", invoker("x + y", args("x", "y"))),
 				srv("volume", sig("exec", SysCaller.class,
 						cxt(proc("cmd", "java -cp  " + cp + Volume.class.getName()),
 						inVal("cylinder"), outVal("cylinder/volume"), outVal("cylinder/radius"),
@@ -202,8 +202,8 @@ public class SysCalls {
 				+ Sorcer.getHome() + "/lib/river/jsk-lib-" + riverVersion + ".jar ";
 
 		Model sm = srvModel(proc("x", 10.0), ent("y"),
-				proc("multiply", invoker("x * y", pars("x", "y"))),
-				proc("add", invoker("x + y", pars("x", "y"))),
+				proc("multiply", invoker("x * y", args("x", "y"))),
+				proc("add", invoker("x + y", args("x", "y"))),
 				srv("volume", sig("exec", SysCaller.class,
 						cxt(proc("cmd", "java -cp  " + cp + Volume.class.getName()),
 								inVal("cylinder", Arg.class),

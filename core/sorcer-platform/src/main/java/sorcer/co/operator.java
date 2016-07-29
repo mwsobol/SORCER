@@ -363,6 +363,7 @@ public class operator {
 		} else {
 			entry = new Entry<T>(path, value);
 		}
+
 		Context cxt = null;
 		for (Arg arg : args) {
 			cxt = (Context) Arg.getServiceModel(args);

@@ -290,18 +290,18 @@ public class operator {
 		}
 	}
 
-	public static ArgSet pars(ServiceInvoker invoker) {
+	public static ArgSet args(ServiceInvoker invoker) {
 		return invoker.getPars();
 	}
 
-	public static Arg[] pars(String... parnames)
-			throws ContextException {
-		ArgSet ps = new ArgSet();
-		for (String name : parnames) {
-			ps.add(new Proc(name));
-		}
-		return ps.toArray();
-	}
+//	public static Arg[] pars(String... parnames)
+//			throws ContextException {
+//		ArgSet ps = new ArgSet();
+//		for (String name : parnames) {
+//			ps.add(new Proc(name));
+//		}
+//		return ps.toArray();
+//	}
 
 	public static Arg[] args(ProcModel pm, String... parnames)
 			throws ContextException {
@@ -360,6 +360,10 @@ public class operator {
 		return invoker;
 	}
 
+	public static ServiceInvoker expr(String expression) {
+		return new GroovyInvoker(expression);
+	}
+
 	public static ServiceInvoker expr(String expression, sorcer.eo.operator.Args args) {
 		return 	invoker(expression, args);
 		}
@@ -381,10 +385,6 @@ public class operator {
 	}
 
 	public static ServiceInvoker invoker(String expression) {
-		return new GroovyInvoker(expression);
-	}
-
-	public static ServiceInvoker expr(String expression) {
 		return new GroovyInvoker(expression);
 	}
 

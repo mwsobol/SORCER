@@ -249,13 +249,13 @@ public class CollectionOperators {
 	@Test
 	public void parOperator() throws Exception {
 
-		Proc add = proc("add", invoker("x + y", pars("x", "y")));
+		Proc add = proc("add", invoker("x + y", args("x", "y")));
 		Context<Double> cxt = context(proc("x", 10.0), proc("y", 20.0));
 		logger.info("proc eval: " + eval(add, cxt));
 		assertTrue(eval(add, cxt).equals(30.0));
 
 		cxt = context(proc("x", 20.0), proc("y", 30.0));
-		add = proc("add", invoker("x + y", pars("x", "y")), cxt);
+		add = proc("add", invoker("x + y", args("x", "y")), cxt);
 		logger.info("proc eval: " + eval(add));
 		assertTrue(eval(add).equals(50.0));
 

@@ -39,7 +39,7 @@ public class Procedures {
 		Context<Double> cxt = context(proc("x", 20.0), proc("y", 30.0));
 
 		// proc with its context scope
-		Proc<?> add = proc("add", invoker("x + y", pars("x", "y")), cxt);
+		Proc<?> add = proc("add", invoker("x + y", args("x", "y")), cxt);
 		logger.info("proc eval: " + eval(add));
 		assertTrue(eval(add).equals(50.0));
 	}
@@ -49,7 +49,7 @@ public class Procedures {
 	public void contextScope() throws Exception {
 
 		Context<Double> cxt = context(proc("x", 20.0), proc("y", 30.0));
-		Proc<?> add = proc("add", invoker("x + y", pars("x", "y")), cxt);
+		Proc<?> add = proc("add", invoker("x + y", args("x", "y")), cxt);
 
 		// adding a proc to the context updates proc's scope
 		add(cxt, add);
@@ -64,7 +64,7 @@ public class Procedures {
 	@Test
 	public void closingParWihEntries() throws Exception {
 		Proc y = proc("y",
-				invoker("(x1 * x2) - (x3 + x4)", pars("x1", "x2", "x3", "x4")));
+				invoker("(x1 * x2) - (x3 + x4)", args("x1", "x2", "x3", "x4")));
 		Object val = eval(y, proc("x1", 10.0), proc("x2", 50.0), proc("x3", 20.0), proc("x4", 80.0));
 		// logger.info("y eval: " + val);
 		assertEquals(val, 400.0);
@@ -74,7 +74,7 @@ public class Procedures {
 	public void closingParWitScope() throws Exception {
 
 		// invokers use contextual scope of pars
-		Proc<?> add = proc("add", invoker("x + y", pars("x", "y")));
+		Proc<?> add = proc("add", invoker("x + y", args("x", "y")));
 
 		Context<Double> cxt = context(proc("x", 10.0), proc("y", 20.0));
 		logger.info("proc eval: " + eval(add, cxt));
@@ -121,7 +121,7 @@ public class Procedures {
 		Proc multi = proc("multi",
 				parFi(ent("init/eval"),
 				dbp,
-				proc("invoke", invoker("x + y", pars("x", "y")))));
+				proc("invoke", invoker("x + y", args("x", "y")))));
 		
 		Context<Double> cxt = context(proc("x", 10.0),
 				proc("y", 20.0), proc("init/eval", 49.0));

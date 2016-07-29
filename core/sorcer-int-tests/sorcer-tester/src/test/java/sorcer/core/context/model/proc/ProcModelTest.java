@@ -66,7 +66,7 @@ public class ProcModelTest {
 		ProcModel pm = new ProcModel("proc-model");
 		add(pm, ent("x", 10.0));
 		add(pm, ent("y", 20.0));
-		add(pm, ent("add", invoker("x + y", pars("x", "y"))));
+		add(pm, ent("add", invoker("x + y", args("x", "y"))));
 
 		assertEquals(pm.getValue("x"), 10.0);
 		assertEquals(pm.getValue("y"), 20.0);
@@ -89,7 +89,7 @@ public class ProcModelTest {
 	public void parModelTest() throws RemoteException, ContextException {
 		Proc x = new Proc("x", 10.0);
 		Proc y = new Proc("y", 20.0);
-		Proc add = new Proc("add", invoker("x + y", pars("x", "y")));
+		Proc add = new Proc("add", invoker("x + y", args("x", "y")));
 
 		ProcModel pm = new ProcModel("arithmetic-model");
 		pm.add(x, y, add);
@@ -121,7 +121,7 @@ public class ProcModelTest {
 	public void dslParModelTest() throws RemoteException,
 			ContextException {
 		ProcModel pm = procModel(proc("x", 10.0), proc("y", 20.0),
-				proc("add", invoker("x + y", pars("x", "y"))));
+				proc("add", invoker("x + y", args("x", "y"))));
 
 		responseUp(pm, "add");
 
@@ -136,7 +136,7 @@ public class ProcModelTest {
 	public void mutateParModeltTest() throws RemoteException,
 			ContextException { 
 		ProcModel pm = procModel(proc("x", 10.0), proc("y", 20.0),
-				proc("add", invoker("x + y", pars("x", "y"))));
+				proc("add", invoker("x + y", args("x", "y"))));
 
 		responseUp(pm, "add");
 
@@ -168,7 +168,7 @@ public class ProcModelTest {
 		// with new arguments, closure
 		assertTrue(value(pm, proc("x", 20.0), proc("y", 30.0)).equals(50.0));
 
-		add(pm, proc("z", invoker("(x * y) + add", pars("x", "y", "add"))));
+		add(pm, proc("z", invoker("(x * y) + add", args("x", "y", "add"))));
 		logger.info("z eval: " + value(pm, "z"));
 		assertEquals(value(pm, "z"), 650.0);
 	}
@@ -468,36 +468,12 @@ public class ProcModelTest {
 	}
 
 	@Test
-	public void conditionalModel() throws RemoteException, ContextException {
-		final ProcModel pm = new ProcModel("proc-model");
-		pm.putValue("x", 10.0);
-		pm.putValue("y", 20.0);
-		pm.putValue("condition", new ServiceInvoker(pm));
-		((ServiceInvoker)pm.get("condition"))
-			.setPars(pars("x", "y"))
-			.setEvaluator(invoker("x > y", pars("x", "y")));
-		
-		Condition flag = new Condition(pm, "condition");
-		
-		assertEquals(pm.getValue("x"), 10.0);
-		assertEquals(pm.getValue("y"), 20.0);
-		logger.info("condition eval: " + flag.isTrue());
-		assertEquals(flag.isTrue(), false);
-		
-		pm.putValue("x", 300.0);
-		pm.putValue("y", 200.0);
-		logger.info("condition eval: " + flag.isTrue());
-		assertEquals(flag.isTrue(), true);
-	}
-
-	@Test
 	public void closingModelConditions() throws RemoteException, ContextException {
 		final ProcModel pm = new ProcModel("proc-model");
 		pm.putValue("x", 10.0);
 		pm.putValue("y", 20.0);
 		
-		Condition flag = new Condition(pm, 
-				"{ x, y -> x > y }", "x", "y");
+		Condition flag = new Condition(pm, "{ x, y -> x > y }", "x", "y");
 		
 		assertEquals(pm.getValue("x"), 10.0);
 		assertEquals(pm.getValue("y"), 20.0);

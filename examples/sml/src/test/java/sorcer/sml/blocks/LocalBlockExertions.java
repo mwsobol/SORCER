@@ -262,7 +262,7 @@ public class  LocalBlockExertions implements SorcerConstants {
 				context(proc("x1", 10.0), proc("x2", 20.0), proc("z", 100.0)),
 				loop(condition((Context<Double> cxt) -> value(cxt, "x1") + value(cxt, "x2")
 								< value(cxt, "z")),
-						task(proc("x1", invoker("x1 + 3", pars("x1"))))));
+						task(proc("x1", invoker("x1 + 3", args("x1"))))));
 
 		block = exert(block);
 		logger.info("block context: " + context(block));
@@ -283,7 +283,7 @@ public class  LocalBlockExertions implements SorcerConstants {
 
 		Block block = block("block", sig("exert", ServiceConcatenator.class),
                 context(inVal("x1", 4), inVal("x2", 5)),
-				task(proc("y", invoker("x1 * x2", pars("x1", "x2")))),
+				task(proc("y", invoker("x1 * x2", args("x1", "x2")))),
 				alt(opt(condition((Context<Integer> cxt) -> value(cxt, "y") > 50), t4),
 						opt(condition((Context<Integer> cxt) -> value(cxt, "y") <= 50), t5)));
 

@@ -47,7 +47,7 @@ public class Entry<T> extends Tuple2<String, T> implements Callable<T>, Dependen
 
 	protected Class valClass;
 
-	protected Variability.Type type = Variability.Type.INPUT;
+	protected Variability.Type type = Variability.Type.VAL;
 
 	// its arguments are always evaluated if active (either Evaluataion or Invocation type)
 	protected boolean isReactive = false;

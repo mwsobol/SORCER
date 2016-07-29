@@ -363,13 +363,13 @@ public class NetJobExertions implements SorcerConstants {
 				// inputs
 				ent("x1"), ent("x2"), proc("x3", 20.0), ent("x4"),
 				// outputs
-				proc("t4", invoker("x1 * x2", pars("x1", "x2"))),
+				proc("t4", invoker("x1 * x2", args("x1", "x2"))),
 				proc("t5",
 					task("t5",
 						sig("add", Adder.class),
 						cxt("add", inVal("arg/x3"), inVal("arg/x4"),
 						result("result/y")))),
-				proc("j1", invoker("t4 - t5", pars("t4", "t5"))));
+				proc("j1", invoker("t4 - t5", args("t4", "t5"))));
 
 		vm = put(vm, proc("x1", 10.0), proc("x2", 50.0),
 				proc("x4", 80.0));

@@ -101,7 +101,7 @@ public class DataModels {
     public void inputsOutputs() throws Exception {
 
         // PositionalContext maintains both paths and indexes
-        Context<Double> cxt = context(ent("arg/x1", 1.1), inVal("arg/x2", 1.2),
+        Context<Double> cxt = context(val("arg/x1", 1.1), inVal("arg/x2", 1.2),
                 inVal("arg/x3", 1.3), inVal("arg/x4", 1.4), inVal("arg/x5", 1.5));
 
         add(cxt, ent("arg/x6", 1.6));
@@ -126,6 +126,7 @@ public class DataModels {
         List<String> allInputs = list("arg/x2", "arg/x3", "arg/x4", "arg/x5", "proc/z");
         List<String> inputs = list("arg/x2", "arg/x3", "arg/x4", "arg/x5");
         List<String> outputs = list("out/y1", "out/y2", "proc/z");
+
         assertTrue(allInputs.equals(paths(allInputs(cxt))));
         assertTrue(inputs.equals(paths(inputs(cxt))));
         assertTrue(outputs.equals(paths(outputs(cxt))));

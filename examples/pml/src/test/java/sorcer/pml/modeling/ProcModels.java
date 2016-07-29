@@ -61,7 +61,7 @@ public class ProcModels {
 
 		// a proc is a variable (entry) evaluated in its own scope (context)
 		Proc y = proc("y",
-				invoker("(x1 * x2) - (x3 + x4)", pars("x1", "x2", "x3", "x4")));
+				invoker("(x1 * x2) - (x3 + x4)", args("x1", "x2", "x3", "x4")));
 		Object val = eval(y, proc("x1", 10.0), proc("x2", 50.0),
 				proc("x3", 20.0), proc("x4", 80.0));
 		// logger.info("y eval: " + val);
@@ -79,9 +79,9 @@ public class ProcModels {
 				ent("x1"), ent("x2"), proc("x3", 20.0),
 				proc("x4", 80.0),
 				// outputs
-				proc("t4", invoker("x1 * x2", pars("x1", "x2"))),
-				proc("t5", invoker("x3 + x4", pars("x3", "x4"))),
-				proc("j1", invoker("t4 - t5", pars("t4", "t5"))));
+				proc("t4", invoker("x1 * x2", args("x1", "x2"))),
+				proc("t5", invoker("x3 + x4", args("x3", "x4"))),
+				proc("j1", invoker("t4 - t5", args("t4", "t5"))));
 
 		logger.info("model: " + model);
 
@@ -121,13 +121,13 @@ public class ProcModels {
 				// inputs
 				ent("x1"), ent("x2"), proc("x3", 20.0), ent("x4"),
 				// outputs
-				proc("t4", invoker("x1 * x2", pars("x1", "x2"))),
+				proc("t4", invoker("x1 * x2", args("x1", "x2"))),
 				proc("t5",
 						task(sig("add", AdderImpl.class),
 								cxt("add", inVal("arg/x3"),
 										inVal("arg/x4"),
 										result("result/y")))),
-				proc("j1", invoker("t4 - t5", pars("t4", "t5"))));
+				proc("j1", invoker("t4 - t5", args("t4", "t5"))));
 
 		vm = put(vm, proc("x1", 10.0), proc("x2", 50.0),
 				proc("x4", 80.0));
@@ -143,7 +143,7 @@ public class ProcModels {
 		ProcModel pm = new ProcModel("proc-model");
 		add(pm, proc("x", 10.0));
 		add(pm, proc("y", 20.0));
-		add(pm, proc("add", invoker("x + y", pars("x", "y"))));
+		add(pm, proc("add", invoker("x + y", args("x", "y"))));
 
 		assertTrue(value(pm, "x").equals(10.0));
 		assertTrue(value(pm, "y").equals(20.0));
@@ -167,7 +167,7 @@ public class ProcModels {
 	@Test
 	public void parModelTest() throws Exception {
 		ProcModel pm = procModel(proc("x", 10.0), proc("y", 20.0),
-				proc("add", invoker("x + y", pars("x", "y"))));
+				proc("add", invoker("x + y", args("x", "y"))));
 
 		assertTrue(value(pm, "x").equals(10.0));
 		assertTrue(value(pm, "y").equals(20.0));
@@ -182,7 +182,7 @@ public class ProcModels {
 	@Test
 	public void expendingParModelTest() throws Exception {
 		ProcModel pm = procModel(proc("x", 10.0), proc("y", 20.0),
-				proc("add", invoker("x + y", pars("x", "y"))));
+				proc("add", invoker("x + y", args("x", "y"))));
 
 		Proc x = proc(pm, "x");
 		logger.info("proc x: " + x);
@@ -211,7 +211,7 @@ public class ProcModels {
 		// with new arguments, closure
 		assertTrue(value(pm, proc("x", 20.0), proc("y", 30.0)).equals(50.0));
 
-		add(pm, proc("z", invoker("(x * y) + add", pars("x", "y", "add"))));
+		add(pm, proc("z", invoker("(x * y) + add", args("x", "y", "add"))));
 		logger.info("z eval: " + value(pm, "z"));
 		assertTrue(value(pm, "z").equals(650.0));
 
@@ -222,8 +222,8 @@ public class ProcModels {
 	public void parInvokers() throws Exception {
 
 		// all var parameters (x1, y1, y2) are not initialized
-		Proc y3 = proc("y3", invoker("x + y2", pars("x", "y2")));
-		Proc y2 = proc("y2", invoker("x * y1", pars("x", "y1")));
+		Proc y3 = proc("y3", invoker("x + y2", args("x", "y2")));
+		Proc y2 = proc("y2", invoker("x * y1", args("x", "y1")));
 		Proc y1 = proc("y1", invoker("x1 * 5", ent("x1")));
 
 		ProcModel pc = procModel(y1, y2, y3);
@@ -503,7 +503,7 @@ public class ProcModels {
 		pm.putValue(Condition._closure_, new ServiceInvoker(pm));
 		// free variables, no pars for the invoker
 		((ServiceInvoker) pm.get(Condition._closure_))
-				.setEvaluator(invoker("{ double x, double y -> x > y }", pars("x", "y")));
+				.setEvaluator(invoker("{ double x, double y -> x > y }", args("x", "y")));
 
 		Closure c = (Closure)pm.getValue(Condition._closure_);
 		logger.info("closure condition: " + c);
@@ -543,7 +543,7 @@ public class ProcModels {
 
 		ProcModel pm = procModel("proc-model");
 		add(pm, proc("x", 1));
-		add(pm, proc("y", invoker("x + 1", pars("x"))));
+		add(pm, proc("y", invoker("x + 1", args("x"))));
 		add(pm, proc("z", inc(invoker(pm, "y"), 2)));
 		Invocation z2 = invoker(pm, "z");
 

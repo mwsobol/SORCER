@@ -25,12 +25,15 @@ import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.ent.Proc;
 import sorcer.core.context.model.ent.ProcModel;
 import sorcer.core.context.model.ent.Entry;
+import sorcer.eo.operator;
 import sorcer.service.*;
 import sorcer.service.modeling.ServiceModel;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.List;
+
+import static sorcer.eo.operator.args;
 
 /**
  * @author Mike Sobolewski
@@ -181,16 +184,21 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 	 * Assigns a setValue of parameters (pars) for this invoker.
 	 * </p>
 	 * 
-	 * @param pars
+	 * @param args
 	 *            the pars to setValue
 	 */
-	public ServiceInvoker setPars(ArgSet pars) {
-		this.pars = pars;
+	public ServiceInvoker setArgs(ArgSet args) {
+		this.pars = args;
 		return this;
 	}
 
-	public ServiceInvoker setPars(Arg[] pars) {
-		this.pars = new ArgSet(pars);
+	public ServiceInvoker setArgs(operator.Args args) {
+		this.pars = new ArgSet(args.args());
+		return this;
+	}
+
+	public ServiceInvoker setArgs(Arg[] args) {
+		this.pars = new ArgSet(args);
 		return this;
 	}
 	
@@ -379,7 +387,7 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 	
 	private void init(ArgSet set){
 		for (Arg p : set) {
-			if (((Proc)p).getScope() == null)
+			if (p instanceof Proc && ((Proc)p).getScope() == null)
 				((Proc)p).setScope(invokeContext);
 		}
 	}

@@ -191,7 +191,7 @@ public class Invokers {
 	}
 
 	@Test
-	public void invokerPar() throws Exception {
+	public void invokerProc() throws Exception {
 
 		Proc<Double> x1 = proc("x1", 1.0);
 
@@ -210,7 +210,7 @@ public class Invokers {
 		logger.info("y: " + eval(y));
 		assertTrue(eval(y).equals(3.0));
 
-		Object val = invoke(y, proc("x1", 10.0), proc("x2", 20.0));
+		Object val = invoke(y, ent("x1", 10.0), ent("x2", 20.0));
 		logger.info("y: " + val);
 
 		logger.info("y: " + eval(y));
@@ -251,11 +251,11 @@ public class Invokers {
 	}
 
 	@Test
-	public void conditionalInvoker() throws Exception {
+	public void modelConditions() throws Exception {
 		final ProcModel pm = new ProcModel("proc-model");
 		pm.putValue("x", 10.0);
 		pm.putValue("y", 20.0);
-		pm.putValue("condition", invoker("x > y", pars("x", "y")));
+		pm.putValue("condition", invoker("x > y", args("x", "y")));
 
 		assertEquals(pm.getValue("x"), 10.0);
 		assertEquals(pm.getValue("y"), 20.0);
@@ -292,7 +292,7 @@ public class Invokers {
 
 		OptInvoker opt = new OptInvoker("opt", new Condition(pm,
 				"{ x, y -> x > y }", "x", "y"), 
-					invoker("x + y", pars("x", "y")));
+					invoker("x + y", args("x", "y")));
 
 		pm.add(opt);
 		pm.putValue("x", 10.0);
@@ -317,7 +317,7 @@ public class Invokers {
 				proc("x", 10.0),
 				proc("y", 20.0),
 				opt("opt", condition(pm, "{ x, y -> x > y }", "x", "y"),
-						invoker("x + y", pars("x", "y"))));
+						invoker("x + y", args("x", "y"))));
 
 		logger.info("opt eval: " + value(pm, "opt"));
 		assertEquals(value(pm, "opt"), null);
@@ -340,19 +340,19 @@ public class Invokers {
 
 		OptInvoker opt1 = new OptInvoker("opt1", condition(pm,
 				"{ x, y -> x > y }", "x", "y"), invoker("x + y + 10",
-						pars("x", "y")));
+					args("x", "y")));
 
 		OptInvoker opt2 = new OptInvoker("opt2", condition(pm,
 				"{ x2, y2 -> x2 > y2 }", "x2", "y2"), invoker(
-				"x + y + 20", pars("x", "y")));
+				"x + y + 20", args("x", "y")));
 
 		OptInvoker opt3 = new OptInvoker("op3", condition(pm,
 				"{ x3, y3 -> x3 > y3 }", "x3", "y3"), invoker(
-				"x + y + 30", pars("x", "y")));
+				"x + y + 30", args("x", "y")));
 
 		// no condition means condition(true)
 		OptInvoker opt4 = new OptInvoker("opt4", invoker("x + y + 40",
-				pars("x", "y")));
+				args("x", "y")));
 
 		AltInvoker alt = new AltInvoker("alt", opt1, opt2, opt3, opt4);
 		add(pm, opt1, opt2, opt3, opt4, alt);
@@ -399,12 +399,12 @@ public class Invokers {
 		AltInvoker alt = alt(
 				"alt",
 				opt("opt1", condition(pm, "{ x, y -> x > y }", "x", "y"),
-						invoker("x + y + 10", pars("x", "y"))),
+						invoker("x + y + 10", args("x", "y"))),
 				opt("opt2", condition(pm, "{ x2, y2 -> x2 > y2 }", "x2", "y2"),
-						invoker("x + y + 20", pars("x", "y"))),
+						invoker("x + y + 20", args("x", "y"))),
 				opt("opt3", condition(pm, "{ x3, y3 -> x3 > y3 }", "x3", "y3"),
-						invoker("x + y + 30", pars("x", "y"))),
-				opt("opt4", invoker("x + y + 40", pars("x", "y"))));
+						invoker("x + y + 30", args("x", "y"))),
+				opt("opt4", invoker("x + y + 40", args("x", "y"))));
 
 		add(pm, alt, get(alt, 0), get(alt, 1), get(alt, 2), get(alt, 3));
 
@@ -433,7 +433,7 @@ public class Invokers {
 	public void invokerLoop() throws Exception {
 		ProcModel pm = procModel("proc-model");
 		add(pm, val("x", 1));
-		add(pm, proc("y", invoker("x + 1", pars("x"))));
+		add(pm, proc("y", invoker("x + 1", args("x"))));
 		add(pm, proc("z", inc(invoker(pm, "y"), 2)));
 		Invocation z2 = invoker(pm, "z");
 
@@ -446,7 +446,7 @@ public class Invokers {
 	public void incrementorStepBy1() throws Exception {
 		ProcModel pm = procModel("proc-model");
 		add(pm, val("x", 1));
-		add(pm, proc("y", invoker("x + 1", pars("x"))));
+		add(pm, proc("y", invoker("x + 1", args("x"))));
 		add(pm, proc("z", inc(invoker(pm, "y"))));
 		for (int i = 0; i < 10; i++) {
 			logger.info("" + value(pm, "z"));
@@ -458,7 +458,7 @@ public class Invokers {
 	public void incrementorStepBy2() throws Exception {
 		ProcModel pm = procModel("proc-model");
 		add(pm, proc("x", 1));
-		add(pm, proc("y", invoker("x + 1", pars("x"))));
+		add(pm, proc("y", invoker("x + 1", args("x"))));
 		add(pm, proc("z", inc(invoker(pm, "y"), 2)));
 
 		for (int i = 0; i < 10; i++) {
@@ -471,7 +471,7 @@ public class Invokers {
 	public void incrementorDouble() throws Exception {
 		ProcModel pm = procModel("proc-model");
 		add(pm, proc("x", 1.0));
-		add(pm, proc("y", invoker("x + 1.2", pars("x"))));
+		add(pm, proc("y", invoker("x + 1.2", args("x"))));
 		add(pm, proc("z", inc(invoker(pm, "y"), 2.1)));
 
 		for (int i = 0; i < 10; i++) {
