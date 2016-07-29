@@ -71,8 +71,8 @@ public class GroovyCodebaseSupport extends AbstractASTTransformation {
         }
 
         private String parseParameters(AnnotationNode anno) {
-            if (anno.getMember("eval")!=null) {
-                return anno.getMember("eval").getText();
+            if (anno.getMember("value")!=null) {
+                return anno.getMember("value").getText();
             } else {
                 String group = (anno.getMember("group")!=null) ? anno.getMember("group").getText() : null;
                 String module = (anno.getMember("module")!=null) ? anno.getMember("module").getText() : null;
