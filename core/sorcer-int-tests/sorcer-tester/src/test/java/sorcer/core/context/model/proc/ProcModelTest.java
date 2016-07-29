@@ -486,7 +486,6 @@ public class ProcModelTest {
 		assertEquals(flag.isTrue(), true);
 	}
 
-	
 	@Test
 		public void attachAgent() throws Exception {
 
