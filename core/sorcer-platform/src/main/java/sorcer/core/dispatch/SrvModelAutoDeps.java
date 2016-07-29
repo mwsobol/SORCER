@@ -43,7 +43,7 @@ import static sorcer.co.operator.paths;
  * User: Pawel Rubach
  * Date: 23.11.2015
  *
- * Sort a list of entries in a model taking into account the dependencies
+ * Sort a list of args in a model taking into account the dependencies
  */
 public class SrvModelAutoDeps {
 
@@ -127,7 +127,7 @@ public class SrvModelAutoDeps {
      */
     private void addDependsOn(SrvModel srvModel, List<String> sortedEntries) {
         for (String entryName : sortedEntries) {
-            // Only those that are entries in the srvModel
+            // Only those that are args in the srvModel
             if (!srvModel.getData().keySet().contains(entryName)) continue;
             Vertex vertex = dag.getVertex(entryName);
             if (vertex.getParentLabels() != null && vertex.getParentLabels().size() > 0) {
@@ -157,7 +157,7 @@ public class SrvModelAutoDeps {
     }
 
     /**
-     * Add SrvModel entries as Vertexes to the Directed Acyclic Graph (DAG)
+     * Add SrvModel args as Vertexes to the Directed Acyclic Graph (DAG)
      *
      * @param srvModel
      * @throws SortingException

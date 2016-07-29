@@ -76,7 +76,7 @@ public class GroovyInvoker<T> extends ServiceInvoker<T> {
 		if (name != null && name.length() > 0)
 			this.name = name;
 		this.expression = expression;
-		this.pars = parameters;
+		this.args = parameters;
 	}
 
 	public GroovyInvoker(String expression, Arg... parameters) {
@@ -91,7 +91,7 @@ public class GroovyInvoker<T> extends ServiceInvoker<T> {
 			throws EvaluationException {
 		this();
 		this.scriptFile = scriptFile;
-		this.pars = new ArgSet(parameters);
+		this.args = new ArgSet(parameters);
 	}
 
 	@Override
@@ -132,7 +132,7 @@ public class GroovyInvoker<T> extends ServiceInvoker<T> {
 				}
 			}
 //			TODO testing
-//			printedEntries(entries);
+//			printedEntries(args);
 		} catch (Exception e) {
 			logger.error("Error Occurred in Groovy Shell: " + e.getMessage());
 		}
@@ -160,8 +160,8 @@ public class GroovyInvoker<T> extends ServiceInvoker<T> {
 	private void initBindings() throws RemoteException, ContextException {
 //		logger.info("invokeContext keys: " + invokeContext.keySet() + "\nfor: " + expression);
 		if (invokeContext != null) {
-			if (pars != null && pars.size() > 0) {
-				for (Arg p : pars) {
+			if (args != null && args.size() > 0) {
+				for (Arg p : args) {
 					Object obj = invokeContext.getValue(p.getName());
 					if (obj == null || obj == Context.none) {
 						// try extended path
@@ -175,7 +175,7 @@ public class GroovyInvoker<T> extends ServiceInvoker<T> {
 				}
 			}
 		}
-		Iterator<Arg> i = pars.iterator();
+		Iterator<Arg> i = args.iterator();
 		Object val = null;
 		String key = null;
 		while (i.hasNext()) {

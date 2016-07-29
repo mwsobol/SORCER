@@ -428,12 +428,12 @@ public class Booter implements SorcerConstants {
 	/**
 	 * Assemble a String array suitable for use as Jini configuration options.
 	 * The String array whose first element is the configuration source and
-	 * remaining elements specify override values for entries
+	 * remaining elements specify override values for args
 	 * 
 	 * @param configFile
 	 *            The location of the configuration file, must not be null
 	 * @param overrides
-	 *            Array of elements specifying override values for entries, mat
+	 *            Array of elements specifying override values for args, mat
 	 *            be null
 	 * 
 	 * @return A String array suitable for use as a Jini configuration

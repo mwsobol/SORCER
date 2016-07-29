@@ -432,7 +432,7 @@ public class ProcModelTest {
 	public void conditionalClosures() throws RemoteException, ContextException {
 		ProcModel pm = new ProcModel("proc-model");
 		pm.putValue(Condition._closure_, new ServiceInvoker(pm));
-		// free variables, no pars for the invoker
+		// free variables, no args for the invoker
 		((ServiceInvoker) pm.get(Condition._closure_))
 				.setEvaluator(invoker("{ double x, double y -> x > y }"));
 

@@ -145,7 +145,7 @@ public class JavaSpaceContentsView extends JPanel implements Runnable {
 	 * cause of an Exception occuring will be down to a retrieved entry not
 	 * having a valid codebase setValue for it
 	 * 
-	 * If the client application that is writing the entries to the space is
+	 * If the client application that is writing the args to the space is
 	 * being run from within the SSB environment, makes sure you have setValue a
 	 * codebase alias, but right clicking on the project icon and selecting
 	 * "Add alias to webserver" and then selecting "Yes" when prompted.
@@ -181,7 +181,7 @@ public class JavaSpaceContentsView extends JPanel implements Runnable {
 	}
 
 	/**
-	 * Request all the entries currently in the space.
+	 * Request all the args currently in the space.
 	 * 
 	 * @throws TransactionException
 	 *             ,RemoteException,UnusableEntryException
@@ -200,7 +200,7 @@ public class JavaSpaceContentsView extends JPanel implements Runnable {
 			addMouseListener(table);
 
 		}
-		// here we're asking for all the entries in the space
+		// here we're asking for all the args in the space
 		// you could modify this sample GUI to allow user input of an entry
 		// class name
 		// AdminIterator iter=javaSpaceAdmin.contents(null/*Entry
@@ -262,7 +262,7 @@ public class JavaSpaceContentsView extends JPanel implements Runnable {
 		}
 
 		System.out.println("JavaSpace05 contents viewer retreived " + got
-				+ " entries");
+				+ " args");
 
 		if (ueCount > 0) {
 			entryMap.put(UNUSABLE_ENTRY, new Object[] { UNUSABLE_ENTRY,
@@ -284,7 +284,7 @@ public class JavaSpaceContentsView extends JPanel implements Runnable {
 		// final JTextField max=new JTextField(5);
 		// max.setText("100   ");
 		final JButton auto = new JButton("Auto refresh");
-		final JButton update = new JButton("Get entries");
+		final JButton update = new JButton("Get args");
 		updateAction = new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
 
@@ -333,7 +333,7 @@ public class JavaSpaceContentsView extends JPanel implements Runnable {
 			}
 		});
 
-		// panel.add(new JLabel("Max entries"));
+		// panel.add(new JLabel("Max args"));
 		// panel.add(max);
 		panel.add(update);
 		panel.add(auto);

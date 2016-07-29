@@ -22,6 +22,7 @@ import sorcer.core.context.ServiceContext;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
+import sorcer.service.modeling.ServiceModel;
 import sorcer.service.modeling.Variability;
 import sorcer.util.Response;
 import sorcer.service.Signature.ReturnPath;
@@ -72,12 +73,14 @@ public class ProcModel extends PositionalContext<Object> implements Model, Invoc
         super();
         name = PAR_MODEL;
         setSubject("proc/model", new Date());
+		isRevaluable = true;
 
     }
 
     public ProcModel(String name) {
         super(name);
-    }
+		isRevaluable = true;
+	}
 
 	public ProcModel(String name, Signature builder) {
 		this(name);
@@ -88,7 +91,8 @@ public class ProcModel extends PositionalContext<Object> implements Model, Invoc
         super(context);
         name = PAR_MODEL;
         setSubject("proc/model", new Date());
-    }
+		isRevaluable = true;
+	}
 
     public ProcModel(Identifiable... objects) throws RemoteException,
             ContextException {
@@ -247,9 +251,9 @@ public class ProcModel extends PositionalContext<Object> implements Model, Invoc
 		}
 		return this;
 	}
-	
-	public ProcModel add(Identifiable... objects) throws ContextException,
-			RemoteException {
+
+	@Override
+	public ServiceModel add(Identifiable... objects) throws ContextException, RemoteException {
 		Proc p = null;
 		boolean changed = false;
 		for (Identifiable obj : objects) {

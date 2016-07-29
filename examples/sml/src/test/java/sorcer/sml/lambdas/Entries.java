@@ -118,7 +118,7 @@ public class Entries {
 
     @Test
     public void lambdaClient() throws Exception {
-        // entries as ValueCallable and  Requestor lambdas
+        // args as ValueCallable and  Requestor lambdas
         Model mo = model(ent("multiply/x1", 10.0), ent("multiply/x2", 50.0),
                 lambda("multiply", (Context<Double> model) ->
                         value(model, "multiply/x1") * value(model, "multiply/x2")),

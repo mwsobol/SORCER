@@ -241,8 +241,8 @@ public class ServiceCataloger extends ServiceProvider implements Cataloger {
 
 	/**
 	 * Returns a Jini ServiceItem containing SORCER service provider based on
-	 * two entries provided. The first entry is a provider's service type, the
-	 * second provider's name. Expected that more entries will be needed to
+	 * two args provided. The first entry is a provider's service type, the
+	 * second provider's name. Expected that more args will be needed to
 	 * identify a provider in the future. See also lookup for a given ServiceID.
 	 * 
 	 * @see sorcer.core.provider.Cataloger#lookup(Class[])

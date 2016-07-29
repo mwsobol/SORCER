@@ -596,7 +596,7 @@ public class SorcerEnv extends SOS {
 				properties.put(key, value);
 			}
 		}
-		// now substitute matching entries accordingly
+		// now substitute matching args accordingly
 		e = properties.propertyNames();
 		while (e.hasMoreElements()) {
 			key = (String) e.nextElement();

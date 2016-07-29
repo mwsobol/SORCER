@@ -264,7 +264,7 @@ public class CollectionOperators {
 	@Test
 	public void dbParOperator() throws Exception {
 
-		// persist values (arguments) of pars
+		// persist values (arguments) of args
 		Proc dbp1 = persistent(proc("design/in", 25.0));
 		Proc dbp2 = dbPar("url/sobol", "http://sorcersoft.org/sobol");
 
@@ -277,7 +277,7 @@ public class CollectionOperators {
 		assertTrue(asis(dbp1) instanceof URL);
 		assertTrue(asis(dbp2) instanceof URL);
 
-		// store pars, not their arguments) in the data store
+		// store args, not their arguments) in the data store
 		URL p1Url = store(proc("design/in", 30.0));
 		URL p2Url = store(proc("url/sorcer", "http://sorcersoft.org"));
 
@@ -293,7 +293,7 @@ public class CollectionOperators {
 
 		Map<String, Double> map2 = map(proc("length", 248.0), proc("screen/width", 27.0), proc("screen/height", 12.0));
 
-		// keys and values of entries
+		// keys and values of args
 		assertEquals(key(proc("name", "Mike")), "name");
 		assertEquals(eval(proc("name", "Mike")), "Mike");
 		// when using namespaces use path for the name of context (map) variables
@@ -352,7 +352,7 @@ public class CollectionOperators {
 		assertTrue(get(cxt, "arg/x6").equals(1.6));
 		assertTrue(asis(cxt, "arg/x7") instanceof Proc);
 
-		// aliasing entries with reactive value entries - rvEnt
+		// aliasing args with reactive value args - rvEnt
 		put(cxt, rvEnt("arg/x6", ent("overwrite", 20.0)));
 		assertTrue(value(cxt, "arg/x6").equals(20.0));
 		urvEnt(cxt, "arg/x6");
@@ -360,7 +360,7 @@ public class CollectionOperators {
 		rrvEnt(cxt, "arg/x6");
 		assertTrue(value(cxt, "arg/x6").equals(20.0));
 
-		// aliasing pars, pars are always reactive
+		// aliasing args, args are always reactive
 		put(cxt, ent("arg/x6", proc("overwrite", 40.0)));
 		assertTrue(value(cxt, "arg/x6").equals(40.0));
 

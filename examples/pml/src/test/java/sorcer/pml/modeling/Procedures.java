@@ -73,7 +73,7 @@ public class Procedures {
 	@Test
 	public void closingParWitScope() throws Exception {
 
-		// invokers use contextual scope of pars
+		// invokers use contextual scope of args
 		Proc<?> add = proc("add", invoker("x + y", args("x", "y")));
 
 		Context<Double> cxt = context(proc("x", 10.0), proc("y", 20.0));

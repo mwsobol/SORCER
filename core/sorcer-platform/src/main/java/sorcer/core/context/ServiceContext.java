@@ -86,7 +86,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	protected List<EntryList> entryLists;
 	/**
 	 * metacontext: key is a metaattribute and eval is a map of
-	 * path/metapath entries
+	 * path/metapath args
 	 */
 	protected Map<String, Map<String,String>> metacontext;
 	protected Context initContext;
@@ -2767,7 +2767,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		// potentially context link
 		if (val == null) {
 			try {
-				return getValue(path);
+				return (T) getValue0(path);
 			} catch (ContextException e) {
 				e.printStackTrace();
 			}
@@ -2775,6 +2775,22 @@ public class ServiceContext<T> extends ServiceMogram implements
 			return val;
 		}
 		return val;
+	}
+
+	@Override
+	public ServiceModel add(Identifiable... objects) throws ContextException, RemoteException {
+		boolean changed = false;
+		for (Identifiable obj : objects) {
+			if (obj instanceof Entry) {
+				putValue(obj.getName(), ((Entry) obj).asis());
+			} else {
+				putValue(obj.getName(), obj);
+			}
+		}
+		if (changed) {
+			isChanged = true;
+		}
+		return this;
 	}
 
 	public T get(String path) {

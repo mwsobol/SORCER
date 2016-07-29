@@ -45,7 +45,7 @@ public class ExertInvoker extends ServiceInvoker implements ExertionInvoking {
 		super(name);
 		this.path = path;
 		this.exertion = exertion;
-		this.pars = new ArgSet(procEntries);
+		this.args = new ArgSet(procEntries);
 	}
 
 	public ExertInvoker(Exertion exertion, String path, Proc... procEntries) {

@@ -57,13 +57,13 @@ public class CallableInvoker<T> extends ServiceInvoker<T> {
 	public CallableInvoker(ProcModel context, Callable callable, Proc... procEntries) {
 		super(context);
 		this.callable = callable;
-		this.pars = new ArgSet(procEntries);
+		this.args = new ArgSet(procEntries);
 	}
 
 	public CallableInvoker(String name, Callable callable, Proc... procEntries) {
 		super(name);
 		this.callable = callable;
-		this.pars = new ArgSet(procEntries);
+		this.args = new ArgSet(procEntries);
 	}
 	
 	@Override

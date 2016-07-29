@@ -95,7 +95,7 @@ public interface ServiceModel extends Arg {
 	 * @return this model value at the path
 	 * @throws ModelException
 	 */
-	public Object getValue(String path, Arg... args) throws ContextException;
+	public Object getValue(String path, Arg... args) throws ContextException, RemoteException;
 
 	/**
 	 * Returns a value of the object at the path as is
@@ -107,5 +107,8 @@ public interface ServiceModel extends Arg {
 	 * @throws ModelException
 	 */
 	public Object asis(String path);
+
+	public ServiceModel add(Identifiable... objects) throws ContextException,
+			RemoteException;
 
 }

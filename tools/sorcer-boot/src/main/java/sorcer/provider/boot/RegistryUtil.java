@@ -30,7 +30,7 @@ import net.jini.config.ConfigurationException;
  * Utility for getting/creating the RMI Registry.
  *
  * <h4>Configuration</h4>
- * The RegistryUtil class supports the following configuration entries;
+ * The RegistryUtil class supports the following configuration args;
  * where each configuration entry name is associated with the component name
  * <tt>sorcer.provider.rmi</tt>.
  *

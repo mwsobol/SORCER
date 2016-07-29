@@ -48,8 +48,8 @@ import static sorcer.eo.operator.*;
  * phenomenon, or service, that accounts for its properties and is used to study its characteristics.
  * Properties of a service model are represented by path of Context with values that depend
  * on other properties and can be evaluated as specified by ths model. Evaluations of the service 
- * model entries of the Srv type results in exerting a dynamic federation of services as specified by
- * these entries. A rendezvous service provider orchestrating a choreography of the model
+ * model args of the Srv type results in exerting a dynamic federation of services as specified by
+ * these args. A rendezvous service provider orchestrating a choreography of the model
  * is a local or remote one specified by a service signature of the model.
  *   
  * Created by Mike Sobolewski on 1/29/15.
@@ -177,7 +177,7 @@ public class SrvModel extends ProcModel implements Model, Invocation<Object> {
         return getSrvValue(path, args);
     }
 
-    // calls from VarModels to call Srv entries of Vars
+    // calls from VarModels to call Srv args of Vars
     public Object getSrvValue(String path, Srv srv, Arg... args) throws EvaluationException {
         try {
             putValue(path, srv);

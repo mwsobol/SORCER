@@ -73,12 +73,12 @@ public class CmdInvoker extends ServiceInvoker implements CmdInvoking {
 	public CmdInvoker(String name, String cmd, Proc... procEntries) {
 		super(name);
 		this.cmd = cmd;
-		this.pars = new ArgSet(procEntries);
+		this.args = new ArgSet(procEntries);
 	}
 
 	public CmdInvoker(String[] cmdarray, Entry... parEntries) {
 		this.cmdarray = cmdarray;
-		this.pars = new ArgSet(parEntries);
+		this.args = new ArgSet(parEntries);
 	}
 
 	public CmdInvoker(String shcmd, File scriptFile, boolean background,
@@ -87,7 +87,7 @@ public class CmdInvoker extends ServiceInvoker implements CmdInvoking {
 		this.scriptFile = scriptFile;
 		this.logFile = logFile;
 		this.background = background;
-		this.pars = new ArgSet(procEntries);
+		this.args = new ArgSet(procEntries);
 		if (!scriptFile.canExecute()) {
 			scriptFile.setExecutable(true);
 			logger.warn("script exec permission corrected for: " + scriptFile);
@@ -113,7 +113,7 @@ public class CmdInvoker extends ServiceInvoker implements CmdInvoking {
 			InputStream stdin, File logFile, Proc... procEntries) throws EvaluationException {
 		cmdarray = new String[argarray.length + 1];
 		this.scriptFile = script;
-		this.pars = new ArgSet(procEntries);
+		this.args = new ArgSet(procEntries);
 		if (!scriptFile.canExecute()) {
 			scriptFile.setExecutable(true);
 			logger.warn("script exec permission corrected for: " + scriptFile);

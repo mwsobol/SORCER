@@ -227,7 +227,7 @@ public class ProcModels {
 		Proc y1 = proc("y1", invoker("x1 * 5", ent("x1")));
 
 		ProcModel pc = procModel(y1, y2, y3);
-		// any dependent values or pars can be updated or added any time
+		// any dependent values or args can be updated or added any time
 		put(pc, "x", 10.0);
 		put(pc, "x1", 20.0);
 
@@ -296,7 +296,7 @@ public class ProcModels {
 //		assertEquals(content(url2), sUrl);
 //		assertEquals(eval(p2), sUrl);
 //
-//		// store pars in the data store
+//		// store args in the data store
 //		p1 = proc("design/in", 30.0);
 //		p2 = proc("url", sUrl);
 //		URL url3 = store(p1);
@@ -412,7 +412,7 @@ public class ProcModels {
 		setValue(j1p, 1000.0);
 		assertTrue(eval(j1p).equals(1000.0));
 
-		// map pars are aliased pars
+		// map args are aliased args
 		ProcModel pc = procModel(x1p, x2p, j1p);
 		logger.info("y eval: " + value(pc, "y"));
 
@@ -501,7 +501,7 @@ public class ProcModels {
 
 		ProcModel pm = new ProcModel("proc-model");
 		pm.putValue(Condition._closure_, new ServiceInvoker(pm));
-		// free variables, no pars for the invoker
+		// free variables, no args for the invoker
 		((ServiceInvoker) pm.get(Condition._closure_))
 				.setEvaluator(invoker("{ double x, double y -> x > y }", args("x", "y")));
 

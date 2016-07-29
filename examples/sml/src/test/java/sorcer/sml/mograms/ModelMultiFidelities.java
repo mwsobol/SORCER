@@ -365,7 +365,7 @@ public class ModelMultiFidelities {
         Entry e2 = ent("x2", 6.0);
         Entry e3 = ent("x3", 7.0);
 
-        MultiFiRequest mfs = multiFiReq("entries", fi(e1, e2, e3));
+        MultiFiRequest mfs = multiFiReq("args", fi(e1, e2, e3));
 
         Object out = exec(mfs);
         logger.info("out: " + out);

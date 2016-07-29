@@ -89,12 +89,12 @@ public class MethodInvoker<T> extends ServiceInvoker<T> implements MethodInvokin
 
 	public MethodInvoker(Object target, Proc... procEntries) {
 		this.target = target;
-		this.pars = new ArgSet(procEntries);
+		this.args = new ArgSet(procEntries);
 	}
 
 	public MethodInvoker(Object target, String methodName, Proc... procEntries) {
 		this(methodName, target, methodName);
-		this.pars = new ArgSet(procEntries);
+		this.args = new ArgSet(procEntries);
 	}
 
 	public MethodInvoker(String name, Object target, String methodName,
@@ -102,7 +102,7 @@ public class MethodInvoker<T> extends ServiceInvoker<T> implements MethodInvokin
 		this(name);
 		this.target = target;
 		selector = methodName;
-		this.pars = new ArgSet(procEntries);
+		this.args = new ArgSet(procEntries);
 	}
 
 	public MethodInvoker(String name, String className, String methodName,
@@ -121,7 +121,7 @@ public class MethodInvoker<T> extends ServiceInvoker<T> implements MethodInvokin
 		this.className = className;
 		selector = methodName;
 		this.paramTypes = paramTypes;
-		this.pars = new ArgSet(procEntries);
+		this.args = new ArgSet(procEntries);
 		if (distributionParameter != null)
 			params = new Object[] { distributionParameter };
 	}

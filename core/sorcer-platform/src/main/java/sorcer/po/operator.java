@@ -291,10 +291,10 @@ public class operator {
 	}
 
 	public static ArgSet args(ServiceInvoker invoker) {
-		return invoker.getPars();
+		return invoker.getArgs();
 	}
 
-//	public static Arg[] pars(String... parnames)
+//	public static Arg[] args(String... parnames)
 //			throws ContextException {
 //		ArgSet ps = new ArgSet();
 //		for (String name : parnames) {

@@ -53,7 +53,7 @@ public class CollectionOperatorsTest {
 				
 		Map<String, Double> map2 = map(ent("length", 248.0), ent("width", 2.0), ent("height", 17.0));
 		
-		// keys and values of entries
+		// keys and values of args
 		String k = key(ent("name", "Mike"));
 		Double v = operator.eval(ent("height", 174.0));
 		assertEquals(k, "name");

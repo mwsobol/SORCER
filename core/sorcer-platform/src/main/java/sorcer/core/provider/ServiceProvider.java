@@ -108,7 +108,7 @@ import static sorcer.util.StringUtils.tName;
  * <p>
  * An inner or outer proxy can be a surrogate of a service partner defined by
  * this provider using <code>server</code> configuration entry or two realted
- * entries: <code>serverType</code> and <code>serverName</code>. If the entry
+ * args: <code>serverType</code> and <code>serverName</code>. If the entry
  * <code>server</code> is defined and its exporter is defined by the entry
  * <code>serverExporter</code> then this provider will use the server's proxy as
  * the outer (primary proxy) and itself as the inner proxy. However if the

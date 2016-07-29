@@ -94,7 +94,7 @@ public class SysCalls {
                 + Sorcer.getHome() + "/lib/river/jsk-platform-" + riverVersion + ".jar"  + File.pathSeparator
                 + Sorcer.getHome() + "/lib/river/jsk-lib-" + riverVersion + ".jar ";
 
-        ProcModel pm = procModel(proc("x", 10.0), args("y"),
+        ProcModel pm = procModel(ent("x", 10.0), args("y"),
                 proc("multiply", invoker("x * y", args("x", "y"))),
                 proc("add", invoker("x + y", args("x", "y"))));
 
@@ -103,7 +103,7 @@ public class SysCalls {
 				outVal("cylinder/height")));
         add(pm, caller);
 
-		Context result = (Context) value(pm, "volume");
+		Context result = (Context) eval(pm, "volume");
 //		Context result = (Context) invoke(pm, "volume");
         // get from the result the volume of cylinder and assign to y parameter
         assertTrue("EXPECTED '0' return eval, GOT: "+value(result, "exit/eval"),

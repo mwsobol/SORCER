@@ -53,27 +53,32 @@ public class operator {
         return value;
     }
 
-    public static Object setValue(Model context, String parname, Object value)
+    public static Object setValue(Model model, String entName, Object value)
         throws ContextException {
-        Object parEntry = context.asis(parname);
-        if (parEntry == null)
-            ((ProcModel)context).addProc(parname, value);
-        else if (parEntry instanceof Setter) {
+        Object entry = model.asis(entName);
+        if (entry == null)
             try {
-                ((Setter) parEntry).setValue(value);
+                model.add(sorcer.co.operator.ent(entName, value));
+            } catch (RemoteException e) {
+                throw new ContextException(e);
+            }
+        else if (entry instanceof Setter) {
+            try {
+                ((Setter) entry).setValue(value);
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
-        } else if (parEntry instanceof Proc) {
-            Proc proc = (Proc) parEntry;
+        } else {
+            ((ServiceContext)model).putValue(entName, value);
+        }
+
+        if (entry instanceof Proc) {
+            Proc proc = (Proc) entry;
             if (proc.getScope() != null && proc.getContextable() == null)
-                ((ServiceContext)proc.getScope()).putValue(proc.getName(), value);
+                proc.getScope().putValue(proc.getName(), value);
         }
-        // just ssetting the eval
-        else {
-            ((ProcModel)context).putValue(parname, value);
-            ((ProcModel)context).setIsChanged(true);
-        }
+
+        ((ServiceMogram)model).setIsChanged(true);
         return value;
     }
 

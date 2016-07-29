@@ -23,7 +23,7 @@ import sorcer.service.modeling.ServiceModel;
 import java.rmi.RemoteException;
 
 /**
- * Copier copies values of entries from one Context to another one.
+ * Copier copies values of args from one Context to another one.
  */
 public class Copier implements Evaluation<Context> {
 	private String name;

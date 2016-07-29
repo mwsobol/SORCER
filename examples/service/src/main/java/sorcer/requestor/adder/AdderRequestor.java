@@ -52,7 +52,7 @@ public class AdderRequestor extends ServiceRequestor {
         Double v1 = new Double(getProperty("arg/x1"));
         Double v2 = new Double(getProperty("arg/x2"));
 
-        // model three entries
+        // model three args
         return model(inVal("arg/x1", v1), inVal("arg/x2", v2),
                 srv(sig("add", Adder.class, result("result/y", inPaths("arg/x1", "arg/x2")))),
                 response("add", "arg/x1", "arg/x2"));

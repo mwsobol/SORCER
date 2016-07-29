@@ -37,7 +37,7 @@ public class ArithmeticMograms {
 
 	@Test
 	public void lambdaEntryModel() throws Exception {
-		// all model entries as functions - Java lambda expressions
+		// all model args as functions - Java lambda expressions
 
 		Model mo = model(ent("multiply/x1", 10.0), ent("multiply/x2", 50.0),
 				ent("add/x1", 20.0), ent("add/x2", 80.0),

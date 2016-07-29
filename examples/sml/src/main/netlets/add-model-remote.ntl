@@ -18,7 +18,7 @@
 @Codebase(group='org.sorcer', module='sml', version='${sorcer.version}', classifier='dl')
 import sorcer.arithmetic.provider.Adder
 
-// model with three entries
+// model with three args
 model(inEnt("arg/x1", 10.00d),
         inVal("arg/x2", 90.00d),
         val(sig("add", Adder.class,

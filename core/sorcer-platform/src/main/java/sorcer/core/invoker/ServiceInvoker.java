@@ -27,13 +27,10 @@ import sorcer.core.context.model.ent.ProcModel;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.eo.operator;
 import sorcer.service.*;
-import sorcer.service.modeling.ServiceModel;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.List;
-
-import static sorcer.eo.operator.args;
 
 /**
  * @author Mike Sobolewski
@@ -98,7 +95,7 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 	protected ValueCallable lambda;
 
 	// setValue of dependent variables for this evaluator
-	protected ArgSet pars = new ArgSet();
+	protected ArgSet args = new ArgSet();
 
 	/** Logger for logging information about instances of this type */
 	static final Logger logger = LoggerFactory.getLogger(ServiceInvoker.class
@@ -146,59 +143,60 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 	public ServiceInvoker(ProcModel context, Evaluator evaluator, Proc... procEntries) {
 		this(context);
 		this.evaluator = evaluator;
-		this.pars = new ArgSet(procEntries);
+		this.args = new ArgSet(procEntries);
 	}
 	
-	public ServiceInvoker(ProcModel context, Evaluator evaluator, ArgSet pars) {
+	public ServiceInvoker(ProcModel context, Evaluator evaluator, ArgSet args) {
 		this(context);
 		this.evaluator = evaluator;
-		this.pars = pars;
+		this.args = args;
 	}
 	
-	public ServiceInvoker(Evaluator evaluator, ArgSet pars) {
+	public ServiceInvoker(Evaluator evaluator, ArgSet args) {
 		this(((Identifiable)evaluator).getName());
 		this.evaluator = evaluator;
-		this.pars = pars;
+		this.args = args;
 	}
 	
 	public ServiceInvoker(Evaluator evaluator, Proc... procEntries) {
 		this(((Identifiable)evaluator).getName());
 		this.evaluator = evaluator;
-		this.pars = new ArgSet(procEntries);
+		this.args = new ArgSet(procEntries);
 	}
 	
 	/**
 	 * <p>
-	 * Returns a setValue of parameters (pars) of this invoker that are a a subset of
+	 * Returns a setValue of parameters (args) of this invoker that are a a subset of
 	 * parameters of its invokeContext.
 	 * </p>
 	 * 
-	 * @return the pars of this invoker
+	 * @return the args of this invoker
 	 */
-	public ArgSet getPars() {
-		return pars;
+	@Override
+	public ArgSet getArgs() {
+		return args;
 	}
 
 	/**
 	 * <p>
-	 * Assigns a setValue of parameters (pars) for this invoker.
+	 * Assigns a setValue of parameters (args) for this invoker.
 	 * </p>
 	 * 
 	 * @param args
-	 *            the pars to setValue
+	 *            the args to setValue
 	 */
 	public ServiceInvoker setArgs(ArgSet args) {
-		this.pars = args;
+		this.args = args;
 		return this;
 	}
 
 	public ServiceInvoker setArgs(operator.Args args) {
-		this.pars = new ArgSet(args.args());
+		this.args = new ArgSet(args.args());
 		return this;
 	}
 
 	public ServiceInvoker setArgs(Arg[] args) {
-		this.pars = new ArgSet(args);
+		this.args = new ArgSet(args);
 		return this;
 	}
 	
@@ -240,7 +238,7 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 	
 	@Override 
 	public void update(Observable observable, Object obj) throws EvaluationException, RemoteException {
-		// one of my dependent pars changed
+		// one of my dependent args changed
 		// the 'observable' is the dependent invoker that has changed as indicated by 'obj'
 		// ignore updates from itself
 		valueValid(false);
@@ -268,7 +266,7 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 			((ServiceContext)invokeContext).put(((Proc) par).getName(), par);
 			if (((Proc) par).asis() instanceof ServiceInvoker) {
 				((ServiceInvoker) ((Proc) par).getValue()).addObserver(this);
-				pars.add((Proc) par);
+				args.add((Proc) par);
 				value = null;
 				setChanged();
 				notifyObservers(this);
@@ -349,7 +347,7 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 			}
 			if (((ServiceContext)invokeContext).isChanged()) {
 				valueIsValid = false;
-				pars.clearArgs();
+				this.args.clearArgs();
 			}
 			if (valueIsValid)
 				return value;
@@ -372,11 +370,11 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 	private Object invokeEvaluator(Arg... entries)
 			throws InvocationException {
 		try {
-			init(pars);
+			init(this.args);
 			if (lambda != null) {
 				return lambda.call((Context)invokeContext);
 			} else if (evaluator != null) {
-				evaluator.addArgs(pars);
+				evaluator.addArgs(this.args);
 				return evaluator.getValue(entries);
 			}
 		} catch (Exception e) {
@@ -462,7 +460,7 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 	}
 
 	public void clearPars() throws EvaluationException {
-		for (Arg p : pars) {
+		for (Arg p : args) {
 			try {
 				((Proc) p).setValue(null);
 			} catch (Exception e) {
@@ -512,14 +510,6 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 		addPars(set);
 	}
 
-	/* (non-Javadoc)
-	 * @see sorcer.service.Evaluator#getArgs()
-	 */
-	@Override
-	public ArgSet getArgs() {
-		return pars;
-	}
-	
 	/* (non-Javadoc)
 	 * @see sorcer.service.Evaluator#setParameterTypes(java.lang.Class[])
 	 */

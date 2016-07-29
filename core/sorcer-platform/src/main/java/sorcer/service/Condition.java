@@ -285,7 +285,7 @@ import java.util.Map;
 		Iterator i = ((ServiceContext) context).entryIterator();
 		while (i.hasNext()) {
 			Map.Entry entry = (Map.Entry) i.next();
-			// now check entries
+			// now check args
 			if (entry.getValue() instanceof ServiceInvoker) {
 				clenupContextScripts(((ServiceInvoker) entry.getValue())
 						.getScope());

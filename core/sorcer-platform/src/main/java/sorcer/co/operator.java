@@ -641,6 +641,7 @@ public class operator {
 				procEntry.getScope().putValue(procEntry.getName(), value);
 			}
 		}
+		entry.isValid(false);
 		return entry;
 	}
 

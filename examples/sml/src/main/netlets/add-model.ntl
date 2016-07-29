@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-// model with three entries
+// model with three args
 Model context = model(
         val("x1", 100.0d),
         val("x2", 200.0d),

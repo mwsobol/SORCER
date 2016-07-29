@@ -46,7 +46,7 @@ public class ContextModels {
 		assertTrue(eval(mdl, "arg/x6").equals(6.0));
 
 		// proc is of the Evaluation type
-		// entries in models are evaluated
+		// args in models are evaluated
 		put(mdl, ent("arg/x6", ent("overwrite", 20.0)));
 		assertTrue(eval(mdl, "arg/x6").equals(20.0));
 

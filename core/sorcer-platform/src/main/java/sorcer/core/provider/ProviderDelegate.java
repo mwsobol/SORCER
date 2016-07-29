@@ -168,7 +168,7 @@ public class ProviderDelegate {
 
 	protected boolean idPersistent = false;
 
-	/** if true then we match all entries with interface type only. */
+	/** if true then we match all args with interface type only. */
 	protected boolean matchInterfaceOnly = true;
 
 	/** if true then its provider can be monitored for its exerting behavior. */
@@ -1397,7 +1397,7 @@ public class ProviderDelegate {
 	/**
 	 * Creates the service attributes to be used with Jini lookup services.
 	 * <p>
-	 * This function will create the following entries:
+	 * This function will create the following args:
 	 * <ul>
 	 * <li>A {@link Name}.
 	 * <li>A {@link SorcerServiceInfo}entry with all the information about this
@@ -1425,14 +1425,14 @@ public class ProviderDelegate {
 			attrVec.addAll(VersionInfo.productAttributesFor(getProviderName()));
 			Entry sst = getSorcerServiceTypeEntry();
 			attrVec.add(sst);
-			// add additional entries declared in the Jini provider's
+			// add additional args declared in the Jini provider's
 			// configuration
 			Entry[] miscEntries = (Entry[]) config.jiniConfig.getEntry(
-					ServiceProvider.COMPONENT, "entries", Entry[].class,
+					ServiceProvider.COMPONENT, "args", Entry[].class,
 					new Entry[] {});
 			for (int i = 0; i < miscEntries.length; i++) {
 				attrVec.add(miscEntries[i]);
-				// transfer location from entries if not defined in
+				// transfer location from args if not defined in
 				// SorcerServiceInfo
 				if (miscEntries[i] instanceof Location
 						&& ((SorcerServiceInfo) sst).location == null) {
@@ -2264,7 +2264,7 @@ public class ProviderDelegate {
 					suffixedName = val + "-" + nameSuffixed;
 					nameSuffixed = "true";
 				}
-				// add provider name and SorcerServiceType entries
+				// add provider name and SorcerServiceType args
 				// nameSuffixed not defined by this provider but in sorcer.env
 				if (nameSuffixed.length() == 0 && globalNameSuffixed) {
 					setProviderName(suffixedName);

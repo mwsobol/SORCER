@@ -320,9 +320,9 @@ public class InvokerTest {
 				"java -cp  " + cp + Volume.class.getName() + " cylinder");
 
 		ProcModel pm = procModel(proc(cmd),
-				proc("x", 10.0), ent("y"),
-				proc("multiply", invoker("x * y", args("x", "y"))),
-				proc("add", invoker("x + y", args("x", "y"))));
+				ent("x", 10.0), ent("y"),
+				ent("multiply", invoker("x * y", args("x", "y"))),
+				ent("add", invoker("x + y", args("x", "y"))));
 
 		CmdResult result = (CmdResult) invoke(pm, "volume");
 		// get from the result the volume of cylinder and assign to y parameter
@@ -347,7 +347,7 @@ public class InvokerTest {
 
 		//pm.putValue("condition", new ServiceInvoker(pm));
 		
-		//((ServiceInvoker) pm.get("condition")).setArgs(pars("x", "y")).setEvaluator(
+		//((ServiceInvoker) pm.get("condition")).setArgs(args("x", "y")).setEvaluator(
 		//		invoker("x > y"));
 
 		
