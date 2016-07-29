@@ -373,6 +373,11 @@ public class operator {
 		return entry;
 	}
 
+	public static Entry db(Entry entry) {
+		entry.setPersistent(true);
+		return entry;
+	}
+
 	public static Entry in(Entry entry) {
 		entry.setType(Variability.Type.INPUT);
 		return entry;
