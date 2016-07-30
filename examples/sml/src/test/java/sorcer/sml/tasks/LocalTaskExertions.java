@@ -112,7 +112,7 @@ public class LocalTaskExertions {
 
 		t4 = exert(t4, fi("object"));
 //		logger.info("task context: " + context(t4));
-		assertEquals(get(context(t4), "result/y"), 500.0);
+		assertEquals(value(context(t4), "result/y"), 500.0);
 	}
 
     @Test
@@ -130,7 +130,7 @@ public class LocalTaskExertions {
 
         batch3 = exert(batch3);
 		//logger.info("task result/y: " + get(batch3, "result/y"));
-		assertEquals(get(batch3, "result/y"), 400.0);
+		assertEquals(value(context(batch3), "result/y"), 400.0);
     }
 
     @Test
@@ -146,7 +146,7 @@ public class LocalTaskExertions {
                         inVal("op2/x1", 20.0), inVal("op2/x2", 80.0)));
 
         batch3 = exert(batch3);
-		assertTrue(get(batch3, "result/y").equals(400.0));
+		assertTrue(value(context(batch3), "result/y").equals(400.0));
 
     }
 

@@ -2178,9 +2178,9 @@ public class operator {
 			throw new ContextException("Not PositionalContext, index: " + index);
 	}
 
-	public static Object get(Exertion exertion) throws ContextException,
+	public static Object returnValue(Mogram mogram) throws ContextException,
 			RemoteException {
-		return exertion.getContext().getReturnValue();
+		return mogram.getContext().getReturnValue();
 	}
 
 	public static <T extends Evaluation> Object asis(T evaluation) throws EvaluationException {
