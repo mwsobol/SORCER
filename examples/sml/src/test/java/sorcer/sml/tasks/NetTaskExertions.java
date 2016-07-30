@@ -216,7 +216,7 @@ public class NetTaskExertions {
 
 		task = exert(task, fi("net"));
 		logger.info("exerted: " + task);
-		assertTrue("Wrong eval for 100.0", (Double) get(task) == 100.0);
+		assertTrue("Wrong eval for 100.0", (Double) returnValue(task) == 100.0);
 	}
 
 	@Test
@@ -317,7 +317,7 @@ public class NetTaskExertions {
 		task = exert(task, fi("net"));
 		logger.info("exerted: " + context(task));
 		assertTrue(fiName(task).equals("net"));
-		assertTrue(get(task).equals(100.0));
+		assertTrue(returnValue(task).equals(100.0));
 	}
 
 

@@ -87,13 +87,16 @@ public class LocalTaskExertions {
 	}
 
 	@Test
-	public void evaluateTask() throws SignatureException, ExertionException, ContextException  {
+	public void evaluateTask() throws Exception  {
 
 		Task t6 = task("t6", sig("average", AveragerImpl.class),
 				cxt("average", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("result/y")));
 
-		// get the result eval
+		// get the result of task evaluation
 		assertEquals(50.0, eval(t6));
+
+		// get the returned result
+		assertEquals(50.0, returnValue(t6));
 
 		// get the subcontext output from the exertion
 		assertTrue(context(ent("result/y", 50.0), ent("arg/x1", 20.0)).equals(
@@ -186,7 +189,7 @@ public class LocalTaskExertions {
 		task = exert(task, fi("object"));
 //		logger.info("exerted: " + context(task));
 		assertTrue(fiName(task).equals("object"));
-		assertTrue(get(task).equals(100.0));
+		assertTrue(returnValue(task).equals(100.0));
 	}
 
 
