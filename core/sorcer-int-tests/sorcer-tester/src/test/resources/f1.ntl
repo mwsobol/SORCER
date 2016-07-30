@@ -1,7 +1,8 @@
 #!/usr/bin/env nsh
 
-//@Codebase('org.sorcer:sml:jar:dl:${sorcer.version}')
-@Codebase(group='org.sorcer', module='sml', version='${sorcer.version}', classifier='dl')
+@Codebase('org.sorcer:sml:jar:dl:${sorcer.version}')
+//@Codebase(group='org.sorcer', module='sml', version='${sorcer.version}', classifier='dl')
+
 import sorcer.arithmetic.provider.Adder;
 import sorcer.arithmetic.provider.Multiplier;
 import sorcer.arithmetic.provider.Subtractor;
