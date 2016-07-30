@@ -11,6 +11,7 @@ import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.core.context.Copier;
 import sorcer.core.context.model.ent.Proc;
 import sorcer.core.context.model.ent.Entry;
+import sorcer.core.invoker.ServiceInvoker;
 import sorcer.service.Context;
 import sorcer.service.modeling.ServiceModel;
 import sorcer.service.modeling.Model;
@@ -56,7 +57,7 @@ public class ContextModels {
 		assertTrue(eval(mdl, "arg/x7").equals(4.0));
 		assertTrue(asis(mdl, "arg/x7") instanceof Entry);
 		assertTrue(asis(mdl, "arg/x7") instanceof Proc);
-		assertTrue(asis(asis(mdl, "arg/x7")) instanceof Double);
+		assertTrue(asis(asis(mdl, "arg/x7")) instanceof ServiceInvoker);
 	}
 
 	@Test

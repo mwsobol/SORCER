@@ -982,14 +982,18 @@ public class operator {
 
 	public static Object asis(Entry entry)
 			throws ContextException {
-		if (entry instanceof Proc) {
-			if (entry._2 != null && entry.isValid())
-				return entry._2;
-			else
-				return entry.value();
+//		if (entry instanceof Proc) {
+//			if (entry._2 != null && entry.isValid())
+//				return entry._2;
+//			else
+//				return entry.value();
+//		}
+//		else
+		try {
+			return entry.asis();
+		} catch (RemoteException e) {
+			throw new ContextException(e);
 		}
-		else
-			return entry._2;
 	}
 
 	public static <T> T asis(Context<T> context, String path)
