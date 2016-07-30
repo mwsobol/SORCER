@@ -55,6 +55,7 @@ import java.util.*;
 import java.util.Collections;
 import java.util.concurrent.Callable;
 
+import static sorcer.eo.operator.context;
 import static sorcer.po.operator.invoker;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -345,7 +346,7 @@ public class operator {
 		Entry<T> entry = null;
 		if (value instanceof Invocation || value instanceof Evaluation) {
 			entry = new Proc<T>(path, value);
-		} else if (value instanceof ServiceFidelity) {
+		} else if (value instanceof Signature || value instanceof ServiceFidelity) {
 			entry = (Entry<T>) new Srv(path, value);
 		} else if (value instanceof MultiFiRequest) {
 			try {
@@ -368,8 +369,20 @@ public class operator {
 		for (Arg arg : args) {
 			cxt = (Context) Arg.getServiceModel(args);
 		}
-		if (cxt != null && entry instanceof Proc) {
-			((Proc)entry).setScope(cxt);
+		try {
+			// special cases of procedural attachmnet
+			if (entry instanceof Proc) {
+				Proc proc = (Proc) entry;
+				if (cxt != null) {
+					((Proc) entry).setScope(cxt);
+				} else if (args.length == 1 && args[0] instanceof Entry) {
+					entry.setScope(context((Entry) args[0]));
+				} else if (args.length == 1 && args[0] instanceof Service) {
+					entry = new Proc(path, value, args[0]);
+				}
+			}
+		} catch (ContextException e) {
+			e.printStackTrace();
 		}
 		return entry;
 	}
@@ -982,13 +995,6 @@ public class operator {
 
 	public static Object asis(Entry entry)
 			throws ContextException {
-//		if (entry instanceof Proc) {
-//			if (entry._2 != null && entry.isValid())
-//				return entry._2;
-//			else
-//				return entry.value();
-//		}
-//		else
 		try {
 			return entry.asis();
 		} catch (RemoteException e) {
