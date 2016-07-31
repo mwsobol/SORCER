@@ -2947,6 +2947,11 @@ public class operator {
 
 	public static Object provider(Signature signature)
 			throws SignatureException {
+		return prv(signature);
+	}
+
+	public static Object prv(Signature signature)
+			throws SignatureException {
 		if (signature instanceof ObjectSignature && ((ObjectSignature)signature).getTarget() != null)
 			return  ((ObjectSignature)signature).getTarget();
 		else if (signature instanceof NetletSignature) {

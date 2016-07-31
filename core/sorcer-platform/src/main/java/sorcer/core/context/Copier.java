@@ -82,4 +82,5 @@ public class Copier implements Evaluation<Context> {
 	public String getName() {
 		return name;
 	}
+
 }

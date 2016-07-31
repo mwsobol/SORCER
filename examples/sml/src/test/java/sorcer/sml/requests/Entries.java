@@ -111,6 +111,7 @@ public class Entries {
         public String getName() {
             return getClass().getName();
         }
+
     };
 
 	@Test

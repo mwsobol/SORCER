@@ -40,8 +40,8 @@ public class ContextModels {
 
 		// use procModel to create an ProcModel the same way as a regular context
 		// or convert any context to procModel(<context>)
-		Model mdl = procModel(ent("arg/x1", 1.0), ent("arg/x2", 2.0),
-				ent("arg/x3", 3.0), ent("arg/x4", 4.0), ent("arg/x5", 5.0));
+		Model mdl = procModel(val("arg/x1", 1.0), val("arg/x2", 2.0),
+				val("arg/x3", 3.0), val("arg/x4", 4.0), val("arg/x5", 5.0));
 
 		add(mdl, ent("arg/x6", 6.0));
 		assertTrue(eval(mdl, "arg/x6").equals(6.0));
@@ -68,7 +68,7 @@ public class ContextModels {
 
 		add(mdl, ent("invoke", invoker("x1 + x3", ents("x1", "x3"))));
 
-		// declare response paths
+		// declare the modeling target
 		responseUp(mdl, "invoke");
 		// evaluate the model
 		eval(mdl);

@@ -2343,7 +2343,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	public boolean isLinkedContext(Object path) {
 		Object result;
 		// System.out.println("getValue: path = \""+path+"\"");
-		result = get(path);
+		result = data.get(path);
 		if (result instanceof ContextLink) {
 			return true;
 		} else
@@ -2793,6 +2793,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		return this;
 	}
 
+	@Override
 	public T get(String path) {
 		if (path != null)
 			return data.get(path);
@@ -2935,7 +2936,6 @@ public class ServiceContext<T> extends ServiceMogram implements
 		result.setName("Response of model: " + name);
 		return result;
 	}
-
 
 	public Object getResult() throws ContextException, RemoteException {
 		return mogramStrategy.outcome;
@@ -3339,9 +3339,9 @@ public class ServiceContext<T> extends ServiceMogram implements
 		return data.containsKey(path);
 	}
 
-	public T get(Object key) {
-		return data.get(key);
-	}
+//	public T get(Object key) {
+//		return data.get(key);
+//	}
 
 	public Set<String> keySet() {
 		return data.keySet();

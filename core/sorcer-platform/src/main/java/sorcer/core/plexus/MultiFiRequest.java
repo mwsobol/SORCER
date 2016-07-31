@@ -220,4 +220,9 @@ public class MultiFiRequest extends ServiceMogram {
     public Object exec(Arg... entries) throws MogramException, RemoteException {
         return null;
     }
+
+    @Override
+    public Object get(String component) throws ServiceException {
+        return requestFidelity.getSelect(component);
+    }
 }

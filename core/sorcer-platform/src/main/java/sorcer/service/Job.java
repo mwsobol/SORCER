@@ -601,4 +601,5 @@ public class Job extends CompoundExertion {
 			throw new SetterException(ex);
 		}
 	}
+
 }

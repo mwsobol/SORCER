@@ -165,4 +165,5 @@ public class Tuple2<T1, T2> implements net.jini.core.entry.Entry, Serializable, 
 	public Object exec(Arg... entries) throws ServiceException, RemoteException, TransactionException {
 		return getValue(entries);
 	}
+
 }
