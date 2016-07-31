@@ -144,7 +144,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 		task = exert(task, fi("net"));
 		logger.info("exerted: " + context(task));
 		assertTrue(fiName(task).equals("net"));
-		assertTrue(get(task).equals(100.0));
+		assertTrue(returnValue(task).equals(100.0));
 	}
 
 	private Job getMultiFiJob() throws Exception {
@@ -256,7 +256,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 						inVal("arg, x2", 80.0), result("result, y")));
 		t5 = exert(t5);
 		logger.info("t5 context: " + context(t5));
-		logger.info("t5 eval: " + get(t5));
+		logger.info("t5 eval: " + returnValue(t5));
 		assertTrue(operator.eval(t5).equals(50.0));
 	}
 	

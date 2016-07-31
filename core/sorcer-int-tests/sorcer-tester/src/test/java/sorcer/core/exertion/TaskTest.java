@@ -61,7 +61,7 @@ public class TaskTest {
 		// EXERTING
 		task = exert(task);
 		logger.info("exerted: " + task);
-		assertTrue("Wrong eval for 100.0", (Double)get(task) == 100.0);
+		assertTrue("Wrong eval for 100.0", (Double)returnValue(task) == 100.0);
 		print(exceptions(task));
 		assertTrue(exceptions(task).size() == 0);
 		print(trace(task));
@@ -117,7 +117,7 @@ public class TaskTest {
 		// EXERTING
 		task = exert(task);
 		logger.info("exerted: " + task);
-		assertTrue("Wrong eval for 100.0", (Double) get(task) == 100.0);
+		assertTrue("Wrong eval for 100.0", (Double) returnValue(task) == 100.0);
 		print(exceptions(task));
 		assertTrue(exceptions(task).size() == 0);
 		print(trace(task));
@@ -153,7 +153,7 @@ public class TaskTest {
 		task = exert(task, fi("object"));
 		logger.info("exerted: " + context(task));
 		assertTrue(fiName(task).equals("object"));
-		assertTrue(get(task).equals(100.0));
+		assertTrue(returnValue(task).equals(100.0));
 	}
 
 	@Test
@@ -174,7 +174,7 @@ public class TaskTest {
 		task = exert(task, fi("net"));
 		logger.info("exerted: " + context(task));
 		assertTrue(fiName(task).equals("net"));
-		assertTrue("Wrong eval for 100.0", (Double)get(task) == 100.0);
+		assertTrue("Wrong eval for 100.0", (Double)returnValue(task) == 100.0);
 	}
 	
 	@Test
