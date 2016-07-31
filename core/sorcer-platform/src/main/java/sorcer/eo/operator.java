@@ -1302,18 +1302,6 @@ public class operator {
 		return fi;
 	}
 
-	public static ServiceFidelity<Request> fi(String name, Request... selectors) {
-		ServiceFidelity fi = new ServiceFidelity(name, selectors);
-		fi.type = ServiceFidelity.Type.REQUEST;
-		return fi;
-	}
-
-	public static ServiceFidelity<Request> fi(Request... selectors) {
-		ServiceFidelity fi = new ServiceFidelity(selectors);
-		fi.type = ServiceFidelity.Type.REQUEST;
-		return fi;
-	}
-
 	public static ServiceFidelity<Fidelity> fi(String name, Fidelity... selectors) {
 		ServiceFidelity fi = new ServiceFidelity(name, selectors);
 		fi.type = ServiceFidelity.Type.META;
@@ -1341,31 +1329,39 @@ public class operator {
 	}
 
 	public static MorphFidelity<Request> mFi(Morpher morpher, Request... services) {
-		MorphFidelity<Request> multiFi = new MorphFidelity(new ServiceFidelity(services));
-		multiFi.setMorpher(morpher);
-		return multiFi;
+		MorphFidelity<Request> morphFi = new MorphFidelity(new ServiceFidelity(services));
+		morphFi.setMorpher(morpher);
+		return morphFi;
 	}
 
 	public static MorphFidelity<Request> mFi(String name, Morpher morpher, Request... services) {
-		MorphFidelity<Request> multiFi = new MorphFidelity(new ServiceFidelity(name, services));
-		multiFi.setMorpher(morpher);
-		return multiFi;
-	}
-
-	public static MorphFidelity<Request> mFi(ServiceFidelity<Entry> sFi, Request... services) {
-		MorphFidelity<Request> multiFi = new MorphFidelity(new ServiceFidelity(services));
-		multiFi.setMorpherFidelity(sFi);
-		return multiFi;
+		MorphFidelity<Request> morphFi = new MorphFidelity(new ServiceFidelity(name, services));
+		morphFi.setMorpher(morpher);
+		morphFi.setPath(name);
+		return morphFi;
 	}
 
 	public static MorphFidelity<Request> mFi(Request... services) {
-		MorphFidelity<Request> multiFi = new MorphFidelity(new ServiceFidelity(services));
-		return multiFi;
+		MorphFidelity<Request> morphFi = new MorphFidelity(new ServiceFidelity(services));
+		return morphFi;
 	}
 
 	public static MorphFidelity<Request> mFi(String name, Request... services) {
-		MorphFidelity<Request> multiFi = new MorphFidelity(new ServiceFidelity(name, services));
-		return multiFi;
+		MorphFidelity<Request> morphFi = new MorphFidelity(new ServiceFidelity(name, services));
+		return morphFi;
+	}
+
+	public static ServiceFidelity<Request> srvFi(Request... services) {
+		ServiceFidelity<Request> srvFi = new ServiceFidelity(services);
+		srvFi.type = ServiceFidelity.Type.REQUEST;
+		return srvFi;
+	}
+
+	public static ServiceFidelity<Request> srvFi(String name, Request... services) {
+		ServiceFidelity<Request> srvFi = new ServiceFidelity(services);
+		srvFi.setPath(name);
+		srvFi.type = ServiceFidelity.Type.REQUEST;
+		return srvFi;
 	}
 
 	public static void reconfigure(Mogram mogram, Fidelity... fidelities) throws RemoteException, ContextException {

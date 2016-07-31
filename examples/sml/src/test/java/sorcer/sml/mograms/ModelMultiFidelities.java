@@ -365,7 +365,7 @@ public class ModelMultiFidelities {
         Entry e2 = ent("x2", 6.0);
         Entry e3 = ent("x3", 7.0);
 
-        MultiFiRequest mfs = multiFiReq("args", fi(e1, e2, e3));
+        MultiFiRequest mfs = multiFiReq("args", srvFi(e1, e2, e3));
 
         Object out = exec(mfs);
         logger.info("out: " + out);
@@ -416,7 +416,7 @@ public class ModelMultiFidelities {
         Signature ms = sig("multiply", MultiplierImpl.class);
         Signature as = sig("add", AdderImpl.class);
 
-        MultiFiRequest mfs = multiFiReq(fi(ms, as), cxt);
+        MultiFiRequest mfs = multiFiReq(srvFi(ms, as), cxt);
 
         Context out = (Context) exec(mfs);
         logger.info("out: " + out);
