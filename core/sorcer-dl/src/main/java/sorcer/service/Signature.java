@@ -394,9 +394,21 @@ public interface Signature extends Item, Comparable, Dependency, Identifiable,
 	public static class ServiceType implements Serializable, Arg {
 		static final long serialVersionUID = 1L;
 		public String typeName;
-		public Class providerType;
+		public Class providerType = Object.class;
         // service types implemented by the service provider
         public Class[] matchTypes;
+
+		public ServiceType() {
+			// do nothing
+		}
+
+		public ServiceType(String className) {
+			typeName = className;
+		}
+
+		public ServiceType(Class classType) {
+			providerType = classType;
+		}
 
 		@Override
 		public String getName() {

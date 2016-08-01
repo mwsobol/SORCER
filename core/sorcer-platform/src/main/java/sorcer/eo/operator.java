@@ -972,31 +972,21 @@ public class operator {
 		} else {
 			Object[] dest = new Object[items.length+1];
 			System.arraycopy(items,  0, dest,  1, items.length);
-			dest[0] = serviceType;
-			return sig(operation, Object.class, dest);
+			dest[0] = operation;
+			ServiceSignature signature = (ServiceSignature) sig(operation, serviceType.providerType, dest);
+			signature.setServiceType(serviceType);
+			return signature;
 		}
+	}
+
+	public static Signature sig(Class classType, Object... items) throws SignatureException {
+		ServiceType serviceType = new ServiceType(classType);
+		return sig(serviceType, items);
 	}
 
 	public static Signature sig(Signature signature, Operation operation) throws SignatureException {
 		((ServiceSignature)signature).setOperation(operation);
 		return signature;
-	}
-
-	public static Signature sig(Class serviceType, Object... items) throws SignatureException {
-		if (items == null || items.length == 0)
-			return defaultSig(serviceType);
-
-		String operation = null;
-		for (Object item : items) {
-			if (item instanceof String) {
-				operation = (String) item;
-			}
-		}
-		if (operation == null) {
-			return sig("?", serviceType, items);
-		} else {
-			return sig(operation, serviceType, items);
-		}
 	}
 
 	public static Signature sig(String operation, Class serviceType, Object... items) throws SignatureException {
@@ -1137,14 +1127,12 @@ public class operator {
 	}
 
 	public static ServiceType type(Class providerType) {
-		ServiceType st = new ServiceType();
-		st.providerType = providerType;
+		ServiceType st = new ServiceType(providerType);
 		return st;
 	}
 
 	public static ServiceType type(String typeName) {
-		ServiceType st = new ServiceType();
-		st.typeName = typeName;
+		ServiceType st = new ServiceType(typeName);
 		return st;
 	}
 

@@ -196,6 +196,10 @@ public class ServiceSignature implements Signature, SorcerConstants {
 		this.serviceType.providerType = serviceType;
 	}
 
+	public void setServiceType(ServiceType serviceType) {
+		this.serviceType = serviceType;
+	}
+
 	public String getSelector() {
 		return operation.selector;
 	}
