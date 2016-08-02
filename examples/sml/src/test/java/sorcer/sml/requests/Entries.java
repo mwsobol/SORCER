@@ -72,8 +72,8 @@ public class Entries {
 	public void expressionEntry() throws Exception {
 
 		Entry z1 = proc("z1", expr("x1 + 4 * x2 + 30",
-					args("x1", "x2"),
-					context(proc("x1", 10.0), proc("x2", 20.0))));
+					context(proc("x1", 10.0), proc("x2", 20.0)),
+                    args("x1", "x2")));
 
 		assertEquals(120.0, eval(z1));
 	}
@@ -260,8 +260,9 @@ public class Entries {
 			loop(condition((Context<Double> cxt) -> v(cxt, "x1") < v(cxt, "x2")),
 				invoker("lambda",
                         (Context<Double> cxt) -> { putValue(cxt, "x1", v(cxt, "x1") + 1.0);
-                            return v(cxt, "x1") * v(cxt, "x3"); }),
-				    context(proc("x1", 10.0), proc("x2", 20.0), proc("x3", 40.0))));
+                            return v(cxt, "x1") * v(cxt, "x3"); },
+				    context(val("x1", 10.0), val("x2", 20.0), val("x3", 40.0)),
+                    args("x1", "x2", "x3"))));
 
 //        logger.info("out eval: {}", eval(y1));
 		assertEquals(800.0,  eval(y1));
@@ -276,7 +277,8 @@ public class Entries {
 				loop(condition((Context<Double> cxt) -> v(cxt, "x1") < v(cxt, "x2")),
 					invoker("lambda",
 						(Context<Double> cxt) -> { putValue(cxt, "x1", v(cxt, "x1") + 1.0);
-							return v(cxt, "x1") * v(cxt, "x3"); }))));
+							return v(cxt, "x1") * v(cxt, "x3"); },
+                        args("x1", "x2", "x3")))));
 
 //        logger.info("out eval: {}", eval(mdl, "y1"));
 		assertEquals(800.0,  eval(mdl, "y1"));

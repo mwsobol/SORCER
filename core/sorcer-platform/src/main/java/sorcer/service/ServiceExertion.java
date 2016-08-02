@@ -977,9 +977,13 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
     }
 
     public boolean isProvisionable() {
-        Boolean state = ((ServiceSignature)getProcessSignature()).getOperation().isProvisionable;
-        if (state.equals(false)) {
-            return controlContext.isProvisionable();
+        Boolean state = false;
+        ServiceSignature ss = (ServiceSignature) getProcessSignature();
+        if (ss != null) {
+            state = ((ServiceSignature) getProcessSignature()).getOperation().isProvisionable;
+            if (state.equals(false)) {
+                return controlContext.isProvisionable();
+            }
         }
         return state;
     }

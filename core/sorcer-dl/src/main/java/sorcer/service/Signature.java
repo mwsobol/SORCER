@@ -27,6 +27,7 @@ import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * A service <code>Signature</code> is an indirect behavioral feature of
@@ -394,7 +395,8 @@ public interface Signature extends Item, Comparable, Dependency, Identifiable,
 	public static class ServiceType implements Serializable, Arg {
 		static final long serialVersionUID = 1L;
 		public String typeName;
-		public Class providerType = Object.class;
+		// default prvType
+		public Class providerType;
         // service types implemented by the service provider
         public Class[] matchTypes;
 

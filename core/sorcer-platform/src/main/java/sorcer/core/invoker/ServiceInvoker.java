@@ -114,15 +114,31 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 	}
 
 	public ServiceInvoker(ValueCallable lambda) throws InvocationException {
-		this(null, lambda, null);
+		this(null, lambda, null, null);
+	}
+
+	public ServiceInvoker(ValueCallable lambda, ArgSet args) throws InvocationException {
+		this(null, lambda, null, args);
+	}
+
+	public ServiceInvoker(String name, ValueCallable lambda) throws InvocationException {
+		this(name, lambda, null, null);
+	}
+
+	public ServiceInvoker(String name, ValueCallable lambda, ArgSet args) throws InvocationException {
+		this(name, lambda, null, args);
 	}
 
 	public ServiceInvoker(String name, ValueCallable lambda, Context context) throws InvocationException {
+		this(name, lambda, context, null);
+	}
+
+	public ServiceInvoker(String name, ValueCallable lambda, Context context, ArgSet args) throws InvocationException {
 		this.name = name;
 		if (context == null)
 			invokeContext = new ProcModel("model/proc");
 		else {
-			if (context instanceof ProcModel) {
+			if (context instanceof ServiceContext) {
 				invokeContext = context;
 			} else {
 				try {
@@ -132,6 +148,7 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 				}
 			}
 		}
+		this.args = args;
 		this.lambda = lambda;
 	}
 
@@ -347,7 +364,8 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 			}
 			if (((ServiceContext)invokeContext).isChanged()) {
 				valueIsValid = false;
-				this.args.clearArgs();
+				if (args != null)
+					args.clearArgs();
 			}
 			if (valueIsValid)
 				return value;
@@ -384,9 +402,11 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 	}
 	
 	private void init(ArgSet set){
-		for (Arg p : set) {
-			if (p instanceof Proc && ((Proc)p).getScope() == null)
-				((Proc)p).setScope(invokeContext);
+		if (set != null) {
+			for (Arg p : set) {
+				if (p instanceof Proc && ((Proc) p).getScope() == null)
+					((Proc) p).setScope(invokeContext);
+			}
 		}
 	}
 	

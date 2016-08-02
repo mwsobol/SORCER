@@ -27,6 +27,7 @@ import sorcer.core.context.model.ent.Proc;
 import sorcer.core.invoker.*;
 import sorcer.service.*;
 import sorcer.service.modeling.ServiceModel;
+import sorcer.eo.operator.Args;
 
 import java.net.URL;
 import java.rmi.RemoteException;
@@ -316,46 +317,50 @@ public class operator {
 		return new ServiceInvoker(evaluator,pars);
 	}
 
-	public static ServiceInvoker invoker(Evaluator evaluator, Proc... procEntries) {
-		return new ServiceInvoker(evaluator, procEntries);
+//	public static ServiceInvoker invoker(Evaluator evaluator, Proc... procEntries) {
+//		return new ServiceInvoker(evaluator, procEntries);
+//	}
+
+	public static <T> ServiceInvoker invoker(ValueCallable<T> lambda, Args args) throws InvocationException {
+		return new ServiceInvoker(null, lambda, null, args.argSet());
 	}
 
-	public static ServiceInvoker invoker(ValueCallable lambda) throws InvocationException {
-		return new ServiceInvoker(null, lambda, null);
-	}
-
-	public static ServiceInvoker invoker(ValueCallable lambda, Context scope) throws InvocationException {
+	public static <T> ServiceInvoker invoker(ValueCallable<T> lambda, Context scope, Args args) throws InvocationException {
 		try {
-			return new ServiceInvoker(null, lambda, scope);
+			return new ServiceInvoker(null, lambda, scope, args.argSet());
 		} catch (Exception e) {
 			throw new InvocationException("Failed to create invoker!", e);
 		}
 	}
 
 	public static <T> ServiceInvoker invoker(String name, ValueCallable<T> lambda) throws InvocationException {
-		return new ServiceInvoker(name, lambda, null);
+		return new ServiceInvoker(name, lambda, null, null);
 	}
 
-	public static <T> ServiceInvoker invoker(String name, ValueCallable<T> lambda, Context scope) throws InvocationException {
-		return new ServiceInvoker(name, lambda, scope);
+	public static <T> ServiceInvoker invoker(String name, ValueCallable<T> lambda, Args args) throws InvocationException {
+		return new ServiceInvoker(name, lambda, args.argSet());
 	}
 
-	public static ServiceInvoker invoker(String name, String expression, sorcer.eo.operator.Args args) {
-		return new GroovyInvoker(name, expression, args.args());
+	public static <T> ServiceInvoker invoker(String name, ValueCallable<T> lambda, Context scope, Args args) throws InvocationException {
+		return new ServiceInvoker(name, lambda, scope, args.argSet());
 	}
 
-	public static ServiceInvoker invoker(String name, String expression, sorcer.eo.operator.Args args, Context scope) throws ContextException {
-		GroovyInvoker invoker = new GroovyInvoker(name, expression, args.args());
+	public static ServiceInvoker invoker(String name, String expression, Args args) {
+		return new GroovyInvoker(name, expression, args.argSet());
+	}
+
+	public static ServiceInvoker invoker(String name, String expression, Context scope, Args args) throws ContextException {
+		GroovyInvoker invoker = new GroovyInvoker(name, expression, args.argSet());
 		invoker.setScope(scope);
 		return invoker;
 	}
 
-	public static ServiceInvoker expr(String expression, sorcer.eo.operator.Args args, Context scope) throws ContextException {
-		return invoker(expression, args,  scope);
+	public static ServiceInvoker expr(String expression, Context scope,  Args args) throws ContextException {
+		return invoker(expression, scope, args);
 	}
 
-	public static ServiceInvoker invoker(String expression, sorcer.eo.operator.Args args, Context scope) throws ContextException {
-		GroovyInvoker invoker = new GroovyInvoker(expression, args.args());
+	public static ServiceInvoker invoker(String expression, Context scope, Args args) throws ContextException {
+		GroovyInvoker invoker = new GroovyInvoker(expression, args.argSet());
 		invoker.setScope(scope);
 		return invoker;
 	}
@@ -364,11 +369,11 @@ public class operator {
 		return new GroovyInvoker(expression);
 	}
 
-	public static ServiceInvoker expr(String expression, sorcer.eo.operator.Args args) {
+	public static ServiceInvoker expr(String expression, Args args) {
 		return 	invoker(expression, args);
 		}
 
-	public static ServiceInvoker invoker(String expression, sorcer.eo.operator.Args args) {
+	public static ServiceInvoker invoker(String expression, Args args) {
 		return new GroovyInvoker(expression, args.args());
 	}
 
@@ -392,7 +397,7 @@ public class operator {
         return new ExertInvoker(exertion);
     }
 
-    public static ServiceInvoker invoker(sorcer.eo.operator.Args args) {
+    public static ServiceInvoker invoker(Args args) {
         return new CmdInvoker(args.argsToStrings());
     }
     public static InvokeIncrementor inc(String path) {

@@ -43,6 +43,7 @@ import sorcer.service.modeling.Variability.Type;
 import sorcer.util.*;
 import sorcer.util.bdb.objects.UuidObject;
 import sorcer.util.url.sos.SdbUtil;
+import sorcer.eo.operator.Args;
 
 import java.io.File;
 import java.io.IOException;
@@ -442,13 +443,13 @@ public class operator {
 		return new Srv(path, call, args.argsToStrings());
 	}
 
-	public static <T> Srv lambda(String path, ValueCallable<T> lambda, Context context) throws InvocationException {
-		return new Srv(path, invoker(lambda, context));
-	}
+//	public static <T> Srv lambda(String path, ValueCallable<T> lambda, Context context, Args args) throws InvocationException {
+//		return new Srv(path, invoker(lambda, context, args));
+//	}
 
-	public static <T> Srv lambda(String path, ValueCallable<T> lambda, sorcer.eo.operator.Args args, Context context)
+	public static <T> Srv lambda(String path, ValueCallable<T> lambda, Context context, Args args)
 			throws InvocationException {
-		return new Srv(path, invoker(lambda, context), args.argsToStrings());
+		return new Srv(path, invoker(lambda, context, args));
 	}
 
 	public static <T> Srv lambda(String path, EntryCollable<T> call) {

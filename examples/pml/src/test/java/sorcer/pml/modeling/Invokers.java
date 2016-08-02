@@ -83,9 +83,9 @@ public class Invokers {
 	public void lambdaInvoker() throws Exception {
 
 		Model mo = model(val("x", 10.0), val("y", 20.0),
-				proc(invoker("lambda", (Context<Double> cxt) -> value(cxt, "x")
-						+ value(cxt, "y")
-						+ 30)));
+				proc(invoker("lambda",
+					(Context<Double> cxt) -> value(cxt, "x") + value(cxt, "y") + 30,
+					args("x", "y"))));
 		logger.info("invoke eval: " + eval(mo, "lambda"));
 		assertEquals(eval(mo, "lambda"), 60.0);
 	}

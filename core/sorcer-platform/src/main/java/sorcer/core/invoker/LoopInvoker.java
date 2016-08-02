@@ -75,6 +75,7 @@ public class LoopInvoker<V> extends ServiceInvoker<V> implements ConditionalInvo
 		super(name);
 		this.condition = condition;
 		target = (ServiceInvoker)invoker;
+		invokeContext = ((ServiceInvoker) invoker).getScope();
 	}
 
 	/**

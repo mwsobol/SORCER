@@ -970,11 +970,11 @@ public class operator {
 		if (operation == null) {
 			return sig("?", serviceType.providerType, items);
 		} else {
-			Object[] dest = new Object[items.length+1];
-			System.arraycopy(items,  0, dest,  1, items.length);
+			Object[] dest = new Object[items.length+2];
+			System.arraycopy(items,  0, dest,  2, items.length);
 			dest[0] = operation;
+            dest[1] = serviceType;
 			ServiceSignature signature = (ServiceSignature) sig(operation, serviceType.providerType, dest);
-			signature.setServiceType(serviceType);
 			return signature;
 		}
 	}
@@ -1025,14 +1025,16 @@ public class operator {
 //		if (Modeler.class.isAssignableFrom(serviceType)) {
 //			sig = new ModelSignature(operation, serviceType, providerName, args);
 //		} else
-		if (srvType != null) {
+		if (srvType != null && srvType.providerType == null) {
 			sig = new ServiceSignature(operation, srvType, providerName);
-		} else if (serviceType.isInterface()) {
-			sig = new NetSignature(operation, serviceType, providerName);
-		} else {
-			sig = new ObjectSignature(operation, serviceType);
-			sig.setProviderName(providerName);
-		}
+		} else if (serviceType != null) {
+            if (serviceType.isInterface()) {
+                sig = new NetSignature(operation, serviceType, providerName);
+            } else {
+                sig = new ObjectSignature(operation, serviceType);
+                sig.setProviderName(providerName);
+            }
+        }
 		((ServiceSignature) sig).setName(operation);
 
 		if (connList != null) {
@@ -2760,9 +2762,11 @@ public class operator {
 	public static class Args extends Path {
 		private static final long serialVersionUID = 1L;
 
-		public Object[] args;
+		public Object[] args = new Object[0];
 
-		public Args(Object... args) {
+		public Args() { }
+
+		public Args(Object[] args) {
 			this.args = args;
 		}
 
@@ -2775,6 +2779,14 @@ public class operator {
 			Arg[] as = new Arg[args.length];
 			for (int i = 0; i < args.length; i++) {
 				as[i] = new Entry(args[i].toString());
+			}
+			return as;
+		}
+
+		public ArgSet argSet() {
+			ArgSet as = new ArgSet();
+			for (int i = 0; i < args.length; i++) {
+				as.add(new Entry(args[i].toString()));
 			}
 			return as;
 		}

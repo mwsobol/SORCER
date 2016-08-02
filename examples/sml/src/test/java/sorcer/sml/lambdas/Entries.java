@@ -97,7 +97,7 @@ public class Entries {
         Model mo = model(ent("x", 10.0), ent("y", 20.0),
                 proc(invoker("lambda", (Context<Double> cxt) -> value(cxt, "x")
                         + value(cxt, "y")
-                        + 30)));
+                        + 30, args("x", "y"))));
         logger.info("invoke eval: " + eval(mo, "lambda"));
         assertEquals(eval(mo, "lambda"), 60.0);
     }

@@ -91,7 +91,8 @@ public class InvokerTest {
 			SignatureException, ExertionException {
 		Invocation invoker = invoker("lambda",
 				cxt ->  (double) value(cxt, "x") + (double) value(cxt, "y") + 30,
-				context(proc("x", 10.0), proc("y", 20.0)));
+				context(proc("x", 10.0), proc("y", 20.0)),
+				args("x", "y"));
 		logger.info("invoke eval: " + invoke(invoker));
 		assertEquals(invoke(invoker), 60.0);
 	}
@@ -157,7 +158,8 @@ public class InvokerTest {
 								+ (double) value(cxt, "y1")
 								+ 30;
 					},
-				scope)));
+				scope,
+				args("x", "y", "y1"))));
 		logger.info("invoke eval: " + operator.eval(mo, "lambda"));
 		assertEquals(operator.eval(mo, "lambda"), 100.0);
 	}

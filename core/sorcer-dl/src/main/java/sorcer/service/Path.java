@@ -20,7 +20,7 @@ package sorcer.service;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Path implements Arg {
+public class Path implements Arg  {
 
 	private static final long serialVersionUID = 1L;
 
