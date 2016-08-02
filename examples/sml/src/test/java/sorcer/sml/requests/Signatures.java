@@ -168,8 +168,23 @@ public class Signatures {
 						result("result/y")));
 
 //		logger.info("ss: " + exec(ss));
-
 		assertEquals(100.0, exec(ss));
+
+	}
+
+	@Test
+	public void localArgSigService() throws Exception {
+
+		// request the local service
+		Signature ss = sig("add", AdderImpl.class);
+
+		Context cxt = context("add",
+				inVal("arg/x1", 20.0),
+				inVal("arg/x2", 80.0),
+				result("result/y"));
+
+//		logger.info("ss: " + exec(ss, cxt));
+		assertEquals(100.0, exec(ss, cxt));
 
 	}
 
@@ -184,7 +199,6 @@ public class Signatures {
 						result("result/y")));
 
 //		logger.info("ss: " + exec(ss));
-
 		assertEquals(100.0, exec(ss));
 
 	}
@@ -285,7 +299,6 @@ public class Signatures {
 		assertEquals(100.0, value(context(out), "result/y"));
 	}
 
-
 	@Test
 	public void signatureWithProviderName() throws Exception  {
 		String group = System.getProperty("user.name");
@@ -324,11 +337,10 @@ public class Signatures {
 
 		Context<Double> cxt = context(
 				inVal("y1", 20.0),
-				inVal("y2", 80.0),
-				result("result/y"));
+				inVal("y2", 80.0));
 
 		Context result = (Context) exec(sig("add", AdderImpl.class), cxt);
-		assertTrue(value(result, "result/y").equals(100.0));
+		assertTrue(value(result, "result/eval").equals(100.0));
 	}
 
 	@Test
@@ -339,8 +351,8 @@ public class Signatures {
 				inVal("y2", 80.0),
 				result("result/y"));
 
-		Context result = (Context) exec(sig("add", Adder.class), cxt);
-		assertTrue(value(result, "result/y").equals(100.0));
+		Object result = exec(sig("add", Adder.class), cxt);
+		assertTrue(result.equals(100.0));
 	}
 
 	@Test

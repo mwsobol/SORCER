@@ -39,7 +39,7 @@ import sorcer.core.deploy.ServiceDeployment;
 import sorcer.core.dispatch.SortingException;
 import sorcer.core.dispatch.SrvModelAutoDeps;
 import sorcer.core.exertion.*;
-import sorcer.core.invoker.InvokeIncrementor;
+import sorcer.core.invoker.IncrementInvoker;
 import sorcer.core.plexus.*;
 import sorcer.core.provider.*;
 import sorcer.core.provider.exerter.Binder;
@@ -587,8 +587,8 @@ public class operator {
 					throw new ContextException(e);
 				}
 				if (val instanceof Incrementor &&
-						((InvokeIncrementor)val).getTarget() == null) {
-					((InvokeIncrementor)val).setScope(cxt);
+						((IncrementInvoker)val).getTarget() == null) {
+					((IncrementInvoker)val).setScope(cxt);
 				}
 				if (ent.isPersistent()) {
 					setProc(cxt, ent);

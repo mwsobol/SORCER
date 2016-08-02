@@ -24,7 +24,7 @@ import sorcer.service.Invocation;
 /**
  * Created by Mike Sobolewski on 8/9/15.
  */
-public class DoubleIncrementor extends InvokeIncrementor<Double> {
+public class DoubleIncrementor extends IncrementInvoker<Double> {
 
     public DoubleIncrementor(String path) {
          super(path);

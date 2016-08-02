@@ -413,10 +413,14 @@ public class NetSignature extends ObjectSignature {
 				}
 			} else if (cxt != null) {
 				Context out = null;
-				if (returnPath != null && returnPath.path != null) {
-					cxt.setReturnPath(returnPath);
+				ReturnPath rp = returnPath;
+				if (rp == null) {
+					rp = (ReturnPath)cxt.getReturnPath();;
+				}
+				if (rp != null && rp.path != null) {
+					cxt.setReturnPath(rp);
 					out = exert(task(this, cxt));
-					return out.getValue(returnPath.path);
+					return out.getValue(rp.path);
 				}
 				out = exert(task(this, cxt));
 				return out;

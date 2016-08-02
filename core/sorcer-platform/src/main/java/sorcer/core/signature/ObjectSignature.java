@@ -386,10 +386,14 @@ public class ObjectSignature extends ServiceSignature {
 			} else if (mog instanceof Context) {
 				argTypes = new Class[] { Context.class };
 				Context out = null;
-				if (returnPath != null && returnPath.path != null) {
-					((Context) mog).setReturnPath(returnPath);
+				ReturnPath rp = returnPath;
+				if (rp == null) {
+					rp = (ReturnPath)((Context) mog).getReturnPath();;
+				}
+				if (rp != null && rp.path != null) {
+					((Context) mog).setReturnPath(rp);
 					out = exert(task(this, mog));
-					return out.getValue(returnPath.path);
+					return out.getValue(rp.path);
 				}
 				out = exert(task(this, mog));
 				return out;

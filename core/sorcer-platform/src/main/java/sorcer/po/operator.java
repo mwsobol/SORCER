@@ -400,15 +400,15 @@ public class operator {
     public static ServiceInvoker invoker(Args args) {
         return new CmdInvoker(args.argsToStrings());
     }
-    public static InvokeIncrementor inc(String path) {
+    public static IncrementInvoker inc(String path) {
 		return new IntegerIncrementor(path, 1);
 	}
 
-	public static InvokeIncrementor inc(String path, int increment) {
+	public static IncrementInvoker inc(String path, int increment) {
 		return new IntegerIncrementor(path, increment);
 	}
 
-	public static InvokeIncrementor inc(Invocation invoker, int increment) {
+	public static IncrementInvoker inc(Invocation invoker, int increment) {
 		if (invoker instanceof IntegerIncrementor) {
 			((IntegerIncrementor) invoker).setIncrement(increment);
 			return (IntegerIncrementor) invoker;
@@ -417,20 +417,20 @@ public class operator {
 		}
 	}
 
-	public static InvokeIncrementor inc(Invocation<Integer> invoker) {
+	public static IncrementInvoker inc(Invocation<Integer> invoker) {
 		return new IntegerIncrementor(invoker, 1);
 	}
 
-	public static InvokeIncrementor dinc(String path) {
+	public static IncrementInvoker dinc(String path) {
 		return new DoubleIncrementor(path, 1.0);
 	}
 
-	public static InvokeIncrementor inc(String path, double increment) {
+	public static IncrementInvoker inc(String path, double increment) {
 		return new DoubleIncrementor(path, increment);
 	}
 
 
-	public static InvokeIncrementor inc(Invocation invoker, double increment) {
+	public static IncrementInvoker inc(Invocation invoker, double increment) {
 		if (invoker instanceof IntegerIncrementor) {
 			((DoubleIncrementor) invoker).setIncrement(increment);
 			return (DoubleIncrementor) invoker;
@@ -439,7 +439,7 @@ public class operator {
 		}
 	}
 
-	public static InvokeIncrementor dinc(Invocation<Double> invoker) {
+	public static IncrementInvoker dinc(Invocation<Double> invoker) {
 		return new DoubleIncrementor(invoker, 1.0);
 	}
 
