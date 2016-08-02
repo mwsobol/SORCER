@@ -334,7 +334,9 @@ public class operator {
 	}
 
 	public static <T> Entry<T> val(String path, T value) {
-		return new Entry<T>(path, value);
+		Entry ent = new Entry<T>(path, value);
+		ent.setType(Variability.Type.VAL);
+		return ent;
 	}
 
 	public static <T> Entry<T> ent(Path path, T value, Arg... args) {
@@ -421,43 +423,58 @@ public class operator {
 	}
 
 	public static Srv lambda(String path, Service service, sorcer.eo.operator.Args args) {
-		return new Srv(path, path, service, args.argsToStrings());
+		Srv srv = new Srv(path, path, service, args.argsToStrings());
+		srv.setType(Variability.Type.LAMBDA);
+		return srv;
 	}
 
 	public static Srv lambda(String path, Service service,  String name, sorcer.eo.operator.Args args) {
-		return new Srv(name, path, service,  args.argsToStrings());
+		Srv srv = new Srv(name, path, service,  args.argsToStrings());
+		srv.setType(Variability.Type.LAMBDA);
+		return srv;
 	}
 
 	public static Srv lambda(String path, String name, Client client) {
-		return new Srv(name, path, client);
+		Srv srv = new Srv(name, path, client);
+		srv.setType(Variability.Type.LAMBDA);
+		return srv;
 	}
 
 	public static <T> Srv lambda(String path, Callable<T> call) {
-		return new Srv(path, call);
+		Srv srv = new Srv(path, call);
+		srv.setType(Variability.Type.LAMBDA);
+		return srv;
 	}
 
 	public static <T> Srv lambda(String path, ValueCallable<T> call) {
-		return new Srv(path, call);
-	}
-	public static <T> Srv lambda(String path, ValueCallable<T> call, sorcer.eo.operator.Args args) {
-		return new Srv(path, call, args.argsToStrings());
+		Srv srv = new Srv(path, call);
+		srv.setType(Variability.Type.LAMBDA);
+		return srv;
 	}
 
-//	public static <T> Srv lambda(String path, ValueCallable<T> lambda, Context context, Args args) throws InvocationException {
-//		return new Srv(path, invoker(lambda, context, args));
-//	}
+	public static <T> Srv lambda(String path, ValueCallable<T> call, sorcer.eo.operator.Args args) {
+		Srv srv = new Srv(path, call, args.argsToStrings());
+		srv.setType(Variability.Type.LAMBDA);
+		return srv;
+	}
 
 	public static <T> Srv lambda(String path, ValueCallable<T> lambda, Context context, Args args)
 			throws InvocationException {
-		return new Srv(path, invoker(lambda, context, args));
+		Srv srv = new Srv(path, invoker(lambda, context, args));
+		srv.setType(Variability.Type.LAMBDA);
+		return srv;
 	}
 
 	public static <T> Srv lambda(String path, EntryCollable<T> call) {
-		return new Srv(path, call);
+		Srv srv = new Srv(path, call);
+		srv.setType(Variability.Type.LAMBDA);
+		return srv;
 	}
 
 	public static <T> Srv lambda(String path, ValueCallable<T> call, ReturnPath returnPath) {
-		return new Srv(path, call, returnPath);
+		Srv srv = new Srv(path, call, returnPath);
+		srv.setType(Variability.Type.LAMBDA);
+		return srv;
 	}
 
 	public static boolean isSorcerLambda(Class clazz) {
@@ -515,7 +532,9 @@ public class operator {
 	}
 
 	public static Entry<Object>  val(String path) {
-		return new Entry(path, null);
+		Entry ent = new Entry(path, null);
+		ent.setType(Variability.Type.VAL);
+		return ent;
 	}
 
 	public static Entry<Object>  ent(String path) {

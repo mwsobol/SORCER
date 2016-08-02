@@ -116,63 +116,6 @@ public class SrvModel extends ProcModel implements Model, Invocation<Object> {
         return true;
     }
 
-//    public void selectedServiceFidelity(String name) {
-//        ServiceFidelity<Signature> fidelity = serviceFidelities.get(name);
-//        serviceFidelitySelector = name;
-//        this.selectedFidelity = fidelity;
-//        selectFidelity();
-//    }
-//
-//    public void addServiceFidelity(ServiceFidelity fidelity) {
-//        putServiceFidelity(fidelity.getName(), fidelity);
-//        serviceFidelitySelector = fidelity.getName();
-//        this.selectedFidelity = fidelity;
-//    }
-//
-//    public void setServiceFidelity(ServiceFidelity fidelity) {
-//        this.serviceFidelity1 = fidelity;
-//        putServiceFidelity(fidelity.getName(), fidelity);
-//        serviceFidelitySelector = fidelity.getName();
-//    }
-//
-//    public void setServiceFidelity(String name, ServiceFidelity fidelity) {
-//        this.serviceFidelity1 = fidelity;
-//        putServiceFidelity(name, fidelity);
-//        serviceFidelitySelector = name;
-//    }
-//
-//    public void putServiceFidelity(ServiceFidelity fidelity) {
-//        if (serviceFidelities == null)
-//            serviceFidelities = new HashMap<String, ServiceFidelity>();
-//        serviceFidelities.put(fidelity.getName(), fidelity);
-//    }
-//
-//    public void putServiceFidelity(String name, ServiceFidelity fidelity) {
-//        if (serviceFidelities == null)
-//            serviceFidelities = new HashMap<String, ServiceFidelity>();
-//        serviceFidelities.put(name, fidelity);
-//    }
-//
-//    public Signature getProcessSignature() {
-//        for (Signature s : serviceFidelity1.getSelects()) {
-//            if (s.getType() == Signature.Type.PROC)
-//                return s;
-//        }
-//        return null;
-//    }
-//
-//    public void selectServiceFidelity(String selector) throws ExertionException {
-//        if (selector != null && serviceFidelities != null
-//                && serviceFidelities.containsKey(selector)) {
-//            ServiceFidelity sf = serviceFidelities.get(selector);
-//
-//            if (sf == null)
-//                throw new ExertionException("no such service fidelity: " + selector + " at: " + this);
-//            serviceFidelity1 = sf;
-//            serviceFidelitySelector = selector;
-//        }
-//    }
-
     public Object getValue(String path, Arg... args) throws EvaluationException {
         return getSrvValue(path, args);
     }

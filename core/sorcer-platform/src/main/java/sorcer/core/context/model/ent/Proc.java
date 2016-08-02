@@ -75,6 +75,7 @@ public class Proc<T> extends Entry<T> implements Variability<T>, Mappable<T>,
 		super(parname);
 		name = parname;
 		value = null;
+		type = Variability.Type.PROC;
 	}
 	
 	public Proc(Identifiable identifiable) {
@@ -113,6 +114,7 @@ public class Proc<T> extends Entry<T> implements Variability<T>, Mappable<T>,
 			_2 = argument;
 			value = argument;
 		}
+		type = Variability.Type.PROC;
 	}
 
 	public Proc(String path, Object argument, Object scope)
@@ -127,8 +129,10 @@ public class Proc<T> extends Entry<T> implements Variability<T>, Mappable<T>,
 
 			}
 		}
-		if (argument instanceof Scopable)
+		if (argument instanceof Scopable) {
 			((Scopable) argument).setScope(this.scope);
+		}
+		type = Variability.Type.PROC;
 	}
 	
 	public Proc(Mappable map, String name, String path) {

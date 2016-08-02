@@ -1491,7 +1491,6 @@ public class ServiceContext<T> extends ServiceMogram implements
 		return links;
 	}
 
-
 	public Context execSignature(Signature sig, Arg... items) throws MogramException {
 		if (sig.getReturnPath() == null)
 			throw new MogramException("No signature return path defined!");
@@ -1502,10 +1501,15 @@ public class ServiceContext<T> extends ServiceMogram implements
 		}
 		Path[] ips = rp.getInSigPaths();
 		Path[] ops = rp.getOutSigPaths();
-		Context incxt;
+		Context incxt = null;
 		if (rp.getDataContext() != null) {
 			incxt = rp.getDataContext();
 			incxt.setScope(this);
+		}
+		if (incxt != null) {
+			if (ips != null && ips.length > 0) {
+				incxt.setScope(this.getEvaluatedSubcontext(ips, items));
+			}
 		} else {
 			incxt = this;
 			if (ips != null && ips.length > 0) {

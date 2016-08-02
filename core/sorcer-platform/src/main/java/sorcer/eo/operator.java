@@ -241,6 +241,15 @@ public class operator {
 	public static Context cxt(Object... entries) throws ContextException {
 		return context(entries);
 	}
+	public static Context data(Object... entries) throws ContextException {
+		for (Object obj : entries) {
+			if (!(obj instanceof String) || !(obj instanceof Entry && ((Entry)obj).getType().equals(Variability.Type.VAL))) {
+				throw new ContextException("Not value entry " + obj.toString());
+			}
+		}
+		return context(entries);
+	}
+
 
 	public static Context context(Object... entries) throws ContextException {
 		// do not create a context from Context, jut return
