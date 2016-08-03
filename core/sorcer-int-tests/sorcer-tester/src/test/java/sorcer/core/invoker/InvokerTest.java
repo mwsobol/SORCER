@@ -66,16 +66,16 @@ public class InvokerTest {
 
 	}
 
-	// member subclass of Invocable with Context parameter used below with
+	// member subclass of Updater with Context parameter used below with
 	// contextMethodAttachmentWithArgs()
 	// there are constructor's context and invoke metod's context as parameters
-	public class Update extends Invocable {
+	public class Update extends Updater {
 		public Update(Context context) {
 			super(context);
 		}
 
-		public Double invoke(Context arg) throws Exception {
-			x.setValue(arg.getValue("x"));
+		public Object invoke(Context context, Arg... entries) throws ContextException, RemoteException {
+			x.setValue(context.getValue("x"));
 			y.setValue(context.getValue("y"));
 			// x setValue from 'arg'
 			assertTrue(operator.eval(x).equals(200.0));
@@ -84,6 +84,7 @@ public class InvokerTest {
 			assertTrue(operator.eval(z).equals(170.0));
 			return operator.eval(x) + operator.eval(y) + (double) value(pm, "z");
 		}
+
 	};
 
 	@Test

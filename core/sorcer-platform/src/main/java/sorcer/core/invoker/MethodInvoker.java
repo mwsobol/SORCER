@@ -22,8 +22,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.ent.Proc;
+import sorcer.eo.operator;
 import sorcer.service.*;
 import sorcer.util.SorcerUtil;
+import sorcer.eo.operator.Args;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -87,41 +89,46 @@ public class MethodInvoker<T> extends ServiceInvoker<T> implements MethodInvokin
 		selector = methodName;
 	}
 
-	public MethodInvoker(Object target, Proc... procEntries) {
+	public MethodInvoker(Object target, Args args) {
 		this.target = target;
-		this.args = new ArgSet(procEntries);
+		this.args = args.argSet();
 	}
 
-	public MethodInvoker(Object target, String methodName, Proc... procEntries) {
-		this(methodName, target, methodName);
-		this.args = new ArgSet(procEntries);
+	public MethodInvoker(Object target, String methodName) {
+		this(null, target, methodName);
 	}
 
-	public MethodInvoker(String name, Object target, String methodName,
-			Proc... procEntries) {
+	public MethodInvoker(String name, Object target, String methodName) {
 		this(name);
 		this.target = target;
 		selector = methodName;
-		this.args = new ArgSet(procEntries);
+	}
+
+	public MethodInvoker(String name, Object target, String methodName, Arg... args) {
+		this(name, target, methodName);
+		this.args = new ArgSet(args);
+	}
+
+	public MethodInvoker(String name, Object target, String methodName, Args args) {
+		this(name, target, methodName);
+		this.args = args.argSet();
+	}
+
+	public MethodInvoker(String name, String className, String methodName, Args args) {
+		this(name, className, methodName, null, null, args);
+	}
+
+	public MethodInvoker(String name, String className, String methodName, Class<?>[] signature, Args args) {
+		this(name, className, methodName, signature, null, args);
 	}
 
 	public MethodInvoker(String name, String className, String methodName,
-			Proc... procEntries) {
-		this(name, className, methodName, null, null, procEntries);
-	}
-
-	public MethodInvoker(String name, String className, String methodName,
-			Class<?>[] signature, Proc... procEntries) {
-		this(name, className, methodName, signature, null, procEntries);
-	}
-
-	public MethodInvoker(String name, String className, String methodName,
-			Class<?>[] paramTypes, String distributionParameter, Proc... procEntries) {
+			Class<?>[] paramTypes, String distributionParameter, Args args) {
 		this(name);
 		this.className = className;
 		selector = methodName;
 		this.paramTypes = paramTypes;
-		this.args = new ArgSet(procEntries);
+		this.args = args.argSet();
 		if (distributionParameter != null)
 			params = new Object[] { distributionParameter };
 	}

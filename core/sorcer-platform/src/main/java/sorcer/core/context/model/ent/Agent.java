@@ -97,7 +97,7 @@ public class Agent<T> extends Proc<T> implements Serializable {
 				
 				Object obj = constructor
 						.newInstance(new Object[] { scope });
-				invoker = new MethodInvoker(name, obj, name, getPars(entries));
+				invoker = new MethodInvoker(name, obj, name, entries);
 				if (scope instanceof ProcModel)
 					invoker.setScope((ProcModel)scope);
 				invoker.setContext(scope);

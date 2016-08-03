@@ -457,14 +457,13 @@ public class operator {
 		return inceremntor.next();
 	}
 
-	public static MethodInvoker methodInvoker(String selector, Object methodObject, Proc... procEntries) {
-		return methodInvoker(selector, methodObject, null, procEntries);
+	public static MethodInvoker methodInvoker(String selector, Object methodObject, Args... args) {
+		return methodInvoker(selector, methodObject, null, args);
 	}
 
 	public static MethodInvoker methodInvoker(String selector, Object methodObject,
-											  Context context, Proc... procEntries) {
-		MethodInvoker mi = new MethodInvoker(selector, methodObject, selector,
-				procEntries);
+											  Context context, Args... args) {
+		MethodInvoker mi = new MethodInvoker(selector, methodObject, selector, args);
 		Context cxt = context;
 		if (context == null) {
 			cxt = new ServiceContext();

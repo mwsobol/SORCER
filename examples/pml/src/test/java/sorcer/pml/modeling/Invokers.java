@@ -13,7 +13,7 @@ import sorcer.arithmetic.provider.impl.SubtractorImpl;
 import sorcer.core.context.model.ent.Proc;
 import sorcer.core.context.model.ent.ProcModel;
 import sorcer.core.invoker.AltInvoker;
-import sorcer.core.invoker.Invocable;
+import sorcer.core.invoker.Updater;
 import sorcer.core.invoker.OptInvoker;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.core.provider.rendezvous.ServiceJobber;
@@ -52,14 +52,15 @@ public class Invokers {
 	private Proc y;
 	private Proc z;
 
-	// member subclass of Invocable with Context parameter used below with
+	/// member subclass of Updater with Context parameter used below with
 	// contextMethodAttachmentWithArgs()
 	// there are constructor's context and invoke metod's context as parameters
-	public class Update extends Invocable {
-		public Update(Context context) {
+	public class ContextUpdater extends Updater {
+		public ContextUpdater(Context context) {
 			super(context);
 		}
-		public Double invoke(Context arg) throws Exception {
+
+		public Double update(Context arg) throws Exception {
 			setValue(x, value(arg, "x"));
 			setValue(y, value(context, "y"));
 			// x setValue from 'arg'
@@ -100,11 +101,11 @@ public class Invokers {
 //		logger.info("y:" + eval(pm, "y"));
 //		logger.info("y:" + eval(pm, "z"));
 
-		Context in = context(proc("x", 20.0), proc("y", 30.0));
-		Context arg = context(proc("x", 200.0), proc("y", 300.0));
-		add(pm, methodInvoker("invoke", new Update(in), arg));
-		logger.info("call eval:" + invoke(pm, "invoke"));
-		assertEquals(invoke(pm, "invoke"), 400.0);
+		Context in = context(val("x", 20.0), val("y", 30.0));
+		Context arg = context(val("x", 200.0), val("y", 300.0));
+		add(pm, methodInvoker("update", new ContextUpdater(in), arg));
+		logger.info("call eval:" + invoke(pm, "update"));
+		assertEquals(invoke(pm, "update"), 400.0);
 	}
 
 	@Test
