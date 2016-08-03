@@ -53,38 +53,28 @@ public class InvokerTest {
 	private final static Logger logger = LoggerFactory.getLogger(InvokerTest.class);
 
 	private ProcModel pm;
-	private Proc<Double> x;
-	private Proc<Double> y;
+	private Proc x;
+	private Proc y;
 	private Proc z;
-		
-	@Before
-	public void initParModel() throws EvaluationException, RemoteException {
-		pm = new ProcModel();
-		x = proc("x", 10.0);
-		y = proc("y", 20.0);
-		z = proc("z", invoker("x - y", x, y));
 
-	}
-
-	// member subclass of Updater with Context parameter used below with
+	/// member subclass of Updater with Context parameter used below with
 	// contextMethodAttachmentWithArgs()
 	// there are constructor's context and invoke metod's context as parameters
-	public class Update extends Updater {
-		public Update(Context context) {
+	public class ContextUpdater extends Updater {
+		public ContextUpdater(Context context) {
 			super(context);
 		}
 
-		public Object invoke(Context context, Arg... entries) throws ContextException, RemoteException {
-			x.setValue(context.getValue("x"));
-			y.setValue(context.getValue("y"));
+		public Double update(Context arg) throws Exception {
+			setValue(x, value(arg, "x"));
+			setValue(y, value(context, "y"));
 			// x setValue from 'arg'
-			assertTrue(operator.eval(x).equals(200.0));
+			assertTrue(eval(x).equals(200.0));
 			// y setValue from construtor's context 'in'
-			assertTrue(operator.eval(y).equals(30.0));
-			assertTrue(operator.eval(z).equals(170.0));
-			return operator.eval(x) + operator.eval(y) + (double) value(pm, "z");
+			assertTrue(eval(y).equals(30.0));
+			assertTrue(eval(z).equals(170.0));
+			return (double)eval(x) + (double)eval(y) + (double)eval(pm, "z");
 		}
-
 	};
 
 	@Test
@@ -106,9 +96,9 @@ public class InvokerTest {
 
 		Context in = context(proc("x", 20.0), proc("y", 30.0));
 		Context arg = context(proc("x", 200.0), proc("y", 300.0));
-		add(pm, methodInvoker("invoke", new Update(in), arg));
-		logger.info("call eval:" + invoke(pm, "invoke"));
-		assertEquals(invoke(pm, "invoke"), 400.0);
+		add(pm, methodInvoker("update", new ContextUpdater(in), arg));
+		logger.info("call eval:" + invoke(pm, "update"));
+		assertEquals(invoke(pm, "update"), 400.0);
 	}
 
 	@Test
