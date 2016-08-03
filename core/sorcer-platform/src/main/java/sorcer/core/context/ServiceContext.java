@@ -1058,9 +1058,6 @@ public class ServiceContext<T> extends ServiceMogram implements
 	public List<String> markedPaths(String association) throws ContextException {
 		String attr, value;
 		Map values;
-		// java 1.4.0 regex
-		// Pattern p;
-		// Matcher m;
 		if (association == null)
 			return null;
 		int index = association.indexOf(SorcerConstants.APS);
@@ -1078,11 +1075,6 @@ public class ServiceContext<T> extends ServiceMogram implements
 			if (values != null) { // if there are no attributes setValue,
 				// values==null;
 				for (Object key : values.keySet()) {
-					/*
-					 * java 1.4.0 regex p = Pattern.compile(eval); m =
-					 * p.matcher((String)values.get(key)); if (m.find())
-					 * keys.addElement(key);
-					 */
 					if (values.get(key).equals(value))
 						keys.add((String) key);
 				}
@@ -2722,6 +2714,9 @@ public class ServiceContext<T> extends ServiceMogram implements
 	@Override
 	public List<T> getMarkedValues(String association) throws ContextException {
 		List<String> paths = markedPaths(association);
+		if (paths == null) {
+			paths = scope.markedPaths(association);
+		}
 		List<T> values = new ArrayList<T>();
 		for (String path : paths) {
 			try {
@@ -3309,20 +3304,27 @@ public class ServiceContext<T> extends ServiceMogram implements
 		if (containsPath(Condition._closure_)) {
 			remove(Condition._closure_);
 		}
-		if (scope != null &&
-				((ServiceContext)scope).containsPath(Condition._closure_)) {
-			((ServiceContext)scope).remove(Condition._closure_);
+		if (scope != null && scope.containsPath(Condition._closure_)) {
+			scope.remove(Condition._closure_);
 		}
 
 		if (inpaths != null) {
 			for (Path path : inpaths) {
-				putInValue(path.getName(), (T) getValue(path.getName()));
+				if (path.info != null) {
+					putInValue(path.getName(), (T) getValue(path.getName()), path.info.toString());
+				} else {
+					putInValue(path.getName(), (T) getValue(path.getName()));
+				}
 			}
 		}
 
 		if (outpaths != null) {
 			for (Path path : outpaths) {
-				putOutValue(path.getName(), (T) getValue(path.getName()));
+				if (path.info != null) {
+					putOutValue(path.getName(), (T) getValue(path.getName()), path.info.toString());
+				} else {
+					putOutValue(path.getName(), (T) getValue(path.getName()));
+				}
 			}
 		}
 		return this;
@@ -3332,9 +3334,8 @@ public class ServiceContext<T> extends ServiceMogram implements
 		if (containsPath(Condition._closure_)) {
 			remove(Condition._closure_);
 		}
-		if (scope != null &&
-				((ServiceContext)scope).containsPath(Condition._closure_)) {
-			((ServiceContext)scope).remove(Condition._closure_);
+		if (scope != null && scope.containsPath(Condition._closure_)) {
+			scope.remove(Condition._closure_);
 		}
 		return this;
 	}
