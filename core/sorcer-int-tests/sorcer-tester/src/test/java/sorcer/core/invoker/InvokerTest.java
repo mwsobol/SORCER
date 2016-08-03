@@ -77,6 +77,14 @@ public class InvokerTest {
 		}
 	};
 
+	@Before
+	public void initParModel() throws Exception {
+		pm = new ProcModel();
+		x = proc("x", 10.0);
+		y = proc("y", 20.0);
+		z = proc("z", invoker("x - y", x, y));
+	}
+
 	@Test
 	public void lambdaInvoker() throws RemoteException, ContextException,
 			SignatureException, ExertionException {
@@ -89,13 +97,17 @@ public class InvokerTest {
 	}
 
 	@Test
-	public void methodInvokerTest() throws RemoteException, ContextException {
+	public void methodInvokerTest() throws Exception {
 		setValue(x, 10.0);
 		setValue(y, 20.0);
 		add(pm, x, y, z);
 
-		Context in = context(proc("x", 20.0), proc("y", 30.0));
-		Context arg = context(proc("x", 200.0), proc("y", 300.0));
+//		logger.info("x:" + eval(pm, "x"));
+//		logger.info("y:" + eval(pm, "y"));
+//		logger.info("y:" + eval(pm, "z"));
+
+		Context in = context(val("x", 20.0), val("y", 30.0));
+		Context arg = context(val("x", 200.0), val("y", 300.0));
 		add(pm, methodInvoker("update", new ContextUpdater(in), arg));
 		logger.info("call eval:" + invoke(pm, "update"));
 		assertEquals(invoke(pm, "update"), 400.0);
