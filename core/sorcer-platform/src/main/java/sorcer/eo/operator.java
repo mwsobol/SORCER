@@ -1085,7 +1085,6 @@ public class operator {
 						((ReturnPath)sig.getReturnPath()).outPaths = ((Out) o).getSigPaths();
 					}
 				} else if (o instanceof ServiceDeployment) {
-					((ServiceSignature) sig).setProvisionable(true);
 					((ServiceSignature) sig).setDeployment((ServiceDeployment) o);
 				} else if (o instanceof Version && sig instanceof NetSignature) {
 					((NetSignature) sig).setVersion(((Version) o).getName());

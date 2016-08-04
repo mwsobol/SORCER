@@ -669,12 +669,15 @@ public class Contexts implements SorcerConstants {
 	public static Object[] getMarkedValues(Context context, String association)
 			throws ContextException {
 		String[] paths = getMarkedPaths(context, association);
-		if (paths == null) {
+		List<Object> values = new ArrayList();
+		for (int i = 0; i < paths.length; i++) {
+			values.add(context.getValue(paths[i]));
+		}
+		if (paths == null || values.size() == 0) {
 			Context cxt = context.getScope();
 			if (cxt != null)
 				paths = getMarkedPaths(cxt, association);
 		}
-		List<Object> values = new ArrayList();
 		for (int i = 0; i < paths.length; i++) {
 			values.add(context.getValue(paths[i]));
 		}
@@ -687,7 +690,7 @@ public class Contexts implements SorcerConstants {
         if (paths == null) {
 			Context cxt = context.getScope();
 			if (cxt != null)
-				paths= getMarkedPaths(cxt, association);
+				paths = getMarkedPaths(cxt, association);
 		}
 		if (paths == null) {
 			return false;
