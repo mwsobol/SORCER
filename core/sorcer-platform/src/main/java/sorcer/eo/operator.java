@@ -283,8 +283,14 @@ public class operator {
 					(String) entries[0]).getContext();
 		} else if (entries[0] instanceof Context && entries[1] instanceof List) {
 			return ((ServiceContext) entries[0]).getDirectionalSubcontext(Path.getPathArray((List)entries[1]));
-		} else if (entries[0] instanceof Model) {
-			cxt = (PositionalContext) entries[0];
+		} else if (entries[0] instanceof Context) {
+			cxt = (Context) entries[0];
+		} else if (Context.class.isAssignableFrom(entries[0].getClass())) {
+			try {
+				cxt = (Context) ((Class) entries[0]).newInstance();
+			} catch (InstantiationException | IllegalAccessException e) {
+				throw new ContextException(e);
+			}
 		} else {
 			cxt = getPersistedContext(entries);
 			if (cxt != null) return cxt;
@@ -1111,12 +1117,22 @@ public class operator {
 		Operation sop = new Operation();
 		sop.selector = selector;
 		for (Arg arg : args) {
-			if (arg instanceof Strategy.Access) {
-				sop.accessType = (Strategy.Access)arg;
-			} else if (arg instanceof Strategy.Provision) {
-				sop.isProvisionable = Strategy.isProvisionable((Strategy.Provision)arg);
-			} if (arg instanceof Path) {
+			if (arg instanceof Path) {
 				sop.path = arg.getName();
+			} else if (arg instanceof Strategy.Access) {
+				sop.accessType = (Strategy.Access) arg;
+			} else if (arg instanceof Strategy.Flow) {
+				sop.flowType = (Strategy.Flow) arg;
+			} else if (arg instanceof Strategy.Monitor) {
+				sop.toMonitor = (Strategy.Monitor) arg;
+			} else if (arg instanceof Strategy.FidelityMangement) {
+				sop.toManageFi = (Strategy.FidelityMangement) arg;
+			} else if (arg instanceof Strategy.Wait) {
+				sop.toWait = (Strategy.Wait) arg;
+			} else if (arg instanceof Strategy.Shell) {
+				sop.isShellRemote = (Strategy.Shell) arg;
+			} else if (arg instanceof Strategy.Provision) {
+				sop.isProvisionable = Strategy.isProvisionable((Strategy.Provision) arg);
 			}
 		}
 		return sop;

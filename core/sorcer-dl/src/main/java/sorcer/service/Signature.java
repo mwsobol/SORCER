@@ -384,9 +384,19 @@ public interface Signature extends Item, Comparable, Dependency, Identifiable,
 
 		public Strategy.Access accessType = Strategy.Access.PUSH;
 
+		public Strategy.Flow flowType = Strategy.Flow.SEQ;
+
+		public Strategy.Monitor toMonitor = Strategy.Monitor.NO;
+
+		public Strategy.Wait toWait = Strategy.Wait.YES;
+
+		public Strategy.FidelityMangement toManageFi = Strategy.FidelityMangement.NO;
+
+		public Strategy.Shell isShellRemote = Strategy.Shell.LOCAL;
+
 		public boolean isProvisionable = false;
 
-        @Override
+		@Override
         public String getName() {
             return selector;
         }
