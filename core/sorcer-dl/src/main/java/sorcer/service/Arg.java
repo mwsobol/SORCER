@@ -63,6 +63,14 @@ public interface Arg extends Serializable {
 		return null;
 	}
 
+	public static Path getPath(Arg[] args) {
+		for (Arg arg : args) {
+			if (arg instanceof Path)
+				return (Path)arg;
+		}
+		return null;
+	}
+
 	public static Object getValue(Arg[] args, String path) throws EvaluationException, RemoteException {
 		for (Arg arg : args) {
 			if (arg instanceof Callable && ((Callable)arg).name().equals(path))
