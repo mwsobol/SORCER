@@ -365,10 +365,6 @@ public class operator {
 		return invoker;
 	}
 
-	public static ServiceInvoker expr(String name, String expression) {
-		return new GroovyInvoker(name, expression);
-	}
-
 	public static ServiceInvoker expr(String expression) {
 		return new GroovyInvoker(expression);
 	}
