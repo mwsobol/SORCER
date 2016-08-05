@@ -373,6 +373,10 @@ public class operator {
 		return new GroovyInvoker(expression);
 	}
 
+	public static ServiceInvoker expr(String name, String expression) {
+		return new GroovyInvoker(name, expression);
+	}
+
 	public static ServiceInvoker expr(String expression, Args args) {
 		return 	invoker(expression, args);
 		}
