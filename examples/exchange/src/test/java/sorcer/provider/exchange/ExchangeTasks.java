@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
+import sorcer.po.operator;
 import sorcer.provider.exchange.impl.ExchangeProviderImpl;
 import sorcer.service.Accessor;
 import sorcer.service.Signature;
@@ -21,7 +22,7 @@ import java.util.Arrays;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static sorcer.co.operator.ent;
+import static sorcer.po.operator.ent;
 import static sorcer.eo.operator.*;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -71,7 +72,7 @@ public class ExchangeTasks {
 	public void evaluateTask1Test() throws Exception {
 		int[] in = intArray();
 		Task ex = task(sig("exchangeInts", ExchangeProviderImpl.class),
-						cxt(ent("values", in),
+						cxt(operator.ent("values", in),
 						result("values")));
 
 		long start = System.currentTimeMillis();
@@ -103,7 +104,7 @@ public class ExchangeTasks {
 	public void evaluateLocalContextTask() throws Exception  {
 		int[] in = intArray();
 		Task ex = task(sig("exchangeInts", ExchangeProviderImpl.class),
-					cxt(ent("values", in),
+					cxt(operator.ent("values", in),
 						result("values")));
 
 		int[] out = null;
@@ -149,7 +150,7 @@ public class ExchangeTasks {
 	public void evaluate1RemoteContextTask() throws Exception {
 		int[] in = intArray();
 		Task ex = task(sig("exchangeInts", ExchangeRemote.class, prvName("Exchange")),
-					cxt(ent("values", in), result("values")));
+					cxt(operator.ent("values", in), result("values")));
 
 		long start = System.currentTimeMillis();
 		int[] out = (int[]) eval(ex);
@@ -162,7 +163,7 @@ public class ExchangeTasks {
 	@Test
 	public void evaluate123LocalContextTask() throws Exception {
 		Task ex = task(sig("exchangeInts", ExchangeProviderImpl.class),
-					cxt(ent("values", new int[] {1, 2, 3} ),
+					cxt(operator.ent("values", new int[] {1, 2, 3} ),
 						result("values")));
 
 		long start = System.currentTimeMillis();
@@ -176,7 +177,7 @@ public class ExchangeTasks {
 	@Test
 	public void evaluate123RemoteContextTask() throws Exception {
 		Task ex = task(sig("exchangeInts", ExchangeRemote.class),
-					cxt(ent("values", new int[] {1, 2, 3} ),
+					cxt(operator.ent("values", new int[] {1, 2, 3} ),
 						result("values")));
 
 		long start = System.currentTimeMillis();
@@ -191,7 +192,7 @@ public class ExchangeTasks {
 	public void evaluateRemoteContext10KTask() throws Exception  {
 		int[] in = intArray();
 		Task ex = task(sig("exchangeInts", ExchangeRemote.class, prvName("Exchange")),
-				cxt(ent("values", in), result("values")));
+				cxt(operator.ent("values", in), result("values")));
 
 		int[] out = null;
 		long start = System.currentTimeMillis();
@@ -208,7 +209,7 @@ public class ExchangeTasks {
 	public void evaluateRemoteContextSmart10KTask() throws Exception  {
 		int[] in = intArray();
 		Task ex = task(sig("exchangeInts", ExchangeRemote.class, prvName("Smart Exchange")),
-				cxt(ent("values", in),
+				cxt(operator.ent("values", in),
 						result("values")));
 
 		int[] out = null;

@@ -17,7 +17,6 @@
 
 package sorcer.mo;
 
-import sorcer.co.tuple.Tuple2;
 import sorcer.core.Name;
 import sorcer.core.context.MapContext;
 import sorcer.core.context.ServiceContext;
@@ -58,7 +57,7 @@ public class operator {
         Object entry = model.asis(entName);
         if (entry == null)
             try {
-                model.add(sorcer.co.operator.ent(entName, value));
+                model.add(sorcer.po.operator.ent(entName, value));
             } catch (RemoteException e) {
                 throw new ContextException(e);
             }

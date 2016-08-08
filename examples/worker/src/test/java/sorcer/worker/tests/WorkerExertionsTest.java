@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
+import sorcer.po.operator;
 import sorcer.service.*;
 import sorcer.service.Strategy.Access;
 import sorcer.service.Strategy.Flow;
@@ -45,11 +46,11 @@ public class WorkerExertionsTest {
 		hostname = InetAddress.getLocalHost().getHostName();
 		
 		context = context("work", 
-				ent("req/name", hostname),
-				ent("req/arg/1", 11),
-				ent("req/arg/2", 101),
-				ent("req/work", Works.work0),
-				ent("to/prv/name", "SORCER Worker"));
+				operator.ent("req/name", hostname),
+				operator.ent("req/arg/1", 11),
+				operator.ent("req/arg/2", 101),
+				operator.ent("req/work", Works.work0),
+				operator.ent("to/prv/name", "SORCER Worker"));
 		
 		contextUrl = store(context);
 	}
@@ -141,19 +142,19 @@ public class WorkerExertionsTest {
 	@Test
 	public void contextPipes() throws Exception {
 		
-		Context cxt1 = context(ent("req/name", "workaholic"), 
-				ent("req/arg/1", 20),  ent("req/arg/2", 80),
-				ent("req/work", Works.work1),  ent("tp/prv/name", "Worker1"),
+		Context cxt1 = context(operator.ent("req/name", "workaholic"),
+				operator.ent("req/arg/1", 20),  operator.ent("req/arg/2", 80),
+				operator.ent("req/work", Works.work1),  operator.ent("tp/prv/name", "Worker1"),
 				outVal("prv/result"));
 
-		Context cxt2 = context(ent("req/name", "workaholic"), 
-				ent("req/arg/1", 10),  ent("req/arg/2", 50),
-				ent("req/work", Works.work2),  ent("tp/prv/name", "Worker2"),
+		Context cxt2 = context(operator.ent("req/name", "workaholic"),
+				operator.ent("req/arg/1", 10),  operator.ent("req/arg/2", 50),
+				operator.ent("req/work", Works.work2),  operator.ent("tp/prv/name", "Worker2"),
 				outVal("prv/result"));
 
-		Context cxt3 = context(ent("req/name", "workaholic"), 
+		Context cxt3 = context(operator.ent("req/name", "workaholic"),
 				inVal("req/arg/1"),  inVal("req/arg/2"),
-				ent("req/work", Works.work3),  ent("tp/prv/name", "Worker3"),
+				operator.ent("req/work", Works.work3),  operator.ent("tp/prv/name", "Worker3"),
 				outVal("prv/result"));
 
 		Job job = job("strategy", 
@@ -173,17 +174,17 @@ public class WorkerExertionsTest {
 	@Test
 	public void exertionStrategy() throws Exception {
 
-		Context cxt1 = context(ent("req/name", "workaholic"), 
-				ent("req/arg/1", 20),  ent("req/arg/2", 80),
-				ent("req/work", Works.work1),  ent("tp/prv/name", "Worker1"));
+		Context cxt1 = context(operator.ent("req/name", "workaholic"),
+				operator.ent("req/arg/1", 20),  operator.ent("req/arg/2", 80),
+				operator.ent("req/work", Works.work1),  operator.ent("tp/prv/name", "Worker1"));
 
-		Context cxt2 = context(ent("req/name", "workaholic"), 
-				ent("req/arg/1", 10),  ent("req/arg/2", 50),
-				ent("req/work", Works.work2),  ent("tp/prv/name", "Worker2"));
+		Context cxt2 = context(operator.ent("req/name", "workaholic"),
+				operator.ent("req/arg/1", 10),  operator.ent("req/arg/2", 50),
+				operator.ent("req/work", Works.work2),  operator.ent("tp/prv/name", "Worker2"));
 
-		Context cxt3 = context(ent("req/name", "workaholic"), 
-				ent("req/arg/1", 100),  ent("req/arg/2", 100),
-				ent("req/work", Works.work3),  ent("tp/prv/name", "Worker3"));
+		Context cxt3 = context(operator.ent("req/name", "workaholic"),
+				operator.ent("req/arg/1", 100),  operator.ent("req/arg/2", 100),
+				operator.ent("req/work", Works.work3),  operator.ent("tp/prv/name", "Worker3"));
 
 		Job job = job("strategy", 
 				task("work1", sig("doWork", Worker.class, prvName("Worker1")), cxt1),

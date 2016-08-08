@@ -18,19 +18,23 @@ package sorcer.po;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sorcer.co.tuple.ExecPath;
-import sorcer.co.tuple.InputEntry;
-import sorcer.co.tuple.Tuple2;
+import sorcer.co.tuple.*;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.ent.*;
 import sorcer.core.context.model.ent.Proc;
+import sorcer.core.context.model.srv.Srv;
 import sorcer.core.invoker.*;
+import sorcer.core.plexus.MorphFidelity;
+import sorcer.core.plexus.MultiFiRequest;
 import sorcer.service.*;
+import sorcer.service.modeling.Model;
 import sorcer.service.modeling.ServiceModel;
 import sorcer.eo.operator.Args;
+import sorcer.service.modeling.Variability;
 
 import java.net.URL;
 import java.rmi.RemoteException;
+import java.util.List;
 import java.util.concurrent.Callable;
 
 import static sorcer.eo.operator.context;
@@ -576,5 +580,182 @@ public class operator {
 			return ((ServiceInvoker) obj).getScope();
 		else
 			return null;
+	}
+
+	public static Entry ent(Model model, String path) throws ContextException {
+        return new Entry(path, model.asis(path));
+    }
+
+	public static <T extends Arg> Srv ent(String name, MorphFidelity<T> fidelity) {
+        fidelity.setPath(name);
+        fidelity.getFidelity().setPath(name);
+        return sorcer.co.operator.srv(name, fidelity);
+    }
+
+	public static Srv ent(String name, ServiceFidelity<Signature> fidelity) {
+        return sorcer.co.operator.srv(name, fidelity);
+    }
+
+	public static Srv ent(ServiceFidelity<Signature> fidelity) {
+        return sorcer.co.operator.srv(fidelity);
+    }
+
+	public static <T> Entry<T> ent(Path path, T value, Arg... args) {
+		Entry<T> entry = ent(path.getName(), value, args);
+		entry.annotation(path.info.toString());
+		return entry;
+	}
+
+	public static <T> Entry<T> ent(String path, T value, Arg... args) {
+		Entry<T> entry = null;
+		if (value instanceof Invocation || value instanceof Evaluation) {
+			entry = new Proc<T>(path, value);
+		} else if (value instanceof Signature || value instanceof ServiceFidelity) {
+			entry = (Entry<T>) new Srv(path, value);
+		} else if (value instanceof MultiFiRequest) {
+			try {
+				((MultiFiRequest)value).setUnifiedName(path);
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			}
+			entry = (Entry<T>) new Srv(path, value);
+		} else if (value instanceof List && ((List)value).get(0) instanceof Path) {
+			entry = (Entry<T>) new DependencyEntry(path, (List)value);
+		} else if (value instanceof ServiceMogram) {
+			entry = (Entry<T>) new Srv(path, value);
+		} else if (value instanceof Service) {
+			entry = (Entry<T>) new Proc(path, value);
+		} else {
+			entry = new Entry<T>(path, value);
+		}
+
+		Context cxt = null;
+		for (Arg arg : args) {
+			cxt = (Context) Arg.getServiceModel(args);
+		}
+		try {
+			// special cases of procedural attachmnet
+			if (entry instanceof Proc) {
+				Proc proc = (Proc) entry;
+				if (cxt != null) {
+					((Proc) entry).setScope(cxt);
+				} else if (args.length == 1 && args[0] instanceof Entry) {
+					entry.setScope(context((Entry) args[0]));
+				} else if (args.length == 1 && args[0] instanceof Service) {
+					entry = new Proc(path, value, args[0]);
+				}
+			}
+		} catch (ContextException e) {
+			e.printStackTrace();
+		}
+		return entry;
+	}
+
+	public static Srv ent(Signature sig) {
+		return sorcer.co.operator.srv(sig);
+	}
+
+	public static Entry<Object>  ent(String path) {
+		return new Entry(path, null);
+	}
+
+	public static <T> TagEntry<T> ent(String path, T value, String association) {
+		return new TagEntry(path, value, association);
+	}
+
+	public static Arg[] ents(String... entries)
+			throws ContextException {
+		ArgSet as = new ArgSet();
+		for (String name : entries) {
+			as.add(new Entry(name, Context.none));
+		}
+		return as.toArray();
+	}
+
+	public static Arg[] ents(Entry... entries)
+			throws ContextException {
+		ArgSet as = new ArgSet();
+		for (Entry e : entries) {
+			as.add(e);
+		}
+		return as.toArray();
+	}
+
+	public static Entry inout(Entry entry) {
+		entry.setType(Variability.Type.INOUT);
+		return entry;
+	}
+
+	public static InputEntry inoutVal(String path) {
+		return new InputEntry(path, null, 0);
+	}
+
+	public static <T> InoutEntry<T> inoutVal(String path, T value) {
+		return new InoutEntry(path, value, 0);
+	}
+
+	public static <T> InoutEntry<T> inoutVal(String path, T value, int index) {
+		return new InoutEntry(path, value, index);
+	}
+
+	public static <T> InoutEntry<T> inoutVal(String path, T value, String annotation) {
+		InoutEntry<T> ie = inoutVal(path, value);
+		ie.annotation(annotation);
+		return ie;
+	}
+
+	public static Srv lambda(String path, Service service, Args args) {
+		Srv srv = new Srv(path, path, service, args.argsToStrings());
+		srv.setType(Variability.Type.LAMBDA);
+		return srv;
+	}
+
+	public static Srv lambda(String path, Service service, String name, Args args) {
+		Srv srv = new Srv(name, path, service,  args.argsToStrings());
+		srv.setType(Variability.Type.LAMBDA);
+		return srv;
+	}
+
+	public static Srv lambda(String path, String name, Client client) {
+		Srv srv = new Srv(name, path, client);
+		srv.setType(Variability.Type.LAMBDA);
+		return srv;
+	}
+
+	public static <T> Srv lambda(String path, Callable<T> call) {
+		Srv srv = new Srv(path, call);
+		srv.setType(Variability.Type.LAMBDA);
+		return srv;
+	}
+
+	public static <T> Srv lambda(String path, ValueCallable<T> call) {
+		Srv srv = new Srv(path, call);
+		srv.setType(Variability.Type.LAMBDA);
+		return srv;
+	}
+
+	public static <T> Srv lambda(String path, ValueCallable<T> call, Args args) {
+		Srv srv = new Srv(path, call, args.argsToStrings());
+		srv.setType(Variability.Type.LAMBDA);
+		return srv;
+	}
+
+	public static <T> Srv lambda(String path, ValueCallable<T> lambda, Context context, Args args)
+			throws InvocationException {
+		Srv srv = new Srv(path, invoker(lambda, context, args));
+		srv.setType(Variability.Type.LAMBDA);
+		return srv;
+	}
+
+	public static <T> Srv lambda(String path, EntryCollable<T> call) {
+		Srv srv = new Srv(path, call);
+		srv.setType(Variability.Type.LAMBDA);
+		return srv;
+	}
+
+	public static <T> Srv lambda(String path, ValueCallable<T> call, Signature.ReturnPath returnPath) {
+		Srv srv = new Srv(path, call, returnPath);
+		srv.setType(Variability.Type.LAMBDA);
+		return srv;
 	}
 }

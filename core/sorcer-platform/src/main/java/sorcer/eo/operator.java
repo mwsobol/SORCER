@@ -2405,21 +2405,21 @@ public class operator {
 	}
 
 	/**
-	 * Assigns the maker for this context, for example "triplet|one|two|three" is a
-	 * marker (relation) named 'triplet' as a product of three "places" path, info, _3.
+	 * Assigns the tag for this context, for example "triplet|one|two|three" is a
+	 * tag (relation) named 'triplet' as a product of three "places" one, two, three.
 	 *
 	 * @param context
-	 * @param marker
+	 * @param tag
 	 * @throws ContextException
 	 */
-	public static void marker(Context context, String marker)
+	public static void tagContext(Context context, String tag)
 			throws ContextException {
-		context.setAttribute(marker);
+		context.setAttribute(tag);
 	}
 
 	/**
-	 * Associates a given path in this context with a tuple of a marker
-	 * defined for this context. If a marker, for example, is
+	 * Associates a given path in this context with a tag
+	 * defined for this context. If a tag, for example, is
 	 * "triplet|one|two|three" then its tuple can be "triplet|mike|w|sobol" where
 	 * 'triplet' is the name of relation and its proper tuple is 'mike|w|sobol'.
 	 *
@@ -2429,7 +2429,7 @@ public class operator {
 	 * @return
 	 * @throws ContextException
 	 */
-	public static Context mark(Context context, String path, String tuple)
+	public static Context tag(Context context, String path, String tuple)
 			throws ContextException {
 		return context.mark(path, tuple);
 	}
@@ -2438,11 +2438,15 @@ public class operator {
 		return context.getMarkedValues(tuple);
 	}
 
-	public static <T> T getAt(Context<T> context, String tuple) throws ContextException {
+	public static String[] pathsAt(Context context, String tuple) throws ContextException {
+		return context.getMarkedPaths(tuple);
+	}
+
+	public static <T> T valueAt(Context<T> context, String tuple) throws ContextException {
 		return valuesAt(context, tuple).get(0);
 	}
 
-	public static <T> T getAt(Context<T> context, int i) throws ContextException {
+	public static <T> T valueAt(Context<T> context, int i) throws ContextException {
 		if (!(context instanceof Positioning))
 			throw new ContextException("Not positional Context: " + context.getName());
 		return context.getMarkedValues("i|" + i).get(0);
@@ -2451,7 +2455,7 @@ public class operator {
 	public static <T> List<T> select(Context<T> context, int... positions) throws ContextException {
 		List<T> values = new ArrayList<T>(positions.length);
 		for (int i : positions) {
-			values.add(getAt(context, i));
+			values.add(valueAt(context, i));
 		}
 		return values;
 	}

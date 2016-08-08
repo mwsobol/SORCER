@@ -8,7 +8,6 @@ import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.core.context.model.ent.Proc;
 import sorcer.core.context.model.ent.ProcModel;
-import sorcer.po.operator;
 import sorcer.service.Context;
 
 import java.net.URL;

@@ -15,7 +15,6 @@ import sorcer.core.context.model.ent.Proc;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.ProcModel;
 import sorcer.core.provider.rendezvous.ServiceJobber;
-import sorcer.mo.operator;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
 import sorcer.util.Runner;

@@ -7,7 +7,6 @@ import org.sorcer.test.ProjectContext;
 import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.core.context.model.ent.Entry;
-import sorcer.core.invoker.ServiceInvoker;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
 import sorcer.util.GenericUtil;

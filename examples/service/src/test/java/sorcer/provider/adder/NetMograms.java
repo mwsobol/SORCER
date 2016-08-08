@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
+import sorcer.po.operator;
 import sorcer.service.*;
 import sorcer.service.Strategy.Access;
 import sorcer.service.Strategy.Wait;
@@ -44,7 +45,7 @@ public class NetMograms {
 		assertEquals(100.0, value(cxt, "result/y"));
 
 		// get the subcontext output from the context
-		assertTrue(context(ent("arg/x1", 20.0), ent("result/y", 100.0)).equals(
+		assertTrue(context(operator.ent("arg/x1", 20.0), operator.ent("result/y", 100.0)).equals(
 				value(cxt, result("result/context", outPaths("arg/x1", "result/y")))));
 	}
 
@@ -58,7 +59,7 @@ public class NetMograms {
         assertTrue(eval(t5).equals(100.0));
 
         // get the subcontext output from the exertion
-        assertTrue(context(ent("arg/x1", 20.0), ent("result/z", 100.0)).equals(
+        assertTrue(context(operator.ent("arg/x1", 20.0), operator.ent("result/z", 100.0)).equals(
                 eval(t5, result("result/z", outPaths("arg/x1", "result/z")))));
 
     }

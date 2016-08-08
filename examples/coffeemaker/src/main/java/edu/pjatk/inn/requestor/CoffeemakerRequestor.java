@@ -2,9 +2,8 @@ package edu.pjatk.inn.requestor;
 
 import edu.pjatk.inn.coffeemaker.CoffeeService;
 import edu.pjatk.inn.coffeemaker.Delivery;
-import sorcer.core.context.model.ent.Entry;
-import sorcer.core.context.model.srv.Srv;
 import sorcer.core.requestor.ServiceRequestor;
+import sorcer.po.operator;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
 
@@ -88,8 +87,8 @@ public class CoffeemakerRequestor extends ServiceRequestor {
                         result("delivery$", inPaths("location", "room")))));
 //				proc("change$", invoker("paid$ - (coffee$ + delivery$)", ents("paid$", "coffee$", "delivery$"))));
 
-        add(mdl, proc("change$", invoker("paid$ - (coffee$ + delivery$)", ents("paid$", "coffee$", "delivery$"))));
-        dependsOn(mdl, ent("change$", "makeCoffee"), ent("change$", "deliver"));
+        add(mdl, proc("change$", invoker("paid$ - (coffee$ + delivery$)", operator.ents("paid$", "coffee$", "delivery$"))));
+        dependsOn(mdl, operator.ent("change$", "makeCoffee"), operator.ent("change$", "deliver"));
         responseUp(mdl, "makeCoffee", "deliver", "change$", "paid$");
 
         return mdl;

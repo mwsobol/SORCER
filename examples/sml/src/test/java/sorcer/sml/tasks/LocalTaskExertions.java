@@ -9,6 +9,7 @@ import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.Adder;
 import sorcer.arithmetic.provider.Multiplier;
 import sorcer.arithmetic.provider.impl.*;
+import sorcer.po.operator;
 import sorcer.service.*;
 
 import static org.junit.Assert.assertEquals;
@@ -40,7 +41,7 @@ public class LocalTaskExertions {
 		assertEquals(100.0, value(cxt, "result/eval"));
 
 		// get the subcontext output from the context
-		assertTrue(context(ent("result/eval", 100.0), ent("arg/x1", 20.0)).equals(
+		assertTrue(context(operator.ent("result/eval", 100.0), operator.ent("arg/x1", 20.0)).equals(
 				value(cxt, outPaths("result/eval", "arg/x1"))));
 
 	}
@@ -62,7 +63,7 @@ public class LocalTaskExertions {
 		assertEquals(100.0, value(cxt, "result/eval"));
 
 		// get the subcontext output from the context
-		assertTrue(context(ent("result/eval", 100.0), ent("arg/x1", 20.0)).equals(
+		assertTrue(context(operator.ent("result/eval", 100.0), operator.ent("arg/x1", 20.0)).equals(
 				value(cxt, outPaths("result/eval", "arg/x1"))));
 
 	}
@@ -81,7 +82,7 @@ public class LocalTaskExertions {
 		assertEquals(200.0, value(cxt, "result/eval"));
 
 		// get the subcontext output from the context
-		assertTrue(context(ent("result/eval", 200.0), ent("arg/x1", 20.0)).equals(
+		assertTrue(context(operator.ent("result/eval", 200.0), operator.ent("arg/x1", 20.0)).equals(
 				value(cxt, outPaths("result/eval", "arg/x1"))));
 
 	}
@@ -99,7 +100,7 @@ public class LocalTaskExertions {
 		assertEquals(50.0, returnValue(t6));
 
 		// get the subcontext output from the exertion
-		assertTrue(context(ent("result/y", 50.0), ent("arg/x1", 20.0)).equals(
+		assertTrue(context(operator.ent("result/y", 50.0), operator.ent("arg/x1", 20.0)).equals(
 				eval(t6, outPaths("result/y", "arg/x1"))));
 
 	}

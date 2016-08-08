@@ -13,6 +13,7 @@ import sorcer.arithmetic.provider.impl.*;
 import sorcer.core.context.model.srv.Srv;
 import sorcer.core.plexus.Morpher;
 import sorcer.core.provider.rendezvous.ServiceJobber;
+import sorcer.po.operator;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
 
@@ -39,13 +40,13 @@ public class ArithmeticMograms {
 	public void lambdaEntryModel() throws Exception {
 		// all model args as functions - Java lambda expressions
 
-		Model mo = model(ent("multiply/x1", 10.0), ent("multiply/x2", 50.0),
-				ent("add/x1", 20.0), ent("add/x2", 80.0),
-				lambda("add", (Context <Double> model) ->
+		Model mo = model(operator.ent("multiply/x1", 10.0), operator.ent("multiply/x2", 50.0),
+				operator.ent("add/x1", 20.0), operator.ent("add/x2", 80.0),
+				operator.lambda("add", (Context <Double> model) ->
 						value(model, "add/x1") + value(model, "add/x2"), args("add/x1", "add/x2")),
-				lambda("multiply", (Context <Double> model) ->
+				operator.lambda("multiply", (Context <Double> model) ->
 						value(model, "multiply/x1") * value(model, "multiply/x2"), args("multiply/x1", "multiply/x2")),
-				lambda("subtract", (Context <Double> model) ->
+				operator.lambda("subtract", (Context <Double> model) ->
 						value(model, "multiply") - value(model, "add"), result("add/out",
                         inPaths("multiply", "add"))),
 				response("subtract", "multiply", "add"));
@@ -61,26 +62,26 @@ public class ArithmeticMograms {
 	public void dynamicLambdaModel() throws Exception {
 		// change scope at runtime for a selected entry ("multiply") in the model
 
-		Model mo = model(ent("multiply/x1", 10.0), ent("multiply/x2", 50.0),
-				ent("add/x1", 20.0), ent("add/x2", 80.0),
-				lambda("add", (Context <Double> model) ->
+		Model mo = model(operator.ent("multiply/x1", 10.0), operator.ent("multiply/x2", 50.0),
+				operator.ent("add/x1", 20.0), operator.ent("add/x2", 80.0),
+				operator.lambda("add", (Context <Double> model) ->
 						value(model, "add/x1") + value(model, "add/x2")),
-				lambda("multiply", (Context <Double> model) ->
+				operator.lambda("multiply", (Context <Double> model) ->
 						value(model, "multiply/x1") * value(model, "multiply/x2")),
-				lambda("subtract", (Context <Double> model) ->
+				operator.lambda("subtract", (Context <Double> model) ->
 						value(model, "multiply") - value(model, "add")),
-				lambda("multiply2", "multiply", (Service entry, Context scope, Arg[] args) -> {
+				operator.lambda("multiply2", "multiply", (Service entry, Context scope, Arg[] args) -> {
 					double out = (double)exec(entry, scope);
 					if (out > 400) {
 						putValue(scope, "multiply/x1", 20.0);
 						putValue(scope, "multiply/x2", 50.0);
 						out = (double)exec(entry, scope);
 					}
-					return context(ent("multiply2", out));
+					return context(operator.ent("multiply2", out));
 				} ),
 				response("subtract", "multiply2", "add"));
 
-		dependsOn(mo, ent("subtract", paths("multiply2", "add")));
+		dependsOn(mo, operator.ent("subtract", paths("multiply2", "add")));
 		Object val = asis(mo, "subtract");
 		if (val instanceof Srv) {
 			Srv srv = ((Srv)val);
@@ -99,18 +100,18 @@ public class ArithmeticMograms {
 	@Test
 	public void lambdaModelWithReturnPath() throws Exception {
 
-		Model mo = model(ent("multiply/x1", 10.0), ent("multiply/x2", 50.0),
-				ent("add/x1", 20.0), ent("add/x2", 80.0),
-				ent("arg/x1", 30.0), ent("arg/x2", 90.0),
-				lambda("add", (Context <Double> model) ->
+		Model mo = model(operator.ent("multiply/x1", 10.0), operator.ent("multiply/x2", 50.0),
+				operator.ent("add/x1", 20.0), operator.ent("add/x2", 80.0),
+				operator.ent("arg/x1", 30.0), operator.ent("arg/x2", 90.0),
+				operator.lambda("add", (Context <Double> model) ->
 						value(model, "add/x1") + value(model, "add/x2"),
 						result("add/out",
 								inPaths("add/x1", "add/x2"))),
-				lambda("multiply", (Context <Double> model) ->
+				operator.lambda("multiply", (Context <Double> model) ->
 								value(model, "multiply/x1") * value(model, "multiply/x2"),
 						result("multiply/out",
 								inPaths("multiply/x1", "multiply/x2"))),
-				lambda("subtract", (Context <Double> model) ->
+				operator.lambda("subtract", (Context <Double> model) ->
 						value(model, "multiply/out") - value(model, "add/out"),
 						result("model/response", inPaths("multiply/out", "add/out"))),
 				response("subtract", "multiply/out", "add/out", "model/response"));
@@ -129,11 +130,11 @@ public class ArithmeticMograms {
 		Model m = model(
 				inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
 				inVal("add/x1", 20.0), inVal("add/x2", 80.0),
-				ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
+				operator.ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
 						inPaths("multiply/x1", "multiply/x2")))),
-				ent(sig("add", AdderImpl.class, result("add/out",
+				operator.ent(sig("add", AdderImpl.class, result("add/out",
 						inPaths("add/x1", "add/x2")))),
-				ent(sig("subtract", SubtractorImpl.class, result("model/response",
+				operator.ent(sig("subtract", SubtractorImpl.class, result("model/response",
 						inPaths("multiply/out", "add/out")))),
 				response("subtract"));
 
@@ -151,11 +152,11 @@ public class ArithmeticMograms {
 		Model m = model(
 				inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
 				inVal("add/x1", 20.0), inVal("add/x2", 80.0),
-				ent(sig("multiply", Multiplier.class, result("multiply/out",
+				operator.ent(sig("multiply", Multiplier.class, result("multiply/out",
 						inPaths("multiply/x1", "multiply/x2")))),
-				ent(sig("add", Adder.class, result("add/out",
+				operator.ent(sig("add", Adder.class, result("add/out",
 						inPaths("add/x1", "add/x2")))),
-				ent(sig("subtract", Subtractor.class, result("model/response",
+				operator.ent(sig("subtract", Subtractor.class, result("model/response",
 						inPaths("multiply/out", "add/out")))),
 				response("subtract"));
 
@@ -173,11 +174,11 @@ public class ArithmeticMograms {
 		Model m = model(
 				inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
 				inVal("add/x1", 20.0), inVal("add/x2", 80.0),
-				ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
+				operator.ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
 						inPaths("multiply/x1", "multiply/x2")))),
-				ent(sig("add", AdderImpl.class, result("add/out",
+				operator.ent(sig("add", AdderImpl.class, result("add/out",
 						inPaths("add/x1", "add/x2")))),
-				ent(sig("subtract", Subtractor.class, result("model/response",
+				operator.ent(sig("subtract", Subtractor.class, result("model/response",
 						inPaths("multiply/out", "add/out")))),
 				response("subtract"));
 
@@ -262,10 +263,10 @@ public class ArithmeticMograms {
     @Test
     public void loopBlock() throws Exception {
         Block block = block("block",
-                context(ent("x1", 10.0), ent("x2", 20.0), ent("z", 100.0)),
+                context(operator.ent("x1", 10.0), operator.ent("x2", 20.0), operator.ent("z", 100.0)),
                 loop(condition((Context<Double> scope) -> value(scope, "x1") + value(scope, "x2")
                                 < value(scope, "z")),
-                        task(ent("x1", invoker("x1 + 3", args("x1"))))));
+                        task(operator.ent("x1", invoker("x1 + 3", args("x1"))))));
 
         block = exert(block);
         assertEquals(value(context(block), "x1"), 82.00);
@@ -373,9 +374,9 @@ public class ArithmeticMograms {
 
         // multifidelity model with morphers
         Model mod = model(inVal("arg/x1", 90.0), inVal("arg/x2", 10.0),
-                ent("mFi1", mFi(mFi1Morpher, add, multiply)),
-                ent("mFi2", mFi(mFi2Morpher, average, divide, subtract)),
-                ent("mFi3", mFi(average, divide, multiply)),
+                operator.ent("mFi1", mFi(mFi1Morpher, add, multiply)),
+                operator.ent("mFi2", mFi(mFi2Morpher, average, divide, subtract)),
+                operator.ent("mFi3", mFi(average, divide, multiply)),
                 fi2, fi3, fi4,
                 response("mFi1", "mFi2", "mFi3", "arg/x1", "arg/x2"));
 

@@ -10,6 +10,7 @@ import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.provider.impl.SubtractorImpl;
 import sorcer.core.provider.rendezvous.ServiceJobber;
+import sorcer.po.operator;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
 
@@ -36,8 +37,8 @@ public class Mograms {
     @Test
     public void evaluateModel() throws Exception  {
 
-        Model context = model(ent("x1", 20.0), ent("x2", 80.0),
-                ent("result/y", invoker("x1 + x2", ents("x1", "x2"))));
+        Model context = model(operator.ent("x1", 20.0), operator.ent("x2", 80.0),
+                operator.ent("result/y", invoker("x1 + x2", operator.ents("x1", "x2"))));
 
         // declare response paths
         responseUp(context, "result/y");
@@ -55,7 +56,7 @@ public class Mograms {
     public void modelInsOutsRsp() throws Exception  {
 
         Model context = model(inVal("x1", 20.0), inVal("x2", 80.0),
-                outVal("result/y", invoker("x1 + x2", ents("x1", "x2"))));
+                outVal("result/y", invoker("x1 + x2", operator.ents("x1", "x2"))));
 
         Context inputs = inputs(context);
         logger.info("inputs : " + inputs(context));
@@ -168,7 +169,7 @@ public class Mograms {
         assertEquals(100.0, exec(t5));
 
         // get the subcontext output from the the result path
-        assertTrue(context(ent("arg/x1", 20.0), ent("result/z", 100.0)).equals(
+        assertTrue(context(operator.ent("arg/x1", 20.0), operator.ent("result/z", 100.0)).equals(
                 exec(t5, result("result/z", outPaths("arg/x1", "result/z")))));
     }
 
@@ -235,9 +236,9 @@ public class Mograms {
         assertEquals(400.0, exec(job));
 
         // get the subcontext output from the exertion
-        assertTrue(context(ent("j1/j2/t4/result/y", 500.0),
-                ent("j1/j2/t5/result/y", 100.0),
-                ent("j1/t3/result/y", 400.0)).equals(
+        assertTrue(context(operator.ent("j1/j2/t4/result/y", 500.0),
+                operator.ent("j1/j2/t5/result/y", 100.0),
+                operator.ent("j1/t3/result/y", 400.0)).equals(
                 exec(job, result("result/z",
                         outPaths("j1/j2/t4/result/y", "j1/j2/t5/result/y", "j1/t3/result/y")))));
 

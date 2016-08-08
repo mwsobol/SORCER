@@ -49,13 +49,13 @@ public class CollectionOperatorsTest {
 
 	@Test
 	public void mapOperatorTest() throws EvaluationException {
-		Map<Object, Object> map1 = dictionary(ent("name", "Mike"), ent("height", 174.0));
+		Map<Object, Object> map1 = dictionary(sorcer.po.operator.ent("name", "Mike"), sorcer.po.operator.ent("height", 174.0));
 				
-		Map<String, Double> map2 = map(ent("length", 248.0), ent("width", 2.0), ent("height", 17.0));
+		Map<String, Double> map2 = map(sorcer.po.operator.ent("length", 248.0), sorcer.po.operator.ent("width", 2.0), sorcer.po.operator.ent("height", 17.0));
 		
 		// keys and values of args
-		String k = key(ent("name", "Mike"));
-		Double v = operator.eval(ent("height", 174.0));
+		String k = key(sorcer.po.operator.ent("name", "Mike"));
+		Double v = operator.eval(sorcer.po.operator.ent("height", 174.0));
 		assertEquals(k, "name");
 		assertTrue(v.equals(174.0));
 		
@@ -79,10 +79,10 @@ public class CollectionOperatorsTest {
 	@Test
 	public void bagOperatorTest() throws EvaluationException {
 		// the bag operator creates instances of java.util.Set
-		Set<Object> set = bag("name", "Mike", "name", "Ray", (Object)ent("height", 174));
+		Set<Object> set = bag("name", "Mike", "name", "Ray", (Object) sorcer.po.operator.ent("height", 174));
 		assertEquals(set.size(), 4);
-		assertEquals(ent("height", 174), ent("height", 174));
-		assertTrue(set.contains(ent("height", 174)));
+		assertEquals(sorcer.po.operator.ent("height", 174), sorcer.po.operator.ent("height", 174));
+		assertTrue(set.contains(sorcer.po.operator.ent("height", 174)));
 	}
 
 	@Test
@@ -100,7 +100,7 @@ public class CollectionOperatorsTest {
 		
 		assertEquals(table.getRowNames(), list("f1", "f2", "f3"));
 		assertEquals(table.getColumnNames(), list("x1", "x2", "x3", "x4", "x5"));
-		assertEquals(table.getRowMap("f2"), map(ent("x1", 2.1), ent("x2", 2.2), ent("x3", 2.3), ent("x4", 2.4), ent("x5",2.5)));
+		assertEquals(table.getRowMap("f2"), map(sorcer.po.operator.ent("x1", 2.1), sorcer.po.operator.ent("x2", 2.2), sorcer.po.operator.ent("x3", 2.3), sorcer.po.operator.ent("x4", 2.4), sorcer.po.operator.ent("x5",2.5)));
 	}
 	
 	@Test

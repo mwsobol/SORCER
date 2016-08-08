@@ -13,6 +13,7 @@ import sorcer.arithmetic.tester.provider.Multiplier;
 import sorcer.arithmetic.tester.provider.Subtractor;
 import sorcer.core.exertion.TaskTest;
 import sorcer.core.provider.Concatenator;
+import sorcer.po.operator;
 import sorcer.service.*;
 import sorcer.util.GenericUtil;
 import sorcer.util.Sorcer;
@@ -152,7 +153,7 @@ public class MonitoringTest {
 //		logger.info("result: " + eval(context(block), "out"));
 		assertEquals(value(context(block), "out"), 500.0);
 
-		block = exert(block, ent("block/t4/arg/x1", 200.0), ent("block/t4/arg/x2", 800.0));
+		block = exert(block, operator.ent("block/t4/arg/x1", 200.0), operator.ent("block/t4/arg/x2", 800.0));
 		logger.info("block context 2: " + context(block));
 //		logger.info("result: " + eval(context(block), "out"));
 		assertEquals(value(context(block), "out"), 100.0);

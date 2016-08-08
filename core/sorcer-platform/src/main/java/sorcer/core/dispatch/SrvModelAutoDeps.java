@@ -35,7 +35,7 @@ import sorcer.service.*;
 import java.util.*;
 
 import static sorcer.co.operator.dep;
-import static sorcer.co.operator.ent;
+import static sorcer.po.operator.ent;
 import static sorcer.co.operator.paths;
 
 /**

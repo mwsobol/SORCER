@@ -20,7 +20,7 @@ import sorcer.service.Task;
 import java.io.Serializable;
 
 import static org.junit.Assert.assertEquals;
-import static sorcer.co.operator.ent;
+import static sorcer.po.operator.ent;
 import static sorcer.co.operator.inVal;
 import static sorcer.eo.operator.alt;
 import static sorcer.eo.operator.*;

@@ -14,6 +14,7 @@ import sorcer.arithmetic.tester.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.tester.provider.impl.SubtractorImpl;
 import sorcer.core.SorcerConstants;
 import sorcer.core.provider.rendezvous.ServiceConcatenator;
+import sorcer.po.operator;
 import sorcer.service.Block;
 import sorcer.service.Task;
 
@@ -43,7 +44,7 @@ public class ArithmeticNoNetBlockTest implements SorcerConstants {
 						result("block/result")));
 		
 		Block block = block("block", sig("exert", ServiceConcatenator.class),
-				context(ent("y1", 100), ent("y2", 200)),
+				context(operator.ent("y1", 100), operator.ent("y2", 200)),
 				alt(opt(condition("{ y1, y2 -> y1 > y2 }", "y1", "y2"), t4), 
 					opt(condition("{ y1, y2 -> y1 <= y2 }", "y1", "y2"), t5)));
 		
@@ -52,7 +53,7 @@ public class ArithmeticNoNetBlockTest implements SorcerConstants {
 //		logger.info("result: " + eval(context(block), "block/result"));
 		assertEquals(value(context(block), "block/result"), 100.00);
 
-		block = exert(block, ent("y1", 200.0), ent("y2", 100.0));
+		block = exert(block, operator.ent("y1", 200.0), operator.ent("y2", 100.0));
 //		logger.info("block context: " + context(block));
 //		logger.info("result: " + eval(context(block), "block/result"));
 		assertEquals(value(context(block), "block/result"), 500.0);
@@ -88,7 +89,7 @@ public class ArithmeticNoNetBlockTest implements SorcerConstants {
 //		logger.info("result: " + eval(context(block), "block/result"));
 		assertEquals(value(context(block), "block/result"), 400.00);
 		
-		block = exert(block, ent("block/t5/arg/x1", 200.0), ent("block/t5/arg/x2", 800.0));
+		block = exert(block, operator.ent("block/t5/arg/x1", 200.0), operator.ent("block/t5/arg/x2", 800.0));
 //		logger.info("block context: " + context(block));
 		logger.info("result: " + value(context(block), "block/result"));
 		assertEquals(value(context(block), "block/result"), 750.00);
@@ -112,7 +113,7 @@ public class ArithmeticNoNetBlockTest implements SorcerConstants {
 		logger.info("result: " + value(context(block), "out"));
 		assertEquals(value(context(block), "out"), 500.0);
 		
-		block = exert(block, ent("block/t4/arg/x1", 200.0), ent("block/t4/arg/x2", 800.0));
+		block = exert(block, operator.ent("block/t4/arg/x1", 200.0), operator.ent("block/t4/arg/x2", 800.0));
 		logger.info("block context: " + context(block));
 		logger.info("result: " + value(context(block), "out"));
 		assertEquals(value(context(block), "out"), 100.0);
