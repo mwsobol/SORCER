@@ -155,7 +155,7 @@ public class SrvModel extends ProcModel implements Model, Invocation<Object> {
                 Object val2 = ((Srv) val).asis();
                 if (val2 instanceof SignatureEntry) {
                     // return the calculated eval
-                    if (((Srv) val).getSrvValue() != null && ((Srv) val).isValueCurrent())
+                    if (((Srv) val).getSrvValue() != null && ((Srv) val).isValueCurrent() && !isChanged())
                         return ((Srv) val).getSrvValue();
                     else {
                         Signature sig = ((SignatureEntry) ((Srv) val).asis()).value();

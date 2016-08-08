@@ -93,6 +93,9 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
 
     protected boolean isChanged = false;
 
+    // indicates that is the parent of another mogram
+    protected boolean isSuper = false;
+
     // true if the exertion has to be initialized (to original state)
     // or used as is after resuming from suspension or failure
     protected boolean isInitializable = true;
@@ -604,6 +607,14 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
 
     public void setIsChanged(boolean isChanged) {
         this.isChanged = isChanged;
+    }
+
+    public boolean isSuper() {
+        return isSuper;
+    }
+
+    public void setSuper(boolean aSuper) {
+        isSuper = aSuper;
     }
 
     public String getDbUrl() {

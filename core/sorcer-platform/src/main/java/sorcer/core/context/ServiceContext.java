@@ -1528,8 +1528,10 @@ public class ServiceContext<T> extends ServiceMogram implements
 			// make sure the result is returned correctly
 			resultContext.putValue(returnPath, returnContext);
 			this.appendInout(returnContext);
+			this.setIsChanged(true);
 		} else {
 			this.appendInout(outcxt);
+			this.setIsChanged(true);
 		}
 		return resultContext;
 	}

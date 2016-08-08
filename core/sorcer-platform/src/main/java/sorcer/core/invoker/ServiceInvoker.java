@@ -377,7 +377,7 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 				else
 					value = getValue(entries);
 
-				valueValid(true);
+				valueIsValid = true;
 			}
 		} catch (Exception e) {
 			throw new InvocationException(e);
