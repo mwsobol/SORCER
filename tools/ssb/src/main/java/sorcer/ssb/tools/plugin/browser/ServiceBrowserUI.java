@@ -2619,7 +2619,7 @@ public class ServiceBrowserUI extends Thread implements RemoteEventListener,
 			DefaultMutableTreeNode lusNode = (DefaultMutableTreeNode) _root
 					.getChildAt(i);
 			ServiceNode lsn = (ServiceNode) lusNode.getUserObject();
-			// create a new ServiceNode and then mark it as NOT a LUS
+			// create a new ServiceNode and then tag it as NOT a LUS
 			ServiceNode newSn = new ServiceNode(lsn.getServiceItem());
 			newSn.markAsService();
 

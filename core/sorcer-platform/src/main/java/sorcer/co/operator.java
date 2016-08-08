@@ -333,6 +333,13 @@ public class operator {
 		return new Srv(path, null, name);
 	}
 
+	public static <T> Entry<T> val(Path path, T value) {
+		Entry ent = new Entry<T>(path.path, value);
+		ent.annotation(path.info.toString());
+		ent.setType(Variability.Type.VAL);
+		return ent;
+	}
+
 	public static <T> Entry<T> val(String path, T value) {
 		Entry ent = new Entry<T>(path, value);
 		ent.setType(Variability.Type.VAL);

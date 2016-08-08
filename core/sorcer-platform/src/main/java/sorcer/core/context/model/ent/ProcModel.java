@@ -264,6 +264,9 @@ public class ProcModel extends PositionalContext<Object> implements Model, Invoc
 				putValue(pn, obj);
 			} else if (obj instanceof Entry) {
 				putValue(pn, ((Entry)obj).asis());
+				if (((Entry)obj).annotation() != null) {
+					mark(obj.getName(), ((Entry)obj).annotation().toString());
+				}
 			} else {
 				putValue(pn, obj);
 			}

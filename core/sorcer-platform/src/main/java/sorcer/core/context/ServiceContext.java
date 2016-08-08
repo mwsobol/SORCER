@@ -227,10 +227,10 @@ public class ServiceContext<T> extends ServiceMogram implements
 	 * the eval of attribute (key in 'metacontext').
 	 * <p>
 	 * The usage of metacontext is illustrated as follows:
-	 * a single attribute - 'tag'; cxt.mark("arg/x1", "tag|stress");
+	 * a single attribute - 'tag'; cxt.tag("arg/x1", "tag|stress");
 	 * and get tagged eval at arg/x1: cxt.getMarkedValues("tag|stress"));
 	 * relation - 'triplet|path|info|_3', 'triplet' is a relation name and path, _3, and _3
-	 * are component attributes; cxt.mark("arg/x3", "triplet|mike|w|sobol");
+	 * are component attributes; cxt.tag("arg/x3", "triplet|mike|w|sobol");
 	 * and get tagged eval at arg/x3: cxt.getMarkedValues("triplet|mike|w|sobol"));
 	 */
 	protected void init() {
@@ -243,8 +243,8 @@ public class ServiceContext<T> extends ServiceMogram implements
 		try {
 			// default relation tags: tag, assoc, and triplet
 			setAttribute("tag");
-			setAttribute("assoc|path|info");
-			setAttribute("triplet|path|info|_3");
+			setAttribute("assoc|key|value");
+			setAttribute("triplet|1|2|3");
 			// context path tag
 			setAttribute(PATH_PAR);
 			// annotating input output files associated with source applications
@@ -1579,7 +1579,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		List<String> outpaths = getOutPaths();
 
 		for (Path path : paths) {
-			// mark the context with provided info
+			// tag the context with provided info
 			if(path.info != null) {
 				subcntxt.putValue(path.path, getValue(path.path), path.info.toString());
 			} else if (inpaths.contains(path.path))
@@ -1689,11 +1689,11 @@ public class ServiceContext<T> extends ServiceMogram implements
 			List<String> outpaths = ((ServiceContext) context).getOutPaths();
 			for (String p : inpaths) {
 				Contexts.markIn(this, p);
-//				mark(p, "cp|in||");
+//				tag(p, "cp|in||");
 			}
 			for (String p : outpaths) {
 				Contexts.markOut(this, p);
-//				mark(p, "cp|out||");
+//				tag(p, "cp|out||");
 			}
 			if (containsPath(Condition._closure_))
 				remove(Condition._closure_);
@@ -2714,7 +2714,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	@Override
 	public List<T> getMarkedValues(String association) throws ContextException {
 		List<String> paths = markedPaths(association);
-		if (paths == null) {
+		if (paths == null && scope != null) {
 			paths = scope.markedPaths(association);
 		}
 		List<T> values = new ArrayList<T>();

@@ -347,7 +347,7 @@ public class MonitorSession extends ArrayList<MonitorSession> implements Monitor
 	/**
 	 * Here's the algorithm to manage the states based on states of children
 	 * Rule 1: If any one of the child state is FAILED and all others are DONE,
-	 * marked ourself FAILED Rule 2: If all child are DONE, mark ourself as DONE
+	 * marked ourself FAILED Rule 2: If all child are DONE, tag ourself as DONE
 	 * Rule 3: If any child is SUSPENDED and all other child are DONE, then we
 	 * are in SUSPENDED state
 	 */

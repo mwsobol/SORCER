@@ -2405,21 +2405,21 @@ public class operator {
 	}
 
 	/**
-	 * Assigns the maker for this context, for example "triplet|one|two|three" is a
-	 * marker (relation) named 'triplet' as a product of three "places" path, info, _3.
+	 * Assigns the tag for this context, for example "triplet|one|two|three" is a
+	 * tag (relation) named 'triplet' as a product of three "places" one, two, three.
 	 *
 	 * @param context
-	 * @param marker
+	 * @param tag
 	 * @throws ContextException
 	 */
-	public static void marker(Context context, String marker)
+	public static void tagContext(Context context, String tag)
 			throws ContextException {
-		context.setAttribute(marker);
+		context.setAttribute(tag);
 	}
 
 	/**
-	 * Associates a given path in this context with a tuple of a marker
-	 * defined for this context. If a marker, for example, is
+	 * Associates a given path in this context with a tag
+	 * defined for this context. If a tag, for example, is
 	 * "triplet|one|two|three" then its tuple can be "triplet|mike|w|sobol" where
 	 * 'triplet' is the name of relation and its proper tuple is 'mike|w|sobol'.
 	 *
@@ -2429,7 +2429,7 @@ public class operator {
 	 * @return
 	 * @throws ContextException
 	 */
-	public static Context mark(Context context, String path, String tuple)
+	public static Context tag(Context context, String path, String tuple)
 			throws ContextException {
 		return context.mark(path, tuple);
 	}
