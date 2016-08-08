@@ -612,6 +612,8 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
     public boolean isSuper() {
         return isSuper;
     }
+git status
+
 
     public void setSuper(boolean aSuper) {
         isSuper = aSuper;
