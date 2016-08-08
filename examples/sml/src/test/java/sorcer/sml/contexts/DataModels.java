@@ -25,6 +25,8 @@ import static sorcer.eo.operator.value;
 import static sorcer.mo.operator.*;
 import static sorcer.mo.operator.inputs;
 import static sorcer.mo.operator.returnPath;
+import static sorcer.po.operator.ent;
+
 /**
  * @author Mike Sobolewski
  */
@@ -36,10 +38,10 @@ public class DataModels {
     @Test
     public void contextOperator() throws Exception {
 
-        Context<Double> cxt = context(operator.ent("arg/x1", 1.1), operator.ent("arg/x2", 1.2),
-                operator.ent("arg/x3", 1.3), operator.ent("arg/x4", 1.4), operator.ent("arg/x5", 1.5));
+        Context<Double> cxt = context(ent("arg/x1", 1.1), ent("arg/x2", 1.2),
+                ent("arg/x3", 1.3), ent("arg/x4", 1.4), ent("arg/x5", 1.5));
 
-        add(cxt, operator.ent("arg/x6", 1.6));
+        add(cxt, ent("arg/x6", 1.6));
 
         assertTrue(value(cxt, "arg/x1").equals(1.1));
         assertTrue(get(cxt, "arg/x1").equals(1.1));
@@ -78,7 +80,7 @@ public class DataModels {
     @Test
     public void directionalEntries() throws Exception {
 
-        Entry<Double> e = operator.ent("arg/x1", 10.0);
+        Entry<Double> e = ent("arg/x1", 10.0);
         assertEquals("arg/x1", key(e));
         // a path is a String - usually a sequence of attributes
         assertEquals(path(e), "arg/x1");
@@ -105,7 +107,7 @@ public class DataModels {
         Context<Double> cxt = context(val("arg/x1", 1.1), inVal("arg/x2", 1.2),
                 inVal("arg/x3", 1.3), inVal("arg/x4", 1.4), inVal("arg/x5", 1.5));
 
-        add(cxt, operator.ent("arg/x6", 1.6));
+        add(cxt, ent("arg/x6", 1.6));
         add(cxt, outVal("out/y1", 1.7));
         add(cxt, outVal("out/y2", 1.8));
         add(cxt, operator.inoutVal("proc/z", 1.9));
@@ -173,10 +175,10 @@ public class DataModels {
     @Test
     public void taggingContextPaths() throws Exception {
 
-        Context<Double> cxt = context(operator.ent("arg/x1", 1.1), operator.ent("arg/x2", 1.2),
-                operator.ent("arg/x3", 1.3), operator.ent("arg/x4", 1.4), operator.ent("arg/x5", 1.5));
+        Context<Double> cxt = context(ent("arg/x1", 1.1), ent("arg/x2", 1.2),
+                ent("arg/x3", 1.3), ent("arg/x4", 1.4), ent("arg/x5", 1.5));
 
-        add(cxt, operator.ent("arg/x6", 1.6));
+        add(cxt, ent("arg/x6", 1.6));
         add(cxt, inVal("arg/x7", 1.7));
         add(cxt, outVal("arg/y", 1.8));
 
@@ -209,7 +211,7 @@ public class DataModels {
 
         // custom annotation with the association: "person|first|last"
         tagContext(cxt, "person|first|last");
-        add(cxt, operator.ent("arg/Mike/height", 174.0, "person|Mike|Sobolewski"));
+        add(cxt, ent("arg/Mike/height", 174.0, "person|Mike|Sobolewski"));
         add(cxt, inVal("arg/John/height", 178.0, "person|John|Doe"));
         assertTrue(valueAt(cxt, "person|Mike|Sobolewski").equals(174.0));
         assertTrue(valueAt(cxt, "person|John|Doe").equals(178.0));
@@ -277,7 +279,7 @@ public class DataModels {
         assertTrue(value(ac, "arg3/eval").equals(100.0));
         assertTrue(value(mc, "arg3/eval").equals(200.0));
         URL a3vURL = storeArg(mc, "arg3/eval");
-        add(ac, operator.ent("arg3/eval", a3vURL));
+        add(ac, ent("arg3/eval", a3vURL));
 
         put(ac, "arg1/eval", 300.0);
         assertTrue(value(ac, "arg1/eval").equals(300.0));
