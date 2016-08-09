@@ -1310,14 +1310,15 @@ public class operator {
 		return signature;
 	}
 
-	public static Fidelity cFi(String componentPath, String fidelity) {
-		Fidelity fi = new Fidelity(fidelity, componentPath);
+	public static Fidelity<String> cFi(String name, String componentPath) {
+		Fidelity<String> fi = new Fidelity(name, componentPath);
+		fi.setSelect(componentPath);
 		fi.type = ServiceFidelity.Type.COMPONENT;
 		return fi;
 	}
 
 	public static ServiceFidelity<Fidelity> fi(String name, Fidelity... selectors) {
-		ServiceFidelity fi = new ServiceFidelity(name, selectors);
+		ServiceFidelity<Fidelity> fi = new ServiceFidelity(name, selectors);
 		fi.type = ServiceFidelity.Type.META;
 		return fi;
 	}
@@ -1476,29 +1477,30 @@ public class operator {
 		return new FiEntry(index, fiList);
 	}
 
-	public static Fidelity fi(String path, String name) {
+	public static Fidelity fi(String name, String path) {
 		Fidelity fi = new Fidelity(name, path);
 		fi.type = Fidelity.Type.SELECT;
 		return fi;
 	}
 
-	public static ServiceFidelity srvFi(String path, String name) {
-		ServiceFidelity fi = new ServiceFidelity(name);
+	public static ServiceFidelity<Path> srvFi(String name, String path) {
+		ServiceFidelity<Path> fi = new ServiceFidelity(name, path(path));
 		fi.setPath(path);
-		fi.setSelect(name);
+		fi.setSelect(path);
 		fi.type = ServiceFidelity.Type.SELECT;
 		return fi;
 	}
 
-	public static Fidelity mFi(String path, String name) {
-		Fidelity fi = new Fidelity(name);
+	public static Fidelity<String> mFi(String name, String path) {
+		Fidelity<String> fi = new Fidelity(name);
 		fi.setPath(path);
 		fi.type = ServiceFidelity.Type.MORPH;
 		return fi;
 	}
 
 	public static ServiceFidelity<Signature> sFi(String name, Signature... signatures) {
-		ServiceFidelity<Signature> fi = new ServiceFidelity<Signature>(name, signatures);
+		ServiceFidelity<Signature> fi = new ServiceFidelity(name, signatures);
+		fi.setSelect(signatures[0]);
 		fi.type = ServiceFidelity.Type.SIG;
 		return fi;
 	}

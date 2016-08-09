@@ -330,7 +330,7 @@ public class SrvModel extends ProcModel implements Model, Invocation<Object> {
        Fidelity selected = null;
         List<Fidelity> fiList = Projection.selectFidelities(entries);
         for (Fidelity sfi : fiList) {
-            if (sfi.getPath().equals(path)) {
+            if (sfi.getName().equals(path)) {
                 selected = sfi;
                 ((Entry) asis(path)).isValid(false);
                 isChanged();
@@ -343,13 +343,13 @@ public class SrvModel extends ProcModel implements Model, Invocation<Object> {
             if (selected == null && fi.getSelect() != null)
                 return fi.getSelect();
             else {
-                String selectName = null;
+                String selectPath = null;
                 if (selected != null) {
-                    selectName = selected.getName();
+                    selectPath = selected.getPath();
                 } else {
-                    selectName = choices.get(0).getName();
+                    selectPath = ((Fidelity)choices.get(0)).getPath();
                 }
-                if (s.getName().equals(selectName)) {
+                if (s.getName().equals(selectPath)) {
                     fi.setSelect(s);
                     return s;
                 }

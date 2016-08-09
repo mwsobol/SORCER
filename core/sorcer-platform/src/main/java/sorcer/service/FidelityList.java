@@ -87,23 +87,29 @@ public class FidelityList extends ArrayList<Fidelity> implements Arg {
         int tally = size();
         StringBuilder sb = new StringBuilder("fis(");
         if (tally > 0) {
-            sb.append("fi(\"").append(get(0).getPath()).append("\", \"");
+//            sb.append("fi(\"").append(get(0).getPath()).append("\", \"");
+            sb.append("fi(\"").append(get(0).getName()).append("\", \"");
             if (tally == 1)
-                sb.append(get(0).getName()).append("\")");
+                sb.append(get(0).getPath()).append("\")");
+//                sb.append(get(0).getName()).append("\")");
             else
-                sb.append(get(0).getName()).append("\"), ");
+                sb.append(get(0).getPath()).append("\"), ");
+//                sb.append(get(0).getName()).append("\"), ");
 
             for (int i = 1; i < tally - 1; i++) {
-                sb.append("fi(\"").append(get(i).getPath()).append("\", \"");
+//                sb.append("fi(\"").append(get(i).getPath()).append("\", \"");
+                sb.append("fi(\"").append(get(i).getName()).append("\", \"");
                 if (tally == 1)
-                    sb.append(get(i).getName()).append("\")");
+                    sb.append(get(i).getPath()).append("\")");
+//                    sb.append(get(i).getName()).append("\")");
                 else
                     sb.append(get(i).getName()).append("\"), ");
+                    sb.append(get(i).getPath()).append("\"), ");
             }
 
             if (tally > 1) {
-                sb.append("fi(\"").append(get(tally - 1).getPath()).append("\", \"");
-                sb.append(get(tally - 1).getName()).append("\")");
+                sb.append("fi(\"").append(get(tally - 1).getName()).append("\", \"");
+                sb.append(get(tally - 1).getPath()).append("\")");
             }
 
         }

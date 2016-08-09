@@ -236,11 +236,11 @@ public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Ob
                 Iterator<Map.Entry<String, ServiceFidelity<T>>> i = fidelities.entrySet().iterator();
                 while (i.hasNext()) {
                     Map.Entry<String, ServiceFidelity<T>> fiEnt = i.next();
-                    if (fiEnt.getKey().equals(path)) {
-                        if (morphFidelities.get(path) != null) {
-                            morphFidelities.get(path).setMorpherSelect(name);
+                    if (fiEnt.getKey().equals(name)) {
+                        if (morphFidelities.get(name) != null) {
+                            morphFidelities.get(name).setMorpherSelect(path);
                         }
-                        fiEnt.getValue().setSelect(name);
+                        fiEnt.getValue().setSelect(path);
                     }
                 }
             }
@@ -315,9 +315,9 @@ public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Ob
         }
         if (this.fidelities.size() > 0) {
             for (Fidelity fi : fidelities) {
-                ServiceFidelity sFi = this.fidelities.get(fi.getPath());
+                ServiceFidelity sFi = this.fidelities.get(fi.getName());
                 if (sFi != null) {
-                    sFi.setSelect(fi.getName());
+                    sFi.setSelect(fi.getPath());
                     if (mogram instanceof Exertion) {
                         ((ServiceMogram)mogram).setSelectedFidelity((ServiceFidelity) sFi.getSelect());
                         if (mogram.getClass()==Task.class) {
