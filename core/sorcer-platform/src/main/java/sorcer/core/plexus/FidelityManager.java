@@ -272,7 +272,12 @@ public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Ob
 		Iterator<Map.Entry<String, ServiceFidelity<T>>> it = fidelities.entrySet().iterator();
 		while (it.hasNext()) {
 			Map.Entry<String, ServiceFidelity<T>> me = it.next();
-			fl.add(new Fidelity(me.getValue().get(0).getName(), me.getKey()));
+            Object defaultFi =  me.getValue().getSelects().get(0);
+            if (defaultFi instanceof ServiceFidelity) {
+                fl.add(new Fidelity(((ServiceFidelity)defaultFi).getName(), ((ServiceFidelity)defaultFi).getPath()));
+            } else {
+                fl.add(new Fidelity(me.getKey(), me.getValue().get(0).getName()));
+            }
 		}
         return fl;
     }
